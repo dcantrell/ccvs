@@ -1,3 +1,12 @@
+Sat Nov  1 00:14:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_parsercsfile_i): Clarify/expand comment about
+	the purpose of having both this and RCS_reparsercsfile.
+	(RCS_rewrite): Add comment about how this works.
+	* admin.c (admin_fileproc): Add comment about call to
+	RCS_fully_parse not RCS_reparsercsfile.
+	* rcs.h: Comment on what delta_pos field of struct rcsnode is.
+
 Fri Oct 31 16:38:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 			  and Abe Feldman
 

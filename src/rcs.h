@@ -69,7 +69,10 @@ struct rcsnode
     int strict_locks;
     char *comment;
     char *desc;
+
+    /* File offset of the first deltatext node, so we can seek there.  */
     long delta_pos;
+
     List *other;
 };
 
