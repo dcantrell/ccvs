@@ -18,6 +18,7 @@ i386 family:
 	PC Clone running UnixWare v1.1.1 using gcc (about 1.4A2)
 	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
         PC Clone running Fintronic Linux 1.2.5 (1.4.93)
+        PC Clone running BSDI 2.0 (1.4.93) (footnote 6)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 m68k:
@@ -56,6 +57,8 @@ SPARC:
 	You also may have to make sure TIME_WITH_SYS_TIME is undef'ed.
 
 (footnote 5) Add "#include <sys/bsdtypes.h>" to src/server.c. (1.4.93)
+
+(footnote 6) Change /usr/tmp to /var/tmp in src/server.c (2 places) (1.4.93).
 
 -------------------------------------------------------------------------------
 
