@@ -1,5 +1,12 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* recurse.c (do_dir_proc): In combining repository and dir, omit
+	trailing "/." from repository.
+	* sanity.sh (modules3): Adjust test modules3-4 so we test for
+	this fix (this is not just cosmetic; the bug prevented the
+	"Rebuilding administrative file database" from happening).
+	modules2 already tests the "co CVSROOT/modules" usage.
+
 	* checkout.c (checkout_proc): When building top-level CVSADM
 	directory, continue the process of walking up the repository one
 	more level, rather than putting in the same repository as for the
