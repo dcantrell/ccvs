@@ -1,3 +1,10 @@
+2001-04-02  Derek Price  <dprice@collab.net>
+	    for Alon Ziv  <alonz@zapper.com>
+
+	* getdate.y: Add a declaration for yyparse().
+
+	* getdate.c: Regenerated.
+
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
         * Makefile.in: Regenerated
