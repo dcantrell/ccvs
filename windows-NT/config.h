@@ -422,9 +422,6 @@
 /* Define to 1 if you have the `memrchr' function. */
 #undef HAVE_MEMRCHR
 
-/* Define to 1 if you have the `mkdir' function. */
-#undef HAVE_MKDIR
-
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
 
@@ -488,9 +485,6 @@
 
 /* Define to 1 if you have the `regfree' function. */
 #undef HAVE_REGFREE
-
-/* Define to 1 if you have the `rename' function. */
-#undef HAVE_RENAME
 
 /* Define to 1 if you have the `rpmatch' function. */
 #undef HAVE_RPMATCH
