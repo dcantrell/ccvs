@@ -530,6 +530,7 @@ dirswitch (dir, repos)
 {
     int status;
     FILE *f;
+    char *b;
 
     server_write_entries ();
 
@@ -558,6 +559,12 @@ dirswitch (dir, repos)
 	sprintf(pending_error_text, "E cannot mkdir %s", dir_name);
 	return;
     }
+
+    b = strrchr (dir_name, '/');
+    *b = '\0';
+    Subdir_Register ((List *) NULL, dir_name, b + 1);
+    *b = '/';
+
     if ( CVS_CHDIR (dir_name) < 0)
     {
 	pending_error = errno;

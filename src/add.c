@@ -27,7 +27,7 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-static int add_directory PROTO((char *repository, char *dir));
+static int add_directory PROTO((char *repository, List *, char *dir));
 static int build_entry PROTO((char *repository, char *user, char *options,
 		        char *message, List * entries, char *tag));
 
@@ -115,6 +115,8 @@ add (argc, argv)
 
 	      sprintf (rcsdir, "%s/%s", repository, argv[i]);
 
+	      strip_trailing_slashes (argv[i]);
+
 	      Create_Admin (argv[i], argv[i], rcsdir, tag, date);
 
 	      if (tag)
@@ -122,6 +124,19 @@ add (argc, argv)
 	      if (date)
 		free (date);
 	      free (rcsdir);
+
+	      if (strchr (argv[i], '/') == NULL)
+		  Subdir_Register ((List *) NULL, (char *) NULL, argv[i]);
+	      else
+	      {
+		  char *cp, *b;
+
+		  cp = xstrdup (argv[i]);
+		  b = strrchr (cp, '/');
+		  *b++ = '\0';
+		  Subdir_Register ((List *) NULL, cp, b);
+		  free (cp);
+	      }
 	    }
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, 0, 0);
@@ -346,7 +361,7 @@ re-adding file %s (in place of dead revision %s)",
 	    && isdir (user)
 	    && !wrap_name_has (user, WRAP_TOCVS))
 	{
-	    err += add_directory (repository, user);
+	    err += add_directory (repository, entries, user);
 	    continue;
 	}
 #ifdef SERVER_SUPPORT
@@ -374,8 +389,9 @@ re-adding file %s (in place of dead revision %s)",
  * Returns 1 on failure, 0 on success.
  */
 static int
-add_directory (repository, dir)
+add_directory (repository, entries, dir)
     char *repository;
+    List *entries;
     char *dir;
 {
     char rcsdir[PATH_MAX];
@@ -500,7 +516,16 @@ add_directory (repository, dir)
     if (date)
 	free (date);
 
+    if (restore_cwd (&cwd, NULL))
+	exit (EXIT_FAILURE);
+    free_cwd (&cwd);
+
+    Subdir_Register (entries, (char *) NULL, dir);
+
     (void) printf ("%s", message);
+
+    return (0);
+
 out:
     if (restore_cwd (&cwd, NULL))
       exit (EXIT_FAILURE);

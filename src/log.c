@@ -109,7 +109,8 @@ struct log_data_and_rcs
 };
 
 static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
-				 char *repository, char *update_dir));
+				 char *repository, char *update_dir,
+				 List *entries));
 static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static struct option_revlist *log_parse_revlist PROTO ((const char *));
 static void log_parse_date PROTO ((struct log_data *, const char *));
@@ -1389,11 +1390,12 @@ log_branch (p, closure)
  */
 /* ARGSUSED */
 static Dtype
-log_dirproc (callerdat, dir, repository, update_dir)
+log_dirproc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     if (!isdir (dir))
 	return (R_SKIP_ALL);

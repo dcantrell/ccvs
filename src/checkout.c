@@ -884,6 +884,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
     {
 	*slash = '\0';
 	*slash2 = '\0';
+	Subdir_Register ((List *) NULL, (char *) NULL, cp);
 	(void) CVS_MKDIR (cp, 0777);
 	if ( CVS_CHDIR (cp) < 0)
 	{
@@ -912,6 +913,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	*slash = '/';
 	*slash2 = '/';
     }
+    Subdir_Register ((List *) NULL, (char *) NULL, cp);
     (void) CVS_MKDIR (cp, 0777);
     if ( CVS_CHDIR (cp) < 0)
     {

@@ -227,14 +227,16 @@ addremove_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int addremove_filesdoneproc PROTO ((void *, int, char *, char *));
+static int addremove_filesdoneproc PROTO ((void *, int, char *, char *,
+					   List *));
 
 static int
-addremove_filesdoneproc (callerdat, err, repository, update_dir)
+addremove_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     if (the_args.setting_default)
 	watch_modify_watchers (NULL, &the_args);

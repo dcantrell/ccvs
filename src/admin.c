@@ -17,7 +17,8 @@
 #endif
 
 static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
-				   char *repos, char *update_dir));
+				   char *repos, char *update_dir,
+				   List *entries));
 static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static const char *const admin_usage[] =
@@ -158,11 +159,12 @@ admin_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-admin_dirproc (callerdat, dir, repos, update_dir)
+admin_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     if (!quiet)
 	error (0, 0, "Administrating %s", update_dir);

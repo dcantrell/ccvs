@@ -51,6 +51,13 @@ struct frame_and_file {
     struct file_info *finfo;
 };
 
+/* Similarly, we need to pass the entries list to do_dir_proc.  */
+
+struct frame_and_entries {
+    struct recursion_frame *frame;
+    List *entries;
+};
+
 /* Start a recursive command.
 
    Command line arguments (ARGC, ARGV) dictate the directories and
@@ -445,28 +452,35 @@ do_recursion (frame)
 	dellist (&filelist);
     }
 
-    if (entries) 
-    {
-	Entries_Close (entries);
-	entries = NULL;
-    }
-
     /* call-back files done proc (if any) */
     if (dodoneproc && frame->filesdoneproc != NULL)
 	err = frame->filesdoneproc (frame->callerdat, err, repository,
-				    update_dir[0] ? update_dir : ".");
+				    update_dir[0] ? update_dir : ".",
+				    entries);
 
     fileattr_write ();
     fileattr_free ();
 
     /* process the directories (if necessary) */
     if (dirlist != NULL)
-	err += walklist (dirlist, do_dir_proc, frame);
+    {
+	struct frame_and_entries frent;
+
+	frent.frame = frame;
+	frent.entries = entries;
+	err += walklist (dirlist, do_dir_proc, (void *) &frent);
+    }
 #if 0
     else if (frame->dirleaveproc != NULL)
 	err += frame->dirleaveproc (frame->callerdat, ".", err, ".");
 #endif
     dellist (&dirlist);
+
+    if (entries) 
+    {
+	Entries_Close (entries);
+	entries = NULL;
+    }
 
     /* free the saved copy of the pointer if necessary */
     if (srepository)
@@ -522,7 +536,8 @@ do_dir_proc (p, closure)
     Node *p;
     void *closure;
 {
-    struct recursion_frame *frame = (struct recursion_frame *)closure;
+    struct frame_and_entries *frent = (struct frame_and_entries *) closure;
+    struct recursion_frame *frame = frent->frame;
     struct recursion_frame xframe;
     char *dir = p->key;
     char newrepos[PATH_MAX];
@@ -571,7 +586,7 @@ do_dir_proc (p, closure)
     /* call-back dir entry proc (if any) */
     if (frame->direntproc != NULL)
 	dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
-					update_dir);
+					update_dir, frent->entries);
 
     /* only process the dir if the return code was 0 */
     if (dir_return != R_SKIP_ALL)
@@ -609,7 +624,8 @@ do_dir_proc (p, closure)
 
 	/* call-back dir leave proc (if any) */
 	if (frame->dirleaveproc != NULL)
-	    err = frame->dirleaveproc (frame->callerdat, dir, err, update_dir);
+	    err = frame->dirleaveproc (frame->callerdat, dir, err, update_dir,
+				       frent->entries);
 
 	/* get back to where we started and restore state vars */
 	if (restore_cwd (&cwd, NULL))

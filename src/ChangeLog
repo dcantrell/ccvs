@@ -7,6 +7,67 @@ Wed Aug  7 15:11:40 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 Wed Aug  7 00:07:31 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	Keep track of subdirectories in the Entries file.
+	* cvs.h (enum ent_type): Define.
+	(struct entnode): Add type field.
+	(struct stickydirtag): Add subdirs field.
+	(Subdirs_Known, Subdir_Register, Subdir_Deregister): Declare.
+	(ignore_files): Update declaration for new parameter.
+	(FILESDONEPROC): Add entries parameter.
+	(DIRENTPROC, DIRLEAVEPROC): Likewise.
+	* entries.c (Entnode_Create): Add type parameter.  Change all
+	callers.
+	(write_ent_proc): If closure is not NULL, treat it as a pointer to
+	an int, and set it to 1 if a node is seen which is not ENT_FILE.
+	(write_entries): If subdirectory information is known, but no
+	subdirectories were written, write an unadorned D to the file.
+	(Scratch_Entry): Write an R command to Entries.Log.  Don't rewrite
+	the Entries file.
+	(Register): Set entfilename.  Write an A command rather than an
+	unadorned entries line.
+	(fgetentent): Add cmd and sawdir parameters.  Change all callers.
+	If CMD is not NULL, expect and return a single character command.
+	Handle an initial D by setting the type to ENT_SUBDIR.
+	(fputentent): Output an initial D for an ENT_SUBDIR entry.
+	(Entries_Open): Handle removal commands in Entries.Log.  Record
+	whether subdirectory information is known in the list private
+	data.
+	(Subdirs_Known): New function.
+	(subdir_record): New static function.
+	(Subdir_Register, Subdir_Deregister): New functions.
+	* find_names.c (add_entries_proc): Skip entries that are not
+	ENT_FILE.
+	(add_subdir_proc): New static function.
+	(register_subdir_proc): New static function.
+	(Find_Directories): If the Entries file has subdirectory
+	information, get the directories out of it.  Otherwise, call
+	find_dirs, and add the information to the Entries file.
+	* recurse.c (struct frame_and_entries): Define.
+	(do_recursion): Don't call Entries_Close until after processing
+	dirlist.  Pass entries to filesdoneproc.  Pass a frame_and_entries
+	structure to do_dir_proc via walklist.
+	(do_dir_proc): Expect a frame_and_entries structure in closure,
+	not a recursion_frame.  Pass entries to direntproc and
+	dirleaveproc.
+	* ignore.c (ignore_files): Add entries parameter.  Change all
+	callers.  If we have subdirectory information, check for
+	directories in entries.
+	* add.c (add): If client_active, call Subdir_Register on each new
+	directory.
+	(add_directory): Add entries parameter.  Change caller.  Call
+	Subdir_Register.
+	* checkout.c (build_dirs_and_chdir): Call Subdir_Register.
+	* client.c (call_in_directory): Call Subdir_Register for newly
+	created directories.  Call Subdirs_Known or Find_Directories after
+	calling Entries_Open.
+	(process_prune_candidates): Call Subdir_Deregister.
+	* commit.c (findmaxrev): Skip entries that are not ENT_FILE.
+	* server.c (dirswitch): Call Subdir_Register.
+	* update.c (update_dirent_proc): Call Subdir_Register.
+	(update_dirleave_proc): Call Subdir_Deregister.
+	* Several files: Change direntproc, dirleaveproc, and
+	filesdoneproc routines to expect an entries argument.
+
 	* rcs.c (translate_symtag): New static function.
 	(RCS_gettag): Use translate_symtag rather than RCS_symbols.
 	(RCS_nodeisbranch, RCS_whatbranch): Likewise.
