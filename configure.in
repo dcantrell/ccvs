@@ -475,8 +475,21 @@ AC_ARG_WITH(
     [--with-editor],
     [The default text editor CVS should use for log messages
      (default autoselects)]), ,
-  [with_editor="vi emacs nano pico edit"])
+  [with_editor=yes])
 
+# If --with-editor was supplied with an argument, let it override $EDITOR from
+# the user's environment.  We need to unset EDITOR here because AC_CHECK_PROGS
+# will let the value of EDITOR ride when it is set rather than searching.  We
+# ignore the --without-editor case since it will be caught below.
+if test -n "$EDITOR" && test yes != $with_editor; then
+  AS_UNSET([EDITOR])
+fi
+
+# Set the default when --with-editor wasn't supplied or when it was supplied
+# without an argument.
+if test yes = $with_editor; then
+  with_editor="vim vi emacs nano pico edit"
+fi
 
 if echo $with_editor |grep ^/ >/dev/null; then
   # If $with_editor is an absolute path, issue a warning if the executable
@@ -492,26 +505,36 @@ if echo $with_editor |grep ^/ >/dev/null; then
   fi
 elif test no != "${with_editor}"; then
   # Search for an editor
-  AC_CHECK_PROGS([EDITOR], [$with_editor])
+  AC_CHECK_PROGS([EDITOR], [$with_editor], [no])
+    if test no = "${EDITOR}"; then
+      AC_MSG_ERROR([
+    Failed to find a text file editor.  CVS cannot be compiled
+    without a default log message editor.  Searched for
+    \`$with_editor'.  Try \`configure --with-editor'.])
+    fi
 else
-  AC_MSG_ERROR([CVS cannot be compiled without a default log message editor.  Try \`configure --with-editor'.])
+  AC_MSG_ERROR([
+    CVS cannot be compiled without a default log message editor.
+    Try \`configure --with-editor'.])
 fi
 
-if test -n "${EDITOR}"; then
-  dnl FIXME - Using --without-editor will probably break a compile at
-  dnl the moment, but maybe it is reasonable for someone to want to
-  dnl compile a CVS executable that refuses to run if no $EDITOR,
-  dnl $CVS_EDITOR, or -e option is specified?  Making a preliminary
-  dnl design decision in this direction, subject to discussion.
-  AC_DEFINE_UNQUOTED(
-    [EDITOR_DFLT], ["$EDITOR"],
-    [The default editor to use, if one does not specify the "-e" option
-     to cvs, or does not have an EDITOR environment variable.  If this
-     is not set to an absolute path to an executable, use the shell to
-     find where the editor actually is.  This allows sites with
-     /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that their
-     PATH is reasonable).])
-fi
+dnl FIXME - Using --without-editor will probably break a compile at
+dnl the moment, but maybe it is reasonable for someone to want to
+dnl compile a CVS executable that refuses to run if no $EDITOR,
+dnl $CVS_EDITOR, or -e option is specified?  Making a preliminary
+dnl design decision in this direction, subject to discussion.
+dnl
+dnl Still don't know if the above would be useful, but we shouldn't
+dnl be able to get here any longer without $EDITOR defined due to the
+dnl error checking above.
+AC_DEFINE_UNQUOTED(
+  [EDITOR_DFLT], ["$EDITOR"],
+  [The default editor to use, if one does not specify the "-e" option
+   to cvs, or does not have an EDITOR environment variable.  If this
+   is not set to an absolute path to an executable, use the shell to
+   find where the editor actually is.  This allows sites with
+   /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that their
+   PATH is reasonable).])
 
 dnl
 dnl done finding an editor
