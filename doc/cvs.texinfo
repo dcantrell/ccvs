@@ -237,7 +237,7 @@ the work when each developer is done.
 @sc{cvs} started out as a bunch of shell scripts written by
 Dick Grune, posted to the newsgroup
 @code{comp.sources.unix} in the volume 6
-release of December, 1986.  While no actual code from
+release of July, 1986.  While no actual code from
 these shell scripts is present in the current version
 of @sc{cvs} much of the @sc{cvs} conflict resolution algorithms
 come from them.
