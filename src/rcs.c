@@ -6266,7 +6266,7 @@ make_file_label (path, rev, rcs)
     char *file;
 
     file = last_component (path);
-    label = (char *) xmalloc (strlen (file) +
+    label = (char *) xmalloc (strlen (file)
 			      + (rev == NULL ? 0 : strlen (rev))
 			      + 50);
 
