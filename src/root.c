@@ -616,13 +616,11 @@ normalize_cvsroot (default_user, default_port)
     char *cvsroot_canonical;
     char *p, *hostname;
     char port_s[11];
-    char free_port_s = 0;
 
     /* get the appropriate host string */
     if (CVSroot_port || default_port)
     {
 	sprintf (port_s, "%d", CVSroot_port ? CVSroot_port : default_port);
-	free_port_s = 1;
     }
     else
     {
@@ -643,9 +641,6 @@ normalize_cvsroot (default_user, default_port)
     sprintf (cvsroot_canonical, ":pserver:%s@%s:%s%s",
 	    CVSroot_username ? CVSroot_username : default_user,
 	    hostname, port_s, CVSroot_directory);
-
-    if (free_port_s)
-	free (port_s);
 
     return cvsroot_canonical;
 }
