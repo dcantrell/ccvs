@@ -35,7 +35,7 @@ static Key_schedule sched;
    on such a system (OS/2, Windows 95, and maybe others) will have to
    take care of this.  */
 void
-start_tcp_server (root, to_server_p, from_server_p)
+start_kerberos4_server (root, to_server_p, from_server_p)
     cvsroot_t *root;
     struct buffer **to_server_p;
     struct buffer **from_server_p;
