@@ -623,10 +623,11 @@ cd $TESTDIR
 
 
 : ${TIMING=false}
-if $proxy || test -n "$remotehost"; then
+if $remote; then
     # Now override our CVS_RSH in order to forward variables which affect the
-    # test suite through.  This needs to be done in $proxy mode for the
-    # crerepos tests.
+    # test suite through.  This always needs to be done when $remotehost is
+    # set, needs to be done in $proxy mode for the crerepos tests, and needs to
+    # be done in $remote mode for the writeproxy-ssh tests.
     if $TIMING; then
 	time="/usr/bin/time -ao'$TESTDIR/time.out'"
     else
@@ -1357,7 +1358,7 @@ if test x"$*" = x; then
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
 	tests="${tests} dottedroot fork commit-d template"
-	tests="${tests} writeproxy writeproxy-noredirect"
+	tests="${tests} writeproxy writeproxy-noredirect writeproxy-ssh"
 else
 	tests="$*"
 fi
@@ -29930,7 +29931,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
 	  dotest writeproxy-noredirect-5 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
 ok
 ok
 ok
@@ -29962,7 +29963,7 @@ EOF
 	  cd firstdir
 	  echo now you see me >file1
 	  dotest writeproxy-noredirect-6 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
 ok
 ok
 ok
@@ -29992,7 +29993,7 @@ EOF
 	  echo /file1/0/dummy+timestamp// >>CVS/Entries
 
 	  dotest writeproxy-noredirect-7 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
 ok
 ok
 Mode u=rw,g=rw,o=r
@@ -30065,6 +30066,100 @@ EOF
 	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
+	  ;;
+
+
+
+	writeproxy-ssh)
+	  # Various tests for a read-only CVS mirror set up as a write-proxy
+	  # for a central server accessed via the :ext: method.
+	  #
+	  # Mostly these tests are intended to set up for the final test which
+	  # verifies that the server registers the referrer.
+	  if $remote; then :; else
+	    remoteonly writeproxy-ssh
+	    continue
+	  fi
+
+	  depends_on_rsh "$CVS_RSH"
+	  if test $? -eq 77; then
+	    skip writeproxy-ssh "$skipreason"
+	    continue
+	  fi
+
+	  tryrsync=`Which rsync`
+	  if test -n "$RSYNC"; then :; else
+	    skip writeproxy-ssh "No rsync found in $PATH"
+	    continue
+	  fi
+
+	  # Save old roots.
+	  PRIMARY_CVSROOT_DIRNAME_save=$PRIMARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_save=$PRIMARY_CVSROOT
+	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_save=$SECONDARY_CVSROOT
+
+	  # Set new roots.
+	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+
+	  # Initialize the primary repository
+	  dotest writeproxy-ssh-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	  mkdir writeproxy-ssh; cd writeproxy-ssh
+	  mkdir primary; cd primary
+	  dotest writeproxy-ssh-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	  cd CVSROOT
+	  cat >>loginfo <<EOF
+ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+	  cat >>loginfo <<EOF
+ALL echo Referrer=%R; cat >/dev/null
+EOF
+	  cat >>config <<EOF
+PrimaryServer=$PRIMARY_CVSROOT
+EOF
+	  dotest writeproxy-ssh-init-3 \
+"$testcvs -Q ci -mconfigure-writeproxy-ssh" \
+"Referrer=NONE"
+
+	  # And now the secondary.
+	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+	  # Checkout from secondary
+	  #
+	  # For now, move the primary root out of the way to satisfy
+	  # ourselves that the data is coming from the secondary.
+	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
+
+	  # Checkin to secondary
+	  cd ../..
+	  dotest writeproxy-ssh-1 "$testcvs -Qd$SECONDARY_CVSROOT co -ldtop ."
+	  cd top
+	  mkdir firstdir
+
+	  # Have to move the primary root back before we can perform write
+	  # operations.
+	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+
+	  dotest writeproxy-ssh-2 "$testcvs -Q add firstdir" \
+"Referrer=$SECONDARY_CVSROOT"
+
+	  cd firstdir
+	  echo now you see me >file1
+	  dotest writeproxy-ssh-3 "$testcvs -Q add file1"
+	  dotest writeproxy-ssh-4 "$testcvs -Q ci -mfirst-file file1" \
+"Referrer=$SECONDARY_CVSROOT"
+
+	  dokeep
+	  cd ../../..
+	  rm -r writeproxy-ssh
+	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
+	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
+	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
+	  SECONDARY_CVSROOT=$SECONDARY_CVSROOT_save
 	  ;;
 
 

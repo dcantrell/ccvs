@@ -101,6 +101,11 @@ static void auth_server (cvsroot_t *, struct buffer *, struct buffer *,
 
 
 
+/* This is the referrer who referred us to a primary, or write server, using
+ * the "Redirect" request.
+ */
+static cvsroot_t *client_referrer;
+
 /* We need to keep track of the list of directories we've sent to the
    server.  This list, along with the current CVSROOT, will help us
    decide which command-line arguments to send.  */
@@ -586,6 +591,7 @@ handle_valid_requests (char *args, int len)
 static void
 handle_redirect (char *args, int len)
 {
+    client_referrer = current_parsed_root;
     current_parsed_root = parse_cvsroot (args);
     /* We deliberately do not set ORIGINAL_ROOT here.  ORIGINAL_ROOT is used
      * by the client to determine the current root being processed for the
@@ -3836,6 +3842,13 @@ start_server (void)
 
 	if (get_server_responses ())
 	    exit (EXIT_FAILURE);
+
+	if (client_referrer && supported_request ("Referrer"))
+	{
+	    send_to_server ("Referrer ", 0);
+	    send_to_server (client_referrer->original, 0);
+	    send_to_server ("\012", 0);
+	}
 
 	/* FIXME: I think we should still be sending this for init.  */
 	if (!rootless && supported_request ("Command-prep"))

@@ -325,6 +325,9 @@ posttag_proc (const char *repository, const char *filter, void *closure)
 	          ppd->force_tag_move ? "mov" : "add",
     	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
         "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+        "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *)NULL,
@@ -751,6 +754,9 @@ pretag_proc (const char *repository, const char *filter, void *closure)
 	          ppd->force_tag_move ? "mov" : "add",
     	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
         "c", "s", cvs_cmd_name,
+#ifdef SERVER_SUPPORT
+        "R", "s", referrer ? referrer->original : "NONE",
+#endif /* SERVER_SUPPORT */
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
