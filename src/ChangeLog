@@ -1,3 +1,7 @@
+2001-03-16  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (admin): Replace hardcoded testdir path with the variable.
+
 2001-03-15  Derek Price  <derek.price@openavenue.com>
 
 	* sanity.sh (basica, binfiles, head, admin): Adjust for new messages.

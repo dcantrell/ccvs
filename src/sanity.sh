@@ -18037,7 +18037,7 @@ done"
 	  #
 	  dotest_fail admin-28-1 "${testcvs} admin -ntagsix:tagfive file2" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
-${PROG} [a-z]*: /tmp/cvs-sanity/cvsroot/first-dir/file2,v: Symbolic name or revision tagfive is undefined\.
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: Symbolic name or revision tagfive is undefined\.
 ${PROG} [a-z]*: RCS file for .file2. not modified\."
       	  
 	  # Try a some nonexisting numeric target tags
@@ -18058,7 +18058,7 @@ ${PROG} \[[a-z]* aborted\]: tag .1\.a\.2. must start with a letter"
 
 	  dotest_fail admin-28-5 "${testcvs} admin -ntagten:BO+GUS file2"  \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
-${PROG} [a-z]*: /tmp/cvs-sanity/cvsroot/first-dir/file2,v: Symbolic name or revision BO${PLUS}GUS is undefined\.
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: Symbolic name or revision BO${PLUS}GUS is undefined\.
 ${PROG} [a-z]*: RCS file for .file2. not modified\."
       	  
 	  dotest_fail admin-28-6 "${testcvs} admin -nq.werty:tagfour file2"  \
