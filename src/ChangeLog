@@ -1,3 +1,9 @@
+Wed Oct 15 15:21:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (checkout_proc): Add comment about assuming '/' is
+	the only path separator.
+	* options.h.in: Fix thinko (CVS/Repository -> CVS/Root).
+
 Mon Oct 13 22:46:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (commit): Add comment about CVS_BADROOT and command

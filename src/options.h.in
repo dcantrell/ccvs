@@ -151,7 +151,7 @@
  * 
  * The big advantage that I can see to having a relative path is that
  * one can change the physical location of the master source
- * repository, change the contents of CVS/Repository files in your
+ * repository, change the contents of CVS/Root files in your
  * checked-out code, and CVS will work without problems.
  *
  * This is likely to be the default in the future, but we want to give
