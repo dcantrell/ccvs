@@ -10082,7 +10082,7 @@ U CVSROOT/verifymsg'
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.2; previous revision: 1\.1
 done
-${PROG} [a-z]*: Rebuilding administrative file database"
+${SPROG} [a-z]*: Rebuilding administrative file database"
 
 	  cd ..
 
@@ -10131,7 +10131,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.3; previous revision: 1\.2
 done
-${PROG} [a-z]*: Rebuilding administrative file database"
+${SPROG} [a-z]*: Rebuilding administrative file database"
 	  cd ../keywordexpand
 	  echo 'a change' >> file1
 	  dotest keywordexpand-7 "${testcvs} -Q ci -madd" \
