@@ -750,8 +750,10 @@ do_recursion (struct recursion_frame *frame)
 	       repository at this point.  Name_Repository will give a
 	       reasonable error message.  */
 	    if (repository == NULL)
-		repository = Name_Repository (NULL, update_dir);
-
+	    {
+		Name_Repository (NULL, update_dir);
+	        assert (!"Not reached.  Please report this problem to <bug-cvs@gnu.org>");
+	    }
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
 	    {
