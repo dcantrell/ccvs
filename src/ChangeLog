@@ -1,3 +1,8 @@
+Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* root.c (check_root_consistent): Add comment about wording of
+	message.
+
 Mon Apr 14 11:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (call_in_directory): If rdirp reaches the end of
