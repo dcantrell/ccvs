@@ -14,8 +14,9 @@
 
 TESTSUITE = $(srcdir)/suite
 TESTSUITE_AT = \
+	suite.at \
 	init.at \
-	suite.at
+	version.at
 
 EXTRA_DIST = \
 	$(TESTSUITE_AT) \
