@@ -13,7 +13,7 @@
    GNU General Public License for more details.  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif /* HAVE_CONFIG_H */
 
 #include <assert.h>
@@ -24,68 +24,67 @@
 
 #ifdef CLIENT_SUPPORT
 
-#include "md5.h"
+# include "md5.h"
 
-#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
-#  ifdef HAVE_WINSOCK_H
-#    include <winsock.h>
-#  else /* No winsock.h */
-#    include <sys/socket.h>
-#    include <netinet/in.h>
-#    include <arpa/inet.h>
-#    include <netdb.h>
-#  endif /* No winsock.h */
-#endif
+# if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || defined(SOCK_ERRNO) || defined(SOCK_STRERROR)
+#   ifdef HAVE_WINSOCK_H
+#     include <winsock.h>
+#   else /* No winsock.h */
+#     include <sys/socket.h>
+#     include <netinet/in.h>
+#     include <arpa/inet.h>
+#     include <netdb.h>
+#   endif /* No winsock.h */
+# endif
 
 /* If SOCK_ERRNO is defined, then send()/recv() and other socket calls
    do not set errno, but that this macro should be used to obtain an
    error code.  This probably doesn't make sense unless
    NO_SOCKET_TO_FD is also defined. */
-#ifndef SOCK_ERRNO
-#define SOCK_ERRNO errno
-#endif
+# ifndef SOCK_ERRNO
+#   define SOCK_ERRNO errno
+# endif
 
 /* If SOCK_STRERROR is defined, then the error codes returned by
    socket operations are not known to strerror, and this macro must be
    used instead to convert those error codes to strings. */
-#ifndef SOCK_STRERROR
-#  define SOCK_STRERROR strerror
+# ifndef SOCK_STRERROR
+#   define SOCK_STRERROR strerror
 
-#  if STDC_HEADERS
-#    include <string.h>
-#  endif
+#   if STDC_HEADERS
+#     include <string.h>
+#   endif
 
-#  ifndef strerror
+#   ifndef strerror
 extern char *strerror ();
-#  endif
-#endif /* ! SOCK_STRERROR */
+#   endif
+# endif /* ! SOCK_STRERROR */
 
-#if HAVE_KERBEROS
-#define CVS_PORT 1999
+# if HAVE_KERBEROS
 
-#include <krb.h>
+#   include <krb.h>
 
 extern char *krb_realmofhost ();
-#ifndef HAVE_KRB_GET_ERR_TEXT
-#define krb_get_err_text(status) krb_err_txt[status]
-#endif /* HAVE_KRB_GET_ERR_TEXT */
+#   ifndef HAVE_KRB_GET_ERR_TEXT
+#     define krb_get_err_text(status) krb_err_txt[status]
+#   endif /* HAVE_KRB_GET_ERR_TEXT */
 
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
 static Key_schedule sched;
 
-#endif /* HAVE_KERBEROS */
+# endif /* HAVE_KERBEROS */
 
-#ifdef HAVE_GSSAPI
+# ifdef HAVE_GSSAPI
 
-# include "xgssapi.h"
+#   include "xgssapi.h"
 
 /* This is needed for GSSAPI encryption.  */
 static gss_ctx_id_t gcontext;
 
 static int connect_to_gserver PROTO((int, struct hostent *));
 
-#endif /* HAVE_GSSAPI */
+# endif /* HAVE_GSSAPI */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -134,9 +133,6 @@ static void handle_f PROTO((char *, int));
 static void handle_notified PROTO((char *, int));
 
 static size_t try_read_from_server PROTO ((char *, size_t));
-#endif /* CLIENT_SUPPORT */
-
-#ifdef CLIENT_SUPPORT
 
 /* We need to keep track of the list of directories we've sent to the
    server.  This list, along with the current CVSROOT, will help us
@@ -267,8 +263,11 @@ arg_should_not_be_sent_to_server (arg)
 }
 
 
+
 #endif /* CLIENT_SUPPORT */
-
+
+
+
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
 /* Shared with server.  */

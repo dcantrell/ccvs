@@ -1,5 +1,10 @@
 2001-05-04  Derek Price  <dprice@collab.net>
 
+	* client.c: Gratuitous reformatting.
+	* client.h: Ditto.
+
+2001-05-04  Derek Price  <dprice@collab.net>
+
 	* zlib.c (compress_buffer_shutdown_input): Use new buffer shutdown
 	prototype.
 	(compress_buffer_shutdown_output): Ditto.
