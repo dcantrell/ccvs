@@ -421,6 +421,7 @@ parse_cvsroot (CVSroot)
 	return 1;
     }
 
+    check_hostname = 0;
     switch (CVSroot_method)
     {
     case local_method:
