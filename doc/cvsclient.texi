@@ -636,6 +636,15 @@ sent for the same file, @code{Entry} must be sent first.  For a
 given file, one can send @code{Modified}, @code{Is-modified}, or
 @code{Unchanged}, but not more than one of these three.
 
+@item Kopt @var{option} \n
+This indicates to the server which keyword expansion options to use for
+the file specified by the next @code{Modified} or @code{Is-modified}
+request (for example @samp{-kb} for a binary file).  This is similar to
+@code{Entry}, but is used for a file for which there is no entries line.
+Typically this will be a file being added via an @code{add} or
+@code{import} request.  The client may not send both @code{Kopt} and
+@code{Entry} for the same file.
+
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
 Send the server a copy of one locally modified file.  @var{filename} is

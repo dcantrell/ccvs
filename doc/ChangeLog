@@ -1,3 +1,7 @@
+Sun Jan 18 18:23:02 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Add Kopt request.
+
 Thu Jan  1 17:36:42 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (BUGS, Credits): Change @unnumbered to @appendix now
