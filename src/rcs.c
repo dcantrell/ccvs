@@ -5047,7 +5047,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		case S_IFREG: break;
 		case S_IFCHR:
 		case S_IFBLK:
-# ifdef HAVE_ST_RDEV
+# ifdef HAVE_STRUCT_STAT_ST_RDEV
 		    np = getnode();
 		    np->type = RCSFIELD;
 		    np->key = xstrdup ("special");
