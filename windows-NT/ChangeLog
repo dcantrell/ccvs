@@ -1,3 +1,11 @@
+Mon Jun 03 01:00:08 1996  noel  <noel@BOAT_ANCHOR>
+
+	* sanity.sh: include new tests from ../src/sanity.sh.
+
+	* filesubr.c (copy_file): use open with O_CREAT instead of creat
+ 	so we can also use O_BINARY -- we don't want to do any LF -> CR/LF
+ 	translations when we copy files.
+
 Fri May 17 11:53:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: In a few places it used to say "server" when it meant
