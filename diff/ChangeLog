@@ -1,3 +1,9 @@
+1999-02-17  Jim Kingdon  <http://www.cyclic.com>
+	and Hallvard B Furuseth.
+
+	* util.c: Use __STDC__ consistently with ./system.h.
+	* system.h: Add comment about PARAMS.
+
 1999-01-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* Makefile.in, analyze.c, cmpbuf.c, cmpbuf.h, context.c, diff.c,
