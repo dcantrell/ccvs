@@ -1,3 +1,8 @@
+2002-05-22  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS (Changes from 1.11.1p1 to 1.11.2): Note new RereadLogAfterVerify
+	config option.
+
 2002-05-15  Larry Jones  <lawrence.jones@eds.com>
 
 	* NEWS (Changes from 1.11.1p1 to 1.11.2): Note log/rlog changes.
