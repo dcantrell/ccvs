@@ -1,3 +1,7 @@
+2004-11-08 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (run_filter): Add function header comment block.
+
 2004-11-07  Larry Jones  <lawrence.jones@ugs.com>
 
 	* sanity.sh: Remove trailing / from cp -r commands.

@@ -1237,6 +1237,14 @@ dotest_internal_debug ()
   fi
 }
 
+# This function allows the test output to be filtered before being verified.
+# The dotest_* functions all call this function, which runs the command
+# in the env var $TEST_FILTER on its argument if $TEST_FILTER is set.  If
+# $TEST_FILTER is not set, this function does nothing.
+#
+# I found this primarily useful when running the test suite on a CVS
+# executable linked with memory and function profilers which can generate
+# spurious output.
 run_filter ()
 {
   if test -n "$TEST_FILTER"; then
