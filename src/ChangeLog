@@ -1,5 +1,15 @@
 Tue Oct  1 13:17:31 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	Make sure the server temporary directory is removed even if
+	Max-dotdot is used.
+	* server.c (orig_server_temp_dir): New static variable.
+	(serve_max_dotdot): Don't free server_temp_dir if it is the same
+	as orig_server_temp_dir.
+	(do_cvs_command): Use orig_server_temp_dir in error message.
+	(server_cleanup): Remove orig_server_temp_dir.
+	(server): Set orig_server_temp_dir.  Remove incorrect indentation
+	of error message.
+
 	* import.c (update_rcs_file): Restore new argument to
 	RCS_checkout, removed in last patch.
 
