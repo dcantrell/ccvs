@@ -1,3 +1,9 @@
+2002-04-03  Derek Price  <oberon@umich.edu>
+
+	* sanity.sh (TR): Send the stderr of one of the tool setup (tr) tests
+	to /dev/null to avoid spurious output on some operating systems
+	(notably Mac OS X).
+
 2002-03-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (rcslib): Correct new tests to use ${testcvs} instead
