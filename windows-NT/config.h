@@ -34,6 +34,10 @@
    I have neither the CD-ROM nor a CD-ROM drive to put it in.  */
 #define HAVE_UTIME_NULL 1
 
+/* On Windows NT, when a file is being watched, utime expects a file
+   to be writable */
+#define UTIME_EXPECTS_WRITABLE
+
 /* Define if on MINIX.  */
 /* Hah.  */
 #undef _MINIX

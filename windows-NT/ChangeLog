@@ -1,3 +1,7 @@
+Fri Oct 31 16:52:30 1997  Abe Feldman
+
+	* config.h: Define UTIME_EXPECTS_WRITABLE.
+
 Tue Oct 28 14:50:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c: Also define call_diff and call_diff3.
