@@ -729,10 +729,20 @@ FILE *cvs_temp_file (char **filename)
     }
 
     if (fp == NULL) free (fn);
-#if (__GLIBC__ - 0 < 2 || __GLIBC__ - 0 == 2 && __GLIBC_MINOR__ - 0 == 0)
-    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
-    else chmod (fn, 0600);
-#endif /* GLIBC API version <= 2.0 */
+
+    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+.  There used
+     * to be a complicated #ifdef checking the library versions here and then
+     * a chmod 0600 on the temp file for versions of glibc less than 2.1.  This
+     * is rather a special case, leaves a race condition open regardless, and
+     * one could hope that sysadmins have read the relevant security
+     * announcements and upgraded by now to a version with a fix committed in
+     * January of 1999.
+     *
+     * If it is decided at some point that old, buggy versions of glibc should
+     * still be catered to, a umask of 0600 should be set before file creation
+     * instead then reset after file creation since this would avoid the race
+     * condition that the chmod left open to exploitation.
+     */
 
     *filename = fn;
     return fp;

@@ -1,3 +1,11 @@
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (cvs_temp_file): Replace a chmod 0600, which shouldn't
+	really be necessary and which provided a false sense of security, with
+	an informative comment.
+	(Thanks to Paul Eggert <eggert@cs.ucla.edu> for his educational
+	advice.)
+
 2003-08-29  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Delete reference to CVSADMROOT_EDITINFO.
