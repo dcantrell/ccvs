@@ -485,6 +485,9 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
 
+/* Define to 1 if you have the `strcasecmp' function. */
+#undef HAVE_STRCASECMP
+
 /* Define if you have strchr (always for CVS). */
 #undef HAVE_STRCHR
 
@@ -502,6 +505,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
+
+/* Define to 1 if you have the `strncasecmp' function. */
+#undef HAVE_STRNCASECMP
 
 /* Define to 1 if you have the `strstr' function. */
 #undef HAVE_STRSTR
@@ -943,14 +949,14 @@
 #undef getline
 
 /* Define to rpl_getopt if the replacement function should be used. */
-#undef getopt
+#define getopt rpl_getopt
 
 /* Define to rpl_getopt_long if the replacement function should be used. */
-#undef getopt_long
+#define getopt_long rpl_getopt_long
 
 /* Define to rpl_getopt_long_only if the replacement function should be used.
    */
-#undef getopt_long_only
+#define getopt_long_only rpl_getopt_long_only
 
 /* Define to a replacement function name for getpass(). */
 #undef getpass
