@@ -1,3 +1,10 @@
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (import output): Remove unecesary verbage.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-03-26  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti: Regenerated.
