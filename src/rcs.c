@@ -5025,52 +5025,12 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 
 /* RCS_deltas and friends.  Processing of the deltas in RCS files.  */
 
-/* Linked list of allocated blocks.  Seems kind of silly to
-   reinvent the obstack wheel, and this isn't as nice as obstacks
-   in some ways, but obstacks are pretty baroque.  */
-struct allocblock
-{
-    char *text;
-    struct allocblock *next;
-};
-struct allocblock *blocks;
-
-static void *block_alloc PROTO ((size_t));
-
-static void *
-block_alloc (n)
-    size_t n;
-{
-    struct allocblock *blk;
-    blk = (struct allocblock *) xmalloc (sizeof (struct allocblock));
-    blk->text = xmalloc (n);
-    blk->next = blocks;
-    blocks = blk;
-    return blk->text;
-}
-
-static void block_free PROTO ((void));
-
-static void
-block_free ()
-{
-    struct allocblock *p;
-    struct allocblock *q;
-
-    p = blocks;
-    while (p != NULL)
-    {
-	free (p->text);
-	q = p->next;
-	free (p);
-	p = q;
-    }
-    blocks = NULL;
-}
-
 struct line
 {
-    /* Text of this line.  */
+    /* Text of this line.  Part of the same malloc'd block as the struct
+       line itself (we probably should use the "struct hack" (char text[1])
+       and save ourselves sizeof (char *) bytes).  Does not include \n;
+       instead has_newline indicates the presence or absence of \n.  */
     char *text;
     /* Length of this line, not counting \n if has_newline is true.  */
     size_t len;
@@ -5079,6 +5039,8 @@ struct line
     /* Nonzero if this line ends with \n.  This will always be true
        except possibly for the last line.  */
     int has_newline;
+    /* Number of pointers to this struct line.  */
+    int refcount;
 };
 
 struct linevector
@@ -5103,30 +5065,36 @@ linevector_init (vec)
     vec->vector = NULL;
 }
 
-static int linevector_add PROTO ((struct linevector *vec, char *text,
+static int linevector_add PROTO ((struct linevector *vec, const char *text,
 				  size_t len, RCSVers *vers,
 				  unsigned int pos));
 
 /* Given some text TEXT, add each of its lines to VEC before line POS
    (where line 0 is the first line).  The last line in TEXT may or may
-   not be \n terminated.  All \n in TEXT are changed to \0 (FIXME: I
-   don't think this is needed, or used, now that we have the ->len
-   field).  Set the version for each of the new lines to VERS.  This
+   not be \n terminated.
+   Set the version for each of the new lines to VERS.  This
    function returns non-zero for success.  It returns zero if the line
-   number is out of range.  */
+   number is out of range.
+
+   Each of the lines in TEXT are copied to space which is managed with
+   the linevector (and freed by linevector_free).  So the caller doesn't
+   need to keep TEXT around after the call to this function.  */
 static int
 linevector_add (vec, text, len, vers, pos)
     struct linevector *vec;
-    char *text;
+    const char *text;
     size_t len;
     RCSVers *vers;
     unsigned int pos;
 {
-    char *textend;
+    const char *textend;
     unsigned int i;
     unsigned int nnew;
-    char *p;
-    struct line *lines;
+    const char *p;
+    const char *nextline_text;
+    size_t nextline_len;
+    int nextline_newline;
+    struct line *q;
 
     if (len == 0)
 	return 1;
@@ -5138,8 +5106,6 @@ linevector_add (vec, text, len, vers, pos)
     for (p = text; p < textend; ++p)
 	if (*p == '\n' && p + 1 < textend)
 	    ++nnew;
-    /* Allocate the struct line's.  */
-    lines = block_alloc (nnew * sizeof (struct line));
 
     /* Expand VEC->VECTOR if needed.  */
     if (vec->nlines + nnew >= vec->lines_alloced)
@@ -5159,29 +5125,41 @@ linevector_add (vec, text, len, vers, pos)
     if (pos > vec->nlines)
 	return 0;
 
-    /* Actually add the lines, to LINES and VEC->VECTOR.  */
+    /* Actually add the lines, to VEC->VECTOR.  */
     i = pos;
-    lines[0].text = text;
-    lines[0].vers = vers;
-    lines[0].has_newline = 0;
-    vec->vector[i++] = &lines[0];
+    nextline_text = text;
+    nextline_newline = 0;
     for (p = text; p < textend; ++p)
 	if (*p == '\n')
 	{
-	    *p = '\0';
-	    lines[i - pos - 1].has_newline = 1;
+	    nextline_newline = 1;
 	    if (p + 1 == textend)
 		/* If there are no characters beyond the last newline, we
 		   don't consider it another line.  */
 		break;
-	    lines[i - pos - 1].len = p - lines[i - pos - 1].text;
-	    lines[i - pos].text = p + 1;
-	    lines[i - pos].vers = vers;
-	    lines[i - pos].has_newline = 0;
-	    vec->vector[i] = &lines[i - pos];
-	    ++i;
+	    nextline_len = p - nextline_text;
+	    q = (struct line *) xmalloc (sizeof (struct line) + nextline_len);
+	    q->vers = vers;
+	    q->text = (char *)q + sizeof (struct line);
+	    q->len = nextline_len;
+	    q->has_newline = nextline_newline;
+	    q->refcount = 1;
+	    memcpy (q->text, nextline_text, nextline_len);
+	    vec->vector[i++] = q;
+
+	    nextline_text = (char *)p + 1;
+	    nextline_newline = 0;
 	}
-    lines[i - pos - 1].len = p - lines[i - pos - 1].text;
+    nextline_len = p - nextline_text;
+    q = (struct line *) xmalloc (sizeof (struct line) + nextline_len);
+    q->vers = vers;
+    q->text = (char *)q + sizeof (struct line);
+    q->len = nextline_len;
+    q->has_newline = nextline_newline;
+    q->refcount = 1;
+    memcpy (q->text, nextline_text, nextline_len);
+    vec->vector[i] = q;
+
     vec->nlines += nnew;
 
     return 1;
@@ -5202,6 +5180,11 @@ linevector_delete (vec, pos, nlines)
     unsigned int last;
 
     last = vec->nlines - nlines;
+    for (i = pos; i < pos + nlines; ++i)
+    {
+	if (--vec->vector[i]->refcount == 0)
+	    free (vec->vector[i]);
+    }
     for (i = pos; i < last; ++i)
 	vec->vector[i] = vec->vector[i + nlines];
     vec->nlines -= nlines;
@@ -5215,6 +5198,8 @@ linevector_copy (to, from)
     struct linevector *to;
     struct linevector *from;
 {
+    unsigned int ln;
+
     if (from->nlines > to->lines_alloced)
     {
 	if (to->lines_alloced == 0)
@@ -5227,18 +5212,27 @@ linevector_copy (to, from)
     memcpy (to->vector, from->vector,
 	    from->nlines * sizeof (*to->vector));
     to->nlines = from->nlines;
+    for (ln = 0; ln < to->nlines; ++ln)
+	++to->vector[ln]->refcount;
 }
 
 static void linevector_free PROTO ((struct linevector *));
 
-/* Free storage associated with linevector (that is, the vector but
-   not the lines pointed to).  */
+/* Free storage associated with linevector.  */
 static void
 linevector_free (vec)
     struct linevector *vec;
 {
+    unsigned int ln;
+
     if (vec->vector != NULL)
+    {
+	for (ln = 0; ln < vec->nlines; ++ln)
+	    if (--vec->vector[ln]->refcount == 0)
+		free (vec->vector[ln]);
+
 	free (vec->vector);
+    }
 }
 
 static char *month_printname PROTO ((char *));
@@ -5299,7 +5293,7 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	enum {ADD, DELETE} type;
 	unsigned long pos;
 	unsigned long nlines;
-	char *new_lines;
+	const char *new_lines;
 	size_t len;
 	struct deltafrag *next;
     };
@@ -5352,9 +5346,8 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 			break;
 		}
 
-	    /* Copy the text we are adding into allocated space.  */
-	    df->new_lines = block_alloc (q - p);
-	    memcpy (df->new_lines, p, q - p);
+	    /* Stash away a pointer to the text we are adding.  */
+	    df->new_lines = p;
 	    df->len = q - p;
 
 	    p = q;
@@ -5404,9 +5397,9 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
    argument.  NAME is used in error messages.  TEXTBUF is the text
    buffer to change, and TEXTLEN is the size.  DIFFBUF and DIFFLEN are
    the change buffer and size.  The new buffer is returned in *RETBUF
-   and *RETLEN.  The new buffer is allocated by xmalloc.  The function
-   changes the contents of TEXTBUF.  This function returns 1 for
-   success.  On failure, it calls error and returns 0.  */
+   and *RETLEN.  The new buffer is allocated by xmalloc.
+
+   Return 1 for success.  On failure, call error and return 0.  */
 
 int
 rcs_change_text (name, textbuf, textlen, diffbuf, difflen, retbuf, retlen)
@@ -5463,11 +5456,6 @@ rcs_change_text (name, textbuf, textlen, diffbuf, difflen, retbuf, retlen)
     }
 
     linevector_free (&lines);
-
-    /* Note that this assumes that we have not called from anything
-       else which uses the block vectors.  FIXME: We could fix this by
-       saving and restoring the state of the block allocation code.  */
-    block_free ();
 
     return ret;
 }
@@ -5601,12 +5589,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	    {
 		if (ishead)
 		{
-		    char *p;
-
-		    p = block_alloc (vallen);
-		    memcpy (p, value, vallen);
-
-		    if (! linevector_add (&curlines, p, vallen, NULL, 0))
+		    if (! linevector_add (&curlines, value, vallen, NULL, 0))
 			error (1, 0, "invalid rcs file %s", rcs->path);
 
 		    ishead = 0;
@@ -5813,7 +5796,6 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     linevector_free (&headlines);
     linevector_free (&trunklines);
 
-    block_free ();
     return;
 
   l_error:
