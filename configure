@@ -850,7 +850,6 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-patch            The patch executable (default "patch")
   --with-krb4=value       Kerberos 4 directory (default /usr/kerberos)
   --with-gssapi=value     GSSAPI directory (default autoselects)
 
@@ -3299,6 +3298,11 @@ CFLAGS="$CFLAGS -D_SYSV3"
 # with crypt tries?  Anyhow, the autoconf manual says we can delete this ISC
 # stuff on or after 2006-07-23 when Sun discontinues support and ISC becomes
 # obsolescent, but I suppose that is probably a matter of opinion.
+#
+# N.B.  The reason for doing this is that some moron decided to put a stub
+# for crypt in libc that always returns NULL.  Without this here, the later
+# check will find the stub instead of the real thing, resulting in a server
+# that can't process crypted passwords correctly.
 LIBS="-lcrypt $LIBS"
 fi
 
@@ -6895,87 +6899,6 @@ fi
 
 
 
-
-# Let the user request a patch
-
-# Check whether --with-patch or --without-patch was given.
-if test "${with_patch+set}" = set; then
-  withval="$with_patch"
-
-else
-  with_patch=patch
-fi;
-
-echo "$as_me:$LINENO: checking for patch" >&5
-echo $ECHO_N "checking for patch... $ECHO_C" >&6
-
-# Test the argument to $with_patch
-unset PATCH
-if echo $with_patch |grep ^/ >/dev/null; then
-  # If $with_patch is an absolute path, just trust the user and use it
-  PATCH=$with_patch
-  echo "$as_me:$LINENO: result: $PATCH" >&5
-echo "${ECHO_T}$PATCH" >&6
-  if ! test -f $with_patch \
-      || ! test -x $with_patch; then
-    # warn the user that they may encounter problems
-    { echo "$as_me:$LINENO: WARNING: $with_patch is not a path to an executable file" >&5
-echo "$as_me: WARNING: $with_patch is not a path to an executable file" >&2;}
-  fi
-elif test no != "${with_patch}"; then
-  echo "$as_me:$LINENO: result: " >&5
-echo "${ECHO_T}" >&6
-  # Search for the patch executable
-  # Extract the first word of "$with_patch", so it can be a program name with args.
-set dummy $with_patch; ac_word=$2
-echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_prog_PATCH+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -n "$PATCH"; then
-  ac_cv_prog_PATCH="$PATCH" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_PATCH="$with_patch"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-
-fi
-fi
-PATCH=$ac_cv_prog_PATCH
-if test -n "$PATCH"; then
-  echo "$as_me:$LINENO: result: $PATCH" >&5
-echo "${ECHO_T}$PATCH" >&6
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-if test -n "${PATCH}"; then
-
-cat >>confdefs.h <<_ACEOF
-#define PATCH_PROGRAM "$PATCH"
-_ACEOF
-
-fi
-
-
-
 KRB4=/usr/kerberos
 
 
@@ -10040,7 +9963,6 @@ s,@TEXI2DVI@,$TEXI2DVI,;t t
 s,@MAKE_TARGETS_IN_VPATH_TRUE@,$MAKE_TARGETS_IN_VPATH_TRUE,;t t
 s,@MAKE_TARGETS_IN_VPATH_FALSE@,$MAKE_TARGETS_IN_VPATH_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
-s,@PATCH@,$PATCH,;t t
 s,@KRB4@,$KRB4,;t t
 s,@includeopt@,$includeopt,;t t
 CEOF
