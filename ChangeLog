@@ -1,5 +1,11 @@
 Tue Jan 13 16:49:38 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* acconfig.h (USE_SETMODE_STDOUT): Add undef line.
+	(HAVE_SETMODE): Likewise.
+	* configure.in: If cygwin32, define USE_SETMODE_STDOUT and
+	HAVE_SETMODE.
+	* configure, config.h.in: Regenerate.
+
 	* acconfig.h (UTIME_EXPECTS_WRITABLE): Add undef line.
 	* configure.in: If cygwin32, define UTIME_EXPECTS_WRITABLE.
 	* configure, config.h.in: Regenerate.

@@ -3287,6 +3287,15 @@ if test $ccvs_cv_sys_cygwin32 = yes; then
 #define UTIME_EXPECTS_WRITABLE 1
 EOF
 
+
+      cat >> confdefs.h <<\EOF
+#define USE_SETMODE_STDOUT 1
+EOF
+
+  cat >> confdefs.h <<\EOF
+#define HAVE_SETMODE 1
+EOF
+
 fi
 
 test -f src/options.h && (

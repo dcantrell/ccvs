@@ -356,6 +356,11 @@ if test $ccvs_cv_sys_cygwin32 = yes; then
   dnl the file.  cygwin32 should really handle this for us, but as of
   dnl January 1998 it doesn't.
   AC_DEFINE(UTIME_EXPECTS_WRITABLE)
+
+  dnl On Windows we must use setmode to change between binary and text
+  dnl mode.
+  AC_DEFINE(USE_SETMODE_STDOUT)
+  AC_DEFINE(HAVE_SETMODE)
 fi
 
 test -f src/options.h && (
