@@ -5181,7 +5181,9 @@ use the @code{cvs log} command (@pxref{log}).
 @c better (start out by clearly explaining what gets
 @c logged in history, for example).
 You can use the history file (@pxref{history file}) to
-log various @sc{cvs} actions.  To retrieve the
+log various @sc{cvs} actions.  (Note: You can control
+what is logged to this file via the CVSROOT/config 
+file and using the LogHistory keyword) To retrieve the
 information from the history file, use the @code{cvs
 history} command (@pxref{history}).
 @c
@@ -12624,6 +12626,14 @@ put them another place, and therefore the repository
 could become corrupted.  CVS 1.10 does not support
 LockDir but it will print a warning if run on a
 repository with LockDir enabled.
+
+@cindex LogHistory, in CVSROOT/config
+@item TopLevelAdmin=@var{value}
+Control what is logged to the CVSROOT/history file.
+Default of "TOFEWGCMAR" (or simply "all") will log
+all transactions.  Any subset of the default is
+legal.  (ie To only log transactions that modify the 
+*,v files, set to "TMAR" 
 @end table
 
 @c ---------------------------------------------------------------------
