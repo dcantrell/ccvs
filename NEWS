@@ -127,7 +127,7 @@ BUG FIXES
 
 DEVELOPER ISSUES
 
-* We've standardized on Automake 1.9.2 to get some at new features that make
+* We've standardized on Automake 1.9.3 to get some at new features that make
   our jobs easier.  See the note below on the Autoconf upgrade for more
   details.
 
