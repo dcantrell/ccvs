@@ -118,6 +118,16 @@ find_fileproc (file, update_dir, repository, entries, srcfiles)
     enum classify_type status;
     Node *node;
     struct find_data *args = find_data_static;
+    char *fullname;
+
+    fullname = xmalloc (strlen (update_dir) + strlen (file) + 10);
+    fullname[0] = '\0';
+    if (update_dir[0] != '\0')
+    {
+	strcat (fullname, update_dir);
+	strcat (fullname, "/");
+    }
+    strcat (fullname, file);
 
     vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
 		       (char *)NULL,
@@ -126,6 +136,13 @@ find_fileproc (file, update_dir, repository, entries, srcfiles)
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')
 	status = T_REMOVED;
+    else if (vers->ts_user == NULL
+	     && vers->vn_user == NULL)
+    {
+	error (0, 0, "nothing known about `%s'", fullname);
+	free (fullname);
+	return 1;
+    }
     else if (vers->ts_user != NULL
 	     && vers->vn_user != NULL
 	     && vers->vn_user[0] == '0')
@@ -135,10 +152,14 @@ find_fileproc (file, update_dir, repository, entries, srcfiles)
 	     && strcmp (vers->ts_user, vers->ts_rcs) != 0)
 	status = T_MODIFIED;
     else
+    {
 	/* This covers unmodified files, as well as a variety of other cases
-	   (e.g. "cvs add foo", "rm foo", "cvs ci"), which I don't *think* we
-	   need to deal with here.  */
+	   (e.g. "touch foo", "cvs ci foo").  FIXME: we probably should be
+	   printing a message and returning 1 for many of those cases (but
+	   I'm not sure exactly which ones).  */
+	free (fullname);
 	return 0;
+    }
 
     node = getnode ();
     node->key = xmalloc (strlen (update_dir) + strlen (file) + 8);
@@ -156,6 +177,8 @@ find_fileproc (file, update_dir, repository, entries, srcfiles)
     (void)addnode (args->ulist, node);
 
     ++args->argc;
+
+    free (fullname);
 
     return 0;
 }
@@ -307,7 +330,7 @@ commit (argc, argv)
 				argc, argv, local, W_LOCAL, 0, 0,
 				(char *)NULL, 0, 0);
 	if (err)
-	    exit (1);
+	    error (1, 0, "correct above errors first!");
 
 	if (find_args.argc == 0)
 	    return 0;

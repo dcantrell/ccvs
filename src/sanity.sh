@@ -368,6 +368,9 @@ done'
 /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 1.2; previous revision: 1.1
 done'
+	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
+'cvs [a-z]*: nothing known about `nonexist'\''
+cvs \[[a-z]* aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update" ''
 	  cd ..
 
