@@ -1,5 +1,11 @@
 1998-04-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (loginfo example): Also give example of sending
+	mail.  Use internal variable $USER rather than expecting CVS to
+	set the environment variable $USER.  Change unnecessary 'sed'
+	invocation to 'cat' (it suffered from the same problem in terms of
+	internal variables versus environment variables).
+
 	* cvs.texinfo (Error messages): Add "conflict: removed FILE was
 	modified by second party".
 
