@@ -1,5 +1,10 @@
 2002-04-18  Derek Price  <oberon@umich.edu>
 
+	* doc/Makefile.am: Add FIXME comment about an automake bug.
+	* doc/Makefile.in: Regenerated.
+
+2002-04-18  Derek Price  <oberon@umich.edu>
+
 	* doc/stamp-1: Regenerated for 1.11.2.1 version update.
 	* doc/stamp-vti: Ditto.
 	* doc/version-client.texi: Ditto.
