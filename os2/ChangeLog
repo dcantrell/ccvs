@@ -1,3 +1,7 @@
+Thu Apr 25 09:28:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Add note about LF vs. CRLF in makefile.
+
 Tue Apr 23 20:43:01 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* filesubr.c (get_homedir, expand_wild): New functions.
