@@ -3,6 +3,15 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* File resurrection from a previously existing revision no longer just reports
+  that it works.
+
+* Misc error & status message corrections.
+
+* Diffing of locally added files against arbitrary revisions in an RCS archive
+  is now allowed when a file of the same name exists or used to exist on some
+  branch.
+
 * Some user messages have been updated for consistency.
 
 DEVELOPER ISSUES

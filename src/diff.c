@@ -517,13 +517,58 @@ diff_fileproc (void *callerdat, struct file_info *finfo)
     }
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
     {
-	if (empty_files)
-	    empty_file = DIFF_ADDED;
-	else
+	/* The file was added locally.  */
+	int exists = 0;
+
+	if (vers->srcfile != NULL)
 	{
-	    error (0, 0, "%s is a new entry, no comparison available",
-		   finfo->fullname);
-	    goto out;
+	    /* The file does exist in the repository.  */
+
+	    if ((diff_rev1 != NULL || diff_date1 != NULL))
+	    {
+		/* special handling for TAG_HEAD */
+		if (diff_rev1 && strcmp (diff_rev1, TAG_HEAD) == 0)
+		{
+		    char *head =
+			(vers->vn_rcs == NULL
+			 ? NULL
+			 : RCS_branch_head (vers->srcfile, vers->vn_rcs));
+		    exists = head != NULL && !RCS_isdead(vers->srcfile, head);
+		    if (head != NULL)
+			free (head);
+		}
+		else
+		{
+		    Vers_TS *xvers;
+
+		    xvers = Version_TS (finfo, NULL, diff_rev1, diff_date1,
+					1, 0);
+		    exists = xvers->vn_rcs != NULL
+		             && !RCS_isdead (xvers->srcfile, xvers->vn_rcs);
+		    freevers_ts (&xvers);
+		}
+	    }
+	    else
+	    {
+		/* The file was added locally, but an RCS archive exists.  Our
+		 * base revision must be dead.
+		 */
+		/* No need to set, exists = 0, here.  That's the default.  */
+	    }
+	}
+	if (!exists)
+	{
+	    /* If we got here, then either the RCS archive does not exist or
+	     * the relevant revision is dead.
+	     */
+	    if (empty_files)
+		empty_file = DIFF_ADDED;
+	    else
+	    {
+		error (0, 0, "%s is a new entry, no comparison available",
+		       finfo->fullname);
+		goto out;
+	    }
 	}
     }
     else if (vers->vn_user[0] == '-')

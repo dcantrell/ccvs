@@ -5463,7 +5463,7 @@ RCS_cmp_file (RCSNode *rcs, char *rev1, char **rev1_cache, char *rev2, char *opt
         fp = CVS_FOPEN( use_file1, binary ? FOPEN_BINARY_READ : "r" );
 	if (fp == NULL)
 	    /* FIXME-update-dir: should include update_dir in message.  */
-	    error (1, errno, "cannot open file %s for comparing", filename);
+	    error (1, errno, "cannot open file %s for comparing", use_file1);
 	
         data.filename = use_file1;
         data.fp = fp;

@@ -1,5 +1,37 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Only call server_updated() when we actual have a new
+	resurrected file for the client.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (previous_rev, write_letter): New prototypes.
+	(struct file_info): Move to before the write_letter prototype.
+	* add.c (add): Allow resurrection of files which used to exist on a
+	branch.
+	* subr.c (previous_rev): New function.
+	* update.c: Consolidate like pragmas.
+	 (write_letter): Remove prototype.  Remove static declaration.
+	* sanity.sh (resurrection): New tests.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (remove_file): Print the actual previous revision instead of
+	a branch number.
+	* sanity.sh: Update to match.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_cmp_file): Print the actual name of the file we failed to
+	open in the error message.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_fileproc): Allow diffing of new files against arbitrary
+	revisions instead of assuming that there is no RCS archive file.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Update serveral tests to use $CPROG & $SPROG correctly.
 
 2004-03-14  Derek Price  <derek@ximbiot.com>
