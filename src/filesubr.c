@@ -983,6 +983,8 @@ expand_wild (argc, argv, pargc, pargv)
 	(*pargv)[i] = xstrdup (argv[i]);
 }
 
+
+
 #ifdef SERVER_SUPPORT
 /* Case-insensitive string compare.  I know that some systems
    have such a routine, but I'm not sure I see any reasons for
@@ -1009,107 +1011,186 @@ cvs_casecmp (str1, str2)
     }
     return pqdiff;
 }
+#endif /* SERVER_SUPPORT */
 
-/* Case-insensitive file open.  As you can see, this is an expensive
-   call.  We don't regard it as our main strategy for dealing with
-   case-insensitivity.  Returns errno code or 0 for success.  Puts the
-   new file in *FP.  NAME and MODE are as for fopen.  If PATHP is not
-   NULL, then put a malloc'd string containing the pathname as found
-   into *PATHP.  *PATHP is only set if the return value is 0.
 
-   Might be cleaner to separate the file finding (which just gives
-   *PATHP) from the file opening (which the caller can do).  For one
-   thing, might make it easier to know whether to put NAME or *PATHP
-   into error messages.  */
-int
-fopen_case (name, mode, fp, pathp)
-    char *name;
-    char *mode;
-    FILE **fp;
-    char **pathp;
-{
-    struct dirent *dp;
-    DIR *dirp;
+
+/* static char *
+ * locate_file_in_dir ( char *dir, char *file )
+ *
+ * Search a directory for a filename, case insensitively when appropriate.
+ *
+ * INPUTS
+ *
+ *  dir		Path to directory to be searched.
+ *  file	File name to be located, perhaps case insensitively.
+ *
+ * RETURNS
+ *
+ *  A newly malloc'd array containing the full path to the located file
+ *  or NULL of the file was not found in dir or if the file found was
+ *  not readable.
+ *
+ * ERRORS
+ *
+ *  When this function returns NULL, errno will be set appropriately.
+ */
+static char *
+locate_file_in_dir ( dir, file )
     char *dir;
-    char *fname;
-    char *found_name;
-    int retval;
+    char *file;
+{
+    char *retval;
 
-    /* Separate NAME into directory DIR and filename within the directory
-       FNAME.  */
-    dir = xstrdup (name);
-    fname = strrchr (dir, '/');
-    if (fname == NULL)
-	error (1, 0, "internal error: relative pathname in fopen_case");
-    *fname++ = '\0';
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+    if ( ign_case )
+    {
+	DIR *dirp;
+	struct dirent *dp;
+	char *found_name = NULL;
 
-    found_name = NULL;
-    dirp = CVS_OPENDIR (dir);
-    if (dirp == NULL)
-    {
-	if (existence_error (errno))
+	if ( ( dirp = CVS_OPENDIR ( dir ) ) == NULL )
 	{
-	    /* This can happen if we are looking in the Attic and the Attic
-	       directory does not exist.  Return the error to the caller;
-	       they know what to do with it.  */
-	    retval = errno;
-	    goto out;
+	    if ( existence_error ( errno ) )
+	    {
+		/* This can happen if we are looking in the Attic and the Attic
+		   directory does not exist.  Pass errno through to the caller;
+		   they know what to do with it.  */
+		return NULL;
+	    }
+	    else
+	    {
+		/* Give a fatal error; that way the error message can be
+		 * more specific than if we returned the error to the caller.
+		 */
+		error ( 1, errno, "cannot read directory %s", dir );
+	    }
 	}
-	else
+	errno = 0;
+	while ( ( dp = CVS_READDIR ( dirp ) ) != NULL )
 	{
-	    /* Give a fatal error; that way the error message can be
-	       more specific than if we returned the error to the caller.  */
-	    error (1, errno, "cannot read directory %s", dir);
+	    if ( cvs_casecmp ( dp->d_name, file ) == 0 )
+	    {
+		if ( found_name != NULL )
+		    error ( 1, 0, "%s is ambiguous; could mean %s or %s",
+			    file, dp->d_name, found_name );
+		found_name = xstrdup ( dp->d_name );
+	    }
 	}
-    }
-    errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
-    {
-	if (cvs_casecmp (dp->d_name, fname) == 0)
-	{
-	    if (found_name != NULL)
-		error (1, 0, "%s is ambiguous; could mean %s or %s",
-		       fname, dp->d_name, found_name);
-	    found_name = xstrdup (dp->d_name);
-	}
-    }
-    if (errno != 0)
-	error (1, errno, "cannot read directory %s", dir);
-    CVS_CLOSEDIR (dirp);
+	if ( errno != 0 )
+	    error ( 1, errno, "cannot read directory %s", dir );
 
-    if (found_name == NULL)
-    {
-	*fp = NULL;
-	retval = ENOENT;
-    }
-    else
-    {
-	char *p;
+	CVS_CLOSEDIR ( dirp );
+
+	if ( found_name == NULL )
+	{
+	    errno = ENOENT;
+	    return NULL;
+	}
 
 	/* Copy the found name back into DIR.  We are assuming that
 	   found_name is the same length as fname, which is true as
 	   long as the above code is just ignoring case and not other
 	   aspects of filename syntax.  */
-	p = dir + strlen (dir);
-	*p++ = '/';
-	strcpy (p, found_name);
-	*fp = fopen (dir, mode);
-	if (*fp == NULL)
-	    retval = errno;
-	else
-	    retval = 0;
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( found_name )
+			   + 2 );
+	sprintf ( retval, "%s/%s", dir, found_name );
+    }
+    else
+#endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
+    {
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( file )
+			   + 2 );
+	(void) sprintf ( retval, "%s/%s", dir, file );
+	if ( !isfile ( retval ) )
+	{
+	    free ( retval );
+	    return NULL;
+	}
     }
 
-    if (pathp == NULL)
-	free (dir);
-    else if (retval != 0)
-	free (dir);
-    else
-	*pathp = dir;
-    free (found_name);
- out:
     return retval;
 }
-#endif /* SERVER_SUPPORT */
+
+
+
+/*
+ * char *
+ * locate_rcs ( const char* file, const char *repository , int *inattic )
+ *
+ * Find an RCS file in the repository.  Most parts of CVS will want to
+ * rely instead on RCS_parse which calls this function and is
+ * called by recurse.c which then puts the result in useful places
+ * like the rcs field of struct file_info.
+ *
+ * INPUTS
+ *
+ *  repository		the repository (including the directory)
+ *  file		the filename within that directory (without RCSEXT).
+ *  inattic		NULL or a pointer to the output boolean
+ *
+ * OUTPUTS
+ *
+ *  inattic		If this input was non-null, the destination will be
+ *  			set to true if the file was found in the attic or
+ *  			false if not.  If no RCS file is found, this value
+ *  			is undefined.
+ *
+ * RETURNS
+ *
+ *  a newly-malloc'd array containing the absolute pathname of the RCS
+ *  file that was found or NULL on error.
+ *
+ * ERRORS
+ *
+ *  errno will be set by the system calls in the case of failure.
+ */
+char *
+locate_rcs ( repository, file, inattic )
+    const char *repository;
+    const char *file;
+    int *inattic;
+{
+    char *rcsfile;
+    char *dir;
+    char *retval;
+
+    /* Allocate space and add the RCS extension */
+    rcsfile = xmalloc ( strlen ( file )
+		    + sizeof ( RCSEXT ) );
+    (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
+
+    /* Search in the top dir given */
+    if ( retval = locate_file_in_dir ( repository, rcsfile ) )
+    {
+	if ( inattic )
+	    *inattic = 0;
+	goto out;
+    }
+
+    /* Search in the Attic */
+    dir = xmalloc ( strlen ( repository )
+		    + sizeof ( CVSATTIC )
+		    + 2 );
+    (void) sprintf ( dir,
+		     "%s/%s",
+		     repository,
+		     CVSATTIC );
+
+    if ( ( retval = locate_file_in_dir ( dir, rcsfile ) ) != NULL
+	 && inattic != NULL )
+	*inattic = 1;
+
+    free ( dir );
+
+out:
+    free ( rcsfile );
+    return retval;
+}
+
+
+
 /* vim:tabstop=8:shiftwidth=4
  */

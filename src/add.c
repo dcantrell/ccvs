@@ -346,7 +346,7 @@ add (argc, argv)
 	    /* Need to check whether there is a directory with the
 	       same name but different case.  We'll check for files
 	       with the same name later (when Version_TS calls
-	       RCS_parse which calls fopen_case).  If CVS some day
+	       RCS_parse which calls locate_rcs).  If CVS some day
 	       records directories in the RCS files, then we should be
 	       able to skip the separate check here, which would be
 	       cleaner.  */
