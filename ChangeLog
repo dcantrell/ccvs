@@ -1,3 +1,10 @@
+1999-02-26  Jim Kingdon  <http://www.cyclic.com>
+
+	* macintosh: Remove this subdirectory and all its contents.  It
+	contained MacCVS 2.x, but pretty much everyone has moved on to
+	MacCVS 3.x, MacCVS Pro, or MacCVSClient.
+	* Makefile.in (SUBDIRS): Remove macintosh.
+
 1999-02-25  Mehul N. Sanghvi (and Jim Kingdon)
 
 	* INSTALL: Add MkLinux on PowerPC.
