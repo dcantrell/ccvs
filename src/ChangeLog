@@ -1,3 +1,7 @@
+Thu Feb 12 15:15:33 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* import.c (add_rcs_file): If add_logfp is NULL, don't call fperror.
+
 11 Feb 1998  Andy Piper
 
 	* server.c (cvs_output_binary): Use OPEN_BINARY not _O_BINARY.
