@@ -479,7 +479,8 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
-	tests="${tests} multibranch import join new newb conflicts conflicts2"
+	tests="${tests} multibranch import join join2"
+	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
@@ -3087,6 +3088,8 @@ rev 2 of file 2
 	join)
 	  # Test doing joins which involve adding and removing files.
 	  # See also binfile2, which does similar things with binary files.
+	  # See also join2, which tests joining (and update -A) on only
+	  # a single file, rather than a directory.
 
 	  # We check merging changes from T1 to T2 into the main line.
 	  # Here are the interesting cases I can think of:
@@ -3423,6 +3426,80 @@ M file4'
 
 	  cd ../..
 	  rm -r 1 2 3
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	join2)
+	  # More joining tests.
+
+	  # First the usual setup; create a directory first-dir, a file
+	  # first-dir/file1, and a branch br1.
+	  mkdir 1; cd 1
+	  dotest join2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest join2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  echo 'initial contents of file1' >file1
+	  dotest join2-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest join2-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest join2-5 "${testcvs} -q tag -b br1" "T file1"
+	  dotest join2-6 "${testcvs} -q update -r br1" ""
+	  echo 'modify on branch' >>file1
+	  dotest join2-7 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # Here is the unusual/pathological part.  We switch back to
+	  # the trunk *for file1 only*, not for the whole directory.
+	  dotest join2-8 "${testcvs} -q update -A file1" '[UP] file1'
+	  dotest join2-9 "${testcvs} -q status file1" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest join2-10 "cat CVS/Tag" "Tbr1"
+
+	  dotest join2-11 "${testcvs} -q update -j br1 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
+	  dotest join2-12 "cat file1" "initial contents of file1
+modify on branch"
+	  # We should have no sticky tag on file1
+	  dotest join2-13 "${testcvs} -q status file1" \
+"===================================================================
+File: file1            	Status: Locally Modified
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest join2-14 "cat CVS/Tag" "Tbr1"
+	  # And the checkin should go to the trunk
+	  dotest join2-15 "${testcvs} -q ci -m modify file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

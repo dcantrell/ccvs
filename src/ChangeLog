@@ -1,5 +1,7 @@
 Tue Jul  1 09:52:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (join2): New tests.
+
 	* repos.c (Name_Repository): Check for errors from fclose.
 
 Fri Jun 27 10:27:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
