@@ -67,6 +67,9 @@ FLAGS_TO_PASS = \
 	AR='$(AR)' \
 	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)' \
+	INSTALL='$(INSTALL)' \
+	INSTALL_DATA='$(INSTALL_DATA)' \
+	INSTALL_PROGRAM='$(INSTALL_PROGRAM)' \
 	LDFLAGS='$(LDFLAGS)' \
 	LIBPROGS='$(LIBPROGS)' \
 	LIBS='$(LIBS)' \
@@ -76,11 +79,11 @@ FLAGS_TO_PASS = \
 	TEXI2DVI='$(TEXI2DVI)' \
 	YACC='$(YACC)' \
 	bindir='$(bindir)' \
+	exec_prefix='$(exec_prefix)' \
 	infodir='$(infodir)' \
 	libdir='$(libdir)' \
 	mandir='$(mandir)' \
-	prefix='$(prefix)' \
-	exec_prefix='$(exec_prefix)'
+	prefix='$(prefix)'
 
 DISTFILES = \
 	COPYING COPYING.LIB INSTALL README TODO PROJECTS \
