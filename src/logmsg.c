@@ -528,8 +528,8 @@ logfile_write (repository, filter, message, logfp, changes)
     char *cp;
     int c;
     int pipestatus;
-    char *fmt_begin, *fmt_end;	/* beginning and end of the format
-				   string specified in filter. */
+    char *fmt_percent;		/* the location of the percent sign
+				   that starts the format string. */
 
     prog = xmalloc (MAXPROGLEN);
       
@@ -550,27 +550,37 @@ logfile_write (repository, filter, message, logfp, changes)
 
        The solution is to allow a format string that allows us to
        specify those other pieces of information.  The format string
-       will be composed of a `%' followed by any of the following
-       characters:
+       will be composed of a `%' followed by a space, or followed by a
+       single format character, or followed by a set of format
+       characters surrounded by `{' and `}' as separators.  The format
+       characters are:
 
          s = file name
 	 V = old version number (pre-checkin)
 	 v = new version number (post-checkin)
+
+       For example, valid format strings are:
+
+         %
+	 %s
+	 %{s}
+	 %{sVv}
 
        There's no reason that more items couldn't be added (like
        modification date or file status [added, modified, updated,
        etc.]) -- the code modifications would be minimal (logmsg.c
        (title_proc) and commit.c (check_fileproc)).
 
-       If none of the above characters are listed after the `%'
-       character, only the name of the repository will be generated.
+       If a space appears after the `%' character (that is, the
+       percent sign appears by itself), only the name of the
+       repository will be generated.
 	 
        The output will be a string of tokens separated by spaces.  For
        backwards compatibility, the the first token will be the
        repository name.  The rest of the tokens will be
        comma-delimited lists of the information requested in the
        format string.  For example, if `/u/src/master' is the
-       repository, `%sVv' is the format string, and three files
+       repository, `%{sVv}' is the format string, and three files
        (ChangeLog, Makefile, foo.c) were modified, the output might
        be:
 
@@ -579,22 +589,63 @@ logfile_write (repository, filter, message, logfp, changes)
        Why this duplicates the old behavior when the format string is
        `%s' is left as an exercise for the reader. */
 
-    fmt_begin = strchr (filter, '%');
-    if (fmt_begin)
+    fmt_percent = strchr (filter, '%');
+    if (fmt_percent)
     {
 	int len;
 	char *srepos;
+	char *fmt_begin, *fmt_end;	/* beginning and end of the
+					   format string specified in
+					   filter. */
+	char *fmt_continue;		/* where the string continues
+					   after the format string (we
+					   might skip a '}') somewhere
+					   in there... */
 
 	/* Grab the format string. */
 
-	fmt_end = strchr (fmt_begin, ' ');
-	if (! fmt_end)
-	    fmt_end = fmt_begin + strlen (fmt_begin);
+	if ((*(fmt_percent + 1) == ' ') || (*(fmt_percent + 1) == '\0'))
+	{
+	    /* The percent stands alone. */
+
+	    fmt_begin = fmt_percent + 1;
+	    fmt_end = fmt_begin;
+	    fmt_continue = fmt_begin;
+	}
+	else if (*(fmt_percent + 1) == '{')
+	{
+	    /* The percent has a set of characters following it. */
+
+	    fmt_begin = fmt_percent + 2;
+	    fmt_end = strchr (fmt_begin, '}');
+	    if (fmt_end)
+	    {
+		/* Skip over the '}' character. */
+
+		fmt_continue = fmt_end + 1;
+	    }
+	    else
+	    {
+		/* There was no close brace -- assume that format
+                   string continues to the end of the line. */
+
+		fmt_end = fmt_begin + strlen (fmt_begin);
+		fmt_continue = fmt_end;
+	    }
+	}
+	else
+	{
+	    /* The percent has a single character following it. */
+
+	    fmt_begin = fmt_percent + 1;
+	    fmt_end = fmt_begin + 1;
+	    fmt_continue = fmt_end;
+	}
 
 	len = fmt_end - fmt_begin;
-	str_list_format = xmalloc (sizeof (char) * len);
-	strncpy (str_list_format, fmt_begin + 1, len - 1);
-	str_list_format[len - 1] = '\0';
+	str_list_format = xmalloc (sizeof (char) * (len + 1));
+	strncpy (str_list_format, fmt_begin, len);
+	str_list_format[len] = '\0';
 	
 	/* Allocate a chunk of memory to hold the string. */
 
@@ -621,13 +672,13 @@ logfile_write (repository, filter, message, logfp, changes)
 
 	srepos = Short_Repository (repository);
 
-	(void) strncpy (prog, filter, fmt_begin - filter);
-	prog[fmt_begin - filter] = '\0';
+	(void) strncpy (prog, filter, fmt_percent - filter);
+	prog[fmt_percent - filter] = '\0';
 	(void) strcat (prog, "'");
 	(void) strcat (prog, srepos);
 	(void) strcat (prog, str_list);
 	(void) strcat (prog, "'");
-	(void) strcat (prog, fmt_end);
+	(void) strcat (prog, fmt_continue);
 	    
 	/* To be nice, free up some memory. */
 
