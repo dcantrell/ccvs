@@ -1726,7 +1726,6 @@ finaladd (finfo, rev, tag, options)
     char *options;
 {
     int ret;
-    char *rcs;
 
     ret = Checkin ('A', finfo, rev, tag, options, saved_message);
     if (ret == 0)
@@ -1743,7 +1742,6 @@ finaladd (finfo, rev, tag, options)
 	fixaddfile (finfo->file, finfo->repository);
 
     (void) time (&last_register_time);
-    free (rcs);
 
     return (ret);
 }
