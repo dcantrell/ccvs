@@ -1,5 +1,7 @@
 1999-05-05  Jim Kingdon  <http://www.cyclic.com>
 
+	* rcs.c (rcs_internal_lockfile): Remove unused variable lockfile.
+
 	* add.c (add): Look for directories with the same name in a
 	different case where appropriate (analogous to fopen_case).
 	In client code, add comment about how this doesn't do quite
