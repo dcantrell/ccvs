@@ -111,9 +111,10 @@ uninstall:
 .PHONY: install uninstall
 
 # Remove targets for CVS
+dvi:
 info:
 installcheck:
-.PHONY: info installcheck
+.PHONY: dvi info installcheck
 
 #install: $(LIBS)
 #	-@if [ ! -d $(includedir)  ]; then mkdir $(includedir); fi
