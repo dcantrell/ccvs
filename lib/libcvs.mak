@@ -57,6 +57,7 @@ CLEAN :
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
+	-@erase "$(INTDIR)\readlink.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\rpmatch.obj"
@@ -127,8 +128,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
+	"$(INTDIR)\xreadlink.obj" \
 	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\xreadlink.obj"
+	"$(INTDIR)\readlink.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -164,6 +166,7 @@ CLEAN :
 	-@erase "$(INTDIR)\md5.obj"
 	-@erase "$(INTDIR)\printf-args.obj"
 	-@erase "$(INTDIR)\printf-parse.obj"
+	-@erase "$(INTDIR)\readlink.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\rpmatch.obj"
@@ -232,8 +235,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
+	"$(INTDIR)\xreadlink.obj" \
 	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\xreadlink.obj"
+	"$(INTDIR)\readlink.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -366,6 +370,11 @@ SOURCE=".\printf-args.c"
 SOURCE=".\printf-parse.c"
 
 "$(INTDIR)\printf-parse.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\readlink.c
+
+"$(INTDIR)\readlink.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\realloc.c
