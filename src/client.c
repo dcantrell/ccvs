@@ -641,9 +641,9 @@ call_in_directory (pathname, func, data)
 		error (1, 0,
 		       "could not get working directory: %s", toplevel_wd);
 
-	if (chdir (toplevel_wd) < 0)
+	if ( CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
-	if (chdir (dir_name) < 0)
+	if ( CVS_CHDIR (dir_name) < 0)
 	{
 	    char *dir;
 	    char *dirp;
@@ -788,7 +788,7 @@ call_in_directory (pathname, func, data)
 	    } while (dirp != NULL);
 	    free (dir);
 	    /* Now it better work.  */
-	    if (chdir (dir_name) < 0)
+	    if ( CVS_CHDIR (dir_name) < 0)
 		error (1, errno, "could not chdir to %s", dir_name);
 	}
 
@@ -885,7 +885,7 @@ protocol error: compressed files not supported for that operation");
        is binary or not.  I haven't carefully looked into whether
        CVS/Template files should use local text file conventions or
        not.  */
-    fp = fopen (filename, "wb");
+    fp = CVS_FOPEN (filename, "wb");
     if (fp == NULL)
 	error (1, errno, "cannot write %s", fullname);
     nread = size;
@@ -1193,7 +1193,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	else
 	    bin = 0;
 
-        fd = open (temp_filename,
+        fd = CVS_OPEN (temp_filename,
                    O_WRONLY | O_CREAT | O_TRUNC | (bin ? OPEN_BINARY : 0),
                    0777);
 
@@ -1241,7 +1241,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    {
 	        convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
 	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
-	        if (unlink (temp_filename) < 0)
+	        if ( CVS_UNLINK (temp_filename) < 0)
 	            error (0, errno, "warning: couldn't delete %s",
                            temp_filename);
 	    }
@@ -1263,7 +1263,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    if (!isfile (filename))
 	        error (1, 0, "patch original file %s does not exist",
 		       short_pathname);
-	    if (stat (temp_filename, &s) < 0)
+	    if ( CVS_STAT (temp_filename, &s) < 0)
 	        error (1, 1, "can't stat patch file %s", temp_filename);
 	    if (s.st_size == 0)
 	        retcode = 0;
@@ -1334,7 +1334,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	     * here using text mode, so its lines will be terminated the same
 	     * way they were transmitted.
 	     */
-	    e = fopen (filename, "r");
+	    e = CVS_FOPEN (filename, "r");
 	    if (e == NULL)
 	        error (1, errno, "could not open %s", short_pathname);
 
@@ -1815,7 +1815,7 @@ do_deferred_progs ()
     FILE *f;
     if (toplevel_wd[0] != '\0')
       {
-	if (chdir (toplevel_wd) < 0)
+	if ( CVS_CHDIR (toplevel_wd) < 0)
 	  error (1, errno, "could not chdir to %s", toplevel_wd);
       }
     for (p = checkin_progs; p != NULL; )
@@ -1861,7 +1861,7 @@ client_isemptydir (dir)
     DIR *dirp;
     struct dirent *dp;
 
-    if ((dirp = opendir (dir)) == NULL)
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
     {
 	if (! existence_error (errno))
 	    error (0, errno, "cannot open directory %s for empty check", dir);
@@ -1918,7 +1918,7 @@ process_prune_candidates ()
 
     if (toplevel_wd[0] != '\0')
     {
-	if (chdir (toplevel_wd) < 0)
+	if ( CVS_CHDIR (toplevel_wd) < 0)
 	  error (1, errno, "could not chdir to %s", toplevel_wd);
     }
     for (p = prune_candidates; p != NULL; )
@@ -2026,7 +2026,7 @@ send_repository (dir, repos, update_dir)
 	else
 	    sprintf (adm_name, "%s/%s", dir, CVSADM_TAG);
 
-	f = fopen (adm_name, "r");
+	f = CVS_FOPEN (adm_name, "r");
 	if (f == NULL)
 	{
 	    if (! existence_error (errno))
@@ -2058,7 +2058,7 @@ send_repository (dir, repos, update_dir)
 	else
 	    sprintf (adm_name, "%s/%s", dir, CVSADM_CIPROG);
 
-	f = fopen (adm_name, "r");
+	f = CVS_FOPEN (adm_name, "r");
 	if (f == NULL)
 	{
 	    if (! existence_error (errno))
@@ -2093,7 +2093,7 @@ send_repository (dir, repos, update_dir)
 	else
 	    sprintf (adm_name, "%s/%s", dir, CVSADM_UPROG);
 
-	f = fopen (adm_name, "r");
+	f = CVS_FOPEN (adm_name, "r");
 	if (f == NULL)
 	{
 	    if (! existence_error (errno))
@@ -3459,7 +3459,7 @@ send_modified (file, short_pathname, vers)
     int bin;
 
     /* Don't think we can assume fstat exists.  */
-    if (stat (file, &sb) < 0)
+    if ( CVS_STAT (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);
 
     mode_string = mode_to_string (sb.st_mode);
@@ -3480,7 +3480,7 @@ send_modified (file, short_pathname, vers)
     else
       bin = 0;
 
-    fd = open (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
+    fd = CVS_OPEN (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
 
     if (fd < 0)
 	error (1, errno, "reading %s", short_pathname);
@@ -3534,7 +3534,7 @@ send_modified (file, short_pathname, vers)
 	       do remember something obscure in the manuals about propagating
 	       the translation mode to created processes via environment
 	       variables, ick.  */
-	    fd = open (tempfile, O_RDONLY | OPEN_BINARY);
+	    fd = CVS_OPEN (tempfile, O_RDONLY | OPEN_BINARY);
 	    if (fd < 0)
 		error (1, errno, "reading %s", short_pathname);
 	}
@@ -3579,7 +3579,7 @@ send_modified (file, short_pathname, vers)
 #if LINES_CRLF_TERMINATED
 	if (converting)
 	{
-	    if (unlink (tempfile) < 0)
+	    if ( CVS_UNLINK (tempfile) < 0)
 		error (0, errno,
 		       "warning: can't remove temp file %s", tempfile);
 	    free (tempfile);
@@ -4117,7 +4117,7 @@ notified_a_file (data, ent_list, short_pathname, filename)
 	{
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close %s", CVSADM_NOTIFY);
-	    if (unlink (CVSADM_NOTIFY) < 0)
+	    if ( CVS_UNLINK (CVSADM_NOTIFY) < 0)
 		error (0, errno, "cannot remove %s", CVSADM_NOTIFY);
 	    return;
 	}

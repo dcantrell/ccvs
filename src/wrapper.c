@@ -97,7 +97,7 @@ wrap_add_file (file, temp)
     wrap_kill_temp();
 
 	/* load the file */
-    if (!(fp = fopen (file, "r")))
+    if (!(fp = CVS_FOPEN (file, "r")))
 	return;
     while (fgets (line, sizeof (line), fp))
 	wrap_add (line, temp);

@@ -365,7 +365,7 @@ diff_fileproc (finfo)
 					 tmp, 0, 0);
 	    if (retcode == -1)
 	    {
-		(void) unlink (tmp);
+		(void) CVS_UNLINK (tmp);
 		error (1, errno, "fork failed during checkout of %s",
 		       vers->srcfile->path);
 	    }
@@ -417,7 +417,7 @@ diff_fileproc (finfo)
 
     if (empty_file == DIFF_REMOVED)
     {
-	(void) unlink (tmp);
+	(void) CVS_UNLINK (tmp);
 	free (tmp);
     }
 
@@ -613,18 +613,18 @@ diff_file_nodiff (file, repository, entries, rcs, vers)
 	case 0:				/* everything ok */
 	    if (xcmp (file, tmp) == 0)
 	    {
-		(void) unlink (tmp);
+		(void) CVS_UNLINK (tmp);
 		return (1);
 	    }
 	    break;
 	case -1:			/* fork failed */
-	    (void) unlink (tmp);
+	    (void) CVS_UNLINK (tmp);
 	    error (1, errno, "fork failed during checkout of %s",
 		   vers->srcfile->path);
 	default:
 	    break;
     }
-    (void) unlink (tmp);
+    (void) CVS_UNLINK (tmp);
     free (tmp);
     return (0);
 }

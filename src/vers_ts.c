@@ -210,7 +210,7 @@ time_stamp_server (file, vers_ts)
     struct stat sb;
     char *cp;
 
-    if (stat (file, &sb) < 0)
+    if ( CVS_STAT (file, &sb) < 0)
     {
 	if (! existence_error (errno))
 	    error (1, errno, "cannot stat temp file");
@@ -288,7 +288,7 @@ time_stamp (file)
     char *cp;
     char *ts;
 
-    if (stat (file, &sb) < 0)
+    if ( CVS_STAT (file, &sb) < 0)
     {
 	ts = NULL;
     }

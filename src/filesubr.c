@@ -55,11 +55,11 @@ copy_file (from, to)
     if (noexec)
 	return;
 
-    if ((fdin = open (from, O_RDONLY)) < 0)
+    if ((fdin = CVS_OPEN (from, O_RDONLY)) < 0)
 	error (1, errno, "cannot open %s for copying", from);
     if (fstat (fdin, &sb) < 0)
 	error (1, errno, "cannot fstat %s", from);
-    if ((fdout = creat (to, (int) sb.st_mode & 07777)) < 0)
+    if ((fdout = CVS_CREAT (to, (int) sb.st_mode & 07777)) < 0)
 	error (1, errno, "cannot create %s for copying", to);
     if (sb.st_size > 0)
     {
@@ -116,7 +116,7 @@ isdir (file)
 {
     struct stat sb;
 
-    if (stat (file, &sb) < 0)
+    if ( CVS_STAT (file, &sb) < 0)
 	return (0);
     return (S_ISDIR (sb.st_mode));
 }
@@ -186,7 +186,7 @@ isaccessible (file, mode)
     int omask = 0;
     int uid;
     
-    if (stat(file, &sb) == -1)
+    if ( CVS_STAT (file, &sb) == -1)
 	return 0;
     if (mode == F_OK)
 	return 1;
@@ -226,7 +226,7 @@ isaccessible (file, mode)
     else
 	return (sb.st_mode & omask) == omask;
 #else
-    return access(file, mode) == 0;
+    return CVS_ACCESS (file, mode) == 0;
 #endif
 }
 
@@ -240,7 +240,7 @@ open_file (name, mode)
 {
     FILE *fp;
 
-    if ((fp = fopen (name, mode)) == NULL)
+    if ((fp = CVS_FOPEN (name, mode)) == NULL)
 	error (1, errno, "cannot open %s", name);
     return (fp);
 }
@@ -254,9 +254,9 @@ make_directory (name)
 {
     struct stat sb;
 
-    if (stat (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
+    if ( CVS_STAT (name, &sb) == 0 && (!S_ISDIR (sb.st_mode)))
 	    error (0, 0, "%s already exists but is not a directory", name);
-    if (!noexec && mkdir (name, 0777) < 0)
+    if (!noexec && CVS_MKDIR (name, 0777) < 0)
 	error (1, errno, "cannot make directory %s", name);
 }
 
@@ -273,7 +273,7 @@ make_directories (name)
     if (noexec)
 	return;
 
-    if (mkdir (name, 0777) == 0 || errno == EEXIST)
+    if ( CVS_MKDIR (name, 0777) == 0 || errno == EEXIST)
 	return;
     if (! existence_error (errno))
     {
@@ -287,7 +287,7 @@ make_directories (name)
     *cp++ = '/';
     if (*cp == '\0')
 	return;
-    (void) mkdir (name, 0777);
+    (void) CVS_MKDIR (name, 0777);
 }
 
 /*
@@ -302,7 +302,7 @@ xchmod (fname, writable)
     struct stat sb;
     mode_t mode, oumask;
 
-    if (stat (fname, &sb) < 0)
+    if ( CVS_STAT (fname, &sb) < 0)
     {
 	if (!noexec)
 	    error (0, errno, "cannot stat %s", fname);
@@ -356,7 +356,7 @@ rename_file (from, to)
     if (noexec)
 	return;
 
-    if (rename (from, to) < 0)
+    if ( CVS_RENAME (from, to) < 0)
 	error (1, errno, "cannot rename file %s to %s", from, to);
 }
 
@@ -400,7 +400,7 @@ unlink_file (f)
     if (noexec)
 	return (0);
 
-    return (unlink (f));
+    return ( CVS_UNLINK (f));
 }
 
 /*
@@ -434,7 +434,7 @@ unlink_file_dir (f)
 	return deep_remove_dir(f);
     else
     {
-	if (unlink (f) != 0)
+	if ( CVS_UNLINK (f) != 0)
 	    return -1;
     }
     /* We were able to remove the file from the disk */
@@ -453,9 +453,9 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if (rmdir (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST)) 
+    if (CVS_RMDIR (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST)) 
     {
-	if ((dirp = opendir (path)) == NULL)
+	if ((dirp = CVS_OPENDIR (path)) == NULL)
 	    /* If unable to open the directory return
 	     * an error
 	     */
@@ -482,7 +482,7 @@ deep_remove_dir (path)
 	    }
 	    else
 	    {
-		if (unlink (buf) != 0)
+		if (CVS_UNLINK (buf) != 0)
 		{
 		    closedir(dirp);
 		    return -1;
@@ -490,7 +490,7 @@ deep_remove_dir (path)
 	    }
 	}
 	closedir (dirp);
-	return rmdir (path);
+	return CVS_RMDIR (path);
 	}
 
     /* Was able to remove the directory return 0 */
@@ -545,9 +545,9 @@ xcmp (file1, file2)
     int fd1, fd2;
     int ret;
 
-    if ((fd1 = open (file1, O_RDONLY)) < 0)
+    if ((fd1 = CVS_OPEN (file1, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file1);
-    if ((fd2 = open (file2, O_RDONLY)) < 0)
+    if ((fd2 = CVS_OPEN (file2, O_RDONLY)) < 0)
 	error (1, errno, "cannot open file %s for comparing", file2);
     if (fstat (fd1, &sb1) < 0)
 	error (1, errno, "cannot fstat %s", file1);

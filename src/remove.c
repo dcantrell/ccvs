@@ -116,7 +116,7 @@ remove_fileproc (finfo)
     {
 	if (!noexec)
 	{
-	    if (unlink (finfo->file) < 0 && ! existence_error (errno))
+	    if ( CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
 	    {
 		error (0, errno, "unable to remove %s", finfo->fullname);
 	    }

@@ -141,7 +141,7 @@ do_editor (dir, messagep, repository, changes)
     /* Create a temporary file */
     fname = cvs_temp_name ();
   again:
-    if ((fp = fopen (fname, "w+")) == NULL)
+    if ((fp = CVS_FOPEN (fname, "w+")) == NULL)
 	error (1, 0, "cannot create temporary file %s", fname);
 
     if (*messagep)
@@ -166,7 +166,7 @@ do_editor (dir, messagep, repository, changes)
 	size_t nwrite;
 
 	/* Why "b"?  */
-	tfp = fopen (CVSADM_TEMPLATE, "rb");
+	tfp = CVS_FOPEN (CVSADM_TEMPLATE, "rb");
 	if (tfp == NULL)
 	{
 	    if (!existence_error (errno))
@@ -211,7 +211,7 @@ do_editor (dir, messagep, repository, changes)
     /* finish off the temp file */
     if (fclose (fp) == EOF)
         error (1, errno, "%s", fname);
-    if (stat (fname, &pre_stbuf) == -1)
+    if ( CVS_STAT (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
 
     if (editinfo_editor)
@@ -236,7 +236,7 @@ do_editor (dir, messagep, repository, changes)
     if (*messagep)
 	free (*messagep);
 
-    if (stat (fname, &post_stbuf) != 0)
+    if ( CVS_STAT (fname, &post_stbuf) != 0)
 	    error (1, errno, "cannot find size of temp file %s", fname);
 
     if (post_stbuf.st_size == 0)
@@ -331,7 +331,7 @@ rcsinfo_proc (repository, template)
 	free (last_template);
     last_template = xstrdup (template);
 
-    if ((tfp = fopen (template, "r")) != NULL)
+    if ((tfp = CVS_FOPEN (template, "r")) != NULL)
     {
 	char *line = NULL;
 	size_t line_chars_allocated = 0;

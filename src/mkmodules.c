@@ -291,7 +291,7 @@ mkmodules (dir)
     if (save_cwd (&cwd))
 	exit (EXIT_FAILURE);
 
-    if (chdir (dir) < 0)
+    if ( CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
 
     /*
@@ -349,7 +349,7 @@ mkmodules (dir)
     }
 
     /* Use 'fopen' instead of 'open_file' because we want to ignore error */
-    fp = fopen (CVSROOTADM_CHECKOUTLIST, "r");
+    fp = CVS_FOPEN (CVSROOTADM_CHECKOUTLIST, "r");
     if (fp)
     {
 	/*
@@ -414,7 +414,7 @@ make_tempfile (temp)
     while (1)
     {
 	(void) sprintf (temp, "%s%d", BAKPREFIX, seed++);
-	if ((fd = open (temp, O_CREAT|O_EXCL|O_RDWR, 0666)) != -1)
+	if ((fd = CVS_OPEN (temp, O_CREAT|O_EXCL|O_RDWR, 0666)) != -1)
 	    break;
 	if (errno != EEXIST)
 	    error (1, errno, "cannot create temporary file %s", temp);
@@ -570,12 +570,12 @@ rename_dbmfile (temp)
     (void) unlink_file (bakdir);	/* rm .#modules.dir .#modules.pag */
     (void) unlink_file (bakpag);
     (void) unlink_file (bakdb);
-    (void) rename (dotdir, bakdir);	/* mv modules.dir .#modules.dir */
-    (void) rename (dotpag, bakpag);	/* mv modules.pag .#modules.pag */
-    (void) rename (dotdb, bakdb);	/* mv modules.db .#modules.db */
-    (void) rename (newdir, dotdir);	/* mv "temp".dir modules.dir */
-    (void) rename (newpag, dotpag);	/* mv "temp".pag modules.pag */
-    (void) rename (newdb, dotdb);	/* mv "temp".db modules.db */
+    (void) CVS_RENAME (dotdir, bakdir);	/* mv modules.dir .#modules.dir */
+    (void) CVS_RENAME (dotpag, bakpag);	/* mv modules.pag .#modules.pag */
+    (void) CVS_RENAME (dotdb, bakdb);	/* mv modules.db .#modules.db */
+    (void) CVS_RENAME (newdir, dotdir);	/* mv "temp".dir modules.dir */
+    (void) CVS_RENAME (newpag, dotpag);	/* mv "temp".pag modules.pag */
+    (void) CVS_RENAME (newdb, dotdb);	/* mv "temp".db modules.db */
 
     /* OK -- make my day */
     SIG_endCrSect ();
@@ -595,14 +595,14 @@ rename_rcsfile (temp, real)
     /* Set "x" bits if set in original. */
     (void) sprintf (rcs, "%s%s", real, RCSEXT);
     statbuf.st_mode = 0; /* in case rcs file doesn't exist, but it should... */
-    (void) stat (rcs, &statbuf);
+    (void) CVS_STAT (rcs, &statbuf);
 
     if (chmod (temp, 0444 | (statbuf.st_mode & 0111)) < 0)
 	error (0, errno, "warning: cannot chmod %s", temp);
     (void) sprintf (bak, "%s%s", BAKPREFIX, real);
     (void) unlink_file (bak);		/* rm .#loginfo */
-    (void) rename (real, bak);		/* mv loginfo .#loginfo */
-    (void) rename (temp, real);		/* mv "temp" loginfo */
+    (void) CVS_RENAME (real, bak);		/* mv loginfo .#loginfo */
+    (void) CVS_RENAME (temp, real);		/* mv "temp" loginfo */
 }
 
 const char *const init_usage[] = {
@@ -671,7 +671,7 @@ init (argc, argv)
     mkdir_if_needed (adm);
 
     /* This is needed by the call to "ci" below.  */
-    if (chdir (adm) < 0)
+    if ( CVS_CHDIR (adm) < 0)
 	error (1, errno, "cannot change to directory %s", adm);
 
     /* 80 is long enough for all the administrative file names, plus

@@ -569,7 +569,7 @@ do_dir_proc (p, closure)
 	dirlist = NULL;
 
 	/* cd to the sub-directory */
-	if (chdir (dir) < 0)
+	if ( CVS_CHDIR (dir) < 0)
 	    error (1, errno, "could not chdir to %s", dir);
 
 	/* honor the global SKIP_DIRS (a.k.a. local) */
@@ -682,7 +682,7 @@ unroll_files_proc (p, closure)
     {
         if (save_cwd (&cwd))
 	    exit (EXIT_FAILURE);
-	if (chdir (p->key) < 0)
+	if ( CVS_CHDIR (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
 	save_update_dir = xstrdup (update_dir);

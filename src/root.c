@@ -130,9 +130,9 @@ same_directories (dir1, dir2)
     struct stat sb2;
     int ret;
 
-    if (stat (dir1, &sb1) < 0)
+    if ( CVS_STAT (dir1, &sb1) < 0)
         return (0);
-    if (stat (dir2, &sb2) < 0)
+    if ( CVS_STAT (dir2, &sb2) < 0)
         return (0);
     
     ret = 0;

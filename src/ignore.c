@@ -128,7 +128,7 @@ ign_add_file (file, hold)
     }
 
     /* load the file */
-    fp = fopen (file, "r");
+    fp = CVS_FOPEN (file, "r");
     if (fp == NULL)
     {
 	if (! existence_error (errno))
@@ -349,7 +349,7 @@ ignore_files (ilist, update_dir, proc)
     else
 	xdir = update_dir;
 
-    dirp = opendir (".");
+    dirp = CVS_OPENDIR (".");
     if (dirp == NULL)
 	return;
 

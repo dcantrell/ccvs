@@ -165,7 +165,7 @@ find_rcs (dir, list)
     DIR *dirp;
 
     /* set up to read the dir */
-    if ((dirp = opendir (dir)) == NULL)
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
 	return (1);
 
     /* read the dir, grabbing the ,v files */
@@ -205,7 +205,7 @@ find_dirs (dir, list, checkadm)
     DIR *dirp;
 
     /* set up to read the dir */
-    if ((dirp = opendir (dir)) == NULL)
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
 	return (1);
 
     /* read the dir, grabbing sub-dirs */

@@ -297,7 +297,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     }
 
     /* cd to the starting repository */
-    if (chdir (repository) < 0)
+    if ( CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
 	return (1);
@@ -412,13 +412,13 @@ patch_fileproc (finfo)
 	return (0);
     }
     tmpfile1 = cvs_temp_name ();
-    if ((fp1 = fopen (tmpfile1, "w+")) != NULL)
+    if ((fp1 = CVS_FOPEN (tmpfile1, "w+")) != NULL)
 	(void) fclose (fp1);
     tmpfile2 = cvs_temp_name ();
-    if ((fp2 = fopen (tmpfile2, "w+")) != NULL)
+    if ((fp2 = CVS_FOPEN (tmpfile2, "w+")) != NULL)
 	(void) fclose (fp2);
     tmpfile3 = cvs_temp_name ();
-    if ((fp3 = fopen (tmpfile3, "w+")) != NULL)
+    if ((fp3 = CVS_FOPEN (tmpfile3, "w+")) != NULL)
 	(void) fclose (fp3);
     if (fp1 == NULL || fp2 == NULL || fp3 == NULL)
     {
@@ -576,9 +576,9 @@ patch_fileproc (finfo)
     if (line2)
         free (line2);
     /* FIXME: should be checking for errors.  */
-    (void) unlink (tmpfile1);
-    (void) unlink (tmpfile2);
-    (void) unlink (tmpfile3);
+    (void) CVS_UNLINK (tmpfile1);
+    (void) CVS_UNLINK (tmpfile2);
+    (void) CVS_UNLINK (tmpfile3);
     free (tmpfile1);
     free (tmpfile2);
     free (tmpfile3);

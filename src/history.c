@@ -697,7 +697,7 @@ history_write (type, update_dir, revs, name, repository)
 #endif
     if (noexec)
 	return;
-    fd = open (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
+    fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
     if (fd < 0)
 	error (1, errno, "cannot open history file: %s", fname);
 
@@ -723,11 +723,11 @@ history_write (type, update_dir, revs, name, repository)
 		/* Try harder to find a "homedir" */
 		if (!getwd (workdir))
 		    error (1, errno, "can't getwd in history");
-		if (chdir (pwdir) < 0)
+		if ( CVS_CHDIR (pwdir) < 0)
 		    error (1, errno, "can't chdir(%s)", pwdir);
 		if (!getwd (homedir))
 		    error (1, errno, "can't getwd in %s", pwdir);
-		(void) chdir (workdir);
+		(void) CVS_CHDIR (workdir);
 
 		i = strlen (homedir);
 		if (!strncmp (CurDir, homedir, i))
@@ -995,7 +995,7 @@ read_hrecs (fname)
     struct hrec *hr;
     struct stat st_buf;
 
-    if ((fd = open (fname, O_RDONLY | OPEN_BINARY)) < 0)
+    if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
 	error (1, errno, "cannot open history file: %s", fname);
 
     if (fstat (fd, &st_buf) < 0)

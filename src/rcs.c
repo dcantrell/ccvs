@@ -63,7 +63,7 @@ RCS_parse (file, repos)
     char rcsfile[PATH_MAX];
 
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
-    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) != NULL) 
+    if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) != NULL) 
     {
         rcs = RCS_parsercsfile_i(fp, rcsfile);
 	if (rcs != NULL) 
@@ -79,7 +79,7 @@ RCS_parse (file, repos)
     }
 
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
-    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) != NULL) 
+    if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) != NULL) 
     {
         rcs = RCS_parsercsfile_i(fp, rcsfile);
 	if (rcs != NULL)
@@ -111,7 +111,7 @@ RCS_parsercsfile (rcsfile)
     RCSNode *rcs;
 
     /* open the rcsfile */
-    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) == NULL)
+    if ((fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ)) == NULL)
     {
 	error (0, errno, "Couldn't open rcs file `%s'", rcsfile);
 	return (NULL);
@@ -216,7 +216,7 @@ RCS_reparsercsfile (rdata, pfp)
     assert (rdata != NULL);
     rcsfile = rdata->path;
 
-    fp = fopen(rcsfile, FOPEN_BINARY_READ);
+    fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ);
     if (fp == NULL)
 	error (1, 0, "unable to reopen `%s'", rcsfile);
 
@@ -1768,7 +1768,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 	    RCS_reparsercsfile (rcs, &fp);
 	else
 	{
-	    fp = fopen (rcs->path, FOPEN_BINARY_READ);
+	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
 	    if (fp == NULL)
 	        error (1, 0, "unable to reopen `%s'", rcs->path);
 	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
@@ -1849,14 +1849,14 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 		    ofp = stdout;
 		else
 		{
-		    ofp = fopen (sout, FOPEN_BINARY_WRITE);
+		    ofp = CVS_FOPEN (sout, FOPEN_BINARY_WRITE);
 		    if (ofp == NULL)
 		        error (1, errno, "cannot open %s", sout);
 		}
 	    }
 	    else
 	    {
-	        ofp = fopen (workfile, FOPEN_BINARY_WRITE);
+	        ofp = CVS_FOPEN (workfile, FOPEN_BINARY_WRITE);
 		if (ofp == NULL)
 		    error (1, errno, "cannot open %s", workfile);
 	    }
@@ -2143,7 +2143,7 @@ annotate_fileproc (finfo)
         RCS_reparsercsfile (finfo->rcs, &fp);
     else
     {
-        fp = fopen (finfo->rcs->path, FOPEN_BINARY_READ);
+        fp = CVS_FOPEN (finfo->rcs->path, FOPEN_BINARY_READ);
 	if (fp == NULL)
 	    error (1, 0, "unable to reopen `%s'", finfo->rcs->path);
 	if (fseek (fp, finfo->rcs->delta_pos, SEEK_SET) != 0)
