@@ -1490,6 +1490,17 @@ cannot commit to a specific revision on a branch.
 \fBcommit\fR also supports these options:
 .SP
 .IP "" 0
+\fB-c\fR
+.IP "" 2
+Refuse to commit files unless the user has registered a valid edit on the
+file via \fBcvs edit\fR.  This is most useful when \fBcommit -c\fR
+and \fBedit -c\fR have been placed in all \fB.cvsrc\fR files.
+A commit can be forced anyways by either regestering an edit retroactively
+via \fBcvs edit\fR (no changes to the file will be lost) or using the
+\fB-f\fR option to commit.  Support for \fBcommit -c\fR requires both
+client and a server versions 1.12.10 or greater.
+.SP
+.IP "" 0
 \fB-F \fIfile\fB\fR
 .IP "" 2
 Read the log message from \fIfile\fR, instead
@@ -1502,7 +1513,8 @@ Note that this is not the standard behavior of
 the \fB-f\fR option as defined in see node `Common options\(aq in the CVS manual.
 .SP
 Force \fBcvs\fR to commit a new revision even if you haven\(aqt
-made any changes to the file.  If the current revision
+made any changes to the file.  As of \fBcvs\fR version 1.12.10,
+it also causes the \fB-c\fR option to be ignored.  If the current revision
 of \fIfile\fR is 1.7, then the following two commands
 are equivalent:
 .SP

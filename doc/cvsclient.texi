@@ -1055,6 +1055,14 @@ Response expected: no.
 Set a user variable @var{variable} to @var{value}.
 The @code{Root} request need not have been previously sent.
 
+@item Hostname @var{hostname} \n
+Response expected: no.  Set the client hostname for an upcoming @code{edit}
+request.
+
+@item LocalDir @var{hostname} \n
+Response expected: no.  Set the local client directory name for an upcoming
+@code{edit} request.
+
 @item expand-modules \n
 Response expected: yes.  Expand the modules which are specified in the
 arguments.  Returns the data in @code{Module-expansion} responses.  Note
@@ -1327,6 +1335,14 @@ to perform a few more checks.
 The client sends a subsequent @code{ci} request to actually record the
 removal in the repository.
 
+@item edit \n
+Response expected: yes.  Actually do the @code{cvs edit} command.  This uses
+any previous @code{Argument}, @code{Directory}, @code{Entry}, @code{LocalDir},
+or @code{Hostname} requests, if they have been sent.  Unless the user has
+requested that edits not be granted unless no one else is editing a file, a
+local edit followed by an attempt to send @code{Notify} requests to the
+server is preferred.
+
 @item watch-on \n
 @itemx watch-off \n
 @itemx watch-add \n
@@ -1584,6 +1600,9 @@ format.  Like @code{Rcs-diff}, this response is only used if the
 The @code{Patched} response is deprecated in favor of the
 @code{Rcs-diff} response.  However, older clients (CVS 1.9 and earlier)
 only support @code{Patched}.
+
+@item Edit-file @var{pathname} \n
+Do the client-side portion of editing a file.
 
 @item Mode @var{mode} \n
 This @var{mode} applies to the next file mentioned in
