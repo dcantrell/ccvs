@@ -8,9 +8,7 @@
 # usage: sanity.sh [-r] @var{cvs-to-test}
 # -r means to test remote instead of local cvs.
 
-# 
-# These commands are not covered at all.
-#	admin
+# See TODO list at end of file.
 
 TESTDIR=/tmp/cvs-sanity
 
@@ -38,8 +36,10 @@ else
   tests="$*"
 fi
 
-# fixme: try things without -m.
-# fixme: run this in a loop over "-Q", "-q", and "".
+# fixme: try things (what things? checkins?) without -m.
+# Some of these tests are written to expect -Q.  But testing with
+# -Q is kind of bogus, it is not the way users actually use CVS (usually).
+# So new tests probably should invoke ${testcvs} directly, rather than ${CVS}.
 CVS="${testcvs} -Q"
 OUTPUT=
 
@@ -1178,6 +1178,76 @@ for what in $tests; do
 		else
 			echo 'FAIL: test 133' | tee -a ${LOGFILE}
 		fi
+
+		# Now test that we can add a file in one working directory
+		# and have an update in another get it.
+		cd ../../1/first-dir
+		echo abc >abc
+		if ${testcvs} add abc >>${LOGFILE} 2>&1; then
+			echo 'PASS: test 134' >>${LOGFILE}
+		else
+			echo 'FAIL: test 134' | tee -a ${LOGFILE}
+		fi
+		if ${testcvs} ci -m 'add abc' abc >>${LOGFILE} 2>&1; then
+			echo 'PASS: test 135' >>${LOGFILE}
+		else
+			echo 'FAIL: test 135' | tee -a ${LOGFILE}
+		fi
+		cd ../../2
+		if ${testcvs} -q update >>${LOGFILE}; then
+			echo 'PASS: test 136' >>${LOGFILE}
+		else
+			echo 'FAIL: test 136' | tee -a ${LOGFILE}
+		fi
+		if test -f first-dir/abc; then
+			echo 'PASS: test 137' >>${LOGFILE}
+		else
+			echo 'FAIL: test 137' | tee -a ${LOGFILE}
+		fi
+
+		# Now test something similar, but in which the parent directory
+		# (not the directory in question) has the Entries.Static flag
+		# set.
+		cd ../1/first-dir
+		mkdir subdir
+		if ${testcvs} add subdir >>${LOGFILE}; then
+			echo 'PASS: test 138' >>${LOGFILE}
+		else
+			echo 'FAIL: test 138' | tee -a ${LOGFILE}
+		fi
+		cd ../..
+		mkdir 3
+		cd 3
+		if ${testcvs} -q co first-dir/abc first-dir/subdir \
+		    >>${LOGFILE}; then
+		  echo 'PASS: test 139' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 139' | tee -a ${LOGFILE}
+		fi
+		cd ../1/first-dir/subdir
+		echo sss >sss
+		if ${testcvs} add sss >>${LOGFILE} 2>&1; then
+		  echo 'PASS: test 140' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 140' | tee -a ${LOGFILE}
+		fi
+		if ${testcvs} ci -m adding sss >>${LOGFILE} 2>&1; then
+		  echo 'PASS: test 140' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 140' | tee -a ${LOGFILE}
+		fi
+		cd ../../../3/first-dir
+		if ${testcvs} -q update >>${LOGFILE}; then
+		  echo 'PASS: test 141' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 141' | tee -a ${LOGFILE}
+		fi
+		if test -f subdir/sss; then
+		  echo 'PASS: test 142' >>${LOGFILE}
+		else
+		  echo 'FAIL: test 142' | tee -a ${LOGFILE}
+		fi
+
 		;;
 
 	*) echo $what is not the name of a test -- ignored ;;
@@ -1186,8 +1256,30 @@ done
 
 echo Ok.
 
-# Local Variables:
-# fill-column: 131
-# End:
+# TODO:
+# * Test `cvs admin'.
+# * Test `cvs update -d foo' (where foo does not exist).
+# * Test `cvs update foo bar' (where foo and bar are both from the same
+#   repository).  Suppose one is a branch--make sure that both directories
+#   get updated with the respective correct thing.
+# * Also test updates on the case where a working directory is not a 
+#   subdirectory of the directory which contains it (for example, it is
+#   legal to check out a copy of the CVSROOT directory alongside some other
+#   directories which are not at the top level).
+# * Zero length files (check in, check out).
+# * `cvs update ../foo'.  Also ../../foo ./../foo foo/../../bar /foo/bar
+#   foo/.././../bar foo/../bar etc.
+# * Test ability to modify modules file and use new modules.
+#   Test all flags in modules file.
+#   Test that ciprog gets run both on checkin in that directory, or a
+#     higher-level checkin which recurses into it.
+# * Test that $ followed by "Header" followed by $ gets expanded on checkin.
+# * Test operations on a directory that contains other directories but has 
+#   no files of its own.
+# * -t global option
+# * cvs rm followed by cvs add or vice versa (with no checkin in between).
+# * cvs rm twice (should be a nice error message).
+# * -P option to checkout--(a) refrains from checking out new empty dirs,
+#   (b) prunes empty dirs already there.
 
 # end of sanity.sh

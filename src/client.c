@@ -1516,9 +1516,21 @@ send_repository (dir, repos, update_dir)
 	if (fprintf (to_server, "Repository %s\n", repos) == EOF)
 	    error (1, errno, "writing to server");
     }
-    if (supported_request ("Static-directory") && isreadable (CVSADM_ENTSTAT))
-	if (fprintf (to_server, "Static-directory\n") == EOF)
-	    error (1, errno, "writing to server");
+    if (supported_request ("Static-directory"))
+    {
+	adm_name[0] = '\0';
+	if (dir[0] != '\0')
+	{
+	    strcat (adm_name, dir);
+	    strcat (adm_name, "/");
+	}
+	strcat (adm_name, CVSADM_ENTSTAT);
+	if (isreadable (adm_name))
+	{
+	    if (fprintf (to_server, "Static-directory\n") == EOF)
+		error (1, errno, "writing to server");
+	}
+    }
     if (supported_request ("Sticky"))
     {
 	FILE *f;
