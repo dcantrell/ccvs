@@ -1101,11 +1101,7 @@ allocate_buffer_datas ()
 
 /* Get a new buffer_data structure.  */
 
-static
-#ifdef __GNUC__
-__inline__
-#endif
-struct buffer_data *
+static inline struct buffer_data *
 get_buffer_data ()
 {
     struct buffer_data *ret;
@@ -1206,11 +1202,7 @@ buf_output0 (buf, string)
 
 /* Add a single character to BUF.  */
 
-static 
-#ifdef __GNUC__
-__inline__
-#endif
-void
+static inline void
 buf_append_char (buf, ch)
     struct buffer *buf;
     int ch;
@@ -1391,11 +1383,7 @@ buf_send_counted (buf)
 
 /* Append a list of buffer_data structures to an buffer.  */
 
-static
-#ifdef __GNUC__
-__inline__
-#endif
-void
+static inline void
 buf_append_data (buf, data, last)
      struct buffer *buf;
      struct buffer_data *data;
