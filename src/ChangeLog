@@ -1,3 +1,8 @@
+Sun Jul  6 13:36:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (update_entries): Add comment about GNU patch usage (-b
+	option and so on).
+
 Sat Jul  5 04:13:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c, cvs.h (RCS_exec_rcsdiff): New function.
