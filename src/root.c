@@ -187,6 +187,7 @@ primary_root_translate (const char *root_in)
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
+#ifdef PROXY_SUPPORT
     if (config->PrimaryServer
         && !strncmp (root_in, config->PrimaryServer->directory,
 		     strlen (config->PrimaryServer->directory))
@@ -197,6 +198,7 @@ primary_root_translate (const char *root_in)
 	    asnprintf (translated, &len, "%s%s",
 	               current_parsed_root->directory,
 	               root_in + strlen (config->PrimaryServer->directory));
+#endif
 
     /* There is no primary root configured or it didn't match.  */
     return root_in;
@@ -227,6 +229,7 @@ primary_root_inverse_translate (const char *root_in)
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
+#ifdef PROXY_SUPPORT
     if (config->PrimaryServer
         && !strncmp (root_in, current_parsed_root->directory,
 		     strlen (current_parsed_root->directory))
@@ -237,6 +240,7 @@ primary_root_inverse_translate (const char *root_in)
 	    asnprintf (translated, &len, "%s%s",
 	               config->PrimaryServer->directory,
 	               root_in + strlen (current_parsed_root->directory));
+#endif
 
     /* There is no primary root configured or it didn't match.  */
     return root_in;
@@ -916,12 +920,14 @@ get_local_root_dir (Node *p, void *root_in)
     if (get_local_root_dir_done)
 	return 0;
 
+#ifdef PROXY_SUPPORT
     if (c->PrimaryServer && !strcmp (*r, c->PrimaryServer->directory))
     {
 	free (*r);
 	*r = xstrdup (p->key);
 	get_local_root_dir_done = true;
     }
+#endif
     return 0;
 }
 
