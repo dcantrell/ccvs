@@ -1,5 +1,12 @@
 2002-01-16  Derek Price  <derek@ximbiot.com>
 
+	* configure.in (--with-editor): Look for nano, the GNU GPL pico clone.
+	(Reported by Robin Cook <rcook@wyrms.net>.)
+
+	* configure: Regenerated.
+
+2002-01-16  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Update to dev version (1.11.4.1).
 	* configure: Regenerated.
 

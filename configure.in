@@ -396,7 +396,7 @@ AC_ARG_WITH(
     [--with-editor],
     [The default text editor CVS should use for log messages
      (default autoselects)]), ,
-  [with_editor="vi emacs pico edit"])
+  [with_editor="vi emacs nano pico edit"])
 
 
 if echo $with_editor |grep ^/ >/dev/null; then

@@ -9052,7 +9052,7 @@ if test "${with_editor+set}" = set; then
   withval="$with_editor"
 
 else
-  with_editor="vi emacs pico edit"
+  with_editor="vi emacs nano pico edit"
 fi;
 
 
