@@ -11374,6 +11374,14 @@ cat >>confdefs.h <<\_ACEOF
 #define FILENAMES_CASE_INSENSITIVE 1
 _ACEOF
 
+      case $LIBOBJS in
+    "fncase.$ac_objext"   | \
+  *" fncase.$ac_objext"   | \
+    "fncase.$ac_objext "* | \
+  *" fncase.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS fncase.$ac_objext" ;;
+esac
+
 fi
 
 
@@ -11499,14 +11507,6 @@ fi
 echo "$as_me:$LINENO: result: $ccvs_cv_sys_cygwin32" >&5
 echo "${ECHO_T}$ccvs_cv_sys_cygwin32" >&6
 if test $ccvs_cv_sys_cygwin32 = yes; then
-  case $LIBOBJS in
-    "fncase.$ac_objext"   | \
-  *" fncase.$ac_objext"   | \
-    "fncase.$ac_objext "* | \
-  *" fncase.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS fncase.$ac_objext" ;;
-esac
-
   LIBS="$LIBS -ladvapi32"
 
 
