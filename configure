@@ -7235,6 +7235,9 @@ fi
 
 
 
+
+
+
 KRB4=/usr/kerberos
 
 
@@ -8145,6 +8148,8 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
+
+  cvs_client_objects="$cvs_client_objects gssapi-client.o"
 
   # locate any other headers
 
@@ -10933,6 +10938,7 @@ s,@MAKE_TARGETS_IN_VPATH_TRUE@,$MAKE_TARGETS_IN_VPATH_TRUE,;t t
 s,@MAKE_TARGETS_IN_VPATH_FALSE@,$MAKE_TARGETS_IN_VPATH_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
+s,@cvs_client_objects@,$cvs_client_objects,;t t
 s,@KRB4@,$KRB4,;t t
 s,@with_default_rsh@,$with_default_rsh,;t t
 s,@EDITOR@,$EDITOR,;t t
