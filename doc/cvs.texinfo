@@ -4,13 +4,14 @@
 @macro copyleftnotice
 @noindent
 Copyright @copyright{} 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-                       2001, 2002, 2003, 2004 Free Software Foundation, Inc.
+                       2001, 2002, 2003, 2004, 2005
+                       Free Software Foundation, Inc.
 
 @multitable @columnfractions .12 .88
 @item Portions
-@item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003, 2004
+@item @tab Copyright @copyright{} 1999, 2000, 2001, 2002, 2003, 2004, 2005
                                   Derek R. Price,
-@item @tab Copyright @copyright{} 2002, 2003, 2004
+@item @tab Copyright @copyright{} 2002, 2003, 2004, 2005
                                   Ximbiot @url{http://ximbiot.com},
 @item @tab Copyright @copyright{} 1992, 1993, 1999 Signum Support AB,
 @item @tab and Copyright @copyright{} others.
