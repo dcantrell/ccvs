@@ -1,3 +1,8 @@
+2004-03-19  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (pathname_levels, previous_rev): Remove leading underscore from
+	prototype arguments to avoid potential conflicts with implementations.
+
 2004-03-18  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (pathname_levels): Make string argument const.
