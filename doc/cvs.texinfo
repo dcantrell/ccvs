@@ -5520,6 +5520,44 @@ slightly different way; @pxref{history options}).
 @c getdate.y (just for our info; we don't want to
 @c attempt to document all the formats accepted by
 @c getdate.y).
+@c 
+@c One more note: In output, CVS should consistently
+@c use one date format, and that format should be one that
+@c it accepts in input as well.  The former isn't
+@c really true (see survey below), and I'm not
+@c sure that either of those formats is accepted in
+@c input. 
+@c 
+@c cvs log
+@c   current 1996/01/02 13:45:31
+@c   Internet 02 Jan 1996 13:45:31 UT
+@c   ISO 1996-01-02 13:45:31
+@c cvs ann
+@c   current 02-Jan-96
+@c   Internet-like 02 Jan 96
+@c   ISO 96-01-02
+@c cvs status
+@c   current Tue Jun 11 02:54:53 1996
+@c   Internet [Tue,] 11 Jun 1996 02:54:53
+@c   ISO 1996-06-11 02:54:53
+@c   note: date possibly should be omitted entirely for
+@c   other reasons.
+@c any others?
+@c There is a good chance the proper solution has to
+@c involve at least some level of letting the user
+@c decide which format (with the default being the
+@c formats CVS has always used; changing these might be
+@c _very_ disruptive since scripts may very well be
+@c parsing them).
+@c
+@c Another random bit of prior art concerning dates is
+@c the strptime function which takes templates such as
+@c "%m/%d/%y", and apparent a variant of getdate()
+@c which also honors them.  See
+@c X/Open CAE Specification, System Interfaces and
+@c Headers Issue 4, Version 2 (September 1994), in the
+@c entry for getdate() on page 231
+
 @cindex timezone, in input
 @cindex zone, time, in input
 A wide variety of date formats are supported by
