@@ -1434,6 +1434,14 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	    free (rev);
     }
 
+    /* If the revision is dead, let checkout_file handle it rather
+       than duplicating the processing here.  */
+    if (RCS_isdead (vers_ts->srcfile, vers_ts->vn_rcs))
+    {
+	*docheckout = 1;
+	return 0;
+    }
+
     backup = xmalloc (strlen (finfo->file)
 		      + sizeof (CVSADM)
 		      + sizeof (CVSPREFIX)
