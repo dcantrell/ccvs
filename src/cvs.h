@@ -452,7 +452,7 @@ char *gca PROTO((char *rev1, char *rev2));
 char *getcaller PROTO((void));
 char *time_stamp PROTO((char *file));
 char *xmalloc PROTO((size_t bytes));
-char *xrealloc PROTO((char *ptr, size_t bytes));
+void *xrealloc PROTO((void *ptr, size_t bytes));
 char *xstrdup PROTO((const char *str));
 void strip_trailing_newlines PROTO((char *str));
 int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
@@ -524,6 +524,16 @@ void line2argv PROTO((int *pargc, char *argv[], char *line));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 void rename_file PROTO((const char *from, const char *to));
+/* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
+   files which exist in the current directory, and accordingly to OS-specific
+   conventions regarding wildcard syntax.  It might be desirable to change the
+   former in the future (e.g. "cvs status *.h" including files which don't exist
+   in the working directory).  The result is placed in *PARGC and *PARGV;
+   the *PARGV array itself and all the strings it contains are newly
+   malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
+extern void expand_wild PROTO ((int argc, char **argv, 
+                                int *pargc, char ***pargv));
+
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));

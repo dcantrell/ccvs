@@ -177,7 +177,7 @@ diff (argc, argv)
 	if (diff_date2)
 	    client_senddate (diff_date2);
 
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 #if 0
 	/* FIXME: We shouldn't have to send current files to diff two
 	   revs, but it doesn't work yet and I haven't debugged it.

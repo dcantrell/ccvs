@@ -81,6 +81,8 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     List *files_by_dir = NULL;
     struct recursion_frame frame;
 
+    expand_wild (argc, argv, &argc, &argv);
+
     if (update_preload == NULL)
 	update_dir[0] = '\0';
     else
@@ -245,6 +247,10 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 			     frame.flags, frame.which, frame.aflag,
 			     frame.readlock, frame.dosrcs);
 
+    /* Free the data which expand_wild allocated.  */
+    for (i = 0; i < argc; ++i)
+	free (argv[i]);
+    free (argv);
 
     return (err);
 }

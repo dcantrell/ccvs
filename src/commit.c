@@ -347,7 +347,7 @@ commit (argc, argv)
 	   check on those files.  This is different from local CVS and
 	   previous versions of client/server CVS, but it probably is a Good
 	   Thing, or at least Not Such A Bad Thing.  */
-	send_file_names (find_args.argc, find_args.argv);
+	send_file_names (find_args.argc, find_args.argv, 0);
 	send_files (find_args.argc, find_args.argv, local, 0);
 
 	send_to_server ("ci\012", 0);

@@ -91,7 +91,7 @@ admin (argc, argv)
 	for (i = 0; i <= ac; ++i)	/* XXX send -ko too with i = 0 */
 	    send_arg (av[i]);
 
-	send_file_names (argc, argv);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	/* FIXME:  We shouldn't have to send current files, but I'm not sure
 	   whether it works.  So send the files --
 	   it's slower but it works.  */
