@@ -11336,6 +11336,11 @@ particular moment).
 @c FIXME: What is the correct way to format a multiline
 @c error message here?  Maybe @table is the wrong
 @c choice?  Texinfo gurus?
+@item @var{file}:@var{line}: Assertion '@var{text}' failed
+The exact format of this message may vary depending on
+your system.  It indicates a bug in @sc{cvs}, which can
+be handled as described in @ref{BUGS}.
+
 @item cannot change permissions on temporary directory
 @example
 Operation not permitted
