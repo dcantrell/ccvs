@@ -4463,7 +4463,7 @@ krb_encrypt_buffer_output (closure, data, have, wrote)
        latter sticks a timestamp in the block, and krb_rd_priv expects
        that timestamp to be within five minutes of the current time.
        Given the way the CVS server buffers up data, that can easily
-       fail over a long network connection.  We trust krb_recv_auth to
+       fail over a long network connection.  We trust krb_recvauth to
        guard against a reply attack.  */
 
     des_cbc_encrypt ((C_Block *) inbuf, (C_Block *) (outbuf + 2), aligned,
