@@ -175,7 +175,6 @@ fi
 # libsocket.so which has a bad implementation of gethostbyname (it
 # only looks in /etc/hosts), so we only look for -lsocket if we need
 # it.
-unset ac_cv_func_connect
 AC_CHECK_FUNC(connect, :, 
 [case "$LIBS" in
 *-lnsl*) ;;
@@ -193,7 +192,6 @@ case "$LIBS" in
 *-linet*) ;;
 *) AC_CHECK_LIB(inet, connect) ;;
 esac
-unset ac_cv_func_connect
 AC_CHECK_FUNCS(connect)])
 
 AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
@@ -203,13 +201,11 @@ if test "$ac_cv_func_connect" = yes; then
 AC_DEFINE(CLIENT_SUPPORT)
 AC_DEFINE(SERVER_SUPPORT)
 # Define AUTH_SERVER_SUPPORT only if we could locate the crypt() function
-unset ac_cv_func_crypt
 AC_CHECK_FUNC(crypt, :,
 [case "$LIBS" in
 *-lcrypt*) ;;
 *) AC_CHECK_LIB(crypt, crypt) ;;
 esac
-unset ac_cv_func_crypt
 AC_CHECK_FUNCS(crypt)])
   if test "$ac_cv_func_crypt" = yes; then
   AC_DEFINE(AUTH_SERVER_SUPPORT)

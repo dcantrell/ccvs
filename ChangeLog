@@ -1,5 +1,12 @@
 Wed Oct 16 15:01:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Don't call unset.  It isn't portable to Ultrix,
+	but perhaps more to the point, seems like we should be using the
+	cached values (there was no comment explaining why we should
+	ignore the cached values, and none of the CVS developers were
+	able to	provide an explanation when I asked).
+	* configure: Regenerated.
+
 	* NEWS: Add item regarding export and "cvs history".
 
 Tue Oct 15 07:40:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
