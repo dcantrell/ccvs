@@ -1003,11 +1003,22 @@ Make_Date (rawdate)
     unixtime = get_date (rawdate, (struct timeb *) NULL);
     if (unixtime == (time_t) - 1)
 	error (1, 0, "Can't parse date/time: %s", rawdate);
-#ifdef HAVE_RCS5
-    ftm = gmtime (&unixtime);
-#else
-    ftm = localtime (&unixtime);
+
+#ifndef HAVE_RCS5
+    you lose;
+    /* Would need to call localtime instead of gmtime.  But I'm not sure
+       anyone is using the !HAVE_RCS5 code anymore.  I'm also not sure
+       the !HAVE_RCS5 code really gets this right (in terms of effectively
+       handling RCS files in the old format).  */
 #endif
+
+    ftm = gmtime (&unixtime);
+    if (ftm == NULL)
+	/* This is a system, like VMS, where the system clock is in local
+	   time.  Hopefully using localtime here matches the "zero timezone"
+	   hack I added to get_date.  */
+	ftm = localtime (&unixtime);
+
     (void) sprintf (date, DATEFORM,
 		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
 		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
