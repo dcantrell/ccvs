@@ -1,3 +1,13 @@
+Fri Mar 28 22:32:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (requests): Change "Repository" to rq_optional.  I'm
+	not sure whether I overlooked this when I removed support for
+	Repository, or whether I was thinking that servers would need to
+	support it anyway, for CVS 1.5 to 1.9 clients, but making it
+	optional doesn't prevent the server from supporting it and it
+	seems silly for the client to complain about absence of a request
+	that it never will use.
+
 Fri Mar 28 10:06:59 1997  Steven Miller  <Miller@wingra.com>
 
 	* entries.c (Subdirs_Known): Don't create Entries.Log if noexec.
