@@ -15503,7 +15503,8 @@ fi
 
 
   # getdate.y works with bison only.
-  : ${YACC='bison -y'}
+
+YACC=${YACC-"${am_missing_run}bison -y"}
 
 
 

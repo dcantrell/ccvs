@@ -4562,8 +4562,7 @@ AC_DEFUN([AC_STRUCT_ST_MTIM_NSEC],
 AC_DEFUN([gl_BISON],
 [
   # getdate.y works with bison only.
-  : ${YACC='bison -y'}
-  AC_SUBST(YACC)
+  AM_MISSING_PROG(YACC, bison -y)
 ])
 
 # clock_time.m4 serial 4
