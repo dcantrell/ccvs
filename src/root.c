@@ -174,7 +174,6 @@ Create_Root (const char *dir, const char *rootdir)
 
 
 
-#ifdef PROXY_SUPPORT
 /* Store our primary root translation.  */
 char *primary_root_in, *primary_root_out;
 
@@ -201,7 +200,6 @@ primary_root_add (const char *arg)
     *p++ = '\0';
     primary_root_out = p;
 }
-#endif /* PROXY_SUPPORT */
 
 
 
@@ -217,7 +215,6 @@ primary_root_add (const char *arg)
 inline char *
 primary_root_translate (const char *root_in)
 {
-#ifdef PROXY_SUPPORT
     if (primary_root_in
         && !strncmp (root_in, primary_root_in, strlen (primary_root_in))
         && strlen (root_in) >= strlen (primary_root_in)
@@ -229,7 +226,6 @@ primary_root_translate (const char *root_in)
 	                  primary_root_out,
 	                  root_in + strlen (primary_root_in));
     }
-#endif /* PROXY_SUPPORT */
 
     /* There is no primary root configured or it didn't match.  */
     return xstrdup (root_in);
@@ -242,7 +238,6 @@ primary_root_translate (const char *root_in)
 inline char *
 primary_root_inverse_translate (const char *root_in)
 {
-#ifdef PROXY_SUPPORT
     if (primary_root_out
         && !strncmp (root_in, primary_root_out, strlen (primary_root_out))
         && strlen (root_in) >= strlen (primary_root_out)
@@ -254,7 +249,6 @@ primary_root_inverse_translate (const char *root_in)
 	                  primary_root_in,
 	                  root_in + strlen (primary_root_out));
     }
-#endif /* PROXY_SUPPORT */
 
     /* There is no primary root configured or it didn't match.  */
     return xstrdup (root_in);

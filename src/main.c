@@ -58,14 +58,12 @@ int top_level_admin = 0;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef PROXY_SUPPORT
 cvsroot_t *PrimaryServer;
-# ifndef TRUST_OS_FILE_CACHE
+#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
 size_t MaxProxyBufferSize = (size_t)(8 * 2^10 * 2^10); /* 8 megabytes,
                                                        * by default.
                                                        */
-# endif /* !TRUST_OS_FILE_CACHE */
-#endif /* PROXY_SUPPORT */
+#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
 
 
 
@@ -577,12 +575,10 @@ main (int argc, char **argv)
 		/* --allow-root */
 		root_allow_add (optarg);
 		break;
-# ifdef PROXY_SUPPORT
 	    case 5:
 		/* --primary-root */
 		primary_root_add (optarg);
 		break;
-# endif /* PROXY_SUPPORT */
 #endif /* SERVER_SUPPORT */
 	    case 'Q':
 		really_quiet = 1;
