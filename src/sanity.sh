@@ -69,7 +69,7 @@ exit_usage ()
 
 # read our options
 unset fromtest
-keep=no
+keep=false
 remote=false
 while getopts f:kr option ; do
     case "$option" in
@@ -81,7 +81,7 @@ while getopts f:kr option ; do
 	    # contents of the /tmp directory; right now only some implement it.  Not
 	    # originally intended to be useful with more than one test, but this should work
 	    # if each test uses a uniquely named dir (use the name of the test).
-	    keep=yes
+	    keep=:
 	    ;;
 	r)
 	    remote=:
@@ -2100,7 +2100,7 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -2177,7 +2177,7 @@ ${PROG} [a-z]*: Updating second-dir"
 	basic1)
 	  # first dive - add a files, first singly, then in a group.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  mkdir 1; cd 1
+	  mkdir basic1; cd basic1
 	  # check out an empty directory
 	  dotest basic1-1 "${testcvs} -q co first-dir" ''
 
@@ -2540,12 +2540,12 @@ done"
 	  cd ..
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
 
-	  rm -r 1
+	  rm -r basic1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -3803,11 +3803,10 @@ diff -c /dev/null trdiff/new:1\.1
 '"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* '"${username}"' Exp \$"
 '"${PLUS}"' new file'
 
-# FIXME: will this work here?
-#		if test "$keep" = yes; then
-#		  echo Keeping ${TESTDIR} and exiting due to --keep
-#		  exit 0
-#		fi
+		if $keep; then
+		  echo Keeping ${TESTDIR} and exiting due to --keep
+		  exit 0
+		fi
 
 		cd ..
 		rm -r testimport
@@ -3864,7 +3863,7 @@ extern int gethostname ();
 #include <winsock\.h>
 #endif /\* HAVE_WINSOCK_H \*/"
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -5264,7 +5263,7 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/file4,v
 done"
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -5957,7 +5956,7 @@ ${PROG} [a-z]*: could not read RCS file for first-dir/file2"
 
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -6040,7 +6039,7 @@ modify-on-br1
 ============================================================================="
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -12025,7 +12024,7 @@ done"
 
 	  # clean up
 	  cd ../..
-	  if test "$keep" = no; then
+	  if $keep; then :; else
 	      rm -r 1
 	      rm -rf ${TESTDIR}/cvsroot/adderrmsg-dir
 	  fi
@@ -12241,7 +12240,7 @@ U first-dir/abc'
 	  dotest_fail devcom-some3 "test -w first-dir/abc" ''
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -15236,7 +15235,7 @@ ${PROG} [a-z]*: Updating crerepos-dir"
 
 	  cd ..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -16377,7 +16376,7 @@ done"
 	  dotest big-6 "${testcvs} -q update" "[UP] file1"
 	  cd ../..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -16748,7 +16747,7 @@ done"
 
 	  cd ../..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -17511,7 +17510,7 @@ xx First log line
 xx Second log line
 xx"
 
-	  if test $keep = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -17952,7 +17951,7 @@ done"
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
 
-	  if test $keep = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -19364,7 +19363,7 @@ Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 
 	  # Clean up after ourselves:
 	  cd ..
-	  if test $keep = no; then
+	  if $keep; then :; else
 	    rm -rf diffmerge1 ${CVSROOT_DIRNAME}/diffmerge1
 	  fi
 	  ;;
@@ -21319,7 +21318,7 @@ anyone
 	  # refer to parts of our checked-out tree (e.g. "cvs update
 	  # mod1-1 mod2-2")
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -21456,7 +21455,7 @@ ${PLUS}${PLUS}${PLUS} dir1/sdir/sfile	${RFCDATE}	1\.2
  sfile
 ${PLUS}change him too"
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -21600,7 +21599,7 @@ ${PROG} \[[a-z]* aborted\]: illegal source repository"
 
 	  cd ../..
 
-	  if test "$keep" = yes; then
+	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
@@ -22151,7 +22150,7 @@ ${TESTDIR}/crerepos/dir1
 editors
 EOF
 
-	    if test "$keep" = yes; then
+	    if $keep; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
 	      exit 0
 	    fi
@@ -22365,7 +22364,7 @@ echo "OK, all tests completed."
 # End of TODO list.
 
 # Exit if keep set
-if test $keep = yes; then
+if $keep; then
   echo "Keeping ${TESTDIR} and exiting due to -k (keep) option."
   exit 0
 fi
