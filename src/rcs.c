@@ -5508,6 +5508,10 @@ unable to parse rcs file; `state' not in the expected place");
 	vnode->dead = 1;
     }
 
+    /* Note that "branches" and "next" are in fact mandatory, according
+       to doc/RCSFILES.  We perhaps should be giving an error if they
+       are not there.  */
+
     /* fill in the branch list (if any branches exist) */
     fpos = ftell (fp);
     (void) getrcskey (fp, &key, &value, NULL);
