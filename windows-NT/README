@@ -1,35 +1,29 @@
-	     Concurrent Versions System (CVS) Version 1.5
+	           Concurrent Versions System (CVS)
 		    ported to Microsoft Windows NT
 			   Cyclic Software
 
-Cyclic Software has ported the client side of CVS 1.5 to Windows NT.
+Check the ../INSTALL file for information on the most recent version
+of CVS which has been known to be tested with NT.  Most of the
+following is from Sunday, August 20, 1995 and pertains to the
+so-called "1.5nt" release (which is later than 1.5; it is not an
+unmodified CVS 1.5), but all the changes done for it had been merged
+into 1.6.
+
 The port implements the full set of CVS commands, but cannot access
 repositories located on the local machine.  The repository must live
 on another machine (a Unix box, say) which runs a complete port of
 CVS.
 
-Source code for the port is available from Cyclic Software as:
-
-	ftp://ftp.cyclic.com/pub/cvs/windows-nt/cvs-1.5nt.tar.gz
-
-That includes documentation, in Texinfo and PostScript.  It's all
-distributed as a gzipped tar file instead of a .ZIP file because, as
-far as I can tell, PKZIP insists on munging long file names, which
-would confuse the makefile for Visual C++.
+We don't distribute a .ZIP source distribution partly because, as far
+as I can tell, PKZIP insists on munging long file names, which would
+confuse the makefile for Visual C++.
 
 To compile, use Microsoft Visual C++ on the file cvsnt.mak in the
 distribution's top directory.  We haven't tested it under any other
 development environments.  If you're curious, see below about the
 warnings you may encounter.
 
-We've put a Windows NT 80x86 executable for CVS in the same directory
-as the source distribution, called cvs.exe.  Full documentation is
-present in PostScript format in the source distribution.  Generally,
-we'd like to avoid spending much time on binary distributions.
-
-Please send bug reports to bug-cvs@prep.ai.mit.edu.  I can't promise
-to fix them --- paying work must come first --- but the reports will
-not be tossed, and I'll see what I can do.
+Send bug reports to bug-cvs@prep.ai.mit.edu.
 
 This port passes the test in src/sanity.sh.  (We ran the checks by
 hand, since we couldn't find a port of the Bourne shell good enough to
@@ -42,10 +36,6 @@ ports of these packages to Windows NT, binary and source, are
 available in:
 
 	ftp://microlib.cc.utexas.edu/microlib/nt/gnu
-
-At the moment, this port isn't integrated into our mainline CVS
-sources, but I expect that to be straightforward.  I'll get around to
-it soon, but as I said, paying work...
 
 Now, strictly speaking, I don't *know* that this port won't correctly
 access repositories on the local machine.  I haven't tried it.  I
@@ -74,4 +64,3 @@ Microsoft Visual C++.  They are all harmless.
 
 
 Jim Blandy <jimb@cyclic.com>
-Sunday, August 20, 1995
