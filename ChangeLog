@@ -1,3 +1,11 @@
+2003-04-30  Derek Price  <derek@ximbiot.com>
+
+	* acinclude.m4 (ACX_WITH_GSSAPI): Fix typo in broken conditional.
+	(Thanks to Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* configure: Regenerated.
+	* aclocal.m4: Ditto.
+
 2003-04-28  Derek Price  <derek@ximbiot.com>
 
 	* NEWS (Changes since 1.11.5): Note removal of Checkin.prog and
@@ -49,7 +57,7 @@
 2003-03-26  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (--with-editor): Quit with an error message when
-	--without-error is specified.
+	--without-editor is specified.
 	(Report from Jim Salter <jsalterjim@earthlink.net>.)
 
 	* configure: Regenerated.
