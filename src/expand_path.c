@@ -233,10 +233,10 @@ expand_variable (name, file, line)
 	   that various crazy syntaxes might be invented for inserting
 	   information about revisions, branches, etc.  */
 	if (line != 0)
-	    error (0, 0, "%s:%d: unrecognized varaible syntax %s",
+	    error (0, 0, "%s:%d: unrecognized variable syntax %s",
 		   file, line, name);
 	else
-	    error (0, 0, "%s: unrecognized varaible syntax %s",
+	    error (0, 0, "%s: unrecognized variable syntax %s",
 		   file, name);
 	return NULL;
     }

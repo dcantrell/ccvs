@@ -1,3 +1,7 @@
+Wed Jul 24 09:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* expand_path.c (expand_variable): Fix typo (varaible -> variable).
+
 Tue Jul 23 15:05:01 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (update_fileproc): In T_REMOVE_ENTRY case, only call
