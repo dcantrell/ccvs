@@ -6,6 +6,7 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 
@@ -187,12 +188,11 @@ Short_Repository (repository)
 
 void
 Sanitize_Repository_Name (repository)
-     char *repository;
+    char *repository;
 {
     size_t len;
 
-    if (repository == NULL)
-	return;
+    assert (repository != NULL);
 
     strip_trailing_slashes (repository);
 

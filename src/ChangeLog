@@ -1,3 +1,12 @@
+Fri Sep 26 22:59:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* create_adm.c (Create_Admin): Fix thinko in Noel's change: keep
+	track of the originally allocated "cp" and free it, rather than
+	calling free on a pointer which may point halfway into the allocation.
+	* repos.c (Sanitize_Repository_Name): Per HACKING, assert that
+	repository != NULL, rather than just silently returning if NULL.
+	Reindent a line.
+
 Fri Sep 26 15:40:00 1997  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (modules): add tests modules-[123]* that make sure the
