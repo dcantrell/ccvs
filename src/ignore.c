@@ -255,12 +255,11 @@ ign_add (ign, hold)
     }
 }
 
-/* Set to 1 if filenames should be matched in a case-insensitive
-   fashion.  Note that, contrary to the name and placement in ignore.c,
-   this is no longer just for ignore patterns.  */
-int ign_case;
 
-/* Return 1 if the given filename should be ignored by update or import. */
+
+/* Return true if the given filename should be ignored by update or import,
+ * else return false.
+ */
 int
 ign_name (name)
     char *name;
@@ -268,47 +267,17 @@ ign_name (name)
     char **cpp = ign_list;
 
     if (cpp == NULL)
-	return (0);
-
-    if (ign_case)
-    {
-	/* We do a case-insensitive match by calling fnmatch on copies of
-	   the pattern and the name which have been converted to
-	   lowercase.  FIXME: would be much cleaner to just unify this
-	   with the other case-insensitive fnmatch stuff (FOLD_FN_CHAR
-	   in lib/fnmatch.c; os2_fnmatch in emx/system.c).  */
-	char *name_lower;
-	char *pat_lower;
-	char *p;
-
-	name_lower = xstrdup (name);
-	for (p = name_lower; *p != '\0'; ++p)
-	    *p = tolower (*p);
-	while (*cpp)
-	{
-	    pat_lower = xstrdup (*cpp++);
-	    for (p = pat_lower; *p != '\0'; ++p)
-		*p = tolower (*p);
-	    if (CVS_FNMATCH (pat_lower, name_lower, 0) == 0)
-		goto matched;
-	    free (pat_lower);
-	}
-	free (name_lower);
 	return 0;
-      matched:
-	free (name_lower);
-	free (pat_lower);
-	return 1;
-    }
-    else
-    {
-	while (*cpp)
-	    if (CVS_FNMATCH (*cpp++, name, 0) == 0)
-		return 1;
-	return 0;
-    }
+
+    while (*cpp)
+	if (CVS_FNMATCH (*cpp++, name, 0) == 0)
+	    return 1;
+
+    return 0;
 }
-
+
+
+
 /* FIXME: This list of dirs to ignore stuff seems not to be used.
    Really?  send_dirent_proc and update_dirent_proc both call
    ignore_directory and do_module calls ign_dir_add.  No doubt could
