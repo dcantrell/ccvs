@@ -1,3 +1,9 @@
+2003-10-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (cvs_output, cvs_outerr): Protect calls to syslog()
+	with the usual preprocessor condition: HAVE_SYSLOG_H.
+	(Original patch from Terrence Enger <tenger@iSeries-guru.com>.)
+
 2003-10-09  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: s/^extern// off of function declarations per HACKING.

@@ -6098,11 +6098,13 @@ cvs_output (const char *str, size_t len)
 	    buf_output (saved_output, str, len);
 	    buf_copy_lines (buf_to_net, saved_output, 'M');
 	}
+# if HAVE_SYSLOG_H
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write message after close of network buffer.  "
 		    "Message was: %s",
 		    str);
+# endif /* HAVE_SYSLOG */
     }
     else if (server_active)
     {
@@ -6112,11 +6114,13 @@ cvs_output (const char *str, size_t len)
 	    buf_copy_lines (protocol, saved_output, 'M');
 	    buf_send_counted (protocol);
 	}
+# if HAVE_SYSLOG_H
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write message before initialization of "
 		    "protocol buffer.  Message was: %s",
 		    str);
+# endif /* HAVE_SYSLOG */
     }
     else
 #endif
@@ -6242,11 +6246,13 @@ cvs_outerr (const char *str, size_t len)
 	    buf_output (saved_outerr, str, len);
 	    buf_copy_lines (buf_to_net, saved_outerr, 'E');
 	}
+# if HAVE_SYSLOG_H
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write error message after close of network "
 		    "buffer.  Message was: %s",
 		    str);
+# endif /* HAVE_SYSLOG */
     }
     else if (server_active)
     {
@@ -6256,11 +6262,13 @@ cvs_outerr (const char *str, size_t len)
 	    buf_copy_lines (protocol, saved_outerr, 'E');
 	    buf_send_counted (protocol);
 	}
+# if HAVE_SYSLOG_H
 	else
 	    syslog (LOG_DAEMON | LOG_ERR,
 		    "Attempt to write error message before initialization of "
 		    "protocol buffer.  Message was: %s",
 		    str);
+# endif /* HAVE_SYSLOG */
     }
     else
 #endif
