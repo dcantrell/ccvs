@@ -242,7 +242,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output ("   Repository revision:\t", 0);
 	cvs_output (vers->vn_rcs, 0);
 	cvs_output ("\t", 0);
-	cvs_output (vers->srcfile->path, 0);
+	cvs_output (vers->srcfile->print_path, 0);
 	cvs_output ("\n", 0);
     }
 

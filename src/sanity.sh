@@ -41,6 +41,8 @@ exit_help ()
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test client/server, as opposed to local, CVS"
+    echo "-p|--proxy	test a secondary/primary CVS server (writeproxy)"
+    echo "              cnofiguration (implies --remote)."
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
@@ -107,6 +109,7 @@ unset fromtest
 unset remotehost
 keep=false
 linkroot=false
+proxy=false
 remote=false
 servercvs=false
 # FIXME - If anyone knows a quick way in shell to expand something like
@@ -120,7 +123,7 @@ servercvs=false
 #		...
 #	esac
 #
-while getopts Hc:f:h:klrs:-: option ; do
+while getopts Hc:f:h:klprs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -160,6 +163,10 @@ while getopts Hc:f:h:klrs:-: option ; do
 		;;
 	    l|li|lin|link|link-|link-r]|link-ro|link-roo|link-root)
 		option=l
+		OPTARG=
+		;;
+	    p|pr|pro|prox|proxy)
+		option=p
 		OPTARG=
 		;;
 	    r|re|rem|remo|remot|remote)
@@ -203,6 +210,10 @@ while getopts Hc:f:h:klrs:-: option ; do
 	l)
 	    linkroot=:
 	    ;;
+        p)
+	    proxy=:
+	    remote=:
+	    ;;
 	r)
 	    remote=:
 	    ;;
@@ -239,13 +250,13 @@ shift
 
 # Verify that $testcvs looks like CVS.
 # we can't use test -x since BSD 4.3 doesn't support it.
-if test ! -f ${testcvs} || test ! -r ${testcvs}; then
-  echo "No such file or file not readable: ${testcvs}" >&2
+if test ! -f $testcvs || test ! -r $testcvs; then
+  echo "No such file or file not readable: $testcvs" >&2
   exit 1
 fi
-if ${testcvs} --version </dev/null 2>/dev/null |
+if $testcvs --version </dev/null 2>/dev/null |
      grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
-  echo "Not a CVS executable: ${testcvs}" >&2
+  echo "Not a CVS executable: $testcvs" >&2
   exit 1
 fi
 
@@ -291,7 +302,7 @@ if test -n "$remotehost"; then
     fi
 fi
 
-case "${servercvs}" in
+case "$servercvs" in
 "")
   exit_usage
   ;;
@@ -300,11 +311,11 @@ false)
 /*)
   ;;
 *)
-  servercvs=`pwd`/${servercvs}
+  servercvs=`pwd`/$servercvs
   ;;
 esac
 
-if test false != ${servercvs}; then
+if test false != $servercvs; then
   # Allow command line to override $CVS_SERVER
   CVS_SERVER=$servercvs
 else
@@ -312,9 +323,10 @@ else
   : ${CVS_SERVER=$testcvs}
   # With the previous command, effectively defaults $servercvs to $CVS_SERVER,
   # then $testcvs
-  servercvs=${CVS_SERVER}
+  servercvs=$CVS_SERVER
 fi
 export CVS_SERVER
+servercvs_orig=$servercvs
 
 # Fail in client/server mode if our ${servercvs} does not contain server
 # support.
@@ -575,17 +587,17 @@ fi
 : ${TESTDIR=$tmp/cvs-sanity}
 # clean any old remnants (we need the chmod because some tests make
 # directories read-only)
-if test -d ${TESTDIR}; then
-    chmod -R a+wx ${TESTDIR}
-    rm -rf ${TESTDIR}
+if test -d $TESTDIR; then
+    chmod -R a+wx $TESTDIR
+    rm -rf $TESTDIR
 fi
 # These exits are important.  The first time I tried this, if the `mkdir && cd`
 # failed then the build directory would get blown away.  Some people probably
 # wouldn't appreciate that.
-mkdir ${TESTDIR} || exit 1
-cd ${TESTDIR} || exit 1
+mkdir $TESTDIR || exit 1
+cd $TESTDIR || exit 1
 # Ensure $TESTDIR is absolute
-if echo "${TESTDIR}" |grep '^[^/]'; then
+if echo "$TESTDIR" |grep '^[^/]'; then
     # Don't resolve this unless we have to.  This keeps symlinks intact.  This
     # is important at least when testing using -h $remotehost, because the same
     # value for $TESTDIR must resolve to the same directory on the client and
@@ -593,11 +605,53 @@ if echo "${TESTDIR}" |grep '^[^/]'; then
     TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 fi
 
-if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+if test -z "$TESTDIR" || echo "$TESTDIR" |grep '^[^/]'; then
     echo "Unable to resolve TESTDIR to an absolute directory." >&2
     exit 1
 fi
-cd ${TESTDIR}
+cd $TESTDIR
+
+
+
+: ${TIMING=false}
+if $proxy || test -n "$remotehost"; then
+    # Now override our CVS_RSH in order to forward variables which affect the
+    # test suite through.  This needs to be done in $proxy mode for the
+    # crerepos tests.
+    if $TIMING; then
+	time="/usr/bin/time -ao'$TESTDIR/time.out'"
+    else
+	time=
+    fi
+    cat >$TESTDIR/ssh-wrapper <<EOF
+#! $TESTSHELL
+hostname=\$1
+shift
+exec \
+$CVS_RSH \
+	 \$hostname \
+	 "CVS_SERVER='\$CVS_SERVER';" \
+	 "CVS_SERVER_SLEEP='\$CVS_SERVER_SLEEP';" \
+	 "export CVS_SERVER CVS_SERVER_SLEEP;" \
+	 "CVS_PARENT_SERVER_SLEEP='\$CVS_PARENT_SERVER_SLEEP';" \
+	 "CVS_SERVER_LOG='\$CVS_SERVER_LOG';" \
+	 "export CVS_PARENT_SERVER_SLEEP CVS_SERVER_LOG;" \
+	 "CVS_SECONDARY_LOG='\$CVS_SECONDARY_LOG';" \
+	 "TMPDIR='\$TMPDIR';" \
+	 "export CVS_SECONDARY_LOG TMPDIR;" \
+	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
+	 "CVSUMASK='\$CVSUMASK';" \
+	 "export CVS_RSH CVSUMASK;" \
+	 "CVS_PID='\$CVS_PID';" \
+	 "export CVS_PID;" \
+	 $time \
+	 \${1+"\$@"}
+EOF
+    chmod a+x $TESTDIR/ssh-wrapper
+    CVS_RSH=$TESTDIR/ssh-wrapper
+fi # $remotehost
+
+
 
 # Now set $TMPDIR if the user hasn't overridden it.
 #
@@ -824,11 +878,23 @@ else
   : good, it works
 fi
 
+# Execute a command on the repository, syncing when done if necessary.
+#
+# Syntax is as `eval'.
+modify_repo ()
+{
+    eval "$*"
+    if $proxy; then
+	# And now resync the secondary.
+	$TESTDIR/sync-secondary "repo modification" modify_repo ALL "$@"
+    fi
+}
+
 # Restore changes to CVSROOT admin files.
 restore_adm ()
 {
-    rm -rf $CVSROOT_DIRNAME/CVSROOT
-    cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
+    modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT
+    modify_repo cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
 }
 
 pass ()
@@ -979,14 +1045,14 @@ run_filter ()
 {
   if test -n "$TEST_FILTER"; then
     # Make sure there is an EOL
-    echo >>$TESTDIR/dotest.tmp
-    sed '${/^$/d}' <$TESTDIR/dotest.tmp >$TESTDIR/dotest.tmp.step2
+    echo >>$1
+    sed '${/^$/d}' <$1 >$1.filter1
     # Run the filter
-    eval "$TEST_FILTER" <$TESTDIR/dotest.tmp.step2 >$TESTDIR/dotest.tmp.filtered
-    diff -u $TESTDIR/dotest.tmp $TESTDIR/dotest.tmp.filtered \
-	    >$TESTDIR/dotest.diff
-    mv $TESTDIR/dotest.tmp.filtered $TESTDIR/dotest.tmp
-    rm $TESTDIR/dotest.tmp.step2
+    eval "$TEST_FILTER" <$1.filter1 >$1.filter2
+    diff -u $1 $1.filter2 \
+	    >$1.diff
+    mv $1.filter2 $1
+    rm $1.filter1
   fi
 }
 
@@ -1008,7 +1074,7 @@ dotest ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" != 0; then
     cat $TESTDIR/dotest.tmp >>$LOGFILE
     echo "exit status was $status" >>${LOGFILE}
@@ -1023,7 +1089,7 @@ dotest_lit ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" != 0; then
     cat $TESTDIR/dotest.tmp >>$LOGFILE
     echo "exit status was $status" >>$LOGFILE
@@ -1047,7 +1113,7 @@ dotest_fail ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp
   if test "$status" = 0; then
     cat $TESTDIR/dotest.tmp >>$LOGFILE
     echo "exit status was $status" >>$LOGFILE
@@ -1062,7 +1128,7 @@ dotest_sort ()
   rm -f $TESTDIR/dotest.ex? 2>&1
   eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp1
   if test "$status" != 0; then
     cat $TESTDIR/dotest.tmp1 >>$LOGFILE
     echo "exit status was $status" >>$LOGFILE
@@ -1075,10 +1141,10 @@ dotest_sort ()
 # Like dotest_fail except output is sorted.
 dotest_fail_sort ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
-  run_filter
+  run_filter $TESTDIR/dotest.tmp1
   if test "$status" = 0; then
     cat $TESTDIR/dotest.tmp1 >>$LOGFILE
     echo "exit status was $status" >>$LOGFILE
@@ -1163,6 +1229,7 @@ if test x"$*" = x; then
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
 	tests="${tests} dottedroot fork commit-d template"
+	tests="${tests} writeproxy"
 else
 	tests="$*"
 fi
@@ -2079,12 +2146,168 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 ###
 ### Initialize the repository
 ###
-dotest init-1 "$testcvs init"
+dotest 1 "$testcvs init"
+
+# Now hide the primary root above behind a secondary if requested.
+if $proxy; then
+    # Where the secondary root will be
+    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+
+    # Script to sync the secondary root.
+    cat >$TESTDIR/sync-secondary <<EOF
+#! $TESTSHELL
+# date >>$TESTDIR/update-log
+
+ps=\$1
+cmd=\$2
+dir=\$3
+shift
+shift
+shift
+
+# echo "updating from \$ps for command \\\`\$cmd' in dir \\\`\$dir'" \${1+"\$@"} \\
+#      >>$TESTDIR/update-log
+
+# If multiple CVS executables could attempt to access the repository, we would
+# Need to lock for this sync and sleep
+case "\$dir" in
+  ALL)
+    # This is a hack to allow a few of the tests to play with the
+    # UseNewInfoFmtStrings key in CVSROOT/config.  It's inefficient, but there
+    # aren't many tests than need it and the alternative is an awful lot of
+    # special casing.
+    rsync -rglop --delete --exclude '#cvs.*' \\
+          $CVSROOT_DIRNAME/ \\
+          $SECONDARY_CVSROOT_DIRNAME
+    ;;
+
+  *)
+    # For the majority of the tests we will only sync the directories that
+    # were written to.
+    case "\$cmd" in
+      add|import)
+	# For \`add', we need a recursive update due to quirks in rsync syntax,
+	# but it shouldn't affect efficiency since any new dir should be empty.
+	#
+	# For \`import', a recursive update is necessary since subdirs may have
+	# been added underneath the root dir we were passed. 
+        rsync -rglop \\
+	      $CVSROOT_DIRNAME/"\$dir" \\
+	      $SECONDARY_CVSROOT_DIRNAME/\`dirname -- "\$dir"\`
+        ;;
+
+      tag)
+	# \`tag' may have changed CVSROOT/val-tags too.
+        rsync -glop \\
+              $CVSROOT_DIRNAME/CVSROOT/val-tags \\
+              $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+	# Otherwise it is identical to other write commands.
+        rsync -rglop --delete \\
+              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
+              $CVSROOT_DIRNAME/"\$dir"/ \\
+              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        ;;
+
+      *)
+	# By default, sync just what changed.
+        rsync -rglop --delete \\
+              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
+              $CVSROOT_DIRNAME/"\$dir"/ \\
+              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        ;;
+    esac # \$cmd
+
+    # And keep the history file up to date for all commands.
+    rsync -glop \\
+          $CVSROOT_DIRNAME/CVSROOT/history \\
+          $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+    ;; # \$dir = *
+esac # \$dir
+
+# Avoid timestamp comparison issues with rsync.
+sleep 1
+EOF
+    chmod a+x $TESTDIR/sync-secondary
+
+    # And now init the secondary.
+    $TESTDIR/sync-secondary "- no, before - create secondary root" \
+                            sanity-setup ALL
+
+    # Initialize the primary repository
+    mkdir proxy-init; cd proxy-init
+    dotest proxy-init-1 "$testcvs -Q co CVSROOT"
+    cd CVSROOT
+    cat >>config <<EOF
+PrimaryServer=$CVSROOT
+EOF
+    cat >>loginfo <<EOF
+ALL $TESTDIR/sync-secondary loginfo %c %p %{sVv}
+EOF
+    cat >>postadmin <<EOF
+ALL $TESTDIR/sync-secondary postadmin %c %p
+EOF
+    cat >>posttag <<EOF
+ALL $TESTDIR/sync-secondary posttag %c %p %o %b %t %{sVv}
+EOF
+    cat >>postwatch <<EOF
+ALL $TESTDIR/sync-secondary postwatch %c %p
+EOF
+    dotest proxy-init-2 \
+"$testcvs -Q ci -mconfigure-writeproxy"
+
+    # Save these files for later reference
+    cp config $TESTDIR/config-clean
+    cp loginfo $TESTDIR/loginfo-clean
+    cp postadmin $TESTDIR/postadmin-clean
+    cp posttag $TESTDIR/posttag-clean
+    cp postwatch $TESTDIR/postwatch-clean
+
+    # done in here
+    cd ../..
+    rm -rf proxy-init
+
+    # Wrap the CVS server to allow --primary-root to be set by the
+    # secondary.
+    cat <<EOF >$TESTDIR/secondary-wrapper
+#! $TESTSHELL
+CVS_SERVER=$TESTDIR/primary-wrapper
+export CVS_SERVER
+
+# Decide if we should be talking to the secondary or the primary.
+#
+# This is a hack which is only necessary when testing in :fork: mode since the
+# servers need to be able to tell the two roots apart given the same \`Root'
+# request from the client.
+if test -f $TESTDIR/last-client-pid \\
+   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+    proot_arg=
+else
+    proot_arg="--primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+fi
+echo \$CVS_PID >$TESTDIR/last-client-pid
+
+$CVS_SERVER \$proot_arg "\$@"
+EOF
+    cat <<EOF >$TESTDIR/primary-wrapper
+#! $TESTSHELL
+# Don't overwrite the log created by the secondary
+if test -n "$CVS_SERVER_LOG"; then
+    CVS_SERVER_LOG=$CVS_SERVER_LOG-primary
+fi
+$CVS_SERVER "\$@"
+EOF
+    chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
+    CVS_SERVER=$TESTDIR/secondary-wrapper
+fi # $proxy
 
 # Save a copy of the initial repository so that it may be restored after the
 # tests that alter it.
 cp -rp $CVSROOT_DIRNAME/CVSROOT/ $TESTDIR/CVSROOT.save/
 
+
+###
+### The tests
+###
 dotest init-2 "$testcvs init"
 
 
@@ -2117,6 +2340,12 @@ a copy of which can be found with the CVS distribution kit.
 
 Specify the --help option for further information about CVS'
 
+# Maybe someday...
+#	  if $proxy; then
+#		dotest version-2r "${testcvs} version" \
+#'Client: Concurrent Versions System (CVS) [0-9p.]* (client.*)
+#Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)
+#Secondary Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 	  if $remote; then
 		dotest version-2r "${testcvs} version" \
 'Client: Concurrent Versions System (CVS) [0-9p.]* (client.*)
@@ -2126,6 +2355,8 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 'Concurrent Versions System (CVS) [0-9.]*.*'
 	  fi
 	  ;;
+
+
 
 	basica)
 	  # Similar in spirit to some of the basic1, and basic2
@@ -2138,39 +2369,39 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 	  # that is does everything through CVS; the reason most of the
 	  # tests don't use it is mostly historical.
 	  mkdir 1; cd 1
-	  dotest basica-0a "${testcvs} -q co -l ." ''
+	  dotest basica-0a "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest basica-0b "${testcvs} add first-dir" \
+	  dotest basica-0b "$testcvs add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
 	  cd ..
 	  rm -r 1
 
-	  dotest basica-1 "${testcvs} -q co first-dir" ''
+	  dotest basica-1 "$testcvs -q co first-dir" ''
 	  cd first-dir
 
 	  # Test a few operations, to ensure they gracefully do
 	  # nothing in an empty directory.
-	  dotest basica-1a0 "${testcvs} -q update" ''
-	  dotest basica-1a1 "${testcvs} -q diff -c" ''
-	  dotest basica-1a2 "${testcvs} -q status" ''
-	  dotest basica-1a3 "${testcvs} -q update ." ''
-	  dotest basica-1a4 "${testcvs} -q update ./" ''
+	  dotest basica-1a0 "$testcvs -q update"
+	  dotest basica-1a1 "$testcvs -q diff -c"
+	  dotest basica-1a2 "$testcvs -q status"
+	  dotest basica-1a3 "$testcvs -q update ."
+	  dotest basica-1a4 "$testcvs -q update ./"
 
 	  mkdir sdir
 	  # Remote CVS gives the "cannot open CVS/Entries" error, which is
 	  # clearly a bug, but not a simple one to fix.
-	  dotest basica-1a10 "${testcvs} -n add sdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository" \
-"${SPROG} add: cannot open CVS/Entries for reading: No such file or directory
-Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
+	  dotest basica-1a10 "$testcvs -n add sdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository" \
+"$SPROG add: cannot open CVS/Entries for reading: No such file or directory
+Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository"
 	  dotest_fail basica-1a11 \
-	    "test -d ${CVSROOT_DIRNAME}/first-dir/sdir" ''
-	  dotest basica-2 "${testcvs} add sdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
+	    "test -d $CVSROOT_DIRNAME/first-dir/sdir"
+	  dotest basica-2 "$testcvs add sdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository"
 	  cd sdir
 	  mkdir ssdir
-	  dotest basica-3 "${testcvs} add ssdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir added to the repository"
+	  dotest basica-3 "$testcvs add ssdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir/ssdir added to the repository"
 	  cd ssdir
 	  echo ssfile >ssfile
 
@@ -2410,9 +2641,11 @@ add-it
 
 	  cd ..
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir
 	  ;;
+
+
 
 	basicb)
 	  # More basic tests, including non-branch tags and co -d.
@@ -2627,18 +2860,20 @@ ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	    exit 0
 	  fi
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/second-dir
-	  rm -f ${CVSROOT_DIRNAME}/topfile,v
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -f $CVSROOT_DIRNAME/topfile,v
 	  ;;
+
+
 
 	basicc)
 	  # More tests of basic/miscellaneous functionality.
 	  mkdir 1; cd 1
-	  dotest_fail basicc-1 "${testcvs} diff" \
-"${CPROG} diff: in directory \.:
-${CPROG} \[diff aborted\]: there is no version here; run .${CPROG} checkout. first"
-	  dotest basicc-2 "${testcvs} -q co -l ." ''
+	  dotest_fail basicc-1 "$testcvs diff" \
+"$CPROG diff: in directory \.:
+$CPROG \[diff aborted\]: there is no version here; run .$CPROG checkout. first"
+	  dotest basicc-2 "$testcvs -q co -l ."
 	  mkdir first-dir second-dir
 	  dotest basicc-3 "${testcvs} add first-dir second-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository
@@ -2717,12 +2952,15 @@ D/second-dir////"
 
 	  cd ..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
+
+
 
 	basic1)
 	  # first dive - add a files, first singly, then in a group.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir basic1; cd basic1
 	  # check out an empty directory
 	  dotest basic1-1 "${testcvs} -q co first-dir" ''
@@ -3068,12 +3306,14 @@ new revision: delete; previous revision: 1\.1"
 	  fi
 
 	  rm -r basic1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	deep)
 	  # Test the ability to operate on directories nested rather deeply.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest deep-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  for i in dir1 dir2 dir3 dir4 dir5 dir6 dir7 dir8; do
@@ -3173,8 +3413,10 @@ new revision: delete; previous revision: 1\.1"
 	  else
 	    fail deep-5
 	  fi
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	basic2)
 		# Test rtag, import, history, various miscellaneous operations
@@ -3185,13 +3427,11 @@ new revision: delete; previous revision: 1\.1"
 		# continuing to piggyback them onto the tests here.
 
 		# First empty the history file
-		rm ${CVSROOT_DIRNAME}/CVSROOT/history
-		touch ${CVSROOT_DIRNAME}/CVSROOT/history
+		modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT/history
+		modify_repo touch $CVSROOT_DIRNAME/CVSROOT/history
 
-### XXX maybe should use `cvs imprt -b1 -m new-module first-dir F F1' in an
-### empty directory to do this instead of hacking directly into $CVSROOT
-		mkdir ${CVSROOT_DIRNAME}/first-dir
-		dotest basic2-1 "${testcvs} -q co first-dir" ''
+		modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+		dotest basic2-1 "$testcvs -q co first-dir"
 		for i in first-dir dir1 dir2 ; do
 			if test ! -d $i ; then
 				mkdir $i
@@ -3777,7 +4017,8 @@ U first-dir/dir1/dir2/file7"
 		# interrupt, while we've got a clean 1.1 here, let's import it
 		# into a couple of other modules.
 		cd export-dir
-		dotest_sort basic2-31 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
+		dotest_sort basic2-31 \
+"$testcvs import -m first-import second-dir first-immigration immigration1 immigration1_0" \
 "
 
 N second-dir/dir1/dir2/file14
@@ -3854,6 +4095,12 @@ ${SPROG} update: Updating dir1/dir2"
 		rm -r 1dir first-dir
 
 		# Test the cvs history command.
+		#
+		# Just skip these in write proxy mode for now.  We should only
+		# see write commands and maybe the last few reads in the
+		# secondary history file the way we currently sync, but I'm not
+		# going to try and test this yet.
+		if $proxy; then :; else
 
 		# The reason that there are two patterns rather than using
 		# \(${TESTDIR}\|<remote>\) is that we are trying to
@@ -3911,10 +4158,11 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
 P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
+	  fi
 
 	  dokeep
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -3934,8 +4182,10 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg"
@@ -3952,13 +4202,15 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg"
 	  # This used to cause a fatal error.
-	  mkdir $CVSROOT_DIRNAME/notcheckedout
+	  modify_repo mkdir $CVSROOT_DIRNAME/notcheckedout
 	  dotest ls-3 "$testcvs ls -RP" \
 "\.:
 CVSROOT
@@ -3973,8 +4225,10 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg"
@@ -3997,8 +4251,10 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -4196,8 +4452,9 @@ $output_dead"
 
 	  dokeep
 	  cd ../../..
-	  rm -rf ls $CVSROOT_DIRNAME/notcheckedout \
-	            $CVSROOT_DIRNAME/cemetery
+	  rm -r ls
+	  modify_repo rm -rf $CVSROOT_DIRNAME/notcheckedout \
+			     $CVSROOT_DIRNAME/cemetery
 	  unset output_living output_dead
 	  ;;
 
@@ -4253,6 +4510,8 @@ $CPROG \[logout aborted\]: Bad CVSROOT: \`:local;proxy=localhost:/dev/null'\."
 	  rm -r 1
 	  ;;
 
+
+
 	files)
 	  # Test of how we specify files on the command line
 	  # (recurse.c and that sort of thing).  Vaguely similar to
@@ -4282,11 +4541,11 @@ initial revision: 1\.1"
 --> Using per-directory sticky tag .C'"
 	  cd dir
 	  touch .file
-	  dotest files-6 "${testcvs} add .file" \
+	  dotest files-7b "${testcvs} add .file" \
 "${SPROG} add: scheduling file .\.file' for addition on branch .C.
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  mkdir sdir
-	  dotest files-7 "${testcvs} add sdir" \
+	  dotest files-7c "${testcvs} add sdir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir/dir/sdir added to the repository
 --> Using per-directory sticky tag .C'"
 	  cd sdir
@@ -4358,7 +4617,7 @@ new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3"
 	  dokeep
 	  cd ../../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -4410,9 +4669,8 @@ initial revision: 1\.1"
 	  cd ..
 
 	  rm -r 1 2 3
-	  rm -rf "${CVSROOT_DIRNAME}/first dir"
-	  rm -r ${CVSROOT_DIRNAME}/-b
-	  rm -f ${CVSROOT_DIRNAME}/-c,v
+	  modify_repo rm -rf "'$CVSROOT_DIRNAME/first dir'" \
+			     $CVSROOT_DIRNAME/-b $CVSROOT_DIRNAME/-c,v
 	  ;;
 
 
@@ -4445,7 +4703,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/"$module"
 	  ;;
 
 
@@ -4454,7 +4712,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 		# This tests for a bug in the status command which failed to
 		# notice resolved conflicts.
 		mkdir status; cd status
-		dotest status-init-1 "${testcvs} -q co -l ." ""
+		dotest status-init-1 "$testcvs -q co -l ."
 		mkdir first-dir
 		dotest status-init-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -4573,8 +4831,11 @@ File: t3file           	Status: Up-to-date
 		dokeep
 		cd ../../..
 		rm -rf status
-		rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/fourth-dir
+		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+				   $CVSROOT_DIRNAME/fourth-dir
 		;;
+
+
 
 	commit-readonlyfs)
 	  mkdir 1; cd 1
@@ -4614,8 +4875,9 @@ ${SPROG} \[commit aborted\]: lock failed - giving up"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/"$module"
 	  ;;
+
 
 
 	rdiff)
@@ -4710,8 +4972,10 @@ diff -c /dev/null trdiff/new:1\.1
 		dokeep
 		cd ..
 		rm -r testimport
-		rm -rf ${CVSROOT_DIRNAME}/trdiff
+		modify_repo rm -rf $CVSROOT_DIRNAME/trdiff
 		;;
+
+
 
 	rdiff-short)
 	  # Test that the short patch behaves as expected
@@ -4807,8 +5071,10 @@ File abc/file2\.txt is new; tag4 revision 1\.1'
 "File abc/file1\.txt changed from revision 1\.2 to 1\.3
 File abc/file2\.txt is new; current revision 1\.1"
 
-	  rm -rf ${CVSROOT_DIRNAME}/abc
+	  modify_repo rm -rf $CVSROOT_DIRNAME/abc
 	  ;;
+
+
 
 	rdiff2)
 	  # Test for the segv problem reported by James Cribb
@@ -4868,8 +5134,10 @@ diff -c m/d/bar:1\.1\.1\.1 m/d/bar:1\.2
 	  dokeep
 	  cd ../..
 	  rm -rf rdiff2
-	  rm -rf ${CVSROOT_DIRNAME}/m
+	  modify_repo rm -rf $CVSROOT_DIRNAME/m
 	  ;;
+
+
 
 	diff)
 	  # Various tests specific to the "cvs diff" command.
@@ -4879,10 +5147,10 @@ diff -c m/d/bar:1\.1\.1\.1 m/d/bar:1\.2
 	  #   rdiff: cvs rdiff.
 	  #   diffmerge*: nuts and bolts (stuff within diff library)
 	  mkdir 1; cd 1
-	  dotest diff-1 "${testcvs} -q co -l ." ''
+	  dotest diff-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest diff-2 "${testcvs} add first-dir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  dotest diff-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
 	  cd first-dir
 
 	  # diff is anomalous.  Most CVS commands print the "nothing
@@ -4917,9 +5185,11 @@ extern int gethostname ();
 
 	  dokeep
 	  cd ../..
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r 1
 	  ;;
+
+
 
 	diffnl)
 	  # Test handling of 'cvs diff' of files without newlines
@@ -5069,8 +5339,10 @@ diff -u -r1\.4 abc
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	death)
 		# next dive.  test death support.
@@ -5080,7 +5352,7 @@ diff -u -r1\.4 abc
 		# add new death support tests to a new section rather
 		# than continuing to piggyback them onto the tests here.
 
-		mkdir  ${CVSROOT_DIRNAME}/first-dir
+		modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 		dotest death-init-1 "$testcvs -Q co first-dir"
 
 		cd first-dir
@@ -5425,13 +5697,18 @@ U first-dir/file3'
 		# trunk version) and HEAD.
 		dotest_fail death-file2-1 "test -f file2" ''
 
-		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+		dokeep
+		cd ..
+		rm -r first-dir
+		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		;;
+
+
 
 	death2)
 	  # More tests of death support.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest death2-1 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest death2-1 "$testcvs -q co first-dir"
 
 	  cd first-dir
 
@@ -5635,8 +5912,8 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  # Test diff of a nonexistent tag
-	  dotest_fail death2-diff-9 "${testcvs} -q diff -rtag -c file3" \
-"${SPROG} diff: tag tag is not in file file3"
+	  dotest_fail death2-diff-9 "$testcvs -q diff -rtag -c file3" \
+"$SPROG diff: tag tag is not in file file3"
 
 	  dotest_fail death2-diff-10 "${testcvs} -q diff -rtag -N -c file3" \
 "Index: file3
@@ -5763,15 +6040,20 @@ new revision: delete; previous revision: 1\.2"
 "${SPROG} update: conflict: \`file4' is modified but no longer in the repository
 C file4"
 
-	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  dokeep
+	  cd ..
+	  rm -r first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	rm-update-message)
 	  # FIXME
 	  # local CVS prints a warning message when update notices a missing
 	  # file and client/server CVS doesn't.  These should be identical.
 	  mkdir rm-update-message; cd rm-update-message
-	  mkdir $CVSROOT_DIRNAME/rm-update-message
+	  modify_repo mkdir $CVSROOT_DIRNAME/rm-update-message
 	  dotest rm-update-message-setup-1 "$testcvs -q co rm-update-message" ''
 	  cd rm-update-message
 	  file=x
@@ -5787,14 +6069,13 @@ initial revision: 1\.1"
 "${SPROG} update: warning: \`$file' was lost
 U $file"
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
+	  dokeep
 	  cd ../..
 	  rm -r rm-update-message
-	  rm -rf $CVSROOT_DIRNAME/rm-update-message
+	  modify_repo rm -rf $CVSROOT_DIRNAME/rm-update-message
 	  ;;
+
+
 
 	rmadd)
 	  # More tests of adding and removing files.
@@ -5806,7 +6087,7 @@ U $file"
 	  #   * basica-8a2: likewise.
 	  #   * keywordlog-4: adding a new file with numeric revision.
 	  mkdir 1; cd 1
-	  dotest rmadd-1 "${testcvs} -q co -l ." ''
+	  dotest rmadd-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest rmadd-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -5879,6 +6160,25 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # Prior to CVS 1.12.10, this would fail with a, "no such tag" message
 	  # since val-tags used to be updated the first time the tag was used
 	  # rather than when it was created.
+
+	  # Try to make CVS write val-tags.
+	  if $proxy; then :; else
+	    # First remove the tag.
+	    grep -v mynonbranch $CVSROOT_DIRNAME/CVSROOT/val-tags \
+	         >$CVSROOT_DIRNAME/CVSROOT/val-tags-tmp
+	    mv $CVSROOT_DIRNAME/CVSROOT/val-tags-tmp \
+	       $CVSROOT_DIRNAME/CVSROOT/val-tags
+
+	    dotest rmadd-18 "$testcvs -q update -p -r mynonbranch file1" \
+"first file1"
+	    # Oops, -p suppresses writing val-tags (probably a questionable
+	    # behavior).
+	    dotest_fail rmadd-19 \
+"$testcvs -q ci -r mynonbranch -m add file4" \
+"$SPROG \[commit aborted\]: no such tag \`mynonbranch'"
+	    # Now make CVS write val-tags for real.
+	    dotest rmadd-20 "$testcvs -q update -r mynonbranch file1"
+	  fi # !$proxy
 
 	  # Oops - CVS isn't distinguishing between a branch tag and
 	  # a non-branch tag.
@@ -5974,10 +6274,13 @@ new revision: 9\.1; previous revision: 1\.1"
 	    dotest rmadd-33 "cat sub/CVS/Tag" "T9"
 	  fi
 
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	rmadd2)
 	  # Tests of undoing commits, including in the presence of
@@ -6059,7 +6362,7 @@ File: no file file1		Status: Up-to-date
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -6125,7 +6428,7 @@ $CPROG \[commit aborted\]: correct above errors first!"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -6190,7 +6493,7 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -6228,7 +6531,7 @@ ${SPROG} import: Importing ${CVSROOT_DIRNAME}/dir1/sdir"
 	  # occasions).  Not the usual recommended practice, but we want
 	  # to try to come up with some kind of reasonable/documented/sensible
 	  # behavior.
-	  rm -rf $CVSROOT_DIRNAME/dir1/sdir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/dir1/sdir
 
 	  dotest dirs-3 "${testcvs} update" \
 "${SPROG} update: Updating dir1
@@ -6267,7 +6570,7 @@ D/sdir////"
 	  dokeep
 	  cd ..
 	  rm -r imp-dir 1
-	  rm -rf $CVSROOT_DIRNAME/dir1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/dir1
 	  ;;
 
 
@@ -6326,6 +6629,7 @@ ${QUESTION} sdir"
 	  cd first-dir
 	  dotest dirs2-9 "${testcvs} -q tag -b br" "T sdir/file1"
 	  rm -r sdir/CVS
+
 	  if $remote; then
 	    # val-tags used to have a cute little quirk; if an update didn't
 	    # recurse into the directories where the tag is defined, val-tags
@@ -6380,14 +6684,14 @@ ${QUESTION} sdir"
 	  dokeep
 	  cd ../..
 	  rm -r 1 2 3
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
 
 	branches)
 	  # More branch tests, including branches off of branches
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest branches-1 "$testcvs -q co first-dir"
 	  cd first-dir
 	  echo 1:ancest >file1
@@ -6578,7 +6882,7 @@ done"
 
 	  dokeep
 	  cd ..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir
 	  ;;
 
@@ -6591,7 +6895,7 @@ done"
 	  # created on the appropriate branch.  Test this when joining
 	  # as well.
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir trunk; cd trunk
 
 	  # Create a file.
@@ -6687,8 +6991,10 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -6716,8 +7022,10 @@ CVSROOT:
 ---- $ISO8601DATE 1\.[0-9][0-9]*        modules
 ---- $ISO8601DATE 1\.[0-9][0-9]*        notify
 ---- $ISO8601DATE 1\.[0-9][0-9]*        postadmin
+---- $ISO8601DATE 1\.[0-9][0-9]*        postproxy
 ---- $ISO8601DATE 1\.[0-9][0-9]*        posttag
 ---- $ISO8601DATE 1\.[0-9][0-9]*        postwatch
+---- $ISO8601DATE 1\.[0-9][0-9]*        preproxy
 ---- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
@@ -6745,8 +7053,10 @@ CVSROOT:
 /modules/1\.[0-9][0-9]*/$DATE//
 /notify/1\.[0-9][0-9]*/$DATE//
 /postadmin/1\.[0-9][0-9]*/$DATE//
+/postproxy/1\.[0-9][0-9]*/$DATE//
 /posttag/1\.[0-9][0-9]*/$DATE//
 /postwatch/1\.[0-9][0-9]*/$DATE//
+/preproxy/1\.[0-9][0-9]*/$DATE//
 /rcsinfo/1\.[0-9][0-9]*/$DATE//
 /taginfo/1\.[0-9][0-9]*/$DATE//
 /verifymsg/1\.[0-9][0-9]*/$DATE//
@@ -6773,8 +7083,10 @@ loginfo
 modules
 notify
 postadmin
+postproxy
 posttag
 postwatch
+preproxy
 rcsinfo
 taginfo
 verifymsg
@@ -7033,7 +7345,7 @@ first-dir/dir2:
 
 	  dokeep
 	  cd ../../..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r trunk b1a b1b
 	  ;;
 
@@ -7051,7 +7363,7 @@ first-dir/dir2:
 	  # the server?
 
 	  if test -n "$remotehost"; then :;else
-	    mkdir $CVSROOT_DIRNAME/first-dir
+	    modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	    mkdir branches3; cd branches3
 
 	    dotest branches3-1 "$testcvs -q co first-dir"
@@ -7089,7 +7401,7 @@ add
 
 	    dokeep
 	    cd ../..
-	    rm -rf $CVSROOT_DIRNAME/first-dir
+	    modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	    rm -r branches3
 	  fi # !$remotehost
 	  ;;
@@ -7100,7 +7412,7 @@ add
 	  # test where a tag is a branch tag in some files and a revision
 	  # tag in others
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir branches4; cd branches4
 
 	  dotest branches4-1 "$testcvs -q co first-dir"
@@ -7174,7 +7486,7 @@ ${SPROG} update: Updating versions"
 
 	  dokeep
 	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r branches4
 	  ;;
 
@@ -7244,7 +7556,7 @@ T file2"
 	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -7334,7 +7646,7 @@ $SPROG add: use \`$SPROG commit' to add this file permanently"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -7535,7 +7847,7 @@ ${SPROG} rtag: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -7685,7 +7997,8 @@ EOF
 
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+	                     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -7697,7 +8010,7 @@ EOF
 	  # neither tag should be expanded in the output.  Also diff
 	  # one revision with the working copy.
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest rcsdiff-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  echo "I am the first foo, and my name is $""Name$." > foo.c
@@ -7815,17 +8128,17 @@ diff -c -F\.\*( -r1\.1 rgx\.c
 
 	  cd ..
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir
 
 	  mkdir 1; cd 1
-	  dotest rcslib-merge-1 "${testcvs} -q co -l ." ""
+	  dotest rcslib-merge-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest rcslib-merge-2 "${testcvs} -q add first-dir" \
-"Directory ${CVSROOT_DIRNAME}.*/first-dir added to the repository"
+	  dotest rcslib-merge-2 "$testcvs -q add first-dir" \
+"Directory $CVSROOT_DIRNAME.*/first-dir added to the repository"
 	  cd ..; rm -r 1
 
-	  dotest rcslib-merge-3 "${testcvs} -q co first-dir" ""
+	  dotest rcslib-merge-3 "$testcvs -q co first-dir" ""
 	  cd first-dir
 
 	  echo '$''Revision$' > file1
@@ -7883,14 +8196,14 @@ two
 	    # Windows support creates *.lnk files for Windows.  When creating
 	    # these in an SMB share from UNIX, these links won't work from the
 	    # UNIX side.
-	    dotest rcslib-symlink-1remotehost "${CVS_RSH} $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	    modify_repo $CVS_RSH $remotehost "'ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v'"
 	  else
-	    dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	    modify_repo ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
-	  dotest rcslib-symlink-2 "${testcvs} update file2" "U file2"
+	  dotest rcslib-symlink-2 "$testcvs update file2" "U file2"
 	  echo "This is a change" >> file2
-	  dotest rcslib-symlink-3 "${testcvs} ci -m because file2" \
-"${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file2
+	  dotest rcslib-symlink-3 "$testcvs ci -m because file2" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 
 	  # Switch as for rcslib-symlink-1
@@ -7921,23 +8234,23 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
 	  # As for rcslib-symlink-1
 	  if test -n "$remotehost"; then
-	    dotest rcslib-symlink-3f "$CVS_RSH $remotehost 'ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	    modify_repo "$CVS_RSH $remotehost 'ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file2,v'"
 	  else
-	    dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	    modify_repo ln -s Attic/file3,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
 
-	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
+	  dotest rcslib-symlink-3g "$testcvs update file2" "U file2"
 
 	  # restore the link to file1 for the following tests
-	  dotest rcslib-symlink-3i "${testcvs} -Q rm -f file3" ''
+	  dotest rcslib-symlink-3i "$testcvs -Q rm -f file3" ''
 	  dotest rcslib-symlink-3j "$testcvs -Q ci -mwhatever file3"
-	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
-	  rm -f ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+	  rm -f $CVSROOT_DIRNAME/first-dir/file2,v
+	  rm -f $CVSROOT_DIRNAME/first-dir/Attic/file3,v
 	  # As for rcslib-symlink-1
 	  if test -n "$remotehost"; then
-	    dotest rcslib-symlink-3h "$CVS_RSH $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	    modify_repo "$CVS_RSH $remotehost 'ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v'"
 	  else
-	    dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	    modify_repo ln -s file1,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  fi
 
 	  # Test 5 reveals a problem with having symlinks in the
@@ -7947,8 +8260,8 @@ new revision: 1\.1\.2\.[0-9]*; previous revision: 1\.1\.2\.[0-9]*"
 	  # so the tag will already be there.  FIXME: do we bother
 	  # changing operations to notice cases like this?  This
 	  # strikes me as a difficult problem.  -Noel
-	  dotest rcslib-symlink-5 "${testcvs} tag the_tag" \
-"${SPROG} tag: Tagging .
+	  dotest rcslib-symlink-5 "$testcvs tag the_tag" \
+"$SPROG tag: Tagging .
 T file1
 W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
 	  # As for rcslib-symlink-1
@@ -7963,14 +8276,14 @@ W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 
 	  # Symlinks tend to interact poorly with the Attic.
 	  cd ..
 	  mkdir 2; cd 2
-	  dotest rcslib-symlink-7 "${testcvs} -q co first-dir" \
+	  dotest rcslib-symlink-7 "$testcvs -q co first-dir" \
 "U first-dir/file1
 U first-dir/file2"
 	  cd first-dir
-	  dotest rcslib-symlink-8 "${testcvs} rm -f file2" \
-"${SPROG} remove: scheduling .file2. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
-	  dotest rcslib-symlink-9 "${testcvs} -q ci -m rm-it" \
+	  dotest rcslib-symlink-8 "$testcvs rm -f file2" \
+"$SPROG remove: scheduling .file2. for removal
+$SPROG remove: use .$SPROG commit. to remove this file permanently"
+	  dotest rcslib-symlink-9 "$testcvs -q ci -m rm-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file2
 new revision: delete; previous revision: 1\.2"
 	  # OK, why this message happens twice is relatively clear
@@ -8000,7 +8313,7 @@ $SPROG rtag: could not read RCS file for first-dir/file2"
 	  if test -n "$remotehost"; then
 	    $CVS_RSH $remotehost "rm -f $CVSROOT_DIRNAME/first-dir/file2,v"
 	  fi
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir 2
 	  ;;
 
@@ -8009,7 +8322,7 @@ $SPROG rtag: could not read RCS file for first-dir/file2"
 	multibranch)
 	  # Test the ability to have several branchpoints coming off the
 	  # same revision.
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest multibranch-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  echo 1:trunk-1 >file1
@@ -8073,7 +8386,7 @@ modify-on-br1
 
 	  dokeep
 	  cd ..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir
 	  ;;
 
@@ -8300,7 +8613,7 @@ rev 2 of file 2
 		dokeep
 		cd ..
 		rm -r first-dir
-		rm -rf $CVSROOT_DIRNAME/first-dir
+		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 		rm -r import-dir
 		;;
 
@@ -8404,7 +8717,8 @@ add
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -8541,7 +8855,7 @@ import-it
 	  TZ=$save_TZ
 	  cd ..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -8684,7 +8998,7 @@ add
 
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 
@@ -8759,20 +9073,12 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 add
 ============================================================================="
 
+	  dokeep
 	  cd ../..
-
-	  # Restore initial config state.
-	  cd wnt/CVSROOT
-	  dotest importX2-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
-	  dotest importX2-cleanup-2 "${testcvs} -q ci -m check-in-admin-files" \
-"${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Rebuilding administrative file database"
-	  cd ../..
-
+	  restore_adm
 	  rm -r 1
 	  rm -r wnt
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -8806,7 +9112,7 @@ $SPROG import: Importing $CVSROOT_DIRNAME/import-CVS/sdir"
 	  dokeep
 	  cd ..
 	  rm -r import-CVS
-	  rm -rf $CVSROOT_DIRNAME/import-CVS
+	  modify_repo rm -rf $CVSROOT_DIRNAME/import-CVS
 	  ;;
 
 
@@ -8858,7 +9164,7 @@ $SPROG import: Importing $CVSROOT_DIRNAME/import-CVS/sdir"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -8918,7 +9224,7 @@ new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r branch-after-import
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -9002,10 +9308,10 @@ new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1"
 	  # In the tests below, fileN represents case N in the above
 	  # lists.
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
-	  dotest join-1 "${testcvs} -q co first-dir" ''
+	  dotest join-1 "$testcvs -q co first-dir"
 
 	  cd first-dir
 
@@ -9408,7 +9714,7 @@ Merging differences between 1\.1 and 1\.2 into file7"
 	  dokeep
 	  cd ../..
 	  rm -r 1 2 3
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -9515,7 +9821,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -9613,7 +9919,7 @@ br2:line1
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -9621,7 +9927,7 @@ br2:line1
 	join4)
 	  # Like join, but with local (uncommitted) modifications.
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
 	  dotest join4-1 "${testcvs} -q co first-dir" ''
@@ -9802,7 +10108,7 @@ R file9'
 	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -9854,7 +10160,7 @@ C -file"
 	  dokeep
 	  cd ../../..
 	  rm -r join5
-	  rm -rf $CVSROOT_DIRNAME/join5
+	  modify_repo rm -rf $CVSROOT_DIRNAME/join5
 	  ;;
 
 
@@ -10027,7 +10333,7 @@ U temp2\.txt
 	  dokeep
 	  cd ../../..
 	  rm -r join6
-	  rm -rf $CVSROOT_DIRNAME/join6
+	  modify_repo rm -rf $CVSROOT_DIRNAME/join6
 	  ;;
 
 
@@ -10106,7 +10412,7 @@ C m"
 	  dokeep
 	  cd ../..
 	  rm -r join-readonly-conflict
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -10152,7 +10458,7 @@ File: b                	Status: Up-to-date
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -10218,7 +10524,7 @@ e already contains the differences between 1\.1 and 1\.2"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -10328,64 +10634,36 @@ File: a                	Status: Up-to-date
 
 	  dokeep
 	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  rm -r $module
 	  ;;
 
+
+
 	new) # look for stray "no longer pertinent" messages.
-		mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest new-init-1 "$testcvs -Q co first-dir"
 
-		if ${CVS} co first-dir  ; then
-		    pass 117
-		else
-		    fail 117
-		fi
+	  cd first-dir
+	  touch a
 
-		cd first-dir
-		touch a
+	  dotest new-1 "$testcvs -Q add a"
 
-		if ${CVS} add a  2>>${LOGFILE}; then
-		    pass 118
-		else
-		    fail 118
-		fi
+	  dotest new-2 "$testcvs -Q ci -m added"
+	  rm a
 
-		if ${CVS} ci -m added  >>${LOGFILE} 2>&1; then
-		    pass 119
-		else
-		    fail 119
-		fi
+	  dotest new-3 "$testcvs -Q rm a"
+	  dotest new-4 "$testcvs -Q ci -m removed"
+	  dotest new-5 "$testcvs -Q update -A"
+	  dotest new-6 "$testcvs -Q update -rHEAD"
 
-		rm a
+	  dokeep
+	  cd ..
+	  rm -r first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
 
-		if ${CVS} rm a  2>>${LOGFILE}; then
-		    pass 120
-		else
-		    fail 120
-		fi
 
-		if ${CVS} ci -m removed >>${LOGFILE} ; then
-		    pass 121
-		else
-		    fail 121
-		fi
-
-		if ${CVS} update -A  2>&1 | grep longer ; then
-		    fail 122
-		else
-		    pass 122
-		fi
-
-		if ${CVS} update -rHEAD 2>&1 | grep longer ; then
-		    fail 123
-		else
-		    pass 123
-		fi
-
-		cd ..
-		rm -r first-dir
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		;;
 
 	newb)
 	  # Test removing a file on a branch and then checking it out.
@@ -10395,7 +10673,7 @@ File: a                	Status: Up-to-date
 	  # Not necessarily the most brilliant nomenclature.
 
 	  # Create file 'a'.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest newb-123a "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  touch a
@@ -10463,13 +10741,16 @@ File: a                	Status: Entry Invalid
 	    pass newb-123k
 	  fi
 
+	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
+
+
 	conflicts)
-		mkdir ${CVSROOT_DIRNAME}/first-dir
+		modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 
 		mkdir 1
 		cd 1
@@ -10718,14 +10999,20 @@ File: a                	Status: Up-to-date
 		else
 		    fail 142
 		fi
+
+		dokeep
 		cd ../..
-		rm -r 1 2 3 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -r 1 2 3
+		modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+		restore_adm
 		;;
+
+
 
 	conflicts2)
 	  # More conflicts tests; separate from conflicts to keep each
 	  # test a manageable size.
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 
 	  mkdir 1
 	  cd 1
@@ -10957,7 +11244,7 @@ File: bb\.c             	Status: Unresolved Conflict
 	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -11121,7 +11408,7 @@ new revision: delete; previous revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -11202,7 +11489,7 @@ fish"
 	  dokeep
 	  cd ../..
           rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -11221,8 +11508,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11298,7 +11587,7 @@ a change"
 	  # Done. Clean up.
 	  cd ../..
 	  rm -rf $TESTDIR/keywordexpand
-          rm -rf $CVSROOT_DIRNAME/keywordexpand
+          modify_repo rm -rf $CVSROOT_DIRNAME/keywordexpand
 	  restore_adm
 	  ;;
 
@@ -11336,8 +11625,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11360,8 +11651,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11375,7 +11668,7 @@ $SPROG commit: Rebuilding administrative file database"
 
 	  ############################################################
 	  # Check out CVSROOT in some other directory
-	  mkdir $CVSROOT_DIRNAME/somedir
+	  modify_repo mkdir $CVSROOT_DIRNAME/somedir
 	  mkdir 1; cd 1
 	  dotest modules-3 "${testcvs} -q co somedir" ''
 	  cd somedir
@@ -11387,8 +11680,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -11399,13 +11694,13 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/somedir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/somedir
 	  ############################################################
 	  # end rebuild tests
 	  ############################################################
 
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 
 	  mkdir 1
 	  cd 1
@@ -11438,7 +11733,7 @@ $CVSROOT_DIRNAME/first-dir/subdir/b,v  <--  b
 initial revision: 1\.1"
 
 	  cd ..
-	  dotest modules-146 "${testcvs} -q co CVSROOT" \
+	  dotest modules-146 "$testcvs -q co CVSROOT" \
 "U CVSROOT/checkoutlist
 U CVSROOT/commitinfo
 U CVSROOT/config
@@ -11447,8 +11742,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -11483,9 +11780,9 @@ infinitealias5 -a infinitealias3/
 bogusalias first-dir/subdir/a -a
 EOF
 	  dotest modules-148 "$testcvs ci -m 'add modules' CVSROOT/modules" \
-"${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Rebuilding administrative file database"
+$SPROG commit: Rebuilding administrative file database"
 
 	  cd ..
 	  # The "statusmod" module contains an error; trying to use it
@@ -11663,7 +11960,7 @@ U first-dir/file2"
 	  dokeep
 	  cd ..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -11906,8 +12203,9 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd ..;  rm -r 1
 
 	  # Clean up.
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir \
-		 $CVSROOT_DIRNAME/third-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir \
+			     $CVSROOT_DIRNAME/third-dir
 	  ;;
 
 
@@ -11919,7 +12217,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  # First just set up a directory first-dir and a file file1 in it.
 	  mkdir 1; cd 1
 
-	  dotest modules3-0 "${testcvs} -q co -l ." ''
+	  dotest modules3-0 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest modules3-1 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -12073,7 +12371,8 @@ initial revision: 1\.1"
 
 	  dokeep
 	  cd ..; rm -r 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -12207,7 +12506,7 @@ add-it
 	  dokeep
 	  cd ../../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -12215,7 +12514,7 @@ add-it
 	modules5)
 	  # Test module programs
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
 	  dotest modules5-1 "$testcvs -q co first-dir"
@@ -12251,8 +12550,10 @@ U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
 U CVSROOT/postadmin
+U CVSROOT/postproxy
 U CVSROOT/posttag
 U CVSROOT/postwatch
+U CVSROOT/preproxy
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -12262,7 +12563,7 @@ U CVSROOT/verifymsg"
 	  # cvs to prevent them in the first place.
 	  for i in checkout export tag; do
 	    cat >> ${CVSROOT_DIRNAME}/$i.sh <<EOF
-#! /bin/sh
+#! $TESTSHELL
 sleep 1
 echo "$i script invoked in \`pwd\`"
 echo "args: \$@"
@@ -12595,7 +12896,8 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  dokeep
 	  cd ..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/*.sh
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/*.sh
 	  ;;
 
 
@@ -12677,7 +12979,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 
 	  dokeep
 	  cd ../..
-	  rm -rf 1
+	  rm -r 1
 	  ;;
 
 
@@ -12764,7 +13066,7 @@ U dir5/sdir/file2"
 	  # clean up
 	  dokeep
 	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  rm -r $module
 	  ;;
 
@@ -13877,26 +14179,16 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  ## That's enough of that, thank you very much.
 	  ##################################################
 
-	  dotest cvsadm-cleanup-1 "${testcvs} -q co CVSROOT/config" \
-"U CVSROOT/config"
-	  cd CVSROOT
-	  dotest cvsadm-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
-	  dotest cvsadm-cleanup-3 "$testcvs -q ci -m cvsadm-cleanup" \
-"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
-
 	  dokeep
-          cd ..
-          rm -rf CVSROOT CVS
+	  restore_adm
 
 	  # remove our junk
 	  cd ..
-	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/1mod $CVSROOT_DIRNAME/1mod-2 \
-		 $CVSROOT_DIRNAME/2mod $CVSROOT_DIRNAME/2mod-2 \
-		 $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod1-2 \
-		 $CVSROOT_DIRNAME/mod2 $CVSROOT_DIRNAME/mod2-2
+	  rm -r 1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/1mod $CVSROOT_DIRNAME/1mod-2 \
+			     $CVSROOT_DIRNAME/2mod $CVSROOT_DIRNAME/2mod-2 \
+			     $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod1-2 \
+			     $CVSROOT_DIRNAME/mod2 $CVSROOT_DIRNAME/mod2-2
 	  ;;
 
 
@@ -13923,9 +14215,9 @@ ${SPROG} commit: Rebuilding administrative file database" \
 "${CPROG} commit: Examining CVSROOT"
 	  rm -rf CVS CVSROOT
 
-	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
+	  modify_repo mkdir $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/moda
 	  # Populate.  Not sure we really need to do this.
-	  dotest emptydir-3 "${testcvs} -q co -l ." ""
+	  dotest emptydir-3 "$testcvs -q co -l ."
 	  dotest emptydir-3a "${testcvs} co mod1 moda" \
 "${SPROG} checkout: Updating mod1
 ${SPROG} checkout: Updating moda"
@@ -14009,7 +14301,7 @@ U dir2d1/sub/sub2d1/file1"
 	  dokeep
 	  cd ..
 	  rm -r 1 2 3
-	  rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/moda
+	  modify_repo rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/moda
 	  # I guess for the moment the convention is going to be
 	  # that we don't need to remove $CVSROOT_DIRNAME/CVSROOT/Emptydir
 	  ;;
@@ -14026,7 +14318,7 @@ U dir2d1/sub/sub2d1/file1"
 	  #
 
 	  # Create a few modules to use
-	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod2
+	  modify_repo mkdir $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod2
 	  dotest abspath-1a "${testcvs} co mod1 mod2" \
 "${SPROG} checkout: Updating mod1
 ${SPROG} checkout: Updating mod2"
@@ -14072,7 +14364,7 @@ U ${TESTDIR}/1/file1"
 	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" "mod1"
 
 	  # Done.  Clean up.
-	  rm -r ${TESTDIR}/1
+	  rm -r $TESTDIR/1
 
 
 	  # Now try in a subdirectory.  We're not covering any more
@@ -14084,11 +14376,11 @@ U ${TESTDIR}/1/file1"
 	  # I am unsure that this wasn't the behavior prior to CVS 1.9, but the
 	  # comment that used to be here leads me to believe it was not.
 	  if $remote; then :; else
-	    dotest abspath-3.1 "${testcvs} -q co -d ${TESTDIR}/1/2 mod1" \
+	    dotest abspath-3.1 "$testcvs -q co -d $TESTDIR/1/2 mod1" \
 "U $TESTDIR/1/2/file1"
 	    rm -r $TESTDIR/1
 	  fi
-	  dotest abspath-3.2 "${testcvs} -q co -d 1/2 mod1" \
+	  dotest abspath-3.2 "$testcvs -q co -d 1/2 mod1" \
 "U 1/2/file1"
 	  rm -r 1
 
@@ -14144,18 +14436,18 @@ U ${TESTDIR}/1/mod2/file2"
 	  dotest abspath-5c "cat ${TESTDIR}/1/mod1/CVS/Repository" "mod1"
 	  dotest abspath-5d "cat ${TESTDIR}/1/mod2/CVS/Repository" "mod2"
 	  # Done.  Clean up.
-	  rm -rf ${TESTDIR}/1
+	  rm -rf $TESTDIR/1
 
 
 	  # Try checking out the top-level module.
 	  if $remote; then
-	    dotest abspath-6ar "${testcvs} co -d 1 ." \
-"${SPROG} checkout: Updating 1
-${SPROG} checkout: Updating 1/CVSROOT
-${DOTSTAR}
-${SPROG} checkout: Updating 1/mod1
+	    dotest abspath-6ar "$testcvs co -d 1 ." \
+"$SPROG checkout: Updating 1
+$SPROG checkout: Updating 1/CVSROOT
+$DOTSTAR
+$SPROG checkout: Updating 1/mod1
 U 1/mod1/file1
-${SPROG} checkout: Updating 1/mod2
+$SPROG checkout: Updating 1/mod2
 U 1/mod2/file2"
 	  else
 	    dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
@@ -14205,16 +14497,15 @@ ${SPROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 	  fi # remote workaround
 	  dotest abspath-7e "${testcvs} -q update -d"
 
-	  dokeep
-	  cd ../..
-	  rm -r 1 2 3
-
 	  #
 	  # FIXME: do other functions here (e.g. update /tmp/foo)
 	  #
 
-	  # Finished with all tests.  Remove the module.
-	  rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod2
+	  # Finished with all tests.  Cleanup.
+	  dokeep
+	  cd ../..
+	  rm -r 1 2 3
+	  modify_repo rm -rf $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod2
 	  ;;
 
 
@@ -14344,19 +14635,12 @@ ${SPROG} checkout: Updating top-dir"
 
 	  chmod +w ../1
 
-	  dotest toplevel-cleanup-1 "${testcvs} -q co CVSROOT/config" \
-"U CVSROOT/config"
-	  cd CVSROOT
-	  dotest toplevel-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
-	  dotest toplevel-cleanup-3 "${testcvs} -q ci -m toplevel-cleanup" \
-"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
-
 	  dokeep
-	  cd ../..
+	  restore_adm
+	  cd ..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/top-dir $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/top-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -14431,19 +14715,12 @@ U top-dir/file1"
 	  # would give us second-dir and CVSROOT directories too.
 	  dotest toplevel2-11 "${testcvs} -q update -d" ""
 
-	  dotest toplevel2-cleanup-1 "${testcvs} -q co CVSROOT/config" \
-"U CVSROOT/config"
-	  cd CVSROOT
-	  dotest toplevel2-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
-	  dotest toplevel2-cleanup-3 "$testcvs -q ci -m toplevel2-cleanup" \
-"$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
-
 	  dokeep
-	  cd ../..
+	  cd ..
+	  restore_adm
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/top-dir $CVSROOT_DIRNAME/second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/top-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -14495,7 +14772,7 @@ RCS file: $CVSROOT_DIRNAME/CVSROOT$DOTSTAR"
 	  dokeep
 	  cd ../..
 	  rm -rf trailingslashes
-	  rm -rf $CVSROOT_DIRNAME/topfile,v
+	  modify_repo rm -rf $CVSROOT_DIRNAME/topfile,v
 	  ;;
 
 
@@ -14531,10 +14808,14 @@ ${CPROG} checkout: move away \`CVSROOT/notify'; it is in the way
 C CVSROOT/notify
 ${CPROG} checkout: move away \`CVSROOT/postadmin'; it is in the way
 C CVSROOT/postadmin
+${CPROG} checkout: move away \`CVSROOT/postproxy'; it is in the way
+C CVSROOT/postproxy
 ${CPROG} checkout: move away \`CVSROOT/posttag'; it is in the way
 C CVSROOT/posttag
 ${CPROG} checkout: move away \`CVSROOT/postwatch'; it is in the way
 C CVSROOT/postwatch
+${CPROG} checkout: move away \`CVSROOT/preproxy'; it is in the way
+C CVSROOT/preproxy
 ${CPROG} checkout: move away \`CVSROOT/rcsinfo'; it is in the way
 C CVSROOT/rcsinfo
 ${CPROG} checkout: move away \`CVSROOT/taginfo'; it is in the way
@@ -14607,7 +14888,7 @@ VERS: 1\.[0-9]*
 	    # Clean up
 	    cd ..
 	    rm -r a-dir
-	    rm -rf $CVSROOT_DIRNAME/a-dir
+	    modify_repo rm -rf $CVSROOT_DIRNAME/a-dir
 	  done
 	  ;;
 
@@ -14835,11 +15116,10 @@ Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 "U CVSROOT/loginfo"
 
           cd CVSROOT
-	  echo 'DEFAULT (echo Start-Log;cat;echo End-Log) >> $CVSROOT/CVSROOT/commitlog' > loginfo
-	  dotest editor-emptylog-continue-2 "${testcvs} commit -m add loginfo" \
-"${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
-new revision: 1\.2; previous revision: 1\.1
-${SPROG} commit: Rebuilding administrative file database"
+	  cat <<\EOF >>loginfo
+DEFAULT (echo Start-Log;cat;echo End-Log) >> $CVSROOT/CVSROOT/commitlog
+EOF
+	  dotest editor-emptylog-continue-2 "$testcvs -Q ci -mloggem"
 
 	  cd ../first-dir
 	  cat >${TESTDIR}/editme <<EOF
@@ -14861,10 +15141,19 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # format and a NULL pointer...
 	  if $remote; then
 	    dotest editor-emptylog-continue-4r \
-"cat ${CVSROOT_DIRNAME}/CVSROOT/commitlog" \
+"cat $CVSROOT_DIRNAME/CVSROOT/commitlog" \
 "Start-Log
-Update of ${CVSROOT_DIRNAME}/first-dir
-In directory ${hostname}:${TMPDIR}/cvs-serv[0-9a-z]*
+Update of $CVSROOT_DIRNAME/CVSROOT
+In directory $hostname:$TMPDIR/cvs-serv[0-9a-z]*
+
+Modified Files:
+	loginfo 
+Log Message:
+loggem
+End-Log
+Start-Log
+Update of $CVSROOT_DIRNAME/first-dir
+In directory $hostname:$TMPDIR/cvs-serv[0-9a-z]*
 
 Modified Files:
 	file1 
@@ -14873,10 +15162,19 @@ Log Message:
 End-Log"
           else
 	    dotest editor-emptylog-continue-4 \
-"cat ${CVSROOT_DIRNAME}/CVSROOT/commitlog" \
+"cat $CVSROOT_DIRNAME/CVSROOT/commitlog" \
 "Start-Log
-Update of ${CVSROOT_DIRNAME}/first-dir
-In directory ${hostname}:${TESTDIR}/1/first-dir
+Update of $CVSROOT_DIRNAME/CVSROOT
+In directory $hostname:$TESTDIR/1/CVSROOT
+
+Modified Files:
+	loginfo 
+Log Message:
+loggem
+End-Log
+Start-Log
+Update of $CVSROOT_DIRNAME/first-dir
+In directory $hostname:$TESTDIR/1/first-dir
 
 Modified Files:
 	file1 
@@ -14903,23 +15201,13 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: +0 -0
 ============================================================================="
 
 	  # clean up
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
-	  # restore the default loginfo script
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v \
-                ${CVSROOT_DIRNAME}/CVSROOT/loginfo \
-                ${CVSROOT_DIRNAME}/CVSROOT/commitlog
-	  dotest editor-emptylog-continue-cleanup-1 "${testcvs} init" ''
-
 	  dokeep
-
+	  # restore the default loginfo script
+	  restore_adm
 	  cd ../..
 	  rm -r 1
-	  rm ${TESTDIR}/editme
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm $TESTDIR/editme
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15014,14 +15302,14 @@ initial revision: 1\.1"
 	    restore_adm
 	    cd ../..
 	    rm -fr $TESTDIR/env
-	    rm -rf $CVSROOT_DIRNAME/env
+	    modify_repo rm -rf $CVSROOT_DIRNAME/env
 	  fi
 	  ;;
 
 
 
 	errmsg1)
-	  mkdir $CVSROOT_DIRNAME/1dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/1dir
 	  mkdir 1
 	  cd 1
 	  dotest errmsg1-init-1 "$testcvs -Q co 1dir"
@@ -15076,7 +15364,7 @@ ${SPROG} update: unable to remove foo: Permission denied" \
 	  chmod u+w 1dir
 	  cd ..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/1dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/1dir
 	  ;;
 
 
@@ -15204,7 +15492,7 @@ initial revision: 1\.1"
 	  dokeep
 	  cd ..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15271,7 +15559,7 @@ initial revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/adderrmsg-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/adderrmsg-dir
 	  ;;
 
 
@@ -15298,7 +15586,7 @@ initial revision: 1\.1"
 
 
 	devcom)
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
 	  dotest devcom-1 "$testcvs -q co first-dir"
@@ -15338,8 +15626,7 @@ U first-dir/abc"
 	  dotest_fail devcom-9 "test -w abb"
 	  dotest_fail devcom-9b "test -w abc"
 
-	  dotest devcom-10 "$testcvs editors" ""
-
+	  dotest devcom-10 "$testcvs editors"
 	  dotest devcom-11 "$testcvs edit abb"
 
 	  # Here we test for the traditional ISO C ctime() date format.
@@ -15460,7 +15747,7 @@ U first-dir/abc'
 	  cd ..
 	  # Use -f because of the readonly files.
 	  rm -rf 1 2 3
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15468,7 +15755,7 @@ U first-dir/abc'
 	devcom2)
 	  # More watch tests, most notably setting watches on
 	  # files in various different states.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
 	  dotest devcom2-1 "${testcvs} -q co first-dir" ''
@@ -15553,7 +15840,7 @@ D	_watched="
 	  cd ../..
 	  # Use -f because of the readonly files.
 	  rm -rf 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15561,7 +15848,7 @@ D	_watched="
 	devcom3)
 	  # More watch tests, most notably handling of features designed
 	  # for future expansion.
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
 
@@ -15652,12 +15939,20 @@ G@#..!@#=&"
 	    dotest_fail devcom3-9ar "$testcvs edit w1 2>/dev/null"
 	    dotest devcom3-9br "test -w w1"
 	    dotest devcom3-9cr "cat CVS/Notify" \
-"Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	$TESTDIR/1/first-dir	EUC"
-	    CVS_SERVER=$CVS_SERVER_save; export CVS_SERVER
-	    dotest devcom3-9dr "$testcvs -q update"
-	    dotest_fail devcom3-9er "test -f CVS/Notify"
-	    dotest devcom3-9fr "$testcvs watchers w1" \
+"Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
+	    CVS_SERVER=${CVS_SERVER_save}; export CVS_SERVER
+	    if $proxy; then
+	      dotest_fail devcom3-9dp "$testcvs -q update" \
+"This CVS server does not support disconnected \`cvs edit'\.  For now, remove all \`CVS/Notify' files in your workspace and try your command again\."
+	      dotest devcom3-9ep "test -f CVS/Notify"
+	      rm CVS/Notify
+	      dotest devcom3-9hp "$testcvs watchers w1"
+	    else
+	      dotest devcom3-9dr "$testcvs -q update"
+	      dotest_fail devcom3-9er "test -f CVS/Notify"
+	      dotest devcom3-9fr "$testcvs watchers w1" \
 "w1	$username	tedit	tunedit	tcommit"
+	    fi
 	    dotest devcom3-9gr "$testcvs unedit w1"
 	    dotest devcom3-9hr "$testcvs watchers w1"
 	  fi
@@ -15666,15 +15961,21 @@ G@#..!@#=&"
 	  # OK, now change the tab to a space, and see that CVS gives
 	  # a reasonable error (this is database corruption but CVS should
 	  # not lose its mind).
-	  sed -e 's/Fw2	/Fw2 /' <${CVSROOT_DIRNAME}/first-dir/CVS/fileattr \
-	    >${CVSROOT_DIRNAME}/first-dir/CVS/fileattr.new
-	  mv ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr.new \
-	    ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
+	  sed -e 's/Fw2	/Fw2 /' <$CVSROOT_DIRNAME/first-dir/CVS/fileattr \
+	    >$CVSROOT_DIRNAME/first-dir/CVS/fileattr.new
+	  modify_repo mv $CVSROOT_DIRNAME/first-dir/CVS/fileattr.new \
+			 $CVSROOT_DIRNAME/first-dir/CVS/fileattr
 	  mkdir 2; cd 2
 	  dotest_fail devcom3-10 "${testcvs} -Q co ." \
 "${SPROG} \[checkout aborted\]: file attribute database corruption: tab missing in ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr"
 
+	  notifyworks=false
 	  if $remote; then
+	    if $proxy; then :; else
+	      notifyworks=:
+	    fi
+	  fi
+	  if $notifyworks; then
 	    dotest devcom3-postwatch-examine-1r "cat $TESTDIR/1/watch-log" \
 "$CVSROOT_DIRNAME first-dir watch
 $CVSROOT_DIRNAME first-dir watch
@@ -15693,7 +15994,7 @@ $CVSROOT_DIRNAME first-dir watch"
 	  cd ..
 	  # Use -f because of the readonly files.
 	  rm -rf 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15778,7 +16079,7 @@ C file1"
 	  dokeep
 	  # Specify -f because of the readonly files.
 	  rm -rf 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15842,7 +16143,7 @@ initial revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r watch5
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -15926,7 +16227,7 @@ U m"
 	  cd ../..
 	  rm -rf 1
 	  rm -r 2
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -16063,7 +16364,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  dokeep
 	  cd ../..
 	  rm -r ignore
-	  rm -rf $CVSROOT_DIRNAME/ignore
+	  modify_repo rm -rf $CVSROOT_DIRNAME/ignore
 	  ;;
 
 
@@ -16072,7 +16373,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  # Test that CVS _doesn't_ ignore files on branches because they were
 	  # added to the trunk.
 	  mkdir ignore-on-branch; cd ignore-on-branch
-	  mkdir $CVSROOT_DIRNAME/ignore-on-branch
+	  modify_repo mkdir $CVSROOT_DIRNAME/ignore-on-branch
 
 	  # create file1 & file2 on trunk
 	  dotest ignore-on-branch-setup-1 "$testcvs -q co -dsetup ignore-on-branch" ''
@@ -16124,7 +16425,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -r ignore-on-branch
-	  rm -rf $CVSROOT_DIRNAME/ignore-on-branch
+	  modify_repo rm -rf $CVSROOT_DIRNAME/ignore-on-branch
 	  ;;
 
 
@@ -16138,7 +16439,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  #   * -k wrappers: binwrap, binwrap2, binwrap3
 	  #   * "cvs import" and wrappers: binwrap, binwrap2, binwrap3
 	  #   * -k option to "cvs import": none yet, as far as I know.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
@@ -16402,7 +16703,7 @@ total revisions: 1
 
 	  dokeep
 	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r 1 2
 	  ;;
 
@@ -16427,7 +16728,7 @@ total revisions: 1
 	  #      repository, but modified in the (trunk) working directory.
 	  #      This is also a conflict.
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles2-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
@@ -16560,7 +16861,7 @@ checkin
 
 	  dokeep
 	  cd ../..
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r 1
 	  ;;
 
@@ -16569,7 +16870,7 @@ checkin
 	binfiles3)
 	  # More binary file tests, especially removing, adding, &c.
 	  # See "binfiles" for a list of binary file tests.
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles3-1 "${testcvs} -q co first-dir" ''
 	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
@@ -16642,7 +16943,7 @@ done"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -16764,7 +17065,7 @@ new revision: 1\.2; previous revision: 1\.1"
 
 	    dokeep
 	    cd ../..
-	    rm -rf $CVSROOT_DIRNAME/first-dir
+	    modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	    rm -r 1
 	    unset CVSWRAPPERS
 	  fi # end of tests to be skipped for remote
@@ -16816,7 +17117,7 @@ File: foo\.exe          	Status: Up-to-date
 
 	  dokeep
 	  rm -r first-dir
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -16865,7 +17166,7 @@ File: foo\.exe          	Status: Up-to-date
 
 	  dokeep
 	  rm -r first-dir
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -17132,7 +17433,7 @@ initial revision: 1\.1"
 	  rm -r binwrap3 CVSROOT
 	  cd ..
 	  rm -r wnt
-	  rm -rf $CVSROOT_DIRNAME/binwrap3
+	  modify_repo rm -rf $CVSROOT_DIRNAME/binwrap3
           CVSWRAPPERS=${CVSWRAPPERS_save}
           ;;
 
@@ -17218,22 +17519,15 @@ ${SPROG} update: file from working directory is now in \.#aa\.1\.1
 C aa"
 	  dotest mwrap-9 "cat aa" "changed in m2"
 	  dotest mwrap-10 "cat .#aa.1.1" "changed in m1"
-	  cd ../..
-	  cd CVSROOT
-	  echo '# comment out' >cvswrappers
-	  dotest mwrap-ce "${testcvs} -q ci -m wrapper-mod" \
-"$CVSROOT_DIRNAME/CVSROOT/cvswrappers,v  <--  cvswrappers
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
 
 	  dokeep
-
-	  cd ..
+	  restore_adm
+	  cd ../..
 	  rm -r CVSROOT
 	  rm -r m1 m2
 	  cd ..
 	  rm -r wnt
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -17257,9 +17551,12 @@ $SPROG commit: Rebuilding administrative file database"
 	  mkdir wnt
 	  cd wnt
 
-	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  dotest info-1 "$testcvs -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
-	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
+	  dotest info-2 "$testcvs -Q tag info-start"
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -17276,47 +17573,68 @@ $SPROG commit: Rebuilding administrative file database"
 	  # Might be nice to move this to crerepos tests; it should
 	  # work to create a loginfo file if you didn't create one
 	  # with "cvs init".
-	  : dotest info-2 "${testcvs} add loginfo" \
-"${SPROG}"' add: scheduling file `loginfo'"'"' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  : dotest info-2 "$testcvs add loginfo" \
+"$SPROG add: scheduling file \`loginfo' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 
-	  dotest info-3 "$testcvs -q ci -m new-loginfo" \
+	  dotest_fail info-3 "$testcvs -q ci -m new-loginfo" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
+$SPROG commit: Rebuilding administrative file database
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=MYENV}
+$SPROG \[commit aborted\]: Unknown format character in info file ('').
+Info files are the hook files, verifymsg, taginfo, commitinfo, etc\."
 	  cd ..
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest info-5 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest info-5 "$testcvs -q co first-dir" ''
 	  cd first-dir
 	  touch file1
-	  dotest info-6 "${testcvs} add file1" \
-"${SPROG}"' add: scheduling file `file1'\'' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  dotest info-6 "$testcvs add file1" \
+"$SPROG add: scheduling file \`file1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
-	  dotest info-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
+	  dotest info-6b "$testcvs -q -s OTHER=value ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
-$SPROG commit: loginfo:1: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
 compatibility with the new info file format strings (add a temporary .1. in
 all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
-leisure\."
+leisure\." \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\.
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line0 >>file1
 	  dotest info-6c "$testcvs -q -sOTHER=foo ci -m mod-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
-$SPROG commit: loginfo:1: no such user variable \${=ZEE}
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
 compatibility with the new info file format strings (add a temporary .1. in
 all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
-leisure\."
+leisure\." \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\.
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line1 >>file1
 	  dotest info-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -17362,8 +17680,11 @@ first-dir file1ux'
 	  # these tests are identical to the above except for the loginfo setup
 	  # and the project name
 	  cd CVSROOT
-	  dotest info-setup-intfmt-1 "${testcvs} -q up -pr1.1 config >config" ""
-	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
+	  dotest info-setup-intfmt-1 "$testcvs -q up -prinfo-start config >config"
+	  dotest info-setup-intfmt-2 "$testcvs -q up -prinfo-start loginfo >loginfo"
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %1{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %1x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -17380,20 +17701,20 @@ first-dir file1ux'
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $TESTDIR/cvsroot/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
 compatibility with the new info file format strings (add a temporary .1. in
 all info files after each .%. which doesn.t represent a literal percent)
 and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
 individual command lines and scripts to handle the new format at your
-leisure\.
-$SPROG commit: Rebuilding administrative file database"
+leisure\."
 	  cd ..
 
 	  # delete the logs now so the results look more like the last tests
 	  # (they won't include the config file update)
 	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
 
-	  mkdir ${CVSROOT_DIRNAME}/third-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/third-dir
 	  dotest info-intfmt-5 "${testcvs} -q co third-dir" ''
 	  cd third-dir
 	  touch file1
@@ -17404,7 +17725,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  dotest info-intfmt-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
 "${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
 initial revision: 1\.1
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -17425,7 +17746,7 @@ the new argument format and remove '1's from your info file format strings\."
 	  dotest info-intfmt-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
 "${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: loginfo:[0-9]*: no such user variable \${=ZEE}
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
 the new argument format and remove '1's from your info file format strings\.
 ${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
@@ -17495,30 +17816,17 @@ third-dir file1ux'
 
 	  # test the new format strings too
 	  cd CVSROOT
-	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" > loginfo
+	  dotest info-setup-newfmt-1 "$testcvs -q up -prinfo-start loginfo >loginfo"
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %p %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "second-dir echo %sux >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
-	  dotest info-setup-newfmt-1 "${testcvs} -q -s ZEE=garbage ci -m nuke-admin-for-info-newfmt" \
+	  dotest info-setup-newfmt-2 "$testcvs -q -s ZEE=garbage ci -m nuke-admin-for-info-newfmt" \
 "${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
-${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
-the new argument format and remove .1.s from your info file format strings\.
 ${SPROG} commit: Rebuilding administrative file database"
 	  cd ..
 
@@ -17526,7 +17834,7 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # (they won't include the config file update)
 	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
 
-	  mkdir $CVSROOT_DIRNAME/fourth-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/fourth-dir
 	  dotest info-newfmt-1 "${testcvs} -q co fourth-dir" ''
 	  cd fourth-dir
 	  touch file1
@@ -17534,15 +17842,15 @@ ${SPROG} commit: Rebuilding administrative file database"
 "${SPROG}"' add: scheduling file `file1'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
-	  dotest info-newfmt-3 "${testcvs} -q -s OTHER=value ci -m add-it" \
-"${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+	  dotest info-newfmt-3 "$testcvs -q -s OTHER=value ci -m add-it" \
+"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
 initial revision: 1\.1
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line0 >>file1
-	  dotest info-newfmt-4 "${testcvs} -q -sOTHER=foo ci -m mod-it" \
-"${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+	  dotest info-newfmt-4 "$testcvs -q -sOTHER=foo ci -m mod-it" \
+"$TESTDIR/cvsroot/fourth-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line1 >>file1
 	  dotest info-newfmt-5 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
@@ -17567,11 +17875,10 @@ file1
 
 	  # clean up after newfmt tests
 	  cd CVSROOT
-	  dotest info-cleanup-newfmt-1 "$testcvs -q up -pr1.1 loginfo >loginfo"
+	  dotest info-cleanup-newfmt-1 "$testcvs -q up -prinfo-start loginfo >loginfo"
 	  dotest info-cleanup-newfmt-2 "$testcvs -q ci -m nuke-loginfo" \
 "$CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: loginfo:1: no such user variable \${=ZEE}
 $SPROG commit: Rebuilding administrative file database"
 
 	  # clean up the logs
@@ -17770,11 +18077,8 @@ BugId: new
 See what happens next.
 ============================================================================="
 
-	  #cd CVSROOT
 	  cd ../CVSROOT
-	  dotest info-reread-cleanup-1 \
-"${testcvs} -q up -pr1.1 config >config" \
-""
+	  dotest info-reread-cleanup-1 "$testcvs -q up -prinfo-start config >config"
 	  # Append the NULL format string until we remove the deprecation
 	  # warning for lack of format strings.
 	  echo 'DEFAULT false %n' >verifymsg
@@ -17787,13 +18091,15 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	  cd ../CVSROOT
-	  echo '# do nothing' >verifymsg
+	  dotest info-reread--cleanup-1 \
+"$testcvs -q up -prinfo-start verifymsg >verifymsg"
 	  dotest info-cleanup-verifymsg "$testcvs -q ci -m nuke-verifymsg" \
 "$SPROG commit: Multiple .DEFAULT. lines (1 and 2) in verifymsg file
 $CVSROOT_DIRNAME/CVSROOT/verifymsg,v  <--  verifymsg
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
+	  dokeep
 	  rm ${TESTDIR}/vscript*
 	  cd ..
 
@@ -17813,8 +18119,9 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ..
 	  rm -r wnt
 	  rm $HOME/.cvsrc
-	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/third-dir \
-		 $CVSROOT_DIRNAME/fourth-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/third-dir \
+			     $CVSROOT_DIRNAME/fourth-dir
 	  ;;
 
 
@@ -17830,14 +18137,15 @@ $SPROG commit: Rebuilding administrative file database"
 	  # in configure.in about oldinfoformatsupport
 
 	  mkdir 1; cd 1
-	  dotest taginfo-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
+	  dotest taginfo-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
 	  cd CVSROOT
-	  cat >${TESTDIR}/1/loggit <<EOF
-#!${TESTSHELL}
+	  dotest taginfo-init-2 "$testcvs -Q tag taginfo-start"
+	  cat >$TESTDIR/1/loggit <<EOF
+#!$TESTSHELL
 if test "\$1" = rejectme; then
   exit 1
 else
-  echo "\$@" >>${TESTDIR}/1/taglog
+  echo "\$@" >>$TESTDIR/1/taglog
   exit 0
 fi
 EOF
@@ -17847,11 +18155,15 @@ EOF
 	  else
 	    chmod +x ${TESTDIR}/1/loggit
 	  fi
-	  echo "ALL ${TESTDIR}/1/loggit" >taginfo
+	  echo "ALL ${TESTDIR}/1/loggit" >>taginfo
 	  sed -e's/^UseNewInfoFmtStrings=yes$/#&/' <config >tmpconfig
 	  mv tmpconfig config
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $CVSROOT_DIRNAME/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -17862,8 +18174,8 @@ $SPROG commit: Rebuilding administrative file database"
 	  # being created to add "first-dir" to the repository.  Since
 	  # that won't happen anymore, we create the directory in the
 	  # repository.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest taginfo-3 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest taginfo-3 "$testcvs -q co first-dir"
 
 	  cd first-dir
 	  echo first >file1
@@ -17872,7 +18184,15 @@ $SPROG commit: Rebuilding administrative file database"
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest taginfo-5 "${testcvs} -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-initial revision: 1\.1"
+initial revision: 1\.1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary '1' in
+all info files after each '%' which doesn't represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 	  dotest taginfo-6 "${testcvs} -q tag tag1" \
 "${SPROG} tag: warning: taginfo line contains no format strings:
     \"${TESTDIR}/1/loggit\"
@@ -17885,11 +18205,19 @@ T file1"
 Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
 usage is deprecated\.
 T file1"
-	  dotest taginfo-8 "${testcvs} -q update -r br" ""
+	  dotest taginfo-8 "$testcvs -q update -r br"
 	  echo add text on branch >>file1
 	  dotest taginfo-9 "${testcvs} -q ci -m modify-on-br" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
-new revision: 1\.1\.2\.1; previous revision: 1\.1"
+new revision: 1\.1\.2\.1; previous revision: 1\.1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary '1' in
+all info files after each '%' which doesn't represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" \
 "${SPROG} tag: warning: taginfo line contains no format strings:
     \"${TESTDIR}/1/loggit\"
@@ -17979,14 +18307,25 @@ tag1 del first-dir"
 
 	  # now that we've tested the default operation, try a new
 	  # style fmt string.
-	  rm ${TESTDIR}/1/taglog
+	  rm $TESTDIR/1/taglog
 	  cd ..
 	  cd CVSROOT
-	  echo "ALL ${TESTDIR}/1/loggit %r %t %o %b %p %{sVv}" >taginfo
-	  dotest taginfo-newfmt-1 "${testcvs} -q ci -m check-in-taginfo" \
+	  dotest taginfo-newfmt-init-1 \
+"$testcvs -q up -prtaginfo-start taginfo >taginfo"
+	  echo "ALL $TESTDIR/1/loggit %r %t %o %b %p %{sVv}" >>taginfo
+	  dotest taginfo-newfmt-init-2 "$testcvs -q ci -m check-in-taginfo" \
 "$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
+$SPROG commit: Rebuilding administrative file database"  \
+"$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary '1' in
+all info files after each '%' which doesn't represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 
 	  cat >${TESTDIR}/1/loggit <<EOF
 #!${TESTSHELL}
@@ -18008,9 +18347,17 @@ EOF
 	  dotest taginfo-newfmt-2b "${testcvs} add 'file 2'" \
 "${SPROG} add: scheduling file .file 2. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest taginfo-newfmt-2c "${testcvs} -q ci -m add-it" \
-"${TESTDIR}/cvsroot/first-dir/file 2,v  <--  file 2
-initial revision: 1\.1"
+	  dotest taginfo-newfmt-2c "$testcvs -q ci -m add-it" \
+"$TESTDIR/cvsroot/first-dir/file 2,v  <--  file 2
+initial revision: 1\.1" \
+"$TESTDIR/cvsroot/first-dir/file 2,v  <--  file 2
+initial revision: 1\.1
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary '1' in
+all info files after each '%' which doesn't represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 
 	  dotest taginfo-newfmt-3 "${testcvs} -q tag tag1" \
 "T file 2
@@ -18057,14 +18404,27 @@ else
   exit 0
 fi
 EOF
-	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sVv}" >taginfo
+	  dotest taginfo-newfmt-init-7 \
+"$testcvs -q up -prtaginfo-start taginfo >taginfo"
+	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sVv}" >>taginfo
 	  echo "UseNewInfoFmtStrings=yes" >>config
-	  dotest taginfo-newfmt-7 "${testcvs} -q ci -m check-in-taginfo" \
-"${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+	  dotest taginfo-newfmt-7 "$testcvs -q ci -m check-in-taginfo" \
+"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Rebuilding administrative file database"
+$SPROG commit: Rebuilding administrative file database" \
+"$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary '1' in
+all info files after each '%' which doesn't represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 
 	  cd ../first-dir
 	  dotest taginfo-newfmt-8 "${testcvs} -q tag tag1" ""
@@ -18160,22 +18520,11 @@ tag1 ? del first-dir/sdir file3 1\.1 1\.1
 tag1 ? del first-dir
 tag1 ? del first-dir/sdir"
 
-	  cd ..
-	  cd CVSROOT
-	  echo '# Keep life simple' > taginfo
-	  dotest taginfo-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
-	  dotest taginfo-cleanup-2 "${testcvs} -q ci -m check-in-admin-files" \
-"${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-${SPROG} commit: Rebuilding administrative file database"
-
 	  dokeep
-
+	  restore_adm
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -18223,7 +18572,7 @@ EOF
 	    chmod +x $TESTDIR/1/loggit
 	  fi
 
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest posttag-init-3 "$testcvs -q co first-dir"
 
 	  cd first-dir
@@ -18301,17 +18650,10 @@ file1
 1.1"
 
 	  dokeep
-
-	  cd ../CVSROOT
-	  echo '# Keep life simple' > posttag
-	  dotest posttag-cleanup-1 "$testcvs -q ci -mrestore-posttag" \
-"$TESTDIR/cvsroot/CVSROOT/posttag,v  <--  posttag
-new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG commit: Rebuilding administrative file database"
-
 	  cd ../..
+	  restore_adm
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -18325,55 +18667,84 @@ $SPROG commit: Rebuilding administrative file database"
 	  mkdir wnt
 	  cd wnt
 
-	  dotest config-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
+	  dotest config-init-1 "$testcvs -q co CVSROOT" "U CVSROOT/$DOTSTAR"
 	  cd CVSROOT
-	  echo 'bogus line' >config
-	  # We can't rely on specific revisions, since other tests
-	  # might need to modify CVSROOT/config
-	  dotest config-3 "${testcvs} -q ci -m change-to-bogus-line" \
+	  dotest config-init-2 "$testcvs -Q tag config-start"
+	  echo 'bogus line' >>config
+	  dotest config-3 "$testcvs -q ci -m change-to-bogus-line" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
-	  echo 'BogusOption=yes' >config
-	  dotest config-4 "${testcvs} -q ci -m change-to-bogus-opt" \
-"$SPROG [a-z]*: syntax error in ${CVSROOT_DIRNAME}/CVSROOT/config: line 'bogus line' is missing '='
-${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
+	  dotest config-3a "$testcvs -Q update -jHEAD -jconfig-start" \
+"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
+retrieving revision 1.[0-9]*
+retrieving revision 1.[0-9]*
+Merging differences between 1.[0-9]* and 1.[0-9]* into config"
+	  echo 'BogusOption=yes' >>config
+	  if $proxy; then
+	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
+"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
-	  echo '# No config is a good config' > config
-	  dotest config-cleanup-1 "${testcvs} -q up -pr1.1 config >config" \
-"${SPROG} [a-z]*: ${TESTDIR}/cvsroot/CVSROOT/config: unrecognized keyword 'BogusOption'"
-	  dotest config-cleanup-2 "${testcvs} -q ci -m change-to-comment" \
+	  else
+	    dotest config-4 "$testcvs -q ci -m change-to-bogus-opt" \
+"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  fi
+	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
+retrieving revision 1.[0-9]*
+retrieving revision 1.[0-9]*
+Merging differences between 1.[0-9]* and 1.[0-9]* into config"
+	  if $proxy; then
+	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  else
+	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
 "$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
-	  dotest config-6 "${testcvs} -q update" ''
+	  fi
+	  dotest config-6 "$testcvs -q update"
 
+	  dokeep
 	  cd ..
 	  rm -r CVSROOT
 	  cd ..
 	  rm -r wnt
 	  ;;
 
+
+
 	serverpatch)
 	  # Test remote CVS handling of unpatchable files.  This isn't
 	  # much of a test for local CVS.
 	  # We test this with some keyword expansion games, but the situation
 	  # also arises if the user modifies the file while CVS is running.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  mkdir 1
 	  cd 1
-	  dotest serverpatch-1 "${testcvs} -q co first-dir" ''
+	  dotest serverpatch-1 "$testcvs -q co first-dir"
 
 	  cd first-dir
 
 	  # Add a file with an RCS keyword.
 	  echo '$''Name$' > file1
 	  echo '1' >> file1
-	  dotest serverpatch-2 "${testcvs} add file1" \
-"${SPROG}"' add: scheduling file `file1'\'' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  dotest serverpatch-2 "$testcvs add file1" \
+"$SPROG add: scheduling file \`file1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 
 	  dotest serverpatch-3 "${testcvs} -q commit -m add" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -18411,10 +18782,13 @@ ${CPROG} client: refetching unpatchable files
 $SPROG update: warning: \`file1' was lost
 U file1"
 
+	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	log)
 	  # Test selecting revisions with cvs log.
@@ -18432,8 +18806,8 @@ U file1"
 	  #   -w, -t: not tested yet (TODO)
 
 	  # Check in a file with a few revisions and branches.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest log-1 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest log-1 "$testcvs -q co first-dir"
 	  cd first-dir
 	  echo 'first revision' > file1
 	  echo 'first revision' > file2
@@ -19187,9 +19561,9 @@ ${log_keyword}
 total revisions: 6;	selected revisions: 2
 ${log_trailer}
 ${SPROG} log: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
-	  dotest log-d4e "${testcvs} -q log -R -rbranch" \
-"${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
-${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest log-d4e "$testcvs -q log -R -rbranch" \
+"$CVSROOT_DIRNAME/first-dir/Attic/file1,v
+$CVSROOT_DIRNAME/first-dir/file2,v"
 	  dotest log-d4f "${testcvs} -q log -R -S -rbranch" \
 "${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
 ${SPROG} log: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
@@ -19422,17 +19796,20 @@ ${log_trailer}"
 	  dotest log-o4 "${testcvs} -q update -p -r 1.2.2.1 file1" \
 "first branch revision"
 
+	  dokeep
 	  cd ..
 	  rm -r first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	log2)
 	  # More "cvs log" tests, for example the file description.
 
 	  # Check in a file
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest log2-1 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest log2-1 "$testcvs -q co first-dir"
 	  cd first-dir
 	  echo 'first revision' > file1
 	  dotest log2-2 "${testcvs} add -m file1-is-for-testing file1" \
@@ -19532,20 +19909,22 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;
 1
 ============================================================================="
 
+	  dokeep
 	  cd ..
-	  rm ${TESTDIR}/descrip
+	  rm $TESTDIR/descrip
 	  rm -r first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	logopt)
 	  # Some tests of log.c's option parsing and such things.
 	  mkdir 1; cd 1
-	  dotest logopt-1 "${testcvs} -q co -l ." ''
+	  dotest logopt-1 "$testcvs -q co -l ." ''
 	  mkdir first-dir
-	  dotest logopt-2 "${testcvs} add first-dir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  dotest logopt-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
 	  cd first-dir
 	  echo hi >file1
 	  dotest logopt-3 "${testcvs} add file1" \
@@ -19573,10 +19952,13 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v"
 ${SPROG} log: Logging first-dir
 ${CVSROOT_DIRNAME}/first-dir/file1,v"
 
+	  dokeep
 	  cd ..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	ann)
 	  # Tests of "cvs annotate".  See also:
@@ -19584,7 +19966,7 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v"
 	  #   rcs        Annotate and the year 2000
 	  #   keywordlog Annotate and $Log.
 	  mkdir 1; cd 1
-	  dotest ann-1 "${testcvs} -q co -l ." ''
+	  dotest ann-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest ann-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -19751,8 +20133,11 @@ Annotations for first-dir/file1
 	  dotest_fail ann-r14 "$testcvs rann -r bill-clintons-chastity first-dir/file1" \
 "$SPROG \[rannotate aborted\]: no such tag \`bill-clintons-chastity'"
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  dokeep
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	ann-id)
 	  # Demonstrate that cvs-1.9.28.1 improperly expands rcs keywords in
@@ -19760,7 +20145,7 @@ Annotations for first-dir/file1
 	  # delta.  In this case, `1.1' instead of `1.2', even though it puts
 	  # the proper version number on the prefix to each line of output.
 	  mkdir 1; cd 1
-	  dotest ann-id-1 "${testcvs} -q co -l ." ''
+	  dotest ann-id-1 "$testcvs -q co -l ."
 	  module=x
 	  mkdir $module
 	  dotest ann-id-2 "${testcvs} add $module" \
@@ -19787,10 +20172,13 @@ Annotations for $file
 1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.1 [0-9/]* [0-9:]* $username Exp "'\$'"
 1.2          ($username *[0-9a-zA-Z-]*): line2"
 
+	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
+
+
 
 	crerepos)
 	  # Various tests relating to creating repositories, operating
@@ -19822,7 +20210,7 @@ Annotations for $file
 
                # Make sure server ignores real ${HOME}/.cvsrc:
             cat >$TESTDIR/cvs-setHome <<EOF
-#!/bin/sh
+#!$TESTSHELL
 HOME=$HOME
 export HOME
 exec $CVS_SERVER "\$@"
@@ -19840,8 +20228,8 @@ EOF
 
 	    # If we're going to do remote testing, make sure 'rsh' works first.
 	    host="`hostname`"
-	    if test "x`${CVS_RSH} $host -n 'echo hi'`" != "xhi"; then
-		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH} $host' fails." >&2
+	    if test "x`$CVS_RSH $host 'echo hi'`" != "xhi"; then
+		echo "ERROR: cannot test remote CVS, because \`$CVS_RSH $host' fails." >&2
 		exit 1
 	    fi
 
@@ -19961,10 +20349,10 @@ initial revision: 1\.1"
 	  rm -r 1
 
 	  mkdir 1; cd 1
-	  dotest crerepos-12 "${testcvs} -d ${CREREPOS_ROOT} -q co -l ." ''
+	  dotest crerepos-12 "$testcvs -d $CREREPOS_ROOT -q co -l ."
 	  mkdir crerepos-dir
-	  dotest crerepos-13 "${testcvs} add crerepos-dir" \
-"Directory ${TESTDIR}/crerepos/crerepos-dir added to the repository"
+	  dotest crerepos-13 "$testcvs add crerepos-dir" \
+"Directory $TESTDIR/crerepos/crerepos-dir added to the repository"
 	  cd crerepos-dir
 	  touch cfile
 	  dotest crerepos-14 "${testcvs} add cfile" \
@@ -19996,9 +20384,11 @@ ${SPROG} update: Updating crerepos-dir"
 	    exit 0
 	  fi
 
+	  dokeep
           rm -f $TESTDIR/cvs-setHome
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/crerepos
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  rm -rf $TESTDIR/crerepos
 	  ;;
 
 
@@ -20016,7 +20406,7 @@ ${SPROG} update: Updating crerepos-dir"
 	  save_TZ=$TZ
 	  TZ=UTC; export TZ
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 
 	  # Currently the way to import an RCS file is to copy it
 	  # directly into the repository.
@@ -20035,7 +20425,7 @@ ${SPROG} update: Updating crerepos-dir"
 	  # as the file written by RCS 5.7 (so I won't try to make it
 	  # a separate test case).
 
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head	1.3;
 access;
 symbols;
@@ -20105,10 +20495,12 @@ text
 @d2 12
 @
 EOF
-	  dotest rcs-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
+
+	  dotest rcs-1 "$testcvs -q co first-dir" 'U first-dir/file1'
 	  cd first-dir
-	  dotest rcs-2 "${testcvs} -q log" "
-RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+	  dotest rcs-2 "$testcvs -q log" "
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
 Working file: file1
 head: 1\.3
 branch:
@@ -20211,7 +20603,7 @@ Annotations for file1
 	  # doc/RCSFILES and friends.  One subtle point is that none of
 	  # the lines end with newlines; that is a feature which we
 	  # should be testing.
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file2,v
+	  cat <<EOF >$TESTDIR/file2,v
 head			 	1.5                 ;
      branch        1.2.6;
 access ;
@@ -20243,6 +20635,7 @@ start revision@
 a1 1
 branch revision@
 EOF
+	  modify_repo mv $TESTDIR/file2,v $CVSROOT_DIRNAME/first-dir/file2,v
 	  # ' Match the single quote in above here doc -- for font-lock mode.
 
 	  # First test the default branch.
@@ -20490,7 +20883,7 @@ revision 1\.4"
 	  TZ=$save_TZ
 	  cd ..
 	  rm -r first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -20499,14 +20892,14 @@ revision 1\.4"
 	  # More date tests.  Might as well do this as a separate
 	  # test from "rcs", so that we don't need to perturb the
 	  # "written by RCS 5.7" RCS file.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  # Significance of various dates:
 	  # * At least one Y2K standard refers to recognizing 9 Sep 1999
 	  #   (as an example of a pre-2000 date, I guess).
 	  # * At least one Y2K standard refers to recognizing 1 Jan 2001
 	  #   (as an example of a post-2000 date, I guess).
 	  # * Many Y2K standards refer to 2000 being a leap year.
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head 1.7; access; symbols; locks; strict;
 1.7 date 2004.08.31.01.01.01; author sue; state; branches; next 1.6;
 1.6 date 2004.02.29.01.01.01; author sue; state; branches; next 1.5;
@@ -20536,6 +20929,7 @@ Tonight we're going to party like it's a certain year@
 a1 1
 Need to start somewhere@
 EOF
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  # ' Match the 3rd single quote in the here doc -- for font-lock mode.
 
 	  dotest rcs2-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
@@ -20575,19 +20969,23 @@ EOF
 	  dotest rcs2-8 "${testcvs} -q update -p -D '8 years' file1" \
 "head revision"
 
+	  dokeep
 	  cd ..
 	  rm -r first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	rcs3)
 	  # More RCS file tests, in particular at least some of the
 	  # error handling issues.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc@@1.1log@@text@head@
 EOF
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  mkdir 1; cd 1
 	  # CVS requires whitespace between "desc" and its value.
 	  # The rcsfile(5) manpage doesn't really seem to answer the
@@ -20595,25 +20993,28 @@ EOF
 	  # nothing about lexical analysis).
 	  dotest_fail rcs3-1 "${testcvs} -q co first-dir" \
 "${SPROG} \[checkout aborted\]: EOF while looking for value in RCS file ${CVSROOT_DIRNAME}/first-dir/file1,v"
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1log@@text@head@
 EOF
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  # Whitespace issues, likewise.
 	  dotest_fail rcs3-2 "${testcvs} -q co first-dir" \
 "${SPROG} \[checkout aborted\]: unexpected '.x6c' reading revision number in RCS file ${CVSROOT_DIRNAME}/first-dir/file1,v"
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1 log@@text@head@
 EOF
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  # Charming array of different messages for similar
 	  # whitespace issues (depending on where the whitespace is).
 	  dotest_fail rcs3-3 "${testcvs} -q co first-dir" \
 "${SPROG} \[checkout aborted\]: EOF while looking for value in RCS file ${CVSROOT_DIRNAME}/first-dir/file1,v"
-	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+	  cat <<EOF >$TESTDIR/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1 log @@text @head@
 EOF
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  dotest rcs3-4 "${testcvs} -q co first-dir" 'U first-dir/file1'
 
 	  # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
@@ -20631,15 +21032,20 @@ EOF
 "${CVSROOT_DIRNAME}/first-dir/file1,v"
 
 	  # OK, now put an extraneous '\0' at the end.
+	  mv $CVSROOT_DIRNAME/first-dir/file1,v $TESTDIR/file1,v
 	  ${AWK} </dev/null 'BEGIN { printf "@%c", 10 }' | ${TR} '@' '\000' \
-	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
+	    >>$TESTDIR/file1,v
+	  modify_repo mv $TESTDIR/file1,v $CVSROOT_DIRNAME/first-dir/file1,v
 	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
 "${SPROG} \[log aborted\]: unexpected '.x0' reading revision number in RCS file ${CVSROOT_DIRNAME}/first-dir/file1,v"
 
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	rcs4)
 	  # Fix a bug that shows up when checking out files by date with the
@@ -20725,7 +21131,7 @@ File: file1            	Status: Up-to-date
 	  TZ=$save_TZ
 	  cd ../..
           rm -r rcs4
-          rm -rf ${CVSROOT_DIRNAME}/rcs4-dir
+          modify_repo rm -rf $CVSROOT_DIRNAME/rcs4-dir
 	  ;;
 
 
@@ -20735,6 +21141,11 @@ File: file1            	Status: Up-to-date
 	  # TODO-maybe: Add a test where we arrange for a loginfo
 	  # script (or some such) to ensure that locks are in place
 	  # so then we can see how they are behaving.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
 
 	  mkdir 1; cd 1
 	  mkdir sdir
@@ -20920,16 +21331,17 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	  dokeep
-
 	  cd ../..
 	  # Perhaps should restore the umask and CVSUMASK to what they
 	  # were before.  But the other tests "should" not care about them...
 	  umask 0077
 	  unset CVSUMASK
-	  rm -r ${TESTDIR}/locks
+	  rm -r $TESTDIR/locks
 	  rm -r 1 2 3
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	backuprecover)
 	  # Tests to make sure we get the expected behavior
@@ -20954,7 +21366,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  #
 	  mkdir backuprecover; cd backuprecover
 	  mkdir 1; cd 1
-	  dotest backuprecover-1 "${testcvs} -q co -l ." ''
+	  dotest backuprecover-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest backuprecover-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -21012,7 +21424,7 @@ $CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
 new revision: 1\.3; previous revision: 1\.2"
 
 	  # Save a backup copy
-	  cp -r ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/backup
+	  cp -r $CVSROOT_DIRNAME/first-dir $TESTDIR/backup
 
 	  # Simulate developer 3
 	  cd ../..
@@ -21072,8 +21484,8 @@ new revision: 1\.6; previous revision: 1\.5"
 	  echo "    You've got an ill, and I have the cure!"  >>dir/file2
 
 	  # Slag the original and restore it a few revisions back
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  mv ${CVSROOT_DIRNAME}/backup ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo mv $TESTDIR/backup $CVSROOT_DIRNAME/first-dir
 
 	  # Have developer 1 try an update and lose some data
 	  #
@@ -21096,7 +21508,7 @@ ${SPROG} \[update aborted\]: could not find desired version 1\.6 in ${CVSROOT_DI
 	  # create our workspace fixin' script
 	  cd ../..
 	  echo \
-"#!/bin/sh
+"#!$TESTSHELL
 
 # This script will copy the CVS database dirs from the checked out
 # version of a newly recovered repository and replace the CVS
@@ -21181,10 +21593,13 @@ new revision: 1\.6; previous revision: 1\.5"
 	  cd ../../1/first-dir
 	  dotest backuprecover-24 "${testcvs} -Q update" ''
 
+	  dokeep
 	  cd ../../..
 	  rm -r backuprecover
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
         sshstdio)
           # CVS_RSH=ssh can have a problem with a non-blocking stdio
@@ -21193,7 +21608,9 @@ new revision: 1\.6; previous revision: 1\.5"
           # will necessarily have ssh available, so be prepared to
           # skip this test.
 
-          if $remote; then
+	  if $proxy; then
+            skipreason="ssh testing is skipped in proxy test mode."
+          elif $remote; then
             [ -n "$CVS_RSH" ] && CVS_RSH_save=$CVS_RSH
 
             # Are we able to run find and use an ssh?
@@ -21287,9 +21704,10 @@ EOF
   
             cd ../..
             rm -r sshstdio
-            rm -rf ${CVSROOT_DIRNAME}/first-dir
+            modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
           fi
           ;;
+
 
 
 	history)
@@ -21302,7 +21720,13 @@ EOF
 	  # user may wish to analyze data from a previous version of
 	  # CVS.  If we phase out this format, it should be done
 	  # slowly and carefully.
-	  cat >${CVSROOT_DIRNAME}/CVSROOT/history <<EOF
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
+
+	  cat <<EOF >$CVSROOT_DIRNAME/CVSROOT/history
 O3395c677|anonymous|<remote>/*0|ccvs||ccvs
 O3396c677|anonymous|<remote>/src|ccvs||src
 O3397c677|kingdon|<remote>/*0|ccvs||ccvs
@@ -21313,6 +21737,7 @@ W33a6eada|anonymous|<remote>*4|ccvs/emx||Makefile.in
 C3b235f50|kingdon|<remote>|ccvs/emx|1.3|README
 M3b23af50|kingdon|~/work/*0|ccvs/doc|1.281|cvs.texinfo
 EOF
+
 	  dotest history-1 "${testcvs} history -e -a" \
 "O 1997-06-04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
 O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs     =src=  <remote>/\*
@@ -21379,6 +21804,8 @@ O 1997-06-05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
 O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  ;;
 
+
+
 	big)
 
 	  # Test ability to operate on big files.  Intention is to
@@ -21391,8 +21818,8 @@ O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  # on machines which run the tests, without any significant
 	  # benefit.
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest big-1 "${testcvs} -q co first-dir" ''
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
+	  dotest big-1 "$testcvs -q co first-dir"
 	  cd first-dir
 	  for i in 0 1 2 3 4 5 6 7 8 9; do
 	    for j in 0 1 2 3 4 5 6 7 8 9; do
@@ -21402,35 +21829,48 @@ O 1997-06-06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	      done
 	    done
 	  done
-	  dotest big-2 "${testcvs} add file1" \
-"${SPROG} add: scheduling file .file1. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest big-3 "${testcvs} -q ci -m add" \
+	  dotest big-2 "$testcvs add file1" \
+"$SPROG add: scheduling file .file1. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+	  dotest big-3 "$testcvs -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1"
 	  cd ..
 	  mkdir 2
 	  cd 2
-	  dotest big-4 "${testcvs} -q get first-dir" "U first-dir/file1"
+	  dotest big-4 "$testcvs -q get first-dir" "U first-dir/file1"
 	  cd ../first-dir
 	  echo "add a line to the end" >>file1
-	  dotest big-5 "${testcvs} -q ci -m modify" \
+
+	  dotest_fail big-4b "$testcvs -q diff -u" \
+"Index: file1
+===================================================================
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1
+diff -u -r1\.1 file1
+--- file1	$RFCDATE	1\.1
+$PLUS$PLUS$PLUS file1	$RFCDATE
+@@ -998,3 ${PLUS}998,4 @@
+ This is line (9,9,7) which goes into the file file1 for testing
+ This is line (9,9,8) which goes into the file file1 for testing
+ This is line (9,9,9) which goes into the file file1 for testing
+${PLUS}add a line to the end"
+
+	  dotest big-5 "$testcvs -q ci -m modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
 	  cd ../2/first-dir
 	  # The idea here is particularly to test the Rcs-diff response
 	  # and the reallocing thereof, for remote.
-	  dotest big-6 "${testcvs} -q update" "[UP] file1"
+	  dotest big-6 "$testcvs -q update" "[UP] file1"
+
+	  dokeep
 	  cd ../..
-
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  rm -r first-dir 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	modes)
 	  # Test repository permissions (CVSUMASK and so on).
@@ -21513,27 +21953,28 @@ new revision: 1\.3; previous revision: 1\.2"
 	  touch ab
 	  # Might as well test the execute bit too.
 	  chmod +x ab
-	  dotest modes-8 "${testcvs} add ab" \
-"${SPROG} add: scheduling file .ab. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest modes-9 "${testcvs} -q ci -m add" \
+	  dotest modes-8 "$testcvs add ab" \
+"$SPROG add: scheduling file .ab. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+	  dotest modes-9 "$testcvs -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/ab,v  <--  ab
 initial revision: 1\.1"
-	  if $remote; then
-	    # The problem here is that the CVSUMASK environment variable
-	    # needs to be set on the server (e.g. .bashrc).  This is, of
-	    # course, bogus, but that is the way it is currently.
-	    if test -n "$remotehost"; then
-	      dotest modes-10remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
-"-r--r--r--.*"
-	    else
-	      dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
-"-r-xr-x---.*" "-r-xr-xr-x.*"
-	    fi
-	  else
-	    dotest modes-10 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+
+	  # The ssh-wrapper script set up by this script forwards CVSUMASK to
+	  # the server.  In practice it would be set on the server in some
+	  # other manner (for instance, by the `env' command, or as an option
+	  # in the xinted.conf file).
+	  #
+	  # I don't recall why, but I used to look for:
+	  #
+	  #   dotest modes-10remotehost \
+	  #   "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/ab,v'" \
+	  #   "-r--r--r--.*"
+	  #
+	  # here when $remotehost was set.  I'm not sure why.  Maybe this was
+	  # one of the innumerable Cygwin issues?
+	  dotest modes-10 "ls -l $CVSROOT_DIRNAME/first-dir/ab,v" \
 "-r-xr-x---.*"
-	  fi
 
 	  # OK, now add a file on a branch.  Check that the mode gets
 	  # set the same way (it is a different code path in CVS).
@@ -21550,34 +21991,21 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest modes-14 "${testcvs} -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/Attic/ac,v  <--  ac
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
-	  if $remote; then
-	    # The problem here is that the CVSUMASK environment variable
-	    # needs to be set on the server (e.g. .bashrc).  This is, of
-	    # course, bogus, but that is the way it is currently.  The
-	    # first match is for the :ext: method (where the CVSUMASK
-	    # won't be set), while the second is for the :fork: method
-	    # (where it will be).
-	    if test -n "$remotehost"; then
-	      dotest modes-15r \
-"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v'" \
-"-r--r--r--.*"
-	    else
-	      dotest modes-15r \
-"ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
-"-r--r--r--.*" "-r--r-----.*"
-	    fi
-	  else
-	    dotest modes-15 \
+
+	  # ssh-wrapper forwards CVSUMASK.  See modes-10 for notes.
+	  dotest modes-15 \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
 "-r--r-----.*"
-	  fi
 
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  # Perhaps should restore the umask and CVSUMASK.  But the other
 	  # tests "should" not care about them...
 	  ;;
+
+
 
 	modes2)
 	  # More tests of file permissions in the working directory
@@ -21616,11 +22044,14 @@ new revision: 1\.2; previous revision: 1\.1"
 "${CPROG} \[update aborted\]: reading aa: Permission denied"
 	  fi
 
+	  dokeep
 	  chmod u+rwx aa
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	modes3)
 	  # Repository permissions.  Particularly, what happens if we
@@ -21629,7 +22060,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # the attic (may that one can remain a fatal error, seems less
 	  # useful for access control).
 	  mkdir 1; cd 1
-	  dotest modes3-1 "${testcvs} -q co -l ." ''
+	  dotest modes3-1 "$testcvs -q co -l ."
 	  mkdir first-dir second-dir
 	  dotest modes3-2 "${testcvs} add first-dir second-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository
@@ -21644,11 +22075,7 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 initial revision: 1\.1
 $CVSROOT_DIRNAME/second-dir/ab,v  <--  ab
 initial revision: 1\.1"
-	  if test -n "$remotehost"; then
-	    $CVS_RSH $remotehost "chmod a= ${CVSROOT_DIRNAME}/first-dir"
-	  else
-	    chmod a= ${CVSROOT_DIRNAME}/first-dir
-	  fi
+	  modify_repo chmod a= $CVSROOT_DIRNAME/first-dir
 	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
 	    # Avoid this test under Cygwin since permissions work differently
 	    # there.
@@ -21698,11 +22125,15 @@ U ${DOTSTAR}
 ${SPROG} update: Updating first-dir
 ${SPROG} update: Updating second-dir"
 
+	  dokeep
 	  cd ..
 	  rm -r 1
-	  chmod u+rwx ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+	  modify_repo chmod u+rwx $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
+
+
 
 	stamps)
 	  # Test timestamps.
@@ -21774,14 +22205,10 @@ U first-dir/kw"
 	  # file was committed.  Could check that the time as reported in
 	  # "cvs log aa" matches stamp.aa.get, but that would be a lot of
 	  # work.
-	  if cmp ${TESTDIR}/1/stamp.aa.ci ${TESTDIR}/1/stamp.aa.get >/dev/null
-	  then
-	    fail stamps-8aa
-	  else
-	    pass stamps-8aa
-	  fi
+	  dotest_fail stamps-8aa \
+"cmp $TESTDIR/1/stamp.aa.ci $TESTDIR/1/stamp.aa.get >/dev/null"
 	  dotest stamps-8kw \
-	    "cmp ${TESTDIR}/1/stamp.kw.ci ${TESTDIR}/1/stamp.kw.get" ''
+"cmp $TESTDIR/1/stamp.kw.ci $TESTDIR/1/stamp.kw.get"
 
 	  # Now we want to see what "cvs update" does.
 	  sleep 60
@@ -21807,9 +22234,9 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # this doesn't serve any function other than being able to
 	  # look at it manually, as we have no machinery for dates being
 	  # newer or older than other dates.
-	  date >${TESTDIR}/1/stamp.debug.update
-	  ls -l aa >${TESTDIR}/1/stamp.aa.update
-	  ls -l kw >${TESTDIR}/1/stamp.kw.update
+	  date >$TESTDIR/1/stamp.debug.update
+	  ls -l aa >$TESTDIR/1/stamp.aa.update
+	  ls -l kw >$TESTDIR/1/stamp.kw.update
 	  # stamp.aa.update and stamp.kw.update should both be approximately
 	  # the same as stamp.debug.update.  Perhaps we could be testing
 	  # this in a more fancy fashion by "touch stamp.before" before
@@ -21819,40 +22246,28 @@ new revision: 1\.2; previous revision: 1\.1"
 	  # As for the rationale, this is so that if one updates and gets
 	  # a new revision, then "make" will be sure to regard those files
 	  # as newer than .o files which may be sitting around.
-	  if cmp ${TESTDIR}/1/stamp.aa.update ${TESTDIR}/1/stamp.aa.ci2 \
-	     >/dev/null
-	  then
-	    fail stamps-11aa
-	  else
-	    pass stamps-11aa
-	  fi
-	  if cmp ${TESTDIR}/1/stamp.kw.update ${TESTDIR}/1/stamp.kw.ci2 \
-	     >/dev/null
-	  then
-	    fail stamps-11kw
-	  else
-	    pass stamps-11kw
-	  fi
+	  dotest_fail stamps-11aa \
+"cmp $TESTDIR/1/stamp.aa.update $TESTDIR/1/stamp.aa.ci2 >/dev/null"
+	  dotest_fail stamps-11kw \
+"cmp $TESTDIR/1/stamp.kw.update $TESTDIR/1/stamp.kw.ci2 >/dev/null"
 
+	  dokeep
 	  cd ../..
-
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
-	perms)
-	  # short cut around checking out and committing CVSROOT
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
-	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
-	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
 
+
+	perms)
 	  mkdir 1; cd 1
-	  dotest perms-1 "${testcvs} -q co -l ." ''
+	  dotest perms-init-1 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  echo 'PreservePermissions=yes' >> ${CVSROOT_DIRNAME}/CVSROOT/config
+	  dotest perms-init-2 "$testcvs -Q ci -mperms"
+	  cd ..
+
+	  dotest perms-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest perms-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -21877,55 +22292,56 @@ initial revision: 1\.1"
 	    dotest perms-6 "ls -l foo" "-r---wx--x .* foo"
 	  fi
 
+	  dokeep
+	  cd ../1/CVSROOT
+	  restore_adm
 	  cd ../..
 	  rm -rf 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
-	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
-	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	symlinks)
 	  # short cut around checking out and committing CVSROOT
-	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
-	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
-	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  rm -f $CVSROOT_DIRNAME/CVSROOT/config
+	  echo 'PreservePermissions=yes' >> $CVSROOT_DIRNAME/CVSROOT/config
+	  chmod 444 $CVSROOT_DIRNAME/CVSROOT/config
 
 	  mkdir 1; cd 1
-	  dotest symlinks-1 "${testcvs} -q co -l ." ''
+	  dotest symlinks-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest symlinks-2 "${testcvs} add first-dir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  dotest symlinks-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
 	  cd first-dir
 
-	  dotest symlinks-2.1 "ln -s ${TESTDIR}/fumble slink" ""
-	  dotest symlinks-3 "${testcvs} add slink" \
-"${SPROG} add: scheduling file .slink. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest symlinks-2.1 "ln -s $TESTDIR/fumble slink"
+	  dotest symlinks-3 "$testcvs add slink" \
+"$SPROG add: scheduling file .slink. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
 	  if $remote; then
 	    # Remote doesn't implement PreservePermissions, and in its
 	    # absence the correct behavior is to follow the symlink.
-	    dotest_fail symlinks-4r "${testcvs} -q ci -m ''" \
-"${SPROG} \[commit aborted\]: reading slink: No such file or directory"
+	    dotest_fail symlinks-4r "$testcvs -q ci -m ''" \
+"$SPROG \[commit aborted\]: reading slink: No such file or directory"
 	  else
-	    dotest symlinks-4 "${testcvs} -q ci -m ''" \
+	    dotest symlinks-4 "$testcvs -q ci -m ''" \
 "$CVSROOT_DIRNAME/first-dir/slink,v  <--  slink
 initial revision: 1\.1"
 
 	    # Test checking out symbolic links.
 	    cd ../..
 	    mkdir 2; cd 2
-	    dotest symlinks-5 "${testcvs} -q co first-dir" "U first-dir/slink"
+	    dotest symlinks-5 "$testcvs -q co first-dir" "U first-dir/slink"
 	    cd first-dir
 	    dotest symlinks-6 "ls -l slink" \
-"l[rwx\-]* .* slink -> ${TESTDIR}/fumble"
+"l[rwx\-]* .* slink -> $TESTDIR/fumble"
 	  fi
 
 	  dokeep
 	  cd ../..
 	  rm -rf 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  restore_adm
 	  ;;
 
@@ -21962,7 +22378,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dokeep
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -22051,7 +22467,7 @@ U first-dir/dd dd dd"
 	  dokeep
 	  cd ../..
 	  rm -rf 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  restore_adm
 	  ;;
 
@@ -22063,65 +22479,65 @@ U first-dir/dd dd dd"
 	  # operations such as adding files on branches.
 	  # See "head" test for interaction between stick tags and HEAD.
 	  mkdir 1; cd 1
-	  dotest sticky-1 "${testcvs} -q co -l ." ''
+	  dotest sticky-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest sticky-2 "${testcvs} add first-dir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  dotest sticky-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
 	  cd first-dir
 
 	  touch file1
-	  dotest sticky-3 "${testcvs} add file1" \
-"${SPROG} add: scheduling file .file1. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest sticky-4 "${testcvs} -q ci -m add" \
+	  dotest sticky-3 "$testcvs add file1" \
+"$SPROG add: scheduling file .file1. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+	  dotest sticky-4 "$testcvs -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1"
-	  dotest sticky-5 "${testcvs} -q tag tag1" "T file1"
+	  dotest sticky-5 "$testcvs -q tag tag1" "T file1"
 	  echo add a line >>file1
-	  dotest sticky-6 "${testcvs} -q ci -m modify" \
+	  dotest sticky-6 "$testcvs -q ci -m modify" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1"
-	  dotest sticky-7 "${testcvs} -q update -r tag1" "[UP] file1"
+	  dotest sticky-7 "$testcvs -q update -r tag1" "[UP] file1"
 	  dotest sticky-8 "cat file1" ''
-	  dotest sticky-9 "${testcvs} -q update" ''
+	  dotest sticky-9 "$testcvs -q update" ''
 	  dotest sticky-10 "cat file1" ''
 	  touch file2
-	  dotest_fail sticky-11 "${testcvs} add file2" \
-"${SPROG} add: cannot add file on non-branch tag \`tag1'"
-	  dotest sticky-12 "${testcvs} -q update -A" "[UP] file1
-${QUESTION} file2" "${QUESTION} file2
+	  dotest_fail sticky-11 "$testcvs add file2" \
+"$SPROG add: cannot add file on non-branch tag \`tag1'"
+	  dotest sticky-12 "$testcvs -q update -A" "[UP] file1
+$QUESTION file2" "$QUESTION file2
 [UP] file1"
 	  dotest sticky-13 "${testcvs} add file2" \
-"${SPROG} add: scheduling file .file2. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
+"$SPROG add: scheduling file .file2. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
 	  dotest sticky-14 "${testcvs} -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 initial revision: 1\.1"
 
 	  # Now back to tag1
 	  dotest sticky-15 "${testcvs} -q update -r tag1" "[UP] file1
-${SPROG} update: \`file2' is no longer in the repository"
+$SPROG update: \`file2' is no longer in the repository"
 
 	  rm file1
 	  dotest sticky-16 "${testcvs} rm file1" \
-"${SPROG} remove: scheduling .file1. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"$SPROG remove: scheduling .file1. for removal
+$SPROG remove: use .$SPROG commit. to remove this file permanently"
 	  # Hmm, this command seems to silently remove the tag from
 	  # the file.  This appears to be intentional.
 	  # The silently part especially strikes me as odd, though.
-	  dotest sticky-17 "${testcvs} -q ci -m remove-it" ""
-	  dotest sticky-18 "${testcvs} -q update -A" "U file1
+	  dotest sticky-17 "$testcvs -q ci -m remove-it" ""
+	  dotest sticky-18 "$testcvs -q update -A" "U file1
 U file2"
-	  dotest sticky-19 "${testcvs} -q update -r tag1" \
+	  dotest sticky-19 "$testcvs -q update -r tag1" \
 "${SPROG} update: \`file1' is no longer in the repository
 ${SPROG} update: \`file2' is no longer in the repository"
-	  dotest sticky-20 "${testcvs} -q update -A" "U file1
+	  dotest sticky-20 "$testcvs -q update -A" "U file1
 U file2"
 
 	  # Now try with a numeric revision.
-	  dotest sticky-21 "${testcvs} -q update -r 1.1 file1" "U file1"
-	  dotest sticky-22 "${testcvs} rm -f file1" \
-"${SPROG} remove: cannot remove file .file1. which has a numeric sticky tag of .1\.1."
+	  dotest sticky-21 "$testcvs -q update -r 1.1 file1" "U file1"
+	  dotest sticky-22 "$testcvs rm -f file1" \
+"$SPROG remove: cannot remove file .file1. which has a numeric sticky tag of .1\.1."
 	  # The old behavior was that remove allowed this and then commit
 	  # gave an error, which was somewhat hard to clear.  I mean, you
 	  # could get into a long elaborate discussion of this being a
@@ -22135,21 +22551,21 @@ U file2"
 	  # up elsewhere in the testsuite.  It is a long-standing
 	  # discrepency between local and remote CVS and should probably
 	  # be cleaned up at some point.
-	  dotest sticky-23 "${testcvs} -q update -Dnow file1" \
-"${SPROG} update: warning: \`file1' was lost
+	  dotest sticky-23 "$testcvs -q update -Dnow file1" \
+"$SPROG update: warning: \`file1' was lost
 U file1" "U file1"
-	  dotest sticky-24 "${testcvs} rm -f file1" \
-"${SPROG} remove: cannot remove file .file1. which has a sticky date of .[0-9.]*."
+	  dotest sticky-24 "$testcvs rm -f file1" \
+"$SPROG remove: cannot remove file .file1. which has a sticky date of .[0-9.]*."
 
-	  dotest sticky-25 "${testcvs} -q update -A" \
-"${SPROG} update: warning: \`file1' was lost
+	  dotest sticky-25 "$testcvs -q update -A" \
+"$SPROG update: warning: \`file1' was lost
 U file1" "U file1"
 
 	  dokeep
 	  restore_adm
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -22365,7 +22781,7 @@ change"
 	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -22574,14 +22990,12 @@ xx First log line
 xx Second log line
 xx"
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	keywordname)
 	  # Test the Name keyword.
@@ -22690,17 +23104,13 @@ U first-dir/file2"
 	  dotest keywordname-checkout-2 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-checkout-3 "cat file2" '\$'"Name: firsttag "'\$'
 
-	  cd ../..
-
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
-	  cd ..
+	  dokeep
+	  cd ../../..
 	  rm -r keywordname
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	keyword2)
 	  # Test merging on files with keywords:
@@ -22833,10 +23243,13 @@ new revision: 1\.1\.4\.1; previous revision: 1\.1"
 U binfile\.dat
 U file1"
 
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	head)
 	  # Testing handling of the HEAD special tag.
@@ -22993,10 +23406,14 @@ deleting revision 1\.3\.2\.1
 done
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 done"
+
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	tagdate)
 	  # Test combining -r and -D.
@@ -23090,15 +23507,13 @@ Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	multibranch2)
 	  # Commit the first delta on branch A when there is an older
@@ -23213,10 +23628,9 @@ Merging differences between 1.1 and 1.1.4.1 into file2"
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  dokeep
-
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -23288,10 +23702,9 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 	  dotest tag8k-18 "$testcvs -Q ci -m . $file"
 
 	  dokeep
-
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -24270,7 +24683,7 @@ date: ${ISO8601DATE};  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 another-log-message
 ============================================================================="
 
-	  # Currently, this test outputs 36 identical linces, so I am just
+	  # Currently, this test outputs 36 identical lines, so I am just
 	  # checking $DOTSTAR for brevity.
 	  dotest admin-postadmin-examine-1 "cat $TESTDIR/2/admin-log" \
 "$CVSROOT_DIRNAME first-dir admin$DOTSTAR"
@@ -24281,7 +24694,7 @@ another-log-message
 	  restore_adm
 	  cd ../..
 	  rm -r 1 2
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -24427,14 +24840,14 @@ $SPROG commit: Rebuilding administrative file database"
 	    chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
 	  fi
 	  echo more stuff >> a-lock
-	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
-"${SPROG} commit: warning: commitinfo line contains no format strings:
-    \"${TESTDIR}/lockme\"
+	  dotest_fail_sort reserved-13b "$testcvs ci -m '' a-lock" \
+"    \"$TESTDIR/lockme\"
 Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+$SPROG \[commit aborted\]: correct above errors first!
+$SPROG commit: Pre-commit check failed
+$SPROG commit: warning: commitinfo line contains no format strings:
 deprecated\.
-fred has file a-lock locked for version  1\.1
-${SPROG} commit: Pre-commit check failed
-${SPROG} \[commit aborted\]: correct above errors first!"
+fred has file a-lock locked for version  1\.1"
 	  # OK, now test "cvs admin -l" in the case where someone
 	  # else has the file locked.
 	  dotest_fail reserved-13c "${testcvs} admin -l a-lock" \
@@ -24484,14 +24897,14 @@ new revision: 1\.3; previous revision: 1\.2
 $SPROG commit: Rebuilding administrative file database"
 
 	  dokeep
-
-	  cd ..; rm -r CVSROOT; cd first-dir
-
-	  cd ../..
+	  cd ..; rm -r CVSROOT
+	  cd ..
 	  rm -r 1
-	  rm ${TESTDIR}/lockme
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm $TESTDIR/lockme
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
         diffmerge1)
 	  # Make sure CVS can merge correctly in circumstances where it
@@ -24649,15 +25062,13 @@ Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 	  dotest diffmerge1_cmp "directory_cmp comp_me mine"
 
 	  # Clean up after ourselves:
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  cd ..
 	  rm -r diffmerge1
-	  rm -rf ${CVSROOT_DIRNAME}/diffmerge1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/diffmerge1
 	  ;;
+
+
 
         diffmerge2)
 
@@ -25326,8 +25737,9 @@ d472 12
 
 	  # We have to put the RCS file in the repository by hand for
 	  # this test:
-	  mkdir $CVSROOT_DIRNAME/diffmerge2
-	  cp diffmerge2/sgrid.h,v $CVSROOT_DIRNAME/diffmerge2/sgrid.h,v
+	  modify_repo mkdir $CVSROOT_DIRNAME/diffmerge2
+	  modify_repo cp diffmerge2/sgrid.h,v \
+		         $CVSROOT_DIRNAME/diffmerge2/sgrid.h,v
 	  rm -rf diffmerge2
 	  dotest diffmerge2_co \
 	    "$testcvs co diffmerge2" "${DOTSTAR}U $DOTSTAR"
@@ -25339,10 +25751,13 @@ d472 12
 	  dotest diffmerge2_diff \
 	    "${testcvs} diff -r Review_V1p3 sgrid.h" ''
 
+	  dokeep
 	  cd ..
 	  rm -rf diffmerge2
-	  rm -rf ${CVSROOT_DIRNAME}/diffmerge2
+	  modify_repo rm -rf $CVSROOT_DIRNAME/diffmerge2
 	  ;;
+
+
 
 	release)
 	  # Tests of "cvs release", particularly multiple arguments.
@@ -25457,14 +25872,23 @@ $SPROG update: Updating first-dir"
 initial revision: 1\.1"
 	  dotest release-21 "$testcvs edit file1"
 	  cd ..
-	  dotest release-22 "echo yes | $testcvs release -d second-dir" \
+	  if $proxy; then
+	    dotest_fail release-22p \
+"echo yes | $testcvs release -d second-dir" \
+"You have \[0\] altered files in this repository.
+Are you sure you want to release (and delete) directory \`second-dir': This CVS server does not support disconnected \`cvs edit'\.  For now, remove all \`CVS/Notify' files in your workspace and try your command again\."
+	  else
+	    dotest release-22 "echo yes | $testcvs release -d second-dir" \
 "You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory \`second-dir': "
+	  fi
 	  dotest release-23 "$testcvs -q update -d" "U second-dir/file1"
 	  dotest release-24 "$testcvs edit"
 
+	  dokeep
 	  cd ../..
-	  rm -rf 1 $CVSROOT_DIRNAME/first-dir
+	  rm -r 1
+	  modify_repo rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -25509,7 +25933,7 @@ Are you sure you want to release (and delete) directory \`second-dir': "
 
 	  # The first test (recase-1 & recase-2) is for a remove of a file then
 	  # a readd in a different case.
-	  mkdir $CVSROOT_DIRNAME/first-dir
+	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
 	  dotest recase-init-1 "$testcvs -Q co first-dir"	
 	  cd first-dir
 
@@ -25802,11 +26226,12 @@ $SPROG update: \`file' is no longer in the repository"
 
 	    # Copy the archive
 	    if test -n "$remotehost"; then
-	      $CVS_RSH $remotehost "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
-		$CVSROOT_DIRNAME/first-dir/FILE,v"
+	      modify_repo $CVS_RSH $remotehost \
+			  "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+			  $CVSROOT_DIRNAME/first-dir/FILE,v"
 	    else
-	      cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
-		$CVSROOT_DIRNAME/first-dir/FILE,v
+	      modify_repo cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+			     $CVSROOT_DIRNAME/first-dir/FILE,v
 	    fi
 
 	    if $client_sensitive; then
@@ -26006,11 +26431,7 @@ C first-dir/FiLe"
 	    :
 	  fi
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
-
+	  dokeep
 	  cd ..
 	  rm -r 1 2 3
 	  if $server_sensitive && test -n "$remotehost"; then
@@ -26020,7 +26441,7 @@ C first-dir/FiLe"
 	    # confusion.
 	    $CVS_RSH $remotehost "rm -f $CVSROOT_DIRNAME/first-dir/FILE,v"
 	  fi
-	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 
 
@@ -26029,6 +26450,11 @@ C first-dir/FiLe"
 	  #
 	  # set up two repositories
 	  #
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root.1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root.2
@@ -27115,8 +27541,15 @@ anyone
 	  rm -rf ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}
 	  ;;
 
+
+
 	multiroot2)
 	  # More multiroot tests.  In particular, nested directories.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root2
@@ -27260,10 +27693,17 @@ ${PLUS}change him too"
 	  rm -rf root1 root2
 	  ;;
 
+
+
 	multiroot3)
 	  # More multiroot tests.  Directories are side-by-side, not nested.
 	  # Not drastically different from multiroot but it covers somewhat
 	  # different stuff.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
 
 	  CVSROOT1=`newroot ${TESTDIR}/root1`
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
@@ -27379,10 +27819,17 @@ $CPROG \[checkout aborted\]: end of file from server (consult above messages if 
 	  unset CVSROOT2
 	  ;;
 
+
+
 	multiroot4)
 	  # More multiroot tests, in particular we have two roots with
 	  # similarly-named directories and we try to see that CVS can
 	  # keep them separate.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
 
 	  CVSROOT1=`newroot ${TESTDIR}/root1`
 	  CVSROOT2=`newroot ${TESTDIR}/root2`
@@ -27438,6 +27885,8 @@ initial revision: 1\.1"
 	  unset CVSROOT2
 	  ;;
 
+
+
 	rmroot)
 	  # When the Entries/Root file is removed from an existing
 	  # workspace, CVS should assume $CVSROOT instead
@@ -27467,14 +27916,24 @@ initial revision: 1\.1"
 	  rm CVS/Root
 	  dotest rmroot-1 "${testcvs} -q update" ''
 
+	  dokeep
 	  cd ../..
 	  rm -rf 1
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
+
+
 
 	reposmv)
 	  # More tests of repositories and specifying them.
 	  # Similar to crerepos but that test is probably getting big
 	  # enough.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
+
 	  CVSROOT1=`newroot ${TESTDIR}/root1`
 	  CVSROOT_MOVED=`newroot ${TESTDIR}/root-moved`
 
@@ -27570,33 +28029,43 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	  unset CVSROOT1
 	  ;;
 
+
+
 	pserver)
 	  # Test basic pserver functionality.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  (The issue is getting servercvs & testcvs
+	      # set correctly for the following tests.  Some expect one access
+	      # method and some another, which in $remotehost mode, means that
+	      # sometimes the executables must run on one platform and
+	      # sometimes another.)
+	      continue
+	    fi
 	    save_servercvs=$servercvs
 	    servercvs=$testcvs
    	    # First set SystemAuth=no.  Not really necessary, I don't
 	    # think, but somehow it seems like the clean thing for
 	    # the testsuite.
 	    mkdir 1; cd 1
-	    dotest pserver-1 "${testcvs} -Q co CVSROOT" ""
+	    dotest pserver-1 "$testcvs -Q co CVSROOT" ""
 	    cd CVSROOT
 	    echo "SystemAuth=no" >>config
-	    dotest pserver-2 "${testcvs} -q ci -m config-it" \
+	    dotest pserver-2 "$testcvs -q ci -m config-it" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
-	    cat >${CVSROOT_DIRNAME}/CVSROOT/passwd <<EOF
+	    cat >$CVSROOT_DIRNAME/CVSROOT/passwd <<EOF
 testme:q6WV9d2t848B2:$username
 dontroot:q6WV9d2t848B2:root
 anonymous::$username
 $username:
 willfail:   :whocares
 EOF
-	    dotest_fail pserver-3 "${servercvs} pserver" \
+	    dotest_fail pserver-3 "$servercvs pserver" \
 "error 0 Server configuration missing --allow-root in inetd.conf" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
@@ -27620,6 +28089,7 @@ EOF
 	    done
 	    dotest_fail pserver-auth-no-dos \
 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Not enough space" \
 "$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Cannot allocate memory" <garbageinput
 	    unset i
 	    rm garbageseg garbageseg2 garbageinput
@@ -27627,38 +28097,38 @@ EOF
 	    # Sending the Root and noop before waiting for the
 	    # "I LOVE YOU" is bogus, but hopefully we can get
 	    # away with it.
-	    dotest pserver-4 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-4 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 ok" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-Root ${CVSROOT_DIRNAME}
+Root $CVSROOT_DIRNAME
 noop
 EOF
 
 	    dotest_fail pserver-4.2 \
-"${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
 "error 0: root not allowed" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 dontroot
 Ay::'d
 END AUTH REQUEST
 EOF
 
-	    dotest pserver-5 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+	    dotest pserver-5 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
+E Protocol error: Root says \"$TESTDIR/1\" but pserver says \"$CVSROOT_DIRNAME\"
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-Root ${TESTDIR}/1
+Root $TESTDIR/1
 noop
 EOF
 
@@ -27771,33 +28241,31 @@ EOF
 
 	    # Check that readers can only read, everyone else can write
 
-	    cat >${CVSROOT_DIRNAME}/CVSROOT/readers <<EOF
-anonymous
-EOF
+	    echo anonymous >$CVSROOT_DIRNAME/CVSROOT/readers
 
-	    dotest pserver-14 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-14 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 M Concurrent Versions System (CVS) .*
 ok" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 anonymous
 Ay::'d
 END AUTH REQUEST
-Root ${CVSROOT_DIRNAME}
+Root $CVSROOT_DIRNAME
 version
 EOF
 
-	    dotest pserver-15 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-15 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 anonymous
 Ay::'d
 END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
+init $CVSROOT_DIRNAME
 EOF
 
 	    dotest pserver-16 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
@@ -28020,11 +28488,10 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
 	    dokeep
-
 	    cd ../..
 	    rm -r 1
-	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd ${CVSROOT_DIRNAME}/CVSROOT/writers
-	    servercvs=$save_severcvs
+	    restore_adm
+	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -28232,21 +28699,27 @@ Entry /CC/CC/CC
 noop
 EOF
 
-	    if $keep; then
-	      echo Keeping ${TESTDIR} and exiting due to --keep
-	      exit 0
-	    fi
-
+	    dokeep
 	    rm -rf ${TESTDIR}/crerepos
 	    rm gzipped.dat session.dat
-	    servercvs=$save_severcvs
+	    servercvs=$save_servercvs
 	  fi # skip the whole thing for local
 	  ;;
+
+
 
 	server2)
 	  # More server tests, in particular testing that various
 	  # possible security holes are plugged.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  (The issue is getting servercvs & testcvs
+	      # set correctly for the following tests.  Some expect one access
+	      # method and some another, which in $remotehost mode, means that
+	      # sometimes the executables must run on one platform and
+	      # sometimes another.)
+	      continue
+	    fi
 	    save_servercvs=$servercvs
 	    servercvs=$testcvs
 	    dotest server2-1 "${servercvs} server" \
@@ -28289,9 +28762,11 @@ ${CVSROOT_DIRNAME}
 Unchanged foo/bar
 noop
 EOF
-	    servercvs=$save_severcvs
+	    servercvs=$save_servercvs
 	  fi
 	  ;;
+
+
 
 	client)
 	  # Some tests of the client (independent of the server).
@@ -28507,7 +28982,7 @@ echo "$HOME/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28527,7 +29002,7 @@ echo "../../home/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28547,7 +29022,7 @@ echo "$HOME/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28567,7 +29042,7 @@ echo "../../home/.bashrc"
 echo "/.bashrc/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "ok"
 cat >/dev/null
@@ -28588,7 +29063,7 @@ echo "./innocuous"
 echo "/innocuous/73.50///"
 echo "u=rw,g=rw,o=rw"
 echo "26"
-echo "#! /bin/sh"
+echo "#! $TESTSHELL"
 echo "echo 'gotcha!'"
 echo "Copy-file ."
 echo "./innocuous"
@@ -28606,11 +29081,7 @@ EOF
 # This is where login scripts would usually be
 # stored\."
 
-	    if $keep; then
-	      echo Keeping $TESTDIR and exiting due to --keep
-	      exit 0
-	    fi
-
+	    dokeep
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus
@@ -28619,8 +29090,16 @@ EOF
 	  fi # skip the whole thing for local
 	  ;;
 
+
+
 	dottedroot)
 	  # Check that a CVSROOT with a "." in the name will work.
+
+	  if $proxy; then
+	    # don't even try
+	    continue
+	  fi
+
 	  CVSROOT_save=${CVSROOT}
 	  CVSROOT_DIRNAME_save=${CVSROOT_DIRNAME}
 	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
@@ -28653,6 +29132,8 @@ U module1/dir2/file1"
 	  CVSROOT=${CVSROOT_save}
 	  ;;
 
+
+
 	fork)
 	  # Test that the server defaults to the correct executable in :fork:
 	  # mode.  See the note in the TODO at the end of this file about this.
@@ -28663,6 +29144,11 @@ U module1/dir2/file1"
 	  # The client series of tests already tests that CVS_SERVER is
 	  # working, but that test might be better here.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  If our caller specified a remotehost, our
+	      # access method has been determined anyhow.
+	      continue
+	    fi
 	    mkdir fork; cd fork
 	    save_CVS_SERVER=$CVS_SERVER
 	    unset CVS_SERVER
@@ -28690,11 +29176,12 @@ ${CPROG} \[version aborted\]: This CVS was not compiled with server support\."
 	    PATH=$save_PATH; unset save_PATH
 
 	    dokeep
-
 	    cd ..
 	    rm -r fork
 	  fi
 	  ;;
+
+
 
 	commit-add-missing)
 	  # Make sure that a commit fails when a `cvs add'ed file has
@@ -28718,9 +29205,10 @@ ${CPROG} \[version aborted\]: This CVS was not compiled with server support\."
 "${SPROG} commit: Up-to-date check failed for .$file'
 ${SPROG} \[commit aborted\]: correct above errors first!"
 
+	  dotest
 	  cd ../..
 	  rm -rf 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  modify_repo rm -rf $CVSROOT_DIRNAME/$module
 	  ;;
 
 
@@ -28742,15 +29230,19 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 new revision: 1.2; previous revision: 1.1
 $CVSROOT_DIRNAME/c-d-c/subdir/file2,v  <--  file2
 new revision: 1.2; previous revision: 1.1"
+
+	  dokeep
 	  cd ../..
 	  rm -rf 1 cvsroot/c-d-c
 	  ;;
 
+
+
 	template)
 	  # Check that the CVS/Template directory is being
 	  # properly created.
-	  mkdir -p ${CVSROOT_DIRNAME}/first/subdir
-	  mkdir -p ${CVSROOT_DIRNAME}/second
+	  modify_repo mkdir -p $CVSROOT_DIRNAME/first/subdir
+	  modify_repo mkdir $CVSROOT_DIRNAME/second
 	  mkdir template; cd template
 
 	  # check that no CVS/Template is created for an empty rcsinfo
@@ -28926,12 +29418,188 @@ ${SPROG} update: Updating first/subdir"
 	  dokeep
 
 	  # cleanup
-	  rm -fr ${CVSROT_DIRNAME}/CVSROOT/rcsinfo,v \
-                 ${CVSROOT_DIRNAME}/CVSROOT/rcsinfo \
-                 ${CVSROOT_DIRNAME}/first ${CVSROOT_DIRNAME}/second
-	  dotest template-cleanup-1 "${testcvs} -Q init" ''
+          modify_repo rm -rf $CVSROOT_DIRNAME/first $CVSROOT_DIRNAME/second
+	  restore_adm
 	  cd ..
 	  rm -rf template
+	  ;;
+
+
+
+	writeproxy)
+	  # Various tests for a read-only CVS mirror set up as a write-proxy
+	  # for a central server.
+	  #
+	  # These tests are only meaningful in client/server mode.
+	  if $remote; then :; else
+	    continue
+	  fi
+
+	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+
+	  # Initialize the primary repository
+	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	  mkdir writeproxy; cd writeproxy
+	  mkdir primary; cd primary
+	  dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	  cd CVSROOT
+	  cat >>loginfo <<EOF
+ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+	  cat >>config <<EOF
+PrimaryServer=$PRIMARY_CVSROOT
+EOF
+	  dotest writeproxy-init-3 \
+"$testcvs -Q ci -mconfigure-writeproxy"
+
+	  # And now the secondary.
+	  rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+	  CVS_SERVER_save=$CVS_SERVER
+	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
+	  CVS_SERVER=$CVS_SERVER_secondary
+
+	  # Wrap the CVS server to allow --primary-root to be set by the
+	  # secondary.
+	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
+#! $TESTSHELL
+CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+export CVS_SERVER
+
+# Decide if we should be talking to the secondary or the primary.
+#
+# This is a hack which is only necessary when testing in :fork: mode since the
+# servers need to be able to tell the two roots apart given the same \`Root'
+# request from the client.
+if test -f $TESTDIR/last-client-pid \\
+   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+    proot_arg=
+else
+    proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+fi
+echo \$CVS_PID >$TESTDIR/last-client-pid
+
+$servercvs \$proot_arg "\$@"
+EOF
+	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
+#! $TESTSHELL
+#CVS_SERVER_LOG=/tmp/cvsprimarylog
+$servercvs "\$@"
+EOF
+
+	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
+	            $TESTDIR/writeproxy-primary-wrapper
+
+	  # Checkout from secondary
+	  #
+	  # It may look like we are checking out from the primary here, but
+	  # the deciding factor is the --primary-root translation above.
+	  # If the primary and secondary hostname were different, this would
+	  # be more obvious.
+	  #
+	  # For now, move the primary root out of the way to satisfy
+	  # ourselves that the data is coming from the secondary.
+	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
+	  cd ../..
+	  mkdir secondary; cd secondary
+	  dotest writeproxy-1 "$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
+"U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
+U CVSROOT/postwatch
+U CVSROOT/preproxy
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg"
+
+	  # Confirm data present
+	  cd CVSROOT
+	  dotest writeproxy-2 "grep rsync loginfo" \
+"ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
+	  dotest writeproxy-3 "grep PrimaryServer config" \
+"${DOTSTAR}
+PrimaryServer=$PRIMARY_CVSROOT"
+
+	  # Checkin to secondary
+	  cd ..
+	  dotest writeproxy-4 "$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
+	  cd top
+	  mkdir firstdir
+
+	  # Have to move the primary root back before we can perform write
+	  # operations.
+	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+
+	  dotest writeproxy-5 "$testcvs -Q add firstdir"
+	  cd firstdir
+	  echo now you see me >file1
+	  dotest writeproxy-6 "$testcvs -Q add file1"
+	  dotest writeproxy-6a "grep file1 CVS/Entries >/dev/null"
+	  dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
+
+	  # Make sure the sync took place
+	  dotest writeproxy-7a "$testcvs -Q up"
+
+	  CVS_SERVER=$servercvs
+	  # Checkout from primary
+	  cd ../../../primary
+	  dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
+"U firstdir/file1"
+
+	  # Confirm data present
+	  #  - This test indirectly confirms that the commit did not take
+	  #    place on the secondary.
+	  cd firstdir
+	  dotest writeproxy-9 "cat file1" "now you see me"
+
+	  # Commit to primary
+	  echo now you see me again >file1
+	  dotest writeproxy-10 "$testcvs -Q ci -medit file1"
+
+	  CVS_SERVER=$CVS_SERVER_secondary
+	  # Update from secondary
+	  cd ../../secondary/top/firstdir
+	  dotest writeproxy-11 "$testcvs -q up" \
+"U file1"
+
+	  # Confirm data present
+	  dotest writeproxy-12 "cat file1" "now you see me again"
+
+	  # Test a failing rsync
+	  cd ../../CVSROOT
+	  sed \$d <loginfo >tmp
+	  mv tmp loginfo
+	  echo >>loginfo \
+"ALL echo >&2 'Im rsync and I encountered an error!'; cat >/dev/null; exit 1"
+	  dotest writeproxy-init-13 "$testcvs -Q ci -mbreak-rsync" \
+"Im rsync and I encountered an error!"
+	  echo "# a comment" >>loginfo
+	  dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync" \
+"Im rsync and I encountered an error!"
+	  touch loginfo
+	  dotest_fail writeproxy-14 "$testcvs up" \
+"$SPROG update: Updating \.
+$SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
+
+	  dokeep
+	  cd ../../..
+	  rm -r writeproxy
+	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  rm $TESTDIR/writeproxy-secondary-wrapper \
+	     $TESTDIR/writeproxy-primary-wrapper
+	  CVS_SERVER=$CVS_SERVER_save
+	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  ;;
 
 
@@ -28961,8 +29629,10 @@ ${SPROG} update: Updating first/subdir"
   *-> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (postwatch,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -28991,8 +29661,10 @@ ${SPROG} update: Updating first/subdir"
   *-> unlink_file(\.#modules)
   *-> unlink_file(\.#notify)
   *-> unlink_file(\.#postadmin)
+  *-> unlink_file(\.#postproxy)
   *-> unlink_file(\.#posttag)
   *-> unlink_file(\.#postwatch)
+  *-> unlink_file(\.#preproxy)
   *-> unlink_file(\.#rcsinfo)
   *-> unlink_file(\.#taginfo)
   *-> unlink_file(\.#verifymsg)
@@ -29016,8 +29688,10 @@ S -> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (postwatch,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -29050,8 +29724,10 @@ S -> unlink_file(\.#loginfo)
 S -> unlink_file(\.#modules)
 S -> unlink_file(\.#notify)
 S -> unlink_file(\.#postadmin)
+S -> unlink_file(\.#postproxy)
 S -> unlink_file(\.#posttag)
 S -> unlink_file(\.#postwatch)
+S -> unlink_file(\.#preproxy)
 S -> unlink_file(\.#rcsinfo)
 S -> unlink_file(\.#taginfo)
 S -> unlink_file(\.#verifymsg)" \
@@ -31904,14 +32580,13 @@ S -> server_notify()
 S -> server_notify()
 You have \[0\] altered files in this repository\."
 
-	  cd ..
-
 	  dokeep
-
+	  cd ..
 	  rm -fr trace
-	  rm -fr ${CVSROOT_DIRNAME}/trace 
-
+	  modify_repo rm -fr $CVSROOT_DIRNAME/trace 
 	  ;;
+
+
 
 	*)
 	   echo $what is not the name of a test -- ignored
@@ -31924,6 +32599,38 @@ You have \[0\] altered files in this repository\."
     # are noticed during single test runs.
     if test "x$TESTDIR" != "x`pwd`"; then
 	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
+    fi
+
+    # Test that the last test didn't overwrite any write proxy configuration
+    # which may be in place.
+    if $proxy; then
+	problem=false
+	for file in \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \
+	            $CVSROOT_DIRNAME/CVSROOT/config \
+		    $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/postadmin \
+	            $CVSROOT_DIRNAME/CVSROOT/postadmin \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/posttag \
+	            $CVSROOT_DIRNAME/CVSROOT/posttag \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/postwatch \
+	            $CVSROOT_DIRNAME/CVSROOT/postwatch; do
+	    if cmp $file $TESTDIR/`basename $file`-clean >/dev/null 2>&1; then
+		:;
+	    else
+		echo "\`$file' and \`$TESTDIR/`basename $file`-clean' differ." \
+		     >>$LOGFILE
+		problem=:
+	    fi
+	done
+	if $problem; then
+	    fail "cleanup: write proxy configuration not preserved"
+	fi
+    fi
+
+    if $remote && test "$servercvs_orig" != "$servercvs" >/dev/null 2>&1; then
+	fail "test slagged \$servercvs"
     fi
 
     # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
@@ -31991,13 +32698,14 @@ echo "OK, all tests completed."
 # End of TODO list.
 
 # Exit if keep set
-if $keep; then
-  echo "Keeping ${TESTDIR} and exiting due to -k (keep) option."
-  exit 0
-fi
+dokeep
 
 # Remove the test directory, but first change out of it.
-cd `dirname ${TESTDIR}`
-rm -rf ${TESTDIR}
+if $TIMING; then
+    echo "exiting without removing test dir in order to preserve timing information."
+else
+    cd `dirname $TESTDIR`
+    rm -rf $TESTDIR
+fi
 
 # end of sanity.sh

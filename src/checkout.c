@@ -998,9 +998,13 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    repos = Name_Repository (NULL, preload_update_dir);
 	    if (fncmp (repository, repos) != 0)
 	    {
+		char *prepository = primary_root_inverse_translate (repository);
+		char *prepos = primary_root_inverse_translate (repos);
 		error (0, 0, "existing repository %s does not match %s",
-		       repos, repository);
+		       prepos, prepository);
 		error (0, 0, "ignoring module %s", omodule);
+		free (prepos);
+		free (prepository);
 		free (repos);
 		err = 1;
 		goto out;

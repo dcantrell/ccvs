@@ -173,10 +173,92 @@ Create_Root (const char *dir, const char *rootdir)
 #endif /* ! DEBUG */
 
 
+
+/* Store our primary root translation.  */
+char *primary_root_in, *primary_root_out;
+
+/* The name of this function is misleading.  At the moment it we only track a
+ * single primary_root.
+ */
+void
+primary_root_add (const char *arg)
+{
+    char *p;
+
+    if (primary_root_in)
+	error (1, 0, "--primary-root may only be invoked once.");
+
+    /* Save path 1.  */
+    primary_root_in = xstrdup (arg);
+
+    p = strchr (primary_root_in, '=');
+    if (p == NULL || primary_root_in[0] != '/' || p[1] != '/')
+	error (1, 0,
+	       "--primary-root requires an argument of the form PATH=LOCALPATH"
+	      );
+
+    *p++ = '\0';
+    primary_root_out = p;
+}
+
+
+
+/* Translate an absolute repository string for a primary server and return it
+ * in freshly allocated memory.
+ *
+ * INPUTS
+ *   root_in	The root to be translated.
+ *
+ * RETURNS
+ *   A freshly allocated translated string.
+ */
+inline char *
+primary_root_translate (const char *root_in)
+{
+    if (primary_root_in
+        && !strncmp (root_in, primary_root_in, strlen (primary_root_in))
+        && strlen (root_in) >= strlen (primary_root_in)
+        && (ISSLASH (root_in[strlen (primary_root_in)])
+            || root_in[strlen (primary_root_in)] == '\0'))
+    {
+	size_t dummy;
+	return asnprintf (NULL, &dummy, "%s%s",
+	                  primary_root_out,
+	                  root_in + strlen (primary_root_in));
+    }
+
+    /* There is no primary root configured or it didn't match.  */
+    return xstrdup (root_in);
+}
+
+
+
+/* Translate a primary root in reverse for PATHNAMEs in responses.
+ */
+inline char *
+primary_root_inverse_translate (const char *root_in)
+{
+    if (primary_root_out
+        && !strncmp (root_in, primary_root_out, strlen (primary_root_out))
+        && strlen (root_in) >= strlen (primary_root_out)
+        && (ISSLASH (root_in[strlen (primary_root_out)])
+            || root_in[strlen (primary_root_out)] == '\0'))
+    {
+	size_t dummy;
+	return asnprintf (NULL, &dummy, "%s%s",
+	                  primary_root_in,
+	                  root_in + strlen (primary_root_out));
+    }
+
+    /* There is no primary root configured or it didn't match.  */
+    return xstrdup (root_in);
+}
+
+
+
 /* The root_allow_* stuff maintains a list of valid CVSROOT
    directories.  Then we can check against them when a remote user
    hands us a CVSROOT directory.  */
-
 static int root_allow_count;
 static char **root_allow_vector;
 static int root_allow_size;

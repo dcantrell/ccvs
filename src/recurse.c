@@ -566,7 +566,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    our_argc = i;
 
 	    /* create the argument vector */
-	    our_argv = (char **) xmalloc (sizeof (char *) * our_argc);
+	    our_argv = xmalloc (sizeof (char *) * our_argc);
 
 	    /* populate it */
 	    i = 0;
@@ -590,7 +590,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     }
 #endif
 
-    return (err);
+    return err;
 }
 
 
@@ -891,15 +891,14 @@ do_recursion (struct recursion_frame *frame)
 
     /* free the saved copy of the pointer if necessary */
     if (srepository)
-    {
 	free (srepository);
-    }
     repository = NULL;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", (void *) frame);
+    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%p)", (void *)frame);
 #else
-    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%lx )", (unsigned long) frame);
+    TRACE (TRACE_FLOW, "Leaving do_recursion (frame=%lx)",
+	   (unsigned long)frame);
 #endif
 
     return err;
@@ -913,15 +912,13 @@ do_recursion (struct recursion_frame *frame)
 static int
 do_file_proc (Node *p, void *closure)
 {
-    struct frame_and_file *frfile = (struct frame_and_file *)closure;
+    struct frame_and_file *frfile = closure;
     struct file_info *finfo = frfile->finfo;
     int ret;
     char *tmp;
 
     finfo->file = p->key;
-    tmp = xmalloc (strlen (finfo->file)
-			       + strlen (finfo->update_dir)
-			       + 2);
+    tmp = xmalloc (strlen (finfo->file) + strlen (finfo->update_dir) + 2);
     tmp[0] = '\0';
     if (finfo->update_dir[0] != '\0')
     {
@@ -950,11 +947,11 @@ do_file_proc (Node *p, void *closure)
 	}
     }
     else
-        finfo->rcs = (RCSNode *) NULL;
+        finfo->rcs = NULL;
     finfo->fullname = tmp;
     ret = frfile->frame->fileproc (frfile->frame->callerdat, finfo);
 
-    freercsnode(&finfo->rcs);
+    freercsnode (&finfo->rcs);
     free (tmp);
 
     /* Allow the user to monitor progress with tail -f.  Doing this once

@@ -42,7 +42,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     {
 	/* XXX - should be error maybe? */
 	error (0, 0, "CVSROOT variable not set");
-	return (1);
+	return 1;
     }
 
     /* find the info file and open it */
@@ -65,8 +65,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
 
-    TRACE ( 1, "Parse_Info (%s, %s, %s)",
-	    infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
+    TRACE (1, "Parse_Info (%s, %s, %s)",
+	   infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
     callback_done = line_number = 0;
@@ -99,8 +99,10 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	/* no value to match with the regular expression is an error */
 	if (*cp == '\0')
 	{
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error at line %d file %s; ignored",
-		   line_number, infofile);
+		   line_number, pinfopath);
+	    free (pinfopath);
 	    continue;
 	}
 	value = cp;
@@ -125,7 +127,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 		       default_line, line_number, infofile);
 		free (default_value);
 	    }
-	    default_value = xstrdup(value);
+	    default_value = xstrdup (value);
 	    default_line = line_number;
 	    continue;
 	}
@@ -167,10 +169,10 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	if( ( expanded_value = expand_path( value, infofile, line_number, 1 )
-	    ) != NULL )
+	if ((expanded_value = expand_path( value, infofile, line_number, 1)
+	    ) != NULL)
 	{
-	    err += callproc( repository, expanded_value, closure );
+	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
 	}
 	else
@@ -185,11 +187,11 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
     {
-	if( ( expanded_value = expand_path( default_value, infofile,
-	                                    line_number, 1 )
-	    ) != NULL )
+	if ((expanded_value = expand_path (default_value, infofile,
+	                                   line_number, 1)
+	    ) != NULL)
 	{
-	    err += callproc( repository, expanded_value, closure );
+	    err += callproc (repository, expanded_value, closure);
 	    free (expanded_value);
 	}
 	else
@@ -203,7 +205,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     if (line != NULL)
 	free (line);
 
-    return (err);
+    return err;
 }
 
 
@@ -307,8 +309,10 @@ parse_config (char *cvsroot)
 	if (p == NULL)
 	{
 	    /* Probably should be printing line number.  */
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
-		   infopath, line);
+		   pinfopath, line);
+	    free (pinfopath);
 	    goto error_return;
 	}
 
@@ -444,6 +448,66 @@ warning: this CVS does not support PreservePermissions");
 		goto error_return;
 	    }
 	}
+	else if (strcmp (line, "PrimaryServer") == 0)
+	{
+	    PrimaryServer = parse_cvsroot (p);
+	    if (PrimaryServer->method != fork_method
+		&& PrimaryServer->method != ext_method)
+		/* I intentionally neglect to mention :fork: here.  It is
+	         * really only useful for testing.
+		 */
+	        error (1, 0,
+"Only PrimaryServers with :ext: methods are valid, not `%s'.",
+		       p);
+	}
+#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+	else if (strcmp (line, "MaxProxyBufferSize") == 0)
+	{
+	    size_t factor = 1;
+	    char *q = p;
+
+	    /* Record the factor character (kilo, mega, giga, tera).  */
+	    switch (p[strlen(p)])
+	    {
+		case 'T':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'G':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'M':
+		    factor = xtimes (factor, 2 ^ 10);
+		case 'k':
+		    factor = xtimes (factor, 2 ^ 10);
+		    p[strlen(p)] = '\0';
+		    break;
+		default:
+		{
+		    char *pinfopath = primary_root_inverse_translate (infopath);
+		    error (0, 0,
+"%s: Unknown MaxProxyBufferSize factor: `%c'",
+			   pinfopath, p[strlen(p)]);
+		    free (pinfopath);
+		}
+	    }
+
+	    /* Verify that *q is a number.  */
+	    while (*q)
+	    {
+		if (*q < 0 || *q > 9)
+		{
+		    char *pinfopath = primary_root_inverse_translate (infopath);
+		    error (0, 0,
+"%s: MaxProxyBufferSize must be a postitive integer, not '%s'",
+			   pinfopath, p);
+		    free (pinfopath);
+		}
+		q++;
+	    }
+
+	    /* Compute final value.  */
+	    MaxProxyBufferSize = strtoul (p, NULL, 10);
+	    MaxProxyBufferSize = xtimes (MaxProxyBufferSize, factor);
+	}
+#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
@@ -457,8 +521,10 @@ warning: this CVS does not support PreservePermissions");
 	       adding new keywords to your CVSROOT/config file is not
 	       particularly recommended unless you are planning on using
 	       the new features.  */
+	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "%s: unrecognized keyword '%s'",
-		   infopath, line);
+		   pinfopath, line);
+	    free (pinfopath);
 	    goto error_return;
 	}
     }

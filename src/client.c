@@ -517,8 +517,10 @@ handle_error( char *args, int len )
 	putc ('\n', stderr);
 }
 
+
+
 static void
-handle_valid_requests( char *args, int len )
+handle_valid_requests (char *args, int len)
 {
     char *p = args;
     char *q;
@@ -563,6 +565,23 @@ handle_valid_requests( char *args, int len )
 	if (rq->flags & RQ_ESSENTIAL)
 	    error (1, 0, "request `%s' not supported by server", rq->name);
     }
+}
+
+
+
+/* Redirect our connection to a different server and start over.
+ *
+ * GLOBALS
+ *   current_parsed_root	The CVSROOT being accessed.
+ *
+ * OUTPUTS
+ *   current_parsed_root	Updated to point to the new CVSROOT.
+ */
+static void
+handle_redirect (char *args, int len)
+{
+    free_cvsroot_t (current_parsed_root);
+    current_parsed_root = parse_cvsroot (args);
 }
 
 
@@ -1154,7 +1173,7 @@ static struct
 } importmergecmd;
 
 /* Nonzero if we should arrange to return with a failure exit status.  */
-static int failure_exit;
+static bool failure_exit;
 
 
 /*
@@ -1281,8 +1300,8 @@ struct update_entries_data
 
 /* Update the Entries line for this file.  */
 static void
-update_entries( char *data_arg, List *ent_list, char *short_pathname,
-                char *filename )
+update_entries (char *data_arg, List *ent_list, char *short_pathname,
+                char *filename)
 {
     char *entries_line;
     struct update_entries_data *data = (struct update_entries_data *)data_arg;
@@ -1423,7 +1442,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 		cvs_output (updated_fname, 0);
 		cvs_output ("\n", 1);
 	    }
-	    failure_exit = 1;
+	    failure_exit = true;
 
 	discard_file_and_return:
 	    /* Now read and discard the file contents.  */
@@ -1618,7 +1637,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
 			error (0, 0,
-			       "checksum failure after patch to %s; will refetch",
+"checksum failure after patch to %s; will refetch",
 			       short_pathname);
 
 			patch_failed = 1;
@@ -2807,6 +2826,7 @@ struct response responses[] =
     RSP_LINE("error", handle_error, response_type_error, rs_essential),
     RSP_LINE("Valid-requests", handle_valid_requests, response_type_normal,
        rs_essential),
+    RSP_LINE("Redirect", handle_redirect, response_type_redirect, rs_optional),
     RSP_LINE("Checked-in", handle_checked_in, response_type_normal,
        rs_essential),
     RSP_LINE("New-entry", handle_new_entry, response_type_normal, rs_optional),
@@ -2944,9 +2964,13 @@ read_from_server( char *buf, size_t len )
 
 
 
-/*
- * Get some server responses and process them.  Returns nonzero for
- * error, 0 for success.  */
+/* Get some server responses and process them.
+ *
+ * RETURNS
+ *   0		Success
+ *   1		Error
+ *   2		Redirect
+ */
 int
 get_server_responses (void)
 {
@@ -3005,11 +3029,35 @@ get_server_responses (void)
 	updated_fname = NULL;
     }
 
-    if (rs->type == response_type_error)
-	return 1;
-    if (failure_exit)
-	return 1;
+    if (rs->type == response_type_redirect) return 2;
+    if (rs->type == response_type_error) return 1;
+    if (failure_exit) return 1;
     return 0;
+}
+
+
+
+static inline void
+close_connection_to_server (struct buffer **to, struct buffer **from)
+{
+    int status;
+
+    /* First we shut down GLOBAL_TO_SERVER.  That tells the server that its
+     * input is finished.  It then shuts down the buffer it is sending to us,
+     * at which point our shut down of GLOBAL_FROM_SERVER will complete.
+     */
+
+    status = buf_shutdown (*to);
+    if (status != 0)
+	error (0, status, "shutting down buffer to server");
+    buf_free (*to);
+    *to = NULL;
+
+    status = buf_shutdown (*from);
+    if (status != 0)
+	error (0, status, "shutting down buffer from server");
+    buf_free (*from);
+    *from = NULL;
 }
 
 
@@ -3027,10 +3075,9 @@ get_server_responses (void)
 int server_started = 0;
 
 int
-get_responses_and_close( void )
+get_responses_and_close (void)
 {
     int errs = get_server_responses ();
-    int status;
 
     /* The following is necessary when working with multiple cvsroots, at least
      * with commit.  It used to be buried nicely in do_deferred_progs() before
@@ -3040,44 +3087,29 @@ get_responses_and_close( void )
      * restore_cwd() before exiting.  Of course, calling CVS_CHDIR only once,
      * here, may be more efficient.
      */
-    if( toplevel_wd != NULL )
+    if (toplevel_wd != NULL)
     {
-	if( CVS_CHDIR( toplevel_wd ) < 0 )
-	    error( 1, errno, "could not chdir to %s", toplevel_wd );
+	if (CVS_CHDIR (toplevel_wd) < 0)
+	    error (1, errno, "could not chdir to %s", toplevel_wd);
     }
 
     if (client_prune_dirs)
 	process_prune_candidates ();
 
-    /* First we shut down GLOBAL_TO_SERVER.  That tells the server that its input is
-     * finished.  It then shuts down the buffer it is sending to us, at which
-     * point our shut down of GLOBAL_FROM_SERVER will complete.
-     */
-
-    status = buf_shutdown (global_to_server);
-    if (status != 0)
-	error (0, status, "shutting down buffer to server");
-    buf_free (global_to_server);
-    global_to_server = NULL;
-
-    status = buf_shutdown (global_from_server);
-    if (status != 0)
-	error (0, status, "shutting down buffer from server");
-    buf_free (global_from_server);
-    global_from_server = NULL;
+    close_connection_to_server (&global_to_server, &global_from_server);
     server_started = 0;
 
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
-    {
 	sleep_past (last_register_time);
-    }
 
     return errs;
 }
-	
-int
-supported_request( char *name )
+
+
+
+bool
+supported_request (const char *name)
 {
     struct request *rq;
 
@@ -3526,7 +3558,7 @@ auth_server (cvsroot_t *root, struct buffer *to_server,
 
 
 
-#ifdef CLIENT_SUPPORT
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 /* 
  * Connect to a forked server process.
  */
@@ -3578,7 +3610,7 @@ connect_to_forked_server (cvsroot_t *root, struct buffer **to_server_p,
     make_bufs_from_fds (tofd, fromfd, child_pid, root, to_server_p,
                         from_server_p, 0);
 }
-#endif /* CLIENT_SUPPORT */
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */
 
 
 
@@ -3680,8 +3712,6 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
-
-    setup_logfiles (to_server_p, from_server_p);
 }
 
 
@@ -3690,57 +3720,77 @@ open_connection_to_server (cvsroot_t *root, struct buffer **to_server_p,
 void
 start_server (void)
 {
-    int rootless;
+    bool rootless;
+    int status;
 
-    /* Clear our static variables for this invocation. */
-    if (toplevel_repos != NULL)
-	free (toplevel_repos);
-    toplevel_repos = NULL;
-
-    open_connection_to_server (current_parsed_root, &global_to_server,
-                               &global_from_server);
-
-    /* Clear static variables.  */
-    if (toplevel_repos != NULL)
-	free (toplevel_repos);
-    toplevel_repos = NULL;
-    if (last_repos != NULL)
-	free (last_repos);
-    last_repos = NULL;
-    if (last_update_dir != NULL)
-	free (last_update_dir);
-    last_update_dir = NULL;
-    stored_checksum_valid = 0;
-    if (stored_mode != NULL)
+    do
     {
-	free (stored_mode);
-	stored_mode = NULL;
-    }
+	/* Clear our static variables for this invocation. */
+	if (toplevel_repos != NULL)
+	    free (toplevel_repos);
+	toplevel_repos = NULL;
 
-    rootless = (strcmp (cvs_cmd_name, "init") == 0);
-    if (!rootless)
-    {
-	send_to_server ("Root ", 0);
-	send_to_server (current_parsed_root->directory, 0);
-	send_to_server ("\012", 1);
-    }
+	open_connection_to_server (current_parsed_root, &global_to_server,
+				   &global_from_server);
+	setup_logfiles ("CVS_CLIENT_LOG", &global_to_server,
+			&global_from_server);
 
-    {
-	struct response *rs;
-
-	send_to_server ("Valid-responses", 0);
-
-	for (rs = responses; rs->name != NULL; ++rs)
+	/* Clear static variables.  */
+	if (toplevel_repos != NULL)
+	    free (toplevel_repos);
+	toplevel_repos = NULL;
+	if (last_repos != NULL)
+	    free (last_repos);
+	last_repos = NULL;
+	if (last_update_dir != NULL)
+	    free (last_update_dir);
+	last_update_dir = NULL;
+	stored_checksum_valid = 0;
+	if (stored_mode != NULL)
 	{
-	    send_to_server (" ", 0);
-	    send_to_server (rs->name, 0);
+	    free (stored_mode);
+	    stored_mode = NULL;
 	}
-	send_to_server ("\012", 1);
-    }
-    send_to_server ("valid-requests\012", 0);
 
-    if (get_server_responses ())
-	exit (EXIT_FAILURE);
+	rootless = (strcmp (cvs_cmd_name, "init") == 0);
+	if (!rootless)
+	{
+	    send_to_server ("Root ", 0);
+	    send_to_server (current_parsed_root->directory, 0);
+	    send_to_server ("\012", 1);
+	}
+
+	{
+	    struct response *rs;
+
+	    send_to_server ("Valid-responses", 0);
+
+	    for (rs = responses; rs->name != NULL; ++rs)
+	    {
+		send_to_server (" ", 0);
+		send_to_server (rs->name, 0);
+	    }
+	    send_to_server ("\012", 1);
+	}
+	send_to_server ("valid-requests\012", 0);
+
+	if (get_server_responses ())
+	    exit (EXIT_FAILURE);
+
+	/* FIXME: I think we should still be sending this for init.  */
+	if (!rootless && supported_request ("Command-prep"))
+	{
+	    send_to_server ("Command-prep ", 0);
+	    send_to_server (cvs_cmd_name, 0);
+	    send_to_server ("\012", 0);
+	    status = get_server_responses ();
+	    if (status == 1) exit (EXIT_FAILURE);
+	    if (status == 2) close_connection_to_server (&global_to_server,
+							 &global_from_server);
+	}
+	else status = 0;
+    } while (status == 2);
+
 
     /*
      * Now handle global options.

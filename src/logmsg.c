@@ -599,7 +599,7 @@ Update_Logfile (const char *repository, const char *xmessage, FILE *xlogfp,
 static int
 update_logfile_proc (const char *repository, const char *filter, void *closure)
 {
-    struct ulp_data *udp = (struct ulp_data *)closure;
+    struct ulp_data *udp = closure;
     TRACE (TRACE_FUNCTION, "update_logfile_proc(%s,%s)", repository, filter);
     return logfile_write (repository, filter, udp->message, udp->logfp,
                           udp->changes);
@@ -785,7 +785,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
        Why this duplicates the old behavior when the format string is
        `%s' is left as an exercise for the reader. */
 
-    /* %p = shortrepos
+    /* %c = cvs_cmd_name
+     * %p = shortrepos
      * %r = repository
      * %{sVv} = file name, old revision (precommit), new revision (postcommit)
      */
@@ -794,6 +795,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 	                      !UseNewInfoFmtStrings, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
+	                      "c", "s", cvs_cmd_name,
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      "sVv", ",", changes,
@@ -842,7 +844,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 
 
 
-/*  This routine is calld by Parse_Info.  It runs the
+/*  This routine is called by Parse_Info.  It runs the
  *  message verification script.
  */
 static int
@@ -852,7 +854,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     char *newscript = NULL;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-    struct verifymsg_proc_data *vpd = (struct verifymsg_proc_data *) closure;
+    struct verifymsg_proc_data *vpd = closure;
     const char *srepos = Short_Repository (repository);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
@@ -904,13 +906,14 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 	     */
 	    sleep_past (vpd->pre_stbuf.st_mtime);
 	}
-    } /* if( vpd->fname == NULL ) */
+    } /* if (vpd->fname == NULL) */
 
     verifymsg_script = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
                                        false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
                                        script,
+				       "c", "s", cvs_cmd_name,
                                        "p", "s", srepos,
                                        "r", "s",
                                        current_parsed_root->directory,
@@ -944,7 +947,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
      * reason and should care about errno or that the process we called
      * returned -1 and the value of errno is undefined.  In other words,
      * run_exec should probably be rewritten to have two return codes.  one
-     * which is it's own exit status and one which is the child process's.  So
+     * which is its own exit status and one which is the child process's.  So
      * there.  :P
      *
      * Once run_exec is returning two error codes, we should probably be

@@ -60,6 +60,9 @@ struct rcsnode
        (the various names might differ in case).  */
     char *path;
 
+    /* Use when printing paths.  */
+    char *print_path;
+
     /* Value for head keyword from RCS header, or NULL if empty.  */
     char *head;
 

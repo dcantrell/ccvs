@@ -57,6 +57,7 @@ cvs_SOURCES = \
 	main.c \
 	mkmodules.c \
 	modules.c \
+	ms-buffer.c ms-buffer.h \
 	myndbm.c \
 	no_diff.c \
 	parseinfo.c \

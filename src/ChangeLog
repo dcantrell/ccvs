@@ -1,3 +1,616 @@
+2004-08-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (sync-secondary): 'dirname -b' fails during the
+	spacefiles-5 test on FreeBSD, so use 'dirname -- "\$dir"' for now
+	and look to AS_DIRNAME at some future date.	
+
+2004-08-19  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (ssh-wrapper): Create for $proxy mode too & forward CVS_PID
+	for crerepos.
+
+2004-08-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (writeproxy): Use CVS_PID instead of PPID as the
+	former environment variable is set by cvs and the latter is
+	NOT set by all bourne shells.
+
+2004-08-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* log-buffer.c (log_buffer_rewind): Avoid FreeBSD compilation
+	error for dereferencing a void * pointer tmp as well as using it
+	as a buffer pointer under some conditions.
+
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isProxyServer): Always compile.  Cache hostname lookup.
+	(serve_notify): Ignore notifications in conjunction with redirects.
+	(do_cvs_command): Send an error when !PROXY_SUPPORT and a client does
+	not support redirects.  Only close proxy logs when they exist.
+	(serve_command_prep): New function.
+	* sanity.sh (secondary-wrapper, writeproxy): Dynamically switch the
+	servers proxy/primary status for testing.
+	(basica): Gratuitous reformatting.
+	(devcom3, config, release): Handle some new proxy/redirect error
+	messages.
+
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* main.c (PrimaryServer): Include without PROXY_SUPPORT to support
+	redirects.
+	(main): Handle --primary-root without PROXY_SUPPORT.
+	* mkmodules.c (PrimaryServer), parseinfo.c (parse_config), root.c
+	(primary_root_add, primary_root_translate,
+	primary_root_inverse_translate): Likewise.
+
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* client.c: Misc reformatting.
+	(handle_redirect, close_connection_to_server): New functions.
+	(failure_exit,*): s/int/bool/.
+	(responses): Add `Redirect'.
+	(get_server_responses): Handle response_type_redirect.
+	(get_responses_and_close): Use close_connection_to_server().
+	(supported_request): Change API to use bool & const.
+	(start_server): Handle response_type_redirect.
+	* client.h (supported_request): Update proto.
+	(type): Add response_type_redirect.
+	* main.c (lookup_command_attribute): Declare arg const.
+	* cvs.h (lookup_command_attribute): Ditto.
+	* sever.c (requests): Create dummy `Command-prep' request.
+
+2004-08-12  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Don't process --primary-root without PROXY_SUPPORT.
+	* root.c (primary_root_translate, primary_root_inverse_translate):
+	Declare inline.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* ms-buffer.h, ms-buffer.c: Disable contents without PROXY_SUPPORT.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isProxyServer): Declare inline.
+	(reprocess_proxy_log): Rename to...
+	(rewind_buf_from_net): ...this and change all callers.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (sync-secondary): Don't bother to log sync activity.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_copy_data), buffer.h (buf_copy_data), log-buffer.c
+	(log_buffer_initialize, log_buffer_input, log_buffer_output,
+	log_buffer_rewind, log_buffer_closelog), log-buffer.h
+	(log_buffer_initialize), main.c (MaxProxyBufferSize), mkmodules.c
+	(config_contents), parseinfo.c (parse_config), server.c (server):
+	Switch eariler support for logs in memory buffers on
+	TRUST_OS_FILE_CACHE.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_free_data, buf_copy_data): Only compile with proxy
+	support.
+	* buffer.h: Ditto for including the protos.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Bracket misguided attempt at improved
+	I/O efficiency with TRUST_OS_FILE_CACHE pragmas.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h, main.c, mkmodules.c, parseinfo.c, server.c:
+	s/MaxSecondaryBufferSize/MaxProxyBufferSize/.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* sever.c (secondary_log, secondary_log_out): Rename globals everywhere
+	to...
+	(proxy_log, proxy_log_out): ...these.
+	(isSecondaryServer): Rename function...
+	(isProxyServer): ...to this.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c: #ifdef PROXY_SUPPORT in appropriate places.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h, log-buffer.h, main.c, mkmodules.c, parseinfo.c, server.c:
+	s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isSecondaryServer): Declare static.
+	* server.h (isSecondaryServer): Remove proto.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.h (log_buffer_rewind, log_buffer_closelog): Don't define
+	protos without SECONDARY_SUPPORT.
+	* server.c (*): #ifdef correctly for !SECONDARY_SUPPORT.
+	* version.c (version): Remove unused code.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (server_cleanup): Remove unused variable.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (buf_from_net_save): Remove obsolete variable.
+	(server_cleanup): Don't close BUF_FROM_NET_SAVE.
+
+2004-08-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (sync-secondary, *info): Sync only the updated directories
+	rather than the entire repository after a write for a minor efficiency
+	improvement.
+	(info, taginfo): Hack *info to sync all dirs for these tests rather
+	than rewriting the sync-secondary script to handle old-style *info
+	format strings.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
+	Beginnings of support for turning off writeproxy support (still broke.)
+	* cvs.h (PrimaryServer, MaxSecondaryBufferSize), main.c (PrimaryServer,
+	MaxSecondaryBufferSize), mkmodules.c (config_contents), parseinfo.c
+	(parse_config): Switch off when writeproxy support disabled.
+	* server.c (replace_file_offset, move_file_offset): Comment out
+	temporarily.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (copy_file): Don't fsync.  It's slow.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_copy_data): New function.
+	* buffer.h: Proto new function.
+	* cvs.h (MaxSecondaryBufferSize): Declare new config global.
+	* log-buffer.c: Allow file-backed memory buffers for "speed".
+	(struct log_buffer): Add new fields.
+	(log_buffer_force_file): New function.
+	(log_buffer_initialize): Initialize new fields.
+	(log_buffer_input, log_buffer_output): Handle logging to memory when
+	asked.
+	(log_buffer_disable): Remove function, moving much functionality...
+	(log_buffer_rewind): ...to this new function and expanding.
+	(log_buffer_closelog): Handle new fields and structs.
+	(log_buffer_get_fd): Remove function.
+	(setup_logfiles): Use new _initialize API.
+	* log-buffer.h: Update protos to match.
+	* main.c (MaxSecondaryBufferSize): Init new config global.
+	* mkmodules.c (config_contents): Add comments 4 MaxSecondaryBufferSize.
+	* parseinfo.c (parse_config): Parse MaxSecondaryBufferSize..
+	* server.c (secondary_log_name, secondary_log_out_name): Remove unused
+	globals.
+	(read_secondary_log): Remove function.
+	(reprocess_secondary_log): Use log_buffer_rewind() instead of the above.
+	(become_proxy): Ditto.
+	(server_cleanup): No need to clean up logfiles any longer.
+	(server): Use new log_buffer_initialize API.
+	
+2004-08-04  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_read_data): s/abort/assert/.
+
+2004-08-04  Derek Price  <derek@ximbiot.com>
+
+	* server.c (loop_over_inputs): Remove function, moving contents back...
+	(server): ...to here.
+
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
+	Checking in IO changes intended to improve speed for posterity since
+	they actually increase CPU usage by about .2% in remote mode and 5% in
+	writeproxy mode.
+	* Makefile.am (cvs_SOURCES): Add ms-buffer.c & ms-buffer.h.
+	* buffer.c (buf_free_data): New function.
+	(buf_read_data): s/abort/assert/.
+	(fd_buffer_input): Try to improve efficiency of blocking read.
+	* buffer.h (buf_free_data): New proto.
+	* server.c (reprocess_secondary_log): Only reopen log and attach to
+	BUF_FROM_NET - don't actually loop over inputs.
+	(become_proxy, serve_co, do_cvs_command): Use new log from above.
+	* ms-buffer.c, ms-buffer.h: New files.
+
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (TIMING): Make this work when not in $remotehost mode.
+	(reserved-13b): Use sorted output.
+
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c: Improve comments.
+
+2004-08-02  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (ssh-wrapper): Export CVSUMASK to remote host.
+	(*): Remove some hacks that were needed because CVSUMASK was not
+	exported to the remote host.  Misc cleanup.
+
+2004-07-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (pserver-auth-no-dos): ENOMEM on Solaris 7, 8, 9, and
+	AIX 4.3 all use the text "Not enough space" instead of the text
+	"Cannot allocate memory" as is printed on GNU/Linux, NetBSD, and
+	FreeBSD systems.
+
+2004-07-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (ssh-wrapper): Export CVS_RSH on remote host.
+
+2004-07-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (secondary-wrapper): Not all $TESTSHELL shells
+	are able to set a variable and export it at the same time.
+	Separate the value assignment from the export statement.
+	(writeproxy-secondary-wrapper): Ditto.
+
+2004-07-28  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isSecondaryServer): Fix array out of bounds problem.
+	* sanity.sh (ssh-wrapper): Wrap any rsh implementation we are handed to
+	forward variables relevant to testing.  Add new $TIMING variable to
+	allow timing of processes on a remote host.
+	(*): Gratuitous reformatting.
+
+2004-07-26  Derek Price  <derek@ximbiot.com>
+
+	* server.c (read_secondary_log): Minor comment corrections.
+
+2004-07-23  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_output): Don't fsync.  It is unneeded and slow.
+	* server.c (move_file_offset, replace_file_offset): Ditto.
+	* log-buffer.c (log_buffer_flush_log): Remove function.
+
+2004-07-19  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (log_buffer_disable): Return log FILE *.  Don't close
+	log.  Fix header comment.
+	(log_buffer_closelog): New function.
+	* log-buffer.h: Update protos to match.
+	* server.c (read_secondary_log): Rewind file pointer rather than
+	closing and reopening file for speed.
+	(serve_root): Close secondary log rather than just disabling when not
+	running in secondary mode.
+
+2004-07-19  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_flush): Replace abort w/assert.
+	* log-buffer.c (log_buffer_flush_log): New function for syncing a log.
+	(log_buffer_flush, log_buffer_flush): Don't sync log for speed.
+	* log-buffer.h (log_buffer_flush_log): New proto.
+	* sanity.sh: Tidy.
+	(run_filter): Accept file name to filter as argument.
+	(dotest_*): pass new arg to run_filter.
+	* server.c (read_secondary_log): Sync log before reopening.
+
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Back out previous two changes due to
+	incompatibility with current state of write proxies.
+	* log-buffer.c (log_buffer_initialize): Handle new buffers which
+	already have some data in them.
+	(log_buffer_input): Don't fsync here.  It is slow.
+	* server.c (serve_root): Disable the secondary output log too.
+	(serve_noop, pserver_authenticate_connection): Misc cleanup.
+	* sanity.sh: Misc gratuitous cleanup.
+
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Don't overwrite the input buffer the
+	second time through the blocking read loop.
+
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_input): Improve efficiency.
+	* sanity.sh (modify_repo): Move timestamp race avoidance to...
+	(sync-secondary): This script.
+	(big): Misc cleanup.
+
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Misc gratuitous cleanup.
+	(modify_repo): Sleep 1 before rsync to avoid timestamp comparison
+	issues.
+
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (log_buffer_output): Remove extremely slow fsync call.
+	(log_buffer_disable): Move to here so log files are sync'd before
+	close.
+	* sanity.sh (run_filter): New function to allow for filtering of cruft
+	output by Rational Quantify or other profilers.
+	(dotest_*): Call new function.
+
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* server.c (prepost_proxy_proc): Add the CVSROOT string for the primary
+	server, as documented.
+
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* tag.c (tag_filesdoneproc): Don't track posttag errors.
+	(cvstag): Move addition of successful tags to val-tags to...
+	(tag_fileproc): ...here and...
+	(rtag_fileproc): ...here.  Consolidate returns at single location.
+	(*): Misc reformatting.
+	* sanity.sh (sync-secondary): Include more data in the update-log.
+	
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore coverage data generated by GCC.
+
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Watch $servercvs and other minor fixes.
+
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Gratuitous reformatting.
+	* sanity.sh: Misc write proxy accommodations.
+
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
+	* log.c (log_fileproc, log_expand_revlist, log_fix_singledate,
+	log_count_print, log_tree, log_abranch, log_version), parseinfo.c
+	(Parse_Info, parse_config), rcs.c (RCS_fully_parse, rcsbuf_getkey,
+	rcsbuf_getrevnum, rcsbuf_valword, RCS_getbranchpoint, RCS_getdate,
+	RCS_getrevtime, RCS_checkout, RCS_findlock_or_tip, RCS_addbranch,
+	RCS_cmp_file, RCS_lock, RCS_unlock, RCS_delete_revs, RCS_deltas,
+	RCS_getdeltatext, RCS_putdtree): Print primary path.
+	* server.c (serve_kopt): Handle secondary log.
+	* sanity.sh: Misc accommodations.
+
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
+	* checkin.c (checkout_proc): Correct vi induced typo.
+
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
+	* admin.c (postadmin_proc), commit.c (precommit_proc), edit.c
+	(notify_proc), fileattr.c (postwatch_proc), logmsg.c (logfile_write),
+	server.c (prepost_proxy_proc), tag.c (posttag_proc, pretag_proc): Add
+	default %c format string.
+	* client.c, edit.c, lock.c, fileattr.c, mkmodules.c, myndbm.c,
+	parseinfo.c, recurse.c: Misc gratuitous cleanup.
+	* commit.c (commit_filesdoneproc): Move loginfo call to after CVSROOT
+	sync.
+	* checkout.c (checkout_proc), fileattr.c (fileattr_read), myndbm.c
+	(mydbm_open, mydbm_load_file): Print primary path.
+	* server.c (serve_checkin_time): Handle secondary log.
+	(prepost_proxy_proc): Move before first call.
+	(become_proxy): Move before first call.
+	(serve_notify): Become proxy for this request.
+	* sanity.sh: Misc accommodations.
+
+2004-07-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (serve_notify): Handle secondary_log.
+
+2004-07-08  Derek Price  <derek@ximbiot.com>
+
+	Intermediate checkin.  Adds some new server requests and test fixes.
+	* sanity.sh: Update tests to handle proxies and new hooks.
+	* cvs.h (CVSROOTADM_PREPROXY): Alphebetize & sub correct name.
+	* mkmodules.c (filelist): Alphabetize.
+	* server.c (serve_max_dotdot, serve_static_directory, serve_argumentx):
+	Handle secondary_log.
+	* tag.c (*): Misc gratuitous cleanup.
+
+2004-07-08  Derek Price  <derek@ximbiot.com>
+
+	Intermediate checkin.  Adds preproxy, & postproxy hooks and some test
+	cruft to test everything.
+
+	* cvs.h (CVSROOTADM_*): Add new hook config files.
+	* log.c (log_fileproc): Print primary path.
+	* mkmodules.c (*_content): Add init content for new files.
+	(filelist): Add new files.
+	* rcs.c (RCS_parsercsfile_i): Set print_path.  Misc gratuitous cleanup.
+	(freercsnode): Free print_path.
+	* rcs.h (struct rcsnode): Add print_path.
+	* rcscmds.c (RCS_merge, RCS_exec_rcsdiff): Print primary path.
+	* server.c (isSecondaryServer): No longer static.
+	(serve_sticky, serve_argumentx): Handle secondary logging.
+	(prepost_proxy_proc): New function.
+	(become_proxy): Call pre & post proxy hooks.  Handle IO closing better.
+	* server.h (isSecondaryServer): No longer static.
+	* status.c (status_fileproc): Print primary path.
+	* sanity.sh: Accept --proxy argument and run in write proxy mode when
+	seen.  Misc fixes to account for other changes.  Misc gratuitous
+	cleanup.
+
+2004-07-02  Derek Price  <derek@ximbiot.com>
+
+	Woo-hoo!  Write proxies work!
+	* client.c (open_connection_to_server): Set up log files...
+	(start_server): ...here.
+	* server.c (secondary_log_out_name, secondary_log_out): New globals.
+	(argument_cound, argument_vector, argument_vector_size): Move before...
+	(reprocess_secondary_log): ...referencing here.  Assume secondary_log.
+	(read_secondary_log): Accept buf & name args.
+	(serve_modified, serve_unchanged, serve_is_modified, serve_entry):
+	Handle logging pass.
+	(become_proxy): Use new output-to-client-log.  Verify buffers still
+	exist before using.
+	(output_dir): Translate paths to the client on the secondary.
+	(serve_co): Only reprocess the secondary log when one exists.
+	(server_cleanup): Free buf after shutdown.  Dispose of client output
+	log.
+	(server): Create client output log.
+	(*): Misc reformatting & detypecasting.
+	* log-buffer.c (log_buffer_output): Handle fatal_errors.
+	(log_buffer_flush): Don't operate on NULL streams.
+	(log_buffer_disable): Reformat so as not to confuse the optimizer.
+	* root.c (primary_root_translate): Remove unused variable and redundant
+	slash.
+	(primary_root_inverse_translate): New function.
+	* root.h: Add new proto.
+	* sanity.sh (writeproxy): Wrap server executables to set args and
+	server variables properly.  Fill in some test gaps.  Correct `cd' args.
+	Clean up wrappers.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
+	* root.h (primary_root_add, primary_root_translate): New protos.
+	* root.c (primary_root_add, primary_root_translate): New functions.
+	* main.c (long_options): Add --primary-root.  Handle --primary-root
+	and --allow-root only with SERVER_SUPPORT.
+	(main): Ditto.
+	* server.c (move_file_offset): Set block before fsync.  Report
+	ftruncate errors.  Force sync after rearranging data.
+	(replace_file_offset): Force sync after replacing data.
+	(serve_directory): Translate roots based on --primary-root arg.
+	(serve_root): Likewise & don't rewrite the log file.
+	(become_proxy): Increment select's N arg because it is required.
+	(do_cvs_command): Use MAX macro appropriately.
+	* sanity.sh (writeproxy): Wrap the secondary server in such a way that
+	it gets the --primary-root option and the primary does not.  Move the
+	primary root out of the way for the read operations to prove only the
+	secondary was accessed.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (log_buffer_input, log_buffer_output): Flush logs as
+	soon as they are written to better diagnose hangs.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
+	* client.c (connect_to_forked_server): Compile for SERVER_SUPPORT.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (buf_append_buffer): Handle NULL from->data.
+
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (log_buffer_flush): Sync all, not just data.
+	* buffer.c (fd_buffer_flush): Ditto.  Ignore problems synchronizing
+	unsynchronizable descriptors.
+
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
+	Intermediate checkin on the way to enabling the write proxy.
+
+	* server.c (isSecondaryServer): Handle forked primary.
+	(read_secondary_log, move_file_offset, replace_file_offset,
+	become_proxy): New functions.
+	(reprocess_secondary_log): Use new read_secondary_log().
+	(serve_root): Replace `Root' request with new version for primary.
+	(do_cvs_command): Use new become_proxy() function.
+	(*): Gratuitous reformatting.
+	(server): Open new logs and avoid opening pipes to pserver twice.
+	* buffer.c (buf_initialize): Handle new LAST_INDEX & LAST_COUNT
+	initializers.
+	(*): Remove unnecessary typecasts.  Gratuitous reformatting.  Use
+	assert() rather than if()/abort().
+	(buf_append_buffer, buf_read_data, buf_copy_lines, buf_copy_counted):
+	Track LAST_INDEX & LAST_COUNT.
+	(buf_read_short_line): Track LAST_INDEX & LAST_COUNT.
+	* buffer.h (struct buffer): Add LAST_INDEX & LAST_COUNT.
+	* cvs.h: Include minmax.h.
+	* root.h (enum CVSmethod): Force null_method to 0.
+	* zlib.c: Remove unnecessary typecasts.  Gratuitous reformatting.  Use
+	assert() rather than if()/abort().
+
+2004-06-23  Derek Price  <derek@ximbiot.com>
+
+	Checkout and probably other read-only commands now work.
+
+	* server.c (serve_expand_modules): Discard arguments even when
+	reprocessing.
+	(serve_argument): Always process arguments.
+	(serve_wrapper_sendme_rcs_options): Process in first pass.
+
+2004-06-23  Derek Price  <derek@ximbiot.com>
+
+	Operate correctly in non-write proxy mode, delaying processing of most
+	commands until after the `Root' request is received.
+
+	* server.c (buf_from_net_save): New global variable to store the input
+	buffer from the client while the secondary log is being reprocessed.
+	(reprocessing): Global to track whether we are reprocessing.
+	(various redundant prototypes): Removed.
+	(fd_buffer_*): Remove unneeded typecasts.
+	(serve_valid_responses, serve_global_option, serve_set,
+	serve_valid_requests): Avoid processing twice.
+	(command_pid, outbuf_memory_error, input_memory_error): Moved above new
+	references.
+	(server): Factor loop over the client inputs to...
+	(loop_over_inputs): ...this new function.
+	(serve_root): Loop over secondary log of client inputs when we
+	discover we are not the secondary.
+	(*): Add !secondary_log assertions to verify that certain code paths
+	are not yet taken.
+	(do_cvs_command, serve_init): Add switch and pseudo-code comments about
+	what will need to be done on secondary servers.
+	(seve_noop): Print errors & "ok" in the first pass, skip "ok" but
+	restore handling of entries and notification in the second.
+	(serve_co): Note what will need to be done on secondaries.
+	(server_cleanup): Deal with buf_from_net_save when necessary.
+
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	* server.c (server): Move previously fatal error on failure to open a
+	secondary log to...
+	(serve_root): ...here, and only when we discover we are actually a
+	secondary server.
+	(server): Ensure an interrupt cannot dump core.
+
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	Enable the writeproxy log and turn it off when we determine we are not
+	running as a secondary server.
+
+	* log-buffer.c: Compile log buffer routines in server mode for write
+	proxy.
+	(struct log_buffer): Add fatal_error member.
+	(log_buffer_initialize, log_buffer_input): Allow for fatal write errors
+	for writeproxy.
+	(log_buffer_disable): Turn off the log when asked.
+	(log_buffer_shutdown): Close log via log_buffer_disable.
+	(log_buffer_input, log_buffer_output, log_buffer_flush): Don't operate
+	on the log when it doesn't exist.
+	(*): Misc gratuitous cleanup.
+	(setup_logfiles): Use new log_buffer_initialize API.
+	* log-buffer.h (log_buffer_initialize, log_buffer_disable): New
+	prototypes.
+	(log_buffer_initialize): Update prototype.
+	* server.c: Include log-buffer.h.  Gratuitous reformatting of pragmas.
+	(secondary_log_name, secondary_log): New globals.
+	(server): Set up recording for writeproxy.
+	(serve_root): Turn off recording when we determine that we are not a
+	secondary.
+
+2004-06-21  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (writeproxy): Verify that secondary is updated after a
+	commit.  Comment test that verifies that commit took place on primary.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (writeproxy): Test response to a failing rsync.
+
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isSecondaryServer): New function.
+	(MAXHOSTNAMELEN): Move to top of file and improve comment.
+
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
+	* parseinfo.c (parse_config): Get my enum references correct.
+
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
+	* parseinfo.c (parse_config): Verify that the ProxyServer connection
+	method is valid.
+
 2004-09-02  Derek Price <derek@ximbiot.com>
 
 	* server.c (do_cvs_command): Pass new args to fd_buffer_initialize().
@@ -307,7 +920,7 @@
 	any conflicts (for 'import -X' support).
 	* sanity.sh (importX): New test.
 	(New feature from Chris Demetriou <cgd@broadcom.com>.)
-	
+
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
 	* wrapper.c: Add explicit "void" return type to "wrap_clean_fmt_str"
@@ -343,6 +956,15 @@
 	* subr.c (increment_revnum): Rewrite ala RCS to work directly on
 	the string rather than converting to int to avoid overflow.
 	* sanity.sh (basica): New tests for above, update others to match.
+
+2004-06-04  Derek Price  <derek@ximbiot.com>
+
+	Preliminary writeproxy functionality.
+	* main.c: Declare PrimaryServer.
+	* cvs.h: Likewise, but extern.
+	* mkmodules.c: Add PrimaryServer to default CVSROOT/config content.
+	* parseinfo.c: Handle PrimaryServer line.
+	* sanity.sh: (Failing) tests for writeproxy functionality.
 
 2004-05-28  Derek Price  <derek@ximbiot.com>
 

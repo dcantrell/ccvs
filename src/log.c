@@ -857,7 +857,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
 
     if (log_data->nameonly)
     {
-	cvs_output (rcsfile->path, 0);
+	cvs_output (rcsfile->print_path, 0);
 	cvs_output ("\n", 1);
 	log_free_revlist (revlist);
 	return 0;
@@ -872,7 +872,7 @@ log_fileproc (void *callerdat, struct file_info *finfo)
     cvs_output ("\n", 1);
 
     cvs_output ("RCS file: ", 0);
-    cvs_output (rcsfile->path, 0);
+    cvs_output (rcsfile->print_path, 0);
 
     if (!is_rlog)
     {
@@ -1060,7 +1060,7 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 	    if (nr->first == NULL && !really_quiet)
 	    {
 		error (0, 0, "warning: no branch `%s' in `%s'",
-		       r->first, rcs->path);
+		       r->first, rcs->print_path);
 		nr->last = NULL;
 		nr->fields = 0;
 	    }
@@ -1083,7 +1083,7 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 		if (nr->first == NULL && !really_quiet)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
-			   r->first, rcs->path);
+			   r->first, rcs->print_path);
 		}
 	    }
 
@@ -1101,7 +1101,7 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 		if (nr->last == NULL && !really_quiet)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
-			   r->last, rcs->path);
+			   r->last, rcs->print_path);
 		}
 	    }
 
@@ -1164,7 +1164,7 @@ log_expand_revlist (RCSNode *rcs, struct option_revlist *revlist,
 		{
 		    error (0, 0,
 			   "invalid branch or revision pair %s:%s in `%s'",
-			   r->first, r->last, rcs->path);
+			   r->first, r->last, rcs->print_path);
 		    free (nr->first);
 		    nr->first = NULL;
 		    free (nr->last);
@@ -1418,7 +1418,7 @@ log_fix_singledate (Node *p, void *closure)
     pv = findnode (data->rcs->versions, p->key);
     if (pv == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
-	       p->key, data->rcs->path);
+	       p->key, data->rcs->print_path);
     vnode = pv->data;
 
     /* We are only interested if this revision passes any other tests.
@@ -1473,7 +1473,7 @@ log_count_print (Node *p, void *closure)
     pv = findnode (data->rcs->versions, p->key);
     if (pv == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
-	       p->key, data->rcs->path);
+	       p->key, data->rcs->print_path);
     if (log_version_requested (data->log_data, data->revlist, data->rcs,
 			       pv->data))
 	return 1;
@@ -1497,7 +1497,7 @@ log_tree (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
     p = findnode (rcs->versions, ver);
     if (p == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
-	       ver, rcs->path);
+	       ver, rcs->print_path);
     vnode = p->data;
     if (vnode->next != NULL)
 	log_tree (log_data, revlist, rcs, vnode->next);
@@ -1532,7 +1532,7 @@ log_abranch (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
     p = findnode (rcs->versions, ver);
     if (p == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
-	       ver, rcs->path);
+	       ver, rcs->print_path);
     vnode = p->data;
     if (vnode->next != NULL)
 	log_abranch (log_data, revlist, rcs, vnode->next);
@@ -1602,7 +1602,7 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 	nextp = findnode (rcs->versions, ver->next);
 	if (nextp == NULL)
 	    error (1, 0, "missing version `%s' in `%s'", ver->next,
-		   rcs->path);
+		   rcs->print_path);
 	nextver = nextp->data;
 	pdel = findnode (nextver->other, ";add");
 	padd = findnode (nextver->other, ";delete");
