@@ -4827,8 +4827,8 @@ initial revision: 1\.1
 done"
 	  cd ..
 
-	  dotest modules3-4 "${testcvs} -q co CVSROOT/modules" \
-'U CVSROOT/modules'
+	  dotest modules3-4 "${testcvs} -q update -d CVSROOT" \
+"U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  cat >modules <<EOF
 mod1 -a first-dir/file1
