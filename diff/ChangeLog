@@ -1,3 +1,10 @@
+2000-10-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* Makefile.in: Get PR_PROGRAM from autoconf instead of hard coding.
+	(Patch submitted by Urs Thuermann <urs@isnogud.escape.de>.)
+	Also add a dependency for util.o on Makefile since PR_PROGRAM gets
+	compiled in.
+
 2000-08-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* diff3.c (read_diff): Use cvs_temp_name () instead of tmpnam () so
