@@ -312,11 +312,13 @@ user.  Compatibility note: @sc{cvs} 1.9.10 and older clients will print
 receiving this response.
 @end table
 
+@c If you are thinking of putting samp or code around BEGIN AUTH REQUEST
+@c and friends, watch for overfull hboxes.
 If the client wishes to merely authenticate without starting the cvs
-protocol, the procedure is the same, except @samp{BEGIN AUTH REQUEST} is
-replaced with @samp{BEGIN VERIFICATION REQUEST}, @samp{END AUTH REQUEST}
-is replaced with @samp{END VERIFICATION REQUEST}, and upon receipt of
-@samp{I LOVE YOU} the connection is closed rather than continuing.
+protocol, the procedure is the same, except BEGIN AUTH REQUEST is
+replaced with BEGIN VERIFICATION REQUEST, END AUTH REQUEST
+is replaced with END VERIFICATION REQUEST, and upon receipt of
+I LOVE YOU the connection is closed rather than continuing.
 
 @item future possibilities
 There are a nearly unlimited number of ways to connect and authenticate.

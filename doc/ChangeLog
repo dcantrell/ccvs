@@ -1,3 +1,8 @@
+Wed Jul 30 19:30:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Connection and Authentication): Don't use @samp
+	on BEGIN AUTH REQUEST and friends.  Avoids overfull hbox.
+
 Fri Jul 25 10:40:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Remove obsolete sentence regarding
