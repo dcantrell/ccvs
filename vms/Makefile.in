@@ -19,7 +19,6 @@ DISTFILES = \
     config.h \
     dir.h \
     filesubr.c \
-    filesubr.c.rej \
     filutils.c \
     filutils.h \
     getwd.c \
