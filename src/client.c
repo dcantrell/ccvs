@@ -450,8 +450,12 @@ log_buffer_shutdown (closure)
      void *closure;
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
+    int retval;
 
-    return buf_shutdown (lb->buf);
+    retval = buf_shutdown (lb->buf);
+    if (fclose (lb->log) < 0)
+	error (0, errno, "closing log file");
+    return retval;
 }
 
 #ifdef NO_SOCKET_TO_FD
@@ -3786,6 +3790,9 @@ the :server: access method is not supported by this port of CVS");
 	   exactly what was transmitted and received (that is
 	   more important than that they be maximally
 	   convenient to view).  */
+	/* Note that if we create several connections in a single CVS client
+	   (currently used by update.c), then the last set of logfiles will
+	   overwrite the others.  There is currently no way around this.  */
 	strcpy (p, ".in");
 	fp = open_file (buf, "wb");
         if (fp == NULL)
