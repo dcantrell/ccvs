@@ -185,6 +185,26 @@ AC_REPLACE_FUNCS(\
 	valloc \
 	waitpid \
 )
+
+
+
+dnl
+dnl GNULIB stuff
+dnl
+
+dnl We always want to use the GNULIB getpass, so define its name to something
+dnl that won't conflict with system declarations.
+AH_VERBATIM([getpass],
+[/* We want to always use the GNULIB version of getpass which we have in lib,
+ * so define getpass to something that won't conflict with any existing system
+ * declarations.
+ */
+#ifndef getpass
+# define getpass cvs_getpass
+#endif])
+
+
+
 AC_CHECK_FUNCS(\
 	fchdir \
 	fchmod \
@@ -194,7 +214,6 @@ AC_CHECK_FUNCS(\
 	getgroups \
 	getopt \
 	getpagesize \
-	getpassphrase \
 	gettimeofday \
 	initgroups \
 	login \
