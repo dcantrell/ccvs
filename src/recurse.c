@@ -298,6 +298,38 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     readlock = noexec ? 0 : xreadlock;
     dosrcs = xdosrcs;
 
+    /* The fact that locks are not active here is what makes us fail to have
+       the
+
+           If someone commits some changes in one cvs command,
+	   then an update by someone else will either get all the
+	   changes, or none of them.
+
+       property (see node Concurrency in cvs.texinfo).
+
+       The most straightforward fix would just to readlock the whole
+       tree before starting an update, but that means that if a commit
+       gets blocked on a big update, it might need to wait a *long*
+       time.
+
+       A more adequate fix would be a two-pass design for update,
+       checkout, etc.  The first pass would go through the repository,
+       with the whole tree readlocked, noting what versions of each
+       file we want to get.  The second pass would release all locks
+       (except perhaps short-term locks on one file at a
+       time--although I think RCS already deals with this) and
+       actually get the files, specifying the particular versions it wants.
+
+       This could be sped up by separating out the data needed for the
+       first pass into a separate file(s)--for example a file
+       attribute for each file whose value contains the head revision
+       for each branch.  The structure should be designed so that
+       commit can relatively quickly update the information for a
+       single file or a handful of files (file attributes, as
+       implemented in Jan 96, are probably acceptable; improvements
+       would be possible such as branch attributes which are in
+       separate files for each branch).  */
+
 #if defined(SERVER_SUPPORT) && defined(SERVER_FLOWCONTROL)
     /*
      * Now would be a good time to check to see if we need to stop
