@@ -1,5 +1,9 @@
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
+	* bison.m4: Declare YACC & YFLAGS as precious vars.
+
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
 	* bison.m4: Use AM_MISSING_PROG rather than a set/subst combination.
 
 2004-05-02  Derek Price  <derek@ximbiot.com>
