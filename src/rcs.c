@@ -2126,7 +2126,7 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
  * -- If tag is a branch tag, returns the branch number, not
  *    the revision of the head of the branch.
  * If tag or revision is not valid or does not exist in file,
- * exit with error.
+ * return NULL.
  */
 char *
 RCS_tag2rev (rcs, tag)
@@ -2205,9 +2205,8 @@ RCS_tag2rev (rcs, tag)
     if (rev)
         return rev;
 
-    error (1, 0, "tag `%s' does not exist", tag);
-    /* NOT REACHED -- error (1 ... ) does not return here */
-    return 0;
+    /* Trust the caller to print warnings. */
+    return NULL;
 }
 
 /*

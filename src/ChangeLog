@@ -1,3 +1,13 @@
+2001-03-15  Derek Price  <derek.price@openavenue.com>
+
+	* sanity.sh (basica, binfiles, head, admin): Adjust for new messages.
+	* admin.c (admin_fileproc): Only print messages when not in
+	really_quiet mode.
+
+	    for Stephen Rasku  <stephen@tgivan.com>
+
+	* rcs.c (RCS_tag2rev): Make a missing tag a survivable error.
+
 2001-03-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* subr.c (sleep_past): Fix various bugs that would result in a
