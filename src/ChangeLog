@@ -1,3 +1,24 @@
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
+	* ls.c: Remove unneeded prototypes.  Add `prune' option.
+	(dircount): Remove static global.
+	(set_tag, created_dir, ls_prune_dirs): New static globals.
+	(ls): Handle new prune option.
+	(ls_print_dir): Don't count directories, just remember not to print a
+	blank line in front of the first one.  Don't list empty directories
+	when prune is specified.
+	(ls_delproc): New function to dispose of dirlist.
+	(ls_direntproc): Reorganize to assume a directory without a parent must
+	be listed.  Create missing directories a la update and checkout so that
+	they may be processed.  Use new delproc when creating new list nodes.
+	(ls_dirleave_proc): New function to remove directories created by
+	ls_direntproc.
+	(ls_proc): Call start_recursion() once for each argument so that
+	ls_direntproc() may assume that any directory without a parent in the
+	dirlist must be listed and others must not unless recursing.
+	* sanity.sh (ls): New tests.
+	(Thanks to a report from Mark D. Baushke <mdb@cvshome.org>.)
+
 2004-04-26  Derek Price  <derek@ximbiot.com>
 
 	* rsh-client.c (start_rsh_server): Don't rely on GNU argument
