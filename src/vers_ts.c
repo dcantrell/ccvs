@@ -46,6 +46,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     struct stickydirtag *sdtp;
     Entnode *entdata;
     char *rcsexpand = NULL;
+    bool setstickynumtag = false;
 
     /* get a new Vers_TS struct */
     vers_ts = xmalloc (sizeof (Vers_TS));
@@ -159,8 +160,138 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
      */
     if (tag || date)
     {
-	vers_ts->tag = xstrdup (tag);
-	vers_ts->date = xstrdup (date);
+        if (tag)
+	{
+	    /* If a relative tag extension is used,
+	     * prepend the local revision number, and set setstickynumtag
+	     * so the sticky tag gets set to the numeric revision number
+	     */
+	    int position = 0;
+	    bool head = false;
+	    bool base = false;
+	    bool root = false;
+	    bool origin = false;
+	    bool relative = true;
+	    bool prepversion = false;
+	    bool dot = false;
+
+	    if (*tag == '.')
+	       dot = true;
+
+	    char *tmp = xstrdup (tag);
+	    char *token = strtok (tmp, ".");
+	    while (token)
+	    {
+	        if (position == 0)
+		{
+		    if (dot)
+		    {
+		        if (!strcmp (token, TAG_ROOT))
+			    root = true;
+			else if (!strcmp (token, TAG_ORIGIN))
+			    origin = true;
+			else if (!strcmp (token, TAG_DOTHEAD))
+			    head = true;
+			else if (!strcmp (token, TAG_DOTBASE))
+			{
+			    base = true;
+			    relative = false;
+			}
+			else if (strcmp (token, TAG_TRUNK)
+			         && strcmp (token, TAG_COMMITID))
+			{
+			    prepversion = true;
+			    setstickynumtag = true;
+			    break;
+			}
+			else
+			    relative = false;
+		    }
+		    else
+		        relative = false;
+		}
+		else if (!isdigit ((unsigned char) *token))
+		{
+		    if (!strcmp (token, TAG_DOTHEAD))
+		        setstickynumtag = false;
+		    else if (!strcmp (token, TAG_PREVIOUS)
+			     || !strcmp (token, TAG_NEXT))
+		        setstickynumtag = true;
+		}
+		token = strtok (NULL, ".");
+		++position;
+	    }
+	    free (tmp);
+
+	    char *preptag = NULL;
+	    if (prepversion)
+	        preptag = vers_ts->vn_user;
+	    else if (head || root || origin)
+	    {
+	        /* make sure that extensions to static tags
+		 * force usage of numeric revisions so we
+		 * don't send '.base.xxx' or alike to translate_tag()
+		 */
+	        if (vers_ts->entdata
+		    && vers_ts->entdata->tag
+		    && !(*vers_ts->entdata->tag == '.'
+			 && !strcmp (vers_ts->entdata->tag+1, TAG_DOTBASE))
+		    && strcmp (vers_ts->entdata->tag, TAG_HEAD)
+		    && strcmp (vers_ts->entdata->tag, TAG_BASE))
+		{
+		    preptag = vers_ts->entdata->tag;
+		}
+		else if (sdtp && !sdtp->aflag && sdtp->tag
+		         && !isdigit (*sdtp->tag)
+		         && !(*sdtp->tag == '.'
+			      && !strcmp (sdtp->tag+1, TAG_DOTBASE))
+		         && strcmp (sdtp->tag, TAG_HEAD)
+		         && strcmp (sdtp->tag, TAG_BASE))
+		{
+		    preptag = sdtp->tag;
+		}
+		else
+		    preptag = vers_ts->vn_user;
+	    }
+
+	    if (preptag)
+	    {
+	        char *p = NULL;
+		if (origin
+		    && (p = strrchr (preptag, '.'))
+		    && !strcmp (p+1, TAG_ORIGIN))
+		{
+		    tmp = xstrdup (preptag);
+		    tmp[p-preptag] = '\0';
+		    vers_ts->tag = Xasprintf ("%s%s", tmp, tag);
+		    free (tmp);
+		}
+		else if (head
+		         && (p = strrchr (preptag, '.'))
+		         && !strcmp (p+1, TAG_DOTHEAD))
+		{
+		    tmp = xstrdup (preptag);
+		    tmp[p-preptag] = '\0';
+		    vers_ts->tag = Xasprintf ("%s%s", tmp, tag);
+		    free (tmp);
+		}
+		else
+		    vers_ts->tag = Xasprintf ("%s%s", preptag, tag);
+	    }
+	    else if (base && position > 1)
+	    {
+	        const char *p = strchr (tag+1, '.');
+		vers_ts->tag = Xasprintf ("%s%s", vers_ts->vn_user, p);
+	    }
+	    else if (relative)
+	        vers_ts->tag = Xasprintf (".%s%s", TAG_TRUNK, tag);
+	    else
+	        vers_ts->tag = xstrdup (tag);
+	}
+	if (date)
+	{
+	    vers_ts->date = xstrdup (date);
+	}
     }
     else if (!vers_ts->entdata && (sdtp && sdtp->aflag == 0))
     {
@@ -189,8 +320,11 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 	/* squirrel away the rcsdata pointer for others */
 	vers_ts->srcfile = rcsdata;
 
-	if (vers_ts->tag && strcmp (vers_ts->tag, TAG_BASE) == 0)
-	{
+	if (vers_ts->tag
+	    && (!strcmp (vers_ts->tag, TAG_BASE)
+		|| (*(vers_ts->tag) == '.'
+		    && !strcmp (vers_ts->tag+1, TAG_DOTBASE)) ) )
+	   {
 	    vers_ts->vn_rcs = xstrdup (vers_ts->vn_user);
 	    vers_ts->vn_tag = xstrdup (vers_ts->vn_user);
 	}
@@ -207,6 +341,15 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 		vers_ts->vn_tag = xstrdup (vers_ts->tag);
 	    else
 		vers_ts->vn_tag = xstrdup (vers_ts->vn_rcs);
+
+	    if (vers_ts->vn_rcs && setstickynumtag)
+	    {
+	        /* for some relative tags, the sticky tag
+		 * needs to be set to its numeric equivalent
+		 */
+		free (vers_ts->tag);
+		vers_ts->tag = xstrdup (vers_ts->vn_rcs);
+	    }
 	}
 
 	/*

@@ -1455,11 +1455,12 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
  *   Nothing.
  */
 void
-tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
+tag_check_valid (const char *oriname, int argc, char **argv, int local, int aflag,
                  char *repository, bool valid)
 {
     DBM *db;
     char *valtags_filename;
+    char *name;
     int nowrite = 0;
     datum mytag, val;
     struct val_args the_val_args;
@@ -1470,42 +1471,32 @@ tag_check_valid (const char *name, int argc, char **argv, int local, int aflag,
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (void *)argv, local, aflag,
+	   oriname ? oriname : "(name)", argc, (void *)argv, local, aflag,
 	   repository ? repository : "(null)",
 	   valid ? "true" : "false");
 #else
     TRACE (TRACE_FUNCTION,
 	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
       "                      aflag=%d, repository=%s, valid=%s)",
-	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
+	   oriname ? oriname : "(name)", argc, (unsigned long)argv, local, aflag,
 	   repository ? repository : "(null)",
 	   valid ? "true" : "false");
 #endif
 
-    /* Numeric tags require only a syntactic check.  */
-    if (isdigit ((unsigned char) name[0]))
+    /* validate tag and return symbolic tag if any */
+    bool files = (argc > 0);
+    int i;
+    for (i=0; i<argc; ++i)
+       if (isdir (argv[i]))
+       {
+	   files = false;
+	   break;
+       }
+    if (!(name = RCS_extract_tag (oriname, files)))
     {
-	/* insert is not possible for numeric revisions */
-	assert (!valid);
-	if (RCS_valid_rev (name)) return;
-	else
-	    error (1, 0, "\
-Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
-    }
-
-    /* Special tags are always valid.  */
-    if (strcmp (name, TAG_BASE) == 0
-	|| strcmp (name, TAG_HEAD) == 0)
-    {
-	/* insert is not possible for numeric revisions */
 	assert (!valid);
 	return;
     }
-
-    /* Verify that the tag is valid syntactically.  Some later code once made
-     * assumptions about this.
-     */
-    RCS_check_tag (name);
 
     /* FIXME: This routine doesn't seem to do any locking whatsoever
        (and it is called from places which don't have locks in place).
@@ -1543,6 +1534,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	     */
 	    dbm_close (db);
 	    free (valtags_filename);
+	    free (name);
 	    return;
 	}
 	/* FIXME: should check errors somehow (add dbm_error to myndbm.c?).  */
@@ -1592,6 +1584,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	if (db != NULL)
 	    dbm_close (db);
 	free (valtags_filename);
+	free (name);
 	return;
     }
 
@@ -1606,6 +1599,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	{
 	    error (0, errno, "warning: cannot create %s", valtags_filename);
 	    free (valtags_filename);
+	    free (name);
 	    return;
 	}
     }
@@ -1617,4 +1611,5 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
     dbm_close (db);
     free (mytag.dptr);
     free (valtags_filename);
+    free (name);
 }

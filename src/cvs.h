@@ -242,6 +242,14 @@ char *strerror (int);
  */
 #define	TAG_HEAD	"HEAD"
 #define	TAG_BASE	"BASE"
+#define TAG_DOTHEAD     "head"
+#define TAG_DOTBASE     "base"
+#define TAG_COMMITID    "commitid"
+#define TAG_PREVIOUS    "prev"
+#define TAG_TRUNK       "trunk"
+#define TAG_ORIGIN      "origin"
+#define TAG_ROOT        "root"
+#define TAG_NEXT        "next"
 
 /* Environment variable used by CVS */
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */

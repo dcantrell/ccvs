@@ -441,6 +441,10 @@ import (int argc, char **argv)
 	error (0, errno, "cannot remove %s", tmpfile);
     free (tmpfile);
 
+    char *commitid = Xasprintf ("@%s", global_session_id);
+    tag_check_valid (commitid, argc, argv, 0, 1, "", true);
+    free (commitid);
+
     if (message)
 	free (message);
     free (repository);
