@@ -872,6 +872,9 @@ Optional Features:
                           optionally pass a low water mark in bytes and a high
                           water mark in bytes, separated by commas. (default
                           is enabled 1M,2M)
+  --enable-case-sensitivity
+                          Force CVS to expect a case sensitive file system
+                          (default autodetects)
   --enable-encryption     Enable encryption support (disabled by default)
   --enable-force-editor   When committing or importing files, you must enter a
                           log message. Normally, you can do this either via
@@ -10442,6 +10445,56 @@ _ACEOF
 fi # enable_server
 
 
+
+# Check whether --enable-case-sensitivity or --disable-case-sensitivity was given.
+if test "${enable_case_sensitivity+set}" = set; then
+  enableval="$enable_case_sensitivity"
+  case "$enable_case_sensitivity" in
+       yes | no | auto) ;;
+       *)
+          { { echo "$as_me:$LINENO: error: Unrecognized argument to --enable-case-sensitivity: \`$enable_case_sensitivity'.  Acceptable values are \`yes', \`no', and \`auto'." >&5
+echo "$as_me: error: Unrecognized argument to --enable-case-sensitivity: \`$enable_case_sensitivity'.  Acceptable values are \`yes', \`no', and \`auto'." >&2;}
+   { (exit 1); exit 1; }; }
+          ;;
+     esac
+else
+  enable_case_sensitivity=auto
+fi;
+
+acx_forced=' (forced)'
+echo "$as_me:$LINENO: checking for a case sensitive file system" >&5
+echo $ECHO_N "checking for a case sensitive file system... $ECHO_C" >&6
+if test $enable_case_sensitivity = auto; then
+        if test "${acx_cv_case_sensitive+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+   rm -f ac_TEST_filenames_CASE_sensitive
+    echo foo >ac_test_filenames_case_sensitive
+    if test -f ac_TEST_filenames_CASE_sensitive; then
+      acx_cv_case_sensitive=no
+    else
+      acx_cv_case_sensitive=yes
+    fi
+    rm ac_test_filenames_case_sensitive
+
+fi
+
+  enable_case_sensitivity=$acx_cv_case_sensitive
+  acx_forced=
+fi
+echo "$as_me:$LINENO: result: $enable_case_sensitivity$acx_forced" >&5
+echo "${ECHO_T}$enable_case_sensitivity$acx_forced" >&6
+if test $enable_case_sensitivity = no; then
+
+cat >>confdefs.h <<\_ACEOF
+#define FILENAMES_CASE_INSENSITIVE 1
+_ACEOF
+
+fi
+
+
+
+
 # Check whether --enable-encryption or --disable-encryption was given.
 if test "${enable_encryption+set}" = set; then
   enableval="$enable_encryption"
@@ -10504,33 +10557,6 @@ fi
 
 
 
-
-
-
-echo "$as_me:$LINENO: checking for a case insensitive file system" >&5
-echo $ECHO_N "checking for a case insensitive file system... $ECHO_C" >&6
-if test "${acx_cv_case_insensitive+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-   rm -f ac_TEST_filenames_CASE_insensitive
-  echo foo >ac_test_filenames_case_insensitive
-  if test -f ac_TEST_filenames_CASE_insensitive; then
-    acx_cv_case_insensitive=yes
-  else
-    acx_cv_case_insensitive=no
-  fi
-  rm ac_test_filenames_case_insensitive
-
-fi
-echo "$as_me:$LINENO: result: $acx_cv_case_insensitive" >&5
-echo "${ECHO_T}$acx_cv_case_insensitive" >&6
-if test $acx_cv_case_insensitive = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define FILENAMES_CASE_INSENSITIVE 1
-_ACEOF
-
-fi
 
 
 

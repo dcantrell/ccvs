@@ -795,6 +795,60 @@ fi # enable_server
 
 
 dnl
+dnl begin --enable-case-sensitivity
+dnl
+
+AC_ARG_ENABLE(
+  [case-sensitivity],
+  AC_HELP_STRING(
+    [--enable-case-sensitivity],
+    [Force CVS to expect a case sensitive file system (default autodetects)]),
+    [case "$enable_case_sensitivity" in
+       yes | no | auto) ;;
+       *)
+          AC_MSG_ERROR([Unrecognized argument to --enable-case-sensitivity: \`$enable_case_sensitivity'.  Acceptable values are \`yes', \`no', and \`auto'.])
+          ;;
+     esac],
+  [enable_case_sensitivity=auto])
+
+acx_forced=' (forced)'
+AC_MSG_CHECKING([for a case sensitive file system])
+if test $enable_case_sensitivity = auto; then
+  dnl
+  dnl Check for a case insensitive filesystem, like Mac OS X and Windows have.
+  dnl
+  AC_CACHE_VAL([acx_cv_case_sensitive],
+  [ rm -f ac_TEST_filenames_CASE_sensitive
+    echo foo >ac_test_filenames_case_sensitive
+    if test -f ac_TEST_filenames_CASE_sensitive; then
+      acx_cv_case_sensitive=no
+    else
+      acx_cv_case_sensitive=yes
+    fi
+    rm ac_test_filenames_case_sensitive
+  ])
+  enable_case_sensitivity=$acx_cv_case_sensitive
+  acx_forced=
+fi
+AC_MSG_RESULT([$enable_case_sensitivity$acx_forced])
+if test $enable_case_sensitivity = no; then
+  AC_DEFINE([FILENAMES_CASE_INSENSITIVE], [1],
+            [Define if this executable will be running on case insensitive
+             file systems.  In the client case, this means that it will request
+             that the server pretend to be case insensitive if it isn't
+             already.])
+fi
+
+dnl
+dnl end --enable-case-sensitivity
+dnl
+
+
+dnl
+dnl begin --enable-encryption
+dnl
+
+dnl
 dnl Use --enable-encryption to turn on encryption support, but ignore this
 dnl option unless either client or server is enabled.
 dnl
@@ -901,29 +955,6 @@ dnl
 dnl
 dnl end --enable-*
 dnl
-
-
-
-dnl
-dnl Check for a case insensitive filesystem, like Mac OS X and Windows have.
-dnl
-AC_CACHE_CHECK([for a case insensitive file system],[acx_cv_case_insensitive],
-[ rm -f ac_TEST_filenames_CASE_insensitive
-  echo foo >ac_test_filenames_case_insensitive
-  if test -f ac_TEST_filenames_CASE_insensitive; then
-    acx_cv_case_insensitive=yes
-  else
-    acx_cv_case_insensitive=no
-  fi
-  rm ac_test_filenames_case_insensitive
-])
-if test $acx_cv_case_insensitive = yes; then
-  AC_DEFINE([FILENAMES_CASE_INSENSITIVE], [1],
-        [Define if this executable will be running on case insensitive
-         file systems.  In the client case, this means that it will request
-         that the server pretend to be case insensitive if it isn't
-         already.])
-fi
 
 
 
