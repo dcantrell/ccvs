@@ -1,3 +1,8 @@
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* getpass.c: Update to new version from GNULIB with Larry's fix
+	incorporated.
+
 2003-09-30  Larry Jones  <lawrence.jones@eds.com>
 
 	* getpass.c: Fix bug that caused password to be echoed on many
