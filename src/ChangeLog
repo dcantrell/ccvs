@@ -1,5 +1,10 @@
 2003-03-31  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (freercsnode): Revert an accidental change from the previous
+	commit.
+
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
 	* recurse.c (start_recursion): Accept new repository argument so that
 	the working directory may be tracked by do_recursion without using
 	xgetwd(), which returned a value different from the one the user
