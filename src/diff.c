@@ -236,7 +236,7 @@ diff (argc, argv)
             case '6': case '7': case '8': case '9':
 	    case 'B': case 'H': case 'T':
 		(void) sprintf (tmp, " -%c", (char) c);
-		allocate_and_strcat (&opts, &opts_allocated, tmp);
+		xrealloc_and_strcat (&opts, &opts_allocated, tmp);
 		break;
 	    case 'L':
 		if (have_rev1_label++)
@@ -246,31 +246,31 @@ diff (argc, argv)
 			break;
 		    }
 
-	        allocate_and_strcat (&opts, &opts_allocated, " -L");
-	        allocate_and_strcat (&opts, &opts_allocated, optarg);
+	        xrealloc_and_strcat (&opts, &opts_allocated, " -L");
+	        xrealloc_and_strcat (&opts, &opts_allocated, optarg);
 		break;
 	    case 'C': case 'F': case 'I': case 'U': case 'V': case 'W':
 		(void) sprintf (tmp, " -%c", (char) c);
-		allocate_and_strcat (&opts, &opts_allocated, tmp);
-		allocate_and_strcat (&opts, &opts_allocated, optarg);
+		xrealloc_and_strcat (&opts, &opts_allocated, tmp);
+		xrealloc_and_strcat (&opts, &opts_allocated, optarg);
 		break;
 	    case 131:
 		/* --ifdef.  */
-		allocate_and_strcat (&opts, &opts_allocated, " --ifdef=");
-		allocate_and_strcat (&opts, &opts_allocated, optarg);
+		xrealloc_and_strcat (&opts, &opts_allocated, " --ifdef=");
+		xrealloc_and_strcat (&opts, &opts_allocated, optarg);
 		break;
 	    case 129: case 130:           case 132: case 133: case 134:
 	    case 135: case 136: case 137: case 138: case 139: case 140:
 	    case 141: case 142: case 143: case 144: case 145: case 146:
-		allocate_and_strcat (&opts, &opts_allocated, " --");
-		allocate_and_strcat (&opts, &opts_allocated,
+		xrealloc_and_strcat (&opts, &opts_allocated, " --");
+		xrealloc_and_strcat (&opts, &opts_allocated,
 				     longopts[option_index].name);
 		if (longopts[option_index].has_arg == 1
 		    || (longopts[option_index].has_arg == 2
 			&& optarg != NULL))
 		{
-		    allocate_and_strcat (&opts, &opts_allocated, "=");
-		    allocate_and_strcat (&opts, &opts_allocated, optarg);
+		    xrealloc_and_strcat (&opts, &opts_allocated, "=");
+		    xrealloc_and_strcat (&opts, &opts_allocated, optarg);
 		}
 		break;
 	    case 'R':
