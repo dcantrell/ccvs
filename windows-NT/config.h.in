@@ -422,7 +422,7 @@
 #undef HAVE_RENAME
 
 /* Define to 1 if you have run the test for working tzset. */
-#undef HAVE_RUN_TZSET_TEST
+#define HAVE_RUN_TZSET_TEST 1
 
 /* Define if the diff library should use setmode for binary files. */
 #define HAVE_SETMODE 1
@@ -757,7 +757,7 @@
 
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
-#define SIZE_MAX ((size_t) -1)
+#define SIZE_MAX (~(size_t)0)
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -945,7 +945,7 @@
 #define mode_t int
 
 /* Define to the name of the strftime replacement function. */
-#undef my_strftime
+#define my_strftime nstrftime
 
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
