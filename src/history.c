@@ -564,9 +564,9 @@ history (argc, argv)
 	    send_arg("-m");
 	for (mod = mod_list; mod < &mod_list[mod_count]; ++mod)
 	    option_with_arg ("-n", *mod);
-	if (since_rev != NULL)
+	if (*since_rev)
 	    option_with_arg ("-r", since_rev);
-	if (since_tag != NULL)
+	if (*since_tag)
 	    option_with_arg ("-t", since_tag);
 	for (mod = user_list; mod < &user_list[user_count]; ++mod)
 	    option_with_arg ("-u", *mod);
