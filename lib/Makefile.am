@@ -81,8 +81,14 @@ alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
 
+# For GNULIB's exitfail module.
+libcvs_a_SOURCES += exitfail.h exitfail.c
+
 # For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
+
+# For GNULIB's xalloc module.
+libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
 # Until Automake gets its act together
 distclean-local:
