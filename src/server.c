@@ -5005,6 +5005,9 @@ switch_to_user (username)
     pw = getpwnam (username);
     if (pw == NULL)
     {
+	/* Normally this won't be reached; check_password contains
+	   a similar check.  */
+
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
 	/* Don't worry about server_cleanup; server_active isn't set yet.  */
@@ -5012,7 +5015,14 @@ error 0 %s: no such user\n", username);
     }
 
 #if HAVE_INITGROUPS
-    if (initgroups (pw->pw_name, pw->pw_gid) < 0)
+    if (initgroups (pw->pw_name, pw->pw_gid) < 0
+#  ifdef EPERM
+	/* At least on the system I tried, initgroups() only works as root.
+	   But we do still want to report ENOMEM and whatever other
+	   errors initgroups() might dish up.  */
+	&& errno != EPERM
+#  endif
+	)
     {
 	/* This could be a warning, but I'm not sure I see the point
 	   in doing that instead of an error given that it would happen
@@ -5467,12 +5477,7 @@ pserver_authenticate_connection ()
     host_user = check_password (username, descrambled_password, repository);
     memset (descrambled_password, 0, strlen (descrambled_password));
     free (descrambled_password);
-    if (host_user)
-    {
-	printf ("I LOVE YOU\n");
-	fflush (stdout);
-    }
-    else
+    if (host_user == NULL)
     {
     i_hate_you:
 	printf ("I HATE YOU\n");
@@ -5507,6 +5512,8 @@ pserver_authenticate_connection ()
     free (username);
     free (password);
 
+    printf ("I LOVE YOU\n");
+    fflush (stdout);
 #endif /* AUTH_SERVER_SUPPORT */
 }
 
