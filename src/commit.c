@@ -1668,7 +1668,6 @@ static int
 finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 {
     int ret;
-    char *rcs;
 
     ret = Checkin ('A', finfo, rev, tag, options, saved_message);
     if (ret == 0)
@@ -1685,7 +1684,6 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 	fixaddfile (finfo->file, finfo->repository);
 
     (void) time (&last_register_time);
-    free (rcs);
 
     return (ret);
 }
