@@ -1,5 +1,9 @@
 2004-03-13  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_updated): Fix header comment.
+
+2004-03-13  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (cvs_SOURCES): Remove error.h since it is now included in
 	lib.
 	* Makefile.in: Regenerated.
