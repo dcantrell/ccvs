@@ -1,3 +1,7 @@
+Wed May 15 23:51:49 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* README: mention that grep is mandatory.
+
 Wed May 01 01:28:41 1996  noel  <noel@BOAT_ANCHOR>
 
 	* filesubr.c (get_homedir): use both HOMEDRIVE and HOMEPATH to
