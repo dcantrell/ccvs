@@ -1,3 +1,9 @@
+Tue Jan 30 18:20:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getline.c: Don't define NDEBUG.
+	(getstr): Rewrite assertions in a way which should stay clear of
+	signed/unsigned problems and compiler warnings thereof.
+
 Thu Jan 25 00:14:06 1996  Jim Kingdon  <kingdon@beezley.cyclic.com>
 
 	* yesno.c (yesno): fflush stdout as well as stderr.
