@@ -77,11 +77,9 @@ EXTRA_DIST = \
 	stdint_h.m4 \
 	strerror.m4 \
 	strerror_r.m4 \
-	strftime.m4 \
 	time_r.m4 \
 	timespec.m4 \
 	tm_gmtoff.m4 \
-	tzset.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
 	unlocked-io.m4 \

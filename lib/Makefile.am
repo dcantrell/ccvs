@@ -27,7 +27,6 @@ libcvs_a_SOURCES = \
 	md5.c \
 	savecwd.c \
 	sighandle.c \
-	strftime.c \
 	xgetwd.c \
 	yesno.c \
 	error.h \

@@ -180,17 +180,13 @@ target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
 EXTRA_DIST = \
+	stamp-ch \
 	config.h \
-	stamp-chi \
 	config.h.in \
-	config.h.in.in \
-	config.h.in.footer \
-	plhead \
-	mkconfig.pl \
-	fix-msvc-mak.pl \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
+	stamp-sh \
 	stdbool.h \
 	filesubr.c \
 	mkdir.c \
@@ -207,17 +203,11 @@ EXTRA_DIST = \
 
 
 SUBDIRS = SCC
-
-###
-### Maintainer targets
-###
-MAINTAINERCLEANFILES = $(srcdir)/stamp-chi $(srcdir)/config.h.in
-DISTCLEANFILES = stamp-ch stamp-sh
 subdir = windows-NT
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = fix-msvc-mak mkconfig
+CONFIG_CLEAN_FILES = fix-msvc-mak
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -226,7 +216,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
-	fix-msvc-mak.pl mkconfig.pl plhead.pl
+	fix-msvc-mak-head.pl fix-msvc-mak.pl
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
@@ -236,9 +226,7 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configu
 	  $(AUTOMAKE) --gnu  windows-NT/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-fix-msvc-mak: $(top_builddir)/config.status plhead.pl fix-msvc-mak.pl
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-mkconfig: $(top_builddir)/config.status plhead.pl mkconfig.pl
+fix-msvc-mak: $(top_builddir)/config.status fix-msvc-mak-head.pl fix-msvc-mak.pl
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 uninstall-info-am:
 
@@ -436,12 +424,10 @@ clean-generic:
 
 distclean-generic:
 	-rm -f $(CONFIG_CLEAN_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-recursive
 
 clean-am: clean-generic mostlyclean-am
@@ -505,9 +491,12 @@ uninstall-info: uninstall-info-recursive
 	uninstall-info-recursive uninstall-recursive
 
 
+###
+### Maintainer targets
+###
 all-local: config.h stdbool.h
 config.h: stamp-ch
-stamp-ch: config.h.in Makefile
+stamp-ch: config.h.in $(top_srcdir)/configure
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
 	  >config.tmp
 	@echo " * config.h.in file." >>config.tmp
@@ -523,12 +512,6 @@ stamp-ch: config.h.in Makefile
 	      cp config.tmp $(srcdir)/config.h)
 	-@rm -f config.tmp
 	@cp $(srcdir)/config.h $@
-
-config.h.in: stamp-chi
-stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
-	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h.in $(srcdir)/$@
 
 stdbool.h: stamp-sh
 stamp-sh: $(top_srcdir)/lib/stdbool_.h
