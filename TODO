@@ -501,3 +501,50 @@ overriding .cvsrc from the command line.  The cleanest solution might
 be to have options in mutually exclusive sets (-l/-R being a current
 example, but --foo/--no-foo is a better way to name such options).  Or
 perhaps there is some better solution.
+
+189.  Renaming files and directories is a frequently discussed topic.
+
+Some of the problems with the status quo:
+
+1.  "cvs annotate" cannot operate on both the old and new files in a
+single run.  You need to run it twice, once for the new name and once
+for the old name.
+
+2.  "cvs diff" (or "cvs diff -N") shows a rename as a removal of the
+old file and an addition of the new one.  Some people would like to
+see the differences between the file contents (but then how would we
+indicate the fact that the file has been renamed?  Certainly the
+notion that "patch(1)" has of renames is as a removal and addition).
+
+3.  "cvs log" should be able to show the changes between two
+tags/dates, even in the presence of adds/removes/renames (I'm not sure
+what the status quo is on this; see also item #182).
+
+4.  Renaming directories is way too hard.
+
+Implementations:
+
+It is perhaps premature to try to design implementation details
+without answering some of the above questions about desired behaviors
+but several general implementations get mentioned.
+
+a.  No fundamental changes (for example, a "cvs rename" command which
+operated on directories could still implement the current recommended
+practice for renaming directories, which is to rename each of the
+files contained therein via an add and a remove).  One thing to note
+that the status quo gets right is proper merges, even with adds and
+removals (Well, mostly right at least.  There are a *LOT* of different
+cases; see the testsuite for some of them).
+
+b.  Rename database.  In this scheme the files in the repository would
+have some arbitrary name, and then a separate rename database would
+indicate the current correspondence between the filename in the
+working directory and the actual storage.  As far as I know this has
+never been designed in detail for CVS.
+
+c.  A modest change in which the RCS files would contain some
+information such as "renamed from X" or "renamed to Y".  That is, this
+would be generally similar to the log messages which are suggested
+when one renames via an add and a removal, but would be
+computer-parseable.  I don't think anyone has tried to flesh out any
+details here either.
