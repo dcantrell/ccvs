@@ -488,14 +488,14 @@ deep_remove_dir (path)
 	       returns 87).  */
 	    || (ENOTEMPTY == 17 && EEXIST == 17 && errno == 87))
 	{
-	    if ((dirp = opendir (path)) == NULL)
+	    if ((dirp = CVS_OPENDIR (path)) == NULL)
 		/* If unable to open the directory return
 		 * an error
 		 */
 		return -1;
 
 	    errno = 0;
-	    while ((dp = readdir (dirp)) != NULL)
+	    while ((dp = CVS_READDIR (dirp)) != NULL)
 	    {
 		char *buf;
 
@@ -513,7 +513,7 @@ deep_remove_dir (path)
 		{
 		    if (deep_remove_dir(buf))
 		    {
-			closedir(dirp);
+			CVS_CLOSEDIR(dirp);
 			free (buf);
 			return -1;
 		    }
@@ -522,7 +522,7 @@ deep_remove_dir (path)
 		{
 		    if (CVS_UNLINK (buf) != 0)
 		    {
-			closedir(dirp);
+			CVS_CLOSEDIR(dirp);
 			free (buf);
 			return -1;
 		    }
@@ -534,11 +534,11 @@ deep_remove_dir (path)
 	    if (errno != 0)
 	    {
 		int save_errno = errno;
-		closedir (dirp);
+		CVS_CLOSEDIR (dirp);
 		errno = save_errno;
 		return -1;
 	    }
-	    closedir (dirp);
+	    CVS_CLOSEDIR (dirp);
 	    return rmdir (path);
 	}
 	else
@@ -1051,7 +1051,7 @@ fopen_case (name, mode, fp, pathp)
 	}
     }
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (cvs_casecmp (dp->d_name, fname) == 0)
 	{
@@ -1063,7 +1063,7 @@ fopen_case (name, mode, fp, pathp)
     }
     if (errno != 0)
 	error (1, errno, "cannot read directory %s", dir);
-    closedir (dirp);
+    CVS_CLOSEDIR (dirp);
 
     if (found_name == NULL)
     {

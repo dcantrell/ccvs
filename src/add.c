@@ -357,7 +357,7 @@ add (argc, argv)
 		error (1, errno, "cannot read directory %s", finfo.repository);
 	    found_name = NULL;
 	    errno = 0;
-	    while ((dp = readdir (dirp)) != NULL)
+	    while ((dp = CVS_READDIR (dirp)) != NULL)
 	    {
 		if (cvs_casecmp (dp->d_name, finfo.file) == 0)
 		{
@@ -369,7 +369,7 @@ add (argc, argv)
 	    }
 	    if (errno != 0)
 		error (1, errno, "cannot read directory %s", finfo.repository);
-	    closedir (dirp);
+	    CVS_CLOSEDIR (dirp);
 
 	    if (found_name != NULL)
 	    {

@@ -1,3 +1,18 @@
+2000-02-06  Derek Price  <derek.price@openavenue.com>
+	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
+	    Shawn Smith  <Shawn_Smith@notes.ymp.gov>
+
+	* add.c: Replace opendir, closedir, & readdir calls with CVS_OPENDIR,
+	CVS_CLOSEDIR, & CVS_READDIR in support of changes to handle VMS DEC C
+	5.7 {open,read,close}dir problems.  Check today's entry in the vms
+	subdir for more.
+	* filesubr.c: ditto
+	* find_names.c: ditto
+	* ignore.c: ditto
+	* import.c: ditto
+	* lock.c: ditto
+	* update.c: ditto
+
 2001-02-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* error.h: Changed include guard macro from _error_h_ to ERROR_H;

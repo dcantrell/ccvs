@@ -634,7 +634,7 @@ again:
 	error (1, 0, "cannot open directory %s", repository);
 
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
 	{
@@ -655,7 +655,7 @@ again:
 		 */
 		if (now >= (sb.st_ctime + CVSLCKAGE) && CVS_UNLINK (line) != -1)
 		{
-		    (void) closedir (dirp);
+		    (void) CVS_CLOSEDIR (dirp);
 		    free (line);
 		    goto again;
 		}
@@ -681,7 +681,7 @@ again:
     if (errno != 0)
 	error (0, errno, "error reading directory %s", repository);
 
-    closedir (dirp);
+    CVS_CLOSEDIR (dirp);
     return (ret);
 }
 

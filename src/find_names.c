@@ -269,7 +269,7 @@ find_rcs (dir, list)
 
     /* read the dir, grabbing the ,v files */
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0) 
 	{
@@ -288,11 +288,11 @@ find_rcs (dir, list)
     if (errno != 0)
     {
 	int save_errno = errno;
-	(void) closedir (dirp);
+	(void) CVS_CLOSEDIR (dirp);
 	errno = save_errno;
 	return 1;
     }
-    (void) closedir (dirp);
+    (void) CVS_CLOSEDIR (dirp);
     return (0);
 }
 
@@ -332,7 +332,7 @@ find_dirs (dir, list, checkadm, entries)
 
     /* read the dir, grabbing sub-dirs */
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") == 0 ||
 	    strcmp (dp->d_name, "..") == 0 ||
@@ -414,11 +414,11 @@ find_dirs (dir, list, checkadm, entries)
     if (errno != 0)
     {
 	int save_errno = errno;
-	(void) closedir (dirp);
+	(void) CVS_CLOSEDIR (dirp);
 	errno = save_errno;
 	return 1;
     }
-    (void) closedir (dirp);
+    (void) CVS_CLOSEDIR (dirp);
     if (tmp != NULL)
 	free (tmp);
     return (0);

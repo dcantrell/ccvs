@@ -408,7 +408,7 @@ ignore_files (ilist, entries, update_dir, proc)
     wrap_add_file (CVSDOTWRAPPER, 1);
 
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	file = dp->d_name;
 	if (strcmp (file, ".") == 0 || strcmp (file, "..") == 0)
@@ -495,5 +495,5 @@ ignore_files (ilist, entries, update_dir, proc)
     }
     if (errno != 0)
 	error (0, errno, "error reading current directory");
-    (void) closedir (dirp);
+    (void) CVS_CLOSEDIR (dirp);
 }
