@@ -1,3 +1,9 @@
+2004-01-30  Derek Price  <derek@ximbiot.com>
+
+	Close issue #155.
+	* log_accum.in: Remove unused variables.
+	(Patch from (Ville Skyttä <scop@cvshome.org>.)
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.

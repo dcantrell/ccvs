@@ -3,6 +3,9 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Thanks to Ville Skyttä some unused variables were removed from the log_accum
+  Perl script in contrib.
+
 * Thanks to Alexey Mahotkin, a bug that prevented CVS from being compiled with
   Kerberos 4 authentication enabled has been fixed.
 
