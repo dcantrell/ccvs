@@ -1,5 +1,9 @@
 2003-08-13  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (tests): Remove version.
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (version): This test moved to tests/suite.
 
 2003-08-13  Derek Price  <derek@ximbiot.com>
