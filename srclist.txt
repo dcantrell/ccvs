@@ -51,6 +51,10 @@ $GNULIB/lib/atexit.c				lib		no NI
 $GNULIB/m4/atexit.m4				m4		no NI
 # $GNULIB/modules/exit
 $GNULIB/lib/exit.h				lib		no NI
+# $GNULIB/modules/exitfail
+$GNULIB/lib/exitfail.h				lib		no NI
+$GNULIB/lib/exitfail.c				lib		no NI
+$GNULIB/m4/exitfail.m4				m4		no NI
 # $GNULIB/modules/gethostname
 $GNULIB/lib/gethostname.c			lib		no NI
 $GNULIB/m4/gethostname.m4			m4		no NI
@@ -153,6 +157,11 @@ $GNULIB/m4/signed.m4				m4		no NI
 $GNULIB/m4/vasnprintf.m4			m4		no NI
 $GNULIB/m4/wchar_t.m4				m4		no NI
 $GNULIB/m4/wint_t.m4				m4		no NI
+# $GNULIB/modules/xalloc
+$GNULIB/lib/xalloc.h				lib		no NI
+$GNULIB/lib/xmalloc.c				lib		no NI
+$GNULIB/lib/xstrdup.c				lib		yes NI
+$GNULIB/m4/xalloc.m4				m4		no NI
 # $GNULIB/modules/xsize
 $GNULIB/lib/xsize.h				lib		no NI
 $GNULIB/m4/xsize.m4				m4		no NI

@@ -69,6 +69,12 @@ GENERAL USER ISSUES
 
 DEVELOPER ISSUES
 
+* xmalloc, xstrdup, & some other memory allocating functions are now available
+  vi GNULIB versions imported into lib.
+
+* The asnprintf() & vasnprintf() functions are now available due to a GNULIB
+  implementation.
+
 * Misc cosmetic, readability, and commenting fixes.
 
 Changes between 1.12.4 and 1.12.5:
