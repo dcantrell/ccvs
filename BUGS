@@ -15,10 +15,6 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
-* Wrappers (-t/-f) do not work client/server, and there are a variety of other
-bugs and annoyances with wrappers.
-
-
 * If your login name contains a space or various other characters
 (particularly an issue on Windows), CVS will have trouble (it will
 write invalid RCS files, probably).  The fix would be to have CVS
