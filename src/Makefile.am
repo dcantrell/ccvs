@@ -14,6 +14,7 @@
 
 SHELL = /bin/sh
 
+# $(includeopt) is CVS specific and set by configure
 ##INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
 INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(includeopt)
 
@@ -45,7 +46,7 @@ cvsbug: cvsbug.sh version.c
 
 # extra clean targets
 # wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = options.h-SAVED
+DISTCLEANFILES = options.h-SAVED cvsbug check.log check.plog
 
 # General
 EXTRA_DIST = \

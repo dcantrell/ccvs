@@ -98,6 +98,7 @@ pr_path = @pr_path@
 
 SHELL = /bin/sh
 
+# $(includeopt) is CVS specific and set by configure
 INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(includeopt)
 
 bin_PROGRAMS = cvs
@@ -121,7 +122,7 @@ cvsbug_EXTRA_DIST = cvsbug.sh
 
 # extra clean targets
 # wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = options.h-SAVED
+DISTCLEANFILES = options.h-SAVED cvsbug check.log check.plog
 
 # General
 EXTRA_DIST = \
@@ -326,6 +327,11 @@ TAGS:  $(HEADERS) $(SOURCES) options.h.in $(TAGS_DEPENDENCIES) \
 	       END { for (i in files) print i; }'`; \
 	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
 	  || $(ETAGS) $(ETAGS_ARGS) $$tags $$unique $(LISP)
+
+GTAGS:
+	here=`CDPATH=: && cd $(top_builddir) && pwd` \
+	  && cd $(top_srcdir) \
+	  && gtags -i $$here
 
 mostlyclean-tags:
 
