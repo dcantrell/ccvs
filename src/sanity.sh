@@ -478,7 +478,7 @@ RCSINIT=; export RCSINIT
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big modes"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binfiles2 binwrap info serverpatch log log2 crerepos rcs big modes"
 	tests="${tests} sticky keyword"
 else
 	tests="$*"
@@ -2803,6 +2803,7 @@ rev 2 of file 2
 
 	join)
 	  # Test doing joins which involve adding and removing files.
+	  # See also binfile2, which does similar things with binary files.
 
 	  # We check merging changes from T1 to T2 into the main line.
 	  # Here are the interesting cases I can think of:
@@ -4996,6 +4997,58 @@ File: nibfile          	Status: Up-to-date
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 2
+	  ;;
+
+	binfiles2)
+	  # Test cvs's ability to handle binary files, particularly branching
+	  # and joining.  The key thing we are worrying about is that CVS
+	  # doesn't print "cannot merge binary files" or some such, in 
+	  # situations where no merging is required.
+	  # See also "join" which does this with non-binary files.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  dotest binfiles2-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  # FIXCVS: unless a branch has at least one file on it,
+	  # tag_check_valid won't know it exists.  So creating a
+	  # file here is a workaround.
+	  touch dummy
+	  dotest binfiles2-1a "${testcvs} add dummy" \
+"${PROG} [a-z]*: scheduling file .dummy. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest binfiles2-1b "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dummy,v
+done
+Checking in dummy;
+/tmp/cvs-sanity/cvsroot/first-dir/dummy,v  <--  dummy
+initial revision: 1\.1
+done'
+	  dotest binfiles2-2 "${testcvs} -q tag -b br" 'T dummy'
+	  dotest binfiles2-3 "${testcvs} -q update -r br" ''
+	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
+	    </dev/null >../binfile
+	  cp ../binfile binfile.dat
+	  dotest binfiles2-4 "${testcvs} add -kb binfile.dat" \
+"${PROG} [a-z]*: scheduling file .binfile\.dat. for addition on branch .br.
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest binfiles2-5 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/binfile\.dat,v
+done
+Checking in binfile\.dat;
+/tmp/cvs-sanity/cvsroot/first-dir/Attic/binfile\.dat,v  <--  binfile\.dat
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done'
+	  dotest binfiles2-6 "${testcvs} -q update -A" \
+"${PROG} [a-z]*: warning: binfile\.dat is not (any longer) pertinent"
+	  dotest_fail binfiles2-7 "test -f binfile.dat" ''
+	  dotest binfiles2-8 "${testcvs} -q update -j br" "U binfile.dat"
+	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
+	  cd ..
+	  cd ..
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1
 	  ;;
 
 	binwrap)
