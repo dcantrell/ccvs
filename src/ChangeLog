@@ -1,5 +1,16 @@
 Tue Jan 31 20:59:19 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
 
+	* server.c: Try to avoid starting the "rm -rf" at cleanup time
+	until after subprocesses have finished.
+	(command_fds_to_drain, max_command_fd): New variables.
+	(do_cvs_command): Set them.
+	(command_pid_is_dead): New variable.
+	(wait_sig): New function.
+	(server_cleanup): If command_pid is nonzero, wait for it to die,
+	draining output from it in the meantime.  If nonzero SIG was
+	passed, send a signal to the subprocess, to encourage it to die
+	soon.
+
 	* main.c (usage): Argument is now `const char *const *'.
 	* cvs.h (usage): Changed prototype.
 	(USE): Make new variable `const'.
