@@ -1,3 +1,9 @@
+2004-10-05  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "lib/save-cwd.h" and "lib/xgetcwd.h" to project.
+	* cvsnt.dep: Regenerated for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerated for "cvsnt.dsp" change.
+
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove call to gl_DIRNAME.

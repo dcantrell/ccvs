@@ -532,6 +532,10 @@ SOURCE=".\src\rsh-client.h"
 # End Source File
 # Begin Source File
 
+SOURCE=".\lib\save-cwd.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\savecwd.h
 # End Source File
 # Begin Source File
@@ -585,6 +589,10 @@ SOURCE=.\src\watch.h
 # Begin Source File
 
 SOURCE=.\lib\xalloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xgetcwd.h
 # End Source File
 # Begin Source File
 
