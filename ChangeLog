@@ -1,3 +1,8 @@
+Sun May 26 17:59:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Change "up-to-date" to "not locally modified"; the file
+	need not match the head revision it only need match some revision.
+
 Sun May 26 17:02:49 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* NEWS: document new option "-c" for tag
