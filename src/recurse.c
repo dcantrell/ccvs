@@ -400,7 +400,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     /* free the saved copy of the pointer if necessary */
     if (srepository)
     {
-	(void) free (srepository);
+	free (srepository);
 	repository = (char *) NULL;
     }
 
@@ -573,7 +573,7 @@ addfile (listp, dir, file)
     Node *n;
 
     /* add this dir. */
-    (void) addlist (listp, dir);
+    addlist (listp, dir);
 
     n = findnode (*listp, dir);
     if (n == NULL)
