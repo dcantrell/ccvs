@@ -509,7 +509,7 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword toplevel head admin reserved"
+	tests="${tests} sticky keyword toplevel head tagdate admin reserved"
 	tests="${tests} cvsadm diffmerge1 diffmerge2"
 else
 	tests="$*"
@@ -9286,6 +9286,53 @@ deleting revision 1\.3\.2\.1
 done
 RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 done"
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	tagdate)
+	  # Test combining -r and -D.
+	  mkdir 1; cd 1
+	  dotest tagdate-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest tagdate-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  echo trunk-1 >file1
+	  dotest tagdate-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest tagdate-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest tagdate-5 "${testcvs} -q tag -b br1" "T file1"
+	  dotest tagdate-6 "${testcvs} -q tag -b br2" "T file1"
+	  echo trunk-2 >file1
+	  dotest tagdate-7 "${testcvs} -q ci -m modify-on-trunk" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  # We are testing -r -D where br1 is a (magic) branch without
+	  # any revisions.  First the case where br2 doesn't have any
+	  # revisions either:
+	  dotest tagdate-8 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
+	  dotest tagdate-9 "${testcvs} -q update -r br2" "U file1"
+	  echo br2-1 >file1
+	  dotest tagdate-10 "${testcvs} -q ci -m modify-on-br2" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.4\.1; previous revision: 1\.1
+done"
+	  # Then the case where br2 does have revisions:
+	  dotest tagdate-11 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
