@@ -926,6 +926,8 @@ shell_escape(buf, str)
     return buf;
 }
 
+
+
 /*
  * We can only travel forwards in time, not backwards.  :)
  */
@@ -978,11 +980,23 @@ sleep_past (desttime)
 	    struct timeval tv;
 	    tv.tv_sec = s;
 	    tv.tv_usec = us;
-	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
+	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL,
+                          &tv);
 	}
 #else
 	if (us > 0) s++;
 	(void)sleep(s);
 #endif
     }
+}
+
+
+
+/* Return non-zero iff FILENAME is absolute.
+   Trivial under Unix, but more complicated under other systems.  */
+int
+isabsolute (filename)
+    const char *filename;
+{
+    return ISABSOLUTE (filename);
 }
