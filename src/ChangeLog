@@ -1,3 +1,30 @@
+2003-06-02  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_file_nodiff): Don't assume that because two specified
+	revision numbers are different, the contents are different.
+	(Original report & patch from Paul Edwards <kerravon@w3.to>.)
+
+	* diff.c (diff_file_nodiff): Pass through rev1_cache to be filled in
+	by RCS_cmp_file when it needs to check out revision 1 into a file.  Add
+	some more informative error messages.  Cleanup for efficiency &
+	readability.
+	(diff_fileproc): Pass the cached revision to RCS_exec_diff().  Clean up
+	the error exit code.  Remove code killed by the changes to
+	diff_file_nodiff().
+	* rcscmds.c (RCS_exec_rcsdiff): Accept and use new cached revision text
+	if present.
+	* rcs.c (RCS_cmp_file): Accept a second revision number and cache the
+	first revision if it needs to be checked out.
+
+	* checkin.c (Checkin): Use new RCS_cmp_file().
+	* import.c (update_rcs_file): Ditto.
+	* no_diff.c (No_Difference): Ditto.
+
+	* cvs.h (RCS_exec_rcsdiff): New proto to match above changes.
+	* rcs.h (RCS_cmp_file): Ditto.
+
+	* sanity.sh: Minor corrections to handle the above changes.
+
 2003-05-31  Derek Price  <derek@ximbiot.com>
 
 	* root.c (parse_cvsroot): Refuse :fork: only in client mode, not
