@@ -1,3 +1,8 @@
+Mon May 20 13:23:36 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* main.c (cmd_usage): minor corrections to descriptions of status,
+	rtag, tag, and rdiff.  Sort alphabetically by command name.
+
 Mon May 20 10:36:07 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (call_in_directory): Move the call to Entries_Close
