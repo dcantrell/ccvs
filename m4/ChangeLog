@@ -1,3 +1,7 @@
+2004-10-15  Derek Price  <derek@ximbiot.com>
+
+	* vasprintf.m4: New file from GNULIB.
+
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
 	* lstat.m4: Update from GNULIB.
