@@ -1,3 +1,14 @@
+2004-01-07  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* checkout.c (safe_location): Remove unused variable(s).
+	* lock.c (lock_tree_for_write): Ditto.
+	* rcs.c (RCS_checkin): Ditto.
+	* subr.c (compare_revnums): Ditto.
+	* tag.c (tag_check_valid): Ditto.
+	* mkmodules.c (init): Initialize err and return it rather than 0.
+	* server.c (do_cvs_command): Only define and set max_command_fd if
+	we're actually going to use it.
+
 2004-01-01  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* zlib.c (read_and_gzip, gunzip_and_write): Fix potential buffer
