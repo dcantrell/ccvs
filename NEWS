@@ -3,6 +3,9 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
+* An unlikely potential segfault when using the :fork: connection method has
+  been fixed.
+
 * Misc cosmetic, readability, and commenting fixes.
 
 * The CVS server has had the protocol check for unused data from the client
