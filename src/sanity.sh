@@ -1035,7 +1035,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
-        tests="${tests} checkout_repository"
+        tests="${tests} top-level checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
 	tests="${tests} errmsg3"
@@ -1071,6 +1071,30 @@ if test x"$*" = x; then
 else
 	tests="$*"
 fi
+
+# Now check the -f argument for validity.
+if test -n "$fromtest"; then
+	# Don't allow spaces - they are our delimiters in tests
+	count=0
+	for sub in $fromtest; do
+	  count=`expr $count + 1`
+	done
+	if test $count != 1; then
+		echo "No such test \`$fromtest'." >&2
+		exit 2
+	fi
+	# make sure it is in $tests
+	case " $tests " in
+		*" $fromtest "*)
+			;;
+		*)
+			echo "No such test \`$fromtest'." >&2
+			exit 2
+			;;
+	esac
+fi
+
+
 
 # a simple function to compare directory contents
 #
@@ -14442,6 +14466,30 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
+
+
+
+	top-level)
+	  # FIXCVS:
+	  # This test confirms a bug that exists in the r* commands currently
+	  # when run against the top-level project.
+	  #
+	  # The copious usage of .* below is because there is no
+          # dotest_fail_sort to match:
+	  # "$SPROG \[rlog aborted\]: received abort signal"
+
+	  dotest_fail top-level-1 "$testcvs rlog ." \
+"$SPROG rlog: Logging \.
+$SPROG rlog: Logging CVSROOT
+.*$SPROG: \.\./\.\./src/recurse.c:[0-9][0-9]*: do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+	;;
+
+
 
         checkout_repository)
           dotest_fail checkout_repository-1 \
@@ -32011,11 +32059,15 @@ You have \[0\] altered files in this repository\."
 	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
     fi
 
-    # Test our temp directory for cvs-serv* directories.  We would like to not
-    # leave any behind.
+    # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
+    # files.  We would like to not leave any behind.
     if $remote && ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
 	fail "Found cvs-serv* directories in $TMPDIR."
+    fi
+    if ls $TMPDIR/cvs?????? >/dev/null 2>&1; then
+	# A true value means ls found files/directories with these names.
+	fail "Found cvsXXXXXX temp files in $TMPDIR."
     fi
 
 done # The big loop
