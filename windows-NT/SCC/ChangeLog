@@ -1,5 +1,7 @@
 Sat Feb 15 15:19:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in: New file.
+
 	* README.txt: Clarify a little more what this stuff does (and more
 	the point, does not) do.
 
