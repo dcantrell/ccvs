@@ -1,5 +1,10 @@
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (recase): Update test names and comments for clarity and
+	consistency.
+
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (recase): Restore some cruft necessary when clients know
 	they are on case insensitive systems.
 
