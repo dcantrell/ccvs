@@ -243,7 +243,7 @@ release (int argc, char **argv)
 
 #ifdef CLIENT_SUPPORT
 	if (!current_parsed_root->isremote
-	    || supported_request ("noop") && supported_request ("Notify"))
+	    || (supported_request ("noop") && supported_request ("Notify")))
 #endif
 	{
 	    int argc = 2;
