@@ -1312,9 +1312,29 @@ repositories.
 @cindex Creating a repository
 @cindex Setting up a repository
 
-To set up a @sc{cvs} repository, choose a directory
-with ample disk space available for the revision
-history of the source files.  It should be accessable
+To set up a @sc{cvs} repository, first choose the
+machine and disk on which you want to store the
+revision history of the source files.  CPU and memory
+requirements are modest---a server with 32M of memory
+or even less can handle a fairly large source tree with
+a fair amount of activity.  To estimate disk space
+requirements, if you are importing RCS files from
+another system, the size of those files is the
+approximate initial size of your repository, or if you
+are starting without any version history, a rule of
+thumb is to allow for the server approximately three
+times the size of the code to be under CVS for the
+repository (you will eventually outgrow this, but not
+for a while).  On the machines on which the developers
+will be working, you'll want disk space for
+approximately one working directory for each developer
+(either the entire tree or a portion of it, depending
+on what each developer uses).  Don't worry about CPU
+and memory requirements for the clients---any machine
+with enough capacity to run the operating system in
+question should have little trouble.
+
+The repository should be accessable
 (directly or via a networked file system) from all
 machines which want to use @sc{cvs} in server or local
 mode; the client machines need not have any access to
