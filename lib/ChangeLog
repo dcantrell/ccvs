@@ -1,3 +1,8 @@
+13 Jan 1998  Jim Kingdon
+
+	* system.h: Just include string.h unconditionally.  We already
+	include it unconditionally elsewhere.
+
 Tue Jan 13 16:51:59 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* fncase.c: New file, taken from windows-NT/filesubr.c.
