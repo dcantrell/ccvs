@@ -4960,7 +4960,7 @@ diff -N file1
 	  dotest death2-8 "${testcvs} -q ci -m removed" \
 "Removing file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Test diff of a dead file.
@@ -5065,7 +5065,7 @@ ${PROG} remove: use .${PROG} commit. to remove this file permanently"
 	  dotest death2-10b "${testcvs} -q ci -m removed" \
 "Removing file4;
 ${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Back to the trunk.
@@ -5875,7 +5875,7 @@ ${PROG} remove: use .${PROG} commit. to remove this file permanently"
 	  dotest dirs2-13 "${testcvs} -q ci -m remove" \
 "Removing sdir/file1;
 ${CVSROOT_DIRNAME}/first-dir/sdir/file1,v  <--  file1
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../2/first-dir
 	  if $remote; then
@@ -9400,15 +9400,15 @@ done"
 	  dotest join-rm-init-8 "$testcvs -Q ci -mrm" \
 "Removing b;
 $CVSROOT_DIRNAME/join-rm/b,v  <--  b
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done
 Removing d;
 $CVSROOT_DIRNAME/join-rm/d,v  <--  d
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done
 Removing g;
 $CVSROOT_DIRNAME/join-rm/g,v  <--  g
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # update to the trunk
@@ -9474,7 +9474,7 @@ rm
 	  dotest join-rm-init-12 "$testcvs -Q ci -m rma" \
 "Removing a;
 $CVSROOT_DIRNAME/join-rm/a,v  <--  a
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # now the test: update to the trunk
@@ -9607,7 +9607,7 @@ ${PROG} remove: use .${PROG} commit. to remove this file permanently"
 	  dotest newb-123h "${testcvs} -q ci -m removed" \
 "Removing a;
 ${CVSROOT_DIRNAME}/first-dir/a,v  <--  a
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Check out the file on the branch.  This should report
