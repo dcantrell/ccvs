@@ -1,3 +1,13 @@
+Tue May 30 00:07:15 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (distclean-local): Don't delete config.status here.
+	(distclean): Delete config.status here instead, but only after
+	recursive make invocations.  Otherwise, the new dependencies
+	in */Makefile.in on ../config.status led to failure in each sub-make
+	because there is no rule there to make ../config.status.
+	Reported by Jeff Johnson <jbj@brewster.jbj.org>.
+	(realclean): Likewise.
+
 Fri Apr 28 14:36:49 1995  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
 
 	* Makefile.in: Set "all" as default target instead of ".PHONY".
