@@ -1,3 +1,11 @@
+1999-05-24  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (checkoutlist): New node, contains more complete
+	documentation of this feature.
+	(CVSROOT storage): Refer to the new node when mentioning
+	checkoutlist.
+	(Administrative files): Update the menu entry for Wrappers.
+
 1999-05-17  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Requests): For Notify request, strike duplicate

@@ -1371,14 +1371,12 @@ cvs commit: Rebuilding administrative file database
 @end example
 
 @noindent
-@cindex checkoutlist
 and update the checked out copy in
 @file{$CVSROOT/CVSROOT}.  If it does not, there is
 something wrong (@pxref{BUGS}).  To add your own files
 to the files to be updated in this fashion, you can add
-them to the @file{checkoutlist} administrative file.
-@c FIXME: checkoutlist probably should be documented
-@c somewhat more completely.
+them to the @file{checkoutlist} administrative file
+(@pxref{checkoutlist}).
 
 @cindex modules.db
 @cindex modules.pag
@@ -10988,7 +10986,7 @@ file, which defines the modules inside the repository.
 
 @menu
 * modules::                     Defining modules
-* Wrappers::                    Treat directories as files
+* Wrappers::                    Specify binary-ness based on file name
 * commit files::                The commit support files
 * commitinfo::                  Pre-commit checking
 * verifymsg::                   How are log messages evaluated?
@@ -10997,6 +10995,7 @@ file, which defines the modules inside the repository.
 * loginfo::                     Where should log messages be sent?
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
+* checkoutlist::                Adding your own administrative files
 * history file::                History information
 * Variables::                   Various variables are expanded
 * config::                      Miscellaneous CVS configuration
@@ -12213,6 +12212,54 @@ way to specify comments.
 @c FIXCVS?  I don't _like_ this syntax at all, but
 @c changing it raises all the usual compatibility
 @c issues and I'm also not sure what to change it to.
+
+@node checkoutlist
+@appendixsec The checkoutlist file
+@cindex checkoutlist
+
+It may be helpful to use @sc{cvs} to maintain your own
+files in the @file{CVSROOT} directory.  For example,
+suppose that you have a script @file{logcommit.pl}
+which you run by including the following line in the
+@file{commitinfo} administrative file:
+
+@example
+ALL   $CVSROOT/CVSROOT/logcommit.pl
+@end example
+
+To maintain @file{logcommit.pl} with @sc{cvs} you would
+add the following line to the @file{checkoutlist}
+administrative file:
+
+@example
+logcommit.pl
+@end example
+
+The format of @file{checkoutlist} is one line for each
+file that you want to maintain using @sc{cvs}, giving
+the name of the file.
+
+After setting up @file{checkoutlist} in this fashion,
+the files listed there will function just like
+@sc{cvs}'s built-in administrative files.  For example,
+when checking in one of the files you should get a
+message such as:
+
+@example
+cvs commit: Rebuilding administrative file database
+@end example
+
+and the checked out copy in the @file{CVSROOT}
+directory should be updated.
+
+Note that listing @file{passwd} (@pxref{Password
+authentication server}) in @file{checkoutlist} is not
+recommended for security reasons.
+
+For information about keeping a checkout out copy in a
+more general context than the one provided by
+@file{checkoutlist}, see @ref{Keeping a checked out
+copy}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history file
