@@ -1,3 +1,7 @@
+2003-03-07  Derek Price  <derek@ximbiot.com>
+
+	* TESTS: Document some more global variables.
+
 2003-03-04  Mark D Baushke <mdb@cvshome.org>
 
 	* NEWS (Changes since 1.11.5): Mention CVS_LOCAL_BRANCH_NUM 
