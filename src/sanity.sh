@@ -5761,6 +5761,10 @@ File: no file file1		Status: Up-to-date
 	  # but in past version of CVS, new content in file1 would be
 	  # erroneously deleted when file1 reappeared between the remove and
 	  # the add.
+	  #
+	  # Later versions of CVS would refuse to perform the add, but still
+	  # allow a subsequent local commit to erase the file from the
+	  # workspace, possibly losing data.
 	  mkdir 1; cd 1
 	  dotest rmadd3-init1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -5791,6 +5795,15 @@ ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  # And attempt to resurrect it at the same time:
 	  dotest_fail rmadd3-2 "${testcvs} add file1" \
 "${SPROG} add: file1 should be removed and is still there (or is back again)"
+
+	  # Now prove that commit knows that it shouldn't erase files.
+	  dotest_fail rmadd3-3 "${testcvs} -q ci -m." \
+"$SPROG commit: \`file1' should be removed and is still there (or is back again)
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  # Then these should pass too:
+	  dotest rmadd3-4 "test -f file1"
+	  dotest rmadd3-5 "cat file1" "desired future contents for file1"
 
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep

@@ -1,5 +1,19 @@
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (find_fileproc, check_fileproc):  Refuse to remove files
+	when the file exists in the sandbox.  This used to cause data loss.
+	(Report from Andreas Reifschneider <andyreif@studcs.uni-sb.de>.)
+
+	* sanity.sh (rmadd3): Update to match.  Expand comments.
+
+2003-11-10  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rmadd3): Test the behavior of commit after the
+	add/replace.
+	(Report from Andreas Reifschneider <andyreif@studcs.uni-sb.de>.)
+
+2003-11-10  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (rmadd3): Fix another typo.
 
 2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
