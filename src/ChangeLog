@@ -1,3 +1,9 @@
+2000-02-14  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (cvs_SOURCES): Alphabetize and split to one/line.
+	(cvs_LDADD): Alphabetize and split to one/line.
+	* Makefile.in: Regenerated.
+
 2001-02-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* build_src.com: Remove references to rtag.c & rtag.obj.
