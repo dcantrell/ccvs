@@ -19959,10 +19959,10 @@ ${PROG} server: Updating dir1/sdir/ssdir"
 	  # to work around).
 	  if test "$remote" = no; then
 	    dotest multiroot2-9 "${testcvs} -t update" \
-"${PROG} update: notice: main loop with CVSROOT=${TESTDIR}/root1
+" -> main loop with CVSROOT=${TESTDIR}/root1
 ${PROG} update: Updating \.
 ${PROG} update: Updating dir1
-${PROG} update: notice: main loop with CVSROOT=${TESTDIR}/root2
+ -> main loop with CVSROOT=${TESTDIR}/root2
 ${PROG} update: Updating dir1/sdir
 ${PROG} update: Updating dir1/sdir/ssdir"
 	  fi
