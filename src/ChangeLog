@@ -1,3 +1,8 @@
+2001-04-02  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (connect_to_forked_server): Use program_path as the default
+	server instead of "cvs".
+
 2001-04-02  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: Use less obfuscated English in my comment about sanity

@@ -3827,7 +3827,7 @@ connect_to_forked_server (tofdp, fromfdp)
 
     command[0] = getenv ("CVS_SERVER");
     if (! command[0])
-	command[0] = "cvs";
+	command[0] = program_path;
     
     command[1] = "server";
     command[2] = NULL;
