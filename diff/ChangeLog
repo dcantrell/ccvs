@@ -1,3 +1,9 @@
+2003-06-03  Derek Price  <derek@ximbiot.com>
+
+	* README: Add this file to point would-be patchers to please send their
+	changes to the GNU diffutils project and then ask us to reimport the
+	new diffutils release with the bug fix.
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Automake version 1.7.5.
