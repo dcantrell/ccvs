@@ -1,3 +1,8 @@
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (trailingslashes): New tests to expose a bug in CVS when
+	paths are specified with trailing slashes.  This relates to TODO #205.
+
 2004-05-12  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (file_has_conflict), vers_ts.c (time_stamp_server): Only
