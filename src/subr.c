@@ -1863,3 +1863,22 @@ Xasprintf (const char *format, ...)
 
     return result;
 }
+
+
+
+/* Like xasmprintf(), but consider all errors fatal (may never return NULL).
+ */
+char *
+Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)
+{
+    va_list args;
+    char *result;
+
+    va_start (args, format);
+    result = vasnprintf (resultbuf, lengthp, format, args);
+    if (result == NULL)
+	error (1, errno, "Failed to write to string.");
+    va_end (args);
+
+    return result;
+}

@@ -463,6 +463,8 @@ char *Xstrdup (const char *str)
 	__attribute__ ((__malloc__));
 char *Xasprintf (const char *format, ...)
 	__attribute__ ((__malloc__, __format__ (__printf__, 1, 2)));
+char *Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)
+        __attribute__ ((__malloc__, __format__ (__printf__, 3, 4)));
 int strip_trailing_newlines (char *str);
 int pathname_levels (const char *path);
 

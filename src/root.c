@@ -12,7 +12,6 @@
 
 #include "cvs.h"
 #include "getline.h"
-#include "vasnprintf.h"
 
 /* Printable names for things in the current_parsed_root->method enum variable.
    Watch out if the enum is changed in cvs.h! */
@@ -198,11 +197,9 @@ primary_root_translate (const char *root_in)
        )
     {
 	translated =
-	    asnprintf (previous, &len,
-		       "%s%s", current_parsed_root->directory,
-	               root_in + strlen (config->PrimaryServer->directory));
-	if (!translated)
-	    error (1, errno, "Failed to allocate string.");
+	    Xasnprintf (previous, &len,
+		        "%s%s", current_parsed_root->directory,
+	                root_in + strlen (config->PrimaryServer->directory));
 	if (previous && previous != translated)
 	    free (previous);
 	return previous = translated;
@@ -246,11 +243,9 @@ primary_root_inverse_translate (const char *root_in)
        )
     {
 	translated =
-	    asnprintf (previous, &len,
-		       "%s%s", config->PrimaryServer->directory,
-	               root_in + strlen (current_parsed_root->directory));
-	if (!translated)
-	    error (1, errno, "Failed to allocate string.");
+	    Xasnprintf (previous, &len,
+		        "%s%s", config->PrimaryServer->directory,
+	                root_in + strlen (current_parsed_root->directory));
 	if (previous && previous != translated)
 	    free (previous);
 	return previous = translated;
