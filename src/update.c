@@ -2037,7 +2037,7 @@ join_file (finfo, vers)
 		   "failed to check out %s file", finfo->fullname);
     }
 #endif
-    
+
     /*
      * The users currently modified file is moved to a backup file name
      * ".#filename.version", so that it will stay around for a few days
@@ -2063,7 +2063,85 @@ join_file (finfo, vers)
 #endif
 #endif
 
-    status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
+    /* If the source of the merge is the same as the working file
+       revision, then we can just RCS_checkout the target (no merging
+       as such).  In the text file case, this is probably quite
+       similar to the RCS_merge, but in the binary file case,
+       RCS_merge gives all kinds of trouble.  */
+    if (vers->vn_user != NULL
+	&& strcmp (rev1, vers->vn_user) == 0
+	/* See comments above about how No_Difference has already been
+	   called.  */
+	&& vers->ts_user != NULL
+	&& strcmp (vers->ts_user, vers->ts_rcs) == 0
+
+	/* This is because of the worry below about $Name.  If that
+	   isn't a problem, I suspect this code probably works for
+	   text files too.  */
+	&& strcmp (options, "-kb") == 0)
+    {
+	/* FIXME: what about nametag?  What does RCS_merge do with
+	   $Name?  */
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, options,
+			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
+	    status = 2;
+	else
+	    status = 0;
+
+	/* OK, this is really stupid.  RCS_checkout carefully removes
+	   write permissions, and we carefully put them back.  But
+	   until someone gets around to fixing it, that seems like the
+	   easiest way to get what would seem to be the right mode.
+	   I don't check CVSWRITE or _watched; I haven't thought about
+	   that in great detail, but it seems like a watched file should
+	   be checked out (writable) after a merge.  */
+	xchmod (finfo->file, 1);
+
+	/* Traditionally, the text file case prints a whole bunch of
+	   scary looking and verbose output which fails to tell the user
+	   what is really going on (it gives them rev1 and rev2 but doesn't
+	   indicate in any way that rev1 == vn_user).  I think just a
+	   simple "U foo" is good here; it seems analogous to the case in
+	   which the file was added on the branch in terms of what to
+	   print.  */
+	write_letter (finfo->file, 'U', finfo->update_dir);
+    }
+    else if (strcmp (options, "-kb") == 0)
+    {
+	/* We are dealing with binary files, but real merging would
+	   need to take place.  This is a conflict.  We give the user
+	   the two files, and let them resolve it.  It is possible
+	   that we should require a "touch foo" or similar step before
+	   we allow a checkin.  */
+	if (RCS_checkout (finfo->rcs, finfo->file, rev2, NULL, options,
+			  RUN_TTY, (RCSCHECKOUTPROC)0, NULL) != 0)
+	    status = 2;
+	else
+	    status = 0;
+
+	/* OK, this is really stupid.  RCS_checkout carefully removes
+	   write permissions, and we carefully put them back.  But
+	   until someone gets around to fixing it, that seems like the
+	   easiest way to get what would seem to be the right mode.
+	   I don't check CVSWRITE or _watched; I haven't thought about
+	   that in great detail, but it seems like a watched file should
+	   be checked out (writable) after a merge.  */
+	xchmod (finfo->file, 1);
+
+	/* Hmm.  We don't give them REV1 anywhere.  I guess most people
+	   probably don't have a 3-way merge tool for the file type in
+	   question, and might just get confused if we tried to either
+	   provide them with a copy of the file from REV1, or even just
+	   told them what REV1 is so they can get it themself, but it
+	   might be worth thinking about.  */
+	error (0, 0, "binary file needs merge");
+	error (0, 0, "revision %s from repository is now in %s",
+	       rev2, finfo->fullname);
+	error (0, 0, "file from working directory is now in %s", backup);
+    }
+    else
+	status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
+
     if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,

@@ -5481,45 +5481,143 @@ File: nibfile          	Status: Up-to-date
 	  # doesn't print "cannot merge binary files" or some such, in 
 	  # situations where no merging is required.
 	  # See also "join" which does this with non-binary files.
+	  #
+	  # Cases (we are merging from the branch to the trunk):
+	  # binfile.dat) File added on branch, not on trunk.
+	  #      File should be marked for addition.
+	  # brmod) File modified on branch, not on trunk.
+	  #      File should be copied over to trunk (no merging is needed).
+	  # brmod-trmod) File modified on branch, also on trunk.
+	  #      This is a conflict.  Present the user with both files and
+	  #      let them figure it out.
+	  # brmod-wdmod) File modified on branch, not modified in the trunk
+	  #      repository, but modified in the (trunk) working directory.
+	  #      This is also a conflict.
 
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles2-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
-	  # FIXCVS: unless a branch has at least one file on it,
-	  # tag_check_valid won't know it exists.  So creating a
-	  # file here is a workaround.
-	  touch dummy
-	  dotest binfiles2-1a "${testcvs} add dummy" \
-"${PROG} [a-z]*: scheduling file .dummy. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
-	  dotest binfiles2-1b "${testcvs} -q ci -m add-it" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/dummy,v
-done
-Checking in dummy;
-${TESTDIR}/cvsroot/first-dir/dummy,v  <--  dummy
-initial revision: 1\.1
-done"
-	  dotest binfiles2-2 "${testcvs} -q tag -b br" 'T dummy'
-	  dotest binfiles2-3 "${testcvs} -q update -r br" ''
+
+	  # The most important thing here is that binfile, binfile2, &c
+	  # each be distinct from each other.  We also make sure to include
+	  # a few likely end-of-line patterns to make sure nothing is
+	  # being munged as if in text mode.
 	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
 	    </dev/null >../binfile
+	  cat ../binfile ../binfile >../binfile2
+	  cat ../binfile2 ../binfile >../binfile3
+
+	  # FIXCVS: unless a branch has at least one file on it,
+	  # tag_check_valid won't know it exists.  So if brmod didn't
+	  # exist, we would have to invent it.
+	  cp ../binfile brmod
+	  cp ../binfile brmod-trmod
+	  cp ../binfile brmod-wdmod
+	  dotest binfiles2-1a \
+"${testcvs} add -kb brmod brmod-trmod brmod-wdmod" \
+"${PROG} [a-z]*: scheduling file .brmod. for addition
+${PROG} [a-z]*: scheduling file .brmod-trmod. for addition
+${PROG} [a-z]*: scheduling file .brmod-wdmod. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+	  dotest binfiles2-1b "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/brmod,v
+done
+Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+initial revision: 1\.1
+done"
+	  dotest binfiles2-2 "${testcvs} -q tag -b br" 'T brmod
+T brmod-trmod
+T brmod-wdmod'
+	  dotest binfiles2-3 "${testcvs} -q update -r br" ''
 	  cp ../binfile binfile.dat
 	  dotest binfiles2-4 "${testcvs} add -kb binfile.dat" \
 "${PROG} [a-z]*: scheduling file .binfile\.dat. for addition on branch .br.
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
-	  dotest binfiles2-5 "${testcvs} -q ci -m add-it" \
+	  cp ../binfile2 brmod
+	  cp ../binfile2 brmod-trmod
+	  cp ../binfile2 brmod-wdmod
+	  dotest binfiles2-5 "${testcvs} -q ci -m br-changes" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/Attic/binfile\.dat,v
 done
 Checking in binfile\.dat;
 ${TESTDIR}/cvsroot/first-dir/Attic/binfile\.dat,v  <--  binfile\.dat
 new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest binfiles2-6 "${testcvs} -q update -A" \
-"${PROG} [a-z]*: warning: binfile\.dat is not (any longer) pertinent"
+"${PROG} [a-z]*: warning: binfile\.dat is not (any longer) pertinent
+[UP] brmod
+[UP] brmod-trmod
+[UP] brmod-wdmod"
 	  dotest_fail binfiles2-7 "test -f binfile.dat" ''
-	  dotest binfiles2-8 "${testcvs} -q update -j br" "U binfile.dat"
+	  dotest binfile2-7-brmod "cmp ../binfile brmod"
+	  cp ../binfile3 brmod-trmod
+	  dotest binfiles2-7a "${testcvs} -q ci -m tr-modify" \
+"Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cp ../binfile3 brmod-wdmod
+
+	  dotest binfiles2-8 "${testcvs} -q update -j br" \
+"U binfile\.dat
+U brmod
+${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-trmod
+${PROG} [a-z]*: file from working directory is now in .#brmod-trmod.1.2
+M brmod-wdmod
+${PROG} [a-z]*: binary file needs merge
+${PROG} [a-z]*: revision 1.1.2.1 from repository is now in brmod-wdmod
+${PROG} [a-z]*: file from working directory is now in .#brmod-wdmod.1.1"
+
 	  dotest binfiles2-9 "cmp ../binfile binfile.dat"
+	  dotest binfiles2-9-brmod "cmp ../binfile2 brmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-trmod"
+	  dotest binfiles2-9-brmod-trmod "cmp ../binfile2 brmod-wdmod"
+
+	  # Test that everything was properly scheduled.
+	  dotest binfiles2-10 "${testcvs} -q ci -m checkin" \
+"Checking in binfile\.dat;
+${TESTDIR}/cvsroot/first-dir/binfile\.dat,v  <--  binfile\.dat
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in brmod;
+${TESTDIR}/cvsroot/first-dir/brmod,v  <--  brmod
+new revision: 1\.2; previous revision: 1\.1
+done
+Checking in brmod-trmod;
+${TESTDIR}/cvsroot/first-dir/brmod-trmod,v  <--  brmod-trmod
+new revision: 1\.3; previous revision: 1\.2
+done
+Checking in brmod-wdmod;
+${TESTDIR}/cvsroot/first-dir/brmod-wdmod,v  <--  brmod-wdmod
+new revision: 1\.2; previous revision: 1\.1
+done"
 	  cd ..
 	  cd ..
 
