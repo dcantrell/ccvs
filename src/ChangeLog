@@ -1,3 +1,10 @@
+2004-02-19  Derek Price <derek@ximbiot.com>
+
+	* run.c (cmdline_quote): Plug memory leak.
+	(format_cmdline): Don't bother with freeing memory before a call to
+	error() which will exit.  Plug memory leak.
+	(Report from Mark D. Baushke <mdb@cvshome.org>.)
+
 2004-02-18  Derek Price <derek@ximbiot.com>
 
 	* run.c (format_cmdline): Move variable declaration to a position more
