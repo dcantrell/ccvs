@@ -546,13 +546,11 @@ serve_root (arg)
 
     set_local_cvsroot (arg);
 
-    if (parse_config (1) < 0)
-    {
-	if (alloc_pending (80))
-	    sprintf (pending_error_text,
-		     "E Error parsing CVSROOT/config file");
-	return;
-    }
+    /* If there was an error parsing the config file, parse_config
+       already printed an error.  We keep going.  Why?  Because
+       if we didn't, then there would be no way to check in a new
+       CVSROOT/config file to fix the broken one!  */
+    parse_config ();
 
     path = xmalloc (strlen (CVSroot_directory)
 		    + sizeof (CVSROOTADM)

@@ -483,7 +483,8 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
 	tests="${tests} devcom devcom2"
-	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
+	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap"
+	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head admin reserved"
 else
@@ -5759,7 +5760,14 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  ;;
 
 	info)
-	  # Test CVS's ability to handle *info files.
+	  # Administrative file tests.
+	  # Here is a list of where each administrative file is tested:
+	  # loginfo: info
+	  # modules: modules, modules2, modules3
+	  # cvsignore: ignore
+	  # verifymsg: info
+	  # cvswrappers: mwrap
+	  # config: config
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
@@ -5896,6 +5904,41 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	    fail info-cleanup-2
 	  fi
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	config)
+	  # Tests of the CVSROOT/config file.  See the comment at the
+	  # "info" tests for a full list of administrative file tests.
+
+	  dotest config-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
+	  cd CVSROOT
+	  echo 'bogus line' >config
+	  dotest config-3 "${testcvs} -q ci -m change-to-bogus-line" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  echo 'BogusOption=yes' >config
+	  dotest config-4 "${testcvs} -q ci -m change-to-bogus-opt" \
+"${PROG} [a-z]*: syntax error in ${TESTDIR}/cvsroot/CVSROOT/config: line 'bogus line' is missing '='
+Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.3; previous revision: 1\.2
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  echo '# No config is a good config' > config
+	  dotest config-5 "${testcvs} -q ci -m change-to-comment" \
+"${PROG} [a-z]*: ${TESTDIR}/cvsroot/CVSROOT/config: unrecognized keyword 'BogusOption'
+Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.4; previous revision: 1\.3
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  dotest config-6 "${testcvs} -q update" ''
+
+	  cd ..
+	  rm -r CVSROOT
 	  ;;
 
 	serverpatch)

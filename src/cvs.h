@@ -449,7 +449,7 @@ int pathname_levels PROTO ((char *path));
 
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
 int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
-extern int parse_config PROTO ((int));
+extern int parse_config PROTO ((void));
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());
 int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
