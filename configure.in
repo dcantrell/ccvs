@@ -3,8 +3,6 @@ AC_INIT(src/cvs.h)
 AC_PREREQ(2.1)dnl Required Autoconf version.
 AC_CONFIG_HEADER(config.h src/options.h)
 
-AC_DEFINE(CVS_SUPPORT)
-
 AC_PROG_CC
 AC_AIX
 AC_MINIX

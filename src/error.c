@@ -28,17 +28,11 @@ static char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
 
 #include <stdio.h>
 
-#ifdef CVS_SUPPORT
-/* If non-zero, error will use the CVS protocol to report error
+/* If non-zero, error will use the CVS protocol to stdout to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
-   process and packages up its stderr in the protocol.
-
-   This really is ugly (why should lib/error.c know about the
-   protocol??), but it's better than a mass munging of all the calls
-   to error in modules.c.  */
+   process and packages up its stderr in the protocol.  */
 int error_use_protocol; 
-#endif
 
 #ifdef HAVE_VPRINTF
 
@@ -107,22 +101,17 @@ error (status, errnum, message, va_alist)
 {
   FILE *out = stderr;
   extern char *program_name;
-#ifdef CVS_SUPPORT
   extern char *command_name;
-#endif
 #ifdef HAVE_VPRINTF
   va_list args;
 #endif
 
-#ifdef CVS_SUPPORT
   if (error_use_protocol)
     {
       out = stdout;
       printf ("E ");
     }
-#endif
 
-#ifdef CVS_SUPPORT
   if (command_name && *command_name)
     if (status)
       fprintf (out, "%s [%s aborted]: ", program_name, command_name);
@@ -130,9 +119,6 @@ error (status, errnum, message, va_alist)
       fprintf (out, "%s %s: ", program_name, command_name);
   else
     fprintf (out, "%s: ", program_name);
-#else
-  fprintf (out, "%s: ", program_name);
-#endif
 #ifdef HAVE_VPRINTF
   VA_START (args, message);
   vfprintf (out, message, args);
@@ -155,8 +141,6 @@ error (status, errnum, message, va_alist)
       exit (status);
     }
 }
-
-#ifdef CVS_SUPPORT
 
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args to the file specified by FP.
@@ -203,5 +187,3 @@ fperror (fp, status, errnum, message, va_alist)
       exit (status);
     }
 }
-
-#endif /* CVS_SUPPORT */

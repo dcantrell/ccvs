@@ -30,7 +30,6 @@ SOURCES = \
 	alloca.c \
 	argmatch.c \
 	dup2.c \
-	error.c \
 	fnmatch.c \
 	ftruncate.c \
 	getdate.c \
@@ -56,12 +55,11 @@ SOURCES = \
 	xgetwd.c \
 	yesno.c
 
-HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h error.h save-cwd.h
+HEADERS = getopt.h fnmatch.h regex.h system.h wait.h md5.h save-cwd.h
 
 OBJECTS = \
     @ALLOCA@ @LIBOBJS@ \
     argmatch.o \
-    error.o \
     getopt.o \
     getopt1.o \
     md5.o \

@@ -38,15 +38,10 @@ void error (int, int, const char *, ...) \
 void error ();
 #endif
 
-/* This variable is incremented each time `error' is called.  */
-extern unsigned int error_message_count;
-
-#ifdef CVS_SUPPORT
 /* If non-zero, error will use the CVS protocol to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
    process and packages up its stderr in the protocol.  */
 extern int error_use_protocol;
-#endif
 
 #endif /* _error_h_ */

@@ -1,3 +1,21 @@
+Fri Oct  6 21:50:48 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	There is little point in trying to share a file as trivial as
+	lib/error.c between programs.  So just admit it is CVS specific:
+	* lib/error.c: Move from here...
+	* src/error.c: ...to here, and remove CVS_SUPPORT ifdefs.
+	* lib/error.h: Move from here...
+	* src/error.h: ...to here.  Remove CVS_SUPPORT
+	ifdefs; remove unused variable error_message_count.
+	* src/Makefile.in (OBJECTS): Add error.o.
+	(SOURCES): Add error.c.
+	(HEADERS): Add error.h.
+	* lib/Makefile.in (OBJECTS): Remove error.o.
+	(SOURCES): Remove error.c.
+	(HEADERS): Remove error.h.
+	* acconfig.h, configure.in: Remove CVS_SUPPORT.
+	* configure, config.h.in: Rebuilt using autoconf and autoheader.
+
 Thu Oct  5 17:26:38 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Mention Siemens-Nixdorf RM600.

@@ -44,7 +44,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 LIBS = @LIBS@
 
 SOURCES = add.c admin.c checkin.c checkout.c classify.c client.c commit.c \
-create_adm.c cvsrc.c diff.c entries.c expand_path.c \
+create_adm.c cvsrc.c diff.c entries.c error.c expand_path.c \
  find_names.c hash.c history.c ignore.c \
 import.c lock.c log.c logmsg.c main.c modules.c myndbm.c no_diff.c \
 parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
@@ -53,7 +53,7 @@ wrapper.c vers_ts.c version.c
 MSOURCES = mkmodules.c
 
 OBJECTS = add.o admin.o checkin.o checkout.o classify.o commit.o \
-create_adm.o cvsrc.o diff.o entries.o expand_path.o \
+create_adm.o cvsrc.o diff.o entries.o error.o expand_path.o \
 find_names.o hash.o history.o \
 ignore.o import.o lock.o log.o logmsg.o main.o modules.o myndbm.o no_diff.o \
 parseinfo.o patch.o rcs.o rcscmds.o recurse.o release.o remove.o repos.o \
@@ -65,7 +65,7 @@ MOBJECTS = hash.o mkmodules.o myndbm.o
 COMMON_OBJECTS = subr.o filesubr.o run.o version.o
 
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
-	update.h server.h client.h
+	update.h server.h client.h error.h
 
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
 	    NOTES README-rm-add \
