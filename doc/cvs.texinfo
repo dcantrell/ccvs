@@ -6702,26 +6702,17 @@ this module.
 @cindex CVSWRAPPERS, environment variable
 @cindex Wrappers
 
-Wrappers are essentially
-directories that are to be treated as "files."  This
-package allows such wrappers to be "processed" on the
-way in and out of CVS.  The intended use is to wrap up
-a wrapper into a single tar, such that that tar can be
-treated as a single binary file in CVS.  Apparently
-this is particularly useful on NEXTSTEP.  To solve
-the problem effectively, it was also necessary to be
-able to prevent rcsmerge application at appropriate
-times.
+Wrappers allow you to set a hook which transforms files on
+their way in and out of cvs
 
 The file @file{cvswrappers} defines the script that will be
 run on a file when its name matches a regular
 expresion. There are two scripts that can be run on a
-file or directory.
-@c FIXME: Is this talking about comb and uncom?  If so,
-@c mention them by name
-A script to filter the directory/file before it gets
-checked in and another that is run when the
-file/directory gets checked out.
+file or directory. One script is executed on the file/directory
+before being checked into the repository (this is denoted
+with the @code{-t} flag) and the other when the file is
+checked out of the repository (this is denoted with the
+@code{-f} flag)
 
 The @file{cvswrappers} also specifies the merge
 methodology that should be used when the file is
@@ -6744,33 +6735,37 @@ and value is a single-quote delimited value.
 @end example
 
 @example
-*.nib    -f 'uncom %s' -t 'comb %s %s' -m 'COPY'
-*.rtfd   -f 'uncom %s' -t 'comb %s %s' -m 'COPY'
+*.nib    -f 'uncom %s' -t 'wrap %s %s' -m 'COPY'
+*.c      -t 'indent %s %s'
 @end example
 
 @noindent
 The above example of a @file{cvswrappers} file
 states that all files/directories that end with a @code{.nib}
-should be filtered with the @file{comb} program before
+should be filtered with the @file{wrap} program before
 checking the file into the repository. The file should
-be filtered though the @file{uncom} program when the
+be filtered though the @file{unwrap} program when the
 file is checked out of the repository. The
 @file{cvswrappers} file also states that a @code{COPY}
 methodology should be used when updating the files in
 the repository (that is no merging should be performed).
 
+The last example line says that all files that end with
+a @code{*.c} should be filtered with @file{indent}
+before being checked into the repository. Unlike the previous
+example no filtering of the @code{*.c} file is done when
+it is checked out of the repository.
 @noindent
-The @file{comb} filter is called with two arguments,
+The @code{-t} filter is called with two arguments,
 the first is the name of the file/directory to filter
 and the second is the pathname to where the resulting
 filtered file should be placed.
 
 @noindent
-The @file{uncom} filter is called with one argument,
+The @code{-f} filter is called with one argument,
 which is the name of the file to filter from. The end
-result of the @file{uncom} filter will be a
-file/directory in the users current working directory,
-that represents the source before being filtered.
+result of this filter will be a file in the users directory
+that they can work on as they normally would.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit files
