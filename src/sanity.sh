@@ -91,6 +91,17 @@ else
 \)*'
 fi
 
+# Work around yet another GNU expr (version 1.10) bug/incompatibility.
+# "+" is a special character, yet for unix expr (e.g. SunOS 4.1.3)
+# it is not.  I doubt that POSIX allows us to use \+ and assume it means
+# (non-special) +, so here is another workaround
+PLUS='+'
+if expr 'a +b' : "a ${PLUS}b" >/dev/null; then
+  : good, it works
+else
+  PLUS='\+'
+fi
+
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if expr 'abc
 def' : 'abc
@@ -642,6 +653,11 @@ done'
 
 	basic2)
 		# Test rtag, import, history, various miscellaneous operations
+
+		# First empty the history file
+		rm ${CVSROOT_DIRNAME}/CVSROOT/history
+		touch ${CVSROOT_DIRNAME}/CVSROOT/history
+
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 		dotest basic2-1 "${testcvs} -q co first-dir" ''
 		for i in first-dir dir1 dir2 ; do
@@ -950,11 +966,57 @@ No conflicts created by this import'
 #		fi
 		rm -rf 1dir first-dir
 
-		if ${CVS} his -e -a  >> ${LOGFILE}; then
-			echo "PASS: test 64" >>${LOGFILE}
-		else
-			echo "FAIL: test 64" | tee -a ${LOGFILE} ; exit 1
-		fi
+		# Test the cvs history command.
+
+		# The reason that there are two patterns rather than using
+		# \(/tmp/cvs-sanity\|<remote>\) is that we are trying to
+		# make this portable.  Perhaps at some point we should
+		# ditch that notion and require GNU expr (or dejagnu or....)
+		# since it seems to be so painful.
+
+		# why are there two lines at the end of the local output
+		# which don't exist in the remote output?  would seem to be
+		# a CVS bug.
+		dotest basic2-64 "${testcvs} his -e -a" \
+'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir           =first-dir= /tmp/cvs-sanity/\*
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1/dir2 == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir           == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1      == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1/dir2 == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
+F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]*                     =first-dir= /tmp/cvs-sanity/\*
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-revision:1.1\]
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* \[1.1\] first-dir           =first-dir= /tmp/cvs-sanity/\*
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == /tmp/cvs-sanity/first-dir
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file7     first-dir           == /tmp/cvs-sanity/first-dir' \
+'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir           =first-dir= <remote>/\*
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir           == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1      == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1/dir2 == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1/dir2 == <remote>
+F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]*                     =first-dir= <remote>/\*
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-revision:1.1\]
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* \[1.1\] first-dir           =first-dir= <remote>/\*'
+
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
