@@ -1,5 +1,9 @@
 2003-02-28  Derek Price  <derek@ximbiot.com>
 
+	* root.c (parse_cvsroot): s/no_passwd/no_password/ in comments.
+
+2003-02-28  Derek Price  <derek@ximbiot.com>
+
 	* root.c (parse_cvsroot): Set no_password for :gserver: and :kserver:
 	as tokens should already be obtained via external sources.
 	* update.c (update_fileproc): Remove redundant code.
