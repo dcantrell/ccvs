@@ -33,6 +33,12 @@ $(TESTSUITE): @MAINTAINER_MODE_TRUE@ package.m4 atspecific.m4 $(TESTSUITE_AT)
 check-local: $(TESTSUITE)
 
 clean-local:
-	test ! -f $(TESTSUITE) || $(SHELL) $(TESTSUITE) --clean
 	rm -f *.tmp
+
+distclean-local:
+	test ! -f $(TESTSUITE) || $(SHELL) $(TESTSUITE) --clean
+	rm -f atconfig
 	rm -rf autom4te.cache
+
+maintainer-clean-local:
+	rm -f $(TESTSUITE)
