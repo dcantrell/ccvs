@@ -3151,6 +3151,7 @@ C aa\.c"
 	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
 	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
+	  echo topfiles -a first-dir/file1 first-dir/file2 >>CVSROOT/modules
 	  echo world -a . >>CVSROOT/modules
 
 	  # Options must come before arguments.  It is possible this should
@@ -3172,6 +3173,7 @@ bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
 realmodule   first-dir/subdir a
+topfiles     -a first-dir/file1 first-dir/file2
 world        -a .'
 	  # I don't know why aliasmodule isn't printed (I would have thought
 	  # that it gets printed without the -a; although I'm not sure that
@@ -3332,6 +3334,45 @@ U nameddir/b'
 "U CVSROOT/modules
 U first-dir/subdir/a
 U first-dir/subdir/b"
+	  cd ..
+	  rm -rf 1
+
+	  # Test checking out a module which lists at least two
+	  # specific files twice.  At one time, this failed over
+	  # remote CVS.
+	  mkdir 1
+	  cd 1
+	  dotest modules-155c1 "${testcvs} -q co first-dir" \
+"U first-dir/subdir/a
+U first-dir/subdir/b"
+
+	  cd first-dir
+	  echo 'first revision' > file1
+	  echo 'first revision' > file2
+	  dotest modules-155c2 "${testcvs} add file1 file2" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+	  dotest modules-155c3 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1.1
+done'
+
+	  cd ..
+	  rm -rf first-dir
+	  dotest modules-155c4 "${testcvs} -q co topfiles" \
+"U first-dir/file1
+U first-dir/file2"
+	  dotest modules-155c5 "${testcvs} -q co topfiles" ""
 	  cd ..
 	  rm -rf 1
 

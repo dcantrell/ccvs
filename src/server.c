@@ -621,7 +621,9 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    f = CVS_FOPEN (CVSADM_ENT, "w+");
+    /* We open in append mode because we don't want to clobber an
+       existing Entries file.  */
+    f = CVS_FOPEN (CVSADM_ENT, "a");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -1146,7 +1148,12 @@ server_write_entries ()
     /* Note that we free all the entries regardless of errors.  */
     if (!error_pending ())
     {
-	f = CVS_FOPEN (CVSADM_ENT, "w");
+	/* We open in append mode because we don't want to clobber an
+           existing Entries file.  If we are checking out a module
+           which explicitly more than one file in a particular
+           directory, then we will wind up calling
+           server_write_entries for each such file.  */
+	f = CVS_FOPEN (CVSADM_ENT, "a");
 	if (f == NULL)
 	{
 	    pending_error = errno;
