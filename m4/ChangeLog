@@ -1,5 +1,11 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add gnulib.m4.
+	* gnulib.m4: New file.
+	* xalloc.m4: Update from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add new and previously missing files.
 	* eoverflow.m4, intmax.m4, printf-posix.m4: New files from GNULIB.
 	* gettext.m4, glibc21.m4, intmax_t.m4, inttypes_h.m4, lib-ld.m4,

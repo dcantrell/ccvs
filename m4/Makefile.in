@@ -208,6 +208,7 @@ EXTRA_DIST = \
 	glibc21.m4 \
 	gettime.m4 \
 	gettimeofday.m4 \
+	gnulib.m4 \
 	iconv.m4 \
 	intdiv0.m4 \
 	intmax.m4 \
