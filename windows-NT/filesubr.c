@@ -38,6 +38,8 @@ USE(rcsid)
 #define LOSING_TMPNAM_FUNCTION
 #endif
 
+static int deep_remove_dir PROTO((const char *path));
+
 /*
  * Copies "from" to "to".
  */
@@ -368,6 +370,100 @@ unlink_file (f)
     /* Win32 unlink is stupid - it fails if the file is read-only */
     chmod (f, _S_IWRITE);
     return (unlink (f));
+}
+
+/*
+ * Unlink a file or dir, if possible.  If it is a directory do a deep
+ * removal of all of the files in the directory.  Return -1 on error
+ * (in which case errno is set).
+ */
+int
+unlink_file_dir (f)
+    const char *f;
+{
+    if (trace)
+#ifdef SERVER_SUPPORT
+	(void) fprintf (stderr, "%c-> unlink_file_dir(%s)\n",
+			(server_active) ? 'S' : ' ', f);
+#else
+	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
+#endif
+    if (noexec)
+	return (0);
+
+    /* Win32 unlink is stupid - it fails if the file is read-only */
+    chmod (f, _S_IWRITE);
+    if (unlink (f) != 0)
+    {
+	/* under Windows NT, unlink returns EACCES if the path
+	   is a directory.  */
+        if (errno == EISDIR || errno == EACCES)
+                return deep_remove_dir (f);
+        else
+		/* The file wasn't a directory and some other
+		 * error occured
+		 */
+                return -1;
+    }
+    /* We were able to remove the file from the disk */
+    return 0;
+}
+
+/* Remove a directory and everything it contains.  Returns 0 for
+ * success, -1 for failure (in which case errno is set).
+ */
+
+static int
+deep_remove_dir (path)
+    const char *path;
+{
+    DIR		  *dirp;
+    struct dirent *dp;
+    char	   buf[PATH_MAX];
+
+    if ( rmdir (path) != 0 && errno == ENOTEMPTY )
+    {
+	if ((dirp = opendir (path)) == NULL)
+	    /* If unable to open the directory return
+	     * an error
+	     */
+	    return -1;
+
+	while ((dp = readdir (dirp)) != NULL)
+	{
+	    if (strcmp (dp->d_name, ".") == 0 ||
+			strcmp (dp->d_name, "..") == 0)
+		continue;
+
+	    sprintf (buf, "%s/%s", path, dp->d_name);
+
+	    /* Win32 unlink is stupid - it fails if the file is read-only */
+	    chmod (buf, _S_IWRITE);
+	    if (unlink (buf) != 0 )
+	    {
+		if (errno == EISDIR || errno == EACCES)
+		{
+		    if (deep_remove_dir (buf))
+		    {
+			closedir (dirp);
+			return -1;
+		    }
+		}
+		else
+		{
+		    /* buf isn't a directory, or there are
+		     * some sort of permision problems
+		     */
+		    closedir (dirp);
+		    return -1;
+		}
+	    }
+	}
+	closedir (dirp);
+	return rmdir (path);
+    }
+    /* Was able to remove the directory return 0 */
+    return 0;
 }
 
 /* Read NCHARS bytes from descriptor FD into BUF.
