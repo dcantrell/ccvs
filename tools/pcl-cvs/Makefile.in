@@ -226,8 +226,10 @@ dist-dir: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
 .PHONY: dist-dir
 
 subdir = tools/pcl-cvs
+.PRECIOUS: Makefile
 Makefile: ../../config.status Makefile.in
 	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+	@echo 'run "make" again...' && exit 1
 
 # CYGNUS LOCAL: don't depend on auto-re-config
 #../config.status: ../configure
