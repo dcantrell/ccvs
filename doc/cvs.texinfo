@@ -1,5 +1,4 @@
 \input texinfo  @c -*-texinfo-*-
-@comment cvs.texinfo,v 1.6 1995/10/12 23:39:26 kfogel Exp
 @comment Documentation for CVS.
 @comment Copyright (C) 1992, 1993 Signum Support AB
 @comment Copyright (C) 1993 Free Software Foundation, Inc.
@@ -2342,7 +2341,8 @@ regular passwords when they access the repository.
 This file is @file{$CVSROOT/CVSROOT/passwd}
 (@pxref{Intro administrative files}).  Its format is
 similar to @file{/etc/passwd}, except that it only has
-two fields, username and password.  For example:
+two or three fields, username, password, and optional
+username for the server to use.  For example:
 
 @example
 bach:ULtgRLXo7NRxs
@@ -2594,7 +2594,7 @@ which allows you to log into the server machine.  Then
 you are ready to go:
 
 @example
-cvs -d :kserver:chainsaw.yard.com:/user/local/cvsroot checkout foo
+cvs -d :kserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
 @end example
 
 Previous versions of @sc{cvs} would fall back to a
@@ -5049,7 +5049,7 @@ Unlike most other commands, the @code{add} command is
 not recursive.  You cannot even type @samp{cvs add
 foo/bar}!  Instead, you have to
 @c FIXCVS: This is, of course, not a feature.  It is
-@c just that noone has gotten around to fixing "cvs add
+@c just that no one has gotten around to fixing "cvs add
 @c foo/bar". 
 
 @example
@@ -6181,6 +6181,15 @@ C source code.  This example shows the first few lines
 of a typical file, after keyword substitution has been
 performed:
 
+@c Hmm.  Someone says that 
+@c "static const char rcsid[] = "foo"
+@c is a simpler way to shut up GCC.  But I really
+@c suspect that we should be avoiding specifics in general
+@c (what about Java, Ada, and who knows how many other
+@c languages?  What about #pragma ident and #ident and
+@c other non-GCC C compilers?  What about the VMS help
+@c system and other systems which take text and convert
+@c them to a generated file?
 @example
 static char *rcsid="$@asis{}Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
 /* @r{The following lines will prevent @code{gcc} version 2.@var{x}}
@@ -6573,7 +6582,7 @@ location.  Many people have come up with some such a
 @c a previous employer)
 @c and gtornblo@senet.abb.se (spicm and related tools),
 @c but as far as I know
-@c noone has nicely packaged or released such a system (or
+@c no one has nicely packaged or released such a system (or
 @c instructions for constructing one).
 system using features such as the symbolic link feature
 found in many operating systems, or the @code{VPATH}
@@ -11583,7 +11592,7 @@ Likewise for the home directory of @var{user}, use
 @samp{~@var{user}}.  These variables are expanded on
 the server machine, and don't get any reasonable
 expansion if pserver (@pxref{Password authenticated})
-is in used; therefore user variables (see below) may be
+is in use; therefore user variables (see below) may be
 a better choice to customize behavior based on the user
 running @sc{cvs}.
 @c Based on these limitations, should we deprecate ~?

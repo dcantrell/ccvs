@@ -1,3 +1,10 @@
+Wed Oct 29 11:52:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Remove fake RCSid; we decided to remove rcsid's a
+	while ago.  Cleanups suggested by Stephen Gildea (CVSROOT/passwd
+	has 2 or 3 fields; /user -> /usr; noone -> no one; in used -> in
+	use).  Add comment about making compilers happy about rcsids.
+
 Sat Oct 25 00:58:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* RCSFILES: rcsfile.5 is correct about {num} after next being
