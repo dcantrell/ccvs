@@ -2048,19 +2048,19 @@ operations, so the remote user host needs to have a
 user.
 
 For example, suppose you are the user @file{mozart} on
-the local machine @file{toe.grunge.com}, and the
-server machine is @file{chainsaw.yard.com}.  On
-chainsaw, put the following line into the file
+the local machine @file{toe.example.com}, and the
+server machine is @file{faun.example.org}.  On
+faun, put the following line into the file
 @file{.rhosts} in @file{bach}'s home directory:
 
 @example
-toe.grunge.com  mozart
+toe.example.com  mozart
 @end example
 
 Then test that @code{rsh} is working with
 
 @example
-rsh -l bach chainsaw.yard.com 'echo $PATH'
+rsh -l bach faun.example.org 'echo $PATH'
 @end example
 
 @cindex CVS_SERVER, environment variable
@@ -2119,10 +2119,10 @@ replacement.
 Continuing our example, supposing you want to access
 the module @file{foo} in the repository
 @file{/usr/local/cvsroot/}, on machine
-@file{chainsaw.yard.com}, you are ready to go:
+@file{faun.example.org}, you are ready to go:
 
 @example
-cvs -d :ext:bach@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
+cvs -d :ext:bach@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -2265,11 +2265,11 @@ anyone:1sOp854gDF3DY:spwang
 @end example
 
         Thus, someone remotely accessing the repository
-on @file{chainsaw.yard.com} with the following
+on @file{faun.example.org} with the following
 command:
 
 @example
-cvs -d :pserver:cvs@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
+cvs -d :pserver:cvs@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
         would end up running the server under the
@@ -2322,7 +2322,7 @@ argument or the @code{CVSROOT} environment variable.
 password:
 
 @example
-cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot login
+cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot login
 CVS password:
 @end example
 
@@ -2335,7 +2335,7 @@ connect directly to the server and authenticate with
 the stored password:
 
 @example
-cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
+cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 The @samp{:pserver:} is necessary because without it,
@@ -2487,7 +2487,7 @@ To connect using GSSAPI, use @samp{:gserver:}.  For
 example,
 
 @example
-cvs -d :gserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
+cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 @node Kerberos authenticated
@@ -2535,7 +2535,7 @@ which allows you to log into the server machine.  Then
 you are ready to go:
 
 @example
-cvs -d :kserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
+cvs -d :kserver:faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 Previous versions of @sc{cvs} would fall back to a
@@ -9528,14 +9528,14 @@ way that @sc{rcs} version 5 does.
 @node rdiff examples
 @appendixsubsec rdiff examples
 
-Suppose you receive mail from @t{foo@@bar.com} asking for an
+Suppose you receive mail from @t{foo@@example.net} asking for an
 update from release 1.2 to 1.4 of the tc compiler.  You
 have no such patches on hand, but with @sc{cvs} that can
 easily be fixed with a command such as this:
 
 @example
 $ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \
-$$ Mail -s 'The patches you asked for' foo@@bar.com
+$$ Mail -s 'The patches you asked for' foo@@example.net
 @end example
 
 Suppose you have made release 1.3, and forked a branch
