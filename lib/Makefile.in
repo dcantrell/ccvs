@@ -190,6 +190,8 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 
+# For GNULIB's dirname module.
+
 # For GNULIB's exitfail module.
 
 # For GNULIB's vasnprintf module.
@@ -225,7 +227,7 @@ libcvs_a_SOURCES = \
 	xselect.h \
 	xsize.h \
 	xtime.h\
-exitfail.h exitfail.c printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
+basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
 
@@ -258,6 +260,7 @@ am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
 	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
 	md5.$(OBJEXT) savecwd.$(OBJEXT) sighandle.$(OBJEXT) \
 	stripslash.$(OBJEXT) xgetwd.$(OBJEXT) yesno.$(OBJEXT) \
+	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
 	exitfail.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
@@ -279,7 +282,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
 @AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
 @AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/basename.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dirname.Po ./$(DEPDIR)/exitfail.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/savecwd.Po \
@@ -358,6 +362,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@

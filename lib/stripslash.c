@@ -1,5 +1,5 @@
-/* stripslash.c -- remove trailing slashes from a string
-   Copyright (C) 1990 Free Software Foundation, Inc.
+/* stripslash.c -- remove redundant trailing slashes from a file name
+   Copyright (C) 1990, 2001, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -9,32 +9,31 @@
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.  */
+   GNU General Public License for more details.
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+
+#if HAVE_CONFIG_H
+# include <config.h>
 #endif
 
-#if STDC_HEADERS || HAVE_STRING_H
-#include <string.h>
-/* An ANSI string.h and pre-ANSI memory.h might conflict. */
-#if !STDC_HEADERS && HAVE_MEMORY_H
-#include <memory.h>
-#endif /* not STDC_HEADERS and HAVE_MEMORY_H */
-#else /* not STDC_HJEADERS and not HAVE_STRING_H */
-#include <strings.h>
-/* memory.h and strings.h conflict on some systems. */
-#endif /* not STDC_HEADERS and not HAVE_STRING_H */
+#include "dirname.h"
 
-/* Remove trailing slashes from PATH. */
+/* Remove trailing slashes from PATH.
+   Return nonzero if a trailing slash was removed.
+   This is useful when using filename completion from a shell that
+   adds a "/" after directory names (such as tcsh and bash), because
+   the Unix rename and rmdir system calls return an "Invalid argument" error
+   when given a path that ends in "/" (except for the root directory).  */
 
-void
-strip_trailing_slashes (path)
-     char *path;
+int
+strip_trailing_slashes (char *path)
 {
-  int last;
-
-  last = strlen (path) - 1;
-  while (last > 0 && path[last] == '/')
-    path[last--] = '\0';
+  char *base = base_name (path);
+  char *base_lim = base + base_len (base);
+  int had_slash = *base_lim;
+  *base_lim = '\0';
+  return had_slash;
 }
