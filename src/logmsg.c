@@ -409,9 +409,10 @@ do_verify (message, repository)
 
     fname = cvs_temp_name ();
 
-    if ((fp = fopen (fname, "w")) < 0)
+    fp = fopen (fname, "w");
+    if (fp == NULL)
     {
-	error (1, 0, "cannot create temporary file %s", fname);
+	error (1, errno, "cannot create temporary file %s", fname);
 	return;
     }
     else
