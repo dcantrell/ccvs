@@ -217,6 +217,8 @@ main_cleanup (sig)
 	break;
 #endif
     default:
+	/* This case should never be reached, because we list above all
+	   the signals for which we actually establish a signal handler.  */
 	sprintf (temp, "%d", sig);
 	name = temp;
 	break;
