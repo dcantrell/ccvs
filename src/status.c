@@ -112,6 +112,7 @@ status_fileproc (callerdat, finfo)
 
     status = Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL,
 			    1, 0, &vers, 0);
+    sstat = "Classify Error";
     switch (status)
     {
 	case T_UNKNOWN:
@@ -149,8 +150,9 @@ status_fileproc (callerdat, finfo)
 	case T_NEEDS_MERGE:
 	    sstat = "Needs Merge";
 	    break;
-	default:
-	    sstat = "Classify Error";
+	case T_TITLE:
+	    /* I don't think this case can occur here.  Just print
+	       "Classify Error".  */
 	    break;
     }
 
