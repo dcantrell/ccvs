@@ -794,11 +794,8 @@ char *
 normalize_cvsroot (const cvsroot_t *root)
 {
     char *cvsroot_canonical;
-    char *p, *hostname, *username;
-    char port_s[64];
-
-    /* get the appropriate port string */
-    sprintf (port_s, "%d", get_cvs_port_number (root));
+    char *p, *hostname;
+    size_t length;
 
     /* use a lower case hostname since we know hostnames are case insensitive */
     /* Some logic says we should be tacking our domain name on too if it isn't
@@ -807,20 +804,18 @@ normalize_cvsroot (const cvsroot_t *root)
      * the DNS trickery that makes life easier for sysadmins when they want to
      * move a repository or the like
      */
-    p = hostname = xstrdup(root->hostname);
+    p = hostname = xstrdup (root->hostname);
     while (*p)
     {
-	*p = tolower(*p);
+	*p = tolower (*p);
 	p++;
     }
 
-    /* get the username string */
-    username = root->username ? root->username : getcaller();
-    cvsroot_canonical = xmalloc ( strlen(username)
-				+ strlen(hostname) + strlen(port_s)
-				+ strlen(root->directory) + 12);
-    sprintf (cvsroot_canonical, ":pserver:%s@%s:%s%s",
-	    username, hostname, port_s, root->directory);
+    cvsroot_canonical = asnprintf (NULL, &length, ":pserver:%s@%s:%d%s",
+                                   root->username ? root->username
+                                                  : getcaller(),
+                                   hostname, get_cvs_port_number (root),
+                                   root->directory);
 
     free (hostname);
     return cvsroot_canonical;
