@@ -444,7 +444,7 @@ HOME=${TESTDIR}/home; export HOME
 if test x"$*" = x; then
 	# This doesn't yet include log2, because the bug it tests for
 	# is not yet fixed, and/or we might want to wait until after 1.9.
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
 else
 	tests="$*"
 fi
