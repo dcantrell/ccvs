@@ -1,3 +1,30 @@
+Wed Aug 30 18:48:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* system.h [HAVE_IO_H]: #include <io.h>, for Windows NT.
+	[HAVE_DIRECT_H]: #include <direct.h>, for Windows NT.
+	(CVS_MKDIR, FOLD_FN_CHAR, fnfold, fncmp, ISDIRSEP, OPEN_BINARY,
+	FOPEN_BINARY_READ, FOPEN_BINARY_WRITE): New macros/functions, for
+	use in system-sensitive code.
+
+	* regex.c (re_set_registers): start and end are pointers, not
+	integers.  Cast the initializing value appropriately.
+
+	* getopt.c [HAVE_STRING_H]: #include <string.h>, to avoid
+	warnings.
+
+	* fnmatch.c (FOLD_FN_CHAR): Give this a dummy #definition if
+	config.h didn't #define it.
+        (fnmatch): Pass filename characters through FOLD_FN_CHAR before
+	comparing them.
+
+	* argmatch.c: #include <sys/types.h>.
+	(argmatch): Declare arglen to be a size_t, rather than an int,
+	to avoid signed/unsigned comparison "problems".
+
+	* .cvsignore: Remove getdate.c from this file.  We want to
+	distribute it, for systems that don't have a Yacc-equivalent
+	installed (like Windows NT).
+
 Sat Aug 19 22:00:51 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* error.c: Don't #define CVS_SUPPORT here.  config.h takes care of
