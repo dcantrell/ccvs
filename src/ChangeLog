@@ -1,3 +1,9 @@
+2003-11-01  Larry Jones  <lawrence.jones@eds.com>
+
+	* ignore.c (ignore_files): Use CVS_LSTAT() instead of lstat().
+	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
+	(Reported by Paul Edwards <kerravon@nosppaam.w3.to>.)
+
 2003-10-31  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (checkout_repository): Name tests consistently.
