@@ -1,3 +1,9 @@
+Wed Jul  3 21:51:23 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (blocking_error): Define macro.
+	(buf_send_output, buf_input_data): Use blocking_error rather than
+	#ifdef EWOULDBLOCK.
+
 Tue Jul  2 20:38:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Change message which said "version 1.2 of foo.c
