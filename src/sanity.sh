@@ -194,25 +194,6 @@ while getopts Hc:f:klrs:-: option ; do
     esac
 done
 
-case $servercvs in
-"")
-  exit_usage
-  ;;
-false)
-  ;;
-/*)
-  ;;
-*)
-  servercvs=`pwd`/$servercvs
-  ;;
-esac
-
-if test false != "${servercvs}" &&
-     ( test ! -f ${servercvs} || test ! -e ${servercvs} ); then
-  echo "No such executable: ${servercvs}" >&2
-  exit 1
-fi
-
 # boot the arguments we used above
 while test $OPTIND -gt 1 ; do
     shift
@@ -234,9 +215,41 @@ case $1 in
 esac
 shift
 
-if test ! -f ${testcvs} || test ! -e ${testcvs}; then
-  echo "No such executable: ${testcvs}" >&2
+# Verify that $testcvs looks like CVS.
+if test ! -f ${testcvs} || test ! -r ${testcvs}; then
+  echo "No such file or file not readable: ${testcvs}" >&2
   exit 1
+fi
+if ${testcvs} --version </dev/null 2>/dev/null |
+     grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
+  echo "Not a CVS executable: ${testcvs}" >&2
+  exit 1
+fi
+
+case "${servercvs}" in
+"")
+  exit_usage
+  ;;
+false)
+  ;;
+/*)
+  ;;
+*)
+  servercvs=`pwd`/${servercvs}
+  ;;
+esac
+
+# verify that $servercvs works.
+if test false != "${servercvs}"; then
+  if test ! -f ${servercvs} || test ! -r ${servercvs}; then
+    echo "No such file or file not readable: ${testcvs}" >&2
+    exit 1
+  fi
+  if ${servercvs} --version </dev/null 2>/dev/null |
+       grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
+    echo "Not a CVS executable: ${servercvs}" >&2
+    exit 1
+  fi
 fi
 
 # default ${servercvs} to ${testcvs}
@@ -247,7 +260,7 @@ fi
 # Fail in client/server mode if our ${servercvs} does not contain server
 # support.
 if $remote; then
-  if ${servercvs} --version |
+  if ${servercvs} --version </dev/null |
        grep '^Concurrent.*(.*server)$' >/dev/null 2>&1; then :; else
     echo "CVS executable \`${servercvs}' does not contain server support." >&2
     exit 1
@@ -257,7 +270,7 @@ fi
 # Fail in client/server mode if our ${testcvs} does not contain client
 # support.
 if $remote; then
-  if ${testcvs} --version |
+  if ${testcvs} --version </dev/null |
        grep '^Concurrent.*(client.*)$' >/dev/null 2>&1; then :; else
     echo "CVS executable \`${testcvs}' does not contain client support." >&2
     exit 1
@@ -265,7 +278,8 @@ if $remote; then
 fi
 
 # For the "fork" tests.
-if ${testcvs} --version | grep '^Concurrent.*(.*server)$' >/dev/null 2>&1
+if ${testcvs} --version </dev/null |
+     grep '^Concurrent.*(.*server)$' >/dev/null 2>&1
 then
   testcvs_server_support=:
 else
@@ -317,17 +331,13 @@ echo 'nothing seems to happen for a long time.)'
 # just spuriously match a few things; if the name contains other regexp
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
-# And the regexp for the CVS server when we have one.  In local mode, default
-# to $PROG.
+# And the regexp for the CVS server when we have one.  In local mode, this
+# defaults to $PROG since $servercvs already did.
 # FIXCVS: There are a few places in error messages where CVS suggests a command
 # and outputs $SPROG as the suggested executable.  This could hopefully use
 # MT (tagged text - see doc/cvs-client.texi) to request that the client print
 # its own name.
-if test false != "${servercvs}"; then
-	SPROG=`basename ${servercvs}`
-else
-	SPROG=$PROG
-fi
+SPROG=`basename ${servercvs}`
 
 
 # Regexp to match an author name.  I'm not really sure what characters
@@ -435,15 +445,15 @@ find_tool ()
   GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin"
   TOOL=""
   for path in $GLOCS ; do
-    if test -x $path/g$1 ; then
-      RES="`$path/g$1 --version </dev/null 2>/dev/null`"
+    if test -f $path/g$1 && test -r $path/g$1 &&
+        RES=`$path/g$1 --version </dev/null 2>/dev/null`; then
       if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
         TOOL=$path/g$1
         break
       fi
     fi
-    if test -x $path/$1 ; then
-      RES="`$path/$1 --version </dev/null 2>/dev/null`"
+    if test -f $path/$1 && test -r $path/$1 &&
+        RES=`$path/$1 --version </dev/null 2>/dev/null`; then
       if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
         TOOL=$path/$1
         break

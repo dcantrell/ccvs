@@ -1,5 +1,12 @@
 2003-06-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Don't use `test -x' since BSD 4.3 doesn't like it.  Minor
+	reorganization for clarity.  Don't check for $server = false after we
+	set its default.  Use </dev/null with calls to $prog --version when we
+	don't know what $prog does for sure.
+
+2003-06-02  Derek Price  <derek@ximbiot.com>
+
 	* diff.c (diff_file_nodiff): Don't assume that because two specified
 	revision numbers are different, the contents are different.
 	(Original report & patch from Paul Edwards <kerravon@w3.to>.)
