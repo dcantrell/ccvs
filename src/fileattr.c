@@ -97,8 +97,13 @@ fileattr_read (void)
 	nread = getline (&line, &line_len, fp);
 	if (nread < 0)
 	    break;
-	/* Remove trailing newline.  */
-	line[nread - 1] = '\0';
+	/* Remove trailing newline.
+	 * It is okay to reference line[nread - 1] here, since getline must
+	 * always return 1 character or EOF, but we need to verify that the
+	 * character we eat is the newline, since getline can return a line
+	 * w/o a newline just before returning EOF.
+	 */
+	if (line[nread - 1] == '\n') line[nread - 1] = '\0';
 	if (line[0] == 'F')
 	{
 	    char *p;
