@@ -1,3 +1,10 @@
+2000-05-02  Donald Sharp <sharpd@cisco.com>
+	and Larry Jones  <larry.jones@sdrc.com>
+
+	* history.c (report_hrecs): Added code to print out year instead of
+	just month/day.
+	* sanity.sh (basic2-64, history): Update to match.
+
 2000-04-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (dirswitch): Set pending_error_text in addition to
