@@ -2371,8 +2371,9 @@ static void linevector_add PROTO ((struct linevector *vec, char *text,
 
 /* Given some text TEXT, add each of its lines to VEC before line POS
    (where line 0 is the first line).  The last line in TEXT may or may
-   not be \n terminated.  All \n in TEXT are changed to \0.  Set the
-   version for each of the new lines to VERS.  */
+   not be \n terminated.  All \n in TEXT are changed to \0 (FIXME: I
+   don't think this is needed, or used, now that we have the ->len
+   field).  Set the version for each of the new lines to VERS.  */
 static void
 linevector_add (vec, text, len, vers, pos)
     struct linevector *vec;
