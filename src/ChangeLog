@@ -1,3 +1,8 @@
+Wed Dec 18 12:27:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* repos.c (Name_Repository): Add comment regarding wording of
+	"*PANIC*" error message.
+
 1996-12-18  Jim Kingdon
 
 	* client.c (call_in_directory): If the directory we are about
