@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* TODO (22, 31): Remove completed items.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove ls assertion failure bug.
 
 2001-10-21  Conrad T. Pino  <Conrad@Pino.com>
