@@ -1,3 +1,7 @@
+2002-03-17  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (log options): Add new -S option.
+
 2002-03-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (diff options): Add missing menu for new subsections.
