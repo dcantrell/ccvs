@@ -2793,7 +2793,7 @@ RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
 VERS: 1.1
 ***************
 $ cvs add file1
-cvs add: version 1.2 of `file1' will be resurrected
+cvs add: re-adding file file1 (in place of dead revision 1.2)
 cvs add: use 'cvs commit' to add this file permanently
 $ cvs commit -m test
 Checking in file1;
