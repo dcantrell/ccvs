@@ -1794,15 +1794,16 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	       several causes: (1) something/someone creates the file
 	       during the time that CVS is running, (2) the repository
 	       has two files whose names clash for the client because
-	       of case-insensitivity or similar causes, (3) a special
-	       case of this is that a file gets renamed for example
-	       from a.c to A.C.  A "cvs update" on a case-insensitive
-	       client will get this error.  Repeating the update takes
-	       care of the problem, but is it clear to the user what
-	       is going on and what to do about it?, (4) the client
-	       has a file which the server doesn't know about (e.g. "?
-	       foo" file), and that name clashes with a file the
-	       server does know about, (5) classify.c will print the same
+	       of case-insensitivity or similar causes, See 3 for
+	       additional notes.  (3) a special case of this is that a
+	       file gets renamed for example from a.c to A.C.  A
+	       "cvs update" on a case-insensitive client will get this
+	       error.  In this case and in case 2, the filename
+	       (short_pathname) printed in the error message will likely _not_
+	       have the same case as seen by the user in a directory listing.
+	       (4) the client has a file which the server doesn't know
+	       about (e.g. "? foo" file), and that name clashes with a file
+	       the server does know about, (5) classify.c will print the same
 	       message for other reasons.
 
 	       I hope the above paragraph makes it clear that making this
