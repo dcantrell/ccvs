@@ -395,11 +395,15 @@ ignore_files (ilist, entries, update_dir, proc)
 
     dirp = CVS_OPENDIR (".");
     if (dirp == NULL)
+    {
+	error (0, errno, "cannot open current directory");
 	return;
+    }
 
     ign_add_file (CVSDOTIGNORE, 1);
     wrap_add_file (CVSDOTWRAPPER, 1);
 
+    errno = 0;
     while ((dp = readdir (dirp)) != NULL)
     {
 	file = dp->d_name;
@@ -476,6 +480,9 @@ ignore_files (ilist, entries, update_dir, proc)
     	}
 
 	(*proc) (file, xdir);
+	errno = 0;
     }
+    if (errno != 0)
+	error (0, errno, "error reading current directory");
     (void) closedir (dirp);
 }

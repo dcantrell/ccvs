@@ -1595,7 +1595,9 @@ findmaxrev (p, closure)
  * XXX - if removing a ,v file that is a relative symbolic link to
  * another ,v file, we probably should add a ".." component to the
  * link to keep it relative after we move it into the attic.
- */
+
+   Return value is 0 on success, or >0 on error (in which case we have
+   printed an error message).  */
 static int
 remove_file (finfo, tag, message)
     struct file_info *finfo;
@@ -1694,16 +1696,6 @@ remove_file (finfo, tag, message)
 	RCS_rewrite (finfo->rcs, NULL, NULL);
     }
 
-#ifdef SERVER_SUPPORT
-    if (server_active) {
-	/* If this is the server, there will be a file sitting in the
-	   temp directory which is the kludgy way in which server.c
-	   tells time_stamp that the file is no longer around.  Remove
-	   it so we can create temp files with that name (ignore errors).  */
-	unlink_file (finfo->file);
-    }
-#endif
-
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  */
     retcode = RCS_checkout (finfo->rcs, finfo->file, rev ? corev : NULL,
@@ -1752,17 +1744,31 @@ remove_file (finfo, tag, message)
 		      sizeof(RCSEXT) + 1);
 	(void) sprintf (tmp, "%s/%s", finfo->repository, CVSATTIC);
 	omask = umask (cvsumask);
-	(void) CVS_MKDIR (tmp, 0777);
+	if (CVS_MKDIR (tmp, 0777) < 0 && errno != EEXIST)
+	    error (0, errno, "cannot make directory %s", tmp);
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC,
 			finfo->file, RCSEXT);
 
-	if (strcmp (finfo->rcs->path, tmp) != 0
-	    && CVS_RENAME (finfo->rcs->path, tmp) == -1
-	    && (isreadable (finfo->rcs->path) || !isreadable (tmp)))
+	if (strcmp (finfo->rcs->path, tmp) != 0)
 	{
-	    free(tmp);
-	    return (1);
+	    if (CVS_RENAME (finfo->rcs->path, tmp) < 0)
+	    {
+		int save_errno = errno;
+
+		/* The checks for isreadable look awfully fishy, but
+		   I'm going to leave them here for now until I
+		   can think harder about whether they take care of
+		   some cases which should be handled somehow.  */
+
+		if (isreadable (finfo->rcs->path) || !isreadable (tmp))
+		{
+		    error (0, save_errno, "cannot rename %s to %s",
+			   finfo->rcs->path, tmp);
+		    free (tmp);
+		    return 1;
+		}
+	    }
 	}
 	/* The old value of finfo->rcs->path is in old_path, and is
            freed below.  */
@@ -1805,7 +1811,9 @@ finaladd (finfo, rev, tag, options)
 	char *tmp = xmalloc (strlen (finfo->file) + sizeof (CVSADM)
 			     + sizeof (CVSEXT_LOG) + 10);
 	(void) sprintf (tmp, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
-	(void) unlink_file (tmp);
+	if (unlink_file (tmp) < 0
+	    && !existence_error (errno))
+	    error (0, errno, "cannot remove %s", tmp);
 	free (tmp);
     }
     else
@@ -1849,7 +1857,10 @@ fixaddfile (file, repository)
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
-	(void) unlink_file (rcs);
+    {
+	if (unlink_file (rcs) < 0)
+	    error (0, errno, "cannot remove %s", rcs);
+    }
     else
 	freercsnode (&rcsfile);
     really_quiet = save_really_quiet;

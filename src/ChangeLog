@@ -1,3 +1,27 @@
+1998-08-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	More error handling fixes:
+	* ignore.c (ignore_files): Check for errors from opendir and
+	readdir.
+	* find_names.c (Find_Names): Check for errors from find_rcs.
+	(find_rcs, find_dirs): Comment error handling better; also return
+	an error if we got one from readdir.
+	* filesubr.c (deep_remove_dir): Also check for errors from readdir.
+	* import.c (import_descend): Print message on error from opendir
+	or readdir.
+	* commit.c (remove_file): Check for errors from CVS_MKDIR and
+	CVS_RENAME.
+	(remove_file): No need to remove the file in the temporary
+	directory; server.c now informs time_stamp_server of what is going
+	on via CVS/Entries rather than a file with a kludged up timestamp.
+	* client.c, entries.c, login.c, logmsg.c, mkmodules.c, patch.c,
+	remove.c, update.c: Check for errors from unlink_file.
+	* mkmodules.c (write_dbmfile, rename_dbfile, rename_rcsfile):
+	Check for errors from fclose, CVS_RENAME, and CVS_STAT.
+	* mkmodules.c (checkout_file): Clarify error handling convention.
+	* mkmodules.c (mkmodules): Call checkout_file accordingly.
+	* entries.c (Entries_Open): Check for errors from fclose.
+
 1998-08-21  Ian Lance Taylor  <ian@cygnus.com>
 
 	* import.c (import): Output suggested merge command using

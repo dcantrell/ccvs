@@ -304,7 +304,10 @@ update (argc, argv)
 		}
 
 		for (i = 0; i < failed_patches_count; i++)
-		    (void) unlink_file (failed_patches[i]);
+		    if (unlink_file (failed_patches[i]) < 0
+			&& !existence_error (errno))
+			error (0, errno, "cannot remove %s",
+			       failed_patches[i]);
 		send_file_names (failed_patches_count, failed_patches, 0);
 		send_files (failed_patches_count, failed_patches, local,
 			    aflag, update_build_dirs ? SEND_BUILD_DIRS : 0);
@@ -1568,7 +1571,11 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     if (isfile (finfo->file))
         rename_file (finfo->file, backup);
     else
-        (void) unlink_file (backup);
+    {
+	if (unlink_file (backup) < 0
+	    && !existence_error (errno))
+	    error (0, errno, "cannot remove %s", backup);
+    }
 
     file1 = xmalloc (strlen (finfo->file)
 		     + sizeof (CVSADM)
@@ -1755,9 +1762,15 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	retval = retcode;
     }
 
-    (void) unlink_file (backup);
-    (void) unlink_file (file1);
-    (void) unlink_file (file2);
+    if (unlink_file (backup) < 0
+	&& !existence_error (errno))
+	error (0, errno, "cannot remove %s", backup);
+    if (unlink_file (file1) < 0
+	&& !existence_error (errno))
+	error (0, errno, "cannot remove %s", file1);
+    if (unlink_file (file2) < 0
+	&& !existence_error (errno))
+	error (0, errno, "cannot remove %s", file2);
 
     free (backup);
     free (file1);
@@ -2327,7 +2340,9 @@ join_file (finfo, vers)
 		      + 10);
     (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
-    (void) unlink_file (backup);
+    if (unlink_file (backup) < 0
+	&& !existence_error (errno))
+	error (0, errno, "cannot remove %s", backup);
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 

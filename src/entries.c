@@ -157,7 +157,9 @@ write_entries (list)
     rename_file (entfilename, CVSADM_ENT);
 
     /* now, remove the log file */
-    unlink_file (CVSADM_ENTLOG);
+    if (unlink_file (CVSADM_ENTLOG) < 0
+	&& !existence_error (errno))
+	error (0, errno, "cannot remove %s", CVSADM_ENTLOG);
 }
 
 /*
@@ -496,7 +498,9 @@ Entries_Open (aflag, update_dir)
 	    (void) AddEntryNode (entries, ent);
 	}
 
-	fclose (fpin);
+	if (fclose (fpin) < 0)
+	    /* FIXME-update-dir: should include update_dir in message.  */
+	    error (0, errno, "cannot close %s", CVSADM_ENT);
     }
 
     fpin = CVS_FOPEN (CVSADM_ENTLOG, "r");
@@ -524,7 +528,9 @@ Entries_Open (aflag, update_dir)
 	    }
 	}
 	do_rewrite = 1;
-	fclose (fpin);
+	if (fclose (fpin) < 0)
+	    /* FIXME-update-dir: should include update_dir in message.  */
+	    error (0, errno, "cannot close %s", CVSADM_ENTLOG);
     }
 
     /* Update the list private data to indicate whether subdirectory
