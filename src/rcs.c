@@ -22,6 +22,15 @@
 #ifdef HAVE_MMAP
 # include "getpagesize.h"
 # include <sys/mman.h>
+
+/* Define MAP_FILE when it isn't otherwise.  */
+# ifndef MAP_FILE
+#  define MAP_FILE 0
+# endif
+/* Define MAP_FAILED for old systems which neglect to.  */
+# ifndef MAP_FAILED
+#  define MAP_FAILED ((void *)-1)
+# endif
 #endif
 
 /* The RCS -k options, and a set of enums that must match the array.
