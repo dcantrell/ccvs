@@ -899,11 +899,7 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
     if (!isdigit (tag[0]))
     {
 	/* If we got a symbolic tag, resolve it to a numeric */
-	if (rcs == NULL)
-	    p = NULL;
-	else {
-	    p = findnode (RCS_symbols(rcs), tag);
-	}
+	p = findnode (RCS_symbols(rcs), tag);
 	if (p != NULL)
 	{
 	    int dots;
@@ -976,10 +972,7 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
     else
     {
 	/* we have a revision tag, so make sure it exists */
-	if (rcs == NULL)
-	    p = NULL;
-	else
-	    p = findnode (rcs->versions, tag);
+	p = findnode (rcs->versions, tag);
 	if (p != NULL)
 	{
 	    /*
