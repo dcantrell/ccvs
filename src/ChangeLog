@@ -1,3 +1,8 @@
+Sat Feb 24 01:05:21 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * options.h.in (RCSBIN_DFLT): don't refer to AUTH_SERVER_SUPPORT
+        in comment anymore, now that it's not defined in this file.
+
 Fri Feb 23 1996  Jim Kingdon  <kingdon@cyclic.com
 
 	* client.c: Ifdef HAVE_WINSOCK_H, include winsock.h
