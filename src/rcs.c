@@ -7419,7 +7419,13 @@ rcs_internal_unlockfile (fp, rcsfile)
        corrupting the repository. */
 
     if (ferror (fp))
-	error (1, errno, "error writing to lock file %s", lockfile);
+	/* The only case in which using errno here would be meaningful
+	   is if we happen to have left errno unmolested since the call
+	   which produced the error (e.g. fprintf).  That is pretty
+	   fragile even if it happens to sometimes be true.  The real
+	   solution is to check each call to fprintf rather than waiting
+	   until the end like this.  */
+	error (1, 0, "error writing to lock file %s", lockfile);
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", lockfile);
 
@@ -7490,7 +7496,13 @@ RCS_rewrite (rcs, newdtext, insertpt)
        delete the file.  */
     rcsbuf_close (&rcsbufin);
     if (ferror (fin))
-	error (0, errno, "warning: when closing RCS file `%s'", rcs->path);
+	/* The only case in which using errno here would be meaningful
+	   is if we happen to have left errno unmolested since the call
+	   which produced the error (e.g. fread).  That is pretty
+	   fragile even if it happens to sometimes be true.  The real
+	   solution is to make sure that all the code which reads
+	   from fin checks for errors itself (some does, some doesn't).  */
+	error (0, 0, "warning: when closing RCS file `%s'", rcs->path);
     if (fclose (fin) < 0)
 	error (0, errno, "warning: closing RCS file `%s'", rcs->path);
 
