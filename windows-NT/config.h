@@ -272,6 +272,12 @@
 /* Define to 1 if you have the `gethostname' function. */
 #undef HAVE_GETHOSTNAME
 
+/* Define to 1 if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
+
+/* Define to 1 if you have the `getopt_long_only' function. */
+#undef HAVE_GETOPT_LONG_ONLY
+
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -936,6 +942,16 @@
 /* Define to a replacement function name for getline(). */
 #undef getline
 
+/* Define to rpl_getopt if the replacement function should be used. */
+#undef getopt
+
+/* Define to rpl_getopt_long if the replacement function should be used. */
+#undef getopt_long
+
+/* Define to rpl_getopt_long_only if the replacement function should be used.
+   */
+#undef getopt_long_only
+
 /* Define to a replacement function name for getpass(). */
 #undef getpass
 
@@ -980,6 +996,15 @@
 
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
+
+/* Define to rpl_optarg if the replacement variable should be used. */
+#undef optarg
+
+/* Define to rpl_optind if the replacement variable should be used. */
+#undef optind
+
+/* Define to rpl_optopt if the replacement variable should be used. */
+#undef optopt
 
 /* Define to `int' if <sys/types.h> does not define. */
 #define pid_t int
