@@ -1,3 +1,7 @@
+2003-03-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.1 (CVS_LOCAL_BRANCH_NUM): Document new environment variable.
+
 2003-02-26  Larry Jones  <lawrence.jones@eds.com>
 
 	* cvs.1: Note using "cvs" in .cvsrc for global options.

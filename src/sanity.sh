@@ -675,7 +675,7 @@ if test x"$*" = x; then
 	tests="${tests} commit-add-missing"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
-	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
+	tests="${tests} dirs dirs2 branches branches2 branches3 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -5690,6 +5690,56 @@ File: file5            	Status: Up-to-date
 	  cd ../../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r trunk b1a b1b
+	  ;;
+
+	branches3)
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir branches3; cd branches3
+
+	  dotest branches3-1 "${testcvs} -q co first-dir"
+	  cd first-dir
+	  echo "file1 first revision" > file1
+	  dotest branches3-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest branches3-3 "${testcvs} commit -m add file1" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
+	  CVS_LOCAL_BRANCH_NUM=1000 \
+	  dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
+	  dotest branches3-5 "${testcvs} -q log file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	tag1: 1\.1\.0\.1000
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1.1
+date: [0-9/: ]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r branches3
 	  ;;
 
 	tagc)

@@ -13694,6 +13694,16 @@ Later versions of @sc{cvs} do not rewrite
 @file{CVS/Root}, so @code{CVS_IGNORE_REMOTE_ROOT} has no
 effect.
 
+@cindex CVS_LOCAL_BRANCH_NUM, environment variable
+@item $CVS_LOCAL_BRANCH_NUM
+Setting this variable allows some control over the
+branch number that is assigned. This is specifically to
+support the local commit feature of CVSup. If one sets
+@code{CVS_LOCAL_BRANCH_NUM} to (say) 1000 then branches
+the local repository, the revision numbers will look
+like 1.66.1000.xx. There is almost a dead-set certainty
+that there will be no conflicts with version numbers.
+
 @cindex COMSPEC, environment variable
 @item $COMSPEC
 Used under OS/2 only.  It specifies the name of the
