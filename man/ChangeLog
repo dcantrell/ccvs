@@ -1,3 +1,11 @@
+Tue May 14 10:23:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.1: Add cvs.texinfo to the SEE ALSO section.  Replace an out
+	of date list of default ignore patterns with a reference to
+	cvs.texinfo (if someone wants to undo this change that is OK with
+	me but I did it this way because it isn't clear people would
+	actually keep cvs.1 up to date).
+
 Wed Mar 13 17:06:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsinit.8: Removed.
