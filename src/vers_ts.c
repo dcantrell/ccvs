@@ -88,9 +88,7 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
 	vers_ts->options = xstrdup (options);
     else if (!vers_ts->options)
     {
-	if (sdtp && sdtp->aflag == 0)
-	    vers_ts->options = xstrdup (sdtp->options);
-	else if (rcs != NULL)
+	if (rcs != NULL)
 	{
 	    /* If no keyword expansion was specified on command line,
 	       use whatever was in the rcs file (if there is one).  This

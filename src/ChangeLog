@@ -1,5 +1,13 @@
 Sun May 26 17:51:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* vers_ts.c (Version_TS): Remove case where we get options from
+	sdtp->options.  Whatever case that was intended to handle is
+	probably lost in the mists of time, but sdtp->options isn't set
+	anywhere, and I think that has been true for a long time.
+	* cvs.h (struct stickydirtag): remove options field.
+	* entries.c (freesdt): Don't free ->options.
+	* sanity.sh (binfiles): New tests binfiles-13a* test for above fix.
+
 	* tag.c (check_fileproc): Use fullname not file in error message.
 	Say "locally modified" not "up-to-date"; the file need not match
 	the head revision it only need match some revision.

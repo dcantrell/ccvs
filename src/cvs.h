@@ -375,7 +375,6 @@ struct stickydirtag
     int aflag;
     char *tag;
     char *date;
-    char *options;
 };
 
 /* Flags for find_{names,dirs} routines */
