@@ -59,11 +59,11 @@
 #endif /* STD_HEADERS */
 /* End includes for functions with variable numbers of arguments */
 
+#include "exit.h"
+
 #if ! STDC_HEADERS
-extern void exit ();
 extern char *getenv();
 #endif /* ! STDC_HEADERS */
-
 
 /* Under OS/2, <stdio.h> doesn't define popen()/pclose(). */
 #ifdef USE_OWN_POPEN
