@@ -1,3 +1,7 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in: Targets added to please Automake
+
 1999-03-27  Jim Kingdon  <http://www.cyclic.com>
 
 	* Makefile.in (LIB_OBJECTS, LIB_SOURCES): Remove vasprintf.

@@ -279,8 +279,9 @@ DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
 
 all:
 
-.PHONY: all install uninstall
-all install uninstall:
+# Automake
+.PHONY: all install uninstall check info
+all install uninstall check info:
 
 installdirs:
 .PHONY: installdirs
@@ -293,21 +294,31 @@ ls:
 	@echo ${DISTFILES}
 
 .PHONY: clean distclean realclean mostlyclean
-clean distclean realclean mostlyclean:
+clean distclean realclean maintainer-clean mostlyclean:
 
 .PHONY: lint
 lint:
 
-.PHONY: dist-dir
-dist-dir:
-	mkdir ${DISTDIR}
-	for i in ${DISTFILES}; do \
-	  ln $${i} ${DISTDIR}; \
+# distdir added for CVS.
+top_builddir = ..
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+distdir:
+	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
+	  if test -d $(distdir)/`dirname $$i`; then \
+	    :; \
+	  else \
+	    mkdir $(distdir)/`dirname $$i`; \
+	  fi; \
+	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
 	done
+.PHONY: distdir
 
 # We don't have a real distclean or anything like that, but at least
-# we can get rid of the obj files and cvs.exe.
-clean:
+# we can get rid of the obj files and cvs.exe. 
+.PHONY: clean distclean realclean mostlyclean maintainer-clean
+clean distclean realclean maintainer-clean mostlyclean:
 	rm -f cvs.exe cvs.out
 	rm -f ${srcdir}/*.o
 	rm -f ${diff_srcdir}/*.o
