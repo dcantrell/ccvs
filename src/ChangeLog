@@ -1,5 +1,8 @@
 2003-01-23  Larry Jones  <lawrence.jones@eds.com>
 
+	* diff.c (diff_fileproc): Restructure code to simplify and eliminate
+	redundant tests.
+
 	* server.c (do_cvs_command): Use WCOREDUMP macro rather than hard
 	coding test for core file.
 
