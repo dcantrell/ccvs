@@ -35,9 +35,6 @@ An attempt at a table of Contents for this directory:
 			changes.  Includes the RCS revision of the change
 			as part of the log.
 			Contributed by Kevin Samborn <samborn@sunrise.com>.
-	pcl-cvs		A directory that contains GNU Emacs lisp code which
-			implements a CVS-mode for emacs.
-			Contributed by Per Cederqvist <ceder@lysator.liu.se>.
 	commit_prep	A perl script, to be combined with log_accum.pl, to
 	log_accum	provide for a way to combine the individual log
 			messages of a multi-directory "commit" into a

@@ -1,3 +1,7 @@
+Sat Oct 12 21:18:19 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Don't mention pcl-cvs; it isn't here any more.
+
 Sun Sep 29 19:45:19 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* README: add entry for patch-2.1-.new-fix.
