@@ -60,7 +60,7 @@ $(OBJECTS): diff.h system.h
 analyze.o cmpbuf.o: cmpbuf.h
 
 util.o: util.c
-	$(COMPILE) -DPR_PROGRAM=\"$(PR_PROGRAM)\" util.c
+	$(COMPILE) -DPR_PROGRAM=\"$(PR_PROGRAM)\" $<
 
 install: all
 

@@ -1,3 +1,7 @@
+Sun Sep 21 19:44:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (util.o): Change util.c to $<, needed for srcdir.
+
 Sat Sep 20 12:06:41 1997  Tim Pierce  <twp@twp.tezcat.com>
 
 	New diff library for CVS, based on diffutils-2.7.  See diffutils
