@@ -1,5 +1,10 @@
 2002-05-07  Larry Jones  <lawrence.jones@eds.com>
 
+	* logmsg: Use fputs/putc rather than fprintf where appropriate.
+	(do_verify): Run the verifymsg script even if there's no log
+	message.  (Reported by Andy Baker <Andy.Baker2@t-mobile.co.uk>.)
+	Don't reread the log message unless a verifymsg script was run.
+
 	* commit.c (commit): Always send -m to the server, even if there's
 	no message.
 

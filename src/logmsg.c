@@ -134,7 +134,7 @@ fmt_proc (p, closure)
 	{
 	    if (col > 0)
 	        (void) fprintf (fp, "\n");
-	    (void) fprintf (fp, "%s", prefix);
+	    (void) fputs (prefix, fp);
 	    col = strlen (prefix);
 	    while (col < 6)
 	    {
@@ -219,7 +219,7 @@ do_editor (dir, messagep, repository, changes)
 
     if (*messagep)
     {
-	(void) fprintf (fp, "%s", *messagep);
+	(void) fputs (*messagep, fp);
 
 	if ((*messagep)[0] == '\0' ||
 	    (*messagep)[strlen (*messagep) - 1] != '\n')
@@ -419,8 +419,6 @@ do_verify (messagep, repository)
     char *fname;
     int retcode = 0;
 
-    struct stat pre_stbuf, post_stbuf;
-
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
@@ -432,39 +430,20 @@ do_verify (messagep, repository)
     if (noexec)
 	return;
 
-    /* If there's no message, then we have nothing to verify.  Can this
-       case happen?  And if so why would we print a message?  */
-    if (*messagep == NULL)
-    {
-	cvs_output ("No message to verify\n", 0);
-	return;
-    }
-
     /* open a temporary file, write the message to the 
        temp file, and close the file.  */
 
     if ((fp = cvs_temp_file (&fname)) == NULL)
 	error (1, errno, "cannot create temporary file %s", fname);
 
-    fprintf (fp, "%s", *messagep);
-    if ((*messagep)[0] == '\0' ||
+    if (*messagep != NULL)
+	fputs (*messagep, fp);
+    if (*messagep == NULL ||
+	(*messagep)[0] == '\0' ||
 	(*messagep)[strlen (*messagep) - 1] != '\n')
-	(void) fprintf (fp, "%s", "\n");
+	putc ('\n', fp);
     if (fclose (fp) == EOF)
 	error (1, errno, "%s", fname);
-
-    if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
-    {
-	/* Remember the status of the temp file for later */
-	if ( CVS_STAT (fname, &pre_stbuf) != 0 )
-	    error (1, errno, "cannot stat temp file %s", fname);
-
-	/*
-	 * See if we need to sleep before running the verification
-	 * script to avoid time-stamp races.
-	 */
-	sleep_past (pre_stbuf.st_mtime);
-    }
 
     /* Get the name of the verification script to run  */
 
@@ -476,6 +455,21 @@ do_verify (messagep, repository)
 
     if (verifymsg_script)
     {
+	struct stat pre_stbuf, post_stbuf;
+
+	if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+	{
+	    /* Remember the status of the temp file for later */
+	    if ( CVS_STAT (fname, &pre_stbuf) != 0 )
+		error (1, errno, "cannot stat temp file %s", fname);
+
+	    /*
+	     * See if we need to sleep before running the verification
+	     * script to avoid time-stamp races.
+	     */
+	    sleep_past (pre_stbuf.st_mtime);
+	}
+
 	run_setup (verifymsg_script);
 	run_arg (fname);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
@@ -488,72 +482,70 @@ do_verify (messagep, repository)
 	    error (1, retcode == -1 ? errno : 0, 
 		   "Message verification failed");
 	}
-    }
 
-    /* Get the mod time and size of the possibly new log message
-     * in always and stat modes.
-     */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
-    {
-	if ( CVS_STAT (fname, &post_stbuf) != 0 )
-	    error (1, errno, "cannot find size of temp file %s", fname);
-    }
-
-    /* And reread the log message in `always' mode or in `stat' mode when it's
-     * changed
-     */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
-	    (pre_stbuf.st_mtime != post_stbuf.st_mtime ||
-	     pre_stbuf.st_size != post_stbuf.st_size)))
-    {
-	/* put the entire message back into the *messagep variable */
-	if ( (fp = open_file (fname, "r")) == NULL )
-	    error (1, errno, "cannot open temporary file %s", fname);
-
-	if (*messagep) free (*messagep);
-
-	if (post_stbuf.st_size == 0)
-	    *messagep = NULL;
-	else
+	/* Get the mod time and size of the possibly new log message
+	 * in always and stat modes.
+	 */
+	if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	    RereadLogAfterVerify == LOGMSG_REREAD_STAT)
 	{
-	    /* On NT, we might read less than st_size bytes,
-	       but we won't read more.  So this works.  */
-	    *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
-	    *messagep[0] = '\0';
+	    if ( CVS_STAT (fname, &post_stbuf) != 0 )
+		error (1, errno, "cannot find size of temp file %s", fname);
 	}
 
-	if (*messagep)
+	/* And reread the log message in `always' mode or in `stat' mode when it's
+	 * changed
+	 */
+	if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	    (RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
+		(pre_stbuf.st_mtime != post_stbuf.st_mtime ||
+		 pre_stbuf.st_size != post_stbuf.st_size)))
 	{
-	    char *line = NULL;
-	    int line_length;
-	    size_t line_chars_allocated = 0;
-	    char *p = *messagep;
+	    /* put the entire message back into the *messagep variable */
 
-	    while (1)
+	    if (*messagep) free (*messagep);
+
+	    if (post_stbuf.st_size == 0)
+		*messagep = NULL;
+	    else
 	    {
-		line_length = getline (&line,
-				       &line_chars_allocated,
-				       fp);
-		if (line_length == -1)
+		char *line = NULL;
+		int line_length;
+		size_t line_chars_allocated = 0;
+		char *p;
+
+		if ( (fp = open_file (fname, "r")) == NULL )
+		    error (1, errno, "cannot open temporary file %s", fname);
+
+		/* On NT, we might read less than st_size bytes,
+		   but we won't read more.  So this works.  */
+		p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
+		*messagep[0] = '\0';
+
+		while (1)
 		{
-		    if (ferror (fp))
+		    line_length = getline (&line,
+					   &line_chars_allocated,
+					   fp);
+		    if (line_length == -1)
+		    {
+			if (ferror (fp))
 			/* Fail in this case because otherwise we will have no
 			 * log message
 			 */
 			error (1, errno, "cannot read %s", fname);
-		    break;
+			break;
+		    }
+		    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
+			continue;
+		    (void) strcpy (p, line);
+		    p += line_length;
 		}
-		if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
-		    continue;
-		(void) strcpy (p, line);
-		p += line_length;
+		if (line) free (line);
+		if (fclose (fp) < 0)
+		    error (0, errno, "warning: cannot close %s", fname);
 	    }
-	    if (line) free (line);
 	}
-	if (fclose (fp) < 0)
-	    error (0, errno, "warning: cannot close %s", fname);
     }
 
     /* Delete the temp file  */
