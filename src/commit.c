@@ -1891,6 +1891,13 @@ checkaddfile (file, repository, tag, options, rcsnode)
     int retval;
     int adding_on_branch;
 
+    /* Callers expect to be able to use either "" or NULL to mean the
+       default keyword expansion.  */
+    if (options != NULL && options[0] == '\0')
+	options = NULL;
+    if (options != NULL)
+	assert (options[0] == '-' && options[1] == 'k');
+
     /* If numeric, it is on the trunk; check_fileproc enforced
        this.  */
     adding_on_branch = tag != NULL && !isdigit ((unsigned char) tag[0]);
@@ -2011,7 +2018,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	}
 
 	/* Set RCS keyword expansion options.  */
-	if (options && options[0] == '-' && options[1] == 'k')
+	if (options != NULL)
 	    opt = options + 2;
 	else
 	    opt = NULL;
