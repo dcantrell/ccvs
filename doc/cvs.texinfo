@@ -10019,6 +10019,10 @@ with the @code{-t} flag) and the other when the file is
 checked out of the repository (this is denoted with the
 @code{-f} flag).  The @samp{-t}/@samp{-f} feature does
 not work with client/server @sc{cvs}.
+@c I think maybe -t/-f works client/server if a single
+@c file converts to/from a single file, as opposed to
+@c the file<->directory case.  Could use more
+@c investigation...
 
 The @file{cvswrappers} also has a @samp{-m} option to
 specify the merge methodology that should be used when
