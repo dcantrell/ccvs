@@ -12706,7 +12706,7 @@ is used as a file name or command-line as appropriate.
 @cindex Common syntax of info files, format strings
 @noindent
 @emph{Note:  The following information on format strings is valid
-as long as the line @code{UseNewInfoFormatStrings=yes} appears in
+as long as the line @code{UseNewInfoFmtStrings=yes} appears in
 your repository's config file (@pxref{config}).  Otherwise,
 default format strings may be appended to the command line and
 the @samp{loginfo} file, especially, can exhibit slightly
@@ -12835,7 +12835,7 @@ running properly.
 
 Now add the following line to your config file (@pxref{config}):
 @example
-UseNewInfoFormatStrings=yes
+UseNewInfoFmtStrings=yes
 @end example
 
 Everything should still be running properly, but your users will probably
@@ -13208,7 +13208,7 @@ For example, some valid format strings are @samp{%%},
 
 @cindex loginfo (admin file), updating legacy repositories
 @cindex compatibility notes, loginfo admin file
-Currently, if @samp{UseNewInfoFormatStrings} is not set in the @file{config}
+Currently, if @samp{UseNewInfoFmtStrings} is not set in the @file{config}
 administration file (@pxref{config}), the format strings will be substituted
 as they were in past versions of @sc{cvs}, but this feature is deprecated.
 It is simply in place so that legacy repositories will remain compatible with
@@ -13901,8 +13901,8 @@ replace the log message, use @samp{UserAdminOptions=klum}.
 @cindex format strings, config admin file
 @cindex config (admin file), updating legacy repositories
 @cindex compatibility notes, config admin file
-@cindex UseNewInfoFormatStrings, in CVSROOT/config
-@item UseNewInfoFormatStrings=@var{value}
+@cindex UseNewInfoFmtStrings, in CVSROOT/config
+@item UseNewInfoFmtStrings=@var{value}
 Specify whether @sc{cvs} should support the new or old command line
 template model for the commit support files (@pxref{commit files}).
 This configuration variable began life in deprecation and is only here
