@@ -1,3 +1,10 @@
+Wed Jul 12 09:15:02 1995  Jim Meyering  (meyering@comco.com)
+
+	* configure.in: Add check for working fnmatch functions so that
+	systems providing it don't incur the space overhead of linking
+	with the version in lib.  Cross compiling builds always use the
+	version in lib.
+
 Tue Jul 11 15:47:20 1995  Greg A. Woods  <woods@most.weird.com>
 
         * configure.in: add some FIXME comments

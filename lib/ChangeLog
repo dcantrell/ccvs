@@ -1,3 +1,8 @@
+Wed Jul 12 09:18:49 1995  Jim Meyering  (meyering@comco.com)
+
+	* Makefile.in (OBJECTS): Remove fnmatch.o.  Now configure adds it
+	to LIBOBJS when necessary.
+
 Fri Jun 30 16:27:18 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rename.c (rename): If MVDIR is not defined, just give an error
