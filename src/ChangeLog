@@ -1,5 +1,9 @@
 Mon Jan  8 11:37:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (import): Avoid using string $ followed by Id followed
+	by $ in sanity.sh source, in case sanity.sh itself is under CVS.
+	I hate keyword expansion.
+
 	* sanity.sh: If expr cannot handle multiline expressions, fail and
 	tell the user to get one which can.
 
