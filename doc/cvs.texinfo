@@ -3011,11 +3011,16 @@ Once a primary server is configured, secondary servers may be configured by:
 @item
 Duplicating the primary repository at the new location.
 @item
-Setting up the loginfo file on the primary to propagate writes to the
-new secondary.
+Setting up the @file{loginfo}, @file{postadmin}, @file{posttag}, and
+@file{postwatch} files on the primary to propagate writes to the new secondary.
 @item
 Configuring local access to the secondary as you would configure access to any
 other CVS server (@pxref{Remote repositories}).
+@item
+Ensuring that the @code{--primary-root=@var{secondarypath}=@var{primarypath}}
+is passed to all incovations of the secondary server if the path to the
+@sc{cvs} repository directory is different on the two servers.  This will be
+obsoleted shortly.
 @end enumerate
 
 

@@ -1,3 +1,8 @@
+2004-07-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Document recent changes in
+	implementation.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (script hooks/*): Tidy.  Document new hooks as
