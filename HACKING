@@ -147,7 +147,7 @@ process the following should exist:
   - Most of the time, a test case (see TESTS).  It can be quite
     frustrating to fix a bug only to see it reappear later, and adding
     the case to the testsuite, where feasible, solves this and other
-    problems.
+    problems.  See the TESTS file for notes on writing new tests.
 
 If you solve several unrelated problems, it is generally easier to
 consider the desirability of the changes if there is a separate patch

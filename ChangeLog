@@ -1,3 +1,10 @@
+2001-10-18  Derek Price  <dprice@collab.net>
+
+	* TESTS: Remove outdated note about tests that don't use the dotest
+	function and add some notes on writing tests.
+	* HACKING: Reference TESTS file in note about submitting test cases
+	with patches.
+
 2001-09-28  Larry Jones  <larry.jones@sdr.com>
 
 	* noautomake.sh: Protect wildcards from shell expansion.
