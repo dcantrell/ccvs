@@ -3,6 +3,8 @@ Sun Aug  3 21:03:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	* cvs.texinfo (Error messages): Add comment about wording of error
 	concerning unknown -x option.
 
+	* cvs.texinfo (Wrappers): Add comment about absolute filter pathname.
+
 Thu Jul 31 14:40:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Use @ref not @xref when reference is not at the
