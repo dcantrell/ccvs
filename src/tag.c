@@ -391,19 +391,13 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
      
     /* It would be nice to provide consistency with respect to
        commits; however CVS lacks the infrastructure to do that (see
-       Concurrency in cvs.texinfo and comment in do_recursion).  We
-       do need to ensure that the RCS file info that gets read and
-       cached in do_recursion isn't stale by the time we get around
-       to using it to rewrite the RCS file in the callback, and this
-       is the easiest way to accomplish that.  */
-    lock_tree_for_write (argc - 1, argv + 1, local_specified, which, 0);
+       Concurrency in cvs.texinfo and comment in do_recursion).  */
 
     /* start the recursion processor */
     err = start_recursion (is_rtag ? rtag_fileproc : tag_fileproc,
 			   (FILESDONEPROC) NULL, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
-			   local_specified, which, 0, 0, where, 1);
-    Lock_Cleanup ();
+			   local_specified, which, 0, 1, where, 1);
     dellist (&mtlist);
     if (where != NULL)
 	free (where);
@@ -656,6 +650,9 @@ rtag_fileproc (callerdat, finfo)
     char *version, *rev;
     int retcode = 0;
 
+    /* upgrade our read lock to a write lock */
+    lock_dir_for_write (finfo->repository);
+
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
@@ -872,6 +869,9 @@ tag_fileproc (callerdat, finfo)
     char *rev;
     Vers_TS *vers;
     int retcode = 0;
+
+    /* upgrade our read lock to a write lock */
+    lock_dir_for_write (finfo->repository);
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 

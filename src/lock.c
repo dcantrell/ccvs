@@ -635,64 +635,66 @@ readers_exist (repository)
     DIR *dirp;
     struct dirent *dp;
     struct stat sb;
-    int ret = 0;
-
+    int ret;
 #ifdef CVS_FUDGELOCKS
-again:
+    time_t now;
+    (void) time (&now);
 #endif
 
-    if ((dirp = CVS_OPENDIR (repository)) == NULL)
-	error (1, 0, "cannot open directory %s", repository);
+    do {
+	if ((dirp = CVS_OPENDIR (repository)) == NULL)
+	    error (1, 0, "cannot open directory %s", repository);
 
-    errno = 0;
-    while ((dp = CVS_READDIR (dirp)) != NULL)
-    {
-	if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
+	ret = 0;
+	errno = 0;
+	while ((dp = CVS_READDIR (dirp)) != NULL)
 	{
-#ifdef CVS_FUDGELOCKS
-	    time_t now;
-	    (void) time (&now);
-#endif
+	    if (CVS_FNMATCH (CVSRFLPAT, dp->d_name, 0) == 0)
+	    {
+		/* ignore our own readlock, if any */
+		if (readlock && strcmp (readlock, dp->d_name) == 0)
+		    continue;
 
-	    line = xmalloc (strlen (repository) + strlen (dp->d_name) + 5);
-	    (void) sprintf (line, "%s/%s", repository, dp->d_name);
-	    if ( CVS_STAT (line, &sb) != -1)
-	    {
-#ifdef CVS_FUDGELOCKS
-		/*
-		 * If the create time of the file is more than CVSLCKAGE 
-		 * seconds ago, try to clean-up the lock file, and if
-		 * successful, re-open the directory and try again.
-		 */
-		if (now >= (sb.st_ctime + CVSLCKAGE) && CVS_UNLINK (line) != -1)
+		line = xmalloc (strlen (repository) + strlen (dp->d_name) + 5);
+		(void) sprintf (line, "%s/%s", repository, dp->d_name);
+		if ( CVS_STAT (line, &sb) != -1)
 		{
-		    (void) CVS_CLOSEDIR (dirp);
-		    free (line);
-		    goto again;
-		}
+#ifdef CVS_FUDGELOCKS
+		    /*
+		     * If the create time of the file is more than CVSLCKAGE 
+		     * seconds ago, try to clean-up the lock file, and if
+		     * successful, re-open the directory and try again.
+		     */
+		    if (now >= (sb.st_ctime + CVSLCKAGE) &&
+                        CVS_UNLINK (line) != -1)
+		    {
+			free (line);
+			ret = -1;
+			break;
+		    }
 #endif
-		set_lockers_name (&sb);
-	    }
-	    else
-	    {
-		/* If the file doesn't exist, it just means that it disappeared
-		   between the time we did the readdir and the time we did
-		   the stat.  */
-		if (!existence_error (errno))
-		    error (0, errno, "cannot stat %s", line);
+		    set_lockers_name (&sb);
+		}
+		else
+		{
+		    /* If the file doesn't exist, it just means that it disappeared
+		       between the time we did the readdir and the time we did
+		       the stat.  */
+		    if (!existence_error (errno))
+			error (0, errno, "cannot stat %s", line);
+		}
+		errno = 0;
+		free (line);
+		ret = 1;
+		break;
 	    }
 	    errno = 0;
-	    free (line);
-
-	    ret = 1;
-	    break;
 	}
-	errno = 0;
-    }
-    if (errno != 0)
-	error (0, errno, "error reading directory %s", repository);
+	if (errno != 0)
+	    error (0, errno, "error reading directory %s", repository);
 
-    CVS_CLOSEDIR (dirp);
+	CVS_CLOSEDIR (dirp);
+    } while (ret < 0);
     return (ret);
 }
 
