@@ -5,6 +5,8 @@
 	declaration of `err'.
 	Rename global `tag' to `saved_tag' to avoid overshadowing `tag'
 	parameters of three functions.
+	Rename global `message' to `saved_message' to avoid overshadowing
+	`message' parameter of a function.
 
 1998-05-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
