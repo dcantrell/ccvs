@@ -1,5 +1,9 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* admin.c (admin): s/int/bool/ as appropriate.  Some reformatting.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* history.c (history_write): Use asnprintf().  Some reformatting.
 
 2004-09-29  Derek Price <derek@ximbiot.com>
