@@ -2089,7 +2089,8 @@ methods all accept optional method options, specified as part of the
 :@var{method}[;@var{option}=@var{arg}...]:
 @end example
 
-Currently, the only two valid connection options are @code{proxy}, which
+Currently, the only two valid connection options for
+all remote @var{method}s are @code{proxy}, which
 takes a hostname as an argument, and @code{proxyport}, which takes a port
 number as an argument.  These options can be used to connect via an HTTP
 tunnel style web proxy.  For example, to connect pserver via a web proxy
@@ -2103,6 +2104,47 @@ at www.myproxy.net and port 8000, you would use a method of:
 the server as noted in the upcoming sections on password authentication,
 gserver and kserver.  The example above would only modify the @var{method}
 portion of the repository name.}
+
+@cindex CVS_RSH option for :ext: method
+@cindex CVS_SERVER option for :ext: method
+There are also two options available for the
+@var{method} @code{ext}, the @var{CVS_RSH} and
+@var{CVS_SERVER} options. The @var{CVS_SERVER} option
+may also be used with the @code{fork} method.
+
+For example, to connect to via the
+@code{/path/to/ssh/command} command, you could choose
+to add the @var{CVS_RSH} option with a method of:
+
+@example
+:ext;CVS_RSH=/path/to/ssh/command:
+@end example
+
+or to specify the name of the remote @code{cvs} command
+as being @code{/path/to/cvs/command} or
+@code{cvs-1.12.11}, you could add the @var{CVS_SERVER}
+option with a method of:
+
+@example
+:ext;CVS_SERVER=/path/to/cvs/command:
+@end example
+
+or
+
+@example
+:ext;CVS_SERVER=cvs-1.12.11:
+@end example
+
+and to combine both of those options, a method of:
+
+@example
+:ext;CVS_RSH=/path/to/ssh/command;CVS_SERVER=/path/to/cvs/command:
+@end example
+
+would work. This means that you would not need to have
+the @code{CVS_SERVER} or @code{CVS_RSH} environment
+variables set. See @ref{Connecting via rsh}, for more details on the
+environment variables.
 
 @cindex CVS_PROXY_PORT
 @var{proxy} must be supplied to connect to a CVS server via a
@@ -2265,10 +2307,11 @@ or @file{.profile}.  Alternately, you can set the
 environment variable @code{CVS_SERVER} on the client
 machine to the filename of the server you want to use,
 for example @file{/usr/local/bin/cvs-1.6}.
-@c FIXME: there should be a way to specify the
-@c program in CVSROOT, not CVS_SERVER, so that one can use
-@c different ones for different roots.  e.g. ":server;cvs=cvs-1.6:"
-@c instead of ":server:".
+For the @code{ext} and @code{fork} methods, you may
+also specify @var{CVS_SERVER} as an otpion in the
+@var{CVSROOT} so that you may use different servers for
+differnt roots. See @ref{Remote repositories} for more
+details.
 
 There is no need to edit @file{inetd.conf} or start a
 @sc{cvs} server daemon.
@@ -2300,10 +2343,13 @@ replacement, the instructions in the rest of this
 section concerning @file{.rhosts} and so on are likely
 to be inapplicable; consult the documentation for your rsh
 replacement.
-@c FIXME: there should be a way to specify the
-@c program in CVSROOT, not CVS_RSH, so that one can use
-@c different ones for different roots.  e.g. ":ext;rsh=remsh:"
-@c instead of ":ext:".
+
+You may choose to specify the @var{CVS_RSH} option in
+the @var{CVSROOT} to allow you to use different ones
+for different roots. For example, allowing some roots
+to use @var{CVS_RSH=remsh} and some to use
+@var{CVS_RSH=ssh} for the @code{ext} method. See also
+the @ref{Remote repositories} for more details.
 @c See also the comment in src/client.c for rationale
 @c concerning "rsh" being the default and never
 @c "remsh".
@@ -8603,7 +8649,7 @@ and @code{update}.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@include getdate-cvs.texi
+@include getdate.texi
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin

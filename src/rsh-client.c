@@ -48,8 +48,10 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p,
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
+    char *cvs_rsh = (root->cvs_rsh != NULL
+		     ? root->cvs_rsh : getenv ("CVS_RSH"));
+    char *cvs_server = (root->cvs_server != NULL
+			? root->cvs_server : getenv ("CVS_SERVER"));
     int i = 0;
     /* This needs to fit "rsh", "-b", "-l", "USER", "host",
        "cmd (w/ args)", and NULL.  We leave some room to grow. */
@@ -128,8 +130,10 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p,
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
+    char *cvs_rsh = (root->cvs_rsh != NULL
+		     ? root->cvs_rsh : getenv ("CVS_RSH"));
+    char *cvs_server = (root->cvs_server != NULL
+			? root->cvs_server : getenv ("CVS_SERVER"));
     char *command;
     int tofd, fromfd;
     int child_pid;

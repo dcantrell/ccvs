@@ -1573,8 +1573,8 @@ RCSINIT=; export RCSINIT
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="version basica basicb basicc basic1 deep basic2 ls"
-	tests="$tests parseroot parseroot2 files spacefiles commit-readonly"
-	tests="${tests} commit-add-missing"
+	tests="$tests parseroot parseroot2 parseroot3 files spacefiles"
+	tests="${tests} commit-readonly commit-add-missing"
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
@@ -22585,6 +22585,56 @@ EOF
 	  cd ../..
 	  CVSROOT=$save_CVSROOT
 	  rm -r parseroot2
+	  ;;
+
+
+
+	parseroot3)
+	  # Test some :ext: roots for consistancy.
+	  if $remote; then :; else
+	    remoteonly parseroot3
+	    continue
+	  fi
+
+	  require_rsh "$CVS_RSH"
+	  if test $? -eq 77; then
+	    skip parseroot3 "$skipreason"
+	    continue
+	  fi
+
+	  # Test checking out and subsequently updating with some different
+	  # CVSROOTs.
+
+	  # A standard case, hostname:dirname.
+	  mkdir parseroot3; cd parseroot3
+	  save_CVSROOT=$CVSROOT
+	  save_CVS_RSH=$CVS_RSH
+	  save_CVS_SERVER=$CVS_SERVER
+	  unset CVS_RSH
+	  unset CVS_SERVER
+	  CVSROOT=":ext;CVS_RSH=$save_CVS_RSH;CVS_SERVER=$save_CVS_SERVER:$host:$CVSROOT_DIRNAME"
+	  dotest parseroot3-1 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot3-2 "$testcvs -Q up"
+	  cd ..
+
+	  # A degenerate remote case, just the server name and the directory
+	  # name, with no :'s to help parsing.  It can be mistaken for a
+	  # relative directory name.
+	  rm -r CVSROOT
+	  CVSROOT=":ext;cvs_RSH=$save_CVS_RSH;CVS_Server=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
+	  dotest parseroot3-3 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot3-4 "$testcvs -Q up"
+	  cd ..
+
+	  dokeep
+	  cd ..
+	  CVSROOT=$save_CVSROOT
+	  CVS_RSH=$save_CVS_RSH
+	  CVS_SERVER=$save_CVS_SERVER
+	  export CVS_RSH CVS_SERVER
+	  rm -r parseroot3
 	  ;;
 
 
