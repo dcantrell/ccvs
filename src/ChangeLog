@@ -1,3 +1,11 @@
+2004-02-14  Mark D. Baushke  <mdb@cvshome.org>
+
+	* annotate.c (rannotate_proc): Plug a memory leak.
+	* log.c (log_fileproc): Ditto.
+	* tag.c (tag_fileproc): Ditto.
+	* update.c (checkout_file): Ditto.
+	* server.c (server_updated): Do not buf_free (filebuf) here.
+	
 2004-02-13  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* rcs.c (locate_rcs): Remove unused variables.
