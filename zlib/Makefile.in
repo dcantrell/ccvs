@@ -63,10 +63,16 @@ DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] *.mms \
   contrib/delphi*/*.??? \
   Make_vms.com .cvsignore
 
+# for CVS's distdir & Makefile targets
+subdir = zlib
+
 # For CVS, just build libz.a
 all: libz.a
 
-test: all
+# To reenable make test
+all-original: all minigzip example
+
+check test: all-original
 	@LD_LIBRARY_PATH=.:$(LD_LIBRARY_PATH) ; export LD_LIBRARY_PATH; \
 	echo hello world | ./minigzip | ./minigzip -d || \
 	  echo '		*** minigzip test FAILED ***' ; \
@@ -99,10 +105,14 @@ example: example.o $(LIBS)
 minigzip: minigzip.o $(LIBS)
 	$(CC) $(CFLAGS) -o $@ minigzip.o $(LDFLAGS) $(LIBS)
 
-# For CVS, remove the install and uninstall targets.
-install:
+# For CVS, make install dependant on all and remove the uninstall target.
+install: all
 uninstall:
 .PHONY: install uninstall
+
+# Remove targeets for CVS
+info:
+.PHONY: info
 
 #install: $(LIBS)
 #	-@if [ ! -d $(includedir)  ]; then mkdir $(includedir); fi
@@ -136,18 +146,21 @@ uninstall:
 installdirs:
 .PHONY: installdirs
 
-# dist-dir added for CVS.
-dist-dir:
-	mkdir ${DISTDIR}
+# distdir added for CVS.
+top_builddir = ..
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+distdir:
 	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	  if test -d $(distdir)/`dirname $$i`; then \
+	    :; \
+	  else \
+	    mkdir $(distdir)/`dirname $$i`; \
+	  fi; \
+	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
 	done
-.PHONY: dist-dir
-
-# ls added for CVS.
-ls:
-	@echo $(DISTFILES)
-.PHONY: ls
+.PHONY: distdir
 
 # mostlyclean added for CVS.
 mostlyclean clean:
@@ -155,10 +168,10 @@ mostlyclean clean:
 	   _match.s maketree
 .PHONY: mostlyclean clean
 
-# distclean and realclean added for CVS.
-distclean realclean:	clean
+# distclean and realclean and maintainer-clean added for CVS.
+distclean realclean maintainer-clean:	clean
 	rm -f Makefile
-.PHONY: distclean realclean
+.PHONY: distclean realclean maintainer-clean
 
 zip:
 	mv Makefile Makefile~; cp -p Makefile.in Makefile
@@ -180,13 +193,25 @@ dist:
 	if test ! -d $$d; then rm -f $$d; fi
 	mv Makefile~ Makefile
 
-tags:	
-	etags *.[ch]
+.PHONY: tags
+tags: TAGS
+
+TAGS:
+	tags=; \
+	here=`pwd`; \
+	list=`(echo *.[ch] && cd $(srcdir) && echo *.[ch]) |sort |uniq`; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || etags $(ETAGS_ARGS) $$tags $$unique $(LISP)
 
 # Makefile target added for CVS.
-subdir = zlib
-Makefile: ../config.status Makefile.in
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 depend:
 	makedepend -- $(CFLAGS) -- *.[ch]

@@ -1,3 +1,8 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* .cvsignore: Added the foo.gz file created by 'make check'
+	* Makefile.in: Added support for Automake targets
+
 2000-10-31  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in (DISTFILES, test, libz.a): propogate local (CVS)
