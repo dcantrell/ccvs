@@ -1,5 +1,13 @@
 2000-02-28  Larry Jones  <larry.jones@sdrc.com>
 
+	* commit.c (commit): Use get_file() to read log file correctly
+	and in text mode rather than binary mode.
+
+	* subr.c (get_file): Ignore bufsize if buf is NULL.  Include
+	terminating NUL byte when estimating required buffer size.
+
+2000-02-28  Larry Jones  <larry.jones@sdrc.com>
+
 	* sanity.sh (find_tool): New function to replace duplicated code.
 
 2000-02-25  Larry Jones  <larry.jones@sdrc.com>

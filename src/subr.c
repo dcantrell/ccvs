@@ -647,9 +647,9 @@ get_file (name, fullname, mode, buf, bufsize, len)
 	e = open_file (name, mode);
     }
 
-    if (*bufsize < filesize)
+    if (*buf == NULL || *bufsize <= filesize)
     {
-	*bufsize = filesize;
+	*bufsize = filesize + 1;
 	*buf = xrealloc (*buf, *bufsize);
     }
 
@@ -691,12 +691,9 @@ get_file (name, fullname, mode, buf, bufsize, len)
     *len = nread;
 
     /* Force *BUF to be large enough to hold a null terminator. */
-    if (*buf != NULL)
-    {
-	if (nread == *bufsize)
-	    expand_string (buf, bufsize, *bufsize + 1);
-	(*buf)[nread] = '\0';
-    }
+    if (nread == *bufsize)
+	expand_string (buf, bufsize, *bufsize + 1);
+    (*buf)[nread] = '\0';
 }
 
 

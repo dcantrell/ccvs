@@ -421,28 +421,12 @@ commit (argc, argv)
     /* some checks related to the "-F logfile" option */
     if (logfile)
     {
-	int n, logfd;
-	struct stat statbuf;
+	size_t size = 0, len;
 
 	if (saved_message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
-	/* FIXME: Why is this binary?  Needs more investigation.  */
-	if ((logfd = CVS_OPEN (logfile, O_RDONLY | OPEN_BINARY)) < 0)
-	    error (1, errno, "cannot open log file %s", logfile);
-
-	if (fstat(logfd, &statbuf) < 0)
-	    error (1, errno, "cannot find size of log file %s", logfile);
-
-	saved_message = xmalloc (statbuf.st_size + 1);
-
-	/* FIXME: Should keep reading until EOF, rather than assuming the
-	   first read gets the whole thing.  */
-	if ((n = read (logfd, saved_message, statbuf.st_size + 1)) < 0)
-	    error (1, errno, "cannot read log message from %s", logfile);
-
-	(void) close (logfd);
-	saved_message[n] = '\0';
+	get_file (logfile, logfile, "r", &saved_message, &size, &len);
     }
 
 #ifdef CLIENT_SUPPORT
