@@ -1992,6 +1992,11 @@ do_cvs_command (command)
     {
 	int exitstatus;
 
+	/* Since we're in the child, and the parent is going to take
+	   care of packaging up our error messages, we can clear this
+	   flag.  */
+	error_use_protocol = 0;
+
 	protocol.data = protocol.last = NULL;
 	protocol.fd = protocol_pipe[1];
 	protocol.output = 1;
@@ -3411,6 +3416,10 @@ server (argc, argv)
 	usage (msg);
     }
     /* Ignore argc and argv.  They might be from .cvsrc.  */
+
+    /* Since we're in the server parent process, error should use the
+       protocol to report error messages.  */
+    error_use_protocol = 1;
 
     /*
      * Put Rcsbin at the start of PATH, so that rcs programs can find
