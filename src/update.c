@@ -503,6 +503,11 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 			   argc, argv, local, which, aflag, 1,
 			   preload_update_dir, 1);
 
+#ifdef SERVER_SUPPORT
+    if (server_active)
+	return err;
+#endif
+
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
     {
