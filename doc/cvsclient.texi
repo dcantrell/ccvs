@@ -1885,6 +1885,8 @@ working directory, and the meaning of sending @code{Entries} without
 A number of enhancements are possible.  Also see the file @sc{todo} in
 the @sc{cvs} source distribution, which has further ideas concerning
 various aspects of @sc{cvs}, some of which impact the protocol.
+Similarly, the @code{http://www.cyclic.com} site, in particular the
+@cite{Development of CVS} page.
 
 @itemize @bullet
 @item
@@ -1894,18 +1896,6 @@ of the file which was originally checked out; probably requiring the use
 of "cvs edit" in this case is the most sensible course (the "cvs edit"
 could be handled by a package like VC for emacs).  This would also allow
 local operation of @code{cvs diff} without arguments.
-
-@item
-The current procedure for @code{cvs update} is highly sub-optimal if
-there are many modified files.  One possible alternative would be to
-have the client send a first request without the contents of every
-modified file, then have the server tell it what files it needs.  Note
-the server needs to do the what-needs-to-be-updated check twice (or
-more, if changes in the repository mean it has to ask the client for
-more files), because it can't keep locks open while waiting for the
-network.  Perhaps this whole thing is irrelevant if there is a multisite
-capability (as noted in @sc{todo}), and therefore the rcsmerge can be
-done with a repository which is connected via a fast connection.
 
 @item
 The fact that @code{pserver} requires an extra network turnaround in
