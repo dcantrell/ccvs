@@ -36,7 +36,6 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
     char *reposcopy;
     char *tmp;
 
-#ifdef SERVER_SUPPORT
     if (trace)
     {
 	fprintf (stderr, "%s-> Create_Admin (%s, %s, %s, %s, %s, %d, %d)\n",
@@ -44,7 +43,6 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 		 dir, update_dir, repository, tag ? tag : "",
 		 date ? date : "", nonbranch, warn);
     }
-#endif
 
     if (noexec)
 	return 0;

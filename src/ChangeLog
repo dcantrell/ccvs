@@ -1,5 +1,9 @@
 1998-08-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* create_adm.c (Create_Admin): Don't condition traces on
+	SERVER_SUPPORT; SERVER_SUPPORT shouldn't do (much of) anything
+	independent of server_active.
+
 	* sanity.sh (binfiles3): New test, for yet another binary file
 	bug (sigh).  Thanks to Jason Aten for reporting this one.
 
