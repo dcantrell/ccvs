@@ -822,7 +822,12 @@ check_fileproc (callerdat, finfo)
 	    {
 	        if (vers->tag == NULL)
 		{
-		    char rcs[PATH_MAX];
+		    char *rcs;
+
+		    rcs = xmalloc (strlen (finfo->repository)
+				   + strlen (finfo->file)
+				   + sizeof RCSEXT
+				   + 5);
 
 		    /* Don't look in the attic; if it exists there we
 		       will move it back out in checkaddfile.  */
@@ -834,8 +839,10 @@ check_fileproc (callerdat, finfo)
 		    "cannot add file `%s' when RCS file `%s' already exists",
 			       finfo->fullname, rcs);
 			freevers_ts (&vers);
+			free (rcs);
 			return (1);
 		    }
+		    free (rcs);
 		}
 		if (vers->tag && isdigit (*vers->tag) &&
 		    numdots (vers->tag) > 1)
@@ -1036,7 +1043,7 @@ check_filesdoneproc (callerdat, err, repos, update_dir, entries)
  * Do the work of committing a file
  */
 static int maxrev;
-static char sbranch[PATH_MAX];
+static char *sbranch;
 
 /* ARGSUSED */
 static int
@@ -1683,7 +1690,7 @@ fixbranch (rcs, branch)
 {
     int retcode;
 
-    if (branch != NULL && branch[0] != '\0')
+    if (branch != NULL)
     {
 	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
@@ -1957,13 +1964,14 @@ lock_RCS (user, rcs, rev, repository)
 
     if (err == 0)
     {
+	if (sbranch != NULL)
+	    free (sbranch);
 	if (branch)
 	{
-	    (void) strcpy (sbranch, branch);
-	    free (branch);
+	    sbranch = branch;
 	}
 	else
-	    sbranch[0] = '\0';
+	    sbranch = NULL;
 	return (0);
     }
 

@@ -25,7 +25,7 @@ Create_Admin (dir, update_dir, repository, tag, date)
 {
     FILE *fout;
     char *cp;
-    char tmp[PATH_MAX];
+    char *tmp;
 
 #ifdef SERVER_SUPPORT
     if (trace)
@@ -42,6 +42,7 @@ Create_Admin (dir, update_dir, repository, tag, date)
     if (noexec)
 	return;
 
+    tmp = xmalloc (strlen (dir) + 100);
     if (dir != NULL)
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM);
     else
@@ -137,4 +138,5 @@ Create_Admin (dir, update_dir, repository, tag, date)
     }
 #endif
 
+    free (tmp);
 }

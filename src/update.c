@@ -265,7 +265,7 @@ update (argc, argv)
 		(void) printf ("%s client: refetching unpatchable files\n",
 			       program_name);
 
-		if (toplevel_wd[0] != '\0'
+		if (toplevel_wd != NULL
 		    && CVS_CHDIR (toplevel_wd) < 0)
 		{
 		    error (1, errno, "could not chdir to %s", toplevel_wd);

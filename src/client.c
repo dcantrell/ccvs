@@ -638,7 +638,7 @@ int filter_through_gunzip (fd, dir, pidp)
 static char *toplevel_repos;
 
 /* Working directory when we first started.  */
-char toplevel_wd[PATH_MAX];
+char *toplevel_wd;
 
 static void
 handle_ok (args, len)
@@ -840,12 +840,14 @@ call_in_directory (pathname, func, data)
 	    free (last_dir_name);
 	last_dir_name = dir_name;
 
-	if (toplevel_wd[0] == '\0')
-	    if (getwd (toplevel_wd) == NULL)
-		error (1, 0,
-		       "could not get working directory: %s", toplevel_wd);
+	if (toplevel_wd == NULL)
+	{
+	    toplevel_wd = xgetwd ();
+	    if (toplevel_wd == NULL)
+		error (1, errno, "could not get working directory");
+	}
 
-	if ( CVS_CHDIR (toplevel_wd) < 0)
+	if (CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
 	newdir = 0;
 	if ( CVS_CHDIR (dir_name) < 0)
@@ -1537,10 +1539,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	else
 	{
 	    int retcode;
-	    char backup[PATH_MAX];
+	    char *backup;
 	    struct stat s;
 
-	    (void) sprintf (backup, "%s~", filename);
+	    backup = xmalloc (strlen (filename) + 5);
+	    strcpy (backup, filename);
+	    strcat (backup, "~");
 	    (void) unlink_file (backup);
 	    if (!isfile (filename))
 	        error (1, 0, "patch original file %s does not exist",
@@ -1593,8 +1597,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 		stored_checksum_valid = 0;
 
+		free (backup);
 		return;
 	    }
+	    free (backup);
 	}
 	free (temp_filename);
 
@@ -2077,15 +2083,17 @@ do_deferred_progs ()
     struct save_prog *p;
     struct save_prog *q;
 
-    char fname[PATH_MAX];
+    char *fname;
     FILE *f;
-    if (toplevel_wd[0] != '\0')
-      {
-	if ( CVS_CHDIR (toplevel_wd) < 0)
-	  error (1, errno, "could not chdir to %s", toplevel_wd);
-      }
+
+    if (toplevel_wd != NULL)
+    {
+	if (CVS_CHDIR (toplevel_wd) < 0)
+	    error (1, errno, "could not chdir to %s", toplevel_wd);
+    }
     for (p = checkin_progs; p != NULL; )
     {
+	fname = xmalloc (strlen (p->dir) + sizeof CVSADM_CIPROG + 10);
 	sprintf (fname, "%s/%s", p->dir, CVSADM_CIPROG);
 	f = open_file (fname, "w");
 	if (fprintf (f, "%s\n", p->name) < 0)
@@ -2097,10 +2105,12 @@ do_deferred_progs ()
 	q = p->next;
 	free (p);
 	p = q;
+	free (fname);
     }
     checkin_progs = NULL;
-    for (p = update_progs; p != NULL; p = p->next)
+    for (p = update_progs; p != NULL; )
     {
+	fname = xmalloc (strlen (p->dir) + sizeof CVSADM_UPROG + 10);
 	sprintf (fname, "%s/%s", p->dir, CVSADM_UPROG);
 	f = open_file (fname, "w");
 	if (fprintf (f, "%s\n", p->name) < 0)
@@ -2109,7 +2119,10 @@ do_deferred_progs ()
 	    error (1, errno, "closing %s", fname);
 	free (p->name);
 	free (p->dir);
+	q = p->next;
 	free (p);
+	p = q;
+	free (fname);
     }
     update_progs = NULL;
 }
@@ -2143,10 +2156,10 @@ process_prune_candidates ()
     struct save_dir *p;
     struct save_dir *q;
 
-    if (toplevel_wd[0] != '\0')
+    if (toplevel_wd != NULL)
     {
-	if ( CVS_CHDIR (toplevel_wd) < 0)
-	  error (1, errno, "could not chdir to %s", toplevel_wd);
+	if (CVS_CHDIR (toplevel_wd) < 0)
+	    error (1, errno, "could not chdir to %s", toplevel_wd);
     }
     for (p = prune_candidates; p != NULL; )
     {
@@ -2960,7 +2973,15 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     /* Run the authorization mini-protocol before anything else. */
     {
 	int i;
-	char ch, read_buf[PATH_MAX];
+	char ch;
+
+	/* Long enough to hold I LOVE YOU or I HATE YOU.  Using a fixed-size
+	   buffer seems better than letting an apeshit server chew up our
+	   memory with illegal responses, and the value comes from
+	   the protocol itself; it is not an arbitrary limit on data sent.  */
+#define LARGEST_RESPONSE 80
+	char read_buf[LARGEST_RESPONSE];
+
 	char *begin      = NULL;
 	char *repository = CVSroot_directory;
 	char *username   = CVSroot_username;
@@ -3009,8 +3030,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	 * end of both ACK and NACK, and we loop, reading until "\n".
 	 */
 	ch = 0;
-	memset (read_buf, 0, PATH_MAX);
-	for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
+	memset (read_buf, 0, LARGEST_RESPONSE);
+	for (i = 0; (i < (LARGEST_RESPONSE - 1)) && (ch != '\n'); i++)
 	{
 	    if (recv (sock, &ch, 1, 0) < 0)
                 error (1, errno, "recv() from server %s", CVSroot_hostname);
@@ -3620,7 +3641,6 @@ start_rsh_server (tofdp, fromfdp)
        invoke another rsh on a proxy machine.  */
     char *cvs_rsh = getenv ("CVS_RSH");
     char *cvs_server = getenv ("CVS_SERVER");
-    char command[PATH_MAX];
     int i = 0;
     /* This needs to fit "rsh", "-b", "-l", "USER", "host",
        "cmd (w/ args)", and NULL.  We leave some room to grow. */
@@ -3661,7 +3681,6 @@ start_rsh_server (tofdp, fromfdp)
     if (trace)
     {
 	fprintf (stderr, " -> Starting server: ");
-	fprintf (stderr, "%s", command);
 	putc ('\n', stderr);
     }
 
