@@ -13906,7 +13906,7 @@ done"
 	  fi
 
 	  cd ../..
-	  rm -r trailingslashes
+	  rm -rf trailingslashes $CVSROOT_DIRNAME/topfile,v
 	  ;;
 
 
