@@ -1,3 +1,8 @@
+Thu Jan  8 12:56:55 1998  Yasutoshi Hiroe  <hiroe@rgk.ricoh.co.jp>
+
+	* import.c (import): Don't strcat on uninitialized memory.  Fixes
+	possible SIGSEGV with zero-length message.
+
 Tue Jan  6 22:56:29 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (crerepos): Fix mistaken variable name which caused us
