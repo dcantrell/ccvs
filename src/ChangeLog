@@ -1,3 +1,19 @@
+2004-09-04  Mark D. Baushke  <mdb@cvshome.org>
+
+	* import.c (expand_at_signs): Typecasting for fwrite results.
+	* log-buffer.c (log_buffer_input, log_buffer_output,
+	log_buffer_initialize): Ditto.
+
+	* log-buffer.c (log_buffer_initialize): Protect reference to
+	fatal_errors.
+
+	* parseinfo.c (parse_config): Protect reference to PrimaryServer
+	using #ifdef PROXY_SUPPORT.
+
+	* ls.c (ls_fileproc): Remove unused variables.
+	* subr.c (increment_revnum): Ditto.
+	* vers_ts.c (time_stamp): Ditto.
+
 2004-09-03  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_checkin), commit.c (remove_file): Accept UPDATE_DIR

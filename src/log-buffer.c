@@ -190,8 +190,14 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 		{
 #endif /* PROXY_SUPPORT */
 		    if (fwrite (data->bufp, 1, data->size, lb->log)
-			!= data->size)
-			error (fatal_errors, errno, "writing to log file");
+			!= (size_t) data->size)
+			error (
+#ifdef PROXY_SUPPORT
+			       fatal_errors,
+#else /* !PROXY_SUPPORT */
+			       false,
+#endif /* PROXY_SUPPORT */
+			       errno, "writing to log file");
 		    fflush (lb->log);
 #ifdef PROXY_SUPPORT
 		}
@@ -242,7 +248,7 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	    if (lb->log)
 	    {
 #endif /* PROXY_SUPPORT */
-		if (fwrite (data, 1, *got, lb->log) != *got)
+		if (fwrite (data, 1, *got, lb->log) != (size_t) *got)
 		    error (
 #ifdef PROXY_SUPPORT
 			   lb->fatal_errors,
@@ -299,7 +305,7 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 	    if (lb->log)
 	    {
 #endif /* PROXY_SUPPORT */
-		if (fwrite (data, 1, *wrote, lb->log) != *wrote)
+		if (fwrite (data, 1, *wrote, lb->log) != (size_t) *wrote)
 		    error (
 #ifdef PROXY_SUPPORT
 			   lb->fatal_errors,

@@ -1624,7 +1624,7 @@ expand_at_signs (const char *buf, off_t size, FILE *fp)
 	size -= len;
     }
 
-    if (fwrite (cp, 1, size, fp) != size)
+    if (fwrite (cp, 1, size, fp) != (size_t) size)
 	return EOF;
 
     return 1;

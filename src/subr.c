@@ -209,7 +209,6 @@ char *
 increment_revnum (const char *rev)
 {
     char *newrev, *p;
-    int lastfield;
     size_t len = strlen (rev);
 
     newrev = xmalloc (len + 2);
