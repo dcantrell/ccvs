@@ -1872,36 +1872,50 @@ $ cvs release -d CVSROOT
 @cindex File locking
 @cindex Locking files
 @cindex Working copy
+@cindex reserved checkouts
+@cindex unreserved checkouts
+@cindex RCS-style locking
 
 When more than one person works on a software project
 things often get complicated.  Often, two people try to
-edit the same file simultaneously.  Some other version
-control systems (including @sc{rcs} and @sc{sccs})
-try to solve that particular problem by introducing
-@dfn{file locking}, so that only one person can edit
-each file at a time.  Unfortunately, file locking can
-be very counter-productive.  If two persons want
-to edit different parts of a file, there may be no
-reason to prevent either of them from doing so.
+edit the same file simultaneously.  One solution, known
+as @dfn{file locking} or @dfn{reserved checkouts}, is
+to allow only one person to edit each file at a time.
+This is the only solution with some version control
+systems, including @sc{rcs} and @sc{sccs}.  @sc{Cvs}
+doesn't have a very nice implementation of reserved
+checkouts (yet) but there are ways to get it working
+(for example, see the @code{cvs admin -l} command in
+@ref{admin options}).  It also may be possible to use
+the watches features described below, together with
+suitable procedures (not enforced by software), to
+avoid having two people edit at the same time.
 
-@sc{cvs} does not use file locking.  Instead, it allows many
-people to edit their own @dfn{working copy} of a file
+@c Our unreserved checkout model might not
+@c be quite the same as others.  For example, I
+@c think that some systems will tend to create a branch
+@c in the case where CVS prints "up-to-date check failed".
+@c It isn't clear to me whether we should try to
+@c explore these subtleties; it could easily just
+@c confuse people.
+The default model with @sc{cvs} is known as
+@dfn{unreserved checkouts}.  In this model, developers
+can edit their own @dfn{working copy} of a file
 simultaneously.  The first person that commits his
-changes has no automatic way of knowing that another has started to
-edit it.  Others will get an error message when they
-try to commit the file.  They must then use @sc{cvs}
-commands to bring their working copy up to date with
-the repository revision.  This process is almost
-automatic, and explained in this chapter.
+changes has no automatic way of knowing that another
+has started to edit it.  Others will get an error
+message when they try to commit the file.  They must
+then use @sc{cvs} commands to bring their working copy
+up to date with the repository revision.  This process
+is almost automatic.
 
-There are many ways to organize a team of developers.
-@sc{cvs} does not try to enforce a certain
-organization.  It is a tool that can be used in several
-ways.  It is often useful to inform the group of
-commits you have done.  @sc{cvs} has several ways of
-automating that process.  @xref{Informing others}.
-@xref{Revision management}, for more tips on how to use
-@sc{cvs}.
+@sc{Cvs} also supports mechanisms which facilitate
+various kinds of communcation, without actually
+enforcing rules like reserved checkouts do.
+
+The rest of this chapter describes how these various
+models work, and some of the issues involved in
+choosing between them.
 
 @menu
 * File status::                 A file can be in several states
@@ -1910,6 +1924,7 @@ automating that process.  @xref{Informing others}.
 * Informing others::            To cooperate you must inform
 * Concurrency::                 Simultaneous repository access
 * Watches::                     Mechanisms to track who is editing files
+* Choosing a model::            Reserved or unreserved checkouts?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2527,10 +2542,23 @@ to @file{notify}, @sc{cvs} will pass the @var{value}
 @node Editing files
 @subsection How to edit a file which is being watched
 
+@cindex checkout, as term for getting ready to edit
 Since a file which is being watched is checked out
 read-only, you cannot simply edit it.  To make it
-read-write, and inform others that you are planning
-to edit it, use the @code{cvs edit} command.
+read-write, and inform others that you are planning to
+edit it, use the @code{cvs edit} command.  Some systems
+call this a @dfn{checkout}, but @sc{cvs} uses that term
+for obtaining a copy of the sources (@pxref{Getting the
+source}), an operation which those systems call a
+@dfn{get} or a @dfn{fetch}.
+@c Issue to think about: should we transition CVS
+@c towards the "get" terminology?  "cvs get" is already a
+@c synonym for "cvs checkout" and that section of the
+@c manual refers to "Getting the source".  If this is
+@c done, needs to be done gingerly (for example, we should
+@c still accept "checkout" in .cvsrc files indefinitely
+@c even if the CVS's messages are changed from "cvs checkout: "
+@c to "cvs get: ").
 
 @cindex edit (subcommand)
 @deffn Command {cvs edit} [options] files @dots{}
@@ -2626,6 +2654,66 @@ you cannot upgrade, use the @code{watch off} and
 @code{watch remove} commands to remove all watches, and
 that will restore the repository to a state which
 @sc{cvs} 1.6 can cope with.
+
+@node Choosing a model
+@section Choosing between reserved or unreserved checkouts
+@cindex choosing, reserved or unreserved checkouts
+
+Reserved and unreserved checkouts each have pros and
+cons.  Let it be said that a lot of this is a matter of
+opinion or what works given different groups' working
+styles, but here is an attempt to briefly describe the
+issues.  There are many ways to organize a team of
+developers.  @sc{cvs} does not try to enforce a certain
+organization.  It is a tool that can be used in several
+ways.
+
+Reserved checkouts can be very counter-productive.  If
+two persons want to edit different parts of a file,
+there may be no reason to prevent either of them from
+doing so.  Also, it is common for someone to take out a
+lock on a file, because they are planning to edit it,
+but then forget to release the lock.
+
+@c "many groups"?  specifics?  cites to papers on this?
+@c some way to weasel-word it a bit more so we don't
+@c need facts :-)?
+People, especially people who are familiar with
+reserved checkouts, often wonder how often conflicts
+occur if unreserved checkouts are used, and how
+difficult they are to resolve.  The experience with
+many groups is that they occur rarely and usually are
+relatively straightforward to resolve.
+
+The rarity of serious conflicts may be surprising, until one realizes
+that they occur only when two developers disagree on the proper design
+for a given section of code; such a disagreement suggests that the
+team has not been communicating properly in the first place.  In order
+to collaborate under @emph{any} source management regimen, developers
+must agree on the general design of the system; given this agreement,
+overlapping changes are usually straightforward to merge.
+
+In some cases unreserved checkouts are clearly
+inappropriate.  If no merge tool exists for the kind of
+file you are managing (for example word processor files
+or files edited by Computer Aided Design programs), and
+it is not desirable to change to a program which uses a
+mergeable data format, then resolving conflicts is
+going to be unpleasant enough that you generally will
+be better off to simply avoid the conflicts instead, by
+using reserved checkouts.
+
+The watches features described above in @ref{Watches}
+can be considered to be an intermediate model between
+reserved checkouts and unreserved checkouts.  When you
+go to edit a file, it is possible to find out who else
+is editing it.  And rather than having the system
+simply forbid both people editing the file, it can tell
+you what the situation is and let you figure out
+whether it is a problem in that particular case or not.
+Therefore, for some groups it can be considered the
+best of both the reserved checkout and unreserved
+checkout worlds.
 
 @c ---------------------------------------------------------------------
 @node Branches
@@ -5067,8 +5155,6 @@ substitution}.  Giving an explicit @samp{-k} option to
 @code{cvs update}, @code{cvs export}, or @code{cvs
 checkout} overrides this default.
 
-@cindex Reserved checkouts
-@cindex RCS-style locking
 @item -l[@var{rev}]
 Lock the revision with number @var{rev}.  If a branch
 is given, lock the latest revision on that branch.  If
