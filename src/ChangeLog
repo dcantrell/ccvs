@@ -1,3 +1,11 @@
+Sat May 15 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (serve_static_directory): Return immediately if there
+	is a pending error.
+	(serve_sticky): Likewise.
+	(serve_modified): Read the file data even if there is a pending
+	error.
+
 Wed May 15 14:26:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (main): If -d and CVS/Root both specified, after writing

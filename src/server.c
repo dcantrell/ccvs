@@ -499,6 +499,9 @@ serve_static_directory (arg)
     char *arg;
 {
     FILE *f;
+
+    if (error_pending ()) return;
+
     f = fopen (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
     {
@@ -521,6 +524,9 @@ serve_sticky (arg)
     char *arg;
 {
     FILE *f;
+
+    if (error_pending ()) return;
+
     f = fopen (CVSADM_TAG, "w+");
     if (f == NULL)
     {
@@ -695,7 +701,14 @@ serve_modified (arg)
 
     int gzipped = 0;
 
-    if (error_pending ()) return;
+    /*
+     * This used to return immediately if error_pending () was true.
+     * However, that fails, because it causes each line of the file to
+     * be echoed back to the client as an unrecognized command.  The
+     * client isn't reading from the socket, so eventually both
+     * processes block trying to write to the other.  Now, we try to
+     * read the file if we can.
+     */
 
     mode_text = read_line (stdin);
     if (mode_text == NULL)
@@ -755,6 +768,25 @@ serve_modified (arg)
     else
       size = atoi (size_text);
     free (size_text);
+
+    if (error_pending ())
+    {
+        /* Now that we know the size, read and discard the file data.  */
+        while (size >= 0)
+	{
+	    char buf[1024];
+	    int toread, nread;
+
+	    toread = sizeof (buf);
+	    if (toread > size)
+	        toread = size;
+	    nread = fread (buf, 1, toread, stdin);
+	    if (nread <= 0)
+	        return;
+	    size -= nread;
+	}
+	return;
+    }
 
     if (size >= 0)
       {
