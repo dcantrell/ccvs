@@ -1,5 +1,7 @@
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (serve_root): Allocate with malloc, not xmalloc.
+
 	* root.c (set_local_cvsroot): Move memory allocation from here...
 	* server.c (serve_root): ...to here.  Fixes error handling.
 

@@ -752,10 +752,15 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
        nothing.  But for rsh, we need to do it now.  */
     parse_config (CVSroot_directory);
 
-    path = xmalloc (strlen (CVSroot_directory)
-		    + sizeof (CVSROOTADM)
-		    + sizeof (CVSROOTADM_HISTORY)
-		    + 10);
+    path = malloc (strlen (CVSroot_directory)
+		   + sizeof (CVSROOTADM)
+		   + sizeof (CVSROOTADM_HISTORY)
+		   + 10);
+    if (path == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
     (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
