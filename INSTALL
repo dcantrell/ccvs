@@ -308,12 +308,14 @@ Installation under Unix:
 
 -------------------------------------------------------------------------------
 
-Detailed info about your interaction with "configure":
+Detailed information about your interaction with "configure":
 
 The "configure" script and its interaction with its options and the
-environment is described here.
+environment is described here.  For more detailed documentation about
+"configure", please refer to the GNU Autoconf documentation.
 
 Supported options are:
+
 	--srcdir=DIR		Useful for compiling on many different
 				machines sharing one source tree.
 	--prefix=DIR		The root of where to install the
@@ -321,15 +323,18 @@ Supported options are:
 	--exec_prefix=DIR	If you want executables in a
 				host-dependent place and shared
 				things in a host-independent place.
+	--with-diffutils[=PATH]	Assume use of GNU diffutils is possible.
+	--with-gnugrep[=PATH]	Assume use of GNU grep is possible.
 
 The following environment variables override configure's default
 behaviour:
+
 	CC			If not set, tries to use gcc first,
 				then cc.  Also tries to use "-g -O"
 				as options, backing down to -g
 				alone if that doesn't work.
 	INSTALL			If not set, tries to use "install", then
-				"cp" as a final choice.
+				"./install-sh" as a final choice.
 	RANLIB			If not set, tries to determine if "ranlib"
 				is available, choosing "echo" if it doesn't
 				appear to be.
