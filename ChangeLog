@@ -1,5 +1,28 @@
 Thu Jun 13 17:29:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TODO: Remove item #67 about having cvs import create CVS
+	directories; I don't think it is wise to have cvs import mess with
+	the directory it is working in at all.  Remove item #69 about
+	having import edit modules--in many cases there is no need for an
+	entry in modules.  Remove item #76 about running on top of SCCS;
+	we are clearly not evolving in that direction.  Remove item #91
+	about documenting how to import sources from SCCS or RCS; this is
+	now documented in cvs.texinfo.  Remove item #129 about "U CFTS/";
+	without more information it is impossible to know what behavior is
+	being discussed.  Remove item #157 concerning module names in cvs
+	release; cvs release takes a directory name, not a module name.
+	Remove item #159 about checking access times; this is as likely to
+	be an annoyance as a help, and people who are into that can just
+	look at the result from "cvs update" (directly or with a script).
+	Remove item #164 concerning variables in *info files; it is done.
+	Remove item #35 (it just says "cvs admin" is cheesy, which isn't
+	specific enough to be useful).  Rewrite #39 to be specific about
+	what would be nice in having branches track each other.  Remove
+	item #46--I'm not sure what it means and if it means that one
+	should check in with "cci" or some such instead of "cvs ci" then
+	that is an installation hassle and a minimal convenience.  Add
+	item #180.
+
 	* config.h.in: Regenerated.
 
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
