@@ -209,6 +209,117 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 }
 
 
+
+/* Print a warning and return false if P doesn't look like a string specifying
+ * a boolean value.
+ *
+ * Sets *VAL to the parsed value when it is found to be valid.  *VAL will not
+ * be altered when false is returned.
+ */
+static bool
+readBool (const char *infopath, const char *option, const char *p, bool *val)
+{
+    if (!cvs_casecmp (p, "no") || !cvs_casecmp (p, "false")
+        || !cvs_casecmp (p, "off") || !strcmp (p, "0"))
+    {
+	*val = false;
+	return true;
+    }
+    else if (!cvs_casecmp (p, "yes") || !cvs_casecmp (p, "true")
+	     || !cvs_casecmp (p, "on") || !strcmp (p, "1"))
+    {
+	*val = true;
+	return true;
+    }
+
+    {
+	char *pinfopath = primary_root_inverse_translate (infopath);
+	error (0, 0, "%s: unrecognized value '%s' for `%s'",
+	       pinfopath, option, p);
+	free (pinfopath);
+    }
+    return true;
+}
+
+
+
+/* Print a warning and return false if P doesn't look like a string specifying
+ * something that can be converted into a size_t.
+ *
+ * Sets *VAL to the parsed value when it is found to be valid.  *VAL will not
+ * be altered when false is returned.
+ */
+static bool
+readSizeT (const char *infopath, const char *option, const char *p,
+	   size_t *val)
+{
+    const char *q;
+    size_t num, factor = 1;
+
+    if (!cvs_casecmp ("unlimited", p))
+    {
+	*val = SIZE_MAX;
+	return true;
+    }
+
+    /* Record the factor character (kilo, mega, giga, tera).  */
+    if (!isdigit (p[strlen(p) - 1]))
+    {
+	switch (p[strlen(p) - 1])
+	{
+	    case 'T':
+		factor = xtimes (factor, 1024);
+	    case 'G':
+		factor = xtimes (factor, 1024);
+	    case 'M':
+		factor = xtimes (factor, 1024);
+	    case 'k':
+		factor = xtimes (factor, 1024);
+		break;
+	    default:
+	    {
+		char *pinfopath = primary_root_inverse_translate (infopath);
+		error (0, 0,
+    "%s: Unknown %s factor: `%c'",
+		       pinfopath, option, p[strlen(p)]);
+		free (pinfopath);
+		return false;
+	    }
+	}
+	TRACE (TRACE_DATA, "readSizeT(): Found factor %u for %s",
+	       factor, option);
+    }
+
+    /* Verify that *q is a number.  */
+    q = p;
+    while (q < p + strlen(p) - 1 /* Checked last character above.  */)
+    {
+	if (!isdigit(*q))
+	{
+	    char *pinfopath = primary_root_inverse_translate (infopath);
+	    error (0, 0,
+"%s: %s must be a postitive integer, not '%s'",
+		   pinfopath, option, p);
+	    free (pinfopath);
+	    return false;
+	}
+	q++;
+    }
+
+    /* Compute final value.  */
+    num = strtoul (p, NULL, 10);
+    if (num == ULONG_MAX || num > SIZE_MAX)
+	/* Don't return an error, just max out.  */
+	num = SIZE_MAX;
+
+    TRACE (TRACE_DATA, "readSizeT(): read number %u for %s", num, option);
+    *val = xtimes (strtoul (p, NULL, 10), factor);
+    TRACE (TRACE_DATA, "readSizeT(): returnning %u for %s", *val, option);
+    return true;
+}
+
+
+
 /* Parse the CVS config file.  The syntax right now is a bit ad hoc
    but tries to draw on the best or more common features of the other
    *info files and various unix (or non-unix) config file syntaxes.
@@ -327,28 +438,17 @@ parse_config (char *cvsroot)
 	    ;
 	}
 	else if (strcmp (line, "SystemAuth") == 0)
+#ifdef AUTH_SERVER_SUPPORT
+	    readBool (infopath, "SystemAuth", p, &system_auth);
+#else
 	{
-	    if (strcmp (p, "no") == 0)
-#ifdef AUTH_SERVER_SUPPORT
-		system_auth = 0;
-#else
-		/* Still parse the syntax but ignore the
-		   option.  That way the same config file can
-		   be used for local and server.  */
-		;
-#endif
-	    else if (strcmp (p, "yes") == 0)
-#ifdef AUTH_SERVER_SUPPORT
-		system_auth = 1;
-#else
-		;
-#endif
-	    else
-	    {
-		error (0, 0, "unrecognized value '%s' for SystemAuth", p);
-		goto error_return;
-	    }
+	    /* Still parse the syntax but ignore the option.  That way the same
+	     * config file can be used for local and server.
+	     */
+	    bool dummy;
+	    readBool (infopath, "SystemAuth", p, &dummy);
 	}
+#endif
 	else if (strcmp (line, "LocalKeyword") == 0)
 	{
 	    RCS_setlocalid(p);
@@ -360,37 +460,14 @@ parse_config (char *cvsroot)
 		
 	}
 	else if (strcmp (line, "PreservePermissions") == 0)
-	{
-	    if (strcmp (p, "no") == 0)
-		preserve_perms = 0;
-	    else if (strcmp (p, "yes") == 0)
-	    {
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-		preserve_perms = 1;
+	    readBool (infopath, "PreservePermissions", p, &preserve_perms);
 #else
-		error (0, 0, "\
+	    error (0, 0, "\
 warning: this CVS does not support PreservePermissions");
 #endif
-	    }
-	    else
-	    {
-		error (0, 0, "unrecognized value '%s' for PreservePermissions",
-		       p);
-		goto error_return;
-	    }
-	}
 	else if (strcmp (line, "TopLevelAdmin") == 0)
-	{
-	    if (strcmp (p, "no") == 0)
-		top_level_admin = 0;
-	    else if (strcmp (p, "yes") == 0)
-		top_level_admin = 1;
-	    else
-	    {
-		error (0, 0, "unrecognized value '%s' for TopLevelAdmin", p);
-		goto error_return;
-	    }
-	}
+	    readBool (infopath, "TopLevelAdmin", p, &top_level_admin);
 	else if (strcmp (line, "LockDir") == 0)
 	{
 	    if (lock_dir != NULL)
@@ -410,12 +487,23 @@ warning: this CVS does not support PreservePermissions");
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
 	{
-	    if (strcmp (p, "no") == 0 || strcmp (p, "never") == 0)
+	    if (!cvs_casecmp (p, "never"))
 	      RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
-	    else if (strcmp (p, "yes") == 0 || strcmp (p, "always") == 0)
+	    else if (!cvs_casecmp (p, "always"))
 	      RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
-	    else if (strcmp (p, "stat") == 0)
+	    else if (!cvs_casecmp (p, "stat"))
 	      RereadLogAfterVerify = LOGMSG_REREAD_STAT;
+	    else
+	    {
+		bool tmp;
+		if (readBool (infopath, "RereadLogAfterVerify", p, &tmp))
+		{
+		    if (tmp)
+			RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+		    else
+			RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
+		}
+	    }
 	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
 	{
@@ -424,30 +512,12 @@ warning: this CVS does not support PreservePermissions");
 	}
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
-	{
-	    if (strcmp (p, "no") == 0)
-		UseNewInfoFmtStrings = false;
-	    else if (strcmp (p, "yes") == 0)
-		UseNewInfoFmtStrings = true;
-	    else
-	    {
-		error (0, 0, "unrecognized value '%s' for UseNewInfoFmtStrings", p);
-		goto error_return;
-	    }
-	}
+	    readBool (infopath, "UseNewInfoFmtStrings", p,
+		      &UseNewInfoFmtStrings);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
-	{
-	    if (strcmp (p, "no") == 0)
-		ImportNewFilesToVendorBranchOnly = 0;
-	    else if (strcmp (p, "yes") == 0)
-		ImportNewFilesToVendorBranchOnly = 1;
-	    else
-	    {
-		error (0, 0, "unrecognized value '%s' for ImportNewFilesToVendorBranchOnly", p);
-		goto error_return;
-	    }
-	}
+	    readBool (infopath, "ImportNewFilesToVendorBranchOnly", p,
+		      &ImportNewFilesToVendorBranchOnly);
 #ifdef PROXY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
@@ -464,52 +534,14 @@ warning: this CVS does not support PreservePermissions");
 #endif /* PROXY_SUPPORT */
 #if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
 	else if (strcmp (line, "MaxProxyBufferSize") == 0)
-	{
-	    size_t factor = 1;
-	    char *q = p;
-
-	    /* Record the factor character (kilo, mega, giga, tera).  */
-	    switch (p[strlen(p)])
-	    {
-		case 'T':
-		    factor = xtimes (factor, 2 ^ 10);
-		case 'G':
-		    factor = xtimes (factor, 2 ^ 10);
-		case 'M':
-		    factor = xtimes (factor, 2 ^ 10);
-		case 'k':
-		    factor = xtimes (factor, 2 ^ 10);
-		    p[strlen(p)] = '\0';
-		    break;
-		default:
-		{
-		    char *pinfopath = primary_root_inverse_translate (infopath);
-		    error (0, 0,
-"%s: Unknown MaxProxyBufferSize factor: `%c'",
-			   pinfopath, p[strlen(p)]);
-		    free (pinfopath);
-		}
-	    }
-
-	    /* Verify that *q is a number.  */
-	    while (*q)
-	    {
-		if (*q < 0 || *q > 9)
-		{
-		    char *pinfopath = primary_root_inverse_translate (infopath);
-		    error (0, 0,
-"%s: MaxProxyBufferSize must be a postitive integer, not '%s'",
-			   pinfopath, p);
-		    free (pinfopath);
-		}
-		q++;
-	    }
-
-	    /* Compute final value.  */
-	    MaxProxyBufferSize = strtoul (p, NULL, 10);
-	    MaxProxyBufferSize = xtimes (MaxProxyBufferSize, factor);
-	}
+	    readSizeT (infopath, "MaxProxyBufferSize", p, MaxProxyBufferSize);
 #endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+	else if (!strcmp (line, "MaxCommentLeaderLength"))
+	    readSizeT (infopath, "MaxCommentLeaderLength", p,
+		       &MaxCommentLeaderLength);
+	else if (!strcmp (line, "UseArchiveCommentLeader"))
+	    readBool (infopath, "UseArchiveCommentLeader", p,
+		      &UseArchiveCommentLeader);
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a

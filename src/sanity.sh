@@ -23045,8 +23045,91 @@ xx First log line
 xx Second log line
 xx"
 
+	  # Now test the behavior when the comment leader exceeds the
+	  # configured maximum.
+	  mkdir 3; cd 3
+	  dotest keywordlog-26 "$testcvs -Q co first-dir"
+
+	  cd first-dir
+	  sed 's/xx \$/1234567890123456789 $/' <file1 >tmp
+	  mv tmp file1
+	  dotest keywordlog-27 "$testcvs -Q ci -mrevision-5"
+	  dotest keywordlog-28 "cat file1" \
+"initial
+1234567890123456789 "'\$'"Log: file1,v "'\$'"
+1234567890123456789 Revision 1\.5  $RCSKEYDATE  $username
+1234567890123456789 revision-5
+1234567890123456789
+xx Revision 1\.4  $RCSKEYDATE  $username
+xx First log line
+xx Second log line
+xx"
+
+	  sed 's/1234567890123456789 \$/12345678901234567890 $/' <file1 >tmp
+	  mv tmp file1
+	  dotest keywordlog-29 "$testcvs -Q ci -mrevision-6" \
+"$SPROG commit: Skipping "'`$''Log$'"' keyword due to excessive comment leader\."
+	  dotest keywordlog-30 "cat file1" \
+"initial
+12345678901234567890 "'\$'"Log: file1,v "'\$'"
+1234567890123456789 Revision 1\.5  $RCSKEYDATE  $username
+1234567890123456789 revision-5
+1234567890123456789
+xx Revision 1\.4  $RCSKEYDATE  $username
+xx First log line
+xx Second log line
+xx"
+
+	  # Check that the Log-related config options work.
+	  cd ..
+	  dotest keywordlog-31 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  echo "UseArchiveCommentLeader=TrUe" >>config
+	  dotest keywordlog-32 "$testcvs -Q ci -mset-UseArchiveCommentLeader"
+
+	  cd ../first-dir
+	  dotest keywordlog-33 "$testcvs -Q ci -fmrevision-7 file1"
+	  dotest keywordlog-34 "cat file1" \
+"initial
+12345678901234567890 "'\$'"Log: file1,v "'\$'"
+# Revision 1\.7  $RCSKEYDATE  $username
+# revision-7
+#
+1234567890123456789 Revision 1\.5  $RCSKEYDATE  $username
+1234567890123456789 revision-5
+1234567890123456789
+xx Revision 1\.4  $RCSKEYDATE  $username
+xx First log line
+xx Second log line
+xx"
+
+	  cd ../CVSROOT
+	  echo "MaxCommentLeaderLength=1k" >>config
+	  dotest keywordlog-35 "$testcvs -Q ci -mset-MaxCommentLeaderLength"
+
+	  cd ../first-dir
+	  dotest keywordlog-36 "$testcvs -Q ci -fmrevision-8 file1"
+	  dotest keywordlog-37 "cat file1" \
+"initial
+12345678901234567890 "'\$'"Log: file1,v "'\$'"
+12345678901234567890 Revision 1\.8  $RCSKEYDATE  $username
+12345678901234567890 revision-8
+12345678901234567890
+# Revision 1\.7  $RCSKEYDATE  $username
+# revision-7
+#
+1234567890123456789 Revision 1\.5  $RCSKEYDATE  $username
+1234567890123456789 revision-5
+1234567890123456789
+xx Revision 1\.4  $RCSKEYDATE  $username
+xx First log line
+xx Second log line
+xx"
+
 	  dokeep
-	  rm -r 1 2
+	  cd ../..
+	  restore_adm
+	  rm -r 1 2 3
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  ;;
 

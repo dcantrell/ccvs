@@ -23,7 +23,7 @@
 # endif
 #endif
 
-int preserve_perms = 0;
+bool preserve_perms = false;
 
 /* The RCS -k options, and a set of enums that must match the array.
    These come first so that we can use enum kflag in function
@@ -3818,17 +3818,47 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log, 
 
 	    /* Find the start of the line.  */
 	    start = srch;
-	    while (start > buf && start[-1] != '\n')
+	    leader_len = 0;
+	    while (start > buf && start[-1] != '\n'
+		   && leader_len <= xsum (MaxCommentLeaderLength,
+					  expand != KFLAG_V ? 1 : 0))
+	    {
 		--start;
+		++leader_len;
+	    }
 
-	    /* Copy the start of the line to use as a comment leader.  */
-	    leader_len = srch - start;
 	    if (expand != KFLAG_V)
+		/* When automagically determined and !KFLAG_V, we wish to avoid
+		 * including the leading `$' of the Log keyword in our leader.
+		 */
 		--leader_len;
-	    leader = xmalloc (leader_len);
-	    memcpy (leader, start, leader_len);
+
+	    /* If the automagically determined leader exceeds the limit set in
+	     * CVSROOT/config, try to use a fallback.
+	     */
+	    if (leader_len > MaxCommentLeaderLength)
+	    {
+		if (UseArchiveCommentLeader && rcs->comment)
+		{
+		    leader = xstrdup (rcs->comment);
+		    leader_len = strlen (rcs->comment);
+		}
+		else
+		{
+		    error (0, 0,
+"Skipping `$" "Log$' keyword due to excessive comment leader.");
+		    continue;
+		}
+	    }
+	    else /* leader_len <= MaxCommentLeaderLength */
+	    {
+		/* Copy the start of the line to use as a comment leader.  */
+		leader = xmalloc (leader_len);
+		memcpy (leader, start, leader_len);
+	    }
+
 	    leader_sp_len = leader_len;
-	    while (leader_sp_len > 0 && leader[leader_sp_len - 1] == ' ')
+	    while (leader_sp_len > 0 && isspace (leader[leader_sp_len - 1]))
 		--leader_sp_len;
 
 	    /* RCS does some checking for an old style of Log here,
