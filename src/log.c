@@ -22,6 +22,7 @@ USE(rcsid);
 static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
 static int log_fileproc PROTO((char *file, char *update_dir, char *repository,
 			 List * entries, List * srcfiles));
+static void log_option_with_arg PROTO((char *name, char **var, char *opt));
 
 static char options[PATH_MAX];
 
@@ -41,6 +42,10 @@ cvslog (argc, argv)
     int numopt = 1;
     int err = 0;
     int local = 0;
+    char *dates_opt = 0;
+    char *revisions_opt = 0;
+    char *states_opt = 0;
+    char *who_opt = 0;
 
     if (argc == -1)
 	usage (log_usage);
@@ -58,6 +63,22 @@ cvslog (argc, argv)
 	    {
 		case 'l':
 		    local = 1;
+		    break;
+		case 'd':
+		    log_option_with_arg ("date list", 
+					 &dates_opt, argv[i]);
+		    break;
+		case 'r':
+		    log_option_with_arg ("revision list",
+					 &revisions_opt, argv[i]);
+		    break;
+		case 's':
+		    log_option_with_arg ("state list",
+					 &states_opt, argv[i]);
+		    break;
+		case 'w':
+		    log_option_with_arg ("user list",
+					 &who_opt, argv[i]);
 		    break;
 		default:
 		    (void) strcat (options, " ");
@@ -79,6 +100,10 @@ cvslog (argc, argv)
 	    if (fprintf (to_server, "Argument -l\n") == EOF)
 		error (1, errno, "writing to server");
 	send_option_string (options);
+	if (dates_opt) send_arg (dates_opt);
+	if (revisions_opt) send_arg (revisions_opt);
+	if (states_opt) send_arg (states_opt);
+	if (who_opt) send_arg (who_opt);
 
 #if 0
 /* FIXME:  We shouldn't have to send current files to get log entries, but it
@@ -100,6 +125,24 @@ cvslog (argc, argv)
 			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
 			   (char *) NULL, 1, 0);
     return (err);
+}
+
+
+/* Append an option to the options string.  */
+static void
+log_option_with_arg (name, var, opt)
+     char *name;
+     char **var;
+     char *opt;
+{
+  if (*var)
+    error (1, 0, "only one %s can be specified", name);
+  *var = opt;
+  if (! client_active)
+    {
+      (void) strcat (options, " ");
+      (void) strcat (options, opt);
+    }
 }
 
 /*
