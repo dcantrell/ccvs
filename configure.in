@@ -158,6 +158,7 @@ AC_CHECK_MEMBERS([struct stat.st_rdev],[AC_DEFINE(HAVE_ST_RDEV, 1,
 
 AC_REPLACE_FUNCS(\
 	dup2 \
+	ftruncate \
 	gethostname \
 	memmove \
 	mkdir \
@@ -173,7 +174,6 @@ AC_CHECK_FUNCS(\
 	fchmod \
 	fsync \
 	ftime \
-	ftruncate \
 	getgroups \
 	getopt \
 	getpagesize \
