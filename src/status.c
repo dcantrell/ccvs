@@ -17,7 +17,7 @@ static int tag_list_proc PROTO((Node * p, void *closure));
 static int local = 0;
 static int long_format = 0;
 static char *xfile;
-static List *xsrcfiles;
+static RCSNode *xrcsnode;
 
 static const char *const status_usage[] =
 {
@@ -108,7 +108,7 @@ status_fileproc (finfo)
     Vers_TS *vers;
 
     status = Classify_File (finfo->file, (char *) NULL, (char *) NULL, (char *) NULL,
-			    1, 0, finfo->repository, finfo->entries, finfo->srcfiles, &vers,
+			    1, 0, finfo->repository, finfo->entries, finfo->rcs, &vers,
 			    finfo->update_dir, 0);
     switch (status)
     {
@@ -195,8 +195,8 @@ status_fileproc (finfo)
 		{
 		    char *branch = NULL;
 	
-		    if (RCS_isbranch (finfo->file, edata->tag, finfo->srcfiles))
-			branch = RCS_whatbranch(finfo->file, edata->tag, finfo->srcfiles);
+		    if (RCS_isbranch (finfo->file, edata->tag, finfo->rcs))
+			branch = RCS_whatbranch(finfo->file, edata->tag, finfo->rcs);
 
 		    (void) printf ("   Sticky Tag:\t\t%s (%s: %s)\n",
 				   edata->tag,
@@ -229,7 +229,7 @@ status_fileproc (finfo)
 	    if (symbols)
 	    {
 		xfile = finfo->file;
-		xsrcfiles = finfo->srcfiles;
+		xrcsnode = finfo->rcs;
 		(void) walklist (symbols, tag_list_proc, NULL);
 	    }
 	    else
@@ -267,8 +267,8 @@ tag_list_proc (p, closure)
 {
     char *branch = NULL;
 
-    if (RCS_isbranch (xfile, p->key, xsrcfiles))
-	branch = RCS_whatbranch(xfile, p->key, xsrcfiles) ;
+    if (RCS_isbranch (xfile, p->key, xrcsnode))
+	branch = RCS_whatbranch(xfile, p->key, xrcsnode) ;
 
     (void) printf ("\t%-25.25s\t(%s: %s)\n", p->key,
 		   branch ? "branch" : "revision",

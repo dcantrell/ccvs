@@ -475,7 +475,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     char *tocvsPath;
 
     vers = Version_TS (repository, (char *) NULL, vbranch, (char *) NULL, vfile,
-		       1, 0, (List *) NULL, (List *) NULL);
+		       1, 0, (List *) NULL, (RCSNode *) NULL);
     if (vers->vn_rcs != NULL
 	&& !RCS_isdead(vers->srcfile, vers->vn_rcs))
     {
@@ -679,7 +679,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
 	return (1);
     }
     vers = Version_TS (repository, (char *) NULL, vtag, (char *) NULL, vfile,
-		       1, 0, (List *) NULL, (List *) NULL);
+		       1, 0, (List *) NULL, (RCSNode *) NULL);
     for (i = 0; i < targc; i++)
     {
 	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)

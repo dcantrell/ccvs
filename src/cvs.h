@@ -515,7 +515,7 @@ int Checkin PROTO((int type, char *file, char *update_dir,
 		   char *tag, char *options, char *message, List *entries));
 Ctype Classify_File PROTO((char *file, char *tag, char *date, char *options,
 		     int force_tag_match, int aflag, char *repository,
-		     List *entries, List *srcfiles, Vers_TS **versp,
+		     List *entries, RCSNode *rcsnode, Vers_TS **versp,
 		     char *update_dir, int pipeout));
 List *Find_Names PROTO((char *repository, int which, int aflag,
 		  List ** optentries));
@@ -525,7 +525,7 @@ void Update_Logfile PROTO((char *repository, char *xmessage, char *xrevision,
 		     FILE * xlogfp, List * xchanges));
 Vers_TS *Version_TS PROTO((char *repository, char *options, char *tag,
 		     char *date, char *user, int force_tag_match,
-		     int set_time, List * entries, List * xfiles));
+		     int set_time, List * entries, RCSNode * rcs));
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
 
@@ -554,9 +554,7 @@ struct file_info
     /* The pre-parsed entries for this directory.  */
     List *entries;
 
-    /* The pre-parsed versions of the RCS files.  This is filled in only
-       if dosrcs was passed as nonzero to start_recursion.  */
-    List *srcfiles;
+    RCSNode *rcs;
 };
 
 typedef	int (*FILEPROC)		PROTO((struct file_info *finfo));

@@ -352,10 +352,8 @@ patch_fileproc (finfo)
     FILE *fp;
 
     /* find the parsed rcs file */
-    p = findnode (finfo->srcfiles, finfo->file);
-    if (p == NULL)
+    if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
-    rcsfile = (RCSNode *) p->data;
     if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
 	isattic = 1;
 

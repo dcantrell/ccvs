@@ -96,8 +96,7 @@ log_fileproc (finfo)
     RCSNode *rcsfile;
     int retcode = 0;
 
-    p = findnode (finfo->srcfiles, finfo->file);
-    if (p == NULL || (rcsfile = (RCSNode *) p->data) == NULL)
+    if ((rcsfile = finfo->rcs) == NULL)
     {
 	/* no rcs file.  What *do* we know about this file? */
 	p = findnode (finfo->entries, finfo->file);

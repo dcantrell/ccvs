@@ -53,70 +53,6 @@ static const char spacetab[] = {
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
-/*
- * Parse all the rcs files specified and return a list
- */
-List *
-RCS_parsefiles (files, xrepos)
-    List *files;
-    char *xrepos;
-{
-    /* initialize */
-    repository = xrepos;
-    rcslist = getlist ();
-
-    /* walk the list parsing files */
-    if (walklist (files, parse_rcs_proc, NULL) != 0)
-    {
-	/* free the list and return NULL on error */
-	dellist (&rcslist);
-	return ((List *) NULL);
-    }
-    else
-	/* return the list we built */
-	return (rcslist);
-}
-
-/*
- * Parse an rcs file into a node on the rcs list
- */
-static int
-parse_rcs_proc (file, closure)
-    Node *file;
-    void *closure;
-{
-    RCSNode *rdata;
-
-    /* parse the rcs file into rdata */
-    rdata = RCS_parse (file->key, repository);
-
-    /* if we got a valid RCSNode back, put it on the list */
-    if (rdata != (RCSNode *) NULL)
-	RCS_addnode (file->key, rdata, rcslist);
-
-    return (0);
-}
-
-/*
- * Add an RCSNode to a list of them.
- */
-
-void
-RCS_addnode (file, rcs, list)
-    const char *file;
-    RCSNode *rcs;
-    List *list;
-{
-    Node *p;
-    
-    p = getnode ();
-    p->key = xstrdup (file);
-    p->delproc = rcsnode_delproc;
-    p->type = RCSNODE;
-    p->data = (char *) rcs;
-    (void) addnode (list, p);
-}
-
 
 /*
  * Parse an rcsfile given a user file name and a repository
@@ -1057,25 +993,22 @@ checkmagic_proc (p, closure)
  * rcs file.
  */
 int
-RCS_isbranch (file, rev, srcfiles)
+RCS_isbranch (file, rev, rcs)
     char *file;
     char *rev;
-    List *srcfiles;
+    RCSNode *rcs;
 {
     Node *p;
-    RCSNode *rcs;
 
     /* numeric revisions are easy -- even number of dots is a branch */
     if (isdigit (*rev))
 	return ((numdots (rev) & 1) == 0);
 
     /* assume a revision if you can't find the RCS info */
-    p = findnode (srcfiles, file);
-    if (p == NULL)
+    if (rcs == NULL)
 	return (0);
 
     /* now, look for a match in the symbols list */
-    rcs = (RCSNode *) p->data;
     return (RCS_nodeisbranch (rev, rcs));
 }
 
@@ -1130,22 +1063,19 @@ RCS_nodeisbranch (rev, rcs)
  * for the specified *symbolic* tag.  Magic branches are handled correctly.
  */
 char *
-RCS_whatbranch (file, rev, srcfiles)
+RCS_whatbranch (file, rev, rcs)
     char *file;
     char *rev;
-    List *srcfiles;
-{
-    int dots;
-    Node *p;
     RCSNode *rcs;
+{
+    Node *p;
+    int dots;
 
     /* assume no branch if you can't find the RCS info */
-    p = findnode (srcfiles, file);
-    if (p == NULL)
+    if (rcs == NULL)
 	return ((char *) NULL);
 
     /* now, look for a match in the symbols list */
-    rcs = (RCSNode *) p->data;
     p = findnode (RCS_symbols(rcs), rev);
     if (p == NULL)
 	return ((char *) NULL);

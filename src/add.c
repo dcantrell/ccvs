@@ -149,7 +149,7 @@ add (argc, argv)
 	}
 
 	vers = Version_TS (repository, options, (char *) NULL, (char *) NULL,
-			   user, 0, 0, entries, (List *) NULL);
+			   user, 0, 0, entries, (RCSNode *) NULL);
 	if (vers->vn_user == NULL)
 	{
 	    /* No entry available, ts_rcs is invalid */

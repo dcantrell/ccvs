@@ -1,3 +1,26 @@
+Tue Feb 27 13:07:45 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	The changes listed below cause cvs to parse each rcs file (and
+ 	free the associated rcsnode after the file has been processed)
+ 	sequentially.  cvs used to parse all files in a directory, an
+	approach that does not scale to huge repositories with lots 
+	of revisions/branches/tags/etc.  
+	
+	* cvs.h (struct file_info): Removed srcfiles field.  Added rcs
+ 	(node) field.
+	* recurse.c (do_recursion): Removed code that pre-parsed all
+ 	rcs files in the directory.
+	(do_file_proc): Parse current rcs file.
+	* rcs.c (RCS_parsefiles, parse_rcs_proc, RCS_addnode): Removed.
+	(RCS_isbranch, RCS_whatbranch): Changed srcfiles argument to
+	rcs (node).
+	* rcs.h (RCS_parsefiles, RCS_addnode): Removed prototypes.
+	(RCS_isbranch, RCS_whatbranch): Updated prototypes.
+	* add.c, admin.c, checkin.c, checkout.c, classify.c, client.c, 
+	commit.c, diff.c, history.c, import.c, log.c, patch.c, remove.c, 
+	rtag.c, status.c, tag.c, update.c, vers_ts: Updated for above
+	calling convention / data structure changes.
+
 Mon Feb 26 16:07:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.7.3.

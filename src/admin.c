@@ -124,7 +124,7 @@ admin_fileproc (finfo)
     int status = 0;
 
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
+		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
 
     version = vers->vn_user;
     if (version == NULL)
