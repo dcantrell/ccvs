@@ -49,20 +49,36 @@ wnt_cleanup (void)
     }
 }
 
+
+
 unsigned sleep(unsigned seconds)
 {
 	Sleep(1000*seconds);
 	return 0;
 }
 
+
+
 /*
- * Sleep at least useconds microseconds.
+ * Sleep at least some number of microseconds, specified with nanosecond
+ * resolution and rounding up to the nearest microsecond.
  */
-int usleep(unsigned long useconds)
+int my_usleep (const struct timespec *delay)
 {
-    /* Not very accurate, but it gets the job done */
-    Sleep(useconds/1000 + (useconds%1000 ? 1 : 0));
-    return 0;
+    struct timeval tv_delay;
+    tv_delay.tv_sec = ts_delay->tv_sec;
+    tv_delay.tv_usec = ts_delay->tv_nsec / 1000
+		       + (ts_delay->tv_nsec % 1000 ? 1 : 0);
+    return select (0, (void *) 0, (void *) 0, (void *) 0, &tv_delay);
+}
+
+
+
+int
+nanosleep (const struct timespec *requested_delay,
+	   struct timespec *remaining_delay)
+{
+    return my_usleep (requested_delay);
 }
 
 
