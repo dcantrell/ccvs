@@ -588,7 +588,7 @@ add_directory (finfo)
 	       "directory %s not added; must be a direct sub-directory", dir);
 	return (1);
     }
-    if (strcmp (dir, CVSADM) == 0)
+    if (fncmp (dir, CVSADM) == 0)
     {
 	error (0, 0, "cannot add a `%s' directory", CVSADM);
 	return (1);
