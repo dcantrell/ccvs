@@ -1,3 +1,13 @@
+Mon Nov 10 11:11:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	This fixes problems with windows-NT/run.c improperly quoting, and
+	is cleaner anyway.
+	* rcscmds.c (call_diff_setup, call_diff_arg, call_diff_add_arg,
+	call_diff_argv, call_diff_argc, call_diff_argc_allocated): New
+	functions/variables, lightly adapted from src/run.c.
+	* cvs.h, run.c (call_diff, call_diff3): Move from here...
+	* rcscmds.c: ...to here.
+
 Sun, 9 Nov 1997  Jim Kingdon
 
 	* rcs.c (rcs_internal_unlockfile): Call rename_file not rename.

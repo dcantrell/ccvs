@@ -640,8 +640,6 @@ void run_setup ();
 void run_args ();
 #endif
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
-int call_diff PROTO((char *out));
-int call_diff3 PROTO((char *out));
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen PROTO((const char *, const char *));
