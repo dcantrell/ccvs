@@ -1,3 +1,8 @@
+Fri Jan  3 18:10:39 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* checkout.c (build_dirs_and_chdir): Move call to Subdir_Register
+	until after we know that the directory exists.
+
 Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, cvsbug.sh, edit.c, edit.h, error.c, error.h,

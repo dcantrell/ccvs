@@ -954,7 +954,6 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    }
 	    free (repository);
 	}
-	Subdir_Register ((List *) NULL, (char *) NULL, cp);
 	(void) CVS_MKDIR (cp, 0777);
 	if ( CVS_CHDIR (cp) < 0)
 	{
@@ -962,6 +961,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    retval = 1;
 	    goto out;
 	}
+	Subdir_Register ((List *) NULL, (char *) NULL, cp);
 	if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
 	{
 	    char *repository;
@@ -1011,7 +1011,6 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	}
 	free (repository);
     }
-    Subdir_Register ((List *) NULL, (char *) NULL, cp);
     (void) CVS_MKDIR (cp, 0777);
     if ( CVS_CHDIR (cp) < 0)
     {
@@ -1019,6 +1018,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	retval = 1;
 	goto out;
     }
+    Subdir_Register ((List *) NULL, (char *) NULL, cp);
 out:
     free (path);
     free (path2);
