@@ -1,3 +1,7 @@
+Mon Feb 12 16:09:55 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* run.c (run_popen): Changed more Popen() to run_popen()
+
 Mon Feb 12 03:33:27 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* run.c: Changed Popen() to run_popen() for the benefit of
