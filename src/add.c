@@ -734,9 +734,9 @@ add_directory (finfo)
 
     /* setup the log message */
     message = xmalloc (strlen (rcsdir)
-		       + 36
-		       + (tag == NULL ? 0 : strlen (tag) + 36)
-		       + (date == NULL ? 0 : strlen (date) + 37));
+		       + 80
+		       + (tag == NULL ? 0 : strlen (tag) + 80)
+		       + (date == NULL ? 0 : strlen (date) + 80));
     (void) sprintf (message, "Directory %s added to the repository\n",
 		    rcsdir);
     if (tag)
