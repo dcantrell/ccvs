@@ -489,13 +489,16 @@ get_file (name, fullname, mode, buf, bufsize, len)
     size_t nread;
     char *tobuf;
     FILE *e;
+    size_t filesize;
 
     if (CVS_STAT (name, &s) < 0)
 	error (1, errno, "can't stat %s", fullname);
+    /* Convert from signed to unsigned.  */
+    filesize = s.st_size;
 
-    if (*bufsize < s.st_size)
+    if (*bufsize < filesize)
     {
-	*bufsize = s.st_size;
+	*bufsize = filesize;
 	*buf = xrealloc (*buf, *bufsize);
     }
 
