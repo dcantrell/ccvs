@@ -1,5 +1,8 @@
 Changes since 1.11.5:
 
+* The new --with-external-zlib option can be passed to configure to compile
+CVS against an external installed zlib.
+
 * A warning message is now issued if an administrative file contains
 more than one DEFAULT entry.
 

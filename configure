@@ -11720,36 +11720,35 @@ fi;
 # Try to locate a ZLIB installation if no location was specified, assuming
 # external ZLIB was enabled.
 #
-if test -n "$acx_zlib_cv_zlib"; then
+if test -n "$acx_zlib_cv_external_zlib"; then
   # Granted, this is a slightly ugly way to print this info, but the
   # AC_CHECK_HEADER used in the search for a ZLIB installation makes using
   # AC_CACHE_CHECK worse
   echo "$as_me:$LINENO: checking for external ZLIB" >&5
 echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
 else :; fi
-if test "${acx_zlib_cv_zlib+set}" = set; then
+if test "${acx_zlib_cv_external_zlib+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-if test x$with_external_zlib = xyes; then
   #
   # --with but no location specified
   # assume zlib.h locates our install.
   #
   acx_zlib_save_CPPFLAGS=$CPPFLAGS
-  for acx_zlib_cv_zlib in yes /usr/local no; do
-    if test x$acx_zlib_cv_zlib = xno; then
+  for acx_zlib_cv_external_zlib in yes /usr/local no; do
+    if test x$acx_zlib_cv_external_zlib = xno; then
       break
     fi
-    if test x$acx_zlib_cv_zlib = xyes; then
+    if test x$acx_zlib_cv_external_zlib = xyes; then
       echo "$as_me:$LINENO: checking for external ZLIB" >&5
 echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
       echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6
     else
-      CPPFLAGS="$acx_zlib_save_CPPFLAGS -I$acx_zlib_cv_zlib/include"
-      echo "$as_me:$LINENO: checking for external ZLIB in $acx_zlib_cv_zlib" >&5
-echo $ECHO_N "checking for external ZLIB in $acx_zlib_cv_zlib... $ECHO_C" >&6
+      CPPFLAGS="$acx_zlib_save_CPPFLAGS -I$acx_zlib_cv_external_zlib/include"
+      echo "$as_me:$LINENO: checking for external ZLIB in $acx_zlib_cv_external_zlib" >&5
+echo $ECHO_N "checking for external ZLIB in $acx_zlib_cv_external_zlib... $ECHO_C" >&6
       echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6
     fi
@@ -11901,37 +11900,141 @@ done
     fi
   done
   CPPFLAGS=$acx_zlib_save_CPPFLAGS
-else
-  acx_zlib_cv_zlib=$with_external_zlib
-fi
 echo "$as_me:$LINENO: checking for external ZLIB" >&5
 echo $ECHO_N "checking for external ZLIB... $ECHO_C" >&6
 
 fi
-echo "$as_me:$LINENO: result: $acx_zlib_cv_zlib" >&5
-echo "${ECHO_T}$acx_zlib_cv_zlib" >&6
+echo "$as_me:$LINENO: result: $acx_zlib_cv_external_zlib" >&5
+echo "${ECHO_T}$acx_zlib_cv_external_zlib" >&6
+
+
+#
+# Output a pretty message naming our selected ZLIB "external" or "package"
+# so that any warnings printed by the version check make more sense.
+#
+echo "$as_me:$LINENO: checking selected ZLIB" >&5
+echo $ECHO_N "checking selected ZLIB... $ECHO_C" >&6
+if test "x$with_external_zlib" = xno; then
+  echo "$as_me:$LINENO: result: package" >&5
+echo "${ECHO_T}package" >&6
+else
+  echo "$as_me:$LINENO: result: external" >&5
+echo "${ECHO_T}external" >&6
+fi
+
+
+#
+# Verify that the ZLIB we aren't using isn't newer than the one we are.
+#
+if test "x$acx_zlib_cv_external_zlib" != xno; then
+  LOCAL_ZLIB_VERSION=`sed -n '/^#define ZLIB_VERSION ".*"$/{
+                              s/^#define ZLIB_VERSION "\(.*\)"$/\1/;
+                              p;}' <$srcdir/zlib/zlib.h 2>&5`
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <zlib.h>
+
+_ACEOF
+ac_extract_cpp_result=`(eval "$ac_cpp -dM conftest.$ac_ext") 2>&5 |
+  sed -n "/^#define ZLIB_VERSION /{
+            s/^#define ZLIB_VERSION //;
+            p;}" 2>&5`
+if test -n "$ac_extract_cpp_result"; then
+  ZLIB_VERSION=$ac_extract_cpp_result
+fi
+rm -f conftest*
+
+  ZLIB_VERSION=`echo "$ZLIB_VERSION" |sed 's/"//g'`
+  if test "x$LOCAL_ZLIB_VERSION" = "x$ZLIB_VERSION"; then
+  # the strings are equal.  run ACTION-IF-EQUAL and bail
+  :
+else
+  # first unletter the versions
+  # this only works for a single trailing letter
+    asx_version_1=`echo "$LOCAL_ZLIB_VERSION" |
+                 sed 's/\(abcedfghi\)/.\1/;
+                      s/\(jklmnopqrs\)/.1\1/;
+                      s/\(tuvwxyz\)/.2\1/;
+                      y/abcdefghijklmnopqrstuvwxyz/12345678901234567890123456/;'`
+  asx_version_2=`echo "$ZLIB_VERSION" |
+                 sed 's/\(abcedfghi\)/.\1/;
+                      s/\(jklmnopqrs\)/.1\1/;
+                      s/\(tuvwxyz\)/.2\1/;
+                      y/abcdefghijklmnopqrstuvwxyz/12345678901234567890123456/;'`
+  asx_count=1
+  asx_save_IFS=$IFS
+  IFS=.
+  asx_retval=-1
+  for vsub1 in $asx_version_1; do
+    vsub2=`echo "$asx_version_2" |awk -F. "{print \\\$$asx_count}"`
+    if test $vsub1 -gt $vsub2; then
+      asx_retval=1
+      break
+    elif test $vsub1 -lt $vsub2; then
+      break
+    fi
+    asx_count=`expr $asx_count + 1`
+  done
+  IFS=$asx_save_IFS
+  if test $asx_retval -eq -1; then
+    if test "x$with_external_zlib" = xno; then
+       { echo "$as_me:$LINENO: WARNING: Found external ZLIB with a more recent version than the
+           package version ($ZLIB_VERSION > $LOCAL_ZLIB_VERSION).  configure with the
+           --with-external-zlib option to select the more recent version." >&5
+echo "$as_me: WARNING: Found external ZLIB with a more recent version than the
+           package version ($ZLIB_VERSION > $LOCAL_ZLIB_VERSION).  configure with the
+           --with-external-zlib option to select the more recent version." >&2;}
+     fi
+  else
+if test "x$with_external_zlib" != xno; then
+       { echo "$as_me:$LINENO: WARNING: Package ZLIB is more recent than requested external version
+           ($LOCAL_ZLIB_VERSION > $ZLIB_VERSION).  configure with the --without-external-zlib
+           option to select the more recent version." >&5
+echo "$as_me: WARNING: Package ZLIB is more recent than requested external version
+           ($LOCAL_ZLIB_VERSION > $ZLIB_VERSION).  configure with the --without-external-zlib
+           option to select the more recent version." >&2;}
+     fi
+  fi
+
+fi
+
+fi
+
+
+# Now set with_external_zlib to our discovered value or the user specified
+# value, as appropriate.
+if test x$with_external_zlib = xyes; then
+  with_external_zlib=$acx_zlib_cv_external_zlib
+fi
+# $with_external_zlib could still be "no"
+
 
 #
 # Set up ZLIB includes for later use.
 #
-if test x$acx_zlib_cv_zlib != xyes \
-   && test x$acx_zlib_cv_zlib != no; then
+if test x$with_external_zlib != xyes \
+   && test x$with_external_zlib != no; then
   if test -z "$CPPFLAGS"; then
-    CPPFLAGS="-I$acx_zlib_cv_zlib/include"
+    CPPFLAGS="-I$with_external_zlib/include"
   else
-    CPPFLAGS="$CPPFLAGS -I$acx_zlib_cv_zlib/include"
+    CPPFLAGS="$CPPFLAGS -I$with_external_zlib/include"
   fi
   if test -z "$LDFLAGS"; then
-    LDFLAGS="-I$acx_zlib_cv_zlib/lib"
+    LDFLAGS="-I$with_external_zlib/lib"
   else
-    LDFLAGS="$LDFLAGS -I$acx_zlib_cv_zlib/lib"
+    LDFLAGS="$LDFLAGS -I$with_external_zlib/lib"
   fi
 fi
 
 ZLIB_CPPFLAGS=
 ZLIB_LIBS=
 ZLIB_SUBDIRS=
-if test x$acx_zlib_cv_zlib = xno; then
+if test x$with_external_zlib = xno; then
   # We need ZLIB_CPPFLAGS so that later executions of cpp from configure
   # don't try to interpret $(top_srcdir)
   ZLIB_CPPFLAGS='-I$(top_srcdir)/zlib'
@@ -11952,8 +12055,8 @@ else
   #
   # Ideally, we would also check that the version is newer
   #
-  echo "$as_me:$LINENO: checking ZLIB library works" >&5
-echo $ECHO_N "checking ZLIB library works... $ECHO_C" >&6
+  echo "$as_me:$LINENO: checking that ZLIB library works" >&5
+echo $ECHO_N "checking that ZLIB library works... $ECHO_C" >&6
   cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 /* confdefs.h.  */
@@ -11996,10 +12099,6 @@ echo "$as_me: error: ZLIB failed to link" >&2;}
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-
-# Subst for the local case
-
-
 
 
 

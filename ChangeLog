@@ -1,3 +1,11 @@
+2003-05-22  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new --with-external-zlib option.
+	* configure.in (AC_PREREQ): 2.57.
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+
 2003-05-22  Larry Jones  <lawrence.jones@eds.com>
 
 	* NEWS: Note recent administrative file changes.
