@@ -34,7 +34,6 @@ libcvs_a_SOURCES = \
 	getndelim2.h \
 	getnline.h \
 	getopt.h \
-	gettext.h \
 	getpagesize.h \
 	md5.h \
 	minmax.h \
@@ -117,6 +116,9 @@ libcvs_a_SOURCES += getdate.h getdate.y
 #	@LIBOBJS@ \
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
+
+## For GNULIB's gettext module.
+libcvs_a_SOURCES += gettext.h
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
