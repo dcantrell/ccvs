@@ -772,7 +772,7 @@ check_fileproc (callerdat, finfo)
 		 * If the timestamps differ, look for Conflict indicators
 		 * in the file to see if we should block the commit anyway
 		 */
-		run_setup ("%s", GREP);
+		run_setup ("%s", Grepbin);
 		run_arg (RCS_MERGE_PAT);
 		run_arg (finfo->file);
 		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_REALLY);
