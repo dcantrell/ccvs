@@ -1,3 +1,10 @@
+1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Environment variables): Document
+	CVS_IGNORE_REMOTE_ROOT in the CVS 1.10 context.
+	(Moving a repository): Update comments concerning surgery on
+	CVS/Root and CVS/Repository files.
+
 1998-09-21  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvs.texinfo (Environment variables): remove information about
