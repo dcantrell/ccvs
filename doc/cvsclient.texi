@@ -1447,6 +1447,11 @@ synchronized.  The server just sends its recommendation for a timestamp
 (based on its own clock, presumably), and the client should just believe
 it (this means that the time might be in the future, for example).
 
+If the server does not send @code{Mod-time} for a given file, the client
+should pick a modification time in the usual way (usually, just let the
+operating system set the modification time to the time that the CVS
+command is running).
+
 @item Checksum @var{checksum}\n
 The @var{checksum} applies to the next file sent (that is,
 @code{Checksum} is a file update modifying response
