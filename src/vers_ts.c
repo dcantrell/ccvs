@@ -90,11 +90,12 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
     {
 	if (sdtp->aflag == 0)
 	    vers_ts->options = xstrdup (sdtp->options);
-	else
+	else if (rcs != NULL)
 	{
 	    /* If no keyword expansion was specified on command line,
-	       use whatever was in the file.  This is how we tell the client
-	       whether a file is binary.  */
+	       use whatever was in the rcs file (if there is one).  This
+	       is how we, if we are the server, tell the client whether
+	       a file is binary.  */
 	    char *rcsexpand = RCS_getexpand (rcs);
 	    if (rcsexpand != NULL)
 	    {

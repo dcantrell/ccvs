@@ -206,6 +206,7 @@ RCS_reparsercsfile (rdata)
     char *cp;
     char *key, *value;
 
+    assert (rdata != NULL);
     rcsfile = rdata->path;
 
     fp = fopen(rcsfile, FOPEN_BINARY_READ);
@@ -1602,6 +1603,7 @@ char *
 RCS_getexpand (rcs)
     RCSNode *rcs;
 {
+    assert (rcs != NULL);
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs);
     return rcs->expand;
