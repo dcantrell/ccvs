@@ -470,7 +470,7 @@ piped_child (char **argv, int *to, int *from)
  * dir = 1 : main proc reads from new proc, which reads from oldfd
  */
 
-#if 0
+#if 1
 /* There seems to be a library bug that makes the passing of argv[]s
  * to spanw unreliable.  Ick.  So the alternate version uses
  * DosExegPgm.
