@@ -1,3 +1,8 @@
+Tue Dec 23 08:28:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsbug.sh: Change bug-cvs address from prep.ai.mit.edu to gnu.org
+	per email from Martin Hamilton.
+
 Sun Dec 21 21:49:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkin): Disable keyword expansion when generating
