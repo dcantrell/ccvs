@@ -18260,7 +18260,7 @@ Annotations for $file
 	    # function if administrative files added to CVS recently (since
 	    # CVS 1.3) do not exist, because the repository might have
 	    # been created with an old version of CVS.
-	    mkdir tmp; cd tmp
+	    mkdir 1; cd 1
 	    dotest crerepos-4 \
 "${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
 ''
@@ -18273,7 +18273,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    rm -rf CVS
 	    cd ..
 	    # The directory tmp should be empty
-	    dotest crerepos-6 "rmdir tmp" ''
+	    dotest crerepos-6 "rmdir 1"
 
 	    CREREPOS_ROOT=${TESTDIR}/crerepos
 
