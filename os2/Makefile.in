@@ -12,6 +12,9 @@ project: cvs.exe
 # this var.
 SL = /
 
+# Directory in which to install executables.
+install_dir = s:${SL}gnu${SL}util
+
 # srcdir is usually "."
 srcdir     = @srcdir@
 
@@ -273,12 +276,19 @@ clean:
 	rm -f ${libdir}${SL}*.obj 
 	rm -f ${cvs_srcdir}${SL}*.obj 
 
+install: cvs.exe cvslogin.exe
+	cp ${srcdir}${SL}cvs.exe ${install_dir}${SL}cvs.exe
+	cp ${srcdir}${SL}cvslogin.exe ${install_dir}${SL}cvslogin.exe
+
+cvslogin.exe: cvslogin.c
+	icc ${CFLAGS} /Fe$@ cvslogin.c
+
 %.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c
 
 # There seems to be no ICC option for specifying library locations, so
 # we must `set' the path in the compilation environment.  Urgkle. 
-cvs.exe: ${OBJECTS}
+cvs.exe: ${OBJECTS} cvslogin.exe
 	echo Creating icc.in...
 	echo -Q+ -Ti+ -Fe$@ -B"/batch" -B"/NOE" > icc.in
 	echo ${OS2_OBJECTS}                    >> icc.in
