@@ -634,7 +634,10 @@ classify_file_internal (finfo, vers)
 {
     int save_noexec, save_quiet, save_really_quiet;
     Ctype status;
-    
+
+    /* FIXME: Do we need to save quiet as well as really_quiet?  Last
+       time I glanced at Classify_File I only saw it looking at really_quiet
+       not quiet.  */
     save_noexec = noexec;
     save_quiet = quiet;
     save_really_quiet = really_quiet;
