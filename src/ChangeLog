@@ -1,3 +1,8 @@
+Sun Sep 21 21:28:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c (call_diff): Sleep for a second, in hopes of helping with
+	out of order bugs.
+
 Sat Sep 20 07:19:18 1997  Tim Pierce  <twp@twp.tezcat.com>
 
 	Integrate diff library into CVS.
