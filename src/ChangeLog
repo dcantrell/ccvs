@@ -1,5 +1,9 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* checkout.c (safe_location): Check for errors from xgetwd.
+	* create_adm.c (Create_Admin): Remove call to xgetwd; it is just
+	debugging code anyway and it wasn't checking for errors.
+
 	* sanity.sh: Add comment about default value for TESTDIR.
 
 	* server.c (serve_log): Change "cvslog" to "log".  This

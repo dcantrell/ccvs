@@ -38,12 +38,10 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 #ifdef SERVER_SUPPORT
     if (trace)
     {
-	char *wd = xgetwd ();
-	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s) in %s\n",
+	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s)\n",
 		 (server_active) ? 'S' : ' ',
-                dir, update_dir, repository, tag ? tag : "",
-                date ? date : "", wd);
-	free (wd);
+		 dir, update_dir, repository, tag ? tag : "",
+		 date ? date : "");
     }
 #endif
 

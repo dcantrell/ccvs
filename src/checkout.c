@@ -445,6 +445,8 @@ safe_location ()
         hardpath[x] = '\0';
     }
     current = xgetwd ();
+    if (current == NULL)
+	error (1, errno, "could not get working directory");
     hardpath_len = strlen (hardpath);
     if (strlen (current) >= hardpath_len
 	&& strncmp (current, hardpath, hardpath_len) == 0)
