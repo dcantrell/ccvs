@@ -336,12 +336,14 @@ write_dbmfile (temp)
     (void) fclose (fp);
     if (err)
     {
-	char dotdir[50], dotpag[50];
+	char dotdir[50], dotpag[50], dotdb[50];
 
 	(void) sprintf (dotdir, "%s.dir", temp);
 	(void) sprintf (dotpag, "%s.pag", temp);
+	(void) sprintf (dotdb, "%s.db", temp);
 	(void) unlink_file (dotdir);
 	(void) unlink_file (dotpag);
+	(void) unlink_file (dotdb);
 	error (1, 0, "DBM creation failed; correct above errors");
     }
 }
@@ -350,29 +352,36 @@ static void
 rename_dbmfile (temp)
     char *temp;
 {
-    char newdir[50], newpag[50];
-    char dotdir[50], dotpag[50];
-    char bakdir[50], bakpag[50];
+    char newdir[50], newpag[50], newdb[50];
+    char dotdir[50], dotpag[50], dotdb[50];
+    char bakdir[50], bakpag[50], bakdb[50];
 
     (void) sprintf (dotdir, "%s.dir", CVSROOTADM_MODULES);
     (void) sprintf (dotpag, "%s.pag", CVSROOTADM_MODULES);
+    (void) sprintf (dotdb, "%s.db", CVSROOTADM_MODULES);
     (void) sprintf (bakdir, "%s%s.dir", BAKPREFIX, CVSROOTADM_MODULES);
     (void) sprintf (bakpag, "%s%s.pag", BAKPREFIX, CVSROOTADM_MODULES);
+    (void) sprintf (bakdb, "%s%s.db", BAKPREFIX, CVSROOTADM_MODULES);
     (void) sprintf (newdir, "%s.dir", temp);
     (void) sprintf (newpag, "%s.pag", temp);
+    (void) sprintf (newdb, "%s.db", temp);
 
     (void) chmod (newdir, 0666);
     (void) chmod (newpag, 0666);
+    (void) chmod (newdb, 0666);
 
     /* don't mess with me */
     SIG_beginCrSect ();
 
     (void) unlink_file (bakdir);	/* rm .#modules.dir .#modules.pag */
     (void) unlink_file (bakpag);
+    (void) unlink_file (bakdb);
     (void) rename (dotdir, bakdir);	/* mv modules.dir .#modules.dir */
     (void) rename (dotpag, bakpag);	/* mv modules.pag .#modules.pag */
+    (void) rename (dotdb, bakdb);	/* mv modules.db .#modules.db */
     (void) rename (newdir, dotdir);	/* mv "temp".dir modules.dir */
     (void) rename (newpag, dotpag);	/* mv "temp".pag modules.pag */
+    (void) rename (newdb, dotdb);	/* mv "temp".db modules.db */
 
     /* OK -- make my day */
     SIG_endCrSect ();
