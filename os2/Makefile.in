@@ -2,6 +2,16 @@
 ### file.  In any case, we would need it for 'make dist' to work
 ### properly on Unix machines.
 
+srcdir     = @srcdir@
+top_srcdir = @top_srcdir@
+cvs_srcdir = @top_srcdir@/src
+VPATH      = @srcdir@
+
+SHELL = /bin/sh
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
 # tcpip.mak will probably be unnecessary, but I include it for now.
 
 HEADERS = tcpip.h tcpip.mak
@@ -32,8 +42,9 @@ lint:
 .PHONY: dist-dir
 dist-dir:
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
-
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
 
 clean:
 	@echo make clean does nothing right now in os2 subdir
