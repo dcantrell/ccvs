@@ -1,3 +1,9 @@
+2001-02-27  Derek Price  <derek.price@openavenue.com>
+
+	* sanity.sh (version-[12]): replace ' (client/server)' with .* in these
+	two tests so that 'make check' works with whatever client/server
+	options the executable was compiled with.
+
 2001-02-23  Derek Price  <derek.price@openavenue.com>
 
 	* main.c (main): Only check a cvsroot_t's isremote member when client

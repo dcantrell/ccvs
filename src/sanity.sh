@@ -751,7 +751,7 @@ for what in $tests; do
 	  # so we might as well test it
 	  dotest version-1 "${testcvs} --version" \
 '
-Concurrent Versions System (CVS) [0-9.]* (client/server)
+Concurrent Versions System (CVS) [0-9.]*.*
 
 Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn, 
                         Jeff Polk, and other authors
@@ -763,7 +763,7 @@ Specify the --help option for further information about CVS'
 
 	  if test $remote = no ; then
 		dotest version-2 "${testcvs} version" \
-'Concurrent Versions System (CVS) [0-9.]* (client/server)'
+'Concurrent Versions System (CVS) [0-9.]*.*'
 	  else
 		dotest version-2r "${testcvs} version" \
 'Client: Concurrent Versions System (CVS) [0-9.]* (client/server)
