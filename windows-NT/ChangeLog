@@ -1,3 +1,7 @@
+2003-07-17  Larry Jones  <lawrence.jones@eds.com>
+
+	* config.h.in (PROTOTYPES): Remove as per config.h.
+
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
 	* config.h (PROTOTYPES): Remove definition.
