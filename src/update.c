@@ -1292,6 +1292,27 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	return 0;
     }
 
+    /* First check that the first revision exists.  If it has been nuked
+       by cvs admin -o, then just fall back to checking out entire
+       revisions.  In some sense maybe we don't have to do this; after
+       all cvs.texinfo says "Make sure that no-one has checked out a
+       copy of the revision you outdate" but then again, that advice
+       doesn't really make complete sense, because "cvs admin" operates
+       on a working directory and so _someone_ will almost always have
+       _some_ revision checked out.  */
+    {
+	char *rev;
+
+	rev = RCS_gettag (finfo->rcs, vers_ts->vn_user, 1, NULL);
+	if (rev == NULL)
+	{
+	    *docheckout = 1;
+	    return 0;
+	}
+	else
+	    free (rev);
+    }
+
     backup = xmalloc (strlen (finfo->file)
 		      + sizeof (CVSADM)
 		      + sizeof (CVSPREFIX)
