@@ -56,6 +56,13 @@ $GNULIB/lib/dirname.h				lib		no NI
 $GNULIB/lib/stripslash.				lib		no NI
 $GNULIB/m4/dirname.m4				m4		no NI
 $GNULIB/m4/dos.m4				m4		no NI
+# The following error module is only half-imported to support getdate.y's test
+# hooks when xmalloc, which calls error(), is needed.  We cannot completely
+# import the error module since it would conflict with CVS's error() function,
+# which is needed to send errors across the connection to the client.
+# $GNULIB/modules/error
+$GNULIB/lib/error.c				lib		no NI
+$GNULIB/m4/strerror_r.m4			lib		no NI
 # $GNULIB/modules/exit
 $GNULIB/lib/exit.h				lib		no NI
 # $GNULIB/modules/exitfail
