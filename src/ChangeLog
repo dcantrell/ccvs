@@ -1,3 +1,8 @@
+1998-09-28  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (multiroot2): New test, tests some nested directory
+	cases.
+
 1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (multiroot): Change a few comments which said modules
