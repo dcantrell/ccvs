@@ -13104,6 +13104,17 @@ above categories.  They are in no particular order.
 
 @itemize @bullet
 @item
+On Windows, if there is a 30 second or so delay when
+you run a @sc{cvs} command, it may mean that you have
+your home directory set to @file{C:/}, for example (see
+@code{HOMEDRIVE} and @code{HOMEPATH} in
+@ref{Environment variables}).  CVS expects the home
+directory to not end in a slash, for example @file{C:}
+or @file{C:\cvs}.
+@c FIXCVS: CVS should at least detect this and print an
+@c error, presumably.
+
+@item
 If you are running @sc{cvs} 1.9.18 or older, and
 @code{cvs update} finds a conflict and tries to
 merge, as described in @ref{Conflicts example}, but

@@ -1,3 +1,8 @@
+1999-04-16  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Other problems): Add the Windows problem with home
+	directory ending in a slash.
+
 1999-04-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (CVS in repository): Include the format of the
