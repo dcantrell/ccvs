@@ -1,7 +1,12 @@
+Mon Oct  7 01:16:50 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh (modules): oops -- forgot modules is sorted.
+	
 Mon Oct  7 00:17:26 1996  Greg A. Woods  <woods@most.weird.com>
 
 	Patches from Mark Mitchell <mmitchell@usa.net>:
 	* sanity.sh: (modules) test sub-module feature (&).
+	(modules): oops, 
 
 Sun Oct  6 13:37:17 1996  Greg A. Woods  <woods@most.weird.com>
 
