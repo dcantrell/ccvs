@@ -165,6 +165,8 @@ ign_add_file (file, hold)
     free (line);
 }
 
+
+
 /* Parse a line of space-separated wildcards and add them to the list. */
 void
 ign_add (ign, hold)
@@ -183,6 +185,16 @@ ign_add (ign, hold)
 	if (isspace ((unsigned char) *ign))
 	    continue;
 
+	/* If we have used up all the space, add some more.  Do this before
+	   processing `!', since an "empty" list still contains the `CVS'
+	   entry.  */
+	if (ign_count >= ign_size)
+	{
+	    ign_size += IGN_GROW;
+	    ign_list = (char **) xrealloc ((char *) ign_list,
+					   (ign_size + 1) * sizeof (char *));
+	}
+
 	/*
 	 * if we find a single character !, we must re-set the ignore list
 	 * (saving it if necessary).  We also catch * as a special case in a
@@ -198,8 +210,10 @@ ign_add (ign, hold)
 
 		for (i = 0; i < ign_count; i++)
 		    free (ign_list[i]);
-		ign_count = 0;
-		ign_list[0] = NULL;
+		ign_count = 1;
+		/* Always ignore the "CVS" directory.  */
+		ign_list[0] = xstrdup("CVS");
+		ign_list[1] = NULL;
 
 		/* if we are doing a '!', continue; otherwise add the '*' */
 		if (*ign == '!')
@@ -223,18 +237,12 @@ ign_add (ign, hold)
 		for (i = 0; i < ign_count; i++)
 		    s_ign_list[i] = ign_list[i];
 		s_ign_count = ign_count;
-		ign_count = 0;
-		ign_list[0] = NULL;
+		ign_count = 1;
+		/* Always ignore the "CVS" directory.  */
+		ign_list[0] = xstrdup ("CVS");
+		ign_list[1] = NULL;
 		continue;
 	    }
-	}
-
-	/* If we have used up all the space, add some more */
-	if (ign_count >= ign_size)
-	{
-	    ign_size += IGN_GROW;
-	    ign_list = (char **) xrealloc ((char *) ign_list,
-					   (ign_size + 1) * sizeof (char *));
 	}
 
 	/* find the end of this token */

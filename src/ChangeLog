@@ -1,3 +1,13 @@
+2004-03-03  Derek Price  <derek@ximbiot.com>
+
+	* import.c (import): Check that the module name specified by the user
+	does not contain `CVS' as a directory name.
+	* ignore.c (ign_add): Never cease ignoring "CVS" - it is a reserved
+	name.
+	(Original patch from Dan Peterson <dbpete@aol.com>.)
+
+	* sanity.sh (import-CVS): New tests for the above.
+
 2004-02-29  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* import.c (expand_at_signs): Change type of len to size_t.
