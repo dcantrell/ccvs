@@ -1,5 +1,7 @@
 Sun Feb 23 09:54:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (devcom3): Clean up at end of test.
+
 	* sanity.sh (basicb): Add commented out test basicb-8a0, for
 	whether CVS can print an error on bad numeric revision to diff.
 	Commented out until we get around to fixing CVS.
