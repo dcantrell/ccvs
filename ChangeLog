@@ -1,3 +1,10 @@
+Fri Sep  5 20:46:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* FAQ: Replace file with an introductory paragraph plus a
+	downloaded copy of Molli's FAQ-O-Matic.  I believe the content
+	closely matches the 1995 Grubbs FAQ but because everything is
+	re-ordered it would be painstaking work to verify this.
+
 Thu Sep  4 17:33:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add item about -w global option and client/server.
