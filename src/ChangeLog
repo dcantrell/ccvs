@@ -1,3 +1,22 @@
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
+	* server.c (pamh): New global static to hold the PAM handle.
+	(server): Close the PAM session so that logging works properly.
+	(switch_to_user): Opens a PAM session and gets credentials from PAM so
+	that PAM modules can change group permissions.  Get the username from
+	PAM so that PAM modules can modify the final local username.
+	(cvs_pam_conv): Changed the assertions to allow PAM to output text to
+	the user.
+	(check_system_password): Renamed to...
+	(check_pam_password): ...this.  Changed argument type for username so
+	that PAM modules can modify the username under authentication.  Setting
+	a terminal so some PAM modules which expect it to be set work, it is
+	set to the pam servicename which defaults to the binary name.  Set the
+	username from PAM after authentication if a module has changed it.
+	(check_password): Calls check_pam_password if PAM is enabled otherwiseu
+	calls check_system_password.
+	(Patch from Brian Murphy <brian@murphy.dk>.)
+
 2004-07-15  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (run_filter): New function to allow for filtering of cruft

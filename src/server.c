@@ -112,6 +112,12 @@ int system_auth = 1;
 
 # endif /* AUTH_SERVER_SUPPORT */
 
+#ifdef HAVE_PAM
+# include <security/pam_appl.h>
+
+static pam_handle_t *pamh = NULL;
+#endif
+
 
 /* While processing requests, this buffer accumulates data to be sent to
    the client, and then once we are in do_cvs_command, we use it
@@ -5368,6 +5374,28 @@ error ENOMEM Virtual memory exhausted.\n");
 	error (0, 0, "Dying gasps received from client.");
     }
 
+#ifdef HAVE_PAM
+    {
+        int retval;
+
+        retval = pam_close_session(pamh, 0);
+#ifdef HAVE_SYSLOG_H
+        if (retval != PAM_SUCCESS)
+            syslog (LOG_DAEMON | LOG_ERR, 
+                    "PAM close session error: %s",
+                    pam_strerror(pamh, retval));
+#endif
+
+        retval = pam_end (pamh, retval);
+#ifdef HAVE_SYSLOG_H
+        if (retval != PAM_SUCCESS)
+            syslog (LOG_DAEMON | LOG_ERR, 
+                    "PAM failed to release authenticator, error: %s",
+                    pam_strerror(pamh, retval));
+#endif
+    }
+#endif
+
     /* server_cleanup() will be called on a normal exit and close the buffers
      * explicitly.
      */
@@ -5381,6 +5409,22 @@ static void
 switch_to_user (const char *cvs_username, const char *username)
 {
     struct passwd *pw;
+#ifdef HAVE_PAM
+    int retval;
+    char *pam_stage = "open session";
+
+    retval = pam_open_session(pamh, 0);
+    if (retval == PAM_SUCCESS) {
+        pam_stage = "get pam user";
+        retval = pam_get_item(pamh, PAM_USER, (const void **)&username);
+    }
+
+    if (retval != PAM_SUCCESS) {
+        printf("E PAM %s error: %s\n", pam_stage,
+                pam_strerror(pamh, retval));
+        exit (EXIT_FAILURE);
+    }
+#endif
 
     pw = getpwnam (username);
     if (pw == NULL)
@@ -5425,6 +5469,15 @@ error 0 %s: no such system user\n", username);
 	exit (EXIT_FAILURE);
     }
 #endif /* HAVE_INITGROUPS */
+
+#ifdef HAVE_PAM
+    retval = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+    if (retval != PAM_SUCCESS) {
+        printf("E PAM reestablish credentials error: %s\n", 
+                pam_strerror(pamh, retval));
+        exit (EXIT_FAILURE);
+    }
+#endif
 
 #ifdef SETXID_SUPPORT
     /* honor the setgid bit iff set*/
@@ -5669,8 +5722,6 @@ check_repository_password (char *username, char *password, char *repository, cha
 
 #ifdef HAVE_PAM
 
-# include <security/pam_appl.h>
-
 struct cvs_pam_userinfo {
     char *username;
     char *password;
@@ -5684,7 +5735,7 @@ cvs_pam_conv (int num_msg, const struct pam_message **msg,
     struct pam_response *response;
     struct cvs_pam_userinfo *ui = (struct cvs_pam_userinfo *)appdata_ptr;
 
-    assert (ui && ui->username && ui->password && msg && resp);
+    assert (msg && resp);
 
     response = xmalloc(num_msg * sizeof (struct pam_response));
     memset(response, 0, num_msg * sizeof (struct pam_response));
@@ -5695,10 +5746,12 @@ cvs_pam_conv (int num_msg, const struct pam_message **msg,
 	{
 	    /* PAM wants a username */
 	    case PAM_PROMPT_ECHO_ON:
+                assert (ui && ui->username);
 		response[i].resp = xstrdup (ui->username);
 		break;
 	    /* PAM wants a password */
 	    case PAM_PROMPT_ECHO_OFF:
+                assert (ui && ui->password);
 		response[i].resp = xstrdup (ui->password);
 		break;
 	    case PAM_ERROR_MSG:
@@ -5727,18 +5780,21 @@ cleanup:
     return PAM_CONV_ERR;
 }
 
-
-
 static int
-check_system_password (char *username, char *password)
+check_pam_password (char **username, char *password)
 {
-    pam_handle_t *pamh = NULL;
     int retval, err;
-    struct cvs_pam_userinfo ui = { username, password };
+    struct cvs_pam_userinfo ui = { *username, password };
     struct pam_conv conv = { cvs_pam_conv, (void *)&ui };
     char *pam_stage = "start";
 
-    retval = pam_start (PAM_SERVICE_NAME, username, &conv, &pamh);
+    retval = pam_start (PAM_SERVICE_NAME, *username, &conv, &pamh);
+
+    /* sets a dummy tty name which pam modules can check for */
+    if (retval == PAM_SUCCESS) {
+        pam_stage = "set dummy tty";
+        retval = pam_set_item(pamh, PAM_TTY, PAM_SERVICE_NAME);
+    }
 
     if (retval == PAM_SUCCESS) {
 	pam_stage = "authenticate";
@@ -5750,20 +5806,18 @@ check_system_password (char *username, char *password)
 	retval = pam_acct_mgmt (pamh, 0);
     }
 
+    if (retval == PAM_SUCCESS) {
+        pam_stage = "get pam user";
+        retval = pam_get_item(pamh, PAM_USER, (const void **)username);
+    }
+
     if (retval != PAM_SUCCESS)
 	printf ("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
 
-    if ((err = pam_end (pamh, retval)) != PAM_SUCCESS)
-    {
-	printf ("E Fatal error, aborting.\n"
-		"pam failed to release authenticator\n"
-		"PAM error %s\n", pam_strerror (NULL, err));
-	exit (EXIT_FAILURE);
-    }
-
     return retval == PAM_SUCCESS;       /* indicate success */
 }
-#else
+#endif
+
 static int
 check_system_password (char *username, char *password)
 {
@@ -5828,7 +5882,6 @@ error 0 %s: no such user\n", username);
 #endif
     return 1;
 }
-#endif
 
 
 
@@ -5869,7 +5922,11 @@ check_password (char *username, char *password, char *repository)
     }
 
     /* No cvs password found, so try /etc/passwd. */
+#ifdef HAVE_PAM
+    if ( check_pam_password(&username, password) )
+#else
     if ( check_system_password(username, password) )
+#endif
 	host_user = xstrdup (username);
     else
 	host_user = NULL;
