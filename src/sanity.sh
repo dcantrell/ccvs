@@ -11730,6 +11730,7 @@ done"
 	  dotest co-d-1 "$testcvs -q co -d dir $module" \
 "U dir/file1
 U dir/file2"
+	  dotest co-d-1.2 "cat dir/CVS/Repository" "$module"
 
 	  # FIXCVS: This should work.  Correct expected result:
 	  #
@@ -11737,11 +11738,15 @@ U dir/file2"
 	  #U dir2/sdir/file2"
 	  dotest_fail co-d-2 "$testcvs -q co -d dir2/sdir $module" \
 "$PROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir2': No such file or directory"
+	  # FIXCVS:
+	  # dotest co-d-2.2 "cat dir4/CVS/Repository" "CVSROOT/Emptydir"
+	  # dotest co-d-2.3 "cat dir5/CVS/Repository" "$module"
 
 	  mkdir dir3
 	  dotest co-d-3 "$testcvs -q co -d dir3 $module" \
 "U dir3/file1
 U dir3/file2"
+	  dotest co-d-3.2 "cat dir3/CVS/Repository" "$module"
 
 	  if $remote; then
 	    # FIXCVS: As for co-d-2.
@@ -11749,6 +11754,7 @@ U dir3/file2"
 	    dotest_fail co-d-4r "$testcvs -q co -d dir4/sdir $module" \
 "$PROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir4': No such file or directory"
 
+	    # FIXCVS: As for co-d-2.
 	    mkdir dir5
 	    mkdir dir5/sdir
 	    dotest_fail co-d-5r "$testcvs -q co -d dir5/sdir $module" \
@@ -11758,20 +11764,22 @@ U dir3/file2"
 	    dotest co-d-4 "$testcvs -q co -d dir4/sdir $module" \
 "U dir4/sdir/file1
 U dir4/sdir/file2"
-	    # FIXCVS:
-	    # dotest co-d-4.2 "cat dir4/CVS/Repository" "CVSROOT/Emptydir"
-	    dotest_fail co-d-4.2 "cat dir4/CVS/Repository" \
-"cat: dir4/CVS/Repository: No such file or directory"
+	    # CVS only creates administration directories for directories it
+	    # creates, and the last portion of the path passed to -d
+	    # regardless.
+	    dotest_fail co-d-4.2 "test -d dir4/CVS"
+	    dotest co-d-4.3 "cat dir4/sdir/CVS/Repository" "$module"
 
 	    mkdir dir5
 	    mkdir dir5/sdir
 	    dotest co-d-5 "$testcvs -q co -d dir5/sdir $module" \
 "U dir5/sdir/file1
 U dir5/sdir/file2"
-	    # FIXCVS:
-	    # dotest co-d-5.2 "cat dir5/CVS/Repository" "CVSROOT/Emptydir"
-	    dotest_fail co-d-5.2 "cat dir5/CVS/Repository" \
-"cat: dir5/CVS/Repository: No such file or directory"
+	    # CVS only creates administration directories for directories it
+	    # creates, and the last portion of the path passed to -d
+	    # regardless.
+	    dotest_fail co-d-5.2 "test -d dir5/CVS"
+	    dotest co-d-5.3 "cat dir5/sdir/CVS/Repository" "$module"
 	  fi
 
 	  # clean up
