@@ -345,7 +345,7 @@ SccDiff (void *context_arg, HWND window, LPSTR file_name,
    do "cvs update -r", etc.  */
 SCC_return
 SccHistory (void *context_arg, HWND window, LONG num_files,
-            LPSTR file_names, LONG options, void *prov_options)
+            LPSTR *file_names, LONG options, void *prov_options)
 {
     return SCC_return_not_supported;
 }
