@@ -14334,33 +14334,45 @@ File: foo\.exe          	Status: Up-to-date
           mkdir binwrap3/sub2
           mkdir binwrap3/sub2/subsub
           
-          echo "*.c0 -k 'b'" > binwrap3/.cvswrappers
+          echo "bar*" > binwrap3/.cvswrappers
+          echo "*.c0 -k 'b'" >> binwrap3/.cvswrappers
           echo "whatever -k 'b'" >> binwrap3/.cvswrappers
           echo ${binwrap3_text} > binwrap3/foo-b.c0
+          echo ${binwrap3_text} > binwrap3/bar-t.c0
           echo ${binwrap3_text} > binwrap3/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/foo-t.sb
           echo ${binwrap3_text} > binwrap3/foo-t.c1
           echo ${binwrap3_text} > binwrap3/foo-t.st
 
-          echo "*.c1 -k 'b'" > binwrap3/sub1/.cvswrappers
+          echo "bar* -k 'kv'" > binwrap3/sub1/.cvswrappers
+          echo "*.c1 -k 'b'" >> binwrap3/sub1/.cvswrappers
           echo "whatever -k 'b'" >> binwrap3/sub1/.cvswrappers
           echo ${binwrap3_text} > binwrap3/sub1/foo-b.c1
+          echo ${binwrap3_text} > binwrap3/sub1/bar-t.c1
           echo ${binwrap3_text} > binwrap3/sub1/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub1/foo-t.sb
           echo ${binwrap3_text} > binwrap3/sub1/foo-t.c0
           echo ${binwrap3_text} > binwrap3/sub1/foo-t.st
 
-          echo "*.st -k 'b'" > binwrap3/sub2/.cvswrappers
+          echo "bar*" > binwrap3/sub2/.cvswrappers
+          echo "*.st -k 'b'" >> binwrap3/sub2/.cvswrappers
           echo ${binwrap3_text} > binwrap3/sub2/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub2/foo-t.sb
           echo ${binwrap3_text} > binwrap3/sub2/foo-b.st
+          echo ${binwrap3_text} > binwrap3/sub2/bar-t.st
           echo ${binwrap3_text} > binwrap3/sub2/foo-t.c0
           echo ${binwrap3_text} > binwrap3/sub2/foo-t.c1
           echo ${binwrap3_text} > binwrap3/sub2/foo-t.c2
           echo ${binwrap3_text} > binwrap3/sub2/foo-t.c3
 
-          echo "*.c3 -k 'b'" > binwrap3/sub2/subsub/.cvswrappers
+          echo "bar* -k 'kv'" > binwrap3/sub2/subsub/.cvswrappers
+          echo "*.c3 -k 'b'" >> binwrap3/sub2/subsub/.cvswrappers
           echo "foo -k 'b'" >> binwrap3/sub2/subsub/.cvswrappers
           echo "c0* -k 'b'" >> binwrap3/sub2/subsub/.cvswrappers
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-b.c3
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/bar-t.c3
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-b.sb
+          echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.sb
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c0
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c1
           echo ${binwrap3_text} > binwrap3/sub2/subsub/foo-t.c2
@@ -14372,7 +14384,8 @@ File: foo\.exe          	Status: Up-to-date
           # This destroys anything currently in cvswrappers, but
 	  # presumably other tests will take care of it themselves if
 	  # they use cvswrappers:
-	  echo "foo*.sb  -k 'b'" > cvswrappers
+	  echo "foo-t.sb" > cvswrappers
+	  echo "foo*.sb  -k 'b'" >> cvswrappers
 	  dotest binwrap3-2 "${testcvs} -q ci -m cvswrappers-mod" \
 "Checking in cvswrappers;
 ${CVSROOT_DIRNAME}/CVSROOT/cvswrappers,v  <--  cvswrappers
@@ -14445,6 +14458,12 @@ done"
           dotest binwrap3-top4 "grep foo-t.st ./CVS/Entries" \
                  "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
 
+          dotest binwrap3-top5 "grep foo-t.sb ./CVS/Entries" \
+                 "/foo-t.sb/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-top6 "grep bar-t.c0 ./CVS/Entries" \
+                 "/bar-t.c0/1.1.1.1/[A-Za-z0-9 	:]*//"
+
           dotest binwrap3-sub1-1 "grep foo-b.c1 sub1/CVS/Entries" \
                  "/foo-b.c1/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
 
@@ -14456,6 +14475,12 @@ done"
 
           dotest binwrap3-sub1-4 "grep foo-t.st sub1/CVS/Entries" \
                  "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub1-5 "grep foo-t.sb sub1/CVS/Entries" \
+                 "/foo-t.sb/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub1-6 "grep bar-t.c1 sub1/CVS/Entries" \
+                 "/bar-t.c1/1.1.1.1/[A-Za-z0-9 	:]*//"
 
           dotest binwrap3-sub2-1 "grep foo-b.sb sub2/CVS/Entries" \
                  "/foo-b.sb/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
@@ -14475,6 +14500,12 @@ done"
           dotest binwrap3-sub2-6 "grep foo-t.c3 sub2/CVS/Entries" \
                  "/foo-t.c3/1.1.1.1/[A-Za-z0-9 	:]*//"
 
+          dotest binwrap3-sub2-7 "grep foo-t.sb sub2/CVS/Entries" \
+                 "/foo-t.sb/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-sub2-8 "grep bar-t.st sub2/CVS/Entries" \
+                 "/bar-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
           dotest binwrap3-subsub1 "grep foo-b.c3 sub2/subsub/CVS/Entries" \
                  "/foo-b.c3/1.1.1.1/[A-Za-z0-9 	:]*/-kb/"
 
@@ -14492,6 +14523,12 @@ done"
 
           dotest binwrap3-subsub6 "grep foo-t.st sub2/subsub/CVS/Entries" \
                  "/foo-t.st/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub7 "grep foo-t.sb sub2/subsub/CVS/Entries" \
+                 "/foo-t.sb/1.1.1.1/[A-Za-z0-9 	:]*//"
+
+          dotest binwrap3-subsub8 "grep bar-t.c3 sub2/subsub/CVS/Entries" \
+                 "/bar-t.c3/1.1.1.1/[A-Za-z0-9 	:]*//"
 
 	  dotest binwrap3-sub2-add1 "grep file1.newbin sub2/CVS/Entries" \
 	    "/file1.newbin/1.1/[A-Za-z0-9 	:]*/-kb/"
