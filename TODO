@@ -769,7 +769,8 @@ or vice versa.
 
 a.  Cases in which the status quo already sends a diff.  For most text
 files, this is probably already close to optimal.  For binary files,
-and anomalous text files, it might be worth looking into other
+and anomalous (?) text files (e.g. those in which it would help to do
+moves, as well as adds and deletes), it might be worth looking into other
 difference algorithms (see item #191).
 
 b.  Cases in which the status quo does not send a diff (e.g. "cvs
@@ -779,9 +780,9 @@ b1.  With some frequency, people suggest rsync or a similar algorithm
 (see ftp://samba.anu.edu.au/pub/rsync/).  This could speed things up,
 and in some ways involves the most minimal changes to the default CVS
 paradigm.  There are some downsides though: (1) there is an extra
-network turnaround, (2) the algorithm is not as efficient with network
-bandwidth as difference type programs (it transmits a fair bit of data
-to discover what a difference program discovers locally).
+network turnaround, (2) the algorithm needs to transmit some data to
+discover what difference type programs can discover locally (although
+this is only about 1% of the size of the files).
 
 b2.  If one is willing to require that users use "cvs edit" before
 editing a file on the client side (in some cases, a development
