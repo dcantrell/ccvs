@@ -1,3 +1,9 @@
+Wed Apr 26 12:07:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.c (getrcskey): Rewritten to process runs of whitespace chars
+	  and rcs @ strings instead of using state variables "white" and
+	  "funky".
+
 Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* lock.c (unlock): Only call stat if we need to.
