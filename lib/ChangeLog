@@ -1,3 +1,9 @@
+Mon Oct  2 10:32:20 1995  Michael Finken  <finken@conware.de>
+
+        * strstr.c (strstr): new file and func.
+
+        * Makefile.in (SOURCES): added strstr.c.
+
 Sun Oct  1 21:03:40 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * regex.c: reverted below change.

@@ -454,7 +454,7 @@ pretag_proc(repository, filter)
     run_setup("%s %s %s %s",
               filter,
               symtag,
-              delete ? "del" : "add",
+              delete ? "del" : force_tag_move ? "mov" : "add",
               repository);
     walklist(tlist, pretag_list_proc, NULL);
     return (run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));

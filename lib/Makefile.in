@@ -47,6 +47,7 @@ SOURCES = \
 	save-cwd.c \
 	sighandle.c \
 	strdup.c \
+	strstr.c \
 	strerror.c \
 	strippath.c \
 	stripslash.c \

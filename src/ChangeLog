@@ -1,3 +1,12 @@
+Mon Oct  2 10:34:53 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * version.c: Upped version to 1.5.95.
+
+Mon Oct  2 15:16:47 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* tag.c, rtag.c: pass "mov" instead of "add" if tag will be moved
+	(i.e. invoked with -F)
+
 Sun Oct  1 18:36:34 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * version.c: upped to 1.5.94.
