@@ -1645,12 +1645,14 @@ connection via rsh; this version will not do so.
 @cindex Creating a project
 
 @comment --moduledb--
-Since @sc{cvs} 1.x is bad at renaming files and moving
-them between directories, the first thing you do when
-you start a new project should be to think through your
-file organization.  It is not impossible---just
-awkward---to rename or move files.
-@xref{Moving files}.
+Because renaming files and moving them between
+directories is somewhat inconvenient, the first thing
+you do when you start a new project should be to think
+through your file organization.  It is not impossible
+to rename or move files, but it does increase the
+potential for confusion and @sc{cvs} does have some
+quirks particularly in the area of renaming
+directories.  @xref{Moving files}.
 
 What to do next depends on the situation at hand.
 

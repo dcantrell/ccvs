@@ -1,3 +1,12 @@
+Sat Sep 28 09:31:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Starting a new project): In discussing difficulty
+	in renaming files, don't refer to "cvs 1.x"--there is no
+	non-vaporous "cvs 2.x".  Reword to reflect that part of the reason
+	to avoid renames (where possible) is not because of CVS at all, and
+	to try to give a general impression of how bad CVS issues involved in
+	renaming are.
+
 Fri Sep 27 04:23:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Adding files): Talk about directories, not modules,
