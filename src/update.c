@@ -703,16 +703,12 @@ update_fileproc (callerdat, finfo)
                         if (server_active)
                             retcode = vers->ts_conflict[0] != '=';
                         else 
-                        {
-                            filestamp = time_stamp (finfo->file);
-                            retcode = strcmp (vers->ts_conflict, filestamp);
-                            free (filestamp);
-                        }
-#else
-                        filestamp = time_stamp (finfo->file);
-                        retcode = strcmp (vers->ts_conflict, filestamp);
-                        free (filestamp);
-#endif
+#endif /* SERVER_SUPPORT */
+			{
+			    filestamp = time_stamp (finfo->file);
+			    retcode = strcmp (vers->ts_conflict, filestamp);
+			    free (filestamp);
+			}
 
                         if (retcode)
                         {
@@ -2976,3 +2972,5 @@ joining ()
 {
     return (join_rev1 != NULL);
 }
+/* vim:tabstop=8:shiftwidth=4
+ */
