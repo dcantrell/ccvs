@@ -1,5 +1,9 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (debug-log-nonfatal): New test.
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (writeproxy-ssh-noredirect): Don't unconditionally create
 	a primary debug log.
 
