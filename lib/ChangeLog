@@ -1,3 +1,8 @@
+Mon Aug 12 11:03:43 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: Don't use #elif.  It is said to cause problems with
+	one of the HP compilers on HPUX 9.01.
+
 Sun Jul  7 23:25:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* memmove.c: Removed.  The memove function was used by a very old
