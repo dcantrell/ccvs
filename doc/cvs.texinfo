@@ -7495,6 +7495,9 @@ $ cd wdiff-0.05
 $ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
+@strong{WARNING: If you use a release tag that already exists in one of the
+repository archives, files removed by an import may not be detected.}
+
 For files that have not been modified locally, the newly created
 revision becomes the head revision.  If you have made local
 changes, @code{import} will warn you that you must merge the changes
@@ -10409,8 +10412,10 @@ At least three arguments are required.
 @var{repository} is needed to identify the collection
 of source.  @var{vendortag} is a tag for the entire
 branch (e.g., for 1.1.1).  You must also specify at
-least one @var{releasetag} to identify the files at
-the leaves created each time you execute @code{import}.
+least one @var{releasetag} to uniquely identify the files at
+the leaves created each time you execute @code{import}.  The
+@var{releasetag} should be new, not previously existing in the
+repository file, and uniquely identify the imported release,
 
 @c I'm not completely sure this belongs here.  But
 @c we need to say it _somewhere_ reasonably obvious; it

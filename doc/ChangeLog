@@ -1,5 +1,11 @@
 2004-07-17  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Update imports, import): Add notes on requirement that
+	release tags be unique.
+	(Original patch from Ilya N. Golubev <gin@mo.msk.ru>.)
+
+2004-07-17  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Password authentication server): Added documentation for
 	the now required session configuration for PAM.
 	(Patch from Brian Murphy <brian@murphy.dk>.)
