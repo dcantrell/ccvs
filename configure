@@ -18104,11 +18104,15 @@ main (void)
       char *c = NULL;
 
       cwd_len += DIR_NAME_SIZE;
-      /* If mkdir or chdir fails, be pessimistic and consider that
-	 as a failure, too.  */
+      /* If mkdir or chdir fails, it could be that this system cannot create
+	 any file with an absolute name longer than PATH_MAX, such as cygwin.
+	 If so, leave fail as 0, because the current working directory can't
+	 be too long for getcwd if it can't even be created.  For other
+	 errors, be pessimistic and consider that as a failure, too.  */
       if (mkdir (DIR_NAME, S_IRWXU) < 0 || chdir (DIR_NAME) < 0)
 	{
-	  fail = 2;
+	  if (! (errno == ERANGE || is_ENAMETOOLONG (errno)))
+	    fail = 2;
 	  break;
 	}
 
