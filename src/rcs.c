@@ -3026,11 +3026,30 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
 	else
 	{
-	    if (fwrite (value, 1, len, ofp) != len)
-		error (1, errno, "cannot write %s",
-		       (workfile != NULL
-			? workfile
-			: (sout != RUN_TTY ? sout : "stdout")));
+	    /* NT (not sure what version) is said to have trouble
+	       writing 2099999 bytes (for example) in a single fwrite.
+	       So break it down (there is no need to be writing that
+	       much at once anyway; it is possible that LARGEST_FWRITE
+	       should be somewhat larger for good performance, but for
+	       testing I want to start with a small value until/unless
+	       a bigger one proves useful).  */
+#define LARGEST_FWRITE 8192
+	    size_t nleft = len;
+	    size_t nstep = (len < LARGEST_FWRITE ? len : LARGEST_FWRITE);
+	    char *p = value;
+
+	    while (nleft > 0)
+	    {
+		if (fwrite (p, 1, nstep, ofp) != nstep)
+		    error (1, errno, "cannot write %s",
+			   (workfile != NULL
+			    ? workfile
+			    : (sout != RUN_TTY ? sout : "stdout")));
+		p += nstep;
+		nleft -= nstep;
+		if (nleft < nstep)
+		    nstep = nleft;
+	    }
 	}
 
 	if (workfile != NULL)
