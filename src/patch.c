@@ -203,8 +203,7 @@ patch (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	if (send_to_server ("rdiff\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("rdiff\n", 0);
         return get_responses_and_close ();
     }
 #endif

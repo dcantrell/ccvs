@@ -579,8 +579,7 @@ history (argc, argv)
 	    option_with_arg ("-x", rec_types);
 	option_with_arg ("-z", tz_name);
 
-	if (send_to_server ("history\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("history\n", 0);
         return get_responses_and_close ();
     }
 #endif

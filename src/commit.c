@@ -237,8 +237,7 @@ commit (argc, argv)
 
 	send_files (argc, argv, local, 0);
 
-	if (send_to_server ("ci\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("ci\n", 0);
 	return get_responses_and_close ();
     }
 #endif

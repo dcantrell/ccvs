@@ -106,8 +106,7 @@ admin (argc, argv)
 #else
 	send_files (argc, argv, 0, 0);
 #endif
-	if (send_to_server ("admin\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("admin\n", 0);
         return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */

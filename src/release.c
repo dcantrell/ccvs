@@ -224,10 +224,10 @@ release (argc, argv)
 #ifdef CLIENT_SUPPORT
         if (client_active)
         {
-          if (send_to_server ("Argument %s\n", thisarg) < 0)
-	    error (1, errno, "writing to server");
-          if (send_to_server ("release\n") < 0)
-	    error (1, errno, "writing to server");
+          send_to_server ("Argument ", 0);
+          send_to_server (thisarg, 0);
+          send_to_server ("\n", 1);
+          send_to_server ("release\n", 0);
         }
         else
         {

@@ -259,8 +259,8 @@
  * define either of these unless you're testing them, in which case 
  * you're me and you already know that.
  */
-#undef AUTH_CLIENT_SUPPORT
-#undef AUTH_SERVER_SUPPORT
+/* #define AUTH_CLIENT_SUPPORT 1 */
+/* #define AUTH_SERVER_SUPPORT 1 */
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
