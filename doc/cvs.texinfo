@@ -8515,7 +8515,7 @@ omitted, remove the latest lock held by the caller.
 Normally, only the locker of a revision may unlock it;
 somebody else unlocking a revision breaks the lock.
 This causes the original locker to be sent a @code{commit}
-notification (see @xref{Getting Notified}).
+notification (@pxref{Getting Notified}).
 There can be no space between @samp{-u} and its argument.
 
 @item -V@var{n}
