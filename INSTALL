@@ -126,6 +126,7 @@ i386 family:
 	Solaris 2.4 using gcc (about 1.4A2)
 	UnixWare v1.1.1 using gcc (about 1.4A2)
 	Unixware 2.1 (1.8.86)
+	Unixware 7 (1.9.29)
 	ISC 4.0.1 (1.8.87)
 	Linux (kernel 1.2.x) (1.8.86)
 	Linux (kernel 2.0.x, RedHat 4.2) (1.9)
