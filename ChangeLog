@@ -1,3 +1,10 @@
+2005-03-01 Derek Price <derek@ximbiot.com>
+
+	* gnulib-update: Correct m4/error.m4 to avoid compiling the GNULIB
+	lib/error.c.
+	(MODULES): Move content to...
+	* gnulib-modules: This new file.
+	
 2005-02-25 Derek Price <derek@ximbiot.com>
 
 	* NEWS: Note commitid feature.

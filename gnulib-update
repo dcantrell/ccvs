@@ -21,13 +21,7 @@ GNULIB=../gnulib
 GNULIB_TOOL=$GNULIB/gnulib-tool
 
 # Which modules to update.
-MODULES="gettext vasnprintf regex atexit save-cwd dirname exit exitfail
-	 extensions fnmatch-posix fnmatch mkstemp getopt stdbool getline
-	 getnline getndelim2 gethostname strcase getpass-gnu gettimeofday
-	 timespec gettime unlocked-io tzset restrict time_r mktime minmax
-	 memmove nanosleep stat lstat strerror vasprintf malloc realloc
-	 strftime xsize getpagesize md5 stdint yesno allocsa setenv getdate
-	 readlink xreadlink xgethostname"
+MODULES=`cat gnulib-modules`
 
 # Are the GNULIB sources really where we expect them?
 if test -r $GNULIB && test -d $GNULIB \
@@ -42,7 +36,11 @@ mv lib/Makefile.am lib/Makefile.am.save
 # Run the update.
 $GNULIB_TOOL --import $MODULES >/dev/null
 
-# Extract the files we imported.
+# Correct this file for our purposes.
+sed '/AC_FUNC_ERROR_AT_LINE/d' <m4/error.m4 >tmp
+mv tmp m4/error.m4
+
+# Extract the names of the files we imported.
 $GNULIB_TOOL --extract-filelist $MODULES >gnulib.new
 
 # Wartn the user if the filelist has changed.
