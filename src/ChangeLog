@@ -1,3 +1,8 @@
+2003-11-01  Larry Jones  <lawrence.jones@eds.com>
+
+	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
+	(Reported by Paul Edwards <kerravon@nosppaam.w3.to>.)
+
 2003-10-31  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: s/${TESTDIR}/cvsroot/${CVSROOT_DIRNAME}/.
