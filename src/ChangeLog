@@ -1,5 +1,9 @@
 2004-06-29  Derek R. Price  <derek@ximbiot.com>
 
+	* sanity.sh (toplevel-12): Handle new error output.
+
+2004-06-29  Derek R. Price  <derek@ximbiot.com>
+
 	* subr.c (xrealloc_and_strcat): Use bool in place of short.
 
 2004-06-29  Derek R. Price  <derek@ximbiot.com>
