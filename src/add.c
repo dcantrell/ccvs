@@ -510,8 +510,11 @@ same name already exists in the repository.");
 				  vers->options,
 				  vers->tag, NULL, NULL);
 #ifdef SERVER_SUPPORT
-			if (server_active)
+			if (server_active && vers->ts_user == NULL)
 			{
+			    /* If we resurrected the file forn the archive, we
+			     * need to tell the client about it.
+			     */
 			    server_updated (&finfo, vers,
 					    SERVER_UPDATED,
 					    (mode_t) -1, NULL, NULL);
