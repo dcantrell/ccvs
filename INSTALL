@@ -69,6 +69,9 @@ SPARC:
 	Sun SPARC running Solaris 2.5 (1.8.87)
 	NextSTEP 3.3 (1.7)
 	Sun SparcClassing running Linux 2.0.17, gcc 2.7.2 (1.8.87)
+VAX:
+	VAX running VMS 6.2 (1.9+patches, client-only)
+	  (see README.VMS for information on necessary hacks).
 
 (footnote 1)
 	AIX 4.1 systems fail to run "configure" due to bugs in their
@@ -120,7 +123,9 @@ SPARC:
 
 -------------------------------------------------------------------------------
 
-Installation under Unix:
+Installation under Unix (if you got a binary distribution from
+somewhere, install it according to procedure for that binary
+distribution, then skip to step 5):
 
 1)  Run "configure":
 
