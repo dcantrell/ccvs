@@ -546,7 +546,7 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
 		run_setup ("%s", GREP);
 		run_arg (RCS_MERGE_PAT);
 		run_arg (file);
-		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_NORMAL);
+		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_REALLY);
 		    
 		if (retcode == -1)
 		{

@@ -1,3 +1,8 @@
+Sat Dec  9 22:01:41 1995  Dan O'Connor  <doconnor@tii.com>
+
+        * commit.c (check_fileproc): pass RUN_REALLY flag to run_exec,
+        because it's okay to examine the file with noexec set.
+
 Sat Dec  9 20:28:01 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (update_entries): new var, `bin, init to 0.
