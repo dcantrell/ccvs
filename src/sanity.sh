@@ -5612,9 +5612,8 @@ Checking in aa;
 /tmp/cvs-sanity/cvsroot/first-dir/aa,v  <--  aa
 initial revision: 1\.1
 done'
-	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r--r--.
 	  dotest modes-5 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
-"-r-------- .*"
+"-r--r--r-- .*"
 
 	  # Test for whether we can set the execute bit.
 	  chmod +x aa
@@ -5628,7 +5627,7 @@ done'
 	  # But it doesn't, and as far as I know that is longstanding
 	  # CVS behavior.
 	  dotest modes-7 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
-"-r-------- .*"
+"-r--r--r-- .*"
 
 	  # OK, now manually change the modes and see what happens.
 	  chmod g=r,o= /tmp/cvs-sanity/cvsroot/first-dir/aa,v
@@ -5656,9 +5655,16 @@ Checking in ab;
 /tmp/cvs-sanity/cvsroot/first-dir/ab,v  <--  ab
 initial revision: 1\.1
 done'
-	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r-----.
-	  dotest modes-10 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/ab,v" \
-"-r-x------.*"
+	  if test "x$remote" = xyes; then
+	    # The problem here is that the CVSUMASK environment variable
+	    # needs to be set on the server (e.g. .bashrc).  This is, of
+	    # course, bogus, but that is the way it is currently.
+	    dotest modes-10 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/ab,v" \
+"-r-xr-x---.*" "-r-xr-xr-x.*"
+	  else
+	    dotest modes-10 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/ab,v" \
+"-r-xr-x---.*"
+	  fi
 
 	  # OK, now add a file on a branch.  Check that the mode gets
 	  # set the same way (it is a different code path in CVS).
@@ -5679,10 +5685,18 @@ Checking in ac;
 /tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v  <--  ac
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done'
-	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r-----.
-	  dotest modes-15 \
+	  if test "x$remote" = xyes; then
+	    # The problem here is that the CVSUMASK environment variable
+	    # needs to be set on the server (e.g. .bashrc).  This is, of
+	    # course, bogus, but that is the way it is currently.
+	    dotest modes-15 \
 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v" \
-"-r--------.*"
+"-r--r--r--.*"
+	  else
+	    dotest modes-15 \
+"ls -l /tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v" \
+"-r--r-----.*"
+	  fi
 
 	  cd ../..
 	  rm -rf 1 ${TESTDIR}/first-dir
