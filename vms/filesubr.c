@@ -748,3 +748,19 @@ get_homedir ()
 {
     return getenv ("HOME");
 }
+
+/* See cvs.h for description.  On VMS this currently does nothing, although
+   I think we should be expanding wildcards here.  */
+void
+expand_wild (argc, argv, pargc, pargv)
+    int argc;
+    char **argv;
+    int *pargc;
+    char ***pargv;
+{
+    int i;
+    *pargc = argc;
+    *pargv = (char **) xmalloc (argc * sizeof (char *));
+    for (i = 0; i < argc; ++i)
+	(*pargv)[i] = xstrdup (argv[i]);
+}
