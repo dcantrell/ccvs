@@ -3007,7 +3007,11 @@ primary is periodically broken.  Only write operations will require the network
 link to the primary.
 
 To configure write proxies, the primary must be specified with the
-@samp{PrimaryServer} option in @file{CVSROOT/config} (@pxref{config}).
+@samp{PrimaryServer} option in @file{CVSROOT/config} (@pxref{config}).  For the
+transparent proxy mode to work, all secondary servers must also be running the
+same version of the @sc{cvs} server, or at least one that provides the same
+list of supported requests to the client as the primary server.  This is not
+necessary for redirection.
 
 Once a primary server is configured, secondary servers may be configured by:
 
@@ -13005,7 +13009,7 @@ The name of the repository (the path portion of @code{$CVSROOT}).
 @item R
 On a server, the name of the referrer, if any.  The referrer is the CVSROOT the
 client reports it used to contact a server which then referred it to this
-server.  Should usually be set on a primary server with a writeproxy setup.
+server.  Should usually be set on a primary server with a write proxy setup.
 @end table
 
 Other format strings are file specific.  See the docs on the
@@ -15111,6 +15115,20 @@ such as:
 vi $*
 exit 0
 @end example
+
+@item cvs [server aborted]: Secondary out of sync with primary!
+
+This usually means that the version of @sc{cvs} running on a secondary server
+and a primary server (@pxref{Write proxies}) are not the same.  This will not
+occur if the client support redirection.
+
+It is not the version number that is significant here, but the list of
+supported requests that the servers provide to the client.  Thus, if the
+secondary was compiled with GSSAPI support and the primary was not, then the
+list of supported requests provided by the two servers will be different and
+the secondary will not work as a transparent proxy to the primary.  Conversely,
+one server could be version 1.12.10 and the other version 1.12.11 if they both
+provided the same list of valid requests to the client.
 
 @c "warning: foo was lost" and "no longer pertinent" (both normal).
 @c Would be nice to write these up--they are
