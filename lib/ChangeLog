@@ -1,5 +1,10 @@
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
+	* test-getdate.sh: Test a date relative to a specified date and one of
+	the failing dates from the rcs2-7 test in src/sanity.sh.
+
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (TESTS): Add test-getdate.sh.
 	(check_PROGRAMS): Add getdate.
 	(getdate_*): Add info to build getdate.
