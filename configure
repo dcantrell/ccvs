@@ -837,6 +837,13 @@ Optional Features:
   --enable-client         include code for running as a remote client
                           (default)
   --enable-server         include code for running as a server (default)
+  --enable-server-flow-control
+                          If you are working with a large remote repository
+                          and a 'cvs checkout' is swamping your network and
+                          memory, define these to enable flow control. You may
+                          optionally pass a low water mark in bytes and a high
+                          water mark in bytes, separated by commas. (default
+                          is enabled 1M,2M)
   --enable-rootcommit     allow the root user to commit files (disabled by
                           default)
 
@@ -9073,6 +9080,7 @@ _ACEOF
 
 fi
 
+
 # Check whether --enable-server or --disable-server was given.
 if test "${enable_server+set}" = set; then
   enableval="$enable_server"
@@ -9082,13 +9090,15 @@ else
      enable_server=yes
    fi
 fi;
+
 if test "$enable_server" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define SERVER_SUPPORT 1
 _ACEOF
 
-  echo "$as_me:$LINENO: checking for library containing crypt" >&5
+
+            echo "$as_me:$LINENO: checking for library containing crypt" >&5
 echo $ECHO_N "checking for library containing crypt... $ECHO_C" >&6
 if test "${ac_cv_search_crypt+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -9203,9 +9213,66 @@ cat >>confdefs.h <<\_ACEOF
 #define AUTH_SERVER_SUPPORT 1
 _ACEOF
 
-
 fi
+
+          # Check whether --enable-server-flow-control or --disable-server-flow-control was given.
+if test "${enable_server_flow_control+set}" = set; then
+  enableval="$enable_server_flow_control"
+  if test yes = $enable_server_flow_control; then
+       enable_server_flow_control=1M,2M
+     fi
+else
+  enable_server_flow_control=1M,2M
+fi;
+  if test no != $enable_server_flow_control; then
+    if echo $enable_server_flow_control \
+        |grep '^[0-9][0-9]*\([GMkb]\|\),[0-9][0-9]*\([GMkb]\|\)$' \
+          >/dev/null; then :; else
+      { { echo "$as_me:$LINENO: error: Can't parse argument to --enable-server-flow-control
+         ('$enable_server_flow_control') as <lwm>,<hwm>" >&5
+echo "$as_me: error: Can't parse argument to --enable-server-flow-control
+         ('$enable_server_flow_control') as <lwm>,<hwm>" >&2;}
+   { (exit 1); exit 1; }; }
+    fi
+    ccvs_lwm=`echo $enable_server_flow_control |sed 's/,.*$//'`
+    ccvs_hwm=`echo $enable_server_flow_control |sed 's/^.*,//'`
+    if echo $ccvs_lwm |grep '[GMkb]' >/dev/null; then
+      ccvs_lwm_E=`echo $ccvs_lwm |sed 's/^[0-9]*//'`
+      ccvs_lwm=`echo $ccvs_lwm |sed 's/.$//'`
+      case $ccvs_lwm_E in
+        G) ccvs_lwm="$ccvs_lwm * 1024 * 1024 * 1024";;
+        M) ccvs_lwm="$ccvs_lwm * 1024 * 1024";;
+        k) ccvs_lwm="$ccvs_lwm * 1024";;
+      esac
+    fi
+    if echo $ccvs_hwm |grep '[GMkb]' >/dev/null; then
+      ccvs_hwm_E=`echo $ccvs_hwm |sed 's/^[0-9]*//'`
+      ccvs_hwm=`echo $ccvs_hwm |sed 's/.$//'`
+      case $ccvs_hwm_E in
+        G) ccvs_hwm="$ccvs_hwm * 1024 * 1024 * 1024";;
+        M) ccvs_hwm="$ccvs_hwm * 1024 * 1024";;
+        k) ccvs_hwm="$ccvs_hwm * 1024";;
+      esac
+    fi
+
+
+cat >>confdefs.h <<\_ACEOF
+#define SERVER_FLOWCONTROL 1
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define SERVER_LO_WATER ($ccvs_lwm)
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define SERVER_HI_WATER ($ccvs_hwm)
+_ACEOF
+
+  fi # enable_server_flow_control
 fi # enable_server
+
 
 # Check whether --enable-rootcommit or --disable-rootcommit was given.
 if test "${enable_rootcommit+set}" = set; then
@@ -9221,6 +9288,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
 
 
 echo "$as_me:$LINENO: checking for cygwin32" >&5

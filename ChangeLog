@@ -1,5 +1,13 @@
 2002-09-20  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Explain --enable-server-flow-control.
+	* configure.in (--enable-server-flow-control): New configure argument.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-09-20  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Set PATCH_PROGRAM as possible, autodetecting with
 	a user override.
 
