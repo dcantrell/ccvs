@@ -34,6 +34,9 @@ EMACS=emacs
 # The rest of this file should not need to be modified.
 #
 
+srcdir = @srcdir@
+VPATH = @srcdir@
+
 # Just in case...
 SHELL = /bin/sh
 
@@ -49,7 +52,7 @@ INSTALL = install
 INSTALL_DATA = $(INSTALL)
 
 pcl-cvs.elc pcl-cvs-lucid.elc elcfiles:
-	$(EMACS) -batch -l ./compile-all.el -f compile-pcl-cvs
+	$(EMACS) -batch -l ${srcdir}/compile-all.el -f compile-pcl-cvs
 
 all: elcfiles info
 
@@ -67,14 +70,14 @@ install_info: pcl-cvs.info
 	$(INSTALL_DATA) pcl-cvs.info* $(infodir)/pcl-cvs.info
 
 info pcl-cvs.info: pcl-cvs.texinfo
-	makeinfo --fill-column=70 pcl-cvs.texinfo
+	makeinfo --fill-column=70 ${srcdir}/pcl-cvs.texinfo
 
 pcl-cvs.aux pcl-cvs.dvi: pcl-cvs.texinfo
-	tex pcl-cvs.texinfo
-	tex pcl-cvs.texinfo
+	tex ${srcdir}/pcl-cvs.texinfo
+	tex ${srcdir}/pcl-cvs.texinfo
 	-texindex pcl-cvs.cp pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky \
 		pcl-cvs.pg
-	tex pcl-cvs.texinfo
+	tex ${srcdir}/pcl-cvs.texinfo
 
 DVIPS=dvips
 pcl-cvs.ps: pcl-cvs.dvi
@@ -87,12 +90,20 @@ tags TAGS:
 	etags *.el
 
 DISTFILES = \
-	.cvsignore ChangeLog INSTALL Makefile NEWS README \
+	.cvsignore ChangeLog INSTALL Makefile.in NEWS README \
 	${ELFILES} ${ELCFILES} compile-all.el \
-	pcl-cvs.texinfo pcl-cvs.aux pcl-cvs.ps texinfo.tex
+	pcl-cvs.texinfo texinfo.tex
+OBJDIR_DISTFILES = pcl-cvs.aux pcl-cvs.ps
 
-dist-dir: ${DISTFILES} pcl-cvs.info
+dist-dir: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+	ln ${OBJDIR_DISTFILES} ${DISTDIR}
 	ln pcl-cvs.info* ${DISTDIR}
 .PHONY: dist-dir
+
+subdir = contrib/pcl-cvs
+Makefile: ../../config.status Makefile.in
+	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

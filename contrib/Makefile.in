@@ -86,7 +86,9 @@ realclean: distclean
 
 dist-dir:
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
 	cd pcl-cvs; ${MAKE} dist-dir DISTDIR="../${DISTDIR}/pcl-cvs"
 .PHONY: dist-dir
 

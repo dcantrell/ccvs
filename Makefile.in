@@ -217,7 +217,7 @@ GZIP=gzip --best
 GZIP_EXT=.gz
 dist:
 	echo > .fname \
-	  ccvs-`sed < src/version.c \
+	  cvs-`sed < $(srcdir)/src/version.c \
 		    -e '/version_string/!d' \
 		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
 		    -e q`
@@ -235,7 +235,9 @@ dist:
 .PHONY: dist-dir
 dist-dir:
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.

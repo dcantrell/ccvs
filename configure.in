@@ -92,4 +92,4 @@ test -f src/options.h || (
 )
 
 AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile \
- 	  contrib/Makefile examples/Makefile stamp-h)
+ 	  contrib/Makefile contrib/pcl-cvs/Makefile examples/Makefile stamp-h)

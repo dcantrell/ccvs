@@ -143,7 +143,9 @@ realclean: distclean
 
 dist-dir:
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
 .PHONY: dist-dir
 
 # Linking rules.
