@@ -32,6 +32,10 @@
  *		history		Display history of Users and Modules.
  */
 
+/* This is a trivial change to test a commit hook.  I'll take it out
+ * soon.  -Karl.
+ */
+
 #include "cvs.h"
 #include "patchlevel.h"
 
