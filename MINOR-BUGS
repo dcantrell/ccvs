@@ -2,6 +2,40 @@ Low-priority bugs go here.  We don't have many yet -- everything is
 high-priority at the moment. :-)
 
 
+* From: Jeff Johnson <jbj@brewster.JBJ.ORG>
+  To: cyclic-cvs@cyclic.com
+  Subject: Named_Root assumes . on server
+  Date: Wed, 17 May 1995 11:04:53 -0400 (EDT)
+  
+  Problem:
+  	On server, Name_Root() attempts (aggressively) to set CVSADM_Root.
+  	If ~/CVS/Root exists (wrto rsh login), then CVSADM_Root will be
+  	initialized from that file. The sanity check between the root
+  	repository and the invocation will fail if the two values are not
+  	coincidentally the same.
+  
+  Workaround:
+  	There's a zillion ways to fix this bugture/featurelet. My current
+  	workaround is to remove ~/CVS/Root on the server. I shall attempt
+  	a better fix as soon as I can determine what appears politically
+  	correct. IMHO, the CVS/Root stuff (and getenv("CVSROOT") also) is
+  	a bit fragile and tedious in an rcmd() driven CCVS environment.
+
+
+* (Jeff Johnson <jbj@jbj.org>)
+  I tried a "cvs status -v" and received the following:
+
+  ? CVS
+  ? programs/CVS
+  ? tests/CVS
+  cvs server: Examining .
+  ===================================================================
+  File: Install.dec            Status: Up-to-date
+  ...
+  
+  I claim that CVS dirs should be ignored.
+
+
 * I sometimes get this message:
 
   Could not look up address for your host.  Permission denied.
