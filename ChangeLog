@@ -1,5 +1,8 @@
 Thu Aug  8 16:00:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TESTS (ABOUT STDOUT AND STDERR): New section.
+	(ABOUT TEST FRAMEWORKS): Add sed/cmp/diff (a la C News) as an option.
+
 	* NEWS: Change entry regarding "cvs log" not invoking "rlog" so
 	that it emphasizes user-visible behaviors.
 
