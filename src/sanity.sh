@@ -19,17 +19,34 @@
 # Original Author: K. Richard Pixley
 
 # usage:
+usage ()
+{
+    echo "Usage: `basename $0` -h"
+    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]"
+}
+
 exit_usage ()
 {
-    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+    usage 1>&2
     exit 2
 }
-# -r		test remote instead of local cvs.
-# -k 		try to keep directories created by individual tests around
-# -f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before
-#		FROM-TEST
-#
-# TESTS-TO-RUN are the names of the tests to run; if omitted default to all tests.
+
+exit_help ()
+{
+    usage
+    echo
+    echo "-h|--help	display this text"
+    echo "-r|--remote	test remote instead of local cvs"
+    echo "-k|--keep	try to keep directories created by individual tests"
+    echo "		around, exiting after the first test which supports"
+    echo "		--keep"
+    echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
+    echo "		FROM-TEST"
+    echo
+    echo "TESTS-TO-RUN are the names of the tests to run; if omitted, defaults to"
+    echo "all tests."
+    exit 2
+}
 
 # See TODO list at end of file.
 
@@ -55,16 +72,40 @@ export LC_ALL
 unset fromtest
 keep=false
 remote=false
-while getopts f:kr option ; do
+while getopts f:Hkr-: option ; do
+    # convert the long opts to short opts
+    if test x$option = x-;  then
+	case "$OPTARG" in
+	    [hH]|[hH][eE]|[hH][eE][lL]|[hH][eE][lL][pP])
+		option=H;
+		OPTARG=
+		;;
+	    [kK]|[kK][eE]|[kK][eE][eE]|[kK][eE][eE][pP])
+		option=k;
+		OPTARG=
+		;;
+	    [rR]|[rR][eE]|[rR][eE][mM]|[rR][eE][mM][oO]|[rR][eE][mM][oO][tT]|[rR][eE][mM][oO][tT][eE])
+		option=k;
+		OPTARG=
+		;;
+	    *)
+		option=\?
+		OPTARG=
+	esac
+    fi
     case "$option" in
 	f)
 	    fromtest="$OPTARG"
 	    ;;
+	H)
+	    exit_help
+	    ;;
 	k)
-	    # The -k (keep) option will eventually cause all the tests to leave around the
-	    # contents of the /tmp directory; right now only some implement it.  Not
-	    # originally intended to be useful with more than one test, but this should work
-	    # if each test uses a uniquely named dir (use the name of the test).
+	    # The -k (keep) option will eventually cause all the tests to
+	    # leave around the contents of the /tmp directory; right now only
+	    # some implement it.  Not originally intended to be useful with
+	    # more than one test, but this should work if each test uses a
+	    # uniquely named dir (use the name of the test).
 	    keep=:
 	    ;;
 	r)
@@ -24569,3 +24610,4 @@ cd `dirname ${TESTDIR}`
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
+# vim:tabstop=8:shiftwidth=4
