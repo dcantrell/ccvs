@@ -1,3 +1,10 @@
+2003-09-30  Larry Jones  <lawrence.jones@eds.com>
+
+	* getpass.c: Fix bug that caused password to be echoed on many
+	systems (input may not be followed by output on the same stream
+	without an intervening call to a file positioning function).
+	(Reported by David Everly <david.everly@mci.com>.)
+
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
 	Provide an atexit() function on systems which provide on_exit() but not
