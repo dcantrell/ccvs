@@ -17603,7 +17603,7 @@ done"
           # that was indeed the version that was visible at the target
 	  # time.
 	  dotest rcs4-5 \
-"${testcvs} -q update -D 'October 1, 2001' file1" \
+"${testcvs} -q update -D 'October 1, 2001 UTC' file1" \
 '[UP] file1'
 	  dotest rcs4-6 \
 "${testcvs} -q status file1" \
@@ -17613,7 +17613,7 @@ File: file1            	Status: Up-to-date
    Working revision:	1\.1\.1\.1.*
    Repository revision:	1\.1\.1\.1	'${CVSROOT_DIRNAME}'/rcs4-dir/file1,v
    Sticky Tag:		(none)
-   Sticky Date:		2001\.10\.01\.[0-1][0-9]\.00\.00
+   Sticky Date:		2001\.10\.01\.00\.00\.00
    Sticky Options:	(none)'
 
 	  if $keep; then
