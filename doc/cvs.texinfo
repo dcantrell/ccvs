@@ -1572,15 +1572,19 @@ The main disadvantage of using rsh is that all the data
 needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can
 connect via a direct @sc{tcp} connection,
-authenticating with kerberos (note that the data
-transmitted is @emph{not} encrypted by default; you
-must use the @code{-x} global option to request
-encryption).
+authenticating with kerberos.
 
 To do this, @sc{cvs} needs to be compiled with kerberos
 support; when configuring @sc{cvs} it tries to detect
 whether kerberos is present or you can use the
 @file{--with-krb4} flag to configure.
+
+The data transmitted is @emph{not} encrypted by
+default.  Encryption support must be compiled into both
+the client and server; use the
+@file{--enable-encryption} configure option to turn it
+on.  You must then use the @code{-x} global option to
+request encryption.
 
 @cindex CVS_CLIENT_PORT
 You need to edit @code{inetd.conf} on the server
@@ -4472,6 +4476,9 @@ Encrypt all communication between the client and the
 server.  Only has an effect on the @sc{cvs} client.  As
 of this writing, this is only implemented when using a
 Kerberos connection (@pxref{Kerberos authenticated}).
+Encryption support is not available by default; it must
+be enabled using a special configure option,
+@file{--enable-encryption}, when you build @sc{cvs}.
 
 @item -z @var{gzip-level}
 Set the compression level.  Only has an effect on the
