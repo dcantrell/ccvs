@@ -5630,6 +5630,9 @@ On unix, the @code{cvs update -A} command suffices.
 @c update -A" would suffice, although the user who
 @c reported this suggested removing the file, manually
 @c removing it from CVS/Entries, and then "cvs update"
+(Note that you can use @code{cvs log} to determine the default keyword
+substitution method for a file and @code{cvs status} to determine
+the keyword substitution method for a working copy.)
 
 However, in using @code{cvs admin -k} to change the
 keyword expansion, be aware that the keyword expansion
