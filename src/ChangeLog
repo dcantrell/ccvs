@@ -1,5 +1,15 @@
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h, rcs.h, add.c, checkin.c, classify.c, commit.c, diff.c,
+	import.c, patch.c, rcs.c, update.c, vers_ts.c: Remove
+	DEATH_SUPPORT ifdefs.  They were introduced to facilitate merging
+	between Cygnus and Berliner variants of CVS, not because it was
+	intended to subset CVS this way.  And they clutter up the code
+	quite a bit.
+	* cvs.h, create_adm.c, main.c, update.c: Likewise, remove
+	CVSADM_ROOT ifdefs (it is still a #define, of course).  I believe
+	they had a more-or-less similar motivation.
+
 	* sanity.sh: Move setting of HOME from ignore test to the start of
 	the tests so it applies to all tests.
 	(CVS): Remove -f; the above change takes care of it.

@@ -101,6 +101,4 @@ void freercsnode PROTO((RCSNode ** rnodep));
 void RCS_addnode PROTO((const char *file, RCSNode *rcs, List *list));
 char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
 
-#ifdef DEATH_SUPPORT
 int RCS_isdead PROTO((RCSNode *, const char *));
-#endif

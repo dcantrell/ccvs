@@ -402,7 +402,6 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (vers_tag == NULL)
 	    (void) printf ("%s is new; current revision %s\n", rcs, vers_head);
 	else if (vers_head == NULL)
-#ifdef DEATH_SUPPORT
 	{
 	    (void) printf ("%s is removed; not included in ", rcs);
 	    if (rev2 != NULL)
@@ -413,10 +412,6 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 		(void) printf ("current release");
 	    (void) printf ("\n");
 	}
-#else
-	    (void) printf ("%s is removed; not included in release %s\n",
-			   rcs, rev2 ? rev2 : date2);
-#endif
 	else
 	    (void) printf ("%s changed from revision %s to %s\n",
 			   rcs, vers_tag, vers_head);

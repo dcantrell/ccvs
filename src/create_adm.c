@@ -51,11 +51,9 @@ Create_Admin (dir, update_dir, repository, tag, date)
 
     make_directory (tmp);
 
-#ifdef CVSADM_ROOT
     /* record the current cvs root for later use */
 
     Create_Root (dir, CVSroot);
-#endif /* CVSADM_ROOT */
     if (dir != NULL)
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_REP);
     else

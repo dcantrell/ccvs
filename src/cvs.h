@@ -109,8 +109,6 @@ extern int errno;
 #include "getopt.h"
 #include "wait.h"
 
-#define DEATH_SUPPORT 1
-
 #include "rcs.h"
 
 
@@ -401,10 +399,8 @@ typedef enum direnter_type Dtype;
 
 extern char *program_name, *program_path, *command_name;
 extern char *Rcsbin, *Editor, *CVSroot;
-#ifdef CVSADM_ROOT
 extern char *CVSADM_Root;
 extern int cvsadmin_root;
-#endif /* CVSADM_ROOT */
 extern char *CurDir;
 extern int really_quiet, quiet;
 extern int use_editor;
@@ -448,11 +444,9 @@ void Entries_Close PROTO((List *entries));
 List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
-#ifdef CVSADM_ROOT
 char *Name_Root PROTO((char *dir, char *update_dir));
 void Create_Root PROTO((char *dir, char *rootdir));
 int same_directories PROTO((char *dir1, char *dir2));
-#endif /* CVSADM_ROOT */
 char *Short_Repository PROTO((char *repository));
 char *gca PROTO((char *rev1, char *rev2));
 char *getcaller PROTO((void));

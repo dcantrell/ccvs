@@ -696,7 +696,6 @@ update_filesdone_proc (err, repository, update_dir)
 	if (unlink_file_dir (CVSADM) < 0 && !existence_error (errno))
 	    error (0, errno, "cannot remove %s directory", CVSADM);
     }
-#ifdef CVSADM_ROOT
 #ifdef SERVER_SUPPORT
     else if (!server_active && !pipeout)
 #else
@@ -707,7 +706,6 @@ update_filesdone_proc (err, repository, update_dir)
         if (!isfile (CVSADM_ROOT))
 	    Create_Root( (char *) NULL, CVSroot );
     }
-#endif /* CVSADM_ROOT */
 
     return (err);
 }
@@ -907,9 +905,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
     int set_time, retval = 0;
     int retcode = 0;
     int status;
-#ifdef DEATH_SUPPORT
     int file_is_dead;
-#endif
 
     /* don't screw with backup files if we're going to stdout */
     if (!pipeout)
@@ -921,47 +917,39 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 	    (void) unlink_file (backup);
     }
 
-#ifdef DEATH_SUPPORT
     file_is_dead = RCS_isdead (vers_ts->srcfile, vers_ts->vn_rcs);
 
-    if (!file_is_dead) {
-#endif
-
-    /*
-     * if we are checking out to stdout, print a nice message to stderr, and
-     * add the -p flag to the command
-     */
-    if (pipeout)
+    if (!file_is_dead)
     {
-	if (!quiet)
+	/*
+	 * if we are checking out to stdout, print a nice message to
+	 * stderr, and add the -p flag to the command */
+	if (pipeout)
 	{
-	    (void) fprintf (stderr, "===================================================================\n");
-	    if (update_dir[0])
-		(void) fprintf (stderr, "Checking out %s/%s\n",
-				update_dir, file);
-	    else
-		(void) fprintf (stderr, "Checking out %s\n", file);
-	    (void) fprintf (stderr, "RCS:  %s\n", vers_ts->srcfile->path);
-	    (void) fprintf (stderr, "VERS: %s\n", vers_ts->vn_rcs);
-	    (void) fprintf (stderr, "***************\n");
+	    if (!quiet)
+	    {
+		(void) fprintf (stderr, "\
+===================================================================\n");
+		if (update_dir[0])
+		    (void) fprintf (stderr, "Checking out %s/%s\n",
+				    update_dir, file);
+		else
+		    (void) fprintf (stderr, "Checking out %s\n", file);
+		(void) fprintf (stderr, "RCS:  %s\n", vers_ts->srcfile->path);
+		(void) fprintf (stderr, "VERS: %s\n", vers_ts->vn_rcs);
+		(void) fprintf (stderr, "***************\n");
+	    }
 	}
-    }
 
-    status = RCS_checkout (vers_ts->srcfile->path,
-                           pipeout ? NULL : file, vers_ts->vn_tag,
-                           vers_ts->options, RUN_TTY, 0, 0);
-#ifdef DEATH_SUPPORT
+	status = RCS_checkout (vers_ts->srcfile->path,
+			       pipeout ? NULL : file, vers_ts->vn_tag,
+			       vers_ts->options, RUN_TTY, 0, 0);
     }
-    if (file_is_dead ||
-#else
-    if (
-#endif
-        status == 0)
+    if (file_is_dead || status == 0)
     {
 	if (!pipeout)
 	{
 	    Vers_TS *xvers_ts;
-#ifdef DEATH_SUPPORT
 	    int resurrecting;
 
 	    resurrecting = 0;
@@ -1004,12 +992,9 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 		    return 0;
 		}
 	    }
-#endif /* DEATH_SUPPORT */
 
 	    if (cvswrite == TRUE
-#ifdef DEATH_SUPPORT
 		&& !file_is_dead
-#endif
 		&& !fileattr_get (file, "_watched"))
 		xchmod (file, 1);
 
@@ -1061,7 +1046,6 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 
 	    (void) time (&last_register_time);
 
-#ifdef DEATH_SUPPORT
 	    if (file_is_dead)
 	    {
 		if (xvers_ts->vn_user != NULL)
@@ -1091,11 +1075,6 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 			xvers_ts->ts_user, xvers_ts->options,
 			xvers_ts->tag, xvers_ts->date,
 			(char *)0); /* Clear conflict flag on fresh checkout */
-#else /* No DEATH_SUPPORT */
-	    Register (entries, file, xvers_ts->vn_rcs, xvers_ts->ts_user,
-		      xvers_ts->options, xvers_ts->tag, xvers_ts->date,
-		      (char *)0);  /* Clear conflict flag on fresh checkout */
-#endif /* No DEATH_SUPPORT */
 
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
@@ -1115,11 +1094,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 
 	    freevers_ts (&xvers_ts);
 
-#ifdef DEATH_SUPPORT
 	    if (!really_quiet && !file_is_dead)
-#else
-	    if (!really_quiet)
-#endif
 	    {
 		if (update_dir[0])
 		    (void) printf ("U %s/%s\n", update_dir, file);

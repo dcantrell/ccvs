@@ -681,13 +681,9 @@ check_fileproc (file, update_dir, repository, entries, srcfiles)
 	    {
 		char rcs[PATH_MAX];
 
-#ifdef DEATH_SUPPORT
 		/* Don't look in the attic; if it exists there we will
 		   move it back out in checkaddfile.  */
 		sprintf(rcs, "%s/%s%s", repository, file, RCSEXT);
-#else
-		locate_rcs (file, repository, rcs);
-#endif
 		if (isreadable (rcs))
 		{
 		    if (update_dir[0] == '\0')
@@ -960,7 +956,6 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
 	    goto out;
 	}
 
-#ifdef DEATH_SUPPORT
 	/* adding files with a tag, now means adding them on a branch.
 	   Since the branch test was done in check_fileproc for
 	   modified files, we need to stub it in again here. */
@@ -978,7 +973,6 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
 
 	    ci->status = T_UPTODATE;
 	}
-#endif /* DEATH_SUPPORT */
     }
 
     /*
@@ -1235,7 +1229,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     char rcs[PATH_MAX];
     char *tmp;
 
-#ifdef DEATH_SUPPORT
     int branch;
     int lockflag;
     char *corev;
@@ -1247,18 +1240,13 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     corev = NULL;
     rev = NULL;
     prev_rev = NULL;
-#endif /* DEATH_SUPPORT */
 
     retcode = 0;
 
     locate_rcs (file, repository, rcs);
 
-#ifdef DEATH_SUPPORT
     branch = 0;
     if (tag && !(branch = RCS_isbranch (file, tag, srcfiles)))
-#else
-    if (tag)
-#endif
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
 	if ((retcode = RCS_deltag (rcs, tag, 1)) != 0) 
@@ -1272,7 +1260,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	return (0);
     }
 
-#ifdef DEATH_SUPPORT
     /* we are removing the file from either the head or a branch */
     /* commit a new, dead revision. */
 
@@ -1379,9 +1366,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	free (rev);
 
     if (!branch)
-#else /* No DEATH_SUPPORT */
-    else
-#endif /* No DEATH_SUPPORT */
     {
 	/* this was the head; really move it into the Attic */
 	tmp = xmalloc(strlen(repository) + 
@@ -1396,7 +1380,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
 	
-#ifdef DEATH_SUPPORT
 	if (strcmp (rcs, tmp) != 0
 	    && rename (rcs, tmp) == -1
 	    && (isreadable (rcs) || !isreadable (tmp)))
@@ -1416,19 +1399,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 
     Scratch_Entry (entries, file);
     return (0);
-#else /* No DEATH_SUPPORT */
-
-	if ((strcmp (rcs, tmp) == 0 || rename (rcs, tmp) != -1) ||
-	    (!isreadable (rcs) && isreadable (tmp)))
- 	{
-	    Scratch_Entry (entries, file);
-	    /* FIXME: should free tmp.  */
-	    return (0);
-	}
-	/* FIXME: should free tmp.  */
-    }
-    return (1);
-#endif /* No DEATH_SUPPORT */
 }
 
 /*
@@ -1540,9 +1510,7 @@ checkaddfile (file, repository, tag, options, srcfiles)
     char fname[PATH_MAX];
     mode_t omask;
     int retcode = 0;
-#ifdef DEATH_SUPPORT
     int newfile = 0;
-#endif
 
     if (tag)
     {
@@ -1556,7 +1524,6 @@ checkaddfile (file, repository, tag, options, srcfiles)
     else
 	locate_rcs (file, repository, rcs);
 
-#ifdef DEATH_SUPPORT
     if (isreadable(rcs))
     {
 	/* file has existed in the past.  Prepare to resurrect. */
@@ -1719,20 +1686,6 @@ checkaddfile (file, repository, tag, options, srcfiles)
 
 	RCS_addnode (file, rcsfile, srcfiles);
     }
-#else /* No DEATH_SUPPORT */
-    run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);
-    run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
-    /* Set RCS keyword expansion options.  */
-    if (options && options[0] == '-' && options[1] == 'k')
-	run_arg (options);
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
-    {
-	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-	       "could not create %s", rcs);
-	return (1);
-    }
-#endif /* No DEATH_SUPPORT */
 
     fileattr_newfile (file);
 
