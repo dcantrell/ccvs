@@ -61,9 +61,10 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	gethostname.c getline.c getndelim2.c getopt.c getopt1.c \
 	getpass.c gettimeofday.c lstat.c malloc.c memmove.c mkdir.c \
 	mkstemp.c mktime.c nanosleep.c printf-args.c printf-parse.c \
-	realloc.c regex.c rename.c stat.c strcasecmp.c strerror.c \
-	strncasecmp.c strstr.c strtoul.c sunos57-select.c tempname.c \
-	time_r.c valloc.c vasnprintf.c vasprintf.c waitpid.c
+	realloc.c regex.c rename.c rpmatch.c stat.c strcasecmp.c \
+	strerror.c strncasecmp.c strstr.c strtoul.c sunos57-select.c \
+	tempname.c time_r.c valloc.c vasnprintf.c vasprintf.c \
+	waitpid.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -93,12 +94,13 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/pathmax.m4 \
 	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/restrict.m4 \
-	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
-	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
+	$(top_srcdir)/m4/signed.m4 $(top_srcdir)/m4/size_max.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_mtim.m4 \
+	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdbool.m4 \
+	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 \
 	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
 	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
 	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
@@ -107,7 +109,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
 	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xsize.m4 \
-	$(top_srcdir)/configure.in
+	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -306,7 +308,7 @@ libcvs_a_SOURCES = sighandle.c error.h system.h wait.h xselect.h \
 	stat-macros.h strcase.h strftime.c strftime.h time_r.h \
 	timespec.h unlocked-io.h printf-args.h printf-parse.h \
 	vasnprintf.h vasprintf.h xalloc.h xmalloc.c xalloc-die.c \
-	xgetcwd.h xgetcwd.c xsize.h yesno.c
+	xgetcwd.h xgetcwd.c xsize.h yesno.c yesno.h
 libcvs_a_LIBADD = @LIBOBJS@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H) \
 	$(STDINT_H)
@@ -397,6 +399,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/realloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rpmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@

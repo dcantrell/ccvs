@@ -216,7 +216,7 @@ libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 libcvs_a_SOURCES += xsize.h
 
 ## For GNULIB's yesno module.
-libcvs_a_SOURCES += yesno.c
+libcvs_a_SOURCES += yesno.c yesno.h
 
 # Until Automake gets its act together
 distclean-local:
