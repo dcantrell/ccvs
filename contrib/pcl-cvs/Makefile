@@ -19,7 +19,7 @@
 # This is the directory in which the ELFILES and ELCFILES will be
 # installed.
 
-lispdir = /usr/local/lib/elisp
+lispdir = /usr/local/lib/emacs/site-lisp/pcl-cvs
 
 # Where to install the info file.
 
