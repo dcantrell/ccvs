@@ -1,3 +1,9 @@
+Fri Nov 17 20:08:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * system.h: ifdef NEED_DECOY_PERMISSIONS, then define the S_I*
+        permission masks for USR, GRP, and OTH in terms of the simpler
+        OS/2 masks.
+
 Wed Nov 15 15:36:03 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * system.h: ifdef USE_OWN_TCPIP_H, then include "tcpip.h".  Only

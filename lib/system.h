@@ -403,6 +403,23 @@ char *getwd ();
  * Some UNIX distributions don't include these in their stat.h Defined here
  * because "config.h" is always included last.
  */
+#ifdef NEED_DECOY_PERMISSIONS        /* OS/2, really */
+
+#define	S_IRUSR S_IREAD
+#define	S_IWUSR S_IWRITE
+#define	S_IXUSR S_IEXEC
+#define	S_IRWXU	(S_IRUSR | S_IWUSR | S_IXUSR)
+#define	S_IRGRP S_IREAD
+#define	S_IWGRP S_IWRITE
+#define	S_IXGRP S_IEXEC
+#define	S_IRWXG	(S_IRGRP | S_IWGRP | S_IXGRP)
+#define	S_IROTH S_IREAD
+#define	S_IWOTH S_IWRITE
+#define	S_IXOTH S_IEXEC
+#define	S_IRWXO	(S_IROTH | S_IWOTH | S_IXOTH)
+
+#else /* ! NEED_DECOY_PERMISSIONS */
+
 #ifndef S_IWRITE
 #define	S_IWRITE	0000200		/* write permission, owner */
 #endif
@@ -412,6 +429,8 @@ char *getwd ();
 #ifndef S_IWOTH
 #define	S_IWOTH		0000002		/* write permission, other */
 #endif
+
+#endif /* NEED_DECOY_PERMISSIONS */
 
 
 /* Under MS-DOS and its derivatives (like Windows NT), mkdir takes only one
