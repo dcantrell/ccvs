@@ -1,3 +1,7 @@
+2001-01-09  Derek Price  <derek.price@openavenue.com>
+
+	* version.c: updated timestamp
+
 2001-01-09  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (server): Change to server_temp_dir immediately after
