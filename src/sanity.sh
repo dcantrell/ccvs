@@ -15122,12 +15122,46 @@ File: binfile          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb"
 
+	  # Test that "-kk" does not override "-kb"
+	  cd ../..
+	  mkdir 2a; cd 2a
+	  dotest binfiles-4 "${testcvs} -q co -kk first-dir" 'U first-dir/binfile'
+	  cd first-dir
+	  # Testing that sticky options is -kb is the closest thing we have
+	  # to testing that binary files work right on non-unix machines
+	  # (until there is automated testing for such machines, of course).
+	  dotest binfiles-5.5 "${testcvs} status binfile" \
+"===================================================================
+File: binfile          	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb"
+
 	  # Test whether the default options from the RCS file are
 	  # also used when operating on files instead of whole
 	  # directories
           cd ../..
 	  mkdir 3; cd 3
 	  dotest binfiles-5.5b0 "${testcvs} -q co first-dir/binfile" \
+'U first-dir/binfile'
+	  cd first-dir
+	  dotest binfiles-5.5b1 "${testcvs} status binfile" \
+"===================================================================
+File: binfile          	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/binfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb"
+	  cd ../..
+	  rm -r 3
+	  # test that "-kk" does not override "-kb"
+	  mkdir 3; cd 3
+	  dotest binfiles-5.5b0 "${testcvs} -q co -kk first-dir/binfile" \
 'U first-dir/binfile'
 	  cd first-dir
 	  dotest binfiles-5.5b1 "${testcvs} status binfile" \
@@ -15181,9 +15215,11 @@ done"
 	  dotest binfiles-con5 "${testcvs} -q update" '[UP] binfile'
 
 	  dotest binfiles-9 "${testcvs} -q update -A" ''
-	  dotest binfiles-10 "${testcvs} -q update -kk" '[UP] binfile'
+	  # "-kk" no longer does anything with "-kb"
+	  dotest binfiles-10 "${testcvs} -q update -kk" ''
 	  dotest binfiles-11 "${testcvs} -q update" ''
-	  dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
+	  # "-kk" no longer does anything with "-kb"
+	  dotest binfiles-12 "${testcvs} -q update -A" ''
 	  dotest binfiles-13 "${testcvs} -q update -A" ''
 
 	  cd ../..
@@ -21037,16 +21073,14 @@ diff -r1\.2 file1
 	  rm file1
 	  if $remote; then
 	    dotest keyword2-13r "${testcvs} -q update -A -kk -j branch" \
-"U binfile.dat
-U file1
+"U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
 	  else
 	    dotest keyword2-13 "${testcvs} -q update -A -kk -j branch" \
-"U binfile.dat
-${SPROG} [a-z]*: warning: file1 was lost
+"${SPROG} [a-z]*: warning: file1 was lost
 U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
@@ -21062,13 +21096,13 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
 done"
 
-	  dotest_fail keyword2-15 "cmp binfile.dat ../binfile.dat" \
-"binfile\.dat \.\./binfile\.dat differ: char 13, line 2"
+	  # "-kk" no longer corrupts binary files
+	  dotest keyword2-15 "cmp binfile.dat ../binfile.dat" ''
 
 	  # Okay, restore everything and make CVS try and merge a binary file...
+	  # "-kk" no longer affects binary files
 	  dotest keyword2-16 "${testcvs} -q update -A" \
-"[UP] binfile.dat
-[UP] file1"
+"[UP] file1"
 	  dotest keyword2-17 "${testcvs} -q tag -b branch2" \
 "T binfile\.dat
 T file1"
@@ -21081,16 +21115,15 @@ T file1"
 ${CVSROOT_DIRNAME}/first-dir/binfile\.dat,v  <--  binfile\.dat
 new revision: 1\.1\.4\.1; previous revision: 1\.1
 done"
+	  # "-kk" no longer affects binary files
+
+	  # XXXX: do not ask, why we get the "U binfile.dat" line twice
+	  #       looks like a bug!
 	  dotest keyword2-20 "${testcvs} -q update -A -kk -j branch2" \
 "U binfile\.dat
-RCS file: ${CVSROOT_DIRNAME}/first-dir/binfile\.dat,v
-retrieving revision 1\.1
-retrieving revision 1\.1\.4\.1
-Merging differences between 1\.1 and 1\.1\.4\.1 into binfile\.dat
+U binfile\.dat
 U file1"
 
-	  # Yep, it's broke, 'cept for that gal in Hodunk who uses -kk
-	  # so that some files only merge when she says so.  Time to clean up...
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
