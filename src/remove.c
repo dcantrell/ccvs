@@ -123,10 +123,6 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
     char fname[PATH_MAX];
     Vers_TS *vers;
 
-    /*
-     * If unlinking the file works, good.  If not, the "unremoved"
-     * error will indicate problems.
-     */
     if (force)
     {
 	if (!noexec)
