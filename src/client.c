@@ -2455,8 +2455,11 @@ try_read_from_server (buf, len)
 
     /* Log, if that's what we're doing. */
     if (from_server_logfile != NULL && nread > 0)
-	if (fwrite (buf, 1, nread, from_server_logfile) < nread)
+    {
+	size_t towrite = nread;
+	if (fwrite (buf, 1, towrite, from_server_logfile) < towrite)
 	    error (0, errno, "writing to from-server logfile");
+    }
 
     return nread;
 }

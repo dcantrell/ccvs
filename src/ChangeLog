@@ -1,3 +1,8 @@
+Thu Apr 18 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* client.c (try_read_from_server): Compare return value from fwrite
+	with a size_t not an int (Visual C++ lint).
+
 Wed Apr 17 11:56:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (try_read_from_server): New function.
