@@ -1,3 +1,8 @@
+Mon Sep  8 08:52:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add pubscc.h.  Thanks to Frederic Van
+	Haren for pointing this out.
+
 Tue Sep  2 13:39:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.txt (SPECIFICATIONS OR OTHER DOCUMENTS DESCRIBING THE
