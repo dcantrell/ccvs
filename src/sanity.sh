@@ -900,7 +900,7 @@ RCSINIT=; export RCSINIT
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="version basica basicb basicc basic1 deep basic2"
-	tests="${tests} files spacefiles commit-readonly"
+	tests="${tests} parseroot files spacefiles commit-readonly"
 	tests="${tests} commit-add-missing"
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
@@ -3733,6 +3733,22 @@ W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
+
+	parseroot)
+	  # Test odd cases involving CVSROOT.  At the moment, that means we
+	  # are testing roots with '/'s on the end, which CVS should parse off.
+	  CVSROOT_SAVED=${CVSROOT}
+	  CVSROOT="${CVSROOT}/////"
+	  dotest parseroot-1 "${testcvs} -q co CVSROOT/modules" \
+"U CVSROOT/modules"
+	  dotest parseroot-2 "${testcvs} -q ci -fmnull-change CVSROOT/modules" \
+"Checking in CVSROOT/modules;
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+new revision: 1\.2; previous revision: 1\.1
+done
+${SPROG} [a-z]*: Rebuilding administrative file database"
+	  CVSROOT=${CVSROOT_SAVED}
+	  ;;
 
 	files)
 	  # Test of how we specify files on the command line

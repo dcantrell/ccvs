@@ -1,5 +1,12 @@
 2003-06-12  Derek Price  <derek@ximbiot.com>
 
+	* root.c (parse_cvsroot, local_cvsroot): Parse trailing '/'s off the
+	end of cvsroots.  Make arguments const.
+	* cvs.h: Update prototypes to match.
+	(Idea from Miles Zarathustra <shiva@aranyaka.org>.)
+
+2003-06-12  Derek Price  <derek@ximbiot.com>
+
 	* checkout.c (safe_location): Fix memory leak.
 	(Patch from Kenneth Lorber <keni@his.com>.)
 

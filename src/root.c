@@ -357,7 +357,7 @@ free_cvsroot_t (root)
  */
 cvsroot_t *
 parse_cvsroot (root_in)
-    char *root_in;
+    const char *root_in;
 {
     cvsroot_t *newroot;			/* the new root to be returned */
     char *cvsroot_save;			/* what we allocated so we can dispose
@@ -368,6 +368,7 @@ parse_cvsroot (root_in)
 					 */
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
     int check_hostname, no_port, no_password;
+    int i;				/* `for' loop counter. */
 
     TRACE ( TRACE_FUNCTION, "parse_cvsroot ( %s )", root_in );
 
@@ -548,7 +549,14 @@ parse_cvsroot (root_in)
     }
 #endif /* CLIENT_SUPPORT */
 
-    /* parse the path for all methods */
+    /*
+     * Parse the path for all methods.
+     */
+    /* Here & local_cvsroot() should be the only places this needs to be
+     * called on a CVSROOT now.  cvsroot->original is saved for error messages
+     * and, otherwise, we want no trailing slashes.
+     */
+    Sanitize_Repository_Name( cvsroot_copy );
     newroot->directory = xstrdup(cvsroot_copy);
 
     /*
@@ -748,14 +756,18 @@ normalize_cvsroot (root)
  * repository DIR.  */
 cvsroot_t *
 local_cvsroot (dir)
-    char *dir;
+    const char *dir;
 {
     cvsroot_t *newroot = new_cvsroot_t();
 
     newroot->original = xstrdup(dir);
     newroot->method = local_method;
     newroot->directory = xstrdup(dir);
-
+    /* Here and parse_cvsroot() should be the only places this needs to be
+     * called on a CVSROOT now.  cvsroot->original is saved for error messages
+     * and, otherwise, we want no trailing slashes.
+     */
+    Sanitize_Repository_Name( newroot->directory );
     return newroot;
 }
 
