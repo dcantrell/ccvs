@@ -1,3 +1,10 @@
+Tue Jul 28 19:33:08 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* version.c: Change version number to 1.9.29.
+
+	* rcs.c (RCS_checkin): add code to follow symbolic links in the
+ 	repository.
+
 Sun Jul 26 05:14:41 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* This set of changes reverts the code to pre-1.9.2 behavior and
