@@ -1,3 +1,8 @@
+1998-11-18  Jim Kingdon
+
+	* cvs.texinfo (Invoking CVS): Change "-r tag" to "-r rev".  We
+	already use "tag" as the name of the tag we are adding.
+
 1998-11-13  Jim Kingdon
 
 	* cvs.texinfo (CVS commands): Add comment about whether part of

@@ -10521,8 +10521,8 @@ No execution of tag program.  See @ref{Common options}.
 Operate recursively (default).  @xref{Recursive
 behavior}.
 
-@item -r @var{tag}
-Tag existing tag @var{tag}.  See @ref{Tagging by date/tag}.
+@item -r @var{rev}
+Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
 @end table
 
 @item status [@var{options}] @var{files}@dots{}
@@ -10573,8 +10573,8 @@ Local; run only in current working directory.  See @ref{Recursive behavior}.
 Operate recursively (default).  @xref{Recursive
 behavior}.
 
-@item -r @var{tag}
-Tag existing tag @var{tag}.  See @ref{Tagging by date/tag}.
+@item -r @var{rev}
+Tag existing tag @var{rev}.  See @ref{Tagging by date/tag}.
 @end table
 
 @item unedit [@var{options}] [@var{files}@dots{}]
