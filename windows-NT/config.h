@@ -338,3 +338,6 @@ extern char *sock_strerror (int errnum);
 
 /* Let the precompiler know that we have getpagesize available. */
 #define HAVE_GETPAGESIZE
+
+/* ssize_t not available under Windows */
+typedef int ssize_t;
