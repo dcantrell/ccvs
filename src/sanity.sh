@@ -9126,6 +9126,7 @@ U m"
 
 	  cd ../..
 	  rm -rf 1
+	  rm -r 2
 	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
