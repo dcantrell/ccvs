@@ -1,5 +1,13 @@
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (basicb-21): POSIX 1003.2 specifies 'illegal option'
+	while lots of getopt implementations still use 'invalid option'.
+	Allow either form for this test.
+	(basic2-21b, basic2-21c): New tests showing a cvs bug when
+	val-tags is not present.
+
+2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
+
 	* buffer.c (fd_buffer_block): Deal with BSD and BSDI problems to
 	set block/nonblock on /dev/null.
 

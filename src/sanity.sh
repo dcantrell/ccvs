@@ -3222,8 +3222,14 @@ ${SPROG} \[admin aborted\]: attempt to delete all revisions"
 	  # of the moon (weirdness with optind), and who knows what else.
 	  # I've been seeing "illegal"...
 	  # And I switched it to "invalid". -DRP
+	  # POSIX 1003.2 specifies the format should be 'illegal option'
+	  # many other folks are still using the older 'invalid option'
+	  # lib/getopt.c will use POSIX when __posixly_correct
+	  # otherwise the other, so accept both of them. -- mdb
 	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
 "admin: invalid option -- H
+${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information" \
+"admin: illegal option -- H
 ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
@@ -4229,6 +4235,26 @@ Are you sure you want to release (and delete) directory .first-dir.: "
 "${SPROG} rtag: Tagging first-dir
 ${SPROG} rtag: Tagging first-dir/dir1
 ${SPROG} rtag: Tagging first-dir/dir1/dir2"
+
+		dotest basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
+"===================================================================
+Checking out first-dir/file6
+RCS:  $CVSROOT_DIRNAME/first-dir/file6,v
+VERS: 1\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+file6
+file6"
+		# see what happens when val-tags is removed
+		modify_repo mv $CVSROOT_DIRNAME/CVSROOT/val-tags \
+				$CVSROOT_DIRNAME/CVSROOT/val-tags.save
+		# FIXCVS - just because the val-tags file is gone does
+		# not mean that cvs should fail to do the right thing.
+		# The output should be the same as basic2-21b.
+		dotest_fail basic2-21c "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
+"${SPROG} checkout: cannot open CVS/Entries for reading: No such file or directory
+${SPROG} \[checkout aborted\]: no such tag \`rtagged-by-head'"
+		modify_repo mv $CVSROOT_DIRNAME/CVSROOT/val-tags.save \
+				$CVSROOT_DIRNAME/CVSROOT/val-tags
 
 		# tag by tag
 		dotest basic2-22 "${testcvs} rtag -r rtagged-by-head rtagged-by-tag first-dir" \
