@@ -602,7 +602,7 @@ if test x"$*" = x; then
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
-	tests="${tests} rmroot reposmv pserver server client"
+	tests="${tests} rmroot reposmv pserver server server2 client"
 else
 	tests="$*"
 fi
@@ -19999,6 +19999,73 @@ EOF
 	    rm gzipped.dat session.dat
 	    rm ${TESTDIR}/server.tmp
 	  fi # skip the whole thing for local
+	  ;;
+
+	server2)
+	  # More server tests, in particular testing that various
+	  # possible security holes are plugged.
+	  if test "$remote" = yes; then
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/cvsroot
+Directory .
+${TESTDIR}/cvsroot/../dir1
+noop
+EOF
+	      dotest server2-1 "cat ${TESTDIR}/server.tmp" \
+"E protocol error: directory '${TESTDIR}/cvsroot/\.\./dir1' not within root '${TESTDIR}/cvsroot'
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server2-1
+	    fi
+
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/cvsroot
+Directory .
+${TESTDIR}/cvsrootdir1
+noop
+EOF
+	      dotest server2-2 "cat ${TESTDIR}/server.tmp" \
+"E protocol error: directory '${TESTDIR}/cvsrootdir1' not within root '${TESTDIR}/cvsroot'
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server2-2
+	    fi
+
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/cvsroot
+Directory .
+${TESTDIR}
+noop
+EOF
+	      dotest server2-3 "cat ${TESTDIR}/server.tmp" \
+"E protocol error: directory '${TESTDIR}' not within root '${TESTDIR}/cvsroot'
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server2-3
+	    fi
+
+	    # OK, now a few tests for the rule that one cannot pass a
+	    # filename containing a slash to Modified, Is-modified,
+	    # Notify, Questionable, or Unchanged.  For completeness
+	    # we'd try them all.  For lazyness/conciseness we don't.
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Root ${TESTDIR}/cvsroot
+Directory .
+${TESTDIR}/cvsroot
+Unchanged foo/bar
+noop
+EOF
+	      dotest server2-4 "cat ${TESTDIR}/server.tmp" \
+"E protocol error: directory 'foo/bar' not within current directory
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server2-4
+	    fi
+	  fi
 	  ;;
 
 	client)

@@ -1,3 +1,14 @@
+1999-05-27  Jim Kingdon  <http://www.cyclic.com>
+
+	Fix two problems pointed out by Olaf Kirch of swb.de/caldera.de:
+	* server.c (outside_root): New function, contains expanded version
+	of code from serve_directory.
+	(serve_directory): Call outside_root.
+	(outside_dir): New function
+	(serve_modified, serve_is_modified, serve_notify,
+	serve_questionable, serve_unchanged): Call outside_dir.
+	* sanity.sh (server2): New tests, for these fixes.
+
 1999-05-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.h, subr.c (xmalloc): Return void* not char*, like xrealloc
