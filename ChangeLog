@@ -1,3 +1,8 @@
+Sat Dec 16 17:19:45 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_REPLACE_FUNCS): Add vasprintf.
+	* configure: Regenerated.
+
 Mon Nov 20 14:19:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Remove items about developer communications; they are done.
