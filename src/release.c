@@ -224,6 +224,17 @@ release (argc, argv)
 	    }
 	}
 
+        /* Note:  client.c doesn't like to have other code
+           changing the current directory on it.  So a fair amount
+           of effort is needed to make sure it doesn't get confused
+           about the directory and (for example) overwrite
+           CVS/Entries file in the wrong directory.  See release-17
+           through release-23. */
+
+        free (repository);
+	if (restore_cwd (&cwd, NULL))
+	    exit (EXIT_FAILURE);
+
 	if (1
 #ifdef CLIENT_SUPPORT
 	    && !(current_parsed_root->isremote
@@ -232,13 +243,14 @@ release (argc, argv)
 #endif
 	    )
 	{
-	    /* We are chdir'ed into the directory in question.  
-	       So don't pass args to unedit.  */
-	    int argc = 1;
+	    int argc = 2;
 	    char *argv[3];
 	    argv[0] = "dummy";
-	    argv[1] = NULL;
+	    argv[1] = thisarg;
+	    argv[2] = NULL;
 	    err += unedit (argc, argv);
+            if (restore_cwd (&cwd, NULL))
+                exit (EXIT_FAILURE);
 	}
 
 #ifdef CLIENT_SUPPORT
@@ -255,11 +267,6 @@ release (argc, argv)
 	    history_write ('F', thisarg, "", thisarg, ""); /* F == Free */
         }
 
-        free (repository);
-
-	if (restore_cwd (&cwd, NULL))
-	    error_exit ();
-
 	if (delete_flag)
 	{
 	    /* FIXME?  Shouldn't this just delete the CVS-controlled
@@ -272,7 +279,17 @@ release (argc, argv)
 
 #ifdef CLIENT_SUPPORT
         if (current_parsed_root->isremote)
-	    err += get_server_responses ();
+        {
+	    /* FIXME:
+	     * Is there a good reason why get_server_responses() isn't
+	     * responsible for restoring its initial directory itself when
+	     * finished?
+	     */
+            err += get_server_responses ();
+
+            if (restore_cwd (&cwd, NULL))
+                exit (EXIT_FAILURE);
+        }
 #endif /* CLIENT_SUPPORT */
     }
 
