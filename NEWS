@@ -3,6 +3,9 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* A problem with `cvs release' of subdirs that could corrupt CVS/Entries files
+  has been fixed (client/server).
+
 * The CVS server has had the protocol check for unused data from the client
   completely removed.  It is now assumed that the server knows when to shut
   down or we would detect it via other means.
