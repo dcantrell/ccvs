@@ -1,3 +1,7 @@
+1998-10-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO (31): Mention the ,foo.c, and SIGINT issue.
+
 1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Update from FAQ-O-Matic.  This features fewer blank lines

@@ -11,6 +11,8 @@ too?).  (perhaps should think a little harder about what this is
 trying to accomplish and what the best way is -kingdon, Jul 1997).
 
 31. Think hard about ^C recovery.
+    One particular issue: RCS removes the ,foo.c, file on ^C and CVS
+    doesn't.
 
 38. Think hard about using RCS state information to allow one to checkin
     a new vendor release without having it be accessed until it has been
