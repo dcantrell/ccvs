@@ -3717,7 +3717,6 @@ done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  cd ..
-	  rm -rf CVSROOT
 
 	  dotest modules2-3 "${testcvs} -q co ampermodule" ''
 	  dotest modules2-4 "test -d ampermodule/first-dir" ''
@@ -3738,6 +3737,25 @@ EOF
 	  dotest_fail modules2-8 "test -d second-dir" ''
 
 	  cd ..
+
+	  # Test that CVS gives an error if one combines -a with
+	  # other options.
+	  cd CVSROOT
+	  echo 'aliasopt -a -d onedir first-dir' >modules
+	  dotest modules2-a0 "${testcvs} -q ci -m add-modules" \
+"Checking in modules;
+/tmp/cvs-sanity/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  dotest_fail modules2-a1 "${testcvs} -q co aliasopt" \
+"${PROG} [a-z]*: -a cannot be specified in the modules file along with other options" \
+"${PROG} [a-z]*: -a cannot be specified in the modules file along with other options
+${PROG} \[[a-z]* aborted\]: cannot expand modules"
+
+	  # Clean up.
+	  rm -rf CVSROOT
 	  cd ..
 	  rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
