@@ -113,6 +113,23 @@ compilers, they are not part of the ANSI C specification.  As of GCC version
 an example of a literal string which is not multi-line but which will print
 multiple lines.
 
+* Other style issues
+
+When composing header files, do not declare function prototypes using the
+`extern' storage-class identifier.  Under C89, there is no functional
+difference between a function declaration with and without `extern', unless the 
+function is declared `static'.  This is NOT the case for global variables.
+Global variables declared in header files MUST be declared `extern'.  For
+example:
+
+/* Global variables */
+extern int foo;
+extern char *bar;
+
+/* Function declarations */
+int make_foo(void);
+char *make_bar(int _foobar);
+
 * Run-time behaviors
 
 Use assert() to check "can't happen" conditions internal to CVS.  We
@@ -242,6 +259,7 @@ Anyone can add themselves to the following mailing lists:
     test-results.  The only messages sent to this list are sent
       automatically, daily, by a script which runs "make check"
       and "make remotecheck" on the master CVS sources.
+
 To subscribe to dev, cvs, or test-results, send
 a message to "<list>-subscribe@ccvs.cvshome.org" or visit
 http://ccvs.cvshome.org/servlets/ProjectMailingListList and follow the
