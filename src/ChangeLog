@@ -1,3 +1,8 @@
+Sun Sep 10 18:48:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * release.c (release): made work with client/server.
+        Don't ask if <arg> is mentioned in `modules'.
+
 Fri Sep  8 13:25:55 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: When committing a removal, send stdout to LOGFILE;
