@@ -53,6 +53,9 @@
  */
 #include <stdbool.h>
 
+/* Ditto for this POSIX.2 header.  */
+#include <fnmatch.h>
+
 
 
 #if HAVE_SYS_STAT_H
