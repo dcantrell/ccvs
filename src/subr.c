@@ -265,7 +265,14 @@ xmalloc (bytes)
 {
     char *cp;
 
-    if ((cp = malloc (bytes)) == NULL && bytes != 0)
+    /* Parts of CVS try to xmalloc zero bytes and then free it.  Some
+       systems have a malloc which returns NULL for zero byte
+       allocations but a free which can't handle NULL, so compensate. */
+    if (bytes == 0)
+	bytes = 1;
+
+    cp = malloc (bytes);
+    if (cp == NULL)
 	error (1, 0, "can not allocate %lu bytes", (unsigned long) bytes);
     return (cp);
 }

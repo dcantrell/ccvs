@@ -1,3 +1,8 @@
+Thu May 25 08:30:12 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* subr.c (xmalloc): Never try to malloc zero bytes; if the user
+	asks for zero bytes, malloc one instead.
+
 Wed May 24 12:44:25 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
 
 	* subr.c (xmalloc): Don't complain about NULL if zero bytes were
