@@ -3035,7 +3035,7 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done"
 	  dotest rcslib-merge-7 "${testcvs} -q tag -b -r 1.1 patch1" "T file1"
-	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "U file1"
+	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "[UP] file1"
 	  dotest rcslib-merge-9 "${testcvs} -q status" \
 "===================================================================
 File: file1            	Status: Up-to-date
