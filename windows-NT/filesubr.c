@@ -408,33 +408,6 @@ rename_file (from, to)
 	error (1, errno, "cannot rename file %s to %s", from, to);
 }
 
-/* Windows NT doesn't have hard links or symbolic links.
-   There was only one place in CVS which used this function,
-   so I rewrote it to work another way, so this function isn't
-   used any more.  */
-#if 0
-/*
- * link a file, if possible.
- */
-int
-link_file (from, to)
-    const char *from;
-    const char *to;
-{
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> link(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> link(%s,%s)\n", from, to);
-#endif
-    if (noexec)
-	return (0);
-
-    return (link (from, to));
-}
-#endif
-
 /*
  * unlink a file, if possible.
  */
