@@ -129,6 +129,36 @@ add (argc, argv)
     if (argc <= 0)
 	usage (add_usage);
 
+    /* First some sanity checks.  I know that the CVS case is (sort of)
+       also handled by add_directory, but we need to check here so the
+       client won't get all confused in send_file_names.  */
+    for (i = 0; i < argc; i++)
+    {
+	/* If it were up to me I'd probably make this a fatal error.
+	   But some people are really fond of their "cvs add *", and
+	   don't seem to object to the warnings.
+	   Whatever.  */
+	strip_trailing_slashes (argv[i]);
+	if (strcmp (argv[i], ".") == 0
+	    || strcmp (argv[i], "..") == 0
+	    || fncmp (argv[i], CVSADM) == 0)
+	{
+	    int j;
+
+	    error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
+
+	    /* FIXME: We don't do anything about free'ing argv[i].  But
+	       the problem is that it is only sometimes allocated (see
+	       cvsrc.c).  */
+
+	    for (j = i; j < argc - 1; ++j)
+		argv[j] = argv[j + 1];
+	    --argc;
+	    /* Check the new argv[i] again.  */
+	    --i;
+	}
+    }
+
     /* find the repository associated with our current dir */
     repository = Name_Repository ((char *) NULL, (char *) NULL);
 
@@ -136,6 +166,14 @@ add (argc, argv)
     if (client_active)
     {
 	int i;
+
+	if (argc == 0)
+	    /* We snipped out all the arguments in the above sanity
+	       check.  We can just forget the whole thing (and we
+	       better, because if we fired up the server and passed it
+	       nothing, it would spit back a usage message).  */
+	    return 0;
+
 	start_server ();
 	ign_setup ();
 	if (options) send_arg(options);
