@@ -42,8 +42,10 @@ OBJS = adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o \
 
 TEST_OBJS = example.o minigzip.o
 
+# build_zlib.com added for CVS
 DISTFILES = README INDEX ChangeLog configure Make*[a-z0-9] descrip.mms \
-	    zlib.def zlib.rc algorithm.doc  *.[ch]
+	    zlib.def zlib.rc algorithm.doc  *.[ch] \
+	    build_zlib.com
 
 # For CVS, just build libz.a
 all: libz.a
