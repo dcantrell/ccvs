@@ -2427,7 +2427,7 @@ passwd} command.
 Unlike many of the files in @file{$CVSROOT/CVSROOT}, it
 is normal to edit the @file{passwd} file in-place,
 rather than via @sc{cvs}.  This is because of the
-possible security risks of having the @file{password}
+possible security risks of having the @file{passwd}
 file checked out to people's working copies.  If you do
 want to include the @file{passwd} file in checkouts of
 @file{$CVSROOT/CVSROOT}, see @xref{checkoutlist}.
