@@ -307,7 +307,7 @@ int
 mkdir_if_needed (name)
     char *name;
 {
-    if (mkdir (name, 0777) < 0)
+    if (mkdir (name) < 0)
     {
 	if (errno != EEXIST
 #ifdef EACCESS

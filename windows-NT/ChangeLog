@@ -1,3 +1,8 @@
+Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* filesubr.c (mkdir_if_needed): mkdir on NT only takes one,
+	not two, arguments.
+
 Thu Aug 29 09:47:33 1996  Mark A. Solinski  <markso@mcs.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
