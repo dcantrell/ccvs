@@ -1,3 +1,8 @@
+1998-07-12  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (ann-id): New (currently failing) test for bug in how
+	rcs keywords are expanded in the output of `cvs annotate'.
+
 1998-07-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (taginfo): Write the TESTDIR into the script rather

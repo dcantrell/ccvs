@@ -565,7 +565,7 @@ if test x"$*" = x; then
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo config"
-	tests="${tests} serverpatch log log2 ann crerepos rcs rcs2"
+	tests="${tests} serverpatch log log2 ann ann-id crerepos rcs rcs2"
 	tests="${tests} history"
 	tests="${tests} big modes modes2 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
@@ -11157,6 +11157,53 @@ done"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	ann-id)
+	  # Demonstrate that cvs-1.9.28.1 improperly expands rcs keywords in
+	  # the output of `cvs annotate' -- it uses values from the previous
+	  # delta.  In this case, `1.1' instead of `1.2', even though it puts
+	  # the proper version number on the prefix to each line of output.
+	  mkdir 1; cd 1
+	  dotest ann-id-1 "${testcvs} -q co -l ." ''
+	  module=x
+	  mkdir $module
+	  dotest ann-id-2 "${testcvs} add $module" \
+"Directory ${TESTDIR}/cvsroot/$module added to the repository"
+	  cd $module
+
+	  file=m
+	  echo '$Id''$' > $file
+
+	  dotest ann-id-3 "$testcvs add $file" \
+"${PROG} [a-z]*: scheduling file .$file. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest ann-id-4 "$testcvs -Q ci -m . $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+done
+Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  echo line2 >> $file
+	  dotest ann-id-5 "$testcvs -Q ci -m . $file" \
+"Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # The version number after $file,v should be `1.2'.
+	  # 1.9.28.1 puts `1.1' there.
+	  dotest ann-id-6 "$testcvs -Q ann $file" \
+"Annotations for $file
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.2 [0-9/]* [0-9:]* $username Exp "'\$'"
+1.2          ($username *[0-9a-zA-Z-]*): line2"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 	crerepos)
