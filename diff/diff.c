@@ -679,6 +679,8 @@ diff_run (argc, argv, out)
   /* Print any messages that were saved up for last.  */
   print_message_queue ();
 
+  free (switch_string);
+
   optind = optind_old;
   check_output (outfile);
   if (outfile != stdout)
