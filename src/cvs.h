@@ -562,6 +562,10 @@ extern int cvs_casecmp (const char *, const char *);
 extern int fopen_case (char *, char *, FILE **, char **);
 #endif
 
+/* exithandle.c */
+void signals_register (RETSIGTYPE (*handler)(int));
+void cleanup_register (void (*handler) (void));
+
 void strip_trailing_slashes (char *path);
 void update_delproc (Node * p);
 void usage (const char *const *cpp);

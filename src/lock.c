@@ -284,58 +284,104 @@ lock_name (char *repository, char *name)
 
 /*
  * Clean up all outstanding locks and free their storage.
- *
- * FIXME: This needs to be reentrant or protected from interrupts.  Calling
- * exit() from a handler routine will not cause this function to be called
- * again, but interrupts when this routine is called from before the exit
- * sequence can.
  */
 void
 Lock_Cleanup (void)
 {
+    static short int never_run_again = 0;
+
     TRACE (TRACE_FUNCTION, "Lock_Cleanup()");
+
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
     remove_locks ();
 
+    /* Avoid being interrupted during calls which set globals to NULL.  This
+     * avoids having interrupt handlers attempt to use these global variables
+     * in inconsistent states.
+     */
+    SIG_beginCrSect();
     dellist (&lock_tree_list);
+    /*  Unblocking allows any signal to be processed as soon as possible.  This
+     *  isn't really necessary, but since we know signals can cause us to be
+     *  called, why not avoid having blocks of code run twice.
+     */
+    SIG_endCrSect();
 
+    SIG_beginCrSect();
     if (locked_dir != NULL)
     {
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
 	char *tmp = locked_dir;
 	locked_dir = NULL;
 	dellist (&locked_list);
 	free (tmp);
     }
+    SIG_endCrSect();
 }
 
 
 
 /*
  * Remove locks without discarding the lock information.
- *
- * FIXME: This needs to be reentrant or protected from interrupts.  Calling
- * exit() from a handler routine will not cause this function to be called
- * again, but interrupts when this routine is called from before the exit
- * sequence can.
  */
 static void
 remove_locks (void)
 {
+    /* Avoid interrupts while accessing globals the interrupt handlers might
+     * make use of.
+     */
+    SIG_beginCrSect();
+
     /* clean up simple locks (if any) */
     if (global_readlock.repository != NULL)
     {
+	/* FIXME: This global deserves a tmp var.  */
 	lock_simple_remove (&global_readlock);
 	global_readlock.repository = NULL;
     }
+    /* See note in Lock_Cleanup() above.  */
+    SIG_endCrSect();
 
     /* clean up multiple locks (if any) */
+    SIG_beginCrSect();
     if (locklist != NULL)
     {
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
 	List *tmp = locklist;
 	locklist = NULL;
 	walklist (tmp, unlock_proc, NULL);
     }
+    SIG_endCrSect();
 }
+
+
 
 /*
  * walklist proc for removing a list of locks
@@ -346,6 +392,8 @@ unlock_proc (Node *p, void *closure)
     lock_simple_remove ((struct lock *)p->data);
     return (0);
 }
+
+
 
 /* Remove the lock files.  */
 static void
@@ -388,6 +436,8 @@ lock_simple_remove (struct lock *lock)
 	free (tmp);
     }
 }
+
+
 
 /*
  * Create a lock file for readers
