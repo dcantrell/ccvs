@@ -180,7 +180,7 @@ EXTRA_DIST = \
 	suite
 
 
-AUTOTEST = $(AUTOM4TE) --language=autotest --cache=autom4te.cache
+AUTOTEST = $(AUTOM4TE) --language=autotest
 subdir = src/tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

@@ -25,7 +25,7 @@ EXTRA_DIST = \
 	package.m4.in \
 	suite
 
-AUTOTEST = $(AUTOM4TE) --language=autotest --cache=autom4te.cache
+AUTOTEST = $(AUTOM4TE) --language=autotest
 $(TESTSUITE): @MAINTAINER_MODE_TRUE@ package.m4 atspecific.m4 $(TESTSUITE_AT)
 @MAINTAINER_MODE_TRUE@	$(AUTOTEST) -I $(srcdir) $(srcdir)/suite.at -o $@.tmp
 @MAINTAINER_MODE_TRUE@	mv $@.tmp $@
