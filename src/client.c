@@ -1037,6 +1037,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    if (status != 0)
 		error (0, status, "cannot change mode of %s", short_pathname);
 	}
+
+	free (mode_string);
 	free (buf);
     }
 
@@ -1095,6 +1097,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	local_timestamp = data->timestamp;
 	if (local_timestamp == NULL || ts[0] == '+')
 	    file_timestamp = time_stamp (filename);
+	else
+	    file_timestamp = NULL;
 
 	/*
 	 * These special version numbers signify that it is not up to
@@ -1108,6 +1112,9 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	Register (ent_list, filename, vn, local_timestamp,
 		  options, tag, date, ts[0] == '+' ? file_timestamp : NULL);
+
+	if (file_timestamp)
+	    free (file_timestamp);
 	free (scratch_entries);
     }
     free (entries_line);
@@ -2719,6 +2726,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	(void) addnode (ignlist, p);
     }
 
+    freevers_ts (&vers);
     free (short_pathname);
     return 0;
 }
