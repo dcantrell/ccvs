@@ -2,7 +2,7 @@
 
 .\analyze.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\cmpbuf.h"\
 	".\diff.h"\
@@ -11,7 +11,7 @@
 	
 
 .\cmpbuf.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\cmpbuf.h"\
 	".\system.h"\
@@ -19,7 +19,7 @@
 
 .\context.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -27,10 +27,9 @@
 	
 
 .\diff.c : \
-	"..\lib\fnmatch.h"\
 	"..\lib\getopt.h"\
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -39,7 +38,7 @@
 
 .\diff3.c : \
 	"..\lib\getopt.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diffrun.h"\
 	".\system.h"\
@@ -47,7 +46,7 @@
 
 .\dir.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -56,7 +55,7 @@
 
 .\ed.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -65,7 +64,7 @@
 
 .\ifdef.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -74,7 +73,7 @@
 
 .\io.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -83,7 +82,7 @@
 
 .\normal.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -92,7 +91,7 @@
 
 .\side.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -101,7 +100,7 @@
 
 .\util.c : \
 	"..\lib\regex.h"\
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
 	".\diffrun.h"\
@@ -109,5 +108,5 @@
 	
 
 .\version.c : \
-	"..\windows-NT\config.h"\
+	"..\windows-nt\config.h"\
 	
