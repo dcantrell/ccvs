@@ -1,5 +1,11 @@
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
+	* client.c (connect_to_pserver): added a close brace the lack of which
+	was preventing compilation when gssapi was enabled.  Removed a
+	redundant check for HAVE_KERBEROS.
+
+2000-10-18  Derek Price  <derek.price@openavenue.com>
+
 	* root.c (normalize_cvsroot): removed references to free_port_s and the
 	now useless call to free now that port_s is on the stack.  Thanks to
 	Jon Miner.

@@ -3853,6 +3853,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 		    "authorization failed: server %s rejected access to %s",
 		    CVSroot_hostname, CVSroot_directory);
 	    goto rejected;
+	}
 #else
 	error (1, 0, "This client does not support GSSAPI authentication");
 #endif
@@ -4037,7 +4038,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 #endif /* AUTH_CLIENT_SUPPORT */
 
 
-#if HAVE_KERBEROS
+#ifdef HAVE_KERBEROS
 
 /* This function has not been changed to deal with NO_SOCKET_TO_FD
    (i.e., systems on which sockets cannot be converted to file
@@ -4071,7 +4072,6 @@ start_tcp_server (tofdp, fromfdp)
 	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
 	       port, SOCK_STRERROR (SOCK_ERRNO));
 
-#ifdef HAVE_KERBEROS
     {
 	const char *realm;
 	struct sockaddr_in laddr;
@@ -4096,7 +4096,6 @@ start_tcp_server (tofdp, fromfdp)
 		   krb_get_err_text (status));
 	memcpy (kblock, cred.session, sizeof (C_Block));
     }
-#endif /* HAVE_KERBEROS */
 
     server_fd = s;
     close_on_exec (server_fd);
