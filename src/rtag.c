@@ -167,6 +167,7 @@ rtag (argc, argv)
 	
 	ign_setup ();
 
+	/* FIXME: is there any reason why we ignore force_tag_match?  */
 	if (local)
 	    send_arg("-l");
 	if (delete_flag)
@@ -175,7 +176,7 @@ rtag (argc, argv)
 	    send_arg("-b");
 	if (force_tag_move)
 	    send_arg("-F");
-	if (run_module_prog)
+	if (!run_module_prog)
 	    send_arg("-n");
 	if (attic_too)
 	    send_arg("-a");

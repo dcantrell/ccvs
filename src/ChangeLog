@@ -1,3 +1,7 @@
+Wed Jan 22 10:06:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rtag.c (rtag): Send -n if run_module_prog is NOT true.
+
 Thu Jan 16 00:06:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.3.
