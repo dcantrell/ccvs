@@ -1,5 +1,7 @@
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * config.h (HAVE_SYS_UTIME_H): define to 1.
+
         * options.h: undef SETXID_SUPPORT, to correspond with Norbert
         Kiesel's recent change to ../src/options.h.in, etc.
 

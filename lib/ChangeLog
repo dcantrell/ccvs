@@ -4,7 +4,9 @@ Wed Nov  8 11:10:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         if it's not defined, then just do a single mask and assume
         acceptance any of non-zero result.  Norbert, I trust you'll let me
         know if this is unsatisfactory. :-)
-
+        Ifdef HAVE_SYS_UTIME_H, then include <sys/utime.h>.  Only OS/2
+        defines this right now.
+        
 Wed Nov  8 13:18:51 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* valloc.c: omit malloc declaration (it's already in system.h
