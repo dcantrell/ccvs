@@ -1,3 +1,14 @@
+Tue Aug  6 15:36:09 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* log.c (struct datelist): Define.
+	(struct log_data): Add datelist and singledatelist fields.
+	(log_usage): Add -d.
+	(cvslog): Handle -d.
+	(log_parse_date): New static function.
+	(log_fileproc): Do special single date handling.
+	(log_version_requested): Check datelist and singledatelist.
+	(log_fix_singledate): New static function.
+
 Mon Aug  5 23:48:16 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* log.c (struct option_revlist): Define.

@@ -51,6 +51,20 @@ struct revlist
     int fields;
 };
 
+/* This structure holds information parsed from the -d option.  */
+
+struct datelist
+{
+    /* The next date.  */
+    struct datelist *next;
+    /* The starting date.  */
+    char *start;
+    /* The ending date.  */
+    char *end;
+    /* Nonzero if the range is inclusive rather than exclusive.  */
+    int inclusive;
+};
+
 /* This structure is used to pass information through start_recursion.  */
 struct log_data
 {
@@ -66,6 +80,12 @@ struct log_data
     /* If not NULL, the value given for the -r option, which lists
        sets of revisions to be printed.  */
     struct option_revlist *revlist;
+    /* If not NULL, the date pairs given for the -d option, which
+       select date ranges to print.  */
+    struct datelist *datelist;
+    /* If not NULL, the single dates given for the -d option, which
+       select specific revisions to print based on a date.  */
+    struct datelist *singledatelist;
     /* Argument count and vector for rlog, if dorlog is set.  */
     int argc;
     char **argv;
@@ -83,6 +103,7 @@ static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
 				 char *repository, char *update_dir));
 static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static struct option_revlist *log_parse_revlist PROTO ((const char *));
+static void log_parse_date PROTO ((struct log_data *, const char *));
 static struct revlist *log_expand_revlist PROTO ((RCSNode *,
 						  struct option_revlist *,
 						  int));
@@ -91,6 +112,7 @@ static int log_version_requested PROTO ((struct log_data *, struct revlist *,
 					 RCSNode *, RCSVers *));
 static int log_symbol PROTO ((Node *, void *));
 static int log_count PROTO ((Node *, void *));
+static int log_fix_singledate PROTO ((Node *, void *));
 static int log_count_print PROTO ((Node *, void *));
 static void log_tree PROTO ((struct log_data *, struct revlist *,
 			     RCSNode *, const char *));
@@ -103,11 +125,12 @@ static int version_compare PROTO ((const char *, const char *, int));
 
 static const char *const log_usage[] =
 {
-    "Usage: %s %s [-blN] [-r[revisions]] [rlog-options] [files...]\n",
+    "Usage: %s %s [-blN] [-r[revisions]] [-d dates] [rlog-options] [files...]\n",
     "\t-b\tOnly list revisions on the default branch.\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-N\tDo not list tags.\n",
     "\t-r[revisions]\tSpecify revision(s)s to list.\n",
+    "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
     NULL
 };
 
@@ -134,12 +157,15 @@ cvslog (argc, argv)
      */
     opterr = 0;
     optind = 1;
-    while ((c = getopt (argc, argv, "blNr::")) != -1)
+    while ((c = getopt (argc, argv, "bd:lNr::")) != -1)
     {
 	switch (c)
 	{
 	    case 'b':
 		log_data.default_branch = 1;
+		break;
+	    case 'd':
+		log_parse_date (&log_data, optarg);
 		break;
 	    case 'l':
 		local = 1;
@@ -152,7 +178,7 @@ cvslog (argc, argv)
 		for (prl = &log_data.revlist;
 		     *prl != NULL;
 		     prl = &(*prl)->next)
-		  ;
+		    ;
 		*prl = rl;
 		break;
 	    case '?':
@@ -282,6 +308,95 @@ log_parse_revlist (argstring)
     }
 
     return ret;
+}
+
+/*
+ * Parse a date specification.
+ */
+static void
+log_parse_date (log_data, argstring)
+    struct log_data *log_data;
+    const char *argstring;
+{
+    char *orig_copy, *copy;
+
+    /* Copy the argument into memory so that we can change it.  We
+       don't want to change the argument because, at least as of this
+       writing, we will use it if we send the arguments to the server.  */
+    copy = xstrdup (argstring);
+    orig_copy = copy;
+    while (copy != NULL)
+    {
+	struct datelist *nd, **pd;
+	char *cpend, *cp, *ds, *de;
+
+	nd = (struct datelist *) xmalloc (sizeof *nd);
+
+	cpend = strchr (copy, ';');
+	if (cpend != NULL)
+	    *cpend++ = '\0';
+
+	pd = &log_data->datelist;
+	nd->inclusive = 0;
+
+	if ((cp = strchr (copy, '>')) != NULL)
+	{
+	    *cp++ = '\0';
+	    if (*cp == '=')
+	    {
+		++cp;
+		nd->inclusive = 1;
+	    }
+	    ds = cp;
+	    de = copy;
+	}
+	else if ((cp = strchr (copy, '<')) != NULL)
+	{
+	    *cp++ = '\0';
+	    if (*cp == '=')
+	    {
+		++cp;
+		nd->inclusive = 1;
+	    }
+	    ds = copy;
+	    de = cp;
+	}
+	else
+	{
+	    ds = NULL;
+	    de = copy;
+	    pd = &log_data->singledatelist;
+	}
+
+	if (ds == NULL)
+	    nd->start = NULL;
+	else if (*ds != '\0')
+	    nd->start = Make_Date (ds);
+	else
+	{
+	  /* 1970 was the beginning of time, as far as get_date and
+	     Make_Date are concerned.  */
+	    nd->start = Make_Date ("1/1/1970 UTC");
+	}
+
+	if (*de != '\0')
+	    nd->end = Make_Date (de);
+	else
+	{
+	  /* We want to set the end date to some time sufficiently far
+	     in the future to pick up all revisions that have been
+	     created since the specified date and the time `cvs log'
+	     completes.  */
+	    nd->end = Make_Date ("next week");
+	}
+
+	nd->next = *pd;
+	*pd = nd;
+
+	copy = cpend;
+    }
+
+    free (orig_copy);
 }
 
 /*
@@ -529,9 +644,20 @@ log_fileproc (callerdat, finfo)
     cvs_output (buf, 0);
 
     cvs_output (";\tselected revisions: ", 0);
+
     log_data_and_rcs.log_data = log_data;
     log_data_and_rcs.revlist = revlist;
     log_data_and_rcs.rcs = rcsfile;
+
+    /* If any single dates were specified, we need to identify the
+       revisions they select.  Each one selects the single revision,
+       which is otherwise selected, of that date or earlier.  The
+       log_fix_singledate routine will fill in the start date for each
+       specific revision.  */
+    if (log_data->singledatelist != NULL)
+	walklist (rcsfile->versions, log_fix_singledate,
+		  (void *) &log_data_and_rcs);
+
     sprintf (buf, "%d", walklist (rcsfile->versions, log_count_print,
 				  (void *) &log_data_and_rcs));
     cvs_output (buf, 0);
@@ -578,6 +704,19 @@ log_fileproc (callerdat, finfo)
 
     /* Free up the new revlist and restore the old one.  */
     log_free_revlist (revlist);
+
+    /* If singledatelist is not NULL, free up the start dates we added
+       to it.  */
+    if (log_data->singledatelist != NULL)
+    {
+	struct datelist *d;
+
+	for (d = log_data->singledatelist; d != NULL; d = d->next)
+	{
+	    free (d->start);
+	    d->start = NULL;
+	}
+    }
 
     return 0;
 }
@@ -799,7 +938,8 @@ log_free_revlist (revlist)
 
 /*
  * Return nonzero if a revision should be printed, based on the
- * options provided.  */
+ * options provided.
+ */
 static int
 log_version_requested (log_data, revlist, rcs, vnode)
     struct log_data *log_data;
@@ -807,6 +947,47 @@ log_version_requested (log_data, revlist, rcs, vnode)
     RCSNode *rcs;
     RCSVers *vnode;
 {
+    /* rlog considers all the -d options together when it decides
+       whether to print a revision, so we must be compatible.  */
+    if (log_data->datelist != NULL || log_data->singledatelist != NULL)
+    {
+	struct datelist *d;
+
+	for (d = log_data->datelist; d != NULL; d = d->next)
+	{
+	    int cmp;
+
+	    cmp = RCS_datecmp (vnode->date, d->start);
+	    if (cmp > 0 || (cmp == 0 && d->inclusive))
+	    {
+		cmp = RCS_datecmp (vnode->date, d->end);
+		if (cmp < 0 || (cmp == 0 && d->inclusive))
+		    break;
+	    }
+	}
+
+	if (d == NULL)
+	{
+	    /* Look through the list of specific dates.  We want to
+	       select the revision with the exact date found in the
+	       start field.  The commit code ensures that it is
+	       impossible to check in multiple revisions of a single
+	       file in a single second, so checking the date this way
+	       should never select more than one revision.  */
+	    for (d = log_data->singledatelist; d != NULL; d = d->next)
+	    {
+		if (d->start != NULL
+		    && RCS_datecmp (vnode->date, d->start) == 0)
+		{
+		    break;
+		}
+	    }
+
+	    if (d == NULL)
+		return 0;
+	}
+    }
+
     /* If the -r or -b options were used, REVLIST will be non NULL,
        and we print the union of the specified revisions.  */
     if (revlist != NULL)
@@ -864,6 +1045,65 @@ log_count (p, closure)
     void *closure;
 {
     return 1;
+}
+
+/*
+ * Sort out a single date specification by narrowing down the date
+ * until we find the specific selected revision.
+ */
+static int
+log_fix_singledate (p, closure)
+    Node *p;
+    void *closure;
+{
+    struct log_data_and_rcs *data = (struct log_data_and_rcs *) closure;
+    Node *pv;
+    RCSVers *vnode;
+    struct datelist *holdsingle, *holddate;
+    int requested;
+
+    pv = findnode (data->rcs->versions, p->key);
+    if (pv == NULL)
+	error (1, 0, "missing version `%s' in RCS file `%s'",
+	       p->key, data->rcs->path);
+    vnode = (RCSVers *) pv->data;
+
+    /* We are only interested if this revision passes any other tests.
+       Temporarily clear log_data->singledatelist to avoid confusing
+       log_version_requested.  We also clear log_data->datelist,
+       because rlog considers all the -d options together.  We don't
+       want to reject a revision because it does not match a date pair
+       if we are going to select it on the basis of the singledate.  */
+    holdsingle = data->log_data->singledatelist;
+    data->log_data->singledatelist = NULL;
+    holddate = data->log_data->datelist;
+    data->log_data->datelist = NULL;
+    requested = log_version_requested (data->log_data, data->revlist,
+				       data->rcs, vnode);
+    data->log_data->singledatelist = holdsingle;
+    data->log_data->datelist = holddate;
+
+    if (requested)
+    {
+	struct datelist *d;
+
+	/* For each single date, if this revision is before the
+	   specified date, but is closer than the previously selected
+	   revision, select it instead.  */
+	for (d = data->log_data->singledatelist; d != NULL; d = d->next)
+	{
+	    if (RCS_datecmp (vnode->date, d->end) <= 0
+		&& (d->start == NULL
+		    || RCS_datecmp (vnode->date, d->start) > 0))
+	    {
+		if (d->start != NULL)
+		    free (d->start);
+		d->start = xstrdup (vnode->date);
+	    }
+	}
+    }
+
+    return 0;
 }
 
 /*
