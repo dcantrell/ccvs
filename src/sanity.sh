@@ -655,6 +655,7 @@ pass ()
 fail ()
 {
   echo "FAIL: $1" | tee -a ${LOGFILE}
+  echo "*** Please see the \`TESTS' and \`check.log' files for more information." >&2
   # This way the tester can go and see what remnants were left
   exit 1
 }
