@@ -457,7 +457,7 @@ typedef int ssize_t;
  * platforms, like some of the Makefiles are.  That way, there is only one
  * place the version string needs to be updated by hand for a new release.
  */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.5.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.12.6"
 
 /*
  * For lib/system.h
