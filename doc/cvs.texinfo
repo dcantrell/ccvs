@@ -11664,9 +11664,16 @@ compiled-in value is used, or your @code{$PATH} is searched.
 @item $HOME
 @cindex HOMEPATH
 @item $HOMEPATH
+@cindex HOMEDRIVE
+@item $HOMEDRIVE
 Used to locate the directory where the @file{.cvsrc}
-file is searched (@code{$HOMEPATH} is used for Windows-NT).
-@pxref{~/.cvsrc}
+file, and other such files, are searched.  On Unix, CVS
+just checks for HOME.  On Windows NT, the system will
+set HOMEDRIVE, for example to @samp{d:} and HOMEPATH,
+for example to @file{\joe}.  On Windows 95, you'll
+probably need to set HOMEDRIVE and HOMEPATH yourself.
+@c We are being vague about whether HOME works on
+@c Windows; see long comment in windows-NT/filesubr.c.
 
 @cindex CVS_RSH
 @item $CVS_RSH
@@ -11916,6 +11923,12 @@ bug (@pxref{BUGS}).
 @c CD is bad (remains to be confirmed).
 @c There is also a report of something which looks
 @c very similar on SGI, Irix 5.2, so I dunno.
+
+@item cvs [login aborted]: could not find out home directory
+This means that you need to set the environment
+variables that CVS uses to locate your home directory.
+See the discussion of HOME, HOMEDRIVE, and HOMEPATH in
+@ref{Environment variables}.
 
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the
