@@ -171,6 +171,7 @@ target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
 EXTRA_DIST = \
+	stamp-ch \
 	config.h \
 	config.h.in \
 	ndir.h \
