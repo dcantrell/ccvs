@@ -6017,7 +6017,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 	repos = xstrdup (rcs->path);
 	workfile = strrchr (repos, '/');
 	*workfile++ = '\0';
-	notify_do ('C', workfile, user, NULL, NULL, repos);
+	notify_do ('C', workfile, NULL, user, NULL, NULL, repos);
 	free (repos);
     }
 

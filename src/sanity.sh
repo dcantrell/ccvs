@@ -1330,6 +1330,7 @@ if test x"$*" = x; then
 	tests="${tests} errmsg3"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
+        tests="${tests} edit-check"
 	tests="${tests} unedit-without-baserev"
 	tests="${tests} ignore ignore-on-branch binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
@@ -15944,11 +15945,11 @@ U first-dir/w3'
 
 	  cd first-dir
 	  # OK, now we want to try files in various states with cvs edit.
-	  dotest devcom2-12 "${testcvs} edit w4" \
+	  dotest_fail devcom2-12 "$testcvs edit w4" \
 "${CPROG} edit: no such file w4; ignored"
 	  # Try the same thing with a per-directory watch set.
 	  dotest devcom2-13 "${testcvs} watch on" ''
-	  dotest devcom2-14 "${testcvs} edit w5" \
+	  dotest_fail devcom2-14 "$testcvs edit w5" \
 "${CPROG} edit: no such file w5; ignored"
 	  dotest devcom2-15 "${testcvs} editors" ''
 	  dotest devcom2-16 "${testcvs} editors w4" ''
@@ -16184,7 +16185,13 @@ U first-dir/subdir/sfile"
 	  cd ../..
 
 	  cd 1/first-dir
-	  dotest watch4-11 "${testcvs} edit file1" ''
+
+            # NOTE: I'm leaving in '' as acceptable
+            #  to maintain partial compatibility with CVS versions
+            #  prior to the edit check patch.
+          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/2/first-dir"
+	  dotest watch4-11 "$testcvs edit file1" "$editorsLineRE"
+
 	  echo 'edited in 1' >file1
 	  dotest watch4-12 "${testcvs} -q ci -m edit-in-1" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
@@ -16291,6 +16298,312 @@ initial revision: 1\.1"
 
 
 
+        edit-check)
+          # This tests the edit -c/-f and related features.
+
+	  mkdir edit-check; cd edit-check
+	  dotest edit-check-0a "$testcvs -q co -l ."
+	  mkdir first-dir
+	  dotest edit-check-0b "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+
+	  cd first-dir
+	  dotest edit-check-1 "$testcvs watch on"
+
+          echo foo > file1
+          dotest edit-check-2a "$testcvs add -minitial file1" \
+"$SPROG [a-z]*: scheduling file .file1. for addition
+$SPROG [a-z]*: use .$SPROG commit. to add this file permanently"
+
+          dotest edit-check-2b "$testcvs commit -m 'c1' file1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1"
+
+          editorsLineRE="file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+
+          R_editorsLineRE="first-dir/file1	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check"
+          F3_editorsLineRE="second-dir/file3	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+
+          A_editorsLineRE="file1	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR[0-9]*/edit-check/first-dir"
+
+          AF_editorsLineRE="file[12]	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+
+          NF_editorsLineRE="	[-a-zA-Z0-9_]*	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/edit-check/first-dir"
+
+          dotest edit-check-3 "$testcvs edit file1"
+          dotest edit-check-4 "$testcvs edit file1" "$editorsLineRE"
+
+          dotest_fail edit-check-5a "$testcvs edit -c file1" \
+"$editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+
+          dotest edit-check-5b "$testcvs editors" "$editorsLineRE"
+
+          dotest edit-check-6a "$testcvs edit -c -f file1" "$editorsLineRE"
+          dotest edit-check-6b "$testcvs editors" "$editorsLineRE"
+
+          dotest edit-check-7a "cat file1" "foo"
+          echo "bar" > file1
+          dotest_fail edit-check-7b "$testcvs edit -c file1" \
+"$editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+          dotest edit-check-7c "cat file1" "bar"
+
+            # edit-check-8a has issues.  It copies the current (modified)
+            # version of the file into CVS/Base, so that edit-check-9a and
+            # edit-check-9b don't get the expected results.
+            #   Maybe unedit is *supposed* to return it to the state
+            # it was in before the edit (even if it was modified),
+            # but while that has a certain symetry, it doesn't seem
+            # to pass the intuitive-usability test.
+            #   This aspect of the general problem could
+            # be fixed by not overwriting pre-existing Base versions,
+            # but it still wouldn't fix it if the user manually
+            # modified the file before doing the first edit.
+            #   Because of the possibility that this is working as
+            # intended, I'm just commenting out the test, not fixing
+            # the issue.
+          #dotest edit-check-8a "${testcvs} edit -c -f file1" \
+          #   "${editorsLineRE}"
+          dotest edit-check-8b "$testcvs editors" "$editorsLineRE"
+
+          dotest edit-check-9a "echo yes | $testcvs unedit file1" \
+"file1 has been modified; revert changes? "
+          dotest edit-check-9b "$testcvs editors"
+          dotest edit-check-9c "cat file1" "foo"
+
+          dotest edit-check-10 "$testcvs edit -c file1"
+          dotest_fail edit-check-11 "$testcvs edit -c file1" \
+"$editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+
+          echo "morefoo" > file1
+          dotest edit-check-12a "$testcvs commit -m 'c2' -c file1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1"
+          dotest edit-check-12b "$testcvs editors file1"
+
+          chmod u+w file1
+          echo "morebar" > file1
+          dotest_fail edit-check-13a "$testcvs commit -m 'c3' -c file1" \
+"$SPROG [a-z]*: Valid edit does not exist for file1
+$SPROG \[[a-z]* aborted\]: correct above errors first!"
+          dotest edit-check-13b "$testcvs editors file1"
+
+          dotest edit-check-14a "$testcvs commit -m 'c4' -c -f file1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2"
+          dotest edit-check-14b "$testcvs editors file1"
+
+          dotest edit-check-15 "$testcvs edit -c file1"
+          cd ..
+
+          dotest edit-check-16a "echo yes | $testcvs release -d first-dir" \
+"You have \[0\] altered files in this repository.
+Are you sure you want to release (and delete) directory \`first-dir': "
+          dotest edit-check-16b "$testcvs -q update -d first-dir" \
+             "U first-dir/file1"
+          cd first-dir
+          dotest edit-check-16c "$testcvs editors file1"
+
+          cd ..
+          dotest edit-check-17a "$testcvs edit -c"
+          dotest_fail edit-check-17b "$testcvs edit -c" \
+"$R_editorsLineRE
+$SPROG edit: Skipping file \`first-dir/file1' due to existing editors\."
+          dotest edit-check-17c "$testcvs edit -c -f" "$R_editorsLineRE"
+
+          echo "more changes" > first-dir/file1
+          dotest edit-check-18a "$testcvs -q commit -m 'c5' -c" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  first-dir/file1
+new revision: 1\.4; previous revision: 1\.3"
+          dotest edit-check-18b "$testcvs editors"
+
+          cd first-dir
+
+            # Manually fake another editor:
+
+            # Try to gaurantee a seperate name for an "other" user editting
+            # the file.
+          otherUser="dummyUser"
+          if [ x"$USER" = x"$otherUser" ]  ; then
+            otherUser="dummyUser2"
+          fi
+          if [ x"$LOGNAME" = x"$otherUser" ] ; then
+            otherUser="dummyUser3"
+          fi
+          tabChar='	'
+
+          backupFileattrName="$CVSROOT_DIRNAME/first-dir/CVS/bak.fileattr.$$"
+          mv $CVSROOT_DIRNAME/first-dir/CVS/fileattr $backupFileattrName
+
+          otherDir="`pwd | sed 's%/edit-check/%2/edit-check/%'`"
+          echo \
+"Ffile1${tabChar}_watched=;_editors=$otherUser>Sat Oct  6 04:25:00 2001 GMT+`hostname`+$otherDir;_watchers=$otherUser>tedit+tunedit+tcommit
+D${tabChar}_watched=" > $CVSROOT_DIRNAME/first-dir/CVS/fileattr 
+
+          editFileattrName="$CVSROOT_DIRNAME/first-dir/CVS/edit.fileattr.$$"
+          cp $CVSROOT_DIRNAME/first-dir/CVS/fileattr $editFileattrName
+
+          O_editorsLineRE="file1	$otherUser	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR[0-9]/edit-check/first-dir"
+
+          dotest edit-check-19a "$testcvs edit file1" "$O_editorsLineRE"
+          dotest edit-check-19b "$testcvs editors" \
+"$A_editorsLineRE
+$NF_editorsLineRE"
+
+          dotest edit-check-20a "$testcvs unedit file1"
+          dotest edit-check-20b "$testcvs editors" "$O_editorsLineRE"
+
+          dotest_fail edit-check-21a "$testcvs edit -c file1" \
+"$O_editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+          dotest edit-check-21b "$testcvs editors" "$O_editorsLineRE"
+
+          dotest edit-check-22a "$testcvs edit -c -f file1" "$O_editorsLineRE"
+          dotest edit-check-22b "$testcvs editors" \
+"$A_editorsLineRE
+$NF_editorsLineRE"
+
+          echo "Yet another change" >file1
+
+          dotest_fail edit-check-23a "$testcvs edit -c" \
+"$A_editorsLineRE
+$NF_editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+
+          dotest edit-check-23b "$testcvs editors" \
+"$A_editorsLineRE
+$NF_editorsLineRE"
+
+          dotest edit-check-24a "echo y | $testcvs unedit" \
+             "file1 has been modified; revert changes? "
+          dotest edit-check-24b "$testcvs editors" "$O_editorsLineRE"
+          dotest edit-check-24c "cat file1" "more changes"
+
+          dotest edit-check-25a "$testcvs unedit"
+          dotest edit-check-25b "$testcvs editors" "$O_editorsLineRE"
+          dotest_fail edit-check-25c "test -w file1"
+
+          dotest edit-check-26a "$testcvs edit file1" "$O_editorsLineRE"
+          dotest edit-check-26b "$testcvs editors file1" \
+"$A_editorsLineRE
+$NF_editorsLineRE"
+          dotest edit-check-26c "test -w file1"
+
+          echo "Yet more changes" >file1
+          dotest edit-check-27a "$testcvs -q commit -mmsg -c file1" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4"
+          dotest edit-check-27b "$testcvs editors" "$O_editorsLineRE"
+
+          chmod u+w file1
+          echo "unofficial change" >file1
+
+          dotest_fail edit-check-28a "$testcvs -q commit -mmsg -c" \
+"$SPROG commit: Valid edit does not exist for file1
+$SPROG \[commit aborted\]: correct above errors first!"
+          dotest edit-check-28b "$testcvs editors" "$O_editorsLineRE"
+
+          dotest edit-check-29a "$testcvs -q commit -mmsg -c -f" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.6; previous revision: 1\.5"
+          dotest edit-check-29b "$testcvs editors" "$O_editorsLineRE"
+          dotest edit-check-29c "cat file1" "unofficial change"
+
+          cp "$backupFileattrName" $CVSROOT_DIRNAME/first-dir/CVS/fileattr
+          dotest edit-check-30 "$testcvs editors"
+
+          # Make sure earlier unreported editors are reported properly
+          # with the edit-check code running.
+          if $remote; then
+            CVS_SERVER_SAVED=$CVS_SERVER
+            CVS_SERVER=$TESTDIR/cvs-none; export CVS_SERVER
+
+            # The $DOTSTAR matches the exact exec error message
+            # (which varies) and either "end of file from server"
+            # (if the process doing the exec exits before the parent
+            # gets around to sending data to it) or "broken pipe" (if it
+            # is the other way around).
+            dotest_fail edit-check-31ar "$testcvs edit file1" \
+"$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: $DOTSTAR"
+            dotest edit-check-31br "test -w file1"
+            dotest edit-check-31cr "cat CVS/Notify" \
+"Efile1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	$TESTDIR/edit-check/first-dir	EUC"
+            CVS_SERVER=$CVS_SERVER_SAVED; export CVS_SERVER
+
+            dotest_fail edit-check-31dr "$testcvs edit -c file1" \
+"$editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\."
+            dotest edit-check-31er "$testcvs editors file1" "$editorsLineRE"
+            dotest edit-check-31fr "$testcvs unedit file1"
+          fi
+
+           # Make sure it isn't confused by handling multiple files at
+           # the same time:
+          echo file2Data >file2
+
+          dotest edit-check-32a "$testcvs add file2" \
+"$SPROG [a-z]*: scheduling file .file2. for addition
+$SPROG [a-z]*: use .$SPROG commit. to add this file permanently"
+
+          dotest edit-check-32b "$testcvs commit -m 'c1' file2" \
+"$CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
+initial revision: 1\.1"
+
+          mkdir second-dir
+          dotest edit-check-32c "$testcvs add second-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir/second-dir added to the repository"
+          cd second-dir
+          echo ThirdFile >file3
+
+          dotest edit-check-32d "$testcvs add file3" \
+"$SPROG [a-z]*: scheduling file .file3. for addition
+$SPROG [a-z]*: use .$SPROG commit. to add this file permanently"
+
+          dotest edit-check-32f "$testcvs commit -m 'c1' file3" \
+"$CVSROOT_DIRNAME/first-dir/second-dir/file3,v  <--  file3
+initial revision: 1\.1"
+          dotest_fail edit-check-32g "test -w file3"
+
+          cd ..
+
+          dotest edit-check-33a "$testcvs edit -c"
+
+          dotest edit-check-33b "$testcvs editors" \
+"$AF_editorsLineRE
+$AF_editorsLineRE
+$F3_editorsLineRE"
+          dotest edit-check-33c "test -w second-dir/file3"
+
+          dotest_fail edit-check-34a "$testcvs edit -c file1 file2" \
+"$AF_editorsLineRE
+$SPROG edit: Skipping file \`file1' due to existing editors\.
+$AF_editorsLineRE
+$SPROG edit: Skipping file \`file2' due to existing editors\."
+
+          dotest edit-check-34b "$testcvs editors file1 file2" \
+"$editorsLineRE
+$AF_editorsLineRE"
+
+          dotest edit-check-35a "$testcvs unedit file1"
+          dotest edit-check-35b "$testcvs editors" \
+"$AF_editorsLineRE
+$F3_editorsLineRE"
+          dotest edit-check-35c "test -w second-dir/file3"
+
+          dotest edit-check-36a "$testcvs unedit"
+          dotest edit-check-36b "$testcvs editors"
+          dotest_fail edit-check-36c "test -w second-dir/file3"
+
+	  dokeep
+          cd ../..
+          rm -rf edit-check
+          rm -rf $CVSROOT_DIRNAME/first-dir
+          ;;
+
+
+
 	unedit-without-baserev)
 	  mkdir 1; cd 1
 	  module=x
@@ -16336,7 +16649,10 @@ U m"
 	  cd ../..
 
 	  cd 1/x
-	  dotest unedit-without-baserev-11 "${testcvs} edit m" ''
+
+          editorsLineRE="m	$username	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	$hostname	$TESTDIR/2/x"
+	  dotest unedit-without-baserev-11 "$testcvs edit m" "$editorsLineRE"
+
 	  echo 'edited in 1' >m
 	  dotest unedit-without-baserev-12 "${testcvs} -q ci -m edit-in-1" \
 "$CVSROOT_DIRNAME/x/m,v  <--  m
@@ -28789,9 +29105,11 @@ EOF
 	    # from the first is bogus but hopefully we can get away
 	    # with it.
 	    dotest server-7 "${servercvs} server" \
-"Notified \./
+"M file1	$username	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir
+Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok
+M file1	$username	Fri May  7 13:21:09 1999 GMT	myhost	some-work-dir
 Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok" <<EOF
@@ -28809,7 +29127,8 @@ EOF
 	    # OK, now test a few error conditions.
 	    # FIXCVS: should give "error" and no "Notified", like server-9
 	    dotest server-8 "${servercvs} server" \
-"E $CPROG server: invalid character in editor value
+"M file1	$username	The 57th day of Discord in the YOLD 3165	myhost	some-work-dir
+E $CPROG server: invalid character in editor value
 Notified \./
 ${TESTDIR}/crerepos/dir1/file1
 ok" <<EOF
@@ -29931,7 +30250,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
 	  dotest writeproxy-noredirect-5 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -29963,7 +30282,7 @@ EOF
 	  cd firstdir
 	  echo now you see me >file1
 	  dotest writeproxy-noredirect-6 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 ok
@@ -29993,7 +30312,7 @@ EOF
 	  echo /file1/0/dummy+timestamp// >>CVS/Entries
 
 	  dotest writeproxy-noredirect-7 "$CVS_SERVER server" \
-"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors init annotate rannotate noop version
+"Valid-requests Root Valid-responses valid-requests Command-prep Referrer Repository Directory Relative-directory Max-dotdot Static-directory Sticky Entry Kopt Checkin-time Modified Is-modified UseUnchanged Unchanged Notify Hostname LocalDir Questionable Argument Argumentx Global_option Gzip-stream wrapper-sendme-rcsOptions Set ${DOTSTAR}expand-modules ci co update diff log rlog list rlist global-list-quiet ls add remove update-patches gzip-file-contents status rdiff tag rtag import admin export history release watch-on watch-off watch-add watch-remove watchers editors edit init annotate rannotate noop version
 ok
 ok
 Mode u=rw,g=rw,o=r

@@ -25,8 +25,8 @@ extern void notify_check (const char *repository, const char *update_dir);
    For TYPE 'E', VAL is the time+host+directory data which goes in
    _editors, and WATCHES is zero or more of E,U,C, in that order, to specify
    what kinds of temporary watches to set.  */
-extern void notify_do (int type, const char *filename, const char *who,
-                       const char *val, const char *watches,
+extern void notify_do (int type, const char *filename, const char *upadte_dir,
+		       const char *who, const char *val, const char *watches,
                        const char *repository);
 
 /* Set attributes to reflect the fact that EDITOR is editing FILENAME.
@@ -38,3 +38,8 @@ extern void editor_set (const char *filename, const char *editor,
 /* Take note of the fact that FILE is up to date (this munges CVS/Base;
    processing of CVS/Entries is done separately).  */
 extern void mark_up_to_date (const char *file);
+
+void editors_output (const char *fullname, const char *them);
+
+void edit_file (void *data, List *ent_list, char *short_pathname,
+		char *filename);
