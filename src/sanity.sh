@@ -779,7 +779,7 @@ if test x"$*" = x; then
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
-	tests="${tests} mkmodules"
+	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
@@ -11693,6 +11693,96 @@ ${PROG} commit: Rebuilding administrative file database"
 
 	  cd ../..
 	  rm -rf 1
+	  ;;
+
+	co-d)
+	  # Some tests of various permutations of co-d when directories exist
+	  # and checkouts lengthen.
+	  #
+	  # Interestingly enough, these same tests pass when the directory
+	  # lengthening happens via the modules file.  Go figure.
+	  module=co-d
+	  mkdir $module; cd $module
+	  mkdir top; cd top
+	  dotest co-d-init-1 "$testcvs -Q co -l ."
+	  mkdir $module
+	  dotest co-d-init-2 "$testcvs -Q add $module"
+	  cd $module
+	  echo content >file1
+	  echo different content >file2
+	  dotest co-d-init-3 "$testcvs -Q add file1 file2"
+	  dotest co-d-init-4 "$testcvs -Q ci -madd-em" \
+"RCS file: $CVSROOT_DIRNAME/co-d/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/co-d/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/co-d/file2,v
+done
+Checking in file2;
+$CVSROOT_DIRNAME/co-d/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  dotest co-d-1 "$testcvs -q co -d dir $module" \
+"U dir/file1
+U dir/file2"
+
+	  # FIXCVS: This should work.  Correct expected result:
+	  #
+	  #"U dir2/sdir/file1
+	  #U dir2/sdir/file2"
+	  dotest_fail co-d-2 "$testcvs -q co -d dir2/sdir $module" \
+"$PROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir2': No such file or directory"
+
+	  mkdir dir3
+	  dotest co-d-3 "$testcvs -q co -d dir3 $module" \
+"U dir3/file1
+U dir3/file2"
+
+	  if $remote; then
+	    # FIXCVS: As for co-d-2.
+	    mkdir dir4
+	    dotest_fail co-d-4r "$testcvs -q co -d dir4/sdir $module" \
+"$PROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir4': No such file or directory"
+
+	    mkdir dir5
+	    mkdir dir5/sdir
+	    dotest_fail co-d-5r "$testcvs -q co -d dir5/sdir $module" \
+"$PROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir5': No such file or directory"
+	  else
+	    mkdir dir4
+	    dotest co-d-4 "$testcvs -q co -d dir4/sdir $module" \
+"U dir4/sdir/file1
+U dir4/sdir/file2"
+	    # FIXCVS:
+	    # dotest co-d-4.2 "cat dir4/CVS/Repository" "CVSROOT/Emptydir"
+	    dotest_fail co-d-4.2 "cat dir4/CVS/Repository" \
+"cat: dir4/CVS/Repository: No such file or directory"
+
+	    mkdir dir5
+	    mkdir dir5/sdir
+	    dotest co-d-5 "$testcvs -q co -d dir5/sdir $module" \
+"U dir5/sdir/file1
+U dir5/sdir/file2"
+	    # FIXCVS:
+	    # dotest co-d-5.2 "cat dir5/CVS/Repository" "CVSROOT/Emptydir"
+	    dotest_fail co-d-5.2 "cat dir5/CVS/Repository" \
+"cat: dir5/CVS/Repository: No such file or directory"
+	  fi
+
+	  # clean up
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf $CVSROOT_DIRNAME/$module
+	  rm -r $module
 	  ;;
 
 	cvsadm)
