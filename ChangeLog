@@ -1,3 +1,7 @@
+2004-04-05  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note new location for GNULIB CVS repository.
+
 2004-04-04  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Cygwin handles paths like X:\.
