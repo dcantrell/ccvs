@@ -829,7 +829,17 @@ gas.clean/config/
 
 If the server wants to tell the client to create a directory, then it
 merely uses the directory in any response, as described above, and the
-client should create the directory if it does not exist.  Some server
+client should create the directory if it does not exist.  Note that this
+should only be done one directory at a time, in order to permit the
+client to correctly store the repository for each directory.  Servers
+can use requests such as @code{Clear-sticky},
+@code{Clear-static-directory}, or any other requests, to create
+directories.
+@c FIXME: Need example here of how "repository" needs to be sent for
+@c each directory, and cannot be correctly deduced from, say, the most
+@c deeply nested directory.
+
+Some server
 implementations may poorly distinguish between a directory which should
 not exist and a directory which contains no files; in order to refrain
 from creating empty directories a client should both send the @samp{-P}
