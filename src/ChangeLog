@@ -1,3 +1,8 @@
+2002-01-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (serve_root): Remove check for impossible condition.
+	(serve_init): Save and restore current_parsed_root.
+
 2002-01-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* error.h (error_exit): Declare __noreturn__ to avoid spurious

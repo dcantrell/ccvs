@@ -776,8 +776,6 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     }
 #endif
 
-    if (current_parsed_root != NULL)
-	free_cvsroot_t (current_parsed_root);
     current_parsed_root = local_cvsroot (arg);
 
     /* For pserver, this will already have happened, and the call will do
@@ -3793,6 +3791,7 @@ static void
 serve_init (arg)
     char *arg;
 {
+    cvsroot_t *saved_parsed_root;
 
     if (!isabsolute (arg))
     {
@@ -3819,11 +3818,11 @@ E Protocol error: init says \"%s\" but pserver says \"%s\"",
     if (print_pending_error ())
 	return;
 
-    if (current_parsed_root != NULL)
-	free_cvsroot_t (current_parsed_root);
+    saved_parsed_root = current_parsed_root;
     current_parsed_root = local_cvsroot (arg);
-
     do_cvs_command ("init", init);
+    free_cvsroot_t (current_parsed_root);
+    current_parsed_root = saved_parsed_root;
 }
 
 static void serve_annotate PROTO ((char *));
