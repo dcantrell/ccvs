@@ -115,11 +115,17 @@ ign_add_file (file, hold)
     }
 
     /* load the file */
-    if (!(fp = fopen (file, "r")))
+    fp = fopen (file, "r");
+    if (fp == NULL)
+    {
+	if (errno != ENOENT)
+	    error (0, errno, "cannot open %s", file);
 	return;
+    }
     while (fgets (line, sizeof (line), fp))
 	ign_add (line, hold);
-    (void) fclose (fp);
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close %s", file);
 }
 
 /* Parse a line of space-separated wildcards and add them to the list. */
