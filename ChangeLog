@@ -1,8 +1,8 @@
-2001-12-12  Larry Jones  <larry.jones@sdr.com>
+2001-12-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS (Changes from 1.10 to 1.11): Note update -C.
 
-2001-12-03  Larry Jones  <larry.jones@sdr.com>
+2001-12-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* TODO (206, 207): New items.
 
@@ -16,7 +16,7 @@
 	* HACKING: Reference TESTS file in note about submitting test cases
 	with patches.
 
-2001-09-28  Larry Jones  <larry.jones@sdr.com>
+2001-09-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* noautomake.sh: Protect wildcards from shell expansion.
 	(Patch submitted by Stephen Cameron <smcameron@yahoo.com>.)
@@ -109,7 +109,7 @@
 	* configure: Regenerated.
 	* Makefile.in: Ditto.
 
-2001-07-26  Larry Jones  <larry.jones@sdr.com>
+2001-07-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS: Fix format, add note about tag -B.
 
@@ -160,7 +160,7 @@
 
 	* mdate-sh: New file to support doc/version.texi.
 
-2001-06-27  Larry Jones  <larry.jones@sdr.com>
+2001-06-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* TESTS: Note environment variables to select certain tools,
 	potential problems with big environments.
@@ -198,11 +198,11 @@
 
 	* Makefile.am (EXTRA_DIST): Add noautoconf.sh.
 
-2001-05-17  Larry Jones  <larry.jones@sdr.com>
+2001-05-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp: Yet another newer (unofficial) version from Automake.
 
-2001-05-10  Larry Jones  <larry.jones@sdr.com>
+2001-05-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in (AC_OUTPUT): Remove -f from chmod -- not portable.
 	* configure: Regenerated.
@@ -275,11 +275,11 @@
 
 	* NEWS: Correct punctuation.
 
-2001-04-25  Larry Jones  <larry.jones@sdr.com>
+2001-04-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp (aix, sgi): Correct previous fixes.
 
-2001-04-24  Larry Jones  <larry.jones@sdr.com>
+2001-04-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp (sgi): Remove stray HP-UX code.
 
@@ -289,23 +289,23 @@
 	prevent unecessary AUtomake rebuilds after updates.
 	* NEWS: Note this new scipt.
 
-2001-04-16  Larry Jones  <larry.jones@sdr.com>
+2001-04-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp (aix): Remove stray HP-UX code.
 
-2001-04-12  Larry Jones  <larry.jones@sdr.com>
+2001-04-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* mkinstalldirs: Newer version from Automake.
 
-2001-04-12  Larry Jones  <larry.jones@sdr.com>
+2001-04-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp: Newer version from Automake.
 
-2001-04-04  Larry Jones  <larry.jones@sdr.com>
+2001-04-04  Larry Jones  <larry.jones@sdrc.com>
 
 	* depcomp: Don't count on $? being set in then or else clauses.
 
-2001-03-30  Larry Jones  <larry.jones@sdr.com>
+2001-03-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS: Note new rlog and rannotate commands.
 
