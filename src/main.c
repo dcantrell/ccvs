@@ -16,8 +16,8 @@
 #include "cvs.h"
 
 #ifdef HAVE_WINSOCK_H
-#include <winsock.h>
-#else
+# include <winsock.h>
+#elif !HAVE_GETHOSTNAME
 extern int gethostname (char *, size_t);
 #endif
 
