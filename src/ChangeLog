@@ -1,3 +1,7 @@
+1999-04-28  Jim Kingdon  <http://www.cyclic.com>
+
+	* main.c (opt_usage): Remove -b.
+
 1999-04-20 Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 
