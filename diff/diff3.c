@@ -194,7 +194,7 @@ static struct diff3_block *create_diff3_block PARAMS((int, int, int, int, int, i
 static struct diff3_block *make_3way_diff PARAMS((struct diff_block *, struct diff_block *));
 static struct diff3_block *reverse_diff3_blocklist PARAMS((struct diff3_block *));
 static struct diff3_block *using_to_diff3_block PARAMS((struct diff_block *[2], struct diff_block *[2], int, int, struct diff3_block const *));
-static struct diff_block *process_diff PARAMS((char const *, char const *, struct diff_block **));
+static struct diff_block *process_diff PARAMS((char const *, char const *, struct diff_block **, char **));
 static void check_output PARAMS((FILE *));
 static void diff3_fatal PARAMS((char const *));
 static void output_diff3 PARAMS((FILE *, struct diff3_block *, int const[3], int const[3]));
@@ -203,6 +203,8 @@ static int try_help PARAMS((char const *));
 static void undotlines PARAMS((FILE *, int, int, int));
 static void usage PARAMS((void));
 static void initialize_main PARAMS((int *, char ***));
+static void free_diff_blocks PARAMS((struct diff_block *));
+static void free_diff3_blocks PARAMS((struct diff3_block *));
 
 /* Functions provided in libdiff.a or other external sources. */
 int diff_run PARAMS((int, char **, char *));
@@ -248,6 +250,7 @@ diff3_run (argc, argv, outfile)
   int conflicts_found;
   int status;
   struct diff_block *thread0, *thread1, *last_block;
+  char *content0, *content1;
   struct diff3_block *diff3;
   int tag_count = 0;
   char *tag_strings[3];
@@ -405,14 +408,16 @@ diff3_run (argc, argv, outfile)
       return status;
 
   commonname = file[rev_mapping[FILEC]];
-  thread1 = process_diff (file[rev_mapping[FILE1]], commonname, &last_block);
+  thread1 = process_diff (file[rev_mapping[FILE1]], commonname, &last_block,
+			  &content1);
   if (thread1)
     for (i = 0; i < 2; i++)
       {
 	horizon_lines = max (horizon_lines, D_NUMLINES (thread1, i));
 	horizon_lines = max (horizon_lines, D_NUMLINES (last_block, i));
       }
-  thread0 = process_diff (file[rev_mapping[FILE0]], commonname, &last_block);
+  thread0 = process_diff (file[rev_mapping[FILE0]], commonname, &last_block,
+			  &content0);
   diff3 = make_3way_diff (thread0, thread1);
   if (edscript)
     conflicts_found
@@ -433,6 +438,12 @@ diff3_run (argc, argv, outfile)
       output_diff3 (outstream, diff3, mapping, rev_mapping);
       conflicts_found = 0;
     }
+
+  free(content0);
+  free(content1);
+  free_diff_blocks(thread0);
+  free_diff_blocks(thread1);
+  free_diff3_blocks(diff3);
 
   check_output (outstream);
   if (outstream != stdout)
@@ -975,19 +986,19 @@ compare_line_list (list1, lengths1, list2, lengths2, nl)
 extern char **environ;
 
 static struct diff_block *
-process_diff (filea, fileb, last_block)
+process_diff (filea, fileb, last_block, diff_contents)
      char const *filea, *fileb;
      struct diff_block **last_block;
+     char **diff_contents;
 {
-  char *diff_contents;
   char *diff_limit;
   char *scan_diff;
   enum diff_type dt;
   int i;
   struct diff_block *block_list, **block_list_end, *bptr;
 
-  diff_limit = read_diff (filea, fileb, &diff_contents);
-  scan_diff = diff_contents;
+  diff_limit = read_diff (filea, fileb, diff_contents);
+  scan_diff = *diff_contents;
   block_list_end = &block_list;
   bptr = 0; /* Pacify `gcc -W'.  */
 
@@ -1757,4 +1768,42 @@ initialize_main (argcp, argvp)
   finalwrite = 0;
   merge = 0;
   diff_program_name = (*argvp)[0];
+}
+
+static void
+free_diff_blocks(p)
+    struct diff_block *p;
+{
+  register struct diff_block *next;
+
+  while (p)
+    {
+      next = p->next;
+      if (p->lines[0]) free(p->lines[0]);
+      if (p->lines[1]) free(p->lines[1]);
+      if (p->lengths[0]) free(p->lengths[0]);
+      if (p->lengths[1]) free(p->lengths[1]);
+      free(p);
+      p = next;
+    }
+}
+
+static void
+free_diff3_blocks(p)
+    struct diff3_block *p;
+{
+  register struct diff3_block *next;
+
+  while (p)
+    {
+      next = p->next;
+      if (p->lines[0]) free(p->lines[0]);
+      if (p->lines[1]) free(p->lines[1]);
+      if (p->lines[2]) free(p->lines[2]);
+      if (p->lengths[0]) free(p->lengths[0]);
+      if (p->lengths[1]) free(p->lengths[1]);
+      if (p->lengths[2]) free(p->lengths[2]);
+      free(p);
+      p = next;
+    }
 }
