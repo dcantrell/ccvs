@@ -1,3 +1,8 @@
+2001-04-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* tag.c (tag_check_valid): Make an unwritable val-tags file a
+	warning instead of a fatal error.
+
 2001-04-20  Larry Jones  <larry.jones@sdrc.com>
 
 	* annotate.c (annotate_usage): -r and -D are not mutually exclusive.

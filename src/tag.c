@@ -1114,6 +1114,7 @@ tag_check_valid (name, argc, argv, local, aflag, repository)
     DBM *db;
     char *valtags_filename;
     int err;
+    int nowrite = 0;
     datum mytag;
     struct val_args the_val_args;
     struct saved_cwd cwd;
@@ -1154,12 +1155,19 @@ Numeric tag %s contains characters other than digits and '.'", name);
     if (db == NULL)
     {
 	if (!existence_error (errno))
-	    error (1, errno, "cannot read %s", valtags_filename);
-
+	{
+	    error (0, errno, "warning: cannot open %s read/write",
+		   valtags_filename);
+	    db = dbm_open (valtags_filename, O_RDONLY, 0666);
+	    if (db != NULL)
+		nowrite = 1;
+	    else if (!existence_error (errno))
+		error (1, errno, "cannot read %s", valtags_filename);
+	}
 	/* If the file merely fails to exist, we just keep going and create
 	   it later if need be.  */
     }
-    else
+    if (db != NULL)
     {
 	datum val;
 
@@ -1221,7 +1229,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	/* The tags is valid but not mentioned in val-tags.  Add it.  */
 	datum value;
 
-	if (noexec)
+	if (noexec || nowrite)
 	{
 	    if (db != NULL)
 		dbm_close (db);
@@ -1238,7 +1246,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
 	    if (db == NULL)
 	    {
-		error (0, errno, "cannot create %s", valtags_filename);
+		error (0, errno, "warning: cannot create %s", valtags_filename);
 		free (valtags_filename);
 		return;
 	    }
