@@ -1,3 +1,7 @@
+2005-03-15  Derek Price  <derek@ximbiot.com>
+
+	* HACKING, NEWS: Note new Automake version.
+
 2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
 
 	* NEWS: Note fix for compile errors on IRIX 5.3.
