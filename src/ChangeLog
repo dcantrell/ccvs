@@ -1,5 +1,9 @@
 1998-05-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (rcsbuf_getid): Remove semicolon at end of #undef.  I'm
+	kind of surprised that compilers accepted this at all, but
+	removing it squelches a warning for some compilers.
+
 	* version.c: Change version number to 1.9.28.1.
 
 	* Version 1.9.28.

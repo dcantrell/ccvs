@@ -1404,7 +1404,7 @@ rcsbuf_getid (rcsbuf, idp)
     rcsbuf->ptr = ptr;
     return 1;
 
-#undef my_whitespace;
+#undef my_whitespace
 }
 
 /* Read an RCS @-delimited string.  Store the result in STRP. */
