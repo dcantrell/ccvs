@@ -15284,7 +15284,7 @@ xx"
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
-	  awk 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", 
+	  awk 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", \
 	    2, 10, 137, "$", 13, 10 }' \
 	    </dev/null | tr '@' '\000' >../binfile.dat
 	  cp ../binfile.dat .
