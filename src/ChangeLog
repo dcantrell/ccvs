@@ -1,3 +1,9 @@
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* history.c (history): Don't conflate -e with -x since the client's
+	idea of what -e means may not match the server's.
+	(Reported by Frank Hemer <frank@hemer.org>.)
+
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
 	* lock.c (Lock_Cleanup), rcs.c (rcs_cleanup), server.c
