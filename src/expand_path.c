@@ -133,7 +133,7 @@ expand_path (name, file, line)
 	    {
 		if (flag
 		    ? *s =='}'
-		    : isalnum ((unsigned char) *s)) == 0 && *s != '_')
+		    : isalnum ((unsigned char) *s) == 0 && *s != '_')
 		    break;
 		doff = d - mybuf;
 		expand_string (&mybuf, &mybuf_size, doff + 1);
