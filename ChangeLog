@@ -1,3 +1,7 @@
+Thu Jun  8 16:33:51 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* INSTALL (Installation): Disrecommend RCS 5.6.[5-7].
+
 Tue May 30 00:07:15 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (distclean-local): Don't delete config.status here.
