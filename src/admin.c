@@ -213,7 +213,7 @@ admin (int argc, char **argv)
     struct admin_data admin_data;
     int c;
     int i;
-    int only_allowed_options;
+    bool only_allowed_options;
 
     if (argc <= 1)
 	usage (admin_usage);
@@ -226,12 +226,12 @@ admin (int argc, char **argv)
        example, admin_data->branch should be not `-bfoo' but simply `foo'. */
 
     optind = 0;
-    only_allowed_options = 1;
+    only_allowed_options = true;
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'q' && !strchr(UserAdminOptions, c))
-	    only_allowed_options = 0;
+	if (c != 'q' && !strchr (UserAdminOptions, c))
+	    only_allowed_options = false;
 
 	switch (c)
 	{
@@ -449,8 +449,8 @@ admin (int argc, char **argv)
 	 */
         !current_parsed_root->isremote &&
 # endif	/* CLIENT_SUPPORT */
-        !only_allowed_options &&
-	(grp = getgrnam(CVS_ADMIN_GROUP)) != NULL)
+        !only_allowed_options
+	&& (grp = getgrnam (CVS_ADMIN_GROUP)) != NULL)
     {
 #ifdef HAVE_GETGROUPS
 	gid_t *grps;
