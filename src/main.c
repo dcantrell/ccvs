@@ -220,7 +220,8 @@ cmd_synonyms ()
 
 
 unsigned long int
-lookup_command_attribute (char *cmd_name)
+lookup_command_attribute (cmd_name)
+     char *cmd_name;
 {
     unsigned long int ret = 0;
 
