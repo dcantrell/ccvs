@@ -5266,52 +5266,100 @@ file using @samp{-D}, @sc{cvs} records the date you specified, so that
 further updates in the same directory will use the same date
 (for more information on sticky tags/dates, @pxref{Sticky tags}).
 
-@c FIXME: this documentation is lousy.  It just gives
-@c some examples, never describes the rules.  That is
-@c probably because the rules are way too loose and not
-@c carefully thought out.  How to solve this problem?
-@c Maybe document a list of "official" date formats
-@c which are a subset of what CVS accepts?  Maybe at
-@c some point have CVS start give warnings on "unofficial"
-@c formats (many of which might be typos or user
-@c misunderstandings, and/or formats people never/rarely
-@c use to specify dates)?  We want to rely on standards
-@c like ISO8601 and RFC822 as much as practical, but
-@c which standard(s)?....
-@c 
-@c NOTE: The tar manual has some documentation for getdate.y which we
-@c might want to lift.  Although the caveats about whether we want to
-@c document only the "most official" formats still applies...
-@c 
-@cindex timezone, in input
-@cindex zone, time, in input
-A wide variety of date formats are supported by
-@sc{cvs}.  The @var{date_spec} is interpreted as being
-in the local timezone, unless a specific timezone is
-specified.  Examples of valid date specifications
-include:
-
-@example
-                    1 month ago
-                    2 hours ago
-                    400000 seconds ago
-                    last year
-                    last Monday
-                    yesterday
-                    a fortnight ago
-                    3/31/92 10:00:07 PST
-                    January 23, 1987 10:05pm
-                    22:00 GMT
-@end example
-
 @samp{-D} is available with the @code{checkout},
 @code{diff}, @code{export}, @code{history},
 @code{rdiff}, @code{rtag}, and @code{update} commands.
 (The @code{history} command uses this option in a
-slightly different way; @pxref{history options}).  Note
-that when specifying a date like @samp{3/31/92} it is
-@code{@var{month}/@var{day}/@var{year}}.  So
-@samp{1/4/96} is January 4, not March 1.
+slightly different way; @pxref{history options}).  
+
+@c What other formats should we accept?  I don't want
+@c to start accepting a whole mess of non-standard
+@c new formats (there are a lot which are in wide use in
+@c one context or another), but practicality does
+@c dictate some level of flexibility.
+@c * POSIX.2 (e.g. touch, ls output, date) and other
+@c POSIX and/or de facto unix standards (e.g. at).  The
+@c practice here is too inconsistent to be of any use.
+@c * VMS dates.  This is not a formal standard, but
+@c there is a published specification (see SYS$ASCTIM
+@c and SYS$BINTIM in the _VMS System Services Reference
+@c Manual_), it is implemented consistently in VMS
+@c utilities, and VMS users will expect CVS running on
+@c VMS to support this format (and if we're going to do
+@c that, better to make CVS support it on all
+@c platforms.  Maybe).
+@c 
+@c NOTE: The tar manual has some documentation for
+@c getdate.y (just for our info; we don't want to
+@c attempt to document all the formats accepted by
+@c getdate.y).
+@cindex timezone, in input
+@cindex zone, time, in input
+A wide variety of date formats are supported by
+@sc{cvs}.  The most standard ones are ISO8601 (from the
+International Standards Organization) and the Internet
+e-mail standard (specified in RFC822 as amended by
+RFC1123).
+
+@c Probably should be doing more to spell out just what
+@c the rules are, rather than just giving examples.
+@c But I want to keep this simple too.
+@c So I don't know....
+
+ISO8601 dates have many variants but a few examples
+are:
+
+@example
+1972-09-24
+1972-09-24 20:05
+@end example
+@c I doubt we really accept all ISO8601 format dates
+@c (for example, decimal hours like 1972-09-24 20,2)
+@c I'm not sure we should, many of them are pretty
+@c bizarre and it has lots of gratuitous multiple ways
+@c to specify the same thing.
+
+See
+@file{http://www.ft.uni-erlangen.de/~mskuhn/iso-time.html}
+for more details about ISO8601 dates.
+@c Perhaps we want to also cite other sources in
+@c case that page goes away.  For example:
+@c http://www.dsi.unimi.it/Users/Students/pensa/standard/ISO8601.html
+
+In addition to the dates allowed in Internet e-mail
+itself, @sc{cvs} also allows some of the fields to be
+omitted.  For example:
+@c FIXME: Need to figure out better, and document,
+@c what we want to allow the user to omit.
+@c NOTE: "omit" does not imply "reorder".
+@c FIXME: Need to cite a web page describing how to get
+@c RFC's.
+
+@example
+24 Sep 1972 20:05
+24 Sep
+@end example
+
+The date is interpreted as being in the
+local timezone, unless a specific timezone is
+specified.
+
+These two date formats are preferred.  However,
+@sc{cvs} currently accepts a wide variety of other date
+formats.  They are intentionally not documented here in
+any detail, and future versions of @sc{cvs} might not
+accept all of them.
+@c Maybe at
+@c some point have CVS start give warnings on "unofficial"
+@c formats (many of which might be typos or user
+@c misunderstandings, and/or formats people never/rarely
+@c use to specify dates)?
+
+One such format is
+@code{@var{month}/@var{day}/@var{year}}.  This may
+confuse people who are accustomed to having the month
+and day in the other order; @samp{1/4/96} is January 4,
+not March 1.
 
 Remember to quote the argument to the @samp{-D}
 flag so that your shell doesn't interpret spaces as
@@ -6827,6 +6875,8 @@ accepted are those accepted by the @samp{-D} option to
 many other @sc{cvs} commands (@pxref{Common options}).
 Dates can be combined into ranges as follows:
 
+@c Should we be thinking about accepting ISO8601
+@c ranges?  For example "1972-09-10/1972-09-12".
 @table @code
 @item @var{d1}<@var{d2}
 @itemx @var{d2}>@var{d1}
