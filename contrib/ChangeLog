@@ -1,3 +1,12 @@
+2003-02-24  Larry Jones  <lawrence.jones@eds.com>
+	and Donald Sharp <sharpd@cisco.com>
+
+	* check_cvs.in: Fixed multiple symlinks in your cvsroot,
+	improved CVSROOT/CVSROOT handling (Patch from Shlomo Reinstein
+	<shlomo.reinstein@intel.com).  Fixed retrieving revisions of ,v
+	files.  Added passwd, readers, and writers to list of files to
+	ignore and sorted list to match the one in src/mkmodules.c.
+
 2003-02-03  Derek Price  <derek@ximbiot.com>
 
 	* newcvsroot.sh: New file.
