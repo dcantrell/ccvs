@@ -1,5 +1,9 @@
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Move setting of HOME from ignore test to the start of
+	the tests so it applies to all tests.
+	(CVS): Remove -f; the above change takes care of it.
+
 	* rcs.h (RCS_MERGE): Removed; unused.
 
 	* commit.c (checkaddfile): Fix memory leak.
