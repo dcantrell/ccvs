@@ -6054,6 +6054,20 @@ but some older versions might still be floating around).  In many
 cases you need to upgrade both the client and the server to take
 advantage of new features and bugfixes, however.
 
+@c Perhaps should be saying something here about the
+@c "D" lines in Entries (written by CVS 1.9; 1.8 and
+@c older don't use them).  These are supposed to be
+@c compatible in both directions, but I'm not sure
+@c they quite are 100%.  One common gripe is if you
+@c "rm -r" a directory and 1.9 gets confused, as it
+@c still sees it in Entries.  That one is fixed in
+@c (say) 1.9.6.  Someone else reported problems with
+@c starting with a directory which was checked out with
+@c an old version, and then using a new version, and
+@c some "D" lines appeared, but not for every
+@c directory, causing some directories to be skipped.
+@c They weren't sure how to reproduce this, though.
+
 @c ---------------------------------------------------------------------
 @node Revision management
 @chapter Revision management
