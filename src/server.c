@@ -3213,10 +3213,13 @@ E CVS locks may need cleaning up.\n");
 	buf_flush (buf_to_net, 1);
 	buf_shutdown (protocol_inbuf);
 	buf_free (protocol_inbuf);
+	protocol_inbuf = NULL;
 	buf_shutdown (stderrbuf);
 	buf_free (stderrbuf);
+	stderrbuf = NULL;
 	buf_shutdown (stdoutbuf);
 	buf_free (stdoutbuf);
+	stdoutbuf = NULL;
     }
 
     if (errs)
@@ -4891,9 +4894,9 @@ server_cleanup (sig)
 
 	status = buf_shutdown (buf_from_net);
 	if (status != 0)
-	{
 	    error (0, status, "shutting down buffer from client");
-	}
+	buf_free (buf_from_net);
+	buf_from_net = NULL;
     }
 
     if (dont_delete_temp)
@@ -4902,6 +4905,9 @@ server_cleanup (sig)
 	{
 	    (void) buf_flush (buf_to_net, 1);
 	    (void) buf_shutdown (buf_to_net);
+	    buf_free (buf_to_net);
+	    buf_to_net = NULL;
+	    error_use_protocol = 0;
 	}
 	return;
     }
@@ -5003,6 +5009,9 @@ server_cleanup (sig)
     {
 	(void) buf_flush (buf_to_net, 1);
 	(void) buf_shutdown (buf_to_net);
+	buf_free (buf_to_net);
+	buf_to_net = NULL;
+	error_use_protocol = 0;
     }
 }
 
@@ -5145,25 +5154,6 @@ error ENOMEM Virtual memory exhausted.\n");
 	    }
 	}
     }
-
-#ifdef SIGABRT
-    (void) SIG_register (SIGABRT, server_cleanup);
-#endif
-#ifdef SIGHUP
-    (void) SIG_register (SIGHUP, server_cleanup);
-#endif
-#ifdef SIGINT
-    (void) SIG_register (SIGINT, server_cleanup);
-#endif
-#ifdef SIGQUIT
-    (void) SIG_register (SIGQUIT, server_cleanup);
-#endif
-#ifdef SIGPIPE
-    (void) SIG_register (SIGPIPE, server_cleanup);
-#endif
-#ifdef SIGTERM
-    (void) SIG_register (SIGTERM, server_cleanup);
-#endif
 
     /* Now initialize our argument vector (for arguments from the client).  */
 
@@ -6352,12 +6342,12 @@ cvs_output (str, len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol)
+    if (error_use_protocol && buf_to_net != NULL)
     {
 	buf_output (saved_output, str, len);
 	buf_copy_lines (buf_to_net, saved_output, 'M');
     }
-    else if (server_active)
+    else if (server_active && protocol != NULL)
     {
 	buf_output (saved_output, str, len);
 	buf_copy_lines (protocol, saved_output, 'M');

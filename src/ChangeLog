@@ -1,3 +1,18 @@
+2002-10-04  Larry Jones  <lawrence.jones@eds.com>
+
+	* client.c (get_responses_and_close, connect_to_pserver): Set
+	to_server and from_server to NULL after freeing.
+	* main.c (main): Clear server_active when finished.  Also neaten
+	up the SERVER_SUPPORT ifdef's.
+	* server.c (do_cvs_command): Set protocol_inbuf, stderrbuf, and
+	stdoutbuf to NULL after freeing.
+	(server_cleanup): Free buf_from_net and buf_to_set and set to NULL.
+	Also reset error_use_protocol.
+	(server): Don't SIG_register server_cleanup.  main_cleanup (which
+	is already registered) outputs a fatal error which causes it to
+	be called; registering it directly results in it being called twice.
+	(cvs_output): Don't try to use buf_to_net or protocol if they're NULL.
+
 2002-10-03  Larry Jones  <lawrence.jones@eds.com>
 
 	* lock.c (readers_exist): Ignore our own read lock, if any, to
