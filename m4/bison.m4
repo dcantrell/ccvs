@@ -3,6 +3,5 @@
 AC_DEFUN([gl_BISON],
 [
   # getdate.y works with bison only.
-  : ${YACC='bison -y'}
-  AC_SUBST(YACC)
+  AM_MISSING_PROG(YACC, bison -y)
 ])
