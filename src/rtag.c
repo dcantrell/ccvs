@@ -64,7 +64,7 @@ static int force_tag_move;              /* don't move existing tags by default *
 
 static const char *const rtag_usage[] =
 {
-    "Usage: %s %s [-aflRnF] [-b] [-d] [-r tag|-D date] tag modules...\n",
+    "Usage: %s %s [-aflRnF] [-b] [-d] [-r rev|-D date] tag modules...\n",
     "\t-a\tClear tag from removed files that would not otherwise be tagged.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",

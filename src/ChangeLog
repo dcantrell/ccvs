@@ -1,5 +1,8 @@
 1998-11-18  Jim Kingdon
 
+	* rtag.c (rtag_usage), tag.c (tag_usage): Use "-r rev"
+	consistently.
+
 	* sanity.sh (conflicts3): Tests conflicts3-24 through
 	conflicts3-28 test for another case similar to conflicts3-22.
 
