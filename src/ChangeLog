@@ -1,5 +1,11 @@
 Fri Jul 11 12:14:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* update.c (join_file): Handle binary files ourself rather than
+	passing them to RCS_merge (which sort of tries to handle binary
+	files, but does so badly).
+	* sanity.sh (binfile2): New "brmod", "brmod-trmod", and
+	"brmod-wdmod" tests test for this fix.
+
 	* add.c (add): Exit status is now nonzero if any of the arguments
 	failed (already was mostly true, make it true for the new sanity
 	check).  Move check for '/' (now ISDIRSEP) up to sanity check, so
