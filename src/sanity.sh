@@ -1223,7 +1223,7 @@ done'
 		mkdir RCS
 		echo ignore.me >RCS/ignore.me
 
-		echo 'import should not expand $Id$' >>imported-file2
+		echo 'import should not expand $''Id$' >>imported-file2
 		cp imported-file2 ../imported-file2-orig.tmp
 
 		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
