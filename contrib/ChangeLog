@@ -1,3 +1,9 @@
+Thu Aug  7 22:42:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: mention pvcs_to_rcs.
+	* pvcs_to_rcs: New file.  This is the file as I got it from David
+	Martin.  Will be checking in the tweaks shortly.
+
 17 May 1997  Jim Kingdon
 
 	* listen2.c: Failed attempt at making this do what it was
