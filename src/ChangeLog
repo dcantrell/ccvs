@@ -1,5 +1,9 @@
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
+	* add.c (add): Fix a possible, if unlikely, memory out of bounds error.
+
+2003-04-30  Derek Price  <derek@ximbiot.com>
+
 	* commit.c: Free vers in single place
 	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
 
