@@ -707,7 +707,7 @@ convert_file (char *infile,  int inflags,
 
     if ((infd = open (infile, inflags)) < 0)
         error (1, errno, "couldn't read %s", infile);
-    if ((outfd = open (outfile, outflags)) < 0)
+    if ((outfd = open (outfile, outflags, S_IWRITE)) < 0)
         error (1, errno, "couldn't write %s", outfile);
 
     while ((len = read (infd, buf, sizeof (buf))) > 0)

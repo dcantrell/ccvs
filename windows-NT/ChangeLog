@@ -1,3 +1,8 @@
+Fri Nov 24 11:17:16 EST 1995  Boleslaw Ciesielski  <bolek@viewlogic.com>
+
+	* filesubr.c (convert_file): Pass S_IWRITE to open when creating
+	file (fixes problem with deleting temporary files).
+
 Fri Nov 24 11:12:47 1995  Boleslaw Ciesielski  <bolek@viewlogic.com>
 
 	* run.c (build_command): Move len++ inside loop, to make room for
