@@ -144,6 +144,7 @@ MIPS:
 	DECstation running Ultrix 4.3 (1.8.85)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
 	SGI running Irix 5.3 using gcc 2.7.2 (1.8.87)
+	SGI running Irix 6.2 using SGI MIPSpro 6.2 and beta 7.2 compilers (1.9)
 	SGI running Irix-6.2 (1.9.8)
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)
 PowerPC or RS/6000:
