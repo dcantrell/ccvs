@@ -5684,7 +5684,7 @@ for mf in $CONFIG_FILES; do
   done
 done
 
-chmod -f +x \
+chmod +x \
 	  contrib/clmerge \
 	  contrib/cln_hist \
 	  contrib/commit_prep \
