@@ -1,3 +1,14 @@
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note new Automake version.
+	* NEWS: Ditto.
+	* configure.in (AC_ISC_POSIX): Remove this obsolete call and comment
+	out some related code with an explanation.
+
+	* Makefile.in: Regenerated using Automake 1.6.3.
+	* aclocal.m4: Ditto.
+	* configure: Regenerated.
+
 2002-09-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* aclocal.m4: Remove no longer needed definition of AC_ISC_POSIX
