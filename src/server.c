@@ -768,6 +768,7 @@ serve_root (arg)
 	return;
     }
 
+#ifdef AUTH_SERVER_SUPPORT
     if (Pserver_Repos != NULL)
     {
 	if (strcmp (Pserver_Repos, arg) != 0)
@@ -781,6 +782,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 			 arg, Pserver_Repos);
 	}
     }
+#endif
     arg_dup = malloc (strlen (arg) + 1);
     if (arg_dup == NULL)
     {

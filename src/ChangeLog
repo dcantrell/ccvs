@@ -1,3 +1,8 @@
+1998-12-17  Jim Kingdon
+
+	* server.c (serve_root): Pserver_Repos only exists if
+	AUTH_SERVER_SUPPORT is defined.
+
 1998-12-12  Jim Kingdon, and Derek R. Price of Stortek.
 
 	* sanity.sh (multiroot): Change + to ${PLUS}.
