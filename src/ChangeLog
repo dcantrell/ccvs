@@ -1,5 +1,8 @@
 Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* import.c (import_descend): Use 4.4BSD d_type field if it is
+	  present.
+
 	* lock.c (set_lockers_name): Use %lu in format and cast st_uid
 	  field to unsigned long.
 
