@@ -1,3 +1,8 @@
+1998-12-22  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (rcs3): Oops, the earlier fix for srcdir only fixed
+	the non-remote case, not the remote case.  Fix the other occurrence.
+
 1998-12-22  Jim Kingdon
 
 	* sanity.sh (rcs3): The assertion failure message varies slightly

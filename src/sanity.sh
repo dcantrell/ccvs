@@ -12987,7 +12987,7 @@ total revisions: 1;	selected revisions: "
 ${PROG} \[log aborted\]: no repository"
 	    cd first-dir
 	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
-"${PROG}: .*/hash.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
+"${PROG}: .*hash\.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
 
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
