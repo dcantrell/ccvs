@@ -1106,6 +1106,24 @@ fail ()
   exit 1
 }
 
+verify_tmp_empty ()
+{
+  # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
+  # files.  We would like to not leave any behind.
+  if $remote && $LS $TMPDIR/cvs-serv* >/dev/null 2>&1; then
+    # A true value means ls found files/directories with these names.
+    # Give the server some time to finish, then retry.
+    sleep 1
+    if $LS $TMPDIR/cvs-serv* >/dev/null 2>&1; then
+      fail "$1: Found cvs-serv* directories in $TMPDIR."
+    fi
+  fi
+  if $LS $TMPDIR/cvs?????? >/dev/null 2>&1; then
+    # A true value means ls found files/directories with these names.
+    fail "$1: Found cvsXXXXXX temp files in $TMPDIR."
+  fi
+}
+
 # See dotest and dotest_fail for explanation (this is the parts
 # of the implementation common to the two).
 dotest_internal ()
@@ -1123,14 +1141,17 @@ dotest_internal ()
     # surely use a somewhat non-specific pattern).
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     pass "$1"
+    verify_tmp_empty "$1"
   # expr can't distinguish between "zero characters matched" and "no match",
   # so special-case it.
   elif test -z "$3" && test ! -s ${TESTDIR}/dotest.tmp; then
     pass "$1"
+    verify_tmp_empty "$1"
   elif test x"$4" != x; then
     if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : "$4${ENDANCHOR}" >/dev/null; then
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
+      verify_tmp_empty "$1"
     else
       echo "** expected: " >>${LOGFILE}
       echo "$3" >>${LOGFILE}
@@ -1205,17 +1226,20 @@ dotest_internal_debug ()
       fail "$1"
     else
       pass "$1"
+      verify_tmp_empty "$1"
     fi
   else
     echo "$3" > ${TESTDIR}/dotest.exp
     if dotest_line_by_line "$1" "$2"; then
       pass "$1"
+      verify_tmp_empty "$1"
     else
       if test x"$4" != x; then
 	mv ${TESTDIR}/dotest.exp ${TESTDIR}/dotest.ex1
 	echo "$4" > ${TESTDIR}/dotest.exp
 	if dotest_line_by_line "$1" "$2"; then
 	  pass "$1"
+	  verify_tmp_empty "$1"
 	else
 	  mv ${TESTDIR}/dotest.exp ${TESTDIR}/dotest.ex2
 	  echo "** expected: " >>${LOGFILE}
@@ -1302,6 +1326,7 @@ dotest_lit ()
   cat >$TESTDIR/dotest.exp
   if cmp $TESTDIR/dotest.exp $TESTDIR/dotest.tmp >/dev/null 2>&1; then
     pass "$1"
+    verify_tmp_empty "$1"
   else
     echo "** expected: " >>$LOGFILE
     cat $TESTDIR/dotest.exp >>$LOGFILE
@@ -34090,20 +34115,7 @@ You have \[0\] altered files in this repository\."
 	fail "test slagged \$servercvs"
     fi
 
-    # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
-    # files.  We would like to not leave any behind.
-    if $remote && ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
-	# A true value means ls found files/directories with these names.
-	# Give the server some time to finish, then retry.
-	sleep 1
-	if ${LS} $TMPDIR/cvs-serv* >/dev/null 2>&1; then
-	    fail "Found cvs-serv* directories in $TMPDIR."
-	fi
-    fi
-    if ${LS} $TMPDIR/cvs?????? >/dev/null 2>&1; then
-	# A true value means ls found files/directories with these names.
-	fail "Found cvsXXXXXX temp files in $TMPDIR."
-    fi
+    verify_tmp_empty "post $what"
 
 done # The big loop
 
