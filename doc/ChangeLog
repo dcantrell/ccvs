@@ -1,5 +1,7 @@
 Tue Apr 15 00:57:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* RCSFILES: Add notes on keyword expansion.
+
 	* cvs.texinfo (Rename by copying): Comment out seemingly erroneous
 	text regarding the revision number that the new file starts with.
 
