@@ -1,3 +1,10 @@
+Sun Nov  2 19:34:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* DEVEL-CVS: Wording fix: want to specify that new developers are
+	granted checkin access and the ability to send to devel-cvs, not
+	specify whether this is implemented via an "account" (whatever
+	that is) (editorial change, not run by devel-cvs).
+
 Fri Oct 31 16:30:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Mention admin -o rev1::rev2.
