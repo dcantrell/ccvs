@@ -167,10 +167,12 @@ CLEAN :
 	-@erase ".\WinRel\socket-client.obj"
 	-@erase ".\WinRel\log-buffer.obj"
 	-@erase ".\WinRel\rsh-client.obj"
-        -@erase ".\WinRel\ftello.obj"
-        -@erase ".\WinRel\fseeko.obj"
-        -@erase ".\WinRel\exithandle.obj"
-        -@erase ".\WinRel\getndelim2.obj"
+	-@erase ".\WinRel\ftello.obj"
+	-@erase ".\WinRel\fseeko.obj"
+	-@erase ".\WinRel\exithandle.obj"
+	-@erase ".\WinRel\getndelim2.obj"
+	-@erase ".\lib\alloca.h"
+	-@erase ".\lib\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -415,7 +417,7 @@ CLEAN :
 	-@erase ".\WinDebug\ftello.obj"
 	-@erase ".\WinDebug\fseeko.obj"
 	-@erase ".\WinDebug\exithandle.obj"
-        -@erase ".\WinDebug\getndelim2.obj"
+	-@erase ".\WinDebug\getndelim2.obj"
 	-@erase ".\WinDebug\uncompr.obj"
 	-@erase ".\WinDebug\ignore.obj"
 	-@erase ".\WinDebug\root.obj"
@@ -465,6 +467,8 @@ CLEAN :
 	-@erase ".\WinDebug\fnmatch.obj"
 	-@erase ".\WinDebug\cvs.ilk"
 	-@erase ".\WinDebug\cvs.pdb"
+	-@erase ".\lib\alloca.h"
+	-@erase ".\lib\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -820,7 +824,6 @@ SOURCE=.\lib\fnmatch.h.in
 
 ".\lib\fnmatch.h" : $(SOURCE)
    copy $(SOURCE) .\lib\fnmatch.h
-
 
 # End Source File
 ################################################################################
@@ -2488,6 +2491,27 @@ DEP_CPP_XMALLOC_C=\
 ################################################################################
 # Begin Source File
 
+SOURCE=.\lib\alloca_.h
+
+".\lib\alloca.h" : $(SOURCE)
+   copy $(SOURCE) .\lib\alloca.h
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\alloca.c
+DEP_CPP_ALLOCA_C=\
+	".\windows-NT\config.h"\
+	".\lib\alloca.h"\
+	
+"$(INTDIR)\alloca.obj" : $(SOURCE) $(DEP_CPP_ALLOCA_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+# End Source File
+################################################################################
+# Begin Source File
+
 SOURCE=.\lib\asnprintf.c
 DEP_CPP_ASNPRINTF_C=\
 	".\windows-NT\config.h"\
@@ -2503,6 +2527,7 @@ DEP_CPP_ASNPRINTF_C=\
 SOURCE=.\lib\vasnprintf.c
 DEP_CPP_VASNPRINTF_C=\
 	".\windows-NT\config.h"\
+	".\lib\alloca.h"\
 	".\lib\printf-parse.h"\
 	".\lib\vasnprintf.h"\
 	".\lib\xsize.h"\
