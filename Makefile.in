@@ -68,22 +68,10 @@ mandir = $(prefix)/man
 
 #### End of system configuration section. ####
 
-# CYGNUS LOCAL--pass INSTALL to sub-makes.  This works for Cygnus
-# builds (in which the top-level makefile sets install to something
-# containing `pwd') but loses if autoconf has set install to something
-# like "../../install.sh".  Relying on autoconf 1.11 to edit the
-# sub-makefiles loses, it has a bug and doesn't add a leading "../" in
-# the case where it is needed.  Autoconf 1.122 fixes this, but in its
-# infinite wisdom has chosen not to support AC_RSH, so we can't just
-# use 1.122.  Sigh.
-
 FLAGS_TO_PASS = \
 	AR='$(AR)' \
 	CC='$(CC)' \
 	CFLAGS='$(CFLAGS)' \
-	INSTALL='$(INSTALL)' \
-	INSTALL_DATA='$(INSTALL_DATA)' \
-	INSTALL_PROGRAM='$(INSTALL_PROGRAM)' \
 	LDFLAGS='$(LDFLAGS)' \
 	LIBPROGS='$(LIBPROGS)' \
 	LIBS='$(LIBS)' \

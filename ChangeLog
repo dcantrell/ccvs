@@ -1,3 +1,9 @@
+Wed Jun 21 16:12:14 1995  James Kingdon  <kingdon@harvey>
+
+	* Makefile.in (FLAGS_TO_PASS): Don't pass INSTALL to sub-makes.
+	The reason for passing it is gone now that we are using autoconf
+	2.x which will set INSTALL in the sub-makefiles correctly.
+
 Tue Jun 20 18:14:54 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in, configure: Make sure src directory exists before
