@@ -338,6 +338,52 @@ dnl
 
 
 dnl
+dnl Find a temporary directory
+dnl
+AC_ARG_WITH(
+  [tmpdir],
+  AC_HELP_STRING(
+    [--with-tmpdir],
+    [The temporary directory CVS should use as a default
+     (default autoselects).]))
+
+AC_MSG_CHECKING([for temporary directory])
+if test -z "$with_tmpdir" || test yes = "$with_tmpdir"; then
+  for with_tmpdir in "$TMPDIR" "$TMP" "$TEMP" /tmp /var/tmp no; do
+    if test -d "$with_tmpdir" && test -x "$with_tmpdir" \
+        && test -w "$with_tmpdir" && test -r "$with_tmpdir"; then
+      break
+    fi
+  done
+  if test no = "$with_tmpdir"; then
+    AC_MSG_WARN([Failed to find usable temporary directory.  Using '/tmp'.])
+    with_tmpdir=/tmp
+  fi
+  AC_MSG_RESULT([$with_tmpdir])
+elif ! echo "$with_tmpdir" |grep '^[[\\/]]'; then
+  AC_MSG_RESULT([$with_tmpdir])
+  AC_MSG_ERROR([--with-tmpdir requires an absolute path.])
+elif ! test -d "$with_tmpdir" || ! test -x "$with_tmpdir" \
+        || ! test -w "$with_tmpdir" || ! test -r "$with_tmpdir"; then
+  AC_MSG_RESULT([$with_tmpdir])
+  AC_MSG_WARN(
+    [User supplied temporary directory ('$with_tmpdir') does not
+     exist or lacks sufficient permissions for read/write.])
+fi
+
+AC_DEFINE_UNQUOTED(
+  [TMPDIR_DFLT], ["$with_tmpdir"],
+  [Directory used for storing temporary files, if not overridden by
+   environment variables or the -T global option.  There should be little
+   need to change this (-T is a better mechanism if you need to use a
+   different directory for temporary files).])
+
+dnl
+dnl done finding tmpdir
+dnl
+
+
+dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
 dnl If you change this, keep in mind that some systems have a bogus

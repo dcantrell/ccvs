@@ -856,6 +856,8 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-editor           The default text editor CVS should use for log
                           messages (default autoselects)
+  --with-tmpdir           The temporary directory CVS should use as a default
+                          (default autoselects).
   --with-krb4=value       Kerberos 4 directory (default /usr/kerberos)
   --with-gssapi=value     GSSAPI directory (default autoselects)
 
@@ -6989,6 +6991,53 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 fi
+
+
+
+
+# Check whether --with-tmpdir or --without-tmpdir was given.
+if test "${with_tmpdir+set}" = set; then
+  withval="$with_tmpdir"
+
+fi;
+
+echo "$as_me:$LINENO: checking for temporary directory" >&5
+echo $ECHO_N "checking for temporary directory... $ECHO_C" >&6
+if test -z "$with_tmpdir" || test yes = "$with_tmpdir"; then
+  for with_tmpdir in "$TMPDIR" "$TMP" "$TEMP" /tmp /var/tmp no; do
+    if test -d "$with_tmpdir" && test -x "$with_tmpdir" \
+        && test -w "$with_tmpdir" && test -r "$with_tmpdir"; then
+      break
+    fi
+  done
+  if test no = "$with_tmpdir"; then
+    { echo "$as_me:$LINENO: WARNING: Failed to find usable temporary directory.  Using '/tmp'." >&5
+echo "$as_me: WARNING: Failed to find usable temporary directory.  Using '/tmp'." >&2;}
+    with_tmpdir=/tmp
+  fi
+  echo "$as_me:$LINENO: result: $with_tmpdir" >&5
+echo "${ECHO_T}$with_tmpdir" >&6
+elif ! echo "$with_tmpdir" |grep '^[\\/]'; then
+  echo "$as_me:$LINENO: result: $with_tmpdir" >&5
+echo "${ECHO_T}$with_tmpdir" >&6
+  { { echo "$as_me:$LINENO: error: --with-tmpdir requires an absolute path." >&5
+echo "$as_me: error: --with-tmpdir requires an absolute path." >&2;}
+   { (exit 1); exit 1; }; }
+elif ! test -d "$with_tmpdir" || ! test -x "$with_tmpdir" \
+        || ! test -w "$with_tmpdir" || ! test -r "$with_tmpdir"; then
+  echo "$as_me:$LINENO: result: $with_tmpdir" >&5
+echo "${ECHO_T}$with_tmpdir" >&6
+  { echo "$as_me:$LINENO: WARNING: User supplied temporary directory ('$with_tmpdir') does not
+     exist or lacks sufficient permissions for read/write." >&5
+echo "$as_me: WARNING: User supplied temporary directory ('$with_tmpdir') does not
+     exist or lacks sufficient permissions for read/write." >&2;}
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define TMPDIR_DFLT "$with_tmpdir"
+_ACEOF
+
 
 
 

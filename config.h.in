@@ -403,6 +403,12 @@
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
+/* Directory used for storing temporary files, if not overridden by
+   environment variables or the -T global option. There should be little need
+   to change this (-T is a better mechanism if you need to use a different
+   directory for temporary files). */
+#undef TMPDIR_DFLT
+
 /* Define if setmode is required when writing binary data to stdout. */
 #undef USE_SETMODE_STDOUT
 
