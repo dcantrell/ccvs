@@ -1746,8 +1746,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		   Of course this is yet one more reason why in the long
 		   run we want Rcs-diff to replace Patched.  */
 
-	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
-			   filename, temp_filename);
+	        run_setup (PATCH_PROGRAM);
+		run_arg ("-f");
+		run_arg ("-s");
+		run_arg ("-b");
+		run_arg ("~");
+		run_arg (filename);
+		run_arg (temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
 	    /* FIXME: should we really be silently ignoring errors?  */

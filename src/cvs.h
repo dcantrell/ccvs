@@ -633,11 +633,7 @@ extern void get_file PROTO ((char *, char *, char *, char **, size_t *,
 
 void run_arg PROTO((const char *s));
 void run_print PROTO((FILE * fp));
-#ifdef HAVE_VPRINTF
-void run_setup PROTO((const char *fmt,...));
-#else
-void run_setup ();
-#endif
+void run_setup PROTO ((const char *prog));
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 
 /* other similar-minded stuff from run.c.  */

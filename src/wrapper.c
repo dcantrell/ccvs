@@ -456,6 +456,7 @@ wrap_tocvs_process_file(fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char *buf = NULL;
+    char *args;
 
     if(e==NULL || e->tocvsFilter==NULL)
 	return NULL;
@@ -464,8 +465,16 @@ wrap_tocvs_process_file(fileName)
 	free (buf);
     buf = cvs_temp_name ();
 
-    run_setup(e->tocvsFilter,fileName,buf);
+    args = xmalloc (strlen (e->tocvsFilter)
+		    + strlen (fileName)
+		    + strlen (buf));
+    /* FIXME: sprintf will blow up if the format string contains items other
+       than %s, or contains too many %s's.  We should instead be parsing
+       e->tocvsFilter ourselves and giving a real error.  */
+    sprintf (args, e->tocvsFilter, fileName, buf);
+    run_setup (args);
     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY );
+    free (args);
 
     return buf;
 }
@@ -485,12 +494,20 @@ void
 wrap_fromcvs_process_file(fileName)
     const char *fileName;
 {
+    char *args;
     WrapperEntry *e=wrap_matching_entry(fileName);
 
     if(e==NULL || e->fromcvsFilter==NULL)
 	return;
 
-    run_setup(e->fromcvsFilter,fileName);
+    args = xmalloc (strlen (e->fromcvsFilter)
+		    + strlen (fileName));
+    /* FIXME: sprintf will blow up if the format string contains items other
+       than %s, or contains too many %s's.  We should instead be parsing
+       e->fromcvsFilter ourselves and giving a real error.  */
+    sprintf (args, e->fromcvsFilter, fileName);
+    run_setup (args);
     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL );
+    free (args);
     return;
 }

@@ -14,30 +14,14 @@
 
 #include "cvs.h"
 
-#ifdef HAVE_VPRINTF
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#include <stdarg.h>
-#define VA_START(args, lastarg) va_start(args, lastarg)
-#else
-#include <varargs.h>
-#define VA_START(args, lastarg) va_start(args)
-#endif
-#else
-#define va_alist a1, a2, a3, a4, a5, a6, a7, a8
-#define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif
-
 static void run_add_arg PROTO((const char *s));
 
 extern char *strtok ();
 
-extern int vasprintf ();
-
 /*
- * To exec a program under CVS, first call run_setup() to setup any initial
- * arguments.  The options to run_setup are essentially like printf(). The
- * arguments will be parsed into whitespace separated words and added to the
- * global run_argv list.
+ * To exec a program under CVS, first call run_setup() to setup initial
+ * arguments.  The argument to run_setup will be parsed into whitespace 
+ * separated words and added to the global run_argv list.
  * 
  * Then, optionally call run_arg() for each additional argument that you'd like
  * to pass to the executed program.
@@ -51,19 +35,10 @@ static int run_argc;
 static int run_argc_allocated;
 
 /* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 void 
-run_setup (const char *fmt,...)
-#else
-void 
-run_setup (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
+run_setup (prog)
+    const char *prog;
 {
-#ifdef HAVE_VPRINTF
-    va_list args;
-#endif
     char *cp;
     int i;
     char *run_prog;
@@ -79,16 +54,7 @@ run_setup (fmt, va_alist)
     }
     run_argc = 0;
 
-    /* process the varargs into run_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
-    (void) vasprintf (&run_prog, fmt, args);
-    va_end (args);
-#else
-    you lose
-#endif
-    if (run_prog == NULL)
-	error (1, 0, "out of memory");
+    run_prog = xstrdup (prog);
 
     /* put each word into run_argv, allocating it as we go */
     for (cp = strtok (run_prog, " \t"); cp; cp = strtok ((char *) NULL, " \t"))

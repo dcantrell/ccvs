@@ -282,7 +282,7 @@ do_editor (dir, messagep, repository, changes)
 	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0);
 
     /* run the editor */
-    run_setup ("%s", editinfo_editor ? editinfo_editor : Editor);
+    run_setup (editinfo_editor ? editinfo_editor : Editor);
     run_arg (fname);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
@@ -431,7 +431,7 @@ do_verify (message, repository)
 
 	if (verifymsg_script)
 	{
-	    run_setup ("%s", verifymsg_script);
+	    run_setup (verifymsg_script);
 	    run_arg (fname);
 	    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 				     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
