@@ -1,3 +1,9 @@
+Fri Oct 25 12:38:29 1996  Jim Wilson  <wilson@cygnus.com>
+
+	* sanity.sh (death2): In tests death2-diff-{2,4,6,8,10}, allow "_"
+	in temp file names.  The system (tmpnam or whatever) generates
+	these names so they vary from system to system.
+
 Fri Oct 25 07:52:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c (logfile_write): Give an error for several cases which
