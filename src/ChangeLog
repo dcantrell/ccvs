@@ -1,3 +1,7 @@
+Thu Nov  2 21:51:04 1995  Dan Wilder  <dan@gasboy.com>
+
+	* rtag.c (rtag): Fix typo ("-T" -> "-F").
+
 Tue Oct 31 19:09:11 1995  Dan Wilder <dan@gasboy.com>
 
         * diff.c (diff_dirproc): just return R_SKIP_ALL if dir not exist.
