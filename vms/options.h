@@ -81,23 +81,6 @@
 #endif
 
 /*
- * The "rm" program to execute when pruning directories that are not part of
- * a release.  This "rm" must support the "-fr" options.  Specify a full
- * pathname if your site wants to use a particular rm.
- */
-#ifndef RM
-#define	RM	"rm"
-#endif
-
-/*
- * The "sort" program to execute when displaying the module database. Specify
- * a full pathname if your site wants to use a particular sort.
- */
-#ifndef SORT
-#define	SORT	"sort"
-#endif
-
-/*
  * The "patch" program to run when using the CVS server and accepting
  * patches across the network.  Specify a full pathname if your site
  * wants to use a particular patch.
@@ -115,17 +98,19 @@
  * unless the user overrides the default with the RCSBIN environment variable
  * or the "-b" option to CVS.
  * 
- * If you're compiling the authenticating server (see
- * AUTH_SERVER_SUPPORT farther down), then you probably want to set
- * RCSBIN_DFLT.  The authenticating server starts out running as root,
- * and then switches to run as the appropriate user once
- * authentication is complete.  No shell is ever started by that user,
- * so the PATH environment variable may not contain the directory with
- * the RCS binaries, even though if that user logged in normally, PATH
- * would include the directory.  An alternative to setting RCSBIN_DFLT
- * is to make sure that root has the right directory in its path
- * already.  Another, probably better alternative is to specify -b in
- * /etc/inetd.conf.
+ * If you use the password-authenticating server, then you need to
+ * make sure that the server can find the RCS programs to invoke them.
+ * The authenticating server starts out running as root, and then
+ * switches to run as the appropriate user once authentication is
+ * complete.  But no actual shell is ever started by that user, so the
+ * PATH environment variable may not contain the directory with the
+ * RCS binaries, even though if that user logged in normally, PATH
+ * would include the directory.  
+ *
+ * One way to solve this problem is to set RCSBIN_DFLT here.  An
+ * alternative is to make sure that root has the right directory in
+ * its path already.  Another, probably better alternative is to
+ * specify -b in /etc/inetd.conf. 
  *
  * This define should be either the empty string ("") or a full pathname to the
  * directory containing all the installed programs from the RCS distribution.  */
@@ -243,12 +228,9 @@
 #endif
 
 /*
- * The authenticated client/server is under construction.  Don't
- * define either of these unless you're testing them, in which case 
- * you're me and you already know that.
+ * The authenticated client is not yet ported to VMS.
  */
 /* #define AUTH_CLIENT_SUPPORT 1 */
-/* #define AUTH_SERVER_SUPPORT 1 */
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
