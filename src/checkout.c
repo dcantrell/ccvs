@@ -935,12 +935,12 @@ internal error: %s doesn't start with %s in checkout_proc",
 	   may not have a thing to do with where the sources are
 	   being checked out.  If it does, build_dirs_and_chdir
 	   will take care of creating adm files here. */
-	/* FIXME: checking where_is_absolute is a horrid kludge;
+	/* FIXME: checking is_absolute (where) is a horrid kludge;
 	   I suspect we probably can just skip the call to
 	   build_one_dir whenever the -d command option was specified
 	   to checkout.  */
 
-	if (!is_absolute (where) && top_level_admin && m_type == CHECKOUT)
+	if (!isabsolute (where) && top_level_admin && m_type == CHECKOUT)
 	{
 	    /* It may be argued that we shouldn't set any sticky
 	       bits for the top-level repository.  FIXME?  */
