@@ -1,3 +1,8 @@
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
+	* fix-msvc-make-head.pl, fix-msvc-mak.pl: New files.
+	* .cvsignore: Add fix-msvc-mak.
+
 2004-04-20  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (unlink_file_dir, deep_remove_dir): Handle errno of

@@ -170,7 +170,7 @@ subdir = windows-NT
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = fix-msvc-mak
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -178,7 +178,8 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	all-recursive install-data-recursive install-exec-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
-DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am
+DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
+	fix-msvc-mak-head.pl fix-msvc-mak.pl
 DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
@@ -188,6 +189,8 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configu
 	  $(AUTOMAKE) --gnu  windows-NT/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
+fix-msvc-mak: $(top_builddir)/config.status fix-msvc-mak-head.pl fix-msvc-mak.pl
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
