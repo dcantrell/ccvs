@@ -772,7 +772,7 @@ check_fileproc (callerdat, finfo)
 		 * If the timestamps differ, look for Conflict indicators
 		 * in the file to see if we should block the commit anyway
 		 */
-		run_setup ("%s", Grepbin);
+		run_setup ("%s", GREP);
 		run_arg (RCS_MERGE_PAT);
 		run_arg (finfo->file);
 		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_REALLY);
@@ -1484,8 +1484,7 @@ remove_file (finfo, tag, message)
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  */
     retcode = RCS_checkout (finfo->rcs, finfo->file, rev ? corev : NULL,
-			    (char *) NULL, (char *) NULL, (char *) NULL,
-			    RUN_TTY);
+			    (char *) NULL, (char *) NULL, RUN_TTY);
     if (retcode != 0)
     {
 	if (!quiet)

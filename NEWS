@@ -1,21 +1,5 @@
 Changes since 1.8:
 
-* New global option '-D diff' to set the path/name of the diff program
-used by 'cvs patch' and 'cvs update' (the latter only if sending patches
-to a remote client.  This value can also now be defaulted at run-time by
-setting the environment variable DIFFBIN.
-
-* New global option '-g grep to set the path/name of the grep program
-used by 'cvs update' when searching for conflict markers after merging.
-This value can also now be defaulted at run-time by setting the
-environment variable GREPBIN.
-
-* The postscript documentation (doc/cvs.ps) shipped with CVS is now
-formatted for US letter size instead of A4.  This is not because we
-consider this size "better" than A4, but because we believe that the
-US letter version will print better on A4 paper than the other way
-around.
-
 * Windows NT client should now work on Windows 95 as well.
 
 * New option "--help-synonyms" prints a list of all recognized command
@@ -24,12 +8,6 @@ synonyms.
 * The "log" command is now implemented internally rather than via the
 RCS "rlog" program.  The main user-visible consequence is that
 symbolic branch names now work (for example "cvs log -rbranch1").
-Also, the date formats accepted by -d have changed.  They previously
-had been a bewildering variety of poorly-documented date formats.  Now
-they are the same as the date formats accepted by the -D options to
-the other CVS commands, which is also a (different) bewildering
-variety of poorly-documented date formats, but at least we are
-consistently bewildering :-).
 
 * Encryption is now supported over a Kerberos client/server
 connection.  The new "-x" global option requests it.  You must
