@@ -472,8 +472,7 @@ do_verify (char **messagep, const char *repository)
 	    char *p;
 	    FILE *fp;
 
-	    if ((fp = xfopen (data.fname, "r")) == NULL)
-		error (1, errno, "cannot open temporary file %s", data.fname);
+	    fp = xfopen (data.fname, "r");
 
 	    /* On NT, we might read less than st_size bytes,
 	       but we won't read more.  So this works.  */
