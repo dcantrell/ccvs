@@ -626,7 +626,6 @@ call_in_directory (pathname, func, data)
 		     */
 		    char *repo;
 		    char *r;
-		    char *p;
 
 		    repo = xmalloc (strlen (reposdirname)
 				    + strlen (toplevel_repos)
@@ -1216,11 +1215,8 @@ handle_clear_static_directory (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
     /* Just the part of pathname relative to toplevel_repos.  */
     char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
 
     if (strcmp (command_name, "export") == 0)
     {
@@ -1266,11 +1262,8 @@ handle_set_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
     /* Just the part of pathname relative to toplevel_repos.  */
     char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
 
     if (strcmp (command_name, "export") == 0)
     {
@@ -1314,11 +1307,8 @@ handle_clear_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    char *dirname;
     /* Just the part of pathname relative to toplevel_repos.  */
     char *short_pathname;
-    char *p;
-    char tmp[PATH_MAX];
 
     if (strcmp (command_name, "export") == 0)
     {
@@ -1707,7 +1697,6 @@ send_a_repository (dir, repository, update_dir)
     char *repository;
     char *update_dir;
 {
-    int update_dir_len = strlen (update_dir);
     if (toplevel_repos == NULL && repository != NULL)
     {
 	if (update_dir[0] == '\0'
@@ -1715,8 +1704,6 @@ send_a_repository (dir, repository, update_dir)
 	    toplevel_repos = xstrdup (repository);
 	else
 	{
-	    char *cvsadm;
-
 	    /*
 	     * Get the repository from a CVS/Repository file if update_dir
 	     * is absolute.  This is not correct in general, because
@@ -2439,7 +2426,6 @@ send_modified (file, short_pathname)
     if (gzip_level && sb.st_size > 100)
     {
 	int nread, newsize = 0, gzip_status;
-	int size_left = bufsize;
 	pid_t gzip_pid;
 	char *bufp = buf;
 	int readsize = 8192;
@@ -2613,8 +2599,6 @@ send_dirent_proc (dir, repository, update_dir)
     char *repository;
     char *update_dir;
 {
-    char *our_repos = NULL;
-    Dtype retval;
     int dir_exists;
     char *cvsadm_repos_name;
 
