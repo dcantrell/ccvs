@@ -392,7 +392,22 @@ run_popen (cmd, mode)
        double quotes.  */
     {
         char *requoted = requote (cmd);
+	/* Save and restore our file descriptors to work around
+	   apparent bugs in _popen.  We are perhaps better off using
+	   the win32 functions instead of _popen.  */
+	int old_stdin = dup (STDIN_FILENO);
+	int old_stdout = dup (STDOUT_FILENO);
+	int old_stderr = dup (STDERR_FILENO);
+
 	FILE *result = popen (requoted, mode);
+
+	dup2 (old_stdin, STDIN_FILENO);
+	dup2 (old_stdout, STDOUT_FILENO);
+	dup2 (old_stderr, STDERR_FILENO);
+	close (old_stdin);
+	close (old_stdout);
+	close (old_stderr);
+
 	free (requoted);
 	return result;
     }
