@@ -15728,11 +15728,13 @@ ${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 
 	    mkdir 1; cd 1
 	    # Set CVS_RSH=false since ocassionally (e.g. when CVS_RSH=ssh on
-	    # some systems), # some rsh implementations will block because they
+	    # some systems) some rsh implementations will block because they
 	    # can look up '..' and want to ask the user about the unknown host
-	    # key or somesuch
-	    CVS_RSH=false dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get ." \
-"$PROG \[[a-z]* aborted\]: end of file from server (consult above messages if any)"
+	    # key or somesuch.  Which error message we get depends on whether
+	    # false finishes running before we try to talk to it or not.
+	    dotest_fail crerepos-6a "CVS_RSH=false ${testcvs} -q -d ../crerepos get ." \
+"$PROG \[[a-z]* aborted\]: end of file from server (consult above messages if any)" \
+"$PROG \[[a-z]* aborted\]: received broken pipe signal"
 	    cd ..
 	    rm -r 1
 

@@ -1,3 +1,8 @@
+2001-06-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (crerepos-6a): Set CVS_RSH for ${testcvs}, not for
+	dotest_fail.  Allow for "broken pipe" rather than "end of file".
+
 2001-06-07  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (tagf): Use $CVSROOT_DIRNAME rather than
