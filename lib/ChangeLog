@@ -1,3 +1,8 @@
+2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
+
+	* xtime.h: added include guards to fix compile errors on IRIX 5.3
+	(Patch from Georg Schwarz <georg.scwarz@freenet.de>.)
+
 2005-02-08  Derek Price  <derek@ximbiot.com>
 
 	* fncase.c (OSX_filename_classes): Mac OSX doesn't need \ mapped to /.

@@ -1,7 +1,6 @@
-2005-03-04  Georg Schwarz <georg.scwarz@freenet.de>
+2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
 
-	* lib/xtime.h - added include guards to fix compile errors
- 	on IRIX 5.3
+	* NEWS: Note fix for compile errors on IRIX 5.3.
 
 2005-02-22  Derek Price  <derek@ximbiot.com>
 
