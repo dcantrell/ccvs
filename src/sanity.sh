@@ -2195,13 +2195,13 @@ EOF
 	    echo 'FAIL: test 186a7' | tee -a ${LOGFILE}
 	  fi
 
-	  dotest devcom-a0 "cvs watchers" ''
-	  dotest devcom-a1 "cvs watch add" ''
-	  dotest devcom-a2 "cvs watchers" \
+	  dotest devcom-a0 "${testcvs} watchers" ''
+	  dotest devcom-a1 "${testcvs} watch add" ''
+	  dotest devcom-a2 "${testcvs} watchers" \
 'abb	[a-z0-9]*	edit	unedit	commit
 abc	[a-z0-9]*	edit	unedit	commit'
-	  dotest devcom-a3 "cvs watch remove -a unedit abb" ''
-	  dotest devcom-a4 "cvs watchers abb" \
+	  dotest devcom-a3 "${testcvs} watch remove -a unedit abb" ''
+	  dotest devcom-a4 "${testcvs} watchers abb" \
 'abb	[a-z0-9]*	edit	commit'
 
 	  cd ../..
