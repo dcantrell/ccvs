@@ -1,3 +1,26 @@
+Sun Oct  6 15:58:11 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* The following changes address problem #56 in the GNATS database
+ 	on harvey.cyclic.com:
+
+	* logmsg.c (str_list_format): new global -- contains the format
+ 	for items to be placed in str_list.
+	(Update_Logfile): move code that creates the "title" string...
+	(logfile_write): ...to here.  Pull apart the filter program and
+ 	look for a format string, extracting it if there is one.
+	(title_proc): write a given filename/value based on the format
+ 	string.
+
+	* commit.c (classify_file_internal): new routine, old code (needed
+ 	to use the code in more than one place).  Determines the status
+ 	and version information about a file.
+	(check_fileproc): use classify_file_internal.  Fill in the rev_old
+ 	field for the struct logfile_info.
+	(commit_fileproc): Fill in the rev_new field.
+
+	* cvs.h (struct logfile_info): add two new fields -- rev_old and
+ 	rev_new -- that keep track of revision numbers across commits.
+
 Fri Sep 27 15:21:47 1996  Peter Wemm  <peter@spinner.dialix.com>
 
 	* logmsg.c (do_editor): Do not use editinfo if running on the client.
