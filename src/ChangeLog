@@ -1,3 +1,10 @@
+Fri Feb  6 16:14:49 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* myndbm.c (mydbm_load_file): Rename line_len to line_size.  Call
+	getstr rather than getline, to avoid any confusion between \n and
+	\012.  Use the line length returned by getstr rather than calling
+	strlen.  Remove local variable len.
+
 Fri Feb  6 13:23:46 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_parsercsfile_i): Don't suppress errors on
