@@ -1,3 +1,7 @@
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt: Note GNULIB exit() function support.
+
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Mention experimental PAM support.
