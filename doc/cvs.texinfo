@@ -575,7 +575,7 @@ to keep a database of reported bugs and the status of
 each one (is it fixed?  in what release?  has the bug
 submitter agreed that it is fixed?).  For interfacing
 @sc{cvs} to an external bug-tracking system, see the
-@file{rcsinfo} and @file{editinfo} files
+@file{rcsinfo} and @file{verifymsg} files
 (@pxref{Administrative files}).
 
 Another aspect of change control is keeping track of
@@ -616,7 +616,7 @@ releases go through various steps, with various
 approvals as needed.  Generally, one can accomplish
 this with @sc{cvs} but it might be a little more work.
 In some cases you'll want to use the @file{commitinfo},
-@file{loginfo}, @file{rcsinfo}, or @file{editinfo}
+@file{loginfo}, @file{rcsinfo}, or @file{verifymsg}
 files, to require that certain steps be performed
 before cvs will allow a checkin.  Also consider whether
 features such as branches and tags can be used to
@@ -8493,7 +8493,9 @@ file, which defines the modules inside the repository.
 * Wrappers::                    Treat directories as files
 * commit files::                The commit support files
 * commitinfo::                  Pre-commit checking
-* editinfo::                    Specifying how log messages are created
+* verifymsg::                   How are log messages evaluated?
+* editinfo::                    Specifying how log messages are created 
+                                (obsolete)
 * loginfo::                     Where should log messages be sent?
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
@@ -8616,7 +8618,7 @@ Specify a program @var{prog} to run whenever files in a
 module are committed.  @var{prog} runs with a single
 argument, the full pathname of the affected directory
 in a source repository.  The @file{commitinfo},
-@file{loginfo}, and @file{editinfo} files provide other
+@file{loginfo}, and @file{verifymsg} files provide other
 ways to call a program on commit.
 @c FIXME: Is it run on server? client?
 
@@ -8812,12 +8814,19 @@ The program is responsible for checking that the commit
 is allowed.  If it exits with a non-zero exit status
 the commit will be aborted.
 
+@item verifymsg
+The specified program is used to evaluate the log message,
+and possibly verify that it contains all required
+fields.  This is most useful in combination with the
+@file{rcsinfo} file, which can hold a log message
+template (@pxref{rcsinfo}).
+
 @item editinfo
 The specified program is used to edit the log message,
 and possibly verify that it contains all required
 fields.  This is most useful in combination with the
 @file{rcsinfo} file, which can hold a log message
-template (@pxref{rcsinfo}).
+template (@pxref{rcsinfo}).  (obsolete)
 
 @item loginfo
 The specified program is called when the commit is
@@ -8843,7 +8852,7 @@ imagination is the limit!
 @c Variables node is rather bogus.
 
 The administrative files such as @file{commitinfo},
-@file{loginfo}, @file{rcsinfo}, @file{editinfo}, etc.,
+@file{loginfo}, @file{rcsinfo}, @file{verifymsg}, etc.,
 all have a common format.  The purpose of the files are
 described later on.  The common syntax is described
 here.
@@ -8953,12 +8962,111 @@ repositories}).
 @c security" (the bit which is not pserver-specific).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node verifymsg
+@appendixsec Verifying log messages
+@cindex verifymsg (admin file)
+@cindex log message, verifying
+
+Once you have entered a log message, you can evaluate 
+that message to check for specific content, such as 
+a bug ID.  Use the @file{verifymsg} file to
+specify a program that is used to verify the log message.
+This program could be a simple script that checks
+that the entered message contains the required fields.
+
+The @file{verifymsg} file is often most useful together
+with the @file{rcsinfo} file, which can be used to
+specify a log message template.
+
+Each line in the @file{verifymsg} file consists of a
+regular expression and a command-line template.  The
+template must include a program name, and can include
+any number of arguments.  The full path to the current
+log message template file is appended to the template.
+
+One thing that should be noted is that the @samp{ALL}
+keyword is not supported.  If more than one matching
+line is found, the first one is used.  This can be
+useful for specifying a default verification script in a
+module, and then overriding it in a subdirectory.
+
+@cindex DEFAULT in verifymsg
+If the repository name does not match any of the
+regular expressions in this file, the @samp{DEFAULT}
+line is used, if it is specified.
+
+If the verification script exits with a non-zero exit status,
+the commit is aborted.
+
+Note that the verification script cannot change the log
+message; it can merely accept it or reject it.
+@c FIXME?  Is this an annoying limitation?  It would be
+@c relatively easy to fix (although it would *not* be a
+@c good idea for a verifymsg script to interact with the user
+@c at least in the client/server case because of locks
+@c and all that jazz).
+
+The following is a little silly example of a
+@file{verifymsg} file, together with the corresponding
+@file{rcsinfo} file, the log message template and an
+verification  script.  We begin with the log message template.
+We want to always record a bug-id number on the first
+line of the log message.  The rest of log message is
+free text.  The following template is found in the file
+@file{/usr/cvssupport/tc.template}.
+
+@example
+BugId:    
+@end example
+
+The script @file{/usr/cvssupport/bugid.verify} is used to
+evaluate the log message.
+
+@example
+#!/bin/sh
+#
+#       bugid.verify filename
+#
+#  Verify that the log message contains a valid bugid 
+#  on the first line.
+#
+if head -1 < $1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
+    exit 0
+else
+    echo "No BugId found."
+    exit 1
+fi
+@end example
+
+The @file{verifymsg} file contains this line:
+
+@example
+^tc     /usr/cvssupport/bugid.edit
+@end example
+
+The @file{rcsinfo} file contains this line:
+
+@example
+^tc     /usr/cvssupport/tc.template
+@end example
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node editinfo
 @appendixsec Editinfo
 @cindex editinfo (admin file)
 @cindex Editor, specifying per module
 @cindex Per-module editor
 @cindex Log messages, editing
+
+@emph{NOTE:} The @file{editinfo} feature has been
+rendered obsolete.  To set a default editor for log
+messages use the @code{EDITOR} environment variable
+(@pxref{Environment variables}) or the @samp{-e} global
+option (@pxref{Global options}).  See @ref{verifymsg},
+for information on the use of the @file{verifymsg}
+feature for evaluating log messages.
 
 If you want to make sure that all log messages look the
 same way, you can use the @file{editinfo} file to
@@ -9003,11 +9111,8 @@ the commit is aborted.
 Note: when @sc{CVS} is accessing a remote repository,
 or when the @samp{-m} or @samp{-F} options to @code{cvs
 commit} are used, @file{editinfo} will not be consulted.
-There is no good workaround for this.
-@c FORCE_USE_EDITOR in the sources sort of helps a bit,
-@c but doesn't help with remote CVS, and in any event the
-@c whole feature confuses two concepts which should be
-@c separate: (1) getting the message; and (2) validating it.
+There is no good workaround for this; use
+@file{verifymsg} instead.
 
 @menu
 * editinfo example::            Editinfo example
@@ -9240,7 +9345,7 @@ out tree in @file{/u/www/local-docs}.
 The @file{rcsinfo} file can be used to specify a form to
 edit when filling out the commit log.  The
 @file{rcsinfo} file has a syntax similar to the
-@file{editinfo}, @file{commitinfo} and @file{loginfo}
+@file{verifymsg}, @file{commitinfo} and @file{loginfo}
 files.  @xref{syntax}.  Unlike the other files the second
 part is @emph{not} a command-line template.  Instead,
 the part after the regular expression should be a full pathname to
@@ -9260,7 +9365,7 @@ commit -m @var{message}} or @samp{cvs commit -f
 @var{file}} that log message will override the
 template.
 
-@xref{editinfo example}, for an example @file{rcsinfo}
+@xref{verifymsg}, for an example @file{rcsinfo}
 file.
 
 When @sc{CVS} is accessing a remote repository,
