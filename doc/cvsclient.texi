@@ -217,6 +217,10 @@ The @var{text} should be supplied to the
 user.  Compatibility note: @sc{cvs} 1.9.10 and older clients will print
 @code{unrecognized auth response} and @var{text}, and then exit, upon
 receiving this response.
+Note that @var{text} for this response, or the @var{text} in an @code{E}
+response, is not designed for machine parsing.  More vigorous use of
+@var{code}, or future extensions, will be needed to prove a cleaner
+machine-parseable indication of what the error was.
 @end table
 
 @c If you are thinking of putting samp or code around BEGIN AUTH REQUEST
@@ -1567,6 +1571,13 @@ extending this one, for graceful handling of @code{Valid-responses}).
 
 @item M @var{text} \n
 A one-line message for the user.
+Note that the format of @var{text} is not designed for machine parsing.
+Although sometimes scripts and clients will have little choice, the
+exact text which is output is subject to vary at the discretion of the
+server and the example output given in this document is just that,
+example output.  Servers are encouraged to use the @samp{MT} response,
+and future versions of this document will hopefully standardize more of
+the @samp{MT} tags; see @ref{Text tags}.
 
 @item Mbinary \n
 Additional data: file transmission (note: compressed file transmissions
@@ -1664,6 +1675,12 @@ feature, or if it's not appropriate for this particular message, it just
 omits the errno-code (in that case there are two spaces after
 @samp{error}).  Text is an error message such as that provided by
 strerror(), or any other message the server wants to use.
+The @var{text} is like the @code{M} response, in the sense that it is
+not particularly intended to be machine-parsed; servers may wish to
+print an error message with @code{MT} responses, and then issue a
+@code{error} response without @var{text} (although it should be noted
+that @code{MT} currently has no way of flagging the output as intended
+for standard error, the way that the @code{E} response does).
 
 @item ok \n
 The command completed successfully.
