@@ -50,11 +50,7 @@
 
 .\getdate.c : \
 	"..\windows-NT\config.h"\
-	"..\windows-NT\stdbool.h"\
-	".\alloca.h"\
-	".\getdate.h"\
-	".\timespec.h"\
-	".\unlocked-io.h"\
+	".\xtime.h"\
 	
 
 .\getline.c : \

@@ -369,6 +369,10 @@ SOURCE=.\xalloc.h
 
 SOURCE=.\xsize.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\xtime.h
+# End Source File
 # End Group
 # End Target
 # End Project
