@@ -338,7 +338,13 @@ main (argc, argv)
      * Just save the last component of the path for error messages
      */
     program_path = xstrdup (argv[0]);
+#ifdef ARGV0_NOT_PROGRAM_NAME
+    /* On some systems, e.g. VMS, argv[0] is not the name of the command
+       which the user types to invoke the program.  */
+    program_name = "cvs";
+#else
     program_name = last_component (argv[0]);
+#endif
 
     /*
      * Query the environment variables up-front, so that
