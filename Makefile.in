@@ -112,7 +112,10 @@ all install uninstall: config.h Makefile all-local
 	  ( cd $$subdir; $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
 	done
 
-install: all install-local
+install: all install-local install-info
+
+install-info:
+	( cd doc; make install-info )
 
 .PHONY: all-local
 all-local: $(PROGS)

@@ -1,5 +1,7 @@
 Wed Jul 12 10:53:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * sanity.sh: remove the TESTDIR after done.
+
         * cvsbug.sh (GNATS_ADDR): now bug-cvs@prep.ai.mit.edu again.
 
 Tue Jul 11 15:53:08 1995  Greg A. Woods  <woods@most.weird.com>
