@@ -561,7 +561,8 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="basica basicb basicc basic1 deep basic2 files commit-readonly"
+	tests="basica basicb basicc basic1 deep basic2"
+	tests="${tests} files spacefiles commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
 	tests="${tests} branches branches2 tagc tagf"
@@ -2230,6 +2231,106 @@ done"
 
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRECTORY}/first-dir
+	  ;;
+
+	spacefiles)
+	  # More filename tests, in particular spaces in file names.
+	  # If we start using eval in dotest, this test should become
+	  # easier to write (in fact, it may be possible to just
+	  # change a few of the names in basica or some other test,
+	  # always good to keep the testsuite concise).
+
+	  # I wrote this test to worry about problems in do_module;
+	  # but then I found that the CVS server has its own problems
+	  # with filenames starting with "-".  Work around it for now.
+	  if test "$remote" = yes; then
+	    dashb=dashb
+	    dashc=dashc
+	  else
+	    dashb=-b
+	    dashc=-c
+	  fi
+
+	  mkdir 1; cd 1
+	  dotest spacefiles-1 "${testcvs} -q co -l ." ""
+	  touch ./${dashc} top
+	  dotest spacefiles-2 "${testcvs} add -- ${dashc} top" \
+"${PROG} [a-z]*: scheduling file .${dashc}. for addition
+${PROG} [a-z]*: scheduling file .top. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest spacefiles-3 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/${dashc},v
+done
+Checking in ${dashc};
+${TESTDIR}/cvsroot/${dashc},v  <--  ${dashc}
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/top,v
+done
+Checking in top;
+${TESTDIR}/cvsroot/top,v  <--  top
+initial revision: 1\.1
+done"
+	  mkdir 'first dir'
+	  if ${testcvs} add 'first dir' >${TESTDIR}/output.tmp 2>&1; then
+	    dotest spacefiles-4 "cat ${TESTDIR}/output.tmp" \
+"Directory ${TESTDIR}/cvsroot/first dir added to the repository"
+	  else
+	    fail spacefiles-4
+	  fi
+	  mkdir ./${dashb}
+	  dotest spacefiles-5 "${testcvs} add -- ${dashb}" \
+"Directory ${TESTDIR}/cvsroot/${dashb} added to the repository"
+	  cd 'first dir'
+	  touch 'a file'
+	  if ${testcvs} add 'a file' >${TESTDIR}/output.tmp 2>&1; then
+	    dotest spacefiles-6 "cat ${TESTDIR}/output.tmp" \
+"${PROG} [a-z]*: scheduling file .a file. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  else
+	    fail spacefiles-6
+	  fi
+	  dotest spacefiles-7 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first dir/a file,v
+done
+Checking in a file;
+${TESTDIR}/cvsroot/first dir/a file,v  <--  a file
+initial revision: 1\.1
+done"
+	  dotest spacefiles-8 "${testcvs} -q tag new-tag" "T a file"
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  # Leading slash strikes me as kind of oddball, but there is
+	  # a special case for it in do_module.  And (in the case of
+	  # "top", rather than "-c") it has worked in CVS 1.10.6 and
+	  # presumably back to CVS 1.3 or so.
+	  dotest spacefiles-9 "${testcvs} -q co -- /top" "U \./top"
+	  dotest spacefiles-10 "${testcvs} co -- ${dashb}" \
+"${PROG} [a-z]*: Updating ${dashb}"
+	  dotest spacefiles-11 "${testcvs} -q co -- ${dashc}" "U \./${dashc}"
+	  rm ./${dashc}
+	  dotest spacefiles-12 "${testcvs} -q co -- /${dashc}" "U \./${dashc}"
+	  if ${testcvs} -q co 'first dir' >${TESTDIR}/output.tmp 2>&1; then
+	    dotest spacefiles-13 "cat ${TESTDIR}/output.tmp" \
+"U first dir/a file"
+	  else
+	    fail spacefiles-13
+	  fi
+	  cd ..
+
+	  mkdir 3; cd 3
+	  if ${testcvs} -q co 'first dir/a file' >${TESTDIR}/output.tmp 2>&1
+	  then
+	    dotest spacefiles-14 "cat ${TESTDIR}/output.tmp" \
+"U first dir/a file"
+	  else
+	    fail spacefiles-14
+	  fi
+	  cd ..
+
+	  rm -r 1 2 3
+	  rm -rf "${CVSROOT_DIRECTORY}/first dir"
 	  ;;
 
 	commit-readonly)

@@ -1,3 +1,15 @@
+1999-05-26  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.h, subr.c (xmalloc): Return void* not char*, like xrealloc
+	has done for some time.
+	* modules.c (do_module): If we find the module as a directory/file
+	(rather than in the modules file), skip a bunch of processing
+	which was unnecessary and also broken in most of the cases
+	now tested for by the spacefiles sanity.sh test.
+	* sanity.sh (spacefiles): New test, for specifying filenames
+	(containing spaces, or starting with '-', or starting with '/') to
+	"cvs co".
+
 1999-05-25  Jim Kingdon  <http://www.cyclic.com>
 
 	* client.c (update_entries): Make the old DONT_USE_PATCH code the
