@@ -7094,8 +7094,8 @@ new revision: 1\.2; previous revision: 1\.1
 done
 $PROG [a-z]*: Rebuilding administrative file database"
 
-	  dotest_fail mtfr-3 "ls $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
-	    "ls: $CVSROOT_DIRNAME/CVSROOT/\.#\[0-9\]\*: .*"
+	  dotest mtfr-3 "echo $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
+	    "$CVSROOT_DIRNAME/CVSROOT/\.#\[0-9\]\*"
 
 	  cd ../..
 	  rm -rf 1
