@@ -180,9 +180,10 @@ foreach sfile (SCCS/s.*)
 	set year = `echo $date | cut -c3-4`
 	if ($year < 70) then
 		# Y2K Bug, change century to 20
-		set date = `echo $date | sed -e s/19/20/`
+		set date = `sccs prs -r$rev $file | grep "^D " | awk '{printf("20%s %s", $3, $4); exit}'`
+	else
+		set date = `sccs prs -r$rev $file | grep "^D " | awk '{printf("19%s %s", $3, $4); exit}'`
 	endif
-        set date = `sccs prs -r$rev $file | grep "^D " | awk '{printf("19%s %s", $3, $4); exit}'`
         set author = `sccs prs -r$rev $file | grep "^D " | awk '{print $5; exit}'`
         echo ""
         echo "==> file $file, rev=$rev, date=$date, author=$author"
