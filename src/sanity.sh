@@ -243,7 +243,7 @@ HOME=${TESTDIR}/home; export HOME
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basica basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basic1 deep basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -569,12 +569,85 @@ done'
 		rm -rf first-dir
 		;;
 
+	deep)
+	  # Test the ability to operate on directories nested rather deeply.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest deep-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  for i in dir1 dir2 dir3 dir4 dir5 dir6 dir7 dir8; do
+	    mkdir $i
+	    dotest deep-2-$i "${testcvs} add $i" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/dir1[/dir0-9]* added to the repository'
+	    cd $i
+	    echo file1 >file1
+	    dotest deep-3-$i "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  done
+	  cd ../../../../../../../../..
+	  dotest deep-4 "${testcvs} -q ci -m add-them first-dir" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/file1,v
+done
+Checking in first-dir/dir1/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/file1,v
+done
+Checking in first-dir/dir1/dir2/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/dir4/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/dir4/dir5/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v
+done
+Checking in first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  file1
+initial revision: 1.1
+done'
+
+	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
+	    pass deep-5
+	  else
+	    fail deep-5
+	  fi
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	basic2)
-		# second dive - add bunch o' files in bunch o' added
-		#  directories
+		# Test rtag, import, history, various miscellaneous operations
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 		dotest basic2-1 "${testcvs} -q co first-dir" ''
-		for i in first-dir dir1 dir2 dir3 dir4 ; do
+		for i in first-dir dir1 dir2 ; do
 			if [ ! -d $i ] ; then
 				mkdir $i
 				if ${CVS} add $i  >> ${LOGFILE}; then
@@ -586,17 +659,17 @@ done'
 
 			cd $i
 
-			for j in file6 file7 file8 file9 file10 file11 file12 file13; do
+			for j in file6 file7; do
 				echo $j > $j
 			done
 
-			if ${CVS} add file6 file7 file8 file9 file10 file11 file12 file13  2>> ${LOGFILE}; then
+			if ${CVS} add file6 file7  2>> ${LOGFILE}; then
 				echo "PASS: test 30-$i-$j" >>${LOGFILE}
 			else
 				echo "FAIL: test 30-$i-$j" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
-		cd ../../../../..
+		cd ../../..
 		if ${CVS} update first-dir  ; then
 			echo "PASS: test 31" >>${LOGFILE}
 		else
@@ -637,35 +710,31 @@ done'
 		# third dive - in bunch o' directories, add bunch o' files,
 		# delete some, change some.
 
-		for i in first-dir dir1 dir2 dir3 dir4 ; do
+		for i in first-dir dir1 dir2 ; do
 			cd $i
 
-			# modify some files
-			for j in file6 file8 file10 file12 ; do
-				echo $j >> $j
-			done
+			# modify a file
+			echo file6 >>file6
 
-			# delete some files
-			rm file7 file9 file11 file13
+			# delete a file
+			rm file7
 
-			if ${CVS} rm file7 file9 file11 file13  2>> ${LOGFILE}; then
+			if ${CVS} rm file7  2>> ${LOGFILE}; then
 				echo "PASS: test 37-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 37-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 
-			# and add some new ones
-			for j in file14 file15 file16 file17 ; do
-				echo $j > $j
-			done
+			# and add a new file
+			echo file14 >file14
 
-			if ${CVS} add file14 file15 file16 file17  2>> ${LOGFILE}; then
+			if ${CVS} add file14  2>> ${LOGFILE}; then
 				echo "PASS: test 38-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 38-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
-		cd ../../../../..
+		cd ../../..
 		if ${CVS} update first-dir  ; then
 			echo "PASS: test 39" >>${LOGFILE}
 		else
@@ -799,70 +868,17 @@ done'
 		# interrupt, while we've got a clean 1.1 here, let's import it into another tree.
 		cd export-dir
 		dotest 56 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
-'N second-dir/file10
-N second-dir/file11
-N second-dir/file12
-N second-dir/file13
-N second-dir/file14
-N second-dir/file15
-N second-dir/file16
-N second-dir/file17
+'N second-dir/file14
 N second-dir/file6
 N second-dir/file7
-N second-dir/file8
-N second-dir/file9
 '"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1
-N second-dir/dir1/file10
-N second-dir/dir1/file11
-N second-dir/dir1/file12
-N second-dir/dir1/file13
 N second-dir/dir1/file14
-N second-dir/dir1/file15
-N second-dir/dir1/file16
-N second-dir/dir1/file17
 N second-dir/dir1/file6
 N second-dir/dir1/file7
-N second-dir/dir1/file8
-N second-dir/dir1/file9
 '"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2
-N second-dir/dir1/dir2/file10
-N second-dir/dir1/dir2/file11
-N second-dir/dir1/dir2/file12
-N second-dir/dir1/dir2/file13
 N second-dir/dir1/dir2/file14
-N second-dir/dir1/dir2/file15
-N second-dir/dir1/dir2/file16
-N second-dir/dir1/dir2/file17
 N second-dir/dir1/dir2/file6
 N second-dir/dir1/dir2/file7
-N second-dir/dir1/dir2/file8
-N second-dir/dir1/dir2/file9
-'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3
-N second-dir/dir1/dir2/dir3/file10
-N second-dir/dir1/dir2/dir3/file11
-N second-dir/dir1/dir2/dir3/file12
-N second-dir/dir1/dir2/dir3/file13
-N second-dir/dir1/dir2/dir3/file14
-N second-dir/dir1/dir2/dir3/file15
-N second-dir/dir1/dir2/dir3/file16
-N second-dir/dir1/dir2/dir3/file17
-N second-dir/dir1/dir2/dir3/file6
-N second-dir/dir1/dir2/dir3/file7
-N second-dir/dir1/dir2/dir3/file8
-N second-dir/dir1/dir2/dir3/file9
-'"${PROG}"' [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3/dir4
-N second-dir/dir1/dir2/dir3/dir4/file10
-N second-dir/dir1/dir2/dir3/dir4/file11
-N second-dir/dir1/dir2/dir3/dir4/file12
-N second-dir/dir1/dir2/dir3/dir4/file13
-N second-dir/dir1/dir2/dir3/dir4/file14
-N second-dir/dir1/dir2/dir3/dir4/file15
-N second-dir/dir1/dir2/dir3/dir4/file16
-N second-dir/dir1/dir2/dir3/dir4/file17
-N second-dir/dir1/dir2/dir3/dir4/file6
-N second-dir/dir1/dir2/dir3/dir4/file7
-N second-dir/dir1/dir2/dir3/dir4/file8
-N second-dir/dir1/dir2/dir3/dir4/file9
 
 No conflicts created by this import'
 
