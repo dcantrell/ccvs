@@ -1,3 +1,7 @@
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (tagdate): Fix typo.
+
 2004-10-19 Derek Price <derek@ximbiot.com>
 
 	* add.c (add): Avoid attempting to resurrect a dead rev 1.1.

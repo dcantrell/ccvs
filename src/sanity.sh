@@ -22335,7 +22335,7 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1
 done"
 	  cd ../..
-	  mkdir 2; cd 
+	  mkdir 2; cd 2
 	  dotest tagdate-14 "${testcvs} -q export -r br2 -D'1 minute ago' first-dir" \
 "[UP] first-dir/file1"
 	  dotest tagdate-15 "cat first-dir/file1" "br2-1"
