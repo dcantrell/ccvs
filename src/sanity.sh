@@ -12832,26 +12832,36 @@ if test "x\$CVS_PID" != "x"; then
     # if all hosts had a 'ps' command that supported the -p switch,
     # but Solaris 7 /usr/ucb/ps does not and that may be the one we use.
     # It is because this is so messy that the CVS_PID feature exists.
-    ppid=\`ps -el |\\
-    awk '/PPID/ { for (i=1; i <= NF; i++) {
-                    if (\$i == "PPID") ppidx = i; 
-                    if (\$i == "PID") pidx = i;
-		  }
-                  next; 
-                }
-                { print \$pidx " " \$ppidx }' |\\
-    grep "^\$\$ " |\\
-    awk '{ print \$NF }'\`
+    pid=\$\$
+    pidcmd="ps -o pid,ppid -p \$pid || ps -el || ps -al"
+    if echo \$pidcmd | sh >pid.stdout 2> pid.stderr; then
+      ppid=\`cat pid.stdout |\\
+      awk '/PPID/ { for (i=1; i <= NF; i++) {
+                      if (\$i == "PPID") ppidx = i; 
+                      if (\$i == "PID") pidx = i;
+		    }
+                    next; 
+                  }
+                  { print \$pidx " " \$ppidx }' |\\
+      grep "^\$pid " |\\
+      awk '{ print \$NF }'\`
+    else
+      ppid=unkown
+    fi
   fi
   if test "x\$ppid" = "x\${CVS_PID}"; then
     # The PID looks okay to me
+    # Clean up any temporary files
+    rm -f pid.stdout pid.stderr
     exit 0
   else
     echo The environment variable CVS_PID is not properly set.
     echo It should have been set to \'\$ppid\' but instead was \'\$CVS_PID\'
     echo It is possible that this test is broken for your host.
-    echo Here is the output of the ps -el command:
-    ps -el
+    echo Current pid: \$pid
+    [ -n "\$pidcmd" ] && echo "Command: \$pidcmd"
+    [ -s pid.stdout ] && echo Standard Out: && cat pid.stdout
+    [ -s pid.stderr ] && echo Standard Error: && cat pid.stderr
     exit 1
   fi
 else
