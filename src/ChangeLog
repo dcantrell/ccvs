@@ -1,3 +1,9 @@
+2002-11-19  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Set $LANG for systems that ignore $LC_ALL.
+	(rcs2-7): Change date offset from 100 months to 96 months to reduce
+	periodic problems with invalid dates.
+
 2002-11-12  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcslib-symlink): Use rm -f rather than a simple rm when
