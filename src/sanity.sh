@@ -2285,10 +2285,10 @@ rcsmerge: warning: conflicts during merge'
 		dotest import-116 'cat imported-file2' \
 'imported file2
 <<<<<<< imported-file2
-import should not expand \$Id$
+import should not expand \$''Id: imported-file2,v 1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 local-change
 =======
-import should not expand \$Id$
+import should not expand \$''Id: imported-file2,v 1\.1\.1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 rev 2 of file 2
 >>>>>>> 1\.1\.1\.2'
 
