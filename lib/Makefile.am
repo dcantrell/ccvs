@@ -230,6 +230,10 @@ libcvs_a_SOURCES += xalloc-die.c
 ## For GNULIB's xgetcwd module.
 libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 
+## For GNULIB's module xgethostname
+
+libcvs_a_SOURCES += xgethostname.h xgethostname.c
+
 ## For GNULIB's xreadlink module.
 libcvs_a_SOURCES += xreadlink.h xreadlink.c
 
