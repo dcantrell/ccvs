@@ -10717,7 +10717,7 @@ EOF
 	  echo stuff > a-lock
 	  dotest reserved-9 "${testcvs} add a-lock" \
 "${PROG} [a-z]*: scheduling file .a-lock. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest reserved-10 "${testcvs} -q ci -m new a-lock" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
 done
