@@ -14,15 +14,10 @@
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
 static int getrcskey PROTO((FILE * fp, char **keyp, char **valp));
-static int parse_rcs_proc PROTO((Node * file, void *closure));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
-static void rcsnode_delproc PROTO((Node * p));
 static void rcsvers_delproc PROTO((Node * p));
-
-static List *rcslist;
-static char *repository;
 
 /*
  * We don't want to use isspace() from the C library because:
@@ -368,16 +363,6 @@ unable to parse rcs file; `state' not in the expected place");
 
     fclose (fp);
     rdata->flags &= ~PARTIAL;
-}
-
-/*
- * rcsnode_delproc - free up an RCS type node
- */
-static void
-rcsnode_delproc (p)
-    Node *p;
-{
-    freercsnode ((RCSNode **) & p->data);
 }
 
 /*
@@ -998,8 +983,6 @@ RCS_isbranch (file, rev, rcs)
     char *rev;
     RCSNode *rcs;
 {
-    Node *p;
-
     /* numeric revisions are easy -- even number of dots is a branch */
     if (isdigit (*rev))
 	return ((numdots (rev) & 1) == 0);

@@ -1,3 +1,21 @@
+Thu Feb 29 08:39:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	gcc -Wall lint:
+	* client.c (copy_a_file): Declare p inside the #ifdef in which is
+	it used.
+	* commit.c (remove_file): Remove unused variable p.
+	* commit.c (checkaddfile): Remove unused variables p.
+	* rcs.c (RCS_isbranch): Remove unused variable p.
+	* rcs.c: Remove unused declarations and definitions of
+	parse_rcs_proc, rcsnode_delproc, rcslist, and repository.
+	* rtag.c (rtag_fileproc): Remove unused variable p.
+	* tag.c (val_fileproc): Remove unused variable node.
+	* client.c, import.c, lock.c, server.c: Cast pid_t to long before
+	passing it to %ld.
+
+	* cvs.h: Don't prototype gethostname; merely declare it (on linux,
+	second argument is size_t not int).
+
 Thu Feb 29 10:29:25 MET 1996  Norbert Kiesel (nk)  <nk@col.sw-ley.de>
 
 	* sanity.sh: added "cat > /dev/null" to loginfo entry to avoid the
