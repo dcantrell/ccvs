@@ -1,5 +1,11 @@
 2002-05-08  Derek Price  <oberon@umich.edu>
 
+	* Makefile.am (cvs_SOURCES): Add options.h explicitly - since we
+	stopped generating it dynamically, Automake stopped noticing it and
+	including it in dists.  See TODO item #214 for notes.
+
+2002-05-08  Derek Price  <oberon@umich.edu>
+
 	* cvs.h: Use the HAVE_CONFIG_H define.
 
 2002-05-07  Larry Jones  <lawrence.jones@eds.com>

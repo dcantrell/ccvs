@@ -89,6 +89,7 @@ cvs_SOURCES = \
 	hardlink.h \
 	hash.h \
 	myndbm.h \
+	options.h \
 	rcs.h \
 	root.h \
 	server.h \
@@ -102,7 +103,7 @@ cvs_LDADD = \
 
 # extra clean targets
 # wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = options.h-SAVED check.log check.plog
+DISTCLEANFILES = check.log check.plog
 
 # General
 EXTRA_DIST = \
