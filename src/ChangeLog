@@ -1,3 +1,8 @@
+Mon Apr 28 14:47:45 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* checkin.c (Checkin): use filename without path when calling
+ 	wrapper (bug found by Michal Schmitz <ms@cosa.de>).
+
 Fri Apr 25 13:28:55 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* client.c (update_entries): In UPDATE_ENTRIES_RCS_DIFF case,
