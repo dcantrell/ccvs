@@ -28,28 +28,6 @@ extern char *krb_realmofhost ();
 #endif /* HAVE_KRB_GET_ERR_TEXT */
 #endif /* HAVE_KERBEROS */
 
-#ifdef HAVE_VPRINTF
-
-#if __STDC__
-#include <stdarg.h>
-#define VA_START(args, lastarg) va_start(args, lastarg)
-#else /* ! __STDC__ */
-#include <varargs.h>
-#define VA_START(args, lastarg) va_start(args)
-#endif /* __STDC__ */
-
-#else /* ! HAVE_VPRINTF */ 
-
-#ifdef HAVE_DOPRNT
-#define va_alist args
-#define va_dcl int args;
-#else /* ! HAVE_DOPRNT */
-#define va_alist a1, a2, a3, a4, a5, a6, a7, a8
-#define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif /* HAVE_DOPRNT */
-
-#endif /* HAVE_VPRINTF */ 
-
 
 static void add_prune_candidate PROTO((char *));
 
@@ -307,6 +285,10 @@ static FILE *to_server;
 /* Stream to read from the server.  */
 static FILE *from_server;
 
+/* We might want to log client/server traffic. */
+static FILE *from_server_logfile;
+static FILE *to_server_logfile;
+
 #if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
 static int rsh_pid = -1;
@@ -366,6 +348,10 @@ read_line (resultp, eof_ok)
 
     /* Terminate it just for kicks, but we *can* deal with embedded NULs.  */
     result[input_index] = '\0';
+
+    /* Log, if that's what we're doing. */
+    if (from_server_logfile)
+      fprintf (from_server_logfile, "%s\n", result);
 
     if (resultp == NULL)
 	free (result);
@@ -1056,26 +1042,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	if (size > 0)
 	{
-	    buf2 = buf;
-	    size_left = size;
-	    while ((size_read = fread (buf2, 1, size_left, from_server)) != size_left)
-	    {
-		if (feof (from_server))
-		    /* FIXME: Should delete temp_filename.  */
-		    error (1, 0, "unexpected end of file from server");
-		else if (ferror (from_server))
-		    /* FIXME: Should delete temp_filename.  */
-		    error (1, errno, "reading from server");
-		else
-		  {
-		    /* short reads are ok if we keep trying */
-		    buf2 += size_read;
-		    size_left -= size_read;
-		  }
-	    }
-	    if (write (fd, buf, size) != size)
-		error (1, errno, "writing %s", short_pathname);
+          read_from_server (buf, size);
+	    
+          if (write (fd, buf, size) != size)
+            error (1, errno, "writing %s", short_pathname);
 	}
+
 	if (close (fd) < 0)
 	    error (1, errno, "writing %s", short_pathname);
 	if (gzip_pid > 0)
@@ -2132,40 +2104,26 @@ struct response responses[] =
 #ifdef CLIENT_SUPPORT
 
 /* 
- * We need this "bottleneck function" because not all systems treat
- * sockets the same as file descriptors.  From now on, all data to the
- * server goes through here.
+ * If LEN is 0, then send_to_server() computes string's length itself.
  *
- * If len is 0, then send_to_server computes the string's length
- * itself.  So if len is 0, the string needs to be '\0'-terminated.
- *
- * CALLERS BEWARE: This function no longer does printf-style formatting.
- *
- * Haven't decided about the return value yet.
+ * Therefore, pass the real length when transmitting data that might
+ * contain 0's.
  */
-int
+void
 send_to_server (str, len)
      char *str;
      int len;
 {
-  int len_written = 0;
+  int wrtn = 0;
 
   if (len == 0)
     len = strlen (str);
 
-  /* 
-   * TODO: for the moment, we just do pretty much what the old
-   * "fprintf (to_server, ...)" calls did.  Later on, we'll get fancy
-   * and use send/recv, for those systems whose sockets are not
-   * file-descriptorish.  A lot of other code that still refers to
-   * to_server has to be changed too, though.
-   */
-
-  while (len_written < len)
+  while (wrtn < len)
     {
-      len_written += fwrite (str, 1, len, to_server);
+      wrtn += fwrite (str + wrtn, 1, len - wrtn, to_server);
 
-      if (len_written == len)
+      if (wrtn == len)
         break;
 
       if (ferror (to_server))
@@ -2174,8 +2132,38 @@ send_to_server (str, len)
         error (1, 0, "premature end-of-file on server");
     }
 
-  return len_written;
+  if (to_server_logfile)
+    fwrite (str, 1, len, to_server_logfile);
 }
+
+
+/*
+ * Read LEN bytes from the server or die trying.
+ */
+void
+read_from_server (buf, len)
+     char *buf;
+     int len;
+{
+  int red = 0;
+
+  while (red < len)
+    {
+      red += fread (buf + red, 1, len - red, from_server);
+
+      if (red == len)
+        break;
+
+      if (ferror (from_server))
+        error (1, errno, "reading from server");
+      if (feof (from_server))
+        error (1, 0, "premature end-of-file from server");
+    }
+
+  if (from_server_logfile)
+    fwrite (buf, 1, len, from_server_logfile);
+}
+
 
 /*
  * Get some server responses and process them.  Returns nonzero for
@@ -2605,8 +2593,12 @@ start_kerberos_server (tofdp, fromfdp, log)
 void
 start_server ()
 {
-    int tofd, fromfd;
-    char *log = getenv ("CVS_CLIENT_LOG");
+  int tofd, fromfd;
+  char *log = getenv ("CVS_CLIENT_LOG");
+
+  /* Init these to NULL.  They will be set later if logging is on. */
+  from_server_logfile = (FILE *) NULL;
+  to_server_logfile   = (FILE *) NULL;
 
 #if HAVE_KERBEROS
     start_kerberos_server (&tofd, &fromfd, log);
@@ -2640,22 +2632,21 @@ start_server ()
     close_on_exec (tofd);
     close_on_exec (fromfd);
 
+    /* Set up logfiles, if any. */
     if (log)
     {
 	int len = strlen (log);
-	char *buf = xmalloc (5 + len);
+	char *buf = xmalloc (len + 5);
 	char *p;
-	static char *teeprog[3] = { "tee" };
 
-	teeprog[1] = buf;
 	strcpy (buf, log);
 	p = buf + len;
 
 	strcpy (p, ".in");
-	tofd = filter_stream_through_program (tofd, 0, teeprog, 0);
+	to_server_logfile = open_file (buf, "w");
 
 	strcpy (p, ".out");
-	fromfd = filter_stream_through_program (fromfd, 1, teeprog, 0);
+	from_server_logfile = open_file (buf, "w");
 
 	free (buf);
     }
