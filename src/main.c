@@ -1219,7 +1219,7 @@ format_time_t (time_t unixtime)
 {
     static char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
     /* Convert to a time in the local time zone.  */
-    struct tm ltm = *(gmtime (&unixtime));
+    struct tm ltm = *(localtime (&unixtime));
 
     if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
 	return NULL;
