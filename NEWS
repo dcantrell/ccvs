@@ -1,5 +1,9 @@
 Changes since 1.11.5:
 
+* Miscellaneous documentation corrections.
+
+* Corrected the path in a failed write error message.
+
 Changes from 1.11.4 to 1.11.5:
 
 * Fixed a security hole in the CVS server by which users with read only access
