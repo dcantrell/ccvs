@@ -1,3 +1,9 @@
+2002-11-12  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (rcslib-symlink): Use rm -f rather than a simple rm when
+	removing links because under some configurations of RH Linux 8.0 the
+	script pauses to ask for removal approval.
+
 2002-11-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (importc): Update the use of the touch command to be
