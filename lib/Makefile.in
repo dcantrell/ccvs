@@ -52,6 +52,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
 ACLOCAL = @ACLOCAL@
+ALLOCA = @ALLOCA@
+ALLOCA_H = @ALLOCA_H@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
@@ -216,11 +218,15 @@ libcvs_a_SOURCES = \
 
 libcvs_a_LIBADD = @LIBOBJS@
 
+
+# For GNULIB's alloca module.
+BUILT_SOURCES = $(ALLOCA_H)
+
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	build_lib.com
-
+	build_lib.com\
+alloca_.h
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -273,7 +279,8 @@ DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	strtoul.c tempname.c valloc.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
-all: all-am
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .o .obj .y
@@ -466,11 +473,13 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LIBRARIES)
 
 installdirs:
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -495,6 +504,7 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f getdate.c
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
@@ -553,10 +563,14 @@ uninstall-am: uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-info-am
 
+all-local $(lib_OBJECTS): $(ALLOCA_H)
+alloca.h: alloca_.h
+	cp $(srcdir)/alloca_.h $@-t
+	mv $@-t $@
 
 # Until Automake gets its act together
 distclean-local:
-	rm -f fnmatch.h
+	rm -f fnmatch.h alloca.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean

@@ -65,14 +65,24 @@ libcvs_a_SOURCES = \
 ## the *.c files in this directory.
 libcvs_a_LIBADD = @LIBOBJS@
 
+BUILT_SOURCES =
+
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
 	build_lib.com
 
+# For GNULIB's alloca module.
+BUILT_SOURCES += $(ALLOCA_H)
+EXTRA_DIST += alloca_.h
+all-local $(lib_OBJECTS): $(ALLOCA_H)
+alloca.h: alloca_.h
+	cp $(srcdir)/alloca_.h $@-t
+	mv $@-t $@
+
 # Until Automake gets its act together
 distclean-local:
-	rm -f fnmatch.h
+	rm -f fnmatch.h alloca.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
