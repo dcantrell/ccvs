@@ -1,3 +1,8 @@
+Sun Mar 16 12:37:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File permissions): CVSUMASK now works for RCS
+	files; but it is (still) awkward for client/server CVS.
+
 Sat Mar 15 17:41:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Magic branch numbers): Add comment about where this
