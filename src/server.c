@@ -3691,7 +3691,9 @@ static void
 serve_rtag (arg)
     char *arg;
 {
-    do_cvs_command ("rtag", rtag);
+    /* Tell cvstag() to behave like rtag not tag.  */
+    command_name = "rtag";
+    do_cvs_command ("rtag", cvstag);
 }
 
 static void
