@@ -1,5 +1,13 @@
 2001-01-09  Larry Jones  <larry.jones@sdrc.com>
 
+	* run.c (close_on_exec): Remove check for FD_CLOEXEC.  As far as I
+	can see, it's *never* been defined, which defeats the whole point.
+	If F_SETFD is defined, it's probably safe to use it.
+
+	* server.c (do_cvs_command): Call close_on_exec on the protocol and
+	flow control pipes in the child process so they don't get inherited
+	by any subsidiary processes.
+
 	* cvs.h (free_cvsroot_t): Spell correctly (was free_CVSroot_t).
 
 2001-01-10  Derek Price  <derek.price@openavenue.com>

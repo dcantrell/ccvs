@@ -444,7 +444,7 @@ void
 close_on_exec (fd)
      int fd;
 {
-#if defined (FD_CLOEXEC) && defined (F_SETFD)
+#ifdef F_SETFD
     if (fcntl (fd, F_SETFD, 1))
 	error (1, errno, "can't set close-on-exec flag on %d", fd);
 #endif
