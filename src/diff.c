@@ -599,23 +599,17 @@ diff_fileproc (callerdat, finfo)
     {
 	int dead1, dead2;
 
-	if (use_rev1 == NULL)
-	    dead1 = 0;
-	else
-	    dead1 = RCS_isdead (vers->srcfile, use_rev1);
-	if (use_rev2 == NULL)
-	    dead2 = 0;
-	else
-	    dead2 = RCS_isdead (vers->srcfile, use_rev2);
+	dead1 = use_rev1 && RCS_isdead (vers->srcfile, use_rev1);
+	dead2 = use_rev2 && RCS_isdead (vers->srcfile, use_rev2);
 
-	if (dead1 && dead2)
+	if (dead1)
 	{
-	    freevers_ts (&vers);
-	    return (0);
-	}
-	else if (dead1)
-	{
-	    if (empty_files)
+	    if (dead2)
+	    {
+		freevers_ts (&vers);
+		return (0);
+	    }
+	    else if (empty_files)
 	        empty_file = DIFF_ADDED;
 	    else
 	    {
