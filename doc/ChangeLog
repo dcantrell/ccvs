@@ -1,3 +1,11 @@
+2002-04-18  Derek Price  <oberon@umich.edu>
+
+	* doc/Makefile.am: Add FIXME comment about an automake bug.
+	* doc/Makefile.in: Regenerated.
+	* doc/stamp-vti: Regenerated as a workaround for the above mentioned
+	automake bug.
+	* doc/version.texi: Ditto.
+
 2002-04-17  Derek Price  <oberon@umich.edu>
 
 	* stamp-vti: Regenerated.
