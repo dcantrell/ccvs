@@ -71,3 +71,6 @@ m4/dos.m4
 m4/dirname.m4
 
 m4/onceonly_2_57.m4
+lib/exit.h
+
+m4/onceonly_2_57.m4
