@@ -1,3 +1,13 @@
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove obsolete bug report.
+	(Patch from Paul Edwards <somewhere in Australia>.)
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove obsolete bug report.
+	(Patch from Paul Edwards <somewhere in Australia>.)
+
 2003-10-23  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS: Note behavior change for cvs update -jrev1 -jrev2.
