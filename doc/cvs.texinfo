@@ -11045,6 +11045,8 @@ a file @file{sfile}.
 * Ampersand modules::
 * Excluding directories::     Excluding directories from a module
 * Module options::            Regular and ampersand modules can take options
+* Module program options::    How the modules ``program options'' programs
+                              are run. 
 @end menu
 
 @node Alias modules
@@ -11326,6 +11328,53 @@ this module.
 @c changes.  Also, the user can edit them, which means
 @c they are no good for security-type stuff.
 @end table
+
+You should also see @pxref{Module program options} about how the
+``program options'' programs are run.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+@node Module program options
+@appendixsubsec How the modules file ``program options'' programs are run
+@cindex Modules file program options
+@cindex -u, in modules file
+@cindex -t, in modules file
+@cindex -o, in modules file
+@cindex -i, in modules file
+@cindex -e, in modules file
+
+@noindent
+For checkout, rtag, and export, the program is server-based, and as such the
+following applies:-
+
+If using remote access methods (pserver, ext, etc.),
+CVS will execute this program on the server from a temporary
+directory. The path is searched for this program.
+
+If using ``local access'' (on a local or remote NFS filesystem, i.e.
+repository set just to a path),
+the program will be executed from the newly checked-out tree, if
+found there, or alternatively searched for in the path if not.
+
+@noindent
+The commit and update programs are locally-based, and are run as
+follows:-
+
+The program is always run locally. One must
+re-checkout the tree one is using if these options are updated in the
+modules administrative file. The file CVS/Checkin.prog contains the
+value of the option `-i' set in the modules file, and similarly for
+the file CVS/Update.prog and `-u'. The program is always executed from
+the top level of the checked-out copy on the client. Again, the program
+is first searched for in the checked-out copy and then using the path.
+
+Note also that the commit and update programs work ONLY when using local
+repository access -- the files simply aren't created when sources are
+checked out from a pserver or other remote CVS.
+
+The programs are all run after the operation has effectively
+completed.
+
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Wrappers
