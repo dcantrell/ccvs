@@ -1008,7 +1008,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 			  force_tag_match, 0 /* !local */ ,
 			  1 /* update -d */ , aflag, checkout_prune_dirs,
 			  pipeout, which, join_rev1, join_rev2,
-			  preload_update_dir);
+			  preload_update_dir, m_type == CHECKOUT);
 	goto out;
     }
 
@@ -1064,7 +1064,7 @@ internal error: %s doesn't start with %s in checkout_proc",
     err += do_update (argc - 1, argv + 1, options, tag, date,
 		      force_tag_match, local_specified, 1 /* update -d */,
 		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
-		      join_rev2, preload_update_dir);
+		      join_rev2, preload_update_dir, m_type == CHECKOUT);
 out:
     free (preload_update_dir);
     preload_update_dir = oldupdate;

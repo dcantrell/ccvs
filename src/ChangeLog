@@ -1,3 +1,11 @@
+2000-11-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* update.c, update.h (do_update): Add xdotemplate parameter.
+	Change all callers.
+	(update_dirent_proc): Use dotemplate for Create_Admin, not 1.
+	* checkout.c (checkout_proc): Don't create CVS/Template if
+	exporting.
+
 2000-11-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* admin.c (admin): Use getgroups() to check for membership in

@@ -99,6 +99,7 @@ static int force_tag_match = 1;
 static int update_build_dirs = 0;
 static int update_prune_dirs = 0;
 static int pipeout = 0;
+static int dotemplate = 0;
 #ifdef SERVER_SUPPORT
 static int patches = 0;
 static int rcs_diff_patches = 0;
@@ -409,7 +410,7 @@ update (argc, argv)
     /* call the command line interface */
     err = do_update (argc, argv, options, tag, date, force_tag_match,
 		     local, update_build_dirs, aflag, update_prune_dirs,
-		     pipeout, which, join_rev1, join_rev2, (char *) NULL);
+		     pipeout, which, join_rev1, join_rev2, (char *) NULL, 1);
 
     /* free the space Make_Date allocated if necessary */
     if (date != NULL)
@@ -423,7 +424,8 @@ update (argc, argv)
  */
 int
 do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
-	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir)
+	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir,
+	   xdotemplate)
     int argc;
     char **argv;
     char *xoptions;
@@ -439,6 +441,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     char *xjoin_rev1;
     char *xjoin_rev2;
     char *preload_update_dir;
+    int xdotemplate;
 {
     int err = 0;
     char *cp;
@@ -452,6 +455,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     aflag = xaflag;
     update_prune_dirs = xprune;
     pipeout = xpipeout;
+    dotemplate = xdotemplate;
 
     /* setup the join support */
     join_rev1 = xjoin_rev1;
@@ -973,7 +977,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 			     via WriteTag.  */
 			  0,
 			  0,
-			  1);
+			  dotemplate);
 	    rewrite_tag = 1;
 	    nonbranch = 0;
 	    Subdir_Register (entries, (char *) NULL, dir);
