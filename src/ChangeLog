@@ -1,3 +1,9 @@
+Tue Oct 31 19:09:11 1995  Dan Wilder <dan@gasboy.com>
+
+        * diff.c (diff_dirproc): just return R_SKIP_ALL if dir not exist.
+        (diff_file_nodiff): don't complain if file doesn't exist, just
+        ignore.
+
 Tue Oct 31 09:25:10 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* sanity.sh: Use absolute pathname for mkmodules.
