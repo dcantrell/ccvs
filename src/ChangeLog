@@ -1,3 +1,9 @@
+1998-10-03  Johannes Stezenbach <johannes.stezenbach@propack-data.de>
+
+	* vers_ts.c (Version_TS): If UTIME_EXPECTS_WRITABLE, if
+	necessary change the file to be writable temporarily to set its
+	modification time.
+
 1998-10-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (handle_error): Add comment about indicating which
