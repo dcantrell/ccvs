@@ -131,7 +131,7 @@ EXTRA_DIST += getopt_.h getopt_int.h
 
 # We need the following in order to create an <getopt.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libgnu_a_OBJECTS): $(GETOPT_H)
+all-local $(libcvs_a_OBJECTS): $(GETOPT_H)
 getopt.h: getopt_.h
 	cp $(srcdir)/getopt_.h $@-t
 	mv $@-t $@

@@ -1,3 +1,8 @@
+2004-10-21  Mark Baushke  <mdb@cvshome.org>
+
+	* Makefile.am (all-local): Fix typo.
+	* Makefile.in: Regenerated.
+	
 2004-10-21  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.mak: Regenerated for "../zlib/lib.dsp" change.
