@@ -167,6 +167,11 @@ rcmd_authenticate (int fd, char *locuser, char *remuser, char *command)
 	}
 	if (c != '\0')
 	{
+	    /* All the junk with USER, LOGNAME, GetUserName, &c, is so
+	       confusing that we better give some clue as to what sort
+	       of user name we decided on.  */
+	    error (0, 0, "cannot log in as local user '%s', remote user '%s'",
+		   locuser, remuser);
 	    error (1, 0, "Permission denied by rshd");
 	}
     }
