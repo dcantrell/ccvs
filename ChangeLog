@@ -1,3 +1,7 @@
+2004-10-26  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note GSSAPI error message fix.
+
 2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* gnulib-update (MODULES): Add yesno.
