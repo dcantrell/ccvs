@@ -742,10 +742,10 @@ diff -r1\.2 -r1\.3"
 "${PROG} [a-z]*: scheduling file .topfile. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  dotest basicb-0c "${testcvs} -q ci -m add-it topfile" \
-"RCS file: ${TESTDIR}/cvsroot/\./topfile,v
+"RCS file: ${TESTDIR}/cvsroot/topfile,v
 done
 Checking in topfile;
-${TESTDIR}/cvsroot/\./topfile,v  <--  topfile
+${TESTDIR}/cvsroot/topfile,v  <--  topfile
 initial revision: 1\.1
 done"
 	  cd ..
@@ -4611,6 +4611,109 @@ File: aa\.c             	Status: Unresolved Conflict
 
 	modules)
 	  # Tests of various ways to define and use modules.
+
+	  ############################################################
+	  # These tests are to make sure that administrative files get
+	  # rebuilt, regardless of how and where files are checked
+	  # out.
+	  ############################################################
+	  # Check out the whole repository
+	  mkdir 1; cd 1
+	  dotest modules-1 "${testcvs} -q co ." 'U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg'
+	  dotest modules-1b "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/\."
+	  dotest modules-1c "cat CVSROOT/CVS/Repository" \
+"${TESTDIR}/cvsroot/CVSROOT"
+	  echo "# made a change" >>CVSROOT/modules
+	  dotest modules-1d "${testcvs} -q ci -m add-modules" \
+"Checking in CVSROOT/modules;
+${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  rm -rf 1
+
+	  ############################################################
+	  # Check out CVSROOT
+	  mkdir 1; cd 1
+	  dotest modules-2 "${testcvs} -q co CVSROOT" 'U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg'
+	  dotest modules-2b "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/\."
+	  dotest modules-2c "cat CVSROOT/CVS/Repository" \
+"${TESTDIR}/cvsroot/CVSROOT"
+	  echo "# made a change" >>CVSROOT/modules
+	  dotest modules-2d "${testcvs} -q ci -m add-modules" \
+"Checking in CVSROOT/modules;
+${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+	  rm -rf 1
+
+	  ############################################################
+	  # Check out CVSROOT in some other directory
+	  mkdir ${CVSROOT_DIRNAME}/somedir
+	  mkdir 1; cd 1
+	  dotest modules-3 "${testcvs} -q co somedir" ''
+	  dotest modules-3b "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/\."
+	  dotest modules-3c "cat somedir/CVS/Repository" \
+"${TESTDIR}/cvsroot/somedir"
+	  cd somedir
+	  dotest modules-3d "${testcvs} -q co CVSROOT" 'U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg'
+	  # this shouldn't have changed, but that's not really what
+	  # we're testing...
+	  dotest modules-3e "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/somedir"
+	  dotest modules-3f "cat CVSROOT/CVS/Repository" \
+"${TESTDIR}/cvsroot/CVSROOT"
+	  echo "# made a change" >>CVSROOT/modules
+	  dotest modules-3g "${testcvs} -q ci -m add-modules" \
+"Checking in CVSROOT/modules;
+${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/somedir
+	  ############################################################
+	  # end rebuild tests
+	  ############################################################
+
+
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
 	  mkdir 1

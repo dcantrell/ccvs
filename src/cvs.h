@@ -436,7 +436,8 @@ void Subdir_Deregister PROTO((List *, const char *, const char *));
 
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
-
+char *Short_Repository PROTO((char *repository));
+void Sanitize_Repository_Name PROTO((char *repository));
 
 char *Name_Root PROTO((char *dir, char *update_dir));
 int parse_cvsroot PROTO((char *CVSroot));
@@ -446,7 +447,6 @@ void root_allow_add PROTO ((char *));
 void root_allow_free PROTO ((void));
 int root_allow_ok PROTO ((char *));
 
-char *Short_Repository PROTO((char *repository));
 char *gca PROTO((char *rev1, char *rev2));
 extern void check_numeric PROTO ((char *, int, char **));
 char *getcaller PROTO((void));

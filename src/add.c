@@ -41,47 +41,6 @@ static const char *const add_usage[] =
     NULL
 };
 
-static char *combine_dir PROTO ((char *, char *));
-
-/* Given a directory DIR and a subdirectory within it, SUBDIR, combine
-   the two into a new directory name.  Returns a newly malloc'd string.
-   For now this is a fairly simple affair, but perhaps it will want
-   to have grander ambitions in the context of VMS or others (or perhaps
-   not, perhaps that should all be hidden inside CVS_FOPEN and libc and so
-   on, and CVS should just see foo/bar/baz style pathnames).  */
-static char *
-combine_dir (dir, subdir)
-    char *dir;
-    char *subdir;
-{
-    char *retval;
-    size_t dir_len;
-
-    dir_len = strlen (dir);
-    retval = xmalloc (dir_len + strlen (subdir) + 10);
-    if (dir_len >= 2
-	&& dir[dir_len - 1] == '.'
-	&& ISDIRSEP (dir[dir_len - 2]))
-    {
-	/* The dir name has an extraneous "." at the end.
-	   I'm not completely sure that this is the best place
-	   to strip it off--it is possible that Name_Repository
-	   should do so, or it shouldn't be in the CVS/Repository
-	   file in the first place.  Fixing it here seems like
-	   a safe, small change, but I'm not sure it catches
-	   all the cases.  */
-	strncpy (retval, dir, dir_len - 2);
-	retval[dir_len - 2] = '\0';
-    }
-    else
-    {
-	strcpy (retval, dir);
-    }
-    strcat (retval, "/");
-    strcat (retval, subdir);
-    return retval;
-}
-
 int
 add (argc, argv)
     int argc;
@@ -229,7 +188,8 @@ add (argc, argv)
 		   per-directory tags */
 		ParseTag (&tag, &date, &nonbranch);
 
-		rcsdir = combine_dir (repository, p);
+		rcsdir = xmalloc (strlen (repository) + strlen (p) + 5);
+		sprintf (rcsdir, "%s/%s", repository, p);
 
 		Create_Admin (p, argv[i], rcsdir, tag, date,
 			      nonbranch, 0);
@@ -621,7 +581,8 @@ add_directory (finfo)
 	goto out;
     }
 
-    rcsdir = combine_dir (repository, dir);
+    rcsdir = xmalloc (strlen (repository) + strlen (dir) + 5);
+    sprintf (rcsdir, "%s/%s", repository, dir);
     if (isfile (rcsdir) && !isdir (rcsdir))
     {
 	error (0, 0, "%s is not a directory; %s not added", rcsdir,
