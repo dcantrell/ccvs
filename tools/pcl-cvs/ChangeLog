@@ -1,3 +1,10 @@
+Wed Sep 25 05:38:09 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* pcl-cvs.el (cvs-find-program): New function.
+	(cvs-program, cvs-diff-program): Use it to find the executables.
+	(local-path, local-gnu-path): Variables deleted; nobody else was
+ 	using them, and they didn't do the job right anyway.
+
 Wed Sep 11 15:43:50 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* pcl-cvs.el (cvs-parse-stderr): Ignore messages about obtained locks.

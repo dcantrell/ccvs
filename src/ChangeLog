@@ -1,3 +1,10 @@
+Wed Sep 25 05:17:50 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* filesubr.c (get_homedir): Use getpwuid to find the home
+	directory, if the HOME environment variable isn't set.
+	* ignore.c (ign_add_file): Call get_homedir to find the user's
+	home directory; this is more portable than calling getpwuid.
+
 Tue Sep 24 09:08:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* log.c (log_tree): When walking through branches, follow the
