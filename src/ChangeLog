@@ -1,3 +1,9 @@
+Thu Oct 12 02:52:13 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* expand_path.c: Don't #include <pwd.h>, since cvs.h already does,
+	and not all systems' <pwd.h>s are protected from multiple inclusion.
+	* login.c: Likewise.
+	
 Wed Oct 11 15:23:24 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (login): handle everything correctly now.
