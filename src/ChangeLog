@@ -1,3 +1,8 @@
+Sat Nov 29 22:15:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h.in: Remove declaration of getwd; see lib/ChangeLog for
+	rationale.
+
 1997-11-29  Jim Meyering  <meyering@na-net.ornl.gov>
 
 	* update.c (checkout_file): Initialize `backup'.
