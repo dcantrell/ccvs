@@ -1,3 +1,17 @@
+Tue Dec 23 18:04:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Sticky tags): Further cleanups.  Fix thinko
+	(s/subsequent cvs update/& commands/).  Remove "vi driver.c" and
+	commit from example (totally vestigial).  Reword start of
+	paragraph on non-branch sticky tags, so that it better alludes
+ 	to branch sticky tags.  When introducing sticky tags, make it
+	clear that even people who aren't trying to use sticky tags
+	may need to know how to avoid them.  Restore comment about
+	CVS/Tag files.
+	(Accessing branches): Don't xref to merging here; that is a much
+	more advanced topic and the "but see" wording didn't tell us what
+	to see the xref about.
+
 Tue Dec 23 14:39:08 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 			  and Jim Kingdon
 
