@@ -4732,6 +4732,21 @@ pairs of @var{filename} @var{revision}.  A non-zero
 exit of the filter program will cause the tag to be
 aborted.
 
+Here is an example of using taginfo to log tag and rtag
+commands.  In the taginfo file put:
+
+@example
+ALL /usr/local/cvsroot/CVSROOT/loggit
+@end example
+
+Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+following script:
+
+@example
+#!/bin/sh
+echo "$@" >>/home/kingdon/cvsroot/CVSROOT/taglog
+@end example
+
 @node annotate
 @section Annotate command
 @cindex annotate (subcommand)

@@ -1,3 +1,7 @@
+1998-02-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (user-defined logging): Add taginfo example.
+
 1998-02-04  Tim Pierce  <twp@skepsis.com>
 
 	* cvs.texinfo (config): PreservePermissions variable.
