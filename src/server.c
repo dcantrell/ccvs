@@ -5740,8 +5740,9 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
     status = krb_kntoln (&auth, user);
     if (status != KSUCCESS)
     {
-	printf ("E Fatal error, aborting.\n\
-error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
+	printf ("E Fatal error, aborting.\n"
+		"error 0 kerberos: can't get local name: %s\n",
+		krb_get_err_text(status));
 
 	error_exit ();
     }

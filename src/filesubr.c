@@ -198,7 +198,7 @@ iswritable (const char *file)
  * bits set.
  */
 int
-isaccessible (const char *file, const const int mode)
+isaccessible (const char *file, const int mode)
 {
 #ifdef SETXID_SUPPORT
     struct stat sb;

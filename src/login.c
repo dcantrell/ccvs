@@ -105,7 +105,9 @@ construct_cvspass_filename (void)
  *	called on the same linebuf
  */
 static char *
-password_entry_parseline (const char *cvsroot_canonical, const const unsigned char warn, const const int linenumber, char *linebuf)
+password_entry_parseline (const char *cvsroot_canonical,
+			  const unsigned char warn, const int linenumber,
+			  char *linebuf)
 {
     char *password = NULL;
     char *p;
