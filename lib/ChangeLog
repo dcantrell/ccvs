@@ -1,5 +1,12 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* lib.dsp: Dropped "alloca.c" from project.
+	* lib.dep: Regenerated for "lib.dsp" change.
+	* lib.mak: Regenerated for "lib.dsp" change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add LIB.dep.
 	* Makefile.in: Regenerated.
 

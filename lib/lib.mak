@@ -37,7 +37,6 @@ ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\alloca.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
@@ -97,7 +96,6 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\alloca.obj" \
 	"$(INTDIR)\exitfail.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
@@ -126,7 +124,6 @@ ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\alloca.obj"
 	-@erase "$(INTDIR)\exitfail.obj"
 	-@erase "$(INTDIR)\getdate.obj"
 	-@erase "$(INTDIR)\getline.obj"
@@ -187,7 +184,6 @@ BSC32_SBRS= \
 LIB32=link.exe -lib
 LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)\alloca.obj" \
 	"$(INTDIR)\exitfail.obj" \
 	"$(INTDIR)\getdate.obj" \
 	"$(INTDIR)\getline.obj" \
@@ -217,11 +213,6 @@ LIB32_OBJS= \
 
 
 !IF "$(CFG)" == "LIB - Win32 Release" || "$(CFG)" == "LIB - Win32 Debug"
-SOURCE=.\alloca.c
-
-"$(INTDIR)\alloca.obj" : $(SOURCE) "$(INTDIR)"
-
-
 SOURCE=.\exitfail.c
 
 "$(INTDIR)\exitfail.obj" : $(SOURCE) "$(INTDIR)"
