@@ -86,6 +86,7 @@ AWK = @AWK@
 CC = @CC@
 CSH = @CSH@
 DEPDIR = @DEPDIR@
+EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -155,7 +156,6 @@ EXTRA_DIST = \
 CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
 
 SUFFIXES = .sh
-EXEEXT =
 OBJEXT = o
 subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs

@@ -77,6 +77,7 @@ AWK = @AWK@
 CC = @CC@
 CSH = @CSH@
 DEPDIR = @DEPDIR@
+EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -115,7 +116,6 @@ EXTRA_DIST = \
 
 
 SUBDIRS = SCC
-EXEEXT =
 OBJEXT = o
 subdir = windows-NT
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
