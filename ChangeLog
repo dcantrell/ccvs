@@ -1,5 +1,10 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Remove note about build being broken on windows.  That was
+	fixed a few commits back.
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add call to ACX_WITH_SYSTEM_VLIB.
 	* Makefile.am: Macro substitution for "zlib" subdir.
 	(Original patch from Anthon Pang <apang@telus.net>.)
