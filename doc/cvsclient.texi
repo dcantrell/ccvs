@@ -739,8 +739,10 @@ Like @code{Set-static-directory}, but clear, not set, the flag.
 Additional data: @var{tagspec} \n.  Tell the client to set a sticky tag
 or date, which should be supplied with the @code{Sticky} request for
 future operations.  @var{pathname} ends in a slash; its purpose is to
-specify a directory, not a file within a directory.  The first character
-of @var{tagspec} is @samp{T} for a tag, or @samp{D} for a date.  The
+specify a directory, not a file within a directory.  The client should
+store @var{tagspec} and pass it back to the server as-is, to allow for
+future expansion.  The first character of @var{tagspec} is @samp{T} for
+a tag, @samp{D} for a date, or something else for future expansion.  The
 remainder of @var{tagspec} contains the actual tag or date.
 
 @item Clear-sticky @var{pathname} \n
