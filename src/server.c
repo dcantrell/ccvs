@@ -4555,7 +4555,7 @@ krb_encrypt_buffer_shutdown (closure)
 
 void
 cvs_output (str, len)
-    char *str;
+    const char *str;
     size_t len;
 {
     if (len == 0)
@@ -4577,11 +4577,11 @@ cvs_output (str, len)
     {
 	size_t written;
 	size_t to_write = len;
-	char *p = str;
+	const char *p = str;
 
 	while (to_write > 0)
 	{
-	    written = fwrite (str, 1, to_write, stdout);
+	    written = fwrite (p, 1, to_write, stdout);
 	    if (written == 0)
 		break;
 	    p += written;
@@ -4594,7 +4594,7 @@ cvs_output (str, len)
 
 void
 cvs_outerr (str, len)
-    char *str;
+    const char *str;
     size_t len;
 {
     if (len == 0)
@@ -4616,11 +4616,11 @@ cvs_outerr (str, len)
     {
 	size_t written;
 	size_t to_write = len;
-	char *p = str;
+	const char *p = str;
 
 	while (to_write > 0)
 	{
-	    written = fwrite (str, 1, to_write, stderr);
+	    written = fwrite (p, 1, to_write, stderr);
 	    if (written == 0)
 		break;
 	    p += written;
