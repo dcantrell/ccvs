@@ -1,3 +1,10 @@
+2001-05-29  Derek Price  <dprice@collab.net>
+
+	* pvcs2cvs.in: New file.
+	* Makefile.am (contrib_SCRIPTS): Add pcvs2cvs.
+
+	* Makefile.in: Regenerated.
+
 2001-05-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* sccs2rcs.in: No need for grep when you're already using awk.
