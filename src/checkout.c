@@ -242,6 +242,13 @@ checkout (argc, argv)
 	    error (1, 0, "tag `%s' must be a symbolic tag", tag);
     }
 
+#ifdef SERVER_SUPPORT
+    if (server_active && where != NULL)
+    {
+	server_pathname_check (where);
+    }
+#endif
+
     if (!safe_location()) {
         error(1, 0, "Cannot check out files into the repository itself");
     }
