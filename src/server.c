@@ -5415,66 +5415,114 @@ check_repository_password (username, password, repository, host_user_ptr)
     return retval;
 }
 
+#ifdef HAVE_PAM
 
-/* Return a hosting username if password matches, else NULL. */
-static char *
-check_password (username, password, repository)
-    char *username, *password, *repository;
+# include <security/pam_appl.h>
+
+struct cvs_pam_userinfo {
+    char *username;
+    char *password;
+};
+
+static int
+cvs_pam_conv(num_msg, msg, resp, appdata_ptr)
+    int num_msg; 
+    const struct pam_message **msg;
+    struct pam_response **resp; 
+    void *appdata_ptr;
 {
-    int rc;
-    char *host_user = NULL;
-    char *found_passwd = NULL;
-    struct passwd *pw;
+    int i;
+    struct pam_response *response;
+    struct cvs_pam_userinfo *ui = (struct cvs_pam_userinfo *)appdata_ptr;
 
-    /* First we see if this user has a password in the CVS-specific
-       password file.  If so, that's enough to authenticate with.  If
-       not, we'll check /etc/passwd. */
+    assert (ui && ui->username && ui->password && msg && resp);
 
-    rc = check_repository_password (username, password, repository,
-				    &host_user);
+    response = xmalloc(num_msg * sizeof(struct pam_response));
+    memset(response, 0, num_msg * sizeof(struct pam_response));
 
-    if (rc == 2)
-	return NULL;
-
-    if (rc == 1)
+    for (i = 0; i < num_msg; i++)
     {
-	/* host_user already set by reference, so just return. */
-	goto handle_return;
+	switch(msg[i]->msg_style) 
+	{
+	    /* PAM wants a username */
+	    case PAM_PROMPT_ECHO_ON:
+		response[i].resp = xstrdup(ui->username);
+		break;
+	    /* PAM wants a password */
+	    case PAM_PROMPT_ECHO_OFF:
+		response[i].resp = xstrdup(ui->password);
+		break;
+	    case PAM_ERROR_MSG:
+	    case PAM_TEXT_INFO:
+		printf("E %s\n",msg[i]->msg);
+		break;
+	    /* PAM wants something we don't understand - bail out */
+	    default:
+		goto cleanup;
+	}
     }
 
-    assert (rc == 0);
+    *resp = response;
+    return PAM_SUCCESS;
 
-    if (!system_auth)
+cleanup:
+    for (i = 0; i < num_msg; i++)
     {
-	/* Note that the message _does_ distinguish between the case in
-	   which we check for a system password and the case in which
-	   we do not.  It is a real pain to track down why it isn't
-	   letting you in if it won't say why, and I am not convinced
-	   that the potential information disclosure to an attacker
-	   outweighs this.  */
-	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
+	if (response[i].resp)
+	{
+	    free(response[i].resp);
+	    response[i].resp = 0;
+	}
+    }
+    free(response);
+    return PAM_CONV_ERR;
+}
 
+static int
+check_system_password (username, password)
+    char *username, *password;
+{
+    pam_handle_t *pamh = NULL;
+    int retval;
+    struct cvs_pam_userinfo ui = { username, password };
+    struct pam_conv conv = { cvs_pam_conv, (void *)&ui };
+
+    retval = pam_start(PAM_SERVICE_NAME, username, &conv, &pamh);
+
+    if (retval == PAM_SUCCESS)
+	retval = pam_authenticate(pamh, 0);
+
+    if (retval == PAM_SUCCESS)
+	retval = pam_acct_mgmt(pamh, 0);
+
+    if (pam_end(pamh,retval) != PAM_SUCCESS)
+    {
+	printf("E Fatal error, aborting.\n
+		pam failed to release authenticator\n");
 	error_exit ();
     }
 
-    /* No cvs password found, so try /etc/passwd. */
-
+    return (retval == PAM_SUCCESS);       /* indicate success */
+}
+#else
+static int
+check_system_password (username, password)
+    char *username, *password;
+{
+    char *found_passwd = NULL;
+    struct passwd *pw;
 #ifdef HAVE_GETSPNAM
     {
 	struct spwd *spw;
 
 	spw = getspnam (username);
 	if (spw != NULL)
-	{
 	    found_passwd = spw->sp_pwdp;
-	}
     }
 #endif
 
     if (found_passwd == NULL && (pw = getpwnam (username)) != NULL)
-    {
 	found_passwd = pw->pw_passwd;
-    }
 
     if (found_passwd == NULL)
     {
@@ -5503,34 +5551,74 @@ error 0 %s: no such user\n", username);
     {
 	/* user exists and has a password */
 	if (strcmp (found_passwd, crypt (password, found_passwd)) == 0)
-	{
-	    host_user = xstrdup (username);
-	}
+	    return 1;
 	else
 	{
-	    host_user = NULL;
 #ifdef LOG_AUTHPRIV
 	    syslog (LOG_AUTHPRIV | LOG_NOTICE,
 		    "password mismatch for %s: %s vs. %s", username,
 		    crypt(password, found_passwd), found_passwd);
 #endif
+	    return 0;
 	}
-	goto handle_return;
     }
 
-    if (password && *password)
-    {
-	/* user exists and has no system password, but we got
-	   one as parameter */
-	host_user = xstrdup (username);
-	goto handle_return;
-    }
-
-    /* user exists but has no password at all */
-    host_user = NULL;
 #ifdef LOG_AUTHPRIV
     syslog (LOG_AUTHPRIV | LOG_NOTICE,
-	    "login refused for %s: user has no password", username);
+	    "user %s authenticated because of blank system password",
+	    username);
+#endif
+    return 1;
+}
+#endif
+
+/* Return a hosting username if password matches, else NULL. */
+static char *
+check_password (username, password, repository)
+    char *username, *password, *repository;
+{
+    int rc;
+    char *host_user = NULL;
+
+    /* First we see if this user has a password in the CVS-specific
+       password file.  If so, that's enough to authenticate with.  If
+       not, we'll check /etc/passwd or maybe whatever is configured via PAM. */
+
+    rc = check_repository_password (username, password, repository,
+				    &host_user);
+
+    if (rc == 2)
+	return NULL;
+
+    if (rc == 1)
+	/* host_user already set by reference, so just return. */
+	goto handle_return;
+
+    assert (rc == 0);
+
+    if (!system_auth)
+    {
+	/* Note that the message _does_ distinguish between the case in
+	   which we check for a system password and the case in which
+	   we do not.  It is a real pain to track down why it isn't
+	   letting you in if it won't say why, and I am not convinced
+	   that the potential information disclosure to an attacker
+	   outweighs this.  */
+	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
+
+	error_exit ();
+    }
+
+    /* No cvs password found, so try /etc/passwd. */
+    if ( check_system_password(username, password) )
+	host_user = xstrdup (username);
+    else
+	host_user = NULL;
+
+#ifdef LOG_AUTHPRIV
+    if (!host_user)
+	syslog (LOG_AUTHPRIV | LOG_NOTICE,
+		"login refused for %s: user has no password", username);
 #endif
 
 handle_return:
