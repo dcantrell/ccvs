@@ -64,7 +64,8 @@ extern char *strerror ();
 void
 error_exit PROTO ((void))
 {
-    Lock_Cleanup();
+    rcs_cleanup ();
+    Lock_Cleanup ();
 #ifdef SERVER_SUPPORT
     if (server_active)
 	server_cleanup (0);
