@@ -2748,6 +2748,14 @@ send_a_repository (dir, repository, update_dir)
 		int slashes_skipped;
 		char *p;
 
+		/*
+		 * Strip trailing slashes from the name of the update directory.
+		 * Otherwise, running `cvs update dir/' provokes the failure
+		 * `protocol error: illegal directory syntax in dir/' when
+		 * running in client/server mode.
+		 */
+		strip_trailing_slashes (update_dir);
+
 		slashes_in_update_dir = 0;
 		for (p = update_dir; *p != '\0'; ++p)
 		    if (*p == '/')
