@@ -4,6 +4,8 @@ Sat May 27 08:08:18 1995  Jim Meyering  (meyering@comco.com)
 	`rcs' executable in ../../rcs/src.  Before, tests would fail when
 	the directory existed but contained no executables.
 	(distclean): Remove options.h, now that it's generated.
+	(Makefile): Regenerate only *this* file when Makefile.in is
+	out of date.  Depend on ../config.status.
 
 Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
