@@ -1,3 +1,13 @@
+Mon Dec 18 18:07:26 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * README: updated.
+
+        * Makefile.in (cvslogin.exe): new rule.
+        (install): new rule.
+        (install_dir): new var.
+
+        * cvslogin.c: new file.
+
 Mon Dec 18 14:54:04 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * getpass.c (getpass): removed debugging garbage.
