@@ -143,7 +143,8 @@ within each sub-section, though they are in no particular order.
 Final note:
 
 	Except for the "Past & Future" section, all answers in this
-	document refer to the latest released version of CVS: 1.4.
+	document refer to CVS version 1.4.  The latest released version is
+	1.5.
 
 
 ============================================
@@ -493,8 +494,8 @@ Final note:
 
 		Program(s)	Suggested revision
 		-----------	-----------------------
-		CVS		1.4
-		RCS		5.6.0.1 (latest version available today)
+		CVS		1.5
+		RCS		5.7 (latest version available today)
 		GNU diff	2.7 (or later) [contained in diffutils-2.7]
 		GDBM		1.5 (or later) [optional]
 
@@ -3591,7 +3592,7 @@ toward the beginning of this document.
 
  3F.3	Can I override the '-kv' flag CVS passes to RCS?
 
-	Not as of the current revision: CVS 1.4.
+	Not as of CVS version 1.4.
 
 
  3F.4	Why doesn't "export" have a '-k' flag like "import" does?
@@ -8935,6 +8936,9 @@ systems have a few problems and non-Unix systems have a *lot* of problems.
 	portable, and provided much of the energy to push CVS 1.4 out
 	the door.
 
+	Jim Kingdon implemented CVS 1.5's remote repository access
+	features, fixed many bugs, and managed the release of version 1.5.
+
 	Take a look at the README and the ChangeLog files in the CVS
 	sources for more contributors.
 
@@ -9258,9 +9262,9 @@ See the Development section later for stuff being worked on.
 	A "rename" or "per-directory" database has been bandied about on
 	the net for years.  It is needed, but it is a lot of work.
 
-
-	Paul F. Kunz <Paul_Kunz@slac.stanford.edu> has produced a version
-	of CVS (rCVS) that runs remotely.  It is available for testing.
+	CVS version 1.5 supports remote repository access, but Paul
+	F. Kunz <Paul_Kunz@slac.stanford.edu> has produced another version
+	(rCVS) that also runs remotely.  It is available for testing.
 
 	    On the host "preprint.slac.stanford.edu", you can find:
 		  Paper:	slacpubs/5000/slac-pub-5923.ps.Z
@@ -9273,11 +9277,6 @@ See the Development section later for stuff being worked on.
 	   With the caveat that until version 1.0 is available, rCVS should
 	   be considered an unreliable Beta release, you are invited to
 	   grab a copy and test it.
-
-
-	Jim Blandy <jimb@cyclic.com> and the company he works for ("Cyclic
-	Software") support a "Cyclic CVS" (CCVS) that can handle remote
-	repositories.  See Section 5D.2.
 
 
 	[[Others?]]
@@ -9329,71 +9328,93 @@ See the Development section later for stuff being worked on.
 
 +5D.2	What is Cyclic Software doing with CVS?
 
-	Cyclic Software exists to provide support for CCVS.  Here's a copy
-	of their Mini-FAQ:
+	Cyclic Software exists to provide support for CVS.  Here's a copy
+	of their product line sheet:
 
 
-			 Cyclic CVS Mini-FAQ
-		ftp://ftp.cyclic.com/pub/cvs/mini-FAQ
-		     Jim Blandy <jimb@cyclic.com>
-				   
+				    Cyclic Software
+				   Standard Support
 
-	* What is Cyclic CVS?
-	
-	Cyclic CVS is a branch from version 1.4A2 of the original CVS
-	distribution, with further bug fixes and speedups installed, in
-	addition to the remote repository access features.
-	
-	Cyclic CVS can access repositories on remote machines.  This is
-	very helpful when collaborating on a project with someone across a
-	wide-area network.
-	
-	Here are some of Cyclic CVS's features:
-	- It uses reliable transport protocols (TCP/IP) for remote
-	  repository access, not NFS.  NFS is unusable over long distances
-	  (and sometimes over short distances)
-	- It transfers only those files that have changed in the
-	  repository or the working directory.  To save transmission time,
-	  it will transfer patches when appropriate, and can compress data
-	  for transmission.
-	- The server never holds CVS locks while waiting for a reply from
-	  the client; this makes the system robust when used over flaky
-	  networks.
-	
-	* Aren't there other similar CVS hacks out there?
-	
-	There have been several CVS variants designed with similar goals.
-	contrib/pcl-cvs/pcl-cvs.el mentions one or two, for example.
-	However, I've had a hard time finding more information about those
-	implementations, so I can't comment on them.  The sense of the
-	info-cvs mailing list seems to be that CCVS is the best extant
-	implementation.
-	
-	
-	* How can I get Cyclic CVS?
-	
-	If you'd like to try this implementation out, it's available via
-	anonymous ftp from ftp.cyclic.com, as /pub/cvs/ccvs.tar.gz.  The
-	mailing list cyclic-cvs@cyclic.com has been set up to handle bug
-	reports and questions; send mail to cyclic-cvs-request@cyclic.com
-	to subscribe or unsubscribe.
-	
-	Nota bene:
-	- It has not tested or ported much, with all that that entails ---
-	  bugs, portability problems, documentation inconsistencies.
-	- I can't promise any support for it for free.  If you're
-	  interested in a support or development contract, send me mail
-	  and we'll work something out.
-	- Nevertheless, please send bug reports to cyclic-cvs@cyclic.com.
-	  Most people on the info-cvs mailing list probably won't be able
-	  to fix them (since they don't use the package).
-	
-	
-	* Where are the remote features documented?
-	
-	Check out doc/cvsclient.texi in the Cyclic CVS distribution.  Would
-	you like to update the main doc file, cvs.texinfo to describe Cyclic
-	CVS's features?
+	   Cyclic Software offers support contracts for CVS.  This
+	includes:
+
+	   * Full source, binaries, and documentation for CVS, RCS, GNU
+	     diffutils, patch, and gzip -- that is, CVS and everything it
+	     wants to run -- via FTP or tape;
+
+	   * guaranteed responses for bugs within 5 business days;
+
+	   * guaranteed fixes for reproducible bugs within 10 business days.
+
+	     (By "reproducible bugs", we mean instances where the software
+	     clearly does not behave as documentation or reasonable
+	     expectations indicate it should, and that we are able to
+	     reproduce this misbehavior reliably.  Naturally, we will make
+	     every possible effort to reproduce the bugs you report; our
+	     experience has been that it's usually not difficult.)
+
+	   We charge a fixed fee for:
+
+	   * one year
+
+	   * one host type (hardware & operating system)
+
+	   * twenty users at your site, with two of those users designated
+	     as "contacts" for CVS, to reduce communication problems.
+
+	   If the host type is not one we have access to for testing
+	purposes, you can either lend us a machine of the appropriate type
+	for the duration of the contract, or pay an additional fee
+	up-front.  We have access to Solaris, Irix, HP-UX, Linux and
+	Ultrix.  (This list is subject to change; contact us for details.)
+
+	   If the above fee structure is not well-suited to your
+	organization, please say so.  We're interested in tailoring our
+	services to be as useful to you as possible.
+
+				       Training
+
+	   We offer on-site training in the use of CVS at a daily rate,
+	plus expenses (inc. travel, accommodations).  The classes target
+	new and intermediate users of CVS; we feel advanced users benefit
+	more from a written manual and the source code.
+
+				  Custom Enhancements
+
+	   We will implement enhancements to CVS or its documentation, and
+	port CVS to new architectures.  Our rates for this work depend on
+	the amount of work to be done.
+
+	   We strongly prefer to work on enhancements suitable for
+	incorporation into the general CVS release upon completion; we
+	will help you design the enhancement in a way that makes this
+	possible.
+
+				 Short-Term Consulting
+
+	   We will do short-term consulting at hourly rates.  These rates
+	are calculated to include the overhead of dealing in short time
+	periods.  Therefore, in sufficiently large projects, we recommend
+	arranging a long-term support contract instead of dealing on an
+	hourly basis.
+
+				     Anything Else
+
+	   Cyclic Software is interested in arranging contracts for work
+	in other areas, to be produced as free software.  Everything is
+	negotiable.
+
+				   How To Contact Us
+
+	     (Email is preferred.)
+
+	     Email:     <info@cyclic.com>
+	     Phone:     +1 812 335 9023
+	     Web:       http://www.cyclic.com
+	     SnailMail: Cyclic Software
+			P.O. Box 804
+			Bloomington, IN 47402-0804
+			USA
 
 				Contributed by Jim Blandy
 
