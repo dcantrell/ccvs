@@ -1,3 +1,12 @@
+Fri Feb  9 17:31:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (CVSvn.texi): New rule.
+	(OBJDIR_DISTFILES): Add CVSvn.texi.
+	(cvs.dvi,cvs.info): Add cruft to deal with it being in build dir
+	or srcdir.
+	* cvs.texinfo: Include CVSvn.texi and use the version number from
+	it instead of a hardcoded version number and date.
+
 Thu Feb  1 13:28:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Sticky tags): Expand so it really documents the

@@ -22,6 +22,7 @@
 
 @afourpaper
 @setfilename cvs.info
+@include CVSvn.texi
 @settitle CVS---Concurrent Versions System
 @setchapternewpage odd
 
@@ -73,13 +74,10 @@ Free Software Foundation instead of in the original English.
 @sp
 @center @titlefont{CVS}
 @sp 2
-@center for @sc{cvs} 1.6.87+
+@center for @sc{cvs} @value{CVSVN}
 @comment -release-
 @sp 3
 @center Per Cederqvist et al
-@sp 3
-@center last updated 23 Jan 1996
-@comment -date-
 
 @comment  The following two commands start the copyright page
 @comment  for the printed manual.  This will not appear in the Info file.
