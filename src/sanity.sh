@@ -1944,6 +1944,10 @@ C a'
 	  echo dirmodule first-dir/subdir >>CVSROOT/modules
 	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
+	  # Options must come before arguments.  It is possible this should
+	  # be relaxed at some point (though the result would be bizarre for
+	  # -a); for now test the current behavior.
+	  echo bogusalias first-dir/subdir/a -a >>CVSROOT/modules
 	  if ${testcvs} ci -m 'add modules' CVSROOT/modules \
 	      >>${LOGFILE} 2>&1; then
 	    echo 'PASS: test 148' >>${LOGFILE}
@@ -1952,6 +1956,20 @@ C a'
 	    exit 1
 	  fi
 	  cd ..
+	  dotest 148a0 "${testcvs} co -c" 'CVSROOT      CVSROOT
+aliasmodule  -a first-dir/subdir/a
+bogusalias   first-dir/subdir/a -a
+dirmodule    first-dir/subdir
+namedmodule  -d nameddir first-dir/subdir
+realmodule   first-dir/subdir a'
+	  # I don't know why aliasmodule isn't printed (I would have thought
+	  # that it gets printed without the -a; although I'm not sure that
+	  # printing expansions without options is useful).
+	  dotest 148a1 "${testcvs} co -s" 'CVSROOT      NONE        CVSROOT
+bogusalias   NONE        first-dir/subdir/a -a
+dirmodule    NONE        first-dir/subdir
+namedmodule  NONE        first-dir/subdir
+realmodule   NONE        first-dir/subdir a'
 
 	  # Test that real modules check out to realmodule/a, not subdir/a.
 	  if ${testcvs} co realmodule >>${LOGFILE}; then

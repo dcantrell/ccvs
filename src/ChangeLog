@@ -1,3 +1,12 @@
+Mon Mar 11 10:21:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h (CVSMODULE_OPTS, CVSMODULE_SPEC): Move from here...
+	* modules.c: ...to here.  They are only used here and the code to
+	handle the syntax of modules files should not be scattered all over.
+	* modules.c (CVSMODULE_OPTS): Add "+" as first character.
+	* sanity.sh (modules): New tests 148a0 and 148a1 test for
+	above-fixed bug.
+
 Mon Mar 11 13:11:04 1996  Samuel Tardieu  <sam@inf.enst.fr>
 
 	* modules.c (cat_module): set optind to 0 to force getopt() to
