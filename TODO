@@ -815,3 +815,6 @@ and only standard diff output go to stdout.
 203.  Add val-tags additions to the tagging code.  Don't remove the update additions
 since val-tags could still be used as a cache when the repository was imported from elsewhere
 (the tags weren't applied with a version which wrote val-tags).
+
+204.  Add test case for compression.  A buf_shutdown error using compression
+wasn't caught by the test suite.
