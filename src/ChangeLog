@@ -1,3 +1,9 @@
+Sat Oct  7 22:28:49 1995  Scott Carson  <sdc@TracerTech.COM>
+
+	* add.c (add): Pass -ko, not -k -ko, to set keyword expansion options.
+
+	* admin.c (admin): Don't skip first argument when sending to server.
+
 Fri Oct  6 21:45:03 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Version 1.6.1.

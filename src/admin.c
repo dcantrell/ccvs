@@ -65,7 +65,7 @@ admin (argc, argv)
 	
 	ign_setup ();
 
-	for (i = 1; i <= ac; ++i)
+	for (i = 0; i <= ac; ++i)	/* XXX send -ko too with i = 0 */
 	    send_arg (av[i]);
 
 #if 0
