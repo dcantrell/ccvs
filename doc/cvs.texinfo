@@ -12071,6 +12071,24 @@ symbolic links, file permissions and ownerships in the
 repository.  The default value is @samp{no}.
 @xref{Special Files} for the full implications of using
 this keyword.
+
+@cindex TopLevelAdmin, in CVSROOT/config
+@item TopLevelAdmin=@var{value}
+Modify the @samp{checkout} command to create a
+@samp{CVS} directory at the top level of the new
+working directory, in addition to @samp{CVS}
+directories created within checked-out directories.
+The default value is @samp{no}.
+
+This option is useful if you find yourself performing
+many commands at the top level of your working
+directory, rather than in one of the checked out
+subdirectories.  The @samp{CVS} directory created there
+will mean you don't have to specify @samp{CVSROOT} for
+each command.  It also provides a place for the
+@samp{CVS/Template} file (@pxref{Working directory
+storage}).
+
 @end table
 
 @c ---------------------------------------------------------------------
