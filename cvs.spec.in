@@ -100,6 +100,8 @@ gzip $RPM_BUILD_ROOT/%{_infodir}/cvs* || true
 # install-info doesn't and info doesn't seem to be very good at spotting that
 # its uncompressed cache is out of date.
 rm -f /%{_infodir}/cvs.info /%{_infodir}/cvs.info-? /%{_infodir}/cvs.info-??
+rm -f /%{_infodir}/cvsclient.info /%{_infodir}/cvsclient.info-?
+rm -f /%{_infodir}/cvsclient.info-??
 %preun
 if [ $1 = 0 ]; then
 # uninstall the info reference in the dir file
