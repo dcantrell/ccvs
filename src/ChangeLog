@@ -1,3 +1,8 @@
+Mon Jul  1 01:38:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* find_names.c (find_dirs): Add comment explaining why we bother
+	with the entries stuff.
+
 Sat Jun 29 20:23:50 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* find_names.c (Find_Directories): Add entries parameter, and pass

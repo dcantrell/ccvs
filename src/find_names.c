@@ -223,6 +223,9 @@ find_dirs (dir, list, checkadm, entries)
 	    strcmp (dp->d_name, CVSREP) == 0)
 	    continue;
 
+	/* findnode() is going to be significantly faster than stat()
+	   because it involves no system calls.  That is why we bother
+	   with the entries argument, and why we check this first.  */
 	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
 	    continue;
 
