@@ -103,6 +103,12 @@ CLEAN :
 	-@erase ".\WinRel\getopt.obj"
 	-@erase ".\WinRel\exitfail.obj"
 	-@erase ".\WinRel\xmalloc.obj"
+	-@erase ".\WinRel\asnprintf.obj"
+	-@erase ".\WinRel\vasnprintf.obj"
+	-@erase ".\WinRel\printf-args.obj"
+	-@erase ".\WinRel\printf-parse.obj"
+	-@erase ".\WinRel\xstrdup.obj"
+	-@erase ".\WinRel\xstrdup.obj"
 	-@erase ".\WinRel\xstrdup.obj"
 	-@erase ".\WinRel\checkin.obj"
 	-@erase ".\WinRel\fileattr.obj"
@@ -245,6 +251,10 @@ LINK32_OBJS= \
 	"$(INTDIR)/exitfail.obj" \
 	"$(INTDIR)/xstrdup.obj" \
 	"$(INTDIR)/xmalloc.obj" \
+	"$(INTDIR)/asnprintf.obj" \
+	"$(INTDIR)/vasnprintf.obj" \
+	"$(INTDIR)/printf-args.obj" \
+	"$(INTDIR)/printf-parse.obj" \
 	"$(INTDIR)/checkin.obj" \
 	"$(INTDIR)/fileattr.obj" \
 	"$(INTDIR)/modules.obj" \
@@ -438,6 +448,10 @@ CLEAN :
 	-@erase ".\WinDebug\exitfail.obj"
 	-@erase ".\WinDebug\xstrdup.obj"
 	-@erase ".\WinDebug\xmalloc.obj"
+	-@erase ".\WinDebug\asnprintf.obj"
+	-@erase ".\WinDebug\vasnprintf.obj"
+	-@erase ".\WinDebug\printf-args.obj"
+	-@erase ".\WinDebug\printf-parse.obj"
 	-@erase ".\WinDebug\entries.obj"
 	-@erase ".\WinDebug\getopt1.obj"
 	-@erase ".\WinDebug\2\version.obj"
@@ -581,6 +595,10 @@ LINK32_OBJS= \
 	"$(INTDIR)/exitfail.obj" \
 	"$(INTDIR)/xstrdup.obj" \
 	"$(INTDIR)/xmalloc.obj" \
+	"$(INTDIR)/asnprintf.obj" \
+	"$(INTDIR)/vasnprintf.obj" \
+	"$(INTDIR)/printf-args.obj" \
+	"$(INTDIR)/printf-parse.obj" \
 	"$(INTDIR)/entries.obj" \
 	"$(INTDIR)/getopt1.obj" \
 	"$(INTDIR)/2/version.obj" \
@@ -2464,6 +2482,57 @@ DEP_CPP_XMALLOC_C=\
 	".\lib\xalloc.h"\
 	
 "$(INTDIR)\xmalloc.obj" : $(SOURCE) $(DEP_CPP_XMALLOC_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\asnprintf.c
+DEP_CPP_ASNPRINTF_C=\
+	".\windows-NT\config.h"\
+	".\lib\vasnprintf.h"\
+	
+"$(INTDIR)\asnprintf.obj" : $(SOURCE) $(DEP_CPP_ASNPRINTF_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\vasnprintf.c
+DEP_CPP_VASNPRINTF_C=\
+	".\windows-NT\config.h"\
+	".\lib\printf-parse.h"\
+	".\lib\vasnprintf.h"\
+	".\lib\xsize.h"\
+	
+"$(INTDIR)\vasnprintf.obj" : $(SOURCE) $(DEP_CPP_VASNPRINTF_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\printf-args.c
+DEP_CPP_PRINTF_ARGS_C=\
+	".\windows-NT\config.h"\
+	".\lib\printf-args.h"\
+	
+"$(INTDIR)\printf-args.obj" : $(SOURCE) $(DEP_CPP_PRINTF_ARGS_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\printf-parse.c
+DEP_CPP_PRINTF_PARSE_C=\
+	".\windows-NT\config.h"\
+	".\lib\printf-parse.h"\
+	".\lib\xsize.h"\
+	
+"$(INTDIR)\printf-parse.obj" : $(SOURCE) $(DEP_CPP_PRINTF_PARSE_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 # End Source File

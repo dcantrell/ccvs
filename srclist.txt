@@ -163,7 +163,7 @@ $GNULIB/lib/xmalloc.c				lib		no NI
 $GNULIB/lib/xstrdup.c				lib		yes NI
 $GNULIB/m4/xalloc.m4				m4		no NI
 # $GNULIB/modules/xsize
-$GNULIB/lib/xsize.h				lib		no NI
+$GNULIB/lib/xsize.h				lib		yes NI
 $GNULIB/m4/xsize.m4				m4		no NI
 $GNULIB/m4/size_max.m4				m4		no NI
 # shared
