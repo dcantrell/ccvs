@@ -1,5 +1,9 @@
 2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (depends_on_rsync): Deal with missing rsync.
+
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sanity.sh (depends_on_rsync): Include rsync version information
 	in output.
 

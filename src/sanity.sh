@@ -962,6 +962,7 @@ depends_on_rsync ()
 {
   # Save a copy and set the absolute path to our default.
   save_RSYNC=$RSYNC
+  rsyncworks=false
   for rsync in ${RSYNC} `Which -a rsync`;
   do
 
