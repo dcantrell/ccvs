@@ -1,3 +1,7 @@
+Mon Feb 12 03:14:36 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * options.h (PATCH_PROGRAM): "cvspatch" (see comment).
+
 Fri Feb  9 22:10:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Remove SYSTEM_COMMENT_TABLE.
