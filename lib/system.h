@@ -510,10 +510,6 @@ int fseeko (FILE *, off_t, int);
        are path component separators.  */
 #   define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
 extern unsigned char WNT_filename_classes[];
-    /* Is the character C a path name separator?  Under
-       Windows NT, you can use either / or \.  */
-#   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
-#   define ISABSOLUTE(s) (ISDIRSEP(s[0]) || FOLD_FN_CHAR(s[0]) >= 'a' && FOLD_FN_CHAR(s[0]) <= 'z' && s[1] == ':' && ISDIRSEP(s[2]))
 # else /* ! WOE32 */
   /* As far as I know, just Macintosh OS X can make it here,
    * but since the OS X fold just folds a-z into A-Z or visa-versa, I'm just
@@ -553,17 +549,11 @@ extern void fnfold (char *FILENAME);
 # define fncmp strcmp
 #endif
 
-/* Different file systems have different path component separators.
-   For the VMS port we might need to abstract further back than this.  */
-#ifndef ISDIRSEP
-# define ISDIRSEP(c) ((c) == '/')
-#endif
-
 /* Different file systems can have different naming patterns which designate
- * a path as absolute
+ * a path as absolute.
  */
 #ifndef ISABSOLUTE
-# define ISABSOLUTE(s) ISDIRSEP(s[0])
+# define ISABSOLUTE(s) ISSLASH(s[FILESYSTEM_PREFIX_LEN(s)])
 #endif
 
 

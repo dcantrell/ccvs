@@ -1,3 +1,15 @@
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
+	Add dirname module from GNULIB.
+
+	* Makefile.am (libcvs_SOURCES): Add new files.
+	* basename.c, dirname.c, dirname.h: New files.
+	* stripslash.c: Update from GNULIB.
+	* system.h (ISDIRSEP): Remove.
+	(ISABSOLUTE): s/ISDIRSEP/ISSLASH/.  Use FILESYSTEM_PREFIX_LEN to search
+	for DOS drive spec rather than reimplementing.
+	* Makefile.in: Regenerated.
+
 2004-04-26  Derek Price  <derek@ximbiot.com>
 
 	* libcvs.dsp: Add stdbool.h from windows-NT as source dependency.

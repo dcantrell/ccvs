@@ -40,7 +40,6 @@ libcvs_a_SOURCES = \
 	md5.c \
 	savecwd.c \
 	sighandle.c \
-	stripslash.c \
 	xgetwd.c \
 	yesno.c \
 	error.h \
@@ -85,6 +84,9 @@ alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
+
+# For GNULIB's dirname module.
+libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
 
 # For GNULIB's exitfail module.
 libcvs_a_SOURCES += exitfail.h exitfail.c
