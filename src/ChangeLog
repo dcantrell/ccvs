@@ -1,5 +1,9 @@
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* expand_path.c (expand_variable): Accept a variable name starting
+	with '=' as a way to specify an environment variable.
+	* sanity.sh (info): New tests, for above behavior.
+
 	* Makefile.in (clean): Also remove check.log check.plog.
 
 	* import.c (comtable): Remove SYSTEM_COMMENT_TABLE; the table
