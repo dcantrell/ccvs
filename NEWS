@@ -1,5 +1,10 @@
 Changes since 1.10:
 
+* Anonymous read-only access can now be done without requiring a
+password.  On the server side, simply give that user (presumably
+`anonymous') an empty password in the CVSROOT/passwd file, and then
+any received password will authenticate successfully.
+
 * There is a new access method :fork: which is similar to :local:
 except that it is implemented via the CVS remote protocol, and thus
 has a somewhat different set of quirks and bugs.

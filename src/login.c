@@ -289,14 +289,15 @@ login (argc, argv)
 }
 
 /* Returns the _scrambled_ password.  The server must descramble
-   before hashing and comparing. */
+   before hashing and comparing.  If password file not found, or
+   password not found in the file, just return NULL. */  
 char *
 get_cvs_password ()
 {
     int found_it = 0;
     int root_len;
-    char *password;
-    char *linebuf = (char *) NULL;
+    char *password = NULL;
+    char *linebuf = NULL;
     size_t linebuf_len;
     FILE *fp;
     char *passfile;
@@ -339,11 +340,10 @@ get_cvs_password ()
 
     passfile = construct_cvspass_filename ();
     fp = CVS_FOPEN (passfile, "r");
-    if (fp == NULL)
+    if (fp == NULL) 
     {
-	error (0, errno, "could not open %s", passfile);
 	free (passfile);
-	error (1, 0, "use \"cvs login\" to log in first");
+	return NULL;
     }
 
     root_len = strlen (CVSroot_original);
@@ -369,23 +369,17 @@ get_cvs_password ()
 	char *tmp;
 
 	strtok (linebuf, " ");
-	password = strtok (NULL, "\n");
+	tmp = strtok (NULL, "\n");
 
 	/* Give it permanent storage. */
-	tmp = xstrdup (password);
-	memset (password, 0, strlen (password));
-	free (linebuf);
-	return tmp;
+	password = xstrdup (tmp);
+	memset (tmp, 0, strlen (password));
     }
-    else
-    {
-        if (linebuf)
-            free (linebuf);
-	error (0, 0, "cannot find password");
-	error (1, 0, "use \"cvs login\" to log in first");
-    }
-    /* NOTREACHED */
-    return NULL;
+
+    if (linebuf)
+        free (linebuf);
+    free (passfile);
+    return password;
 }
 
 static const char *const logout_usage[] =
