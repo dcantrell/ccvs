@@ -611,7 +611,8 @@ $CVS_RSH \
 	 "TMPDIR='\$TMPDIR';" \
 	 "export CVS_SECONDARY_LOG TMPDIR;" \
 	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
-	 "export CVS_RSH;" \
+	 "CVSUMASK='\$CVSUMASK';" \
+	 "export CVS_RSH CVSUMASK;" \
 	 $time \
 	 \${1+"\$@"}
 EOF
@@ -19515,8 +19516,8 @@ EOF
 
 	    # If we're going to do remote testing, make sure 'rsh' works first.
 	    host="`hostname`"
-	    if test "x`${CVS_RSH} $host -n 'echo hi'`" != "xhi"; then
-		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH} $host' fails." >&2
+	    if test "x`$CVS_RSH $host 'echo hi'`" != "xhi"; then
+		echo "ERROR: cannot test remote CVS, because \`$CVS_RSH $host' fails." >&2
 		exit 1
 	    fi
 
@@ -21131,27 +21132,28 @@ new revision: 1\.3; previous revision: 1\.2"
 	  touch ab
 	  # Might as well test the execute bit too.
 	  chmod +x ab
-	  dotest modes-8 "${testcvs} add ab" \
-"${SPROG} add: scheduling file .ab. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest modes-9 "${testcvs} -q ci -m add" \
+	  dotest modes-8 "$testcvs add ab" \
+"$SPROG add: scheduling file .ab. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+	  dotest modes-9 "$testcvs -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/ab,v  <--  ab
 initial revision: 1\.1"
-	  if $remote; then
-	    # The problem here is that the CVSUMASK environment variable
-	    # needs to be set on the server (e.g. .bashrc).  This is, of
-	    # course, bogus, but that is the way it is currently.
-	    if test -n "$remotehost"; then
-	      dotest modes-10remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
-"-r--r--r--.*"
-	    else
-	      dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
-"-r-xr-x---.*" "-r-xr-xr-x.*"
-	    fi
-	  else
-	    dotest modes-10 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+
+	  # The ssh-wrapper script set up by this script forwards CVSUMASK to
+	  # the server.  In practice it would be set on the server in some
+	  # other manner (for instance, by the `env' command, or as an option
+	  # in the xinted.conf file).
+	  #
+	  # I don't recall why, but I used to look for:
+	  #
+	  #   dotest modes-10remotehost \
+	  #   "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/ab,v'" \
+	  #   "-r--r--r--.*"
+	  #
+	  # here when $remotehost was set.  I'm not sure why.  Maybe this was
+	  # one of the innumerable Cygwin issues?
+	  dotest modes-10 "ls -l $CVSROOT_DIRNAME/first-dir/ab,v" \
 "-r-xr-x---.*"
-	  fi
 
 	  # OK, now add a file on a branch.  Check that the mode gets
 	  # set the same way (it is a different code path in CVS).
@@ -21168,27 +21170,11 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest modes-14 "${testcvs} -q ci -m add" \
 "$CVSROOT_DIRNAME/first-dir/Attic/ac,v  <--  ac
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
-	  if $remote; then
-	    # The problem here is that the CVSUMASK environment variable
-	    # needs to be set on the server (e.g. .bashrc).  This is, of
-	    # course, bogus, but that is the way it is currently.  The
-	    # first match is for the :ext: method (where the CVSUMASK
-	    # won't be set), while the second is for the :fork: method
-	    # (where it will be).
-	    if test -n "$remotehost"; then
-	      dotest modes-15r \
-"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v'" \
-"-r--r--r--.*"
-	    else
-	      dotest modes-15r \
-"ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
-"-r--r--r--.*" "-r--r-----.*"
-	    fi
-	  else
-	    dotest modes-15 \
+
+	  # ssh-wrapper forwards CVSUMASK.  See modes-10 for notes.
+	  dotest modes-15 \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
 "-r--r-----.*"
-	  fi
 
 	  dokeep
 	  cd ../..
@@ -24003,7 +23989,7 @@ $SPROG commit: Rebuilding administrative file database"
 	    chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
 	  fi
 	  echo more stuff >> a-lock
-	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
+	  dotest_fail_sort reserved-13b "${testcvs} ci -m '' a-lock" \
 "${SPROG} commit: warning: commitinfo line contains no format strings:
     \"${TESTDIR}/lockme\"
 Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
@@ -25382,8 +25368,9 @@ $SPROG update: \`file' is no longer in the repository"
 
 	    # Copy the archive
 	    if test -n "$remotehost"; then
-	      $CVS_RSH $remotehost "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
-		$CVSROOT_DIRNAME/first-dir/FILE,v"
+	      modify_repo $CVS_RSH $remotehost \
+			  "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+			  $CVSROOT_DIRNAME/first-dir/FILE,v"
 	    else
 	      modify_repo cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
 			     $CVSROOT_DIRNAME/first-dir/FILE,v
@@ -27189,6 +27176,14 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	pserver)
 	  # Test basic pserver functionality.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  (The issue is getting servercvs & testcvs
+	      # set correctly for the following tests.  Some expect one access
+	      # method and some another, which in $remotehost mode, means that
+	      # sometimes the executables must run on one platform and
+	      # sometimes another.)
+	      continue
+	    fi
 	    save_servercvs=$servercvs
 	    servercvs=$testcvs
    	    # First set SystemAuth=no.  Not really necessary, I don't
@@ -27388,33 +27383,31 @@ EOF
 
 	    # Check that readers can only read, everyone else can write
 
-	    cat >${CVSROOT_DIRNAME}/CVSROOT/readers <<EOF
-anonymous
-EOF
+	    echo anonymous >$CVSROOT_DIRNAME/CVSROOT/readers
 
-	    dotest pserver-14 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-14 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 M Concurrent Versions System (CVS) .*
 ok" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 anonymous
 Ay::'d
 END AUTH REQUEST
-Root ${CVSROOT_DIRNAME}
+Root $CVSROOT_DIRNAME
 version
 EOF
 
-	    dotest pserver-15 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-15 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 anonymous
 Ay::'d
 END AUTH REQUEST
-init ${CVSROOT_DIRNAME}
+init $CVSROOT_DIRNAME
 EOF
 
 	    dotest pserver-16 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
@@ -27861,6 +27854,14 @@ EOF
 	  # More server tests, in particular testing that various
 	  # possible security holes are plugged.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  (The issue is getting servercvs & testcvs
+	      # set correctly for the following tests.  Some expect one access
+	      # method and some another, which in $remotehost mode, means that
+	      # sometimes the executables must run on one platform and
+	      # sometimes another.)
+	      continue
+	    fi
 	    save_servercvs=$servercvs
 	    servercvs=$testcvs
 	    dotest server2-1 "${servercvs} server" \
@@ -28285,6 +28286,11 @@ U module1/dir2/file1"
 	  # The client series of tests already tests that CVS_SERVER is
 	  # working, but that test might be better here.
 	  if $remote; then
+	    if test -n "$remotehost"; then
+	      # Don't even try.  If our caller specified a remotehost, our
+	      # access method has been determined anyhow.
+	      continue
+	    fi
 	    mkdir fork; cd fork
 	    save_CVS_SERVER=$CVS_SERVER
 	    unset CVS_SERVER
