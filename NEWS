@@ -3,6 +3,9 @@ Changes since 1.11.12:
 
 GENERAL USER ISSUES
 
+* A minor problem with the nmake build file that was preventing the source from
+  compiling under Windows has been fixed.
+
 * Tests have been added to the test suite.
 
 Changes from 1.11.11 to 1.11.12:
