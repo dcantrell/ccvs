@@ -3380,6 +3380,14 @@ start_server ()
 	    START_SERVER (&tofd, &fromfd, getcaller (),
 			  CVSroot_username, CVSroot_hostname,
 			  CVSroot_directory);
+#  if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
+	    /* This is a system on which we can only write to a socket
+	       using send/recv.  Therefore its START_SERVER needs to
+	       return a socket.  */
+	    use_socket_style = 1;
+	    server_sock = tofd;
+#  endif
+
 #else
 	    /* FIXME: It should be possible to implement this portably,
 	       like pserver, which would get rid of the duplicated code
@@ -3394,13 +3402,6 @@ the :server: access method is not supported by this port of CVS");
 (start_server internal error): unknown access method");
 	    break;
     }
-
-#if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
-    /* This is a system on which we can only write to a socket using
-       send/recv.  Therefore its START_SERVER needs to return a socket.  */
-    use_socket_style = 1;
-    server_sock = tofd;
-#endif
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;

@@ -1,5 +1,9 @@
 Wed Sep 11 12:46:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (start_server): Move START_SERVER_RETURNS_SOCKET code
+	so that it is only run for server_method.  It is wrong for
+	pserver_method (in which connect_to_pserver sets server_sock).
+
 	* login.c (construct_cvspass_filename): If NO_SLASH_AFTER_HOME,
 	don't put a '/' between $HOME and .cvspass.  Reindent function.
 	* build_src.com: Add zlib.c, login.c, and scramble.c.
