@@ -110,17 +110,78 @@ bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
 
 # The cvs executable
-cvs_SOURCES = add.c admin.c buffer.c checkin.c checkout.c classify.c client.c \
-commit.c create_adm.c cvsrc.c diff.c edit.c entries.c error.c expand_path.c \
-fileattr.c find_names.c hardlink.c hash.c history.c ignore.c import.c \
-lock.c log.c login.c logmsg.c main.c mkmodules.c modules.c myndbm.c no_diff.c \
-parseinfo.c patch.c rcs.c rcscmds.c recurse.c release.c remove.c repos.c \
-root.c scramble.c server.c status.c subr.c filesubr.c run.c \
-tag.c update.c watch.c wrapper.c vers_ts.c zlib.c \
-buffer.h cvs.h rcs.h hardlink.h hash.h myndbm.h \
-update.h server.h client.h error.h fileattr.h edit.h watch.h
-
-cvs_LDADD = version.o ../lib/libcvs.a ../diff/libdiff.a ../zlib/libz.a
+cvs_SOURCES = \
+	add.c \
+	admin.c \
+	buffer.c \
+	checkin.c \
+	checkout.c \
+	classify.c \
+	client.c \
+	commit.c \
+	create_adm.c \
+	cvsrc.c diff.c \
+	edit.c \
+	entries.c \
+	error.c \
+	expand_path.c \
+	fileattr.c \
+	filesubr.c \
+	find_names.c \
+	hardlink.c \
+	hash.c \
+	history.c \
+	ignore.c \
+	import.c \
+	lock.c \
+	log.c \
+	login.c \
+	logmsg.c \
+	main.c \
+	mkmodules.c \
+	modules.c \
+	myndbm.c \
+	no_diff.c \
+	parseinfo.c \
+	patch.c \
+	rcs.c \
+	rcscmds.c \
+	recurse.c \
+	release.c \
+	remove.c \
+	repos.c \
+	root.c \
+	run.c \
+	scramble.c \
+	server.c \
+	status.c \
+	subr.c \
+	tag.c \
+	update.c \
+	vers_ts.c \
+	watch.c \
+	wrapper.c \
+	zlib.c \
+	buffer.h \
+	client.h \
+	cvs.h \
+	edit.h \
+	error.h \
+	fileattr.h \
+	hardlink.h \
+	hash.h \
+	myndbm.h \
+	rcs.h \
+	select.h \
+	server.h \
+	update.h \
+	watch.h \
+	xtime.h
+cvs_LDADD = \
+	../diff/libdiff.a \
+	../lib/libcvs.a \
+	../zlib/libz.a \
+	version.o
 cvs_EXTRA_DIST = version.c
 
 # extra clean targets
