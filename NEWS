@@ -3,6 +3,8 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Infinite alias loops in the modules file are now checked for and avoided.
+
 * Clients on case insensitive systems now preserve the case of directories in
   CVS/Entries, in addition to files, for use in communications with the CVS
   server.

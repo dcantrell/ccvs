@@ -14,12 +14,57 @@
 
 
 
+static void
+_push (List *stack, void *elem, int isstring)
+{
+    Node *p = getnode();
+
+    if (isstring)
+	p->key = elem;
+    else
+	p->data = elem;
+
+    addnode(stack, p);
+}
+
+
+
 void
 push (List *stack, void *elem)
 {
-    Node *p = getnode();
-    p->data = elem;
-    addnode(stack, p);
+    _push (stack, elem, 0);
+}
+
+
+
+void
+push_string (List *stack, char *elem)
+{
+    _push (stack, elem, 1);
+}
+
+
+
+void *
+_pop (List *stack, int isstring)
+{
+    void *elem;
+
+    if (isempty (stack)) return NULL;
+
+    if (isstring)
+    {
+	elem = stack->list->prev->key;
+	stack->list->prev->key = NULL;
+    }
+    else
+    {
+	elem = stack->list->prev->data;
+	stack->list->prev->data = NULL;
+    }
+
+    delnode (stack->list->prev);
+    return elem;
 }
 
 
@@ -27,14 +72,30 @@ push (List *stack, void *elem)
 void *
 pop (List *stack)
 {
-    void *elem;
+    return _pop (stack, 0);
+}
 
-    if (isempty (stack)) return NULL;
 
-    elem = stack->list->prev->data;
-    stack->list->prev->data = NULL;
-    delnode (stack->list->prev);
-    return elem;
+
+char *
+pop_string (List *stack)
+{
+    return _pop (stack, 1);
+}
+
+
+
+static void
+_unshift (List *stack, void *elem, int isstring)
+{
+    Node *p = getnode();
+
+    if (isstring)
+	p->key = elem;
+    else
+	p->data = elem;
+
+    addnode_at_front(stack, p);
 }
 
 
@@ -42,9 +103,38 @@ pop (List *stack)
 void
 unshift (List *stack, void *elem)
 {
-    Node *p = getnode();
-    p->data = elem;
-    addnode_at_front(stack, p);
+    _unshift (stack, elem, 0);
+}
+
+
+
+void
+unshift_string (List *stack, char *elem)
+{
+    _unshift (stack, elem, 1);
+}
+
+
+
+static void *
+_shift (List *stack, int isstring)
+{
+    void *elem;
+
+    if (isempty (stack)) return NULL;
+
+    if (isstring)
+    {
+	elem = stack->list->next->key;
+	stack->list->next->key = NULL;
+    }
+    else
+    {
+	elem = stack->list->next->data;
+	stack->list->next->data = NULL;
+    }
+    delnode (stack->list->next);
+    return elem;
 }
 
 
@@ -52,15 +142,18 @@ unshift (List *stack, void *elem)
 void *
 shift (List *stack)
 {
-    void *elem;
-
-    if (isempty (stack)) return NULL;
-
-    elem = stack->list->next->data;
-    stack->list->next->data = NULL;
-    delnode (stack->list->next);
-    return elem;
+    return _shift (stack, 0);
 }
+
+
+
+char *
+shift_string (List *stack)
+{
+    return _shift (stack, 1);
+}
+
+
 
 int
 isempty (List *stack)
