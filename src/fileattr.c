@@ -117,7 +117,12 @@ fileattr_read ()
 	    newnode->delproc = fileattr_delproc;
 	    newnode->key = xstrdup (line + 1);
 	    newnode->data = xstrdup (p);
-	    addnode (attrlist, newnode);
+	    if (addnode (attrlist, newnode) != 0)
+		/* If the same filename appears twice in the file, discard
+		   any line other than the first for that filename.  This
+		   is the way that CVS has behaved since file attributes
+		   were first introduced.  */
+		free (newnode);
 	}
 	else if (line[0] == 'D')
 	{

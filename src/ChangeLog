@@ -1,5 +1,11 @@
 Sun Feb 23 09:54:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* fileattr.c (fileattr_read): If a filename is duplicated,
+	continue to ignore subsequent lines but free the node so that we
+	don't leak memory.
+	* sanity.sh (devcom3): New tests devcom3-8 and devcom3-9 test for
+	behavior on duplicated filenames.
+
 	* fileattr.h: Add comment about unrecognized ENT-TYPE and order of
 	lines in fileattr file.
 	* fileattr.c (struct unrecog, unrecog_head): New variables, to
