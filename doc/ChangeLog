@@ -1,3 +1,12 @@
+Tue Nov  5 14:00:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Rename node "Invoking CVS" to "CVS commands".
+	Rewrite the intro and comments to reflect addition of the new
+	Invoking CVS.
+	(Invoking CVS): New node, a quick summary of each command.
+	(annotate): Don't list the options; refer to Invoking CVS and
+	Common options instead.
+
 Sun Nov  3 21:22:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Compatibility): New node, moved from ../README.
