@@ -1,3 +1,20 @@
+2004-09-27  Derek Price <derek@ximbiot.com>
+
+	Use original_root for client comparisons with CVS/Root since
+	current_parsed_root may be the product of a redirect.
+
+	* client.c (handle_redirect): Don't free current_parsed_root.  Validate
+	new roots.
+	(args_should_not_be_sent_to_server):
+	s/current_parsed_root->original/original_root/.
+	* create_adm.c (Create_Admin): Likewise.
+	* cvs.h (current_parsed_root): Move extern decl...
+	* root.h: ...here.  Decl original_root extern.
+	* main.c (set_root_directory): Store original_root.
+	(main): s/current_parsed_root->original/original_root/.
+	* recurse.c, release.c, update.c: Likewise.
+	* root.c: Declare original_root.
+
 2004-09-24  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (parseroot2): Correct two test names.  Restore CVSROOT.

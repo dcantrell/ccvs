@@ -217,7 +217,7 @@ arg_should_not_be_sent_to_server (char *arg)
 
 	/* Now check the value for root. */
 	if (root_string && current_parsed_root
-	    && (strcmp (root_string, current_parsed_root->original) != 0))
+	    && (strcmp (root_string, original_root) != 0))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
 	    if (this_root) free_cvsroot_t (this_root);
@@ -586,8 +586,14 @@ handle_valid_requests (char *args, int len)
 static void
 handle_redirect (char *args, int len)
 {
-    free_cvsroot_t (current_parsed_root);
     current_parsed_root = parse_cvsroot (args);
+    /* We deliberately do not set ORIGINAL_ROOT here.  ORIGINAL_ROOT is used
+     * by the client to determine the current root being processed for the
+     * purpose of looking it up in lists and such, even after a redirect.
+     */
+    if (!current_parsed_root)
+	error (1, 0, "Server requested redirect to invalid root: `%s'",
+	       args);
 }
 
 
