@@ -12,6 +12,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "yesno.h"
 #include "watch.h"
 #include "edit.h"
 #include "fileattr.h"
@@ -616,6 +617,8 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
     if (xcmp (finfo->file, basefilename) != 0)
     {
 	printf ("%s has been modified; revert changes? ", finfo->fullname);
+	fflush (stderr);
+	fflush (stdout);
 	if (!yesno ())
 	{
 	    /* "no".  */

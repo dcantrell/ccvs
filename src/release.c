@@ -8,6 +8,7 @@
 #include "cvs.h"
 #include "save-cwd.h"
 #include "getline.h"
+#include "yesno.h"
 
 static const char *const release_usage[] =
 {
@@ -214,6 +215,8 @@ release (int argc, char **argv)
 		    c);
 	    printf ("Are you sure you want to release %sdirectory `%s': ",
 		    delete_flag ? "(and delete) " : "", thisarg);
+	    fflush (stderr);
+	    fflush (stdout);
 	    c = !yesno ();
 	    if (c)			/* "No" */
 	    {
