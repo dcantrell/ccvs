@@ -1,3 +1,9 @@
+Mon May  1 14:02:42 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* configure.in: Set up src/options.h for the user.  Its defaults are
+	usually right.
+	* README, INSTALL: Adjust installation instructions appropriately.
+
 Fri Apr 28 22:31:26 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* Makefile.in (DISTFILES): Brought up-to-date.
