@@ -1,3 +1,7 @@
+Sat Sep 14 10:46:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keeping a checked out copy): New node.
+
 Fri Sep 13 23:55:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Magic branch numbers): Delete song and dance about

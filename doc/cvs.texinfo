@@ -7649,6 +7649,7 @@ repositories}).
 
 @menu
 * loginfo example::             Loginfo example
+* Keeping a checked out copy::  Updating a tree on every checkin
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -7685,6 +7686,54 @@ like this:
  echo;
  sed '1s+'$@{CVSROOT@}'++') >> $1
 @end example
+
+@node Keeping a checked out copy
+@appendixsubsec Keeping a checked out copy
+
+@c What other index entries?  It seems like
+@c people might want to use a lot of different
+@c words for this functionality.
+@cindex keeping a checked out copy
+@cindex checked out copy, keeping
+
+It is often useful to maintain a directory tree which
+contains files which correspond to the latest version
+in the repository.  For example, other developers might
+want to refer to the latest sources without having to
+check them out, or you might be maintaining a web site
+with @sc{cvs} and want every checkin to cause the files
+used by the web server to be updated.
+@c Can we offer more details on the web example?  Or
+@c point the user at how to figure it out?  This text
+@c strikes me as sufficient for someone who already has
+@c some idea of what we mean but not enough for the naive
+@c user/sysadmin to understand it and set it up.
+
+The way to do this is by having loginfo invoke
+@code{cvs update}.  Doing so in the naive way will
+cause a problem with locks, so the @code{cvs update}
+must be run in the background.
+@c Should we try to describe the problem with locks?
+@c It seems like a digression for someone who just
+@c wants to know how to make it work.
+@c Another choice which might work for a single file
+@c is to use "cvs -n update -p" which doesn't take
+@c out locks (I think) but I don't see many advantages
+@c of that and we might as well document something which
+@c works for multiple files.
+Here is an example (this should all be on one line):
+
+@example
+^cyclic-pages		(date; cat; (sleep 2; cd /u/www/local-docs;
+ cvs -q update -d) &) >> $CVSROOT/CVSROOT/updatelog 2>&1
+@end example
+
+This will cause checkins to repository directories
+starting with @code{cyclic-pages} to update the checked
+out tree in @file{/u/www/local-docs}.
+@c More info on some of the details?  The "sleep 2" is
+@c so if we are lucky the lock will be gone by the time
+@c we start and we can wait 2 seconds instead of 30.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rcsinfo
