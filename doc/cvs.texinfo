@@ -8445,13 +8445,7 @@ If @var{file} is omitted,
 obtain the text from standard input, terminated by
 end-of-file or by a line containing @samp{.} by itself.
 Prompt for the text if interaction is possible; see
-@samp{-I}.  Reading from standard input does not work
-for client/server @sc{cvs} and may change in a future
-release of @sc{cvs}.
-@c Changing it to doeditor() is the most obvious thing
-@c (but with a different syntax, as we would like to
-@c phase out optional arguments).  I don't know.  I'm
-@c tempted to say the whole concept is unnecessary.
+@samp{-I}.
 
 @item -t-@var{string}
 Similar to @samp{-t@var{file}}. Write descriptive text
