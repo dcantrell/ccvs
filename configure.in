@@ -26,7 +26,7 @@ if test X"$ac_cv_sys_interpreter" != X"yes" ; then
   AC_MSG_WARN($ac_msg)
 fi
 
-AC_PATH_PROGS(gdiff_path, gdiff gnudiff diff, diff)
+AC_PATH_PROGS(gdiff_path, gnudiff diff, diff)
 AC_MSG_CHECKING(to see if $gdiff_path supports -a)
 if $gdiff_path -a /dev/null /dev/null > /dev/null 2>&1 ; then
   AC_MSG_RESULT(yes; appending -a to $gdiff_path)
