@@ -1,3 +1,9 @@
+Fri Oct 24 10:22:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (patch_file): If the first revision does not exist in
+	the RCS file, fall back to sending entire file.  Fixes
+	admin-22-o15 in make remotecheck.
+
 1997-10-23  enami tsugutomo  <enami@but-b.or.jp>
 
 	* rcs.c (RCS_checkin): Unlink temporary files stored in variable
