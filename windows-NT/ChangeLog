@@ -1,5 +1,9 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* .cvsignore: Ignore stamp-sh2
+
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* Makefile.am (EXTRA_DIST): Add stdint.h.
 	* stdint.h: Regenerated.
 	* Makefile.in: Ditto.

@@ -5,3 +5,4 @@ fix-msvc-mak
 mkconfig
 stamp-ch
 stamp-sh
+stamp-sh2
