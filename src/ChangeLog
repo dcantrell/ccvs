@@ -1,3 +1,8 @@
+1998-11-18  Jim Kingdon
+
+	* sanity.sh (conflicts3): Tests conflicts3-24 through
+	conflicts3-28 test for another case similar to conflicts3-22.
+
 1998-11-14  Jim Kingdon
 
 	* sanity.sh (diff): New test, for now just tests for the "I know
