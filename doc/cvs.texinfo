@@ -1404,7 +1404,8 @@ cvs -b /usr/local/bin pserver
 @end example
 
 The @samp{-b} option specifies the directory which contains
-the @sc{rcs} binaries on the server.
+the @sc{rcs} binaries on the server.  You could also use the
+@samp{-T} option to specify a temporary directory.
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -4517,6 +4518,14 @@ left of @samp{cvs_command}) are:
 @item -b @var{bindir}
 Use @var{bindir} as the directory where @sc{rcs} programs are
 located.  Overrides the setting of the @code{$RCSBIN} environment
+variable and any precompiled directory.  This parameter should be
+specified as an absolute pathname.
+
+@cindex TMPDIR, overriding
+@cindex Overriding TMPDIR
+@item -T @var{tempdir}
+Use @var{tempdir} as the directory where temporary files are
+located.  Overrides the setting of the @code{$TMPDIR} environment
 variable and any precompiled directory.  This parameter should be
 specified as an absolute pathname.
 
@@ -8012,9 +8021,10 @@ programs it uses.
 
 @cindex RCSBIN
 @item $RCSBIN
-Specifies the full pathname of the location of @sc{rcs} programs,
-such as co(1) and ci(1).  If not set, a compiled-in
-value is used, or your @code{$PATH} is searched.
+This is the value @sc{cvs} is using for where to find
+@sc{rcs} binaries.  @xref{Global options}, for a
+description of how to specify this.  If not set, a
+compiled-in value is used, or your @code{$PATH} is searched.
 
 @cindex HOME
 @item $HOME
@@ -8097,8 +8107,9 @@ parts of @sc{cvs} which are implemented using @sc{rcs}
 inspect the above variables in the order they appear
 above and the first value found is taken; if none of
 them are set, a host-dependent default is used,
-typically @file{/tmp}.  The @sc{cvs} server checks
-@code{TMPDIR}, and if not set, it uses @file{/tmp}.
+typically @file{/tmp}.  The @sc{cvs} server uses
+@code{TMPDIR}.  @xref{Global options}, for a
+description of how to specify this.
 Some parts of @sc{cvs} will always use @file{/tmp} (via
 the @code{tmpnam} function provided by the system).
 
