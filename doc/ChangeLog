@@ -1,5 +1,9 @@
+2000-02-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo: Clean up text/formatting of previous change.
+
 2000-02-21  K.J. Paradise <kj@sourcegear.com>
-	
+
 	* cvs.texinfo : Adding John Cavanaugh's patch to allow 
 	the history file to log actions based on the CVSROOT/config
 	file.  (To limit which cvs actions actually make it into the 
