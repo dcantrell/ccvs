@@ -243,8 +243,6 @@ parse_cvsroot (char *CVSroot)
 	    CVSroot_method = kserver_method;
 	else if (strcmp (method, "server") == 0)
 	    CVSroot_method = server_method;
-	else if (strcmp (method, "rsh") == 0)
-	    CVSroot_method = server_method;
 	else
 	{
 	    error (0, 0, "unknown method in CVSroot: %s", CVSroot);
@@ -348,6 +346,21 @@ parse_cvsroot (char *CVSroot)
     
     /* Hooray!  We finally parsed it! */
     return 0;
+}
+
+
+/* Set up the global CVSroot* variables as if we're using the local
+   repository DIR. */
+
+void
+set_local_cvsroot (char *dir)
+{
+    CVSroot_original = xstrdup (dir);
+    CVSroot_method = local_method;
+    CVSroot_directory = CVSroot_original;
+    CVSroot_username = NULL;
+    CVSroot_hostname = NULL;
+    client_active = 0;
 }
 
 

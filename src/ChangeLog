@@ -1,5 +1,8 @@
 Mon Apr 29 10:48:38 1996  Noel Cragg  <noel@gargle>
 
+	* root.c (parse_cvsroot): removed "rsh" as an alias to "server" in
+ 	the method section.
+
 	* main.c (main): new variable help so we can support the `cvs -H
  	cmd' convention.  Reverts change of 26 Apr 96 which removed this
  	feature.
