@@ -23,10 +23,17 @@ AT_CVS_SETUP([version])
 # someone neglected to update the copyright notice than to avoid a few spurious
 # failures when testing old versions of CVS.
 #
+# FIXME: This could be done with sed branching - if the listed version is the
+# same as the CVS dist version that script was generated with, then check the
+# year.  Otherwise, ignore it.
+#
+# The s# *$## command is necessary to test old versions of CVS since some are
+# known to have generated trailing spaces in their version string.
 this_year=`date +%Y`
 AT_CHECK_NOESCAPE(
 [cvs --version |
-  sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##;s# *$##'],
+  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
+      -e 's# *$##'],
 [0],
 [
 Concurrent Versions System (CVS)
