@@ -1,3 +1,8 @@
+Tue Apr 30 08:21:27 1996  Mike Sutton <mike_sutton@dayton.saic.com>
+
+	* checkout.c, history.c: added logging/reporting of cvs export
+	command
+
 Wed Oct 16 10:16:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Remove tests 4, 4.5, and 4.75; this functionality is
