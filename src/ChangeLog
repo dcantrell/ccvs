@@ -1,5 +1,9 @@
 1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
 
+	* history.c (read_hrecs): st_blksize is unsigned long, not int.
+	This isn't just cosmetic - getting it wrong will cause coredumps
+	and such on 64 bit machines.
+
 	* import.c (import_descend), ignore.c (ignore_files): Placate gcc
 	-Wall by parenthesizing foo || (bar && baz).
 
