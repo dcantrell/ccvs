@@ -1,3 +1,30 @@
+Sat Oct  5 15:05:47 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* pcl-cvs.el (cvs-mode-emerge): 
+	"Message-Id: <199607310315.WAA05661@dosadi.ae.utexas.edu>
+	In-Reply-To: <m0ulPfo-00076pC@most.weird.com>
+	References: <199607301941.OAA03591@dosadi.ae.utexas.edu>
+		<m0ulPfo-00076pC@most.weird.com>
+	From: "Robert T. McLay" <mclay@cfdlab.ae.utexas.edu>
+	To: woods@most.weird.com (Greg A. Woods)
+	Date: Tue, 30 Jul 1996 22:15:59 -0500
+	Subject: Re: bug w/ emerge in pcl-cvs and (emerge.el in 19.31) (with patches)
+	
+	As I pointed out in my earlier message: I had a patch for emerge.el
+	and pcl-cvs.el.  I got a reply from rms saying that the error is
+	really with pcl-cvs.el.  The quit-hooks are setting a single function
+	instead of a list with one function.  I have enclosed a new patch for
+	the pcl-cvs.el that comes in 1.8.1 and add both the correct setting of
+	the file-name-variables and uses a cons to get a list of one function
+	for the quit-hooks.
+	
+	This means that you can ignore my previous patch and look at this one
+	instead.
+	
+	I still don't understand why I have to use setq instead of let."
+	
+	[[ that's because it has to be a global for a hook to use it.... ]]
+
 Wed Sep 25 05:38:09 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	* pcl-cvs.el (cvs-find-program): New function.
