@@ -1396,6 +1396,19 @@ serve_kopt (arg)
 	return;
     }
 
+    /* Do some sanity checks.  In particular, that it is not too long.
+       This lets the rest of the code not worry so much about buffer
+       overrun attacks.  Probably should call RCS_check_kflag here,
+       but that would mean changing RCS_check_kflag to handle errors
+       other than via exit(), fprintf(), and such.  */
+    if (strlen (arg) > 10)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E protocol error: invalid Kopt request: %s", arg);
+	return;
+    }
+
     kopt = malloc (strlen (arg) + 1);
     if (kopt == NULL)
     {
