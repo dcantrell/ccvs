@@ -1,3 +1,8 @@
+Wed Feb 28 22:28:43 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* build_src.com: Added DCL command procedure to build
+	and link CVS client for VMS.
+
 Wed Feb 28 22:07:20 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* client.c: VMS CVS client specific changes.
