@@ -18,6 +18,7 @@
 #endif
 
 #include "system.h"
+#include "pathmax.h"
 
 #include <stdio.h>
 #include <errno.h>

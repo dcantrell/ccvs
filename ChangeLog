@@ -1,3 +1,11 @@
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvsnt.mak (CLEAN, CPP_SBRS): Add ftello, fseeko, exithandle and
+	getndelim2.
+	(ftello.c, fseeko.c, exithandle.c, getndelim2): Add new source
+	file definitions.
+	(Patch from Rob Clevenger <rob@robsite.org>.)
+	
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Add section for 1.12.4.

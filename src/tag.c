@@ -1196,7 +1196,7 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *
 	    "tag_check_valid ( name=%s, argc=%d, argv=%lx, local=%d,\n"
        "                       aflag=%d, repository=%s )",
 	    name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
-	    repository ? repository : "(null") );
+	    repository ? repository : "(null)" );
 #endif
 
     /* Numeric tags require only a syntactic check.  */
