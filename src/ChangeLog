@@ -1,5 +1,10 @@
 Tue Jun 10 14:03:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (toplevel): Change "update" and "checkout" to "[a-z]*"
+	as these read "server" instead for "make remotecheck".  Change
+	expect strings for toplevel-9 to accept the behavior of remote CVS
+	(see comments for more discussion).
+
 	* sanity.sh: New tests stamps-9 through stamps-11 test timestamp
 	behavior on cvs update.
 
