@@ -1,3 +1,13 @@
+2001-03-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.h (mtype): Add MISC type.
+	* log.c (cvslog): Support rlog as well as log.
+	(rlog_proc): New.
+	* main.c (cmds[], cmd_usage[]): Add rlog.
+	(main): Remove old rlog warning message.
+	* server.c (serve_rlog): New.
+	(requests[]): Add rlog.
+
 2001-03-29  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: cd to $TESTDIR once after it is normalized.  Make TODO

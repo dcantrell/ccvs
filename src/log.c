@@ -109,6 +109,9 @@ struct log_data_and_rcs
     RCSNode *rcs;
 };
 
+static int rlog_proc PROTO((int argc, char **argv, char *xwhere,
+			    char *mwhere, char *mfile, int shorten,
+			    int local_specified, char *mname, char *msg));
 static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
 				 char *repository, char *update_dir,
 				 List *entries));
@@ -134,6 +137,9 @@ static void log_version PROTO ((struct log_data *, struct revlist *,
 				RCSNode *, RCSVers *, int));
 static int log_branch PROTO ((Node *, void *));
 static int version_compare PROTO ((const char *, const char *, int));
+
+static struct log_data log_data;
+static int is_rlog;
 
 static const char *const log_usage[] =
 {
@@ -211,8 +217,9 @@ cvslog (argc, argv)
     int c;
     int err = 0;
     int local = 0;
-    struct log_data log_data;
     struct option_revlist **prl;
+
+    is_rlog = (strcmp (command_name, "rlog") == 0);
 
     if (argc == -1)
 	usage (log_usage);
@@ -265,6 +272,8 @@ cvslog (argc, argv)
 		break;
 	}
     }
+    argc -= optind;
+    argv += optind;
 
     wrap_setup ();
 
@@ -277,7 +286,10 @@ cvslog (argc, argv)
 
 	/* We're the local client.  Fire up the remote server.  */
 	start_server ();
-	
+
+	if (is_rlog && !supported_request ("rlog"))
+	    error (1, 0, "server does not support rlog");
+
 	ign_setup ();
 
 	if (log_data.default_branch)
@@ -362,10 +374,19 @@ cvslog (argc, argv)
 	send_arg_list ("-w", log_data.authorlist);
 	dellist (&log_data.authorlist);
 
-	send_files (argc - optind, argv + optind, local, 0, SEND_NO_CONTENTS);
-	send_file_names (argc - optind, argv + optind, SEND_EXPAND_WILD);
-
-	send_to_server ("log\012", 0);
+	if (is_rlog)
+	{
+	    int i;
+	    for (i = 0; i < argc; i++)
+		send_arg (argv[i]);
+	    send_to_server ("rlog\012", 0);
+	}
+	else
+	{
+	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	    send_file_names (argc, argv, SEND_EXPAND_WILD);
+	    send_to_server ("log\012", 0);
+	}
         err = get_responses_and_close ();
 	return err;
     }
@@ -376,11 +397,24 @@ cvslog (argc, argv)
     if (findnode (log_data.authorlist, "@@MYSELF") != NULL)
 	log_parse_list (&log_data.authorlist, getcaller ());
 
-    err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
-			   (DIRLEAVEPROC) NULL, (void *) &log_data,
-			   argc - optind, argv + optind, local,
-			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
-			   (char *) NULL, 1);
+    if (is_rlog)
+    {
+	DBM *db;
+	int i;
+	db = open_module ();
+	for (i = 0; i < argc; i++)
+	{
+	    err += do_module (db, argv[i], MISC, "Logging", rlog_proc,
+			     (char *) NULL, 0, 0, 0, 0, (char *) NULL);
+	}
+	close_module (db);
+    }
+    else
+    {
+	err = rlog_proc (argc + 1, argv - 1, (char *) NULL,
+			 (char *) NULL, (char *) NULL, 0, 0, (char *) NULL,
+			 (char *) NULL);
+    }
 
     while (log_data.revlist)
     {
@@ -417,6 +451,101 @@ cvslog (argc, argv)
 
     return (err);
 }
+
+
+static int
+rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
+    int argc;
+    char **argv;
+    char *xwhere;
+    char *mwhere;
+    char *mfile;
+    int shorten;
+    int local;
+    char *mname;
+    char *msg;
+{
+    /* Begin section which is identical to patch_proc--should this
+       be abstracted out somehow?  */
+    char *myargv[2];
+    int err = 0;
+    int which;
+    char *repository;
+    char *where;
+
+    if (is_rlog)
+    {
+	repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
+			      + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+	(void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
+	where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
+			 + 1);
+	(void) strcpy (where, argv[0]);
+
+	/* if mfile isn't null, we need to set up to do only part of the module */
+	if (mfile != NULL)
+	{
+	    char *cp;
+	    char *path;
+
+	    /* if the portion of the module is a path, put the dir part on repos */
+	    if ((cp = strrchr (mfile, '/')) != NULL)
+	    {
+		*cp = '\0';
+		(void) strcat (repository, "/");
+		(void) strcat (repository, mfile);
+		(void) strcat (where, "/");
+		(void) strcat (where, mfile);
+		mfile = cp + 1;
+	    }
+
+	    /* take care of the rest */
+	    path = xmalloc (strlen (repository) + strlen (mfile) + 5);
+	    (void) sprintf (path, "%s/%s", repository, mfile);
+	    if (isdir (path))
+	    {
+		/* directory means repository gets the dir tacked on */
+		(void) strcpy (repository, path);
+		(void) strcat (where, "/");
+		(void) strcat (where, mfile);
+	    }
+	    else
+	    {
+		myargv[0] = argv[0];
+		myargv[1] = mfile;
+		argc = 2;
+		argv = myargv;
+	    }
+	    free (path);
+	}
+
+	/* cd to the starting repository */
+	if ( CVS_CHDIR (repository) < 0)
+	{
+	    error (0, errno, "cannot chdir to %s", repository);
+	    free (repository);
+	    return (1);
+	}
+	free (repository);
+	/* End section which is identical to patch_proc.  */
+
+	which = W_REPOS | W_ATTIC;
+	repository = NULL;
+    }
+    else
+    {
+        where = NULL;
+        which = W_LOCAL | W_REPOS | W_ATTIC;
+        repository = "";
+    }
+
+    err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
+			   (DIRLEAVEPROC) NULL, (void *) &log_data,
+			   argc - 1, argv + 1, local, which, 0, 1,
+			   where, 1);
+    return err;
+}
+
 
 /*
  * Parse a revision list specification.
