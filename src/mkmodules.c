@@ -46,7 +46,7 @@ struct admin_file {
 };
 
 static const char *const loginfo_contents[] = {
-    "# The \"loginfo\" file controls where \"cvs commit\" log information\n"
+    "# The \"loginfo\" file controls where \"cvs commit\" log information\n",
     "# is sent.  The first entry on a line is a regular expression which must match\n",
     "# the directory that the change is being made to, relative to the\n",
     "# $CVSROOT.  If a match is found, then the remainder of the line is a filter\n",
