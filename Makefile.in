@@ -453,7 +453,7 @@ maintainer-clean
 
 
 .PHONY: remotecheck
-remotecheck:
+remotecheck: all
 	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
 .PHONY: doc

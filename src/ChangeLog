@@ -1,3 +1,8 @@
+2001-01-03  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (remotecheck): depend on 'all'
+	* Makefile.in: regenerated
+
 2000-12-29  Derek Price  <derek.price@openavenue.com>
 
 	* sanity.sh: remove explicit "$@" from last checkin and move the 'do'

@@ -1,5 +1,10 @@
 2001-01-03  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.am (remotecheck): depend on 'all'
+	* Makefile.in: regenerated
+
+2001-01-03  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.in (DEP_FILES): Regenerated with new version of Automake
 	(DEP_FILES_conditional patch for BSD make compatibility)
 	* contrib/Makefile.in: ditto

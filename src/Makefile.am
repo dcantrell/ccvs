@@ -70,7 +70,7 @@ check-local:
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 
 .PHONY: remotecheck
-remotecheck:
+remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
 
 ## MAINTAINER Targets

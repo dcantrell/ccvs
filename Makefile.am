@@ -42,7 +42,7 @@ EXTRA_DIST = \
 	cvsnt.mak
 
 .PHONY: remotecheck
-remotecheck:
+remotecheck: all
 	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
 .PHONY: doc
