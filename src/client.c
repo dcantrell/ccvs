@@ -3711,7 +3711,6 @@ start_tcp_server (tofdp, fromfdp)
 	}
 	if (trace)
 	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
-	port = port;
     }
     else
     {

@@ -1,3 +1,8 @@
+Mon Dec 29 12:53:00 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (start_tcp_server): Remove useless assignment, left
+	behind by Dec 15 patch.
+
 Sat Dec 27 17:41:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c, options.h.in, history.c, import.c, main.c, rcs.c,
