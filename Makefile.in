@@ -174,7 +174,7 @@ clean-local: mostlyclean-local
 
 .PHONY: distclean-local
 distclean-local: clean-local
-	rm -f Makefile config.cache config.h config.log stamp-h
+	rm -f Makefile config.cache config.h config.log stamp-h .version .fname
 	rm -f tags TAGS
 
 .PHONY: realclean-local

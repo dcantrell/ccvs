@@ -15,3 +15,5 @@ WinDebug
 WinRel
 cvsnt.mdp
 stamp-h
+.fname
+.version
