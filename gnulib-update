@@ -1,0 +1,48 @@
+#! /bin/sh
+# Update the local files from GNULIB.  Currently assumes that the current
+# GNULIB sources are in a directory parallel with this one.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+# Where to find the GNULIB sources.
+GNULIB=../gnulib
+GNULIB_TOOL=$GNULIB/gnulib-tool
+
+# Which modules to update.
+MODULES="gettext vasnprintf regex atexit save-cwd"
+
+# Are the GNULIB sources really where we expect them?
+if test -r $GNULIB && test -d $GNULIB \
+   && test -r $GNULIB_TOOL && test -f $GNULIB_TOOL; then :; else
+  echo GNULIB sources not found. >&2
+  exit 1
+fi
+
+# Prevent lib/Makefile.am from being overwritten.
+mv lib/Makefile.am lib/Makefile.am.save
+
+# Run the update.
+$GNULIB_TOOL --import $MODULES
+
+# Warn the user if changes have been made to the Makefile.am.
+if cmp lib/Makefile.am lib/Makefile.gnulib >/dev/null; then :; else
+  echo Makefile.am needs updating. >&2
+fi
+
+# Save the generated lib/Makefile.am for next time.
+mv lib/Makefile.am lib/Makefile.gnulib
+
+# Restore lib/Makefile.am.
+mv lib/Makefile.am.save lib/Makefile.am
