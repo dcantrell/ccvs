@@ -125,6 +125,8 @@ $GNULIB/m4/pathmax.m4				m4		no NI
 # $GNULIB/modules/realloc
 $GNULIB/lib/realloc.c				lib		no NI
 $GNULIB/m4/realloc.m4				m4		no NI
+# $GNULIB/modules/restrict
+$GNULIB/m4/restrict.m4				m4		no NI
 # $GNULIB/modules/stat
 $GNULIB/lib/stat.c				lib		yes NI
 $GNULIB/m4/stat.m4				m4		no NI
