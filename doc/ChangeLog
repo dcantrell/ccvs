@@ -1,3 +1,11 @@
+2001-08-10  Derek Price  <dprice@collab.net>
+
+	* cvs.texinfo (Default options and the ~/.cvsrc file): Added a few more
+	"standard" options to the example.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.

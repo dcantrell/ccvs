@@ -7715,9 +7715,11 @@ the file.  So if this is the contents of the user's
 
 @example
 log -N
-diff -u
-update -P
+diff -uN
+rdiff -u
+update -Pd
 checkout -P
+release -d
 @end example
 
 @noindent
