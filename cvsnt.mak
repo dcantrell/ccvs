@@ -48,9 +48,9 @@ $(OUTDIR) :
     if not exist $(OUTDIR)/nul mkdir $(OUTDIR)
 
 # ADD BASE CPP /nologo /W3 /GX /YX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /FR /c
-# ADD CPP /nologo /W3 /GX /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR /c
+# ADD CPP /nologo /W3 /GX /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR /c
 # SUBTRACT CPP /WX
-CPP_PROJ=/nologo /W3 /GX /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /D "NDEBUG"\
+CPP_PROJ=/nologo /W3 /GX /YX /Ob1 /I "windows-NT" /I "lib" /I "src" /I "zlib" /D "NDEBUG"\
  /D "WIN32" /D "_CONSOLE" /D "HAVE_CONFIG_H" /FR$(INTDIR)/\
  /Fp$(OUTDIR)/"cvsnt.pch" /Fo$(INTDIR)/ /c 
 CPP_OBJS=.\WinRel/
