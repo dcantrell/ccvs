@@ -1,5 +1,3 @@
-#ident	"$CVSid$"
-
 First, read the README file.  If you're still happy...
 
 CVS has been tested on the following platforms.  The most recent
@@ -200,27 +198,14 @@ Installation under Unix:
 3a)  Run the regression tests (optional).
 
     You may also wish to validate the correctness of the new binary by
-    running the regression tests:
+    running the regression tests.  If they succeed, that is nice to
+    know.  However, if they fail, it doesn't tell you much.  Often it
+    will just be a problem with running the tests on your machine,
+    rather than a problem with CVS.  Unless you will have the time to
+    determine which of the two it is in case of failure, you might
+    want to save yourself the time and just not run the tests.
 
-	$ make check
-
-    Note that if your /bin/sh doesn't support shell functions, you'll
-    have to try something like this, where "/bin/sh5" is replaced by the
-    pathname of a shell which handles normal shell functions:
-
-	$ make SHELL=/bin/sh5 check
-
-    WARNING:  This test can take quite a while to run, esp. if your
-    disks are slow or over-loaded.
-
-    If you receive any un-expected output from the regression tests,
-    it may indicate a bug in CVS (or might just indicate a problem
-    running the tests).  If you choose to submit a bug report,
-    be aware that, as with all bug reports, you may or may not get a
-    response, and your odds might be better if you include enough information
-    to reproduce the bug, an analysis of what is going wrong (if you have
-    the time and ability to provide one), etc.  The check.log file is the
-    first place to look.
+    If you want to run the tests, see the file TESTS for more information.
 
 4)  Install the binaries/documentation:
 
