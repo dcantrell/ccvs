@@ -262,16 +262,6 @@ else
   QUESTION='\?'
 fi
 
-debug ()
-{
-  echo "$@"
-  /bin/sh
-  if [ $? != 0 ]; then
-    echo "Aborting."
-    exit 1
-  fi
-}
-
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
