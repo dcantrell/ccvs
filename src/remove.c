@@ -84,7 +84,7 @@ cvsremove (argc, argv)
 	    send_arg("-l");
 	send_file_names (argc, argv);
 	send_files (argc, argv, local, 0);
-	send_to_server ("remove\n", 0);
+	send_to_server ("remove\012", 0);
         return get_responses_and_close ();
     }
 #endif

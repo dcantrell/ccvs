@@ -289,7 +289,7 @@ update (argc, argv)
 	    failed_patches = NULL;
 	    failed_patches_count = 0;
 
-	    send_to_server ("update\n", 0);
+	    send_to_server ("update\012", 0);
 
 	    status = get_responses_and_close ();
 	    if (status != 0)

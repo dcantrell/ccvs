@@ -227,8 +227,8 @@ release (argc, argv)
         {
           send_to_server ("Argument ", 0);
           send_to_server (thisarg, 0);
-          send_to_server ("\n", 1);
-          send_to_server ("release\n", 0);
+          send_to_server ("\012", 1);
+          send_to_server ("release\012", 0);
         }
         else
         {
