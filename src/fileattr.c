@@ -305,8 +305,6 @@ fileattr_set (filename, attrname, attrval)
     Node *node;
     char *p;
 
-    attrs_modified = 1;
-
     if (filename == NULL)
     {
 	p = fileattr_modify (fileattr_default_attrs, attrname, attrval,
@@ -314,6 +312,7 @@ fileattr_set (filename, attrname, attrval)
 	if (fileattr_default_attrs != NULL)
 	    free (fileattr_default_attrs);
 	fileattr_default_attrs = p;
+	attrs_modified = 1;
 	return;
     }
     if (attrlist == NULL)
@@ -353,6 +352,8 @@ fileattr_set (filename, attrname, attrval)
 	free (node->data);
 	node->data = p;
     }
+
+    attrs_modified = 1;
 }
 
 void

@@ -451,7 +451,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2 crerepos"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos"
 else
 	tests="$*"
 fi
@@ -4087,6 +4087,57 @@ U first-dir/abc'
 	  fi
 
 	  rm -rf 1 2 3 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	devcom2)
+	  # More watch tests, most notably setting watches on
+	  # files in various different states.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  dotest devcom2-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+
+	  # This should probably be an error; setting a watch on a totally
+	  # unknown file is more likely to be a typo than intentional.
+	  # But that isn't the currently implemented behavior.
+	  dotest devcom2-2 "${testcvs} watch on w1" ''
+
+	  touch w1 w2 w3 nw1
+	  dotest devcom2-3 "${testcvs} add w1 w2 w3 nw1" "${DOTSTAR}"
+	  # Letting the user set the watch here probably can be considered
+	  # a feature--although it leads to a few potentially strange
+	  # consequences like one user can set the watch and another actually
+	  # adds the file.
+	  dotest devcom2-4 "${testcvs} watch on w2" ''
+	  dotest devcom2-5 "${testcvs} -q ci -m add-them" "${DOTSTAR}"
+
+	  # Note that this test differs in a subtle way from devcom-some0;
+	  # in devcom-some0 the watch is creating a new fileattr file, and
+	  # here we are modifying an existing one.
+	  dotest devcom2-6 "${testcvs} watch on w3" ''
+
+	  # Now test that all the watches got set on the correct files
+	  # FIXME: CVS should have a way to report whether watches are
+	  # set, I think.  The "check it out and see if it read-only" is
+	  # sort of OK, but is complicated by CVSREAD and doesn't help
+	  # if the file is added and not yet committed or some such.
+	  # Probably "cvs status" should report "watch: on" if watch is on
+	  # (and nothing if watch is off, so existing behavior is preserved).
+	  cd ../..
+	  mkdir 2
+	  cd 2
+	  dotest devcom2-7 "${testcvs} -q co first-dir" 'U first-dir/nw1
+U first-dir/w1
+U first-dir/w2
+U first-dir/w3'
+	  dotest devcom2-8 "test -w first-dir/nw1" ''
+	  dotest_fail devcom2-9 "test -w first-dir/w1" ''
+	  dotest_fail devcom2-10 "test -w first-dir/w2" ''
+	  dotest_fail devcom2-11 "test -w first-dir/w3" ''
+	  cd ..
+
+	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	ignore)

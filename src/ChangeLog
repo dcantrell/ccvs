@@ -1,3 +1,10 @@
+Tue Oct 29 12:49:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* fileattr.c (fileattr_set): Set attrs_modified *after* we might
+	call fileattr_read, because fileattr_read clears it.
+	* sanity.sh (devcom2): New tests, test for above fix and other
+	behaviors I discovered in the process of looking into it.
+
 Mon Oct 28 08:55:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	The following changes are to ensure that SYSTEM_CLEANUP is always
