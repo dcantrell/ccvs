@@ -225,14 +225,19 @@ do_editor (dir, messagep, repository, changes)
 	{
 	    line_length = getline (&line, &line_chars_allocated, fp);
 	    if (line_length == -1)
+	    {
+		if (ferror (fp))
+		    error (0, errno, "warning: cannot read %s", fname);
 		break;
+	    }
 	    if (strncmp (line, CVSEDITPREFIX, sizeof (CVSEDITPREFIX) - 1) == 0)
 		continue;
 	    (void) strcpy (p, line);
 	    p += line_length;
 	}
     }
-    (void) fclose (fp);
+    if (fclose (fp) < 0)
+	error (0, errno, "warning: cannot close %s", fname);
 
     if (pre_stbuf.st_mtime == post_stbuf.st_mtime ||
 	*messagep == NULL ||
@@ -262,7 +267,8 @@ do_editor (dir, messagep, repository, changes)
     }
     if (line)
 	free (line);
-    (void) unlink_file (fname);
+    if (unlink_file (fname) < 0)
+	error (0, errno, "warning: cannot remove temp file %s", fname);
 }
 
 /*
@@ -293,14 +299,17 @@ rcsinfo_proc (repository, template)
 
 	while (getline (&line, &line_chars_allocated, tfp) >= 0)
 	    (void) fputs (line, fp);
-	(void) fclose (tfp);
+	if (ferror (tfp))
+	    error (0, errno, "warning: cannot read %s", template);
+	if (fclose (tfp) < 0)
+	    error (0, errno, "warning: cannot close %s", template);
 	if (line)
 	    free (line);
 	return (0);
     }
     else
     {
-	error (0, 0, "Couldn't open rcsinfo template file %s", template);
+	error (0, errno, "Couldn't open rcsinfo template file %s", template);
 	return (1);
     }
 }

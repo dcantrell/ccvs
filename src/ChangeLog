@@ -1,3 +1,7 @@
+Mon Oct 23 12:17:03 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* logmsg.c (do_editor): Check for errors from stdio calls.
+
 Mon Oct 23 12:37:06 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h: Don't declare valloc.  Some systems (e.g. linux) declare
