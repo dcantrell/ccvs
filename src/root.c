@@ -2,7 +2,7 @@
  * Copyright (c) 1992, Mark D. Baushke
  *
  * You may distribute under the terms of the GNU General Public License as
- * specified in the README file that comes with the CVS 1.4 kit.
+ * specified in the README file that comes with the CVS source distribution.
  * 
  * Name of Root
  * 
