@@ -26,6 +26,7 @@
 
 #include "cvs.h"
 #include "savecwd.h"
+#include "fileattr.h"
 
 static int add_directory PROTO((char *repository, List *, char *dir));
 static int build_entry PROTO((char *repository, char *user, char *options,
@@ -532,6 +533,7 @@ add_directory (repository, entries, dir)
     char *message = NULL;
     char *tag, *date;
     int nonbranch;
+    char *attrs;
 
     if (strchr (dir, '/') != NULL)
     {
@@ -547,6 +549,12 @@ add_directory (repository, entries, dir)
 
     /* before we do anything else, see if we have any per-directory tags */
     ParseTag (&tag, &date, &nonbranch);
+
+    /* Remember the default attributes from this directory, so we can apply
+       them to the new directory.  */
+    fileattr_startdir (repository);
+    attrs = fileattr_getall (NULL);
+    fileattr_free ();
 
     /* now, remember where we were, so we can get back */
     if (save_cwd (&cwd))
@@ -615,6 +623,15 @@ add_directory (repository, entries, dir)
 	    }
 	    (void) umask (omask);
 	}
+
+	/* Now set the default file attributes to the ones we inherited
+	   from the parent directory.  */
+	fileattr_startdir (rcsdir);
+	fileattr_setall (NULL, attrs);
+	fileattr_write ();
+	fileattr_free ();
+	if (attrs != NULL)
+	    free (attrs);
 
 	/*
 	 * Set up an update list with a single title node for Update_Logfile
