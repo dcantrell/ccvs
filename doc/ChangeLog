@@ -1,3 +1,8 @@
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Update years in Copyright.
+	* stamp-vti, version.texi: Regenerated.
+
 2004-04-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Use splitrcskeyword macro consistently in a failed
