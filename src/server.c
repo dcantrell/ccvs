@@ -2306,28 +2306,27 @@ serve_questionable (char *arg)
     }
 }
 
-static void serve_case (char *);
 
-static void
-serve_case (char *arg)
-{
-    ign_case = 1;
-}
-
+
 static struct buffer *protocol = NULL;
 
 /* This is the output which we are saving up to send to the server, in the
    child process.  We will push it through, via the `protocol' buffer, when
    we have a complete line.  */
 static struct buffer *saved_output;
+
 /* Likewise, but stuff which will go to stderr.  */
 static struct buffer *saved_outerr;
-
+
+
+
 static void
 protocol_memory_error (struct buffer *buf)
 {
     error (1, ENOMEM, "Virtual memory exhausted");
 }
+
+
 
 /*
  * Process IDs of the subprocess, or negative if that subprocess
@@ -4527,7 +4526,6 @@ struct request requests[] =
   REQ_LINE("Unchanged", serve_unchanged, RQ_ESSENTIAL),
   REQ_LINE("Notify", serve_notify, 0),
   REQ_LINE("Questionable", serve_questionable, 0),
-  REQ_LINE("Case", serve_case, 0),
   REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
   REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
   REQ_LINE("Global_option", serve_global_option, RQ_ROOTLESS),

@@ -1,5 +1,17 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	Continue removal from server of handling of case insensitive clients.
+
+	* cvs.h: Remove extern declaration of ign_case.
+	* ignore.c (ign_case): Remove declaration.
+	(ign_name): Remove support for ign_case.
+	* server.c (serve_case): Ditto.
+	(requests): No longer support the "Case" request.
+	* rcs.c (locate_rcs): Remove reference to GLOBAL in function header
+	comment.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	* client.c (send_file_names): Restore prescribed client handling of the
 	FILENAMES_CASE_INSENSITIVE switch.
 
