@@ -1,3 +1,8 @@
+2004-03-28  Derek Price  <derek@ximbiot.com>
+
+	* libdiff.dsp, libdiff.mak: Repair & regenerate, relativizing path
+	that MSVC seems intent on keeping absolute.
+
 2004-03-27  Derek Price  <derek@ximbiot.com>
 
 	* libdiff.dep, libdiff.mak, libdiff.dsp: Repaired & regnerated.
