@@ -27,7 +27,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 
 #if !defined (getpagesize)
-#  include <sys/param.h>
+#  ifdef HAVE_SYS_PARAM_H
+#    include <sys/param.h>
+#  endif
 #  if defined (PAGESIZE)
 #     define getpagesize() PAGESIZE
 #  else /* !PAGESIZE */
