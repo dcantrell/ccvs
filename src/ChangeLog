@@ -1,3 +1,8 @@
+Mon Feb 12 03:06:50 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* release.c, rtag.c, tag.c: changed 'delete' to 'delete_flag'
+	to avoid symbol collision with DEC C RTL function delete()
+
 Mon Feb 12 03:01:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* mkmodules.c: changed 'void Lock_Cleanup()' to 'void static

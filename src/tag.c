@@ -27,7 +27,7 @@ static int tag_fileproc PROTO((struct file_info *finfo));
 static char *numtag;
 static char *date = NULL;
 static char *symtag;
-static int delete;			/* adding a tag by default */
+static int delete_flag;			/* adding a tag by default */
 static int branch_mode;			/* make an automagic "branch" tag */
 static int local;			/* recursive by default */
 static int force_tag_match = 1;         /* force tag to match by default */
@@ -96,7 +96,7 @@ tag (argc, argv)
 		local = 0;
 		break;
 	    case 'd':
-		delete = 1;
+		delete_flag = 1;
 		break;
             case 'r':
                 numtag = optarg;
@@ -132,7 +132,7 @@ tag (argc, argv)
 
     if (date && numtag)
 	error (1, 0, "-r and -D options are mutually exclusive");
-    if (delete && branch_mode)
+    if (delete_flag && branch_mode)
 	error (0, 0, "warning: -b ignored with -d options");
     RCS_check_tag (symtag);
 
@@ -146,7 +146,7 @@ tag (argc, argv)
 
 	if (local)
 	    send_arg("-l");
-	if (delete)
+	if (delete_flag)
 	    send_arg("-d");
 	if (branch_mode)
 	    send_arg("-b");
@@ -245,7 +245,7 @@ check_fileproc (finfo)
         oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
         if (oversion == NULL) 
         {
-            if (delete)
+            if (delete_flag)
             {
                 addit = 0;
             }
@@ -332,7 +332,7 @@ pretag_proc(repository, filter)
     run_setup("%s %s %s %s",
               filter,
               symtag,
-              delete ? "del" : force_tag_move ? "mov" : "add",
+              delete_flag ? "del" : force_tag_move ? "mov" : "add",
               repository);
     walklist(tlist, pretag_list_proc, NULL);
     return (run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
@@ -406,7 +406,7 @@ tag_fileproc (finfo)
             return (0);
         }
     }
-    if (delete)
+    if (delete_flag)
     {
 
 	/*
@@ -567,7 +567,7 @@ tag_dirproc (dir, repos, update_dir)
     char *update_dir;
 {
     if (!quiet)
-	error (0, 0, "%s %s", delete ? "Untagging" : "Tagging", update_dir);
+	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
     return (R_PROCESS);
 }
 
