@@ -1,5 +1,7 @@
 Wed Jun 18 11:24:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.11.
+
 	* Version 1.9.10.
 
 Tue Jun 17 22:48:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
