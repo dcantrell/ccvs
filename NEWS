@@ -9,10 +9,12 @@ NEW FEATURES
 * New scripting hooks have been added to the CVS server.  These are the
   postadmin, posttag, and postwatch hooks.  See the manual for more info.
 
-* "Write proxy" functionality has been added to the CVS server.  This
-  functionality allows clients to any of multiple read-only secondary servers
-  which know how to relay write requests to a single primary CVS server,
-  allowing for massive redistribution of server load.
+* Thanks to funding from Juniper Networks <http://juniper.net>, "Write proxy"
+  functionality has been added to the CVS server.  CVS must be configured with
+  the --enable-proxy option to use it.  Write proxy functionality allows any of
+  multiple, read-only "secondary" servers to relay write requests from clients
+  to a single primary CVS server, allowing for a massive redistribution of
+  server load which is transparent to all known CVS clients.
 
 Changes from 1.12.8 to 1.12.9:
 ******************************
