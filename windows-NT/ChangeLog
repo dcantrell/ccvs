@@ -1,3 +1,16 @@
+Mon Dec  4 10:46:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* The following change was copied from src/filesubr.c.  This is
+	because we need filesubr.c to compile, not because we are trying
+	to make set*id work on NT (if it even has set*id).
+	* filesubr.c (isaccessable): new function.  Checks access-rights
+	for files like access(), but is getxid-safe.  Falls back to
+	access() if SETXID_SUPPORT is not enabled.
+	(isfile): replace stat() by isaccessable(file, F_OK)
+	(isreadable): replace access() by isaccessable()
+	(iswritable): ditto
+	(make_directory): rename local variable buf to sb
+
 Fri Nov 24 11:17:16 EST 1995  Boleslaw Ciesielski  <bolek@viewlogic.com>
 
 	* filesubr.c (convert_file): Pass S_IWRITE to open when creating
