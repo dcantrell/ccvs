@@ -4836,9 +4836,11 @@ The way that you remove a directory is to remove all
 the files in it.  You don't remove the directory
 itself; there is no way to do that.
 Instead you specify the @samp{-P} option to
-@code{cvs update}, @code{cvs checkout}, or @code{cvs
-export}, which will cause @sc{cvs} to remove empty
-directories from working directories.  Probably the
+@code{cvs update} or @code{cvs checkout},
+which will cause @sc{cvs} to remove empty
+directories from working directories.
+(Note that @code{cvs export} always removes empty directories.)
+Probably the
 best way to do this is to always specify @samp{-P}; if
 you want an empty directory then put a dummy file (for
 example @file{.keepme}) in it to prevent @samp{-P} from
@@ -4851,7 +4853,7 @@ removing it.
 @c need for -P and so that a file can be a directory in
 @c one revision and a regular file in another.
 Note that @samp{-P} is implied by the @samp{-r} or @samp{-D}
-options of @code{checkout} and @code{export}.  This way
+options of @code{checkout}.  This way
 @sc{cvs} will be able to correctly create the directory
 or not depending on whether the particular version you
 are checking out contains any files in that directory.
@@ -9134,7 +9136,8 @@ the @sc{cvs} administrative directories.  For example, you
 might use @code{export} to prepare source for shipment
 off-site.  This command requires that you specify a
 date or tag (with @samp{-D} or @samp{-r}), so that you
-can count on reproducing the source you ship to others.
+can count on reproducing the source you ship to others
+(and thus it always prunes empty directories).
 
 One often would like to use @samp{-kv} with @code{cvs
 export}.  This causes any keywords to be
