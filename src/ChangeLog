@@ -1,3 +1,7 @@
+2001-07-03  Derek Price  <dprice@collab.net>
+
+	* update.c: Indent compiler directives.
+
 2001-07-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (update_rcs_file): Use -kb instead of -ko when comparing
