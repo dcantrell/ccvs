@@ -72,18 +72,24 @@ getlist (void)
 }
 
 /*
- * free up a list
+ * Free up a list.  For accessing globals which might be accessed via interrupt
+ * handlers, it can be assumed that the first action of this function will be
+ * to set the *listp to NULL.
  */
 void
 dellist (List **listp)
 {
     int i;
     Node *p;
+    List *tmp;
 
-    if (*listp == (List *) NULL)
+    if (*listp == NULL)
 	return;
 
-    p = (*listp)->list;
+    tmp = *listp;
+    *listp = NULL;
+
+    p = tmp->list;
 
     /* free each node in the list (except header) */
     while (p->next != p)
@@ -95,7 +101,7 @@ dellist (List **listp)
     /* free up the header nodes for hash lists (if any) */
     for (i = 0; i < HASHSIZE; i++)
     {
-	if ((p = (*listp)->hasharray[i]) != (Node *) NULL)
+	if ((p = tmp->hasharray[i]) != NULL)
 	{
 	    /* put the nodes into the cache */
 #ifndef NOCACHE
@@ -113,13 +119,12 @@ dellist (List **listp)
 
     /* put it on the cache */
 #ifndef NOCACHE
-    (*listp)->next = listcache;
-    listcache = *listp;
+    tmp->next = listcache;
+    listcache = tmp;
 #else
-    free ((*listp)->list);
-    free (*listp);
+    free (tmp->list);
+    free (tmp);
 #endif
-    *listp = (List *) NULL;
 }
 
 /*
