@@ -32,6 +32,7 @@
 #  else /* No winsock.h */
 #    include <sys/socket.h>
 #    include <netinet/in.h>
+#    include <arpa/inet.h>
 #    include <netdb.h>
 #  endif /* No winsock.h */
 #endif
@@ -3831,6 +3832,10 @@ connect_to_forked_server (tofdp, fromfdp)
     command[1] = "server";
     command[2] = NULL;
 
+    if (trace)
+    {
+	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
+    }
     if (! piped_child (command, tofdp, fromfdp))
 	error (1, 0, "could not fork server process");
 }
@@ -3870,9 +3875,17 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     }
     port_number = get_cvs_port_number (current_parsed_root);
     hostinfo = init_sockaddr (&client_sai, current_parsed_root->hostname, port_number);
+    if (trace)
+    {
+	fprintf (stderr, " -> Connecting to %s(%s):%d\n",
+		 current_parsed_root->hostname,
+		 inet_ntoa (client_sai.sin_addr), port_number);
+    }
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
-	error (1, 0, "connect to %s:%d failed: %s", current_parsed_root->hostname,
+	error (1, 0, "connect to %s(%s):%d failed: %s",
+	       current_parsed_root->hostname,
+	       inet_ntoa (client_sai.sin_addr),
 	       port_number, SOCK_STRERROR (SOCK_ERRNO));
 
     /* Run the authorization mini-protocol before anything else. */
@@ -4100,8 +4113,17 @@ start_tcp_server (tofdp, fromfdp)
     hname = xmalloc (strlen (hp->h_name) + 1);
     strcpy (hname, hp->h_name);
   
+    if (trace)
+    {
+	fprintf (stderr, " -> Connecting to %s(%s):%d\n",
+		 current_parsed_root->hostname,
+		 inet_ntoa (client_sai.sin_addr), port);
+    }
+
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	error (1, 0, "connect to %s:%d failed: %s", current_parsed_root->hostname,
+	error (1, 0, "connect to %s(%s):%d failed: %s",
+	       current_parsed_root->hostname,
+	       inet_ntoa (client_sai.sin_addr),
 	       port, SOCK_STRERROR (SOCK_ERRNO));
 
     {
@@ -4814,6 +4836,8 @@ start_rsh_server (tofdp, fromfdp)
     if (trace)
     {
 	fprintf (stderr, " -> Starting server: ");
+	for (i = 0; rsh_argv[i]; i++)
+	    fprintf (stderr, "%s ", rsh_argv[i]);
 	putc ('\n', stderr);
     }
 
