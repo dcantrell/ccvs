@@ -1,5 +1,10 @@
 2003-07-24  Derek Price  <derek@ximbiot.com>
 
+	* getline.c, getline.h, getndelim2.c, getndelim2.h, getnline.c,
+	getnline.h: Merge some more changes from GNULIB.
+
+2003-07-24  Derek Price  <derek@ximbiot.com>
+
 	* gethostname.c: Update from GNULIB.
 
 2003-07-23  Derek Price  <derek@ximbiot.com>

@@ -39,7 +39,7 @@ char *malloc (), *realloc ();
 #define MIN_CHUNK 64
 
 ssize_t
-getndelim2 (char **lineptr, size_t *linesize, size_t offset, ssize_t limit,
+getndelim2 (char **lineptr, size_t *linesize, size_t offset, size_t limit,
             int delim1, int delim2, FILE *stream)
 {
   size_t nbytes_avail;		/* Allocated but unused chars in *LINEPTR.  */
