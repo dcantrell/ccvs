@@ -1,3 +1,9 @@
+1999-05-13  Jim Kingdon  <http://www.cyclic.com>
+
+	* BUGS: Remove item about RELATIVE_REPOS not working with
+	client/server CVS; it must have been fixed because the testsuite
+	is working fine with RELATIVE_REPOS.
+
 1999-05-07  Jim Kingdon  <http://www.cyclic.com>
 
 	* TESTS: Add note about send-expect style interaction.
