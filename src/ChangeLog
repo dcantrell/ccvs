@@ -1,5 +1,7 @@
 1999-03-26  Jim Kingdon  <http://www.cyclic.com>
 
+	* server.c (server): Add comment about Gzip-stream vs. RQ_ROOTLESS.
+
 	* sanity.sh (modules3-11b): Adjust exact text of error message to
 	reflect 1999-03-24 change to dirswitch.
 
