@@ -13,12 +13,6 @@
    GNU General Public License for more details.  */
 
 #include "cvs.h"
-#include "vasnprintf.h"
-
-/* Get wint_t.  */
-#ifdef HAVE_WINT_T
-# include <wchar.h>
-#endif
 
 #ifndef HAVE_UNISTD_H
 extern int execvp (char *file, char **argv);

@@ -10,6 +10,12 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "vasnprintf.h"
+
+/* Get wint_t.  */
+#ifdef HAVE_WINT_T
+# include <wchar.h>
+#endif
 
 #if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
   /* use select as a workaround */

@@ -1,3 +1,8 @@
+2004-03-09  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* run.c: Move #includes required for cmdline_escape and friends...
+	* subr.c: ...to here.
+
 2004-03-07  Derek Price  <derek@ximbiot.com>
 
 	* run.c (struct cmdline_bindings, cmdline_bindings_hash_node_delete,
