@@ -52,12 +52,6 @@ Imported files					CVS		Local
 $GNULIB/lib/error.c				lib		no NI
 $GNULIB/lib/error.h				lib		no NI
 $GNULIB/m4/strerror_r.m4			lib		no NI
-# $GNULIB/modules/getdate
-$GNULIB/lib/getdate.h				lib		no NI
-$GNULIB/lib/getdate.y				lib		no NI
-$GNULIB/m4/bison.m4				m4		yes NI
-$GNULIB/m4/getdate.m4				m4		no NI
-$GNULIB/m4/tm_gmtoff.m4				m4		no NI
 
 
 
