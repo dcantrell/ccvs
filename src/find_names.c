@@ -272,7 +272,7 @@ find_rcs (dir, list)
     }
     if (errno != 0)
     {
-	int save_errno;
+	int save_errno = errno;
 	(void) closedir (dirp);
 	errno = save_errno;
 	return 1;
@@ -324,34 +324,34 @@ find_dirs (dir, list, checkadm, entries)
 	    strcmp (dp->d_name, CVSATTIC) == 0 ||
 	    strcmp (dp->d_name, CVSLCK) == 0 ||
 	    strcmp (dp->d_name, CVSREP) == 0)
-	    continue;
+	    goto do_it_again;
 
 	/* findnode() is going to be significantly faster than stat()
 	   because it involves no system calls.  That is why we bother
 	   with the entries argument, and why we check this first.  */
 	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
-	    continue;
+	    goto do_it_again;
 
 	if (skip_emptydir
 	    && strcmp (dp->d_name, CVSNULLREPOS) == 0)
-	    continue;
+	    goto do_it_again;
 
 #ifdef DT_DIR
 	if (dp->d_type != DT_DIR) 
 	{
 	    if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_LNK)
-		continue;
+		goto do_it_again;
 #endif
 	    /* don't bother stating ,v files */
 	    if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0)
-		continue;
+		goto do_it_again;
 
 	    expand_string (&tmp,
 			   &tmp_size,
 			   strlen (dir) + strlen (dp->d_name) + 10);
 	    sprintf (tmp, "%s/%s", dir, dp->d_name);
 	    if (!isdir (tmp))
-		continue;
+		goto do_it_again;
 
 #ifdef DT_DIR
 	}
@@ -366,12 +366,12 @@ find_dirs (dir, list, checkadm, entries)
 	    {
 		/* we're either unknown or a symlink at this point */
 		if (dp->d_type == DT_LNK)
-		    continue;
+		    goto do_it_again;
 #endif
 		/* Note that we only get here if we already set tmp
 		   above.  */
 		if (islink (tmp))
-		    continue;
+		    goto do_it_again;
 #ifdef DT_DIR
 	    }
 #endif
@@ -383,7 +383,7 @@ find_dirs (dir, list, checkadm, entries)
 			    + sizeof (CVSADM) + 10));
 	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
 	    if (!isdir (tmp))
-		continue;
+		goto do_it_again;
 	}
 
 	/* put it in the list */
@@ -393,6 +393,7 @@ find_dirs (dir, list, checkadm, entries)
 	if (addnode (list, p) != 0)
 	    freenode (p);
 
+    do_it_again:
 	errno = 0;
     }
     if (errno != 0)
