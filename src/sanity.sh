@@ -4830,17 +4830,11 @@ done"
 	  # Check that -n doesn't make CVS lose its mind as it creates
 	  # (or rather, doesn't) a new file.
 	  dotest conflicts3-6 "${testcvs} -nq update" \
-"${PROG} [a-z]*: warning: file1 was lost
-U file1
-${PROG} [a-z]*: warning: file2 was lost
-U file2" "U file1
+"U file1
 U file2"
 	  dotest_fail conflicts3-7 "test -f file1" ''
 	  dotest conflicts3-8 "${testcvs} -q update" \
-"${PROG} [a-z]*: warning: file1 was lost
-U file1
-${PROG} [a-z]*: warning: file2 was lost
-U file2" "U file1
+"U file1
 U file2"
 	  dotest conflicts3-7 "test -f file2" ''
 	  cd ../..
