@@ -1,3 +1,7 @@
+Tue Nov 21 17:36:16 1995  unknown  (unknown@beezley)
+
+        * popen.c: #include <fcntl.h>.
+
 Tue Nov 21 16:18:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * popen.h (popenRW): prototype popenRW()... why wasn't I doing
