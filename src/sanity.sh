@@ -28764,6 +28764,11 @@ u=rw,g=r,o=r
 abc
 update"
 
+	    if $keep; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
+	    fi
+
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus
