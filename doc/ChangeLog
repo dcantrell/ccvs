@@ -1,3 +1,8 @@
+Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Remove CVSid; we decided to get rid
+	of these some time ago.
+
 Wed Jan  8 09:08:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): Document
