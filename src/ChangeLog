@@ -1,3 +1,10 @@
+2003-05-06  Derek Price  <derek@ximbiot.com>
+
+	* client.c (socket_buffer_*): Moved most of the socket stuff to...
+	* socket-client.h: ...here...
+	* socket-client.c: ...and here.
+	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
 2003-05-05  Derek Price  <derek@ximbiot.com>
 
 	* hash.c (findnode): Document behavior of this function when its list
