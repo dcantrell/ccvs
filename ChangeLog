@@ -1,5 +1,10 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt (dirname): Mark as not forked.
+	* aclocal.m4: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	Add dirname module from GNULIB.
 
 	* configure.in: Use gl_DIRNAME.
