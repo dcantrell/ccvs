@@ -363,8 +363,9 @@ S: /home/kingdon/zwork/cvsroot/1dir/
 S: ok
 @end example
 
-Note that @code{Clear-sticky} (and other responses) return two
-pathnames.  The first one, @file{moddir/}, indicates the working
+In this example the response shown is @code{Clear-sticky}, but it could
+be another response instead.  The first one, @file{moddir/}, indicates
+the working
 directory to check out into.  The second one, ending in @file{1dir/},
 indicates the directory to pass back to the server in a subsequent
 @code{Directory} request.  For example, a subsequent @code{update}
@@ -379,7 +380,10 @@ C: update
 
 For a given working directory, the repository will be the same for each
 of the responses, so one can use the repository from whichever response
-is most convenient (there is nothing special about @code{Clear-sticky}).
+is most convenient.  Typically a client will store the repository along
+with the sources for each working directory, use that same setting
+whenever operating on that working directory, and not update the setting
+as long as the working directory exists.
 
 @item Max-dotdot @var{level} \n
 Response expected: no.
