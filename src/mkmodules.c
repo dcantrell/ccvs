@@ -14,7 +14,6 @@
 
 static int checkout_file PROTO((char *file, char *temp));
 static void make_tempfile PROTO((char *temp));
-static void mkmodules_usage PROTO((void));
 static void rename_rcsfile PROTO((char *temp, char *real));
 
 #ifndef MY_NDBM

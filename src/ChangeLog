@@ -1,3 +1,10 @@
+Tue Feb 13 20:26:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	gcc -Wall lint:
+	* mkmodules.c (mkmodules_usage): Remove declaration of
+	non-existent function.
+	* cvs.h (mkmodules): Declare.
+
 Mon Feb 12 12:20:04 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* mkmodules.c: Rename main to mkmodules and remove various pieces

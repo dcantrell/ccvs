@@ -582,6 +582,8 @@ typedef	int (*FILESDONEPROC)	PROTO((int err, char *repository, char *update_dir)
 typedef	Dtype (*DIRENTPROC)	PROTO((char *dir, char *repos, char *update_dir));
 typedef	int (*DIRLEAVEPROC)	PROTO((char *dir, int err, char *update_dir));
 
+extern int mkmodules PROTO ((char *dir));
+
 int do_module PROTO((DBM * db, char *mname, enum mtype m_type, char *msg,
 		CALLBACKPROC callback_proc, char *where, int shorten,
 		int local_specified, int run_module_prog, char *extra_arg));
