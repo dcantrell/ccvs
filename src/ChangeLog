@@ -1,5 +1,7 @@
 Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
+	* wrapper.c:  updateed Andrew Athan's email address.
+
 	* main.c:  fix an ifdef so the code will compile. syntax error in
 	the ifdef for CVS_NOADMIN.
 
