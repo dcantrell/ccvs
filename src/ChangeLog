@@ -1,3 +1,9 @@
+2001-06-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (checkout): Explicitly initialize all the static options
+	so that multiple calls work right.  Also fix potential memory leaks.
+	(Reported by Dr. Dieter Maurer <dieter@sz-sb.de>.)
+
 2001-06-28  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with new version of Automake.
