@@ -2272,7 +2272,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 			       finfo->repository);
 #endif
 	if (! really_quiet)
-	    error (0, 0, "scheduling %s for removal", finfo->fullname);
+	    error (0, 0, "scheduling `%s' for removal", finfo->fullname);
 
 	return;
     }
