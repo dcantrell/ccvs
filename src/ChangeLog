@@ -1,5 +1,10 @@
 2004-08-24  Derek Price <derek@ximbiot.com>
 
+	* rcs.c (RCS_valid_rev): Declare arg const.
+	* rcs.h: Likewise.
+
+2004-08-24  Derek Price <derek@ximbiot.com>
+
 	* rcs.c (translate_symtag): Prevent infinite loop.
 	* tag.c (tag_check_valid): Check tag syntax before searching for tags.
 	* sanity.sh (tag-space): Some tests for the above.
