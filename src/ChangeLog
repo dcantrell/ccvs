@@ -1,3 +1,14 @@
+2002-05-22  Derek Price  <oberon@umich.edu>
+
+	* cvs.h: Add prototype for this...
+	* filesubr.c (strcat_filename_onto_homedir): new function.
+	* login.c (): Use new function.
+
+	* cvsrc.c (read_cvsrc): Use new function due to problems on VMS.
+	* ignore.c (ign_setup): Ditto.
+	* wrapper.c (wrap_setup): Ditto.
+	(Original patch from Karsten Spang <ksp@dannet.dk>.)
+
 2002-05-21  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcs.c (rcsbuf_getkey): Correct off-by-one error in ptr assertion

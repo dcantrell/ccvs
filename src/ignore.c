@@ -90,7 +90,8 @@ ign_setup ()
     if (home_dir)
     {
 	char *file = xmalloc (strlen (home_dir) + sizeof (CVSDOTIGNORE) + 10);
-	(void) sprintf (file, "%s/%s", home_dir, CVSDOTIGNORE);
+	(void) strcpy (file, home_dir);
+	(void) strcat_filename_onto_homedir (file, CVSDOTIGNORE);
 	ign_add_file (file, 0);
 	free (file);
     }
