@@ -1,3 +1,8 @@
+1998-09-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (rdiff options): Thanks to the diff library, -u is
+	supported regardless of your diff program.
+
 1998-09-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (config): Add LockDir.
