@@ -12371,6 +12371,17 @@ The exact format of this message may vary depending on
 your system.  It indicates a bug in @sc{cvs}, which can
 be handled as described in @ref{BUGS}.
 
+@item cvs @var{command}: conflict: removed @var{file} was modified by second party
+This message indicates that you removed a file, and
+someone else modified it.  To resolve the conflict,
+first run @samp{cvs add @var{file}}.  If desired, look
+at the other party's modification to decide whether you
+still want to remove it.  If you don't want to remove
+it, stop here.  If you do want to remove it, proceed
+with @samp{cvs remove @var{file}} and commit your
+removal.
+@c Tests conflicts2-142b* in sanity.sh test for this.
+
 @item cannot change permissions on temporary directory
 @example
 Operation not permitted
