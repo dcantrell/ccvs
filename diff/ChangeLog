@@ -1,3 +1,8 @@
+2001-05-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* diff3.c (diff3_run): Put the name of the output file in the error
+	message instead of "could not open output file" to aid in debugging.
+
 2001-04-25  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated using AM 1.4e as of today at 18:10 -0400.

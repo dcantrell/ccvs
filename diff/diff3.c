@@ -444,7 +444,7 @@ diff3_run (argc, argv, out, callbacks_arg)
 	  outfile = fopen (out, "w");
 	  if (outfile == NULL)
 	    {
-	      perror_with_name ("could not open output file");
+	      perror_with_name (out);
 	      return 2;
 	    }
 	  opened_file = 1;
