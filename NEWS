@@ -3,6 +3,9 @@ Changes since 1.11.17:
 
 BUG FIXES
 
+* Thanks to a report from Dan Peterson <dbpete@aol.com>, error messages from
+  GSSAPI servers are no longer truncated.
+
 * Thanks to a report from Dan Peterson <dbpete@aol.com>, attempts to resurrect
   a file on the trunk that was added on a branch no longer causes an assertion
   failure.
