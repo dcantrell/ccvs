@@ -268,11 +268,11 @@ main (argc, argv)
 
     error_set_cleanup (error_cleanup);
 
-#ifdef INITIALIZE_SOCKET_SUBSYSTEM
+#ifdef SYSTEM_INITIALIZE
     /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or putting up a window on Mac.  */
-    INITIALIZE_SOCKET_SUBSYSTEM ();
-#endif /* INITIALIZE_SOCKET_SUBSYSTEM */
+       NT and OS2 or dealing with windows and arguments on Mac.  */
+    SYSTEM_INITIALIZE (&argc, &argv);
+#endif
 
     /*
      * Just save the last component of the path for error messages
@@ -724,10 +724,10 @@ main (argc, argv)
 
     Lock_Cleanup ();
 
-#ifdef CLEANUP_SOCKET_SUBSYSTEM
+#ifdef SYSTEM_CLEANUP
     /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or putting up a window on Mac.  */
-    CLEANUP_SOCKET_SUBSYSTEM ();
+       NT and OS2 or dealing with windows and arguments on Mac.  */
+    SYSTEM_CLEANUP ();
 #endif
 
     if (err)
