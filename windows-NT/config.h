@@ -1011,13 +1011,13 @@
 #undef nanosleep
 
 /* Define to rpl_optarg if the replacement variable should be used. */
-#undef optarg
+#define optarg rpl_optarg
 
 /* Define to rpl_optind if the replacement variable should be used. */
-#undef optind
+#define optind rpl_optind
 
 /* Define to rpl_optopt if the replacement variable should be used. */
-#undef optopt
+#define optopt rpl_optopt
 
 /* Define to `int' if <sys/types.h> does not define. */
 #define pid_t int
