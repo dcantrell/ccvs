@@ -82,6 +82,7 @@ CLEAN :
 	-@erase ".\WinRel\valloc.obj"
 	-@erase ".\WinRel\cvsrc.obj"
 	-@erase ".\WinRel\lock.obj"
+	-@erase ".\WinRel\annotate.obj"
 	-@erase ".\WinRel\log.obj"
 	-@erase ".\WinRel\ed.obj"
 	-@erase ".\WinRel\deflate.obj"
@@ -211,6 +212,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/valloc.obj" \
 	"$(INTDIR)/cvsrc.obj" \
 	"$(INTDIR)/lock.obj" \
+	"$(INTDIR)/annotate.obj" \
 	"$(INTDIR)/log.obj" \
 	"$(INTDIR)/ed.obj" \
 	"$(INTDIR)/deflate.obj" \
@@ -346,6 +348,7 @@ CLEAN :
 	-@erase ".\WinDebug\status.obj"
 	-@erase ".\WinDebug\ndir.obj"
 	-@erase ".\WinDebug\savecwd.obj"
+	-@erase ".\WinDebug\annotate.obj"
 	-@erase ".\WinDebug\log.obj"
 	-@erase ".\WinDebug\sockerror.obj"
 	-@erase ".\WinDebug\infutil.obj"
@@ -477,6 +480,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/status.obj" \
 	"$(INTDIR)/ndir.obj" \
 	"$(INTDIR)/savecwd.obj" \
+	"$(INTDIR)/annotate.obj" \
 	"$(INTDIR)/log.obj" \
 	"$(INTDIR)/sockerror.obj" \
 	"$(INTDIR)/infutil.obj" \
@@ -2134,6 +2138,43 @@ NODEP_CPP_IGNOR=\
 	
 
 "$(INTDIR)\ignore.obj" : $(SOURCE) $(DEP_CPP_IGNOR) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\annotate.c
+DEP_CPP_ANNOTATE_C=\
+	".\src\cvs.h"\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	".\lib\fnmatch.h"\
+	".\windows-NT\pwd.h"\
+	".\lib\system.h"\
+	".\lib\xtime.h"\
+	".\src\hash.h"\
+	".\src\client.h"\
+	".\src\myndbm.h"\
+	".\lib\regex.h"\
+	".\lib\getopt.h"\
+	".\lib\wait.h"\
+	".\src\rcs.h"\
+	".\src\update.h"\
+	".\src\server.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_ANNOTATE_C=\
+	".\src\popen.h"\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\annotate.obj" : $(SOURCE) $(DEP_CPP_ANNOTATE_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
