@@ -1,3 +1,8 @@
+Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (binfiles): New tests test ability to change keyword
+	expansion.
+
 Mon Mar 25 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* cvs.h, filesubr.c (expand_wild): New function.
