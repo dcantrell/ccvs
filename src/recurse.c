@@ -272,7 +272,6 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     * seems to be handled somewhere (else) but why should
 		     * it be a separate case?  Needs investigation...  */
 		    just_subdirs = 1;
-		free_cvsroot_t (root);
 	    }
 	}
 #endif
@@ -703,7 +702,6 @@ do_recursion (struct recursion_frame *frame)
 		process_this_directory =
 		    !strcmp (original_parsed_root->original,
 			     this_root->original);
-		free_cvsroot_t (this_root);
 	    }
 	    else
 	    {
@@ -1162,7 +1160,6 @@ but CVS uses %s for its own purposes; skipping %s directory",
 		process_this_directory =
 		    !strcmp (original_parsed_root->original,
 			     this_root->original);
-		free_cvsroot_t (this_root);
 	    }
 	    else
 	    {

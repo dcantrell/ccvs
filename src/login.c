@@ -200,7 +200,6 @@ password_entry_parseline (const char *cvsroot_canonical,
 	    password = p + 1;
 
 	free (tmp_root_canonical);
-	free_cvsroot_t (tmp_root);
     }
 
     return password;
