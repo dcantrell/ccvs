@@ -152,7 +152,11 @@ when using GSSAPI.])
   # We could try once with and once without, but I'm not sure it's worth the
   # trouble.
   if test x$acx_gssapi_cv_gssapi != xyes; then
-    LDFLAGS="$LDFLAGS -L$acx_gssapi_cv_gssapi/lib"
+    if test -z "$LIBS"; then
+      LIBS="-L$acx_gssapi_cv_gssapi/lib"
+    else
+      LIBS="-L$acx_gssapi_cv_gssapi/lib $LIBS"
+    fi
   else :; fi
 
   dnl What happens if we want to enable, say, krb5 and some other GSSAPI
