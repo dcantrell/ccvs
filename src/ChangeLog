@@ -1,3 +1,8 @@
+2004-04-16  Derek Price  <derek@ximbiot.com>
+
+	* client.c (connect_to_pserver): Use size_t instead of int as argument
+	to asnprintf.  Some gratuitous reformatting.
+
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
 	* client.c, commit.c, server.c: Gratuitous reformatting.

@@ -3205,9 +3205,9 @@ make_bufs_from_fds( int tofd, int fromfd, int child_pid,
    If we fail to connect or if access is denied, then die with fatal
    error.  */
 void
-connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
+connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
                     struct buffer **from_server_p, int verify_only,
-                    int do_gssapi )
+                    int do_gssapi)
 {
     int sock;
     int port_number, proxy_port_number;
@@ -3254,7 +3254,8 @@ connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
 #define CONNECT_STRING "CONNECT %s:%d HTTP/1.0\r\n\r\n"
 	/* Send a "CONNECT" command to proxy: */
 	char* read_buf;
-	int codenum, count;
+	int codenum;
+	size_t count;
 	/* 4 characters for port covered by the length of %s & %d */
 	char* write_buf = asnprintf (NULL, &count, CONNECT_STRING,
                                      root->hostname, port_number);
