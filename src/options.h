@@ -34,17 +34,6 @@
 #endif
 
 /*
- * The default editor to use, if one does not specify the "-e" option
- * to cvs, or does not have an EDITOR environment variable.  I set
- * this to just "vi", and use the shell to find where "vi" actually
- * is.  This allows sites with /usr/bin/vi or /usr/ucb/vi to work
- * equally well (assuming that your PATH is reasonable).
- */
-#ifndef EDITOR_DFLT
-#define	EDITOR_DFLT	"vi"
-#endif
-
-/*
  * The default umask to use when creating or otherwise setting file or
  * directory permissions in the repository.  Must be a value in the
  * range of 0 through 0777.  For example, a value of 002 allows group

@@ -1,3 +1,9 @@
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
+	* options.h: Move defininition of EDITOR_DFLT into configure.in.
+
+	* Makefile.in: Regenerated.
+
 2002-09-23  Jim Meyering  <meyering@lucent.com>
 
 	If `cvs -d REPO commit ...' was used to override CVS/Root,
