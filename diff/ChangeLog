@@ -1,3 +1,7 @@
+2001-04-25  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated using AM 1.4e as of today at 18:10 -0400.
+
 2001-03-24  Noel Cragg  <noel@shave.red-bean.com>
 
 	* diff.c: fix typo in usage string.

@@ -11,6 +11,35 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+# Makefile for GNU CVS contributed sources.
+# Do not use this makefile directly, but only from `../Makefile'.
+# Copyright (C) 1986, 1988-1990 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# DISTFILES = \
+# 	ChangeLog README .cvsignore intro.doc \
+# 	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs2vendor.sh \
+# 	cvs_acls.pl cvscheck.sh cvscheck.man cvshelp.man debug_check_log.sh \
+# 	descend.sh \
+# 	descend.man dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh \
+# 	rcs2log.sh rcslock.pl sccs2rcs.csh rcs2sccs.sh
+
+# files installed in $(pkgdatadir)
+#
+# CONTRIB_FILES = README intro.doc cvscheck.man
+
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -56,9 +85,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -82,35 +108,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
-# Makefile for GNU CVS contributed sources.
-# Do not use this makefile directly, but only from `../Makefile'.
-# Copyright (C) 1986, 1988-1990 Free Software Foundation, Inc.
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# DISTFILES = \
-# 	ChangeLog README .cvsignore intro.doc \
-# 	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs2vendor.sh \
-# 	cvs_acls.pl cvscheck.sh cvscheck.man cvshelp.man debug_check_log.sh \
-# 	descend.sh \
-# 	descend.man dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh \
-# 	rcs2log.sh rcslock.pl sccs2rcs.csh rcs2sccs.sh
-
-# files installed in $(pkgdatadir)
-#
-# CONTRIB_FILES = README intro.doc cvscheck.man
-
 
 contribdir = $(pkgdatadir)/contrib
 
@@ -169,26 +169,25 @@ subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES = clmerge cln_hist commit_prep cvs_acls log log_accum \
-mfpipe rcslock sccs2rcs
+	mfpipe rcslock sccs2rcs
 SCRIPTS = $(contrib_SCRIPTS)
 
 DIST_SOURCES =
 DATA = $(contrib_DATA)
 
 DIST_COMMON = README ChangeLog Makefile.am Makefile.in clmerge.in \
-cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in mfpipe.in \
-rcslock.in sccs2rcs.in
-
+	cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in \
+	mfpipe.in rcslock.in sccs2rcs.in
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .sh
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  contrib/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status

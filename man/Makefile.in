@@ -11,6 +11,22 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+# Makefile.am for GNU CVS man pages.
+# Copyright (C) 1986-1992, 2000 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -56,9 +72,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -82,22 +95,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
-# Makefile.am for GNU CVS man pages.
-# Copyright (C) 1986-1992, 2000 Free Software Foundation, Inc.
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
 
 man_MANS = cvs.1 cvs.5 cvsbug.8
 EXTRA_DIST = \
@@ -111,26 +111,24 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES =
 DIST_SOURCES =
-man1dir = $(mandir)/man1
-man5dir = $(mandir)/man5
-man8dir = $(mandir)/man8
-MANS = $(man_MANS)
 
 NROFF = nroff
+MANS = $(man_MANS)
 DIST_COMMON = ChangeLog Makefile.am Makefile.in
-
 all: all-am
 
 .SUFFIXES:
 
-$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  man/Makefile
 
-Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
 	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+
+man1dir = $(mandir)/man1
 install-man1: $(man1_MANS) $(man_MANS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man1dir)
@@ -167,6 +165,8 @@ uninstall-man1:
 	  echo " rm -f $(DESTDIR)$(man1dir)/$$inst"; \
 	  rm -f $(DESTDIR)$(man1dir)/$$inst; \
 	done
+
+man5dir = $(mandir)/man5
 install-man5: $(man5_MANS) $(man_MANS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man5dir)
@@ -203,6 +203,8 @@ uninstall-man5:
 	  echo " rm -f $(DESTDIR)$(man5dir)/$$inst"; \
 	  rm -f $(DESTDIR)$(man5dir)/$$inst; \
 	done
+
+man8dir = $(mandir)/man8
 install-man8: $(man8_MANS) $(man_MANS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man8dir)
