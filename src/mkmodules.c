@@ -70,6 +70,8 @@ main (argc, argv)
 	"a %s file can be used to specify files to ignore"},
     {CVSROOTADM_CHECKOUTLIST,
 	"a %s file can specify extra CVSROOT files to auto-checkout"},
+    {CVSROOTADM_WRAPPER,
+	"a %s file can be used to specify files to treat as wrappers"},
     {NULL, NULL}};
 
     /*

@@ -511,7 +511,8 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	tocvsPath = wrap_tocvs_process_file (vfile);
 	different = xcmp (xtmpfile, vfile);
 	if (tocvsPath)
-	    unlink_file (tocvsPath);
+	    if (unlink_file_dir (tocvsPath) < 0)
+		error (0, errno, "cannot remove %s", tocvsPath);
 
 	(void) unlink_file (xtmpfile);
 	if (!different)
@@ -613,8 +614,8 @@ add_rev (message, rcs, vfile, vers)
     if (tocvsPath == NULL)
 	rename_file (FILE_HOLDER, vfile);
     else
-	/* FIXME: should we be silently ignoring errors?  */
-	unlink_file (tocvsPath);
+	if (unlink_file_dir (tocvsPath) < 0)
+		error (0, errno, "cannot remove %s", tocvsPath);
 
     if (status)
     {
@@ -709,6 +710,7 @@ static const struct compair comtable[] =
     {"cc", "// "},
     {"cpp", "// "},
     {"cxx", "// "},
+    {"m", "// "},			/* Objective-C */
     {"cl", ";;; "},			/* Common Lisp	 */
     {"cmd", ":: "},			/* command (OS/2) */
     {"cmf", "c "},			/* CM Fortran	 */
@@ -747,6 +749,8 @@ static const struct compair comtable[] =
     {"pas", " * "},
     {"pl", "# "},			/* perl	(conflict with Prolog) */
     {"ps", "% "},			/* postscript	 */
+    {"psw", "% "},			/* postscript wrap */
+    {"pswm", "% "},			/* postscript wrap */
     {"r", "# "},			/* ratfor	 */
     {"red", "% "},			/* psl/rlisp	 */
 #ifdef sparc
@@ -977,6 +981,9 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 	error (0, ierrno, "WARNING: cannot change mode of file %s", rcs);
 	err++;
     }
+    if (tocvsPath)
+	if (unlink_file_dir (tocvsPath) < 0)
+		error (0, errno, "cannot remove %s", tocvsPath);
     return (err);
 
 write_error:
@@ -992,6 +999,10 @@ write_error_noclose:
 	fperror (logfp, 0, 0, "ERROR: out of space - aborting");
 	error (1, 0, "ERROR: out of space - aborting");
     }
+    if (tocvsPath)
+	if (unlink_file_dir (tocvsPath) < 0)
+	    error (0, errno, "cannot remove %s", tocvsPath);
+
     return (err + 1);
 }
 

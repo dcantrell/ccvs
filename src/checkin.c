@@ -65,8 +65,9 @@ Checkin (type, file, update_dir, repository,
         if (tocvsPath)
 	{
             copy_file (tocvsPath, fname);
-	    /* FIXME: should we be silently ignoring errors?  */
-	    unlink_file (file);
+	    if (unlink_file_dir (file) < 0)
+		if (errno != ENOENT)
+		    error (1, errno, "cannot remove %s", file);
 	    copy_file (tocvsPath, file);
 	}
 	else
@@ -92,10 +93,6 @@ Checkin (type, file, update_dir, repository,
 	     * newly checkout file as the user file and remove the old
 	     * original user file.
 	     */
-
-            if (tocvsPath) /* CVSWRAPPER */
-		/* FIXME: should we be silently ignoring errors?  */
-		unlink_file(file);
 
 	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
@@ -148,15 +145,15 @@ Checkin (type, file, update_dir, repository,
 	    freevers_ts (&vers);
 
 	    if (tocvsPath)
-		/* FIXME: should we be silently ignoring errors?  */
-		unlink_file (tocvsPath);
+		if (unlink_file_dir (tocvsPath) < 0)
+		    error (0, errno, "cannot remove %s", tocvsPath);
 
 	    break;
 
 	case -1:			/* fork failed */
 	    if (tocvsPath)
-		/* FIXME: should we be silently ignoring errors?  */
-		unlink_file (tocvsPath);
+		if (unlink_file_dir (tocvsPath) < 0)
+		    error (0, errno, "cannot remove %s", tocvsPath);
 
 	    if (!noexec)
 		error (1, errno, "could not check in %s -- fork failed",
@@ -170,8 +167,8 @@ Checkin (type, file, update_dir, repository,
 	     * original user file, print an error, and return an error
 	     */
 	    if (tocvsPath)
-		/* FIXME: should we be silently ignoring errors?  */
-		unlink_file (tocvsPath);
+		if (unlink_file_dir (tocvsPath) < 0)
+		    error (0, errno, "cannot remove %s", tocvsPath);
 
 	    if (!noexec)
 	    {
