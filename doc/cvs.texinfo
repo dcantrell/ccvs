@@ -946,7 +946,7 @@ access methods, see @ref{Remote repositories}.
 @c more of the buck to the Remote repositories node?
 If the access method is omitted, then if the repository
 does not contain @samp{:}, then @code{:local:} is
-assumed.  If it does contain @samp{:} than either
+assumed.  If it does contain @samp{:} then either
 @code{:ext:} or @code{:server:} is assumed.  For
 example, if you have a local repository in
 @file{/usr/local/cvsroot}, you can use
@@ -981,7 +981,7 @@ user-defined modules.
 @node Specifying a repository
 @section Telling CVS where your repository is
 
-There are a couple of different ways to tell @sc{cvs}
+There are several ways to tell @sc{cvs}
 where to find the repository.  You can name the
 repository on the command line explicitly, with the
 @code{-d} (for "directory") option:
@@ -998,7 +998,7 @@ cvs -d /usr/local/cvsroot checkout yoyodyne/tc
         Or you can set the @code{$CVSROOT} environment
 variable to an absolute path to the root of the
 repository, @file{/usr/local/cvsroot} in this example.
-To set @code{$CVSROOT}, all @code{csh} and @code{tcsh}
+To set @code{$CVSROOT}, @code{csh} and @code{tcsh}
 users should have this line in their @file{.cshrc} or
 @file{.tcshrc} files:
 
@@ -1041,7 +1041,7 @@ For most purposes it isn't important @emph{how}
 @sc{cvs} stores information in the repository.  In
 fact, the format has changed in the past, and is likely
 to change in the future.  Since in almost all cases one
-accesses the repository via @sc{cvs} commands; such
+accesses the repository via @sc{cvs} commands, such
 changes need not be disruptive.
 
 However, in some cases it may be necessary to
@@ -1199,7 +1199,7 @@ Also note that users must have write access to the
 @file{CVSROOT/val-tags} file.  @sc{Cvs} uses it to keep
 track of what tags are valid tag names (it is sometimes
 updated when tags are used, as well as when they are
-created, though).
+created).
 
 @cindex CVSUMASK
 @cindex umask, for repository files
@@ -2289,7 +2289,7 @@ but no one has done so as of this writing.
 @c type).
 Furthermore, there may be other ways in which having
 access to @sc{cvs} allows people to gain more general
-access to the system; noone has done a careful audit.
+access to the system; no one has done a careful audit.
 
 Note that because the @file{$CVSROOT/CVSROOT} directory
 contains @file{passwd} and other files which are used
@@ -4615,6 +4615,10 @@ cvs update -A
 cvs update -jbranchtag
 @end example
 
+After these commands are executed and a @samp{cvs commit} is done,
+file @file{a} will be removed and file @file{d} added in the main branch.
+@c (which was determined by trying it)
+
 @c ---------------------------------------------------------------------
 @node Recursive behavior
 @chapter Recursive behavior
@@ -5947,7 +5951,7 @@ Each file has a stored default substitution mode, and
 each working directory copy of a file also has a
 substitution mode.  The former is set by the @samp{-k}
 option to @code{cvs add} and @code{cvs admin}; the
-latter is set by the -k or -A options to @code{cvs
+latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
 @xref{Binary files}.
@@ -6050,7 +6054,7 @@ interfere with everyday source file browsing.
 
 There are two issues with using @sc{cvs} to store
 binary files.  The first is that @sc{cvs} by default
-convert line endings between the canonical form in
+converts line endings between the canonical form in
 which they are stored in the repository (linefeed
 only), and the form appropriate to the operating system
 in use on the client (for example, carriage return
@@ -6492,7 +6496,7 @@ There are some @code{command_options} that are used so
 often that you might have set up an alias or some other
 means to make sure you always specify that option.  One
 example (the one that drove the implementation of the
-.cvsrc support, actually) is that many people find the
+@file{.cvsrc} support, actually) is that many people find the
 default output of the @samp{diff} command to be very
 hard to read, and that either context diffs or unidiffs
 are much easier to understand.
@@ -6543,7 +6547,7 @@ example the following line in @file{.cvsrc}
 cvs -z6
 @end example
 
-causes @sc{cvs} to use compression level 6
+causes @sc{cvs} to use compression level 6.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Global options
@@ -6613,7 +6617,7 @@ a command name, @samp{cvs -H} displays overall help for
 @c perhaps that is confusing...
 
 @item -l
-Do not log the cvs_command in the command history (but execute it
+Do not log the @samp{cvs_command} in the command history (but execute it
 anyway).  @xref{history}, for information on command history.
 
 @cindex Read-only mode
@@ -6999,8 +7003,8 @@ Specifying the @samp{-q} global option along with the
 the warning messages when the @sc{rcs} history file
 does not contain the specified tag.
 
-@strong{Warning:} this is not the same as the overall `cvs -r' option,
-which you can specify to the left of a cvs command!
+@strong{Warning:} this is not the same as the overall @samp{cvs -r} option,
+which you can specify to the left of a @sc{cvs} command!
 
 @samp{-r} is available with the @code{checkout}, @code{commit},
 @code{diff}, @code{history}, @code{export}, @code{rdiff},
@@ -8250,7 +8254,7 @@ Use @var{message} as log information, instead of
 invoking an editor.
 @end table
 
-There are three additional special options.
+There are the following additional special options.
 
 @table @code
 @item -b @var{branch}
@@ -8528,7 +8532,7 @@ Synonym: patch
 @end itemize
 
 Builds a Larry Wall format patch(1) file between two
-releases, that can be fed directly into the patch
+releases, that can be fed directly into the @code{patch}
 program to bring an old release up-to-date with the new
 release.  (This is one of the few @sc{cvs} commands that
 operates directly from the repository, and doesn't
@@ -8544,8 +8548,8 @@ the @sc{rcs} file.
 
 Note that if the software release affected is contained
 in more than one directory, then it may be necessary to
-specify the @samp{-p} option to the patch command when
-patching the old sources, so that patch is able to find
+specify the @samp{-p} option to the @code{patch} command when
+patching the old sources, so that @code{patch} is able to find
 the files that are located in other directories.
 
 @menu
@@ -8600,7 +8604,7 @@ last change to a file was.
 
 @item -u
 Use the unidiff format for the context diffs.
-This option is not available if your diff does not
+This option is not available if your @code{diff} does not
 support the unidiff format.  Remember that old versions
 of the @code{patch} program can't handle the unidiff
 format, so if you plan to post this patch to the net
@@ -8960,13 +8964,13 @@ Two special options are available:
 
 @table @code
 @item -b
-The -b option makes the tag a branch tag
+Make the tag a branch tag
 (@pxref{Revisions and branches}), allowing concurrent, isolated
 development.  This is most useful for creating a patch
 to a previously released software distribution.
 
 @item -c
-The -c option checks that all files which are to be tagged are
+Check that all files which are to be tagged are
 unmodified.  This can be used to make sure that you can reconstruct the
 current file contents.
 
@@ -9118,7 +9122,7 @@ ancestor revision is the common ancestor of the
 revision which the working directory is based on, and
 the revision specified in the @samp{-j} option.
 
-In addition, each -j option can contain an optional
+In addition, each @samp{-j} option can contain an optional
 date specification which, when used with branches, can
 limit the chosen revision to one within a specific
 date.  An optional date is specified by adding a colon
@@ -9134,7 +9138,7 @@ date.  An optional date is specified by adding a colon
 @appendixsubsec update output
 
 @code{update} and @code{checkout} keep you informed of
-its progress by printing a line for each file, preceded
+their progress by printing a line for each file, preceded
 by one character indicating the status of the file:
 
 @table @code
@@ -9190,7 +9194,7 @@ is also in your working directory, with the name
 @file{.#@var{file}.@var{revision}} where @var{revision}
 is the @sc{rcs} revision that your modified file started
 from.  Resolve the conflict as described in
-@ref{Conflicts example}
+@ref{Conflicts example}.
 @c "some systems" as in out-of-the-box OSes?  Not as
 @c far as I know.  We need to advise sysadmins as well
 @c as users how to set up this kind of purge, if that is
@@ -10188,7 +10192,7 @@ be filtered though the @file{unwrap} program when the
 file is checked out of the repository. The
 @file{cvswrappers} file also states that a @code{COPY}
 methodology should be used when updating the files in
-the repository (that is no merging should be performed).
+the repository (that is, no merging should be performed).
 
 @c What pitfalls arise when using indent this way?  Is
 @c it a winning thing to do?  Would be nice to at least
@@ -10196,9 +10200,9 @@ the repository (that is no merging should be performed).
 @c how to solve problems, not just to say that cvs can
 @c do certain things.
 The last example line says that all files that end with
-a @code{*.c} should be filtered with @file{indent}
+@code{.c} should be filtered with @file{indent}
 before being checked into the repository. Unlike the previous
-example no filtering of the @code{*.c} file is done when
+example, no filtering of the @code{.c} file is done when
 it is checked out of the repository.
 @noindent
 The @code{-t} filter is called with two arguments,
@@ -10989,7 +10993,7 @@ To find the home directory of the user running @sc{cvs}
 @samp{~} followed by @samp{/} or the end of the line.
 Likewise for the home directory of @var{user}, use
 @samp{~@var{user}}.  These variables are expanded on
-the server machine, and don't get any resonable
+the server machine, and don't get any reasonable
 expansion if pserver (@pxref{Password authenticated})
 is in used; therefore user variables (see below) may be
 a better choice to customize behavior based on the user
@@ -11031,7 +11035,7 @@ server machine).
 @end table
 
 If you want to pass a value to the administrative files
-which the user that is running @sc{cvs} can specify,
+which the user who is running @sc{cvs} can specify,
 use a user variable.  To expand a user variable, the
 administrative file contains
 @code{$@{=@var{variable}@}}.  To set a user variable,
