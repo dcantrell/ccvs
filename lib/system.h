@@ -494,21 +494,22 @@ char *getwd ();
 #endif
 
 
-/* On some systems, lines in text files should be terminated with CRLF,
-   not just LF, and the read and write routines do this translation
-   for you.  LINES_CRLF_TERMINATED is #defined on such systems.
-   - OPEN_BINARY is the flag to pass to the open function for
-     untranslated I/O.
-   - FOPEN_BINARY_READ is the string to pass to fopen to get
-     untranslated reading.
-   - FOPEN_BINARY_WRITE is the string to pass to fopen to get
-     untranslated writing.  */
-#if LINES_CRLF_TERMINATED
-#define OPEN_BINARY (O_BINARY)
+/* On some systems, we have to be careful about writing/reading files
+   in text or binary mode (so in text mode the system can handle CRLF
+   vs. LF, VMS text file conventions, &c).  We decide to just always
+   be careful.  That way we don't have to worry about whether text and
+   binary differ on this system.  We just have to worry about whether
+   the system has O_BINARY and "rb".  The latter is easy; all ANSI C
+   libraries have it, SunOS4 has it, and CVS has used it unguarded
+   some places for a while now without complaints (e.g. "rb" in
+   server.c (server_updated), since CVS 1.8).  The former is just an
+   #ifdef.  */
+
 #define FOPEN_BINARY_READ ("rb")
 #define FOPEN_BINARY_WRITE ("wb")
+
+#ifdef O_BINARY
+#define OPEN_BINARY (O_BINARY)
 #else
 #define OPEN_BINARY (0)
-#define FOPEN_BINARY_READ ("r")
-#define FOPEN_BINARY_WRITE ("w")
 #endif
