@@ -190,7 +190,8 @@ AC_DEFUN([AM_PROG_ETAGS_WORKS],
 [cat >conftest.c <<EOF
 int globalvar;
 EOF
-if AC_TRY_COMMAND([${ETAGS-etags} -f - conftest.c |egrep "^int globalvar;" >&2]); then
+if AC_TRY_COMMAND([${ETAGS-etags} -f - conftest.c
+		|egrep ^int\ globalvar\; >&2]); then
 	am_cv_prog_etags_works=yes
 else
 	am_cv_prog_etags_works=no
@@ -205,11 +206,11 @@ if test "$am_cv_prog_etags_works" = yes ; then
 	[cat >conftest.c <<EOF
 int globalvar;
 EOF
-	if AC_TRY_COMMAND([${ETAGS-etags} --etags-include=TAGS.inc -f - conftest.c \
-			|egrep '^TAGS.inc,include$' >&2]); then
+	if AC_TRY_COMMAND([${ETAGS-etags} --etags-include=TAGS.inc -f - conftest.c
+			|egrep ^TAGS.inc,include\$ >&2]); then
 		am_cv_prog_etags_include_option=--etags-include=
-	elif AC_TRY_COMMAND([${ETAGS-etags} -i TAGS.inc -f - conftest.c \
-			|egrep '^TAGS.inc,include$' >&2]); then
+	elif AC_TRY_COMMAND([${ETAGS-etags} -i TAGS.inc -f - conftest.c
+			|egrep ^TAGS.inc,include\$ >&2]); then
 		am_cv_prog_etags_include_option='"-i "'
 	else :
 		# AC_MSG_ERROR(unfamiliar etags implementation)
@@ -293,6 +294,9 @@ AC_SUBST([$1]DEPMODE)
 AC_DEFUN([AM_SET_DEPDIR],[
 if test -d .deps || mkdir .deps 2> /dev/null || test -d .deps; then
   DEPDIR=.deps
+  # We redirect because .deps might already exist and be populated.
+  # In this situation we don't want to see an error.
+  rmdir .deps > /dev/null 2>&1
 else
   DEPDIR=_deps
 fi

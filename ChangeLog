@@ -1,5 +1,9 @@
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
+	* aclocal.m4: Regenerated due to Automake update
+
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.in: Regenerated
 	* aclocal.m4: Regenerated due to a change to AM_PROG_ETAGS
 	* configure: Regenerated
