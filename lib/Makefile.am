@@ -106,6 +106,19 @@ check_PROGRAMS += getdate
 getdate_SOURCES = \
 	getdate.y \
 	gettime.c
+## The following sources are needed when lstat gets compiled via LIBOBJS.  I
+## just include them all the time since it shouldn't hurt.
+getdate_SOURCES += \
+	error.c \
+	exitfail.c \
+	exitfail.h \
+	xalloc.h \
+	xmalloc.c \
+	xstrdup.c
+## This source file was added only for the getdate test program when compiled
+## with GNULIB's error.c.
+getdate_SOURCES += \
+	progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \

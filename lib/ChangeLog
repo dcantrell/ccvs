@@ -1,3 +1,10 @@
+2004-05-02  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (getdate_SOURCES): Add xmalloc, xstrdup, error, exitfail,
+	and progname for getdate test program on some systems.
+	* error.c, progname.c: New file.
+	(Report from Mark D. Baushke <mdb@cvshome.org>.)
+	
 2004-04-29  Derek Price  <derek@ximbiot.com>
 
 	* getdate.y: Restore unforked version from GNULIB.
