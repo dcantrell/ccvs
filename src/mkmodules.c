@@ -77,10 +77,7 @@ main (argc, argv)
     /*
      * Just save the last component of the path for error messages
      */
-    if ((program_name = strrchr (argv[0], '/')) == NULL)
-	program_name = argv[0];
-    else
-	program_name++;
+    program_name = last_component (argv[0]);
 
     if (argc != 2)
 	mkmodules_usage ();
