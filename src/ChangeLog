@@ -1,3 +1,176 @@
+Wed Aug 30 12:36:37 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* sanity.sh (basic1): Make sure first-dir is deleted before
+	running this set of tests.
+
+        * subr.c: Extract file twiddling functions to a different file,
+	because we want to use different versions of many of these
+	routines under Windows NT.
+	(copy_file, isdir, islink, isfile, isreadable, iswritable,
+	open_file, make_directory, make_directories, xchmod,
+	rename_file, link_file, unlink_file, xcmp, tmpnam,
+	unlink_file_dir, deep_remove_dir): Moved to...
+	* filesubr.c: ...this file, which is new.
+	* Makefile.in (SOURCES): Mention filesubr.c.
+	(COMMON_OBJECTS): Mention filesubr.o.
+
+	* subr.c: Extract process execution guts to a different file,
+	because we want to replace these routines entirely under
+	Windows NT.
+	(VA_START, va_alist, va_dcl): Move this stuff...
+	(run_add_arg, run_init_prog): and these declarations...
+	(run_prog, run_argv, run_argc, run_argc_allocated): and these
+	variables...
+	(run_setup, run_arg, run_args, run_add_arg, run_init_prog,
+	run_exec, run_print, Popen): and these functions...
+	* run.c: To this file, which is new.
+	* Makefile.in (SOURCES): Mention run.c.
+	(COMMON_OBJECTS): Mention run.o.
+
+	* status.c (status): Call ign_setup, if client_active.  Otherwise,
+	we don't end up ignoring CVS directories and such.
+
+	* server.c (mkdir_p, dirswitch): Use CVS_MKDIR instead of mkdir.
+
+	* repos.c (Name_Repository): Use the isabsolute function instead of
+	checking the first character of the path.
+	* root.c (Name_Root): Same.
+
+	* release.c (release): Use fncmp instead of strcmp to compare
+	filenames.
+
+	* rcs.c (RCS_parse, RCS_parsercsfile) [LINES_CRLF_TERMINATED]:
+	Abort, because we have strong reason to believe this code is
+	wrong.
+
+	* patch.c (patch): Register signal handlers iff the signal name is
+	#defined.
+
+	* no_diff.c (No_Difference): Don't try to include server_active in
+	trace message unless SERVER_SUPPORT is #defined.
+
+	* modules.c (do_module): Use CVS_MKDIR instead of mkdir.
+
+	* mkmodules.c (main): Call last_component instead of writing it out.
+
+	* main.c (main): Call last_component instead of writing it out.
+	Break up the long copyright string into several strings; Microsoft
+	Visual C++ can't handle a line that long.  Feh.
+	Use fncmp instead of strcmp to compare filenames.
+	Register signal handlers iff the signal name is #defined.
+
+	* lock.c (readers_exist): Don't check return value of closedir.
+	Most of the rest of the code doesn't, and some systems don't
+	provide a return value anyway.
+	(set_lock): Use CVS_MKDIR instead of mkdir.
+
+	* import.c (import): Use the isabsolute function instead of
+	checking the first character of the path.
+	Try to delete the temporary file again after we close it, so it'll
+	get deleted on systems that don't let you delete files that are
+	open.
+	(add_rev): Instead of making a hard link to the working file and
+	checking in the revision with ci -r, use ci -u and restore the
+	permission bits.
+	(comtable): Include lines from SYSTEM_COMMENT_TABLE, if it is
+	#defined.
+	(add_rcs_file) [LINES_CRLF_TERMINATED]: Abort, because we have
+	strong reason to believe this code is wrong.
+	(import_descend_dir): Use CVS_MKDIR instead of mkdir.
+
+	* history.c (read_hrecs): Open the file with OPEN_BINARY.
+
+	* find_names.c (add_entries_proc, fsortcmp): Add prototypes.
+	* entries.c (write_ent_proc): Add prototype.
+	* hash.c (walklist): Add prototype for PROC argument.
+	(sortlist): Add prototype for COMP argument.
+	(printnode): Add a prototype, and make it static.
+
+	* cvs.h (wrap_add_file, wrap_add): Add extern decls for these;
+	they're used in import.c and update.c.
+	* wrapper.c (wrap_add_file, wrap_add): Remove them from here.
+
+	* cvs.h (RUN_NORMAL, RUN_COMBINED, RUN_REALLY, RUN_STDOUT_APPEND,
+	RUN_STDERR_APPEND, RUN_SIGNIGNORE, RUN_TTY, run_arg, run_print,
+	run_setup, run_args, run_exec, Popen, piped_child, close_on_exec,
+	filter_stream_through_program, waitpid): Move all these
+	declarations and definitions to the same section.
+
+	* cvs.h (error_set_cleanup): Fix prototype.
+
+	* cvs.h (isabsolute, last_component): New extern decls.
+
+	* cvs.h (link_file): Function is deleted; remove extern decl.
+
+	* cvs.h (DEATH_STATE, DEATH_SUPPORT): Move #definitions of these
+	above the point where we #include rcs.h, since rcs.h tests them
+	(or DEATH_SUPPORT, at least).
+
+	* cvs.h (DEVNULL): #define this iff it isn't already #defined.
+	config.h may want to override it.
+
+	* cvs.h (SERVER_SUPPORT, CLIENT_SUPPORT): Don't #define these
+	here; let config.h do that.  On some systems, we don't have any
+	server support.
+
+	* cvs.h: Don't #include <io.h> or <direct.h>; we take care of
+	those in lib/system.h.
+
+	* commit.c (commit): Open logfile with the OPEN_BINARY flag.
+	(precommit_proc): Use the isabsolute function, instead of
+	comparing the first character with /.
+	(remove_file, checkaddfile): Use CVS_MKDIR instead of mkdir.
+
+        * client.c (send_repository): Use larger line buffers.
+
+        * client.c [LINES_CRLF_TERMINATED] (update_entries): If we've just
+	received a gzipped file, copy it over, converting LF to CRLF,
+	instead of just renaming it into place.
+	[LINES_CRLF_TERMINATED] (send_modified): Convert file to LF format
+	before sending with gzip.
+	(send_modified): Don't be disturbed if we get fewer than
+	sb.st_size characters when we read.  The read function may be
+	collapsing CRLF to LF for us.
+
+	* client.c: Add forward declarations for all the cvs command
+	functions we call.
+
+	* client.c: Add forward static declarations for all the
+	handle_mumble functions.
+
+	On some systems, RSH converts LF to CRLF; this screws us up.
+	* client.c (rsh_pid): Declare this iff RSH_NOT_TRANSPARENT is not
+	#defined.
+	(get_responses_and_close): Use SHUTDOWN_SERVER if it is #defined.
+	Only wait for rsh process to exit if RSH_NOT_TRANSPARENT is not
+	#defined.
+	(start_rsh_server): Declare and define only if
+	RSH_NOT_TRANSPARENT is not #defined.  Use piped_child, instead of
+	writing all that out.
+	(start_server): Only try to call start_rsh_server if
+	RSH_NOT_TRANSPARENT is not #defined.  Use START_SERVER if it is
+	#defined.  Convert file descriptors to stdio file pointers using
+	the FOPEN_BINARY_WRITE and FOPEN_BINARY_READ strings.
+
+	* client.h (rsh_pid): Don't declare this; it's never used elsewhere.
+	(supported_request): Add external declaration for this;
+	it's used in checkout.c.
+
+	Move process-running functions to run.c; we need to totally
+	replace these on other systems, like Windows NT.
+	* client.c (close_on_exec, filter_stream_through_program): Moved
+	to run.c.
+	* run.c (close_on_exec, filter_stream_through_program): Here they
+	are.
+
+	* add.c (add_directory): Use CVS_MKDIR instead of straight mkdir.
+	* checkout.c (checkout, build_dirs_and_chdir): Same.
+	(checkout_proc): Use fncmp instead of strcmp.
+	* client.c (call_in_directory): Use CVS_MKDIR instead of straight
+	mkdir.
+
+	* client.c (handle_checksum): Cast return value of strtol.
+
 Wed Aug 30 10:35:46 1995  Stefan Monnier <stefan.monnier@epfl.ch>
 
         * main.c (main): Allow -d to override CVSROOT_ENV.
@@ -25,11 +198,6 @@ Tue Aug 22 10:09:29 1995  Kirby Koster  <koster@sctc.com>
 Tue Aug 22 10:09:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c, client.c: Add comments about modes and umasks.
-
-Mon Aug 21 16:11:16 1995  Jim Blandy  <jimb@totoro.cyclic.com>
-
-	* sanity.sh (basic1): Make sure first-dir is deleted before
-	running this set of tests.
 
 Mon Aug 21 12:54:14 1995  Rick Sladkey  <jrs@world.std.com>
 
@@ -99,7 +267,7 @@ Sun Jul 30 20:52:04 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* parseinfo.c (Parse_Info): Revise comments and indentation.
 
-Sun Jul 28 15:30:16 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+Sun Jul 30 15:30:16 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
         * history.c: put ifdef SERVER_SUPPORT around tracing code incase
         the client/server code is not compiled into the program.
@@ -108,7 +276,7 @@ Sat Jul 29 16:59:49 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c (deep_remove_dir): Use struct dirent, not struct direct.
 
-Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+Sat Jul 29 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
 	* add.c: Check wrap_name_has.
 
@@ -142,10 +310,6 @@ Fri Jul 28 19:37:03 1995  Paul Eggert  <eggert@twinsun.com>
 	(log_option_with_arg, options): Remove.
 
 	(log_fileproc): Don't prepend `/' to file name if update_dir is empty.
-
-Thu Jul 27 20:26:13 1995  Jim Blandy  <jimb@totoro.cyclic.com>
-
-	* log.c: import of initial WNT port work
 
 Tue Jul 25 00:52:26 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
