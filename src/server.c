@@ -1594,8 +1594,7 @@ serve_unchanged (char *arg)
     char *cp;
     char *timefield;
 
-    if (error_pending ())
-	return;
+    if (error_pending ()) return;
 
     if (outside_dir (arg))
 	return;
@@ -1609,7 +1608,16 @@ serve_unchanged (char *arg)
 	    && strlen (arg) == cp - name
 	    && strncmp (arg, name, cp - name) == 0)
 	{
-	    timefield = strchr (cp + 1, '/') + 1;
+	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
+	    {
+		/* We didn't find the record separator or it is followed by
+		 * the end of the string, so just exit.
+		 */
+		if (alloc_pending (80))
+		    sprintf (pending_error_text,
+		             "E Malformed Entry encountered.");
+		return;
+	    }
 	    /* If the time field is not currently empty, then one of
 	     * serve_modified, serve_is_modified, & serve_unchanged were
 	     * already called for this file.  We would like to ignore the
@@ -1679,8 +1687,7 @@ serve_is_modified (char *arg)
     /* Have we found this file in "entries" yet.  */
     int found;
 
-    if (error_pending ())
-	return;
+    if (error_pending ()) return;
 
     if (outside_dir (arg))
 	return;
@@ -1695,7 +1702,16 @@ serve_is_modified (char *arg)
 	    && strlen (arg) == cp - name
 	    && strncmp (arg, name, cp - name) == 0)
 	{
-	    timefield = strchr (cp + 1, '/') + 1;
+	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
+	    {
+		/* We didn't find the record separator or it is followed by
+		 * the end of the string, so just exit.
+		 */
+		if (alloc_pending (80))
+		    sprintf (pending_error_text,
+		             "E Malformed Entry encountered.");
+		return;
+	    }
 	    /* If the time field is not currently empty, then one of
 	     * serve_modified, serve_is_modified, & serve_unchanged were
 	     * already called for this file.  We would like to ignore the
@@ -1781,8 +1797,29 @@ serve_entry (char *arg)
 {
     struct an_entry *p;
     char *cp;
+    int i = 0;
     if (error_pending()) return;
-    p = (struct an_entry *) xmalloc (sizeof (struct an_entry));
+
+    /* Verify that the entry is well-formed.  This can avoid problems later.
+     * At the moment we only check that the Entry contains five slashes in
+     * approximately the correct locations since some of the code makes
+     * assumptions about this.
+     */
+    cp = arg;
+    if (*cp == 'D') cp++;
+    while (i++ < 5)
+    {
+	if (!cp || *cp != '/')
+	{
+	    if (alloc_pending (80))
+		sprintf (pending_error_text,
+			 "E protocol error: Malformed Entry");
+	    return;
+	}
+	cp = strchr (cp + 1, '/');
+    }
+
+    p = xmalloc (sizeof (struct an_entry));
     if (p == NULL)
     {
 	pending_error = ENOMEM;

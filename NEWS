@@ -1,6 +1,12 @@
 Changes since 1.12.8:
 *********************
 
+SERVER SECURITY FIXES
+
+* A potential buffer overflow vulnerability in the server has been fixed.
+  This addresses the Common Vulnerabilities and Exposures Project's issue
+  #CAN-2004-0414.  Please see <http://www.cve.mitre.org> for more information.
+
 NEW FEATURES
 
 * `cvs log' & `cvs ls' now output local times when both the server and client
