@@ -1,3 +1,7 @@
+2001-09-04  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with automake 1.5.
+
 2001-08-07  Derek Price  <derek.price@openavenue.com>
 
 	* Make_vms.com: Changes for VMS.  I don't know why, but the rest made

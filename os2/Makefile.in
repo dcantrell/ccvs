@@ -276,6 +276,9 @@ all:
 all install uninstall:
 
 # Remove targets for Automake
+dvi:
+.PHONY: dvi
+
 info:
 .PHONY: info
 

@@ -1,3 +1,7 @@
+2001-09-04  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with automake 1.5.
+
 2001-08-09  Derek Price  <dprice@collab.net>
 
 	* config.h: Back out the HAVE_GETPAGESIZE thing.  That was a mistake.
