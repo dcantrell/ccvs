@@ -1,3 +1,8 @@
+2000-11-08  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.texinfo (settitle): add the version number to the title string
+	so that it is easier to find on HTML pages and the like.
+
 2000-10-20  Jim Kingdon  <http://sourceforge.net/users/kingdon/>
 
 	* cvs.texinfo (Variables): Document CVS_USER.
