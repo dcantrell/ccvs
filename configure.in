@@ -1047,7 +1047,7 @@ if test no != "$enable_password_authenticated_client"; then
        method in the CVS client (default)])
   else
     AC_MSG_WARN(
-      [--enable-password-authenticated-server is meaningless with
+      [--enable-password-authenticated-client is meaningless with
        the CVS client disabled (--disable-client)])
   fi
 fi

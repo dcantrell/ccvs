@@ -1,3 +1,17 @@
+2004-03-17  Derek Price  <derek@ximbiot.com>
+
+	* src/subr.c (pathname_levels): Get it right this time.
+
+2004-03-17  Derek Price  <derek@ximbiot.com>
+
+	* src/subr.c (pathname_levels): Remove incorrect assertion and just
+	return 0 when pathname is NULL.
+
+2004-03-17  Derek Price  <derek@ximbiot.com>
+
+	* src/subr.c (pathname_levels): Use ISDIRSEP() instead of strchr('/')
+	and remove FIXME comment to that effect.
+
 2004-03-16  Derek Price  <derek@ximbiot.com>
 
 	* src/main.c (main): Update the --version Copyright (c) string to

@@ -71,15 +71,12 @@ strip_trailing_newlines (char *str)
 
 
 
-/* Return the number of levels that path ascends above where it starts.
-   For example:
-   "../../foo" -> 2
-   "foo/../../bar" -> 1
-   */
-/* FIXME: Should be using ISDIRSEP, last_component, or some other
-   mechanism which is more general than just looking at slashes,
-   particularly for the client.c caller.  The server.c caller might
-   want something different, so be careful.  */
+/* Return the number of levels that PATH ascends above where it starts.
+ * For example:
+ *
+ *   "../../foo" -> 2
+ *   "foo/../../bar" -> 1
+ */
 int
 pathname_levels (char *path)
 {
@@ -88,31 +85,37 @@ pathname_levels (char *path)
     int level;
     int max_level;
 
+    if (p == NULL) return 0;
+
     max_level = 0;
     p = path;
     level = 0;
     do
     {
-	q = strchr (p, '/');
-	if (q != NULL)
-	    ++q;
-	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/'))
+	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
+	q = p;
+	while (*q != '\0' && !ISDIRSEP (*q)) q++;
+	if (*q != '\0') q++;
+
+	/* Now look for pathname level-ups.  */
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP(p[2])))
 	{
 	    --level;
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '\0' || p[0] == '/' ||
-		 (p[0] == '.' && (p[1] == '\0' || p[1] == '/')))
+	else if (p[0] == '\0' || ISDIRSEP(p[0]) ||
+		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP(p[1]))))
 	    ;
 	else
 	    ++level;
 	p = q;
-    } while (p != NULL);
+    } while (*p != '\0');
     return max_level;
 }
 
-
+
+
 /* Free a vector, where (*ARGV)[0], (*ARGV)[1], ... (*ARGV)[*PARGC - 1]
    are malloc'd and so is *ARGV itself.  Such a vector is allocated by
    line2argv or expand_wild, for example.  */
