@@ -1,3 +1,14 @@
+2003-03-16  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.h (CVSREADONLYFS_ENV): New macro to support new environment
+	variable "CVSREADONLYFS" for read-only file-system repository mode.
+	* lock.c (Reader_Lock, Writer_Lock): Add support for new read-only
+	file-system repository mode.
+	* main.c (main, opt_usage): Ditto.
+	* root.c (parse_cvsroot): Ditto.
+	* sanity.sh (commit-readonlyfs): Test new read-only file-system
+	repository mode.
+
 2003-03-14  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (template_proc): Fix broken Template protocol code.

@@ -313,6 +313,8 @@ extern int errno;
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
 #define	CVSREAD_DFLT	0		/* writable files by default */
 
+#define	CVSREADONLYFS_ENV "CVSREADONLYFS" /* repository is read-only */
+
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
 
 #define	EDITOR1_ENV	"CVSEDITOR"	/* which editor to use */
@@ -440,6 +442,7 @@ extern int safe_location PROTO ((char *));
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
+extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
 
 extern int top_level_admin;

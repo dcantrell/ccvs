@@ -433,6 +433,12 @@ parse_cvsroot (root_in)
 #endif /* CLIENT_SUPPORT */
 
 
+    if (readonlyfs && newroot->method != local_method)
+	error (1, 0,
+	       "Read-only repository feature unavailable with remote roots (cvsroot = %s)",
+	       cvsroot_copy);
+
+
     if ((newroot->method != local_method)
 	&& (newroot->method != fork_method))
     {

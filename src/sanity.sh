@@ -3927,6 +3927,40 @@ File: tfile            	Status: Locally Modified
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
 
+	commit-readonlyfs)
+	  mkdir 1; cd 1
+	  module=x
+	  : > junk
+	  dotest commit-readonlyfs-1 "${testcvs} -Q import -m . $module X Y" ''
+	  if $remote; then
+	    dotest_fail commit-readonlyfs-2r1 "${testcvs} -Q -R co $module" \
+"${PROG} \[checkout aborted\]: Read-only repository feature unavailable with remote roots (cvsroot = ${CVSROOT_DIRNAME})"
+	    dotest commit-readonlyfs-2r2 "${testcvs} -Q co $module" ''
+          else
+	    dotest commit-readonlyfs-2 "${testcvs} -Q -R co $module" ''
+          fi
+	  cd $module
+	  echo test > junk
+	  if $remote; then
+	    dotest_fail commit-readonlyfs-3r "${testcvs} -Q -R ci -m. junk" \
+"${PROG} \[commit aborted\]: Read-only repository feature unavailable with remote roots (cvsroot = ${CVSROOT_DIRNAME})"
+	  else
+	    dotest_fail commit-readonlyfs-3 "${testcvs} -Q -R ci -m. junk" \
+"${PROG} [a-z]*: write lock failed\.
+WARNING: Read-only repository access mode selected via \`cvs -R'\.
+Using this option to access a repository which some users write to may
+cause intermittant sandbox corruption\.
+${PROG} \[commit aborted\]: lock failed - giving up"
+          fi
+
+	  dokeep
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
+
 	rdiff)
 		# Test rdiff
 		# XXX for now this is just the most essential test...

@@ -11,6 +11,11 @@ group.
 out a tree, the template in the users' tree will be updated rather
 than remaining static from the time of the original checkout.
 
+* Added a CVSREADONLYFS environment variable and `-R' cvs global
+option to turn on read-only repository mode for local repositories.
+This allows users to checkout from a CDROM repository or other
+read-only filesystem.
+
 * Miscellaneous documentation corrections.
 
 * Corrected the path in a failed write error message.

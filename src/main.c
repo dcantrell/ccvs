@@ -41,6 +41,7 @@ int really_quiet = 0;
 int quiet = 0;
 int trace = 0;
 int noexec = 0;
+int readonlyfs = 0;
 int logoff = 0;
 
 /* Set if we should be writing CVSADM directories at top level.  At
@@ -251,6 +252,7 @@ static const char *const opt_usage[] =
     "    -n           Do not execute anything that will change the disk.\n",
     "    -t           Show trace of program execution (repeat for more\n",
     "                 verbosity) -- try with -n.\n",
+    "    -R           Assume repository is read-only, such as CDROM\n",
     "    -v           CVS version and copyright.\n",
     "    -T tmpdir    Use 'tmpdir' for temporary files.\n",
     "    -e editor    Use 'editor' for editing log information.\n",
@@ -408,7 +410,7 @@ main (argc, argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+Qqrwtnlvb:T:e:d:Hfz:s:xa";
+    static const char short_options[] = "+QqrwtnRlvb:T:e:d:Hfz:s:xa";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -471,6 +473,10 @@ main (argc, argv)
     }
     if (getenv (CVSREAD_ENV) != NULL)
 	cvswrite = 0;
+    if (getenv (CVSREADONLYFS_ENV) != NULL) {
+	readonlyfs = 1;
+	logoff = 1;
+    }
 
     /* Set this to 0 to force getopt initialization.  getopt() sets
        this to 1 internally.  */
@@ -535,6 +541,10 @@ main (argc, argv)
 		break;
 	    case 't':
 		trace++;
+		break;
+	    case 'R':
+		readonlyfs = -1;
+		logoff = 1;
 		break;
 	    case 'n':
 		noexec = 1;
