@@ -484,11 +484,16 @@ static const char *const modules_contents[] = {
 };
 
 static const char *const config_contents[] = {
-    "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
+    "# Set `SystemAuth' to `no' if pserver shouldn't check system users/passwords.\n",
     "#SystemAuth=no\n",
     "\n",
-    "# Put CVS lock files in this directory rather than directly in the repository.\n",
-    "#LockDir=/var/lock/cvs\n",
+    "# Set `LocalKeyword' to specify a local alias for a standard keyword.\n",
+    "#LocalKeyword=MYCVS=CVSHeader\n",
+    "\n",
+    "# Set `KeywordExpand' to `i' followed by a list of keywords to expand or\n",
+    "# `e' followed by a list of keywords to not expand.\n"
+    "#KeywordExpand=iMYCVS,Name,Date\n",
+    "#KeywordExpand=eCVSHeader\n",
     "\n",
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     "# Set `PreservePermissions' to `yes' to save file status information\n",
@@ -500,6 +505,9 @@ static const char *const config_contents[] = {
     "# level of the new working directory when using the `cvs checkout'\n",
     "# command.\n",
     "#TopLevelAdmin=no\n",
+    "\n",
+    "# Put CVS lock files in this directory rather than directly in the repository.\n",
+    "#LockDir=/var/lock/cvs\n",
     "\n",
     "# Set `LogHistory' to `all' or `" ALL_HISTORY_REC_TYPES "' to log all transactions to the\n",
     "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
@@ -534,6 +542,7 @@ static const char *const config_contents[] = {
     "# every `cvs import' command to behave as if the `-X' flag was\n",
     "# specified.\n",
     "#ImportNewFilesToVendorBranchOnly=no\n",
+#ifdef PROXY_SUPPORT
     "\n",
     "# Set `PrimaryServer' to the CVSROOT to the primary, or write, server when\n",
     "# establishing one or more read-only mirrors which serve as proxies for\n",
@@ -543,7 +552,6 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   PrimaryServer=:fork:localhost/cvsroot\n",
-#ifdef PROXY_SUPPORT
     "\n",
     "# Set `MaxProxyBufferSize' to the the maximum allowable secondary\n",
     "# buffer memory cache size before the buffer begins being stored to disk, in\n",

@@ -1,3 +1,8 @@
+2004-11-30  Larry Jones  <lawrence.jones@ugs.com>
+
+	* mkmodules.c (config_contents): Add LocalKeyword and KeywordExpand,
+	misc. cleanup.
+
 2004-11-30  Derek Price  <derek@ximbiot.com>
 
 	* parseinfo.c (readBool): Update quotes in error message for
