@@ -1,5 +1,8 @@
 Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (From other version control systems): Fix typo
+	("systesm" -> "systems").
+
 	* cvs.texinfo (Exit status): New node.
 	(diff): Replace text on exit status with an xref to that node.
 	The previous text documented a behavior which CVS no longer

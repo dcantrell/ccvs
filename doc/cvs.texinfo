@@ -2494,7 +2494,7 @@ files are binary and which are not.  @xref{Wrappers}.
 @c thinking of something more concise.
 @node From other version control systems
 @subsection Creating Files From Other Version Control Systems
-@cindex Importing files, from other version control systesm
+@cindex Importing files, from other version control systems
 
 If you have a project which you are maintaining with
 another version control system, such as @sc{rcs}, you
