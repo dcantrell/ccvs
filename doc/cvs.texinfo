@@ -3102,6 +3102,13 @@ Talk about what to do if someone has locked a file and you want to
 edit that file.  (breaking locks, or lack thereof).
 
 
+One other idea (which could work along with the
+existing "cvs admin -l" reserved checkouts, as well as
+the above):
+
+"cvs editors" could show who has the file locked, if
+someone does.
+
 @end ignore
 
 @menu

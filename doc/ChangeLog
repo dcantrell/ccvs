@@ -1,3 +1,8 @@
+Wed Sep  3 14:49:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Multiple developers): Add idea about cvs editors
+	and reserved checkouts.
+
 Sun Aug 31 19:36:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Rewrite paragraph on cvs add on a
