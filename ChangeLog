@@ -1,3 +1,8 @@
+Sat Aug  2 09:23:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: In step 4, be more generic (the CVS sources are just an
+	example, and people might not have them handy).
+
 Fri Jul 25 17:02:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Refer to cvs.texinfo as the Cederqvist manual; that
