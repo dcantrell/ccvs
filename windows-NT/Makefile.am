@@ -52,7 +52,7 @@ DISTCLEANFILES =
 
 all-local: config.h stdbool.h stdint.h
 config.h: stamp-ch
-stamp-ch: config.h.in Makefile
+stamp-ch: $(srcdir)/config.h.in Makefile
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
 	  >config.tmp
 	@echo " * config.h.in file." >>config.tmp
@@ -72,10 +72,10 @@ DISTCLEANFILES += stamp-ch
 
 # The shell portion of this target is so that this file will be regenerated
 # when it is missing, even when not in maintainer mode.
-config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-chi
 	@if test ! -f $@; then \
 	  rm -f stamp-chi; \
-	  $(MAKE) stamp-chi; \
+	  $(MAKE) $(srcdir)/stamp-chi; \
 	else :; fi
 
 # The following target exists for two reasons.  The first is so that the rule
@@ -88,11 +88,11 @@ config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
 # will only find out that they have a broken Perl install (used by mkconfig),
 # for instance, when they actually need to rebuild this file because one of its
 # dependencies was touched.
-stamp-chi: mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in \
-           $(srcdir)/config.h.in.footer
-	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
-	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h.in $(srcdir)/$@
+$(srcdir)/stamp-chi: mkconfig $(top_srcdir)/config.h.in \
+		     $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
+	@./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
+	               $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
+	@cp $(srcdir)/config.h.in $@
 MAINTAINERCLEANFILES += $(srcdir)/stamp-chi $(srcdir)/config.h.in
 
 stdbool.h: stamp-sh

@@ -1,5 +1,11 @@
 2004-11-16  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stamp-chi, config.h.in): Rename to...
+	($(srcdir)/stamp-chi, $(srcdir)/config.h.in): Respectively, including
+	associated required target changes.
+
+2004-11-16  Derek Price  <derek@ximbiot.com>
+
 	* mkconfig.pl (save_copy): Revert previous change.
 	(make_config_h): Don't output full paths to generated comment.
 
