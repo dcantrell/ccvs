@@ -1,3 +1,10 @@
+2002-04-18  Derek Price  <oberon@umich.edu>
+
+	* doc/stamp-1: Regenerated for 1.11.2.1 version update.
+	* doc/stamp-vti: Ditto.
+	* doc/version-client.texi: Ditto.
+	* doc/version.texi: Ditto.
+
 2002-04-17  Derek Price  <oberon@umich.edu>
 
 	* stamp-vti: Regenerated.
