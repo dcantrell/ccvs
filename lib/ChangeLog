@@ -1,3 +1,12 @@
+2000-07-04  Karl Fogel  <kfogel@red-bean.com>
+
+	* getline.h, getline.c (getstr): take new limit arg.
+	(GETLINE_NO_LIMIT): new #define.
+	(getline_safe): new function, takes limit arg and passes it on.
+	(getline): pass GETLINE_NO_LIMIT to getstr().
+	
+	See related change of same date in ../src/ChangeLog.
+
 2000-06-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* regex.c, regex.h: Version from emacs 20.7 to plug memory leaks
