@@ -125,11 +125,7 @@ void wrap_setup()
        .cvswrappers is).  */
     if (homedir != NULL)
     {
-	char *file;
-
-	file = xmalloc (strlen (homedir) + sizeof (CVSDOTWRAPPER) + 10);
-	(void) strcpy (file, homedir);
-	(void) strcat_filename_onto_homedir (file, CVSDOTWRAPPER);
+	char *file = strcat_filename_onto_homedir (homedir, CVSDOTWRAPPER);
 	if (isfile (file))
 	{
 	    wrap_add_file (file, 0);
