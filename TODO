@@ -261,10 +261,6 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
      This behavior was not particularly popular and has been since
      reverted.
 
-     Note also RELATIVE_REPOS in options.h; it needs to be set for
-     changing CVS/Root (not CVS/Repository) to be sufficient in the
-     case where the directory has changed.
-
      This whole area is a rather bad pile of individual decisions which
      accumulated over time, some of them probably bad decisions with
      hindsight.  But we didn't get into this mess overnight, and we're

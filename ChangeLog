@@ -1,3 +1,7 @@
+2003-05-01  Derek Price  <derek@ximbiot.com>
+
+	* TODO (149): Remove reference to defunct RELATIVE_REPOS macro.
+
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
 	* acinclude.m4 (ACX_WITH_GSSAPI): Get rid of $includeopt, using
