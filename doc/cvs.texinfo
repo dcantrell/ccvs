@@ -10457,7 +10457,7 @@ Operate recursively (default).  @xref{Recursive
 behavior}.
 
 @item -r @var{tag}
-Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+Checkout revision @var{tag}.  See @ref{Common options}.
 @end table
 
 @item history [@var{options}] [@var{files}@dots{}]

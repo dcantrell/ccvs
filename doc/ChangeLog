@@ -1,3 +1,9 @@
+1999-04-05  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* cvs.texinfo (export options): Remove notation that the -r
+	tag is sticky.  'cvs export' doesn't store that data.
+
 1999-04-08  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "EOF in RCS file" and
