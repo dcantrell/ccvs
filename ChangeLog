@@ -1,5 +1,9 @@
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note web proxy support.
+
+2004-04-06  Derek Price  <derek@ximbiot.com>
+
 	* TODO (196, 217, 219, 220, 222, 226): Remove completed items.
 	(230): New item.
 
