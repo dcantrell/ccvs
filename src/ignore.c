@@ -254,12 +254,12 @@ ign_name (name)
 	char *p;
 
 	name_lower = xstrdup (name);
-	for (p = name_lower; *p != '0'; ++p)
+	for (p = name_lower; *p != '\0'; ++p)
 	    *p = tolower (*p);
 	while (*cpp)
 	{
 	    pat_lower = xstrdup (*cpp++);
-	    for (p = pat_lower; *p != '0'; ++p)
+	    for (p = pat_lower; *p != '\0'; ++p)
 		*p = tolower (*p);
 	    if (fnmatch (pat_lower, name_lower, 0) == 0)
 		goto matched;
