@@ -4,6 +4,7 @@
 	the equivalent to lib/system.h.
 
 	* configure.in: Regenerated.
+	* config.h.in: Ditto.
 
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
