@@ -12518,6 +12518,24 @@ done
   fi
 
 
+    case $LIBOBJS in
+    "getpass.$ac_objext"   | \
+  *" getpass.$ac_objext"   | \
+    "getpass.$ac_objext "* | \
+  *" getpass.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getpass.$ac_objext" ;;
+esac
+
+
+  :
+
+
+cat >>confdefs.h <<\_ACEOF
+#define getpass gnu_getpass
+_ACEOF
+
+
+
       echo "$as_me:$LINENO: checking whether clearerr_unlocked is declared" >&5
 echo $ECHO_N "checking whether clearerr_unlocked is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl_clearerr_unlocked+set}" = set; then
@@ -20138,30 +20156,6 @@ _ACEOF
 
 
 
-
-
-
-    case $LIBOBJS in
-    "getpass.$ac_objext"   | \
-  *" getpass.$ac_objext"   | \
-    "getpass.$ac_objext "* | \
-  *" getpass.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getpass.$ac_objext" ;;
-esac
-
-
-  :
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getpass gnu_getpass
-_ACEOF
-
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getpass cvs_getpass
-_ACEOF
 
 
 #

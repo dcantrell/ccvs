@@ -1,3 +1,9 @@
+2004-10-01  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (getpass): Don't define twice.
+	(Report and original patch from Martin Neitzel
+	<neitzel@sco.gaertner.de>.)
+
 2004-09-25  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Use doc/mkman.pl as source for doc/mkman.

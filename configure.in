@@ -217,6 +217,9 @@ gl_FUNC_ALLOCA
 gl_FUNC_ATEXIT
 gl_FUNC_FNMATCH_POSIX
 gl_FUNC_GETHOSTNAME
+dnl Always use the GNULIB getpass to work around 8 character password limits on
+dnl HP-UX.
+gl_FUNC_GETPASS_GNU
 gl_FUNC_GLIBC_UNLOCKED_IO
 gl_FUNC_GNU_STRFTIME
 gl_FUNC_MEMMOVE
@@ -251,14 +254,6 @@ AC_REQUIRE([gt_TYPE_WINT_T])
 AC_REQUIRE([jm_AC_TYPE_INTMAX_T])
 AC_REQUIRE([jm_AC_TYPE_LONG_LONG])])
 CCVS_CALL_GNULIB_MACROS_ONCE()
-
-dnl We always want to use the GNULIB getpass, so define its name to something
-dnl that won't conflict with system declarations.
-gl_FUNC_GETPASS_GNU
-AC_DEFINE([getpass], [cvs_getpass],
-  [We want to always use the GNULIB version of getpass which we have in lib,
-   so define getpass to something that won't conflict with any existing system
-   declarations.])
 
 #
 # End GNULIB stuff.
