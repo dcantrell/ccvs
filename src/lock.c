@@ -377,6 +377,14 @@ Simple_Lock_Cleanup (void)
 
 /*
  * Clean up all outstanding locks and free their storage.
+ *
+ * NOTES
+ *   This function needs to be reentrant since a call to exit() can cause a
+ *   call to this function, which can then be interrupted by a signal, which
+ *   can cause a second call to this function.
+ *
+ * RETURNS
+ *   Nothing.
  */
 void
 Lock_Cleanup (void)
@@ -385,17 +393,10 @@ Lock_Cleanup (void)
 
     TRACE (TRACE_FUNCTION, "Lock_Cleanup()");
 
-    /* Since our signal handler must allow cleanup handlers to be called twice
-     * in order to avoid a race condition and still use the exit function,
+    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
+     * allowing this function to be called twice as an optimization.
      *
-     *   (There must be a few operations in exit() between when this function
-     *    is removed from its list of functions to call and when this function
-     *    is actually called and when the actual signal blocking takes place in
-     *    SIG_beginCrSect().  A signal could theoretically be recieved during
-     *    that time, triggering a call to exit() which would not cause this
-     *    function to be called a second time.)
-     *
-     * if we are already in a signal critical section, assume we were called
+     * If we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
      * The only time that we should get into one of these functions otherwise
      * while still in a critical section is if error(1,...) is called from a

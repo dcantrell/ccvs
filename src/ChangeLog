@@ -1,5 +1,10 @@
 2004-05-15  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (Lock_Cleanup), rcs.c (rcs_cleanup), server.c
+	(server_cleanup):  Clean up inchoherent comment.
+
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h, client.c, history.c, main.c, rcs.c, sanity.sh, server.c:
 	Back out get_date() changes from 2004-04-28.
 

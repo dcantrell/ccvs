@@ -4682,10 +4682,11 @@ struct request requests[] =
 
 #undef REQ_LINE
 };
-
 #endif /* SERVER_SUPPORT or CLIENT_SUPPORT */
-#ifdef SERVER_SUPPORT
 
+
+
+#ifdef SERVER_SUPPORT
 static void
 serve_valid_requests (char *arg)
 {
@@ -4708,13 +4709,15 @@ serve_valid_requests (char *arg)
     buf_flush (buf_to_net, 1);
 }
 
+
+
 #ifdef SUNOS_KLUDGE
 /*
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
  */
 static int command_pid_is_dead;
-static void wait_sig( int sig )
+static void wait_sig (int sig)
 {
     int status;
     pid_t r = wait (&status);
@@ -4722,6 +4725,8 @@ static void wait_sig( int sig )
 	command_pid_is_dead++;
 }
 #endif /* SUNOS_KLUDGE */
+
+
 
 /*
  * This function cleans up after the server.  Specifically, it:
@@ -4738,6 +4743,11 @@ static void wait_sig( int sig )
  * <li>Flush and shutdown the buffers.</li>
  * <li>Set ERROR_USE_PROTOCOL and SERVER_ACTIVE to false.</li>
  * </ol>
+ *
+ * NOTES
+ *   This function needs to be reentrant since a call to exit() can cause a
+ *   call to this function, which can then be interrupted by a signal, which
+ *   can cause a second call to this function.
  *
  * GLOBALS
  *   buf_from_net		The input buffer which brings data from the
@@ -4775,17 +4785,10 @@ server_cleanup (void)
 
     TRACE (TRACE_FUNCTION, "server_cleanup()");
 
-    /* Since our signal handler must allow cleanup handlers to be called twice
-     * in order to avoid a race condition and still use the exit function,
+    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
+     * allowing this function to be called twice as an optimization.
      *
-     *   (There must be a few operations in exit() between when this function
-     *    is removed from its list of functions to call and when this function
-     *    is actually called and when the actual signal blocking takes place in
-     *    SIG_beginCrSect().  A signal could theoretically be recieved during
-     *    that time, triggering a call to exit() which would not cause this
-     *    function to be called a second time.)
-     *
-     * if we are already in a signal critical section, assume we were called
+     * If we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
      * The only time that we should get into one of these functions otherwise
      * while still in a critical section is if error(1,...) is called from a
@@ -4803,7 +4806,7 @@ server_cleanup (void)
     if (never_run_again) return;
     if (SIG_inCrSect()) never_run_again = 1;
 
-    assert(server_active);
+    assert (server_active);
 
     /* Since we install this function in an atexit() handler before forking,
      * reuse the ERROR_USE_PROTOCOL flag, which we know is only set in the
@@ -4861,9 +4864,11 @@ server_cleanup (void)
 	    if (command_pid > 0)
 	    {
 		/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
-		   triggered by the use of rename() in RCS, wait for the
-		   subprocess to die.  Unfortunately, this means draining output
-		   while waiting for it to unblock the signal we sent it.  Yuck!  */
+		 * triggered by the use of rename() in RCS, wait for the
+		 * subprocess to die.  Unfortunately, this means draining
+		 * output while waiting for it to unblock the signal we sent
+		 * it.  Yuck!
+		 */
 		int status;
 		pid_t r;
 
@@ -4873,8 +4878,9 @@ server_cleanup (void)
 		   children have exited.  */
 		kill (command_pid, SIGINT);
 		/* The caller may also have sent a signal to command_pid, so
-		   always try waiting.  First, though, check and see if it's still
-		   there....  */
+		 * always try waiting.  First, though, check and see if it's
+		 * still there....
+		 */
 	    do_waitpid:
 		r = waitpid (command_pid, &status, WNOHANG);
 		if (r == 0)
@@ -4968,6 +4974,8 @@ server_cleanup (void)
 
     server_active = 0;
 }
+
+
 
 int server_active = 0;
 
