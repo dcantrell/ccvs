@@ -80,7 +80,6 @@ unlock (repository)
     char *repository;
 {
     char tmp[PATH_MAX];
-    struct stat sb;
 
     if (readlock[0] != '\0')
     {
