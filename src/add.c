@@ -121,7 +121,7 @@ add (int argc, char **argv)
 	    p = argv[i];
 	    while (*p != '\0')
 	    {
-		if (ISSLASH (*p))
+		if (ISDIRSEP (*p))
 		{
 		    found_slash = 1;
 		    break;
@@ -185,6 +185,16 @@ add (int argc, char **argv)
 	    /* FIXME: Does this erroneously call Create_Admin in error
 	       conditions which are only detected once the server gets its
 	       hands on things?  */
+	    /* FIXME-also: if filenames are case-insensitive on the
+	       client, and the directory in the repository already
+	       exists and is named "foo", and the command is "cvs add
+	       FOO", this call to Create_Admin puts the wrong thing in
+	       CVS/Repository and so a subsequent "cvs update" will
+	       give an error.  The fix will be to have the server report
+	       back what it actually did (e.g. use tagged text for the
+	       "Directory %s added" message), and then Create_Admin,
+	       which should also fix the error handling concerns.  */
+
 	    if (isdir (argv[j]))
 	    {
 		char *tag;
@@ -223,11 +233,11 @@ add (int argc, char **argv)
 
 		/* don't add stuff to Emptydir */
 		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
-		    && ISSLASH (repository[cvsroot_len])
+		    && ISDIRSEP (repository[cvsroot_len])
 		    && strncmp (repository + cvsroot_len + 1,
 				CVSROOTADM,
 				sizeof CVSROOTADM - 1) == 0
-		    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
+		    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
 		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 			       CVSNULLREPOS) == 0)
 		    error (1, 0, "cannot add to `%s'", repository);
@@ -321,11 +331,11 @@ add (int argc, char **argv)
 	/* don't add stuff to Emptydir */
 	if (strncmp (repository, current_parsed_root->directory,
 		     cvsroot_len) == 0
-	    && ISSLASH (repository[cvsroot_len])
+	    && ISDIRSEP (repository[cvsroot_len])
 	    && strncmp (repository + cvsroot_len + 1,
 			CVSROOTADM,
 			sizeof CVSROOTADM - 1) == 0
-	    && ISSLASH (repository[cvsroot_len + sizeof CVSROOTADM])
+	    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
 	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 		       CVSNULLREPOS) == 0)
 	    error (1, 0, "cannot add to `%s'", repository);
@@ -686,10 +696,8 @@ add (int argc, char **argv)
     if (options)
 	free (options);
 
-    return err;
+    return (err);
 }
-
-
 
 /*
  * The specified user file is really a directory.  So, let's make sure that
@@ -717,12 +725,12 @@ add_directory (struct file_info *finfo)
 	/* "Can't happen".  */
 	error (0, 0,
 	       "directory %s not added; must be a direct sub-directory", dir);
-	return 1;
+	return (1);
     }
     if (fncmp (dir, CVSADM) == 0)
     {
 	error (0, 0, "cannot add a `%s' directory", CVSADM);
-	return 1;
+	return (1);
     }
 
     /* before we do anything else, see if we have any per-directory tags */
@@ -867,7 +875,7 @@ out:
     free_cwd (&cwd);
     if (rcsdir != NULL)
 	free (rcsdir);
-    return 0;
+    return (0);
 }
 
 
@@ -885,7 +893,7 @@ build_entry (const char *repository, const char *user, const char *options,
     FILE *fp;
 
     if (noexec)
-	return 0;
+	return (0);
 
     /*
      * The requested log is read directly from the user and stored in the
@@ -910,7 +918,7 @@ build_entry (const char *repository, const char *user, const char *options,
     (void) sprintf (line, "Initial %s", user);
     Register (entries, user, "0", line, options, tag, (char *) 0, (char *) 0);
     free (line);
-    return 0;
+    return (0);
 }
 
 

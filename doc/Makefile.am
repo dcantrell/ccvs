@@ -15,7 +15,6 @@
 # GNU General Public License for more details.
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-man_MANS = cvs.1
 
 PSS = \
 	cvs.ps \
@@ -37,10 +36,7 @@ EXTRA_DIST = \
 	ChangeLog.fsf \
 	RCSFILES \
 	mdate-sh \
-	cvs.1 \
-	cvs-paper.ms \
-	cvs.man.header \
-	cvs.man.footer
+	cvs-paper.ms
 
 MOSTLYCLEANFILES = \
 	$(TXTS)
@@ -76,14 +72,9 @@ cvs-paper.ps: cvs-paper.ms
 cvs-paper.pdf: cvs-paper.ps
 	ps2pdf $< $@
 
-# Targets to build a man page from cvs.texinfo.
-cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
-	./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
-	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
-MAINTAINERCLEANFILES += $(srcdir)/cvs.1
+SUFFIXES = .txt
 
 # texinfo based targets automake neglects to include
-SUFFIXES = .txt
 .texinfo.txt:
 	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
 	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<

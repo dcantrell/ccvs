@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=libdiff - Win32 Debug
+CFG=libdiff - Win32 Release
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,7 +13,7 @@ CFG=libdiff - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "libdiff.mak" CFG="libdiff - Win32 Debug"
+!MESSAGE NMAKE /f "libdiff.mak" CFG="libdiff - Win32 Release"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -32,8 +32,8 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "WinRel"
-# PROP BASE Intermediate_Dir "WinRel"
+# PROP BASE Output_Dir "Release"
+# PROP BASE Intermediate_Dir "Release"
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
@@ -55,8 +55,8 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "WinDebug"
-# PROP BASE Intermediate_Dir "WinDebug"
+# PROP BASE Output_Dir "Debug"
+# PROP BASE Intermediate_Dir "Debug"
 # PROP BASE Target_Dir ".\libdiff"
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
@@ -105,7 +105,15 @@ SOURCE=.\diff.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\diff3.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diffrun.h
 # End Source File
 # Begin Source File
 
@@ -138,46 +146,6 @@ SOURCE=.\util.c
 # Begin Source File
 
 SOURCE=.\version.c
-# End Source File
-# End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl;fi;fd"
-# Begin Source File
-
-SOURCE="..\windows-NT\config.h"
-# End Source File
-# Begin Source File
-
-SOURCE=.\diff.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\diffrun.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\lib\fnmatch.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\lib\getopt.h
-# End Source File
-# Begin Source File
-
-SOURCE="..\windows-NT\ndir.h"
-# End Source File
-# Begin Source File
-
-SOURCE=..\lib\regex.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\system.h
-# End Source File
-# Begin Source File
-
-SOURCE="..\windows-NT\unistd.h"
 # End Source File
 # End Group
 # End Target

@@ -48,19 +48,6 @@
  */
 #include <sys/types.h>
 
-/* A GNULIB replacement for this C99 header is supplied when it is missing.
- * See the comments in stdbool_.h for its limitations.
- */
-#include <stdbool.h>
-
-/* Ditto for this POSIX.2 header.  */
-#include <fnmatch.h>
-
-/* For struct timespec.  */
-#include "timespec.h"
-
-
-
 #if HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */
@@ -234,6 +221,8 @@ off_t lseek ();
 char *getcwd ();
 #endif
 
+#include "xtime.h"
+
 #ifdef HAVE_IO_H
 #include <io.h>
 #endif
@@ -326,26 +315,26 @@ extern int errno;
 /* Under OS/2, this must be included _after_ stdio.h; that's why we do
    it here. */
 #ifdef USE_OWN_TCPIP_H
-# include "tcpip.h"
+#include "tcpip.h"
 #endif
 
 #ifdef HAVE_FCNTL_H
-# include <fcntl.h>
+#include <fcntl.h>
 #else
-# include <sys/file.h>
+#include <sys/file.h>
 #endif
 
 #ifndef SEEK_SET
-# define SEEK_SET 0
-# define SEEK_CUR 1
-# define SEEK_END 2
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 2
 #endif
 
 #ifndef F_OK
-# define F_OK 0
-# define X_OK 1
-# define W_OK 2
-# define R_OK 4
+#define F_OK 0
+#define X_OK 1
+#define W_OK 2
+#define R_OK 4
 #endif
 
 #if HAVE_DIRENT_H
@@ -370,7 +359,7 @@ extern int errno;
 #define convert_blocks(b, k) ((k) ? ((b) + 1) / 2 : (b))
 
 #ifndef S_ISLNK
-# define lstat stat
+#define lstat stat
 #endif
 
 /*
@@ -378,13 +367,13 @@ extern int errno;
  * because "config.h" is always included last.
  */
 #ifndef S_IWRITE
-# define	S_IWRITE	0000200    /* write permission, owner */
+#define	S_IWRITE	0000200		/* write permission, owner */
 #endif
 #ifndef S_IWGRP
-# define	S_IWGRP		0000020    /* write permission, grougroup */
+#define	S_IWGRP		0000020		/* write permission, grougroup */
 #endif
 #ifndef S_IWOTH
-# define	S_IWOTH		0000002    /* write permission, other */
+#define	S_IWOTH		0000002		/* write permission, other */
 #endif
 
 /* Under non-UNIX operating systems (MS-DOS, WinNT, MacOS), many filesystem
@@ -393,51 +382,51 @@ extern int errno;
    can hang their own definitions.  */
 
 #ifndef CVS_ACCESS
-# define CVS_ACCESS access
+#define CVS_ACCESS access
 #endif
 
 #ifndef CVS_CHDIR
-# define CVS_CHDIR chdir
+#define CVS_CHDIR chdir
 #endif
 
 #ifndef CVS_CREAT
-# define CVS_CREAT creat
+#define CVS_CREAT creat
 #endif
 
 #ifndef CVS_FOPEN
-# define CVS_FOPEN fopen
+#define CVS_FOPEN fopen
 #endif
 
 #ifndef CVS_FDOPEN
-# define CVS_FDOPEN fdopen
+#define CVS_FDOPEN fdopen
 #endif
 
 #ifndef CVS_MKDIR
-# define CVS_MKDIR mkdir
+#define CVS_MKDIR mkdir
 #endif
 
 #ifndef CVS_OPEN
-# define CVS_OPEN open
+#define CVS_OPEN open
 #endif
 
 #ifndef CVS_READDIR
-# define CVS_READDIR readdir
+#define CVS_READDIR readdir
 #endif
 
 #ifndef CVS_CLOSEDIR
-# define CVS_CLOSEDIR closedir
+#define CVS_CLOSEDIR closedir
 #endif
 
 #ifndef CVS_OPENDIR
-# define CVS_OPENDIR opendir
+#define CVS_OPENDIR opendir
 #endif
 
 #ifndef CVS_RENAME
-# define CVS_RENAME rename
+#define CVS_RENAME rename
 #endif
 
 #ifndef CVS_RMDIR
-# define CVS_RMDIR rmdir
+#define CVS_RMDIR rmdir
 #endif
 
 #ifndef CVS_STAT
@@ -468,12 +457,12 @@ extern int errno;
 #endif
 
 #ifndef CVS_UNLINK
-# define CVS_UNLINK unlink
+#define CVS_UNLINK unlink
 #endif
 
 /* Wildcard matcher.  Should be case-insensitive if the system is.  */
 #ifndef CVS_FNMATCH
-# define CVS_FNMATCH fnmatch
+#define CVS_FNMATCH fnmatch
 #endif
 
 #ifndef HAVE_FSEEKO
@@ -497,23 +486,31 @@ int fseeko (FILE *, off_t, int);
 #endif /* WIN32 */
 
 
+#ifdef WOE32
+  /* Under Windows NT, filenames are case-insensitive.  */
+# define FILENAMES_CASE_INSENSITIVE 1
+#endif /* WOE32 */
+
+
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 
 # if defined (__CYGWIN32__) || defined (WOE32)
-    /* Under Windows, filenames are case-insensitive, and both / and \
+    /* Under Windows NT, filenames are case-insensitive, and both / and \
        are path component separators.  */
 #   define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
 extern unsigned char WNT_filename_classes[];
+    /* Is the character C a path name separator?  Under
+       Windows NT, you can use either / or \.  */
+#   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
+#   define ISABSOLUTE(s) (ISDIRSEP(s[0]) || FOLD_FN_CHAR(s[0]) >= 'a' && FOLD_FN_CHAR(s[0]) <= 'z' && s[1] == ':' && ISDIRSEP(s[2]))
 # else /* ! WOE32 */
-  /* As far as I know, just Macintosh OS X can make it here,
+  /* As far as I know, both Cygwin and Macintosh OS X can make it here,
    * but since the OS X fold just folds a-z into A-Z or visa-versa, I'm just
-   * allowing it to be used for any case insensitive system which we aren't
-   * yet making other specific folds or exceptions for (basically, anything
-   * case insensitive other than Windows, where \ and C:\ style absolute paths
-   * also need to be accounted for).
+   * using it for Cygwin too.  The var name below could probably use a
+   * rename.
    *
-   * Under Mac OS X, filenames are case-insensitive.
+   * Under Mac OS X & Cygwin, filenames are case-insensitive.
    */
 #   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
 extern unsigned char OSX_filename_classes[];
@@ -544,11 +541,17 @@ extern void fnfold (char *FILENAME);
 # define fncmp strcmp
 #endif
 
+/* Different file systems have different path component separators.
+   For the VMS port we might need to abstract further back than this.  */
+#ifndef ISDIRSEP
+# define ISDIRSEP(c) ((c) == '/')
+#endif
+
 /* Different file systems can have different naming patterns which designate
- * a path as absolute.
+ * a path as absolute
  */
 #ifndef ISABSOLUTE
-# define ISABSOLUTE(s) ISSLASH(s[FILESYSTEM_PREFIX_LEN(s)])
+# define ISABSOLUTE(s) ISDIRSEP(s[0])
 #endif
 
 

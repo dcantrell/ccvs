@@ -1,7 +1,3 @@
 Makefile
 check.log
 check.plog
-fix-msvc-mak
-mkconfig
-stamp-ch
-stamp-sh

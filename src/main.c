@@ -128,7 +128,6 @@ static const struct cmd
     { "login",    "logon",    "lgn",       login,     0 },
     { "logout",   NULL,       NULL,        logout,    0 },
 #endif /* AUTH_CLIENT_SUPPORT */
-    { "ls",       "dir",      "list",      ls,        0 },
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     { "pserver",  NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR }, /* placeholder */
 #endif
@@ -137,7 +136,6 @@ static const struct cmd
     { "release",  "re",       "rel",       release,   0 },
     { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
     { "rlog",     "rl",       NULL,        cvslog,    0 },
-    { "rls",      "rdir",     "rlist",     ls,        0 },
     { "rtag",     "rt",       "rfreeze",   cvstag,    CVS_CMD_MODIFIES_REPOSITORY },
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
@@ -221,7 +219,6 @@ static const char *const cmd_usage[] =
     "        login        Prompt for password for authenticating server\n",
     "        logout       Removes entry in .cvspass for remote repository\n",
 #endif /* AUTH_CLIENT_SUPPORT */
-    "        ls           List files available from CVS\n",
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     "        pserver      Password server mode\n",
 #endif
@@ -230,7 +227,6 @@ static const char *const cmd_usage[] =
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Remove an entry from the repository\n",
     "        rlog         Print out history information for a module\n",
-    "        rls          List files in a module\n",
     "        rtag         Add a symbolic tag to a module\n",
 #ifdef SERVER_SUPPORT
     "        server       Server mode\n",
@@ -1089,18 +1085,16 @@ cause intermittent sandbox corruption.");
 	return 0;
 }
 
-
-
 char *
 Make_Date (char *rawdate)
 {
-    time_t unixtime = get_date (rawdate, NULL);
-    if (unixtime == (time_t)-1)
-	error (1, 0, "Can't parse date/time: `%s'", rawdate);
+    time_t unixtime;
+
+    unixtime = get_date (rawdate, (struct timeb *) NULL);
+    if (unixtime == (time_t) - 1)
+	error (1, 0, "Can't parse date/time: %s", rawdate);
     return date_from_time_t (unixtime);
 }
-
-
 
 /* Convert a time_t to an RCS format date.  This is mainly for the
    use of "cvs history", because the CVSROOT/history file contains
@@ -1131,10 +1125,8 @@ date_from_time_t (time_t unixtime)
 		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
 		    ftm->tm_min, ftm->tm_sec);
     ret = xstrdup (date);
-    return ret;
+    return (ret);
 }
-
-
 
 /* Convert a date to RFC822/1123 format.  This is used in contexts like
    dates to send in the protocol; it should not vary based on locale or
@@ -1151,8 +1143,6 @@ date_to_internet (char *dest, const char *source)
     date_to_tm (&date, source);
     tm_to_internet (dest, &date);
 }
-
-
 
 void
 date_to_tm (struct tm *dest, const char *source)
@@ -1172,8 +1162,6 @@ date_to_tm (struct tm *dest, const char *source)
     dest->tm_mon -= 1;
 }
 
-
-
 /* Convert a date to RFC822/1123 format.  This is used in contexts like
    dates to send in the protocol; it should not vary based on locale or
    other such conventions for users.  We should have another routine which
@@ -1191,108 +1179,9 @@ tm_to_internet (char *dest, const struct tm *source)
 	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     
     sprintf (dest, "%d %s %d %02d:%02d:%02d -0000", source->tm_mday,
-	     source->tm_mon < 0 || source->tm_mon > 11
-               ? "???" : month_names[source->tm_mon],
-	     source->tm_year + 1900, source->tm_hour, source->tm_min,
-             source->tm_sec);
+	     source->tm_mon < 0 || source->tm_mon > 11 ? "???" : month_names[source->tm_mon],
+	     source->tm_year + 1900, source->tm_hour, source->tm_min, source->tm_sec);
 }
-
-
-
-/*
- * Format a date for the current locale.
- *
- * INPUT
- *   UNIXTIME	The UNIX seconds since the epoch.
- *
- * RETURNS
- *   If my_strftime() encounters an error, this function can return NULL.
- *
- *   Otherwise, returns a date string in ISO8601 format, e.g.:
- *
- *	2004-04-29 13:24:22 -0700
- *
- *   It is the responsibility of the caller to return of this string.
- */
-static char *
-format_time_t (time_t unixtime)
-{
-    static char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
-    /* Convert to a time in the local time zone.  */
-    struct tm ltm = *(gmtime (&unixtime));
-
-    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
-	return NULL;
-
-    return xstrdup (buf);
-}
-
-
-
-/* Like format_time_t(), but return time in UTC.
- */
-char *
-gmformat_time_t (time_t unixtime)
-{
-    static char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
-    /* Convert to a time in the local time zone.  */
-    struct tm ltm = *(gmtime (&unixtime));
-
-    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
-	return NULL;
-
-    return xstrdup (buf);
-}
-
-
-
-/* Format a date in the local timezone using format_time_t() given a date from
- * an arbitrary timezone in a string.
- *
- * INPUT
- *   DATESTR	A string that looks like anything get_date() can parse, e.g.:
- *
- *                      2004-04-29 20:24:22
- *
- * ERRORS
- *   As get_date() & format_time_t().  Prints a warning if either provide
- *   error return values.  See RETURNS.
- *
- * RETURNS
- *   A freshly allocated string that is a copy of the input string if either
- *   get_date() or format_time_t() encounter an error and as format_time_t()
- *   otherwise.
- */
-char *
-format_date_alloc (char *datestr)
-{
-    time_t unixtime;
-    char *buf;
-
-    TRACE (TRACE_FUNCTION, "format_date (%s)", datestr);
-
-    /* Convert the date string to seconds since the epoch. */
-    unixtime = get_date (datestr, NULL);
-    if (unixtime == (time_t)-1)
-    {
-	error (0, 0, "Can't parse date/time: `%s'.", datestr);
-	goto as_is;
-    }
-
-    /* Get the time into a string.  */
-    if ((buf = format_time_t (unixtime)) == NULL)
-    {
-	error (0, 0, "Unable to reformat date `%s'.", datestr);
-	goto as_is;
-    }
-
-    return buf;
-
- as_is:
-    return xstrdup (datestr);
-}
-
-
 
 void
 usage (register const char *const *cpp)

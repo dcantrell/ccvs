@@ -41,7 +41,6 @@
 
 /* begin GNULIB headers */
 #include "exit.h"
-#include "vasnprintf.h"
 #include "xalloc.h"
 /* end GNULIB headers */
 
@@ -59,6 +58,12 @@ char *getenv();
    string.h.  */
 char *strerror (int);
 #endif
+
+#ifdef HAVE_FNMATCH
+# include <fnmatch.h> /* This is supposed to be available on Posix systems */
+#else /* HAVE_FNMATCH */
+# include "fnmatch.h" /* Our substitute */
+#endif /* HAVE_FNMATCH */
 
 #include "system.h"
 
@@ -430,8 +435,6 @@ char *date_from_time_t (time_t);
 void date_to_internet (char *, const char *);
 void date_to_tm (struct tm *, const char *);
 void tm_to_internet (char *, const struct tm *);
-char *gmformat_time_t (time_t unixtime);
-char *format_date_alloc (char *text);
 
 char *Name_Repository (const char *dir, const char *update_dir);
 const char *Short_Repository (const char *repository);
@@ -452,8 +455,6 @@ char *previous_rev (RCSNode *rcs, const char *rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *getcaller (void);
-char *entries_time (time_t unixtime);
-time_t unix_time_stamp (const char *file);
 char *time_stamp (const char *file);
 
 void *xmalloc (size_t bytes)
@@ -496,7 +497,6 @@ FILE *cvs_temp_file (char **filename);
 int numdots (const char *s);
 char *increment_revnum (const char *);
 int compare_revnums (const char *, const char *);
-int ls (int argc, char *argv[]);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
 
@@ -539,13 +539,7 @@ void write_letter (struct file_info *finfo, int letter);
 int xcmp (const char *file1, const char *file2);
 int yesno (void);
 void *valloc (size_t bytes);
-
-/* Need this until we back out the get_date () proto again and use a current
- * version of getdate.y from GNULIB.
- */
-#include "xtime.h"
 time_t get_date (char *date, struct timeb *now);
-
 int Create_Admin (const char *dir, const char *update_dir,
                   const char *repository, const char *tag, const char *date,
                   int nonbranch, int warn, int dotemplate);
@@ -613,6 +607,7 @@ void expand_wild (int argc, char **argv,
 
 #ifdef SERVER_SUPPORT
 int cvs_casecmp (const char *, const char *);
+int fopen_case (char *, char *, FILE **, char **);
 #endif
 
 /* exithandle.c */

@@ -6,5 +6,3 @@ WinDebug
 WinRel
 alloca.h
 fnmatch.h
-stdbool.h
-getdate
