@@ -15,6 +15,11 @@ Mon Oct 16 15:58:31 1995  Gary Oberbrunner <garyo@avs.com>
 	* server.c (server_register): Don't pass NULL to printf if tag,
 	date, or conflict is NULL.
 
+Thu Oct 12 12:13:42 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c (main): begin to handle "pserver"; support not complete
+        yet, however.
+
 Thu Oct 12 02:52:13 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 
 	* expand_path.c: Don't #include <pwd.h>, since cvs.h already does,

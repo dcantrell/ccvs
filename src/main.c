@@ -467,6 +467,58 @@ error 0 %s: no such user\n", user);
     }
 #endif /* HAVE_KERBEROS */
 
+#ifdef CVS_LOGIN
+#ifdef SERVER_SUPPORT
+    if (! strcmp (argv[0], "pserver"))
+      {
+        /* todo:
+         * Here, `user' will have to gotten somehow, and looked up in
+         * CVSROOT/passwd or else /etc/passwd.
+         */
+	int len;
+	char user[ANAME_SZ];
+	struct passwd *pw;
+
+        /* user = somehow_get_username (); */
+
+	pw = getpwnam (user);
+	if (pw == NULL)
+          {
+	    printf ("E Fatal error, aborting.\n"
+                    "error 0 %s: no such user\n", user);
+	    exit (1);
+	}
+
+	initgroups (pw->pw_name, pw->pw_gid);
+	setgid (pw->pw_gid);
+	setuid (pw->pw_uid);
+	/* Inhibit access by randoms.  Don't want people randomly
+	   changing our temporary tree before we check things in.  */
+	umask (077);
+
+#if HAVE_PUTENV
+	/* Set LOGNAME and USER in the environment, in case they are
+           already set to something else.  */
+	{
+	    char *env;
+
+	    env = xmalloc (sizeof "LOGNAME=" + strlen (user));
+	    (void) sprintf (env, "LOGNAME=%s", user);
+	    (void) putenv (env);
+
+	    env = xmalloc (sizeof "USER=" + strlen (user));
+	    (void) sprintf (env, "USER=%s", user);
+	    (void) putenv (env);
+	}
+#endif
+	/* Pretend we were invoked as a plain server.  */
+	argv[0] = "server";
+      }
+
+#endif /* SERVER_SUPPORT */
+#endif /* CVS_LOGIN */
+
+
 #ifdef CVSADM_ROOT
     /*
      * See if we are able to find a 'better' value for CVSroot in the
