@@ -209,9 +209,16 @@ release (argc, argv)
           }
 	}
 
+	if (1
 #ifdef SERVER_SUPPORT
-	if (!server_active)
+	    && !server_active
 #endif
+#ifdef CLIENT_SUPPORT
+	    && !(client_active
+		 && (!supported_request ("noop")
+		     || !supported_request ("Notify")))
+#endif
+	    )
 	{
 	  /* We are chdir'ed into the directory in question.  
 	     So don't pass args to unedit.  */

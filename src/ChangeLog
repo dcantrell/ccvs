@@ -1,5 +1,11 @@
 Thu Jan  4 09:58:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* release.c (release): If we are the client, only unedit if the
+	server supports it.
+
+	* sanity.sh: Remove STARTANCHOR stuff; expr patterns are
+	automatically anchored to the start.  ENDANCHOR remains.
+
 	* commit.c (commit): Don't start the server until we have
 	determined that there is something to commit.
 
