@@ -1,3 +1,8 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	* root.c (parse_cvsroot): Ignore method options.
+	* sanity.sh (parseroot): Verify that method options are ignored.
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	* root.h (cvsroot_t): Move username, password, hostname, port inside

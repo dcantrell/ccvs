@@ -3703,13 +3703,27 @@ ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.2; previous revision: 1\.1
 done
 ${PROG} commit: Rebuilding administrative file database"
-	  CVSROOT=${CVSROOT_save}
+
+	  if $remote; then
+	    # I only test these when testing remote in case CVS was compiled
+	    # without client support.
+
+	    # logout does not try to contact the server.
+	    CVSROOT=":pserver;proxy=localhost;proxyport=8080:localhost/dev/null"
+	    dotest parseroot-3r "$testcvs -d'$CVSROOT' logout" \
+"$PROG logout: WARNING: Ignoring method options found in CVSROOT: \`proxy=localhost;proxyport=8080'\.
+$PROG logout: Use CVS version 1\.12\.7 or later to handle method options\.
+Logging out of :pserver:oberon@localhost:2401/dev/null
+$PROG logout: warning: failed to open /tmp/cvs-sanity-1.11.x/home/\.cvspass for reading: No such file or directory
+$PROG logout: Entry not found\."
+	  fi
 
 	  if $keep; then
-		echo Keeping ${TESTDIR} and exiting due to --keep
+		echo Keeping $TESTDIR and exiting due to --keep
 		exit 0
 	  fi
 
+	  CVSROOT=$CVSROOT_save
 	  cd ..
 	  rm -r 1
 	  ;;
