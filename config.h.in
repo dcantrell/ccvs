@@ -59,6 +59,9 @@
    relevant when using GSSAPI. */
 #undef GSS_C_NT_HOSTBASED_SERVICE
 
+/* Define to 1 if you have the `atexit' function. */
+#undef HAVE_ATEXIT
+
 /* Define if you have the connect function. */
 #undef HAVE_CONNECT
 
