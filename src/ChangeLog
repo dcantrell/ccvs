@@ -1,5 +1,7 @@
 2003-04-04  Larry Jones  <lawrence.jones@eds.com>
 
+	* sanity.sh (branches4-15): New test.
+
 	* error.h: Avoid __pure__ for GCC versions < 2.96 & __malloc__ for GCC
 	versions < 3.0.
 
