@@ -6356,12 +6356,12 @@ error ENOMEM Virtual memory exhausted.\n");
     {
         int retval;
 
-        retval = pam_close_session(pamh, 0);
+        retval = pam_close_session (pamh, 0);
 #ifdef HAVE_SYSLOG_H
         if (retval != PAM_SUCCESS)
             syslog (LOG_DAEMON | LOG_ERR, 
                     "PAM close session error: %s",
-                    pam_strerror(pamh, retval));
+                    pam_strerror (pamh, retval));
 #endif
 
         retval = pam_end (pamh, retval);
@@ -6369,7 +6369,7 @@ error ENOMEM Virtual memory exhausted.\n");
         if (retval != PAM_SUCCESS)
             syslog (LOG_DAEMON | LOG_ERR, 
                     "PAM failed to release authenticator, error: %s",
-                    pam_strerror(pamh, retval));
+                    pam_strerror (pamh, retval));
 #endif
     }
 #endif
@@ -6393,15 +6393,17 @@ switch_to_user (const char *cvs_username, const char *username)
 
     if (pamh)
     {
-        retval = pam_open_session(pamh, 0);
-        if (retval == PAM_SUCCESS) {
+        retval = pam_open_session (pamh, 0);
+        if (retval == PAM_SUCCESS)
+        {
             pam_stage = "get pam user";
-            retval = pam_get_item(pamh, PAM_USER, (const void **)&username);
+            retval = pam_get_item (pamh, PAM_USER, (const void **)&username);
         }
 
-        if (retval != PAM_SUCCESS) {
+        if (retval != PAM_SUCCESS)
+        {
             printf("E PAM %s error: %s\n", pam_stage,
-                    pam_strerror(pamh, retval));
+                    pam_strerror (pamh, retval));
             exit (EXIT_FAILURE);
         }
     }
@@ -6454,10 +6456,11 @@ error 0 %s: no such system user\n", username);
 #ifdef HAVE_PAM
     if (pamh)
     {
-        retval = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-        if (retval != PAM_SUCCESS) {
+        retval = pam_setcred (pamh, PAM_ESTABLISH_CRED);
+        if (retval != PAM_SUCCESS)
+        {
             printf("E PAM reestablish credentials error: %s\n", 
-                    pam_strerror(pamh, retval));
+                    pam_strerror (pamh, retval));
             exit (EXIT_FAILURE);
         }
     }
@@ -6771,28 +6774,32 @@ check_pam_password (char **username, char *password)
     retval = pam_start (PAM_SERVICE_NAME, *username, &conv, &pamh);
 
     /* sets a dummy tty name which pam modules can check for */
-    if (retval == PAM_SUCCESS) {
+    if (retval == PAM_SUCCESS)
+    {
         pam_stage = "set dummy tty";
-        retval = pam_set_item(pamh, PAM_TTY, PAM_SERVICE_NAME);
+        retval = pam_set_item (pamh, PAM_TTY, PAM_SERVICE_NAME);
     }
 
-    if (retval == PAM_SUCCESS) {
+    if (retval == PAM_SUCCESS)
+    {
 	pam_stage = "authenticate";
-	retval = pam_authenticate(pamh, 0);
+	retval = pam_authenticate (pamh, 0);
     }
 
-    if (retval == PAM_SUCCESS) {
+    if (retval == PAM_SUCCESS)
+    {
 	pam_stage = "account";
 	retval = pam_acct_mgmt (pamh, 0);
     }
 
-    if (retval == PAM_SUCCESS) {
+    if (retval == PAM_SUCCESS)
+    {
         pam_stage = "get pam user";
-        retval = pam_get_item(pamh, PAM_USER, (const void **)username);
+        retval = pam_get_item (pamh, PAM_USER, (const void **)username);
     }
 
     if (retval != PAM_SUCCESS)
-	printf ("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
+	printf ("E PAM %s error: %s\n", pam_stage, pam_strerror (pamh, retval));
 
     /* clear the pointers to make sure we don't use these references again */
     pam_username = 0;
