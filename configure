@@ -11669,27 +11669,41 @@ fi
   fi
 
   # Define an additional variable used in the Makefile substitution.
-
-  cat >conftest.$ac_ext <<_ACEOF
+  if test $ac_cv_working_alloca_h = yes; then
+    cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
-#if defined __GNUC__ || defined _MSC_VER || !HAVE_ALLOCA_H
-  Need own alloca
+#if defined __GNUC__ || defined _AIX || defined _MSC_VER
+	Need own alloca
 #endif
 
 _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "Need own alloca" >/dev/null 2>&1; then
-  ALLOCA_H=alloca.h
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ALLOCA 1
+_ACEOF
+
+       ALLOCA_H=alloca.h
 else
   ALLOCA_H=
 fi
 rm -f conftest*
 
+  else
+    ALLOCA_H=alloca.h
+  fi
+
+
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ALLOCA_H 1
+_ACEOF
 
 
 
