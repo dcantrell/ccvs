@@ -1436,6 +1436,8 @@ diff -c /dev/null trdiff/new:1\.1
 #		  exit 0
 #		fi
 
+		cd ..
+		rm -rf testimport
 		rm -rf ${CVSROOT_DIRNAME}/trdiff
 		;;
 
