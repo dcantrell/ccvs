@@ -405,6 +405,11 @@ diff_fileproc (callerdat, finfo)
     char *tocvsPath;
     char *fname;
 
+    /* Initialize these solely to avoid warnings from gcc -Wall about
+       variables that might be used uninitialized.  */
+    tmp = NULL;
+    fname = NULL;
+
     user_file_rev = 0;
     vers = Version_TS (finfo, NULL, NULL, NULL, 1, 0);
 
