@@ -1,5 +1,15 @@
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
+	* patch.c (patch_fileproc): Output revision number of the original
+	revision in the removed case.
+	(Idea from Paul Edwards <kerravon@w3.to>.)
+
+	* sanity.sh (rdiff-add-remove-nodiff): Rename to...
+	(rdiff-short): ...this.  Test for the above changes.  Add some tests
+	for when rev2 defaults to the trunk.  Expand comments.
+
+2003-06-23  Derek Price  <derek@ximbiot.com>
+
 	* add.c (add): Fix xmalloc's strlen() of wrong variable.
 	* checkout.c (safe_location): leak: reused where_location without free.
 	* log.c (rlog_proc): leak: free where before exit.
