@@ -1,3 +1,11 @@
+2000-11-06  Jim Meyering  <meyering@lucent.com>
+
+	Compile with gcc's -Wformat and fix the exposed problems.
+	* root.c (parse_cvsroot) [! HAVE_KERBEROS]: Provide an argument
+	for the %s error format spec.
+	[! HAVE_GSSAPI]: Likewise.
+	(normalize_cvsroot): Put comment delimiters around token after `#endif'.
+
 2000-11-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: Some versions of sed require a space between -e and
