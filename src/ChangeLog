@@ -1,3 +1,10 @@
+Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* client.c (send_file_names): Look for the name to send in
+	Entries even if the file doesn't exist; we should send the
+	name as it appears in Entries in the "rm foo; cvs update FOO"
+	case.
+
 Tue Sep  3 20:50:11 1996  William A. Hoffman  <hoffman@albirio.crd.ge.com>
 
 	* rcs.c (RCS_fast_checkout): If workfile is NULL, don't try to

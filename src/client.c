@@ -4416,8 +4416,7 @@ send_file_names (argc, argv, flags)
 	/* For now just do this for files in the local
 	   directory.  Would be nice to handle the
 	   non-local case too, though.  */
-	if (p == last_component (p)
-	    && isfile (p))
+	if (p == last_component (p))
 	{
 	    FILE *ent;
 
