@@ -532,8 +532,8 @@ null_delproc (p)
  *      space or semicolon 
  *    o if key == "desc" then key and data are NULL and return -1 
  *    o if key wasn't terminated by a semicolon, skip white space and fill 
- *      in value with everything up to a semicolon o compress all whitespace
- *      down to a single space 
+ *      in value with everything up to a semicolon 
+ *    o compress all whitespace down to a single space 
  *    o if a word starts with @, do funky rcs processing
  *    o strip whitespace off end of value or set value to NULL if it empty 
  *    o return 0 since we found something besides "desc"
@@ -554,11 +554,9 @@ getrcskey (fp, keyp, valp)
 {
     char *cur, *max;
     int c;
-    int funky = 0;
-    int white = 1;
 
     /* skip leading whitespace */
-    while (1)
+    do
     {
 	c = getc (fp);
 	if (c == EOF)
@@ -567,25 +565,22 @@ getrcskey (fp, keyp, valp)
 	    *valp = (char *) NULL;
 	    return (-1);
 	}
-	if (!whitespace (c))
-	    break;
-    }
+    } while (whitespace (c));
 
     /* fill in key */
     cur = key;
     max = key + keysize;
     while (!whitespace (c) && c != ';')
     {
-	if (cur < max)
-	    *cur++ = c;
-	else
+	if (cur >= max)
 	{
 	    key = xrealloc (key, keysize + ALLOCINCR);
 	    cur = key + keysize;
 	    keysize += ALLOCINCR;
 	    max = key + keysize;
-	    *cur++ = c;
 	}
+	*cur++ = c;
+
 	c = getc (fp);
 	if (c == EOF)
 	{
@@ -601,7 +596,6 @@ getrcskey (fp, keyp, valp)
 	keysize += ALLOCINCR;
 	max = key + keysize;
     }
-
     *cur = '\0';
 
     /* if we got "desc", we are done with the file */
@@ -612,6 +606,18 @@ getrcskey (fp, keyp, valp)
 	return (-1);
     }
 
+    /* skip whitespace between key and val */
+    while (whitespace (c))
+    {
+	c = getc (fp);
+	if (c == EOF)
+	{
+	    *keyp = (char *) NULL;
+	    *valp = (char *) NULL;
+	    return (-1);
+	}
+    } 
+
     /* if we ended key with a semicolon, there is no value */
     if (c == ';')
     {
@@ -621,33 +627,25 @@ getrcskey (fp, keyp, valp)
     }
 
     /* otherwise, there might be a value, so fill it in */
-    (void) ungetc (c, fp);
     cur = value;
     max = value + valsize;
 
     /* process the value */
     for (;;)
     {
-	/* get a character */
-	c = getc (fp);
-	if (c == EOF)
+	/* handle RCS "strings" */
+	if (c == '@') 
 	{
-	    *keyp = (char *) NULL;
-	    *valp = (char *) NULL;
-	    return (-1);
-	}
-
-	/* if we are in funky mode, do the rest of this string */
-	if (funky)
-	{
-
-	    /*
-	     * funky mode processing does the following: o @@ means one @ o
-	     * all other characters are literal up to a single @ (including
-	     * ';')
-	     */
 	    for (;;)
 	    {
+		c = getc (fp);
+		if (c == EOF)
+		{
+		    *keyp = (char *) NULL;
+		    *valp = (char *) NULL;
+		    return (-1);
+		}
+
 		if (c == '@')
 		{
 		    c = getc (fp);
@@ -657,16 +655,11 @@ getrcskey (fp, keyp, valp)
 			*valp = (char *) NULL;
 			return (-1);
 		    }
+		    
 		    if (c != '@')
-		    {
-			/* @ followed by non @ turns off funky mode */
-			funky = 0;
 			break;
-		    }
-		    /* otherwise, we already ate one @ so copy the other one */
 		}
 
-		/* put the character on the value (maybe allocating space) */
 		if (cur >= max)
 		{
 		    value = xrealloc (value, valsize + ALLOCINCR);
@@ -675,6 +668,13 @@ getrcskey (fp, keyp, valp)
 		    max = value + valsize;
 		}
 		*cur++ = c;
+	    }
+	}
+
+	/* compress whitespace down to a single space */
+	if (whitespace (c))
+	{
+	    do {
 		c = getc (fp);
 		if (c == EOF)
 		{
@@ -682,45 +682,8 @@ getrcskey (fp, keyp, valp)
 		    *valp = (char *) NULL;
 		    return (-1);
 		}
-	    }
-	}
+	    } while (whitespace (c));
 
-	/* if we got the semi-colon we are done with the entire value */
-	if (c == ';')
-	    break;
-
-	/* process the character we got */
-	if (white && c == '@')
-	{
-
-	    /*
-	     * if we are starting a word with an '@', enable funky processing
-	     */
-	    white = 0;			/* you can't be funky and white :-) */
-	    funky = 1;
-	}
-	else
-	{
-
-	    /*
-	     * we put the character on the list, compressing all whitespace
-	     * to a single space
-	     */
-
-	    /* whitespace with white set means compress it out */
-	    if (white && whitespace (c))
-		continue;
-
-	    if (whitespace (c))
-	    {
-		/* make c a space and set white */
-		white = 1;
-		c = ' ';
-	    }
-	    else
-		white = 0;
-
-	    /* put the char on the end of value (maybe allocating space) */
 	    if (cur >= max)
 	    {
 		value = xrealloc (value, valsize + ALLOCINCR);
@@ -728,17 +691,13 @@ getrcskey (fp, keyp, valp)
 		valsize += ALLOCINCR;
 		max = value + valsize;
 	    }
-	    *cur++ = c;
+	    *cur++ = ' ';
 	}
-    }
 
-    /* if the last char was white space, take it off */
-    if (white && cur != value)
-	cur--;
+	/* if we got a semi-colon we are done with the entire value */
+	if (c == ';')
+	    break;
 
-    /* terminate the string */
-    if (cur)
-    {
 	if (cur >= max)
 	{
 	    value = xrealloc (value, valsize + ALLOCINCR);
@@ -746,8 +705,26 @@ getrcskey (fp, keyp, valp)
 	    valsize += ALLOCINCR;
 	    max = value + valsize;
 	}
-	*cur = '\0';
+	*cur++ = c;
+
+	c = getc (fp);
+	if (c == EOF)
+	{
+	    *keyp = (char *) NULL;
+	    *valp = (char *) NULL;
+	    return (-1);
+	}
     }
+
+    /* terminate the string */
+    if (cur >= max)
+    {
+	value = xrealloc (value, valsize + ALLOCINCR);
+	cur = value + valsize;
+	valsize += ALLOCINCR;
+	max = value + valsize;
+    }
+    *cur = '\0';
 
     /* if the string is empty, make it null */
     if (value && *value != '\0')
