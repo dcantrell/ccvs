@@ -3110,6 +3110,16 @@ get_server_responses ()
 	    }
 	if (rs->name == NULL)
 	    /* It's OK to print just to the first '\0'.  */
+	    /* We might want to handle control characters and the like
+	       in some other way other than just sending them to stdout.
+	       One common reason for this error is if people use :ext:
+	       with a version of rsh which is doing CRLF translation or
+	       something, and so the client gets "ok^M" instead of "ok".
+	       Right now that will tend to print part of this error
+	       message over the other part of it.  It seems like we could
+	       do better (either in general, by quoting or omitting all
+	       control characters, and/or specifically, by detecting the CRLF
+	       case and printing a specific error message).  */
 	    error (0, 0,
 		   "warning: unrecognized response `%s' from cvs server",
 		   cmd);
