@@ -114,7 +114,7 @@ cvs-paper.ps: cvs-paper.ms
 
 cvsclient.ps: cvsclient.dvi
 	$(DVIPS) $(DVIPSFLAGS) cvsclient.dvi -o cvsclient.ps
-	
+
 tags:
 .PHONY: tags
 
