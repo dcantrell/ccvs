@@ -17180,6 +17180,8 @@ EOF
 	  # Hmm, if this test is run on the 31st of the month, and 100
 	  # months from now is a month with only 30 days (e.g. run on
 	  # 31 May 1999, 31 May 2001, 31 July 2002), it seems to fail.
+	  # This also failed on three days in a row in October of 2002:
+	  # the 29th, 30th, and 31st.
 	  # 
 	  # Sigh.
 	  dotest rcs2-7 "${testcvs} -q update -p -D '100 months' file1" \
