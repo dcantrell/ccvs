@@ -6,7 +6,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -34,7 +34,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -60,7 +60,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -90,12 +90,13 @@
 	
 
 .\src\buffer.c : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -121,7 +122,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -149,7 +150,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -175,7 +176,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -196,6 +197,7 @@
 	
 
 .\src\client.c : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
@@ -203,7 +205,7 @@
 	".\lib\gettext.h"\
 	".\lib\md5.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -213,9 +215,7 @@
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
-	".\src\gssapi-client.h"\
 	".\src\hash.h"\
-	".\src\kerberos4-client.h"\
 	".\src\log-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
@@ -237,7 +237,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -266,7 +266,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -293,7 +293,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -319,7 +319,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -346,7 +346,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -376,7 +376,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -402,7 +402,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -428,7 +428,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -454,7 +454,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -481,7 +481,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -503,12 +503,13 @@
 	
 
 ".\windows-NT\filesubr.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -534,7 +535,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -589,7 +590,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -615,7 +616,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -644,7 +645,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -670,7 +671,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -697,12 +698,11 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -724,7 +724,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -750,7 +750,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -777,7 +777,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -804,7 +804,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -825,12 +825,13 @@
 	
 
 .\src\main.c : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -861,7 +862,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -888,7 +889,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -916,7 +917,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -944,7 +945,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -974,7 +975,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1001,7 +1002,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1028,7 +1029,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1053,12 +1054,13 @@
 	
 
 ".\windows-NT\rcmd.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1083,10 +1085,9 @@
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1115,7 +1116,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1141,7 +1142,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -1171,7 +1172,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -1198,7 +1199,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1225,7 +1226,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1252,7 +1253,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1278,7 +1279,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1300,12 +1301,13 @@
 	
 
 ".\windows-NT\run.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1336,7 +1338,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1364,24 +1366,21 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
 	".\src\fileattr.h"\
-	".\src\gssapi-client.h"\
 	".\src\hash.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
 	".\src\server.h"\
-	".\src\socket-client.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
@@ -1400,13 +1399,18 @@
 	".\windows-NT\pwd.h"\
 	
 
+".\windows-NT\sockerror.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
+	
+
 ".\src\socket-client.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1433,7 +1437,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1454,12 +1458,13 @@
 	
 
 ".\windows-NT\startserver.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1486,7 +1491,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1517,13 +1522,12 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xselect.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1545,7 +1549,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -1572,9 +1576,8 @@
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
-	".\lib\md5.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
@@ -1625,7 +1628,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1651,7 +1654,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1681,7 +1684,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1705,12 +1708,13 @@
 	
 
 ".\windows-NT\woe32.c" : \
+	"..\..\..\..\progra~1\micros~3\vc98\include\basetsd.h"\
 	".\lib\exit.h"\
 	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1737,7 +1741,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1790,7 +1794,7 @@
 	".\lib\getopt.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\regex.h"\
+	".\LIB\regex.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
