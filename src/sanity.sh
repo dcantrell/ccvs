@@ -3939,6 +3939,8 @@ done'
 	  cat >modules <<EOF
 mod1 -a first-dir/file1
 bigmod -a mod1 first-dir/file1
+namednest -d src/sub/dir first-dir
+nestdeeper -d src/sub1/sub2/sub3/dir first-dir
 EOF
 	  dotest modules3-5 "${testcvs} -q ci -m add-modules" \
 "Checking in modules;
@@ -3952,8 +3954,37 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  rm -rf first-dir
 	  dotest modules3-7 "${testcvs} -q co bigmod" 'U first-dir/file1'
 	  cd ..
-
 	  rm -r 1
+
+	  if test "x$remote" = xno; then
+	  # Remote fails with:
+	  # "cvs checkout: internal error: repository string too short."
+	  mkdir 1
+	  cd 1
+	  dotest modules3-8 "${testcvs} -q co namednest" \
+'U src/sub/dir/file1'
+	  dotest modules3-9 "test -f src/sub/dir/file1" ''
+	  cd ..
+	  rm -r 1
+	  fi # end of tests bypassed for remote
+
+	  # Try the same thing, but with the directories nested even
+	  # deeper (deeply enough so they are nested more deeply than
+	  # the number of directories from / to ${TESTDIR}).
+	  if false; then
+	  # This one fails with a SIGSEGV.  Based on looking at the
+	  # CVS/Repository files that modules3-8 creates locally, it would
+	  # seem that the same underlying bug is responsible for this and
+	  # the remote failures in modules3-8.
+	  mkdir 1
+	  cd 1
+	  dotest modules3-10 "${testcvs} -q co nestdeeper" \
+'U src/sub1/sub2/sub3/dir/file1'
+	  dotest modules3-11 "test -f src/sub1/sub2/sub3/dir/file1" ''
+	  cd ..
+	  rm -r 1
+	  fi # matches "if false".
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
