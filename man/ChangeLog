@@ -1,3 +1,7 @@
+Wed Jul 24 19:01:35 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.1: Document -x.
+
 Tue May 14 10:23:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.1: Add cvs.texinfo to the SEE ALSO section.  Replace an out

@@ -240,6 +240,11 @@ Overrides the setting of the
 .SM CVSREAD
 environment variable.
 .TP
+.B \-x
+Encrypt all communication between the client and the server.  As of
+this writing, this is only implemented when using a Kerberos
+connection.
+.TP
 \fB\-z\fP \fIcompression\-level\fP
 When transferring files across the network use
 .B gzip
