@@ -1,5 +1,89 @@
 First, read the README file.  If you're still happy...
 
+First you need to obtain and install the CVS executables.  If you got
+a distribution which contains executables, consult the installation
+instructions for that distribution.  If you got source code, do not
+panic.  On many platforms building CVS from source code is a
+straightforward process requiring no programming knowledge.  See the
+section BUILDING FROM SOURCE CODE at the end of this file, which
+includes a list of platforms which have been tested.
+
+-------------------------------------------------------------------------------
+
+1) Take a look at the CVS documentation, if desired.  For most
+   purposes you want doc/cvs.texinfo, also known as _Version Management
+   with CVS_ by Per Cederqvist et al.  Looking at it might be as simple
+   as "info cvs" but this will depend on your installation; see README
+   for more details.
+
+   See what CVS can do for you, and if it fits your environment (or can
+   possibly be made to fit your environment).  If things look good,
+   continue on.  Alternately, just give CVS a try first then figure out
+   what it is good for.
+
+2) Set the CVSROOT environment variable to where you want to put your
+   source repository.  See the "Setting up the repository" section of
+   cvs.texinfo for details, but the quick summary is just to pick some
+   directory.  We'll use /src/master as an example.  For users of a
+   POSIX shell (sh/bash/ksh) on unix, the following commands can be
+   placed in user's ~/.profile, ~/.bash_profile file; or in the
+   site-wide /etc/profile:
+
+       CVSROOT=/src/master; export CVSROOT
+
+   For C shell users on unix place the following commands in the
+   user's ~/.cshrc, ~/.login, or /etc/chsrc file:
+
+       setenv CVSROOT /src/master
+
+   For Windows users, supposing the repository will be in
+   d:\src\master, place the following line in c:\autoexec.bat.  On
+   Windows 95, autoexec.bat might not already exist.  In that case,
+   just create a new file containing the following line.
+
+       set CVSROOT=:local:d:\src\master
+
+   If these environment variables are not already set in your current
+   shell, set them now (or source the login script you just edited).
+   The instructions for the remaining steps assume that you have set
+   the CVSROOT environment variable.
+
+3) Create the master source repository.  Again, the details are in
+   the "Setting up the repository" section of cvs.texinfo; the
+   one-line summary is:
+
+       $ cvs init
+
+4) It might be a good idea to jump right in and put the CVS distribution
+   directly under CVS control.  From within the top-level directory of
+   the CVS distribution (the one that contains this INSTALL file) run
+   the following commands:
+
+       $ make distclean
+       $ cvs import -m 'CVS 1.6 distribution' ccvs CVS_DIST CVS-1_6
+
+5) Having done step 4, one should be able to checkout a fresh copy of the
+   CVS distribution and hack away at the sources with the following command:
+
+      $ cd
+      $ cvs checkout ccvs
+
+   This will make the directory "ccvs" in your current directory and
+   populate it with the appropriate CVS files and directories.
+
+6) You may wish to customize the various administrative files, in particular
+   modules.  See cvs.texinfo for details.
+
+7) Read the NEWS file to see what's new.
+
+8) Hack away.
+
+-------------------------------------------------------------------------------
+
+BUILDING FROM SOURCE CODE
+
+Tested platforms
+
 CVS has been tested on the following platforms.  The most recent
 version of CVS reported to have been tested is indicated, but more
 recent versions of CVS probably will work too.  Please send updates to
@@ -120,11 +204,10 @@ VAX:
     So after running configure I had to undef HAVE_DIRENT_H and
     define HAVE_SYS_DIR_H.
 
+
 -------------------------------------------------------------------------------
 
-Installation under Unix (if you got a binary distribution from
-somewhere, install it according to procedure for that binary
-distribution, then skip to step 5):
+Building from source code under Unix:
 
 1)  Run "configure":
 
@@ -260,65 +343,6 @@ distribution, then skip to step 5):
     Depending on your installation's configuration, you may need to be
     root to do this.
 
-5)  Take a look at the CVS documentation.
-
-	$ man cvs
-
-    and
-
-	$ info cvs  
-
-    See what it can do for you, and if it fits your environment (or can
-    possibly be made to fit your environment).  If things look good,
-    continue on...
-
-6)  Set up the master source repository.  See the "Setting up the repository"
-    section of cvs.texinfo for details; the one-line summary is (if you
-    are putting the repository in /src/master):
-    $ cvs -d /src/master init
-
-7)  Have all users of the CVS system set the CVSROOT environment
-    variable appropriately to reflect the placement of your source
-    repository.  If the above example is used, the following commands
-    can be placed in user's ~/.profile, ~/.bash_profile file; or in the
-    site-wide /etc/profile:
-
-	CVSROOT=/src/master; export CVSROOT
-
-    for sh/bash/ksh users, or place the following commands in the user's
-    ~/.cshrc, ~/.login, or /etc/chsrc file:
-
-	setenv CVSROOT /src/master
-
-    for csh/tcsh users.  If these environment variables are not already set
-    in your current shell, set them now (or source the login script you
-    just edited).  You will need to have the CVSROOT environment variable
-    set to continue on to the next step.
-
-8)  It might be a good idea to jump right in and put the CVS distribution
-    directly under CVS control.  From within the top-level directory of the
-    CVS distribution (the one that contains this README file) do the
-    following commands:
-
-	$ make distclean
-	$ cvs import -m 'CVS 1.6 distribution' cvs CVS_DIST CVS-1_6
-
-9)  Having done step 8, one should be able to checkout a fresh copy of the
-    CVS distribution and hack away at the sources with the following command:
-
-	$ cd
-	$ cvs checkout cvs
-
-    This will make the directory "cvs" in your current directory and
-    populate it with the appropriate CVS files and directories.
-
-10) You may wish to customize the various administrative files, in particular
-    modules.  See cvs.texinfo for details.
-
-11) Read the NEWS file to see what's new.
-
-12) Hack away.
-
 -------------------------------------------------------------------------------
 
 Detailed information about your interaction with "configure":
@@ -354,13 +378,30 @@ behaviour:
 				appear to be.
 
 -------------------------------------------------------------------------------
-Installation under Windows NT:
+
+Building from source code under Windows NT/95:
 
 You may find interesting information in windows-NT/README.
 
-1) Using Microsoft Visual C++ version 2.1, open the project `cvsnt.mak',
-   in the top directory of the CVS distribution.
+1) Using Microsoft Visual C++ 5.x, open the project `cvsnt.dsp',
+   in the top directory of the CVS distribution.  If you have an older
+   version of Visual C++, take a look at windows-NT/README.
 2) Choose "Build cvs.exe" from the "Project" menu.
-3) MSVC will place the executable file cvs.exe in WinDebug, or whatever
+3) MSVC will place the executable file cvs.exe in WinRel, or whatever
    your target directory is.
+
+-------------------------------------------------------------------------------
+
+Building from source code under other platforms:
+
+For OS/2, see os2/README and emx/README.
+
+For VMS, see README.VMS
+
+For Macintosh, see macintosh/README.MacCVS
+
+For a Java client, see jCVS (which is a separate package from CVS
+itself, but which might be preferable to the Macintosh port mentioned
+above, for example).
+
 -------------------------------------------------------------------------------

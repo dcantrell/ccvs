@@ -1,3 +1,10 @@
+Fri Jul 18 09:47:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Reorganize to separate out building/installing CVS
+	executables from what to do once you have them.  Adjust Visual C++
+	instructions to deal with Visual C++ 5.x.  Add brief mentions of
+	platforms other than unix and Windows.
+
 Thu Jul 17 21:13:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: In item 39, talk about how PRCS 1.2 as a possible model.
