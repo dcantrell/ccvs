@@ -464,7 +464,12 @@ following also works:
 	C:\> vcvars32
 	C:\> nmake /f cvsnt.mak CFG="cvsnt - Win32 Debug"
 
-* You might also try http://cvsgui.org & http://www.cvsnt.org
+* Using the Cygwin development environment <http://cygwin.com>, Windows clients
+  and servers can be built using the instructions for building on UNIX.  For
+  deploying the CVS server on Windows NT, see the `cygrunserv' executable that
+  comes with Cygwin.
+
+* You might also try <http://wincvs.org> & <http://www.cvsnt.org>.
 
 -------------------------------------------------------------------------------
 
