@@ -1,3 +1,7 @@
+1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com> and Michael Pakovic
+
+	* edit.c (notify_do): Only free line if it is not NULL.
+
 1998-09-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h: dirs_sent_to_server should not be inside
