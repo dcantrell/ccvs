@@ -5321,6 +5321,11 @@ to use the optional developer communication features.
 @c section (for repository & working directory) from the
 @c rest--that might help avoid confusing people who
 @c are upgrading (for example) from 1.6 to 1.8.
+@c
+@c A minor incompatibility is if a current version of CVS
+@c puts "Nfoo" into CVS/Tag, then CVS 1.9 or older will
+@c see this as if there is no tag.  Seems to me this is
+@c too obscure to mention.
 
 The working directory format is compatible going back
 to @sc{cvs} 1.5.  It did change between @sc{cvs} 1.3
