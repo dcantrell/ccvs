@@ -757,6 +757,21 @@ initial revision: 1.1
 done
 HERE
 
+	  cd first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8
+	  rm file1
+	  dotest deep-4a0 "${testcvs} rm file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  dotest deep-4a1 "${testcvs} -q ci -m rm-it" 'Removing file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done'
+	  cd ../../..
+	  dotest deep-4a2 "${testcvs} -q update -P dir6/dir7" ''
+	  # Should be using "test -e" if that is portable enough.
+	  dotest_fail deep-4a3 "test -d dir6/dir7/dir8" ''
+	  cd ../../../../../..
+
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
 	    pass deep-5
 	  else
