@@ -1,6 +1,12 @@
+Mon Apr 29 10:48:38 1996  Noel Cragg  <noel@gargle>
+
+	* main.c (main): new variable help so we can support the `cvs -H
+ 	cmd' convention.  Reverts change of 26 Apr 96 which removed this
+ 	feature.
+
 Sun Apr 28 14:57:38 1996  Noel Cragg  <noel@gargle>
 
-        * main.c (main): update error message if PARSE_CVSROOT fails.
+        * main.c (main): update error message if parse_cvsroot fails.
 	* server.c (serve_root): same.
 	(serve_init): same.
 	
@@ -8,22 +14,22 @@ Sun Apr 28 14:57:38 1996  Noel Cragg  <noel@gargle>
  	stuff, now that we have access methods.
 	(start_server): switch off the access method to choose routine
  	that starts the server.
-	(start_tcp_server): TOFD wasn't getting set to -1 early enough,
- 	because a call to ERROR for bind or gethostbyname might fail and
+	(start_tcp_server): tofd wasn't getting set to -1 early enough,
+ 	because a call to error for bind or gethostbyname might fail and
  	the subsequent error check to see if the connection had been made
  	would fail.
 
-	* root.c: new variable METHOD_NAMES for error reporting purposes.
+	* root.c: new variable method_names for error reporting purposes.
 
 Sun Apr 28 17:22:15 1996  Noel Cragg  <noel@occs.cs.oberlin.edu>
 
 	* server.c: moved kerberos #includes from main.c for the
-        KSERVER_AUTHENTICATE_CONNECTION routine.
+        kserver_authenticate_connection routine.
 
 Fri Apr 26 07:59:44 1996  Noel Cragg  <noel@gargle>
 
 	* server.c (serve_init): use the new return value from
- 	PARSE_CVSROOT.
+ 	parse_cvsroot.
 	(serve_root): same.
 	* main.c (main): same.
 
@@ -37,23 +43,24 @@ Fri Apr 26 07:59:44 1996  Noel Cragg  <noel@gargle>
  	correctly if the user asks for help).  Similar mods for the code
  	that tries to get the working directory.
 
-	Also make `CVSADM_Root' a local variable instead of a global,
- 	since its scope is only about 20 lines here!
+	Also make CVSADM_Root a local variable instead of a global, since
+ 	its scope is only about 20 lines here!
 
 	* server.c (kserver_authenticate_connection): moved code from
  	main.c to clean up MAIN.  Makes sense, since we already have a
- 	PSERVER_AUTHENTICATE_CONNECTION.
+ 	pserver_authenticate_connection.
 	(pserver_authenticate_connection): rename from
- 	AUTHENTICATE_CONNECTION.
+ 	authenticate_connection.
 
 	* main.c (main): reorganized the routine to eliminate variables
- 	HELP, HELP_COMMANDS, and VERSION_FLAG.  Now the routine is much
+ 	help, help_commands, and version_flag.  Now the routine is much
  	clearer, since we don't have to be checking to see if these
  	variables are set.  One behavior that was a bug/feature which is
  	now gone is an invocation like "cvs -H rtag" -- previously this
  	would give usage for rtag, but now gives usage for cvs itself.
   	The first behavior didn't make sense, especially since we say in
- 	the docs that command-line flags are position-specific.
+ 	the docs that command-line flags are position-specific.  *Reverted
+ 	Above*
 
 Thu Apr 25 20:05:10 1996  Noel Cragg  <noel@gargle>
 
@@ -74,10 +81,10 @@ Thu Apr 25 20:05:10 1996  Noel Cragg  <noel@gargle>
  	guessing when we had hostnames vs. directories specified.  Any
  	ambiguity should be removed by having the user specify the access
  	method.  If the access method isn't specified, choose
- 	SERVER_METHOD if the string contains a colon or LOCAL_METHOD
+ 	server_method if the string contains a colon or local_method
  	otherwise.
 
-	* Changed `CVSroot_remote' back to `client_active' since the code
+	* Changed CVSroot_remote back to client_active since the code
  	reads better.
 	
 Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
@@ -86,9 +93,9 @@ Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
  	CVSroot_directory (oops!).
 	* update.c (update_filesdone_proc): same.
 
-	* server.c (serve_root): modify to use PARSE_CVSROOT rather than
+	* server.c (serve_root): modify to use parse_cvsroot rather than
  	goofing around with other variables.  Will need to fix
- 	PARSE_CVSROOT to have a return value so we can return an error and
+ 	parse_cvsroot to have a return value so we can return an error and
  	quit gracefully if in server mode.
 	(serve_init): same.
 
@@ -100,24 +107,24 @@ Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
         * client.h (client_*): removed prototypes for now non-existent
  	functions.
 
-	* client.c: remove proto for GET_CVS_PASSWORD, since it is now in
+	* client.c: remove proto for get_cvs_password, since it is now in
  	cvs.h.  Modify routines to use new globals that describe CVSROOT
- 	rather than CLIENT_ACTIVE, SERVER_HOST, SERVER_USER, and
- 	SERVER_CVSROOT.
+ 	rather than client_active, server_host, server_user, and
+ 	server_cvsroot.
 	(parse_cvsroot): removed function, since a more generic version
  	now lives in root.c.
-	(connect_to_pserver): remove call to PARSE_CVSROOT, since main.c
+	(connect_to_pserver): remove call to parse_cvsroot, since main.c
  	has already done it for us.
 	(client_*): removed all of these routines, since they only call
- 	PARSE_CVSROOT and then their respective operation functions.
-  	Since main.c has already called PARSE_CVSROOT, we shouldn't bother
+ 	parse_cvsroot and then their respective operation functions.
+  	Since main.c has already called parse_cvsroot, we shouldn't bother
  	with the extra function call, since client-server diffs are
  	already handled in the core routines themselves.
 
-	* main.c: remove `CVSroot' as a global variable.  Remove
- 	USE_AUTHENTICATING_SERVER variable since we have a new
+	* main.c: remove CVSroot as a global variable.  Remove
+ 	use_authenticating_server variable since we have a new
  	`CVSroot_method' variable instead.
-	(main): add `CVSroot' as a local variable.  Call PARSE_CVSROOT
+	(main): add `CVSroot' as a local variable.  Call parse_cvsroot
  	after we're sure we have the right setting for `CVSroot.'
 
 	* login.c (login): update to use new global variables.  Instead of
@@ -126,7 +133,7 @@ Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
  	user type the password, however.
 	(get_cvs_password): make sure that CVSROOT is fully qualified
  	before trying to find the entry in the .cvspass file.
-	* cvs.h: add prototype for GET_CVS_PASSWORD.
+	* cvs.h: add prototype for get_cvs_password.
 
 	* add.c: use new globals that describe CVSROOT.
 	* admin.c: same.
@@ -166,12 +173,12 @@ Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
  	CVSroot_remote, CVSroot_method, CVSroot_username,
  	CVSroot_hostname, CVSroot_directory for use by all other
  	functions.  Checks for obvious errors in format of string.
-	(main): a short routine to test PARSE_CVSROOT from the command
+	(main): a short routine to test parse_cvsroot from the command
  	line.
-	* cvs.h: add prototype for PARSE_CVSROOT and extern definitions
+	* cvs.h: add prototype for parse_cvsroot and extern definitions
  	for new globals.
 
-	* cvs.h: removed `CVSroot' variable, since we don't want other
+	* cvs.h: removed CVSroot variable, since we don't want other
  	routines using the raw CVSROOT (also helped to find all of the
  	refs to the variable!).
 
