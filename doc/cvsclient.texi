@@ -894,7 +894,6 @@ directory.
 @itemx log \n
 @itemx remove \n
 @itemx admin \n
-@itemx export \n
 @itemx history \n
 @itemx watchers \n
 @itemx editors \n
@@ -915,6 +914,19 @@ command are module names; the client cannot know what directories they
 correspond to except by (1) just sending the @code{co} request, and then
 seeing what directory names the server sends back in its responses, and
 (2) the @code{expand-modules} request.
+
+@item export \n
+Response expected: yes.  Get files from the repository.  This uses any
+previous @code{Argument}, @code{Directory}, @code{Entry}, or
+@code{Modified} requests, if they have been sent.  Arguments to this
+command are module names, as described for the @code{co} request.  The
+intention behind this command is that a client can get sources from a
+server without storing CVS information about those sources.  That is, a
+client probably should not count on being able to take the entries line
+returned in the @code{Created} response from an @code{export} request
+and send it in a future @code{Entry} request.  Note that the entries
+line in the @code{Created} response must indicate whether the file is
+binary or text, so the client can create it correctly.
 
 @item rdiff \n
 @itemx rtag \n
