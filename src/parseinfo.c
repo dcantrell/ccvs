@@ -394,8 +394,8 @@ warning: this CVS does not support PreservePermissions");
 	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
 	{
-	    user_admin_options = xmalloc(strlen(p) + 1);
-	    strcpy(user_admin_options, p);
+	    UserAdminOptions = xmalloc(strlen(p) + 1);
+	    strcpy(UserAdminOptions, p);
 	}
 	else
 	{

@@ -1,5 +1,16 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (user_admin_options): Rename to...
+	(UserAdminOptions): ...this to match the convention set by
+	of RereadLogAfterVerify.
+	* admin.c (admin): Ditto.
+	* parseinfo.c (parse_config): Ditto.
+
+	* mkmodules.c (config_contents): Update with UserAdminOptions
+	information.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvsbug.in: Import use of mktemp function from RedHat 8.0's
 	CVS 1.11.2 RPM.  Use new MKTEMP configure variable.  Use new
 	SENDMAIL from configure.

@@ -20,7 +20,7 @@ static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
 				   List *entries));
 static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
-char *user_admin_options = "k";
+char *UserAdminOptions = "k";
 
 static const char *const admin_usage[] =
 {
@@ -171,7 +171,7 @@ admin (argc, argv)
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'q' && !strchr(user_admin_options, c))
+	if (c != 'q' && !strchr(UserAdminOptions, c))
 	    only_allowed_options = 0;
 
 	switch (c)
