@@ -2523,7 +2523,9 @@ actual tag names.
 @c defines legitimate tag names by listing illegal
 @c characters rather than legal ones.  CVS is said to lose its
 @c mind if you try to use "/" (try making such a tag sticky
-@c and using "cvs status").  FIXME: The testsuite
+@c and using "cvs status" client/server--see remote
+@c protocol format for entries line for probably cause).
+@c TODO: The testsuite
 @c should test for whatever are documented above as
 @c officially-OK tag names, and CVS should at least reject
 @c characters that won't work, like "/".
