@@ -24,7 +24,6 @@ libcvs_a_SOURCES = \
 	sighandle.c \
 	yesno.c \
 	error.h \
-	getpagesize.h \
 	md5.h \
 	system.h \
 	wait.h \
@@ -119,6 +118,9 @@ EXTRA_DIST += getndelim2.h getndelim2.c
 
 ## For GNULIB's getnline module.
 libcvs_a_SOURCES += getnline.h getnline.c
+
+## For GNULIB's getpagesize module.
+libcvs_a_SOURCES += getpagesize.h
 
 ## For GNULIB's getpass module.
 libcvs_a_SOURCES += getpass.h
