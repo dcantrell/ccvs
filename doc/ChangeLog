@@ -1,3 +1,10 @@
+Sun Jul 20 17:55:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (admin options): For options with optional
+	arguments, specify that there can be no space between the option
+	and its argument.  For -N, add xref to Magic branch numbers.  For
+	-t, talk about reading from stdin.  Comment changes.
+
 Sat Jul 19 22:28:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Preface): Make section titles more verbose.

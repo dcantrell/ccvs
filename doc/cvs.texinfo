@@ -4558,7 +4558,7 @@ $
 @node Magic branch numbers
 @section Magic branch numbers
 
-@c Want xref to here from "log" and "admin"?
+@c Want xref to here from "log"?
 
 This section describes a @sc{cvs} feature called
 @dfn{magic branches}.  For most purposes, you need not
@@ -7327,6 +7327,7 @@ which branch you want to work on.  There is one reason
 to run @code{cvs admin -b}: to revert to the vendor's
 version when using vendor branches (@pxref{Reverting
 local changes}).
+There can be no space between @samp{-b} and its argument.
 
 @cindex comment leader
 @item -c@var{string}
@@ -7364,7 +7365,8 @@ checkout} overrides this default.
 Lock the revision with number @var{rev}.  If a branch
 is given, lock the latest revision on that branch.  If
 @var{rev} is omitted, lock the latest revision on the
-default branch.
+default branch.  There can be no space between
+@samp{-l} and its argument.
 
 This can be used in conjunction with the
 @file{rcslock.pl} script in the @file{contrib}
@@ -7396,7 +7398,8 @@ Replace the log message of revision @var{rev} with
 
 @item -N@var{name}[:[@var{rev}]]
 Act like @samp{-n}, except override any previous
-assignment of @var{name}.
+assignment of @var{name}.  For use with magic branches,
+see @ref{Magic branch numbers}.
 
 @item -n@var{name}[:[@var{rev}]]
 Associate the symbolic name @var{name} with the branch
@@ -7473,17 +7476,27 @@ commands like @code{cvs remove} and @code{cvs add}, not
 Useful with @sc{cvs}.  Write descriptive text from the
 contents of the named @var{file} into the RCS file,
 deleting the existing text.  The @var{file} pathname
-may not begin with @samp{-}.  If @var{file} is omitted,
+may not begin with @samp{-}.  The descriptive text can be seen in the
+output from @samp{cvs log} (@pxref{log}).
+There can be no space between @samp{-t} and its argument.
+
+If @var{file} is omitted,
 obtain the text from standard input, terminated by
 end-of-file or by a line containing @samp{.} by itself.
 Prompt for the text if interaction is possible; see
-@samp{-I}.  The descriptive text can be seen in the
-output from @samp{cvs log} (@pxref{log}).
+@samp{-I}.  Reading from standard input does not work
+for client/server @sc{cvs} and may change in a future
+release of @sc{cvs}.
+@c Changing it to doeditor() is the most obvious thing
+@c (but with a different syntax, as we would like to
+@c phase out optional arguments).  I don't know.  I'm
+@c tempted to say the whole concept is unnecessary.
 
 @item -t-@var{string}
 Similar to @samp{-t@var{file}}. Write descriptive text
 from the @var{string} into the @sc{rcs} file, deleting
 the existing text.
+There can be no space between @samp{-t} and its argument.
 
 @c The rcs -T option, do not update last-mod time for
 @c minor changes, has never been documented as a
@@ -7508,12 +7521,18 @@ This causes a mail message to be sent to the original
 locker.  The message contains a commentary solicited
 from the breaker.  The commentary is terminated by
 end-of-file or by a line containing @code{.} by itself.
+There can be no space between @samp{-u} and its argument.
+@c In the future "send mail" probably will go via the
+@c CVSROOT/notify mechanism.  But for now it means
+@c whatever it means to "rcs".
 
 @item -V@var{n}
 Emulate @sc{rcs} version @var{n}. Use -V@var{n} to make
 an @sc{rcs} file acceptable to @sc{rcs} version @var{n}
 by discarding information that would confuse version
 @var{n}.
+@c Note that -V without an argument has never been
+@c documented as a cvs admin option.
 
 @item -x@var{suffixes}
 In previous versions of @sc{cvs}, this was documented
