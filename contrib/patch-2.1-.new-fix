@@ -1,6 +1,6 @@
 Index: gnu/patch/.cvsignore
 diff -c /dev/null gnu/patch/.cvsignore:1.1
-*** /dev/null	Sun Sep 29 16:13:02 1996
+*** /dev/null	Sun Sep 29 19:50:14 1996
 --- gnu/patch/.cvsignore	Wed Sep  4 17:51:44 1996
 ***************
 *** 0 ****
@@ -83,29 +83,30 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   /* patch - a program to apply diffs to original files
    *
 ***************
-*** 9,16 ****
+*** 8,14 ****
+   * This program may be copied as long as you don't try to make any
    * money off of it, or pretend that you wrote it.
    *
-   * $Log$
-!  * Revision 1.1.1.1  1993/08/19 18:26:33  woods
-!  * GNU Unified Patch version 2.1 distribution
-   *
+!  * $Log$
    * Revision 2.0.2.0  90/05/01  22:17:50  davison
    * patch12u: unidiff support added
---- 9,19 ----
+   * 
+--- 8,20 ----
+   * This program may be copied as long as you don't try to make any
    * money off of it, or pretend that you wrote it.
    *
-   * $Log$
+!  * $Log$
 !  * Revision 1.2  1996/09/29 19:53:06  woods
 !  * * patch.c (main): Add test to see if file exists before creating
 !  * if ok_to_create_file has been set.  If the file patch would have
 !  * created isn't identical to existing file, keep the new file with
 !  * the extension ".new" (or "!").
-   *
+!  *
    * Revision 2.0.2.0  90/05/01  22:17:50  davison
    * patch12u: unidiff support added
+   * 
 ***************
-*** 209,214 ****
+*** 206,211 ****
 --- 212,219 ----
   	there_is_another_patch();
   	reinitialize_almost_everything()
@@ -116,7 +117,7 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   	if (outname == Nullch)
   	    outname = savestr(filearg[0]);
 ***************
-*** 226,231 ****
+*** 223,228 ****
 --- 231,243 ----
   	/* initialize reject file */
   	init_reject(TMPREJNAME);
@@ -132,7 +133,7 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   	if (!skip_rest_of_patch)
   	    scan_input(filearg[0]);
 ***************
-*** 346,357 ****
+*** 343,354 ****
   	assert(hunk);
       
   	/* finish spewing out the new file */
@@ -270,7 +271,7 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   	    char *realout = outname;
   
 ***************
-*** 359,366 ****
+*** 356,363 ****
   		toutkeep = TRUE;
   		realout = TMPOUTNAME;
   		chmod(TMPOUTNAME, filemode);
@@ -288,7 +289,7 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   
   	    if (remove_empty_files && stat(realout, &statbuf) == 0
 ***************
-*** 367,373 ****
+*** 364,370 ****
   		&& statbuf.st_size == 0) {
   		if (verbose)
   		    say2("Removing %s (empty after patching).\n", realout);
@@ -305,7 +306,7 @@ diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
   	}
   	Fclose(rejfp);
 ***************
-*** 858,865 ****
+*** 855,862 ****
   #endif
       if (input_lines)
   	copy_till(input_lines);		/* dump remainder of file */
@@ -320,23 +321,21 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
 *** gnu/patch/patch.man:1.1.1.1	Thu Aug 19 14:26:33 1993
 --- gnu/patch/patch.man	Sun Sep 29 15:54:20 1996
 ***************
-*** 1,10 ****
+*** 1,8 ****
   .\" -*- nroff -*-
   .rn '' }`
 ! '\" $Header$
   '\" 
-  '\" $Log$
-! '\" Revision 1.1.1.1  1993/08/19 18:26:33  woods
-! '\" GNU Unified Patch version 2.1 distribution
-  '\"
+! '\" $Log$
   '\" Revision 2.0.1.2  88/06/22  20:47:18  lwall
   '\" patch12: now avoids Bell System Logo
---- 1,18 ----
+  '\" 
+--- 1,19 ----
   .\" -*- nroff -*-
   .rn '' }`
 ! '\" $Header$
   '\" 
-  '\" $Log$
+! '\" $Log$
 ! '\" Revision 1.2  1996/09/29 19:54:20  woods
 ! '\" * patch.man:
 ! '\" - use '\-' for real dashes, esp. in NAME section.
@@ -347,11 +346,12 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
 ! '\" (BUGS):
 ! '\" - mention that -t may be making bad assumptions
 ! '\" - mention that -E should probably be the default
-  '\"
+! '\"
   '\" Revision 2.0.1.2  88/06/22  20:47:18  lwall
   '\" patch12: now avoids Bell System Logo
+  '\" 
 ***************
-*** 73,79 ****
+*** 70,76 ****
   'br\}
   .TH PATCH 1 LOCAL
   .SH NAME
@@ -368,7 +368,7 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
   .B patch
   [options] [origfile [patchfile]] [+ [options] [origfile]]...
 ***************
-*** 409,415 ****
+*** 406,412 ****
   .B \-R
   option set.
   If it can't, the patch will continue to be applied normally.
@@ -385,7 +385,7 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
   since appends always succeed, due to the fact that a null context will match
   anywhere.
 ***************
-*** 497,512 ****
+*** 494,509 ****
   Selects when numbered backup files are made.
   .SH FILES
   $TMPDIR/patch*
@@ -423,7 +423,7 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
   context diff header, or with an Index: line.
   If you are patching something in a subdirectory, be sure to tell the patch
 ***************
-*** 513,527 ****
+*** 510,524 ****
   user to specify a 
   .B \-p
   option as needed.
@@ -479,7 +479,7 @@ diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
   Too many to list here, but generally indicative that
   .I patch
 ***************
-*** 570,573 ****
+*** 567,570 ****
 --- 604,615 ----
   .I patch
   will think it is a reversed patch, and offer to un-apply the patch.
