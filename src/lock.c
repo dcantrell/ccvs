@@ -649,6 +649,9 @@ lock_exists (const char *repository, const char *filepat, const char *ignore)
 
 	CVS_CLOSEDIR (dirp);
     } while (ret < 0);
+
+    if (lockdir != NULL)
+	free (lockdir);
     return (ret);
 }
 
