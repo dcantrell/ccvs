@@ -24710,6 +24710,22 @@ done"
 "U first-dir/FiLe"
 
 	  cd first-dir
+	  # Prove that we can still get status and log information on
+	  # conflicting case files (1 in Attic, one in parent).
+	  if $remote; then
+	    if $client_sensitive; then
+	      file=file
+	      fIlE=fIlE
+	    else # client insensitive
+	      # Because FiLe is present on a case insensitive client, it is the
+	      # only one ever found and queried or altered.
+	      file=FiLe
+	      fIlE=FiLe
+	    fi
+	  else # ! $remote
+	    file=file
+	    fIlE=fIlE
+	  fi
 	  if $server_sensitive; then
 	    if $client_sensitive; then
 	      # Client finds Entry only for FiLe.  Others returned by server.
@@ -24827,17 +24843,17 @@ recase
 	    # printed file/archive name can vary.
 	    dotest recase-4si "$testcvs status file" \
 "===================================================================
-File: file             	Status: Up-to-date
+File: $file             	Status: Up-to-date
 
    Working revision:	1\.3.*
-   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/file,v
+   Repository revision:	1\.3	$CVSROOT_DIRNAME/first-dir/$file,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
 	    dotest recase-5si "$testcvs log file" \
 "
-RCS file: $CVSROOT_DIRNAME/first-dir/file,v
-Working file: file
+RCS file: $CVSROOT_DIRNAME/first-dir/$file,v
+Working file: $file
 head: 1\.3
 branch:
 locks: strict
@@ -24910,10 +24926,10 @@ File: no file fIlE		Status: Unknown
 	  else # ! $client_sensitive && ! $server_sensitive
 	    dotest recase-8 "$testcvs status fIlE" \
 "===================================================================
-File: fIlE             	Status: Up-to-date
+File: $fIlE             	Status: Up-to-date
 
    Working revision:	1\.[0-9]*.*
-   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/fIlE,v
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
@@ -25125,10 +25141,10 @@ File: no file fIlE		Status: Unknown
 	  else
 	    dotest recase-19ci "$testcvs status fIlE" \
 "===================================================================
-File: fIlE             	Status: Up-to-date
+File: $fIlE             	Status: Up-to-date
 
    Working revision:	1\.[0-9]*.*
-   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/fIlE,v
+   Repository revision:	1\.[0-9]*	$CVSROOT_DIRNAME/first-dir/$fIlE,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	(none)"
