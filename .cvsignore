@@ -8,3 +8,4 @@ cvsinit
 cvs-*.tar.gz
 WinDebug
 WinRel
+cvsnt.vcp
