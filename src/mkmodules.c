@@ -703,6 +703,7 @@ rename_rcsfile (temp, real)
 
 const char *const init_usage[] = {
     "Usage: %s %s\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

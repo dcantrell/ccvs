@@ -54,6 +54,7 @@ static const char *const patch_usage[] =
     "\t-D date\tDate.\n",
     "\t-r rev\tRevision - symbolic or numeric.\n",
     "\t-V vers\tUse RCS Version \"vers\" for keyword expansion.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

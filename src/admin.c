@@ -24,6 +24,7 @@ static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static const char *const admin_usage[] =
 {
     "Usage: %s %s rcs-options files...\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

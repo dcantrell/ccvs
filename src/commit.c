@@ -92,6 +92,7 @@ static const char *const commit_usage[] =
     "\t-F file\tRead the log message from file.\n",
     "\t-m msg\tLog message.\n",
     "\t-r rev\tCommit to this branch or trunk revision.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

@@ -68,6 +68,7 @@ static const char *const tag_usage[] =
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-F\tMove tag if it already exists.\n",
     "\t-c\tCheck that working files are unmodified.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

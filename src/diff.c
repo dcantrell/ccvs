@@ -71,6 +71,7 @@ static const char *const diff_usage[] =
     "\t--ifdef=arg\tOutput diffs in ifdef format.\n",
     "(consult the documentation for your diff program for rcsdiff-options.\n",
     "The most popular is -c for context diffs but there are many more).\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

@@ -56,6 +56,7 @@ static const char *const import_usage[] =
     "\t-b bra\tVendor branch id.\n",
     "\t-m msg\tLog message.\n",
     "\t-W spec\tWrappers specification line.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 
