@@ -410,7 +410,8 @@ watch (argc, argv)
 
 static const char *const watchers_usage[] =
 {
-    "Usage: %s %s [files...]\n",
+    "Usage: %s %s [-l] [files...]\n",
+    "\t-l\tProcess this directory only (not recursive).\n",
     NULL
 };
 

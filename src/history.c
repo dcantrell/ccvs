@@ -278,6 +278,12 @@ static int mod_count;		/* Number of elements used */
 
 static char *histfile;		/* Ptr to the history file name */
 
+/* This is pretty unclear.  First of all, separating "flags" vs.
+   "options" (I think the distinction is that "options" take arguments)
+   is nonstandard, and not something we do elsewhere in CVS.  Second of
+   all, what does "reports" mean?  I think it means that you can only
+   supply one of those options, but "reports" hardly has that meaning in
+   a self-explanatory way.  */
 static const char *const history_usg[] =
 {
     "Usage: %s %s [-report] [-flags] [-options args] [files...]\n\n",
