@@ -3592,6 +3592,96 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+# for contrib/rcs2log.sh & src/cvsbug.in.
+# Extract the first word of "mktemp", so it can be a program name with args.
+set dummy mktemp; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_MKTEMP+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $MKTEMP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MKTEMP="$MKTEMP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_MKTEMP="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_MKTEMP" && ac_cv_path_MKTEMP="mktemp"
+  ;;
+esac
+fi
+MKTEMP=$ac_cv_path_MKTEMP
+
+if test -n "$MKTEMP"; then
+  echo "$as_me:$LINENO: result: $MKTEMP" >&5
+echo "${ECHO_T}$MKTEMP" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+MKTEMP=mktemp
+if test x"$MKTEMP" = xmktemp; then
+	MKTEMP_SH_FUNCTION=mktemp.sh
+else
+	MKTEMP_SH_FUNCTION=/dev/null
+fi
+
+# for src/cvsbug.in
+# Extract the first word of "sendmail", so it can be a program name with args.
+set dummy sendmail; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_SENDMAIL+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $SENDMAIL in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_SENDMAIL="$SENDMAIL" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH:/usr/sbin:/usr/lib
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_SENDMAIL="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_SENDMAIL" && ac_cv_path_SENDMAIL="no"
+  ;;
+esac
+fi
+SENDMAIL=$ac_cv_path_SENDMAIL
+
+if test -n "$SENDMAIL"; then
+  echo "$as_me:$LINENO: result: $SENDMAIL" >&5
+echo "${ECHO_T}$SENDMAIL" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+# For diff/util.c
 # Extract the first word of "pr", so it can be a program name with args.
 set dummy pr; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -3632,7 +3722,6 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-# For diff/util.c
 if test x"$PR" != xno; then
 
 cat >>confdefs.h <<_ACEOF
@@ -9761,6 +9850,8 @@ ac_config_files="$ac_config_files contrib/mfpipe"
 
 ac_config_files="$ac_config_files contrib/pvcs2rcs"
 
+ac_config_files="$ac_config_files contrib/rcs2log:contrib/rcs2log.sh"
+
 ac_config_files="$ac_config_files contrib/rcslock"
 
 ac_config_files="$ac_config_files contrib/sccs2rcs"
@@ -10278,6 +10369,7 @@ do
   "contrib/log_accum" ) CONFIG_FILES="$CONFIG_FILES contrib/log_accum" ;;
   "contrib/mfpipe" ) CONFIG_FILES="$CONFIG_FILES contrib/mfpipe" ;;
   "contrib/pvcs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/pvcs2rcs" ;;
+  "contrib/rcs2log" ) CONFIG_FILES="$CONFIG_FILES contrib/rcs2log:contrib/rcs2log.sh" ;;
   "contrib/rcslock" ) CONFIG_FILES="$CONFIG_FILES contrib/rcslock" ;;
   "contrib/sccs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/sccs2rcs" ;;
   "src/cvsbug" ) CONFIG_FILES="$CONFIG_FILES src/cvsbug" ;;
@@ -10421,6 +10513,10 @@ s,@YACC@,$YACC,;t t
 s,@LN_S@,$LN_S,;t t
 s,@PERL@,$PERL,;t t
 s,@CSH@,$CSH,;t t
+s,@MKTEMP@,$MKTEMP,;t t
+/@MKTEMP_SH_FUNCTION@/r $MKTEMP_SH_FUNCTION
+s,@MKTEMP_SH_FUNCTION@,,;t t
+s,@SENDMAIL@,$SENDMAIL,;t t
 s,@PR@,$PR,;t t
 s,@ROFF@,$ROFF,;t t
 s,@PS2PDF@,$PS2PDF,;t t
@@ -10640,6 +10736,7 @@ s,@INSTALL@,$ac_INSTALL,;t t
     contrib/log_accum ) chmod +x contrib/log_accum ;;
     contrib/mfpipe ) chmod +x contrib/mfpipe ;;
     contrib/pvcs2rcs ) chmod +x contrib/pvcs2rcs ;;
+    contrib/rcs2log ) chmod +x contrib/rcs2log ;;
     contrib/rcslock ) chmod +x contrib/rcslock ;;
     contrib/sccs2rcs ) chmod +x contrib/sccs2rcs ;;
     src/cvsbug ) chmod +x src/cvsbug ;;

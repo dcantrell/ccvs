@@ -1,5 +1,13 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add checks for mktemp and sendmail.
+	* mktemp.sh: New file.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* NEWS (Changes since 1.11.5): Mention UserAdminOptions.
 
 2003-02-06  Derek Price  <derek@ximbiot.com>
