@@ -1,3 +1,15 @@
+2005-02-20 Derek Price <derek@ximbiot.com>
+
+	* cvs.h (run_arg): Rename to...
+	(run_add_arg): New function.
+	* run.c (run_arg): Remove.
+	(run_add_arg): Remove static declaration.
+	(run_piped): New function.
+	* logmsg.c, modules.c: s/run_arg/run_add_arg/.
+	* release.c (release): Replace use of piped_child with a call
+	to run_piped to avoid quoting issues.
+	* sanity.sh (info-cleanup-0): Expect success.
+
 2005-02-19 Derek Price <derek@ximbiot.com>
 
 	* edit.c (unedit_fileproc, mark_up_to_date): Replace xmallc/strcat

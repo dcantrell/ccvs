@@ -705,10 +705,10 @@ module `%s' is a request for a file in a module which is not a directory",
 	    if (expanded_path != NULL)
 	    {
 		run_setup (expanded_path);
-		run_arg (real_where);
+		run_add_arg (real_where);
 
 		if (extra_arg)
-		    run_arg (extra_arg);
+		    run_add_arg (extra_arg);
 
 		if (!quiet)
 		{

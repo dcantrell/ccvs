@@ -289,7 +289,7 @@ do_editor (const char *dir, char **messagep, const char *repository,
 
     /* run the editor */
     run_setup (Editor);
-    run_arg (fname);
+    run_add_arg (fname);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
 	error (0, retcode == -1 ? errno : 0, "warning: editor session failed");

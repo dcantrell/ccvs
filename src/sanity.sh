@@ -19035,8 +19035,8 @@ $SPROG commit: Rebuilding administrative file database"
 	  rm ${TESTDIR}/vscript*
 	  cd ..
 
-	  dotest_fail info-cleanup-0 "${testcvs} -n release -d CVSROOT" \
-"${CPROG} \[release aborted\]: cannot run command ${DOTSTAR}"
+	  dotest info-cleanup-0 "$testcvs -n release -d CVSROOT" \
+"You have \[0\] altered files in this repository\."
 
 	  dotest info-cleanup-1 \
 "echo yes |${testcvs} -q release -d CVSROOT >/dev/null"
