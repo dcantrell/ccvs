@@ -1,3 +1,7 @@
+Tue Jun  4 13:38:17 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh: When doing a remote check, use :server: in CVSROOT.
+
 Wed Jun  5 13:32:40 1996  Larry Jones  <larry.jones@sdrc.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
