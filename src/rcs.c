@@ -234,7 +234,7 @@ RCS_parse (file, repos)
  */
 RCSNode *
 RCS_parsercsfile (rcsfile)
-    char *rcsfile;
+    const char *rcsfile;
 {
     FILE *fp;
     RCSNode *rcs;
