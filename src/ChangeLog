@@ -1,10 +1,15 @@
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (basic2-21a): The val-tags file should have
+	at least 'rtagged-by-head y' in it. Test from cvs 1.11.18 that
+	shows fixed result.
+	(basic2-21b, basic2-21c): New tests showing a cvs bug when
+	val-tags is not present.
+	(Report from "John Elgin" <John@JCElgin.com>.)
+
 	* sanity.sh (basicb-21): POSIX 1003.2 specifies 'illegal option'
 	while lots of getopt implementations still use 'invalid option'.
 	Allow either form for this test.
-	(basic2-21b, basic2-21c): New tests showing a cvs bug when
-	val-tags is not present.
 
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
