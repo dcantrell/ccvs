@@ -485,8 +485,16 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		(void) write_letter (file, 'C', update_dir);
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
-		retval = merge_file (file, repository, entries,
-				     vers, update_dir);
+		if (noexec)
+		{
+		    retval = 1;
+		    (void) write_letter (file, 'C', update_dir);
+		}
+		else
+		{
+		    retval = merge_file (file, repository, entries,
+					 vers, update_dir);
+		}
 		break;
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
