@@ -2320,9 +2320,9 @@ from the repository.
 
 Note that these locks are to protect @sc{cvs}'s
 internal data structures and have no relationship to
-the word @dfn{lock} in the sense used by @sc{rcs}--a
-way to prevent other developers from working on a
-particular file.
+the word @dfn{lock} in the sense used by
+@sc{rcs}---which refers to reserved checkouts
+(@pxref{Multiple developers}).
 
 Any number of people can be reading from a given
 repository at a time; only when someone is writing do
