@@ -1,5 +1,7 @@
 1998-02-18  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_whatbranch): Fix indentation.
+
 	* patch.c (patch_fileproc): Check for errors from fclose; check
 	for errors from fopen properly.
 

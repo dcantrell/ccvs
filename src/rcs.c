@@ -2192,11 +2192,11 @@ RCS_whatbranch (rcs, rev)
     if (isdigit (*rev))
 	version = xstrdup (rev);
     else
-	{
+    {
 	version = translate_symtag (rcs, rev);
 	if (version == NULL)
 	    return ((char *) NULL);
-	}
+    }
     dots = numdots (version);
     if ((dots & 1) == 0)
 	return (version);
