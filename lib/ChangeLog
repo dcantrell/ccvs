@@ -1,3 +1,10 @@
+1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
+
+	* Makefile.in: There was a comment here which referred to a long
+	comment in configure.in about regex.o (the configure.in comment
+	isn't there any more).  Replace our comment with a conciser
+	version of the former configure.in comment.
+
 1999-03-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* getopt.h: Don't declare the arguments to getopt.
