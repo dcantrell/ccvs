@@ -190,7 +190,7 @@ checkout (argc, argv)
 		    shorten = 1;
 		break;
 	    case 's':
-		status = 1;
+		cat = status = 1;
 		break;
 	    case 'f':
 		force_tag_match = 0;
@@ -223,10 +223,10 @@ checkout (argc, argv)
     if (shorten == -1)
 	shorten = 0;
 
-    if ((cat || status) && argc != 0)
+    if (cat && argc != 0)
 	error (1, 0, "-c and -s must not get any arguments");
 
-    if (!(cat || status) && argc == 0)
+    if (!cat && argc == 0)
 	error (1, 0, "must specify at least one module or directory");
 
     if (where && pipeout)
@@ -248,7 +248,7 @@ checkout (argc, argv)
     }
 #endif
 
-    if (!safe_location()) {
+    if (!cat && !safe_location()) {
         error(1, 0, "Cannot check out files into the repository itself");
     }
 
@@ -269,7 +269,7 @@ checkout (argc, argv)
            below in !expand_modules), those files (CVS/Checkin.prog
            or CVS/Update.prog) don't get created.  Grrr.  */
 	
-	expand_modules = (!cat && !status && !pipeout
+	expand_modules = (!cat && !pipeout
 			  && supported_request ("expand-modules"));
 	
 	if (expand_modules)
@@ -296,7 +296,7 @@ checkout (argc, argv)
 	if (checkout_prune_dirs && m_type == CHECKOUT)
 	    send_arg("-P");
 	client_prune_dirs = checkout_prune_dirs;
-	if (cat)
+	if (cat && !status)
 	    send_arg("-c");
 	if (where != NULL)
 	    option_with_arg ("-d", where);
@@ -329,7 +329,7 @@ checkout (argc, argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    if (cat || status)
+    if (cat)
     {
 	cat_module (status);
 	if (options)
