@@ -1,3 +1,8 @@
+Fri Aug 23 19:19:44 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* checkin.c (Checkin): Copy rcs parameter in case it is freed when
+	finfo->rcs is freed.
+
 Fri Aug 23 14:55:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* remove.c (remove_fileproc): Revert change of 23 Aug to print

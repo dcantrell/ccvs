@@ -32,11 +32,15 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
     char fname[PATH_MAX];
     Vers_TS *vers;
     int set_time;
-
+    char *rcscopy;
     char *tocvsPath = NULL;
 
     (void) printf ("Checking in %s;\n", finfo->fullname);
     (void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
+
+    /* Make a copy of the RCS argument, in case it comes from
+       finfo->rcs which we might free in this routine.  */
+    rcscopy = xstrdup (rcs);
 
     /*
      * Move the user file to a backup file, so as to preserve its
@@ -62,7 +66,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	}
     }
 
-    switch (RCS_checkin (rcs, NULL, message, rev, 0))
+    switch (RCS_checkin (rcscopy, NULL, message, rev, 0))
     {
 	case 0:			/* everything normal */
 
@@ -135,6 +139,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	    if (!noexec)
 		error (1, errno, "could not check in %s -- fork failed",
 		       finfo->fullname);
+	    free (rcscopy);
 	    return (1);
 
 	default:			/* ci failed */
@@ -152,6 +157,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 		rename_file (fname, finfo->file);
 		error (0, 0, "could not check in %s", finfo->fullname);
 	    }
+	    free (rcscopy);
 	    return (1);
     }
 
@@ -162,8 +168,10 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
      */
     if (rev)
     {
-	(void) RCS_unlock (rcs, NULL, 1);
+	(void) RCS_unlock (rcscopy, NULL, 1);
     }
+
+    free (rcscopy);
 
 #ifdef SERVER_SUPPORT
     if (server_active)
