@@ -28,7 +28,7 @@
 #define LOSING_TMPNAM_FUNCTION
 #endif
 
-static int deep_remove_dir PROTO((const char *path));
+static int deep_remove_dir( const char *path );
 
 /*
  * Copies "from" to "to".
