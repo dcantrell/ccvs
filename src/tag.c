@@ -403,19 +403,6 @@ pretag_list_proc(p, closure)
     return (0);
 }
 
-/* We do not need to acquire a full write lock for the tag operation:
-   the revisions are obtained from the working directory, so we do not
-   require consistency across the entire repository.  However, we do
-   need to prevent simultaneous tag operations from interfering with
-   each other.  Therefore, we write lock each directory as we enter
-   it, and unlock it as we leave it.
-
-   This variable holds the write locked directory.  We lock it in
-   tag_fileproc and clear the lock in tag_filesdoneproc.  We don't use
-   a direntproc and dirleaveproc because those won't handle the case
-   where the user specifies a list of files on the command line.  */
-static char *locked_dir;
-static List *locked_list;
 
 /*
  * Called to tag a particular file (the currently checked out version is
@@ -432,28 +419,10 @@ tag_fileproc (finfo)
     Vers_TS *vers;
     int retcode = 0;
 
-    /* If we haven't write locked the directory yet, do it now.  */
-    if (finfo->repository != NULL
-	&& (locked_dir == NULL
-	    || strcmp (locked_dir, finfo->repository) != 0))
-    {
-        Node *node;
-
-        if (locked_dir != NULL)
-	{
-	    Lock_Cleanup ();
-	    dellist (&locked_list);
-	    free (locked_dir);
-	}
-
-	locked_dir = xstrdup (finfo->repository);
-	locked_list = getlist ();
-	node = getnode ();
-	node->type = LOCK;
-	node->key = xstrdup (finfo->repository);
-	(void) addnode (locked_list, node);
-	Writer_Lock (locked_list);
-    }
+    /* Lock the directory if it is not already locked.  We can't rely
+       on tag_dirproc because it won't handle the case where the user
+       specifies a list of files on the command line.  */
+    tag_lockdir (finfo->repository);
 
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
@@ -621,13 +590,7 @@ tag_filesdoneproc(err, repos, update_dir)
     char *repos;
     char *update_dir;
 {
-    if (locked_dir != NULL)
-    {
-        Lock_Cleanup ();
-	dellist (&locked_list);
-	free (locked_dir);
-	locked_dir = NULL;
-    }
+    tag_unlockdir ();
 
     return (err);
 }
@@ -645,6 +608,66 @@ tag_dirproc (dir, repos, update_dir)
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
     return (R_PROCESS);
+}
+
+/* We do not need to acquire a full write lock for the tag operation:
+   the revisions are obtained from the working directory, so we do not
+   require consistency across the entire repository.  However, we do
+   need to prevent simultaneous tag operations from interfering with
+   each other.  Therefore, we write lock each directory as we enter
+   it, and unlock it as we leave it.
+
+   In the rtag case, it would be nice to provide consistency with
+   respect to commits; however CVS lacks the infrastructure to do that
+   (see Concurrency in cvs.texinfo and comment in do_recursion).  We
+   can and will prevent simultaneous tag operations from interfering
+   with each other, by write locking each directory as we enter it,
+   and unlocking it as we leave it.  */
+static char *locked_dir;
+static List *locked_list;
+
+/*
+ * Lock the directory for a tag operation.  This is also called by the
+ * rtag code.
+ */
+void
+tag_lockdir (repository)
+     char *repository;
+{
+    if (repository != NULL
+	&& (locked_dir == NULL
+	    || strcmp (locked_dir, repository) != 0))
+    {
+        Node *node;
+
+	if (locked_dir != NULL)
+	    tag_unlockdir ();
+
+	locked_dir = xstrdup (repository);
+	locked_list = getlist ();
+	node = getnode ();
+	node->type = LOCK;
+	node->key = xstrdup (repository);
+	(void) addnode (locked_list, node);
+	Writer_Lock (locked_list);
+    }
+}
+
+/*
+ * Unlock the directory for a tag operation.  This is also called by
+ * the rtag code.
+ */
+void
+tag_unlockdir ()
+{
+    if (locked_dir != NULL)
+    {
+        Lock_Cleanup ();
+	dellist (&locked_list);
+	free (locked_dir);
+	locked_dir = NULL;
+	locked_list = NULL;
+    }
 }
 
 /* Code relating to the val-tags file.  Note that this file has no way
