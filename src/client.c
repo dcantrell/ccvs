@@ -60,7 +60,6 @@ extern char *strerror ();
 #if HAVE_KERBEROS
 #define CVS_PORT 1999
 
-#if HAVE_KERBEROS
 #include <krb.h>
 
 extern char *krb_realmofhost ();
@@ -71,8 +70,6 @@ extern char *krb_realmofhost ();
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
 static Key_schedule sched;
-
-#endif /* HAVE_KERBEROS */
 
 #endif /* HAVE_KERBEROS */
 
