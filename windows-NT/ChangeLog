@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in.in: Tell compiler we have a decl for getpass().
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in: Define use of replacement getopt functions.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>

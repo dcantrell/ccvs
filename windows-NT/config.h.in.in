@@ -180,6 +180,11 @@
    */
 #undef HAVE_DECL_GETENV
 
+/* Define to 1 if you have the declaration of `getpass', and to 0 if you
+   don't. */
+/* This is in `windows-NT/unistd.h'.  */
+#define HAVE_DECL_GETPASS 1
+
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
 #undef HAVE_DECL_NANOSLEEP

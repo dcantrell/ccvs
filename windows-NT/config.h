@@ -204,6 +204,10 @@
    */
 #undef HAVE_DECL_GETENV
 
+/* Define to 1 if you have the declaration of `getpass', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETPASS
+
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
 #undef HAVE_DECL_NANOSLEEP
@@ -481,6 +485,9 @@
 /* Define if <stdint.h> exists, doesn't clash with <sys/types.h>, and declares
    uintmax_t. */
 #undef HAVE_STDINT_H_WITH_UINTMAX
+
+/* Define to 1 if you have the <stdio_ext.h> header file. */
+#undef HAVE_STDIO_EXT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
