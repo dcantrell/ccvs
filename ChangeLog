@@ -1,3 +1,8 @@
+Tue Oct 28 19:59:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO (190): "rcs failed" message is no longer affected by global
+	-q option.
+
 1997-10-28  Jim Kingdon
 
 	* .cvsignore: Add Visual C++ files du jour, namely

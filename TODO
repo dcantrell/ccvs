@@ -608,8 +608,6 @@ of -q; I don't know whether anyone has done a similar investigation of
   c.  Suppressing various error messages.  This is almost surely
   bogus.
 
-    admin.c: %s failed for `%s' (questionable; I guess the rationale is
-      that rcs probably already printed a message)
     commit.c: failed to remove tag `%s' from `%s' (even more questionable.
       Rationale might be similar but why would it be necessary to avoid
       the extra message in such an uncommon case)
