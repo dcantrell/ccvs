@@ -571,7 +571,7 @@ if test x"$*" = x; then
 	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
 	tests="${tests} sticky keyword keywordlog"
-	tests="${tests} head tagdate multibranch2"
+	tests="${tests} head tagdate multibranch2 tag8k"
 	# "cvs admin", reserved checkouts.
 	tests="${tests} admin reserved"
 	# Nuts and bolts of diffing/merging (diff library, &c)
@@ -11295,6 +11295,8 @@ start revision@
 a1 1
 branch revision@
 EOF
+	  # ' Match the single quote in above here doc -- for font-lock mode.
+
 	  # First test the default branch.
 	  dotest rcs-5 "${testcvs} -q update file2" "U file2"
 	  dotest rcs-6 "cat file2" "branch revision"
@@ -11570,6 +11572,8 @@ Tonight we're going to party like it's a certain year@
 a1 1
 Need to start somewhere@
 EOF
+	  # ' Match the 3rd single quote in the here doc -- for font-lock mode.
+
 	  dotest rcs2-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
 	  cd first-dir
 
@@ -13023,6 +13027,91 @@ done"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	tag8k)
+	  # In cvs-1.9.27, there is a bug that can cause an abort.
+	  # It happens when you commit a change to a ,v file that has
+	  # just the right amount of tag/branch info to align one of the
+	  # semicolons in the branch info to be on a 8k-byte boundary.
+	  # The result: rcsbuf_getkey got an abort.  This failure doesn't
+	  # corrupt the ,v file -- that would be really serious.  But it
+	  # does leave stale write locks that have to be removed manually.
+
+	  mkdir 1
+	  cd 1
+
+	  module=x
+
+	  : > junk
+	  dotest tag8k-1 "$testcvs -Q import -m . $module X Y" ''
+	  dotest tag8k-2 "$testcvs -Q co $module" ''
+	  cd $module
+
+	  file=m
+	  : > $file
+	  dotest tag8k-3 "$testcvs add $file" \
+"${PROG} [a-z]*: scheduling file .$file. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest tag8k-4 "$testcvs -Q ci -m . $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+done
+Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  # It seems there have to be at least two versions.
+	  echo a > $file
+	  dotest tag8k-5 "$testcvs -Q ci -m . $file" \
+"Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # Add just under 8K worth of tags.
+	  t=TAG---------------------------------------------------------------------
+	  t=$t$t
+	  t=$t$t$t$t$t
+	  # Now $t is 720 bytes long.
+
+	  # Apply some tags with that long prefix.
+	  dotest tag8k-6  "$testcvs -Q tag $t-0 $file" ''
+	  dotest tag8k-7  "$testcvs -Q tag $t-1 $file" ''
+	  dotest tag8k-8  "$testcvs -Q tag $t-2 $file" ''
+	  dotest tag8k-9  "$testcvs -Q tag $t-3 $file" ''
+	  dotest tag8k-10 "$testcvs -Q tag $t-4 $file" ''
+	  dotest tag8k-11 "$testcvs -Q tag $t-5 $file" ''
+	  dotest tag8k-12 "$testcvs -Q tag $t-6 $file" ''
+	  dotest tag8k-13 "$testcvs -Q tag $t-7 $file" ''
+	  dotest tag8k-14 "$testcvs -Q tag $t-8 $file" ''
+	  dotest tag8k-15 "$testcvs -Q tag $t-9 $file" ''
+	  dotest tag8k-16 "$testcvs -Q tag $t-a $file" ''
+
+	  # Determine the length of the author value.
+	  name=`sed -n 's/.*;	author \([^;]*\);.*/\1/p' ${TESTDIR}/cvsroot/$module/$file,v|head -1`
+	  name_len=`expr length $name`
+
+	  # CAREFUL: this will lose if $name is longer than 16.
+	  # Then, form a string of length 16 - $name_len.
+	  add_len=`expr 16 - $name_len`
+	  suffix=`expr substr 1234567890123456 1 $add_len`
+
+	  # Add a final tag with length chosen so that it will push the
+	  # offset of the `;' in the 2nd occurrence of `;\tauthor' in the
+	  # ,v file to exactly 8192.
+	  dotest tag8k-17 "$testcvs -Q tag "x8bytes-$suffix" $file" ''
+
+	  # This commit would fail with 1.9.27.
+	  echo a >> $file
+	  dotest tag8k-18 "$testcvs -Q ci -m . $file" \
+"Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+new revision: 1\.3; previous revision: 1\.2
+done"
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 
