@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move include of getopt.h to system.h with similar headers.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* login.c: Include getpass.h.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>

@@ -40,10 +40,6 @@
 #endif /* __attribute__ */
 
 /* begin GNULIB headers */
-/* The folowing may have system equivalents.  */
-#include <getopt.h>
-
-/* The following do not.  */
 #include "dirname.h"
 #include "exit.h"
 #include "minmax.h"
