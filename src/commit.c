@@ -339,7 +339,12 @@ commit (argc, argv)
     /* FIXME: Shouldn't this check be much more closely related to the
        readonly user stuff (CVSROOT/readers, &c).  That is, why should
        root be able to "cvs init", "cvs import", &c, but not "cvs ci"?  */
-    if (geteuid () == (uid_t) 0)
+    if (geteuid () == (uid_t) 0
+#  ifdef CLIENT_SUPPORT
+	/* Who we are on the client side doesn't affect logging.  */
+	&& !client_active
+#  endif
+	)
     {
 	struct passwd *pw;
 
