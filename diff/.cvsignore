@@ -1,3 +1,4 @@
+*.plg
 .deps
 Makefile
 WinDebug
