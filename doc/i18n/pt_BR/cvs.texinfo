@@ -283,20 +283,7 @@ grande ajuda.
 Você pode, é claro, salvar toda versão de todo arquivo
 que um dia você criou. Mas isto vai consumir um enorme
 espaço no disco. @sc{cvs} guarda todas as versões de um
-arquivo em um único arquivo de uma forma ???clever???
-@c ??? clever: adjective.  2.  Showing skill or adroitness in the doer or
-@c maker.
-@c
-@c synonyms for this particular meaning: intelligent (as in the thing took
-@c intelligence to make).
-@c Maybe, "trickyness", though this may be an English coloquialism and also
-@c prove hard to translate.
-@c
-@c Clever can imply something beyond intelligence.  Creativity, perhaps.
-@c Approaching problems in new ways.  Implies speaker is more impressed with
-@c the act more than citing intelligence.  Perhaps because intelligence seems
-@c more quantifiable to most, measurable with tests, etc.  Clever is more
-@c subjective.
+arquivo em um único arquivo em uma forma inteligente
 que guarda apenas as diferenças entre versões.
 
 @comment <en>@sc{cvs} also helps you if you are part of a group of people working
@@ -337,21 +324,7 @@ desenvolvedor tiver terminado.
 @comment <en>these shell scripts is present in the current version
 @comment <en>of @sc{cvs} much of the @sc{cvs} conflict resolution algorithms
 @comment <en>come from them.
-@sc{cvs} começou como um ???bunch??? de shell scripts
-@c ??? "bunch" is a noun meaning a group containing many members, usually close
-@c together.  Bananas come in "bunches".  Many members is very relative.  Two
-@c bananas would be a small bunch, but you probably wouldn't refer to groups
-@c of people as bunches in groups of less than 5 or 10, and they would probably
-@c be travelling together, not just associated.  If you don't have a word for
-@c this in Portugese, but you have a translation for "group", or "set", it
-@c would likely be close enough.  "Bunch" isn't a very precise word.  :)
-@c
-@c Just to maybe help give you a better idea of the connotations of the word
-@c bunch, I will mention that when used as a verb in English, "bunch",
-@c refers to members of a larger group or flexible object moving closer
-@c together.  Catepillars bunch up as they move forward.  Cars on a highway
-@c can temporarily bunch together when the lead car slows down.  When your
-@c underwear bunches together in your butt crack, it can be very uncomfortable.
+@sc{cvs} começou como um monte de shell scripts
 escritos por Dick Grune, postados no newsgroup
 @code{comp.sources.unix} no volume 6 de Julho,
 1986. Na verdade, nenhum código daqueles scripts está
@@ -453,17 +426,14 @@ tenta fazer tudo para todo mundo.
 
 @table @asis
 @comment <en>@item @sc{cvs} is not a build system.
-@item @sc{cvs} não é um ???sistema de construção???.
-@c ??? Like the UNIX `make' tool, which provides commands to "build" your text
-@c source files into object object files and into executables.
+@item @sc{cvs} não é um sistema de construção (build system).
 
 @comment <en>Though the structure of your repository and modules
 @comment <en>file interact with your build system
 @comment <en>(e.g. @file{Makefile}s), they are essentially
 @comment <en>independent.
 Embora a estrutura do seu repositório e arquivos de
-módulo interajam com seu ???sistema de construção???
-@c ??? again, as above.
+módulo interajam com seu sistema de construção
 (e.g. @file{Makefile}s), eles são essencialmente
 independentes.
 
@@ -481,13 +451,7 @@ guarda arquivos para recuperação numa estrutura de
 @comment <en>you wind up requiring the entire repository to be
 @comment <en>checked out.
 @sc{cvs} não dita como usar o espaço em disco em
-diretórios de trabalho ???checked out???. Se você
-@c ??? In other contexts, "checked out" can be used to refer to the process of
-@c borrowing a book from a library, or a video from the video store (actually,
-@c if money changes hands, like with videos, customers will refer to "renting"
-@c the video, but if the video is not in, the employees would tell you, "no, it
-@c is checked out".  In this context, "checked out" refers to the process of
-@c copying a version of a project to a local work space.
+diretórios de trabalho emprestados. Se você
 escreve seus @file{Makefile}s ou scripts em cada
 diretório, eles têm que saber a posição relativa de
 todo o resto, logo você acaba tendo que pegar todo o
@@ -543,13 +507,9 @@ construção com @sc{cvs}.
 @comment <en>of schedules, merge points, branch names and release
 @comment <en>dates.  If they don't, @sc{cvs} can't help.
 Espera-se que seus gerentes e líderes de projetos falem
-com você com a frequencia suficiente para que você
+com você com a frequência suficiente para que você
 saiba de prazos, pontos de mescla, nomes de ramos e
-datas de ???release???. Se eles não o fizerem, o
-@c ??? A release date in this context is when software is sent out to the
-@c public.  After the software makes it past the testing of the quality
-@c assurance team, it is "released" to the public, like an animal might be
-@c "released" into the wild.
+datas de lançamento (release). Se eles não o fizerem, o
 @sc{cvs} não pode ajudar.
 
 @comment <en>@sc{cvs} is an instrument for making sources dance to
@@ -584,17 +544,8 @@ que é necessária a comunicação entre os desenvolvedores.
 simultâneas em um arquivo, ou vários, vão conflitar
 logicamente umas com as outras. Seu conceito de
 @dfn{conflito} é puramente textual, surgindo quando
-duas alterações nummesmo arquivo inicial são próximas o
-suficiente para ???spook??? o comando mescla dos
-@c normally, "spook" as a verb means to scare or frighten.
-@c
-@c "spook" here is an anthropomorphism (its use here implies that the cvs in
-@c general and the merge command in particular has feelings like a person).
-@c It is actually referring to the fact that the merge command is not "smart"
-@c enough to resolve two sets of changes to the same line or lines close
-@c together, but that it is "smart" to realize that it doesn't know how to
-@c resolve the conflict and this "spooks" it ("scares" it) adding the conflict
-@c markers so to ask the user to resolve the issue.
+duas alterações num mesmo arquivo inicial são próximas o
+suficiente para intimidar o comando mescla dos
 (i.e. @code{diff3}).
 
 @comment <en>@sc{cvs} does not claim to help at all in figuring out
@@ -617,11 +568,7 @@ antigos. Vocês estão fora do escopo da competência do
 
 @comment <en>Acquire the habit of reading specs and talking to your
 @comment <en>peers.
-Adquira o hábito de ler ???specs??? e conversar com
-@c "specs" = "specifications".  In this context, this refers to software
-@c documentation - the documentation that "specifies", (lists? shows? explains)
-@c what is required of the software, or how the software performs some
-@c action, etc.
+Adquira o hábito de ler documentação e conversar com
 seus parceiros.
 
 
