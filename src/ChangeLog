@@ -1,3 +1,7 @@
+Tue Jan 13 10:33:02 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* zlib.c (read_and_gzip): Set finish to 0; it was uninitialized.
+
 Tue Jan 13 10:26:43 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c, rcs.c: Plug memory leaks.
