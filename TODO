@@ -659,3 +659,36 @@ space than it could, typically.
     more on fractal compression, including at least one patent to
     watch for; I don't know how analogous Karl's ideas are to the
     techniques described there).
+
+192.  "cvs update" using an absolute pathname does not work if the
+working directory is not a CVS-controlled directory with the correct
+CVSROOT.  For example, the following will fail:
+
+  cd /tmp
+  cvs -d /repos co foo
+  cd /
+  cvs update /tmp/foo
+
+It is possible to read the CVSROOT from the administrative files in
+the directory specified by the absolute pathname argument to update.
+In that case, the last command above would be equivalent to:
+
+  cd /tmp/foo
+  cvs update .
+
+This can be problematic, however, if we ask CVS to update two
+directories with different CVSROOTs.  Currently, CVS has no way of
+changing CVSROOT mid-stream.  Consider the following:
+
+  cd /tmp
+  cvs -d /repos1 co foo
+  cvs -d /repos2 co bar
+  cd /
+  cvs update /tmp/foo /tmp/bar
+
+To make that example work, we need to think hard about:
+
+  - where and when CVSROOT-related variables get set
+  - who caches said variables for later use
+  - how the remote protocol should be extended to handle sending a new
+    repository mid-stream
