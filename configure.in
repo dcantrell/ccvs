@@ -191,6 +191,7 @@ AC_REPLACE_FUNCS(\
 dnl
 dnl Begin GNULIB stuff.
 dnl
+gl_XSIZE
 
 dnl We always want to use the GNULIB getpass, so define its name to something
 dnl that won't conflict with system declarations.
