@@ -10092,11 +10092,6 @@ These special options are also available with
 Reset any sticky tags, dates, or @samp{-k} options.
 See @ref{Sticky tags}, for more information on sticky tags/dates.
 
-@item -C
-Overwrite locally modified files with clean copies from
-the repository (the modified file is saved in
-@file{.#@var{file}.@var{revision}}, however).
-
 @item -d
 Create any directories that exist in the repository if
 they're missing from the working directory.  Normally,
@@ -10970,11 +10965,6 @@ Bring work tree in sync with repository.  See
 @item -A
 Reset any sticky tags/date/options.  See @ref{Sticky
 tags} and @ref{Keyword substitution}.
-
-@item -C
-Overwrite locally modified files with clean copies from
-the repository (the modified file is saved in
-@file{.#@var{file}.@var{revision}}, however).
 
 @item -D @var{date}
 Check out revisions as of @var{date} (is sticky).  See
