@@ -200,6 +200,23 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
     frame.aflag = aflag;
     frame.locktype = locktype;
     frame.dosrcs = dosrcs;
+
+    /* If our repository_in has a trailing "/.", remove it before storing it
+     * for do_recursion().
+     *
+     * FIXME: This is somewhat of a hack in the sense that many of our callers
+     * painstakingly compute and add the trailing '.' we now remove.
+     */
+    while (repository_in && strlen (repository_in) >= 2
+           && repository_in[strlen (repository_in) - 2] == '/'
+           && repository_in[strlen (repository_in) - 1] == '.')
+    {
+	/* Beware the case where the string is exactly "/.".  */
+	if (strlen (repository_in) == 2)
+	    repository_in[1] = '\0';
+	else
+	    repository_in[strlen (repository_in) - 2] = '\0';
+    }
     frame.repository = repository_in;
 
     expand_wild (argc, argv, &argc, &argv);
