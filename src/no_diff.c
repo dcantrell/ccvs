@@ -39,10 +39,9 @@ No_Difference (file, vers, entries, repository, update_dir)
     else
 	options = xstrdup ("");
 
-    run_setup ("%s%s -p -q -r%s %s", Rcsbin, RCS_CO,
-	       vers->vn_user ? vers->vn_user : "", options);
-    run_arg (vers->srcfile->path);
-    if ((retcode = run_exec (RUN_TTY, tmpnam (tmp), RUN_TTY, RUN_REALLY)) == 0)
+    retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_user, options,
+                            tmpnam (tmp), 0, 0);
+    if (retcode == 0)
     {
 #if 0
 	/* Why would we want to munge the modes?  And only if the timestamps

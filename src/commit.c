@@ -1237,7 +1237,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 
 #ifdef DEATH_SUPPORT
     int branch;
-    char *lockflag;
+    int lockflag;
     char *corev;
     char *rev;
     char *prev_rev;
@@ -1247,7 +1247,6 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     corev = NULL;
     rev = NULL;
     prev_rev = NULL;
-    lockflag = 0;
 #endif /* DEATH_SUPPORT */
 
     retcode = 0;
@@ -1281,7 +1280,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     (void) printf ("Removing %s;\n", file);
 
     rev = NULL;
-    lockflag = "-l";
+    lockflag = RCS_FLAGS_LOCK;
     if (branch)
     {
 	char *branchname;
@@ -1307,7 +1306,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 	       revision but do not lock. */
 	    corev = RCS_gettag (rcsfile, tag, 1, 0);
 	    prev_rev = xstrdup(rev);
-	    lockflag = "";
+	    lockflag = 0;
 	} else
 	{
 	    corev = xstrdup (rev);
@@ -1354,12 +1353,10 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  except when creating a branch,
        lock the rev we're checking out.  */
-    run_setup ("%s%s %s %s%s %s", Rcsbin, RCS_CO,
-	       lockflag,
-	       rev ? "-r" : "",
-	       rev ? corev : "", rcs); 
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
-	!= 0) {
+    retcode = RCS_checkout (rcs, "", rev ? corev : NULL, NULL, RUN_TTY,
+                            lockflag, 1);
+    if (retcode != 0)
+    {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
 		   "failed to check out `%s'", rcs);

@@ -436,9 +436,9 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     }
     if (vers_tag != NULL)
     {
-	run_setup ("%s%s %s -p -q -r%s", Rcsbin, RCS_CO, options, vers_tag);
-	run_arg (rcsfile->path);
-	if ((retcode = run_exec (RUN_TTY, tmpfile1, RUN_TTY, RUN_NORMAL)) != 0)
+	retcode = RCS_checkout (rcsfile->path, NULL, vers_tag, options, tmpfile1,
+	                        0, 0);
+	if (retcode != 0)
 	{
 	    if (!really_quiet)
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
@@ -458,9 +458,8 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     }
     if (vers_head != NULL)
     {
-	run_setup ("%s%s %s -p -q -r%s", Rcsbin, RCS_CO, options, vers_head);
-	run_arg (rcsfile->path);
-	if ((retcode = run_exec (RUN_TTY, tmpfile2, RUN_TTY, RUN_NORMAL)) != 0)
+	retcode = RCS_checkout (rcsfile->path, NULL, vers_head, options, tmpfile2, 0, 0);
+	if (retcode != 0)
 	{
 	    if (!really_quiet)
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
@@ -481,7 +480,7 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     line2 = NULL;
     line2_chars_allocated = 0;
 
-    switch (run_exec (RUN_TTY, tmpfile3, RUN_TTY, RUN_NORMAL))
+    switch (run_exec (RUN_TTY, tmpfile3, RUN_TTY, RUN_REALLY))
     {
 	case -1:			/* fork/wait failure */
 	    error (1, errno, "fork for diff failed on %s", rcs);
@@ -586,9 +585,10 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
         free (line1);
     if (line2)
         free (line2);
-    (void) unlink_file (tmpfile1);
-    (void) unlink_file (tmpfile2);
-    (void) unlink_file (tmpfile3);
+    /* FIXME: should be checking for errors.  */
+    (void) unlink (tmpfile1);
+    (void) unlink (tmpfile2);
+    (void) unlink (tmpfile3);
     return (ret);
 }
 

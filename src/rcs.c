@@ -130,14 +130,8 @@ RCS_parse (file, repos)
     FILE *fp;
     char rcsfile[PATH_MAX];
 
-#ifdef LINES_CRLF_TERMINATED
-    /* Some ports of RCS to Windows NT write RCS files with newline-
-       delimited lines.  We would need to pass fopen a "binary" flag.  */
-    abort ();
-#endif
-
     (void) sprintf (rcsfile, "%s/%s%s", repos, file, RCSEXT);
-    if ((fp = fopen (rcsfile, "r")) != NULL) 
+    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) != NULL) 
     {
         rcs = RCS_parsercsfile_i(fp, rcsfile);
 	if (rcs != NULL) 
@@ -152,14 +146,8 @@ RCS_parse (file, repos)
 	return NULL;
     }
 
-#ifdef LINES_CRLF_TERMINATED
-    /* Some ports of RCS to Windows NT write RCS files with newline-
-       delimited lines.  We would need to pass fopen a "binary" flag.  */
-    abort ();
-#endif
-
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
-    if ((fp = fopen (rcsfile, "r")) != NULL) 
+    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) != NULL) 
     {
         rcs = RCS_parsercsfile_i(fp, rcsfile);
 	if (rcs != NULL)
@@ -190,14 +178,8 @@ RCS_parsercsfile (rcsfile)
     FILE *fp;
     RCSNode *rcs;
 
-#ifdef LINES_CRLF_TERMINATED
-    /* Some ports of RCS to Windows NT write RCS files with newline-
-       delimited lines.  We would need to pass fopen a "binary" flag.  */
-    abort ();
-#endif
-
     /* open the rcsfile */
-    if ((fp = fopen (rcsfile, "r")) == NULL)
+    if ((fp = fopen (rcsfile, FOPEN_BINARY_READ)) == NULL)
     {
 	error (0, errno, "Couldn't open rcs file `%s'", rcsfile);
 	return (NULL);
@@ -295,13 +277,7 @@ RCS_reparsercsfile (rdata)
 
     rcsfile = rdata->path;
 
-#ifdef LINES_CRLF_TERMINATED
-    /* Some ports of RCS to Windows NT write RCS files with newline-
-       delimited lines.  We would need to pass fopen a "binary" flag.  */
-    abort ();
-#endif
-
-    fp = fopen(rcsfile, "r");
+    fp = fopen(rcsfile, FOPEN_BINARY_READ);
     if (fp == NULL)
 	error (1, 0, "unable to reopen `%s'", rcsfile);
 
