@@ -3708,7 +3708,9 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	/* If this revision is being inserted on the trunk, the change text
 	   for the new delta should be the contents of the working file ... */
 	bufsize = 0;
-	get_file(workfile, workfile, "r", &dtext->text, &bufsize, &dtext->len);
+	get_file (workfile, workfile,
+		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  &dtext->text, &bufsize, &dtext->len);
 
 	/* ... and the change text for the old delta should be a diff. */
 	commitpt->text = (Deltatext *) xmalloc (sizeof (Deltatext));
@@ -3730,7 +3732,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		break;
 	}
 
-	get_file (changefile, changefile, "r",
+	get_file (changefile, changefile, "rb",
 		  &commitpt->text->text, &bufsize, &commitpt->text->len);
 
 	/* If COMMITPT->TEXT->TEXT is NULL, it means that CHANGEFILE
@@ -3764,7 +3766,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		error (1, 0, "error diffing %s", workfile);
 		break;
 	}
-	get_file (changefile, changefile, "r", &dtext->text, &bufsize,
+	get_file (changefile, changefile, "rb", &dtext->text, &bufsize,
 		  &dtext->len);
 	if (dtext->text == NULL)
 	{
