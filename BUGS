@@ -1,3 +1,5 @@
+* CVS leaves .#mumble files around when a conflict occurs.
+
 * If patch fails, CCVS tries to transfer the whole file, but it
   doesn't seem to handle this correctly:
 
