@@ -1,3 +1,9 @@
+1999-11-10  Jim Kingdon  <http://developer.redhat.com/>
+
+	* admin.c: Revert change to add -H command option.  The help
+	invocation is "cvs -H admin" not "cvs admin -H" (see cvs.texinfo,
+	basicb-21 in sanity.sh; fix to cvs.1)
+
 1999-11-08  Jim Kingdon  <http://developer.redhat.com/>
 
 	* log.c (cvslog): If client_active, send options to the server
