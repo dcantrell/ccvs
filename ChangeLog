@@ -1,3 +1,7 @@
+2004-04-16  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Correct CVS name for piped checkout issue now that we have one.
+
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.dsp: Set PROP BASE directories to projet standard,
