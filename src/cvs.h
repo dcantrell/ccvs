@@ -700,9 +700,6 @@ typedef enum {
     /* -t and -f wrapper options.  Treating directories as single files.  */
     WRAP_TOCVS,
     WRAP_FROMCVS,
-    /* -m wrapper option.  Changing merge behavior (FIXME: look into whether
-       this is still relevant given the 24 Jun 96 change to merge_file).  */
-    WRAP_CONFLICT,
     /* -k wrapper option.  Default keyword expansion options.  */
     WRAP_RCSOPTION
 } WrapMergeHas;
