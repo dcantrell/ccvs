@@ -4544,6 +4544,12 @@ File: foo\.exe          	Status: Up-to-date
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
+          # The following cases test the format string substitution
+          echo "ALL echo %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %sux >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
 
 	  # Might be nice to move this to crerepos tests; it should
 	  # work to create a loginfo file if you didn't create one
@@ -4594,6 +4600,16 @@ done'
 	    fail info-8
 	  fi
 	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valueyz=[a-z0-9@][a-z0-9@]*=/tmp/cvs-sanity/cvsroot='
+          dotest info-10 "cat $TESTDIR/testlog2" 'first-dir file1,NONE,1.1
+first-dir 1.1
+first-dir file1
+first-dir NONEAX
+first-dir file1ux
+first-dir file1,1.1,1.2
+first-dir 1.2
+first-dir file1
+first-dir 1.1AX
+first-dir file1ux'
 
 	  # I think this might be doable with cvs remove, or at least
 	  # checking in a version with only comments, but I'm too lazy
