@@ -3841,7 +3841,11 @@ CVS server internal error: unhandled case in server_updated");
 	    /* But if we are joining, we'll need the file when we call
 	       join_file.  */
 	    && !joining ())
-	    CVS_UNLINK (finfo->file);
+	{
+	    if (CVS_UNLINK (finfo->file) < 0)
+		error (0, errno, "cannot remove temp file for %s",
+		       finfo->fullname);
+	}
     }
     else if (scratched_file != NULL && entries_line == NULL)
     {
