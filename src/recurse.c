@@ -34,7 +34,6 @@ static int readlock;
 static int dosrcs;
 static char update_dir[PATH_MAX];
 static char *repository = NULL;
-static List *entries = NULL;
 static List *filelist = NULL; /* holds list of files on which to operate */
 static List *dirlist = NULL; /* holds list of directories on which to operate */
 
@@ -97,11 +96,6 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     {
 	free (repository);
 	repository = (char *) NULL;
-    }
-    if (entries)
-    {
-	Entries_Close (entries);
-	entries = NULL;
     }
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
@@ -273,6 +267,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     int err = 0;
     int dodoneproc = 1;
     char *srepository;
+    List *entries = NULL;
 
     /* do nothing if told */
     if (xflags == R_SKIP_ALL)
@@ -437,6 +432,10 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	/* clean up */
 	dellist (&filelist);
 	dellist (&finfo_struct.srcfiles);
+    }
+
+    if (entries) 
+    {
 	Entries_Close (entries);
 	entries = NULL;
     }
