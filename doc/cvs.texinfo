@@ -2321,7 +2321,9 @@ finds the user, it compares against that password.  If
 it does not find the user, or if the @sc{cvs}
 @file{passwd} file does not exist, then the server
 tries to match the password using the system's
-user-lookup routine.  When using the @sc{cvs}
+user-lookup routine (using the system's user-lookup
+routine can be disabled by setting @code{SystemAuth=no}
+in the config file, @pxref{config}).  When using the @sc{cvs}
 @file{passwd} file, the server runs under as the
 username specified in the the third argument in the
 entry, or as the first argument if there is no third
@@ -11333,7 +11335,7 @@ Extraneous spaces or tabs are not permitted.
 @c See comments in parseinfo.c:parse_config for more
 @c discussion of this strictness.
 
-Currently only one keyword is defined.  It is:
+Currently defined keywords are:
 
 @table @code
 @cindex RCSBIN, in CVSROOT/config
@@ -11345,6 +11347,15 @@ not specified whether this setting overrides the
 with respect to overrides may change in the future.
 @c In other words, I haven't thought very much about
 @c what should override what.
+
+@cindex SystemAuth, in CVSROOT/config
+@item SystemAuth=@var{value}
+If @var{value} is @samp{yes}, then pserver should check
+for users in the system's user database if not found in
+@file{CVSROOT/passwd}.  If it is @samp{no}, then all
+pserver users must exist in @file{CVSROOT/passwd}.
+The default is @samp{yes}.  For more on pserver, see
+@ref{Password authenticated}.
 @end table
 
 @c ---------------------------------------------------------------------
