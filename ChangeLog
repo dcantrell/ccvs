@@ -1,3 +1,15 @@
+Fri Aug 16 16:09:59 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvs.spec: new file.  This is a template for a RPM specification
+	file (which is used by 'make spec').
+
+	* Makefile.in (installdirs-local): new (empty) target
+	(all install uninstall installdirs): add installdirs to list of
+	targets which are done for all subdirs 
+	(spec): new target to create a rpm specification file (which can
+	be used to create RPM source and binary packages)
+	(dist): depend on spec (which now also creates .fname)
+
 Wed Aug 14 13:59:11 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* configure.in (AC_REPLACE_FUNCS): add getspnam for reading shadow

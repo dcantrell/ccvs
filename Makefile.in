@@ -110,12 +110,14 @@ TSUBDIRS= src lib
 # Set default target.
 all:
 
-.PHONY: all install uninstall
-all install uninstall: config.h Makefile all-local
+.PHONY: all install uninstall installdirs
+all install uninstall installdirs: config.h Makefile all-local
 	@for subdir in $(SUBDIRS); do \
 	  echo "making $@ in $$subdir"; \
 	  ( cd $$subdir && $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
 	done
+
+installdirs: installdirs-local
 
 install: all install-local install-info
 
@@ -128,6 +130,10 @@ info dvi clean-info install-info:
 
 .PHONY: install-local
 install-local: all-local
+	@: nothing to do locally
+
+.PHONY: installdirs-local
+installdirs-local: all-local
 	@: nothing to do locally
 
 .PHONY: tags
@@ -207,12 +213,7 @@ lint:
 GZIP=gzip --best
 GZIP_EXT=.gz
 TAR_VERBOSE=
-dist:
-	echo > .fname \
-	  cvs-`sed < $(srcdir)/src/version.c \
-		    -e '/version_string/!d' \
-		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
-		    -e q`
+dist: spec
 	rm -rf `cat .fname`
 	${MAKE} dist-dir DISTDIR="`cat .fname`"
 	for dir in ${SUBDIRS}; do \
@@ -222,7 +223,7 @@ dist:
 	  ); \
 	done
 	tar chf${TAR_VERBOSE} - `cat .fname` | ${GZIP} > "`cat .fname`.tar${GZIP_EXT}"
-	rm -rf `cat .fname` .fname
+	rm -rf `cat .fname` .fname .version
 
 .PHONY: dist-dir
 dist-dir:
@@ -230,6 +231,20 @@ dist-dir:
 	for i in ${DISTFILES}; do \
 	  ln $(srcdir)/$${i} ${DISTDIR}; \
 	done
+
+.PHONY: spec
+spec:
+	rm -f .version .fname
+	sed < $(srcdir)/src/version.c \
+	    -e '/version_string/!d' \
+	    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
+	    -e q > .version
+	echo > .fname cvs-`cat .version`
+	rm -f `cat .fname`.spec
+	sed < $(top_srcdir)/cvs.spec \
+	    -e 's/@VERSION@/'`cat .version`'/' \
+	    > `cat .fname`.spec
+
 
 # For the justification of the following Makefile rules, see node
 # `Automatic Remaking' in GNU Autoconf documentation.
