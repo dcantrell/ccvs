@@ -1,5 +1,7 @@
 Tue Feb 10 18:07:35 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Connection): New node.
+
 	* cvsclient.texi (Protocol): Fix typo (lots -> lost).
 
 Sun Feb  8 21:39:22 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
