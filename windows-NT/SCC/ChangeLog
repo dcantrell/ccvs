@@ -1,3 +1,14 @@
+4 Mar 1997  Jim Kingdon
+
+	Still some distance from being able to open a
+	project, but that's what I'm playing with:
+	* scc.c (SccOpenProject): Use outproc not debuglog
+	for debugging messages.
+	(SccGet): Add debugging messages.
+	(SccAddFromScc): Implemented.
+	(SccInitialize): Return AddFromScc in capabilities.
+	* scc.c: Change out_proc to outproc for consistency.
+
 2 Mar 1997  Jim Kingdon
 
 	* scc.c: Add a bunch of things, to SccOpenProject,

@@ -32,7 +32,9 @@ enum SCC_command
 
 /* Outproc codes, for second argument to outproc.  */
 #define SCC_outproc_info 1
-typedef long (*SCC_out_proc) (char *, long);
+#define SCC_outproc_warning 2
+#define SCC_outproc_error 3
+typedef long (*SCC_outproc) (char *, long);
 
 typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
                                 LONG status, LPCSTR file);
@@ -49,6 +51,7 @@ typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
 
 /* Bits to set in the caps used by SccInitialize.  */
 #define SCC_cap_GetProjPath 0x200L
+#define SCC_cap_AddFromScc 0x400L
 #define SCC_cap_want_outproc 0x8000L
 
 
@@ -60,8 +63,24 @@ struct context {
        "open project" in SCC terminology), malloc'd, or NULL if there is
        no project currently open.  */
     char *root;
-    SCC_out_proc out_proc;
+    /* Local directory (working directory in CVS parlance).  */
+    char *local;
+    SCC_outproc outproc;
 };
+
+#include <windows.h>
+
+/* Report a malloc error and return the SCC_return_* value which the
+   caller should return to the IDE.  Probably this should be getting
+   the window argument too, but for the moment we don't need it.
+   Note that we only use this for errors which occur after the
+   context->outproc is set up.  */
+SCC_return
+malloc_error (struct context *context)
+{
+    (*context->outproc) ("Out of memory\n", SCC_outproc_error);
+    return SCC_return_non_specific_error;
+}
 
 /* Return the version of the SCC spec, major version in the high word,
    minor version in the low word.  */
@@ -95,7 +114,10 @@ SccInitialize (void **contextp, HWND window, LPSTR caller, LPSTR name,
     context->root = NULL;
     *contextp = context;
     fprintf (fp, "Made it into SccInitialize!\n");
-    *caps = SCC_cap_GetProjPath | SCC_cap_want_outproc;
+    *caps = (SCC_cap_GetProjPath
+	     | SCC_cap_AddFromScc
+	     | SCC_cap_want_outproc);
+
     /* I think maybe this should have some more CVS-like
        name, like "CVS Root", if we decide that is what
        a SCC "project" is.  */
@@ -128,11 +150,9 @@ SccUninitialize (void *context_arg)
 SCC_return
 SccOpenProject (void *context_arg, HWND window, LPSTR user,
                  LPSTR project, LPSTR local_proj, LPSTR aux_proj,
-                 LPSTR comment, SCC_out_proc outproc, LONG flags)
+                 LPSTR comment, SCC_outproc outproc, LONG flags)
 {
     struct context *context = (struct context *)context_arg;
-    fprintf (context->debuglog, "SccOpenProject (aux_proj=%s)\n",
-	     aux_proj);
 
     /* This can happen if the IDE opens a project which is not under
        CVS control.  I'm not sure whether checking for aux_proj
@@ -158,8 +178,17 @@ SccOpenProject (void *context_arg, HWND window, LPSTR user,
 	fflush (context->debuglog);
 	return SCC_return_non_specific_error;
     }
-    context->out_proc = outproc;
-    (*context->out_proc) ("Hello, world.\n", SCC_outproc_info);
+    context->outproc = outproc;
+
+    (*context->outproc) ("SccOpenProject (aux_proj=", SCC_outproc_info);
+    (*context->outproc) (aux_proj, SCC_outproc_info);
+    (*context->outproc) (")\n", SCC_outproc_info);
+
+    context->local = malloc (strlen (local_proj) + 5);
+    if (context->local == NULL)
+	return malloc_error (context);
+    strcpy (context->local, local_proj);
+
     fflush (context->debuglog);
     return SCC_return_success;
 }
@@ -179,7 +208,43 @@ SCC_return
 SccGet (void *context_arg, HWND window, LONG num_files,
         LPSTR *file_names, LONG options, void *prov_options)
 {
-    return SCC_return_not_supported;
+    struct context *context = (struct context *)context_arg;
+    int i;
+    char buf[20];
+    char *fname;
+
+    (*context->outproc) ("SccGet: ", SCC_outproc_info);
+    sprintf (buf, "%d", num_files);
+    (*context->outproc) (buf, SCC_outproc_info);
+    (*context->outproc) ("; files: ", SCC_outproc_info);
+#if 1
+    for (i = 0; i < num_files; ++i)
+    {
+	(*context->outproc) (file_names[i], SCC_outproc_info);
+	(*context->outproc) (" ", SCC_outproc_info);
+    }
+#endif
+    (*context->outproc) ("\n", SCC_outproc_info);
+    Sleep (3000);
+
+    for (i = 0; i < num_files; ++i)
+    {
+	FILE *fp;
+
+	fname = malloc (strlen (file_names[i])
+			+ strlen (context->local)
+			+ 10);
+	strcpy (fname, context->local);
+	strcat (fname, "\\");
+	strcat (fname, file_names[i]);
+	(*context->outproc) (fname, SCC_outproc_info);
+#if 0
+	fp = fopen (fname, "w");
+#endif
+	(*context->outproc) (" ", SCC_outproc_info);
+    }
+    (*context->outproc) ("\n", SCC_outproc_info);
+    return SCC_return_success;
 }
 
 /* cvs edit.  */
@@ -360,9 +425,48 @@ SccGetProjPath (void *context_arg, HWND window, LPSTR user,
 /* Pretty much similar to SccPopulateList.  */
 SCC_return
 SccAddFromScc (void *context_arg, HWND window, LONG *files,
-               LPSTR **file_names)
+               char ***file_names)
 {
-    return SCC_return_not_supported;
+    struct context *context = (struct context *)context_arg;
+
+    /* For now we have hardcoded the notion that there are two files,
+       foo.c and bar.c.  */
+#define NUM_FILES 2
+    if (files == NULL)
+    {
+	char **p;
+
+	/* This means to free the memory that is allocated for
+	   file_names.  */
+	for (p = *file_names; *p != NULL; ++p)
+	{
+	    (*context->outproc) ("Freeing ", SCC_outproc_info);
+	    (*context->outproc) (*p, SCC_outproc_info);
+	    (*context->outproc) ("\n", SCC_outproc_info);
+	    free (*p);
+	}
+    }
+    else
+    {
+	*file_names = malloc ((NUM_FILES + 1) * sizeof (char **));
+	if (*file_names == NULL)
+	    return malloc_error (context);
+	(*file_names)[0] = malloc (80);
+	if ((*file_names)[0] == NULL)
+	    return malloc_error (context);
+	strcpy ((*file_names)[0], "foo.c");
+	(*file_names)[1] = malloc (80);
+	if ((*file_names)[1] == NULL)
+	    return malloc_error (context);
+	strcpy ((*file_names)[1], "bar.c");
+	(*file_names)[2] = NULL;
+	*files = 2;
+
+	/* Are we supposed to also Get the files?  Or is the IDE
+	   next going to call SccGet on each one?  The spec doesn't
+	   say explicitly.  */
+    }
+    return SCC_return_success;
 }
 
 /* This changes several aspects of how we interact with the IDE.  */
