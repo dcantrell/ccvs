@@ -97,7 +97,7 @@ struct buffer_data
     char *bufp;
 
     /* The number of data bytes found at BUFP.  */
-    int size;
+    size_t size;
 
     /*
      * Actual buffer.  This never changes after the structure is
@@ -127,12 +127,12 @@ struct buffer *buf_nonio_initialize (void (*) (struct buffer *));
 struct buffer *compress_buffer_initialize (struct buffer *, int, int,
 					   void (*) (struct buffer *));
 struct buffer *packetizing_buffer_initialize
-	(struct buffer *, int (*) (void *, const char *, char *, int),
-	 int (*) (void *, const char *, char *, int, int *), void *,
+	(struct buffer *, int (*) (void *, const char *, char *, size_t),
+	 int (*) (void *, const char *, char *, size_t, size_t *), void *,
 	 void (*) (struct buffer *));
 int buf_empty (struct buffer *);
 int buf_empty_p (struct buffer *);
-void buf_output (struct buffer *, const char *, int);
+void buf_output (struct buffer *, const char *, size_t);
 void buf_output0 (struct buffer *, const char *);
 void buf_append_char (struct buffer *, int);
 int buf_send_output (struct buffer *);
@@ -147,11 +147,11 @@ void buf_append_buffer (struct buffer *, struct buffer *);
 int buf_read_file (FILE *, long, struct buffer_data **, struct buffer_data **);
 int buf_read_file_to_eof (FILE *, struct buffer_data **,
 			  struct buffer_data **);
-int buf_input_data (struct buffer *, int *);
-int buf_read_line (struct buffer *, char **, int *);
+int buf_input_data (struct buffer *, size_t *);
+int buf_read_line (struct buffer *, char **, size_t *);
 int buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
                          size_t max);
-int buf_read_data (struct buffer *, int, char **, int *);
+int buf_read_data (struct buffer *, size_t, char **, size_t *);
 void buf_copy_lines (struct buffer *, struct buffer *, int);
 int buf_copy_counted (struct buffer *, struct buffer *, int *);
 int buf_chain_length (struct buffer_data *);

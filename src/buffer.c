@@ -193,7 +193,7 @@ buf_count_mem (struct buffer *buf)
 
 /* Add data DATA of length LEN to BUF.  */
 void
-buf_output (struct buffer *buf, const char *data, int len)
+buf_output (struct buffer *buf, const char *data, size_t len)
 {
     if (buf->data != NULL
 	&& (((buf->last->text + BUFFER_DATA_SIZE)
@@ -293,7 +293,8 @@ buf_send_output (struct buffer *buf)
 
 	if (data->size > 0)
 	{
-	    int status, nbytes;
+	    int status;
+	    size_t nbytes;
 
 	    status = (*buf->output) (buf->closure, data->bufp, data->size,
 				     &nbytes);
@@ -754,7 +755,7 @@ buf_length (struct buffer *buf)
  * bytes read.
  */
 int
-buf_input_data (struct buffer *buf, int *countp)
+buf_input_data (struct buffer *buf, size_t *countp)
 {
     assert (buf->input != NULL);
 
@@ -763,8 +764,8 @@ buf_input_data (struct buffer *buf, int *countp)
 
     while (1)
     {
-	int get;
-	int status, nbytes;
+	int status;
+	size_t get, nbytes;
 
 	if (buf->data == NULL
 	    || (buf->last->bufp + buf->last->size
@@ -829,7 +830,7 @@ buf_input_data (struct buffer *buf, int *countp)
  * Maintains LAST_INDEX & LAST_COUNT.
  */
 int
-buf_read_line (struct buffer *buf, char **line, int *lenp)
+buf_read_line (struct buffer *buf, char **line, size_t *lenp)
 {
     return buf_read_short_line (buf, line, lenp, SIZE_MAX);
 }
@@ -916,7 +917,8 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
 	predicted_len = 0;
 	while (1)
 	{
-	    int size, status, nbytes;
+	    int status;
+	    size_t size, nbytes;
 	    char *mem;
 
 	    if (buf->data == NULL
@@ -985,7 +987,7 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
  * Maintains LAST_INDEX & LAST_COUNT.
  */
 int
-buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
+buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
 {
     assert (buf->input != NULL);
 
@@ -1004,7 +1006,8 @@ buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
     if (buf->data == NULL)
     {
 	struct buffer_data *data;
-	int get, status, nbytes;
+	int status;
+	size_t get, nbytes;
 
 	data = get_buffer_data ();
 	if (data == NULL)
@@ -1343,7 +1346,7 @@ struct packetizing_buffer
        SIZE is the amount of data in INPUT, and is also the size of
        OUTPUT.  This should return 0 on success, or an errno code.  */
     int (*inpfn) (void *fnclosure, const char *input, char *output,
-			int size);
+			size_t size);
     /* The output translation function.  This should translate the
        data in INPUT, storing the result in OUTPUT.  The first two
        bytes in INPUT will be the size of the data, and so will SIZE.
@@ -1351,7 +1354,7 @@ struct packetizing_buffer
        OUTPUT.  OUTPUT is large enough to hold SIZE + PACKET_SLOP
        bytes.  This should return 0 on success, or an errno code.  */
     int (*outfn) (void *fnclosure, const char *input, char *output,
-			int size, int *translated);
+			size_t size, size_t *translated);
     /* A closure for the translation function.  */
     void *fnclosure;
     /* For an input buffer, we may have to buffer up data here.  */
@@ -1386,9 +1389,9 @@ static int packetizing_buffer_shutdown (struct buffer *);
 struct buffer *
 packetizing_buffer_initialize (struct buffer *buf,
                                int (*inpfn) (void *, const char *, char *,
-                                             int),
+                                             size_t),
                                int (*outfn) (void *, const char *, char *,
-                                             int, int *),
+                                             size_t, size_t *),
                                void *fnclosure,
                                void (*memory) (struct buffer *))
 {

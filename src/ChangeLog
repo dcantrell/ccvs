@@ -1,3 +1,27 @@
+2004-10-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.h, buffer.c (buf_output, buf_input_data, buf_read_line,
+	buf_read_data, struct packetizing_buffer,
+	packetizing_buffer_initialize) Use size_t instead of int.
+	Silences warnings in buffer.c, server.c, and zlib.c on OpenBSD
+	sparc64 where sizeof(int) is not the same as sizeof(size_t).
+	* client.c (read_line_via, read_line, try_read_from_server,
+	get_server_response, handle_ok, handle_error,
+	handle_valid_requests, handle_checked_in, handle_new_entry,
+	handle_checksum, handle_copy_file, handle_updated, handle_merged,
+	handle_patched, handle_rcs_diff, handle_removed,
+	handle_remove_entry, handle_set_static_directory,
+	handle_clear_static_directory, handle_set_sticky,
+	handle_clear_sticky, handle_clear_template,
+	handle_module_expansion, handle_wrapper_rcs_option, handle_m,
+	handle_e, handle_f, handle_notified): Ditto
+	* client.h (struct response): Ditto.
+	* server.c (receive_partial_file, receive_file, serve_modified,
+	do_cvs_command): Ditto.
+	* zlib.c (compress_buffer_input, compress_buffer_shutdown_input):
+	Ditto.
+	(Patch from Alexander Taler <dissent@cvshome.org>.)
+
 2004-10-08  Derek Price  <derek@ximbiot.com>
 
 	* client.c (send_args): Carry through a const to silence gcc -Wall.

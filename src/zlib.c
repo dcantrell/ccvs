@@ -167,7 +167,8 @@ compress_buffer_input (void *closure, char *data, size_t need, size_t size,
 
     while (1)
     {
-	int zstatus, sofar, status, nread;
+	int zstatus, sofar, status;
+	size_t nread;
 
 	/* First try to inflate any data we already have buffered up.
 	   This is useful even if we don't have any buffered data,
@@ -366,7 +367,8 @@ compress_buffer_shutdown_input (struct buffer *buf)
     /* Pick up any trailing data, such as the checksum.  */
     while (1)
     {
-	int status, nread;
+	int status;
+	size_t nread;
 	char buf[100];
 
 	status = compress_buffer_input (cb, buf, 0, sizeof buf, &nread);
