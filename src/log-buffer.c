@@ -366,14 +366,13 @@ log_buffer_rewind (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
     struct buffer *retbuf;
-    void *tmp;
     int fd;
 
     lb->disabled = true;
 
     if (lb->log)
     {
-	tmp = lb->log;
+	FILE *tmp = lb->log;
 	lb->log = NULL;
 
 	/* flush & rewind the file.  */
@@ -400,11 +399,14 @@ log_buffer_rewind (struct buffer *buf)
     retbuf = fd_buffer_initialize (fd, 0, NULL, true, buf->memory_error);
 
 # ifndef TRUST_OS_FILE_CACHE
-    /* Insert the data which wasn't written to a file.  */
-    buf_append_buffer (retbuf, lb->back_buf);
-    tmp = lb->back_buf;
-    lb->back_buf = NULL;
-    buf_free (tmp);
+    {
+	struct buffer *tmp;
+        /* Insert the data which wasn't written to a file.  */
+	buf_append_buffer (retbuf, lb->back_buf);
+	tmp = lb->back_buf;
+	lb->back_buf = NULL;
+	buf_free (tmp);
+    }
 # endif /* !TRUST_OS_FILE_CACHE */
 
     return retbuf;

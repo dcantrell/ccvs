@@ -1,3 +1,9 @@
+2004-08-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* log-buffer.c (log_buffer_rewind): Avoid FreeBSD compilation
+	error for dereferencing a void * pointer tmp as well as using it
+	as a buffer pointer under some conditions.
+
 2004-08-17  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isProxyServer): Always compile.  Cache hostname lookup.
