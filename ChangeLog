@@ -1,5 +1,10 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Generate windows-NT/fix-msvc-mak.
+	* configure, Makefile.in: Regenerated.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL (Building from source code under Unix): Move Autoconf &
 	Automake notes...
 	* HACKING (Regenerating Build Files (UNIX)): ...here.
