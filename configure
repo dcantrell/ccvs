@@ -35010,9 +35010,7 @@ if test "${enable_client+set}" = set; then
   enableval="$enable_client"
 
 else
-  if test "$ac_cv_search_connect" != no; then
-    enable_client=yes
-  fi
+  enable_client=$ac_cv_search_connect
 fi;
 if test no != "$enable_client"; then
 
@@ -35028,10 +35026,12 @@ fi
 if test "${enable_password_authenticated_client+set}" = set; then
   enableval="$enable_password_authenticated_client"
 
+else
+  enable_password_authenticated_client=$enable_client
 fi;
 
-if test no != "$enable_password_authenticated_client"; then
-  if test no != "$enable_client"; then
+if test xno != "x$enable_password_authenticated_client"; then
+  if test xno != "x$enable_client"; then
 
 cat >>confdefs.h <<\_ACEOF
 #define AUTH_CLIENT_SUPPORT 1
@@ -35053,9 +35053,7 @@ if test "${enable_server+set}" = set; then
   enableval="$enable_server"
 
 else
-  if test "$ac_cv_search_connect" != no; then
-     enable_server=yes
-   fi
+  enable_server=$ac_cv_search_connect
 fi;
 
 if test no != "$enable_server"; then
@@ -35267,15 +35265,26 @@ if test "${enable_proxy+set}" = set; then
   enableval="$enable_proxy"
 
 else
-  enable_proxy=yes
+  if test xno != "x$enable_client" && test xno != "x$enable_server"; then
+     enable_proxy=yes
+   else
+     enable_proxy=no
+   fi
 fi;
 
 if test no != "$enable_proxy"; then
+  if test xno = "x$enable_client" || test xno = "x$enable_server"; then
+    { echo "$as_me:$LINENO: WARNING: --enable-proxy is meaningless when either the CVS client or the
+       CVS server is disabled (--disable-client and --disable-server)." >&5
+echo "$as_me: WARNING: --enable-proxy is meaningless when either the CVS client or the
+       CVS server is disabled (--disable-client and --disable-server)." >&2;}
+  else
 
 cat >>confdefs.h <<\_ACEOF
 #define PROXY_SUPPORT 1
 _ACEOF
 
+  fi
 fi
 
 
@@ -35587,18 +35596,18 @@ if test "${enable_encryption+set}" = set; then
 else
   enable_encryption=no
 fi;
-if test "$enable_encryption" = yes; then
-  if test no != "$with_client" || test no != "$with_server"; then
+if test "x$enable_encryption" = xyes; then
+  if test xno = "x$with_client" && test xno = "x$with_server"; then
+    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless when neither the CVS client
+       nor the CVS server is enabled (--disable-client and --disable-server)." >&5
+echo "$as_me: WARNING: --enable-encryption is meaningless when neither the CVS client
+       nor the CVS server is enabled (--disable-client and --disable-server)." >&2;}
+  else
 
 cat >>confdefs.h <<\_ACEOF
 #define ENCRYPTION 1
 _ACEOF
 
-  else
-    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless when neither the CVS client
-       nor the CVS server is enabled (--disable-client and --disable-server)." >&5
-echo "$as_me: WARNING: --enable-encryption is meaningless when neither the CVS client
-       nor the CVS server is enabled (--disable-client and --disable-server)." >&2;}
   fi
 fi
 
