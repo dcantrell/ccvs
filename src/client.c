@@ -1100,6 +1100,8 @@ call_in_directory (pathname, func, data)
     char *short_pathname;
     char *p;
 
+    assert (pathname);
+
     /*
      * Do the whole descent in parallel for the repositories, so we
      * know what to put in CVS/Repository files.  I'm not sure the
@@ -1225,6 +1227,11 @@ call_in_directory (pathname, func, data)
 	char *r;
 
 	newdir = 1;
+
+	/* If toplevel_repos doesn't have at least one character, then the
+	 * reference to r[-1] below could be out of bounds.
+	 */
+	assert (*toplevel_repos);
 
 	repo = xmalloc (strlen (toplevel_repos)
 			+ 10);

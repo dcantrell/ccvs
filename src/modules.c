@@ -376,6 +376,7 @@ my_module (db, mname, m_type, msg, callback_proc, where, shorten,
 	    /* mwhere gets just the module name */
 	    mwhere = xstrdup (mname);
 	    mfile = cp + 1;
+	    assert (strlen (mfile));
 
 	    /* put the / back in mname */
 	    *cp = '/';

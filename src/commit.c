@@ -1479,6 +1479,8 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
     Node *p;
     List *ulist;
 
+    assert (repository);
+
     p = findnode (mulist, update_dir);
     if (p == NULL)
 	return err;

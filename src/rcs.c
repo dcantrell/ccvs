@@ -2098,6 +2098,8 @@ do_symbols (list, val)
     char *cp = val;
     char *tag, *rev;
 
+    assert (cp);
+
     for (;;)
     {
 	/* skip leading whitespace */
@@ -2139,6 +2141,8 @@ do_locks (list, val)
     Node *p;
     char *cp = val;
     char *user, *rev;
+
+    assert (cp);
 
     for (;;)
     {
@@ -4876,6 +4880,8 @@ RCS_addbranch (rcs, branch)
     Node *marker;
     RCSVers *branchnode;
 
+    assert (branch);
+
     /* Append to end by default.  */
     marker = NULL;
 
@@ -5028,6 +5034,7 @@ RCS_checkin (rcs, workfile_in, message, rev, citime, flags)
     {
 	char *p;
 	int extlen = strlen (RCSEXT);
+	assert (rcs->path);
 	workfile = xstrdup (last_component (rcs->path));
 	p = workfile + (strlen (workfile) - extlen);
 	assert (strncmp (p, RCSEXT, extlen) == 0);
@@ -7282,6 +7289,8 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
     struct linevector curlines;
     struct linevector trunklines;
     int foundhead;
+
+    assert (version);
 
     if (fp == NULL)
     {
