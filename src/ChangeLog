@@ -1,3 +1,11 @@
+2000-05-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.h, subr.c (file_has_markers): Check for any of the three
+	conflict marker lines, not just one.
+	* sanity.sh (conflicts-status): New tests for above.
+	* sanity.sh: Revise to avoid tripping the above check when merging
+	changes into sanity.sh itself.
+
 2000-05-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* update.c (join_file): When registering the result of the merge,

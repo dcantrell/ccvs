@@ -8,8 +8,10 @@
  * RCS source control definitions needed by rcs.c and friends
  */
 
-/* String which indicates a conflict if it occurs at the start of a line.  */
-#define	RCS_MERGE_PAT ">>>>>>> "
+/* Strings which indicate a conflict if they occur at the start of a line.  */
+#define	RCS_MERGE_PAT_1 "<<<<<<< "
+#define	RCS_MERGE_PAT_2 "=======\n"
+#define	RCS_MERGE_PAT_3 ">>>>>>> "
 
 #define	RCSEXT		",v"
 #define RCSPAT		"*,v"

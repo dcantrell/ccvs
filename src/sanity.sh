@@ -4023,7 +4023,7 @@ Merging differences between 1\.1\.2\.1 and 1\.1\.2\.1\.2\.1 into file1
 rcsmerge: warning: conflicts during merge"
 	  dotest branches-16 "cat file1" '<<<<<<< file1
 1:ancest
-=======
+[=]======
 1:brbr
 [>]>>>>>> 1\.1\.2\.1\.2\.1'
 
@@ -5802,7 +5802,9 @@ U file7"
 	  dotest join-35 "${testcvs} -q update" \
 'A file7'
 
-	  # Now to T4.
+	  # Now update to T4.
+	  # This is probably a bug, although in this particular case it just
+	  # happens to do the right thing; see above join-20.
 	  dotest join-36 "${testcvs} -q up -j T3 -j T4" \
 "A file7
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file7,v
@@ -6388,9 +6390,24 @@ File: a                	Status: File had conflicts on merge
 "${PROG} [a-z]*: file .a. had a conflict and has not been modified
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
-		echo lame attempt at resolving it >>a
 		# Try to check in the file with the conflict markers in it.
-		dotest conflicts-status-2 "${testcvs} status a" \
+		# Make sure we detect any one of the three conflict markers
+		mv a aa
+		grep '^<<<<<<<' aa >a
+		dotest conflicts-status-2 "${testcvs} -nq ci -m try" \
+"${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
+
+		grep '^=======' aa >a
+		dotest conflicts-status-3 "${testcvs} -nq ci -m try" \
+"${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
+
+		grep '^>>>>>>>' aa >a
+		dotest conflicts-status-4 "${testcvs} -qn ci -m try" \
+"${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
+
+		mv aa a
+		echo lame attempt at resolving it >>a
+		dotest conflicts-status-5 "${testcvs} status a" \
 "===================================================================
 File: a                	Status: File had conflicts on merge
 
@@ -6406,10 +6423,12 @@ ${TESTDIR}/cvsroot/first-dir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
 done"
 
+		rm aa
+
 		# OK, the user saw the warning (good user), and now
 		# resolves it for real.
 		echo resolve conflict >a
-		dotest conflicts-status-3 "${testcvs} status a" \
+		dotest conflicts-status-6 "${testcvs} status a" \
 "===================================================================
 File: a                	Status: Locally Modified
 
@@ -6423,7 +6442,7 @@ File: a                	Status: Locally Modified
 ${TESTDIR}/cvsroot/first-dir/a,v  <--  a
 new revision: 1\.4; previous revision: 1\.3
 done"
-		dotest conflicts-status-4 "${testcvs} status a" \
+		dotest conflicts-status-7 "${testcvs} status a" \
 "===================================================================
 File: a                	Status: Up-to-date
 
