@@ -13433,7 +13433,32 @@ correctly, it will respond with
 cvs [pserver aborted]: bad auth protocol start: foo
 @end example
 
-If this fails to work, then make sure inetd is working
+If instead you get:
+
+@example
+Usage: cvs [cvs-options] command [command-options-and-arguments]
+...
+@end example
+
+then you're missing the @samp{pserver} command at the end of the
+line in @file{inetd.conf}; check to make sure that the entire command
+is on one line and that it's complete.
+
+Likewise, if you get something like:
+
+@example
+Unknown command: `pserved'
+
+CVS commands are:
+        add          Add a new file/directory to the repository
+...
+@end example
+
+then you've misspelled @samp{pserver} in some way.  If it isn't
+obvious, check for invisible control characters (particularly
+carriage returns) in @file{inetd.conf}.
+
+If it fails to work at all, then make sure inetd is working
 right.  Change the invocation in @file{inetd.conf} to run the
 echo program instead of cvs.  For example:
 
