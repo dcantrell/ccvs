@@ -1,5 +1,10 @@
 Changes since 1.11.9:
 
+* Some of the contrib scripts, some of the documentation, and sanity.sh were
+  modified to use and recommend more portable commands rather than using and
+  recommending commands which were not compatible with the POSIX 1003.1-2001
+  specification.
+
 Changes from 1.11.8 to 1.11.9:
 
 * CVS now knows how to report, as well as record, `P' record types.
