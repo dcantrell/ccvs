@@ -6,6 +6,12 @@ Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 Thu Oct 19 15:06:15 1995  Jim Meyering  (meyering@comco.com)
 
+	* filesubr.c (xchmod): Parenthesize arithmetic in operand of |
+	to placate gcc -Wall.
+
+	* expand_path.c (expand_path): Parenthesize assignments used as
+	truth values to placate gcc -Wall.
+
 	* commit.c (checkaddfile): Remove dcls of unused variables.
 	* lock.c (unlock): Remove dcl of unused variable.
 
