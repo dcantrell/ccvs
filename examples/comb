@@ -1,0 +1,5 @@
+#!/bin/sh
+#
+# Combine a directory into a single tar package.
+#
+gnutar --preserve --sparse -cf - $1 | gzip -c > $2
