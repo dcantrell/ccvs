@@ -16,7 +16,7 @@ extern char *getlogin ();
 /*
  * malloc some data and die if it fails
  */
-char *
+void *
 xmalloc (bytes)
     size_t bytes;
 {
