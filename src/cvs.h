@@ -378,7 +378,7 @@ extern int logoff;		/* Don't write history entry */
 
 extern int top_level_admin;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-extern int UseNewInfoFmtStrings;
+extern bool UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 extern int ImportNewFilesToVendorBranchOnly;
 
@@ -726,7 +726,7 @@ struct format_cmdline_walklist_closure
 char *cmdlinequote (char quotes, char *s);
 char *cmdlineescape (char quotes, char *s);
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-char *format_cmdline (int oldway, const char *srepos, const char *format, ...);
+char *format_cmdline (bool oldway, const char *srepos, const char *format, ...);
 #else /* SUPPORT_OLD_INFO_FMT_STRINGS */
 char *format_cmdline (const char *format, ...);
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */

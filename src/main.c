@@ -49,7 +49,7 @@ int logoff = 0;
    1.9.2, behavior). */
 int top_level_admin = 0;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-int UseNewInfoFmtStrings = 0;
+bool UseNewInfoFmtStrings = false;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 /* Control default behavior of 'cvs import' (-X option on or off) in

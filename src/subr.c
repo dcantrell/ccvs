@@ -1037,7 +1037,7 @@ cmdlineescape (char quotes, char *s)
  */
 char *
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-format_cmdline (int oldway, const char *srepos, const char *format, ...)
+format_cmdline (bool oldway, const char *srepos, const char *format, ...)
 #else /* SUPPORT_OLD_INFO_FMT_STRINGS */
 format_cmdline (const char *format, ...)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
