@@ -1,3 +1,12 @@
+Fri Dec  8 17:47:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * server.c (downcase_string): removed.
+        (check_repository_password): don't deal with case-insensitivity
+        anymore.
+
+        * options.h.in (CVS_PASSWORDS_CASE_SENSITIVE): deleted this.  No
+        need for it anymore.
+
 Thu Dec  7 21:08:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * server.c (check_repository_password): when checking for false
