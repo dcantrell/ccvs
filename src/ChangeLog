@@ -1,3 +1,8 @@
+Mon May  6 10:40:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (conflicts): New test conflicts-126.5 tests for bug
+	which Ian fixed May 5 in update.c
+
 Mon May  6 06:00:10 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
         * Version 1.8.1
