@@ -389,7 +389,11 @@ enum direnter_type
     R_SKIP_DIRS,			/* don't process sub-dirs */
     R_SKIP_ALL				/* don't process files or dirs */
 };
+#ifdef ENUMS_CAN_BE_TROUBLE
+typedef int Dtype;
+#else
 typedef enum direnter_type Dtype;
+#endif
 
 extern char *program_name, *program_path, *command_name;
 extern char *Rcsbin, *Editor;
