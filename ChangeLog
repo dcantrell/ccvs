@@ -1,3 +1,9 @@
+Tue Apr 15 12:32:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* FAQ: The URL of yahoo's Configuration Management category has
+	changed.  As it might change again, just cite their top-level page
+	rather than the entire URL.
+
 8 Apr 1997  Jim Kingdon
 
 	* cvsnt.mak: Add windows-NT/sockerror.c.
