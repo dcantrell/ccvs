@@ -82,7 +82,7 @@ file's description.
   Date: Sat, 25 Feb 1995 17:01:15 -0500
   
   mycroft@duality [1]; cd /usr/src/lib/libc
-  mycroft@duality [1]; cvs diff -c2 '-D1 day ago' -Dnow
+  mycroft@duality [1]; cvs diff -C2 '-D1 day ago' -Dnow
   cvs server: Diffing .
   cvs server: Diffing DB
   cvs [server aborted]: could not chdir to DB: No such file or directory
