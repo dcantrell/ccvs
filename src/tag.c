@@ -12,7 +12,7 @@
  */
 
 #include "cvs.h"
-#include "save-cwd.h"
+#include "savecwd.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
