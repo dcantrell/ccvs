@@ -1,4 +1,5 @@
 .deps
 Makefile
-Debug
-Release
+WinDebug
+WinRel
+libdiff.001
