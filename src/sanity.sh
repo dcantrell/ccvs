@@ -398,7 +398,7 @@ else
 fi
 
 # now make sure that tr works on NULs
-if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null; then
+if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null 2>&1; then
   TR=`find_tool tr`
   if test -z "$TR" ; then
     echo 'Warning: you are using a version of tr which does not correctly'
