@@ -1,3 +1,10 @@
+2001-07-06  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Variables): Add index entry for CVS_USER.
+	(Reported by Jens Schweikhardt <Jens.Schweikhardt@marconi.com>.)
+	(Working directory storage): Fix Emptydir index entry: Emptydir
+	is a directory, not a file.
+
 2001-07-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Working directory storage): Add Emptydir to index.

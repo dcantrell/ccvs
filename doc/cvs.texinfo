@@ -1489,7 +1489,7 @@ If the particular working directory does not correspond
 to a directory in the repository, then @file{Repository}
 should contain @file{CVSROOT/Emptydir}.
 @cindex Emptydir, in CVSROOT directory
-@cindex CVSROOT/Emptydir file
+@cindex CVSROOT/Emptydir directory
 
 @cindex Entries file, in CVS directory
 @cindex CVS/Entries file
@@ -12800,6 +12800,7 @@ Environment variables passed to administrative files are:
 @c available both in internal variables and environment variables.
 
 @item CVS_USER
+@cindex CVS_USER, environment variable
 The @sc{cvs}-specific username provided by the user, if it
 can be provided (currently just for the pserver access
 method), and to the empty string otherwise.  (@code{CVS_USER}
