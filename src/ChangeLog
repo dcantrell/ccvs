@@ -1,5 +1,13 @@
 2004-10-08  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_args): Carry through a const to silence gcc -Wall.
+	* hardlink.c (delhardlist): New function.
+	(lookup_file_by_inode): Use new function as delproc since it should
+	work.  Carry through a const to silence gcc -Wall.
+	* ms-buffer.c (ms_buffer_initialize): Use a working delproc.
+
+2004-10-08  Derek Price  <derek@ximbiot.com>
+
 	* client.c (open_connection_to_server, close_connection_to_server,
 	handle_redirect): Add traces.
 

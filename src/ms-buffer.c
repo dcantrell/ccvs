@@ -121,6 +121,15 @@ ms_buffer_shutdown (struct buffer *buf)
 
 
 
+static void
+delbuflist (Node *p)
+{
+    if (p->data)
+	buf_free (p->data);
+}
+
+
+
 /* Create a multi-source buffer.  This could easily be generalized to support
  * any number of source buffers, but for now only two are necessary.
  */
@@ -138,7 +147,7 @@ ms_buffer_initialize (void (*memory) (struct buffer *),
     mb->bufs = getlist ();
     p = getnode ();
     p->data = buf2;
-    p->delproc = buf_free;
+    p->delproc = delbuflist;
     addnode (mb->bufs, p);
     retbuf = buf_initialize (0, 0, ms_buffer_input, NULL, NULL,
 			     ms_buffer_block, ms_buffer_get_fd,
