@@ -1,5 +1,12 @@
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Add call to AC_GNU_SOURCE & jm_FUNC_GLIBC_UNLOCKED_IO.
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add call to jm_FUNC_REALLOC.
 
 	* config.h.in: Regenerated.

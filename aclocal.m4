@@ -952,8 +952,6 @@ dnl If it doesn't, arrange to use the replacement function.
 AC_DEFUN([jm_FUNC_REALLOC],
 [
   AC_REQUIRE([AC_FUNC_REALLOC])
-  AC_LIBOBJ(realloc)
-  ac_cv_func_realloc_works=no
   dnl autoconf < 2.57 used the symbol ac_cv_func_realloc_works.
   if test X"$ac_cv_func_realloc_0_nonnull" = Xno || test X"$ac_cv_func_realloc_works" = Xno; then
     gl_PREREQ_REALLOC
@@ -1021,6 +1019,29 @@ AC_DEFUN([gl_PREREQ_LSTAT],
   AC_REQUIRE([AC_HEADER_STAT])
   AC_CHECK_HEADERS(stdlib.h)
   AC_CHECK_DECLS(free)
+])
+
+#serial 7 -*- autoconf -*-
+
+dnl From Jim Meyering.
+dnl
+dnl See if the glibc *_unlocked I/O macros or functions are available.
+dnl Use only those *_unlocked macros or functions that are declared
+dnl (because some of them were declared in Solaris 2.5.1 but were removed
+dnl in Solaris 2.6, whereas we want binaries built on Solaris 2.5.1 to run
+dnl on Solaris 2.6).
+
+AC_DEFUN([jm_FUNC_GLIBC_UNLOCKED_IO],
+[
+  dnl Persuade glibc <stdio.h> to declare fgets_unlocked(), fputs_unlocked()
+  dnl etc.
+  AC_REQUIRE([AC_GNU_SOURCE])
+
+  AC_CHECK_DECLS(
+     [clearerr_unlocked, feof_unlocked, ferror_unlocked,
+      fflush_unlocked, fgets_unlocked, fputc_unlocked, fputs_unlocked,
+      fread_unlocked, fwrite_unlocked, getc_unlocked,
+      getchar_unlocked, putc_unlocked, putchar_unlocked])
 ])
 
 # Determine whether printf supports %p for printing pointers.
