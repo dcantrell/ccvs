@@ -228,6 +228,10 @@ SOURCE=.\src\logmsg.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\ls.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\main.c
 # End Source File
 # Begin Source File
@@ -545,6 +549,10 @@ SOURCE=".\src\socket-client.h"
 # Begin Source File
 
 SOURCE=.\src\stack.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\stdbool.h"
 # End Source File
 # Begin Source File
 
