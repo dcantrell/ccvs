@@ -1,5 +1,12 @@
 Changes since 1.12.1:
 
+* Support for pre-ANSI compilers has been removed.  Our minimum support level
+now assumes at least a freestanding C89 compilers.  See the HACKING file for
+more information.  If you *really* need K&R support, our Makefile.am files
+should only need minor tweaking to get them to run the ansi2knr script from the
+Automake project.  If you get this working, please send a patch to
+<bug-cvs@gnu.org>.
+
 * Experimental support for Pluggable Authentication Modules (PAM) has been
 added, though it is not compiled by default.  If you like this feature (or
 don't), please send us feedback.  See the Cederqvist, `./configure --help',
