@@ -1665,7 +1665,7 @@ do_cvs_command (command)
     set_nonblock_fd (flowcontrol_pipe[1]);
 #endif /* SERVER_FLOWCONTROL */
 
-    dev_null_fd = CVS_OPEN ("/dev/null", O_RDONLY);
+    dev_null_fd = CVS_OPEN (DEVNULL, O_RDONLY);
     if (dev_null_fd < 0)
     {
 	print_error (errno);
