@@ -1065,6 +1065,7 @@ the file permissions appropriate for the repository.
 @menu
 * Repository files::            What files are stored in the repository
 * File permissions::            File permissions
+* Windows permissions::         Issues specific to Windows
 * Attic::                       Some files are stored in the Attic
 * CVSROOT storage::             A few things about CVSROOT are different
 @end menu
@@ -1184,7 +1185,11 @@ rules see @ref{Tags}.
 @subsection File permissions
 @c -- Move this to @node Creating a repository or similar
 @cindex Security, file permissions in repository
-@cindex File permissions
+@cindex File permissions, general
+@cindex permissions, general
+@c FIXME: we need to somehow reflect "permissions in
+@c repository" versus "permissions in working
+@c directory" in the index entries.
 @cindex Group
 @cindex read-only files, in repository
 All @samp{,v} files are created read-only, and you
@@ -1280,6 +1285,37 @@ authentication security}.
 Since @sc{cvs} was not written to be run setuid, it is
 unsafe to try to run it setuid.  You cannot use the
 setuid features of @sc{rcs} together with @sc{cvs}.
+@c FIXME: This should be moved to a "Unix permissions"
+@c node analogous to the "Windows permissions" node.
+@c Same for CVSUMASK, maybe, although the meaning of
+@c CVSUMASK in a non-unix context is a larger issue.
+@c For example, whether there is
+@c an equivalent which fits better into other
+@c protection schemes like POSIX.6, VMS, &c.
+
+@node Windows permissions
+@subsection File Permission issues specific to Windows
+@cindex Windows, and permissions
+@cindex File permissions, Windows-specific
+@cindex permissions, Windows-specific
+
+Some file permission issues are specific to Windows
+operating systems (Windows 95, Windows NT, and
+presumably future operating systems in this family.
+Some of the following might apply to OS/2 but I'm not
+sure).
+
+If you are using local CVS and the repository is on a
+networked file system which is served by the Samba SMB
+server, some people have reported problems with
+permissions.  Enabling WRITE=YES in the samba
+configuration is said to fix/workaround it.
+Disclaimer: I haven't investigated enough to know the
+implications of enabling that option, nor do I know
+whether there is something which CVS could be doing
+differently in order to avoid the problem.  If you find
+something out, please let us know as described in
+@ref{BUGS}.
 
 @node Attic
 @subsection The attic
