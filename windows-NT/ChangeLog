@@ -1,5 +1,9 @@
 2003-09-29  Derek Price  <derek@ximbiot.com>
 
+	* config.h, stamp-ch: Regenerated for 1.11.7.1.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add stamp-ch.
 	* Makefile.in, config.h, stamp-ch: Regenerated for 1.11.7.
 
@@ -894,3 +898,5 @@ Wed Jul 19 18:00:00 1995  Jim Blandy <jimb@cyclic.com>
 Tue Jul 18 21:18:00 1995  Jim Blandy <jimb@cyclic.com>
 
 	* config.h, options.h, pwd.h: New files.
+M config.h
+M stamp-ch
