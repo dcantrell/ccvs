@@ -83,6 +83,7 @@ CC = @CC@
 CSH = @CSH@
 DEPDIR = @DEPDIR@
 EDITOR = @EDITOR@
+HAVE_PUTENV = @HAVE_PUTENV@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -207,7 +208,7 @@ EXTRA_DIST = \
 subdir = src
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = cvsbug
+CONFIG_CLEAN_FILES = cvsbug sanity.config.sh
 bin_PROGRAMS = cvs$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
@@ -274,7 +275,8 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 CFLAGS = @CFLAGS@
 DIST_SOURCES = $(cvs_SOURCES)
-DIST_COMMON = ChangeLog Makefile.am Makefile.in cvsbug.in
+DIST_COMMON = ChangeLog Makefile.am Makefile.in cvsbug.in \
+	sanity.config.sh.in
 SOURCES = $(cvs_SOURCES)
 
 all: all-am
@@ -287,6 +289,8 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 cvsbug: $(top_builddir)/config.status cvsbug.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+sanity.config.sh: $(top_builddir)/config.status sanity.config.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 install-binPROGRAMS: $(bin_PROGRAMS)

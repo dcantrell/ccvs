@@ -22,8 +22,9 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] [-s CVS-FOR-CVS-SERVER] \\"
-    echo "                 CVS-TO-TEST [TESTS-TO-RUN...]"
+    echo "Usage: `basename $0` [-kr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
+    echo "                 [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
+    echo "                 [TESTS-TO-RUN...]"
 }
 
 exit_usage ()
@@ -39,20 +40,44 @@ exit_help ()
     echo "-h|--help	display this text"
     echo "-r|--remote	test remote instead of local cvs"
     echo "-s CVS-FOR-CVS-SERVER"
+    echo "--server=CVS-FOR-CVS-SERVER"
     echo "		Use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
     echo "		executable to be tested (defaults to CVS-TO-TEST and"
     echo "		implies --remote)"
+    echo "-f FROM-TEST"
+    echo "--from-test=FROM-TEST"
+    echo "		run TESTS-TO-RUN, skipping all tests in the list before"
+    echo "		FROM-TEST"
+    echo "-c CONFIG-FILE"
+    echo "--config=CONFIG_FILE"
+    echo "		Use an alternate test suite config file (defaults to"
+    echo "		\`sanity.config.sh' in the same directory as"
+    echo "		CVS-TO-TEST is found in)"
     echo "-k|--keep	try to keep directories created by individual tests"
     echo "		around, exiting after the first test which supports"
     echo "		--keep"
-    echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
-    echo "		FROM-TEST"
     echo
     echo "CVS-TO-TEST	the path to the CVS executable to be tested; used as"
     echo "		the path to the CVS client when CVS-FOR-CVS-SERVER is"
     echo "		specified"
     echo "TESTS-TO-RUN	the names of the tests to run (defaults to all tests)"
     exit 2
+}
+
+unset longoptmode
+getlongoptarg()
+{
+    if echo "$OPTARG" |grep = >/dev/null; then
+	OPTION=`echo "$OPTARG" |sed 's/=.*$//'`
+	OPTARG=`echo "$OPTARG" |sed 's/^.*=//'`
+    else
+	OPTION=$OPTARG
+	OPTARG=
+    fi
+    if test "x$longoptmode" != xoptional && test -z "$OPTARG"; then
+	echo "option \`--$OPTION' requires an argument" >&2
+	exit_usage
+    fi
 }
 
 # See TODO list at end of file.
@@ -76,14 +101,34 @@ export LC_ALL
 #
 # read our options
 #
+unset configfile
 unset fromtest
 keep=false
 remote=false
 servercvs=false
-while getopts Hf:krs:-: option ; do
+# FIXME - If anyone knows a quick way in shell to expand something like
+# "config" to something like the messes below, please put it in a function
+# so the messes below can be replaced with something easier to read like
+#
+#	case "$OPTARG" in
+#		`expandlongopt4case config hasarg`)
+#			...
+#			;;
+#		...
+#	esac
+#
+while getopts Hc:f:krs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	case "$OPTARG" in
+	    [cC]|[cC][oO]|[cC][oO][nN]|[cC][oO][nN][fF]|[cC][oO][nN][fF][iI]|[cC][oO][nN][fF][iI][gG]|[cC]=*|[cC][oO]=*|[cC][oO][nN]=*|[cC][oO][nN][fF]=*|[cC][oO][nN][fF][iI]=*|[cC][oO][nN][fF][iI][gG]=*)
+		option=c
+		getlongoptarg
+		;;
+	    [fF]|[fF][rR]|[fF][rR][oO]|[fF][rR][oO][mM]|[fF][rR][oO][mM]-|[fF][rR][oO][mM]-[tT]|[fF][rR][oO][mM]-[tT][eE]|[fF][rR][oO][mM]-[tT][eE][sS]|[fF][rR][oO][mM]-[tT][eE][sS][tT]|[fF]=*|[fF][rR]=*|[fF][rR][oO]=*|[fF][rR][oO][mM]=*|[fF][rR][oO][mM]-=*|[fF][rR][oO][mM]-[tT]=*|[fF][rR][oO][mM]-[tT][eE]=*|[fF][rR][oO][mM]-[tT][eE][sS]=*|[fF][rR][oO][mM]-[tT][eE][sS][tT]=*)
+		option=f
+		getlongoptarg
+		;;
 	    [hH]|[hH][eE]|[hH][eE][lL]|[hH][eE][lL][pP])
 		option=H;
 		OPTARG=
@@ -93,8 +138,12 @@ while getopts Hf:krs:-: option ; do
 		OPTARG=
 		;;
 	    [rR]|[rR][eE]|[rR][eE][mM]|[rR][eE][mM][oO]|[rR][eE][mM][oO][tT]|[rR][eE][mM][oO][tT][eE])
-		option=k;
+		option=r;
 		OPTARG=
+		;;
+	    [sS]|[sS][eE]|[sS][eE][rR]|[sS][eE][rR][vV]|[sS][eE][rR][vV][eE]|[sS][eE][rR][vV][eE][rR]|[sS]=*|[sS][eE]=*|[sS][eE][rR]=*|[sS][eE][rR][vV]=*|[sS][eE][rR][vV][eE]=*|[sS][eE][rR][vV][eE][rR]=*)
+		option=s
+		getlongoptarg
 		;;
 	    *)
 		option=\?
@@ -102,6 +151,9 @@ while getopts Hf:krs:-: option ; do
 	esac
     fi
     case "$option" in
+	c)
+	    configfile="$OPTARG"
+	    ;;
 	f)
 	    fromtest="$OPTARG"
 	    ;;
@@ -170,6 +222,25 @@ dokeep()
       exit 0
     fi
 }
+
+
+
+# Read our config file if we can find it.
+#
+# The config file should always be located in the same directory as the CVS
+# executable, unless we are testing an executable outside of the build
+# directory.  In this case, we echo a warning and attempt to assume the most
+# portable configuration.
+if test -z "$configfile"; then
+	configfile=`dirname $testcvs`/sanity.config.sh
+fi
+if test -r "$configfile"; then
+	. "$configfile"
+else
+	echo "WARNING: Failed to locate test suite config file" >&2
+	echo "         \`$configfile'." >&2
+fi
+
 
 
 ###
