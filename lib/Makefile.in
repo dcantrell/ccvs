@@ -218,7 +218,7 @@ libcvs_a_SOURCES = \
 	wait.h \
 	xselect.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h getnline.c gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
+basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h getnline.c gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c strcase.h time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H)
@@ -270,7 +270,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/printf-args.Po $(DEPDIR)/printf-parse.Po \
 @AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/regex.Po \
 @AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/stat.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strcasecmp.Po $(DEPDIR)/strerror.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strncasecmp.Po $(DEPDIR)/strstr.Po \
 @AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/tempname.Po \
 @AMDEP_TRUE@	$(DEPDIR)/time_r.Po $(DEPDIR)/valloc.Po \
 @AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
@@ -294,8 +295,8 @@ DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	getndelim2.c getopt.c getopt1.c getpass.c gettimeofday.c \
 	lstat.c malloc.c memmove.c mkdir.c mkstemp.c mktime.c \
 	nanosleep.c printf-args.c printf-parse.c realloc.c regex.c \
-	rename.c stat.c strerror.c strstr.c strtoul.c tempname.c \
-	time_r.c valloc.c vasnprintf.c waitpid.c
+	rename.c stat.c strcasecmp.c strerror.c strncasecmp.c strstr.c \
+	strtoul.c tempname.c time_r.c valloc.c vasnprintf.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: $(BUILT_SOURCES)
@@ -355,7 +356,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stat.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strncasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strstr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoul.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/tempname.Po@am__quote@
