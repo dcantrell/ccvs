@@ -1393,10 +1393,9 @@ the server system through a variety of means.  Thus, repository
 access implies fairly broad system access as well.  It
 might be possible to modify @sc{cvs} to prevent that,
 but no one has done so as of this writing.
-Furthermore, there may be other security problems with
-@sc{cvs}; it is not a simple program and determining
-how people might use it to gain access to a system is
-difficult.
+Furthermore, there may be other ways in which having
+access to @sc{cvs} allows people to gain more general
+access to the system; noone has done a careful audit.
 
 In summary, anyone who gets the password gets
 repository access, and some measure of general system
