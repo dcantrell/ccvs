@@ -1,3 +1,7 @@
+Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (cvs_temp_name): New function..
+
 Tue Apr  9 20:56:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Mention CRLF for src/server.c.
