@@ -29,6 +29,8 @@ contrib_SCRIPTS = \
 	mfpipe \
 	newcvsroot \
 	pvcs2rcs \
+	rcs-to-cvs \
+	rcs2log \
 	rcslock \
 	sandbox_status \
 	sccs2rcs \
@@ -49,7 +51,9 @@ EXTRA_DIST = \
 	$(contrib_DATA) \
 	$(contrib_MANS) \
 	cvs2vendor.sh \
+	sandbox_status.sh \
 	cvshelp.man \
+	debug_check_log.sh \
 	descend.sh \
 	descend.man \
 	dirfns.shar \
