@@ -1,3 +1,13 @@
+Fri Jul 21 00:20:52 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c: Revert David Lamkin patch, except for the bits about
+	removing temp_filename and the .rej file.
+	* sanity.sh (errmsg1): Test for the underlying bug which Lamkin
+	kludged around.
+	* client.c (call_in_directory): Set short_pathname to include the
+	filename, not just the directory.  Improve comments regarding what
+	is passed to FUNC.
+
 Thu Jul 20 17:51:54 1995  David Lamkin  <drl@net-tel.co.uk>
 
 	* client.c (short_pathname): Fixes the fetching of the whole file

@@ -463,11 +463,15 @@ get_short_pathname (name)
 
 /*
  * Do all the processing for PATHNAME, where pathname consists of the
- * repository and the filename.  FUNC gets called with the DATA parameter
- * to call_in_directory, and with a pointer to an entries list (which
- * we manage the storage for).
- */
-       
+ * repository and the filename.  The parameters we pass to FUNC are:
+ * DATA is just the DATA parameter which was passed to
+ * call_in_directory; ENT_LIST is a pointer to an entries list (which
+ * we manage the storage for); SHORT_PATHNAME is the pathname of the
+ * file relative to the (overall) directory in which the command is
+ * taking place; and FILENAME is the filename portion only of
+ * SHORT_PATHNAME.  When we call FUNC, the curent directory points to
+ * the directory portion of SHORT_PATHNAME.  */
+
 static char *last_dirname;
 
 static void
@@ -557,6 +561,15 @@ call_in_directory (pathname, func, data)
 	filename = short_repos;
     else
 	++filename;
+
+    if (reposname != NULL)
+    {
+	/* This is the use_directory case.  */
+
+	short_pathname = xmalloc (strlen (pathname) + strlen (filename) + 5);
+	strcpy (short_pathname, pathname);
+	strcat (short_pathname, filename);
+    }
 
     if (last_dirname == NULL
 	|| strcmp (last_dirname, dirname) != 0)
@@ -711,7 +724,11 @@ call_in_directory (pathname, func, data)
 	free (dirname);
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
-    free (reposname);
+    if (reposname != NULL)
+    {
+	free (short_pathname);
+	free (reposname);
+    }
 }
 
 static void
@@ -861,7 +878,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	buf = xmalloc (size);
 	fd = open (temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd < 0)
-	    error (1, errno, "writing %s%s", short_pathname, temp_filename);
+	    error (1, errno, "writing %s", short_pathname);
 
 	if (use_gzip)
 	    fd = filter_through_gunzip (fd, 0, &gzip_pid);
@@ -921,33 +938,42 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
-	    (void) unlink_file(temp_filename);
+	    /* FIXME: should we really be silently ignoring errors?  */
+	    (void) unlink_file (temp_filename);
 	    if (retcode == 0)
 	    {
+		/* FIXME: should we really be silently ignoring errors?  */
 		(void) unlink_file (backup);
 	    }
 	    else
 	    {
 	        int old_errno = errno;
-		char path_tmp[PATH_MAX];
-		
+		char *path_tmp;
+
 	        if (isfile (backup))
 		    rename_file (backup, filename);
-		/* Get rid of the patch reject file */
-		sprintf(path_tmp, "%s.rej", filename);
-		(void) unlink_file(path_tmp);
        
+		/* Get rid of the patch reject file.  */
+		path_tmp = xmalloc (strlen (filename + 10));
+		strcpy (path_tmp, filename);
+		strcat (path_tmp, ".rej");
+		/* FIXME: should we really be silently ignoring errors?  */
+		(void) unlink_file (path_tmp);
+		free (path_tmp);
+
 		/* Save this file to retrieve later.  */
 		failed_patches =
 		    (char **) xrealloc ((char *) failed_patches,
 					((failed_patches_count + 1)
 					 * sizeof (char *)));
-		sprintf(path_tmp, "%s%s", short_pathname, filename);
-		failed_patches[failed_patches_count] = xstrdup (path_tmp);
+		failed_patches[failed_patches_count] =
+		    xstrdup (short_pathname);
 		++failed_patches_count;
+
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? old_errno : 0,
 		       "could not patch %s%s", filename,
 		       retcode == -1 ? "" : "; will refetch");
+
 		stored_checksum_valid = 0;
 
 		return;
@@ -984,7 +1010,6 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	    if (memcmp (checksum, stored_checksum, 16) != 0)
 	    {
-		char path_tmp[PATH_MAX];
 	        if (data->contents != UPDATE_ENTRIES_PATCH)
 		    error (1, 0, "checksum failure on %s",
 			   short_pathname);
@@ -998,8 +1023,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		    (char **) xrealloc ((char *) failed_patches,
 					((failed_patches_count + 1)
 					 * sizeof (char *)));
-		sprintf(path_tmp, "%s%s", short_pathname, filename);
-		failed_patches[failed_patches_count] = xstrdup (path_tmp);
+		failed_patches[failed_patches_count] =
+		    xstrdup (short_pathname);
 		++failed_patches_count;
 
 		return;
