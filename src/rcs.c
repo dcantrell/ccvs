@@ -2149,11 +2149,6 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	}
 	else
 	{
-#if 0
-	    /* RCS_deltas for this use is not ready for the prime
-	       time; first we need to check RCS_deltas for memory
-	       leaks.  */
-
 	    /* It isn't the head revision of the trunk.  We'll need to
 	       walk through the deltas.  */
 	    /* Numeric version of TAG.  (Should we be having the caller
@@ -2190,9 +2185,6 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 		found = 1;
 		free (num);
 	    }
-#else
-	    found = 0;
-#endif
 	}
 
 	/* I'm not completely sure that checking rcs->expand is necessary
@@ -2361,17 +2353,16 @@ struct linevector
     struct line **vector;
 };
 
-static void linevector_init PROTO ((struct linevector *));
+static inline void linevector_init PROTO ((struct linevector *));
 
 /* Initialize *VEC to be a linevector with no lines.  */
-static void
+static inline void
 linevector_init (vec)
     struct linevector *vec;
 {
-    vec->lines_alloced = 10;
+    vec->lines_alloced = 0;
     vec->nlines = 0;
-    vec->vector = (struct line **)
-	xmalloc (vec->lines_alloced * sizeof (*vec->vector));
+    vec->vector = NULL;
 }
 
 static void linevector_add PROTO ((struct linevector *vec, char *text,
@@ -2396,8 +2387,6 @@ linevector_add (vec, text, len, vers, pos)
     char *p;
     struct line *lines;
 
-    assert (vec->lines_alloced > 0);
-
     if (len == 0)
 	return;
 
@@ -2414,6 +2403,8 @@ linevector_add (vec, text, len, vers, pos)
     /* Expand VEC->VECTOR if needed.  */
     if (vec->nlines + nnew >= vec->lines_alloced)
     {
+	if (vec->lines_alloced == 0)
+	    vec->lines_alloced = 10;
 	while (vec->nlines + nnew >= vec->lines_alloced)
 	    vec->lines_alloced *= 2;
 	vec->vector = xrealloc (vec->vector,
@@ -2483,6 +2474,8 @@ linevector_copy (to, from)
 {
     if (from->nlines > to->lines_alloced)
     {
+	if (to->lines_alloced == 0)
+	    to->lines_alloced = 10;
 	while (from->nlines > to->lines_alloced)
 	    to->lines_alloced *= 2;
 	to->vector = (struct line **)
@@ -2501,7 +2494,8 @@ static void
 linevector_free (vec)
     struct linevector *vec;
 {
-   free (vec->vector);
+    if (vec->vector != NULL)
+	free (vec->vector);
 }
 
 static char *month_printname PROTO ((char *));
@@ -2585,6 +2579,10 @@ RCS_deltas (rcs, fp, version, op, text, len)
     onbranch = 0;
     foundhead = 0;
 
+    linevector_init (&curlines);
+    linevector_init (&headlines);
+    linevector_init (&trunklines);
+
     /* We set BRANCHVERSION to the version we are currently looking
        for.  Initially, this is the version on the trunk from which
        VERSION branches off.  If VERSION is not a branch, then
@@ -2642,7 +2640,6 @@ RCS_deltas (rcs, fp, version, op, text, len)
 		    p = block_alloc (vallen);
 		    memcpy (p, value, vallen);
 
-		    linevector_init (&curlines);
 		    linevector_add (&curlines, p, vallen, NULL, 0);
 		    ishead = 0;
 		}
@@ -2783,7 +2780,6 @@ invalid rcs file %s (`d' operand out of range)",
 	    if (strcmp (branchversion, version) == 0)
 	    {
 	        /* This is the version we want.  */
-	        linevector_init (&headlines);
 		linevector_copy (&headlines, &curlines);
 		foundhead = 1;
 		if (onbranch)
@@ -2813,7 +2809,6 @@ invalid rcs file %s (`d' operand out of range)",
                        lines so that we can restore them when we
                        continue tracking down the trunk.  */
 		    trunk_vers = vers;
-		    linevector_init (&trunklines);
 		    linevector_copy (&trunklines, &curlines);
 
 		    /* Reset the version information we have
@@ -2943,12 +2938,10 @@ invalid rcs file %s (`d' operand out of range)",
 	    break;
     }
 
-    if (!ishead)
-    {
-	linevector_free (&curlines);
-	linevector_free (&headlines);
-    }
-    /* FIXME-leak: shouldn't we free trunklines at some point around here?  */
+    linevector_free (&curlines);
+    linevector_free (&headlines);
+    linevector_free (&trunklines);
+
     block_free ();
     return;
 
