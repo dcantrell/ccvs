@@ -126,9 +126,10 @@ The mailing list for CVS is info-cvs@prep.ai.mit.edu.  Send
 subscription and removal requests for that list to
 info-cvs-request@prep.ai.mit.edu.
 
-[Historical note: info-cvs@prep.ai.mit.edu is now the union of
- info-cvs@prep and cyclic-cvs@cyclic.com.  Please use the prep
- address.]
+The newsgroup for CVS (and other configuration management systems) is
+comp.software.config-mgmt.  There is not yet a CVS-specific newsgroup,
+but perhaps if comp.software.config-mgmt gets enough CVS discussion,
+then it will be possible to create one.
 
 -------------------------------------------------------------------------------
 
