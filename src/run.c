@@ -175,10 +175,11 @@ run_exec (stin, stout, sterr, flags)
 
     /* The output files, if any, are now created.  Do the fork and dups.
 
-       We use vfork not so much for the sake of unices without
-       copy-on-write (such systems are rare these days), but for the
-       sake of systems without an MMU, which therefore can't do
-       copy-on-write (e.g. Amiga).  The other solution is spawn (see
+       We use vfork not so much for a performance boost (the
+       performance boost, if any, is modest on most modern unices),
+       but for the sake of systems without a memory management unit,
+       which find it difficult or impossible to implement fork at all
+       (e.g. Amiga).  The other solution is spawn (see
        windows-NT/run.c).  */
 
 #ifdef HAVE_VFORK

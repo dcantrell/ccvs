@@ -1,3 +1,10 @@
+1999-01-14  Jim Kingdon  <http://www.cyclic.com>
+
+	* run.c (run_exec): Adjust comment about vfork; this isn't the place
+	to get into a treatise about fork performance vs. vfork
+	performance but it isn't quite as simple as whether one has
+	copy-on-write.
+
 1999-01-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (dotest_fail): Handle spurrious output from assert better.
