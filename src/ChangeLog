@@ -1,3 +1,9 @@
+Thu Jan 15 21:24:59 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* release.c (release_delete): If __CYGWIN32__ is defined, don't
+ 	worry about mismatched inodes.  This is a hack, but then I think
+ 	the test is rather peculiar anyhow.
+
 Thu Jan 15 16:07:36 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (reserved-9): Use ${PROG} instead of "cvs".
