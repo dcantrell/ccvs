@@ -244,7 +244,7 @@ static const char *const notify_contents[] = {
     "# \"ALL\" or \"DEFAULT\" can be used in place of the regular expression.\n",
     "#\n",
     "# For example:\n",
-    "#ALL mail %s -s \"CVS notification\"\n",
+    "#ALL mail -s \"CVS notification\" %s\n",
     NULL
 };
 
