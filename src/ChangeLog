@@ -1,5 +1,8 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh (import): Use quoting to avoid expansion of RCS ID
+	strings.
+
 	* sanity.sh (import): Use dotest to examine the output of test
  	113, and the actual contents of the file in test 116.
 
