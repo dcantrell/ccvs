@@ -14434,137 +14434,97 @@ done"
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1
 	  cd 1
-	  if ${testcvs} -q co first-dir >>${LOGFILE} ; then
-	      pass 169
-	  else
-	      fail 169
-	  fi
+	  dotest devcom-1 "${testcvs} -q co first-dir"
 
 	  cd first-dir
 	  echo abb >abb
-	  if ${testcvs} add abb 2>>${LOGFILE}; then
-	      pass 170
-	  else
-	      fail 170
-	  fi
-	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
-	      pass 171
-	  else
-	      fail 171
-	  fi
-	  dotest_fail 171a0 "${testcvs} watch" "Usage${DOTSTAR}"
-	  if ${testcvs} watch on; then
-	      pass 172
-	  else
-	      fail 172
-	  fi
+	  dotest devcom-2 "${testcvs} add abb" \
+"$SPROG add: scheduling file \`abb' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+
+	  dotest devcom-3 "${testcvs} -q ci -m added" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/abb,v
+done
+Checking in abb;
+${CVSROOT_DIRNAME}/first-dir/abb,v  <--  abb
+initial revision: 1\.1
+done"
+
+	  dotest_fail devcom-4 "${testcvs} watch" "Usage${DOTSTAR}"
+
+	  dotest devcom-5 "${testcvs} watch on"
+
 	  echo abc >abc
-	  if ${testcvs} add abc 2>>${LOGFILE}; then
-	      pass 173
-	  else
-	      fail 173
-	  fi
-	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
-	      pass 174
-	  else
-	      fail 174
-	  fi
+	  dotest devcom-6 "${testcvs} add abc" \
+"$SPROG add: scheduling file \`abc' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+
+	  dotest devcom-7 "${testcvs} -q ci -m added" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
+done
+Checking in abc;
+${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
+initial revision: 1\.1
+done"
 
 	  cd ../..
 	  mkdir 2
 	  cd 2
 
-	  if ${testcvs} -q co first-dir >>${LOGFILE}; then
-	      pass 175
-	  else
-	      fail 175
-	  fi
+	  dotest devcom-8 "${testcvs} -q co first-dir" \
+"U first-dir/abb
+U first-dir/abc"
+
 	  cd first-dir
-	  if test -w abb; then
-	      fail 176
-	  else
-	      pass 176
-	  fi
-	  if test -w abc; then
-	      fail 177
-	  else
-	      pass 177
-	  fi
+	  dotest_fail devcom-9 "test -w abb"
+	  dotest_fail devcom-9 "test -w abc"
 
-	  dotest devcom-178 "${testcvs} editors" ""
+	  dotest devcom-10 "${testcvs} editors" ""
 
-	  if ${testcvs} edit abb; then
-	      pass 179
-	  else
-	      fail 179
-	  fi
+	  dotest devcom-11 "${testcvs} edit abb"
 
 	  # Here we test for the traditional ISO C ctime() date format.
 	  # We assume the C locale; I guess that works provided we set
 	  # LC_ALL at the start of this script but whether these
 	  # strings should vary based on locale does not strike me as
 	  # self-evident.
-	  dotest devcom-180 "${testcvs} editors" \
+	  dotest devcom-12 "${testcvs} editors" \
 "abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/2/first-dir"
 
 	  echo aaaa >>abb
-	  if ${testcvs} ci -m modify abb >>${LOGFILE} 2>&1; then
-	      pass 182
-	  else
-	      fail 182
-	  fi
+	  dotest devcom-13 "${testcvs} ci -m modify abb" \
+"Checking in abb;
+${CVSROOT_DIRNAME}/first-dir/abb,v  <--  abb
+new revision: 1\.2; previous revision: 1\.1
+done"
+
 	  # Unedit of a file not being edited should be a noop.
-	  dotest 182.5 "${testcvs} unedit abb" ''
+	  dotest devcom-14 "${testcvs} unedit abb" ''
 
-	  dotest devcom-183 "${testcvs} editors" ""
+	  dotest devcom-15 "${testcvs} editors" ""
 
-	  if test -w abb; then
-	      fail 185
-	  else
-	      pass 185
-	  fi
+	  dotest_fail devcom-16 "test -w abb"
 
-	  if ${testcvs} edit abc; then
-	      pass 186a1
-	  else
-	      fail 186a1
-	  fi
+	  dotest devcom-17 "${testcvs} edit abc"
+
 	  # Unedit of an unmodified file.
-	  if ${testcvs} unedit abc; then
-	      pass 186a2
-	  else
-	      fail 186a2
-	  fi
-	  if ${testcvs} edit abc; then
-	      pass 186a3
-	  else
-	      fail 186a3
-	  fi
+	  dotest devcom-18 "${testcvs} unedit abc"
+	  dotest devcom-19 "${testcvs} edit abc"
+
 	  echo changedabc >abc
 	  # Try to unedit a modified file; cvs should ask for confirmation
-	  if (echo no | ${testcvs} unedit abc) >>${LOGFILE}; then
-	      pass 186a4
-	  else
-	      fail 186a4
-	  fi
-	  if echo changedabc | cmp - abc; then
-	      pass 186a5
-	  else
-	      fail 186a5
-	  fi
-	  # OK, now confirm the unedit
-	  if (echo yes | ${testcvs} unedit abc) >>${LOGFILE}; then
-	      pass 186a6
-	  else
-	      fail 186a6
-	  fi
-	  if echo abc | cmp - abc; then
-	      pass 186a7
-	  else
-	      fail 186a7
-	  fi
+	  dotest devcom-20 "echo no | ${testcvs} unedit abc" \
+"abc has been modified; revert changes? "
 
-	  dotest devcom-a0 "${testcvs} watchers" ''
+	  dotest devcom-21 "echo changedabc | cmp - abc"
+
+	  # OK, now confirm the unedit
+	  dotest devcom-22 "echo yes | ${testcvs} unedit abc" \
+"abc has been modified; revert changes? "
+
+	  dotest devcom-23 "echo abc | cmp - abc"
+
+	  dotest devcom-24 "${testcvs} watchers" ''
 
 	  # FIXME: This probably should be an error message instead
 	  # of silently succeeding and printing nothing.
