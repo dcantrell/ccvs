@@ -1,3 +1,8 @@
+Sun Jun 23 10:07:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication security): Add comment
+	regarding anoncvs as practised by OpenBSD.
+
 Wed Jun 19 15:41:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Administrative files): Add xref to Intro
