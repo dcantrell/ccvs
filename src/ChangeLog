@@ -1,3 +1,7 @@
+2004-05-07  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (fopen_case): Remove obsolescent prototype.
+
 2004-05-05  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Wait a second and retry if cvs-serv* directories are
