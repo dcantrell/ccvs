@@ -16,6 +16,7 @@
 #include    <sys/stat.h>
 #include    <ctype.h>
 #include    <string.h>
+#include    <fcntl.h>
 
 #define LL_VAL ULONG
 #define LL_KEY PID    /* also ULONG, really */
