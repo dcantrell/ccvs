@@ -49,14 +49,12 @@ static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server));
 #ifdef SERVER_SUPPORT
 static void checkout_to_buffer PROTO ((void *, const char *, size_t));
-#endif
-#ifdef SERVER_SUPPORT
 static int patch_file PROTO ((struct file_info *finfo,
 			      Vers_TS *vers_ts, 
 			      int *docheckout, struct stat *file_info,
 			      unsigned char *checksum));
 static void patch_file_write PROTO ((void *, const char *, size_t));
-#endif
+#endif /* SERVER_SUPPORT */
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((struct file_info *finfo, Vers_TS *vers));
 static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
@@ -72,7 +70,6 @@ static int update_filesdone_proc PROTO ((void *callerdat, int err,
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 static int get_linkinfo_proc PROTO ((void *callerdat, struct file_info *));
 #endif
-static void write_letter PROTO ((struct file_info *finfo, int letter));
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
 
 static char *options = NULL;
@@ -1869,7 +1866,7 @@ patch_file_write (callerdat, buffer, len)
  * Several of the types we process only print a bit of information consisting
  * of a single letter and the name.
  */
-static void
+void
 write_letter (finfo, letter)
     struct file_info *finfo;
     int letter;

@@ -24,6 +24,7 @@
  * file to be resurrected.
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "savecwd.h"
 #include "fileattr.h"
@@ -451,24 +452,79 @@ same name already exists in the repository.");
 		    }
 		    else
 		    {
+			if (vers->ts_user == NULL)
+			{
+			    /* If this file does not exist locally, assume that
+			     * the last version on the branch is being
+			     * resurrected.
+			     */
+			    struct buffer *revbuf = NULL;
+
+			    /* Compute previous revision.  We assume that it
+			     * exists and that it is not a revision on the
+			     * trunk of the form X.1 (1.1, 2.1, 3.1, ...).  We
+			     * also assume that it is not dead, which seems
+			     * fair since we know vers->vn_rcs is dead
+			     * and we shouldn't see two dead revisions in a
+			     * row.
+			     */
+			    char *prev = previous_rev (vers->srcfile,
+			                               vers->vn_rcs);
+			    int status;
+			    assert (prev != NULL);
+			    if (!quiet)
+				error (0, 0,
+"file `%s' resurrected from revision %s",
+			               finfo.fullname, prev);
+			    status = RCS_checkout (vers->srcfile, finfo.file,
+						   prev, vers->tag,
+						   vers->options, RUN_TTY,
+			                           NULL, NULL);
+			    if (status != 0)
+			    {
+				error (0, 0, "Failed to resurrect revision %s",
+				       prev);
+				err++;
+			    }
+			    else if (!really_quiet)
+				write_letter (&finfo, 'U');
+			    free (prev);
+			}
 			if (!quiet)
 			{
 			    if (vers->tag)
-				error (0, 0, "\
-file `%s' will be added on branch `%s' from version %s",
-					finfo.fullname, vers->tag, vers->vn_rcs);
+				error (0, 0,
+"file `%s' will be added on branch `%s' from version %s",
+				       finfo.fullname, vers->tag,
+				       vers->vn_rcs);
 			    else
 				/* I'm not sure that mentioning
 				   vers->vn_rcs makes any sense here; I
 				   can't think of a way to word the
 				   message which is not confusing.  */
-				error (0, 0, "\
-re-adding file `%s' (in place of dead revision %s)",
-					finfo.fullname, vers->vn_rcs);
+				error (0, 0,
+"re-adding file `%s' (in place of dead revision %s)",
+				       finfo.fullname, vers->vn_rcs);
 			}
 			Register (entries, finfo.file, "0", vers->ts_user,
 				  vers->options,
 				  vers->tag, NULL, NULL);
+#ifdef SERVER_SUPPORT
+			if (server_active)
+			{
+			    server_updated (&finfo, vers,
+					    SERVER_UPDATED,
+					    (mode_t) -1, NULL, NULL);
+			    /* This is kinda hacky or, at least, it renders the
+			     * name "begin_added_files" obsolete, but we want
+			     * the added_files to be counted without triggering
+			     * the check that causes server_checked_in() to be
+			     * called below since we have already called
+			     * server_updated() to complete the resurrection.
+			     */
+			    ++begin_added_files;
+			}
+#endif
 			++added_files;
 		    }
 		}
