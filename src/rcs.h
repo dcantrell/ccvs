@@ -41,6 +41,11 @@
 #define	INATTIC	0x2			/* RCS file is located in the Attic */
 #define PARTIAL 0x4			/* RCS file not completly parsed */
 
+/* All the "char *" fields in RCSNode, Deltatext, and RCSVers are
+   '\0'-terminated (except "text" in Deltatext).  This means that we
+   can't deal with fields containing '\0', which is a limitation that
+   RCS does not have.  Would be nice to fix this some day.  */
+
 struct rcsnode
 {
     int refcount;
