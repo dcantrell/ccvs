@@ -183,6 +183,7 @@ static int fd_buffer_input PROTO((void *, char *, int, int, int *));
 static int fd_buffer_output PROTO((void *, const char *, int, int *));
 static int fd_buffer_flush PROTO((void *));
 static int fd_buffer_block PROTO((void *, int));
+static int fd_buffer_shutdown PROTO((void *));
 
 /* Initialize a buffer built on a file descriptor.  FD is the file
    descriptor.  INPUT is nonzero if this is for input, zero if this is
@@ -204,7 +205,7 @@ fd_buffer_initialize (fd, input, memory)
 			   input ? NULL : fd_buffer_output,
 			   input ? NULL : fd_buffer_flush,
 			   fd_buffer_block,
-			   (int (*) PROTO((void *))) NULL,
+			   fd_buffer_shutdown,
 			   memory,
 			   n);
 }
@@ -338,6 +339,16 @@ fd_buffer_block (closure, block)
 
     fd->blocking = block;
 
+    return 0;
+}
+
+/* The buffer shutdown function for a buffer built on a file descriptor.  */
+
+static int
+fd_buffer_shutdown (closure)
+     void *closure;
+{
+    free (closure);
     return 0;
 }
 
@@ -1527,6 +1538,7 @@ serve_modified (arg)
 		}
 	    }
 	}
+	free (mode_text);
 	return;
     }
     if (size_text[0] == 'z')
@@ -1551,16 +1563,24 @@ serve_modified (arg)
 		return;
 	    size -= nread;
 	}
+	free (mode_text);
 	return;
     }
 
     if (outside_dir (arg))
+    {
+	free (mode_text);
 	return;
+    }
 
     if (size >= 0)
     {
 	receive_file (size, arg, gzipped);
-	if (error_pending ()) return;
+	if (error_pending ())
+	{
+	    free (mode_text);
+	    return;
+	}
     }
 
     if (checkin_time_valid)
@@ -1575,6 +1595,7 @@ serve_modified (arg)
 	    if (alloc_pending (80 + strlen (arg)))
 		sprintf (pending_error_text, "E cannot utime %s", arg);
 	    pending_error = save_errno;
+	    free (mode_text);
 	    return;
 	}
 	checkin_time_valid = 0;
@@ -2070,6 +2091,7 @@ server_notify ()
 	buf_append_char (buf_to_net, '/');
 	buf_output0 (buf_to_net, notify_list->filename);
 	buf_append_char (buf_to_net, '\n');
+	free (repos);
 
 	p = notify_list->next;
 	free (notify_list->filename);
@@ -2788,6 +2810,7 @@ error  \n");
 	 * When we exit, that will close the pipes, giving an EOF to
 	 * the parent.
 	 */
+	buf_free (protocol);
 	exit (exitstatus);
     }
 
@@ -3141,6 +3164,12 @@ E CVS locks may need cleaning up.\n");
 	 */
 	set_block (buf_to_net);
 	buf_flush (buf_to_net, 1);
+	buf_shutdown (protocol_inbuf);
+	buf_free (protocol_inbuf);
+	buf_shutdown (stderrbuf);
+	buf_free (stderrbuf);
+	buf_shutdown (stdoutbuf);
+	buf_free (stdoutbuf);
     }
 
     if (errs)

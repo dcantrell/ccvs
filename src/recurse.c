@@ -173,6 +173,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 		   seems to be handled somewhere (else) but why should
 		   it be a separate case?  Needs investigation...  */
 		just_subdirs = 1;
+	    free (root);
 	}
 #endif
 
