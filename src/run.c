@@ -706,6 +706,10 @@ format_cmdline (char *format, ...)
     Node *p;
     struct cmdline_bindings *b;
     static int warned_of_deprecation = 0;
+    char key[] = "\0\0";	/* Used as temporary storage for a single
+				 * character search string used to locate a
+				 * hash key.
+				 */
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     /* state varialbes in the while loop which parses the actual
      * format string in the final parsing pass*/
@@ -1284,7 +1288,6 @@ format_cmdline (char *format, ...)
 		    *d++ = '"';
 		}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-		char key[] = "\0\0";
 		/*
 		 * for each character in the fmt string,
 		 *
