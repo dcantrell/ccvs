@@ -59,6 +59,18 @@ cd project ||
 
 
 
+m4_divert_text([DEFAULTS],
+[#cvs_client_server_or_skip()
+#
+# Skip this test unless the relevant executables are capable of client and
+# server modes.
+cvs_client_server_or_skip() {
+AT_CHECK([cvs --version |grep client || exit 77], 0, ignore)dnl
+AT_CHECK([$server --version |grep server || exit 77], 0, ignore)dnl
+}])
+
+
+
 # AT_CVS_SETUP(DESCRIPTION)
 # -------------------------
 # Set up a CVS test with description DESCRIPTION.
@@ -104,8 +116,7 @@ AT_CHECK([ln -s realcvsroot $at_group_dir/cvsroot || exit 77])
 CVSROOT_DIR=$at_group_dir/cvsroot
 m4_ifvaln(m4_quote(AT_CVS_clientserver),
 [AT_KEYWORDS([remote])dnl
-AT_CHECK([cvs --version |grep client || exit 77], 0, ignore)dnl
-AT_CHECK([$server --version |grep server || exit 77], 0, ignore)dnl
+cvs_client_server_or_skip
 CVS_SERVER=$server; export CVS_SERVER
 method=:fork:],
 [AT_KEYWORDS([local])dnl

@@ -1,3 +1,11 @@
+2003-11-25  Derek R. Price  <derek@ximbiot.com>
+
+	More size reductions via shell functions.
+
+	* atspecific.at (AT_CVS_SETUP): Move some AT_CHECK calls into...
+	(cvs_client_server_or_skip): ...this shell function.
+	* basic.at (cvs_project_init_simple): Only allow expansion once.
+
 2003-11-20  Derek R. Price  <derek@ximbiot.com>
 
 	* atspecific.at (AT_CVS_SETUP): Remove call to cvs_project_init.
