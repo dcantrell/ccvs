@@ -2034,7 +2034,9 @@ server_pause_check()
 	    
 	if (FD_ISSET (flowcontrol_pipe[0], &fds))
 	{
-	    while (read (flowcontrol_pipe[0], buf, 1) == 1)
+	    int got;
+
+	    while ((got = read (flowcontrol_pipe[0], buf, 1)) == 1)
 	    {
 		if (*buf == 'S')	/* Stop */
 		    paused = 1;
@@ -2042,6 +2044,16 @@ server_pause_check()
 		    paused = 0;
 		else
 		    return;		/* ??? */
+	    }
+
+	    /* This assumes that we are using BSD or POSIX nonblocking
+               I/O.  System V nonblocking I/O returns zero if there is
+               nothing to read.  */
+	    if (got == 0)
+	        error (1, 0, "flow control EOF");
+	    if (got < 0 && ! blocking_error (errno))
+	    {
+	        error (1, errno, "flow control read failed");
 	    }
 	}
     }
