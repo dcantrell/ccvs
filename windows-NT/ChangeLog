@@ -1,3 +1,7 @@
+2000-10-18  Derek Price  <derek.price@openavenue.com>
+
+	* config.h: Add () to a macro function to supress a warning.
+
 2000-06-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* config.h: Define REGEX_MALLOC and _REGEX_RE_COMP.
