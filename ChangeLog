@@ -1,3 +1,7 @@
+2005-02-23  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note -r<tag>:<date> change.
+
 2005-02-21  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note zlib update.

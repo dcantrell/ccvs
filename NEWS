@@ -3,6 +3,11 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* CVS now accepts the <tag>:<date> format, which has long been acceptable as an
+  argument to -j options, in most places where <tag> used to be acceptable.  An
+  empty tag in this format (e.g. ":<date>"), which used to be rejected, is now
+  interpreted as specifying a date on the trunk.
+
 * CVS now uses ZLib 1.2.2.  This fixes the minor vulnerability described here:
   <http://www.kb.cert.org/vuls/id/238678>, as well as some other minor bugs we
   are not aware of bug reports for in conjunction with CVS.
