@@ -1960,6 +1960,8 @@ Any number of people can be reading from a given
 repository at a time; only when someone is writing do
 the locks prevent other people from reading or writing.
 
+@cindex Atomic transactions, lack of
+@cindex Transactions, atomic, lack of
 One might hope for the following property
 
 @example
@@ -1984,9 +1986,10 @@ if someone runs
 cvs ci a/two.c b/three.c
 @end example
 
-and someone else runs @code{cvs update}, the person
-running update might get only the change to
-@file{b/three.c} and not the change to @file{a/two.c}.
+and someone else runs @code{cvs update} at the same
+time, the person running @code{update} might get only
+the change to @file{b/three.c} and not the change to
+@file{a/two.c}.
 
 @node Watches
 @section Mechanisms to track who is editing files
