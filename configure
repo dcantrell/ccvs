@@ -5299,6 +5299,7 @@ trap 'rm -fr `echo "Makefile \
 	  contrib/log \
 	  contrib/log_accum \
 	  contrib/mfpipe \
+	  contrib/pvcs2cvs \
 	  contrib/rcslock \
 	  contrib/sccs2rcs \
 	  diff/Makefile \
@@ -5438,6 +5439,7 @@ CONFIG_FILES=\${CONFIG_FILES-"Makefile \
 	  contrib/log \
 	  contrib/log_accum \
 	  contrib/mfpipe \
+	  contrib/pvcs2cvs \
 	  contrib/rcslock \
 	  contrib/sccs2rcs \
 	  diff/Makefile \
@@ -5692,6 +5694,7 @@ chmod +x \
 	  contrib/log \
 	  contrib/log_accum \
 	  contrib/mfpipe \
+	  contrib/pvcs2cvs \
 	  contrib/rcslock \
 	  contrib/sccs2rcs \
 	  src/cvsbug
