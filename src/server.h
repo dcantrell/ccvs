@@ -1,4 +1,3 @@
-
 /* Interface between the server and the rest of CVS.  */
 
 /* Miscellaneous stuff which isn't actually particularly server-specific.  */
@@ -47,11 +46,12 @@ extern void server_pathname_check (char *);
 /* We have a new Entries line for a file.  TAG or DATE can be NULL.  */
 extern void server_register
     (char *name, char *version, char *timestamp,
-     char *options, char *tag, char *date, char *conflict);
+	     char *options, char *tag, char *date, char *conflict);
 
 /* Set the modification time of the next file sent.  This must be
    followed by a call to server_updated on the same file.  */
-extern void server_modtime (struct file_info *finfo, Vers_TS * vers_ts);
+extern void server_modtime (struct file_info *finfo,
+				   Vers_TS *vers_ts);
 
 /*
  * We want to nuke the Entries line for a file, and (unless
@@ -96,28 +96,26 @@ enum server_updated_arg4
     SERVER_PATCHED,
     SERVER_RCS_DIFF
 };
-
 #ifdef __STDC__
 struct buffer;
 #endif
 
 extern void server_updated
-    (struct file_info *finfo, Vers_TS * vers,
-     enum server_updated_arg4 updated, mode_t mode,
-     unsigned char *checksum, struct buffer *filebuf);
+    (struct file_info *finfo, Vers_TS *vers,
+	   enum server_updated_arg4 updated, mode_t mode,
+	   unsigned char *checksum, struct buffer *filebuf);
 
 /* Whether we should send RCS format patches.  */
 extern int server_use_rcs_diff (void);
 
 /* Set the Entries.Static flag.  */
 extern void server_set_entstat (char *update_dir, char *repository);
-
 /* Clear it.  */
 extern void server_clear_entstat (char *update_dir, char *repository);
 
 /* Set or clear a per-directory sticky tag or date.  */
 extern void server_set_sticky (char *update_dir, char *repository,
-			       char *tag, char *date, int nonbranch);
+				     char *tag, char *date, int nonbranch);
 
 /* Send Clear-template response.  */
 extern void server_clear_template (char *update_dir, char *repository);
@@ -127,7 +125,7 @@ extern void server_template (char *update_dir, char *repository);
 
 extern void server_update_entries
     (char *file, char *update_dir, char *repository,
-     enum server_updated_arg4 updated);
+	   enum server_updated_arg4 updated);
 
 /* Pointer to a malloc'd string which is the directory which
    the server should prepend to the pathnames which it sends
@@ -137,7 +135,6 @@ extern char *server_dir;
 extern void server_cleanup (int sig);
 
 #ifdef SERVER_FLOWCONTROL
-
 /* Pause if it's convenient to avoid memory blowout */
 extern void server_pause_check (void);
 #endif /* SERVER_FLOWCONTROL */
@@ -152,46 +149,34 @@ extern int system_auth;
 /* Stuff shared with the client.  */
 struct request
 {
-    /*
-       Name of the request.  
-     */
-    char *name;
+  /* Name of the request.  */
+  char *name;
 
 #ifdef SERVER_SUPPORT
-    /*
-     * Function to carry out the request.  ARGS is the text of the command
-     * after name and, if present, a single space, have been stripped off.
-     */
-    void (*func) (char *args);
+  /*
+   * Function to carry out the request.  ARGS is the text of the command
+   * after name and, if present, a single space, have been stripped off.
+   */
+  void (*func) (char *args);
 #endif
 
-    /*
-       One or more of the RQ_* flags described below.  
-     */
-    int flags;
+  /* One or more of the RQ_* flags described below.  */
+  int flags;
 
-    /*
-       If set, failure to implement this request can imply a fatal
-       error.  This should be set only for commands which were in the
-       original version of the protocol; it should not be set for new
-       commands.  
-     */
+  /* If set, failure to implement this request can imply a fatal
+     error.  This should be set only for commands which were in the
+     original version of the protocol; it should not be set for new
+     commands.  */
 #define RQ_ESSENTIAL 1
 
-    /*
-       Set by the client if the server we are talking to supports it.  
-     */
+  /* Set by the client if the server we are talking to supports it.  */
 #define RQ_SUPPORTED 2
 
-    /*
-       If set, and client and server both support the request, the
-       client should tell the server by making the request.  
-     */
+  /* If set, and client and server both support the request, the
+     client should tell the server by making the request.  */
 #define RQ_ENABLEME 4
 
-    /*
-       The server may accept this request before "Root".  
-     */
+  /* The server may accept this request before "Root".  */
 #define RQ_ROOTLESS 8
 };
 
@@ -201,4 +186,4 @@ extern struct request requests[];
 /* Gzip library, see zlib.c.  */
 extern int gunzip_and_write (int, char *, unsigned char *, size_t);
 extern int read_and_gzip (int, char *, unsigned char **, size_t *,
-			  size_t *, int);
+				 size_t *, int);

@@ -1,4 +1,3 @@
-
 /* CVS Kerberos4 client stuff.
 
    This program is free software; you can redistribute it and/or modify
@@ -21,7 +20,6 @@
 #   include <krb.h>
 
 extern char *krb_realmofhost ();
-
 #   ifndef HAVE_KRB_GET_ERR_TEXT
 #     define krb_get_err_text(status) krb_err_txt[status]
 #   endif /* HAVE_KRB_GET_ERR_TEXT */
@@ -37,8 +35,8 @@ static Key_schedule sched;
    on such a system (OS/2, Windows 95, and maybe others) will have to
    take care of this.  */
 void
-start_kerberos4_server (cvsroot_t * root, struct buffer **to_server_p,
-			struct buffer **from_server_p)
+start_kerberos4_server( cvsroot_t *root, struct buffer **to_server_p,
+                        struct buffer **from_server_p )
 {
     int s;
     int port;
@@ -56,14 +54,17 @@ start_kerberos4_server (cvsroot_t * root, struct buffer **to_server_p,
 
     hname = xmalloc (strlen (hp->h_name) + 1);
     strcpy (hname, hp->h_name);
-
-    TRACE (1, "Connecting to %s(%s):%d",
-	   root->hostname, inet_ntoa (sin.sin_addr), port);
+  
+    TRACE ( 1, "Connecting to %s(%s):%d",
+	    root->hostname,
+	    inet_ntoa (sin.sin_addr),
+	    port );
 
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
 	       root->hostname,
-	       inet_ntoa (sin.sin_addr), port, SOCK_STRERROR (SOCK_ERRNO));
+	       inet_ntoa (sin.sin_addr),
+	       port, SOCK_STRERROR (SOCK_ERRNO));
 
     {
 	const char *realm;
@@ -78,12 +79,9 @@ start_kerberos4_server (cvsroot_t * root, struct buffer **to_server_p,
 
 	laddrlen = sizeof (laddr);
 	if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
-	    error (1, 0, "getsockname failed: %s",
-		   SOCK_STRERROR (SOCK_ERRNO));
+	    error (1, 0, "getsockname failed: %s", SOCK_STRERROR (SOCK_ERRNO));
 
-	/*
-	   We don't care about the checksum, and pass it as zero.  
-	 */
+	/* We don't care about the checksum, and pass it as zero.  */
 	status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
 			       hname, realm, (unsigned long) 0, &msg_data,
 			       &cred, sched, &laddr, &sin, "KCVSV1.0");
@@ -97,20 +95,19 @@ start_kerberos4_server (cvsroot_t * root, struct buffer **to_server_p,
 
     free (hname);
 
-    /*
-       Give caller the values it wants. 
-     */
+    /* Give caller the values it wants. */
     make_bufs_from_fds (s, s, 0, to_server_p, from_server_p, 1);
 }
 
 void
-initialize_kerberos4_encryption_buffers (struct buffer **to_server_p,
-					 struct buffer **from_server_p)
+initialize_kerberos4_encryption_buffers( struct buffer **to_server_p,
+                                         struct buffer **from_server_p )
 {
-    *to_server_p = krb_encrypt_buffer_initialize (*to_server_p, 0, sched,
-						  kblock,
+  *to_server_p = krb_encrypt_buffer_initialize (*to_server_p, 0, sched,
+						kblock,
+						(BUFMEMERRPROC) NULL);
+  *from_server_p = krb_encrypt_buffer_initialize (*from_server_p, 1,
+						  sched, kblock,
 						  (BUFMEMERRPROC) NULL);
-    *from_server_p = krb_encrypt_buffer_initialize (*from_server_p, 1,
-						    sched, kblock,
-						    (BUFMEMERRPROC) NULL);
 }
+

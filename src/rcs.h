@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -46,143 +45,100 @@
 
 struct rcsnode
 {
-    /*
-       Reference count for this structure.  Used to deal with the
+    /* Reference count for this structure.  Used to deal with the
        fact that there might be a pointer from the Vers_TS or might
        not.  Callers who increment this field are responsible for
-       calling freercsnode when they are done with their reference.  
-     */
+       calling freercsnode when they are done with their reference.  */
     int refcount;
 
-    /*
-       Flags (INATTIC, PARTIAL, &c), see above.  
-     */
+    /* Flags (INATTIC, PARTIAL, &c), see above.  */
     int flags;
 
-    /*
-       File name of the RCS file.  This is not necessarily the name
+    /* File name of the RCS file.  This is not necessarily the name
        as specified by the user, but it is a name which can be passed to
        system calls and a name which is OK to print in error messages
-       (the various names might differ in case).  
-     */
+       (the various names might differ in case).  */
     char *path;
 
-    /*
-       Value for head keyword from RCS header, or NULL if empty.  
-     */
+    /* Value for head keyword from RCS header, or NULL if empty.  */
     char *head;
 
-    /*
-       Value for branch keyword from RCS header, or NULL if omitted.  
-     */
+    /* Value for branch keyword from RCS header, or NULL if omitted.  */
     char *branch;
 
-    /*
-       Raw data on symbolic revisions.  The first time that RCS_symbols is
-       called, we parse these into ->symbols, and free ->symbols_data.  
-     */
+    /* Raw data on symbolic revisions.  The first time that RCS_symbols is
+       called, we parse these into ->symbols, and free ->symbols_data.  */
     char *symbols_data;
 
-    /*
-       Value for expand keyword from RCS header, or NULL if omitted.  
-     */
+    /* Value for expand keyword from RCS header, or NULL if omitted.  */
     char *expand;
 
-    /*
-       List of nodes, the key of which is the symbolic name and the data
-       of which is the numeric revision that it corresponds to (malloc'd).  
-     */
+    /* List of nodes, the key of which is the symbolic name and the data
+       of which is the numeric revision that it corresponds to (malloc'd).  */
     List *symbols;
 
-    /*
-       List of nodes (type RCSVERS), the key of which the numeric revision
-       number, and the data of which is an RCSVers * for the revision.  
-     */
+    /* List of nodes (type RCSVERS), the key of which the numeric revision
+       number, and the data of which is an RCSVers * for the revision.  */
     List *versions;
 
-    /*
-       Value for access keyword from RCS header, or NULL if empty.
+    /* Value for access keyword from RCS header, or NULL if empty.
        FIXME: RCS_delaccess would also seem to use "" for empty.  We
-       should pick one or the other.  
-     */
+       should pick one or the other.  */
     char *access;
 
-    /*
-       Raw data on locked revisions.  The first time that RCS_getlocks is
-       called, we parse these into ->locks, and free ->locks_data.  
-     */
+    /* Raw data on locked revisions.  The first time that RCS_getlocks is
+       called, we parse these into ->locks, and free ->locks_data.  */
     char *locks_data;
 
-    /*
-       List of nodes, the key of which is the numeric revision and the
-       data of which is the user that it corresponds to (malloc'd).  
-     */
+    /* List of nodes, the key of which is the numeric revision and the
+       data of which is the user that it corresponds to (malloc'd).  */
     List *locks;
 
-    /*
-       Set for the strict keyword from the RCS header.  
-     */
+    /* Set for the strict keyword from the RCS header.  */
     int strict_locks;
 
-    /*
-       Value for the comment keyword from RCS header (comment leader), or
-       NULL if omitted.  
-     */
+    /* Value for the comment keyword from RCS header (comment leader), or
+       NULL if omitted.  */
     char *comment;
 
-    /*
-       Value for the desc field in the RCS file, or NULL if empty.  
-     */
+    /* Value for the desc field in the RCS file, or NULL if empty.  */
     char *desc;
 
-    /*
-       File offset of the first deltatext node, so we can seek there.  
-     */
+    /* File offset of the first deltatext node, so we can seek there.  */
     long delta_pos;
 
-    /*
-       Newphrases from the RCS header.  List of nodes, the key of which
+    /* Newphrases from the RCS header.  List of nodes, the key of which
        is the "id" which introduces the newphrase, and the value of which
-       is the value from the newphrase.  
-     */
+       is the value from the newphrase.  */
     List *other;
 };
 
 typedef struct rcsnode RCSNode;
 
-struct deltatext
-{
+struct deltatext {
     char *version;
 
-    /*
-       Log message, or NULL if we do not intend to change the log message
+    /* Log message, or NULL if we do not intend to change the log message
        (that is, RCS_copydeltas should just use the log message from the
-       file).  
-     */
+       file).  */
     char *log;
 
-    /*
-       Change text, or NULL if we do not intend to change the change text
+    /* Change text, or NULL if we do not intend to change the change text
        (that is, RCS_copydeltas should just use the change text from the
        file).  Note that it is perfectly valid to have log be NULL and
-       text non-NULL, or vice-versa.  
-     */
+       text non-NULL, or vice-versa.  */
     char *text;
     size_t len;
 
-    /*
-       Newphrase fields from deltatext nodes.  FIXME: duplicates the
-       other field in the rcsversnode, I think.  
-     */
+    /* Newphrase fields from deltatext nodes.  FIXME: duplicates the
+       other field in the rcsversnode, I think.  */
     List *other;
 };
 typedef struct deltatext Deltatext;
 
 struct rcsversnode
 {
-    /*
-       Duplicate of the key by which this structure is indexed.  
-     */
+    /* Duplicate of the key by which this structure is indexed.  */
     char *version;
 
     char *date;
@@ -193,21 +149,15 @@ struct rcsversnode
     int outdated;
     Deltatext *text;
     List *branches;
-    /*
-       Newphrase fields from deltatext nodes.  Also contains ";add" and
+    /* Newphrase fields from deltatext nodes.  Also contains ";add" and
        ";delete" magic fields (see rcs.c, log.c).  I think this is
        only used by log.c (where it looks up "log").  Duplicates the
-       other field in struct deltatext, I think.  
-     */
+       other field in struct deltatext, I think.  */
     List *other;
-    /*
-       Newphrase fields from delta nodes.  
-     */
+    /* Newphrase fields from delta nodes.  */
     List *other_delta;
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-    /*
-       Hard link information for each revision. 
-     */
+    /* Hard link information for each revision. */
     List *hardlinks;
 #endif
 };
@@ -230,8 +180,7 @@ struct rcsbuffer;
 #endif
 
 /* What RCS_deltas is supposed to do.  */
-enum rcs_delta_op
-{ RCS_ANNOTATE, RCS_FETCH };
+enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
 
 /*
  * exported interfaces
@@ -245,35 +194,36 @@ extern int RCS_setattic (RCSNode *, int);
 char *RCS_check_kflag (const char *arg);
 char *RCS_getdate (RCSNode * rcs, char *date, int force_tag_match);
 char *RCS_gettag (RCSNode * rcs, char *symtag, int force_tag_match,
-		  int *simple_tag);
-int RCS_exist_rev (RCSNode * rcs, char *rev);
-int RCS_exist_tag (RCSNode * rcs, char *tag);
-char *RCS_tag2rev (RCSNode * rcs, char *tag);
+			int *simple_tag);
+int RCS_exist_rev (RCSNode *rcs, char *rev);
+int RCS_exist_tag (RCSNode *rcs, char *tag);
+char *RCS_tag2rev (RCSNode *rcs, char *tag);
 char *RCS_getversion (RCSNode * rcs, char *tag, char *date,
 		      int force_tag_match, int *simple_tag);
-char *RCS_magicrev (RCSNode * rcs, char *rev);
-int RCS_isbranch (RCSNode * rcs, const char *rev);
-int RCS_nodeisbranch (RCSNode * rcs, const char *tag);
-char *RCS_whatbranch (RCSNode * rcs, const char *tag);
+char *RCS_magicrev (RCSNode *rcs, char *rev);
+int RCS_isbranch (RCSNode *rcs, const char *rev);
+int RCS_nodeisbranch (RCSNode *rcs, const char *tag);
+char *RCS_whatbranch (RCSNode *rcs, const char *tag);
 char *RCS_head (RCSNode * rcs);
 int RCS_datecmp (char *date1, char *date2);
 time_t RCS_getrevtime (RCSNode * rcs, char *rev, char *date, int fudge);
-List *RCS_symbols (RCSNode * rcs);
+List *RCS_symbols (RCSNode *rcs);
 void RCS_check_tag (const char *tag);
 int RCS_valid_rev (char *rev);
-List *RCS_getlocks (RCSNode * rcs);
+List *RCS_getlocks (RCSNode *rcs);
 void freercsnode (RCSNode ** rnodep);
 char *RCS_getbranch (RCSNode * rcs, char *tag, int force_tag_match);
-char *RCS_branch_head (RCSNode * rcs, char *rev);
+char *RCS_branch_head (RCSNode *rcs, char *rev);
 
 int RCS_isdead (RCSNode *, const char *);
 char *RCS_getexpand (RCSNode *);
 void RCS_setexpand (RCSNode *, char *);
 int RCS_checkout (RCSNode *, char *, char *, char *, char *, char *,
-		  RCSCHECKOUTPROC, void *);
-int RCS_checkin (RCSNode * rcs, char *workfile, char *message,
-		 char *rev, int flags);
-int RCS_cmp_file (RCSNode *, char *, char **, char *, char *, const char *);
+			 RCSCHECKOUTPROC, void *);
+int RCS_checkin (RCSNode *rcs, char *workfile, char *message,
+			char *rev, int flags);
+int RCS_cmp_file ( RCSNode *, char *, char **, char *, char *,
+			 const char * );
 int RCS_settag (RCSNode *, const char *, const char *);
 int RCS_deltag (RCSNode *, const char *);
 int RCS_setbranch (RCSNode *, const char *);
@@ -287,17 +237,20 @@ RETSIGTYPE rcs_cleanup (void);
 void RCS_rewrite (RCSNode *, Deltatext *, char *);
 void RCS_abandon (RCSNode *);
 int rcs_change_text (const char *, char *, size_t, const char *,
-		     size_t, char **, size_t *);
+			    size_t, char **, size_t *);
 void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, char *,
-		 enum rcs_delta_op, char **, size_t *, char **, size_t *);
+			enum rcs_delta_op, char **, size_t *,
+			char **, size_t *);
 void RCS_setincexc (const char *arg);
 void RCS_setlocalid (const char *arg);
 char *make_file_label (char *, char *, RCSNode *);
-char *locate_rcs (const char *repository, const char *file, int *inattic);
+char *locate_rcs ( const char *repository,
+                          const char *file,
+                          int *inattic );
 
 extern int preserve_perms;
 
 /* From import.c.  */
 extern int add_rcs_file (char *, char *, char *, char *, char *,
-			 char *, char *, int, char **,
-			 char *, size_t, FILE *);
+				char *, char *, int, char **,
+				char *, size_t, FILE *);

@@ -1,4 +1,3 @@
-
 /* CVS GSSAPI client stuff.
 
    This program is free software; you can redistribute it and/or modify
@@ -28,14 +27,12 @@
 #ifdef HAVE_GSSAPI_H
 # include <gssapi.h>
 #else
-
 /* Assume existance of this header so that the user will get an informative
  * message if HAVE_GSSAPI somehow gets defined with both headers missing.
  */
 # include <gssapi/gssapi.h>
 #endif
 #ifdef HAVE_GSSAPI_GSSAPI_GENERIC_H
-
 /* MIT Kerberos 5 v1.2.1 */
 # include <gssapi/gssapi_generic.h>
 #endif
@@ -49,16 +46,15 @@ extern gss_ctx_id_t gcontext;
 
 /* We can't declare the arguments without including gssapi.h, and I
    don't want to do that in every file.  */
-struct buffer *cvs_gssapi_wrap_buffer_initialize (struct buffer *buf,
+struct buffer* cvs_gssapi_wrap_buffer_initialize( struct buffer *buf,
 						  int input,
-						  gss_ctx_id_t gcontext,
-						  void (*memory) (struct
-								  buffer *));
+						   gss_ctx_id_t gcontext,
+						   void (*memory) (struct buffer *) );
 
 int connect_to_gserver (cvsroot_t *, int, struct hostent *);
 
 extern void initialize_gssapi_buffers (struct buffer **to_server_p,
-				       struct buffer **from_server_p);
+					     struct buffer **from_server_p);
 
 #endif /* HAVE_GSSAPI */
 

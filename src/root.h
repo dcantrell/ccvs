@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2001, Derek Price and others
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
@@ -11,8 +10,7 @@
 /* CVSroot data structures */
 
 /* Access method specified in CVSroot. */
-typedef enum
-{
+typedef enum {
     null_method,
     local_method,
     server_method,
@@ -21,13 +19,11 @@ typedef enum
     gserver_method,
     ext_method,
     fork_method
-}
-CVSmethod;
+} CVSmethod;
 extern const char method_names[][16];	/* change this in root.c if you change
 					   the enum above */
 
-typedef struct cvsroot_s
-{
+typedef struct cvsroot_s {
     char *original;		/* the complete source CVSroot string */
     CVSmethod method;		/* one of the enum values above */
     char *username;		/* the username or NULL if method == local */
@@ -37,6 +33,5 @@ typedef struct cvsroot_s
     char *directory;		/* the directory name */
 #ifdef CLIENT_SUPPORT
     unsigned char isremote;	/* nonzero if we are doing remote access */
-#endif				/* CLIENT_SUPPORT */
-}
-cvsroot_t;
+#endif /* CLIENT_SUPPORT */
+} cvsroot_t;

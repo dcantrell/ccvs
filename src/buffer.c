@@ -1,4 +1,3 @@
-
 /* Code for the buffer data structure.  */
 
 #include <assert.h>
@@ -30,11 +29,7 @@ static struct buffer_data *get_buffer_data (void);
 /* Initialize a buffer structure.  */
 
 struct buffer *
-buf_initialize (int (*input) (void *, char *, int, int, int *),
-		int (*output) (void *, const char *, int, int *),
-		int (*flush) (void *), int (*block) (void *, int),
-		int (*shutdown) (struct buffer *),
-		void (*memory) (struct buffer *), void *closure)
+buf_initialize (int (*input) (void *, char *, int, int, int *), int (*output) (void *, const char *, int, int *), int (*flush) (void *), int (*block) (void *, int), int (*shutdown) (struct buffer *), void (*memory) (struct buffer *), void *closure)
 {
     struct buffer *buf;
 
@@ -68,14 +63,16 @@ buf_free (struct buffer *buf)
 /* Initialize a buffer structure which is not to be used for I/O.  */
 
 struct buffer *
-buf_nonio_initialize (void (*memory) (struct buffer *))
+buf_nonio_initialize( void (*memory) (struct buffer *) )
 {
     return (buf_initialize
-	    ((int (*)(void *, char *, int, int, int *)) NULL,
-	     (int (*)(void *, const char *, int, int *)) NULL,
-	     (int (*)(void *)) NULL,
-	     (int (*)(void *, int)) NULL,
-	     (int (*)(struct buffer *)) NULL, memory, (void *) NULL));
+	    ((int (*) (void *, char *, int, int, int *)) NULL,
+	     (int (*) (void *, const char *, int, int *)) NULL,
+	     (int (*) (void *)) NULL,
+	     (int (*) (void *, int)) NULL,
+	     (int (*) (struct buffer *)) NULL,
+	     memory,
+	     (void *) NULL));
 }
 
 /* Default memory error handler.  */
@@ -95,9 +92,7 @@ allocate_buffer_datas (void)
     char *space;
     int i;
 
-    /*
-       Allocate buffer_data structures in blocks of 16.  
-     */
+    /* Allocate buffer_data structures in blocks of 16.  */
 # define ALLOC_COUNT (16)
 
     alc = ((struct buffer_data *)
@@ -110,7 +105,7 @@ allocate_buffer_datas (void)
 	alc->next = free_buffer_data;
 	free_buffer_data = alc;
 	alc->text = space;
-    }
+    }	  
 }
 
 /* Get a new buffer_data structure.  */
@@ -146,7 +141,6 @@ buf_empty_p (struct buffer *buf)
 }
 
 # ifdef SERVER_FLOWCONTROL
-
 /*
  * Count how much data is stored in the buffer..
  * Note that each buffer is a xmalloc'ed chunk BUFFER_DATA_SIZE.
@@ -163,7 +157,7 @@ buf_count_mem (struct buffer *buf)
 
     return mem;
 }
-# endif	/* SERVER_FLOWCONTROL */
+# endif /* SERVER_FLOWCONTROL */
 
 /* Add data DATA of length LEN to BUF.  */
 
@@ -172,7 +166,8 @@ buf_output (struct buffer *buf, const char *data, int len)
 {
     if (buf->data != NULL
 	&& (((buf->last->text + BUFFER_DATA_SIZE)
-	     - (buf->last->bufp + buf->last->size)) >= len))
+	     - (buf->last->bufp + buf->last->size))
+	    >= len))
     {
 	memcpy (buf->last->bufp + buf->last->size, data, len);
 	buf->last->size += len;
@@ -213,7 +208,8 @@ buf_output (struct buffer *buf, const char *data, int len)
 	len -= BUFFER_DATA_SIZE;
     }
 
- /*NOTREACHED*/}
+    /*NOTREACHED*/
+}
 
 /* Add a '\0' terminated string to BUF.  */
 
@@ -270,25 +266,21 @@ buf_send_output (struct buffer *buf)
 				     &nbytes);
 	    if (status != 0)
 	    {
-		/*
-		   Some sort of error.  Discard the data, and return.  
-		 */
+		/* Some sort of error.  Discard the data, and return.  */
 
 		buf->last->next = free_buffer_data;
 		free_buffer_data = buf->data;
 		buf->data = NULL;
 		buf->last = NULL;
 
-		return status;
+	        return status;
 	    }
 
 	    if (nbytes != data->size)
 	    {
-		/*
-		   Not all the data was written out.  This is only
-		   permitted in nonblocking mode.  Adjust the buffer,
-		   and return.  
-		 */
+		/* Not all the data was written out.  This is only
+                   permitted in nonblocking mode.  Adjust the buffer,
+                   and return.  */
 
 		assert (buf->nonblocking);
 
@@ -323,25 +315,25 @@ buf_flush (struct buffer *buf, int block)
     int status;
 
     if (buf->flush == NULL)
-	abort ();
+        abort ();
 
     nonblocking = buf->nonblocking;
     if (nonblocking && block)
     {
-	status = set_block (buf);
+        status = set_block (buf);
 	if (status != 0)
 	    return status;
     }
 
     status = buf_send_output (buf);
     if (status == 0)
-	status = (*buf->flush) (buf->closure);
+        status = (*buf->flush) (buf->closure);
 
     if (nonblocking && block)
     {
-	int blockstat;
+        int blockstat;
 
-	blockstat = set_nonblock (buf);
+        blockstat = set_nonblock (buf);
 	if (status == 0)
 	    status = blockstat;
     }
@@ -362,7 +354,7 @@ set_nonblock (struct buffer *buf)
     if (buf->nonblocking)
 	return 0;
     if (buf->block == NULL)
-	abort ();
+        abort ();
     status = (*buf->block) (buf->closure, 0);
     if (status != 0)
 	return status;
@@ -380,10 +372,10 @@ set_block (struct buffer *buf)
 {
     int status;
 
-    if (!buf->nonblocking)
+    if (! buf->nonblocking)
 	return 0;
     if (buf->block == NULL)
-	abort ();
+        abort ();
     status = (*buf->block) (buf->closure, 1);
     if (status != 0)
 	return status;
@@ -466,8 +458,7 @@ buf_send_special_count (struct buffer *buf, int count)
 /* Append a list of buffer_data structures to an buffer.  */
 
 void
-buf_append_data (struct buffer *buf, struct buffer_data *data,
-		 struct buffer_data *last)
+buf_append_data (struct buffer *buf, struct buffer_data *data, struct buffer_data *last)
 {
     if (data != NULL)
     {
@@ -501,8 +492,7 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
  */
 
 int
-buf_read_file (FILE * f, long int size, struct buffer_data **retp,
-	       struct buffer_data **lastp)
+buf_read_file (FILE *f, long int size, struct buffer_data **retp, struct buffer_data **lastp)
 {
     int status;
 
@@ -567,8 +557,7 @@ buf_read_file (FILE * f, long int size, struct buffer_data **retp,
  */
 
 int
-buf_read_file_to_eof (FILE * f, struct buffer_data **retp,
-		      struct buffer_data **lastp)
+buf_read_file_to_eof (FILE *f, struct buffer_data **retp, struct buffer_data **lastp)
 {
     int status;
 
@@ -627,7 +616,6 @@ int
 buf_chain_length (struct buffer_data *buf)
 {
     int size = 0;
-
     while (buf)
     {
 	size += buf->size;
@@ -705,15 +693,14 @@ buf_input_data (struct buffer *buf, int *countp)
 
 	if (nbytes < get)
 	{
-	    /*
-	       If we did not fill the buffer, then presumably we read
-	       all the available data.  
-	     */
+	    /* If we did not fill the buffer, then presumably we read
+               all the available data.  */
 	    return 0;
 	}
     }
 
- /*NOTREACHED*/}
+    /*NOTREACHED*/
+}
 
 /*
  * Read a line (characters up to a \012) from an input buffer.  (We
@@ -730,7 +717,7 @@ int
 buf_read_line (struct buffer *buf, char **line, int *lenp)
 {
     if (buf->input == NULL)
-	abort ();
+        abort ();
 
     *line = NULL;
 
@@ -740,26 +727,22 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	struct buffer_data *data;
 	char *nl;
 
-	/*
-	   See if there is a newline in BUF.  
-	 */
+	/* See if there is a newline in BUF.  */
 	len = 0;
 	for (data = buf->data; data != NULL; data = data->next)
 	{
 	    nl = memchr (data->bufp, '\012', data->size);
 	    if (nl != NULL)
 	    {
-		finallen = nl - data->bufp;
-		len += finallen;
+	        finallen = nl - data->bufp;
+	        len += finallen;
 		break;
 	    }
 	    len += data->size;
 	}
 
-	/*
-	   If we found a newline, copy the line into a memory buffer,
-	   and remove it from BUF.  
-	 */
+	/* If we found a newline, copy the line into a memory buffer,
+           and remove it from BUF.  */
 	if (data != NULL)
 	{
 	    char *p;
@@ -792,14 +775,12 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	    buf->data = data;
 
 	    if (lenp != NULL)
-		*lenp = len;
+	        *lenp = len;
 
 	    return 0;
 	}
 
-	/*
-	   Read more data until we get a newline.  
-	 */
+	/* Read more data until we get a newline.  */
 	while (1)
 	{
 	    int size, status, nbytes;
@@ -830,22 +811,18 @@ buf_read_line (struct buffer *buf, char **line, int *lenp)
 	    mem = buf->last->bufp + buf->last->size;
 	    size = (buf->last->text + BUFFER_DATA_SIZE) - mem;
 
-	    /*
-	       We need to read at least 1 byte.  We can handle up to
-	       SIZE bytes.  This will only be efficient if the
-	       underlying communication stream does its own buffering,
-	       or is clever about getting more than 1 byte at a time.  
-	     */
+	    /* We need to read at least 1 byte.  We can handle up to
+               SIZE bytes.  This will only be efficient if the
+               underlying communication stream does its own buffering,
+               or is clever about getting more than 1 byte at a time.  */
 	    status = (*buf->input) (buf->closure, mem, 1, size, &nbytes);
 	    if (status != 0)
 		return status;
 
 	    buf->last->size += nbytes;
 
-	    /*
-	       Optimize slightly to avoid an unnecessary call to
-	       memchr.  
-	     */
+	    /* Optimize slightly to avoid an unnecessary call to
+               memchr.  */
 	    if (nbytes == 1)
 	    {
 		if (*mem == '\012')
@@ -921,13 +898,13 @@ buf_read_data (struct buffer *buf, int want, char **retdata, int *got)
     *retdata = buf->data->bufp;
     if (want < buf->data->size)
     {
-	*got = want;
+        *got = want;
 	buf->data->size -= want;
 	buf->data->bufp += want;
     }
     else
     {
-	*got = buf->data->size;
+        *got = buf->data->size;
 	buf->data->size = 0;
     }
 
@@ -951,9 +928,7 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 	char *nl;
 	int len;
 
-	/*
-	   See if there is a newline in INBUF.  
-	 */
+	/* See if there is a newline in INBUF.  */
 	nldata = NULL;
 	nl = NULL;
 	for (data = inbuf->data; data != NULL; data = data->next)
@@ -968,15 +943,11 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 
 	if (nldata == NULL)
 	{
-	    /*
-	       There are no more lines in INBUF.  
-	     */
+	    /* There are no more lines in INBUF.  */
 	    return;
 	}
 
-	/*
-	   Put in the command.  
-	 */
+	/* Put in the command.  */
 	buf_append_char (outbuf, command);
 	buf_append_char (outbuf, ' ');
 
@@ -1041,8 +1012,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	{
 	    char intbuf[sizeof (int)];
 	    int i;
-	}
-	u;
+	} u;
 	char *intp;
 	int count;
 	struct buffer_data *start;
@@ -1050,9 +1020,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	struct buffer_data *stop;
 	int stopwant;
 
-	/*
-	   See if we have enough bytes to figure out the count.  
-	 */
+	/* See if we have enough bytes to figure out the count.  */
 	need = sizeof (int);
 	intp = u.intbuf;
 	for (data = inbuf->data; data != NULL; data = data->next)
@@ -1068,9 +1036,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	}
 	if (data == NULL)
 	{
-	    /*
-	       We don't have enough bytes to form an integer.  
-	     */
+	    /* We don't have enough bytes to form an integer.  */
 	    return need;
 	}
 
@@ -1080,10 +1046,8 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 
 	if (count < 0)
 	{
-	    /*
-	       A negative COUNT is a special case meaning that we
-	       don't need any further information.  
-	     */
+	    /* A negative COUNT is a special case meaning that we
+               don't need any further information.  */
 	    stop = start;
 	    stopwant = 0;
 	}
@@ -1111,9 +1075,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 		}
 		if (data == NULL)
 		{
-		    /*
-		       We don't have enough bytes.  
-		     */
+		    /* We don't have enough bytes.  */
 		    return need;
 		}
 		stop = data;
@@ -1146,9 +1108,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	    free_buffer_data = data;
 	}
 
-	/*
-	   If COUNT is negative, set *SPECIAL and get out now.  
-	 */
+	/* If COUNT is negative, set *SPECIAL and get out now.  */
 	if (count < 0)
 	{
 	    *special = count;
@@ -1162,9 +1122,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 
 	if (start != stop)
 	{
-	    /*
-	       Attach the buffers from START through STOP to OUTBUF.  
-	     */
+	    /* Attach the buffers from START through STOP to OUTBUF.  */
 	    for (data = start; data->next != stop; data = data->next)
 		;
 	    inbuf->data = stop;
@@ -1180,7 +1138,8 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	}
     }
 
- /*NOTREACHED*/}
+    /*NOTREACHED*/
+}
 
 /* Shut down a buffer.  This returns 0 on success, or an errno code.  */
 
@@ -1211,19 +1170,20 @@ struct stdio_buffer_closure
 };
 
 struct buffer *
-stdio_buffer_initialize (FILE * fp, int child_pid, int input,
-			 void (*memory) (struct buffer *))
+stdio_buffer_initialize (FILE *fp, int child_pid, int input, void (*memory) (struct buffer *))
 {
     struct stdio_buffer_closure *bc = xmalloc (sizeof (*bc));
 
     bc->fp = fp;
     bc->child_pid = child_pid;
 
-    return buf_initialize (input ? stdio_buffer_input : NULL,
+    return buf_initialize( input ? stdio_buffer_input : NULL,
 			   input ? NULL : stdio_buffer_output,
 			   input ? NULL : stdio_buffer_flush,
-			   (int (*)(void *, int)) NULL,
-			   stdio_buffer_shutdown, memory, (void *) bc);
+			   (int (*) (void *, int)) NULL,
+			   stdio_buffer_shutdown,
+			   memory,
+			   (void *) bc );
 }
 
 /* Return the file associated with a stdio buffer. */
@@ -1232,11 +1192,11 @@ stdio_buffer_get_file (struct buffer *buf)
 {
     struct stdio_buffer_closure *bc;
 
-    assert (buf->shutdown == stdio_buffer_shutdown);
+    assert(buf->shutdown == stdio_buffer_shutdown);
 
     bc = (struct stdio_buffer_closure *) buf->closure;
 
-    return (bc->fp);
+    return(bc->fp);
 }
 
 /* The buffer input function for a buffer built on a stdio FILE.  */
@@ -1247,14 +1207,12 @@ stdio_buffer_input (void *closure, char *data, int need, int size, int *got)
     struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) closure;
     int nbytes;
 
-    /*
-       Since stdio does its own buffering, we don't worry about
-       getting more bytes than we need.  
-     */
+    /* Since stdio does its own buffering, we don't worry about
+       getting more bytes than we need.  */
 
     if (need == 0 || need == 1)
     {
-	int ch;
+        int ch;
 
 	ch = getc (bc->fp);
 
@@ -1345,19 +1303,14 @@ stdio_buffer_flush (void *closure)
 static int
 stdio_buffer_shutdown (struct buffer *buf)
 {
-    struct stdio_buffer_closure *bc =
-	(struct stdio_buffer_closure *) buf->closure;
+    struct stdio_buffer_closure *bc = (struct stdio_buffer_closure *) buf->closure;
     struct stat s;
     int closefp = 1;
 
-    /*
-       Must be a pipe or a socket.  What could go wrong? 
-     */
-    assert (fstat (fileno (bc->fp), &s) != -1);
+    /* Must be a pipe or a socket.  What could go wrong? */
+    assert (fstat ( fileno (bc->fp), &s ) != -1);
 
-    /*
-       Flush the buffer if we can 
-     */
+    /* Flush the buffer if we can */
     if (buf->flush)
     {
 	buf_flush (buf, 1);
@@ -1366,33 +1319,29 @@ stdio_buffer_shutdown (struct buffer *buf)
 
     if (buf->input)
     {
-	if (!buf_empty_p (buf))
+	if ( !buf_empty_p (buf) )
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
-		/*
-		   FIXME: This should probably be sysloged since it doesn't
-		   * have anywhere else to go at this point.
+		/* FIXME: This should probably be sysloged since it doesn't
+		 * have anywhere else to go at this point.
 		 */
 		error (0, 0, "dying gasps from client unexpected");
 	    else
 # endif
-		error (0, 0, "dying gasps from %s unexpected",
-		       current_parsed_root->hostname);
+		error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
 	}
 	else if (ferror (bc->fp))
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
-		/*
-		   FIXME: This should probably be sysloged since it doesn't
-		   * have anywhere else to go at this point.
+		/* FIXME: This should probably be sysloged since it doesn't
+		 * have anywhere else to go at this point.
 		 */
 		error (0, errno, "reading from client");
 	    else
 # endif
-		error (0, errno, "reading from %s",
-		       current_parsed_root->hostname);
+		error (0, errno, "reading from %s", current_parsed_root->hostname);
 	}
 
 # ifdef SHUTDOWN_SERVER
@@ -1400,52 +1349,44 @@ stdio_buffer_shutdown (struct buffer *buf)
 # endif
 # ifndef NO_SOCKET_TO_FD
 	{
-	    /*
-	       shutdown() sockets 
-	     */
-	    if (S_ISSOCK (s.st_mode))
-		shutdown (fileno (bc->fp), 0);
+	    /* shutdown() sockets */
+	    if (S_ISSOCK(s.st_mode))
+		shutdown ( fileno (bc->fp), 0);
 	}
-# endif	/* NO_SOCKET_TO_FD */
+# endif /* NO_SOCKET_TO_FD */
 # ifdef START_RSH_WITH_POPEN_RW
-	/*
-	   Can't be set with SHUTDOWN_SERVER defined 
-	 */
+	/* Can't be set with SHUTDOWN_SERVER defined */
 	else if (pclose (bc->fp) == EOF)
 	{
 	    error (1, errno, "closing connection to %s",
 		   current_parsed_root->hostname);
 	    closefp = 0;
 	}
-# endif	/* START_RSH_WITH_POPEN_RW */
+# endif /* START_RSH_WITH_POPEN_RW */
 
 	buf->input = NULL;
     }
     else if (buf->output)
     {
 # ifdef SHUTDOWN_SERVER
-	/*
-	   FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
-	   * SHUTDOWN_SERVER_OUTPUT
+	/* FIXME:  Should have a SHUTDOWN_SERVER_INPUT &
+	 * SHUTDOWN_SERVER_OUTPUT
 	 */
 	if (current_parsed_root->method == server_method)
-	    SHUTDOWN_SERVER (fileno (bc->fp));
+	    SHUTDOWN_SERVER ( fileno (bc->fp) );
 	else
 # endif
 # ifndef NO_SOCKET_TO_FD
-	    /*
-	       shutdown() sockets 
-	     */
-	if (S_ISSOCK (s.st_mode))
-	    shutdown (fileno (bc->fp), 1);
+	/* shutdown() sockets */
+	if (S_ISSOCK(s.st_mode))
+	    shutdown ( fileno (bc->fp), 1);
 # else
 	{
-	    /*
-	       I'm not sure I like this empty block, but the alternative
-	       * is a another nested NO_SOCKET_TO_FD switch above.
-	     */
+	/* I'm not sure I like this empty block, but the alternative
+	 * is a another nested NO_SOCKET_TO_FD switch above.
+	 */
 	}
-# endif	/* NO_SOCKET_TO_FD */
+# endif /* NO_SOCKET_TO_FD */
 
 	buf->output = NULL;
     }
@@ -1455,9 +1396,7 @@ stdio_buffer_shutdown (struct buffer *buf)
 	       "closing down connection to %s",
 	       current_parsed_root->hostname);
 
-    /*
-       If we were talking to a process, make sure it exited 
-     */
+    /* If we were talking to a process, make sure it exited */
     if (bc->child_pid)
     {
 	int w;
@@ -1494,58 +1433,39 @@ stdio_buffer_shutdown (struct buffer *buf)
 
 struct packetizing_buffer
 {
-    /*
-       The underlying buffer.  
-     */
+    /* The underlying buffer.  */
     struct buffer *buf;
-    /*
-       The input translation function.  Exactly one of inpfn and outfn
+    /* The input translation function.  Exactly one of inpfn and outfn
        will be NULL.  The input translation function should
        untranslate the data in INPUT, storing the result in OUTPUT.
        SIZE is the amount of data in INPUT, and is also the size of
-       OUTPUT.  This should return 0 on success, or an errno code.  
-     */
-    int (*inpfn) (void *fnclosure, const char *input, char *output, int size);
-    /*
-       The output translation function.  This should translate the
+       OUTPUT.  This should return 0 on success, or an errno code.  */
+    int (*inpfn) (void *fnclosure, const char *input, char *output,
+			int size);
+    /* The output translation function.  This should translate the
        data in INPUT, storing the result in OUTPUT.  The first two
        bytes in INPUT will be the size of the data, and so will SIZE.
        This should set *TRANSLATED to the amount of translated data in
        OUTPUT.  OUTPUT is large enough to hold SIZE + PACKET_SLOP
-       bytes.  This should return 0 on success, or an errno code.  
-     */
+       bytes.  This should return 0 on success, or an errno code.  */
     int (*outfn) (void *fnclosure, const char *input, char *output,
-		  int size, int *translated);
-    /*
-       A closure for the translation function.  
-     */
+			int size, int *translated);
+    /* A closure for the translation function.  */
     void *fnclosure;
-    /*
-       For an input buffer, we may have to buffer up data here.  
-     */
-    /*
-       This is non-zero if the buffered data has been translated.
+    /* For an input buffer, we may have to buffer up data here.  */
+    /* This is non-zero if the buffered data has been translated.
        Otherwise, the buffered data has not been translated, and starts
-       with the two byte packet size.  
-     */
+       with the two byte packet size.  */
     int translated;
-    /*
-       The amount of buffered data.  
-     */
+    /* The amount of buffered data.  */
     int holdsize;
-    /*
-       The buffer allocated to hold the data.  
-     */
+    /* The buffer allocated to hold the data.  */
     char *holdbuf;
-    /*
-       The size of holdbuf.  
-     */
+    /* The size of holdbuf.  */
     int holdbufsize;
-    /*
-       If translated is set, we need another data pointer to track
+    /* If translated is set, we need another data pointer to track
        where we are in holdbuf.  If translated is clear, then this
-       pointer is not used.  
-     */
+       pointer is not used.  */
     char *holddata;
 };
 
@@ -1558,14 +1478,7 @@ static int packetizing_buffer_shutdown (struct buffer *);
 /* Create a packetizing buffer.  */
 
 struct buffer *
-packetizing_buffer_initialize (struct buffer *buf,
-			       int (*inpfn) (void *, const char *, char *,
-					     int), int (*outfn) (void *,
-								 const char *,
-								 char *, int,
-								 int *),
-			       void *fnclosure,
-			       void (*memory) (struct buffer *))
+packetizing_buffer_initialize (struct buffer *buf, int (*inpfn) (void *, const char *, char *, int), int (*outfn) (void *, const char *, char *, int, int *), void *fnclosure, void (*memory) (struct buffer *))
 {
     struct packetizing_buffer *pb;
 
@@ -1579,11 +1492,9 @@ packetizing_buffer_initialize (struct buffer *buf,
 
     if (inpfn != NULL)
     {
-	/*
-	   Add PACKET_SLOP to handle larger translated packets, and
-	   add 2 for the count.  This buffer is increased if
-	   necessary.  
-	 */
+	/* Add PACKET_SLOP to handle larger translated packets, and
+           add 2 for the count.  This buffer is increased if
+           necessary.  */
 	pb->holdbufsize = BUFFER_DATA_SIZE + PACKET_SLOP + 2;
 	pb->holdbuf = xmalloc (pb->holdbufsize);
     }
@@ -1592,14 +1503,15 @@ packetizing_buffer_initialize (struct buffer *buf,
 			   inpfn != NULL ? NULL : packetizing_buffer_output,
 			   inpfn != NULL ? NULL : packetizing_buffer_flush,
 			   packetizing_buffer_block,
-			   packetizing_buffer_shutdown, memory, pb);
+			   packetizing_buffer_shutdown,
+			   memory,
+			   pb);
 }
 
 /* Input data from a packetizing buffer.  */
 
 static int
-packetizing_buffer_input (void *closure, char *data, int need, int size,
-			  int *got)
+packetizing_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
@@ -1637,20 +1549,16 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 	char stackoutbuf[BUFFER_DATA_SIZE + PACKET_SLOP];
 	char *inbuf, *outbuf;
 
-	/*
-	   If we don't already have the two byte count, get it.  
-	 */
+	/* If we don't already have the two byte count, get it.  */
 	if (pb->holdsize < 2)
 	{
 	    get = 2 - pb->holdsize;
 	    status = buf_read_data (pb->buf, get, &bytes, &nread);
 	    if (status != 0)
 	    {
-		/*
-		   buf_read_data can return -2, but a buffer input
-		   function is only supposed to return -1, 0, or an
-		   error code.  
-		 */
+		/* buf_read_data can return -2, but a buffer input
+                   function is only supposed to return -1, 0, or an
+                   error code.  */
 		if (status == -2)
 		    status = ENOMEM;
 		return status;
@@ -1658,10 +1566,8 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 
 	    if (nread == 0)
 	    {
-		/*
-		   The buffer is in nonblocking mode, and we didn't
-		   manage to read anything.  
-		 */
+		/* The buffer is in nonblocking mode, and we didn't
+                   manage to read anything.  */
 		return 0;
 	    }
 
@@ -1672,10 +1578,8 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 		pb->holdbuf[0] = bytes[0];
 		if (nread < 2)
 		{
-		    /*
-		       We only got one byte, but we needed two.  Stash
-		       the byte we got, and try again.  
-		     */
+		    /* We only got one byte, but we needed two.  Stash
+                       the byte we got, and try again.  */
 		    pb->holdsize = 1;
 		    continue;
 		}
@@ -1684,20 +1588,17 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 	    pb->holdsize = 2;
 	}
 
-	/*
-	   Read the packet.  
-	 */
+	/* Read the packet.  */
 
-	count = (((pb->holdbuf[0] & 0xff) << 8) + (pb->holdbuf[1] & 0xff));
+	count = (((pb->holdbuf[0] & 0xff) << 8)
+		 + (pb->holdbuf[1] & 0xff));
 
 	if (count + 2 > pb->holdbufsize)
 	{
 	    char *n;
 
-	    /*
-	       We didn't allocate enough space in the initialize
-	       function.  
-	     */
+	    /* We didn't allocate enough space in the initialize
+               function.  */
 
 	    n = xrealloc (pb->holdbuf, count + 2);
 	    if (n == NULL)
@@ -1714,11 +1615,9 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 	status = buf_read_data (pb->buf, get, &bytes, &nread);
 	if (status != 0)
 	{
-	    /*
-	       buf_read_data can return -2, but a buffer input
-	       function is only supposed to return -1, 0, or an error
-	       code.  
-	     */
+	    /* buf_read_data can return -2, but a buffer input
+               function is only supposed to return -1, 0, or an error
+               code.  */
 	    if (status == -2)
 		status = ENOMEM;
 	    return status;
@@ -1726,45 +1625,35 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 
 	if (nread == 0)
 	{
-	    /*
-	       We did not get any data.  Presumably the buffer is in
-	       nonblocking mode.  
-	     */
+	    /* We did not get any data.  Presumably the buffer is in
+               nonblocking mode.  */
 	    return 0;
 	}
 
 	if (nread < get)
 	{
-	    /*
-	       We did not get all the data we need to fill the packet.
-	       buf_read_data does not promise to return all the bytes
-	       requested, so we must try again.  
-	     */
+	    /* We did not get all the data we need to fill the packet.
+               buf_read_data does not promise to return all the bytes
+               requested, so we must try again.  */
 	    memcpy (pb->holdbuf + pb->holdsize, bytes, nread);
 	    pb->holdsize += nread;
 	    continue;
 	}
 
-	/*
-	   We have a complete untranslated packet of COUNT bytes.  
-	 */
+	/* We have a complete untranslated packet of COUNT bytes.  */
 
 	if (pb->holdsize == 2)
 	{
-	    /*
-	       We just read the entire packet (the 2 bytes in
-	       PB->HOLDBUF are the size).  Save a memcpy by
-	       translating directly from BYTES.  
-	     */
+	    /* We just read the entire packet (the 2 bytes in
+               PB->HOLDBUF are the size).  Save a memcpy by
+               translating directly from BYTES.  */
 	    inbuf = bytes;
 	}
 	else
 	{
-	    /*
-	       We already had a partial packet in PB->HOLDBUF.  We
-	       need to copy the new data over to make the input
-	       contiguous.  
-	     */
+	    /* We already had a partial packet in PB->HOLDBUF.  We
+               need to copy the new data over to make the input
+               contiguous.  */
 	    memcpy (pb->holdbuf + pb->holdsize, bytes, nread);
 	    inbuf = pb->holdbuf + 2;
 	}
@@ -1785,10 +1674,8 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 	if (status != 0)
 	    return status;
 
-	/*
-	   The first two bytes in the translated buffer are the real
-	   length of the translated data.  
-	 */
+	/* The first two bytes in the translated buffer are the real
+           length of the translated data.  */
 	tcount = ((outbuf[0] & 0xff) << 8) + (outbuf[1] & 0xff);
 
 	if (tcount > count)
@@ -1796,10 +1683,8 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 
 	if (tcount > size)
 	{
-	    /*
-	       We have more data than the caller has provided space
-	       for.  We need to save some of it for the next call.  
-	     */
+	    /* We have more data than the caller has provided space
+               for.  We need to save some of it for the next call.  */
 
 	    memcpy (data, outbuf + 2, size);
 	    *got += size;
@@ -1834,8 +1719,7 @@ packetizing_buffer_input (void *closure, char *data, int need, int size,
 /* Output data to a packetizing buffer.  */
 
 static int
-packetizing_buffer_output (void *closure, const char *data, int have,
-			   int *wrote)
+packetizing_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
     char inbuf[BUFFER_DATA_SIZE + 2];
@@ -1846,10 +1730,8 @@ packetizing_buffer_output (void *closure, const char *data, int have,
 
     if (have > BUFFER_DATA_SIZE)
     {
-	/*
-	   It would be easy to xmalloc a buffer, but I don't think this
-	   case can ever arise.  
-	 */
+	/* It would be easy to xmalloc a buffer, but I don't think this
+           case can ever arise.  */
 	abort ();
     }
 
@@ -1859,12 +1741,10 @@ packetizing_buffer_output (void *closure, const char *data, int have,
 
     size = have + 2;
 
-    /*
-       The output function is permitted to add up to PACKET_SLOP
+    /* The output function is permitted to add up to PACKET_SLOP
        bytes, and we need 2 bytes for the size of the translated data.
        If we can guarantee that the result will fit in a buffer_data,
-       we translate directly into one to avoid a memcpy in buf_output.  
-     */
+       we translate directly into one to avoid a memcpy in buf_output.  */
     if (size + PACKET_SLOP + 2 > BUFFER_DATA_SIZE)
 	outbuf = stack_outbuf;
     else
@@ -1887,10 +1767,8 @@ packetizing_buffer_output (void *closure, const char *data, int have,
     if (status != 0)
 	return status;
 
-    /*
-       The output function is permitted to add up to PACKET_SLOP
-       bytes.  
-     */
+    /* The output function is permitted to add up to PACKET_SLOP
+       bytes.  */
     if (translated > size + PACKET_SLOP)
 	abort ();
 
@@ -1907,11 +1785,9 @@ packetizing_buffer_output (void *closure, const char *data, int have,
 
     *wrote = have;
 
-    /*
-       We will only be here because buf_send_output was called on the
+    /* We will only be here because buf_send_output was called on the
        packetizing buffer.  That means that we should now call
-       buf_send_output on the underlying buffer.  
-     */
+       buf_send_output on the underlying buffer.  */
     return buf_send_output (pb->buf);
 }
 
@@ -1922,12 +1798,10 @@ packetizing_buffer_flush (void *closure)
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
 
-    /*
-       Flush the underlying buffer.  Note that if the original call to
+    /* Flush the underlying buffer.  Note that if the original call to
        buf_flush passed 1 for the BLOCK argument, then the buffer will
        already have been set into blocking mode, so we should always
-       pass 0 here.  
-     */
+       pass 0 here.  */
     return buf_flush (pb->buf, 0);
 }
 
@@ -1949,8 +1823,7 @@ packetizing_buffer_block (void *closure, int block)
 static int
 packetizing_buffer_shutdown (struct buffer *buf)
 {
-    struct packetizing_buffer *pb =
-	(struct packetizing_buffer *) buf->closure;
+    struct packetizing_buffer *pb = (struct packetizing_buffer *) buf->closure;
 
     return buf_shutdown (pb->buf);
 }

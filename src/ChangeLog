@@ -1,15 +1,19 @@
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
+	* *.{c,h}: Back out the indent run.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Move some includes into lib/system.h.
 
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
-	(*.{c,h}): Run these through GNU indent as per the NEWS file to fix
+	* *.{c,h}: Run these through GNU indent as per the NEWS file to fix
 	some of the long function decls which came out of protoize.
 
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
-	(*.c): Run these through GCC's protoize to convert the pre-ANSI C
+	* *.c: Run these through GCC's protoize to convert the pre-ANSI C
 	function decls to C89 compliance.
 
 2003-07-22  Derek Price  <derek@ximbiot.com>

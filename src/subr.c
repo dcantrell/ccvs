@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -20,11 +19,9 @@
 # include "xtime.h"
 #else /* HAVE_NANOSLEEP */
 # if !defined HAVE_USLEEP && defined HAVE_SELECT
-    /*
-       use select as a workaround 
-     */
+    /* use select as a workaround */
 #   include "xselect.h"
-# endif	/* !defined HAVE_USLEEP && defined HAVE_SELECT */
+# endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
 #endif /* !HAVE_NANOSLEEP */
 
 extern char *getlogin (void);
@@ -37,19 +34,16 @@ xmalloc (size_t bytes)
 {
     char *cp;
 
-    /*
-       Parts of CVS try to xmalloc zero bytes and then free it.  Some
+    /* Parts of CVS try to xmalloc zero bytes and then free it.  Some
        systems have a malloc which returns NULL for zero byte
-       allocations but a free which can't handle NULL, so compensate. 
-     */
+       allocations but a free which can't handle NULL, so compensate. */
     if (bytes == 0)
 	bytes = 1;
 
-    cp = CVS_MALLOC (bytes);
+    cp = CVS_MALLOC( bytes );
     if (cp == NULL)
     {
 	char buf[80];
-
 	sprintf (buf, "out of memory; can not allocate %lu bytes",
 		 (unsigned long) bytes);
 	error (1, 0, buf);
@@ -68,14 +62,13 @@ xrealloc (void *ptr, size_t bytes)
     char *cp;
 
     if (!ptr)
-	cp = CVS_MALLOC (bytes);
+	cp = CVS_MALLOC( bytes );
     else
-	cp = CVS_REALLOC (ptr, bytes);
+	cp = CVS_REALLOC( ptr, bytes );
 
     if (cp == NULL)
     {
 	char buf[80];
-
 	sprintf (buf, "out of memory; can not reallocate %lu bytes",
 		 (unsigned long) bytes);
 	error (1, 0, buf);
@@ -104,7 +97,7 @@ xrealloc (void *ptr, size_t bytes)
    NEWSIZE bytes of space.  Gives a fatal error if out of memory;
    if it returns it was successful.  */
 void
-expand_string (char **strptr, size_t * n, size_t newsize)
+expand_string (char **strptr, size_t *n, size_t newsize)
 {
     if (*n < newsize)
     {
@@ -128,7 +121,7 @@ expand_string (char **strptr, size_t * n, size_t newsize)
 /* *STR is a pointer to a malloc'd string.  *LENP is its allocated
    length.  Add SRC to the end of it, reallocating if necessary.  */
 void
-xrealloc_and_strcat (char **str, size_t * lenp, const char *src)
+xrealloc_and_strcat (char **str, size_t *lenp, const char *src)
 {
 
     expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
@@ -155,7 +148,6 @@ void
 strip_trailing_newlines (char *str)
 {
     int len;
-
     len = strlen (str) - 1;
 
     while (str[len] == '\n')
@@ -167,7 +159,6 @@ strip_trailing_newlines (char *str)
    "../../foo" -> 2
    "foo/../../bar" -> 1
    */
-
 /* FIXME: Should be using ISDIRSEP, last_component, or some other
    mechanism which is more general than just looking at slashes,
    particularly for the client.c caller.  The server.c caller might
@@ -200,12 +191,11 @@ pathname_levels (char *path)
 	else
 	    ++level;
 	p = q;
-    }
-    while (p != NULL);
+    } while (p != NULL);
     return max_level;
 }
-
 
+
 /* Free a vector, where (*ARGV)[0], (*ARGV)[1], ... (*ARGV)[*PARGC - 1]
    are malloc'd and so is *ARGV itself.  Such a vector is allocated by
    line2argv or expand_wild, for example.  */
@@ -231,23 +221,17 @@ void
 line2argv (int *pargc, char ***argv, char *line, char *sepchars)
 {
     char *cp;
-
-    /*
-       Could make a case for size_t or some other unsigned type, but
+    /* Could make a case for size_t or some other unsigned type, but
        we'll stick with int to avoid signed/unsigned warnings when
-       comparing with *pargc.  
-     */
+       comparing with *pargc.  */
     int argv_allocated;
 
-    /*
-       Small for testing.  
-     */
+    /* Small for testing.  */
     argv_allocated = 1;
     *argv = (char **) xmalloc (argv_allocated * sizeof (**argv));
 
     *pargc = 0;
-    for (cp = strtok (line, sepchars); cp;
-	 cp = strtok ((char *) NULL, sepchars))
+    for (cp = strtok (line, sepchars); cp; cp = strtok ((char *) NULL, sepchars))
     {
 	if (*pargc == argv_allocated)
 	{
@@ -334,9 +318,7 @@ getcaller (void)
     uid_t uid;
 #endif
 
-    /*
-       If there is a CVS username, return it.  
-     */
+    /* If there is a CVS username, return it.  */
 #ifdef AUTH_SERVER_SUPPORT
     if (CVS_Username != NULL)
 	return CVS_Username;
@@ -345,11 +327,9 @@ getcaller (void)
 #ifdef SYSTEM_GETCALLER
     return SYSTEM_GETCALLER ();
 #else
-    /*
-       Get the caller's login from his uid.  If the real uid is "root"
+    /* Get the caller's login from his uid.  If the real uid is "root"
        try LOGNAME USER or getlogin(). If getlogin() and getpwuid()
-       both fail, return the uid as a string.  
-     */
+       both fail, return the uid as a string.  */
 
     if (cache != NULL)
 	return cache;
@@ -359,11 +339,9 @@ getcaller (void)
     {
 	char *name;
 
-	/*
-	   super-user; try getlogin() to distinguish 
-	 */
-	if (((name = getlogin ()) || (name = getenv ("LOGNAME")) ||
-	     (name = getenv ("USER"))) && *name)
+	/* super-user; try getlogin() to distinguish */
+	if (((name = getlogin ()) || (name = getenv("LOGNAME")) ||
+	     (name = getenv("USER"))) && *name)
 	{
 	    cache = xstrdup (name);
 	    return cache;
@@ -384,10 +362,9 @@ getcaller (void)
 
 #ifdef lint
 #ifndef __GNUC__
-
 /* ARGSUSED */
 time_t
-get_date (char *date, struct timeb * now)
+get_date( char *date, struct timeb *now )
 {
     time_t foo = 0;
 
@@ -412,74 +389,52 @@ gca (const char *rev1, const char *rev2)
     if (rev1 == NULL || rev2 == NULL)
     {
 	error (0, 0, "sanity failure in gca");
-	abort ();
+	abort();
     }
 
-    /*
-       The greatest common ancestor will have no more dots, and numbers
+    /* The greatest common ancestor will have no more dots, and numbers
        of digits for each component no greater than the arguments.  Therefore
-       this string will be big enough.  
-     */
+       this string will be big enough.  */
     g = gca = xmalloc (strlen (rev1) + strlen (rev2) + 100);
 
-    /*
-       walk the strings, reading the common parts. 
-     */
+    /* walk the strings, reading the common parts. */
     p1 = rev1;
     p2 = rev2;
     do
     {
 	r1 = strtol (p1, (char **) &p1, 10);
 	r2 = strtol (p2, (char **) &p2, 10);
-
-	/*
-	   use the lowest. 
-	 */
+	
+	/* use the lowest. */
 	(void) sprintf (g, "%d.", r1 < r2 ? r1 : r2);
 	g += strlen (g);
-	if (*p1 == '.')
-	    ++p1;
-	else
-	    break;
-	if (*p2 == '.')
-	    ++p2;
-	else
-	    break;
-    }
-    while (r1 == r2);
+	if (*p1 == '.') ++p1;
+	else break;
+	if (*p2 == '.') ++p2;
+	else break;
+    } while (r1 == r2);
 
-    /*
-       erase that last dot. 
-     */
+    /* erase that last dot. */
     *--g = '\0';
 
-    /*
-       numbers differ, or we ran out of strings.  we're done with the
-       common parts.  
-     */
+    /* numbers differ, or we ran out of strings.  we're done with the
+       common parts.  */
 
     dots = numdots (gca);
     if (dots == 0)
     {
-	/*
-	   revisions differ in trunk major number.  
-	 */
+	/* revisions differ in trunk major number.  */
 
-	if (r2 < r1)
-	    p1 = p2;
+	if (r2 < r1) p1 = p2;
 	if (*p1 == '\0')
 	{
-	    /*
-	       we only got one number.  this is strange.  
-	     */
+	    /* we only got one number.  this is strange.  */
 	    error (0, 0, "bad revisions %s or %s", rev1, rev2);
-	    abort ();
+	    abort();
 	}
 	else
 	{
-	    /*
-	       we have a minor number.  use it.  
-	     */
+	    /* we have a minor number.  use it.  */
 	    *g++ = '.';
 	    while (*p1 != '.' && *p1 != '\0')
 		*g++ = *p1++;
@@ -488,11 +443,9 @@ gca (const char *rev1, const char *rev2)
     }
     else if ((dots & 1) == 0)
     {
-	/*
-	   if we have an even number of dots, then we have a branch.
-	   remove the last number in order to make it a revision.  
-	 */
-
+	/* if we have an even number of dots, then we have a branch.
+	   remove the last number in order to make it a revision.  */
+	
 	g = strrchr (gca, '.');
 	*g = '\0';
     }
@@ -516,13 +469,11 @@ check_numeric (const char *rev, int argc, char **argv)
     if (rev == NULL || !isdigit ((unsigned char) *rev))
 	return;
 
-    /*
-       Note that the check for whether we are processing more than one
+    /* Note that the check for whether we are processing more than one
        file is (basically) syntactic; that is, we don't behave differently
        depending on whether a directory happens to contain only a single
        file or whether it contains more than one.  I strongly suspect this
-       is the least confusing behavior.  
-     */
+       is the least confusing behavior.  */
     if (argc != 1
 	|| (!wrap_name_has (argv[0], WRAP_TOCVS) && isdir (argv[0])))
     {
@@ -545,37 +496,28 @@ make_message_rcsvalid (char *message)
 {
     char *dst, *dp, *mp;
 
-    if (message == NULL)
-	message = "";
+    if (message == NULL) message = "";
 
-    /*
-       Strip whitespace from end of lines and end of string. 
-     */
+    /* Strip whitespace from end of lines and end of string. */
     dp = dst = (char *) xmalloc (strlen (message) + 1);
     for (mp = message; *mp != '\0'; ++mp)
     {
 	if (*mp == '\n')
 	{
-	    /*
-	       At end-of-line; backtrack to last non-space. 
-	     */
+	    /* At end-of-line; backtrack to last non-space. */
 	    while (dp > dst && (dp[-1] == ' ' || dp[-1] == '\t'))
 		--dp;
 	}
 	*dp++ = *mp;
     }
 
-    /*
-       Backtrack to last non-space at end of string, and truncate. 
-     */
+    /* Backtrack to last non-space at end of string, and truncate. */
     while (dp > dst && isspace ((unsigned char) dp[-1]))
 	--dp;
     *dp = '\0';
 
-    /*
-       After all that, if there was no non-space in the string,
-       substitute a non-empty message. 
-     */
+    /* After all that, if there was no non-space in the string,
+       substitute a non-empty message. */
     if (*dst == '\0')
     {
 	free (dst);
@@ -611,11 +553,10 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
     char *filestamp;
     int retcode;
 
-    /*
-       If ts_conflict is NULL, there was no merge since the last
-       * commit and there can be no conflict.
+    /* If ts_conflict is NULL, there was no merge since the last
+     * commit and there can be no conflict.
      */
-    assert (ts_conflict);
+    assert ( ts_conflict );
 
     /*
      * If the timestamp has changed and no
@@ -624,14 +565,14 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
      */
 
 #ifdef SERVER_SUPPORT
-    if (server_active)
+    if ( server_active )
 	retcode = ts_conflict[0] == '=';
-    else
+    else 
 #endif /* SERVER_SUPPORT */
     {
-	filestamp = time_stamp (finfo->file);
-	retcode = !strcmp (ts_conflict, filestamp);
-	free (filestamp);
+	filestamp = time_stamp ( finfo->file );
+	retcode = !strcmp ( ts_conflict, filestamp );
+	free ( filestamp );
     }
 
     return retcode;
@@ -658,11 +599,9 @@ file_has_markers (const struct file_info *finfo)
 	error (1, errno, "cannot open %s", finfo->fullname);
     while (getline (&line, &line_allocated, fp) > 0)
     {
-	if (strncmp (line, RCS_MERGE_PAT_1, sizeof RCS_MERGE_PAT_1 - 1) == 0
-	    || strncmp (line, RCS_MERGE_PAT_2,
-			sizeof RCS_MERGE_PAT_2 - 1) == 0
-	    || strncmp (line, RCS_MERGE_PAT_3,
-			sizeof RCS_MERGE_PAT_3 - 1) == 0)
+	if (strncmp (line, RCS_MERGE_PAT_1, sizeof RCS_MERGE_PAT_1 - 1) == 0 ||
+	    strncmp (line, RCS_MERGE_PAT_2, sizeof RCS_MERGE_PAT_2 - 1) == 0 ||
+	    strncmp (line, RCS_MERGE_PAT_3, sizeof RCS_MERGE_PAT_3 - 1) == 0)
 	{
 	    result = 1;
 	    goto out;
@@ -670,7 +609,7 @@ file_has_markers (const struct file_info *finfo)
     }
     if (ferror (fp))
 	error (0, errno, "cannot read %s", finfo->fullname);
-  out:
+out:
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", finfo->fullname);
     if (line != NULL)
@@ -687,8 +626,7 @@ file_has_markers (const struct file_info *finfo)
    is FULLNAME.  MODE is "r" for text or "rb" for binary.  */
 
 void
-get_file (const char *name, const char *fullname, const char *mode,
-	  char **buf, size_t * bufsize, size_t * len)
+get_file (const char *name, const char *fullname, const char *mode, char **buf, size_t *bufsize, size_t *len)
 {
     struct stat s;
     size_t nread;
@@ -699,24 +637,20 @@ get_file (const char *name, const char *fullname, const char *mode,
     if (name == NULL)
     {
 	e = stdin;
-	filesize = 100;			/* force allocation of minimum buffer */
+	filesize = 100;	/* force allocation of minimum buffer */
     }
     else
     {
-	/*
-	   Although it would be cleaner in some ways to just read
+	/* Although it would be cleaner in some ways to just read
 	   until end of file, reallocating the buffer, this function
 	   does get called on files in the working directory which can
 	   be of arbitrary size, so I think we better do all that
-	   extra allocation.  
-	 */
+	   extra allocation.  */
 
 	if (CVS_STAT (name, &s) < 0)
 	    error (1, errno, "can't stat %s", fullname);
 
-	/*
-	   Convert from signed to unsigned.  
-	 */
+	/* Convert from signed to unsigned.  */
 	filesize = s.st_size;
 
 	e = open_file (name, mode);
@@ -743,9 +677,7 @@ get_file (const char *name, const char *fullname, const char *mode,
 	if (feof (e))
 	    break;
 
-	/*
-	   Allocate more space if needed.  
-	 */
+	/* Allocate more space if needed.  */
 	if (tobuf == *buf + *bufsize)
 	{
 	    int c;
@@ -767,9 +699,7 @@ get_file (const char *name, const char *fullname, const char *mode,
 
     *len = nread;
 
-    /*
-       Force *BUF to be large enough to hold a null terminator. 
-     */
+    /* Force *BUF to be large enough to hold a null terminator. */
     if (nread == *bufsize)
 	expand_string (buf, bufsize, *bufsize + 1);
     (*buf)[nread] = '\0';
@@ -784,23 +714,20 @@ get_file (const char *name, const char *fullname, const char *mode,
 void
 resolve_symlink (char **filename)
 {
-    if ((!filename) || (!*filename))
+    if ((! filename) || (! *filename))
 	return;
 
     while (islink (*filename))
     {
 	char *newname;
-
 #ifdef HAVE_READLINK
-	/*
-	   The clean thing to do is probably to have each filesubr.c
+	/* The clean thing to do is probably to have each filesubr.c
 	   implement this (with an error if not supported by the
 	   platform, in which case islink would presumably return 0).
 	   But that would require editing each filesubr.c and so the
-	   expedient hack seems to be looking at HAVE_READLINK.  
-	 */
+	   expedient hack seems to be looking at HAVE_READLINK.  */
 	newname = xreadlink (*filename);
-
+	
 	if (isabsolute (newname))
 	{
 	    free (*filename);
@@ -811,7 +738,6 @@ resolve_symlink (char **filename)
 	    char *oldname = last_component (*filename);
 	    int dirlen = oldname - *filename;
 	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
-
 	    strncpy (fullnewname, *filename, dirlen);
 	    strcpy (fullnewname + dirlen, newname);
 	    free (newname);
@@ -837,17 +763,20 @@ backup_file (const char *filename, const char *suffix)
 
     if (suffix == NULL)
     {
-	backup_name = xmalloc (sizeof (BAKPREFIX) + strlen (filename) + 1);
-	sprintf (backup_name, "%s%s", BAKPREFIX, filename);
+        backup_name = xmalloc (sizeof (BAKPREFIX) + strlen (filename) + 1);
+        sprintf (backup_name, "%s%s", BAKPREFIX, filename);
     }
     else
     {
-	backup_name = xmalloc (sizeof (BAKPREFIX) + strlen (filename) + strlen (suffix) + 2);	/* one for dot, one for trailing '\0' */
-	sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
+        backup_name = xmalloc (sizeof (BAKPREFIX)
+                               + strlen (filename)
+                               + strlen (suffix)
+                               + 2);  /* one for dot, one for trailing '\0' */
+        sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
     }
 
     if (isfile (filename))
-	copy_file (filename, backup_name);
+        copy_file (filename, backup_name);
 
     return backup_name;
 }
@@ -860,23 +789,21 @@ backup_file (const char *filename, const char *suffix)
  */
 
 char *
-shell_escape (char *buf, const char *str)
+shell_escape(char *buf, const char *str)
 {
     static const char meta[] = "$`\\\"";
     const char *p;
 
     for (;;)
     {
-	p = strpbrk (str, meta);
-	if (!p)
-	    p = str + strlen (str);
+	p = strpbrk(str, meta);
+	if (!p) p = str + strlen(str);
 	if (p > str)
 	{
-	    memcpy (buf, str, p - str);
+	    memcpy(buf, str, p - str);
 	    buf += p - str;
 	}
-	if (!*p)
-	    break;
+	if (!*p) break;
 	*buf++ = '\\';
 	*buf++ = *p++;
 	str = p;
@@ -899,7 +826,6 @@ sleep_past (time_t desttime)
     {
 #ifdef HAVE_GETTIMEOFDAY
 	struct timeval tv;
-
 	gettimeofday (&tv, NULL);
 	if (tv.tv_sec > desttime)
 	    break;
@@ -912,9 +838,7 @@ sleep_past (time_t desttime)
 	    us = 0;
 	}
 #else
-	/*
-	   default to 20 ms increments 
-	 */
+	/* default to 20 ms increments */
 	s = desttime - t;
 	us = 20000;
 #endif
@@ -922,33 +846,28 @@ sleep_past (time_t desttime)
 #if defined(HAVE_NANOSLEEP)
 	{
 	    struct timespec ts;
-
 	    ts.tv_sec = s;
 	    ts.tv_nsec = us * 1000;
-	    (void) nanosleep (&ts, NULL);
+	    (void)nanosleep (&ts, NULL);
 	}
 #elif defined(HAVE_USLEEP)
 	if (s > 0)
-	    (void) sleep (s);
+	    (void)sleep (s);
 	else
-	    (void) usleep (us);
+	    (void)usleep (us);
 #elif defined(HAVE_SELECT)
 	{
-	    /*
-	       use select instead of sleep since it is a fairly portable way of
-	       * sleeping for ms.
+	    /* use select instead of sleep since it is a fairly portable way of
+	     * sleeping for ms.
 	     */
 	    struct timeval tv;
-
 	    tv.tv_sec = s;
 	    tv.tv_usec = us;
-	    (void) select (0, (fd_set *) NULL, (fd_set *) NULL,
-			   (fd_set *) NULL, &tv);
+	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
 	}
 #else
-	if (us > 0)
-	    s++;
-	(void) sleep (s);
+	if (us > 0) s++;
+	(void)sleep(s);
 #endif
     }
 }
@@ -981,71 +900,70 @@ locate_file_in_dir (const char *dir, const char *file)
     char *retval;
 
 #if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-    if (ign_case)
+    if ( ign_case )
     {
 	DIR *dirp;
 	struct dirent *dp;
 	char *found_name = NULL;
 
-	if ((dirp = CVS_OPENDIR (dir)) == NULL)
+	if ( ( dirp = CVS_OPENDIR ( dir ) ) == NULL )
 	{
-	    if (existence_error (errno))
+	    if ( existence_error ( errno ) )
 	    {
-		/*
-		   This can happen if we are looking in the Attic and the Attic
+		/* This can happen if we are looking in the Attic and the Attic
 		   directory does not exist.  Pass errno through to the caller;
-		   they know what to do with it.  
-		 */
+		   they know what to do with it.  */
 		return NULL;
 	    }
 	    else
 	    {
-		/*
-		   Give a fatal error; that way the error message can be
-		   * more specific than if we returned the error to the caller.
+		/* Give a fatal error; that way the error message can be
+		 * more specific than if we returned the error to the caller.
 		 */
-		error (1, errno, "cannot read directory %s", dir);
+		error ( 1, errno, "cannot read directory %s", dir );
 	    }
 	}
 	errno = 0;
-	while ((dp = CVS_READDIR (dirp)) != NULL)
+	while ( ( dp = CVS_READDIR ( dirp ) ) != NULL )
 	{
-	    if (cvs_casecmp (dp->d_name, file) == 0)
+	    if ( cvs_casecmp ( dp->d_name, file ) == 0 )
 	    {
-		if (found_name != NULL)
-		    error (1, 0, "%s is ambiguous; could mean %s or %s",
-			   file, dp->d_name, found_name);
-		found_name = xstrdup (dp->d_name);
+		if ( found_name != NULL )
+		    error ( 1, 0, "%s is ambiguous; could mean %s or %s",
+			    file, dp->d_name, found_name );
+		found_name = xstrdup ( dp->d_name );
 	    }
 	}
-	if (errno != 0)
-	    error (1, errno, "cannot read directory %s", dir);
+	if ( errno != 0 )
+	    error ( 1, errno, "cannot read directory %s", dir );
 
-	CVS_CLOSEDIR (dirp);
+	CVS_CLOSEDIR ( dirp );
 
-	if (found_name == NULL)
+	if ( found_name == NULL )
 	{
 	    errno = ENOENT;
 	    return NULL;
 	}
 
-	/*
-	   Copy the found name back into DIR.  We are assuming that
+	/* Copy the found name back into DIR.  We are assuming that
 	   found_name is the same length as fname, which is true as
 	   long as the above code is just ignoring case and not other
-	   aspects of filename syntax.  
-	 */
-	retval = xmalloc (strlen (dir) + strlen (found_name) + 2);
-	sprintf (retval, "%s/%s", dir, found_name);
+	   aspects of filename syntax.  */
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( found_name )
+			   + 2 );
+	sprintf ( retval, "%s/%s", dir, found_name );
     }
     else
 #endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
     {
-	retval = xmalloc (strlen (dir) + strlen (file) + 2);
-	(void) sprintf (retval, "%s/%s", dir, file);
-	if (!isfile (retval))
+	retval = xmalloc ( strlen ( dir )
+			   + strlen ( file )
+			   + 2 );
+	(void) sprintf ( retval, "%s/%s", dir, file );
+	if ( !isfile ( retval ) )
 	{
-	    free (retval);
+	    free ( retval );
 	    return NULL;
 	}
     }
@@ -1061,22 +979,21 @@ locate_file_in_dir (const char *dir, const char *file)
  * Print tracing information to stderr on request.  I haven't decided to
  * actually use levels yet, but I did implement them as CVSNT did.
  */
-void
-cvs_trace (int level, const char *fmt, ...)
+void cvs_trace ( int level, const char *fmt, ... )
 {
-    if (trace >= level)
+    if(trace >= level)
     {
 	va_list va;
 
-	va_start (va, fmt);
+	va_start( va, fmt );
 #ifdef SERVER_SUPPORT
-	fprintf (stderr, "%c -> ", server_active ? 'S' : ' ');
+	fprintf(stderr,"%c -> ",server_active?'S':' ');
 #else /* ! SERVER_SUPPORT */
-	fprintf (stderr, "  -> ");
+	fprintf(stderr,"  -> ");
 #endif
-	vfprintf (stderr, fmt, va);
-	fprintf (stderr, "\n");
-	va_end (va);
+	vfprintf(stderr, fmt, va);
+	fprintf(stderr,"\n");
+	va_end(va);
     }
 }
 

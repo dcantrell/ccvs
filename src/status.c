@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -12,7 +11,8 @@
 #include "cvs.h"
 
 static Dtype status_dirproc (void *callerdat, char *dir,
-			     char *repos, char *update_dir, List * entries);
+				    char *repos, char *update_dir,
+				    List *entries);
 static int status_fileproc (void *callerdat, struct file_info *finfo);
 static int tag_list_proc (Node * p, void *closure);
 
@@ -20,7 +20,8 @@ static int local = 0;
 static int long_format = 0;
 static RCSNode *xrcsnode;
 
-static const char *const status_usage[] = {
+static const char *const status_usage[] =
+{
     "Usage: %s %s [-vlR] [files...]\n",
     "\t-v\tVerbose format; includes tag information for the file\n",
     "\t-l\tProcess this directory only (not recursive).\n",
@@ -71,13 +72,12 @@ cvsstatus (int argc, char **argv)
 	ign_setup ();
 
 	if (long_format)
-	    send_arg ("-v");
+	    send_arg("-v");
 	if (local)
-	    send_arg ("-l");
+	    send_arg("-l");
 	send_arg ("--");
 
-	/*
-	   For a while, we tried setting SEND_NO_CONTENTS here so this
+	/* For a while, we tried setting SEND_NO_CONTENTS here so this
 	   could be a fast operation.  That prevents the
 	   server from updating our timestamp if the timestamp is
 	   changed but the file is unmodified.  Worse, it is user-visible
@@ -88,8 +88,7 @@ cvsstatus (int argc, char **argv)
 	   something perhaps could be made to work but somehow that
 	   seems nonintuitive to me even if so).  Given that timestamps
 	   seem to have the potential to get munged for any number of
-	   reasons, it seems better to not rely too much on them.  
-	 */
+	   reasons, it seems better to not rely too much on them.  */
 
 	send_files (argc, argv, local, 0, 0);
 
@@ -102,13 +101,11 @@ cvsstatus (int argc, char **argv)
     }
 #endif
 
-    /*
-       start the recursion processor 
-     */
+    /* start the recursion processor */
     err = start_recursion
-	(status_fileproc, (FILESDONEPROC) NULL,
-	 status_dirproc, (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
-	 W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1, (char *) NULL);
+	( status_fileproc, (FILESDONEPROC) NULL,
+	  status_dirproc, (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
+	  W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1, (char *) NULL);
 
     return (err);
 }
@@ -116,7 +113,6 @@ cvsstatus (int argc, char **argv)
 /*
  * display the status of a file
  */
-
 /* ARGSUSED */
 static int
 status_fileproc (void *callerdat, struct file_info *finfo)
@@ -125,9 +121,8 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     char *sstat;
     Vers_TS *vers;
 
-    status =
-	Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL, 1,
-		       0, &vers, 0);
+    status = Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL,
+			    1, 0, &vers, 0);
     sstat = "Classify Error";
     switch (status)
     {
@@ -141,13 +136,12 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    sstat = "Needs Patch";
 	    break;
 	case T_CONFLICT:
-	    /*
-	       FIXME - This message needs to be clearer.  It comes up now
-	       * only when a file exists or has been added in the local sandbox
-	       * and a file of the same name has been committed indepenently to
-	       * the repository from a different sandbox.  It also comes up
-	       * whether an update has been attempted or not, so technically, I
-	       * think it is not actually a conflict yet.
+	    /* FIXME - This message needs to be clearer.  It comes up now
+	     * only when a file exists or has been added in the local sandbox
+	     * and a file of the same name has been committed indepenently to
+	     * the repository from a different sandbox.  It also comes up
+	     * whether an update has been attempted or not, so technically, I
+	     * think it is not actually a conflict yet.
 	     */
 	    sstat = "Unresolved Conflict";
 	    break;
@@ -158,15 +152,14 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    sstat = "Locally Removed";
 	    break;
 	case T_MODIFIED:
-	    if (vers->ts_conflict
-		&& (file_has_conflict (finfo, vers->ts_conflict)
-		    || file_has_markers (finfo)))
+	    if ( vers->ts_conflict
+		 && ( file_has_conflict ( finfo, vers->ts_conflict )
+		       || file_has_markers ( finfo ) ) )
 		sstat = "File had conflicts on merge";
 	    else
-		/*
-		   Note that we do not re Register() the file when we spot
-		   * a resolved conflict like update_fileproc() does on the
-		   * premise that status should not alter the sandbox.
+		/* Note that we do not re Register() the file when we spot
+		 * a resolved conflict like update_fileproc() does on the
+		 * premise that status should not alter the sandbox.
 		 */
 		sstat = "Locally Modified";
 	    break;
@@ -180,10 +173,8 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	    sstat = "Needs Merge";
 	    break;
 	case T_TITLE:
-	    /*
-	       I don't think this case can occur here.  Just print
-	       "Classify Error".  
-	     */
+	    /* I don't think this case can occur here.  Just print
+	       "Classify Error".  */
 	    break;
     }
 
@@ -200,7 +191,6 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     else
     {
 	char *buf;
-
 	buf = xmalloc (strlen (finfo->file) + strlen (sstat) + 80);
 	sprintf (buf, "File: %-17s\tStatus: %s\n\n", finfo->file, sstat);
 	cvs_output (buf, 0);
@@ -269,7 +259,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 		    char *branch = NULL;
 
 		    if (RCS_nodeisbranch (finfo->rcs, edata->tag))
-			branch = RCS_whatbranch (finfo->rcs, edata->tag);
+			branch = RCS_whatbranch(finfo->rcs, edata->tag);
 
 		    cvs_output ("   Sticky Tag:\t\t", 0);
 		    cvs_output (edata->tag, 0);
@@ -308,7 +298,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 
     if (long_format && vers->srcfile)
     {
-	List *symbols = RCS_symbols (vers->srcfile);
+	List *symbols = RCS_symbols(vers->srcfile);
 
 	cvs_output ("\n   Existing Tags:\n", 0);
 	if (symbols)
@@ -328,11 +318,9 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 /*
  * Print a warm fuzzy message
  */
-
 /* ARGSUSED */
 static Dtype
-status_dirproc (void *callerdat, char *dir, char *repos, char *update_dir,
-		List * entries)
+status_dirproc (void *callerdat, char *dir, char *repos, char *update_dir, List *entries)
 {
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
@@ -343,18 +331,19 @@ status_dirproc (void *callerdat, char *dir, char *repos, char *update_dir,
  * Print out a tag and its type
  */
 static int
-tag_list_proc (Node * p, void *closure)
+tag_list_proc (Node *p, void *closure)
 {
     char *branch = NULL;
     char *buf;
 
     if (RCS_nodeisbranch (xrcsnode, p->key))
-	branch = RCS_whatbranch (xrcsnode, p->key);
+	branch = RCS_whatbranch(xrcsnode, p->key) ;
 
     buf = xmalloc (80 + strlen (p->key)
 		   + (branch ? strlen (branch) : strlen (p->data)));
     sprintf (buf, "\t%-25s\t(%s: %s)\n", p->key,
-	     branch ? "branch" : "revision", branch ? branch : p->data);
+	     branch ? "branch" : "revision",
+	     branch ? branch : p->data);
     cvs_output (buf, 0);
     free (buf);
 
