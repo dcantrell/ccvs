@@ -1526,6 +1526,24 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	jdate1 = NULL;
     }
 
+    /* The file in the working directory doesn't exist in CVS/Entries.
+       FIXME: Shouldn't this case result in additional processing (if
+       the file was added going from rev1 to rev2, then do the equivalent
+       of a "cvs add")?  (yes; easier said than done.. :-) */
+    if (vers->vn_user == NULL)
+    {
+	/* No merge possible YET. */
+	if (jdate2 != NULL)
+	    error (0, 0,
+		   "file %s is present in revision %s as of %s",
+		   file, jrev2, jdate2);
+	else
+	    error (0, 0,
+		   "file %s is present in revision %s",
+		   file, jrev2);
+	return;
+    }
+
     /* convert the second rev spec, walking branches and dates. */
 
     rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1);
@@ -1544,16 +1562,9 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	}
 	return;
     }
-	
-    /* skip joining identical revs */
-    if (/* The file in the working directory doesn't exist in CVS/Entries.
-	   FIXME: Shouldn't this case result in additional processing (if
-	   the file was added going from rev1 to rev2, then do the equivalent
-	   of a "cvs add")?  */
-	vers->vn_user == NULL
 
-	/* Identical revs.  */
-	|| strcmp (rev2, vers->vn_user) == 0)
+    /* skip joining identical revs */
+    if (strcmp (rev2, vers->vn_user) == 0)
     {
 	/* No merge necessary.  */
 	free (rev2);

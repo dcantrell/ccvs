@@ -1,5 +1,8 @@
 Thu Sep 14 14:17:52 1995  Peter Wemm  <peter@haywire.dialix.com>
 
+	* update.c (join_file): Print a message in the case where the file
+	was added.
+
 	* mkmodules.c: Deal with .db as well as .pag/.dir (for use with
 	BSD 4.4 and real dbm support).
 
