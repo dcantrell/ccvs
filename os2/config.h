@@ -146,10 +146,6 @@
    that's always there.  */
 #undef SERVER_SUPPORT
 
-/* the path to the gnu diff program on your system  */
-/* We don't need this for CLIENT side.  */
-#undef DIFF
-
 /* Define if you have the connect function.  */
 /* Not used?  */
 /* It appears to be used in client.c now... don't know yet it OS/2 has it. */
