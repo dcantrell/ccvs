@@ -1,3 +1,7 @@
+2004-09-09  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (packetizing_buffer_input): s/int/size_t/ as appropriate.
+
 2004-09-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* root.c (primary_root_inverse_translate): No longer inline.

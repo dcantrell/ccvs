@@ -1462,7 +1462,8 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 
     while (need > 0 || *got == 0)
     {
-	int get, status, nread, count, tcount;
+	int status;
+	size_t get, nread, count, tcount;
 	char *bytes;
 	char stackoutbuf[BUFFER_DATA_SIZE + PACKET_SLOP];
 	char *inbuf, *outbuf;
