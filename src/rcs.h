@@ -231,7 +231,6 @@ int RCS_delete_revs (RCSNode *, char *, char *, int);
 void RCS_addaccess (RCSNode *, char *);
 void RCS_delaccess (RCSNode *, char *);
 char *RCS_getaccess (RCSNode *);
-RETSIGTYPE rcs_cleanup (void);
 void RCS_rewrite (RCSNode *, Deltatext *, char *);
 void RCS_abandon (RCSNode *);
 int rcs_change_text (const char *, char *, size_t, const char *,
