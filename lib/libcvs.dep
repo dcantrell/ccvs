@@ -1,14 +1,60 @@
 # Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
+.\argmatch.c : \
+	"..\windows-NT\config.h"\
+	
+
+.\asnprintf.c : \
+	"..\windows-NT\config.h"\
+	".\vasnprintf.h"\
+	
+
+.\basename.c : \
+	"..\windows-NT\config.h"\
+	".\dirname.h"\
+	
+
 .\exitfail.c : \
 	"..\windows-NT\config.h"\
 	".\exit.h"\
 	".\exitfail.h"\
 	
 
+.\fncase.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\ndir.h"\
+	"..\windows-NT\pwd.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\fnmatch.h"\
+	".\gettext.h"\
+	".\system.h"\
+	".\timespec.h"\
+	".\unlocked-io.h"\
+	
+
+.\fnmatch.c : \
+	"..\windows-NT\config.h"\
+	".\alloca.h"\
+	".\fnmatch.h"\
+	".\fnmatch_loop.c"\
+	
+
+.\fseeko.c : \
+	"..\windows-NT\config.h"\
+	
+
+.\ftello.c : \
+	"..\windows-NT\config.h"\
+	
+
 .\getdate.c : \
 	"..\windows-NT\config.h"\
-	".\xtime.h"\
+	"..\windows-NT\stdbool.h"\
+	".\alloca.h"\
+	".\getdate.h"\
+	".\timespec.h"\
+	".\unlocked-io.h"\
 	
 
 .\getline.c : \
@@ -34,6 +80,16 @@
 	".\getopt.h"\
 	
 
+.\gettime.c : \
+	"..\windows-NT\config.h"\
+	".\timespec.h"\
+	
+
+.\md5.c : \
+	"..\windows-NT\config.h"\
+	".\md5.h"\
+	
+
 ".\printf-args.c" : \
 	"..\windows-NT\config.h"\
 	".\printf-args.h"\
@@ -55,6 +111,85 @@
 	".\gettext.h"\
 	".\regex.h"\
 	".\unlocked-io.h"\
+	
+
+.\savecwd.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\error.h"\
+	".\savecwd.h"\
+	
+
+.\sighandle.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\ndir.h"\
+	"..\windows-NT\pwd.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\fnmatch.h"\
+	".\gettext.h"\
+	".\system.h"\
+	".\timespec.h"\
+	".\unlocked-io.h"\
+	
+
+.\stripslash.c : \
+	"..\windows-NT\config.h"\
+	".\dirname.h"\
+	
+
+.\valloc.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\ndir.h"\
+	"..\windows-NT\pwd.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\fnmatch.h"\
+	".\getpagesize.h"\
+	".\gettext.h"\
+	".\system.h"\
+	".\timespec.h"\
+	".\unlocked-io.h"\
+	
+
+.\vasnprintf.c : \
+	"..\windows-NT\config.h"\
+	".\alloca.h"\
+	".\printf-args.h"\
+	".\printf-parse.h"\
+	".\vasnprintf.h"\
+	".\xsize.h"\
+	
+
+.\xgetwd.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\ndir.h"\
+	"..\windows-NT\pwd.h"\
+	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\unistd.h"\
+	".\fnmatch.h"\
+	".\gettext.h"\
+	".\pathmax.h"\
+	".\system.h"\
+	".\timespec.h"\
+	".\unlocked-io.h"\
+	
+
+.\xmalloc.c : \
+	"..\windows-NT\config.h"\
+	".\error.h"\
+	".\exitfail.h"\
+	".\gettext.h"\
+	".\xalloc.h"\
+	
+
+.\xstrdup.c : \
+	"..\windows-NT\config.h"\
+	".\xalloc.h"\
+	
+
+.\yesno.c : \
+	"..\windows-NT\config.h"\
 	
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"

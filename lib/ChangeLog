@@ -1,3 +1,11 @@
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
+	* libcvs.dsp: Move all "../lib/*.c" files to this project.  Header file
+	list updated for GNULIB updates.
+	* libcvs.dep: Regenerated for "libcvs.dsp" changes.
+	* libcvs.mak: Regenerated for "libcvs.dsp" changes.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-05-14  Derek Price  <derek@ximbiot.com>
 
 	* libcvs.dsp: Add basename.c & gettime.c for Windows build.
