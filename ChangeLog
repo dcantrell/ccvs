@@ -1,5 +1,11 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	Assume headers in m4/gettext.m4 per notes in HACKING.
+
+	* aclocal.m4: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Remove call to AC_TYPE_SIZE_T since size_t can be
 	assumed via our C89 assumption of stddef.h.  Don't check for errno.h
 	or string.h.  We are assuming these headers.
