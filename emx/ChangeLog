@@ -1,5 +1,13 @@
 Tue Jun 17 14:44:02 1997  Jim Kingdon  (unknown@beezley)
 
+	* rcmd.c: Removed; no longer used.
+	* rcmd.h: Updated to have similar contents as
+	windows-NT/rcmd.h.
+	* Makefile.in (OS2_HEADERS): Change back to ${srcdir}/rcmd.h.
+	That is the one that the -I options specify anyway.
+	* startserver.c (os2_start_server): Pass a const char ** not
+	a char ** to rcmd.
+
 	* README: Replace text concerning warnings with a more
 	specific list of exactly what the warnings are.  For the
 	most part there should be no warnings.

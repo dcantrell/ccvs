@@ -33,6 +33,7 @@ os2_start_server (int *tofd, int *fromfd,
     int fd, port;
     char *portenv;
     struct servent *sptr;
+	const char *rcmd_host = (const char *) server_host;
 
     if (! (cvs_server = getenv ("CVS_SERVER")))
 	cvs_server = "cvs";
@@ -58,7 +59,7 @@ os2_start_server (int *tofd, int *fromfd,
 	    server_cvsroot);
     }
 
-    fd = rcmd (&server_host, port,
+    fd = rcmd (&rcmd_host, port,
 	       client_user,
 	       (server_user ? server_user : client_user),
 	       command, 0);
