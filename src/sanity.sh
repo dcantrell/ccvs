@@ -7976,22 +7976,15 @@ done"
 U dir2d1/sub2d1/file1"
 	  cd dir2d1
 	  touch emptyfile
-	  # The fact that CVS lets us add a file here is a CVS bug, right?
-	  # I can just make this an error message (on the add and/or the
-	  # commit) without getting flamed, right?
-	  # Right?
-	  # Right?
+	  # It doesn't make any sense to add a file (or do much of anything
+	  # else) in Emptydir; Emptydir is a placeholder indicating that
+	  # the working directory doesn't correspond to anything in
+	  # the repository.
 	  dotest emptydir-7 "${testcvs} add emptyfile" \
 "${PROG} [a-z]*: scheduling file .emptyfile. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  dotest emptydir-8 "${testcvs} -q ci -m add" \
-"RCS file: ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v
-done
-Checking in emptyfile;
-${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
-initial revision: 1\.1
-done
-${PROG} [a-z]*: Rebuilding administrative file database"
+	  dotest_fail emptydir-8 "${testcvs} -q ci -m add" \
+"${PROG} \[[a-z]* aborted\]: cannot check in to ${TESTDIR}/cvsroot/CVSROOT/Emptydir"
 	  cd ..
 	  rm -rf CVS dir2d1
 

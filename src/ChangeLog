@@ -1,5 +1,8 @@
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (check_fileproc): Don't allow commits in Emptydir.
+	* sanity.sh (emptydir-8): Test for this change in behavior.
+
 	* sanity.sh: Add some compatibility tests to TODO comments at end.
 
 1998-09-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
