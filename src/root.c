@@ -447,7 +447,10 @@ parse_cvsroot (const char *root_in)
 
     assert (root_in != NULL);
 
-    TRACE (TRACE_FUNCTION, "parse_cvsroot ( %s )", root_in);
+    /* This message is TRACE_FLOW since this function is called repeatedly by
+     * the recursion routines.
+     */
+    TRACE (TRACE_FLOW, "parse_cvsroot (%s)", root_in);
 
     /* allocate some space */
     newroot = new_cvsroot_t();
