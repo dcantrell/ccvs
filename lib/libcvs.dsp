@@ -221,6 +221,10 @@ SOURCE=.\xmalloc.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\xreadlink.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\yesno.c
 # End Source File
 # End Group
@@ -447,6 +451,10 @@ SOURCE=.\xalloc.h
 # Begin Source File
 
 SOURCE=.\xgetcwd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xreadlink.h
 # End Source File
 # Begin Source File
 

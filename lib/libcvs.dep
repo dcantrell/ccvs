@@ -235,6 +235,13 @@
 	".\xalloc.h"\
 	
 
+.\xreadlink.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\xalloc.h"\
+	".\xreadlink.h"\
+	
+
 .\yesno.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\stdbool.h"\
