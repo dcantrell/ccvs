@@ -603,11 +603,14 @@ WriteTag (dir, tag, date)
     char *date;
 {
     FILE *fout;
-    char tmp[PATH_MAX];
+    char *tmp;
 
     if (noexec)
 	return;
 
+    tmp = xmalloc ((dir ? strlen (dir) : 0)
+		   + sizeof (CVSADM_TAG)
+		   + 10);
     if (dir == NULL)
 	(void) strcpy (tmp, CVSADM_TAG);
     else
@@ -632,6 +635,7 @@ WriteTag (dir, tag, date)
     else
 	if (unlink_file (tmp) < 0 && ! existence_error (errno))
 	    error (1, errno, "cannot remove %s", tmp);
+    free (tmp);
 }
 
 /*
