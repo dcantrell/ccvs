@@ -1189,6 +1189,10 @@ later; for details see @ref{Watches Compatibility}.
 @node Locks
 @subsection CVS locks in the repository
 
+@cindex #cvs.rfl, technical details
+@cindex #cvs.wfl, technical details
+@cindex #cvs.lock, technical details
+@cindex locks, cvs, technical details
 For an introduction to CVS locks focusing on
 user-visible behavior, see @ref{Concurrency}.  The
 following section is aimed at people who are writing
@@ -1199,6 +1203,7 @@ described here, like @dfn{read lock}, @dfn{write lock},
 and @dfn{deadlock}, you might consult the literature on
 operating systems or databases.
 
+@cindex #cvs.tfl
 Any file in the repository with a name starting
 with @file{#cvs.rfl} is a read lock.  Any file in
 the repository with a name starting with
@@ -1788,6 +1793,8 @@ in the repository; for the most part it is possible to
 back them up just like any other files.  However, there
 are a few issues to consider.
 
+@cindex locks, cvs, and backups
+@cindex #cvs.rfl, and backups
 The first is that to be paranoid, one should either not
 use @sc{cvs} during the backup, or have the backup
 program lock @sc{cvs} while doing the backup.  To not
@@ -5526,7 +5533,7 @@ newsgroup.
 @node Concurrency
 @section Several developers simultaneously attempting to run CVS
 
-@cindex locks, cvs
+@cindex locks, cvs, introduction
 @c For a discussion of *why* CVS creates locks, see
 @c the comment at the start of src/lock.c
 If several developers try to run @sc{cvs} at the same
@@ -5536,6 +5543,9 @@ time, one may get the following message:
 [11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
 @end example
 
+@cindex #cvs.rfl, removing
+@cindex #cvs.wfl, removing
+@cindex #cvs.lock, removing
 @sc{cvs} will try again every 30 seconds, and either
 continue with the operation or print the message again,
 if it still needs to wait.  If a lock seems to stick
@@ -5544,8 +5554,8 @@ holding the lock and ask them about the cvs command
 they are running.  If they aren't running a cvs
 command, look in the repository directory mentioned in
 the message and remove files which they own whose names
-start with @file{#cvs.tfl}, @file{#cvs.rfl}, or
-@file{#cvs.wfl}.
+start with @file{#cvs.rfl},
+@file{#cvs.wfl}, or @file{#cvs.lock}.
 
 Note that these locks are to protect @sc{cvs}'s
 internal data structures and have no relationship to
