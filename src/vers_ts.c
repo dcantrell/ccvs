@@ -285,8 +285,7 @@ time_stamp_server (file, vers_ts, entdata)
 	if (entdata == NULL)
 	    mark_lost (vers_ts);
 	else if (entdata->timestamp
-		 && entdata->timestamp[0] == '='
-		 && entdata->timestamp[1] == '\0')
+		 && entdata->timestamp[0] == '=')
 	    mark_unchanged (vers_ts);
 	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'
