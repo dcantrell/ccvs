@@ -118,7 +118,8 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p,
 	error (1, errno, "cannot start server via rsh");
 
     /* Give caller the file descriptors in a form it can deal with. */
-    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server_p, from_server_p, 0);
+    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server_p,
+                        from_server_p, 0);
 }
 
 # else /* ! START_RSH_WITH_POPEN_RW */
