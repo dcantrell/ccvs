@@ -5747,7 +5747,10 @@ pserver_authenticate_connection ()
 #endif
     }
     else
+    {
+	if (!tmp) tmp = "";
 	error (1, 0, "bad auth protocol start: %s", tmp);
+    }
 
 #ifndef AUTH_SERVER_SUPPORT
 
