@@ -1,3 +1,19 @@
+Thu Aug  3 01:03:52 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* parseinfo.c (Parse_Info): Add code to call expand_path function
+	instead of using built in code.
+
+	* wrapper.c (wrap_add): Add code to call expand_path function to
+	expand all built in variables.
+
+	* expand_path.c (New file): expand things that look like
+	environmental variables (only expand local CVS environmental
+	variables) and user names like ~/.
+	* cvs.h: Declare expand_path.
+
+	* Makefile.in (SOURCES, OBJECTS): Added expand_path.c,
+	expand_path.o.
+
 Fri Oct  6 14:03:09 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* ignore.c (ign_setup): Don't try to look for a file in CVSroot if
