@@ -7111,7 +7111,7 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
        we define a deltafrag as an add or a delete) need to be applied
        in reverse order.  So we stick them into a linked list.  */
     struct deltafrag {
-	enum {ADD, DELETE} type;
+	enum {FRAG_ADD, FRAG_DELETE} type;
 	unsigned long pos;
 	unsigned long nlines;
 	const char *new_lines;
@@ -7151,7 +7151,7 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	{
 	    unsigned int i;
 
-	    df->type = ADD;
+	    df->type = FRAG_ADD;
 	    i = df->nlines;
 	    /* The text we want is the number of lines specified, or
 	       until the end of the value, whichever comes first (it
@@ -7181,7 +7181,7 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 	    --df->pos;
 
 	    assert (op == 'd');
-	    df->type = DELETE;
+	    df->type = FRAG_DELETE;
 	}
     }
 
@@ -7191,12 +7191,12 @@ apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
 
 	switch (df->type)
 	{
-	case ADD:
+	case FRAG_ADD:
 	    if (! linevector_add (lines, df->new_lines, df->len, addvers,
 				  df->pos))
 		return 0;
 	    break;
-	case DELETE:
+	case FRAG_DELETE:
 	    if (df->pos > lines->nlines
 		|| df->pos + df->nlines > lines->nlines)
 		return 0;
