@@ -1,5 +1,10 @@
 2004-05-14  Derek Price  <derek@ximbiot.com>
 
+	* libcvs.dsp: Add basename.c & gettime.c for Windows build.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-05-14  Derek Price  <derek@ximbiot.com>
+
 	* gettime.c, nanosleep.c: Updated from GNULIB.
 
 2004-05-03  Mark D. Baushke  <mdb@cvshome.org>

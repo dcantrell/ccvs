@@ -85,6 +85,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\basename.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\exitfail.c
 # End Source File
 # Begin Source File
@@ -106,6 +110,10 @@ SOURCE=.\getopt.c
 # Begin Source File
 
 SOURCE=.\getopt1.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\gettime.c
 # End Source File
 # Begin Source File
 
