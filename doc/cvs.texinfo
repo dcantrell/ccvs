@@ -5911,6 +5911,20 @@ You can also set a default for whether @code{cvs add}
 and @code{cvs import} treat a file as binary based on
 its name; for example you could say that files who
 names end in @samp{.exe} are binary.  @xref{Wrappers}.
+There is currently no way to have @sc{cvs} detect
+whether a file is binary based on its contents.  The
+main difficulty with designing such a feature is that
+it is not clear how to distinguish between binary and
+non-binary files, and the rules to apply would vary
+considerably with the operating system.
+@c For example, it would be good on MS-DOS-family OSes
+@c for anything containing ^Z to be binary.  Having
+@c characters with the 8th bit set imply binary is almost
+@c surely a bad idea in the context of ISO-8859-* and
+@c other such character sets.  On VMS or the Mac, we
+@c could use the OS's file typing.  This is a
+@c commonly-desired feature, and something of this sort
+@c may make sense.  But there are a lot of pitfalls here.
 
 @c I'm not sure about the best location for this.  In
 @c one sense, it might belong right after we've introduced
