@@ -1551,7 +1551,8 @@ remove_file (finfo, tag, message)
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  */
     retcode = RCS_checkout (finfo->rcs, finfo->file, rev ? corev : NULL,
-			    (char *) NULL, (char *) NULL, RUN_TTY);
+			    (char *) NULL, (char *) NULL, RUN_TTY,
+			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
     if (retcode != 0)
     {
 	if (!quiet)

@@ -1,5 +1,24 @@
 Sun Apr 13 18:07:50 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (RCS_checkout): Add pfn and callerdat parameters.  Change
+	all callers.  Move setting of expand after retrieval of file
+	data.
+	(struct cmp_file_data): Define.
+	(RCS_cmp_file): New function.
+	(cmp_file_buffer): New static function.
+	* rcs.h (RCSCHECKOUTPROC): Define type.
+	(RCS_checkout): Update declaration.
+	(RCS_cmp_file): Define.
+	* diff.c (diff_file_nodiff): Call RCS_cmp_file rather than
+	RCS_checkout and xcmp.
+	* import.c (update_rcs_file): Likewise.
+	* no_diff.c (No_Difference): Likewise.
+	* update.c (struct patch_file_data): Define.
+	(patch_file): Just return if noexec, or if binary file.  Pass
+	patch_file_write to RCS_checkout.  Don't check for newlines or
+	compute checksums here.  Stat RCS file to set modes.
+	(patch_file_write): New static function.
+
 	* update.c (patch_file): Checkout directly to file2, rather than
 	to finfo->file followed by rename.  Remove check for whether
 	result of checkout is readable; that was for an old, obsolete,
