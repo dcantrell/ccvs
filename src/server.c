@@ -16,6 +16,38 @@
 #include "getline.h"
 #include "buffer.h"
 
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+# ifdef HAVE_GSSAPI
+/* This stuff isn't included solely with SERVER_SUPPORT since some of these
+ * functions (encryption & the like) get compiled with or without server
+ * support.
+ *
+ * FIXME - They should be in a different file.
+ */
+#   include <netdb.h>
+#   include "xgssapi.h"
+/* We use Kerberos 5 routines to map the GSSAPI credential to a user
+   name.  */
+#   include <krb5.h>
+
+/* We need this to wrap data.  */
+static gss_ctx_id_t gcontext;
+
+static void gserver_authenticate_connection PROTO((void));
+
+/* Whether we are already wrapping GSSAPI communication.  */
+static int cvs_gssapi_wrapping;
+
+#   ifdef ENCRYPTION
+/* Whether to encrypt GSSAPI communication.  We use a global variable
+   like this because we use the same buffer type (gssapi_wrap) to
+   handle both authentication and encryption, and we don't want
+   multiple instances of that buffer in the communication stream.  */
+int cvs_gssapi_encrypt;
+#   endif
+# endif	/* HAVE_GSSAPI */
+#endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
+
 #ifdef SERVER_SUPPORT
 
 #ifdef HAVE_WINSOCK_H
@@ -40,32 +72,6 @@
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
 static Key_schedule sched;
-
-#endif
-
-#ifdef HAVE_GSSAPI
-
-# include <netdb.h>
-# include "xgssapi.h"
-/* We use Kerberos 5 routines to map the GSSAPI credential to a user
-   name.  */
-# include <krb5.h>
-
-/* We need this to wrap data.  */
-static gss_ctx_id_t gcontext;
-
-static void gserver_authenticate_connection PROTO((void));
-
-/* Whether we are already wrapping GSSAPI communication.  */
-static int cvs_gssapi_wrapping;
-
-# ifdef ENCRYPTION
-/* Whether to encrypt GSSAPI communication.  We use a global variable
-   like this because we use the same buffer type (gssapi_wrap) to
-   handle both authentication and encryption, and we don't want
-   multiple instances of that buffer in the communication stream.  */
-int cvs_gssapi_encrypt;
-# endif
 
 #endif
 

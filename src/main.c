@@ -944,7 +944,9 @@ Copyright (c) 1989-2001 Brian Berliner, david d `zoo' zuhn, \n\
 		/*
 		 * Check to see if the repository exists.
 		 */
+#ifdef CLIENT_SUPPORT
 		if (!current_parsed_root->isremote)
+#endif	/* CLIENT_SUPPORT */
 		{
 		    char *path;
 		    int save_errno;
