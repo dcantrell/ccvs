@@ -1,5 +1,14 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (open_file): Move proto...
+	* subr.h (xfopen): ...here and rename.
+	* filesubr.c (open_file): Move function...
+	* subr.c (xfopen): ...here, with additional commenting and minor
+	cosmetic changes.
+	* add.c, checkout.c, client.c
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c (setup_logfiles): Failure to open a debug log file
 	should be non-fatal.
 

@@ -387,7 +387,7 @@ edit_fileproc (void *callerdat, struct file_info *finfo)
         }
     }
 
-    fp = open_file (CVSADM_NOTIFY, "a");
+    fp = xfopen (CVSADM_NOTIFY, "a");
 
     (void) time (&now);
     ascnow = asctime (gmtime (&now));
@@ -630,7 +630,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
     rename_file (basefilename, finfo->file);
     free (basefilename);
 
-    fp = open_file (CVSADM_NOTIFY, "a");
+    fp = xfopen (CVSADM_NOTIFY, "a");
 
     (void) time (&now);
     ascnow = asctime (gmtime (&now));

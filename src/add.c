@@ -910,7 +910,7 @@ build_entry (const char *repository, const char *user, const char *options,
      * initial creation log (which typically describes the file).
      */
     fname = Xasprintf ("%s/%s%s", CVSADM, user, CVSEXT_LOG);
-    fp = open_file (fname, "w+");
+    fp = xfopen (fname, "w+");
     if (message && fputs (message, fp) == EOF)
 	    error (1, errno, "cannot write to %s", fname);
     if (fclose (fp) == EOF)

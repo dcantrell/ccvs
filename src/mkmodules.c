@@ -905,7 +905,7 @@ write_dbmfile( char *temp )
     datum key, val;
     int len, cont, err = 0;
 
-    fp = open_file (temp, "r");
+    fp = xfopen (temp, "r");
     if ((db = dbm_open (temp, O_RDWR | O_CREAT | O_TRUNC, 0666)) == NULL)
 	error (1, errno, "cannot open dbm file %s for creation", temp);
     for (cont = 0; fgets (line, sizeof (line), fp) != NULL;)
@@ -1212,7 +1212,7 @@ init (int argc, char **argv)
 		FILE *fp;
 		const char * const *p;
 
-		fp = open_file (info, "w");
+		fp = xfopen (info, "w");
 		for (p = fileptr->contents; *p != NULL; ++p)
 		    if (fputs (*p, fp) < 0)
 			error (1, errno, "cannot write %s", info);
@@ -1244,7 +1244,7 @@ init (int argc, char **argv)
     {
 	FILE *fp;
 
-	fp = open_file (info, "w");
+	fp = xfopen (info, "w");
 	if (fclose (fp) < 0)
 	    error (1, errno, "cannot close %s", info);
  
@@ -1262,7 +1262,7 @@ init (int argc, char **argv)
     {
 	FILE *fp;
 
-	fp = open_file (info, "w");
+	fp = xfopen (info, "w");
 	if (fclose (fp) < 0)
 	    error (1, errno, "cannot close %s", info);
  

@@ -80,7 +80,7 @@ Name_Root (const char *dir, const char *update_dir)
      * The assumption here is that the CVS Root is always contained in the
      * first line of the "Root" file.
      */
-    fpin = open_file (tmp, "r");
+    fpin = xfopen (tmp, "r");
 
     if ((len = getline (&root, &root_allocated, fpin)) < 0)
     {
@@ -164,7 +164,7 @@ Create_Root (const char *dir, const char *rootdir)
         else
 	    tmp = xstrdup (CVSADM_ROOT);
 
-        fout = open_file (tmp, "w+");
+        fout = xfopen (tmp, "w+");
         if (fprintf (fout, "%s\n", rootdir) < 0)
 	    error (1, errno, "write to %s failed", tmp);
         if (fclose (fout) == EOF)

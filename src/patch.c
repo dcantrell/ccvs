@@ -610,7 +610,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	    cvs_output ("\n", 1);
 
 	    /* Now the munging. */
-	    fp = open_file (tmpfile3, "r");
+	    fp = xfopen (tmpfile3, "r");
 	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
 		getline (&line2, &line2_chars_allocated, fp) < 0)
 	    {

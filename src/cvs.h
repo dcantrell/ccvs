@@ -444,7 +444,6 @@ extern int error_use_protocol;
 
 
 DBM *open_module (void);
-FILE *open_file (const char *, const char *);
 List *Find_Directories (char *repository, int which, List *entries);
 void Entries_Close (List *entries);
 List *Entries_Open (int aflag, char *update_dir);

@@ -88,7 +88,7 @@ read_cvsrc (int *argc, char ***argv, const char *cmdname)
     line = NULL;
     line_chars_allocated = 0;
     command_len = strlen (cmdname);
-    cvsrcfile = open_file (homeinit, "r");
+    cvsrcfile = xfopen (homeinit, "r");
     while ((line_length = getline (&line, &line_chars_allocated, cvsrcfile))
 	   >= 0)
     {

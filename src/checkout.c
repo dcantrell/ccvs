@@ -578,7 +578,7 @@ build_one_dir (char *repository, char *dirpath, int sticky)
 
 	if (!noexec)
 	{
-	    fp = open_file (CVSADM_ENTSTAT, "w+");
+	    fp = xfopen (CVSADM_ENTSTAT, "w+");
 	    if (fclose (fp) == EOF)
 		error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
 #ifdef SERVER_SUPPORT
@@ -976,7 +976,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 
 		Create_Admin (".", preload_update_dir, repository,
 			      NULL, NULL, 0, 0, m_type == CHECKOUT);
-		fp = open_file (CVSADM_ENTSTAT, "w+");
+		fp = xfopen (CVSADM_ENTSTAT, "w+");
 		if (fclose (fp) == EOF)
 		    error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
 #ifdef SERVER_SUPPORT
