@@ -10075,7 +10075,7 @@ ${PROG} [a-z]*: Updating top-dir"
 
 	  cd ..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/top-dir
+	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
 	head)
