@@ -55,10 +55,11 @@ cause CVS/Root to be updated.
 windows-NT/README for details.
 
 * The CVSROOT variable specification has changed to support more
-access methods.  In addition to "pserver," "server" (rsh), "kserver"
-(kerberos), and "local" (local filesystem access) can now be
-specified.  For more details on each method, see cvs.texinfo (there is
-an index entry for :local: and each of the other access methods).
+access methods.  In addition to "pserver," "server" (internal rsh
+client), "ext" (external rsh client), "kserver" (kerberos), and
+"local" (local filesystem access) can now be specified.  For more
+details on each method, see cvs.texinfo (there is an index entry for
+:local: and each of the other access methods).
 
 * The "login" command no longer prompts the user for username and
 hostname, since one will have to provide that information via the `-d'

@@ -1,5 +1,8 @@
 Thu Sep  5 11:30:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Revise access method item to mention both :ext: and
+	:server:.
+
 	* README.VMS: Change bug reporting address to bug-cvs.  In
 	discussing filenames, don't mention a hypothetical behavior
 	involving folding to lowercase (I'm not sure what is meant, and it
