@@ -361,6 +361,12 @@
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
+/* By default, CVS stores its modules and other such items in flat text files
+   (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
+   system-supplied ndbm database library and use it instead. That may speed
+   things up, but the default setting generally works fine too. */
+#undef MY_NDBM
+
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 

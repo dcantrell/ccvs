@@ -338,9 +338,9 @@ Building from source code under Unix:
 	By default, CVS uses some built-in ndbm emulation code to allow
 	CVS to work in a heterogeneous environment.  However, if you have
 	a very large modules database, this may not work well.  You will
-	need to edit src/options.h to turn off the MY_NDBM #define and
-	re-run configure.  If you do this, the following comments apply.
-	If not, you may safely skip these comments.
+	need to supply the --disable-cvs-ndbm option to configure to
+	accomplish this.  If you do this, the following comments apply.  If
+	not, you may safely skip these comments.
 
 	If you configure CVS to use the real ndbm(3) libraries and
 	you do not have them installed in a "normal" place, you will

@@ -553,6 +553,43 @@ dnl
 dnl Done setting CVS Administrator Group
 dnl
 
+dnl
+dnl Set the NDBM library to use.
+dnl
+dnl XXX - FIXME - FIXME - FIXME - XXX
+dnl
+dnl This is very bad.  It should really autodetect an appropriate NDBM library
+dnl and, if it doesn't find one, decide to use MY_NDBM.  I'm am defining
+dnl this here since this is no worse than it worked when it was in options.h
+dnl and I am cleaning out options.h so that the Windows version of CVS will
+dnl compile properly for the next release.
+dnl
+dnl That's why this option is in the --with-* section rather than the
+dnl --enable-* section.
+dnl
+dnl XXX - FIXME - FIXME - FIXME - XXX
+dnl
+AC_ARG_ENABLE(
+  [cvs-ndbm],
+  AC_HELP_STRING(
+    [--enable-cvs-ndbm],
+    [Use the NDBM library distributed with CVS rather than attempting to use
+     a system NDBM library.  Disabling this may not work.  (default)]), ,
+  [enable_cvs_ndbm=yes])
+if test no != "$enable_cvs_ndbm"; then
+  AC_DEFINE(
+    [MY_NDBM], [1],
+    [By default, CVS stores its modules and other such items in flat
+     text files (MY_NDBM enables this).  Turning off MY_NDBM causes CVS
+     to look for a system-supplied ndbm database library and use it
+     instead.  That may speed things up, but the default setting
+     generally works fine too.])
+fi
+
+dnl
+dnl Done selecting NDBM library.
+dnl
+
 
 
 dnl
@@ -806,8 +843,9 @@ dnl end --enable-rootcommit
 dnl
 
 
+
 dnl
-dnl end --enables
+dnl end --enable-*
 dnl
 
 
