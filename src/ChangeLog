@@ -1,3 +1,10 @@
+2000-08-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* repos.c (Name_Repository): Use pathname_levels to detect attempts
+	to get above the repository instead of checking for leading ..
+	which isn't reliable.
+	* sanity.sh (multiroot3-12 to multiroot3-15): New tests for above.
+
 2000-08-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (expand_keywords): Handle the unusual case of log == NULL.
