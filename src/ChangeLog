@@ -1,5 +1,11 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (remove_file): Print the actual previous revision instead of
+	a branch number.
+	* sanity.sh: Update to match.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (RCS_cmp_file): Print the actual name of the file we failed to
 	open in the error message.
 
