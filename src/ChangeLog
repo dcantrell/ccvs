@@ -1,3 +1,9 @@
+2001-06-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (pserver_authenticate_connection): Don't clear out
+	descrambled_password until *after* it's (potentially) logged.
+	(Reported by Eric Hanchrow <offby1@blarg.net>.)
+
 2001-06-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* recurse.c (start_recursion): Deal with at least some of the cases
