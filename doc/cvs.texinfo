@@ -4531,7 +4531,11 @@ the state of a new revision is set to @samp{Exp} when
 it is created.  The state is visible in the output from
 @var{cvs log} (@pxref{log}), and in the
 @samp{$@asis{}Log$} and @samp{$@asis{}State$} keywords
-(@pxref{Keyword substitution}).
+(@pxref{Keyword substitution}).  Note that @sc{cvs}
+uses the @code{dead} state for its own purposes; to
+take a file to or from the @code{dead} state use
+commands like @code{cvs remove} and @code{cvs add}, not
+@code{cvs admin -s}.
 
 @item -t[@var{file}]
 Useful with @sc{cvs}.  Write descriptive text from the
