@@ -84,25 +84,7 @@ int cvs_gssapi_encrypt;
 #endif
 
 /* for select */
-#include <sys/types.h>
-#ifdef HAVE_SYS_BSDTYPES_H
-#include <sys/bsdtypes.h>
-#endif
-
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
-
-#if HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
+# include "xselect.h"
 
 #ifndef O_NONBLOCK
 #define O_NONBLOCK O_NDELAY
@@ -116,18 +98,16 @@ int cvs_gssapi_encrypt;
 #define blocking_error(err) ((err) == EAGAIN)
 #endif
 
-#ifdef AUTH_SERVER_SUPPORT
-#ifdef HAVE_GETSPNAM
-#include <shadow.h>
-#endif
-#endif /* AUTH_SERVER_SUPPORT */
-
 /* For initgroups().  */
 #if HAVE_INITGROUPS
 #include <grp.h>
 #endif /* HAVE_INITGROUPS */
-
-#ifdef AUTH_SERVER_SUPPORT
+
+# ifdef AUTH_SERVER_SUPPORT
+
+#   ifdef HAVE_GETSPNAM
+#     include <shadow.h>
+#   endif
 
 /* The cvs username sent by the client, which might or might not be
    the same as the system username the server eventually switches to
@@ -143,7 +123,7 @@ static char *Pserver_Repos = NULL;
    CVSROOT/config.  */
 int system_auth = 1;
 
-#endif /* AUTH_SERVER_SUPPORT */
+# endif /* AUTH_SERVER_SUPPORT */
 
 
 /* While processing requests, this buffer accumulates data to be sent to
