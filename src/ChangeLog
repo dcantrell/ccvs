@@ -1,3 +1,15 @@
+Wed Apr 17 11:56:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (try_read_from_server): New function.
+	(read_from_server): Use it.
+	(read_counted_file): New function.
+	* client.c, server.c: Add Template response.
+	* cvs.h (CVSADM_TEMPLATE): Added.
+	* logmsg.c (do_editor): If repository is NULL, use CVSADM_TEMPLATE
+	file in place of rcsinfo.
+	* server.c, server.h (server_template): New function.
+	* create_adm.c (Create_Admin): Call it.
+
 Tue Apr 16 13:56:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* repos.c (Name_Repository): Fix comments.

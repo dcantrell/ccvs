@@ -125,7 +125,10 @@ Create_Admin (dir, update_dir, repository, tag, date)
 
 #ifdef SERVER_SUPPORT
     if (server_active)
+    {
 	server_set_sticky (update_dir, repository, tag, date);
+	server_template (update_dir, repository);
+    }
 
     if (trace)
     {

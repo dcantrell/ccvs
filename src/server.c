@@ -3602,7 +3602,76 @@ server_set_sticky (update_dir, repository, tag, date)
     }
     buf_send_counted (&protocol);
 }
+
+struct template_proc_data
+{
+    char *update_dir;
+    char *repository;
+};
 
+/* Here as a static until we get around to fixing Parse_Info to pass along
+   a void * for it.  */
+static struct template_proc_data *tpd;
+
+static int
+template_proc (repository, template)
+    char *repository;
+    char *template;
+{
+    FILE *fp;
+    char buf[1024];
+    size_t n;
+    struct stat sb;
+    struct template_proc_data *data = tpd;
+
+    if (!supported_response ("Template"))
+	/* Might want to warn the user that the rcsinfo feature won't work.  */
+	return 0;
+    buf_output0 (&protocol, "Template ");
+    output_dir (data->update_dir, data->repository);
+    buf_output0 (&protocol, "\n");
+
+    fp = fopen (template, "rb");
+    if (fp == NULL)
+    {
+	error (0, errno, "Couldn't open rcsinfo template file %s", template);
+	return 1;
+    }
+    if (fstat (fileno (fp), &sb) < 0)
+    {
+	error (0, errno, "cannot stat rcsinfo template file %s", template);
+	return 1;
+    }
+    sprintf (buf, "%ld\n", (long) sb.st_size);
+    buf_output0 (&protocol, buf);
+    while (!feof (fp))
+    {
+	n = fread (buf, 1, sizeof buf, fp);
+	buf_output (&protocol, buf, n);
+	if (ferror (fp))
+	{
+	    error (0, errno, "cannot read rcsinfo template file %s", template);
+	    (void) fclose (fp);
+	    return 1;
+	}
+    }
+    if (fclose (fp) < 0)
+	error (0, errno, "cannot close rcsinfo template file %s", template);
+    return 0;
+}
+
+void
+server_template (update_dir, repository)
+    char *update_dir;
+    char *repository;
+{
+    struct template_proc_data data;
+    data.update_dir = update_dir;
+    data.repository = repository;
+    tpd = &data;
+    (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc, 1);
+}
+
 static void
 serve_gzip_contents (arg)
      char *arg;

@@ -112,10 +112,8 @@ fmt_proc (p, closure)
  * editor on the file.  The header garbage in the resultant file is then
  * stripped and the log message is stored in the "message" argument.
  * 
- * rcsinfo - is the name of a file containing lines tacked onto the end of the
- * RCS info offered to the user for editing. If specified, the '-m' flag to
- * "commit" is disabled -- users are forced to run the editor.
- * 
+ * If REPOSITORY is non-NULL, process rcsinfo for that repository; if it
+ * is NULL, use the CVSADM_TEMPLATE file instead.
  */
 void
 do_editor (dir, messagep, repository, changes)
@@ -159,6 +157,41 @@ do_editor (dir, messagep, repository, changes)
     if (repository != NULL)
 	/* tack templates on if necessary */
 	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc, 1);
+    else
+    {
+	FILE *tfp;
+	char buf[1024];
+	char *p;
+	size_t n;
+	size_t nwrite;
+
+	/* Why "b"?  */
+	tfp = fopen (CVSADM_TEMPLATE, "rb");
+	if (tfp == NULL)
+	{
+	    if (!existence_error (errno))
+		error (1, errno, "cannot read %s", CVSADM_TEMPLATE);
+	}
+	else
+	{
+	    while (!feof (tfp))
+	    {
+		n = fread (buf, 1, sizeof buf, tfp);
+		nwrite = n;
+		p = buf;
+		while (nwrite > 0)
+		{
+		    n = fwrite (p, 1, nwrite, fp);
+		    nwrite -= n;
+		    p += n;
+		}
+		if (ferror (tfp))
+		    error (1, errno, "cannot read %s", CVSADM_TEMPLATE);
+	    }
+	    if (fclose (tfp) < 0)
+		error (0, errno, "cannot close %s", CVSADM_TEMPLATE);
+	}
+    }
 
     (void) fprintf (fp,
   "%s----------------------------------------------------------------------\n",

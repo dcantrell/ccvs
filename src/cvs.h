@@ -133,6 +133,7 @@ extern int errno;
 #define CVSADM_NOTIFY   "CVS/Notify."
 #define CVSADM_NOTIFYTMP "CVS/Notify.tmp"
 #define CVSADM_BASE      "CVS/Base"
+#define CVSADM_TEMPLATE "CVS/Template."
 #else /* USE_VMS_FILENAMES */
 #define	CVSADM		"CVS"
 #define	CVSADM_ENT	"CVS/Entries"
@@ -149,6 +150,8 @@ extern int errno;
 /* A directory in which we store base versions of files we currently are
    editing with "cvs edit".  */
 #define CVSADM_BASE     "CVS/Base"
+/* File which contains the template for use in log messages.  */
+#define CVSADM_TEMPLATE "CVS/Template"
 #endif /* USE_VMS_FILENAMES */
 
 /* This is the special directory which we use to store various extra
