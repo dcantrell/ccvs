@@ -1,3 +1,8 @@
+Wed Jul 30 08:42:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (toplevel): New test toplevel-11 and friends test for
+	another variation of the toplevel-9 bug.
+
 Tue Jul 29 12:11:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* login.c (construct_cvspass_filename): Revert this change.  The

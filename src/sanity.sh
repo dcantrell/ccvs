@@ -7464,9 +7464,10 @@ change"
 
 	  mkdir 1; cd 1
 	  dotest toplevel-1 "${testcvs} -q co -l ." ''
-	  mkdir top-dir
-	  dotest toplevel-2 "${testcvs} add top-dir" \
-"Directory ${TESTDIR}/cvsroot/top-dir added to the repository"
+	  mkdir top-dir second-dir
+	  dotest toplevel-2 "${testcvs} add top-dir second-dir" \
+"Directory ${TESTDIR}/cvsroot/top-dir added to the repository
+Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  cd top-dir
 
 	  touch file1
@@ -7478,6 +7479,20 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 done
 Checking in file1;
 ${TESTDIR}/cvsroot/top-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ..
+
+	  cd second-dir
+	  touch file2
+	  dotest toplevel-3s "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest toplevel-4s "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/second-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/second-dir/file2,v  <--  file2
 initial revision: 1\.1
 done"
 
@@ -7519,6 +7534,23 @@ ${PROG} [a-z]*: Updating top-dir" \
 "${PROG} [a-z]*: Updating \.
 U file1
 ${PROG} [a-z]*: Updating top-dir"
+
+	  cd ..
+	  rm -r 1; mkdir 1; cd 1
+	  dotest toplevel-10 "${testcvs} co top-dir" \
+"${PROG} [a-z]*: Updating top-dir
+U top-dir/file1"
+	  # This one is particularly a "real life" example of why this
+	  # bug is annoying.
+	  if test "x$remote" = xyes; then
+	    # This is correct behavior.
+	    dotest toplevel-11 "${testcvs} -q update -d second-dir" \
+"U second-dir/file2"
+	  else
+	    # This is the buggy behavior.
+	    dotest toplevel-11 "${testcvs} -q update -d second-dir" \
+"${PROG} update: nothing known about second-dir"
+	  fi
 
 	  cd ..
 	  rm -r 1
