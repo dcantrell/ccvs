@@ -243,7 +243,14 @@ run_exec (stin, stout, sterr, flags)
     fflush (stdout);
     fflush (stderr);
 
-    /* The output files, if any, are now created.  Do the fork and dups */
+    /* The output files, if any, are now created.  Do the fork and dups.
+
+       We use vfork not so much for the sake of unices without
+       copy-on-write (such systems are rare these days), but for the
+       sake of systems without an MMU, which therefore can't do
+       copy-on-write (e.g. Amiga).  The other solution is spawn (see
+       windows-NT/run.c).  */
+
 #ifdef HAVE_VFORK
     pid = vfork ();
 #else
