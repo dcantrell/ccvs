@@ -506,8 +506,38 @@ if there is no entry for the file.
 
 @item Is-modified @var{filename} \n
 Response expected: no.  Additional data: none.  Like @code{Modified},
-but used for commands like @code{log} and @code{status} which only need
+but used if the server only needs
 to know whether the file is modified, not the contents.
+
+The commands which can take @code{Is-modified} instead of
+@code{Modified} with no known change in behavior are: @code{admin},
+@code{diff} (if and only if two @samp{-r} or @samp{-D} options are
+specified), @code{watch-on}, @code{watch-off}, @code{watch-add},
+@code{watch-remove}, @code{watchers}, @code{editors},
+@code{log}, and @code{annotate}.
+
+For the @code{status} command, one can send @code{Is-modified} but if
+the client is using imperfect mechanisms such a timestamps to determine
+whether to consider a file modified, then the behavior will be
+different.  That is, if one sends @code{Modified}, then the server will
+actually compare the contents of the file sent and the one it derives
+from to determine whether the file is genuinely modified.  But if one
+sends @code{Is-modified}, then the server takes the client's word for
+it.  A similar situation exists for @code{tag}, if the @samp{-c} option
+is specified.
+
+Commands for which @code{Modified} is necessary are @code{co},
+@code{ci}, @code{update}, and @code{import}.
+
+Commands which do not need to inform the server about a working
+directory, and thus should not be sending either @code{Modified} or
+@code{Is-modified}: @code{rdiff}, @code{rtag}, @code{history},
+@code{init}, and @code{release}.
+
+Commands for which further investigation is warranted are:
+@code{remove}, @code{add}, and @code{export}.  Pending such
+investigation, the more conservative course of action is to stick to
+@code{Modified}.
 
 @item Unchanged @var{filename} \n
 Response expected: no.  Tell the server that @var{filename} has not been
