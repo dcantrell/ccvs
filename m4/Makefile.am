@@ -33,6 +33,7 @@ EXTRA_DIST = \
 	glibc21.m4 \
 	iconv.m4 \
 	intdiv0.m4 \
+	intmax_t.m4 \
 	inttypes_h.m4 \
 	inttypes.m4 \
 	inttypes-pri.m4 \
@@ -41,6 +42,8 @@ EXTRA_DIST = \
 	lib-ld.m4 \
 	lib-link.m4 \
 	lib-prefix.m4 \
+	longdouble.m4 \
+	longlong.m4 \
 	lstat.m4 \
 	malloc.m4 \
 	mkstemp.m4 \
@@ -51,10 +54,14 @@ EXTRA_DIST = \
 	progtest.m4 \
 	realloc.m4 \
 	restrict.m4 \
+	signed.m4 \
 	size_max.m4 \
 	stat.m4 \
 	stdint_h.m4 \
 	uintmax_t.m4 \
 	ulonglong.m4 \
 	unlocked-io.m4 \
+	vasnprintf.m4 \
+	wchar_t.m4 \
+	wint_t.m4 \
 	xsize.m4
