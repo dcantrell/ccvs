@@ -3,6 +3,12 @@ Low-priority bugs go here.  Actually, most every documented bug is
 has gotten around to fixing it.
 
 
+* cvs init may gave a strange error at times:
+      ttyp4:<woods@clapton> $ cvs -d /local/src-CVS init
+      cvs [init aborted]: cannot open CVS/Root: No such file or directory
+  but it seemed to work just the same....  Note that at the time CVSROOT
+  was set to point to a CVS server using the ":server:" option.
+
 * If a ~/CVS/Root file exists on the server and you are using rsh to
 connect to the server, CVS may loose its mind (this was reported in
 May 1995 and I suspect the symptoms have changed, but I have no
