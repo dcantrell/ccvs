@@ -351,17 +351,17 @@ checkout (argc, argv)
 
     /* If we will be calling history_write, work out the name to pass
        it.  */
-    if (m_type == CHECKOUT && !pipeout)
+    if (!pipeout)
     {
-	if (tag && date)
+	if (!date)
+	    history_name = tag;
+	else if (!tag)
+	    history_name = date;
+	else
 	{
 	    history_name = xmalloc (strlen (tag) + strlen (date) + 2);
 	    sprintf (history_name, "%s:%s", tag, date);
 	}
-	else if (tag)
-	    history_name = tag;
-	else
-	    history_name = date;
     }
 
 
@@ -424,7 +424,7 @@ safe_location (where)
 		error( 1, errno, "could not get working directory" );
 
 	    if( chdir( current ) == -1 )
-		error( 1, errno, "could not change directory to `%s'" );
+		error( 1, errno, "could not change directory to `%s'", current );
 
 	    free( current );
 	    current = where_location;
@@ -1059,12 +1059,9 @@ internal error: %s doesn't start with %s in checkout_proc",
      */
     if (!(local_specified || argc > 1))
     {
-	if (m_type == CHECKOUT && !pipeout)
-	    history_write ('O', preload_update_dir, history_name, where,
-			   repository);
-	else if (m_type == EXPORT && !pipeout)
-	    history_write ('E', preload_update_dir, tag ? tag : date, where,
-			   repository);
+	if (!pipeout)
+	    history_write (m_type == CHECKOUT ? 'O' : 'E', preload_update_dir,
+			   history_name, where, repository);
 	err += do_update (0, (char **) NULL, options, tag, date,
 			  force_tag_match, 0 /* !local */ ,
 			  1 /* update -d */ , aflag, checkout_prune_dirs,
