@@ -1,5 +1,10 @@
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_cleanup): Skip BUF_TO_NET checks as an optimization
+	when ERROR_USE_PROTOCOL is set.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
 	* modules.c (do_module): Use TRACE.
 
 2003-10-02  Derek Price  <derek@ximbiot.com>
