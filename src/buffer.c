@@ -2121,9 +2121,14 @@ fd_buffer_output (void *closure, const char *data, int have, int *wrote)
 static int
 fd_buffer_flush (void *closure)
 {
-    struct fd_buffer *fb = closure;
-    if (fsync (fb->fd) < 0 && errno != EROFS && errno != EINVAL)
-	return errno;
+    /* We don't need to do anything here.  Our fd doesn't have its own buffer
+     * and syncing won't do anything but slow us down.
+     *
+     * struct fd_buffer *fb = closure;
+     *
+     * if (fsync (fb->fd) < 0 && errno != EROFS && errno != EINVAL)
+     *     return errno;
+     */
     return 0;
 }
 

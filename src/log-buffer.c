@@ -141,22 +141,6 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 
 
 
-/* Flush and sync a log file.  */
-void
-log_buffer_flush_log (struct buffer *buf)
-{
-    struct log_buffer *lb = buf->closure;
-
-    /* We don't really have to flush the log file here, but doing it
-     * will let tail -f on the log file show what is sent to the
-     * network as it is sent.
-     */
-    if (lb->log && (fflush (lb->log) || fsync (fileno (lb->log))))
-        error (lb->fatal_errors, errno, "flushing log file");
-}
-
-
-
 /* The flush function for a log buffer.  */
 static int
 log_buffer_flush (void *closure)

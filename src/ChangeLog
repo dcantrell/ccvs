@@ -1,3 +1,9 @@
+2004-07-23  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (fd_buffer_output): Don't fsync.  It is unneeded and slow.
+	* server.c (move_file_offset, replace_file_offset): Ditto.
+	* log-buffer.c (log_buffer_flush_log): Remove function.
+
 2004-07-19  Derek Price  <derek@ximbiot.com>
 
 	* log-buffer.c (log_buffer_disable): Return log FILE *.  Don't close
