@@ -1,5 +1,9 @@
 2004-10-29 Derek Price <derek@ximbiot.com>
 
+	* server.c (isSameHost): Handle gethostname & gethostbyname errors.
+
+2004-10-29 Derek Price <derek@ximbiot.com>
+
 	* server.c (isSameHost): Use strcasecmp to compare host names.
 
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
