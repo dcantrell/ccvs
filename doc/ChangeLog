@@ -1,3 +1,10 @@
+Wed Apr 24 08:41:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication security): Rewrite sentence
+	on complex and unknown security bugs to clarify that it is
+	referring to people who have been give access to cvs, not to holes
+	in the authentication method (which is relatively simple).
+
 Tue Apr 23 09:31:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Wrappers): Talk about what -m does (and does not
