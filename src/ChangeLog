@@ -1,5 +1,24 @@
 2001-05-04  Derek Price  <dprice@collab.net>
 
+	* client.c:  General refactoring.  Removed several global variables in
+	favor of passing locals and/or dynamic evaluation.
+	(recv_line): Removed this function.
+	(make_bufs_from_fds): New function with factored code.
+	(connect_to_forked_server): New prototype.  Use new functions.
+	(connect_to_pserver): New prototype.  Use new functions.
+	(connect_to_gserver): New prototype.  Use new API.
+	(auth_server): Factored this portion of the pserver code so it can be
+	shared.  Rewrote to use buffers rather than depending on a socket.
+	(start_rsh_server): New prototype.  Use new API.
+	(start_tcp_server): New prototype.  Use new API.
+	(start_server): Factor some code.  Use new API.
+	* client.h: New prototypes.
+	* cvs.h: Gratuitous reformatting.  Use new root.h.
+	* login.c (login): Use new connect_to_pserver API.
+	* root.h: New file.  Contains some code that used to be in cvs.h.
+
+2001-05-04  Derek Price  <dprice@collab.net>
+
 	* client.c: Gratuitous reformatting.
 	* client.h: Ditto.
 

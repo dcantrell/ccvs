@@ -560,7 +560,7 @@ login (argc, argv)
      * will get zeroed by connect_to_server().  */
     cvs_password = xstrdup (typed_password);
 
-    connect_to_pserver (NULL, NULL, 1, 0);
+    connect_to_pserver (current_parsed_root, NULL, NULL, 1, 0);
 
     password_entry_operation (password_entry_add, current_parsed_root, typed_password);
 

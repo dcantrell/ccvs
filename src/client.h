@@ -56,8 +56,10 @@ extern int client_prune_dirs;
 
 # ifdef AUTH_CLIENT_SUPPORT
 extern int use_authenticating_server;
-void connect_to_pserver PROTO ((int *tofdp, int* fromfdp, int verify_only,
-				int do_gssapi));
+void connect_to_pserver PROTO ((cvsroot_t *,
+				struct buffer **,
+				struct buffer **,
+				int, int ));
 #   ifndef CVS_AUTH_PORT
 #     define CVS_AUTH_PORT 2401
 #   endif /* CVS_AUTH_PORT */
