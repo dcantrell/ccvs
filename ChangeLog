@@ -1,3 +1,10 @@
+2000-09-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* acconfig.h: Copy HAVE_CRYPT, HAVE_GETSPNAM, REGEX_MALLOC, and
+	_REGEX_RE_COMP from config.h.in to here, where they should have
+	been in the first place.
+	* config.h.in: Regenerated.
+
 2000-08-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS: Note additional history enhancements.
