@@ -44,6 +44,7 @@ libcvs_a_SOURCES = \
 	xgetwd.c \
 	yesno.c \
 	getline.h \
+	getndelim2.h \
 	getnline.h \
 	getopt.h \
 	gettext.h \
