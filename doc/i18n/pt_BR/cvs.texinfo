@@ -7350,25 +7350,25 @@ cvs update -j merged_from_R1fix_to_trunk -j R1fix m.c
 @c <en>@node Merging two revisions
 @node Mesclando duas revisões
 @c <en>@section Merging differences between any two revisions
-@section Merging differences between any two revisions
+@section Mesclando diferenças entre duas revisões quaisquer
 @c <en>@cindex Merging two revisions
 @cindex Mesclando duas revisões
 @c <en>@cindex Revisions, merging differences between
-@cindex Revisions, merging differences between
+@cindex Revisões, mesclando diferenças entre
 @c <en>@cindex Differences, merging
-@cindex Differences, merging
+@cindex Diferenças, mesclando
 
 @c <en>With two @samp{-j @var{revision}} flags, the @code{update}
 @c <en>(and @code{checkout}) command can merge the differences
 @c <en>between any two revisions into your working file.
-With two @samp{-j @var{revision}} flags, the @code{update}
-(and @code{checkout}) command can merge the differences
-between any two revisions into your working file.
+Com duas opções @samp{-j @var{revisão}}, o comando @code{update}
+(e @code{checkout}) pode mesclar as diferenças entre
+quaisquer duas revisões no arquivo do diretório de trabalho.
 
 @c <en>@cindex Undoing a change
-@cindex Undoing a change
+@cindex Desfazendo uma alteração
 @c <en>@cindex Removing a change
-@cindex Removing a change
+@cindex Removendo uma alteração
 @example
 $ cvs update -j 1.5 -j 1.3 backend.c
 @end example
@@ -7376,8 +7376,8 @@ $ cvs update -j 1.5 -j 1.3 backend.c
 @noindent
 @c <en>will undo all changes made between revision
 @c <en>1.3 and 1.5.  Note the order of the revisions!
-will undo all changes made between revision
-1.3 and 1.5.  Note the order of the revisions!
+vai desfazer todas as alterações feitas entre as
+revisões 1.3 e 1.5.  Observe a ordem das revisões!
 
 @c <en>If you try to use this option when operating on
 @c <en>multiple files, remember that the numeric revisions will
@@ -7385,17 +7385,17 @@ will undo all changes made between revision
 @c <en>You almost always use symbolic
 @c <en>tags rather than revision numbers when operating on
 @c <en>multiple files.
-If you try to use this option when operating on
-multiple files, remember that the numeric revisions will
-probably be very different between the various files.
-You almost always use symbolic
-tags rather than revision numbers when operating on
-multiple files.
+Se você tentar usar esta opção quando estiver agindo em
+vários arquivos, lembre-se que as revisões numéricas
+provavelmente vão ser bastante diferentes nos vários
+arquivos. Você vai quase sempre usar etiquetas
+simbólicas ao invés de números de revisão quando
+estiver operando em vários arquivos.
 
 @c <en>@cindex Restoring old version of removed file
-@cindex Restoring old version of removed file
+@cindex Recuperando uma versão antiga de um arquivo removido
 @c <en>@cindex Resurrecting old version of dead file
-@cindex Resurrecting old version of dead file
+@cindex Ressucitando uma versão antiga de um arquivo morto
 @c <en>Specifying two @samp{-j} options can also undo file
 @c <en>removals or additions.  For example, suppose you have
 @c <en>a file
@@ -7403,13 +7403,14 @@ multiple files.
 @c <en>you then removed it (thus adding a dead revision 1.2).
 @c <en>Now suppose you want to add it again, with the same
 @c <en>contents it had previously.  Here is how to do it:
-Specifying two @samp{-j} options can also undo file
-removals or additions.  For example, suppose you have
-a file
-named @file{file1} which existed as revision 1.1, and
-you then removed it (thus adding a dead revision 1.2).
-Now suppose you want to add it again, with the same
-contents it had previously.  Here is how to do it:
+Ao especificar duas opções @samp{-j} você pode também
+desfazer uma remoção ou adição de arquivo.  Por
+exemplo, suponhao que você tem um arquivo chamado
+@file{file1} que existia numa revisão 1.1, e você
+removeu ele (adicionando então uma revisão morta 1.2).
+Agora suponha que você quer adicioná-lo novamente, com
+o mesmo conteúdo que ele tinha anteriormente.  Aqui
+está como fazer isto:
 
 @example
 $ cvs update -j 1.2 -j 1.1 file1
@@ -7425,21 +7426,21 @@ $
 @c <en>@node Merging adds and removals
 @node Mesclando adicionados e removidos
 @c <en>@section Merging can add or remove files
-@section Merging can add or remove files
+@section Mesclar pode adicionar ou remover arquivos
 
 @c <en>If the changes which you are merging involve removing
 @c <en>or adding some files, @code{update -j} will reflect
 @c <en>such additions or removals.
-If the changes which you are merging involve removing
-or adding some files, @code{update -j} will reflect
-such additions or removals.
+Se as mudanças que você está mesclando envolvem remover
+ou adicionar alguns arquivos, @code{update -j} vai
+resultar em algumas adições ou remoções.
 
 @c FIXME: This example needs a lot more explanation.
 @c We also need other examples for some of the other
 @c cases (not all--there are too many--as long as we present a
 @c coherent general principle).
 @c <en>For example:
-For example:
+Por exemplo:
 @example
 cvs update -A
 touch a b c
@@ -7455,8 +7456,9 @@ cvs update -jbranchtag
 
 @c <en>After these commands are executed and a @samp{cvs commit} is done,
 @c <en>file @file{a} will be removed and file @file{d} added in the main branch.
-After these commands are executed and a @samp{cvs commit} is done,
-file @file{a} will be removed and file @file{d} added in the main branch.
+Depois destes comandos terem sido executados e um
+@samp{cvs commit} ser feito, o arquivo @file{a} vai ser
+removido e o arquivo @file{d} adicionado no ramo principal.
 @c (which was determined by trying it)
 
 @c <en>Note that using a single static tag (@samp{-j @var{tagname}})
@@ -7467,14 +7469,18 @@ file @file{a} will be removed and file @file{d} added in the main branch.
 @c <en>a static tag has been attached to a dead revision manually.  Use the branch tag
 @c <en>to merge all changes from the branch or use two static tags as merge endpoints
 @c <en>to be sure that all intended changes are propagated in the merge.
-Note that using a single static tag (@samp{-j @var{tagname}})
-rather than a dynamic tag (@samp{-j @var{branchname}}) to merge
-changes from a branch will usually not remove files which were removed on the
-branch since @sc{cvs} does not automatically add static tags to dead revisions.
-The exception to this rule occurs when
-a static tag has been attached to a dead revision manually.  Use the branch tag
-to merge all changes from the branch or use two static tags as merge endpoints
-to be sure that all intended changes are propagated in the merge.
+Observe que ao se usar uma única etiqueta estática
+(@samp{-j @var{tagname}}) ao invés de uma etiqueta
+dinâmica (@samp{-j @var{branchname}}) para mesclar
+mudanças a partir de um ramo normalmente não vai
+remover arquivos que foram removidos do ramo, já que o
+@sc{cvs} não adiona etiquetas estáticas a revisões
+mortas. A exceção a esta regra ocorre quando uma
+etiqueta estática foi colocada numa revisão morta
+manualmente.  Use a etiqueta do ramo para mesclar todas
+as mudanças a partir do ramo ou use duas etiquetas
+estáticas como limites da mescla para ter certeza que
+todas as mudanças pretendidas vão ser propagadas na mesclagem.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Merging and keywords
@@ -7482,24 +7488,24 @@ to be sure that all intended changes are propagated in the merge.
 @c <en>@section Merging and keywords
 @section Mesclagem e palavras-chave
 @c <en>@cindex Merging, and keyword substitution
-@cindex Merging, and keyword substitution
+@cindex Mesclagem, e substituição de palavra-chave
 @c <en>@cindex Keyword substitution, and merging
-@cindex Keyword substitution, and merging
+@cindex Substituição de palavra-chave, e mesclagem
 @c <en>@cindex -j (merging branches), and keyword substitution
-@cindex -j (merging branches), and keyword substitution
+@cindex -j (mesclando ramos), e substituição de palavra-chave
 @c <en>@cindex -kk, to avoid conflicts during a merge
-@cindex -kk, to avoid conflicts during a merge
+@cindex -kk, para evitar conflitos durante uma mesclagem
 
 @c <en>If you merge files containing keywords (@pxref{Keyword
 @c <en>substitution}), you will normally get numerous
 @c <en>conflicts during the merge, because the keywords are
 @c <en>expanded differently in the revisions which you are
 @c <en>merging.
-If you merge files containing keywords
-(@pxref{Substituição de palavra-chave}), you will normally get numerous
-conflicts during the merge, because the keywords are
-expanded differently in the revisions which you are
-merging.
+Se você mescla arquivos contendo palavras-chave
+(@pxref{Substituição de palavra-chave}), você
+normalmente vai ter muitos conflitos durante a
+mesclagem, já que as palavras-chave são expandidas de
+forma diferente nas revisões que você está mesclando.
 
 @c <en>Therefore, you will often want to specify the
 @c <en>@samp{-kk} (@pxref{Substitution modes}) switch to the
@@ -7508,16 +7514,16 @@ merging.
 @c <en>this option ensures that the revisions which you are
 @c <en>merging will be the same as each other, and avoid
 @c <en>spurious conflicts.
-Therefore, you will often want to specify the
-@samp{-kk} (@pxref{Substitution modes}) switch to the
-merge command line.  By substituting just the name of
-the keyword, not the expanded value of that keyword,
-this option ensures that the revisions which you are
-merging will be the same as each other, and avoid
-spurious conflicts.
+Portanto, você vai freqüentemente querer especificar a opção
+@samp{-kk} (@pxref{Modos de substituição}) na linha de
+comando do merge.  Simplesmente substituindo o nome da
+palavra-chave, e não o valor expandido dela, vai
+garantir que as revisões que você vai estar mesclando
+???will be the same as each other???, e assim evitar
+conflitos falsos.
 
 @c <en>For example, suppose you have a file like this:
-For example, suppose you have a file like this:
+Por exemplo, suponha que você tenha um arquivo como este:
 
 @example
        +---------+
@@ -7534,9 +7540,9 @@ For example, suppose you have a file like this:
 @c <en>and your working directory is currently on the trunk
 @c <en>(revision 1.2).  Then you might get the following
 @c <en>results from a merge:
-and your working directory is currently on the trunk
-(revision 1.2).  Then you might get the following
-results from a merge:
+E seu diretório de trabalho está no momento no tronco
+(revisão 1.2).  Então pode acontecer de você obter os
+seguintes resultados de uma mescla:
 
 @example
 $ cat file1
@@ -7565,16 +7571,16 @@ key $@splitrcskeyword{}Revision: 1.1.2.1 $
 @c <en>@sc{cvs} tried to merge that change into your working
 @c <en>directory, which conflicted with the fact that your
 @c <en>working directory had contained @code{Revision: 1.2}.
-What happened was that the merge tried to merge the
-differences between 1.1 and 1.1.2.1 into your working
-directory.  So, since the keyword changed from
-@code{Revision: 1.1} to @code{Revision: 1.1.2.1},
-@sc{cvs} tried to merge that change into your working
-directory, which conflicted with the fact that your
-working directory had contained @code{Revision: 1.2}.
+O que aconteceu é que a mesclagem tentou mesclar as
+diferenças entre 1.1 e 1.1.2.1 dentro de seu diretório
+de trabalho.  Então, uma vez que a palavra-chave mudou
+de @code{Revision: 1.1} para @code{Revision: 1.1.2.1},
+o @sc{cvs} tentou mesclar esta mudança no seu diretório
+de trabalho, o que gerou um conflito com o fato de seu
+diretório de trabalho continha @code{Revision: 1.2}.
 
 @c <en>Here is what happens if you had used @samp{-kk}:
-Here is what happens if you had used @samp{-kk}:
+Isto é o que aconteceria se você tivesse usado @samp{-kk}:
 
 @example
 $ cat file1
@@ -7596,11 +7602,10 @@ key $@splitrcskeyword{}Revision$
 @c <en>merging the changes between them into the working
 @c <en>directory need not change anything.  Therefore, there
 @c <en>is no conflict.
-What is going on here is that revision 1.1 and 1.1.2.1
-both expand as plain @code{Revision}, and therefore
-merging the changes between them into the working
-directory need not change anything.  Therefore, there
-is no conflict.
+O que está acontecendo aqui é que ambas as revisões 1.1
+e 1.1.2.1 expandem em um simples @code{Revision}, e
+consequentemente, não há nenhuma mudança para mesclar entre elas no
+diretório de trabalho.  Portanto, não há conflito.
 
 @c <en>@strong{WARNING: In versions of @sc{cvs} prior to 1.12.2, there was a
 @c <en>major problem with using @samp{-kk} on merges.  Namely, @samp{-kk}
@@ -7610,14 +7615,17 @@ is no conflict.
 @c <en>to @samp{-kb}).  Therefore, when a repository contained binary files,
 @c <en>conflicts had to be dealt with manually rather than using @samp{-kk} in
 @c <en>a merge command.}
-@strong{WARNING: In versions of @sc{cvs} prior to 1.12.2, there was a
-major problem with using @samp{-kk} on merges.  Namely, @samp{-kk}
-overrode any default keyword expansion mode set in the archive file in
-the repository.  This could, unfortunately for some users, cause data
-corruption in binary files (with a default keyword expansion mode set
-to @samp{-kb}).  Therefore, when a repository contained binary files,
-conflicts had to be dealt with manually rather than using @samp{-kk} in
-a merge command.}
+@strong{WARNING: Em versões do @sc{cvs} anteriores à
+1.12.2, existia um grande problema ao usar @samp{-kk}
+em mesclagens.  A saber, @samp{-kk} sobreescrevia
+qualquer modo de expansão de palavra-chave padrão
+ajustado no arquivo do repositório.  Isto podia,
+infelizmente para alguns usuários, corromper arquivos
+binários (com um modo de expansão de palavra-chave
+padrão em @samp{-kb}).  Portanto, quando um repositório
+contém arquivos binários, conflitos têm que ser
+tratados manualmente ao invés de serem tratados com
+@samp{-kk} no comando de mescla.}
 
 @c <en>In @sc{cvs} version 1.12.2 and later, the keyword expansion mode
 @c <en>provided on the command line to any @sc{cvs} command no longer
@@ -7626,13 +7634,15 @@ a merge command.}
 @c <en>modes.  You can now safely merge using @samp{-kk} to avoid spurious conflicts
 @c <en>on lines containing RCS keywords, even when your repository contains
 @c <en>binary files.
-In @sc{cvs} version 1.12.2 and later, the keyword expansion mode
-provided on the command line to any @sc{cvs} command no longer
-overrides the @samp{-kb} keyword expansion mode setting for binary
-files, though it will still override other default keyword expansion
-modes.  You can now safely merge using @samp{-kk} to avoid spurious conflicts
-on lines containing RCS keywords, even when your repository contains
-binary files.
+Da versão 1.12.2 para frente do @sc{cvs}, a expansão
+por palavra-chave disponível na linha de comando para
+qualquer comando do @sc{cvs} não mais sobreescreve o
+modo de expansão de palavra-chave @samp{-kb} para
+arquivos binários, embora ainda sobreescreva os outros
+modos de expansão de palavra-chave.  Você pode agora
+mesclar com tranquilidade usando @samp{-kk} para evitar
+conflitos falsos em linhas contendo palavras-chave do
+RCS, mesmo quando seu repositório contém arquivos binários.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Recursive behavior
@@ -7877,7 +7887,7 @@ example.
 @c <en>@ref{Substitution modes}.
 The @samp{-k} option specifies the default way that
 this file will be checked out; for more information see
-@ref{Substitution modes}.
+@ref{Modos de substituição}.
 
 @c As noted in BUGS, -m is broken client/server (Nov
 @c 96).  Also see testsuite log2-* tests.
@@ -9469,14 +9479,23 @@ someone does.
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node File status
 @node File status
+@c <en>@section File status
 @section File status
+@c <en>@cindex File status
 @cindex File status
+@c <en>@cindex Status of a file
 @cindex Status of a file
 
 @c Shouldn't this start with an example or something,
 @c introducing the unreserved checkout model?  Before we
 @c dive into listing states?
+@c <en>Based on what operations you have performed on a
+@c <en>checked out file, and what operations others have
+@c <en>performed to that file in the repository, one can
+@c <en>classify a file in a number of states.  The states, as
+@c <en>reported by the @code{status} command, are:
 Based on what operations you have performed on a
 checked out file, and what operations others have
 performed to that file in the repository, one can
@@ -9487,8 +9506,12 @@ reported by the @code{status} command, are:
 @c similar outputs together.
 @c People who want alphabetical can use the index...
 @table @asis
+@c <en>@cindex Up-to-date
 @cindex Up-to-date
+@c <en>@item Up-to-date
 @item Up-to-date
+@c <en>The file is identical with the latest revision in the
+@c <en>repository for the branch in use.
 The file is identical with the latest revision in the
 repository for the branch in use.
 @c FIXME: should we clarify "in use"?  The answer is
@@ -9498,12 +9521,19 @@ repository for the branch in use.
 @c FIXME: What happens with non-branch sticky tags?  Is
 @c a stuck file "Up-to-date" or "Needs checkout" or what?
 
+@c <en>@item Locally Modified
 @item Locally Modified
+@c <en>@cindex Locally Modified
 @cindex Locally Modified
+@c <en>You have edited the file, and not yet committed your changes.
 You have edited the file, and not yet committed your changes.
 
+@c <en>@item Locally Added
 @item Locally Added
+@c <en>@cindex Locally Added
 @cindex Locally Added
+@c <en>You have added the file with @code{add}, and not yet
+@c <en>committed your changes.
 You have added the file with @code{add}, and not yet
 committed your changes.
 @c There are many cases involving the file being
@@ -9513,42 +9543,68 @@ committed your changes.
 @c status" produces a non-confusing output in most of
 @c those cases.
 
+@c <en>@item Locally Removed
 @item Locally Removed
+@c <en>@cindex Locally Removed
 @cindex Locally Removed
+@c <en>You have removed the file with @code{remove}, and not yet
+@c <en>committed your changes.
 You have removed the file with @code{remove}, and not yet
 committed your changes.
 
+@c <en>@item Needs Checkout
 @item Needs Checkout
+@c <en>@cindex Needs Checkout
 @cindex Needs Checkout
+@c <en>Someone else has committed a newer revision to the
+@c <en>repository.  The name is slightly misleading; you will
+@c <en>ordinarily use @code{update} rather than
+@c <en>@code{checkout} to get that newer revision.
 Someone else has committed a newer revision to the
 repository.  The name is slightly misleading; you will
 ordinarily use @code{update} rather than
 @code{checkout} to get that newer revision.
 
+@c <en>@item Needs Patch
 @item Needs Patch
+@c <en>@cindex Needs Patch
 @cindex Needs Patch
 @c See also newb-123j0 in sanity.sh (although that case
 @c should probably be changed rather than documented).
+@c <en>Like Needs Checkout, but the @sc{cvs} server will send
+@c <en>a patch rather than the entire file.  Sending a patch or
+@c <en>sending an entire file accomplishes the same thing.
 Like Needs Checkout, but the @sc{cvs} server will send
 a patch rather than the entire file.  Sending a patch or
 sending an entire file accomplishes the same thing.
 
+@c <en>@item Needs Merge
 @item Needs Merge
+@c <en>@cindex Needs Merge
 @cindex Needs Merge
+@c <en>Someone else has committed a newer revision to the repository, and you
+@c <en>have also made modifications to the file.
 Someone else has committed a newer revision to the repository, and you
 have also made modifications to the file.
 
+@c <en>@item Unresolved Conflict
 @item Unresolved Conflict
+@c <en>@cindex Unresolved Conflict
 @cindex Unresolved Conflict
 @c FIXCVS - This file status needs to be changed to some more informative
 @c text that distinguishes it more clearly from each of the Locally Added,
 @c File had conflicts on merge, and Unknown status types, but an exact and
 @c succinct wording escapes me at the moment.
+@c <en>A file with the same name as this new file has been added to the repository
+@c <en>from a second workspace.  This file will need to be moved out of the way
+@c <en>to allow an @code{update} to complete.
 A file with the same name as this new file has been added to the repository
 from a second workspace.  This file will need to be moved out of the way
 to allow an @code{update} to complete.
 
+@c <en>@item File had conflicts on merge
 @item File had conflicts on merge
+@c <en>@cindex File had conflicts on merge
 @cindex File had conflicts on merge
 @c is it worth saying that this message was "Unresolved
 @c Conflict" in CVS 1.9 and earlier?  I'm inclined to
@@ -9562,8 +9618,13 @@ This is like Locally Modified, except that a previous
 already done so, you need to
 resolve the conflict as described in @ref{Exemplo de conflitos}.
 
+@c <en>@item Unknown
 @item Unknown
+@c <en>@cindex Unknown
 @cindex Unknown
+@c <en>@sc{cvs} doesn't know anything about this file.  For
+@c <en>example, you have created a new file and have not run
+@c <en>@code{add}.
 @sc{cvs} doesn't know anything about this file.  For
 example, you have created a new file and have not run
 @code{add}.
@@ -9577,6 +9638,12 @@ example, you have created a new file and have not run
 
 @end table
 
+@c <en>To help clarify the file status, @code{status} also
+@c <en>reports the @code{Working revision} which is the
+@c <en>revision that the file in the working directory derives
+@c <en>from, and the @code{Repository revision} which is the
+@c <en>latest revision in the repository for the branch in
+@c <en>use.
 To help clarify the file status, @code{status} also
 reports the @code{Working revision} which is the
 revision that the file in the working directory derives
@@ -9621,6 +9688,15 @@ and @code{Sticky date} output, see @ref{Etiquetas adesivas}.
 For information on its @code{Sticky options} output,
 see the @samp{-k} option in @ref{update options}.
 
+@c <en>You can think of the @code{status} and @code{update}
+@c <en>commands as somewhat complementary.  You use
+@c <en>@code{update} to bring your files up to date, and you
+@c <en>can use @code{status} to give you some idea of what an
+@c <en>@code{update} would do (of course, the state of the
+@c <en>repository might change before you actually run
+@c <en>@code{update}).  In fact, if you want a command to
+@c <en>display file status in a more brief format than is
+@c <en>displayed by the @code{status} command, you can invoke
 You can think of the @code{status} and @code{update}
 commands as somewhat complementary.  You use
 @code{update} to bring your files up to date, and you
@@ -9631,6 +9707,7 @@ repository might change before you actually run
 display file status in a more brief format than is
 displayed by the @code{status} command, you can invoke
 
+@c <en>@cindex update, to display file status
 @cindex update, to display file status
 @example
 $ cvs -n -q update
@@ -9648,31 +9725,60 @@ more information on the @code{update} command, and
 these options, see @ref{Chamando o CVS}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Updating a file
 @node Updating a file
+@c <en>@section Bringing a file up to date
 @section Bringing a file up to date
+@c <en>@cindex Bringing a file up to date
 @cindex Bringing a file up to date
+@c <en>@cindex Updating a file
 @cindex Updating a file
+@c <en>@cindex Merging a file
 @cindex Merging a file
+@c <en>@cindex Update, introduction
 @cindex Update, introduction
 
+@c <en>When you want to update or merge a file, use the @code{update}
+@c <en>command.  For files that are not up to date this is roughly equivalent
+@c <en>to a @code{checkout} command: the newest revision of the file is
+@c <en>extracted from the repository and put in your working directory.
 When you want to update or merge a file, use the @code{update}
 command.  For files that are not up to date this is roughly equivalent
 to a @code{checkout} command: the newest revision of the file is
 extracted from the repository and put in your working directory.
 
+@c <en>Your modifications to a file are never lost when you
+@c <en>use @code{update}.  If no newer revision exists,
+@c <en>running @code{update} has no effect.  If you have
+@c <en>edited the file, and a newer revision is available,
+@c <en>@sc{cvs} will merge all changes into your working copy.
 Your modifications to a file are never lost when you
 use @code{update}.  If no newer revision exists,
 running @code{update} has no effect.  If you have
 edited the file, and a newer revision is available,
 @sc{cvs} will merge all changes into your working copy.
 
+@c <en>For instance, imagine that you checked out revision 1.4 and started
+@c <en>editing it.  In the meantime someone else committed revision 1.5, and
+@c <en>shortly after that revision 1.6.  If you run @code{update} on the file
+@c <en>now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
+@c <en>your file.
 For instance, imagine that you checked out revision 1.4 and started
 editing it.  In the meantime someone else committed revision 1.5, and
 shortly after that revision 1.6.  If you run @code{update} on the file
 now, @sc{cvs} will incorporate all changes between revision 1.4 and 1.6 into
 your file.
 
+@c <en>@cindex Overlap
 @cindex Overlap
+@c <en>If any of the changes between 1.4 and 1.6 were made too
+@c <en>close to any of the changes you have made, an
+@c <en>@dfn{overlap} occurs.  In such cases a warning is
+@c <en>printed, and the resulting file includes both
+@c <en>versions of the lines that overlap, delimited by
+@c <en>special markers.
+@c <en>@xref{update}, for a complete description of the
+@c <en>@code{update} command.
 If any of the changes between 1.4 and 1.6 were made too
 close to any of the changes you have made, an
 @dfn{overlap} occurs.  In such cases a warning is
@@ -9694,6 +9800,7 @@ special markers.
 @c <en>@cindex driver.c (merge example)
 @cindex driver.c (merge example)
 
+@c <en>Suppose revision 1.4 of @file{driver.c} contains this:
 Suppose revision 1.4 of @file{driver.c} contains this:
 
 @example
@@ -9711,6 +9818,7 @@ void main()
 @end example
 
 @noindent
+@c <en>Revision 1.6 of @file{driver.c} contains this:
 Revision 1.6 of @file{driver.c} contains this:
 
 @example
@@ -9734,6 +9842,9 @@ int main(int argc,
 @end example
 
 @noindent
+@c <en>Your working copy of @file{driver.c}, based on revision
+@c <en>1.4, contains this before you run @samp{cvs update}:
+@c <en>@c -- Really include "cvs"?
 Your working copy of @file{driver.c}, based on revision
 1.4, contains this before you run @samp{cvs update}:
 @c -- Really include "cvs"?
@@ -9755,6 +9866,8 @@ void main()
 @end example
 
 @noindent
+@c <en>You run @samp{cvs update}:
+@c <en>@c -- Really include "cvs"?
 You run @samp{cvs update}:
 @c -- Really include "cvs"?
 
@@ -9770,7 +9883,12 @@ C driver.c
 @end example
 
 @noindent
+@c <en>@cindex Conflicts (merge example)
 @cindex Conflicts (merge example)
+@c <en>@sc{cvs} tells you that there were some conflicts.
+@c <en>Your original working file is saved unmodified in
+@c <en>@file{.#driver.c.1.4}.  The new version of
+@c <en>@file{driver.c} contains this:
 @sc{cvs} tells you that there were some conflicts.
 Your original working file is saved unmodified in
 @file{.#driver.c.1.4}.  The new version of
@@ -9803,18 +9921,32 @@ int main(int argc,
 @end example
 
 @noindent
+@c <en>@cindex Markers, conflict
 @cindex Markers, conflict
+@c <en>@cindex Conflict markers
 @cindex Conflict markers
+@c <en>@cindex <<<<<<<
 @cindex <<<<<<<
+@c <en>@cindex >>>>>>>
 @cindex >>>>>>>
+@c <en>@cindex =======
 @cindex =======
 
+@c <en>Note how all non-overlapping modifications are incorporated in your working
+@c <en>copy, and that the overlapping section is clearly marked with
+@c <en>@samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
 Note how all non-overlapping modifications are incorporated in your working
 copy, and that the overlapping section is clearly marked with
 @samp{<<<<<<<}, @samp{=======} and @samp{>>>>>>>}.
 
+@c <en>@cindex Resolving a conflict
 @cindex Resolving a conflict
+@c <en>@cindex Conflict resolution
 @cindex Conflict resolution
+@c <en>You resolve the conflict by editing the file, removing the markers and
+@c <en>the erroneous line.  Suppose you end up with this file:
+@c <en>@c -- Add xref to the pcl-cvs manual when it talks
+@c <en>@c -- about this.
 You resolve the conflict by editing the file, removing the markers and
 the erroneous line.  Suppose you end up with this file:
 @c -- Add xref to the pcl-cvs manual when it talks
@@ -9842,6 +9974,7 @@ int main(int argc,
 @end example
 
 @noindent
+@c <en>You can now go ahead and commit this as revision 1.7.
 You can now go ahead and commit this as revision 1.7.
 
 @example
@@ -9852,6 +9985,18 @@ new revision: 1.7; previous revision: 1.6
 done
 @end example
 
+@c <en>For your protection, @sc{cvs} will refuse to check in a
+@c <en>file if a conflict occurred and you have not resolved
+@c <en>the conflict.  Currently to resolve a conflict, you
+@c <en>must change the timestamp on the file.  In previous
+@c <en>versions of @sc{cvs}, you also needed to
+@c <en>insure that the file contains no conflict markers.
+@c <en>Because
+@c <en>your file may legitimately contain conflict markers (that
+@c <en>is, occurrences of @samp{>>>>>>> } at the start of a
+@c <en>line that don't mark a conflict), the current
+@c <en>version of @sc{cvs} will print a warning and proceed to
+@c <en>check in the file.
 For your protection, @sc{cvs} will refuse to check in a
 file if a conflict occurred and you have not resolved
 the conflict.  Currently to resolve a conflict, you
@@ -9876,19 +10021,37 @@ check in the file.
 @c directly--such a tool can verify that the user has
 @c really dealt with each conflict.
 
+@c <en>@cindex emerge
 @cindex emerge
+@c <en>If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
+@c <en>Emacs front-end for @sc{cvs}) you can use an Emacs
+@c <en>package called emerge to help you resolve conflicts.
+@c <en>See the documentation for pcl-cvs.
 If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
 Emacs front-end for @sc{cvs}) you can use an Emacs
 package called emerge to help you resolve conflicts.
 See the documentation for pcl-cvs.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Informing others
 @node Informing others
+@c <en>@section Informing others about commits
 @section Informing others about commits
+@c <en>@cindex Informing others
 @cindex Informing others
+@c <en>@cindex Spreading information
 @cindex Spreading information
+@c <en>@cindex Mail, automatic mail on commit
 @cindex Mail, automatic mail on commit
 
+@c <en>It is often useful to inform others when you commit a
+@c <en>new revision of a file.  The @samp{-i} option of the
+@c <en>@file{modules} file, or the @file{loginfo} file, can be
+@c <en>used to automate this process.  @xref{modules}.
+@c <en>@xref{loginfo}.  You can use these features of @sc{cvs}
+@c <en>to, for instance, instruct @sc{cvs} to mail a
+@c <en>message to all developers, or post a message to a local
+@c <en>newsgroup.
 It is often useful to inform others when you commit a
 new revision of a file.  The @samp{-i} option of the
 @file{modules} file, or the @file{loginfo} file, can be
@@ -9904,9 +10067,12 @@ newsgroup.
 @c <en>@section Several developers simultaneously attempting to run CVS
 @section Vários desenvolvedores tentando rodar o CVS simultâneamente
 
+@c <en>@cindex Locks, cvs, introduction
 @cindex Locks, cvs, introduction
 @c For a discussion of *why* CVS creates locks, see
 @c the comment at the start of src/lock.c
+@c <en>If several developers try to run @sc{cvs} at the same
+@c <en>time, one may get the following message:
 If several developers try to run @sc{cvs} at the same
 time, one may get the following message:
 
@@ -9914,9 +10080,22 @@ time, one may get the following message:
 [11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
 @end example
 
+@c <en>@cindex #cvs.rfl, removing
 @cindex #cvs.rfl, removing
+@c <en>@cindex #cvs.wfl, removing
 @cindex #cvs.wfl, removing
+@c <en>@cindex #cvs.lock, removing
 @cindex #cvs.lock, removing
+@c <en>@sc{cvs} will try again every 30 seconds, and either
+@c <en>continue with the operation or print the message again,
+@c <en>if it still needs to wait.  If a lock seems to stick
+@c <en>around for an undue amount of time, find the person
+@c <en>holding the lock and ask them about the cvs command
+@c <en>they are running.  If they aren't running a cvs
+@c <en>command, look in the repository directory mentioned in
+@c <en>the message and remove files which they own whose names
+@c <en>start with @file{#cvs.rfl},
+@c <en>@file{#cvs.wfl}, or @file{#cvs.lock}.
 @sc{cvs} will try again every 30 seconds, and either
 continue with the operation or print the message again,
 if it still needs to wait.  If a lock seems to stick
@@ -9939,11 +10118,16 @@ the word @dfn{lock} in the sense used by
 @sc{rcs}---which refers to reserved checkouts
 (@pxref{Múltiplos desenvolvedores}).
 
+@c <en>Any number of people can be reading from a given
+@c <en>repository at a time; only when someone is writing do
+@c <en>the locks prevent other people from reading or writing.
 Any number of people can be reading from a given
 repository at a time; only when someone is writing do
 the locks prevent other people from reading or writing.
 
+@c <en>@cindex Atomic transactions, lack of
 @cindex Atomic transactions, lack of
+@c <en>@cindex Transactions, atomic, lack of
 @cindex Transactions, atomic, lack of
 @c the following talks about what one might call commit/update
 @c atomicity.
@@ -9956,15 +10140,21 @@ the locks prevent other people from reading or writing.
 @c a/one.c and b/four.c and another commits a/two.c and
 @c b/three.c.  Then an update cannot get the new a/one.c
 @c and a/two.c and the old b/four.c and b/three.c.
+@c <en>One might hope for the following property:
 One might hope for the following property:
 
 @quotation
+@c <en>If someone commits some changes in one cvs command,
+@c <en>then an update by someone else will either get all the
+@c <en>changes, or none of them.
 If someone commits some changes in one cvs command,
 then an update by someone else will either get all the
 changes, or none of them.
 @end quotation
 
 @noindent
+@c <en>but @sc{cvs} does @emph{not} have this property.  For
+@c <en>example, given the files
 but @sc{cvs} does @emph{not} have this property.  For
 example, given the files
 
@@ -9976,6 +10166,7 @@ b/four.c
 @end example
 
 @noindent
+@c <en>if someone runs
 if someone runs
 
 @example
@@ -9983,15 +10174,34 @@ cvs ci a/two.c b/three.c
 @end example
 
 @noindent
+@c <en>and someone else runs @code{cvs update} at the same
+@c <en>time, the person running @code{update} might get only
+@c <en>the change to @file{b/three.c} and not the change to
+@c <en>@file{a/two.c}.
 and someone else runs @code{cvs update} at the same
 time, the person running @code{update} might get only
 the change to @file{b/three.c} and not the change to
 @file{a/two.c}.
 
+@c <en>@node Watches
 @node Watches
+@c <en>@section Mechanisms to track who is editing files
 @section Mechanisms to track who is editing files
+@c <en>@cindex Watches
 @cindex Watches
 
+@c <en>For many groups, use of @sc{cvs} in its default mode is
+@c <en>perfectly satisfactory.  Users may sometimes go to
+@c <en>check in a modification only to find that another
+@c <en>modification has intervened, but they deal with it and
+@c <en>proceed with their check in.  Other groups prefer to be
+@c <en>able to know who is editing what files, so that if two
+@c <en>people try to edit the same file they can choose to
+@c <en>talk about who is doing what when rather than be
+@c <en>surprised at check in time.  The features in this
+@c <en>section allow such coordination, while retaining the
+@c <en>ability of two developers to edit the same file at the
+@c <en>same time.
 For many groups, use of @sc{cvs} in its default mode is
 perfectly satisfactory.  Users may sometimes go to
 check in a modification only to find that another
@@ -10018,6 +10228,11 @@ same time.
 @c track of what working directories exist.
 @c FIXME: should the above discussion be part of the
 @c manual proper, somewhere, not just in a comment?
+@c <en>For maximum benefit developers should use @code{cvs
+@c <en>edit} (not @code{chmod}) to make files read-write to
+@c <en>edit them, and @code{cvs release} (not @code{rm}) to
+@c <en>discard a working directory which is no longer in use,
+@c <en>but @sc{cvs} is not able to enforce this behavior.
 For maximum benefit developers should use @code{cvs
 edit} (not @code{chmod}) to make files read-write to
 edit them, and @code{cvs release} (not @code{rm}) to
@@ -10033,29 +10248,55 @@ but @sc{cvs} is not able to enforce this behavior.
 @c add" with loginfo).  I don't know.
 
 @menu
+@c <en>* Setting a watch::             Telling CVS to watch certain files
 * Setting a watch::             Telling CVS to watch certain files
+@c <en>* Getting Notified::            Telling CVS to notify you
 * Getting Notified::            Telling CVS to notify you
+@c <en>* Editing files::               How to edit a file which is being watched
 * Editing files::               How to edit a file which is being watched
+@c <en>* Watch information::           Information about who is watching and editing
 * Watch information::           Information about who is watching and editing
+@c <en>* Watches Compatibility::       Watches interact poorly with CVS 1.6 or earlier
 * Watches Compatibility::       Watches interact poorly with CVS 1.6 or earlier
 @end menu
 
+@c <en>@node Setting a watch
 @node Setting a watch
+@c <en>@subsection Telling CVS to watch certain files
 @subsection Telling CVS to watch certain files
 
+@c <en>To enable the watch features, you first specify that
+@c <en>certain files are to be watched.
 To enable the watch features, you first specify that
 certain files are to be watched.
 
+@c <en>@cindex watch on (subcommand)
 @cindex watch on (subcommand)
+@c <en>@deffn Command {cvs watch on} [@code{-lR}] [@var{files}]@dots{}
 @deffn Command {cvs watch on} [@code{-lR}] [@var{files}]@dots{}
 
+@c <en>@cindex Read-only files, and watches
 @cindex Read-only files, and watches
+@c <en>Specify that developers should run @code{cvs edit}
+@c <en>before editing @var{files}.  @sc{cvs} will create working
+@c <en>copies of @var{files} read-only, to remind developers
+@c <en>to run the @code{cvs edit} command before working on
+@c <en>them.
 Specify that developers should run @code{cvs edit}
 before editing @var{files}.  @sc{cvs} will create working
 copies of @var{files} read-only, to remind developers
 to run the @code{cvs edit} command before working on
 them.
 
+@c <en>If @var{files} includes the name of a directory, @sc{cvs}
+@c <en>arranges to watch all files added to the corresponding
+@c <en>repository directory, and sets a default for files
+@c <en>added in the future; this allows the user to set
+@c <en>notification policies on a per-directory basis.  The
+@c <en>contents of the directory are processed recursively,
+@c <en>unless the @code{-l} option is given.
+@c <en>The @code{-R} option can be used to force recursion if the @code{-l}
+@c <en>option is set in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
 If @var{files} includes the name of a directory, @sc{cvs}
 arranges to watch all files added to the corresponding
 repository directory, and sets a default for files
@@ -10066,13 +10307,19 @@ unless the @code{-l} option is given.
 The @code{-R} option can be used to force recursion if the @code{-l}
 option is set in @file{~/.cvsrc} (@pxref{~/.cvsrc}).
 
+@c <en>If @var{files} is omitted, it defaults to the current directory.
 If @var{files} is omitted, it defaults to the current directory.
 
+@c <en>@cindex watch off (subcommand)
 @cindex watch off (subcommand)
 @end deffn
 
+@c <en>@deffn Command {cvs watch off} [@code{-lR}] [@var{files}]@dots{}
 @deffn Command {cvs watch off} [@code{-lR}] [@var{files}]@dots{}
 
+@c <en>Do not create @var{files} read-only on checkout; thus,
+@c <en>developers will not be reminded to use @code{cvs edit}
+@c <en>and @code{cvs unedit}.
 Do not create @var{files} read-only on checkout; thus,
 developers will not be reminded to use @code{cvs edit}
 and @code{cvs unedit}.
@@ -10084,14 +10331,24 @@ enabled in the @file{config} administrative file
 (@pxref{Special Files}, @pxref{config})
 @end ignore
 
+@c <en>The @var{files} and options are processed as for @code{cvs
+@c <en>watch on}.
 The @var{files} and options are processed as for @code{cvs
 watch on}.
 
 @end deffn
 
+@c <en>@node Getting Notified
 @node Getting Notified
+@c <en>@subsection Telling CVS to notify you
 @subsection Telling CVS to notify you
 
+@c <en>You can tell @sc{cvs} that you want to receive
+@c <en>notifications about various actions taken on a file.
+@c <en>You can do this without using @code{cvs watch on} for
+@c <en>the file, but generally you will want to use @code{cvs
+@c <en>watch on}, to remind developers to use the @code{cvs edit}
+@c <en>command.
 You can tell @sc{cvs} that you want to receive
 notifications about various actions taken on a file.
 You can do this without using @code{cvs watch on} for
@@ -10099,63 +10356,95 @@ the file, but generally you will want to use @code{cvs
 watch on}, to remind developers to use the @code{cvs edit}
 command.
 
+@c <en>@cindex watch add (subcommand)
 @cindex watch add (subcommand)
+@c <en>@deffn Command {cvs watch add} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 @deffn Command {cvs watch add} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
+@c <en>Add the current user to the list of people to receive notification of
+@c <en>work done on @var{files}.
 Add the current user to the list of people to receive notification of
 work done on @var{files}.
 
+@c <en>The @code{-a} option specifies what kinds of events @sc{cvs} should notify
+@c <en>the user about.  @var{action} is one of the following:
 The @code{-a} option specifies what kinds of events @sc{cvs} should notify
 the user about.  @var{action} is one of the following:
 
 @table @code
 
+@c <en>@item edit
 @item edit
+@c <en>Another user has applied the @code{cvs edit} command (described
+@c <en>below) to a watched file.
 Another user has applied the @code{cvs edit} command (described
 below) to a watched file.
 
+@c <en>@item commit
 @item commit
+@c <en>Another user has committed changes to one of the named @var{files}.
 Another user has committed changes to one of the named @var{files}.
 
+@c <en>@item unedit
 @item unedit
+@c <en>Another user has abandoned editing a file (other than by committing changes).
+@c <en>They can do this in several ways, by:
 Another user has abandoned editing a file (other than by committing changes).
 They can do this in several ways, by:
 
 @itemize @bullet
 
 @item
+@c <en>applying the @code{cvs unedit} command (described below) to the file
 applying the @code{cvs unedit} command (described below) to the file
 
 @item
+@c <en>applying the @code{cvs release} command (@pxref{release}) to the file's parent directory
+@c <en>(or recursively to a directory more than one level up)
 applying the @code{cvs release} command (@pxref{release}) to the file's parent directory
 (or recursively to a directory more than one level up)
 
 @item
+@c <en>deleting the file and allowing @code{cvs update} to recreate it
 deleting the file and allowing @code{cvs update} to recreate it
 
 @end itemize
 
+@c <en>@item all
 @item all
+@c <en>All of the above.
 All of the above.
 
+@c <en>@item none
 @item none
+@c <en>None of the above.  (This is useful with @code{cvs edit},
+@c <en>described below.)
 None of the above.  (This is useful with @code{cvs edit},
 described below.)
 
 @end table
 
+@c <en>The @code{-a} option may appear more than once, or not at all.  If
+@c <en>omitted, the action defaults to @code{all}.
 The @code{-a} option may appear more than once, or not at all.  If
 omitted, the action defaults to @code{all}.
 
+@c <en>The @var{files} and options are processed as for
+@c <en>@code{cvs watch on}.
 The @var{files} and options are processed as for
 @code{cvs watch on}.
 
 @end deffn
 
 
+@c <en>@cindex watch remove (subcommand)
 @cindex watch remove (subcommand)
+@c <en>@deffn Command {cvs watch remove} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 @deffn Command {cvs watch remove} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
+@c <en>Remove a notification request established using @code{cvs watch add};
+@c <en>the arguments are the same.  If the @code{-a} option is present, only
+@c <en>watches for the specified actions are removed.
 Remove a notification request established using @code{cvs watch add};
 the arguments are the same.  If the @code{-a} option is present, only
 watches for the specified actions are removed.
@@ -10196,6 +10485,7 @@ ALL mail %s -s "CVS notification"
 @end example
 
 @noindent
+@c <en>This causes users to be notified by electronic mail.
 This causes users to be notified by electronic mail.
 @c FIXME: should it be this hard to set up this
 @c behavior (and the result when one fails to do so,
@@ -10204,7 +10494,19 @@ This causes users to be notified by electronic mail.
 @c document the use of "DEFAULT :" for the case where
 @c skipping the notification is indeed desired)?
 
+@c <en>@cindex users (admin file)
 @cindex users (admin file)
+@c <en>Note that if you set this up in the straightforward
+@c <en>way, users receive notifications on the server machine.
+@c <en>One could of course write a @file{notify} script which
+@c <en>directed notifications elsewhere, but to make this
+@c <en>easy, @sc{cvs} allows you to associate a notification
+@c <en>address for each user.  To do so create a file
+@c <en>@file{users} in @file{CVSROOT} with a line for each
+@c <en>user in the format @var{user}:@var{value}.  Then
+@c <en>instead of passing the name of the user to be notified
+@c <en>to @file{notify}, @sc{cvs} will pass the @var{value}
+@c <en>(normally an email address on some other machine).
 Note that if you set this up in the straightforward
 way, users receive notifications on the server machine.
 One could of course write a @file{notify} script which
@@ -10217,6 +10519,15 @@ instead of passing the name of the user to be notified
 to @file{notify}, @sc{cvs} will pass the @var{value}
 (normally an email address on some other machine).
 
+@c <en>@sc{cvs} does not notify you for your own changes.
+@c <en>Currently this check is done based on whether the user
+@c <en>name of the person taking the action which triggers
+@c <en>notification matches the user name of the person
+@c <en>getting notification.  In fact, in general, the watches
+@c <en>features only track one edit by each user.  It probably
+@c <en>would be more useful if watches tracked each working
+@c <en>directory separately, so this behavior might be worth
+@c <en>changing.
 @sc{cvs} does not notify you for your own changes.
 Currently this check is done based on whether the user
 name of the person taking the action which triggers
@@ -10236,7 +10547,9 @@ changing.
 @c supply a serial number which the client stores in the
 @c CVS directory as a magic cookie should work.
 
+@c <en>@node Editing files
 @node Editing files
+@c <en>@subsection How to edit a file which is being watched
 @subsection How to edit a file which is being watched
 
 @c <en>@cindex Checkout, as term for getting ready to edit
@@ -10270,19 +10583,31 @@ an operation which those systems call a
 @c than "checkout" (and thus arguably harder to assign
 @c a technical meaning for).
 
+@c <en>@cindex edit (subcommand)
 @cindex edit (subcommand)
+@c <en>@deffn Command {cvs edit} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 @deffn Command {cvs edit} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
+@c <en>Prepare to edit the working files @var{files}.  @sc{cvs} makes the
+@c <en>@var{files} read-write, and notifies users who have requested
+@c <en>@code{edit} notification for any of @var{files}.
 Prepare to edit the working files @var{files}.  @sc{cvs} makes the
 @var{files} read-write, and notifies users who have requested
 @code{edit} notification for any of @var{files}.
 
+@c <en>The @code{cvs edit} command accepts the same options as the
+@c <en>@code{cvs watch add} command, and establishes a temporary watch for the
+@c <en>user on @var{files}; @sc{cvs} will remove the watch when @var{files} are
+@c <en>@code{unedit}ed or @code{commit}ted.  If the user does not wish to
+@c <en>receive notifications, she should specify @code{-a none}.
 The @code{cvs edit} command accepts the same options as the
 @code{cvs watch add} command, and establishes a temporary watch for the
 user on @var{files}; @sc{cvs} will remove the watch when @var{files} are
 @code{unedit}ed or @code{commit}ted.  If the user does not wish to
 receive notifications, she should specify @code{-a none}.
 
+@c <en>The @var{files} and the options are processed as for the @code{cvs
+@c <en>watch} commands.
 The @var{files} and the options are processed as for the @code{cvs
 watch} commands.
 
@@ -10298,6 +10623,12 @@ repository.}
 
 @end deffn
 
+@c <en>Normally when you are done with a set of changes, you
+@c <en>use the @code{cvs commit} command, which checks in your
+@c <en>changes and returns the watched files to their usual
+@c <en>read-only state.  But if you instead decide to abandon
+@c <en>your changes, or not to make any changes, you can use
+@c <en>the @code{cvs unedit} command.
 Normally when you are done with a set of changes, you
 use the @code{cvs commit} command, which checks in your
 changes and returns the watched files to their usual
@@ -10305,20 +10636,39 @@ read-only state.  But if you instead decide to abandon
 your changes, or not to make any changes, you can use
 the @code{cvs unedit} command.
 
+@c <en>@cindex unedit (subcommand)
 @cindex unedit (subcommand)
+@c <en>@cindex Abandoning work
 @cindex Abandoning work
+@c <en>@cindex Reverting to repository version
 @cindex Reverting to repository version
+@c <en>@deffn Command {cvs unedit} [@code{-lR}] [@var{files}]@dots{}
 @deffn Command {cvs unedit} [@code{-lR}] [@var{files}]@dots{}
 
+@c <en>Abandon work on the working files @var{files}, and revert them to the
+@c <en>repository versions on which they are based.  @sc{cvs} makes those
+@c <en>@var{files} read-only for which users have requested notification using
+@c <en>@code{cvs watch on}.  @sc{cvs} notifies users who have requested @code{unedit}
+@c <en>notification for any of @var{files}.
 Abandon work on the working files @var{files}, and revert them to the
 repository versions on which they are based.  @sc{cvs} makes those
 @var{files} read-only for which users have requested notification using
 @code{cvs watch on}.  @sc{cvs} notifies users who have requested @code{unedit}
 notification for any of @var{files}.
 
+@c <en>The @var{files} and options are processed as for the
+@c <en>@code{cvs watch} commands.
 The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
+@c <en>If watches are not in use, the @code{unedit} command
+@c <en>probably does not work, and the way to revert to the
+@c <en>repository version is with the command @code{cvs update -C file}
+@c <en>(@pxref{update}).
+@c <en>The meaning is
+@c <en>not precisely the same; the latter may also
+@c <en>bring in some changes which have been made in the
+@c <en>repository since the last time you updated.
 If watches are not in use, the @code{unedit} command
 probably does not work, and the way to revert to the
 repository version is with the command @code{cvs update -C file}
@@ -10331,44 +10681,74 @@ repository since the last time you updated.
 @c unedit work in the non-watch case as well.
 @end deffn
 
+@c <en>When using client/server @sc{cvs}, you can use the
+@c <en>@code{cvs edit} and @code{cvs unedit} commands even if
+@c <en>@sc{cvs} is unable to successfully communicate with the
+@c <en>server; the notifications will be sent upon the next
+@c <en>successful @sc{cvs} command.
 When using client/server @sc{cvs}, you can use the
 @code{cvs edit} and @code{cvs unedit} commands even if
 @sc{cvs} is unable to successfully communicate with the
 server; the notifications will be sent upon the next
 successful @sc{cvs} command.
 
+@c <en>@node Watch information
 @node Watch information
+@c <en>@subsection Information about who is watching and editing
 @subsection Information about who is watching and editing
 
+@c <en>@cindex watchers (subcommand)
 @cindex watchers (subcommand)
+@c <en>@deffn Command {cvs watchers} [@code{-lR}] [@var{files}]@dots{}
 @deffn Command {cvs watchers} [@code{-lR}] [@var{files}]@dots{}
 
+@c <en>List the users currently watching changes to @var{files}.  The report
+@c <en>includes the files being watched, and the mail address of each watcher.
 List the users currently watching changes to @var{files}.  The report
 includes the files being watched, and the mail address of each watcher.
 
+@c <en>The @var{files} and options are processed as for the
+@c <en>@code{cvs watch} commands.
 The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 @end deffn
 
 
+@c <en>@cindex editors (subcommand)
 @cindex editors (subcommand)
+@c <en>@deffn Command {cvs editors} [@code{-lR}] [@var{files}]@dots{}
 @deffn Command {cvs editors} [@code{-lR}] [@var{files}]@dots{}
 
+@c <en>List the users currently working on @var{files}.  The report
+@c <en>includes the mail address of each user, the time when the user began
+@c <en>working with the file, and the host and path of the working directory
+@c <en>containing the file.
 List the users currently working on @var{files}.  The report
 includes the mail address of each user, the time when the user began
 working with the file, and the host and path of the working directory
 containing the file.
 
+@c <en>The @var{files} and options are processed as for the
+@c <en>@code{cvs watch} commands.
 The @var{files} and options are processed as for the
 @code{cvs watch} commands.
 
 @end deffn
 
+@c <en>@node Watches Compatibility
 @node Watches Compatibility
+@c <en>@subsection Using watches with old versions of CVS
 @subsection Using watches with old versions of CVS
 
+@c <en>@cindex CVS 1.6, and watches
 @cindex CVS 1.6, and watches
+@c <en>If you use the watch features on a repository, it
+@c <en>creates @file{CVS} directories in the repository and
+@c <en>stores the information about watches in that directory.
+@c <en>If you attempt to use @sc{cvs} 1.6 or earlier with the
+@c <en>repository, you get an error message such as the
+@c <en>following (all on one line):
 If you use the watch features on a repository, it
 creates @file{CVS} directories in the repository and
 stores the information about watches in that directory.
@@ -10382,6 +10762,13 @@ No such file or directory
 @end example
 
 @noindent
+@c <en>and your operation will likely be aborted.  To use the
+@c <en>watch features, you must upgrade all copies of @sc{cvs}
+@c <en>which use that repository in local or server mode.  If
+@c <en>you cannot upgrade, use the @code{watch off} and
+@c <en>@code{watch remove} commands to remove all watches, and
+@c <en>that will restore the repository to a state which
+@c <en>@sc{cvs} 1.6 can cope with.
 and your operation will likely be aborted.  To use the
 watch features, you must upgrade all copies of @sc{cvs}
 which use that repository in local or server mode.  If
@@ -10390,10 +10777,21 @@ you cannot upgrade, use the @code{watch off} and
 that will restore the repository to a state which
 @sc{cvs} 1.6 can cope with.
 
+@c <en>@node Choosing a model
 @node Choosing a model
+@c <en>@section Choosing between reserved or unreserved checkouts
 @section Choosing between reserved or unreserved checkouts
+@c <en>@cindex Choosing, reserved or unreserved checkouts
 @cindex Choosing, reserved or unreserved checkouts
 
+@c <en>Reserved and unreserved checkouts each have pros and
+@c <en>cons.  Let it be said that a lot of this is a matter of
+@c <en>opinion or what works given different groups' working
+@c <en>styles, but here is a brief description of some of the
+@c <en>issues.  There are many ways to organize a team of
+@c <en>developers.  @sc{cvs} does not try to enforce a certain
+@c <en>organization.  It is a tool that can be used in several
+@c <en>ways.
 Reserved and unreserved checkouts each have pros and
 cons.  Let it be said that a lot of this is a matter of
 opinion or what works given different groups' working
@@ -10403,6 +10801,12 @@ developers.  @sc{cvs} does not try to enforce a certain
 organization.  It is a tool that can be used in several
 ways.
 
+@c <en>Reserved checkouts can be very counter-productive.  If
+@c <en>two persons want to edit different parts of a file,
+@c <en>there may be no reason to prevent either of them from
+@c <en>doing so.  Also, it is common for someone to take out a
+@c <en>lock on a file, because they are planning to edit it,
+@c <en>but then forget to release the lock.
 Reserved checkouts can be very counter-productive.  If
 two persons want to edit different parts of a file,
 there may be no reason to prevent either of them from
@@ -10413,6 +10817,12 @@ but then forget to release the lock.
 @c "many groups"?  specifics?  cites to papers on this?
 @c some way to weasel-word it a bit more so we don't
 @c need facts :-)?
+@c <en>People, especially people who are familiar with
+@c <en>reserved checkouts, often wonder how often conflicts
+@c <en>occur if unreserved checkouts are used, and how
+@c <en>difficult they are to resolve.  The experience with
+@c <en>many groups is that they occur rarely and usually are
+@c <en>relatively straightforward to resolve.
 People, especially people who are familiar with
 reserved checkouts, often wonder how often conflicts
 occur if unreserved checkouts are used, and how
@@ -10420,6 +10830,13 @@ difficult they are to resolve.  The experience with
 many groups is that they occur rarely and usually are
 relatively straightforward to resolve.
 
+@c <en>The rarity of serious conflicts may be surprising, until one realizes
+@c <en>that they occur only when two developers disagree on the proper design
+@c <en>for a given section of code; such a disagreement suggests that the
+@c <en>team has not been communicating properly in the first place.  In order
+@c <en>to collaborate under @emph{any} source management regimen, developers
+@c <en>must agree on the general design of the system; given this agreement,
+@c <en>overlapping changes are usually straightforward to merge.
 The rarity of serious conflicts may be surprising, until one realizes
 that they occur only when two developers disagree on the proper design
 for a given section of code; such a disagreement suggests that the
@@ -10428,6 +10845,15 @@ to collaborate under @emph{any} source management regimen, developers
 must agree on the general design of the system; given this agreement,
 overlapping changes are usually straightforward to merge.
 
+@c <en>In some cases unreserved checkouts are clearly
+@c <en>inappropriate.  If no merge tool exists for the kind of
+@c <en>file you are managing (for example word processor files
+@c <en>or files edited by Computer Aided Design programs), and
+@c <en>it is not desirable to change to a program which uses a
+@c <en>mergeable data format, then resolving conflicts is
+@c <en>going to be unpleasant enough that you generally will
+@c <en>be better off to simply avoid the conflicts instead, by
+@c <en>using reserved checkouts.
 In some cases unreserved checkouts are clearly
 inappropriate.  If no merge tool exists for the kind of
 file you are managing (for example word processor files
@@ -10438,6 +10864,17 @@ going to be unpleasant enough that you generally will
 be better off to simply avoid the conflicts instead, by
 using reserved checkouts.
 
+@c <en>The watches features described above in @ref{Watches}
+@c <en>can be considered to be an intermediate model between
+@c <en>reserved checkouts and unreserved checkouts.  When you
+@c <en>go to edit a file, it is possible to find out who else
+@c <en>is editing it.  And rather than having the system
+@c <en>simply forbid both people editing the file, it can tell
+@c <en>you what the situation is and let you figure out
+@c <en>whether it is a problem in that particular case or not.
+@c <en>Therefore, for some groups it can be considered the
+@c <en>best of both the reserved checkout and unreserved
+@c <en>checkout worlds.
 The watches features described above in @ref{Watches}
 can be considered to be an intermediate model between
 reserved checkouts and unreserved checkouts.  When you
@@ -10461,32 +10898,57 @@ checkout worlds.
 @c -- This chapter could be expanded a lot.
 @c -- Experiences are very welcome!
 
+@c <en>If you have read this far, you probably have a pretty
+@c <en>good grasp on what @sc{cvs} can do for you.  This
+@c <en>chapter talks a little about things that you still have
+@c <en>to decide.
 If you have read this far, you probably have a pretty
 good grasp on what @sc{cvs} can do for you.  This
 chapter talks a little about things that you still have
 to decide.
 
+@c <en>If you are doing development on your own using @sc{cvs}
+@c <en>you could probably skip this chapter.  The questions
+@c <en>this chapter takes up become more important when more
+@c <en>than one person is working in a repository.
 If you are doing development on your own using @sc{cvs}
 you could probably skip this chapter.  The questions
 this chapter takes up become more important when more
 than one person is working in a repository.
 
 @menu
+@c <en>* When to commit::              Some discussion on the subject
 * When to commit::              Some discussion on the subject
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node When to commit
 @node When to commit
+@c <en>@section When to commit?
 @section When to commit?
+@c <en>@cindex When to commit
 @cindex When to commit
+@c <en>@cindex Committing, when to
 @cindex Committing, when to
+@c <en>@cindex Policy
 @cindex Policy
 
+@c <en>Your group should decide which policy to use regarding
+@c <en>commits.  Several policies are possible, and as your
+@c <en>experience with @sc{cvs} grows you will probably find
+@c <en>out what works for you.
 Your group should decide which policy to use regarding
 commits.  Several policies are possible, and as your
 experience with @sc{cvs} grows you will probably find
 out what works for you.
 
+@c <en>If you commit files too quickly you might commit files
+@c <en>that do not even compile.  If your partner updates his
+@c <en>working sources to include your buggy file, he will be
+@c <en>unable to compile the code.  On the other hand, other
+@c <en>persons will not be able to benefit from the
+@c <en>improvements you make to the code if you commit very
+@c <en>seldom, and conflicts will probably be more common.
 If you commit files too quickly you might commit files
 that do not even compile.  If your partner updates his
 working sources to include your buggy file, he will be
@@ -10495,6 +10957,15 @@ persons will not be able to benefit from the
 improvements you make to the code if you commit very
 seldom, and conflicts will probably be more common.
 
+@c <en>It is common to only commit files after making sure
+@c <en>that they can be compiled.  Some sites require that the
+@c <en>files pass a test suite.  Policies like this can be
+@c <en>enforced using the commitinfo file
+@c <en>(@pxref{commitinfo}), but you should think twice before
+@c <en>you enforce such a convention.  By making the
+@c <en>development environment too controlled it might become
+@c <en>too regimented and thus counter-productive to the real
+@c <en>goal, which is to get software written.
 It is common to only commit files after making sure
 that they can be compiled.  Some sites require that the
 files pass a test suite.  Policies like this can be
@@ -10539,11 +11010,17 @@ with strings of the form
 a new revision of the file.
 
 @menu
+@c <en>* Keyword list::                   Keywords
 * Keyword list::                   Keywords
+@c <en>* Using keywords::                 Using keywords
 * Using keywords::                 Using keywords
+@c <en>* Avoiding substitution::          Avoiding substitution
 * Avoiding substitution::          Avoiding substitution
-* Substitution modes::             Substitution modes
+@c <en>* Substitution modes::             Substitution modes
+* Modos de substituição::             Modos de substituição
+@c <en>* Configuring keyword expansion::  Configuring keyword expansion
 * Configuring keyword expansion::  Configuring keyword expansion
+@c <en>* Log keyword::                    Problems with the $@splitrcskeyword{}Log$ keyword.
 * Log keyword::                    Problems with the $@splitrcskeyword{}Log$ keyword.
 @end menu
 
@@ -10781,9 +11258,13 @@ you might want the literal text string
 @sc{cvs} interpreting it as a keyword and expanding it
 into something like @samp{$@splitrcskeyword{}Author: ceder $}.
 
+@c <en>There is unfortunately no way to selectively turn off
+@c <en>keyword substitution.  You can use @samp{-ko}
+@c <en>(@pxref{Substitution modes}) to turn off keyword
+@c <en>substitution entirely.
 There is unfortunately no way to selectively turn off
 keyword substitution.  You can use @samp{-ko}
-(@pxref{Substitution modes}) to turn off keyword
+(@pxref{Modos de substituição}) to turn off keyword
 substitution entirely.
 
 In many cases you can avoid using keywords in
@@ -10804,9 +11285,9 @@ for use with the @code{LocalKeyword} option--see
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Substitution modes
-@node Substitution modes
+@node Modos de substituição
 @c <en>@section Substitution modes
-@section Substitution modes
+@section Modos de substituição
 @c <en>@cindex Keyword substitution, changing modes
 @cindex Keyword substitution, changing modes
 @c <en>@cindex -k (keyword substitution)
@@ -14197,8 +14678,10 @@ files, instead of using the module name.
 @xref{checkout options}, for complete details on how
 @sc{cvs} handles this flag.
 
+@c <en>@item -k @var{subst}
 @item -k @var{subst}
-Set keyword expansion mode (@pxref{Substitution modes}).
+@c <en>Set keyword expansion mode (@pxref{Substitution modes}).
+Set keyword expansion mode (@pxref{Modos de substituição}).
 
 @item -N
 Only useful together with @samp{-d @var{dir}}.
@@ -14506,11 +14989,17 @@ There are the following additional special options.
 @item -b @var{branch}
 See @ref{Multiple vendor branches}.
 
+@c <en>@item -k @var{subst}
 @item -k @var{subst}
+@c <en>Indicate the keyword expansion mode desired.  This
+@c <en>setting will apply to all files created during the
+@c <en>import, but not to any files that previously existed in
+@c <en>the repository.  See @ref{Substitution modes}, for a
+@c <en>list of valid @samp{-k} settings.
 Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
-the repository.  See @ref{Substitution modes}, for a
+the repository.  See @ref{Modos de substituição}, for a
 list of valid @samp{-k} settings.
 
 @item -I @var{name}
@@ -15501,7 +15990,8 @@ Set the compression level (client only).
 See @ref{Opções globais}.
 @end table
 
-Keyword expansion modes (@pxref{Substitution modes}):
+@c <en>Keyword expansion modes (@pxref{Substitution modes}):
+Keyword expansion modes (@pxref{Modos de substituição}):
 
 @example
 -kkv  $@splitrcskeyword{}Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp $
@@ -15737,7 +16227,7 @@ Merge in changes.  See @ref{checkout options}.
 @c <en>Use @var{kflag} keyword expansion.  See
 @c <en>@ref{Substitution modes}.
 Use @var{kflag} keyword expansion.  See
-@ref{Substitution modes}.
+@ref{Modos de substituição}.
 
 @c <en>@item -l
 @item -l
@@ -15974,7 +16464,7 @@ Use head revision if tag/date not found.  See
 @c <en>Use @var{kflag} keyword expansion.  See
 @c <en>@ref{Substitution modes}.
 Use @var{kflag} keyword expansion.  See
-@ref{Substitution modes}.
+@ref{Modos de substituição}.
 
 @c <en>@item -l
 @item -l
@@ -16713,7 +17203,7 @@ Merge in changes.  See @ref{update options}.
 @c <en>Use @var{kflag} keyword expansion.  See
 @c <en>@ref{Substitution modes}.
 Use @var{kflag} keyword expansion.  See
-@ref{Substitution modes}.
+@ref{Modos de substituição}.
 
 @c <en>@item -l
 @item -l
