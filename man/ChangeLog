@@ -1,3 +1,9 @@
+2002-04-17  Derek Price  <oberon@umich.edu>
+
+	* cvs.1: Claim to be out of date and direct users to the Cederqvist.
+	Replace www.cyclic.com with cvshome.org.
+	* cvs.5: Ditto.
+
 2001-11-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvsbug.8: Fixed typo.
