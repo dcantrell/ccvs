@@ -12274,13 +12274,6 @@ behavior}.
 @cindex Reference manual (files)
 @cindex CVSROOT (file)
 
-@c FIXME?  Somewhere there needs to be a more "how-to"
-@c guide to writing these.  I think the triggers
-@c (commitinfo, loginfo, taginfo, &c) are perhaps a
-@c different case than files like modules.  One
-@c particular issue that people sometimes are
-@c (unnecessarily?) worried about is performance, and
-@c the impact of writing in perl or sh or ____.
 Inside the repository, in the directory
 @file{$CVSROOT/CVSROOT}, there are a number of
 supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
@@ -12295,9 +12288,7 @@ file, which defines the modules inside the repository.
 @menu
 * modules::                     Defining modules
 * Wrappers::                    Specify binary-ness based on file name
-* commit files::                The commit support files (commitinfo,
-                                verifymsg, loginfo)
-* taginfo::                     Verifying/Logging tags
+* script hooks::		Launch scripts in response to server events
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * checkoutlist::                Adding your own administrative files
@@ -12792,53 +12783,28 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @c (probably a CVS bug, although I haven't thought it out).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node commit files
-@appendixsec The commit support files
-@cindex Commits, administrative support files
-@cindex commit files, see Info files
+@node script hooks
+@appendixsec The scripting hooks
 
 The files described in this section provide flexible ways to run
 programs whenever something is committed.
 
-There are three kinds of programs that can be run on
-commit.  They are specified in files in the repository,
-as described below.  The following table summarizes the
-file names and the purpose of the corresponding
-programs.
-
-@table @file
-@item commitinfo
-The program is responsible for checking that the commit
-is allowed.  If it exits with a non-zero exit status
-the commit will be aborted.
-
-@item verifymsg
-The specified program is used to evaluate the log message,
-and possibly verify that it contains all required
-fields.  This is most useful in combination with the
-@file{rcsinfo} file, which can hold a log message
-template (@pxref{rcsinfo}).
-
-@item loginfo
-The specified program is called when the commit is
-complete.  It receives the log message and some
-additional information and can store the log message in
-a file, or mail it to appropriate persons, or maybe
-post it to a local newsgroup, or@dots{}  Your
-imagination is the limit!
-@end table
-
 @menu
 * syntax::                      The common syntax
-* commitinfo::                  Pre-commit checking
-* verifymsg::                   How are log messages evaluated?
-* loginfo::                     Where should log messages be sent?
 
-* Updating Commit Files::       Updating legacy repositories to stop using
-                                deprecated command line template formats
+* commit files::                The commit support files (commitinfo,
+                                verifymsg, loginfo)
+*   commitinfo::                Pre-commit checking
+*   verifymsg::                 How are log messages evaluated?
+*   loginfo::                   Where should log messages be sent?
+
+* postadmin::			Logging admin commands
+* taginfo::                     Verifying/Logging tags
+* posttag::                     Logging tags
+* postwatch::			Logging watch commands
 @end menu
 
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node syntax
 @appendixsubsec The common syntax
 @cindex Info files (syntax)
@@ -12856,13 +12822,17 @@ here.
 
 @cindex Regular expression syntax
 Each line contains the following:
+
 @itemize @bullet
+@cindex @samp{ALL} keyword, in lieu of regular expressions in script hooks
+@cindex @samp{DEFAULT} keyword, in lieu of regular expressions in script hooks
 @item
-@c Say anything about DEFAULT and ALL?  Right now we
-@c leave that to the description of each file (and in fact
-@c the practice is inconsistent which is really annoying).
-A regular expression.  This is a basic regular
-expression in the syntax used by GNU emacs.
+A regular expression or the literal string @samp{DEFAULT}.  Some script hooks
+also support the literal string @samp{ALL}.  Other than the @samp{ALL} and
+@samp{DEFAULT} keywords, this is a basic regular expression in the syntax used
+by GNU emacs.  See the descriptions of the individual script hooks for
+information on whether the @samp{ALL} keyword is supported
+(@pxref{script hooks}).
 @c FIXME: What we probably should be saying is "POSIX Basic
 @c Regular Expression with the following extensions (`\('
 @c `\|' '+' etc)"
@@ -12890,8 +12860,12 @@ unfortunately can @emph{not} be broken in two parts in
 any way.
 
 The first regular expression that matches the current
-directory name in the repository is used.  The rest of the line
-is used as a file name or command-line as appropriate.
+directory name in the repository or the first line containing @samp{DEFAULT}
+in lieu of a regular expression is used and all lines containing @samp{ALL} is
+used for the hooks which support the @samp{ALL} keyword.  The rest of the line
+is used as a file name or command-line template as appropriate.  See the
+descriptions of the individual script hooks for information on whether the
+@samp{ALL} keyword is supported (@pxref{script hooks}).
 
 @cindex format strings
 @cindex format strings, common syntax
@@ -12928,12 +12902,12 @@ single format character representing a variable or a single attribute of
 list elements or multiple format characters representing attributes of
 list elements, and a closing @samp{@}} when the open bracket was present.
 
-@emph{Flat} format strings (single format characters which get replaced
-with a single value) will generate a single argument
+@emph{Flat format strings}, or single format characters which get replaced
+with a single value, will generate a single argument
 to the called script, regardless of whether the replacement variable contains
 white space or other special characters.
 
-List attributes will generate an argument for each attribute
+@emph{List attributes} will generate an argument for each attribute
 requested for each list item.  For example, @samp{%@{sVv@}}
 in a @file{loginfo} command template will generate three
 arguments (file name, precommit version, postcommit version,
@@ -12947,17 +12921,22 @@ special characters.
 The format strings available to all script hooks are:
 
 @table @t
+@item c
+The canonical name of the command being executed.  For instance, in the case of
+a hook run from @code{cvs up}, @sc{cvs} would replace @samp{%c} with the string
+@samp{update} and, in the case of a hook run from @code{cvs ci}, @sc{cvs} would
+replace @samp{%c} with the string @samp{commit}.
 @item n
-the null, or empty, string
+The null, or empty, string.
 @item p
-the name of the directory being operated on within the repository
+The name of the directory being operated on within the repository.
 @item r
-the name of the repository (the path portion of @code{$CVSROOT})
+The name of the repository (the path portion of @code{$CVSROOT}).
 @end table
 
 Other format strings are file specific.  See the docs on the
-particular administration files for more information
-(@pxref{Administrative files}).
+particular script hooks for more information
+(@pxref{script hooks}).
 
 As an example, the following line in a @file{loginfo} file would
 match only the directory @file{module} and any subdirectories of
@@ -12985,8 +12964,53 @@ Log Message:
 A log message.
 @end example
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@node commit files
+@appendixsubsec The commit support files
+@cindex Commits, administrative support files
+@cindex commit files, see Info files
+
+The @samp{-i} flag in the @file{modules} file can be
+used to run a certain program whenever files are
+committed (@pxref{modules}).  The files described in
+this section provide other, more flexible, ways to run
+programs whenever something is committed.
+
+There are three kinds of programs that can be run on
+commit.  They are specified in files in the repository,
+as described below.  The following table summarizes the
+file names and the purpose of the corresponding
+programs.
+
+@table @file
+@item commitinfo
+The program is responsible for checking that the commit
+is allowed.  If it exits with a non-zero exit status
+the commit will be aborted.  @xref{commitinfo}.
+
+@item verifymsg
+The specified program is used to evaluate the log message,
+and possibly verify that it contains all required
+fields.  This is most useful in combination with the
+@file{rcsinfo} file, which can hold a log message
+template (@pxref{rcsinfo}).  @xref{verifymsg}.
+
+@item loginfo
+The specified program is called when the commit is
+complete.  It receives the log message and some
+additional information and can store the log message in
+a file, or mail it to appropriate persons, or maybe
+post it to a local newsgroup, or@dots{}  Your
+imagination is the limit!  @xref{loginfo}.
+@end table
+
+@menu
+* Updating Commit Files::       Updating legacy repositories to stop using
+                                deprecated command line template formats
+@end menu
+
+@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node Updating Commit Files
-@appendixsubsec  Updating legacy repositories to stop using deprecated command line template formats
+@appendixsubsubsec  Updating legacy repositories to stop using deprecated command line template formats
 @cindex Info files (syntax), updating legacy repositories
 @cindex Syntax of info files, updating legacy repositories
 @cindex Common syntax of info files, updating legacy repositories
@@ -13096,12 +13120,9 @@ ready to be committed.  This could be used, for
 instance, to verify that the changed files conform to
 to your site's standards for coding practice.
 
-As mentioned earlier, each line in the
-@file{commitinfo} file consists of a regular expression
-and a command-line template.  The template can include
-a program name and any number of arguments you wish to
-supply to it, as well as format strings.  For more info,
-@pxref{syntax}.
+The @file{commitinfo} file has the standard form for script hooks
+(@pxref{script hooks}), where each line is a regular expression followed by a
+command to execute.  It supports only the DEFAULT keywords.
 
 @cindex format strings, commitinfo admin file
 In addition to the common format strings (@pxref{syntax}),
@@ -13129,16 +13150,6 @@ command returns a non-zero exit status the commit will
 be aborted.
 @c FIXME: need example(s) of what "directory within the
 @c repository" means.
-
-@cindex DEFAULT in commitinfo
-If the repository name does not match any of the
-regular expressions in this file, the @samp{DEFAULT}
-line is used, if it is specified.
-
-@cindex ALL in commitinfo
-All occurrences of the name @samp{ALL} appearing as a
-regular expression are used in addition to the first
-matching regular expression or the name @samp{DEFAULT}.
 
 @cindex @file{commitinfo}, working directory
 @cindex @file{commitinfo}, command environment
@@ -13191,12 +13202,11 @@ that the entered message contains the required fields.
 
 The @file{verifymsg} file is often most useful together
 with the @file{rcsinfo} file, which can be used to
-specify a log message template.
+specify a log message template (@pxref{rcsinfo}).
 
-Each line in the @file{verifymsg} file consists of a
-regular expression and a command-line template.  The
-template must include a program name, and can include
-any number of arguments.
+The @file{verifymsg} file has the standard form for script hooks
+(@pxref{script hooks}), where each line is a regular expression followed by a
+command to execute.  It supports only the DEFAULT keywords.
 
 @cindex format strings, verifymsg admin file
 In addition to the common format strings (@pxref{syntax}),
@@ -13221,11 +13231,6 @@ keyword is not supported.  If more than one matching
 line is found, the first one is used.  This can be
 useful for specifying a default verification script in a
 directory, and then overriding it in a subdirectory.
-
-@cindex DEFAULT in @file{verifymsg}
-If the repository name does not match any of the
-regular expressions in this file, the @samp{DEFAULT}
-line is used, if it is specified.
 
 @cindex Exit status, of @file{verifymsg}
 If the verification script exits with a non-zero exit status,
@@ -13354,30 +13359,32 @@ RereadLogAfterVerify=always
 @cindex Distributing log messages
 @cindex Log messages
 
-@c "cvs commit" is not quite right.  What we
-@c mean is "when the repository gets changed" which
-@c also includes "cvs import" and "cvs add" on a directory.
-The @file{loginfo} file is used to control where
-@samp{cvs commit} log information is sent.  @xref{taginfo}, for
-how to log tagging information.
+The @file{loginfo} file is used to control where log information is sent after
+versioned changes are made to repository archive files and after directories
+are added ot the repository.  @ref{posttag} for how to log tagging
+information and @ref{postadmin} for how to log changes due to the @code{admin}
+command.
 
-The first entry on a line is a regular expression which is tested
-against the directory that the change is being made to,
-relative to the @code{$CVSROOT}.  If a match is found, then
-the remainder of the line is a filter program that
-should expect log information on its standard input.
-Note that the filter program @strong{must} read @strong{all}
-of the log information or @sc{cvs} may fail with a broken pipe signal.
+The @file{loginfo} file has the standard form for script hooks
+(@pxref{script hooks}), where each line is a regular expression followed by a
+command to execute.  It supports the ALL and DEFAULT keywords.
 
-If the repository name does not match any of the
-regular expressions in this file, the @samp{DEFAULT}
-line is used, if it is specified.
+Any specified scripts are called:
 
-All occurrences of the name @samp{ALL} appearing as a
-regular expression are used in addition to the first
-matching regular expression or @samp{DEFAULT}.
+@table @code
+@item commit
+Once per directory, immediately after a successfully completing the commit of
+all files within that directory.
+@item import
+Once per import, immediately after completion of all write operations.
+@item add
+Immediately after the successful @code{add} of a directory.
+@end table
 
-The first matching regular expression is used.
+Any script called via @file{loginfo} will be fed the log information on its
+standard input.  Note that the filter program @strong{must} read @strong{all}
+of the log information from its standard input or @sc{cvs} may fail with a
+broken pipe signal.
 
 @cindex format strings, loginfo admin file
 In addition to the common format strings (@pxref{syntax}),
@@ -13407,9 +13414,6 @@ as they were in past versions of @sc{cvs}, but this feature is deprecated.
 It is simply in place so that legacy repositories will remain compatible with
 the new @sc{cvs} application.  For information on updating,
 please see @ref{Updating Commit Files}.
-
-@xref{commit files}, for a description of the syntax of the @file{loginfo}
-file.
 
 As an example, if @samp{/u/src/master/yoyodyne/tc} is the repository, @samp{%p}
 and @samp{%@{sVv@}} are the format strings, and three files (@t{ChangeLog},
@@ -13465,6 +13469,9 @@ like this:
  cat) >> $1
 @end example
 
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Keeping a checked out copy
 @appendixsubsubsec Keeping a checked out copy
 
@@ -13514,7 +13521,144 @@ out tree in @file{/u/www/local-docs}.
 @c so if we are lucky the lock will be gone by the time
 @c we start and we can wait 2 seconds instead of 30.
 
+
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postadmin
+@appendixsubsec Logging admin commands
+@cindex postadmin (admin file)
+@cindex script hook, postadmin
+@cindex Admin commands, logging
+
+The @file{postadmin} file defines programs to execute after an @code{admin}
+command modifies files.  The @file{postadmin} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, postadmin admin file
+The @file{postadmin} file supports no format strings other than the common
+ones (@pxref{syntax}),
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node taginfo
+@appendixsubsec Taginfo
+@cindex taginfo (admin file)
+@cindex script hook, taginfo
+@cindex Tags, logging
+@cindex Tags, verifying
+The @file{taginfo} file defines programs to execute
+when someone executes a @code{tag} or @code{rtag}
+command.  The @file{taginfo} file has the standard form
+for script hooks (@pxref{script hooks}), where each line
+is a regular expression followed by a command to execute.
+It supports the ALL and DEFAULT keywords.
+
+@cindex format strings, taginfo admin file
+In addition to the common format strings (@pxref{syntax}),
+@file{taginfo} supports:
+
+@table @t
+@item b
+tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
+unknown, as during delete operations)
+@item o
+operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
+@code{del} for @code{tag -d})
+@item t
+tag name
+@item @{sVv@}
+file attributes, where:
+@table @t
+@item s
+file name
+@item V
+old version number (for a move or delete operation)
+@item v
+new version number (for an add or move operation)
+@end table
+@end table
+
+For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
+@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
+
+@cindex taginfo (admin file), updating legacy repositories
+@cindex compatibility notes, taginfo admin file
+Currently, if no format strings are specified, a default
+string of @samp{ %t %o %p %@{sv@}} will be appended to the command
+line template before replacement is performed, but this
+feature is deprecated.  It is simply in place so that legacy
+repositories will remain compatible with the new @sc{cvs} application.
+For information on updating, @pxref{Updating Commit Files}.
+
+@cindex Exit status, of taginfo admin file
+@cindex taginfo (admin file), exit status
+A non-zero exit of the filter program will cause the tag to be
+aborted.
+
+Here is an example of using @file{taginfo} to log @code{tag} and @code{rtag}
+commands.  In the @file{taginfo} file put:
+
+@example
+ALL /usr/local/cvsroot/CVSROOT/loggit %t %b %o %p %@{sVv@}
+@end example
+
+@noindent
+Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
+following script:
+
+@example
+#!/bin/sh
+echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
+@end example
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node posttag
+@appendixsubsec Logging tags
+@cindex posttag (admin file)
+@cindex script hook, posttag
+@cindex Tags, logging
+
+The @file{posttag} file defines programs to execute after a @code{tag} or
+@code{rtag} command modifies files.  The @file{posttag} file has the standard
+form for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, posttag admin file
+The @file{posttag} admin file supports the same format strings as the
+@file{taginfo} file (@pxref{taginfo}),
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postwatch
+@appendixsubsec Logging watch commands
+@cindex postwatch (admin file)
+@cindex script hook, postwatch
+@cindex Watch family of commands, logging
+
+The @file{postwatch} file defines programs to execute after any command (for
+instance, @code{watch}, @code{edit}, @code{unedit}, or @code{commit}) modifies
+any @file{CVS/fileattr} file in the repository (@pxref{Watches}).  The
+@file{postwatch} file has the standard form for script hooks
+(@pxref{script hooks}), where each line is a regular expression followed by a
+command to execute.  It supports the ALL and DEFAULT keywords.
+
+@cindex format strings, postwatch admin file
+The @file{postwatch} file supports no format strings other than the common
+ones (@pxref{syntax}), but it is worth noting that the @code{%c} format string
+may not be replaced as you might expect.  Client runs of @code{edit} and
+@code{unedit} can sometimes skip contacting the @sc{cvs} server and cache the
+notification of the file attribute change to be sent the next time the client
+contacts the server for whatever other reason,
+
+
+
 @node rcsinfo
 @appendixsec Rcsinfo
 @cindex rcsinfo (admin file)
@@ -13574,76 +13718,8 @@ In versions of @sc{cvs} prior to version 1.12, the
 client may be used and the @file{CVS/Template} will
 be updated from the server.
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node taginfo
-@appendixsec Taginfo
-@cindex taginfo (admin file)
-@cindex Tags, logging
-@cindex Tags, verifying
-The @file{taginfo} file defines programs to execute
-when someone executes a @code{tag} or @code{rtag}
-command.  The @file{taginfo} file has the standard form
-for administrative files (@pxref{Administrative
-files}), where each line is a regular expression
-followed by a command to execute.
 
-@cindex format strings, taginfo admin file
-In addition to the common format strings (@pxref{syntax}),
-@file{taginfo} supports:
 
-@table @t
-@item b
-tag type (@code{T} for branch, @code{N} for not-branch, or @code{?} for
-unknown, as during delete operations)
-@item o
-operation (@code{add} for @code{tag}, @code{mov} for @code{tag -F}, or
-@code{del} for @code{tag -d})
-@item t
-tag name
-@item @{sVv@}
-file attributes, where:
-@table @t
-@item s
-file name
-@item V
-old version number (for a move or delete operation)
-@item v
-new version number (for an add or move operation)
-@end table
-@end table
-
-For example, some valid format strings are @samp{%%}, @samp{%p}, @samp{%t},
-@samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
-
-@cindex taginfo (admin file), updating legacy repositories
-@cindex compatibility notes, taginfo admin file
-Currently, if no format strings are specified, a default
-string of @samp{ %t %o %p %@{sv@}} will be appended to the command
-line template before replacement is performed, but this
-feature is deprecated.  It is simply in place so that legacy
-repositories will remain compatible with the new @sc{cvs} application.
-For information on updating, @pxref{Updating Commit Files}.
-
-@cindex Exit status, of taginfo admin file
-@cindex taginfo (admin file), exit status
-A non-zero exit of the filter program will cause the tag to be
-aborted.
-
-Here is an example of using @file{taginfo} to log @code{tag} and @code{rtag}
-commands.  In the @file{taginfo} file put:
-
-@example
-ALL /usr/local/cvsroot/CVSROOT/loggit %t %b %o %p %@{sVv@}
-@end example
-
-@noindent
-Where @file{/usr/local/cvsroot/CVSROOT/loggit} contains the
-following script:
-
-@example
-#!/bin/sh
-echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
-@end example
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore
 @appendixsec Ignoring files via cvsignore

@@ -3,6 +3,17 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* Thanks to funding from Juniper Networks <http://juniper.net>, new scripting
+  hooks have been added to the CVS server.  These are the postadmin, posttag,
+  and postwatch hooks.  See the manual for more info.
+
+* Thanks to funding from Juniper Networks <http://juniper.net>, all the
+  existing scripting hooks may now optionally be passed a command name
+  argument.
+
+* Thanks to funding from Juniper Networks <http://juniper.net>, new tags are
+  cached in the val-tags file at the time of tag creation.
+
 * Thanks to a patch from Brian Murphy <brian@murphy.dk>, CVS now supports PAM
   session management.
 
