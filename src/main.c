@@ -353,6 +353,7 @@ lookup_command_attribute (cmd_name)
         (strcmp (cmd_name, "log") != 0) &&
         (strcmp (cmd_name, "noop") != 0) &&
         (strcmp (cmd_name, "watchers") != 0) &&
+        (strcmp (cmd_name, "release") != 0) &&
         (strcmp (cmd_name, "status") != 0))
     {
         ret |= CVS_CMD_MODIFIES_REPOSITORY;
