@@ -12742,6 +12742,10 @@ for setting up the CVS server.
 @c FIXCVS: should be printing CR as \r or \015 or some
 @c such, probably.
 
+@item cvs commit: [@var{time}] waiting for @var{user}'s lock in @var{directory}
+This is a normal message, not an error.  See
+@ref{Concurrency}, for more details.
+
 @item cvs commit: warning: editor session failed
 @cindex exit status, of editor
 This means that the editor which @sc{cvs} is using exits with a nonzero

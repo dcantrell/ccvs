@@ -1,3 +1,7 @@
+1999-01-21  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "waiting for USER's lock".
+
 1999-01-16  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Wrappers): Comment out all the -t/-f documentation,
