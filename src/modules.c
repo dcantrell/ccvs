@@ -119,10 +119,6 @@ do_module (db, mname, m_type, msg, callback_proc, where,
       }
 #endif
 
-    /* remember where we start */
-    if (save_cwd (&cwd))
-	exit (1);
-
     /* if this is a directory to ignore, add it to that list */
     if (mname[0] == '!' && mname[1] != '\0')
     {
@@ -297,6 +293,10 @@ do_module (db, mname, m_type, msg, callback_proc, where,
      */
   found:
 
+    /* remember where we start */
+    if (save_cwd (&cwd))
+	exit (1);
+
     /* copy value to our own string since if we go recursive we'll be
        really screwed if we do another dbm lookup */
     zvalue = xstrdup (value);
@@ -438,6 +438,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		if (mwhere)
 		    free (mwhere);
 		free (zvalue);
+		free_cwd (&cwd);
 		return (err);
 	}
     }
@@ -449,6 +450,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	if (mwhere)
 	    free (mwhere);
 	free (zvalue);
+	free_cwd (&cwd);
 	return (++err);
     }
 
@@ -471,6 +473,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	if (mwhere)
 	    free (mwhere);
 	free (zvalue);
+	free_cwd (&cwd);
 	return (err);
     }
 

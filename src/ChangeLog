@@ -1,3 +1,13 @@
+Wed Feb 21 07:30:16 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* modules.c (do_module): call free_cwd before exiting.
+
+	* recurse.c: Removed entries global variable.
+	(do_recursion): Declare entries.  Moved call to Entries_Close so
+ 	entries list is closed on all code paths.
+	(start_recursion): Removed call to Entries_Close, entries list has
+ 	been moved to do_recursion only.
+
 Tue Feb 20 22:10:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (update_dirent_proc): If dir lacks a CVS subdirectory,
