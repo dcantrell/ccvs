@@ -1,3 +1,8 @@
+Thu Jun  6 15:12:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vasprintf.c: If STDC_HEADERS, include stdlib.h rather than
+	declaring its functions ourself.
+
 Wed Jun 05 10:14:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
