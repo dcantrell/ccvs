@@ -1055,7 +1055,7 @@ static void
 read_hrecs (fname)
     char *fname;
 {
-    unsigned char *cpstart, *cp, *nl;
+    unsigned char *cpstart, *cpend, *cp, *nl;
     char *hrline;
     int i;
     int fd;
@@ -1072,7 +1072,7 @@ read_hrecs (fname)
 
     cpstart = xmalloc (2 * STAT_BLOCKSIZE(st_buf));
     cpstart[0] = '\0';
-    cp = cpstart;
+    cp = cpend = cpstart;
 
     hrec_max = HREC_INCREMENT;
     hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
@@ -1080,14 +1080,14 @@ read_hrecs (fname)
 
     for (;;)
     {
-	for (nl = cp; *nl && *nl != '\n'; nl++)
+	for (nl = cp; nl < cpend && *nl != '\n'; nl++)
 	    if (!isprint(*nl)) *nl = ' ';
 
-	if (!*nl)
+	if (nl >= cpend)
 	{
 	    if (nl - cp >= STAT_BLOCKSIZE(st_buf))
 	    {
-		error(1, 0, "history line too long (> %lu)",
+		error(1, 0, "history line %ld too long (> %lu)", hrec_idx + 1,
 		      (unsigned long) STAT_BLOCKSIZE(st_buf));
 	    }
 	    if (nl > cp)
@@ -1097,13 +1097,14 @@ read_hrecs (fname)
 	    i = read (fd, nl, STAT_BLOCKSIZE(st_buf));
 	    if (i > 0)
 	    {
-		nl[i] = '\0';
+		cpend = nl + i;
+		*cpend = '\0';
 		continue;
 	    }
 	    if (i < 0)
 		error (1, errno, "error reading history file");
 	    if (nl == cp) break;
-	    nl[1] = '\0';
+	    error (0, 0, "warning: no newline at end of history file");
 	}
 	*nl = '\0';
 
@@ -1197,7 +1198,7 @@ select_hrec (hr)
     if (!hr->type || !hr->user || !hr->dir || !hr->repos || !hr->rev ||
 	!hr->file || !hr->end)
     {
-	error (0, 0, "warning: invalid history record at line %ld", hr->idx);
+	error (0, 0, "warning: history line %ld invalid", hr->idx);
 	return (0);
     }
 
