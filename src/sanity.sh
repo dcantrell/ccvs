@@ -6803,6 +6803,12 @@ change"
 	toplevel)
 	  # test the feature that cvs creates a CVS subdir also for
 	  # the toplevel directory
+
+	  # Some test, somewhere, is creating Emptydir.  That test
+	  # should, perhaps, clean up for itself, but I don't know which
+	  # one it is.
+	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
+
 	  mkdir 1; cd 1
 	  dotest toplevel-1 "${testcvs} -q co -l ." ''
 	  mkdir top-dir
