@@ -1,7 +1,7 @@
 ICC compilation errors, warnings, and informationals.
 
 ------------------------------------------------------------------------
-::: src/add
+::: src/add (getopt, begin_added_files set but not reffed)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/add
@@ -42,7 +42,7 @@ C:\src\cvs-1.6.1\src\checkin.c(204:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:03:25
 
 ------------------------------------------------------------------------
-::: src/checkout
+::: src/checkout (getopt, getwd)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/checkout
@@ -70,7 +70,11 @@ C:\src\cvs-1.6.1\src\classify.c(504:0) : informational EDC0802: Static variable 
 Compilation finished at Mon Nov 06 14:03:50
 
 ------------------------------------------------------------------------
-::: src/client [after installing dirent]
+::: src/client (read_line, getwd, call_in_directory, copy_a_file,
+                update_entries,  remove_entry, remove_entry_and_file,
+                set_static, is_cvsroot_level, clear_static,
+                set_sticky, clear_sticky, send_modified,
+                send_fileproc, send_dirent_proc, parse_cvsroot)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/client
@@ -98,7 +102,7 @@ C:\src\cvs-1.6.1\src\client.c(3033:5) : warning EDC0185: Function parse_cvsroot 
 Compilation finished at Mon Nov 06 19:10:36
 
 ------------------------------------------------------------------------
-::: src/commit
+::: src/commit (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/commit
@@ -125,7 +129,7 @@ C:\src\cvs-1.6.1\src\create_adm.c(144:0) : informational EDC0802: Static variabl
 Compilation finished at Mon Nov 06 14:04:34
 
 ------------------------------------------------------------------------
-::: src/cvsrc
+::: src/cvsrc (line_length set but not reffed)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/cvsrc
@@ -139,7 +143,7 @@ C:\src\cvs-1.6.1\src\cvsrc.c(151:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:04:51
 
 ------------------------------------------------------------------------
-::: src/diff
+::: src/diff (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/diff
@@ -153,7 +157,8 @@ C:\src\cvs-1.6.1\src\diff.c(633:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:05:17
 
 ------------------------------------------------------------------------
-::: src/entries
+::: src/entries (write_entries, Entnode_Create, freesdt,
+                 Entnode_Destroy, Entries_delproc, var `cp' not reffed) 
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/entries
@@ -197,7 +202,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:06:02
 
 ------------------------------------------------------------------------
-::: os2/filesubr
+::: os2/filesubr (these are all trivial)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../os2/filesubr
@@ -232,7 +237,7 @@ C:\src\cvs-1.6.1\os2\filesubr.c(733:0) : informational EDC0802: Static variable 
 Compilation finished at Wed Nov 08 15:32:53
 
 ------------------------------------------------------------------------
-::: src/find_names [after installing dirent]
+::: src/find_names
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/find_names
@@ -245,7 +250,7 @@ C:\src\cvs-1.6.1\src\find_names.c(275:0) : informational EDC0802: Static variabl
 Compilation finished at Mon Nov 06 19:17:28
 
 ------------------------------------------------------------------------
-::: src/hash
+::: src/hash (hashp, nodetypestring)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/hash
@@ -260,7 +265,7 @@ C:\src\cvs-1.6.1\src\hash.c(400:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:07:06
 
 ------------------------------------------------------------------------
-::: src/history
+::: src/history (getopt, getwd)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/history
@@ -288,7 +293,7 @@ C:\src\cvs-1.6.1\src\ignore.c(286:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:07:38
 
 ------------------------------------------------------------------------
-::: src/import
+::: src/import (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/import
@@ -340,7 +345,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:10:03
 
 ------------------------------------------------------------------------
-::: src/logmsg
+::: src/logmsg (getwd, pclose)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/logmsg
@@ -355,7 +360,7 @@ C:\src\cvs-1.6.1\src\logmsg.c(486:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:10:15
 
 ------------------------------------------------------------------------
-::: src/main
+::: src/main (error_cleanup, getwd, main_cleanup)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/main
@@ -384,7 +389,7 @@ C:\src\cvs-1.6.1\src\mkmodules.c(435:0) : informational EDC0802: Static variable
 Compilation finished at Mon Nov 06 14:10:42
 
 ------------------------------------------------------------------------
-::: src/modules
+::: src/modules (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/modules
@@ -398,7 +403,7 @@ C:\src\cvs-1.6.1\src\modules.c(884:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:11:26
 
 ------------------------------------------------------------------------
-::: src/myndbm
+::: src/myndbm (myndbm_load_file)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/myndbm
@@ -438,7 +443,7 @@ C:\src\cvs-1.6.1\src\parseinfo.c(171:0) : informational EDC0802: Static variable
 Compilation finished at Mon Nov 06 14:11:59
 
 ------------------------------------------------------------------------
-::: src/patch
+::: src/patch (getopt, utime ???, getline)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/patch
@@ -454,7 +459,7 @@ C:\src\cvs-1.6.1\src\patch.c(613:0) : informational EDC0802: Static variable sta
 Compilation finished at Mon Nov 06 14:12:12
 
 ------------------------------------------------------------------------
-::: src/rcs
+::: src/rcs (RCS_reparsercsfile)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/rcs
@@ -480,7 +485,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:12:45
 
 ------------------------------------------------------------------------
-::: src/recurse
+::: src/recurse (getwd)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/recurse
@@ -494,7 +499,7 @@ C:\src\cvs-1.6.1\src\recurse.c(634:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:13:05
 
 ------------------------------------------------------------------------
-::: src/release
+::: src/release (getopt, popen, pclose, srepos set but not reffed)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/release
@@ -514,7 +519,7 @@ C:\src\cvs-1.6.1\src\release.c(261:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 14:13:21
 
 ------------------------------------------------------------------------
-::: src/remove
+::: src/remove (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/remove
@@ -554,7 +559,7 @@ C:\src\cvs-1.6.1\src\root.c(182:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:13:55
 
 ------------------------------------------------------------------------
-::: src/rtag
+::: src/rtag (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/rtag
@@ -568,7 +573,8 @@ C:\src\cvs-1.6.1\src\rtag.c(692:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:14:15
 
 ------------------------------------------------------------------------
-::: src/run
+::: src/run (fork, execvp, SIGQUIT, wait, SIGPIPE, qstat set but not
+             reffed, popen, pipe)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/run
@@ -602,7 +608,7 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:14:34
 
 ------------------------------------------------------------------------
-::: src/status
+::: src/status (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/status
@@ -629,7 +635,7 @@ C:\src\cvs-1.6.1\src\subr.c(310:0) : informational EDC0802: Static variable stan
 Compilation finished at Mon Nov 06 14:14:54
 
 ------------------------------------------------------------------------
-::: src/tag
+::: src/tag (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/tag
@@ -643,7 +649,7 @@ C:\src\cvs-1.6.1\src\tag.c(582:0) : informational EDC0802: Static variable stand
 Compilation finished at Mon Nov 06 14:15:04
 
 ------------------------------------------------------------------------
-::: src/update [after fixing S_IF* macros]
+::: src/update (getopt)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/update
@@ -657,7 +663,7 @@ C:\src\cvs-1.6.1\src\update.c(1882:0) : informational EDC0802: Static variable s
 Compilation finished at Mon Nov 06 20:29:55
 
 ------------------------------------------------------------------------
-::: src/vers_ts
+::: src/vers_ts (utime ???)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/vers_ts
@@ -684,7 +690,7 @@ C:\src\cvs-1.6.1\src\version.c(34:0) : informational EDC0802: Static variable st
 Compilation finished at Mon Nov 06 14:15:36
 
 ------------------------------------------------------------------------
-::: src/wrapper
+::: src/wrapper (wrap_matching_entry)
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/wrapper
@@ -696,7 +702,9 @@ C:\src\cvs-1.6.1\src\wrapper.c(333:21) : warning EDC0185: Function wrap_matching
 
 Compilation finished at Mon Nov 06 14:15:46
 
-------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+                              LIB/ ERRORS
+-----------------------------------------------------------------------------
 ::: lib/argmatch [albeit without HAVE_CONFIG_H defined]
 
 cd c:/src/cvs-1.6.1/os2/
@@ -1077,6 +1085,3 @@ ECHO is on.
 icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/yesno.obj ../lib/yesno.c
 
 Compilation finished at Mon Nov 06 21:35:29
-
-------------------------------------------------------------------------
-::: lib/
