@@ -515,6 +515,11 @@ get_short_pathname (name)
     return (char *) retval;
 }
 
+/* This variable holds the result of Entries_Open, so that we can
+   close Entries_Close on it when we move on to a new directory, or
+   when we finish.  */
+static List *last_entries;
+
 /*
  * Do all the processing for PATHNAME, where pathname consists of the
  * repository and the filename.  The parameters we pass to FUNC are:
@@ -535,8 +540,6 @@ call_in_directory (pathname, func, data)
 			  char *filename));
     char *data;
 {
-    static List *last_entries;
-
     char *dir_name;
     char *filename;
     /* Just the part of pathname relative to toplevel_repos.  */
@@ -2617,6 +2620,12 @@ int
 get_responses_and_close ()
 {
     int errs = get_server_responses ();
+
+    if (last_entries != NULL)
+    {
+	Entries_Close (last_entries);
+	last_entries = NULL;
+    }
 
     do_deferred_progs ();
 
