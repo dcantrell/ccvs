@@ -10754,6 +10754,11 @@ done"
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
 "${PROG} [a-z]*: re-adding file file1 (in place of dead revision 1\.2)
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  # The idea behind this test is to make sure that the file
+	  # gets opened in binary mode to send to "cvs ci".
+	  dotest binfiles3-6a "cat CVS/Entries" \
+"/file1/0/[A-Za-z0-9 :]*/-kb/
+D"
 	  dotest binfiles3-7 "${testcvs} -q ci -m readd-it" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1

@@ -420,7 +420,7 @@ file `%s' will be added on branch `%s' from version %s",
 re-adding file %s (in place of dead revision %s)",
 				   finfo.fullname, vers->vn_rcs);
 			Register (entries, finfo.file, "0", vers->ts_user,
-				  NULL,
+				  vers->options,
 				  vers->tag, NULL, NULL);
 			++added_files;
 		    }
