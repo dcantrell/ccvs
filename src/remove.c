@@ -17,6 +17,10 @@
 
 #include "cvs.h"
 
+#ifdef CLIENT_SUPPORT
+static int remove_force_fileproc PROTO ((void *callerdat,
+					 struct file_info *finfo));
+#endif
 static int remove_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static Dtype remove_dirproc PROTO ((void *callerdat, char *dir,
 				    char *repos, char *update_dir,
@@ -82,15 +86,10 @@ cvsremove (argc, argv)
 	{
 	    if (!noexec)
 	    {
-		int i;
-
-		for (i = 0; i < argc; i++)
-		{
-		    if ( CVS_UNLINK (argv[i]) < 0 && ! existence_error (errno))
-		    {
-			error (0, errno, "unable to remove %s", argv[i]);
-		    }
-		}
+		start_recursion (remove_force_fileproc, (FILESDONEPROC) NULL,
+				 (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+				 (void *) NULL, argc, argv, local, W_LOCAL,
+				 0, 0, (char *) NULL, 0);
 	    }
 	    /* else FIXME should probably act as if the file doesn't exist
 	       in doing the following checks.  */
@@ -126,6 +125,26 @@ cvsremove (argc, argv)
 
     return (err);
 }
+
+#ifdef CLIENT_SUPPORT
+
+/*
+ * This is called via start_recursion if we are running as the client
+ * and the -f option was used.  We just physically remove the file.
+ */
+
+/*ARGSUSED*/
+static int
+remove_force_fileproc (callerdat, finfo)
+     void *callerdat;
+     struct file_info *finfo;
+{
+    if (CVS_UNLINK (finfo->file) < 0 && ! existence_error (errno))
+	error (0, errno, "unable to remove %s", finfo->fullname);
+    return 0;
+}
+
+#endif
 
 /*
  * remove the file, only if it has already been physically removed
