@@ -1,3 +1,10 @@
+Fri Nov  1 14:00:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (commit examples): Rewrite "New major release
+	number" section to tighten up the wording, better motivate the
+	discussion, and replace the term "rcs revision number" with
+	"numeric revision".
+
 Fri Oct 25 07:49:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (loginfo): Don't say "a la printf"; the syntax is
