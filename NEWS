@@ -1,5 +1,8 @@
 Changes since 1.11.9:
 
+* A bug which could stop `cvs admin -mTAG:message' from recursing has been
+  fixed.
+
 * Misc documentation cleanup and fixes.
 
 * Some of the contrib scripts, some of the documentation, and sanity.sh were
