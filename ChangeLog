@@ -1,3 +1,7 @@
+Sun Dec 31 16:52:49 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * NEWS: add a blurb about password authentication.
+
 Sun Dec 31 16:16:38 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Add "submissions will be distributed under the GPL"
