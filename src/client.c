@@ -4111,7 +4111,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
    (i.e., systems on which sockets cannot be converted to file
    descriptors).  The first person to try building a kerberos client
    on such a system (OS/2, Windows 95, and maybe others) will have to
-   make take care of this.  */
+   take care of this.  */
 void
 start_tcp_server (root, to_server, from_server)
     cvsroot_t *root;
@@ -4140,13 +4140,13 @@ start_tcp_server (root, to_server, from_server)
     {
 	fprintf (stderr, " -> Connecting to %s(%s):%d\n",
 		 root->hostname,
-		 inet_ntoa (client_sai.sin_addr), port);
+		 inet_ntoa (sin.sin_addr), port);
     }
 
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
 	       root->hostname,
-	       inet_ntoa (client_sai.sin_addr),
+	       inet_ntoa (sin.sin_addr),
 	       port, SOCK_STRERROR (SOCK_ERRNO));
 
     {
