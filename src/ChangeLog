@@ -1,3 +1,9 @@
+Tue Sep 17 01:13:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* status.c (status_fileproc): Instead of a default case, set sstat
+	before the switch.  This way gcc -Wall can detect a missed case.
+	Add explicit T_TITLE case.
+
 Tue Sep 17 00:09:44 1996  Assar Westerlund  <assar@pdc.kth.se>
 
 	* login.c (login): Print usage if argc < 0.
