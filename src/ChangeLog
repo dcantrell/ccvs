@@ -1,5 +1,7 @@
 2002-11-19  Larry Jones  <lawrence.jones@eds.com>
 
+	* log.c (log_expand_revlist): Fix cross-branch correction code.
+
 	* sanity.sh: Set $LANG for systems that ignore $LC_ALL.
 	(rcs2-7): Change date offset from 100 months to 96 months to reduce
 	periodic problems with invalid dates.

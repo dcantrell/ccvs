@@ -1195,8 +1195,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 			nr->next = NULL;
 			*pr = nr;
 			nr = (struct revlist *) xmalloc (sizeof *nr);
-			nr->inclusive = (*pr)->inclusive;
-			(*pr)->inclusive = 1;
+			nr->inclusive = 1;
 			nr->first = xstrdup ((*pr)->last);
 			nr->last = xstrdup ((*pr)->last);
 			nr->fields = (*pr)->fields;
@@ -1207,7 +1206,8 @@ log_expand_revlist (rcs, revlist, default_branch)
 			p = strchr (nr->first + (p - (*pr)->last), '.');
 			if (p != NULL)
 			{
-			    *p = '\0';
+			    *++p = '0';
+			    *++p = '\0';
 			    nr->fields += 2;
 			}
 			else
