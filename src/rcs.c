@@ -16,6 +16,9 @@
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
 # include <sys/mman.h>
+# ifndef HAVE_GETPAGESIZE
+#  include "getpagesize.h"
+# endif
 #endif
 
 int preserve_perms = 0;
@@ -63,8 +66,10 @@ static void rcsbuf_close PROTO ((struct rcsbuffer *));
 static int rcsbuf_getkey PROTO ((struct rcsbuffer *, char **keyp,
 				 char **valp));
 static int rcsbuf_getrevnum PROTO ((struct rcsbuffer *, char **revp));
+#ifndef HAVE_MMAP
 static char *rcsbuf_fill PROTO ((struct rcsbuffer *, char *ptr, char **keyp,
 				 char **valp));
+#endif
 static int rcsbuf_valcmp PROTO ((struct rcsbuffer *));
 static char *rcsbuf_valcopy PROTO ((struct rcsbuffer *, char *val, int polish,
 				    size_t *lenp));
@@ -1005,7 +1010,7 @@ rcsbuf_open (rcsbuf, fp, filename, pos)
 
 	if (pos)
 	{
-	    long ps = sysconf ( _SC_PAGE_SIZE );
+	    size_t ps = getpagesize ();
 	    mmap_off = ( pos / ps ) * ps;
 	}
 
@@ -8048,8 +8053,10 @@ RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
     char *bufrest;
     int nls;
     size_t buflen;
+#ifndef HAVE_MMAP
     char buf[8192];
     int got;
+#endif
 
     /* Count the number of versions for which we have to do some
        special operation.  */
