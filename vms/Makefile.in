@@ -295,6 +295,7 @@ EXTRA_DIST = \
 	vmsmunch_private.h \
 	waitpid.c
 
+DISTCLEANFILES = stamp-ch
 all: all-am
 
 .SUFFIXES:
@@ -386,6 +387,7 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
