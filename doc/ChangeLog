@@ -1,3 +1,8 @@
+Sun Nov  3 21:22:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Common options): Add comment about how tar manual
+	contains documentation for getdate date formats.
+
 Fri Nov  1 14:00:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (commit examples): Rewrite "New major release

@@ -5190,6 +5190,11 @@ further updates in the same directory will use the same date
 @c use to specify dates)?  We want to rely on standards
 @c like ISO8601 and RFC822 as much as practical, but
 @c which standard(s)?....
+@c 
+@c NOTE: The tar manual has some documentation for getdate.y which we
+@c might want to lift.  Although the caveats about whether we want to
+@c document only the "most official" formats still applies...
+@c 
 @cindex timezone, in input
 @cindex zone, time, in input
 A wide variety of date formats are supported by
