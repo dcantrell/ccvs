@@ -1,3 +1,9 @@
+Mon Apr  8 15:59:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Connection and Authentication): Revise kerberos
+	and pserver sections to reflect the fact that port 2401 is now
+	officially registered.
+
 Thu Mar 28 09:51:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (History browsing): Reinstate this node.  Try to get
