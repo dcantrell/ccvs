@@ -41,9 +41,8 @@ INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
-# intro.doc used to be in this list, but wasn't in the disty I got.
 DISTFILES = \
-	ChangeLog README .cvsignore \
+	ChangeLog README .cvsignore intro.doc \
 	Makefile.in clmerge cln_hist.pl commit_prep.pl cvs_acls.pl \
 	cvscheck cvscheck.man cvshelp.man descend descend.man dirfns \
 	log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcs2log rcslock.pl \
