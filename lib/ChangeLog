@@ -1,3 +1,8 @@
+Wed Nov 15 15:36:03 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * system.h: ifdef USE_OWN_TCPIP_H, then include "tcpip.h".  Only
+        OS/2 does this right now.
+
 Tue Nov 14 18:44:57 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* getdate.c: OK, this one is from SunOS-4.1 yacc and may be more
