@@ -1,5 +1,11 @@
 Tue Jul  9 04:33:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_deltas): New function, created from guts of old
+	annotate_fileproc.
+	(annotate_fileproc): Call RCS_deltas.
+	(RCS_fast_checkout): Call it (commented out for now; see comment
+	for reasons).
+
 	* cvs.h, recurse.c (start_recursion): Add callerdat argument.
 	* cvs.h: Add callerdat argument to recursion processor callbacks.
 	* recurse.c: add it to struct recursion_frame and pass it to all
