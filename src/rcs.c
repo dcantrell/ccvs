@@ -8612,8 +8612,8 @@ annotate (argc, argv)
 	option_with_arg ("-r", tag);
 	if (date)
 	    client_senddate (date);
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("annotate\012", 0);
 	return get_responses_and_close ();
     }

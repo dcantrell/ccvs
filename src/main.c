@@ -1022,6 +1022,17 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		parse_config (CVSroot_directory);
 	    }
 
+#ifdef CLIENT_SUPPORT
+	    if (client_active)
+	    {
+		/* Create a new list for directory names that we've
+		   sent to the server. */
+		if (dirs_sent_to_server != NULL)
+		    dellist (&dirs_sent_to_server);
+		dirs_sent_to_server = getlist ();
+	    }
+#endif
+
 	    err = (*(cm->func)) (argc, argv);
 	
 	    if (need_to_create_root)

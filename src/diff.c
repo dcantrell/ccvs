@@ -353,13 +353,13 @@ diff (argc, argv)
 	if (diff_date2)
 	    client_senddate (diff_date2);
 
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
-
 	/* Send the current files unless diffing two revs from the archive */
 	if (diff_rev2 == NULL && diff_date2 == NULL)
 	    send_files (argc, argv, local, 0, 0);
 	else
 	    send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 
 	send_to_server ("diff\012", 0);
         err = get_responses_and_close ();
