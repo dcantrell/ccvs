@@ -982,8 +982,7 @@ Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  # then blow it away.  But that is perfectly legal; people who
 	  # are used to the old behavior especially may be interested.
 	  rm -r CVS
-	  dotest basicc-4 "ls -1" "first-dir
-second-dir"
+	  dotest basicc-4 "echo *" "first-dir second-dir"
 	  dotest basicc-5 "${testcvs} update" \
 "${PROG} [a-z]*: Updating first-dir
 ${PROG} [a-z]*: Updating second-dir" \
