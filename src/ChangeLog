@@ -1,5 +1,9 @@
 2000-05-18  Larry Jones  <larry.jones@sdrc.com>
 
+	* client.c (start_server): Don't do encryption, authentication,
+	compression, or case insensitivity when doing init because init
+	is ROOTLESS and they're not.
+
 	* client.c (connect_to_pserver): Include repository and username in
 	authorization failed message -- if a directory tree crosses multiple
 	repositories, it can be quite difficult for the user to figure out
