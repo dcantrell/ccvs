@@ -1,4 +1,4 @@
-#serial 7 -*- autoconf -*-
+#serial 9
 
 dnl From Jim Meyering.
 dnl
@@ -8,11 +8,11 @@ dnl (because some of them were declared in Solaris 2.5.1 but were removed
 dnl in Solaris 2.6, whereas we want binaries built on Solaris 2.5.1 to run
 dnl on Solaris 2.6).
 
-AC_DEFUN([jm_FUNC_GLIBC_UNLOCKED_IO],
+AC_DEFUN([gl_FUNC_GLIBC_UNLOCKED_IO],
 [
-  dnl Persuade glibc <stdio.h> to declare fgets_unlocked(), fputs_unlocked()
-  dnl etc.
-  AC_REQUIRE([AC_GNU_SOURCE])
+  dnl Persuade glibc and Solaris <stdio.h> to declare
+  dnl fgets_unlocked(), fputs_unlocked() etc.
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 
   AC_CHECK_DECLS_ONCE(
      [clearerr_unlocked feof_unlocked ferror_unlocked
