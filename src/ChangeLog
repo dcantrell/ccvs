@@ -4,6 +4,7 @@
 	created by the server.
 	(ls_dirleaveproc): Always delete directories created by
 	ls_direntproc().
+	* sanity.sh (ls): Update to match.
 
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
