@@ -1,5 +1,11 @@
 2005-03-03 Derek Price <derek@ximbiot.com>
 
+	* configure.in: Remove checks for valloc and mmap.
+	* gnulib-modules: Add pagealign_alloc.
+	* NEWS: Note new buffer allocation method.
+
+2005-03-03 Derek Price <derek@ximbiot.com>
+
 	* gnulib-update: Clean up "saved" files on interrupt.
 
 2005-03-02  Jim Meyering  <jim@meyering.net>

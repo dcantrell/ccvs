@@ -185,7 +185,6 @@ fi
 
 # Replace functions with versions in lib/ when they can't be found.
 AC_REPLACE_FUNCS(\
-	valloc \
 	waitpid \
 )
 
@@ -218,6 +217,7 @@ AC_DEFUN([CCVS_CALL_GNULIB_MACROS_ONCE],
 AC_REQUIRE([gt_TYPE_WCHAR_T])
 AC_REQUIRE([gt_TYPE_WINT_T])
 AC_REQUIRE([gl_AC_TYPE_INTMAX_T])
+AC_REQUIRE([gl_FUNC_MMAP_ANON])
 AC_REQUIRE([gl_AC_TYPE_LONG_LONG])])
 CCVS_CALL_GNULIB_MACROS_ONCE()
 
@@ -508,9 +508,6 @@ AC_SEARCH_LIBS(getspnam, sec gen, AC_DEFINE(HAVE_GETSPNAM, 1,
 
 AC_FUNC_UTIME_NULL
 AC_SYS_LONG_FILE_NAMES
-
-dnl for the buffer routine replacements
-AC_FUNC_MMAP
 
 dnl for debugging code
 CVS_FUNC_PRINTF_PTR

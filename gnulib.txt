@@ -318,6 +318,12 @@ m4/onceonly_2_57.m4
 lib/xalloc-die.c
 
 m4/onceonly_2_57.m4
+lib/pagealign_alloc.h
+lib/pagealign_alloc.c
+m4/mmap-anon.m4
+m4/pagealign_alloc.m4
+
+m4/onceonly_2_57.m4
 lib/closeout.h
 lib/closeout.c
 m4/closeout.m4

@@ -55,4 +55,5 @@ ftruncate
 strtoul
 pathmax
 xalloc-die
+pagealign_alloc
 closeout
