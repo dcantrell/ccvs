@@ -1,3 +1,10 @@
+1999-01-31  Assar Westerlund of sics.se
+	    and Jim Kingdon
+
+	* configure.in: The GSSAPI code in CVS requires krb5.h which
+	Solaris 2.7 doesn't have.  Check for it.
+	* configure: Regenerated.
+
 1999-01-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* COPYING, COPYING.LIB: Remove obsolete snail address of the Free
