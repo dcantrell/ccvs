@@ -68,8 +68,8 @@
  * use rcsdiff which will use whatever version of diff was specified
  * when rcsdiff was built on your system.
  */
-#ifndef DIFFBIN_DFLT
-#define	DIFFBIN_DFLT	"diff"
+#ifndef DIFF
+#define	DIFF	"diff"
 #endif
 
 /*
@@ -78,8 +78,8 @@
  * regular expression as an argument.  Specify a full pathname if your
  * site wants to use a particular grep.
  */
-#ifndef GREPBIN_DFLT
-#define GREPBIN_DFLT	"grep"
+#ifndef GREP
+#define GREP "grep"
 #endif
 
 /*

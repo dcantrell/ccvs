@@ -441,9 +441,13 @@ HOME=${TESTDIR}/home; export HOME
 # from a cvs or testsuite change, and to facilitate understanding the
 # tests.
 
-# We omit rdiff for now, because we have put off committing the changes that
-# make it work until after the 1.9 release.
 if test x"$*" = x; then
+	# This doesn't yet include log2, because the bug it tests for
+	# is not yet fixed, and/or we might want to wait until after 1.9.
+	#
+	# We also omit rdiff for now, because we have put off
+	# committing the changes that make it work until after the 1.9
+	# release.
 	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log"
 else
 	tests="$*"
