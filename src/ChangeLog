@@ -1,3 +1,11 @@
+1998-08-25  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (multiroot): new set of tests to check the behavior of
+	multiroot.
+
+	* diff.c (diff): set options value to NULL after freeing to reset
+	the state for the next time around.
+
 Wed Aug 19 00:28:50 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* recurse.c (do_dir_proc): don't muck with CVS/Root directories
