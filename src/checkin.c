@@ -27,14 +27,6 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
     int set_time;
     char *tocvsPath = NULL;
 
-    /* Hmm.  This message goes to stdout and the "foo,v  <--  foo"
-       message from "ci" goes to stderr.  This doesn't make a whole
-       lot of sense, but making everything go to stdout can only be
-       gracefully achieved once RCS_checkin is librarified.  */
-    cvs_output ("Checking in ", 0);
-    cvs_output (finfo->fullname, 0);
-    cvs_output (";\n", 0);
-
     tocvsPath = wrap_tocvs_process_file (finfo->file);
     if (!noexec)
     {

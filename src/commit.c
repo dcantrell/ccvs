@@ -1518,10 +1518,13 @@ commit_filesdoneproc (void *callerdat, int err, const char *repository,
 		    || admin_dir[p - repository + cvsrootlen] == '/');
 	    admin_dir[p - repository + cvsrootlen] = '\0';
 
-	    cvs_output (program_name, 0);
-	    cvs_output (" ", 1);
-	    cvs_output (cvs_cmd_name, 0);
-	    cvs_output (": Rebuilding administrative file database\n", 0);
+	    if (!really_quiet)
+	    {
+		cvs_output (program_name, 0);
+		cvs_output (" ", 1);
+		cvs_output (cvs_cmd_name, 0);
+		cvs_output (": Rebuilding administrative file database\n", 0);
+	    }
 	    mkmodules (admin_dir);
 	    free (admin_dir);
 	    WriteTemplate (".", 1, repository);
@@ -1666,11 +1669,6 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     /* we are removing the file from either the head or a branch */
     /* commit a new, dead revision. */
 
-    /* Print message indicating that file is going to be removed. */
-    cvs_output ("Removing ", 0);
-    cvs_output (finfo->fullname, 0);
-    cvs_output (";\n", 0);
-
     rev = NULL;
     lockflag = 1;
     if (branch)
@@ -1762,13 +1760,17 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	RCS_setattic (finfo->rcs, 1);
 
     /* Print message that file was removed. */
-    cvs_output (old_path, 0);
-    cvs_output ("  <--  ", 0);
-    cvs_output (finfo->file, 0);
-    cvs_output ("\nnew revision: delete; previous revision: ", 0);
-    cvs_output (prev_rev, 0);
-    cvs_output ("\ndone\n", 0);
-    free(prev_rev);
+    if (!really_quiet)
+    {
+	cvs_output (old_path, 0);
+	cvs_output ("  <--  ", 0);
+	cvs_output (finfo->file, 0);
+	cvs_output ("\nnew revision: delete; previous revision: ", 0);
+	cvs_output (prev_rev, 0);
+	cvs_output ("\n", 0);
+    }
+
+    free (prev_rev);
 
     free (old_path);
 
@@ -1990,15 +1992,6 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    opt = options + 2;
 	else
 	    opt = NULL;
-
-	/* This message is an artifact of the time when this
-	   was implemented via "rcs -i".  It should be revised at
-	   some point (does the "initial revision" in the message from
-	   RCS_checkin indicate that this is a new file?  Or does the
-	   "RCS file" message serve some function?).  */
-	cvs_output ("RCS file: ", 0);
-	cvs_output (rcsname, 0);
-	cvs_output ("\ndone\n", 0);
 
 	if (add_rcs_file (NULL, rcsname, file, NULL, opt,
 			  NULL, NULL, 0, NULL,

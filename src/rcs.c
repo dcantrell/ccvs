@@ -4842,7 +4842,7 @@ RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
     resolve_symlink (&(rcs->path));
 
     checkin_quiet = flags & RCS_FLAGS_QUIET;
-    if (!checkin_quiet)
+    if (!(checkin_quiet || really_quiet))
     {
 	cvs_output (rcs->path, 0);
 	cvs_output ("  <--  ", 7);
@@ -5005,7 +5005,7 @@ workfile);
 		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);
 
-	if (!checkin_quiet)
+	if (!(checkin_quiet || really_quiet))
 	{
 	    cvs_output ("initial revision: ", 0);
 	    cvs_output (rcs->head, 0);
@@ -5031,9 +5031,6 @@ workfile);
 		/* FIXME-update-dir: message does not include update_dir.  */
 		error (0, errno, "cannot remove %s", workfile);
 	}
-
-	if (!checkin_quiet)
-	    cvs_output ("done\n", 5);
 
 	status = 0;
 	goto checkin_done;
@@ -5367,7 +5364,7 @@ workfile);
     (void) addnode (rcs->versions, nodep);
 	
     /* Write the new RCS file, inserting the new delta at COMMITPT. */
-    if (!checkin_quiet)
+    if (!(checkin_quiet || really_quiet))
     {
 	cvs_output ("new revision: ", 14);
 	cvs_output (delta->version, 0);
@@ -5390,9 +5387,6 @@ workfile);
     if (unlink_file (changefile) < 0)
 	error (0, errno, "cannot remove %s", changefile);
     free (changefile);
-
-    if (!checkin_quiet)
-	cvs_output ("done\n", 5);
 
  checkin_done:
     free (workfile);
