@@ -3,6 +3,7 @@
 	* logmsg.c (do_editor): Add comment and assertion.
 	* import.c (import): Don't call do_editor with a repository argument
 	in client mode.
+	(Report and original patch from darkness <darkness@invado.com>.)
 
 2001-08-24  Larry Jones  <larry.jones@sdrc.com>
 
