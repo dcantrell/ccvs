@@ -117,7 +117,7 @@ static const char *const update_usage[] =
 int
 update (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c, err;
     int local = 0;			/* recursive by default */
@@ -352,7 +352,7 @@ int
 do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir)
     int argc;
-    char *argv[];
+    char **argv;
     char *xoptions;
     char *xtag;
     char *xdate;
@@ -1334,20 +1334,9 @@ merge_file (file, repository, entries, vers, update_dir)
     copy_file (file, backup);
     xchmod (file, 1);
 
-    /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.
-
-       Well, okay, but my rcsmerge doesn't take a -E option.  --JimB */
-    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
-    run_setup ("%s%s %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, vers->options,
-	       vers->vn_user, vers->vn_rcs);
-    run_arg (vers->srcfile->path);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    if (status != 0
-#ifdef HAVE_RCS5
-	&& status != 1
-#endif
-	)
+    status = RCS_merge(vers->srcfile->path, 
+		       vers->options, vers->vn_user, vers->vn_rcs);
+    if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
 	       "could not merge revision %s of %s", vers->vn_user, user);
@@ -1397,12 +1386,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	return (0);
     }
 
-    /* possibly run GREP to see if there appear to be conflicts in the file */
-    run_setup ("%s -s", GREP);
-    run_arg (RCS_MERGE_PAT);
-    run_arg (file);
-    if (status == 1 ||
-	(retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) == 0)
+    if (status == 1)
     {
 	if (!noexec)
 	    error (0, 0, "conflicts found in %s", user);
@@ -1685,20 +1669,8 @@ join_file (file, srcfiles, vers, update_dir, entries)
 #endif
 #endif
 
-    /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.
-
-       Well, okay, but my rcsmerge doesn't take a -E option.  --JimB */
-    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
-    run_setup ("%s%s %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, options,
-	       rev1, rev2);
-    run_arg (vers->srcfile->path);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-    if (status != 0
-#ifdef HAVE_RCS5
-	&& status != 1
-#endif
-	)
+    status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
+    if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
 	       "could not merge revision %s of %s", rev2, user);
@@ -1709,7 +1681,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
     free (rev1);
     free (rev2);
 
-#ifdef HAVE_RCS5
     if (status == 1)
     {
 	char *cp = 0;
@@ -1721,7 +1692,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	if (cp)
 	    free(cp);
     }
-#endif
 
     if (server_active)
     {
@@ -1729,8 +1699,6 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
-
-    return;
 }
 
 /*

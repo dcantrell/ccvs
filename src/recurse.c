@@ -72,7 +72,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     Dtype (*direntproc) ();
     int (*dirleaveproc) ();
     int argc;
-    char *argv[];
+    char **argv;
     int local;
     int which;
     int aflag;

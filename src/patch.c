@@ -23,7 +23,7 @@ static RETSIGTYPE patch_cleanup PROTO((void));
 static Dtype patch_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int patch_fileproc PROTO((char *file, char *update_dir, char *repository,
 			   List * entries, List * srcfiles));
-static int patch_proc PROTO((int *pargc, char *argv[], char *xwhere,
+static int patch_proc PROTO((int *pargc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
 		       int local_specified, char *mname, char *msg));
 
@@ -59,7 +59,7 @@ static const char *const patch_usage[] =
 int
 patch (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     register int i;
     int c;
@@ -239,7 +239,7 @@ static int
 patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    mname, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *xwhere;
     char *mwhere;
     char *mfile;

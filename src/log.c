@@ -36,7 +36,7 @@ static const char *const log_usage[] =
 int
 cvslog (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int i;
     int numopt = 1;

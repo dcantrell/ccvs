@@ -41,7 +41,6 @@ char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state .nse_depinf
 void
 ign_setup ()
 {
-    extern char *getenv ();
     struct passwd *pw;
     char file[PATH_MAX];
     char *tmp;

@@ -45,7 +45,7 @@ static const char *const tag_usage[] =
 int
 tag (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c;
     int err = 0;

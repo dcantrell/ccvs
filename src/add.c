@@ -46,7 +46,7 @@ static const char *const add_usage[] =
 int
 add (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char *message = NULL;
     char *user;
@@ -419,14 +419,14 @@ add_directory (repository, dir)
 	}
 #endif
 
-	omask = umask (2);
+	omask = umask ((mode_t) 2);
 	if (mkdir (rcsdir, 0777) < 0)
 	{
 	    error (0, errno, "cannot mkdir %s", rcsdir);
-	    (void) umask ((int) omask);
+	    (void) umask (omask);
 	    goto out;
 	}
-	(void) umask ((int) omask);
+	(void) umask (omask);
 
 	/*
 	 * Set up an update list with a single title node for Update_Logfile

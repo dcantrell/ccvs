@@ -30,10 +30,8 @@ char *alloca ();
 #endif /* not __GNUC__ */
 
 #if __STDC__
-#define	CONST	const
 #define	PTR	void *
 #else
-#define	CONST
 #define	PTR	char *
 #endif
 
@@ -55,6 +53,13 @@ char *alloca ();
 
 #include <stdio.h>
 
+#ifdef STDC_HEADERS
+#include <stdlib.h>
+#else
+extern void exit ();
+extern char *getenv()
+#endif
+ 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif 
@@ -353,6 +358,7 @@ int RCS_deltag PROTO((const char *, const char *));
 int RCS_setbranch PROTO((const char *, const char *));
 int RCS_lock PROTO((const char *, const char *));
 int RCS_unlock PROTO((const char *, const char *));
+int RCS_merge PROTO((const char *, const char *, const char *, const char *));
 
 DBM *open_module PROTO((void));
 FILE *Fopen PROTO((char *name, char *mode));

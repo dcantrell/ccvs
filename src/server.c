@@ -2816,9 +2816,9 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 	    char *mode_string;
 
 	    if (file_info != NULL)
-	        mode_string = mode_to_string (file_info);
+	        mode_string = mode_to_string (file_info->st_mode);
 	    else
-	        mode_string = mode_to_string (&sb);
+	        mode_string = mode_to_string (sb.st_mode);
 	    buf_output0 (&protocol, mode_string);
 	    buf_output0 (&protocol, "\n");
 	    free (mode_string);
@@ -3034,7 +3034,7 @@ static int
 expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 	     local_specified, omodule, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *where;
     char *mwhere;
     char *mfile;

@@ -35,7 +35,7 @@ struct sortrec
     char *comment;
 };
 
-static int sort_order PROTO((CONST PTR l, CONST PTR r));
+static int sort_order PROTO((const PTR l, const PTR r));
 static void save_d PROTO((char *k, int ks, char *d, int ds));
 
 
@@ -627,12 +627,12 @@ static char def_status[] = "NONE";
 */
 static int
 sort_order (l, r)
-    CONST PTR l;
-    CONST PTR r;
+    const PTR l;
+    const PTR r;
 {
     int i;
-    CONST struct sortrec *left = (CONST struct sortrec *) l;
-    CONST struct sortrec *right = (CONST struct sortrec *) r;
+    const struct sortrec *left = (const struct sortrec *) l;
+    const struct sortrec *right = (const struct sortrec *) r;
 
     if (Status)
     {

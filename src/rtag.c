@@ -22,7 +22,7 @@ static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int rtag_fileproc PROTO((char *file, char *update_dir,
 			  char *repository, List * entries,
 			  List * srcfiles));
-static int rtag_proc PROTO((int *pargc, char *argv[], char *xwhere,
+static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
 static int rtag_delete PROTO((RCSNode *rcsfile));
@@ -57,7 +57,7 @@ static const char *const rtag_usage[] =
 int
 rtag (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     register int i;
     int c;
@@ -203,7 +203,7 @@ static int
 rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	   mname, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *xwhere;
     char *mwhere;
     char *mfile;

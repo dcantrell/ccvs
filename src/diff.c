@@ -65,7 +65,7 @@ static const char *const diff_usage[] =
 int
 diff (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char tmp[50];
     int c, err = 0;

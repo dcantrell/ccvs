@@ -64,3 +64,36 @@ const char *rev;
     run_arg (path);
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 }
+
+/* Merge revisions REV1 and REV2. */
+int
+RCS_merge(path, options, rev1, rev2)
+     const char *path;
+     const char *options;
+     const char *rev1;
+     const char *rev2;
+{
+    int status;
+
+    /* We pass -E to rcsmerge so that it will not indicate a conflict if
+       both things we are merging are modified the same way.
+
+       Well, okay, but my rcsmerge doesn't take a -E option.  --JimB */
+    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
+
+    run_setup ("%s%s %s -r%s -r%s %s", Rcsbin, RCS_RCSMERGE,
+	       options, rev1, rev2, path);
+    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+#ifndef HAVE_RCS5
+    if (status == 0) 
+    {
+	/* Run GREP to see if there appear to be conflicts in the file */
+	run_setup ("%s -s", GREP);
+	run_arg (RCS_MERGE_PAT);
+	run_arg (path);
+	status = (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) == 0);
+
+    }
+#endif
+    return status;
+}

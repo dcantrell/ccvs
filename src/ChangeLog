@@ -1,3 +1,35 @@
+Wed Jun  7 11:28:31 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* add.c (add_directory): Don't cast umask() argument to int.
+
+	* import.c (add_rcs_file): Changed type of mode to mode_t.
+
+	* rcscmds.c (RCS_merge): New function.
+	* cvs.h (RCS_merge): Declare.
+	* update.c (merge_file, join_file): Call RCS_merge instead of
+	  invoking rcsmerge directly.
+
+	* cvs.h: Include <stdlib.h> if HAVE_STDC_HEADERS, otherwise
+	  declared getenv().
+	* cvsrc.c, ignore.c, main.c: Removed getenv() declaration.
+
+	* client.c (mode_to_string): Changed to take mode_t instead of
+	  struct statb argument.  Simplified implementation, no longer
+	  overallocates storage for returned mode string.
+	* client.h (mode_to_string): Updated declaration.
+	* server.c (server_updated): Updated for new calling conventions,
+	  pass st_mode instead of pointer to struct statb.
+
+	* cvs.h (CONST): Removed definition, use of const qualifier is
+	  determined by autoconf.
+	* history.c, modules.c, parseinfo.c: Use const instead of CONST.
+
+	* add.c, admin.c, checkout.c, commit.c, diff.c, import.c, log.c,
+	  main.c, mkmodules.c, patch.c, recurse.c, remove.c, rtag.c,
+	  server.c, status.c, subr.c, tag.c, update.c: Changed function
+	  arguments "char *argv[]" to "char **argv" to silence lint
+	  warnings about performing arithmetic on arrays.
+
 Tue Jun  6 18:57:21 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* version.c: Fix up version string, to say that this is Cyclic

@@ -44,7 +44,7 @@ static const char *const remove_usage[] =
 int
 cvsremove (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c, err;
 

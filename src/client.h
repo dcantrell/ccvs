@@ -1,7 +1,7 @@
 /* Interface between the client and the rest of CVS.  */
 
 /* Stuff shared with the server.  */
-extern char *mode_to_string PROTO((struct stat *));
+extern char *mode_to_string PROTO((mode_t));
 extern int change_mode PROTO((char *, char *));
 
 /*

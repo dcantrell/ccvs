@@ -82,7 +82,7 @@ static const char *const keyword_usage[] =
 int
 import (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     char *message = NULL;
     char tmpfile[L_tmpnam+1];
@@ -806,7 +806,8 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     char altdate2[50];
 #endif
     char *author, *buf;
-    int i, mode, ierrno, err = 0;
+    int i, ierrno, err = 0;
+    mode_t mode;
 
     if (noexec)
 	return (0);
