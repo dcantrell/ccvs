@@ -10724,14 +10724,28 @@ sure which version of @sc{cvs} they are using at any
 particular moment).
 
 @table @code
-@item cvs [server aborted]: received broken pipe signal
-This message seems to be caused by a hard-to-track-down
-bug in @sc{cvs} or the systems it runs on (we don't
-know---we haven't tracked it down yet!).  It seems to
-happen only after a @sc{cvs} command has completed, and
-you should be able to just ignore the message.
-However, if you have discovered information concerning its
-cause, please let us know as described in @ref{BUGS}.
+@c FIXME: What is the correct way to format a multiline
+@c error message here?  Maybe @table is the wrong
+@c choice?  Texinfo gurus?
+@item cannot change permissions on temporary directory
+@example
+Operation not permitted
+@end example
+This message has been happening in a non-reproducible,
+occasional way when we run the client/server testsuite,
+both on Red Hat Linux 3.0.3 and 4.1.  We haven't been
+able to figure out what causes it, nor is it known
+whether it is specific to linux (or even to this
+particular machine!).  If the problem does occur on
+other unices, @samp{Operation not permitted} would be
+likely to read @samp{Not owner} or whatever the system
+in question uses for the unix @code{EPERM} error.  If
+you have any information to add, please let us know as
+described in @ref{BUGS}.  If you experience this error
+while using @sc{cvs}, retrying the operation which
+produced it should work fine.
+@c Most recently this was in the multibranch-5 test.
+@c But I'm not sure it is specific to that test.
 
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
@@ -10798,6 +10812,15 @@ to avoid the duplication, and you have no versions of
 every place it appears in your @code{modules}
 file.  For more information on the @code{modules} file,
 see @ref{modules}.
+
+@item cvs [server aborted]: received broken pipe signal
+This message seems to be caused by a hard-to-track-down
+bug in @sc{cvs} or the systems it runs on (we don't
+know---we haven't tracked it down yet!).  It seems to
+happen only after a @sc{cvs} command has completed, and
+you should be able to just ignore the message.
+However, if you have discovered information concerning its
+cause, please let us know as described in @ref{BUGS}.
 
 @item cvs commit: Up-to-date check failed for `@var{file}'
 This means that someone else has committed a change to
