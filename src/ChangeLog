@@ -1,3 +1,17 @@
+Thu Jan  2 12:27:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (info): New test info-cleanup-verifymsg gets rid of
+	verifymsg when we are done with it.
+
+	* sanity.sh (basicb): Skip tests basicb-1a and basicb-9a for remote.
+	* sanity.sh (modules-155a4): It is OK if a CVS directory exists.
+	* sanity.sh (ignore): Do everything inside a "1" directory.  The
+	change to create CVS directories at top-level causes messages such as
+	"? home" otherwise.  In test 191, specify -I CVS so that new CVS
+	directory is ignored.
+	* sanity.sh (crerepos): Manually remove CVS directory which had not
+	existed before.
+
 Thu Jan  2 09:06:20 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
 
         * server.c: Changes for pserver read-only repository access:
