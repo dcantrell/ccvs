@@ -1,3 +1,32 @@
+1998-11-06  Jim Kingdon
+
+	Clean up various confusions between modules and directories:
+	* cvs.texinfo: In "are you sure you want to release" message,
+	change module to directory.  CVS was changed some time ago.
+	(Tags): "working copy of the module" -> "working directory".
+	(Merging two revisions): Remove unnecessary text "that make up a
+	module".
+	(Recursive behavior): Change "module" to "directory".
+	(Removing files): Likewise.
+	(Tracking sources): Remove "a module" from titles.
+	(Moving directories): Change "module" to "parent-dir".
+	(Inside): Remove "of the module".
+	(Inside): Change "module" to "dir".
+	(Rename by copying): Change "module" to "dir".
+	(Rename by copying): Remove "of the module".
+	(Moving directories): "copy of the module" -> "checked out copy of
+	the directory"; remove second "of the module".  Change "check out
+	the module" to " check out again".
+	(Moving directories): Remove "of the module".
+	(Keyword substitution): "your working copy of a module" -> "a
+	working directory".
+	(CVS commands): Change "module" to "directory".
+	(release examples): "module" -> "tc directory".
+	(commitinfo): "relative path to the module" -> "directory in the
+	repository".
+	(verifymsg): Change "module" to "directory".
+	(Updating a file): "working copy of a module" -> "working directory".
+
 1998-10-25  Jim Kingdon
 
 	* cvs.texinfo (Branches and revisions): Fix error in branch
