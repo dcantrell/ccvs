@@ -1,3 +1,8 @@
+1998-08-05  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (unedit-without-baserev): Use ${QUESTION} not "?".
+	This makes it work with GNU expr 1.12 as well as 1.16.
+
 Sun Aug  2 20:27:44 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* mkmodules.c: add comment about TopLevelAdmin for the initial

@@ -9230,7 +9230,7 @@ C file1"
 	  if echo "yes" | ${testcvs} -Q unedit $file \
 	    >${TESTDIR}/test.tmp 2>&1 ; then
 	    dotest unedit-without-baserev-4 "cat ${TESTDIR}/test.tmp" \
-"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
+"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
 	  else
 	    fail unedit-without-baserev-4
@@ -9284,7 +9284,7 @@ C m"
 	  rm CVS/Baserev
 	  if (echo yes | ${testcvs} unedit m) >${TESTDIR}/test.tmp 2>&1; then
 	    dotest unedit-without-baserev-14 "cat ${TESTDIR}/test.tmp" \
-"m has been modified; revert changes? ${PROG} unedit: m not mentioned in CVS/Baserev
+"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
 ${PROG} unedit: run update to complete the unedit"
 	  else
 	    fail unedit-without-baserev-14
