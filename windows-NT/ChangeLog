@@ -1,3 +1,8 @@
+Mon Oct 14 08:30:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Remove item about markso Win95 web site now that it is
+	merged in.  Mention Win95 at beginning.
+
 Tue Oct  8 12:37:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* options.h (HAD_RCS4): Remove; no longer used.
