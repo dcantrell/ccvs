@@ -12124,6 +12124,34 @@ U CVSROOT/verifymsg'
 \$MyBSD: keywordexpand/file1,v 1\.2 [0-9/]* [0-9:]* ${username} Exp \$
 a change"
 
+	  cd ../CVSROOT
+	  mv config config.old
+	  sed -e 's/LocalKeyword=MyBSD/LocalKeyword=My_BSD/' < config.old > config
+	  dotest keywordexpand-9 "${testcvs} -Q ci -minvalidlocalkeyword config"
+	  dotest keywordexpand-10 "${testcvs} -Q update config" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
+${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'"
+	  cp config.old config
+	  dotest keywordexpand-11 "${testcvs} -Q ci -mfixit config" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'
+${SPROG} [a-z]*: LocalKeyword ignored: Bad character \`_' in key \`My_BSD'" \
+	  dotest keywordexpand-12 "${testcvs} -Q update config"
+	  sed -e 's/LocalKeyword=MyBSD=CVSHeader/LocalKeyword=MyBSD=Name/' \
+	    < config.old > config
+	  dotest keywordexpand-13 "${testcvs} -Q ci -minvalidlocalkeyword2 config"
+	  dotest keywordexpand-14 "${testcvs} -Q update config" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
+${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
+	  cp config.old config
+	  dotest keywordexpand-15 "${testcvs} -Q ci -mfixit2 config" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'" \
+"${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'
+${SPROG} [a-z]*: LocalKeyword ignored: Unknown LocalId mode: \`Name'"
+	  dotest keywordexpand-16 "${testcvs} -Q update config"
+
 	  dokeep
 	  # Done. Clean up.
 	  cd ../..

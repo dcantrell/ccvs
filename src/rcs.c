@@ -8542,23 +8542,37 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 void
 RCS_setlocalid (void **keywords_in, const char *arg)
 {
-    char *copy, *next, *key;
+    char *copy, *next, *key, *s;
     struct rcs_keyword *keywords;
+    enum keyword save_expandto;
 
     if (!*keywords_in)
 	*keywords_in = new_keywords ();
     keywords = *keywords_in;
 
-    copy = xstrdup(arg);
+    copy = xstrdup (arg);
     next = copy;
-    key = strtok(next, "=");
+    key = strtok (next, "=");
 
-    keywords[KEYWORD_LOCALID].string = xstrdup(key);
-    keywords[KEYWORD_LOCALID].len = strlen(key);
-    keywords[KEYWORD_LOCALID].expandit = 1;
+    /*
+     * Validate key
+     */
+    for (s = key; *s != '\0'; s++)
+    {
+	if (! isalpha ((unsigned char) *s))
+	{
+	    error (0, 0,
+		   "LocalKeyword ignored: Bad character `%c' in key `%s'",
+		   *s, key);
+	    free (copy);
+	    return;
+	}
+    }
+
+    save_expandto = keywords[KEYWORD_LOCALID].expandto;
 
     /* options? */
-    while ((key = strtok(NULL, ",")) != NULL) {
+    while ((key = strtok (NULL, ",")) != NULL) {
 	if (!strcmp(key, keywords[KEYWORD_ID].string))
 	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_ID;
 	else if (!strcmp(key, keywords[KEYWORD_HEADER].string))
@@ -8566,9 +8580,20 @@ RCS_setlocalid (void **keywords_in, const char *arg)
 	else if (!strcmp(key, keywords[KEYWORD_CVSHEADER].string))
 	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_CVSHEADER;
 	else
-	    error(1, 0, "Unknown LocalId mode: %s", key);
+	{
+	    keywords[KEYWORD_LOCALID].expandto = save_expandto;
+	    error (0, 0, "LocalKeyword ignored: Unknown LocalId mode: `%s'",
+		   key);
+	    free (copy);
+	    return;
+	}
     }
-    free(copy);
+
+    keywords[KEYWORD_LOCALID].string = xstrdup (next);
+    keywords[KEYWORD_LOCALID].len = strlen (next);
+    keywords[KEYWORD_LOCALID].expandit = 1;
+
+    free (copy);
 }
 
 
