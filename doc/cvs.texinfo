@@ -5978,28 +5978,33 @@ file. @xref{Wrappers}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node log
-@appendixsec log---Print out 'rlog' information for files
+@appendixsec log---Print out log information for files
 @cindex Log (subcommand)
 
 @itemize @bullet
 @item
-Synopsis: log [-l] rlog-options [files@dots{}]
+Synopsis: log [options] [files@dots{}]
 @item
 Requires: repository, working directory.
 @item
 Changes: nothing.
 @end itemize
 
-Display log information for files.  @code{log} calls
-the @sc{rcs} utility @code{rlog}, which prints all available
-information about the @sc{rcs} history file.  This includes
-the location of the @sc{rcs} file, the @dfn{head} revision
-(the latest revision on the trunk), all symbolic names (tags)
-and some other things.  For each revision, the revision
-number, the author, the number of lines added/deleted and
-the log message are printed.  All times are displayed in
-Coordinated Universal Time (UTC).  (Other parts of @sc{cvs}
-print times in the local timezone).
+Display log information for files.  @code{log} used to
+call the @sc{rcs} utility @code{rlog}.  Although this
+is no longer true in the current sources, this history
+determines the format of the output and the options,
+which are not quite in the style of the other @sc{cvs}
+commands.
+
+The output includes the location of the @sc{rcs} file,
+the @dfn{head} revision (the latest revision on the
+trunk), all symbolic names (tags) and some other
+things.  For each revision, the revision number, the
+author, the number of lines added/deleted and the log
+message are printed.  All times are displayed in
+Coordinated Universal Time (UTC).  (Other parts of
+@sc{cvs} print times in the local timezone).
 @c -- timezone--
 
 @menu
@@ -6011,32 +6016,15 @@ print times in the local timezone).
 @node log options
 @appendixsubsec log options
 
-Only one option is interpreted by @sc{cvs} and not passed on to @code{rlog}:
-
-@table @code
-@item -l
-Local; run only in current working directory.  (Default
-is to run recursively).
-@end table
-
-By default, @code{rlog} prints all information that is
-available.  All other options (including those that
-normally behave differently) are passed through to
-@code{rlog} and restrict the output.  See rlog(1) for a
-complete description of options.  This incomplete list
-(which is a slightly edited extract from rlog(1)) lists
-all options that are useful in conjunction with @sc{cvs}.
-
-@strong{Please note:}  There can be no space between the option
-and its argument, since @code{rlog} parses its options
-in a different way than @sc{cvs}.
+By default, @code{log} prints all information that is
+available.  All other options restrict the output.
 
 @table @code
 @item -b
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 
-@item -d@var{dates}
+@item -d @var{dates}
 Print information about revisions with a checkin
 date/time in the range given by the
 semicolon-separated list of dates.  The following table
@@ -6046,7 +6034,7 @@ explains the available range formats:
 @item @var{d1}<@var{d2}
 @itemx @var{d2}>@var{d1}
 Select the revisions that were deposited between
-@var{d1} and @var{d2} inclusive.
+@var{d1} and @var{d2}.
 
 @item <@var{d}
 @itemx @var{d}>
@@ -6061,15 +6049,20 @@ Select the single, latest revision dated @var{d} or
 earlier.
 @end table
 
-The date/time strings @var{d}, @var{d1}, and @var{d2}
-are in the free format explained in co(1).  Quoting is
-normally necessary, especially for < and >.  Note that
-the separator is a semicolon (;).
+The @samp{>} or @samp{<} characters may be followed by
+@samp{=} to indicate an inclusive range rather than an
+exclusive one.
+
+Note that the separator is a semicolon (;).
 
 @item -h
 Print only the @sc{rcs} pathname, working pathname, head,
 default branch, access list, locks, symbolic names, and
 suffix.
+
+@item -l
+Local; run only in current working directory.  (Default
+is to run recursively).
 
 @item -N
 Do not print the list of tags for this file.  This
@@ -6102,10 +6095,7 @@ branch containing @var{rev}.
 
 @item @var{branch}
 An argument that is a branch means all revisions on
-that branch.  You can unfortunately not specify a
-symbolic branch here.  You must specify the numeric
-branch number.  @xref{Magic branch numbers}, for an
-explanation.
+that branch.
 
 @item @var{branch1}:@var{branch2}
 A range of branches means all revisions
@@ -6117,8 +6107,10 @@ The latest revision in @var{branch}.
 
 A bare @samp{-r} with no revisions means the latest
 revision on the default branch, normally the trunk.
+There can be no space between the @samp{-r} option and
+its argument.
 
-@item -s@var{states}
+@item -s @var{states}
 Print information about revisions whose state
 attributes match one of the states given in the
 comma-separated list @var{states}.
@@ -6130,13 +6122,14 @@ Print the same as @samp{-h}, plus the descriptive text.
 Print information about revisions checked in by users
 with login names appearing in the comma-separated list
 @var{logins}.  If @var{logins} is omitted, the user's
-login is assumed.
+login is assumed.  There can be no space between the
+@samp{-w} option and its argument.
 @end table
 
-@code{rlog} prints the intersection of the revisions
-selected with the options @samp{-d}, @samp{-l},
-@samp{-s}, and @samp{-w}, intersected with the union of
-the revisions selected by @samp{-b} and @samp{-r}.
+@code{log} prints the intersection of the revisions
+selected with the options @samp{-d}, @samp{-s}, and
+@samp{-w}, intersected with the union of the revisions
+selected by @samp{-b} and @samp{-r}.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node log examples

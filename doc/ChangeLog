@@ -1,3 +1,8 @@
+Tue Aug  6 16:48:53 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (log, log options): Update for changes to cvs log
+	now that it no longer invokes rlog.
+
 Thu Jul 25 10:10:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Fix typo (Kerberos-request ->
