@@ -1,3 +1,8 @@
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Add strftime.c.
+	* strftime.c: New file.
+
 2004-05-17  Derek Price  <derek@ximbiot.com>
 
 	* libcvs.dsp: Add "lib/xtime.h" to project header files.
