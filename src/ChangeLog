@@ -1,3 +1,10 @@
+Mon May  5 18:10:37 1997  larry.jones@sdrc.com
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Change all /tmp/cvs-sanity to TESTDIR.  If TESTDIR
+	environment variable is set, use it instead of /tmp/cvs-sanity.
+	* sanity.sh: Make TMPPWD the pwd equivalent of TESTDIR, not of /tmp.
+
 4 May 1997  Larry jones  <larry.jones@sdrc.com>
 	    and Jim Kingdon
 
