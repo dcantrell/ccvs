@@ -44,7 +44,7 @@ static int checkout_proc PROTO((int argc, char **argv, char *where,
 
 static const char *const checkout_usage[] =
 {
-    "Usage:\n  %s %s [-ANPRcflnps] [-r rev | -D date] [-d dir]\n",
+    "Usage:\n  %s %s [-ANPRcflnps] [-r rev] [-D date] [-d dir]\n",
     "    [-j rev1] [-j rev2] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
@@ -67,7 +67,7 @@ static const char *const checkout_usage[] =
 
 static const char *const export_usage[] =
 {
-    "Usage: %s %s [-NRfln] [-r rev | -D date] [-d dir] [-k kopt] module...\n",
+    "Usage: %s %s [-NRfln] [-r rev] [-D date] [-d dir] [-k kopt] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",

@@ -108,7 +108,7 @@ static List *ignlist = (List *) NULL;
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
-    "Usage: %s %s [-APdflRp] [-k kopt] [-r rev|-D date] [-j rev]\n",
+    "Usage: %s %s [-APdflRp] [-k kopt] [-r rev] [-D date] [-j rev]\n",
     "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",

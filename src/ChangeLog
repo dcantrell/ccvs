@@ -1,5 +1,9 @@
 2001-04-16  Larry Jones  <larry.jones@sdrc.com>
 
+	* checkout.c, update.c: Fix usage messages: -r and -D are not
+	mutually exclusive.
+	(Suggested by David L. Martin <dlmart2@home.com>.)
+
 	* logmsg.c (do_editor): Don't add a blank line to the message.
 
 	* checkout.c, update.c: Note in usage message that -k is sticky.
