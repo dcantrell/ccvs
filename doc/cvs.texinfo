@@ -13338,6 +13338,18 @@ directions given for :ext:.
 
 @cindex :pserver:, troubleshooting
 @item :pserver:
+Errors along the lines of "connection refused" typically indicate
+that inetd isn't even listening for connections on port 2401
+whereas errors like "connection reset by peer" or "recv() from
+server: EOF" typically indicate that inetd is listening for
+connections but is unable to start @sc{cvs} (this is frequently
+caused by having an incorrect path in @file{inetd.conf}).
+"unrecognized auth response" errors are caused by a bad command
+line in @file{inetd.conf}, typically an invalid option or forgetting
+to put the @samp{pserver} command at the end of the line.
+Another less common problem is invisible control characters that
+your editor "helpfully" added without you noticing.
+
 One good debugging tool is to "telnet servername
 2401".  After connecting, send any text (for example
 "foo" followed by return).  If @sc{cvs} is working
@@ -13379,12 +13391,7 @@ cvs server: cannot open /root/.cvsignore: Permission denied
 cvs [server aborted]: can't chdir(/root): Permission denied
 @end example
 
-then either you haven't specified @samp{-f} in @file{inetd.conf}
-or your system is setting the @code{HOME} environment variable
-for programs being run by inetd.  In the latter case, you can either
-have inetd run a shell script that unsets @code{HOME} and then runs
-@sc{cvs}, or you can use @code{env} to run @sc{cvs} with a pristine
-environment.
+then you probably haven't specified @samp{-f} in @file{inetd.conf}.
 
 If you can connect successfully for a while but then can't,
 you've probably hit inetd's rate limit.
