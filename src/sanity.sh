@@ -5893,6 +5893,7 @@ xCVS: ----------------------------------------------------------------------
 	  cd ../../2/1dir
 	  # FIXME: should be using dotest.
 	  ${testcvs} -q update 2>../tst167.err
+	  cat ../tst167.err >>${LOGFILE}
 	  cat <<EOF >../tst167.ans
 ${PROG} server: warning: foo is not (any longer) pertinent
 ${PROG} update: unable to remove ./foo: Permission denied
