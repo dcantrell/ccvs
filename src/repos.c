@@ -120,8 +120,8 @@ Name_Repository (const char *dir, const char *update_dir)
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
-	newrepos = sprintf (NULL, &dummy, "%s/%s",
-			    current_parsed_root->directory, repos);
+	newrepos = asnprintf (NULL, &dummy, "%s/%s",
+			      current_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }

@@ -1,5 +1,9 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* repos.c (Name_Repository): asnprintf, not sprintf.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (ignore-11r): Rename second occurance to...
 	(ignore-11ar): ...this.
 
@@ -10,8 +14,8 @@
 
 2004-10-01  Derek Price <derek@ximbiot.com>
 
-	* release.c (release): Simplify string construction with asnprintf().
-	Improve comment.  Some reformatting.
+	* repos.c (Name_Repository): Simplify string construction with
+	asnprintf().  Improve comment.  Some reformatting.
 
 2004-10-01  Derek Price <derek@ximbiot.com>
 
