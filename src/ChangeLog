@@ -1,3 +1,9 @@
+Fri Jun  7 13:04:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Change INITIALIZE_SOCKET_SUBSYSTEM to
+	SYSTEM_INITIALIZE and pass it pointers to argc and argv.  Rename
+	CLEANUP_SOCKET_SUBSYSTEM to SYSTEM_CLEANUP.
+
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* import.c (add_rcs_file): make buf char[] not unsigned char[]
