@@ -6467,6 +6467,24 @@ considerably with the operating system.
 @c could use the OS's file typing.  This is a
 @c commonly-desired feature, and something of this sort
 @c may make sense.  But there are a lot of pitfalls here.
+@c
+@c Another, probably better, way to tell is to read the
+@c file in text mode, write it to a temp file in text
+@c mode, and then do a binary mode compare of the two 
+@c files.  If they differ, it is a binary file.  This
+@c might have problems on VMS (or some other system
+@c with several different text modes), but in general
+@c should be relatively portable.  The only other
+@c downside I can think of is that it would be fairly
+@c slow, but that is perhaps a small price to pay for
+@c not having your files corrupted.  Another issue is
+@c what happens if you import a text file with bare
+@c linefeeds on Windows.  Such files will show up on
+@c Windows sometimes (I think some native windows
+@c programs even write them, on occasion).  Perhaps it
+@c is reasonable to treat such files as binary; after
+@c all it is something of a presumption to assume that
+@c the user would want the linefeeds converted to CRLF.
 
 @c I'm not sure about the best location for this.  In
 @c one sense, it might belong right after we've introduced
