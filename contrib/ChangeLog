@@ -1,3 +1,8 @@
+2001-08-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* sccs2rcs.in: Fix typo: missing quote.
+	(Patch submitted by "Mark D. Baushke" <mdb@cvshome.org>.)
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.
