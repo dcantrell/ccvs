@@ -1046,14 +1046,15 @@ expand_at_signs (buf, size, fp)
 {
     char *cp, *end;
 
+    errno = 0;
     for (cp = buf, end = buf + size; cp < end; cp++)
     {
 	if (*cp == '@')
 	{
-	    if (putc ('@', fp) == EOF)
+	    if (putc ('@', fp) == EOF && errno != 0)
 		return EOF;
 	}
-	if (putc (*cp, fp) == EOF)
+	if (putc (*cp, fp) == EOF && errno != 0)
 	    return (EOF);
     }
     return (1);

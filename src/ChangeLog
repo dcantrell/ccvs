@@ -1,3 +1,9 @@
+Tue Oct 24 22:34:22 1995  Anthony J. Lill  <ajlill@ajlc.waterloo.on.ca>
+
+	* import.c (expand_at_signs): Check errno as well as return value
+	from putc.  Some systems bogusly return EOF when successfully
+	writing 0xff.
+
 Tue Oct 24 14:32:45 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* admin.c (admin): use getcaller() instead of getpwuid
