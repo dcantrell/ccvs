@@ -1,7 +1,15 @@
+2003-11-19  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Rename "OTHER ISSUES" to "GENERAL USER ISSUES" and move the
+	note about the Autoconf upgrade to a new "DEVELOPER ISSUES" section.
+	Add a note about upgrading Automake.
+	* aclocal.m4, configure, **/Makefile.in: Regenerated with Automake
+	1.7.9.
+
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
-	* NEWS: Subdivide Changes section into "SERVER SECURITY CHANGES" and
-	"OTHER CHANGES".  Note module abspath issue in security section.
+	* NEWS: Subdivide Changes section into "SERVER SECURITY ISSUES" and
+	"OTHER ISSUES".  Note module abspath issue in security section.
 
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
