@@ -1,5 +1,9 @@
 Wed Jun 18 12:07:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (OS2_SOURCES): Fix comment so this is not commented
+	out.  Remove windows-NT/rcmd.c; the make dist for the windows-NT
+	directory can take care of that one.
+
 	* Makefile.in, README: Add comments about Makefile rule.
 
 Tue Jun 17 14:44:02 1997  Jim Kingdon  (unknown@beezley)
