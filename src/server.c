@@ -401,7 +401,7 @@ dirswitch (dir, repos)
 	sprintf(pending_error_text, "E cannot mkdir %s", dir_name);
 	return;
     }
-    if (chdir (dir_name) < 0)
+    if ( CVS_CHDIR (dir_name) < 0)
     {
 	pending_error = errno;
 	pending_error_text = malloc (80 + strlen(dir_name));
@@ -420,7 +420,7 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    f = fopen (CVSADM_REP, "w");
+    f = CVS_FOPEN (CVSADM_REP, "w");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -437,7 +437,7 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    f = fopen (CVSADM_ENT, "w+");
+    f = CVS_FOPEN (CVSADM_ENT, "w+");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -505,7 +505,7 @@ serve_static_directory (arg)
 
     if (error_pending ()) return;
 
-    f = fopen (CVSADM_ENTSTAT, "w+");
+    f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -530,7 +530,7 @@ serve_sticky (arg)
 
     if (error_pending ()) return;
 
-    f = fopen (CVSADM_TAG, "w+");
+    f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -641,7 +641,7 @@ receive_file (size, file, gzipped)
     int gzip_status;
 
     /* Write the file.  */
-    fd = open (arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
     if (fd < 0)
     {
 	pending_error_text = malloc (40 + strlen (arg));
@@ -840,7 +840,7 @@ serve_lost (arg)
     else
     {
 	struct utimbuf ut;
-	int fd = open (arg, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	int fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (fd < 0 || close (fd) < 0)
 	{
 	    pending_error = errno;
@@ -956,7 +956,7 @@ server_write_entries ()
     /* Note that we free all the entries regardless of errors.  */
     if (!error_pending ())
     {
-	f = fopen (CVSADM_ENT, "w");
+	f = CVS_FOPEN (CVSADM_ENT, "w");
 	if (f == NULL)
 	{
 	    pending_error = errno;
@@ -1133,7 +1133,7 @@ server_notify ()
 
     while (notify_list != NULL)
     {
-	if (chdir (notify_list->dir) < 0)
+	if ( CVS_CHDIR (notify_list->dir) < 0)
 	{
 	    error (0, errno, "cannot change to %s", notify_list->dir);
 	    return -1;
@@ -2364,7 +2364,7 @@ do_cvs_command (command)
     set_nonblock_fd (flowcontrol_pipe[1]);
 #endif /* SERVER_FLOWCONTROL */
 
-    dev_null_fd = open ("/dev/null", O_RDONLY);
+    dev_null_fd = CVS_OPEN ("/dev/null", O_RDONLY);
     if (dev_null_fd < 0)
     {
 	print_error (errno);
@@ -3022,7 +3022,7 @@ checked_in_response (file, update_dir, repository)
 	struct stat sb;
 	char *mode_string;
 
-	if (stat (file, &sb) < 0)
+	if ( CVS_STAT (file, &sb) < 0)
 	{
 	    /* Not clear to me why the file would fail to exist, but it
 	       was happening somewhere in the testsuite.  */
@@ -3316,7 +3316,7 @@ serve_co (arg)
 	    return;
 	}
 
-	if (chdir (tempdir) < 0)
+	if ( CVS_CHDIR (tempdir) < 0)
 	{
 	    printf ("E Cannot change to directory %s\n", tempdir);
 	    print_error (errno);
@@ -3386,7 +3386,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	unsigned long size;
 	char size_text[80];
 
-	if (stat (file, &sb) < 0)
+	if ( CVS_STAT (file, &sb) < 0)
 	{
 	    if (existence_error (errno))
 	    {
@@ -3488,7 +3488,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		int status, fd, gzip_status;
 		pid_t gzip_pid;
 
-		fd = open (file, O_RDONLY | OPEN_BINARY, 0);
+		fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY, 0);
 		if (fd < 0)
 		    error (1, errno, "reading %s", short_pathname);
 		fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
@@ -3515,7 +3515,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 		long status;
 
 		size = sb.st_size;
-		f = fopen (file, "rb");
+		f = CVS_FOPEN (file, "rb");
 		if (f == NULL)
 		    error (1, errno, "reading %s", short_pathname);
 		status = buf_read_file (f, sb.st_size, &list, &last);
@@ -3546,7 +3546,7 @@ server_updated (file, update_dir, repository, vers, updated, file_info,
 	    /* But if we are joining, we'll need the file when we call
 	       join_file.  */
 	    && !joining ())
-	    unlink (file);
+	    CVS_UNLINK (file);
     }
     else if (scratched_file != NULL && entries_line == NULL)
     {
@@ -3688,7 +3688,7 @@ template_proc (repository, template)
     output_dir (data->update_dir, data->repository);
     buf_output0 (&protocol, "\n");
 
-    fp = fopen (template, "rb");
+    fp = CVS_FOPEN (template, "rb");
     if (fp == NULL)
     {
 	error (0, errno, "Couldn't open rcsinfo template file %s", template);
@@ -3864,7 +3864,7 @@ serve_checkin_prog (arg)
     char *arg;
 {
     FILE *f;
-    f = fopen (CVSADM_CIPROG, "w+");
+    f = CVS_FOPEN (CVSADM_CIPROG, "w+");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -3893,7 +3893,7 @@ serve_update_prog (arg)
     char *arg;
 {
     FILE *f;
-    f = fopen (CVSADM_UPROG, "w+");
+    f = CVS_FOPEN (CVSADM_UPROG, "w+");
     if (f == NULL)
     {
 	pending_error = errno;
@@ -4114,7 +4114,7 @@ server_cleanup (sig)
     temp_dir = getenv ("TMPDIR");
     if (temp_dir == NULL || temp_dir[0] == '\0')
         temp_dir = "/tmp";
-    chdir(temp_dir);
+    CVS_CHDIR (temp_dir);
 
     len = strlen (server_temp_dir) + 80;
     cmd = malloc (len);
@@ -4347,7 +4347,7 @@ check_repository_password (username, password, repository, host_user_ptr)
     strcat (filename, "/CVSROOT");
     strcat (filename, "/passwd");
   
-    fp = fopen (filename, "r");
+    fp = CVS_FOPEN (filename, "r");
     if (fp == NULL)
     {
 	if (!existence_error (errno))

@@ -361,7 +361,7 @@ commit (argc, argv)
 	    error (1, 0, "cannot specify both a message and a log file");
 
 	/* FIXME: Why is this binary?  Needs more investigation.  */
-	if ((logfd = open (logfile, O_RDONLY | OPEN_BINARY)) < 0)
+	if ((logfd = CVS_OPEN (logfile, O_RDONLY | OPEN_BINARY)) < 0)
 	    error (1, errno, "cannot open log file %s", logfile);
 
 	if (fstat(logfd, &statbuf) < 0)
@@ -1183,7 +1183,7 @@ commit_filesdoneproc (err, repository, update_dir)
     {
 	FILE *fp;
 
-	if ((fp = fopen (CVSADM_CIPROG, "r")) != NULL)
+	if ((fp = CVS_FOPEN (CVSADM_CIPROG, "r")) != NULL)
 	{
 	    char *line;
 	    int line_length;
@@ -1482,7 +1482,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
 	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
 	
 	if (strcmp (rcs, tmp) != 0
-	    && rename (rcs, tmp) == -1
+	    && CVS_RENAME (rcs, tmp) == -1
 	    && (isreadable (rcs) || !isreadable (tmp)))
 	{
 	    free(tmp);
@@ -1643,7 +1643,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
 	    
 	    if (strcmp (oldfile, rcs) == 0
-		|| rename (oldfile, rcs) != 0
+		|| CVS_RENAME (oldfile, rcs) != 0
 		|| isreadable (oldfile)
 		|| !isreadable (rcs))
 	    {
@@ -1898,7 +1898,7 @@ fix_rcs_modes (rcs, user)
 {
     struct stat sb;
 
-    if (stat (user, &sb) != -1)
+    if ( CVS_STAT (user, &sb) != -1)
 	(void) chmod (rcs, (int) sb.st_mode & ~0222);
 }
 

@@ -1,3 +1,20 @@
+Wed Jun 05 10:03:10 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* lib/{system.h,savecwd.c}, src/{add.c,checkout.c,client.c,
+	commit.c,create_adm.c,diff.c,edit.c,entries.c,fileattr.c,
+	filesubr.c,find_names.c,history.c,ignore.c,import.c,lock.c,
+	login.c,logmsg.c,mkmodules.c,modules.c,myndbm.c,no_diff.c,
+	parseinfo.c,patch.c,rcs.c,recurse.c,release.c,remove.c,root.c,
+	rtag.c,server.c,tag.c,update.c,vers_ts.c,wrapper.c}:
+	Under non-UNIX operating systems (MS-DOS, WinNT, MacOS), many
+	filesystem calls take only one argument; permission is handled
+	very differently on those systems than in UNIX.  On MacOS,
+	the naming scheme for volumes and subdirectories is quite
+	different.  This patch leaves hooks in the form of CVS_ACCESS,
+	CVS_CHDIR, CVS_CREAT, CVS_FOPEN, CVS_MKDIR, CVS_OPEN, CVS_OPENDIR,
+	CVS_RENAME, CVS_RMDIR, CVS_STAT, and CVS_UNLINK to accomodate
+	these differences.
+
 Thu Jun  6 11:11:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Say "changes from 1.7 to 1.8" not "changes since 1.7".

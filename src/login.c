@@ -140,7 +140,7 @@ login (argc, argv)
     /* Yes, the method below reads the user's password file twice.  It's
        inefficient, but we're not talking about a gig of data here. */
 
-    fp = fopen (passfile, "r");
+    fp = CVS_FOPEN (passfile, "r");
     /* FIXME: should be printing a message if fp == NULL and not
        existence_error (errno).  */
     if (fp != NULL)
@@ -181,14 +181,14 @@ login (argc, argv)
 	    FILE *tmp_fp;
 
 	    tmp_name = cvs_temp_name ();
-	    if ((tmp_fp = fopen (tmp_name, "w")) == NULL)
+	    if ((tmp_fp = CVS_FOPEN (tmp_name, "w")) == NULL)
             {
 		error (1, errno, "unable to open temp file %s", tmp_name);
 		return 1;
             }
 	    chmod (tmp_name, 0600);
 
-	    fp = fopen (passfile, "r");
+	    fp = CVS_FOPEN (passfile, "r");
 	    if (fp == NULL)
             {
 		error (1, errno, "unable to open %s", passfile);
@@ -218,7 +218,7 @@ login (argc, argv)
     }
     else
     {
-	if ((fp = fopen (passfile, "a")) == NULL)
+	if ((fp = CVS_FOPEN (passfile, "a")) == NULL)
         {
 	    error (1, errno, "could not open %s", passfile);
 	    free (passfile);
@@ -291,7 +291,7 @@ get_cvs_password ()
     }
 
   passfile = construct_cvspass_filename ();
-  fp = fopen (passfile, "r");
+  fp = CVS_FOPEN (passfile, "r");
   if (fp == NULL)
     {
       error (0, errno, "could not open %s", passfile);

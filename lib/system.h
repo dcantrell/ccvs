@@ -422,12 +422,53 @@ char *getwd ();
 #define	S_IWOTH		0000002		/* write permission, other */
 #endif
 
-/* Under MS-DOS and its derivatives (like Windows NT), mkdir takes only one
-   argument; permission is handled very differently on those systems than in
-   in Unix.  So we leave such systems a hook on which they can hang their
-   own definitions.  */
+/* Under non-UNIX operating systems (MS-DOS, WinNT, MacOS), many filesystem
+   calls take  only one argument; permission is handled very differently on
+   those systems than in Unix.  So we leave such systems a hook on which they
+   can hang their own definitions.  */
+
+#ifndef CVS_ACCESS
+#define CVS_ACCESS access
+#endif
+
+#ifndef CVS_CHDIR
+#define CVS_CHDIR chdir
+#endif
+
+#ifndef CVS_CREAT
+#define CVS_CREAT creat
+#endif
+
+#ifndef CVS_FOPEN
+#define CVS_FOPEN fopen
+#endif
+
 #ifndef CVS_MKDIR
 #define CVS_MKDIR mkdir
+#endif
+
+#ifndef CVS_OPEN
+#define CVS_OPEN open
+#endif
+
+#ifndef CVS_OPENDIR
+#define CVS_OPENDIR opendir
+#endif
+
+#ifndef CVS_RENAME
+#define CVS_RENAME rename
+#endif
+
+#ifndef CVS_RMDIR
+#define CVS_RMDIR rmdir
+#endif
+
+#ifndef CVS_STAT
+#define CVS_STAT stat
+#endif
+
+#ifndef CVS_UNLINK
+#define CVS_UNLINK unlink
 #endif
 
 /* Some file systems are case-insensitive.  If FOLD_FN_CHAR is

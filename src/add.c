@@ -371,7 +371,7 @@ add_directory (repository, dir)
     /* now, remember where we were, so we can get back */
     if (save_cwd (&cwd))
 	return (1);
-    if (chdir (dir) < 0)
+    if ( CVS_CHDIR (dir) < 0)
     {
 	error (0, errno, "cannot chdir to %s", dir);
 	return (1);

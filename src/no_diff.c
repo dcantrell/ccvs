@@ -99,7 +99,7 @@ No_Difference (file, vers, entries, repository, update_dir)
 				' ',
 #endif
 				tocvsPath);
-	    if (unlink (tocvsPath) < 0)
+	    if ( CVS_UNLINK (tocvsPath) < 0)
 		error (0, errno, "could not remove %s", tocvsPath);
 	}
     }
@@ -123,7 +123,7 @@ No_Difference (file, vers, entries, repository, update_dir)
 #else
 	(void) fprintf (stderr, "-> unlink (%s)\n", tmp);
 #endif
-    if (unlink (tmp) < 0)
+    if (CVS_UNLINK (tmp) < 0)
 	error (0, errno, "could not remove %s", tmp);
     free (tmp);
     free (options);

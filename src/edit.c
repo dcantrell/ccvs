@@ -165,7 +165,7 @@ ncheck_fileproc (finfo)
     /* We send notifications even if noexec.  I'm not sure which behavior
        is most sensible.  */
 
-    fp = fopen (CVSADM_NOTIFY, "r");
+    fp = CVS_FOPEN (CVSADM_NOTIFY, "r");
     if (fp == NULL)
     {
 	if (!existence_error (errno))
@@ -212,7 +212,7 @@ ncheck_fileproc (finfo)
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", CVSADM_NOTIFY);
 
-    if (unlink (CVSADM_NOTIFY) < 0)
+    if ( CVS_UNLINK (CVSADM_NOTIFY) < 0)
 	error (0, errno, "cannot remove %s", CVSADM_NOTIFY);
 
     return 0;
@@ -777,7 +777,7 @@ notify_do (type, filename, who, val, watches, repository)
 	    strcat (usersname, CVSROOTADM);
 	    strcat (usersname, "/");
 	    strcat (usersname, CVSROOTADM_USERS);
-	    fp = fopen (usersname, "r");
+	    fp = CVS_FOPEN (usersname, "r");
 	    if (fp == NULL && !existence_error (errno))
 		error (0, errno, "cannot read %s", usersname);
 	    if (fp != NULL)
@@ -871,7 +871,7 @@ notify_check (repository, update_dir)
     /* We send notifications even if noexec.  I'm not sure which behavior
        is most sensible.  */
 
-    fp = fopen (CVSADM_NOTIFY, "r");
+    fp = CVS_FOPEN (CVSADM_NOTIFY, "r");
     if (fp == NULL)
     {
 	if (!existence_error (errno))

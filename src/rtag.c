@@ -269,7 +269,7 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     }
 
     /* chdir to the starting directory */
-    if (chdir (repository) < 0)
+    if ( CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
 	return (1);

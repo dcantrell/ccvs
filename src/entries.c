@@ -272,7 +272,7 @@ fgetentent(fpin)
 	 */
 	{
 	    struct stat sb;
-	    if (strlen (ts) > 30 && stat (user, &sb) == 0)
+	    if (strlen (ts) > 30 && CVS_STAT (user, &sb) == 0)
 	    {
 		char *c = ctime (&sb.st_mtime);
 		
@@ -365,7 +365,7 @@ Entries_Open (aflag)
 	entries->list->delproc = freesdt;
     }
 
-    fpin = fopen (CVSADM_ENT, "r");
+    fpin = CVS_FOPEN (CVSADM_ENT, "r");
     if (fpin == NULL)
 	error (0, errno, "cannot open %s for reading", CVSADM_ENT);
     else
@@ -378,7 +378,7 @@ Entries_Open (aflag)
 	fclose (fpin);
     }
 
-    fpin = fopen (CVSADM_ENTLOG, "r");
+    fpin = CVS_FOPEN (CVSADM_ENTLOG, "r");
     if (fpin != NULL) 
     {
 	while ((ent = fgetentent (fpin)) != NULL) 
@@ -520,7 +520,7 @@ ParseTag (tagp, datep)
 	*tagp = (char *) NULL;
     if (datep)
 	*datep = (char *) NULL;
-    fp = fopen (CVSADM_TAG, "r");
+    fp = CVS_FOPEN (CVSADM_TAG, "r");
     if (fp)
     {
 	char *line;

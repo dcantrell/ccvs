@@ -270,7 +270,7 @@ update (argc, argv)
 			       program_name);
 
 		if (toplevel_wd[0] != '\0'
-		    && chdir (toplevel_wd) < 0)
+		    && CVS_CHDIR (toplevel_wd) < 0)
 		{
 		    error (1, errno, "could not chdir to %s", toplevel_wd);
 		}
@@ -836,7 +836,7 @@ update_dirleave_proc (dir, err, update_dir)
 
     /* run the update_prog if there is one */
     if (err == 0 && !pipeout && !noexec &&
-	(fp = fopen (CVSADM_UPROG, "r")) != NULL)
+	(fp = CVS_FOPEN (CVSADM_UPROG, "r")) != NULL)
     {
 	char *cp;
 	char *repository;
@@ -861,7 +861,7 @@ update_dirleave_proc (dir, err, update_dir)
     {
 	/* FIXME: chdir ("..") loses with symlinks.  */
 	/* Prune empty dirs on the way out - if necessary */
-	(void) chdir ("..");
+	(void) CVS_CHDIR ("..");
 	if (update_prune_dirs && isemptydir (dir))
 	{
 	    /* I'm not sure the existence_error is actually possible (except
@@ -886,7 +886,7 @@ isemptydir (dir)
     DIR *dirp;
     struct dirent *dp;
 
-    if ((dirp = opendir (dir)) == NULL)
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
     {
 	error (0, 0, "cannot open directory %s for empty check", dir);
 	return (0);
@@ -1200,7 +1200,7 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
         fail = 1;
     else
     {
-        e = fopen (file1, "r");
+        e = CVS_FOPEN (file1, "r");
 	if (e == NULL)
 	    fail = 1;
 	else
@@ -1238,7 +1238,7 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 		if (cvswrite == TRUE
 		    && !fileattr_get (file, "_watched"))
 		    xchmod (file2, 1);
-		e = fopen (file2, "r");
+		e = CVS_FOPEN (file2, "r");
 		if (e == NULL)
 		    fail = 1;
 		else
@@ -1298,7 +1298,7 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 	    unsigned int c;
 
 	    /* Check the diff output to make sure patch will be handle it.  */
-	    e = fopen (file, "r");
+	    e = CVS_FOPEN (file, "r");
 	    if (e == NULL)
 		error (1, errno, "could not open diff output file %s", file);
 	    c = fread (buf, 1, sizeof BINARY - 1, e);
@@ -1328,7 +1328,7 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
 		  xvers_ts->ts_user, xvers_ts->options,
 		  xvers_ts->tag, xvers_ts->date, NULL);
 
-	if (stat (file2, file_info) < 0)
+	if ( CVS_STAT (file2, file_info) < 0)
 	    error (1, errno, "could not stat %s", file2);
 
 	/* If this is really Update and not Checkout, recode history */

@@ -78,14 +78,14 @@ lock_simple_remove (repository)
     if (readlock[0] != '\0')
     {
 	(void) sprintf (tmp, "%s/%s", repository, readlock);
-	if (unlink (tmp) < 0 && ! existence_error (errno))
+	if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
     }
 
     if (writelock[0] != '\0')
     {
 	(void) sprintf (tmp, "%s/%s", repository, writelock);
-	if (unlink (tmp) < 0 && ! existence_error (errno))
+	if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
     }
 
@@ -104,7 +104,7 @@ lock_simple_remove (repository)
 		sprintf(rmuidlock, "rm -f %s/uidlock%d", tmp, geteuid() );
 		system(rmuidlock);
 #endif
-	    (void) rmdir (tmp);
+	    (void) CVS_RMDIR (tmp);
 	    }
     }
     cleanup_lckdir = 0;
@@ -134,7 +134,7 @@ Check_Owner(lockdir)
 		 * Assume that we don't own it.
 		 */
 #else
-  if (stat (lockdir, &sb) != -1 && sb.st_uid == geteuid ())
+  if ( CVS_STAT (lockdir, &sb) != -1 && sb.st_uid == geteuid ())
     return 1;
   else
     return 0;
@@ -186,7 +186,7 @@ Reader_Lock (xrepository)
 
     /* write a read-lock */
     (void) sprintf (tmp, "%s/%s", xrepository, readlock);
-    if ((fp = fopen (tmp, "w+")) == NULL || fclose (fp) == EOF)
+    if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
     {
 	error (0, errno, "cannot create read lock in repository `%s'",
 	       xrepository);
@@ -310,11 +310,11 @@ write_lock (repository)
 
 	/* write the write-lock file */
 	(void) sprintf (tmp, "%s/%s", repository, writelock);
-	if ((fp = fopen (tmp, "w+")) == NULL || fclose (fp) == EOF)
+	if ((fp = CVS_FOPEN (tmp, "w+")) == NULL || fclose (fp) == EOF)
 	{
 	    int xerrno = errno;
 
-	    if (unlink (tmp) < 0 && ! existence_error (errno))
+	    if ( CVS_UNLINK (tmp) < 0 && ! existence_error (errno))
 		error (0, errno, "failed to remove lock %s", tmp);
 
 	    /* free the lock dir if we created it */
@@ -353,7 +353,7 @@ readers_exist (repository)
 again:
 #endif
 
-    if ((dirp = opendir (repository)) == NULL)
+    if ((dirp = CVS_OPENDIR (repository)) == NULL)
 	error (1, 0, "cannot open directory %s", repository);
 
     errno = 0;
@@ -368,7 +368,7 @@ again:
 
 	    line = xmalloc (strlen (repository) + strlen (dp->d_name) + 5);
 	    (void) sprintf (line, "%s/%s", repository, dp->d_name);
-	    if (stat (line, &sb) != -1)
+	    if ( CVS_STAT (line, &sb) != -1)
 	    {
 #ifdef CVS_FUDGELOCKS
 		/*
@@ -376,7 +376,7 @@ again:
 		 * seconds ago, try to clean-up the lock file, and if
 		 * successful, re-open the directory and try again.
 		 */
-		if (now >= (sb.st_ctime + CVSLCKAGE) && unlink (line) != -1)
+		if (now >= (sb.st_ctime + CVSLCKAGE) && CVS_UNLINK (line) != -1)
 		{
 		    (void) closedir (dirp);
 		    free (line);
@@ -463,11 +463,11 @@ set_lock (repository, will_wait)
 	    FILE *fp;
 
 	    sprintf(uidlock, "%s/uidlock%d", masterlock, geteuid() );
-	    if ((fp = fopen(uidlock, "w+")) == NULL)
+	    if ((fp = CVS_FOPEN (uidlock, "w+")) == NULL)
 	    {
 		/* We failed to create the uidlock,
 		   so rm masterlock and leave */
-		rmdir(masterlock);
+		CVS_RMDIR (masterlock);
 		SIG_endCrSect ();
 		status = L_ERROR;
 		goto out;
@@ -499,7 +499,7 @@ set_lock (repository, will_wait)
 	 * stat the dir - if it is non-existent, re-try the loop since
 	 * someone probably just removed it (thus releasing the lock)
 	 */
-	if (stat (masterlock, &sb) < 0)
+	if ( CVS_STAT (masterlock, &sb) < 0)
 	{
 	    if (existence_error (errno))
 		continue;
@@ -523,7 +523,7 @@ set_lock (repository, will_wait)
 	  sprintf(rmuidlock, "rm -f %s/uidlock%d", masterlock, geteuid() );
 	  system(rmuidlock);
 #endif
-	    if (rmdir (masterlock) >= 0)
+	    if (CVS_RMDIR (masterlock) >= 0)
 		continue;
 	}
 #endif
@@ -551,7 +551,7 @@ clear_lock()
   sprintf(rmuidlock, "rm -f %s/uidlock%d", masterlock, geteuid() );
   system(rmuidlock);
 #endif
-    if (rmdir (masterlock) < 0)
+    if (CVS_RMDIR (masterlock) < 0)
 	error (0, errno, "failed to remove lock dir `%s'", masterlock);
     cleanup_lckdir = 0;
 }

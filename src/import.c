@@ -245,9 +245,9 @@ import (argc, argv)
 
     /* Create the logfile that will be logged upon completion */
     tmpfile = cvs_temp_name ();
-    if ((logfp = fopen (tmpfile, "w+")) == NULL)
+    if ((logfp = CVS_FOPEN (tmpfile, "w+")) == NULL)
 	error (1, errno, "cannot create temporary file `%s'", tmpfile);
-    (void) unlink (tmpfile);		/* to be sure it goes away */
+    (void) CVS_UNLINK (tmpfile);		/* to be sure it goes away */
     (void) fprintf (logfp, "\nVendor Tag:\t%s\n", argv[1]);
     (void) fprintf (logfp, "Release Tags:\t");
     for (i = 2; i < argc; i++)
@@ -307,7 +307,7 @@ import (argc, argv)
 
     /* Make sure the temporary file goes away, even on systems that don't let
        you delete a file that's in use.  */
-    unlink (tmpfile);
+    CVS_UNLINK (tmpfile);
     free (tmpfile);
 
     if (message)
@@ -335,7 +335,7 @@ import_descend (message, vtag, targc, targv)
     ign_add_file (CVSDOTIGNORE, 1);
     wrap_add_file (CVSDOTWRAPPER, 1);
 
-    if ((dirp = opendir (".")) == NULL)
+    if ((dirp = CVS_OPENDIR (".")) == NULL)
     {
 	err++;
     }
@@ -869,7 +869,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
        Maybe based on the file name....  */
     tocvsPath = wrap_tocvs_process_file (user);
     userfile = (tocvsPath == NULL ? user : tocvsPath);
-    fpuser = fopen (userfile, "r");
+    fpuser = CVS_FOPEN (userfile, "r");
     if (fpuser == NULL)
     {
 	/* not fatal, continue import */
@@ -877,7 +877,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 	error (0, errno, "ERROR: cannot read file %s", userfile);
 	goto read_error;
     }
-    fprcs = fopen (rcs, "w+b");
+    fprcs = CVS_FOPEN (rcs, "w+b");
     if (fprcs == NULL)
     {
 	ierrno = errno;
@@ -1043,7 +1043,7 @@ write_error_noclose:
     error (0, ierrno, "ERROR: cannot write file %s", rcs);
     if (ierrno == ENOSPC)
     {
-	(void) unlink (rcs);
+	(void) CVS_UNLINK (rcs);
 	fperror (logfp, 0, 0, "ERROR: out of space - aborting");
 	error (1, 0, "ERROR: out of space - aborting");
     }
@@ -1159,7 +1159,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 #endif
 	error (0, 0, "Importing %s", repository);
 
-    if (chdir (dir) < 0)
+    if ( CVS_CHDIR (dir) < 0)
     {
 	ierrno = errno;
 	fperror (logfp, 0, ierrno, "ERROR: cannot chdir to %s", repository);

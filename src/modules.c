@@ -344,7 +344,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    /* XXX - think about making null repositories at each dir here
 		     instead of just at the bottom */
 	    make_directories (dir);
-	    if (chdir (dir) < 0)
+	    if ( CVS_CHDIR (dir) < 0)
 	    {
 		error (0, errno, "cannot chdir to %s", dir);
 		spec_opt = NULL;

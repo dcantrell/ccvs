@@ -84,7 +84,7 @@ fileattr_read ()
     strcat (fname, CVSREP_FILEATTR);
 
     attr_read_attempted = 1;
-    fp = fopen (fname, FOPEN_BINARY_READ);
+    fp = CVS_FOPEN (fname, FOPEN_BINARY_READ);
     if (fp == NULL)
     {
 	if (!existence_error (errno))
@@ -441,7 +441,7 @@ fileattr_write ()
 	strcpy (fname, fileattr_stored_repos);
 	strcat (fname, "/");
 	strcat (fname, CVSREP);
-	if (rmdir (fname) < 0)
+	if (CVS_RMDIR (fname) < 0)
 	{
 	    if (errno != ENOTEMPTY
 
@@ -457,7 +457,7 @@ fileattr_write ()
     }
 
     omask = umask (cvsumask);
-    fp = fopen (fname, FOPEN_BINARY_WRITE);
+    fp = CVS_FOPEN (fname, FOPEN_BINARY_WRITE);
     if (fp == NULL)
     {
 	if (existence_error (errno))
@@ -482,7 +482,7 @@ fileattr_write ()
 	    }
 	    free (repname);
 
-	    fp = fopen (fname, FOPEN_BINARY_WRITE);
+	    fp = CVS_FOPEN (fname, FOPEN_BINARY_WRITE);
 	}
 	if (fp == NULL)
 	{

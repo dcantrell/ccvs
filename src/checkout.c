@@ -345,7 +345,7 @@ checkout (argc, argv)
 	char repository[PATH_MAX];
 
 	(void) CVS_MKDIR (where, 0777);
-	if (chdir (where) < 0)
+	if ( CVS_CHDIR (where) < 0)
 	    error (1, errno, "cannot chdir to %s", where);
 	preload_update_dir = xstrdup (where);
 	where = (char *) NULL;
@@ -396,7 +396,7 @@ checkout (argc, argv)
 	slash = strrchr (where, '/');
 	*slash = '\0';
 
-	if (chdir (where) < 0)
+	if ( CVS_CHDIR (where) < 0)
 	    error (1, errno, "cannot chdir to %s", where);
 
 	preload_update_dir = xstrdup (where);
@@ -713,7 +713,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
      */
     if (pipeout)
     {
-	if (chdir (repository) < 0)
+	if ( CVS_CHDIR (repository) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (preload_update_dir);
@@ -852,7 +852,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	*slash = '\0';
 	*slash2 = '\0';
 	(void) CVS_MKDIR (cp, 0777);
-	if (chdir (cp) < 0)
+	if ( CVS_CHDIR (cp) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", cp);
 	    return (1);
@@ -880,7 +880,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	*slash2 = '/';
     }
     (void) CVS_MKDIR (cp, 0777);
-    if (chdir (cp) < 0)
+    if ( CVS_CHDIR (cp) < 0)
     {
 	error (0, errno, "cannot chdir to %s", cp);
 	return (1);
