@@ -1,3 +1,9 @@
+Sun Sep 29 11:14:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): State that Gzip-stream is preferred
+	to gzip-file-contents.  Cite RFC1952/1951 rather than just "gzip".
+	Say that RFC1950/1951 compression is also known as "zlib".
+
 Sat Sep 28 09:31:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Repository): Move all information about the

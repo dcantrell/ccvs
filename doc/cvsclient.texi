@@ -306,8 +306,8 @@ newline, followed by the specified number of bytes of file contents.
 These are the entire contents of the specified file.  Second, if both
 client and server support @samp{gzip-file-contents}, a @samp{z} may
 precede the length, and the `file contents' sent are actually compressed
-with @samp{gzip}.  The length specified is that of the compressed
-version of the file.
+with @samp{gzip} (RFC1952/1951) compression.  The length specified is
+that of the compressed version of the file.
 
 In neither case are the file content followed by any additional data.
 The transmission of a file will end with a newline iff that file (or its
@@ -486,7 +486,7 @@ them to this request.
 
 @item Gzip-stream @var{level} \n
 Response expected: no.
-Use RFC 1950/1951 compression to compress all further communication
+Use zlib (RFC 1950/1951) compression to compress all further communication
 between the client and the server.  After this request is sent, all
 further communication must be compressed.  All further data received
 from the server will also be compressed.  The @var{level} argument
@@ -596,11 +596,13 @@ in order to receive patches.
 
 @item gzip-file-contents @var{level} \n
 Response expected: no.  Note that this request does not follow the
-response convention stated above.
-This request asks the server to filter files it sends to the client
-through the @samp{gzip} program, using the specified level of
-compression.  If this request is not made, the server must not do any
-compression.
+response convention stated above.  @code{Gzip-stream} is suggested
+instead of @code{gzip-file-contents} as it gives better compression; the
+only reason to implement the latter is to provide compression with
+@sc{cvs} 1.8 and earlier.  The @code{gzip-file-contents} request asks
+the server to compress files it sends to the client using @code{gzip}
+(RFC1952/1951) compression, using the specified level of compression.
+If this request is not made, the server must not compress files.
 
 This is only a hint to the server.  It may still decide (for example, in
 the case of very small files, or files that already appear to be
