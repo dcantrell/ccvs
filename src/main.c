@@ -228,7 +228,7 @@ static const char *const cmd_usage[] =
 static RETSIGTYPE
 main_cleanup ()
 {
-    exit (1);
+    exit (EXIT_FAILURE);
 }
 
 static void
@@ -468,7 +468,7 @@ main (argc, argv)
 	{
 	    printf ("E Fatal error, aborting.\n\
 error %s getpeername or getsockname failed\n", strerror (errno));
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 
 	status = krb_recvauth (KOPT_DO_MUTUAL, STDIN_FILENO, &ticket, "rcmd",
@@ -478,7 +478,7 @@ error %s getpeername or getsockname failed\n", strerror (errno));
 	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 kerberos: %s\n", krb_get_err_text(status));
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 
 	/* Get the local name.  */
@@ -487,7 +487,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 
 	pw = getpwnam (user);
@@ -495,7 +495,7 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
 	{
 	    printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", user);
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 
 	initgroups (pw->pw_name, pw->pw_gid);
@@ -770,14 +770,10 @@ error 0 %s: no such user\n", user);
 
 #endif /* No CLIENT_SUPPORT */
     }
-    /*
-     * If the command's error count is modulo 256, we need to change it
-     * so that we don't overflow the 8-bits we get to report exit status
-     */
-    if (err && (err % 256) == 0)
-	err = 1;
     Lock_Cleanup ();
-    return (err);
+    if (err)
+	return (EXIT_FAILURE);
+    return 0;
 }
 
 char *
@@ -812,5 +808,5 @@ usage (cpp)
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)
 	(void) fprintf (stderr, *cpp);
-    exit (1);
+    exit (EXIT_FAILURE);
 }

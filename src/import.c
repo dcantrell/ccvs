@@ -1195,7 +1195,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
     else
 	repository[0] = '\0';
     if (restore_cwd (&cwd, NULL))
-      exit (1);
+      exit (EXIT_FAILURE);
     free_cwd (&cwd);
     return (err);
 }

@@ -466,7 +466,7 @@ add_directory (repository, dir)
     (void) printf ("%s", message);
 out:
     if (restore_cwd (&cwd, NULL))
-      exit (1);
+      exit (EXIT_FAILURE);
     free_cwd (&cwd);
     return (0);
 }

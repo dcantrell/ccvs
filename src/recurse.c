@@ -557,7 +557,7 @@ do_dir_proc (p, closure)
     {
 	/* save our current directory and static vars */
         if (save_cwd (&cwd))
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	sdirlist = dirlist;
 	srepository = repository;
 	dirlist = NULL;
@@ -591,7 +591,7 @@ do_dir_proc (p, closure)
 
 	/* get back to where we started and restore state vars */
 	if (restore_cwd (&cwd, NULL))
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
 	dirlist = sdirlist;
 	repository = srepository;
@@ -675,7 +675,7 @@ unroll_files_proc (p, closure)
     if (strcmp(p->key, ".") != 0)
     {
         if (save_cwd (&cwd))
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	if (chdir (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
@@ -698,7 +698,7 @@ unroll_files_proc (p, closure)
 	free (save_update_dir);
 
 	if (restore_cwd (&cwd, NULL))
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
     }
 

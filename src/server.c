@@ -270,7 +270,7 @@ serve_valid_responses (arg)
 	{
 	    printf ("E response `%s' not supported by client\nerror  \n",
 		    rs->name);
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
 	    rs->status = rs_not_supported;
@@ -2236,7 +2236,7 @@ error ENOMEM Virtual memory exhausted.\n";
     /* If this gives an error, not much we could do.  syslog() it?  */
     write (STDOUT_FILENO, msg, sizeof (msg) - 1);
     server_cleanup (0);
-    exit (1);
+    exit (EXIT_FAILURE);
 }
 
 static void
@@ -4040,7 +4040,7 @@ server (argc, argv)
 	{
 	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 	putenv (env);
     }
@@ -4064,7 +4064,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	     */
 	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 	strcpy (server_temp_dir, temp_dir);
 
@@ -4104,7 +4104,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	 */
 	printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
-	exit (1);
+	exit (EXIT_FAILURE);
     }
 
     argument_count = 1;
@@ -4300,7 +4300,7 @@ check_password (username, password, repository)
         {
           printf ("E Fatal error, aborting.\n"
                   "error 0 %s: no such user\n", username);
-          exit (1);
+          exit (EXIT_FAILURE);
         }
       found_passwd = pw->pw_passwd;
       
@@ -4425,7 +4425,7 @@ authenticate_connection ()
       fflush (stdout);
       memset (descrambled_password, 0, strlen (descrambled_password));
       free (descrambled_password);
-      exit (1);
+      exit (EXIT_FAILURE);
     }
   
   /* Don't go any farther if we're just responding to "cvs login". */
