@@ -1,3 +1,17 @@
+Fri Jul 28 19:37:03 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* log.c (cvslog, log_fileproc): Pass all options (except -l)
+	to rlog as-is, so that users can put spaces in options,
+	can specify multiple -d options, etc.
+	(ac, av): New variables.
+	(log_option_with_arg, options): Remove.
+
+	(log_fileproc): Don't prepend `/' to file name if update_dir is empty.
+
+Thu Jul 27 20:26:13 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* log.c: import of initial WNT port work
+
 Tue Jul 25 00:52:26 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (safe_location): Don't use PROTO in function definition.
