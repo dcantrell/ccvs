@@ -1,3 +1,7 @@
+1998-09-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (config): Add LockDir.
+
 1998-09-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): "Directory" and "Argument" are

@@ -12088,6 +12088,26 @@ each command.  It also provides a place for the
 @samp{CVS/Template} file (@pxref{Working directory
 storage}).
 
+@cindex LockDir, in CVSROOT/config
+@item LockDir=@var{directory}
+Put CVS lock files in @var{directory} rather than
+directly in the repository.  This is useful if you want
+to let users read from the repository while giving them
+write access only to @var{directory}, not to the
+repository.  You need to create @var{directory}, but
+CVS will create subdirectories of @var{directory} as it
+needs them.  For information on CVS locks, see
+@ref{Concurrency}.
+
+@c Mention this in Compatibility section?
+Before enabling the LockDir option, make sure that you
+have tracked down and removed any copies of CVS 1.9 or
+older.  Such versions neither support LockDir, nor will
+give an error indicating that they don't support it.
+The result, if this is allowed to happen, is that some
+CVS users will put the locks one place, and others will
+put them another place, and therefore the repository
+could become corrupted.
 @end table
 
 @c ---------------------------------------------------------------------
