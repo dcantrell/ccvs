@@ -1,3 +1,8 @@
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
+	* stamp-chi: Remove this file - it is generated only in maintainer
+	mode.
+
 2004-11-29  Conrad T. Pino  <Conrad@Pino.com>
 
 	* unistd.h: FIXME gethostname prototype for lib/xgethostname.c
