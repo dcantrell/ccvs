@@ -634,10 +634,9 @@ update_fileproc (callerdat, finfo)
 			break;
 		    }
 		}
-		/* Fall through.  */
 		/* If we're not running as a server, just check the
-		   file out.  It's simpler and faster than starting up
-		   two new processes (diff and patch).  */
+		   file out.  It's simpler and faster than producing
+		   and applying patches.  */
 		/* Fall through.  */
 #endif
 	    case T_CHECKOUT:		/* needs checkout */
