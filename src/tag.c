@@ -581,6 +581,8 @@ tag_fileproc (callerdat, finfo)
 	if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
 	{
 	    free (oversion);
+	    if (branch_mode)
+		free (rev);
 	    freevers_ts (&vers);
 	    return (0);
 	}
@@ -602,6 +604,8 @@ tag_fileproc (callerdat, finfo)
 	    cvs_output (rev, 0);
 	    cvs_output ("\n", 1);
 	    free (oversion);
+	    if (branch_mode)
+		free (rev);
 	    freevers_ts (&vers);
 	    return (0);
 	}
@@ -613,9 +617,13 @@ tag_fileproc (callerdat, finfo)
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag %s to revision %s in %s",
 	       symtag, rev, vers->srcfile->path);
+	if (branch_mode)
+	    free (rev);
 	freevers_ts (&vers);
 	return (1);
     }
+    if (branch_mode)
+	free (rev);
     RCS_rewrite (vers->srcfile, NULL, NULL);
 
     /* more warm fuzzies */

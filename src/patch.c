@@ -735,6 +735,10 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
     tmpfile1 = tmpfile2 = tmpfile3 = NULL;
 
  out2:
+    if (vers_tag != NULL)
+	free (vers_tag);
+    if (vers_head != NULL)
+	free (vers_head);
     if (rcs != NULL)
 	free (rcs);
     return (ret);

@@ -820,12 +820,7 @@ admin_fileproc (callerdat, finfo)
 	   additional message is to make it clear that the previous problems
 	   caused CVS to forget about the idea of modifying the RCS file.  */
 	error (0, 0, "cannot modify RCS file for `%s'", finfo->file);
-
-	/* Upon failure, we want to abandon any changes made to the
-	   RCS data structure.  Forcing a reparse does the trick,
-	   but leaks memory and is kludgey.  Should we export
-	   free_rcsnode_contents for this purpose? */
-	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
+	RCS_abandon (rcs);
     }
 
   exitfunc:

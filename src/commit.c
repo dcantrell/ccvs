@@ -1275,6 +1275,8 @@ commit_fileproc (callerdat, finfo)
 	{
 	    if (finfo->rcs == NULL)
 		error (1, 0, "internal error: no parsed RCS file");
+	    if (ci->rev)
+		free (ci->rev);
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
 	    err = Checkin ('A', finfo, finfo->rcs->path, ci->rev,
 			   ci->tag, ci->options, saved_message);
@@ -1569,8 +1571,10 @@ commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
        this being a confusing feature!  */
     if (err == 0 && write_dirtag != NULL)
     {
+	char *repos = Name_Repository (dir, update_dir);
 	WriteTag (NULL, write_dirtag, NULL, write_dirnonbranch,
-		  update_dir, Name_Repository (dir, update_dir));
+		  update_dir, repos);
+	free (repos);
     }
 
     return (err);
