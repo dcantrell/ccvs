@@ -18163,24 +18163,32 @@ ${TESTDIR}/root1/dir1/file1,v  <--  file1
 initial revision: 1\.1
 done"
 
-	  if test "$remote" = yes; then
-	    # This is good behavior - we are asking CVS to do something
-	    # which doesn't make sense.  RELATIVE_REPOS symptom might vary
-	    # but it would still be an error (I imagine).
+	  if test "`cat dir1/CVS/Repository`" = "dir1"; then
+	    # RELATIVE_REPOS
+	    # That this is an error is good - we are asking CVS to do
+	    # something which doesn't make sense.
 	    dotest_fail multiroot3-10 \
 "${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" \
-"protocol error: directory '${TESTDIR}/root2/dir2' not within root '${TESTDIR}/root1'"
-	    # This one is supposed to work.
-	    dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
+"${PROG} [a-z]*: failed to create lock directory in repository .${TESTDIR}/root1/dir2': No such file or directory
+${PROG} [a-z]*: failed to obtain dir lock in repository .${TESTDIR}/root1/dir2'
+${PROG} \[[a-z]* aborted\]: read lock failed - giving up"
 	  else
-	    # Local isn't as picky as we might want in terms of getting
-	    # the wrong root.  I think if RELATIVE_REPOS, it would be
-	    # an error.
-	    dotest multiroot3-10 \
+	    # Not RELATIVE_REPOS.
+	    if test "$remote" = yes; then
+	      # This is good behavior - we are asking CVS to do something
+	      # which doesn't make sense.
+	      dotest_fail multiroot3-10 \
+"${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" \
+"protocol error: directory '${TESTDIR}/root2/dir2' not within root '${TESTDIR}/root1'"
+	    else
+	      # Local isn't as picky as we'd want in terms of getting
+	      # the wrong root.
+	      dotest multiroot3-10 \
 "${testcvs} -q -d ${CVSROOT1} diff dir1/file1 dir2/file2" ""
-	    # This one should work even for RELATIVE_REPOS, I would think.
-	    dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
+	    fi
 	  fi
+	  # This one is supposed to work.
+	  dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
 
 	  cd ..
 
