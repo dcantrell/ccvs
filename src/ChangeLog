@@ -1,3 +1,7 @@
+2004-10-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* add.c (add): Backout last typecasts cleanup.
+
 2004-10-19 Derek Price <derek@ximbiot.com>
 
 	* add.c (add): Avoid attempting to resurrect a dead rev 1.1.
