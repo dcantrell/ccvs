@@ -125,6 +125,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     Ctype status;
     char *sstat;
     Vers_TS *vers;
+    Node *node;
 
     status = Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL,
 			    1, 0, &vers, 0);
@@ -248,6 +249,20 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	cvs_output ("\t", 0);
 	cvs_output (vers->srcfile->print_path, 0);
 	cvs_output ("\n", 0);
+
+	node = findnode(vers->srcfile->versions,vers->vn_rcs);
+	if (node)
+	{
+	    RCSVers *v;
+	    v=(RCSVers*)node->data;
+	    node = findnode(v->other_delta,"commitid");
+	    cvs_output("   Commit Identifier:\t", 0);
+	    if(node && node->data)
+	        cvs_output(node->data, 0);
+	    else
+	        cvs_output("(none)",0);
+	    cvs_output("\n",0);
+	}
     }
 
     if (vers->entdata)

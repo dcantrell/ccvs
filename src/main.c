@@ -25,6 +25,8 @@ const char *program_name;
 const char *program_path;
 const char *cvs_cmd_name;
 
+const char *global_session_id; /* Random session ID */
+
 char *hostname;
 #ifdef SERVER_SUPPORT
 char *server_hostname;
@@ -677,6 +679,13 @@ distribution kit for a complete list of contributors and copyrights.\n",
 Using this option to access a repository which some users write to may\n\
 cause intermittent sandbox corruption.");
     }
+
+    /* Calculate the cvs global session ID */
+
+    global_session_id = Xasprintf ("%x%08lx%04x", (int)getpid(),
+                                  (long)time (NULL), rand()&0xFFFF);
+
+    TRACE (TRACE_FUNCTION, "main: Session ID is %s", global_session_id);
 
     /* Look up the command name. */
 

@@ -1634,7 +1634,17 @@ log_version (struct log_data *log_data, struct revlist *revlist, RCSNode *rcs,
 	cvs_output_tagged ("text", padd->data);
 	cvs_output_tagged ("text", " -");
 	cvs_output_tagged ("text", pdel->data);
+        cvs_output_tagged ("text", ";");
     }
+
+    p = findnode(ver->other_delta,"commitid");
+    if(p && p->data)
+    {
+        cvs_output_tagged ("text", "  commitid: ");
+	cvs_output_tagged ("text", p->data);
+	cvs_output_tagged ("text", ";");
+    }
+
     cvs_output_tagged ("newline", NULL);
 
     if (ver->branches != NULL)

@@ -1275,6 +1275,9 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	if (fprintf (fprcs, "next    %s;\012", add_vhead) < 0)
 	    goto write_error;
 
+	if (fprintf (fprcs, "commitid        %s;\012", global_session_id) < 0)
+	    goto write_error;
+
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
 	if (config->preserve_perms)
@@ -1306,6 +1309,9 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	if (fprintf (fprcs, "next     ;\012") < 0)
 	    goto write_error;
 
+	if (fprintf (fprcs, "commitid        %s;\012", global_session_id) < 0)
+	    goto write_error;
+
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
 	if (config->preserve_perms)
@@ -1322,7 +1328,8 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 		fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
 			 altdate1, author) < 0 ||
 		fprintf (fprcs, "branches ;\012") < 0 ||
-		fprintf (fprcs, "next     ;\012") < 0)
+		fprintf (fprcs, "next     ;\012") < 0 ||
+	        fprintf (fprcs, "commitid        %s;\012", global_session_id) < 0)
 		goto write_error;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
