@@ -2083,6 +2083,11 @@ than physical memory.
 @c in a first in, first out fashion, but I haven't
 @c looked very closely.
 
+@c What about disk usage in /tmp on the server?  I think that
+@c it can be substantial, but I haven't looked at this
+@c again and tried to figure it out ("cvs import" is
+@c probably the worst case...).
+
 The second area of large memory consumption is
 @code{diff}, when checking in large files.  This is
 required even for binary files.  The rule of thumb is

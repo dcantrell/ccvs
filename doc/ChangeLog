@@ -1,5 +1,8 @@
 Wed Sep 10 12:44:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Server requirements): Add comment about server
+	disk usage in /tmp.
+
 	* cvs.texinfo (Common options): More comments about date formats:
 	"now", "yesterday", and the "3 weeks ago" family.
 
