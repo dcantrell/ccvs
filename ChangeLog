@@ -1,5 +1,11 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note new cvs ls subcommand.
+	(Thanks for patches from Mark D Baushke <mdb@cvshome.org>
+	& Alexander Taler <dissent@cvshome.org>.)
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.dep, cvsnt.mak: Back out previous change.
 
 2004-04-23  Derek Price  <derek@ximbiot.com>
