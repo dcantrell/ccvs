@@ -9933,6 +9933,10 @@ Checking in first-dir/sdir10/ssdir/ssfile;
 ${TESTDIR}/cvsroot/first-dir/sdir10/ssdir/ssfile,v  <--  ssfile
 initial revision: 1\.1
 done"
+	  dotest errmsg2-18 "${testcvs} -Q tag test" ''
+
+	  dotest_fail errmsg2-19 "${testcvs} annotate -rtest -Dyesterday" \
+"${PROG} \[[a-z]* aborted\]: rcsbuf_open: internal error"
 
 	  cd ..
 	  rm -r 1
@@ -15583,6 +15587,21 @@ done"
 
 	tagdate)
 	  # Test combining -r and -D.
+	  #
+	  # Note that this is not a complete test.  It relies on the fact
+	  # that update, checkout and export have a LOT of shared code.
+	  # Notice:
+	  #	1)  checkout is never tested at all with -r -D
+	  #	2)  update never uses an argument to '-D' besides 'now'
+	  #		(this test does not provide enough data to prove
+	  #		that 'cvs update' with both a '-r' and a '-D'
+	  #		specified does not ignore '-D': a 'cvs up
+	  #		-r<branch> -Dnow' and a 'cvs up -r<branch>'
+	  #		should specify the same file revision).
+	  #	3)  export uses '-r<branch> -D<when there was a different
+	  #		revision>', hopefully completing this behavior test
+	  #		for checkout and update as well.
+	  #
 	  mkdir 1; cd 1
 	  dotest tagdate-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -15620,15 +15639,95 @@ done"
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.1; previous revision: 1\.1
 done"
+
 	  # Then the case where br2 does have revisions:
 	  dotest tagdate-11 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
 
 	  # For some reason, doing this on a branch seems to be relevant.
 	  dotest_fail tagdate-12 "${testcvs} -q update -j:yesterday" \
 "${PROG} \[[a-z]* aborted\]: argument to join may not contain a date specifier without a tag"
+	  # And check export
+
+	  # Wish some shorter sleep interval would suffice, but I need to
+	  # guarantee that the point in time specified by the argument to -D
+	  # in tagdate-14 and tagdate-16
+	  # falls in the space of time between commits to br2 and I
+	  # figure 60 seconds is probably a large enough range to
+	  # account for most network file system delays and such...
+	  # as it stands, it takes between 1 and 2 seconds between
+	  # calling CVS on my machine and the -D argument being used to
+	  # recall the file revision and this timing will certainly vary
+	  # by several seconds between machines - dependant on CPUspeeds,
+	  # I/O speeds, load, etc.
+	  sleep 60
+
+	  echo br2-2 >file1
+	  dotest tagdate-13 "${testcvs} -q ci -m modify-2-on-br2" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1
+done"
+	  cd ../..
+	  mkdir 2; cd 
+	  if ${testcvs} -q export -r br2 -D'1 minute ago' first-dir \
+			>${TESTDIR}/tagdate.tmp 2>&1; then
+	    if ${EXPR} "`cat ${TESTDIR}/tagdate.tmp`" : \
+"[UP] first-dir/file1" >/dev/null; then
+	      pass tagdate-14
+	    else
+	      echo "** expected: " >>${LOGFILE}
+	      echo "[UP] first-dir/file1" >>${LOGFILE}
+	      echo "** got: " >>${LOGFILE}
+	      cat ${TESTDIR}/tagdate.tmp >>${LOGFILE}
+	      fail tagdate-14
+	    fi
+	  else
+	    echo "Bad exit status" >>${LOGFILE}
+	    fail tagdate-14
+	  fi
+
+	  if ${EXPR} "`cat first-dir/file1`" : "br2-1" >/dev/null; then
+	    pass tagdate-15
+	  else
+	    fail tagdate-15
+	  fi
+
+	  # Now for annotate
+	  cd ../1/first-dir
+	  if ${testcvs} annotate -rbr2 -D'1 minute ago' \
+			>${TESTDIR}/tagdate.tmp 2>&1; then
+	    if ${EXPR} "`cat ${TESTDIR}/tagdate.tmp`" : \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1" >/dev/null; then
+	      pass tagdate-16
+	    else
+	      echo "** expected: " >>${LOGFILE}
+	      echo "Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1" >>${LOGFILE}
+	      echo "** got: " >>${LOGFILE}
+	      cat ${TESTDIR}/tagdate.tmp >>${LOGFILE}
+	      fail tagdate-16
+	    fi
+	  else
+	    echo "Bad exit status" >>${LOGFILE}
+	    fail tagdate-16
+	  fi
+
+	  dotest tagdate-17 "${testcvs} annotate -rbr2 -Dnow" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
+
+	  if test $keep = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
 
 	  cd ../..
-	  rm -r 1
+	  rm ${TESTDIR}/tagdate.tmp
+	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
