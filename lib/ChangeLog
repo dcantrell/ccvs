@@ -1,3 +1,8 @@
+2004-11-30  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dep: Regenerated for "../cvsnt.dsp" change.
+	* libcvs.mak: Regenerated for "../cvsnt.dsp" change.
+
 2004-11-21  Mark D. Baushke  <mdb@cvshome.org>
 
 	* libcvs.dep, libcvs.dsp, libcvs.mak: Add "xgethostname.c" to
