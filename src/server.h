@@ -29,6 +29,11 @@ extern void server_register
     PROTO((char *name, char *version, char *timestamp,
 	     char *options, char *tag, char *date, char *conflict));
 
+/* Set the modification time of the next file sent.  This must be
+   followed by a call to server_updated on the same file.  */
+extern void server_modtime PROTO ((struct file_info *finfo,
+				   Vers_TS *vers_ts));
+
 /*
  * We want to nuke the Entries line for a file, and (unless
  * server_scratch_entry_only is subsequently called) the file itself.

@@ -482,7 +482,7 @@ if test x"$*" = x; then
 	tests="${tests} multibranch import join new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap info"
-	tests="${tests} serverpatch log log2 crerepos rcs big modes"
+	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword"
 else
 	tests="$*"
@@ -6279,6 +6279,89 @@ done"
 	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  # Perhaps should restore the umask and CVSUMASK.  But the other
 	  # tests "should" not care about them...
+	  ;;
+
+	stamps)
+	  # Test timestamps.
+	  mkdir 1; cd 1
+	  dotest stamps-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest stamps-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch aa
+	  echo '$''Id$' >kw
+	  ls -l aa >${TESTDIR}/1/stamp.aa.touch
+	  ls -l kw >${TESTDIR}/1/stamp.kw.touch
+	  # "sleep 1" would suffice if we could assume ls --full-time, but
+	  # that is as far as I know unique to GNU ls.  Is there some POSIX.2
+	  # way to get the timestamp of a file, including the seconds?
+	  sleep 60
+	  dotest stamps-3 "${testcvs} add aa kw" \
+"${PROG} [a-z]*: scheduling file .aa. for addition
+${PROG} [a-z]*: scheduling file .kw. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+	  ls -l aa >${TESTDIR}/1/stamp.aa.add
+	  ls -l kw >${TESTDIR}/1/stamp.kw.add
+	  # "cvs add" should not muck with the timestamp.
+	  dotest stamps-4aa \
+"cmp ${TESTDIR}/1/stamp.aa.touch ${TESTDIR}/1/stamp.aa.add" ''
+	  dotest stamps-4kw \
+"cmp ${TESTDIR}/1/stamp.kw.touch ${TESTDIR}/1/stamp.kw.add" ''
+	  sleep 60
+	  dotest stamps-5 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
+done
+Checking in aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/kw,v
+done
+Checking in kw;
+${TESTDIR}/cvsroot/first-dir/kw,v  <--  kw
+initial revision: 1\.1
+done"
+	  ls -l aa >${TESTDIR}/1/stamp.aa.ci
+	  ls -l kw >${TESTDIR}/1/stamp.kw.ci
+	  # If there are no keywords, "cvs ci" leaves the timestamp alone
+	  # If there are, it sets the timestamp to the date of the commit.
+	  # I'm not sure how logical this is, but it is intentional.
+	  # If we wanted to get fancy we would make sure the time as
+	  # reported in "cvs log kw" matched stamp.kw.ci.  But that would
+	  # be a lot of work.
+	  dotest stamps-6aa \
+	    "cmp ${TESTDIR}/1/stamp.aa.add ${TESTDIR}/1/stamp.aa.ci" ''
+	  if cmp ${TESTDIR}/1/stamp.kw.add ${TESTDIR}/1/stamp.kw.ci >/dev/null
+	  then
+	    fail stamps-6kw
+	  else
+	    pass stamps-6kw
+	  fi
+	  cd ../..
+	  sleep 60
+	  mkdir 2
+	  cd 2
+	  dotest stamps-7 "${testcvs} -q get first-dir" "U first-dir/aa
+U first-dir/kw"
+	  cd first-dir
+	  ls -l aa >${TESTDIR}/1/stamp.aa.get
+	  ls -l kw >${TESTDIR}/1/stamp.kw.get
+	  # On checkout, CVS should set the timestamp to the date that the
+	  # file was committed.  Could check that the time as reported in
+	  # "cvs log aa" matches stamp.aa.get, but that would be a lot of
+	  # work.
+	  if cmp ${TESTDIR}/1/stamp.aa.ci ${TESTDIR}/1/stamp.aa.get >/dev/null
+	  then
+	    fail stamps-8aa
+	  else
+	    pass stamps-8aa
+	  fi
+	  dotest stamps-8kw \
+	    "cmp ${TESTDIR}/1/stamp.kw.ci ${TESTDIR}/1/stamp.kw.get" ''
+	  cd ../..
+	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	sticky)
