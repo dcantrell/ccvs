@@ -112,6 +112,7 @@ BSC32_SBRS= \
 	.\WinRel\yesno.sbr \
 	.\WinRel\getopt1.sbr \
 	.\WinRel\valloc.sbr \
+	.\WinRel\getline.sbr \
 	.\WinRel\xgetwd.sbr \
 	.\WinRel\regex.sbr \
 	.\WinRel\fnmatch.sbr \
@@ -194,6 +195,7 @@ LINK32_OBJS= \
 	.\WinRel\yesno.obj \
 	.\WinRel\getopt1.obj \
 	.\WinRel\valloc.obj \
+	.\WinRel\getline.obj \
 	.\WinRel\xgetwd.obj \
 	.\WinRel\regex.obj \
 	.\WinRel\fnmatch.obj \
@@ -299,6 +301,7 @@ BSC32_SBRS= \
 	.\WinDebug\yesno.sbr \
 	.\WinDebug\getopt1.sbr \
 	.\WinDebug\valloc.sbr \
+	.\WinDebug\getline.sbr \
 	.\WinDebug\xgetwd.sbr \
 	.\WinDebug\regex.sbr \
 	.\WinDebug\fnmatch.sbr \
@@ -381,6 +384,7 @@ LINK32_OBJS= \
 	.\WinDebug\yesno.obj \
 	.\WinDebug\getopt1.obj \
 	.\WinDebug\valloc.obj \
+	.\WinDebug\getline.obj \
 	.\WinDebug\xgetwd.obj \
 	.\WinDebug\regex.obj \
 	.\WinDebug\fnmatch.obj \
@@ -1648,6 +1652,24 @@ SOURCE=.\lib\valloc.c
 !ELSEIF  "$(CFG)" == "Win32 Debug"
 
 .\WinDebug\valloc.obj :  $(SOURCE)  $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\lib\getline.c
+
+!IF  "$(CFG)" == "Win32 Release"
+
+.\WinRel\getline.obj :  $(SOURCE)  $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ELSEIF  "$(CFG)" == "Win32 Debug"
+
+.\WinDebug\getline.obj :  $(SOURCE)  $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 !ENDIF 
