@@ -1,3 +1,8 @@
+2004-02-16  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* configure.in: Add AC_C_INLINE for vasnprintf and friends.
+	* config.h.in, configure: Regenerated.
+
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
 	Import vasnprintf module from GNULIB.
