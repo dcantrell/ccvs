@@ -60,6 +60,7 @@ AWK = @AWK@
 CC = @CC@
 CSH = @CSH@
 DEPDIR = @DEPDIR@
+EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -87,7 +88,6 @@ libdiff_a_SOURCES = diff.c diff3.c analyze.c cmpbuf.c cmpbuf.h io.c \
 
 
 EXTRA_DIST = ChangeLog build_diff.com diagmeet.note libdiff.dsp
-EXEEXT =
 OBJEXT = o
 subdir = diff
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
