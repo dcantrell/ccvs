@@ -3238,14 +3238,13 @@ _ACEOF
 
 fi
 
-
-        echo "$as_me:$LINENO: checking for strerror in -lcposix" >&5
-echo $ECHO_N "checking for strerror in -lcposix... $ECHO_C" >&6
-if test "${ac_cv_lib_cposix_strerror+set}" = set; then
+echo "$as_me:$LINENO: checking for library containing strerror" >&5
+echo $ECHO_N "checking for library containing strerror... $ECHO_C" >&6
+if test "${ac_cv_search_strerror+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lcposix  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
+ac_cv_search_strerror=no
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3283,22 +3282,69 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  ac_cv_lib_cposix_strerror=yes
+  ac_cv_search_strerror="none required"
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-ac_cv_lib_cposix_strerror=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_cposix_strerror" >&5
-echo "${ECHO_T}$ac_cv_lib_cposix_strerror" >&6
-if test $ac_cv_lib_cposix_strerror = yes; then
-  LIBS="$LIBS -lcposix"
-fi
+if test "$ac_cv_search_strerror" = no; then
+  for ac_lib in cposix; do
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+    cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
 
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char strerror ();
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+strerror ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_search_strerror="-l$ac_lib"
+break
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+  done
+fi
+LIBS=$ac_func_search_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_search_strerror" >&5
+echo "${ECHO_T}$ac_cv_search_strerror" >&6
+if test "$ac_cv_search_strerror" != no; then
+  test "$ac_cv_search_strerror" = "none required" || LIBS="$ac_cv_search_strerror $LIBS"
 
+fi
 
 if test "$ISC" = yes; then
 CFLAGS="$CFLAGS -D_SYSV3"
@@ -5013,7 +5059,6 @@ _ACEOF
 
 
 
-
 echo "$as_me:$LINENO: checking for struct stat.st_blksize" >&5
 echo $ECHO_N "checking for struct stat.st_blksize... $ECHO_C" >&6
 if test "${ac_cv_member_struct_stat_st_blksize+set}" = set; then
@@ -5068,13 +5113,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_ST_BLKSIZE 1
-_ACEOF
-
 fi
-
-
 
 echo "$as_me:$LINENO: checking for struct stat.st_rdev" >&5
 echo $ECHO_N "checking for struct stat.st_rdev... $ECHO_C" >&6
@@ -5129,10 +5168,6 @@ cat >>confdefs.h <<_ACEOF
 #define HAVE_STRUCT_STAT_ST_RDEV 1
 _ACEOF
 
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_ST_RDEV 1
-_ACEOF
 
 fi
 
@@ -5269,11 +5304,13 @@ done
 
 
 
+
 for ac_func in \
 	fchdir \
 	fchmod \
 	fsync \
 	ftime \
+	geteuid \
 	getgroups \
 	getopt \
 	getpagesize \

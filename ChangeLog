@@ -1,3 +1,11 @@
+2002-09-24  Larry Jones  <lawrence.jones@eds.com>
+
+	* aclocal.m4: Remove no longer needed definition of AC_ISC_POSIX
+	from gettext-0.10.40.
+	* configure.in: Remove warnings about obsolete AC_STRUCT_ST_BLKSIZE
+	and AC_STRUCT_ST_RDEV, add check for geteuid().
+	* configure, config.h.in: Regenerated.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* TODO (227): New item.
