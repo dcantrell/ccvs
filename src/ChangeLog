@@ -1,3 +1,25 @@
+2000-06-09  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_reparsercsfile, RCS_fully_parse, getdelta,
+	RCS_getdeltatext): Handle newphrases with composite values.
+	(rcsbuf_getkey): Don't remove @s in composite values -- it makes
+	it impossible to parse the value!  Set special flag to indicate
+	a composite value.
+	(rcsbuf_valcopy, rcsbuf_valpolish_internal): Handle composite values.
+	(putrcsfield): Write composite values.
+	(RCS_checkin): Set node types in other_delta list.
+	* hash.h: Add RCSCMPFLD.
+	* hash.c (nodetypestring): Ditto.
+
+	* rcs.c (getdelta): Never allocate space for value, just return
+	pointer into rcsbuf (fixes memory leaks).  Use rcsbuf_getkey to
+	read a key and value and then parse the value if needed rather
+	than trying to read it in bits and pieces with rcsbuf_getid,
+	rcsbuf_getstring, and rcsbuf_getword.
+	(RCS_reparsercsfile): Change callers to compensate.
+	(rcsbuf_valcmp, rcsbuf_valword): New functions.
+	(rcsbuf_getid, rcsbuf_getstring, rcsbuf_getword): Deleted.
+
 2000-06-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (usg): Update CVS home page URL.

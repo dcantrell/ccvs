@@ -60,12 +60,14 @@ static int rcsbuf_getkey PROTO ((struct rcsbuffer *, char **keyp,
 static int rcsbuf_getrevnum PROTO ((struct rcsbuffer *, char **revp));
 static char *rcsbuf_fill PROTO ((struct rcsbuffer *, char *ptr, char **keyp,
 				 char **valp));
+static int rcsbuf_valcmp PROTO ((struct rcsbuffer *));
 static char *rcsbuf_valcopy PROTO ((struct rcsbuffer *, char *val, int polish,
 				    size_t *lenp));
 static void rcsbuf_valpolish PROTO ((struct rcsbuffer *, char *val, int polish,
 				     size_t *lenp));
 static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
 					      const char *from, size_t *lenp));
+static char *rcsbuf_valword PROTO ((struct rcsbuffer *, char **));
 static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
 static void rcsbuf_get_buffered PROTO ((struct rcsbuffer *, char **datap,
 					size_t *lenp));
@@ -542,9 +544,10 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
 	if (rdata->other == NULL)
 	    rdata->other = getlist ();
 	kv = getnode ();
-	kv->type = RCSFIELD;
+	kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
 	kv->key = xstrdup (key);
-	kv->data = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
+	kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
+				   (size_t *) NULL);
 	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
@@ -590,9 +593,7 @@ RCS_reparsercsfile (rdata, pfp, rcsbufp)
 		   key, rcsfile);
 	    free (rdata->desc);
 	}
-	/* Don't need to rcsbuf_valcopy `value' because
-	   getdelta already did that. */
-	rdata->desc = xstrdup (value);
+	rdata->desc = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
     }
 
     rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
@@ -748,9 +749,10 @@ RCS_fully_parse (rcs)
 		if (vnode->other == NULL)
 		    vnode->other = getlist ();
 		kv = getnode ();
-		kv->type = RCSFIELD;
+		kv->type = rcsbuf_valcmp (&rcsbuf) ? RCSCMPFLD : RCSFIELD;
 		kv->key = xstrdup (key);
-		kv->data = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
+		kv->data = rcsbuf_valcopy (&rcsbuf, value, kv->type == RCSFIELD,
+					   (size_t *) NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -1028,6 +1030,9 @@ rcsbuf_close (rcsbuf)
    characters.  Call rcsbuf_valcopy or rcsbuf_valpolish to do
    appropriate massaging.  */
 
+/* Note that the extreme hair in rcsbuf_getkey is because profiling
+   statistics show that it was worth it. */
+
 static int
 rcsbuf_getkey (rcsbuf, keyp, valp)
     struct rcsbuffer *rcsbuf;
@@ -1283,13 +1288,10 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 	}
 
 	/* The value extends past the '@' string.  We need to undo the
-           closing of the '@' done in the default case above.  This
+           '@' stripping done in the default case above.  This
            case never happens in a plain RCS file, but it can happen
            if user defined phrases are used.  */
-	if (rcsbuf->vlen != 0)
-	    (*valp)[rcsbuf->vlen] = ' ';
-	else
-	    *valp = ptr;
+	((*valp)--)[rcsbuf->vlen++] = '@';
     }
 
     /* Here we have a value which is not a simple '@' string.  We need
@@ -1346,8 +1348,8 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 	    return 1;
 	}
 
-	/* We found an '@' string in the value.  We set
-	   RCSBUF->AT_STRING, which means that we won't be able to
+	/* We found an '@' string in the value.  We set RCSBUF->AT_STRING
+	   and RCSBUF->EMBEDDED_AT to indicate that we won't be able to
 	   compress whitespace correctly for this type of value.
 	   Since this type of value never arises in a normal RCS file,
 	   this should not be a big deal.  It means that if anybody
@@ -1356,8 +1358,7 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 	   themselves.  */
 
 	rcsbuf->at_string = 1;
-
-	*pat = ' ';
+	rcsbuf->embedded_at = -1;
 
 	ptr = pat + 1;
 
@@ -1392,445 +1393,12 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
 		break;
 
 	    /* We found an '@' pair in the string.  Keep looking.  */
-	    ++rcsbuf->embedded_at;
 	    ptr = pat + 2;
 	}
 
 	/* Here PAT points to the final '@' in the string.  */
-
-	*pat = ' ';
-
 	ptr = pat + 1;
     }
-
-#undef my_whitespace
-}
-
-/* TODO: Eliminate redundant code in rcsbuf_getkey, rcsbuf_getid,
-   rcsbuf_getstring, rcsbuf_getword.  These last three functions were
-   all created by hacking monstrous swaths of code from rcsbuf_getkey,
-   and some engineering would make the code easier to read and
-   maintain.
-
-   Note that the extreme hair in rcsbuf_getkey is because profiling
-   statistics show that it was worth it.
-
-   We probably could be processing "hardlinks" by first calling
-   rcsbuf_getkey, and breaking up the value afterwards; the code to
-   break it up would not need to be hacked for speed.  This would
-   remove the need for rcsbuf_getword, rcsbuf_getid, and
-   rcsbuf_getstring, as the other calls are easy to remove.  */
-
-/* Read an `id' (in the sense of rcsfile(5)) from RCSBUF, and store in
-   IDP. */
-
-static int
-rcsbuf_getid (rcsbuf, idp)
-    struct rcsbuffer *rcsbuf;
-    char **idp;
-{
-    register const char * const my_spacetab = spacetab;
-    register char *ptr, *ptrend;
-    char c;
-
-#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
-
-    rcsbuf->vlen = 0;
-    rcsbuf->at_string = 0;
-    rcsbuf->embedded_at = 0;
-
-    ptr = rcsbuf->ptr;
-    ptrend = rcsbuf->ptrend;
-
-    /* Sanity check.  */
-    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
-	abort ();
-
-    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
-       buffer, move back to the start of the buffer.  This keeps the
-       buffer from growing indefinitely.  */
-    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
-    {
-	int len;
-
-	len = ptrend - ptr;
-
-	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
-           at a time, so we can't have more bytes than that past PTR.  */
-	if (len > RCSBUF_BUFSIZE)
-	    abort ();
-
-	/* Update the POS field, which holds the file offset of the
-           first byte in the RCSBUF_BUFFER buffer.  */
-	rcsbuf->pos += ptr - rcsbuf_buffer;
-
-	memcpy (rcsbuf_buffer, ptr, len);
-	ptr = rcsbuf_buffer;
-	ptrend = ptr + len;
-	rcsbuf->ptrend = ptrend;
-    }
-
-    /* Skip leading whitespace.  */
-
-    while (1)
-    {
-	if (ptr >= ptrend)
-	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
-	    if (ptr == NULL)
-		return 0;
-	    ptrend = rcsbuf->ptrend;
-	}
-
-	c = *ptr;
-	if (! my_whitespace (c))
-	    break;
-
-	++ptr;
-    }
-
-    /* We've found the start of the key.  */
-
-    *idp = ptr;
-
-    if (c != ';')
-    {
-	while (1)
-	{
-	    ++ptr;
-	    if (ptr >= ptrend)
-	    {
-		ptr = rcsbuf_fill (rcsbuf, ptr, idp, (char **) NULL);
-		if (ptr == NULL)
-		    error (1, 0, "EOF in key in RCS file %s",
-			   rcsbuf->filename);
-		ptrend = rcsbuf->ptrend;
-	    }
-	    c = *ptr;
-	    if (c == ';' || my_whitespace (c))
-		break;
-	}
-    }
-
-    /* Here *IDP points to the id in the buffer, C is the character
-       we found at the end of the key, and PTR points to the location in
-       the buffer where we found C.  We may not set *PTR to \0, because
-       it may overwrite a terminating semicolon.  The calling function
-       must copy and terminate the id on its own. */
-
-    rcsbuf->ptr = ptr;
-    return 1;
-
-#undef my_whitespace
-}
-
-/* Read an RCS @-delimited string.  Store the result in STRP. */
-
-static int
-rcsbuf_getstring (rcsbuf, keyp, strp)
-    struct rcsbuffer *rcsbuf;
-    char **keyp;
-    char **strp;
-{
-    register const char * const my_spacetab = spacetab;
-    register char *ptr, *ptrend;
-    char *pat;
-    size_t vlen;
-    char c;
-
-#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
-
-    rcsbuf->vlen = 0;
-    rcsbuf->at_string = 0;
-    rcsbuf->embedded_at = 0;
-
-    ptr = rcsbuf->ptr;
-    ptrend = rcsbuf->ptrend;
-
-    /* Sanity check.  */
-    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
-	abort ();
-
-    /* Skip leading whitespace.  */
-
-    while (1)
-    {
-	if (ptr >= ptrend)
-	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
-	    if (ptr == NULL)
-		error (1, 0, "unexpected end of file reading %s",
-		       rcsbuf->filename);
-	    ptrend = rcsbuf->ptrend;
-	}
-
-	c = *ptr;
-	if (! my_whitespace (c))
-	    break;
-
-	++ptr;
-    }
-
-    /* PTR should now point to the start of a string. */
-    if (c != '@')
-	error (1, 0, "expected @-string at '\\x%x' in %s",
-	       c, rcsbuf->filename);
-
-    /* Optimize the common case of a value composed of a single
-       '@' string.  */
-
-    rcsbuf->at_string = 1;
-    
-    ++ptr;
-    
-    *strp = ptr;
-    
-    while (1)
-    {
-	while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
-	{
-	    /* Note that we pass PTREND as the PTR value to
-	       rcsbuf_fill, so that we will wind up setting PTR to
-	       the location corresponding to the old PTREND, so
-	       that we don't search the same bytes again.  */
-	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, strp);
-	    if (ptr == NULL)
-		error (1, 0,
-		       "EOF while looking for end of string in RCS file %s",
-		       rcsbuf->filename);
-	    ptrend = rcsbuf->ptrend;
-	}
-
-	/* Handle the special case of an '@' right at the end of
-	   the known bytes.  */
-	if (pat + 1 >= ptrend)
-	{
-	    /* Note that we pass PAT, not PTR, here.  */
-	    pat = rcsbuf_fill (rcsbuf, pat, keyp, strp);
-	    if (pat == NULL)
-	    {
-		/* EOF here is OK; it just means that the last
-		   character of the file was an '@' terminating a
-		   value for a key type which does not require a
-		   trailing ';'.  */
-		pat = rcsbuf->ptrend - 1;
-		
-	    }
-	    ptrend = rcsbuf->ptrend;
-	    
-	    /* Note that the value of PTR is bogus here.  This is
-	       OK, because we don't use it.  */
-	}
-	
-	if (pat + 1 >= ptrend || pat[1] != '@')
-	    break;
-	
-	/* We found an '@' pair in the string.  Keep looking.  */
-	++rcsbuf->embedded_at;
-	ptr = pat + 2;
-    }
-
-    /* Here PAT points to the final '@' in the string.  */
-    
-    *pat = '\0';
-    
-    vlen = pat - *strp;
-    if (vlen == 0)
-	*strp = NULL;
-    rcsbuf->vlen = vlen;
-    rcsbuf->ptr = pat + 1;
-    
-    return 1;
-
-#undef my_whitespace
-}
-
-/* Read an RCS `word', in the sense of rcsfile(5) (an id, a num, a
-   @-delimited string, or `:').  Store the result in WORDP.  If a
-   `;' is reached without reading any text, the result is NULL. */
-
-static int
-rcsbuf_getword (rcsbuf, keyp, wordp)
-    struct rcsbuffer *rcsbuf;
-    char **keyp;
-    char **wordp;
-{
-    register const char * const my_spacetab = spacetab;
-    register char *ptr, *ptrend;
-    char c;
-
-#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
-
-    rcsbuf->vlen = 0;
-    rcsbuf->at_string = 0;
-    rcsbuf->embedded_at = 0;
-
-    ptr = rcsbuf->ptr;
-    ptrend = rcsbuf->ptrend;
-
-    /* Sanity check.  */
-    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
-	abort ();
-
-    /* Skip leading whitespace.  */
-
-    while (1)
-    {
-	if (ptr >= ptrend)
-	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
-	    if (ptr == NULL)
-		error (1, 0, "unexpected end of file reading %s",
-		       rcsbuf->filename);
-	    ptrend = rcsbuf->ptrend;
-	}
-
-	c = *ptr;
-	if (! my_whitespace (c))
-	    break;
-
-	++ptr;
-    }
-
-    /* If we have reached `;', there is no value. */
-    if (c == ';')
-    {
-	*wordp = NULL;
-	*ptr++ = '\0';
-	rcsbuf->ptr = ptr;
-	rcsbuf->vlen = 0;
-	return 1;
-    }
-
-    /* PTR now points to the start of a value.  Find out whether it is
-       a num, an id, a string or a colon. */
-    if (c == ':')
-    {
-	*wordp = ptr++;
-	rcsbuf->ptr = ptr;
-	rcsbuf->vlen = 1;
-	return 1;
-    }
-
-    if (c == '@')
-    {
-	char *pat;
-	size_t vlen;
-
-	/* Optimize the common case of a value composed of a single
-	   '@' string.  */
-
-	rcsbuf->at_string = 1;
-
-	++ptr;
-
-	*wordp = ptr;
-
-	while (1)
-	{
-	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
-	    {
-		/* Note that we pass PTREND as the PTR value to
-                   rcsbuf_fill, so that we will wind up setting PTR to
-                   the location corresponding to the old PTREND, so
-                   that we don't search the same bytes again.  */
-		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, wordp);
-		if (ptr == NULL)
-		    error (1, 0,
-			   "EOF while looking for end of string in RCS file %s",
-			   rcsbuf->filename);
-		ptrend = rcsbuf->ptrend;
-	    }
-
-	    /* Handle the special case of an '@' right at the end of
-               the known bytes.  */
-	    if (pat + 1 >= ptrend)
-	    {
-		/* Note that we pass PAT, not PTR, here.  */
-		pat = rcsbuf_fill (rcsbuf, pat, keyp, wordp);
-		if (pat == NULL)
-		{
-		    /* EOF here is OK; it just means that the last
-		       character of the file was an '@' terminating a
-		       value for a key type which does not require a
-		       trailing ';'.  */
-		    pat = rcsbuf->ptrend - 1;
-
-		}
-		ptrend = rcsbuf->ptrend;
-
-		/* Note that the value of PTR is bogus here.  This is
-		   OK, because we don't use it.  */
-	    }
-
-	    if (pat + 1 >= ptrend || pat[1] != '@')
-		break;
-
-	    /* We found an '@' pair in the string.  Keep looking.  */
-	    ++rcsbuf->embedded_at;
-	    ptr = pat + 2;
-	}
-
-	/* Here PAT points to the final '@' in the string.  */
-
-	*pat = '\0';
-
-	vlen = pat - *wordp;
-	if (vlen == 0)
-	    *wordp = NULL;
-	rcsbuf->vlen = vlen;
-	rcsbuf->ptr = pat + 1;
-
-	return 1;
-    }
-
-    /* C is neither `:', `;' nor `@', so it should be the start of a num
-       or an id.  Make sure it is not another special character. */
-    if (c == '$' || c == '.' || c == ',')
-    {
-	error (1, 0, "illegal special character in RCS field in %s",
-	       rcsbuf->filename);
-    }
-
-    *wordp = ptr;
-    while (1)
-    {
-	if (ptr >= ptrend)
-	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, wordp);
-	    if (ptr == NULL)
-		error (1, 0, "unexpected end of file reading %s",
-		       rcsbuf->filename);
-	    ptrend = rcsbuf->ptrend;
-	}
-
-	/* Legitimate ID characters are digits, dots and any `graphic
-           printing character that is not a special.' This test ought
-	   to do the trick. */
-	c = *ptr;
-	if (isprint ((unsigned char) c) &&
-	    c != ';' && c != '$' && c != ',' && c != '@' && c != ':')
-	{
-	    ++ptr;
-	    continue;
-	}
-	break;
-    }
-
-    /* PTR points to the last non-id character in this word, and C is
-       the character in its memory cell.  Check to make sure that it
-       is a legitimate word delimiter -- whitespace or semicolon. */
-    if (c == ';' || my_whitespace (c))
-    {
-	rcsbuf->vlen = ptr - *wordp;
-	rcsbuf->ptr = ptr;
-	return 1;
-    }
-
-    error (1, 0, "illegal special character in RCS field in %s",
-	   rcsbuf->filename);
-    /* Shut up compiler warnings.  */
-    return 0;
 
 #undef my_whitespace
 }
@@ -1938,6 +1506,8 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
 	    koff = *keyp - rcsbuf_buffer;
 	if (valp != NULL && *valp != NULL)
 	    voff = *valp - rcsbuf_buffer;
+	koff = keyp == NULL ? 0 : *keyp - rcsbuf_buffer;
+	voff = valp == NULL ? 0 : *valp - rcsbuf_buffer;
 
 	expand_string (&rcsbuf_buffer, &rcsbuf_buffer_size,
 		       rcsbuf_buffer_size + RCSBUF_BUFSIZE);
@@ -1963,6 +1533,16 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
     return ptr;
 }
 
+/* Test whether the last value returned by rcsbuf_getkey is a composite
+   value or not. */
+   
+static int
+rcsbuf_valcmp (rcsbuf)
+    struct rcsbuffer *rcsbuf;
+{
+    return rcsbuf->at_string && rcsbuf->embedded_at < 0;
+}
+
 /* Copy the value VAL returned by rcsbuf_getkey into a memory buffer,
    returning the memory buffer.  Polish the value like
    rcsbuf_valpolish, q.v.  */
@@ -1986,7 +1566,7 @@ rcsbuf_valcopy (rcsbuf, val, polish, lenp)
     }
 
     vlen = rcsbuf->vlen;
-    embedded_at = rcsbuf->embedded_at;
+    embedded_at = rcsbuf->embedded_at < 0 ? 0 : rcsbuf->embedded_at;
 
     ret = xmalloc (vlen - embedded_at + 1);
 
@@ -2093,6 +1673,7 @@ rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
 	orig_to = to;
 
 	embedded_at = rcsbuf->embedded_at;
+	assert (embedded_at > 0);
 
 	if (lenp != NULL)
 	    *lenp = len - embedded_at;
@@ -2140,6 +1721,109 @@ rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
 	*to = '\0';
     }
 }
+
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+
+/* Copy the next word from the value VALP returned by rcsbuf_getkey into a
+   memory buffer, updating VALP and returning the memory buffer.  Return
+   NULL when there are no more words. */
+
+static char *
+rcsbuf_valword (rcsbuf, valp)
+    struct rcsbuffer *rcsbuf;
+    char **valp;
+{
+    register const char * const my_spacetab = spacetab;
+    register char *ptr, *pat;
+    char c;
+
+#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
+
+    if (*valp == NULL)
+	return NULL;
+
+    for (ptr = *valp; my_whitespace (*ptr); ++ptr) ;
+    if (*ptr == '\0')
+    {
+	assert (ptr - *valp == rcsbuf->vlen);
+	*valp = NULL;
+	rcsbuf->vlen = 0;
+	return NULL;
+    }
+
+    /* PTR now points to the start of a value.  Find out whether it is
+       a num, an id, a string or a colon. */
+    c = *ptr;
+    if (c == ':')
+    {
+	rcsbuf->vlen -= ++ptr - *valp;
+	*valp = ptr;
+	return xstrdup (":");
+    }
+
+    if (c == '@')
+    {
+	int embedded_at = 0;
+
+	pat = ++ptr;
+	while ((pat = strchr (pat, '@')) != NULL)
+	{
+	    if (pat[1] != '@')
+		break;
+	    ++embedded_at;
+	    pat += 2;
+	}
+
+	/* Here PAT points to the final '@' in the string.  */
+	*pat = '\0';
+	assert (rcsbuf->at_string);
+	rcsbuf->embedded_at = embedded_at;
+	ptr = rcsbuf_valcopy (rcsbuf, ptr, 0, (size_t *) NULL);
+	rcsbuf->vlen -= ++pat - *valp;
+	*valp = pat;
+	if (strchr (pat, '@') == NULL)
+	    rcsbuf->at_string = 0;
+	else
+	    rcsbuf->embedded_at = -1;
+	return ptr;
+    }
+
+    /* *PTR is neither `:', `;' nor `@', so it should be the start of a num
+       or an id.  Make sure it is not another special character. */
+    if (c == '$' || c == '.' || c == ',')
+    {
+	error (1, 0, "illegal special character in RCS field in %s",
+	       rcsbuf->filename);
+    }
+
+    pat = ptr;
+    while (1)
+    {
+	/* Legitimate ID characters are digits, dots and any `graphic
+           printing character that is not a special.' This test ought
+	   to do the trick. */
+	c = *++pat;
+	if (!isprint ((unsigned char) c) ||
+	    c == ';' || c == '$' || c == ',' || c == '@' || c == ':')
+	    break;
+    }
+
+    /* PAT points to the last non-id character in this word, and C is
+       the character in its memory cell.  Check to make sure that it
+       is a legitimate word delimiter -- whitespace or end. */
+    if (c != '\0' && !my_whitespace (c))
+	error (1, 0, "illegal special character in RCS field in %s",
+	       rcsbuf->filename);
+
+    *pat = '\0';
+    rcsbuf->vlen -= pat - *valp;
+    *valp = pat;
+    return xstrdup (ptr);
+
+#undef my_whitespace
+}
+
+#endif
 
 /* Return the current position of an rcsbuf.  */
 
@@ -5195,6 +4879,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	if (S_ISLNK (sb.st_mode))
 	{
 	    np = getnode();
+	    np->type = RCSFIELD;
 	    np->key = xstrdup ("symlink");
 	    np->data = xreadlink (workfile);
 	    addnode (delta->other_delta, np);
@@ -5203,18 +4888,21 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	{
 	    (void) sprintf (buf, "%u", sb.st_uid);
 	    np = getnode();
+	    np->type = RCSFIELD;
 	    np->key = xstrdup ("owner");
 	    np->data = xstrdup (buf);
 	    addnode (delta->other_delta, np);
 
 	    (void) sprintf (buf, "%u", sb.st_gid);
 	    np = getnode();
+	    np->type = RCSFIELD;
 	    np->key = xstrdup ("group");
 	    np->data = xstrdup (buf);
 	    addnode (delta->other_delta, np);
 	    
 	    (void) sprintf (buf, "%o", sb.st_mode & 07777);
 	    np = getnode();
+	    np->type = RCSFIELD;
 	    np->key = xstrdup ("permissions");
 	    np->data = xstrdup (buf);
 	    addnode (delta->other_delta, np);
@@ -5226,6 +4914,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		case S_IFCHR:
 		case S_IFBLK:
 		    np = getnode();
+		    np->type = RCSFIELD;
 		    np->key = xstrdup ("special");
 		    sprintf (buf, "%s %lu",
 			     ((sb.st_mode & S_IFMT) == S_IFCHR
@@ -7645,7 +7334,7 @@ getdelta (rcsbuf, rcsfile, keyp, valp)
     char **valp;
 {
     RCSVers *vnode;
-    char *key, *value, *valbuf, *cp;
+    char *key, *value, *cp;
     Node *kv;
 
     /* Get revision number if it wasn't passed in. This uses
@@ -7763,81 +7452,31 @@ unable to parse %s; `state' not in the expected place", rcsfile);
      */
     while (1)
     {
-	int keylen;
-	size_t valbuflen;
-
-	key = NULL;
-
-	if (! rcsbuf_getid (rcsbuf, &key))
+	if (! rcsbuf_getkey (rcsbuf, &key, &value))
 	    error (1, 0, "unexpected end of file reading %s", rcsfile);
 
-	/* rcsbuf_getid did not terminate the key, so remember its length. */
-	keylen = rcsbuf->ptr - key;
-
-	/* The `desc' keyword has only a single string value, with no
-	   trailing semicolon, so it must be handled specially. */
-	if (strncmp (key, RCSDESC, keylen) == 0)
-	{
-	    (void) rcsbuf_getstring (rcsbuf, &key, &valbuf);
-	    value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
-	    key[keylen] = '\0';
+	/* The `desc' keyword is the end of the deltas. */
+	if (strcmp (key, RCSDESC) == 0)
 	    break;
-	}
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
+
 	/* The `hardlinks' value is a group of words, which must
 	   be parsed separately and added as a list to vnode->hardlinks. */
-	if (strncmp (key, "hardlinks", keylen) == 0)
+	if (strcmp (key, "hardlinks") == 0)
 	{
-	    Node *n;
+	    char *word;
 
 	    vnode->hardlinks = getlist();
-	    while (1)
+	    while ((word = rcsbuf_valword (rcsbuf, &value)) != NULL)
 	    {
-		if (! rcsbuf_getword (rcsbuf, &key, &valbuf))
-		    error (1, 0, "unexpected end of file reading %s", rcsfile);
-		if (valbuf == NULL)
-		    break;
-		n = getnode();
-		n->key = rcsbuf_valcopy (rcsbuf, valbuf, 1, NULL);
+		Node *n = getnode();
+		n->key = word;
 		addnode (vnode->hardlinks, n);
 	    }
 	    continue;
 	}
 #endif
-
-	/* Get the value. */
-	value = NULL;
-	while (1)
-	{
-	    if (! rcsbuf_getword (rcsbuf, &key, &valbuf))
-		error (1, 0, "unexpected end of file reading %s", rcsfile);
-	    if (valbuf == NULL)
-		break;
-
-	    /* Copy valbuf to new space so we can polish it, then
-	       append it to value. */
-
-	    if (value == NULL)
-	    {
-		value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
-	    }
-	    else
-	    {
-		char *temp_value;
-		int len;
-
-		temp_value = rcsbuf_valcopy (rcsbuf, valbuf, 1, &valbuflen);
-		len = strlen (value);
-		value = (char *) xrealloc (value, len + valbuflen + 2);
-		value[len] = ' ';
-		strcpy (value + len + 1, temp_value);
-		free (temp_value);
-	    }
-	}
-
-	/* Now terminate key */
-	key[keylen] = '\0';
 
 	/* Enable use of repositories created by certain obsolete
 	   versions of CVS.  This code should remain indefinately;
@@ -7867,9 +7506,10 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	if (vnode->other_delta == NULL)
 	    vnode->other_delta = getlist ();
 	kv = getnode ();
-	kv->type = RCSFIELD;
+	kv->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
 	kv->key = xstrdup (key);
-	kv->data = value;
+	kv->data = rcsbuf_valcopy (rcsbuf, value, kv->type == RCSFIELD,
+				   (size_t *) NULL);
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -7954,9 +7594,10 @@ RCS_getdeltatext (rcs, fp, rcsbuf)
 	    break;
 
 	p = getnode();
-	p->type = RCSFIELD;
+	p->type = rcsbuf_valcmp (rcsbuf) ? RCSCMPFLD : RCSFIELD;
 	p->key = xstrdup (key);
-	p->data = rcsbuf_valcopy (rcsbuf, value, 1, (size_t *) NULL);
+	p->data = rcsbuf_valcopy (rcsbuf, value, p->type == RCSFIELD,
+				  (size_t *) NULL);
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
@@ -8037,8 +7678,8 @@ putrcsfield_proc (node, vfp)
 	   A case where we are wrong in a much more clear-cut way is that
 	   we let through non-graphic characters such as whitespace and
 	   control characters.  */
-	int n = strcspn (node->data, "$,.:;@");
-	if (node->data[n] == 0)
+
+	if (node->type == RCSCMPFLD || strpbrk (node->data, "$,.:;@") == NULL)
 	    fputs (node->data, fp);
 	else
 	{
