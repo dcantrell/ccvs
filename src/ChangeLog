@@ -2,6 +2,25 @@ Tue Oct 15 10:22:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	This is intended to facilitate some future cleanups to the
 	locking, but by itself it is a simple, conversative rearrangement:
+	* tag.c (locked_dir, locked_list): Move from here...
+	* lock.c: ...to here.
+	* lock.c (Lock_Cleanup): If locked_dir is set clean it up too.
+	* tag.c (tag_unlockdir): Removed; with the above change
+	Lock_Cleanup suffices.
+	* tag.c (tag_lockdir): Move from here...
+	* lock.c (lock_dir_for_write): ...to here.
+	* tag.c (tag_fileproc), rtag.c (rtag_fileproc): Update callers.
+	Move comments concerning why we are locking what we are from
+	tag_lockdir to here.
+	* tag.c (tag_filesdoneproc), rtag.c (rtag_filesdoneproc):
+	Update callers.
+	* lock.c (Writer_Lock): Made static.
+	* cvs.h: Update declarations.
+	* server.c (server_notify): Call lock_dir_for_write rather than
+	calling Writer_Lock ourselves.
+
+	This is intended to facilitate some future cleanups to the
+	locking, but by itself it is a simple, conversative rearrangement:
 	* lock.c (Lock_Cleanup): Also dellist (lock_tree_list).
 	* lock.c, cvs.h (lock_tree_cleanup): Removed; with the above change
 	Lock_Cleanup suffices.

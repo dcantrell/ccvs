@@ -407,10 +407,8 @@ char *xstrdup PROTO((const char *str));
 void strip_trailing_newlines PROTO((char *str));
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
 int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
-int Reader_Lock PROTO((char *xrepository));
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());
 int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
-int Writer_Lock PROTO((List * list));
 int isdir PROTO((const char *file));
 int isfile PROTO((const char *file));
 int islink PROTO((const char *file));
@@ -434,11 +432,17 @@ time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
 			 char *repository, char *tag, char *date));
 
+/* Locking subsystem (implemented in lock.c).  */
+
+int Reader_Lock PROTO((char *xrepository));
 void Lock_Cleanup PROTO((void));
 
 /* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
    and AFLAG, anyway.  */
 void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
+
+/* See lock.c for description.  */
+extern void lock_dir_for_write PROTO ((char *));
 
 void ParseTag PROTO((char **tagp, char **datep));
 void Scratch_Entry PROTO((List * list, char *fname));
@@ -761,8 +765,6 @@ char *get_cvs_password PROTO((void));
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
 extern void tag_check_valid_join PROTO ((char *, int, char **, int, int,
 					 char *));
-extern void tag_lockdir PROTO ((char *));
-extern void tag_unlockdir PROTO ((void));
 
 extern void cvs_output PROTO ((const char *, size_t));
 extern void cvs_outerr PROTO ((const char *, size_t));

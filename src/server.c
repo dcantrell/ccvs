@@ -1322,9 +1322,6 @@ server_notify ()
 {
     struct notify_note *p;
     char *repos;
-    List *list;
-    Node *node;
-    int status;
 
     while (notify_list != NULL)
     {
@@ -1335,14 +1332,7 @@ server_notify ()
 	}
 	repos = Name_Repository (NULL, NULL);
 
-	/* Now writelock.  */
-	list = getlist ();
-	node = getnode ();
-	node->type = LOCK;
-	node->key = xstrdup (repos);
-	status = addnode (list, node);
-	assert (status == 0);
-	Writer_Lock (list);
+	lock_dir_for_write (repos);
 
 	fileattr_startdir (repos);
 
@@ -1375,9 +1365,7 @@ server_notify ()
 	fileattr_write ();
 	fileattr_free ();
 
-	/* Remove the writelock.  */
 	Lock_Cleanup ();
-	dellist (&list);
     }
 
     /* The code used to call fflush (stdout) here, but that is no
