@@ -489,7 +489,11 @@ directory most recently specified with @code{Directory}.  If the user
 is operating on only some files in a directory, @code{Entry} requests
 for only those files need be included.  If an @code{Entry} request is
 sent without @code{Modified} or @code{Unchanged}, it means the file is
-lost (does not exist in the working directory).
+lost (does not exist in the working directory).  If both @code{Entry}
+and one of @code{Modified}, @code{Is-modified}, or @code{Unchanged} are
+sent for the same file, @code{Entry} must be sent first.  For a
+given file, one can send @code{Modified}, @code{Is-modified}, or
+@code{Unchanged}, but not more than one of these three.
 
 @item Modified @var{filename} \n
 Response expected: no.  Additional data: mode, \n, file transmission.
@@ -498,6 +502,11 @@ relative to the most recent repository sent with @code{Directory}.  If
 the user is operating on only some files in a directory, only those
 files need to be included.  This can also be sent without @code{Entry},
 if there is no entry for the file.
+
+@item Is-modified @var{filename} \n
+Response expected: no.  Additional data: none.  Like @code{Modified},
+but used for commands like @code{log} and @code{status} which only need
+to know whether the file is modified, not the contents.
 
 @item Unchanged @var{filename} \n
 Response expected: no.  Tell the server that @var{filename} has not been

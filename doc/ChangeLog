@@ -1,3 +1,9 @@
+Sun Mar 30 00:31:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Add Is-modified request.  Clarify
+	order of Entry relative to Unchanged or Is-modified (might as well
+	specify the same thing vis-a-vis Modified while we are at it).
+
 Sat Mar 29 12:32:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi: Change "newline" to "linefeed".  Most of the
