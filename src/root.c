@@ -184,10 +184,10 @@ primary_root_translate (const char *root_in)
     static char *translated = NULL;
     static size_t len;
 
+#ifdef PROXY_SUPPORT
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
-#ifdef PROXY_SUPPORT
     if (config->PrimaryServer
         && !strncmp (root_in, config->PrimaryServer->directory,
 		     strlen (config->PrimaryServer->directory))
@@ -224,12 +224,10 @@ primary_root_inverse_translate (const char *root_in)
     static char *translated = NULL;
     static size_t len;
 
-    TRACE (TRACE_FLOW, "primary_root_inverse_translate (%s)", root_in);
-
+#ifdef PROXY_SUPPORT
     /* This can happen, for instance, during `cvs init'.  */
     if (!config) return root_in;
 
-#ifdef PROXY_SUPPORT
     if (config->PrimaryServer
         && !strncmp (root_in, current_parsed_root->directory,
 		     strlen (current_parsed_root->directory))
@@ -905,6 +903,7 @@ normalize_cvsroot (const cvsroot_t *root)
 
 
 
+#ifdef PROXY_SUPPORT
 /* A walklist() function to walk the root_allow list looking for a PrimaryServer
  * configuration with a directory matching the requested directory.
  *
@@ -920,16 +919,15 @@ get_local_root_dir (Node *p, void *root_in)
     if (get_local_root_dir_done)
 	return 0;
 
-#ifdef PROXY_SUPPORT
     if (c->PrimaryServer && !strcmp (*r, c->PrimaryServer->directory))
     {
 	free (*r);
 	*r = xstrdup (p->key);
 	get_local_root_dir_done = true;
     }
-#endif
     return 0;
 }
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -949,12 +947,14 @@ local_cvsroot (const char *dir)
      */
     Sanitize_Repository_Name (newroot->directory);
 
+#ifdef PROXY_SUPPORT
     /* Translate the directory to a local one in the case that we are
      * configured as a secondary.  If root_allow has not been initialized,
      * nothing happens.
      */
     get_local_root_dir_done = false;
     walklist (root_allow, get_local_root_dir, &newroot->directory);
+#endif /* PROXY_SUPPORT */
 
     return newroot;
 }
