@@ -19,3 +19,4 @@ int do_update PROTO((int argc, char *argv[], char *xoptions, char *xtag,
 	       int xaflag, int xprune, int xpipeout, int which,
 	       char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir));
 int joining PROTO((void));
+int isemptydir PROTO((const char *dir)); /* FIXME: move somewhere better */
