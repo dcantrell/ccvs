@@ -596,7 +596,7 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot multiroot2 multiroot3"
+	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} reposmv pserver server client"
 else
 	tests="$*"
@@ -17196,7 +17196,6 @@ diff -r1\.1 file1-2
 > brown
 ${PROG} [a-z]*: Diffing mod2-2
 ${PROG} [a-z]*: Diffing mod2-2/mod1-2
-${PROG} server: Diffing \.
 ${PROG} [a-z]*: Diffing mod1-2
 ${PROG} [a-z]*: Diffing mod1-2/mod2-2
 ${PROG} [a-z]*: Diffing mod2-1
@@ -17258,7 +17257,6 @@ ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
 P mod2-2/mod1-2/file1-2
-${PROG} server: Updating \.
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 P mod1-2/mod2-2/file2-2
@@ -17284,7 +17282,6 @@ ${PROG} [a-z]*: Tagging mod1-2
 T mod1-2/file1-2
 ${PROG} [a-z]*: Tagging mod2-2
 ${PROG} [a-z]*: Tagging mod2-2/mod1-2
-${PROG} server: Tagging \.
 ${PROG} [a-z]*: Tagging mod1-2
 ${PROG} [a-z]*: Tagging mod1-2/mod2-2
 T mod1-2/mod2-2/file2-2
@@ -17498,7 +17495,6 @@ File: file1-2          	Status: Up-to-date
    Existing Tags:
 	cattle                   	(revision: 1\.2)
 
-${PROG} server: Examining \.
 ${PROG} [a-z]*: Examining mod1-2
 ${PROG} [a-z]*: Examining mod1-2/mod2-2
 ===================================================================
@@ -17606,7 +17602,6 @@ ${PROG} [a-z]*: Updating mod1-2
 U mod1-2/anotherfile1-2
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
-${PROG} server: Updating \.
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
@@ -17959,7 +17954,6 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 is
 =============================================================================
-${PROG} server: Logging \.
 ${PROG} [a-z]*: Logging mod1-2
 ${PROG} [a-z]*: Logging mod1-2/mod2-2
 
@@ -18157,7 +18151,6 @@ ${PROG} update: Updating dir1/sdir
 ${PROG} update: Updating dir1/sdir/ssdir" \
 "${PROG} server: Updating \.
 ${PROG} server: Updating dir1
-${PROG} server: Updating \.
 ${PROG} server: Updating dir1
 ${PROG} server: Updating dir1/sdir
 ${PROG} server: Updating dir1/sdir/ssdir"
@@ -18339,6 +18332,77 @@ ${PROG} \[[a-z]* aborted\]: read lock failed - giving up"
 	  fi
 
 	  rm -r 1
+	  rm -rf ${TESTDIR}/root1 ${TESTDIR}/root2
+	  unset CVSROOT1
+	  unset CVSROOT2
+	  ;;
+
+	multiroot4)
+	  # More multiroot tests, in particular we have two roots with
+	  # similarly-named directories and we try to see that CVS can
+	  # keep them separate.
+	  if test "x$remote" = xyes; then
+	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
+	  else
+	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
+	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
+	  fi
+
+	  mkdir 1; cd 1
+	  dotest multiroot4-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot4-2 "${testcvs} -d ${CVSROOT1} -q co -l ." ""
+	  mkdir dircom
+	  dotest multiroot4-3 "${testcvs} add dircom" \
+"Directory ${TESTDIR}/root1/dircom added to the repository"
+	  cd dircom
+	  touch file1
+	  dotest multiroot4-4 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest multiroot4-5 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/root1/dircom/file1,v
+done
+Checking in file1;
+${TESTDIR}/root1/dircom/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest multiroot4-6 "${testcvs} -d ${CVSROOT2} init" ""
+	  dotest multiroot4-7 "${testcvs} -d ${CVSROOT2} -q co -l ." ""
+	  mkdir dircom
+	  dotest multiroot4-8 "${testcvs} add dircom" \
+"Directory ${TESTDIR}/root2/dircom added to the repository"
+	  cd dircom
+	  touch file2
+	  dotest multiroot4-9 "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest multiroot4-10 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/root2/dircom/file2,v
+done
+Checking in file2;
+${TESTDIR}/root2/dircom/file2,v  <--  file2
+initial revision: 1\.1
+done"
+
+	  cd ../..
+	  cd 1/dircom
+	  # This may look contrived; the real world example which inspired
+	  # it was that a user was changing from local to remote.  Cases
+	  # like switching servers (among those mounting the same
+	  # repository) and so on would also look the same.
+	  mkdir sdir2
+	  dotest multiroot4-11 "${testcvs} -d ${CVSROOT2} add sdir2" \
+"Directory ${TESTDIR}/root2/dircom/sdir2 added to the repository"
+
+	  dotest multiroot4-12 "${testcvs} -q update" ""
+	  cd ..
+	  dotest multiroot4-13 "${testcvs} -q update dircom" ""
+	  cd ..
+
+	  rm -r 1 2
 	  rm -rf ${TESTDIR}/root1 ${TESTDIR}/root2
 	  unset CVSROOT1
 	  unset CVSROOT2

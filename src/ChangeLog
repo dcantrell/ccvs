@@ -1,3 +1,17 @@
+1999-02-16  Jim Kingdon  <http://www.cyclic.com>
+
+	* recurse.c (start_recursion): If we are skipping the current
+	directory (due to it being from the wrong repository), also adjust
+	the arguments we send to the server accordingly (like we already
+	do for the case in which there is no CVS directory).
+	* sanity.sh (multiroot4): New test, for this.  All these tests had
+	passed locally, but remote multiroot4-12 tests for this fix.
+	(multiroot): Adjust multiroot-diff-1, multiroot-update-2,
+	multiroot-tag-1, multiroot-status-1, multiroot-update-3, and
+	multiroot-log-1 to reflect the cosmetic change this produces (one
+	less "Diffing ." message).
+	(multiroot2): multiroot2-8 likewise.
+
 1999-02-10  Jim Kingdon  <http://www.cyclic.com>
 
 	* tag.c (cvstag): Don't pass SEND_NO_CONTENTS if -c specified.
