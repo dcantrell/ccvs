@@ -1,3 +1,8 @@
+Tue Oct 22 13:08:54 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* cvs.texinfo (loginfo): add information on the new loginfo format
+ 	string specification.
+
 Mon Oct 21 17:33:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Builds): New node.
