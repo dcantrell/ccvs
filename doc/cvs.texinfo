@@ -7901,6 +7901,11 @@ if you want files retrieved even when there is no match for the
 tag or date.  (The most recent revision of the file
 will be used).
 
+Note that even with @samp{-f}, a tag that you specify
+must exist (that is, in some file, not necessary in
+every file).  This is so that @sc{cvs} will continue to
+give an error if you mistype a tag name.
+
 @need 800
 @samp{-f} is available with these commands:
 @code{annotate}, @code{checkout}, @code{export},
@@ -12920,6 +12925,22 @@ set to a non-empty value and re-create the RCS file.
 @c and of itself, as there are the environment
 @c variables the system login name, &c, and it depends
 @c on the version of CVS.
+
+@item cvs [checkout aborted]: no such tag @var{tag}
+This message means that @sc{cvs} isn't familiar with
+the tag @var{tag}.  Usually this means that you have
+mistyped a tag name; however there are (relatively
+obscure) cases in which @sc{cvs} will require you to
+@c Search sanity.sh for "no such tag" to see some of
+@c the relatively obscure cases.
+try a few other @sc{cvs} commands involving that tag,
+before you find one which will cause @sc{cvs} to update
+the @file{val-tags} file; see discussion of val-tags in
+@ref{File permissions}.  You only need to worry about
+this once for a given tag; when a tag is listed in
+@file{val-tags}, it stays there.  Note that using
+@samp{-f} to not require tag matches does not override
+this check; see @ref{Common options}.
 
 @item *PANIC* administration files missing
 This typically means that there is a directory named
