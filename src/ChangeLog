@@ -1,3 +1,11 @@
+Mon Dec  9 10:58:28 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	* login.c (get_cvs_password): Remove code to check for value of
+	CVS_PASSWORD.  Keeping cleartext passwords in environment
+	variables is a really bad idea on Unix, since anyone can print
+	out a processes' environment using 'ps' (on BSD variants
+	anyway).  Update help message.
+
 Fri Dec  6 15:59:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: When matching "use .cvs commit. to remove this file
