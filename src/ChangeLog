@@ -1,3 +1,12 @@
+2004-08-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (sync-secondary, *info): Sync only the updated directories
+	rather than the entire repository after a write for a minor efficiency
+	improvement.
+	(info, taginfo): Hack *info to sync all dirs for these tests rather
+	than rewriting the sync-secondary script to handle old-style *info
+	format strings.
+
 2004-08-05  Derek Price  <derek@ximbiot.com>
 
 	Beginnings of support for turning off writeproxy support (still broke.)
