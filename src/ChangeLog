@@ -1,3 +1,10 @@
+Sat Mar 25 18:51:39 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c (server_cleanup): Only do the abysmal kludge of waiting
+ 	for command and draining the pipe #ifdef sun.  The code makes
+ 	assumptions not valid on all systems, and is only there to
+ 	workaround a SunOS bug.
+
 Wed Mar 22 21:55:56 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* server.c (mkdir_p): Call stat only if we get the EACCES.  Faster
