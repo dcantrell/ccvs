@@ -1257,11 +1257,16 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		   conversion, use convert_file which can compensate
 		   (FIXME: we could just use stdio instead which would
 		   avoid the whole problem).  */
-		convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
-	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
-		if (CVS_UNLINK (temp_filename) < 0)
-		    error (0, errno, "warning: couldn't delete %s",
-			   temp_filename);
+		if (!bin)
+		{
+		    convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
+				  filename, O_WRONLY | O_CREAT | O_TRUNC);
+		    if (CVS_UNLINK (temp_filename) < 0)
+			error (0, errno, "warning: couldn't delete %s",
+			       temp_filename);
+		}
+		else
+		    rename_file (temp_filename, filename);
 	    }
 #else
 		rename_file (temp_filename, filename);
@@ -3525,6 +3530,8 @@ send_modified (file, short_pathname, vers)
 	if (fd < 0)
 	    error (1, errno, "reading %s", short_pathname);
     }
+    else
+	fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY);
 #else
     fd = CVS_OPEN (file, O_RDONLY | (bin ? OPEN_BINARY : 0));
 #endif
