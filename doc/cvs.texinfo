@@ -5690,6 +5690,9 @@ all its options and arguments to the @code{rcs} command; it does
 no filtering or other processing.  This command @emph{does} work
 recursively, however, so extreme care should be used.
 
+@c "group" should probably read "unix group" (but what
+@c does NT local do?).  "compiled in value" is
+@c unclear--compiled in to what?
 If there is a group whose name matches a compiled in
 value which defaults to @code{cvsadmin}, only members
 of that group can use @code{cvs admin}.  To disallow
