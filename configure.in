@@ -30,15 +30,14 @@ if test X"$ac_cv_sys_interpreter" != X"yes" ; then
 fi
 
 AC_PATH_PROGS(gdiff_path, gnudiff diff, diff)
-AC_DEFINE_UNQUOTED(DIFF, "$gdiff_path")
 AC_MSG_CHECKING(to see if $gdiff_path supports -a)
 if $gdiff_path -a /dev/null /dev/null > /dev/null 2>&1 ; then
   AC_MSG_RESULT(yes; appending -a to $gdiff_path)
   gdiff_path="$gdiff_path -a"
 fi
+AC_DEFINE_UNQUOTED(DIFF, "$gdiff_path")
 
 AC_PATH_PROGS(ggrep_path, ggrep gnugrep grep, grep)
-AC_DEFINE_UNQUOTED(GREP, "$ggrep_path")
 AC_MSG_CHECKING(to see if $ggrep_path supports -s)
 [echo foostring | $ggrep_path -s foostring > conftest.out 2>/dev/null]
 dnl
@@ -69,6 +68,7 @@ else
     AC_MSG_RESULT(yes)
   fi
 fi
+AC_DEFINE_UNQUOTED(GREP, "$ggrep_path")
 rm -f conftest*
 
 AC_HEADER_STDC
