@@ -1,3 +1,8 @@
+Fri Jun 27 10:27:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (connect_to_pserver): Check for errors from send().
+	If socket() fails, include SOCK_STRERROR (SOCK_ERRNO) in message.
+
 Wed Jun 25 11:21:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c: New option --help-options, with much of the text
