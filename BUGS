@@ -95,10 +95,6 @@ interpret its option string, then the problem may be output in unexpected
 formats.
 
 
-* `release' of a project subdir does not remove the `subdir' entry from
-  `./CVS/Entries'.
-
-
 * CVS currently breaks at an assertion failure when `cvs ls <filename>' is used
   to list information for a single file.
 
