@@ -281,7 +281,7 @@ read_line (resultp, eof_ok)
 #ifdef NO_SOCKET_TO_FD
     if (! use_socket_style)
 #endif /* NO_SOCKET_TO_FD */
-      fflush (to_server);
+	fflush (to_server);
 
     result = (char *) xmalloc (result_size);
 
@@ -289,32 +289,32 @@ read_line (resultp, eof_ok)
     {
 
 #ifdef NO_SOCKET_TO_FD
-      if (use_socket_style)
+	if (use_socket_style)
         {
-          char ch;
-          /* Yes, this sucks performance-wise.  Short of implementing
-             our own buffering, I'm not sure how to effect a big
-             improvement.  We could at least avoid calling
-             read_from_server() for each character if we were willing
-             to duplicate a lot of its code, but I'm not sure that's
-             worth it. */
-          read_from_server (&ch, 1);
-          c = ch;
+	    char ch;
+	    /* Yes, this sucks performance-wise.  Short of implementing
+	       our own buffering, I'm not sure how to effect a big
+	       improvement.  We could at least avoid calling
+	       read_from_server() for each character if we were willing
+	       to duplicate a lot of its code, but I'm not sure that's
+	       worth it. */
+	    read_from_server (&ch, 1);
+	    c = ch;
         }
-      else
+	else
 #endif /* NO_SOCKET_TO_FD */
-        c = getc (from_server);
+	    c = getc (from_server);
 
 	if (c == EOF)
 	{
 	    free (result);
 
 #ifdef NO_SOCKET_TO_FD
-            if (! use_socket_style)
+	    if (! use_socket_style)
 #endif /* NO_SOCKET_TO_FD */
-              if (ferror (from_server))
-                error (1, errno, "reading from server");
-            
+		if (ferror (from_server))
+		    error (1, errno, "reading from server");
+ 
 	    /* It's end of file.  */
 	    if (eof_ok)
 		return 0;
@@ -324,7 +324,7 @@ read_line (resultp, eof_ok)
 
 	if (c == '\n')
 	    break;
-	
+
 	result[input_index++] = c;
 	while (input_index + 1 >= result_size)
 	{
@@ -356,7 +356,7 @@ read_line (resultp, eof_ok)
 	    putc ('\n', from_server_logfile);
 	}
     }
-    
+
     if (resultp == NULL)
 	free (result);
     return input_index;
@@ -374,22 +374,22 @@ read_line (resultp, eof_ok)
 int gzip_level;
 
 int filter_through_gzip (fd, dir, level, pidp)
-     int fd, dir, level;
-     pid_t *pidp;
+    int fd, dir, level;
+    pid_t *pidp;
 {
-  static char buf[5] = "-";
-  static char *gzip_argv[3] = { "gzip", buf };
+    static char buf[5] = "-";
+    static char *gzip_argv[3] = { "gzip", buf };
 
-  sprintf (buf+1, "%d", level);
-  return filter_stream_through_program (fd, dir, &gzip_argv[0], pidp);
+    sprintf (buf+1, "%d", level);
+    return filter_stream_through_program (fd, dir, &gzip_argv[0], pidp);
 }
 
 int filter_through_gunzip (fd, dir, pidp)
-     int fd, dir;
-     pid_t *pidp;
+    int fd, dir;
+    pid_t *pidp;
 {
-  static char *gunzip_argv[3] = { "gzip", "-d" };
-  return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
+    static char *gunzip_argv[3] = { "gzip", "-d" };
+    return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
 }
 
 #endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
@@ -676,19 +676,19 @@ call_in_directory (pathname, func, data)
 	    {
 		dirp = strchr (dirp, '/');
 		if (dirp)
-		  {
+		{
 		    strncpy (dir, dir_name, dirp - dir_name);
 		    dir[dirp - dir_name] = '\0';
 		    /* Skip the slash.  */
 		    ++dirp;
 		    if (rdirp == NULL)
-		      error (0, 0,
-			     "internal error: repository string too short.");
+			error (0, 0,
+			       "internal error: repository string too short.");
 		    else
-		      rdirp = strchr (rdirp, '/');
-		  }
+			rdirp = strchr (rdirp, '/');
+		}
 		else
-		  {
+		{
 		    /* If there are no more slashes in the dir name,
                        we're down to the most nested directory -OR- to
                        the name of a module.  In the first case, we
@@ -706,35 +706,35 @@ call_in_directory (pathname, func, data)
 
 		    rdirp = NULL;
 		    strcpy (dir, dir_name);
-		  }
+		}
 
 		if (CVS_MKDIR (dir, 0777) < 0)
 		{
-                  /* Now, let me get this straight.  In IBM C/C++
-                   * under OS/2, the error string for EEXIST is:
-                   *
-                   *     "The file already exists",
-                   *
-                   * and the error string for EACCESS is:
-                   *
-                   *     "The file or directory specified is read-only".
-                   *
-                   * Nonetheless, mkdir() will set EACCESS if the
-                   * directory *exists*, according both to the
-                   * documentation and its actual behavior.
-                   *
-                   * I'm sure that this made sense, to someone,
-                   * somewhere, sometime.  Just not me, here, now.
-                   */
+		    /* Now, let me get this straight.  In IBM C/C++
+		     * under OS/2, the error string for EEXIST is:
+		     *
+		     *     "The file already exists",
+		     *
+		     * and the error string for EACCESS is:
+		     *
+		     *     "The file or directory specified is read-only".
+		     *
+		     * Nonetheless, mkdir() will set EACCESS if the
+		     * directory *exists*, according both to the
+		     * documentation and its actual behavior.
+		     *
+		     * I'm sure that this made sense, to someone,
+		     * somewhere, sometime.  Just not me, here, now.
+		     */
 #ifdef EACCESS
-                  if ((errno != EACCESS) && (errno != EEXIST))
-                    error (1, errno, "cannot make directory %s", dir);
+		    if ((errno != EACCESS) && (errno != EEXIST))
+			error (1, errno, "cannot make directory %s", dir);
 #else /* ! defined(EACCESS) */
-                  if ((errno != EEXIST))
-                    error (1, errno, "cannot make directory %s", dir);
+		    if ((errno != EEXIST))
+			error (1, errno, "cannot make directory %s", dir);
 #endif /* defined(EACCESS) */
-                  
-                  /* It already existed, fine.  Just keep going.  */
+
+		    /* It already existed, fine.  Just keep going.  */
 		}
 		else if (strcmp (command_name, "export") == 0)
 		    /* Don't create CVSADM directories if this is export.  */
@@ -2745,140 +2745,139 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
  */
 void
 start_tcp_server (tofdp, fromfdp)
-     int *tofdp, *fromfdp;
+    int *tofdp, *fromfdp;
 {
-  int tofd = -1, fromfd;
+    int tofd = -1, fromfd;
 
-  struct hostent *hp;
-  char *hname;
-  const char *portenv;
-  int port;
-  struct sockaddr_in sin;
-  int s;
-
+    struct hostent *hp;
+    char *hname;
+    const char *portenv;
+    int port;
+    struct sockaddr_in sin;
+    int s;
 
 #if HAVE_KERBEROS
-  KTEXT_ST ticket;
-  const char *realm;
+    KTEXT_ST ticket;
+    const char *realm;
 #endif /* HAVE_KERBEROS */
 
-  int status;
-  
-  /*
-   * We look up the host to give a better error message if it
-   * does not exist.  However, we then pass CVSroot_hostname to
-   * krb_sendauth, rather than the canonical name, because
-   * krb_sendauth is going to do its own canonicalization anyhow
-   * and that lets us not worry about the static storage used by
-   * gethostbyname.
-   */
-  hp = gethostbyname (CVSroot_hostname);
-  if (hp == NULL)
-    error (1, 0, "%s: unknown host", CVSroot_hostname);
-  hname = xmalloc (strlen (hp->h_name) + 1);
-  strcpy (hname, hp->h_name);
+    int status;
+
+    /*
+     * We look up the host to give a better error message if it
+     * does not exist.  However, we then pass CVSroot_hostname to
+     * krb_sendauth, rather than the canonical name, because
+     * krb_sendauth is going to do its own canonicalization anyhow
+     * and that lets us not worry about the static storage used by
+     * gethostbyname.
+     */
+    hp = gethostbyname (CVSroot_hostname);
+    if (hp == NULL)
+	error (1, 0, "%s: unknown host", CVSroot_hostname);
+    hname = xmalloc (strlen (hp->h_name) + 1);
+    strcpy (hname, hp->h_name);
   
 #if HAVE_KERBEROS
-  realm = krb_realmofhost (hname);
+    realm = krb_realmofhost (hname);
 #endif /* HAVE_KERBEROS */
-  
-  /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
-  portenv = getenv ("CVS_CLIENT_PORT");
-  if (portenv != NULL)
+
+    /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
+    portenv = getenv ("CVS_CLIENT_PORT");
+    if (portenv != NULL)
     {
-      port = atoi (portenv);
-      if (port <= 0)
+	port = atoi (portenv);
+	if (port <= 0)
 	{
-	  error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
-	  error (0, 0, "are trying to force a connection via rsh, please");
-	  error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
-	  error (1, 0, "variable.");
+	    error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
+	    error (0, 0, "are trying to force a connection via rsh, please");
+	    error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
+	    error (1, 0, "variable.");
 	}
-      if (trace)
-        fprintf(stderr, "Using TCP port %d to contact server.\n", port);
-      port = htons (port);
+	if (trace)
+	    fprintf(stderr, "Using TCP port %d to contact server.\n", port);
+	port = htons (port);
     }
-  else
+    else
     {
-      struct servent *sp;
-      
-      sp = getservbyname ("cvs", "tcp");
-      if (sp == NULL)
-        port = htons (CVS_PORT);
-      else
-        port = sp->s_port;
+	struct servent *sp;
+
+	sp = getservbyname ("cvs", "tcp");
+	if (sp == NULL)
+	    port = htons (CVS_PORT);
+	else
+	    port = sp->s_port;
     }
-  
-  s = socket (AF_INET, SOCK_STREAM, 0);
-  if (s < 0)
-    error (1, errno, "socket");
-  
-  memset (&sin, 0, sizeof sin);
-  sin.sin_family = AF_INET;
-  sin.sin_addr.s_addr = INADDR_ANY;
-  sin.sin_port = 0;
-  
-  if (bind (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-    error (1, errno, "bind");
-  
-  memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
-  sin.sin_port = port;
-  
-  if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
+
+    s = socket (AF_INET, SOCK_STREAM, 0);
+    if (s < 0)
+	error (1, errno, "socket");
+
+    memset (&sin, 0, sizeof sin);
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = INADDR_ANY;
+    sin.sin_port = 0;
+
+    if (bind (s, (struct sockaddr *) &sin, sizeof sin) < 0)
+	error (1, errno, "bind");
+
+    memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
+    sin.sin_port = port;
+
+    if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
     {
-      error (0, errno, "connect");
-      close (s);
+	error (0, errno, "connect");
+	close (s);
     }
-  else
+    else
     {
 #ifdef HAVE_KERBEROS
-      struct sockaddr_in laddr;
-      int laddrlen;
-      MSG_DAT msg_data;
-      CREDENTIALS cred;
-      Key_schedule sched;
-      
-      laddrlen = sizeof (laddr);
-      if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
-        error (1, errno, "getsockname");
-      
-      /* We don't care about the checksum, and pass it as zero.  */
-      status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
-                             hname, realm, (unsigned long) 0, &msg_data,
-                             &cred, sched, &laddr, &sin, "KCVSV1.0");
-      if (status != KSUCCESS)
+	struct sockaddr_in laddr;
+	int laddrlen;
+	MSG_DAT msg_data;
+	CREDENTIALS cred;
+	Key_schedule sched;
+
+	laddrlen = sizeof (laddr);
+	if (getsockname (s, (struct sockaddr *) &laddr, &laddrlen) < 0)
+	    error (1, errno, "getsockname");
+
+	/* We don't care about the checksum, and pass it as zero.  */
+	status = krb_sendauth (KOPT_DO_MUTUAL, s, &ticket, "rcmd",
+			       hname, realm, (unsigned long) 0, &msg_data,
+			       &cred, sched, &laddr, &sin, "KCVSV1.0");
+	if (status != KSUCCESS)
         {
-          error (0, 0, "kerberos: %s", krb_get_err_text(status));
-          close (s);
+	    error (0, 0, "kerberos: %s", krb_get_err_text(status));
+	    close (s);
         }
-      else
+	else
         {
 #endif /* HAVE_KERBEROS */
 
-          server_fd = s;
-          close_on_exec (server_fd);
-          tofd = fromfd = s;
+	    server_fd = s;
+	    close_on_exec (server_fd);
+	    tofd = fromfd = s;
 
 #ifdef HAVE_KERBEROS
         }
 #endif /* HAVE_KERBEROS */
     }
   
-  if (tofd == -1)
-  {
+    if (tofd == -1)
+    {
 #ifdef HAVE_KERBEROS
-      error (0, 0, "Kerberos connect failed");
+	error (0, 0, "Kerberos connect failed");
 #else
-      error (0, 0, "Direct TCP connect failed");
+	error (0, 0, "Direct TCP connect failed");
 #endif
-      error (1, 0, "couldn't connect to remote host %s", CVSroot_hostname);
-  }
+	error (1, 0, "couldn't connect to remote host %s", CVSroot_hostname);
+    }
 
-  free (hname);
+    free (hname);
 
-  /* Give caller the values it wants. */
-  *tofdp   = tofd;
-  *fromfdp = fromfd;
+    /* Give caller the values it wants. */
+    *tofdp   = tofd;
+    *fromfdp = fromfd;
 }
 
 #endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
@@ -2902,51 +2901,52 @@ send_variable_proc (node, closure)
 void
 start_server ()
 {
-  int tofd, fromfd;
-  char *log = getenv ("CVS_CLIENT_LOG");
+    int tofd, fromfd;
+    char *log = getenv ("CVS_CLIENT_LOG");
 
-  /* Note that generally speaking we do *not* fall back to a different
-     way of connecting if the first one does not work.  This is slow
-     (*really* slow on a 14.4kbps link); the clean way to have a CVS
-     which supports several ways of connecting is with access methods.  */
+    /* Note that generally speaking we do *not* fall back to a different
+       way of connecting if the first one does not work.  This is slow
+       (*really* slow on a 14.4kbps link); the clean way to have a CVS
+       which supports several ways of connecting is with access methods.  */
 
-  /* Init these to NULL.  They will be set later if logging is on. */
-  from_server_logfile = (FILE *) NULL;
-  to_server_logfile   = (FILE *) NULL;
+    /* Init these to NULL.  They will be set later if logging is on. */
+    from_server_logfile = (FILE *) NULL;
+    to_server_logfile   = (FILE *) NULL;
 
-  switch (CVSroot_method)
-  {
+    switch (CVSroot_method)
+    {
 
 #ifdef AUTH_CLIENT_SUPPORT
-  case pserver_method:
-      /* Toss the return value.  It will die with error if anything
-	 goes wrong anyway. */
-      connect_to_pserver (&tofd, &fromfd, 0);
-      break;
+	case pserver_method:
+	    /* Toss the return value.  It will die with error if anything
+	       goes wrong anyway. */
+	    connect_to_pserver (&tofd, &fromfd, 0);
+	    break;
 #endif
 
 #if HAVE_KERBEROS || USE_DIRECT_TCP
-  case kserver_method:
-      start_tcp_server (&tofd, &fromfd);
-      break;
+	case kserver_method:
+	    start_tcp_server (&tofd, &fromfd);
+	    break;
 #endif
 
-  case server_method:
+	case server_method:
 #if ! RSH_NOT_TRANSPARENT
-      start_rsh_server (&tofd, &fromfd);
+	    start_rsh_server (&tofd, &fromfd);
 #else
 
 #  if defined(START_SERVER)
-      START_SERVER (&tofd, &fromfd, getcaller (),
-		    CVSroot_username, CVSroot_hostname, CVSroot_directory);
+	    START_SERVER (&tofd, &fromfd, getcaller (),
+			  CVSroot_username, CVSroot_hostname,
+			  CVSroot_directory);
 #  endif
 #endif
-      break;
+	    break;
 
-  default:
-      error (1, 0, "(start_server): unknown access method %s");
-      break;
-  }
+	default:
+	    error (1, 0, "(start_server): unknown access method %s");
+	    break;
+    }
 
 #if defined(VMS) && defined(NO_SOCKET_TO_FD)
     /* Avoid mixing sockets with stdio */
@@ -2970,12 +2970,12 @@ start_server ()
 	strcpy (p, ".in");
 	to_server_logfile = open_file (buf, "w");
         if (to_server_logfile == NULL)
-          error (0, errno, "opening to-server logfile %s", buf);
+	    error (0, errno, "opening to-server logfile %s", buf);
 
 	strcpy (p, ".out");
 	from_server_logfile = open_file (buf, "w");
         if (from_server_logfile == NULL)
-          error (0, errno, "opening from-server logfile %s", buf);
+	    error (0, errno, "opening from-server logfile %s", buf);
 
 	free (buf);
     }
@@ -2983,7 +2983,7 @@ start_server ()
 #ifdef NO_SOCKET_TO_FD
     if (! use_socket_style)
 #endif /* NO_SOCKET_TO_FD */
-      {
+    {
         /* todo: some OS's don't need these calls... */
         close_on_exec (tofd);
         close_on_exec (fromfd);
@@ -3001,24 +3001,24 @@ start_server ()
         /* These will use binary mode on systems which have it.  */
         to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
         if (to_server == NULL)
-          error (1, errno, "cannot fdopen %d for write", tofd);
+	    error (1, errno, "cannot fdopen %d for write", tofd);
         from_server = fdopen (fromfd, FOPEN_BINARY_READ);
         if (from_server == NULL)
-          error (1, errno, "cannot fdopen %d for read", fromfd);
-      }
+	    error (1, errno, "cannot fdopen %d for read", fromfd);
+    }
 
     /* Clear static variables.  */
     if (toplevel_repos != NULL)
-        free (toplevel_repos);
+	free (toplevel_repos);
     toplevel_repos = NULL;
     if (last_dir_name != NULL)
-        free (last_dir_name);
+	free (last_dir_name);
     last_dir_name = NULL;
     if (last_repos != NULL)
-        free (last_repos);
+	free (last_repos);
     last_repos = NULL;
     if (last_update_dir != NULL)
-        free (last_update_dir);
+	free (last_update_dir);
     last_update_dir = NULL;
     stored_checksum_valid = 0;
     stored_mode_valid = 0;
@@ -3176,68 +3176,68 @@ start_server ()
 
 static void
 start_rsh_server (tofdp, fromfdp)
-     int *tofdp, *fromfdp;
+    int *tofdp, *fromfdp;
 {
-  int pipes[2];
-  
-  /* If you're working through firewalls, you can set the
-     CVS_RSH environment variable to a script which uses rsh to
-     invoke another rsh on a proxy machine.  */
-  char *cvs_rsh = getenv ("CVS_RSH");
-  char *cvs_server = getenv ("CVS_SERVER");
-  char command[PATH_MAX];
-  int i = 0;
-  /* This needs to fit "rsh", "-b", "-l", "USER", "host",
-	 "cmd (w/ args)", and NULL.  We leave some room to grow. */
-  char *rsh_argv[10];
-  
-  if (!cvs_rsh)
-    cvs_rsh = "rsh";
-  if (!cvs_server)
-    cvs_server = "cvs";
-  
-  /* If you are running a very old (Nov 3, 1994, before 1.5)
-   * version of the server, you need to make sure that your .bashrc
-   * on the server machine does not set CVSROOT to something
-   * containing a colon (or better yet, upgrade the server).  */
-  
-  /* The command line starts out with rsh. */
-  rsh_argv[i++] = cvs_rsh;
-  
+    int pipes[2];
+
+    /* If you're working through firewalls, you can set the
+       CVS_RSH environment variable to a script which uses rsh to
+       invoke another rsh on a proxy machine.  */
+    char *cvs_rsh = getenv ("CVS_RSH");
+    char *cvs_server = getenv ("CVS_SERVER");
+    char command[PATH_MAX];
+    int i = 0;
+    /* This needs to fit "rsh", "-b", "-l", "USER", "host",
+       "cmd (w/ args)", and NULL.  We leave some room to grow. */
+    char *rsh_argv[10];
+
+    if (!cvs_rsh)
+	cvs_rsh = "rsh";
+    if (!cvs_server)
+	cvs_server = "cvs";
+
+    /* If you are running a very old (Nov 3, 1994, before 1.5)
+     * version of the server, you need to make sure that your .bashrc
+     * on the server machine does not set CVSROOT to something
+     * containing a colon (or better yet, upgrade the server).  */
+
+    /* The command line starts out with rsh. */
+    rsh_argv[i++] = cvs_rsh;
+
 #ifdef RSH_NEEDS_BINARY_FLAG
-  /* "-b" for binary, under OS/2. */
-  rsh_argv[i++] = "-b";
+    /* "-b" for binary, under OS/2. */
+    rsh_argv[i++] = "-b";
 #endif /* RSH_NEEDS_BINARY_FLAG */
 
-  /* Then we strcat more things on the end one by one. */
-  if (CVSroot_username != NULL)
+    /* Then we strcat more things on the end one by one. */
+    if (CVSroot_username != NULL)
     {
-      rsh_argv[i++] = "-l";
-      rsh_argv[i++] = CVSroot_username;
+	rsh_argv[i++] = "-l";
+	rsh_argv[i++] = CVSroot_username;
     }
-  
-  rsh_argv[i++] = CVSroot_hostname;
-  rsh_argv[i++] = cvs_server;
-  rsh_argv[i++] = "server";
 
-  /* Mark the end of the arg list. */
-  rsh_argv[i]   = (char *) NULL;
+    rsh_argv[i++] = CVSroot_hostname;
+    rsh_argv[i++] = cvs_server;
+    rsh_argv[i++] = "server";
 
-  if (trace)
+    /* Mark the end of the arg list. */
+    rsh_argv[i]   = (char *) NULL;
+
+    if (trace)
     {
-      fprintf (stderr, " -> Starting server: ");
-      fprintf (stderr, "%s", command);
-      putc ('\n', stderr);
+	fprintf (stderr, " -> Starting server: ");
+	fprintf (stderr, "%s", command);
+	putc ('\n', stderr);
     }
-  
-  /* Do the deed. */
-  rsh_pid = popenRW (rsh_argv, pipes);
-  if (rsh_pid < 0)
-    error (1, errno, "cannot start server via rsh");
 
-  /* Give caller the file descriptors. */
-  *tofdp   = pipes[0];
-  *fromfdp = pipes[1];
+    /* Do the deed. */
+    rsh_pid = popenRW (rsh_argv, pipes);
+    if (rsh_pid < 0)
+	error (1, errno, "cannot start server via rsh");
+
+    /* Give caller the file descriptors. */
+    *tofdp   = pipes[0];
+    *fromfdp = pipes[1];
 }
 
 #else /* ! START_RSH_WITH_POPEN_RW */
