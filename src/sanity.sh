@@ -4281,7 +4281,7 @@ ${QUESTION} second-dir/.cvsignore"
 	  dotest ignore-193 "cat ${TESTDIR}/ignore.tmp" \
 "${QUESTION} \.cvsignore
 You have \[0\] altered files in this repository.
-Are you sure you want to release (and delete) module .first-dir': "
+Are you sure you want to release (and delete) directory .first-dir': "
 
 	  echo add a line >>second-dir/foobar.c
 	  rm second-dir/notig.c second-dir/.cvsignore
@@ -4294,7 +4294,7 @@ Are you sure you want to release (and delete) module .first-dir': "
 	  dotest ignore-195 "cat ${TESTDIR}/ignore.tmp" \
 "M foobar.c
 You have \[1\] altered files in this repository.
-Are you sure you want to release (and delete) module .second-dir': "
+Are you sure you want to release (and delete) directory .second-dir': "
 	  rm ${TESTDIR}/ignore.tmp
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;

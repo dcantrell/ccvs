@@ -1,3 +1,22 @@
+Mon Nov 25 12:48:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Cleanups to release, mostly cosmetic:
+	* release.c (release_server): New function; breaks out server code
+	from the release function.
+	* release.c: Move delete_flag inside the release function.
+	* release.c (release): Reindent.  Rewrite comments about how the
+	implementation could be improved.  Don't declare variables as
+	"register".  Include errno in error message.  Don't cast result of
+	printf to void.  Remove unused variable srepos.
+	* release.c: Remove comments at top of file about what it does.
+	They were not particularly coherent and they were also out of date
+	(I think).  Likewise for comment in release function about "if we
+	are in a repository".
+	* release.c: Change "module" to "directory" in a few messages
+	since that is what is meant.
+	* sanity.sh: In tests ignore-195 and ignore-193, change expected
+	message accordingly.
+
 Sun Nov 24 11:30:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Clarify a few items in the todo list.
