@@ -1,3 +1,9 @@
+2001-03-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (diffmerge1_yours, diffmerge1_mine): Check for exact
+	output instead of using wildards to avoid buffer overflows in some
+	versions of expr.
+
 2001-03-21  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: cd to '/tmp' again rather than $HOME since HOME was set to
