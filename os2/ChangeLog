@@ -1,3 +1,8 @@
+Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove C_ALLOCA, CRAY_STACKSEG_END, HAVE_ALLOCA,
+	HAVE_ALLOCA_H, and STACK_DIRECTION to reflect alloca removal.
+
 Mon Feb 19 00:35:24 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * Makefile.in: deal with new objects `mkmodules' and `vasprintf'.

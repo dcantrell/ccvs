@@ -1,5 +1,8 @@
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* config.h: Remove C_ALLOCA, CRAY_STACKSEG_END, HAVE_ALLOCA,
+	HAVE_ALLOCA_H, and STACK_DIRECTION to reflect alloca removal.
+
 	* vms.h: Remove DEATH_SUPPORT; it was removed from CVS Feb 9.
 
 	* alloca.c: Removed.
