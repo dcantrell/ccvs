@@ -11079,6 +11079,13 @@ this module.
 @c should be better motivated (e.g. start with the
 @c problems, then explain how the feature solves it).
 
+Wrappers refers to a @sc{cvs} feature which lets you
+control certain settings based on the name of the file
+which is being operated on.  The settings are @samp{-k}
+for binary files, and @samp{-m} for nonmergeable text
+files.
+
+@ignore
 Wrappers allow you to set a hook which transforms files on
 their way in and out of @sc{cvs}.
 
@@ -11095,9 +11102,10 @@ not work with client/server @sc{cvs}.
 @c file converts to/from a single file, as opposed to
 @c the file<->directory case.  Could use more
 @c investigation...
+@end ignore
 
-The @file{cvswrappers} also has a @samp{-m} option to
-specify the merge methodology that should be used when
+The @samp{-m} option
+specifies the merge methodology that should be used when
 a non-binary file is updated.  @code{MERGE} means the usual
 @sc{cvs} behavior: try to merge the files.  @code{COPY}
 means that @code{cvs update} will refuse to merge
@@ -11128,14 +11136,17 @@ The basic format of the file @file{cvswrappers} is:
 wildcard     [option value][option value]...
 
 where option is one of
+@ignore
 -f           from cvs filter         value: path to filter
 -t           to cvs filter           value: path to filter
+@end ignore
 -m           update methodology      value: MERGE or COPY
 -k           keyword expansion       value: expansion mode
 
 and value is a single-quote delimited value.
 @end example
 
+@ignore
 @example
 *.nib    -f 'unwrap %s' -t 'wrap %s %s' -m 'COPY'
 *.c      -t 'indent %s %s'
@@ -11195,8 +11206,11 @@ options}).
 @c This is, of course, a serious design flaw in -t/-f.
 @c Probably the whole functionality needs to be
 @c redesigned (starting from requirements) to fix this.
+@end ignore
 
-For another example, the following command imports a
+@c FIXME: We don't document -W or point to where it is
+@c documented.  Or .cvswrappers.
+For example, the following command imports a
 directory, treating files whose name ends in
 @samp{.exe} as binary:
 
