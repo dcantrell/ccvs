@@ -317,17 +317,36 @@ main (argc, argv)
 		CVSUMASK_ENV, cp);
     }
 
-    /*
-     * Scan cvsrc file for global options.
-     */
-    read_cvsrc(&argc, &argv);
-
     /* This has the effect of setting getopt's ordering to REQUIRE_ORDER,
        which is what we need to distinguish between global options and
        command options.  FIXME: It would appear to be possible to do this
        much less kludgily by passing "+" as the first character to the
        option string we pass to getopt_long.  */
     optind = 1;
+
+
+    /* We have to parse the options twice because else there is no
+       chance to avoid reading the global options from ".cvsrc".  Set
+       opterr to 0 for avoiding error messages about invalid options.
+       */
+opterr = 0;
+
+    while ((c = getopt_long
+            (argc, argv, "f", NULL, NULL))
+           != EOF)
+      {
+	if (c == 'f')
+	    use_cvsrc = FALSE;
+      }
+    
+    /*
+     * Scan cvsrc file for global options.
+     */
+    if (use_cvsrc)
+	read_cvsrc(&argc, &argv);
+
+    optind = 1;
+    opterr = 1;
 
     while ((c = getopt_long
             (argc, argv, "Qqrwtnlvb:e:d:Hfz:", long_options, &option_index))
