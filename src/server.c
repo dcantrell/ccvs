@@ -914,6 +914,68 @@ error ENOMEM Virtual memory exhausted.\n");
 
 
 
+/* This function reprocesses the write proxy log file if it exists.  If it
+ * does not exist, this function will return without errors.  This has the
+ * effect of both allowing this function to be called twice in certain cases
+ * (for instance, in serve_co...do_cvs_command) and of allowing an earlier
+ * error opening the secondary log to be ignored when the log file is not
+ * needed.
+ *
+ * GLOBALS
+ *   secondary_log	The buffer object containing the write proxy log.
+ *
+ * RETURNS
+ *   Nothing.
+ */
+static void
+reprocess_secondary_log (void)
+{
+    if (secondary_log)
+    {
+	int fd;
+
+	/* Close the secondary log.  */
+	log_buffer_disable (secondary_log);
+	secondary_log = NULL;
+
+	/* And reprocess the log.  */
+	fd = open (secondary_log_name, O_RDONLY | O_LARGEFILE);
+	if (fd < 0)
+	{
+	    int err = errno;
+	    buf_output0 (buf_to_net,
+"E  Failed to open write proxy log for read: ");
+	    buf_output0 (buf_to_net, strerror (err));
+	    buf_output0 (buf_to_net, "\n");
+	    exit (EXIT_FAILURE);
+	}
+
+	SIG_beginCrSect();
+	buf_from_net_save = buf_from_net;
+	buf_from_net = fd_buffer_initialize (fd, true,
+					     outbuf_memory_error);
+	SIG_endCrSect();
+
+	/* Set this to avoid processing some requests twice.  */
+	reprocessing = true;
+	loop_over_inputs ();
+	reprocessing = false;
+
+	/* Restore the connection to the client.  This is in a critical
+	 * section since an interrupt could cause server_cleanup() to
+	 * attempt to dispose of the buffers.
+	 */
+	SIG_beginCrSect();
+	(void) buf_shutdown (buf_from_net);
+	free (buf_from_net);
+	buf_from_net = buf_from_net_save;
+	buf_from_net_save = NULL;
+	SIG_endCrSect();
+    }
+}
+
+
+
 /*
  * This request cannot be ignored by a potential secondary since it is used to
  * determine if we _are_ a secondary.
@@ -985,53 +1047,10 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	    error (1, 0, "No secondary log found for write proxy.");
     }
     else
-    {
-	/* We are not a secondary server.  Disable the log if it was created -
-	 * there is no longer a good reason to waste CPU and IO cycles on it.
+	/* We are not a secondary server, so reprocess the secondary log and
+	 * continue.
 	 */
-	if (secondary_log)
-	{
-	    int fd;
-
-	    /* Close the secondary log.  */
-	    log_buffer_disable (secondary_log);
-	    secondary_log = NULL;
-
-	    /* And reprocess the log.  */
-	    fd = open (secondary_log_name, O_RDONLY | O_LARGEFILE);
-	    if (fd < 0)
-	    {
-		int err = errno;
-		buf_output0 (buf_to_net,
-"error  Failed to open write proxy log for read: ");
-		buf_output0 (buf_to_net, strerror (err));
-		buf_output0 (buf_to_net, "\n");
-		exit (EXIT_FAILURE);
-	    }
-
-	    SIG_beginCrSect();
-	    buf_from_net_save = buf_from_net;
-	    buf_from_net = fd_buffer_initialize (fd, true,
-	                                         outbuf_memory_error);
-	    SIG_endCrSect();
-
-	    /* Set this to avoid processing some requests twice.  */
-	    reprocessing = true;
-	    loop_over_inputs ();
-	    reprocessing = false;
-
-	    /* Restore the connection to the client.  This is in a critical
-	     * section since an interrupt could cause server_cleanup() to
-	     * attempt to dispose of the buffers.
-	     */
-	    SIG_beginCrSect();
-	    (void) buf_shutdown (buf_from_net);
-	    free (buf_from_net);
-	    buf_from_net = buf_from_net_save;
-	    buf_from_net_save = NULL;
-	    SIG_endCrSect();
-	}
-    }
+	reprocess_secondary_log ();
 
     path = xmalloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
@@ -1420,20 +1439,16 @@ serve_directory (char *arg)
 
     TRACE (TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)");
 
-    assert (!secondary_log);
 
+    /* The data needs to be read into the secondary log regardless, but
+     * processing of anything other than errors is skipped until later.
+     */
     status = buf_read_line (buf_from_net, &repos, NULL);
-    if (status == 0)
-    {
-	if (!outside_root (repos))
-	    dirswitch (arg, repos);
-	free (repos);
-    }
-    else if (status == -2)
+    if (status == -2)
     {
 	pending_error = ENOMEM;
     }
-    else
+    else if (status != 0)
     {
 	pending_error_text = xmalloc (80 + strlen (arg));
 	if (pending_error_text == NULL)
@@ -1451,6 +1466,12 @@ serve_directory (char *arg)
 		     "E error reading mode for %s", arg);
 	    pending_error = status;
 	}
+    }
+    else
+    {
+	if (!secondary_log && !outside_root (repos))
+	    dirswitch (arg, repos);
+	free (repos);
     }
 }
 
@@ -2498,19 +2519,24 @@ server_notify (void)
 
     return 0;
 }
-
+
+
+
 static int argument_count;
 static char **argument_vector;
 static int argument_vector_size;
 
+/* This request is processed in all passes since requests which must
+ * sometimes be processed before it is known whether we are running as a
+ * secondary or not, for instance the `expand-modules' request, sometimes use
+ * the `Arguments'.
+ */
 static void
 serve_argument (char *arg)
 {
     char *p;
 
     if (error_pending()) return;
-    
-    assert (!secondary_log);
 
     if (argument_count >= 10000)
     {
@@ -2541,6 +2567,8 @@ serve_argument (char *arg)
     strcpy (p, arg);
     argument_vector[argument_count++] = p;
 }
+
+
 
 static void
 serve_argumentx (char *arg)
@@ -3024,14 +3052,20 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
 
+    /* Write proxy logging is always terminated when a command is received.
+     * Therefore, we wish to avoid reprocessing the command since that would
+     * cause endless recursion.
+     */
+    if (reprocessing) return;
+
     if (isSecondaryServer())
     {
-	/* Close the log.  */
-	log_buffer_disable (secondary_log);
-
 	if (lookup_command_attribute (cmd_name) & CVS_CMD_MODIFIES_REPOSITORY
 	    || !strcmp (cmd_name, "version"))
 	{
+	    /* Close the log.  */
+	    log_buffer_disable (secondary_log);
+
 	    /* WRITEPROXY: Call presecondary script.  */
 	    /* WRITEPROXY: Feed the log to the primary server.  */
 	    /* WRITEPROXY: Transfer data between client & primary server.  */
@@ -3041,9 +3075,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	    /* WRITEPROXY: Exit.  */
 	}
 	else
-	{
-	    /* WRITEPROXY: Reprocess the log.  */
-	}
+	    reprocess_secondary_log ();
     }
 
     command_pid = -1;
@@ -4281,13 +4313,18 @@ serve_co (char *arg)
     char *tempdir;
     int status;
 
-    if (print_pending_error ())
+    /* Write proxy logging is always terminated when a command is received.
+     * Therefore, we wish to avoid reprocessing the command since that would
+     * cause endless recursion.
+     */
+    if (print_pending_error () || reprocessing)
 	return;
 
+    /* If we are not a secondary server, the write proxy log will already have
+     * been reprocessed.
+     */
     if (isSecondaryServer ())
-    {
-	/* WRITEPROXY: Reprocess secondary log.  */
-    }
+	reprocess_secondary_log ();
 
     if (!isdir (CVSADM))
     {
@@ -4919,6 +4956,8 @@ serve_gzip_stream (char *arg)
 					     buf_to_net->memory_error);
 }
 
+
+
 /* Tell the client about RCS options set in CVSROOT/cvswrappers. */
 static void
 serve_wrapper_sendme_rcs_options (char *arg)
@@ -4931,7 +4970,7 @@ serve_wrapper_sendme_rcs_options (char *arg)
      */
     char *wrapper_line = NULL;
 
-    assert (!secondary_log);
+    if (reprocessing) return;
 
     wrap_setup ();
 
@@ -5033,23 +5072,27 @@ static void
 serve_expand_modules (char *arg)
 {
     int i;
-    int err;
+    int err = 0;
     DBM *db;
 
     /* This needs to be processed in the first pass since the client expects a
      * response but we may not yet know if we are a secondary.
+     *
+     * On the second pass, we still must make sure to ignore the arguments.
      */
-    if (reprocessing) return;
+    if (!reprocessing)
+    {
+	err = 0;
 
-    err = 0;
+	db = open_module ();
+	for (i = 1; i < argument_count; i++)
+	    err += do_module (db, argument_vector[i],
+			      CHECKOUT, "Updating", expand_proc,
+			      NULL, 0, 0, 0, 0,
+			      (char *) NULL);
+	close_module (db);
+    }
 
-    db = open_module ();
-    for (i = 1; i < argument_count; i++)
-	err += do_module (db, argument_vector[i],
-			  CHECKOUT, "Updating", expand_proc,
-			  NULL, 0, 0, 0, 0,
-			  (char *) NULL);
-    close_module (db);
     {
 	/* argument_vector[0] is a dummy argument, we don't mess with it.  */
 	char **cp;
@@ -5060,15 +5103,19 @@ serve_expand_modules (char *arg)
 
 	argument_count = 1;
     }
-    if (err)
-	/* We will have printed an error message already.  */
-	buf_output0 (buf_to_net, "error  \n");
-    else
-	buf_output0 (buf_to_net, "ok\n");
 
-    /* The client is waiting for the module expansions, so we must
-       send the output now.  */
-    buf_flush (buf_to_net, 1);
+    if (!reprocessing)
+    {
+	if (err)
+	    /* We will have printed an error message already.  */
+	    buf_output0 (buf_to_net, "error  \n");
+	else
+	    buf_output0 (buf_to_net, "ok\n");
+
+	/* The client is waiting for the module expansions, so we must
+	   send the output now.  */
+	buf_flush (buf_to_net, 1);
+    }
 }
 
 
