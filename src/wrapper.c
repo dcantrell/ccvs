@@ -399,7 +399,7 @@ wrap_add (line, isTemp)
 	switch(opt){
 	case 'f':
 	    /* Before this is reenabled, need to address the problem in
-	       commit.c (see http://www.cyclic.com/cvs/dev-wrap.txt).  */
+	       commit.c (see http://www.cvshome.org/docs/infowrapper.html).  */
 	    error (1, 0,
 		   "-t/-f wrappers not supported by this version of CVS");
 
@@ -413,7 +413,7 @@ wrap_add (line, isTemp)
 	    break;
 	case 't':
 	    /* Before this is reenabled, need to address the problem in
-	       commit.c (see http://www.cyclic.com/cvs/dev-wrap.txt).  */
+	       commit.c (see http://www.cvshome.org/docs/infowrapper.html).  */
 	    error (1, 0,
 		   "-t/-f wrappers not supported by this version of CVS");
 
