@@ -1,3 +1,8 @@
+2004-10-20  Derek Price  <derek@ximbiot.com>
+
+	* validate_repo.in: Accept but log bad revision numbers.
+	(Patch from Dan Peterson <dbpete@aol.com>.)
+
 2004-09-13  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs_acls.in: New version from

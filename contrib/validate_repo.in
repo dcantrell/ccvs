@@ -142,6 +142,7 @@ use vars qw(
              @extra_files
              @ignore_files
              $ignored_files
+             @invalid_revs
              @list_of_broken_files
              @scripts
              $total_files
@@ -276,6 +277,13 @@ sub main
 		print( "**** File: $broken\n" );
 	}
 
+	print "List of Files containing invalid revisions:\n"
+		if @invalid_revs;
+	foreach ( @invalid_revs )
+	{
+		print( "**** File: ($_->{'rev'}) $_->{'file'}\n" );
+	}
+
 	print "List of Files That Don't belong in Repository:\n"
 		if @extra_files;
 	foreach my $extra ( @extra_files )
@@ -284,6 +292,8 @@ sub main
 	}
 	print( "Total Files: $total_files  Corrupted files: "
 		   . scalar( @list_of_broken_files )
+		   . "  Invalid revs: "
+		   . scalar( @invalid_revs )
 		   . "  Extra files: "
 		   . scalar( @extra_files )
 		   . "  Ignored Files: $ignored_files\n" );
@@ -465,8 +475,14 @@ sub get_history
     {
 		if( $ignore == 1 ) 
 		{
-			if( ( $revision ) = $line =~ /^revision (\d+\.\d[\d.]*)(	locked by: \S+;)?$/ )
+			if( ( $revision ) = $line =~ /^revision ([\d.]*)(	locked by: \S+;)?$/ )
 			{
+  				unless($revision =~ m/^\d+\.\d+(?:\.\d+\.\d+)*$/)
+				{
+					push @invalid_revs, { 'file' => $file, 'rev' => $revision };
+					verbose( "Adding invalid revision `$revision' of file `$file' to invalid revs list.\n" );
+				}
+
 				$ignore++;
 				next;
 			}
