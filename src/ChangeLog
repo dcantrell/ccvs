@@ -1,3 +1,9 @@
+2001-05-15  Derek Price  <dprice@collab.net>
+
+	* client.c (start_tcp_server): Use the struct sockaddr_in declared in
+	the function.
+	(Reported by Emil Isberg <isberg@dynarc.se>.)
+
 2001-05-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* annotate.c (annotate): Pass local to do_module and rannotate_proc
