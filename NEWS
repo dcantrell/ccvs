@@ -1,5 +1,8 @@
 Changes since 1.10:
 
+* The "cvs history" command output format has changed -- the date
+now includes the year and is given is ISO 8601 format (yyyy-mm-dd).
+
 * The buggy PreservePermissions code has been disabled.
 
 * Anonymous read-only access can now be done without requiring a

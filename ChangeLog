@@ -1,3 +1,8 @@
+2000-05-02  Donald Sharp <sharpd@cisco.com>
+	and Larry Jones  <larry.jones@sdrc.com>
+
+	* NEWS: Note history output format change.
+
 2000-02-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS: Note that PreservePermissions is disabled.
