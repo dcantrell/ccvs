@@ -2071,9 +2071,42 @@ The details of exactly what needs to be set up depend
 on how you are connecting to the server.
 
 If @var{method} is not specified, and the repository
-name contains @samp{:}, then the default is @code{ext}
+name does not start with a @samp{/}, then the default is @code{ext}
 or @code{server}, depending on your platform; both are
 described in @ref{Connecting via rsh}.
+
+@cindex connection method options
+@cindex options, connection method
+@cindex proxies, web, using
+@cindex web proxies, using
+The @code{gserver} and @code{pserver} connection
+methods all accept optional method options, specified as part of the
+@var{method} string, like so:
+
+@example
+:@var{method}[;@var{option}=@var{arg}...]:
+@end example
+
+Currently, the only two valid connection options are @code{proxy}, which
+takes a hostname as an argument, and @code{proxyport}, which takes a port
+number as an argument.  These options can be used to connect via an HTTP
+tunnel style web proxy.  For example, to connect pserver via a web proxy
+at www.myproxy.net and port 8000, you would use a method of:
+
+@example
+:pserver;proxy=www.myproxy.net;proxyport=8000:
+@end example
+
+@strong{NOTE: The rest of the connection string is required to connect to
+the server as noted in the upcoming sections on password authentication,
+gserver and kserver.  The example above would only modify the @var{method}
+portion of the repository name.}
+
+@cindex CVS_PROXY_PORT
+@var{proxy} must be supplied to connect to a CVS server via a
+proxy server, but @var{proxyport} will default to port 8080 if not supplied.
+@var{PROXYPORT} may also be set via the @var{CVS_PROXY_PORT} environment
+variable.
 @c Should we try to explain which platforms are which?
 @c Platforms like unix and VMS, which only allow
 @c privileged programs to bind to sockets <1024 lose on
@@ -2837,7 +2870,7 @@ cvs/@var{hostname}, where @var{hostname} is the
 canonical name of the server host.  You will have to
 set this up as required by your GSSAPI mechanism.
 
-To connect using GSSAPI, use @samp{:gserver:}.  For
+To connect using GSSAPI, use the @samp{:gserver:} method.  For
 example,
 
 @example
@@ -2875,13 +2908,7 @@ the client and server; use the
 on.  You must then use the @code{-x} global option to
 request encryption.
 
-@cindex CVS_CLIENT_PORT
-You need to edit @file{inetd.conf} on the server
-machine to run @code{cvs kserver}.  The client uses
-port 1999 by default; if you want to use another port
-specify it in the @code{CVSROOT} (@pxref{Remote repositories})
-or the @code{CVS_CLIENT_PORT} environment variable
-(@pxref{Environment variables}) on the client.
+The CVS client will attempt to connect to port 1999 by default.
 
 @cindex kinit
 When you want to use @sc{cvs}, get a ticket in the
@@ -14027,10 +14054,18 @@ Used in client-server mode when accessing the @code{cvs
 login server}.  Default value is @file{$HOME/.cvspass}.
 @pxref{Password authentication client}
 
+@cindex CVS_CLIENT_PORT
 @item $CVS_CLIENT_PORT
 Used in client-server mode to set the port to use when accessing the server
 via Kerberos, GSSAPI, or @sc{cvs}'s password authentication protocol
 if the port is not specified in the CVSROOT.
+@pxref{Remote repositories}
+
+@cindex CVS_PROXY_PORT
+@item $CVS_PROXY_PORT
+Used in client-server mode to set the port to use when accessing a server
+via a web proxy, if the port is not specified in the CVSROOT.  Works with
+GSSAPI, and the password authentication protocol.
 @pxref{Remote repositories}
 
 @cindex CVS_RCMD_PORT, environment variable
