@@ -15,6 +15,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+SUBDIRS = pam
+
 contribdir = $(pkgdatadir)/contrib
 
 contrib_SCRIPTS = \
