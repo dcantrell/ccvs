@@ -12103,7 +12103,9 @@ give an error indicating that they don't support it.
 The result, if this is allowed to happen, is that some
 CVS users will put the locks one place, and others will
 put them another place, and therefore the repository
-could become corrupted.
+could become corrupted.  CVS 1.10 does not support
+LockDir but it will print a warning if run on a
+repository with LockDir enabled.
 @end table
 
 @c ---------------------------------------------------------------------
