@@ -1167,8 +1167,8 @@ static int stdio_buffer_flush PROTO((void *));
 
 /* Initialize a buffer built on a stdio FILE.  */
 
-struct buffer
-*stdio_buffer_initialize (fp, input, memory)
+struct buffer *
+stdio_buffer_initialize (fp, input, memory)
      FILE *fp;
      int input;
      void (*memory) PROTO((struct buffer *));
