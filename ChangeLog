@@ -1,3 +1,7 @@
+Sun Feb 11 16:43:38 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Makefile.in (DISTFILES): added HACKING.
+
 Sun Feb 11 12:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Revise *info files feature (now user vars, not env vars).
