@@ -40,7 +40,6 @@ static char *date = NULL;
 static char *symtag;			/* tag to add or delete */
 static int delete_flag;			/* adding a tag by default */
 static int branch_mode;			/* make an automagic "branch" tag */
-static int local;			/* recursive by default */
 static int force_tag_match = 1;		/* force tag to match by default */
 static int force_tag_move;		/* don't force tag to move by default */
 static int check_uptodate;		/* no uptodate-check by default */
@@ -103,6 +102,7 @@ cvstag (argc, argv)
     int argc;
     char **argv;
 {
+    int local = 0;			/* recursive by default */
     int c;
     int err = 0;
     int run_module_prog = 1;
@@ -252,14 +252,14 @@ cvstag (argc, argv)
 			   (date ? date : "A"))), symtag, argv[i], "");
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
-			      rtag_proc, (char *) NULL, 0, 0, run_module_prog,
+			      rtag_proc, (char *) NULL, 0, local, run_module_prog,
 			      0, symtag);
 	}
 	close_module (db);
     }
     else
     {
-	err = rtag_proc (argc + 1, argv - 1, NULL, NULL, NULL, 0, 0, NULL,
+	err = rtag_proc (argc + 1, argv - 1, NULL, NULL, NULL, 0, local, NULL,
 			 NULL);
     }
 
@@ -362,7 +362,7 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     if (numtag != NULL && !numtag_validated)
     {
-	tag_check_valid (numtag, argc - 1, argv + 1, local, 0, repository);
+	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0, repository);
 	numtag_validated = 1;
     }
 
@@ -372,7 +372,7 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     mtlist = getlist();
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-                           argc - 1, argv + 1, local, which, 0, 1,
+                           argc - 1, argv + 1, local_specified, which, 0, 1,
                            where, 1);
     
     if (err)
@@ -387,13 +387,13 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
        cached in do_recursion isn't stale by the time we get around
        to using it to rewrite the RCS file in the callback, and this
        is the easiest way to accomplish that.  */
-    lock_tree_for_write (argc - 1, argv + 1, local, which, 0);
+    lock_tree_for_write (argc - 1, argv + 1, local_specified, which, 0);
 
     /* start the recursion processor */
     err = start_recursion (is_rtag ? rtag_fileproc : tag_fileproc,
 			   (FILESDONEPROC) NULL, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
-			   local, which, 0, 0, where, 1);
+			   local_specified, which, 0, 0, where, 1);
     Lock_Cleanup ();
     dellist (&mtlist);
     if (where != NULL)
