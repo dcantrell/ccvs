@@ -30720,7 +30720,9 @@ fi
 
           ac_config_files="$ac_config_files src/cvsbug"
 
-          ac_config_files="$ac_config_files windows-NT/fix-msvc-mak:windows-NT/fix-msvc-mak-head.pl:windows-NT/fix-msvc-mak.pl"
+          ac_config_files="$ac_config_files windows-NT/fix-msvc-mak:windows-NT/plhead.pl:windows-NT/fix-msvc-mak.pl"
+
+          ac_config_files="$ac_config_files windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl"
 
 
                                                                                                                                                                           ac_config_files="$ac_config_files Makefile contrib/Makefile cvs.spec diff/Makefile doc/Makefile emx/Makefile lib/Makefile m4/Makefile man/Makefile os2/Makefile src/Makefile src/sanity.config.sh tools/Makefile vms/Makefile windows-NT/Makefile windows-NT/SCC/Makefile zlib/Makefile"
@@ -31317,7 +31319,8 @@ do
   "contrib/sccs2rcs" ) CONFIG_FILES="$CONFIG_FILES contrib/sccs2rcs" ;;
   "doc/mkman" ) CONFIG_FILES="$CONFIG_FILES doc/mkman" ;;
   "src/cvsbug" ) CONFIG_FILES="$CONFIG_FILES src/cvsbug" ;;
-  "windows-NT/fix-msvc-mak" ) CONFIG_FILES="$CONFIG_FILES windows-NT/fix-msvc-mak:windows-NT/fix-msvc-mak-head.pl:windows-NT/fix-msvc-mak.pl" ;;
+  "windows-NT/fix-msvc-mak" ) CONFIG_FILES="$CONFIG_FILES windows-NT/fix-msvc-mak:windows-NT/plhead.pl:windows-NT/fix-msvc-mak.pl" ;;
+  "windows-NT/mkconfig" ) CONFIG_FILES="$CONFIG_FILES windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl" ;;
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
   "contrib/Makefile" ) CONFIG_FILES="$CONFIG_FILES contrib/Makefile" ;;
   "cvs.spec" ) CONFIG_FILES="$CONFIG_FILES cvs.spec" ;;
@@ -31769,6 +31772,7 @@ s,@INSTALL@,$ac_INSTALL,;t t
     doc/mkman ) chmod +x doc/mkman ;;
     src/cvsbug ) chmod +x src/cvsbug ;;
     windows-NT/fix-msvc-mak ) chmod +x windows-NT/fix-msvc-mak ;;
+    windows-NT/mkconfig ) chmod +x windows-NT/mkconfig ;;
   esac
 done
 _ACEOF

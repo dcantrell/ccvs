@@ -1,5 +1,12 @@
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note generation of windows-NT/config.h.in.
+	* configure.in: Use new plhead.pl for windows-NT/fix-msvc-mak.  Add
+	windows-NT/mkconfig target.
+	* configure: Regenerated.
+
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note CAN-2004-0396 fix.
 
 2004-05-17  Derek Price  <derek@ximbiot.com>

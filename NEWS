@@ -1,6 +1,12 @@
 Changes since 1.12.8:
 *********************
 
+DEVELOPER NOTES
+
+* The windows-NT/config.h.in file is now generated dynamically from the
+  root config.h.in file and a few inputs in the windows-NT directory in hopes
+  of keeping it more in sync with the root config.h.in file.
+
 Changes from 1.12.7 to 1.12.8:
 ******************************
 
