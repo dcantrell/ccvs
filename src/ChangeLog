@@ -1,5 +1,8 @@
 2002-01-02  Larry Jones  <larry.jones@sdrc.com>
 
+	* server.c (LOG_DAEMON): Define if needed.
+	(Patch from John David Anglin <dave@hiauly1.hia.nrc.ca>.)
+
 	* server.c (pserver_authenticate_connection): Add a specific error
 	message for EOF at protocol start and syslog if available.
 	* sanity.sh (pserver-bufinit): Update to match.

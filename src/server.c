@@ -59,7 +59,10 @@ int cvs_gssapi_encrypt;
 #endif
 
 #ifdef HAVE_SYSLOG_H
-#include <syslog.h>
+# include <syslog.h>
+# ifndef LOG_DAEMON   /* for ancient syslogs */
+#  define LOG_DAEMON 0
+# endif
 #endif
 
 #ifdef HAVE_KERBEROS
