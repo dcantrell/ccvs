@@ -2130,6 +2130,49 @@ buf_copy_counted (outbuf, inbuf)
     /*NOTREACHED*/
 }
 
+/* While processing requests, this buffer accumulates data to be sent to
+   the client, and then once we are in do_cvs_command, we use it
+   for all the data to be sent.  */
+static struct buffer buf_to_net;
+
+static void serve_questionable PROTO((char *));
+
+static void
+serve_questionable (arg)
+    char *arg;
+{
+    static int initted;
+
+    if (!initted)
+    {
+	/* Pick up ignores from CVSROOTADM_IGNORE, $HOME/.cvsignore on server,
+	   and CVSIGNORE on server.  */
+	ign_setup ();
+	initted = 1;
+    }
+
+    if (dirname == NULL)
+    {
+	buf_output0 (&buf_to_net, "E Protocol error: 'Directory' missing");
+	return;
+    }
+
+    if (!ign_name (arg))
+    {
+	char *update_dir;
+
+	buf_output (&buf_to_net, "M ? ", 4);
+	update_dir = dirname + strlen (server_temp_dir) + 1;
+	if (!(update_dir[0] == '.' && update_dir[1] == '\0'))
+	{
+	    buf_output0 (&buf_to_net, update_dir);
+	    buf_output (&buf_to_net, "/", 1);
+	}
+	buf_output0 (&buf_to_net, arg);
+	buf_output (&buf_to_net, "\n", 1);
+    }
+}
+
 static struct buffer protocol;
 
 static void
@@ -2317,7 +2360,6 @@ do_cvs_command (command)
 
     /* OK, sit around getting all the input from the child.  */
     {
-	struct buffer outbuf;
 	struct buffer stdoutbuf;
 	struct buffer stderrbuf;
 	struct buffer protocol_inbuf;
@@ -2351,12 +2393,6 @@ do_cvs_command (command)
 	    goto error_exit;
 	}
 
-	outbuf.data = outbuf.last = NULL;
-	outbuf.fd = STDOUT_FILENO;
-	outbuf.output = 1;
-	outbuf.nonblocking = 0;
-	outbuf.memory_error = outbuf_memory_error;
-
 	stdoutbuf.data = stdoutbuf.last = NULL;
 	stdoutbuf.fd = stdout_pipe[0];
 	stdoutbuf.output = 0;
@@ -2375,7 +2411,7 @@ do_cvs_command (command)
 	protocol_inbuf.nonblocking = 0;
 	protocol_inbuf.memory_error = input_memory_error;
 
-	set_nonblock (&outbuf);
+	set_nonblock (&buf_to_net);
 	set_nonblock (&stdoutbuf);
 	set_nonblock (&stderrbuf);
 	set_nonblock (&protocol_inbuf);
@@ -2431,7 +2467,7 @@ do_cvs_command (command)
 	     * See if we are swamping the remote client and filling our VM.
 	     * Tell child to hold off if we do.
 	     */
-	    bufmemsize = buf_count_mem (&outbuf);
+	    bufmemsize = buf_count_mem (&buf_to_net);
 	    if (!have_flowcontrolled && (bufmemsize > SERVER_HI_WATER))
 	    {
 		if (write(flowcontrol_pipe[1], "S", 1) == 1)
@@ -2446,7 +2482,7 @@ do_cvs_command (command)
 
 	    FD_ZERO (&readfds);
 	    FD_ZERO (&writefds);
-	    if (! buf_empty_p (&outbuf))
+	    if (! buf_empty_p (&buf_to_net))
 	        FD_SET (STDOUT_FILENO, &writefds);
 
 	    if (stdout_pipe[0] >= 0)
@@ -2479,7 +2515,7 @@ do_cvs_command (command)
 	    if (FD_ISSET (STDOUT_FILENO, &writefds))
 	    {
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&outbuf);
+		buf_send_output (&buf_to_net);
 	    }
 
 	    if (stdout_pipe[0] >= 0
@@ -2489,7 +2525,7 @@ do_cvs_command (command)
 
 	        status = buf_input_data (&stdoutbuf, (int *) NULL);
 
-		buf_copy_lines (&outbuf, &stdoutbuf, 'M');
+		buf_copy_lines (&buf_to_net, &stdoutbuf, 'M');
 
 		if (status == -1)
 		    stdout_pipe[0] = -1;
@@ -2500,7 +2536,7 @@ do_cvs_command (command)
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&outbuf);
+		buf_send_output (&buf_to_net);
 	    }
 
 	    if (stderr_pipe[0] >= 0
@@ -2510,7 +2546,7 @@ do_cvs_command (command)
 
 	        status = buf_input_data (&stderrbuf, (int *) NULL);
 
-		buf_copy_lines (&outbuf, &stderrbuf, 'E');
+		buf_copy_lines (&buf_to_net, &stderrbuf, 'E');
 
 		if (status == -1)
 		    stderr_pipe[0] = -1;
@@ -2521,7 +2557,7 @@ do_cvs_command (command)
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&outbuf);
+		buf_send_output (&buf_to_net);
 	    }
 
 	    if (protocol_pipe[0] >= 0
@@ -2540,7 +2576,8 @@ do_cvs_command (command)
 		 */
 		count_needed -= count_read;
 		if (count_needed <= 0)
-		  count_needed = buf_copy_counted (&outbuf, &protocol_inbuf);
+		    count_needed = buf_copy_counted (&buf_to_net,
+						     &protocol_inbuf);
 
 		if (status == -1)
 		    protocol_pipe[0] = -1;
@@ -2551,7 +2588,7 @@ do_cvs_command (command)
 		}
 
 		/* What should we do with errors?  syslog() them?  */
-		buf_send_output (&outbuf);
+		buf_send_output (&buf_to_net);
 	    }
 	}
 
@@ -2563,15 +2600,15 @@ do_cvs_command (command)
 	if (! buf_empty_p (&stdoutbuf))
 	{
 	    buf_append_char (&stdoutbuf, '\n');
-	    buf_copy_lines (&outbuf, &stdoutbuf, 'M');
+	    buf_copy_lines (&buf_to_net, &stdoutbuf, 'M');
 	}
 	if (! buf_empty_p (&stderrbuf))
 	{
 	    buf_append_char (&stderrbuf, '\n');
-	    buf_copy_lines (&outbuf, &stderrbuf, 'E');
+	    buf_copy_lines (&buf_to_net, &stderrbuf, 'E');
 	}
 	if (! buf_empty_p (&protocol_inbuf))
-	    buf_output0 (&outbuf,
+	    buf_output0 (&buf_to_net,
 			 "E Protocol error: uncounted data discarded\n");
 
 	errs = 0;
@@ -2622,8 +2659,8 @@ E CVS locks may need cleaning up.\n",
 	 * OK, we've waited for the child.  By now all CVS locks are free
 	 * and it's OK to block on the network.
 	 */
-	set_block (&outbuf);
-	buf_send_output (&outbuf);
+	set_block (&buf_to_net);
+	buf_send_output (&buf_to_net);
     }
 
     if (errs)
@@ -3721,6 +3758,7 @@ struct request requests[] =
   REQ_LINE("UseUnchanged", serve_enable_unchanged, rq_enableme),
   REQ_LINE("Unchanged", serve_unchanged, rq_optional),
   REQ_LINE("Notify", serve_notify, rq_optional),
+  REQ_LINE("Questionable", serve_questionable, rq_optional),
   REQ_LINE("Argument", serve_argument, rq_essential),
   REQ_LINE("Argumentx", serve_argumentx, rq_essential),
   REQ_LINE("Global_option", serve_global_option, rq_optional),
@@ -4014,7 +4052,14 @@ error ENOMEM Virtual memory exhausted.\n");
     argument_count = 1;
     argument_vector[0] = "Dummy argument 0";
 
+    buf_to_net.data = buf_to_net.last = NULL;
+    buf_to_net.fd = STDOUT_FILENO;
+    buf_to_net.output = 1;
+    buf_to_net.nonblocking = 0;
+    buf_to_net.memory_error = outbuf_memory_error;
+
     server_active = 1;
+
     while (1)
     {
 	char *cmd, *orig_cmd;
