@@ -1,5 +1,8 @@
 Thu Aug 28 14:13:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (diff options): Add comment about "cvs diff"
+	vs. "cvs diff -r HEAD".
+
 	* cvs.texinfo (Global options): Add comment about -w not
 	overriding cvs watch on.
 

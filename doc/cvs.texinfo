@@ -8090,6 +8090,9 @@ revision will be compared to your current working file.
 With two @samp{-r} options those two revisions will be
 compared (and your working file will not affect the
 outcome in any way).
+@c We should be a lot more explicit, with examples,
+@c about the difference between "cvs diff" and "cvs
+@c diff -r HEAD".  This often confuses new users.
 
 One or both @samp{-r} options can be replaced by a
 @samp{-D @var{date}} option, described above.
