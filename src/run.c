@@ -536,9 +536,10 @@ cmdlinequote (quotes, s)
     buf[0] = quotes;
     buf[1] = '\0';
     strcat (buf, quoted);
+    free (quoted);
     buf[strlen(buf)+1] = '\0';
     buf[strlen(buf)] = quotes;
-    return (buf);
+    return buf;
 }
 
 /* read quotes as the type of quotes we are between (if any) and then make our
@@ -1019,8 +1020,6 @@ format_cmdline (char *format, ...)
 	/* fail if we found an error or haven't found the end of the string */
 	if (conversion_error || s[1])
 	{
-	    dellist(&pflist);
-	    free(b);
 	    error (1, 0,
 "internal error (format_cmdline): '%s' is not a valid conversion!!!",
                    conversion);
@@ -1247,9 +1246,6 @@ format_cmdline (char *format, ...)
 		    /* FIXME - this wants a file name and line number in a bad
 		     * way.
 		     */
-		    if (fmt) free (fmt);
-		    if (buf) free(buf);
-		    dellist(&pflist);
 		    error(1, 0,
 "unterminated format string encountered in command spec.\n"
 "This error is likely to have been caused by an invalid line in a hook script\n"
@@ -1331,9 +1327,6 @@ format_cmdline (char *format, ...)
 			char *outstr;
 			if (strlen(q) > 1)
 			{
-			    if (fmt) free (fmt);
-			    if (buf) free(buf);
-			    dellist(&pflist);
 			    error (1, 0,
 "Multiple non-list variables are not allowed in a single format string.");
 			}
@@ -1401,9 +1394,6 @@ format_cmdline (char *format, ...)
 		{
 		    /* print an error message to the user
 		     * FIXME - this should have a file and line number!!! */
-		    if (fmt) free (fmt);
-		    if (buf) free(buf);
-		    dellist(&pflist);
 		    error (1, 0,
 "Unknown format character in info file ('%s').\n"
 "Info files are the hook files, verifymsg, taginfo, commitinfo, etc.",
@@ -1433,9 +1423,9 @@ format_cmdline (char *format, ...)
 	/* FIXME - we shouldn't need this - Parse_Info should be handling
 	 * multiple lines...
 	 */
-	if (buf) free (buf);
-	dellist(&pflist);
 	error (1, 0, "unterminated quote in format string: %s", format);
     }
-    return(buf);
+
+    dellist (&pflist);
+    return buf;
 }
