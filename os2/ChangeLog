@@ -1,3 +1,13 @@
+Fri Nov 17 14:53:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c, client.h: new files, copied from ../src/.
+
+        * config.h (HAVE_POPEN_RW): don't define this anymore, since we'll
+        just be using our own version of client.c.
+
+        * Makefile.in: reflect the fact that os2/client.c is now used
+        instead of src/client.c.
+
 Thu Nov 16 21:47:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
 	* startserver.c: removed.  We don't need this anymore.

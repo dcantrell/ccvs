@@ -362,8 +362,6 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 
 /* We actually do have a transparent rsh, whew. */
 #undef RSH_NOT_TRANSPARENT
-/* This causes us to use a special definition of start_server(): */
-#define HAVE_POPEN_RW 1
 
 /* For the access() function, for which OS/2 has no pre-defined
    mnemonic masks. */
