@@ -565,27 +565,23 @@ only once they have been proven.
 @node Basic concepts
 @chapter Basic concepts
 @cindex Modules (intro)
-@cindex Repository (intro)
 
+@c This node doesn't know what it wants.  We don't talk
+@c about *all* the concepts of CVS, just a few random ones
+@c which don't make any sense in isolation.  Nor do we
+@c start with what a beginner most needs to know.  We also
+@c jump into branches, which are a very advanced topic for
+@c this stage in the manual.  I'd just nuke the node if
+@c I could figure out where this stuff should go instead.
+@c The real intro to the repository is in Repository
 @sc{cvs} stores all files in a centralized
-@dfn{repository}: a directory (such as
-@file{/usr/local/cvsroot} or
-@file{user@@remotehost:/usr/local/cvsroot}) which is
-populated with a hierarchy of files and directories.
-(@pxref{Remote repositories} for information about
-keeping the repository on a remote machine.)
+@dfn{repository} (@pxref{Repository}).
 
-Normally, you never access any of the files in the
-repository directly.  Instead, you use @sc{cvs}
-commands to get your own copy of the files, and then
-work on that copy.  When you've finished a set of
-changes, you check (or @dfn{commit}) them back into the
-repository.
-
-The files in the repository are organized in
-@dfn{modules}.  Each module is made up of one or more
-files, and can include files from several directories.
-A typical usage is to define one module per project.
+The repository contains directories and files, in an
+arbitrary tree.  The @dfn{modules} feature can be used
+to group together a set of directories or files into a
+single entity (@pxref{modules}).  A typical usage is to
+define one module per project.
 
 @menu
 * Revision numbers::            The meaning of a revision number
@@ -889,52 +885,73 @@ Are you sure you want to release (and delete) module `tc': y
 @c ---------------------------------------------------------------------
 @node Repository
 @chapter The Repository
+@cindex Repository (intro)
 @cindex Repository, example
 @cindex Layout of repository
 @cindex Typical repository
-@cindex CVSROOT, environment variable
-@cindex .profile
-@cindex .cshrc
-@cindex .tcshrc
-@cindex .bashrc
-@cindex /usr/local/cvsroot
+@cindex /usr/local/cvsroot, as example repository
 @cindex cvsroot
 
-Figure 3 below shows a typical setup of a repository.
-Only directories are shown below.
+The @sc{cvs} @dfn{repository} stores a complete copy of
+all the files and directories which are under version
+control.
 
-@example
-@t{/usr}
- |
- +--@t{local}
- |   |
- |   +--@t{cvsroot}
- |   |    | 
- |   |    +--@t{CVSROOT}
-          |      (administrative files) 
-          | 
-          +--@t{gnu}
-          |   | 
-          |   +--@t{diff}
-          |   |   (source code to @sc{gnu} diff) 
-          |   | 
-          |   +--@t{rcs}
-          |   |   (source code to @sc{rcs})
-          |   | 
-          |   +--@t{cvs}
-          |       (source code to @sc{cvs}) 
-          | 
-          +--@t{yoyodyne}
-              | 
-              +--@t{tc}
-              |    |
-              |    +--@t{man}
-              |    |
-              |    +--@t{testing}
-              | 
-              +--(other Yoyodyne software)
-@end example                              
+Normally, you never access any of the files in the
+repository directly.  Instead, you use @sc{cvs}
+commands to get your own copy of the files, and then
+work on that copy.  When you've finished a set of
+changes, you check (or @dfn{commit}) them back into the
+repository.  The repository then contains the changes
+which you have made, as well as recording exactly what
+you changed, when you changed it, and other such
+information.
 
+@cindex :local:
+@sc{Cvs} can access a repository by a variety of
+means.  It might be on the local computer, or it might
+be on a computer across the room or across the world.
+To distinguish various ways to access a repository, the
+repository name can start with an @dfn{access method}.
+For example, the access method @code{:local:} means to
+access a repository directory, so the repository
+@code{:local:/usr/local/cvsroot} means that the
+repository is in @file{/usr/local/cvsroot} on the
+computer running @sc{cvs}.  For information on other
+access methods, see @ref{Remote repositories}.
+
+@c Can se say this more concisely?  Like by passing
+@c more of the buck to the Remote repositories node?
+If the access method is omitted, then if the repository
+does not contain @samp{:}, then @code{:local:} is
+assumed.  If it does contain @samp{:} than either
+@code{:ext:} or @code{:server:} is assumed.  For
+example, if you have a local repository in
+@file{/usr/local/cvsroot}, you can use
+@code{/usr/local/cvsroot} instead of
+@code{:local:/usr/local/cvsroot}.  But if (under
+Windows NT, for example) your local repository is
+@file{c:\src\cvsroot}, then you must specify the access
+method, as in @code{:local:c:\src\cvsroot}.
+
+@c This might appear to go in Repository storage, but
+@c actually it is describing something which is quite
+@c user-visible, when you do a "cvs co CVSROOT".  This
+@c isn't necessary the perfect place for that, though.
+The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
+administrative files for @sc{cvs}.  The other directories contain the actual
+user-defined modules.
+
+@menu
+* Specifying a repository::     Telling CVS where your repository is
+* Repository storage::          The structure of the repository
+* Intro administrative files::  Defining modules
+* Multiple repositories::       Multiple repositories
+* Creating a repository::       Creating a repository
+* Remote repositories::         Accessing repositories on remote machines
+@end menu
+
+@node Specifying a repository
+@section Telling CVS where your repository is
 
 There are a couple of different ways to tell @sc{cvs}
 where to find the repository.  You can name the
@@ -945,6 +962,11 @@ repository on the command line explicitly, with the
 cvs -d /usr/local/cvsroot checkout yoyodyne/tc
 @end example
 
+@cindex .profile, setting CVSROOT in
+@cindex .cshrc, setting CVSROOT in
+@cindex .tcshrc, setting CVSROOT in
+@cindex .bashrc, setting CVSROOT in
+@cindex CVSROOT, environment variable
         Or you can set the @code{$CVSROOT} environment
 variable to an absolute path to the root of the
 repository, @file{/usr/local/cvsroot} in this example.
@@ -980,44 +1002,76 @@ former is used (and specifying @code{-d} will cause
 operation they should be two ways of referring to the
 same repository.
 
-There is nothing magical about the name
-@file{/usr/local/cvsroot}.  You can choose to place the
-repository anywhere you like.  
-@xref{Remote repositories} to learn how the repository can be on a
-different machine than your working copy of the sources.
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Repository storage
+@section How data is stored in the repository
+@cindex Repository, how data is stored
 
-@cindex :local:
-@emph{Note:} For compatibility with older versions,
-@sc{cvs} will treat any repository name that contains a
-colon as an indication of a remote repository
-(@xref{Remote repositories}).  If the name of your
-local repository contains a colon, you should prepend
-the string @samp{:local:} to the pathname to tell
-@sc{cvs} that it is, indeed, a local repository.  For
-example, you might use this command line under Windows
-NT:
+For most purposes it isn't important @emph{how}
+@sc{cvs} stores information in the repository.  In
+fact, the format has changed in the past, and is likely
+to change in the future.  Since in almost all cases one
+accesses the repository via @sc{cvs} commands; such
+changes need not be disruptive.
 
-@example
-cvs -d :local:c:\src\cvsroot checkout yoyodyne/tc
-@end example
-
-The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
-administrative files for @sc{cvs}.  The other directories contain the actual
-user-defined modules.
+However, in some cases it may be necessary to
+understand how @sc{cvs} stores data in the repository,
+for example you might need to track down @sc{cvs} locks
+(@pxref{Concurrency}) or you might need to deal with
+the file permissions appropriate for the repository.
 
 @menu
-* User modules::                The structure of the repository
-* Intro administrative files::  Defining modules
-* Multiple repositories::       Multiple repositories
-* Creating a repository::       Creating a repository
-* Remote repositories::         Accessing repositories on remote machines
+* Repository files::            What files are stored in the repository
+* File permissions::            File permissions
 @end menu
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node User modules
-@section User modules
-@cindex User modules
-@cindex Repository, user parts
+@node Repository files
+@subsection Where files are stored within the repository
+
+The overall structure of the repository is a directory
+tree corresponding to the directories in the working
+directory.  For example, supposing the repository is in
+@file{/usr/local/cvsroot}, here is a possible directory
+tree (showing only the directories):
+
+@example
+@t{/usr}
+ |
+ +--@t{local}
+ |   |
+ |   +--@t{cvsroot}
+ |   |    | 
+ |   |    +--@t{CVSROOT}
+          |      (administrative files) 
+          | 
+          +--@t{gnu}
+          |   | 
+          |   +--@t{diff}
+          |   |   (source code to @sc{gnu} diff) 
+          |   | 
+          |   +--@t{rcs}
+          |   |   (source code to @sc{rcs})
+          |   | 
+          |   +--@t{cvs}
+          |       (source code to @sc{cvs}) 
+          | 
+          +--@t{yoyodyne}
+              | 
+              +--@t{tc}
+              |    |
+              |    +--@t{man}
+              |    |
+              |    +--@t{testing}
+              | 
+              +--(other Yoyodyne software)
+@end example                              
+
+With the directories are @dfn{history files} for each file
+under version control.  The name of the history file is
+the name of the corresponding file with @samp{,v}
+appended to the end.  Here is what the repository for
+the @file{yoyodyne/tc} directory might look like:
+@c FIXME: Should also mention CVS (CVSREP) and Attic
 
 @example
   @code{$CVSROOT}
@@ -1043,24 +1097,21 @@ user-defined modules.
 
 @cindex History files
 @cindex RCS history files
-@cindex RCS, CVS uses RCS
-The figure above shows the contents of the @samp{tc}
-module inside the repository.  As you can see all file
-names end in @samp{,v}.  The files are @dfn{history
-files}.  They contain, among other things, enough
+@c The first sentence, about what history files
+@c contain, is kind of redundant with our intro to what the
+@c repository does in node Repository....
+The history files contain, among other things, enough
 information to recreate any revision of the file, a log
 of all commit messages and the user-name of the person
-who committed the revision.  @sc{cvs} uses the
-facilities of @sc{rcs}, a simpler version control
-system, to maintain these files.  For a full
+who committed the revision.  The history files are
+known as @dfn{RCS files}, because the first program to
+store files in that format was a version control system
+known as @sc{rcs}.  For a full
 description of the file format, see the @code{man} page
-@cite{rcsfile(5)}.
-@c -- Use this format for all references to man pages,
-@c -- or use something better!
-
-@menu
-* File permissions::            File permissions
-@end menu
+@cite{rcsfile(5)}, distributed with @sc{rcs}.  This
+file format has become very common---many systems other
+than @sc{cvs} or @sc{rcs} can at least import history
+files in this format.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node File permissions
@@ -1098,7 +1149,19 @@ created, though).
 for new directories that are added inside the tree, but
 you must fix the permissions manually when a new
 directory should have different permissions than its
-parent directory.
+parent directory.  If you set the @code{CVSUMASK}
+environment variable that will control the file
+permissions which @sc{cvs} uses in creating directories
+and/or files in the repository.
+@c FIXME: need to explain what a umask is or cite
+@c someplace which does.
+@c FIXME: this doesn't really explain what CVSUMASK
+@c does.  Directories?  Files (not history files, I
+@c don't think)?  CVS/* files?  We need to state
+@c whether using CVSUMASK removes the need for manually
+@c fixing permissions (in fact, if we are going to mention
+@c manually fixing permission, we better document a lot
+@c better just what we mean by "fix").
 
 @cindex setuid
 @cindex setgid
@@ -1197,10 +1260,20 @@ variable, the @samp{-d} option to @sc{cvs}, or (once
 you have checked out a working directory) by simply
 allowing @sc{cvs} to use the repository that was used
 to check out the working directory
-(@pxref{Repository}).
+(@pxref{Specifying a repository}).
 
-Notwithstanding, it can be confusing to have two or
-more repositories.
+The big advantage of having multiple repositories is
+that they can reside on different servers.  The big
+disadvantage is that you cannot have a single @sc{cvs}
+command recurse into directories which comes from
+different repositories.  Generally speaking, if you are
+thinking of setting up several repositories on the same
+machine, you might want to consider using several
+directories within the same repository.
+@c FIXCVS: the thing about recursing into diverse roots
+@c would be nice to fix.
+@c FIXME: Does the FAQ have more about this?  I have a
+@c dim recollection, but I'm too lazy to check right now.
 
 None of the examples in this manual show multiple
 repositories.

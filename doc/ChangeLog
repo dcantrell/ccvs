@@ -1,5 +1,13 @@
 Sat Sep 28 09:31:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Repository): Move all information about the
+	internal structure of the repository to User modules node.  Rename
+	it to "Repository storage" ("User modules" wasn't particularly
+	clear).  Mention CVSUMASK.  Much clarification and
+	reorganization.
+	(Basic concepts): Remove material which duplicates what is now in
+	Repository.  Rewrite paragraph introducing modules.
+
 	* cvs.texinfo (Starting a new project): In discussing difficulty
 	in renaming files, don't refer to "cvs 1.x"--there is no
 	non-vaporous "cvs 2.x".  Reword to reflect that part of the reason
