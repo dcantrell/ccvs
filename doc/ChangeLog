@@ -1,3 +1,8 @@
+1998-09-21  Noel Cragg  <noel@swish.red-bean.com>
+
+	* cvs.texinfo (Environment variables): remove information about
+	CVS_IGNORE_REMOTE_ROOT, since it's no longer used.
+
 1998-09-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (config): Mention that CVS 1.10 doesn't have

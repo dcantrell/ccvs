@@ -817,10 +817,8 @@ repository, it will remember where its repository is
 The @code{-d} option and the @file{CVS/Root} file both
 override the @code{$CVSROOT} environment variable.  If
 @code{-d} option differs from @file{CVS/Root}, the
-former is used (and specifying @code{-d} will cause
-@file{CVS/Root} to be updated).  Of course, for proper
-operation they should be two ways of referring to the
-same repository.
+former is used.  Of course, for proper operation they
+should be two ways of referring to the same repository.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Repository storage
@@ -12223,10 +12221,6 @@ Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
 server child process the specified amount of
 seconds so that you can attach to it with a debugger.
-
-@cindex CVS_IGNORE_REMOTE_ROOT, environment variable
-@item $CVS_IGNORE_REMOTE_ROOT
-(What is the purpose of this variable?)
 
 @cindex COMSPEC, environment variable
 @item $COMSPEC
