@@ -1,3 +1,9 @@
+Fri Jun 27 11:20:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Repository files): Also mention doc/RCSFILES in
+	documenting RCS file format.
+	(CVSROOT, storage of files): New node.
+
 Thu Jun 26 09:18:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (File permissions): xref to the pserver thing about
