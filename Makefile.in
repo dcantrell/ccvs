@@ -153,13 +153,13 @@ tags:
 TAGS:
 	@for dir in $(TSUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 	@echo making $@ in .
-	@etags `for i in \`$(MAKE) SUBDIRS="$(TSUBDIRS)" ls\` ; do echo $(srcdir)/$$i ; done`
+	@etags `for i in \`$(MAKE) SUBDIRS="$(TSUBDIRS)" ls | grep -v 'make\[[0-9]\]'\` ; do echo $(srcdir)/$$i ; done`
 
 .PHONY: ls
 ls:
 	@echo $(DISTFILES)
 	@for dir in $(SUBDIRS); do \
-		for i in `cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@` ; do \
+		for i in `cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ | grep -v 'make\[[0-9]\]'` ; do \
 			echo $$dir/$$i ; \
 		done ; \
 	done
