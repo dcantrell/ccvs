@@ -156,9 +156,15 @@ status_fileproc (callerdat, finfo)
 	    sstat = "Locally Removed";
 	    break;
 	case T_MODIFIED:
-	    if (vers->ts_conflict)
+	    if ( vers->ts_conflict
+		 && ( file_has_conflict ( finfo, vers->ts_conflict )
+		       || file_has_markers ( finfo ) ) )
 		sstat = "File had conflicts on merge";
 	    else
+		/* Note that we do not re Register() the file when we spot
+		 * a resolved conflict like update_fileproc() does on the
+		 * premise that status should not alter the sandbox.
+		 */
 		sstat = "Locally Modified";
 	    break;
 	case T_REMOVE_ENTRY:

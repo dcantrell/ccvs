@@ -701,6 +701,8 @@ int SIG_inCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));
 
 char *make_message_rcsvalid PROTO((char *message));
+extern int file_has_conflict PROTO ((const struct file_info *,
+				     const char *ts_conflict));
 extern int file_has_markers PROTO ((const struct file_info *));
 extern void get_file PROTO ((const char *, const char *, const char *,
 			     char **, size_t *, size_t *));
