@@ -1619,21 +1619,24 @@ checkaddfile (file, repository, tag, options, srcfiles)
        to create a dead revision on the trunk.  */
     if (tag && newfile)
     {
-	char tmp[PATH_MAX];
+	char *tmp;
 	
 	/* move the new file out of the way. */
 	(void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
 	rename_file (file, fname);
 	copy_file (DEVNULL, file);
-	
+
+	tmp = xmalloc (strlen (file) + strlen (tag) + 80);
 	/* commit a dead revision. */
-	(void) sprintf (tmp, "-mfile %s was initially added on branch %s.", file, tag);
+	(void) sprintf (tmp, "-mfile %s was initially added on branch %s.",
+			file, tag);
 #ifdef DEATH_STATE
 	run_setup ("%s%s -q -f -sdead", Rcsbin, RCS_CI);
 #else
 	run_setup ("%s%s -q -K", Rcsbin, RCS_CI);
 #endif
 	run_arg (tmp);
+	free (tmp);
 	run_arg (rcs);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 	{
