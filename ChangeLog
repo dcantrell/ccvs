@@ -1,5 +1,12 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL (Building from source code under Unix): Move Autoconf &
+	Automake notes...
+	* HACKING (Regenerating Build Files (UNIX)): ...here.
+	(Regenerating Build Files (Windows)): New section.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	Update to current fnmatch module from GNULIB.
 
 	* configure.in: Call gl_FUNC_FNMATCH_POSIX.
