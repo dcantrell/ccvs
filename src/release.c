@@ -21,9 +21,7 @@ static void release_delete PROTO((char *dir));
 static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] modules...\n",
-    "\t-Q\tReally quiet.\n",
     "\t-d\tDelete the given directory.\n",
-    "\t-q\tSomewhat quiet.\n",
     NULL
 };
 
@@ -51,10 +49,15 @@ release (argc, argv)
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		delete++;
@@ -75,10 +78,6 @@ release (argc, argv)
 	
 	ign_setup ();
 
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (delete)
 	    send_arg("-d");
 

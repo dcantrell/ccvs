@@ -41,9 +41,8 @@ static int unidiff = 0;
 
 static const char *const patch_usage[] =
 {
-    "Usage: %s %s [-Qflq] [-c|-u] [-s|-t] [-V %%d]\n",
+    "Usage: %s %s [-fl] [-c|-u] [-s|-t] [-V %%d]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",
-    "\t-Q\tReally quiet.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-c\tContext diffs (default)\n",
@@ -75,10 +74,15 @@ patch (argc, argv)
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'f':
 		force_tag_match = 0;
@@ -172,10 +176,6 @@ patch (argc, argv)
 
 	if (local)
 	    send_arg("-l");
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (force_tag_match)
 	    send_arg("-f");
 	if (toptwo_diffs)

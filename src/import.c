@@ -52,10 +52,8 @@ static char *keyword_opt = NULL;
 
 static const char *const import_usage[] =
 {
-    "Usage: %s %s [-Qq] [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
+    "Usage: %s %s [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
     "    [-W spec] repository vendor-tag release-tags...\n",
-    "\t-Q\tReally quiet.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-d\tUse the file's modification time as the time of import.\n",
     "\t-k sub\tSet default RCS keyword substitution mode.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
@@ -90,10 +88,15 @@ import (argc, argv)
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		use_file_modtime = 1;
@@ -205,10 +208,6 @@ import (argc, argv)
 
 	ign_setup ();
 
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (use_file_modtime)
 	    send_arg("-d");
 
