@@ -1,3 +1,9 @@
+2004-09-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (cvs_output, cvs_output_binary): fflush (stderr)
+	here to avoid problems with 'cvs status 2>&1'.
+	(Report by Frank Hemer <frank@hemer.org>.)
+
 2004-09-23  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (crerepos, sshstdio): Minor modifications to make use of
