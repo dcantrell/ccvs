@@ -1,5 +1,11 @@
 1998-10-11  Jim Kingdon
 
+	* commit.c (checkaddfile, commit_fileproc): A numeric value for
+	'tag' does not mean that we are adding on a branch.
+	* sanity.sh (keywordlog): Adjust this test, to test for this
+	(replaces comment saying we should be doing it).
+	(rmadd): Likewise.
+
 	* sanity.sh (rmadd): New test, tests for various existing
 	behaviors with "cvs ci -r".
 

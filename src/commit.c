@@ -1274,7 +1274,11 @@ commit_fileproc (callerdat, finfo)
 	   Since the branch test was done in check_fileproc for
 	   modified files, we need to stub it in again here. */
 
-	if (ci->tag)
+	if (ci->tag
+
+	    /* If numeric, it is on the trunk; check_fileproc enforced
+	       this.  */
+	    && !isdigit (ci->tag[0]))
 	{
 	    if (finfo->rcs == NULL)
 		error (1, 0, "internal error: no parsed RCS file");
@@ -1878,8 +1882,13 @@ checkaddfile (file, repository, tag, options, rcsnode)
     int newfile = 0;
     RCSNode *rcsfile = NULL;
     int retval;
+    int adding_on_branch;
 
-    if (tag)
+    /* If numeric, it is on the trunk; check_fileproc enforced
+       this.  */
+    adding_on_branch = tag != NULL && !isdigit (tag[0]);
+
+    if (adding_on_branch)
     {
 	rcs = xmalloc (strlen (repository) + strlen (file)
 		       + sizeof (RCSEXT) + sizeof (CVSATTIC) + 10);
@@ -1910,7 +1919,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    goto out;
 	}
 
-	if (tag == NULL)
+	if (!adding_on_branch)
 	{
 	    /* We are adding on the trunk, so move the file out of the
 	       Attic.  */
@@ -2010,7 +2019,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
     /* when adding a file for the first time, and using a tag, we need
        to create a dead revision on the trunk.  */
-    if (tag && newfile)
+    if (adding_on_branch && newfile)
     {
 	char *tmp;
 	FILE *fp;
@@ -2072,7 +2081,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	}
     }
 
-    if (tag != NULL)
+    if (adding_on_branch)
     {
 	/* when adding with a tag, we need to stub a branch, if it
 	   doesn't already exist.  */
