@@ -1,3 +1,7 @@
+2005-02-21  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Undo some changes accidentally imported from 1.11.x.
+
 2005-02-08  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (config.h, stamp-ch): New targets.
