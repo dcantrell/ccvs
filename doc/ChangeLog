@@ -1,5 +1,8 @@
 Sun Feb  8 21:39:22 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Invoking CVS): For admin -b, point to the section
+	where we talk about reverting to vendor branch.
+
 	* cvs.texinfo (Invoking CVS, rdiff options): Document rdiff -V
 	option as obsolete, since it was made a fatal error some time ago.
 
