@@ -364,7 +364,9 @@ rename_file (from, to)
 }
 
 /*
- * link a file, if possible.
+ * link a file, if possible.  Warning: the Windows NT version of this
+ * function just copies the file, so only use this function in ways
+ * that can deal with either a link or a copy.
  */
 int
 link_file (from, to)
