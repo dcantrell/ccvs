@@ -245,3 +245,18 @@ $GNULIB/m4/ssize_t.m4				m4		no NI
 $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
 $GNULIB/m4/ulonglong.m4				m4		no NI
+
+
+
+GNULib
+Windows stat() substitute which works around bass ackwards file time problems
+on Windows.
+License: GPL
+Bug Report Email: ???
+Project Web Page: http://www.codeproject.com/datetime/dstbugs.asp
+
+Imported files					CVS		Local
+						Directory	Modifications
+----------------------------------------------- --------------- ---------------
+JmgStat.c                                       windows-NT      yes NI
+JmgStat.h                                       windows-NT      yes NI

@@ -67,6 +67,11 @@ NEW FEATURES
 
 BUG FIXES
 
+* Thanks to a report from Chris Bohn <cbohn@rrinc.com>, links from J.C. Hamlin
+  <jchamlin@ibsys.com>, and code posted by Jonathan Gilligan, we think we have
+  finally corrected the Windows "red-file" (daylight savings time) bug once and
+  for all.
+
 * Thanks to a patch from Jeroen Ruigrok/asmodai <asmodai@wxs.nl>, the
   log_accum.pl script should no longer elicit warnings from Perl 5.8.5.
 
