@@ -5,6 +5,14 @@ Wed Sep 25 10:35:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Remove item about ~/.cvsignore on NT; it is fixed.
 
+Wed Sep 25 10:22:00 1996  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in: Add hack for ISC crypt (the version in the posix C
+	library doesn't work -- why am I not surprised).  Add check for
+	libsec.a for shadow password functions.
+
+	* Makefile.in: Make zlib along with lib in the check targets.
+
 Wed Sep 25 08:34:01 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	Fix from Mark A. Solinski <markso@mcs.com>:

@@ -1,3 +1,7 @@
+Wed Sep 25 10:25:00 1996  Larry Jones  <larry.jones@sdrc.com>
+
+	* vasprintf.c: Fix type clashes in calls to strtoul.
+
 Wed Sep 11 15:55:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* build_lib.com: Add valloc.c.
