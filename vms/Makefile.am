@@ -32,7 +32,6 @@ EXTRA_DIST = \
     misc.h \
     ndir.c \
     ndir.h \
-    options.h \
     pathnames.h \
     pc.c \
     pipe.c \

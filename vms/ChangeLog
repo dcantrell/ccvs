@@ -1,3 +1,12 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Remove reference to options.h.
+	* startserver.c: Replace reference to options.h with config.h.
+	* options.h: Remove file and move relevant content...
+	* config.h: ...here.
+
+	* Makefile.in: Regenerated.
+
 2002-12-06  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c: Change some calls to malloc to use xmalloc.
