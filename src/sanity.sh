@@ -19731,6 +19731,8 @@ ${PROG} admin: run add or import to create an RCS file
 ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  dotest_fail admin-4 "${testcvs} -q log file1" \
 "${PROG} [a-z]*: nothing known about file1"
+	  dotest_fail admin-4a "${testcvs} -q admin file1" \
+"${PROG} [a-z]*: nothing known about file1"
 
 	  # Set up some files, file2 a plain one and file1 with a revision
 	  # on a branch.
