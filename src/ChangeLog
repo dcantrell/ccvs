@@ -1,5 +1,7 @@
 Fri Sep  1 00:03:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Fix TODO item pathname.
+
 	* sanity.el: Removed.  It was out of date, didn't do much, and I
 	doubt anyone was using it.
 
