@@ -1,5 +1,13 @@
 Fri Jul 18 09:47:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TODO: Remove item 161 (the comments in cvs.texinfo have a much
+	more complete discussion of date format issues).  In item 30,
+	change "patch" to "rdiff" and expand discussion slightly.  Remove
+	item 64 (the performance issues in initial checkout have probably
+	changed quite a bit since that was written and in any event it
+	isn't particularly useful without specifics of what is slow and
+	ideas for speeding it up).
+
 	* INSTALL: Reorganize to separate out building/installing CVS
 	executables from what to do once you have them.  Adjust Visual C++
 	instructions to deal with Visual C++ 5.x.  Add brief mentions of

@@ -4,7 +4,9 @@
     (If done, this should be configurable via commitinfo or some new
     config file -kingdon, Jun 1995).
 
-30. Add "patch" program option to the modules database.
+30. Add "rdiff" program option to the modules database (and "diff"
+too?).  (perhaps should think a little harder about what this is
+trying to accomplish and what the best way is -kingdon, Jul 1997).
 
 31. Think hard about ^C recovery.
 
@@ -46,9 +48,6 @@
 
 63. The "import" and vendor support commands (co -j) need to be documented
     better.
-
-64. Need to greatly increase the performance of an initial checkout.
-    [[ it got better, then we added functionality, making it worse again ]]
 
 66. Length of the CVS temporary files must be limited to 14 characters for
     System-V stupid support.  As well as the length on the CVS.adm files.
@@ -317,9 +316,6 @@
      someone else.  Maybe it should also lock the new revision if the old
      revision was already locked by the user as well, thus moving the lock
      forward after the commit.
-
-161. The date parser included with CVS (lib/getdate.y) does not support
-     such RCS-supported dates as "1992/03/07".  It probably should.
 
 163. The rtag/tag commands should have an option that removes the specified
      tag from any file that is in the attic.  This allows one to re-use a
