@@ -1,3 +1,8 @@
+Sat Jul 19 22:28:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Preface): Make section titles more verbose.
+	Likewise for the menu.
+
 Fri Jul 18 08:41:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): No need for an external patch if

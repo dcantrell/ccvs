@@ -208,9 +208,9 @@ an extensive index, and a lot of cross references.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @menu
-* Checklist::                   
-* Credits::                     
-* BUGS::                        
+* Checklist::                   Checklist for the impatient reader
+* Credits::                     A few of the people who wrote this manual
+* BUGS::                        Dealing with bugs in CVS or this manual
 @end menu
 
 @node Checklist
@@ -291,7 +291,7 @@ distribution.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node BUGS
-@unnumberedsec BUGS
+@unnumberedsec Dealing with bugs in CVS or this manual
 
 @cindex Bugs in this manual or CVS
 Neither @sc{cvs} nor this manual is perfect, and they
