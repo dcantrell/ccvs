@@ -3112,10 +3112,16 @@ start_server ()
 	    gzip_level = 0;
 	}
     }
+
+#ifdef FILENAMES_CASE_INSENSITIVE
+    if (supported_request ("Case"))
+	send_to_server ("Case\012", 0);
+#endif
+
     /* If "Set" is not supported, just silently fail to send the variables.
        Users with an old server should get a useful error message when it
        fails to recognize the ${=foo} syntax.  This way if someone uses
-       several server, some of which are new and some old, they can still
+       several servers, some of which are new and some old, they can still
        set user variables in their .cvsrc without trouble.  */
     if (supported_request ("Set"))
 	walklist (variable_list, send_variable_proc, NULL);

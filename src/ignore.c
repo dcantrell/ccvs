@@ -230,6 +230,10 @@ ign_add (ign, hold)
     }
 }
 
+/* Set to 1 if ignore file patterns should be matched in a case-insensitive
+   fashion.  */
+int ign_case;
+
 /* Return 1 if the given filename should be ignored by update or import. */
 int
 ign_name (name)
@@ -240,12 +244,44 @@ ign_name (name)
     if (cpp == NULL)
 	return (0);
 
-    while (*cpp)
-	if (fnmatch (*cpp++, name, 0) == 0)
-	    return (1);
-    return (0);
-}
+    if (ign_case)
+    {
+	/* We do a case-insensitive match by calling fnmatch on copies of
+	   the pattern and the name which have been converted to
+	   lowercase.  */
+	char *name_lower;
+	char *pat_lower;
+	char *p;
 
+	name_lower = xstrdup (name);
+	for (p = name_lower; *p != '0'; ++p)
+	    *p = tolower (*p);
+	while (*cpp)
+	{
+	    pat_lower = xstrdup (*cpp++);
+	    for (p = pat_lower; *p != '0'; ++p)
+		*p = tolower (*p);
+	    if (fnmatch (pat_lower, name_lower, 0) == 0)
+		goto matched;
+	    free (pat_lower);
+	}
+	free (name_lower);
+	return 0;
+      matched:
+	free (name_lower);
+	free (pat_lower);
+	return 1;
+    }
+    else
+    {
+	while (*cpp)
+	    if (fnmatch (*cpp++, name, 0) == 0)
+		return 1;
+	return 0;
+    }
+}
+
+/* FIXME: This list of dirs to ignore stuff seems not to be used.  */
 
 static char **dir_ign_list = NULL;
 static int dir_ign_max = 0;
@@ -289,7 +325,7 @@ int ignore_directory (name)
 
   return 0;
 }
-
+
 /*
  * Process the current directory, looking for files not in ILIST and not on
  * the global ignore list for this directory.  If we find one, call PROC
