@@ -1,3 +1,10 @@
+1998-02-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* create_adm.c (Create_Admin): Just print update_dir to tell the
+	user where we are; not the whole xgetwd.  Cleaner than
+	Noel's change (which also had problems in errno handling).
+	* sanity.sh (toplevel-12): Update accordingly.
+
 Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	[These mods make "checkout" work with "-d /absolute/pathname"

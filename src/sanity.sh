@@ -10069,7 +10069,7 @@ U top-dir/file1"
 	  chmod -w ../1
 	  # Now see whether CVS has trouble because it can't create CVS.
 	  dotest toplevel-12 "${testcvs} co top-dir" \
-"${PROG} [a-z]*: warning: cannot make directory ./CVS in ${TESTDIR}/1
+"${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
 ${PROG} [a-z]*: Updating top-dir"
 	  chmod +w ../1
 
