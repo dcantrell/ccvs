@@ -48,6 +48,10 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
+/* Define if there is a member named d_ino in the struct describing directory
+   headers. */
+#undef D_INO_IN_DIRENT
+
 /* The default editor to use, if one does not specify the "-e" option to cvs,
    or does not have an EDITOR environment variable. If this is not set to an
    absolute path to an executable, use the shell to find where the editor
@@ -113,6 +117,17 @@
 /* Define to 1 if you have the `btowc' function. */
 #undef HAVE_BTOWC
 
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
+/* Define to 1 if you have the `chsize' function. */
+#define HAVE_CHSIZE 1
+
 /* Define to 1 if you have the `clock_gettime' function. */
 #undef HAVE_CLOCK_GETTIME
 
@@ -132,6 +147,10 @@
 /* Define to 1 if you have the declaration of `clearerr_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_CLEARERR_UNLOCKED
+
+/* Define to 1 if you have the declaration of `__fpending', and to 0 if you
+   don't. */
+#define HAVE_DECL___FPENDING 0
 
 /* Define to 1 if you have the declaration of `feof_unlocked', and to 0 if you
    don't. */
@@ -176,6 +195,10 @@
 /* Define to 1 if you have the declaration of `getchar_unlocked', and to 0 if
    you don't. */
 #undef HAVE_DECL_GETCHAR_UNLOCKED
+
+/* Define to 1 if you have the declaration of `getcwd', and to 0 if you don't.
+   */
+#define HAVE_DECL_GETCWD 1
 
 /* Define to 1 if you have the declaration of `getc_unlocked', and to 0 if you
    don't. */
@@ -245,12 +268,6 @@
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE
 
-/* Define to 1 if you have the `getcwd' function. */
-#define HAVE_GETCWD 1
-
-/* Define if getcwd (NULL, 0) allocates memory for result. */
-#define HAVE_GETCWD_NULL 1
-
 /* Define to 1 if you have the `getdelim' function. */
 #undef HAVE_GETDELIM
 
@@ -318,6 +335,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `iswprint' function. */
+#define HAVE_ISWPRINT 1
+
 /* Define if you have MIT Kerberos version 4 available. */
 #undef HAVE_KERBEROS
 
@@ -359,11 +379,21 @@
    to 0 otherwise. */
 #define HAVE_MALLOC 1
 
+/* Define to 1 if mmap()'s MAP_ANONYMOUS flag is available after including
+   config.h and <sys/mman.h>. */
+#undef HAVE_MAP_ANONYMOUS
+
 /* Define to 1 if you have the `mblen' function. */
 #undef HAVE_MBLEN
 
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
+
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
+#define HAVE_MBRTOWC 1
+
+/* Define to 1 if you have the `mbsinit' function. */
+#undef HAVE_MBSINIT
 
 /* Define to 1 if you have the `mbsrtowcs' function. */
 #undef HAVE_MBSRTOWCS
@@ -383,8 +413,8 @@
 /* Define to 1 if you have the `mempcpy' function. */
 #undef HAVE_MEMPCPY
 
-/* Define to 1 if you have the `mkdir' function. */
-#undef HAVE_MKDIR
+/* Define to 1 if you have the `memrchr' function. */
+#undef HAVE_MEMRCHR
 
 /* Define to 1 if you have the `mknod' function. */
 #undef HAVE_MKNOD
@@ -395,11 +425,17 @@
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
+/* Define to 1 if you have the `nanotime' function. */
+#undef HAVE_NANOTIME
+
 /* Define to 1 if you have the <ndbm.h> header file. */
 #undef HAVE_NDBM_H
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
+
+/* Define to 1 if you have the `openat' function. */
+#undef HAVE_OPENAT
 
 /* Define to 1 if you have the <OS.h> header file. */
 #undef HAVE_OS_H
@@ -408,6 +444,15 @@
    getpwnam interface. This allows authentication (in theory) with any PAM
    module, e.g. on systems with shadow passwords or via LDAP */
 #undef HAVE_PAM
+
+/* Define to 1 if getcwd works, except it sometimes fails when it shouldn't,
+   setting errno to ERANGE, ENAMETOOLONG, or ENOENT. If __GETCWD_PREFIX is not
+   defined, it doesn't matter whether HAVE_PARTLY_WORKING_GETCWD is defined.
+   */
+#undef HAVE_PARTLY_WORKING_GETCWD
+
+/* Define to 1 if you have the `posix_memalign' function. */
+#undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
@@ -437,9 +482,6 @@
 
 /* Define to 1 if you have the `regfree' function. */
 #undef HAVE_REGFREE
-
-/* Define to 1 if you have the `rename' function. */
-#undef HAVE_RENAME
 
 /* Define to 1 if you have the `rpmatch' function. */
 #undef HAVE_RPMATCH
@@ -520,6 +562,9 @@
 
 /* Define to 1 if you have the `strstr' function. */
 #undef HAVE_STRSTR
+
+/* Define to 1 if you have the `strtol' function. */
+#define HAVE_STRTOL 1
 
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
@@ -622,9 +667,6 @@
 /* Define to 1 if `utime(file, NULL)' sets file's timestamp to the present. */
 #define HAVE_UTIME_NULL 1
 
-/* Define to 1 if you have the `valloc' function. */
-#undef HAVE_VALLOC
-
 /* Define to 1 if you have the `vasnprintf' function. */
 #undef HAVE_VASNPRINTF
 
@@ -647,10 +689,10 @@
 #undef HAVE_WAITPID
 
 /* Define to 1 if you have the <wchar.h> header file. */
-#undef HAVE_WCHAR_H
+#define HAVE_WCHAR_H 1
 
 /* Define if you have the 'wchar_t' type. */
-#undef HAVE_WCHAR_T
+#define HAVE_WCHAR_T 1
 
 /* Define to 1 if you have the `wcslen' function. */
 #undef HAVE_WCSLEN
@@ -682,6 +724,9 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if you have the `__fpending' function. */
+#undef HAVE___FPENDING
+
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
@@ -705,6 +750,9 @@
 
 /* If malloc(0) is != NULL, define this to 1. Otherwise define this to 0. */
 #undef MALLOC_0_IS_NONNULL
+
+/* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
+#undef MAP_ANONYMOUS
 
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
@@ -736,6 +784,9 @@
    */
 #undef PAM_SERVICE_NAME
 
+/* the number of pending output bytes on stream `fp' */
+#define PENDING_OUTPUT_N_BYTES ( fp ? fp->_ptr - fp->_base : 0 )
+
 /* Define if you want CVS to be able to serve as a transparent proxy for write
    operations. Disabling this may produce a slight performance gain on some
    systems, at the expense of write proxy support. */
@@ -746,6 +797,10 @@
 
 /* Define to force lib/regex.c to use malloc instead of alloca. */
 #define REGEX_MALLOC 1
+
+/* Define if rename does not work for source paths with a trailing slash, like
+   the one from SunOS 4.1.1_U1. */
+#undef RENAME_TRAILING_SLASH_BUG
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -973,9 +1028,15 @@
 # undef __EXTENSIONS__
 #endif
 
+/* Define to rpl_ if the getcwd replacement function should be used. */
+#undef __GETCWD_PREFIX
+
 /* Define to rpl_ if the getopt replacement functions and variables should be
    used. */
 #define __GETOPT_PREFIX rpl_
+
+/* Define to rpl_ if the openat replacement function should be used. */
+#undef __OPENAT_PREFIX
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
@@ -1018,6 +1079,9 @@
 /* Define to a type if <wchar.h> does not define. */
 #undef mbstate_t
 
+/* Define to rpl_mkdir if the replacement function should be used. */
+#undef mkdir
+
 /* Define to rpl_mkstemp if the replacement function should be used. */
 #undef mkstemp
 
@@ -1038,6 +1102,9 @@
 
 /* Define to rpl_realloc if the replacement function should be used. */
 #define realloc rpl_realloc
+
+/* Define to rpl_rename if the replacement function should be used. */
+#undef rename
 
 /* Define to equivalent of C99 restrict keyword, or to nothing if this is not
    supported. Do not define if restrict is supported directly. */
