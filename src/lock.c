@@ -143,8 +143,6 @@ static List *locked_list;
 /* LockDir from CVSROOT/config.  */
 char *lock_dir;
 
-static char *lock_name (char *repository, char *name);
-
 /* Return a newly malloc'd string containing the name of the lock for the
    repository REPOSITORY and the lock file name within that directory
    NAME.  Also create the directories in which to put the lock file
