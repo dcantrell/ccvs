@@ -1,5 +1,8 @@
 Sun Dec 14 10:14:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Responses): Add MT response.
+	(Text tags): New node.
+
 	* cvs.texinfo (loginfo): Add comment about which commands run
 	loginfo.
 
