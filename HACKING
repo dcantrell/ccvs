@@ -13,13 +13,7 @@ detect many programming errors.  This is not the default because it
 might cause spurious warnings, but at least on some machines, there
 should be no spurious warnings.  For example:
 
-	$ CFLAGS="-g -Wall" ./configure
-
-Configure is not very good at remembering this setting; it will get
-wiped out whenever you do a ./config.status --recheck, so you'll need
-to use:
-
-	$ CFLAGS="-g -Wall" ./config.status --recheck
+	$ ./configure CPPFLAGS=-Wall
 
 * Backwards Compatibility
 
