@@ -64,19 +64,6 @@ static const char *const import_usage[] =
     NULL
 };
 
-static const char *const keyword_usage[] =
-{
-  "%s %s: invalid RCS keyword expansion mode\n",
-  "Valid expansion modes include:\n",
-  "   -kkv\tGenerate keywords using the default form.\n",
-  "   -kkvl\tLike -kkv, except locker's name inserted.\n",
-  "   -kk\tGenerate only keyword names in keyword strings.\n",
-  "   -kv\tGenerate only keyword values in keyword strings.\n",
-  "   -ko\tGenerate the old keyword string (no changes from checked in file).\n",
-  NULL,
-};
-
-
 int
 import (argc, argv)
     int argc;
