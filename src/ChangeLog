@@ -1,5 +1,17 @@
 2004-07-11  Derek Price  <derek@ximbiot.com>
 
+	* log.c (log_fileproc, log_expand_revlist, log_fix_singledate,
+	log_count_print, log_tree, log_abranch, log_version), parseinfo.c
+	(Parse_Info, parse_config), rcs.c (RCS_fully_parse, rcsbuf_getkey,
+	rcsbuf_getrevnum, rcsbuf_valword, RCS_getbranchpoint, RCS_getdate,
+	RCS_getrevtime, RCS_checkout, RCS_findlock_or_tip, RCS_addbranch,
+	RCS_cmp_file, RCS_lock, RCS_unlock, RCS_delete_revs, RCS_deltas,
+	RCS_getdeltatext, RCS_putdtree): Print primary path.
+	* server.c (serve_kopt): Handle secondary log.
+	* sanity.sh: Misc accommodations.
+
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
 	* checkin.c (checkout_proc): Correct vi induced typo.
 
 2004-07-11  Derek Price  <derek@ximbiot.com>

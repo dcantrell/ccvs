@@ -2199,10 +2199,8 @@ serve_entry (char *arg)
 static void
 serve_kopt (char *arg)
 {
-    if (error_pending ())
+    if (error_pending () || secondary_log)
 	return;
-
-    assert (!secondary_log);
 
     if (kopt != NULL)
     {

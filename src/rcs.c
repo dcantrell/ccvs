@@ -734,7 +734,7 @@ RCS_fully_parse (RCSNode *rcs)
 	if (vers == NULL)
 	    error (1, 0,
 		   "mismatch in rcs file %s between deltas and deltatexts (%s)",
-		   rcs->path, key);
+		   rcs->print_path, key);
 
 	vnode = vers->data;
 
@@ -756,7 +756,7 @@ RCS_fully_parse (RCSNode *rcs)
 		    error (0, 0,
 			   "\
 warning: duplicate key `%s' in version `%s' of RCS file `%s'",
-			   key, vnode->version, rcs->path);
+			   key, vnode->version, rcs->print_path);
 		    freenode (kv);
 		}
 
@@ -789,15 +789,15 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 			if (op != 'a' && op  != 'd')
 			    error (1, 0, "\
 unrecognized operation '\\x%x' in %s",
-				   op, rcs->path);
+				   op, rcs->print_path);
 			(void) strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != ' ')
 			    error (1, 0, "space expected in %s revision %s",
-				   rcs->path, vnode->version);
+				   rcs->print_path, vnode->version);
 			count = strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != '\012')
 			    error (1, 0, "linefeed expected in %s revision %s",
-				   rcs->path, vnode->version);
+				   rcs->print_path, vnode->version);
 
 			if (op == 'd')
 			    del += count;
@@ -813,7 +813,7 @@ unrecognized operation '\\x%x' in %s",
 				    if (count != 1)
 					error (1, 0, "\
 premature end of value in %s revision %s",
-					       rcs->path, vnode->version);
+					       rcs->print_path, vnode->version);
 				    else
 					break;
 				}
@@ -833,7 +833,7 @@ premature end of value in %s revision %s",
 		    error (0, 0,
 			   "\
 warning: duplicate key `%s' in version `%s' of RCS file `%s'",
-			   key, vnode->version, rcs->path);
+			   key, vnode->version, rcs->print_path);
 		    freenode (kv);
 		}
 
@@ -847,7 +847,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		    error (0, 0,
 			   "\
 warning: duplicate key `%s' in version `%s' of RCS file `%s'",
-			   key, vnode->version, rcs->path);
+			   key, vnode->version, rcs->print_path);
 		    freenode (kv);
 		}
 	    }
@@ -1014,7 +1014,7 @@ rcsbuf_open (struct rcsbuffer *rcsbuf, FILE *fp, const char *filename, long unsi
 	rcsbuf->ptrend = rcsbuf_buffer + fs.st_size - mmap_off;
 	rcsbuf->pos = mmap_off;
     }
-#else /* HAVE_MMAP */
+#else /* !HAVE_MMAP */
     if (rcsbuf_buffer_size < RCSBUF_BUFSIZE)
 	expand_string (&rcsbuf_buffer, &rcsbuf_buffer_size, RCSBUF_BUFSIZE);
 
@@ -1029,8 +1029,9 @@ rcsbuf_open (struct rcsbuffer *rcsbuf, FILE *fp, const char *filename, long unsi
     rcsbuf->embedded_at = 0;
 }
 
-/* Stop gathering keys from an RCS file.  */
 
+
+/* Stop gathering keys from an RCS file.  */
 static void
 rcsbuf_close (struct rcsbuffer *rcsbuf)
 {
@@ -1110,7 +1111,7 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
     {
 	if (ptr >= ptrend)
 	{
-	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    ptr = rcsbuf_fill (rcsbuf, ptr, NULL, NULL);
 	    if (ptr == NULL)
 		return 0;
 	    ptrend = rcsbuf->ptrend;
@@ -1136,8 +1137,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 		if (ptr == NULL)
+		{
+		    char *pfilename =
+			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in key in RCS file %s",
-			   rcsbuf->filename);
+			   pfilename);
+		    free (pfilename);
+		}
 		ptrend = rcsbuf->ptrend;
 	    }
 	    c = *ptr;
@@ -1171,8 +1177,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
 	    if (ptr == NULL)
+	    {
+		char *pfilename =
+		         primary_root_inverse_translate (rcsbuf->filename);
 		error (1, 0, "EOF while looking for value in RCS file %s",
-		       rcsbuf->filename);
+		       pfilename);
+		free (pfilename);
+	    }
 	    ptrend = rcsbuf->ptrend;
 	}
 	c = *ptr;
@@ -1216,9 +1227,14 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
+		{
+		    char *pfilename =
+			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
-			   rcsbuf->filename);
+			   pfilename);
+		    free (pfilename);
+		}
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1294,8 +1310,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
+		{
+		    char *pfilename =
+			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in value in RCS file %s",
-			   rcsbuf->filename);
+			   pfilename);
+		    free (pfilename);
+		}
 		ptrend = rcsbuf->ptrend;
 	    }
 	    n = *ptr;
@@ -1342,7 +1363,12 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    slen = start - *valp;
 	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 	    if (ptr == NULL)
-		error (1, 0, "EOF in value in RCS file %s", rcsbuf->filename);
+	    {
+		char *pfilename =
+			 primary_root_inverse_translate (rcsbuf->filename);
+		error (1, 0, "EOF in value in RCS file %s", pfilename);
+		free (pfilename);
+	    }
 	    start = *valp + slen;
 	    ptrend = rcsbuf->ptrend;
 	}
@@ -1396,9 +1422,14 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
+		{
+		    char *pfilename =
+			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
-			   rcsbuf->filename);
+			   pfilename);
+		    free (pfilename);
+		}
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1408,8 +1439,13 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
+		{
+		    char *pfilename =
+			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in value in RCS file %s",
-			   rcsbuf->filename);
+			   pfilename);
+		    free (pfilename);
+		}
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1467,10 +1503,14 @@ rcsbuf_getrevnum (struct rcsbuffer *rcsbuf, char **revp)
     }
 
     if (! isdigit ((unsigned char) c) && c != '.')
+    {
+	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0,
 	       "\
 unexpected '\\x%x' reading revision number in RCS file %s",
-	       c, rcsbuf->filename);
+	       c, pfilename);
+	free (pfilename);
+    }
 
     *revp = ptr;
 
@@ -1481,9 +1521,14 @@ unexpected '\\x%x' reading revision number in RCS file %s",
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, revp, (char **) NULL);
 	    if (ptr == NULL)
+	    {
+		char *pfilename =
+			 primary_root_inverse_translate (rcsbuf->filename);
 		error (1, 0,
 		       "unexpected EOF reading revision number in RCS file %s",
-		       rcsbuf->filename);
+		       pfilename);
+		free (pfilename);
+	    }
 	    ptrend = rcsbuf->ptrend;
 	}
 
@@ -1492,9 +1537,13 @@ unexpected '\\x%x' reading revision number in RCS file %s",
     while (isdigit ((unsigned char) c) || c == '.');
 
     if (! whitespace (c))
+    {
+	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "\
 unexpected '\\x%x' reading revision number in RCS file %s",
-	       c, rcsbuf->filename);
+	       c, pfilename);
+	free (pfilename);
+    }
 
     *ptr = '\0';
 
@@ -1813,8 +1862,10 @@ rcsbuf_valword (rcsbuf, valp)
        or an id.  Make sure it is not another special character. */
     if (c == '$' || c == '.' || c == ',')
     {
+	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "invalid special character in RCS field in %s",
-	       rcsbuf->filename);
+	       pfilename);
+	free (pfilename);
     }
 
     pat = ptr;
@@ -1833,8 +1884,12 @@ rcsbuf_valword (rcsbuf, valp)
        the character in its memory cell.  Check to make sure that it
        is a legitimate word delimiter -- whitespace or end. */
     if (c != '\0' && !my_whitespace (c))
+    {
+	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "invalid special character in RCS field in %s",
-	       rcsbuf->filename);
+	       pfilename);
+	free (pfilename);
+    }
 
     *pat = '\0';
     rcsbuf->vlen -= pat - *valp;
@@ -2755,7 +2810,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
     bp = strrchr (branch, '.');
     if (bp == NULL)
 	error (1, 0, "%s: confused revision number %s",
-	       rcs->path, target);
+	       rcs->print_path, target);
     if (isrevnum)
 	while (*--bp != '.')
 	    ;
@@ -2764,7 +2819,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
     vp = findnode (rcs->versions, branch);
     if (vp == NULL)
     {	
-	error (0, 0, "%s: can't find branch point %s", rcs->path, target);
+	error (0, 0, "%s: can't find branch point %s", rcs->print_path, target);
 	return NULL;
     }
     rev = vp->data;
@@ -2790,7 +2845,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
     free (branch);
     if (vp == rev->branches->list)
     {
-	error (0, 0, "%s: can't find branch point %s", rcs->path, target);
+	error (0, 0, "%s: can't find branch point %s", rcs->print_path, target);
 	return NULL;
     }
     else
@@ -2850,7 +2905,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
 	p = findnode (rcs->versions, rcs->head);
 	if (p == NULL)
 	{
-	    error (0, 0, "%s: head revision %s doesn't exist", rcs->path,
+	    error (0, 0, "%s: head revision %s doesn't exist", rcs->print_path,
 		   rcs->head);
 	}
 	while (p != NULL)
@@ -2871,7 +2926,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
 	}
     }
     else
-	error (0, 0, "%s: no head revision", rcs->path);
+	error (0, 0, "%s: no head revision", rcs->print_path);
 
     /*
      * at this point, either we have the revision we want, or we have the
@@ -3053,7 +3108,7 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
     /* split up the date */
     if (sscanf (vers->date, SDATEFORM, &xtm.tm_year, &xtm.tm_mon,
 		&xtm.tm_mday, &xtm.tm_hour, &xtm.tm_min, &xtm.tm_sec) != 6)
-	error (1, 0, "%s: invalid date for revision %s (%s)", rcs->path,
+	error (1, 0, "%s: invalid date for revision %s (%s)", rcs->print_path,
 	       rev, vers->date);
 
     /* If the year is from 1900 to 1999, RCS files contain only two
@@ -3063,7 +3118,7 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 
     if (xtm.tm_year >= 100 && xtm.tm_year < 2000)
 	error (0, 0, "%s: non-standard date format for revision %s (%s)",
-	       rcs->path, rev, vers->date);
+	       rcs->print_path, rev, vers->date);
     if (xtm.tm_year >= 1900)
 	xtm.tm_year -= 1900;
 
@@ -4028,7 +4083,7 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 
 	gothead = 0;
 	if (! rcsbuf_getrevnum (&rcsbuf, &key))
-	    error (1, 0, "unexpected EOF reading %s", rcs->path);
+	    error (1, 0, "unexpected EOF reading %s", rcs->print_path);
 	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
 	    if (STREQ (key, "log"))
@@ -4073,7 +4128,7 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 	{
 	    /* If RCS_deltas didn't close the file, we could use fstat
 	       here too.  Probably should change it thusly....  */
-	    if( CVS_STAT( rcs->path, &sb ) < 0 )
+	    if (CVS_STAT (rcs->path, &sb) < 0)
 		error (1, errno, "cannot stat %s", rcs->path);
 	    rcsbufp = NULL;
 	}
@@ -4544,7 +4599,7 @@ RCS_findlock_or_tip (RCSNode *rcs)
 	    if (lock != NULL)
 	    {
 		error (0, 0, "\
-%s: multiple revisions locked by %s; please specify one", rcs->path, user);
+%s: multiple revisions locked by %s; please specify one", rcs->print_path, user);
 		return NULL;
 	    }
 	    lock = p;
@@ -4558,7 +4613,7 @@ RCS_findlock_or_tip (RCSNode *rcs)
 	if (p == NULL)
 	{
 	    error (0, 0, "%s: can't unlock nonexistent revision %s",
-		   rcs->path,
+		   rcs->print_path,
 		   lock->key);
 	    return NULL;
 	}
@@ -4696,7 +4751,7 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
     nodep = findnode (rcs->versions, branchpoint);
     if (nodep == NULL)
     {
-	error (0, 0, "%s: can't find branch point %s", rcs->path, branchpoint);
+	error (0, 0, "%s: can't find branch point %s", rcs->print_path, branchpoint);
 	free (branchpoint);
 	return NULL;
     }
@@ -5123,7 +5178,7 @@ workfile);
 	    if (isrevnum)
 	    {
 		error (0, 0, "%s: can't find branch point %s",
-		       rcs->path, branch);
+		       rcs->print_path, branch);
 		free (branch);
 		free (newrev);
 		status = 1;
@@ -5151,7 +5206,7 @@ workfile);
 		{
 		    error (0, 0,
 			   "%s: revision %s too low; must be higher than %s",
-			   rcs->path,
+			   rcs->print_path,
 			   newrev, tip);
 		    free (branch);
 		    free (newrev);
@@ -5195,7 +5250,7 @@ workfile);
 	    if (!adding_branch)
 	    {
 		error (0, 0, "%s: revision %s locked by %s",
-		       rcs->path,
+		       rcs->print_path,
 		       nodep->key, (char *)nodep->data);
 		status = 1;
 		goto checkin_done;
@@ -5224,7 +5279,7 @@ workfile);
     if (status != 0)
 	error (1, 0,
 	       "could not check out revision %s of `%s'",
-	       commitpt->version, rcs->path);
+	       commitpt->version, rcs->print_path);
 
     bufsize = 0;
     changefile = cvs_temp_name();
@@ -5486,7 +5541,7 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
 	                      (RCSCHECKOUTPROC)0, NULL))
 		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev1, rcs->path);
+		       rev1, rcs->print_path);
 	    use_file1 = tmpfile;
 	    if (rev1_cache != NULL)
 		*rev1_cache = tmpfile;
@@ -5507,7 +5562,7 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
                           RUN_TTY, cmp_file_buffer, &data ))
 		error (1, errno,
 		       "cannot check out revision %s of %s",
-		       rev2 ? rev2 : rev1, rcs->path);
+		       rev2 ? rev2 : rev1, rcs->print_path);
 
         /* If we have not yet found a difference, make sure that we are at
            the end of the file.  */
@@ -5729,7 +5784,7 @@ RCS_lock (RCSNode *rcs, const char *rev, int lock_quiet)
     if (xrev == NULL || findnode (rcs->versions, xrev) == NULL)
     {
 	if (!lock_quiet)
-	    error (0, 0, "%s: revision %s absent", rcs->path, rev);
+	    error (0, 0, "%s: revision %s absent", rcs->print_path, rev);
 	free (xrev);
 	return 1;
     }
@@ -5839,7 +5894,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 		{
 		    if (!unlock_quiet)
 			error (0, 0, "\
-%s: multiple revisions locked by %s; please specify one", rcs->path, user);
+%s: multiple revisions locked by %s; please specify one", rcs->print_path, user);
 		    return 1;
 		}
 		lock = p;
@@ -5858,7 +5913,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 	xrev = RCS_gettag (rcs, rev, 1, (int *) NULL);
 	if (xrev == NULL)
 	{
-	    error (0, 0, "%s: revision %s absent", rcs->path, rev);
+	    error (0, 0, "%s: revision %s absent", rcs->print_path, rev);
 	    return 1;
 	}
     }
@@ -5880,7 +5935,7 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 	char *repos, *workfile;
 	if (!unlock_quiet)
 	    error (0, 0, "\
-%s: revision %s locked by %s; breaking lock", rcs->path, xrev, (char *)lock->data);
+%s: revision %s locked by %s; breaking lock", rcs->print_path, xrev, (char *)lock->data);
 	repos = xstrdup (rcs->path);
 	workfile = strrchr (repos, '/');
 	*workfile++ = '\0';
@@ -6053,7 +6108,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	rev1 = RCS_gettag (rcs, tag1, 1, NULL);
 	if (rev1 == NULL || (nodep = findnode (rcs->versions, rev1)) == NULL)
 	{
-	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, tag1);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->print_path, tag1);
 	    goto delrev_done;
 	}
     }
@@ -6062,7 +6117,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	rev2 = RCS_gettag (rcs, tag2, 1, NULL);
 	if (rev2 == NULL || (nodep = findnode (rcs->versions, rev2)) == NULL)
 	{
-	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, tag2);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->print_path, tag2);
 	    goto delrev_done;
 	}
     }
@@ -6187,7 +6242,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	}
 	if (revp->next == NULL)
 	{
-	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->path, rev1);
+	    error (0, 0, "%s: Revision %s doesn't exist.", rcs->print_path, rev1);
 	    goto delrev_done;
 	}
 	if (rev1_inclusive)
@@ -6237,14 +6292,14 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	    if (findnode (RCS_getlocks (rcs), revp->version))
 	    {
 		error (0, 0, "%s: can't remove locked revision %s",
-		       rcs->path,
+		       rcs->print_path,
 		       revp->version);
 		goto delrev_done;
 	    }
 	    if (revp->branches != NULL)
 	    {
 		error (0, 0, "%s: can't remove branch point %s",
-		       rcs->path,
+		       rcs->print_path,
 		       revp->version);
 		goto delrev_done;
 	    }
@@ -6296,7 +6351,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	assert (tag1 != NULL);
 	assert (tag2 != NULL);
 
-	error (0, 0, "%s: invalid revision range %s:%s", rcs->path,
+	error (0, 0, "%s: invalid revision range %s:%s", rcs->print_path,
 	       tag1, tag2);
 	goto delrev_done;
     }
@@ -6387,7 +6442,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	    {
 		/* Not sure we need this message; will diff_exec already
 		   have printed an error?  */
-		error (0, 0, "%s: could not diff", rcs->path);
+		error (0, 0, "%s: could not diff", rcs->print_path);
 		status = 1;
 		goto delrev_done;
 	    }
@@ -7045,7 +7100,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 
     do {
 	if (! rcsbuf_getrevnum (rcsbuf, &key))
-	    error (1, 0, "unexpected EOF reading RCS file %s", rcs->path);
+	    error (1, 0, "unexpected EOF reading RCS file %s", rcs->print_path);
 
 	if (next != NULL && ! STREQ (next, key))
 	{
@@ -7063,7 +7118,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 	    if (node == NULL)
 	        error (1, 0,
 		       "mismatch in rcs file %s between deltas and deltatexts (%s)",
-		       rcs->path, key);
+		       rcs->print_path, key);
 
 	    /* Stash the previous version.  */
 	    prev_vers = vers;
@@ -7083,7 +7138,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 	{
 	    if (! rcsbuf_getkey (rcsbuf, &key, &value))
 		error (1, 0, "%s does not appear to be a valid rcs file",
-		       rcs->path);
+		       rcs->print_path);
 
 	    if (log != NULL
 		&& isversion
@@ -7099,7 +7154,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		if (ishead)
 		{
 		    if (! linevector_add (&curlines, value, vallen, NULL, 0))
-			error (1, 0, "invalid rcs file %s", rcs->path);
+			error (1, 0, "invalid rcs file %s", rcs->print_path);
 
 		    ishead = 0;
 		}
@@ -7109,7 +7164,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 					     rcs->path,
 					     onbranch ? vers : NULL,
 					     onbranch ? NULL : prev_vers))
-			error (1, 0, "invalid change text in %s", rcs->path);
+			error (1, 0, "invalid change text in %s", rcs->print_path);
 		}
 		break;
 	    }
@@ -7170,13 +7225,13 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 
 		if (vers->branches == NULL)
 		    error (1, 0, "missing expected branches in %s",
-			   rcs->path);
+			   rcs->print_path);
 		*cpversion = '.';
 		++cpversion;
 		cpversion = strchr (cpversion, '.');
 		if (cpversion == NULL)
 		    error (1, 0, "version number confusion in %s",
-			   rcs->path);
+			   rcs->print_path);
 		for (p = vers->branches->list->next;
 		     p != vers->branches->list;
 		     p = p->next)
@@ -7185,7 +7240,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 			break;
 		if (p == vers->branches->list)
 		    error (1, 0, "missing expected branch in %s",
-			   rcs->path);
+			   rcs->print_path);
 
 		next = p->key;
 
@@ -7204,7 +7259,7 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 
     if (! foundhead)
         error (1, 0, "could not find desired version %s in %s",
-	       version, rcs->path);
+	       version, rcs->print_path);
 
     /* Now print out or return the data we have just computed.  */
     switch (op)
@@ -7535,23 +7590,23 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
 	if (num == NULL)
 	    return NULL;
 	else
-	    error (1, 0, "%s: unexpected EOF", rcs->path);
+	    error (1, 0, "%s: unexpected EOF", rcs->print_path);
     }
 
     p = findnode (rcs->versions, num);
     if (p == NULL)
 	error (1, 0, "mismatch in rcs file %s between deltas and deltatexts (%s)",
-	       rcs->path, num);
+	       rcs->print_path, num);
 
     d = (Deltatext *) xmalloc (sizeof (Deltatext));
     d->version = xstrdup (num);
 
     /* Get the log message. */
     if (! rcsbuf_getkey (rcsbuf, &key, &value))
-	error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
+	error (1, 0, "%s, delta %s: unexpected EOF", rcs->print_path, num);
     if (! STREQ (key, "log"))
 	error (1, 0, "%s, delta %s: expected `log', got `%s'",
-	       rcs->path, num, key);
+	       rcs->print_path, num, key);
     d->log = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
 
     /* Get random newphrases. */
@@ -7559,7 +7614,7 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
     while (1)
     {
 	if (! rcsbuf_getkey (rcsbuf, &key, &value))
-	    error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
+	    error (1, 0, "%s, delta %s: unexpected EOF", rcs->print_path, num);
 
 	if (STREQ (key, "text"))
 	    break;
@@ -7572,7 +7627,7 @@ RCS_getdeltatext (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf)
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
-		   rcs->path, num, key);
+		   rcs->print_path, num, key);
 	}
     }
 
@@ -7802,7 +7857,7 @@ RCS_putdtree (RCSNode *rcs, char *rev, FILE *fp)
     {
         error (1, 0,
                "error parsing repository file %s, file may be corrupt.", 
-               rcs->path);
+               rcs->print_path);
     }
  
     versp = p->data;
