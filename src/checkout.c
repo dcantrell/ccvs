@@ -367,7 +367,7 @@ checkout (argc, argv)
 
     for (i = 0; i < argc; i++)
 	err += do_module (db, argv[i], m_type, "Updating", checkout_proc,
-			  where, shorten, local, run_module_prog,
+			  where, shorten, local, run_module_prog, !pipeout,
 			  (char *) NULL);
     close_module (db);
     if (options)

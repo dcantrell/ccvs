@@ -1,3 +1,10 @@
+2001-02-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* modules.c, cvs.h (do_module): Add build_dirs argument and use it
+	instead of run_module_prog.  Change all callers.
+	* tag.c (cvstag): For rtag, don't build directories.
+	* sanity.sh (modules3): Update to match.
+
 2000-02-20  Derek Price  <derek.price@openavenue.com>
 
 	* client.c: Use xgssapi.h.

@@ -97,8 +97,8 @@ close_module (db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-do_module (db, mname, m_type, msg, callback_proc, where,
-	   shorten, local_specified, run_module_prog, extra_arg)
+do_module (db, mname, m_type, msg, callback_proc, where, shorten,
+	   local_specified, run_module_prog, build_dirs, extra_arg)
     DBM *db;
     char *mname;
     enum mtype m_type;
@@ -108,6 +108,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     int shorten;
     int local_specified;
     int run_module_prog;
+    int build_dirs;
     char *extra_arg;
 {
     char *checkin_prog = NULL;
@@ -505,7 +506,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    else
 		err += do_module (db, modargv[i], m_type, msg, callback_proc,
 				  where, shorten, local_specified,
-				  run_module_prog, extra_arg);
+				  run_module_prog, build_dirs, extra_arg);
 	}
 	goto do_module_return;
     }
@@ -533,9 +534,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	 */
 	char *dir;
 
-	/* XXX - XXX - MAJOR HACK - DO NOT SHIP - this needs to
-	   be !pipeout, but we don't know that here yet */
-	if (!run_module_prog)
+	if (!build_dirs)
 	    goto do_special;
 
 	dir = where ? where : (mwhere ? mwhere : mname);
@@ -646,7 +645,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	else
 	    err += do_module (db, spec_opt, m_type, msg, callback_proc,
 			      (char *) NULL, 0, local_specified,
-			      run_module_prog, extra_arg);
+			      run_module_prog, build_dirs, extra_arg);
 	spec_opt = next_opt;
     }
 
