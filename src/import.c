@@ -1158,7 +1158,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	goto write_error;
     }
 
-    if (local_opt != NULL)
+    if (local_opt != NULL && strcmp (local_opt, "kv") != 0)
     {
 	if (fprintf (fprcs, "expand   @%s@;\012", local_opt) < 0)
 	{

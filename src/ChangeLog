@@ -1,3 +1,17 @@
+2001-10-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* import.c (add_rcs_file): Don't put an expand entry into the file
+	for the default expansion mode (kv).
+	* wrapper.c (wrap_send, wrap_unparse_rcs_options): Process entries
+	with default expansion mode since they may be needed to avoid matching
+	a more general entry later.
+	(wrap_add): Set rcsOption to NULL for default (kv).
+	(wrap_add_entry): Use structure assignment to copy entries rather
+	that copying members by hand.
+	* sanity.sh (binwrap3): Revise to test wrapper entries that don't
+	specify any non-default options but just prevent matching later,
+	more general entries.
+
 2001-10-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_fully_parse): Add revision number to more error messages.
