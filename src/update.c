@@ -1345,7 +1345,7 @@ merge_file (finfo, vers)
 	   user the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
-	status = checkout_file (finfo, vers, NULL);
+	status = checkout_file (finfo, vers, 0);
 #ifdef SERVER_SUPPORT
 	/* Send the new contents of the file before the message.  If we
 	   wanted to be totally correct, we would have the client write

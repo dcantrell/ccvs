@@ -1,3 +1,8 @@
+Mon Jul 22 14:41:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (merge_file): Pass 0 not NULL to checkout_file (20 Jul
+	96 change changed other calls to checkout_file but missed this one).
+
 Sat Jul 20 00:21:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (join_file): Check whether the target of the merge is
