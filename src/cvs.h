@@ -79,7 +79,7 @@ extern char *getenv();
 char *strerror ();
 #endif
 
-#include <fnmatch.h>		/* This is supposed to be available on Posix systems */
+#include <fnmatch.h> /* This is supposed to be available on Posix systems */
 
 #include <ctype.h>
 #include <pwd.h>

@@ -1,3 +1,7 @@
+Mon Nov 13 04:06:10 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * cvs.h: conform to 80 column standard (yes, I'm a pedant).
+
 Sat Nov 11 13:45:13 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (process_prune_candidates): use unlink_file_dir() to
