@@ -1,3 +1,8 @@
+Sun Dec 31 16:16:38 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Add "submissions will be distributed under the GPL"
+	language (like the newspapers have for letters to the editor).
+
 Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* cvsnt.mak: Revert to an old version, then add in recent changes
