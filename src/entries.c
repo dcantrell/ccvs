@@ -137,9 +137,9 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
     {
 	(void) fprintf (stderr, "%c-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
 			(server_active) ? 'S' : ' ',
-			fname, vn, ts,
+                       fname, vn, ts ? ts : "",
 			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-			options, tag ? tag : "",	date ? date : "");
+                       options, tag ? tag : "", date ? date : "");
     }
 
     node = AddEntryNode (list, fname, vn, ts, options, tag, date, ts_conflict);
@@ -434,6 +434,8 @@ AddEntryNode (list, name, version, timestamp, options, tag, date, conflict)
     entdata = (Entnode *) p->data;
     entdata->version = xstrdup (version);
     entdata->timestamp = xstrdup (timestamp);
+    if (entdata->timestamp == NULL)
+       entdata->timestamp = xstrdup ("");/* must be non-NULL */
     entdata->options = xstrdup (options);
     if (entdata->options == NULL)
 	entdata->options = xstrdup ("");/* must be non-NULL */

@@ -1,3 +1,8 @@
+Wed Jun 21 16:51:54 1995  nk@ipgate.col.sw-ley.de (Norbert Kiesel)
+
+	* create_adm.c, entries.c, modules.c: Avoid coredumps if
+	timestamps, tags, etc., are NULL.
+
 Tue Jun 20 15:52:53 1995  Jim Meyering  (meyering@comco.com)
 
 	* checkout.c (checkout): Remove dcl of unused variable.
