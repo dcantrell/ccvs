@@ -1,3 +1,7 @@
+2005-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h.in, configure: Regenerated.
+
 2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
 
 	* NEWS: Note fix for compile errors on IRIX 5.3.

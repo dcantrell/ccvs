@@ -48,6 +48,17 @@
 
 #define _(str) gettext (str)
 
+#if HAVE_MMAP
+/* Define MAP_FILE when it isn't otherwise.  */
+# ifndef MAP_FILE
+#  define MAP_FILE 0
+# endif
+/* Define MAP_FAILED for old systems which neglect to.  */
+# ifndef MAP_FAILED
+#  define MAP_FAILED ((void *)-1)
+# endif
+#endif
+
 
 #if HAVE_MMAP || ! HAVE_POSIX_MEMALIGN
 
@@ -147,14 +158,12 @@ pagealign_alloc (size_t size)
     }
 #else /* !HAVE_MMAP && !HAVE_POSIX_MEMALIGN */
   size_t pagesize = getpagesize ();
-  void *unaligned_ptr;
-  errno = 0;
-  unaligned_ptr = malloc (size + pagesize - 1);
+  void *unaligned_ptr = malloc (size + pagesize - 1);
   if (unaligned_ptr == NULL)
     {
-      /* Failed malloc on some non-posix systems (e.g. mingw) fail to set
-         errno.  */
-      if (!errno) errno = ENOMEM;
+      /* Set errno.  We don't know whether malloc already set errno: some
+	 implementations of malloc do, some don't.  */
+      errno = ENOMEM;
       return NULL;
     }
   ret = (char *) unaligned_ptr
