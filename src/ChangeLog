@@ -1,5 +1,11 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* filesubr.c (fopen_case): Don't set *PATHP if we return an
+	error.  Since the 9 Apr 1997 change, the behavior has been to
+	sometimes set it and sometimes not.
+	* rcs.c (RCS_parse): Adjust callers to not free it.  Without this
+	change, they could call free() on an uninitialized variable.
+
 	* checkout.c (checkout): Add comment about export -k.
 
 	* root.c (check_root_consistent): Add comment about wording of

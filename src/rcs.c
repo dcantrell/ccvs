@@ -154,11 +154,9 @@ RCS_parse (file, repos)
 	else if (! existence_error (status))
 	{
 	    error (0, status, "cannot open %s", rcsfile);
-	    free (found_path);
 	    retval = NULL;
 	    goto out;
 	}
-	free (found_path);
 
 	(void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
 	status = fopen_case (rcsfile, "rb", &fp, &found_path);
@@ -180,11 +178,9 @@ RCS_parse (file, repos)
 	else if (! existence_error (status))
 	{
 	    error (0, status, "cannot open %s", rcsfile);
-	    free (found_path);
 	    retval = NULL;
 	    goto out;
 	}
-	free (found_path);
     }
 #endif
     retval = NULL;
