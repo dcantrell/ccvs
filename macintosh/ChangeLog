@@ -1,4 +1,9 @@
-Sat Dec 16 20:55:36 1995    Mike Ladwig  <mike@twinpeaks.prc.com>
+Sat Dec 16 20:59:12 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * maccvs_projects.sit.hqx: replaced with new version mailed by
+        Michael.
+
+Sat Dec 16 20:55:36 1995    Michael Ladwig  <mike@twinpeaks.prc.com>
 
         * Makefile.in: new file.
 
