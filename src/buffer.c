@@ -2082,21 +2082,24 @@ fd_buffer_input (void *closure, char *data, int need, int size, int *got)
     struct fd_buffer *fb = closure;
     int nbytes;
 
+    assert (need <= size);
+
+    *got = 0;
+
     if (fb->blocking)
     {
 	int status;
 	fd_set readfds;
 
-	/* Set non-block.  */
-        status = fd_buffer_block (fb, false);
-	if (status != 0) return status;
-
-	*got = 0;
-
 	/* This function used to read at least one byte even when none were
 	 * requested.  I'm not sure why, but CVS seems to depend on this
 	 */
 	if (need == 0) return 0;
+
+#ifndef TRUST_OS_FILE_CACHE
+	/* Set non-block.  */
+        status = fd_buffer_block (fb, false);
+	if (status != 0) return status;
 
 	FD_ZERO (&readfds);
 	FD_SET (fb->fd, &readfds);
@@ -2164,16 +2167,19 @@ block_done:
 	}
 	return status;
     }
+#else /* TRUST_OS_FILE_CACHE */
+	nbytes = read (fb->fd, data, need);
+    }
+    else
+#endif /* !TRUST_OS_FILE_CACHE */
+	/* The above will always return.  Handle non-blocking read.  */
+	nbytes = read (fb->fd, data, size);
 
-    /* The above will always return.  Handle non-blocking read.  */
-    nbytes = read (fb->fd, data, size);
     if (nbytes > 0)
     {
 	*got = nbytes;
 	return 0;
     }
-
-    *got = 0;
 
     if (nbytes == 0)
 	/* End of file.  This assumes that we are using POSIX or BSD
@@ -2331,7 +2337,7 @@ fd_buffer_shutdown (struct buffer *buf)
  * SHUTDOWN_SERVER, NO_SOCKET_TO_FD, & START_RSH_WITH_POPEN_RW were completely
  * independant, then the next few lines could easily refuse to compile.
  *
- * The note nelow about START_RSH_WITH_POPEN_RW never being set when
+ * The note below about START_RSH_WITH_POPEN_RW never being set when
  * SHUTDOWN_SERVER is defined means that this code would always break on
  * systems with SHUTDOWN_SERVER defined and thus the comment must now be
  * incorrect or the code was broken since the comment was written.
