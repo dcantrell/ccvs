@@ -7,7 +7,7 @@
 	* cvs.h: Proto for format_date_alloc
 	* main.c (format_date_alloc, tm_diff): Added.
 	* log.c (log_version): Use MT response to tag date output.
-	(Original patch from Bart Robinson  <lomew@riverbed.com>.)
+	(Original patch from Bart Robinson <lomew@pobox.com>.)
 
 	* sanity.sh (importc, rcs, rcs4): Use TZ=GMT for the duration of these
 	tests to obtain consistent times in output.

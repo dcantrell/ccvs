@@ -2,7 +2,7 @@
 
 	* cvs.texinfo (log): Updated since we display in local time now.
 	Also added some examples.
-	(Patch from Bart Robinson  <lomew@riverbed.com>.)
+	(Patch from Bart Robinson <lomew@pobox.com>.)
 
 	* cvs.1: Regenerated.
 
