@@ -508,7 +508,7 @@ AC_ARG_WITH(
 
 AC_MSG_CHECKING([for temporary directory])
 if test -z "$with_tmpdir" || test yes = "$with_tmpdir"; then
-  for with_tmpdir in "$TMPDIR" "$TMP" "$TEMP" /tmp /var/tmp no; do
+  for with_tmpdir in /tmp /var/tmp no; do
     if test -d "$with_tmpdir" && test -x "$with_tmpdir" \
         && test -w "$with_tmpdir" && test -r "$with_tmpdir"; then
       break
