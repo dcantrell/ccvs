@@ -41,14 +41,7 @@ EXTRA_DIST = \
 	CVSvn.texi.in \
 	ChangeLog.fsf \
 	RCSFILES \
-	cvs-paper.ms \
-	cvs.aux \
-	cvsclient.aux
-
-# Listing cvs.cps & cvs.fns here is a workaround for an Automake deficiency
-MOSTLYCLEANFILES = \
-	cvs.cps \
-	cvs.fns
+	cvs-paper.ms
 
 CLEANFILES = \
 	$(PDFS) \
@@ -95,16 +88,6 @@ SUFFIXES = .aux .txt .pdf
 .texi.pdf:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
 	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) --pdf $<
-
-.texinfo.aux:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
-.txi.aux:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
-.texi.aux:
-	TEXINPUTS=$(srcdir):$$TEXINPUTS \
-	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(TEXI2DVI) $<
 
 .texinfo.txt:
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
