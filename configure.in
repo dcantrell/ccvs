@@ -274,6 +274,14 @@ if test "$ac_cv_header_gssapi_h" = "yes" || test "$ac_cv_header_gssapi_gssapi_h"
   else
     LIBS="$LIBS -L$GSSAPI/lib -lgssapi_krb5 -lkrb5 -lcrypto -lcom_err"
   fi
+  save_CPPFLAGS=$CPPFLAGS
+  CPPFLAGS="-I$GSSAPI/include $CPPFLAGS"
+  if test "$ac_cv_header_gssapi_h" = "yes"; then
+    AC_EGREP_HEADER(GSS_C_NT_HOSTBASED_SERVICE, gssapi.h, AC_DEFINE(HAVE_GSS_C_NT_HOSTBASED_SERVICE))
+  else
+    AC_EGREP_HEADER(GSS_C_NT_HOSTBASED_SERVICE, gssapi/gssapi.h, AC_DEFINE(HAVE_GSS_C_NT_HOSTBASED_SERVICE))
+  fi
+  CPPFLAGS=$save_CPPFLAGS
   # This is necessary on Irix 5.3, in order to link against libkrb5 --
   # there, an_to_ln.o refers to things defined only in -lgen.
   AC_CHECK_LIB(gen, compile)

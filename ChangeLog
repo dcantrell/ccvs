@@ -1,3 +1,9 @@
+1998-06-02  Assar Westerlund  <assar@sics.se>
+
+	* configure.in: Test for GSS_C_NT_HOSTBASED_SERVICE in gssapi.h.
+	* acconfig.h: Add undef for HAVE_GSS_C_NT_HOSTBASED_SERVICE.
+	* configure, config.h.in: Rebuild.
+
 1998-06-01  Assar Westerlund  <assar@sics.se>
 	and Ian Lance Taylor  <ian@cygnus.com>
 
