@@ -1,3 +1,9 @@
+1999-03-24  Jim Kingdon  <http://www.cyclic.com>
+
+	* server.c (dirswitch): Also check dir here, similar to
+	what server_pathname_check does for other cases.
+	* sanity.sh (files): Adjust files-14 to test for this.
+
 1999-03-24  Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 	and Jim Kingdon

@@ -919,6 +919,25 @@ dirswitch (dir, repos)
 
     if (error_pending()) return;
 
+    /* Check for bad directory name.
+
+       FIXME: could/should unify these checks with server_pathname_check
+       except they need to report errors differently.  */
+    if (isabsolute (dir))
+    {
+	if (alloc_pending (80 + strlen (dir)))
+	    sprintf (pending_error_text,
+		     "E absolute pathname `%s' illegal for server", dir);
+	return;
+    }
+    if (pathname_levels (dir) > max_dotdot_limit)
+    {
+	if (alloc_pending (80 + strlen (dir)))
+	    sprintf (pending_error_text,
+		     "E protocol error: `%s' has too many ..", dir);
+	return;
+    }
+
     if (dir_name != NULL)
 	free (dir_name);
 

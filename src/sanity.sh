@@ -2208,7 +2208,7 @@ done"
 	  if test "$remote" = yes; then
 	    dotest_fail files-14 \
 "${testcvs} commit -fmtest ../../first-dir/dir/.file" \
-"Permission denied"
+"protocol error: .\.\./\.\./first-dir/dir' has too many \.\."
 	  else
 	    dotest files-14 \
 "${testcvs} commit -fmtest ../../first-dir/dir/.file" \
