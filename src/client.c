@@ -3977,8 +3977,7 @@ start_tcp_server (root, to_server, from_server)
 
     hp = init_sockaddr (&sin, root->hostname, port);
 
-    hname = xmalloc (strlen (hp->h_name) + 1);
-    strcpy (hname, hp->h_name);
+    hname = xstrdup (hp->h_name);
   
     if (trace)
     {
