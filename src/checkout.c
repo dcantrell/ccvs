@@ -435,6 +435,7 @@ safe_location ()
 {
     char current[PATH_MAX];
     char hardpath[PATH_MAX+5];
+    size_t hardpath_len;
     int  x;
 
     x = readlink(CVSroot_directory, hardpath, sizeof hardpath - 1);
@@ -447,9 +448,19 @@ safe_location ()
         hardpath[x] = '\0';
     }
     getwd (current);
-    if (strncmp(current, hardpath, strlen(hardpath)) == 0)
+    hardpath_len = strlen (hardpath);
+    if (strncmp (current, hardpath, hardpath_len) == 0)
     {
-        return (0);
+	if (/* Current is a subdirectory of hardpath.  */
+	    current[hardpath_len] == '/'
+
+	    /* Current is hardpath itself.  */
+	    || current[hardpath_len] == '\0')
+	    return 0;
+	else
+	    /* It isn't a problem.  For example, current is
+	       "/foo/cvsroot-bar" and hardpath is "/foo/cvsroot".  */
+	    return 1;
     }
     return (1);
 }
