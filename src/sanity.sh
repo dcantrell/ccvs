@@ -21555,8 +21555,14 @@ echo "OK, all tests completed."
 #     are ignored (per cvs.texinfo).
 # End of TODO list.
 
+# Exit if keep set
+if test $keep = yes; then
+  echo Keeping ${TESTDIR} and exiting due to -k (keep) option
+  exit 0
+fi
+
 # Remove the test directory, but first change out of it.
-cd /tmp
+cd
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
