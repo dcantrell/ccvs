@@ -6998,7 +6998,7 @@ RCS_putadmin (rcs, fp)
     fputs (";\n", fp);
 
     fputs (RCSSYMBOLS, fp);
-    /* If we haven't hard to convert the symbols to a list yet, don't
+    /* If we haven't had to convert the symbols to a list yet, don't
        force a conversion now; just write out the string.  */
     if (rcs->symbols == NULL && rcs->symbols_data != NULL)
     {

@@ -1,3 +1,8 @@
+Sat Feb 21 20:02:24 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* buffer.c (buf_append_buffer): Correct typo in comment.
+	* rcs.c (RCS_putadmin): Likewise.
+
 Fri Feb 20 17:53:06 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (rcs_internal_unlockfile): Pass errno when calling error

@@ -494,7 +494,7 @@ buf_append_data (buf, data, last)
     }
 }
 
-/* Append the data on one buffer to another.  This remvoes the data
+/* Append the data on one buffer to another.  This removes the data
    from the source buffer.  */
 
 void
