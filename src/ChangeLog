@@ -1,3 +1,8 @@
+Fri Apr 28 16:16:33 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (start_rsh_server): Send the remote command to rsh as a
+	single string.
+
 Fri Apr 28 00:29:49 1995  Noel Cragg  <noel@vo.com>
 
 	* commit.c: Added initializer for FORCE_CI
