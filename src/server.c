@@ -1358,15 +1358,17 @@ serve_directory (char *arg)
 	                       current_parsed_root->directory, short_repos);
 	    free (short_repos);
 	}
-	char *lrepos = primary_root_translate (repos);
-	free (repos);
-	if (
+	{
+	    char *lrepos = primary_root_translate (repos);
+	    free (repos);
+	    if (
 #ifdef PROXY_SUPPORT
-	    !proxy_log &&
+		!proxy_log &&
 #endif /* PROXY_SUPPORT */
-	    !outside_root (lrepos))
-	    dirswitch (arg, lrepos);
-	free (lrepos);
+		!outside_root (lrepos))
+		dirswitch (arg, lrepos);
+	    free (lrepos);
+	}
     }
     else if (status == -2)
     {
