@@ -1,3 +1,13 @@
+Wed Jun 12 16:23:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (send_modified, update_entries): Reindent and add
+	comments to BROKEN_READWRITE_CONVERSION code.
+
+Wed Jun 12 16:23:03 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* client.c (send_modified, update_entries): Add
+	BROKEN_READWRITE_CONVERSION code.
+
 Mon Jun 10 20:03:16 1996  J.T. Conklin  <jtc@cygnus.com>
 
 	* rcs.c (RCS_gettag): No longer set p to NULL if rcs is also NULL.
