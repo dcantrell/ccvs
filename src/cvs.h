@@ -558,6 +558,7 @@ void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));
 
 char *make_message_rcslegal PROTO((char *message));
+extern int file_has_markers PROTO ((struct file_info *));
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */

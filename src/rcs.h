@@ -15,7 +15,10 @@
 #define	RCS_CO		"co"
 #define	RCS_DIFF	"rcsdiff"
 #define	RCS_RCSMERGE	"rcsmerge"
-#define	RCS_MERGE_PAT	"^>>>>>>> "	/* runs "grep" with this pattern */
+
+/* String which indicates a conflict if it occurs at the start of a line.  */
+#define	RCS_MERGE_PAT ">>>>>>> "
+
 #define	RCSEXT		",v"
 #define RCSPAT		"*,v"
 #define	RCSHEAD		"head"
