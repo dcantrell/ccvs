@@ -1,3 +1,15 @@
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* win32.c (gethostname): Remove this function.  It has been commented
+	out since ... and...
+	(*): ...move the rest of the contents...
+	* woe32.c: ...to this new file in accordance with the GNU convention to
+	avoid implying that we consider the Microsoft Windows Operating
+	Environment any sort of "win".
+	* Makefile.am (EXTRA_DIST): Rename win32.c woe32.c.
+
+	* Makefile.in: Regenerated.
+
 2003-06-04  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in (RSH_DFLT): Replace accidentally deleted macro.

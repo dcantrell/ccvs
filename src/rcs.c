@@ -6407,7 +6407,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	char *diffbuf;
 	size_t bufsize, len;
 
-#if defined (__CYGWIN32__) || defined (_WIN32)
+#ifdef WOE32
 	/* FIXME: This is an awful kludge, but at least until I have
 	   time to work on it a little more and test it, I'd rather
 	   give a fatal error than corrupt the file.  I think that we
@@ -6420,7 +6420,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 		error (1, 0,
 		   "admin -o not implemented yet for binary on this system");
 	}
-#endif
+#endif /* WOE32 */
 
 	afterfile = cvs_temp_name();
 	status = RCS_checkout (rcs, NULL, after, NULL, "-ko", afterfile,

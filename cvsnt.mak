@@ -73,7 +73,7 @@ CLEAN :
 	-@erase ".\WinRel\gzio.obj"
 	-@erase ".\WinRel\fnmatch.obj"
 	-@erase ".\WinRel\side.obj"
-	-@erase ".\WinRel\win32.obj"
+	-@erase ".\WinRel\woe32.obj"
 	-@erase ".\WinRel\inffast.obj"
 	-@erase ".\WinRel\startserver.obj"
 	-@erase ".\WinRel\ignore.obj"
@@ -206,7 +206,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/gzio.obj" \
 	"$(INTDIR)/fnmatch.obj" \
 	"$(INTDIR)/side.obj" \
-	"$(INTDIR)/win32.obj" \
+	"$(INTDIR)/woe32.obj" \
 	"$(INTDIR)/inffast.obj" \
 	"$(INTDIR)/startserver.obj" \
 	"$(INTDIR)/ignore.obj" \
@@ -358,7 +358,7 @@ CLEAN :
 	-@erase ".\WinDebug\log.obj"
 	-@erase ".\WinDebug\sockerror.obj"
 	-@erase ".\WinDebug\infutil.obj"
-	-@erase ".\WinDebug\win32.obj"
+	-@erase ".\WinDebug\woe32.obj"
 	-@erase ".\WinDebug\inffast.obj"
 	-@erase ".\WinDebug\ed.obj"
 	-@erase ".\WinDebug\edit.obj"
@@ -493,7 +493,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/log.obj" \
 	"$(INTDIR)/sockerror.obj" \
 	"$(INTDIR)/infutil.obj" \
-	"$(INTDIR)/win32.obj" \
+	"$(INTDIR)/woe32.obj" \
 	"$(INTDIR)/inffast.obj" \
 	"$(INTDIR)/ed.obj" \
 	"$(INTDIR)/edit.obj" \
@@ -3101,7 +3101,7 @@ NODEP_CPP_FILES=\
 ################################################################################
 # Begin Source File
 
-SOURCE=".\windows-NT\win32.c"
+SOURCE=".\windows-NT\woe32.c"
 DEP_CPP_WIN32=\
 	".\windows-NT\config.h"\
 	".\src\cvs.h"\
@@ -3130,7 +3130,7 @@ NODEP_CPP_WIN32=\
 	".\lib\tcpip.h"\
 	
 
-"$(INTDIR)\win32.obj" : $(SOURCE) $(DEP_CPP_WIN32) "$(INTDIR)"
+"$(INTDIR)\woe32.obj" : $(SOURCE) $(DEP_CPP_WIN32) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
