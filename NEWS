@@ -3,6 +3,9 @@ Changes since 1.11.17:
 
 BUG FIXES
 
+* Thanks to a report from Dan Peterson <dbpete@aol.com>, imports to branches
+  like "1.1." no longer create corrupt RCS archives.
+
 * Thanks to a report from Chris Bohn <cbohn@rrinc.com>, links from J.C. Hamlin
   <jchamlin@ibsys.com>, and code posted by Jonathan Gilligan, we think we have
   finally corrected the Windows "red-file" (daylight savings time) bug once and
