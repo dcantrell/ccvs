@@ -1,3 +1,15 @@
+Tue Jul 15 16:47:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keyword list): Fix documentation of $Log to reflect
+	the fact that we no longer use the comment leader.
+	(admin options): Fix documentation of $Log.
+	(admin examples): Remove example concerning comment leader, since
+	the example no longer does what it claims to.
+	(admin, admin options): Fix various parts of the documentation to
+	not refer to this being implemented via RCS.  Say nastier things
+	about -I and -x.  Add comments about options to "rcs" which we
+	don't document.
+
 Mon Jul 14 00:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): The "cannot change permissions on
