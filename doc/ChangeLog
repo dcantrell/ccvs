@@ -1,3 +1,8 @@
+Sun Apr 20 23:42:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Add note about format
+	of timestamp and the "Result of merge" concept.
+
 Sat Apr 19 13:42:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): It is OK for Copy-file to implement

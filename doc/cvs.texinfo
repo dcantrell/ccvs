@@ -1323,7 +1323,16 @@ revision for a removed file.  @var{timestamp} is the
 timestamp of the file at the time that @sc{cvs} created
 it; if the timestamp differs with the actual
 modification time of the file it means the file has
-been modified.  @var{conflict} indicates that there was
+been modified.  It is in Universal Time (UT), stored in
+the format used by the ISO C asctime() function (for
+example, @samp{Sun Apr  7 01:29:26 1996}).  One may
+write a string which is not in that format, for
+example, @samp{Result of merge}, to indicate that the
+file should always be considered to be modified.  This
+need not be a special case; to see whether a file is
+modified a program can take the timestamp of the file
+and simply do a string compare with @var{timestamp}.
+@var{conflict} indicates that there was
 a conflict; if it is the same as the actual
 modification time of the file it means that the user
 has obviously not resolved the conflict.  @var{options}
