@@ -1,3 +1,8 @@
+1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
+
+	* diff.c (compare_files): Use explicit braces with if-if-else, per
+	GNU coding standards and gcc -Wall.
+
 1999-11-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* diff3.c: Explicitly initialize zero_diff3 to placate neurotic
