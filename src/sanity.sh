@@ -14828,17 +14828,17 @@ done"
 	  # the attic (may that one can remain a fatal error, seems less
 	  # useful for access control).
 	  mkdir 1; cd 1
-	  dotest modes-1 "${testcvs} -q co -l ." ''
+	  dotest modes3-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir second-dir
-	  dotest modes-2 "${testcvs} add first-dir second-dir" \
+	  dotest modes3-2 "${testcvs} add first-dir second-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository
 Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  touch first-dir/aa second-dir/ab
-	  dotest modes-3 "${testcvs} add first-dir/aa second-dir/ab" \
+	  dotest modes3-3 "${testcvs} add first-dir/aa second-dir/ab" \
 "${PROG} [a-z]*: scheduling file .first-dir/aa. for addition
 ${PROG} [a-z]*: scheduling file .second-dir/ab. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
-	  dotest modes-4 "${testcvs} -q ci -m add" \
+	  dotest modes3-4 "${testcvs} -q ci -m add" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
 done
 Checking in first-dir/aa;
@@ -14852,7 +14852,7 @@ ${TESTDIR}/cvsroot/second-dir/ab,v  <--  ab
 initial revision: 1\.1
 done"
 	  chmod a= ${TESTDIR}/cvsroot/first-dir
-	  dotest modes-5 "${testcvs} update" \
+	  dotest modes3-5 "${testcvs} update" \
 "${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating first-dir
 ${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/first-dir: Permission denied
@@ -14864,7 +14864,7 @@ ${PROG} [a-z]*: Updating second-dir"
 	  # won't have it in their working directory.  But the next
 	  # one is more of a problem if it is fatal.
 	  rm -r first-dir
-	  dotest modes-6 "${testcvs} update -dP" \
+	  dotest modes3-6 "${testcvs} update -dP" \
 "${PROG} [a-z]*: Updating .
 ${PROG} [a-z]*: Updating CVSROOT
 U ${DOTSTAR}
