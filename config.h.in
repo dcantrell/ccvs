@@ -181,9 +181,6 @@
 /* Define to 1 if you have the `gethostname' function. */
 #undef HAVE_GETHOSTNAME
 
-/* Define to 1 if you have the `getopt' function. */
-#undef HAVE_GETOPT
-
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 

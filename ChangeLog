@@ -1,5 +1,12 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove check for getopt function.  Add call to
+	gl_GETOPT.
+	* srclist.txt: Add entries for GNULIB getopt module.
+	* aclocal.m4, config.h.in, configure: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	Assume headers in m4/gettext.m4 per notes in HACKING.
 
 	* aclocal.m4: Regenerated.

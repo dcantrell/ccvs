@@ -214,6 +214,7 @@ gl_FUNC_MEMMOVE
 gl_FUNC_STRERROR
 gl_GETNDELIM2
 gl_GETNLINE
+gl_GETOPT
 gl_PATHMAX
 jm_FUNC_GLIBC_UNLOCKED_IO
 jm_FUNC_LSTAT
@@ -243,7 +244,6 @@ AC_CHECK_FUNCS(\
 	ftime \
 	geteuid \
 	getgroups \
-	getopt \
 	getpagesize \
 	gettimeofday \
 	initgroups \
