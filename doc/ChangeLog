@@ -1,3 +1,10 @@
+1998-12-03  Jim Kingdon
+
+	* cvs.texinfo (Error messages): Add "unrecognized auth response".
+	(Password authentication server): Remove comment about
+	"unrecognized auth response" and link to the troubleshooting
+	section.
+
 1998-12-02  Jim Kingdon
 
 	* cvs.texinfo (Multiple repositories): Add an example.

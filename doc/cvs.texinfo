@@ -2195,14 +2195,8 @@ cvspserver      2401/tcp
 @code{inetd}, or do whatever is necessary to force it
 to reread its initialization files.
 
-@c FIXME: should be documenting how to troubleshoot
-@c this.  One strange situation I ran into recently
-@c was that if inetd.conf specifies a non-existent
-@c cvs (e.g. /usr/local/bin/cvs doesn't exist in
-@c the above example), the client says
-@c   cvs-1.8 [login aborted]: unrecognized auth response from harvey:
-@c which is a very unhelpful response (can it be
-@c improved?  does inetd log somewhere?)
+If you are having trouble setting this up, see
+@ref{Connection}.
 
 @cindex CVS passwd file
 @cindex passwd (admin file)
@@ -12667,6 +12661,15 @@ older expects the logfile as an argument whereas the
 logfile to be specified with a @samp{-f} option.  Of
 course, if you don't need @file{log.pl} you can just
 comment it out of @file{loginfo}.
+
+@item cvs [login aborted]: unrecognized auth response from @var{server}
+This message typically means that the server is not set
+up properly.  For example, if @file{inetd.conf} points
+to a nonexistent cvs executable.  To debug it further,
+find the log file which inetd writes
+(@file{/var/log/messages} or whatever inetd uses on
+your system).  For details, see @ref{Connection}, and
+@ref{Password authentication server}.
 
 @item cvs commit: Up-to-date check failed for `@var{file}'
 This means that someone else has committed a change to
