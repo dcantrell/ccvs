@@ -1,13 +1,9 @@
-1999-07-27  Eric Sink   <eric@sourcegear.com>
+1999-07-28  Eric Sink   <eric@sourcegear.com>
 
-	removed basicc-11 from sanity.sh
-	related to patch from Steve Dodd (dirk@loth.demon.co.uk)
-	bug-cvs, claiming that the test is invalid and the code
-	is correct.
-
-	and then, an hour later, undid the previous change.
-	I'll resolve the status of the basicc-11 test with some
-	more digging, and fix up all the comments.
+	* sanity.sh: before running basicc-11, we need to see if
+	the cwd has been deleted (by basicc-8).  If so, we
+	recreate it to allow basicc-11 to proceed.  This may be
+	something that only happens under the Linux 2.2 kernel.
 
 1999-07-18  Karl Fogel  <kfogel@floss.red-bean.com>
 
