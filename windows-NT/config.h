@@ -863,6 +863,11 @@
 /* Define if setmode is required when writing binary data to stdout. */
 #define USE_SETMODE_STDOUT 1
 
+/* Define to 1 if you want getc etc. to use unlocked I/O if available.
+   Unlocked I/O can improve performance in unithreaded apps, but it is not
+   safe for multithreaded apps. */
+#undef USE_UNLOCKED_IO
+
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
 #define UTIME_EXPECTS_WRITABLE
