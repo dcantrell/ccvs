@@ -2318,7 +2318,9 @@ server_write_entries (void)
 	pending_error = save_errno;
     }
 }
-
+
+
+
 struct notify_note {
     /* Directory in which this notification happens.  xmalloc'd*/
     char *dir;
@@ -2341,8 +2343,6 @@ static struct notify_note *notify_list;
 /* Used while building list, to point to the last node that already exists.  */
 static struct notify_note *last_node;
 
-static void serve_notify (char *);
-
 static void
 serve_notify (char *arg)
 {
@@ -2352,34 +2352,36 @@ serve_notify (char *arg)
 
     if (error_pending ()) return;
 
-    assert (!secondary_log);
-
-    if (outside_dir (arg))
-	return;
-
-    if (dir_name == NULL)
-	goto error;
-
-    new = (struct notify_note *) xmalloc (sizeof (struct notify_note));
-    if (new == NULL)
+    /* Skip everything but the readline when still logging.  */
+    if (!secondary_log)
     {
-	pending_error = ENOMEM;
-	return;
-    }
-    new->dir = xmalloc (strlen (dir_name) + 1);
-    new->filename = xmalloc (strlen (arg) + 1);
-    if (new->dir == NULL || new->filename == NULL)
-    {
-	pending_error = ENOMEM;
-	if (new->dir != NULL)
-	    free (new->dir);
-	free (new);
-	return;
-    }
-    strcpy (new->dir, dir_name);
-    strcpy (new->filename, arg);
+	if (outside_dir (arg))
+	    return;
 
-    status = buf_read_line (buf_from_net, &data, (int *) NULL);
+	if (dir_name == NULL)
+	    goto error;
+
+	new = xmalloc (sizeof (struct notify_note));
+	if (new == NULL)
+	{
+	    pending_error = ENOMEM;
+	    return;
+	}
+	new->dir = xmalloc (strlen (dir_name) + 1);
+	new->filename = xmalloc (strlen (arg) + 1);
+	if (new->dir == NULL || new->filename == NULL)
+	{
+	    pending_error = ENOMEM;
+	    if (new->dir != NULL)
+		free (new->dir);
+	    free (new);
+	    return;
+	}
+	strcpy (new->dir, dir_name);
+	strcpy (new->filename, arg);
+    }
+
+    status = buf_read_line (buf_from_net, &data, NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -2406,6 +2408,8 @@ serve_notify (char *arg)
 	free (new->dir);
 	free (new);
     }
+    else if (secondary_log)
+	return;
     else
     {
 	char *cp;
@@ -2469,6 +2473,8 @@ serve_notify (char *arg)
     }
     return;
 }
+
+
 
 /* Process all the Notify requests that we have stored up.  Returns 0
    if successful, if not prints error message (via error()) and
