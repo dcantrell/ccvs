@@ -1,3 +1,7 @@
+Tue Sep 10 19:55:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Mention Win95.
+
 Fri Sep  6 11:43:26 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* configure.in: Add AC_ARG_ENABLE for encryption.
