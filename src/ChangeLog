@@ -1,5 +1,12 @@
 Sun Jul  6 13:36:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcscmds.c, cvs.h (diff_exec): New function.
+	* diff.c (diff_fileproc), patch.c (patch_fileproc),
+	update.c (patch_file): Call it.
+	* rcscmds.c: Adjust comments concerning diff library to point to
+	new, expanded comments at diff_exec.  Remove comments concerning
+	patch library; Rcs-diff should be adequate.
+
 	* client.c (update_entries): Add comment about GNU patch usage (-b
 	option and so on).
 

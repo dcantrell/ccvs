@@ -567,7 +567,7 @@ diff_fileproc (callerdat, finfo)
 	if (empty_file == DIFF_ADDED)
 	{
 	    if (use_rev2 == NULL)
-		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
+		status = diff_exec (DEVNULL, finfo->file, opts, RUN_TTY);
 	    else
 	    {
 		int retcode;
@@ -588,7 +588,7 @@ diff_fileproc (callerdat, finfo)
 		}
 		/* FIXME: what if retcode > 0?  */
 
-		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, tmp);
+		status = diff_exec (DEVNULL, tmp, opts, RUN_TTY);
 	    }
 	}
 	else
@@ -609,9 +609,8 @@ diff_fileproc (callerdat, finfo)
 	    }
 	    /* FIXME: what if retcode > 0?  */
 
-	    run_setup ("%s %s %s %s", DIFF, opts, tmp, DEVNULL);
+	    status = diff_exec (tmp, DEVNULL, opts, RUN_TTY);
 	}
-	status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY|RUN_COMBINED);
     }
     else
     {

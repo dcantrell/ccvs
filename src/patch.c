@@ -543,11 +543,8 @@ patch_fileproc (callerdat, finfo)
 	       and therefore should be on the server, not the client.  */
 	    (void) utime (tmpfile2, &t);
     }
-    run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
-    run_arg (tmpfile1);
-    run_arg (tmpfile2);
 
-    switch (run_exec (RUN_TTY, tmpfile3, RUN_TTY, RUN_REALLY))
+    switch (diff_exec (tmpfile1, tmpfile2, unidiff ? "-u" : "-c", tmpfile3))
     {
 	case -1:			/* fork/wait failure */
 	    error (1, errno, "fork for diff failed on %s", rcs);

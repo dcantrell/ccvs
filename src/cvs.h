@@ -407,6 +407,8 @@ int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
 			char *rev, int flags));
 extern int RCS_exec_rcsdiff PROTO ((char *rcsfile, char *opts, char *options,
 				    char *rev1, char *rev2));
+extern int diff_exec PROTO ((char *file1, char *file2, char *options,
+			     char *out));
 
 
 

@@ -1383,7 +1383,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     retcode = 0;
     if (! fail)
     {
-	const char *diff_options;
+	char *diff_options;
 
 	/* FIXME: It might be better to come up with a diff library
            which can be shared with the diffutils.  */
@@ -1412,10 +1412,10 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	       should come up with a diff library.  -kingdon, Apr 1997.  */
 	    diff_options = "-n";
 	}
-	run_setup ("%s %s %s %s", DIFF, diff_options, file1, file2);
+	retcode = diff_exec (file1, file2, diff_options, finfo->file);
 
 	/* A retcode of 0 means no differences.  1 means some differences.  */
-	if ((retcode = run_exec (RUN_TTY, finfo->file, RUN_TTY, RUN_NORMAL)) != 0
+	if (retcode != 0
 	    && retcode != 1)
 	{
 	    fail = 1;
