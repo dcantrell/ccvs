@@ -633,6 +633,24 @@ um segundo desenvolvedor, e por aí vai. Geralmente, a
 forma de fazer isto com o @sc{cvs} é gerando um diff
 (usando @code{cvs diff} ou @code{diff}) e mandando por
 email para alguem que possa ???apply it??? usando o
+@comment "Apply", in this case, could refer to either of the following usages:
+@comment (From Webster's Unabridged Dictionary, 1913)
+@comment 
+@comment  1. To lay or place; to put or adjust (one thing to another);
+@comment     -- with to; as, to apply the hand to the breast; to apply
+@comment     medicaments (external medicines) to a diseased part of the body.
+@comment  2. n: To put to use; to use or employ for a particular purpose,
+@comment     or in a particular case; to appropriate; to devote; as, to
+@comment     apply money to the payment of a debt.
+@comment 
+@comment When talking specifically about "applying a patch" (or diff,
+@comment "applying _it_", here), it refers to the process of running the
+@comment generated file through the "patch" program which then "applies", or
+@comment attaches/puts to use, the data.  In other words, "applying the patch",
+@comment in this case, literally changes the destination file as directed by
+@comment the diff.  (If you need more information, perhaps the diff & patch man
+@comment pages would be instructive?)
+@comment -DRP
 utilitário @code{patch}. Isto é muito flexível, mas
 depende de mecanismos externos ao @sc{cvs} para
 garantir que nada dê problema.
@@ -648,6 +666,15 @@ garantir que nada dê problema.
 testes usando o arquivo @code{commitinfo}. Eu nunca
 ouvi falar muito sobre projetos que tentam fazer isto,
 ou sequer que ???there are subtle gotchas, however???.
+@comment "caveat emptor", in Latin.  Rather than "gotchas", perhaps, "traps"
+@comment would have a direct translation in Portugese?  "Subtle" can mean
+@comment slight, fine, sly, or hard to detect.  As a whole, this sentence
+@comment appears to be using this phrase in an attempt to warn the reader that
+@comment the author has only examined the gross, or large and obvious, details
+@comment of the problem and may have missed finer, or small and hard to spot,
+@comment details of the problem that might suprise the user attempting to
+@comment enforce mandatory use of a test suite.
+@comment -DRP
 
 @comment <en>@item @sc{cvs} does not have a builtin process model
 @item @sc{cvs} não tem um modelo de processo inerente
@@ -667,6 +694,11 @@ ou sequer que ???there are subtle gotchas, however???.
 alguns sistemas fornecem formas de garantir que
 mudanças ou lançamentos sigam vários passos, com várias
 aprovações ???as needed???. Geralmente, pode-se obter
+@comment "as required"?  "as desired"?  I believe this is referring to the
+@comment various validations of steps in the development processes that various
+@comment groups or organizations might require, without attempting to be very
+@comment specific.
+@comment -DRP
 isto com o @sc{cvs}, mas acarreta em um pouco mais de
 trabalho. Em alguns casos você vai querer usar o
 arquivo @file{commitinfo}, @file{loginfo},
@@ -692,6 +724,16 @@ desenvolvimento e então mesclar certas mudanças numa
 @cindex Sessão de trabalho, exemplo de uma
 @comment <en>@cindex tc, Trivial Compiler (example)
 @cindex ???tc???, ???Trivial Compiler??? (exemplo)
+@comment "Trivial" means small or inconsequential.  In this case, it could
+@comment probably almost be said to mean "irrelevant", since it really has
+@comment little relevance to CVS and was created whole out of the author's
+@comment imagination for the purposes of this example.  "Compiler" refers
+@comment to a computer program that turns computer languages which humans can
+@comment read into the binary code a computer can run.
+@comment 
+@comment "tc" is an abbreviation for "Trivial Compiler", in the same way that
+@comment "gcc" stands for "GNU C Compiler".
+@comment -DRP
 @comment <en>@cindex Trivial Compiler (example)
 @cindex ???Trivial Compiler??? (example)
 
@@ -741,9 +783,24 @@ esta sessão assume que um repositório esteja ativo.
 @comment <en>called @samp{tc}.
 Suponha que você esteja trabalhando num compilador
 simples. O fonte é um ???handful??? de arquivos C e um
+@comment Literally, as much as your hands can hold, or a "hand's" "full".
+@comment Here, this refers to a small number of files.  Usually used to refer
+@comment to a small number of objects, but not a single object, in the
+@comment sense of having a handful of something.
+@comment 
+@comment In other contexts it can refer to having as much or more than you can
+@comment handle, literally, with your hands full, you cannot handle any more
+@comment tasks.  For example, a common usage would refer to an active child:
+@comment "She (or he) is a handful," meaning that the child is active and hard
+@comment to keep track of, making it complicated to do other things while
+@comment watching the child.  Note the singular usage and the "<blank> is a
+@comment handful" construction equating one thing to another.
+@comment -DRP
 @file{Makefile}. O compilador é chamado @samp{???tc???}
 (???Trivial Compiler???), e o repositório é feito de
 forma que exista um módulo chamado @samp{???tc???}.
+@comment As above.
+@comment -DRP
 
 @menu
 @comment <en>* Getting the source::          Creating a workspace
@@ -767,7 +824,11 @@ forma que exista um módulo chamado @samp{???tc???}.
 @cindex Pegando emprestado os fontes
 @comment <en>@cindex Fetching source
 @cindex ???Fetching??? source
+@comment Getting.  Retrieving.  Obtaining.  The game of "fetch", as played
+@comment with a dog, is the game of throwing a toy, bone, ball, whatever, for
+@comment the animal and having it bring it back to you.
 @comment <en>@cindex Source, getting from CVS
+@comment -DRP
 @cindex Fonte, pegando do CVS
 @comment <en>@cindex Checkout, example
 @cindex Empréstimos, exemplo
@@ -821,6 +882,20 @@ desenvolvedores}, para uma explicação.
 @cindex Efetivando mudanças nos arquivos
 @comment <en>@cindex Log message entry
 @cindex ???entry??? de mensagens de log
+@comment From Webster's:
+@comment  2. The act of making or entering a record; a setting down in
+@comment     writing the particulars, as of a transaction; as, an entry
+@comment     of a sale; also, that which is entered; an item.
+@comment 
+@comment The record entered into a diary, log book, or "log" for short, can
+@comment also be called an "entry", usually as much as is written attached to
+@comment a single date and time stamp.  For example, on "Star Trek", the short
+@comment bits about "Captain's Log, Stardate 2501XXXXX.  ...", would constitute
+@comment a single entry in the Captain's log.  In terms of CVS, it would refer
+@comment to the text the user enters to be saved along with the time stamp and
+@comment other commit information, but that is not the case with this
+@comment particular index text.
+@comment -DRP
 
 @comment <en>When you have checked that the compiler is still compilable you decide
 @comment <en>to make a new version of @file{backend.c}.  This will
@@ -988,6 +1063,9 @@ Are you sure you want to release (and delete) directory `tc': n
 O comando @code{release} verifica se todas as suas
 modificações foram efetivadas. Se o ???log de
 histórico??? está ativo ele também escreve uma
+@comment Again, "logging", refers to the act of saving records about each CVS
+@comment transaction, in this case in the history file.
+@comment -DRP
 observação no arquivo de histórico. @xref{arquivo de histórico}.
 
 @comment <en>When you use the @samp{-d} flag with @code{release}, it
@@ -1032,6 +1110,11 @@ arquivo de histórico.
 @comment <en>You decide to play it safe and answer @kbd{n @key{RET}}
 @comment <en>when @code{release} asks for confirmation.
 Você decide ???to play it safe??? e responder @kbd{n @key{RET}}
+@comment "To play it safe", literally, means to respond to a situation in such
+@comment a way that the least number of risks are involved.  To take the
+@comment "safest" path possible.  In other words, "to be careful", or to not
+@comment take any chances with failure.
+@comment -DRP
 quando @code{release} pede uma confirmação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1200,8 +1283,15 @@ contém os módulos definidos pelo usuário.
 * Especificando um repositório::       Dizendo ao CVS onde está o seu repositório
 @comment <en>* Repository storage::          The structure of the repository
 * ???Repository storage???::           A estrutura do repositório
+@comment This refers to where various files are "stored", or saved, in the
+@comment repository.  The note title, to me, refers to information on how the
+@comment CVS server uses the disk space it is given to store archive files and
+@comment other data in the repository.
+@comment -DRP
 @comment <en>* Working directory storage::   The structure of working directories
 * ???Working directory storage???::    A estrutura dos diretórios de trabalho
+@comment Ditto, for the working directory, or sandbox, and the client.
+@comment -DRP
 @comment <en>* Intro administrative files::  Defining modules
 * Intro aos arquivos administrativos:: Definindo módulos
 @comment <en>* Multiple repositories::       Multiple repositories
@@ -1308,6 +1398,8 @@ referenciar o mesmo repositório.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @comment <en>@node Repository storage
 @node ???Repository storage???
+@comment As above.
+@comment -DRP
 @comment <en>@section How data is stored in the repository
 @section Como os dados são guardados no repositório
 @comment <en>@cindex Repository, how data is stored
@@ -1351,8 +1443,19 @@ para o repositório.
 * CVS no repositório::           Informações adicionais no diretório CVS
 @comment <en>* Locks::                       CVS locks control concurrent accesses
 * travas::                       ???CVS locks control concurrent accesses???
+@comment This is referring to the fact that CVS uses "lock" files and
+@comment directories and such to prevent multiple processes from writing
+@comment to the same file at the same time and overwriting other user's changes
+@comment and/or corrupting files.
+@comment
+@comment There is probably a better way to say this even in English, but I am
+@comment not quite sure what it is.  :)
+@comment -DRP
 @comment <en>* CVSROOT storage::             A few things about CVSROOT are different
 * ???CVSROOT storage???::             Umas poucas coisas sobre CVSROOT são diferentes
+@comment "Storage" again.  How the CVS server uses the disk space under the
+@comment $CVSROOT/CVSROOT directory.
+@comment -DRP
 @end menu
 
 @comment <en>@node Repository files
@@ -1491,6 +1594,10 @@ Os arquivos de histórico contém, entre outras coisas,
 informações suficientes para recriar qualquer revisão
 do arquivo, um log com todas as mensagens ???de
 commit??? e o usuário que efetivou (commit) a
+@comment This is the same as a "log message", "log entry", or whatever else
+@comment you might want to call it.  It is sometimes called a "commit message"
+@comment in this manual because it is entered into the log at commit time.
+@comment -DRP
 revisão. Os arquivos de histórico são conhecidos como
 @dfn{arquivos RCS} (RCS files), pois o primeiro
 programa a guardar arquivos neste formato foi o sistema
@@ -1538,8 +1645,12 @@ leia em @ref{Etiquetas (Tags)}.
 @c FIXME: we need to somehow reflect "permissions in
 @c repository" versus "permissions in working
 @c directory" in the index entries.
-@comment <en>@cindex Group
+@comment <en>@cindex Group, UNIX file permissions, in repository
 @cindex ???Grupo???
+@comment "Group" here refers to UNIX groups, as used for file permissions, like
+@comment "UNIX users and groups".  I updated the text above in the English
+@comment manual as well.
+@comment -DRP
 @comment <en>@cindex Read-only files, in repository
 @cindex Arquivos somente-leitura, no repositório
 @comment <en>All @samp{,v} files are created read-only, and you
@@ -1569,6 +1680,11 @@ precisar ajustar o bit set-group-ID-on-execution nos
 diretórios do repositório (veja em chmod(1)) de forma
 que arquivos e diretório criados recebam o ID de grupo
 do diretório pai e não do ???processo corrente???.)
+@comment "Current process" refers to the current UNIX process, or program,
+@comment which is running, which could have the user and group ids of the user
+@comment running it.  It could also have a user and group id defined in the
+@comment CVSROOT/passwd file in pserver mode.
+@comment -DRP
 
 @c See also comment in commitinfo node regarding cases
 @c which are really awkward with unix groups.
@@ -1648,6 +1764,17 @@ nas permissões do diretório de trabalho; tais arquivos
 têm as permissões que são típicas para novos arquivos,
 exceto qeu algumas vezes o @sc{cvs} cria os arquivos
 somente-leitura (veja as seções em ???watches???,
+@comment From Webster's:
+@comment 1. The act of watching; forbearance of sleep; vigil; wakeful,
+@comment    vigilant, or constantly observant attention; close
+@comment    observation; guard; preservative or preventive vigilance;
+@comment    formerly, a watching or guarding by night.
+@comment 
+@comment A "watch" in CVS terminology, is the command run to request
+@comment notifications of file status changes.  Thus CVS keeps a "watch" on the
+@comment file for you and notifies you of changes.  When you have requested
+@comment that CVS "watch" several files, it is said to be keeping "watches".
+@comment -DRP
 @ref{Setting a watch}; -r, @ref{Opções globais}; or
 @code{CVSREAD}, @ref{Variáveis de ambiente}).
 @c FIXME: Need more discussion of which
@@ -1682,6 +1809,10 @@ documentação de seu sistema operacional. Este
 comportamento pode mudar em futuras versões do
 @sc{cvs}; ???não se basear nos ajustes do @code{CVSUMASK}
 no cliente não tem efeito.???
+@comment I believe this is referring to the possibility that the CVSUMASK on
+@comment a CVS client might eventually be sent to the server and used there,
+@comment as part of the CVS client/server protocol.
+@comment -DRP
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
 @c
@@ -1719,6 +1850,10 @@ nos diretórios abaixo dele na árvore; veja em
 @cindex Securança, setuid
 @comment <en>@cindex Installed images (VMS)
 @cindex ???Installed images??? (VMS)
+@comment I have no idea what I could tell you to help you translate this since
+@comment I know little of the VMS operating system.  Perhaps you could look
+@comment this up in some VMS documentation somewhere?
+@comment -DRP
 @comment <en>Some operating systems have features which allow a
 @comment <en>particular program to run with the ability to perform
 @comment <en>operations which the caller of the program could not.
@@ -1747,6 +1882,10 @@ usar tais habilidades, logo, tentar instalar o @sc{cvs}
 nesta forma vai gerar proteção apenas contra erros
 acidentais; qualquer um que esteja tentando
 ???circumvent the measure??? vai ser capaz de fazê-lo,
+@comment "circumvent the measure" means "get around this security restriction",
+@comment here.  "Circumvent" means to avoid or get around and "the measure"
+@comment here refers to the security restrictions being discussed.
+@comment -DRP
 e dependendo de como você configurou, pode ganhar
 acesso até a mais do que apenas o @sc{cvs}. Você pode
 estar considerando o uso do pserver. Ele compartilha
@@ -1795,6 +1934,19 @@ está num sistema de arquivos em rede de um servidor
 Samba SMB, algumas pessoas relataram problemas com
 permissões. Habilitando WRITE=YES na configuração do
 samba consertar/resolve. ???Disclaimer:??? Eu não
+@comment "Webster's Revised Unabridged Dictionary (1913)"
+@comment Disclaimer Dis*claim"er, n.
+@comment    1. One who disclaims, disowns, or renounces.
+@comment 
+@comment    2. (Law) A denial, disavowal, or renunciation, as of a title,
+@comment       claim, interest, estate, or trust; relinquishment or
+@comment       waiver of an interest or estate. --Burrill.
+@comment 
+@comment    3. A public disavowal, as of pretensions, claims, opinions,
+@comment       and the like. --Burke.
+@comment 
+@comment In other words, "Warning:", or "Caution:", might be appropriate.
+@comment -DRP
 investiguei o suficiente as implicações de habilitar
 esta opção, nem sei se há algo que o @sc{cvs} poderia
 fazer de diferente para evitar este problema. Se você
@@ -1852,6 +2004,11 @@ fica o arquivo; @sc{cvs} mantém controle disto e busca
 no Attic quando é preciso. Mas caso você queira saber,
 a regra é que o arquivo RCS é guardado no attic se e
 somente se a ???head revision??? no tronco está no
+@comment "Head", at the front, etc.  In this case, refers to the most recent
+@comment revision on the trunk, like the head of a snake would be in front.
+@comment In English, the "head of a line" is the person in front and the "tail"
+@comment the person in back.
+@comment -DRP
 estado @code{morto} (dead). Um estado @code{morto} significa
 que o arquivo foi removido, ou nunca foi adicionado,
 naquela revisão. Por exemplo, se você adiciona um
@@ -1887,6 +2044,8 @@ devem ignorar em silêncio arquivos adicionais.
 Este comportamento é implementado apenas pelo @sc{cvs}
 1.7 e posteriores; para detalhes veja em @ref{???Watches
 Compatibility???}.
+@comment As "watches", previously.
+@comment -DRP
 
 @comment <en>The format of the fileattr file is a series of entries
 @comment <en>of the following form (where @samp{@{} and @samp{@}}
@@ -1933,6 +2092,19 @@ rearranjá-las de acordo com sua própria conveniência.
 @comment <en>don't handle a NUL character in any of the fields, but
 @comment <en>implementations are encouraged to allow it.
 Não existe atualmente uma forma de ???quoting??? tabs
+@comment Refers to quoting filenames in the Bourne shell and other shell sense,
+@comment in this case so that the characters would be interpreted as part of
+@comment a filename and not as a whitespace separator in the file.  For
+@comment example:
+@comment 
+@comment    echo 'Some words >/dev/null'
+@comment 
+@comment and:
+@comment 
+@comment    echo Some words >/dev/null
+@comment 
+@comment mean quite different things to a Bourne shell.
+@comment -DRP
 ou quebras de linhas no nome do arquivo, @samp{=} em @var{attrname},
 @samp{;} em @var{attrval}, etc. Obs.: algumas
 implementações também não manipulam o caractere NUL em
@@ -1958,6 +2130,8 @@ Atributos internos:
 @comment <en>read-only.
 Quando presente significa que o arquivo está
 ???watched??? (watched) e deve ser emprestado como
+@comment As "watches", before.
+@comment -DRP
 somente-leitura.
 
 @item _watchers
@@ -1967,6 +2141,8 @@ somente-leitura.
 @comment <en>is zero or more of edit,unedit,commit separated by
 @comment <en>@samp{+} (that is, nothing if none; there is no "none" or "all" keyword).
 Usuários com ???watches??? para este arquivo. O valor é
+@comment As "watches", before.
+@comment -DRP
 @var{watcher} > @var{type} @{ , @var{watcher} > @var{type} @}
 onde @var{watcher} é um nome de usuário, e @var{type} é
 zero ou mais de edit,unedit,commit separados por
@@ -2016,6 +2192,9 @@ D _watched=
 significa que o arquivo @file{file1} deve ser pego como
 somente-leitura. Além disso, joe está ???watching???
 edicoes e mary está ???watching??? ???commits???. O
+@comment "Watching", as "watches", before.
+@comment "Commits" are checkins, i.e. via the `cvs commit' command.
+@comment -DRP
 arquivo @file{file2} deve ser pego somente-leitura; sue
 comecou a edita-lo em 8 Jan 1975 no diretorio
 @file{/home/sue/cvs} na maquina
@@ -2071,8 +2250,15 @@ sistemas operacionais e bancos de dados.
 @comment <en>creating any of the other locks.
 Qualquer arquivo no repositório com um nome começando
 com @file{#cvs.rfl.} é um ???read lock???. Qualquer
+@comment As "locks" earlier.  A read lock is a lock that means the file is
+@comment being read and therefore is off limits for writing.
+@comment -DRP
 arquivo no repositório com um nome comçando com
 @file{#cvs.wfl} é um ???write lock???.  versões antigas
+@comment As "locks" earlier.  A write lock is a lock that means the file is
+@comment being written and is therefore is off limits for reading and writing
+@comment by other processes.
+@comment -DRP
 do @sc{cvs} (antes do @sc{cvs} 1.5) também criavam
 arquivos com nomes começando com @file{#cvs.tfl}, mas
 estes não são discutidos aqui.
@@ -2098,6 +2284,8 @@ criar qualquer das outras travas.
 @comment <en>done, remove the @file{#cvs.rfl} file to release the
 @comment <en>read lock.
 Para obter um ???readlock???, primeiro crie o diretório
+@comment As "read lock", above.
+@comment -DRP
 @file{#cvs.lock}.  Esta operação deve ser atômica (o
 que deve ser verdade para a criação de um diretório na
 maioria dos sistemas operacionais).  Se isto falha por
@@ -2110,6 +2298,8 @@ diretório @file{#cvs.lock} para ativar a trava
 mestra. Então começe a ler o repositório.  Quando você
 terminar, remova o arquivo @file{#cvs.rfl} para
 liberar o ???read lock?.
+@comment As "read lock", above.
+@comment -DRP
 
 @comment <en>To obtain a writelock, first create the
 @comment <en>@file{#cvs.lock} directory, as with a readlock.  Then
@@ -2128,11 +2318,18 @@ liberar o ???read lock?.
 @comment <en>beyond what is provided by holding on to the
 @comment <en>@file{#cvs.lock} lock itself.
 Para obter uma ???writelock???, primeiro crie o
+@comment As "write lock", above.
+@comment -DRP
 diretório @file{#cvs.lock}, da mesma forma que com um
 ???readlock???.  Então verifique se não existem
+@comment As "read lock", above.
+@comment -DRP
 arquivos cujos nomes começam com @file{#cvs.rfl.}.  Se
 existem, remova o @file{#cvs.lock}, espere um tempinho
 e tente de novo.  Se não existem ???readers???, então
+@comment "Readers" are processes which read a file, in this case, as determined
+@comment by examinig the read locks.
+@comment -DRP
 crie um arquivo cujo nome seja @file{#cvs.wfl} seguido
 pela informação de sua escolha (por exemplo, hostname e
 número de identificação de processo).  mantenha a trava
@@ -2154,7 +2351,11 @@ além do que é feito pelo ato de manter a trava
 @comment <en>any lock you need, you must release the whole tree
 @comment <en>before waiting and trying again, to avoid deadlocks).
 Observe que cada trava (???writelock??? or
+@comment As "write lock", before.
+@comment -DRP
 ???readlock???) apenas trava um único diretório no
+@comment As "read lock", before.
+@comment -DRP
 repositório, inclusive no caso do @file{Attic} e do @file{CVS}
 sem incluir os subdiretórios que representam outros
 diretórios sob controle de versão.  Para travar uma
@@ -2162,6 +2363,18 @@ diretórios sob controle de versão.  Para travar uma
 (observe que se você não conseguir obter alguma trava
 que você precise, você deve liberar a árvore toda antes
 para esperar e tentar novamente, para evitar ???deadlocks???).
+@comment "Deadlock" is a computer science term which refers to the scenario
+@comment where two processes end up waiting on each other in such a way that
+@comment neither will ever get the lock and therefore neither process will
+@comment ever run again, and therefore both are said to be "dead".
+@comment 
+@comment For example, say process 1 wants to lock files "A" and "B", and so
+@comment does process 2.  If process 1 locks "A" first, and process 2 locks
+@comment file "B" first, then process begins waiting to lock "B" while process
+@comment 2 waits to lock "A", then both processes will wait indefinately, a
+@comment commonly encountered problem with file locking, especially for
+@comment inexperienced programmers.
+@comment -DRP
 
 @comment <en>Note also that @sc{cvs} expects writelocks to control
 @comment <en>access to individual @file{foo,v} files.  @sc{rcs} has
@@ -2171,20 +2384,30 @@ para esperar e tentar novamente, para evitar ???deadlocks???).
 @comment <en>rcs_internal_lockfile in the @sc{cvs} source code for
 @comment <en>further discussion/rationale.
 Observe também que o @sc{cvs} espera ???writelocks???
+@comment As "write lock", before.
+@comment -DRP
 para controlar o acesso a arquivos @file{foo,v}
 individuais.  @sc{rcs} tem um esquema onde o arquivo
 @file{,foo,} funciona como uma trava, mas o @sc{cvs}
 não implementa isso. Portanto, fazer um ???writelock???
+@comment As "write lock", before.
+@comment -DRP
 no @sc{cvs} é recomendado.  Veja os comentários no
 rcs_internal_lockfile no código fonte do @sc{cvs} para
 mais discussões/???rationale???.
+@comment "rationale" = "explanation", here.
+@comment -DRP
 
 @comment <en>@node CVSROOT storage
 @node CVSROOT ???storage???
+@comment As "storage", above.
+@comment -DRP
 @comment <en>@subsection How files are stored in the CVSROOT directory
 @subsection Como os arquivos são guardados no diretório CVSROOT
 @comment <en>@cindex CVSROOT, storage of files
 @cindex CVSROOT, ???storage??? de arquivos
+@comment As "storage", above.
+@comment -DRP
 
 @comment <en>The @file{$CVSROOT/CVSROOT} directory contains the
 @comment <en>various administrative files.  In some ways this
@@ -2259,6 +2482,10 @@ guardar ele como um arquivo de texto normal faz a busca
 por módulos lenta (Não estou bem certo se isso importa
 tanto agora como quando o @sc{cvs} primeiramente
 desenvolveu esta habilidade; não vi ???benchmarks???).
+@comment In computer science, scientifically designed tests to compare one
+@comment computer platform or program to another.  Benchmarks usually rate the
+@comment programs or systems on speed, etc.
+@comment -DRP
 Entretanto, fazendo edições apropriadas no código fonte
 do @sc{cvs} pode-se guardar o arquivo modules num banco
 de dados que implementa a interface @code{ndbm}, tais
@@ -2274,6 +2501,8 @@ Para informações sobre o significado dos vários arquivos administrativos, veja e
 
 @comment <en>@node Working directory storage
 @node ???Working directory storage???
+@comment As "storage", above.
+@comment -DRP
 @comment <en>@section How data is stored in the working directory
 @section Como os dados são guardados no diretório de trabalho
 
@@ -2369,6 +2598,9 @@ ser um caminho absoluto ou relativo; @sc{cvs} adquiriu
 a habilidade de ler ambos os formatos desde a versão
 1.3.  O caminho é relativo à raiz (root), e é a
 abordagem mais ???sensible???, mas o caminho absoluto é
+@comment That doesn't look like English in the comments above.  Anyhow,
+@comment "sensible" usually means rational, intelligent, or correct.
+@comment -DRP
 mais comum e ambos devem ser aceitos. Por exemplo,
 depois do comando
 
@@ -2478,6 +2710,9 @@ arquivo no diretório de trabalho deriva, ou @samp{0}
 para um arquivo adicionado, ou @samp{-} seguido de uma
 revisão para um arquivo removido.  @var{timestamp} é o
 ???timestamp??? do arquivo quando o @sc{cvs} o criou;
+@comment As a file system timestamp.  Usually a creation time or modification
+@comment time or something.  I'm not sure what they were prior to CVS 1.5.
+@comment -DRP
 se o timestamp difere da hora de modificação do
 arquivo, significa que o arquivo foi modificado.  É
 armazenado no formato usando pela função ISO C
@@ -2539,6 +2774,8 @@ modificados simplesmente por que o fuso horário mudou
 Se o primeiro caractere de uma linha em @file{Entries}
 é @samp{D}, então ele indica um dubdiretório.  @samp{D}
 em uma linha ???all by itself??? indica que o programa
+@comment "All by itself" means alone, or the only thing on the line.
+@comment -DRP
 que escreveu o arquivo @file{Entries} registra
 subdiretórios (portanto, se existe tal linha e nenhuma
 outra linha começando com @samp{D}, conclui-se que não
