@@ -4112,15 +4112,15 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
     dev_t devnum = 0;
 #endif
 
-    TRACE ( 1, "RCS_checkout (%s, %s, %s, %s, %s)",
-	    rcs->path,
-	    rev != NULL ? rev : "",
-	    nametag != NULL ? nametag : "",
-	    options != NULL ? options : "",
-	    (pfn != NULL ? "(function)"
-	      : (workfile != NULL ? workfile
-		  : (sout != RUN_TTY ? sout
-		      : "(stdout)" ) ) ) );
+    TRACE (TRACE_FUNCTION, "RCS_checkout (%s, %s, %s, %s, %s)",
+	   rcs->path,
+	   rev != NULL ? rev : "",
+	   nametag != NULL ? nametag : "",
+	   options != NULL ? options : "",
+	   (pfn != NULL ? "(function)"
+	    : (workfile != NULL ? workfile
+	       : (sout != RUN_TTY ? sout
+		  : "(stdout)"))));
 
     assert (rev == NULL || isdigit ((unsigned char) *rev));
 

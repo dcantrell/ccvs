@@ -35,8 +35,8 @@ static Key_schedule sched;
    on such a system (OS/2, Windows 95, and maybe others) will have to
    take care of this.  */
 void
-start_kerberos4_server( cvsroot_t *root, struct buffer **to_server_p,
-                        struct buffer **from_server_p )
+start_kerberos4_server (cvsroot_t *root, struct buffer **to_server_p,
+                        struct buffer **from_server_p)
 {
     int s;
     int port;
@@ -55,10 +55,10 @@ start_kerberos4_server( cvsroot_t *root, struct buffer **to_server_p,
     hname = xmalloc (strlen (hp->h_name) + 1);
     strcpy (hname, hp->h_name);
   
-    TRACE ( 1, "Connecting to %s(%s):%d",
-	    root->hostname,
-	    inet_ntoa (sin.sin_addr),
-	    port );
+    TRACE (TRACE_FUNCTION, "Connecting to %s(%s):%d",
+	   root->hostname,
+	   inet_ntoa (sin.sin_addr),
+	   port);
 
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",

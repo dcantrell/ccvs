@@ -69,7 +69,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
 
-    TRACE (1, "Parse_Info (%s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "Parse_Info (%s, %s, %s)",
 	   infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */

@@ -34,7 +34,7 @@ copy_file (const char *from, const char *to)
     int fdin, fdout;
     ssize_t rsize;
 
-    TRACE ( 1, "copy(%s,%s)", from, to );
+    TRACE (TRACE_FUNCTION, "copy(%s,%s)", from, to);
 
     if (noexec)
 	return;
@@ -374,7 +374,7 @@ xchmod (const char *fname, int writable)
 	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
     }
 
-    TRACE ( 1, "chmod(%s,%o)", fname, (unsigned int) mode );
+    TRACE (TRACE_FUNCTION, "chmod(%s,%o)", fname, (unsigned int) mode);
 
     if (noexec)
 	return;
@@ -389,7 +389,7 @@ xchmod (const char *fname, int writable)
 void
 rename_file (const char *from, const char *to)
 {
-    TRACE ( 1, "rename(%s,%s)", from, to );
+    TRACE (TRACE_FUNCTION, "rename(%s,%s)", from, to);
 
     if (noexec)
 	return;
@@ -404,7 +404,7 @@ rename_file (const char *from, const char *to)
 int
 unlink_file (const char *f)
 {
-    TRACE ( 1, "unlink_file(%s)", f );
+    TRACE (TRACE_FUNCTION, "unlink_file(%s)", f);
 
     if (noexec)
 	return (0);

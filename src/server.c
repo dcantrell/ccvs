@@ -4229,10 +4229,10 @@ server_register (const char *name, const char *version, const char *timestamp,
     if (options == NULL)
 	options = "";
 
-    TRACE ( 1, "server_register(%s, %s, %s, %s, %s, %s, %s)",
-	    name, version, timestamp ? timestamp : "", options,
-	    tag ? tag : "", date ? date : "",
-	    conflict ? conflict : "" );
+    TRACE (TRACE_FUNCTION, "server_register(%s, %s, %s, %s, %s, %s, %s)",
+	   name, version, timestamp ? timestamp : "", options,
+	   tag ? tag : "", date ? date : "",
+	   conflict ? conflict : "");
 
     if (entries_line != NULL)
     {

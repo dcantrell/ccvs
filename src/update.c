@@ -2118,14 +2118,14 @@ join_file (struct file_info *finfo, Vers_TS *vers)
     char *jdate1;
     char *jdate2;
 
-    TRACE ( 1, "join_file(%s, %s%s%s%s, %s, %s)",
-	    finfo->file,
-	    vers->tag ? vers->tag : "",
-	    vers->tag ? " (" : "",
-	    vers->vn_rcs ? vers->vn_rcs : "",
-	    vers->tag ? ")" : "",
-	    join_rev1 ? join_rev1 : "",
-	    join_rev2 ? join_rev2 : "" );
+    TRACE (TRACE_FUNCTION, "join_file(%s, %s%s%s%s, %s, %s)",
+	   finfo->file,
+	   vers->tag ? vers->tag : "",
+	   vers->tag ? " (" : "",
+	   vers->vn_rcs ? vers->vn_rcs : "",
+	   vers->tag ? ")" : "",
+	   join_rev1 ? join_rev1 : "",
+	   join_rev2 ? join_rev2 : "");
 
     jrev1 = join_rev1;
     jrev2 = join_rev2;

@@ -38,9 +38,9 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     char *reposcopy;
     char *tmp;
 
-    TRACE ( 1, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
-	    dir, update_dir, repository, tag ? tag : "",
-	    date ? date : "", nonbranch, warn, dotemplate );
+    TRACE (TRACE_FUNCTION, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
+	   dir, update_dir, repository, tag ? tag : "",
+	   date ? date : "", nonbranch, warn, dotemplate);
 
     if (noexec)
 	return 0;
@@ -159,7 +159,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date, nonbranch, update_dir, repository);
 
-    TRACE (1, "Create_Admin");
+    TRACE (TRACE_FUNCTION, "Create_Admin");
 
     free (reposcopy);
     free (tmp);

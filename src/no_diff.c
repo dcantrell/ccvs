@@ -52,9 +52,9 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	options = xstrdup ("");
 
     tocvsPath = wrap_tocvs_process_file (finfo->file);
-    retcode = RCS_cmp_file( vers->srcfile, vers->vn_user, (char **)NULL,
+    retcode = RCS_cmp_file (vers->srcfile, vers->vn_user, (char **)NULL,
                             (char *)NULL, options,
-			    tocvsPath == NULL ? finfo->file : tocvsPath );
+			    tocvsPath == NULL ? finfo->file : tocvsPath);
     if (retcode == 0)
     {
 	/* no difference was found, so fix the entries file */
@@ -66,8 +66,8 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	if (server_active)
 	{
 	    /* We need to update the entries line on the client side.  */
-	    server_update_entries
-	      (finfo->file, finfo->update_dir, finfo->repository, SERVER_UPDATED);
+	    server_update_entries (finfo->file, finfo->update_dir,
+				   finfo->repository, SERVER_UPDATED);
 	}
 #endif
 	free (ts);
@@ -85,11 +85,11 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
     {
 	/* Need to call unlink myself because the noexec variable
 	 * has been set to 1.  */
-	TRACE ( 1, "unlink (%s)", tocvsPath);
+	TRACE (TRACE_FUNCTION, "unlink (%s)", tocvsPath);
 	if ( CVS_UNLINK (tocvsPath) < 0)
 	    error (0, errno, "could not remove %s", tocvsPath);
     }
 
     free (options);
-    return (ret);
+    return ret;
 }

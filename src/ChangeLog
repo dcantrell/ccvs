@@ -1,3 +1,22 @@
+2005-02-27  Mark D. Baushke  <mdb@cvshome.org>
+
+	* client.c (connect_to_pserver): Use TRACE_FUNCTION, not 1 in
+	TRACE() calls.
+	(connect_to_pserver,send_modified): Ditto.
+	* create_adm.c (Create_Admin): Ditto.
+	* entries.c (Register, Scratch_Entry, WriteTemplate): Ditto.
+	* filesubr.c (copy_file, xchmod, rename_file): Ditto.
+	* history.c (history_write): Ditto.
+	* kerberos4-client.c (start_kerberos4_server): Ditto.
+	* no_diff.c (No_Difference): Ditto.
+	* parseinfo.c (Parse_Info): Ditto.
+	* rcs.c (RCS_checkout): Ditto.
+	* server.c (server_register): Ditto.
+	* update.c (join_file): Ditto.
+	
+	* no_diff.c (No_Difference): Gratuitous reformatting.
+	* kerberos4-client.c (start_kerberos4_server): Ditto.
+	
 2005-02-27  Jim Meyering  <jim@meyering.net>
 
 	* login.c (password_entry_operation): Exit nonzero when
