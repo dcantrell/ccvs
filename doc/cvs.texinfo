@@ -248,7 +248,7 @@ binary files. @xref{Keyword substitution}, for
 solutions.
 
 @item The @code{admin} command
-Uncareful use of the @code{admin} command can cause
+Careless use of the @code{admin} command can cause
 @sc{cvs} to cease working.  @xref{admin}, before trying
 to use it.
 @end table
@@ -1125,10 +1125,11 @@ diff            gnu/diff
 tc              yoyodyne/tc
 @end example
 
-The @file{modules} file is line oriented.  In its simplest form each
-line contains the name of the module, whitespace, and the directory
-where the module resides.  The directory is a path relative to
-@code{$CVSROOT}.  The last for lines in the example
+The @file{modules} file is line oriented.  In its
+simplest form each line contains the name of the
+module, whitespace, and the directory where the module
+resides.  The directory is a path relative to
+@code{$CVSROOT}.  The last four lines in the example
 above are examples of such lines.
 
 @c FIXME: might want to introduce the concept of options in modules file
@@ -1174,9 +1175,10 @@ without sharing any code.  All you have to do to have
 several repositories is to specify the appropriate
 repository, using the @code{CVSROOT} environment
 variable, the @samp{-d} option to @sc{cvs}, or (once
-you have checked out a working directories) by
-simply allowing @sc{cvs} to use the repository that was
-used to check out the working directory (@pxref{Repository}).
+you have checked out a working directory) by simply
+allowing @sc{cvs} to use the repository that was used
+to check out the working directory
+(@pxref{Repository}).
 
 Notwithstanding, it can be confusing to have two or
 more repositories.
