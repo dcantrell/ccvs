@@ -1,3 +1,12 @@
+Wed Jan 10 20:43:33 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Makefile.in (DISTFILES): added `Makefile'.
+
+        * README.MacCVS (NOTE): added note at top saying that this port is
+        in-progress and should not be considered a finished product.
+
+        * Updated all files from Mike Ladwig's new tar.
+        
 Sat Dec 16 20:59:12 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * maccvs_projects.sit.hqx: replaced with new version mailed by
