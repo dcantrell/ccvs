@@ -197,58 +197,39 @@ icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/inclu
 Compilation finished at Mon Nov 06 14:06:02
 
 ------------------------------------------------------------------------
-::: src/filesubr
+::: os2/filesubr
 
 cd c:/src/cvs-1.6.1/os2/
-make -f test-makefile THIS_BASENAME=../src/filesubr
+make -f test-makefile THIS_BASENAME=../os2/filesubr
 ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../lib -I../src -DTCPIP_IBM -Is:\ibmtcpip\include
 ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/filesubr.obj ../src/filesubr.c
-C:\src\cvs-1.6.1\src\filesubr.c(108:12) : warning EDC0185: Function utime has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\filesubr.c(126:13) : error EDC0041: Identifier S_IFMT must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(207:37) : error EDC0041: Identifier S_IFMT must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(209:27) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
-C:\src\cvs-1.6.1\src\filesubr.c(209:27) : informational EDC0141: Prototype has type pointer to unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(209:27) : informational EDC0147: Argument has type pointer to constant unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(209:33) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
-C:\src\cvs-1.6.1\src\filesubr.c(226:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
-C:\src\cvs-1.6.1\src\filesubr.c(226:16) : informational EDC0141: Prototype has type pointer to unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(226:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(226:22) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
-C:\src\cvs-1.6.1\src\filesubr.c(240:19) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
-C:\src\cvs-1.6.1\src\filesubr.c(240:19) : informational EDC0141: Prototype has type pointer to unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(240:19) : informational EDC0147: Argument has type pointer to constant unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(240:25) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
-C:\src\cvs-1.6.1\src\filesubr.c(329:13) : warning EDC0185: Function link has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\filesubr.c(380:22) : error EDC0041: Identifier EISDIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(380:41) : error EDC0041: Identifier EPERM must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(400:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(400:13) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(401:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\filesubr.c(401:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(401:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(402:5) : error EDC0349: Unexpected text 'char' ignored.
-C:\src\cvs-1.6.1\src\filesubr.c(402:13) : error EDC0041: Identifier buf must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(404:17) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
-C:\src\cvs-1.6.1\src\filesubr.c(404:17) : informational EDC0141: Prototype has type pointer to unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(404:17) : informational EDC0147: Argument has type pointer to constant unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(404:40) : error EDC0041: Identifier ENOTEMPTY must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(406:14) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\filesubr.c(412:15) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\filesubr.c(416:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\filesubr.c(422:16) : error EDC0041: Identifier EISDIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(422:35) : error EDC0041: Identifier EPERM must be declared before it is used.
-C:\src\cvs-1.6.1\src\filesubr.c(426:4) : warning EDC0185: Function closedir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\filesubr.c(441:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
-C:\src\cvs-1.6.1\src\filesubr.c(441:16) : informational EDC0141: Prototype has type pointer to unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(441:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
-C:\src\cvs-1.6.1\src\filesubr.c(466:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\filesubr.c(472:6) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\filesubr.c(525:14) : warning EDC0185: Function block_read has not been prototyped prior to use.
-make: *** [../src/filesubr.obj] Error 12
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../lib -I../src -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../os2/filesubr.obj ../os2/filesubr.c
+C:\src\cvs-1.6.1\os2\filesubr.c(110:12) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(110:12) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(110:12) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(211:27) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(211:27) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(211:27) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(228:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(228:16) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(228:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(242:19) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(242:19) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(242:19) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(434:17) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(434:17) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(434:17) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(436:23) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(436:23) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(436:23) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(473:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\os2\filesubr.c(473:16) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(473:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\os2\filesubr.c(557:14) : warning EDC0185: Function block_read has not been prototyped prior to use.
+C:\src\cvs-1.6.1\os2\filesubr.c(733:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
 
-Compilation exited abnormally with code 2 at Mon Nov 06 14:06:39
+Compilation finished at Wed Nov 08 15:32:53
 
 ------------------------------------------------------------------------
 ::: src/find_names [after installing dirent]
@@ -861,4 +842,241 @@ C:\src\cvs-1.6.1\lib\getopt1.c(73:10) : warning EDC0185: Function _getopt_intern
 Compilation finished at Mon Nov 06 21:06:14
 
 ------------------------------------------------------------------------
-::: lib/? [albeit without HAVE_CONFIG_H defined]
+::: lib/hostname
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/hostname.obj ../lib/hostname.c
+C:\src\cvs-1.6.1\lib\hostname.c(31:0) : error EDC0504: Unable to find #include file <sys/utsname.h>.
+C:\src\cvs-1.6.1\lib\hostname.c(40:3) : error EDC0044: An incomplete struct or union tag cannot be used in a declaration.
+C:\src\cvs-1.6.1\lib\hostname.c(42:7) : warning EDC0185: Function uname has not been prototyped prior to use.
+make: *** [../lib/hostname.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 21:18:53
+
+------------------------------------------------------------------------
+::: lib/md5
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/md5.obj ../lib/md5.c
+
+Compilation finished at Mon Nov 06 21:29:09
+
+------------------------------------------------------------------------
+::: lib/memmove
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/memmove.obj ../lib/memmove.c
+C:\src\cvs-1.6.1\lib\memmove.c(55:5) : warning EDC0185: Function bcopy has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:29:26
+
+------------------------------------------------------------------------
+::: lib/mkdir
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/mkdir.obj ../lib/mkdir.c
+C:\src\cvs-1.6.1\lib\mkdir.c(60:10) : warning EDC0185: Function fork has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(71:16) : warning EDC0185: Function umask has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(73:7) : warning EDC0185: Function execl has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(74:7) : warning EDC0185: Function _exit has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(77:14) : warning EDC0185: Function wait has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(82:12) : error EDC0041: Identifier EIO must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(85:14) : warning EDC0185: Function chmod has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(102:26) : error EDC0041: Identifier S_IFMT must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(104:15) : error EDC0041: Identifier ENOTDIR must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(124:12) : error EDC0041: Identifier EIO must be declared before it is used.
+make: *** [../lib/mkdir.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 21:29:48
+
+------------------------------------------------------------------------
+::: lib/rename
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/mkdir.obj ../lib/mkdir.c
+C:\src\cvs-1.6.1\lib\mkdir.c(60:10) : warning EDC0185: Function fork has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(71:16) : warning EDC0185: Function umask has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(73:7) : warning EDC0185: Function execl has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(74:7) : warning EDC0185: Function _exit has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(77:14) : warning EDC0185: Function wait has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(82:12) : error EDC0041: Identifier EIO must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(85:14) : warning EDC0185: Function chmod has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\mkdir.c(102:26) : error EDC0041: Identifier S_IFMT must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(104:15) : error EDC0041: Identifier ENOTDIR must be declared before it is used.
+C:\src\cvs-1.6.1\lib\mkdir.c(124:12) : error EDC0041: Identifier EIO must be declared before it is used.
+make: *** [../lib/mkdir.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 21:29:48
+
+------------------------------------------------------------------------
+::: lib/save-cwd
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/save-cwd.obj ../lib/save-cwd.c
+
+Compilation finished at Mon Nov 06 21:31:37
+
+------------------------------------------------------------------------
+::: lib/sighandle
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/sighandle.obj ../lib/sighandle.c
+C:\src\cvs-1.6.1\lib\sighandle.c(186:6) : warning EDC0185: Function SIG_init has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\sighandle.c(231:41) : warning EDC0185: Function SIG_handle has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\sighandle.c(405:0) : informational EDC0806: Static variable SIG_crSectMask is set but not referenced.
+
+Compilation finished at Mon Nov 06 21:31:55
+
+------------------------------------------------------------------------
+::: lib/strdup
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/strdup.obj ../lib/strdup.c
+C:\src\cvs-1.6.1\lib\strdup.c(35:11) : error EDC0322: Type of the parameter str cannot conflict with previous declaration of function strdup.
+C:\src\cvs-1.6.1\lib\strdup.c(35:11) : informational EDC0142: Previous declaration has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\lib\strdup.c(35:11) : informational EDC0145: Redeclaration has type pointer to unsigned character.
+make: *** [../lib/strdup.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 21:32:27
+
+------------------------------------------------------------------------
+::: lib/strerror
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/strerror.obj ../lib/strerror.c
+C:\src\cvs-1.6.1\lib\strerror.c(596:7) : warning EDC0185: Function init_error_tables has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\strerror.c(765:9) : warning EDC0185: Function strcmp has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:32:57
+
+------------------------------------------------------------------------
+::: lib/strippath
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/strippath.obj ../lib/strippath.c
+
+Compilation finished at Mon Nov 06 21:33:21
+
+------------------------------------------------------------------------
+::: lib/stripslash
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/stripslash.obj ../lib/stripslash.c
+
+Compilation finished at Mon Nov 06 21:33:39
+
+------------------------------------------------------------------------
+::: lib/strstr
+
+
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/strstr.obj ../lib/strstr.c
+C:\src\cvs-1.6.1\lib\strstr.c(28:18) : warning EDC0185: Function strlen has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\strstr.c(35:18) : warning EDC0185: Function strncmp has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:33:58
+
+------------------------------------------------------------------------
+::: lib/valloc
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/valloc.obj ../lib/valloc.c
+C:\src\cvs-1.6.1\lib\valloc.c(13:13) : error EDC0281: The identifier malloc cannot be redeclared.
+C:\src\cvs-1.6.1\lib\valloc.c(13:13) : informational EDC0142: Previous declaration has type _Optlink function returning pointer to void.
+C:\src\cvs-1.6.1\lib\valloc.c(13:13) : informational EDC0145: Redeclaration has type _Optlink function returning pointer to unsigned character.
+make: *** [../lib/valloc.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 21:34:21
+
+------------------------------------------------------------------------
+::: lib/waitpid
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/waitpid.obj ../lib/waitpid.c
+C:\src\cvs-1.6.1\lib\waitpid.c(46:18) : warning EDC0185: Function ualloc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\waitpid.c(66:17) : warning EDC0185: Function wait3 has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:34:55
+
+------------------------------------------------------------------------
+::: lib/xgetwd
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/xgetwd.obj ../lib/xgetwd.c
+C:\src\cvs-1.6.1\lib\xgetwd.c(61:9) : warning EDC0185: Function xmalloc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\xgetwd.c(64:17) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\lib\xgetwd.c(67:13) : warning EDC0185: Function xrealloc has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 21:35:13
+
+------------------------------------------------------------------------
+::: lib/yesno
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -DHAVE_CONFIG_H -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../lib/yesno.obj ../lib/yesno.c
+
+Compilation finished at Mon Nov 06 21:35:29
+
+------------------------------------------------------------------------
+::: lib/

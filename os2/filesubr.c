@@ -1,5 +1,5 @@
-/* filesubr.c --- subroutines for dealing with files
-   Jim Blandy <jimb@cyclic.com>
+/* filesubr.c --- subroutines for dealing with files under OS/2
+   Jim Blandy <jimb@cyclic.com> and Karl Fogel <kfogel@cyclic.com>
 
    This file is part of GNU CVS.
 
@@ -32,7 +32,7 @@ USE(rcsid);
 
 /*
  * I don't know of a convenient way to test this at configure time, or else
- * I'd certainly do it there.
+ * I'd certainly do it there.  -JimB
  */
 #if defined(NeXT)
 #define LOSING_TMPNAM_FUNCTION
@@ -367,8 +367,14 @@ unlink_file (f)
     if (noexec)
 	return (0);
 
-    /* Win32 unlink is stupid - it fails if the file is read-only */
-    chmod (f, _S_IWRITE);
+   /* Win32 unlink is stupid - it fails if the file is read-only.
+    * OS/2 is similarly stupid.  It does have a remove() function,
+    * but the documentation does not make clear why remove() is or
+    * isn't preferable to unlink().  I'll use unlink() because the
+    * name is closer to our interface, what the heck.  Also, we know
+    * unlink()'s error code when trying to remove a directory.
+    */
+    chmod (f, S_IWRITE);
     return (unlink (f));
 }
 
@@ -391,13 +397,11 @@ unlink_file_dir (f)
     if (noexec)
 	return (0);
 
-    /* Win32 unlink is stupid - it fails if the file is read-only */
-    chmod (f, _S_IWRITE);
-    if (unlink (f) != 0)
+    if (unlink_file (f) != 0)
     {
-	/* under Windows NT, unlink returns EACCES if the path
+	/* under OS/2, unlink returns EACCESS if the path
 	   is a directory.  */
-        if (errno == EISDIR || errno == EACCES)
+        if (errno == EACCESS)
                 return deep_remove_dir (f);
         else
 		/* The file wasn't a directory and some other
@@ -421,7 +425,7 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if ( rmdir (path) != 0 && errno == ENOTEMPTY )
+    if ( rmdir (path) != 0 && errno == EACCESS )
     {
 	if ((dirp = opendir (path)) == NULL)
 	    /* If unable to open the directory return
@@ -437,11 +441,9 @@ deep_remove_dir (path)
 
 	    sprintf (buf, "%s/%s", path, dp->d_name);
 
-	    /* Win32 unlink is stupid - it fails if the file is read-only */
-	    chmod (buf, _S_IWRITE);
-	    if (unlink (buf) != 0 )
+	    if (unlink_file (buf) != 0 )
 	    {
-		if (errno == EISDIR || errno == EACCES)
+		if (errno == EACCES)
 		{
 		    if (deep_remove_dir (buf))
 		    {
