@@ -1,3 +1,8 @@
+1998-06-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* fileattr.c (fileattr_read): Check for NULL return from strchr.
+	* sanity.sh (devcom3): New test devcom3-10 checks for this.
+
 1998-06-01  Assar Westerlund  <assar@sics.se>
 	and Ian Lance Taylor  <ian@cygnus.com>
 
