@@ -2173,6 +2173,20 @@ done"
 "${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
 "${PROG} server: Up-to-date check failed for .\.file'
 ${PROG} \[server aborted\]: correct above errors first!"
+
+	    # Sync up the version numbers so that the rest of the
+	    # tests don't need to expect different numbers based
+	    # local or remote.
+	    dotest files-12-workaround \
+"${testcvs} commit -f -m test sdir/ssdir/.file .file" \
+"Checking in sdir/ssdir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done
+Checking in \.file;
+${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done"
 	  else
 	    dotest files-12 \
 "${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
@@ -2183,6 +2197,24 @@ done
 Checking in \.file;
 ${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
+done"
+	  fi
+	  dotest files-13 \
+"${testcvs} commit -fmtest ./sdir/../sdir/ssdir/..///ssdir/.file" \
+"Checking in \./sdir/\.\./sdir/ssdir/\.\.///ssdir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3
+done"
+	  if test "$remote" = yes; then
+	    dotest_fail files-14 \
+"${testcvs} commit -fmtest ../../first-dir/dir/.file" \
+"Permission denied"
+	  else
+	    dotest files-14 \
+"${testcvs} commit -fmtest ../../first-dir/dir/.file" \
+"Checking in \.\./\.\./first-dir/dir/\.file;
+${TESTDIR}/cvsroot/first-dir/dir/Attic/\.file,v  <--  \.file
+new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3
 done"
 	  fi
 	  cd ../../..
