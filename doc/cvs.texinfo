@@ -10198,7 +10198,7 @@ The file is being ignored (@pxref{cvsignore}).
 The file is a symbolic link; @code{cvs import} ignores symbolic links.
 People periodically suggest that this behavior should
 be changed, but if there is a consensus on what it
-should be changed to, it doesn't seem to be apparent.
+should be changed to, it is not apparent.
 (Various options in the @file{modules} file can be used
 to recreate symbolic links on checkout, update, etc.;
 @pxref{modules}.)
