@@ -3628,9 +3628,9 @@ $ cvs remove @var{old}
 $ cvs commit @var{old}
 # @r{Remove all tags from @var{new}}
 $ cvs update @var{new}
-$ cvs log @var{new}             # @r{Remember the tag names}
-$ cvs tag -d @var{tag1}
-$ cvs tag -d @var{tag2}
+$ cvs log @var{new}             # @r{Remember the non-branch tag names}
+$ cvs tag -d @var{tag1} @var{new}
+$ cvs tag -d @var{tag2} @var{new}
 @dots{}
 @end example
 
