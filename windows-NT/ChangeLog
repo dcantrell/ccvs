@@ -1,5 +1,12 @@
 2004-12-14  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add stamp-chi.
+	(config.h.in, stamp-chi, DISTCLEANFILES, MAINTAINERCLEANFILES):
+	Reorganize for distributing stamp-chi.
+	* stamp-chi: Restore this file.
+
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
 	* stamp-chi: Remove this file - it is generated only in maintainer
 	mode.
 
