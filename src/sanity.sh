@@ -14474,14 +14474,10 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # This test confirms a bug that exists in the r* commands currently
 	  # when run against the top-level project.
 	  #
-	  # The copious usage of .* below is because there is no
-          # dotest_fail_sort to match:
-	  # "$SPROG \[rlog aborted\]: received abort signal"
-
+	  # The assertion failure is something like:
+	  # do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
 	  dotest_fail top-level-1 "$testcvs rlog ." \
-"$SPROG rlog: Logging \.
-$SPROG rlog: Logging CVSROOT
-.*$SPROG: \.\./\.\./src/recurse.c:[0-9][0-9]*: do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
 
 	  if $keep; then
 	    echo Keeping $TESTDIR and exiting due to --keep
