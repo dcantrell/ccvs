@@ -294,8 +294,7 @@ update (argc, argv)
 	    failed_patches = NULL;
 	    failed_patches_count = 0;
 
-	    if (send_to_server ("update\n") < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("update\n", 0);
 
 	    status = get_responses_and_close ();
 	    if (status != 0)

@@ -42,6 +42,12 @@ extern int client_unedit PROTO((int argc, char **argv));
  */
 extern int client_active;
 
+/*
+ * Flag variable for seeing whether the server has been started yet.
+ * As of this writing, only edit.c:notify_check() uses it.
+ */
+extern int server_started;
+
 /* Is the -P option to checkout or update specified?  */
 extern int client_prune_dirs;
 
@@ -50,17 +56,17 @@ extern FILE *to_server;
 /* Stream to read from the server.  */
 extern FILE *from_server;
 
+#ifdef AUTH_CLIENT_SUPPORT
+extern int use_authenticating_server;
+void connect_to_pserver();
+# ifndef CVS_AUTH_PORT
+# define CVS_AUTH_PORT 2401
+# endif /* CVS_AUTH_PORT */
+#endif /* AUTH_CLIENT_SUPPORT */
 
 /* "Bottleneck" function that everyone should use for communicating
    with the server. */
-#if __STDC__
-int send_to_server (char *data, ...);
-     /* FIXME: should we be using that __attribute__ stuff, like
-        error.h does?  I don't know... */
-#else /* ! __STDC__ */
-int send_to_server PROTO((void));
-#endif /* __STDC__ */
-
+int send_to_server PROTO((char *str, int len));
 
 /* Internal functions that handle client communication to server, etc.  */
 int supported_request PROTO ((char *));

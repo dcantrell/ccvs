@@ -83,8 +83,7 @@ cvsremove (argc, argv)
 	if (local)
 	    send_arg("-l");
 	send_files (argc, argv, local, 0);
-	if (send_to_server ("remove\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("remove\n", 0);
         return get_responses_and_close ();
     }
 #endif

@@ -1,3 +1,36 @@
+Sun Dec 17 15:40:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.h: update prototype of send_to_server().
+        
+        * client.c, watch.c, update.c, tag.c, status.c, rtag.c, remove.c,
+        release.c, patch.c, log.c, import.c, history.c, edit.c, diff.c,
+        commit.c, client.c, checkout.c, admin.c, add.c:
+        Convert all send_to_server() calls that used formatting to send
+        pre-formatted strings instead.  And don't error check
+        send_to_server(), because it does its own error checking now.
+        
+        * client.c (send_to_server): don't use vasprintf(), just fwrite a
+        certain number of bytes to the server.  And do error checking
+        here, so our callers don't have to.
+        (send_arg): use send_to_server() instead of putc()'ing
+        directly to `to_server'.
+        
+Sun Dec 17 14:37:52 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h.in (AUTH_CLIENT_SUPPORT, AUTH_SERVER_SUPPORT):
+        Define to 1 but leave commented out, instead of #undef'ing them.
+        This treats them like everything else in this file.
+
+        * client.c: define server_started, init to 0.
+        (start_server): set server_started to 1.
+
+        * client.h: declare `server_started', extern.
+        AUTH_CLIENT_SUPPORT moved here from cvs.h.
+        
+        * cvs.h: moved AUTH_CLIENT_SUPPORT stuff to client.h.
+
+        * edit.c (notify_check): use new var server_started.
+
 Sun Dec 17 00:44:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (get_responses_and_close): Really stop ignoring ECHILD

@@ -96,8 +96,7 @@ watch_onoff (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (send_to_server (turning_on ? "watch-on\n" : "watch-off\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server (turning_on ? "watch-on\n" : "watch-off\n", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */
@@ -260,7 +259,7 @@ send_notifications (argc, argv, local)
 				argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 				1, 0);
 
-	send_to_server ("noop\n");
+	send_to_server ("noop\n", 0);
 	if (strcmp (command_name, "release") == 0)
 	    err += get_server_responses ();
 	else
@@ -801,7 +800,7 @@ notify_check (repository, update_dir)
     char *line = NULL;
     size_t line_len = 0;
 
-    if (to_server == NULL)
+    if (! server_started)
 	/* We are in the midst of a command which is not to talk to
 	   the server (e.g. the first phase of a cvs edit).  Just chill
 	   out, we'll catch the notifications on the flip side.  */
@@ -955,8 +954,7 @@ editors (argc, argv)
 #else
 	send_files (argc, argv, local, 0);
 #endif
-	if (send_to_server ("editors\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("editors\n", 0);
 	return get_responses_and_close ();
     }
 #endif /* CLIENT_SUPPORT */

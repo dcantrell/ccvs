@@ -484,8 +484,9 @@ handle_valid_requests (args, len)
 		 * Server wants to know if we have this, to enable the
 		 * feature.
 		 */
-		if (send_to_server ("%s\n", rq->name) < 0)
-		    error (1, errno, "writing to server");
+		send_to_server (rq->name, 0);
+                send_to_server ("\n", 0);
+
 		if (!strcmp("UseUnchanged",rq->name))
 		    use_unchanged = 1;
 	    }
@@ -1764,19 +1765,17 @@ send_repository (dir, repos, update_dir)
 
     if (use_directory)
     {
-	if (send_to_server ("Directory ") < 0)
-	    error (1, errno, "writing to server");
-	if (send_to_server ("%s", update_dir) < 0)
-	    error (1, errno, "writing to server");
-
-	if (send_to_server ("\n%s\n", repos)
-	    < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("Directory ", 0);
+	send_to_server (update_dir, 0);
+	send_to_server ("\n", 1);
+	send_to_server (repos, 0);
+	send_to_server ("\n", 1);
     }
     else
     {
-	if (send_to_server ("Repository %s\n", repos) < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("Repository ", 0);
+	send_to_server (repos, 0);
+	send_to_server ("\n", 1);
     }
     if (supported_request ("Static-directory"))
     {
@@ -1789,8 +1788,7 @@ send_repository (dir, repos, update_dir)
 	strcat (adm_name, CVSADM_ENTSTAT);
 	if (isreadable (adm_name))
 	{
-	    if (send_to_server ("Static-directory\n") < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("Static-directory\n", 0);
 	}
     }
     if (supported_request ("Sticky"))
@@ -1811,19 +1809,16 @@ send_repository (dir, repos, update_dir)
 	{
 	    char line[80];
 	    char *nl;
-	    if (send_to_server ("Sticky ") < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("Sticky ", 0);
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (send_to_server ("%s", line) < 0)
-		    error (1, errno, "writing to server");
+		send_to_server (line, 0);
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (send_to_server ("\n") < 0)
-		    error (1, errno, "writing to server");
+                send_to_server ("\n", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -1846,19 +1841,19 @@ send_repository (dir, repos, update_dir)
 	{
 	    char line[80];
 	    char *nl;
-	    if (send_to_server ("Checkin-prog ") < 0)
-		error (1, errno, "writing to server");
+
+	    send_to_server ("Checkin-prog ", 0);
+
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (send_to_server ("%s", line) < 0)
-		    error (1, errno, "writing to server");
+		send_to_server (line, 0);
+
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (send_to_server ("\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("\n", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -1881,19 +1876,19 @@ send_repository (dir, repos, update_dir)
 	{
 	    char line[80];
 	    char *nl;
-	    if (send_to_server ("Update-prog ") < 0)
-		error (1, errno, "writing to server");
+
+	    send_to_server ("Update-prog ", 0);
+
 	    while (fgets (line, sizeof (line), f) != NULL)
 	    {
-		if (send_to_server ("%s", line) < 0)
-		    error (1, errno, "writing to server");
+		send_to_server (line, 0);
+
 		nl = strchr (line, '\n');
 		if (nl != NULL)
 		    break;
 	    }
 	    if (nl == NULL)
-		if (send_to_server ("\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("\n", 1);
 	    if (fclose (f) == EOF)
 		error (0, errno, "closing %s", adm_name);
 	}
@@ -2025,8 +2020,9 @@ client_expand_modules (argc, argv, local)
     for (i = 0; i < argc; ++i)
 	send_arg (argv[i]);
     send_a_repository ("", server_cvsroot, "");
-    if (send_to_server ("expand-modules\n") < 0)
-	error (1, errno, "writing to server");
+
+    send_to_server ("expand-modules\n", 0);
+
     errs = get_server_responses ();
     if (last_repos != NULL)
         free (last_repos);
@@ -2139,29 +2135,23 @@ struct response responses[] =
  * We need this "bottleneck function" because not all systems treat
  * sockets the same as file descriptors.  From now on, all data to the
  * server goes through here.
- * 
- * It is called like printf, which is kind of crock performance-wise
- * because it means all kinds of extra processing (e.g. memory
- * allocation) and most callers don't use it.  We should have a
- * fputs_to_server instead (or in addition, although I'm not sure
- * there is any need for the printf-like calling convention when those
- * rare callers that need it can just do an sprintf).  */
+ *
+ * If len is 0, then send_to_server computes the string's length
+ * itself.  So if len is 0, the string needs to be NULL-terminated.
+ *
+ * CALLERS BEWARE: This function no longer does printf-style formatting.
+ *
+ * Haven't decided about the return value yet.
+ */
 int
-#if __STDC__
-send_to_server (char *data, ...)
-#else /* !__STDC__ */
-send_to_server (data, va_alist)
-     char *data;
-     va_dcl
-#endif /* !__STDC__ */
+send_to_server (str, len)
+     char *str;
+     int len;
 {
-  int len;
-  char *buf;
-  va_list args;
+  int len_written = 0;
 
-  VA_START (args, data);
-  len = vasprintf (&buf, data, args);
-  va_end (args);
+  if (len == 0)
+    len = strlen (str);
 
   /* 
    * TODO: for the moment, we just do pretty much what the old
@@ -2170,7 +2160,21 @@ send_to_server (data, va_alist)
    * file-descriptorish.  A lot of other code that still refers to
    * to_server has to be changed too, though.
    */
-  return fprintf (to_server, "%s", buf);
+
+  while (len_written < len)
+    {
+      len_written += fwrite (str, 1, len, to_server);
+
+      if (len_written == len)
+        break;
+
+      if (ferror (to_server))
+        error (1, errno, "writing to server");
+      if (feof (to_server))
+        error (1, 0, "premature end-of-file on server");
+    }
+
+  return len_written;
 }
 
 /*
@@ -2588,6 +2592,16 @@ start_kerberos_server (tofdp, fromfdp, log)
 
 #endif /* HAVE_KERBEROS */
 
+/*
+ * Flag var; we'll set it in start_server() and not one of its
+ * callees, such as start_rsh_server().  This means that there might
+ * be a small window between the starting of the server and the
+ * setting of this var, but all the code in that window shouldn't care
+ * because it's busy checking return values to see if the server got
+ * started successfully anyway.
+ */
+int server_started = 0;
+
 /* Contact the server.  */
 void
 start_server ()
@@ -2619,6 +2633,9 @@ start_server ()
 #endif /* ! RSH_NOT_TRANSPARENT */
       }
 #endif /* HAVE_KERBEROS */
+
+    /* "Hi, I'm Darlene and I'll be your server tonight..." */
+    server_started = 1;
 
     /* todo: some OS's don't need these calls... */
     close_on_exec (tofd);
@@ -2668,22 +2685,24 @@ start_server ()
     stored_checksum_valid = 0;
     stored_mode_valid = 0;
 
-    if (send_to_server ("Root %s\n", server_cvsroot) < 0)
-	error (1, errno, "writing to server");
+    send_to_server ("Root ", 0);
+    send_to_server (server_cvsroot, 0);
+    send_to_server ("\n", 1);
+
     {
 	struct response *rs;
-	if (send_to_server ("Valid-responses") < 0)
-	    error (1, errno, "writing to server");
+
+	send_to_server ("Valid-responses", 0);
+
 	for (rs = responses; rs->name != NULL; ++rs)
 	{
-	    if (send_to_server (" %s", rs->name) < 0)
-		error (1, errno, "writing to server");
+	    send_to_server (" ", 0);
+	    send_to_server (rs->name, 0);
 	}
-	if (send_to_server ("\n") < 0)
-	    error (1, errno, "writing to server");
+	send_to_server ("\n", 1);
     }
-    if (send_to_server ("valid-requests\n") < 0)
-	error (1, errno, "writing to server");
+    send_to_server ("valid-requests\n", 0);
+
     if (get_server_responses ())
 	exit (1);
 
@@ -2708,8 +2727,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -n\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -n\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2719,8 +2737,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -q\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -q\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2730,8 +2747,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -Q\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -Q\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2741,8 +2757,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -r\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -r\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2752,8 +2767,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -t\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -t\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2763,8 +2777,7 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		if (send_to_server ("Global_option -l\n") < 0)
-		    error (1, errno, "writing to server");
+		send_to_server ("Global_option -l\n", 0);
 	    }
 	    else
 		error (1, 0,
@@ -2775,8 +2788,15 @@ start_server ()
       {
 	if (supported_request ("gzip-file-contents"))
 	  {
-	    if (send_to_server ("gzip-file-contents %d\n", gzip_level) < 0)
-	      error (1, 0, "writing to server");
+            char gzip_level_buf[5];
+            int len;
+
+	    send_to_server ("gzip-file-contents ", 0);
+
+            len = sprintf (gzip_level_buf, "%d", gzip_level);
+	    send_to_server (gzip_level_buf, len);
+
+	    send_to_server ("\n", 1);
 	  }
 	else
 	  {
@@ -2947,22 +2967,25 @@ void
 send_arg (string)
     char *string;
 {
+    char buf[1];
     char *p = string;
-    if (send_to_server ("Argument ") < 0)
-	error (1, errno, "writing to server");
+
+    send_to_server ("Argument ", 0);
+
     while (*p)
     {
 	if (*p == '\n')
 	{
-	    if (send_to_server ("\nArgumentx ") < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("\nArgumentx ", 0);
 	}
-	else if (putc (*p, to_server) == EOF)
-	    error (1, errno, "writing to server");
+	else
+        {
+          buf[0] = *p;
+          send_to_server (buf, 1);
+        }
 	++p;
     }
-    if (putc ('\n', to_server) == EOF)
-	error (1, errno, "writing to server");
+    send_to_server ("\n", 1);
 }
 
 static void send_modified PROTO ((char *, char *, Vers_TS *));
@@ -3104,11 +3127,18 @@ send_modified (file, short_pathname, vers)
 	}
 #endif /* LINES_CRLF_TERMINATED */
 
-	send_to_server ("Modified %s\n%s\nz%lu\n", file, mode_string,
-		 (unsigned long) newsize);
-	fwrite (buf, newsize, 1, to_server);
-	if (feof (to_server) || ferror (to_server))
+        {
+          char tmp[MAXLINELEN];
+          int len;
+          
+          len = sprintf (tmp, "Modified %s\n%s\nz%lu\n",
+                         file, mode_string, (unsigned long) newsize);
+
+          send_to_server (tmp, len);
+          send_to_server (buf, newsize);
+          if (feof (to_server) || ferror (to_server))
 	    error (1, errno, "writing to server");
+        }
     }
     else
     {
@@ -3129,17 +3159,22 @@ send_modified (file, short_pathname, vers)
 	if (close (fd) < 0)
 	    error (0, errno, "warning: can't close %s", short_pathname);
 
-	if (send_to_server ("Modified %s\n%s\n%lu\n", file,
-		     mode_string, (unsigned long) newsize) < 0)
-	    error (1, errno, "writing to server");
+        {
+          char tmp[MAXLINELEN];
+          int len;
+          
+          len = sprintf (tmp, "Modified %s\n%s\n%lu\n", file,
+                              mode_string, (unsigned long) newsize);
+
+          send_to_server (tmp, len);
+        }
 
 	/*
 	 * Note that this only ends with a newline if the file ended with
 	 * one.
 	 */
 	if (newsize > 0)
-	    if (fwrite (buf, newsize, 1, to_server) != 1)
-		error (1, errno, "writing to server");
+          send_to_server (buf, newsize);
     }
     free (buf);
     free (mode_string);
@@ -3170,27 +3205,33 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 
     if (vers->vn_user != NULL)
     {
-	/* The Entries request.  */
-	/* Not sure about whether this deals with -k and stuff right.  */
-	if (send_to_server ("Entry /%s/%s/%s%s/%s/", file, vers->vn_user,
+      char tmp[MAXLINELEN];
+      int len;
+
+      len = sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
+                     file, vers->vn_user,
 		     vers->ts_conflict == NULL ? "" : "+",
 		     (vers->ts_conflict == NULL ? ""
 		      : (vers->ts_user != NULL &&
 			 strcmp (vers->ts_conflict, vers->ts_user) == 0
 			 ? "="
 			 : "modified")),
-		     vers->options) < 0)
-	    error (1, errno, "writing to server");
+		     vers->options);
+
+	/* The Entries request.  */
+	/* Not sure about whether this deals with -k and stuff right.  */
+	send_to_server (tmp, len);
 	if (vers->entdata != NULL && vers->entdata->tag)
 	{
-	    if (send_to_server ("T%s", vers->entdata->tag) < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("T", 0);
+	    send_to_server (vers->entdata->tag, 0);
 	}
 	else if (vers->entdata != NULL && vers->entdata->date)
-	    if (send_to_server ("D%s", vers->entdata->date) < 0)
-		error (1, errno, "writing to server");
-	if (send_to_server ("\n") < 0)
-	    error (1, errno, "writing to server");
+          {
+	    send_to_server ("D", 0);
+	    send_to_server (vers->entdata->date, 0);
+          }
+	send_to_server ("\n", 1);
     }
 
     if (vers->ts_user == NULL)
@@ -3203,8 +3244,9 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (!use_unchanged)
 	{
 	    /* if the server is old, use the old request... */
-	    if (send_to_server ("Lost %s\n", file) < 0)
-		error (1, errno, "writing to server");
+	    send_to_server ("Lost ", 0);
+	    send_to_server (file, 0);
+	    send_to_server ("\n", 1);
 	    /*
 	     * Otherwise, don't do anything for missing files,
 	     * they just happen.
@@ -3220,8 +3262,11 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	/* Only use this request if the server supports it... */
 	if (use_unchanged)
-	    if (send_to_server ("Unchanged %s\n", file) < 0)
-		error (1, errno, "writing to server");
+          {
+	    send_to_server ("Unchanged ", 0);
+	    send_to_server (file, 0);
+	    send_to_server ("\n", 1);
+          }
     }
 
     /* if this directory has an ignore list, add this file to it */
@@ -3366,8 +3411,13 @@ send_file_names (argc, argv)
     {
 	if (supported_request ("Max-dotdot"))
 	{
-	    if (send_to_server ("Max-dotdot %d\n", max_level) < 0)
-		error (1, errno, "writing to server");
+            char buf[10];
+            int len;
+            len = sprintf (buf, "%d", max_level);
+
+	    send_to_server ("Max-dotdot ", 0);
+	    send_to_server (buf, len);
+	    send_to_server ("\n", 1);
 	}
 	else
 	    /*
@@ -3599,11 +3649,15 @@ client_notify (repository, update_dir, filename, notif_type, val)
     int notif_type;
     char *val;
 {
+    char buf[MAXLINELEN];
+    int len;
+
     send_a_repository ("", repository, update_dir);
 
-    if (send_to_server ("Notify %s\n%c\t%s", filename,
-		 notif_type, val) < 0)
-	error (1, errno, "writing to server");
+    len = sprintf (buf, "Notify %s\n%c\t%s",
+                   filename, notif_type, val);
+
+    send_to_server (buf, len);
 }
 
 /*
@@ -3617,8 +3671,11 @@ option_with_arg (option, arg)
 {
     if (arg == NULL)
 	return;
-    if (send_to_server ("Argument %s\n", option) < 0)
-	error (1, errno, "writing to server");
+
+    send_to_server ("Argument ", 0);
+    send_to_server (option, 0);
+    send_to_server ("\n", 1);
+
     send_arg (arg);
 }
 
