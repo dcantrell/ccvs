@@ -1,5 +1,8 @@
 1998-08-31  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL (Tested platforms): Add Solaris x86 (reported by Jeremy of
+	exit109.com) and Irix 6.4 (reported by Russ Allbery).
+
 	* INSTALL (Tested platforms): Add Solaris 2.6 (reported by Russ
 	Allbery).
 
