@@ -1,5 +1,11 @@
 2002-05-08  Derek Price  <oberon@umich.edu>
 
+	* configure.in: Add code to use lib/fnmatch.h.in redirection when
+	necessary to avoid namespace conflicts in #includes.
+	* configure: Regenerated.
+
+2002-05-08  Derek Price  <oberon@umich.edu>
+
 	* TODO (215): Add note.
 
 2002-05-08  Derek Price  <oberon@umich.edu>
