@@ -1918,12 +1918,26 @@ checkaddfile (file, repository, tag, options, rcsnode)
     {
 	/* file has existed in the past.  Prepare to resurrect. */
 	char *rev;
+	char *oldexpand;
 
 	if ((rcsfile = *rcsnode) == NULL)
 	{
 	    error (0, 0, "could not find parsed rcsfile %s", file);
 	    retval = 1;
 	    goto out;
+	}
+
+	oldexpand = RCS_getexpand (rcsfile);
+	if ((oldexpand != NULL
+	     && options != NULL
+	     && strcmp (options + 2, oldexpand) != 0)
+	    || (oldexpand == NULL && options != NULL))
+	{
+	    /* We tell the user about this, because it means that the
+	       old revisions will no longer retrieve the way that they
+	       used to.  */
+	    error (0, 0, "changing keyword expansion mode to %s", options);
+	    RCS_setexpand (rcsfile, options + 2);
 	}
 
 	if (!adding_on_branch)

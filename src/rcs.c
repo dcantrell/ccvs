@@ -3668,8 +3668,24 @@ char *
 RCS_getexpand (rcs)
     RCSNode *rcs;
 {
+    /* Since RCS_parsercsfile_i now reads expand, don't need to worry
+       about RCS_reparsercsfile.  */
     assert (rcs != NULL);
     return rcs->expand;
+}
+
+/* Set keyword expansion mode to EXPAND.  For example "b" for binary.  */
+void
+RCS_setexpand (rcs, expand)
+    RCSNode *rcs;
+    char *expand;
+{
+    /* Since RCS_parsercsfile_i now reads expand, don't need to worry
+       about RCS_reparsercsfile.  */
+    assert (rcs != NULL);
+    if (rcs->expand != NULL)
+	free (rcs->expand);
+    rcs->expand = xstrdup (expand);
 }
 
 /* RCS keywords, and a matching enum.  */

@@ -10759,13 +10759,16 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  dotest binfiles3-6a "cat CVS/Entries" \
 "/file1/0/[A-Za-z0-9 :]*/-kb/
 D"
+	  # TODO: This just tests the case where the old keyword
+	  # expansion mode is the default (RCS_getexpand == NULL
+	  # in checkaddfile()); should also test the case in which
+	  # we are changing it from one non-default value to another.
 	  dotest binfiles3-7 "${testcvs} -q ci -m readd-it" \
-"Checking in file1;
+"${PROG} [a-z]*: changing keyword expansion mode to -kb
+Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
 done"
-	  # Here is the bug; should be "kb" not "kv".  We have clobbered
-	  # yet another user file :-(.
 	  dotest binfiles3-8 "${testcvs} -q log -h -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
@@ -10773,7 +10776,7 @@ head: 1\.3
 branch:
 locks: strict
 access list:
-keyword substitution: kv
+keyword substitution: b
 total revisions: 3
 ============================================================================="
 	  cd ../..
