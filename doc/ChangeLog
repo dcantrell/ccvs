@@ -1,5 +1,7 @@
 1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Dates): Also mention log -d.
+
 	* cvs.texinfo (Invoking CVS): No space is allowed between -r or -w
 	and its argument, for the log command.
 

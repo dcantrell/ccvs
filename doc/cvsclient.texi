@@ -486,6 +486,11 @@ and @code{update} requests, the server should support two formats:
 The former format is preferred; the latter however is sent by the CVS
 command line client (versions 1.5 through at least 1.9).
 
+For the @samp{-d} option to the @code{log} request, servers should at
+least support RFC 822/1123 format.  Clients are encouraged to use this
+format too (traditionally the command line CVS client has just passed
+along the date format specified by the user, however).
+
 For @code{Mod-time}, see the description of that response.
 
 For @code{Notify}, see the description of that request.
