@@ -3,6 +3,9 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* Failures to open the CVS_CLIENT_LOG, CVS_SERVER_LOG, and CVS_SECONDARY_LOG
+  are no longer fatal.
+
 * CVS's client and server IO buffers now rely on a GNULIB modules for memory
   management rather than taking on the task themseleves.  This should be faster
   on any system but may increase memory usage noticably on systems without the
