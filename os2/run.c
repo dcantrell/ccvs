@@ -18,10 +18,8 @@
 
 #include "cvs.h"
 
-#define INCL_DOSQUEUES
-#define INCL_DOSPROCESS
-#define INCL_DOSSESMGR
-#include <os2.h>
+#include "os2inc.h"
+
 #include <process.h>
 
 #include <stdio.h>

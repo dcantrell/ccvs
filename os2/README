@@ -19,6 +19,27 @@ such as emacs will generally do this).
         You will get warnings during the compilation; ignore them.
 Report bugs to <bug-cvs@prep.ai.mit.edu>.
 
+
+
+Some notes on the watcom port:
+------------------------------
+
+You need the OS/2 TCPIP developers toolkit to translate the sources.
+This is not as bad as it sounds, since the toolkit is on your OS/2
+CD.
+
+To compile the sources, enter
+
+        wmake -f watcom.mak
+
+at the OS/2 prompt.
+
+The executable created by the watcom compiler does *not* need a runtime
+DLL.
+
+
+        Uz      (uz@musoftware.com)
+
 Credits:
 
 Original port in 1995 by Karl Fogel <kfogel@cyclic.com>.

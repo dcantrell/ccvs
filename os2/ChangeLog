@@ -1,3 +1,29 @@
+Fri Dec  6 11:00:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* os2inc.h, watcom.mak: Add GPL notice.
+
+1996-11-24  Ullrich von Bassewitz  <uz@wuschel.ibb.schwaben.com>
+
+	Changes for Watcom C:
+	* README: Describe watcom port.
+	* config.h: Include stdio.h and errno.h.
+	* config.h: If EACCES is not defined, define it to EACCESS.
+	* filesubr.c: Use EACCES not EACCESS.
+	* config.h [__WATCOMC__]: Define _setmode and _cwait.
+	Don't define HAVE_DIRENT_H.  Don't declare getpid.  Don't
+	define NEED_DECOY_PERMISSIONS.  Don't define R_OK and friends.
+	* os2inc.h: New file; includes os2.h but protected against
+	multiple inclusion.
+	* config.h: Include os2inc.h before defining sleep.
+	* filesubr.c, getpass.c, popen.c, run.c: Include os2inc.h rather than
+	trying to go through the right contortions to include os2.h
+	ourselves.
+	* popen.c (popen) [__WATCOMC__]: Use _hdopen together with fdopen.
+	(popenRW): Change pid from PID to int.
+	* tcpip.h [__WATCOMC__]: Work around errno value conflict
+	between the TCP/IP header and errno.h.
+	* watcom.mak: New file.
+
 Sat Nov 23 18:36:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Try to clarify status vis-a-vis client vs. local.
