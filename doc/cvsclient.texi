@@ -657,11 +657,13 @@ or without conflicts.
 @item Patched @var{pathname} \n
 This is just like @code{Updated} and takes the same additional data,
 with the one difference that instead of sending a new copy of the file,
-the server sends a patch produced by @samp{diff -u}.  This client must
-apply this patch, using the @samp{patch} program, to the existing file.
-This will only be used when the client has an exact copy of an earlier
-revision of a file.  This response is only used if the @code{update}
-command is given the @samp{-u} argument.
+the server sends a patch.  This patch is produced by @samp{diff -c} for
+@sc{cvs} 1.6 and later (see POSIX.2 for a description of this format),
+or @samp{diff -u} for previous versions of @sc{cvs}; clients are
+encouraged to accept either format.  The client must apply this patch to
+the existing file.  This will only be used when the client has an exact
+copy of an earlier revision of a file.  This response is only used if
+the @code{update} command is given the @samp{-u} argument.
 
 @item Mode @var{mode} \n
 This @var{mode} applies to the next file mentioned in

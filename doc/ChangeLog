@@ -1,3 +1,9 @@
+Mon Jun  3 17:01:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Responses): Clarify "diff -c" versus "diff -u"
+	format in Patched response.  Don't specify how the client must
+	implement its patch-applying functionality.
+
 Sun May 26 17:12:24 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.texinfo (tag options) Document option "-c".
