@@ -28124,10 +28124,31 @@ EOF
 	    # And now the secondary.
 	    rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 
+	    # Wrap the CVS server to allow --primary-root to be set by the
+	    # secondary.
+	    cat <<EOF >$TESTDIR/secondary-wrapper
+#! /bin/sh
+export CVS_SERVER=$CVS_SERVER
+$CVS_SERVER --primary-root $TESTDIR/primary_cvsroot=$TESTDIR/secondary_cvsroot "\$@"
+EOF
+	    chmod a+x $TESTDIR/secondary-wrapper
+	    CVS_SERVER_save=$CVS_SERVER
+	    CVS_SERVER_secondary=$TESTDIR/secondary-wrapper
+	    CVS_SERVER=$CVS_SERVER_secondary
+
 	    # Checkout from secondary
+	    #
+	    # It may look like we are checking out from the primary here, but
+	    # the deciding factor is the --primary-root translation above.
+	    # If the primary and secondary hostname were different, this would
+	    # be more obvious.
+	    #
+	    # For now, move the primary root out of the way to satisfy
+	    # ourselves that the data is coming from the secondary.
+	    mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
 	    cd ../..
 	    mkdir secondary; cd secondary
-	    dotest writeproxy-1 "$testcvs -qd$SECONDARY_CVSROOT co CVSROOT" \
+	    dotest writeproxy-1 "$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
 "U CVSROOT/checkoutlist
 U CVSROOT/commitinfo
 U CVSROOT/config
@@ -28149,9 +28170,14 @@ PrimaryServer=$PRIMARY_CVSROOT"
 
 	    # Checkin to secondary
 	    cd ..
-	    dotest writeproxy-4 "$testcvs -Qd$SECONDARY_CVSROOT co -ldtop ."
+	    dotest writeproxy-4 "$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
 	    cd top
 	    mkdir firstdir
+
+	    # Have to move the primary root back before we can perform write
+	    # operations.
+	    mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+
 	    dotest writeproxy-5 "$testcvs -Q add firstdir"
 	    cd firstdir
 	    echo now you see me >file1
@@ -28161,6 +28187,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    # Make sure the sync took place
 	    dotest writeproxy-7a "$testcvs -Q up"
 
+	    CVS_SERVER=$CVS_SERVER_save
 	    # Checkout from primary
 	    cd ../../../primary
 	    dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
@@ -28176,6 +28203,7 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    echo now you see me again >file1
 	    dotest writeproxy-10 "$testcvs -Q ci -medit file1"
 
+	    CVS_SERVER=$CVS_SERVER_secondary
 	    # Update from secondary
 	    cd ../../secondary/firstdir
 	    dotest writeproxy-11 "$testcvs -q up" \
@@ -28198,6 +28226,8 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    cd ../../..
 	    rm -r writeproxy
 	    rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	    rm $TESTDIR/secondary-wrapper
+	    CVS_SERVER=$CVS_SERVER_save
 	  fi
 	  ;;
 

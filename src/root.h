@@ -40,3 +40,6 @@ typedef struct cvsroot_s {
     unsigned char isremote;	/* Nonzero if we are doing remote access. */
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
+
+void primary_root_add (const char *arg);
+char *primary_root_translate (const char *root_in);
