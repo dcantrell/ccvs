@@ -1,3 +1,8 @@
+2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* main.c (usg): Remove Dr. Pascal Molli's CVS URL from the
+	documentation.
+
 2004-12-08  Derek Price  <derek@ximbiot.com>
 
 	* root.c (Name_Root): s/TRACE_FUNCTION/TRACE_FLOW/.

@@ -1,3 +1,8 @@
+2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* README: Remove Dr. Pascal Molli's CVS URL from the
+	documentation.
+
 2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* validate_repo.in: Loosen revision regex even more.

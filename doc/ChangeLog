@@ -1,7 +1,9 @@
-2004-12-07  Mark D. Baushke  <mdb@cvshome.org>
+2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
-	* cvs.texinfo (BUGS, What is CVS?): Remove references to Dr.
-	Pascal Molli's cvs document which is no longer available.
+	* cvs.texinfo (BUGS, What is CVS?): Remove Dr. Pascal Molli's CVS
+	URL from the documentation.
+	* cvs.man.footer: Ditto.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
 
 2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
 

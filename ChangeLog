@@ -1,3 +1,9 @@
+2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* README: Remove Dr. Pascal Molli's CVS URL from the
+	documentation.
+	* FAQ: Ditto.
+	
 2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS: Document new CVSROOT options and case insensitivity.

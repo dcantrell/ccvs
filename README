@@ -98,10 +98,9 @@ cvs.texinfo and re-generate cvs.ps using TeX.
 * How do I get up-to-date information and information about other
 versions of CVS?
 
-On the web, http://www.loria.fr/~molli/cvs-index.html.
-
 See also 
 	http://www.cvshome.org
+	http://www.cvsnt.org
 
 The mailing list for CVS is info-cvs@gnu.org.  Send
 subscription and removal requests for that list to
