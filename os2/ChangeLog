@@ -1,3 +1,7 @@
+Sat Oct 26 16:21:26 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* config.h (HAVE_TZSET): Add a #definition for this.
+
 Tue Oct  8 12:37:35 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* options.h (HAD_RCS4): Remove; no longer used.
