@@ -63,8 +63,8 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 		   is what I would expect.  */
 		if (!force_tag_match || !(vers->tag || vers->date))
 		    if (!really_quiet)
-			error (0, 0, "use `cvs add' to create an entry for %s",
-			       finfo->fullname);
+			error (0, 0, "use `%s add' to create an entry for %s",
+			       program_name, finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
 	}
@@ -74,8 +74,8 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 		ret = T_UPTODATE;
 	    else
 	    {
-		error (0, 0, "use `cvs add' to create an entry for %s",
-		       finfo->fullname);
+		error (0, 0, "use `%s add' to create an entry for %s",
+		       program_name, finfo->fullname);
 		ret = T_UNKNOWN;
 	    }
 	}

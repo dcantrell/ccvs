@@ -1,3 +1,18 @@
+Fri Oct  3 09:47:04 1997  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (168): use PROG instead of CVSBASE, since they are
+ 	equal.
+	(importb-2): refer to PROG instead of "cvs" in error message.
+
+	* add.c (add): use PROGRAM_NAME in the error message rather than
+ 	"cvs".
+	* classify.c (Classify_File): same.
+	* commit.c (find_fileproc): same.
+	* sanity.sh: change all add notification messages to refer to PROG
+ 	rather than "cvs".  Fixed nasty quoting in several places at the
+ 	same time, replacing older "'command'" forms with newer
+ 	".command." for simplicity.
+
 Sat Sep 27 01:37:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (rcslib-merge-8): Accept "P file1" as well as "U file1".
