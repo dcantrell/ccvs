@@ -1,5 +1,14 @@
 2002-05-02  Derek Price  <oberon@umich.edu>
 
+	* configure.in: Add check for fnmatch.h so we can avoid namespace
+	conflicts on systems where the fnmatch function is broken.  Not sure
+	this applies to any systems but Mac OS X.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
+2002-05-02  Derek Price  <oberon@umich.edu>
+
 	* .cvsignore: Remove config.cache and add autom4te.cache.
 
 2002-05-02  Derek Price  <oberon@umich.edu>
