@@ -31,7 +31,7 @@ testcvs=$1; shift
 
 # Remaining arguments are the names of tests to run.
 if test x"$*" = x; then
-  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts"
+  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules"
 else
   tests="$*"
 fi
@@ -99,7 +99,7 @@ if test "x$remote" = xyes; then
   # Use rsh so we can test it without having to muck with inetd or anything 
   # like that.  Also needed to get CVS_SERVER to work.
   CVS_CLIENT_PORT=-1; export CVS_CLIENT_PORT
-  CVS_SERVER=${CVS}; export CVS_SERVER
+  CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
 mkdir tmp ; cd tmp
