@@ -18,8 +18,8 @@ distribution's top directory.  At least with the tar port I'm using,
 the sources get extracted without carriage returns and you must add
 carriage returns to the end of every line in cvsnt.mak.  It doesn't
 seem to be necessary to add them to any other file.  This makefile was
-generated with Visual C++ 6.x.  With Visual C++ 6.x you can also try
-cvsnt.dsp.  For Visual C++ 2.x you probably are in the position of
+generated with Visual C++ 5.x.  With Visual C++ 6.x you can also try
+cvsnt.dsw.  For Visual C++ 2.x you probably are in the position of
 digging through old versions of CVS for a cvsnt.mak and then updating
 it.  Feel free to let us know about problems of this sort as with
 other bug reports.
@@ -27,7 +27,7 @@ other bug reports.
 If you end up regenerating the MSVC makefiles and submitting a patch back to
 us, please be careful.  MSVC appears to be trying to write absolute paths into
 the diff/libdiff.mak file and a relative path to a file in the local MSVC
-install in cvsnt.dep.
+install in cvsnt.dep (this last only with MSVC 6.x).
 
 Send bug reports to bug-cvs@gnu.org.
 
