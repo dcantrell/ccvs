@@ -3,7 +3,10 @@
 	* client.c (socket_buffer_*): Moved most of the socket stuff to...
 	* socket-client.h: ...here...
 	* socket-client.c: ...and here.
+	* Makefile.am (cvs_SOURCES): Add new source files.
 	(Patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
 
 2003-05-05  Derek Price  <derek@ximbiot.com>
 
