@@ -27,11 +27,7 @@
 /* Specification.  */
 #include "getndelim2.h"
 
-#if STDC_HEADERS
-# include <stdlib.h>
-#else
-char *malloc (), *realloc ();
-#endif
+#include <stdlib.h>
 
 #include "unlocked-io.h"
 
@@ -93,7 +89,7 @@ getndelim2 (char **lineptr, size_t *linesize, size_t offset, size_t limit,
 	  read_pos = *linesize - nbytes_avail + *lineptr;
 	}
 
-      if (c == EOF || ferror (stream))
+      if (c == EOF)
 	{
 	  /* Return partial line, if any.  */
 	  if (read_pos == *lineptr)

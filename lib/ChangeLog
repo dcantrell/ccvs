@@ -1,5 +1,9 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* getline.c, getndelim2.c: Merge changes from GNULIB.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* system.h: Assume <string.h> and <sys/types.h> per the notes in
 	HACKING.
 
