@@ -1,3 +1,8 @@
+Wed May  8 15:02:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Set EXPR in the case that the expr in the path is the
+	one that we want.
+
 Wed May  8 14:06:24 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh (test): - convert all '[' to test ala GCD

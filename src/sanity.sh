@@ -81,8 +81,10 @@ fi
 
 GEXPRLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
 
+EXPR=expr
+
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
-if expr 'abc
+if $EXPR 'abc
 def' : 'abc
 def' >/dev/null; then
   : good, it works
@@ -111,7 +113,7 @@ fi
 
 # Warn SunOS, SysVr3.2, etc., users that they may be partially losing
 # if we can't find a GNU expr to ease their troubles...
-if expr 'a
+if $EXPR 'a
 b' : 'a
 c' >/dev/null; then
   for path in $GEXPRLOCS ; do
