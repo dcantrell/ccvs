@@ -281,9 +281,15 @@ release_delete (dir)
     (void) CVS_STAT (dir, &st);
     if (ino != st.st_ino)
     {
+	/* This test does not work on cygwin32, because under cygwin32
+	   the st_ino field is not the same when you refer to a file
+	   by a different name.  This is a cygwin32 bug, but then I
+	   don't see what the point of this test is anyhow.  */
+#ifndef __CYGWIN32__
 	error (0, 0,
 	       "Parent dir on a different disk, delete of %s aborted", dir);
 	return;
+#endif
     }
     /*
      * XXX - shouldn't this just delete the CVS-controlled files and, perhaps,
