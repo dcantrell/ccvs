@@ -53,7 +53,7 @@ cvs \- Concurrent Versions System
 .IX  revisions  "cvs command"  ""  "\fLcvs\fP \- source control"
 This manpage is a summary of some of the features of
 \fBcvs\fP.  It is auto-generated from an appendix of the CVS manual.
-For more current and in-depth documentation, please consult the
+For more in-depth documentation, please consult the
 Cederqvist manual (via the
 .B info CVS
 command or otherwise,
