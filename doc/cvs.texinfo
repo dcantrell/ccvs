@@ -13342,14 +13342,7 @@ for example @file{/var/tmp}; see @code{TMPDIR} in
 temporary directory.
 
 @item cannot commit files as 'root'
-When committing a permanent change, @sc{cvs} makes a log entry of
-who committed the change.  If you are committing the change logged
-in as "root" (not under "su" or other root-priv giving program),
-@sc{cvs} cannot determine who is actually making the change.
-As such, by default, @sc{cvs} disallows changes to be committed by users
-logged in as "root".  (You can disable this option by commenting out
-the definition of @code{CVS_BADROOT} in @file{options.h} before
-building @sc{cvs}.
+See @samp{'root' is not allowed to commit files}.
 
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
@@ -13568,6 +13561,16 @@ happen only after a @sc{cvs} command has completed, and
 you should be able to just ignore the message.
 However, if you have discovered information concerning its
 cause, please let us know as described in @ref{BUGS}.
+
+@item 'root' is not allowed to commit files
+When committing a permanent change, @sc{cvs} makes a log entry of
+who committed the change.  If you are committing the change logged
+in as "root" (not under "su" or other root-priv giving program),
+@sc{cvs} cannot determine who is actually making the change.
+As such, by default, @sc{cvs} disallows changes to be committed by users
+logged in as "root".  (You can disable this option by commenting out
+the definition of @code{CVS_BADROOT} in @file{options.h} before
+building @sc{cvs}.
 
 @item Too many arguments!
 This message is typically printed by the @file{log.pl}

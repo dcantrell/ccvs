@@ -1,3 +1,8 @@
+2001-08-24  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Error messages): Add new message about root not
+	being allowed to do commit.
+
 2001-08-24  Derek Price  <dprice@collab.net>
 
 	* cvs.texinfo (config): Add a new RereadLogAfterVerify
