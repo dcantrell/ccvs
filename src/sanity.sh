@@ -440,9 +440,9 @@ directory_cmp ()
 	cd $OLDPWD
 	while read a
 	do
-		if [ -f $DIR_1/"$a" ] ; then
+		if test -f $DIR_1/"$a" ; then
 			cmp -s $DIR_1/"$a" $DIR_2/"$a"
-			if [ $? -ne 0 ] ; then
+			if test $? -ne 0 ; then
 				ISDIFF=true
 			fi
 		fi
@@ -601,7 +601,7 @@ ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
 					fi
 
 					# update it.
-					if [ "${do}" = "rm" -a "$j" != "commit -m test" ] || ${CVS} update ${files} ; then
+					if test "${do}" = "rm" -a "$j" != "commit -m test" || ${CVS} update ${files} ; then
 					  echo "PASS: test 15-${do}-$j" >>${LOGFILE}
 					else
 					  echo "FAIL: test 15-${do}-$j" | tee -a ${LOGFILE}; exit 1
@@ -768,7 +768,7 @@ HERE
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 		dotest basic2-1 "${testcvs} -q co first-dir" ''
 		for i in first-dir dir1 dir2 ; do
-			if [ ! -d $i ] ; then
+			if test ! -d $i ; then
 				mkdir $i
 				if ${CVS} add $i  >> ${LOGFILE}; then
 				  echo "PASS: test 29-$i" >>${LOGFILE}
@@ -809,7 +809,7 @@ HERE
 			echo "FAIL: test 33" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-#		if ${CVS} diff -u first-dir   >> ${LOGFILE} || [ $? = 1 ] ; then
+#		if ${CVS} diff -u first-dir   >> ${LOGFILE} || test $? = 1 ; then
 #			echo "PASS: test 34" >>${LOGFILE}
 #		else
 #			echo "FAIL: test 34" | tee -a ${LOGFILE} # ; exit 1
@@ -874,7 +874,7 @@ HERE
 			echo "FAIL: test 41" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-#		if ${CVS} diff -u first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
+#		if ${CVS} diff -u first-dir  >> ${LOGFILE} || test $? = 1 ; then
 #			echo "PASS: test 42" >>${LOGFILE}
 #		else
 #			echo "FAIL: test 42" | tee -a ${LOGFILE} # ; exit 1
@@ -900,7 +900,7 @@ HERE
 		fi
 
 		# end of third dive
-		if [ -d first-dir ] ; then
+		if test -d first-dir ; then
 			echo "FAIL: test 45.5" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 45.5" >>${LOGFILE}
@@ -930,7 +930,7 @@ HERE
 		fi
 
 		# rdiff by revision
-		if ${CVS} rdiff -r1.1 -rrtagged-by-head first-dir  >> ${LOGFILE} || [ $? = 1 ] ; then
+		if ${CVS} rdiff -r1.1 -rrtagged-by-head first-dir  >> ${LOGFILE} || test $? = 1 ; then
 			echo "PASS: test 49" >>${LOGFILE}
 		else
 			echo "FAIL: test 49" | tee -a ${LOGFILE} ; exit 1
@@ -1342,7 +1342,7 @@ done'
 
 		dotest_fail death-file4-4 "test -f file4" ''
 
-		if [ -f file3 ] ; then
+		if test -f file3 ; then
 			echo "FAIL: test 85" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 85" >>${LOGFILE}
@@ -1357,7 +1357,7 @@ done'
 
 		dotest_fail death-file4-5 "test -f file4" ''
 
-		if [ -f file3 ] ; then
+		if test -f file3 ; then
 			echo "PASS: test 87" >>${LOGFILE}
 		else
 			echo "FAIL: test 87" | tee -a ${LOGFILE} ; exit 1
@@ -1400,7 +1400,7 @@ done'
 			echo "FAIL: test 91" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		if [ -f file1 ] ; then
+		if test -f file1 ; then
 			echo "FAIL: test 92" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 92" >>${LOGFILE}
@@ -1430,7 +1430,7 @@ done'
 
 		dotest_fail death-file4-6 "test -f file4" ''
 
-		if [ -f file1 ] ; then
+		if test -f file1 ; then
 			echo "PASS: test 94" >>${LOGFILE}
 		else
 			echo "FAIL: test 94" | tee -a ${LOGFILE} ; exit 1
@@ -1696,7 +1696,7 @@ rcsmerge: warning: conflicts during merge'
 
 		cd first-dir
 		for i in 1 2 3 4 ; do
-			if [ -f imported-file"$i" ] ; then
+			if test -f imported-file"$i" ; then
 				echo "PASS: test 98-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 98-$i" | tee -a ${LOGFILE} ; exit 1
@@ -1794,14 +1794,14 @@ rcsmerge: warning: conflicts during merge'
 
 		cd first-dir
 
-		if [ -f imported-file1 ] ; then
+		if test -f imported-file1 ; then
 			echo "FAIL: test 108" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 108" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
-			if [ -f imported-file"$i" ] ; then
+			if test -f imported-file"$i" ; then
 				echo "PASS: test 109-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 109-$i" | tee -a ${LOGFILE} ; exit 1
@@ -1815,7 +1815,7 @@ rcsmerge: warning: conflicts during merge'
 			echo "FAIL: test 110" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		if [ -f imported-file4 ] ; then
+		if test -f imported-file4 ; then
 			echo "PASS: test 111" >>${LOGFILE}
 		else
 			echo "FAIL: test 111" | tee -a ${LOGFILE} ; exit 1
@@ -1838,14 +1838,14 @@ rcsmerge: warning: conflicts during merge'
 
 		cd first-dir
 
-		if [ -f imported-file1 ] ; then
+		if test -f imported-file1 ; then
 			echo "FAIL: test 114" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 114" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
-			if [ -f imported-file"$i" ] ; then
+			if test -f imported-file"$i" ; then
 				echo "PASS: test 115-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 115-$i" | tee -a ${LOGFILE} ; exit 1
