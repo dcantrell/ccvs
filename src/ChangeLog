@@ -1,5 +1,15 @@
 Wed Oct 22 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.h (RCSVers): New field other_delta.
+	* rcs.c (free_rcsvers_contents): Also free other_delta.
+	(getdelta): Read newphrases from deltas into other_delta field.
+	(putdelta): Write those newphrases.
+	* sanity.sh (rcs-8a): New test, for this fix.
+	* admin.c (admin_fileproc): If "-b" without argument, then set
+	branch to NULL, not "" (uncovered by rcs-8a test).
+	* rcs.c (putrcsfield_proc): Add comment about how we (mis)handle
+	values in newphrases.
+
 	* sanity.sh (reserved): Instead of looking for rcslock.pl in CVS
 	distribution, just use our own equivalent.
 

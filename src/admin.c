@@ -485,7 +485,9 @@ admin_fileproc (callerdat, finfo)
     }
 
     if (admin_data->branch != NULL)
-	RCS_setbranch (rcs, admin_data->branch + 2);
+	RCS_setbranch (rcs, (admin_data->branch[2] == '\0'
+			     ? NULL
+			     : admin_data->branch + 2));
     if (admin_data->comment != NULL)
     {
 	if (rcs->comment != NULL)

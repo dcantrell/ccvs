@@ -741,6 +741,8 @@ free_rcsvers_contents (rnode)
 	free (rnode->state);
     if (rnode->other != (List *) NULL)
 	dellist (&rnode->other);
+    if (rnode->other_delta != NULL)
+	dellist (&rnode->other_delta);
     if (rnode->text != NULL)
 	freedeltatext (rnode->text);
     free ((char *) rnode);
@@ -5455,6 +5457,7 @@ getdelta (fp, rcsfile)
     RCSVers *vnode;
     char *key, *value, *cp;
     long fpos;
+    Node *kv;
 
     vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
     memset (vnode, 0, sizeof (RCSVers));
@@ -5571,7 +5574,24 @@ unable to parse rcs file; `state' not in the expected place");
 	    break;
 
 	/* At this point, key and value represent a user-defined field
-	   in the delta node, so we ignore it and loop. */
+	   in the delta node. */
+	if (vnode->other_delta == NULL)
+	    vnode->other_delta = getlist ();
+	kv = getnode ();
+	kv->type = RCSFIELD;
+	kv->key = xstrdup (key);
+	kv->data = xstrdup (value);
+	if (addnode (vnode->other_delta, kv) != 0)
+	{
+	    /* Complaining about duplicate keys in newphrases seems
+	       questionable, in that we don't know what they mean and
+	       doc/RCSFILES has no prohibition on several newphrases
+	       with the same key.  But we can't store more than one as
+	       long as we store them in a List *.  */
+	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
+		   key, rcsfile);
+	    freenode (kv);
+	}
      }
 
     /* We got here because we read beyond the end of a delta.  Seek back
@@ -5710,6 +5730,14 @@ putrcsfield_proc (node, vfp)
     {
 	/* If the field's value contains evil characters,
 	   it must be stringified. */
+	/* FIXME: This does not quite get it right.  "7jk8f" is not a legal
+	   value for a value in a newpharse, according to doc/RCSFILES,
+	   because digits are not valid in an "id".  We might do OK by
+	   always writing strings (enclosed in @@).  Would be nice to
+	   explicitly mention this one way or another in doc/RCSFILES.
+	   A case where we are wrong in a much more clear-cut way is that
+	   we let through non-graphic characters such as whitespace and
+	   control characters.  */
 	int n = strcspn (node->data, "$,.:;@");
 	if (node->data[n] == 0)
 	    fputs (node->data, fp);
@@ -5806,6 +5834,9 @@ putdelta (vers, fp)
     }
 
     fprintf (fp, ";\nnext\t%s;", vers->next ? vers->next : "");
+
+    walklist (vers->other_delta, putrcsfield_proc, fp);
+
     putc ('\n', fp);
 }
 

@@ -75,6 +75,8 @@ struct deltatext {
     char *log;
     char *text;
     int len;
+    /* Newphrase fields from deltatext nodes.  FIXME: duplicates the
+       other field in the rcsversnode, I think.  */
     List *other;
 };
 typedef struct deltatext Deltatext;
@@ -90,7 +92,13 @@ struct rcsversnode
     int outdated;
     Deltatext *text;
     List *branches;
+    /* Newphrase fields from deltatext nodes.  Also contains ";add" and
+       ";delete" magic fields (see rcs.c, log.c).  I think this is
+       only used by log.c (where it looks up "log").  Duplicates the
+       other field in struct deltatext, I think.  */
     List *other;
+    /* Newphrase fields from delta nodes.  */
+    List *other_delta;
 };
 typedef struct rcsversnode RCSVers;
 
