@@ -861,6 +861,10 @@ glibc version.
 
 215.  Add reditors and rwatchers commands.
 
+	- Is an r* command abstraction layer possible here for the commands
+	  where this makes sense?  Would it be simpler?  It seems to me the
+	  major operational differences lie in the file list construction.
+
 216.  Avoid command-line keyword expansion modes overriding binary mode
 (or make binary mode completely separate from keyword expansion mode).
 
