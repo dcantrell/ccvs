@@ -581,7 +581,7 @@ re-adding file `%s' (in place of dead revision %s)",
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
 		    free( tmp );
-		    tmp = xmalloc( strlen( finfo.file ) + 13 );
+		    tmp = xmalloc (strlen (finfo.file) + 15);
 		    (void) sprintf (tmp, "Resurrected `%s'", finfo.file);
 		    Register (entries, finfo.file, vers->vn_user, tmp,
 			      vers->options,
