@@ -5721,8 +5721,10 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     }
     if (unlink_file (tmpfile) < 0)
 	error (0, errno, "cannot remove %s", tmpfile);
+    free (tmpfile);
     if (unlink_file (changefile) < 0)
 	error (0, errno, "cannot remove %s", changefile);
+    free (changefile);
 
     if (!checkin_quiet)
 	cvs_output ("done\n", 5);
@@ -5805,6 +5807,7 @@ RCS_cmp_file (rcs, rev, options, filename)
 	retcode = xcmp (tmp, filename);
 	if (CVS_UNLINK (tmp) < 0)
 	    error (0, errno, "cannot remove %s", tmp);
+	free (tmp);
 	return retcode;
     }
     else
