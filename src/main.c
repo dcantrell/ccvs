@@ -683,10 +683,10 @@ main (argc, argv)
 	 * Make stdout line buffered, so 'tail -f' can monitor progress.
 	 * Patch creates too much output to monitor and it runs slowly.
 	 */
-#if 0
+#ifndef KLUDGE_FOR_WNT_TESTSUITE
 	if (strcmp (cm->fullname, "patch"))
 	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, 0);
-#endif
+#else
 	    (void) setvbuf (stdout, (char *) NULL, _IONBF, 0);
 	    (void) setvbuf (stderr, (char *) NULL, _IONBF, 0);
 #endif

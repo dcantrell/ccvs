@@ -2788,7 +2788,12 @@ start_tcp_server (tofdp, fromfdp)
     {
       port = atoi (portenv);
       if (port <= 0)
-        error (1, 0, "CVS_CLIENT_PORT must be a positive number!");
+	{
+	  error (0, 0, "CVS_CLIENT_PORT must be a positive number!  If you");
+	  error (0, 0, "are trying to force a connection via rsh, please");
+	  error (0, 0, "put \":server:\" at the beginning of your CVSROOT");
+	  error (1, 0, "variable.");
+	}
       if (trace)
         fprintf(stderr, "Using TCP port %d to contact server.\n", port);
       port = htons (port);
