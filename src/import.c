@@ -141,7 +141,7 @@ import (argc, argv)
 	RCS_check_tag (argv[i]);
 
     /* XXX - this should be a module, not just a pathname */
-    if (argv[0][0] != '/')
+    if (! isabsolute (argv[0]))
     {
 	if (CVSroot == NULL)
 	{
@@ -293,6 +293,10 @@ import (argc, argv)
     Update_Logfile (repository, message, vbranch, logfp, ulist);
     dellist (&ulist);
     (void) fclose (logfp);
+
+    /* Make sure the temporary file goes away, even on systems that don't let
+       you delete a file that's in use.  */
+    unlink (tmpfile);
 
     if (message)
 	free (message);
@@ -568,6 +572,7 @@ add_rev (message, rcs, vfile, vers)
 {
     int locked, status, ierrno;
     char *tocvsPath;
+    struct stat vfile_stat;
 
     if (noexec)
 	return (0);
@@ -586,27 +591,20 @@ add_rev (message, rcs, vfile, vers)
 	locked = 1;
     }
     tocvsPath = wrap_tocvs_process_file (vfile);
-    if (tocvsPath == NULL)
-    {
-	if (link_file (vfile, FILE_HOLDER) < 0)
-	{
-	    if (errno == EEXIST)
-	    {
-		(void) unlink_file (FILE_HOLDER);
-		(void) link_file (vfile, FILE_HOLDER);
-	    }
-	    else
-	    {
-		ierrno = errno;
-		fperror (logfp, 0, ierrno,
-			 "ERROR: cannot create link to %s", vfile);
-		error (0, ierrno, "ERROR: cannot create link to %s", vfile);
-		return (1);
-	    }
-	}
-    }
 
-    run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
+    /* We used to deposit the revision with -r; RCS would delete the
+       working file, but we'd keep a hard link to it, and rename it
+       back after running RCS (ooh, atomicity).  However, that
+       strategy doesn't work on operating systems without hard links
+       (like Windows NT).  Instead, let's deposit it using -u, and
+       restore its permission bits afterwards.  This also means the
+       file always exists under its own name.  */
+    if (! tocvsPath)
+        stat (vfile, &vfile_stat);
+
+    run_setup ("%s%s -q -f %s%s", Rcsbin, RCS_CI, 
+	       (tocvsPath ? "-r" : "-u"),
+	       vbranch);
     run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
@@ -615,11 +613,9 @@ add_rev (message, rcs, vfile, vers)
     status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     ierrno = errno;
 
-    if (tocvsPath == NULL)
-	rename_file (FILE_HOLDER, vfile);
-    else
-	if (unlink_file_dir (tocvsPath) < 0)
-		error (0, errno, "cannot remove %s", tocvsPath);
+    /* Restore the permissions on vfile.  */
+    if (! tocvsPath)
+        chmod (vfile, vfile_stat.st_mode);
 
     if (status)
     {
@@ -780,6 +776,9 @@ static const struct compair comtable[] =
     {"y", " * "},			/* yacc		 */
     {"ye", " * "},			/* yacc-efl	 */
     {"yr", " * "},			/* yacc-ratfor	 */
+#ifdef SYSTEM_COMMENT_TABLE
+    SYSTEM_COMMENT_TABLE
+#endif
     {"", "# "},				/* default for empty suffix	 */
     {NULL, "# "}			/* default for unknown suffix;	 */
 /* must always be last		 */
@@ -844,6 +843,12 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     if (noexec)
 	return (0);
 
+#ifdef LINES_CRLF_TERMINATED
+    /* There exits a port of RCS to such a system that stores files with
+       straight newlines.  If we ever reach this point on such a system,
+       we'll need to decide what to do with the open_file call below.  */
+    abort ();
+#endif
     fprcs = open_file (rcs, "w+");
     tocvsPath = wrap_tocvs_process_file (user);
     fpuser = open_file (tocvsPath == NULL ? user : tocvsPath, "r");
@@ -1128,7 +1133,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	    err = 1;
 	    goto out;
 	}
-	if (noexec == 0 && mkdir (repository, 0777) < 0)
+	if (noexec == 0 && CVS_MKDIR (repository, 0777) < 0)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, ierrno,
