@@ -2134,6 +2134,7 @@ variable.
 * GSSAPI authenticated::        Direct connections using GSSAPI
 * Kerberos authenticated::      Direct connections with Kerberos
 * Connecting via fork::         Using a forked @code{cvs server} to connect
+* Write proxies::               Distributing load across several CVS servers
 @end menu
 
 @node Server requirements
@@ -2961,6 +2962,69 @@ cvs -d :fork:/usr/local/cvsroot checkout foo
 As with @code{:ext:}, the server is called @samp{cvs}
 by default, or the value of the @code{CVS_SERVER}
 environment variable.
+
+
+@node Write proxies
+@subsection Distributing load across several CVS servers
+
+@cindex PrimaryServer, in CVSROOT/config
+@cindex Primary server
+@cindex Secondary server
+@cindex proxy, write
+@cindex write proxy
+@sc{cvs} can be configured to distribute usage across several @sc{cvs}
+servers.  This is accomplished by means of one or more @dfn{write proxies}, or
+@dfn{secondary servers}, for a single @dfn{primary server}.
+
+When a @sc{cvs} client accesses a secondary server and only sends read
+requests, then the secondary server handles the entire request.  If the client
+sends any write requests, however, the secondary server becomes a transparent
+proxy for the primary server, which actually handles the write request.
+
+In this manner, any number of read-only secondary servers may be configured as
+write proxies for the primary server, effectively distributing the load from
+all read operations between the secondary servers and restricting the load on
+the primary server to write operations and pushing changes to the secondaries.
+
+Primary servers will not automatically push changes to secondaries.  This must
+be configured via @file{loginfo}, @file{postadmin}, @file{posttag}, &
+@file{postwatch} scripts (@pxref{script hooks}) like the following:
+
+@example
+ALL	rsync -gopr -essh ./ secondary:/cvsroot/%p &
+@end example
+
+You would probably actually want to lock directories for write on the secondary
+and for read on the primary before running the @samp{rsync} in the above
+example, but describing such a setup is beyond the scope of this document.
+
+A secondary advantage of a write proxy setup is that users pointing at the
+secondary server can still execute fast read operations while on a network that
+connects to the primary over a slow link or even one where the link to the
+primary is periodically broken.  Only write operations will require the network
+link to the primary.
+
+To configure write proxies, the primary must be specified with the
+@samp{PrimaryServer} option in @file{CVSROOT/config} (@pxref{config}).
+
+Once a primary server is configured, secondary servers may be configured by:
+
+@enumerate
+@item
+Duplicating the primary repository at the new location.
+@item
+Setting up the @file{loginfo}, @file{postadmin}, @file{posttag}, and
+@file{postwatch} files on the primary to propagate writes to the new secondary.
+@item
+Configuring local access to the secondary as you would configure access to any
+other CVS server (@pxref{Remote repositories}).
+@item
+Ensuring that the @code{--primary-root=@var{secondarypath}=@var{primarypath}}
+is passed to all incovations of the secondary server if the path to the
+@sc{cvs} repository directory is different on the two servers.  This will be
+obsoleted shortly.
+@end enumerate
+
 
 @c ---------------------------------------------------------------------
 @node Read-only access
@@ -12786,8 +12850,16 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @node script hooks
 @appendixsec The scripting hooks
 
-The files described in this section provide flexible ways to run
-programs whenever something is committed.
+@c FIXME
+@c Somewhere there needs to be a more "how-to" guide to writing these.
+@c One particular issue that people sometimes are worried about is performance,
+@c and the impact of writing in perl or sh or ____.  Performance comparisons
+@c should probably remain outside the scope of this document, but at least
+@c _that_ much could be referenced, perhaps with links to other sources.
+
+Script hooks are used to launch external programs at various points during
+the execution of @sc{cvs} commands.  These hooks can be used to prevent certain
+actions, log them, and/or maintain anything else you deem practical.
 
 @menu
 * syntax::                      The common syntax
@@ -12802,6 +12874,11 @@ programs whenever something is committed.
 * taginfo::                     Verifying/Logging tags
 * posttag::                     Logging tags
 * postwatch::			Logging watch commands
+
+* preproxy::			Launch a script on a secondary server prior
+				to becoming a write proxy
+* postproxy::			Launch a script on a secondary server after
+				completing proxy operations
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13659,6 +13736,79 @@ contacts the server for whatever other reason,
 
 
 
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node preproxy
+@appendixsubsec Launch a Script before Proxying
+@cindex preproxy (admin file)
+@cindex script hook, preproxy
+@cindex Write proxy, verifying
+@cindex Write proxy, logging
+
+The @file{preproxy} file defines programs to execute after a secondary
+server receives a write request from a client, just before it starts up the
+primary server and becomes a write proxy.  This hook could be used to
+dial a modem, launch an SSH tunnel, establish a VPN, or anything else that
+might be necessary to do before contacting the primary server.
+
+@file{preproxy} scripts are called once, at the time of the write request, with
+the repository argument (if requested) set from the topmost directory sent by
+the client.
+
+The @file{preproxy} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, preproxy admin file
+In addition to the common format strings, the @file{preproxy} file supports the
+following format string:
+
+@table @t
+@item P
+the CVSROOT string which specifies the primary server
+@end table
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node postproxy
+@appendixsubsec Launch a Script after Proxying
+@cindex postproxy (admin file)
+@cindex script hook, postproxy
+@cindex Write proxy, logging
+@cindex Write proxy, pull updates
+@cindex secondary server, pull updates
+
+The @file{postproxy} file defines programs to execute after a secondary
+server notes that the connection to the primary server has shut down and before
+it releases the client by shutting down the connection to the client.
+This could hook could be used to
+disconnect a modem, an SSH tunnel, a VPN, or anything else that
+might be necessary to do after contacting the primary server.  This hook should
+also be used to pull updates from the primary server before allowing the client
+which did the write to disconnect since otherwise the client's next read
+request may generate error messages and fail upon encountering an out of date
+repository on the secondary server.
+
+@file{postproxy} scripts are called once per directory.
+
+The @file{postproxy} file has the standard form
+for script hooks (@pxref{script hooks}), where each line is a regular
+expression followed by a command to execute.  It supports the ALL and DEFAULT
+keywords.
+
+@cindex format strings, postproxy admin file
+In addition to the common format strings, the @file{postproxy} file supports
+the following format string:
+
+@table @t
+@item P
+the CVSROOT string which specifies the primary server
+@end table
+
+
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rcsinfo
 @appendixsec Rcsinfo
 @cindex rcsinfo (admin file)
@@ -14192,7 +14342,28 @@ Specify whether @code{cvs import} should always behave as if the
 @var{value} may be either @samp{yes} or @samp{no}.  If set to @samp{yes},
 all uses of @code{cvs import} on the repository will behave as if the
 @samp{-X} flag was set.  The default value is @samp{no}.
+
+@cindex PrimaryServer, in CVSROOT/config
+@cindex Primary server
+@cindex Secondary server
+@cindex proxy, write
+@cindex write proxy
+@item PrimaryServer=@var{CVSROOT}
+When specified, and the repository specified by @var{CVSROOT} is not the one
+currently being accessed, then the server will turn itself into a transparent
+proxy to @var{CVSROOT} for write requests.  The @var{hostname} configured as
+part of @var{CVSROOT} must be the same as that returned by the uname command
+on the primary server for this to work.
+
+Only the @samp{:ext:} method is
+currently supported for primaries (actually, @samp{:fork:} is supported as
+well, but only for testing - if you find another use for accessing a primary
+via the @samp{:fork:} method, please send a note to @email{bug-cvs@@gnu.org}
+about it).  See @ref{Write proxies} for more on configuring and using write
+proxies.
 @end table
+
+
 
 @c ---------------------------------------------------------------------
 @node Environment variables

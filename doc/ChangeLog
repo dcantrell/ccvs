@@ -1,3 +1,52 @@
+2004-08-17  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): s/Command-prenotify/Command-prep/.
+
+2004-08-16  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Document the new `Command-prenotify'
+	request.
+	(Responses): Document the new `Redirect' response.
+
+2004-07-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Document recent changes in
+	implementation.
+
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (script hooks/*): Tidy.  Document new hooks as
+	implemented.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (config): Note that PrimaryServer hostname must match
+	that returned by uname on the primary server.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* writeproxy.rtf: Update with latest modifications.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Reference new script hooks.
+	(Administrative files): Move relevant parts of FIXME and references to
+	*info files...
+	(commit files): ...and most of the menu items from this node...
+	(script hooks): ...to this new node.
+	(postadmin, posttag, postwatch, preproxy, postproxy): New nodes.
+	(syntax, taginfo): Point at "script hooks" rather than
+	"Administrative files" node.
+
+2004-06-07  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): New node.
+	(config): Note new PrimaryServer option.
+
+2004-06-04  Derek Price  <derek@ximbiot.com>
+
+	* writeproxy.rtf: Documentation for new writeproxy design.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (script hooks/*): Tidy.  Document new hooks as
