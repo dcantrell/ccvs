@@ -1,3 +1,16 @@
+Sun Dec 21 20:57:24 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+			  and Jim Kingdon
+
+	This is just moving text; related cleanups to follow.
+	* cvs.texinfo: Changes to put branching and merging together, and
+	keep it all separate from revisions:
+ 	(Revisions): Renamed from "Revisions and branches".
+	(Branching and merging): Renamed from "Merging".
+	(Branches motivation, Creating a branch, Sticky tags, Magic branch
+	numbers): these subnodes moved to "Branching and merging" from
+	"Revisions".
+	everywhere: Adjusted cross-references to cope with above.
+
 Sun Dec 21 20:36:39 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 			  and Jim Kingdon
 
