@@ -1,3 +1,9 @@
+2003-08-13  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Don't shutdown buf_from_net if it's
+	null.
+	(Reported by Scott Mitchell <scott@fishballoon.org>.)
+
 2003-08-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* lock.c: Do not include xtime.h (already included via system.h).
