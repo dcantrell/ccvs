@@ -1,5 +1,9 @@
 2004-12-14  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stamp-chi): Comment dist stamp-chi reasoning.
+
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add stamp-chi.
 	(config.h.in, stamp-chi, DISTCLEANFILES, MAINTAINERCLEANFILES):
 	Reorganize for distributing stamp-chi.
