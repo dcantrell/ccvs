@@ -5448,7 +5448,7 @@ echo "$@@" >>/home/kingdon/cvsroot/CVSROOT/taglog
 @section Annotate command
 @cindex annotate (subcommand)
 
-@deffn Command {cvs annotate} [@code{-flR}] [@code{-r rev}|@code{-D date}] files @dots{}
+@deffn Command {cvs annotate} [@code{-FflR}] [@code{-r rev}|@code{-D date}] files @dots{}
 
 For each file in @var{files}, print the head revision
 of the trunk, together with information on the last
@@ -5476,7 +5476,7 @@ or replaced; you need to use @code{cvs diff} for that
 The options to @code{cvs annotate} are listed in
 @ref{Invoking CVS}, and can be used to select the files
 and revisions to annotate.  The options are described
-in more detail in @ref{Common options}.
+in more detail there and in @ref{Common options}.
 
 @c FIXME: maybe an example using the options?  Just
 @c what it means to select a revision might be worth a
@@ -10622,6 +10622,10 @@ Show last revision where each line was modified.  See
 Annotate the most recent revision no later than
 @var{date}.  See @ref{Common options}.
 
+@item -F
+Force annotation of binary files.  (Without this option,
+binary files are skipped with a message.)
+
 @item -f
 Use head revision if tag/date not found.  See
 @ref{Common options}.
@@ -11003,6 +11007,10 @@ Show last revision where each line was modified.  See
 @item -D @var{date}
 Annotate the most recent revision no later than
 @var{date}.  See @ref{Common options}.
+
+@item -F
+Force annotation of binary files.  (Without this option,
+binary files are skipped with a message.)
 
 @item -f
 Use head revision if tag/date not found.  See
