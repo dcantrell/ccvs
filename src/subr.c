@@ -65,7 +65,6 @@ copy_file (from, to)
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
-    char *buf;
 
     if (trace)
 	(void) fprintf (stderr, "%c-> copy(%s,%s)\n",
