@@ -4552,6 +4552,13 @@ later merge the additions to another branch if you want
 @cindex Removing files
 @cindex Deleting files
 
+@c FIXME: this node wants to be split into several
+@c smaller nodes.  Probably would fit well with merging
+@c this chapter with "adding files" and the others, as
+@c suggested at the top-level menu (death support could
+@c be its own section, for example, as could the
+@c various bits about undoing mistakes in adding and
+@c removing).
 Modules change.  New files are added, and old files
 disappear.  Still, you want to be able to retrieve an
 exact copy of old releases.
@@ -4584,6 +4591,15 @@ Use @samp{cvs commit @var{filename}} to actually
 perform the removal of the file from the repository.
 @end itemize
 
+@c FIXME: Somehow this should be linked in with a more
+@c general discussion of death support.  I don't know
+@c whether we want to use the term "death support" or
+@c not (we can perhaps get by without it), but we do
+@c need to discuss the "dead" state in "cvs log" and
+@c related subjects.  The current discussion is
+@c scattered around, and not xref'd to each other.
+@c FIXME: I think this paragraph wants to be moved
+@c later down, at least after the first example.
 When you commit the removal of the file, @sc{cvs}
 records the fact that the file no longer exists.  It is
 possible for a file to exist on only some branches and
@@ -4592,23 +4608,24 @@ name later.  CVS will correctly create or not create
 the file, based on the @samp{-r} and @samp{-D} options
 specified to @code{checkout} or @code{update}.
 
+@c FIXME: This style seems to clash with how we
+@c document things in general.
 @cindex Remove (subcommand)
-@deffn Command {cvs remove} [@code{-lR}] files @dots{}
+@deffn Command {cvs remove} [options] files @dots{}
 
 Schedule file(s) to be removed from the repository
 (files which have not already been removed from the
 working directory are not processed).  This command
 does not actually remove the file from the repository
-until you commit the removal.  The @samp{-R} option
-(the default) specifies that it will recurse into
-subdirectories; @samp{-l} specifies that it will not.
+until you commit the removal.  For a full list of
+options, see @ref{Invoking CVS}.
 @end deffn
 
 Here is an example of removing several files:
 
 @example
 $ cd test
-$ rm ?.c
+$ rm *.c
 $ cvs remove
 cvs remove: Removing .
 cvs remove: scheduling a.c for removal
@@ -4619,9 +4636,36 @@ cvs commit: Examining .
 cvs commit: Committing .
 @end example
 
-If you change your mind you can easily resurrect the
-file before you commit it, using the @code{add}
-command.
+As a convenience you can remove the file and @code{cvs
+remove} it in one step, by specifying the @samp{-f}
+option.  For example, the above example could also be
+done like this:
+
+@example
+$ cd test
+$ cvs remove -f *.c
+cvs remove: scheduling a.c for removal
+cvs remove: scheduling b.c for removal
+cvs remove: use 'cvs commit' to remove these files permanently
+$ cvs ci -m "Removed unneeded files"
+cvs commit: Examining .
+cvs commit: Committing .
+@end example
+
+If you execute @code{remove} for a file, and then
+change your mind before you commit, you can undo the
+@code{remove} with an @code{add} command.
+@ignore
+@c is this worth saying or not?  Somehow it seems
+@c confusing to me.
+Of course,
+since you have removed your copy of file in the working
+directory, @sc{cvs} does not necessarily bring back the
+contents of the file from right before you executed
+@code{remove}; instead it gets the file from the
+repository again.
+@end ignore
+
 @c FIXME: what if you change your mind after you commit
 @c it?  (answer is also "cvs add" but we don't say that...).
 @c We need some index entries for thinks like "undoing

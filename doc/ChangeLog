@@ -1,5 +1,10 @@
 Mon Apr 28 11:12:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Removing files): Use "*.c" not "?.c" in example;
+	the former should be good for both unix and DOS-like operating
+	systems.  Document -f option.  Refer to Invoking CVS for a full
+	list of options.  Add a few comments.
+
 	* cvs.texinfo (Invoking CVS): For checkout and update, call them
 	"sticky options" not "sticky kopts".
 
