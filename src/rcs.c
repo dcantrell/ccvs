@@ -233,7 +233,7 @@ RCS_parse (const char *file, const char *repos)
  * Parse a specific rcsfile.
  */
 RCSNode *
-RCS_parsercsfile (char *rcsfile)
+RCS_parsercsfile (const char *rcsfile)
 {
     FILE *fp;
     RCSNode *rcs;
