@@ -1,5 +1,9 @@
 2003-05-22  Derek Price  <derek@ximbiot.com>
 
+	* TODO (230): Remove this completed item.
+
+2003-05-22  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note new --with-external-zlib option.
 	* configure.in (AC_PREREQ): 2.57.
 

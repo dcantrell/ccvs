@@ -909,7 +909,3 @@ the other CVSROOT.  This happens a lot with my copies of the ccvs project.
 229.  Improve the locking code to use a random delay with exponential
 backoff ala Ethernet and separate the notification interval from the
 wait interval.
-
-230. Check ZLIB_VERSION from zlib.h to verify that an external version of ZLIB
-is more recent than the shipped version when requested by the user.  Issue a
-warning when it isn't.  This should happen in m4/acx_with_external_zlib.m4.
