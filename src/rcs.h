@@ -40,7 +40,6 @@
 #define VALID	0x1			/* flags field contains valid data */
 #define	INATTIC	0x2			/* RCS file is located in the Attic */
 #define PARTIAL 0x4			/* RCS file not completly parsed */
-#define NODELTA 0x8			/* delta_pos no longer valid */
 
 struct rcsnode
 {
@@ -59,11 +58,26 @@ struct rcsnode
     char *expand;
     List *symbols;
     List *versions;
+    char *access;
+    char *locks_data;
+    List *locks;
+    int strict_locks;
+    char *comment;
+    char *desc;
     long delta_pos;
     List *other;
 };
 
 typedef struct rcsnode RCSNode;
+
+struct deltatext {
+    char *version;
+    char *log;
+    char *text;
+    int len;
+    List *other;
+};
+typedef struct deltatext Deltatext;
 
 struct rcsversnode
 {
@@ -73,6 +87,8 @@ struct rcsversnode
     char *state;
     char *next;
     int dead;
+    int outdated;
+    Deltatext *text;
     List *branches;
     List *other;
 };
@@ -111,6 +127,7 @@ int RCS_datecmp PROTO((char *date1, char *date2));
 time_t RCS_getrevtime PROTO((RCSNode * rcs, char *rev, char *date, int fudge));
 List *RCS_symbols PROTO((RCSNode *rcs));
 void RCS_check_tag PROTO((const char *tag));
+List *RCS_getlocks PROTO((RCSNode *rcs));
 void freercsnode PROTO((RCSNode ** rnodep));
 char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
 
@@ -118,12 +135,19 @@ int RCS_isdead PROTO((RCSNode *, const char *));
 char *RCS_getexpand PROTO ((RCSNode *));
 int RCS_checkout PROTO ((RCSNode *, char *, char *, char *, char *, char *,
 			 RCSCHECKOUTPROC, void *));
+int RCS_checkin PROTO ((RCSNode *rcs, char *workfile, char *message,
+			char *rev, int flags));
 int RCS_cmp_file PROTO ((RCSNode *, char *, char *, const char *));
 int RCS_settag PROTO ((RCSNode *, const char *, const char *));
-int RCS_deltag PROTO ((RCSNode *, const char *, int));
+int RCS_deltag PROTO ((RCSNode *, const char *));
 int RCS_setbranch PROTO((RCSNode *, const char *));
 int RCS_lock PROTO ((RCSNode *, const char *, int));
 int RCS_unlock PROTO ((RCSNode *, const char *, int));
+int RCS_delete_revs PROTO ((RCSNode *, char *, char *));
+void RCS_addaccess PROTO ((RCSNode *, char *));
+void RCS_delaccess PROTO ((RCSNode *, char *));
+char *RCS_getaccess PROTO ((RCSNode *));
+void RCS_rewrite PROTO ((RCSNode *, Deltatext *, char *));
 int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
 			    size_t, char **, size_t *));
 char *make_file_label PROTO ((char *, char *, RCSNode *));

@@ -1558,7 +1558,7 @@ remove_file (finfo, tag, message)
     if (tag && !(branch = RCS_nodeisbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	if ((retcode = RCS_deltag (finfo->rcs, tag, 1)) != 0) 
+	if ((retcode = RCS_deltag (finfo->rcs, tag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1566,6 +1566,7 @@ remove_file (finfo, tag, message)
 		       finfo->fullname);
 	    return (1);
 	}
+	RCS_rewrite (finfo->rcs, NULL, NULL);
 	Scratch_Entry (finfo->entries, finfo->file);
 	return (0);
     }
@@ -1622,6 +1623,7 @@ remove_file (finfo, tag, message)
 		   finfo->fullname);
 	    return (1);
 	}
+	RCS_rewrite (finfo->rcs, NULL, NULL);
     }
 
 #ifdef SERVER_SUPPORT
@@ -1650,12 +1652,15 @@ remove_file (finfo, tag, message)
     /* Except when we are creating a branch, lock the revision so that
        we can check in the new revision.  */
     if (lockflag)
-	RCS_lock (finfo->rcs, rev ? corev : NULL, 0);
+    {
+	if (RCS_lock (finfo->rcs, rev ? corev : NULL, 1) == 0)
+	    RCS_rewrite (finfo->rcs, NULL, NULL);
+    }
 
     if (corev != NULL)
 	free (corev);
 
-    retcode = RCS_checkin (finfo->rcs->path, finfo->file, message, rev,
+    retcode = RCS_checkin (finfo->rcs, finfo->file, message, rev,
 			   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
@@ -1756,6 +1761,8 @@ unlockrcs (rcs)
     if ((retcode = RCS_unlock (rcs, NULL, 0)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 	       "could not unlock %s", rcs->path);
+    else
+	RCS_rewrite (rcs, NULL, NULL);
 }
 
 /*
@@ -1796,6 +1803,7 @@ fixbranch (rcs, branch)
 	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "cannot restore branch to %s for %s", branch, rcs->path);
+	RCS_rewrite (rcs, NULL, NULL);
     }
 }
 
@@ -1960,6 +1968,7 @@ internal error: `%s' didn't move out of the attic",
 	    retval = 1;
 	    goto out;
 	}
+	rcsfile = RCS_parsercsfile (rcs);
 	newfile = 1;
 	if (desc != NULL)
 	    free (desc);
@@ -1982,7 +1991,7 @@ internal error: `%s' didn't move out of the attic",
 	/* commit a dead revision. */
 	(void) sprintf (tmp, "file %s was initially added on branch %s.",
 			file, tag);
-	retcode = RCS_checkin (rcs, NULL, tmp, NULL,
+	retcode = RCS_checkin (rcsfile, NULL, tmp, NULL,
 			       RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
 	free (tmp);
 	if (retcode != 0)
@@ -1997,7 +2006,8 @@ internal error: `%s' didn't move out of the attic",
 	rename_file (fname, file);
 	free (fname);
 
-	assert (rcsfile == NULL);
+	/* double-check that the file was written correctly */
+	freercsnode (&rcsfile);
 	rcsfile = RCS_parse (file, repository);
 	if (rcsfile == NULL)
 	{
@@ -2051,6 +2061,7 @@ internal error: `%s' didn't move out of the attic",
 	    magicrev = RCS_magicrev (rcsfile, head);
 
 	    retcode = RCS_settag (rcsfile, tag, magicrev);
+	    RCS_rewrite (rcsfile, NULL, NULL);
 
 	    free (head);
 	    free (magicrev);
@@ -2137,12 +2148,13 @@ lock_RCS (user, rcs, rev, repository)
 		return (1);
 	    }
 	}
-	err = RCS_lock(rcs, NULL, 0);
+	err = RCS_lock(rcs, NULL, 1);
     }
     else
     {
 	(void) RCS_lock(rcs, rev, 1);
     }
+    RCS_rewrite (rcs, NULL, NULL);
 
     if (err == 0)
     {

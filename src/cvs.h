@@ -396,11 +396,6 @@ extern char hostname[];
 
 /* Externs that are included directly in the CVS sources */
 
-int RCS_exec_settag PROTO((const char *, const char *, const char *));
-int RCS_exec_deltag PROTO((const char *, const char *, int));
-int RCS_exec_setbranch PROTO((const char *, const char *));
-int RCS_exec_lock PROTO((const char *, const char *, int));
-int RCS_exec_unlock PROTO((const char *, const char *, int));
 int RCS_merge PROTO((RCSNode *, char *, char *, char *, char *, char *));
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
@@ -408,8 +403,7 @@ int RCS_merge PROTO((RCSNode *, char *, char *, char *, char *, char *));
 #define RCS_FLAGS_DEAD 2
 #define RCS_FLAGS_QUIET 4
 #define RCS_FLAGS_MODTIME 8
-int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
-			char *rev, int flags));
+
 extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 				    char *opts, char *options,
 				    char *rev1, char *rev2,
@@ -477,6 +471,8 @@ char *get_homedir PROTO ((void));
 char *cvs_temp_name PROTO ((void));
 
 int numdots PROTO((const char *s));
+char *increment_revnum PROTO ((char *));
+int compare_revnums PROTO ((char *, char *));
 int unlink_file PROTO((const char *f));
 int link_file PROTO ((const char *from, const char *to));
 int unlink_file_dir PROTO((const char *f));
@@ -488,6 +484,7 @@ time_t get_date PROTO((char *date, struct timeb *now));
 extern int Create_Admin PROTO ((char *dir, char *update_dir,
 				char *repository, char *tag, char *date,
 				int nonbranch, int warn));
+extern int expand_at_signs PROTO ((char *, off_t, FILE *));
 
 /* Locking subsystem (implemented in lock.c).  */
 
@@ -525,7 +522,7 @@ extern int ign_case;
 
 #include "update.h"
 
-void line2argv PROTO ((int *pargc, char ***argv, char *line));
+void line2argv PROTO ((int *pargc, char ***argv, char *line, char *sepchars));
 void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 extern int mkdir_if_needed PROTO ((char *name));

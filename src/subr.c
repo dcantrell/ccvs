@@ -182,16 +182,17 @@ free_names (pargc, argv)
     *pargc = 0;				/* and set it to zero when done */
 }
 
-/* Convert LINE into arguments separated by space and tab.  Set *ARGC
+/* Convert LINE into arguments separated by SEPCHARS.  Set *ARGC
    to the number of arguments found, and (*ARGV)[0] to the first argument,
    (*ARGV)[1] to the second, etc.  *ARGV is malloc'd and so are each of
    (*ARGV)[0], (*ARGV)[1], ...  Use free_names() to return the memory
    allocated here back to the free pool.  */
 void
-line2argv (pargc, argv, line)
+line2argv (pargc, argv, line, sepchars)
     int *pargc;
     char ***argv;
     char *line;
+    char *sepchars;
 {
     char *cp;
     /* Could make a case for size_t or some other unsigned type, but
@@ -206,7 +207,7 @@ line2argv (pargc, argv, line)
     *argv = (char **) xmalloc (argv_allocated * sizeof (**argv));
 
     *pargc = 0;
-    for (cp = strtok (line, " \t"); cp; cp = strtok ((char *) NULL, " \t"))
+    for (cp = strtok (line, sepchars); cp; cp = strtok ((char *) NULL, sepchars))
     {
 	if (*pargc == argv_allocated)
 	{
@@ -233,6 +234,56 @@ numdots (s)
 	    dots++;
     }
     return (dots);
+}
+
+/* Compare revision numbers REV1 and REV2 by consecutive fields.
+   Return negative, zero, or positive in the manner of strcmp.  The
+   two revision numbers must have the same number of fields, or else
+   compare_revnums will return an inaccurate result. */
+int
+compare_revnums (rev1, rev2)
+    char *rev1;
+    char *rev2;
+{
+    char *s, *sp, *snext;
+    char *t, *tp, *tnext;
+    int result = 0;
+
+    sp = s = xstrdup (rev1);
+    tp = t = xstrdup (rev2);
+    while (result == 0)
+    {
+	result = strtoul (sp, &snext, 10) - strtoul (tp, &tnext, 10);
+	if (*snext == '\0' || *tnext == '\0')
+	    break;
+	sp = snext + 1;
+	tp = tnext + 1;
+    }
+
+    free (s);
+    free (t);
+    return result;
+}
+
+char *
+increment_revnum (rev)
+    char *rev;
+{
+    char *newrev, *p;
+    int lastfield;
+
+    newrev = (char *) xmalloc (strlen (rev) + 2);
+    strcpy (newrev, rev);
+    p = strrchr (newrev, '.');
+    if (p == NULL)
+    {
+	free (newrev);
+	return NULL;
+    }
+    lastfield = atoi (++p);
+    sprintf (p, "%d", lastfield + 1);
+
+    return newrev;
 }
 
 /* Return the username by which the caller should be identified in
@@ -449,26 +500,49 @@ check_numeric (rev, argc, argv)
 /*
  *  Sanity checks and any required fix-up on message passed to RCS via '-m'.
  *  RCS 5.7 requires that a non-total-whitespace, non-null message be provided
- *  with '-m'.  Returns the original argument or a pointer to readonly
- *  static storage.
+ *  with '-m'.  Returns a newly allocated, non-empty buffer with whitespace
+ *  stripped from end of lines and end of buffer.
+ *
+ *  TODO: We no longer use RCS to manage repository files, so maybe this
+ *  nonsense about non-empty log fields can be dropped.
  */
 char *
 make_message_rcslegal (message)
      char *message;
 {
-    if ((message == NULL) || (*message == '\0') || isspace (*message))
+    char *dst, *dp, *mp;
+
+    if (message == NULL || (*message == '\0'))
+	return xstrdup ("*** empty log message ***");
+
+    /* Strip whitespace from end of lines and end of string. */
+    dp = dst = (char *) xmalloc (strlen (message) + 1);
+    for (mp = message; *mp != '\0'; ++mp)
     {
-        char *t;
-
-	if (message)
-	    for (t = message; *t; t++)
-	        if (!isspace (*t))
-		    return message;
-
-	return "*** empty log message ***\n";
+	if (*mp == '\n')
+	{
+	    /* At end-of-line; backtrack to last non-space. */
+	    while (dp > dst && isspace (*--dp))
+		;
+	    ++dp;
+	}
+	*dp++ = *mp;
     }
 
-    return message;
+    /* Backtrack to last non-space at end of string, and truncate. */
+    while (isspace (*--dp))
+	;
+    *++dp = '\0';
+
+    /* After all that, if there was no non-space in the string,
+       substitute a non-empty message. */
+    if (*dst == '\0')
+    {
+	free (dst);
+	dst = xstrdup ("*** empty log message ***");
+    }
+
+    return dst;
 }
 
 /* Does the file FINFO contain conflict markers?  The whole concept
@@ -507,7 +581,8 @@ out:
     return result;
 }
 
-/* Read the entire contents of the file NAME into *BUF.  *BUF
+/* Read the entire contents of the file NAME into *BUF.
+   If NAME is NULL, read from stdin.  *BUF
    is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
    bytes of space.  The actual size is returned in *LEN.  On error,
    give a fatal error.  The name of the file to use in error messages
@@ -529,18 +604,26 @@ get_file (name, fullname, mode, buf, bufsize, len)
     FILE *e;
     size_t filesize;
 
-    if (CVS_STAT (name, &s) < 0)
-	error (1, errno, "can't stat %s", fullname);
-    /* Convert from signed to unsigned.  */
-    filesize = s.st_size;
+    if (name == NULL)
+    {
+	e = stdin;
+	filesize = 100;	/* force allocation of minimum buffer */
+    }
+    else
+    {
+	if (CVS_STAT (name, &s) < 0)
+	    error (1, errno, "can't stat %s", fullname);
+	/* Convert from signed to unsigned.  */
+	filesize = s.st_size;
+
+	e = open_file (name, mode);
+    }
 
     if (*bufsize < filesize)
     {
 	*bufsize = filesize;
 	*buf = xrealloc (*buf, *bufsize);
     }
-
-    e = open_file (name, mode);
 
     tobuf = *buf;
     nread = 0;
@@ -576,8 +659,16 @@ get_file (name, fullname, mode, buf, bufsize, len)
 	}
     }
 
-    if (fclose (e) < 0)
+    if (e != stdin && fclose (e) < 0)
 	error (0, errno, "cannot close %s", fullname);
 
     *len = nread;
+
+    /* Force *BUF to be large enough to hold a null terminator. */
+    if (*buf != NULL)
+    {
+	if (nread == *bufsize)
+	    expand_string (buf, bufsize, *bufsize + 1);
+	(*buf)[nread] = '\0';
+    }
 }

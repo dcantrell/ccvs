@@ -470,6 +470,18 @@ log_parse_list (plist, argstring)
     }
 }
 
+static int
+printlock_proc (lock, foo)
+    Node *lock;
+    void *foo;
+{
+    cvs_output ("\n\t", 2);
+    cvs_output (lock->data, 0);
+    cvs_output (": ", 2);
+    cvs_output (lock->key, 0);
+    return 0;
+}
+
 /*
  * Do an rlog on a file
  */
@@ -561,98 +573,18 @@ log_fileproc (callerdat, finfo)
     }
 
     cvs_output ("\nlocks:", 0);
-    if (rcsfile->other != NULL)
-    {
-	p = findnode (rcsfile->other, "strict");
-	if (p != NULL)
-	    cvs_output (" strict", 0);
-	p = findnode (rcsfile->other, "locks");
-	if (p != NULL && p->data != NULL)
-	{
-	    char *f, *cp;
-
-	    f = xstrdup (p->data);
-	    cp = f;
-	    while (*cp != '\0')
-	    {
-		char *cp2, *locker, *version;
-		RCSVers *vnode;
-
-		locker = cp;
-
-		cp2 = strchr (cp, ':');
-		if (cp2 == NULL)
-		{
-		    error (0, 0, "warning: bad locks field in RCS file `%s'",
-			   finfo->fullname);
-		    break;
-		}
-
-		*cp2 = '\0';
-
-		cvs_output ("\n\t", 2);
-		cvs_output (cp, cp2 - cp);
-		cvs_output (": ", 2);
-
-		cp = cp2 + 1;
-		while (isspace (*cp) && *cp != '\0')
-		    ++cp;
-
-		version = cp;
-
-		cp2 = cp;
-		while (! isspace (*cp2) && *cp2 != '\0')
-		    ++cp2;
-
-		cvs_output (cp, cp2 - cp);
-
-		if (*cp2 == '\0')
-		    cp = cp2;
-		else
-		{
-		    *cp2 = '\0';
-		    cp = cp2 + 1;
-		    while (isspace (*cp) && *cp != '\0')
-			++cp;
-		}
-
-		p = findnode (rcsfile->versions, version);
-		if (p == NULL)
-		    error (0, 0,
-			   "warning: lock for missing version `%s' in `%s'",
-			   version, finfo->fullname);
-		else
-		{
-		    vnode = (RCSVers *) p->data;
-		    p = getnode ();
-		    p->type = RCSFIELD;
-		    p->key = xstrdup (";locker");
-		    p->data = xstrdup (locker);
-		    if (addnode (vnode->other, p) != 0)
-		    {
-			error (0, 0,
-			       "warning: duplicate lock for `%s' in `%s'",
-			       version, finfo->fullname);
-			freenode (p);
-		    }
-		}
-	    }
-
-	    free (f);
-	}
-    }
+    if (rcsfile->strict_locks)
+	cvs_output (" strict", 0);
+    walklist (RCS_getlocks (rcsfile), printlock_proc, NULL);
 
     cvs_output ("\naccess list:", 0);
-    if (rcsfile->other != NULL)
+    if (rcsfile->access != NULL)
     {
-	p = findnode (rcsfile->other, "access");
-	if (p != NULL && p->data != NULL)
-	{
-	    const char *cp;
+	const char *cp;
 
-	    cp = p->data;
-	    while (*cp != '\0')
-	    {
+	cp = rcsfile->access;
+	while (*cp != '\0')
+	{
 		const char *cp2;
 
 		cvs_output ("\n\t", 2);
@@ -663,7 +595,6 @@ log_fileproc (callerdat, finfo)
 		cp = cp2;
 		while (isspace (*cp) && *cp != '\0')
 		    ++cp;
-	    }
 	}
     }
 
@@ -713,12 +644,8 @@ log_fileproc (callerdat, finfo)
     if (! log_data->header || log_data->long_header)
     {
 	cvs_output ("description:\n", 0);
-	if (rcsfile->other != NULL)
-	{
-	    p = findnode (rcsfile->other, "desc");
-	    if (p != NULL && p->data != NULL)
-		cvs_output (p->data, 0);
-	}
+	if (rcsfile->desc != NULL)
+	    cvs_output (rcsfile->desc, 0);
     }
 
     if (! log_data->header && ! log_data->long_header && rcsfile->head != NULL)
@@ -1277,7 +1204,7 @@ log_version (log_data, revlist, rcs, ver, trunk)
     cvs_output ("----------------------------\nrevision ", 0);
     cvs_output (ver->version, 0);
 
-    p = findnode (ver->other, ";locker");
+    p = findnode (RCS_getlocks (rcs), ver->version);
     if (p != NULL)
     {
 	cvs_output ("\tlocked by: ", 0);

@@ -23,7 +23,6 @@
 #define	FILE_HOLDER	".#cvsxxx"
 
 static char *get_comment PROTO((char *user));
-static int expand_at_signs PROTO((char *buf, off_t size, FILE *fp));
 static int add_rev PROTO((char *message, RCSNode *rcs, char *vfile,
 			  char *vers));
 static int add_tags PROTO((RCSNode *rcs, char *vfile, char *vtag, int targc,
@@ -604,12 +603,14 @@ add_rev (message, rcs, vfile, vers)
 	/* Before RCS_lock existed, we were directing stdout, as well as
 	   stderr, from the RCS command, to DEVNULL.  I wouldn't guess that
 	   was necessary, but I don't know for sure.  */
-        if (RCS_lock (rcs, vbranch, 1) != 0)
-	{
-	    error (0, errno, "fork failed");
-	    return (1);
-	}
+	/* Earlier versions of this function printed a `fork failed' error
+	   when RCS_lock returned an error code.  That's not appropriate
+	   now that RCS_lock is librarified, but should the error text be
+	   preserved? */
+	if (RCS_lock (rcs, vbranch, 1) != 0)
+	    return 1;
 	locked = 1;
+	RCS_rewrite (rcs, NULL, NULL);
     }
     tocvsPath = wrap_tocvs_process_file (vfile);
     if (tocvsPath == NULL)
@@ -634,7 +635,7 @@ add_rev (message, rcs, vfile, vers)
 	}
     }
 
-    status = RCS_checkin (rcs->path, tocvsPath == NULL ? vfile : tocvsPath,
+    status = RCS_checkin (rcs, tocvsPath == NULL ? vfile : tocvsPath,
 			  message, vbranch,
 			  (RCS_FLAGS_QUIET
 			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)));
@@ -658,6 +659,7 @@ add_rev (message, rcs, vfile, vers)
 	if (locked)
 	{
 	    (void) RCS_unlock(rcs, vbranch, 0);
+	    RCS_rewrite (rcs, NULL, NULL);
 	}
 	return (1);
     }
@@ -695,6 +697,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
 	       "ERROR: Failed to set tag %s in %s", vtag, rcs->path);
 	return (1);
     }
+    RCS_rewrite (rcs, NULL, NULL);
 
     memset (&finfo, 0, sizeof finfo);
     finfo.file = vfile;
@@ -707,7 +710,9 @@ add_tags (rcs, vfile, vtag, targc, targv)
     vers = Version_TS (&finfo, NULL, vtag, NULL, 1, 0);
     for (i = 0; i < targc; i++)
     {
-	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)
+	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) == 0)
+	    RCS_rewrite (rcs, NULL, NULL);
+	else
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, retcode == -1 ? ierrno : 0,
@@ -1243,7 +1248,7 @@ read_error:
  * signs.  If an error occurs, return a negative value and set errno
  * to indicate the error.  If not, return a nonnegative value.
  */
-static int
+int
 expand_at_signs (buf, size, fp)
     char *buf;
     off_t size;

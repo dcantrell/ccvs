@@ -48,6 +48,7 @@ Node *findnode PROTO((List * list, const char *key));
 Node *findnode_fn PROTO((List * list, const char *key));
 Node *getnode PROTO((void));
 int addnode PROTO((List * list, Node * p));
+int addnode_at_front PROTO((List * list, Node * p));
 int walklist PROTO((List * list, int (*)(Node *n, void *closure), void *closure));
 int list_isempty PROTO ((List *list));
 void dellist PROTO((List ** listp));

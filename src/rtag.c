@@ -597,6 +597,8 @@ rtag_fileproc (callerdat, finfo)
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : numtag;
 	retcode = RCS_settag(rcsfile, symtag, numtag);
+	if (retcode == 0)
+	    RCS_rewrite (rcsfile, NULL, NULL);
     }
     else
     {
@@ -646,6 +648,8 @@ rtag_fileproc (callerdat, finfo)
 	    free (oversion);
 	}
 	retcode = RCS_settag(rcsfile, symtag, rev);
+	if (retcode == 0)
+	    RCS_rewrite (rcsfile, NULL, NULL);
     }
 
     if (retcode != 0)
@@ -697,7 +701,7 @@ rtag_delete (rcsfile)
 	return (0);
     free (version);
 
-    if ((retcode = RCS_deltag(rcsfile, symtag, 1)) != 0)
+    if ((retcode = RCS_deltag(rcsfile, symtag)) != 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
@@ -705,6 +709,7 @@ rtag_delete (rcsfile)
 		   rcsfile->path);
 	return (1);
     }
+    RCS_rewrite (rcsfile, NULL, NULL);
     return (0);
 }
 

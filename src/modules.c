@@ -432,7 +432,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     (void) sprintf (line, "%s %s", "XXX", value);
 
     /* turn the line into an argv[] array */
-    line2argv (&xmodargc, &xmodargv, line);
+    line2argv (&xmodargc, &xmodargv, line, " \t");
     free (line);
     modargc = xmodargc;
     modargv = xmodargv;
@@ -937,7 +937,7 @@ cat_module (status)
 	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 15);
 	/* Parse module file entry as command line and print options */
 	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
-	line2argv (&moduleargc, &moduleargv, line);
+	line2argv (&moduleargc, &moduleargv, line, " \t");
 	free (line);
 	argc = moduleargc;
 	argv = moduleargv;

@@ -266,6 +266,51 @@ addnode (list, p)
     return (0);
 }
 
+/*
+ * Like addnode, but insert p at the front of `list'.  This bogosity is
+ * necessary to preserve last-to-first output order for some RCS functions.
+ */
+int
+addnode_at_front (list, p)
+    List *list;
+    Node *p;
+{
+    int hashval;
+    Node *q;
+
+    if (p->key != NULL)			/* hash it too? */
+    {
+	hashval = hashp (p->key);
+	if (list->hasharray[hashval] == NULL)	/* make a header for list? */
+	{
+	    q = getnode ();
+	    q->type = HEADER;
+	    list->hasharray[hashval] = q->hashnext = q->hashprev = q;
+	}
+
+	/* put it into the hash list if it's not already there */
+	for (q = list->hasharray[hashval]->hashnext;
+	     q != list->hasharray[hashval]; q = q->hashnext)
+	{
+	    if (strcmp (p->key, q->key) == 0)
+		return (-1);
+	}
+	q = list->hasharray[hashval];
+	p->hashprev = q->hashprev;
+	p->hashnext = q;
+	p->hashprev->hashnext = p;
+	q->hashprev = p;
+    }
+
+    /* put it into the regular list */
+    p->prev = list->list;
+    p->next = list->list->next;
+    list->list->next->prev = p;
+    list->list->next = p;
+
+    return (0);
+}
+
 /* Look up an entry in hash list table and return a pointer to the
    node.  Return NULL if not found.  Abort with a fatal error for
    errors.  */

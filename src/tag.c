@@ -482,7 +482,7 @@ tag_fileproc (callerdat, finfo)
 	}
 	free (version);
 
-	if ((retcode = RCS_deltag(vers->srcfile, symtag, 1)) != 0) 
+	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -491,6 +491,7 @@ tag_fileproc (callerdat, finfo)
 	    freevers_ts (&vers);
 	    return (1);
 	}
+	RCS_rewrite (vers->srcfile, NULL, NULL);
 
 	/* warm fuzzies */
 	if (!really_quiet)
@@ -600,6 +601,7 @@ tag_fileproc (callerdat, finfo)
 	freevers_ts (&vers);
 	return (1);
     }
+    RCS_rewrite (vers->srcfile, NULL, NULL);
 
     /* more warm fuzzies */
     if (!really_quiet)
