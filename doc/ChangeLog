@@ -1,3 +1,11 @@
+1998-12-23  Jim Kingdon  <http://www.cyclic.com>
+
+	* RCSFILES: Add clarification about certain character set issues
+	from Paul Eggert, the RCS maintainer.  The last paragraph and the
+	change from Shift-JIS to JIS as an example of a character set
+	which contains 0x40 bytes which are not '@' characters are mine;
+	the rest is directly from Paul Eggert.
+
 1998-12-22  Martin Buchholz  <martin@xemacs.org>
 
 	* cvs.texinfo: Fixed various trivial typos.
