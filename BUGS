@@ -95,10 +95,6 @@ interpret its option string, then the problem may be output in unexpected
 formats.
 
 
-* CVS currently breaks at an assertion failure when `cvs ls <filename>' is used
-  to list information for a single file.
-
-
 * Status
 
   This experimental version of CVS contains new features which may not have

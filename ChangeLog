@@ -1,3 +1,7 @@
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove ls assertion failure bug.
+
 2001-10-21  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dep: Regenerated for "../zlib/lib.dsp" change.
