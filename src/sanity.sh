@@ -564,6 +564,8 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs big modes stamps"
+	# PreservePermissions stuff: permissions, symlinks et al.
+	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
 	tests="${tests} sticky keyword keywordlog"
 	tests="${tests} head tagdate multibranch2"
@@ -11579,6 +11581,185 @@ done"
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	perms)
+	  # short cut around checking out and committing CVSROOT
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+
+	  mkdir 1; cd 1
+	  dotest perms-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest perms-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  touch foo
+	  chmod 431 foo
+	  dotest perms-3 "${testcvs} add foo" \
+"${PROG} [a-z]*: scheduling file .foo. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest perms-4 "${testcvs} -q ci -m ''" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/foo,v
+done
+Checking in foo;
+${TESTDIR}/cvsroot/first-dir/foo,v  <--  foo
+initial revision: 1\.1
+done"
+
+	  # Test checking out files with different permissions.
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest perms-5 "${testcvs} -q co first-dir" "U first-dir/foo"
+	  cd first-dir
+	  if test "$remote" = no; then
+	    # PreservePermissions not yet implemented for remote.
+	    dotest perms-6 "ls -l foo" "-r---wx--x .* foo"
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  ;;
+
+	symlinks)
+	  # short cut around checking out and committing CVSROOT
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+
+	  mkdir 1; cd 1
+	  dotest symlinks-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest symlinks-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  dotest symlinks-2.1 "ln -s ${TESTDIR}/fumble slink" ""
+	  dotest symlinks-3 "${testcvs} add slink" \
+"${PROG} [a-z]*: scheduling file .slink. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  if test "$remote" = yes; then
+	    # Remote doesn't implement PreservePermissions, and in its
+	    # absence the correct behavior is to follow the symlink.
+	    dotest_fail symlinks-4 "${testcvs} -q ci -m ''" \
+"${PROG} \[commit aborted\]: reading slink: No such file or directory"
+	  else
+	    dotest symlinks-4 "${testcvs} -q ci -m ''" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/slink,v
+done
+Checking in slink;
+${TESTDIR}/cvsroot/first-dir/slink,v  <--  slink
+initial revision: 1\.1
+done"
+
+	    # Test checking out symbolic links.
+	    cd ../..
+	    mkdir 2; cd 2
+	    dotest symlinks-5 "${testcvs} -q co first-dir" "U first-dir/slink"
+	    cd first-dir
+	    dotest symlinks-6 "ls -l slink" \
+"l[rwx\-]* .* slink -> ${TESTDIR}/fumble"
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+	  ;;
+
+	hardlinks)
+	  # short cut around checking out and committing CVSROOT
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  echo 'PreservePermissions=yes' > ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
+
+	  mkdir 1; cd 1
+	  dotest hardlinks-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest hardlinks-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+
+	  dotest hardlinks-2.1 "touch alpha" ""
+	  dotest hardlinks-2.2 "ln alpha beta" ""
+	  dotest hardlinks-2.2 "ln alpha gamma" ""
+	  dotest hardlinks-3 "${testcvs} add alpha beta gamma" \
+"${PROG} [a-z]*: scheduling file .alpha. for addition
+${PROG} [a-z]*: scheduling file .beta. for addition
+${PROG} [a-z]*: scheduling file .gamma. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest hardlinks-4 "${testcvs} -q ci -m ''" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/alpha,v
+done
+Checking in alpha;
+${TESTDIR}/cvsroot/first-dir/alpha,v  <--  alpha
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/beta,v
+done
+Checking in beta;
+${TESTDIR}/cvsroot/first-dir/beta,v  <--  beta
+initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/gamma,v
+done
+Checking in gamma;
+${TESTDIR}/cvsroot/first-dir/gamma,v  <--  gamma
+initial revision: 1\.1
+done"
+	  # Test checking out hardlinked files.  Note spurious warnings:
+	  # these should be removed if/when the hard link code is
+	  # improved to track hard links better.
+	  cd ../..
+	  mkdir 2; cd 2
+	  if test "$remote" = yes; then
+	    # Remote does not implement PreservePermissions.
+	    dotest hardlinks-5 "${testcvs} -q co first-dir" \
+"U first-dir/alpha
+U first-dir/beta
+U first-dir/gamma"
+	    cd first-dir
+	    dotest hardlinks-6 "ls -l alpha beta gamma" \
+"-[rwx\-]* *1 .* alpha
+-[rwx\-]* *1 .* beta
+-[rwx\-]* *1 .* gamma"
+	  else
+	    dotest hardlinks-5 "${testcvs} -q co first-dir" \
+"${PROG} [a-z]*: warning: beta should be hardlinked to alpha, but is missing
+${PROG} [a-z]*: warning: gamma should be hardlinked to alpha, but is missing
+U first-dir/alpha
+U first-dir/beta
+U first-dir/gamma"
+	    cd first-dir
+	    # To make sure that the files are properly hardlinked, it
+	    # would be nice to do `ls -i' and make sure all the inodes
+	    # match.  But I think that would require expr to support
+	    # tagged regexps, and I don't think we can rely on that.
+	    # So instead we just see that each file has the right
+	    # number of links. -twp
+	    dotest hardlinks-6 "ls -l alpha beta gamma" \
+"-[rwx\-]* *3 .* alpha
+-[rwx\-]* *3 .* beta
+-[rwx\-]* *3 .* gamma"
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/config
+	  touch ${CVSROOT_DIRNAME}/CVSROOT/config
+	  chmod 444 ${CVSROOT_DIRNAME}/CVSROOT/config
 	  ;;
 
 	sticky)
