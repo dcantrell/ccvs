@@ -2026,6 +2026,9 @@ described in @ref{Connecting via rsh}.
 @c use SSH, for example.  Plus it incorrectly implies
 @c that you need an @code{rsh} binary on the client to use
 @c :server:.
+@c Also note that rsh not pserver is the right choice if you want
+@c users to be able to create their own repositories
+@c (because of the --allow-root related issues).
 @menu
 * Server requirements::         Memory and other resources for servers
 * Connecting via rsh::          Using the @code{rsh} program to connect
