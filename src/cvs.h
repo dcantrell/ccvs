@@ -338,7 +338,7 @@ extern mode_t cvsumask;
 
 /* Access method specified in CVSroot. */
 typedef enum {
-  local_method, server_method, pserver_method, kserver_method
+  local_method, server_method, pserver_method, kserver_method, ext_method
 } CVSmethod;
 extern char *method_names[];	/* change this in root.c if you change
 				   the enum above */

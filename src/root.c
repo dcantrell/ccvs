@@ -17,7 +17,7 @@
    Watch out if the enum is changed in cvs.h! */
 
 char *method_names[] = {
-  "local", "server (rsh)", "pserver", "kserver"
+  "local", "server (rsh)", "pserver", "kserver", "ext"
 };
 
 #ifndef DEBUG
@@ -220,7 +220,7 @@ parse_cvsroot (CVSroot)
 
 	/* Access method specified, as in
 	 * "cvs -d :pserver:user@host:/path",
-	 * "cvs -d :local:e\path", or
+	 * "cvs -d :local:e:\path", or
 	 * "cvs -d :kserver:user@host:/path".
 	 * We need to get past that part of CVSroot before parsing the
 	 * rest of it.
@@ -244,6 +244,8 @@ parse_cvsroot (CVSroot)
 	    CVSroot_method = kserver_method;
 	else if (strcmp (method, "server") == 0)
 	    CVSroot_method = server_method;
+	else if (strcmp (method, "ext") == 0)
+	    CVSroot_method = ext_method;
 	else
 	{
 	    error (0, 0, "unknown method in CVSroot: %s", CVSroot);
@@ -252,11 +254,16 @@ parse_cvsroot (CVSroot)
     }
     else
     {
-	/* If the method isn't specified, assume SERVER_METHOD if the
-	   string contains a colon or LOCAL_METHOD otherwise. */
+	/* If the method isn't specified, assume
+	   SERVER_METHOD/EXT_METHOD if the string contains a colon or
+	   LOCAL_METHOD otherwise.  */
 
 	CVSroot_method = ((strchr (cvsroot_copy, ':'))
+#ifdef RSH_NOT_TRANSPARENT
 			  ? server_method
+#else
+			  ? ext_method
+#endif
 			  : local_method);
     }
 
@@ -330,6 +337,7 @@ parse_cvsroot (CVSroot)
 	return 1;
 #endif
     case server_method:
+    case ext_method:
     case pserver_method:
 	if (! CVSroot_hostname)
 	{

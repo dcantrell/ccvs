@@ -1,3 +1,18 @@
+Thu Sep  5 13:57:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_tcp_server): Don't allow :kserver: to mean
+	"direct tcp" (root.c already takes care of this, but I want to
+	make it clear what is intended, and not intended, here).
+	(start_server): Handle ext_method (external rsh program) and
+	server_method (internal rsh client) separately.
+	* client.c: Take rsh_pid and start_rsh_server out of
+	RSH_NOT_TRANSPARENT ifdefs.  It is useful for things like SSH on NT.
+	* cvs.h (CVSmethod), root.c (method_names): Add ext_method.
+	* root.c (parse_cvsroot): Recognize "ext" access method.
+	If access method is not specified and CVSROOT contains a colon,
+	use either ext_method or server_method depending on
+	RSH_NOT_TRANSPARENT.
+
 Thu Sep  5 00:09:49 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_checkout): Remove flags parameter, which was not
