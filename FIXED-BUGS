@@ -1,0 +1,48 @@
+I feel like we should save these.
+
+======================================================================
+======================================================================
+
+* We don't understand the relationship between modules and subdirs
+  very well.  However, it is certainly the case that
+
+          CVSROOT=<local-cvs-repository> cvs checkout cvs
+
+                        and
+
+          CVSROOT=<remote-cvs-repository> cvs checkout cvs
+
+        ought to produce the same dir tree, and they don't.  On floss,
+  checking out cvs gets cygnus/cvs/..., whereas on totoro it gets
+  cvs/... bad, bad, bad, Bad, BAD.  Charles Hannum has noticed this too,
+  see immediately below:
+
+* From: "Charles M. Hannum" <mycroft@ai.mit.edu>
+  To: remote-cvs@cyclic.com
+  Subject: Yet another bug
+  Date: Thu, 23 Feb 1995 21:28:31 -0500
+  
+  Modules don't work correctly remotely.  e.g.  If I have a module `foo'
+  that points to `src/bin/foo', and I type `cvs get foo':
+  
+  1) Locally, CVS checks it out into a directory named `foo'.
+  2) Remotely, CVS checks it out into a directory named `src/bin/foo'.
+  
+  The latter is incorrect.
+
+----------------------------------------------------------------------
+
+For some reason, the remote version of the checkout code decided that
+module names had to be expanded into their names as relative to the
+CVS repository's root.  I removed this quirk and fixed another
+algorithm that relied on this fact.
+
+BTW, the difference between modules and aliases: if you use an alias,
+it will be as if you typed the value of the alias on the command line;
+if you use a module, the name doesn't get expanded.  Functionally,
+defining a module is the same as typing:
+
+	cvs checkout -d <module> <mapping>
+
+======================================================================
+======================================================================
