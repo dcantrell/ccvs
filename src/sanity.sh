@@ -1825,7 +1825,7 @@ for what in $tests; do
 '
 Concurrent Versions System (CVS) [0-9.]*.*
 
-Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn, 
+Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
