@@ -166,9 +166,9 @@ Reader_Lock (xrepository)
     if (readlock[0] == '\0')
       (void) sprintf (readlock, 
 #ifdef HAVE_LONG_FILE_NAMES
-		"%s.%s.%d", CVSRFL, hostname,
+		"%s.%s.%ld", CVSRFL, hostname,
 #else
-		"%s.%d", CVSRFL,
+		"%s.%ld", CVSRFL,
 #endif
 		getpid ());
 
@@ -307,9 +307,9 @@ write_lock (repository)
     if (writelock[0] == '\0')
 	(void) sprintf (writelock,
 #ifdef HAVE_LONG_FILE_NAMES
-	    "%s.%s.%d", CVSWFL, hostname,
+	    "%s.%s.%ld", CVSWFL, hostname,
 #else
-	    "%s.%d", CVSWFL,
+	    "%s.%ld", CVSWFL,
 #endif
 	getpid());
 
@@ -317,9 +317,9 @@ write_lock (repository)
     /* make sure we can write the repository */
     (void) sprintf (tmp,
 #ifdef HAVE_LONG_FILE_NAMES
-	"%s/%s.%s.%d", repository, CVSTFL, hostname,
+	"%s/%s.%s.%ld", repository, CVSTFL, hostname,
 #else
-	"%s/%s.%d", repository, CVSTFL,
+	"%s/%s.%ld", repository, CVSTFL,
 #endif
 	getpid ());
     if ((fp = fopen (tmp, "w+")) == NULL || fclose (fp) == EOF)

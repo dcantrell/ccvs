@@ -418,6 +418,8 @@ extern int logoff;		/* Don't write history entry */
 extern char hostname[];
 
 /* Externs that are included directly in the CVS sources */
+int gethostname PROTO((char* name, int namelen));
+
 int RCS_settag PROTO((const char *, const char *, const char *));
 int RCS_deltag PROTO((const char *, const char *, int));
 int RCS_setbranch PROTO((const char *, const char *));

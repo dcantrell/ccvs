@@ -676,7 +676,7 @@ receive_file (size, file, gzipped)
     if (gzip_pid)
     {
 	if (waitpid (gzip_pid, &gzip_status, 0) != gzip_pid)
-	    error (1, errno, "waiting for gunzip process %d", gzip_pid);
+	    error (1, errno, "waiting for gunzip process %ld", gzip_pid);
 	else if (gzip_status != 0)
 	    error (1, 0, "gunzip exited %d", gzip_status);
     }
@@ -3409,7 +3409,7 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 		if (fclose (f) == EOF)
 		    error (1, errno, "reading %s", short_pathname);
 		if (waitpid (gzip_pid, &gzip_status, 0) == -1)
-		    error (1, errno, "waiting for gzip process %d", gzip_pid);
+		    error (1, errno, "waiting for gzip process %ld", gzip_pid);
 		else if (gzip_status != 0)
 		    error (1, 0, "gzip exited %d", gzip_status);
 		/* Prepending length with "z" is flag for using gzip here.  */
@@ -4051,7 +4051,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	strcat (server_temp_dir, "/cvs-serv");
 
 	p = server_temp_dir + strlen (server_temp_dir);
-	sprintf (p, "%d", getpid ());
+	sprintf (p, "%ld", getpid ());
     }
 
     (void) SIG_register (SIGHUP, server_cleanup);

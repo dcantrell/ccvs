@@ -2511,7 +2511,7 @@ done'
 	  # Test CVS's ability to handle *info files.
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
-	  echo "ALL echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog" > loginfo
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
 	  dotest info-2 "${testcvs} add loginfo" \
 "${PROG}"' [a-z]*: scheduling file `loginfo'"'"' for addition
 '"${PROG}"' [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
