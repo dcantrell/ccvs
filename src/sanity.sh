@@ -42,6 +42,8 @@ unset CVSREAD
 #   'sort' and tabs and spaces (LC_COLLATE).
 #   Messages from getopt (LC_MESSAGES) (in the future, CVS itself might 
 #     also alter its messages based on LC_MESSAGES).
+LANG=C
+export LANG
 LC_ALL=C
 export LC_ALL
 
@@ -17169,21 +17171,12 @@ EOF
 	  # someone feels like documenting them and things go downhill
 	  # from there).
 	  # 
-	  # Hmm, if this test is run on the 31st of the month, and 100
-	  # months from now is a month with only 30 days (e.g. run on
-	  # 31 May 1999, 31 May 2001, 31 July 2002), it seems to fail.
-	  #
-	  # This also failed on three days in a row in October of 2002:
-	  # the 29th, 30th, and 31st.
-	  # I'm too tired to check the math just now, but is it possible that
-	  # the algorithm assumes the final month has 31 days and that 100
-	  # months from the 29th, 30th, and 31st would be the non-existan 29th,
-	  # 30th, and 31st of a non-leap year February or something?  Forgive
-	  # me if that is way off base but it is a wild guess without in-depth
-	  # knowledge of this test or the error being generated.
-	  # 
-	  # Sigh.
-	  dotest rcs2-7 "${testcvs} -q update -p -D '100 months' file1" \
+	  # These tests can be expected to fail 3 times every 400 years
+	  # starting Feb. 29, 2096 (because 8 years from that date would
+	  # be Feb. 29, 2100, which is an invalid date -- 2100 isn't a
+	  # leap year because it's divisible by 100 but not by 400).
+
+	  dotest rcs2-7 "${testcvs} -q update -p -D '96 months' file1" \
 "head revision"
 	  dotest rcs2-8 "${testcvs} -q update -p -D '8 years' file1" \
 "head revision"
