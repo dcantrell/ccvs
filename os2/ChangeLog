@@ -1,4 +1,10 @@
+Sun Jan 28 00:16:58 1996  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * filesubr.c (xchmod): rewritten for OS/2.
+
 Sat Jan 27 16:18:20 1996  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * config.h (CHMOD_BROKEN): define to 1.
 
         * filesubr.c (rename_file): rename() returns non-zero error codes,
         not necessarily negative.
