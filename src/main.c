@@ -437,9 +437,6 @@ main (int argc, char **argv)
 	{"help-options", 0, NULL, 4},
 #ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
-# ifdef PROXY_SUPPORT
-	{"primary-root", required_argument, NULL, 5},
-# endif /* PROXY_SUPPORT */
 #endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
     };
@@ -555,10 +552,6 @@ main (int argc, char **argv)
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg);
-		break;
-	    case 5:
-		/* --primary-root */
-		primary_root_add (optarg);
 		break;
 #endif /* SERVER_SUPPORT */
 	    case 'Q':

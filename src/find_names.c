@@ -83,9 +83,8 @@ Find_Names (char *repository, int which, int aflag, List **optentries)
 	/* search the repository */
 	if (find_rcs (repository, files) != 0)
 	{
-	    char *ppath = primary_root_inverse_translate (repository);
-	    error (0, errno, "cannot open directory %s", ppath);
-	    free (ppath);
+	    error (0, errno, "cannot open directory %s",
+		   primary_root_inverse_translate (repository));
 	    goto error_exit;
 	}
 
@@ -97,12 +96,10 @@ Find_Names (char *repository, int which, int aflag, List **optentries)
 	    (void) sprintf (dir, "%s/%s", repository, CVSATTIC);
 	    if (find_rcs (dir, files) != 0
 		&& !existence_error (errno))
-	    {
 		/* For now keep this a fatal error, seems less useful
 		   for access control than the case above.  */
-		char *ppath = primary_root_inverse_translate (dir);
-		error (1, errno, "cannot open directory %s", ppath);
-	    }
+		error (1, errno, "cannot open directory %s",
+		       primary_root_inverse_translate (dir));
 	    free (dir);
 	}
     }

@@ -538,11 +538,26 @@ commit (int argc, char **argv)
 		}
 		else
 		{
-		    send_to_server ("Directory ", 0);
-		    send_to_server (p->dir[0] == '\0' ? "." : p->dir, 0);
-		    send_to_server ("\012", 1);
-		    send_to_server (p->repos, 0);
-		    send_to_server ("\012", 1);
+		    /* This used to send the Directory line of its own accord,
+		     * but skipped some of the other processing like checking
+		     * for whether the server would accept "Relative-directory"
+		     * requests.  Relying on send_a_repository() to do this
+		     * picks up these checks but also:
+		     *
+		     *   1. Causes the "Directory" request to be sent only once
+		     *      per directory.
+		     *   2. Causes the global TOPLEVEL_REPOS to be set.
+		     *   3. Causes "Static-directory" and "Sticky" requests
+		     *      to sometimes be sent.
+		     *
+		     * (1) is almost certainly a plus.  (2) & (3) may or may
+		     * not be useful sometimes, and will ocassionally cause a
+		     * little extra network traffic.  The additional network
+		     * traffic is probably already saved several times over and
+		     * certainly cancelled out via the multiple "Directory"
+		     * request suppression of (1).
+		     */
+		    send_a_repository (p->dir, p->repos, p->dir);
 
 		    send_to_server ("Questionable ", 0);
 		    send_to_server (p->file, 0);

@@ -1,5 +1,31 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* checkout.c (checkout_proc), fileattr.c (fileattr_read), find_names.c
+	(Find_Names), myndbm.c (mydbm_open, mydbm_load_file), parseinfo.c
+	(Parse_Info), rcs.c (RCS_parsercsfile_i, rcsbuf_getkey,
+	rcsbuf_getrevnum, rcsbuf_valword): Root translation functions no longer
+	allocate.
+	* commit.c (commit): Use send_a_repository rather than reimplementing.
+	* main.c (main): Remove --primary-root option.
+	* root.c (primary_root_add): Remove this function.
+	(primary_root_in, primary_root_out): Remove globals.
+	(primary_root_translate, primary_root_inverse_translate): Return const.
+	Don't allocate return value.  Rely on parsed root and confg's
+	PrimarServer rather than separately maintained globals.
+	(get_local_root_dir): New function.
+	(local_cvsroot): Translate requests for primary roots when necessary.
+	* root.h (primary_root_add, primary_root_translate,
+	primary_root_inverse_translate): Update protos to match.
+	* sanity.sh (top level, writeproxy): Simplify $proxy setup.
+	(client): Don't execute $proxy.  Simplify skips and reindent.
+	(writeproxy-noredirect): Use --allow-root in place of --primary-root.
+	Save and restore $PRIMARY_CVSROOT*.
+	* server.c (serve_root): Rely on local_cvsroot() to do any necessary
+	root translation.
+	(serve_directory): Root translation functions no longer allocate.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* client.c (arg_should_not_be_sent_to_server), create_adm.c
 	(Create_Admin), recurse.c (start_recursion, do_recursion, do_dir_proc),
 	release.c (release), repos.c (Name_Repository, Short_Repository),

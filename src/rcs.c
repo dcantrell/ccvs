@@ -340,7 +340,7 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
     memset (rdata, 0, sizeof (RCSNode));
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
-    rdata->print_path = primary_root_inverse_translate (rcsfile);
+    rdata->print_path = xstrdup (primary_root_inverse_translate (rcsfile));
 
     /* Process HEAD, BRANCH, and EXPAND keywords from the RCS header.
 
@@ -1143,13 +1143,8 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, NULL);
 		if (ptr == NULL)
-		{
-		    char *pfilename =
-			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in key in RCS file %s",
-			   pfilename);
-		    free (pfilename);
-		}
+			   primary_root_inverse_translate (rcsbuf->filename));
 		ptrend = rcsbuf->ptrend;
 	    }
 	    c = *ptr;
@@ -1183,13 +1178,8 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, NULL);
 	    if (ptr == NULL)
-	    {
-		char *pfilename =
-		         primary_root_inverse_translate (rcsbuf->filename);
 		error (1, 0, "EOF while looking for value in RCS file %s",
-		       pfilename);
-		free (pfilename);
-	    }
+		       primary_root_inverse_translate (rcsbuf->filename));
 	    ptrend = rcsbuf->ptrend;
 	}
 	c = *ptr;
@@ -1233,14 +1223,9 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
-		{
-		    char *pfilename =
-			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
-			   pfilename);
-		    free (pfilename);
-		}
+			   primary_root_inverse_translate (rcsbuf->filename));
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1316,13 +1301,8 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
-		{
-		    char *pfilename =
-			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in value in RCS file %s",
-			   pfilename);
-		    free (pfilename);
-		}
+			   primary_root_inverse_translate (rcsbuf->filename));
 		ptrend = rcsbuf->ptrend;
 	    }
 	    n = *ptr;
@@ -1369,12 +1349,8 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    slen = start - *valp;
 	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 	    if (ptr == NULL)
-	    {
-		char *pfilename =
-			 primary_root_inverse_translate (rcsbuf->filename);
-		error (1, 0, "EOF in value in RCS file %s", pfilename);
-		free (pfilename);
-	    }
+		error (1, 0, "EOF in value in RCS file %s",
+		       primary_root_inverse_translate (rcsbuf->filename));
 	    start = *valp + slen;
 	    ptrend = rcsbuf->ptrend;
 	}
@@ -1428,14 +1404,9 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
                    that we don't search the same bytes again.  */
 		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
 		if (ptr == NULL)
-		{
-		    char *pfilename =
-			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0,
 			   "EOF while looking for end of string in RCS file %s",
-			   pfilename);
-		    free (pfilename);
-		}
+			   primary_root_inverse_translate (rcsbuf->filename));
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1445,13 +1416,8 @@ rcsbuf_getkey (struct rcsbuffer *rcsbuf, char **keyp, char **valp)
 	    {
 		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
 		if (ptr == NULL)
-		{
-		    char *pfilename =
-			     primary_root_inverse_translate (rcsbuf->filename);
 		    error (1, 0, "EOF in value in RCS file %s",
-			   pfilename);
-		    free (pfilename);
-		}
+			   primary_root_inverse_translate (rcsbuf->filename));
 		ptrend = rcsbuf->ptrend;
 	    }
 
@@ -1510,14 +1476,10 @@ rcsbuf_getrevnum (struct rcsbuffer *rcsbuf, char **revp)
     }
 
     if (! isdigit ((unsigned char) c) && c != '.')
-    {
-	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0,
 	       "\
 unexpected '\\x%x' reading revision number in RCS file %s",
-	       c, pfilename);
-	free (pfilename);
-    }
+	       c, primary_root_inverse_translate (rcsbuf->filename));
 
     *revp = ptr;
 
@@ -1528,14 +1490,9 @@ unexpected '\\x%x' reading revision number in RCS file %s",
 	{
 	    ptr = rcsbuf_fill (rcsbuf, ptr, revp, NULL);
 	    if (ptr == NULL)
-	    {
-		char *pfilename =
-			 primary_root_inverse_translate (rcsbuf->filename);
 		error (1, 0,
 		       "unexpected EOF reading revision number in RCS file %s",
-		       pfilename);
-		free (pfilename);
-	    }
+		       primary_root_inverse_translate (rcsbuf->filename));
 	    ptrend = rcsbuf->ptrend;
 	}
 
@@ -1544,13 +1501,9 @@ unexpected '\\x%x' reading revision number in RCS file %s",
     while (isdigit ((unsigned char) c) || c == '.');
 
     if (! whitespace (c))
-    {
-	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "\
 unexpected '\\x%x' reading revision number in RCS file %s",
-	       c, pfilename);
-	free (pfilename);
-    }
+	       c, primary_root_inverse_translate (rcsbuf->filename));
 
     *ptr = '\0';
 
@@ -1871,12 +1824,8 @@ rcsbuf_valword (struct rcsbuffer *rcsbuf, char **valp)
     /* *PTR is neither `:', `;' nor `@', so it should be the start of a num
        or an id.  Make sure it is not another special character. */
     if (c == '$' || c == '.' || c == ',')
-    {
-	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "invalid special character in RCS field in %s",
-	       pfilename);
-	free (pfilename);
-    }
+	       primary_root_inverse_translate (rcsbuf->filename));
 
     pat = ptr;
     while (1)
@@ -1894,12 +1843,8 @@ rcsbuf_valword (struct rcsbuffer *rcsbuf, char **valp)
        the character in its memory cell.  Check to make sure that it
        is a legitimate word delimiter -- whitespace or end. */
     if (c != '\0' && !my_whitespace (c))
-    {
-	char *pfilename = primary_root_inverse_translate (rcsbuf->filename);
 	error (1, 0, "invalid special character in RCS field in %s",
-	       pfilename);
-	free (pfilename);
-    }
+	       primary_root_inverse_translate (rcsbuf->filename));
 
     *pat = '\0';
     rcsbuf->vlen -= pat - *valp;

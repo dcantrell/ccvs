@@ -166,84 +166,80 @@ Create_Root (const char *dir, const char *rootdir)
 
 
 
-/* Store our primary root translation.  */
-char *primary_root_in, *primary_root_out;
-
-/* The name of this function is misleading.  At the moment it we only track a
- * single primary_root.
- */
-void
-primary_root_add (const char *arg)
-{
-    char *p;
-
-    if (primary_root_in)
-	error (1, 0, "--primary-root may only be invoked once.");
-
-    /* Save path 1.  */
-    primary_root_in = xstrdup (arg);
-
-    p = strchr (primary_root_in, '=');
-    if (p == NULL || primary_root_in[0] != '/' || p[1] != '/')
-	error (1, 0,
-	       "--primary-root requires an argument of the form PATH=LOCALPATH"
-	      );
-
-    *p++ = '\0';
-    primary_root_out = p;
-}
-
-
-
-/* Translate an absolute repository string for a primary server and return it
- * in freshly allocated memory.
+/* Translate an absolute repository string for a primary server and return it.
  *
  * INPUTS
  *   root_in	The root to be translated.
  *
  * RETURNS
- *   A freshly allocated translated string.
+ *   A translated string this function owns, or a pointer to the original
+ *   string passed in if no translation was necessary.
+ *
+ *   If the returned string is the translated one, it will be overwritten
+ *   by the next call to this function.
  */
-inline char *
+const char *
 primary_root_translate (const char *root_in)
 {
-    if (primary_root_in
-        && !strncmp (root_in, primary_root_in, strlen (primary_root_in))
-        && strlen (root_in) >= strlen (primary_root_in)
-        && (ISSLASH (root_in[strlen (primary_root_in)])
-            || root_in[strlen (primary_root_in)] == '\0'))
-    {
-	size_t dummy;
-	return asnprintf (NULL, &dummy, "%s%s",
-	                  primary_root_out,
-	                  root_in + strlen (primary_root_in));
-    }
+    static char *translated = NULL;
+    static size_t len;
+
+    /* This can happen, for instance, during `cvs init'.  */
+    if (!config) return root_in;
+
+    if (config->PrimaryServer
+        && !strncmp (root_in, config->PrimaryServer->directory,
+		     strlen (config->PrimaryServer->directory))
+        && (ISSLASH (root_in[strlen (config->PrimaryServer->directory)])
+            || root_in[strlen (config->PrimaryServer->directory)] == '\0')
+       )
+	return translated =
+	    asnprintf (translated, &len, "%s%s",
+	               current_parsed_root->directory,
+	               root_in + strlen (config->PrimaryServer->directory));
 
     /* There is no primary root configured or it didn't match.  */
-    return xstrdup (root_in);
+    return root_in;
 }
 
 
 
 /* Translate a primary root in reverse for PATHNAMEs in responses.
+ *
+ * INPUTS
+ *   root_in	The root to be translated.
+ *
+ * RETURNS
+ *   A translated string this function owns, or a pointer to the original
+ *   string passed in if no translation was necessary.
+ *
+ *   If the returned string is the translated one, it will be overwritten
+ *   by the next call to this function.
  */
-char *
+const char *
 primary_root_inverse_translate (const char *root_in)
 {
-    if (primary_root_out
-        && !strncmp (root_in, primary_root_out, strlen (primary_root_out))
-        && strlen (root_in) >= strlen (primary_root_out)
-        && (ISSLASH (root_in[strlen (primary_root_out)])
-            || root_in[strlen (primary_root_out)] == '\0'))
-    {
-	size_t dummy;
-	return asnprintf (NULL, &dummy, "%s%s",
-	                  primary_root_in,
-	                  root_in + strlen (primary_root_out));
-    }
+    static char *translated = NULL;
+    static size_t len;
+
+    TRACE (TRACE_FLOW, "primary_root_inverse_translate (%s)", root_in);
+
+    /* This can happen, for instance, during `cvs init'.  */
+    if (!config) return root_in;
+
+    if (config->PrimaryServer
+        && !strncmp (root_in, current_parsed_root->directory,
+		     strlen (current_parsed_root->directory))
+        && (ISSLASH (root_in[strlen (current_parsed_root->directory)])
+            || root_in[strlen (current_parsed_root->directory)] == '\0')
+       )
+	return translated =
+	    asnprintf (translated, &len, "%s%s",
+	               config->PrimaryServer->directory,
+	               root_in + strlen (current_parsed_root->directory));
 
     /* There is no primary root configured or it didn't match.  */
-    return xstrdup (root_in);
+    return root_in;
 }
 
 
@@ -339,7 +335,10 @@ char *CVSroot_cmdline;
 /* FIXME - Deglobalize this. */
 cvsroot_t *current_parsed_root = NULL;
 /* Used to save the original root being processed so that we can still find it
- * in lists and the like after a `Redirect' response.
+ * in lists and the like after a `Redirect' response.  Also set to mirror
+ * current_parsed_root in server mode so that code which runs on both the
+ * client and server but which wants to use original data on the client can
+ * just always reference the original_parsed_root.
  */
 const cvsroot_t *original_parsed_root;
 
@@ -902,6 +901,32 @@ normalize_cvsroot (const cvsroot_t *root)
 
 
 
+/* A walklist() function to walk the root_allow list looking for a PrimaryServer
+ * configuration with a directory matching the requested directory.
+ *
+ * If found, replace it.
+ */
+static bool get_local_root_dir_done;
+static int
+get_local_root_dir (Node *p, void *root_in)
+{
+    struct config *c = p->data;
+    char **r = root_in;
+
+    if (get_local_root_dir_done)
+	return 0;
+
+    if (c->PrimaryServer && !strcmp (*r, c->PrimaryServer->directory))
+    {
+	free (*r);
+	*r = xstrdup (p->key);
+	get_local_root_dir_done = true;
+    }
+    return 0;
+}
+
+
+
 /* allocate and return a cvsroot_t structure set up as if we're using the local
  * repository DIR.  */
 cvsroot_t *
@@ -916,7 +941,15 @@ local_cvsroot (const char *dir)
      * called on a CVSROOT now.  cvsroot->original is saved for error messages
      * and, otherwise, we want no trailing slashes.
      */
-    Sanitize_Repository_Name( newroot->directory );
+    Sanitize_Repository_Name (newroot->directory);
+
+    /* Translate the directory to a local one in the case that we are
+     * configured as a secondary.  If root_allow has not been initialized,
+     * nothing happens.
+     */
+    get_local_root_dir_done = false;
+    walklist (root_allow, get_local_root_dir, &newroot->directory);
+
     return newroot;
 }
 
