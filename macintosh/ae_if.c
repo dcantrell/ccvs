@@ -8,7 +8,8 @@
  *
  * Michael Ladwig <mike@twinpeaks.prc.com> --- April 1996
  */
- 
+#include "mac_config.h"
+#ifdef AE_IO_HANDLERS
 #ifdef __POWERPC__
 #include <MacHeadersPPC>
 #else
@@ -24,11 +25,9 @@
 
 extern char *xmalloc (size_t bytes);
 
-#define AE_TIMEOUT_SECONDS		2
+enum { outToAE, outToFile };
 
-enum { outToConsole, outToAE, outToFile };
-
-static int		outputMode = outToConsole;
+static int		outputMode = outToAE;
 static char		tempOutputFileName[256], outputFileName[256];
 static int		outputFile;
 static int		noLineBuffer;
@@ -44,9 +43,6 @@ char				**Args;
 char				**EnvVars, **EnvVals;
 int				ArgC	= 1;
 int				EnvC	= 1;
-
-#define ArgMax 512
-#define EnvMax 512
 
 char * CopyInfo(Handle info)
 {
@@ -169,7 +165,7 @@ pascal OSErr DoScript(const AppleEvent *event, AppleEvent *reply, long refCon)
 	// Figure out what mode should be used to return results
 	
 	if (AEGetParamPtr(event, 'MODE', typeEnumerated, &typeCode, &mode, 4, &size))
-		outputMode = outToConsole;
+		outputMode = outToAE;
 	else
 	{
 		switch (mode) {
