@@ -4690,7 +4690,6 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     struct send_data *args = (struct send_data *) callerdat;
     int dir_exists;
     char *cvsadm_name;
-    char *cvsadm_repos_name;
 
     if (ignore_directory (update_dir))
     {
@@ -4721,9 +4720,7 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
      * newly-created directory), the server still needs to know about it.
      */
 
-    cvsadm_repos_name = xmalloc (strlen (dir) + sizeof (CVSADM_REP) + 80);
-    sprintf (cvsadm_repos_name, "%s/%s", dir, CVSADM_REP);
-    if (dir_exists && isreadable (cvsadm_repos_name))
+    if (dir_exists)
     {
 	/*
 	 * Get the repository from a CVS/Repository file whenever possible.
@@ -4740,10 +4737,9 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
            new directories (build_dirs is true).  Otherwise, CVS may
            see a D line in an Entries file, and recreate a directory
            which the user removed by hand.  */
-	if (dir_exists || args->build_dirs)
+	if (args->build_dirs)
 	    send_a_repository (dir, repository, update_dir);
     }
-    free (cvsadm_repos_name);
 
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
 }

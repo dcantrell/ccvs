@@ -4897,6 +4897,12 @@ ${PROG} [a-z]*: ignoring sdir (CVS/Entries missing)"
 	  mkdir newdir
 	  mkdir newdir/CVS
 	  dotest conflicts3-17 "${testcvs} -q update" "${QUESTION} newdir"
+	  echo "D/newdir////" >> CVS/Entries
+	  dotest conflicts3-18 "${testcvs} -q update" \
+"${PROG} [a-z]*: ignoring newdir (CVS/Repository missing)"
+	  touch newdir/CVS/Repository
+	  dotest conflicts3-19 "${testcvs} -q update" \
+"${PROG} [a-z]*: ignoring newdir (CVS/Entries missing)"
 	  rm -r newdir
 
 	  cd ../..

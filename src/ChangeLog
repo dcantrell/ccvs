@@ -1,3 +1,11 @@
+Sun Nov 23 10:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_dir_proc): Move check for CVS/Repository and
+	CVS/Entries to before where we call the direntproc.
+	* client.c (send_dirent_proc): Remove code to check for
+	CVS/Repository, now that recurse.c does it.
+	* sanity.sh (conflicts3-18 through conflicts3-19): New tests, for this.
+
 Sat Nov 22 10:54:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_dir_proc): Check that CVS/Repository and

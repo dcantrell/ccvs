@@ -669,8 +669,67 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    newrepos = xstrdup (repository);
     }
 
+    /* Check to see that the CVSADM directory, if it exists, seems to be
+       well-formed.  It can be missing files if the user hit ^C in the
+       middle of a previous run.  We want to (a) make this a nonfatal
+       error, and (b) make sure we print which directory has the
+       problem.
+
+       Do this before the direntproc, so that (1) the direntproc
+       doesn't have to guess/deduce whether we will skip the directory
+       (e.g. send_dirent_proc and whether to send the directory), and
+       (2) so that the warm fuzzy doesn't get printed if we skip the
+       directory.  */
+    {
+	char *cvsadmdir;
+
+	cvsadmdir = xmalloc (strlen (dir)
+			     + sizeof (CVSADM_REP)
+			     + sizeof (CVSADM_ENT)
+			     + 80);
+
+	strcpy (cvsadmdir, dir);
+	strcat (cvsadmdir, "/");
+	strcat (cvsadmdir, CVSADM);
+	if (isdir (cvsadmdir))
+	{
+	    strcpy (cvsadmdir, dir);
+	    strcat (cvsadmdir, "/");
+	    strcat (cvsadmdir, CVSADM_REP);
+	    if (!isfile (cvsadmdir))
+	    {
+		/* Some commands like update may have printed "? foo" but
+		   if we were planning to recurse, and don't on account of
+		   CVS/Repository, we want to say why.  */
+		error (0, 0, "ignoring %s (%s missing)", update_dir,
+		       CVSADM_REP);
+		dir_return = R_SKIP_ALL;
+	    }
+
+	    /* Likewise for CVS/Entries.  */
+	    if (dir_return != R_SKIP_ALL)
+	    {
+		strcpy (cvsadmdir, dir);
+		strcat (cvsadmdir, "/");
+		strcat (cvsadmdir, CVSADM_ENT);
+		if (!isfile (cvsadmdir))
+		{
+		    /* Some commands like update may have printed "? foo" but
+		       if we were planning to recurse, and don't on account of
+		       CVS/Repository, we want to say why.  */
+		    error (0, 0, "ignoring %s (%s missing)", update_dir,
+			   CVSADM_ENT);
+		    dir_return = R_SKIP_ALL;
+		}
+	    }
+	}
+	free (cvsadmdir);
+    }
+
     /* call-back dir entry proc (if any) */
-    if (frame->direntproc != NULL)
+    if (dir_return == R_SKIP_ALL)
+	;
+    else if (frame->direntproc != NULL)
 	dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
 					update_dir, frent->entries);
     else
@@ -679,54 +738,6 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	   a direntproc just to get this.  */
 	if ((frame->which & W_LOCAL) && !isdir (dir))
 	    dir_return = R_SKIP_ALL;
-    }
-
-    /* Now we check for CVS/Repository.  We do this now rather than wait
-       for Name_Repository, so we can make this a nonfatal error.  */
-    if (dir_return != R_SKIP_ALL)
-    {
-	char *cvsadmdir;
-
-	cvsadmdir = xmalloc (strlen (dir)
-			     + sizeof (CVSADM_REP)
-			     + 80);
-
-	strcpy (cvsadmdir, dir);
-	strcat (cvsadmdir, "/");
-	strcat (cvsadmdir, CVSADM_REP);
-	if (!isfile (cvsadmdir))
-	{
-	    /* Some commands like update may have printed "? foo" but
-	       if we were planning to recurse, and don't on account of
-	       CVS/Repository, we want to say why.  This case can
-	       happen if the user hit ^C at the wrong time in a
-	       checkout.  */
-	    error (0, 0, "ignoring %s (%s missing)", update_dir, CVSADM_REP);
-	    dir_return = R_SKIP_ALL;
-	}
-	free (cvsadmdir);
-    }
-
-    /* Likewise for CVS/Entries.  */
-    if (dir_return != R_SKIP_ALL)
-    {
-	char *cvsadmdir;
-
-	cvsadmdir = xmalloc (strlen (dir)
-			     + sizeof (CVSADM_ENT)
-			     + 80);
-
-	strcpy (cvsadmdir, dir);
-	strcat (cvsadmdir, "/");
-	strcat (cvsadmdir, CVSADM_ENT);
-	if (!isfile (cvsadmdir))
-	{
-	    /* As with CVS/Repository, don't rely on just the "? foo"
-	       message.  */
-	    error (0, 0, "ignoring %s (%s missing)", update_dir, CVSADM_ENT);
-	    dir_return = R_SKIP_ALL;
-	}
-	free (cvsadmdir);
     }
 
     free (newrepos);
