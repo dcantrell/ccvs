@@ -6046,9 +6046,7 @@ server (int argc, char **argv)
 	buf_from_net = log_buffer_initialize (buf_from_net, NULL,
 # ifdef PROXY_SUPPORT
 					      true,
-#   ifndef TRUST_OS_FILE_CACHE
 					      MaxProxyBufferSize,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
 					      true, outbuf_memory_error);
 	proxy_log = buf_from_net;
@@ -6057,9 +6055,7 @@ server (int argc, char **argv)
 	buf_to_net = log_buffer_initialize (buf_to_net, NULL,
 # ifdef PROXY_SUPPORT
 					    true,
-#   ifndef TRUST_OS_FILE_CACHE
 					    MaxProxyBufferSize,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
 					    false, outbuf_memory_error);
 	proxy_log_out = buf_to_net;

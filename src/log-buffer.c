@@ -44,7 +44,6 @@ struct log_buffer
     /* Set once logging is permanently disabled for a buffer.  */
     bool disabled;
 
-# ifndef TRUST_OS_FILE_CACHE
     /* The memory buffer (cache) backing this log.  */
     struct buffer *back_buf;
 
@@ -55,7 +54,6 @@ struct log_buffer
 
     /* Once we start logging to a file we do not want to stop unless asked.  */
     bool tofile;
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
 };
 
@@ -106,7 +104,7 @@ log_buffer_force_file (struct log_buffer *lb)
 #endif
  *   input		Whether we will log data for an input or output
  *			buffer.
-#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+#ifdef PROXY_SUPPORT
  *   max		The maximum size of our memory cache.
 #else
  *   max		unused
@@ -127,9 +125,7 @@ struct buffer *
 log_buffer_initialize (struct buffer *buf, FILE *fp,
 # ifdef PROXY_SUPPORT
 		       bool fatal_errors,
-#   ifndef TRUST_OS_FILE_CACHE
 		       size_t max,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
                        bool input,
 		       void (*memory) (struct buffer *))
@@ -143,12 +139,10 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
     lb->back_fn = NULL;
     lb->fatal_errors = fatal_errors;
     lb->disabled = false;
-# ifndef TRUST_OS_FILE_CACHE
     assert (size_in_bounds_p (max));
     lb->max = max;
     lb->tofile = false;
     lb->back_buf = buf_nonio_initialize (memory);
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
     retbuf = buf_initialize (0, 0,
                              input ? log_buffer_input : NULL,
@@ -167,14 +161,13 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 	 * the auth code will be logged and put in our new buffer).
 	 */
 	struct buffer_data *data;
-#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+#ifdef PROXY_SUPPORT
 	size_t total = 0;
-#endif /* PROXY_SUPPORT && !TRUST_OS_FILE_CACHE */
+#endif /* PROXY_SUPPORT */
 
 	for (data = buf->data; data != NULL; data = data->next)
 	{
 #ifdef PROXY_SUPPORT
-# ifndef TRUST_OS_FILE_CACHE
 	    if (!lb->tofile)
 	    {
 		total = xsum (data->size, total);
@@ -184,7 +177,6 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 
 	    if (lb->tofile)
 	    {
-# endif /* !TRUST_OS_FILE_CACHE */
 		if (!lb->log) log_buffer_force_file (lb);
 		if (lb->log)
 		{
@@ -201,12 +193,10 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
 		    fflush (lb->log);
 #ifdef PROXY_SUPPORT
 		}
-# ifndef TRUST_OS_FILE_CACHE
 	    }
 	    else
 		/* Log to memory buffer.  */
 		buf_copy_data (lb->back_buf, data, data);
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
 	}
 	buf_append_buffer (retbuf, buf);
@@ -237,14 +227,12 @@ log_buffer_input (void *closure, char *data, size_t need, size_t size,
 	*got > 0)
     {
 #ifdef PROXY_SUPPORT
-# ifndef TRUST_OS_FILE_CACHE
 	if (!lb->tofile
 	    && xsum (*got, buf_count_mem (lb->back_buf)) >= lb->max)
 	    lb->tofile = true;
 
 	if (lb->tofile)
 	{
-# endif /* !TRUST_OS_FILE_CACHE */
 	    if (!lb->log) log_buffer_force_file (lb);
 	    if (lb->log)
 	    {
@@ -260,12 +248,10 @@ log_buffer_input (void *closure, char *data, size_t need, size_t size,
 		fflush (lb->log);
 #ifdef PROXY_SUPPORT
 	    }
-# ifndef TRUST_OS_FILE_CACHE
 	}
 	else
 	    /* Log to memory buffer.  */
 	    buf_output (lb->back_buf, data, *got);
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
     }
 
@@ -294,14 +280,12 @@ log_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 	*wrote > 0)
     {
 #ifdef PROXY_SUPPORT
-# ifndef TRUST_OS_FILE_CACHE
 	if (!lb->tofile
 	    && xsum (*wrote, buf_count_mem (lb->back_buf)) >= lb->max)
 	    lb->tofile = true;
 
 	if (lb->tofile)
 	{
-# endif /* !TRUST_OS_FILE_CACHE */
 	    if (!lb->log) log_buffer_force_file (lb);
 	    if (lb->log)
 	    {
@@ -317,12 +301,10 @@ log_buffer_output (void *closure, const char *data, size_t have, size_t *wrote)
 		fflush (lb->log);
 #ifdef PROXY_SUPPORT
 	    }
-# ifndef TRUST_OS_FILE_CACHE
 	}
 	else
 	    /* Log to memory buffer.  */
 	    buf_output (lb->back_buf, data, *wrote);
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
     }
 
@@ -405,7 +387,6 @@ log_buffer_rewind (struct buffer *buf)
     /* Create a new fd buffer around the log.  */
     retbuf = fd_buffer_initialize (fd, 0, NULL, true, buf->memory_error);
 
-# ifndef TRUST_OS_FILE_CACHE
     {
 	struct buffer *tmp;
         /* Insert the data which wasn't written to a file.  */
@@ -414,7 +395,6 @@ log_buffer_rewind (struct buffer *buf)
 	lb->back_buf = NULL;
 	buf_free (tmp);
     }
-# endif /* !TRUST_OS_FILE_CACHE */
 
     return retbuf;
 }
@@ -458,14 +438,12 @@ log_buffer_closelog (struct buffer *buf)
 	free (tmp);
     }
 
-# ifndef TRUST_OS_FILE_CACHE
     if (lb->back_buf)
     {
 	tmp = lb->back_buf;
 	lb->back_buf = NULL;
 	buf_free (tmp);
     }
-# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
 }
 
@@ -529,9 +507,7 @@ setup_logfiles (char *var, struct buffer **to_server_p,
 	*to_server_p = log_buffer_initialize (*to_server_p, fp,
 # ifdef PROXY_SUPPORT
 					      false,
-#   ifndef TRUST_OS_FILE_CACHE
 					      0,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
 					      false, NULL);
 
@@ -543,9 +519,7 @@ setup_logfiles (char *var, struct buffer **to_server_p,
 	*from_server_p = log_buffer_initialize (*from_server_p, fp,
 # ifdef PROXY_SUPPORT
 						false,
-#   ifndef TRUST_OS_FILE_CACHE
 						0,
-#   endif /* !TRUST_OS_FILE_CACHE */
 # endif /* PROXY_SUPPORT */
                                                 true, NULL);
 

@@ -159,10 +159,8 @@ int buf_length (struct buffer *);
 int buf_get_fd (struct buffer *);
 int buf_shutdown (struct buffer *);
 #ifdef PROXY_SUPPORT
-# ifndef TRUST_OS_FILE_CACHE
 void buf_copy_data (struct buffer *buf, struct buffer_data *data,
                     struct buffer_data *last);
-# endif /* !TRUST_OS_FILE_CACHE */
 void buf_free_data (struct buffer *);
 #endif /* PROXY_SUPPORT */
 

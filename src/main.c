@@ -59,11 +59,11 @@ bool top_level_admin = false;
 bool UseNewInfoFmtStrings = false;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 cvsroot_t *PrimaryServer;
-#if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
+#ifdef PROXY_SUPPORT
 size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
                                                         * by default.
                                                         */
-#endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+#endif /* PROXY_SUPPORT */
 size_t MaxCommentLeaderLength = 20;
 bool UseArchiveCommentLeader = false;
 

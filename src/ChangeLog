@@ -1,5 +1,10 @@
 2004-09-17  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c, buffer.h, log-buffer.c, log-buffer.h, main.c, mkmodules.c,
+	parseinfo.c, server.c: Remove TRUST_OS_FILE_CACHE.
+
+2004-09-17  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (fd_set_block): Ignore FreeBSD /dev/null problem.
 
 2004-09-17  Derek Price  <derek@ximbiot.com>
