@@ -1,3 +1,7 @@
+2000-12-27  Derek Price  <derek.price@openavenue.com>
+
+	* NEWS: Fix comments about the changes to ~/.cvspass
+
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (EXTRA_DIST): Add cvs.spec.in
