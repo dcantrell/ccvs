@@ -2777,7 +2777,7 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 
 	if (stat (file, &sb) < 0)
 	{
-	    if (errno == ENOENT)
+	    if (existence_error (errno))
 	    {
 		/*
 		 * If we have a sticky tag for a branch on which the

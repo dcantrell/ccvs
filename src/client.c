@@ -561,7 +561,7 @@ call_in_directory (pathname, func, data)
 	    char *dir;
 	    char *dirp;
 	    
-	    if (errno != ENOENT)
+	    if (! existence_error (errno))
 		error (1, errno, "could not chdir to %s", dirname);
 	    
 	    /* Directory does not exist, we need to create it.  */
@@ -1276,7 +1276,7 @@ clear_static (data, ent_list, short_pathname, filename)
     char *short_pathname;
     char *filename;
 {
-    if (unlink_file (CVSADM_ENTSTAT) < 0 && errno != ENOENT)
+    if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
         error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
 }
 
@@ -1359,7 +1359,7 @@ clear_sticky (data, ent_list, short_pathname, filename)
     char *short_pathname;
     char *filename;
 {
-    if (unlink_file (CVSADM_TAG) < 0 && errno != ENOENT)
+    if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TAG);
 }
 
@@ -1491,7 +1491,7 @@ client_isemptydir (dir)
 
     if ((dirp = opendir (dir)) == NULL)
     {
-	if (errno != ENOENT)
+	if (! existence_error (errno))
 	    error (0, errno, "cannot open directory %s for empty check", dir);
 	return (0);
     }
@@ -1638,7 +1638,7 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
+	    if (! existence_error (errno))
 		error (1, errno, "reading %s", adm_name);
 	}
 	else
@@ -1673,7 +1673,7 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
+	    if (! existence_error (errno))
 		error (1, errno, "reading %s", adm_name);
 	}
 	else
@@ -1708,7 +1708,7 @@ send_repository (dir, repos, update_dir)
 	f = fopen (adm_name, "r");
 	if (f == NULL)
 	{
-	    if (errno != ENOENT)
+	    if (! existence_error (errno))
 		error (1, errno, "reading %s", adm_name);
 	}
 	else

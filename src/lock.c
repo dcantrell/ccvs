@@ -83,14 +83,14 @@ unlock (repository)
     if (readlock[0] != '\0')
     {
 	(void) sprintf (tmp, "%s/%s", repository, readlock);
-	if (unlink (tmp) < 0 && errno != ENOENT)
+	if (unlink (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
     }
 
     if (writelock[0] != '\0')
     {
 	(void) sprintf (tmp, "%s/%s", repository, writelock);
-	if (unlink (tmp) < 0 && errno != ENOENT)
+	if (unlink (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
     }
 
@@ -194,7 +194,7 @@ Reader_Lock (xrepository)
 	error (0, errno, "cannot create read lock in repository `%s'",
 	       xrepository);
 	readlock[0] = '\0';
-	if (unlink (tmp) < 0 && errno != ENOENT)
+	if (unlink (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
 	return (1);
     }
@@ -331,7 +331,7 @@ write_lock (repository)
     {
 	error (0, errno, "cannot create write lock in repository `%s'",
 	       repository);
-	if (unlink (tmp) < 0 && errno != ENOENT)
+	if (unlink (tmp) < 0 && ! existence_error (errno))
 	    error (0, errno, "failed to remove lock %s", tmp);
 	return (L_ERROR);
     }
@@ -362,7 +362,7 @@ write_lock (repository)
 	{
 	    int xerrno = errno;
 
-	    if (unlink (tmp) < 0 && errno != ENOENT)
+	    if (unlink (tmp) < 0 && ! existence_error (errno))
 		error (0, errno, "failed to remove lock %s", tmp);
 
 	    /* free the lock dir if we created it */
@@ -537,7 +537,7 @@ set_lock (repository, will_wait)
 	 */
 	if (stat (masterlock, &sb) < 0)
 	{
-	    if (errno == ENOENT)
+	    if (existence_error (errno))
 		continue;
 
 	    error (0, errno, "couldn't stat lock directory `%s'", masterlock);

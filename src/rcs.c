@@ -152,7 +152,7 @@ RCS_parse (file, repos)
 	fclose (fp);
 	return (rcs);
     }
-    else if (errno != ENOENT)
+    else if (! existence_error (errno))
     {
 	error (0, errno, "cannot open %s", rcsfile);
 	return NULL;
@@ -177,7 +177,7 @@ RCS_parse (file, repos)
 	fclose (fp);
 	return (rcs);
     }
-    else if (errno != ENOENT)
+    else if (! existence_error (errno))
     {
 	error (0, errno, "cannot open %s", rcsfile);
 	return NULL;

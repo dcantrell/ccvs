@@ -280,7 +280,7 @@ make_directories (name)
 
     if (mkdir (name, 0777) == 0 || errno == EEXIST)
 	return;
-    if (errno != ENOENT)
+    if (! existence_error (errno))
     {
 	error (0, errno, "cannot make path to %s", name);
 	return;

@@ -203,7 +203,7 @@ time_stamp_server (file, vers_ts)
 
     if (stat (file, &sb) < 0)
     {
-	if (errno != ENOENT)
+	if (! existence_error (errno))
 	    error (1, errno, "cannot stat temp file");
 	if (use_unchanged)
 	  {

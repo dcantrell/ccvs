@@ -129,7 +129,7 @@ ign_add_file (file, hold)
     fp = fopen (file, "r");
     if (fp == NULL)
     {
-	if (errno != ENOENT)
+	if (! existence_error (errno))
 	    error (0, errno, "cannot open %s", file);
 	return;
     }

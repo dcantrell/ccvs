@@ -66,7 +66,7 @@ Checkin (type, file, update_dir, repository,
 	{
             copy_file (tocvsPath, fname);
 	    if (unlink_file_dir (file) < 0)
-		if (errno != ENOENT)
+		if (! existence_error (errno))
 		    error (1, errno, "cannot remove %s", file);
 	    copy_file (tocvsPath, file);
 	}

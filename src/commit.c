@@ -1025,7 +1025,7 @@ commit_filesdoneproc (err, repository, update_dir)
 	}
 	else
 	{
-	    if (errno != ENOENT)
+	    if (! existence_error (errno))
 		error (0, errno, "warning: cannot open %s", CVSADM_CIPROG);
 	}
     }
