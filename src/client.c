@@ -1234,7 +1234,7 @@ call_in_directory (pathname, func, data)
 	    {
 		/* It already existed, fine.  Just keep going.  */
 	    }
-	    else if (strcmp (command_name, "export") == 0)
+	    else if (strcmp (cvs_cmd_name, "export") == 0)
 		/* Don't create CVSADM directories if this is export.  */
 		;
 	    else
@@ -1302,7 +1302,7 @@ warning: server is not creating directories one at a time");
 	if ( CVS_CHDIR (dir_name) < 0)
 	    error (1, errno, "could not chdir to %s", dir_name);
     }
-    else if (strcmp (command_name, "export") == 0)
+    else if (strcmp (cvs_cmd_name, "export") == 0)
 	/* Don't create CVSADM directories if this is export.  */
 	;
     else if (!isdir (CVSADM))
@@ -1332,7 +1332,7 @@ warning: server is not creating directories one at a time");
 	    free (repo);
     }
 
-    if (strcmp (command_name, "export") != 0)
+    if (strcmp (cvs_cmd_name, "export") != 0)
     {
 	last_entries = Entries_Open (0, dir_name);
 
@@ -2138,7 +2138,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
      * Process the entries line.  Do this after we've written the file,
      * since we need the timestamp.
      */
-    if (strcmp (command_name, "export") != 0)
+    if (strcmp (cvs_cmd_name, "export") != 0)
     {
 	char *local_timestamp;
 	char *file_timestamp;
@@ -2162,7 +2162,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	{
 	    local_timestamp = file_timestamp;
 
-	    /* Checking for command_name of "commit" doesn't seem like
+	    /* Checking for cvs_cmd_name of "commit" doesn't seem like
 	       the cleanest way to handle this, but it seem to roughly
 	       parallel what the :local: code which calls
 	       mark_up_to_date ends up amounting to.  Some day, should
@@ -2170,7 +2170,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	       vis-a-vis both Entries and Base and clarify
 	       cvsclient.texi accordingly.  */
 
-	    if (!strcmp (command_name, "commit"))
+	    if (!strcmp (cvs_cmd_name, "commit"))
 		mark_up_to_date (filename);
 	}
 
@@ -2360,7 +2360,7 @@ handle_set_static_directory (args, len)
     char *args;
     int len;
 {
-    if (strcmp (command_name, "export") == 0)
+    if (strcmp (cvs_cmd_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -2385,7 +2385,7 @@ handle_clear_static_directory (pathname, len)
     char *pathname;
     int len;
 {
-    if (strcmp (command_name, "export") == 0)
+    if (strcmp (cvs_cmd_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -2440,7 +2440,7 @@ handle_set_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    if (strcmp (command_name, "export") == 0)
+    if (strcmp (cvs_cmd_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -2481,7 +2481,7 @@ handle_clear_sticky (pathname, len)
     char *pathname;
     int len;
 {
-    if (strcmp (command_name, "export") == 0)
+    if (strcmp (cvs_cmd_name, "export") == 0)
     {
 	/* Swallow the repository.  */
 	read_line (NULL);
@@ -4339,7 +4339,7 @@ start_server ()
 	stored_mode = NULL;
     }
 
-    rootless = (strcmp (command_name, "init") == 0);
+    rootless = (strcmp (cvs_cmd_name, "init") == 0);
     if (!rootless)
     {
 	send_to_server ("Root ", 0);
@@ -4441,8 +4441,8 @@ start_server ()
        reason to bother would be so we could make add work without
        contacting the server, I suspect).  */
 
-    if ((strcmp (command_name, "import") == 0)
-        || (strcmp (command_name, "add") == 0))
+    if ((strcmp (cvs_cmd_name, "import") == 0)
+        || (strcmp (cvs_cmd_name, "add") == 0))
     {
 	if (supported_request ("wrapper-sendme-rcsOptions"))
 	{

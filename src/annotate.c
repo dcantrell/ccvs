@@ -54,7 +54,7 @@ annotate (argc, argv)
     int err = 0;
     int c;
 
-    is_rannotate = (strcmp(command_name, "rannotate") == 0);
+    is_rannotate = (strcmp(cvs_cmd_name, "rannotate") == 0);
 
     if (argc == -1)
 	usage (annotate_usage);

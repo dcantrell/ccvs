@@ -762,7 +762,7 @@ local_cvsroot (dir)
 #include <stdio.h>
 
 char *program_name = "testing";
-char *command_name = "parse_cvsroot";		/* XXX is this used??? */
+char *cvs_cmd_name = "parse_cvsroot";		/* XXX is this used??? */
 
 /* Toy versions of various functions when debugging under unix.  Yes,
    these make various bad assumptions, but they're pretty easy to

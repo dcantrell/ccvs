@@ -225,7 +225,7 @@ cvslog (argc, argv)
     int local = 0;
     struct option_revlist **prl;
 
-    is_rlog = (strcmp (command_name, "rlog") == 0);
+    is_rlog = (strcmp (cvs_cmd_name, "rlog") == 0);
 
     if (argc == -1)
 	usage (log_usage);

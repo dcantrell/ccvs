@@ -367,7 +367,7 @@ admin (argc, argv)
 		/* getopt will have printed an error message.  */
 
 	    usage_error:
-		/* Don't use command_name; it might be "server".  */
+		/* Don't use cvs_cmd_name; it might be "server".  */
 	        error (1, 0, "specify %s -H admin for usage information",
 		       program_name);
 	}

@@ -1494,7 +1494,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 
 	    cvs_output (program_name, 0);
 	    cvs_output (" ", 1);
-	    cvs_output (command_name, 0);
+	    cvs_output (cvs_cmd_name, 0);
 	    cvs_output (": Rebuilding administrative file database\n", 0);
 	    mkmodules (admin_dir);
 	    free (admin_dir);

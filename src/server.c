@@ -2640,7 +2640,7 @@ do_cvs_command (cmd_name, command)
     if (print_pending_error ())
 	goto free_args_and_return;
 
-    /* Global `command_name' is probably "server" right now -- only
+    /* Global `cvs_cmd_name' is probably "server" right now -- only
        serve_export() sets it to anything else.  So we will use local
        parameter `cmd_name' to determine if this command is legal for
        this user.  */
@@ -2654,7 +2654,7 @@ do_cvs_command (cmd_name, command)
 error  \n");
 	goto free_args_and_return;
     }
-    command_name = cmd_name;
+    cvs_cmd_name = cmd_name;
 
     (void) server_notify ();
 
@@ -3921,12 +3921,12 @@ serve_co (arg)
 	free (tempdir);
     }
 
-    /* Compensate for server_export()'s setting of command_name.
+    /* Compensate for server_export()'s setting of cvs_cmd_name.
      *
      * [It probably doesn't matter if do_cvs_command() gets "export"
      *  or "checkout", but we ought to be accurate where possible.]
      */
-    do_cvs_command ((strcmp (command_name, "export") == 0) ?
+    do_cvs_command ((strcmp (cvs_cmd_name, "export") == 0) ?
 		    "export" : "checkout",
 		    checkout);
 }
@@ -3936,7 +3936,7 @@ serve_export (arg)
     char *arg;
 {
     /* Tell checkout() to behave like export not checkout.  */
-    command_name = "export";
+    cvs_cmd_name = "export";
     serve_co (arg);
 }
 

@@ -1,5 +1,10 @@
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* cvs.h: Change command_name to cvs_command_name to avoid conflict
+	on HP-UX (incredibly, it declares a global command_name in prot.h,
+	which is included from shadow.h, which we include in server.c).
+	Change all references.
+
 	* subr.c (previous_rev): Fix == vs = typo.
 
 	* buffer.h: Add prototype for buf_empty.
