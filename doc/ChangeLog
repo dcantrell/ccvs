@@ -1,3 +1,8 @@
+Wed Nov  8 09:38:00 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Notes): Revise paragraph on server memory use
+	problem.
+
 Tue Nov  7 16:26:39 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Document merging more than once from a branch;

@@ -76,19 +76,30 @@ The server can also be started by @code{cvs kserver}, in which case it
 does an initial Kerberos authentication on stdin.  If the authentication
 succeeds, it subsequently runs identically to @code{cvs server}.
 
-The current server implementation can use up huge amounts of memory when
-transmitting a lot of data.  Avoiding this would be a bit tricky because
-it is not acceptable to have the server block on the network (which may
-be very slow) when it has locks open.  The buffer code has been
-rewritten so that this does not appear to be a serious problem in
-practice.  However, if it is seen to be a problem several solutions are
-possible.  The two-pass design would involve first noting what versions
-of everything we need (with locks in place) and then sending the data,
-blocking on the network, with no locks needed.  The lather-rinse-repeat
-design would involve doing things as it does now until a certain amount
-of server memory is being used (10M?), then releasing locks, and trying
-the whole update again (some of it is presumably already done).  One
-problem with this is getting merges to work right.
+The current server implementation can use up huge amounts of memory
+when transmitting a lot of data over a slow link (i.e. the network is
+slower than the server can generate the data).  Avoiding this is
+tricky because of the goal of not having the server block on the
+network when it has locks open (this could lock the repository for
+hours if things are running smoothly or longer if not).  Several
+solutions are possible.  The two-pass design would involve first
+noting what versions of everything we need (with locks in place) and
+then sending the data, blocking on the network, with no locks needed.
+The lather-rinse-repeat design would involve doing things as it does
+now until a certain amount of server memory is being used (10M?), then
+releasing locks, and trying the whole update again (some of it is
+presumably already done).  One problem with this is getting merges to
+work right.  The two-pass design appears to be the more elegant of the
+two (it actually reduces the amount of time that locks need to be in
+place), but people have expressed concerns about whether it would be
+slower (because it traverses the repository twice).  It is not clear
+whether this is a real problem (looking for whether a file needs to be
+updated and actually checking it out are done separately already), but
+I don't think anyone has investigated carefully.  One hybrid approach
+which avoids the problem with merges would be to start out in one-pass
+mode and switch to two-pass mode if data is backing up--but this
+complicates the code and should be undertaken only if the pure
+two-pass design is shown to be flawed.
 
 @node How To
 @chapter How to add more remote commands
