@@ -1,3 +1,24 @@
+Mon Apr 21 00:03:34 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	Don't require the patch program:
+	* client.c (struct update_entries_data): Add
+	UPDATE_ENTRIES_RCS_DIFF to contents enum.
+	(update_entries): Handle UPDATE_ENTRIES_RCS_DIFF.
+	(handle_rcs_diff): New static function.
+	(responses): Add "Rcs-diff".
+	* server.c (server_updated): Handle SERVER_RCS_DIFF.
+	(server_use_rcs_diff): New function.
+	* server.h (enum server_updated_arg4): Add SERVER_RCS_DIFF.
+	(server_use_rcs_diff): Declare.
+	* update.c (rcs_diff_patches): New static variable.
+	(update): Set rcs_diff_patches.
+	(update_fileproc): If rcs_diff_patches, pass SERVER_RCS_DIFF
+	rather than SERVER_PATCHED to server_updated.
+	(patch_file): Correct initial comment to say diff rather than
+	rcsdiff.  If rcs_diff_options, pass -n to diff rather than -c.
+	* rcs.c (rcs_change_text): New function.
+	* rcs.h (rcs_change_text): Declare.
+
 Mon Apr 21 00:08:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff_fileproc): Add comment concerning updating the
