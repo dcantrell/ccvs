@@ -1,3 +1,8 @@
+Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
+
+	* filesubr.c (isaccessible): Rename from isaccessable.
+	Update callers.
+
 Mon Dec  4 10:46:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* The following change was copied from src/filesubr.c.  This is

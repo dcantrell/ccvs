@@ -581,7 +581,7 @@ error 0 %s: no such user\n", user);
 		error (1, 0, "You don't have a %s environment variable",
 		       CVSROOT_ENV);
 	    (void) sprintf (path, "%s/%s", CVSroot, CVSROOTADM);
-	    if (!isaccessable (path, R_OK | X_OK))
+	    if (!isaccessible (path, R_OK | X_OK))
 	    {
 		save_errno = errno;
 #ifdef CLIENT_SUPPORT
@@ -597,7 +597,7 @@ error 0 %s: no such user\n", user);
 	    }
 	    (void) strcat (path, "/");
 	    (void) strcat (path, CVSROOTADM_HISTORY);
-	    if (isfile (path) && !isaccessable (path, R_OK | W_OK))
+	    if (isfile (path) && !isaccessible (path, R_OK | W_OK))
 	    {
 		save_errno = errno;
 		error (0, 0,

@@ -153,7 +153,7 @@ int
 isfile (file)
     const char *file;
 {
-    return isaccessable(file, F_OK);
+    return isaccessible(file, F_OK);
 }
 
 /*
@@ -163,7 +163,7 @@ int
 isreadable (file)
     const char *file;
 {
-    return isaccessable(file, R_OK);
+    return isaccessible(file, R_OK);
 }
 
 /*
@@ -173,7 +173,7 @@ int
 iswritable (file)
     const char *file;
 {
-    return isaccessable(file, W_OK);
+    return isaccessible(file, W_OK);
 }
 
 /*
@@ -182,7 +182,7 @@ iswritable (file)
  * bits set.
  */
 int
-isaccessable (file, mode)
+isaccessible (file, mode)
     const char *file;
     const int mode;
 {
