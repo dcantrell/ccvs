@@ -1362,8 +1362,7 @@ stdio_buffer_shutdown (struct buffer *buf)
 	    else
 #endif
 		error (0, 0, "dying gasps from %s unexpected",
-		       current_parsed_root->method == fork_method ?
-		           "server" : current_parsed_root->hostname);
+		       current_parsed_root->hostname);
 	}
 	else if (ferror (bc->fp) && errno != EAGAIN)
 	{
@@ -1373,8 +1372,7 @@ stdio_buffer_shutdown (struct buffer *buf)
 	    else
 #endif
 		error (0, errno, "reading from %s",
-		       current_parsed_root->method == fork_method ?
-		           "server" : current_parsed_root->hostname);
+		       current_parsed_root->hostname);
 	}
 
 # ifdef SHUTDOWN_SERVER
