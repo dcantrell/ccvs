@@ -1,3 +1,8 @@
+2000-01-22  Jim Kingdon  <http://developer.redhat.com/>
+
+	* sanity.sh (emptydir): Add a case in which one might hope for a
+	non-Emptydir result, but which result?
+
 2000-01-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (main): Allow -z0 to disable gzip compression.

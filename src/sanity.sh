@@ -9213,6 +9213,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "U CVSROOT/modules"
 	  echo "# Module defs for emptydir tests" > CVSROOT/modules
 	  echo "2d1mod -d dir2d1/sub2d1 mod1" >> CVSROOT/modules
+	  echo "2d1moda -d dir2d1/suba moda/modasub" >> CVSROOT/modules
+	  echo "comb -a 2d1mod 2d1moda" >> CVSROOT/modules
 
 	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
 "${PROG} [a-z]*: Examining CVSROOT
@@ -9223,24 +9225,35 @@ done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  rm -rf CVS CVSROOT
 
-	  mkdir ${CVSROOT_DIRNAME}/mod1
+	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
 	  # Populate.  Not sure we really need to do this.
-	  dotest emptydir-3 "${testcvs} co mod1" \
-"${PROG} [a-z]*: Updating mod1"
+	  dotest emptydir-3 "${testcvs} -q co -l ." ""
+	  dotest emptydir-3a "${testcvs} co mod1 moda" \
+"${PROG} [a-z]*: Updating mod1
+${PROG} [a-z]*: Updating moda"
 	  echo "file1" > mod1/file1
-	  cd mod1
-	  dotest emptydir-4 "${testcvs} add file1" \
-"${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
-          cd ..
-	  dotest emptydir-5 "${testcvs} -q ci -m yup mod1" \
+	  mkdir moda/modasub
+	  dotest emptydir-3b "${testcvs} add moda/modasub" \
+"Directory ${TESTDIR}/cvsroot/moda/modasub added to the repository"
+	  echo "filea" > moda/modasub/filea
+	  dotest emptydir-4 "${testcvs} add mod1/file1 moda/modasub/filea" \
+"${PROG} [a-z]*: scheduling file .mod1/file1. for addition
+${PROG} [a-z]*: scheduling file .moda/modasub/filea. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+	  dotest emptydir-5 "${testcvs} -q ci -m yup" \
 "RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
 done
 Checking in mod1/file1;
 ${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
 initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/moda/modasub/filea,v
+done
+Checking in moda/modasub/filea;
+${CVSROOT_DIRNAME}/moda/modasub/filea,v  <--  filea
+initial revision: 1\.1
 done"
-	  rm -rf mod1 CVS
+	  rm -rf mod1 moda CVS
 	  # End Populate.
 
 	  dotest emptydir-6 "${testcvs} co 2d1mod" \
@@ -9271,11 +9284,25 @@ ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest emptydir-11 "${testcvs} -q -n update -d -P" ''
 	  cd ../..
 	  rm -r edir
-
 	  cd ..
 
-	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/mod1
+	  # Now start playing with moda.
+	  mkdir 2; cd 2
+	  dotest emptydir-12 "${testcvs} -q co 2d1moda" \
+"U dir2d1/suba/filea"
+	  # OK, this is the crux of the matter.  Some people think
+	  # it would be more logical if this showed "moda".  But why
+	  # "moda" (from module 2d1moda) and not "." (from module 2d1mod)?
+	  dotest emptydir-13 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
+	  dotest emptydir-14 "${testcvs} co comb" \
+"${PROG} [a-z]*: Updating dir2d1/sub2d1
+U dir2d1/sub2d1/file1
+${PROG} [a-z]*: Updating dir2d1/suba"
+	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "CVSROOT/Emptydir"
+	  cd ..
+
+	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
 	  # I guess for the moment the convention is going to be
 	  # that we don't need to remove ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
 	  ;;
