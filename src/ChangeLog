@@ -1,3 +1,8 @@
+2000-10-20  Jim Kingdon  <http://sourceforge.net/users/kingdon/>
+	
+	* server.c (switch_to_user): Set CVS_USER.  Patch from Sudish
+	Joseph and popularized by dozens (e.g. mozilla.org, also others).
+
 2000-10-20  Derek Price  <derek.price@openavenue.com>
 
 	* root.c (normalize_cvsroot): plug a memory leak.  Thanks to
