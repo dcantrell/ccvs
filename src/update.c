@@ -2330,6 +2330,7 @@ join_file (finfo, vers)
            addition.  */
 	if (vers->vn_user == NULL)
 	{
+	    char *saved_options = options;
 	    Vers_TS *xvers;
 
 	    xvers = Version_TS (finfo, vers->options, jrev2, jdate2, 1, 0);
@@ -2344,6 +2345,7 @@ join_file (finfo, vers)
 	    /* FIXME: If checkout_file fails, we should arrange to
                return a non-zero exit status.  */
 	    status = checkout_file (finfo, xvers, 1, 0, 1);
+	    options = saved_options;
 
 	    freevers_ts (&xvers);
 
