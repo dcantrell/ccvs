@@ -56,6 +56,11 @@ char *alloca ();
 
 #include <stdio.h>
 
+/* Under OS/2, <stdio.h> doesn't define popen()/pclose(). */
+#ifdef USE_OWN_POPEN
+#include "popen.h"
+#endif
+
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
