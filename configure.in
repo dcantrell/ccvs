@@ -215,7 +215,6 @@ AC_FUNC_STRERROR_R
 AM_FUNC_GETLINE
 AM_STDBOOL_H
 UTILS_FUNC_MKSTEMP
-gl_EXITFAIL
 gl_FUNC_FNMATCH_POSIX
 gl_FUNC_GETHOSTNAME
 dnl Always use the GNULIB getpass to work around 8 character password limits on
