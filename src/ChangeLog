@@ -1,3 +1,9 @@
+2003-08-13  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Don't shutdown buf_from_net if it's
+	null.
+	(Reported by Scott Mitchell <scott@fishballoon.org>.)
+
 2003-08-01  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (join5): Use $PROG consistently and escape a `.'.
