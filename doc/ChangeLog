@@ -1,3 +1,7 @@
+2000-11-13  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.texinfo: use '@sc{cvs}' instead of 'CVS' in various locations
+
 2000-11-08  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.texinfo (settitle): stick a 'v' in front of the version number
