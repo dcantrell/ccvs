@@ -189,9 +189,12 @@ add (argc, argv)
 	       hands on things?  */
 	    if (isdir (argv[j]))
 	    {
+		char *tag;
+		char *date;
+		int nonbranch;
+		char *rcsdir;
 		char *p;
 		char *update_dir;
-		char *new_repository;
 		/* This is some mungeable storage into which we can point
 		   with p and/or update_dir.  */
 		char *filedir;
@@ -221,8 +224,7 @@ add (argc, argv)
 		repository = Name_Repository (NULL, update_dir);
 
 		/* don't add stuff to Emptydir */
-		if (strncmp (repository, current_parsed_root->directory,
-                             cvsroot_len) == 0
+		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
 		    && ISDIRSEP (repository[cvsroot_len])
 		    && strncmp (repository + cvsroot_len + 1,
 				CVSROOTADM,
@@ -232,18 +234,35 @@ add (argc, argv)
 			       CVSNULLREPOS) == 0)
 		    error (1, 0, "cannot add to %s", repository);
 
-		/* append the new dir to repository */
-		new_repository = xmalloc (strlen (repository)
-                                          + strlen (p) + 2);
-		sprintf (new_repository, "%s/%s", repository, p);
+		/* before we do anything else, see if we have any
+		   per-directory tags */
+		ParseTag (&tag, &date, &nonbranch);
 
-		send_a_repository (p, new_repository, argv[j]);
+		rcsdir = xmalloc (strlen (repository) + strlen (p) + 5);
+		sprintf (rcsdir, "%s/%s", repository, p);
+
+		Create_Admin (p, argv[j], rcsdir, tag, date,
+			      nonbranch, 0, 1);
+
+		if (found_slash)
+		    send_a_repository ("", repository, update_dir);
 
 		if (restore_cwd (&cwd, NULL))
 		    error_exit ();
 		free_cwd (&cwd);
 
-		free (new_repository);
+		if (tag)
+		    free (tag);
+		if (date)
+		    free (date);
+		free (rcsdir);
+
+		if (p == filedir)
+		    Subdir_Register ((List *) NULL, (char *) NULL, argv[j]);
+		else
+		{
+		    Subdir_Register ((List *) NULL, update_dir, p);
+		}
 		free (repository);
 		free (filedir);
 	    }
@@ -821,8 +840,8 @@ add_directory (finfo)
 
 #ifdef SERVER_SUPPORT
     if (!server_active)
-#endif /* SERVER_SUPPORT */
-	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
+#endif
+        Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
     if (tag)
 	free (tag);
     if (date)
