@@ -115,7 +115,6 @@ COMMON_SOURCES = \
        ${cvs_srcdir}/remove.c \
        ${cvs_srcdir}/repos.c \
        ${cvs_srcdir}/root.c \
-       ${cvs_srcdir}/rtag.c \
        ${cvs_srcdir}/scramble.c \
        ${cvs_srcdir}/server.c \
        ${cvs_srcdir}/status.c \
@@ -210,7 +209,6 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}/remove.o \
        ${cvs_srcdir}/repos.o \
        ${cvs_srcdir}/root.o \
-       ${cvs_srcdir}/rtag.o \
        ${cvs_srcdir}/scramble.o \
        ${cvs_srcdir}/server.o \
        ${cvs_srcdir}/status.o \
