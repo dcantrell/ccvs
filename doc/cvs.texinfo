@@ -4950,6 +4950,7 @@ revision.
 * Reverting local changes::     Reverting a module to the latest vendor release
 * Binary files in imports::     Binary files require special handling
 * Keywords in imports::         Keyword substitution might be undesirable
+* Multiple vendor branches::    What if you get sources from several places?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4965,7 +4966,7 @@ command to track third-party sources, the @dfn{vendor
 tag} and @dfn{release tags} are useful.  The
 @dfn{vendor tag} is a symbolic name for the branch
 (which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---@xref{import options}.).  The
+@var{branch}} flag---@xref{Multiple vendor branches}.).  The
 @dfn{release tags} are symbolic names for a particular
 release, such as @samp{FSF_0_04}.
 
@@ -5096,6 +5097,58 @@ and use the @samp{-k} option to @code{cvs update} or
 @c Supplying -ko to import if the file already existed
 @c has no effect.  Not clear to me whether it should
 @c or not.
+
+@node Multiple vendor branches
+@section Multiple vendor branches
+
+All the examples so far assume that there is only one
+vendor from which you are getting sources.  In some
+situations you might get sources from a variety of
+places.  For example, suppose that you are dealing with
+a project where many different people and teams are
+modifying the software.  There are a variety of ways to
+handle this, but in some cases you have a bunch of
+source trees lying around and what you want to do more
+than anything else is just to all put them in CVS so
+that you at least have them in one place.
+
+For handling situations in which there may be more than
+one vendor, you may specify the @samp{-b} option to
+@code{cvs import}.  It takes as an argument the vendor
+branch to import to.  The default is @samp{-b 1.1.1}.
+
+For example, suppose that there are two teams, the red
+team and the blue team, that are sending you sources.
+You want to import the red team's efforts to branch
+1.1.1 and use the vendor tag RED.  You want to import
+the blue team's efforts to branch 1.1.3 and use the
+vendor tag BLUE.  So the commands you might use are:
+
+@example
+$ cvs import dir RED RED_1-0
+$ cvs import -b 1.1.3 dir BLUE BLUE_1-5
+@end example
+
+Note that if your vendor tag does not match your
+@samp{-b} option, CVS will not detect this case!  For
+example,
+
+@example
+$ cvs import -b 1.1.3 dir RED RED_1-0
+@end example
+
+@noindent
+Be careful; this kind of mismatch is sure to sow
+confusion or worse.  I can't think of a useful purpose
+for the ability to specify a mismatch here, but if you
+discover such a use, don't.  CVS is likely to make this
+an error in some future release.
+
+@c Probably should say more about the semantics of
+@c multiple branches.  What about the default branch?
+@c What about joining (perhaps not as useful with
+@c multiple branches, or perhaps it is.  Either way
+@c should be mentioned).
 
 @c ---------------------------------------------------------------------
 @node Moving files
@@ -8083,13 +8136,7 @@ There are three additional special options.
 
 @table @code
 @item -b @var{branch}
-Specify a first-level branch other than 1.1.1.  Unless
-the @samp{-b @var{branch}} flag is given, revisions will
-@emph{always} be made to the branch 1.1.1---even if a
-@var{vendortag} that matches another branch is given!
-What happens in that case, is that the tag will be
-reset to 1.1.1.  Warning: This behavior might change
-in the future.
+See @ref{Multiple vendor branches}.
 
 @item -k @var{subst}
 Indicate the RCS keyword expansion mode desired.  This
@@ -9415,7 +9462,7 @@ Import files into CVS, using vendor branches.  See
 @table @code
 @item -b @var{bra}
 Import to vendor branch @var{bra}.  See
-@ref{import options}.
+@ref{Multiple vendor branches}.
 
 @item -d
 Use the file's modification time as the time of

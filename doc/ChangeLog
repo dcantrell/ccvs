@@ -1,3 +1,8 @@
+Sun May 25 00:08:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Multiple vendor branches): New node.
+	(First import, import options, Invoking CVS): xref to it.
+
 Sat May 24 23:47:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (File permissions): Add comment about group
