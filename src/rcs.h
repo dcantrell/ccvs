@@ -13,7 +13,6 @@
 #define	RCS		"rcs"
 #define	RCS_CI		"ci"
 #define	RCS_CO		"co"
-#define	RCS_RLOG	"rlog"
 #define	RCS_DIFF	"rcsdiff"
 #define	RCS_RCSMERGE	"rcsmerge"
 #define	RCS_MERGE_PAT	"^>>>>>>> "	/* runs "grep" with this pattern */

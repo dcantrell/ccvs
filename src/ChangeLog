@@ -1,3 +1,7 @@
+Sun Aug 11 17:54:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.h (RCS_RLOG): Removed; no longer used.
+
 Fri Aug  9 20:16:20 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* server.c (dirswitch): Open the Entries file with mode "a" rather
