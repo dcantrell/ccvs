@@ -1,3 +1,9 @@
+2004-10-05  Mark D. Baushke  <mdb@cvshome.org>
+
+	* regex.c (re_comp): Cast gettext return value to char * to
+	avoid warning in !ENABLE_NLS case. Patch imported from GNULIB.
+	(Problem report from Martin Neitzel <neitzel@sco.gaertner.de>.)
+
 2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.mak: Regenerated for "../cvsnt.dsp" changes made 2004-09-08.
