@@ -15,12 +15,18 @@
 
 # You can't run CVS as root; print a nice error message here instead
 # of somewhere later, after making a mess.
-case "`whoami`" in
-  "root" )
-    echo "sanity.sh: test suite does not work correctly when run as root" >&2
-    exit 1
-  ;;
-esac
+# Commented out because:
+# (1) whoami is not portable.  If memory serves the POSIX way is "id -un".
+#     ("logname" or "who am i" are similar but different--they have more to
+#      do with who logged in on your tty than your uid).
+# (2) This definition of "root" doesn't quite match CVS's (which is based
+#     on uid 0, not username "root").
+#case "`whoami`" in
+#  "root" )
+#    echo "sanity.sh: test suite does not work correctly when run as root" >&2
+#    exit 1
+#  ;;
+#esac
 
 # required to make this script work properly.
 unset CVSREAD
