@@ -1650,8 +1650,19 @@ char *
 RCS_check_kflag (arg)
     char *arg;
 {
-    static char *kflags[] =
+    static const char *const kflags[] =
     {"kv", "kvl", "k", "v", "o", (char *) NULL};
+    static const char *const  keyword_usage[] =
+    {
+      "%s %s: invalid RCS keyword expansion mode\n",
+      "Valid expansion modes include:\n",
+      "   -kkv\tGenerate keywords using the default form.\n",
+      "   -kkvl\tLike -kkv, except locker's name inserted.\n",
+      "   -kk\tGenerate only keyword names in keyword strings.\n",
+      "   -kv\tGenerate only keyword values in keyword strings.\n",
+      "   -ko\tGenerate the old keyword string (no changes from checked in file).\n",
+      NULL,
+    };
     char karg[10];
     char **cpp = NULL;
 
@@ -1671,12 +1682,7 @@ RCS_check_kflag (arg)
 
     if (arg == NULL || *cpp == NULL)
     {
-	(void) fprintf (stderr, "%s %s: invalid -k option\n",
-			program_name, command_name);
-	(void) fprintf (stderr, "\tvalid options are:\n");
-	for (cpp = kflags; *cpp != NULL; cpp++)
-	    (void) fprintf (stderr, "\t\t-k%s\n", *cpp);
-	error (1, 0, "Please retry with a valid -k option");
+	usage (keyword_usage);
     }
 
     (void) sprintf (karg, "-k%s", *cpp);

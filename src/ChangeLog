@@ -1,5 +1,14 @@
 Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* lock.c (set_lockers_name): Use %lu in format and cast st_uid
+	  field to unsigned long.
+
+	* import.c (import): Use RCS_check_kflag() to check -k options.
+	  (keyword_usage, str2expmode, strn2expmode, expand_names):
+	  Removed.
+	* rcs.c (RCS_check_kflag): Added keyword_usage array from import.c
+	  for more descriptive error messages.
+
 	* subr.c (run_setup, run_args): Changed variable argument
 	  processing to work on machines that use <varargs.h>.
 
