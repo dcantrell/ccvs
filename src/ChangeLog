@@ -1,3 +1,11 @@
+2004-11-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* checkout.c (checkout_proc): Passing the repository to
+	tag_check_valid seems to stop the assertion failure in recurse.c
+	do_recursion.
+	* sanity.sh (basic2-21a): Removed.
+	(basic2-21b): Fixed.
+
 2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (basic2-21a): The val-tags file should have
