@@ -1,5 +1,9 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* ls.c (usage): Sync with manual.
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (cvs_SOURCES): Add ls.c.
 	* client.c, subr.c: Move #include vasnprintf.h to...
 	* cvs.h: ...here.
