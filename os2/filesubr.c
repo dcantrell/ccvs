@@ -239,7 +239,7 @@ make_directories (name)
     if (noexec)
 	return;
 
-    if (mkdir (name) == 0 || errno == EEXIST)
+    if (mkdir (name) == 0 || errno == EACCESS)
 	return;
     if (! existence_error (errno))
     {
