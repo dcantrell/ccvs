@@ -41,7 +41,7 @@ No_Difference (file, vers, entries, repository, update_dir)
 
     tmp = cvs_temp_name ();
     retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_user, options,
-				 tmp, 0, 0);
+				 tmp, 0);
     if (retcode == 0)
     {
 #if 0

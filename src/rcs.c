@@ -1729,18 +1729,16 @@ RCS_getexpand (rcs)
    is NULL, run regardless of noexec; if non-NULL, noexec inhibits
    execution.  SOUT is what to do with standard output (typically
    RUN_TTY).  If FLAGS & RCS_FLAGS_LOCK, lock it.  If FLAGS &
-   RCS_FLAGS_FORCE, check out even on top of an existing file.  If
-   NOERR is nonzero, suppress errors.  */
+   RCS_FLAGS_FORCE, check out even on top of an existing file.  */
 
 int
-RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
+RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
      RCSNode *rcs;
      char *workfile;
      char *tag;
      char *options;
      char *sout;
      int flags;
-     int noerr;
 {
     if ((workfile == NULL || *workfile != '\0')
 	&& ! noexec
@@ -1878,8 +1876,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 
     /* We were not able to optimize retrieving this revision.  */
 
-    return RCS_checkout (rcs->path, workfile, tag, options, sout, flags,
-			 noerr);
+    return RCS_checkout (rcs->path, workfile, tag, options, sout, flags);
 }
 
 /* Stuff related to annotate command.  This should perhaps be split

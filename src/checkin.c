@@ -90,7 +90,7 @@ Checkin (type, file, update_dir, repository,
 		options[0] = '\0';
 
 	    /* FIXME: should be checking for errors.  */
-	    (void) RCS_checkout (rcs, "", rev, options, RUN_TTY, 0, 0);
+	    (void) RCS_checkout (rcs, "", rev, options, RUN_TTY, 0);
 
 	    xchmod (file, 1);
 	    if (xcmp (file, fname) == 0)

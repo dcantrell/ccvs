@@ -1,5 +1,11 @@
 Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcscmds.c (RCS_checkout): Remove noerr parameter.  Change all
+	callers.
+	* rcs.c (RCS_fast_checkout): Likewise.
+
+Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
+
 	Cleaner implementation of tag locking code added Jun 13 1996:
 	* cvs.h (tag_lockdir, tag_unlockdir): Declare.
 	* rtag.c (locked_dir, locked_list): Remove.

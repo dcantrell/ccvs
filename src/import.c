@@ -508,7 +508,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 #else
 				     NULL,
 #endif
-				     xtmpfile, RCS_FLAGS_FORCE, 0);
+				     xtmpfile, RCS_FLAGS_FORCE);
 	if (retcode != 0)
 	{
 	    ierrno = errno;

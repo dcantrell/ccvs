@@ -126,17 +126,15 @@ RCS_merge(path, options, rev1, rev2)
    If WORKFILE is NULL, run regardless of noexec; if non-NULL, noexec
    inhibits execution.  SOUT is what to do with standard output
    (typically RUN_TTY).  If FLAGS & RCS_FLAGS_LOCK, lock it.  If
-   FLAGS & RCS_FLAGS_FORCE, check out even on top of an existing file.
-   If NOERR is nonzero, suppress errors.  */
+   FLAGS & RCS_FLAGS_FORCE, check out even on top of an existing file.  */
 int
-RCS_checkout (rcsfile, workfile, tag, options, sout, flags, noerr)
+RCS_checkout (rcsfile, workfile, tag, options, sout, flags)
     char *rcsfile;
     char *workfile;
     char *tag;
     char *options;
     char *sout;
     int flags;
-    int noerr;
 {
     run_setup ("%s%s -x,v/ -q %s%s", Rcsbin, RCS_CO,
                tag ? "-r" : "", tag ? tag : "");
@@ -151,7 +149,7 @@ RCS_checkout (rcsfile, workfile, tag, options, sout, flags, noerr)
     run_arg (rcsfile);
     if (workfile != NULL && workfile[0] != '\0')
 	run_arg (workfile);
-    return run_exec (RUN_TTY, sout, noerr ? DEVNULL : RUN_TTY,
+    return run_exec (RUN_TTY, sout, RUN_TTY,
                      workfile == NULL ? (RUN_NORMAL | RUN_REALLY) : RUN_NORMAL);
 }
 

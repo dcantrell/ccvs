@@ -434,7 +434,7 @@ int RCS_unlock PROTO((const char *, const char *, int));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
 int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag,
 			 char *options,
-                         char *sout, int flags, int noerr));
+                         char *sout, int flags));
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
 #define RCS_FLAGS_LOCK 1
