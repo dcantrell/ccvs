@@ -1,3 +1,7 @@
+2004-01-25  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Kerberos 4 fix.
+
 2004-01-22  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note recent infinite alias loop fix.
