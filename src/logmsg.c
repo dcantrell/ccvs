@@ -547,6 +547,7 @@ do_verify (messagep, repository)
 		(void) strcpy (p, line);
 		p += line_length;
 	    }
+	    if (line) free (line);
 	}
 	if (fclose (fp) < 0)
 	    error (0, errno, "warning: cannot close %s", fname);
