@@ -1,3 +1,11 @@
+Mon Mar 27 08:58:42 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* rcs.c (RCS_parsercsfile_i): Accept `dead' state regardless of
+	DEATH_STATE define.  Revise comments regarding DEATH_STATE versus
+	CVSDEA versus the scheme which uses a patched RCS.
+	* README-rm-add, RCS-patches: Explain what versions of CVS need
+	RCS patches.
+
 Sat Mar 25 18:51:39 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 
 	* server.c (server_cleanup): Only do the abysmal kludge of waiting

@@ -1,5 +1,5 @@
-These patches add support for tracking file death to rcs-5.6.6.  These
-patches are a prerequisite for the remove/add patches to cvs.
+These patches add support for tracking file death to rcs-5.6.6.  See
+README-rm-add for information about what versions of CVS need them.
 
 
 These patches add the following features to rcs.
