@@ -16536,16 +16536,27 @@ access list:
 keyword substitution: kv
 total revisions: 2
 ============================================================================="
-	  # Put the access list back, to avoid special cases later.
-	  dotest admin-19a-fix "${testcvs} -q admin -eauth3 file1" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-done"
 	  fi # end of tests skipped for remote
 
-	  # Now test that plain -e is at least parsed right.  CVS 1.10
-	  # would wrongly treat "-e file1" as "-efile1".
-	  dotest_fail admin-19a-2 "${testcvs} -q admin -e file1" \
-"${PROG} \[[a-z]* aborted\]: removing entire access list not yet implemented"
+	  # Now test that plain -e works right.
+	  dotest admin-19a-2 "${testcvs} -q admin -e file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest admin-19a-3 "${testcvs} -q log -h -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 2
+============================================================================="
+
+	  # Put the access list back, to avoid special cases later.
+	  dotest admin-19a-4 "${testcvs} -q admin -afoo,auth2 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
 
 	  # Add another revision to file2, so we can delete one.
 	  echo 'add a line' >> file2

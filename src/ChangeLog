@@ -1,3 +1,12 @@
+1999-10-14  Larry Jones  <larry.jones@sdrc.com>
+
+	Make "cvs admin -e" (with no list of users) work:
+	* admin.c (admin): Remove error message.
+	(admin_fileproc): If no args for -e, call RCS_delaccess with NULL user.
+	* rcs.c (RCS_delaccess): Interpret NULL user as request to delete
+	entire access list.
+	* sanity.sh (admin-19a-*): Test.
+
 1999-09-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* entries.c (Subdirs_Known): Use entfilename when opening CVSADM_ENTLOG

@@ -6278,13 +6278,19 @@ RCS_delaccess (rcs, user)
     if (rcs->access == NULL)
 	return;
 
+    if (user == NULL)
+    {
+        free (rcs->access);
+        rcs->access = NULL;
+        return;
+    }
+
     p = rcs->access;
     ulen = strlen (user);
     while (p != NULL)
     {
-	if (p[ulen] == '\0' || p[ulen] == ' ')
-	    if (strncmp (p, user, ulen) == 0)
-		break;
+	if (strncmp (p, user, ulen) == 0 && (p[ulen] == '\0' || p[ulen] == ' '))
+	    break;
 	p = strchr (p, ' ');
 	if (p != NULL)
 	    ++p;
