@@ -1150,22 +1150,22 @@ See the instructions in the @file{INSTALL} file in the
 @cindex Remote repositories
 @cindex Client/Server Operation
 
-The repository and your working copy of the sources can
-be on different machines.  To access a remote
-repository, use the following format for its name:
+        Your working copy of the sources can be on a
+different machine than the repository.  Generally,
+using a remote repository is just like using a local
+one, except that the format of the repository name is:
 
 @example
         user@@hostname:/path/to/repository
 @end example
 
-(The @file{user@@} can be omitted if it's the same on
-both the local and remote hosts.)
-
-The details of exactly what needs to be set up depends
+The details of exactly what needs to be set up depend
 on how you are connecting to the server.
 
+@c fooo
 @menu
-* Connecting via rsh::          Using the rsh program to connect
+* Connecting via rsh::          Using the @code{rsh} program to connect
+* Password authenticated::      Direct connections using passwords
 * Kerberos authenticated::      Direct connections with kerberos
 @end menu
 
@@ -1188,20 +1188,20 @@ chainsaw, put the following line into the file
 anklet.grunge.com  mozart
 @end example
 
-Then test that rsh is working with
+Then test that @code{rsh} is working with
 
 @example
 rsh -l bach chainsaw.brickyard.com echo $PATH
 @end example
 
 @cindex CVS_SERVER
-Next you have to make sure that rsh will be able to
-find the server.  Make sure that the path which rsh
-printed in the above example includes the directory
-containing a program named @code{cvs} which is the
-server.  You need to set the path in @file{.bashrc},
-@file{.cshrc}, etc., not @file{.login} or
-@file{.profile}.  Alternately, you can set the
+Next you have to make sure that @code{rsh} will be able
+to find the server.  Make sure that the path which
+@code{rsh} printed in the above example includes the
+directory containing a program named @code{cvs} which
+is the server.  You need to set the path in
+@file{.bashrc}, @file{.cshrc}, etc., not @file{.login}
+or @file{.profile}.  Alternately, you can set the
 environment variable @code{CVS_SERVER} on the client
 machine to the filename of the server you want to use,
 for example @file{/usr/local/bin/cvs-1.6}.
@@ -1217,6 +1217,206 @@ the module @file{foo} in the repository
 @example
 cvs -d bach@@chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 @end example
+
+(The @file{bach@@} can be omitted if the username is
+the same on both the local and remote hosts.)
+
+@node Password authenticated
+@subsection Direct connection with password authentication
+
+The @sc{cvs} client can also connect to the server
+using a password protocol.  This is particularly useful
+if using via @code{rsh} is not feasible (for example,
+the server is behind a firewall), and Kerberos also is
+not available.
+
+        To use this method, it is necessary to make
+some adjustments on both the server and client sides.
+
+@menu
+* Setting up the server for password authentication::
+* Using the client with password authentication::
+* Security considerations with password authentication::
+@end menu
+
+@node Setting up the server for password authentication
+@subsubsection Setting up the server for password authentication
+
+@cindex Pserver (subcommand)
+@cindex password server, setting up
+@cindex authenticating server, setting up
+On the server side, the file @file{/etc/inetd.conf}
+needs to be edited so @code{inetd} knows to run the
+command @code{cvs pserver} when it receives a
+connection on the right port.  By default, the port
+number is 2401; it would be different if your server
+were compiled with @code{CVS_AUTH_PORT} defined to
+something else, though.
+
+        If your @code{inetd} allows raw port numbers in
+@file{/etc/inetd.conf}, then a line like this should be
+sufficient:
+
+@example
+2401  stream  tcp  nowait  root  /usr/local/bin/cvs cvs pserver
+@end example
+
+        If it wants a symbolic service name, then put
+this in @file{/etc/services}:
+
+@example
+cvspserver      2401/tcp
+@end example
+
+        and this in @file{inetd.conf}:
+
+@example
+cvspserver  stream  tcp  nowait  root  /usr/local/bin/cvs cvs pserver
+@end example
+
+        Once the above is taken care of, restart your
+@code{inetd}, or do whatever is necessary to force it
+to reread its initialization files.
+
+@cindex CVS passwd file
+@cindex passwd file
+Because the client stores and transmits passwords in
+cleartext @footnote{Almost cleartext --- the
+client-side stored passwords are trivially encoded, but
+it won't deter an attacker who's really trying.}, a
+separate @sc{cvs} password file may be used, so people
+don't compromise their regular passwords when they
+access the repository.  This file is
+@file{$CVSROOT/CVSROOT/passwd} (@pxref{Intro
+administrative files}).  Its format is similar to
+@file{/etc/passwd}, except that it only has two fields,
+username and password.  For example:
+
+@example
+bach:ULtgRLXo7NRxs
+cwang:1sOp854gDF3DY
+@end example
+
+The password is encrypted according to the standard
+Unix @code{crypt()} function, so it is possible to
+paste in passwords directly from regular Unix
+@file{passwd} files.
+
+When authenticating a password, the server first checks
+for the user in the @sc{cvs} @file{passwd} file.  If it
+finds the user, it compares against that password.  If
+it does not find the user, or if the @sc{cvs}
+@file{passwd} file does not exist, then the server
+tries the system's @file{/etc/passwd} file.  In either
+case, assuming the password is correct, the server
+switches to run as that user immediately after
+authentication, so that it will have no privileges
+which that user would not have.  Therefore it is
+necessary that usernames in the @sc{cvs} @file{passwd}
+file be valid usernames on the system.
+
+Right now, the only way to put a password in the
+@sc{cvs} @file{passwd} file is to paste it there from
+somewhere else.  Someday, there may be a @code{cvs
+passwd} command.
+
+@node Using the client with password authentication
+@subsubsection Using the client with password authentication
+@cindex Login (subcommand)
+@cindex password client, using
+@cindex authenticated client, using
+Before connecting to the server, the client must "log
+in" with the command @code{cvs login}.  Logging in
+verifies a password with the server, and also records
+the password for later transactions with the server.
+The @code{cvs login} command needs to know the
+username, server hostname, and full repository path,
+and it gets this information from the repository
+argument or the @code{CVSROOT} environment variable.
+
+@code{cvs login} is interactive --- it prompts for a
+password:
+
+@example
+cvs -d bach@@chainsaw.brickyard.com:/usr/local/cvsroot login 
+Enter CVS password: 
+@end example
+
+The password is checked with the server; if it is
+correct, the @code{login} succeeds, else it fails,
+complaining that the password was incorrect.
+
+Once you have logged in, you can force @sc{cvs} to
+connect directly to the server and authenticate with
+the stored password by prefixing the repository with
+@samp{:pserver:}:
+
+@example
+cvs -d :pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+@end example
+
+The @samp{:pserver:} is necessary because without it,
+@sc{cvs} will assume it should use @code{rsh} to
+connect with the server.  (Once you have a working copy
+checked out and are running @sc{cvs} commands from
+within it, there is no longer any need to specify the
+repository explicitly, because @sc{cvs} records it in
+the working copy's @file{CVS} subdirectory.)
+
+@cindex CVS_PASSFILE, environment variable
+Passwords are stored by default in the file
+@file{$HOME/.cvspass}.  Its format is human-readable,
+but don't edit it unless you know what you are doing.
+The passwords are not stored in cleartext, but are
+trivially encoded to protect them from "innocent"
+compromise (i.e., inadvertently being seen by a system
+administrator who happens to look at that file).
+
+The @code{CVS_PASSFILE} environment variable overrides
+this default.  If you use this variable, make sure you
+set it @emph{before} @code{cvs login} is run.  If you
+were to set it after running @code{cvs login}, then
+later @sc{cvs} commands would be unable to look up the
+password for transmission to the server.
+
+@cindex CVS_PASSWORD, environment variable
+The @code{CVS_PASSWORD} environment variable overrides
+@emph{all} stored passwords.  If it is set, @sc{cvs}
+will use it for all all password-authenticated
+connections.
+
+@node Security considerations with password authentication
+@subsubsection Security considerations with password authentication
+
+The passwords are stored on the client side in a
+trivial encoding of the cleartext, and transmitted in
+the same encoding.  The encoding is done only to
+prevent inadvertent password compromises (i.e., a
+system administrator accidentally looking at the file),
+and will not prevent even a naive attacker from gaining
+the password.
+
+The separate @sc{cvs} password file (@pxref{Setting up
+the server for password authentication}) allows people
+to use a different password for repository access than
+for login access.  On the other hand, once a user has
+access to the repository, she can execute programs on
+the system through the @sc{cvs} administrative files
+(@pxref{Administrative files}).  Thus, repository
+access implies fairly broad system access as well.  It
+might be easy to modify @sc{cvs} to prevent that, but
+no one has done so as of this writing.  Furthermore,
+there may be other security problems with @sc{cvs}; it
+was not originally designed with security in mind, and
+determining how people might use it to gain access to a
+system is difficult.
+
+In summary, anyone who gets the password gets
+repository access, and some measure of general system
+access as well.  The password is available to anyone
+who can sniff network packets or read a protected
+(i.e., user read-only) file.  If you want real
+security, get Kerberos.
 
 @node Kerberos authenticated
 @subsection Direct connection with kerberos
