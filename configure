@@ -13499,6 +13499,12 @@ fi
 
 
 
+cat >>confdefs.h <<\_ACEOF
+#define USE_UNLOCKED_IO 1
+_ACEOF
+
+
+
 
 
   :

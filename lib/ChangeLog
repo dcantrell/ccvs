@@ -1,5 +1,11 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Move unlocked-io.h to its own
+	section.
+	* unlocked-io.h: Import most recent version from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Move regex.h to its own section.
 	* regex.c: Import most recent version from GNULIB.
 

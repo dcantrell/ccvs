@@ -1,3 +1,7 @@
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt (unlocked-io): Remove dependency on onceonly_2_57.m4.
+
 2004-10-05  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add "lib/dirname.h" and "src/parseinfo.h" to project.
