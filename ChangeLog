@@ -1,18 +1,3 @@
-1998-08-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
-
-	* INSTALL: Update for SCO OpenServer 5 (reported by Jeffery
-	Cann).
-
-1998-08-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
-
-	* INSTALL: Add Unixware 7 (reported by Phillip Porch).
-
-1998-07-29  Jim Kingdon  <kingdon@harvey.cyclic.com>
-
-	* cvsnt.mak: For rcscmds.c, also include files from the diff
-	directory.  Plus of course the usual voluminous "because Visual
-	C++ 4.0 feels like it" changes.
-
 Tue Jul 28 22:16:48 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* Makefile.in (dist): unset the GZIP shell variable before calling

@@ -1,7 +1,3 @@
-1998-08-06  David Masterson of kla-tencor.com
-
-	* util.c (flush_output): Don't prototype.
-
 Thu Jul  2 16:34:38 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	Simplify the callback interface:

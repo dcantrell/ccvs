@@ -3113,7 +3113,7 @@ static void
 serve_remove (arg)
     char *arg;
 {
-    do_cvs_command ("remove", cvsremove);
+    do_cvs_command ("cvsremove", cvsremove);
 }
 
 static void
@@ -3127,7 +3127,7 @@ static void
 serve_rdiff (arg)
     char *arg;
 {
-    do_cvs_command ("rdiff", patch);
+    do_cvs_command ("patch", patch);
 }
 
 static void
