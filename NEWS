@@ -3,8 +3,8 @@ Changes since 1.12.8:
 
 NEW FEATURES
 
-* `cvs log' now outputs local times when both the server and client are 1.12.8
-  or greater.
+* `cvs log' & `cvs ls' now output local times when both the server and client
+  are 1.12.9 or greater.
 
 DEVELOPER NOTES
 
