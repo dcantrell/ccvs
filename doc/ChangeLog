@@ -1,5 +1,8 @@
 Sun May  4 14:38:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (cvsclient.dvi cvsclient.aux): Run texi2dvi rather
+	than (poorly) emulating it ourself.
+
 	Fix overfull and underfull hboxes:
 	* cvs.texinfo (What is CVS?): Add words "the newsgroup" before
 	"comp.sources.unix".
