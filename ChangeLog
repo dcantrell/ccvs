@@ -1,3 +1,7 @@
+2004-12-09  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note `Redirect' CVSROOT method option and doc improvements.
+
 2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* README: Remove Dr. Pascal Molli's CVS URL from the

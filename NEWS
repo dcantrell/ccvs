@@ -5,13 +5,15 @@ NEW FEATURES
 
 * CVSROOT methods and option names are now case insensitive
 
-* CVSROOT methods :ext: now support the CVS_SERVER option.
+* CVSROOT methods :ext: and :fork: now support the CVS_SERVER option.
 
-* CVSROOT method :ext: now supports the CVS_RSH option.
+* CVSROOT method :ext: now supports the CVS_RSH and Redirect options.
 
 * Date handling has been improved slightly.
 
 * Miscellaneous bug fixes.
+
+* Miscellaneous documentation fixes.
 
 BUG FIXES
 
