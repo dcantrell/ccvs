@@ -1,7 +1,7 @@
 2001-03-16  Derek Price  <dprice@collab.net>
 
-	* sanity.sh (?): Additional test for ampersand module behavior with
-	'-d'.
+	* sanity.sh (modules2): Additional test for ampersand module behavior
+	with '-d'.
 
 	    for Greg Klanderman  <greg@itasoftware.com>
 
