@@ -478,3 +478,5 @@ int start_recursion PROTO((int PROTO((*fileproc)) (), int PROTO((*filesdoneproc)
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv));
+
+char *make_message_rcslegal PROTO((char *message));

@@ -1235,7 +1235,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
     run_setup ("%s%s -K %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 #endif
 	       rev ? rev : ""); 
-    run_args ("-m%s", message);
+    run_args ("-m%s", make_message_rcslegal (message));
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
 	!= 0) {
@@ -1842,11 +1842,7 @@ ci_new_rev (rev, msg, rcs)
 
     run_setup ("%s%s -f %s%s", Rcsbin, RCS_CI, rev ? "-r" : "",
 	       rev ? rev : ""); 
-    run_args ("-m%s",
-	      (message == NULL
-	       || *message == '\0'
-	       || strcmp(message, "\n") == 0) ?
-	      "*** empty log message ***\n" : message);
+    run_args ("-m%s", make_message_rcslegal (message));
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, DEVNULL, RUN_NORMAL))
 	!= 0) {

@@ -1092,3 +1092,27 @@ char *tmpnam(char *s)
     }
 }
 #endif
+
+/*
+ *  Sanity checks and any required fix-up on message passed to RCS via '-m'.
+ *  RCS 5.7 requires that a non-total-whitespace, non-null message be provided
+ *  with '-m'.
+ */
+char *
+make_message_rcslegal (message)
+     char *message;
+{
+    if ((message == NULL) || (*message == '\0') || isspace (*message))
+    {
+        char *t;
+
+	if (message)
+	    for (t = message; *t; t++)
+	        if (!isspace (*t))
+		    return message;
+
+	return "*** empty log message ***\n";
+    }
+
+    return message;
+}

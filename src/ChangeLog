@@ -1,3 +1,17 @@
+Tue Jul 11 14:20:0 1995  Loren James Rittle  <rittle@supra.comm.mot.com>
+
+	* import.c (add_rev), commit.c (remove_file, ci_new_rev),
+	checkin.c (Checkin), subr.c (make_message_rcslegal), cvs.h:
+	Always perform sanity check and fix-up on messages to be passed
+ 	directly to RCS via the '-m' switch.  RCS 5.7 requires that a
+ 	non-total-whitespace, non-null message be provided or it will
+ 	abort with an error.  CVS is not setup to handle any returned
+ 	error from 'ci' gracefully and, thus, the repository entered a
+ 	trashed state.
+
+	* sanity.sh: Add regression tests for new code and interactions
+	with RCS 5.7.
+
 Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
         
 	* .cvsignore: added new backup file
