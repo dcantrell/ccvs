@@ -61,31 +61,51 @@ tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
 
 echo 'This test should produce no other output than this line, and a final "OK".'
 
-if test x"$1" = x"-r"; then
-	shift
-	remote=yes
-else
-	remote=no
+exit_usage ()
+{
+    echo "Usage: `basename $0` [-r] [--keep] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+    exit 2
+}
+
+args=`getopt f:kr $*`
+if test $? -ne 0 ; then
+    exit_usage
 fi
 
-# The --keep option will eventually cause all the tests to leave around the
-# contents of the /tmp directory; right now only some implement it.  Not
-# useful if you are running more than one test.
-# FIXME: need some real option parsing so this doesn't depend on the order
-# in which they are specified.
-if test x"$1" = x"--keep"; then
-  shift
-  keep=yes
-else
-  keep=no
-fi
+unset fromtest
+keep=no
+remote=no
+set -- $args
+for i ; do
+    case "$i" in
+	-f)
+	    fromtest=$2
+	    shift
+	    shift
+	    ;;
+	-k)
+	    # The --keep option will eventually cause all the tests to leave around the
+	    # contents of the /tmp directory; right now only some implement it.  Not
+	    # useful if you are running more than one test.
+	    keep=yes
+	    shift
+	    ;;
+	-r)
+	    remote=yes
+	    shift
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+    esac
+done
 
 # Use full path for CVS executable, so that CVS_SERVER gets set properly
 # for remote.
 case $1 in
 "")
-  echo "Usage: `basename $0` [-r] [--keep] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
-  exit 1
+  exit_usage
   ;;
 /*)
   testcvs=$1
@@ -94,8 +114,9 @@ case $1 in
   testcvs=`pwd`/$1
   ;;
 esac
-
 shift
+
+
 
 # Regexp to match what CVS will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
@@ -718,6 +739,13 @@ dotest 1a "${testcvs} init" ''
 
 ### The big loop
 for what in $tests; do
+	if test -n "$fromtest" ; then
+	    if test $fromtest = $what ; then
+		unset fromtest
+	    else
+		continue
+	    fi
+	fi
 	case $what in
 	basica)
 	  # Similar in spirit to some of the basic1, and basic2

@@ -1,3 +1,13 @@
+2000-12-27  Derek Price  <derek.price@openavenue.com>
+
+	* sanity.sh: add a -f option for continuing from a particular test
+	and shorten --keep to -k so we can use the getopt function.
+
+2000-12-27  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (remotecheck): Make remotecheck dependant on all
+	* Makefile.in: regenerated
+
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in: update timestamp
