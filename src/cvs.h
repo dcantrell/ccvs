@@ -1,5 +1,3 @@
-/* $CVSid: @(#)cvs.h 1.86 94/10/22 $	 */
-
 /*
  * basic information used in all source files
  *

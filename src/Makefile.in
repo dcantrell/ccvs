@@ -12,8 +12,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-# $CVSid: @(#)Makefile.in 1.19 94/09/29 $
-
 SHELL = /bin/sh
 
 srcdir     = @srcdir@
