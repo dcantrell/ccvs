@@ -2328,25 +2328,34 @@ start_rsh_server (tofdp, fromfdp)
 	if (dup2 (from_server_pipe[1], STDOUT_FILENO) < 0)
 	    error (1, errno, "cannot dup2");
 
-	execlp ("rsh", "rsh", server_host,
-		getenv ("CVS_SERVER") ? getenv ("CVS_SERVER") : "cvs",
+	{
+	  /* If you're working through firewalls, you can set the
+	     CVS_RSH environment variable to rsh and rsh invocation on
+	     a proxy machine.  */
+	  char *cvs_rsh = getenv ("CVS_RSH");
+	  char *cvs_server = getenv ("CVS_SERVER");
+
+	  cvs_rsh || (cvs_rsh = "rsh");
+	  cvs_server || (cvs_server = "cvs");
+
+	  execlp (cvs_rsh, cvs_rsh, server_host, cvs_server,
 #if 1
-		/*
-		 * This is really cheesy, because it is redundant with the
-		 * Root request, inconsistent with how we do things when we
-		 * aren't using rsh, and the code in main.c which prints
-		 * an error on a bad root just writes to stderr rather than
-		 * using the protocol.
-		 * 
-		 * But I'm leaving it in for now because old (Nov 3, 1994)
-		 * versions of the server say
-		 * "`cvs server' is for internal use--don't use it directly"
-		 * if you try to start them up without -d and your .bashrc
-		 * sets CVSROOT to something containing a colon.
-		 */
-		"-d", server_cvsroot,
+		  /*
+		   * This is really cheesy, because it is redundant with the
+		   * Root request, inconsistent with how we do things when we
+		   * aren't using rsh, and the code in main.c which prints
+		   * an error on a bad root just writes to stderr rather than
+		   * using the protocol.
+		   * 
+		   * But I'm leaving it in for now because old (Nov 3, 1994)
+		   * versions of the server say
+		   * "`cvs server' is for internal use--don't use it directly"
+		   * if you try to start them up without -d and your .bashrc
+		   * sets CVSROOT to something containing a colon.  */
+		  "-d", server_cvsroot,
 #endif
-		"server", (char *)NULL);
+		  "server", (char *)NULL);
+	}
 	error (1, errno, "cannot exec");
     }
     if (close (to_server_pipe[0]) < 0)
