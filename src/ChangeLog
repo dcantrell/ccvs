@@ -1,3 +1,64 @@
+1998-02-15  Tim Pierce  <twp@skepsis.com>
+
+	[This is the code as submitted.  I'll be checking in my cleanups
+	shortly.  This work sponsored by Abbott Labs.  -kingdon]
+
+	Support for device special files, symbolic links, user and group
+	ownerships, and file permissions.
+	
+	* parseinfo.c: (parse_config): Handle new config variable
+	`PreservePermissions'.
+	* mkmodules.c (config_contents): Add new PreservePermissions var.
+
+	* rcs.c, rcs.h (preserve_perms): New variable.
+	(RCS_checkout, RCS_checkin): Support for newphrases `owner',
+	`group', `permissions', `special', `symlink'.
+	(RCS_checkout): If `workfile' and `sout' are symlinks, remove them
+	before attempting to open them for writing.
+	* import.c (add_rcs_file): Support for newphrases.  Do not attempt
+	to read data from special files or symlinks.  Error message
+	`cannot fstat' is now `cannot lstat'.
+
+	New metrics for deciding when two files are different:
+
+	* update.c, cvs.h (special_file_mismatch): New function.
+	(merge_file, join_file): Call it.
+	* no_diff.c (No_Difference): Call it.
+
+	* filesubr.c (xcmp): Consider files to be different if they are of
+	different types; if they are symlinks which link to different
+	pathnames; or if they are devices with different device numbers.
+	Error message is now `cannot lstat'.
+	* rcs.c (RCS_cmp_file): Use `xcmp' to compare files, simplifying
+	the special handling for nonregular files.
+
+	* rcscmds.c (diff_exec, diff_execv): If asked to obtain diffs for
+	special files, report no differences.
+
+	Miscellaneous changes to make special file support possible:
+
+	* commit.c (fix_rcs_modes): Don't attempt to `fix' permissions on
+	a symlink.
+
+	* import.c (add_rcs_file): Don't try to close fpuser if it was
+	never opened (e.g. when operating on a symlink).
+
+	* filesubr.c, cvs.h (isdevice, xreadlink): New functions.
+	* filesubr.c (copy_file): Handle special files and symlinks.
+	(xchmod): Do nothing if `preserve_perms' is set.
+
+	* commit.c (checkaddfile): Replace `copy_file (DEVNULL, ...)' with
+	fopen/fclose calls.  Copy_file no longer attempts to read data
+	from device files.
+
+	* filesubr.c (islink): Use CVS_LSTAT, not lstat.
+	* vers_ts.c (time_stamp, time_stamp_server): Use CVS_LSTAT, not stat,
+	to get symlinks right.
+	* subr.c (get_file): Same.  Don't attempt to read from special
+	files or symlinks.
+
+	* classify.c (Classify_File): Doc fix.
+
 Fri Feb 13 17:07:32 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	Fix some file system ordering problems found on Irix 6.4:

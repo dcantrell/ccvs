@@ -615,8 +615,16 @@ get_file (name, fullname, mode, buf, bufsize, len)
     }
     else
     {
-	if (CVS_STAT (name, &s) < 0)
+	if (CVS_LSTAT (name, &s) < 0)
 	    error (1, errno, "can't stat %s", fullname);
+
+	/* Don't attempt to read special files or symlinks. */
+	if (!S_ISREG (s.st_mode))
+	{
+	    *len = 0;
+	    return;
+	}
+
 	/* Convert from signed to unsigned.  */
 	filesize = s.st_size;
 

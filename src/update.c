@@ -1738,12 +1738,24 @@ merge_file (finfo, vers)
     xchmod (finfo->file, 1);
 
     if (strcmp (vers->options, "-kb") == 0
-	|| wrap_merge_is_copy (finfo->file))
+	|| wrap_merge_is_copy (finfo->file)
+	|| special_file_mismatch (finfo, NULL, vers->vn_rcs))
     {
-	/* For binary files, a merge is always a conflict.  We give the
+	/* For binary files, a merge is always a conflict.  Same for
+	   files whose permissions or linkage do not match.  We give the
 	   user the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
+
+	/* TODO: it may not always be necessary to regard a permission
+	   mismatch as a conflict.  The working file and the RCS file
+	   have a common ancestor `A'; if the working file's permissions
+	   match A's, then it's probably safe to overwrite them with the
+	   RCS permissions.  Only if the working file, the RCS file, and
+	   A all disagree should this be considered a conflict.  But more
+	   thought needs to go into this, and in the meantime it is safe
+	   to treat any such mismatch as an automatic conflict. -twp */
+
 #ifdef SERVER_SUPPORT
 	if (server_active)
 	    server_copy_file (finfo->file, finfo->update_dir,
@@ -2236,9 +2248,11 @@ join_file (finfo, vers)
 	write_letter (finfo, 'U');
     }
     else if (strcmp (options, "-kb") == 0
-	     || wrap_merge_is_copy (finfo->file))
+	     || wrap_merge_is_copy (finfo->file)
+	     || special_file_mismatch (finfo, rev1, rev2))
     {
-	/* We are dealing with binary files, but real merging would
+	/* We are dealing with binary files, or files with a
+	   permission/linkage mismatch, and real merging would
 	   need to take place.  This is a conflict.  We give the user
 	   the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
@@ -2321,6 +2335,266 @@ join_file (finfo, vers)
     }
 #endif
     free (backup);
+}
+
+/*
+ * Report whether revisions REV1 and REV2 of FINFO agree on:
+ *   . file ownership
+ *   . permissions
+ *   . major and minor device numbers
+ *   . symbolic links
+ *   . hard links (not done yet)
+ *
+ * If either REV1 or REV2 is NULL, the working copy is used instead.
+ *
+ * Return 1 if the files differ on these data.
+ */
+int
+special_file_mismatch (finfo, rev1, rev2)
+    struct file_info *finfo;
+    char *rev1;
+    char *rev2;
+{
+    struct stat sb;
+    RCSVers *vp;
+    Node *n;
+    uid_t rev1_uid, rev2_uid;
+    gid_t rev1_gid, rev2_gid;
+    mode_t rev1_mode, rev2_mode;
+    dev_t rev1_dev, rev2_dev;
+    char *rev1_symlink = NULL;
+    char *rev2_symlink = NULL;
+    int check_uids, check_gids, check_modes, check_devnums;
+    int result;
+
+    /* If we don't care about special file info, then
+       don't report a mismatch in any case. */
+    if (!preserve_perms)
+	return 0;
+
+    check_uids = check_gids = check_modes = 1;
+
+    /* Obtain file information for REV1.  If this is null, then stat
+       finfo->file and use that info. */
+    /* If a revision does not know anything about its status,
+       then presumably it doesn't matter, and indicates no conflict. */
+
+    if (rev1 == NULL)
+    {
+	if (islink (finfo->file))
+	    rev1_symlink = xreadlink (finfo->file);
+	else
+	{
+	    if (CVS_LSTAT (finfo->file, &sb) < 0)
+		error (1, errno, "could not get file information for %s",
+		       finfo->file);
+	    rev1_uid = sb.st_uid;
+	    rev1_gid = sb.st_gid;
+	    rev1_mode = sb.st_mode;
+	    if (S_ISBLK (rev1_mode) || S_ISCHR (rev1_mode))
+		rev1_dev = sb.st_rdev;
+	}
+    }
+    else
+    {
+	n = findnode (finfo->rcs->versions, rev1);
+	vp = (RCSVers *) n->data;
+
+	n = findnode (vp->other_delta, "symlink");
+	if (n != NULL)
+	    rev1_symlink = xstrdup (n->data);
+	else
+	{
+	    n = findnode (vp->other_delta, "owner");
+	    if (n == NULL)
+		check_uids = 0;	/* don't care */
+	    else
+		rev1_uid = strtoul (n->data, NULL, 10);
+
+	    n = findnode (vp->other_delta, "group");
+	    if (n == NULL)
+		check_gids = 0;	/* don't care */
+	    else
+		rev1_gid = strtoul (n->data, NULL, 10);
+
+	    n = findnode (vp->other_delta, "permissions");
+	    if (n == NULL)
+		check_modes = 0;	/* don't care */
+	    else
+		rev1_mode = strtoul (n->data, NULL, 8);
+
+	    n = findnode (vp->other_delta, "special");
+	    if (n == NULL)
+		rev1_mode |= S_IFREG;
+	    else
+	    {
+		/* If the size of `ftype' changes, fix the sscanf call also */
+		char ftype[16];
+		if (sscanf (n->data, "%16s %lu", ftype,
+			    (unsigned long *) &rev1_dev) < 2)
+		    error (1, 0, "%s:%s has bad `special' newphrase %s",
+			   finfo->file, rev1, n->data);
+		if (strcmp (ftype, "character") == 0)
+		    rev1_mode |= S_IFCHR;
+		else if (strcmp (ftype, "block") == 0)
+		    rev1_mode |= S_IFBLK;
+		else
+		    error (0, 0, "%s:%s unknown file type `%s'",
+			   finfo->file, rev1, ftype);
+	    }
+	}
+    }
+
+    /* Obtain file information for REV2. */
+    if (rev2 == NULL)
+    {
+	if (islink (finfo->file))
+	    rev2_symlink = xreadlink (finfo->file);
+	else
+	{
+	    if (CVS_LSTAT (finfo->file, &sb) < 0)
+		error (1, errno, "could not get file information for %s",
+		       finfo->file);
+	    rev2_uid = sb.st_uid;
+	    rev2_gid = sb.st_gid;
+	    rev2_mode = sb.st_mode;
+	    if (S_ISBLK (rev2_mode) || S_ISCHR (rev2_mode))
+		rev2_dev = sb.st_rdev;
+	}
+    }
+    else
+    {
+	n = findnode (finfo->rcs->versions, rev2);
+	vp = (RCSVers *) n->data;
+
+	n = findnode (vp->other_delta, "symlink");
+	if (n != NULL)
+	    rev2_symlink = xstrdup (n->data);
+	else
+	{
+	    n = findnode (vp->other_delta, "owner");
+	    if (n == NULL)
+		check_uids = 0;	/* don't care */
+	    else
+		rev2_uid = strtoul (n->data, NULL, 10);
+
+	    n = findnode (vp->other_delta, "group");
+	    if (n == NULL)
+		check_gids = 0;	/* don't care */
+	    else
+		rev2_gid = strtoul (n->data, NULL, 10);
+
+	    n = findnode (vp->other_delta, "permissions");
+	    if (n == NULL)
+		check_modes = 0;	/* don't care */
+	    else
+		rev2_mode = strtoul (n->data, NULL, 8);
+
+	    n = findnode (vp->other_delta, "special");
+	    if (n == NULL)
+		rev2_mode |= S_IFREG;
+	    else
+	    {
+		/* If the size of `ftype' changes, fix the sscanf call also */
+		char ftype[16];
+		if (sscanf (n->data, "%16s %lu", ftype,
+			    (unsigned long *) &rev2_dev) < 2)
+		    error (1, 0, "%s:%s has bad `special' newphrase %s",
+			   finfo->file, rev2, n->data);
+		if (strcmp (ftype, "character") == 0)
+		    rev2_mode |= S_IFCHR;
+		else if (strcmp (ftype, "block") == 0)
+		    rev2_mode |= S_IFBLK;
+		else
+		    error (0, 0, "%s:%s unknown file type `%s'",
+			   finfo->file, rev2, ftype);
+	    }
+	}
+    }
+
+    /* Check the user/group ownerships and file permissions, printing
+       an error for each mismatch found.  Return 0 if all characteristics
+       matched, and 1 otherwise. */
+
+    result = 0;
+
+    /* Compare symlinks first, since symlinks are simpler (don't have
+       any other characteristics). */
+    if (rev1_symlink != NULL && rev2_symlink == NULL)
+    {
+	error (0, 0, "%s is a symbolic link",
+	       (rev1 == NULL ? "working file" : rev1));
+	result = 1;
+    }
+    else if (rev1_symlink == NULL && rev2_symlink != NULL)
+    {
+	error (0, 0, "%s is a symbolic link",
+	       (rev2 == NULL ? "working file" : rev2));
+	result = 1;
+    }
+    else if (rev1_symlink != NULL)
+	result = (strcmp (rev1_symlink, rev2_symlink) == 0);
+    else
+    {
+	/* Compare user ownership. */
+	if (check_uids && rev1_uid != rev2_uid)
+	{
+	    error (0, 0, "%s: owner mismatch between %s and %s",
+		   finfo->file,
+		   (rev1 == NULL ? "working file" : rev1),
+		   (rev2 == NULL ? "working file" : rev2));
+	    result = 1;
+	}
+
+	/* Compare group ownership. */
+	if (check_gids && rev1_gid != rev2_gid)
+	{
+	    error (0, 0, "%s: group mismatch between %s and %s",
+		   finfo->file,
+		   (rev1 == NULL ? "working file" : rev1),
+		   (rev2 == NULL ? "working file" : rev2));
+	    result = 1;
+	}
+    
+	/* Compare permissions. */
+	if (check_modes &&
+	    (rev1_mode & 07777) != (rev2_mode & 07777))
+	{
+	    error (0, 0, "%s: permission mismatch between %s and %s",
+		   finfo->file,
+		   (rev1 == NULL ? "working file" : rev1),
+		   (rev2 == NULL ? "working file" : rev2));
+	    result = 1;
+	}
+
+	/* Compare device file characteristics. */
+	if ((rev1_mode & S_IFMT) != (rev2_mode & S_IFMT))
+	{
+	    error (0, 0, "%s: %s and %s are different file types",
+		   finfo->file,
+		   (rev1 == NULL ? "working file" : rev1),
+		   (rev2 == NULL ? "working file" : rev2));
+	    result = 1;
+	}
+	else if (S_ISBLK (rev1_mode))
+	{
+	    if (rev1_dev != rev2_dev)
+	    {
+		error (0, 0, "%s: device numbers of %s and %s do not match",
+		       finfo->file,
+		       (rev1 == NULL ? "working file" : rev1),
+		       (rev2 == NULL ? "working file" : rev2));
+		result = 1;
+	    }
+	}
+    }
+
+    if (rev1_symlink != NULL)
+	free (rev1_symlink);
+    if (rev2_symlink != NULL)
+	free (rev2_symlink);
+
+    return result;
 }
 
 int

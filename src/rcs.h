@@ -217,6 +217,8 @@ int rcs_change_text PROTO ((const char *, char *, size_t, const char *,
 			    size_t, char **, size_t *));
 char *make_file_label PROTO ((char *, char *, RCSNode *));
 
+extern int preserve_perms;
+
 /* From import.c.  */
 extern int add_rcs_file PROTO ((char *, char *, char *, char *, char *,
 				char *, char *, int, char **,
