@@ -1,5 +1,9 @@
 2003-11-25  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (commit_fileproc): Reword comment.
+
+2003-11-25  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (devcom3-9ar): Ignore the stderr output since it varies
 	considerably between platforms.
 
