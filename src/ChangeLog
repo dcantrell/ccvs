@@ -1,3 +1,8 @@
+1999-11-06  Larry Jones <larry.jones@sdrc.com>
+
+	*sanity.sh(rcs3-5): Remote output can be out-of-order, so need a
+	more general pattern to match the assertion failure.
+
 1999-11-05  K.J. Paradise (kj@sourcegear.com)
 
 	* history.c: Added a trap to verify that if a 

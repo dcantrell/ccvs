@@ -14027,7 +14027,7 @@ EOF
 	  # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
 	  # the feature, if this is a -s problem?
 	  dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
-".*[Aa]ssertion.*failed${DOTSTAR}" ".*failed assertion${DOTSTAR}"
+"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
 	  cd first-dir
 	  dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
 "${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
