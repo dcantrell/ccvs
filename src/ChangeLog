@@ -1,5 +1,9 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* update.c (join_file): Correct status message for consistency.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	Continue removal from server of handling of case insensitive clients.
 
 	* cvs.h: Remove extern declaration of ign_case.
