@@ -549,7 +549,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="basica basicb basicc basic1 deep basic2"
+	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff death death2 branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
@@ -2033,6 +2033,47 @@ O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
 		;;
+
+	commit-readonly)
+	  mkdir 1; cd 1
+	  module=x
+
+	  : > junk
+	  dotest commit-readonly-1 "$testcvs -Q import -m . $module X Y" ''
+	  dotest commit-readonly-2 "$testcvs -Q co $module" ''
+	  cd $module
+
+	  file=m
+
+	  # Include an rcs keyword to be expanded.
+	  echo '$Id$' > $file
+
+	  dotest commit-readonly-3 "$testcvs add $file" \
+"${PROG} [a-z]*: scheduling file .$file. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest commit-readonly-4 "$testcvs -Q ci -m . $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+done
+Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  echo line2 > $file
+	  # Make the file read-only.
+	  chmod a-w $file
+
+	  dotest commit-readonly-5 "$testcvs -Q ci -m . $file" \
+"Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  ;;
+
 
 	rdiff)
 		# Test rdiff
