@@ -57,7 +57,12 @@
 
 .\getdate.c : \
 	"..\windows-NT\config.h"\
-	".\xtime.h"\
+	"..\windows-NT\stdbool.h"\
+	".\alloca.h"\
+	".\getdate.h"\
+	".\setenv.h"\
+	".\timespec.h"\
+	".\xalloc.h"\
 	
 
 .\getline.c : \
@@ -131,6 +136,13 @@
 	".\xgetcwd.h"\
 	
 
+.\setenv.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\alloca.h"\
+	".\allocsa.h"\
+	
+
 .\sighandle.c : \
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
@@ -164,6 +176,11 @@
 .\time_r.c : \
 	"..\windows-NT\config.h"\
 	".\time_r.h"\
+	
+
+.\unsetenv.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
 	
 
 .\valloc.c : \

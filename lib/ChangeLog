@@ -1,3 +1,9 @@
+2004-11-01  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add "setenv.c", "unsetenv.c", "allocsa.h" and "setenv.h" to project.
+	* libcvs.dep: Regenerate for "libcvs.dsp" change.
+	* libcvs.mak: Regenerate for "libcvs.dsp" change.
+
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
 	* test-getdate.sh: Test a date relative to a specified date and one of
