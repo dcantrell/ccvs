@@ -440,6 +440,11 @@ main (argc, argv)
     else
 	command_name = cm->fullname;	/* Global pointer for later use */
 
+    if (strcmp (argv[0], "rlog") == 0)
+    {
+	error (0, 0, "warning: the rlog command is deprecated");
+	error (0, 0, "use the synonymous log command instead");
+    }
 
     if (help)
 	argc = -1;		/* some functions only check for this */
