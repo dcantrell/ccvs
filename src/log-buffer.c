@@ -1,3 +1,4 @@
+
 /* CVS client logging buffer.
 
    This program is free software; you can redistribute it and/or modify
@@ -27,9 +28,13 @@
 
 struct log_buffer
 {
-    /* The underlying buffer.  */
+    /*
+       The underlying buffer.  
+     */
     struct buffer *buf;
-    /* The file to log information to.  */
+    /*
+       The file to log information to.  
+     */
     FILE *log;
 };
 
@@ -42,7 +47,8 @@ static int log_buffer_shutdown (struct buffer *);
 /* Create a log buffer.  */
 
 static struct buffer *
-log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (struct buffer *))
+log_buffer_initialize (struct buffer *buf, FILE * fp, int input,
+		       void (*memory) (struct buffer *))
 {
     struct log_buffer *n;
 
@@ -52,10 +58,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (
     return buf_initialize (input ? log_buffer_input : NULL,
 			   input ? NULL : log_buffer_output,
 			   input ? NULL : log_buffer_flush,
-			   log_buffer_block,
-			   log_buffer_shutdown,
-			   memory,
-			   n);
+			   log_buffer_block, log_buffer_shutdown, memory, n);
 }
 
 /* The input function for a log buffer.  */
@@ -120,11 +123,13 @@ log_buffer_flush (void *closure)
     if (lb->buf->flush == NULL)
 	abort ();
 
-    /* We don't really have to flush the log file here, but doing it
+    /*
+       We don't really have to flush the log file here, but doing it
        will let tail -f on the log file show what is sent to the
-       network as it is sent.  */
+       network as it is sent.  
+     */
     if (fflush (lb->log) != 0)
-        error (0, errno, "flushing log file");
+	error (0, errno, "flushing log file");
 
     return (*lb->buf->flush) (lb->buf->closure);
 }
@@ -160,47 +165,52 @@ log_buffer_shutdown (struct buffer *buf)
 void
 setup_logfiles (struct buffer **to_server_p, struct buffer **from_server_p)
 {
-  char *log = getenv ("CVS_CLIENT_LOG");
+    char *log = getenv ("CVS_CLIENT_LOG");
 
-  /* Set up logfiles, if any.
-   *
-   * We do this _after_ authentication on purpose.  Wouldn't really like to
-   * worry about logging passwords...
-   */
-  if (log)
+    /*
+       Set up logfiles, if any.
+       *
+       * We do this _after_ authentication on purpose.  Wouldn't really like to
+       * worry about logging passwords...
+     */
+    if (log)
     {
-      int len = strlen (log);
-      char *buf = xmalloc (len + 5);
-      char *p;
-      FILE *fp;
+	int len = strlen (log);
+	char *buf = xmalloc (len + 5);
+	char *p;
+	FILE *fp;
 
-      strcpy (buf, log);
-      p = buf + len;
+	strcpy (buf, log);
+	p = buf + len;
 
-      /* Open logfiles in binary mode so that they reflect
-	 exactly what was transmitted and received (that is
-	 more important than that they be maximally
-	 convenient to view).  */
-      /* Note that if we create several connections in a single CVS client
-	 (currently used by update.c), then the last set of logfiles will
-	 overwrite the others.  There is currently no way around this.  */
-      strcpy (p, ".in");
-      fp = open_file (buf, "wb");
-      if (fp == NULL)
-	error (0, errno, "opening to-server logfile %s", buf);
-      else
-	*to_server_p = log_buffer_initialize (*to_server_p, fp, 0,
-					      (BUFMEMERRPROC) NULL);
+	/*
+	   Open logfiles in binary mode so that they reflect
+	   exactly what was transmitted and received (that is
+	   more important than that they be maximally
+	   convenient to view).  
+	 */
+	/*
+	   Note that if we create several connections in a single CVS client
+	   (currently used by update.c), then the last set of logfiles will
+	   overwrite the others.  There is currently no way around this.  
+	 */
+	strcpy (p, ".in");
+	fp = open_file (buf, "wb");
+	if (fp == NULL)
+	    error (0, errno, "opening to-server logfile %s", buf);
+	else
+	    *to_server_p = log_buffer_initialize (*to_server_p, fp, 0,
+						  (BUFMEMERRPROC) NULL);
 
-      strcpy (p, ".out");
-      fp = open_file (buf, "wb");
-      if (fp == NULL)
-	error (0, errno, "opening from-server logfile %s", buf);
-      else
-	*from_server_p = log_buffer_initialize (*from_server_p, fp, 1,
-						(BUFMEMERRPROC) NULL);
+	strcpy (p, ".out");
+	fp = open_file (buf, "wb");
+	if (fp == NULL)
+	    error (0, errno, "opening from-server logfile %s", buf);
+	else
+	    *from_server_p = log_buffer_initialize (*from_server_p, fp, 1,
+						    (BUFMEMERRPROC) NULL);
 
-      free (buf);
+	free (buf);
     }
 }
 

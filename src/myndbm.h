@@ -4,22 +4,28 @@
 
 typedef struct
 {
-    List *dbm_list;			/* cached database */
-    Node *dbm_next;			/* next key to return for nextkey() */
+    List *dbm_list;		/* cached database */
+    Node *dbm_next;		/* next key to return for nextkey() */
 
-    /* Name of the file to write to if modified is set.  malloc'd.  */
+    /*
+       Name of the file to write to if modified is set.  malloc'd.  
+     */
     char *name;
 
-    /* Nonzero if the database has been modified and dbm_close needs to
-       write it out to disk.  */
+    /*
+       Nonzero if the database has been modified and dbm_close needs to
+       write it out to disk.  
+     */
     int modified;
-} DBM;
+}
+DBM;
 
 typedef struct
 {
     char *dptr;
     int dsize;
-} datum;
+}
+datum;
 
 /*
  * So as not to conflict with other dbm_open, etc., routines that may
@@ -42,4 +48,4 @@ datum mydbm_firstkey (DBM * db);
 datum mydbm_nextkey (DBM * db);
 extern int mydbm_store (DBM *, datum, datum, int);
 
-#endif				/* MY_NDBM */
+#endif /* MY_NDBM */

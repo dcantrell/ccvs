@@ -1,3 +1,4 @@
+
 /* CVS GSSAPI client stuff.
 
    This program is free software; you can redistribute it and/or modify
@@ -23,6 +24,7 @@
 gss_ctx_id_t gcontext;
 
 #   ifdef ENCRYPTION
+
 /* Whether to encrypt GSSAPI communication.  We use a global variable
    like this because we use the same buffer type (gssapi_wrap) to
    handle both authentication and encryption, and we don't want
@@ -34,7 +36,7 @@ int cvs_gssapi_encrypt;
 /* Receive a given number of bytes.  */
 
 static void
-recv_bytes( int sock, char *buf, int need )
+recv_bytes (int sock, char *buf, int need)
 {
     while (need > 0)
     {
@@ -42,7 +44,8 @@ recv_bytes( int sock, char *buf, int need )
 
 	got = recv (sock, buf, need, 0);
 	if (got <= 0)
-	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
+	    error (1, 0, "recv() from server %s: %s",
+		   current_parsed_root->hostname,
 		   got == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
 
 	buf += got;
@@ -68,7 +71,7 @@ recv_bytes( int sock, char *buf, int need )
  */
 #define BUFSIZE 1024
 int
-connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
+connect_to_gserver (cvsroot_t * root, int sock, struct hostent *hostinfo)
 {
     char *str;
     char buf[BUFSIZE];
@@ -108,7 +111,7 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 
 	    message_context = 0;
 	    gss_display_status (&new_stat_min, stat_maj, GSS_C_GSS_CODE,
-                                GSS_C_NULL_OID, &message_context, &tok_out);
+				GSS_C_NULL_OID, &message_context, &tok_out);
 	    error (0, 0, "GSSAPI authentication failed: %s",
 		   (char *) tok_out.value);
 
@@ -142,11 +145,13 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 	    {
 		int got;
 
-		/* This usually means that the server sent us an error
+		/*
+		   This usually means that the server sent us an error
 		   message.  Read it byte by byte and print it out.
 		   FIXME: This is a terrible error handling strategy.
 		   However, even if we fix the server, we will still
-		   want to do this to work with older servers.  */
+		   want to do this to work with older servers.  
+		 */
 		buf[0] = cbuf[0];
 		buf[1] = cbuf[1];
 		got = recv (sock, buf + 2, sizeof buf - 2, 0);
@@ -156,8 +161,7 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 		buf[got + 2] = '\0';
 		if (buf[got + 1] == '\n')
 		    buf[got + 1] = '\0';
-		error (1, 0, "error from server %s: %s", root->hostname,
-		       buf);
+		error (1, 0, "error from server %s: %s", root->hostname, buf);
 	    }
 
 	    recv_bytes (sock, buf, need);
@@ -181,21 +185,22 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 
 struct cvs_gssapi_wrap_data
 {
-    /* The GSSAPI context.  */
+    /*
+       The GSSAPI context.  
+     */
     gss_ctx_id_t gcontext;
 };
 
 static int cvs_gssapi_wrap_input (void *, const char *, char *, int);
-static int cvs_gssapi_wrap_output (void *, const char *, char *, int,
-					 int *);
+static int cvs_gssapi_wrap_output (void *, const char *, char *, int, int *);
 
 /* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
    GSSAPI wrapping routines.  */
 
 struct buffer *
-cvs_gssapi_wrap_buffer_initialize( struct buffer *buf, int input,
-                                   gss_ctx_id_t gcontext,
-                                   void (*memory) ( struct buffer * ) )
+cvs_gssapi_wrap_buffer_initialize (struct buffer *buf, int input,
+				   gss_ctx_id_t gcontext,
+				   void (*memory) (struct buffer *))
 {
     struct cvs_gssapi_wrap_data *gd;
 
@@ -205,16 +210,14 @@ cvs_gssapi_wrap_buffer_initialize( struct buffer *buf, int input,
     return (packetizing_buffer_initialize
 	    (buf,
 	     input ? cvs_gssapi_wrap_input : NULL,
-	     input ? NULL : cvs_gssapi_wrap_output,
-	     gd,
-	     memory));
+	     input ? NULL : cvs_gssapi_wrap_output, gd, memory));
 }
 
 /* Unwrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
-                       int size )
+cvs_gssapi_wrap_input (void *fnclosure, const char *input, char *output,
+		       int size)
 {
     struct cvs_gssapi_wrap_data *gd =
 	(struct cvs_gssapi_wrap_data *) fnclosure;
@@ -236,8 +239,10 @@ cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
 
     memcpy (output, outbuf.value, outbuf.length);
 
-    /* The real packet size is stored in the data, so we don't need to
-       remember outbuf.length.  */
+    /*
+       The real packet size is stored in the data, so we don't need to
+       remember outbuf.length.  
+     */
 
     gss_release_buffer (&stat_min, &outbuf);
 
@@ -247,8 +252,8 @@ cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
 /* Wrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
-                        int size, int *translated )
+cvs_gssapi_wrap_output (void *fnclosure, const char *input, char *output,
+			int size, int *translated)
 {
     struct cvs_gssapi_wrap_data *gd =
 	(struct cvs_gssapi_wrap_data *) fnclosure;
@@ -269,10 +274,12 @@ cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
 		  &inbuf, &conf, &outbuf) != GSS_S_COMPLETE)
 	error (1, 0, "gss_wrap failed");
 
-    /* The packetizing buffer only permits us to add 100 bytes.
+    /*
+       The packetizing buffer only permits us to add 100 bytes.
        FIXME: I don't know what, if anything, is guaranteed by GSSAPI.
        This may need to be increased for a different GSSAPI
-       implementation, or we may need a different algorithm.  */
+       implementation, or we may need a different algorithm.  
+     */
     if (outbuf.length > size + 100)
 	abort ();
 
@@ -286,16 +293,15 @@ cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
 }
 
 void
-initialize_gssapi_buffers( struct buffer **to_server_p,
-                           struct buffer **from_server_p )
+initialize_gssapi_buffers (struct buffer **to_server_p,
+			   struct buffer **from_server_p)
 {
-  *to_server_p = cvs_gssapi_wrap_buffer_initialize (*to_server_p, 0,
-						    gcontext,
-						    ((BUFMEMERRPROC)
-						     NULL));
-
-  *from_server_p = cvs_gssapi_wrap_buffer_initialize (*from_server_p, 1,
+    *to_server_p = cvs_gssapi_wrap_buffer_initialize (*to_server_p, 0,
 						      gcontext,
-						      ((BUFMEMERRPROC)
-						       NULL));
+						      ((BUFMEMERRPROC) NULL));
+
+    *from_server_p = cvs_gssapi_wrap_buffer_initialize (*from_server_p, 1,
+							gcontext,
+							((BUFMEMERRPROC)
+							 NULL));
 }

@@ -1,3 +1,4 @@
+
 /* Declarations for file attribute munging features.
 
    This program is free software; you can redistribute it and/or modify
@@ -69,8 +70,7 @@ extern char *fileattr_get (const char *filename, const char *attrname);
 
 /* Like fileattr_get, but return a pointer to a newly malloc'd string
    terminated by '\0' (or NULL if said file lacks said attribute).  */
-extern char *fileattr_get0 (const char *filename,
-				   const char *attrname);
+extern char *fileattr_get0 (const char *filename, const char *attrname);
 
 /* This is just a string manipulation function; it does not manipulate
    file attributes as such.  
@@ -101,15 +101,15 @@ extern char *fileattr_get0 (const char *filename,
 */
 
 extern char *fileattr_modify (char *list, const char *attrname,
-				     const char *attrval, int namevalsep,
-				     int entsep);
+			      const char *attrval, int namevalsep,
+			      int entsep);
 
 /* Set attribute ATTRNAME for file FILENAME to ATTRVAL.  If ATTRVAL is NULL,
    the attribute is removed.  Changes are not written to disk until the
    next call to fileattr_write.  If FILENAME is NULL, set attributes for
    files created in the future.  If ATTRVAL is NULL, remove that attribute.  */
 extern void fileattr_set (const char *filename, const char *attrname,
-				 const char *attrval);
+			  const char *attrval);
 
 /* Get all the attributes for file FILENAME.  They are returned as malloc'd
    data in an unspecified format which is guaranteed only to be good for

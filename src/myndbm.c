@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner
  * 
@@ -20,12 +21,13 @@
 #ifdef MY_NDBM
 # ifndef O_ACCMODE
 #   define O_ACCMODE (O_RDONLY | O_WRONLY | O_RDWR)
-# endif /* defined O_ACCMODE */
+# endif	/* defined O_ACCMODE */
 
 static void mydbm_load_file (FILE *, List *, char *);
 
 /* Returns NULL on error in which case errno has been set to indicate
    the error.  Can also call error() itself.  */
+
 /* ARGSUSED */
 DBM *
 mydbm_open (char *file, int flags, int mode)
@@ -34,7 +36,7 @@ mydbm_open (char *file, int flags, int mode)
     DBM *db;
 
     fp = CVS_FOPEN (file, (flags & O_ACCMODE) != O_RDONLY ?
-                                 FOPEN_BINARY_READWRITE : FOPEN_BINARY_READ);
+		    FOPEN_BINARY_READWRITE : FOPEN_BINARY_READ);
     if (fp == NULL && !(existence_error (errno) && (flags & O_CREAT)))
 	return ((DBM *) 0);
 
@@ -55,9 +57,10 @@ mydbm_open (char *file, int flags, int mode)
 static int write_item (Node *, void *);
 
 static int
-write_item (Node *node, void *data)
+write_item (Node * node, void *data)
 {
-    FILE *fp = (FILE *)data;
+    FILE *fp = (FILE *) data;
+
     fputs (node->key, fp);
     fputs (" ", fp);
     fputs (node->data, fp);
@@ -66,15 +69,16 @@ write_item (Node *node, void *data)
 }
 
 void
-mydbm_close (DBM *db)
+mydbm_close (DBM * db)
 {
     if (db->modified)
     {
 	FILE *fp;
+
 	fp = CVS_FOPEN (db->name, FOPEN_BINARY_WRITE);
 	if (fp == NULL)
 	    error (1, errno, "cannot write %s", db->name);
-	walklist (db->dbm_list, write_item, (void *)fp);
+	walklist (db->dbm_list, write_item, (void *) fp);
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", db->name);
     }
@@ -84,13 +88,15 @@ mydbm_close (DBM *db)
 }
 
 datum
-mydbm_fetch (DBM *db, datum key)
+mydbm_fetch (DBM * db, datum key)
 {
     Node *p;
     char *s;
     datum val;
 
-    /* make sure it's null-terminated */
+    /*
+       make sure it's null-terminated 
+     */
     s = xmalloc (key.dsize + 1);
     (void) strncpy (s, key.dptr, key.dsize);
     s[key.dsize] = '\0';
@@ -111,7 +117,7 @@ mydbm_fetch (DBM *db, datum key)
 }
 
 datum
-mydbm_firstkey (DBM *db)
+mydbm_firstkey (DBM * db)
 {
     Node *head, *p;
     datum key;
@@ -133,7 +139,7 @@ mydbm_firstkey (DBM *db)
 }
 
 datum
-mydbm_nextkey (DBM *db)
+mydbm_nextkey (DBM * db)
 {
     Node *head, *p;
     datum key;
@@ -159,7 +165,7 @@ mydbm_nextkey (DBM *db)
    it gives a warning, rather than either DBM_INSERT or DBM_REPLACE
    behavior.  */
 int
-mydbm_store (DBM *db, datum key, datum value, int flags)
+mydbm_store (DBM * db, datum key, datum value, int flags)
 {
     Node *node;
 
@@ -185,10 +191,10 @@ mydbm_store (DBM *db, datum key, datum value, int flags)
 }
 
 static void
-mydbm_load_file (FILE *fp, List *list, char *filename)
-             
-               
-                   	/* Used in error messages. */
+mydbm_load_file (FILE * fp, List * list, char *filename)
+			/*
+			   Used in error messages. 
+			 */
 {
     char *line = NULL;
     size_t line_size;
@@ -203,23 +209,26 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
     value = xmalloc (value_allocated);
 
     cont = 0;
-    line_num=0;
-    while( ( line_length = 
-             getdelim( &line, &line_size, '\012', fp ) ) >= 0 )
+    line_num = 0;
+    while ((line_length = getdelim (&line, &line_size, '\012', fp)) >= 0)
     {
 	line_num++;
 	if (line_length > 0 && line[line_length - 1] == '\012')
 	{
-	    /* Strip the newline.  */
+	    /*
+	       Strip the newline.  
+	     */
 	    --line_length;
 	    line[line_length] = '\0';
 	}
 	if (line_length > 0 && line[line_length - 1] == '\015')
 	{
-	    /* If the file (e.g. modules) was written on an NT box, it will
+	    /*
+	       If the file (e.g. modules) was written on an NT box, it will
 	       contain CRLF at the ends of lines.  Strip them (we can't do
 	       this by opening the file in text mode because we might be
-	       running on unix).  */
+	       running on unix).  
+	     */
 	    --line_length;
 	    line[line_length] = '\0';
 	}
@@ -251,8 +260,7 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    cont = 0;
 	}
 	expand_string (&value,
-		       &value_allocated,
-		       strlen (value) + line_length + 5);
+		       &value_allocated, strlen (value) + line_length + 5);
 	strcat (value, line);
 
 	if (value[0] == '#')
@@ -284,8 +292,8 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    {
 		if (!really_quiet)
 		    error (0, 0,
-			"warning: NULL value for key `%s' at line %d of `%s'",
-			p->key, line_num, filename);
+			   "warning: NULL value for key `%s' at line %d of `%s'",
+			   p->key, line_num, filename);
 		freenode (p);
 		continue;
 	    }
@@ -294,18 +302,20 @@ mydbm_load_file (FILE *fp, List *list, char *filename)
 	    {
 		if (!really_quiet)
 		    error (0, 0,
-			"duplicate key found for `%s' at line %d of `%s'",
-			p->key, line_num, filename);
+			   "duplicate key found for `%s' at line %d of `%s'",
+			   p->key, line_num, filename);
 		freenode (p);
 	    }
 	}
     }
     if (line_length < 0 && !feof (fp))
-	/* FIXME: should give the name of the file.  */
+	/*
+	   FIXME: should give the name of the file.  
+	 */
 	error (0, errno, "cannot read file in mydbm_load_file");
 
     free (line);
     free (value);
 }
 
-#endif				/* MY_NDBM */
+#endif /* MY_NDBM */

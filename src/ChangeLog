@@ -1,6 +1,11 @@
-2003-07-22  Derek Price  <derek@ximbiot.com>
+2003-07-23  Derek Price  <derek@ximbiot.com>
 
-	(*.c): Runn these through GCC's protoize to convert the pre-ANSI C
+	(*.{c,h}): Run these through GNU indent as per the NEWS file to fix
+	some of the long function decls which came out of protoize.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
+	(*.c): Run these through GCC's protoize to convert the pre-ANSI C
 	function decls to C89 compliance.
 
 2003-07-22  Derek Price  <derek@ximbiot.com>

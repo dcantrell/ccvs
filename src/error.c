@@ -1,3 +1,4 @@
+
 /* error.c -- error handler for noninteractive utilities
    Copyright (C) 1990-1992 Free Software Foundation, Inc.
 
@@ -12,6 +13,7 @@
    GNU General Public License for more details.  */
 
 /* David MacKenzie */
+
 /* Brian Berliner added support for CVS */
 
 #include "cvs.h"
@@ -23,7 +25,7 @@
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
    process and packages up its stderr in the protocol.  */
-int error_use_protocol; 
+int error_use_protocol;
 
 #ifndef strerror
 extern char *strerror (int);
@@ -39,8 +41,10 @@ error_exit (void)
 	server_cleanup (0);
 #endif
 #ifdef SYSTEM_CLEANUP
-    /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or dealing with windows and arguments on Mac.  */
+    /*
+       Hook for OS-specific behavior, for example socket subsystems on
+       NT and OS2 or dealing with windows and arguments on Mac.  
+     */
     SYSTEM_CLEANUP ();
 #endif
     exit (EXIT_FAILURE);
@@ -99,65 +103,74 @@ error (int status, int errnum, const char *message, ...)
 	}
 	cvs_outerr (": ", 2);
 
-	va_start( args, message );
+	va_start (args, message);
 	p = message;
 	while ((q = strchr (p, '%')) != NULL)
 	{
-	    static const char msg[] =
-		"\ninternal error: bad % in error()\n";
+	    static const char msg[] = "\ninternal error: bad % in error()\n";
+
 	    if (q - p > 0)
 		cvs_outerr (p, q - p);
 
 	    switch (q[1])
 	    {
-	    case 's':
-		str = va_arg (args, char *);
-		cvs_outerr (str, strlen (str));
-		break;
-	    case 'd':
-		num = va_arg (args, int);
-		sprintf (buf, "%d", num);
-		cvs_outerr (buf, strlen (buf));
-		break;
-	    case 'l':
-		if (q[2] == 'd')
-		{
-		    lnum = va_arg (args, long);
-		    sprintf (buf, "%ld", lnum);
-		}
-		else if (q[2] == 'u')
-		{
-		    ulnum = va_arg (args, unsigned long);
-		    sprintf (buf, "%lu", ulnum);
-		}
-		else goto bad;
-		cvs_outerr (buf, strlen (buf));
-		q++;
-		break;
-	    case 'x':
-		unum = va_arg (args, unsigned int);
-		sprintf (buf, "%x", unum);
-		cvs_outerr (buf, strlen (buf));
-		break;
-	    case 'c':
-		ch = va_arg (args, int);
-		buf[0] = ch;
-		cvs_outerr (buf, 1);
-		break;
-	    case '%':
-		cvs_outerr ("%", 1);
-		break;
-	    default:
-	    bad:
-		cvs_outerr (msg, sizeof (msg) - 1);
-		/* Don't just keep going, because q + 1 might point to the
-		   terminating '\0'.  */
-		goto out;
+		case 's':
+		    str = va_arg (args, char *);
+
+		    cvs_outerr (str, strlen (str));
+		    break;
+		case 'd':
+		    num = va_arg (args, int);
+
+		    sprintf (buf, "%d", num);
+		    cvs_outerr (buf, strlen (buf));
+		    break;
+		case 'l':
+		    if (q[2] == 'd')
+		    {
+			lnum = va_arg (args, long);
+
+			sprintf (buf, "%ld", lnum);
+		    }
+		    else if (q[2] == 'u')
+		    {
+			ulnum = va_arg (args, unsigned long);
+
+			sprintf (buf, "%lu", ulnum);
+		    }
+		    else
+			goto bad;
+		    cvs_outerr (buf, strlen (buf));
+		    q++;
+		    break;
+		case 'x':
+		    unum = va_arg (args, unsigned int);
+
+		    sprintf (buf, "%x", unum);
+		    cvs_outerr (buf, strlen (buf));
+		    break;
+		case 'c':
+		    ch = va_arg (args, int);
+
+		    buf[0] = ch;
+		    cvs_outerr (buf, 1);
+		    break;
+		case '%':
+		    cvs_outerr ("%", 1);
+		    break;
+		default:
+		  bad:
+		    cvs_outerr (msg, sizeof (msg) - 1);
+		    /*
+		       Don't just keep going, because q + 1 might point to the
+		       terminating '\0'.  
+		     */
+		    goto out;
 	    }
 	    p = q + 2;
 	}
 	cvs_outerr (p, strlen (p));
-    out:
+      out:
 	va_end (args);
 
 	if (errnum != 0)
@@ -177,14 +190,15 @@ error (int status, int errnum, const char *message, ...)
    format string with optional args to the file specified by FP.
    If ERRNUM is nonzero, print its corresponding system error message.
    Exit with status EXIT_FAILURE if STATUS is nonzero.  */
+
 /* VARARGS */
 void
-fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
+fperrmsg (FILE * fp, int status, int errnum, char *message, ...)
 {
     va_list args;
 
     fprintf (fp, "%s: ", program_name);
-    va_start( args, message );
+    va_start (args, message);
     vfprintf (fp, message, args);
     va_end (args);
     if (errnum)

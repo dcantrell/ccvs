@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
@@ -71,14 +72,16 @@ Name_Repository (char *dir, char *update_dir)
 
 	if (existence_error (save_errno))
 	{
-	    /* FIXME: This is a very poorly worded error message.  It
+	    /*
+	       FIXME: This is a very poorly worded error message.  It
 	       occurs at least in the case where the user manually
 	       creates a directory named CVS, so the error message
 	       should be more along the lines of "CVS directory found
 	       without administrative files; use CVS to create the CVS
 	       directory, or rename it to something else if the
 	       intention is to store something besides CVS
-	       administrative files".  */
+	       administrative files".  
+	     */
 	    error (0, 0, "in directory %s:", xupdate_dir);
 	    error (1, 0, "*PANIC* administration files missing");
 	}
@@ -88,7 +91,9 @@ Name_Repository (char *dir, char *update_dir)
 
     if (getline (&repos, &repos_allocated, fpin) < 0)
     {
-	/* FIXME: should be checking for end of file separately.  */
+	/*
+	   FIXME: should be checking for end of file separately.  
+	 */
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (1, errno, "cannot read %s", CVSADM_REP);
     }
@@ -104,7 +109,7 @@ Name_Repository (char *dir, char *update_dir)
      * one by tacking on the CVSROOT environment variable. If the CVSROOT
      * environment variable is not set, die now.
      */
-    if (! isabsolute(repos))
+    if (!isabsolute (repos))
     {
 	char *newrepos;
 
@@ -121,8 +126,11 @@ Name_Repository (char *dir, char *update_dir)
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
-	newrepos = xmalloc (strlen (current_parsed_root->directory) + strlen (repos) + 2);
-	(void) sprintf (newrepos, "%s/%s", current_parsed_root->directory, repos);
+	newrepos =
+	    xmalloc (strlen (current_parsed_root->directory) +
+		     strlen (repos) + 2);
+	(void) sprintf (newrepos, "%s/%s", current_parsed_root->directory,
+			repos);
 	free (repos);
 	repos = newrepos;
     }
@@ -142,13 +150,18 @@ Short_Repository (char *repository)
     if (repository == NULL)
 	return (NULL);
 
-    /* If repository matches CVSroot at the beginning, strip off CVSroot */
-    /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
+    /*
+       If repository matches CVSroot at the beginning, strip off CVSroot 
+     */
+    /*
+       And skip leading '/' in rep, in case CVSroot ended with '/'. 
+     */
     if (strncmp (current_parsed_root->directory, repository,
 		 strlen (current_parsed_root->directory)) == 0)
     {
 	char *rep = repository + strlen (current_parsed_root->directory);
-	return (*rep == '/') ? rep+1 : rep;
+
+	return (*rep == '/') ? rep + 1 : rep;
     }
     else
 	return (repository);
@@ -189,8 +202,7 @@ Sanitize_Repository_Name (char *repository)
 
     len = strlen (repository);
     if (len >= 2
-	&& repository[len - 1] == '.'
-	&& ISDIRSEP (repository[len - 2]))
+	&& repository[len - 1] == '.' && ISDIRSEP (repository[len - 2]))
     {
 	repository[len - 2] = '\0';
     }

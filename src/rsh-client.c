@@ -1,3 +1,4 @@
+
 /* CVS rsh client stuff.
 
    This program is free software; you can redistribute it and/or modify
@@ -38,24 +39,30 @@
    up and running, and that's most important. */
 
 void
-start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
-                  struct buffer **from_server_p )
+start_rsh_server (cvsroot_t * root, struct buffer **to_server_p,
+		  struct buffer **from_server_p)
 {
     int pipes[2];
     int child_pid;
 
-    /* If you're working through firewalls, you can set the
+    /*
+       If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
-       invoke another rsh on a proxy machine.  */
+       invoke another rsh on a proxy machine.  
+     */
     char *cvs_rsh = getenv ("CVS_RSH");
     char *cvs_server = getenv ("CVS_SERVER");
     int i = 0;
-    /* This needs to fit "rsh", "-b", "-l", "USER", "host",
-       "cmd (w/ args)", and NULL.  We leave some room to grow. */
+
+    /*
+       This needs to fit "rsh", "-b", "-l", "USER", "host",
+       "cmd (w/ args)", and NULL.  We leave some room to grow. 
+     */
     char *rsh_argv[10];
 
     if (!cvs_rsh)
-	/* People sometimes suggest or assume that this should default
+	/*
+	   People sometimes suggest or assume that this should default
 	   to "remsh" on systems like HPUX in which that is the
 	   system-supplied name for the rsh program.  However, that
 	   causes various problems (keep in mind that systems such as
@@ -74,20 +81,27 @@ start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
 	   remain "rsh", and tell HPUX users to specify remsh, for
 	   example in CVS_RSH or other such mechanisms to be devised,
 	   if that is what they want (the manual already tells them
-	   that).  */
+	   that).  
+	 */
 	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
 	cvs_server = "cvs";
 
-    /* The command line starts out with rsh. */
+    /*
+       The command line starts out with rsh. 
+     */
     rsh_argv[i++] = cvs_rsh;
 
 #   ifdef RSH_NEEDS_BINARY_FLAG
-    /* "-b" for binary, under OS/2. */
+    /*
+       "-b" for binary, under OS/2. 
+     */
     rsh_argv[i++] = "-b";
 #   endif /* RSH_NEEDS_BINARY_FLAG */
 
-    /* Then we strcat more things on the end one by one. */
+    /*
+       Then we strcat more things on the end one by one. 
+     */
     if (root->username != NULL)
     {
 	rsh_argv[i++] = "-l";
@@ -98,8 +112,10 @@ start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
     rsh_argv[i++] = cvs_server;
     rsh_argv[i++] = "server";
 
-    /* Mark the end of the arg list. */
-    rsh_argv[i]   = (char *) NULL;
+    /*
+       Mark the end of the arg list. 
+     */
+    rsh_argv[i] = (char *) NULL;
 
     if (trace)
     {
@@ -109,23 +125,31 @@ start_rsh_server( cvsroot_t *root, struct buffer **to_server_p,
 	putc ('\n', stderr);
     }
 
-    /* Do the deed. */
+    /*
+       Do the deed. 
+     */
     child_pid = popenRW (rsh_argv, pipes);
     if (child_pid < 0)
 	error (1, errno, "cannot start server via rsh");
 
-    /* Give caller the file descriptors in a form it can deal with. */
-    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server_p, from_server_p, 0);
+    /*
+       Give caller the file descriptors in a form it can deal with. 
+     */
+    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server_p,
+			from_server_p, 0);
 }
 
 # else /* ! START_RSH_WITH_POPEN_RW */
 
 void
-start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **from_server_p)
+start_rsh_server (cvsroot_t * root, struct buffer **to_server_p,
+		  struct buffer **from_server_p)
 {
-    /* If you're working through firewalls, you can set the
+    /*
+       If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
-       invoke another rsh on a proxy machine.  */
+       invoke another rsh on a proxy machine.  
+     */
     char *cvs_rsh = getenv ("CVS_RSH");
     char *cvs_server = getenv ("CVS_SERVER");
     char *command;
@@ -137,27 +161,32 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
     if (!cvs_server)
 	cvs_server = "cvs";
 
-    /* Pass the command to rsh as a single string.  This shouldn't
+    /*
+       Pass the command to rsh as a single string.  This shouldn't
        affect most rsh servers at all, and will pacify some buggy
        versions of rsh that grab switches out of the middle of the
-       command (they're calling the GNU getopt routines incorrectly).  */
+       command (they're calling the GNU getopt routines incorrectly).  
+     */
     command = xmalloc (strlen (cvs_server) + 8);
 
-    /* If you are running a very old (Nov 3, 1994, before 1.5)
-     * version of the server, you need to make sure that your .bashrc
-     * on the server machine does not set CVSROOT to something
-     * containing a colon (or better yet, upgrade the server).  */
+    /*
+       If you are running a very old (Nov 3, 1994, before 1.5)
+       * version of the server, you need to make sure that your .bashrc
+       * on the server machine does not set CVSROOT to something
+       * containing a colon (or better yet, upgrade the server).  
+     */
     sprintf (command, "%s server", cvs_server);
 
     {
-        char *argv[10];
+	char *argv[10];
 	char **p = argv;
 
 	*p++ = cvs_rsh;
 	*p++ = root->hostname;
 
-	/* If the login names differ between client and server
-	 * pass it on to rsh.
+	/*
+	   If the login names differ between client and server
+	   * pass it on to rsh.
 	 */
 	if (root->username != NULL)
 	{
@@ -169,12 +198,12 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
 	*p++ = NULL;
 
 	if (trace)
-        {
+	{
 	    int i;
 
-            fprintf (stderr, " -> Starting server: ");
+	    fprintf (stderr, " -> Starting server: ");
 	    for (i = 0; argv[i]; i++)
-	        fprintf (stderr, "%s ", argv[i]);
+		fprintf (stderr, "%s ", argv[i]);
 	    putc ('\n', stderr);
 	}
 	child_pid = piped_child (argv, &tofd, &fromfd);
@@ -184,10 +213,11 @@ start_rsh_server (cvsroot_t *root, struct buffer **to_server_p, struct buffer **
     }
     free (command);
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, 0);
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p,
+			0);
 }
 
-# endif /* START_RSH_WITH_POPEN_RW */
+# endif	/* START_RSH_WITH_POPEN_RW */
 
 #endif /* NO_EXT_METHOD */
 
