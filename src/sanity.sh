@@ -9785,10 +9785,13 @@ done"
 
 		# undo commitinfo changes
 		cd ../CVSROOT
-		dotest reserved-16 "${testcvs} admin -o1.2 commitinfo" \
-"RCS file: ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v
-deleting revision 1\.2
-done"
+		echo '# vanilla commitinfo' >commitinfo
+		dotest reserved-16 "${testcvs} -q ci -m back commitinfo" \
+"Checking in commitinfo;
+${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
+new revision: 1\.3; previous revision: 1\.2
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
 		cd ..; rm -r CVSROOT; cd first-dir
 
 	  cd ../..
