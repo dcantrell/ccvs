@@ -912,9 +912,9 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     struct stat sb;
     struct tm *ftm;
     time_t now;
-    char altdate1[50];
+    char altdate1[MAXDATELEN];
 #ifndef HAVE_RCS5
-    char altdate2[50];
+    char altdate2[MAXDATELEN];
 #endif
     char *author;
     int i, ierrno, err = 0;

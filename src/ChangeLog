@@ -1,5 +1,9 @@
 Sun Feb  9 12:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* import.c (add_rcs_file): Change size of altdate1 and altdate2 to
+	MAXDATELEN.
+	* cvs.h (MAXDATELEN): Fix comments; describe what this is for.
+
 	* diff.c (diff_usage): Document --ifdef and try to briefly say
 	what "rcsdiff-options" means.
 
