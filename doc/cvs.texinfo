@@ -11741,6 +11741,18 @@ import.  Because this is awkward, in the future
 @samp{-I !} might be modified to override
 @file{.cvsignore} files in each directory.
 
+Note that the syntax of the ignore files consists of a
+series of lines, each of which contains a space
+separated list of filenames.  This offers no clean way
+to specify filenames which contain spaces, but you can
+use a workaround like @file{foo?bar} to match a file
+named @file{foo bar} (it also matches @file{fooxbar}
+and the like).  Also note that there is currently no
+way to specify comments.
+@c FIXCVS?  I don't _like_ this syntax at all, but
+@c changing it raises all the usual compatibility
+@c issues and I'm also not sure what to change it to.
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history file
 @appendixsec The history file

@@ -1,3 +1,8 @@
+Fri Dec 12 09:27:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (cvsignore): Add note about comments and the
+	space-separated nature of the syntax.
+
 Sun Dec  7 09:33:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (checkout): Clarify issues regarding updating
