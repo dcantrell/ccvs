@@ -260,8 +260,8 @@ to use it.
 @cindex Credits (manual)
 Roland Pesch, then of Cygnus Support <@t{roland@@wrs.com}>
 wrote the manual pages which were distributed with
-@sc{cvs} 1.3.  Appendix A and B contain much text that
-was extracted from them.  He also read an early draft
+@sc{cvs} 1.3.  Much of their text was copied into this
+manual.  He also read an early draft
 of this manual and contributed many ideas and
 corrections.
 
@@ -281,6 +281,8 @@ use @sc{cvs}, at least).
 
 In addition, the following persons have helped by
 telling me about mistakes I've made:
+
+@display
 Roxanne Brunskill <@t{rbrunski@@datap.ca}>,
 Kathy Dyer <@t{dyer@@phoenix.ocf.llnl.gov}>,
 Karl Pingle <@t{pingle@@acuson.com}>,
@@ -288,8 +290,9 @@ Thomas A Peterson <@t{tap@@src.honeywell.com}>,
 Inge Wallin <@t{ingwa@@signum.se}>,
 Dirk Koschuetzki <@t{koschuet@@fmi.uni-passau.de}>
 and Michael Brown <@t{brown@@wi.extrel.com}>.
+@end display
 
-The above list is not comprehensive; for a more
+The list of contributors here is not comprehensive; for a more
 complete list of who has contributed to this manual see
 the file @file{doc/ChangeLog} in the @sc{cvs} source
 distribution.
@@ -450,7 +453,8 @@ the work when each developer is done.
 @cindex Credits (CVS program)
 @cindex Contributors (CVS program)
 @sc{cvs} started out as a bunch of shell scripts written by
-Dick Grune, posted to @code{comp.sources.unix} in the volume 6
+Dick Grune, posted to the newsgroup
+@code{comp.sources.unix} in the volume 6
 release of December, 1986.  While no actual code from
 these shell scripts is present in the current version
 of @sc{cvs} much of the @sc{cvs} conflict resolution algorithms
@@ -1065,8 +1069,14 @@ the file permissions appropriate for the repository.
 The overall structure of the repository is a directory
 tree corresponding to the directories in the working
 directory.  For example, supposing the repository is in
-@file{/usr/local/cvsroot}, here is a possible directory
-tree (showing only the directories):
+
+@example
+/usr/local/cvsroot
+@end example
+
+@noindent
+here is a possible directory tree (showing only the
+directories):
 
 @example
 @t{/usr}
@@ -1859,19 +1869,19 @@ operations, so the remote user host needs to have a
 user.
 
 For example, suppose you are the user @file{mozart} on
-the local machine @file{anklet.grunge.com}, and the
-server machine is @file{chainsaw.brickyard.com}.  On
+the local machine @file{toe.grunge.com}, and the
+server machine is @file{chainsaw.yard.com}.  On
 chainsaw, put the following line into the file
 @file{.rhosts} in @file{bach}'s home directory:
 
 @example
-anklet.grunge.com  mozart
+toe.grunge.com  mozart
 @end example
 
 Then test that @code{rsh} is working with
 
 @example
-rsh -l bach chainsaw.brickyard.com 'echo $PATH'
+rsh -l bach chainsaw.yard.com 'echo $PATH'
 @end example
 
 @cindex CVS_SERVER
@@ -1927,10 +1937,10 @@ replacement.
 Continuing our example, supposing you want to access
 the module @file{foo} in the repository
 @file{/usr/local/cvsroot/}, on machine
-@file{chainsaw.brickyard.com}, you are ready to go:
+@file{chainsaw.yard.com}, you are ready to go:
 
 @example
-cvs -d :ext:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+cvs -d :ext:bach@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
 @end example
 
 (The @file{bach@@} can be omitted if the username is
@@ -2066,11 +2076,11 @@ anyone:1sOp854gDF3DY:spwang
 @end example
 
         Thus, someone remotely accessing the repository
-on @file{chainsaw.brickyard.com} with the following
+on @file{chainsaw.yard.com} with the following
 command:
 
 @example
-cvs -d :pserver:cvs@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+cvs -d :pserver:cvs@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
 @end example
 
         would end up running the server under the
@@ -2118,7 +2128,7 @@ argument or the @code{CVSROOT} environment variable.
 password:
 
 @example
-cvs -d :pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot login 
+cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot login 
 CVS password: 
 @end example
 
@@ -2131,7 +2141,7 @@ connect directly to the server and authenticate with
 the stored password:
 
 @example
-cvs -d :pserver:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+cvs -d :pserver:bach@@chainsaw.yard.com:/usr/local/cvsroot checkout foo
 @end example
 
 The @samp{:pserver:} is necessary because without it,
@@ -2246,7 +2256,7 @@ which allows you to log into the server machine.  Then
 you are ready to go:
 
 @example
-cvs -d :kserver:chainsaw.brickyard.com:/user/local/cvsroot checkout foo
+cvs -d :kserver:chainsaw.yard.com:/user/local/cvsroot checkout foo
 @end example
 
 Previous versions of @sc{cvs} would fall back to a
@@ -2295,16 +2305,22 @@ jrandom
         (Don't forget the newline after the last user.)
 
         "Exclusion" means explicitly listing everyone
-who has @emph{write} access---if the
-@file{$CVSROOT/CVSROOT/writers} file exists, then only
+who has @emph{write} access---if the file
+
+@example
+$CVSROOT/CVSROOT/writers
+@end example
+
+@noindent
+exists, then only
 those users listed in it have write access, and
 everyone else has read-only access (of course, even the
 read-only users still need to be listed in the
-@file{$CVSROOT/CVSROOT/passwd} file).  The
+@sc{cvs} @file{passwd} file).  The
 @file{writers} file has the same format as the
 @file{readers} file.
 
-        Note: if your @file{$CVSROOT/CVSROOT/passwd}
+        Note: if your @sc{cvs} @file{passwd}
 file maps cvs users onto system users (@pxref{Password
 authentication server}), make sure you deny or grant
 read-only access using the @emph{cvs} usernames, not
@@ -2335,7 +2351,13 @@ read-only access.
 @cindex server, temporary directories
 
 While running, the @sc{cvs} server creates temporary
-directories.  They are named @file{cvs-serv@var{pid}},
+directories.  They are named 
+
+@example
+cvs-serv@var{pid}
+@end example
+
+@noindent
 where @var{pid} is the process identification number of
 the server.  They are located in the directory
 specified by the @samp{TMPDIR} environment variable
@@ -3567,10 +3589,12 @@ If you use the watch features on a repository, it
 creates @file{CVS} directories in the repository and
 stores the information about watches in that directory.
 If you attempt to use @sc{cvs} 1.6 or earlier with the
-repository, you get an error message such as
+repository, you get an error message such as the
+following (all on one line):
 
 @example
-cvs update: cannot open CVS/Entries for reading: No such file or directory
+cvs update: cannot open CVS/Entries for reading:
+No such file or directory
 @end example
 
 and your operation will likely be aborted.  To use the
@@ -3728,18 +3752,18 @@ example.
 
 @example
 @group
-                                                     +-------------+
-                          Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
-                                                   / +-------------+
-                                                  /
-                                                 /
-                 +---------+    +---------+    +---------+    +---------+
-Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !----! 1.2.2.4 !
-               / +---------+    +---------+    +---------+    +---------+
+                                      +-------------+
+           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
+                                    / +-------------+
+                                   /
+                                  /
+                 +---------+    +---------+    +---------+
+Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
+               / +---------+    +---------+    +---------+
               /
              /
 +-----+    +-----+    +-----+    +-----+    +-----+
-! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !  <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !
                 !
@@ -3932,7 +3956,7 @@ $ cvs status -v backend.c
 File: backend.c         Status: Up-to-date
 
     Version:            1.4     Tue Dec  1 14:39:01 1992
-    RCS Version:        1.4     /usr/local/cvsroot/yoyodyne/tc/backend.c,v
+    RCS Version:        1.4     /u/cvsroot/yoyodyne/tc/backend.c,v
     Sticky Tag:         (none)
     Sticky Date:        (none)
     Sticky Options:     (none)
@@ -4089,7 +4113,7 @@ $ cvs status -v driver.c backend.c
 File: driver.c          Status: Up-to-date
 
     Version:            1.7     Sat Dec  5 18:25:54 1992
-    RCS Version:        1.7     /usr/local/cvsroot/yoyodyne/tc/driver.c,v
+    RCS Version:        1.7     /u/cvsroot/yoyodyne/tc/driver.c,v
     Sticky Tag:         release-1-0-patches (branch: 1.7.2)
     Sticky Date:        (none)
     Sticky Options:     (none)
@@ -4102,7 +4126,7 @@ File: driver.c          Status: Up-to-date
 File: backend.c         Status: Up-to-date
 
     Version:            1.4     Tue Dec  1 14:39:01 1992
-    RCS Version:        1.4     /usr/local/cvsroot/yoyodyne/tc/backend.c,v
+    RCS Version:        1.4     /u/cvsroot/yoyodyne/tc/backend.c,v
     Sticky Tag:         release-1-0-patches (branch: 1.4.2)
     Sticky Date:        (none)
     Sticky Options:     (none)
@@ -4156,7 +4180,7 @@ $ cvs status -v driver.c
 File: driver.c          Status: Up-to-date
 
     Version:            1.7.2.1 Sat Dec  5 19:35:03 1992
-    RCS Version:        1.7.2.1 /usr/local/cvsroot/yoyodyne/tc/driver.c,v
+    RCS Version:        1.7.2.1 /u/cvsroot/yoyodyne/tc/driver.c,v
     Sticky Tag:         release-1-0-patches (branch: 1.7.2)
     Sticky Date:        (none)
     Sticky Options:     (none)
@@ -4377,7 +4401,7 @@ like this:
 
 @example
 +-----+    +-----+    +-----+    +-----+    +-----+
-! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !                           *
                 !                          *
@@ -4395,7 +4419,7 @@ Now suppose that development continues on the
 
 @example
 +-----+    +-----+    +-----+    +-----+    +-----+
-! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !      <- The main trunk
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !   <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !                           *
                 !                          *
@@ -4535,8 +4559,11 @@ following is true:
 
 @itemize @bullet
 @item
-@samp{cvs update testing} is equivalent to @samp{cvs
-update testing/testpgm.t testing/test2.t}
+@samp{cvs update testing} is equivalent to
+
+@example
+cvs update testing/testpgm.t testing/test2.t
+@end example
 
 @item
 @samp{cvs update testing man} updates all files in the
@@ -4928,7 +4955,7 @@ directory (@pxref{Getting the source}).
 
 @cindex Wdiff (import example)
 Suppose you have the sources to a program called
-@code{wdiff} in a directory called @file{wdiff-0.04},
+@code{wdiff} in a directory @file{wdiff-0.04},
 and are going to make private modifications that you
 want to be able to use even when new releases are made
 in the future.  You start by importing the source to
@@ -6487,9 +6514,11 @@ are:
 @c bizarre and it has lots of gratuitous multiple ways
 @c to specify the same thing.
 
-See
-@file{http://www.ft.uni-erlangen.de/~mskuhn/iso-time.html}
-for more details about ISO8601 dates.
+For more details about ISO8601 dates, see:
+
+@example
+http://www.ft.uni-erlangen.de/~mskuhn/iso-time.html
+@end example
 @c Perhaps we want to also cite other sources in
 @c case that page goes away.  For example:
 @c http://www.saqqara.demon.co.uk/datefmt.htm
@@ -9517,7 +9546,7 @@ Local; run only in current working directory.  See @ref{Recursive behavior}.
 
 @c ---------------------------------------------------------------------
 @node Administrative files
-@appendix Reference manual for the Administrative files
+@appendix Reference manual for Administrative files
 @cindex Administrative files (reference)
 @cindex Files, reference manual
 @cindex Reference manual (files)
@@ -10339,7 +10368,7 @@ like this:
 
 @example
 #!/bin/sh
-(echo "-----------------------------------------------------------------";
+(echo "------------------------------------------------------";
  echo -n $USER"  ";
  date;
  echo;
@@ -10630,7 +10659,14 @@ particularly useful to specify this option via
 For example, if you want the administrative file to
 refer to a test directory you might create a user
 variable @code{TESTDIR}.  Then if @sc{cvs} is invoked
-as @code{cvs -s TESTDIR=/work/local/tests}, and the
+as
+
+@example
+cvs -s TESTDIR=/work/local/tests
+@end example
+
+@noindent
+and the
 administrative file contains @code{sh
 $@{=TESTDIR@}/runtests}, then that string is expanded
 to @code{sh /work/local/tests/runtests}.
@@ -11065,7 +11101,8 @@ patent must be licensed for everyone's free use or not licensed at all.
 modification follow.
 
 @iftex
-@unnumberedsec TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+@heading TERMS AND CONDITIONS FOR COPYING,
+@heading DISTRIBUTION AND MODIFICATION
 @end iftex
 @ifinfo
 @center TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
@@ -11354,7 +11391,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA 02111-1307, USA.
 @end smallexample
 
 Also add information on how to contact you by electronic and paper mail.
