@@ -1,5 +1,11 @@
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
+	* checkout.c (checkaddfile): Simplify the logic here, using assumptions
+	already made later in the function to remove calls to locate_rcs and
+	some conditionals.  Use same assumptions to remove some variables.
+
+2003-07-29  Derek Price  <derek@ximbiot.com>
+
 	* login.c: Remove GETPASS & HAVE_GETPASSPHRASE cruft in favor of always
 	using the GNULIB getpass since the system getpass was removed from the
 	POSIX.2 specification.
