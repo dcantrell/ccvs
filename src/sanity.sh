@@ -9323,7 +9323,7 @@ done"
 	  # any revisions.  First the case where br2 doesn't have any
 	  # revisions either:
 	  dotest tagdate-8 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
-	  dotest tagdate-9 "${testcvs} -q update -r br2" "U file1"
+	  dotest tagdate-9 "${testcvs} -q update -r br2" "[UP] file1"
 	  echo br2-1 >file1
 	  dotest tagdate-10 "${testcvs} -q ci -m modify-on-br2" \
 "Checking in file1;
