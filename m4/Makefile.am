@@ -75,6 +75,8 @@ EXTRA_DIST = \
 	stat.m4 \
 	stdbool.m4 \
 	stdint_h.m4 \
+	strerror.m4 \
+	strerror_r.m4 \
 	time_r.m4 \
 	timespec.m4 \
 	tm_gmtoff.m4 \
