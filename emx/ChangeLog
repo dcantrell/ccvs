@@ -1,3 +1,8 @@
+Tue Jun 17 13:19:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Revise paragraph on -Zsys to discuss problem with
+	sockets being missing.
+
 Mon Jun 16 10:58:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Change bug submission address to include bug-cvs.
