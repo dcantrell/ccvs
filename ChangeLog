@@ -1,3 +1,7 @@
+2004-07-17  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note PAM session management support.
+
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Generate contrib/pam/Makefile.
