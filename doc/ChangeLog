@@ -1,3 +1,8 @@
+1998-09-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication server): Say explicitly
+	that you edit passwd directly, many users get confused by this.
+
 1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Connecting via fork): :fork: may be of interest to
