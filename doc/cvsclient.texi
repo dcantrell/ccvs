@@ -506,6 +506,12 @@ The first character of @var{tagspec} is @samp{T} for a tag, or @samp{D}
 for a date.  The remainder of @var{tagspec} contains the actual tag or
 date.
 
+The server should remember @code{Static-directory} and @code{Sticky}
+requests for a particular directory; the client need not resend them
+each time it sends a @code{Directory} request for a given directory.
+However, the server is not obliged to remember them beyond the context
+of a single command.
+
 @item Checkin-prog @var{program} \n
 Response expected: no.  Tell the server that the directory most recently
 specified with @code{Directory} has a checkin program @var{program}.
