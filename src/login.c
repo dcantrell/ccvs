@@ -48,9 +48,7 @@ construct_cvspass_filename ()
     homedir = get_homedir ();
     if (! homedir)
     {
-	error (1, errno, "could not find out home directory\n"
-               "(You may need to set the HOME environment variable yourself;\n"
-               "CVS caches passwords in a file in that directory");
+	error (1, errno, "could not find out home directory");
 	return (char *) NULL;
     }
 
