@@ -452,6 +452,11 @@ cd ${TESTDIR}
 mkdir home
 HOME=${TESTDIR}/home; export HOME
 
+# Make sure this variable is not defined to anything that would
+# change the format of rcs dates.  Otherwise people using e.g.,
+# RCSINIT=-zLT get lots of spurious failures.
+RCSINIT=; export RCSINIT
+
 # Remaining arguments are the names of tests to run.
 #
 # The testsuite is broken up into (hopefully manageably-sized)
