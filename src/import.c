@@ -708,6 +708,7 @@ static const struct compair comtable[] =
     {"adb", "-- "},
     {"asm", ";; "},			/* assembler (MS-DOS) */
     {"ads", "-- "},			/* Ada		 */
+    {"bas", "' "},    			/* Visual Basic code */
     {"bat", ":: "},			/* batch (MS-DOS) */
     {"body", "-- "},			/* Ada		 */
     {"c", " * "},			/* C		 */
@@ -721,12 +722,14 @@ static const struct compair comtable[] =
     {"cmf", "c "},			/* CM Fortran	 */
     {"cs", " * "},			/* C*		 */
     {"csh", "# "},			/* shell	 */
+    {"dlg", " * "},   			/* MS Windows dialog file */
     {"e", "# "},			/* efl		 */
     {"epsf", "% "},			/* encapsulated postscript */
     {"epsi", "% "},			/* encapsulated postscript */
     {"el", "; "},			/* Emacs Lisp	 */
     {"f", "c "},			/* Fortran	 */
     {"for", "c "},
+    {"frm", "' "},    			/* Visual Basic form */
     {"h", " * "},			/* C-header	 */
     {"hh", "// "},			/* C++ header	 */
     {"hpp", "// "},
@@ -736,6 +739,7 @@ static const struct compair comtable[] =
 					 * franzlisp) */
     {"mac", ";; "},			/* macro (DEC-10, MS-DOS, PDP-11,
 					 * VMS, etc) */
+    {"mak", "# "},    			/* makefile, e.g. Visual C++ */
     {"me", ".\\\" "},			/* me-macros	t/nroff	 */
     {"ml", "; "},			/* mocklisp	 */
     {"mm", ".\\\" "},			/* mm-macros	t/nroff	 */
@@ -757,6 +761,7 @@ static const struct compair comtable[] =
     {"psw", "% "},			/* postscript wrap */
     {"pswm", "% "},			/* postscript wrap */
     {"r", "# "},			/* ratfor	 */
+    {"rc", " * "},			/* Microsoft Windows resource file */
     {"red", "% "},			/* psl/rlisp	 */
 #ifdef sparc
     {"s", "! "},			/* assembler	 */
@@ -781,9 +786,6 @@ static const struct compair comtable[] =
     {"y", " * "},			/* yacc		 */
     {"ye", " * "},			/* yacc-efl	 */
     {"yr", " * "},			/* yacc-ratfor	 */
-#ifdef SYSTEM_COMMENT_TABLE
-    SYSTEM_COMMENT_TABLE
-#endif
     {"", "# "},				/* default for empty suffix	 */
     {NULL, "# "}			/* default for unknown suffix;	 */
 /* must always be last		 */
