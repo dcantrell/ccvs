@@ -56,8 +56,8 @@ host_triplet = @host@
 check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	ChangeLog asnprintf.c asprintf.c atexit.c dup2.c fncase.c \
-	fnmatch.c fseeko.c ftello.c ftruncate.c getdate.c \
+	ChangeLog alloca.c asnprintf.c asprintf.c atexit.c dup2.c \
+	fncase.c fnmatch.c fseeko.c ftello.c ftruncate.c getdate.c \
 	gethostname.c getline.c getndelim2.c getopt.c getopt1.c \
 	getpass.c gettimeofday.c lstat.c malloc.c memmove.c mkdir.c \
 	mkstemp.c mktime.c nanosleep.c printf-args.c printf-parse.c \
@@ -136,7 +136,7 @@ am_getdate_OBJECTS = getdate-allocsa.$(OBJEXT) getdate-error.$(OBJEXT) \
 	getdate-xmalloc.$(OBJEXT) getdate-progname.$(OBJEXT)
 getdate_OBJECTS = $(am_getdate_OBJECTS)
 am__DEPENDENCIES_1 =
-getdate_DEPENDENCIES = @LIBOBJS@ $(am__DEPENDENCIES_1) \
+getdate_DEPENDENCIES = @LIBOBJS@ @ALLOCA@ $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -319,6 +319,7 @@ getdate_SOURCES = allocsa.c error.c exitfail.c exitfail.h getdate.y \
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
+	@ALLOCA@ \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
@@ -376,6 +377,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/alloca.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atexit.Po@am__quote@
