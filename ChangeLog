@@ -1,3 +1,8 @@
+2001-08-14  Derek Price  <dprice@collab.net>
+
+	* DEVEL-CVS: Update mailing list addresses.
+	* HACKING: Ditto.
+
 2001-08-09  Derek Price  <dprice@collab.net>
 
 	* cvsnt.mak: Add entry for annotate.c.
