@@ -34,7 +34,7 @@ LIB = s:${SL}ibmcpp${SL}lib;s:${SL}toolkt21${SL}os2lib;
 CINC = -Is:${SL}ibmcpp${SL}include -Is:${SL}toolkt21${SL}c${SL}os2h
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -C+
-CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC} \
+CFLAGS = -W3 -Wrea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC} \
   -I${srcdir} -I${lib_dir} -I${cvs_srcdir} -I${zlib_dir} \
   -DIBM_CPP -DHAVE_CONFIG_H \
   -DTCPIP_IBM -Is:${SL}ibmtcpip${SL}include
