@@ -62,7 +62,7 @@ vers_ts.o server.o client.o
 
 MOBJECTS = hash.o mkmodules.o myndbm.o
 
-COMMON_OBJECTS = subr.o filesubr.o run.o version.o
+COMMON_OBJECTS = subr.o filesubr.o run.o version.o error.o
 
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
 	update.h server.h client.h error.h
