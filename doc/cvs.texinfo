@@ -1120,6 +1120,7 @@ files in this format.
 @cindex Security
 @cindex File permissions
 @cindex Group
+@cindex read-only files, in repository
 All @samp{,v} files are created read-only, and you
 should not change the permission of those files.  The
 directories inside the repository should be writable by
@@ -1145,6 +1146,8 @@ track of what tags are valid tag names (it is sometimes
 updated when tags are used, as well as when they are
 created, though).
 
+@cindex CVSUMASK
+@cindex umask, for repository files
 @sc{cvs} tries to set up reasonable file permissions
 for new directories that are added inside the tree, but
 you must fix the permissions manually when a new
@@ -1152,12 +1155,28 @@ directory should have different permissions than its
 parent directory.  If you set the @code{CVSUMASK}
 environment variable that will control the file
 permissions which @sc{cvs} uses in creating directories
-and/or files in the repository.
+and/or files in the repository.  @code{CVSUMASK} does
+not affect the file permissions in the working
+directory; such files have the permissions which are
+typical for newly created files, except that sometimes
+@sc{cvs} creates them read-only (see the sections on
+watches, @ref{Setting a watch}; -r, @ref{Global
+options}; or CVSREAD, @ref{Environment variables}).
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
-@c FIXME: this doesn't really explain what CVSUMASK
-@c does.  Directories?  Files (not history files, I
-@c don't think)?  CVS/* files?  We need to state
+@c FIXME: Need one place which discusses this
+@c read-only files thing.  Why would one use -r or
+@c CVSREAD?  Why would one use watches?  How do they interact?
+@c FIXCVS: Currently CVSUMASK does not control the mode
+@c of the history files (e.g. if CVSUMASK is 002 and the
+@c user's umask is 077, then the history files get created with
+@c mode 0400 or 0500, which means other users cannot check
+@c them out.  This is a bug; the user's umask should
+@c only control the mode used in working directories).
+@c The wording above tries to waffle because
+@c we don't want to mislead people, yet it is not clear
+@c we should document this (broken) behavior instead of fixing it.
+@c We need to state
 @c whether using CVSUMASK removes the need for manually
 @c fixing permissions (in fact, if we are going to mention
 @c manually fixing permission, we better document a lot
@@ -2495,6 +2514,7 @@ certain files are to be watched.
 @cindex watch on (subcommand)
 @deffn Command {cvs watch on} [@code{-l}] files @dots{}
 
+@cindex read-only files, and watches
 Specify that developers should run @code{cvs edit}
 before editing @var{files}.  CVS will create working
 copies of @var{files} read-only, to remind developers
@@ -4868,7 +4888,7 @@ Cause the command to be somewhat quiet; informational messages,
 such as reports of recursion through subdirectories, are
 suppressed.
 
-@cindex Read-only files
+@cindex read-only files, and -r
 @item -r
 Make new working files files read-only.  Same effect
 as if the @code{$CVSREAD} environment variable is set
@@ -8303,6 +8323,7 @@ A whitespace-separated list of file name patterns that
 @sc{cvs} should treat as wrappers. @xref{Wrappers}.
 
 @cindex CVSREAD
+@cindex read-only files, and CVSREAD
 @item $CVSREAD
 If this is set, @code{checkout} and @code{update} will
 try hard to make the files in your working directory
