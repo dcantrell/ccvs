@@ -1099,6 +1099,8 @@ dirswitch (char *dir, char *repos)
     }
 }
 
+
+
 static void
 serve_repository (char *arg)
 {
@@ -1108,15 +1110,17 @@ serve_repository (char *arg)
     return;
 }
 
+
+
 static void
 serve_directory (char *arg)
 {
     int status;
     char *repos;
 
-    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)" );
+    TRACE (TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)");
 
-    status = buf_read_line (buf_from_net, &repos, (int *) NULL);
+    status = buf_read_line (buf_from_net, &repos, NULL);
     if (status == 0)
     {
 	if (!outside_root (repos))
@@ -1147,7 +1151,9 @@ serve_directory (char *arg)
 	}
     }
 }
-
+
+
+
 static void
 serve_static_directory (char *arg)
 {
@@ -1399,6 +1405,8 @@ receive_file (int size, char *file, int gzipped)
     }
 }
 
+
+
 /* Kopt for the next file sent in Modified or Is-modified.  */
 static char *kopt;
 
@@ -1407,7 +1415,7 @@ static char *kopt;
 static int checkin_time_valid;
 static time_t checkin_time;
 
-static void serve_modified (char *);
+
 
 static void
 serve_modified (char *arg)
@@ -1427,7 +1435,7 @@ serve_modified (char *arg)
      * read the file if we can.
      */
 
-    status = buf_read_line (buf_from_net, &mode_text, (int *) NULL);
+    status = buf_read_line (buf_from_net, &mode_text, NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -1453,7 +1461,7 @@ serve_modified (char *arg)
 	return;
     }
 
-    status = buf_read_line (buf_from_net, &size_text, (int *) NULL);
+    status = buf_read_line (buf_from_net, &size_text, NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -1699,7 +1707,7 @@ serve_is_modified (char *arg)
     }
 }
 
-static void serve_entry (char *);
+
 
 static void
 serve_entry (char *arg)
@@ -1726,7 +1734,7 @@ serve_entry (char *arg)
     entries = p;
 }
 
-static void serve_kopt (char *);
+
 
 static void
 serve_kopt (char *arg)

@@ -310,7 +310,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
-static int copy_ulist (Node *, void *);
+
 
 static int
 copy_ulist (Node *node, void *data)
@@ -462,11 +462,9 @@ commit (int argc, char **argv)
 	find_args.force = force_ci || saved_tag != NULL;
 
 	err = start_recursion
-	    ( find_fileproc, find_filesdoneproc,
-	      find_dirent_proc, (DIRLEAVEPROC) NULL,
-	      (void *) &find_args,
-	      argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-	      (char *) NULL, 0, (char *) NULL );
+	    (find_fileproc, find_filesdoneproc, find_dirent_proc, NULL,
+	     &find_args, argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
+	     NULL, 0, NULL );
 	if (err)
 	    error (1, 0, "correct above errors first!");
 
@@ -484,7 +482,7 @@ commit (int argc, char **argv)
 	   operate on, and only work with those files in the future.
 	   This saves time--we don't want to search the file system
 	   of the working directory twice.  */
-	find_args.argv = (char **) xmalloc (find_args.argc * sizeof (char **));
+	find_args.argv = xmalloc (find_args.argc * sizeof (char **));
 	find_args.argc = 0;
 	walklist (find_args.ulist, copy_ulist, &find_args);
 
@@ -505,7 +503,7 @@ commit (int argc, char **argv)
 	 * The protocol is designed this way.  This is a feature.
 	 */
 	if (use_editor)
-	    do_editor (".", &saved_message, (char *)NULL, find_args.ulist);
+	    do_editor (".", &saved_message, NULL, find_args.ulist);
 
 	/* We always send some sort of message, even if empty.  */
 	option_with_arg ("-m", saved_message ? saved_message : "");

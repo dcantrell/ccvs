@@ -1,3 +1,7 @@
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
+	* client.c, commit.c, server.c: Gratuitous reformatting.
+
 2004-04-11  Derek Price  <derek@ximbiot.com>
 
 	* client.c (call_in_directory): Check paths the server sends us to make
