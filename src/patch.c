@@ -384,7 +384,7 @@ patch_fileproc (finfo)
     }
     vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match, 0);
 
-    if (vers_tag == NULL && (vers_head == NULL || isattic))
+    if (vers_tag == NULL && vers_head == NULL)
 	return (0);			/* nothing known about specified revs */
 
     if (vers_tag && vers_head && strcmp (vers_head, vers_tag) == 0)
