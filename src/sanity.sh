@@ -2172,7 +2172,7 @@ Directory ${CVSROOT_DIRNAME}/first-dir/sdir2 added to the repository"
 "${SPROG} add: scheduling file .sfile1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest basicb-2a11 "${testcvs} status sfile1" \
-"${SPROG} status: use .${SPROG} add. to create an entry for sfile1
+"${SPROG} status: use \`${SPROG} add' to create an entry for \`sfile1'
 ===================================================================
 File: sfile1           	Status: Unknown
 
@@ -3628,7 +3628,7 @@ U second-dir/dir1/dir2/file7"
 		cd first-dir
 		dotest basic2-34 "${testcvs} update -A -l *file*" \
 "[UP] file6
-${SPROG} update: file7 is no longer in the repository"
+${SPROG} update: \`file7' is no longer in the repository"
 
 		# If we don't delete the tag first, cvs won't retag it.
 		# This would appear to be a feature.
@@ -5213,8 +5213,8 @@ done"
 	  # this case.
 	  dotest death2-14 "${testcvs} -q update -r branch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository
-${SPROG} update: file4 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository
+${SPROG} update: \`file4' is no longer in the repository"
 
 	  # Add a file on the branch with the same name.
 	  echo "branch revision" > file2
@@ -5322,8 +5322,8 @@ diff -N file4
 	  # Switch to the nonbranch tag.
 	  dotest death2-19 "${testcvs} -q update -r tag" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository
-${SPROG} update: file3 is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository
+${SPROG} update: \`file3' is no longer in the repository
 U file4"
 
 	  dotest_fail death2-20 "test -f file2"
@@ -5368,7 +5368,7 @@ done"
 	  cd ..
 	  echo "new stuff" >file4
 	  dotest_fail death2-25 "${testcvs} up file4" \
-"${SPROG} update: conflict: file4 is modified but no longer in the repository
+"${SPROG} update: conflict: \`file4' is modified but no longer in the repository
 C file4"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
@@ -5396,7 +5396,7 @@ done"
 
 	  rm $file
 	  dotest rm-update-message-1 "$testcvs up $file" \
-"${SPROG} update: warning: $file was lost
+"${SPROG} update: warning: \`$file' was lost
 U $file"
 
 	  if $keep; then
@@ -5601,8 +5601,8 @@ done"
 
 	  # lose the branch
 	  dotest rmadd-29 "${testcvs} -q up -A" \
-"${SPROG} update: file3 is no longer in the repository
-${SPROG} update: file4 is no longer in the repository"
+"${SPROG} update: \`file3' is no longer in the repository
+${SPROG} update: \`file4' is no longer in the repository"
 
 	  # -f disables recursion
 	  dotest rmadd-30 "${testcvs} -q ci -f -r9 -m." \
@@ -5794,7 +5794,7 @@ ${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  # And attempt to resurrect it at the same time:
 	  dotest_fail rmadd3-2 "${testcvs} add file1" \
-"${SPROG} add: file1 should be removed and is still there (or is back again)"
+"${SPROG} add: \`file1' should be removed and is still there (or is back again)"
 
 	  # Now prove that commit knows that it shouldn't erase files.
 	  dotest_fail rmadd3-3 "${testcvs} -q ci -m." \
@@ -5922,7 +5922,7 @@ done"
 "${QUESTION} sdir
 ${SPROG} update: Updating \.
 ${SPROG} update: Updating sdir
-${CPROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	    rm sdir/file1
 	    rm -r sdir/CVS
@@ -5964,12 +5964,12 @@ ${SPROG} \[update aborted\]: no such tag br"
 "${QUESTION} sdir
 ${SPROG} update: Updating \.
 ${SPROG} update: Updating sdir
-${CPROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	  else
 	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
-"${CPROG} update: in directory sdir:
-${CPROG} \[update aborted\]: there is no version here; do '${CPROG} checkout' first"
+"${CPROG} update: in directory \`sdir':
+${CPROG} \[update aborted\]: there is no version here; do \`${CPROG} checkout' first"
 	  fi
 	  cd ../..
 
@@ -6816,7 +6816,7 @@ initial revision: 1\.1
 done"
 	  cd ../../2/first-dir
 	  dotest tagc-10 "${testcvs} -q tag -c tag4" \
-"${SPROG} tag: file2 is no longer in the repository
+"${SPROG} tag: \`file2' is no longer in the repository
 T file1
 T file2"
 	  cd ../..
@@ -6874,7 +6874,7 @@ v1"
 	  rm $file
 	  # Before the fix that prompted the addition of this test,
 	  # the following command would fail with this diagnostic:
-	  # cvs update: warning: new-born F has disappeared
+	  # cvs update: warning: new-born \`F' has disappeared
 	  dotest update-p-10 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
@@ -6896,7 +6896,7 @@ v1"
 	  # that we can then remove.
 	  dotest update-p-undead-0 "$testcvs update -A" \
 "${SPROG} update: Updating \.
-${SPROG} update: warning: new-born $file has disappeared"
+${SPROG} update: warning: new-born \`$file' has disappeared"
 	  dotest update-p-undead-1 "$testcvs update" \
 "${SPROG} update: Updating \.
 U $file"
@@ -7362,7 +7362,7 @@ done"
 	  # for timestamp changes for a while.  Test that.
 	  rm file1
 	  dotest rcslib-symlink-3a "${testcvs} -q up file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1"
 	  echo "This is a change" >> file1
 	  dotest rcslib-symlink-3b "${testcvs} ci -m because file1" \
@@ -7661,7 +7661,7 @@ done"
 
 		# update to main line
 		dotest import-105 "${testcvs} -q update -A" \
-"${SPROG} update: imported-f1 is no longer in the repository
+"${SPROG} update: \`imported-f1' is no longer in the repository
 [UP] imported-f2"
 
 		# second import - file4 deliberately unchanged
@@ -7715,7 +7715,7 @@ Use the following command to help the merge:"
 
 		# update to main line
 		dotest import-112 "${testcvs} -q update -A" \
-"${SPROG} update: imported-f1 is no longer in the repository
+"${SPROG} update: \`imported-f1' is no longer in the repository
 [UP] imported-f2"
 
 		cd ..
@@ -8079,7 +8079,7 @@ U first-dir/file2'
 'T file1'
 	  dotest branch-after-import-4 \
 "${testcvs} -q update -r TESTTOTRON" \
-"${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file2' is no longer in the repository"
 
 	  cp ../imp-dir/file2 .
 	  dotest branch-after-import-5 \
@@ -8577,7 +8577,7 @@ U first-dir/file8
 U first-dir/file9'
 	  cd first-dir
 	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
-"${SPROG} update: file1 is no longer in the repository
+"${SPROG} update: \`file1' is no longer in the repository
 U file1
 U file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
@@ -8589,9 +8589,9 @@ ${SPROG} update: scheduling file3 for removal
 U file4
 ${SPROG} update: file file4 has been modified, but has been removed in revision branch
 U file7
-${SPROG} update: file8 is no longer in the repository
+${SPROG} update: \`file8' is no longer in the repository
 U file8
-${SPROG} update: file9 is no longer in the repository
+${SPROG} update: \`file9' is no longer in the repository
 U file9"
 	  # Verify that the right changes have been scheduled.
 	  dotest join-twobranch-3 "${testcvs} -q update" \
@@ -8757,10 +8757,10 @@ done"
 	  # CVS, would be a lot of work and I'm not sure this case justifies
 	  # it.
 	  dotest join2-17-circumvent "${testcvs} -q update -A" \
-"${SPROG} update: bradd is no longer in the repository
+"${SPROG} update: \`bradd' is no longer in the repository
 [UP] file1"
 :	  dotest join2-17 "${testcvs} -q update -A bradd" \
-"${SPROG} update: warning: bradd is not (any longer) pertinent"
+"${SPROG} update: warning: \`bradd' is not (any longer) pertinent"
 	  dotest join2-18 "${testcvs} -q update -j br1 bradd" "U bradd"
 	  dotest join2-19 "${testcvs} -q status bradd" \
 "===================================================================
@@ -8837,7 +8837,7 @@ T file2"
 
 	  # Before we actually have any revision on br2, let's try a join
 	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
@@ -8856,7 +8856,7 @@ trunk:line1
 
 	  # OK, we'll try the same thing with a revision on br2.
 	  dotest join3-14 "${testcvs} -q update -r br2 file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 	  echo 'br2:line1' >>file1
 	  dotest join3-15 "${testcvs} -q ci -m modify file1" \
@@ -9645,14 +9645,14 @@ done"
 	  cd ..
 	  rm -r first-dir
 	  dotest newb-123i "${testcvs} -q co -r branch first-dir/a" \
-"${SPROG} checkout: warning: first-dir/a is not (any longer) pertinent"
+"${SPROG} checkout: warning: \`first-dir/a' is not (any longer) pertinent"
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
 	  # "Entry Invalid" is a rather strange output here.  Something like
 	  # "Removed in Repository" would make more sense.
 	  dotest newb-123j0 "${testcvs} status a" \
-"${SPROG} status: a is no longer in the repository
+"${SPROG} status: \`a' is no longer in the repository
 ===================================================================
 File: a                	Status: Entry Invalid
 
@@ -9662,7 +9662,7 @@ File: a                	Status: Entry Invalid
    Sticky Date:		(none)
    Sticky Options:	(none)"
 	  dotest newb-123j "${testcvs} -q update" \
-"${SPROG} update: a is no longer in the repository"
+"${SPROG} update: \`a' is no longer in the repository"
 
 	  if test -f a; then
 	    fail newb-123k
@@ -9997,25 +9997,25 @@ done"
 "${SPROG} remove: scheduling .a. for removal
 ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest_fail conflicts2-142b4 "${testcvs} -q update" \
-"${SPROG} update: conflict: removed a was modified by second party
+"${SPROG} update: conflict: removed \`a' was modified by second party
 C a"
 	  # Resolve the conflict by deciding not to remove the file
 	  # after all.
 	  dotest conflicts2-142b5 "${testcvs} add a" "U a
-${SPROG} add: a, version 1\.1, resurrected"
+${SPROG} add: \`a', version 1\.1, resurrected"
 	  dotest conflicts2-142b6 "${testcvs} -q update" ''
 
 	  # Now one level up.
 	  cd ..
 	  dotest conflicts2-142b7 "${testcvs} rm -f first-dir/a" \
-"${SPROG} remove: scheduling .first-dir/a. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`first-dir/a' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 
 	  if $remote; then
 	    # Haven't investigated this one.
 	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${CPROG} add: in directory \.:
-${CPROG} \[add aborted\]: there is no version here; do '${CPROG} checkout' first"
+"${CPROG} add: in directory \`\.':
+${CPROG} \[add aborted\]: there is no version here; do \`${CPROG} checkout' first"
 	    cd first-dir
 	  else
 	    # The "nothing known" is a bug.  Correct behavior is for a to get
@@ -10028,18 +10028,18 @@ ${CPROG} \[add aborted\]: there is no version here; do '${CPROG} checkout' first
 	    # The fix for both is presumably to call RCS_checkout() or
 	    # something other than update().
 	    dotest conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${SPROG} add: nothing known about first-dir
-${SPROG} add: first-dir/a, version 1\.2, resurrected"
+"${SPROG} add: nothing known about \`first-dir'
+${SPROG} add: \`first-dir/a', version 1\.2, resurrected"
 	    cd first-dir
 	    # Now recover from the damage that the 142b8 test did.
 	    dotest conflicts2-142b9 "${testcvs} rm -f a" \
-"${SPROG} remove: scheduling .a. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`a' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  fi
 
 	  # As before, 1.2 instead of 1.1 is a bug.
 	  dotest conflicts2-142b10 "${testcvs} add a" "U a
-${SPROG} add: a, version 1\.2, resurrected"
+${SPROG} add: \`a', version 1\.2, resurrected"
 	  # As with conflicts2-142b6, check that things are normal again.
 	  dotest conflicts2-142b11 "${testcvs} -q update" ''
 	  cd ../..
@@ -10051,8 +10051,8 @@ ${SPROG} add: a, version 1\.2, resurrected"
 	  cd 1/first-dir
 	  rm abc
 	  dotest conflicts2-142c0 "${testcvs} rm abc" \
-"${SPROG} remove: scheduling .abc. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`abc' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  dotest conflicts2-142c1 "${testcvs} -q ci -m remove-abc" \
 "Removing abc;
 ${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
@@ -10061,8 +10061,8 @@ done"
 	  cd ../../2/first-dir
 	  rm abc
 	  dotest conflicts2-142c2 "${testcvs} rm abc" \
-"${SPROG} remove: scheduling .abc. for removal
-${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
+"${SPROG} remove: scheduling \`abc' for removal
+${SPROG} remove: use \`${SPROG} commit' to remove this file permanently"
 	  dotest conflicts2-142c3 "${testcvs} update" \
 "${SPROG} update: Updating \."
 	  cd ../..
@@ -10120,32 +10120,32 @@ done"
 	  # the local CVS behavior for remote without the cvs add seems 
 	  # pretty difficult).
 	  if $remote; then
-	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
+	    dotest_fail conflicts2-142d2r "${testcvs} -q update" \
 "${QUESTION} aa\.c
 ${QUESTION} same\.c
-${CPROG} update: move away \./aa\.c; it is in the way
+${CPROG} update: move away \`\./aa\.c'; it is in the way
 C aa\.c
-${SPROG} update: conflict: bb\.c created independently by second party
+${SPROG} update: conflict: \`bb\.c' created independently by second party
 C bb\.c
-${CPROG} update: move away \./same\.c; it is in the way
+${CPROG} update: move away \`\./same\.c'; it is in the way
 C same\.c"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
-"${CPROG} update: move away aa\.c; it is in the way
+"${CPROG} update: move away \`aa\.c'; it is in the way
 C aa\.c
-${CPROG} update: conflict: bb\.c created independently by second party
+${CPROG} update: conflict: \`bb\.c' created independently by second party
 C bb\.c
 U same\.c"
 	  fi
 	  dotest conflicts2-142d3 "${testcvs} -q status aa.c" \
-"${SPROG} status: move away aa\.c; it is in the way
+"${SPROG} status: move away \`aa\.c'; it is in the way
 ===================================================================
 File: aa\.c             	Status: Unresolved Conflict
 
    Working revision:	No entry for aa\.c
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/aa\.c,v"
 	  dotest conflicts2-142d3a "${testcvs} -q status bb.c" \
-"${SPROG} status: conflict: bb\.c created independently by second party
+"${SPROG} status: conflict: \`bb\.c' created independently by second party
 ===================================================================
 File: bb\.c             	Status: Unresolved Conflict
 
@@ -10171,7 +10171,7 @@ File: bb\.c             	Status: Unresolved Conflict
 	  # email lists.  Somehow we need to get more information to users
 	  # via these messages and the ones generated by update. -DRP
 	  dotest_fail conflicts2-142d4 "${testcvs} -q add aa.c" \
-"${SPROG} add: aa.c added independently by second party"
+"${SPROG} add: \`aa.c' added independently by second party"
 
 	  # The user might want to see just what the conflict is.
 	  # Don't bother, diff seems to kind of lose its mind, with or
@@ -10258,11 +10258,11 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../1/first-dir
 	  dotest conflicts3-12 "${testcvs} -n -q update" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest conflicts3-13 "${testcvs} -q update" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  # OK, now add a directory to both working directories
 	  # and see that CVS doesn't lose its mind.
@@ -10344,7 +10344,7 @@ ${SPROG} update: ignoring first-dir/sdir (CVS/Entries missing)"
 	  if $remote; then
 	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir
-${CPROG} update: move away sdir/sfile; it is in the way
+${CPROG} update: move away \`sdir/sfile'; it is in the way
 C sdir/sfile"
 	  else
 	    dotest conflicts3-23 "${testcvs} -q update -PdA" \
@@ -10802,7 +10802,7 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # (Dec 95).  Probably the exit status should be nonzero,
 	  # however.
 	  dotest modules-150g1 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared"
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared"
 	  # We tolerate the creation of the dirmodule directory, since that
 	  # is what CVS does, not because we view that as preferable to not
 	  # creating it.
@@ -10906,7 +10906,7 @@ done"
 	  cd ..
 	  rm -r first-dir
 	  dotest modules-155c8 "${testcvs} -q co topfiles" \
-"${SPROG} checkout: warning: first-dir/file1 is not (any longer) pertinent
+"${SPROG} checkout: warning: \`first-dir/file1' is not (any longer) pertinent
 U first-dir/file2"
 
 	  cd ..
@@ -11638,13 +11638,13 @@ Are you sure you want to release (and delete) directory .dirmodule.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: dirmodule"
 	  else
 	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born dirmodule/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`dirmodule/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
 checkout script invoked in ${TESTDIR}/1
 args: dirmodule"
@@ -11794,13 +11794,13 @@ Are you sure you want to release (and delete) directory .mydir.: "
 	  # however.
 	  if $remote; then
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born mydir/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-42 "${testcvs} co -d mydir dirmodule/nonexist" \
-"${SPROG} checkout: warning: new-born mydir/nonexist has disappeared
+"${SPROG} checkout: warning: new-born \`mydir/nonexist' has disappeared
 ${SPROG} checkout: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .mydir..
 checkout script invoked in ${TESTDIR}/1
 args: mydir"
@@ -13199,10 +13199,10 @@ U dir2d1/sub/sub2d1/file1"
 	  # the working directory doesn't correspond to anything in
 	  # the repository.
 	  dotest_fail emptydir-7 "${testcvs} add emptyfile" \
-"${SPROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
+"${SPROG} \[add aborted]: cannot add to \`${CVSROOT_DIRNAME}/CVSROOT/Emptydir'"
 	  mkdir emptydir
 	  dotest_fail emptydir-8 "${testcvs} add emptydir" \
-"${CPROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
+"${CPROG} \[add aborted]: cannot add to \`${CVSROOT_DIRNAME}/CVSROOT/Emptydir'"
 	  cd ..
 	  rm -rf CVS dir2d1
 
@@ -13702,25 +13702,25 @@ ${SPROG} commit: Rebuilding administrative file database"
           dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
 "${CPROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
 "${SPROG} checkout: Updating CVSROOT
-${CPROG} checkout: move away CVSROOT/checkoutlist; it is in the way
+${CPROG} checkout: move away \`CVSROOT/checkoutlist'; it is in the way
 C CVSROOT/checkoutlist
-${CPROG} checkout: move away CVSROOT/commitinfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/commitinfo'; it is in the way
 C CVSROOT/commitinfo
-${CPROG} checkout: move away CVSROOT/config; it is in the way
+${CPROG} checkout: move away \`CVSROOT/config'; it is in the way
 C CVSROOT/config
-${CPROG} checkout: move away CVSROOT/cvswrappers; it is in the way
+${CPROG} checkout: move away \`CVSROOT/cvswrappers'; it is in the way
 C CVSROOT/cvswrappers
-${CPROG} checkout: move away CVSROOT/loginfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/loginfo'; it is in the way
 C CVSROOT/loginfo
-${CPROG} checkout: move away CVSROOT/modules; it is in the way
+${CPROG} checkout: move away \`CVSROOT/modules'; it is in the way
 C CVSROOT/modules
-${CPROG} checkout: move away CVSROOT/notify; it is in the way
+${CPROG} checkout: move away \`CVSROOT/notify'; it is in the way
 C CVSROOT/notify
-${CPROG} checkout: move away CVSROOT/rcsinfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/rcsinfo'; it is in the way
 C CVSROOT/rcsinfo
-${CPROG} checkout: move away CVSROOT/taginfo; it is in the way
+${CPROG} checkout: move away \`CVSROOT/taginfo'; it is in the way
 C CVSROOT/taginfo
-${CPROG} checkout: move away CVSROOT/verifymsg; it is in the way
+${CPROG} checkout: move away \`CVSROOT/verifymsg'; it is in the way
 C CVSROOT/verifymsg"
 
           dotest checkout_repository-3 \
@@ -14253,9 +14253,9 @@ done"
 
 	  cd ../../2/1dir
 	  dotest 168 "${testcvs} -q update" \
-"${SPROG} update: foo is no longer in the repository
+"${SPROG} update: \`foo' is no longer in the repository
 ${CPROG} update: unable to remove foo: Permission denied" \
-"${SPROG} update: foo is no longer in the repository
+"${SPROG} update: \`foo' is no longer in the repository
 ${CPROG} update: unable to remove \./foo: Permission denied"
 
 	  cd ..
@@ -14367,7 +14367,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # message (e.g. the one from local CVS).  But at least it is an
 	  # error message.
 	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
-"${SPROG} add: in directory bogus-dir:
+"${SPROG} add: in directory \`bogus-dir':
 ${SPROG} \[add aborted\]: there is no version here; do .${SPROG} checkout. first" \
 "${CPROG} add: cannot open CVS/Entries for reading: No such file or directory
 ${CPROG} \[add aborted\]: no repository"
@@ -14451,7 +14451,7 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 
 	  # add it twice
 	  dotest_fail adderrmsg-4 "${testcvs} add file1" \
-"${SPROG} add: file1 has already been entered"
+"${SPROG} add: \`file1' has already been entered"
 	  dotest_fail adderrmsg-5 "${testcvs} -q add file1" ""
 
 	  dotest adderrmsg-6 "${testcvs} -q ci -madd" \
@@ -14464,7 +14464,7 @@ done"
 
 	  # file in Entries & repository
 	  dotest_fail adderrmsg-7 "${testcvs} add file1" \
-"${SPROG} add: file1 already exists, with version number 1\.1"
+"${SPROG} add: \`file1' already exists, with version number 1\.1"
 	  dotest_fail adderrmsg-8 "${testcvs} -q add file1" ""
 
 	  # clean up
@@ -15043,7 +15043,7 @@ ${CPROG} unedit: run update to complete the unedit"
 	    "/$file/1\.1\.1\.1/${DOTSTAR}"
 
 	  dotest unedit-without-baserev-6 "${testcvs} -q update" \
-"${CPROG} update: warning: m was lost
+"${CPROG} update: warning: \`m' was lost
 U m"
 
 	  # OK, those were the easy cases.  Now tackle the hard one
@@ -15083,7 +15083,7 @@ C m"
 "m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
 ${CPROG} unedit: run update to complete the unedit"
 	  dotest unedit-without-baserev-15 "${testcvs} -q update" \
-"${CPROG} update: warning: m was lost
+"${CPROG} update: warning: \`m' was lost
 U m"
 	  # The following tests are kind of degenerate compared with
 	  # watch4-16 through watch4-18 but might as well make sure that
@@ -15301,7 +15301,7 @@ $CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
-"${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file2' is no longer in the repository"
 	  dotest ignore-on-branch-7 "$testcvs -q up -jbranch" 'U file2'
 
 	  if $keep; then
@@ -15701,7 +15701,7 @@ ${CVSROOT_DIRNAME}/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest binfiles2-6 "${testcvs} -q update -A" \
-"${SPROG} update: binfile\.dat is no longer in the repository
+"${SPROG} update: \`binfile\.dat' is no longer in the repository
 [UP] brmod
 [UP] brmod-trmod
 [UP] brmod-wdmod"
@@ -17068,7 +17068,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 
 	  cd ../..
@@ -17155,7 +17155,7 @@ done"
 
 	  dotest log-7 "${testcvs} -q update -r branch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  echo 'first branch revision' > file1
 	  dotest log-8 "${testcvs} -q ci -m1b file1" \
@@ -18063,7 +18063,7 @@ ${log_trailer}"
 
 	  dotest log-d99 "${testcvs} -q up -rbranch" \
 "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  # Now test outdating revisions
 
@@ -20572,7 +20572,7 @@ done"
 	  dotest sticky-10 "cat file1" ''
 	  touch file2
 	  dotest_fail sticky-11 "${testcvs} add file2" \
-"${SPROG} add: cannot add file on non-branch tag tag1"
+"${SPROG} add: cannot add file on non-branch tag \`tag1'"
 	  dotest sticky-12 "${testcvs} -q update -A" "[UP] file1
 ${QUESTION} file2" "${QUESTION} file2
 [UP] file1"
@@ -20589,7 +20589,7 @@ done"
 
 	  # Now back to tag1
 	  dotest sticky-15 "${testcvs} -q update -r tag1" "[UP] file1
-${SPROG} update: file2 is no longer in the repository"
+${SPROG} update: \`file2' is no longer in the repository"
 
 	  rm file1
 	  dotest sticky-16 "${testcvs} rm file1" \
@@ -20602,8 +20602,8 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest sticky-18 "${testcvs} -q update -A" "U file1
 U file2"
 	  dotest sticky-19 "${testcvs} -q update -r tag1" \
-"${SPROG} update: file1 is no longer in the repository
-${SPROG} update: file2 is no longer in the repository"
+"${SPROG} update: \`file1' is no longer in the repository
+${SPROG} update: \`file2' is no longer in the repository"
 	  dotest sticky-20 "${testcvs} -q update -A" "U file1
 U file2"
 
@@ -20625,13 +20625,13 @@ U file2"
 	  # discrepency between local and remote CVS and should probably
 	  # be cleaned up at some point.
 	  dotest sticky-23 "${testcvs} -q update -Dnow file1" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 	  dotest sticky-24 "${testcvs} rm -f file1" \
 "${SPROG} remove: cannot remove file .file1. which has a sticky date of .[0-9.]*."
 
 	  dotest sticky-25 "${testcvs} -q update -A" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1" "U file1"
 
 	  cd ../..
@@ -20836,7 +20836,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
@@ -20847,7 +20847,7 @@ U file1"
 	    dotest keyword-23r "${testcvs} update -A file1" "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  else
 	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
@@ -21143,7 +21143,7 @@ done"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
@@ -21158,7 +21158,7 @@ T file2"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -21171,7 +21171,7 @@ new data"
 "P file1
 ${CPROG} update: checksum failure after patch to \./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
@@ -21181,7 +21181,7 @@ U file1"
 "P file1
 ${CPROG} update: checksum failure after patch to ./file1; will refetch
 ${CPROG} client: refetching unpatchable files
-${CPROG} update: warning: file1 was lost
+${CPROG} update: warning: \`file1' was lost
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -21316,7 +21316,7 @@ diff -r1\.2 file1
 	  # Here's the problem... shouldn't -kk a binary file...
 	  rm file1
 	  dotest keyword2-13 "${testcvs} -q update -A -kk -j branch" \
-"${SPROG} update: warning: file1 was lost
+"${SPROG} update: warning: \`file1' was lost
 U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 retrieving revision 1\.1
@@ -21941,7 +21941,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest admin-10 "${testcvs} -q update -A" \
 "U file1
-${SPROG} update: file3 is no longer in the repository"
+${SPROG} update: \`file3' is no longer in the repository"
 
 	  # Check that we can administer files in the repository that
 	  # aren't in the working directory.
@@ -25394,25 +25394,25 @@ ${SPROG} \[diff aborted\]: read lock failed - giving up"
 	  cd 1a
 	  dotest_fail multiroot3-12 \
 "${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
-"${SPROG} checkout: in directory \.\./root2/dir2:
+"${SPROG} checkout: in directory \`\.\./root2/dir2':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-13 \
 "${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
-"${SPROG} checkout: in directory \.\./root1/dir1:
+"${SPROG} checkout: in directory \`\.\./root1/dir1':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root1
 	  dotest_fail multiroot3-14 \
 "${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
-"${SPROG} checkout: in directory \./\.\./root2/dir2:
+"${SPROG} checkout: in directory \`\./\.\./root2/dir2':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root2
 	  dotest_fail multiroot3-15 \
 "${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
-"${SPROG} checkout: in directory \./\.\./root1/dir1:
+"${SPROG} checkout: in directory \`\./\.\./root1/dir1':
 ${SPROG} checkout: .\.\..-relative repositories are not supported.
 ${SPROG} \[checkout aborted\]: invalid source repository"
 	  rm -rf ../root1
@@ -25611,7 +25611,7 @@ ${DOTSTAR}"
 	  if $remote; then
 	    CVSROOT_SAVED=${CVSROOT}
 	    CVSROOT=:fork:${TESTDIR}/root-none; export CVSROOT
-	    dotest_fail reposmv-4 "${testcvs} update" \
+	    dotest_fail reposmv-4r "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
 	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT

@@ -220,7 +220,7 @@ add (int argc, char **argv)
 		    update_dir = filedir;
 		    if (CVS_CHDIR (update_dir) < 0)
 			error (1, errno,
-			       "could not chdir to %s", update_dir);
+			       "could not chdir to `%s'", update_dir);
 		}
 
 		/* find the repository associated with our current dir */
@@ -235,7 +235,7 @@ add (int argc, char **argv)
 		    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
 		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 			       CVSNULLREPOS) == 0)
-		    error (1, 0, "cannot add to %s", repository);
+		    error (1, 0, "cannot add to `%s'", repository);
 
 		/* before we do anything else, see if we have any
 		   per-directory tags */
@@ -310,7 +310,7 @@ add (int argc, char **argv)
 	    finfo.update_dir = argv[i];
 	    finfo.file = p;
 	    if (CVS_CHDIR (finfo.update_dir) < 0)
-		error (1, errno, "could not chdir to %s", finfo.update_dir);
+		error (1, errno, "could not chdir to `%s'", finfo.update_dir);
 	}
 
 	/* Add wrappers for this directory.  They exist only until
@@ -323,7 +323,8 @@ add (int argc, char **argv)
 	repository = Name_Repository (NULL, finfo.update_dir);
 
 	/* don't add stuff to Emptydir */
-	if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
+	if (strncmp (repository, current_parsed_root->directory,
+		     cvsroot_len) == 0
 	    && ISDIRSEP (repository[cvsroot_len])
 	    && strncmp (repository + cvsroot_len + 1,
 			CVSROOTADM,
@@ -331,7 +332,7 @@ add (int argc, char **argv)
 	    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
 	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
 		       CVSNULLREPOS) == 0)
-	    error (1, 0, "cannot add to %s", repository);
+	    error (1, 0, "cannot add to `%s'", repository);
 
 	entries = Entries_Open (0, NULL);
 
@@ -353,20 +354,23 @@ add (int argc, char **argv)
 
 	    dirp = CVS_OPENDIR (finfo.repository);
 	    if (dirp == NULL)
-		error (1, errno, "cannot read directory %s", finfo.repository);
+		error (1, errno, "cannot read directory `%s'",
+		       finfo.repository);
 	    errno = 0;
 	    while ((dp = CVS_READDIR (dirp)) != NULL)
 	    {
 		if (cvs_casecmp (dp->d_name, finfo.file) == 0)
 		{
 		    if (found_name != NULL)
-			error (1, 0, "%s is ambiguous; could mean %s or %s",
+			error (1, 0,
+			       "`%s' is ambiguous; could mean `%s' or `%s'",
 			       finfo.file, dp->d_name, found_name);
 		    found_name = xstrdup (dp->d_name);
 		}
 	    }
 	    if (errno != 0)
-		error (1, errno, "cannot read directory %s", finfo.repository);
+		error (1, errno, "cannot read directory `%s'",
+		       finfo.repository);
 	    CVS_CLOSEDIR (dirp);
 
 	    if (found_name != NULL)
@@ -380,7 +384,7 @@ add (int argc, char **argv)
 		{
 		    if (CVS_MKDIR (found_name, 0777) < 0
 			&& errno != EEXIST)
-			error (0, errno, "cannot create %s", finfo.file);
+			error (0, errno, "cannot create `%s'", finfo.file);
 		}
 
 		/* OK, we found a directory with the same name, maybe in
@@ -405,7 +409,7 @@ add (int argc, char **argv)
 		if (vers->ts_user == NULL)
 		{
 		    /* There is no user file either */
-		    error (0, 0, "nothing known about %s", finfo.fullname);
+		    error (0, 0, "nothing known about `%s'", finfo.fullname);
 		    err++;
 		}
 		else if (!isdir (finfo.file)
@@ -447,7 +451,7 @@ add (int argc, char **argv)
 		    if (vers->nonbranch)
 		    {
 			error (0, 0,
-				"cannot add file on non-branch tag %s",
+				"cannot add file on non-branch tag `%s'",
 				vers->tag);
 			++err;
 		    }
@@ -463,8 +467,8 @@ add (int argc, char **argv)
 			    if (!quiet)
 			    {
 				if (vers->tag)
-				    error (0, 0, "\
-scheduling %s `%s' for addition on branch `%s'",
+				    error (0, 0, "scheduling %s `%s' for"
+					   " addition on branch `%s'",
 					   (wrap_name_has (finfo.file,
 							   WRAP_TOCVS)
 					    ? "wrapper"
@@ -488,17 +492,17 @@ scheduling %s `%s' for addition on branch `%s'",
 		if (isdir (finfo.file)
 		    && !wrap_name_has (finfo.file, WRAP_TOCVS))
 		{
-		    error (0, 0, "\
-the directory `%s' cannot be added because a file of the", finfo.fullname);
-		    error (1, 0, "\
-same name already exists in the repository.");
+		    error (0, 0,
+			   "the directory `%s' cannot be added because a file"
+			   " of the", finfo.fullname);
+		    error (1, 0, "same name already exists in the repository.");
 		}
 		else
 		{
 		    if (vers->nonbranch)
 		    {
 			error (0, 0,
-			       "cannot add file on non-branch tag %s",
+			       "cannot add file on non-branch tag `%s'",
 			       vers->tag);
 			++err;
 		    }
@@ -532,7 +536,7 @@ re-adding file `%s' (in place of dead revision %s)",
 		 * There is an RCS file already, so somebody else must've
 		 * added it
 		 */
-		error (0, 0, "%s added independently by second party",
+		error (0, 0, "`%s' added independently by second party",
 		       finfo.fullname);
 		err++;
 	    }
@@ -545,7 +549,7 @@ re-adding file `%s' (in place of dead revision %s)",
 	     * inappropriate here
 	     */
 	    if (!quiet)
-		error (0, 0, "%s has already been entered", finfo.fullname);
+		error (0, 0, "`%s' has already been entered", finfo.fullname);
 	    err++;
 	}
 	else if (vers->vn_user[0] == '-')
@@ -561,8 +565,9 @@ re-adding file `%s' (in place of dead revision %s)",
 		     * There is no RCS file, so somebody else must've removed
 		     * it from under us
 		     */
-		    error (0, 0, "\
-cannot resurrect %s; RCS file removed by second party", finfo.fullname);
+		    error (0, 0,
+			   "cannot resurrect `%s'; RCS file removed by"
+			   " second party", finfo.fullname);
 		    err++;
 		}
 		else
@@ -577,7 +582,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		    (void) strcpy (vers->vn_user, tmp);
 		    free( tmp );
 		    tmp = xmalloc( strlen( finfo.file ) + 13 );
-		    (void) sprintf (tmp, "Resurrected %s", finfo.file);
+		    (void) sprintf (tmp, "Resurrected `%s'", finfo.file);
 		    Register (entries, finfo.file, vers->vn_user, tmp,
 			      vers->options,
 			      vers->tag, vers->date, vers->ts_conflict);
@@ -589,13 +594,14 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		       check the file out.  */
 		    if (update (2, argv + i - 1) == 0)
 		    {
-			error (0, 0, "%s, version %s, resurrected",
+			error (0, 0, "`%s', version %s, resurrected",
 			       finfo.fullname,
 			       vers->vn_user);
 		    }
 		    else
 		    {
-			error (0, 0, "could not resurrect %s", finfo.fullname);
+			error (0, 0, "could not resurrect `%s'",
+			       finfo.fullname);
 			err++;
 		    }
 		}
@@ -604,7 +610,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	    {
 		/* The user file shouldn't be there */
 		error (0, 0, "\
-%s should be removed and is still there (or is back again)", finfo.fullname);
+`%s' should be removed and is still there (or is back again)", finfo.fullname);
 		err++;
 	    }
 	}
@@ -612,7 +618,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	{
 	    /* A normal entry, ts_rcs is valid, so it must already be there */
 	    if (!quiet)
-		error (0, 0, "%s already exists, with version number %s",
+		error (0, 0, "`%s' already exists, with version number %s",
 			finfo.fullname,
 			vers->vn_user);
 	    err++;

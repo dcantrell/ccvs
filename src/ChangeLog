@@ -1,3 +1,10 @@
+2003-11-11  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add), classify.c (Classify_File), client.c (update_entries),
+	repos.c (Name_Repository): Use consistent quoting in error messages.
+	Misc reformatting.
+	* sanity.sh: Update to match.
+
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (find_fileproc, check_fileproc):  Refuse to remove files

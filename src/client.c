@@ -1343,7 +1343,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 
 	       I hope the above paragraph makes it clear that making this
 	       clearer is not a one-line fix.  */
-	    error (0, 0, "move away %s; it is in the way", short_pathname);
+	    error (0, 0, "move away `%s'; it is in the way", short_pathname);
 	    if (updated_fname != NULL)
 	    {
 		cvs_output ("C ", 0);
