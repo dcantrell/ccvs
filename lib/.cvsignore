@@ -2,5 +2,6 @@
 .pure
 Makefile
 fnmatch.h
+getdate
 WinDebug
 WinRel

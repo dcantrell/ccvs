@@ -1,3 +1,10 @@
+2005-03-23  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (TESTS, MOSTLYCLEANFILES, check_PROGRAMS, EXTRA_DIST,
+	getdate_SOURCES, getdate_CPPFLAGS): Add getdate testing cruft.
+	* test-getdate.sh: New file.
+	* .cvsignore: Ignore getdate executable.
+
 2005-03-23  Larry Jones  <lawrence.jones@ugs.com>
 
 	* getdate.c: Remove absolute paths from #line directives.
