@@ -47,6 +47,10 @@
 
 #include <stdio.h>
 
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 /* Comment out all this code if we are using the GNU C Library, and are not
    actually compiling the library itself.  This code is part of the GNU C
    Library, but also included in many other GNU distributions.  Compiling
