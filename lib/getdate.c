@@ -618,10 +618,14 @@ ToSeconds(Hours, Minutes, Seconds, Meridian)
     case MERam:
 	if (Hours < 1 || Hours > 12)
 	    return -1;
+	if (Hours == 12)
+	    Hours = 0;
 	return (Hours * 60L + Minutes) * 60L + Seconds;
     case MERpm:
 	if (Hours < 1 || Hours > 12)
 	    return -1;
+	if (Hours == 12)
+	    Hours = 0;
 	return ((Hours + 12) * 60L + Minutes) * 60L + Seconds;
     default:
 	abort ();
@@ -1020,7 +1024,7 @@ main(ac, av)
     /* NOTREACHED */
 }
 #endif	/* defined(TEST) */
-#line 1024 "y.tab.c"
+#line 1028 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -1445,7 +1449,7 @@ case 41:
 	    yyval.Meridian = yyvsp[0].Meridian;
 	}
 break;
-#line 1449 "y.tab.c"
+#line 1453 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
