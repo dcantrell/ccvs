@@ -1,5 +1,10 @@
 2003-04-03  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (DISTCLEAN_FILES): Move the contents of this variable...
+	(distclean-local): ...to this target now that Automake supports it.
+
+2003-04-03  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Avoid __pure__ for GCC versions < 2.96 & __malloc__ for GCC
 	versions < 3.0.
 
