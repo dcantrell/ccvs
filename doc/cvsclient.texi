@@ -186,28 +186,31 @@ the client proceeds to start the cvs protocol.
 
 @item kserver
 The kerberized server listens on a port (in the current implementation,
-by having inetd call "cvs kserver") which defaults to 1999 (this port is
-officially reserved for another use, so it may change in the future).
-The client connects, sends the usual kerberos authentication
-information, and then starts the cvs protocol.
+by having inetd call "cvs kserver") which defaults to 1999.  The client
+connects, sends the usual kerberos authentication information, and then
+starts the cvs protocol.  Note: port 1999 is officially registered for
+another use, and in any event one cannot register more than one port for
+CVS, so the kerberized client and server should be changed to use port
+2401 (see below), and send a different string in place of @samp{BEGIN
+AUTH REQUEST} to identify the authentication method in use.  However,
+noone has yet gotten around to implementing this.
 
 @item pserver
 The password authenticated server listens on a port (in the current
 implementation, by having inetd call "cvs pserver") which defaults to
-2401 (this port is not officially registered, so it may change in the
-future).  The client connects, sends the string @samp{BEGIN AUTH
-REQUEST}, a linefeed, the cvs root, a linefeed, the username, a
-linefeed, the password trivially encoded (see scramble.c in the cvs
-sources), a linefeed, the string @samp{END AUTH REQUEST}, and a
-linefeed.  The server responds with @samp{I LOVE YOU} and a linefeed if
-the authentication is successful or @samp{I HATE YOU} and a linefeed if
-the authentication fails.  After receiving @samp{I LOVE YOU}, the client
-proceeds with the cvs protocol.  If the client wishes to merely
-authenticate without starting the cvs protocol, the procedure is the
-same, except @samp{BEGIN AUTH REQUEST} is replaced with @samp{BEGIN
-VERIFICATION REQUEST}, @samp{END AUTH REQUEST} is replaced with
-@samp{END VERIFICATION REQUEST}, and upon receipt of @samp{I LOVE YOU}
-the connection is closed rather than continuing.
+2401 (this port is officially registered).  The client
+connects, sends the string @samp{BEGIN AUTH REQUEST}, a linefeed, the
+cvs root, a linefeed, the username, a linefeed, the password trivially
+encoded (see scramble.c in the cvs sources), a linefeed, the string
+@samp{END AUTH REQUEST}, and a linefeed.  The server responds with
+@samp{I LOVE YOU} and a linefeed if the authentication is successful or
+@samp{I HATE YOU} and a linefeed if the authentication fails.  After
+receiving @samp{I LOVE YOU}, the client proceeds with the cvs protocol.
+If the client wishes to merely authenticate without starting the cvs
+protocol, the procedure is the same, except @samp{BEGIN AUTH REQUEST} is
+replaced with @samp{BEGIN VERIFICATION REQUEST}, @samp{END AUTH REQUEST}
+is replaced with @samp{END VERIFICATION REQUEST}, and upon receipt of
+@samp{I LOVE YOU} the connection is closed rather than continuing.
 @end table
 
 @node Protocol
