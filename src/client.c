@@ -1216,23 +1216,22 @@ handle_mode( char *args, int len )
 /* Nonzero if time was specified in Mod-time.  */
 static int stored_modtime_valid;
 /* Time specified in Mod-time.  */
-static struct timespec stored_modtime;
+static time_t stored_modtime;
 
 static void handle_mod_time (char *, int);
 
 static void
-handle_mod_time (char *args, int len)
+handle_mod_time( char *args, int len )
 {
     if (stored_modtime_valid)
 	error (0, 0, "protocol error: duplicate Mod-time");
-    if (!get_date (&stored_modtime, args, NULL))
+    stored_modtime = get_date (args, NULL);
+    if (stored_modtime == (time_t) -1)
 	error (0, 0, "protocol error: cannot parse date %s", args);
     else
 	stored_modtime_valid = 1;
 }
-
-
-
+
 /*
  * If we receive a patch, but the patch program fails to apply it, we
  * want to request the original file.  We keep a list of files whose
@@ -1737,7 +1736,7 @@ update_entries( char *data_arg, List *ent_list, char *short_pathname,
 	struct utimbuf t;
 
 	memset (&t, 0, sizeof (t));
-	t.modtime = stored_modtime.tv_sec;
+	t.modtime = stored_modtime;
 	(void) time (&t.actime);
 
 #ifdef UTIME_EXPECTS_WRITABLE
