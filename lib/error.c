@@ -28,8 +28,17 @@ static char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
 
 #include <stdio.h>
 
-/* turn on CVS support by default, since this is the CVS distribution */
-#define	CVS_SUPPORT
+#ifdef CVS_SUPPORT
+/* If non-zero, error will use the CVS protocol to report error
+   messages.  This will only be set in the CVS server parent process;
+   most other code is run via do_cvs_command, which forks off a child
+   process and packages up its stderr in the protocol.
+
+   This really is ugly (why should lib/error.c know about the
+   protocol??), but it's better than a mass munging of all the calls
+   to error in modules.c.  */
+int error_use_protocol; 
+#endif
 
 #ifdef HAVE_VPRINTF
 
@@ -96,6 +105,7 @@ error (status, errnum, message, va_alist)
      va_dcl
 #endif
 {
+  FILE *out = stderr;
   extern char *program_name;
 #ifdef CVS_SUPPORT
   extern char *command_name;
@@ -105,31 +115,39 @@ error (status, errnum, message, va_alist)
 #endif
 
 #ifdef CVS_SUPPORT
+  if (error_use_protocol)
+    {
+      out = stdout;
+      printf ("E ");
+    }
+#endif
+
+#ifdef CVS_SUPPORT
   if (command_name && *command_name)
     if (status)
-      fprintf (stderr, "%s [%s aborted]: ", program_name, command_name);
+      fprintf (out, "%s [%s aborted]: ", program_name, command_name);
     else
-      fprintf (stderr, "%s %s: ", program_name, command_name);
+      fprintf (out, "%s %s: ", program_name, command_name);
   else
-    fprintf (stderr, "%s: ", program_name);
+    fprintf (out, "%s: ", program_name);
 #else
-  fprintf (stderr, "%s: ", program_name);
+  fprintf (out, "%s: ", program_name);
 #endif
 #ifdef HAVE_VPRINTF
   VA_START (args, message);
-  vfprintf (stderr, message, args);
+  vfprintf (out, message, args);
   va_end (args);
 #else
 #ifdef HAVE_DOPRNT
-  _doprnt (message, &args, stderr);
+  _doprnt (message, &args, out);
 #else
-  fprintf (stderr, message, a1, a2, a3, a4, a5, a6, a7, a8);
+  fprintf (out, message, a1, a2, a3, a4, a5, a6, a7, a8);
 #endif
 #endif
   if (errnum)
-    fprintf (stderr, ": %s", strerror (errnum));
-  putc ('\n', stderr);
-  fflush (stderr);
+    fprintf (out, ": %s", strerror (errnum));
+  putc ('\n', out);
+  fflush (out);
   if (status)
     {
       if (cleanup_fn)
