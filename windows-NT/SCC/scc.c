@@ -68,7 +68,8 @@ typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
 
 
 /* We get to put whatever we want here, and the caller will pass it
-   to us, so we don't need any global variables.  */
+   to us, so we don't need any global variables.  This is the
+   "void *context_arg" argument to most of the Scc* functions.  */
 struct context {
     FILE *debuglog;
     /* Value of the CVSROOT we are currently working with (that is, the
@@ -79,6 +80,11 @@ struct context {
     char *local;
     SCC_outproc outproc;
 };
+
+/* In addition to context_arg, most of the Scc* functions take a
+   "HWND window" argument.  This is so that we can put up dialogs.
+   The window which is passed in is the IDE's window, which we
+   should use as the parent of dialogs that we put up.  */
 
 #include <windows.h>
 
@@ -97,7 +103,7 @@ malloc_error (struct context *context)
 /* Return the version of the SCC spec, major version in the high word,
    minor version in the low word.  */
 LONG
-SccGetVersion ()
+SccGetVersion (void)
 {
     /* We implement version 1.1 of the spec.  */
     return 0x10001;
