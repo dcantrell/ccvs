@@ -291,7 +291,7 @@ new_config (void)
 
     TRACE (TRACE_FLOW, "new_config ()");
 
-    new->logHistory = ALL_HISTORY_REC_TYPES;
+    new->logHistory = xstrdup (ALL_HISTORY_REC_TYPES);
     new->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
     new->UserAdminOptions = xstrdup ("k");
     new->MaxCommentLeaderLength = 20;
@@ -496,7 +496,17 @@ parse_config (const char *cvsroot)
 	else if (strcmp (line, "LogHistory") == 0)
 	{
 	    if (strcmp (p, "all") != 0)
+	    {
+		static bool gotone = false;
+		if (gotone)
+		    error (0, 0, "\
+%s [%u]: warning: duplicate LogHistory entry found.",
+			   infopath, ln);
+		else
+		    gotone = true;
+		free (retval->logHistory);
 		retval->logHistory = xstrdup (p);
+	    }
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
 	{

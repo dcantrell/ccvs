@@ -11,7 +11,9 @@
 /* Collect and manage hardlink info associated with a particular file.  */
 
 #include "cvs.h"
-#include "hardlink.h"
+
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+# include "hardlink.h"
 
 /* The structure currently used to manage hardlink info is a list.
    Therefore, most of the functions which manipulate hardlink data
@@ -307,4 +309,4 @@ find_checkedout_proc (Node *node, void *data)
 
     return 0;
 }
-
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */

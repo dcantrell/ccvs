@@ -489,6 +489,12 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
                    RCS_addaccess expects nothing but spaces.  FIXME:
                    It would be easy and more efficient to change
                    RCS_addaccess.  */
+		if (rdata->access)
+		{
+		    error (0, 0,
+		           "Duplicate `access' keyword found in RCS file.");
+		    free (rdata->access);
+		}
 		rdata->access = rcsbuf_valcopy (&rcsbuf, value, 1, NULL);
 	    }
 	    continue;
@@ -499,7 +505,15 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	if (STREQ (key, "locks"))
 	{
 	    if (value != NULL)
+	    {
+		if (rdata->locks_data)
+		{
+		    error (0, 0,
+		           "Duplicate `locks' keyword found in RCS file.");
+		    free (rdata->locks_data);
+		}
 		rdata->locks_data = rcsbuf_valcopy (&rcsbuf, value, 0, NULL);
+	    }
 	    if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	    {
 		error (1, 0, "premature end of file reading %s", rcsfile);
@@ -516,7 +530,16 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 	if (STREQ (RCSSYMBOLS, key))
 	{
 	    if (value != NULL)
+	    {
+		if (rdata->symbols_data)
+		{
+		    error (0, 0,
+		           "Duplicate `%s' keyword found in RCS file.",
+		           RCSSYMBOLS);
+		    free (rdata->symbols_data);
+		}
 		rdata->symbols_data = rcsbuf_valcopy (&rcsbuf, value, 0, NULL);
+	    }
 	    continue;
 	}
 
@@ -2806,6 +2829,7 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
     if (vp == NULL)
     {	
 	error (0, 0, "%s: can't find branch point %s", rcs->print_path, target);
+	free (branch);
 	return NULL;
     }
     rev = vp->data;
@@ -4165,7 +4189,15 @@ RCS_checkout (RCSNode *rcs, const char *workfile, const char *rev,
 	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
 	    if (STREQ (key, "log"))
+	    {
+		if (log)
+		{
+		    error (0, 0,
+"Duplicate log keyword found for head revision in RCS file.");
+		    free (log);
+		}
 		log = rcsbuf_valcopy (&rcsbuf, value, 0, &loglen);
+	    }
 	    else if (STREQ (key, "text"))
 	    {
 		gothead = 1;
@@ -6242,7 +6274,12 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	/* A range consisting of a branch number means the latest revision
 	   on that branch. */
 	if (RCS_isbranch (rcs, rev1) && STREQ (rev1, rev2))
-	    rev1 = rev2 = RCS_getbranch (rcs, rev1, 0);
+	{
+	    char *tmp = RCS_getbranch (rcs, rev1, 0);
+	    free (rev1);
+	    free (rev2);
+	    rev1 = rev2 = tmp;
+	}
 	else
 	{
 	    /* Make sure REV1 and REV2 are ordered correctly (in the
@@ -6636,7 +6673,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
  delrev_done:
     if (rev1 != NULL)
 	free (rev1);
-    if (rev2 != NULL)
+    if (rev2 && rev2 != rev1)
 	free (rev2);
     if (branchpoint != NULL)
 	free (branchpoint);
@@ -6978,6 +7015,7 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
     };
     struct deltafrag *dfhead;
     struct deltafrag *df;
+    int err;
 
     dfhead = NULL;
     for (p = diffbuf; p != NULL && p < diffbuf + difflen; )
@@ -7043,33 +7081,39 @@ apply_rcs_changes (struct linevector *lines, const char *diffbuf,
 	}
     }
 
+    err = 0;
     for (df = dfhead; df != NULL;)
     {
 	unsigned int ln;
 
-	switch (df->type)
-	{
-	case FRAG_ADD:
-	    if (! linevector_add (lines, df->new_lines, df->len, addvers,
-				  df->pos))
-		return 0;
-	    break;
-	case FRAG_DELETE:
-	    if (df->pos > lines->nlines
-		|| df->pos + df->nlines > lines->nlines)
-		return 0;
-	    if (delvers != NULL)
-		for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
-		    lines->vector[ln]->vers = delvers;
-	    linevector_delete (lines, df->pos, df->nlines);
-	    break;
-	}
+	/* Once an error is encountered, just free the rest of the list and
+	 * return.
+	 */
+	if (!err)
+	    switch (df->type)
+	    {
+	    case FRAG_ADD:
+		if (! linevector_add (lines, df->new_lines, df->len, addvers,
+				      df->pos))
+		    err = 1;
+		break;
+	    case FRAG_DELETE:
+		if (df->pos > lines->nlines
+		    || df->pos + df->nlines > lines->nlines)
+		    return 0;
+		if (delvers != NULL)
+		    for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
+			lines->vector[ln]->vers = delvers;
+		linevector_delete (lines, df->pos, df->nlines);
+		break;
+	    }
+
 	df = df->next;
 	free (dfhead);
 	dfhead = df;
     }
 
-    return 1;
+    return !err;
 }
 
 
