@@ -1,5 +1,10 @@
 2003-02-03  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Merging a branch): Mention the GCA as opposed to the
+	"branch point" as the implicit revision when merging a branch.
+
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Remote repositories): :METHOD: is optional.
 
 2003-02-03  Derek Price  <derek@ximbiot.com>
