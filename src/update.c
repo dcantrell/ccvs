@@ -83,6 +83,10 @@ static char *date = NULL;
 static int rewrite_tag;
 static int nonbranch;
 
+/* If we set the tag or date for a subdirectory, we use this to undo
+   the setting.  See update_dirent_proc.  */
+static char *tag_update_dir;
+
 static char *join_rev1, *date_rev1;
 static char *join_rev2, *date_rev2;
 static int aflag = 0;
@@ -806,6 +810,26 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	else
 	{
 	    /* otherwise, create the dir and appropriate adm files */
+
+	    /* If no tag or date were specified on the command line,
+               and we're not using -A, we want the subdirectory to use
+               the tag and date, if any, of the current directory.
+               That way, update -d will work correctly when working on
+               a branch.
+
+	       We use TAG_UPDATE_DIR to undo the tag setting in
+	       update_dirleave_proc.  If we did not do this, we would
+	       not correctly handle a working directory with multiple
+	       tags (and maybe we should prohibit such working
+	       directories, but they work now and we shouldn't make
+	       them stop working without more thought).  */
+	    if ((tag == NULL && date == NULL) && ! aflag)
+	    {
+		ParseTag (&tag, &date, &nonbranch);
+		if (tag != NULL || date != NULL)
+		    tag_update_dir = xstrdup (update_dir);
+	    }
+
 	    make_directory (dir);
 	    Create_Admin (dir, update_dir, repository, tag, date,
 			  /* This is a guess.  We will rewrite it later
@@ -896,6 +920,27 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     List *entries;
 {
     FILE *fp;
+
+    /* If we set the tag or date for a new subdirectory in
+       update_dirent_proc, and we're now done with that subdirectory,
+       undo the tag/date setting.  Note that we know that the tag and
+       date were both originally NULL in this case.  */
+    if (tag_update_dir != NULL && strcmp (update_dir, tag_update_dir) == 0)
+    {
+	if (tag != NULL)
+	{
+	    free (tag);
+	    tag = NULL;
+	}
+	if (date != NULL)
+	{
+	    free (date);
+	    date = NULL;
+	}
+	nonbranch = 0;
+	free (tag_update_dir);
+	tag_update_dir = NULL;
+    }
 
     /* run the update_prog if there is one */
     /* FIXME: should be checking for errors from CVS_FOPEN and printing
