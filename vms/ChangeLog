@@ -1,3 +1,8 @@
+Wed Jan  1 22:50:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Reword comment for TMPDIR_DFLT to make it clear that
+	this isn't specific to the pserver server.
+
 Tue Nov 19 17:13:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* ndir.c (opendir): Change strip_path to strip_trailing_slashes
