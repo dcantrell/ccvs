@@ -231,6 +231,7 @@ static const char *const cmd_usage[] =
     "        tag          Add a symbolic tag to checked out version of files\n",
     "        unedit       Undo an edit command\n",
     "        update       Bring work tree in sync with repository\n",
+    "        version      Show current CVS version(s)\n",
     "        watch        Set watches\n",
     "        watchers     See who is watching a file\n",
     "(Specify the --help option for a list of other help options)\n",

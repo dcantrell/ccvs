@@ -30,7 +30,7 @@ static int rannotate_proc PROTO((int argc, char **argv, char *xwhere,
 
 static const char *const annotate_usage[] =
 {
-    "Usage: %s %s [-lRf] [-r rev|-D date] [files...]\n",
+    "Usage: %s %s [-lRf] [-r rev] [-D date] [files...]\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-f\tUse head revision if tag/date not found.\n",
