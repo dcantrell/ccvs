@@ -1,3 +1,7 @@
+Sun Dec 10 23:10:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* notify: New file.
+
 Tue Nov 14 18:19:22 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* commitinfo, editinfo, loginfo, rcsinfo: new rcs id
