@@ -1,3 +1,7 @@
+Mon Aug 12 10:34:43 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* main.c: add synonym "ann" for "annotate" again
+
 Sun Aug 11 17:54:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.h (RCS_RLOG): Removed; no longer used.
