@@ -1,5 +1,9 @@
 2004-10-19  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note resurrection fix.
+
+2004-10-19  Derek Price  <derek@ximbiot.com>
+
 	* HACKING (Portability): Note assumption of sys/stat.h.
 
 2004-10-16  Conrad T. Pino  <Conrad@Pino.com>
