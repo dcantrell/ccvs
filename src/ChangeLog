@@ -1,5 +1,10 @@
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c, import.c, no_diff.c, parseinfo.c, rcs.c, rcscmds.c,
+	update.c: Omit the preserve_perms code if
+	PRESERVE_PERMISSIONS_SUPPORT is not defined.  Much of that code
+	won't even compile on non-unix systems.
+
 	* hardlink.c, hardlink.h: Use the 'standard' copyright (as found
 	in server.c).
 	* commit.c, rcs.c: Minor whitespace changes to Tim's submission.
