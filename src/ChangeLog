@@ -1,3 +1,9 @@
+Sat Oct  7 23:26:54 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* admin.c (admin): If group CVS_ADMIN_GROUP exists, allow only
+	users in that group to use "cvs admin".
+	* options.h.in: Default CVS_ADMIN_GROUP to "cvsadmin".
+
 Sat Oct  7 23:05:24 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* add.c, checkout.c, commit.c, cvs.h, filesubr.c, import.c,
