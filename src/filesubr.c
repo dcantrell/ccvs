@@ -812,9 +812,15 @@ xreadlink (const char *link)
 	    file[link_name_len] = '\0';
 	    return file;
 	}
-	buflen *= 2;
-	if (! (0 < buflen && buflen < SSIZE_MAX))
+
+	if (buflen >= SSIZE_MAX)
+	    /* Our buffer cannot grow any bigger.  */
 	    error (1, ENAMETOOLONG, "cannot readlink %s", link);
+
+	buflen = xtimes (buflen, 2);
+	if (buflen > SSIZE_MAX)
+	    /* readlink()'s maximum buffer size.  */
+	    buflen = SSIZE_MAX;
     }
 }
 #endif /* HAVE_READLINK */
