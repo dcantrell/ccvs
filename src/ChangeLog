@@ -1,5 +1,7 @@
 1999-06-01  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh: Add comment about rcs2-7 failures on certain days.
+
 	Make "cvs status -v" on a removed file work:
 	* status.c (cvsstatus): Reindent the client code.
 	(status_fileproc): Don't need a CVS/Entries listing to show the
