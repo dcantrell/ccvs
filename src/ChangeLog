@@ -1,5 +1,9 @@
 2005-02-28  Derek Price  <derek@ximbiot.com>
 
+	* edit.c (notify_proc), logmsg.c (logfile_write): Minor reformatting.
+
+2005-02-28  Derek Price  <derek@ximbiot.com>
+
 	* root.c (parse_root): Trigger a later error message rather than
 	maintaining two copies.
 
