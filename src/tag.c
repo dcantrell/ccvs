@@ -507,7 +507,6 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
     if (ti->rev != NULL)
     {
-        int addit = 1;
         ti->oldrev = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
 	                             (int *) NULL);
 
