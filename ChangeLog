@@ -1,3 +1,9 @@
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Generate contrib/pam/Makefile.
+	* NEWS: Note distribution of sample PAM configs.
+	(Thanks to a report from Brian Murphy <brian@murphy.dk>.)
+
 2004-07-12  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note improved time zone handling.  Attribute previous change.

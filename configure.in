@@ -1498,6 +1498,7 @@ AC_CONFIG_FILES(windows-NT/mkconfig:windows-NT/plhead.pl:windows-NT/mkconfig.pl,
 dnl the bulk files
 AC_CONFIG_FILES([Makefile \
 	  contrib/Makefile \
+	  contrib/pam/Makefile \
 	  cvs.spec \
 	  diff/Makefile \
 	  doc/Makefile \

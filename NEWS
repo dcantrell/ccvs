@@ -3,6 +3,9 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* Thanks to a report from Brian Murphy <brian@murphy.dk>, the demo PAM
+  configuration files mentioned in the manual are actually being distributed.
+
 * Thanks again to Bart Robinson <lomew@pobox.com>, `cvs log' & `cvs ls' now
   actually output local times when the server is version 1.12.9 or greater and
   the client is version  1.12.10 or greater.  
