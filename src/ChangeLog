@@ -1,3 +1,7 @@
+1998-05-13  Jim Meyering  <meyering@ascend.com>
+
+	* commit.c (commit_filesdoneproc): Remove trailing blanks.
+
 1998-05-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (commit_filesdoneproc): #if 0 the new code until it can
