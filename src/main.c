@@ -41,6 +41,12 @@ int quiet = 0;
 int trace = 0;
 int noexec = 0;
 int logoff = 0;
+
+/* Set if we should be writing CVSADM directories at top level.  At
+   least for now we'll make the default be off (the CVS 1.9, not CVS
+   1.9.2, behavior). */
+int top_level_admin = 0;
+
 mode_t cvsumask = UMASK_DFLT;
 
 char *CurDir;
