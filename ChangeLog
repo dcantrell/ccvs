@@ -1,3 +1,7 @@
+1998-06-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: We generally don't need GNU patch any more.
+
 1998-06-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Don't mention the version of Solaris; Mark Borges says
