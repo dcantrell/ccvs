@@ -1,3 +1,8 @@
+2002-05-02  Derek Price  <oberon@umich.edu>
+
+	* noautoconf.sh: Update this script for operation with the new autotools.
+	* stamp-h1.in: Remove this obsolete file.
+
 2002-05-01  Derek Price  <oberon@umich.edu>
 
 	* TODO (224): Comment on this item.
