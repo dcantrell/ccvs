@@ -1,3 +1,10 @@
+1999-03-30  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (get_responses_and_close), commit.c (commit),
+	update.c (do_update): If the sleep(1) call returns prematurely
+	(due to the way wakeup is scheduled or receiving a signal), do
+	it again.
+
 1999-03-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* server.c (server): Add comment about Gzip-stream vs. RQ_ROOTLESS.

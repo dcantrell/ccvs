@@ -3664,9 +3664,12 @@ get_responses_and_close ()
     {
 	time_t now;
 
-	(void) time (&now);
-	if (now == last_register_time)
+	for (;;)
+	{
+	    (void) time (&now);
+	    if (now != last_register_time) break;
 	    sleep (1);			/* to avoid time-stamp races */
+	}
     }
 
     return errs;
