@@ -669,7 +669,8 @@
 #undef PAM_SERVICE_NAME
 
 /* Define if you want CVS to be able to serve as a transparent proxy for write
-   operations. */
+   operations. Disabling this may produce a slight performance gain on some
+   systems, at the expense of write proxy support. */
 #undef PROXY_SUPPORT
 
 /* Path to the pr utility */
