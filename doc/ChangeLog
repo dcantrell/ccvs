@@ -1,5 +1,8 @@
 Tue Nov 18 09:23:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Be more explicit about "export" and
+	entries lines.
+
 	* Makefile.in (DISTFILES): Remove DIFFUTILS-2.7-BUG.
 
 Mon Nov 17 18:20:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
