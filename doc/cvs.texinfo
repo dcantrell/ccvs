@@ -11686,7 +11686,7 @@ must be run in the background.
 @c out locks (I think) but I don't see many advantages
 @c of that and we might as well document something which
 @c works for multiple files.
-Here is an example (this should all be on one line):
+Here is an example for unix (this should all be on one line):
 
 @example
 ^cyclic-pages		(date; cat; (sleep 2; cd /u/www/local-docs;
