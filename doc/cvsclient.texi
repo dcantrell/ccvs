@@ -415,6 +415,14 @@ conflicts in it.  The rest of @var{conflict} is @samp{=} if the
 timestamp matches the file, or anything else if it doesn't.  If
 @var{conflict} does not start with a @samp{+}, it is silently ignored.
 
+@var{options} signifies the keyword expansion options (for example
+@samp{-ko}).  In an @code{Entry} request, this indicates the options
+that were specified with the file from the previous file updating
+response (@pxref{Response intro}, for a list of file updating
+responses); if the client is specifying the @samp{-k} or @samp{-A}
+option to @code{update}, then it is the server which figures out what
+overrides what.
+
 @node Modes
 @section Modes
 
