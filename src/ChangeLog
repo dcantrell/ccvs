@@ -1,5 +1,8 @@
 2003-05-22  Larry Jones  <lawrence.jones@eds.com>
 
+	* commit.c (commit): Fix leading zero stripping code to not strip
+	unless there's a following digit.
+
 	* parseinfo.c (Parse_Info): Warn if multiple DEFAULT lines found.
 	* sanity.sh (info): New test for above.
 
