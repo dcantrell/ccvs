@@ -1,5 +1,17 @@
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
+	Update installed GNULIB modules.
+	* Makefile.am: Tweak for new GNULIB updates.
+	* alloca_.h, dup2.c, error.c, ftruncate.c, getdate.c, getdate.y,
+	getopt_.h, gettext.h, gettime.c, malloc.c, mkdir.c, mktime.c,
+	realloc.c, rename.c, save-cwd.c, strstr.c, strtoul.c, timespec.h,
+	xgetcwd.c: Update these files.
+	* chdir-long.c, chdir-long.h, getcwd.c, getcwd.h, mempcpy.c, mempcpy.h,
+	memrchr.c, memrchr.h, openat.c, openat.h, strstr.h, strtol.c: New files
+	from GNULIB.
+
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
 	* xtime.h: Remove obsolete timeb stuff.
 
 2005-02-20  Mark D. Baushke  <mdb@cvshome.org>

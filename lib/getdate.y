@@ -1,6 +1,8 @@
 %{
 /* Parse a string into an internal time stamp.
-   Copyright (C) 1999, 2000, 2002, 2003, 2004 Free Software Foundation, Inc.
+
+   Copyright (C) 1999, 2000, 2002, 2003, 2004, 2005 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +38,16 @@
 
 #include "getdate.h"
 
-#include <alloca.h>
+/* There's no need to extend the stack, so there's no need to involve
+   alloca.  */
+#define YYSTACK_USE_ALLOCA 0
+
+/* Tell Bison how much stack space is needed.  20 should be plenty for
+   this grammar, which is not right recursive.  Beware setting it too
+   high, since that might cause problems on machines whose
+   implementations have lame stack-overflow checking.  */
+#define YYMAXDEPTH 20
+#define YYINITDEPTH YYMAXDEPTH
 
 /* Since the code of getdate.y is not included in the Emacs executable
    itself, there is no need to #define static in this file.  Even if
@@ -108,6 +119,7 @@
    representation.  */
 typedef struct
 {
+  bool negative;
   long int value;
   size_t digits;
 } textint;
@@ -179,6 +191,7 @@ typedef struct
 union YYSTYPE;
 static int yylex (union YYSTYPE *, parser_control *);
 static int yyerror (parser_control *, char *);
+static long int time_zone_hhmm (textint, long int);
 
 %}
 
@@ -188,8 +201,8 @@ static int yyerror (parser_control *, char *);
 %parse-param { parser_control *pc }
 %lex-param { parser_control *pc }
 
-/* This grammar has 13 shift/reduce conflicts. */
-%expect 13
+/* This grammar has 14 shift/reduce conflicts. */
+%expect 14
 
 %union
 {
@@ -207,7 +220,7 @@ static int yyerror (parser_control *, char *);
 %token <textintval> tSNUMBER tUNUMBER
 %token <timespec> tSDECIMAL_NUMBER tUDECIMAL_NUMBER
 
-%type <intval> o_merid
+%type <intval> o_colon_minutes o_merid
 %type <timespec> seconds signed_seconds unsigned_seconds
 
 %%
@@ -263,7 +276,7 @@ time:
 	pc->seconds.tv_nsec = 0;
 	pc->meridian = $4;
       }
-  | tUNUMBER ':' tUNUMBER tSNUMBER
+  | tUNUMBER ':' tUNUMBER tSNUMBER o_colon_minutes
       {
 	pc->hour = $1.value;
 	pc->minutes = $3.value;
@@ -271,7 +284,7 @@ time:
 	pc->seconds.tv_nsec = 0;
 	pc->meridian = MER24;
 	pc->zones_seen++;
-	pc->time_zone = $4.value % 100 + ($4.value / 100) * 60;
+	pc->time_zone = time_zone_hhmm ($4, $5);
       }
   | tUNUMBER ':' tUNUMBER ':' unsigned_seconds o_merid
       {
@@ -280,14 +293,14 @@ time:
 	pc->seconds = $5;
 	pc->meridian = $6;
       }
-  | tUNUMBER ':' tUNUMBER ':' unsigned_seconds tSNUMBER
+  | tUNUMBER ':' tUNUMBER ':' unsigned_seconds tSNUMBER o_colon_minutes
       {
 	pc->hour = $1.value;
 	pc->minutes = $3.value;
 	pc->seconds = $5;
 	pc->meridian = MER24;
 	pc->zones_seen++;
-	pc->time_zone = $6.value % 100 + ($6.value / 100) * 60;
+	pc->time_zone = time_zone_hhmm ($6, $7);
       }
   ;
 
@@ -301,6 +314,8 @@ local_zone:
 zone:
     tZONE
       { pc->time_zone = $1; }
+  | tZONE tSNUMBER o_colon_minutes
+      { pc->time_zone = $1 + time_zone_hhmm ($2, $3); }
   | tDAYZONE
       { pc->time_zone = $1 + 60; }
   | tZONE tDST
@@ -523,6 +538,13 @@ number:
       }
   ;
 
+o_colon_minutes:
+    /* empty */
+      { $$ = -1; }
+  | ':' tUNUMBER
+      { $$ = $2.value; }
+  ;
+
 o_merid:
     /* empty */
       { $$ = MER24; }
@@ -708,6 +730,19 @@ static table const military_table[] =
 };
 
 
+
+/* Convert a time zone expressed as HH:MM into an integer count of
+   minutes.  If MM is negative, then S is of the form HHMM and needs
+   to be picked apart; otherwise, S is of the form HH.  */
+
+static long int
+time_zone_hhmm (textint s, long int mm)
+{
+  if (mm < 0)
+    return (s.value / 100) * 60 + s.value % 100;
+  else
+    return s.value * 60 + (s.negative ? -mm : mm);
+}
 
 static int
 to_hour (long int hours, int meridian)
@@ -960,6 +995,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	    }
 	  else
 	    {
+	      lvalp->textintval.negative = sign < 0;
 	      if (sign < 0)
 		{
 		  lvalp->textintval.value = - value;
@@ -1091,8 +1127,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 
   if (! now)
     {
-      if (gettime (&gettime_buffer) != 0)
-	return false;
+      gettime (&gettime_buffer);
       now = &gettime_buffer;
     }
 
