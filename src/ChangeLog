@@ -1,5 +1,9 @@
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
+	* server.c (switch_to_user): SysLog attempts to root from pserver.
+
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
 	* server.c (switch_to_user): Don't allow CVS to run as root in pserver
 	mode.
 	(Original patch from Wichert Akkerman via Bradley M Kuhn
