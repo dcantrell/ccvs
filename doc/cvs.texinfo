@@ -12740,6 +12740,20 @@ produced it should work fine.
 @c so it doesn't seem particularly specific to any one
 @c test.
 
+@item cvs [server aborted]: Cannot check out files into the repository itself
+The obvious cause for this message (especially for
+non-client/server @sc{cvs}) is that the @sc{cvs} root
+is, for example, @file{/usr/local/cvsroot} and you try
+to check out files when you are in a subdirectory, such
+as @file{/usr/local/cvsroot/test}.  However, there is a
+more subtle cause, which is that the temporary
+directory on the server is set to a subdirectory of the
+root (which is also not allowed).  If this is the
+problem, set the temporary directory to somewhere else,
+for example @file{/var/tmp}; see @code{TMPDIR} in
+@ref{Environment variables}, for how to set the
+temporary directory.
+
 @c For one example see basica-1a10 in the testsuite
 @c For another example, "cvs co ." on NT; see comment
 @c at windows-NT/filesubr.c (expand_wild).
