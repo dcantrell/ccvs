@@ -1,6 +1,8 @@
 2002-08-12  Derek Price  <oberon@umich.edu>
 
 	* configure.in: Move ftruncate from AC_CHECK_FUNC to AC_REPLACE_FUNC.
+	(Symptoms reported by
+	Andrey Aristarkhov <Aristarkhov@bitechnology.ru>.)
 	* aclocal.m4: Regenerated.
 	* configure: Ditto.
 
