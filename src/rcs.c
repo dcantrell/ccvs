@@ -1856,12 +1856,14 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 	        error (1, errno, "cannot write %s", workfile);
 
 	    if (workfile != NULL)
+	    {
 	        if (fclose (ofp) < 0)
 		    error (1, errno, "cannot close %s", workfile);
-
-	    if (chmod (workfile,
-		       sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
-	        error (0, errno, "cannot change mode of file %s", workfile);
+	        if (chmod (workfile,
+			   sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
+		    error (0, errno, "cannot change mode of file %s",
+			   workfile);
+	    }
 
 	    return 0;
 	}

@@ -1,3 +1,7 @@
+Tue May 14 10:56:56 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (RCS_fast_checkout): If workfile is NULL, don't call chmod.
+
 Sat May 11 18:57:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Comment out test basica-9 until I get around to
