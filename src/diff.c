@@ -59,9 +59,10 @@ static int empty_files = 0;
    --ifdef and --context, but rcsdiff only does if diff does).  */
 static const char *const diff_usage[] =
 {
-    "Usage: %s %s [-lN] [rcsdiff-options]\n",
+    "Usage: %s %s [-lNR] [rcsdiff-options]\n",
     "    [[-r rev1 | -D date1] [-r rev2 | -D date2]] [files...] \n",
     "\t-l\tLocal directory only, not recursive\n",
+    "\t-R\tProcess directories recursively.\n",
     "\t-D d1\tDiff revision for date against working file.\n",
     "\t-D d2\tDiff rev1/date1 against date2.\n",
     "\t-N\tinclude diffs for added and removed files.\n",

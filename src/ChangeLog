@@ -1,3 +1,9 @@
+4 May 1997  Larry jones  <larry.jones@sdrc.com>
+	    and Jim Kingdon
+
+	* checkout.c, diff.c, patch.c, rcs.c: Update usage messages.
+	* rcs.c (annotate): Add -R like other things with -l.
+
 Sat May  3 14:57:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basic1): Rewrite test (use dotest, unroll the loops
