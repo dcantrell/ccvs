@@ -561,7 +561,7 @@ if test x"$*" = x; then
 	tests="${tests} sticky keyword keywordlog"
 	tests="${tests} toplevel head tagdate multibranch2"
 	tests="${tests} admin reserved"
-	tests="${tests} cvsadm diffmerge1 diffmerge2"
+	tests="${tests} cvsadm diffmerge1 diffmerge2 abspath"
 else
 	tests="$*"
 fi
@@ -10069,7 +10069,7 @@ U top-dir/file1"
 	  chmod -w ../1
 	  # Now see whether CVS has trouble because it can't create CVS.
 	  dotest toplevel-12 "${testcvs} co top-dir" \
-"${PROG} [a-z]*: warning: cannot make directory ./CVS: Permission denied
+"${PROG} [a-z]*: warning: cannot make directory ./CVS in ${TESTDIR}/1
 ${PROG} [a-z]*: Updating top-dir"
 	  chmod +w ../1
 
@@ -13443,6 +13443,151 @@ d472 12
 	  # This is the one that counts -- there should be no output:
 	  dotest diffmerge2_diff \
 	    "${testcvs} diff -r Review_V1p3 sgrid.h" ''
+
+	  ;;
+
+	abspath)
+	
+	  # These tests test the thituations thin thwitch thoo theck
+	  # things thout twith thabsolute thaths.  Threally.
+
+	  #
+	  # CHECKOUTS
+	  #
+
+	  # Create a few modules to use
+	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod2
+	  dotest abspath-1a "${testcvs} co mod1 mod2" \
+"${PROG} [a-z]*: Updating mod1
+${PROG} [a-z]*: Updating mod2"
+
+	  # Populate the module
+	  echo "file1" > mod1/file1
+	  echo "file2" > mod2/file2
+	  dotest abspath-1b "${testcvs} add mod1/file1 mod2/file2" \
+"${PROG} [a-z]*: scheduling file .mod1/file1. for addition
+${PROG} [a-z]*: scheduling file .mod2/file2. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+
+	  dotest abspath-1c "${testcvs} ci -m yup mod1 mod2" \
+"${PROG} [a-z]*: Examining mod1
+${PROG} [a-z]*: Examining mod2
+RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
+done
+Checking in mod1/file1;
+${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: ${CVSROOT_DIRNAME}/mod2/file2,v
+done
+Checking in mod2/file2;
+${CVSROOT_DIRNAME}/mod2/file2,v  <--  file2
+initial revision: 1.1
+done"
+	  # Finished creating the module -- clean up.
+	  rm -rf CVS mod1 mod2
+	  # Done.
+	  
+	  # Try checking out the module in a local directory
+	  dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1
+U ${TESTDIR}/1/file1"
+
+	  # Are we relative or absolute in our Repository file?
+	  echo "${CVSROOT_DIRNAME}/mod1" > ${TESTDIR}/dotest.abs
+	  echo "mod1" > ${TESTDIR}/dotest.rel
+	  if cmp ${TESTDIR}/dotest.abs ${TESTDIR}/1/CVS/Repository >/dev/null 2>&1; then
+	    AREP="${CVSROOT_DIRNAME}/"
+	  elif cmp ${TESTDIR}/dotest.rel ${TESTDIR}/1/CVS/Repository >/dev/null 2>&1; then
+	    AREP=""
+	  else
+	    fail "Cannot figure out if RELATIVE_REPOS is defined."
+	  fi
+	  rm -f ${TESTDIR}/dotest.rel ${TESTDIR}/dotest.abs
+
+	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" \
+"${AREP}mod1"
+
+	  # Done.  Clean up.
+	  rm -rf ${TESTDIR}/1
+
+
+	  # Now try in a subdirectory.  We're not covering any more
+	  # code here, but we might catch a future error if someone
+	  # changes the checkout code.
+	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1/2
+U ${TESTDIR}/1/2/file1"
+	  dotest abspath-3b "cat ${TESTDIR}/1/2/CVS/Repository" \
+"${AREP}mod1"
+	  # Done.  Clean up.
+	  rm -rf ${TESTDIR}/1
+
+
+	  # Now try someplace where we don't have permission (we're
+	  # not supposed to run this as root, right?
+	  dotest_fail abspath-4 "${testcvs} co -d /barf mod1" \
+"${PROG} \[[a-z]* aborted\]: cannot make directory /barf: No such file or directory"
+	  # Done.  Nothing to clean up.
+
+
+	  # Try checking out two modules into the same directory.
+	  dotest abspath-5a "${testcvs} co -d ${TESTDIR}/1 mod1 mod2" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1/mod1
+U ${TESTDIR}/1/mod1/file1
+${PROG} [a-z]*: Updating ${TESTDIR}/1/mod2
+U ${TESTDIR}/1/mod2/file2"
+	  dotest abspath-5b "cat ${TESTDIR}/1/CVS/Repository" \
+"${AREP}."
+	  dotest abspath-5c "cat ${TESTDIR}/1/mod1/CVS/Repository" \
+"${AREP}mod1"
+	  dotest abspath-5d "cat ${TESTDIR}/1/mod2/CVS/Repository" \
+"${AREP}mod2"
+	  # Done.  Clean up.
+	  rm -rf ${TESTDIR}/1
+
+
+	  # Try checking out the top-level module.
+	  dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1
+${PROG} [a-z]*: Updating ${TESTDIR}/1/CVSROOT
+U ${TESTDIR}/1/CVSROOT/checkoutlist
+U ${TESTDIR}/1/CVSROOT/commitinfo
+U ${TESTDIR}/1/CVSROOT/config
+U ${TESTDIR}/1/CVSROOT/cvswrappers
+U ${TESTDIR}/1/CVSROOT/editinfo
+U ${TESTDIR}/1/CVSROOT/loginfo
+U ${TESTDIR}/1/CVSROOT/modules
+U ${TESTDIR}/1/CVSROOT/notify
+U ${TESTDIR}/1/CVSROOT/rcsinfo
+U ${TESTDIR}/1/CVSROOT/taginfo
+U ${TESTDIR}/1/CVSROOT/verifymsg
+${PROG} [a-z]*: Updating ${TESTDIR}/1/mod1
+U ${TESTDIR}/1/mod1/file1
+${PROG} [a-z]*: Updating ${TESTDIR}/1/mod2
+U ${TESTDIR}/1/mod2/file2"
+	  dotest abspath-6b "cat ${TESTDIR}/1/CVS/Repository" \
+"${AREP}."
+	  dotest abspath-6c "cat ${TESTDIR}/1/CVSROOT/CVS/Repository" \
+"${AREP}CVSROOT"
+	  dotest abspath-6c "cat ${TESTDIR}/1/mod1/CVS/Repository" \
+"${AREP}mod1"
+	  dotest abspath-6d "cat ${TESTDIR}/1/mod2/CVS/Repository" \
+"${AREP}mod2"
+	  # Done.  Clean up.
+	  rm -rf ${TESTDIR}/1
+
+	  #
+	  # FIXME: do other functions here (e.g. update /tmp/foo)
+	  #
+
+	  # Finished with all tests.  Remove the module.
+	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod1
+
+	  # FIXME: the absolute pathname fixes create CVS directories
+	  # wherever they can.  That means for the standard TESTDIR, a
+	  # /tmp/CVS directory will be created as well.  It's not safe
+	  # to remove it, however.
 
 	  ;;
 

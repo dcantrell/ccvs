@@ -801,8 +801,8 @@ last_component (path)
     char *path;
 {
     char *last = strrchr (path, '/');
-
-    if (last)
+    
+    if (last && (last != path))
         return last + 1;
     else
         return path;

@@ -1,3 +1,28 @@
+Tue Feb 17 02:32:21 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	[These mods make "checkout" work with "-d /absolute/pathname"
+	once again.]
+	
+	* checkout.c (checkout_proc): the -d flag on the command line
+ 	should override the -d flag in the modules file if the latter is
+ 	an absolute path.  The loop that assembles the list of directories
+ 	to build has been reorganized slightly to prepare for rewriting
+ 	with last_component rather than assuming '/' as a path separator.
+  	Also added to that loop was some code to handle absolute
+ 	pathnames.
+	(build_dirs_and_chdir): add a new argument that tells this routine
+ 	whether or not to check before it creates and populates
+ 	directories or not.
+
+	* filesubr.c (last_component): return the top-level directory when
+ 	asked about the top-level directory.
+
+	* sanity.sh (toplevel-12): change test to reflect the new style of
+ 	this error message.
+
+	* create_adm.c (Create_Admin): include the directory in the error
+ 	message.
+	
 1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff_fileproc), import.c (import, add_rcs_file), rcs.c

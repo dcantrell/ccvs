@@ -59,6 +59,12 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 
     if (CVS_MKDIR (tmp, 0777) < 0)
     {
+	/* It's useful to print out the entire pathname in the error
+           message, since a lot of our code calls this function with
+           dir == "." or dir == NULL. */
+
+	char *wd = xgetwd ();
+
 	if (warn)
 	{
 	    /* The reason that this is a warning, rather than silently
@@ -66,11 +72,14 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn)
 	       CVS's behavior to vary subtly based on factors (like directory
 	       permissions) which are not made clear to the user.  With
 	       the warning at least we let them know what is going on.  */
-	    error (0, errno, "warning: cannot make directory %s", tmp);
+	    error (0, errno, "warning: cannot make directory %s in %s",
+		   tmp, wd);
+	    free (wd);
+	    free (tmp);
 	    return 1;
 	}
 	else
-	    error (1, errno, "cannot make directory %s", tmp);
+	    error (1, errno, "cannot make directory %s in %s", tmp, wd);
     }
 
     /* record the current cvs root for later use */
