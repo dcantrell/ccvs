@@ -52,12 +52,9 @@ admin (argc, argv)
      /* skip usage right check if group CVS_ADMIN_GROUP does not exist */
     if (grp != NULL)
     {
-	char *me = getlogin();
+	char *me = getcaller();
 	char **grnam = grp->gr_mem;
 	int denied = 1;
-	
-	if (me == NULL) 
-	    me = getpwuid(getuid())->pw_name;
 	
 	while (*grnam)
 	{
