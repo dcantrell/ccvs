@@ -12,7 +12,9 @@
  */
 
 
-#include <config.h>		/* this is stuff found via autoconf */
+#ifdef HAVE_CONFIG_H
+# include <config.h>		/* this is stuff found via autoconf */
+#endif /* CONFIG_H */
 #include "options.h"		/* these are some larger questions which
 				   can't easily be automatically checked
 				   for */
