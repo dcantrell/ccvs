@@ -17,7 +17,12 @@
 
 extern int fnmatch(char *pattern, char *string, int options);
 
+/* With the define of HAVE_NDIR_H in config.h, lib/system.h and
+   diff/system.h should include ndir.h for us.  But I'm too lazy to
+   track down and make _sure_ all bases are covered, so I'm leaving in
+   this include for now.  */
 #include "ndir.h"
+
 #include "pwd.h"
 #include "pipe.h"
 
