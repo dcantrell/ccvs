@@ -1,3 +1,10 @@
+Fri Sep 13 23:55:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Magic branch numbers): Delete song and dance about
+	how cvs log can't cope with magic branches because rlog doesn't
+	know about them; cvs log no longer calls rlog.  Delete item about
+	how you can't specify a symbolic branch to cvs log; that is fixed.
+
 Wed Sep 11 22:48:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication server): Add comments
