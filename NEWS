@@ -1,5 +1,12 @@
 Changes from 1.5 to the present:
 
+* "cvs update", "cvs rdiff", "cvs checkout", "cvs import", "cvs
+release", "cvs rtag", and "cvs tag" used to take -q and -Q options
+after the command name (e.g. "cvs update -q").  This was confusing
+because other commands, such as "cvs ci", did not.  So the options
+after the command name have been removed and you must now specify, for
+example, "cvs -q update", which has been supported since CVS 1.3.
+
 * New "wrappers" feature.  This allows you to set a hook which
 transforms files on their way in and out of cvs (apparently on the
 NeXT there is some particular usefulness in tarring things up in the
