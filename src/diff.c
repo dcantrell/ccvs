@@ -386,6 +386,8 @@ diff (argc, argv)
 
     /* clean up */
     free (options);
+    options = NULL;
+
     return (err);
 }
 

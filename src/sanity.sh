@@ -581,6 +581,8 @@ if test x"$*" = x; then
 	tests="${tests} admin reserved"
 	# Nuts and bolts of diffing/merging (diff library, &c)
 	tests="${tests} diffmerge1 diffmerge2"
+	# Multiple root directories
+	tests="${tests} multiroot"
 else
 	tests="$*"
 fi
@@ -11561,7 +11563,7 @@ U first-dir/file1"
 "${PROG} [a-z]*: Updating crerepos-dir
 U crerepos-dir/cfile"
 
-	  if test x`cat crerepos-dir/CVS/Repository` = xcrerepos-dir; then
+  	  if test x`cat crerepos-dir/CVS/Repository` = xcrerepos-dir; then
 	    # RELATIVE_REPOS
 	    # Fatal error so that we don't go traipsing through the
 	    # directories which happen to have the same names from the
@@ -11575,15 +11577,25 @@ U crerepos-dir/cfile"
 	      # history file and such).
 	      dotest crerepos-18 "${testcvs} -q update" ''
 	    else
-	      # Fatal error so that we don't go traipsing through the
-	      # directories which happen to have the same names from the
-	      # wrong repository.
-	      dotest_fail crerepos-18 "${testcvs} -q update" \
-"protocol error: directory .${TESTDIR}/crerepos/crerepos-dir. not within root .${TESTDIR}/cvsroot."
+	      # Now that we have multiroot support, this command will
+	      # work (the client will make two separate connections
+	      # for the two directories (each has a different
+	      # repository).  FIXME: write some code to not send both
+	      # arguments to each cvs server for each connection.
+	      # Ideally we only send the appropriate directories to
+	      # each repository.
+	      dotest crerepos-18 "${testcvs} -q update" \
+"cvs server: nothing known about crerepos-dir
+cvs server: nothing known about first-dir"
 	    fi
 	  fi
 
 	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
 
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/crerepos
@@ -15494,6 +15506,297 @@ d472 12
 	  cd ..
 	  rm -rf diffmerge2
 	  rm -rf ${CVSROOT_DIRNAME}/diffmerge2
+	  ;;
+	  
+	multiroot)
+	
+	  #
+	  # set up two repositories
+	  #
+
+	  CVSROOT1_DIRNAME=${TESTDIR}/root1
+	  CVSROOT2_DIRNAME=${TESTDIR}/root2
+	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
+	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
+	  if test "x$remote" = xyes; then
+	      CVSROOT1=:ext:`hostname`:${CVSROOT1_DIRNAME} ; export CVSROOT1
+	      CVSROOT2=:ext:`hostname`:${CVSROOT2_DIRNAME} ; export CVSROOT2
+	  fi
+	  testcvs1="${testcvs} -d ${CVSROOT1}"
+	  testcvs2="${testcvs} -d ${CVSROOT2}"
+
+	  dotest multiroot-setup-1 "mkdir ${CVSROOT1_DIRNAME} ${CVSROOT2_DIRNAME}" ""
+	  dotest multiroot-setup-2 "${testcvs1} init" ""
+	  dotest multiroot-setup-3 "${testcvs2} init" ""
+
+	  #
+	  # create some modules in root1
+	  #
+	  mkdir 1; cd 1
+	  dotest multiroot-setup-4 "${testcvs1} co -l ." "${PROG} [a-z]*: Updating ."
+	  mkdir mod1-1 mod1-2
+	  dotest multiroot-setup-5 "${testcvs1} add mod1-1 mod1-2" \
+"Directory ${CVSROOT1_DIRNAME}/mod1-1 added to the repository
+Directory ${CVSROOT1_DIRNAME}/mod1-2 added to the repository"
+	  echo file1-1 > mod1-1/file1-1
+	  echo file1-2 > mod1-2/file1-2
+	  dotest multiroot-setup-6 "${testcvs1} add mod1-1/file1-1 mod1-2/file1-2" \
+"${PROG} [a-z]*: scheduling file .mod1-1/file1-1. for addition
+${PROG} [a-z]*: scheduling file .mod1-2/file1-2. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+	  dotest multiroot-setup-7 "${testcvs1} commit -m is" \
+"${PROG} [a-z]*: Examining \.
+${PROG} [a-z]*: Examining mod1-1
+${PROG} [a-z]*: Examining mod1-2
+RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+done
+Checking in mod1-1/file1-1;
+${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
+initial revision: 1.1
+done
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+done
+Checking in mod1-2/file1-2;
+${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
+initial revision: 1.1
+done"
+	  cd ..
+	  rm -rf 1
+
+	  #
+	  # create some modules in root2
+	  #
+	  mkdir 1; cd 1
+	  dotest multiroot-setup-8 "${testcvs2} co -l ." "${PROG} [a-z]*: Updating ."
+	  mkdir mod2-1 mod2-2
+	  dotest multiroot-setup-9 "${testcvs2} add mod2-1 mod2-2" \
+"Directory ${CVSROOT2_DIRNAME}/mod2-1 added to the repository
+Directory ${CVSROOT2_DIRNAME}/mod2-2 added to the repository"
+	  echo file2-1 > mod2-1/file2-1
+	  echo file2-2 > mod2-2/file2-2
+	  dotest multiroot-setup-6 "${testcvs2} add mod2-1/file2-1 mod2-2/file2-2" \
+"${PROG} [a-z]*: scheduling file .mod2-1/file2-1. for addition
+${PROG} [a-z]*: scheduling file .mod2-2/file2-2. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+	  dotest multiroot-setup-10 "${testcvs2} commit -m anyone" \
+"${PROG} [a-z]*: Examining \.
+${PROG} [a-z]*: Examining mod2-1
+${PROG} [a-z]*: Examining mod2-2
+RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+done
+Checking in mod2-1/file2-1;
+${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  file2-1
+initial revision: 1.1
+done
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+done
+Checking in mod2-2/file2-2;
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  file2-2
+initial revision: 1.1
+done"
+	  cd ..
+	  rm -rf 1
+
+	  # check out a few directories, from simple/shallow to
+	  # complex/deep
+	  mkdir 1; cd 1
+	  
+	  dotest multiroot-setup-11 "${testcvs1} co mod1-1 mod1-2" \
+"${PROG} [a-z]*: Updating mod1-1
+U mod1-1/file1-1
+${PROG} [a-z]*: Updating mod1-2
+U mod1-2/file1-2"
+	  dotest multiroot-setup-12 "${testcvs2} co mod2-1 mod2-2" \
+"${PROG} [a-z]*: Updating mod2-1
+U mod2-1/file2-1
+${PROG} [a-z]*: Updating mod2-2
+U mod2-2/file2-2"
+	  cd mod1-2
+	  dotest multiroot-setup-13 "${testcvs2} co mod2-2" \
+"${PROG} [a-z]*: Updating mod2-2
+U mod2-2/file2-2"
+	  cd ..
+	  cd mod2-2
+	  dotest multiroot-setup-14 "${testcvs1} co mod1-2" \
+"${PROG} [a-z]*: Updating mod1-2
+U mod1-2/file1-2"
+	  cd ..
+
+	  # Try to determine whether RELATIVE_REPOS is defined
+	  # so that we can make the following a lot less
+	  # verbose.
+
+	  echo "${CVSROOT1_DIRNAME}/mod1-1" > dotest.abs
+	  echo "mod1-1" > dotest.rel
+	  if cmp dotest.abs mod1-1/CVS/Repository >/dev/null 2>&1; then
+	    AREP1="${CVSROOT1_DIRNAME}/"
+	    AREP2="${CVSROOT2_DIRNAME}/"
+	  elif cmp dotest.rel mod1-1/CVS/Repository >/dev/null 2>&1; then
+	    AREP1=""
+	    AREP2=""
+	  else
+	    fail "Cannot figure out if RELATIVE_REPOS is defined."
+	  fi
+	  rm -f dotest.abs dotest.rel
+
+	  #
+	  # Make sure that the Root and Repository files contain the
+	  # correct information.
+	  #
+	  dotest multiroot-cvsadm-1a "cat mod1-1/CVS/Root" "${CVSROOT1}"
+	  dotest multiroot-cvsadm-1b "cat mod1-1/CVS/Repository" "${AREP1}mod1-1"
+	  dotest multiroot-cvsadm-2a "cat mod2-1/CVS/Root" "${CVSROOT2}"
+	  dotest multiroot-cvsadm-2b "cat mod2-1/CVS/Repository" "${AREP2}mod2-1"
+	  dotest multiroot-cvsadm-3a "cat mod1-2/CVS/Root" "${CVSROOT1}"
+	  dotest multiroot-cvsadm-3b "cat mod1-2/CVS/Repository" "${AREP1}mod1-2"
+	  dotest multiroot-cvsadm-3c "cat mod1-2/mod2-2/CVS/Root" "${CVSROOT2}"
+	  dotest multiroot-cvsadm-3d "cat mod1-2/mod2-2/CVS/Repository" "${AREP2}mod2-2"
+	  dotest multiroot-cvsadm-4a "cat mod2-2/CVS/Root" "${CVSROOT2}"
+	  dotest multiroot-cvsadm-4b "cat mod2-2/CVS/Repository" "${AREP2}mod2-2"
+	  dotest multiroot-cvsadm-4c "cat mod2-2/mod1-2/CVS/Root" "${CVSROOT1}"
+	  dotest multiroot-cvsadm-4d "cat mod2-2/mod1-2/CVS/Repository" "${AREP1}mod1-2"
+
+	  #
+	  # Start testing various cvs commands.  Begin with commands
+	  # without extra arguments (e.g. "cvs update", "cvs diff",
+	  # etc.
+	  #
+
+	  # Do at least one command with both CVSROOTs to make sure
+	  # that there's not some kind of unexpected dependency on the
+	  # choice of which CVSROOT is specified on the command line.
+
+	  dotest multiroot-update-1a "${testcvs1} update" \
+"${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2"
+	  dotest multiroot-update-1b "${testcvs2} update" \
+"${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2"
+
+	  # modify all files and do a diff
+
+	  echo bobby >> mod1-1/file1-1
+	  echo brown >> mod1-2/file1-2
+	  echo goes >> mod2-1/file2-1
+	  echo down >> mod2-2/file2-2
+
+	  dotest_status multiroot-diff-1 1 "${testcvs1} diff" \
+"${PROG} [a-z]*: Diffing mod1-1
+Index: mod1-1/file1-1
+===================================================================
+RCS file: /tmp/cvs-sanity/root1/mod1-1/file1-1,v
+retrieving revision 1\.1
+diff -r1\.1 file1-1
+1a2
+> bobby
+${PROG} [a-z]*: Diffing mod1-2
+Index: mod1-2/file1-2
+===================================================================
+RCS file: /tmp/cvs-sanity/root1/mod1-2/file1-2,v
+retrieving revision 1\.1
+diff -r1\.1 file1-2
+1a2
+> brown
+${PROG} [a-z]*: Diffing mod2-2/mod1-2
+${PROG} [a-z]*: Diffing mod1-2/mod2-2
+${PROG} [a-z]*: Diffing mod2-1
+Index: mod2-1/file2-1
+===================================================================
+RCS file: /tmp/cvs-sanity/root2/mod2-1/file2-1,v
+retrieving revision 1\.1
+diff -r1\.1 file2-1
+1a2
+> goes
+${PROG} [a-z]*: Diffing mod2-2
+Index: mod2-2/file2-2
+===================================================================
+RCS file: /tmp/cvs-sanity/root2/mod2-2/file2-2,v
+retrieving revision 1\.1
+diff -r1\.1 file2-2
+1a2
+> down"
+
+	  dotest multiroot-commit-1 "${testcvs1} commit -m actually" \
+"${PROG} [a-z]*: Examining mod1-1
+${PROG} [a-z]*: Examining mod1-2
+${PROG} [a-z]*: Examining mod2-2/mod1-2
+Checking in mod1-1/file1-1;
+/tmp/cvs-sanity/root1/mod1-1/file1-1,v  <--  file1-1
+new revision: 1.2; previous revision: 1.1
+done
+Checking in mod1-2/file1-2;
+/tmp/cvs-sanity/root1/mod1-2/file1-2,v  <--  file1-2
+new revision: 1.2; previous revision: 1.1
+done
+${PROG} [a-z]*: Examining mod1-2/mod2-2
+${PROG} [a-z]*: Examining mod2-1
+${PROG} [a-z]*: Examining mod2-2
+Checking in mod2-1/file2-1;
+/tmp/cvs-sanity/root2/mod2-1/file2-1,v  <--  file2-1
+new revision: 1.2; previous revision: 1.1
+done
+Checking in mod2-2/file2-2;
+/tmp/cvs-sanity/root2/mod2-2/file2-2,v  <--  file2-2
+new revision: 1.2; previous revision: 1.1
+done"
+
+	  dotest multiroot-update-2 "${testcvs2} update" \
+"${PROG} [a-z]*: Updating mod1-2/mod2-2
+U mod1-2/mod2-2/file2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+U mod2-2/mod1-2/file1-2"
+
+	  dotest multiroot-tag-1 "${testcvs1} tag cattle" \
+"${PROG} [a-z]*: Tagging mod1-1
+T mod1-1/file1-1
+${PROG} [a-z]*: Tagging mod1-2
+T mod1-2/file1-2
+${PROG} [a-z]*: Tagging mod2-2/mod1-2
+${PROG} [a-z]*: Tagging mod1-2/mod2-2
+T mod1-2/mod2-2/file2-2
+${PROG} [a-z]*: Tagging mod2-1
+T mod2-1/file2-1
+${PROG} [a-z]*: Tagging mod2-2"
+
+	  echo anotherfile1-1 > mod1-1/anotherfile1-1
+	  echo anotherfile2-1 > mod2-1/anotherfile2-1
+	  echo anotherfile1-2 > mod2-2/mod1-2/anotherfile1-2
+	  echo anotherfile2-2 > mod1-2/mod2-2/anotherfile2-2
+
+	  dotest multiroot-add-1 "${testcvs1} add mod1-1/anotherfile1-1 mod2-1/anotherfile2-1 mod2-2/mod1-2/anotherfile1-2 mod1-2/mod2-2/anotherfile2-2" \
+"${PROG} [a-z]*: scheduling file .mod1-1/anotherfile1-1. for addition
+${PROG} [a-z]*: scheduling file .mod2-1/anotherfile2-1. for addition
+${PROG} [a-z]*: scheduling file .mod2-2/mod1-2/anotherfile1-2. for addition
+${PROG} [a-z]*: scheduling file .mod1-2/mod2-2/anotherfile2-2. for addition
+${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
+
+	  # After the simple cases, let's execute some commands which
+	  # refer to parts of our checked-out tree (e.g. "cvs update
+	  # mod1-1 mod2-2")
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  # clean up after ourselves
+	  cd ..
+	  rm -rf 
+	  
+	  # clean up our repositories
+	  rm -rf root1 root2
 	  ;;
 
 	*)
