@@ -696,3 +696,8 @@ To make that example work, we need to think hard about:
   - who caches said variables for later use
   - how the remote protocol should be extended to handle sending a new
     repository mid-stream
+  - how the client should maintain connections to a variety of servers
+    in a single invocation.
+
+Because those issues are hairy, I suspect that having a change in
+CVSROOT be an error would be a better move.
