@@ -1,5 +1,10 @@
 2004-08-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (TIMING): Make this work when not in $remotehost mode.
+	(reserved-13b): Use sorted output.
+
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c: Improve comments.
 
 2004-08-02  Derek Price  <derek@ximbiot.com>
