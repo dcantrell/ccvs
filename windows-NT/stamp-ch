@@ -253,9 +253,6 @@ extern int readlink (char *path, char *buf, int buf_size);
 /* This is just a call to GetCurrentProcessID.  */
 extern pid_t getpid (void);
 
-/* We definitely have prototypes.  */
-#define PROTOTYPES 1
-
 /* This is just a call to the Win32 Sleep function.  */
 unsigned int sleep (unsigned int);
 /* So is this */

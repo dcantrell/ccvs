@@ -1,3 +1,7 @@
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
+	* stamp-ch: Regenerated.
+
 2003-07-17  Larry Jones  <lawrence.jones@eds.com>
 
 	* config.h.in (PROTOTYPES): Remove as per config.h.
