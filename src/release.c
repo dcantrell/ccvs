@@ -155,7 +155,7 @@ release (argc, argv)
 		   key.dptr, val.dptr);
 	    continue;
 	}
-	if (strcmp (*margv, srepos))
+	if (fncmp (*margv, srepos))
 	{
 	    error (0, 0, "repository mismatch: module[%s], here[%s]",
 		   *margv, srepos);
