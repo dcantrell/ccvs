@@ -4046,7 +4046,7 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
 		 * can return 1 and we will not receive "I LOVE YOU" from the server, barring
 		 * broken connections and garbled messages, of course).
 		 *
-		 * i.e. This is a pserver specific error message and shoiuld be since
+		 * i.e. This is a pserver specific error message and should be since
 		 * GSSAPI doesn't use username.
 		 */
 		error (0, 0,
