@@ -5748,8 +5748,9 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 			cvs_output (ym - 2, 2);
 		    }
 		    cvs_output ("): ", 0);
-		    cvs_output (headlines.vector[ln]->text,
-				headlines.vector[ln]->len);
+		    if (headlines.vector[ln]->len != 0)
+			cvs_output (headlines.vector[ln]->text,
+				    headlines.vector[ln]->len);
 		    cvs_output ("\n", 1);
 		}
 	    }
