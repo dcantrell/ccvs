@@ -1,5 +1,7 @@
 2001-07-05  Larry Jones  <larry.jones@sdrc.com>
 
+	* buffer.c: #include socket header to declare shutdown().
+
 	* rcs.c (rcsbuf_open): Use getpagesize() instead of sysconf() for
 	portability.
 	(RCS_copydeltas, rcsbuf_fill): Fix -Wall warnings.

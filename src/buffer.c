@@ -6,6 +6,12 @@
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
+#ifdef HAVE_WINSOCK_H
+# include <winsock.h>
+#else
+# include <sys/socket.h>
+#endif
+
 /* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
    a different error into EIO strikes me as pretty dubious.  */
 #if !defined (EIO)
