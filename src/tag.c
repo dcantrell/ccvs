@@ -161,6 +161,11 @@ tag (argc, argv)
 	if (force_tag_move)
 	    send_arg("-F");
 
+	if (numtag)
+	    option_with_arg ("-r", numtag);
+	if (date)
+	    client_senddate (date);
+
 	send_arg (symtag);
 
 #if 0
