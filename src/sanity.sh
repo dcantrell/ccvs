@@ -3605,9 +3605,9 @@ bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
 realmodule   first-dir/subdir a
+submodule    &first-dir
 topfiles     -a first-dir/file1 first-dir/file2
-world        -a .
-submodule    &first-dir'
+world        -a .'
 	  # I don't know why aliasmodule isn't printed (I would have thought
 	  # that it gets printed without the -a; although I'm not sure that
 	  # printing expansions without options is useful).
@@ -3823,6 +3823,7 @@ U first-dir/file2"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
 	mflag)
 	  for message in '' ' ' '	
            ' '    	  	test' ; do
@@ -4887,6 +4888,7 @@ Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done'
+	  # NOTE:  leadding newline required for some reason
 	  dotest log2-4 "${testcvs} log -N file1" '
 RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 Working file: file1
