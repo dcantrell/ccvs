@@ -1,5 +1,12 @@
 Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* expand_path.c (expand_variable): Fix typo ('*'->'(').
+
+Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (commit_filesdoneproc): Check for errors from fopen,
+	fgets, and fclose.
+
 	* rcscmds.c (RCS_merge): Remove comment about rcsmerge -E.
 	Hacking CVS was never a very good solution; the situation is fixed
 	in RCS 5.7, and is documented in ../INSTALL.

@@ -990,9 +990,9 @@ commit_filesdoneproc (err, repository, update_dir)
 	char line[MAXLINELEN];
 	char *repository;
 
-	/* It is not an error if Checkin.prog does not exist.  */
 	if ((fp = fopen (CVSADM_CIPROG, "r")) != NULL)
 	{
+	    /* FIXME--arbitrary limit.  */
 	    if (fgets (line, sizeof (line), fp) != NULL)
 	    {
 		if ((cp = strrchr (line, '\n')) != NULL)
@@ -1006,7 +1006,19 @@ commit_filesdoneproc (err, repository, update_dir)
 		(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 		free (repository);
 	    }
-	    (void) fclose (fp);
+	    else
+	    {
+		if (ferror (fp))
+		    error (0, errno, "warning: error reading %s",
+			   CVSADM_CIPROG);
+	    }
+	    if (fclose (fp) < 0)
+		error (0, errno, "warning: cannot close %s", CVSADM_CIPROG);
+	}
+	else
+	{
+	    if (errno != ENOENT)
+		error (0, errno, "warning: cannot open %s", CVSADM_CIPROG);
 	}
     }
 
