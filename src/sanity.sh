@@ -5864,11 +5864,11 @@ U file2"
 	  dotest tagf-28 "${testcvs} ci -m changes" \
 "${PROG} [a-z]*: Examining \.
 Checking in file1;
-/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.8\.1; previous revision: 1\.1
 done
 Checking in file2;
-/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
 new revision: 1\.1\.6\.1; previous revision: 1\.1
 done"
 	  # try intentional branch to non-branch (tag -F -B)
