@@ -465,6 +465,11 @@ char *getwd ();
 #define CVS_UNLINK unlink
 #endif
 
+/* Wildcard matcher.  Should be case-insensitive if the system is.  */
+#ifndef CVS_FNMATCH
+#define CVS_FNMATCH fnmatch
+#endif
+
 /* Some file systems are case-insensitive.  If FOLD_FN_CHAR is
    #defined, it maps the character C onto its "canonical" form.  In a
    case-insensitive system, it would map all alphanumeric characters
