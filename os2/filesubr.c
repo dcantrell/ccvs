@@ -246,6 +246,7 @@ make_directories (name)
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Adding write permissions honors the current umask
  * setting.
+ * todo: I'm not sure what this might mean under OS/2
  */
 void
 xchmod (fname, writable)
@@ -290,65 +291,13 @@ xchmod (fname, writable)
 
 
 /* Read the value of a symbolic link.
-   Under Windows NT, this function always returns EINVAL.  */
+   Under OS/2, this function always returns EINVAL.  */
 int
 readlink (char *path, char *buf, int buf_size)
 {
     errno = EINVAL;
     return -1;
 }
-
-/*
- * Rename a file and die if it fails
- */
-void
-rename_file (from, to)
-    const char *from;
-    const char *to;
-{
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
-#endif
-    if (noexec)
-	return;
-
-    /* Win32 unlink is stupid --- it fails if the file is read-only  */
-    chmod(to, S_IWRITE);
-    unlink(to);
-    if (rename (from, to) < 0)
-	error (1, errno, "cannot rename file %s to %s", from, to);
-}
-
-/* Windows NT doesn't have hard links or symbolic links.
-   There was only one place in CVS which used this function,
-   so I rewrote it to work another way, so this function isn't
-   used any more.  */
-#if 0
-/*
- * link a file, if possible.
- */
-int
-link_file (from, to)
-    const char *from;
-    const char *to;
-{
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> link(%s,%s)\n",
-			(server_active) ? 'S' : ' ', from, to);
-#else
-	(void) fprintf (stderr, "-> link(%s,%s)\n", from, to);
-#endif
-    if (noexec)
-	return (0);
-
-    return (link (from, to));
-}
-#endif
 
 /*
  * unlink a file, if possible.
@@ -468,6 +417,31 @@ deep_remove_dir (path)
     return 0;
 }
 
+
+/*
+ * Rename a file and die if it fails
+ */
+void
+rename_file (from, to)
+    const char *from;
+    const char *to;
+{
+    if (trace)
+#ifdef SERVER_SUPPORT
+	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
+			(server_active) ? 'S' : ' ', from, to);
+#else
+	(void) fprintf (stderr, "-> rename(%s,%s)\n", from, to);
+#endif
+    if (noexec)
+	return;
+
+    unlink_file (to);
+    if (rename (from, to) < 0)
+	error (1, errno, "cannot rename file %s to %s", from, to);
+}
+
+
 /* Read NCHARS bytes from descriptor FD into BUF.
    Return the number of characters successfully read.
    The number returned is always NCHARS unless end-of-file or error.  */
@@ -570,10 +544,13 @@ xcmp (file1, file2)
 
 
 /* The equivalence class mapping for filenames.
-   Windows NT filenames are case-insensitive, but case-preserving.
-   Both / and \ are path element separators.
+   OS/2 filenames are case-insensitive, but case-preserving.  Both /
+   and \ are path element separators. 
    Thus, this table maps both upper and lower case to lower case, and
-   both / and \ to /.  */
+   both / and \ to /.  
+
+   Much thanks to Jim Blandy, who already invented this wheel in the
+   Windows NT port. */
 
 #if 0
 main ()
@@ -602,7 +579,7 @@ main ()
 
 
 unsigned char
-WNT_filename_classes[] =
+OS2_filename_classes[] =
 {
     0x00,0x01,0x02,0x03, 0x04,0x05,0x06,0x07,
     0x08,0x09,0x0a,0x0b, 0x0c,0x0d,0x0e,0x0f,
@@ -639,17 +616,17 @@ WNT_filename_classes[] =
 };
 
 /* Like strcmp, but with the appropriate tweaks for file names.
-   Under Windows NT, filenames are case-insensitive but case-preserving,
-   and both \ and / are path element separators.  */
+   Under OS/2, filenames are case-insensitive but case-preserving, and
+   both \ and / are path element separators.  */ 
 int
 fncmp (const char *n1, const char *n2)
 {
     while (*n1 && *n2
-           && (WNT_filename_classes[(unsigned char) *n1]
-	       == WNT_filename_classes[(unsigned char) *n2]))
+           && (OS2_filename_classes[(unsigned char) *n1]
+	       == OS2_filename_classes[(unsigned char) *n2]))
         n1++, n2++;
-    return (WNT_filename_classes[(unsigned char) *n1]
-            - WNT_filename_classes[(unsigned char) *n1]);
+    return (OS2_filename_classes[(unsigned char) *n1]
+            - OS2_filename_classes[(unsigned char) *n1]);
 }
 
 /* Fold characters in FILENAME to their canonical forms.  

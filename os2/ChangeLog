@@ -7,7 +7,14 @@ Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         nonempty.  We ain't got ENOTEMPTY in OS/2.
         (that_swing): removed references.  We ain't got that_swing in
         OS/2.
-        
+        (rename_file): just use unlink_file(); move to after definition of
+        unlink_file() so we don't have to deal with IBM C/C++'s strange
+        prototyping rituals.
+        (link_file): removed this function -- no one uses it anymore.
+        It still exists in src/filesubr.c, though.
+        (OS2_filename_classes): new table (well, old table, new name).
+        All references changed.
+
         * config.h (HAVE_SYS_UTIME_H): define to 1.
 
         * options.h: undef SETXID_SUPPORT, to correspond with Norbert
