@@ -62,8 +62,8 @@ AC_CACHE_VAL(ccvs_cv_sys_working_fnmatch,
 int
 main ()
 {
-  exit ((fnmatch ("a", "a", FNM_FILE_NAME) == 0
-	 && fnmatch ("a", "b", FNM_FILE_NAME) == FNM_NOMATCH)
+  exit ((fnmatch ("a", "a", FNM_PATHNAME) == 0
+	 && fnmatch ("a", "b", FNM_PATHNAME) == FNM_NOMATCH)
 	? 0 : 1);
 }],
 ccvs_cv_sys_working_fnmatch=yes,
