@@ -1,3 +1,8 @@
+2001-05-21  Derek Price  <dprice@collab.net>
+
+	* cvs.1: Correct a quoting error.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>).
+
 2001-05-18  Derek Price  <dprice@collab.net>
 
 	* cvs.1: Add note about 'P' file status from update.
