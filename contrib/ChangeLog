@@ -1,8 +1,7 @@
-2003-03-24  Derek Price  <derek@ximbiot.com>
+2003-04-09  Derek Price  <derek@ximbiot.com>
 
-	* Makefile.am: Update copyright notice.
-
-	* Makefile.in: Regenerated.
+	* check_cvs.in: Update for usability.  Add help text.  Add standard
+	GNU GPL disclaimer to avoid being sued.
 
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
