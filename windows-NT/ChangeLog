@@ -1,3 +1,9 @@
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Add "inline" & "SIZE_MAX" macros for "xsize.h" header.
+	* config.h: Regenerated for "config.h.in" change.
+	(Original patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Remove some files that are included by

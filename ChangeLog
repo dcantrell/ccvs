@@ -1,3 +1,11 @@
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Conrad's Windows fix.
+
+2004-06-21  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore GPG signature files for distributions.
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note manual update.
