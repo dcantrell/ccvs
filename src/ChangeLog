@@ -1,3 +1,13 @@
+2001-05-31  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (rcs2-7): Add today to the list of failure dates for rcs2-7
+	in the hopes that the data will eventually prove useful to someone
+	motivated enough to fix the problem.
+
+2001-05-30  Derek Price  <dprice@collab.net>
+
+	* stamp-h2.in: Regenerated.
+
 2001-05-30  Derek Price  <dprice@collab.net>
 
 	* *: Various bug fixes and comments for the following
