@@ -17,6 +17,9 @@
 #include "buffer.h"
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
+
+#include "gssapi-client.h"
+
 # ifdef HAVE_GSSAPI
 /* This stuff isn't included solely with SERVER_SUPPORT since some of these
  * functions (encryption & the like) get compiled with or without server
@@ -38,13 +41,6 @@ static void gserver_authenticate_connection PROTO((void));
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
 
-#   ifdef ENCRYPTION
-/* Whether to encrypt GSSAPI communication.  We use a global variable
-   like this because we use the same buffer type (gssapi_wrap) to
-   handle both authentication and encryption, and we don't want
-   multiple instances of that buffer in the communication stream.  */
-int cvs_gssapi_encrypt;
-#   endif
 # endif	/* HAVE_GSSAPI */
 #endif	/* defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT) */
 
@@ -5974,131 +5970,6 @@ int cvsencrypt;
 /* This global variable is non-zero if the users requests stream
    authentication on the command line.  */
 int cvsauthenticate;
-
-#ifdef HAVE_GSSAPI
-
-/* An buffer interface using GSSAPI.  This is built on top of a
-   packetizing buffer.  */
-
-/* This structure is the closure field of the GSSAPI translation
-   routines.  */
-
-struct cvs_gssapi_wrap_data
-{
-    /* The GSSAPI context.  */
-    gss_ctx_id_t gcontext;
-};
-
-static int cvs_gssapi_wrap_input PROTO((void *, const char *, char *, int));
-static int cvs_gssapi_wrap_output PROTO((void *, const char *, char *, int,
-					 int *));
-
-/* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
-   GSSAPI wrapping routines.  */
-
-struct buffer *
-cvs_gssapi_wrap_buffer_initialize (buf, input, gcontext, memory)
-     struct buffer *buf;
-     int input;
-     gss_ctx_id_t gcontext;
-     void (*memory) PROTO((struct buffer *));
-{
-    struct cvs_gssapi_wrap_data *gd;
-
-    gd = (struct cvs_gssapi_wrap_data *) xmalloc (sizeof *gd);
-    gd->gcontext = gcontext;
-
-    return (packetizing_buffer_initialize
-	    (buf,
-	     input ? cvs_gssapi_wrap_input : NULL,
-	     input ? NULL : cvs_gssapi_wrap_output,
-	     gd,
-	     memory));
-}
-
-/* Unwrap data using GSSAPI.  */
-
-static int
-cvs_gssapi_wrap_input (fnclosure, input, output, size)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
-{
-    struct cvs_gssapi_wrap_data *gd =
-	(struct cvs_gssapi_wrap_data *) fnclosure;
-    gss_buffer_desc inbuf, outbuf;
-    OM_uint32 stat_min;
-    int conf;
-
-    inbuf.value = (void *) input;
-    inbuf.length = size;
-
-    if (gss_unwrap (&stat_min, gd->gcontext, &inbuf, &outbuf, &conf, NULL)
-	!= GSS_S_COMPLETE)
-    {
-	error (1, 0, "gss_unwrap failed");
-    }
-
-    if (outbuf.length > size)
-	abort ();
-
-    memcpy (output, outbuf.value, outbuf.length);
-
-    /* The real packet size is stored in the data, so we don't need to
-       remember outbuf.length.  */
-
-    gss_release_buffer (&stat_min, &outbuf);
-
-    return 0;
-}
-
-/* Wrap data using GSSAPI.  */
-
-static int
-cvs_gssapi_wrap_output (fnclosure, input, output, size, translated)
-     void *fnclosure;
-     const char *input;
-     char *output;
-     int size;
-     int *translated;
-{
-    struct cvs_gssapi_wrap_data *gd =
-	(struct cvs_gssapi_wrap_data *) fnclosure;
-    gss_buffer_desc inbuf, outbuf;
-    OM_uint32 stat_min;
-    int conf_req, conf;
-
-    inbuf.value = (void *) input;
-    inbuf.length = size;
-
-#ifdef ENCRYPTION
-    conf_req = cvs_gssapi_encrypt;
-#else
-    conf_req = 0;
-#endif
-
-    if (gss_wrap (&stat_min, gd->gcontext, conf_req, GSS_C_QOP_DEFAULT,
-		  &inbuf, &conf, &outbuf) != GSS_S_COMPLETE)
-	error (1, 0, "gss_wrap failed");
-
-    /* The packetizing buffer only permits us to add 100 bytes.
-       FIXME: I don't know what, if anything, is guaranteed by GSSAPI.
-       This may need to be increased for a different GSSAPI
-       implementation, or we may need a different algorithm.  */
-    if (outbuf.length > size + 100)
-	abort ();
-
-    memcpy (output, outbuf.value, outbuf.length);
-
-    *translated = outbuf.length;
-
-    gss_release_buffer (&stat_min, &outbuf);
-
-    return 0;
-}
-
-#endif /* HAVE_GSSAPI */
 
 #ifdef ENCRYPTION
 

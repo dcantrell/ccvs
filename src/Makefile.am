@@ -94,7 +94,10 @@ cvs_SOURCES = \
 	update.h \
 	watch.h
 
-cvs_LDADD = \
+EXTRA_cvs_SOURCES = gssapi-client.c gssapi-client.h
+
+cvs_DEPENDENCIES = $(cvs_client_objects)
+cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
 	../zlib/libz.a

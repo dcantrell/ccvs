@@ -35,22 +35,7 @@ extern struct buffer *krb_encrypt_buffer_initialize ();
 
 #   endif /* HAVE_KERBEROS */
 
-#   ifdef HAVE_GSSAPI
-
-/* Set this to turn on GSSAPI encryption.  */
-extern int cvs_gssapi_encrypt;
-
-#   endif /* HAVE_GSSAPI */
-
 # endif /* ENCRYPTION */
-
-# ifdef HAVE_GSSAPI
-
-/* We can't declare the arguments without including gssapi.h, and I
-   don't want to do that in every file.  */
-extern struct buffer *cvs_gssapi_wrap_buffer_initialize ();
-
-# endif /* HAVE_GSSAPI */
 
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
