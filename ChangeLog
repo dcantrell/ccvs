@@ -1,3 +1,10 @@
+Sun Jul  7 23:21:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_REPLACE_FUNCS): Remove memmove; it was used by
+	a very old version of the CVS server for neferious purposes and it
+	has been long gone.
+	* configure: Regenerated.
+
 Tue Jul  2 22:36:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Add discussion of test frameworks.
