@@ -400,6 +400,9 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #define HAVE_NDIR_H 1
 
+/* Define to 1 if you have the <OS.h> header file. */
+#undef HAVE_OS_H
+
 /* Define to enable system authentication with PAM instead of using the simple
    getpwnam interface. This allows authentication (in theory) with any PAM
    module, e.g. on systems with shadow passwords or via LDAP */
