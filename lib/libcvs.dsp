@@ -189,33 +189,6 @@ InputPath=.\fnmatch_.h
 
 SOURCE=.\regex.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\stdbool_.h
-
-!IF  "$(CFG)" == "libcvs - Win32 Release"
-
-# Begin Custom Build
-InputPath=.\stdbool_.h
-
-".\stdbool.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\stdbool_.h .\stdbool.h
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
-
-# Begin Custom Build
-InputPath=.\stdbool_.h
-
-".\stdbool.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\stdbool_.h .\stdbool.h
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
 # End Group
 # End Target
 # End Project
