@@ -149,6 +149,9 @@
 /* Define if you have the getpassphrase function.  */
 #undef HAVE_GETPASSPHRASE
 
+/* Define if you have the gettimeofday function.  */
+#undef HAVE_GETTIMEOFDAY
+
 /* Define if you have the initgroups function.  */
 #undef HAVE_INITGROUPS
 

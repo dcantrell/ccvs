@@ -1,5 +1,13 @@
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
+	* configure.in (AC_CHECK_FUNCS): Look for gettimeofday.
+
+	* config.h.in: Regenerated:
+	* configure: Ditto.
+	* stamp-h1.in: Ditto.
+
+2001-03-14  Derek Price  <derek.price@openavenue.com>
+
 	New version of Automake (1.4e).  With luck it works with the quirky BSD
 	Make.
 
