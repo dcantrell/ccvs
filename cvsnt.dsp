@@ -624,6 +624,10 @@ SOURCE=.\lib\xtime.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\yesno.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\zlib\zconf.h
 # End Source File
 # Begin Source File

@@ -1,3 +1,8 @@
+2004-10-26  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Add "lib/yesno.h" to project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+
 2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note GSSAPI error message fix.
