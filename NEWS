@@ -20,7 +20,8 @@ GENERAL USER ISSUES
 * Import now uses backslash rather than slash on Windows when checking for
   "CVS" directories to ignore in import commands.
 
-* Relative paths should now work in client/server mode (client fix).
+* Relative paths containing up-references (`..') should now work in
+  client/server mode (client fix).
 
 * A race condition between the ordering of messages from CVS and messages from
   called scripts in client/server mode has been removed (server fix).
