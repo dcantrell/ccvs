@@ -1,4 +1,4 @@
-Thu Apr 27 12:52:28 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+Thu Apr 27 12:52:28 1995  Bryan O'Sullivan <bos@cyclic.com>
 
 	* client.c (start_rsh_server): If the CVS_RSH environment variable
 	is set, use its contents as the name of the program to invoke
