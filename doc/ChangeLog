@@ -1,5 +1,8 @@
 Tue Sep 10 10:36:00 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (What is CVS?): Reword text regarding info-cvs,
+	to avoid overfull hbox.
+
 	* cvs.texinfo (Binary files): Add comment about further issues
 	with recovering from failure to use -kb.
 
