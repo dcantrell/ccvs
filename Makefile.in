@@ -100,10 +100,8 @@ FLAGS_TO_PASS = \
 	exec_prefix='$(exec_prefix)'
 
 DISTFILES = COPYING COPYING.LIB ChangeLog INSTALL README TODO \
-	cvs-format.el mkinstalldirs \
+	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
 	configure configure.in stamp-h.in config.h.in Makefile.in
-# install-sh used to be in that list, but it wasn't included in the disty
-# I got, and doesn't seem to be used anymore.
 
 PROGS = cvsinit
 
@@ -207,7 +205,7 @@ lint:
 
 .PHONY: dist
 dist:
-	echo cvs-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q src/version.c` > .fname
+	echo ccvs-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q src/version.c` > .fname
 	rm -rf `cat .fname`
 	mkdir `cat .fname`
 	ln $(DISTFILES) `cat .fname`
