@@ -11750,7 +11750,7 @@ fi
 The @file{verifymsg} file contains this line:
 
 @example
-^tc     /usr/cvssupport/bugid.edit
+^tc     /usr/cvssupport/bugid.verify
 @end example
 
 The @file{rcsinfo} file contains this line:

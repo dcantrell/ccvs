@@ -1,3 +1,8 @@
+1999-04-23  Yoshiki Hayashi of u-tokyo.ac.jp
+
+	* cvs.texinfo (verifymsg): Correct wrong file name (bugid.edit ->
+	bugid.verify).
+
 1999-04-22  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Responses): The text in the "M" response is not
