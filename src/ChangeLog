@@ -1,5 +1,9 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* history.h: Protect against multiple include.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* root.c (root_allow_count, root_allow_vector, root_allow_size):
 	Replace with...
 	(root_allow): ...this single List *.
