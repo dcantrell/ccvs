@@ -1,3 +1,7 @@
+Fri May 10 09:39:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Document that -d overrides CVS/Root.
+
 Mon May  6 06:00:10 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.8.1
@@ -49,6 +53,10 @@ Thu May  2 01:40:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 Wed May  1 15:38:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Remove item about reserving all-uppercase tag names.
+
+Wed Apr 24 16:48:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Document that -d overrides CVS/Root.
 
 Fri Apr 19 11:22:35 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
