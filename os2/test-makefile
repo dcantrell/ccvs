@@ -32,7 +32,4 @@ CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
 all: ${THIS_BASENAME}.obj
 
 ${THIS_BASENAME}.obj: ${THIS_BASENAME}.c
-	@echo
-	@echo ${CFLAGS}
-	@echo
 	${CC} ${CFLAGS} /Fo${THIS_BASENAME}.obj ${THIS_BASENAME}.c
