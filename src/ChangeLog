@@ -1,3 +1,10 @@
+Mon Jan 27 17:25:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules.c (cat_module): Allocate line right before we use
+	it.  The previous code was wrong because the length of the
+	s_h->rest changes between the time we allocate line and the time we
+	sprintf s_h->rest into it.
+
 Sun Jan 26 21:58:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* expand_path.c (expand_path): Revise to call expand_string as
