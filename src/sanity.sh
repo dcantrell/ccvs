@@ -2246,12 +2246,12 @@ export CVS_SERVER
 # servers need to be able to tell the two roots apart given the same \`Root'
 # request from the client.
 if test -f $TESTDIR/last-client-pid \\
-   && expr \$PPID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
     proot_arg=
 else
     proot_arg="--primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
 fi
-echo \$PPID >$TESTDIR/last-client-pid
+echo \$CVS_PID >$TESTDIR/last-client-pid
 
 $CVS_SERVER \$proot_arg "\$@"
 EOF
@@ -28725,12 +28725,12 @@ export CVS_SERVER
 # servers need to be able to tell the two roots apart given the same \`Root'
 # request from the client.
 if test -f $TESTDIR/last-client-pid \\
-   && expr \$PPID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+   && expr \$CVS_PID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
     proot_arg=
 else
     proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
 fi
-echo \$PPID >$TESTDIR/last-client-pid
+echo \$CVS_PID >$TESTDIR/last-client-pid
 
 $servercvs \$proot_arg "\$@"
 EOF
