@@ -3755,24 +3755,19 @@ get_cvs_port_number (root)
 
 
 void
-make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server)
+make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, is_sock)
     int tofd;
     int fromfd;
     int child_pid;
     struct buffer **to_server;
     struct buffer **from_server;
+    int is_sock;
 {
     FILE *to_server_fp;
     FILE *from_server_fp;
 
 #ifdef NO_SOCKET_TO_FD
-    struct stat s;
-
-    if (fstat (tofd, &s) < 0)
-    {
-	error (1, errno, "Failed to stat file descriptor\n");
-    }
-    if (S_ISSOCK(s.st_mode))
+    if (is_sock)
     {
 	assert (tofd == fromfd);
 	*to_server = socket_buffer_initialize (tofd, 0,
@@ -3850,7 +3845,7 @@ connect_to_forked_server (to_server, from_server)
     if (child_pid < 0)
 	error (1, 0, "could not fork server process");
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server);
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
 }
 
 /* Connect to the authenticating server.
@@ -3899,7 +3894,7 @@ connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
 	       inet_ntoa (client_sai.sin_addr),
 	       port_number, SOCK_STRERROR (SOCK_ERRNO));
 
-    make_bufs_from_fds (sock, sock, 0, &to_server, &from_server);
+    make_bufs_from_fds (sock, sock, 0, &to_server, &from_server, 1);
 
     auth_server (root, to_server, from_server, verify_only, do_gssapi, hostinfo);
 
@@ -4178,7 +4173,7 @@ start_tcp_server (root, to_server, from_server)
     free (hname);
 
     /* Give caller the values it wants. */
-    make_bufs_from_fds (s, s, 0, to_server, from_server);
+    make_bufs_from_fds (s, s, 0, to_server, from_server, 1);
 }
 
 #endif /* HAVE_KERBEROS */
@@ -4408,7 +4403,11 @@ start_server ()
 	    START_SERVER (&tofd, &fromfd, getcaller (),
 			  current_parsed_root->username, current_parsed_root->hostname,
 			  current_parsed_root->directory);
-	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server);
+# ifdef START_SERVER_RETURNS_SOCKET
+	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 1);
+# else
+	    make_bufs_from_fds (tofd, fromfd, 0, &to_server, &from_server, 0);
+# endif /* START_SERVER_RETURNS_SOCKET */
 	    }
 #else
 	    /* FIXME: It should be possible to implement this portably,
@@ -4849,7 +4848,7 @@ start_rsh_server (root, to_server, from_server)
 	error (1, errno, "cannot start server via rsh");
 
     /* Give caller the file descriptors in a form it can deal with. */
-    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server, from_server);
+    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server, from_server, 0);
 }
 
 # else /* ! START_RSH_WITH_POPEN_RW */
@@ -4921,7 +4920,7 @@ start_rsh_server (root, to_server, from_server)
     }
     free (command);
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server);
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
 }
 
 # endif /* START_RSH_WITH_POPEN_RW */
