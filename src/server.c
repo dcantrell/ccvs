@@ -2488,7 +2488,7 @@ server_scratch_entry_only ()
 
 /* Print a new entries line, from a previous server_register.  */
 static void
-new_entries_line (void)
+new_entries_line ()
 {
     if (entries_line)
     {
