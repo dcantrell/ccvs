@@ -1,3 +1,7 @@
+Tue Mar 25 13:26:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Version 1.9.6.
+
 Mon Mar 24 13:02:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* entries.c (ParseTag): Add comment about unrecognized characters
