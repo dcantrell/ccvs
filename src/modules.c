@@ -3,7 +3,8 @@
  *    Copyright (c) 1989-1992, Brian Berliner
  *
  *    You may distribute under the terms of the GNU General Public License
- *    as specified in the README file that comes with the CVS source distribution.
+ *    as specified in the README file that comes with the CVS source
+ *    distribution.
  *
  * Modules
  *
@@ -212,7 +213,8 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	    *acp = '/';
 	}
 	else
-	    (void) sprintf (attic_file, "%s/%s/%s%s", current_parsed_root->directory,
+	    (void) sprintf (attic_file, "%s/%s/%s%s",
+	                    current_parsed_root->directory,
 			    CVSATTIC, mname, RCSEXT);
 
 	if (isdir (file))
