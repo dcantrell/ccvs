@@ -1,3 +1,9 @@
+Thu Dec 11 15:58:06 1997  Eric Mumpower  <nocturne@cygnus.com>
+
+	* configure.in: Let --with-krb4 override the system Kerberos
+	header files and libraries, if any.
+	* configure: Regenerate.
+
 Thu Dec  4 20:01:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_CHECK_FUNCS): Remove mempcpy per change to

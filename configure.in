@@ -182,6 +182,10 @@ fi])
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
+dnl If you change this, keep in mind that some systems have a bogus
+dnl libkrb in the system libraries, so --with-krb4=value needs to
+dnl override the system -lkrb.
+dnl
 KRB4=/usr/kerberos
 define(WITH_KRB4,[
 AC_ARG_WITH([krb4],
@@ -194,15 +198,19 @@ WITH_KRB4
 
 krb_h=
 AC_MSG_CHECKING([for krb.h])
-AC_TRY_LINK([#include <krb.h>],[int i;],
-  [krb_h=yes krb_incdir=],
-  [if test "$cross_compiling" != yes && test -r $KRB4/include/krb.h; then
-     hold_cflags=$CFLAGS
-     CFLAGS="$CFLAGS -I$KRB4/include"
-     AC_TRY_LINK([#include <krb.h>],[int i;],
-       [krb_h=yes krb_incdir=$KRB4/include])
-     CFLAGS=$hold_cflags
-   fi])
+if test "$cross_compiling" != yes && test -r $KRB4/include/krb.h; then
+   hold_cflags=$CFLAGS
+   CFLAGS="$CFLAGS -I$KRB4/include"
+   AC_TRY_LINK([#include <krb.h>],[int i;],
+          [krb_h=yes krb_incdir=$KRB4/include],
+          [CFLAGS=$hold_cflags
+           AC_TRY_LINK([#include <krb.h>],[int i;],
+             [krb_h=yes krb_incdir=])])
+   CFLAGS=$hold_cflags
+else
+   AC_TRY_LINK([#include <krb.h>],[int i;],
+             [krb_h=yes krb_incdir=])
+fi
 if test -z "$krb_h"; then
   AC_TRY_LINK([#include <krb.h>],[int i;],
     [krb_h=yes krb_incdir=],
@@ -218,10 +226,18 @@ AC_MSG_RESULT($krb_h)
 
 if test -n "$krb_h"; then
   krb_lib=
-  AC_CHECK_LIB(krb,printf,[krb_lib=yes krb_libdir=],
-    [if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
-       krb_lib=yes krb_libdir=$KRB4/lib
-     fi])
+  if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
+       hold_ldflags=$LDFLAGS
+       LDFLAGS="-L${KRB4}/lib $LDFLAGS"
+       AC_CHECK_LIB(krb,printf,[krb_lib=yes krb_libdir=${KRB4}/lib],
+           [LDFLAGS=$hold_ldflags
+            # Using open here instead of printf so we don't
+            # get confused by the cached value for printf from above.
+            AC_CHECK_LIB(krb,open,[krb_lib=yes krb_libdir=])])
+       LDFLAGS=$hold_ldflags
+  else
+       AC_CHECK_LIB(krb,printf,[krb_lib=yes krb_libdir=])
+  fi
   if test -n "$krb_lib"; then
     AC_DEFINE(HAVE_KERBEROS)
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
