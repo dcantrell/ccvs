@@ -25,6 +25,7 @@ m68k:
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 m88k:
 	Data General AViiON running dgux 5.4R2.10 (1.5)
+	Harris Nighthawk 5800 running CX/UX 7.1 (1.5) (footnote 7)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.5)
@@ -61,6 +62,10 @@ SPARC:
 (footnote 5) Add "#include <sys/bsdtypes.h>" to src/server.c. (1.4.93)
 
 (footnote 6) Change /usr/tmp to /var/tmp in src/server.c (2 places) (1.4.93).
+
+(footnote 7) Build in ucb universe with COFF compiler tools.  Put
+	/usr/local/bin first in PATH while doing a configure, make
+	and install of GNU diffutils-2.7, rcs-5.7, then cvs-1.5.
 
 -------------------------------------------------------------------------------
 
