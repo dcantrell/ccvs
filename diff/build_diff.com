@@ -12,6 +12,7 @@ $ CC ifdef.c
 $ CC normal.c
 $ CC side.c
 $ CC version.c
+$ CC diff3.c
 $ library/create diff.olb diff.obj,analyze.obj,cmpbuf.obj,-
 dir.obj,io.obj,util.obj,context.obj,ed.obj,ifdef.obj,normal.obj,-
-side.obj,version.obj
+side.obj,version.obj,diff3.obj
