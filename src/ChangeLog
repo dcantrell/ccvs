@@ -1,5 +1,15 @@
 2003-01-31  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move header includes in from...
+	* error.c: ...here.  Remove checks for definition of vprintf().
+	Since our error() function was making assumptions about the definition
+	of VA_START, we must not have been compiling on platforms without
+	vprintf for quite awhile and I've heard no complaints.
+	(fperrmsg): Assume vprintf().
+	* subr.c (cvs_trace): Don't assume ANSI C function declarations.
+
+2003-01-31  Derek Price  <derek@ximbiot.com>
+
 	* main.c (main): Allow multiple -t options.
 	(opt_usage): Correct usage.
 	* cvs.h (TRACE): New macro.

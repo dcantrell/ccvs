@@ -26,36 +26,71 @@
 
 /* Add prototype support.  */
 #ifndef PROTO
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#define PROTO(ARGS) ARGS
-#else
-#define PROTO(ARGS) ()
-#endif
+# if PROTOTYPES
+#   define PROTO(ARGS) ARGS
+# else
+#   define PROTO(ARGS) ()
+# endif
 #endif
 
+/* Begin the default set of autoconf includes */
 #include <stdio.h>
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif /* HAVE_SYS_TYPES_H */
+#if HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif /* HAVE_SYS_STAT_H */
+#if STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else /* ! STDC_HEADERS */
+# if HAVE_STDLIB_H
+#   include <stdlib.h>
+# endif /* HAVE_STDLIB_H */
+#endif /* STDC_HEADERS */
+#if HAVE_STRING_H
+# if !STDC_HEADERS && HAVE_MEMORY_H
+#  include <memory.h>
+# endif /* !STDC_HEADERS && HAVE_MEMORY_H */
+# include <string.h>
+#endif /* HAVE_STRING_H */
+#if HAVE_STRINGS_H
+# include <strings.h>
+#endif /* HAVE_STRINGS_H */
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else /* ! HAVE_INTTYPES_H */
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif /* HAVE_STDINT_H */
+#endif /* HAVE_INTTYPES_H */
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif /* HAVE_UNISTD_H */
+/* End the default set of autoconf includes */
+
+/* Begin includes for functions with variable numbers of arguments */
+#if STDC_HEADERS
+# include <stdarg.h>
+# define VA_START(args, lastarg) va_start(args, lastarg)
+#else /* ! STDC_HEADERS */
+# ifdef HAVE_VARARGS_H
+#   include <varargs.h>
+#   define VA_START(args, lastarg) va_start(args)
+# endif /* HAVE_VARARGS_H */
+#endif /* STD_HEADERS */
+/* End includes for functions with variable numbers of arguments */
+
+#if ! STDC_HEADERS
+extern void exit ();
+extern char *getenv();
+#endif /* ! STDC_HEADERS */
+
 
 /* Under OS/2, <stdio.h> doesn't define popen()/pclose(). */
 #ifdef USE_OWN_POPEN
 #include "popen.h"
-#endif
-
-#ifdef STDC_HEADERS
-#include <stdlib.h>
-#include <stdarg.h>
-#else
-extern void exit ();
-extern char *getenv();
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_STRING_H
-#include <string.h>
-#else
-#include <strings.h>
 #endif
 
 #ifdef SERVER_SUPPORT
@@ -902,5 +937,5 @@ extern void cvs_flushout PROTO ((void));
 extern void cvs_output_tagged PROTO ((char *, char *));
 
 /* The trace funciton from subr.c */
-void cvs_trace(int level, const char *fmt,...);
+void cvs_trace PROTO (( int level, const char *fmt, ... ));
 #define TRACE cvs_trace
