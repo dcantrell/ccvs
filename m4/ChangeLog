@@ -1,3 +1,7 @@
+2004-10-26  Derek Price  <derek@ximbiot.com>
+
+	* bison.m4 (gl_BISON): Comment reasons for forking form GNULIB.
+
 2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* rpmatch.m4, yesno.m4: New files from GNULIB.
