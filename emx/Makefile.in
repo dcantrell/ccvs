@@ -26,6 +26,7 @@ zlib_dir = ${top_srcdir}/zlib
 
 # Used to say -lufc, but that would only be needed for crypt().
 LIB = -lsocket
+
 CINC =
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -c
@@ -295,9 +296,32 @@ ${lib_dir}/libcvs.a: $(LIB_OBJECTS)
 ${zlib_dir}/libz.a: $(ZLIB_OBJECTS)
 	$(AR) cr $@ $(ZLIB_OBJECTS)
 
+# Eventually probably static linking (cvs-static.exe) will be the
+# default, but even so we'll want to preserve this rule so we can
+# create a dynamically linked executable when we want coredumps.
 cvs.exe: ${OBJECTS} ${lib_dir}/libcvs.a ${zlib_dir}/libz.a
 	gcc $(COMMON_OBJECTS) $(OS2_OBJECTS) ${lib_dir}/libcvs.a ${zlib_dir}/libz.a $(LIB) -o cvs.out
 	emxbind -w -o $@.exe cvs.out
+
+${lib_dir}/libcvs.lib: ${lib_dir}/libcvs.a
+	emxomf ${lib_dir}/libcvs.a
+
+${zlib_dir}/libz.lib: ${zlib_dir}/libz.a
+	emxomf ${zlib_dir}/libz.a
+
+# Where do -Zomf -Zsys go?  When we compile the .o's?
+# When I tried this rule, I had problems with (1) could not find
+# socket.lib.  Hmm.  I thought I converted it from socket.a
+# in the EMX distribution.  Probably my EMX installation at fault.
+# (2) could not find miscellaneous system routines like strerror.
+# This might be a matter of learning to live without them (EMX
+# doc is supposed to describe which are present and which are not).
+# (3) some linker errors like no stack and the like.  Maybe I am
+# missing some options?
+cvs-static.exe: ${OBJECTS} ${lib_dir}/libcvs.lib ${zlib_dir}/libz.lib
+	emxomf ${OBJECTS}
+	emxomfld -o $@ $(subst .o,.obj,${OBJECTS}) \
+	  ${lib_dir}/libcvs.lib ${zlib_dir}/libz.lib ${LIB}
 
 # cvs.o: ${OBJECTS} ${SOURCES} ${HEADERS}
 
