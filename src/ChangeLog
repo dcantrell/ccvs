@@ -1,3 +1,8 @@
+2005-02-23 Derek Price <derek@ximbiot.com>
+
+	* rsh-client.c (start_rsh_server): Update comment.  Replace
+	malloc/sprintf combo with a call to Xasprintf.
+
 2005-02-22 Derek Price <derek@ximbiot.com>
 
 	* error.c (error): Handle unsigned int format char.
