@@ -1,3 +1,7 @@
+2001-09-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (multiroot2-9a): Update to match changes to lock.c.
+
 2001-09-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* lock.c (Lock_Cleanup, Reader_Lock, write_lock): Add trace messages.

@@ -22744,10 +22744,19 @@ ${PROG} server: Updating dir1/sdir/ssdir"
 	    dotest multiroot2-9a "${testcvs} -t update" \
 " *-> main loop with CVSROOT=${TESTDIR}/root1
 ${PROG} update: Updating \.
+ *-> Reader_Lock(${TESTDIR}/root1)
+ *-> Lock_Cleanup()
 ${PROG} update: Updating dir1
+ *-> Reader_Lock(${TESTDIR}/root1/dir1)
+ *-> Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
 ${PROG} update: Updating dir1/sdir
-${PROG} update: Updating dir1/sdir/ssdir"
+ *-> Reader_Lock(${TESTDIR}/root2/sdir)
+ *-> Lock_Cleanup()
+${PROG} update: Updating dir1/sdir/ssdir
+ *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
+ *-> Lock_Cleanup()
+ *-> Lock_Cleanup()"
 	  fi
 
 	  dotest multiroot2-9 "${testcvs} -q tag tag1" \
