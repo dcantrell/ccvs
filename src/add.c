@@ -582,7 +582,10 @@ add_directory (repository, entries, dir)
     }
 
     /* setup the log message */
-    message = xmalloc (strlen (rcsdir) + 80);
+    message = xmalloc (strlen (rcsdir)
+		       + 80
+		       + (tag == NULL ? 0 : strlen (tag) + 80)
+		       + (date == NULL ? 0 : strlen (date) + 80));
     (void) sprintf (message, "Directory %s added to the repository\n", rcsdir);
     if (tag)
     {
