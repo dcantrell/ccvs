@@ -1,5 +1,14 @@
 2004-06-09  Derek Price  <derek@ximbiot.com>
 
+	* commit.c, filesubr.c, history.c, server.c, wrapper.c: Various
+	security fixes.
+	(Original patch from Stefan Essler <s.esser@e-matters.de> & Sebastian
+	Krahmer <krahmer@suse.de>.)
+
+	* cvs.h: Include xsize.h.
+
+2004-06-09  Derek Price  <derek@ximbiot.com>
+
 	* server.c (serve_entry, serve_is_modified, serve_unchanged): Protect
 	against malformed entries.
 	* sanity.sh (server): Tests for same.

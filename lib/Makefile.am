@@ -46,7 +46,6 @@ libcvs_a_SOURCES = \
 	unlocked-io.h \
 	wait.h \
 	xselect.h \
-	xsize.h \
 	xtime.h
 ## Because @LIBOBJS@ is included below and AC_LIBOBJ is sometimes called on
 ## these files from configure.in, automake automatically knows about many of
@@ -150,6 +149,13 @@ libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
 ## For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
+
+# For the xsize module from GNULIB.
+libcvs_a_SOURCES += xsize.h
+
+# Until Automake gets its act together
+distclean-local:
+	rm -f fnmatch.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
