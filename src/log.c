@@ -68,9 +68,15 @@ struct datelist
 /* This structure is used to pass information through start_recursion.  */
 struct log_data
 {
-    /* Nonzero if we need to invoke rlog (because we were passed
-       options we don't understand).  */
-    int dorlog;
+    /* Nonzero if the -R option was given, meaning that only the name
+       of the RCS file should be printed.  */
+    int nameonly;
+    /* Nonzero if the -h option was given, meaning that only header
+       information should be printed.  */
+    int header;
+    /* Nonzero if the -t option was given, meaning that only the
+       header and the descriptive text should be printed.  */
+    int long_header;
     /* Nonzero if the -N option was seen, meaning that tag information
        should not be printed.  */
     int notags;
@@ -86,9 +92,12 @@ struct log_data
     /* If not NULL, the single dates given for the -d option, which
        select specific revisions to print based on a date.  */
     struct datelist *singledatelist;
-    /* Argument count and vector for rlog, if dorlog is set.  */
-    int argc;
-    char **argv;
+    /* If not NULL, the list of states given for the -s option, which
+       only prints revisions of given states.  */
+    List *statelist;
+    /* If not NULL, the list of login names given for the -w option,
+       which only prints revisions checked in by given users.  */
+    List *authorlist;
 };
 
 /* This structure is used to pass information through walklist.  */
@@ -104,6 +113,7 @@ static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
 static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static struct option_revlist *log_parse_revlist PROTO ((const char *));
 static void log_parse_date PROTO ((struct log_data *, const char *));
+static void log_parse_list PROTO ((List **, const char *));
 static struct revlist *log_expand_revlist PROTO ((RCSNode *,
 						  struct option_revlist *,
 						  int));
@@ -125,12 +135,18 @@ static int version_compare PROTO ((const char *, const char *, int));
 
 static const char *const log_usage[] =
 {
-    "Usage: %s %s [-blN] [-r[revisions]] [-d dates] [rlog-options] [files...]\n",
-    "\t-b\tOnly list revisions on the default branch.\n",
+    "Usage: %s %s [-lRhtNb] [-r[revisions]] [-d dates] [-s states]\n",
+    "    [-w[logins]] [files...]\n",
     "\t-l\tLocal directory only, no recursion.\n",
+    "\t-R\tOnly print name of RCS file.\n",
+    "\t-h\tOnly print header.\n",
+    "\t-t\tOnly print header and descriptive text.\n",
     "\t-N\tDo not list tags.\n",
+    "\t-b\tOnly list revisions on the default branch.\n",
     "\t-r[revisions]\tSpecify revision(s)s to list.\n",
     "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
+    "\t-s states\tOnly list revisions with specified states.\n",
+    "\t-w[logins]\tOnly list revisions checked in by specified logins.\n",
     NULL
 };
 
@@ -155,9 +171,8 @@ cvslog (argc, argv)
      * If we see nothing but -N, we don't invoke 'rlog', but just
      * handle the printing ourselves.
      */
-    opterr = 0;
     optind = 1;
-    while ((c = getopt (argc, argv, "bd:lNr::")) != -1)
+    while ((c = getopt (argc, argv, "bd:hlNRr::s:tw::")) != -1)
     {
 	switch (c)
 	{
@@ -167,11 +182,17 @@ cvslog (argc, argv)
 	    case 'd':
 		log_parse_date (&log_data, optarg);
 		break;
+	    case 'h':
+		log_data.header = 1;
+		break;
 	    case 'l':
 		local = 1;
 		break;
 	    case 'N':
 		log_data.notags = 1;
+		break;
+	    case 'R':
+		log_data.nameonly = 1;
 		break;
 	    case 'r':
 		rl = log_parse_revlist (optarg);
@@ -181,17 +202,24 @@ cvslog (argc, argv)
 		    ;
 		*prl = rl;
 		break;
+	    case 's':
+		log_parse_list (&log_data.statelist, optarg);
+		break;
+	    case 't':
+		log_data.long_header = 1;
+		break;
+	    case 'w':
+		if (optarg != NULL)
+		    log_parse_list (&log_data.authorlist, optarg);
+		else
+		    log_parse_list (&log_data.authorlist, getcaller ());
+		break;
 	    case '?':
 	    default:
-		/* We got an unrecognized option.  We have to invoke
-		   rlog directly.  */
-		log_data.dorlog = 1;
-		log_data.argc = argc;
-		log_data.argv = argv;
+		usage (log_usage);
 		break;
 	}
     }
-    opterr = 1;
 
     wrap_setup ();
 
@@ -400,6 +428,46 @@ log_parse_date (log_data, argstring)
 }
 
 /*
+ * Parse a comma separated list of items, and add each one to *PLIST.
+ */
+static void
+log_parse_list (plist, argstring)
+    List **plist;
+    const char *argstring;
+{
+    while (1)
+    {
+	Node *p;
+	char *cp;
+
+	p = getnode ();
+
+	cp = strchr (argstring, ',');
+	if (cp == NULL)
+	    p->key = xstrdup (argstring);
+	else
+	{
+	    size_t len;
+
+	    len = cp - argstring;
+	    p->key = xmalloc (len + 1);
+	    strncpy (p->key, argstring, len);
+	    p->key[len + 1] = '\0';
+	}
+
+	if (*plist == NULL)
+	    *plist = getlist ();
+	if (addnode (*plist, p) != 0)
+	    freenode (p);
+
+	if (cp == NULL)
+	    break;
+
+	argstring = cp + 1;
+    }
+}
+
+/*
  * Do an rlog on a file
  */
 static int
@@ -410,7 +478,6 @@ log_fileproc (callerdat, finfo)
     struct log_data *log_data = (struct log_data *) callerdat;
     Node *p;
     RCSNode *rcsfile;
-    int retcode = 0;
     char buf[50];
     struct revlist *revlist;
     struct log_data_and_rcs log_data_and_rcs;
@@ -439,38 +506,11 @@ log_fileproc (callerdat, finfo)
 	return (1);
     }
 
-    /* Invoke rlog if we were given any options we don't understand.
-       FIXME: We should eventually understand all options here, and
-       never invoke rlog.  */
-    if (log_data->dorlog)
+    if (log_data->nameonly)
     {
-	run_setup ("%s%s -x,v/", Rcsbin, RCS_RLOG);
-	{
-	    int ac = log_data->argc;
-	    char **av = log_data->argv;
-	    int i;
-
-	    for (i = 1; i < ac && av[i][0] == '-'; i++)
-		if (av[i][1] != 'l')
-		    run_arg (av[i]);
-	}
-	run_arg (rcsfile->path);
-
-	if (*finfo->update_dir)
-	{
-	    char *workfile = xmalloc (strlen (finfo->update_dir)
-				      + strlen (finfo->file)
-				      + 2);
-	    sprintf (workfile, "%s/%s", finfo->update_dir, finfo->file);
-	    run_arg (workfile);
-	    free (workfile);
-	}
-
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY)) == -1)
-	{
-	    error (1, errno, "fork failed for rlog on %s", finfo->file);
-	}
-	return (retcode);
+	cvs_output (rcsfile->path, 0);
+	cvs_output ("\n", 1);
+	return 0;
     }
 
     /* We will need all the information in the RCS file.  */
@@ -643,36 +683,42 @@ log_fileproc (callerdat, finfo)
     sprintf (buf, "%d", walklist (rcsfile->versions, log_count, NULL));
     cvs_output (buf, 0);
 
-    cvs_output (";\tselected revisions: ", 0);
+    if (! log_data->header && ! log_data->long_header)
+    {
+	cvs_output (";\tselected revisions: ", 0);
 
-    log_data_and_rcs.log_data = log_data;
-    log_data_and_rcs.revlist = revlist;
-    log_data_and_rcs.rcs = rcsfile;
+	log_data_and_rcs.log_data = log_data;
+	log_data_and_rcs.revlist = revlist;
+	log_data_and_rcs.rcs = rcsfile;
 
-    /* If any single dates were specified, we need to identify the
-       revisions they select.  Each one selects the single revision,
-       which is otherwise selected, of that date or earlier.  The
-       log_fix_singledate routine will fill in the start date for each
-       specific revision.  */
-    if (log_data->singledatelist != NULL)
-	walklist (rcsfile->versions, log_fix_singledate,
-		  (void *) &log_data_and_rcs);
+	/* If any single dates were specified, we need to identify the
+	   revisions they select.  Each one selects the single
+	   revision, which is otherwise selected, of that date or
+	   earlier.  The log_fix_singledate routine will fill in the
+	   start date for each specific revision.  */
+	if (log_data->singledatelist != NULL)
+	    walklist (rcsfile->versions, log_fix_singledate,
+		      (void *) &log_data_and_rcs);
 
-    sprintf (buf, "%d", walklist (rcsfile->versions, log_count_print,
-				  (void *) &log_data_and_rcs));
-    cvs_output (buf, 0);
+	sprintf (buf, "%d", walklist (rcsfile->versions, log_count_print,
+				      (void *) &log_data_and_rcs));
+	cvs_output (buf, 0);
+    }
 
     cvs_output ("\n", 1);
 
-    cvs_output ("description:\n", 0);
-    if (rcsfile->other != NULL)
+    if (! log_data->header || log_data->long_header)
     {
-	p = findnode (rcsfile->other, "desc");
-	if (p != NULL)
-	    cvs_output (p->data, 0);
+	cvs_output ("description:\n", 0);
+	if (rcsfile->other != NULL)
+	{
+	    p = findnode (rcsfile->other, "desc");
+	    if (p != NULL)
+		cvs_output (p->data, 0);
+	}
     }
 
-    if (rcsfile->head != NULL)
+    if (! log_data->header && ! log_data->long_header && rcsfile->head != NULL)
     {
 	p = findnode (rcsfile->versions, rcsfile->head);
 	if (p == NULL)
@@ -713,7 +759,8 @@ log_fileproc (callerdat, finfo)
 
 	for (d = log_data->singledatelist; d != NULL; d = d->next)
 	{
-	    free (d->start);
+	    if (d->start != NULL)
+		free (d->start);
 	    d->start = NULL;
 	}
     }
@@ -947,6 +994,29 @@ log_version_requested (log_data, revlist, rcs, vnode)
     RCSNode *rcs;
     RCSVers *vnode;
 {
+    /* Handle the list of states from the -s option.  */
+    if (log_data->statelist != NULL)
+    {
+	Node *p;
+
+	p = findnode (vnode->other, "state");
+	if (p != NULL
+	    && findnode (log_data->statelist, p->data) == NULL)
+	{
+	    return 0;
+	}
+    }
+
+    /* Handle the list of authors from the -w option.  */
+    if (log_data->authorlist != NULL)
+    {
+	if (vnode->author != NULL
+	    && findnode (log_data->authorlist, vnode->author) == NULL)
+	{
+	    return 0;
+	}
+    }
+
     /* rlog considers all the -d options together when it decides
        whether to print a revision, so we must be compatible.  */
     if (log_data->datelist != NULL || log_data->singledatelist != NULL)
