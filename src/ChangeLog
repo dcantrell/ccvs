@@ -1,3 +1,10 @@
+Thu Dec 12 10:36:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* login.c (get_cvs_password): If CVS_PASSWORD is set, print a
+	warning (and then proceed to ignore it).  It was a documented
+	feature, so we should point people who were using it to the
+	replacement.
+
 Mon Dec  9 12:35:43 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* server.c (server_updated): Change comment to only worry about
