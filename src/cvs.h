@@ -663,3 +663,6 @@ char *descramble PROTO ((char *str));
 #endif /* AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT */
 
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
+
+extern void cvs_output PROTO ((char *, size_t));
+extern void cvs_outerr PROTO ((char *, size_t));

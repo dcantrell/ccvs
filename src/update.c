@@ -1091,10 +1091,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 
 	    if (!really_quiet && !file_is_dead)
 	    {
-		if (update_dir[0])
-		    (void) printf ("U %s/%s\n", update_dir, file);
-		else
-		    (void) printf ("U %s\n", file);
+		write_letter (file, 'U', update_dir);
 	    }
 	}
     }
@@ -1315,10 +1312,7 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
 
 	if (!really_quiet)
 	{
-	    if (update_dir[0])
-	      (void) printf ("P %s/%s\n", update_dir, file);
-	    else
-	      (void) printf ("P %s\n", file);
+	    write_letter (file, 'P', update_dir);
 	}
     }
     else
@@ -1356,10 +1350,17 @@ write_letter (file, letter, update_dir)
 {
     if (!really_quiet)
     {
+	char buf[2];
+	buf[0] = letter;
+	buf[1] = ' ';
+	cvs_output (buf, 2);
 	if (update_dir[0])
-	    (void) printf ("%c %s/%s\n", letter, update_dir, file);
-	else
-	    (void) printf ("%c %s\n", letter, file);
+	{
+	    cvs_output (update_dir, 0);
+	    cvs_output ("/", 1);
+	}
+	cvs_output (file, 0);
+	cvs_output ("\n", 1);
     }
     return (0);
 }

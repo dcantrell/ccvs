@@ -794,11 +794,74 @@ cvs \[[a-z]* aborted\]: correct above errors first!'
 
 		# interrupt, while we've got a clean 1.1 here, let's import it into another tree.
 		cd export-dir
-		if ${CVS} import -m "first-import" second-dir first-immigration immigration1 immigration1_0  ; then
-			echo "PASS: test 56" >>${LOGFILE}
-		else
-			echo "FAIL: test 56" | tee -a ${LOGFILE} ; exit 1
-		fi
+		dotest 56 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
+'N second-dir/file10
+N second-dir/file11
+N second-dir/file12
+N second-dir/file13
+N second-dir/file14
+N second-dir/file15
+N second-dir/file16
+N second-dir/file17
+N second-dir/file6
+N second-dir/file7
+N second-dir/file8
+N second-dir/file9
+cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1
+N second-dir/dir1/file10
+N second-dir/dir1/file11
+N second-dir/dir1/file12
+N second-dir/dir1/file13
+N second-dir/dir1/file14
+N second-dir/dir1/file15
+N second-dir/dir1/file16
+N second-dir/dir1/file17
+N second-dir/dir1/file6
+N second-dir/dir1/file7
+N second-dir/dir1/file8
+N second-dir/dir1/file9
+cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2
+N second-dir/dir1/dir2/file10
+N second-dir/dir1/dir2/file11
+N second-dir/dir1/dir2/file12
+N second-dir/dir1/dir2/file13
+N second-dir/dir1/dir2/file14
+N second-dir/dir1/dir2/file15
+N second-dir/dir1/dir2/file16
+N second-dir/dir1/dir2/file17
+N second-dir/dir1/dir2/file6
+N second-dir/dir1/dir2/file7
+N second-dir/dir1/dir2/file8
+N second-dir/dir1/dir2/file9
+cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3
+N second-dir/dir1/dir2/dir3/file10
+N second-dir/dir1/dir2/dir3/file11
+N second-dir/dir1/dir2/dir3/file12
+N second-dir/dir1/dir2/dir3/file13
+N second-dir/dir1/dir2/dir3/file14
+N second-dir/dir1/dir2/dir3/file15
+N second-dir/dir1/dir2/dir3/file16
+N second-dir/dir1/dir2/dir3/file17
+N second-dir/dir1/dir2/dir3/file6
+N second-dir/dir1/dir2/dir3/file7
+N second-dir/dir1/dir2/dir3/file8
+N second-dir/dir1/dir2/dir3/file9
+cvs [a-z]*: Importing /tmp/cvs-sanity/cvsroot/second-dir/dir1/dir2/dir3/dir4
+N second-dir/dir1/dir2/dir3/dir4/file10
+N second-dir/dir1/dir2/dir3/dir4/file11
+N second-dir/dir1/dir2/dir3/dir4/file12
+N second-dir/dir1/dir2/dir3/dir4/file13
+N second-dir/dir1/dir2/dir3/dir4/file14
+N second-dir/dir1/dir2/dir3/dir4/file15
+N second-dir/dir1/dir2/dir3/dir4/file16
+N second-dir/dir1/dir2/dir3/dir4/file17
+N second-dir/dir1/dir2/dir3/dir4/file6
+N second-dir/dir1/dir2/dir3/dir4/file7
+N second-dir/dir1/dir2/dir3/dir4/file8
+N second-dir/dir1/dir2/dir3/dir4/file9
+
+No conflicts created by this import'
+
 		cd ..
 
 		if ${CVS} export -r HEAD second-dir  ; then

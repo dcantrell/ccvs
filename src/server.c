@@ -1425,9 +1425,6 @@ buf_output (buf, data, len)
     const char *data;
     int len;
 {
-    if (! buf->output)
-	abort ();
-
     if (buf->data != NULL
 	&& (((buf->last->text + BUFFER_DATA_SIZE)
 	     - (buf->last->bufp + buf->last->size))
@@ -2186,6 +2183,13 @@ serve_questionable (arg)
 
 static struct buffer protocol;
 
+/* This is the output which we are saving up to send to the server, in the
+   child process.  We will push it through, via the `protocol' buffer, when
+   we have a complete line.  */
+static struct buffer saved_output;
+/* Likewise, but stuff which will go to stderr.  */
+static struct buffer saved_outerr;
+
 static void
 protocol_memory_error (buf)
     struct buffer *buf;
@@ -2336,6 +2340,13 @@ do_cvs_command (command)
 	protocol.output = 1;
 	protocol.nonblocking = 0;
 	protocol.memory_error = protocol_memory_error;
+
+	saved_output.data = saved_output.last = NULL;
+	saved_output.fd = -1;
+	saved_output.output = 0;
+	saved_output.nonblocking = 0;
+	saved_output.memory_error = protocol_memory_error;
+	saved_outerr = saved_output;
 
 	if (dup2 (dev_null_fd, STDIN_FILENO) < 0)
 	    error (1, errno, "can't set up pipes");
@@ -4423,3 +4434,84 @@ authenticate_connection ()
 
 #endif /* SERVER_SUPPORT */
 
+/* Output LEN bytes at STR.  If LEN is zero, then output up to (not including)
+   the first '\0' byte.  Should not be called from the server parent process
+   (yet at least, in the future it might be extended so that works).  */
+
+void
+cvs_output (str, len)
+    char *str;
+    size_t len;
+{
+    if (len == 0)
+	len = strlen (str);
+    if (error_use_protocol)
+	/* Eventually we'll probably want to make it so this case works,
+	   but for now, callers who want to output something with
+	   error_use_protocol in effect can just printf the "M foo"
+	   themselves.  */
+	abort ();
+#ifdef SERVER_SUPPORT
+    if (server_active)
+    {
+	buf_output (&saved_output, str, len);
+	buf_copy_lines (&protocol, &saved_output, 'M');
+	buf_send_counted (&protocol);
+    }
+    else
+#endif
+    {
+	size_t written;
+	size_t to_write = len;
+	char *p = str;
+
+	while (to_write > 0)
+	{
+	    written = fwrite (str, 1, to_write, stdout);
+	    if (written == 0)
+		break;
+	    p += written;
+	    to_write -= written;
+	}
+    }
+}
+
+/* Like CVS_OUTPUT but output is for stderr not stdout.  */
+
+void
+cvs_outerr (str, len)
+    char *str;
+    size_t len;
+{
+    if (len == 0)
+	len = strlen (str);
+    if (error_use_protocol)
+	/* Eventually we'll probably want to make it so this case works,
+	   but for now, callers who want to output something with
+	   error_use_protocol in effect can just printf the "E foo"
+	   themselves.  */
+	abort ();
+#ifdef SERVER_SUPPORT
+    if (server_active)
+    {
+	buf_output (&saved_outerr, str, len);
+	buf_copy_lines (&protocol, &saved_outerr, 'E');
+	buf_send_counted (&protocol);
+    }
+    else
+#endif
+    {
+	size_t written;
+	size_t to_write = len;
+	char *p = str;
+
+	while (to_write > 0)
+	{
+	    written = fwrite (str, 1, to_write, stderr);
+	    if (written == 0)
+		break;
+	    p += written;
+	    to_write -= written;
+	}
+    }
+}
