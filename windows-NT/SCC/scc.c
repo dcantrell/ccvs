@@ -40,10 +40,13 @@ struct context {
     FILE *debuglog;
 };
 
+/* Return the version of the SCC spec, major version in the high word,
+   minor version in the low word.  */
 LONG
 SccGetVersion ()
 {
-    return 1;
+    /* We implement version 1.1 of the spec.  */
+    return 0x10001;
 }
 
 SCC_return
