@@ -1,3 +1,26 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* .cvsignore: removed newly unused files, added new stamp file,
+	and alphabetized.
+	* AUTHORS: Added this file to please Automake.  Apparently, its
+	presence is mandated by the GNU coding standards.
+	* Makefile.am: New file needed by Automake
+	* Makefile.in: Regenerated
+	* NEWS: Add a comment about the Automake conversion
+	* aclocal.m4: Added this file for Automake
+	* config.h.in: Regenerated
+	* configure: Regenerated
+	* configure.in: Some changes to support Automake and support for
+	missing roff & ps2pdf programs.
+	* cvs.spec: Regenerated
+	* cvs.spec.in: New file leveraging Automake support
+	* depcomp: New Automake file
+	* install-sh: Newer version from Automake
+	* missing: New Automake file
+	* mkinstalldirs: Newer version from Automake
+	* stamp-h.in: Remove unused file
+	* stamp-h1.in: New Automake generated stamp file
+
 2000-11-30  Derek Price  <derek.price@openavenue.com>
 	    Stephen Kennedy  <Stephen.Kennedy@havok.com>
 
