@@ -1,3 +1,14 @@
+2004-10-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (tagdate): Added some additional tests and FIXCVS
+	comments for dealing properly with a 'cvs add' of a file to
+	a branch that already exists on the mainline.
+	(Problem reported by Renny Barrett <rbarrett@curamsoftware.com>.)
+
+	* sanity.sh (getrlogdate): New shell function.
+	(tagdate-{13,14,16}): Use it to avoid 'sleep 60' by using
+	the exact 1.1.4.1 timestamp for tagdate-14 and tagdate-16.
+	
 2004-10-25 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Redirect rsync output to /dev/null when
