@@ -919,6 +919,7 @@ $(INTDIR)/vers_ts.obj :  $(SOURCE)  $(DEP_VERS_) $(INTDIR)
 SOURCE=.\src\checkin.c
 DEP_CHECKI=\
 	.\src\cvs.h\
+	.\src\fileattr.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
