@@ -591,7 +591,7 @@ em qual lançamento? o submissor do erro concordou que o
 erro foi corrigido?). Para fazer a interface do
 @sc{cvs} com um sistema de bug-tracking externo, veja
 os arquivos @file{rcsinfo} e @file{verifymsg}
-(@pxref{Arquivos de administração}).
+(@pxref{Arquivos administrativos}).
 
 @comment <en>Another aspect of change control is keeping track of
 @comment <en>the fact that changes to several files were in fact
@@ -606,7 +606,7 @@ Outra característica de controle de mudanças é manter
 um controle no fato de que mudanças em vários arquivos
 foram, de fato, uma única mudança lógica. Se você
 devolve vários arquivos numa única operação com
-@code{cvs commit}, @sc{cvs} esquece que os arquivos
+@code{cvs commit} (efetivar), @sc{cvs} esquece que os arquivos
 foram devolvidos juntos, e o fato de eles terem a mesma
 mensagem de log é a única coisa que os une. Manter um
 @file{ChangeLog} no estilo @sc{gnu} pode de certa forma
@@ -673,7 +673,7 @@ arquivo @file{commitinfo}, @file{loginfo},
 @file{rcsinfo}, ou @file{verifymsg} para exigir que
 certos passos sejam executados antes que o cvs permita
 uma devolução (checkin). Também considere se
-características tais como ramos e tags podem ser usadas
+características tais como ramos e etiquetas (tags) podem ser usadas
 para realizar tarefas como desenvolver numa árvore de
 desenvolvimento e então mesclar certas mudanças numa
 árvore estável apenas quando eles tenham sido confirmados.
@@ -747,9 +747,9 @@ forma que exista um módulo chamado @samp{???tc???}.
 
 @menu
 @comment <en>* Getting the source::          Creating a workspace
-* Obtendo os fontes::             Criando uma área de trabalho
+* Obtendo os fontes::           Criando uma área de trabalho
 @comment <en>* Committing your changes::     Making your work available to others
-* Enviando suas alterações::    Disponibilizando seu trabalho para outros
+* Efetivando suas alterações::  Disponibilizando seu trabalho para outros
 @comment <en>* Cleaning up::                 Cleaning up
 * Limpando::                    Limpando
 @comment <en>* Viewing differences::         Viewing differences
@@ -814,11 +814,11 @@ desenvolvedores}, para uma explicação.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @comment <en>@node Committing your changes
-@node Devolvendo suas mudanças
+@node Efetivando suas mudanças
 @comment <en>@subsection Committing your changes
-@subsection Devolvendo suas mudanças
+@subsection efetivando suas mudanças
 @comment <en>@cindex Committing changes to files
-@cindex Devolvendo mudanças para arquivos
+@cindex Efetivando mudanças nos arquivos
 @comment <en>@cindex Log message entry
 @cindex ???entry??? de mensagens de log
 
@@ -909,7 +909,7 @@ arquivo tinha da última vez que foi pego ou
 atualizado. Entretanto, se a data de modificação de um
 arquivo mudou mas seu conteúdo não, ele vai ser
 considerado modificado. A maneira mais fácil de lidar
-com isto é desconsidarando---se você seguir devolvendo,
+com isto é desconsidarando---se você seguir efetivando,
 o @sc{cvs} vai notar que o conteúdo está intacto e vai
 tratar o arquivo como não-modificado. O próximo
 @code{update} vai dar a dica para o @sc{cvs} de que o
@@ -986,10 +986,9 @@ Are you sure you want to release (and delete) directory `tc': n
 @comment <en>committed.  If history logging is enabled it also makes a note in the
 @comment <en>history file.  @xref{history file}.
 O comando @code{release} verifica se todas as suas
-modificações foram devolvidas. Se o ???log de
+modificações foram efetivadas. Se o ???log de
 histórico??? está ativo ele também escreve uma
-observação no arquivo history
-(histórico). @xref{history file}.
+observação no arquivo de histórico. @xref{arquivo de histórico}.
 
 @comment <en>When you use the @samp{-d} flag with @code{release}, it
 @comment <en>also removes your working copy.
@@ -1028,7 +1027,7 @@ O comando @code{release} sempre termina dizendo quantos
 arquivos modificados você tem em sua cópia de trabalho
 dos fontes, e então pergunta por confirmação antes de
 apagar qualquer arquivo ou escrever qualquer coisa na
-arquivo history.
+arquivo de histórico.
 
 @comment <en>You decide to play it safe and answer @kbd{n @key{RET}}
 @comment <en>when @code{release} asks for confirmation.
@@ -1122,7 +1121,7 @@ repositório diretamente. Ao invés disso, você usa os
 comandos do @sc{cvs} para pegar emprestada a sua cópia
 dos arquivos num @dfn{diretório de trabalho}, e então
 trabalhar nesta cópia. Quando você termina um conjunto
-de mudanças, você @dfn{devolve})-as ao repositório. O
+de mudanças, você as @dfn{efetiva}) no repositório. O
 repositório então passa a conter as mudanças que você
 fez, assim como gravar exatamente o que você fez,
 quando você fez e outras informações deste
@@ -1202,7 +1201,7 @@ contém os módulos definidos pelo usuário.
 @comment <en>* Repository storage::          The structure of the repository
 * ???Repository storage???::           A estrutura do repositório
 @comment <en>* Working directory storage::   The structure of working directories
-* Working directory storage::          A estrutura dos repositórios de trabalho
+* ???Working directory storage???::    A estrutura dos diretórios de trabalho
 @comment <en>* Intro administrative files::  Defining modules
 * Intro aos arquivos administrativos:: Definindo módulos
 @comment <en>* Multiple repositories::       Multiple repositories
@@ -1410,13 +1409,16 @@ apenas os diretórios):
           +--@t{gnu}
           |   |
           |   +--@t{diff}
-          |   |   (source code to @sc{gnu} diff)
+@comment <en>          |   |   (source code to @sc{gnu} diff)
+          |   |   (código fonte do @sc{gnu} diff)
           |   |
           |   +--@t{rcs}
-          |   |   (source code to @sc{rcs})
+@comment <en>          |   |   (source code to @sc{rcs})
+          |   |   (código fonte do @sc{rcs})
           |   |
           |   +--@t{cvs}
-          |       (source code to @sc{cvs})
+@comment <en>          |       (source code to @sc{cvs})
+          |       (código fonte do @sc{cvs})
           |
           +--@t{yoyodyne}
               |
@@ -1429,11 +1431,16 @@ apenas os diretórios):
               +--(other Yoyodyne software)
 @end example
 
-With the directories are @dfn{history files} for each file
-under version control.  The name of the history file is
-the name of the corresponding file with @samp{,v}
-appended to the end.  Here is what the repository for
-the @file{yoyodyne/tc} directory might look like:
+@comment <en>With the directories are @dfn{history files} for each file
+@comment <en>under version control.  The name of the history file is
+@comment <en>the name of the corresponding file with @samp{,v}
+@comment <en>appended to the end.  Here is what the repository for
+@comment <en>the @file{yoyodyne/tc} directory might look like:
+Nos diretórios estão os @dfn{arquivos de histórico} para
+cada arquivo sob controle de versão. O nome do arquivo
+de histórico é o nome do arquivo correspondente com um
+@samp{,v} no final. Aqui está como o repositório do
+diretório @file{yoyodyne/tc} deve se parecer:
 @c FIXME: Should also mention CVS (CVSREP)
 @c FIXME? Should we introduce Attic with an xref to
 @c Attic?  Not sure whether that is a good idea or not.
@@ -1459,25 +1466,42 @@ the @file{yoyodyne/tc} directory might look like:
                  +--@t{test2.t,v}
 @end example
 
-@cindex History files
-@cindex RCS history files
+@comment <en>@cindex History files
+@cindex Arquivos de histórico
+@comment <en>@cindex RCS history files
+@cindex Arquivos de histórico do RCS
 @c The first sentence, about what history files
 @c contain, is kind of redundant with our intro to what the
 @c repository does in node Repository....
-The history files contain, among other things, enough
-information to recreate any revision of the file, a log
-of all commit messages and the user-name of the person
-who committed the revision.  The history files are
-known as @dfn{RCS files}, because the first program to
-store files in that format was a version control system
-known as @sc{rcs}.  For a full
-description of the file format, see the @code{man} page
-@cite{rcsfile(5)}, distributed with @sc{rcs}, or the
-file @file{doc/RCSFILES} in the @sc{cvs} source
-distribution.  This
-file format has become very common---many systems other
-than @sc{cvs} or @sc{rcs} can at least import history
-files in this format.
+@comment <en>The history files contain, among other things, enough
+@comment <en>information to recreate any revision of the file, a log
+@comment <en>of all commit messages and the user-name of the person
+@comment <en>who committed the revision.  The history files are
+@comment <en>known as @dfn{RCS files}, because the first program to
+@comment <en>store files in that format was a version control system
+@comment <en>known as @sc{rcs}.  For a full
+@comment <en>description of the file format, see the @code{man} page
+@comment <en>@cite{rcsfile(5)}, distributed with @sc{rcs}, or the
+@comment <en>file @file{doc/RCSFILES} in the @sc{cvs} source
+@comment <en>distribution.  This
+@comment <en>file format has become very common---many systems other
+@comment <en>than @sc{cvs} or @sc{rcs} can at least import history
+@comment <en>files in this format.
+Os arquivos de histórico contém, entre outras coisas,
+informações suficientes para recriar qualquer revisão
+do arquivo, um log com todas as mensagens ???de
+commit??? e o usuário que efetivou (commit) a
+revisão. Os arquivos de histórico são conhecidos como
+@dfn{arquivos RCS} (RCS files), pois o primeiro
+programa a guardar arquivos neste formato foi o sistema
+de controle de versões conhecido como @sc{rcs}. Para
+uma descrição completa do formato de arquivo, leia a
+página @code{man} @cite{rcsfile(5)}, distribuída com o
+@sc{rcs}, ou o arquivo @file{doc/RCSFILES} na
+distribuição dos fontes do @sc{cvs}. Este formato de
+arquivo se tornou muito comum---muitos sistemas além do
+@sc{cvs} e do @sc{rcs} podem, pelo menos, importar
+arquivos de histórico neste formato.
 @c FIXME: Think about including documentation for this
 @c rather than citing it?  In the long run, getting
 @c this to be a standard (not sure if we can cope with
@@ -1485,84 +1509,147 @@ files in this format.
 @c though...) is the way to go, so maybe citing is
 @c better.
 
-The @sc{rcs} files used in @sc{cvs} differ in a few
-ways from the standard format.  The biggest difference
-is magic branches; for more information see @ref{Magic
-branch numbers}.  Also in @sc{cvs} the valid tag names
-are a subset of what @sc{rcs} accepts; for @sc{cvs}'s
-rules see @ref{Tags}.
+@comment <en>The @sc{rcs} files used in @sc{cvs} differ in a few
+@comment <en>ways from the standard format.  The biggest difference
+@comment <en>is magic branches; for more information see @ref{Magic
+@comment <en>branch numbers}.  Also in @sc{cvs} the valid tag names
+@comment <en>are a subset of what @sc{rcs} accepts; for @sc{cvs}'s
+@comment <en>rules see @ref{Tags}.
+Os arquivos @sc{rcs} usados no @sc{cvs} diferem em
+algumas poucas coisas do formato padrão. A maior
+diferença são os ramos mágicos; para mais informações
+veja em @ref{Números de ramos mágicos}. Além disso, no
+@sc{cvs} os nomes válidos de etiquetas (tags) é um subconjunto dos
+que são aceitos pelo @sc{rcs}; para regras do @sc{cvs},
+leia em @ref{Etiquetas (Tags)}.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node File permissions
-@subsection File permissions
+@comment <en>@node File permissions
+@node Permissões de arquivos
+@comment <en>@subsection File permissions
+@subsection Permissões de arquivos
 @c -- Move this to @node Creating a repository or similar
-@cindex Security, file permissions in repository
-@cindex File permissions, general
-@cindex Permissions, general
+@comment <en>@cindex Security, file permissions in repository
+@cindex Segurança, permissões de arquivos no repositório
+@comment <en>@cindex File permissions, general
+@cindex Permissões de arquivos, geral
+@comment <en>@cindex Permissions, general
+@cindex Permissões, geral
 @c FIXME: we need to somehow reflect "permissions in
 @c repository" versus "permissions in working
 @c directory" in the index entries.
-@cindex Group
-@cindex Read-only files, in repository
-All @samp{,v} files are created read-only, and you
-should not change the permission of those files.  The
-directories inside the repository should be writable by
-the persons that have permission to modify the files in
-each directory.  This normally means that you must
-create a UNIX group (see group(5)) consisting of the
-persons that are to edit the files in a project, and
-set up the repository so that it is that group that
-owns the directory.
-(On some systems, you also need to set the set-group-ID-on-execution bit
-on the repository directories (see chmod(1)) so that newly-created files
-and directories get the group-ID of the parent directory rather than
-that of the current process.)
+@comment <en>@cindex Group
+@cindex ???Grupo???
+@comment <en>@cindex Read-only files, in repository
+@cindex Arquivos somente-leitura, no repositório
+@comment <en>All @samp{,v} files are created read-only, and you
+@comment <en>should not change the permission of those files.  The
+@comment <en>directories inside the repository should be writable by
+@comment <en>the persons that have permission to modify the files in
+@comment <en>each directory.  This normally means that you must
+@comment <en>create a UNIX group (see group(5)) consisting of the
+@comment <en>persons that are to edit the files in a project, and
+@comment <en>set up the repository so that it is that group that
+@comment <en>owns the directory.
+@comment <en>(On some systems, you also need to set the set-group-ID-on-execution bit
+@comment <en>on the repository directories (see chmod(1)) so that newly-created files
+@comment <en>and directories get the group-ID of the parent directory rather than
+@comment <en>that of the current process.)
+Todos os arquivos @samp{,v} são criados
+somente-leitura, e você não deve mudar as permissões
+destes arquivos. Os diretórios dentro do repositório
+devem dar permissão de escrita para as pessoas que tem
+permissão para modificar os arquivos em cada diretório.
+Isto normalmente significa que você deve criar um grupo
+do UNIX (veja em group(5)) consistindo nas pessoas que
+vão editar os arquivos num projeto, e ajustar o
+repositório tal que aquele grupo seja o dono do
+diretório. (Em alguns sistemas, você também vai
+precisar ajustar o bit set-group-ID-on-execution nos
+diretórios do repositório (veja em chmod(1)) de forma
+que arquivos e diretório criados recebam o ID de grupo
+do diretório pai e não do ???processo corrente???.)
 
 @c See also comment in commitinfo node regarding cases
 @c which are really awkward with unix groups.
 
-This means that you can only control access to files on
-a per-directory basis.
+@comment <en>This means that you can only control access to files on
+@comment <en>a per-directory basis.
+Isto significa que você pode apenas controlar o acesso
+aos arquivos por diretório.
 
-Note that users must also have write access to check
-out files, because @sc{cvs} needs to create lock files
-(@pxref{Concurrency}).  You can use LockDir in CVSROOT/config
-to put the lock files somewhere other than in the repository
-if you want to allow read-only access to some directories
-(@pxref{config}).
+@comment <en>Note that users must also have write access to check
+@comment <en>out files, because @sc{cvs} needs to create lock files
+@comment <en>(@pxref{Concurrency}).  You can use LockDir in CVSROOT/config
+@comment <en>to put the lock files somewhere other than in the repository
+@comment <en>if you want to allow read-only access to some directories
+@comment <en>(@pxref{config}).
+Observe que os usuários devem ter direito de escrita
+para pegar arquivos emprestados, já que o @sc{cvs} tem
+que criar arquivos de trava (@pxref{Concorrência}). Você
+pode usar LockDir (diretório de trava) no CVSROOT/config
+para botar os arquivos de trava num lugar fora do
+repositório se você quer permitir acesso
+somente-leitura a alguns diretórios (@pxref{config}).
 
 @c CVS seems to use CVSUMASK in picking permissions for
 @c val-tags, but maybe we should say more about this.
 @c Like val-tags gets created by someone who doesn't
 @c have CVSUMASK set right?
-@cindex CVSROOT/val-tags file, and read-only access to projects
-@cindex val-tags file, and read-only access to projects
-Also note that users must have write access to the
-@file{CVSROOT/val-tags} file.  @sc{cvs} uses it to keep
-track of what tags are valid tag names (it is sometimes
-updated when tags are used, as well as when they are
-created).
+@comment <en>@cindex CVSROOT/val-tags file, and read-only access to projects
+@cindex O arquivo CVSROOT/val-tags, e acesso somente-leitura a projetos
+@comment <en>@cindex val-tags file, and read-only access to projects
+@cindex O arquivo val-tags, e acesso somente-leitura a projetos
+@comment <en>Also note that users must have write access to the
+@comment <en>@file{CVSROOT/val-tags} file.  @sc{cvs} uses it to keep
+@comment <en>track of what tags are valid tag names (it is sometimes
+@comment <en>updated when tags are used, as well as when they are
+@comment <en>created).
+Observe também que os usuários devem ter permissão de
+escrita ao arquivo @file{CVSROOT/val-tags}. O @sc{cvs} usa
+tal arquivo para ter controle sobre quais etiquetas
+(tags) são nomes de etiquetas válidos (é às vezes
+atualizado quando etiquetas são usadas ou criadas).
 
-Each @sc{rcs} file will be owned by the user who last
-checked it in.  This has little significance; what
-really matters is who owns the directories.
+@comment <en>Each @sc{rcs} file will be owned by the user who last
+@comment <en>checked it in.  This has little significance; what
+@comment <en>really matters is who owns the directories.
+Cada arquivo @sc{rcs} vai pertencer ao usuário que o
+devolveu por último. Isto tem pouco significado; o que
+realmente importa é quem possui os diretórios.
 
-@cindex CVSUMASK, environment variable
-@cindex Umask, for repository files
-@sc{cvs} tries to set up reasonable file permissions
-for new directories that are added inside the tree, but
-you must fix the permissions manually when a new
-directory should have different permissions than its
-parent directory.  If you set the @code{CVSUMASK}
-environment variable that will control the file
-permissions which @sc{cvs} uses in creating directories
-and/or files in the repository.  @code{CVSUMASK} does
-not affect the file permissions in the working
-directory; such files have the permissions which are
-typical for newly created files, except that sometimes
-@sc{cvs} creates them read-only (see the sections on
-watches, @ref{Setting a watch}; -r, @ref{Global
-options}; or @code{CVSREAD}, @ref{Environment variables}).
+@comment <en>@cindex CVSUMASK, environment variable
+@cindex CVSUMASK, variável de ambiente
+@comment <en>@cindex Umask, for repository files
+@cindex Umask, para arquivos do repositório
+@comment <en>@sc{cvs} tries to set up reasonable file permissions
+@comment <en>for new directories that are added inside the tree, but
+@comment <en>you must fix the permissions manually when a new
+@comment <en>directory should have different permissions than its
+@comment <en>parent directory.  If you set the @code{CVSUMASK}
+@comment <en>environment variable that will control the file
+@comment <en>permissions which @sc{cvs} uses in creating directories
+@comment <en>and/or files in the repository.  @code{CVSUMASK} does
+@comment <en>not affect the file permissions in the working
+@comment <en>directory; such files have the permissions which are
+@comment <en>typical for newly created files, except that sometimes
+@comment <en>@sc{cvs} creates them read-only (see the sections on
+@comment <en>watches, @ref{Setting a watch}; -r, @ref{Global
+@comment <en>options}; or @code{CVSREAD}, @ref{Environment variables}).
+O @sc{cvs} tenta ajustar de forma razoável as permissões para novos
+diretórios que vão sendo adicionados na árvore, mas
+você vai ter que mudar as permissões manualmente quando
+um novo diretório deve ter permissões diferentes que o
+seu diretório pai. Se você ajusta a variável de
+ambiente @code{CVSUMASK} ela vai controlar as
+permissões que o @sc{cvs} usa na criação de diretórios
+e/ou arquivos no repositório. @code{CVSUMASK} não mexe
+nas permissões do diretório de trabalho; tais arquivos
+têm as permissões que são típicas para novos arquivos,
+exceto qeu algumas vezes o @sc{cvs} cria os arquivos
+somente-leitura (veja as seções em ???watches???,
+@ref{Setting a watch}; -r, @ref{Opções globais}; or
+@code{CVSREAD}, @ref{Variáveis de ambiente}).
 @c FIXME: Need more discussion of which
 @c group should own the file in the repository.
 @c Include a somewhat detailed example of the usual
@@ -1576,15 +1663,25 @@ options}; or @code{CVSREAD}, @ref{Environment variables}).
 @c can't remember what POSIX says about this, if
 @c anything).
 
-Note that using the client/server @sc{cvs}
-(@pxref{Remote repositories}), there is no good way to
-set @code{CVSUMASK}; the setting on the client machine
-has no effect.  If you are connecting with @code{rsh}, you
-can set @code{CVSUMASK} in @file{.bashrc} or @file{.cshrc}, as
-described in the documentation for your operating
-system.  This behavior might change in future versions
-of @sc{cvs}; do not rely on the setting of
-@code{CVSUMASK} on the client having no effect.
+@comment <en>Note that using the client/server @sc{cvs}
+@comment <en>(@pxref{Remote repositories}), there is no good way to
+@comment <en>set @code{CVSUMASK}; the setting on the client machine
+@comment <en>has no effect.  If you are connecting with @code{rsh}, you
+@comment <en>can set @code{CVSUMASK} in @file{.bashrc} or @file{.cshrc}, as
+@comment <en>described in the documentation for your operating
+@comment <en>system.  This behavior might change in future versions
+@comment <en>of @sc{cvs}; do not rely on the setting of
+@comment <en>@code{CVSUMASK} on the client having no effect.
+Observe que ao usar o @sc{cvs} cliente/servidor
+(@pxref{Repositórios remotos}), não há uma boa maneira
+de ajustar o @code{CVSUMASK}; o ajuste na máquina
+cliente não tem efeito. Se você está se conectando com
+@code{rsh}, você pode ajustar o @code{CVSUMASK} em
+@file{.bashrc} ou @file{.cshrc}, como descrito na
+documentação de seu sistema operacional. Este
+comportamento pode mudar em futuras versões do
+@sc{cvs}; ???não se basear nos ajustes do @code{CVSUMASK}
+no cliente não tem efeito.???
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
 @c
@@ -1605,167 +1702,292 @@ of @sc{cvs}; do not rely on the setting of
 @c manually fixing permission, we better document a lot
 @c better just what we mean by "fix").
 
-Using pserver, you will generally need stricter
-permissions on the @sc{cvsroot} directory and
-directories above it in the tree; see @ref{Password
-authentication security}.
+@comment <en>Using pserver, you will generally need stricter
+@comment <en>permissions on the @sc{cvsroot} directory and
+@comment <en>directories above it in the tree; see @ref{Password
+@comment <en>authentication security}.
+Quando usar pserver, você deve ser, em geral, mais mais
+restritivo com permissões no diretório @sc{cvsroot} e
+nos diretórios abaixo dele na árvore; veja em
+@ref{Securança com autenticação por senha}.
 
+@comment <en>@cindex Setuid
 @cindex Setuid
+@comment <en>@cindex Setgid
 @cindex Setgid
-@cindex Security, setuid
-@cindex Installed images (VMS)
-Some operating systems have features which allow a
-particular program to run with the ability to perform
-operations which the caller of the program could not.
-For example, the set user ID (setuid) or set group ID
-(setgid) features of unix or the installed image
-feature of VMS.  @sc{cvs} was not written to use such
-features and therefore attempting to install @sc{cvs} in
-this fashion will provide protection against only
-accidental lapses; anyone who is trying to circumvent
-the measure will be able to do so, and depending on how
-you have set it up may gain access to more than just
-@sc{cvs}.  You may wish to instead consider pserver.  It
-shares some of the same attributes, in terms of
-possibly providing a false sense of security or opening
-security holes wider than the ones you are trying to
-fix, so read the documentation on pserver security
-carefully if you are considering this option
-(@ref{Password authentication security}).
+@comment <en>@cindex Security, setuid
+@cindex Securança, setuid
+@comment <en>@cindex Installed images (VMS)
+@cindex ???Installed images??? (VMS)
+@comment <en>Some operating systems have features which allow a
+@comment <en>particular program to run with the ability to perform
+@comment <en>operations which the caller of the program could not.
+@comment <en>For example, the set user ID (setuid) or set group ID
+@comment <en>(setgid) features of unix or the installed image
+@comment <en>feature of VMS.  @sc{cvs} was not written to use such
+@comment <en>features and therefore attempting to install @sc{cvs} in
+@comment <en>this fashion will provide protection against only
+@comment <en>accidental lapses; anyone who is trying to circumvent
+@comment <en>the measure will be able to do so, and depending on how
+@comment <en>you have set it up may gain access to more than just
+@comment <en>@sc{cvs}.  You may wish to instead consider pserver.  It
+@comment <en>shares some of the same attributes, in terms of
+@comment <en>possibly providing a false sense of security or opening
+@comment <en>security holes wider than the ones you are trying to
+@comment <en>fix, so read the documentation on pserver security
+@comment <en>carefully if you are considering this option
+@comment <en>(@ref{Password authentication security}).
+alguns sistemas operacionais têm a habilidade de
+permitir que um programa execute com a habilidade de
+executar certas operações que quem chamou o programa
+não não tem. Por exemplo, os set user ID (setuid) ou
+set group ID (setgid) do unix ou a caracteristica de
+installed image do VMS. @sc{cvs} não foi escrito para
+usar tais habilidades, logo, tentar instalar o @sc{cvs}
+nesta forma vai gerar proteção apenas contra erros
+acidentais; qualquer um que esteja tentando
+???circumvent the measure??? vai ser capaz de fazê-lo,
+e dependendo de como você configurou, pode ganhar
+acesso até a mais do que apenas o @sc{cvs}. Você pode
+estar considerando o uso do pserver. Ele compartilha
+alguns dos mesmos atributos, em termos de possivelmente
+fornecer uma falsa sensação de securança ou de abrir
+buracos de segurança ainda maiores dos que os que você
+quer fechar. Portanto leia a documentação de segurança
+com pserver cuidadosamente se você está pensando nesta
+opção (@ref{Segurança com autenticação por senha}).
 
-@node Windows permissions
-@subsection File Permission issues specific to Windows
-@cindex Windows, and permissions
-@cindex File permissions, Windows-specific
-@cindex Permissions, Windows-specific
+@comment <en>@node Windows permissions
+@node Permissões no Windows
+@comment <en>@subsection File Permission issues specific to Windows
+@subsection Questões sobre permissões de arquivos específicas ao Windows
+@comment <en>@cindex Windows, and permissions
+@cindex Windows, e permissões
+@comment <en>@cindex File permissions, Windows-specific
+@cindex Permissões de arquivos, específicas ao Windows
+@comment <en>@cindex Permissions, Windows-specific
+@cindex Permissões, específicas ao Windows
 
-Some file permission issues are specific to Windows
-operating systems (Windows 95, Windows NT, and
-presumably future operating systems in this family.
-Some of the following might apply to OS/2 but I'm not
-sure).
+@comment <en>Some file permission issues are specific to Windows
+@comment <en>operating systems (Windows 95, Windows NT, and
+@comment <en>presumably future operating systems in this family.
+@comment <en>Some of the following might apply to OS/2 but I'm not
+@comment <en>sure).
+Algumas questões sobre permissões de arquivos são
+específicas ao sistema operacional Windows (Windows 95,
+Windows NT e presumivelmente futuros sistemas
+operacionais nesta família. Algumas coisas abaixo se
+aplicam ao OS/2 mas não estou bem certo).
 
-If you are using local @sc{cvs} and the repository is on a
-networked file system which is served by the Samba SMB
-server, some people have reported problems with
-permissions.  Enabling WRITE=YES in the samba
-configuration is said to fix/workaround it.
-Disclaimer: I haven't investigated enough to know the
-implications of enabling that option, nor do I know
-whether there is something which @sc{cvs} could be doing
-differently in order to avoid the problem.  If you find
-something out, please let us know as described in
-@ref{BUGS}.
+@comment <en>If you are using local @sc{cvs} and the repository is on a
+@comment <en>networked file system which is served by the Samba SMB
+@comment <en>server, some people have reported problems with
+@comment <en>permissions.  Enabling WRITE=YES in the samba
+@comment <en>configuration is said to fix/workaround it.
+@comment <en>Disclaimer: I haven't investigated enough to know the
+@comment <en>implications of enabling that option, nor do I know
+@comment <en>whether there is something which @sc{cvs} could be doing
+@comment <en>differently in order to avoid the problem.  If you find
+@comment <en>something out, please let us know as described in
+@comment <en>@ref{BUGS}.
+Se você está usando um @sc{cvs} local e o repositório
+está num sistema de arquivos em rede de um servidor
+Samba SMB, algumas pessoas relataram problemas com
+permissões. Habilitando WRITE=YES na configuração do
+samba consertar/resolve. ???Disclaimer:??? Eu não
+investiguei o suficiente as implicações de habilitar
+esta opção, nem sei se há algo que o @sc{cvs} poderia
+fazer de diferente para evitar este problema. Se você
+souber de algo, por favor nos ponha a par como descrito
+em @ref{Paus}.
 
+@comment <en>@node Attic
 @node Attic
-@subsection The attic
+@comment <en>@subsection The attic
+@subsection O attic
+@comment <en>@cindex Attic
 @cindex Attic
 
-You will notice that sometimes @sc{cvs} stores an
-@sc{rcs} file in the @code{Attic}.  For example, if the
-@sc{cvsroot} is @file{/usr/local/cvsroot} and we are
-talking about the file @file{backend.c} in the
-directory @file{yoyodyne/tc}, then the file normally
-would be in
+@comment <en>You will notice that sometimes @sc{cvs} stores an
+@comment <en>@sc{rcs} file in the @code{Attic}.  For example, if the
+@comment <en>@sc{cvsroot} is @file{/usr/local/cvsroot} and we are
+@comment <en>talking about the file @file{backend.c} in the
+@comment <en>directory @file{yoyodyne/tc}, then the file normally
+@comment <en>would be in
+Você deve ter notado que às vezes o @sc{cvs} guarda um
+arquivo @sc{rcs} no @code{Attic}. Por exemplo, se o
+@sc{cvsroot} é @file{/usr/local/cvsroot} e nós estamos
+falando sobre o arquivo @file{backend.c} no diretório
+@file{yoyodyne/tc}, então o arquivo normalmente deve
+estar em
 
 @example
 /usr/local/cvsroot/yoyodyne/tc/backend.c,v
 @end example
 
 @noindent
-but if it goes in the attic, it would be in
+@comment <en>but if it goes in the attic, it would be in
+mas se ele vai para o attic, ele deve estar em
 
 @example
 /usr/local/cvsroot/yoyodyne/tc/Attic/backend.c,v
 @end example
 
 @noindent
+@comment <en>@cindex Dead state
 @cindex Dead state
-instead.  It should not matter from a user point of
-view whether a file is in the attic; @sc{cvs} keeps
-track of this and looks in the attic when it needs to.
-But in case you want to know, the rule is that the RCS
-file is stored in the attic if and only if the head
-revision on the trunk has state @code{dead}.  A
-@code{dead} state means that file has been removed, or
-never added, for that revision.  For example, if you
-add a file on a branch, it will have a trunk revision
-in @code{dead} state, and a branch revision in a
-non-@code{dead} state.
+@comment <en>instead.  It should not matter from a user point of
+@comment <en>view whether a file is in the attic; @sc{cvs} keeps
+@comment <en>track of this and looks in the attic when it needs to.
+@comment <en>But in case you want to know, the rule is that the RCS
+@comment <en>file is stored in the attic if and only if the head
+@comment <en>revision on the trunk has state @code{dead}.  A
+@comment <en>@code{dead} state means that file has been removed, or
+@comment <en>never added, for that revision.  For example, if you
+@comment <en>add a file on a branch, it will have a trunk revision
+@comment <en>in @code{dead} state, and a branch revision in a
+@comment <en>non-@code{dead} state.
+ao invés. Não importa ao usuário onde, dentro do Attic,
+fica o arquivo; @sc{cvs} mantém controle disto e busca
+no Attic quando é preciso. Mas caso você queira saber,
+a regra é que o arquivo RCS é guardado no attic se e
+somente se a ???head revision??? no tronco está no
+estado @code{morto} (dead). Um estado @code{morto} significa
+que o arquivo foi removido, ou nunca foi adicionado,
+naquela revisão. Por exemplo, se você adiciona um
+arquivo num ramo, ele vai ter uma revisão de
+tronco num estado @code{morto} e uma revisão de
+ramo num estado não-@code{morto}.
 @c Probably should have some more concrete examples
 @c here, or somewhere (not sure exactly how we should
 @c arrange the discussion of the dead state, versus
 @c discussion of the attic).
 
-@node CVS in repository
-@subsection The CVS directory in the repository
-@cindex CVS directory, in repository
+@comment <en>@node CVS in repository
+@node CVS no repositório
+@comment <en>@subsection The CVS directory in the repository
+@subsection O diretório CVS no repositório
+@comment <en>@cindex CVS directory, in repository
+@cindex diretório CVS, no repositório
 
-The @file{CVS} directory in each repository directory
-contains information such as file attributes (in a file
-called @file{CVS/fileattr}.  In the
-future additional files may be added to this directory,
-so implementations should silently ignore additional
-files.
+@comment <en>The @file{CVS} directory in each repository directory
+@comment <en>contains information such as file attributes (in a file
+@comment <en>called @file{CVS/fileattr}.  In the
+@comment <en>future additional files may be added to this directory,
+@comment <en>so implementations should silently ignore additional
+@comment <en>files.
+O diretório @file{CVS} em cada diretório do repositório
+contém informações tais como atributos de arquivos (num
+arquivo chamado @file{CVS/fileattr}. No futuro novos
+arquivos ficarão neste diretório, logo, implementações
+devem ignorar em silêncio arquivos adicionais.
 
-This behavior is implemented only by @sc{cvs} 1.7 and
-later; for details see @ref{Watches Compatibility}.
+@comment <en>This behavior is implemented only by @sc{cvs} 1.7 and
+@comment <en>later; for details see @ref{Watches Compatibility}.
+Este comportamento é implementado apenas pelo @sc{cvs}
+1.7 e posteriores; para detalhes veja em @ref{???Watches
+Compatibility???}.
 
-The format of the fileattr file is a series of entries
-of the following form (where @samp{@{} and @samp{@}}
-means the text between the braces can be repeated zero
-or more times):
+@comment <en>The format of the fileattr file is a series of entries
+@comment <en>of the following form (where @samp{@{} and @samp{@}}
+@comment <en>means the text between the braces can be repeated zero
+@comment <en>or more times):
+O formato do arquivo fileattr é uma série de entradas
+da seguinte forma (onde @samp{@{} e @samp{@}}
+significam que o texto entre chaves pode ser repetido
+zero ou várias vezes):
 
 @var{ent-type} @var{filename} <tab> @var{attrname} = @var{attrval}
   @{; @var{attrname} = @var{attrval}@} <linefeed>
 
-@var{ent-type} is @samp{F} for a file, in which case the entry specifies the
-attributes for that file.
+@comment <en>@var{ent-type} is @samp{F} for a file, in which case the entry specifies the
+@comment <en>attributes for that file.
+@var{ent-type} é @samp{F} para arquivo, neste caso a
+entrada especifica os atributos para tal arquivo.
 
-@var{ent-type} is @samp{D},
-and @var{filename} empty, to specify default attributes
-to be used for newly added files.
+@comment <en>@var{ent-type} is @samp{D},
+@comment <en>and @var{filename} empty, to specify default attributes
+@comment <en>to be used for newly added files.
+@var{ent-type} é @samp{D},
+e @var{filename} vazio, para especificar atributos
+padrão para serem usados em novos arquivos adicionados.
 
-Other @var{ent-type} are reserved for future expansion.  @sc{cvs} 1.9 and older
-will delete them any time it writes file attributes.
-@sc{cvs} 1.10 and later will preserve them.
+@comment <en>Other @var{ent-type} are reserved for future expansion.  @sc{cvs} 1.9 and older
+@comment <en>will delete them any time it writes file attributes.
+@comment <en>@sc{cvs} 1.10 and later will preserve them.
+Outros @var{ent-type} são reservados para futuras
+expansões. @sc{cvs} 1.9 e anteriores vão deletá-los a
+toda hora que ele escrever atributos de
+arquivos. @sc{cvs} 1.10 e posteriores vão preservá-los.
 
-Note that the order of the lines is not significant;
-a program writing the fileattr file may
-rearrange them at its convenience.
+@comment <en>Note that the order of the lines is not significant;
+@comment <en>a program writing the fileattr file may
+@comment <en>rearrange them at its convenience.
+Observe que a ordem das linhas não é significante; um
+programa escrevendo o arquivo fileattr pode
+rearranjá-las de acordo com sua própria conveniência.
 
-There is currently no way of quoting tabs or linefeeds in the
-filename, @samp{=} in @var{attrname},
-@samp{;} in @var{attrval}, etc.  Note: some implementations also
-don't handle a NUL character in any of the fields, but
-implementations are encouraged to allow it.
+@comment <en>There is currently no way of quoting tabs or linefeeds in the
+@comment <en>filename, @samp{=} in @var{attrname},
+@comment <en>@samp{;} in @var{attrval}, etc.  Note: some implementations also
+@comment <en>don't handle a NUL character in any of the fields, but
+@comment <en>implementations are encouraged to allow it.
+Não existe atualmente uma forma de ???quoting??? tabs
+ou quebras de linhas no nome do arquivo, @samp{=} em @var{attrname},
+@samp{;} em @var{attrval}, etc. Obs.: algumas
+implementações também não manipulam o caractere NUL em
+enhum dos campos, mas encorajamos implementações que
+permitam isto.
 
-By convention, @var{attrname} starting with @samp{_} is for an attribute given
-special meaning by @sc{cvs}; other @var{attrname}s are for user-defined attributes
-(or will be, once implementations start supporting user-defined attributes).
+@comment <en>By convention, @var{attrname} starting with @samp{_} is for an attribute given
+@comment <en>special meaning by @sc{cvs}; other @var{attrname}s are for user-defined attributes
+@comment <en>(or will be, once implementations start supporting user-defined attributes).
+Por convenção, @var{attrname} começando com @samp{_} é
+para um atributo ao qual foi dado significado especial
+pelo @sc{cvs}; outros @var{attrname}s são para
+atributos definidos pelo usuário (ou que vão ser, já
+que implementações começaram suporte a atributos
+definidos pelo usuário).
 
-Builtin attributes:
+@comment <en>Builtin attributes:
+Atributos internos:
 
 @table @code
 @item _watched
-Present means the file is watched and should be checked out
-read-only.
+@comment <en>Present means the file is watched and should be checked out
+@comment <en>read-only.
+Quando presente significa que o arquivo está
+???watched??? (watched) e deve ser emprestado como
+somente-leitura.
 
 @item _watchers
-Users with watches for this file.  Value is
+@comment <en>Users with watches for this file.  Value is
+@comment <en>@var{watcher} > @var{type} @{ , @var{watcher} > @var{type} @}
+@comment <en>where @var{watcher} is a username, and @var{type}
+@comment <en>is zero or more of edit,unedit,commit separated by
+@comment <en>@samp{+} (that is, nothing if none; there is no "none" or "all" keyword).
+Usuários com ???watches??? para este arquivo. O valor é
 @var{watcher} > @var{type} @{ , @var{watcher} > @var{type} @}
-where @var{watcher} is a username, and @var{type}
-is zero or more of edit,unedit,commit separated by
-@samp{+} (that is, nothing if none; there is no "none" or "all" keyword).
+onde @var{watcher} é um nome de usuário, e @var{type} é
+zero ou mais de edit,unedit,commit separados por
+@samp{+} (isto é, deixe em branco para nenhum; não há
+palavras chaves para "nenhum" ou "todos").
 
 @item _editors
-Users editing this file.  Value is
+@comment <en>Users editing this file.  Value is
+@comment <en>@var{editor} > @var{val} @{ , @var{editor} > @var{val} @}
+@comment <en>@comment <en>where @var{editor} is a username, and @var{val} is
+@comment <en>@var{time}+@var{hostname}+@var{pathname}, where
+@comment <en>@var{time} is when the @code{cvs edit} command (or
+@comment <en>equivalent) happened,
+@comment <en>and @var{hostname} and @var{pathname} are for the working directory.
+Usuários editando este arquivo. O valor é
 @var{editor} > @var{val} @{ , @var{editor} > @var{val} @}
-where @var{editor} is a username, and @var{val} is
-@var{time}+@var{hostname}+@var{pathname}, where
-@var{time} is when the @code{cvs edit} command (or
-equivalent) happened,
-and @var{hostname} and @var{pathname} are for the working directory.
+onde @var{editor} é um username, e @var{val} é
+@var{time}+@var{hostname}+@var{pathname}, onde
+@var{time} é quando o comando @code{cvs edit} (ou outro
+equivalente) aconteceu, e @var{hostname} e
+@var{pathname} são do diretório de trabalho.
 @end table
 
 Example:
@@ -1781,148 +2003,279 @@ D _watched=
 @end example
 
 @noindent
-means that the file @file{file1} should be checked out
-read-only.  Furthermore, joe is watching for edits and
-mary is watching for commits.  The file @file{file2}
-should be checked out read-only; sue started editing it
-on 8 Jan 1975 in the directory @file{/home/sue/cvs} on
-the machine @code{workstn1}.  Future files which are
-added should be checked out read-only.  To represent
-this example here, we have shown a space after
-@samp{D}, @samp{Ffile1}, and @samp{Ffile2}, but in fact
-there must be a single tab character there and no spaces.
+@comment <en>means that the file @file{file1} should be checked out
+@comment <en>read-only.  Furthermore, joe is watching for edits and
+@comment <en>mary is watching for commits.  The file @file{file2}
+@comment <en>should be checked out read-only; sue started editing it
+@comment <en>on 8 Jan 1975 in the directory @file{/home/sue/cvs} on
+@comment <en>the machine @code{workstn1}.  Future files which are
+@comment <en>added should be checked out read-only.  To represent
+@comment <en>this example here, we have shown a space after
+@comment <en>@samp{D}, @samp{Ffile1}, and @samp{Ffile2}, but in fact
+@comment <en>there must be a single tab character there and no spaces.
+significa que o arquivo @file{file1} deve ser pego como
+somente-leitura. Além disso, joe está ???watching???
+edicoes e mary está ???watching??? ???commits???. O
+arquivo @file{file2} deve ser pego somente-leitura; sue
+comecou a edita-lo em 8 Jan 1975 no diretorio
+@file{/home/sue/cvs} na maquina
+@code{workstn1}. Futuros arquivos que forem adicionados
+devem ser pegos somente-leitura. Para representar este
+exemplo aqui, nós mostramos um espaco depois de
+@samp{D}, @samp{Ffile1}, e @samp{Ffile2}, mas de fato
+existe um caractere de tab e nenhum espaco.
 
-@node Locks
-@subsection CVS locks in the repository
+@comment <en>@node Locks
+@node Travas
+@comment <en>@subsection CVS locks in the repository
+@subsection travas CVS no repositório
 
-@cindex #cvs.rfl, technical details
-@cindex #cvs.wfl, technical details
-@cindex #cvs.lock, technical details
-@cindex Locks, cvs, technical details
-For an introduction to @sc{cvs} locks focusing on
-user-visible behavior, see @ref{Concurrency}.  The
-following section is aimed at people who are writing
-tools which want to access a @sc{cvs} repository without
-interfering with other tools accessing the same
-repository.  If you find yourself confused by concepts
-described here, like @dfn{read lock}, @dfn{write lock},
-and @dfn{deadlock}, you might consult the literature on
-operating systems or databases.
+@comment <en>@cindex #cvs.rfl, technical details
+@cindex #cvs.rfl, detalhes técnicos
+@comment <en>@cindex #cvs.wfl, technical details
+@cindex #cvs.wfl, detalhes técnicos
+@comment <en>@cindex #cvs.lock, technical details
+@cindex #cvs.lock, detalhes técnicos
+@comment <en>@cindex Locks, cvs, technical details
+@cindex Travas, cvs, detalhes técnicos
+@comment <en>For an introduction to @sc{cvs} locks focusing on
+@comment <en>user-visible behavior, see @ref{Concurrency}.  The
+@comment <en>following section is aimed at people who are writing
+@comment <en>tools which want to access a @sc{cvs} repository without
+@comment <en>interfering with other tools accessing the same
+@comment <en>repository.  If you find yourself confused by concepts
+@comment <en>described here, like @dfn{read lock}, @dfn{write lock},
+@comment <en>and @dfn{deadlock}, you might consult the literature on
+@comment <en>operating systems or databases.
+Para uma introdução às travas (locks) no @sc{cvs}
+focando no comportamento visível ao usuário, veja em
+@ref{Concorrência}. A seção seguinte foi feita para
+para pessoas que escrevem ferramentas as quais precisam
+acessar um repositório @sc{cvs} sem interferir com
+outras ferramentas acessando o mesmo repositório. Se
+você se sentir confuso com os conceitos descritos aqui,
+como @dfn{read lock}, @dfn{write lock} e
+@dfn{deadlock}, você deve consultar a literatura de
+sistemas operacionais e bancos de dados.
 
+@comment <en>@cindex #cvs.tfl
 @cindex #cvs.tfl
-Any file in the repository with a name starting
-with @file{#cvs.rfl.} is a read lock.  Any file in
-the repository with a name starting with
-@file{#cvs.wfl} is a write lock.  Old versions of @sc{cvs}
-(before @sc{cvs} 1.5) also created files with names starting
-with @file{#cvs.tfl}, but they are not discussed here.
-The directory @file{#cvs.lock} serves as a master
-lock.  That is, one must obtain this lock first before
-creating any of the other locks.
+@comment <en>Any file in the repository with a name starting
+@comment <en>with @file{#cvs.rfl.} is a read lock.  Any file in
+@comment <en>the repository with a name starting with
+@comment <en>@file{#cvs.wfl} is a write lock.  Old versions of @sc{cvs}
+@comment <en>(before @sc{cvs} 1.5) also created files with names starting
+@comment <en>with @file{#cvs.tfl}, but they are not discussed here.
+@comment <en>The directory @file{#cvs.lock} serves as a master
+@comment <en>lock.  That is, one must obtain this lock first before
+@comment <en>creating any of the other locks.
+Qualquer arquivo no repositório com um nome começando
+com @file{#cvs.rfl.} é um ???read lock???. Qualquer
+arquivo no repositório com um nome comçando com
+@file{#cvs.wfl} é um ???write lock???.  versões antigas
+do @sc{cvs} (antes do @sc{cvs} 1.5) também criavam
+arquivos com nomes começando com @file{#cvs.tfl}, mas
+estes não são discutidos aqui.
 
-To obtain a readlock, first create the @file{#cvs.lock}
-directory.  This operation must be atomic (which should
-be true for creating a directory under most operating
-systems).  If it fails because the directory already
-existed, wait for a while and try again.  After
-obtaining the @file{#cvs.lock} lock, create a file
-whose name is @file{#cvs.rfl.} followed by information
-of your choice (for example, hostname and process
-identification number).  Then remove the
-@file{#cvs.lock} directory to release the master lock.
-Then proceed with reading the repository.  When you are
-done, remove the @file{#cvs.rfl} file to release the
-read lock.
+@comment <en>The directory @file{#cvs.lock} serves as a master
+@comment <en>lock.  That is, one must obtain this lock first before
+@comment <en>creating any of the other locks.
+O diretório @file{#cvs.lock} funciona como uma trava
+mestra.  Isto é, deve-se obter esta trava antes de
+criar qualquer das outras travas.
 
-To obtain a writelock, first create the
-@file{#cvs.lock} directory, as with a readlock.  Then
-check that there are no files whose names start with
-@file{#cvs.rfl.}.  If there are, remove
-@file{#cvs.lock}, wait for a while, and try again.  If
-there are no readers, then create a file whose name is
-@file{#cvs.wfl} followed by information of your choice
-(for example, hostname and process identification
-number).  Hang on to the @file{#cvs.lock} lock.  Proceed
-with writing the repository.  When you are done, first
-remove the @file{#cvs.wfl} file and then the
-@file{#cvs.lock} directory. Note that unlike the
-@file{#cvs.rfl} file, the @file{#cvs.wfl} file is just
-informational; it has no effect on the locking operation
-beyond what is provided by holding on to the
-@file{#cvs.lock} lock itself.
+@comment <en>To obtain a readlock, first create the @file{#cvs.lock}
+@comment <en>directory.  This operation must be atomic (which should
+@comment <en>be true for creating a directory under most operating
+@comment <en>systems).  If it fails because the directory already
+@comment <en>existed, wait for a while and try again.  After
+@comment <en>obtaining the @file{#cvs.lock} lock, create a file
+@comment <en>whose name is @file{#cvs.rfl.} followed by information
+@comment <en>of your choice (for example, hostname and process
+@comment <en>identification number).  Then remove the
+@comment <en>@file{#cvs.lock} directory to release the master lock.
+@comment <en>Then proceed with reading the repository.  When you are
+@comment <en>done, remove the @file{#cvs.rfl} file to release the
+@comment <en>read lock.
+Para obter um ???readlock???, primeiro crie o diretório
+@file{#cvs.lock}.  Esta operação deve ser atômica (o
+que deve ser verdade para a criação de um diretório na
+maioria dos sistemas operacionais).  Se isto falha por
+que o diretório já existe, espere um tempinho e tente de
+novo.  Depois de obter a trava @file{#cvs.lock}, crie
+um arquivo cujo nome seja @file{#cvs.rfl.} seguido pela
+informação de sua escolha (por exemplo, nome de host e
+nmero de identificaçao de processo).  Então remova o
+diretório @file{#cvs.lock} para ativar a trava
+mestra. Então começe a ler o repositório.  Quando você
+terminar, remova o arquivo @file{#cvs.rfl} para
+liberar o ???read lock?.
 
-Note that each lock (writelock or readlock) only locks
-a single directory in the repository, including
-@file{Attic} and @file{CVS} but not including
-subdirectories which represent other directories under
-version control.  To lock an entire tree, you need to
-lock each directory (note that if you fail to obtain
-any lock you need, you must release the whole tree
-before waiting and trying again, to avoid deadlocks).
+@comment <en>To obtain a writelock, first create the
+@comment <en>@file{#cvs.lock} directory, as with a readlock.  Then
+@comment <en>check that there are no files whose names start with
+@comment <en>@file{#cvs.rfl.}.  If there are, remove
+@comment <en>@file{#cvs.lock}, wait for a while, and try again.  If
+@comment <en>there are no readers, then create a file whose name is
+@comment <en>@file{#cvs.wfl} followed by information of your choice
+@comment <en>(for example, hostname and process identification
+@comment <en>number).  Hang on to the @file{#cvs.lock} lock.  Proceed
+@comment <en>with writing the repository.  When you are done, first
+@comment <en>remove the @file{#cvs.wfl} file and then the
+@comment <en>@file{#cvs.lock} directory. Note that unlike the
+@comment <en>@file{#cvs.rfl} file, the @file{#cvs.wfl} file is just
+@comment <en>informational; it has no effect on the locking operation
+@comment <en>beyond what is provided by holding on to the
+@comment <en>@file{#cvs.lock} lock itself.
+Para obter uma ???writelock???, primeiro crie o
+diretório @file{#cvs.lock}, da mesma forma que com um
+???readlock???.  Então verifique se não existem
+arquivos cujos nomes começam com @file{#cvs.rfl.}.  Se
+existem, remova o @file{#cvs.lock}, espere um tempinho
+e tente de novo.  Se não existem ???readers???, então
+crie um arquivo cujo nome seja @file{#cvs.wfl} seguido
+pela informação de sua escolha (por exemplo, hostname e
+número de identificação de processo).  mantenha a trava
+@file{#cvs.lock}.  Escreva no repositório.  Quando
+tiver terminado, primeiro remova o arquivo
+@file{#cvs.wfl} e então o diretório
+@file{#cvs.lock}. Observe que ao contrário do arquivo
+@file{#cvs.rfl}, o  arquivo @file{#cvs.wfl} é apenas
+informativo; ele não tem efeito na operação de trava
+além do que é feito pelo ato de manter a trava
+@file{#cvs.lock}.
 
-Note also that @sc{cvs} expects writelocks to control
-access to individual @file{foo,v} files.  @sc{rcs} has
-a scheme where the @file{,foo,} file serves as a lock,
-but @sc{cvs} does not implement it and so taking out a
-@sc{cvs} writelock is recommended.  See the comments at
-rcs_internal_lockfile in the @sc{cvs} source code for
-further discussion/rationale.
+@comment <en>Note that each lock (writelock or readlock) only locks
+@comment <en>a single directory in the repository, including
+@comment <en>@file{Attic} and @file{CVS} but not including
+@comment <en>subdirectories which represent other directories under
+@comment <en>version control.  To lock an entire tree, you need to
+@comment <en>lock each directory (note that if you fail to obtain
+@comment <en>any lock you need, you must release the whole tree
+@comment <en>before waiting and trying again, to avoid deadlocks).
+Observe que cada trava (???writelock??? or
+???readlock???) apenas trava um único diretório no
+repositório, inclusive no caso do @file{Attic} e do @file{CVS}
+sem incluir os subdiretórios que representam outros
+diretórios sob controle de versão.  Para travar uma
+árvore inteira, voc precisa travar cada diretório
+(observe que se você não conseguir obter alguma trava
+que você precise, você deve liberar a árvore toda antes
+para esperar e tentar novamente, para evitar ???deadlocks???).
 
-@node CVSROOT storage
-@subsection How files are stored in the CVSROOT directory
-@cindex CVSROOT, storage of files
+@comment <en>Note also that @sc{cvs} expects writelocks to control
+@comment <en>access to individual @file{foo,v} files.  @sc{rcs} has
+@comment <en>a scheme where the @file{,foo,} file serves as a lock,
+@comment <en>but @sc{cvs} does not implement it and so taking out a
+@comment <en>@sc{cvs} writelock is recommended.  See the comments at
+@comment <en>rcs_internal_lockfile in the @sc{cvs} source code for
+@comment <en>further discussion/rationale.
+Observe também que o @sc{cvs} espera ???writelocks???
+para controlar o acesso a arquivos @file{foo,v}
+individuais.  @sc{rcs} tem um esquema onde o arquivo
+@file{,foo,} funciona como uma trava, mas o @sc{cvs}
+não implementa isso. Portanto, fazer um ???writelock???
+no @sc{cvs} é recomendado.  Veja os comentários no
+rcs_internal_lockfile no código fonte do @sc{cvs} para
+mais discussões/???rationale???.
 
-The @file{$CVSROOT/CVSROOT} directory contains the
-various administrative files.  In some ways this
-directory is just like any other directory in the
-repository; it contains @sc{rcs} files whose names end
-in @samp{,v}, and many of the @sc{cvs} commands operate
-on it the same way.  However, there are a few
-differences.
+@comment <en>@node CVSROOT storage
+@node CVSROOT ???storage???
+@comment <en>@subsection How files are stored in the CVSROOT directory
+@subsection Como os arquivos são guardados no diretório CVSROOT
+@comment <en>@cindex CVSROOT, storage of files
+@cindex CVSROOT, ???storage??? de arquivos
 
-For each administrative file, in addition to the
-@sc{rcs} file, there is also a checked out copy of the
-file.  For example, there is an @sc{rcs} file
-@file{loginfo,v} and a file @file{loginfo} which
-contains the latest revision contained in
-@file{loginfo,v}.  When you check in an administrative
-file, @sc{cvs} should print
+@comment <en>The @file{$CVSROOT/CVSROOT} directory contains the
+@comment <en>various administrative files.  In some ways this
+@comment <en>directory is just like any other directory in the
+@comment <en>repository; it contains @sc{rcs} files whose names end
+@comment <en>in @samp{,v}, and many of the @sc{cvs} commands operate
+@comment <en>on it the same way.  However, there are a few
+@comment <en>differences.
+O diretório @file{$CVSROOT/CVSROOT} contém os vários
+arquivos administrativos.  Em alguns aspectos este
+diretório é igual a qualquer outro diretório no
+repositório; ele contém arquivos @sc{rcs} cujos nomes
+terminam em @samp{,v}, e muitos dos comandos do
+@sc{cvs} operam neles do mesmo jeito.  Entretanto,
+existem algumas poucas diferenças.
+
+@comment <en>For each administrative file, in addition to the
+@comment <en>@sc{rcs} file, there is also a checked out copy of the
+@comment <en>file.  For example, there is an @sc{rcs} file
+@comment <en>@file{loginfo,v} and a file @file{loginfo} which
+@comment <en>contains the latest revision contained in
+@comment <en>@file{loginfo,v}.  When you check in an administrative
+@comment <en>file, @sc{cvs} should print
+Para cada arquivo administrativo, além do arquivo
+@sc{rcs}, existe também uma cópia de trabalho do
+arquivo.  Por exemplo, existe um arquivo @sc{rcs}
+@file{loginfo,v} e um arquivo @file{loginfo} que contém
+a ultima revisão contida em @file{loginfo,v}.  Quando
+você devolve um arquivo administrativo, o @sc{cvs} vai
+mostrar
 
 @example
 cvs commit: Rebuilding administrative file database
 @end example
 
 @noindent
-and update the checked out copy in
-@file{$CVSROOT/CVSROOT}.  If it does not, there is
-something wrong (@pxref{BUGS}).  To add your own files
-to the files to be updated in this fashion, you can add
-them to the @file{checkoutlist} administrative file
+@comment <en>and update the checked out copy in
+@comment <en>@file{$CVSROOT/CVSROOT}.  If it does not, there is
+@comment <en>something wrong (@pxref{BUGS}).  To add your own files
+@comment <en>to the files to be updated in this fashion, you can add
+@comment <en>them to the @file{checkoutlist} administrative file
+@comment <en>(@pxref{checkoutlist}).
+e atualizar a cópia de trabalho em
+@file{$CVSROOT/CVSROOT}.  Se não fizer, tem algo errado
+(@pxref{BUGS}).  Para adicionar os seus próprios
+arquivos aos arquivos a serem atualizados desta
+maneira, você pode adicioná-los ao arquivo
+administrativo  @file{checkoutlist}
 (@pxref{checkoutlist}).
 
+@comment <en>@cindex modules.db
 @cindex modules.db
+@comment <en>@cindex modules.pag
 @cindex modules.pag
+@comment <en>@cindex modules.dir
 @cindex modules.dir
-By default, the @file{modules} file behaves as
-described above.  If the modules file is very large,
-storing it as a flat text file may make looking up
-modules slow (I'm not sure whether this is as much of a
-concern now as when @sc{cvs} first evolved this
-feature; I haven't seen benchmarks).  Therefore, by
-making appropriate edits to the @sc{cvs} source code
-one can store the modules file in a database which
-implements the @code{ndbm} interface, such as Berkeley
-db or GDBM.  If this option is in use, then the modules
-database will be stored in the files @file{modules.db},
-@file{modules.pag}, and/or @file{modules.dir}.
+@comment <en>By default, the @file{modules} file behaves as
+@comment <en>described above.  If the modules file is very large,
+@comment <en>storing it as a flat text file may make looking up
+@comment <en>modules slow (I'm not sure whether this is as much of a
+@comment <en>concern now as when @sc{cvs} first evolved this
+@comment <en>feature; I haven't seen benchmarks).  Therefore, by
+@comment <en>making appropriate edits to the @sc{cvs} source code
+@comment <en>one can store the modules file in a database which
+@comment <en>implements the @code{ndbm} interface, such as Berkeley
+@comment <en>db or GDBM.  If this option is in use, then the modules
+@comment <en>database will be stored in the files @file{modules.db},
+@comment <en>@file{modules.pag}, and/or @file{modules.dir}.
+Por padrão o arquivo @file{modules} se comporta como
+descrito acima.  Se o arquivo modules é muito grande,
+guardar ele como um arquivo de texto normal faz a busca
+por módulos lenta (Não estou bem certo se isso importa
+tanto agora como quando o @sc{cvs} primeiramente
+desenvolveu esta habilidade; não vi ???benchmarks???).
+Entretanto, fazendo edições apropriadas no código fonte
+do @sc{cvs} pode-se guardar o arquivo modules num banco
+de dados que implementa a interface @code{ndbm}, tais
+como o Berkeley db ou GDBM.  Se esta opção está em uso,
+então o banco de dados modules será guardado nos
+arquivos @file{modules.db}, @file{modules.pag}, e/ou @file{modules.dir}.
 @c I think fileattr also will use the database stuff.
 @c Anything else?
 
-For information on the meaning of the various
-administrative files, see @ref{Administrative files}.
+@comment <en>For information on the meaning of the various
+@comment <en>administrative files, see @ref{Administrative files}.
+Para informações sobre o significado dos vários arquivos administrativos, veja em @ref{Arquivos administrativos}.
 
-@node Working directory storage
-@section How data is stored in the working directory
+@comment <en>@node Working directory storage
+@node ???Working directory storage???
+@comment <en>@section How data is stored in the working directory
+@section Como os dados são guardados no diretório de trabalho
 
 @c FIXME: Somewhere we should discuss timestamps (test
 @c case "stamps" in sanity.sh).  But not here.  Maybe
@@ -1931,218 +2284,379 @@ administrative files, see @ref{Administrative files}.
 @c whether that is a good organization (is it based on
 @c what the user wants to do?).
 
-@cindex CVS directory, in working directory
-While we are discussing @sc{cvs} internals which may
-become visible from time to time, we might as well talk
-about what @sc{cvs} puts in the @file{CVS} directories
-in the working directories.  As with the repository,
-@sc{cvs} handles this information and one can usually
-access it via @sc{cvs} commands.  But in some cases it
-may be useful to look at it, and other programs, such
-as the @code{jCVS} graphical user interface or the
-@code{VC} package for emacs, may need to look at it.
-Such programs should follow the recommendations in this
-section if they hope to be able to work with other
-programs which use those files, including future
-versions of the programs just mentioned and the
-command-line @sc{cvs} client.
+@comment <en>@cindex CVS directory, in working directory
+@cindex diretório CVS, no diretório de trabalho
+@comment <en>While we are discussing @sc{cvs} internals which may
+@comment <en>become visible from time to time, we might as well talk
+@comment <en>about what @sc{cvs} puts in the @file{CVS} directories
+@comment <en>in the working directories.  As with the repository,
+@comment <en>@sc{cvs} handles this information and one can usually
+@comment <en>access it via @sc{cvs} commands.  But in some cases it
+@comment <en>may be useful to look at it, and other programs, such
+@comment <en>as the @code{jCVS} graphical user interface or the
+@comment <en>@code{VC} package for emacs, may need to look at it.
+@comment <en>Such programs should follow the recommendations in this
+@comment <en>section if they hope to be able to work with other
+@comment <en>programs which use those files, including future
+@comment <en>versions of the programs just mentioned and the
+@comment <en>command-line @sc{cvs} client.
+Assim como estamos conversando sobre as entranhas do
+@sc{cvs}, que podem ficar visíveis de tempos em tempos,
+também devemos falar sobre o que o @sc{cvs} bota nos
+diretórios @file{CVS} nos diretórios de trabalho.
+Assim como com o repositório, o @sc{cvs} manipula esta
+informação e pode-se acessá-la normalmente via comandos
+@sc{cvs}.  Mas em alguns casos pode ser útil dar uma
+olhada, e outros programas, como a interface de usuário
+gráfica @code{jCVS} ou o pacote para emacs @code{VC},
+precisarem ver o que tem lá. Tais programas devem
+seguir as recomendações nesta seção se eles querem
+interagir com outros programas que usam estes arquivos,
+inclusive versões futuras dos programas mencinados logo
+acima e o  cliente em linha-de-comando do @sc{cvs}.
 
-The @file{CVS} directory contains several files.
-Programs which are reading this directory should
-silently ignore files which are in the directory but
-which are not documented here, to allow for future
-expansion.
+@comment <en>The @file{CVS} directory contains several files.
+@comment <en>Programs which are reading this directory should
+@comment <en>silently ignore files which are in the directory but
+@comment <en>which are not documented here, to allow for future
+@comment <en>expansion.
+O diretório @file{CVS} contém vários
+arquivos. Programas que estão lendo este diretório
+devem ignorar em silêncio arquivos que encontrem no
+diretório mas que não estejam documentados aqui, para
+permitir expansões futuras.
 
-The files are stored according to the text file
-convention for the system in question.  This means that
-working directories are not portable between systems
-with differing conventions for storing text files.
-This is intentional, on the theory that the files being
-managed by @sc{cvs} probably will not be portable between
-such systems either.
+@comment <en>The files are stored according to the text file
+@comment <en>convention for the system in question.  This means that
+@comment <en>working directories are not portable between systems
+@comment <en>with differing conventions for storing text files.
+@comment <en>This is intentional, on the theory that the files being
+@comment <en>managed by @sc{cvs} probably will not be portable between
+@comment <en>such systems either.
+Os arquivos são guardados de acordo com a convenção de
+arquivo de texto do sistema em questão.  Isto significa
+que diretórios de trabalho não são portáveis entre
+sistemas com diferentes convenções para armazenar
+arquivos de texto. Isto é de propósito, baseado na
+teoria de que os arquivos sendo gerenciados pelo
+@sc{cvs} provavelmente também não seriam portáveis
+entre tais sistemas.
 
 @table @file
 @item Root
-This file contains the current @sc{cvs} root, as
-described in @ref{Specifying a repository}.
+@comment <en>This file contains the current @sc{cvs} root, as
+@comment <en>described in @ref{Specifying a repository}.
+Este arquivo contém a raiz atual do @sc{cvs}, como
+descrito em @ref{Especificando um repositório}.
 
-@cindex Repository file, in CVS directory
-@cindex CVS/Repository file
+@comment <en>@cindex Repository file, in CVS directory
+@cindex O arquivo Repository, no diretório CVS
+@comment <en>@cindex CVS/Repository file
+@cindex O arquivo CVS/Repository
+@comment <en>@item Repository
 @item Repository
-This file contains the directory within the repository
-which the current directory corresponds with.  It can
-be either an absolute pathname or a relative pathname;
-@sc{cvs} has had the ability to read either format
-since at least version 1.3 or so.  The relative
-pathname is relative to the root, and is the more
-sensible approach, but the absolute pathname is quite
-common and implementations should accept either.  For
-example, after the command
+@comment <en>Este arquivo contém o diretório no qual está o
+@comment <en>repositório correspondente ao diretório atual.  Pode
+@comment <en>ser um caminho absoluto ou relativo; @sc{cvs} adquiriu
+@comment <en>a habilidade de ler ambos os formatos desde a versão
+@comment <en>1.3.  O caminho é relativo à raiz (root), e é a
+@comment <en>abordagem mais ???sensible???, mas o caminho absoluto é
+@comment <en>mais comum e ambos devem ser aceitos. Por exemplo,
+@comment <en>depois do comando
+Este arquivo contém o diretório no qual está o
+repositório correspondente ao diretório atual.  Pode
+ser um caminho absoluto ou relativo; @sc{cvs} adquiriu
+a habilidade de ler ambos os formatos desde a versão
+1.3.  O caminho é relativo à raiz (root), e é a
+abordagem mais ???sensible???, mas o caminho absoluto é
+mais comum e ambos devem ser aceitos. Por exemplo,
+depois do comando
 
 @example
 cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
 @end example
 
 @noindent
-@file{Root} will contain
+@comment <en>@file{Root} will contain
+o @file{Root} vai conter
 
 @example
 :local:/usr/local/cvsroot
 @end example
 
 @noindent
-and @file{Repository} will contain either
+@comment <en>and @file{Repository} will contain either
+e o @file{Repository} vai conter ou
 
 @example
 /usr/local/cvsroot/yoyodyne/tc
 @end example
 
 @noindent
-or
+@comment <en>or
+ou
 
 @example
 yoyodyne/tc
 @end example
 
-If the particular working directory does not correspond
-to a directory in the repository, then @file{Repository}
-should contain @file{CVSROOT/Emptydir}.
-@cindex Emptydir, in CVSROOT directory
-@cindex CVSROOT/Emptydir directory
+@comment <en>If the particular working directory does not correspond
+@comment <en>to a directory in the repository, then @file{Repository}
+@comment <en>should contain @file{CVSROOT/Emptydir}.
+Se o diretório de trabalho particular não corresponde a
+um diretório no repositório, então o @file{Repository}
+deve conter @file{CVSROOT/Emptydir}.
+@comment <en>@cindex Emptydir, in CVSROOT directory
+@cindex Emptydir, no diretório CVSROOT
+@comment <en>@cindex CVSROOT/Emptydir directory
+@cindex O diretório CVSROOT/Emptydir
 
-@cindex Entries file, in CVS directory
-@cindex CVS/Entries file
+@comment <en>@cindex Entries file, in CVS directory
+@cindex O arquivo Entries, no diretório do CVS
+@comment <en>@cindex CVS/Entries file
+@cindex O arquivo CVS/Entries
+@comment <en>@item Entries
 @item Entries
-This file lists the files and directories in the
-working directory.
-The first character of each line indicates what sort of
-line it is.  If the character is unrecognized, programs
-reading the file should silently skip that line, to
-allow for future expansion.
+@comment <en>This file lists the files and directories in the
+@comment <en>working directory.
+@comment <en>The first character of each line indicates what sort of
+@comment <en>line it is.  If the character is unrecognized, programs
+@comment <en>reading the file should silently skip that line, to
+@comment <en>allow for future expansion.
+Este arquivo relaciona os arquivos e diretórios no
+diretório de trabalho. O primeiro caractere de cada
+linha indica de que tipo é a linha.  Se  caractere não
+for reconhecido, os programas lendo o arquivo devem
+pular de linha em silêncio, para permitir futuras expansões.
 
-If the first character is @samp{/}, then the format is:
+@comment <en>If the first character is @samp{/}, then the format is:
+Se o primeiro caractere é @samp{/}, então o formato é:
 
 @example
 /@var{name}/@var{revision}/@var{timestamp}[+@var{conflict}]/@var{options}/@var{tagdate}
 @end example
 
 @noindent
-where @samp{[} and @samp{]} are not part of the entry,
-but instead indicate that the @samp{+} and conflict
-marker are optional.  @var{name} is the name of the
-file within the directory.  @var{revision} is the
-revision that the file in the working derives from, or
-@samp{0} for an added file, or @samp{-} followed by a
-revision for a removed file.  @var{timestamp} is the
-timestamp of the file at the time that @sc{cvs} created
-it; if the timestamp differs with the actual
-modification time of the file it means the file has
-been modified.  It is stored in
-the format used by the ISO C asctime() function (for
-example, @samp{Sun Apr  7 01:29:26 1996}).  One may
-write a string which is not in that format, for
-example, @samp{Result of merge}, to indicate that the
-file should always be considered to be modified.  This
-is not a special case; to see whether a file is
-modified a program should take the timestamp of the file
-and simply do a string compare with @var{timestamp}.
-If there was a conflict, @var{conflict} can be set to
-the modification time of the file after the file has been
-written with conflict markers (@pxref{Conflicts example}).
-Thus if @var{conflict} is subsequently the same as the actual
-modification time of the file it means that the user
-has obviously not resolved the conflict.  @var{options}
-contains sticky options (for example @samp{-kb} for a
-binary file).  @var{tagdate} contains @samp{T} followed
-by a tag name, or @samp{D} for a date, followed by a
-sticky tag or date.  Note that if @var{timestamp}
-contains a pair of timestamps separated by a space,
-rather than a single timestamp, you are dealing with a
-version of @sc{cvs} earlier than @sc{cvs} 1.5 (not
-documented here).
+@comment <en>where @samp{[} and @samp{]} are not part of the entry,
+@comment <en>but instead indicate that the @samp{+} and conflict
+@comment <en>marker are optional.  @var{name} is the name of the
+@comment <en>file within the directory.  @var{revision} is the
+@comment <en>revision that the file in the working derives from, or
+@comment <en>@samp{0} for an added file, or @samp{-} followed by a
+@comment <en>revision for a removed file.  @var{timestamp} is the
+@comment <en>timestamp of the file at the time that @sc{cvs} created
+@comment <en>it; if the timestamp differs with the actual
+@comment <en>modification time of the file it means the file has
+@comment <en>been modified.  It is stored in
+@comment <en>the format used by the ISO C asctime() function (for
+@comment <en>example, @samp{Sun Apr  7 01:29:26 1996}).  One may
+@comment <en>write a string which is not in that format, for
+@comment <en>example, @samp{Result of merge}, to indicate that the
+@comment <en>file should always be considered to be modified.  This
+@comment <en>is not a special case; to see whether a file is
+@comment <en>modified a program should take the timestamp of the file
+@comment <en>and simply do a string compare with @var{timestamp}.
+@comment <en>If there was a conflict, @var{conflict} can be set to
+@comment <en>the modification time of the file after the file has been
+@comment <en>written with conflict markers (@pxref{Conflicts example}).
+@comment <en>Thus if @var{conflict} is subsequently the same as the actual
+@comment <en>modification time of the file it means that the user
+@comment <en>has obviously not resolved the conflict.  @var{options}
+@comment <en>contains sticky options (for example @samp{-kb} for a
+@comment <en>binary file).  @var{tagdate} contains @samp{T} followed
+@comment <en>by a tag name, or @samp{D} for a date, followed by a
+@comment <en>sticky tag or date.  Note that if @var{timestamp}
+@comment <en>contains a pair of timestamps separated by a space,
+@comment <en>rather than a single timestamp, you are dealing with a
+@comment <en>version of @sc{cvs} earlier than @sc{cvs} 1.5 (not
+@comment <en>documented here).
+Onde @samp{[} e @samp{]} não são partes da entrada, mas
+indicam que o @samp{+} e o marcador de conflito são
+opcionais.  @var{name} é o nome do arquivo no
+diretório.  @var{revision} e a revisão da qual o
+arquivo no diretório de trabalho deriva, ou @samp{0}
+para um arquivo adicionado, ou @samp{-} seguido de uma
+revisão para um arquivo removido.  @var{timestamp} é o
+???timestamp??? do arquivo quando o @sc{cvs} o criou;
+se o timestamp difere da hora de modificação do
+arquivo, significa que o arquivo foi modificado.  É
+armazenado no formato usando pela função ISO C
+asctime() (por exemplo, @samp{Sun Apr  7 01:29:26
+1996}).  Pode-se escrever uma string que não esteja
+neste formato, por exemplo, @samp{Result of merge},
+para indicar que o arquivo deve ser sempre considerado
+como modificado.  Este não é um caso especial; para ver
+se um arquivo é modificado, um programa pode pegar o
+timestamp do arquivo e simplesmente criar uma string e
+comparar com @var{timestamp}. Se existe um conflito,
+@var{conflict} pode ser ajustada para o tempo de
+modificação do arquivo depois do arquivo ter sido
+escrito com marcações de conflito (@pxref{Exemplo de conflitos}).
+Logo, se @var{conflict} é posteriormente o mesmo que o
+tempo de modificação real do arquivo significa que o
+usuário obviamente não resolveu o conflito.  @var{options}
+contém opções adesivas (por exemplo @samp{-kb} para um
+arquivo binário).  @var{tagdate} contém @samp{T}
+seguindo de um nome de etiqueta (tag), ou @samp{D} para
+uma data, seguido de uma data ou etiqueta adesiva.
+Observe que se @var{timestamp} contém um par de
+timestamps separados por um espaço, ao invés de um
+único timestamp, você está lidando com uma versão do
+@sc{cvs} anterior ao @sc{cvs} 1.5 (sem documentação aqui).
 
-The timezone on the timestamp in CVS/Entries (local or
-universal) should be the same as the operating system
-stores for the timestamp of the file itself.  For
-example, on Unix the file's timestamp is in universal
-time (UT), so the timestamp in CVS/Entries should be
-too.  On @sc{vms}, the file's timestamp is in local
-time, so @sc{cvs} on @sc{vms} should use local time.
-This rule is so that files do not appear to be modified
-merely because the timezone changed (for example, to or
-from summer time).
+@comment <en>The timezone on the timestamp in CVS/Entries (local or
+@comment <en>universal) should be the same as the operating system
+@comment <en>stores for the timestamp of the file itself.  For
+@comment <en>example, on Unix the file's timestamp is in universal
+@comment <en>time (UT), so the timestamp in CVS/Entries should be
+@comment <en>too.  On @sc{vms}, the file's timestamp is in local
+@comment <en>time, so @sc{cvs} on @sc{vms} should use local time.
+@comment <en>This rule is so that files do not appear to be modified
+@comment <en>merely because the timezone changed (for example, to or
+@comment <en>from summer time).
+O fuso horário do timestamp no CVS/Entries (local ou
+universal) deve ser igual ao que o sistema
+operacional guarda para o timestamp do próprio arquivo.
+Por exemplo, no Unix o timestamp do arquivo está em
+tempo universal (universal time - UT). Logo, o
+timestamp em CVS/Entries deve estar assim também.  No
+@sc{vms}, o timestamp do arquivo está em hora
+local, logo, o @sc{cvs} no @sc{vms} deve usar hora
+local. Esta regra é para que arquivos não pareçam estar
+modificados simplesmente por que o fuso horário mudou
+(por exemplo, saindo ou entrando no horário de verão).
 @c See comments and calls to gmtime() and friends in
 @c src/vers_ts.c (function time_stamp).
 
-If the first character of a line in @file{Entries} is
-@samp{D}, then it indicates a subdirectory.  @samp{D}
-on a line all by itself indicates that the program
-which wrote the @file{Entries} file does record
-subdirectories (therefore, if there is such a line and
-no other lines beginning with @samp{D}, one knows there
-are no subdirectories).  Otherwise, the line looks
-like:
+@comment <en>If the first character of a line in @file{Entries} is
+@comment <en>@samp{D}, then it indicates a subdirectory.  @samp{D}
+@comment <en>on a line all by itself indicates that the program
+@comment <en>which wrote the @file{Entries} file does record
+@comment <en>subdirectories (therefore, if there is such a line and
+@comment <en>no other lines beginning with @samp{D}, one knows there
+@comment <en>are no subdirectories).  Otherwise, the line looks
+@comment <en>like:
+Se o primeiro caractere de uma linha em @file{Entries}
+é @samp{D}, então ele indica um dubdiretório.  @samp{D}
+em uma linha ???all by itself??? indica que o programa
+que escreveu o arquivo @file{Entries} registra
+subdiretórios (portanto, se existe tal linha e nenhuma
+outra linha começando com @samp{D}, conclui-se que não
+há subdiretórios). Caso contrário, a linha vai se
+parecer com:
 
 @example
 D/@var{name}/@var{filler1}/@var{filler2}/@var{filler3}/@var{filler4}
 @end example
 
 @noindent
-where @var{name} is the name of the subdirectory, and
-all the @var{filler} fields should be silently ignored,
-for future expansion.  Programs which modify
-@code{Entries} files should preserve these fields.
+@comment <en>where @var{name} is the name of the subdirectory, and
+@comment <en>all the @var{filler} fields should be silently ignored,
+@comment <en>for future expansion.  Programs which modify
+@comment <en>@code{Entries} files should preserve these fields.
+onde @var{name} é o nome do subdiretório, e todos os
+campos @var{filler} devem ser ignorados em silêncio,
+para expansões futuras.  Programas que modificam
+arquivos @code{Entries} devem manter estes campos.
 
-The lines in the @file{Entries} file can be in any order.
+@comment <en>The lines in the @file{Entries} file can be in any order.
+As linhas no arquivo @file{Entries} podem estar em
+qualquer ordem.
 
-@cindex Entries.Log file, in CVS directory
-@cindex CVS/Entries.Log file
+@comment <en>@cindex Entries.Log file, in CVS directory
+@cindex O arquivo Entries.Log, no diretório CVS
+@comment <en>@cindex CVS/Entries.Log file
+@cindex O arquivo CVS/Entries.Log
+@comment <en>@item Entries.Log
 @item Entries.Log
-This file does not record any information beyond that
-in @file{Entries}, but it does provide a way to update
-the information without having to rewrite the entire
-@file{Entries} file, including the ability to preserve
-the information even if the program writing
-@file{Entries} and @file{Entries.Log} abruptly aborts.
-Programs which are reading the @file{Entries} file
-should also check for @file{Entries.Log}.  If the latter
-exists, they should read @file{Entries} and then apply
-the changes mentioned in @file{Entries.Log}.  After
-applying the changes, the recommended practice is to
-rewrite @file{Entries} and then delete @file{Entries.Log}.
-The format of a line in @file{Entries.Log} is a single
-character command followed by a space followed by a
-line in the format specified for a line in
-@file{Entries}.  The single character command is
-@samp{A} to indicate that the entry is being added,
-@samp{R} to indicate that the entry is being removed,
-or any other character to indicate that the entire line
-in @file{Entries.Log} should be silently ignored (for
-future expansion).  If the second character of the line
-in @file{Entries.Log} is not a space, then it was
-written by an older version of @sc{cvs} (not documented
-here).
+@comment <en>This file does not record any information beyond that
+@comment <en>in @file{Entries}, but it does provide a way to update
+@comment <en>the information without having to rewrite the entire
+@comment <en>@file{Entries} file, including the ability to preserve
+@comment <en>the information even if the program writing
+@comment <en>@file{Entries} and @file{Entries.Log} abruptly aborts.
+@comment <en>Programs which are reading the @file{Entries} file
+@comment <en>should also check for @file{Entries.Log}.  If the latter
+@comment <en>exists, they should read @file{Entries} and then apply
+@comment <en>the changes mentioned in @file{Entries.Log}.  After
+@comment <en>applying the changes, the recommended practice is to
+@comment <en>rewrite @file{Entries} and then delete @file{Entries.Log}.
+@comment <en>The format of a line in @file{Entries.Log} is a single
+@comment <en>character command followed by a space followed by a
+@comment <en>line in the format specified for a line in
+@comment <en>@file{Entries}.  The single character command is
+@comment <en>@samp{A} to indicate that the entry is being added,
+@comment <en>@samp{R} to indicate that the entry is being removed,
+@comment <en>or any other character to indicate that the entire line
+@comment <en>in @file{Entries.Log} should be silently ignored (for
+@comment <en>future expansion).  If the second character of the line
+@comment <en>in @file{Entries.Log} is not a space, then it was
+@comment <en>written by an older version of @sc{cvs} (not documented
+@comment <en>here).
+Este arquivo não registra qualquer informação a mais
+que no @file{Entries}, mas fornece um jeito de
+atualizar a informação sem ter que reescrever todo o
+arquivo @file{Entries}, incluindo a habilidade de
+preservar a informação mesmo se o programa que estava
+escrevendo o @file{Entries} e o @file{Entries.Log}
+aborta abruptamente. Programas que estão lendo o
+arquivo @file{Entries} devem também verificar pelo
+@file{Entries.Log}.  Se este último existe, eles devem
+ler o @file{Entries} e então aplicar as mudanças
+mencionadas no @file{Entries.Log}.  Depois de aplicar
+as mudanças, a prática recomendada é reescrever o
+@file{Entries} e depois apagar o @file{Entries.Log}. O
+formato de uma linha no @file{Entries.Log} é um comando
+de um caractere seguido de um espaço seguido por uma
+linha no formato especificado para uma linha no
+@file{Entries}.  O caractere de comando é
+@samp{A} para indicar que a entrada está sendo
+adicionada, @samp{R} para indicar que a entrada está
+sendo removida, ou qualquer outro caractere para
+indicar que a linha inteira em @file{Entries.Log} deve
+ser ignorada em silêncio (para expansão futura).  Se o
+segundo caractere da linha em @file{Entries.Log} não é
+um espaço, então foi escrito por uma versão antiga do
+@sc{cvs} (não documentada aqui).
 
-Programs which are writing rather than reading can
-safely ignore @file{Entries.Log} if they so choose.
+@comment <en>Programs which are writing rather than reading can
+@comment <en>safely ignore @file{Entries.Log} if they so choose.
+Programas que estão escrevendo ao invés de lendo podem
+seguramente ignorar @file{Entries.Log} se assim escolherem.
 
-@cindex Entries.Backup file, in CVS directory
-@cindex CVS/Entries.Backup file
+@comment <en>@cindex Entries.Backup file, in CVS directory
+@cindex O arquivo Entries.Backup, no diretório CVS
+@comment <en>@cindex CVS/Entries.Backup file
+@cindex O arquivo CVS/Entries.Backup
+@comment <en>@item Entries.Backup
 @item Entries.Backup
-This is a temporary file.  Recommended usage is to
-write a new entries file to @file{Entries.Backup}, and
-then to rename it (atomically, where possible) to @file{Entries}.
+@comment <en>This is a temporary file.  Recommended usage is to
+@comment <en>write a new entries file to @file{Entries.Backup}, and
+@comment <en>then to rename it (atomically, where possible) to @file{Entries}.
+Este é um arquivo temporário.  O uso recomendado é
+escrever um novo arquivo entries para o
+@file{Entries.Backup}, e então renomeá-lo
+(atomicamente, quando possível) para @file{Entries}.
 
-@cindex Entries.Static file, in CVS directory
-@cindex CVS/Entries.Static file
+@comment <en>@cindex Entries.Static file, in CVS directory
+@cindex O arquivo Entries.Static, no diretório CVS
+@comment <en>@cindex CVS/Entries.Static file
+@cindex O arquivo CVS/Entries.Static
+@comment <en>@item Entries.Static
 @item Entries.Static
-The only relevant thing about this file is whether it
-exists or not.  If it exists, then it means that only
-part of a directory was gotten and @sc{cvs} will
-not create additional files in that directory.  To
-clear it, use the @code{update} command with the
-@samp{-d} option, which will get the additional files
-and remove @file{Entries.Static}.
+@comment <en>The only relevant thing about this file is whether it
+@comment <en>exists or not.  If it exists, then it means that only
+@comment <en>part of a directory was gotten and @sc{cvs} will
+@comment <en>not create additional files in that directory.  To
+@comment <en>clear it, use the @code{update} command with the
+@comment <en>@samp{-d} option, which will get the additional files
+@comment <en>and remove @file{Entries.Static}.
+A única coisa relevante sobre este arquivo é quando ele
+existe ou não.  Se ele existe, então quer dizer que
+apenas parte de um diretório foi pego e o @sc{cvs} não
+vai criar arquivos adicionais neste diretório.  Para limpar isto, use o comando
+@code{update} com a opção @samp{-d}, a qual vai pegar
+os arquivos adicionais e remover @file{Entries.Static}.
 @c FIXME: This needs to be better documented, in places
 @c other than Working Directory Storage.
 @c FIXCVS: The fact that this setting exists needs to
