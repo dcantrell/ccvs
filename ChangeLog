@@ -1,5 +1,7 @@
 Tue Jan  9 09:02:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Mention changes in default ignore list.
+
 	* INSTALL: check.log is not in /tmp/cvs-sanity.  Mention
 	submitting bug reports as a possibility, not a request from us.
 	Separate out "make check" a bit to make clear it is optional.
