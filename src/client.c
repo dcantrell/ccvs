@@ -1076,6 +1076,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    date = tag_or_date + 1;
     }
     else
+	/* For cvs export, assume it is a text file.  FIXME: This is
+	   broken behavior--we should be having the server tell us
+	   whether it is text or binary and dealing accordingly.  I
+	   think maybe we can parse the entries line, get the options,
+	   and then ignore the entries line otherwise, but I haven't
+	   checked to see whether the server sends the entries line
+	   correctly in this case.  */
 	options = NULL;
 
     if (data->contents == UPDATE_ENTRIES_UPDATE
