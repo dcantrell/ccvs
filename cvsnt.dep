@@ -1607,7 +1607,6 @@
 	".\lib\system.h"\
 	".\lib\timespec.h"\
 	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
