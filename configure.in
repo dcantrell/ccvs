@@ -373,6 +373,7 @@ if test -n "$krb_h"; then
     test -n "${krb_libdir}" && LDFLAGS="$LDFLAGS -L${krb_libdir}"
     AC_CHECK_LIB(des,printf,[LIBS="${LIBS} -ldes"])
     AC_CHECK_LIB(krb,krb_recvauth)
+    AC_CHECK_LIB(krb4,krb_recvauth)
     LDFLAGS=$hold_ldflags
     if test -n "$krb_incdir"; then
       includeopt="${includeopt} -I$krb_incdir"
