@@ -263,16 +263,17 @@
 #undef SETXID_SUPPORT
 
 /*
- * This is under construction.  Don't define this unless you're
- * testing it, in which case you're me and you already know that.
+ * Under OS/2, we build the authenticated client by default.
+ * But not the server, because there is no server support for OS/2
+ * yet.
  */
-/* #define AUTH_CLIENT_SUPPORT 1 */
+#define AUTH_CLIENT_SUPPORT 1
 /* #define AUTH_SERVER_SUPPORT 1 */
 
 /*
  * This tells the client that it must use send()/recv() to talk to the
  * server if it is connected to the server via a socket.  Sigh.
- * Windows NT also cannot convert sockets to file descriptors,
+ * Windows 95 also cannot convert sockets to file descriptors,
  * apparently.
  */
 #define NO_SOCKET_TO_FD 1

@@ -34,14 +34,6 @@
 #if !defined( IN_TCPIP_H )
 #define IN_TCPIP_H
 
-#if defined( TCPIP_IBM )
-#	include	<types.h>
-#	if !defined( TCPIP_IBM_NOHIDE )
-#		define send IbmSockSend
-#		define recv IbmSockRecv
-#	endif
-#endif
-
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<sys/socket.h>
@@ -49,6 +41,14 @@
 #include	<netinet/in.h>
 #include	<netdb.h>
 #include	<errno.h>
+
+#if defined( TCPIP_IBM )
+#	include	<types.h>
+#	if !defined( TCPIP_IBM_NOHIDE )
+#		define send IbmSockSend
+#		define recv IbmSockRecv
+#	endif
+#endif
 
 #if defined( TCPIP_IBM )
 #	define	BSD_SELECT
@@ -70,8 +70,8 @@
 const char *HostStrError(int HostErrno);
 const char *SockStrError(int SockErrno);
 
-int IbmSockSend (int Socket, char *Data, int Len, int Flags);
-int IbmSockRecv (int Socket, char *Data, int Len, int Flags);
+int IbmSockSend (int Socket, const void *Buffer, int Len, int Flags);
+int IbmSockRecv (int Socket, const void *Buffer, int Len, int Flags);
 
 #if !defined( h_errno )
 extern int h_errno; /* IBM forgot to declare this in current header files */
