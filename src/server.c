@@ -3747,10 +3747,30 @@ error ENOMEM Virtual memory exhausted.\n");
 #endif /* 1/0 */
 
 
+/* Return 0 iff password matches, else 1. */
+int
+check_password (username, password)
+     char *username, *password;
+{
+  struct passwd *pw;
+  char *found_passwd;
+  char *encrypted_passwd;
+
+  pw = getpwnam (username);
+  if (pw == NULL)
+    {
+      printf ("E Fatal error, aborting.\n"
+              "error 0 %s: no such user\n", username);
+      exit (1);
+    }
+
+  return (strcmp (pw->pw_passwd, crypt (password, pw->pw_passwd)));
+}
+
+
 /* Read username and password from client (i.e., stdin).
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
-
 void
 authenticate_connection ()
 {
@@ -3812,8 +3832,7 @@ authenticate_connection ()
       exit (1);
     }
 
-  /* Primitive authorization for testing. */
-  if (strcmp (password, "unguessable"))
+  if (check_password (username, password))
     {
       printf ("I HATE YOU\n");
       fflush (stdout);
