@@ -364,6 +364,7 @@ diff (argc, argv)
 	send_to_server ("diff\012", 0);
         err = get_responses_and_close ();
 	free (options);
+	options = NULL;
 	return (err);
     }
 #endif

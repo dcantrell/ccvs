@@ -1,3 +1,32 @@
+1998-08-28  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (crerepos-18): add new comment and change test
+	slightly to support multiroot.
+	(multiroot): add more tests.
+	
+	* server.c (create_adm_p): new function.
+	(dirswitch): call create_adm_p.  Modify the code to always write a
+	new CVSADM_REP file, since create_adm_p might have put a
+	placeholder there and our value is guaranteed to be correct.
+	(server): move the CVS_SERVER_SLEEP check here so we can debug
+	things at an earlier stage.
+
+	* recurse.c (start_recursion): add large comment about the ideal
+	solution to the "Argument xxx" problem.
+
+	* main.c (main): move position of debugging comment for -m flag.
+
+	* diff.c (diff): clear a static variable.
+
+	* client.c (send_file_names): check to see if we should send this
+	argument to the server based on the contents of the appropriate
+	CVSADM directory.  This avoids "nothing known about foo" messages
+	and problems with duplicate modules names in multiple
+	repositories.
+	(send_a_repository): change method of calculating toplevel_repos
+	to support multiple CVSROOTs.
+	(start_server): clear some static variables.
+
 1998-08-25  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (multiroot): new set of tests to check the behavior of

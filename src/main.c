@@ -929,10 +929,6 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	       walklist (root_directories, set_root_directory, NULL)
 	       )
 	{
-	    if (multiroot_debug)
-		error (0, 0, "notice: main loop with CVSROOT=%s",
-		       current_root);
-
 #ifdef SERVER_SUPPORT
 	    /* Fiddling with CVSROOT doesn't make sense if we're running
 	       in server mode, since the client will send the repository
@@ -947,6 +943,10 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 
 		if (parse_cvsroot (current_root))
 		    error (1, 0, "Bad CVSROOT.");
+
+		if (multiroot_debug)
+		  error (0, 0, "notice: main loop with CVSROOT=%s",
+			 current_root);
 
 		/*
 		 * Check to see if we can write into the history file.  If not,
@@ -986,7 +986,7 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 
 #ifdef HAVE_PUTENV
 		/* Update the CVSROOT environment variable if necessary. */
-
+		/* FIXME (njc): should we always set this with the CVSROOT from the command line? */
 		if (cvs_update_env)
 		{
 		    char *env;
