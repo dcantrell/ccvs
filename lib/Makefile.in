@@ -155,7 +155,8 @@ libcvs_a_LIBADD = @LIBOBJS@
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	build_lib.com
+	build_lib.com \
+	xgssapi.h
 
 subdir = lib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
