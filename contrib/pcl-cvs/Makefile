@@ -48,7 +48,7 @@ TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
 INSTALL = install
 INSTALL_DATA = $(INSTALL)
 
-elcfiles:
+pcl-cvs.elc pcl-cvs-lucid.el elcfiles:
 	$(EMACS) -batch -l ./compile-all.el -f compile-pcl-cvs
 
 all: elcfiles info
