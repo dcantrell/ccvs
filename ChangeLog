@@ -1,3 +1,9 @@
+Tue Jan 30 16:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* cvsnt.mak: Change save-cwd.c to savecwd.c and regenerate
+	dependencies to take care of save-cwd.h.
+	* windows-NT/README: Update information about Visual C++ 4.0.
+
 Tue Jan 30 16:09:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Rename lib/save-cwd.c to lib/savecwd.c.  Avoiding a hyphen

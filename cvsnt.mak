@@ -119,8 +119,8 @@ BSC32_SBRS= \
 	$(INTDIR)/regex.sbr \
 	$(INTDIR)/fnmatch.sbr \
 	$(INTDIR)/getdate.sbr \
-	$(INTDIR)/"save-cwd.sbr" \
 	$(INTDIR)/getline.sbr \
+	$(INTDIR)/savecwd.sbr \
 	$(INTDIR)/mkdir.sbr \
 	$(INTDIR)/run.sbr \
 	$(INTDIR)/pwd.sbr \
@@ -205,8 +205,8 @@ LINK32_OBJS= \
 	$(INTDIR)/regex.obj \
 	$(INTDIR)/fnmatch.obj \
 	$(INTDIR)/getdate.obj \
-	$(INTDIR)/"save-cwd.obj" \
 	$(INTDIR)/getline.obj \
+	$(INTDIR)/savecwd.obj \
 	$(INTDIR)/mkdir.obj \
 	$(INTDIR)/run.obj \
 	$(INTDIR)/pwd.obj \
@@ -314,8 +314,8 @@ BSC32_SBRS= \
 	$(INTDIR)/regex.sbr \
 	$(INTDIR)/fnmatch.sbr \
 	$(INTDIR)/getdate.sbr \
-	$(INTDIR)/"save-cwd.sbr" \
 	$(INTDIR)/getline.sbr \
+	$(INTDIR)/savecwd.sbr \
 	$(INTDIR)/mkdir.sbr \
 	$(INTDIR)/run.sbr \
 	$(INTDIR)/pwd.sbr \
@@ -400,8 +400,8 @@ LINK32_OBJS= \
 	$(INTDIR)/regex.obj \
 	$(INTDIR)/fnmatch.obj \
 	$(INTDIR)/getdate.obj \
-	$(INTDIR)/"save-cwd.obj" \
 	$(INTDIR)/getline.obj \
+	$(INTDIR)/savecwd.obj \
 	$(INTDIR)/mkdir.obj \
 	$(INTDIR)/run.obj \
 	$(INTDIR)/pwd.obj \
@@ -555,6 +555,7 @@ SOURCE=.\src\client.c
 DEP_CLIEN=\
 	.\src\cvs.h\
 	.\lib\getline.h\
+	.\src\edit.h\
 	.\lib\md5.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
@@ -669,7 +670,7 @@ $(INTDIR)/entries.obj :  $(SOURCE)  $(DEP_ENTRI) $(INTDIR)
 SOURCE=.\src\tag.c
 DEP_TAG_C=\
 	.\src\cvs.h\
-	".\lib\save-cwd.h"\
+	.\lib\savecwd.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -924,6 +925,7 @@ SOURCE=.\src\checkin.c
 DEP_CHECKI=\
 	.\src\cvs.h\
 	.\src\fileattr.h\
+	.\src\edit.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1185,7 +1187,7 @@ $(INTDIR)/history.obj :  $(SOURCE)  $(DEP_HISTO) $(INTDIR)
 SOURCE=.\src\add.c
 DEP_ADD_C=\
 	.\src\cvs.h\
-	".\lib\save-cwd.h"\
+	.\lib\savecwd.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1242,7 +1244,7 @@ $(INTDIR)/lock.obj :  $(SOURCE)  $(DEP_LOCK_) $(INTDIR)
 SOURCE=.\src\recurse.c
 DEP_RECUR=\
 	.\src\cvs.h\
-	".\lib\save-cwd.h"\
+	.\lib\savecwd.h\
 	.\src\fileattr.h\
 	.\src\edit.h\
 	".\windows-NT\config.h"\
@@ -1273,7 +1275,7 @@ $(INTDIR)/recurse.obj :  $(SOURCE)  $(DEP_RECUR) $(INTDIR)
 SOURCE=.\src\modules.c
 DEP_MODUL=\
 	.\src\cvs.h\
-	".\lib\save-cwd.h"\
+	.\lib\savecwd.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1499,7 +1501,7 @@ $(INTDIR)/rcscmds.obj :  $(SOURCE)  $(DEP_RCSCM) $(INTDIR)
 SOURCE=.\src\import.c
 DEP_IMPOR=\
 	.\src\cvs.h\
-	".\lib\save-cwd.h"\
+	.\lib\savecwd.h\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\windows-NT\alloca.h"\
@@ -1913,24 +1915,24 @@ $(INTDIR)/getdate.obj :  $(SOURCE)  $(DEP_GETDA) $(INTDIR)
 ################################################################################
 # Begin Source File
 
-SOURCE=".\lib\save-cwd.c"
-DEP_SAVE_=\
-	".\windows-NT\config.h"\
-	".\lib\save-cwd.h"\
-	.\src\error.h
+SOURCE=.\lib\getline.c
+DEP_GETLI=\
+	".\windows-NT\config.h"
 
-$(INTDIR)/"save-cwd.obj" :  $(SOURCE)  $(DEP_SAVE_) $(INTDIR)
+$(INTDIR)/getline.obj :  $(SOURCE)  $(DEP_GETLI) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\lib\getline.c
-DEP_GETLI=\
-	".\windows-NT\config.h"
+SOURCE=.\lib\savecwd.c
+DEP_SAVEC=\
+	".\windows-NT\config.h"\
+	.\lib\savecwd.h\
+	.\src\error.h
 
-$(INTDIR)/getline.obj :  $(SOURCE)  $(DEP_GETLI) $(INTDIR)
+$(INTDIR)/savecwd.obj :  $(SOURCE)  $(DEP_SAVEC) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
