@@ -467,7 +467,7 @@ void expand_string PROTO ((char **, size_t *, size_t));
 void xrealloc_and_strcat PROTO ((char **, size_t *, const char *));
 char *xstrdup PROTO((const char *str));
 int strip_trailing_newlines PROTO((char *str));
-int pathname_levels PROTO ((char *path));
+int pathname_levels PROTO ((const char *_path));
 
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
 int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
