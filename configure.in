@@ -214,7 +214,6 @@ AC_FUNC_GETTIMEOFDAY_CLOBBER
 AC_FUNC_STRERROR_R
 AM_FUNC_GETLINE
 AM_STDBOOL_H
-UTILS_FUNC_MKSTEMP
 gl_FUNC_GETHOSTNAME
 dnl Always use the GNULIB getpass to work around 8 character password limits on
 dnl HP-UX.

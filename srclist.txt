@@ -104,15 +104,6 @@ $GNULIB/lib/memmove.c				lib		no NI
 $GNULIB/m4/memmove.m4				m4		no NI
 # $GNULIB/modules/minmax
 $GNULIB/lib/minmax.h				lib		no NI
-# $GNULIB/modules/mkstemp
-$GNULIB/lib/mkstemp.c				lib		no NI
-$GNULIB/lib/tempname.c				lib		no NI
-$GNULIB/m4/mkstemp.m4				m4		no NI
-$GNULIB/m4/inttypes_h.m4			m4		no NI
-$GNULIB/m4/onceonly_2_57.m4			m4		no NI
-$GNULIB/m4/stdint_h.m4				m4		no NI
-$GNULIB/m4/uintmax_t.m4				m4		no NI
-$GNULIB/m4/ulonglong.m4				m4		no NI
 # $GNULIB/modules/mktime
 $GNULIB/lib/mktime.c				lib		no NI
 $GNULIB/m4/mktime.m4				m4		no NI
