@@ -4210,7 +4210,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     /* File was modified, send it.  */
     struct stat sb;
     int fd;
-    char *buf;
+    unsigned char *buf;
     char *mode_string;
     size_t bufsize;
     int bin;
@@ -4266,7 +4266,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     {
 	size_t newsize = 0;
 
-	if (read_and_gzip (fd, short_pathname, (unsigned char **)&buf,
+	if (read_and_gzip (fd, short_pathname, &buf,
 			   &bufsize, &newsize,
 			   file_gzip_level))
 	    error (1, 0, "aborting due to compression error");
@@ -4293,7 +4293,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     	int newsize;
 
         {
-	    char *bufp = buf;
+	    unsigned char *bufp = buf;
 	    int len;
 
 	    /* FIXME: This is gross.  It assumes that we might read
