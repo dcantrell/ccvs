@@ -47,9 +47,13 @@ clean-cvs" to clean up object and library files.
 
 The cvs.exe generated will require emx.dll to run.  You can try
 compiling with -Zomf -Zsys to generate a cvs.exe without this
-requirement, but I'm not sure whether that works yet (if it does work,
-it almost surely would be for client not local, as EMX in this mode
-lacks fork()).
+requirement, but that almost surely will require significant changes
+to make it work.  For the client, the big known problem would be that
+EMX 0.9c doesn't have sockets with -Zsys (according to the
+documentation).  That seems like it would be hard to get around.  For
+local, the big known problem is that -Zsys doesn't have fork().  This
+one isn't as bad--using os2/run.c or something similar instead of
+src/run.c should solve this problem.
 
 You will get warnings during the compilation; ignore them.
 Report bugs to tepting@swol.de and bug-cvs@prep.ai.mit.edu.
