@@ -44,6 +44,11 @@ BUG FIXES
 
 * Misc updates to the manual.
 
+DEVELOPER ISSUES
+
+* The CVS build files are now being generated with Autoconf 2.59 & Automake
+  1.9.3.  Please see the HACKING file for more information.
+
 Changes from 1.11.16 to 1.11.17:
 ********************************
 
