@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* gnulib-update (MODULES): Add xsize module explicitly.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Remove outdated comment.
 
 2004-10-21  Derek Price  <derek@ximbiot.com>
