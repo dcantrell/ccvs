@@ -1,3 +1,24 @@
+Tue Dec 17 12:57:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (verifymsg): In example, remove text "and reedit if
+	necessary"; it was copied from editinfo and doesn't apply here.
+	Fix syntax of if statement; remove unnecessary attempt at loop;
+	don't use -n with echo.  Add @appendixsec at start of node.
+	Add note about how verifymsg cannot change log message.
+	(editinfo): In paragraph saying editinfo is obsolete, fix various
+	typos and formatting glitches.  Mention -e as well as EDITOR.
+	(editinfo): In saying that editinfo doesn't get consulted with -m,
+	-F or client/server, recommend verifymsg.  Remove comment which
+	says, in effect, "we need a feature like verifymsg".
+	(editinfo example): Change "verifymsg" back to "editinfo" here;
+	the example is of editinfo not verifymsg.
+
+Tue Dec 17 12:45:32 1996  Abe Feldman  <feldman@cyclic.com>
+
+	* cvs.texinfo (verifymsg): New node.
+	various places: Say that editinfo is obsolete, or refer to
+	verifymsg instead of editinfo
+
 Wed Dec 11 08:55:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Compatibility): Add comment about 1.3 and file death.
