@@ -1,3 +1,8 @@
+1999-03-09  John Bley of duke.edu
+
+	* mkmodules.c (filelist): Missed a NULL in this struct (should
+	have 3 members, only had 2).
+
 1999-03-07  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (Index): Rename new test from rm_CVS/Root to rmroot
