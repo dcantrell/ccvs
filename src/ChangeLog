@@ -1,3 +1,9 @@
+2002-05-31  Larry Jones  <lawrence.jones@eds.com>
+
+	* rcs.c: Conditionally define MAP_FAILED for old systems that don't
+	have it in <mman.h>.
+	(Reported by jeremy brand <jeremy@earth.care2.com>.)
+
 2002-05-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcscmds.c (diff_exec): Add a -- before the first file name just
