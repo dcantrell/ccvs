@@ -39,7 +39,9 @@ man8dir = $(mandir)/man8
 all:
 .PHONY: all
 
-# CYGNUS LOCAL: Do not depend upon installdirs
+# This used to depend on installdirs, but someone took it out (I think
+# maybe it is/was some kind of Cygnus convention to not depend on installdirs;
+# I'm not sure).  I don't know what the pro(s) and con(s) are.
 install: all
 	for f in $(MAN1FILES); do \
 		$(INSTALL_DATA) $(srcdir)/$$f $(man1dir)/$$f; \
