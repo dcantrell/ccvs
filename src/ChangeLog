@@ -1,3 +1,8 @@
+Thu Feb 23 23:03:43 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (join_file): Don't pass the -E option to rcsmerge here,
+	either (see Jan 22 change).
+
 Mon Feb 13 13:28:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* cvsbug.sh: Send bug reports to remote-cvs@cyclic.com, rather
