@@ -1,3 +1,10 @@
+Fri Apr 28 22:32:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Makefile.in (DISTFILES): Brought up-to-date with current
+	directory contents.
+	(dist-dir): Renamed from dist-dir; use DISTDIR variable, passed
+	from parent.
+
 Mon Feb 13 13:32:07 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* rcs2log: rcs2log was originally in this tree; how did it get

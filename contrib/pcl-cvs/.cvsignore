@@ -1,3 +1,5 @@
+pcl-cvs
+pcl-cvs-[0-9]*
 pcl-cvs.aux
 pcl-cvs.cp
 pcl-cvs.cps
@@ -14,3 +16,4 @@ pcl-cvs.tp
 pcl-cvs.tps
 pcl-cvs.vr
 pcl-cvs.vrs
+pcl-cvs.ps

@@ -1,5 +1,15 @@
 Fri Apr 28 16:16:33 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
+	* Makefile.in (SOURCES, HEADERS, DISTFILES): Updated.
+	(dist-dir): Renamed from dist; changed to work with DISTDIR
+	variable passed from parent.
+
+	We don't want to include a file the user has to edit in the
+	distribution.
+	* options.h: No longer distributed.
+	* options.h.in: Distribute this instead.
+	* ../INSTALL, ../README: Installation instructions updated.
+
 	* client.c (start_rsh_server): Send the remote command to rsh as a
 	single string.
 

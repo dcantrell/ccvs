@@ -1,6 +1,15 @@
-Sun Apr 23 20:58:32 1995  Noel Cragg  <noel@vo.com>
+Fri Apr 28 22:31:26 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
-        * BUGS-FIXED: new file
+	* Makefile.in (DISTFILES): Brought up-to-date.
+	(dist): Rewritten to use dist-dir targets, passing DISTDIR variable.
+	(GZIP, GZIP_EXT): New variables.
+	(dist-dir): New target.
+
+	We don't want to include a file the user has to edit in the
+	distribution.
+	* src/options.h: No longer distributed.
+	* src/options.h.in: Distribute this instead.
+	* INSTALL, README: Installation instructions updated.
 
 Sat Apr  8 19:02:21 1995  Roland McGrath  <roland@baalperazim.frob.com>
 
