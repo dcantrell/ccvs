@@ -1,3 +1,9 @@
+1999-06-18  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (devcom3-9a): Be less specific about the expected
+	error message (BSD/OS 4.0 has a bug that can cause exec* to fail
+	with EACCES instead of ENOENT).
+
 1999-06-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (diff-4, dirs2-10, tagf-13, importc-7, conflicts2-142b8):
