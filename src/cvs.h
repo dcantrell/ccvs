@@ -663,7 +663,6 @@ int run_exec PROTO((const char *stin, const char *stout, const char *sterr,
 FILE *run_popen PROTO((const char *, const char *));
 int piped_child PROTO((char **, int *, int *));
 void close_on_exec PROTO((int));
-int filter_stream_through_program PROTO((int, int, char **, pid_t *));
 
 pid_t waitpid PROTO((pid_t, int *, int));
 

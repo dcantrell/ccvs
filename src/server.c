@@ -1263,8 +1263,6 @@ receive_file (size, file, gzipped)
 {
     int fd;
     char *arg = file;
-    pid_t gzip_pid = 0;
-    int gzip_status;
 
     /* Write the file.  */
     fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
@@ -1277,15 +1275,78 @@ receive_file (size, file, gzipped)
 	return;
     }
 
-    /*
-     * FIXME: This doesn't do anything reasonable with gunzip's stderr, which
-     * means that if gunzip writes to stderr, it will cause all manner of
-     * protocol violations.
-     */
     if (gzipped)
-	fd = filter_through_gunzip (fd, 0, &gzip_pid);
+    {
+	/* Using gunzip_and_write isn't really a high-performance
+	   approach, because it keeps the whole thing in memory
+	   (contiguous memory, worse yet).  But it seems easier to
+	   code than the alternative (and less vulnerable to subtle
+	   bugs).  Given that this feature is mainly for
+	   compatibility, that is the better tradeoff.  */
 
-    receive_partial_file (size, fd);
+	int toread = size;
+	char *filebuf;
+	char *p;
+
+	filebuf = malloc (size);
+	p = filebuf;
+	/* If NULL, we still want to read the data and discard it.  */
+
+	while (toread > 0)
+	{
+	    int status, nread;
+	    char *data;
+
+	    status = buf_read_data (buf_from_net, toread, &data, &nread);
+	    if (status != 0)
+	    {
+		if (status == -2)
+		    pending_error = ENOMEM;
+		else
+		{
+		    pending_error_text = malloc (80);
+		    if (pending_error_text == NULL)
+			pending_error = ENOMEM;
+		    else if (status == -1)
+		    {
+			sprintf (pending_error_text,
+				 "E premature end of file from client");
+			pending_error = 0;
+		    }
+		    else
+		    {
+			sprintf (pending_error_text,
+				 "E error reading from client");
+			pending_error = status;
+		    }
+		}
+		return;
+	    }
+
+	    toread -= nread;
+
+	    if (filebuf != NULL)
+	    {
+		memcpy (p, data, nread);
+		p += nread;
+	    }
+	}
+	if (filebuf == NULL)
+	{
+	    pending_error = ENOMEM;
+	    goto out;
+	}
+
+	if (gunzip_and_write (fd, file, filebuf, size))
+	{
+	    if (alloc_pending (80))
+		sprintf (pending_error_text,
+			 "E aborting due to compression error");
+	}
+	free (filebuf);
+    }
+    else
+	receive_partial_file (size, fd);
 
     if (pending_error_text)
     {
@@ -1299,24 +1360,14 @@ receive_file (size, file, gzipped)
 	/* else original string is supposed to be unchanged */
     }
 
+ out:
     if (close (fd) < 0 && !error_pending ())
     {
 	pending_error_text = malloc (40 + strlen (arg));
 	if (pending_error_text)
 	    sprintf (pending_error_text, "E cannot close %s", arg);
 	pending_error = errno;
-	if (gzip_pid)
-	    waitpid (gzip_pid, (int *) 0, 0);
 	return;
-    }
-
-    if (gzip_pid)
-    {
-	if (waitpid (gzip_pid, &gzip_status, 0) != gzip_pid)
-	    error (1, errno, "waiting for gunzip process %ld",
-		   (long) gzip_pid);
-	else if (gzip_status != 0)
-	    error (1, 0, "gunzip exited %d", gzip_status);
     }
 }
 
@@ -3683,6 +3734,12 @@ server_updated (finfo, vers, updated, mode, checksum, filebuf)
 	unsigned long size;
 	char size_text[80];
 
+	/* The contents of the file will be in one of filebuf,
+	   list/last, or here.  */
+	unsigned char *file;
+	size_t file_allocated;
+	size_t file_used;
+
 	if (filebuf != NULL)
 	{
 	    size = buf_length (filebuf);
@@ -3791,6 +3848,11 @@ CVS server internal error: no mode in server_updated");
 	}
 
 	list = last = NULL;
+
+	file = NULL;
+	file_allocated = 0;
+	file_used = 0;
+
 	if (size > 0)
 	{
 	    /* Throughout this section we use binary mode to read the
@@ -3806,8 +3868,14 @@ CVS server internal error: no mode in server_updated");
 		 */
 		&& size > 100)
 	    {
-		int status, fd, gzip_status;
-		pid_t gzip_pid;
+		/* Basing this routine on read_and_gzip is not a
+		   high-performance approach.  But it seems easier
+		   to code than the alternative (and less
+		   vulnerable to subtle bugs).  Given that this feature
+		   is mainly for compatibility, that is the better
+		   tradeoff.  */
+
+		int fd;
 
 		/* Callers must avoid passing us a buffer if
                    file_gzip_level is set.  We could handle this case,
@@ -3820,22 +3888,13 @@ CVS server internal error: unhandled case in server_updated");
 		fd = CVS_OPEN (finfo->file, O_RDONLY | OPEN_BINARY, 0);
 		if (fd < 0)
 		    error (1, errno, "reading %s", finfo->fullname);
-		fd = filter_through_gzip (fd, 1, file_gzip_level, &gzip_pid);
-		f = fdopen (fd, "rb");
-		status = buf_read_file_to_eof (f, &list, &last);
-		size = buf_chain_length (list);
-		if (status == -2)
-		    (*protocol->memory_error) (protocol);
-		else if (status != 0)
-		    error (1, ferror (f) ? errno : 0, "reading %s",
-			   finfo->fullname);
-		if (fclose (f) == EOF)
+		if (read_and_gzip (fd, finfo->fullname, &file,
+				   &file_allocated, &file_used,
+				   file_gzip_level))
+		    error (1, 0, "aborting due to compression error");
+		size = file_used;
+		if (close (fd) < 0)
 		    error (1, errno, "reading %s", finfo->fullname);
-		if (waitpid (gzip_pid, &gzip_status, 0) == -1)
-		    error (1, errno, "waiting for gzip process %ld",
-			   (long) gzip_pid);
-		else if (gzip_status != 0)
-		    error (1, 0, "gzip exited %d", gzip_status);
 		/* Prepending length with "z" is flag for using gzip here.  */
 		buf_output0 (protocol, "z");
 	    }
@@ -3860,7 +3919,13 @@ CVS server internal error: unhandled case in server_updated");
 	sprintf (size_text, "%lu\n", size);
 	buf_output0 (protocol, size_text);
 
-	if (filebuf == NULL)
+	if (file != NULL)
+	{
+	    buf_output (protocol, file, file_used);
+	    free (file);
+	    file = NULL;
+	}
+	else if (filebuf == NULL)
 	    buf_append_data (protocol, list, last);
 	else
 	{
