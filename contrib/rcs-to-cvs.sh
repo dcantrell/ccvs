@@ -83,7 +83,8 @@ if [ $got_one -eq 0 ]; then
     got_one=1
 fi
 
-umask 22
+# Ya gotta share.
+umask 0
 
 update_dir=${CVSROOT}/${repository}
 [ ! -d ${update_dir} ] && mkdir $update_dir
@@ -99,7 +100,7 @@ fi
 for name in * .[a-zA-Z0-9]*
 do
     case "$name" in
-    RCS | \* | .\[a-zA-Z0-9\]\* ) continue ;;
+    RCS | *~ | \* | .\[a-zA-Z0-9\]\* ) continue ;;
     esac
     echo $name
     if [ $vbose -ne 0 ]; then 
