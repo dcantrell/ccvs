@@ -52,4 +52,6 @@ extern char *strerror ();
 #   endif
 # endif /* ! SOCK_STRERROR */
 
+struct hostent *init_sockaddr PROTO ((struct sockaddr_in *, char *, unsigned int));
+
 #endif /* SOCKET_CLIENT_H__ */

@@ -17,6 +17,33 @@
 
 #include "socket-client.h"
 
+
+#if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
+
+struct hostent *
+init_sockaddr (name, hostname, port)
+    struct sockaddr_in *name;
+    char *hostname;
+    unsigned int port;
+{
+    struct hostent *hostinfo;
+    unsigned short shortport = port;
+
+    memset (name, 0, sizeof (*name));
+    name->sin_family = AF_INET;
+    name->sin_port = htons (shortport);
+    hostinfo = gethostbyname (hostname);
+    if (hostinfo == NULL)
+    {
+	fprintf (stderr, "Unknown host %s.\n", hostname);
+	error_exit ();
+    }
+    name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+    return hostinfo;
+}
+
+#endif
+
 #ifdef NO_SOCKET_TO_FD
 
 /* Under certain circumstances, we must communicate with the server
