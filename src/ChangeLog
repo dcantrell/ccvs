@@ -1,5 +1,11 @@
 Thu Feb 27 15:29:58 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* remove.c (cvsremove): When forcing removal in client mode, use
+	start_recursion rather than calling CVS_UNLINK on each argument.
+	(remove_force_fileproc): New static function.
+	* sanity.sh (deep): Add tests deep-rm7 through deep-rm10 for above
+	patch.
+
 	* sanity.sh (death): Enable death-76a0 and death-76a1 tests for
 	remote, since they now work.
 

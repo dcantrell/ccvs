@@ -990,7 +990,27 @@ done'
 	  dotest deep-rm5 "${testcvs} -q update -d -P" ''
 	  dotest_fail deep-rm6 "test -d dir7" ''
 
-	  cd ../../../../../../..
+	  # Test rm -f -R.
+	  cd ../..
+	  dotest deep-rm7 "${testcvs} rm -f -R dir5" \
+"${PROG} [a-z]*: Removing dir5
+${PROG} [a-z]*: scheduling .dir5/file1. for removal
+${PROG} [a-z]*: Removing dir5/dir6
+${PROG} [a-z]*: scheduling .dir5/dir6/file1. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove these files permanently"
+	  dotest deep-rm8 "${testcvs} -q ci -m rm-it" \
+'Removing dir5/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done
+Removing dir5/dir6/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done'
+	  dotest deep-rm9 "${testcvs} -q update -d -P" ''
+	  dotest_fail deep-rm10 "test -d dir5"
+
+	  cd ../../../../..
 
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
 	    pass deep-5
