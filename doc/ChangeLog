@@ -1,5 +1,8 @@
 Sun Feb 23 16:12:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Common options): Add various additional comments
+	about date formats.
+
 	* RCSFILES: Remove diff for Id and explain it in words instead.
 	The previous values for Id had been clobbered by keyword expansion
 	on the RCSFILES file itself.
