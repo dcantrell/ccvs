@@ -9630,6 +9630,15 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
 branch-four
 ============================================================================="
 
+	  dotest admin-22-o24 "${testcvs} -q update -p -r 1.3.2.4 aaa" \
+"first rev
+second rev
+third rev
+new branch rev
+second branch rev
+third branch rev
+fourth branch rev"
+
 	  # The bit here about how there is a "tagone" tag pointing to
 	  # a nonexistent revision is documented by rcs.  I dunno, I
 	  # wonder whether the "cvs admin -o" should give a warning in

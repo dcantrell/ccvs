@@ -1,5 +1,8 @@
 Wed Oct 29 07:07:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (admin-22-o24): New test, tests that admin -o
+	correctly munged the deltatexts on a branch too.
+
 	* rcs.c (RCS_delete_revs): If we are deleting an entire branch,
 	delete the node in ->branches rather than setting the ->key to the
 	bogus value NULL.
