@@ -1,3 +1,12 @@
+Sun Dec  3 20:02:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (update_file_proc), commit.c (check_fileproc),
+	rcscmds.c (RCS_merge): Direct stdout to DEVNULL rather than
+	passing -s option to grep.  This avoids trouble with respect to
+	finding a grep which support -s and whether we should use the (GNU
+	grep) -q option if it exists.
+	* options.h.in: Change "@ggrep_path@" to "grep".
+
 Fri Dec  1 11:53:19 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* rcs.c (RCS_gettag): new parameter return_both force return both

@@ -70,13 +70,13 @@
 
 /*
  * The "grep" program to execute when checking to see if a merged file had
- * any conflicts.  This "grep" must support the "-s" option and a standard
+ * any conflicts.  This "grep" must support a standard basic
  * regular expression as an argument.  Specify a full pathname if your site
  * wants to use a particular grep.
  */
 
 #ifndef GREP
-#define GREP "@ggrep_path@"
+#define GREP "grep"
 #endif
 
 /*
