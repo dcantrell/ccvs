@@ -1,3 +1,8 @@
+Thu Jul 18 18:43:50 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (patch): Fix names of a couple of tests to say patch
+	rather than death2.
+
 Thu Jul 18 16:19:21 1996  Bill Bumgarner <bbum@friday.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
