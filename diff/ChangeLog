@@ -1,3 +1,9 @@
+2003-07-12  Larry Jones  <lawrence.jones@eds.com>
+
+	* io.c (find_identical_ends): Update to match current diffutils
+	code and improve handling of files with no newline at end.
+	(Patch from Andrew Moise <chops@demiurgestudios.com>.)
+
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
 	* diff3.c (read_diff): Fix memory leak.
