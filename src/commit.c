@@ -1432,8 +1432,6 @@ checkaddfile (file, repository, tag, options, srcfiles)
     char *options;
     List *srcfiles;
 {
-    FILE *fp;
-    char *cp;
     char rcs[PATH_MAX];
     char fname[PATH_MAX];
     mode_t omask;
