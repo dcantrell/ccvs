@@ -1,3 +1,8 @@
+2000-05-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvsclient.texi (Requests): Note that Global_option is now
+	valid without Root.
+
 2000-04-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Variables): Clarify what USER means in pserver.
