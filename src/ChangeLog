@@ -1,3 +1,7 @@
+Tue Nov 14 15:10:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh: test 63 doesn't work and probably can't
+
 Tue Nov 14 12:22:00 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh: many minor tweaks:
