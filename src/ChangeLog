@@ -1,3 +1,10 @@
+2004-03-15  Derek Price  <derek@ximbiot.com>
+
+	* release.c (release): Enable authentication and encryption for a child
+	update process when necessary.
+	(Original patch from Dan Russell <russelld@aol.net> via Hal Mahaffey
+	<HMahaffey@aol.com>.)
+
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Only call server_updated() when we actual have a new

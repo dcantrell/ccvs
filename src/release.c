@@ -112,12 +112,14 @@ release (int argc, char **argv)
      * up to the user to take note of them, at least currently
      * (ignore-193 in testsuite)).
      */
-    /* Construct the update command. */
-    update_cmd = xmalloc (strlen (program_path)
-			  + strlen (current_parsed_root->original)
-			  + 20);
-    sprintf (update_cmd, "%s -n -q -d %s update",
-             program_path, current_parsed_root->original);
+    /* Construct the update command.  Be sure to add authentication and
+       encryption if we are using them currently, else our child process may
+       not be able to communicate with the server.  */
+    sprintf (update_cmd, "%s %s%s-n -q -d %s update",
+             program_path,
+             cvsauthenticate ? "-a " : "",
+             cvsencrypt ? "-x " : "",
+             current_parsed_root->original);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */
