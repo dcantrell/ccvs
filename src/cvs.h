@@ -441,7 +441,6 @@ void root_allow_add PROTO ((char *));
 void root_allow_free PROTO ((void));
 int root_allow_ok PROTO ((char *));
 
-int same_directories PROTO((char *dir1, char *dir2));
 char *Short_Repository PROTO((char *repository));
 char *gca PROTO((char *rev1, char *rev2));
 extern void check_numeric PROTO ((char *, int, char **));

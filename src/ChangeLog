@@ -1,5 +1,9 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* root.c: Reindent a few things.
+	* root.c, cvs.h (same_directories): Remove.  Never used,
+	portability hassle.
+
 	* add.c (add_directory): When checking for CVSADM, call fncmp not
 	strcmp.  I actually suspect this code doesn't do much these days,
 	but fncmp clearly will make more sense than strcmp.

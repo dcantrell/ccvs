@@ -18,15 +18,15 @@
    Watch out if the enum is changed in cvs.h! */
 
 char *method_names[] = {
-  "local", "server (rsh)", "pserver", "kserver", "ext"
+    "local", "server (rsh)", "pserver", "kserver", "ext"
 };
 
 #ifndef DEBUG
 
 char *
-Name_Root(dir, update_dir)
-     char *dir;
-     char *update_dir;
+Name_Root (dir, update_dir)
+    char *dir;
+    char *update_dir;
 {
     FILE *fpin;
     char *ret, *xupdate_dir;
@@ -133,41 +133,14 @@ Name_Root(dir, update_dir)
 }
 
 /*
- * Returns non-zero if the two directories have the same stat values
- * which indicates that they are really the same directories.
- */
-int
-same_directories (dir1, dir2)
-     char *dir1;
-     char *dir2;
-{
-    struct stat sb1;
-    struct stat sb2;
-    int ret;
-
-    if ( CVS_STAT (dir1, &sb1) < 0)
-        return (0);
-    if ( CVS_STAT (dir2, &sb2) < 0)
-        return (0);
-    
-    ret = 0;
-    if ( (memcmp( &sb1.st_dev, &sb2.st_dev, sizeof(dev_t) ) == 0) &&
-	 (memcmp( &sb1.st_ino, &sb2.st_ino, sizeof(ino_t) ) == 0))
-        ret = 1;
-
-    return (ret);
-}
-
-
-/*
  * Write the CVS/Root file so that the environment variable CVSROOT
  * and/or the -d option to cvs will be validated or not necessary for
  * future work.
  */
 void
 Create_Root (dir, rootdir)
-     char *dir;
-     char *rootdir;
+    char *dir;
+    char *rootdir;
 {
     FILE *fout;
     char *tmp;
