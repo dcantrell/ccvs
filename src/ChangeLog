@@ -1,3 +1,8 @@
+1998-10-14  Eivind Eklund and Jim Kingdon
+
+	* commit.c (commit): For the client, don't worry about whether we
+	are root.
+
 1998-10-13  Jim Kingdon
 
 	* server.h (struct request): Change status field to flags and add
