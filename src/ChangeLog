@@ -48,19 +48,6 @@
 
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
-	* client.c (add_prune_candidate, send_a_repository, send_to_server,
-	client_notify): Declare char * arguments const.
-	(send_repository): Ditto, plus xstrdup() an arg before using to make
-	the above true.
-	* client.h (send_to_server, send_a_repository, client_notify): Change
-	prototypes to match.
-	* edit.c (notify_check): Declare char * arguments const.
-	* edit.h (notify_check): Update prototype to match.
-	* rcs.c (RCS_parse), recurse.c (do_recursion, do_dir_proc): Some
-	reformatting.
-
-2004-03-20  Derek Price  <derek@ximbiot.com>
-
 	* sanity.sh (conflicts2): s/cvs/$testcvs/.
 
 2004-03-20  Derek Price  <derek@ximbiot.com>
