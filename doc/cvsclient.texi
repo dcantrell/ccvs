@@ -784,6 +784,9 @@ A one-line message for the user.
 @item E @var{text} \n
 Same as @code{M} but send to stderr not stdout.
 
+@item F \n
+Flush stderr.
+
 @item error @var{errno-code} @samp{ } @var{text} \n
 The command completed with an error.  @var{errno-code} is a symbolic
 error code (e.g. @code{ENOENT}); if the server doesn't support this
