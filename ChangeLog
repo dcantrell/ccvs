@@ -1,3 +1,16 @@
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: Add stack.c and stack.h in order to compile under Windows.
+	* README: Update copyright notice.
+
+2004-02-09  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note new tests in sanity.sh.
+
+2004-02-06  Derek Price  <derek@ximbiot.com>
+
+	* README: Undo accidental overwrite.
+
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that alias module recursion is now more comprehensive.
