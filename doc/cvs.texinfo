@@ -12775,10 +12775,7 @@ cvs import -I ! -W "*.exe -k 'b'" first-dir vendortag reltag
 @cindex Commits, administrative support files
 @cindex commit files, see Info files
 
-The @samp{-i} flag in the @file{modules} file can be
-used to run a certain program whenever files are
-committed (@pxref{modules}).  The files described in
-this section provide other, more flexible, ways to run
+The files described in this section provide flexible ways to run
 programs whenever something is committed.
 
 There are three kinds of programs that can be run on
