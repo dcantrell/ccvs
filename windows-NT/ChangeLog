@@ -1,3 +1,10 @@
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (stamp-chi): Don't cross line boundries since this does
+	not work portably when @MAINTAINER_MODE_TRUE@ is replaced with a
+	comment.  Add config.h.in.footer.
+	* Makefile.in: Regenerated.
+
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-chi): This should be a copy of config.h.in, not
