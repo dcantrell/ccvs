@@ -702,6 +702,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
+	tests="${tests} fork"
 else
 	tests="$*"
 fi
@@ -22692,6 +22693,26 @@ update"
 	  fi # skip the whole thing for local
 	  ;;
 
+	fork)
+	  # Test that the server defaults to the correct executable in :fork:
+	  # mode.  See the note in the TODO at the end of this file about this.
+	  #
+	  # This test and client should be left after all other references to
+	  # CVS_SERVER are removed from this script.
+	  #
+	  # The client series of tests already tests that CVS_SERVER is
+	  # working, but that test might be better here.
+	  #
+	  # This isn't a complete test, but it should work a lot.
+	  if $remote; then
+	    unset CVS_SERVER
+	    dotest fork-1 "$testcvs -d:fork:$CVSROOT_DIRNAME version" \
+'Client: \(.*\)
+Server: \1'
+	    CVS_SERVER=${testcvs}; export CVS_SERVER
+	  fi
+	  ;;
+
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
@@ -22744,6 +22765,11 @@ echo "OK, all tests completed."
 #   - Test that unrecognized files in CVS directories (e.g. CVS/Foobar)
 #     are ignored (per cvs.texinfo).
 #   - Test 'cvs history' with symlinks in the path to the working directory.
+#   - Remove most of the CVS_SERVER stuff after a reasonable amount of time.
+#     The "fork" & "client" series of tests should be left.  4/2/00, CVS
+#     1.11.0.1 was altered so that it would default to program_name (set from
+#     argv[0]) rather than "cvs", but I'd like this script to work on legacy
+#     versions of CVS for awhile.
 # End of TODO list.
 
 # Exit if keep set

@@ -1,3 +1,9 @@
+2001-04-02  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (fork): New test for CVS_SERVER default.
+	(TODO): Note about eventually removing most of the references to
+	CVS_SERVER.
+
 2001-04-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (connect_to_forked_server): Use program_path as the default
