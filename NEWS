@@ -1,5 +1,10 @@
 Changes since 1.8:
 
+* New flag -k in wrappers allows you to specify the keyword expansion
+mode for added files based on their name.  For example, you can
+specify that files whose name matches *.exe are binary by default.
+See the Wrappers section of cvs.texinfo for more details.
+
 * Remote CVS with the "-z" option now uses the zlib library (included
 with CVS) to compress all communication between the client and the
 server, rather than invoking gzip on each file separately.  This means
