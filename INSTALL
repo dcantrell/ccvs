@@ -170,7 +170,7 @@ SPARC:
 	Sun SPARC running Solaris 2.5 (1.8.87)
 	Sun SPARC running Solaris 2.5.1 using gcc 2.7.2.2 (1.9.14)
 	NextSTEP 3.3 (1.7)
-	Sun SparcClassing running Linux 2.0.17, gcc 2.7.2 (1.8.87)
+	Sun SPARC running Linux 2.0.17, gcc 2.7.2 (1.8.87)
 VAX:
 	VAX running VMS 6.2 (1.9+patches, client-only)
 	  (see README.VMS for information on necessary hacks).
