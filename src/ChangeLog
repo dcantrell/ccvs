@@ -1,5 +1,7 @@
 Wed Oct 15 15:21:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (username): Add '-' to characters allowed in user name.
+
 	* rcscmds.c (diff_exec): Remove item about external diff
 	programs.  It doesn't really belong here now that diff is
 	librarified and TODO #191 now mentions this.
