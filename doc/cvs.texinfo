@@ -8512,16 +8512,11 @@ using this option with @sc{cvs}.  Unlock the revision
 with number @var{rev}.  If a branch is given, unlock
 the latest revision on that branch.  If @var{rev} is
 omitted, remove the latest lock held by the caller.
-Normally, only the locker of a revision may unlock it.
-Somebody else unlocking a revision breaks the lock.
-This causes a mail message to be sent to the original
-locker.  The message contains a commentary solicited
-from the breaker.  The commentary is terminated by
-end-of-file or by a line containing @code{.} by itself.
+Normally, only the locker of a revision may unlock it;
+somebody else unlocking a revision breaks the lock.
+This causes the original locker to be sent a @code{commit}
+notification (see @xref{Getting Notified}).
 There can be no space between @samp{-u} and its argument.
-@c In the future "send mail" probably will go via the
-@c CVSROOT/notify mechanism.  But for now it means
-@c whatever it means to "rcs".
 
 @item -V@var{n}
 In previous versions of @sc{cvs}, this option meant to
