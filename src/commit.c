@@ -930,8 +930,12 @@ precommit_list_proc (p, closure)
     Node *p;
     void *closure;
 {
-    if (p->data == (char *) T_ADDED || p->data == (char *) T_MODIFIED ||
-	p->data == (char *) T_REMOVED)
+    struct logfile_info *li;
+
+    li = (struct logfile_info *) p->data;
+    if (li->status == T_ADDED
+	|| li->status == T_MODIFIED
+	|| li->status == T_REMOVED)
     {
 	run_arg (p->key);
     }
