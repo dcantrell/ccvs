@@ -1,3 +1,13 @@
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--enable-pam): New experimental option to enable PAM
+	support on systems that support it.
+	(--with-hardcoded-pam-service-name): PAM configuration option.
+	(Original patch from Brian Murphy <brian@murphy.dk>.)
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
 	* srclist.txt: Add a few missed files and reorganize slightly.
