@@ -2123,34 +2123,31 @@ do_cvs_command (command)
 	{
 	    fd_set readfds;
 	    fd_set writefds;
-	    fd_set exceptfds;
 	    int numfds;
 
 	    FD_ZERO (&readfds);
 	    FD_ZERO (&writefds);
-	    FD_ZERO (&exceptfds);
 	    if (! buf_empty_p (&outbuf))
 	      FD_SET (STDOUT_FILENO, &writefds);
-	    FD_SET (STDOUT_FILENO, &exceptfds);
 	    if (stdout_pipe[0] >= 0)
 	    {
 		FD_SET (stdout_pipe[0], &readfds);
-		FD_SET (stdout_pipe[0], &exceptfds);
 	    }
 	    if (stderr_pipe[0] >= 0)
 	    {
 		FD_SET (stderr_pipe[0], &readfds);
-		FD_SET (stderr_pipe[0], &exceptfds);
 	    }
 	    if (protocol_pipe[0] >= 0)
 	    {
 		FD_SET (protocol_pipe[0], &readfds);
-		FD_SET (protocol_pipe[0], &exceptfds);
 	    }
 
 	    do {
-	      numfds = select (num_to_check, &readfds, &writefds,
-				 &exceptfds, (struct timeval *)NULL);
+		/* This used to select on exceptions too, but as far
+                   as I know there was never any reason to do that and
+                   SCO doesn't let you select on exceptions on pipes.  */
+		numfds = select (num_to_check, &readfds, &writefds,
+				 (fd_set *)0, (struct timeval *)NULL);
 		if (numfds < 0
 		    && errno != EINTR)
 		{
@@ -2159,16 +2156,14 @@ do_cvs_command (command)
 		}
 	    } while (numfds < 0);
 	    
-	    if (FD_ISSET (STDOUT_FILENO, &writefds)
-		|| FD_ISSET (STDOUT_FILENO, &exceptfds))
+	    if (FD_ISSET (STDOUT_FILENO, &writefds))
 	    {
 		/* What should we do with errors?  syslog() them?  */
 		buf_send_output (&outbuf);
 	    }
 
 	    if (stdout_pipe[0] >= 0
-		&& (FD_ISSET (stdout_pipe[0], &readfds)
-		    || FD_ISSET (stdout_pipe[0], &exceptfds)))
+		&& (FD_ISSET (stdout_pipe[0], &readfds)))
 	    {
 	        int status;
 
@@ -2189,8 +2184,7 @@ do_cvs_command (command)
 	    }
 
 	    if (stderr_pipe[0] >= 0
-		&& (FD_ISSET (stderr_pipe[0], &readfds)
-		    || FD_ISSET (stderr_pipe[0], &exceptfds)))
+		&& (FD_ISSET (stderr_pipe[0], &readfds)))
 	    {
 	        int status;
 
@@ -2211,8 +2205,7 @@ do_cvs_command (command)
 	    }
 
 	    if (protocol_pipe[0] >= 0
-		&& (FD_ISSET (protocol_pipe[0], &readfds)
-		    || FD_ISSET (protocol_pipe[0], &exceptfds)))
+		&& (FD_ISSET (protocol_pipe[0], &readfds)))
 	    {
 		int status;
 		int count_read;
