@@ -349,7 +349,7 @@ import_descend (message, vtag, targc, targv)
 	    }
 
 	    if (
-#ifdef DTR_DIR
+#ifdef DT_DIR
 		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
 #endif
 		isdir (dp->d_name))
@@ -357,7 +357,7 @@ import_descend (message, vtag, targc, targv)
 		has_dirs = 1;
 	    }
 	    else if (
-#ifdef DTR_DIR
+#ifdef DT_DIR
 		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
 #endif
 		islink (dp->d_name))
