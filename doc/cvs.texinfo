@@ -2523,12 +2523,21 @@ gives branches even numbers, starting at 2.
 @cindex Tags, sticky
 @cindex Branches, sticky
 
-The @samp{-r release-1-0-patches} flag that was given to @code{checkout}
+@c FIXME: make this stand alone better; many places
+@c @xref to this node.
+The @samp{-r release-1-0-patches} flag that was given
+to @code{checkout} in the previous example
 is @dfn{sticky}, that is, it will apply to subsequent commands
 in this directory.  If you commit any modifications, they are
 committed on the branch.  You can later merge the modifications into
 the main trunk.  @xref{Merging}.
 
+You can use the @code{status} command to see what
+sticky tags or dates are set:
+
+@c FIXME: This example needs to stand alone better and it
+@c would also better if it didn't use -v which only
+@c clutters the output in this context.
 @example
 $ vi driver.c   # @r{Fix the bugs}
 $ cvs commit -m "Fixed initialization bug" driver.c
@@ -2556,19 +2565,52 @@ File: driver.c          Status: Up-to-date
 @cindex Sticky tags, resetting
 @cindex Deleting sticky tags
 The sticky tags will remain on your working files until
-you delete them with @samp{cvs update -A}.  @xref{update}.
+you delete them with @samp{cvs update -A}.  The
+@samp{-A} option retrieves the version of the file from
+the head of the trunk, and forgets any sticky tags,
+dates, or options.
 
+@c Is the fact that CVS works this way a bug or a
+@c feature?  If a feature, describe how you would use
+@c it to do something useful.
 Sticky tags are not just for branches.  If you check
 out a certain revision (such as 1.4) it will also
 become sticky.  Subsequent @samp{cvs update} will not
 retrieve the latest revision until you reset the tag
-with @samp{cvs update -A}.
+with @samp{cvs update -A}.  Likewise, use of the
+@samp{-D} option to @code{update} or @code{checkout}
+sets a @dfn{sticky date}, which, similarly, causes that
+date to be used for future retrievals.
 
-See the descriptions in Appendix A for more information
-about sticky tags.  Dates and some other options can
-also be sticky.  Again, see Appendix A for details.
-@c -- xref to relevant part of App A.
-@c -- Re-evaluate this node.
+@cindex Restoring old version of removed file
+@cindex Resurrecting old version of dead file
+Many times you will want to retrieve an old version of
+a file without setting a sticky tag.  The way to do
+that is with the @samp{-p} option to @code{checkout} or
+@code{update}, which sends the contents of the file to
+standard output.  For example, suppose you have a file
+named @file{file1} which existed as revision 1.1, and
+you then removed it (thus adding a dead revision 1.2).
+Now suppose you want to add it again, with the same
+contents it had previously.  Here is how to do it:
+
+@example
+$ cvs update -p -r 1.1 file1 >file1
+===================================================================
+Checking out file1
+RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
+VERS: 1.1
+***************
+$ cvs add file1
+cvs add: version 1.2 of `file1' will be resurrected
+cvs add: use 'cvs commit' to add this file permanently
+$ cvs commit -m test
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.3; previous revision: 1.2
+done
+$ 
+@end example
 
 @c ---------------------------------------------------------------------
 @node Merging
@@ -2897,15 +2939,67 @@ Use @samp{cvs commit @var{filename}} to actually
 perform the removal of the file from the repository.
 @end itemize
 
-What happens when you commit the removal of the file is
-that inside the source repository, it is moved into a
-subdirectory called @file{Attic}.  @sc{cvs} normally doesn't
-look in that directory when you run e.g.
-@code{checkout}.  However, if you are retrieving a
-certain revision via e.g. @samp{cvs checkout -r
-@var{some-tag}}, it will look at the files inside the
-@file{Attic} and include any files that contain the
-specified tag.
+When you commit the removal of the file, @sc{cvs}
+records the fact that the file no longer exists.  It is
+possible for a file to exist on only some branches and
+not on others, or to re-add another file with the same
+name later.  CVS will correctly create or not create
+the file, based on the @samp{-r} and @samp{-D} options
+specified to @code{checkout} or @code{update}.
+
+@cindex Remove (subcommand)
+@deffn Command {cvs remove} [@code{-lR}] files @dots{}
+
+Schedule file(s) to be removed from the repository
+(files which have not already been removed from the
+working directory are not processed).  This command
+does not actually remove the file from the repository
+until you commit the removal.  The @samp{-R} option
+(the default) specifies that it will recurse into
+subdirectories; @samp{-l} specifies that it will not.
+@end deffn
+
+Here is an example of removing several files:
+
+@example
+$ cd test
+$ rm ?.c
+$ cvs remove
+cvs remove: Removing .
+cvs remove: scheduling a.c for removal
+cvs remove: scheduling b.c for removal
+cvs remove: use 'cvs commit' to remove these files permanently
+$ cvs ci -m "Removed unneeded files"
+cvs commit: Examining .
+cvs commit: Committing .
+@end example
+
+If you change your mind you can easily resurrect the
+file before you commit it, using the @code{add}
+command.
+
+@example
+$ ls
+CVS   ja.h  oj.c
+$ rm oj.c
+$ cvs remove oj.c
+cvs remove: scheduling oj.c for removal
+cvs remove: use 'cvs commit' to remove this file permanently
+$ cvs add oj.c
+U oj.c
+cvs add: oj.c, version 1.1.1.1, resurrected
+@end example
+
+If you realize your mistake before you run the
+@code{remove} command you can use @code{update} to
+resurrect the file:
+
+@example
+$ rm oj.c
+$ cvs update oj.c
+cvs update: warning: oj.c was lost
+U oj.c
+@end example
 
 @c ---------------------------------------------------------------------
 @node Tracking sources
@@ -3731,7 +3825,6 @@ particular subcommand, see @ref{Index}.
 * log::                         Print out 'rlog' information for files
 * rdiff::                       'patch' format diffs between releases
 * release::                     Indicate that a Module is no longer in use
-* remove::                      Remove an entry from the repository
 * rtag::                        Add a tag to a module
 * status::                      Status info on the revisions
 * tag::                         Add a tag to checked out version
@@ -3971,7 +4064,7 @@ The specification is @dfn{sticky} when you use it to make a
 private copy of a source file; that is, when you get a working
 file using @samp{-D}, @sc{cvs} records the date you specified, so that
 further updates in the same directory will use the same date
-(unless you explicitly override it; @pxref{update}).
+(for more information on sticky tags/dates, @pxref{Sticky tags}).
 
 A wide variety of date formats are supported by the underlying
 @sc{rcs} facilities, similar to those described in co(1), but not
@@ -4111,7 +4204,8 @@ revision you last checked out into the current working directory.
 The tag specification is sticky when you use this option
 with @code{checkout} or @code{update} to make your own
 copy of a file: @sc{cvs} remembers the tag and continues to use it on
-future update commands, until you specify otherwise.  The
+future update commands, until you specify otherwise (for more information
+on sticky tags/dates, @pxref{Sticky tags}).  The
 tag can be either a symbolic or numeric tag.
 @xref{Tags}.
 
@@ -4185,7 +4279,7 @@ use @code{commit} to make the change permanent.  Doing an
 @code{add} on a file that was removed with the @code{remove}
 command will resurrect the file, unless a @code{commit} command
 intervened.
-@xref{remove examples} for an example.
+@xref{Removing files}, for an example.
 
 
 Unlike most other commands @code{add} never recurses down
@@ -4305,12 +4399,15 @@ login names appearing in the comma-separated list
 @var{logins} to the access list of the @sc{rcs} file.
 
 @item -b[@var{rev}]
-Breaks @sc{cvs}.  When used with bare @sc{rcs}, this
-option sets the default branch to @var{rev}.
-If @var{rev} is omitted, the default branch is reset to
-the (dynamically) highest branch on the trunk.  Use
-sticky tags instead, as in @code{cvs co -r}.
-@xref{Sticky tags}.
+When used with bare @sc{rcs}, this
+option sets the default branch to @var{rev}; in
+@sc{cvs} sticky tags (@pxref{Sticky tags}) are a better
+way to decide which branch you want to work on.  With
+@sc{cvs}, this option can be used to control behavior
+with respect to the vendor branch.
+@c FIXME: document how you use it with the vendor
+@c branch (or fix cvs so that there is a more graceful
+@c way to handle the case).
 
 @item -c@var{string}
 Useful with @sc{cvs}.  Sets the comment leader to
@@ -4623,7 +4720,8 @@ them):
 @table @code
 @item -D @var{date}
 Use the most recent revision no later than @var{date}.
-This option is sticky, and implies @samp{-P}.
+This option is sticky, and implies @samp{-P}.  See
+@ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -f
 Only useful with the @samp{-D @var{date}} or @samp{-r
@@ -4654,6 +4752,7 @@ Pipe files to the standard output.
 
 @item -r @var{tag}
 Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
+See @ref{Sticky tags}, for more information on sticky tags/dates.
 @end table
 
 In addition to those, you can use these special command
@@ -4662,12 +4761,7 @@ options with @code{checkout}:
 @table @code
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
-(If you get a working file using one of the @samp{-r},
-@samp{-D}, or @samp{-k} options, @sc{cvs} remembers the
-corresponding tag, date, or @var{kflag} and continues using
-it for future updates; use the @samp{-A} option to make
-@sc{cvs} forget these specifications, and retrieve the
-`head' revision of the file).
+See @ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -c
 Copy the module file, sorted, to the standard output,
@@ -5899,111 +5993,6 @@ Are you sure you want to release (and delete) module `tc': y
 $
 @end example
 
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node remove
-@appendixsec remove---Remove an entry from the repository
-@cindex Remove (subcommand)
-
-@itemize @bullet
-@item
-remove [-lR] [files@dots{}]
-@item
-Requires: Working directory.
-@item
-Changes: Working directory.
-@item
-Synonyms: rm, delete
-@end itemize
-
-Use this command to declare that you wish to remove
-files from the source repository.  Like most @sc{cvs}
-commands, @samp{cvs remove} works on files in your working
-directory, not directly on the repository.  As a
-safeguard, it also requires that you first erase the
-specified files from your working directory.
-
-The files are not actually removed until you apply your
-changes to the repository with @code{commit}; at that
-point, the corresponding @sc{rcs} files in the source
-repository are moved into the @file{Attic} directory
-(also within the source repository).
-
-This command is recursive by default, scheduling all
-physically removed files that it finds for removal by
-the next commit.  Use the @samp{-l} option to avoid
-this recursion, or just specify the actual files that
-you wish removed.
-
-
-@menu
-* remove options::              remove options
-* remove examples::             remove examples
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node remove options
-@appendixsubsec remove options
-
-Two of the standard options are the only options
-supported by @code{remove}.
-
-@table @code
-@item -l
-Local; run only in current working directory.
-
-@item -R
-Commit directories recursively.  This is on by default.
-@end table
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node remove examples
-@appendixsubsec remove examples
-
-@appendixsubsubsec Remove a couple of files.
-
-@example
-$ cd test
-$ rm ?.c
-$ cvs remove
-cvs remove: Removing .
-cvs remove: scheduling a.c for removal
-cvs remove: scheduling b.c for removal
-cvs remove: use 'cvs commit' to remove these files permanently
-$ cvs ci -m "Removed unneeded files"
-cvs commit: Examining .
-cvs commit: Committing .
-@end example
-
-@appendixsubsubsec Resurrecting removed files
-
-If you change your mind you can easily resurrect the
-file before you commit it, using the @code{add}
-command.
-
-@example
-$ ls
-CVS   ja.h  oj.c
-$ rm oj.c
-$ cvs remove oj.c
-cvs remove: scheduling oj.c for removal
-cvs remove: use 'cvs commit' to remove this file permanently
-$ cvs add oj.c
-U oj.c
-cvs add: oj.c, version 1.1.1.1, resurrected
-@end example
-
-If you realize your mistake before you run the
-@code{remove} command you can use @code{update} to
-resurrect the file:
-
-@example
-$ rm oj.c
-$ cvs update oj.c
-cvs update: warning: oj.c was lost
-U oj.c
-@end example
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rtag
 @appendixsec rtag---Add a tag to the RCS file
 @cindex Rtag (subcommand)
@@ -6312,6 +6301,7 @@ them):
 @item -D date
 Use the most recent revision no later than @var{date}.
 This option is sticky, and implies @samp{-P}.
+See @ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -f
 Only useful with the @samp{-D @var{date}} or @samp{-r
@@ -6342,6 +6332,7 @@ Operate recursively.  This is on by default.
 @item -r tag
 Retrieve revision @var{tag}.  This option is sticky,
 and implies @samp{-P}.
+See @ref{Sticky tags}, for more information on sticky tags/dates.
 @end table
 
 @need 800
@@ -6351,12 +6342,7 @@ These special options are also available with
 @table @code
 @item -A
 Reset any sticky tags, dates, or @samp{-k} options.
-(If you get a working copy of a file by using one of
-the @samp{-r}, @samp{-D}, or @samp{-k} options, @sc{cvs}
-remembers the corresponding tag, date, or @var{kflag} and
-continues using it on future updates; use the @samp{-A}
-option to make @sc{cvs} forget these specifications, and
-retrieve the head revision of the file).
+See @ref{Sticky tags}, for more information on sticky tags/dates.
 
 @item -d
 Create any directories that exist in the repository if

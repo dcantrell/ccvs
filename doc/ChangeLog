@@ -1,3 +1,15 @@
+Thu Feb  1 13:28:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Sticky tags): Expand so it really documents the
+	features it is talking about rather than referring to "Appendix
+	A".  Add example of how to restore the old version of a dead
+	file.  In various other parts of the manual refer to this node, in
+	some cases deleting duplicative text.  In the case of cvs admin
+	-b, mention vendor branch usage.
+	(Removing files): Discuss removing files (in user-visible terms,
+	not in terms of the Attic and such).
+	(remove): Remove node; merge contents into Removing files.
+
 Tue Jan 30 17:52:06 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* cvs.texinfo: Tweak @top node, to make file compatible with both
