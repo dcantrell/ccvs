@@ -1266,7 +1266,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	{
 	    if (save_cwd (&cwd))
 		error_exit ();
-	    if ( CVS_CHDIR (repository) < 0)
+	    if (CVS_CHDIR (repository) < 0)
 		error (1, errno, "cannot change to %s directory", repository);
 	}
     }
@@ -1303,7 +1303,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	    mode_t omask;
 	    omask = umask (cvsumask);
 	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	    (void) umask (omask);
+	    (void)umask (omask);
 
 	    if (db == NULL)
 	    {
