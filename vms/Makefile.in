@@ -107,7 +107,6 @@ VERSION = @VERSION@
 YACC = @YACC@
 am__include = @am__include@
 am__quote = @am__quote@
-includeopt = @includeopt@
 install_sh = @install_sh@
 with_default_rsh = @with_default_rsh@
 
