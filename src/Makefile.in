@@ -63,7 +63,7 @@ subr.o filesubr.o run.o version.o error.o zlib.o
 HEADERS = buffer.h cvs.h rcs.h hash.h myndbm.h \
 	update.h server.h client.h error.h fileattr.h edit.h watch.h
 
-TAGFILES = $(HEADERS) options.h.in $(SOURCES)
+TAGFILES = $(HEADERS) $(SOURCES)
 
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog-9395 ChangeLog-9194 \
 	    NOTES \
@@ -136,7 +136,7 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f tags TAGS Makefile options.h
+	rm -f tags TAGS Makefile
 .PHONY: distclean
 
 realclean: distclean
@@ -182,16 +182,13 @@ cvsbug: cvsbug.sh $(srcdir)/version.c
 
 # Compilation rules.
 
-$(OBJECTS): $(HEADERS) options.h
+$(OBJECTS): $(HEADERS)
 
 zlib.o: zlib.c
 	$(CC) $(CPPFLAGS) $(INCLUDES) -I$(top_srcdir)/zlib $(DEFS) $(CFLAGS) -c $(srcdir)/zlib.c
 
 subdir = src
 Makefile: ../config.status Makefile.in
-	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
-
-options.h: ../config.status options.h.in
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
 #../config.status: ../configure
