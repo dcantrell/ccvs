@@ -1,3 +1,10 @@
+2001-01-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* update.c (update_fileproc): Handle toss_local_changes in the
+	T_NEEDS_MERGE case.
+	(Inspired by Noel L Yap <yap_noel@jpmorgan.com>.)
+	* sanity.sh (clean): New tests for above.
+
 2001-01-23  Derek Price  <derek.price@openavenue.com>
 
 	* run.c (run_exec): flush, if used, stderr and stdout before exit

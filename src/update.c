@@ -657,8 +657,12 @@ update_fileproc (callerdat, finfo)
 		write_letter (finfo, 'C');
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
-		retval = merge_file (finfo, vers);
-		break;
+		if (! toss_local_changes)
+		{
+		    retval = merge_file (finfo, vers);
+		    break;
+		}
+		/* else FALL THROUGH */
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
                 if (toss_local_changes)
