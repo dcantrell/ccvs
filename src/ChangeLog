@@ -1,3 +1,16 @@
+Sat Nov 30 15:10:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* subr.c, cvs.h (file_has_markers): New function.
+	* rcs.h (RCS_MERGE_PAT): Now a fixed string not a regexp.
+	* options.h.in (GREP): Removed; no longer used.
+	* update.c (update_fileproc), commit.c (check_fileproc): Call
+	file_has_markers rather than GREP.
+	* rcscmds.c (RCS_merge): Just give a fatal error in the case where
+	we had been calling GREP.  I suspect noone is using this code
+	any more.
+	* sanity.sh (conflicts): Rewrite tests 131, 132, and 133 to use
+	dotest; tests that the above changes didn't break anything.
+
 Fri Nov 29 09:06:41 1996  fnf@ninemoons.com (Fred Fish)
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

@@ -539,22 +539,11 @@ update_fileproc (callerdat, finfo)
 
 		    if (retcode)
 		    {
-			/*
-			 * If the timestamps differ, look for Conflict
-			 * indicators to see if 'C' anyway.
-			 */
-			run_setup ("%s", GREP);
-			run_arg (RCS_MERGE_PAT);
-			run_arg (finfo->file);
-			retcode = run_exec (RUN_TTY, DEVNULL,
-					    RUN_TTY,RUN_NORMAL);
-			if (retcode == -1)
-			{
-			    error (1, errno,
-				"fork failed while examining conflict in `%s'",
-				       finfo->fullname);
-			}
+			/* The timestamps differ.  But if there are conflict
+			   markers print 'C' anyway.  */
+			retcode = !file_has_markers (finfo);
 		    }
+
 		    if (!retcode)
 		    {
 			(void) write_letter (finfo->file, 'C', finfo->update_dir);

@@ -785,22 +785,7 @@ check_fileproc (callerdat, finfo)
 		    return (1);
 		}
 
-		/*
-		 * If the timestamps differ, look for Conflict indicators
-		 * in the file to see if we should block the commit anyway
-		 */
-		run_setup ("%s", GREP);
-		run_arg (RCS_MERGE_PAT);
-		run_arg (finfo->file);
-		retcode = run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_REALLY);
-		    
-		if (retcode == -1)
-		{
-		    error (1, errno,
-			   "fork failed while examining conflict in `%s'",
-			   finfo->fullname);
-		}
-		else if (retcode == 0)
+		if (file_has_markers (finfo))
 		{
 		    error (0, 0,
 			   "file `%s' still contains conflict indicators",

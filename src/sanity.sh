@@ -3195,29 +3195,22 @@ rcsmerge: warning: conflicts during merge
 C a'
 		rmdir dir1 sdir
 
-		# Try to check in the file with the conflict markers in it.
-		if ${CVS} ci -m try 2>>${LOGFILE}; then
-			echo 'FAIL: test 131' | tee -a ${LOGFILE}
-		else
-			# Should tell us to resolve conflict first
-			echo 'PASS: test 131' >>${LOGFILE}
-		fi
+		dotest_fail conflicts-131 "${testcvs} -q ci -m try" \
+"${PROG} [a-z]*: file .a. had a conflict and has not been modified
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
 		echo lame attempt at resolving it >>a
 		# Try to check in the file with the conflict markers in it.
-		if ${CVS} ci -m try >>${LOGFILE} 2>&1; then
-			echo 'FAIL: test 132' | tee -a ${LOGFILE}
-		else
-			# Should tell us to resolve conflict first
-			echo 'PASS: test 132' >>${LOGFILE}
-		fi
+		dotest_fail conflicts-132 "${testcvs} -q ci -m try" \
+"${PROG} [a-z]*: file .a. still contains conflict indicators
+${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
 		echo resolve conflict >a
-		if ${CVS} ci -m resolved >>${LOGFILE} 2>&1; then
-			echo 'PASS: test 133' >>${LOGFILE}
-		else
-			echo 'FAIL: test 133' | tee -a ${LOGFILE}
-		fi
+		dotest conflicts-133 "${testcvs} -q ci -m resolved" \
+"Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+new revision: 1\.3; previous revision: 1\.2
+done"
 
 		# Now test that we can add a file in one working directory
 		# and have an update in another get it.
