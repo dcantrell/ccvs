@@ -1,0 +1,49 @@
+m4_divert_text([HEADER-COPYRIGHT],
+[# Copyright (C) 2003 Derek Price, Ximbiot,
+#                    & The Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+])
+
+dnl Include the macros specific to this (CVS) test suite.
+m4_include([atspecific.m4])
+
+AT_TESTED([cvs])
+
+dnl Init Autotest
+AT_INIT
+
+dnl Set up the options this test suite accepts.
+AT_ARG_OPTION(
+  [remote|r],
+  [AS_HELP_STRING([-r | --remote],
+                  [Run test suite in remote mode.  This is the same as
+specifying --keywords=remote.],
+                  [                 ])])dnl
+
+m4_divert_text([DEFAULTS], [server=])
+AT_ARG_OPTION_ARG(
+  [server|s],
+  [AS_HELP_STRING([-s | --server=PATH],
+                  [Run using PATH as the CVS server for client/server
+                   testing.],
+                  [                 ])],
+[server="$server $at_server_arg"],
+dnl FIXME - This should be ${PROG}
+[server=cvs])dnl
+
+
+
+##
+## Run the tests
+##
+
+AT_CVS_INCLUDE([init.at])
