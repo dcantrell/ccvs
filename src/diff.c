@@ -19,7 +19,8 @@
 static Dtype diff_dirproc PROTO((char *dir, char *pos_repos, char *update_dir));
 static int diff_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int diff_dirleaveproc PROTO((char *dir, int err, char *update_dir));
-static int diff_file_nodiff PROTO ((struct file_info *finfo, Vers_TS *vers));
+static int diff_file_nodiff PROTO ((struct file_info *finfo, Vers_TS *vers,
+				    int just_set_rev));
 static int diff_fileproc PROTO((struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
@@ -385,14 +386,57 @@ diff_fileproc (finfo)
 	}
     }
 
-    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo, vers))
+    if (diff_file_nodiff (finfo, vers, empty_file != DIFF_NEITHER))
     {
 	freevers_ts (&vers);
 	return (0);
     }
 
-    /* FIXME: Check whether use_rev1 and use_rev2 are dead and deal
-       accordingly.  */
+    if (empty_file == DIFF_NEITHER)
+    {
+	int dead1, dead2;
+
+	if (use_rev1 == NULL)
+	    dead1 = 0;
+	else
+	    dead1 = RCS_isdead (vers->srcfile, use_rev1);
+	if (use_rev2 == NULL)
+	    dead2 = 0;
+	else
+	    dead2 = RCS_isdead (vers->srcfile, use_rev2);
+
+	if (dead1 && dead2)
+	{
+	    freevers_ts (&vers);
+	    return (0);
+	}
+	else if (dead1)
+	{
+	    if (empty_files)
+	        empty_file = DIFF_ADDED;
+	    else
+	    {
+		error (0, 0, "%s is a new entry, no comparison available",
+		       finfo->fullname);
+		freevers_ts (&vers);
+		diff_mark_errors (err);
+		return (err);
+	    }
+	}
+	else if (dead2)
+	{
+	    if (empty_files)
+		empty_file = DIFF_REMOVED;
+	    else
+	    {
+		error (0, 0, "%s was removed, no comparison available",
+		       finfo->fullname);
+		freevers_ts (&vers);
+		diff_mark_errors (err);
+		return (err);
+	    }
+	}
+    }
 
     /* Output an "Index:" line for patch to use */
     (void) fflush (stdout);
@@ -422,19 +466,35 @@ diff_fileproc (finfo)
 
 	if (empty_file == DIFF_ADDED)
 	{
-	    run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
+	    if (use_rev2 == NULL)
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
+	    else
+	    {
+		int retcode;
+
+		tmp = cvs_temp_name ();
+		retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev2,
+					     (*options
+					      ? options
+					      : vers->options),
+					     tmp, 0);
+		if (retcode == -1)
+		{
+		    (void) CVS_UNLINK (tmp);
+		    error (1, errno, "fork failed during checkout of %s",
+			   vers->srcfile->path);
+		}
+		/* FIXME: what if retcode > 0?  */
+
+		run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, tmp);
+	    }
 	}
 	else
 	{
 	    int retcode;
 
-	    /*
-	     * FIXME: Should be setting use_rev1 using the logic in
-	     * diff_file_nodiff, and using that revision.  This code
-	     * is broken for "cvs diff -N -r foo".
-	     */
 	    tmp = cvs_temp_name ();
-	    retcode = RCS_fast_checkout (vers->srcfile, NULL, vers->vn_rcs,
+	    retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev1,
 					 *options ? options : vers->options,
 					 tmp, 0);
 	    if (retcode == -1)
@@ -489,7 +549,8 @@ diff_fileproc (finfo)
 	    error (1, errno, "cannot remove %s", finfo->file);
     }
 
-    if (empty_file == DIFF_REMOVED)
+    if (empty_file == DIFF_REMOVED
+	|| (empty_file == DIFF_ADDED && use_rev2 != NULL))
     {
 	(void) CVS_UNLINK (tmp);
 	free (tmp);
@@ -565,9 +626,10 @@ diff_dirleaveproc (dir, err, update_dir)
  * verify that a file is different 0=same 1=different
  */
 static int
-diff_file_nodiff (finfo, vers)
+diff_file_nodiff (finfo, vers, just_set_rev)
     struct file_info *finfo;
     Vers_TS *vers;
+    int just_set_rev;
 {
     Vers_TS *xvers;
     char *tmp;
@@ -670,6 +732,9 @@ diff_file_nodiff (finfo, vers)
 	if (use_rev1 == NULL)
 	    use_rev1 = xstrdup (vers->vn_user);
     }
+
+    if (just_set_rev)
+	return (0);
 
     /*
      * with 0 or 1 -r option specified, run a quick diff to see if we
