@@ -3,6 +3,10 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* New builtin tags are available: '.base' and '.head' as a replacement for
+  the well known HEAD and BASE tags, additional tags are: '.trunk', '.root',
+  '.origin', '.prev', '.next'.
+
 * A problem where a proxy server could fail to notice that its primary closed
   the connection has been fixed.
 
