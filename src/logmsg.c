@@ -136,6 +136,10 @@ do_editor (dir, messagep, repository, changes)
     if (noexec || reuse_log_message)
 	return;
 
+    /* Abort creation of temp file if no editor is defined */
+    if (strcmp(Editor, "") == 0 && !editinfo_editor)
+       error(1, 0, "no editor defined, must use -e or -m");
+
     /* Create a temporary file */
     (void) tmpnam (fname);
   again:
