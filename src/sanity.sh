@@ -709,58 +709,94 @@ is_bad_tool ()
    case ":$badtools:" in *:$1:*) return 0 ;; *) return 1 ; esac
 }
 
+version_test ()
+{
+  vercmd=$1
+  if RES=`$vercmd --version </dev/null 2>/dev/null`; then
+    if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
+      echo "$RES"
+    else
+      echo "$RES"
+      echo "The command \`$vercmd' does not support the --version option."
+    fi
+  fi
+  # It does not really matter that --version is not supported
+  return 0
+}
+
+# Try to find a tool that satisfies all of the tests.
+# Usage: list:of:colon:separated:alternatives test1 test2 test3 test4...
+# Example: find_tool awk:gawk:nawk awk_tooltest1 awk_tooltest2
 find_tool ()
 {
+  default_TOOL=$1
+  echo find_tool: ${1+"$@"} >>$LOGFILE
+  cmds="`IFS=:; echo $1`"; shift; tooltests="${1+$@}"
+  if test -z "$tooltests"; then tooltests=version_test; fi
+  clist=; for cmd in $cmds; do clist="$clist `Which -a $cmd`"; done
+  # Make sure the default tool is just the first real command name
+  for default_TOOL in $clist `IFS=:; echo $default_TOOL`; do break; done
   TOOL=""
-  for path in `IFS=:; echo $SEARCHPATH`; do
-    if is_bad_tool $path/g$1 ; then continue; fi
-    if test -f $path/g$1 && test -r $path/g$1 &&
-        RES=`$path/g$1 --version </dev/null 2>/dev/null`; then
-      if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
-        TOOL=$path/g$1
-        break
+  for trytool in $clist ; do
+    pass=:
+    for tooltest in $tooltests; do
+      result=`eval $tooltest $trytool`
+      rc=$?
+      echo "Running $tooltest $trytool" >>$LOGFILE
+      if test -n "$result"; then
+	echo "$result" >>$LOGFILE
       fi
-    fi
-    if is_bad_tool $path/$1 ; then continue; fi
-    if test -f $path/$1 && test -r $path/$1 &&
-        RES=`$path/$1 --version </dev/null 2>/dev/null`; then
-      if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
-        TOOL=$path/$1
-        break
+      if test "$rc" = "0"; then
+        echo "PASS: $tooltest $trytool" >>$LOGFILE
+      elif test "$rc" = "77"; then
+        echo "MARGINAL: $tooltest $trytool; rc=$rc" >>$LOGFILE
+        TOOL=$trytool
+	pass=false
+      else
+        set_bad_tool $trytool
+        echo "FAIL: $tooltest $trytool; rc=$rc" >>$LOGFILE
+	pass=false
       fi
+    done
+    if $pass; then
+      echo $trytool
+      return 0
     fi
   done
-  if test -z "$TOOL"; then
-    :
+  if test -n "$TOOL"; then
+    echo "Notice: The default version of \`$default_TOOL' is defective." >>$LOGFILE
+    echo "using \`$TOOL' and hoping for the best." >>$LOGFILE
+    echo "Notice: The default version of \`$default_TOOL' is defective." >&2
+    echo "using \`$TOOL' and hoping for the best." >&2
+    echo $TOOL
   else
-    echo "Notice: The default version of \`$1' is defective, using" >&2
-    echo "\`$TOOL' instead." >&2
+    echo $default_TOOL
   fi
-  echo "$TOOL"
 }  
+
+id_tool_test ()
+{
+  id=$1
+  if $id -u >/dev/null 2>&1 && $id -un >/dev/null 2>&1; then
+    return 0
+  else
+    echo "Running these tests requires an \`id' program that understands the"
+    echo "-u and -n flags.  Make sure that such an id (GNU, or many but not"
+    echo "all vendor-supplied versions) is in your path."
+    return 1
+  fi
+}
+
+ID=`find_tool id version_test id_tool_test`
+echo "Using ID=$ID" >>$LOGFILE
 
 # You can't run CVS as root; print a nice error message here instead
 # of somewhere later, after making a mess.
-#
-# FIXME - find_tool() finds the 'gid' from GNU id-utils if I pull 'id' out of
-# my path.
 for pass in false :; do
   case "`$ID -u 2>/dev/null`" in
     "0")
       echo "Test suite does not work correctly when run as root" >&2
       exit 1
-      ;;
-
-    "")
-      if $pass; then :; else
-	ID=`find_tool id`
-      fi
-      if $pass || test -z "$ID" ; then
-	echo "Running these tests requires an \`id' program that understands the" >&2
-	echo "-u and -n flags.  Make sure that such an id (GNU, or many but not" >&2
-	echo "all vendor-supplied versions) is in your path." >&2
-	exit 1
-      fi
       ;;
 
     *)
@@ -770,63 +806,70 @@ for pass in false :; do
 done
 
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
-if $EXPR 'abc
+expr_tooltest1 ()
+{
+expr=$1
+if $expr 'abc
 def' : 'abc
 def' >/dev/null; then
-  : good, it works
+  # good, it works
+  return 0
 else
-  EXPR=`find_tool expr`
-  if test -z "$EXPR" ; then
-    echo 'Running these tests requires an "expr" program that can handle' >&2
-    echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but' >&2
-    echo 'not all vendor-supplied versions) is in your path.' >&2
-    exit 1
-  fi
+  echo 'Running these tests requires an "expr" program that can handle'
+  echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
+  echo 'not all vendor-supplied versions) is in your path.'
+  return 1
 fi
+}
 
 # Warn SunOS, SysVr3.2, etc., users that they may be partially losing
 # if we can't find a GNU expr to ease their troubles...
-if $EXPR 'a
+expr_tooltest2 ()
+{
+expr=$1
+if $expr 'a
 b' : 'a
 c' >/dev/null; then
-  EXPR=`find_tool expr`
-  if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr that does not correctly'
-    echo 'match multi-line patterns.  Some tests may spuriously pass or fail.'
-    echo 'You may wish to make sure GNU expr is in your path.'
-    EXPR=expr
-  fi
+  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'match multi-line patterns.  Some tests may spuriously pass or fail.'
+  echo 'You may wish to make sure GNU expr is in your path.'
+  return 1
 else
-  : good, it works
+  return 0
 fi
+}
 
-# More SunOS lossage...
+expr_create_bar ()
+{
 echo 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' >${TESTDIR}/foo
 cat ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo >${TESTDIR}/bar
 cat ${TESTDIR}/bar ${TESTDIR}/bar ${TESTDIR}/bar ${TESTDIR}/bar >${TESTDIR}/foo
 cat ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo >${TESTDIR}/bar
-if $EXPR "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
+rm -f ${TESTDIR}/foo
+}
+
+expr_tooltest3 ()
+{
+expr=$1
+# More SunOS lossage...
+test ! -f ${TESTDIR}/bar && expr_create_bar
+if $expr "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
   : good, it works
 else
-  EXPR=`find_tool expr`
-  if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr that does not correctly'
-    echo 'match large patterns.  Some tests may spuriously pass or fail.'
-    echo 'You may wish to make sure GNU expr is in your path.'
-    EXPR=expr
-  fi
+  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'match large patterns.  Some tests may spuriously pass or fail.'
+  echo 'You may wish to make sure GNU expr is in your path.'
+  return 1
 fi
 if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
-  EXPR=`find_tool expr`
-  if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr that does not correctly'
-    echo 'match large patterns.  Some tests may spuriously pass or fail.'
-    echo 'You may wish to make sure GNU expr is in your path.'
-    EXPR=expr
-  fi
-else
-  : good, it works
+  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'match large patterns.  Some tests may spuriously pass or fail.'
+  echo 'You may wish to make sure GNU expr is in your path.'
+  return 1
 fi
+# good, it works
+return 0
+}
 
 # That we should have to do this is total bogosity, but GNU expr
 # version 1.9.4-1.12 uses the emacs definition of "$" instead of the unix
@@ -834,10 +877,18 @@ fi
 # next release of GNU expr after 1.12 (but we still have to cater to the old
 # ones for some time because they are in many linux distributions).
 ENDANCHOR="$"
-if $EXPR 'abc
+expr_set_ENDANCHOR ()
+{
+expr=$1
+ENDANCHOR="$"
+if $expr 'abc
 def' : 'abc$' >/dev/null; then
   ENDANCHOR='\'\'
+   echo "Notice: An ENDANCHOR of dollar does not work."
+   echo "Using a workaround for GNU expr versions 1.9.4 thru 1.12"
 fi
+return 0
+}
 
 # Work around another GNU expr (version 1.10-1.12) bug/incompatibility.
 # "." doesn't appear to match a newline (it does with SunOS 4.1.3 expr).
@@ -848,28 +899,53 @@ fi
 # next release of GNU expr after 1.12 (but we still have to cater to the old
 # ones for some time because they are in many linux distributions).
 DOTSTAR='.*'
-if $EXPR 'abc
+expr_set_DOTSTAR ()
+{
+expr=$1
+DOTSTAR='.*'
+if $expr 'abc
 def' : "a${DOTSTAR}f" >/dev/null; then
   : good, it works
 else
   DOTSTAR='\(.\|
 \)*'
+  echo "Notice: DOTSTAR changed from sane \`.*' value to \`$DOTSTAR\`"
+  echo "to workaround GNU expr version 1.10 thru 1.12 bug where \`.'"
+  echo "does not match a newline."
 fi
+return 0
+}
 
 # Now that we have DOTSTAR, make sure it works with big matches
-if $EXPR "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
-  : good, it works
+expr_tooltest_DOTSTAR ()
+{
+expr=$1
+test ! -f ${TESTDIR}/bar && expr_create_bar
+if $expr "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
+  # good, it works
+  return 0
 else
-  EXPR=`find_tool expr`
-  if test -z "$EXPR" ; then
-    echo 'Warning: you are using a version of expr that does not correctly'
-    echo 'match large patterns.  Some tests may spuriously pass or fail.'
-    echo 'You may wish to make sure GNU expr is in your path.'
-    EXPR=expr
-  fi
+  echo 'Warning: you are using a version of expr that does not correctly'
+  echo 'match large patterns.  Some tests may spuriously pass or fail.'
+  echo 'You may wish to make sure GNU expr is in your path.'
+  return 77
 fi
+}
 
-rm -f ${TESTDIR}/foo ${TESTDIR}/bar
+EXPR=`find_tool ${EXPR}:gexpr \
+  version_test expr_tooltest1 expr_tooltest2 expr_tooltest3 \
+expr_set_ENDANCHOR expr_set_DOTSTAR expr_tooltest_DOTSTAR`
+
+# Set the ENDANCHOR and DOTSTAR for the chosen expr version.
+expr_set_ENDANCHOR ${EXPR} >/dev/null
+expr_tooltest_DOTSTAR ${EXPR} >/dev/null
+
+echo "Using EXPR=$EXPR" >>$LOGFILE
+echo "Using ENDANCHOR=$ENDANCHOR" >>$LOGFILE
+echo "Using DOTSTAR=$DOTSTAR" >>$LOGFILE
+
+# Cleanup
+rm -f ${TESTDIR}/bar
 
 # Work around yet another GNU expr (version 1.10) bug/incompatibility.
 # "+" is a special character, yet for unix expr (e.g. SunOS 4.1.3)
@@ -904,47 +980,88 @@ else
 fi
 
 # now make sure that tr works on NULs
-if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null 2>&1; then
-  TR=`find_tool tr`
-  if test -z "$TR" ; then
-    echo 'Warning: you are using a version of tr which does not correctly'
-    echo 'handle NUL bytes.  Some tests may spuriously pass or fail.'
-    echo 'You may wish to make sure GNU tr is in your path.'
-    TR=tr
-  fi
-else
-  : good, it works
+tr_tooltest1 ()
+{
+tr=$1
+if $EXPR `echo "123" | $tr '2' '\0'` : "123" >/dev/null 2>&1; then
+  echo 'Warning: you are using a version of tr which does not correctly'
+  echo 'handle NUL bytes.  Some tests may spuriously pass or fail.'
+  echo 'You may wish to make sure GNU tr is in your path.'
+  return 77
 fi
+# good, it works
+return 0
+}
 
+TR=`find_tool ${TR}:gtr version_test tr_tooltest1`
+echo "Using TR=$TR" >>$LOGFILE
 
 # MacOS X (10.2.8) has a /bin/ls that does not work correctly in that
 # it will return true even if the wildcard argument does not match any
 # files.
+ls_tooltest ()
+{
+ls=$1
+# Force cleanup
 if test -d $TESTDIR/ls-test; then
     chmod -R a+wx $TESTDIR/ls-test
     rm -rf $TESTDIR/ls-test
 fi
-LS=`Which ls`
-if ${LS} $TESTDIR/ls-test >/dev/null 2>&1; then
-    echo "Notice: The default version of \`ls' in \`${LS}' is defective."
-    for tryls in `Which -a ls` ; do
-        if [ ${tryls} = ${LS} ]; then continue; fi
-	if ${tryls} $TESTDIR/ls-test >/dev/null 2>&1; then
-	    echo "Attempt to use \`${tryls}' also failed. It is defective."
-        else
-            LS=${tryls}
-	    break
-	fi
-    done
-    if ${LS} $TESTDIR/ls-test >/dev/null 2>&1; then
-        echo 'Warning: you are using a version of ls which does not correctly'
-        echo 'return false for files that do not exist. Some tests may'
-        echo 'spuriously pass or fail.'
-        echo 'You may wish to put a an ls from GNU coreutils into your path.'
-    else
-        echo "Using \`${LS}' as a replacement version of \`ls'."
-    fi
+if $ls $TESTDIR/ls-test >/dev/null 2>&1; then
+  echo "Notice: \`$ls' is defective."
+  echo 'This is a version of ls which does not correctly'
+  echo 'return false for files that do not exist. Some tests may'
+  echo 'spuriously pass or fail.'
+  echo 'You may wish to put a an ls from GNU coreutils into your path.'
+  return 77
+else
+  return 0
 fi
+}
+LS=`find_tool ls:gls version_test ls_tooltest`
+echo "Using LS=$LS" >>$LOGFILE
+
+# Awk testing
+
+awk_tooltest1 ()
+{
+awk=$1
+$awk 'BEGIN {printf("one\ntwo\nthree\nfour\nfive\nsix")}' </dev/null >abc
+if $EXPR "`cat abc`" : \
+'one
+two
+three
+four
+five
+six'; then
+  rm abc
+  return 0
+else
+  rm abc
+  echo "Notice: awk BEGIN clause or printf is not be working properly."
+  return 1
+fi
+}
+
+# Format item %c check
+awk_tooltest2 ()
+{
+awk=$1
+$awk 'BEGIN { printf "%c%c%c", 2, 3, 4 }' </dev/null \
+  | ${TR} '\002\003\004' '123' >abc
+if $EXPR "`cat abc`" : "123" ; then
+  : good, found it
+else
+  echo "Notice: awk format %c string may not be working properly."
+  rm abc
+  return 77
+fi
+rm abc
+return 0
+}
+
+AWK=`find_tool gawk:nawk:awk version_test awk_tooltest1 awk_tooltest2`
+echo "Using AWK=$AWK" >>$LOGFILE
 
 
 ###
