@@ -8963,17 +8963,7 @@ done"
 	      pass 177
 	  fi
 
-	  if ${testcvs} editors >../ans178.tmp; then
-	      pass 178
-	  else
-	      fail 178
-	  fi
-	  cat ../ans178.tmp >>${LOGFILE}
-	  if test -s ../ans178.tmp; then
-	      fail 178a
-	  else
-	      pass 178a
-	  fi
+	  dotest devcom-178 "${testcvs} editors" ""
 
 	  if ${testcvs} edit abb; then
 	      pass 179
@@ -8981,17 +8971,13 @@ done"
 	      fail 179
 	  fi
 
-	  if ${testcvs} editors >../ans180.tmp; then
-	      pass 180
-	  else
-	      fail 180
-	  fi
-	  cat ../ans180.tmp >>${LOGFILE}
-	  if test -s ../ans180.tmp; then
-	      pass 181
-	  else
-	      fail 181
-	  fi
+	  # Here we test for the traditional ISO C ctime() date format.
+	  # We assume the C locale; I guess that works provided we set
+	  # LC_ALL at the start of this script but whether these
+	  # strings should vary based on locale does not strike me as
+	  # self-evident.
+	  dotest devcom-180 "${testcvs} editors" \
+"abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9]* [0-9:]* [0-9][0-9][0-9][0-9] GMT	[a-zA-Z-_.]*	${TESTDIR}/2/first-dir"
 
 	  echo aaaa >>abb
 	  if ${testcvs} ci -m modify abb >>${LOGFILE} 2>&1; then
@@ -9002,17 +8988,7 @@ done"
 	  # Unedit of a file not being edited should be a noop.
 	  dotest 182.5 "${testcvs} unedit abb" ''
 
-	  if ${testcvs} editors >../ans183.tmp; then
-	      pass 183
-	  else
-	      fail 183
-	  fi
-	  cat ../ans183.tmp >>${LOGFILE}
-	  if test -s ../ans183.tmp; then
-	      fail 184
-	  else
-	      pass 184
-	  fi
+	  dotest devcom-183 "${testcvs} editors" ""
 
 	  if test -w abb; then
 	      fail 185

@@ -1009,29 +1009,29 @@ editors_fileproc (callerdat, finfo)
     if (them == NULL)
 	return 0;
 
-    fputs (finfo->fullname, stdout);
+    cvs_output (finfo->fullname, 0);
 
     p = them;
     while (1)
     {
-	putc ('\t', stdout);
+	cvs_output ("\t", 1);
 	while (*p != '>' && *p != '\0')
-	    putc (*p++, stdout);
+	    cvs_output (p++, 1);
 	if (*p == '\0')
 	{
 	    /* Only happens if attribute is misformed.  */
-	    putc ('\n', stdout);
+	    cvs_output ("\n", 1);
 	    break;
 	}
 	++p;
-	putc ('\t', stdout);
+	cvs_output ("\t", 1);
 	while (1)
 	{
 	    while (*p != '+' && *p != ',' && *p != '\0')
-		putc (*p++, stdout);
+		cvs_output (p++, 1);
 	    if (*p == '\0')
 	    {
-		putc ('\n', stdout);
+		cvs_output ("\n", 1);
 		goto out;
 	    }
 	    if (*p == ',')
@@ -1040,9 +1040,9 @@ editors_fileproc (callerdat, finfo)
 		break;
 	    }
 	    ++p;
-	    putc ('\t', stdout);
+	    cvs_output ("\t", 1);
 	}
-	putc ('\n', stdout);
+	cvs_output ("\n", 1);
     }
   out:;
     return 0;

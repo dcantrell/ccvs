@@ -1,5 +1,10 @@
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* edit.c (editors_fileproc), watch.c (watchers_fileproc): Use
+	cvs_output rather than writing to stdout.
+	* sanity.sh (devcom): Use dotest for tests 178, 180, and 183
+	(tests that we preserve existing behavior on "cvs editors").
+
 	* commit.c (check_fileproc): Don't allow commits in Emptydir.
 	* sanity.sh (emptydir-8): Test for this change in behavior.
 
