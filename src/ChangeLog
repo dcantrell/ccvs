@@ -1,3 +1,9 @@
+1999-08-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* lock.c (lock_name): Remove side-effects from assert() expression
+	since they won't occur if NDEBUG is defined (not that that's a good
+	thing to do).  (Reported by KOIE Hidetaka <hide@koie.org>.)
+
 1999-08-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: Use "${AWK}" instead of "awk" to make it easier for
