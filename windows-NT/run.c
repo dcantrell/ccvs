@@ -131,9 +131,9 @@ run_add_arg (s)
 
 int
 run_exec (stin, stout, sterr, flags)
-    char *stin;
-    char *stout;
-    char *sterr;
+    const char *stin;
+    const char *stout;
+    const char *sterr;
     int flags;
 {
     int shin, shout, sherr;
