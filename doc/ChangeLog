@@ -1,5 +1,7 @@
 Sun Sep 29 11:14:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Keyword list): Don't mention Name twice.
+
 	* cvs.texinfo (File permissions): Expand CVSUMASK stuff a bit.
 	(Setting a watch, Environment variables, Global options): Update
 	index entries for "read-only files, and ...".
