@@ -904,6 +904,10 @@ Optional Features:
                           optionally pass a low water mark in bytes and a high
                           water mark in bytes, separated by commas. (default
                           is enabled 1M,2M)
+  --enable-proxy          Include code for running as a transparent proxy
+                          server. Disabling this may produce a slight
+                          performance gain on some systems, at the expense of
+                          write proxy support. (default)
   --enable-pam            Use to enable system authentication with PAM instead
                           of using the simple getpwnam interface. This allows
                           authentication (in theory) with any PAM module, e.g.
@@ -924,6 +928,14 @@ Optional Features:
                           probably no real harm. (default autoselects based on
                           the case sensitivity of the file system containing
                           the current working directory)
+  --enable-file-cache-trust
+                          Don't include code which second-guesses the system
+                          file cache. On some systems, disabling this option
+                          may provide a performance boost, but on most modern
+                          operating systems it probably won't. If you find a
+                          system where this option improves CVS's performance,
+                          please send a note describing it to the
+                          <bug-cvs@gnu.org> mailing list. (default)
   --enable-encryption     Enable encryption support (disabled by default)
   --enable-force-editor   When committing or importing files, you must enter a
                           log message. Normally, you can do this either via
@@ -31114,6 +31126,24 @@ fi # enable_server
 
 
 
+# Check whether --enable-proxy or --disable-proxy was given.
+if test "${enable_proxy+set}" = set; then
+  enableval="$enable_proxy"
+
+else
+  enable_proxy=yes
+fi;
+
+if test no != "$enable_proxy"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define PROXY_SUPPORT 1
+_ACEOF
+
+fi
+
+
+
 # Check whether --enable-pam or --disable-pam was given.
 if test "${enable_pam+set}" = set; then
   enableval="$enable_pam"
@@ -31411,6 +31441,24 @@ esac
 
 fi
 
+
+
+
+# Check whether --enable-file-cache-trust or --disable-file-cache-trust was given.
+if test "${enable_file_cache_trust+set}" = set; then
+  enableval="$enable_file_cache_trust"
+
+else
+  enable_file_cache_trust=yes
+fi;
+
+if test no != "$enable_file_cache_trust"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define TRUST_OS_FILE_CACHE 1
+_ACEOF
+
+fi
 
 
 
