@@ -1,3 +1,7 @@
+2003-08-01  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join5): Use `[a-z]*' as opposed to `update'.
+
 2003-07-31  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add_directory): Restore a malloc I shouldn't have altered on
