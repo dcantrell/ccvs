@@ -14,6 +14,7 @@
 	NULL pointer in the error message string in the case where the client
 	didn't send any data.
 	* sanity.sh (pserver): Test for this case.
+	(Report from Mark Welch <mark@collab.net>).
 
 2001-08-24  Derek Price  <dprice@collab.net>
 
