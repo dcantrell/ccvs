@@ -1,3 +1,12 @@
+1998-07-02  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcscmds.c: Don't include <stdarg.h> or <vasprintf.h>.  Don't
+	declare vasprintf.
+	(call_diff_printf_output): Remove.
+	(call_diff_stdout_callbacks): Don't initialize printf_output
+	field--it has been removed from the interface.
+	(call_diff_file_callbacks): Likewise.
+
 1998-07-01  Jim Meyering  <meyering@ascend.com>
 
 	* edit.c (unedit_fileproc): Handle the case in which base_get

@@ -14,14 +14,6 @@
 #include <stdio.h>
 #include "diffrun.h"
 
-#ifdef __STDC__
-#include <stdarg.h>
-#else /* ! __STDC__ */
-#include <varargs.h>
-#endif /* __STDC__ */
-
-extern int vasprintf ();
-
 /* This file, rcs.h, and rcs.c, together sometimes known as the "RCS
    library", are intended to define our interface to RCS files.
 
@@ -86,7 +78,6 @@ static int call_diff PROTO ((char *out));
 static int call_diff3 PROTO ((char *out));
 
 static void call_diff_write_output PROTO((const char *, size_t));
-static void call_diff_printf_output PROTO((const char *, va_list));
 static void call_diff_flush_output PROTO((void));
 static void call_diff_write_stdout PROTO((const char *));
 static void call_diff_error PROTO((const char *, const char *, const char *));
@@ -159,27 +150,6 @@ call_diff_write_output (text, len)
     cvs_output (text, len);
 }
 
-/* Call back function for the diff library to printf output to the
-   output file.  This is used when we are producing output to stdout.  */
-
-static void
-call_diff_printf_output (format, args)
-    const char *format;
-    va_list args;
-{
-    char *message;
-
-    message = NULL;
-    vasprintf (&message, format, args);
-
-    if (message == NULL)
-	error (1, 0, "out of memory");
-
-    cvs_output (message, 0);
-
-    free (message);
-}
-
 /* Call back function for the diff library to flush the output file.
    This is used when we are producing output to stdout.  */
 
@@ -217,7 +187,6 @@ call_diff_error (format, a1, a2)
 static struct diff_callbacks call_diff_stdout_callbacks =
 {
     call_diff_write_output,
-    call_diff_printf_output,
     call_diff_flush_output,
     call_diff_write_stdout,
     call_diff_error
@@ -229,7 +198,6 @@ static struct diff_callbacks call_diff_stdout_callbacks =
 static struct diff_callbacks call_diff_file_callbacks =
 {
     (void (*) PROTO((const char *, size_t))) NULL,
-    (void (*) PROTO((const char *, va_list))) NULL,
     (void (*) PROTO((void))) NULL,
     call_diff_write_stdout,
     call_diff_error
