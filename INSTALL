@@ -19,6 +19,7 @@ i386 family:
 	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
         PC Clone running Fintronic Linux 1.2.5 (1.5)
         PC Clone running BSDI 2.0 (1.4.93) (footnote 6)
+	PC Clone running Windows NT 3.51 (1.5)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 m68k:
@@ -69,7 +70,7 @@ SPARC:
 
 -------------------------------------------------------------------------------
 
-Installation:
+Installation under Unix:
 
 1)  Run "configure":
 
@@ -276,4 +277,14 @@ behaviour:
 				is available, choosing "yacc" if it doesn't
 				appear to be.
 
+-------------------------------------------------------------------------------
+Installation under Windows NT:
+
+You may find interesting information in windows-NT/README.
+
+1) Using Microsoft Visual C++ version 2.1, open the project `cvsnt.mak',
+   in the top directory of the CVS distribution.
+2) Choose "Build cvs.exe" from the "Project" menu.
+3) MSVC will place the executable file cvs.exe in WinDebug, or whatever
+   your target directory is.
 -------------------------------------------------------------------------------
