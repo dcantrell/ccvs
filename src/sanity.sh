@@ -670,7 +670,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
-	tests="${tests} import-after-initial"
+	tests="${tests} update-p import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -5750,6 +5750,103 @@ done"
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	update-p)
+	  # Make sure `cvs update -p -rT FILE' works from a branch when
+	  # FILE is already on the trunk and is being added to that branch.
+
+	  mkdir 1; cd 1
+	  module=x
+
+	  echo > unused-file
+
+	  # Create the module.
+	  dotest update-p-1 \
+	    "$testcvs -Q import -m. $module X Y" ''
+
+	  file=F
+	  # Check it out and tag it.
+	  dotest update-p-2 "$testcvs -Q co $module" ''
+	  cd $module
+	  dotest update-p-3 "$testcvs -Q tag -b B" ''
+	  echo v1 > $file
+	  dotest update-p-4 "$testcvs -Q add $file" ''
+	  dotest update-p-5 "$testcvs -Q ci -m. $file" \
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
+done
+Checking in $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+initial revision: 1\.1
+done"
+	  dotest update-p-6 "$testcvs -Q tag T $file" ''
+	  dotest update-p-7 "$testcvs -Q update -rB" ''
+
+	  # This merge effectively adds file F on branch B.
+	  dotest update-p-8 "$testcvs -Q update -jT" ''
+
+	  # Before the fix that prompted the addition of this test,
+	  # the following command would fail with this diagnostic:
+	  # cvs update: conflict: F created independently by second party
+	  dotest update-p-9 "$testcvs update -p -rT $file" \
+"===================================================================
+Checking out $file
+RCS:  ${TESTDIR}/cvsroot/$module/$file,v
+VERS: 1\.1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+v1"
+
+	  # Repeat the above, but with $file removed.
+	  # This exercises a slightly different code path.
+	  rm $file
+	  # Before the fix that prompted the addition of this test,
+	  # the following command would fail with this diagnostic:
+	  # cvs update: warning: new-born F has disappeared
+	  dotest update-p-10 "$testcvs update -p -rT $file" \
+"===================================================================
+Checking out $file
+RCS:  ${TESTDIR}/cvsroot/$module/$file,v
+VERS: 1\.1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+v1"
+
+	  # Exercise yet another code path:
+	  # the one that involves reviving a `dead' file.
+	  # And a little more, for good measure...
+	  touch new
+	  dotest update-p-a1 "$testcvs -Q add new" ''
+	  dotest update-p-a2 "$testcvs -Q update -p new" ''
+	  dotest update-p-a3 "$testcvs -Q rm -f new" ''
+
+	  # Both an update -A, *and* the following update are required
+	  # to return to the state of being on the trunk with a $file
+	  # that we can then remove.
+	  dotest update-p-undead-0 "$testcvs update -A" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: warning: new-born $file has disappeared"
+	  dotest update-p-undead-1 "$testcvs update" \
+"${PROG} [a-z]*: Updating \.
+U $file"
+	  dotest update-p-undead-2 "$testcvs -Q update -p -rT $file" v1
+	  dotest update-p-undead-3 "$testcvs -Q rm -f $file" ''
+	  dotest update-p-undead-4 "$testcvs -Q update -p -rT $file" v1
+	  dotest update-p-undead-5 "$testcvs -Q ci -m. $file" \
+"Removing $file;
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
+new revision: delete; previous revision: 1\.1
+done"
+	  dotest update-p-undead-6 "$testcvs -Q update -p -rT $file" v1
+	  echo v2 > $file
+	  dotest update-p-undead-7 "$testcvs -Q update -p -rT $file" v1
+	  dotest update-p-undead-8 "$testcvs add $file" \
+"${PROG} [a-z]*: re-adding file $file (in place of dead revision 1\.2)
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  dotest update-p-undead-9 "$testcvs -Q update -p -rT $file" v1
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/$module
 	  ;;
 
 	tagf)

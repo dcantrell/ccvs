@@ -1,3 +1,11 @@
+2002-04-19  Jim Meyering  <meyering@lucent.com>
+	and Ed Santiago <easm@lucent.com>
+
+	* classify.c (Classify_File): Fix it so that `cvs update -p -r...'
+	works, even under some slightly unusual (though perfectly legitimate)
+	circumstances.
+	* sanity.sh (update-p): New tests for this.
+
 2002-04-18  Derek Price  <oberon@umich.edu>
 
 	* sanity.sh: Move test for regex metacharacters in username until
@@ -360,7 +368,7 @@
 	* Makefile.am: Various modifications to make Automake, make dist, and
 	windows targets work like they are supposed to.
 	* version.h: New (generated) file.
-	
+
 	* Makefile.in: Regenerated.
 
 2001-08-09  Derek Price  <dprice@collab.net>
@@ -597,7 +605,7 @@
 
 	* tag.c: (rtag_fileproc, rtag_delete, tag_fileproc)
 	  Changed behavior of "cvs tag -F", "cvs tag -d", "cvs rtag -F"
-	  and "cvs rtag -d" so that they will not disturb existing 
+	  and "cvs rtag -d" so that they will not disturb existing
 	  branch tags unless a new "-B" option is given.
 	* sanity.sh (tagf-16 - tagf-33): Added tests for new -B option
 	  to "cvs tag" and "cvs rtag"
