@@ -1,3 +1,8 @@
+Mon Sep  4 23:30:41 1995  Kirby Koster <koster@sctc.com>
+
+	* commit.c: When committing a removal, print a message saying what
+	we are doing.
+
 Wed Aug  2 10:06:51 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
 	* server.c: fix compiler warnings (on NeXT) (declare functions as
