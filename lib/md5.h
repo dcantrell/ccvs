@@ -1,26 +1,106 @@
-/* See md5.c for explanation and copyright information.  */
+/* md5.h - Declaration of functions and data types used for MD5 sum
+   computing library functions.
 
-#ifndef MD5_H
-#define MD5_H
+   Copyright (C) 1995, 1996, 1999, 2000, 2003, 2004 Free Software
+   Foundation, Inc.
 
-/* Unlike previous versions of this code, uint32 need not be exactly
-   32 bits, merely 32 bits or more.  Choosing a data type which is 32
-   bits instead of 64 is not important; speed is considerably more
-   important.  ANSI guarantees that "unsigned long" will be big enough,
-   and always using it seems to have few disadvantages.  */
-typedef unsigned long cvs_uint32;
+   NOTE: The canonical source of this file is maintained with the GNU C
+   Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
 
-struct cvs_MD5Context {
-	cvs_uint32 buf[4];
-	cvs_uint32 bits[2];
-	unsigned char in[64];
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+
+#ifndef _MD5_H
+#define _MD5_H 1
+
+#include <stdio.h>
+
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#if HAVE_STDINT_H || _LIBC
+# include <stdint.h>
+#endif
+
+typedef uint32_t md5_uint32;
+
+/* Structure to save state of computation between the single steps.  */
+struct md5_ctx
+{
+  md5_uint32 A;
+  md5_uint32 B;
+  md5_uint32 C;
+  md5_uint32 D;
+
+  md5_uint32 total[2];
+  md5_uint32 buflen;
+  char buffer[128];
 };
 
-void cvs_MD5Init (struct cvs_MD5Context *context);
-void cvs_MD5Update (struct cvs_MD5Context *context,
-			   unsigned char const *buf, unsigned len);
-void cvs_MD5Final (unsigned char digest[16],
-			  struct cvs_MD5Context *context);
-void cvs_MD5Transform (cvs_uint32 buf[4], const unsigned char in[64]);
+/*
+ * The following three functions are build up the low level used in
+ * the functions `md5_stream' and `md5_buffer'.
+ */
 
-#endif /* !MD5_H */
+/* Initialize structure containing state of computation.
+   (RFC 1321, 3.3: Step 3)  */
+extern void md5_init_ctx (struct md5_ctx *ctx);
+
+/* Starting with the result of former calls of this function (or the
+   initialization function update the context for the next LEN bytes
+   starting at BUFFER.
+   It is necessary that LEN is a multiple of 64!!! */
+extern void md5_process_block (const void *buffer, size_t len,
+			       struct md5_ctx *ctx);
+
+/* Starting with the result of former calls of this function (or the
+   initialization function update the context for the next LEN bytes
+   starting at BUFFER.
+   It is NOT required that LEN is a multiple of 64.  */
+extern void md5_process_bytes (const void *buffer, size_t len,
+			       struct md5_ctx *ctx);
+
+/* Process the remaining bytes in the buffer and put result from CTX
+   in first 16 bytes following RESBUF.  The result is always in little
+   endian byte order, so that a byte-wise output yields to the wanted
+   ASCII representation of the message digest.
+
+   IMPORTANT: On some systems it is required that RESBUF be correctly
+   aligned for a 32 bits value.  */
+extern void *md5_finish_ctx (struct md5_ctx *ctx, void *resbuf);
+
+
+/* Put result from CTX in first 16 bytes following RESBUF.  The result is
+   always in little endian byte order, so that a byte-wise output yields
+   to the wanted ASCII representation of the message digest.
+
+   IMPORTANT: On some systems it is required that RESBUF is correctly
+   aligned for a 32 bits value.  */
+extern void *md5_read_ctx (const struct md5_ctx *ctx, void *resbuf);
+
+
+/* Compute MD5 message digest for bytes read from STREAM.  The
+   resulting message digest number will be written into the 16 bytes
+   beginning at RESBLOCK.  */
+extern int md5_stream (FILE *stream, void *resblock);
+
+/* Compute MD5 message digest for LEN bytes beginning at BUFFER.  The
+   result is always in little endian byte order, so that a byte-wise
+   output yields to the wanted ASCII representation of the message
+   digest.  */
+extern void *md5_buffer (const char *buffer, size_t len, void *resblock);
+
+#define rol(x,n) ( ((x) << (n)) | ((x) >> (32-(n))) )
+
+#endif
