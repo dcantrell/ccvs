@@ -429,7 +429,7 @@ safe_location (char *where)
 #endif /* CLIENT_SUPPORT */
 
     /* set current - even if where is set we'll need to cd back... */
-    current = xgetwd ();
+    current = xgetcwd ();
     if (current == NULL)
 	error (1, errno, "could not get working directory");
 
@@ -447,7 +447,7 @@ safe_location (char *where)
 	    {
 		/* where */
 		free (where_this_pass);
-		where_this_pass = xgetwd();
+		where_this_pass = xgetcwd ();
 		if (where_this_pass == NULL)
 		    error (1, errno, "could not get working directory");
 

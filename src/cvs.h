@@ -45,6 +45,7 @@
 #include "minmax.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
+#include "xgetcwd.h"
 #include "xsize.h"
 /* end GNULIB headers */
 
@@ -614,7 +615,6 @@ void cleanup_register (void (*handler) (void));
 void update_delproc (Node * p);
 void usage (const char *const *cpp);
 void xchmod (const char *fname, int writable);
-char *xgetwd (void);
 List *Find_Names (char *repository, int which, int aflag,
 		  List ** optentries);
 void Register (List * list, const char *fname, const char *vn, const char *ts,

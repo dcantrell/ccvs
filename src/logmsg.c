@@ -812,7 +812,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
     }
     (void) fprintf (pipefp, "Update of %s\n", repository);
     (void) fprintf (pipefp, "In directory %s:", hostname);
-    cp = xgetwd ();
+    cp = xgetcwd ();
     if (cp == NULL)
 	fprintf (pipefp, "<cannot get working directory: %s>\n\n",
 		 strerror (errno));

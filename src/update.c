@@ -478,7 +478,7 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 	/* We need to do an extra recursion, bleah.  It's to make sure
 	   that we know as much as possible about file linkage. */
 	hardlist = getlist();
-	working_dir = xgetwd();		/* save top-level working dir */
+	working_dir = xgetcwd ();		/* save top-level working dir */
 
 	/* FIXME-twp: the arguments to start_recursion make me dizzy.  This
 	   function call was copied from the update_fileproc call that

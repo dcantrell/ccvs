@@ -120,9 +120,9 @@ struct frame_and_entries {
  *
  *   repository_in
  *     keeps track of the repository string.  This is only for the remote mode,
- *     specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was used
- *     to locate the repository.  Things would break when xgetwd() was used
- *     with a symlinked repository because xgetwd() would return the true path
+ *     specifically, r* commands (rtag, rdiff, co, ...) where xgetcwd() was used
+ *     to locate the repository.  Things would break when xgetcwd() was used
+ *     with a symlinked repository because xgetcwd() would return the true path
  *     and in some cases this would cause the path to be printed as other than
  *     the user specified in error messages and in other cases some of CVS's
  *     security assertions would fail.
