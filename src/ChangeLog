@@ -1,3 +1,10 @@
+2004-10-21 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh: Fail gracefully in proxy mode when rsync is defective.
+	(depends_on_rsync): New function.
+	(writeproxy, writeproxy-noredirect, writeproxy-ssh): Skip these tests
+	gracefully when rsync is missing.
+	
 2004-10-21  Mark D. Baushke  <mdb@cvshome.org>
 
 	* add.c (add): Pay attention to cvswrite mode when resurrecting a
