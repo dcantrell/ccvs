@@ -1,3 +1,9 @@
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
+	* libdiff.dep: New generated file.
+	* libdiff.mak: Regenerated.
+	(Original patch from Conrad T. Pino <conrad@pino.com>.)
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Remove libdiff.dep.
