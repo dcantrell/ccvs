@@ -161,7 +161,7 @@ mydbm_nextkey (DBM *db)
     }
     else
     {
-	key.dptr = (char *) NULL;
+	key.dptr = NULL;
 	key.dsize = 0;
     }
     db->dbm_next = p->next;

@@ -107,10 +107,9 @@ cvsstatus (int argc, char **argv)
 #endif
 
     /* start the recursion processor */
-    err = start_recursion
-	( status_fileproc, (FILESDONEPROC) NULL,
-	  status_dirproc, (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
-	  W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1, (char *) NULL);
+    err = start_recursion (status_fileproc, NULL, status_dirproc,
+			   NULL, NULL, argc, argv, local, W_LOCAL,
+			   0, CVS_LOCK_READ, NULL, 1, NULL);
 
     return (err);
 }
@@ -127,8 +126,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
     Node *node;
 
-    status = Classify_File (finfo, (char *) NULL, (char *) NULL, (char *) NULL,
-			    1, 0, &vers, 0);
+    status = Classify_File (finfo, NULL, NULL, NULL, 1, 0, &vers, 0);
     sstat = "Classify Error";
     switch (status)
     {

@@ -2167,7 +2167,7 @@ fd_buffer_shutdown (struct buffer *buf)
 	int w;
 
 	do
-	    w = waitpid (fb->child_pid, (int *) 0, 0);
+	    w = waitpid (fb->child_pid, NULL, 0);
 	while (w == -1 && errno == EINTR);
 	if (w == -1)
 	    error (1, errno, "waiting for process %d", fb->child_pid);

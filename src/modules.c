@@ -557,8 +557,7 @@ module `%s' is a request for a file in a module which is not a directory",
 
 	    nullrepos = emptydir_name ();
 
-	    Create_Admin (".", dir,
-			  nullrepos, (char *) NULL, (char *) NULL, 0, 0, 1);
+	    Create_Admin (".", dir, nullrepos, NULL, NULL, 0, 0, 1);
 	    if (!noexec)
 	    {
 		FILE *fp;
@@ -638,9 +637,8 @@ module `%s' is a request for a file in a module which is not a directory",
 		   CVSMODULE_SPEC, mname);
 	else
 	    err += my_module (db, spec_opt, m_type, msg, callback_proc,
-                               (char *) NULL, 0, local_specified,
-                               run_module_prog, build_dirs, extra_arg,
-	                       stack);
+			      NULL, 0, local_specified, run_module_prog,
+			      build_dirs, extra_arg, stack);
 	spec_opt = next_opt;
     }
 

@@ -148,7 +148,7 @@ register_subdir_proc (Node *p, void *closure)
 {
     List *entries = (List *) closure;
 
-    Subdir_Register (entries, (char *) NULL, p->key);
+    Subdir_Register (entries, NULL, p->key);
     return 0;
 }
 

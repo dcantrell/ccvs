@@ -90,11 +90,9 @@ cvsremove (int argc, char **argv)
 	{
 	    if (!noexec)
 	    {
-		start_recursion
-		    ( remove_force_fileproc, (FILESDONEPROC) NULL,
-		      (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
-		      NULL, argc, argv, local, W_LOCAL,
-		      0, CVS_LOCK_NONE, (char *) NULL, 0, (char *) NULL );
+		start_recursion (remove_force_fileproc, NULL, NULL, NULL,
+				 NULL, argc, argv, local, W_LOCAL,
+				 0, CVS_LOCK_NONE, NULL, 0, NULL);
 	    }
 	    /* else FIXME should probably act as if the file doesn't exist
 	       in doing the following checks.  */
@@ -115,11 +113,9 @@ cvsremove (int argc, char **argv)
 #endif
 
     /* start the recursion processor */
-    err = start_recursion
-	( remove_fileproc, (FILESDONEPROC) NULL,
-	  remove_dirproc, (DIRLEAVEPROC) NULL, NULL, argc, argv,
-	  local, W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1,
-	  (char *) NULL );
+    err = start_recursion (remove_fileproc, NULL, remove_dirproc, NULL,
+			   NULL, argc, argv, local, W_LOCAL, 0,
+			   CVS_LOCK_READ, NULL, 1, NULL);
 
     if (removed_files && !really_quiet)
 	error (0, 0, "use `%s commit' to remove %s permanently", program_name,

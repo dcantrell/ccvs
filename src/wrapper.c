@@ -503,7 +503,7 @@ wrap_matching_entry (const char *name)
     for(x=0;x<count;++x)
 	if (CVS_FNMATCH (wrap_list[x]->wildCard, name, 0) == 0)
 	    return wrap_list[x];
-    return (WrapperEntry *)NULL;
+    return NULL;
 }
 
 /* Return the RCS options for FILENAME in a newly malloc'd string.  If

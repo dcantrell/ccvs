@@ -901,7 +901,7 @@ Attempting to write to a read-only filesystem is not allowed.");
     }
 
     /* We only know how to do one list at a time */
-    if (locklist != (List *) NULL)
+    if (locklist != NULL)
     {
 	error (0, 0,
 	       "lock_list_promotably called while promotable locks set - Help!");
@@ -913,7 +913,7 @@ Attempting to write to a read-only filesystem is not allowed.");
     {
 	/* try to lock everything on the list */
 	lock_error = L_OK;		/* init for set_promotablelock_proc */
-	lock_error_repos = (char *) NULL; /* init for set_promotablelock_proc */
+	lock_error_repos = NULL;	/* init for set_promotablelock_proc */
 	locklist = list;		/* init for Lock_Cleanup */
 	if (lockers_name != NULL)
 	    free (lockers_name);

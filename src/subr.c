@@ -1050,13 +1050,13 @@ cmdlineescape (char quotes, char *s)
  * EXAMPLE
  *    (ignoring oldway variable and srepos since those are only around while we
  *    SUPPORT_OLD_INFO_FMT_STRINGS)
- *    format_cmdline( "/cvsroot/CVSROOT/mytaginfoproc %t %o %{sVv}",
+ *    format_cmdline ("/cvsroot/CVSROOT/mytaginfoproc %t %o %{sVv}",
  *                    "t", "s", "newtag",
  *                    "o", "s", "mov",
  *                    "xG", "ld", longintwhichwontbeusedthispass,
  *                    "sVv", ",", tlist, pretag_list_to_args_proc,
- *                      (void *) mydata,
- *                    (char *)NULL);
+ *                    (void *) mydata,
+ *                    NULL);
  *
  *    would generate the following command line, assuming two files in tlist,
  *    file1 & file2, each with old versions 1.1 and new version 1.1.2.3:

@@ -61,9 +61,9 @@ getlist (void)
 	/* get a list from the cache and clear it */
 	list = listcache;
 	listcache = listcache->next;
-	list->next = (List *) NULL;
+	list->next = NULL;
 	for (i = 0; i < HASHSIZE; i++)
-	    list->hasharray[i] = (Node *) NULL;
+	    list->hasharray[i] = NULL;
     }
     else
     {
@@ -146,7 +146,7 @@ getnode (void)
 {
     Node *p;
 
-    if (nodecache != (Node *) NULL)
+    if (nodecache != NULL)
     {
 	/* get one from the cache */
 	p = nodecache;

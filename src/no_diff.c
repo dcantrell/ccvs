@@ -53,8 +53,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	options = xstrdup ("");
 
     tocvsPath = wrap_tocvs_process_file (finfo->file);
-    retcode = RCS_cmp_file (vers->srcfile, vers->vn_user, (char **)NULL,
-                            (char *)NULL, options,
+    retcode = RCS_cmp_file (vers->srcfile, vers->vn_user, NULL, NULL, options,
 			    tocvsPath == NULL ? finfo->file : tocvsPath);
     if (retcode == 0)
     {
@@ -62,7 +61,7 @@ No_Difference (struct file_info *finfo, Vers_TS *vers)
 	ts = time_stamp (finfo->file);
 	Register (finfo->entries, finfo->file,
 		  vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
-		  options, vers->tag, vers->date, (char *) 0);
+		  options, vers->tag, vers->date, NULL);
 #ifdef SERVER_SUPPORT
 	if (server_active)
 	{

@@ -838,8 +838,8 @@ cause intermittent sandbox corruption.");
 	/* Probably the need for this will go away at some point once
 	   we call fflush enough places (e.g. fflush (stdout) in
 	   cvs_outerr).  */
-	(void) setvbuf (stdout, (char *) NULL, _IONBF, 0);
-	(void) setvbuf (stderr, (char *) NULL, _IONBF, 0);
+	(void) setvbuf (stdout, NULL, _IONBF, 0);
+	(void) setvbuf (stderr, NULL, _IONBF, 0);
 #endif /* KLUDGE_FOR_WNT_TESTSUITE */
 
 	if (use_cvsrc)

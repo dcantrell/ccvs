@@ -2308,7 +2308,7 @@ RCS_gettag (RCSNode *rcs, const char *symtag, int force_tag_match,
     if (symtag && STREQ (symtag, TAG_HEAD))
 #if 0 /* This #if 0 is only in the Cygnus code.  Why?  Death support?  */
 	if (force_tag_match && (rcs->flags & VALID) && (rcs->flags & INATTIC))
-	    return ((char *) NULL);	/* head request for removed file */
+	    return NULL;	/* head request for removed file */
 	else
 #endif
 	    return RCS_head (rcs);
@@ -5414,7 +5414,7 @@ workfile);
 			    ? "-kb"
 			    : "-ko"),
 			   tmpfile,
-			   (RCSCHECKOUTPROC)0, NULL);
+			   NULL, NULL);
     if (status != 0)
 	error (1, 0,
 	       "could not check out revision %s of `%s'",
@@ -5677,7 +5677,7 @@ RCS_cmp_file (RCSNode *rcs, const char *rev1, char **rev1_cache,
 	    /* Open & cache rev1 */
 	    tmpfile = cvs_temp_name();
 	    if (RCS_checkout (rcs, NULL, rev1, NULL, options, tmpfile,
-	                      (RCSCHECKOUTPROC)0, NULL))
+	                      NULL, NULL))
 		error (1, errno,
 		       "cannot check out revision %s of %s",
 		       rev1, rcs->print_path);
@@ -6545,7 +6545,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 
 	afterfile = cvs_temp_name();
 	status = RCS_checkout (rcs, NULL, after, NULL, "-ko", afterfile,
-			       (RCSCHECKOUTPROC)0, NULL);
+			       NULL, NULL);
 	if (status > 0)
 	    goto delrev_done;
 
@@ -6573,7 +6573,7 @@ RCS_delete_revs (RCSNode *rcs, char *tag1, char *tag2, int inclusive)
 	{
 	    beforefile = cvs_temp_name();
 	    status = RCS_checkout (rcs, NULL, before, NULL, "-ko", beforefile,
-				   (RCSCHECKOUTPROC)0, NULL);
+				   NULL, NULL);
 	    if (status > 0)
 		goto delrev_done;
 

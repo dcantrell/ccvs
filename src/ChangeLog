@@ -1,3 +1,27 @@
+2005-03-16  Mark D. Baushke  <mdb@juniper.net>
+
+	* buffer.c (fd_buffer_shutdown): Replace (int *) 0 with NULL.
+	* server.c (do_cvs_command): Ditto.
+
+	* client.c (update_entries): Use xnmalloc.
+
+	* checkin.c (Checkin): Replace (char *) 0 with NULL.
+	* patch.c (patch_fileproc): Ditto.
+	* update.c (update_fileproc): Ditto.
+	* no_diff.c (No_Difference): Ditto.
+	* patch.c (patch_fileproc): Ditto.
+	* rcscmds.c (call_diff_setup, call_diff_add_arg): Ditto.
+
+	* update.c (join_file): Replace (RCSCHECKOUTPROC)0 with NULL.
+	* rcs.c (RCS_checkin, RCS_cmp_file, RCS_delete_revs) 
+	(RCS_delete_revs): Ditto.
+	* rcscmds.c (RCS_merge, RCS_exec_rcsdiff): Ditto.
+	
+	* annotate.c, checkin.c, classify.c, fileattr.c, find_names.c,
+	hash.c, lock.c, login.c, logmsg.c, main.c, modules.c, myndbm.c,
+	no_diff.c, patch.c, rcs.c, rcscmds.c, remove.c, server.c,
+	status.c, subr.c, tag.c, update.c, vers_ts.c: Avoid casting NULL.
+
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
 	* client.c (call_in_directory): Put function call after var decls.

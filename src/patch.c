@@ -257,7 +257,7 @@ patch (int argc, char **argv)
     db = open_module ();
     for (i = 0; i < argc; i++)
 	err += do_module (db, argv[i], PATCH, "Patching", patch_proc,
-			  (char *)NULL, 0, local, 0, 0, (char *)NULL);
+			  NULL, 0, local, 0, 0, NULL);
     close_module (db);
     free (options);
     patch_cleanup (0);
@@ -547,7 +547,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	}
 	memset ((char *) &t, 0, sizeof (t));
 	if ((t.actime = t.modtime = RCS_getrevtime (rcsfile, vers_tag,
-						    (char *) 0, 0)) != -1)
+						    NULL, 0)) != -1)
 	    /* I believe this timestamp only affects the dates in our diffs,
 	       and therefore should be on the server, not the client.  */
 	    (void)utime (tmpfile1, &t);
@@ -569,7 +569,7 @@ patch_fileproc (void *callerdat, struct file_info *finfo)
 	    goto out;
 	}
 	if ((t.actime = t.modtime = RCS_getrevtime (rcsfile, vers_head,
-						    (char *)0, 0)) != -1)
+						    NULL, 0)) != -1)
 	    /* I believe this timestamp only affects the dates in our diffs,
 	       and therefore should be on the server, not the client.  */
 	    (void)utime (tmpfile2, &t);

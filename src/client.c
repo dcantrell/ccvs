@@ -1801,9 +1801,9 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (patch_failed)
 	{
 	    /* Save this file to retrieve later.  */
-	    failed_patches = xrealloc (failed_patches,
-				       ((failed_patches_count + 1)
-					* sizeof (char *)));
+	    failed_patches = xnrealloc (failed_patches,
+					failed_patches_count + 1,
+					sizeof (char *));
 	    failed_patches[failed_patches_count] = xstrdup (short_pathname);
 	    ++failed_patches_count;
 
