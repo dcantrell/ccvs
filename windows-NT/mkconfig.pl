@@ -1,5 +1,10 @@
 use strict;
 
+# For the `mv' function which is smart enough to cross device boundries.
+use File::Copy qw{mv};
+# For the `basename' function.
+use File::Basename;
+
 
 
 ###
@@ -11,12 +16,14 @@ sub save_edit
 
     if ($same)
     {
-	unlink $temp_name;
+	unlink $temp_name
+	    or warn "Failed to unlink ", $temp_name, ": $!";
 	print "no change: ", $file_name, "\n";
     }
     else
     {
-	rename $temp_name, $file_name;
+	mv $temp_name, $file_name
+	    or die "Failed to rename ", $temp_name, " to ", $file_name, ": $!";
 	print "save edit: ", $file_name, "\n";
     }
 }
@@ -108,7 +115,8 @@ sub make_config_h
     # scan build level configuration to collect define/undef values
     #==========================================================================
 
-    open FINP, "< $inp_name" or die "open error: ", $inp_name;
+    open FINP, "< $inp_name"
+	or die "error opening ", $inp_name, " for read: $!";
     my %build_macros;
     while (<FINP>)
     {
@@ -141,10 +149,10 @@ sub make_config_h
     #==========================================================================
     # temporary output file
     #==========================================================================
-    my $temp_name = "$out_name.tmp";
+    my $temp_name = basename($out_name) . ".tmp";
 
     open FOUT, "> $temp_name"
-	or die "error opening ", $temp_name, "for read: $!";
+	or die "error opening ", $temp_name, " for write: $!";
 
     #==========================================================================
     # copy build level configuration append file to output file
@@ -171,7 +179,8 @@ EOF
     # copy root level configuration to output file
     # while keeping track of conditional compile nesting level
     #==========================================================================
-    open FINP, "< $ph_name" or die "open error: ", $ph_name;
+    open FINP, "< $ph_name"
+	or die "error opening ", $ph_name, " for read: $!";
     my %ph_macros;
     while (<FINP>)
     {
@@ -227,7 +236,8 @@ EOF
 
     if (open FINP, "< $out_name")
     {
-	open FOUT, "< $temp_name" or die "open error: ", $temp_name;
+	open FOUT, "< $temp_name"
+	    or die "error opening ", $temp_name, " for read: $!";
 
 	$same = 1;
 	while ($same)
