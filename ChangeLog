@@ -1,3 +1,7 @@
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note server ignoring `-l' with a warning.
+
 2003-10-02  Derek Price  <derek@ximbiot.com>
 
 	* NEWS (Changes since 1.11.8): Add empty section.
