@@ -1,3 +1,8 @@
+Wed Oct 30 08:53:20 1996  jalving@ibm.net
+
+	* patch.c (patch_fileproc): Set line1 and line2 to NULL up-front
+	(before the first "goto out") so we don't try to free them.
+
 Wed Oct 30 08:53:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (remove_file, commit_filesdoneproc), run.c (run_print,
