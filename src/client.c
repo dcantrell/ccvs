@@ -2249,7 +2249,8 @@ process_prune_candidates ()
 	{
 	    char *b;
 
-	    unlink_file_dir (p->dir);
+	    if (unlink_file_dir (p->dir) < 0)
+		error (0, errno, "cannot remove %s", p->dir);
 	    b = strrchr (p->dir, '/');
 	    if (b == NULL)
 		Subdir_Deregister ((List *) NULL, (char *) NULL, p->dir);
