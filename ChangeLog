@@ -1,3 +1,22 @@
+2004-02-17  Derek Price <derek@ximbiot.com>
+
+	* configure.in:  added macros to set the UNIQUE_*_TYPE_* flags and
+	HAVE_STDINT_T (for intmax_t) for some stuff involving varargs in
+	format_cmdline() in src/run.c.  UNIQUE_X_TYPE_Y means that
+	type Y (e.g. INT, SHORT_INT, or DOUBLE) is the first type, according
+	to an arbitrary order of precedence within type group X (e.g. INT or
+	FLOAT), that has a particular size, in bytes.  Added
+	SUPPORT_OLD_INFO_FMT_STRINGS in order to make configurable whether to
+	support the old style info file command line format strings.  The idea
+	is to deprecate the use of the old strings until one day this can be
+	switched to off.  This option can be enabled/disabled with
+	--enable-old-info-format-support and --disable-old-info-format-support.
+	* HACKING (Run-time behaviors): Remove reference to Parse_Info not
+	accepting a void * argument.
+
+	* config.h.in:  Regenerated.
+	* configure:  Ditto..
+
 2004-02-17  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note spec file fix.

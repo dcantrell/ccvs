@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* The CVSROOT/*info files want a new command format and the old style strings
+  have been deprecated.  Please see the manual for more information on the new
+  format.
+
 * The spec file has been updated to work with more recent versions of RPM.
 
 * Some more GNULIB functions have been imported and/or updated for portability
