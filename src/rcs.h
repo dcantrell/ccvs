@@ -207,6 +207,7 @@ int RCS_valid_rev PROTO ((char *rev));
 List *RCS_getlocks PROTO((RCSNode *rcs));
 void freercsnode PROTO((RCSNode ** rnodep));
 char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
+char *RCS_branch_head PROTO ((RCSNode *rcs, char *rev));
 
 int RCS_isdead PROTO((RCSNode *, const char *));
 char *RCS_getexpand PROTO ((RCSNode *));

@@ -1,3 +1,11 @@
+1998-04-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	(This diff was run by devel-cvs and everyone seemed to like it).
+	* diff.c (diff_file_nodiff): Make HEAD mean the head of the branch
+	which contains the sticky tag, not the sticky tag itself.
+	* rcs.c, rcs.h (RCS_branch_head): New function.
+	* sanity.sh (head): Update for this changed behavior.
+
 1998-04-19  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Move emptydir tests from basicb to new test emptydir.

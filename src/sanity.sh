@@ -12616,24 +12616,11 @@ add a line on trunk after trunktag"
 "imported contents
 add a line on trunk
 add a line on trunk after trunktag"
-	  # But diff thinks that HEAD is "brtag".  Case (c) from
-	  # cvs.texinfo (the "strange, maybe accidental" case).
-	  dotest_fail head-brtag-diff "${testcvs} -q diff -c -r HEAD -r br1" \
-"Index: file1
-===================================================================
-RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-retrieving revision 1\.3\.2\.1
-retrieving revision 1\.3\.2\.2
-diff -c -r1\.3\.2\.1 -r1\.3\.2\.2
-\*\*\* file1	[0-9/]* [0-9:]*	1\.3\.2\.1
---- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-\*\*\* 2,4 \*\*\*\*
---- 2,5 ----
-  add a line on trunk
-  add a line on trunk after trunktag
-  modify on branch
-${PLUS} modify on branch after brtag"
+
+	  # CVS 1.9 and older thought that HEAD is "brtag" (this was
+	  # noted as "strange, maybe accidental").  But "br1" makes a
+	  # whole lot more sense.
+	  dotest head-brtag-diff "${testcvs} -q diff -c -r HEAD -r br1" ""
 
 	  # With a nonbranch sticky tag on the trunk, HEAD is the head
 	  # of the trunk, I think.
@@ -12645,24 +12632,23 @@ add a line on trunk"
 "imported contents
 add a line on trunk
 add a line on trunk after trunktag"
-	  # Like head-brtag-diff, HEAD is the sticky tag.  Similarly
-	  # questionable.
+	  # Like head-brtag-diff, there is a non-branch sticky tag.
 	  dotest_fail head-trunktag-diff \
 	    "${testcvs} -q diff -c -r HEAD -r br1" \
 "Index: file1
 ===================================================================
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-retrieving revision 1\.2
+retrieving revision 1\.3
 retrieving revision 1\.3\.2\.2
-diff -c -r1\.2 -r1\.3\.2\.2
-\*\*\* file1	[0-9/]* [0-9:]*	1\.2
+diff -c -r1\.3 -r1\.3\.2\.2
+\*\*\* file1	[0-9/]* [0-9:]*	1\.3
 --- file1	[0-9/]* [0-9:]*	1\.3\.2\.2
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-\*\*\* 1,2 \*\*\*\*
+\*\*\* 1,3 \*\*\*\*
 --- 1,5 ----
   imported contents
   add a line on trunk
-${PLUS} add a line on trunk after trunktag
+  add a line on trunk after trunktag
 ${PLUS} modify on branch
 ${PLUS} modify on branch after brtag"
 
