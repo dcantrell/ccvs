@@ -1,0 +1,61 @@
+Mon Aug 22 22:48:19 1994  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
+
+	* error.c (strerror): Replaced conditional static definition
+	(always used, since the condition variable was never set) with an
+	extern declaration, since it's provided by libc or strerror.c.
+
+Wed Aug 10 14:54:25 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
+
+	* Makefile.in (SOURCES): Add waitpid.c.
+	* waitpid.c: New file.
+
+Tue Aug  9 16:00:12 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
+
+	* md5.h (uint32): If SIZEOF_LONG isn't 4, don't define this to be
+	"unsigned long"; try SIZEOF_INT and "unsigned int", otherwise
+	complain.
+
+	* md5.c: Include config.h.
+	(const): Don't bother defining here, config.h should take care of
+	it.
+
+	* valloc.c (malloc): Declare.
+
+Fri Jul 15 12:57:20 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* getopt.c: Do not include <stdlib.h> unless __GNU_LIBRARY__ is
+	defined.  On Irix 5.2, <stdlib.h> includes <getopt.h>, which
+	causes a multiple definition of struct option.
+
+Fri Jul  8 10:04:59 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* md5.h, md5.c: Remove ANSI-isms.
+
+Thu Jul  7 20:24:18 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* md5.h, md5.c: New files.
+	* Makefile.in (SOURCES): Add md5.c.
+	(OBJECTS): Add md5.o.
+	(DISTFILES): Add md5.h.
+	(md5.o): New target; depend upon md5.h.
+
+Fri May 27 18:15:34 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* valloc.c: New file.
+
+Tue May 17 08:18:26 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* error.c (error, fperror): If server_active, call server_cleanup
+	as well as Lock_Cleanup.
+
+Thu Jan  6 13:45:04 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
+
+	* system.h: Fix Dec 27 change to work correctly.  Makes Sep 9
+	change unnecessary, so backed that one out.  Never define PATH_MAX
+	in terms of pathconf, because that doesn't produce a constant, and
+	PATH_MAX is used to set array sizes.
+
+Mon Dec 27 14:22:07 1993  Mark Eichin  (eichin@cygnus.com)
+
+	* system.h: don't touch PATH_MAX or MAXPATHLEN if *both* of them
+	are already defined, as one may be defined in terms of the other.

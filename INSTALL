@@ -1,0 +1,236 @@
+First, read the README file.  If you're still happy...
+
+The CVS 1.4 Alpha release has been tested on the following platforms.  Your
+mileage may vary.  Please send updates to this list using the "cvsbug"
+program, specifying the "portability" category.  If your installation
+failed, you may need to run "cvsbug" directly from the "src" directory as
+"src/cvsbug.sh".
+
+	DEC Alpha running OSF/1 version 1.3 using cc
+	DEC Alpha running OSF/1 version 2.1
+	HP 9000/710 running HP-UX 8.07A using gcc
+	HP 9000/715 running HP-UX 9.01 using gcc
+	Gateway P5-66 (pentium) running Solaris 2.4 using gcc
+	IBM RS/6000 running AIX 3.2.5 using gcc and cc
+	IBM RS/6000 running AIX 4.1 using gcc and cc (*)
+	PC Clone running UnixWare v1.1.1 using gcc
+	PC Clone running Linux 1.1.48 using gcc
+	SGI Indigo 2 running Irix 4.0.5H using gcc and cc (**)
+	Sun SPARCstation 1+ running SunOS 4.1.3 using gcc and cc
+	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc
+	Sun SPARCstation 10 running Solaris 2.4 using gcc
+	Sun SPARCstation 10 running SunOS 4.1.3_U1 using gcc and cc
+
+NOTE:	CVS relies on having some form of the opendir/readdir/closedir
+	functions being available.  Some older systems do not support these
+	calls.  CVS will not work with these systems unless a suitable
+	readdir implementation is installed on the system.  Take a look at
+	the file "contrib/dirfns", which contains some code that might add
+	this support to your system.
+
+(*)	AIX 4.1 systems fail to run "configure" due to bugs in their
+	"/bin/sh" implementation.  You might want to try feeding the
+	configure script to "bash" ported to AIX 4.1.
+
+(**)	Some Irix 4.0 systems may core dump in malloc while running
+	CVS.  We believe this is a bug in the Irix malloc.  You can
+	workaround this bug by linking with "-lmalloc" if necessary.
+
+-------------------------------------------------------------------------------
+
+Installation:
+
+1)  Edit the src/options.h header file.  Appropriate things to look at may be
+    the invocation locations of programs like DIFF, GREP, RM, and SORT.
+    Also glance at the default values for the environment variables that
+    CVS uses, in particular, the RCSBIN variable, which holds the path to
+    where the RCS programs live on your system.  The likelihood is that you
+    don't have to change anything here, except perhaps adding the -a
+    option to DIFF if you are using GNU diff (which is strongly recommended).
+
+2)  Run "configure":
+
+	$ ./configure
+
+    You can specify an alternate destination to override the default with
+    the --prefix option:
+
+	$ ./configure --prefix=/usr/local/gnu
+
+    or some path that is more appropriate for your site.  The default prefix
+    value is "/usr/local", with binaries in sub-directory "bin", manual
+    pages in sub-directory "man", and libraries in sub-directory "lib".
+
+    This release of CVS also requires RCS commands to be installed in the
+    user's PATH (or a path you have configured in src/options.h).  If you
+    don't have RCS, you will need to get it from GNU as well.  It is best
+    to get the version 5.6 (or later) version of RCS, available from
+    prep.ai.mit.edu in the file pub/gnu/rcs-5.6.tar.Z.  Along with RCS, you
+    will want to run GNU diff.  This will allow revision control of files
+    with binary data (a real nice feature).  You will need at least version
+    1.15 of GNU diff for this to work.  Be sure that you configure RCS to
+    work correctly with GNU diff to avoid other configuration problems.
+
+    NOTE: The configure program will cache the results of the previous
+    configure execution.  If you need to re-run configure from scratch, you
+    may need to run "make distclean" first to remove the cached
+    configuration information.
+
+    NOTE ON CVS's USE OF NDBM:
+
+	By default, CVS uses some built-in ndbm emulation code to allow
+	CVS to work in a heterogeneous environment.  However, if you have
+	a very large modules database, this may not work well.  You will
+	need to edit src/options.h to turn off the MY_NDBM #define and
+	re-run configure.  If you do this, the following comments apply.
+	If not, you may safely skip these comments.
+
+	If you configure CVS to use the real ndbm(3) libraries and
+	you do not have them installed in a "normal" place, you will
+	probably want to get the GNU version of ndbm (gdbm) and install
+	that before running the CVS configure script.  Be aware that the
+	GDBM 1.5 release does NOT install the <ndbm.h> header file included
+	with the release automatically.  You may have to install it by hand.
+
+	If you configure CVS to use the ndbm(3) libraries, you cannot
+	compile CVS with GNU cc (gcc) on Sun-4 SPARC systems.  However, gcc
+	2.0 may have fixed this limitation if -fpcc-struct-return is
+	defined.  When using gcc on other systems to compile CVS, you *may*
+	need to specify the -fpcc-struct-return option to gcc (you will
+	*know* you have to if "cvs checkout" core dumps in some ndbm
+	function).  You can do this as follows:
+
+	    $ CC=gcc DEFS=-fpcc-struct-return ./configure
+
+	for sh, bash, and ksh users and:
+
+	    % setenv CC gcc
+	    % setenv DEFS -fpcc-struct-return
+	    % ./configure
+
+	for csh and tcsh users.
+
+    END OF NOTE FOR NDBM GUNK.
+
+3)  Try to build it:
+
+	$ make
+
+    This will (hopefully) make the needed CVS binaries within the "src"
+    directory.  Send me your "config.status" file with your host type,
+    operating system information, and make output if something fails for
+    your system.
+
+4)  Install the binaries/documentation:
+
+	$ make install
+
+    Depending on your installation's configuration, you may need to be
+    root to do this.
+
+5)  Take a look at the CVS documentation.
+
+	$ man cvs
+
+    and
+
+	$ info cvs  
+
+    See what it can do for you, and if it fits your environment (or can
+    possibly be made to fit your environment).  If things look good,
+    continue on...
+
+6)  Setup the master source repository.  Choose a directory with ample disk
+    space available for source files.  This is where the RCS ",v" files
+    will be stored.  Note that this should be some shared directory for your
+    site.  It should probably be auto-mounted, if you're running NFS.
+
+    Say you choose "/src/master" as the root of your source repository.
+    Run the "cvsinit" script to help you set it up.  It will ask you to
+    enter the path to your CVSROOT area.  You would enter /src/master in
+    this example.
+
+	$ ./cvsinit
+
+    The cvsinit script will setup a reasonable CVSROOT area to start with.
+    It is also valuable to folks who already have a CVSROOT area setup from
+    using earlier releases of CVS.  It assumes that you have installed CVS
+    already (step 4) and that the RCS programs (co and ci) are in your
+    PATH.  There are many ways to customize CVS for your site.  Read the
+    cvs(5) manual page when you get the chance.
+
+7)  Have all users of the CVS system set the CVSROOT environment variable
+    appropriately to reflect the placement of your source repository.  If
+    the above example is used, the following commands can be placed in
+    user's ~/.profile, ~/.bash_profile, or ~/.login file:
+
+	CVSROOT=/src/master; export CVSROOT
+
+    for sh/bash/ksh users, or
+
+	setenv CVSROOT /src/master
+
+    for csh/tcsh users.  If these environment variables are not already set
+    in your current shell, set them now (or source the login script you
+    just edited).  You will need to have the CVSROOT environment variable
+    set to continue on to the next step.
+
+8)  It might be a good idea to jump right in and put the CVS distribution
+    directly under CVS control.  From within the top-level directory of the
+    CVS distribution (the one that contains this README file) do the
+    following commands:
+
+	$ make distclean
+	$ cvs import -m 'CVS 1.4 distribution' cvs CVS CVS1_4
+
+9)  Having done step 8, one should be able to checkout a fresh copy of the
+    CVS distribution and hack away at the sources with the following command:
+
+	$ cd
+	$ cvs checkout cvs
+
+    This will make the directory "cvs" in your current directory and
+    populate it with the appropriate CVS files and directories.
+
+10) Remember to edit the modules file manually when sources are checked in
+    with "cvs import" or "cvs add".  A copy of the modules file for editing
+    can usually be retrieved with the "cvs checkout modules" command, and
+    definitely with the "cvs checkout CVSROOT" command.  See cvs(5).
+
+11) Read the ChangeLog file to see what's new.  REALLY!  I use the
+    ChangeLog file as the Release Notes.
+
+12) Hack away.
+
+-------------------------------------------------------------------------------
+
+Detailed info about your interaction with "configure":
+
+The "configure" script and its interaction with its options and the
+environment is described here.
+
+Supported options are:
+	--srcdir=DIR		Useful for compiling on many different
+				machines sharing one source tree.
+	--prefix=DIR		The root of where to install the
+				various pieces of CVS (/usr/local).
+	--exec_prefix=DIR	If you want executables in a
+				host-dependent place and shared
+				things in a host-independent place.
+
+The following environment variables override configure's default
+behaviour:
+	CC			If not set, tries to use gcc first,
+				then cc.  Also tries to use "-g -O"
+				as options, backing down to -g
+				alone if that doesn't work.
+	INSTALL			If not set, tries to use "install", then
+				"cp" as a final choice.
+	RANLIB			If not set, tries to determine if "ranlib"
+				is available, choosing "echo" if it doesn't
+				appear to be.
+	YACC			If not set, tries to determine if "bison"
+				is available, choosing "yacc" if it doesn't
+				appear to be.
+
+-------------------------------------------------------------------------------

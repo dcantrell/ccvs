@@ -1,0 +1,113 @@
+SUMMARY:
+
+These *unofficial* patches extend CVS branch support and allow files
+which have previously been removed to be added once again.  This
+support requires a set of patches to rcs-5.6.6.  Said patches are also
+included.
+
+
+WHAT THESE PATCHES DO:
+
+The RCS patches add to RCS the ability to record when a file is
+active, or alive, and when it is removed, or dead.  With this facility
+you can record the history of a file, including the fact that at some
+point in its life the file was removed and then later added.
+
+I've modified CVS to exploit this facility in several areas.
+
+First, the following now works as expected:
+
+	touch foo
+	cvs add foo ; cvs ci -m "added" foo
+	rm foo
+	cvs rm foo ; cvs ci -m "removed" foo
+	touch foo
+	cvs add foo ; cvs ci -m "resurrected" foo
+
+Second, files can now be added or removed in a branch and later merged
+into the trunk.
+
+	cvs update -A
+	touch a b c
+	cvs add a b c ; cvs ci -m "added" a b c
+	cvs tag -b branchtag
+	cvs update -r branchtag
+	touch d ; cvs add d
+	rm a ; cvs rm a
+	cvs ci -m "added d, removed a"
+	cvs update -A
+	cvs update -jbranchtag
+
+Added and removed files may also be merged between branches.
+
+Files removed in the trunk may be merged into branches.
+
+Files added on the trunk are a special case.  They cannot be merged
+into a branch.  Instead, simply branch the file by hand.
+
+I also extended the "cvs update -j" semantic slightly.  Like before,
+if you use two -j options, the changes made between the first and the
+second will be merged into your working files.  This has not changed.
+
+If you use only one -j option, it is used as the second -j option.
+The first is assumed to be the greatest common ancestor revision
+between the revision specified by the -j and the BASE revision of your
+working file.
+
+
+INCOMPATIBILITIES:
+
+Previous versions of RCS will not work properly on RCS files that use
+the death support.  Previous versions of RCS contain a bug in the
+future expansion such that unrecognized keywords are not propogated
+forward in the rcs file.  That is, if your RCS file contains revisions
+which are flagged as dead, and you use a previous version of RCS on
+this RCS file, the previous version of RCS will delete the death
+markers.
+
+Previous versions of CVS did not record *when* a file died.  They only
+recorded that a file *was* dead in the trunk.  There is a simple
+repository conversion that mostly works.  There's a new script in
+cvs/src/convert.sh to do this for you.  Its usage is:
+
+	/bin/sh convert.sh $CVSROOT
+
+This script will look through the repository specified as its first
+argument.  For each file in an Attic, .../Attic/foo,v, the script will
+copy the rcs file into .../Attic/SAVE/foo,v and will then mark the
+file dead as of the time the script is running.  This means that
+attempts to retrieve the file by date will be innacurate.
+Specifically, an attempt to retrieve the file by a date prior to
+repository conversion, but after the file was removed, will actually
+retrieve a copy of the file when it should not.
+
+The conversion script also ignores an important case.  If you have any
+files which were added on a branch by previous version of CVS, they
+will not be handled correctly.  Previous versions of CVS did not
+record this information properly.  Specifically, it is not possible to
+recognize the difference between a file which was added on a branch
+from a file which was removed from the trunk.  If you know of any of
+these cases, then you will need to repair the file by hand.
+
+Files added on a branch using this patched version of CVS will behave
+properly.
+
+
+HOW TO INSTALL:
+
+Make backups of everything in sight; your repository, your CVS source,
+your RCS source, your dog, your desk, your boss, your boss's boss, and
+like that.
+
+Apply these patches to your copy of CVS.
+
+Apply the RCS patches from the file RCS-patches into your copy of
+rcs-5.6.6.  Rebuild and reinstall RCS.
+
+Rebuild and reinstall CVS.
+
+Run the repository converter over your repository.
+
+
+7 Dec '92 - K. Richard Pixley <rich@cygnus.com>
+modified & updated 22 Nov '93.
