@@ -1,3 +1,7 @@
+Sun Jan 28 01:51:27 1996  Jim Kingdon
+
+	* config.h: Fix unclosed comment.
+
 Sun Jan 28 00:16:58 1996  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * filesubr.c (xchmod): rewritten for OS/2.
