@@ -1082,14 +1082,14 @@ directory_cmp ()
 	DIR_2=$2
 
 	cd $DIR_1
-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d1
+	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d1
 
 	# go back where we were to avoid symlink hell...
 	cd $OLDPWD
 	cd $DIR_2
-	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d2
+	find . -print | fgrep -v /CVS | sort > $TESTDIR/dc$$d2
 
-	if diff /tmp/dc$$d1 /tmp/dc$$d2 >/dev/null 2>&1
+	if diff $TESTDIR/dc$$d1 $TESTDIR/dc$$d2 >/dev/null 2>&1
 	then
 		:
 	else
@@ -1104,8 +1104,8 @@ directory_cmp ()
 				return 1
 			fi
 		fi
-	done < /tmp/dc$$d1
-	rm -f /tmp/dc$$*
+	done < $TESTDIR/dc$$d1
+	rm -f $TESTDIR/dc$$*
 	return 0
 }
 
@@ -19744,7 +19744,7 @@ Annotations for $file
 	    # function if administrative files added to CVS recently (since
 	    # CVS 1.3) do not exist, because the repository might have
 	    # been created with an old version of CVS.
-	    mkdir tmp; cd tmp
+	    mkdir 1; cd 1
 	    dotest crerepos-4 \
 "${testcvs} -q -d ${TESTDIR}/crerepos co CVSROOT" \
 ''
@@ -19757,7 +19757,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    rm -rf CVS
 	    cd ..
 	    # The directory tmp should be empty
-	    dotest crerepos-6 "rmdir tmp" ''
+	    dotest crerepos-6 "rmdir 1"
 
 	    CREREPOS_ROOT=${TESTDIR}/crerepos
 
