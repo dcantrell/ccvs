@@ -4340,6 +4340,21 @@ EOF
 G@#..!@#=&
 Enew	line	here"
 
+	  # See what CVS does when a file name is duplicated.  The
+	  # behavior of all versions of CVS since file attributes were
+	  # implemented is that it nukes the duplications.  This seems
+	  # reasonable enough, although it means it isn't clear how
+	  # useful duplicates would be for purposes of future
+	  # expansion.  But in the interests of keeping behaviors
+	  # predictable, might as well test for it, I guess.
+	  echo 'Fw2	duplicate=' >>${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
+	  dotest devcom3-8 "${testcvs} watch on w1" ''
+	  dotest devcom3-9 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
+"Fw2	_watched=
+Fw1	_watched=
+Enew	line	here
+G@#..!@#=&"
+
 	  cd ..
 
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
