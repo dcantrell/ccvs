@@ -1,3 +1,7 @@
+Tue Jan 23 14:20:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* devel-cvs: New file, not to be included in the distribution.
+
 Thu Jan 18 21:46:56 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* BUGS: Remove all mention of the outdated cyclic-cvs@cyclic.com
