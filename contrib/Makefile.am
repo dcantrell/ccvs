@@ -62,7 +62,7 @@ EXTRA_DIST = \
 	rcs2log.sh \
 	rcs2sccs.sh
 
-CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
+CLEANFILES = $(bin_LINKS) $(contrib_SCRIPTS)
 
 # we'd rather have a link here rather than two copies of a script
 install-data-local:

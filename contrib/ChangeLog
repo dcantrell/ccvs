@@ -1,5 +1,10 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (CLEANFILES): Clean bin_LINKS, not bin_SCRIPTS.
+	* Makefile.in: Regenerated.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* .cvsignore: s/cvscheck/sandbox_status/.
 
 2004-04-14  Derek Price  <derek@ximbiot.com>
