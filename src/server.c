@@ -4673,6 +4673,10 @@ server_cleanup (void)
      *
      * if we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
+     * The only time that we should get into one of these functions otherwise
+     * while still in a critical section is if error(1,...) is called from a
+     * critical section, in which case we are exiting and interrupts are
+     * already being ignored.
      *
      * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
      * can be called to clean up the current lock set multiple times by the

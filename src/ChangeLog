@@ -1,5 +1,11 @@
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (Lock_Cleanup), rcs.c (rcs_cleanup), server.c
+	(server_cleanup): Expand comments about the never_run_again variable
+	and its interoperation with critical sections, exit, and interrupts.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (remove_locks): Reduce TRACE level since this function is
 	rarely called and we can usually rely on tracing higher level
 	functions.
