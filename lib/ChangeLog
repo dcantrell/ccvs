@@ -1,3 +1,7 @@
+2001-03-14  Derek Price  <derek.price@openavenue.com>
+
+        * Makefile.in: Regenerated
+
 2001-02-20  Derek Price  <derek.price@openavenue.com>
 
 	* xgssapi.h: New file to perform GSSAPI include magic.

@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4c from Makefile.am
+# Makefile.in generated automatically by automake 1.4e from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -47,7 +47,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -62,14 +62,12 @@ AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
-CPP = @CPP@
 CSH = @CSH@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 ETAGS = @ETAGS@
 ETAGS_INCLUDE_OPTION = @ETAGS_INCLUDE_OPTION@
-GSSAPI = @GSSAPI@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 KRB4 = @KRB4@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
@@ -79,9 +77,11 @@ PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
+STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
+_am_include = @_am_include@
 includeopt = @includeopt@
 install_sh = @install_sh@
 
@@ -104,34 +104,35 @@ EXTRA_DIST = \
 	.cvsignore \
 	$(man_MANS)
 
+EXEEXT =
+OBJEXT = o
 subdir = man
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h ../src/options.h
-CONFIG_CLEAN_FILES = 
-DIST_SOURCES = 
+CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
+CONFIG_CLEAN_FILES =
+DIST_SOURCES =
 man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 man8dir = $(mandir)/man8
 MANS = $(man_MANS)
 
 NROFF = nroff
-DIST_COMMON =  ChangeLog Makefile.am Makefile.in
+DIST_COMMON = ChangeLog Makefile.am Makefile.in
 
+all: all-am
 
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
-all: all-redirect
 .SUFFIXES:
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu man/Makefile
+
+$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  man/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
-
-install-man1:
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
+install-man1: $(man1_MANS) $(man_MANS)
+	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man1dir)
 	@list='$(man1_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
@@ -151,6 +152,7 @@ install-man1:
 	done
 
 uninstall-man1:
+	@$(NORMAL_UNINSTALL)
 	@list='$(man1_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
 	  case "$$i" in \
@@ -165,8 +167,8 @@ uninstall-man1:
 	  echo " rm -f $(DESTDIR)$(man1dir)/$$inst"; \
 	  rm -f $(DESTDIR)$(man1dir)/$$inst; \
 	done
-
-install-man5:
+install-man5: $(man5_MANS) $(man_MANS)
+	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man5dir)
 	@list='$(man5_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
@@ -186,6 +188,7 @@ install-man5:
 	done
 
 uninstall-man5:
+	@$(NORMAL_UNINSTALL)
 	@list='$(man5_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
 	  case "$$i" in \
@@ -200,8 +203,8 @@ uninstall-man5:
 	  echo " rm -f $(DESTDIR)$(man5dir)/$$inst"; \
 	  rm -f $(DESTDIR)$(man5dir)/$$inst; \
 	done
-
-install-man8:
+install-man8: $(man8_MANS) $(man_MANS)
+	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(man8dir)
 	@list='$(man8_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
@@ -221,6 +224,7 @@ install-man8:
 	done
 
 uninstall-man8:
+	@$(NORMAL_UNINSTALL)
 	@list='$(man8_MANS)'; \
 	l2='$(man_MANS)'; for i in $$l2; do \
 	  case "$$i" in \
@@ -235,17 +239,14 @@ uninstall-man8:
 	  echo " rm -f $(DESTDIR)$(man8dir)/$$inst"; \
 	  rm -f $(DESTDIR)$(man8dir)/$$inst; \
 	done
-install-man: $(MANS)
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-man1 install-man5 install-man8
-uninstall-man:
-	@$(NORMAL_UNINSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-man1 uninstall-man5 uninstall-man8
 tags: TAGS
 TAGS:
 
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
@@ -259,33 +260,26 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-am
-dvi-am:
-dvi: dvi-am
 check-am: all-am
 check: check-am
-installcheck-am:
-installcheck: installcheck-am
-install-exec-am:
-install-exec: install-exec-am
+all-am: Makefile $(MANS)
 
-install-data-am: install-man
+installdirs:
+	$(mkinstalldirs) $(DESTDIR)$(man1dir) $(DESTDIR)$(man5dir) $(DESTDIR)$(man8dir)
+
+install: install-am
+install-exec: install-exec-am
 install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
-uninstall-am: uninstall-man
-uninstall: uninstall-am
-all-am: Makefile $(MANS)
-all-redirect: all-am
-install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
-	$(mkinstalldirs)  $(DESTDIR)$(mandir)/man1 $(DESTDIR)$(mandir)/man5 \
-		$(DESTDIR)$(mandir)/man8
 
+installcheck: installcheck-am
+
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
 
 mostlyclean-generic:
 
@@ -296,32 +290,56 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-generic mostlyclean-am
-
 clean: clean-am
 
-distclean-am:  distclean-generic clean-am
+clean-am: clean-generic mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-generic distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-generic
+
+dvi:
+
+dvi-am:
+
+info:
+
+info-am:
+
+install-data-am: install-man
+
+install-exec-am:
+
+install-info:
+
+install-man: install-man1 install-man5 install-man8
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: install-man1 uninstall-man1 install-man5 uninstall-man5 \
-install-man8 uninstall-man8 install-man uninstall-man tags distdir \
-info-am info dvi-am dvi check check-am installcheck-am installcheck \
-install-exec-am install-exec install-data-am install-data install-am \
-install uninstall-am uninstall all-redirect all-am all install-strip \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-generic
+
+uninstall-am: uninstall-man
+
+uninstall-man: uninstall-man1 uninstall-man5 uninstall-man8
+
+.PHONY: all all-am check check-am clean clean-generic distclean \
+	distclean-generic distdir dvi dvi-am info info-am install \
+	install-am install-data install-data-am install-exec \
+	install-exec-am install-info install-man install-man1 \
+	install-man5 install-man8 install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	uninstall uninstall-am uninstall-man uninstall-man1 \
+	uninstall-man5 uninstall-man8
 
 
 # for backwards compatibility with the old makefiles

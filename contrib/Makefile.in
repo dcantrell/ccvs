@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.4c from Makefile.am
+# Makefile.in generated automatically by automake 1.4e from Makefile.am.
 
-# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
+# Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001
 # Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -47,7 +47,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-INSTALL_STRIP_FLAG =
+INSTALL_HEADER = $(INSTALL_DATA)
 transform = @program_transform_name@
 
 NORMAL_INSTALL = :
@@ -62,14 +62,12 @@ AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
-CPP = @CPP@
 CSH = @CSH@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
 ETAGS = @ETAGS@
 ETAGS_INCLUDE_OPTION = @ETAGS_INCLUDE_OPTION@
-GSSAPI = @GSSAPI@
+INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALL_STRIP_PROGRAM_ENV = @INSTALL_STRIP_PROGRAM_ENV@
 KRB4 = @KRB4@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
@@ -79,9 +77,11 @@ PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
+STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
+_am_include = @_am_include@
 includeopt = @includeopt@
 install_sh = @install_sh@
 
@@ -163,53 +163,53 @@ EXTRA_DIST = \
 CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
 
 SUFFIXES = .sh
+EXEEXT =
+OBJEXT = o
 subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h ../src/options.h
-CONFIG_CLEAN_FILES =  clmerge cln_hist commit_prep cvs_acls log \
-log_accum mfpipe rcslock sccs2rcs
-SCRIPTS =  $(contrib_SCRIPTS)
+CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
+CONFIG_CLEAN_FILES = clmerge cln_hist commit_prep cvs_acls log log_accum \
+mfpipe rcslock sccs2rcs
+SCRIPTS = $(contrib_SCRIPTS)
 
-DIST_SOURCES = 
-DATA =  $(contrib_DATA)
+DIST_SOURCES =
+DATA = $(contrib_DATA)
 
-DIST_COMMON =  README ChangeLog Makefile.am Makefile.in clmerge.in \
+DIST_COMMON = README ChangeLog Makefile.am Makefile.in clmerge.in \
 cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in mfpipe.in \
 rcslock.in sccs2rcs.in
 
+all: all-am
 
-DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-
-GZIP_ENV = --best
-all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .sh
-$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu contrib/Makefile
+
+$(srcdir)/Makefile.in: Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+	cd $(top_srcdir) && \
+	  $(AUTOMAKE) --gnu  contrib/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
+	cd $(top_builddir) && \
+	  CONFIG_HEADERS= CONFIG_LINKS= \
+	  CONFIG_FILES=$(subdir)/$@ $(SHELL) ./config.status
 clmerge: $(top_builddir)/config.status clmerge.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 cln_hist: $(top_builddir)/config.status cln_hist.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 commit_prep: $(top_builddir)/config.status commit_prep.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 cvs_acls: $(top_builddir)/config.status cvs_acls.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 log: $(top_builddir)/config.status log.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 log_accum: $(top_builddir)/config.status log_accum.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 mfpipe: $(top_builddir)/config.status mfpipe.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 rcslock: $(top_builddir)/config.status rcslock.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 sccs2rcs: $(top_builddir)/config.status sccs2rcs.in
-	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
-
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= CONFIG_LINKS= $(SHELL) ./config.status
 install-contribSCRIPTS: $(contrib_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(contribdir)
@@ -231,12 +231,11 @@ uninstall-contribSCRIPTS:
 	  echo " rm -f $(DESTDIR)$(contribdir)/$$f"; \
 	  rm -f $(DESTDIR)$(contribdir)/$$f; \
 	done
-
 install-contribDATA: $(contrib_DATA)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(contribdir)
 	@list='$(contrib_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f="`echo $$p | sed -e 's|^.*/||'`"; \
 	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(contribdir)/$$f"; \
 	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(contribdir)/$$f; \
@@ -253,7 +252,10 @@ tags: TAGS
 TAGS:
 
 
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+
+top_distdir = ..
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
@@ -267,34 +269,26 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-info-am:
-info: info-am
-dvi-am:
-dvi: dvi-am
 check-am: all-am
 check: check-am
-installcheck-am:
-installcheck: installcheck-am
-install-exec-am:
-install-exec: install-exec-am
+all-am: Makefile $(SCRIPTS) $(DATA)
 
-install-data-am: install-contribSCRIPTS install-contribDATA \
-		install-data-local
+installdirs:
+	$(mkinstalldirs) $(DESTDIR)$(contribdir) $(DESTDIR)$(contribdir)
+
+install: install-am
+install-exec: install-exec-am
 install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-install: install-am
-uninstall-am: uninstall-contribSCRIPTS uninstall-contribDATA \
-		uninstall-local
-uninstall: uninstall-am
-all-am: Makefile $(SCRIPTS) $(DATA)
-all-redirect: all-am
-install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_STRIP_FLAG=-s install
-installdirs:
-	$(mkinstalldirs)  $(DESTDIR)$(contribdir) $(DESTDIR)$(contribdir)
 
+installcheck: installcheck-am
+
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	  INSTALL_PROGRAM_ENV='$(INSTALL_STRIP_PROGRAM_ENV)' install
 
 mostlyclean-generic:
 
@@ -306,33 +300,56 @@ distclean-generic:
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
 
 maintainer-clean-generic:
+	@echo "This command is intended for maintainers to use"
+	@echo "it deletes files that may require special tools to rebuild."
 	-rm -f Makefile.in
-mostlyclean-am:  mostlyclean-generic
-
-mostlyclean: mostlyclean-am
-
-clean-am:  clean-generic mostlyclean-am
-
 clean: clean-am
 
-distclean-am:  distclean-generic clean-am
+clean-am: clean-generic mostlyclean-am
 
 distclean: distclean-am
 
-maintainer-clean-am:  maintainer-clean-generic distclean-am
-	@echo "This command is intended for maintainers to use;"
-	@echo "it deletes files that may require special tools to rebuild."
+distclean-am: clean-am distclean-generic
+
+dvi:
+
+dvi-am:
+
+info:
+
+info-am:
+
+install-data-am: install-contribDATA install-contribSCRIPTS \
+	install-data-local
+
+install-exec-am:
+
+install-info:
+
+install-man:
+
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 
-.PHONY: uninstall-contribSCRIPTS install-contribSCRIPTS \
-uninstall-contribDATA install-contribDATA tags distdir info-am info \
-dvi-am dvi check check-am installcheck-am installcheck install-exec-am \
-install-exec install-data-local install-data-am install-data install-am \
-install uninstall-local uninstall-am uninstall all-redirect all-am all \
-install-strip installdirs mostlyclean-generic distclean-generic \
-clean-generic maintainer-clean-generic clean mostlyclean distclean \
-maintainer-clean
+maintainer-clean-am: distclean-am maintainer-clean-generic
+
+mostlyclean: mostlyclean-am
+
+mostlyclean-am: mostlyclean-generic
+
+uninstall-am: uninstall-contribDATA uninstall-contribSCRIPTS \
+	uninstall-local
+
+.PHONY: all all-am check check-am clean clean-generic distclean \
+	distclean-generic distdir dvi dvi-am info info-am install \
+	install-am install-contribDATA install-contribSCRIPTS \
+	install-data install-data-am install-data-local install-exec \
+	install-exec-am install-info install-man install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	uninstall uninstall-am uninstall-contribDATA \
+	uninstall-contribSCRIPTS uninstall-local
 
 
 # we'd rather have a link here rather than two copies of a script

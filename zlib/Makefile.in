@@ -110,9 +110,10 @@ install: all
 uninstall:
 .PHONY: install uninstall
 
-# Remove targeets for CVS
+# Remove targets for CVS
 info:
-.PHONY: info
+installcheck:
+.PHONY: info installcheck
 
 #install: $(LIBS)
 #	-@if [ ! -d $(includedir)  ]; then mkdir $(includedir); fi
