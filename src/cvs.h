@@ -687,7 +687,8 @@ struct vers_ts
        and if they differ it is modified.  */
     char *ts_rcs;
 
-    /* Options from CVS/Entries (keyword expansion).  */
+    /* Options from CVS/Entries (keyword expansion), malloc'd.  If none,
+       then it is an empty string (never NULL).  */
     char *options;
 
     /* If non-NULL, there was a conflict (or merely a merge?  See merge_file)
