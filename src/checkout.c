@@ -734,7 +734,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	   NT, &c, if the user specifies '\'.  Likewise for the call
 	   to findslash.  */
 	cp = where + strlen (where);
-	while (1)
+	while (cp > where)
 	{
 	    struct dir_to_build *new;
 
@@ -750,7 +750,7 @@ internal error: %s doesn't start with %s in checkout_proc",
                last path element we create should be the top-level
                directory. */
 
-	    if (cp - where)
+	    if (cp > where)
 	    {
 		strncpy (new->dirpath, where, cp - where);
 		new->dirpath[cp - where] = '\0';
@@ -758,7 +758,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    else
 	    {
 		/* where should always be at least one character long. */
-		assert (strlen (where));
+		assert (where[0] != '\0');
 		strcpy (new->dirpath, "/");
 	    }
 	    new->next = head;
