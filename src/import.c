@@ -70,6 +70,7 @@ import (argc, argv)
     int i, c, msglen, err;
     List *ulist;
     Node *p;
+    struct logfile_info *li;
 
     if (argc == -1)
 	usage (import_usage);
@@ -300,9 +301,12 @@ import (argc, argv)
     p->type = UPDATE;
     p->delproc = update_delproc;
     p->key = xstrdup ("- Imported sources");
-    p->data = (char *) T_TITLE;
+    li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+    li->type = T_TITLE;
+    li->tag = xstrdup (vbranch);
+    p->data = (char *) li;
     (void) addnode (ulist, p);
-    Update_Logfile (repository, message, vbranch, logfp, ulist);
+    Update_Logfile (repository, message, logfp, ulist);
     dellist (&ulist);
     (void) fclose (logfp);
 

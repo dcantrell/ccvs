@@ -475,8 +475,8 @@ List *Find_Names PROTO((char *repository, int which, int aflag,
 		  List ** optentries));
 void Register PROTO((List * list, char *fname, char *vn, char *ts,
 	       char *options, char *tag, char *date, char *ts_conflict));
-void Update_Logfile PROTO((char *repository, char *xmessage, char *xrevision,
-		     FILE * xlogfp, List * xchanges));
+void Update_Logfile PROTO((char *repository, char *xmessage, FILE * xlogfp,
+		     List * xchanges));
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
 
@@ -666,6 +666,15 @@ Ctype Classify_File PROTO
     ((struct file_info *finfo, char *tag, char *date, char *options,
       int force_tag_match, int aflag, Vers_TS **versp, int pipeout));
 
+/*
+ * structure used for list nodes passed to Update_Logfile() and
+ * do_editor().
+ */
+struct logfile_info
+{
+  enum classify_type type;
+  char *tag;
+};
 
 /* Wrappers.  */
 
