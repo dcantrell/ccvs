@@ -553,7 +553,7 @@ specified), @code{watch-on}, @code{watch-off}, @code{watch-add},
 @code{log}, and @code{annotate}.
 
 For the @code{status} command, one can send @code{Is-modified} but if
-the client is using imperfect mechanisms such a timestamps to determine
+the client is using imperfect mechanisms such as timestamps to determine
 whether to consider a file modified, then the behavior will be
 different.  That is, if one sends @code{Modified}, then the server will
 actually compare the contents of the file sent and the one it derives
