@@ -13,7 +13,6 @@
 #include "cvs.h"
 #include "getline.h"
 #include "fileattr.h"
-#include <assert.h>
 
 static void fileattr_read (void);
 static int writeattr_proc (Node *, void *);

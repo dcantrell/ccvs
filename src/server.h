@@ -1,4 +1,16 @@
-/* Interface between the server and the rest of CVS.  */
+/*
+ * Copyright (c) 2003 The Free Software Foundation.
+ *
+ * Portions Copyright (c) 2003 Derek Price
+ *                         and Ximbiot <http://ximbiot.com>,
+ *
+ * You may distribute under the terms of the GNU General Public License as
+ * specified in the README file that comes with the CVS kit.
+ *
+ *
+ *
+ * This file contains the interface between the server and the rest of CVS.
+ */
 
 /* Miscellaneous stuff which isn't actually particularly server-specific.  */
 #ifndef STDIN_FILENO
@@ -6,7 +18,7 @@
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 #endif
-
+
 
 /*
  * Expand to `S', ` ', or the empty string.  Used in `%s-> ...' trace printfs.
@@ -28,53 +40,50 @@ extern int server_active;
 /* Server functions exported to the rest of CVS.  */
 
 /* Run the server.  */
-extern int server (int argc, char **argv);
+int server (int argc, char **argv);
 
 /* kserver user authentication.  */
 # ifdef HAVE_KERBEROS
-extern void kserver_authenticate_connection (void);
+void kserver_authenticate_connection (void);
 # endif
 
 /* pserver user authentication.  */
 # if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-extern void pserver_authenticate_connection (void);
+void pserver_authenticate_connection (void);
 # endif
 
 /* See server.c for description.  */
-extern void server_pathname_check (char *);
+void server_pathname_check (char *);
 
 /* We have a new Entries line for a file.  TAG or DATE can be NULL.  */
-extern void server_register
-    (char *name, char *version, char *timestamp,
-	     char *options, char *tag, char *date, char *conflict);
+void server_register (char *name, char *version, char *timestamp,
+                      char *options, char *tag, char *date, char *conflict);
 
 /* Set the modification time of the next file sent.  This must be
    followed by a call to server_updated on the same file.  */
-extern void server_modtime (struct file_info *finfo,
-				   Vers_TS *vers_ts);
+void server_modtime (struct file_info *finfo, Vers_TS *vers_ts);
 
 /*
  * We want to nuke the Entries line for a file, and (unless
  * server_scratch_entry_only is subsequently called) the file itself.
  */
-extern void server_scratch (char *name);
+void server_scratch (char *name);
 
 /*
  * The file which just had server_scratch called on it needs to have only
  * the Entries line removed, not the file itself.
  */
-extern void server_scratch_entry_only (void);
+void server_scratch_entry_only (void);
 
 /*
  * We just successfully checked in FILE (which is just the bare
  * filename, with no directory).  REPOSITORY is the directory for the
  * repository.
  */
-extern void server_checked_in
-    (char *file, char *update_dir, char *repository);
+void server_checked_in (char *file, char *update_dir, char *repository);
 
-extern void server_copy_file
-    (char *file, char *update_dir, char *repository, char *newfile);
+void server_copy_file (char *file, char *update_dir, char *repository,
+                       char *newfile);
 
 /* Send the appropriate responses for a file described by FINFO and
    VERS.  This is called after server_register or server_scratch.  In
@@ -96,47 +105,44 @@ enum server_updated_arg4
     SERVER_PATCHED,
     SERVER_RCS_DIFF
 };
-#ifdef __STDC__
-struct buffer;
-#endif
 
-extern void server_updated
-    (struct file_info *finfo, Vers_TS *vers,
-	   enum server_updated_arg4 updated, mode_t mode,
-	   unsigned char *checksum, struct buffer *filebuf);
+struct buffer;
+
+void server_updated (struct file_info *finfo, Vers_TS *vers,
+                     enum server_updated_arg4 updated, mode_t mode,
+                     unsigned char *checksum, struct buffer *filebuf);
 
 /* Whether we should send RCS format patches.  */
-extern int server_use_rcs_diff (void);
+int server_use_rcs_diff (void);
 
 /* Set the Entries.Static flag.  */
-extern void server_set_entstat (char *update_dir, char *repository);
+void server_set_entstat (char *update_dir, char *repository);
 /* Clear it.  */
-extern void server_clear_entstat (char *update_dir, char *repository);
+void server_clear_entstat (char *update_dir, char *repository);
 
 /* Set or clear a per-directory sticky tag or date.  */
-extern void server_set_sticky (char *update_dir, char *repository,
-				     char *tag, char *date, int nonbranch);
+void server_set_sticky (char *update_dir, char *repository,
+                        char *tag, char *date, int nonbranch);
 
 /* Send Clear-template response.  */
-extern void server_clear_template (char *update_dir, char *repository);
+void server_clear_template (char *update_dir, char *repository);
 
 /* Send Template response.  */
-extern void server_template (char *update_dir, char *repository);
+void server_template (char *update_dir, char *repository);
 
-extern void server_update_entries
-    (char *file, char *update_dir, char *repository,
-	   enum server_updated_arg4 updated);
+void server_update_entries (char *file, char *update_dir, char *repository,
+                            enum server_updated_arg4 updated);
 
 /* Pointer to a malloc'd string which is the directory which
    the server should prepend to the pathnames which it sends
    to the client.  */
 extern char *server_dir;
 
-extern void server_cleanup (int sig);
+void server_cleanup (void);
 
 #ifdef SERVER_FLOWCONTROL
 /* Pause if it's convenient to avoid memory blowout */
-extern void server_pause_check (void);
+void server_pause_check (void);
 #endif /* SERVER_FLOWCONTROL */
 
 #ifdef AUTH_SERVER_SUPPORT
@@ -184,6 +190,5 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
-extern int gunzip_and_write (int, char *, unsigned char *, size_t);
-extern int read_and_gzip (int, char *, unsigned char **, size_t *,
-				 size_t *, int);
+int gunzip_and_write (int, char *, unsigned char *, size_t);
+int read_and_gzip (int, char *, unsigned char **, size_t *, size_t *, int);

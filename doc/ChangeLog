@@ -1,3 +1,71 @@
+2003-10-30  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-10-30  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File permissions, Error messages): Add index entries for
+	CVSROOT/val-tags file.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for 1.12.2.1.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for 1.12.2.
+
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo: Note gnu.cvs.* usenet mirrors of the email lists.
+	(Suggestion from Paul Edwards, from somewhere in Australia.)
+
+	* cvs.texinfo: Put email addresses in @email{} tags and URLs in @url{}
+	tags rather than relying on markup like @code{}.
+	* stamp-vti, version.texi: Regenerated.
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* cvs.texinfo: Suggest 'sed 1q', not 'head -1'.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Add recommendation to client developers to
+	avoid the `Case' request.
+	* stamp-1, version-client.texi: Regenerated.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (checkoutlist): Document the error messages which may be
+	specified in this file.
+	* stamp-vti, version.texi: Regenerated.
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Administrative files, Commit files): Remove references
+	to deleted nodes.
+	(editinfo, editinfo example): Remove these obsolete nodes.
+	* stamp-vti, version.texi: Regenerated.
+
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.texinfo (history options): Note the 'P' record type which
+	has been around for a long time but never actually appeared in
+	the history file due to bugs in the code.
+	(Invoking CVS): Ditto.
+	(config): Ditto.
+	* stamp-vti, version.texi: Regenerated.
+
 2003-08-12  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.

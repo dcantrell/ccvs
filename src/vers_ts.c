@@ -12,21 +12,28 @@
 static void time_stamp_server (char *, Vers_TS *, Entnode *);
 #endif
 
-/* Fill in and return a Vers_TS structure for the file FINFO.  TAG and
-   DATE are from the command line.  */
-
+/* Fill in and return a Vers_TS structure for the file FINFO.
+ *
+ * INPUTS
+ *   finfo		struct file_info data about the file to be examined.
+ *   options		Keyword expansion options, I think generally from the
+ *			command line.  Can be either NULL or "" to indicate
+ *			none are specified here.
+ *   tag		Tag specified by user on the command line (via -r).
+ *   date		Date specified by user on the command line (via -D).
+ *   force_tag_match	If set and TAG is specified, will only set RET->vn_rcs
+ *   			based on TAG.  Otherwise, if TAG is specified and does
+ *   			not exist in the file, RET->vn_rcs will be set to the
+ *   			head revision.
+ *   set_time		If set, set the last modification time of the user file
+ *			specified by FINFO to the checkin time of RET->vn_rcs.
+ *
+ * RETURNS
+ *   Vers_TS structure for FINFO.
+ */
 Vers_TS *
-Version_TS (struct file_info *finfo, char *options, char *tag, char *date, int force_tag_match, int set_time)
-                            
-
-    /* Keyword expansion options, I think generally from the command
-       line.  Can be either NULL or "" to indicate none are specified
-       here.  */
-                  
-              
-               
-                        
-                 
+Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
+            int force_tag_match, int set_time)
 {
     Node *p;
     RCSNode *rcsdata;
@@ -34,10 +41,6 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date, int f
     struct stickydirtag *sdtp;
     Entnode *entdata;
     char *rcsexpand = NULL;
-
-#ifdef UTIME_EXPECTS_WRITABLE
-    int change_it_back = 0;
-#endif
 
     /* get a new Vers_TS struct */
     vers_ts = (Vers_TS *) xmalloc (sizeof (Vers_TS));
@@ -220,6 +223,10 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date, int f
 		t.modtime = RCS_getrevtime (rcsdata, vers_ts->vn_rcs, 0, 0);
 		if (t.modtime != (time_t) -1)
 		{
+#ifdef UTIME_EXPECTS_WRITABLE
+		    int change_it_back = 0;
+#endif
+
 		    (void) time (&t.actime);
 
 #ifdef UTIME_EXPECTS_WRITABLE
@@ -239,10 +246,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date, int f
 
 #ifdef UTIME_EXPECTS_WRITABLE
 		    if (change_it_back)
-		    {
 			xchmod (finfo->file, 0);
-			change_it_back = 0;
-		    }
 #endif  /*  UTIME_EXPECTS_WRITABLE  */
 		}
 	    }

@@ -17,7 +17,6 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
-#include <assert.h>
 #include "cvs.h"
 
 static int deep_remove_dir (const char *path);
@@ -576,6 +575,7 @@ xcmp (const char *file1, const char *file2)
 
     /* If FILE1 and FILE2 are symlinks, they are equal if they point to
        the same thing. */
+#ifdef S_ISLNK
     if (S_ISLNK (sb1.st_mode) && S_ISLNK (sb2.st_mode))
     {
 	int result;
@@ -586,6 +586,7 @@ xcmp (const char *file1, const char *file2)
 	free (buf2);
 	return result;
     }
+#endif
 
     /* If FILE1 and FILE2 are devices, they are equal if their device
        numbers match. */
@@ -691,8 +692,9 @@ cvs_temp_name (void)
  *	unique file name or NULL on failure.
  *
  *  ERRORS
- *	on error, errno will be set to some value either by CVS_FOPEN or
- *	whatever system function is called to generate the temporary file name
+ *	On error, errno will be set to some value either by CVS_FOPEN or
+ *	whatever system function is called to generate the temporary file name.
+ *	The value of filename is undefined on error.
  */
 FILE *cvs_temp_file (char **filename)
 {
@@ -729,11 +731,20 @@ FILE *cvs_temp_file (char **filename)
     }
 
     if (fp == NULL) free (fn);
-    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
-    /* FIXME - configure can probably tell us which version of glibc we are
-     * linking to and not chmod for 2.0.7+
+
+    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+.  There used
+     * to be a complicated #ifdef checking the library versions here and then
+     * a chmod 0600 on the temp file for versions of glibc less than 2.1.  This
+     * is rather a special case, leaves a race condition open regardless, and
+     * one could hope that sysadmins have read the relevant security
+     * announcements and upgraded by now to a version with a fix committed in
+     * January of 1999.
+     *
+     * If it is decided at some point that old, buggy versions of glibc should
+     * still be catered to, a umask of 0600 should be set before file creation
+     * instead then reset after file creation since this would avoid the race
+     * condition that the chmod left open to exploitation.
      */
-    else chmod (fn, 0600);
 
     *filename = fn;
     return fp;

@@ -4332,7 +4332,7 @@ kingdon@cyclic.com
    
    You should be able to run:
    
-   sort +0.1 ${dir1}/history ${dir2}/history > history
+   sort -k 1.2 ${dir1}/history ${dir2}/history > history
    
    If you "diff" a standard history file before and after such a sort,
    you might see other differences caused by garbage (split lines, nulls,

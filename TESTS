@@ -52,7 +52,8 @@ expected.  If it says "** expected:" followed by a regular expression
 followed by "** got:" followed by some text, then the regular
 expression is the output which the test expected, and the text is the
 output which the command under test actually produced.  In some cases
-you'll have to look closely to see how they differ.
+you'll have to look closely to see how they differ; the debug_check_log
+script in the contrib directory can assist in this process.
 
 If output from "make remotecheck" is out of order compared to what is
 expected (for example,

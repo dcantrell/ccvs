@@ -262,6 +262,9 @@ sub main
 				if( $sym_count > 5 );
 		}
 
+		# Remove indirections.
+		$directory_to_look_at =~ s#(/+.)*$##o;
+
 		verbose( "Processing: $directory_to_look_at\n" );
 		@ignore_files = get_ignore_files_from_cvsroot( $directory_to_look_at );
 		find( \&process_file, $directory_to_look_at );
@@ -344,6 +347,7 @@ sub process_file
 		elsif( !grep { $path =~ $_ } @ignore_files )
 		{
 			push @extra_files, $path;
+			verbose( "Adding unrecognized file `$path' to corrupted list.\n" );
 		}
 		else
 		{
@@ -431,7 +435,7 @@ sub look_at_cvs_file
 #      $file - The file to retrieve the revision numbers for
 #
 #    GLOBALS :
-#      NONE
+#      $cvsroot - the CVSROOT we are examining
 #
 #    RETURNS :
 #      On Success - A hash of revision info, indexed by revision numbers.
@@ -452,7 +456,8 @@ sub get_history
 	my %rinfo;		# Info about revisions in the file.
 	my $revision;
 
-	my $fh = new IO::File( "cvs rlog -N \"$file\" 2>&1 |" )
+    my $fh = new IO::File( "cvs -d $cvsroot rlog -N \"$file\""
+                           . ($verbose ? "" : " 2>&1") . " |" )
 		or die( "unable to run `cvs rlog', help" );
 
 	my $ignore = -1;
@@ -460,11 +465,15 @@ sub get_history
     {
 		if( $ignore == 1 ) 
 		{
-			die "Couldn't read revision from `cvs rlog'.\n"
-			    . "line = $line"
-				unless ( $revision ) = $line =~ /^revision (\S+)/;
-			$ignore++;
-			next;
+			if( ( $revision ) = $line =~ /^revision (\d+\.\d[\d.]*)(	locked by: \S+;)?$/ )
+			{
+				$ignore++;
+				next;
+			}
+
+			# We require ---- before a ^revision tag, not a revision
+			# after every ----.
+			$ignore = 0;
         }
 		if( $ignore == 2 )
 		{
@@ -517,10 +526,9 @@ sub get_history
 		}
 	}
 
-    if( !$fh->close )
-    {
-        return( undef );
-    }
+	die "Syserr closing pipe from `cvs co': $!"
+		if !$fh->close && $!;
+	return if $?;
 
     return( \%finfo, %rinfo ? \%rinfo : undef );
 }
@@ -576,9 +584,10 @@ sub check_revision
 	my $kwmode = $finfo->{'kwmode'} eq 'b' ? '' : ' -ko';
     my $command = "cvs -d $cvsroot co$kwmode -npr $revision \"$file\"";
 	my $ret_code;
+	verbose( "Executing `$command'.\n" );
 	if( @scripts )
 	{
-    	my $fh = new IO::File "$command 2>&1 |";
+    	my $fh = new IO::File $command . ($verbose ? "" : " 2>&1") . " |";
 		fcntl( $fh, F_SETFD, 0 )
 			or die "Can't clear close-on-exec flag on filehandle: $!";
 		my $count;
@@ -616,8 +625,7 @@ sub check_revision
     	$ret_code = 0xffff & system "$command >/dev/null 2>&1";
 	}
 
-    return( 1 ) if $ret_code == 0;
-    return( 0 );
+    return !$ret_code;
 }
 
 ######################################################################
@@ -805,7 +813,7 @@ sub get_ignore_files_from_cvsroot {
 		foreach my $line( @list )
 		{
 			next if( $line =~ /^#/ || $line =~ /^\s*$/ );
-			$line =~ s/^\s*(\S*)\s*$/$1/;
+			$line =~ s/^\s*(\S+)(\s+.*)?$/$1/;
 			push @ignore, qr{^(./)?CVSROOT/$line$};
 		}
 	}	

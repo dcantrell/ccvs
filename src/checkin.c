@@ -15,7 +15,6 @@
  * Returns non-zero on error.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "fileattr.h"
 #include "edit.h"

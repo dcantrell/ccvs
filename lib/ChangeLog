@@ -1,3 +1,70 @@
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Remove obsolete PROTO.h.
+	* Makefile.in: Regenerated.
+
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_LIBADD): Undo the previous change and move it
+	into the program linking step in `../src'.
+	* Makefile.in: Regenerated.
+
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_LIBADD): Add $(LIBINTL) for gettext.
+	* Makefile.in: Regenerated.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* sighandle.c (SIG_handle): With the last commit, avoid allowing a
+	second interrupt while this interrupt handler runs.
+	(SIG_beginCrSect, SIG_endCrSect): With the last change, move these two
+	functions to the top of this file to avoid prototyping them for
+	SIG_handle().
+	(*): C89ify some prototypes.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* system.h (EXIT_FAILURE): Don't define here since it's defined in
+	exit.h.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* getpass.c: Update to new version from GNULIB with Larry's fix
+	incorporated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* getopt.h, getopt.c, getopt1.c: Update from GNULIB.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* getline.c, getndelim2.c: Merge changes from GNULIB.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Assume <string.h> and <sys/types.h> per the notes in
+	HACKING.
+
+2003-09-30  Larry Jones  <lawrence.jones@eds.com>
+
+	* getpass.c: Fix bug that caused password to be echoed on many
+	systems (input may not be followed by output on the same stream
+	without an intervening call to a file positioning function).
+	(Reported by David Everly <david.everly@mci.com>.)
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	Provide an atexit() function on systems which provide on_exit() but not
+	atexit().
+
+	* atexit.c: New file.
+	* Makefile.in: Regenerated.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Assume more headers, re C89 & GNULIB.
+
 2003-08-12  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Remove getndelim2 - it is now in

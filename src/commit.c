@@ -14,7 +14,6 @@
  *
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"
@@ -627,10 +626,7 @@ commit (int argc, char **argv)
 	  argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
 	  (char *) NULL, 1, (char *) NULL );
     if (err)
-    {
-	Lock_Cleanup ();
 	error (1, 0, "correct above errors first!");
-    }
 
     /*
      * Run the recursion processor to commit the files
@@ -649,18 +645,17 @@ commit (int argc, char **argv)
     Lock_Cleanup ();
     dellist (&mulist);
 
-#ifdef SERVER_SUPPORT
-    if (server_active)
-	return err;
-#endif
-
     /* see if we need to sleep before returning to avoid time-stamp races */
-    if (last_register_time)
-    {
-	sleep_past (last_register_time);
-    }
+    if (
+#ifdef SERVER_SUPPORT
+	/* But only sleep on the client.  */
+        !server_active &&
+#endif
+	last_register_time
+       )
+	    sleep_past (last_register_time);
 
-    return (err);
+    return err;
 }
 
 /* This routine determines the status of a given file and retrieves
@@ -1209,7 +1204,8 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 	if (checkaddfile (finfo->file, finfo->repository, ci->tag, ci->options,
 			  &finfo->rcs) != 0)
 	{
-	    fixaddfile (finfo->rcs->path);
+	    if (finfo->rcs != NULL)
+		fixaddfile (finfo->rcs->path);
 	    err = 1;
 	    goto out;
 	}
@@ -1673,7 +1669,7 @@ finaladd (struct file_info *finfo, char *rev, char *tag, char *options)
 	    error (0, errno, "cannot remove %s", tmp);
 	free (tmp);
     }
-    else
+    else if (finfo->rcs != NULL)
 	fixaddfile (finfo->rcs->path);
 
     (void) time (&last_register_time);

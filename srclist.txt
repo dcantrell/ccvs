@@ -42,6 +42,9 @@ CVS Repository: :pserver:anoncvs@subversions.gnu.org:/cvsroot/gnulib
 Imported files					CVS		Local
 						Directory	Modifications
 ----------------------------------------------- --------------- ---------------
+# $GNULIB/modules/atexit
+$GNULIB/lib/atexit.c				lib		no NI
+$GNULIB/m4/atexit.m4				m4		no NI
 # $GNULIB/modules/exit
 $GNULIB/lib/exit.h				lib		no NI
 # $GNULIB/modules/gethostname
@@ -54,8 +57,8 @@ $GNULIB/lib/getndelim2.c			lib		yes NI
 $GNULIB/lib/getndelim2.h			lib		yes NI
 $GNULIB/lib/getnline.c				lib		yes NI
 $GNULIB/lib/getnline.h				lib		yes NI
-$GNULIB/m4/getline.m4				m4		no NI
-$GNULIB/m4/getndelim2.m4			m4		no NI
+$GNULIB/m4/getline.m4				m4		yes NI
+$GNULIB/m4/getndelim2.m4			m4		yes NI
 $GNULIB/m4/getnline.m4				m4		no NI
 $GNULIB/m4/ssize_t.m4				m4		no NI
 # $GNULIB/modules/getndelim2
@@ -68,6 +71,11 @@ $GNULIB/lib/getnline.c				lib		yes NI
 $GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getnline.m4				m4		no NI
 $GNULIB/m4/ssize_t.m4				m4		no NI
+# $GNULIB/modules/getopt
+$GNULIB/lib/getopt.c				lib		no NI
+$GNULIB/lib/getopt1.c				lib		no NI
+$GNULIB/lib/getopt.h				lib		no NI
+$GNULIB/m4/getopt.m4				m4		no NI
 # $GNULIB/modules/getpass-gnu
 $GNULIB/lib/getpass.c				lib		no NI
 $GNULIB/m4/getpass.m4				m4		no NI
@@ -117,6 +125,8 @@ $GNULIB/m4/pathmax.m4				m4		no NI
 # $GNULIB/modules/realloc
 $GNULIB/lib/realloc.c				lib		no NI
 $GNULIB/m4/realloc.m4				m4		no NI
+# $GNULIB/modules/restrict
+$GNULIB/m4/restrict.m4				m4		no NI
 # $GNULIB/modules/stat
 $GNULIB/lib/stat.c				lib		yes NI
 $GNULIB/m4/stat.m4				m4		no NI

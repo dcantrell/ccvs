@@ -8,7 +8,6 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "watch.h"
 #include "edit.h"
@@ -680,7 +679,7 @@ serve_valid_responses (char *arg)
 	       cause deadlock, as noted in server_cleanup.  */
 	    buf_flush (buf_to_net, 1);
 
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
 	    rs->status = rs_not_supported;
@@ -779,6 +778,8 @@ static int max_dotdot_limit = 0;
 void
 server_pathname_check (char *path)
 {
+    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)", path);
+
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
        of being a security hole in the anonymous readonly case.  */
@@ -908,6 +909,8 @@ dirswitch (char *dir, char *repos)
     int status;
     FILE *f;
     size_t dir_len;
+
+    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir, repos);
 
     server_write_entries ();
 
@@ -1996,6 +1999,8 @@ server_notify (void)
     struct notify_note *p;
     char *repos;
 
+    TRACE (TRACE_FUNCTION, "server_notify()");
+
     while (notify_list != NULL)
     {
 	if ( CVS_CHDIR (notify_list->dir) < 0)
@@ -2116,6 +2121,9 @@ serve_global_option (char *arg)
     }
     switch (arg[1])
     {
+	case 'l':
+	    error(0, 0, "WARNING: global `-l' option ignored.");
+	    break;
 	case 'n':
 	    noexec = 1;
 	    logoff = 1;
@@ -2304,7 +2312,7 @@ serve_case (char *arg)
     ign_case = 1;
 }
 
-static struct buffer *protocol;
+static struct buffer *protocol = NULL;
 
 /* This is the output which we are saving up to send to the server, in the
    child process.  We will push it through, via the `protocol' buffer, when
@@ -2344,7 +2352,7 @@ error ENOMEM Virtual memory exhausted.\n";
 #ifdef HAVE_SYSLOG_H
     syslog (LOG_DAEMON | LOG_ERR, "virtual memory exhausted");
 #endif
-    error_exit ();
+    exit (EXIT_FAILURE);
 }
 
 static void
@@ -2586,6 +2594,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 error  \n");
 	goto free_args_and_return;
     }
+    command_name = cmd_name;
 
     (void) server_notify ();
 
@@ -3524,8 +3533,6 @@ serve_log (char *arg)
 static void
 serve_rlog (char *arg)
 {
-    /* Tell cvslog() to behave like rlog not log.  */
-    command_name = "rlog";
     do_cvs_command ("rlog", cvslog);
 }
 
@@ -3562,8 +3569,6 @@ serve_tag (char *arg)
 static void
 serve_rtag (char *arg)
 {
-    /* Tell cvstag() to behave like rtag not tag.  */
-    command_name = "rtag";
     do_cvs_command ("rtag", cvstag);
 }
 
@@ -3714,8 +3719,6 @@ static void serve_rannotate (char *);
 static void
 serve_rannotate (char *arg)
 {
-    /* Tell annotate() to behave like rannotate not annotate.  */
-    command_name = "rannotate";
     do_cvs_command ("rannotate", annotate);
 }
 
@@ -4609,149 +4612,250 @@ static void wait_sig( int sig )
 }
 #endif /* SUNOS_KLUDGE */
 
+/*
+ * This function cleans up after the server.  Specifically, it:
+ *
+ * <ol>
+ * <li>Sets BUF_TO_NET to blocking and fluxhes it.</li>
+ * <li>With SUNOS_KLUDGE enabled:
+ *   <ol>
+ *   <li>Terminates the command process.</li>
+ *   <li>Waits on the command process, draining output as necessary.</li>
+ *   </ol>
+ * </li>
+ * <li>Removes the temporary directory.</li>
+ * <li>Flush and shutdown the buffers.</li>
+ * <li>Set ERROR_USE_PROTOCOL and SERVER_ACTIVE to false.</li>
+ * </ol>
+ *
+ * GLOBALS
+ *   buf_from_net		The input buffer which brings data from the
+ *   				CVS client.
+ *   buf_to_net			The output buffer which moves data to the CVS
+ *   				client.
+ *   error_use_protocol		Set when the server parent process is active.
+ *   				Cleared for the server child processes.
+ *   dont_delete_temp		Set when a core dump of a child process is
+ *   				detected so that the core and related data may
+ *   				be preserved.
+ *   Tmpdir			The system TMP directory for all temp files.
+ *   noexec			Whether we are supposed to change the disk.
+ *   orig_server_temp_dir	The temporary directory we created within
+ *   				Tmpdir for our duplicate of the client
+ *   				workspace.
+ *
+ * INPUTS
+ *   None.
+ *
+ * ERRORS
+ *   Problems encountered during the cleanup, for instance low memory or
+ *   problems deleting the temp files and directories, can cause the error
+ *   function to be called, which might call exit.  If exit gets called in this
+ *   manner. this routine will not complete, but the other exit handlers
+ *   registered via atexit() will still run.
+ *
+ * RETURNS
+ *   Nothing.
+ */
 void
-server_cleanup (int sig)
+server_cleanup (void)
 {
-    /* Do "rm -rf" on the temp directory.  */
-    int status;
-    int save_noexec;
+    static short int never_run_again = 0;
 
-    if (buf_to_net != NULL)
-    {
-	/* Since we're done, go ahead and put BUF_TO_NET back into blocking
-	 * mode and send any pending output.  In the usual case there won't
-	 * won't be any, but there might be if an error occured.
-	 */
+    TRACE (TRACE_FUNCTION, "server_cleanup()");
 
-	set_block (buf_to_net);
-	buf_flush (buf_to_net, 1);
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     * The only time that we should get into one of these functions otherwise
+     * while still in a critical section is if error(1,...) is called from a
+     * critical section, in which case we are exiting and interrupts are
+     * already being ignored.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
-	/* Next we shut down BUF_FROM_NET.  That will pick up the checksum
-	 * generated when the client shuts down its buffer.  Then, after we
-	 * have generated any final output, we shut down BUF_TO_NET.
-	 */
+    assert(server_active);
 
-	status = buf_shutdown (buf_from_net);
-	if (status != 0)
-	    error (0, status, "shutting down buffer from client");
-	buf_free (buf_from_net);
-	buf_from_net = NULL;
-    }
-
-    if (dont_delete_temp)
+    /* Since we install this function in an atexit() handler before forking,
+     * reuse the ERROR_USE_PROTOCOL flag, which we know is only set in the
+     * parent server process, to avoid cleaning up the temp space multiple
+     * times.  Skip the buf_to_net checks too as an optimization since we know
+     * they will be set to NULL in the child process anyhow.
+     */
+    if (error_use_protocol)
     {
 	if (buf_to_net != NULL)
 	{
-	    (void) buf_flush (buf_to_net, 1);
-	    (void) buf_shutdown (buf_to_net);
-	    buf_free (buf_to_net);
-	    buf_to_net = NULL;
-	    error_use_protocol = 0;
-	}
-	return;
-    }
+	    /* Since we're done, go ahead and put BUF_TO_NET back into blocking
+	     * mode and send any pending output.  In the usual case there won't
+	     * won't be any, but there might be if an error occured.
+	     */
 
-    /* What a bogus kludge.  This disgusting code makes all kinds of
-       assumptions about SunOS, and is only for a bug in that system.
-       So only enable it on Suns.  */
-#ifdef SUNOS_KLUDGE
-    if (command_pid > 0)
-    {
-	/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
-	   triggered by the use of rename() in RCS, wait for the
-	   subprocess to die.  Unfortunately, this means draining output
-	   while waiting for it to unblock the signal we sent it.  Yuck!  */
-	int status;
-	pid_t r;
+	    set_block (buf_to_net);
+	    buf_flush (buf_to_net, 1);
 
-	signal (SIGCHLD, wait_sig);
-	if (sig)
-	    /* Perhaps SIGTERM would be more correct.  But the child
-	       process will delay the SIGINT delivery until its own
-	       children have exited.  */
-	    kill (command_pid, SIGINT);
-	/* The caller may also have sent a signal to command_pid, so
-	   always try waiting.  First, though, check and see if it's still
-	   there....  */
-    do_waitpid:
-	r = waitpid (command_pid, &status, WNOHANG);
-	if (r == 0)
-	    ;
-	else if (r == command_pid)
-	    command_pid_is_dead++;
-	else if (r == -1)
-	    switch (errno)
+	    /* Next we shut down BUF_FROM_NET.  That will pick up the checksum
+	     * generated when the client shuts down its buffer.  Then, after we
+	     * have generated any final output, we shut down BUF_TO_NET.
+	     */
+
+	    /* Avoid being interrupted during calls which set globals to NULL.
+	     * This avoids having interrupt handlers attempt to use these
+	     * global variables in inconsistent states.
+	     */
+	    SIG_beginCrSect();
+
+	    if (buf_from_net != NULL)
 	    {
-		case ECHILD:
-		    command_pid_is_dead++;
-		    break;
-		case EINTR:
-		    goto do_waitpid;
+		/* Use a tmp var since any of these functions could call exit,
+		 * causing us to be called a second time.
+		 */
+		int status;
+		struct buffer *tmp = buf_from_net;
+		buf_from_net = NULL;
+		status = buf_shutdown (tmp);
+		if (status != 0)
+		    error (0, status, "shutting down buffer from client");
+		buf_free (tmp);
 	    }
-	else
-	    /* waitpid should always return one of the above values */
-	    abort ();
-	while (!command_pid_is_dead)
+	    SIG_endCrSect();
+	}
+
+	if (!dont_delete_temp)
 	{
-	    struct timeval timeout;
-	    struct fd_set_wrapper readfds;
-	    char buf[100];
-	    int i;
+	    int save_noexec;
 
-	    /* Use a non-zero timeout to avoid eating up CPU cycles.  */
-	    timeout.tv_sec = 2;
-	    timeout.tv_usec = 0;
-	    readfds = command_fds_to_drain;
-	    switch (select (max_command_fd + 1, &readfds.fds,
-			    (fd_set *)0, (fd_set *)0,
-			    &timeout))
+	    /* What a bogus kludge.  This disgusting code makes all kinds of
+	       assumptions about SunOS, and is only for a bug in that system.
+	       So only enable it on Suns.  */
+#ifdef SUNOS_KLUDGE
+	    if (command_pid > 0)
 	    {
-		case -1:
-		    if (errno != EINTR)
-			abort ();
-		case 0:
-		    /* timeout */
-		    break;
-		case 1:
-		    for (i = 0; i <= max_command_fd; i++)
+		/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
+		   triggered by the use of rename() in RCS, wait for the
+		   subprocess to die.  Unfortunately, this means draining output
+		   while waiting for it to unblock the signal we sent it.  Yuck!  */
+		int status;
+		pid_t r;
+
+		signal (SIGCHLD, wait_sig);
+		/* Perhaps SIGTERM would be more correct.  But the child
+		   process will delay the SIGINT delivery until its own
+		   children have exited.  */
+		kill (command_pid, SIGINT);
+		/* The caller may also have sent a signal to command_pid, so
+		   always try waiting.  First, though, check and see if it's still
+		   there....  */
+	    do_waitpid:
+		r = waitpid (command_pid, &status, WNOHANG);
+		if (r == 0)
+		    ;
+		else if (r == command_pid)
+		    command_pid_is_dead++;
+		else if (r == -1)
+		    switch (errno)
 		    {
-			if (!FD_ISSET (i, &readfds.fds))
-			    continue;
-			/* this fd is non-blocking */
-			while (read (i, buf, sizeof (buf)) >= 1)
-			    ;
+			case ECHILD:
+			    command_pid_is_dead++;
+			    break;
+			case EINTR:
+			    goto do_waitpid;
 		    }
-		    break;
-		default:
+		else
+		    /* waitpid should always return one of the above values */
 		    abort ();
+		while (!command_pid_is_dead)
+		{
+		    struct timeval timeout;
+		    struct fd_set_wrapper readfds;
+		    char buf[100];
+		    int i;
+
+		    /* Use a non-zero timeout to avoid eating up CPU cycles.  */
+		    timeout.tv_sec = 2;
+		    timeout.tv_usec = 0;
+		    readfds = command_fds_to_drain;
+		    switch (select (max_command_fd + 1, &readfds.fds,
+				    (fd_set *)0, (fd_set *)0,
+				    &timeout))
+		    {
+			case -1:
+			    if (errno != EINTR)
+				abort ();
+			case 0:
+			    /* timeout */
+			    break;
+			case 1:
+			    for (i = 0; i <= max_command_fd; i++)
+			    {
+				if (!FD_ISSET (i, &readfds.fds))
+				    continue;
+				/* this fd is non-blocking */
+				while (read (i, buf, sizeof (buf)) >= 1)
+				    ;
+			    }
+			    break;
+			default:
+			    abort ();
+		    }
+		}
 	    }
-	}
-    }
 #endif /* SUNOS_KLUDGE */
 
-    CVS_CHDIR (Tmpdir);
-    /* Temporarily clear noexec, so that we clean up our temp directory
-       regardless of it (this could more cleanly be handled by moving
-       the noexec check to all the unlink_file_dir callers from
-       unlink_file_dir itself).  */
-    save_noexec = noexec;
-    noexec = 0;
-    /* FIXME?  Would be nice to not ignore errors.  But what should we do?
-       We could try to do this before we shut down the network connection,
-       and try to notify the client (but the client might not be waiting
-       for responses).  We could try something like syslog() or our own
-       log file.  */
-    unlink_file_dir (orig_server_temp_dir);
-    noexec = save_noexec;
+	    /* Make sure our working directory isn't inside the tree we're
+	       going to delete.  */
+	    CVS_CHDIR (Tmpdir);
 
-    if (buf_to_net != NULL)
-    {
-	(void) buf_flush (buf_to_net, 1);
-	(void) buf_shutdown (buf_to_net);
-	buf_free (buf_to_net);
-	buf_to_net = NULL;
-	error_use_protocol = 0;
+	    /* Temporarily clear noexec, so that we clean up our temp directory
+	       regardless of it (this could more cleanly be handled by moving
+	       the noexec check to all the unlink_file_dir callers from
+	       unlink_file_dir itself).  */
+	    save_noexec = noexec;
+
+	    SIG_beginCrSect();
+	    noexec = 0;
+	    unlink_file_dir (orig_server_temp_dir);
+	    noexec = save_noexec;
+	    SIG_endCrSect();
+	} /* !dont_delete_temp && error_use_protocol */
+
+	SIG_beginCrSect();
+	if (buf_to_net != NULL)
+	{
+	    /* Save BUF_TO_NET and set the global pointer to NULL so that any
+	     * error messages generated during shutdown go to the syslog rather
+	     * than getting lost.
+	     */
+	    struct buffer *buf_to_net_save = buf_to_net;
+	    buf_to_net = NULL;
+
+	    (void) buf_flush (buf_to_net_save, 1);
+	    (void) buf_shutdown (buf_to_net_save);
+	    buf_free (buf_to_net_save);
+	    error_use_protocol = 0;
+	}
+	SIG_endCrSect();
     }
+
+    server_active = 0;
 }
 
 int server_active = 0;
@@ -4817,7 +4921,7 @@ server (int argc, char **argv)
 		printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    }
 	    strcpy (server_temp_dir, Tmpdir);
 
@@ -4971,14 +5075,12 @@ error ENOMEM Virtual memory exhausted.\n");
 	free (orig_cmd);
     }
     free(error_prog_name);
-    server_cleanup (0);
     return 0;
 }
 
-
-#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
-static void switch_to_user (const char *);
 
+
+#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 static void
 switch_to_user (const char *username)
 {
@@ -4992,8 +5094,7 @@ switch_to_user (const char *username)
 
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such system user\n", username);
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
 #if HAVE_INITGROUPS
@@ -5011,8 +5112,7 @@ error 0 %s: no such system user\n", username);
 	   on every connection.  We could log it somewhere and not tell
 	   the user.  But at least for now make it an error.  */
 	printf ("error 0 initgroups failed: %s\n", strerror (errno));
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 #endif /* HAVE_INITGROUPS */
 
@@ -5024,9 +5124,7 @@ error 0 %s: no such system user\n", username);
 	{
 	    /* See comments at setuid call below for more discussion.  */
 	    printf ("error 0 setgid failed: %s\n", strerror (errno));
-	    /* Don't worry about server_cleanup;
-	       server_active isn't set yet.  */
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
     }
     else
@@ -5041,9 +5139,7 @@ error 0 %s: no such system user\n", username);
 		    "setgid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_gid, getuid(), getgid(), geteuid(), getegid());
 #endif
-	    /* Don't worry about server_cleanup;
-	       server_active isn't set yet.  */
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
     }
 
@@ -5061,8 +5157,7 @@ error 0 %s: no such system user\n", username);
 		    "setuid to %d failed (%m): real %d/%d, effective %d/%d ",
 		    pw->pw_uid, getuid(), getgid(), geteuid(), getegid());
 #endif
-	/* Don't worry about server_cleanup; server_active isn't set yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* We don't want our umask to change file modes.  The modes should
@@ -5351,7 +5446,7 @@ check_system_password( char *username, char *password )
 	printf("E Fatal error, aborting.\n"
 		"pam failed to release authenticator\n"
 		"PAM error %s\n", pam_strerror(NULL, err));
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     return (retval == PAM_SUCCESS);       /* indicate success */
@@ -5380,7 +5475,7 @@ check_system_password (char *username, char *password)
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* Allow for dain bramaged HPUX passwd aging
@@ -5456,7 +5551,7 @@ check_password (char *username, char *password, char *repository)
 	   outweighs this.  */
 	printf ("error 0 no such user %s in CVSROOT/passwd\n", username);
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* No cvs password found, so try /etc/passwd. */
@@ -5657,7 +5752,7 @@ pserver_authenticate_connection (void)
 
 	/* Don't worry about server_cleanup, server_active isn't set
 	   yet.  */
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
     memset (descrambled_password, 0, strlen (descrambled_password));
     free (descrambled_password);
@@ -5667,13 +5762,6 @@ pserver_authenticate_connection (void)
     {
 	printf ("I LOVE YOU\n");
 	fflush (stdout);
-
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-
 	exit (0);
     }
 
@@ -5721,7 +5809,7 @@ kserver_authenticate_connection( void )
 	printf ("E Fatal error, aborting.\n\
 error %s getpeername or getsockname failed\n", strerror (errno));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
 #ifdef SO_KEEPALIVE
@@ -5748,7 +5836,7 @@ error %s getpeername or getsockname failed\n", strerror (errno));
 	printf ("E Fatal error, aborting.\n\
 error 0 kerberos: %s\n", krb_get_err_text(status));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     memcpy (kblock, auth.session, sizeof (C_Block));
@@ -5761,7 +5849,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
 		"error 0 kerberos: can't get local name: %s\n",
 		krb_get_err_text(status));
 
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     /* Switch to run as this user. */
@@ -5906,7 +5994,6 @@ int cvsauthenticate;
 
 /* This structure is the closure field of the Kerberos translation
    routines.  */
-
 struct krb_encrypt_data
 {
     /* The Kerberos key schedule.  */
@@ -5915,34 +6002,9 @@ struct krb_encrypt_data
     C_Block block;
 };
 
-static int krb_encrypt_input( void *_fnclosure, const char *_input,
-                              char *_output, int _size );
-static int krb_encrypt_output( void *_fnclosure, const char *_input,
-                               char *_output, int _size, int *_translated );
 
-/* Create a Kerberos encryption buffer.  We use a packetizing buffer
-   with Kerberos encryption translation routines.  */
-
-struct buffer *
-krb_encrypt_buffer_initialize( struct buffer *buf, int input,
-                               Key_schedule sched, C_Block block,
-                               void *memory( struct buffer * ) )
-{
-    struct krb_encrypt_data *kd;
-
-    kd = (struct krb_encrypt_data *) xmalloc (sizeof *kd);
-    memcpy (kd->sched, sched, sizeof (Key_schedule));
-    memcpy (kd->block, block, sizeof (C_Block));
-
-    return packetizing_buffer_initialize (buf,
-					  input ? krb_encrypt_input : NULL,
-					  input ? NULL : krb_encrypt_output,
-					  kd,
-					  memory);
-}
 
 /* Decrypt Kerberos data.  */
-
 static int
 krb_encrypt_input( void *fnclosure, const char *input, char *output, int size )
 {
@@ -5966,8 +6028,9 @@ krb_encrypt_input( void *fnclosure, const char *input, char *output, int size )
     return 0;
 }
 
-/* Encrypt Kerberos data.  */
 
+
+/* Encrypt Kerberos data.  */
 static int
 krb_encrypt_output( void *fnclosure, const char *input, char *output,
                     int size, int *translated )
@@ -6000,29 +6063,72 @@ krb_encrypt_output( void *fnclosure, const char *input, char *output,
     return 0;
 }
 
+
+
+/* Create a Kerberos encryption buffer.  We use a packetizing buffer
+   with Kerberos encryption translation routines.  */
+struct buffer *
+krb_encrypt_buffer_initialize( struct buffer *buf, int input,
+                               Key_schedule sched, C_Block block,
+                               void *memory( struct buffer * ) )
+{
+    struct krb_encrypt_data *kd;
+
+    kd = (struct krb_encrypt_data *) xmalloc (sizeof *kd);
+    memcpy (kd->sched, sched, sizeof (Key_schedule));
+    memcpy (kd->block, block, sizeof (C_Block));
+
+    return packetizing_buffer_initialize (buf,
+					  input ? krb_encrypt_input : NULL,
+					  input ? NULL : krb_encrypt_output,
+					  kd,
+					  memory);
+}
+
 #endif /* HAVE_KERBEROS */
 #endif /* ENCRYPTION */
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
+
+
 /* Output LEN bytes at STR.  If LEN is zero, then output up to (not including)
    the first '\0' byte.  */
-
 void
 cvs_output (const char *str, size_t len)
 {
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol && buf_to_net != NULL)
+    if (error_use_protocol)
     {
-	buf_output (saved_output, str, len);
-	buf_copy_lines (buf_to_net, saved_output, 'M');
+	if (buf_to_net)
+	{
+	    buf_output (saved_output, str, len);
+	    buf_copy_lines (buf_to_net, saved_output, 'M');
+	}
+# if HAVE_SYSLOG_H
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write message after close of network buffer.  "
+		    "Message was: %s",
+		    str);
+# endif /* HAVE_SYSLOG */
     }
-    else if (server_active && protocol != NULL)
+    else if (server_active)
     {
-	buf_output (saved_output, str, len);
-	buf_copy_lines (protocol, saved_output, 'M');
-	buf_send_counted (protocol);
+	if (protocol)
+	{
+	    buf_output (saved_output, str, len);
+	    buf_copy_lines (protocol, saved_output, 'M');
+	    buf_send_counted (protocol);
+	}
+# if HAVE_SYSLOG_H
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write message before initialization of "
+		    "protocol buffer.  Message was: %s",
+		    str);
+# endif /* HAVE_SYSLOG */
     }
     else
 #endif
@@ -6065,6 +6171,8 @@ cvs_output_binary (char *str, size_t len)
 	    buf = buf_to_net;
 	else
 	    buf = protocol;
+
+	assert (buf);
 
 	if (!supported_response ("Mbinary"))
 	{
@@ -6141,14 +6249,34 @@ cvs_outerr (const char *str, size_t len)
 #ifdef SERVER_SUPPORT
     if (error_use_protocol)
     {
-	buf_output (saved_outerr, str, len);
-	buf_copy_lines (buf_to_net, saved_outerr, 'E');
+	if (buf_to_net)
+	{
+	    buf_output (saved_outerr, str, len);
+	    buf_copy_lines (buf_to_net, saved_outerr, 'E');
+	}
+# if HAVE_SYSLOG_H
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write error message after close of network "
+		    "buffer.  Message was: %s",
+		    str);
+# endif /* HAVE_SYSLOG */
     }
     else if (server_active)
     {
-	buf_output (saved_outerr, str, len);
-	buf_copy_lines (protocol, saved_outerr, 'E');
-	buf_send_counted (protocol);
+	if (protocol)
+	{
+	    buf_output (saved_outerr, str, len);
+	    buf_copy_lines (protocol, saved_outerr, 'E');
+	    buf_send_counted (protocol);
+	}
+# if HAVE_SYSLOG_H
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write error message before initialization of "
+		    "protocol buffer.  Message was: %s",
+		    str);
+# endif /* HAVE_SYSLOG */
     }
     else
 #endif

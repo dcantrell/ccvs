@@ -8,7 +8,6 @@
 
 #include "cvs.h"
 #include "getline.h"
-#include <assert.h>
 
 extern char *logHistory;
 

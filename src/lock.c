@@ -55,25 +55,16 @@
    1.  Check for EROFS.  Maybe useful, although in the presence of NFS
    EROFS does *not* mean that the file system is unchanging.
 
-   2.  Provide a means to put the cvs locks in some directory apart from
-   the repository (CVSROOT/locks; a -l option in modules; etc.).
-
-   3.  Provide an option to disable locks for operations which only
+   2.  Provide an option to disable locks for operations which only
    read (see above for some of the consequences).
 
-   4.  Have a server internally do the locking.  Probably a good
+   3.  Have a server internally do the locking.  Probably a good
    long-term solution, and many people have been working hard on code
    changes which would eventually make it possible to have a server
    which can handle various connections in one process, but there is
-   much, much work still to be done before this is feasible.
-
-   5.  Like #4 but use shared memory or something so that the servers
-   merely need to all be on the same machine.  This is a much smaller
-   change to CVS (it functions much like #2; shared memory might be an
-   unneeded complication although it presumably would be faster).  */
+   much, much work still to be done before this is feasible.  */
 
 #include "cvs.h"
-#include <assert.h>
 
 #if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
   /* use select as a workaround */
@@ -144,8 +135,6 @@ static List *locked_list;
 /* LockDir from CVSROOT/config.  */
 char *lock_dir;
 
-static char *lock_name (char *repository, char *name);
-
 /* Return a newly malloc'd string containing the name of the lock for the
    repository REPOSITORY and the lock file name within that directory
    NAME.  Also create the directories in which to put the lock file
@@ -161,6 +150,8 @@ lock_name (char *repository, char *name)
     char *short_repos;
     mode_t save_umask = 0000;
     int saved_umask = 0;
+
+    TRACE (TRACE_FLOW, "lock_name (%s, %s)", repository, name);
 
     if (lock_dir == NULL)
     {
@@ -283,58 +274,114 @@ lock_name (char *repository, char *name)
     return retval;
 }
 
+
+
 /*
- * Clean up all outstanding locks
+ * Clean up all outstanding locks and free their storage.
  */
 void
 Lock_Cleanup (void)
 {
-    /* FIXME: error handling here is kind of bogus; we sometimes will call
-       error, which in turn can call us again.  For the moment work around
-       this by refusing to reenter this function (this is a kludge).  */
-    /* FIXME-reentrancy: the workaround isn't reentrant.  */
-    static int in_lock_cleanup = 0;
+    static short int never_run_again = 0;
 
-    TRACE (1, "Lock_Cleanup()");
+    TRACE (TRACE_FUNCTION, "Lock_Cleanup()");
 
-    if (in_lock_cleanup)
-	return;
-    in_lock_cleanup = 1;
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     * The only time that we should get into one of these functions otherwise
+     * while still in a critical section is if error(1,...) is called from a
+     * critical section, in which case we are exiting and interrupts are
+     * already being ignored.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
     remove_locks ();
 
+    /* Avoid being interrupted during calls which set globals to NULL.  This
+     * avoids having interrupt handlers attempt to use these global variables
+     * in inconsistent states.
+     */
+    SIG_beginCrSect();
     dellist (&lock_tree_list);
+    /*  Unblocking allows any signal to be processed as soon as possible.  This
+     *  isn't really necessary, but since we know signals can cause us to be
+     *  called, why not avoid having blocks of code run twice.
+     */
+    SIG_endCrSect();
 
+    SIG_beginCrSect();
     if (locked_dir != NULL)
     {
-	dellist (&locked_list);
-	free (locked_dir);
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
+	char *tmp = locked_dir;
 	locked_dir = NULL;
-	locked_list = NULL;
+	dellist (&locked_list);
+	free (tmp);
     }
-    in_lock_cleanup = 0;
+    SIG_endCrSect();
 }
 
+
+
 /*
- * Remove locks without discarding the lock information
+ * Remove locks without discarding the lock information.
  */
 static void
 remove_locks (void)
 {
+    TRACE (TRACE_FLOW, "remove_locks()");
+
+    /* Avoid interrupts while accessing globals the interrupt handlers might
+     * make use of.
+     */
+    SIG_beginCrSect();
+
     /* clean up simple locks (if any) */
     if (global_readlock.repository != NULL)
     {
-	lock_simple_remove (&global_readlock);
+	struct lock tmp = global_readlock;
 	global_readlock.repository = NULL;
+	lock_simple_remove (&tmp);
     }
+    /* See note in Lock_Cleanup() above.  */
+    SIG_endCrSect();
 
     /* clean up multiple locks (if any) */
-    if (locklist != (List *) NULL)
+    SIG_beginCrSect();
+    if (locklist != NULL)
     {
-	(void) walklist (locklist, unlock_proc, NULL);
-	locklist = (List *) NULL;
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
+	List *tmp = locklist;
+	locklist = NULL;
+	walklist (tmp, unlock_proc, NULL);
     }
+    SIG_endCrSect();
 }
+
+
 
 /*
  * walklist proc for removing a list of locks
@@ -346,11 +393,15 @@ unlock_proc (Node *p, void *closure)
     return (0);
 }
 
+
+
 /* Remove the lock files.  */
 static void
 lock_simple_remove (struct lock *lock)
 {
     char *tmp;
+
+    TRACE (TRACE_FLOW, "lock_simple_remove()");
 
     /* If readlock is set, the lock directory *might* have been created, but
        since Reader_Lock doesn't use SIG_beginCrSect the way that set_lock
@@ -387,6 +438,8 @@ lock_simple_remove (struct lock *lock)
 	free (tmp);
     }
 }
+
+
 
 /*
  * Create a lock file for readers
@@ -721,8 +774,13 @@ set_lockers_name (struct stat *statp)
 
 /*
  * Persistently tries to make the directory "lckdir", which serves as a
- * lock. If the create time on the directory is greater than CVSLCKAGE
+ * lock.
+ *
+ * #ifdef CVS_FUDGELOCKS
+ * If the create time on the directory is greater than CVSLCKAGE
  * seconds old, just try to remove the directory.
+ * #endif
+ *
  */
 static int
 set_lock (struct lock *lock, int will_wait)
@@ -908,7 +966,8 @@ static int lock_filesdoneproc (void *callerdat, int err,
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+lock_filesdoneproc (void *callerdat, int err, char *repository,
+                    char *update_dir, List *entries)
 {
     Node *p;
 

@@ -1,3 +1,46 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* acx_extract_cpp_defn.m4 (ACX_EXTRACT_CPP_DEFN): Remove leading and
+	trailing white space around extracted definitions.
+	(Report from Mark D. Baushke <mdb@cvshome.org>.)
+
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	Avoid including getndelim.o in $(LIBOBJ) twice.
+
+	* getndelim2.m4 (gl_GETNDELIM2): Only allow AC_LIBOBJ(getndelim2) to be
+	called once.
+	* getline.m4 (gl_GETLINE): Use gl_GETNDELIM2 rather than calling
+	AC_LIBOBJ(getndelim2) directly.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	Add the GNULIB restrict module.
+
+	* Makefile.am (EXTRA_DIST): Add restrict.m4.
+	* restrict.m4: New file.
+	* Makefile.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add getopt.m4.
+	* getopt.m4: New file from GNULIB.
+	* Makefile.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* gettext.m4: Don't check for headers we assume per the notes in
+	HACKING.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	Provide an atexit() function on systems which provide on_exit() but not
+	atexit().
+
+	* Makefile.am (EXTRA_DIST): Add atexit.m4.
+	* atexit.m4: New file.
+	* Makefile.in: Regenerated.
+
 2003-08-11  Derek Price  <derek@ximbiot.com>
 
 	* getndelim2: Update from GNULIB to eliminate warning.

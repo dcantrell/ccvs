@@ -175,9 +175,7 @@ typedef struct rcsversnode RCSVers;
 /* The type of a function passed to RCS_checkout.  */
 typedef void (*RCSCHECKOUTPROC) (void *, const char *, size_t);
 
-#ifdef __STDC__
 struct rcsbuffer;
-#endif
 
 /* What RCS_deltas is supposed to do.  */
 enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
@@ -233,7 +231,6 @@ int RCS_delete_revs (RCSNode *, char *, char *, int);
 void RCS_addaccess (RCSNode *, char *);
 void RCS_delaccess (RCSNode *, char *);
 char *RCS_getaccess (RCSNode *);
-RETSIGTYPE rcs_cleanup (void);
 void RCS_rewrite (RCSNode *, Deltatext *, char *);
 void RCS_abandon (RCSNode *);
 int rcs_change_text (const char *, char *, size_t, const char *,
@@ -244,9 +241,6 @@ void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, char *,
 void RCS_setincexc (const char *arg);
 void RCS_setlocalid (const char *arg);
 char *make_file_label (char *, char *, RCSNode *);
-char *locate_rcs ( const char *repository,
-                          const char *file,
-                          int *inattic );
 
 extern int preserve_perms;
 

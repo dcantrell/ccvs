@@ -6,7 +6,6 @@
  * specified in the README file that comes with the CVS source distribution.
  */
 
-#include <assert.h>
 
 #include "cvs.h"
 #include "getline.h"
@@ -21,8 +20,6 @@ static int title_proc (Node * p, void *closure);
 static int update_logfile_proc ( char *repository, char *filter,
                                        void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int editinfo_proc ( char *repository, char *template,
-                                 void *closure );
 static int verifymsg_proc ( char *repository, char *script,
                                   void *closure );
 
@@ -174,6 +171,10 @@ fmt_proc (Node *p, void *closure)
  * If REPOSITORY is non-NULL, process rcsinfo for that repository; if it
  * is NULL, use the CVSADM_TEMPLATE file instead.  REPOSITORY should be
  * NULL when running in client mode.
+ *
+ * GLOBALS
+ *   Editor     Set to a default value by configure and overridable using the
+ *              -e option to the CVS executable.
  */
 void
 do_editor (char *dir, char **messagep, char *repository, List *changes)
@@ -185,7 +186,6 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     char *fname;
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
-    char *editinfo_editor = NULL;
 
 #ifdef CLIENT_SUPPORT
     assert (!current_parsed_root->isremote != !repository);
@@ -196,22 +196,14 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     if (noexec || reuse_log_message)
 	return;
 
-    /* Abort creation of temp file if no editor is defined */
-    /* FIXME - why test this here?  Editor is set by configure and
-     * editinfo_editor is really set later in this function.  This test
-     * should either be deleted or moved below the call to Parse_Info().
-     */
-    if (strcmp (Editor, "") == 0 && !editinfo_editor)
-	error(1, 0, "no editor defined, must use -e or -m");
+    /* Abort before creation of the temp file if no editor is defined. */
+    if (strcmp (Editor, "") == 0)
+        error(1, 0, "no editor defined, must use -e or -m");
 
-    /* Create a temporary file */
-    /* FIXME - It's possible we should be relying on cvs_temp_file to open
-     * the file here - we get race conditions otherwise.
-     */
-    fname = cvs_temp_name ();
   again:
-    if ((fp = CVS_FOPEN (fname, "w+")) == NULL)
-	error (1, 0, "cannot create temporary file %s", fname);
+    /* Create a temporary file.  */
+    if( ( fp = cvs_temp_file( &fname ) ) == NULL )
+	error( 1, errno, "cannot create temporary file" );
 
     if (*messagep)
     {
@@ -283,26 +275,12 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     if ( CVS_STAT (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
 
-    if (editinfo_editor)
-	free (editinfo_editor);
-    editinfo_editor = (char *) NULL;
-#ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote)
-	; /* nothing, leave editinfo_editor NULL */
-    else
-#endif
-    if (repository != NULL)
-	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
-		 &editinfo_editor);
-
     /* run the editor */
-    run_setup (editinfo_editor ? editinfo_editor : Editor);
+    run_setup (Editor);
     run_arg (fname);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
 			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
-	error (editinfo_editor ? 1 : 0, retcode == -1 ? errno : 0,
-	       editinfo_editor ? "Logfile verification failed" :
-	       "warning: editor session failed");
+	error (0, retcode == -1 ? errno : 0, "warning: editor session failed");
 
     /* put the entire message back into the *messagep variable */
 
@@ -930,29 +908,7 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
     return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
 }
 
-/*
- * We choose to use the *last* match within the editinfo file for this
- * repository.  This allows us to have a global editinfo program for the
- * root of some hierarchy, for example, and different ones within different
- * sub-directories of the root (like a special checker for changes made to
- * the "src" directory versus changes made to the "doc" or "test"
- * directories.
- */
-/* ARGSUSED */
-static int
-editinfo_proc(char *repository, char *editor, void *closure)
-{
-    char **editinfo_editor = (char **)closure;
 
-    /* nothing to do if the last match is the same as this one */
-    if (*editinfo_editor && strcmp (*editinfo_editor, editor) == 0)
-	return (0);
-    if (*editinfo_editor)
-	free (*editinfo_editor);
-
-    *editinfo_editor = xstrdup (editor);
-    return (0);
-}
 
 /*  This routine is calld by Parse_Info.  It picks up the name of the
  *  message verification script.

@@ -26,20 +26,23 @@ to use:
 CVS mostly uses a consistent indentation style which looks like this:
 
 void
-foo (arg)
-    char *arg;
+foo (char *arg, int c)
 {
+    long aflag;
+
     if (arg != NULL)
     {
 	bar (arg);
 	baz (arg);
     }
+
     switch (c)
     {
 	case 'A':
 	    aflag = 1;
 	    break;
     }
+
     printf ("Literal string line 1\n"
 	    "Literal string line 2\n"
 	    "Literal string line 3\n");
@@ -63,27 +66,69 @@ portability cruft for systems on which people are actually testing and
 using new CVS releases.  Without testing, CVS will fail to be portable
 for any number of unanticipated reasons.
 
-The current consequence of that general rule seems to be that if it
-is in ANSI C and it is in SunOS4 (using /bin/cc), generally it is OK
-to use it without ifdefs (for example, assert() and void * as long as
-you add more casts to and from void * than ANSI requires).  Such constructs
-are generally portable enough, including to NT, OS/2, VMS, etc.
+CVS is now assuming a freestanding C89 compiler.  If you don't have one, you
+should find an old release of GCC that did not require a freestanding C89
+compiler to build, build that on your system, build a newer release of GCC
+if you wish, then build CVS using GCC as your freestanding C89 compiler.
 
-The following headers are assumed and included from lib/system.h: <ctype.h>,
-<pwd.h>, <signal.h>, <stdio.h>.
+A freestanding C89 compiler is guaranteed to support function prototypes,
+void *, and assert().
 
 The following headers can be assumed and are included from lib/system.h for a
 freestanding C89 implementation: <float.h>, <limits.h>, <stdarg.h>, <stddef.h>.
-We are not assuming the other standard headers listed by C89 because these four
-headers are the only headers guaranteed to be shipped with a C89 compiler
-(frestanding compiler).  We are not currently assuming that the system the
-compiler is running on provides the rest of the C89 headers.
+We are not assuming the other standard headers listed by C89 (hosted headers)
+because these four headers are the only headers guaranteed to be shipped with
+a C89 compiler (frestanding compiler).  We are not currently assuming that the
+system the compiler is running on provides the rest of the C89 headers.
+
+The following C89 hosted headers can be assumed due to their presence in UNIX
+version 7 and are included from lib/system.h: <assert.h>, <ctype.h>, <errno.h>,
+<math.h>, <setjmp.h>, <signal.h>, <stdio.h>.  <time.h> can also be assumed but
+is included via lib/xtime.h via lib/system.h to include some Autoconf magic
+which avoids including <time.h> and <sys/time.h> on systems that can't handle
+both.
+
+The following C89 headers are also assumed since we believe GCC includes them
+even on systems where it is installed as a freestanding compiler when the
+system lacks them, despite their not being required: <stdlib.h>, <string.h>.
+When the system does not lack these headers, they can sometimes not be
+standards compatible, but GCC provides a script, `fixincludes', for the purpose
+of fixing ANSI conformance problems and we think we can rely on asking users to
+either use GCC or run this script to fix conformance problems manually.  A
+GNULIB developer has made a statement that if this turns out to be a problem,
+GNULIB <stdlib.h> and <string.h> substitutes could be included in GNULIB, so if
+we discover the problem, this should be discussed on <bug-gnulib@gnu.org>.
+
+<sys/types.h> can be assumed despite a lack of a presence in even C99, since
+it has been around nearly forever and noone has ever complained about our code
+assuming its existance.
+
+I hope to include the C99 <stdbool.h> substitute from GNULIB soon.
+
+CVS has been assuming <pwd.h> for some time.  I am unsure of the rationale.
 
 Please do not use multi-line strings.  Despite their common acceptance by many
 compilers, they are not part of the ANSI C specification.  As of GCC version
 3.3, they are no longer supported.  See the Indentation Style section above for
 an example of a literal string which is not multi-line but which will print
 multiple lines.
+
+* Other style issues
+
+When composing header files, do not declare function prototypes using the
+`extern' storage-class identifier.  Under C89, there is no functional
+difference between a function declaration with and without `extern', unless the 
+function is declared `static'.  This is NOT the case for global variables.
+Global variables declared in header files MUST be declared `extern'.  For
+example:
+
+/* Global variables */
+extern int foo;
+extern char *bar;
+
+/* Function declarations */
+int make_foo(void);
+char *make_bar(int _foobar);
 
 * Run-time behaviors
 
@@ -214,6 +259,7 @@ Anyone can add themselves to the following mailing lists:
     test-results.  The only messages sent to this list are sent
       automatically, daily, by a script which runs "make check"
       and "make remotecheck" on the master CVS sources.
+
 To subscribe to dev, cvs, or test-results, send
 a message to "<list>-subscribe@ccvs.cvshome.org" or visit
 http://ccvs.cvshome.org/servlets/ProjectMailingListList and follow the

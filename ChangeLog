@@ -1,3 +1,258 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (AM_INIT_AUTOMAKE): Require Automake 1.7.5.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add some notes on Autoconf requirements.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerated.
+
+2003-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.am (ACLOCAL_AMFLAGS): autoreconf does not understand
+	what to do with $(srcdir) so remove it -- autoreconf needs to be
+	done in the srcdir in order to regenerate all the files properly
+	in any case.
+
+	* configure.in (AM_GNU_GETTEXT_VERSION): Add to allow autoreconf
+	to regenerate files instead of using the incantation:
+	'aclocal -I m4 && autoconf && automake && autoheader' to do the
+	same thing as 'autoreconf' should do.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that we're better at detecting ZLIB versions now.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* aclocal.m4, configure: Regenerated.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that server ignores `-l' rather than rejecting it with a
+	fatal error.
+
+2003-10-31  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note Cygwin as an option for building CVS under Windows.
+
+2003-10-31  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: s/cvsgui/wincvs/.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Move case sensitivity test to the enable-* section and
+	allow override via command line switch.
+	* NEWS: Update last news item to reflect new command line switch.
+	* configure, config.h.in: Regenerated.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add new test for a case insensitive file system.
+	* configure, config.h.in: Regenerated.
+	* NEWS: Note the above change.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Update version to 1.12.2.1.
+	* NEWS (Changes since 1.12.2): New section.
+	* configure: Regenerated.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Update version to 1.12.2.
+	* configure: Regenerated.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: /PROTO\.h/d;.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Update recent text about joins to reflect new behavior.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note that release of a project subdir does not remove the entry
+	from `./CVS/Entries'.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note things like plugging memory leaks and code cleanup and
+	reorganization under misc.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove obsolete bug report.
+	(Patch from Paul Edwards <somewhere in Australia>.)
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove obsolete bug report.
+	(Patch from Paul Edwards <somewhere in Australia>.)
+
+2003-10-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: Note behavior change for cvs update -jrev1 -jrev2.
+
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that double include of getndelim2.o problem is gone from
+	OS X.
+	* srclist.txt (getline, getndelim2): Note divergence from GNULIB.
+	* aclocal.m4, configure: Regenerated.
+
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that we build on systems with gettext installed now.
+
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note Mark's recent admin -m fix.
+
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note the @email{} and @url{} fixes as misc documentation fixes.
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note POSIX 1003.1-2001 compatibility of docs and scripts.
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* BUGS: Suggest 'diff -C2', not 'diff -c2'.
+	* FAQ: Suggest 'sort -k 1.2', not 'sort +0.1'.
+	* depcomp: Sync to the depcomp shipped with Automake 1.7.8, as
+	it has the bug fixed and that's better than maintaining our
+	own depcomp.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add HPPA 2.0 running HP-UX 10.20 for CVS 1.11.9.
+	(Report from Tom Kuiper <kuiper@DSNra.JPL.NASA.gov>.)
+
+2003-10-09  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Other style issues): Note the dev team's preference for
+	consistency in the use of the `extern' storage-class identifier.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note history reporting fix.
+
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* TESTS: Add pointer to debug_check_log script.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Improve syntax and punctuation of my last entry.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note history fix for clients requesting `P' records.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note case insensitive file lookup fix.  Note getpass fix.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	Add the GNULIB restrict module.
+
+	* configure.in: Add call to gl_C_RESTRICT.
+	* srclist.txt: Add m4/restrict.m4.
+	* aclocal.m4, configure, config.h.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Remove check for getopt function.  Add call to
+	gl_GETOPT.
+	* srclist.txt: Add entries for GNULIB getopt module.
+	* aclocal.m4, config.h.in, configure: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	Assume headers in m4/gettext.m4 per notes in HACKING.
+
+	* aclocal.m4: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Remove call to AC_TYPE_SIZE_T since size_t can be
+	assumed via our C89 assumption of stddef.h.  Don't check for errno.h
+	or string.h.  We are assuming these headers.
+	* HACKING (Portability): Add a few more notes on our header assumptions
+	based on some comments from Paul Eggert <eggert@cs.ucla.edu> on the
+	GNULIB list.
+	* config.h.in, configure.in: Regenerated.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	Provide an atexit() function on systems which provide on_exit() but not
+	atexit().
+
+	* configure.in: Add a call to gl_FUNC_ATEXIT.
+	* srclist.txt: List atexit sources.
+	* aclocal.m4, config.h.in, configure: Regenerated.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note recent fix of the potential segfault during a diff.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Indentation style): Put an ANSI function prototype in the
+	indentation style example.
+	(Portability): Add a few more notes on assuming a freestanding C89
+	compiler and what that means.
+
+2003-09-26  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Note bug in options passed to diff via `cvs diff'.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Move last blurb into an item with more detail.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Add the recent checkoutlist fix as "Other miscellaneous
+	bug fixes."
+
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal of the workaround for a bug in GLIBC prior to
+	GLIBC 2.0.7 and advise upgrading GLIBC rather than depending on silly
+	hacks that don't fix other programs installed on the system.
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note removal of CVSROOT/editinfo functionality.
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Remove typo in recent getpass() note.
+
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* NEWS: Note client/server messages have real command name, client/
+	server updates get logged in history file, history file has "P"
+	record type.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Portability): Add further comments about which headers we
+	can use.
+
 2003-08-12  Derek Price  <derek@ximbiot.com>
 
 	* aclocal.m4, configure: Regenerated.

@@ -16,7 +16,6 @@
 /* The routines in this file are the interface between the CVS
    client/server support and the zlib compression library.  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "buffer.h"
 

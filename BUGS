@@ -49,40 +49,13 @@ file's description.
   users who try to add the same directory at nearly the same time.
 
 
-* The following bug was reported against CVS 1.9:
-
-    Create a module named test with a file named test in it.
-
-      cactus:sfavor> cvs get test
-      cvs checkout: Updating test
-      U test/test
-      cactus:sfavor> cd test
-      cactus:sfavor> cvs get test
-      cvs checkout: cannot chdir to test: Not a directory
-      cvs checkout: ignoring module test
-      Exit 1
-      cactus:sfavor> cvs update
-      cvs update: Updating .
-      rcs.c:2139: failed assertion `rev == NULL || isdigit (*rev)'
-      Abort (core dumped)
-      Exit 134
-
-
-* From: billr@mpd.tandem.com (Bill Robertson)
-  Subject: Problem with rtag and the -D option
-  Date: Fri, 17 Mar 1995 10:53:29 -0600 (CST)
-
-  I have been trying to use the -D option to specify a date for tagging, but
-  rtag does not recognize the -D option. It is documented to do so and I've
-  tested the use of -D with cvs update and cvs diff and it works fine there.
-
 * From: "Charles M. Hannum" <mycroft@ai.mit.edu>
   To: info-cvs@prep.ai.mit.edu
   Subject: Still one more bug
   Date: Sat, 25 Feb 1995 17:01:15 -0500
   
   mycroft@duality [1]; cd /usr/src/lib/libc
-  mycroft@duality [1]; cvs diff -c2 '-D1 day ago' -Dnow
+  mycroft@duality [1]; cvs diff -C2 '-D1 day ago' -Dnow
   cvs server: Diffing .
   cvs server: Diffing DB
   cvs [server aborted]: could not chdir to DB: No such file or directory
@@ -219,6 +192,15 @@ commit, probably milliseconds or seconds, for this symptom to be noticed.  One
 suspected cause is that one of the calls to sleep_past() is being called with
 an incorrect value, though this does not explain why symptoms have only been
 noticed under BSDI.
+
+* Spaces in arguments to `cvs diff' are currently split on spaces and tabs
+before being passed to diff.  This can often cause diff to abort since it can
+no longer interpret its options string and if it can, coincidentally,
+interpret its option string, then the problem may be output in unexpected
+formats.
+
+* `release' of a project subdir does not remove the `subdir' entry from
+  `./CVS/Entries'.
 
 * Status
 
