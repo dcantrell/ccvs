@@ -992,6 +992,11 @@
 /* Define to force lib/regex.c to define re_comp et al. */
 #define _REGEX_RE_COMP 1
 
+/* Define for Solaris 2.5.1 so uint32_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   #define below would cause a syntax error. */
+#undef _UINT32_T
+
 /* Enable extensions on Solaris.  */
 #ifndef __EXTENSIONS__
 # undef __EXTENSIONS__

@@ -1,3 +1,9 @@
+2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* readlink.m4, xreadlink.m4: New from GNULIB.
+	* uint32_t.m4: Update from GNULIB.
+	* gnulib.m4: Regenerated.
+
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* getpass.m4, setenv.m4: Update from GNULIB.

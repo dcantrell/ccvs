@@ -528,6 +528,10 @@ SOURCE=.\lib\regex.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\readlink.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\root.h
 # End Source File
 # Begin Source File
@@ -613,6 +617,14 @@ SOURCE=.\lib\xalloc.h
 # Begin Source File
 
 SOURCE=.\lib\xgetcwd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xreadlink.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\xreadlink.h
 # End Source File
 # Begin Source File
 

@@ -32,6 +32,7 @@ copy_file (const char *from, const char *to)
     struct stat sb;
     struct utimbuf t;
     int fdin, fdout;
+    ssize_t rsize;
 
     TRACE ( 1, "copy(%s,%s)", from, to );
 
@@ -40,9 +41,9 @@ copy_file (const char *from, const char *to)
 
     /* If the file to be copied is a link or a device, then just create
        the new link or device appropriately. */
-    if (islink (from))
+    if ((rsize = islink (from)) > 0)
     {
-	char *source = xreadlink (from);
+	char *source = Xreadlink (from, rsize);
 	symlink (source, to);
 	free (source);
 	return;
@@ -127,20 +128,20 @@ isdir (const char *file)
 
 
 /*
- * Returns true if the argument file is a symbolic link.
+ * Returns 0 if the argument file is not a symbolic link.
+ * Returns size of the link if it is a symbolic link.
  */
-bool
+ssize_t
 islink (const char *file)
 {
+    ssize_t retsize = 0;
 #ifdef S_ISLNK
     struct stat sb;
 
-    if (CVS_LSTAT (file, &sb) < 0)
-	return false;
-    return S_ISLNK (sb.st_mode);
-#else
-    return false;
+    if ((CVS_LSTAT (file, &sb) >= 0) && S_ISLNK (sb.st_mode))
+	retsize = sb.st_size;
 #endif
+    return retsize;
 }
 
 
@@ -600,8 +601,8 @@ xcmp (const char *file1, const char *file2)
     if (S_ISLNK (sb1.st_mode) && S_ISLNK (sb2.st_mode))
     {
 	int result;
-	buf1 = xreadlink (file1);
-	buf2 = xreadlink (file2);
+	buf1 = Xreadlink (file1, sb1.st_size);
+	buf2 = Xreadlink (file2, sb2.st_size);
 	result = (strcmp (buf1, buf2) == 0);
 	free (buf1);
 	free (buf2);
@@ -770,69 +771,6 @@ FILE *cvs_temp_file (char **filename)
     *filename = fn;
     return fp;
 }
-
-
-
-#ifdef HAVE_READLINK
-/* char *
- * xreadlink ( const char *link )
- *
- * Like the X/OPEN and 4.4BSD readlink() function, but allocates and returns
- * its own buf.
- *
- * INPUTS
- *  link	The original path.
- *
- * RETURNS
- *  The resolution of the final symbolic link in the path.
- *
- * ERRORS
- *  This function exits with a fatal error if it fails to read the link for
- *  any reason.
- */
-#define MAXSIZE (SIZE_MAX < SSIZE_MAX ? SIZE_MAX : SSIZE_MAX)
-
-char *
-xreadlink (const char *link)
-{
-    char *file = NULL;
-    size_t buflen = 128;
-
-    /* Get the name of the file to which `from' is linked. */
-    while (1)
-    {
-	ssize_t r;
-	size_t link_name_len;
-
-	file = xrealloc (file, buflen);
-	r = readlink (link, file, buflen);
-	link_name_len = r;
-
-	if (r < 0
-#ifdef ERANGE
-	    /* AIX 4 and HP-UX report ERANGE if the buffer is too small. */
-	    && errno != ERANGE
-#endif
-	    )
-	    error (1, errno, "cannot readlink %s", link);
-
-	/* If there is space for the NUL byte, set it and return. */
-	if (r >= 0 && link_name_len < buflen)
-	{
-	    file[link_name_len] = '\0';
-	    return file;
-	}
-
-	if (buflen <= MAXSIZE / 2)
-	    buflen *= 2;
-	else if (buflen < MAXSIZE)
-	    buflen = MAXSIZE;
-	else
-	    /* Our buffer cannot grow any bigger.  */
-	    error (1, ENAMETOOLONG, "cannot readlink %s", link);
-    }
-}
-#endif /* HAVE_READLINK */
 
 
 

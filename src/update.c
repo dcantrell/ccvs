@@ -2695,8 +2695,10 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 
     if (rev1 == NULL)
     {
-	if (islink (finfo->file))
-	    rev1_symlink = xreadlink (finfo->file);
+	ssize_t rsize;
+
+	if ((rsize = islink (finfo->file)) > 0)
+	    rev1_symlink = Xreadlink (finfo->file, rsize);
 	else
 	{
 # ifdef HAVE_STRUCT_STAT_ST_RDEV
@@ -2773,8 +2775,10 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
     /* Obtain file information for REV2. */
     if (rev2 == NULL)
     {
-	if (islink (finfo->file))
-	    rev2_symlink = xreadlink (finfo->file);
+	ssize_t rsize;
+
+	if ((rsize = islink (finfo->file)) > 0)
+	    rev2_symlink = Xreadlink (finfo->file, rsize);
 	else
 	{
 # ifdef HAVE_STRUCT_STAT_ST_RDEV
