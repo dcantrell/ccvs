@@ -1,3 +1,8 @@
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Gratuitous reformatting.
+	* sanity.sh: Misc write proxy accommodations.
+
 2004-07-11  Derek Price  <derek@ximbiot.com>
 
 	* log.c (log_fileproc, log_expand_revlist, log_fix_singledate,

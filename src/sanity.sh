@@ -6446,25 +6446,26 @@ ${QUESTION} sdir"
 	  cd first-dir
 	  dotest dirs2-9 "${testcvs} -q tag -b br" "T sdir/file1"
 	  rm -r sdir/CVS
+
 	  if $remote; then
-	    # Cute little quirk of val-tags; if we don't recurse into
-	    # the directories where the tag is defined, val-tags won't
-	    # get updated.
-	    dotest_fail dirs2-10r "${testcvs} update -d -r br" \
-"${QUESTION} sdir
-${SPROG} \[update aborted\]: no such tag br"
-	    dotest dirs2-10ar \
-"$testcvs -q rdiff -u -r 1.1 -r br first-dir/sdir/file1"
-	    dotest_fail dirs2-10-againr "${testcvs} update -d -r br" \
-"${QUESTION} sdir
-${SPROG} update: Updating \.
-${SPROG} update: Updating sdir
-${CPROG} update: move away \`sdir/file1'; it is in the way
+	    # val-tags used to have a cute little quirk; if an update didn't
+	    # recurse into the directories where the tag is defined, val-tags
+	    # wouldn't get updated.  This is no longer a problem as of 1.12.10.
+	    dotest_fail dirs2-10-againr "$testcvs update -d -r br" \
+"$QUESTION sdir
+$SPROG update: Updating \.
+$SPROG update: Updating sdir
+$CPROG update: move away \`sdir/file1'; it is in the way
 C sdir/file1"
 	  else
-	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
-"${CPROG} update: in directory \`sdir':
-${CPROG} \[update aborted\]: there is no version here; do \`${CPROG} checkout' first"
+	    dotest dirs2-10 "${testcvs} update -d -r br" \
+"$SPROG update: Updating \.
+$QUESTION sdir"
+# This is what used to happen.  I'm not sure why it changed with 1.12.10, but
+# as near as I can tell from the comments in update_direntproc, the new
+# behavior was the intended behavior.
+#"$CPROG update: in directory \`sdir':
+#$CPROG \[update aborted\]: there is no version here; do \`$CPROG checkout' first"
 	  fi
 	  cd ../..
 
@@ -11642,7 +11643,9 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd ..;  rm -r 1
 
 	  # Clean up.
-	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir second-dir third-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir \
+			     $CVSROOT_DIRNAME/third-dir
 	  ;;
 
 
@@ -11654,7 +11657,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 	  # First just set up a directory first-dir and a file file1 in it.
 	  mkdir 1; cd 1
 
-	  dotest modules3-0 "${testcvs} -q co -l ." ''
+	  dotest modules3-0 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest modules3-1 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -11808,7 +11811,8 @@ initial revision: 1\.1"
 
 	  dokeep
 	  cd ..; rm -r 2
-	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir second-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
+			     $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 
@@ -12305,6 +12309,7 @@ Are you sure you want to release (and delete) directory .mydir.: "
 
 	  dokeep
 	  cd ..
+	  rm -r 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir \
 			     $CVSROOT_DIRNAME/*.sh
 	  ;;
@@ -12388,7 +12393,7 @@ ${CPROG} \[checkout aborted\]: cannot expand modules"
 
 	  dokeep
 	  cd ../..
-	  rm -rf 1
+	  rm -r 1
 	  ;;
 
 
@@ -13590,11 +13595,10 @@ U dir/dir2/dir2d2/sub2d2/file2"
 
 	  dokeep
 	  restore_adm
-          rm -rf CVS
 
 	  # remove our junk
 	  cd ..
-	  rm -rf 1
+	  rm -r 1
 	  modify_repo rm -rf $CVSROOT_DIRNAME/1mod $CVSROOT_DIRNAME/1mod-2 \
 			     $CVSROOT_DIRNAME/2mod $CVSROOT_DIRNAME/2mod-2 \
 			     $CVSROOT_DIRNAME/mod1 $CVSROOT_DIRNAME/mod1-2 \
@@ -13774,7 +13778,7 @@ U ${TESTDIR}/1/file1"
 	  dotest abspath-2b "cat ${TESTDIR}/1/CVS/Repository" "mod1"
 
 	  # Done.  Clean up.
-	  rm -r ${TESTDIR}/1
+	  rm -r $TESTDIR/1
 
 
 	  # Now try in a subdirectory.  We're not covering any more
@@ -13786,11 +13790,11 @@ U ${TESTDIR}/1/file1"
 	  # I am unsure that this wasn't the behavior prior to CVS 1.9, but the
 	  # comment that used to be here leads me to believe it was not.
 	  if $remote; then :; else
-	    dotest abspath-3.1 "${testcvs} -q co -d ${TESTDIR}/1/2 mod1" \
+	    dotest abspath-3.1 "$testcvs -q co -d $TESTDIR/1/2 mod1" \
 "U $TESTDIR/1/2/file1"
 	    rm -r $TESTDIR/1
 	  fi
-	  dotest abspath-3.2 "${testcvs} -q co -d 1/2 mod1" \
+	  dotest abspath-3.2 "$testcvs -q co -d 1/2 mod1" \
 "U 1/2/file1"
 	  rm -r 1
 
@@ -13846,18 +13850,18 @@ U ${TESTDIR}/1/mod2/file2"
 	  dotest abspath-5c "cat ${TESTDIR}/1/mod1/CVS/Repository" "mod1"
 	  dotest abspath-5d "cat ${TESTDIR}/1/mod2/CVS/Repository" "mod2"
 	  # Done.  Clean up.
-	  rm -rf ${TESTDIR}/1
+	  rm -rf $TESTDIR/1
 
 
 	  # Try checking out the top-level module.
 	  if $remote; then
-	    dotest abspath-6ar "${testcvs} co -d 1 ." \
-"${SPROG} checkout: Updating 1
-${SPROG} checkout: Updating 1/CVSROOT
-${DOTSTAR}
-${SPROG} checkout: Updating 1/mod1
+	    dotest abspath-6ar "$testcvs co -d 1 ." \
+"$SPROG checkout: Updating 1
+$SPROG checkout: Updating 1/CVSROOT
+$DOTSTAR
+$SPROG checkout: Updating 1/mod1
 U 1/mod1/file1
-${SPROG} checkout: Updating 1/mod2
+$SPROG checkout: Updating 1/mod2
 U 1/mod2/file2"
 	  else
 	    dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
@@ -16953,6 +16957,15 @@ Info files are the hook files, verifymsg, taginfo, commitinfo, etc\."
 	  dotest info-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\." \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
 compatibility with the new info file format strings (add a temporary .1. in
 all info files after each .%. which doesn.t represent a literal percent)
@@ -16962,6 +16975,15 @@ leisure\.
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}"
 	  echo line0 >>file1
 	  dotest info-6c "$testcvs -q -sOTHER=foo ci -m mod-it" \
+"$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+$SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
+$SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\." \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 $SPROG commit: warning:  Set to use deprecated info format strings\.  Establish
@@ -17742,7 +17764,7 @@ EOF
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
-$SPROG} commit: Rebuilding administrative file database" \
+$SPROG commit: Rebuilding administrative file database" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $TESTDIR/cvsroot/CVSROOT/taginfo,v  <--  taginfo
@@ -17876,7 +17898,7 @@ tag1 ? del first-dir/sdir"
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  dotest config-3a "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG server: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
@@ -17888,7 +17910,7 @@ $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
-"$SPROG server: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
@@ -25271,8 +25293,8 @@ $SPROG update: \`file' is no longer in the repository"
 	      $CVS_RSH $remotehost "cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
 		$CVSROOT_DIRNAME/first-dir/FILE,v"
 	    else
-	      cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
-		$CVSROOT_DIRNAME/first-dir/FILE,v
+	      modify_repo cp $CVSROOT_DIRNAME/first-dir/FiLe,v \
+			     $CVSROOT_DIRNAME/first-dir/FILE,v
 	    fi
 
 	    if $client_sensitive; then
@@ -28453,62 +28475,67 @@ ${SPROG} update: Updating first/subdir"
 	  # for a central server.
 	  #
 	  # These tests are only meaningful in client/server mode.
-	  if $remote; then
-	    PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
-	    PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
-	    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
-	    SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+	  if $remote; then :; else
+	    continue
+	  fi
 
-	    # Initialize the primary repository
-	    dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
-	    mkdir writeproxy; cd writeproxy
-	    mkdir primary; cd primary
-	    dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
-	    cd CVSROOT
-	    cat >>loginfo <<EOF
+	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+
+	  # Initialize the primary repository
+	  dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	  mkdir writeproxy; cd writeproxy
+	  mkdir primary; cd primary
+	  dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	  cd CVSROOT
+	  cat >>loginfo <<EOF
 ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 EOF
-	    cat >>config <<EOF
+	  cat >>config <<EOF
 PrimaryServer=$PRIMARY_CVSROOT
 EOF
-	    dotest writeproxy-init-3 \
+	  dotest writeproxy-init-3 \
 "$testcvs -Q ci -mconfigure-writeproxy"
 
-	    # And now the secondary.
-	    rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+	  # And now the secondary.
+	  rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 
-	    # Wrap the CVS server to allow --primary-root to be set by the
-	    # secondary.
-	    cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
-#! /bin/sh
+	  CVS_SERVER_save=$CVS_SERVER
+	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
+	  CVS_SERVER=$CVS_SERVER_secondary
+
+	  # Wrap the CVS server to allow --primary-root to be set by the
+	  # secondary.
+	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
+#! $TESTSHELL
 export CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
-$CVS_SERVER --primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
+$servercvs --primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
 EOF
-	    cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
-#! /bin/sh
+	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
+#! $TESTSHELL
 #CVS_SERVER_LOG=/tmp/cvsprimarylog
-$CVS_SERVER "\$@"
+$servercvs "\$@"
 EOF
 
-	    chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
-	              $TESTDIR/writeproxy-primary-wrapper
-	    CVS_SERVER_save=$CVS_SERVER
-	    CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
-	    CVS_SERVER=$CVS_SERVER_secondary
+	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
+	            $TESTDIR/writeproxy-primary-wrapper
 
-	    # Checkout from secondary
-	    #
-	    # It may look like we are checking out from the primary here, but
-	    # the deciding factor is the --primary-root translation above.
-	    # If the primary and secondary hostname were different, this would
-	    # be more obvious.
-	    #
-	    # For now, move the primary root out of the way to satisfy
-	    # ourselves that the data is coming from the secondary.
-	    mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
-	    cd ../..
-	    mkdir secondary; cd secondary
-	    dotest writeproxy-1 "$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
+	  # Checkout from secondary
+	  #
+	  # It may look like we are checking out from the primary here, but
+	  # the deciding factor is the --primary-root translation above.
+	  # If the primary and secondary hostname were different, this would
+	  # be more obvious.
+	  #
+	  # For now, move the primary root out of the way to satisfy
+	  # ourselves that the data is coming from the secondary.
+	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
+	  cd ../..
+	  mkdir secondary; cd secondary
+	  dotest writeproxy-1 "$testcvs -qd$PRIMARY_CVSROOT co CVSROOT" \
 "U CVSROOT/checkoutlist
 U CVSROOT/commitinfo
 U CVSROOT/config
@@ -28525,82 +28552,83 @@ U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
 
-	    # Confirm data present
-	    cd CVSROOT
-	    dotest writeproxy-2 "grep rsync loginfo" \
+	  # Confirm data present
+	  cd CVSROOT
+	  dotest writeproxy-2 "grep rsync loginfo" \
 "ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
-	    dotest writeproxy-3 "grep PrimaryServer config" \
+	  dotest writeproxy-3 "grep PrimaryServer config" \
 "${DOTSTAR}
 PrimaryServer=$PRIMARY_CVSROOT"
 
-	    # Checkin to secondary
-	    cd ..
-	    dotest writeproxy-4 "$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
-	    cd top
-	    mkdir firstdir
+	  # Checkin to secondary
+	  cd ..
+	  dotest writeproxy-4 "$testcvs -Qd$PRIMARY_CVSROOT co -ldtop ."
+	  cd top
+	  mkdir firstdir
 
-	    # Have to move the primary root back before we can perform write
-	    # operations.
-	    mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+	  # Have to move the primary root back before we can perform write
+	  # operations.
+	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
-	    dotest writeproxy-5 "$testcvs -Q add firstdir"
-	    cd firstdir
-	    echo now you see me >file1
-	    dotest writeproxy-6 "$testcvs -Q add file1"
-	    dotest writeproxy-6a "grep file1 CVS/Entries >/dev/null"
-	    dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
+	  dotest writeproxy-5 "$testcvs -Q add firstdir"
+	  cd firstdir
+	  echo now you see me >file1
+	  dotest writeproxy-6 "$testcvs -Q add file1"
+	  dotest writeproxy-6a "grep file1 CVS/Entries >/dev/null"
+	  dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
 
-	    # Make sure the sync took place
-	    dotest writeproxy-7a "$testcvs -Q up"
+	  # Make sure the sync took place
+	  dotest writeproxy-7a "$testcvs -Q up"
 
-	    CVS_SERVER=$CVS_SERVER_save
-	    # Checkout from primary
-	    cd ../../../primary
-	    dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
+	  CVS_SERVER=$servercvs
+	  # Checkout from primary
+	  cd ../../../primary
+	  dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
 "U firstdir/file1"
 
-	    # Confirm data present
-	    #  - This test indirectly confirms that the commit did not take
-	    #    place on the secondary.
-	    cd firstdir
-	    dotest writeproxy-9 "cat file1" "now you see me"
+	  # Confirm data present
+	  #  - This test indirectly confirms that the commit did not take
+	  #    place on the secondary.
+	  cd firstdir
+	  dotest writeproxy-9 "cat file1" "now you see me"
 
-	    # Commit to primary
-	    echo now you see me again >file1
-	    dotest writeproxy-10 "$testcvs -Q ci -medit file1"
+	  # Commit to primary
+	  echo now you see me again >file1
+	  dotest writeproxy-10 "$testcvs -Q ci -medit file1"
 
-	    CVS_SERVER=$CVS_SERVER_secondary
-	    # Update from secondary
-	    cd ../../secondary/top/firstdir
-	    dotest writeproxy-11 "$testcvs -q up" \
+	  CVS_SERVER=$CVS_SERVER_secondary
+	  # Update from secondary
+	  cd ../../secondary/top/firstdir
+	  dotest writeproxy-11 "$testcvs -q up" \
 "U file1"
 
-	    # Confirm data present
-	    dotest writeproxy-12 "cat file1" "now you see me again"
+	  # Confirm data present
+	  dotest writeproxy-12 "cat file1" "now you see me again"
 
-	    # Test a failing rsync
-	    cd ../../CVSROOT
-	    sed \$d <loginfo >tmp
-	    mv tmp loginfo
-	    echo >>loginfo \
+	  # Test a failing rsync
+	  cd ../../CVSROOT
+	  sed \$d <loginfo >tmp
+	  mv tmp loginfo
+	  echo >>loginfo \
 "ALL echo >&2 'Im rsync and I encountered an error!'; cat >/dev/null; exit 1"
-	    dotest writeproxy-init-4 "$testcvs -Q ci -mbreak-rsync"
-	    echo "# a comment" >>loginfo
-	    dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync" \
+	  dotest writeproxy-init-13 "$testcvs -Q ci -mbreak-rsync" \
 "Im rsync and I encountered an error!"
-	    touch loginfo
-	    dotest_fail writeproxy-14 "$testcvs up" \
+	  echo "# a comment" >>loginfo
+	  dotest writeproxy-13 "$testcvs -Q ci -mtest-broken-rsync" \
+"Im rsync and I encountered an error!"
+	  touch loginfo
+	  dotest_fail writeproxy-14 "$testcvs up" \
 "$SPROG update: Updating \.
-$SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
+$SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSROOT_DIRNAME/CVSROOT/loginfo,v"
 
-	    dokeep
-	    cd ../../..
-	    rm -r writeproxy
-	    rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
-	    rm $TESTDIR/writeproxy-secondary-wrapper \
-	       $TESTDIR/writeproxy-primary-wrapper
-	    CVS_SERVER=$CVS_SERVER_save
-	  fi
+	  dokeep
+	  cd ../../..
+	  rm -r writeproxy
+	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  rm $TESTDIR/writeproxy-secondary-wrapper \
+	     $TESTDIR/writeproxy-primary-wrapper
+	  CVS_SERVER=$CVS_SERVER_save
+	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  ;;
 
 
@@ -31621,7 +31649,7 @@ You have \[0\] altered files in this repository\."
 		:;
 	    else
 		echo "\`$file' and \`$TESTDIR/`basename $file`-clean' differ." \
-		     >&2
+		     >>$LOGFILE
 		problem=:
 	    fi
 	done
@@ -31695,13 +31723,10 @@ echo "OK, all tests completed."
 # End of TODO list.
 
 # Exit if keep set
-if $keep; then
-  echo "Keeping ${TESTDIR} and exiting due to -k (keep) option."
-  exit 0
-fi
+dokeep
 
 # Remove the test directory, but first change out of it.
-cd `dirname ${TESTDIR}`
-rm -rf ${TESTDIR}
+cd `dirname $TESTDIR`
+rm -rf $TESTDIR
 
 # end of sanity.sh
