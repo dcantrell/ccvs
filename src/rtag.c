@@ -569,7 +569,7 @@ rtag_fileproc (callerdat, finfo)
 	 * the branch.  Use a symbolic tag for that.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : numtag;
-	retcode = RCS_settag(rcsfile->path, symtag, numtag);
+	retcode = RCS_settag(rcsfile, symtag, numtag);
     }
     else
     {
@@ -617,7 +617,7 @@ rtag_fileproc (callerdat, finfo)
 	    }
 	    free (oversion);
 	}
-	retcode = RCS_settag(rcsfile->path, symtag, rev);
+	retcode = RCS_settag(rcsfile, symtag, rev);
     }
 
     if (retcode != 0)
@@ -667,7 +667,7 @@ rtag_delete (rcsfile)
 	return (0);
     free (version);
 
-    if ((retcode = RCS_deltag(rcsfile->path, symtag, 1)) != 0)
+    if ((retcode = RCS_deltag(rcsfile, symtag, 1)) != 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,

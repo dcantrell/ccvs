@@ -1773,8 +1773,8 @@ join_file (finfo, vers)
     {
 	int retcode;
 	/* The file is up to date.  Need to check out the current contents.  */
-	retcode = RCS_fast_checkout (vers->srcfile, "", vers->vn_user, NULL,
-				     RUN_TTY, 0);
+	retcode = RCS_fast_checkout (vers->srcfile, finfo->file,
+				     vers->vn_user, NULL, RUN_TTY, 0);
 	if (retcode != 0)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", finfo->fullname);

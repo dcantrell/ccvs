@@ -42,24 +42,11 @@
    error (and an error message has been printed), or zero for success.  */
 
 int
-RCS_settag(path, tag, rev)
+RCS_exec_settag(path, tag, rev)
     const char *path;
     const char *tag;
     const char *rev;
 {
-    /* FIXME: This check should be moved to RCS_check_tag.  There is no
-       reason for it to be here.  */
-    if (strcmp (tag, TAG_BASE) == 0
-	|| strcmp (tag, TAG_HEAD) == 0)
-    {
-	/* Print the name of the tag might be considered redundant
-	   with the caller, which also prints it.  Perhaps this helps
-	   clarify why the tag name is considered reserved, I don't
-	   know.  */
-	error (0, 0, "Attempt to add reserved tag name %s", tag);
-	return 1;
-    }
-
     run_setup ("%s%s -x,v/ -q -N%s:%s", Rcsbin, RCS, tag, rev);
     run_arg (path);
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
@@ -68,7 +55,7 @@ RCS_settag(path, tag, rev)
 /* NOERR is 1 to suppress errors--FIXME it would
    be better to avoid the errors or some cleaner solution.  */
 int
-RCS_deltag(path, tag, noerr)
+RCS_exec_deltag(path, tag, noerr)
     const char *path;
     const char *tag;
     int noerr;
@@ -80,7 +67,7 @@ RCS_deltag(path, tag, noerr)
 
 /* set RCS branch to REV */
 int
-RCS_setbranch(path, rev)
+RCS_exec_setbranch(path, rev)
     const char *path;
     const char *rev;
 {
@@ -92,7 +79,7 @@ RCS_setbranch(path, rev)
 /* Lock revision REV.  NOERR is 1 to suppress errors--FIXME it would
    be better to avoid the errors or some cleaner solution.  */
 int
-RCS_lock(path, rev, noerr)
+RCS_exec_lock(path, rev, noerr)
     const char *path;
     const char *rev;
     int noerr;
@@ -105,7 +92,7 @@ RCS_lock(path, rev, noerr)
 /* Unlock revision REV.  NOERR is 1 to suppress errors--FIXME it would
    be better to avoid the errors or some cleaner solution.  */
 int
-RCS_unlock(path, rev, noerr)
+RCS_exec_unlock(path, rev, noerr)
     const char *path;
     const char *rev;
     int noerr;
@@ -145,14 +132,13 @@ RCS_merge(path, options, rev1, rev2)
 }
 
 /* Check out a revision from RCSFILE into WORKFILE, or to standard output
-   if WORKFILE is NULL.  If WORKFILE is "", let RCS pick the working file
-   name.  TAG is the tag to check out, or NULL if one should check out
-   the head of the default branch.  OPTIONS is a string such as
-   -kb or -kkv, for keyword expansion options, or NULL if there are none.
-   If WORKFILE is NULL, run regardless of noexec; if non-NULL, noexec
-   inhibits execution.  SOUT is what to do with standard output
-   (typically RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on top
-   of an existing file.  */
+   if WORKFILE is NULL.  TAG is the tag to check out, or NULL if one
+   should check out the head of the default branch.  OPTIONS is a string
+   such as -kb or -kkv, for keyword expansion options, or NULL if there
+   are none.  If WORKFILE is NULL, run regardless of noexec; if non-NULL,
+   noexec inhibits execution.  SOUT is what to do with standard output
+   (typically RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on
+   top of an existing file.  */
 int
 RCS_checkout (rcsfile, workfile, tag, options, sout, flags)
     char *rcsfile;
@@ -171,7 +157,7 @@ RCS_checkout (rcsfile, workfile, tag, options, sout, flags)
     if (flags & RCS_FLAGS_FORCE)
 	run_arg ("-f");
     run_arg (rcsfile);
-    if (workfile != NULL && workfile[0] != '\0')
+    if (workfile != NULL)
 	run_arg (workfile);
     return run_exec (RUN_TTY, sout, RUN_TTY,
                      workfile == NULL ? (RUN_NORMAL | RUN_REALLY) : RUN_NORMAL);

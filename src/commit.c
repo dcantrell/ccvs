@@ -14,6 +14,7 @@
  * 
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"
@@ -41,15 +42,16 @@ static int commit_filesdoneproc PROTO ((void *callerdat, int err,
 static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
 			   char *options));
 static int findmaxrev PROTO((Node * p, void *closure));
-static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
+static int lock_RCS PROTO((char *user, RCSNode *rcs, char *rev,
+			   char *repository));
 static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
 static void fix_rcs_modes PROTO((char *rcs, char *user));
 static void fixaddfile PROTO((char *file, char *repository));
-static void fixbranch PROTO((char *rcs, char *branch));
-static void unlockrcs PROTO((char *rcs));
+static void fixbranch PROTO((RCSNode *, char *branch));
+static void unlockrcs PROTO((RCSNode *rcs));
 static void ci_delproc PROTO((Node *p));
 static void masterlist_delproc PROTO((Node *p));
 static void locate_rcs PROTO((char *file, char *repository, char *rcs));
@@ -1058,10 +1060,10 @@ commit_fileproc (callerdat, finfo)
     {
 	if (finfo->rcs == NULL)
 	    error (1, 0, "internal error: no parsed RCS file");
-	if (lock_RCS (finfo->file, finfo->rcs->path, ci->rev,
+	if (lock_RCS (finfo->file, finfo->rcs, ci->rev,
 		      finfo->repository) != 0)
 	{
-	    unlockrcs (finfo->rcs->path);
+	    unlockrcs (finfo->rcs);
 	    err = 1;
 	    goto out;
 	}
@@ -1089,8 +1091,8 @@ commit_fileproc (callerdat, finfo)
 			   ci->tag, ci->options, message);
 	    if (err != 0)
 	    {
-		unlockrcs (finfo->rcs->path);
-		fixbranch (finfo->rcs->path, sbranch);
+		unlockrcs (finfo->rcs);
+		fixbranch (finfo->rcs, sbranch);
 	    }
 
 	    (void) time (&last_register_time);
@@ -1132,8 +1134,8 @@ commit_fileproc (callerdat, finfo)
 
 	if (err != 0)
 	{
-	    unlockrcs (finfo->rcs->path);
-	    fixbranch (finfo->rcs->path, sbranch);
+	    unlockrcs (finfo->rcs);
+	    fixbranch (finfo->rcs, sbranch);
 	}
     }
     else if (ci->status == T_REMOVED)
@@ -1386,6 +1388,7 @@ remove_file (finfo, tag, message)
     char *corev;
     char *rev;
     char *prev_rev;
+    char *old_path;
 
     corev = NULL;
     rev = NULL;
@@ -1400,7 +1403,7 @@ remove_file (finfo, tag, message)
     if (tag && !(branch = RCS_isbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	if ((retcode = RCS_deltag (finfo->rcs->path, tag, 1)) != 0) 
+	if ((retcode = RCS_deltag (finfo->rcs, tag, 1)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1456,7 +1459,7 @@ remove_file (finfo, tag, message)
        branch is the trunk. */
     if (!tag && !branch)
     {
-        if (RCS_setbranch (finfo->rcs->path, NULL) != 0) 
+        if (RCS_setbranch (finfo->rcs, NULL) != 0) 
 	{
 	    error (0, 0, "cannot change branch to default for %s",
 		   finfo->fullname);
@@ -1476,8 +1479,8 @@ remove_file (finfo, tag, message)
 
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  */
-    retcode = RCS_fast_checkout (finfo->rcs, "", rev ? corev : NULL, NULL,
-				 RUN_TTY, 0);
+    retcode = RCS_fast_checkout (finfo->rcs, finfo->file, rev ? corev : NULL,
+				 NULL, RUN_TTY, 0);
     if (retcode != 0)
     {
 	if (!quiet)
@@ -1489,12 +1492,12 @@ remove_file (finfo, tag, message)
     /* Except when we are creating a branch, lock the revision so that
        we can check in the new revision.  */
     if (lockflag)
-	RCS_lock (finfo->rcs->path, rev ? corev : NULL, 0);
+	RCS_lock (finfo->rcs, rev ? corev : NULL, 0);
 
     if (corev != NULL)
 	free (corev);
 
-    retcode = RCS_checkin (finfo->rcs->path, NULL, message, rev,
+    retcode = RCS_checkin (finfo->rcs->path, finfo->file, message, rev,
 			   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
@@ -1507,6 +1510,7 @@ remove_file (finfo, tag, message)
     if (rev != NULL)
 	free (rev);
 
+    old_path = finfo->rcs->path;
     if (!branch)
     {
 	/* this was the head; really move it into the Attic */
@@ -1529,15 +1533,20 @@ remove_file (finfo, tag, message)
 	    free(tmp);
 	    return (1);
 	}
-	free(tmp);
+	/* The old value of finfo->rcs->path is in old_path, and is
+           freed below.  */
+	finfo->rcs->path = tmp;
     }
 
     /* Print message that file was removed. */
-    (void) printf ("%s  <--  %s\n", finfo->rcs->path, finfo->file);
+    (void) printf ("%s  <--  %s\n", old_path, finfo->file);
     (void) printf ("new revision: delete; ");
     (void) printf ("previous revision: %s\n", prev_rev);
     (void) printf ("done\n");
     free(prev_rev);
+
+    if (old_path != finfo->rcs->path)
+	free (old_path);
 
     Scratch_Entry (finfo->entries, finfo->file);
     return (0);
@@ -1577,13 +1586,13 @@ finaladd (finfo, rev, tag, options)
  */
 static void
 unlockrcs (rcs)
-    char *rcs;
+    RCSNode *rcs;
 {
     int retcode;
 
     if ((retcode = RCS_unlock (rcs, NULL, 0)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-	       "could not unlock %s", rcs);
+	       "could not unlock %s", rcs->path);
 }
 
 /*
@@ -1613,7 +1622,7 @@ fixaddfile (file, repository)
  */
 static void
 fixbranch (rcs, branch)
-    char *rcs;
+    RCSNode *rcs;
     char *branch;
 {
     int retcode;
@@ -1622,7 +1631,7 @@ fixbranch (rcs, branch)
     {
 	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		   "cannot restore branch to %s for %s", branch, rcs);
+		   "cannot restore branch to %s for %s", branch, rcs->path);
     }
 }
 
@@ -1645,6 +1654,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
     mode_t omask;
     int retcode = 0;
     int newfile = 0;
+    RCSNode *rcsfile = NULL;
 
     if (tag)
     {
@@ -1668,7 +1678,12 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	/* file has existed in the past.  Prepare to resurrect. */
 	char oldfile[PATH_MAX];
 	char *rev;
-	RCSNode *rcsfile;
+
+	if ((rcsfile = *rcsnode) == NULL)
+	{
+	    error (0, 0, "could not find parsed rcsfile %s", file);
+	    return (1);
+	}
 
 	if (tag == NULL)
 	{
@@ -1686,17 +1701,13 @@ checkaddfile (file, repository, tag, options, rcsnode)
 		       file);
 		return (1);
 	    }
-	}
-
-	if ((rcsfile = *rcsnode) == NULL)
-	{
-	    error (0, 0, "could not find parsed rcsfile %s", file);
-	    return (1);
+	    free (rcsfile->path);
+	    rcsfile->path = xstrdup (rcs);
 	}
 
 	rev = RCS_getversion (rcsfile, tag, NULL, 1, 0);
 	/* and lock it */
-	if (lock_RCS (file, rcs, rev, repository)) {
+	if (lock_RCS (file, rcsfile, rev, repository)) {
 	    error (0, 0, "cannot lock `%s'.", rcs);
 	    free (rev);
 	    return (1);
@@ -1754,9 +1765,22 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
 	/* put the new file back where it was */
 	rename_file (fname, file);
-	
+
+	assert (rcsfile == NULL);
+	rcsfile = RCS_parse (file, repository);
+	if (rcsfile == NULL)
+	{
+	    error (0, 0, "could not read %s", rcs);
+	    return (1);
+	}
+	if (rcsnode != NULL)
+	{
+	    assert (*rcsnode == NULL);
+	    *rcsnode = rcsfile;
+	}
+
 	/* and lock it once again. */
-	if (lock_RCS (file, rcs, NULL, repository)) {
+	if (lock_RCS (file, rcsfile, NULL, repository)) {
 	    error (0, 0, "cannot lock `%s'.", rcs);
 	    return (1);
 	}
@@ -1766,15 +1790,22 @@ checkaddfile (file, repository, tag, options, rcsnode)
     {
 	/* when adding with a tag, we need to stub a branch, if it
 	   doesn't already exist.  */
-	RCSNode *rcsfile;
 
-	rcsfile = RCS_parse (file, repository);
 	if (rcsfile == NULL)
 	{
-	    error (0, 0, "could not read %s", rcs);
-	    return (1);
+	    if (rcsnode != NULL && *rcsnode != NULL)
+		rcsfile = *rcsnode;
+	    else
+	    {
+		rcsfile = RCS_parse (file, repository);
+		if (rcsfile == NULL)
+		{
+		    error (0, 0, "could not read %s", rcs);
+		    return (1);
+		}
+	    }
 	}
-	
+
 	if (!RCS_nodeisbranch (rcsfile, tag)) {
 	    /* branch does not exist.  Stub it.  */
 	    char *head;
@@ -1782,38 +1813,33 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    
 	    head = RCS_getversion (rcsfile, NULL, NULL, 0, 0);
 	    magicrev = RCS_magicrev (rcsfile, head);
-	    if ((retcode = RCS_settag(rcs, tag, magicrev)) != 0)
+
+	    retcode = RCS_settag (rcsfile, tag, magicrev);
+
+	    free (head);
+	    free (magicrev);
+
+	    if (retcode != 0)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not stub branch %s for %s", tag, rcs);
 		return (1);
 	    }
-	    
-	    freercsnode (&rcsfile);
-	    
-	    /* reparse the file, then add it to our list. */
-	    rcsfile = RCS_parse (file, repository);
-	    if (rcsfile == NULL)
-	    {
-		error (0, 0, "could not reparse %s", rcs);
-		return (1);
-	    }
-
-	    free (head);
-	    free (magicrev);
 	}
 	else
 	{
 	    /* lock the branch. (stubbed branches need not be locked.)  */
-	    if (lock_RCS (file, rcs, NULL, repository)) {
+	    if (lock_RCS (file, rcsfile, NULL, repository)) {
 		error (0, 0, "cannot lock `%s'.", rcs);
 		return (1);
 	    }
 	} 
 
-	if (rcsnode)
-		freercsnode(rcsnode);
-	*rcsnode = rcsfile;
+	if (rcsnode && *rcsnode != rcsfile)
+	{
+	    freercsnode(rcsnode);
+	    *rcsnode = rcsfile;
+	}
     }
 
     fileattr_newfile (file);
@@ -1831,11 +1857,10 @@ checkaddfile (file, repository, tag, options, rcsnode)
 static int
 lock_RCS (user, rcs, rev, repository)
     char *user;
-    char *rcs;
+    RCSNode *rcs;
     char *rev;
     char *repository;
 {
-    RCSNode *rcsfile;
     char *branch = NULL;
     int err = 0;
 
@@ -1850,29 +1875,19 @@ lock_RCS (user, rcs, rev, repository)
      */
     if (rev == NULL || (rev && isdigit (*rev) && numdots (rev) < 2))
     {
-	if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
+	branch = xstrdup (rcs->branch);
+	if (branch != NULL)
 	{
-	    /* invalid rcs file? */
-	    err = 1;
-	}
-	else
-	{
-	    /* rcsfile is valid */
-	    branch = xstrdup (rcsfile->branch);
-	    freercsnode (&rcsfile);
-	    if (branch != NULL)
+	    if (RCS_setbranch (rcs, NULL) != 0)
 	    {
-		if (RCS_setbranch (rcs, NULL) != 0)
-		{
-		    error (0, 0, "cannot change branch to default for %s",
-			   rcs);
-		    if (branch)
-			free (branch);
-		    return (1);
-		}
+		error (0, 0, "cannot change branch to default for %s",
+		       rcs->path);
+		if (branch)
+		    free (branch);
+		return (1);
 	    }
-	    err = RCS_lock(rcs, NULL, 0);
 	}
+	err = RCS_lock(rcs, NULL, 0);
     }
     else
     {

@@ -20,6 +20,7 @@ static void getrcsrev PROTO ((FILE *fp, char **revp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
+static void free_rcsnode_contents PROTO((RCSNode *));
 static void rcsvers_delproc PROTO((Node * p));
 static char *translate_symtag PROTO((RCSNode *, const char *));
 
@@ -261,10 +262,8 @@ RCS_reparsercsfile (rdata, all, pfp)
 	if (strcmp (RCSSYMBOLS, key) == 0)
 	{
 	    if (value != NULL)
-	    {
 		rdata->symbols_data = xstrdup(value);
-		continue;
-	    }
+	    continue;
 	}
 
 	if (strcmp (RCSEXPAND, key) == 0)
@@ -486,6 +485,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
     }
 
     rdata->delta_pos = ftell (fp);
+    rdata->flags &= ~NODELTA;
 
     if (pfp == NULL)
     {
@@ -687,21 +687,34 @@ freercsnode (rnodep)
 	return;
     }
     free ((*rnodep)->path);
-    dellist (&(*rnodep)->versions);
-    if ((*rnodep)->symbols != (List *) NULL)
-	dellist (&(*rnodep)->symbols);
-    if ((*rnodep)->symbols_data != (char *) NULL)
-	free ((*rnodep)->symbols_data);
-    if ((*rnodep)->expand != NULL)
-	free ((*rnodep)->expand);
     if ((*rnodep)->head != (char *) NULL)
 	free ((*rnodep)->head);
     if ((*rnodep)->branch != (char *) NULL)
 	free ((*rnodep)->branch);
-    if ((*rnodep)->other != (List *) NULL)
-	dellist (&(*rnodep)->other);
+    free_rcsnode_contents (*rnodep);
     free ((char *) *rnodep);
     *rnodep = (RCSNode *) NULL;
+}
+
+/*
+ * free_rcsnode_contents - free up the contents of an RCSNode without
+ * freeing the node itself, or the file name, or the head, or the
+ * path.  This returns the RCSNode to the state it is in immediately
+ * after a call to RCS_parse.
+ */
+static void
+free_rcsnode_contents (rnode)
+    RCSNode *rnode;
+{
+    dellist (&rnode->versions);
+    if (rnode->symbols != (List *) NULL)
+	dellist (&rnode->symbols);
+    if (rnode->symbols_data != (char *) NULL)
+	free (rnode->symbols_data);
+    if (rnode->expand != NULL)
+	free (rnode->expand);
+    if (rnode->other != (List *) NULL)
+	dellist (&rnode->other);
 }
 
 /*
@@ -2083,10 +2096,9 @@ RCS_getexpand (rcs)
 
 /* Check out a revision from RCS.  This function optimizes by reading
    the head version directly if it is easy.  Check out the revision
-   into WORKFILE, or to standard output if WORKFILE is NULL.  If
-   WORKFILE is "", let RCS pick the working file name.  TAG is the tag
-   to check out, or NULL if one should check out the head of the
-   default branch.  OPTIONS is a string such as -kb or -kkv, for
+   into WORKFILE, or to standard output if WORKFILE is NULL.  TAG is
+   the tag to check out, or NULL if one should check out the head of
+   the default branch.  OPTIONS is a string such as -kb or -kkv, for
    keyword expansion options, or NULL if there are none.  If WORKFILE
    is NULL, run regardless of noexec; if non-NULL, noexec inhibits
    execution.  SOUT is what to do with standard output (typically
@@ -2102,8 +2114,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
      char *sout;
      int flags;
 {
-    if ((workfile == NULL || *workfile != '\0')
-	&& ! noexec
+    if (! noexec
 	&& (sout == RUN_TTY || workfile == NULL))
     {
         FILE *fp;
@@ -2117,6 +2128,12 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	if (tag == NULL || strcmp (tag, rcs->head) == 0)
 	{
 	    /* We want the head revision.  Try to read it directly.  */
+
+	    if (rcs->flags & NODELTA)
+	    {
+		free_rcsnode_contents (rcs);
+		rcs->flags |= PARTIAL;
+	    }
 
 	    if (rcs->flags & PARTIAL)
 		RCS_reparsercsfile (rcs, 0, &fp);
@@ -2259,7 +2276,9 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 
 	    if (fwrite (value, 1, len, ofp) != len)
 		error (1, errno, "cannot write %s",
-		       workfile == NULL ? "stdout" : workfile);
+		       (workfile != NULL
+			? workfile
+			: (sout != RUN_TTY ? sout : "stdout")));
 
 	    if (workfile != NULL)
 	    {
@@ -2283,6 +2302,196 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
     /* We were not able to optimize retrieving this revision.  */
 
     return RCS_checkout (rcs->path, workfile, tag, options, sout, flags);
+}
+
+/* For RCS file RCS, make symbolic tag TAG point to revision REV.
+   This validates that TAG is OK for a user to use.  Return value is
+   -1 for error (and errno is set to indicate the error), positive for
+   error (and an error message has been printed), or zero for success.  */
+
+int
+RCS_settag (rcs, tag, rev)
+    RCSNode *rcs;
+    const char *tag;
+    const char *rev;
+{
+    int ret;
+
+    /* FIXME: This check should be moved to RCS_check_tag.  There is no
+       reason for it to be here.  */
+    if (strcmp (tag, TAG_BASE) == 0
+	|| strcmp (tag, TAG_HEAD) == 0)
+    {
+	/* Print the name of the tag might be considered redundant
+	   with the caller, which also prints it.  Perhaps this helps
+	   clarify why the tag name is considered reserved, I don't
+	   know.  */
+	error (0, 0, "Attempt to add reserved tag name %s", tag);
+	return 1;
+    }
+
+    ret = RCS_exec_settag (rcs->path, tag, rev);
+    if (ret != 0)
+	return ret;
+
+    /* If we have already parsed the RCS file, update the tag
+       information.  If we have not yet parsed it (i.e., the PARTIAL
+       flag is set), the new tag information will be read when and if
+       we do parse it.  */
+    if ((rcs->flags & PARTIAL) == 0)
+    {
+	List *symbols;
+	Node *node;
+
+	/* At this point rcs->symbol_data may not have been parsed.
+	   Calling RCS_symbols will force it to be parsed into a list
+	   which we can easily manipulate.  */
+	symbols = RCS_symbols (rcs);
+	if (symbols == NULL)
+	{
+	    symbols = getlist ();
+	    rcs->symbols = symbols;
+	}
+	node = findnode (symbols, tag);
+	if (node != NULL)
+	{
+	    free (node->data);
+	    node->data = xstrdup (rev);
+	}
+	else
+	{
+	    node = getnode ();
+	    node->key = xstrdup (tag);
+	    node->data = xstrdup (rev);
+	    (void) addnode (symbols, node);
+	}
+    }
+
+    /* Setting the tag will most likely have invalidated delta_pos.  */
+    rcs->flags |= NODELTA;
+
+    return 0;
+}
+
+/* Delete the symbolic tag TAG from the RCS file RCS.  NOERR is 1 to
+   suppress errors--FIXME it would be better to avoid the errors or
+   some cleaner solution.  */
+
+int
+RCS_deltag (rcs, tag, noerr)
+    RCSNode *rcs;
+    const char *tag;
+    int noerr;
+{
+    int ret;
+
+    ret = RCS_exec_deltag (rcs->path, tag, noerr);
+    if (ret != 0)
+	return ret;
+
+    /* If we have already parsed the RCS file, update the tag
+       information.  If we have not yet parsed it (i.e., the PARTIAL
+       flag is set), the new tag information will be read when and if
+       we do parse it.  */
+    if ((rcs->flags & PARTIAL) == 0)
+    {
+	List *symbols;
+
+	/* At this point rcs->symbol_data may not have been parsed.
+	   Calling RCS_symbols will force it to be parsed into a list
+	   which we can easily manipulate.  */
+	symbols = RCS_symbols (rcs);
+	if (symbols != NULL)
+	{
+	    Node *node;
+
+	    node = findnode (symbols, tag);
+	    if (node != NULL)
+		delnode (node);
+	}
+    }
+
+    /* Deleting the tag will most likely have invalidated delta_pos.  */
+    rcs->flags |= NODELTA;
+
+    return 0;
+}
+
+/* Set the default branch of RCS to REV.  */
+
+int
+RCS_setbranch (rcs, rev)
+     RCSNode *rcs;
+     const char *rev;
+{
+    int ret;
+
+    if (rev == NULL && rcs->branch == NULL)
+	return 0;
+    if (rev != NULL && rcs->branch != NULL && strcmp (rev, rcs->branch) == 0)
+	return 0;
+
+    ret = RCS_exec_setbranch (rcs->path, rev);
+    if (ret != 0)
+	return ret;
+
+    if (rcs->branch != NULL)
+	free (rcs->branch);
+    rcs->branch = xstrdup (rev);
+
+    /* Changing the branch will have changed the data in the file, so
+       delta_pos will no longer be correct.  */
+    rcs->flags |= NODELTA;
+
+    return 0;
+}
+
+/* Lock revision REV.  NOERR is 1 to suppress errors--FIXME it would
+   be better to avoid the errors or some cleaner solution.  FIXME:
+   This is only required because the RCS ci program requires a lock.
+   If we eventually do the checkin ourselves, this can become a no-op.  */
+
+int
+RCS_lock (rcs, rev, noerr)
+     RCSNode *rcs;
+     const char *rev;
+     int noerr;
+{
+    int ret;
+
+    ret = RCS_exec_lock (rcs->path, rev, noerr);
+    if (ret != 0)
+	return ret;
+
+    /* Setting a lock will have changed the data in the file, so
+       delta_pos will no longer be correct.  */
+    rcs->flags |= NODELTA;
+
+    return 0;
+}
+
+/* Unlock revision REV.  NOERR is 1 to suppress errors--FIXME it would
+   be better to avoid the errors or some cleaner solution.  FIXME:
+   Like RCS_lock, this can become a no-op if we do the checkin
+   ourselves.  */
+
+int
+RCS_unlock (rcs, rev, noerr)
+     RCSNode *rcs;
+     const char *rev;
+     int noerr;
+{
+    int ret;
+
+    ret = RCS_exec_unlock (rcs->path, rev, noerr);
+    if (ret != 0)
+	return ret;
+
+    /* Setting a lock will have changed the data in the file, so
+       delta_pos will no longer be correct.  */
+    rcs->flags |= NODELTA;
+
+    return 0;
 }
 
 /* RCS_deltas and friends.  Processing of the deltas in RCS files.  */
@@ -2565,11 +2774,19 @@ RCS_deltas (rcs, fp, version, op, text, len)
 
     if (fp == NULL)
     {
-	fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-	if (fp == NULL)
-	    error (1, 0, "unable to reopen `%s'", rcs->path);
-	if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-	    error (1, 0, "cannot fseek RCS file");
+	if (rcs->flags & NODELTA)
+	{
+	    free_rcsnode_contents (rcs);
+	    RCS_reparsercsfile (rcs, 0, &fp);
+	}
+	else
+	{
+	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
+	    if (fp == NULL)
+		error (1, 0, "unable to reopen `%s'", rcs->path);
+	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
+		error (1, 0, "cannot fseek RCS file");
+	}
     }
 
     ishead = 1;
