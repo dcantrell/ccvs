@@ -1,4 +1,10 @@
-2004-10-25 Derek Price <derek@ximbiot.com>
+2004-10-26 Derek Price <derek@ximbiot.com>
+
+	* client.c (connect_to_gserver): Avoid truncating error messages from
+	the GSSAPI server.
+	(Report from Dan Peterson <dbpete@aol.com>.)
+
+2004-10-26 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (import-quirks): Test an even branch number.
 
