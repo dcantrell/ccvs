@@ -93,10 +93,10 @@ Checkin (type, file, update_dir, repository,
 
 	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
-	    run_setup ("%s%s -q %s %s%s", Rcsbin, RCS_CO, options,
-		       rev ? "-r" : "", rev ? rev : "");
-	    run_arg (rcs);
-	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+
+	    /* FIXME: should be checking for errors.  */
+	    (void) RCS_checkout (rcs, "", rev, options, RUN_TTY, 0, 0);
+
 	    xchmod (file, 1);
 	    if (xcmp (file, fname) == 0)
 	    {

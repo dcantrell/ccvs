@@ -357,20 +357,23 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
 	else
 	{
+	    int retcode;
+
 	    /*
 	     * FIXME: Should be setting use_rev1 using the logic in
 	     * diff_file_nodiff, and using that revision.  This code
 	     * is broken for "cvs diff -N -r foo".
 	     */
-	    run_setup ("%s%s -p -q %s -r%s", Rcsbin, RCS_CO,
-		       *options ? options : vers->options, vers->vn_rcs);
-	    run_arg (vers->srcfile->path);
-	    if (run_exec (RUN_TTY, tmpnam (tmp), RUN_TTY, RUN_REALLY) == -1)
+	    retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_rcs,
+	                            *options ? options : vers->options, tmpnam (tmp),
+	                            0, 0);
+	    if (retcode == -1)
 	    {
 		(void) unlink (tmp);
 		error (1, errno, "fork failed during checkout of %s",
 		       vers->srcfile->path);
 	    }
+	    /* FIXME: what if retcode > 0?  */
 
 	    run_setup ("%s %s %s %s", DIFF, opts, tmp, DEVNULL);
 	}
@@ -498,6 +501,7 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 {
     Vers_TS *xvers;
     char tmp[L_tmpnam+1];
+    int retcode;
 
     /* free up any old use_rev* variables and reset 'em */
     if (use_rev1)
@@ -601,10 +605,9 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
      * with 0 or 1 -r option specified, run a quick diff to see if we
      * should bother with it at all.
      */
-    run_setup ("%s%s -p -q %s -r%s", Rcsbin, RCS_CO,
-	       *options ? options : vers->options, use_rev1);
-    run_arg (vers->srcfile->path);
-    switch (run_exec (RUN_TTY, tmpnam (tmp), RUN_TTY, RUN_REALLY))
+    retcode = RCS_checkout (vers->srcfile->path, NULL, use_rev1,
+                            *options ? options : vers->options, tmpnam (tmp), 0, 0);
+    switch (retcode)
     {
 	case 0:				/* everything ok */
 	    if (xcmp (file, tmp) == 0)

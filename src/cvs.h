@@ -427,6 +427,10 @@ int RCS_setbranch PROTO((const char *, const char *));
 int RCS_lock PROTO((const char *, const char *, int));
 int RCS_unlock PROTO((const char *, const char *, int));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
+int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag, char *options,
+                         char *sout, int flags, int noerr));
+#define RCS_FLAGS_LOCK 1
+#define RCS_FLAGS_FORCE 2
 
 #include "error.h"
 

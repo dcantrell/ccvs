@@ -1,3 +1,27 @@
+Thu Feb  8 13:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* rcs.c (RCS_parse, RCS_parsercsfile, RCS_reparsercsfile),
+	fileattr.c (fileattr_read), myndbm.c (myndbm_open):
+	Use FOPEN_BINARY_READ.
+	* fileattr.c (fileattr_write), myndbm.c (myndbm_close):
+	Use FOPEN_BINARY_WRITE.
+	* history.c (history_write, read_hrecs): Specify OPEN_BINARY.
+	* rcs.c: Remove calls to abort.
+	* myndbm.c (myndbm_load_file): Ignore CRs from ends of lines
+	if present.
+	* myndbm.c, fileattr.c: While I am at it, change \n to \012
+	a few places where LF is intended.
+	* history.c (history_write): Use getenv ("HOME"), not getpwnam,
+	to find home directory.  If it isn't set, just keep going; don't
+	print a message.
+	* rcscmds.c, cvs.h (RCS_checkout): New function.
+	* update.c, checkin.c, commit.c, diff.c, import.c, no_diff.c, 
+	patch.c: Call it instead of run_*.
+	* patch.c (patch_fileproc): Clean up inconsistent handling of
+	noexec flag.
+	* rcscmds.c (RCS_*): Pass -x,v/ to RCS commands; elsewhere in
+	CVS it is assumed that ,v is a suffix.
+
 Fri Feb  2 14:07:32 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* rcs.h (struct rcsnode): Remove dates field (list of rcsversnodes

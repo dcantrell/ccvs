@@ -906,6 +906,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
     char backup[PATH_MAX];
     int set_time, retval = 0;
     int retcode = 0;
+    int status;
 #ifdef DEATH_SUPPORT
     int file_is_dead;
 #endif
@@ -925,9 +926,6 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 
     if (!file_is_dead) {
 #endif
-    
-    run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO, vers_ts->vn_tag,
-	       vers_ts->options);
 
     /*
      * if we are checking out to stdout, print a nice message to stderr, and
@@ -935,7 +933,6 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
      */
     if (pipeout)
     {
-	run_arg ("-p");
 	if (!quiet)
 	{
 	    (void) fprintf (stderr, "===================================================================\n");
@@ -950,18 +947,16 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 	}
     }
 
-    /* tack on the rcs and maybe the user file */
-    run_arg (vers_ts->srcfile->path);
-    if (!pipeout)
-	run_arg (file);
-
+    status = RCS_checkout (vers_ts->srcfile->path,
+                           pipeout ? NULL : file, vers_ts->vn_tag,
+                           vers_ts->options, RUN_TTY, 0, 0);
 #ifdef DEATH_SUPPORT
     }
-    if (file_is_dead || (retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+    if (file_is_dead ||
 #else
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+    if (
 #endif
-        (pipeout ? (RUN_NORMAL|RUN_REALLY) : RUN_NORMAL))) == 0)
+        status == 0)
     {
 	if (!pipeout)
 	{
@@ -981,14 +976,15 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 		{
 		    /* when joining, we need to get dead files checked
 		       out.  Try harder.  */
-		    run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO,
-			       vers_ts->vn_rcs,
-			       vers_ts->options);
-
-		    run_arg ("-f");
-		    run_arg (vers_ts->srcfile->path);
-		    run_arg (file);
-		    retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		    /* I think that RCS_FLAGS_FORCE is here only because
+		       passing -f to co used to enable checking out
+		       a dead revision in the old version of death
+		       support which used a hacked RCS instead of using
+		       the RCS state.  */
+		    retcode = RCS_checkout (vers_ts->srcfile->path, file,
+		                            vers_ts->vn_rcs,
+		                            vers_ts->options, RUN_TTY,
+		                            RCS_FLAGS_FORCE, 0);
 		    if (retcode != 0)
 		    {
 			error (retcode == -1 ? 1 : 0,
@@ -1199,9 +1195,13 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
     /* We need to check out both revisions first, to see if either one
        has a trailing newline.  Because of this, we don't use rcsdiff,
        but just use diff.  */
-    run_setup ("%s%s -q -p -r%s %s %s", Rcsbin, RCS_CO, vers_ts->vn_user,
-	       vers_ts->options, vers_ts->srcfile->path);
-    if (run_exec (RUN_TTY, file1, RUN_TTY, RUN_NORMAL) != 0)
+    if (noexec)
+	retcode = 0;
+    else
+	retcode = RCS_checkout (vers_ts->srcfile->path, NULL,
+	                        vers_ts->vn_user,
+	                        vers_ts->options, file1, 0, 0);
+    if (retcode != 0)
         fail = 1;
     else
     {
@@ -1225,9 +1225,10 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
            can get the right modes into *FILE_INFO.  We can't check it
            out directly into file2 because co doesn't understand how
            to do that.  */
-        run_setup ("%s%s -q -r%s %s %s %s", Rcsbin, RCS_CO, vers_ts->vn_rcs,
-		   vers_ts->options, vers_ts->srcfile->path, file);
-	if (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL) != 0)
+	retcode = RCS_checkout (vers_ts->srcfile->path, file,
+	                        vers_ts->vn_rcs,
+	                        vers_ts->options, RUN_TTY, 0, 0);
+	if (retcode != 0)
 	    fail = 1;
 	else
 	{
@@ -1275,6 +1276,7 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
 	}
     }	  
 
+    retcode = 0;
     if (! fail)
     {
 	/* FIXME: This whole thing with diff/patch is rather more
@@ -1771,9 +1773,8 @@ join_file (file, srcfiles, vers, update_dir, entries)
     {
 	int retcode;
 	/* The file is up to date.  Need to check out the current contents.  */
-	run_setup ("%s%s -q -r%s", Rcsbin, RCS_CO, vers->vn_user);
-	run_arg (vers->srcfile->path);
-	retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+	retcode = RCS_checkout (vers->srcfile->path, "", vers->vn_user, NULL,
+	                        RUN_TTY, 0, 0);
 	if (retcode != 0)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", file);

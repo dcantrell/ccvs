@@ -492,14 +492,16 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	 * This is to try to cut down the number of "C" conflict messages for
 	 * locally modified import source files.
 	 */
+	/* Why is RCS_FLAGS_FORCE here?  I wouldn't think that it would have any
+	   effect in conjunction with passing NULL for workfile (i.e. to stdout).  */
+	retcode = RCS_checkout (vers->srcfile->path, NULL, vers->vn_rcs,
 #ifdef HAVE_RCS5
-	run_setup ("%s%s -q -f -r%s -p -ko", Rcsbin, RCS_CO, vers->vn_rcs);
+	                        "-ko",
 #else
-	run_setup ("%s%s -q -f -r%s -p", Rcsbin, RCS_CO, vers->vn_rcs);
+	                        NULL,
 #endif
-	run_arg (vers->srcfile->path);
-	if ((retcode = run_exec (RUN_TTY, xtmpfile, RUN_TTY,
-				 RUN_NORMAL|RUN_REALLY)) != 0)
+	                        xtmpfile, RCS_FLAGS_FORCE, 0);
+	if (retcode != 0)
 	{
 	    ierrno = errno;
 	    fperror (logfp, 0, retcode == -1 ? ierrno : 0,

@@ -82,7 +82,7 @@ fileattr_read ()
     strcat (fname, CVSREP_FILEATTR);
 
     attr_read_attempted = 1;
-    fp = fopen (fname, "r");
+    fp = fopen (fname, FOPEN_BINARY_READ);
     if (fp == NULL)
     {
 	if (!existence_error (errno))
@@ -384,7 +384,7 @@ writeattr_proc (node, data)
     fputs (node->key, fp);
     fputs ("\t", fp);
     fputs (node->data, fp);
-    fputs ("\n", fp);
+    fputs ("\012", fp);
     return 0;
 }
 
@@ -447,7 +447,7 @@ fileattr_write ()
     }
 
     omask = umask (cvsumask);
-    fp = fopen (fname, "w");
+    fp = fopen (fname, FOPEN_BINARY_WRITE);
     if (fp == NULL)
     {
 	if (existence_error (errno))
@@ -472,7 +472,7 @@ fileattr_write ()
 	    }
 	    free (repname);
 
-	    fp = fopen (fname, "w");
+	    fp = fopen (fname, FOPEN_BINARY_WRITE);
 	}
 	if (fp == NULL)
 	{
@@ -487,7 +487,7 @@ fileattr_write ()
     {
 	fputs ("D\t", fp);
 	fputs (fileattr_default_attrs, fp);
-	fputs ("\n", fp);
+	fputs ("\012", fp);
     }
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", fname);
