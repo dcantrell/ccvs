@@ -560,7 +560,7 @@ isThisHost (const char *otherhost)
     }
 
     hinfo = gethostbyname (otherhost);
-    return !strcmp (thishost, hinfo->h_name);
+    return !strcasecmp (thishost, hinfo->h_name);
 }
 
 
