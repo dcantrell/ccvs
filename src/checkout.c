@@ -346,8 +346,6 @@ checkout (argc, argv)
      */
     if (argc > 1 && where != NULL)
     {
-	char *repository;
-
 	(void) CVS_MKDIR (where, 0777);
 	if ( CVS_CHDIR (where) < 0)
 	    error (1, errno, "cannot chdir to %s", where);
@@ -355,6 +353,8 @@ checkout (argc, argv)
 	where = (char *) NULL;
 	if (!isfile (CVSADM))
 	{
+	    char *repository;
+
 	    repository = xmalloc (strlen (CVSroot_directory) + 80);
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot_directory,
 			    CVSROOTADM, CVSNULLREPOS);

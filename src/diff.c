@@ -647,7 +647,7 @@ diff_fileproc (callerdat, finfo)
 	    if (! existence_error (errno))
 		error (1, errno, "cannot remove %s", finfo->file);
 
-	rename_file (fname,finfo->file);
+	rename_file (fname, finfo->file);
 	if (unlink_file (tocvsPath) < 0)
 	    error (1, errno, "cannot remove %s", tocvsPath);
 	free (fname);

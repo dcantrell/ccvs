@@ -1368,10 +1368,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     /* Timestamp field.  Always empty according to the protocol.  */
     char *ts;
     char *options;
-    char *tag;
-    char *date;
+    char *tag = NULL;
+    char *date = NULL;
     char *tag_or_date;
-    char *scratch_entries;
+    char *scratch_entries = NULL;
     int bin;
 
     read_line (&entries_line);
@@ -1408,8 +1408,6 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	cp = strchr (tag_or_date, '/');
 	if (cp != NULL)
 	    *cp = '\0';
-	tag = (char *) NULL;
-	date = (char *) NULL;
 	if (*tag_or_date == 'T')
 	    tag = tag_or_date + 1;
 	else if (*tag_or_date == 'D')

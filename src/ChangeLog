@@ -1,3 +1,17 @@
+Thu May 15 11:50:15 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* diff.c (diff_fileproc): cosmetic change (whitespace added).
+
+	* checkout.c (checkout): move local variable definition into the
+	block where the variable is used.
+
+	* client.c (update_entries): initialize some local variables to shut up
+	gcc -O -Wall.
+
+	* buffer.c (buf_read_line): initialize a local variable to shut up
+	gcc -O -Wall.
+		   
+
 Wed May 14 16:29:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* admin.c (admin): When sending options to server, don't try to
