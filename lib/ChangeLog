@@ -1,3 +1,7 @@
+Tue Feb 27 21:26:34 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* build_lib.com: Added.  DCL File to build contents of [.lib]
+
 Tue Feb 27 21:18:38 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* system.h: added an existence_error macro check for EVMSERR
