@@ -276,9 +276,6 @@ extern pid_t getpid (void);
 /* This is just a call to the Win32 Sleep function.  */
 unsigned sleep (unsigned);
 
-/* This is in the winsock library.  */
-int __stdcall gethostname(char *name, int namelen);
-
 /* Don't worry, Microsoft, it's okay for these functions to
    be in our namespace.  */
 #define popen _popen
@@ -288,6 +285,7 @@ int __stdcall gethostname(char *name, int namelen);
    are path component separators.  */
 #define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
 extern unsigned char WNT_filename_classes[];
+#define FILENAMES_CASE_INSENSITIVE 1
 
 /* Is the character C a path name separator?  Under
    Windows NT, you can use either / or \.  */
