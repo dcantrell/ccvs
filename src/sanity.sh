@@ -6694,6 +6694,185 @@ File: file3            	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	(none)"
 
+# Test some calls to rls here because we can.  These should probably be
+# somewhere else, but we already have some directories set up.
+          dotest branches2-14-rls-1 "$testcvs rls" \
+"$SPROG rls: Listing module: \`.'
+CVSROOT
+first-dir"
+          dotest branches2-14-rls-2 "$testcvs rls -R" \
+"$SPROG rls: Listing module: \`.'
+\.:
+CVSROOT
+first-dir
+
+CVSROOT:
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg
+Emptydir
+
+CVSROOT/Emptydir:
+
+first-dir:
+file1
+dir1
+
+first-dir/dir1:"
+          dotest branches2-14-rls-3 "$testcvs rls -l -R" \
+"$SPROG rls: Listing module: \`.'
+\.:
+d---                                     CVSROOT
+d---                                     first-dir
+
+CVSROOT:
+---- $DATE 1\.[0-9][0-9]*        checkoutlist
+---- $DATE 1\.[0-9][0-9]*        commitinfo
+---- $DATE 1\.[0-9][0-9]*        config
+---- $DATE 1\.[0-9][0-9]*        cvswrappers
+---- $DATE 1\.[0-9][0-9]*        loginfo
+---- $DATE 1\.[0-9][0-9]*        modules
+---- $DATE 1\.[0-9][0-9]*        notify
+---- $DATE 1\.[0-9][0-9]*        rcsinfo
+---- $DATE 1\.[0-9][0-9]*        taginfo
+---- $DATE 1\.[0-9][0-9]*        verifymsg
+d---                                     Emptydir
+
+CVSROOT/Emptydir:
+
+first-dir:
+---- $DATE 1\.1        file1
+d---                                     dir1
+
+first-dir/dir1:"
+          dotest branches2-14-rls-4 "$testcvs rls -eR" \
+"$SPROG rls: Listing module: \`.'
+\.:
+D/CVSROOT////
+D/first-dir////
+
+CVSROOT:
+/checkoutlist/1\.[0-9][0-9]*/$DATE//
+/commitinfo/1\.[0-9][0-9]*/$DATE//
+/config/1\.[0-9][0-9]*/$DATE//
+/cvswrappers/1\.[0-9][0-9]*/$DATE//
+/loginfo/1\.[0-9][0-9]*/$DATE//
+/modules/1\.[0-9][0-9]*/$DATE//
+/notify/1\.[0-9][0-9]*/$DATE//
+/rcsinfo/1\.[0-9][0-9]*/$DATE//
+/taginfo/1\.[0-9][0-9]*/$DATE//
+/verifymsg/1\.[0-9][0-9]*/$DATE//
+D/Emptydir////
+
+CVSROOT/Emptydir:
+
+first-dir:
+/file1/1\.1/$DATE//
+D/dir1////
+
+first-dir/dir1:"
+          dotest branches2-14-rls-5 "$testcvs -q rls -R" \
+"\.:
+CVSROOT
+first-dir
+
+CVSROOT:
+checkoutlist
+commitinfo
+config
+cvswrappers
+loginfo
+modules
+notify
+rcsinfo
+taginfo
+verifymsg
+Emptydir
+
+CVSROOT/Emptydir:
+
+first-dir:
+file1
+dir1
+
+first-dir/dir1:"
+          dotest branches2-14-rls-6 "$testcvs -q rls -lRrb1" \
+"\.:
+d---                                     CVSROOT
+d---                                     first-dir
+
+CVSROOT:
+d---                                     Emptydir
+
+CVSROOT/Emptydir:
+
+first-dir:
+---- $DATE 1\.1        file1
+---- $DATE 1\.1\.2\.1    file2
+d---                                     dir1
+
+first-dir/dir1:
+---- $DATE 1\.1\.2\.1    file3"
+          dotest branches2-14-rls-7 "$testcvs -q rls -lRrb2" \
+"\.:
+d---                                     CVSROOT
+d---                                     first-dir
+
+CVSROOT:
+d---                                     Emptydir
+
+CVSROOT/Emptydir:
+
+first-dir:
+---- $DATE 1\.1        file1
+d---                                     dir1
+
+first-dir/dir1:"
+
+	  # Now some calls to ls.  These are more appropriate here.
+	  dotest branches2-14-ls-1 "$testcvs ls" \
+"file1
+dir1"
+	  dotest branches2-14-ls-2 "$testcvs ls -e" \
+"/file1/1\.1/$DATE//
+D/dir1////"
+	  dotest branches2-14-ls-3 "$testcvs ls -R" \
+"\.:
+file1
+dir1
+
+dir1:
+file3"
+	  dotest branches2-14-ls-4 "$testcvs ls -eRrHEAD" \
+"\.:
+/file1/1\.1/$DATE//THEAD
+/file2/1\.1/$DATE//THEAD
+D/dir1////
+
+dir1:
+/file3/1\.1/$DATE//THEAD"
+	  dotest branches2-14-ls-5 "$testcvs ls -eRrb1" \
+"\.:
+/file1/1\.1/$DATE//Tb1
+/file2/1\.1\.2\.1/$DATE//Tb1
+D/dir1////
+
+dir1:
+/file3/1\.1\.2\.1/$DATE//Tb1"
+	  dotest branches2-14-ls-6 "$testcvs ls -eRrb2" \
+"\.:
+/file1/1.1/$DATE//Tb2
+D/dir1////
+
+dir1:"
+
 	  # FIXME: Just clobbering the directory like this is a bit
 	  # tacky, although people generally expect it to work.  Maybe
 	  # we should release it instead.  We do it a few other places
@@ -6861,7 +7040,24 @@ File: file5            	Status: Up-to-date
    Sticky Options:	(none)"
 	  dotest_fail branches2-38 "test -f CVS/status"
 
+          dotest branches2-39 "$testcvs rls -rb1 -l -R first-dir" \
+"$SPROG rls: Listing module: \`first-dir'
+first-dir:
+---- $DATE 1\.1        file1
+---- $DATE 1\.1\.2\.1    file2
+d---                                     dir1
+d---                                     dir2
+
+first-dir/dir1:
+---- $DATE 1\.1\.2\.1    file3
+
+first-dir/dir2:
+---- $DATE 1\.1\.2\.1    file4"
+
 	  cd ../../..
+
+	  dokeep
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r trunk b1a b1b
 	  ;;

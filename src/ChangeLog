@@ -1,5 +1,20 @@
 2004-04-23  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (cvs_SOURCES): Add ls.c.
+	* client.c, subr.c: Move #include vasnprintf.h to...
+	* cvs.h: ...here.
+	(ls): Add prototype.
+	* ls.c: New file.
+	* main.c (cmds): Add ls & rls entries.
+	* server.c (serve_ls, serve_rls): New functions.
+	(requests): Add list, ls, rlist, & global-list-quiet.
+	* sanity.sh (branches2): Test new cvs ls & rls commands.
+	* Makefile.in: Regenerated.
+	(Thanks for patches from Alexander Taler <dissent@cvshome.org>
+	and Mark D. Baushke <mdb@cvshome.org>.)
+
+2004-04-23  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (AM_CPPFLAGS): No, really, $(top_builddir)/lib.
 	* Makefile.in: Regenerated.
 
@@ -162,6 +177,10 @@
 
 	* sanity.sh (toplevel): Remove FIXME type comment and unneeded
 	Emtptydir removal.
+
+2004-03-22  Derek Price  <derek@ximbiot.com>
+
+	* update.c: Some minor style cleanup.
 
 2004-03-22  Derek Price  <derek@ximbiot.com>
 

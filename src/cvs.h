@@ -41,6 +41,7 @@
 
 /* begin GNULIB headers */
 #include "exit.h"
+#include "vasnprintf.h"
 #include "xalloc.h"
 /* end GNULIB headers */
 
@@ -491,6 +492,7 @@ FILE *cvs_temp_file (char **filename);
 int numdots (const char *s);
 char *increment_revnum (const char *);
 int compare_revnums (const char *, const char *);
+int ls (int argc, char *argv[]);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
 
