@@ -1,5 +1,7 @@
 Tue Sep 10 19:15:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in: New file.
+
 	* config.h (START_SERVER_RETURNS_SOCKET, SEND_NEVER_PARTIAL):
 	Define.  This just preserves the behavior the VMS port has had all
 	along.
