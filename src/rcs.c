@@ -3732,7 +3732,20 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		break;
 	}
 
-	get_file (changefile, changefile, "rb",
+	/* OK, the text file case here is really dumb.  Logically
+	   speaking we want diff to read the files in text mode,
+	   convert them to the canonical form found in RCS files
+	   (which, we hope at least, is independent of OS--always
+	   bare linefeeds), and then work with change texts in that
+	   format.  However, diff_exec both generates change
+	   texts and produces output for user purposes (e.g. patch.c),
+	   and there is no way to distinguish between the two cases.
+	   So we actually implement the text file case by writing the
+	   change text as a text file, then reading it as a text file.
+	   This should cause no harm, but doesn't strike me as
+	   immensely clean.  */
+	get_file (changefile, changefile,
+		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
 		  &commitpt->text->text, &bufsize, &commitpt->text->len);
 
 	/* If COMMITPT->TEXT->TEXT is NULL, it means that CHANGEFILE
@@ -3766,7 +3779,11 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 		error (1, 0, "error diffing %s", workfile);
 		break;
 	}
-	get_file (changefile, changefile, "rb", &dtext->text, &bufsize,
+	/* See the comment above, at the other get_file invocation,
+	   regarding binary vs. text.  */
+	get_file (changefile, changefile, 
+		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  &dtext->text, &bufsize,
 		  &dtext->len);
 	if (dtext->text == NULL)
 	{

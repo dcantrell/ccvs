@@ -1,5 +1,9 @@
 Mon, 10 Nov 1997  Jim Kingdon
 
+	* rcs.c (RCS_checkin): Actually, when we get a change text
+	for a text file using get_file, we want text mode, although
+	the reasons are kind of subtle (see comment).
+
 	* rcs.c (RCS_checkin): Pass correct mode to get_file for
 	binary files.
 
