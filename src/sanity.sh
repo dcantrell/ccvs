@@ -16423,9 +16423,9 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # Now test verifymsg
 	  cat >${TESTDIR}/vscript <<EOF
 #!${TESTSHELL}
-if head -1 < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
+if sed 1q < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
-elif head -1 < \$1 | grep '^BugId:[ ]*new$' > /dev/null; then
+elif sed 1q < \$1 | grep '^BugId:[ ]*new$' > /dev/null; then
     echo A new bugid was found. >> \$1
     exit 0
 else
@@ -21652,7 +21652,7 @@ done"
 	  dotest tag8k-16 "$testcvs -Q tag $t-a $file" ''
 
 	  # Extract the author value.
-	  name=`sed -n 's/.*;	author \([^;]*\);.*/\1/p' ${CVSROOT_DIRNAME}/$module/$file,v|head -1`
+	  name=`sed -n 's/.*;	author \([^;]*\);.*/\1/p' ${CVSROOT_DIRNAME}/$module/$file,v|sed 1q`
 
 	  # Form a suffix string of length (16 - length($name)).
 	  # CAREFUL: this will lose if $name is longer than 16.
