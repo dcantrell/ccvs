@@ -3802,7 +3802,12 @@ RCS_checkin (rcs, workfile, message, rev, flags)
        the working file. */
 
     tmpfile = cvs_temp_name();
-    status = RCS_checkout (rcs, NULL, commitpt->version, NULL, NULL, tmpfile,
+    status = RCS_checkout (rcs, NULL, commitpt->version, NULL,
+			   ((rcs->expand != NULL
+			     && strcmp (rcs->expand, "b") == 0)
+			    ? "-kb"
+			    : "-ko"),
+			   tmpfile,
 			   (RCSCHECKOUTPROC)0, NULL);
     if (status != 0)
 	error (1, status < 0 ? errno : 0,

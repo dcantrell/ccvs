@@ -1,3 +1,12 @@
+Sun Dec 21 21:49:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_checkin): Disable keyword expansion when generating
+	the change text.
+	* sanity.sh: Move tests keyword-24 through keyword-27 into
+	new section keywordlog and expand greatly.  Note that CVS 1.9.18
+	passes the new tests both local and remote but the current
+	version failed them both local and remote before this fix.
+
 Sat Dec 20 19:56:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_delete_revs): Clean up temporary files even if noexec.

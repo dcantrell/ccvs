@@ -9275,44 +9275,160 @@ done"
 
 	  dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
 
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	keywordlog)
 	  # Test the Log keyword.
+	  mkdir 1; cd 1
+	  dotest keywordlog-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest keywordlog-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  echo change >file1
+	  dotest keywordlog-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  # Note that we wanted to try "ci -r 1.3 -m add file1" and CVS
+	  # seemed to get all confused, thinking it was adding on a branch
+	  # or something.  FIXME?  Do something about this?  Document it
+	  # in BUGS or someplace?
+
+	  dotest keywordlog-4 "${testcvs} -q ci -m add file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest keywordlog-4a "${testcvs} -q co first-dir" "U first-dir/file1"
+	  cd ../1/first-dir
+
 	  echo 'xx $''Log$' > file1
 	  cat >${TESTDIR}/comment.tmp <<EOF
 First log line
 Second log line
 EOF
-	  dotest keyword-24 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
+	  dotest keywordlog-5 "${testcvs} ci -F ${TESTDIR}/comment.tmp file1" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.4; previous revision: 1\.3
+new revision: 1\.2; previous revision: 1\.1
 done"
 	  rm -f ${TESTDIR}/comment.tmp
-	  dotest keyword-25 "cat file1" \
+	  dotest keywordlog-6 "${testcvs} -q tag -b br" "T file1"
+	  dotest keywordlog-7 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx"
 
+	  cd ../../2/first-dir
+	  dotest keywordlog-8 "${testcvs} -q update" "[UP] file1"
+	  dotest keywordlog-9 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx"
+	  cd ../../1/first-dir
+
 	  echo "change" >> file1
-	  dotest keyword-26 "${testcvs} ci -m modify file1" \
+	  dotest keywordlog-10 "${testcvs} ci -m modify file1" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.5; previous revision: 1\.4
+new revision: 1\.3; previous revision: 1\.2
 done"
-	  dotest keyword-27 "cat file1" \
+	  dotest keywordlog-11 "cat file1" \
 "xx "'\$'"Log: file1,v "'\$'"
-xx Revision 1\.5  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
 xx modify
 xx
-xx Revision 1\.4  [0-9/]* [0-9:]*  ${username}
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
 xx First log line
 xx Second log line
 xx
 change"
 
+	  cd ../../2/first-dir
+	  dotest keywordlog-12 "${testcvs} -q update" "[UP] file1"
+	  dotest keywordlog-13 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
+xx modify
+xx
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+change"
+
+	  cd ../../1/first-dir
+	  dotest keywordlog-14 "${testcvs} -q update -r br" "[UP] file1"
+	  echo br-change >>file1
+	  dotest keywordlog-15 "${testcvs} -q ci -m br-modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2\.2\.1; previous revision: 1\.2
+done"
+	  dotest keywordlog-16 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx br-modify
+xx
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+br-change"
+	  cd ../../2/first-dir
+	  dotest keywordlog-17 "${testcvs} -q update -r br" "[UP] file1"
+	  dotest keywordlog-18 "cat file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx br-modify
+xx
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+br-change"
 	  cd ../..
-	  rm -r 1
+	  dotest keywordlog-19 "${testcvs} -q co -p -r br first-dir/file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.2\.2\.1  [0-9/]* [0-9:]*  ${username}
+xx br-modify
+xx
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+br-change"
+	  dotest keywordlog-20 "${testcvs} -q co -p first-dir/file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.3  [0-9/]* [0-9:]*  ${username}
+xx modify
+xx
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx
+change"
+	  dotest keywordlog-21 "${testcvs} -q co -p -r 1.2 first-dir/file1" \
+"xx "'\$'"Log: file1,v "'\$'"
+xx Revision 1\.2  [0-9/]* [0-9:]*  ${username}
+xx First log line
+xx Second log line
+xx"
+
+	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
