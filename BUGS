@@ -1,3 +1,6 @@
+* The build process isn't configure, make.  The stuff in options.h
+  could be derived by autoconf, couldn't it?
+
 * pcl-cvs doesn't like it when you try to check in a file which isn't
   up-to-date.  The messages produced by the server perhaps don't match
   what pcl-cvs is looking for.
