@@ -3,8 +3,10 @@ WinDebug
 WinRel
 config.cache
 config.h
+config.h.in
 config.log
 config.status
+configure
 cvs-*.spec
 cvs-*.tar.gz
 cvsinit
