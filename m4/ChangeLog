@@ -1,6 +1,12 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add new file.
+	* gettimeofday.m4: New file.
+	* Makefile.in: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add new file.
 	* st_mtim.m4, timespec.m4: New file.
 	* Makefile.in: Regenerated.
 
