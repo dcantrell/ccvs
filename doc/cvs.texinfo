@@ -6622,7 +6622,7 @@ recursing through subdirectories.
 as the overall @samp{cvs -l} option, which you can specify to the
 left of a cvs command!
 
-Available with the following commands: @code{checkout},
+Available with the following commands: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{export}, @code{log},
 @code{remove}, @code{rdiff}, @code{rtag},
 @code{status}, @code{tag}, and @code{update}.
@@ -6655,13 +6655,13 @@ Pipe the files retrieved from the repository to standard output,
 rather than writing them in the current directory.  Available
 with the @code{checkout} and @code{update} commands.
 
-@item -W
-Specify file names that should be filtered.  You can
-use this option repeatedly.  The spec can be a file
-name pattern of the same type that you can specify in
-the @file{.cvswrappers} file.
-Avaliable with the following commands: @code{import},
-and @code{update}.
+@item -R
+Process directories recursively.  This is on by default.
+
+Available with the following commands: @code{annotate}, @code{checkout},
+@code{commit}, @code{diff}, @code{export}, @code{log},
+@code{remove}, @code{rdiff}, @code{rtag},
+@code{status}, @code{tag}, and @code{update}.
 
 @item -r @var{tag}
 Use the revision specified by the @var{tag} argument instead of the
@@ -6711,6 +6711,14 @@ which you can specify to the left of a cvs command!
 @samp{-r} is available with the @code{checkout}, @code{commit},
 @code{diff}, @code{history}, @code{export}, @code{rdiff},
 @code{rtag}, and @code{update} commands.
+
+@item -W
+Specify file names that should be filtered.  You can
+use this option repeatedly.  The spec can be a file
+name pattern of the same type that you can specify in
+the @file{.cvswrappers} file.
+Avaliable with the following commands: @code{import},
+and @code{update}.
 
 @end table
 
@@ -7138,6 +7146,9 @@ Prune empty directories.  See @ref{Moving directories}.
 
 @item -p
 Pipe files to the standard output.
+
+@item -R
+Checkout directories recursively.  This option is on by default.
 
 @item -r @var{tag}
 Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
@@ -8269,6 +8280,9 @@ recent revision (instead of ignoring the file).
 @item -l
 Local; don't descend subdirectories.
 
+@item -R
+Examine directories recursively.  This option is on by default.
+
 @item -r @var{tag}
 Use revision @var{tag}.
 @end table
@@ -8522,7 +8536,7 @@ Do not run any tag program that was specified with the
 (@pxref{modules}).
 
 @item -R
-Commit directories recursively.  This is on by default.
+Tag directories recursively.  This is on by default.
 
 @item -r @var{tag}
 Only tag those files that contain @var{tag}.  This can
@@ -8637,7 +8651,7 @@ different revision.  This option is new in @sc{cvs}
 Local; run only in current working directory.
 
 @item -R
-Commit directories recursively.  This is on by default.
+Tag directories recursively.  This is on by default.
 @end table
 
 Two special options are available:
@@ -8739,7 +8753,7 @@ Prune empty directories.  See @ref{Moving directories}.
 Pipe files to the standard output.
 
 @item -R
-Operate recursively (default).  @xref{Recursive
+Update directories recursively (default).  @xref{Recursive
 behavior}.
 
 @item -r tag
@@ -8993,6 +9007,10 @@ Use head revision if tag/date not found.  See
 
 @item -l
 Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
 
 @item -r @var{tag}
 Annotate revision @var{tag}.  See @ref{Common options}.
