@@ -15,12 +15,6 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
-* Need more work on the procedure for fixing it if a binary file is
-accidentally added in text mode (sanity.sh test cases, better
-documentation, probably update and/or admin -kb should update
-the -k setting in CVS/Entries).
-
-
 * Wrappers (-t/-f) do not work client/server, and there are a variety of other
 bugs and annoyances with wrappers.
 
@@ -229,3 +223,14 @@ file's description.
   
   Send me a PGP-signed message if you want the password to use the machine
   where the problem showed up.
+
+* Status
+
+                             /*-------.
+                             | Stable |
+                             `-------*/
+
+                     /*-------------------------.
+                     | Sane for full scale use. |
+                     `-------------------------*/
+

@@ -11372,3 +11372,18 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
+
+
+
+# Report the state of this version of CVS if this is from dev.
+    cat <<EOF
+
+You are about to use an unreleased version of CVS.  Be sure to
+read the relevant mailing lists, most importantly <info-cvs@gnu.org>.
+
+Below you will find information on the status of this version of CVS.
+
+
+EOF
+    sed -n '/^\* Status/,$p' $srcdir/BUGS
+
