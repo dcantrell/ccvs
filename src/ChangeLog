@@ -1,3 +1,12 @@
+2004-11-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mkmodules.c (loginfo_contents, verifymsg_contents,
+	commitinfo_contents, taginfo_contents, preproxy_contents,
+	postadmin_contents, postproxy_contents, posttag_contents,
+	postwatch_contents, notify_contents): Add comments regarding the
+	additional format strings that are available. Include some
+	gratuitous reformatting.
+
 2004-11-19  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (Xasnprintf): Improve header comment block.

@@ -48,11 +48,11 @@ struct admin_file {
 };
 
 static const char *const loginfo_contents[] = {
-    "# The \"loginfo\" file controls where \"cvs commit\" log information\n",
-    "# is sent.  The first entry on a line is a regular expression which must match\n",
-    "# the directory that the change is being made to, relative to the\n",
-    "# $CVSROOT.  If a match is found, then the remainder of the line is a filter\n",
-    "# program that should expect log information on its standard input.\n",
+    "# The \"loginfo\" file controls where \"cvs commit\" log information is\n",
+    "# sent. The first entry on a line is a regular expression which must\n",
+    "# match the directory that the change is being made to, relative to the\n",
+    "# $CVSROOT.  If a match is found, then the remainder of the line is a\n",
+    "# filter program that should expect log information on its standard input.\n",
     "#\n",
     "# If the repository name does not match any of the regular expressions in this\n",
     "# file, the \"DEFAULT\" line is used, if it is specified.\n",
@@ -60,20 +60,27 @@ static const char *const loginfo_contents[] = {
     "# If the name ALL appears as a regular expression it is always used\n",
     "# in addition to the first matching regex or DEFAULT.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced as follows:\n",
+    "# If any format strings are present in the filter, they will be replaced\n",
+    "# as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %{sVv} = attribute list = file name, old version number (pre-checkin),\n",
-    "#           new version number (post-checkin).  When either old or new revision is\n",
-    "#           unknown, doesn't exist, or isn't applicable, the string \"NONE\" will be\n",
-    "#           placed on the command line instead.\n",
+    "#           new version number (post-checkin).  When either old or new revision\n",
+    "#           is unknown, doesn't exist, or isn't applicable, the string \"NONE\"\n",
+    "#           will be placed on the command line instead.\n",
     "#\n",
-    "# Note that %{sVv} is a list operator and not all elements are necessary.  Thus %{sv} is\n",
-    "# a legal format string, but will only be replaced with file name and new revision.\n",
-    "# it also generates multiple arguments for each file being operated upon.  i.e. if two\n",
-    "# files, file1 & file2, are being commited from 1.1 to version 1.1.2.1 and from 1.1.2.2\n",
-    "# to 1.1.2.3, respectively, %{sVv} will generate the following six arguments in this\n",
-    "# order: file1, 1.1, 1.1.2.1, file2, 1.1.2.2, 1.1.2.3.\n",
+    "# Note that %{sVv} is a list operator and not all elements are necessary.\n",
+    "# Thus %{sv} is a legal format string, but will only be replaced with\n",
+    "# file name and new revision.\n",
+    "# It also generates multiple arguments for each file being operated upon.\n",
+    "# That is, if two files, file1 & file2, are being commited from 1.1 to\n",
+    "# version 1.1.2.1 and from 1.1.2.2 to 1.1.2.3, respectively, %{sVv} will\n",
+    "# generate the following six arguments in this order:\n",
+    "# file1, 1.1, 1.1.2.1, file2, 1.1.2.2, 1.1.2.3.\n",
     "#\n",
     "# For example:\n",
     "#DEFAULT (echo \"\"; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog\n",
@@ -118,6 +125,10 @@ static const char *const verifymsg_contents[] = {
     "# If any of the above test failed, then the commit would be aborted.\n",
     "#\n",
     "# Format strings present in the filter will be replaced as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %l = name of log file to be verified.\n",
@@ -146,6 +157,10 @@ static const char *const commitinfo_contents[] = {
     "# of the line is the name of the filter to run.\n",
     "#\n",
     "# Format strings present in the filter will be replaced as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %{s} = file name, file name, ...\n",
@@ -164,7 +179,8 @@ static const char *const commitinfo_contents[] = {
 
 static const char *const taginfo_contents[] = {
     "# The \"taginfo\" file is used to control pre-tag checks.\n",
-    "# The filter on the right is invoked with the following arguments if no format strings are present:\n",
+    "# The filter on the right is invoked with the following arguments\n",
+    "# if no format strings are present:\n",
     "#\n",
     "# $1 -- tagname\n",
     "# $2 -- operation \"add\" for tag, \"mov\" for tag -F, and \"del\" for tag -d\n",
@@ -172,9 +188,15 @@ static const char *const taginfo_contents[] = {
     "# $4 -- repository\n",
     "# $5->  file revision [file revision ...]\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced as follows:\n",
-    "#    %b = branch mode = \"?\" (delete ops - unknown) | \"T\" (branch) | \"N\" (not branch)\n",
+    "# If any format strings are present in the filter, they will be replaced\n",
+    "# as follows:\n",
+    "#    %b = branch mode = \"?\" (delete ops - unknown) | \"T\" (branch)\n",
+    "#                     | \"N\" (not branch)\n",
     "#    %o = operation = \"add\" | \"mov\" | \"del\"\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %t = tagname\n",
@@ -189,8 +211,8 @@ static const char *const taginfo_contents[] = {
     "# name and old revision. it also generates multiple arguments for each file\n",
     "# being operated upon.  i.e. if two files, file1 & file2, are having a tag\n",
     "# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the\n",
-    "# following six arguments in this order: file1, 1.1, 1.1.2.9, file2, 1.1,\n",
-    "# 1.1.2.9.\n",
+    "# following six arguments in this order:\n",
+    "# file1, 1.1, 1.1.2.9, file2, 1.1, 1.1.2.9.\n",
     "#\n",
     "# A non-zero exit of the filter program will cause the tag to be aborted.\n",
     "#\n",
@@ -215,8 +237,12 @@ static const char *const preproxy_contents[] = {
     "# used to launch a dial up or VPN connection to the primary server's\n",
     "# network.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced",
+    "# If any format strings are present in the filter, they will be replaced\n",
     "# as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository (currently always \".\")\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#\n",
@@ -234,11 +260,15 @@ static const char *const preproxy_contents[] = {
 };
 
 static const char *const postadmin_contents[] = {
-    "# The \"postadmin\" file is called after the \"admin\" command finishes",
-    "# processing a directory.",
+    "# The \"postadmin\" file is called after the \"admin\" command finishes\n",
+    "# processing a directory.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced",
+    "# If any format strings are present in the filter, they will be replaced\n",
     "# as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#\n",
@@ -261,8 +291,12 @@ static const char *const postproxy_contents[] = {
     "# This script might, for example, be used to shut down a dial up\n",
     "# or VPN connection to the primary server's network.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced",
+    "# If any format strings are present in the filter, they will be replaced\n",
     "# as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository (currently always \".\")\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#\n",
@@ -280,12 +314,18 @@ static const char *const postproxy_contents[] = {
 };
 
 static const char *const posttag_contents[] = {
-    "# The \"posttag\" file is called after the \"tag\" command finishes",
-    "# processing a directory.",
+    "# The \"posttag\" file is called after the \"tag\" command finishes\n",
+    "# processing a directory.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced as follows:\n",
-    "#    %b = branch mode = \"?\" (delete ops - unknown) | \"T\" (branch) | \"N\" (not branch)\n",
+    "# If any format strings are present in the filter, they will be replaced\n",
+    "# as follows:\n",
+    "#    %b = branch mode = \"?\" (delete ops - unknown) | \"T\" (branch)\n",
+    "#                     | \"N\" (not branch)\n",
     "#    %o = operation = \"add\" | \"mov\" | \"del\"\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %t = tagname\n",
@@ -300,8 +340,8 @@ static const char *const posttag_contents[] = {
     "# name and old revision. it also generates multiple arguments for each file\n",
     "# being operated upon.  i.e. if two files, file1 & file2, are having a tag\n",
     "# moved from version 1.1 to version 1.1.2.9, %{sVv} will generate the\n",
-    "# following six arguments in this order: file1, 1.1, 1.1.2.9, file2, 1.1,\n",
-    "# 1.1.2.9.\n",
+    "# following six arguments in this order:\n",
+    "# file1, 1.1, 1.1.2.9, file2, 1.1, 1.1.2.9.\n",
     "#\n",
     "# The first entry on a line is a regular expression which is tested\n",
     "# against the directory that the change is being committed to, relative\n",
@@ -320,8 +360,12 @@ static const char *const postwatch_contents[] = {
     "# The \"postwatch\" file is called after any command finishes writing new\n",
     "# file attibute (watch/edit) information in a directory.\n",
     "#\n",
-    "# If any format strings are present in the filter, they will be replaced",
+    "# If any format strings are present in the filter, they will be replaced\n",
     "# as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#\n",
@@ -396,6 +440,10 @@ static const char *const notify_contents[] = {
     "# \"ALL\" or \"DEFAULT\" can be used in place of the regular expression.\n",
     "#\n",
     "# format strings are replaceed as follows:\n",
+    "#    %c = canonical name of the command being executed\n",
+#ifdef PROXY_SUPPORT
+    "#    %R = the name of the referrer, if any, otherwise the value NONE\n",
+#endif
     "#    %p = path relative to repository\n",
     "#    %r = repository (path portion of $CVSROOT)\n",
     "#    %s = user to notify\n",
