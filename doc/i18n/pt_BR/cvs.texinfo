@@ -6340,7 +6340,7 @@ cvs rtag -d old-name-0-4 tc
 @c <en>@node Tagging add/remove
 @node Etiquetando adicionados/removidos
 @c <en>@section Tagging and adding and removing files
-@section Tagging and adding and removing files
+@section Etiquetando e adicionando e removendo arquivos
 
 @c <en>The subject of exactly how tagging interacts with
 @c <en>adding and removing files is somewhat obscure; for the
@@ -6352,16 +6352,17 @@ cvs rtag -d old-name-0-4 tc
 @c <en>omit the tag, and @sc{cvs} knows to treat the absence
 @c <en>of a tag as meaning that the file didn't exist as of
 @c <en>that tag.
-The subject of exactly how tagging interacts with
-adding and removing files is somewhat obscure; for the
-most part @sc{cvs} will keep track of whether files
-exist or not without too much fussing.  By default,
-tags are applied to only files which have a revision
-corresponding to what is being tagged.  Files which did
-not exist yet, or which were already removed, simply
-omit the tag, and @sc{cvs} knows to treat the absence
-of a tag as meaning that the file didn't exist as of
-that tag.
+O tema a respeito de como exatamente etiquetas
+interagem com arquivos adicionados e removidos é de
+certa forma obscuro; Normalmente, o @sc{cvs} vai
+verificar quais arquivos existem ou não sem muita
+confusão.  Por padrão, etiquetas são aplicadas apenas a
+arquivos que tenham uma revisão correspondendo ao que
+está sendo etiquetado.  Arquivos que ainda não existem,
+ou que já foram removidos, simplesmente omitem a
+etiqueta, e o @sc{cvs} trata a ausência de uma
+etiqueta como significando que o arquivo não existia na
+criação da etiqueta.
 
 @c <en>However, this can lose a small amount of information.
 @c <en>For example, suppose a file was added and then removed.
@@ -6372,15 +6373,16 @@ that tag.
 @c <en>then @sc{cvs} tags the files which have been removed,
 @c <en>and thereby avoids this problem.  For example, one
 @c <en>might specify @code{-r HEAD} to tag the head.
-However, this can lose a small amount of information.
-For example, suppose a file was added and then removed.
-Then, if the tag is missing for that file, there is no
-way to know whether the tag refers to the time before
-the file was added, or the time after it was removed.
-If you specify the @samp{-r} option to @code{cvs rtag},
-then @sc{cvs} tags the files which have been removed,
-and thereby avoids this problem.  For example, one
-might specify @code{-r HEAD} to tag the head.
+Entretanto, Isto pode perder uma pequena quantidade de
+informação. Por exemplo, suponha que um arquivo foi
+adicionado e então removido. Então, se a etiqueta está
+faltando para aquele arquivo, não há como se descobrir
+se a data da etiqueta é posterior à adição ou anterior
+à remoção do arquivo. Se você usa a opção @samp{-r}
+para @code{cvs rtag}, então o @sc{cvs} etiqueta os
+arquivos que foram removidos, e portanto remove este
+problema.  Por exemplo, alguem pode especificar @code{-r
+HEAD} para etiquetar a head.
 
 @c <en>On the subject of adding and removing files, the
 @c <en>@code{cvs rtag} command has a @samp{-a} option which
@@ -6392,16 +6394,17 @@ might specify @code{-r HEAD} to tag the head.
 @c <en>the old revision, rather than reflecting the fact that
 @c <en>the file had been removed.  I don't think this is
 @c <en>necessary if @samp{-r} is specified, as noted above.
-On the subject of adding and removing files, the
-@code{cvs rtag} command has a @samp{-a} option which
-means to clear the tag from removed files that would
-not otherwise be tagged.  For example, one might
-specify this option in conjunction with @samp{-F} when
-moving a tag.  If one moved a tag without @samp{-a},
-then the tag in the removed files might still refer to
-the old revision, rather than reflecting the fact that
-the file had been removed.  I don't think this is
-necessary if @samp{-r} is specified, as noted above.
+A respeito de adicionar e remover arquivos, o comando
+@code{cvs rtag} tem a opção @samp{-a} que significa
+limpar a etiqueta de arquivos removidos que ???would
+not otherwise be tagged???.  Por exemplo, alguem pode
+especificar esta opção em conjunto com @samp{-F} quando
+mover uma etiqueta.  Se alguem mover uma etiqueta sem o
+@samp{-a}, então a etiqueta nos arquivos removidos vai
+continuar fazendo referência à revisão antiga, Ao invés
+de refletir o fato de que o arquivo foi removido.  Eu
+não acho que isto seja necessário se @samp{-r} é
+especificado, como falado acima.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Sticky tags
@@ -6426,29 +6429,31 @@ necessary if @samp{-r} is specified, as noted above.
 @c <en>or @samp{update -D}.  Because this data persists --
 @c <en>that is, it applies to subsequent commands in the
 @c <en>working copy -- we refer to it as @dfn{sticky}.
-Sometimes a working copy's revision has extra data
-associated with it, for example it might be on a branch
-(@pxref{Ramificando e mesclando}), or restricted to
-versions prior to a certain date by @samp{checkout -D}
-or @samp{update -D}.  Because this data persists --
-that is, it applies to subsequent commands in the
-working copy -- we refer to it as @dfn{sticky}.
+Algumas vezes, um cópia de tabalho de uma revisão tem
+dados extra associados a ela, por exemplo, ela pode
+estar num ramo (@pxref{Ramificando e mesclando}), ou
+restrita a uma versão anterior a uma certa data por
+@samp{checkout -D} ou @samp{update -D}.  Já que este
+dado persiste -- ou seja, ele se aplica a comandos
+subseqüentes na cópia de trabalho -- nós o chamamos de
+@dfn{adesivos}.
 
 @c <en>Most of the time, stickiness is an obscure aspect of
 @c <en>@sc{cvs} that you don't need to think about.  However,
 @c <en>even if you don't want to use the feature, you may need
 @c <en>to know @emph{something} about sticky tags (for
 @c <en>example, how to avoid them!).
-Most of the time, stickiness is an obscure aspect of
-@sc{cvs} that you don't need to think about.  However,
-even if you don't want to use the feature, you may need
-to know @emph{something} about sticky tags (for
-example, how to avoid them!).
+Na maioria das vezes, ser adesivo é um aspecto obscuro
+do @sc{cvs} que você não precisa saber a respeito.
+Entretanto, mesmo se você não quiser usar esta
+habilidade, você  vai precisar saber @emph{alguma
+coisa} sobre etiquetas adesivas (sticky tags) (por
+exemplo, como evitá-las!).
 
 @c <en>You can use the @code{status} command to see if any
 @c <en>sticky tags or dates are set:
-You can use the @code{status} command to see if any
-sticky tags or dates are set:
+Você pode usar o comando @code{status} para ver se
+alguma etiqueta ou data adesiva estão ligadas:
 
 @example
 $ cvs status driver.c
@@ -6475,15 +6480,16 @@ File: driver.c          Status: Up-to-date
 @c <en>file from the head of the trunk, removing any sticky tags,
 @c <en>dates, or options.  See @ref{update} for more on the operation
 @c <en>of @code{cvs update}.
-The sticky tags will remain on your working files until
-you delete them with @samp{cvs update -A}.  The
-@samp{-A} option merges local changes into the version of the
-file from the head of the trunk, removing any sticky tags,
-dates, or options.  See @ref{update} for more on the operation
-of @code{cvs update}.
+As etiquetas adesivas vão permanecer nos seus arquivos
+de trabalho até que você apague elas com @samp{cvs
+update -A}.  A opção @samp{-A} mescla as alterações
+locais na versão do arquivo na cabeça (head) do tronco,
+removendo qualquer etiqueta, data ou opção adesiva.
+Veja em @ref{update} para mais a respeito desta
+operação do @code{cvs update}.
 
 @c <en>@cindex Sticky date
-@cindex Sticky date
+@cindex Data adesiva
 @c <en>The most common use of sticky tags is to identify which
 @c <en>branch one is working on, as described in
 @c <en>@ref{Accessing branches}.  However, non-branch
@@ -6502,35 +6508,35 @@ of @code{cvs update}.
 @c <en>@samp{-D} option to @code{update} or @code{checkout}
 @c <en>sets a @dfn{sticky date}, which, similarly, causes that
 @c <en>date to be used for future retrievals.
-The most common use of sticky tags is to identify which
-branch one is working on, as described in
-@ref{Accessing branches}.  However, non-branch
-sticky tags have uses as well.  For example,
-suppose that you want to avoid updating your working
-directory, to isolate yourself from possibly
-destabilizing changes other people are making.  You
-can, of course, just refrain from running @code{cvs
-update}.  But if you want to avoid updating only a
-portion of a larger tree, then sticky tags can help.
-If you check out a certain revision (such as 1.4) it
-will become sticky.  Subsequent @code{cvs update}
-commands will
-not retrieve the latest revision until you reset the
-tag with @code{cvs update -A}.  Likewise, use of the
-@samp{-D} option to @code{update} or @code{checkout}
-sets a @dfn{sticky date}, which, similarly, causes that
-date to be used for future retrievals.
+O uso mais comum de etiquetas adesivas é identificar em
+que ramo se está trabalhando, como descrito em
+@ref{Acessando ramos}.  Entretanto, etiquetas adesivas
+em ???non-branch??? também têm seu uso.  Por exemplo,
+suponha que você quer evitar atualizar seu diretório de
+trabalho, para se isolar de mudanças que outras pessoas
+estão fazendo que possam que possam desestabilizar seu
+trabalho.  Você pode, claro, simplesmente não rodar o @code{cvs
+update}.  Mas se você quer evitar atualizar (fazer
+update) apenas uma parte de uma grande árvore, então
+etiquetas adesivas podem ajudar. Se você pega uma certa
+revsão (como a 1.4) ela vai se tornar adesiva.
+comandos @code{cvs update} subsequentes não vão trazer
+a revisão mais nova até que você limpe a etiqueta com os
+comandos @code{cvs update -A}.  Da mesma forma, o uso da
+opção @samp{-D} em @code{update} ou @code{checkout}
+define uma @dfn{data adesiva}, que, similarmente, faz
+com que a data seja usada para futuras ???retrievals???.
 
 @c <en>People often want to retrieve an old version of
 @c <en>a file without setting a sticky tag.  This can
 @c <en>be done with the @samp{-p} option to @code{checkout} or
 @c <en>@code{update}, which sends the contents of the file to
 @c <en>standard output.  For example:
-People often want to retrieve an old version of
-a file without setting a sticky tag.  This can
-be done with the @samp{-p} option to @code{checkout} or
-@code{update}, which sends the contents of the file to
-standard output.  For example:
+É normal as pessoas quererem recuperar uma versão
+antiga de um arquivo sem definir uma etiqueta adesiva.
+Isto pode ser feito com a opção @samp{-p} no
+@code{checkout} ou @code{update}, que manda o conteúdo
+do arquivo para a saída padrão.  Por exemplo:
 @example
 $ cvs update -p -r 1.1 file1 >file1
 ===================================================================
@@ -6547,12 +6553,12 @@ $
 @c <en>1.1).  In that case you are better off using the
 @c <en>@samp{-j} option to @code{update}; for further
 @c <en>discussion see @ref{Merging two revisions}.
-However, this isn't the easiest way, if you are asking
-how to undo a previous checkin (in this example, put
-@file{file1} back to the way it was as of revision
-1.1).  In that case you are better off using the
-@samp{-j} option to @code{update}; for further
-discussion see @ref{Merging two revisions}.
+Entretanto, esta não é a forma mais fácil, se você está
+querendo desfazer um envio anterior (neste exemplo,
+devolver o arquivo @file{file1} ao que ele era na
+revisão 1.1).  Neste caso é melhor usar a opção
+@samp{-j} com o @code{update}; Para maiores detalhes,
+veja em @ref{Mesclando duas revisões}.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Branching and merging
@@ -6604,7 +6610,7 @@ copy the changes onto another branch.
 @c <en>* Creating a branch::           Creating a branch
 * Creating a branch::           Creating a branch
 @c <en>* Accessing branches::          Checking out and updating branches
-* Accessing branches::          Checking out and updating branches
+* Acessando ramos::          Checking out and updating branches
 @c <en>* Branches and revisions::      Branches are reflected in revision numbers
 * Ramos e revisões::      Branches are reflected in revision numbers
 @c <en>* Magic branch numbers::        Magic branch numbers
@@ -6614,7 +6620,7 @@ copy the changes onto another branch.
 @c <en>* Merging more than once::      Merging from a branch several times
 * Merging more than once::      Merging from a branch several times
 @c <en>* Merging two revisions::       Merging differences between two revisions
-* Merging two revisions::       Merging differences between two revisions
+* Mesclando duas revisões::       Merging differences between two revisions
 @c <en>* Merging adds and removals::   What if files are added or removed?
 * Merging adds and removals::   What if files are added or removed?
 @c <en>* Merging and keywords::        Avoiding conflicts due to keyword substitution
@@ -6720,7 +6726,7 @@ in the repository, not in the working copy.  Creating a
 branch based on current revisions, as the above example
 does, will @emph{not} automatically switch the working
 copy to be on the new branch.  For information on how
-to do that, see @ref{Accessing branches}.
+to do that, see @ref{Acessando ramos}.
 
 @c <en>You can also create a branch without reference to any
 @c <en>working copy, by using @code{rtag}:
@@ -6768,9 +6774,9 @@ by @samp{rel-1-0}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Accessing branches
-@node Accessing branches
+@node Acessando ramos
 @c <en>@section Accessing branches
-@section Accessing branches
+@section Acessando ramos
 @c <en>@cindex Check out a branch
 @cindex Check out a branch
 @c <en>@cindex Retrieve a branch
@@ -7335,11 +7341,11 @@ cvs update -j merged_from_R1fix_to_trunk -j R1fix m.c
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Merging two revisions
-@node Merging two revisions
+@node Mesclando duas revisões
 @c <en>@section Merging differences between any two revisions
 @section Merging differences between any two revisions
 @c <en>@cindex Merging two revisions
-@cindex Merging two revisions
+@cindex Mesclando duas revisões
 @c <en>@cindex Revisions, merging differences between
 @cindex Revisions, merging differences between
 @c <en>@cindex Differences, merging
@@ -12597,7 +12603,21 @@ left intact but the head revision is deleted.
 Delete the revision @var{rev}.  For example, @samp{-o
 1.3} is equivalent to @samp{-o 1.2::1.4}.
 
+@c <en>@item @var{rev1}:@var{rev2}
 @item @var{rev1}:@var{rev2}
+@c <en>Delete the revisions from @var{rev1} to @var{rev2},
+@c <en>inclusive, on the same branch.  One will not be able to
+@c <en>retrieve @var{rev1} or @var{rev2} or any of the
+@c <en>revisions in between.  For example, the command
+@c <en>@samp{cvs admin -oR_1_01:R_1_02 .} is rarely useful.
+@c <en>It means to delete revisions up to, and including, the
+@c <en>tag R_1_02.  But beware!  If there are files that have not
+@c <en>changed between R_1_02 and R_1_03 the file will have
+@c <en>@emph{the same} numerical revision number assigned to
+@c <en>the tags R_1_02 and R_1_03.  So not only will it be
+@c <en>impossible to retrieve R_1_02; R_1_03 will also have to
+@c <en>be restored from the tapes!  In most cases you want to
+@c <en>specify @var{rev1}::@var{rev2} instead.
 Delete the revisions from @var{rev1} to @var{rev2},
 inclusive, on the same branch.  One will not be able to
 retrieve @var{rev1} or @var{rev2} or any of the
@@ -12612,20 +12632,43 @@ impossible to retrieve R_1_02; R_1_03 will also have to
 be restored from the tapes!  In most cases you want to
 specify @var{rev1}::@var{rev2} instead.
 
+@c <en>@item :@var{rev}
 @item :@var{rev}
+@c <en>Delete revisions from the beginning of the
+@c <en>branch containing @var{rev} up to and including
+@c <en>@var{rev}.
 Delete revisions from the beginning of the
 branch containing @var{rev} up to and including
 @var{rev}.
 
+@c <en>@item @var{rev}:
 @item @var{rev}:
+@c <en>Delete revisions from revision @var{rev}, including
+@c <en>@var{rev} itself, to the end of the branch containing
+@c <en>@var{rev}.
 Delete revisions from revision @var{rev}, including
 @var{rev} itself, to the end of the branch containing
 @var{rev}.
 @end table
 
+@c <en>None of the revisions to be deleted may have
+@c <en>branches or locks.
 None of the revisions to be deleted may have
 branches or locks.
 
+@c <en>If any of the revisions to be deleted have symbolic
+@c <en>names, and one specifies one of the @samp{::} syntaxes,
+@c <en>then @sc{cvs} will give an error and not delete any
+@c <en>revisions.  If you really want to delete both the
+@c <en>symbolic names and the revisions, first delete the
+@c <en>symbolic names with @code{cvs tag -d}, then run
+@c <en>@code{cvs admin -o}.  If one specifies the
+@c <en>non-@samp{::} syntaxes, then @sc{cvs} will delete the
+@c <en>revisions but leave the symbolic names pointing to
+@c <en>nonexistent revisions.  This behavior is preserved for
+@c <en>compatibility with previous versions of @sc{cvs}, but
+@c <en>because it isn't very useful, in the future it may
+@c <en>change to be like the @samp{::} case.
 If any of the revisions to be deleted have symbolic
 names, and one specifies one of the @samp{::} syntaxes,
 then @sc{cvs} will give an error and not delete any
@@ -12648,14 +12691,21 @@ cannot be specified symbolically if it is a branch.
 @xref{Números de ramos mágicos}, for an explanation.
 @c FIXME: is this still true?  I suspect not.
 
+@c <en>Make sure that no-one has checked out a copy of the
+@c <en>revision you outdate.  Strange things will happen if he
+@c <en>starts to edit it and tries to check it back in.  For
+@c <en>this reason, this option is not a good way to take back
+@c <en>a bogus commit; commit a new revision undoing the bogus
+@c <en>change instead (@pxref{Merging two revisions}).
 Make sure that no-one has checked out a copy of the
 revision you outdate.  Strange things will happen if he
 starts to edit it and tries to check it back in.  For
 this reason, this option is not a good way to take back
 a bogus commit; commit a new revision undoing the bogus
-change instead (@pxref{Merging two revisions}).
+change instead (@pxref{Mesclando duas revisões}).
 
 @item -q
+@c <en>Run quietly; do not print diagnostics.
 Run quietly; do not print diagnostics.
 
 @c <en>@item -s@var{state}[:@var{rev}]
