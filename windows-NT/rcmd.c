@@ -12,6 +12,9 @@
 
    Jim Blandy <jimb@cyclic.com> --- August 1995  */
 
+#include "cvs.h"
+#include "rcmd.h"
+
 #include <io.h>
 #include <fcntl.h>
 #include <malloc.h>
@@ -38,9 +41,6 @@
 
 #include <stdio.h>
 #include <assert.h>
-
-#include "cvs.h"
-#include "rcmd.h"
 
 /* The rest of this file contains the rcmd() code, which is used
    only by START_SERVER.  The idea for a long-term direction is
