@@ -11066,6 +11066,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  fi
 	  cd ..
 	  rm -r wnt
+	  rm $HOME/.cvsrc
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -17576,6 +17577,22 @@ error  "
 	      echo "exit status was $?" >>${LOGFILE}
 	      fail server-1
 	    fi
+
+	    # Could also test for relative pathnames here (so that crerepos-6a
+	    # and crerepos-6b can use :fork:).
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Set OTHER=variable
+Set MYENV=env-value
+init ${TESTDIR}/crerepos
+EOF
+	      dotest server-2 "cat ${TESTDIR}/server.tmp" "ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-2
+	    fi
+	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
+
+	    rm -rf ${TESTDIR}/crerepos
 	  fi # skip the whole thing for local
 	  ;;
 
