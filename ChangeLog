@@ -1,5 +1,10 @@
 2004-08-24  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Remove release subdir note.  This was fixed with the commit on
+	2004-02-25, based on Matthew Ogilvie's patch.
+
+2004-08-24  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note r* . fix.
 	* BUGS: Remove r* . note.
 
