@@ -1,5 +1,12 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Import vasnprintf module from GNULIB.
+	* intmax_t.m4, longdouble.m4, longlong.m4, signed.m4, vasnprintf.m4,
+	wchar_t.m4, wint_t.m4: New files.
+	* Makefile.am (EXTRA_DIST): Add new files.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	Import xsize module from GNULIB for vasnprintf().
 	* size_max.m4, xsize.m4: New files.
 	* Makefile.am (EXTRA_DIST): Add new files.
