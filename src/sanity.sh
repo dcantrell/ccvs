@@ -10448,21 +10448,18 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  # Tests to add:
 	  #   -F to move
-	  #   branch
-	  #   rejectme without -n
-	  #   rejectme with -n
-	  #   would-be-tag with -n (should not log)
 	  #   -d
+	  #   rtag
 
 	  mkdir 1; cd 1
 	  dotest taginfo-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
 	  cat >${TESTDIR}/1/loggit <<EOF
 #!${TESTSHELL}
-echo "\$@" >>${TESTDIR}/1/taglog
 if test "\$1" = rejectme; then
   exit 1
 else
+  echo "\$@" >>${TESTDIR}/1/taglog
   exit 0
 fi
 EOF
@@ -10500,6 +10497,20 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" "T file1"
+
+	  dotest_fail taginfo-11 "${testcvs} -q tag rejectme" \
+"${PROG} [a-z]*: Pre-tag check failed
+${PROG} \[[a-z]* aborted\]: correct the above errors first!"
+
+	  # When we are using taginfo to allow/disallow, it would be
+	  # convenient to be able to use "cvs -n tag" to test whether
+	  # the allow/disallow functionality is working as expected.
+	  dotest taginfo-12 "${testcvs} -nq tag rejectme" "T file1"
+
+	  # But when taginfo is used for logging, it is a pain for -n
+	  # to call taginfo, since taginfo doesn't know whether -n was
+	  # specified or not.
+	  dotest taginfo-13 "${testcvs} -nq tag would-be-tag" "T file1"
 
 	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
 	  # But it turns out that is very hard to implement, since
