@@ -1,3 +1,7 @@
+Fri Sep 19 09:59:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Add item #191, concerning how to store binary files.
+
 Wed Sep 17 16:13:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Add ideas about ability to pass spaces in arguments, and
