@@ -25,7 +25,7 @@ static void setup_tmpfile PROTO((FILE * xfp, char *xprefix, List * changes));
 static int editinfo_proc PROTO((char *repository, char *template));
 
 static FILE *fp;
-static char *strlist;
+static char *str_list;
 static char *editinfo_editor;
 static Ctype type;
 
@@ -326,9 +326,9 @@ Update_Logfile (repository, xmessage, xrevision, xlogfp, xchanges)
     srepos = Short_Repository (repository);
 
     /* allocate a chunk of memory to hold the title string */
-    if (!strlist)
-	strlist = xmalloc (MAXLISTLEN);
-    strlist[0] = '\0';
+    if (!str_list)
+	str_list = xmalloc (MAXLISTLEN);
+    str_list[0] = '\0';
 
     type = T_TITLE;
     (void) walklist (changes, title_proc, NULL);
@@ -338,12 +338,12 @@ Update_Logfile (repository, xmessage, xrevision, xlogfp, xchanges)
     (void) walklist (changes, title_proc, NULL);
     type = T_REMOVED;
     (void) walklist (changes, title_proc, NULL);
-    title = xmalloc (strlen (srepos) + strlen (strlist) + 1 + 2); /* for 's */
-    (void) sprintf (title, "'%s%s'", srepos, strlist);
+    title = xmalloc (strlen (srepos) + strlen (str_list) + 1 + 2); /* for 's */
+    (void) sprintf (title, "'%s%s'", srepos, str_list);
 
     /* to be nice, free up this chunk of memory */
-    free (strlist);
-    strlist = (char *) NULL;
+    free (str_list);
+    str_list = (char *) NULL;
 
     /* call Parse_Info to do the actual logfile updates */
     (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc, 1);
@@ -365,7 +365,7 @@ update_logfile_proc (repository, filter)
 }
 
 /*
- * concatenate each name onto strlist
+ * concatenate each name onto str_list
  */
 static int
 title_proc (p, closure)
@@ -374,8 +374,8 @@ title_proc (p, closure)
 {
     if (p->data == (char *) type)
     {
-	(void) strcat (strlist, " ");
-	(void) strcat (strlist, p->key);
+	(void) strcat (str_list, " ");
+	(void) strcat (str_list, p->key);
     }
     return (0);
 }
