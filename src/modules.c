@@ -786,22 +786,6 @@ cat_module (status)
     char *line;
     char *moduleargv[MAXFILEPERDIR];
 
-#ifdef sun
-#ifdef TIOCGSIZE
-    struct ttysize ts;
-
-    (void) ioctl (0, TIOCGSIZE, &ts);
-    cols = ts.ts_cols;
-#endif
-#else
-#ifdef TIOCGWINSZ
-    struct winsize ws;
-
-    (void) ioctl (0, TIOCGWINSZ, &ws);
-    cols = ws.ws_col;
-#endif
-#endif
-
     Status = status;
 
     /* Read the whole modules file into allocated records */
