@@ -2253,7 +2253,7 @@ fi
 for ac_hdr in errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
 		 limits.h sys/file.h \
                  sys/param.h sys/select.h sys/time.h sys/timeb.h \
-                 io.h direct.h sys/bsdtypes.h sys/resource.h
+                 io.h direct.h sys/bsdtypes.h sys/resource.h syslog.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6

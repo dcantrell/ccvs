@@ -1,3 +1,8 @@
+2001-01-29  Larry Jones  <larry.jones@sdrc.com>
+ 
+	* configure.in: Check for syslog.h.
+	* configure, config.h.in: Regenerated.
+
 2001-01-17  Derek Price  <derek.price@openavenue.com>
 
 	* configure.in: add machinery to check for the BSD VPATH bug
@@ -188,7 +193,7 @@
 	* configure: regenerated
 
 2000-11-08  Larry Jones  <larry.jones@sdrc.com>
-
+ 
 	* configure.in: Check for getgroups function.
 	* configure, config.h.in: Regenerated.
 

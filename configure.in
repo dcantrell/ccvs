@@ -77,7 +77,7 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
 		 limits.h sys/file.h \
                  sys/param.h sys/select.h sys/time.h sys/timeb.h \
-                 io.h direct.h sys/bsdtypes.h sys/resource.h)
+                 io.h direct.h sys/bsdtypes.h sys/resource.h syslog.h)
 AC_HEADER_STAT
 AC_HEADER_TIME
 
