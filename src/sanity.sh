@@ -2190,7 +2190,7 @@ new revision: delete; previous revision: 3\.1
 done"
 	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ./ssfile >ssfile" ""
 	  dotest basica-r4 "${testcvs} add ssfile" \
-"${SPROG} add: re-adding file .ssfile. (in place of dead revision 3\.2)
+"${SPROG} add: re-adding file .ssfile. after dead revision 3\.2
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest basica-r5 "${testcvs} -q ci -m resurrect" \
 "Checking in ssfile;
@@ -5313,8 +5313,8 @@ diff -c first-dir/file1:1\.1 first-dir/file1:removed
 	  # Readd the file to the branch.
 	  echo "second revision" > file1
 	  dotest death2-9 "${testcvs} add file1" \
-"${SPROG}"' add: file `file1'\'' will be added on branch `branch'\'' from version 1\.1\.2\.1
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+"${SPROG} add: re-adding file \`file1' on branch \`branch' after dead revision 1\.1\.2\.1
+${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 
 	  # Test diff of the added file before it is committed.
 	  dotest_fail death2-diff-7 "${testcvs} -q diff file1" \
@@ -7089,7 +7089,7 @@ done"
 	  echo v2 > $file
 	  dotest update-p-undead-7 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-8 "$testcvs add $file" \
-"${SPROG} add: re-adding file .$file. (in place of dead revision 1\.2)
+"${SPROG} add: re-adding file .$file. after dead revision 1\.2
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 
 	  dotest update-p-undead-9 "$testcvs -Q update -p -rT $file" v1
@@ -16520,7 +16520,7 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cp ../binfile.dat file1
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
-"${SPROG} add: re-adding file .file1. (in place of dead revision 1\.2)
+"${SPROG} add: re-adding file .file1. after dead revision 1\.2
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  # The idea behind this test is to make sure that the file
 	  # gets opened in binary mode to send to "cvs ci".
@@ -25664,7 +25664,7 @@ initial revision: 1\.1
 done"
 	  else # server insensitive
 	    dotest recase-1si "$testcvs add FiLe" \
-"$SPROG add: re-adding file \`FiLe' (in place of dead revision 1\.2)
+"$SPROG add: re-adding file \`FiLe' after dead revision 1\.2
 $SPROG add: use \`$SPROG commit' to add this file permanently"
 	    dotest recase-2si "$testcvs -q ci -mrecase" \
 "Checking in FiLe;
