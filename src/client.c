@@ -5312,8 +5312,6 @@ send_file_names (argc, argv, flags)
     unsigned int flags;
 {
     int i;
-    int level;
-    int max_level;
     
     /* The fact that we do this here as well as start_recursion is a bit 
        of a performance hit.  Perhaps worth cleaning up someday.  */

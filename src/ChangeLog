@@ -1,3 +1,7 @@
+2004-04-03  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* client.c (send_file_names): Remove unused variables.
+
 2004-04-02  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (client): Honor $keep.
