@@ -291,6 +291,12 @@ extern void fnfold (char *FILENAME);
 /* Diff also has an ifdef for setmode, and it is HAVE_SETMODE.  */
 #define HAVE_SETMODE 1
 
+/* Diff needs us to define this.  I think it could always be
+   -1 for CVS, because we pass temporary files to diff, but
+   config.h seems like the easiest place to put this, so for
+   now we put it here.  */
+#define same_file(s,t) (-1)
+
 /* Read data from INFILE, and copy it to OUTFILE. 
    Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
    This is useful for converting between CRLF and LF line formats.  */
