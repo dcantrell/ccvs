@@ -1,5 +1,10 @@
 1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_checkout): Comment return value (0/1, not -1).
+	* commit.c, diff.c, mkmodules.c, patch.c, rcs.c, update.c: Update
+	to match this convention.  Don't suppress errors based on
+	quiet or really_quiet variables.
+
 	Fix a longstanding bug which also makes stamps-8kw in make
 	remotecheck work again (it stopped working with Ian's 8 Feb 98
 	checkin):

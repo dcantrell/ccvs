@@ -523,9 +523,8 @@ patch_fileproc (callerdat, finfo)
 				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
 	{
-	    if (!really_quiet)
-		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		       "co of revision %s in %s failed", vers_tag, rcs);
+	    error (0, 0,
+		   "cannot check out revision %s of %s", vers_tag, rcs);
 	    ret = 1;
 	    goto out;
 	}
@@ -548,9 +547,8 @@ patch_fileproc (callerdat, finfo)
 				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
 	{
-	    if (!really_quiet)
-		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		       "co of revision %s in %s failed", vers_head, rcs);
+	    error (0, 0,
+		   "cannot check out revision %s of %s", vers_head, rcs);
 	    ret = 1;
 	    goto out;
 	}

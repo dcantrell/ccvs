@@ -2175,7 +2175,7 @@ join_file (finfo, vers)
 				(char *) NULL, RUN_TTY,
 				(RCSCHECKOUTPROC) NULL, (void *) NULL);
 	if (retcode != 0)
-	    error (1, retcode == -1 ? errno : 0,
+	    error (1, 0,
 		   "failed to check out %s file", finfo->fullname);
     }
 #endif
