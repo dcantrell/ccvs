@@ -946,6 +946,69 @@ fi # enable_server
 
 
 dnl
+dnl begin --enable-case-sensitivity
+dnl
+
+AC_ARG_ENABLE(
+  [case-sensitivity],
+  AC_HELP_STRING(
+    [--enable-case-sensitivity],
+    [Force CVS to expect a case sensitive file system.  Enabling this on a case
+     insensitive system should have little effect on the server or client
+     operation, though client users may ocassionally be suprised that the CVS
+     server appears to be case sensitive.  Disabling this for a case sensitive
+     server disables server support for case insensitive clients, which can
+     confuse all users of case insensitive clients contacting the server.
+     Disabling this for a case sensitive client will cause the client to ask
+     servers to behave case insensitively, which could cause confusion for
+     users, but also probably no real harm.  (default autoselects based on the
+     case sensitivity of the file system containing the current working
+     directory)]),
+    [case "$enable_case_sensitivity" in
+       yes | no | auto) ;;
+       *)
+          AC_MSG_ERROR([Unrecognized argument to --enable-case-sensitivity: \`$enable_case_sensitivity'.  Acceptable values are \`yes', \`no', and \`auto'.])
+          ;;
+     esac],
+  [enable_case_sensitivity=auto])
+
+acx_forced=' (forced)'
+AC_MSG_CHECKING([for a case sensitive file system])
+if test $enable_case_sensitivity = auto; then
+  dnl
+  dnl Check for a case insensitive filesystem, like Mac OS X and Windows have.
+  dnl
+  AC_CACHE_VAL([acx_cv_case_sensitive],
+  [ rm -f ac_TEST_filenames_CASE_sensitive
+    echo foo >ac_test_filenames_case_sensitive
+    if test -f ac_TEST_filenames_CASE_sensitive; then
+      acx_cv_case_sensitive=no
+    else
+      acx_cv_case_sensitive=yes
+    fi
+    rm ac_test_filenames_case_sensitive
+  ])
+  enable_case_sensitivity=$acx_cv_case_sensitive
+  acx_forced=
+fi
+AC_MSG_RESULT([$enable_case_sensitivity$acx_forced])
+if test $enable_case_sensitivity = no; then
+  AC_DEFINE([FILENAMES_CASE_INSENSITIVE], [1],
+            [Define if this executable will be running on case insensitive
+             file systems.  In the client case, this means that it will request
+             that the server pretend to be case insensitive if it isn't
+             already.])
+  dnl Compile fncase.c (containing fncase() & fncmp()) to handle file name
+  dnl comparisons on case insensitive filesystems.
+  AC_LIBOBJ(fncase)
+fi
+
+dnl
+dnl end --enable-case-sensitivity
+dnl
+
+
+dnl
 dnl begin --enable-encryption
 dnl
 
@@ -1066,11 +1129,9 @@ dnl things won't be that simple, before long.
 dnl AC_DEFINE(PRESERVE_PERMISSIONS_SUPPORT, 1,
 dnl [Define if this system supports chown(), link(), and friends.])
 
-dnl On cygwin32, we configure like a Unix system, but we use the
-dnl Windows support code in lib/fncase.c to handle the case
-dnl insensitive file system.  We also need some support libraries.  We
-dnl do this at the end so that the new libraries are added at the end
-dnl of LIBS.
+dnl On cygwin32, we configure like a Unix system, but we need some support
+dnl libraries.  We do this at the end so that the new libraries are added at
+dnl the end of LIBS.
 dnl
 dnl FIXME: We should be trying to meet the autoconf ideal of checking for
 dnl the properties of the system rather than the name of the os here.  In other
@@ -1080,7 +1141,6 @@ AC_CACHE_CHECK(for cygwin32, ccvs_cv_sys_cygwin32,
 [AC_TRY_COMPILE([], [return __CYGWIN32__;],
 ccvs_cv_sys_cygwin32=yes, ccvs_cv_sys_cygwin32=no)])
 if test $ccvs_cv_sys_cygwin32 = yes; then
-  AC_LIBOBJ(fncase)
   LIBS="$LIBS -ladvapi32"
 
   dnl On Windows you can only change file times if you can write to

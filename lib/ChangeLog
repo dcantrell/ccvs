@@ -1,3 +1,12 @@
+2003-12-03  Derek Price  <derek@ximbiot.com>
+
+	* fncase.c (OSX_filename_classes): New array.
+	(fncmp): Use FOLD_FN_CASE rather relying on the fact that it will be
+	#defined to use WNT_filename_classes.
+	* system.h: Define FOLD_FN_CASE, fncmp, and fnfold for all case
+	insensitive filesystems.  Share some code between the new generic case
+	insensitive section and the old WOE32 section.
+
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.

@@ -1,3 +1,10 @@
+2003-12-03  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--enable-case-sensitivity): Restore this option.
+	Always AC_LIBOBJ(fncase) when filenames are found to be case
+	insensitive.
+	* configure, config.h.in: Regenerated.
+
 2003-11-26  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (--enable-case-sensitivity): Remove this option.
