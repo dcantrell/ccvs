@@ -1,3 +1,7 @@
+2001-02-15  Derek Price  <derek.price@openavenue.com>
+
+	* configure: Regenerated without beta automake macros.
+
 2001-02-14  Derek Price  <derek.price@openavenue.com>
 
 	* configure.in (AC_CHECK_FUNCS): Alphebetize & reorganize.  Add
