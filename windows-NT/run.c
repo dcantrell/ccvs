@@ -109,36 +109,6 @@ run_arg (s)
     run_add_arg (s);
 }
 
-/* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
-void 
-run_args (const char *fmt,...)
-#else
-void 
-run_args (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
-{
-#ifdef HAVE_VPRINTF
-    va_list args;
-#endif
-
-    run_init_prog ();
-
-    /* process the varargs into run_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
-    (void) vsprintf (run_prog, fmt, args);
-    va_end (args);
-#else
-    (void) sprintf (run_prog, fmt, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
-
-    /* and add the (single) argument to the run_argv list */
-    run_add_arg (run_prog);
-}
-
 /* Return a malloc'd copy of s, with double quotes around it.  */
 static char *
 quote (const char *s)

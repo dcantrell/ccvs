@@ -93,22 +93,6 @@ run_arg (s)
     run_add_arg (s);
 }
 
-void
-run_args (const char *fmt,...)
-{
-    va_list args;
-
-    run_init_prog ();
-
-    /* process the varargs into run_prog */
-    va_start (args, fmt);
-    (void) vsprintf (run_prog, fmt, args);
-    va_end (args);
-
-    /* and add the (single) argument to the run_argv list */
-    run_add_arg (run_prog);
-}
-
 /* Return a malloc'd copy of s, with double quotes around it.  */
 static char *
 quote (const char *s)
