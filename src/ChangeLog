@@ -1,3 +1,16 @@
+Sun Sep 29 13:09:45 1996  Noel Cragg  <noel@kiva.rain.org>
+
+	* main.c (main): don't create/update CVS/Root when doing the "cvs
+ 	login" command.  Consider: if the user executes "cvs login" with
+ 	the working directory inside an already checked out module, we'd
+ 	incorrectly change the CVS/Root file to reflect the CVSROOT of the
+ 	"cvs login" command.
+
+	* login.c (login): if we're re-logging into a server for which a
+ 	.cvspass entry already exists, copy the temporary file to its home
+ 	location rather than renaming.  Renaming doesn't work between
+ 	filesystems.  After copying, unlink the temporary file.
+
 Fri Sep 27 05:24:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c: Add comment about --brief option.
