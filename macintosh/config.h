@@ -21,20 +21,6 @@
 #include <sys/errno.h>
 #endif
 
-/* MetroWerks provides alloca, but only for PPC Macs - try CVS 'alloca' */
-
-#if !__POWERPC__
-#undef REGEX_MALLOC
-#undef HAVE_ALLOCA
-#undef ALLOCA_IN_STDLIB
-#undef HAVE_ALLOCA_H
-#else
-#undef REGEX_MALLOC
-#define HAVE_ALLOCA 1
-#undef ALLOCA_IN_STDLIB
-#define HAVE_ALLOCA_H 1
-#endif
-
 /* Enumerated values can be trouble on 68K machines.  */
 #if !__POWERPC__
 #define ENUMS_CAN_BE_TROUBLE 1

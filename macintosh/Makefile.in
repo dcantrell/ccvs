@@ -21,7 +21,6 @@ HEADERS = \
   
 SOURCES = \
   ae_if.c \
-  alloca.c \
   filesubr.c \
   mac_init.c \
   macos_filesys.c \
