@@ -1,3 +1,9 @@
+Wed Apr 10 14:55:10 1996  code by Mike Spengler  mks@msc.edu
+	comments by Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (unlink_file_dir,deep_remove_dir): Don't call unlink
+	on something which might be a directory; check using isdir instead.
+
 Wed Apr 10 14:55:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (build_dirs_and_chdir): Pass path, not cp, to
