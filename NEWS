@@ -1,5 +1,9 @@
 Changes since 1.8:
 
+* The format of the CVS commit message has changed slightly when
+committing changes on a branch.  The tag on which the commit is
+ocurring is now reported correctly in all cases.
+
 * New flag -k in wrappers allows you to specify the keyword expansion
 mode for added files based on their name.  For example, you can
 specify that files whose name matches *.exe are binary by default.

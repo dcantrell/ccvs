@@ -1,3 +1,8 @@
+Mon Jul 22 23:48:39 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* NEWS: Mention that the commit message has changed slightly when
+ 	committing changes on a branch.
+
 Fri Jul 19 16:10:04 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Say that GNU expr is part of sh-utils.
