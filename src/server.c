@@ -68,6 +68,10 @@ int status PROTO((int argc, char **argv));
 int tag PROTO((int argc, char **argv));
 int update PROTO((int argc, char **argv));
 
+/* While processing requests, this buffer accumulates data to be sent to
+   the client, and then once we are in do_cvs_command, we use it
+   for all the data to be sent.  */
+static struct buffer buf_to_net;
 
 /*
  * This is where we stash stuff we are going to use.  Format string
@@ -103,7 +107,7 @@ read_line (stream)
     int input_index = 0;
     int result_size = 80;
 
-    fflush (stdout);
+    buf_send_output (&buf_to_net);
     result = (char *) malloc (result_size);
     if (result == NULL)
 	return NO_MEM_ERROR;
@@ -200,11 +204,12 @@ print_error (status)
     int status;
 {
     char *msg;
-    printf ("error  ");
+    buf_output0 (&buf_to_net, "error  ");
     msg = strerror (status);
     if (msg)
-	printf ("%s", msg);
-    printf ("\n");
+	buf_output0 (&buf_to_net, msg);
+    buf_append_char (&buf_to_net, '\n');
+    buf_send_output (&buf_to_net);
 }
 
 static int pending_error;
@@ -220,11 +225,13 @@ print_pending_error ()
 {
     if (pending_error_text)
     {
-	printf ("%s\n", pending_error_text);
+	buf_output0 (&buf_to_net, pending_error_text);
+	buf_append_char (&buf_to_net, '\n');
 	if (pending_error)
 	    print_error (pending_error);
 	else
-	    printf ("error  \n");
+	    buf_output0 (&buf_to_net, "error  \n");
+	buf_send_output (&buf_to_net);
 	pending_error = 0;
 	free (pending_error_text);
 	pending_error_text = NULL;
@@ -288,8 +295,11 @@ serve_valid_responses (arg)
     {
 	if (rs->status == rs_essential)
 	{
-	    printf ("E response `%s' not supported by client\nerror  \n",
-		    rs->name);
+	    buf_output0 (&buf_to_net, "E response `");
+	    buf_output0 (&buf_to_net, rs->name);
+	    buf_output0 (&buf_to_net, "' not supported by client\nerror  \n");
+	    set_block (&buf_to_net);
+	    buf_send_output (&buf_to_net);
 	    exit (EXIT_FAILURE);
 	}
 	else if (rs->status == rs_optional)
@@ -1163,20 +1173,21 @@ server_notify ()
 	notify_do (*notify_list->type, notify_list->filename, getcaller(),
 		   notify_list->val, notify_list->watches, repos);
 
-	printf ("Notified ");
+	buf_output0 (&buf_to_net, "Notified ");
 	if (use_dir_and_repos)
 	{
 	    char *dir = notify_list->dir + strlen (server_temp_dir) + 1;
 	    if (dir[0] == '\0')
-		fputs (".", stdout);
+	        buf_append_char (&buf_to_net, '.');
 	    else
-		fputs (dir, stdout);
-	    fputs ("/\n", stdout);
+	        buf_output0 (&buf_to_net, dir);
+	    buf_append_char (&buf_to_net, '/');
+	    buf_append_char (&buf_to_net, '\n');
 	}
-	fputs (repos, stdout);
-	fputs ("/", stdout);
-	fputs (notify_list->filename, stdout);
-	fputs ("\n", stdout);
+	buf_output0 (&buf_to_net, repos);
+	buf_append_char (&buf_to_net, '/');
+	buf_output0 (&buf_to_net, notify_list->filename);
+	buf_append_char (&buf_to_net, '\n');
 
 	p = notify_list->next;
 	free (notify_list->filename);
@@ -1192,9 +1203,11 @@ server_notify ()
 	Lock_Cleanup ();
 	dellist (&list);
     }
-    /* do_cvs_command writes to stdout via write(), not stdio, so better
-       flush out the buffer.  */
-    fflush (stdout);
+
+    /* The code used to call fflush (stdout) here, but that is no
+       longer necessary.  The data is now buffered in buf_to_net,
+       which will be flushed by the caller, do_cvs_command.  */
+
     return 0;
 }
 
@@ -1331,11 +1344,6 @@ set_nonblock_fd (fd)
 
 #endif /* SERVER_FLOWCONTROL */
 
-/* While processing requests, this buffer accumulates data to be sent to
-   the client, and then once we are in do_cvs_command, we use it
-   for all the data to be sent.  */
-static struct buffer buf_to_net;
-
 static void serve_questionable PROTO((char *));
 
 static void
@@ -1521,6 +1529,22 @@ do_cvs_command (command)
 	goto error_exit;
     }
 
+    /* We shouldn't have any partial lines from cvs_output and
+       cvs_outerr, but we handle them here in case there is a bug.  */
+    if (! buf_empty_p (&saved_output))
+    {
+	buf_append_char (&saved_output, '\n');
+	buf_copy_lines (&buf_to_net, &saved_output, 'M');
+    }
+    if (! buf_empty_p (&saved_outerr))
+    {
+	buf_append_char (&saved_outerr, '\n');
+	buf_copy_lines (&buf_to_net, &saved_outerr, 'E');
+    }
+
+    /* Flush out any pending data.  */
+    buf_send_output (&buf_to_net);
+
     /* Don't use vfork; we're not going to exec().  */
     command_pid = fork ();
     if (command_pid < 0)
@@ -1543,12 +1567,11 @@ do_cvs_command (command)
 	protocol.nonblocking = 0;
 	protocol.memory_error = protocol_memory_error;
 
-	saved_output.data = saved_output.last = NULL;
-	saved_output.fd = -1;
-	saved_output.output = 0;
-	saved_output.nonblocking = 0;
+	/* These were originally set up to use outbuf_memory_error.
+           Since we're now in the child, we should use the simpler
+           protocol_memory_error function.  */
 	saved_output.memory_error = protocol_memory_error;
-	saved_outerr = saved_output;
+	saved_outerr.memory_error = protocol_memory_error;
 
 	if (dup2 (dev_null_fd, STDIN_FILENO) < 0)
 	    error (1, errno, "can't set up pipes");
@@ -1613,7 +1636,9 @@ do_cvs_command (command)
 	++num_to_check;
 	if (num_to_check > FD_SETSIZE)
 	{
-	    printf ("E internal error: FD_SETSIZE not big enough.\nerror  \n");
+	    buf_output0 (&buf_to_net,
+			 "E internal error: FD_SETSIZE not big enough.\n\
+error  \n");
 	    goto error_exit;
 	}
 
@@ -1864,6 +1889,7 @@ do_cvs_command (command)
 	    else
 	    {
 	        int sig = WTERMSIG (status);
+	        char buf[50];
 		/*
 		 * This is really evil, because signals might be numbered
 		 * differently on the two systems.  We should be using
@@ -1871,14 +1897,17 @@ do_cvs_command (command)
 		 * variety).  But cvs doesn't currently use libiberty...we
 		 * could roll our own....  FIXME.
 		 */
-		printf ("E Terminated with fatal signal %d\n", sig);
+		buf_output0 (&buf_to_net, "E Terminated with fatal signal ");
+		sprintf (buf, "%d\n", sig);
+		buf_output0 (&buf_to_net, buf);
 
 		/* Test for a core dump.  Is this portable?  */
 		if (status & 0x80)
 		{
-		    printf ("E Core dumped; preserving %s on server.\n\
-E CVS locks may need cleaning up.\n",
-			    server_temp_dir);
+		    buf_output0 (&buf_to_net, "E Core dumped; preserving ");
+		    buf_output0 (&buf_to_net, server_temp_dir);
+		    buf_output0 (&buf_to_net, " on server.\n\
+E CVS locks may need cleaning up.\n");
 		    dont_delete_temp = 1;
 		}
 		++errs;
@@ -1897,9 +1926,9 @@ E CVS locks may need cleaning up.\n",
 
     if (errs)
 	/* We will have printed an error message already.  */
-	printf ("error  \n");
+	buf_output0 (&buf_to_net, "error  \n");
     else
-	printf ("ok\n");
+	buf_output0 (&buf_to_net, "ok\n");
     goto free_args_and_return;
 
  error_exit:
@@ -1936,6 +1965,11 @@ E CVS locks may need cleaning up.\n",
 
 	argument_count = 1;
     }
+
+    /* Flush out any data not yet sent.  */
+    set_block (&buf_to_net);
+    buf_send_output (&buf_to_net);
+
     return;
 }
 
@@ -2452,7 +2486,7 @@ serve_co (arg)
 	tempdir = malloc (strlen (server_temp_dir) + 80);
 	if (tempdir == NULL)
 	{
-	    printf ("E Out of memory\n");
+	    buf_output0 (&buf_to_net, "E Out of memory\n");
 	    return;
 	}
 	strcpy (tempdir, server_temp_dir);
@@ -2460,7 +2494,9 @@ serve_co (arg)
 	status = mkdir_p (tempdir);
 	if (status != 0 && status != EEXIST)
 	{
-	    printf ("E Cannot create %s\n", tempdir);
+	    buf_output0 (&buf_to_net, "E Cannot create ");
+	    buf_output0 (&buf_to_net, tempdir);
+	    buf_append_char (&buf_to_net, '\n');
 	    print_error (errno);
 	    free (tempdir);
 	    return;
@@ -2468,7 +2504,9 @@ serve_co (arg)
 
 	if ( CVS_CHDIR (tempdir) < 0)
 	{
-	    printf ("E Cannot change to directory %s\n", tempdir);
+	    buf_output0 (&buf_to_net, "E Cannot change to directory ");
+	    buf_output0 (&buf_to_net, tempdir);
+	    buf_append_char (&buf_to_net, '\n');
 	    print_error (errno);
 	    free (tempdir);
 	    return;
@@ -2913,23 +2951,37 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 
     if (mwhere != NULL)
     {
-	printf ("Module-expansion %s", mwhere);
+	buf_output0 (&buf_to_net, "Module-expansion ");
+	buf_output0 (&buf_to_net, mwhere);
 	if (mfile != NULL)
 	{
-	    printf ("/%s", mfile);
+	    buf_append_char (&buf_to_net, '/');
+	    buf_output0 (&buf_to_net, mfile);
 	}
-	printf ("\n");
+	buf_append_char (&buf_to_net, '\n');
     }
     else
-      {
+    {
 	/* We may not need to do this anymore -- check the definition
            of aliases before removing */
 	if (*pargc == 1)
-	  printf ("Module-expansion %s\n", dir);
+	{
+	    buf_output0 (&buf_to_net, "Module-expansion ");
+	    buf_output0 (&buf_to_net, dir);
+	    buf_append_char (&buf_to_net, '\n');
+	}
 	else
-	  for (i = 1; i < *pargc; ++i)
-	    printf ("Module-expansion %s/%s\n", dir, argv[i]);
-      }
+	{
+	    for (i = 1; i < *pargc; ++i)
+	    {
+	        buf_output0 (&buf_to_net, "Module-expansion ");
+		buf_output0 (&buf_to_net, dir);
+		buf_append_char (&buf_to_net, '/');
+		buf_output0 (&buf_to_net, argv[i]);
+		buf_append_char (&buf_to_net, '\n');
+	    }
+	}
+    }
     return 0;
 }
 
@@ -2968,9 +3020,9 @@ serve_expand_modules (arg)
     }
     if (err)
 	/* We will have printed an error message already.  */
-	printf ("error  \n");
+	buf_output0 (&buf_to_net, "error  \n");
     else
-	printf ("ok\n");
+	buf_output0 (&buf_to_net, "ok\n");
 }
 
 void
@@ -2981,20 +3033,23 @@ server_prog (dir, name, which)
 {
     if (!supported_response ("Set-checkin-prog"))
     {
-	printf ("E \
+	buf_output0 (&buf_to_net, "E \
 warning: this client does not support -i or -u flags in the modules file.\n");
 	return;
     }
     switch (which)
     {
 	case PROG_CHECKIN:
-	    printf ("Set-checkin-prog ");
+	    buf_output0 (&buf_to_net, "Set-checkin-prog ");
 	    break;
 	case PROG_UPDATE:
-	    printf ("Set-update-prog ");
+	    buf_output0 (&buf_to_net, "Set-update-prog ");
 	    break;
     }
-    printf ("%s\n%s\n", dir, name);
+    buf_output0 (&buf_to_net, dir);
+    buf_append_char (&buf_to_net, '\n');
+    buf_output0 (&buf_to_net, name);
+    buf_append_char (&buf_to_net, '\n');
 }
 
 static void
@@ -3139,11 +3194,16 @@ serve_valid_requests (arg)
     struct request *rq;
     if (print_pending_error ())
 	return;
-    printf ("Valid-requests");
+    buf_output0 (&buf_to_net, "Valid-requests");
     for (rq = requests; rq->name != NULL; rq++)
+    {
 	if (rq->func != NULL)
-	    printf (" %s", rq->name);
-    printf ("\nok\n");
+	{
+	    buf_append_char (&buf_to_net, ' ');
+	    buf_output0 (&buf_to_net, rq->name);
+	}
+    }
+    buf_output0 (&buf_to_net, "\nok\n");
 }
 
 #ifdef sun
@@ -3170,6 +3230,9 @@ server_cleanup (sig)
     int len;
     char *cmd;
     char *temp_dir;
+
+    set_block (&buf_to_net);
+    buf_send_output (&buf_to_net);
 
     if (dont_delete_temp)
 	return;
@@ -3258,8 +3321,10 @@ server_cleanup (sig)
     cmd = malloc (len);
     if (cmd == NULL)
     {
-	printf ("E Cannot delete %s on server; out of memory\n",
-		server_temp_dir);
+        buf_output0 (&buf_to_net, "E Cannot delete ");
+	buf_output0 (&buf_to_net, server_temp_dir);
+	buf_output0 (&buf_to_net, " on server; out of memory\n");
+	buf_send_output (&buf_to_net);
 	return;
     }
     sprintf (cmd, "rm -rf %s", server_temp_dir);
@@ -3394,6 +3459,13 @@ error ENOMEM Virtual memory exhausted.\n");
     buf_to_net.nonblocking = 0;
     buf_to_net.memory_error = outbuf_memory_error;
 
+    saved_output.data = saved_output.last = NULL;
+    saved_output.fd = -1;
+    saved_output.output = 0;
+    saved_output.nonblocking = 0;
+    saved_output.memory_error = outbuf_memory_error;
+    saved_outerr = saved_output;
+
     server_active = 1;
 
     while (1)
@@ -3406,7 +3478,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	if (cmd == NO_MEM_ERROR)
 	{
-	    printf ("E Fatal server error, aborting.\n\
+	    buf_output0 (&buf_to_net, "E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 	    break;
 	}
@@ -3431,7 +3503,12 @@ error ENOMEM Virtual memory exhausted.\n");
 	if (rq->name == NULL)
 	{
 	    if (!print_pending_error ())
-		printf ("error  unrecognized request `%s'\n", cmd);
+	    {
+	        buf_output0 (&buf_to_net, "error  unrecognized request `");
+		buf_output0 (&buf_to_net, cmd);
+		buf_append_char (&buf_to_net, '\'');
+		buf_append_char (&buf_to_net, '\n');
+	    }
 	}
 	free (orig_cmd);
     }
@@ -3832,8 +3909,7 @@ error 0 %s: no such user\n", user);
 #endif /* SERVER_SUPPORT */
 
 /* Output LEN bytes at STR.  If LEN is zero, then output up to (not including)
-   the first '\0' byte.  Should not be called from the server parent process
-   (yet at least, in the future it might be extended so that works).  */
+   the first '\0' byte.  */
 
 void
 cvs_output (str, len)
@@ -3842,14 +3918,13 @@ cvs_output (str, len)
 {
     if (len == 0)
 	len = strlen (str);
-    if (error_use_protocol)
-	/* Eventually we'll probably want to make it so this case works,
-	   but for now, callers who want to output something with
-	   error_use_protocol in effect can just printf the "M foo"
-	   themselves.  */
-	abort ();
 #ifdef SERVER_SUPPORT
-    if (server_active)
+    if (error_use_protocol)
+    {
+        buf_output (&saved_output, str, len);
+	buf_copy_lines (&buf_to_net, &saved_output, 'M');
+    }
+    else if (server_active)
     {
 	buf_output (&saved_output, str, len);
 	buf_copy_lines (&protocol, &saved_output, 'M');
@@ -3882,14 +3957,14 @@ cvs_outerr (str, len)
 {
     if (len == 0)
 	len = strlen (str);
-    if (error_use_protocol)
-	/* Eventually we'll probably want to make it so this case works,
-	   but for now, callers who want to output something with
-	   error_use_protocol in effect can just printf the "E foo"
-	   themselves.  */
-	abort ();
 #ifdef SERVER_SUPPORT
-    if (server_active)
+    if (error_use_protocol)
+    {
+        buf_output (&saved_outerr, str, len);
+	buf_copy_lines (&buf_to_net, &saved_outerr, 'E');
+	buf_send_output (&buf_to_net);
+    }
+    else if (server_active)
     {
 	buf_output (&saved_outerr, str, len);
 	buf_copy_lines (&protocol, &saved_outerr, 'E');
