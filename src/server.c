@@ -4873,7 +4873,15 @@ server_cleanup (sig)
 
     if (buf_to_net != NULL)
     {
-	/* First we shut down BUF_FROM_NET.  That will pick up the checksum
+	/* Since we're done, go ahead and put BUF_TO_NET back into blocking
+	 * mode and send any pending output.  In the usual case there won't
+	 * won't be any, but there might be if an error occured.
+	 */
+
+	set_block (buf_to_net);
+	buf_flush (buf_to_net, 1);
+
+	/* Next we shut down BUF_FROM_NET.  That will pick up the checksum
 	 * generated when the client shuts down its buffer.  Then, after we
 	 * have generated any final output, we shut down BUF_TO_NET.
 	 */
@@ -4888,7 +4896,10 @@ server_cleanup (sig)
     if (dont_delete_temp)
     {
 	if (buf_to_net != NULL)
+	{
+	    (void) buf_flush (buf_to_net, 1);
 	    (void) buf_shutdown (buf_to_net);
+	}
 	return;
     }
 
@@ -4986,7 +4997,10 @@ server_cleanup (sig)
     noexec = save_noexec;
 
     if (buf_to_net != NULL)
+    {
+	(void) buf_flush (buf_to_net, 1);
 	(void) buf_shutdown (buf_to_net);
+    }
 }
 
 int server_active = 0;
