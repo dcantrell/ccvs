@@ -658,7 +658,6 @@ char *backup_file (const char *file, const char *suffix);
 void resolve_symlink (char **filename);
 void sleep_past (time_t desttime);
 int set_nonblock_fd (int _fd);
-int set_block_fd (int _fd);
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */

@@ -896,25 +896,6 @@ set_nonblock_fd (int fd)
 
 
 /*
- * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
- * code.
- */
-int
-set_block_fd (int fd)
-{
-    int flags;
-
-    flags = fcntl (fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-	return errno;
-    return 0;
-}
-
-
-
-/*
  * void cvs_trace(int level, const char *fmt, ...)
  *
  * Print tracing information to stderr on request.  I haven't decided to
