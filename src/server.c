@@ -1834,9 +1834,9 @@ do_cvs_command (cmd_name, command)
        this user.  */
     if (!check_command_legal_p (cmd_name))
     {
-	buf_output0 (buf_to_net, "E \"");
+	buf_output0 (buf_to_net, "E ");
 	buf_output0 (buf_to_net, program_name);
-	buf_output0 (buf_to_net, " ");
+	buf_output0 (buf_to_net, " [server aborted]: \"");
 	buf_output0 (buf_to_net, cmd_name);
 	buf_output0 (buf_to_net, "\" requires write access to the repository\n\
 error  \n");
