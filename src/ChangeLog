@@ -1,3 +1,8 @@
+2002-04-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* logmsg.c (do_editor): Fix assertion when CLIENT_SUPPORT not defined.
+	(Reported by Matthias Andree <matthias.andree@stud.uni-dortmund.de>.)
+
 2002-04-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (log_expand_revlist): First cut at code to allow logging
