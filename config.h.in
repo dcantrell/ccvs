@@ -94,6 +94,9 @@
    relevant when using GSSAPI. */
 #undef GSS_C_NT_HOSTBASED_SERVICE
 
+/* Define to 1 if you have the `alarm' function. */
+#undef HAVE_ALARM
+
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
@@ -880,6 +883,9 @@
 
 /* Define to rpl_mkstemp if the replacement function should be used. */
 #undef mkstemp
+
+/* Define to rpl_mktime if the replacement function should be used. */
+#undef mktime
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef mode_t
