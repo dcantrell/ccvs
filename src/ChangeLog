@@ -1,3 +1,11 @@
+Thu Apr  6 13:05:15 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* commit.c (checkaddfile): If we didn't manage to fopen the file,
+	don't try to fclose it.
+
+	* client.c (handle_m, handle_e): Use fwrite, rather than a loop of
+	putc's.  Sometimes these streams are unbuffered.
+
 Tue Apr  4 11:33:56 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* (DISTFILES): Include cvsbug.sh, ChangeLog, NOTES, RCS-patches,
