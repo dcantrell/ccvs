@@ -668,6 +668,10 @@
    */
 #undef PAM_SERVICE_NAME
 
+/* Define if you want CVS to be able to serve as a transparent proxy for write
+   operations. */
+#undef PROXY_SUPPORT
+
 /* Path to the pr utility */
 #undef PR_PROGRAM
 
@@ -680,10 +684,6 @@
 /* The default remote shell to use, if one does not specify the CVS_RSH
    environment variable. */
 #undef RSH_DFLT
-
-/* Define if you want CVS to be able to serve as a transparent proxy for write
-   operations. */
-#undef SECONDARY_SUPPORT
 
 /* If you are working with a large remote repository and a 'cvs checkout' is
    swamping your network and memory, define these to enable flow control. You

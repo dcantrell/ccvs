@@ -1,5 +1,9 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note recent attempts at improving I/O efficiency.
 	* configure.in (--enable-file-cache-trust): New option.
 
