@@ -1,5 +1,7 @@
 Mon Feb 19 00:35:24 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
+        * Makefile.in: deal with new objects `mkmodules' and `vasprintf'.
+
         * getpass.c (EchoOn, EchoOff): new funcs.
         (getpass): use above new funcs to avoid echoing the password to
         the screen.
