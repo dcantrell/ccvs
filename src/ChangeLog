@@ -1,3 +1,9 @@
+2002-02-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (server_cleanup): Set buf_to_net back to blocking mode
+	and flush it (in case there are any error messages pending) before
+	shutting down buf_from_net and again right before shutting it down.
+
 2002-02-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (lookup_command_attribute): Throw a fatal error if the
