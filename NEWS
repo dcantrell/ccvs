@@ -16,7 +16,7 @@ versions of CVS should interoperate invisibly.  After that point, an extra login
 using the old version of CVS may be necessary to continue to allow the new and
 old versions of CVS to interoperate using the same ~/.cvspass file and CVSROOT.
 The exception to this rule occurs when the CVSROOTs used with the different
-versions use case insensitively different hostnames.  For example, "empress",
+versions use case insensitively different hostnames, for example, "empress",
 and "empress.2-wit.com".
 
 * A password and a port number may now be specified in CVSROOT for pserver
