@@ -573,7 +573,8 @@ isabsolute (filename)
 
 /* Return a pointer into PATH's last component.  */
 char *
-last_component (char *path)
+last_component (path)
+    char *path;
 {
     char *last = strrchr (path, '/');
 
