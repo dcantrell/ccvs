@@ -1,3 +1,8 @@
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_file_names): Restore prescribed client handling of the
+	FILENAMES_CASE_INSENSITIVE switch.
+
 2004-01-25  Derek Price  <derek@ximbiot.com>
 
 	* server.c (kserver_authenticate_connection): Fix call to
