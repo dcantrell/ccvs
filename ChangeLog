@@ -1,3 +1,17 @@
+2003-04-10  Larry Jones  <lawrence.jones@eds.com>
+
+	* aclocal.m4 (AM_MAINTAINER_MODE): New macro to support
+	--enable-maintainer-mode.
+	* configure.in: Use it.
+	* configure: Regenerated.
+	* Makefile.in: Regenerated.
+	* noautomake.sh: Removed; no longer needed.
+	* INSTALL: Remove reference to noautomake.sh, add reference to
+	--enable-maintainer-mode.
+	* Makefile.am: Remove noautomake.sh.
+	* NEWS: Add note about --enable-maintainer-mode and noautomake.sh.
+	* README: Remove noautomake.sh.
+
 2003-04-01  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove a pcl-cvs bug.  pcl-cvs is no longer part of the CVS
