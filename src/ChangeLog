@@ -1,3 +1,8 @@
+Wed Jul  2 18:57:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (join2): New tests join2-19 and friends test for a
+	case that we can't readily get right (see comments).
+
 Tue Jul  1 09:52:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (cmd_usage): Say "specify" --help rather than the vague
