@@ -1,3 +1,9 @@
+Tue Jan  9 09:02:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: check.log is not in /tmp/cvs-sanity.  Mention
+	submitting bug reports as a possibility, not a request from us.
+	Separate out "make check" a bit to make clear it is optional.
+
 Mon Jan  8 11:42:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove grep stuff; no longer necessary.

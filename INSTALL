@@ -195,11 +195,14 @@ Installation under Unix:
 
 	$ make
 
-    This will (hopefully) make the needed CVS binaries within the "src"
-    directory.  If something fails for your system, using the "cvsbug"
-    script submit your "config.status" file together with your host
-    type, operating system and compiler information, make output, and
-    anything else you think will be helpful.
+    This will (hopefully) make the needed CVS binaries within the
+    "src" directory.  If something fails for your system, and you want
+    to submit a bug report, you may wish to include your
+    "config.status" file, your host type, operating system and
+    compiler information, make output, and anything else you think
+    will be helpful.
+
+3a)  Run the regression tests (optional).
 
     You may also wish to validate the correctness of the new binary by
     running the regression tests:
@@ -216,10 +219,11 @@ Installation under Unix:
     disks are slow or over-loaded.
 
     If you receive any un-expected output from the regression tests,
-    using the "cvsbug" script please submit your "config.status" file,
-    together with your host type, operating system and compiler
-    information, the contents of /tmp/cvs-sanity/check.log, and any
-    "make check" output.
+    it may indicate a bug in CVS (or might just indicate a problem
+    running the tests).  If you choose to submit a bug report,
+    relevant information to include might be your "config.status"
+    file, your host type, operating system and compiler information,
+    the contents of check.log, and any "make check" output.
 
 4)  Install the binaries/documentation:
 
