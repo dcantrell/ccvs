@@ -333,7 +333,12 @@ edit_fileproc (file, update_dir, repository, entries, srcfiles)
        that.  */
     if (CVS_MKDIR (CVSADM_BASE, 0777) < 0)
     {
-	if (errno != EEXIST)
+		if (errno != EEXIST
+#ifdef EACCESS
+		    /* OS/2; see longer comment in client.c.  */
+		    && errno != EACCESS
+#endif
+		    )
 	    error (1, errno, "cannot mkdir %s", CVSADM_BASE);
     }
     basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (file));

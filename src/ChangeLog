@@ -1,3 +1,7 @@
+Sat Jan 27 23:29:46 1996  Jim Kingdon  (kingdon@beezley)
+
+	* edit.c (edit_fileproc): Check for EACCESS as well as EEXIST.
+
 Sat Jan 27 16:26:30 1996  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * client.c (notified_a_file): use rename_file() instead of
