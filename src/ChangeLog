@@ -1,3 +1,23 @@
+Sun Feb 11 10:51:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main) [!CLIENT_SUPPORT]: Silently ignore gzip level
+	rather than printing usage message.
+
+	* cvs.h, expand_path.c (variable_list): New variable.
+	(variable_set): New function.
+	* hash.h (enum ntype), hash.c (nodetypestring): Add VARIABLE.
+	* expand_path.c (expand_path, expand_variable): Reindent.
+	(expand_variable): Use user variables not environment variables
+	for ${=VAR} syntax.  The environment variables didn't work
+	client/server.
+	* main.c (main): Process new -s global option.
+	* client.c (send_variable_proc): New function.
+	(start_server): Call it, to send user variables.
+	* server.c (serve_set): New function.
+	(requests): Add Set request.
+	* sanity.sh: Revise info test to use user variables rather than
+	environment variables.
+
 Sat Feb 10 16:55:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	By itself this is only a small cleanup, but in the long run it

@@ -342,7 +342,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:e:d:Hfz:", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:e:d:Hfz:s:", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -391,14 +391,20 @@ main (argc, argv)
             case 'f':
 		use_cvsrc = FALSE;
 		break;
-#ifdef CLIENT_SUPPORT
 	    case 'z':
+#ifdef CLIENT_SUPPORT
 		gzip_level = atoi (optarg);
 		if (gzip_level <= 0 || gzip_level > 9)
 		  error (1, 0,
 			 "gzip compression level must be between 1 and 9");
-		break;
 #endif
+		/* If no CLIENT_SUPPORT, we just silently ignore the gzip
+		   level, so that users can have it in their .cvsrc and not
+		   cause any trouble.  */
+		break;
+	    case 's':
+		variable_set (optarg);
+		break;
 	    case '?':
 	    default:
                 usage (usg);

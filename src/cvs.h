@@ -640,10 +640,16 @@ int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
 char *wrap_tocvs_process_file PROTO((const char *fileName));
 int   wrap_merge_is_copy PROTO((const char *fileName));
 char *wrap_fromcvs_process_file PROTO((const char *fileName));
-/* Pathname expansion */
-char *expand_path PROTO((char *name));
 void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
+
+/* Pathname expansion */
+char *expand_path PROTO((char *name));
+
+/* User variables.  */
+extern List *variable_list;
+
+extern void variable_set PROTO ((char *nameval));
 
 int watch PROTO ((int argc, char **argv));
 int edit PROTO ((int argc, char **argv));

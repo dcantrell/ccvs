@@ -2344,7 +2344,7 @@ done'
 	  # Test CVS's ability to handle *info files.
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
-	  echo "ALL echo x\${=MYENV}y >>$TESTDIR/testlog" > loginfo
+	  echo "ALL echo x\${=MYENV}\${=OTHER}y >>$TESTDIR/testlog" > loginfo
 	  dotest info-2 "${testcvs} add loginfo" \
 'cvs [a-z]*: scheduling file `loginfo'"'"' for addition
 cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
@@ -2370,8 +2370,9 @@ cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CV
 	  dotest info-6 "${testcvs} add file1" \
 'cvs [a-z]*: scheduling file `file1'\'' for addition
 cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  MYENV=env-value; export MYENV
-	  dotest info-7 "${testcvs} -q ci -m add-it" \
+	  echo "cvs -s MYENV=env-" >>$HOME/.cvsrc
+	  echo "cvs -s OTHER=not-this" >>$HOME/.cvsrc
+	  dotest info-7 "${testcvs} -q -s OTHER=value ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
 Checking in file1;
