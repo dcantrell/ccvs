@@ -12,6 +12,20 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+# For now we need to include $(top_srcdir)/src because some systems
+# (at least 'AIX rioscpu2 3 4 000030498200',
+# 'HP-UX hp60 B.10.20 A 9000/770 hp60 two-user license', &
+# 'IRIX64 sgiop110 6.5 07151433 IP30') have trouble finding error.h
+# when compiling savecwd.c
+#
+# FIXME - the fact that compiling on my Linux 2.2.16 system finds
+# /usr/include/error.h instead of $(top_srcdir)/src/error.h but
+# everything compiles and tests anyhow implies that src/error.h may
+# be unecessary now.  Should look more deeply into this
+#
+# $(includeopt) is CVS specific and set by configure
+INCLUDES = -I$(top_srcdir)/$(src) $(includeopt)
+
 noinst_LIBRARIES = libcvs.a
 
 # Always use CVS's regular expression matcher regex.o, because of
