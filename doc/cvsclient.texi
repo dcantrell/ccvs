@@ -172,6 +172,43 @@ Protocol Extension Protocol but I haven't looked at the relevant IETF
 documents in any detail.  Obviously, we want something as simple as
 possible (but no simpler).
 
+@item
+The scrambling algorithm in the CVS client and server actually support
+more characters than those documented in @ref{Password scrambling}.
+Someday we are going to either have to document them all (but this is
+not as easy as it may look, see below), or (gradually and with adequate
+process) phase out the support for other characters in the CVS
+implementation.  This business of having the feature partly undocumented
+isn't a desirable state long-term.
+
+The problem with documenting other characters is that unless we know
+what character set is in use, there is no way to make a password
+portable from one system to another.  For example, a with a circle on
+top might have different encodings in different character sets.
+
+It @emph{almost} works to say that the client picks an arbitrary,
+unknown character set (indeed, having the CVS client know what character
+set the user has in mind is a hard problem otherwise), and scrambles
+according to a certain octet<->octet mapping.  There are two problems
+with this.  One is that the protocol has no way to transmit character 10
+decimal (linefeed), and the current server and clients have no way to
+handle 0 decimal (NUL).  This may cause problems with certain multibyte
+character sets, in which octets 10 and 0 will appear in the middle of
+other characters.  The other problem, which is more minor and possibly
+not worth worrying about, is that someone can type a password on one
+system and then go to another system which uses a different encoding for
+the same characters, and have their password not work.
+
+The restriction to the ISO646 invariant subset is the best approach for
+strings which are not particularly significant to users.  Passwords are
+visible enough that this is somewhat doubtful as applied here.  ISO646
+does, however, have the virtue (!?) of offending everyone.  It is easy
+to say "But the $ is right on people's keyboards!  Surely we can't
+forbid that".  From a human factors point of view, that makes quite a
+bit of sense.  The contrary argument, of course, is that a with a circle
+on top, or some of the characters poorly handled by Unicode, are on
+@emph{someone}'s keyboard.
+
 @end itemize
 
 @node Connection and Authentication
@@ -205,10 +242,23 @@ noone has yet gotten around to implementing this.
 The password authenticated server listens on a port (in the current
 implementation, by having inetd call "cvs pserver") which defaults to
 2401 (this port is officially registered).  The client
-connects, sends the string @samp{BEGIN AUTH REQUEST}, a linefeed, the
-cvs root, a linefeed, the username, a linefeed, the password trivially
-encoded (see scramble.c in the cvs sources), a linefeed, the string
-@samp{END AUTH REQUEST}, and a linefeed.  The client must send the
+connects, and sends the following:
+
+@itemize @bullet
+@item
+the string @samp{BEGIN AUTH REQUEST}, a linefeed, 
+@item
+the cvs root, a linefeed,
+@item
+the username, a linefeed,
+@item
+the password trivially encoded (see @ref{Password scrambling}), a
+linefeed,
+@item
+the string @samp{END AUTH REQUEST}, and a linefeed.
+@end itemize
+
+The client must send the
 identical string for cvs root both here and later in the
 @code{Root} request of the cvs
 protocol itself.  Servers are encouraged to enforce this restriction.
@@ -264,6 +314,44 @@ other possibilities.  The way to add future mechanisms, for the most
 part, should be to continue to use port 2401, but to use different
 strings in place of @samp{BEGIN AUTH REQUEST}.
 @end table
+
+@node Password scrambling
+@chapter Password scrambling algorithm
+
+The pserver authentication protocol, as described in @ref{Connection and
+Authentication}, trivially encodes the passwords.  This is only to
+prevent inadvertent compromise; it provides no protection against even a
+relatively unsophisticated attacker.  For comparison, HTTP Basic
+Authentication (as described in RFC2068) uses BASE64 for a similar
+purpose.  CVS uses its own algorithm, described here.
+
+The scrambled password starts with @samp{A}, which serves to identify
+the scrambling algorithm in use.  After that follows a single octet for
+each character in the password, according to a fixed encoding.  The
+values are shown here, with the encoded values in decimal.  Control
+characters, space, and characters outside the invariant ISO 646
+character set are not shown; such characters are not recommended for use
+in passwords.  There is a long discussion of character set issues in
+@ref{Protocol Notes}.
+
+@example
+        0 111           P 125           p  58
+! 120   1  52   A  57   Q  55   a 121   q 113
+"  53   2  75   B  83   R  54   b 117   r  32
+        3 119   C  43   S  66   c 104   s  90
+        4  49   D  46   T 124   d 101   t  44
+% 109   5  34   E 102   U 126   e 100   u  98
+&  72   6  82   F  40   V  59   f  69   v  60
+' 108   7  81   G  89   W  47   g  73   w  51
+(  70   8  95   H  38   X  92   h  99   x  33
+)  64   9  65   I 103   Y  71   i  63   y  97
+*  76   : 112   J  45   Z 115   j  94   z  62
++  67   ;  86   K  50           k  93
+, 116   < 118   L  42           l  39
+-  74   = 110   M 123           m  37
+.  68   > 122   N  91           n  61
+/  87   ? 105   O  35   _  56   o  48
+@end example
 
 @node Protocol
 @chapter The CVS client/server protocol
