@@ -71,7 +71,6 @@ BUILT_SOURCES =
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	LIB.dep \
 	build_lib.com \
 	lib.dsp \
 	lib.mak
