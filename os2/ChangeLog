@@ -1,3 +1,8 @@
+Sat Nov 11 15:00:01 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * run.c (run_setup): cleared away Windows NT stuff, left skeleton
+        functions that just complain and die for now.
+
 Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (COMMON_SOURCES, COMMON_OBJECTS): removed filesubr
