@@ -29,7 +29,9 @@ char *alloca ();
 #endif /* not HAVE_ALLOCA_H */
 #endif /* not __GNUC__ */
 
-#if __STDC__
+/* Changed from if __STDC__ to ifdef __STDC__ because of Sun's acc compiler */
+
+#ifdef __STDC__
 #define	PTR	void *
 #else
 #define	PTR	char *
@@ -158,6 +160,7 @@ extern int errno;
 #define	CVSROOTADM_LOGINFO	"loginfo"
 #define	CVSROOTADM_RCSINFO	"rcsinfo"
 #define CVSROOTADM_COMMITINFO	"commitinfo"
+#define CVSROOTADM_TAGINFO      "taginfo"
 #define	CVSROOTADM_EDITINFO	"editinfo"
 #define	CVSROOTADM_HISTORY	"history"
 #define	CVSROOTADM_IGNORE	"cvsignore"

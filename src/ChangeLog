@@ -1,3 +1,15 @@
+Mon Jul 24 13:25:00 1995  Del <del@babel.dialix.oz.au>
+
+	* checkout.c:  New procedure safe_location.
+	Ensures that you don't check out into the repository
+	itself.
+
+	* tag.c, rtag.c, cvs.h, mkmodules.c:  Added a "taginfo" file in
+	CVSROOT to perform pre-tag checks.
+
+	* main.c, options.h.in:  Added a compile time option to
+	disable the admin command.
+
 Fri Jul 21 17:07:42 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c, status.c, patch.c, checkout.c, import.c, release.c,

@@ -236,6 +236,10 @@ checkout (argc, argv)
 	options = RCS_check_kflag ("v");/* -kv must be on */
     }
 
+    if (!safe_location()) {
+        error(1, 0, "Cannot check out files into the repository itself");
+    }
+
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
@@ -397,6 +401,26 @@ checkout (argc, argv)
 			  (char *) NULL);
     close_module (db);
     return (err);
+}
+
+static int safe_location PROTO((void))
+{
+    char current[MAXPATHLEN];
+    char hardpath[MAXPATHLEN+5];
+    int  x;
+
+    x = readlink(CVSroot, hardpath, sizeof hardpath - 1);
+    if (x == -1)
+    {
+        strcpy(hardpath, CVSroot);
+    }
+    hardpath[x] = '\0';
+    getcwd(current, sizeof current);
+    if (strncmp(current, hardpath, strlen(hardpath)) == 0)
+    {
+        return (0);
+    }
+    return (1);
 }
 
 /*

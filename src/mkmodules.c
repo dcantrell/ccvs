@@ -64,6 +64,8 @@ main (argc, argv)
 	"a %s file can be used to validate log messages"},
     {CVSROOTADM_COMMITINFO,
 	"a %s file can be used to configure 'cvs commit' checking"},
+    {CVSROOTADM_TAGINFO,
+	"a %s file can be used to configure 'cvs tag' checking"},
     {CVSROOTADM_IGNORE,
 	"a %s file can be used to specify files to ignore"},
     {CVSROOTADM_CHECKOUTLIST,
