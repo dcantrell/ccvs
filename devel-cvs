@@ -34,7 +34,7 @@ distribution of such items under the terms of the GNU Public License.
 ----------------------------------------------------------------------
 Procedure for dealing with people who want to be developers:
 
-People who want checkin access (checkout-only access is available only
+People who want checkin access (checkout-only access is available primarily
 via snapshots, for technical reasons) are first requested to send
 patches and have them reviewed by a developer.  If they submit some
 good ones (preferably over a period of time, to demonstrate sustained
