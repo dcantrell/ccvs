@@ -1,3 +1,8 @@
+Wed Dec  6 11:40:37 1995  J.T. Conklin  <jtc@slave.cygnus.com>
+
+	* configure.in: Remove leading -l from first argument of
+ 	AC_CHECK_LIB for -lkrb and -ldes checks.
+
 Mon Dec  4 08:06:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h.in: Regenerated.
