@@ -129,6 +129,17 @@ else
   exit 1
 fi
 
+# Warn SunOS, SysVr3.2, etc., users that they may be partially losing
+if expr 'a
+b' : 'a
+c' >/dev/null; then
+  echo 'Warning: you are using a version of expr which does not correctly'
+  echo 'match multi-line patterns.  Some tests may spuriously pass.'
+  echo 'You may wish to make sure GNU expr is in your path.'
+else
+  : good, it works
+fi
+
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
