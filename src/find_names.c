@@ -59,8 +59,9 @@ add_entries_proc (node, closure)
    list).  */
 
 List *
-Find_Names (repository, which, aflag, optentries)
+Find_Names (repository, update_dir, which, aflag, optentries)
     char *repository;
+    const char *update_dir;
     int which;
     int aflag;
     List **optentries;
@@ -75,7 +76,7 @@ Find_Names (repository, which, aflag, optentries)
     if (which & W_LOCAL)
     {
 	/* parse the entries file (if it exists) */
-	entries = Entries_Open (aflag, NULL);
+	entries = Entries_Open (aflag, update_dir);
 	if (entries != NULL)
 	{
 	    /* walk the entries file adding elements to the files list */
@@ -84,8 +85,6 @@ Find_Names (repository, which, aflag, optentries)
 	    /* if our caller wanted the entries list, return it; else free it */
 	    if (optentries != NULL)
 		*optentries = entries;
-	    else
-		Entries_Close (entries);
 	}
     }
 
@@ -166,8 +165,9 @@ register_subdir_proc (p, closure)
  * create a list of directories to traverse from the current directory
  */
 List *
-Find_Directories (repository, which, entries)
+Find_Directories (repository, update_dir, which, entries)
     char *repository;
+    const char *update_dir;
     int which;
     List *entries;
 {
@@ -187,7 +187,7 @@ Find_Directories (repository, which, entries)
 	if (entries != NULL)
 	    tmpentries = entries;
 	else if (isfile (CVSADM_ENT))
-	    tmpentries = Entries_Open (0, NULL);
+	    tmpentries = Entries_Open (0, update_dir);
 	else
 	    tmpentries = NULL;
 
@@ -225,9 +225,6 @@ Find_Directories (repository, which, entries)
 		    Subdirs_Known (tmpentries);
 	    }
 	}
-
-	if (entries == NULL && tmpentries != NULL)
-	    Entries_Close (tmpentries);
     }
 
     /* look for sub-dirs in the repository */

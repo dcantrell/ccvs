@@ -1113,7 +1113,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	List *entries;
 
 	/* we are only doing files, so register them */
-	entries = Entries_Open (0, NULL);
+	entries = Entries_Open (0, preload_update_dir);
 	for (i = 1; i < argc; i++)
 	{
 	    char *line;
@@ -1146,8 +1146,6 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    freevers_ts (&vers);
 	    freercsnode (&finfo.rcs);
 	}
-
-	Entries_Close (entries);
     }
 
     /* Don't log "export", just regular "checkouts" */

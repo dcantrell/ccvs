@@ -16,4 +16,5 @@ int do_update PROTO((int argc, char *argv[], char *xoptions, char *xtag,
 	       char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir,
 	       int xdotemplate, char *repository));
 int joining PROTO((void));
-extern int isemptydir PROTO ((const char *dir, int might_not_exist));
+extern int isemptydir PROTO ((const char *update_dir, const char *dir,
+                              int might_not_exist));

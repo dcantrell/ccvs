@@ -1,3 +1,25 @@
+2005-03-08 Derek Price <derek@ximbiot.com>
+
+	* add.c (add), checkout.c (checkout_proc), client.c
+	(call_in_directory), find_names.c (Find_Names, Find_Directories),
+	recurse.c (start_recursion), update.c (update_dir_leave_proc,
+	isemptydir): Pass update dir to Entries_Open(), Find_Names(),
+	Find_Directories(), & isemptydir().  Do not call
+	Entries_Close().
+	* import.c (process_import_file): Ditto.  Use new internal prototypes.
+	(import_descend, import_descend_dir): Maintain and/or pass through new
+	update dir argument.
+	(import): Pass starter update dir argument to recursive
+	import_descend().
+	* entries.c: Include new headers.
+	(Entries_Close): Declare static.
+	(struct entries_cache_s): New struct.
+	(entries_cache_delproc, Entries_Close_Cache): New functions.
+	(Entries_Open): Use cache.
+	* update.h (isemptydir): Update prototype.
+	* cvs.h (Entries_Open, Find_Directories, Find_Names): Update protos.
+	(Entries_Close): Remove proto.
+
 2005-02-27  Jim Meyering  <jim@meyering.net>
 
 	* login.c (password_entry_operation): Exit nonzero when

@@ -1088,7 +1088,7 @@ call_in_directory (pathname, func, data)
     char *data;
 {
     /* This variable holds the result of Entries_Open. */
-    List *last_entries = NULL;
+    List *entries = NULL;
     char *dir_name;
     char *filename;
     /* This is what we get when we hook up the directory (working directory
@@ -1429,7 +1429,7 @@ warning: server is not creating directories one at a time");
 
     if (strcmp (cvs_cmd_name, "export") != 0)
     {
-	last_entries = Entries_Open (0, dir_name);
+	entries = Entries_Open (0, dir_name);
 
 	/* If this is a newly created directory, we will record
 	   all subdirectory information, so call Subdirs_Known in
@@ -1442,20 +1442,17 @@ warning: server is not creating directories one at a time");
 	   record subdirectory information, then this call only
 	   does list manipulation.  */
 	if (newdir)
-	    Subdirs_Known (last_entries);
+	    Subdirs_Known (entries);
 	else
 	{
 	    List *dirlist;
 
-	    dirlist = Find_Directories ((char *) NULL, W_LOCAL,
-					last_entries);
+	    dirlist = Find_Directories (NULL, dir_name, W_LOCAL, entries);
 	    dellist (&dirlist);
 	}
     }
     free (reposdirname);
-    (*func) (data, last_entries, short_pathname, filename);
-    if (last_entries != NULL)
-	Entries_Close (last_entries);
+    (*func) (data, entries, short_pathname, filename);
     free (dir_name);
     free (short_pathname);
     free (reposname);
@@ -2663,7 +2660,7 @@ process_prune_candidates ()
     }
     for (p = prune_candidates; p != NULL; )
     {
-	if (isemptydir (p->dir, 1))
+	if (isemptydir (p->dir, p->dir, 1))
 	{
 	    char *b;
 
@@ -5499,7 +5496,7 @@ send_file_names (argc, argv, flags)
 		       command line, not the case of the
 		       directory in the filesystem.  This
 		       is correct behavior.  */
-		    entries = Entries_Open (0, NULL);
+		    entries = Entries_Open (0, dir_name);
 		    node = findnode_fn (entries, q);
 		    if (node != NULL)
 		    {
@@ -5509,7 +5506,6 @@ send_file_names (argc, argv, flags)
 			xrealloc_and_strcat (&line, &line_len, node->key);
 			delnode (node);
 		    }
-		    Entries_Close (entries);
 		}
 
 		/* If node is still NULL then we either didn't find CVSADM or

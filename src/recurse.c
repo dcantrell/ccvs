@@ -226,7 +226,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	 */
 	if (just_subdirs)
 	{
-	    dirlist = Find_Directories ((char *) NULL, W_LOCAL, (List *) NULL);
+	    dirlist = Find_Directories (NULL, update_dir, W_LOCAL, NULL);
 	    /* If there are no sub-directories, there is a certain logic in
 	       favor of doing nothing, but in fact probably the user is just
 	       confused about what directory they are in, or whether they
@@ -257,6 +257,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
                    FIXME: perhaps it would be better to write a
                    function that duplicates a list. */
 		args_to_send_when_finished = Find_Directories ((char *) NULL,
+		                                               update_dir,
 							       W_LOCAL,
 							       (List *) NULL);
 	    }
@@ -719,8 +720,8 @@ do_recursion (frame)
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
 	    {
-		filelist = Find_Names (repository, lwhich, frame->aflag,
-				       &entries);
+		filelist = Find_Names (repository, update_dir, lwhich,
+		                       frame->aflag, &entries);
 		if (filelist == NULL)
 		{
 		    error (0, 0, "skipping directory %s", update_dir);
@@ -736,7 +737,7 @@ do_recursion (frame)
 	if (frame->flags != R_SKIP_DIRS)
 	    dirlist = Find_Directories (
 		process_this_directory ? repository : NULL,
-		frame->which, entries);
+		update_dir, frame->which, entries);
     }
     else
     {
@@ -745,7 +746,7 @@ do_recursion (frame)
 	{
 	    /* we will process files, so pre-parse entries */
 	    if (frame->which & W_LOCAL)
-		entries = Entries_Open (frame->aflag, NULL);
+		entries = Entries_Open (frame->aflag, update_dir);
 	}
     }
 
@@ -822,12 +823,6 @@ do_recursion (frame)
 	err += frame->dirleaveproc (frame->callerdat, ".", err, ".");
 #endif
     dellist (&dirlist);
-
-    if (entries) 
-    {
-	Entries_Close (entries);
-	entries = NULL;
-    }
 
     /* free the saved copy of the pointer if necessary */
     if (srepository)

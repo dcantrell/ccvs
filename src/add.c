@@ -337,7 +337,7 @@ add (argc, argv)
 		       CVSNULLREPOS) == 0)
 	    error (1, 0, "cannot add to %s", repository);
 
-	entries = Entries_Open (0, NULL);
+	entries = Entries_Open (0, finfo.update_dir);
 
 	finfo.repository = repository;
 	finfo.entries = entries;
@@ -691,7 +691,6 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 
 skip_this_file:
 	free (repository);
-	Entries_Close (entries);
 
 	if (restore_cwd (&cwd, NULL))
 	    error_exit ();

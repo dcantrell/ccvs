@@ -30,11 +30,14 @@ static int add_rev PROTO((char *message, RCSNode *rcs, char *vfile,
 			  char *vers));
 static int add_tags PROTO((RCSNode *rcs, char *vfile, char *vtag, int targc,
 		     char *targv[]));
-static int import_descend PROTO((char *message, char *vtag, int targc, char *targv[]));
-static int import_descend_dir PROTO((char *message, char *dir, char *vtag,
-			       int targc, char *targv[]));
-static int process_import_file PROTO((char *message, char *vfile, char *vtag,
-				int targc, char *targv[]));
+static int import_descend PROTO((const char *update_dir, char *message,
+                                 char *vtag, int targc, char *targv[]));
+static int import_descend_dir PROTO((const char *update_dir, char *message,
+                                     char *dir, char *vtag,
+                                     int targc, char *targv[]));
+static int process_import_file PROTO((const char *update_dir, char *message,
+                                      char *vfile, char *vtag,
+                                      int targc, char *targv[]));
 static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int targc,
 			    char *targv[], int inattic));
 static void add_log PROTO((int ch, char *fname));
@@ -302,7 +305,7 @@ import (argc, argv)
 
 	logfp = stdin;
 	client_import_setup (repository);
-	err = import_descend (message, argv[1], argc - 2, argv + 2);
+	err = import_descend ("", message, argv[1], argc - 2, argv + 2);
 	client_import_done ();
 	if (message)
 	    free (message);
@@ -342,7 +345,7 @@ import (argc, argv)
     (void) fprintf (logfp, "\n");
 
     /* Just Do It.  */
-    err = import_descend (message, argv[1], argc - 2, argv + 2);
+    err = import_descend ("", message, argv[1], argc - 2, argv + 2);
     if (conflicts)
     {
 	if (!really_quiet)
@@ -435,7 +438,8 @@ import (argc, argv)
    Returns 0 for success, or >0 on error (in which case a message
    will have been printed).  */
 static int
-import_descend (message, vtag, targc, targv)
+import_descend (update_dir, message, vtag, targc, targv)
+    const char *update_dir;
     char *message;
     char *vtag;
     int targc;
@@ -518,7 +522,8 @@ import_descend (message, vtag, targc, targv)
 						       use_file_modtime);
 		else
 #endif
-		    err += process_import_file (message, dp->d_name,
+		    err += process_import_file (update_dir, message,
+		                                dp->d_name,
 						vtag, targc, targv);
 	    }
 	one_more_time_boys:
@@ -539,7 +544,8 @@ import_descend (message, vtag, targc, targv)
 	head = dirlist->list;
 	for (p = head->next; p != head; p = p->next)
 	{
-	    err += import_descend_dir (message, p->key, vtag, targc, targv);
+	    err += import_descend_dir (update_dir, message, p->key, vtag,
+	                               targc, targv);
 	}
 
 	dellist(&dirlist);
@@ -552,7 +558,8 @@ import_descend (message, vtag, targc, targv)
  * Process the argument import file.
  */
 static int
-process_import_file (message, vfile, vtag, targc, targv)
+process_import_file (update_dir, message, vfile, vtag, targc, targv)
+    const char *update_dir;
     char *message;
     char *vfile;
     char *vtag;
@@ -599,7 +606,7 @@ process_import_file (message, vfile, vtag, targc, targv)
 		/* Reading all the entries for each file is fairly silly, and
 		   probably slow.  But I am too lazy at the moment to do
 		   anything else.  */
-		entries = Entries_Open (0, NULL);
+		entries = Entries_Open (0, update_dir);
 		node = findnode_fn (entries, vfile);
 		if (node != NULL)
 		{
@@ -613,7 +620,6 @@ process_import_file (message, vfile, vtag, targc, targv)
 			free_opt = our_opt;
 		    }
 		}
-		Entries_Close (entries);
 	    }
 #endif
 
@@ -1563,7 +1569,8 @@ add_log (ch, fname)
  * Note that we do not follow symbolic links here, which is a feature!
  */
 static int
-import_descend_dir (message, dir, vtag, targc, targv)
+import_descend_dir (update_dir, message, dir, vtag, targc, targv)
+    const char *update_dir;
     char *message;
     char *dir;
     char *vtag;
@@ -1574,6 +1581,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
     char *cp;
     int ierrno, err;
     char *rcs = NULL;
+    char *xupdate_dir;
 
     if (islink (dir))
 	return (0);
@@ -1644,7 +1652,15 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	    goto out;
 	}
     }
-    err = import_descend (message, vtag, targc, targv);
+    if (*update_dir)
+    {
+	xupdate_dir = xmalloc (strlen (update_dir) + strlen (dir) + 2);
+	sprintf (xupdate_dir, "%s/%s", update_dir, dir);
+    }
+    else
+	xupdate_dir = xstrdup (dir);
+    err = import_descend (xupdate_dir, message, vtag, targc, targv);
+    free (xupdate_dir);
   out:
     if (rcs != NULL)
 	free (rcs);
