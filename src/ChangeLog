@@ -8,6 +8,10 @@ Wed Dec 20 14:00:28 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	update_filesdone_proc.  Pass new function send_ignproc to
 	ignore_files (to ask server about ignored file before printing
 	"?").
+	* server.c: Rename outbuf from but_to_net and take it from
+	do_cvs_command to a global.  Move initialization accordingly.
+	(serve_questionable): New function.
+	(requests): Add it.
 	* update.c (update_filesdone_proc): Remove client stuff.  Pass new
 	function update_ignproc to ignore_files.
 	* cvs.h (joining, do_update): Move declarations from here...
