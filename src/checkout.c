@@ -350,20 +350,7 @@ checkout (argc, argv)
 	{
 	    char *repository;
 
-	    repository = xmalloc (strlen (CVSroot_directory) + 80);
-	    (void) sprintf (repository, "%s/%s/%s", CVSroot_directory,
-			    CVSROOTADM, CVSNULLREPOS);
-	    if (!isfile (repository))
-	    {
-		mode_t omask;
-		omask = umask (cvsumask);
-		(void) CVS_MKDIR (repository, 0777);
-		(void) umask (omask);
-	    }
-
-	    /* I'm not sure whether this check is redundant.  */
-	    if (!isdir (repository))
-		error (1, 0, "there is no repository %s", repository);
+	    repository = emptydir_name ();
 
 	    Create_Admin (".", preload_update_dir, repository,
 			  (char *) NULL, (char *) NULL, 0, 0);
@@ -777,20 +764,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    if (cp2 == NULL || cp2 < prepath + root_len)
 	    {
 		/* Don't walk up past CVSROOT; instead put in CVSNULLREPOS.  */
-		new->repository =
-		    xmalloc (strlen (CVSroot_directory) + 80);
-		(void) sprintf (new->repository, "%s/%s/%s",
-				CVSroot_directory,
-				CVSROOTADM, CVSNULLREPOS);
-		if (!isfile (new->repository))
-		{
-		    mode_t omask;
-		    omask = umask (cvsumask);
-		    if (CVS_MKDIR (new->repository, 0777) < 0)
-			error (0, errno, "cannot create %s",
-			       new->repository);
-		    (void) umask (omask);
-		}
+		new->repository = emptydir_name ();
 	    }
 	    else
 	    {
@@ -1027,6 +1001,32 @@ findslash (start, p)
 	return (NULL);
     else
 	return (p);
+}
+
+/* Return a newly malloc'd string containing a pathname for CVSNULLREPOS,
+   and make sure that it exists.  If there is an error creating the
+   directory, give a fatal error.  Otherwise, the directory is guaranteed
+   to exist when we return.  */
+char *
+emptydir_name ()
+{
+    char *repository;
+
+    repository = xmalloc (strlen (CVSroot_directory) 
+			  + sizeof (CVSROOTADM)
+			  + sizeof (CVSNULLREPOS)
+			  + 10);
+    (void) sprintf (repository, "%s/%s/%s", CVSroot_directory,
+		    CVSROOTADM, CVSNULLREPOS);
+    if (!isfile (repository))
+    {
+	mode_t omask;
+	omask = umask (cvsumask);
+	if (CVS_MKDIR (repository, 0777) < 0)
+	    error (1, errno, "cannot create %s", repository);
+	(void) umask (omask);
+    }
+    return repository;
 }
 
 /* Build all the dirs along the path to DIRS with CVS subdirs with appropriate

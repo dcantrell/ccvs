@@ -1,5 +1,13 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	(For reference, this takes CVS's text segment from 344460 to
+	344140 bytes.  I know, this may seem unimportant, but it is so
+	unusual for programs to shrink and I think it is so cool when they
+	do without losing functionality/clarity/etc).
+	* checkout.c, cvs.h (emptydir_name): New function.
+	* checkout.c (checkout, checkout_proc), modules.c (do_module):
+	Call it instead of duplicating the code to do that.
+
 	* sanity.sh (basicc): Clean up first-dir at end of test.
 
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
