@@ -1,5 +1,7 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (cvs_flusherr): Correct typo in comment.
+
 	* rcs.c (getrcskey): Hoist three constant strcmp calls out of the
 	value reading loop.
 

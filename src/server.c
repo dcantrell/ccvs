@@ -4192,9 +4192,9 @@ cvs_outerr (str, len)
     }
 }
 
-/* Flush stderr.  stderr is normallyi flushed automatically, of
-   course, but this function is used to flush information from the
-   server back to the client.  */
+/* Flush stderr.  stderr is normally flushed automatically, of course,
+   but this function is used to flush information from the server back
+   to the client.  */
 
 void
 cvs_flusherr ()
