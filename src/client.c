@@ -4511,7 +4511,7 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     char *targv[];
     char *repository;
 {
-    char *short_pathname;
+    char *update_dir;
     int first_time;
 
     /* FIXME: I think this is always false now that we call
@@ -4526,13 +4526,17 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
 	error (1, 0,
 	       "internal error: pathname `%s' doesn't specify file in `%s'",
 	       repository, toplevel_repos);
-    short_pathname = repository + strlen (toplevel_repos) + 1;
+
+    if (strcmp (repository, toplevel_repos) == 0)
+	update_dir = "";
+    else
+	update_dir = repository + strlen (toplevel_repos) + 1;
 
     if (!first_time)
     {
-	send_a_repository ("", repository, short_pathname);
+	send_a_repository ("", repository, update_dir);
     }
-    send_modified (vfile, short_pathname, NULL);
+    send_modified (vfile, vfile, NULL);
     return 0;
 }
 
