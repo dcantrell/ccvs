@@ -1,3 +1,8 @@
+2004-11-01 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (rcslib): Test a link to a path longer than 128
+	characters.
+
 2004-10-29 Derek Price <derek@ximbiot.com>
 
 	* filesubr.c (xreadlink): Make sure allocation is tried once at the
@@ -14,7 +19,7 @@
 	(xreadlink): Deal with symlinks longer than 127 bytes.
 	(Problem reported as issue 190 by Gottfried Ganssauge
 	<gotti@cvshome.org>.)
-	
+
 2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
 
 	* release.c (release): Allow builds of cvs with --disable-server

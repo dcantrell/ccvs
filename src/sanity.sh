@@ -7633,15 +7633,59 @@ done"
 "${PROG} rtag: could not read RCS file for file2
 ${PROG} rtag: could not read RCS file for first-dir/file2
 ${PROG} rtag: could not read RCS file for first-dir/file2"
-	  cd ..
 
-	  cd ..
+	  # Restore file1 for the next test.
+	  dotest rcslib-long-symlink-init-1 "$testcvs -Q up -A"
+	  dotest rcslib-long-symlink-init-2 "$testcvs -Q add file1"
+	  dotest rcslib-long-symlink-init-3 "$testcvs -Q ci -mback" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+
+	  cd ../..  # $TESTDIR
+
+	  # CVS has a hard-coded default link path size of 127 characters.
+	  # Make sure it knows how to exceed that.
+	  longpath=$CVSROOT_DIRNAME
+	  count=0
+	  while test $count -lt 10; do
+	    count=`expr $count + 1`
+	    longpath=$longpath/1234567889012345678901234567890
+	    mkdir $longpath
+	  done
+	  cp $CVSROOT_DIRNAME/first-dir/file1,v $longpath
+	  mkdir $CVSROOT_DIRNAME/second-dir
+
+	  # Switch as for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-long-symlink-1rh \
+"$CVS_RSH $remotehost 'ln -s $longpath/file1,v $CVSROOT_DIRNAME/second-dir/fileX,v'"
+	  else
+	    dotest rcslib-long-symlink-1 \
+"ln -s $longpath/file1,v $CVSROOT_DIRNAME/second-dir/fileX,v"
+	  fi
+
+	  dotest rcslib-long-symlink-2 "$testcvs co second-dir" \
+"$PROG checkout: Updating second-dir
+U second-dir/fileX"
+
+	  cd second-dir
+	  echo change-it >>fileX
+
+	  # Writes actually cause symlinks to be resolved.
+	  dotest rcslib-long-symlink-3 "$testcvs -q ci -mwrite-it" \
+"Checking in fileX;
+$CVSROOT_DIRNAME/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/1234567889012345678901234567890/file1,v  <--  fileX
+new revision: 1\.5; previous revision: 1\.4
+done"
 
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
 
+	  cd ..
 	  # Must remove the symlink first.  Samba doesn't appear to show
 	  # broken symlink across the SMB share, and rm -rf by itself
 	  # will remove file1,v first and leave file2,v a broken link and the
@@ -7652,10 +7696,12 @@ ${PROG} rtag: could not read RCS file for first-dir/file2"
 	  # rcslib-symlink-3j works fine, but the next one doesn't unless run
 	  # remotely under Cygwin and using a TESTDIR on a Samba share.
 	  if test -n "$remotehost"; then
-	    $CVS_RSH $remotehost "rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	    $CVS_RSH $remotehost \
+"rm -f $CVSROOT_DIRNAME/first-dir/file2,v $CVSROOT_DIRNAME/second-dir/fileX,v"
 	  fi
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -r first-dir 2
+	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir \
+		 $CVSROOT_DIRNAME/123456789012345678901234567890
+	  rm -r first-dir second-dir 2
 	  ;;
 
 	multibranch)
