@@ -319,19 +319,10 @@ edit_fileproc (callerdat, finfo)
        copy so that if the user removes the working file, then restores it
        with "cvs update" (which clears _editors but does not update
        CVSADM_BASE), then a future "cvs edit" can still win.  */
-    /* Could save a system call by only calling mkdir if trying to create
-       the output file fails.  But copy_file isn't set up to facilitate
-       that.  */
-    if (CVS_MKDIR (CVSADM_BASE, 0777) < 0)
-    {
-		if (errno != EEXIST
-#ifdef EACCESS
-		    /* OS/2; see longer comment in client.c.  */
-		    && errno != EACCESS
-#endif
-		    )
-	    error (1, errno, "cannot mkdir %s", CVSADM_BASE);
-    }
+    /* Could save a system call by only calling mkdir_if_needed if
+       trying to create the output file fails.  But copy_file isn't
+       set up to facilitate that.  */
+    mkdir_if_needed (CVSADM_BASE);
     basefilename = xmalloc (10 + sizeof CVSADM_BASE + strlen (finfo->file));
     strcpy (basefilename, CVSADM_BASE);
     strcat (basefilename, "/");

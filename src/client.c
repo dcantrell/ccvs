@@ -953,32 +953,8 @@ call_in_directory (pathname, func, data)
 		    strcpy (dir, dir_name);
 		}
 
-		if (CVS_MKDIR (dir, 0777) < 0)
+		if (mkdir_if_needed (dir))
 		{
-		    /* Now, let me get this straight.  In IBM C/C++
-		     * under OS/2, the error string for EEXIST is:
-		     *
-		     *     "The file already exists",
-		     *
-		     * and the error string for EACCESS is:
-		     *
-		     *     "The file or directory specified is read-only".
-		     *
-		     * Nonetheless, mkdir() will set EACCESS if the
-		     * directory *exists*, according both to the
-		     * documentation and its actual behavior.
-		     *
-		     * I'm sure that this made sense, to someone,
-		     * somewhere, sometime.  Just not me, here, now.
-		     */
-#ifdef EACCESS
-		    if ((errno != EACCESS) && (errno != EEXIST))
-			error (1, errno, "cannot make directory %s", dir);
-#else /* ! defined(EACCESS) */
-		    if ((errno != EEXIST))
-			error (1, errno, "cannot make directory %s", dir);
-#endif /* defined(EACCESS) */
-
 		    /* It already existed, fine.  Just keep going.  */
 		}
 		else if (strcmp (command_name, "export") == 0)

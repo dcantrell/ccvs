@@ -290,6 +290,22 @@ make_directories (name)
     (void) mkdir (name, 0777);
 }
 
+/* Create directory NAME if it does not already exist; fatal error for
+   other errors.  Returns 0 if directory was created; 1 if it already
+   existed.  */
+int
+mkdir_if_needed (name)
+    char *name;
+{
+    if (mkdir (name, 0777) < 0)
+    {
+	if (errno != EEXIST)
+	    error (1, errno, "cannot make directory %s", name);
+	return 1;
+    }
+    return 0;
+}
+
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.

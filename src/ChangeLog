@@ -1,3 +1,10 @@
+Mon Aug 26 12:27:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* mkmodules.c (mkdir_if_needed): Move from here ...
+	* filesubr.c, cvs.h (mkdir_if_needed): ... to here.  Have it
+	return a value saying whether the directory was created.
+	* client.c (call_in_directory), edit.c (edit_fileproc): Call it.
+
 Fri Aug 23 19:19:44 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* checkin.c (Checkin): Copy rcs parameter in case it is freed when
