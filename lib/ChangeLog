@@ -1,5 +1,9 @@
 2004-03-26  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in: Regenerated.
+
+2004-03-26  Derek Price  <derek@ximbiot.com>
+
 	* LIB.dep, lib.dsp, lib.mak: New files.
 	* Makefile.am (EXTRA_DIST): Add new files.
 	* .cvsignore: Ignore MSVC build cruft.

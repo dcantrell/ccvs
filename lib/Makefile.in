@@ -233,7 +233,10 @@ BUILT_SOURCES = $(ALLOCA_H)
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	build_lib.com\
+	LIB.dep \
+	build_lib.com \
+	lib.dsp \
+	lib.mak\
 alloca_.h
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
