@@ -208,11 +208,13 @@ AC_REPLACE_FUNCS(\
 
 # Look for functions from GNULIB and replace with versions in lib/ when
 # necessary.
+gl_PREREQ_GETNLINE
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
 jm_FUNC_STAT
 jm_FUNC_LSTAT
 jm_FUNC_GLIBC_UNLOCKED_IO
+AM_FUNC_GETLINE
 AM_GNU_GETTEXT([external])
 UTILS_FUNC_MKSTEMP
 
