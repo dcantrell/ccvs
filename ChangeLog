@@ -1,3 +1,7 @@
+Tue Sep 17 12:46:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* .cvsignore: Add cvs-*.spec.
+
 Mon Sep 16 17:42:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: In 180, mention issue of network being down.  Add item
