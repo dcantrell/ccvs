@@ -1,3 +1,8 @@
+2000-07-06  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (admin options): Remove note about -t not working
+	in client/server.
+
 2000-04-03  Pavel Roskin  <pavel_roskin@geocities.com>
 
 	* cvs.texinfo (Telling CVS to notify you): Remove backslashes
