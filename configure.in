@@ -219,7 +219,6 @@ gl_GETDATE
 jm_FUNC_LSTAT
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
-jm_FUNC_STAT
 dnl The following macros can be called by other GNULIB macros but are also
 dnl used by the UNIQUE_*_TYPE stuff below.  I don't want to rely on the GNULIB
 dnl macros which call these to continue to do so, so use AC_REQUIRE, which can
