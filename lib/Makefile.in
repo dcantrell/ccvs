@@ -132,6 +132,7 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 ZLIB_CPPFLAGS = @ZLIB_CPPFLAGS@
 ZLIB_LIBS = @ZLIB_LIBS@
 ZLIB_SUBDIRS = @ZLIB_SUBDIRS@
@@ -210,9 +211,9 @@ libcvs_a_SOURCES = \
 basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettime.c time_r.h timespec.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
-BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) getdate.c $(STDBOOL_H)
+BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
 MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getdate-expected getdate-got getdate.diff stdbool.h stdbool.h-t
-MAINTAINERCLEANFILES = getdate.c
+MAINTAINERCLEANFILES = 
 # CVS test scripts for getdate.
 TESTS = test-getdate.sh
 check_PROGRAMS = getdate

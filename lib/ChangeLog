@@ -1,3 +1,9 @@
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (BUILT_SOURCES, MAINTAINERCLEANFILES): Remove getdate.c,
+	Automake determines this automatically.
+	* Makefile.in: Regenerated.
+
 2004-05-02  Derek Price  <derek@ximbiot.com>
 
 	* progname.c (progname): Assume = "getdate" for now.

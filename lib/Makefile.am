@@ -97,8 +97,6 @@ MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
 ## For GNULIB's getdate module.
 libcvs_a_SOURCES += getdate.h getdate.y
-BUILT_SOURCES += getdate.c
-MAINTAINERCLEANFILES += getdate.c
 # CVS test scripts for getdate.
 TESTS += test-getdate.sh
 MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
