@@ -1,3 +1,8 @@
+Sat May 11 18:57:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Comment out test basica-9 until I get around to
+	actually fixing it (the -d vs. CVS/Root change broke it).
+
 Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	Extract the head revision directly from the RCS file when

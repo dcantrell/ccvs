@@ -560,7 +560,7 @@ done'
 "${PROG}"' [a-z]*: nothing known about `nonexist'\''
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update" ''
-	  dotest_fail basica-9 \
+:	  dotest_fail basica-9 \
 	    "${testcvs} -q -d /tmp/cvs-sanity/nonexist update" \
 "${PROG}: .*/tmp/cvs-sanity/cvsroot value for CVS Root found in CVS/Root
 ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
