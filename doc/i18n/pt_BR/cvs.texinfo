@@ -202,7 +202,7 @@ Referências.
 @c <en>* BUGS::                        Dealing with bugs in CVS or this manual
 * Paus::                       Lidando com paus no CVS ou neste manual
 @c <en>* Index::                       Index
-* Índice::                     Índice
+* Indice::                     Índice
 @end menu
 
 @c ---------------------------------------------------------------------
@@ -2013,7 +2013,7 @@ Usuários com ???watches??? para este arquivo. O valor é
 onde @var{watcher} é um nome de usuário, e @var{type} é
 zero ou mais de edit,unedit,commit separados por
 @samp{+} (isto é, deixe em branco para nenhum; não há
-palavras chaves para "nenhum" ou "todos").
+palavras-chave para "nenhum" ou "todos").
 
 @item _editors
 @c <en>Users editing this file.  Value is
@@ -6566,13 +6566,13 @@ veja em @ref{Mesclando duas revisões}.
 @c <en>@chapter Branching and merging
 @chapter Ramificando e mesclando
 @c <en>@cindex Branching
-@cindex Branching
+@cindex Ramificando
 @c <en>@cindex Merging
-@cindex Merging
+@cindex Mesclando
 @c <en>@cindex Copying changes
 @cindex Copying changes
 @c <en>@cindex Main trunk and branches
-@cindex Main trunk and branches
+@cindex Tronco principal e ramos
 @c <en>@cindex Revision tree, making branches
 @cindex Revision tree, making branches
 @c <en>@cindex Branches, copying changes between
@@ -6586,10 +6586,10 @@ veja em @ref{Mesclando duas revisões}.
 @c <en>line of development, known as a @dfn{branch}.  When you
 @c <en>change files on a branch, those changes do not appear
 @c <en>on the main trunk or other branches.
-@sc{cvs} allows you to isolate changes onto a separate
-line of development, known as a @dfn{branch}.  When you
-change files on a branch, those changes do not appear
-on the main trunk or other branches.
+O @sc{cvs} permite isolar mudanças em uma linha de
+desenvolvimento separada, chamada de @dfn{ramo}.
+Quando você muda os arquivos de um ramo, aquelas
+mudanças não aparecem no tronco principal ou em outros ramos.
 
 @c <en>Later you can move changes from one branch to another
 @c <en>branch (or the main trunk) by @dfn{merging}.  Merging
@@ -6597,45 +6597,46 @@ on the main trunk or other branches.
 @c <en>the changes into the working directory.
 @c <en>You can then commit that revision, and thus effectively
 @c <en>copy the changes onto another branch.
-Later you can move changes from one branch to another
-branch (or the main trunk) by @dfn{merging}.  Merging
-involves first running @code{cvs update -j}, to merge
-the changes into the working directory.
-You can then commit that revision, and thus effectively
-copy the changes onto another branch.
+Mais tarde você pode mover as mudanças de um ramo para
+outro (ou para o tronco principal) com uma
+@dfn{mesclagem}.  Mesclar é primeiro rodar um @code{cvs
+update -j}, para mesclar as mudanças no seu diretório
+de trabalho. Depois efetivar (commit) esta revisão, e
+finalmente fazer a efetiva destas mudanças de um ramo
+para outro.
 
 @menu
 @c <en>* Branches motivation::         What branches are good for
-* Branches motivation::         What branches are good for
+* Motivação para ramos::              Para que ramos são bons
 @c <en>* Creating a branch::           Creating a branch
-* Creating a branch::           Creating a branch
+* Criando um ramo::                   Criando um ramo
 @c <en>* Accessing branches::          Checking out and updating branches
-* Acessando ramos::          Checking out and updating branches
+* Acessando ramos::                   Pegando e devolvendo ramos
 @c <en>* Branches and revisions::      Branches are reflected in revision numbers
-* Ramos e revisões::      Branches are reflected in revision numbers
+* Ramos e revisões::                  Ramificar se reflete nos números de revisão
 @c <en>* Magic branch numbers::        Magic branch numbers
-* Números de ramos mágicos::        Magic branch numbers
+* Números de ramos mágicos::          Magic branch numbers
 @c <en>* Merging a branch::            Merging an entire branch
-* Merging a branch::            Merging an entire branch
+* Mesclando um ramo::                 Mesclando um ramo inteiro
 @c <en>* Merging more than once::      Merging from a branch several times
-* Merging more than once::      Merging from a branch several times
+* Mesclando mais de uma vez::         Mesclando a partir de um ramo várias vezes
 @c <en>* Merging two revisions::       Merging differences between two revisions
-* Mesclando duas revisões::       Merging differences between two revisions
+* Mesclando duas revisões::           Mesclando diferenças entre duas revisões
 @c <en>* Merging adds and removals::   What if files are added or removed?
-* Merging adds and removals::   What if files are added or removed?
+* Mesclando adicionados e removidos:: E se arquivos forem adicionados ou removidos?
 @c <en>* Merging and keywords::        Avoiding conflicts due to keyword substitution
-* Merging and keywords::        Avoiding conflicts due to keyword substitution
+* Mesclagem e palavras-chave::        Evitando conflitos devido a substituição de palavras-chave
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Branches motivation
-@node Branches motivation
+@node Motivação para ramos
 @c <en>@section What branches are good for
-@section What branches are good for
+@section Para que ramos são bons
 @c <en>@cindex Branches motivation
-@cindex Branches motivation
+@cindex Motivação para ramos
 @c <en>@cindex What branches are good for
-@cindex What branches are good for
+@cindex Para que ramos são bons
 @c <en>@cindex Motivation for branches
 @cindex Motivation for branches
 
@@ -6655,14 +6656,16 @@ copy the changes onto another branch.
 @c <en>of the sources are in a state of flux and are not expected to be stable
 @c <en>for at least another month.  There is no way to make a
 @c <en>bugfix release based on the newest sources.
-Suppose that release 1.0 of tc has been made.  You are continuing to
-develop tc, planning to create release 1.1 in a couple of months.  After a
-while your customers start to complain about a fatal bug.  You check
-out release 1.0 (@pxref{Etiquetas}) and find the bug
-(which turns out to have a trivial fix).  However, the current revision
-of the sources are in a state of flux and are not expected to be stable
-for at least another month.  There is no way to make a
-bugfix release based on the newest sources.
+Suponha que a release 1.0 de tc está pronta.  Você está
+continua desenvolvendo tc, e planeja lançar a release
+1.1 em alguns meses.  Depois de um tempo seus
+consumidores começam a reclamar de um erro fatal.  Você
+baixa a release 1.0 (@pxref{Etiquetas}) e encontra o
+erro (que tem um conserto fácil).  Entretanto, a
+revisão atual dos fontes está num estado do fluxo de
+desenvolvimento que você não espera que estaja estável
+em pelo menos um mês.  Não tem jeito de lançar uma
+release baseada nos fontes mais novos.
 
 @c <en>The thing to do in a situation like this is to create a @dfn{branch} on
 @c <en>the revision trees for all the files that make up
@@ -6670,31 +6673,31 @@ bugfix release based on the newest sources.
 @c <en>modifications to the branch without disturbing the main trunk.  When the
 @c <en>modifications are finished you can elect to either incorporate them on
 @c <en>the main trunk, or leave them on the branch.
-The thing to do in a situation like this is to create a @dfn{branch} on
-the revision trees for all the files that make up
-release 1.0 of tc.  You can then make
-modifications to the branch without disturbing the main trunk.  When the
-modifications are finished you can elect to either incorporate them on
-the main trunk, or leave them on the branch.
+O que se há para fazer numa situação como esta é criar
+um @dfn{ramo} na árvore de revisões para todos os
+arquivos que integram a release 1.0 de tc.  Você pode
+então fazer modificações no ramo sem perturbar o tronco
+principal.  Quando as modificações terminarem você pode
+decidir se incorporam elas ao tronco ou deixa elas no ramo.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Creating a branch
-@node Creating a branch
+@node Criando um ramo
 @c <en>@section Creating a branch
-@section Creating a branch
+@section Criando um ramo
 @c <en>@cindex Creating a branch
-@cindex Creating a branch
+@cindex Criando um ramo
 @c <en>@cindex Branch, creating a
-@cindex Branch, creating a
+@cindex Ramo, criando um
 @c <en>@cindex tag (subcommand), creating a branch using
-@cindex tag (subcommand), creating a branch using
+@cindex tag (subcomando), criando um ramo usando
 @c <en>@cindex rtag (subcommand), creating a branch using
-@cindex rtag (subcommand), creating a branch using
+@cindex rtag (subcomando), criando um ramo usando
 
 @c <en>You can create a branch with @code{tag -b}; for
 @c <en>example, assuming you're in a working copy:
-You can create a branch with @code{tag -b}; for
-example, assuming you're in a working copy:
+Você pode criar um ramo com @code{tag -b}; por exemplo,
+supondo que você está numa cópia de trabalho:
 
 @example
 $ cvs tag -b rel-1-0-patches
@@ -6711,8 +6714,8 @@ $ cvs tag -b rel-1-0-patches
 @c <en>This splits off a branch based on the current revisions
 @c <en>in the working copy, assigning that branch the name
 @c <en>@samp{rel-1-0-patches}.
-This splits off a branch based on the current revisions
-in the working copy, assigning that branch the name
+Isto inicia um ramo baseado nas revisões atuais na
+cópia de trabalho, dando a este ramo o nome
 @samp{rel-1-0-patches}.
 
 @c <en>It is important to understand that branches get created
@@ -6721,17 +6724,17 @@ in the working copy, assigning that branch the name
 @c <en>does, will @emph{not} automatically switch the working
 @c <en>copy to be on the new branch.  For information on how
 @c <en>to do that, see @ref{Accessing branches}.
-It is important to understand that branches get created
-in the repository, not in the working copy.  Creating a
-branch based on current revisions, as the above example
-does, will @emph{not} automatically switch the working
-copy to be on the new branch.  For information on how
-to do that, see @ref{Acessando ramos}.
+É importante entender que ramos são criados no
+repositório, e não na cópia de tarbalho.  Criar um ramo
+baseado nas revisões atuais, como no exemplo acima,
+@emph{Não} vai mudar automaticamente a cópia de
+trabalho para o novo ramo.  Para informações sobre
+como fazer isto, veja em @ref{Acessando ramos}.
 
 @c <en>You can also create a branch without reference to any
 @c <en>working copy, by using @code{rtag}:
-You can also create a branch without reference to any
-working copy, by using @code{rtag}:
+Você também pode criar um ramo sem referência a
+qualquer cópia de trabalho usando @code{rtag}:
 
 @example
 $ cvs rtag -b -r rel-1-0 rel-1-0-patches tc
@@ -6744,33 +6747,34 @@ $ cvs rtag -b -r rel-1-0 rel-1-0-patches tc
 @c <en>split a branch off an old revision (for example, when
 @c <en>fixing a bug in a past release otherwise known to be
 @c <en>stable).
-@samp{-r rel-1-0} says that this branch should be
-rooted at the revision that
-corresponds to the tag @samp{rel-1-0}.  It need not
-be the most recent revision -- it's often useful to
-split a branch off an old revision (for example, when
-fixing a bug in a past release otherwise known to be
-stable).
+@samp{-r rel-1-0} diz que este ramo deve ser iniciado
+na revisão que corresponde à etiqueta (tag)
+@samp{rel-1-0}.  Não precisa ser a revisão mais recente
+-- é útil às vezes separar um ramo a partir de uma
+revisão antiga (por exemplo, quando se está consertando
+um erro numa release anterior que se pensava estar
+estável).
 
 @c <en>As with @samp{tag}, the @samp{-b} flag tells
 @c <en>@code{rtag} to create a branch (rather than just a
 @c <en>symbolic revision name).  Note that the numeric
 @c <en>revision number that matches @samp{rel-1-0} will
 @c <en>probably be different from file to file.
-As with @samp{tag}, the @samp{-b} flag tells
-@code{rtag} to create a branch (rather than just a
-symbolic revision name).  Note that the numeric
-revision number that matches @samp{rel-1-0} will
-probably be different from file to file.
+Assim como no @samp{tag}, a opção @samp{-b} diz ao
+@code{rtag} para criar um ramo (ao invés de
+simplesmente um nome de revisão simbólico).  Observe
+que o número de revisão simbólico que casa com
+@samp{rel-1-0} provavelmente ser diferente de arquivo
+para arquivo.
 
 @c <en>So, the full effect of the command is to create a new
 @c <en>branch -- named @samp{rel-1-0-patches} -- in module
 @c <en>@samp{tc}, rooted in the revision tree at the point tagged
 @c <en>by @samp{rel-1-0}.
-So, the full effect of the command is to create a new
-branch -- named @samp{rel-1-0-patches} -- in module
-@samp{tc}, rooted in the revision tree at the point tagged
-by @samp{rel-1-0}.
+Então, O efeito total do comando é criar um novo ramo
+-- chamado @samp{rel-1-0-patches} -- no módulo
+@samp{tc}, partindo da árvore de revisão no ponto
+etiquetado como @samp{rel-1-0}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Accessing branches
@@ -6797,16 +6801,16 @@ by @samp{rel-1-0}.
 @c <en>You can retrieve a branch in one of two ways: by
 @c <en>checking it out fresh from the repository, or by
 @c <en>switching an existing working copy over to the branch.
-You can retrieve a branch in one of two ways: by
-checking it out fresh from the repository, or by
-switching an existing working copy over to the branch.
+Você pode recuperar um ramo de duas formas: pegando um
+cópia zerada dele do repositório, ou alternando de uma
+cópia de trabalho já existente para o ramo.
 
 @c <en>To check out a branch from the repository, invoke
 @c <en>@samp{checkout} with the @samp{-r} flag, followed by
 @c <en>the tag name of the branch (@pxref{Creating a branch}):
-To check out a branch from the repository, invoke
-@samp{checkout} with the @samp{-r} flag, followed by
-the tag name of the branch (@pxref{Creating a branch}):
+Para pegar um ramo do repositório, chame o
+@samp{checkout} com a opção @samp{-r}, seguida pelo
+nome da etiqueta do ramo (@pxref{Criando um ramo}):
 
 @example
 $ cvs checkout -r rel-1-0-patches tc
@@ -6814,8 +6818,8 @@ $ cvs checkout -r rel-1-0-patches tc
 
 @c <en>Or, if you already have a working copy, you can switch
 @c <en>it to a given branch with @samp{update -r}:
-Or, if you already have a working copy, you can switch
-it to a given branch with @samp{update -r}:
+Ou, se você já tem uma cópia de trabalho, você pode
+alternar dela para um dado ramo com @samp{update -r}:
 
 @example
 $ cvs update -r rel-1-0-patches tc
@@ -6823,7 +6827,7 @@ $ cvs update -r rel-1-0-patches tc
 
 @noindent
 @c <en>or equivalently:
-or equivalently:
+ou equivalentemente:
 
 @example
 $ cd tc
@@ -6836,36 +6840,39 @@ $ cvs update -r rel-1-0-patches
 @c <en>similarly to a regular @samp{update} command,
 @c <en>@samp{update -r} merges any changes you have made,
 @c <en>notifying you of conflicts where they occur.
-It does not matter if the working copy was originally
-on the main trunk or on some other branch -- the above
-command will switch it to the named branch.  And
-similarly to a regular @samp{update} command,
-@samp{update -r} merges any changes you have made,
-notifying you of conflicts where they occur.
+Não importa se a cópia de tabalho estava originalmente
+no tronco principal ou em algum outro ramo -- o comando
+acima vai alternar ela para o ramo dado.  E
+similarmente ao comando @samp{update} normal,
+@samp{update -r} mescla quaisquer mudanças que você
+tenha feito, notificando você sobre conflitos onde eles
+ocorrerem.
 
 @c <en>Once you have a working copy tied to a particular
 @c <en>branch, it remains there until you tell it otherwise.
 @c <en>This means that changes checked in from the working
 @c <en>copy will add new revisions on that branch, while
 @c <en>leaving the main trunk and other branches unaffected.
-Once you have a working copy tied to a particular
-branch, it remains there until you tell it otherwise.
-This means that changes checked in from the working
-copy will add new revisions on that branch, while
-leaving the main trunk and other branches unaffected.
+Uma vez que você tenha uma cópia de trabalho referente
+a um dado, ela continua no ramo até que se diga o
+contrário. Isto significa que mudanças inseridas a
+partir da cópia de trabalho vão adicionar novas
+revisões naquele ramo, enquanto que não afeta o tronco
+principal nem os outros ramos.
 
 @c <en>@cindex Branches, sticky
-@cindex Branches, sticky
+@cindex Ramos, adesivos
 @c <en>To find out what branch a working copy is on, you can
 @c <en>use the @samp{status} command.  In its output, look for
 @c <en>the field named @samp{Sticky tag} (@pxref{Sticky tags})
 @c <en>-- that's @sc{cvs}'s way of telling you the branch, if
 @c <en>any, of the current working files:
-To find out what branch a working copy is on, you can
-use the @samp{status} command.  In its output, look for
-the field named @samp{Sticky tag} (@pxref{Etiquetas adesivas})
--- that's @sc{cvs}'s way of telling you the branch, if
-any, of the current working files:
+Para saber em qual ramo uma cópia de trabalho está,
+você precisa usar o comando @samp{status}.  Na saída do
+comando procure pelo campo chamado @samp{Sticky tag}
+(etiqueta adesiva) (@pxref{Etiquetas adesivas})
+-- esta é a forma do @sc{cvs} de dizer a você o ramo,
+se é que se está num, dos arquivos de trabalho atuais:
 
 @example
 $ cvs status -v driver.c backend.c
@@ -6907,20 +6914,21 @@ File: backend.c         Status: Up-to-date
 @c <en>branch was made.  In the above example, one can deduce
 @c <en>that @samp{driver.c} had been through more changes than
 @c <en>@samp{backend.c} before this branch was created.
-Don't be confused by the fact that the branch numbers
-for each file are different (@samp{1.7.2} and
-@samp{1.4.2} respectively).  The branch tag is the
-same, @samp{rel-1-0-patches}, and the files are
-indeed on the same branch.  The numbers simply reflect
-the point in each file's revision history at which the
-branch was made.  In the above example, one can deduce
-that @samp{driver.c} had been through more changes than
-@samp{backend.c} before this branch was created.
+Não se confunda pelo fato de que os números de ramo de
+cada arquivo serem diferentes (@samp{1.7.2} e
+@samp{1.4.2} respectivamente).  A etiqueta do ramo é a
+mesma, @samp{rel-1-0-patches}, e os arquivos estão na
+verdade no mesmo ramo.  Os números simplesmente
+refletem o ponto em que cada arquivo estava no
+histórico de revisão quando o ramo foi criado.  No
+exemplo acima, pode-se deduzir que @samp{driver.c}
+tinha tido mais alterações que @samp{backend.c} antes
+do ramo ter sido criado.
 
 @c <en>See @ref{Branches and revisions} for details about how
 @c <en>branch numbers are constructed.
-See @ref{Ramos e revisões} for details about how
-branch numbers are constructed.
+Veja em @ref{Ramos e revisões} para detalhes a respeito
+de como números de ramos são criados.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Branches and revisions
@@ -6928,16 +6936,17 @@ branch numbers are constructed.
 @c <en>@section Branches and revisions
 @section Ramos e revisões
 @c <en>@cindex Branch number
-@cindex Branch number
+@cindex Número de ramo
 @c <en>@cindex Number, branch
-@cindex Number, branch
+@cindex Ramo, número de
 @c <en>@cindex Revision numbers (branches)
-@cindex Revision numbers (branches)
+@cindex Números de revisão (ramos)
 
 @c <en>Ordinarily, a file's revision history is a linear
 @c <en>series of increments (@pxref{Revision numbers}):
-Ordinarily, a file's revision history is a linear
-series of increments (@pxref{Números de revisão}):
+Normalmente, um histórico da revisão do arquivo é uma
+séria linear de incrementos (@pxref{Números de
+revisão}):
 
 @example
        +-----+    +-----+    +-----+    +-----+    +-----+
@@ -6950,11 +6959,12 @@ series of increments (@pxref{Números de revisão}):
 @c <en>where each branch is a self-maintained line of
 @c <en>development.  Changes made on one branch can easily be
 @c <en>moved back to the main trunk.
-However, @sc{cvs} is not limited to linear development.  The
-@dfn{revision tree} can be split into @dfn{branches},
-where each branch is a self-maintained line of
-development.  Changes made on one branch can easily be
-moved back to the main trunk.
+Entretanto, o @sc{cvs} não está limitado a
+desenvolvimento linear.  A @dfn{árvore de revisões}
+pode ser separada em @dfn{ramos},
+onde cada ramo é uma linha de desenvolvimento que se
+mantém. Mudanças feitas em um ramo podem ser facilmente
+movidas para o tronco principal.
 
 @c <en>Each branch has a @dfn{branch number}, consisting of an
 @c <en>odd number of period-separated decimal integers.  The
@@ -6962,22 +6972,21 @@ moved back to the main trunk.
 @c <en>revision number where the corresponding branch forked
 @c <en>off.  Having branch numbers allows more than one branch
 @c <en>to be forked off from a certain revision.
-Each branch has a @dfn{branch number}, consisting of an
-odd number of period-separated decimal integers.  The
-branch number is created by appending an integer to the
-revision number where the corresponding branch forked
-off.  Having branch numbers allows more than one branch
-to be forked off from a certain revision.
+Cada ramo tem um @dfn{número de ramo}, formado por uma
+quantidade ímpar de números inteiros decimais separados
+por ponto.  O número do ramo é criado anexando um
+inteiro ao número de revisão de onde o ramo
+correpondente saiu.  Com números de ramo é possível se
+ter mais de uma ramificação partindo de uma certa revisão.
 
 @need 3500
 @c <en>All revisions on a branch have revision numbers formed
 @c <en>by appending an ordinal number to the branch number.
 @c <en>The following figure illustrates branching with an
 @c <en>example.
-All revisions on a branch have revision numbers formed
-by appending an ordinal number to the branch number.
-The following figure illustrates branching with an
-example.
+Todas as revisões num ramo têm números de revisão
+formados pela anexação de um número ordinal ao número
+do ramo. A figura seguinte ilustra a ramificação com um exemplo.
 
 @example
 @c This example used to have a 1.2.2.4 revision, which
@@ -6986,25 +6995,21 @@ example.
 @c without overfull hboxes.
 @group
                                                       +-------------+
-@c <en>                           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
                            Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
                                                     / +-------------+
                                                    /
                                                   /
                  +---------+    +---------+    +---------+
-@c <en>Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
 Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
                / +---------+    +---------+    +---------+
               /
              /
 +-----+    +-----+    +-----+    +-----+    +-----+
-@c <en>! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !  <- The main trunk
 ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !  <- The main trunk
 +-----+    +-----+    +-----+    +-----+    +-----+
                 !
                 !
                 !   +---------+    +---------+    +---------+
-@c <en>Branch 1.2.4 -> +---! 1.2.4.1 !----! 1.2.4.2 !----! 1.2.4.3 !
 Branch 1.2.4 -> +---! 1.2.4.1 !----! 1.2.4.2 !----! 1.2.4.3 !
                     +---------+    +---------+    +---------+
 
@@ -7031,16 +7036,17 @@ Branch 1.2.4 -> +---! 1.2.4.1 !----! 1.2.4.2 !----! 1.2.4.3 !
 @c <en>(such as 6.4.0) are used internally by @sc{cvs}
 @c <en>(@pxref{Magic branch numbers}).  The branch 1.1.1 has a
 @c <en>special meaning.  @xref{Tracking sources}.
-The exact details of how the branch number is
-constructed is not something you normally need to be
-concerned about, but here is how it works: When
-@sc{cvs} creates a branch number it picks the first
-unused even integer, starting with 2.  So when you want
-to create a branch from revision 6.4 it will be
-numbered 6.4.2.  All branch numbers ending in a zero
-(such as 6.4.0) are used internally by @sc{cvs}
-(@pxref{Números de ramos mágicos}).  The branch 1.1.1 has a
-special meaning.  @xref{Acompanhando fontes}.
+Os detalhes exatos de como o número de ramo é
+construído não são algo com os quais você precisa estar
+preocupado, mas aqui vai como a coisa funciona: quando
+o @sc{cvs} cria um número de ramo ele pega o primeiro
+número par não usado, a partir de 2.  Logo, quando você
+quer criar um ramo a partir da revisão 6.4 ele vai ser
+numerado 6.4.2.  Todos os números de ramos terminados
+com um zero (tal como 6.4.0) são usados internamente
+pelo @sc{cvs} (@pxref{Números de ramos mágicos}).  O
+ramo 1.1.1 tem um significado especial.
+@xref{Acompanhando fontes}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Magic branch numbers
@@ -7056,12 +7062,12 @@ special meaning.  @xref{Acompanhando fontes}.
 @c <en>you.  However, they are visible to you in certain
 @c <en>circumstances, so it may be useful to have some idea of
 @c <en>how it works.
-This section describes a @sc{cvs} feature called
-@dfn{magic branches}.  For most purposes, you need not
-worry about magic branches; @sc{cvs} handles them for
-you.  However, they are visible to you in certain
-circumstances, so it may be useful to have some idea of
-how it works.
+Esta seção descreve uma habilidade do @sc{cvs} chamada
+@dfn{ramos mágicos}.  Para a maioria dos casos, você
+não precisa se preocupar com os ramos mágicos; o
+@sc{cvs} cuida deles para você.  Entretanto, eles
+aparecem em algumas situações, sendo importante se ter
+alguma idéia de como eles funcionam.
 
 @c <en>Externally, branch numbers consist of an odd number of
 @c <en>dot-separated decimal integers.  @xref{Revision
@@ -7070,20 +7076,20 @@ how it works.
 @c <en>in the second rightmost position (1.2.4 becomes
 @c <en>1.2.0.4, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
 @c <en>on).
-Externally, branch numbers consist of an odd number of
-dot-separated decimal integers.
-@xref{Números de revisão}.  That is not the whole truth, however.  For
-efficiency reasons @sc{cvs} sometimes inserts an extra 0
-in the second rightmost position (1.2.4 becomes
-1.2.0.4, 8.9.10.11.12 becomes 8.9.10.11.0.12 and so
-on).
+Externamente, números de ramos consistem de uma quantidade
+ímpar de inteiros decimais separados por
+ponto. @xref{Números de revisão}.  Isto não é toda a
+verdade, entretanto.  Por questões de eficiência, o
+@sc{cvs} insere, em alguns momentos, um 0 extra na
+segunda posição da direita para a esquerda (1.2.4 se torna
+1.2.0.4, 8.9.10.11.12 se torna 8.9.10.11.0.12 e assim
+por diante).
 
 @c <en>@sc{cvs} does a pretty good job at hiding these so
 @c <en>called magic branches, but in a few places the hiding
 @c <en>is incomplete:
-@sc{cvs} does a pretty good job at hiding these so
-called magic branches, but in a few places the hiding
-is incomplete:
+O @sc{cvs} faz um bom trabalho escondendo estes tais
+ramos mágicos, mas em alguns lugares alguma coisa aparece:
 
 @itemize @bullet
 @ignore
@@ -7104,15 +7110,15 @@ fixed in @sc{cvs} 1.3-s2.
 @item
 @c <en>The magic branch number appears in the output from
 @c <en>@code{cvs log}.
-The magic branch number appears in the output from
+O número de ramo mágico aparece na saída do
 @code{cvs log}.
 @c What output should appear instead?
 
 @item
 @c <en>You cannot specify a symbolic branch name to @code{cvs
 @c <en>admin}.
-You cannot specify a symbolic branch name to @code{cvs
-admin}.
+Você não pode especificar um nome de ramo simbólico
+para o @code{cvs admin}.
 
 @end itemize
 
@@ -7124,11 +7130,11 @@ admin}.
 @c <en>to be.  If @code{R4patches} is assigned to the branch
 @c <en>1.4.2 (magic branch number 1.4.0.2) in file
 @c <en>@file{numbers.c} you can do this:
-You can use the @code{admin} command to reassign a
-symbolic name to a branch the way @sc{rcs} expects it
-to be.  If @code{R4patches} is assigned to the branch
-1.4.2 (magic branch number 1.4.0.2) in file
-@file{numbers.c} you can do this:
+Você pode usar o comando @code{admin} para reatribuir
+um nome simbólico para um ramo da forma que o @sc{rcs}
+espera que seja.  Se o @code{R4patches} está atribuído
+para o ramo 1.4.2 (número de ramo mágico 1.4.0.2) no
+arquivo @file{numbers.c} você pode fazer isto:
 
 @example
 $ cvs admin -NR4patches:1.4.2 numbers.c
@@ -7138,20 +7144,20 @@ $ cvs admin -NR4patches:1.4.2 numbers.c
 @c <en>committed on the branch.  Be very careful so that you
 @c <en>do not assign the tag to the wrong number.  (There is
 @c <en>no way to see how the tag was assigned yesterday).
-It only works if at least one revision is already
-committed on the branch.  Be very careful so that you
-do not assign the tag to the wrong number.  (There is
-no way to see how the tag was assigned yesterday).
+Isto apenas funciona se pelo menos uma revisão já está
+efetivada no ramo.  Seja bastante cuidadoso para não
+atribuir a etiqueta ao número errado.  (Não existe
+jeito de ver como a etiqueta estava atribuída ontem).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Merging a branch
-@node Merging a branch
+@node Mesclando um ramo
 @c <en>@section Merging an entire branch
-@section Merging an entire branch
+@section Mesclando um ramo inteiro
 @c <en>@cindex Merging a branch
-@cindex Merging a branch
+@cindex Mesclando um ramo
 @c <en>@cindex -j (merging branches)
-@cindex -j (merging branches)
+@cindex -j (mesclando ramos)
 
 @c <en>You can merge changes made on a branch into your working copy by giving
 @c <en>the @samp{-j @var{branchname}} flag to the @code{update} subcommand.  With one
@@ -7159,17 +7165,19 @@ no way to see how the tag was assigned yesterday).
 @c <en>greatest common ancestor (GCA) of the branch and the destination revision (in
 @c <en>the simple case below the GCA is the point where the branch forked) and the
 @c <en>newest revision on that branch into your working copy.
-You can merge changes made on a branch into your working copy by giving
-the @samp{-j @var{branchname}} flag to the @code{update} subcommand.  With one
-@samp{-j @var{branchname}} option it merges the changes made between the
-greatest common ancestor (GCA) of the branch and the destination revision (in
-the simple case below the GCA is the point where the branch forked) and the
-@c <en>newest revision on that branch into your working copy.
-newest revision on that branch into your working copy.
+Você pode mesclar mudanças feitas num ramo em seu
+diretório de trabalho passando a opção @samp{-j
+@var{nome_do_ramo}} para o subcomando @code{update}.
+Com uma opção @samp{-j @var{nome_do_ramo}} ele mescla
+as mudançãs feitas entre o maior ancestral comum
+(greatest common ancestor - GCA) do ramo e a revisão de
+destino (no caso mais simples abaixo, o GCA é o ponto
+onde o ramo bifurcou) e a nova revisão neste ramo na
+sua cópia de trabalho.
 
 @cindex Join
 @c <en>The @samp{-j} stands for ``join''.
-The @samp{-j} stands for ``join''.
+O @samp{-j} significa ``join'', ``juntar''.
 
 @c <en>@cindex Branch merge example
 @cindex Branch merge example
@@ -7182,13 +7190,11 @@ Consider this revision tree:
 
 @example
 +-----+    +-----+    +-----+    +-----+
-@c <en>! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !      <- The main trunk
 ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !      <- The main trunk
 +-----+    +-----+    +-----+    +-----+
                 !
                 !
                 !   +---------+    +---------+
-@c <en>Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
 Branch R1fix -> +---! 1.2.2.1 !----! 1.2.2.2 !
                     +---------+    +---------+
 @end example
@@ -7224,7 +7230,7 @@ new revision.  @xref{Exemplo de conflitos}.
 @c <en>@ref{Merging and keywords}, for information on how to avoid this.
 If your source files contain keywords (@pxref{Substituição de palavra-chave}),
 you might be getting more conflicts than strictly necessary.  See
-@ref{Merging and keywords}, for information on how to avoid this.
+@ref{Mesclagem e palavras-chave}, for information on how to avoid this.
 
 @c <en>The @code{checkout} command also supports the @samp{-j @var{branchname}} flag.  The
 @c <en>same effect as above could be achieved with this:
@@ -7239,10 +7245,10 @@ $ cvs commit -m "Included R1fix"
 @c <en>It should be noted that @code{update -j @var{tagname}} will also work but may
 @c <en>not produce the desired result.  @xref{Merging adds and removals}, for more.
 It should be noted that @code{update -j @var{tagname}} will also work but may
-not produce the desired result.  @xref{Merging adds and removals}, for more.
+not produce the desired result.  @xref{Mesclando adicionados e removidos}, for more.
 
 @c <en>@node Merging more than once
-@node Merging more than once
+@node Mesclando mais de uma vez
 @c <en>@section Merging from a branch several times
 @section Merging from a branch several times
 
@@ -7416,7 +7422,7 @@ $
 @end example
 
 @c <en>@node Merging adds and removals
-@node Merging adds and removals
+@node Mesclando adicionados e removidos
 @c <en>@section Merging can add or remove files
 @section Merging can add or remove files
 
@@ -7471,9 +7477,9 @@ to be sure that all intended changes are propagated in the merge.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Merging and keywords
-@node Merging and keywords
+@node Mesclagem e palavras-chave
 @c <en>@section Merging and keywords
-@section Merging and keywords
+@section Mesclagem e palavras-chave
 @c <en>@cindex Merging, and keyword substitution
 @cindex Merging, and keyword substitution
 @c <en>@cindex Keyword substitution, and merging
@@ -7633,13 +7639,13 @@ binary files.
 @c <en>@chapter Recursive behavior
 @chapter Comportamento recursivo
 @c <en>@cindex Recursive (directory descending)
-@cindex Recursive (directory descending)
+@cindex Recursivo (directory descending)
 @c <en>@cindex Directory, descending
 @cindex Directory, descending
 @c <en>@cindex Descending directories
 @cindex Descending directories
 @c <en>@cindex Subdirectories
-@cindex Subdirectories
+@cindex Subdiretórios
 
 @c <en>Almost all of the subcommands of @sc{cvs} work
 @c <en>recursively when you specify a directory as an
@@ -7917,7 +7923,7 @@ $ cvs commit -m "Early version. Not yet compilable." backend.c
 When you add a file it is added only on the branch
 which you are working on (@pxref{Ramificando e mesclando}).  You can
 later merge the additions to another branch if you want
-(@pxref{Merging adds and removals}).
+(@pxref{Mesclando adicionados e removidos}).
 @c Should we mention that earlier versions of CVS
 @c lacked this feature (1.3) or implemented it in a buggy
 @c way (well, 1.8 had many bugs in cvs update -j)?
@@ -8138,7 +8144,7 @@ U oj.c
 When you remove a file it is removed only on the branch
 which you are working on (@pxref{Ramificando e mesclando}).  You can
 later merge the removals to another branch if you want
-(@pxref{Merging adds and removals}).
+(@pxref{Mesclando adicionados e removidos}).
 
 @c <en>@node Removing directories
 @node Removing directories
@@ -10796,10 +10802,15 @@ for use with the @code{LocalKeyword} option--see
 @ref{Keyword list}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Substitution modes
 @node Substitution modes
+@c <en>@section Substitution modes
 @section Substitution modes
+@c <en>@cindex Keyword substitution, changing modes
 @cindex Keyword substitution, changing modes
+@c <en>@cindex -k (keyword substitution)
 @cindex -k (keyword substitution)
+@c <en>@cindex Kflag
 @cindex Kflag
 
 @c FIXME: This could be made more coherent, by expanding it
@@ -10819,7 +10830,7 @@ option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
-see @ref{Arquivos binários}, and @ref{Merging and keywords}.
+see @ref{Arquivos binários}, and @ref{Mesclagem e palavras-chave}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
 @c somewhat questionable.  Perhaps there should be
@@ -10834,30 +10845,55 @@ see @ref{Arquivos binários}, and @ref{Merging and keywords}.
 @c appeal, and maybe there is no sufficient reason for
 @c creeping featurism in this area.
 
+@c <en>The modes available are:
 The modes available are:
 
 @table @samp
+@c <en>@item -kkv
 @item -kkv
+@c <en>Generate keyword strings using the default form, e.g.
+@c <en>@code{$@splitrcskeyword{}Revision: 5.7 $} for the @code{Revision}
+@c <en>keyword.
 Generate keyword strings using the default form, e.g.
 @code{$@splitrcskeyword{}Revision: 5.7 $} for the @code{Revision}
 keyword.
 
+@c <en>@item -kkvl
 @item -kkvl
+@c <en>Like @samp{-kkv}, except that a locker's name is always
+@c <en>inserted if the given revision is currently locked.
+@c <en>The locker's name is only relevant if @code{cvs admin
+@c <en>-l} is in use.
 Like @samp{-kkv}, except that a locker's name is always
 inserted if the given revision is currently locked.
 The locker's name is only relevant if @code{cvs admin
 -l} is in use.
 
+@c <en>@item -kk
 @item -kk
+@c <en>Generate only keyword names in keyword strings; omit
+@c <en>their values.  For example, for the @code{Revision}
+@c <en>keyword, generate the string @code{$@splitrcskeyword{}Revision$}
+@c <en>instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.  This option
+@c <en>is useful to ignore differences due to keyword
+@c <en>substitution when comparing different revisions of a
+@c <en>file (@pxref{Merging and keywords}).
 Generate only keyword names in keyword strings; omit
 their values.  For example, for the @code{Revision}
 keyword, generate the string @code{$@splitrcskeyword{}Revision$}
 instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.  This option
 is useful to ignore differences due to keyword
 substitution when comparing different revisions of a
-file (@pxref{Merging and keywords}).
+file (@pxref{Mesclagem e palavras-chave}).
 
+@c <en>@item -ko
 @item -ko
+@c <en>Generate the old keyword string, present in the working
+@c <en>file just before it was checked in.  For example, for
+@c <en>the @code{Revision} keyword, generate the string
+@c <en>@code{$@splitrcskeyword{}Revision: 1.1 $} instead of
+@c <en>@code{$@splitrcskeyword{}Revision: 5.7 $} if that is how the
+@c <en>string appeared when the file was checked in.
 Generate the old keyword string, present in the working
 file just before it was checked in.  For example, for
 the @code{Revision} keyword, generate the string
@@ -10890,7 +10926,17 @@ only to terminate lines, this is very similar to
 @code{cvs import} may not be overridden by a @samp{-k} option
 specified on the command line.
 
+@c <en>@item -kv
 @item -kv
+@c <en>Generate only keyword values for keyword strings.  For
+@c <en>example, for the @code{Revision} keyword, generate the string
+@c <en>@code{5.7} instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.
+@c <en>This can help generate files in programming languages
+@c <en>where it is hard to strip keyword delimiters like
+@c <en>@code{$@splitrcskeyword{}Revision: $} from a string.  However,
+@c <en>further keyword substitution cannot be performed once
+@c <en>the keyword names are removed, so this option should be
+@c <en>used with care.
 Generate only keyword values for keyword strings.  For
 example, for the @code{Revision} keyword, generate the string
 @code{5.7} instead of @code{$@splitrcskeyword{}Revision: 5.7 $}.
@@ -10901,6 +10947,9 @@ further keyword substitution cannot be performed once
 the keyword names are removed, so this option should be
 used with care.
 
+@c <en>One often would like to use @samp{-kv} with @code{cvs
+@c <en>export}---@pxref{export}.  But be aware that doesn't
+@c <en>handle an export containing binary files correctly.
 One often would like to use @samp{-kv} with @code{cvs
 export}---@pxref{export}.  But be aware that doesn't
 handle an export containing binary files correctly.
@@ -10908,10 +10957,29 @@ handle an export containing binary files correctly.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Configuring keyword expansion
 @node Configuring keyword expansion
+@c <en>@section Configuring Keyord Expansion
 @section Configuring Keyord Expansion
+@c <en>@cindex Configuring keyword expansion
 @cindex Configuring keyword expansion
 
+@c <en>In a repository that includes third-party software on
+@c <en>vendor branches, it is sometimes helpful to configure
+@c <en>CVS to use a local keyword instead of the standard
+@c <en>$@splitrcskeyword{Id}$ or $@splitrcskeyword{Header}$ keywords. Examples from
+@c <en>real projects includ, $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
+@c <en>$@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
+@c <en>$@splitrcskeyword{OpenBSD}$, and even $@splitrcskeyword{dotat}$.
+@c <en>The advantage of this is that
+@c <en>you can include your local version information in a
+@c <en>file using this local keyword (sometimes called a
+@c <en>``custom tag'' or a ``local tag'') without disrupting
+@c <en>the upstream version information (which may be a
+@c <en>different local keyword or a standard keyword). In
+@c <en>these cases, it is typically desirable to disable the
+@c <en>expansion of all keywords except the configured local
+@c <en>keyword.
 In a repository that includes third-party software on
 vendor branches, it is sometimes helpful to configure
 CVS to use a local keyword instead of the standard
@@ -10929,6 +10997,12 @@ these cases, it is typically desirable to disable the
 expansion of all keywords except the configured local
 keyword.
 
+@c <en>The @code{KeywordExpansion} option in the
+@c <en>@file{CVSROOT/config} file is intended to allow for the
+@c <en>either the explicit exclusion of a keyword or list of
+@c <en>keywords, or for the explicit inclusion of a keyword or
+@c <en>a list of keywords. This list may include the
+@c <en>@code{LocalKeyword} that has been configured.
 The @code{KeywordExpansion} option in the
 @file{CVSROOT/config} file is intended to allow for the
 either the explicit exclusion of a keyword or list of
@@ -10936,6 +11010,11 @@ keywords, or for the explicit inclusion of a keyword or
 a list of keywords. This list may include the
 @code{LocalKeyword} that has been configured.
 
+@c <en>The @code{KeywordExpansion} option is followed by
+@c <en>@code{=} and the next character may either be @code{i}
+@c <en>to start an inclusion list or @code{e} to start an
+@c <en>exclusion list. If the following lines were added to
+@c <en>the @file{CVSROOT/config} file:
 The @code{KeywordExpansion} option is followed by
 @code{=} and the next character may either be @code{i}
 to start an inclusion list or @code{e} to start an
@@ -10949,6 +11028,8 @@ the @file{CVSROOT/config} file:
         KeywordExpand=iMyBSD
 @end example
 
+@c <en>then only the $@splitrcskeyword{MyBSD}$ keyword would be expanded.
+@c <en>A list may be used. The this example:
 then only the $@splitrcskeyword{MyBSD}$ keyword would be expanded.
 A list may be used. The this example:
 
@@ -10961,7 +11042,11 @@ A list may be used. The this example:
 
 would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
 $@splitrcskeyword{Date}$ to be expanded.
+would allow $@splitrcskeyword{MyBSD}$, $@splitrcskeyword{Name}$, and
+$@splitrcskeyword{Date}$ to be expanded.
 
+It is also possible to configure an exclusion list
+using the following:
 It is also possible to configure an exclusion list
 using the following:
 
@@ -10970,6 +11055,13 @@ using the following:
         KeywordExpand=eCVSHeader
 @end example
 
+@c <en>This allows @sc{cvs} to ignore the recently introduced
+@c <en>$@splitrcskeyword{CVSHeader}$ keyword and retain all of the
+@c <en>others. The exclusion entry could also contain the
+@c <en>standard RCS keyword list, but this could be confusing
+@c <en>to users that expect RCS keywords to be expanded, so
+@c <en>ycare should be taken to properly set user expectations
+@c <en>for a repository that is configured in that manner.
 This allows @sc{cvs} to ignore the recently introduced
 $@splitrcskeyword{CVSHeader}$ keyword and retain all of the
 others. The exclusion entry could also contain the
@@ -10978,6 +11070,10 @@ to users that expect RCS keywords to be expanded, so
 ycare should be taken to properly set user expectations
 for a repository that is configured in that manner.
 
+@c <en>If there is a desire to not have any RCS keywords
+@c <en>expanded and not use the @code{-ko} flags everywhere,
+@c <en>an administrator may disable all keyword expansion
+@c <en>using the @file{CVSROOT/config} line:
 If there is a desire to not have any RCS keywords
 expanded and not use the @code{-ko} flags everywhere,
 an administrator may disable all keyword expansion
@@ -10988,11 +11084,21 @@ using the @file{CVSROOT/config} line:
 	KeywordExpand=i
 @end example
 
+@c <en>this could be confusing to users that expect RCS
+@c <en>keywords like $@splitrcskeyword{Id}$ to be expanded properly,
+@c <en>so care should be taken to properly set user
+@c <en>expectations for a repository so configured.
 this could be confusing to users that expect RCS
 keywords like $@splitrcskeyword{Id}$ to be expanded properly,
 so care should be taken to properly set user
 expectations for a repository so configured.
 
+@c <en>It should be noted that a patch to provide both the
+@c <en>@code{KeywordExpand} and @code{LocalKeyword} features
+@c <en>has been around a long time. However, that patch
+@c <en>implemented these features using @code{tag=} and
+@c <en>@code{tagexpand=} keywords and those keywords are NOT
+@c <en>recognized.
 It should be noted that a patch to provide both the
 @code{KeywordExpand} and @code{LocalKeyword} features
 has been around a long time. However, that patch
@@ -11001,9 +11107,18 @@ implemented these features using @code{tag=} and
 recognized.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@c <en>@node Log keyword
 @node Log keyword
+@c <en>@section Problems with the $@splitrcskeyword{}Log$ keyword.
 @section Problems with the $@splitrcskeyword{}Log$ keyword.
 
+@c <en>The @code{$@splitrcskeyword{}Log$} keyword is somewhat
+@c <en>controversial.  As long as you are working on your
+@c <en>development system the information is easily accessible
+@c <en>even if you do not use the @code{$@splitrcskeyword{}Log$}
+@c <en>keyword---just do a @code{cvs log}.  Once you export
+@c <en>the file the history information might be useless
+@c <en>anyhow.
 The @code{$@splitrcskeyword{}Log$} keyword is somewhat
 controversial.  As long as you are working on your
 development system the information is easily accessible
@@ -11012,6 +11127,10 @@ keyword---just do a @code{cvs log}.  Once you export
 the file the history information might be useless
 anyhow.
 
+@c <en>A more serious concern is that @sc{cvs} is not good at
+@c <en>handling @code{$@splitrcskeyword{}Log$} entries when a branch is
+@c <en>merged onto the main trunk.  Conflicts often result
+@c <en>from the merging operation.
 A more serious concern is that @sc{cvs} is not good at
 handling @code{$@splitrcskeyword{}Log$} entries when a branch is
 merged onto the main trunk.  Conflicts often result
@@ -11020,6 +11139,12 @@ from the merging operation.
 @c of RCS_merge has this problem the same way rcsmerge
 @c does.  I would assume so....
 
+@c <en>People also tend to "fix" the log entries in the file
+@c <en>(correcting spelling mistakes and maybe even factual
+@c <en>errors).  If that is done the information from
+@c <en>@code{cvs log} will not be consistent with the
+@c <en>information inside the file.  This may or may not be a
+@c <en>problem in real life.
 People also tend to "fix" the log entries in the file
 (correcting spelling mistakes and maybe even factual
 errors).  If that is done the information from
@@ -11027,6 +11152,11 @@ errors).  If that is done the information from
 information inside the file.  This may or may not be a
 problem in real life.
 
+@c <en>It has been suggested that the @code{$@splitrcskeyword{}Log$}
+@c <en>keyword should be inserted @emph{last} in the file, and
+@c <en>not in the files header, if it is to be used at all.
+@c <en>That way the long list of change messages will not
+@c <en>interfere with everyday source file browsing.
 It has been suggested that the @code{$@splitrcskeyword{}Log$}
 keyword should be inserted @emph{last} in the file, and
 not in the files header, if it is to be used at all.
@@ -11053,25 +11183,48 @@ interfere with everyday source file browsing.
 @c relationships like customer-supplier, developer-QA,
 @c maintainer-contributor, or whatever, to make it
 @c seem concrete.
+@c <en>If you modify a program to better fit your site, you
+@c <en>probably want to include your modifications when the next
+@c <en>release of the program arrives.  @sc{cvs} can help you with
+@c <en>this task.
 If you modify a program to better fit your site, you
 probably want to include your modifications when the next
 release of the program arrives.  @sc{cvs} can help you with
 this task.
 
 @cindex Vendor
+@cindex Vendor
+@cindex Vendor branch
 @cindex Vendor branch
 @cindex Branch, vendor-
+@cindex Branch, vendor-
+@c <en>In the terminology used in @sc{cvs}, the supplier of the
+@c <en>program is called a @dfn{vendor}.  The unmodified
+@c <en>distribution from the vendor is checked in on its own
+@c <en>branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
+@c <en>1.1.1 for this use.
 In the terminology used in @sc{cvs}, the supplier of the
 program is called a @dfn{vendor}.  The unmodified
 distribution from the vendor is checked in on its own
 branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
 1.1.1 for this use.
 
+@c <en>When you modify the source and commit it, your revision
+@c <en>will end up on the main trunk.  When a new release is
+@c <en>made by the vendor, you commit it on the vendor branch
+@c <en>and copy the modifications onto the main trunk.
 When you modify the source and commit it, your revision
 will end up on the main trunk.  When a new release is
 made by the vendor, you commit it on the vendor branch
 and copy the modifications onto the main trunk.
 
+@c <en>Use the @code{import} command to create and update
+@c <en>the vendor branch.  When you import a new file,
+@c <en>the vendor branch is made the `head' revision, so
+@c <en>anyone that checks out a copy of the file gets that
+@c <en>revision.  When a local modification is committed it is
+@c <en>placed on the main trunk, and made the `head'
+@c <en>revision.
 Use the @code{import} command to create and update
 the vendor branch.  When you import a new file,
 the vendor branch is made the `head' revision, so
@@ -12221,39 +12374,67 @@ with a @code{checkout} or @code{update} command,
 it operates on, and continues to use that @var{kflag} with future
 commands on the same files until you specify otherwise.
 
+@c <en>The @samp{-k} option is available with the @code{add},
+@c <en>@code{checkout}, @code{diff}, @code{export}, @code{import} and
+@c <en>@code{update} commands.
 The @samp{-k} option is available with the @code{add},
 @code{checkout}, @code{diff}, @code{export}, @code{import} and
 @code{update} commands.
 
+@c <en>@strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
+@c <en>overrode the @samp{-kb} indication for a binary file.  This could
+@c <en>sometimes corrupt binary files.  @xref{Merging and keywords}, for
+@c <en>more.}
 @strong{WARNING: Prior to CVS version 1.12.2, the @samp{-k} flag
 overrode the @samp{-kb} indication for a binary file.  This could
-sometimes corrupt binary files.  @xref{Merging and keywords}, for
+sometimes corrupt binary files.  @xref{Mesclagem e palavras-chave}, for
 more.}
 
+@c <en>@item -l
 @item -l
+@c <en>Local; run only in current working directory, rather than
+@c <en>recursing through subdirectories.
 Local; run only in current working directory, rather than
 recursing through subdirectories.
 
+@c <en>Available with the following commands: @code{annotate}, @code{checkout},
+@c <en>@code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
+@c <en>@code{log}, @code{rdiff}, @code{remove}, @code{rtag},
+@c <en>@code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
+@c <en>and @code{watchers}.
 Available with the following commands: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
 @code{log}, @code{rdiff}, @code{remove}, @code{rtag},
 @code{status}, @code{tag}, @code{unedit}, @code{update}, @code{watch},
 and @code{watchers}.
 
+@c <en>@cindex Editor, avoiding invocation of
 @cindex Editor, avoiding invocation of
+@c <en>@cindex Avoiding editor invocation
 @cindex Avoiding editor invocation
+@c <en>@item -m @var{message}
 @item -m @var{message}
+@c <en>Use @var{message} as log information, instead of
+@c <en>invoking an editor.
 Use @var{message} as log information, instead of
 invoking an editor.
 
+@c <en>Available with the following commands: @code{add},
+@c <en>@code{commit} and @code{import}.
 Available with the following commands: @code{add},
 @code{commit} and @code{import}.
 
+@c <en>@item -n
 @item -n
+@c <en>Do not run any tag program.  (A program can be
+@c <en>specified to run in the modules
+@c <en>database (@pxref{modules}); this option bypasses it).
 Do not run any tag program.  (A program can be
 specified to run in the modules
 database (@pxref{modules}); this option bypasses it).
 
+@c <en>@strong{Note: this is not the same as the @samp{cvs -n}
+@c <en>program option, which you can specify to the left of a cvs command!}
 @strong{Note: this is not the same as the @samp{cvs -n}
 program option, which you can specify to the left of a cvs command!}
 
@@ -15049,10 +15230,14 @@ ancestor revision is the common ancestor of the
 revision which the working directory is based on, and
 the revision specified in the @samp{-j} option.
 
+@c <en>Note that using a single @samp{-j @var{tagname}} option rather than
+@c <en>@samp{-j @var{branchname}} to merge changes from a branch will
+@c <en>often not remove files which were removed on the branch.
+@c <en>@xref{Merging adds and removals}, for more.
 Note that using a single @samp{-j @var{tagname}} option rather than
 @samp{-j @var{branchname}} to merge changes from a branch will
 often not remove files which were removed on the branch.
-@xref{Merging adds and removals}, for more.
+@xref{Mesclando adicionados e removidos}, for more.
 
 In addition, each @samp{-j} option can contain an optional
 date specification which, when used with branches, can
@@ -15180,7 +15365,7 @@ description of the @samp{-I} option, and
 This appendix describes how to invoke @sc{cvs}, with
 references to where each command or feature is
 described in detail.  For other references run the
-@code{cvs --help} command, or see @ref{Índice}.
+@code{cvs --help} command, or see @ref{Indice}.
 
 A @sc{cvs} command looks like:
 
@@ -19567,7 +19752,7 @@ comprehensive, detailed list of known bugs.
 
 @c ---------------------------------------------------------------------
 @c <en>@node Index
-@node Índice
+@node Indice
 @c <en>@unnumbered Index
 @unnumbered Índice
 @c <en>@cindex Index
