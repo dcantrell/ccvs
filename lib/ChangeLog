@@ -1,3 +1,7 @@
+2004-10-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.mak: Regenerated for "../zlib/lib.dsp" change.
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sunos57-select.c: New file. Work around Solaris 7 select()
