@@ -659,6 +659,10 @@ space than it could, typically.
     more on fractal compression, including at least one patent to
     watch for; I don't know how analogous Karl's ideas are to the
     techniques described there).
+  - Quite possibly want some documented interface by which a site can
+    plug in their choice of external difference programs (with the
+    ability to choose the program based on filename, magic numbers,
+    or some such).
 
 192.  "cvs update" using an absolute pathname does not work if the
 working directory is not a CVS-controlled directory with the correct
