@@ -1,5 +1,7 @@
 Sun Nov 24 17:27:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Adding files): Update comment about "cvs add -m".
+
 	* cvs.texinfo (Common options): Remove -H; -H is not a command
 	option.
 	(Global options): Also list --help and --version.  Don't say that
