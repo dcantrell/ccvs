@@ -5825,6 +5825,7 @@ done
 
 # Look for functions from GNULIB and replace with versions in lib/ when
 # necessary.
+gl_PATH_MAX
 
 
   LIBOBJS="$LIBOBJS getnline.$ac_objext"

@@ -1160,7 +1160,7 @@ AC_DEFUN([AC_CHECK_DECLS_ONCE], [
   ])
 ])
 
-# getline.m4 serial 8
+# getline.m4 serial 9
 
 dnl Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 dnl Foundation, Inc.
