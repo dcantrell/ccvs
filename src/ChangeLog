@@ -1,3 +1,8 @@
+Fri Dec 22 18:21:39 1995  Karl Fogel  <kfogel@csxt.cs.oberlin.edu>
+
+        * client.c (start_server): don't use kerberos if authenticating
+        server was specified.
+
 Fri Dec 22 16:35:57 1995  Karl Fogel  <kfogel@csxt.cs.oberlin.edu>
 
         * login.c (login): deal with new scramble methods.
