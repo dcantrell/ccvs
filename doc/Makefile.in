@@ -609,7 +609,7 @@ cvs-paper.pdf: cvs-paper.ps
 
 # Targets to build a man page from cvs.texinfo.
 cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
-	$(srcdir)/mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
+	./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 		$(srcdir)/cvs.man.footer >$@
 .texinfo.txt:
 	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
