@@ -46,7 +46,7 @@ char *alloca ();
 #if __GNUC__ == 2
 #define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var)
 #else
-#define USE(var)
+#define USE(var) static const char standalone_semis_illegal_sigh
 #endif
 
 
