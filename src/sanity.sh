@@ -27843,6 +27843,7 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
 	  if $remote; then :; else
 	    dotest multiroot2-9a "${testcvs} -t update" \
 " *-> main loop with CVSROOT=${TESTDIR}/root1
+ *-> parse_config ($TESTDIR/root1)
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
@@ -27852,6 +27853,7 @@ ${CPROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
  *-> Simple_Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
+ *-> parse_config ($TESTDIR/root2)
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)

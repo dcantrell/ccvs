@@ -126,9 +126,6 @@ static struct lock global_writelock;
    with locklist, sort of.  */
 static List *lock_tree_list;
 
-/* LockDir from CVSROOT/config.  */
-char *lock_dir;
-
 
 
 /* Return a newly malloc'd string containing the name of the lock for the
@@ -150,7 +147,7 @@ lock_name (const char *repository, const char *name)
     TRACE (TRACE_FLOW, "lock_name (%s, %s)",
 	   repository  ? repository : "(null)", name ? name : "(null)");
 
-    if (lock_dir == NULL)
+    if (!config->lock_dir)
     {
 	/* This is the easy case.  Because the lock files go directly
 	   in the repository, no need to create directories or anything.  */
@@ -177,11 +174,11 @@ lock_name (const char *repository, const char *name)
 	else
 	    assert (short_repos[-1] == '/');
 
-	retval = xmalloc (strlen (lock_dir)
+	retval = xmalloc (strlen (config->lock_dir)
 			  + strlen (short_repos)
 			  + strlen (name)
 			  + 10);
-	strcpy (retval, lock_dir);
+	strcpy (retval, config->lock_dir);
 	q = retval + strlen (retval);
 	*q++ = '/';
 
@@ -220,8 +217,8 @@ lock_name (const char *repository, const char *name)
 	   because the locks will generally be removed by the process
 	   which created them.  */
 
-	if (CVS_STAT (lock_dir, &sb) < 0)
-	    error (1, errno, "cannot stat %s", lock_dir);
+	if (CVS_STAT (config->lock_dir, &sb) < 0)
+	    error (1, errno, "cannot stat %s", config->lock_dir);
 	new_mode = sb.st_mode;
 	save_umask = umask (0000);
 	saved_umask = 1;

@@ -330,8 +330,10 @@ xchmod (const char *fname, int writable)
     struct stat sb;
     mode_t mode, oumask;
 
-    if (preserve_perms)
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+    if (config->preserve_perms)
 	return;
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */
 
     if( CVS_STAT( fname, &sb ) < 0 )
     {

@@ -1,5 +1,50 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* cvs.h: Include parseinfo.h.
+	(top_level_admin, UseNewInfoFmtStrings,
+	ImportNewFilesToVendorBranchOnly, PrimaryServer, MaxProxyBufferSize,
+	MaxCommentLeaderLength, UseArchiveCommentLeader, RereadLogAfterVerify,
+	lock_dir, UserAdminOptions):  Move extern decls for global config opts
+	to config struct in parseinfo.h.
+	(config): New global.
+	(parse_config): Move proto to...
+	* parseinfo.h: This new file.
+	* parseinfo.c (parse_config): Return struct config.
+	(new_config): New function.
+	* admin.c: Remove global UserAdminOptions.
+	(admin): Don't check config on client.
+	* checkin.c (Checkin), checkout.c (checkout_proc), filesubr.c (xchmod),
+	import.c (import, add_rcs_file, expand_and_copy_contents):
+	Use config instead
+	of globals.  Some reformatting.
+	* history.c (logHistory): Move to struct config.
+	(history_write): Use config instead of globals.
+	* lock.c (lock_dir): Move global to struct config.
+	(lock_name): Use config instead of globals.
+	* logmsg.c (RereadLogAfterVerify): Move global to struct config.
+	(do_verify, logfile_write, verifymsg_proc): Prefer config to globals.
+	* main.c (top_level_admin, UseNewInfoFmtStrings, PrimaryServer,
+	MaxProxyBufferSize, MaxCommentLeaderLength, UseArchiveCommentLeader,
+	ImportNewFilesToVendorBranchOnly): Move globals to struct config.
+	(config): New global.
+	(main): Use new parse_config API.
+	* rcs.c (preserve_perms, keywords): Move globals to struct config.
+	(keyword_local): Move to struct rcs_keyword.
+	(new_keywords, free_keywords): New functions.
+	(expand_keywords, RCS_setlocalid, RCS_setincexc): Prefer config to
+	globals.
+	* rcs.h (free_keywords): New proto.
+	(RCS_setincexc, RCS_setlocalid): Accept opaque keywords element.
+	* root.c (delconfig, get_root_allow_config): New functions.
+	* root.h (get_root_allow_config): New proto.
+	* server.c (system_auth): Move global to struct config.
+	(isProxyServer, become_proxy, serve_command_prep): Prefer config to
+	globals.
+	(serve_root): Ditto.  Set config.
+	* server.h (system_auth): Move extern decl for global moved to config.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* history.h: Protect against multiple include.
 
 2004-09-29  Derek Price <derek@ximbiot.com>

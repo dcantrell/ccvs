@@ -8,8 +8,7 @@
 
 #include "cvs.h"
 #include "getline.h"
-
-extern char *logHistory;
+#include "history.h"
 
 
 
@@ -219,25 +218,24 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
 static bool
 readBool (const char *infopath, const char *option, const char *p, bool *val)
 {
+    TRACE (TRACE_FLOW, "readBool (%s, %s, %s)", infopath, option, p);
     if (!cvs_casecmp (p, "no") || !cvs_casecmp (p, "false")
         || !cvs_casecmp (p, "off") || !strcmp (p, "0"))
     {
+	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = false;
 	return true;
     }
     else if (!cvs_casecmp (p, "yes") || !cvs_casecmp (p, "true")
 	     || !cvs_casecmp (p, "on") || !strcmp (p, "1"))
     {
+	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = true;
 	return true;
     }
 
-    {
-	char *pinfopath = primary_root_inverse_translate (infopath);
-	error (0, 0, "%s: unrecognized value '%s' for `%s'",
-	       pinfopath, option, p);
-	free (pinfopath);
-    }
+    error (0, 0, "%s: unrecognized value '%s' for `%s'",
+	   infopath, option, p);
     return false;
 }
 
@@ -277,14 +275,10 @@ readSizeT (const char *infopath, const char *option, const char *p,
 		factor = xtimes (factor, 1024);
 		break;
 	    default:
-	    {
-		char *pinfopath = primary_root_inverse_translate (infopath);
 		error (0, 0,
     "%s: Unknown %s factor: `%c'",
-		       pinfopath, option, p[strlen(p)]);
-		free (pinfopath);
+		       infopath, option, p[strlen(p)]);
 		return false;
-	    }
 	}
 	TRACE (TRACE_DATA, "readSizeT(): Found factor %u for %s",
 	       factor, option);
@@ -296,11 +290,9 @@ readSizeT (const char *infopath, const char *option, const char *p,
     {
 	if (!isdigit(*q))
 	{
-	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0,
 "%s: %s must be a postitive integer, not '%s'",
-		   pinfopath, option, p);
-	    free (pinfopath);
+		   infopath, option, p);
 	    return false;
 	}
 	q++;
@@ -320,21 +312,63 @@ readSizeT (const char *infopath, const char *option, const char *p,
 
 
 
+/* Allocate and initialize a new config struct.  */
+static inline struct config *
+new_config (void)
+{
+    struct config *new = xcalloc (1, sizeof (struct config));
+
+    TRACE (TRACE_FLOW, "new_config ()");
+
+    new->logHistory = ALL_HISTORY_REC_TYPES;
+    new->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+    new->UserAdminOptions = xstrdup ("k");
+    new->MaxCommentLeaderLength = 20;
+#ifdef PROXY_SUPPORT
+    new->MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
+                                                          * by default.
+                                                          */
+#endif /* PROXY_SUPPORT */
+#ifdef AUTH_SERVER_SUPPORT
+    new->system_auth = true;
+#endif /* AUTH_SERVER_SUPPORT */
+
+    return new;
+}
+
+
+
+void
+free_config (struct config *data)
+{
+    if (data->keywords) free_keywords (data->keywords);
+    free (data);
+}
+
+
+
 /* Parse the CVS config file.  The syntax right now is a bit ad hoc
-   but tries to draw on the best or more common features of the other
-   *info files and various unix (or non-unix) config file syntaxes.
-   Lines starting with # are comments.  Settings are lines of the form
-   KEYWORD=VALUE.  There is currently no way to have a multi-line
-   VALUE (would be nice if there was, probably).
-
-   CVSROOT is the $CVSROOT directory
-   (current_parsed_root->directory might not be set yet, so this
-   function takes the cvsroot as a function argument).
-
-   Returns 0 for success, negative value for failure.  Call
-   error(0, ...) on errors in addition to the return value.  */
-int
-parse_config (char *cvsroot)
+ * but tries to draw on the best or more common features of the other
+ * *info files and various unix (or non-unix) config file syntaxes.
+ * Lines starting with # are comments.  Settings are lines of the form
+ * KEYWORD=VALUE.  There is currently no way to have a multi-line
+ * VALUE (would be nice if there was, probably).
+ *
+ * CVSROOT is the $CVSROOT directory
+ * (current_parsed_root->directory might not be set yet, so this
+ * function takes the cvsroot as a function argument).
+ *
+ * RETURNS
+ *   Always returns a fully initialized config struct, which on error may
+ *   contain only the defaults.
+ *
+ * ERRORS
+ *   Calls error(0, ...) on errors in addition to the return value.
+ *
+ *   xmalloc() failures are fatal, per usual.
+ */
+struct config *
+parse_config (const char *cvsroot)
 {
     char *infopath;
     FILE *fp_info;
@@ -342,31 +376,15 @@ parse_config (char *cvsroot)
     size_t line_allocated = 0;
     size_t len;
     char *p;
-    /* FIXME-reentrancy: If we do a multi-threaded server, this would need
-       to go to the per-connection data structures.  */
-    static int parsed = 0;
+    struct config *retval;
+    size_t dummy;
 
-    /* Authentication code and serve_root might both want to call us.
-       Let this happen smoothly.  */
-    if (parsed)
-	return 0;
-    parsed = 1;
+    TRACE (TRACE_FUNCTION, "parse_config (%s)", cvsroot);
 
-    infopath = xmalloc (strlen (cvsroot)
-			+ sizeof (CVSROOTADM_CONFIG)
-			+ sizeof (CVSROOTADM)
-			+ 10);
-    if (infopath == NULL)
-    {
-	error (0, 0, "out of memory; cannot allocate infopath");
-	goto error_return;
-    }
+    retval = new_config ();
 
-    strcpy (infopath, cvsroot);
-    strcat (infopath, "/");
-    strcat (infopath, CVSROOTADM);
-    strcat (infopath, "/");
-    strcat (infopath, CVSROOTADM_CONFIG);
+    infopath = asnprintf (NULL, &dummy, "%s/%s/%s",
+			  cvsroot, CVSROOTADM, CVSROOTADM_CONFIG);
 
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
@@ -379,7 +397,7 @@ parse_config (char *cvsroot)
 	    error (0, errno, "cannot open %s", infopath);
 	}
 	free (infopath);
-	return 0;
+	return retval;
     }
 
     while (getline (&line, &line_allocated, fp_info) >= 0)
@@ -415,15 +433,15 @@ parse_config (char *cvsroot)
 	if (line[0] == '\0')
 	    continue;
 
+	TRACE (TRACE_DATA, "parse_info() examining line: `%s'", line);
+
 	/* The first '=' separates keyword from value.  */
 	p = strchr (line, '=');
 	if (p == NULL)
 	{
 	    /* Probably should be printing line number.  */
-	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
-		   pinfopath, line);
-	    free (pinfopath);
+		   infopath, line);
 	    continue;
 	}
 
@@ -439,7 +457,7 @@ parse_config (char *cvsroot)
 	}
 	else if (strcmp (line, "SystemAuth") == 0)
 #ifdef AUTH_SERVER_SUPPORT
-	    readBool (infopath, "SystemAuth", p, &system_auth);
+	    readBool (infopath, "SystemAuth", p, &retval->system_auth);
 #else
 	{
 	    /* Still parse the syntax but ignore the option.  That way the same
@@ -450,29 +468,24 @@ parse_config (char *cvsroot)
 	}
 #endif
 	else if (strcmp (line, "LocalKeyword") == 0)
-	{
-	    RCS_setlocalid(p);
-		
-	}
+	    RCS_setlocalid (&retval->keywords, p);
 	else if (strcmp (line, "KeywordExpand") == 0)
-	{
-	    RCS_setincexc(p);
-		
-	}
+	    RCS_setincexc (&retval->keywords, p);
 	else if (strcmp (line, "PreservePermissions") == 0)
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
-	    readBool (infopath, "PreservePermissions", p, &preserve_perms);
+	    readBool (infopath, "PreservePermissions", p,
+		      &retval->preserve_perms);
 #else
 	    error (0, 0, "\
 warning: this CVS does not support PreservePermissions");
 #endif
 	else if (strcmp (line, "TopLevelAdmin") == 0)
-	    readBool (infopath, "TopLevelAdmin", p, &top_level_admin);
+	    readBool (infopath, "TopLevelAdmin", p, &retval->top_level_admin);
 	else if (strcmp (line, "LockDir") == 0)
 	{
-	    if (lock_dir != NULL)
-		free (lock_dir);
-	    lock_dir = xstrdup (p);
+	    if (retval->lock_dir != NULL)
+		free (retval->lock_dir);
+	    retval->lock_dir = xstrdup (p);
 	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
@@ -480,84 +493,73 @@ warning: this CVS does not support PreservePermissions");
 	else if (strcmp (line, "LogHistory") == 0)
 	{
 	    if (strcmp (p, "all") != 0)
-	    {
-		logHistory=xmalloc(strlen (p) + 1);
-		strcpy (logHistory, p);
-	    }
+		retval->logHistory = xstrdup (p);
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
 	{
 	    if (!cvs_casecmp (p, "never"))
-	      RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
+	      retval->RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
 	    else if (!cvs_casecmp (p, "always"))
-	      RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+	      retval->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
 	    else if (!cvs_casecmp (p, "stat"))
-	      RereadLogAfterVerify = LOGMSG_REREAD_STAT;
+	      retval->RereadLogAfterVerify = LOGMSG_REREAD_STAT;
 	    else
 	    {
 		bool tmp;
 		if (readBool (infopath, "RereadLogAfterVerify", p, &tmp))
 		{
 		    if (tmp)
-			RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
+			retval->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
 		    else
-			RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
+			retval->RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
 		}
 	    }
 	}
 	else if (strcmp (line, "UserAdminOptions") == 0)
-	{
-	    UserAdminOptions = xmalloc(strlen(p) + 1);
-	    strcpy(UserAdminOptions, p);
-	}
+	    retval->UserAdminOptions = xstrdup (p);
 	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	    readBool (infopath, "UseNewInfoFmtStrings", p,
-		      &UseNewInfoFmtStrings);
+		      &retval->UseNewInfoFmtStrings);
 #else /* !SUPPORT_OLD_INFO_FMT_STRINGS */
 	{
 	    bool dummy;
 	    if (readBool (infopath, "UseNewInfoFmtStrings", p, &dummy)
 		&& !dummy)
-	    {
-		char *pinfopath = primary_root_inverse_translate (infopath);
 		error (1, 0,
 "%s: Old style info format strings not supported by this executable.",
-		       pinfopath);
-	    }
+		       infopath);
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else if (strcmp (line, "ImportNewFilesToVendorBranchOnly") == 0)
 	    readBool (infopath, "ImportNewFilesToVendorBranchOnly", p,
-		      &ImportNewFilesToVendorBranchOnly);
+		      &retval->ImportNewFilesToVendorBranchOnly);
 #ifdef PROXY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
-	    PrimaryServer = parse_cvsroot (p);
-	    if (PrimaryServer->method != fork_method
-		&& PrimaryServer->method != ext_method)
+	    retval->PrimaryServer = parse_cvsroot (p);
+	    if (retval->PrimaryServer->method != fork_method
+		&& retval->PrimaryServer->method != ext_method)
 	    {
 		/* I intentionally neglect to mention :fork: here.  It is
 	         * really only useful for testing.
 		 */
-		char *pinfopath = primary_root_inverse_translate (infopath);
 	        error (1, 0,
 "%s: Only PrimaryServers with :ext: methods are valid, not `%s'.",
-		       pinfopath, p);
-		free (pinfopath);
+		       infopath, p);
 	    }
 	}
-	else if (strcmp (line, "MaxProxyBufferSize") == 0)
-	    readSizeT (infopath, "MaxProxyBufferSize", p, &MaxProxyBufferSize);
+	else if (!strcmp (line, "MaxProxyBufferSize"))
+	    readSizeT (infopath, "MaxProxyBufferSize", p,
+		       &retval->MaxProxyBufferSize);
 #endif /* PROXY_SUPPORT */
 	else if (!strcmp (line, "MaxCommentLeaderLength"))
 	    readSizeT (infopath, "MaxCommentLeaderLength", p,
-		       &MaxCommentLeaderLength);
+		       &retval->MaxCommentLeaderLength);
 	else if (!strcmp (line, "UseArchiveCommentLeader"))
 	    readBool (infopath, "UseArchiveCommentLeader", p,
-		      &UseArchiveCommentLeader);
+		      &retval->UseArchiveCommentLeader);
 	else
-	{
 	    /* We may be dealing with a keyword which was added in a
 	       subsequent version of CVS.  In that case it is a good idea
 	       to complain, as (1) the keyword might enable a behavior like
@@ -569,31 +571,15 @@ warning: this CVS does not support PreservePermissions");
 	       adding new keywords to your CVSROOT/config file is not
 	       particularly recommended unless you are planning on using
 	       the new features.  */
-	    char *pinfopath = primary_root_inverse_translate (infopath);
 	    error (0, 0, "%s: unrecognized keyword '%s'",
-		   pinfopath, line);
-	    free (pinfopath);
-	}
+		   infopath, line);
     }
     if (ferror (fp_info))
-    {
 	error (0, errno, "cannot read %s", infopath);
-	goto error_return;
-    }
     if (fclose (fp_info) < 0)
-    {
 	error (0, errno, "cannot close %s", infopath);
-	goto error_return;
-    }
     free (infopath);
     if (line != NULL)
 	free (line);
-    return 0;
-
- error_return:
-    if (infopath != NULL)
-	free (infopath);
-    if (line != NULL)
-	free (line);
-    return -1;
+    return retval;
 }

@@ -253,6 +253,14 @@ primary_root_inverse_translate (const char *root_in)
    hands us a CVSROOT directory.  */
 static List *root_allow;
 
+static void
+delconfig (Node *n)
+{
+    if (n->data) free_config (n->data);
+}
+
+
+
 void
 root_allow_add (const char *arg)
 {
@@ -261,6 +269,8 @@ root_allow_add (const char *arg)
     if (!root_allow) root_allow = getlist();
     n = getnode();
     n->key = xstrdup (arg);
+    n->data = parse_config (arg);
+    n->delproc = delconfig;
     addnode (root_allow, n);
 }
 
@@ -292,6 +302,29 @@ error 0 Server configuration missing --allow-root in inetd.conf\n");
     if (findnode (root_allow, arg))
 	return true;
     return false;
+}
+
+
+
+/* Get a config we stored in response to root_allow.
+ *
+ * RETURNS
+ *   The config associated with ARG.
+ */
+struct config *
+get_root_allow_config (const char *arg)
+{
+    Node *n;
+
+    TRACE (TRACE_FUNCTION, "get_root_allow_config (%s)", arg);
+
+    if (root_allow)
+	n = findnode (root_allow, arg);
+    else
+	n = NULL;
+
+    if (n) return n->data;
+    return parse_config (arg);
 }
 
 

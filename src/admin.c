@@ -19,8 +19,6 @@ static Dtype admin_dirproc (void *callerdat, const char *dir,
                             List *entries);
 static int admin_fileproc (void *callerdat, struct file_info *finfo);
 
-char *UserAdminOptions = "k";
-
 static const char *const admin_usage[] =
 {
     "Usage: %s %s [options] files...\n",
@@ -230,7 +228,12 @@ admin (int argc, char **argv)
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'q' && !strchr (UserAdminOptions, c))
+	if (
+# ifdef CLIENT_SUPPORT
+	    !current_parsed_root->isremote &&
+# endif	/* CLIENT_SUPPORT */
+	    c != 'q' && !strchr (config->UserAdminOptions, c)
+	   )
 	    only_allowed_options = false;
 
 	switch (c)

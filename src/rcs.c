@@ -23,8 +23,6 @@
 # endif
 #endif
 
-bool preserve_perms = false;
-
 /* The RCS -k options, and a set of enums that must match the array.
    These come first so that we can use enum kflag in function
    prototypes.  */
@@ -3469,30 +3467,6 @@ RCS_setexpand (RCSNode *rcs, const char *expand)
 
 
 /* RCS keywords, and a matching enum.  */
-struct rcs_keyword
-{
-    const char *string;
-    size_t len;
-    int expandit;
-};
-#define KEYWORD_INIT(s) (s), sizeof (s) - 1
-static struct rcs_keyword keywords[] =
-{
-    { KEYWORD_INIT ("Author"), 1 },
-    { KEYWORD_INIT ("Date"), 1 },
-    { KEYWORD_INIT ("CVSHeader"), 1 },
-    { KEYWORD_INIT ("Header"), 1 },
-    { KEYWORD_INIT ("Id"), 1 },
-    { KEYWORD_INIT ("Locker"), 1 },
-    { KEYWORD_INIT ("Log"), 1 },
-    { KEYWORD_INIT ("Name"), 1 },
-    { KEYWORD_INIT ("RCSfile"), 1 },
-    { KEYWORD_INIT ("Revision"), 1 },
-    { KEYWORD_INIT ("Source"), 1 },
-    { KEYWORD_INIT ("State"), 1 },
-    { NULL, 0, 0 },		/* localid */
-    { NULL, 0, 0 }
-};
 enum keyword
 {
     KEYWORD_AUTHOR = 0,
@@ -3509,7 +3483,51 @@ enum keyword
     KEYWORD_STATE,
     KEYWORD_LOCALID
 };
-enum keyword keyword_local = KEYWORD_ID;
+struct rcs_keyword
+{
+    const char *string;
+    size_t len;
+    enum keyword expandto;
+    bool expandit;
+};
+
+
+
+static inline struct rcs_keyword *
+new_keywords (void)
+{
+    struct rcs_keyword *new;
+    new = xcalloc (KEYWORD_LOCALID + 2, sizeof (struct rcs_keyword));
+
+#define KEYWORD_INIT(k, i, s) \
+	k[i].string = s; \
+	k[i].len = sizeof s - 1; \
+	k[i].expandto = i; \
+	k[i].expandit = true
+
+    KEYWORD_INIT (new, KEYWORD_AUTHOR, "Author");
+    KEYWORD_INIT (new, KEYWORD_DATE, "Date");
+    KEYWORD_INIT (new, KEYWORD_CVSHEADER, "CVSHeader");
+    KEYWORD_INIT (new, KEYWORD_HEADER, "Header");
+    KEYWORD_INIT (new, KEYWORD_ID, "Id");
+    KEYWORD_INIT (new, KEYWORD_LOCKER, "Locker");
+    KEYWORD_INIT (new, KEYWORD_LOG, "Log");
+    KEYWORD_INIT (new, KEYWORD_NAME, "Name");
+    KEYWORD_INIT (new, KEYWORD_RCSFILE, "RCSfile");
+    KEYWORD_INIT (new, KEYWORD_REVISION, "Revision");
+    KEYWORD_INIT (new, KEYWORD_SOURCE, "Source");
+    KEYWORD_INIT (new, KEYWORD_STATE, "State");
+
+    return new;
+}
+
+
+
+void
+free_keywords (void *keywords)
+{
+    free (keywords);
+}
 
 
 
@@ -3629,13 +3647,18 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
     char *locker;
     char *srch, *srch_next;
     size_t srch_len;
+    const struct rcs_keyword *keywords;
 
-    if (expand == KFLAG_O || expand == KFLAG_B)
+    if (!config /* For `cvs init', config may not be set.  */
+	||expand == KFLAG_O || expand == KFLAG_B)
     {
 	*retbuf = buf;
 	*retlen = len;
 	return;
     }
+
+    if (!config->keywords) config->keywords = new_keywords ();
+    keywords = config->keywords;
 
     /* If we are using -kkvl, dig out the locker information if any.  */
     locker = NULL;
@@ -3655,7 +3678,6 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	char *s, *send;
 	size_t slen;
 	const struct rcs_keyword *keyword;
-	enum keyword kw;
 	char *value;
 	int free_value;
 	char *sub;
@@ -3689,8 +3711,6 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	if (keyword->string == NULL)
 	    continue;
 
-	kw = (enum keyword) (keyword - keywords);
-
 	/* If the keyword ends with a ':', then the old value consists
            of the characters up to the next '$'.  If there is no '$'
            before the end of the line, though, then this wasn't an RCS
@@ -3713,7 +3733,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	    value = NULL;
 	else
 	{
-	    switch (kw)
+	    switch (keyword->expandto)
 	    {
 	    default:
 		assert (!"unreached");
@@ -3738,13 +3758,9 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 		    char *old_path;
 
 		    old_path = NULL;
-		    if (kw == KEYWORD_HEADER ||
-			    (kw == KEYWORD_LOCALID &&
-			     keyword_local == KEYWORD_HEADER))
+		    if (keyword->expandto == KEYWORD_HEADER)
 			path = rcs->print_path;
-		    else if (kw == KEYWORD_CVSHEADER ||
-			     (kw == KEYWORD_LOCALID &&
-			      keyword_local == KEYWORD_CVSHEADER))
+		    else if (keyword->expandto == KEYWORD_CVSHEADER)
 			path = getfullCVSname(rcs->print_path, &old_path);
 		    else
 			path = last_component (rcs->print_path);
@@ -3847,7 +3863,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	/* The Log keyword requires special handling.  This behaviour
            is taken from RCS 5.7.  The special log message is what RCS
            uses for ci -k.  */
-	if (kw == KEYWORD_LOG
+	if (keyword->expandto == KEYWORD_LOG
 	    && (sizeof "checked in with -k by " <= loglen
 		|| log == NULL
 		|| strncmp (log, "checked in with -k by ",
@@ -3876,7 +3892,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	    start = srch;
 	    leader_len = 0;
 	    while (start > buf && start[-1] != '\n'
-		   && leader_len <= xsum (MaxCommentLeaderLength,
+		   && leader_len <= xsum (config->MaxCommentLeaderLength,
 					  expand != KFLAG_V ? 1 : 0))
 	    {
 		--start;
@@ -3892,9 +3908,9 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 	    /* If the automagically determined leader exceeds the limit set in
 	     * CVSROOT/config, try to use a fallback.
 	     */
-	    if (leader_len > MaxCommentLeaderLength)
+	    if (leader_len > config->MaxCommentLeaderLength)
 	    {
-		if (UseArchiveCommentLeader && rcs->comment)
+		if (config->UseArchiveCommentLeader && rcs->comment)
 		{
 		    leader = xstrdup (rcs->comment);
 		    leader_len = strlen (rcs->comment);
@@ -3906,7 +3922,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 		    continue;
 		}
 	    }
-	    else /* leader_len <= MaxCommentLeaderLength */
+	    else /* leader_len <= config->MaxCommentLeaderLength */
 	    {
 		/* Copy the start of the line to use as a comment leader.  */
 		leader = xmalloc (leader_len);
@@ -8601,9 +8617,14 @@ make_file_label (const char *path, const char *rev, RCSNode *rcs)
 
 
 void
-RCS_setlocalid (const char *arg)
+RCS_setlocalid (void **keywords_in, const char *arg)
 {
     char *copy, *next, *key;
+    struct rcs_keyword *keywords;
+
+    if (!*keywords_in)
+	*keywords_in = new_keywords ();
+    keywords = *keywords_in;
 
     copy = xstrdup(arg);
     next = copy;
@@ -8616,11 +8637,11 @@ RCS_setlocalid (const char *arg)
     /* options? */
     while ((key = strtok(NULL, ",")) != NULL) {
 	if (!strcmp(key, keywords[KEYWORD_ID].string))
-	    keyword_local = KEYWORD_ID;
+	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_ID;
 	else if (!strcmp(key, keywords[KEYWORD_HEADER].string))
-	    keyword_local = KEYWORD_HEADER;
+	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_HEADER;
 	else if (!strcmp(key, keywords[KEYWORD_CVSHEADER].string))
-	    keyword_local = KEYWORD_CVSHEADER;
+	    keywords[KEYWORD_LOCALID].expandto = KEYWORD_CVSHEADER;
 	else
 	    error(1, 0, "Unknown LocalId mode: %s", key);
     }
@@ -8630,21 +8651,26 @@ RCS_setlocalid (const char *arg)
 
 
 void
-RCS_setincexc (const char *arg)
+RCS_setincexc (void **keywords_in, const char *arg)
 {
     char *key;
     char *copy, *next;
-    int include = 0;
+    bool include = false;
     struct rcs_keyword *keyword;
+    struct rcs_keyword *keywords;
+
+    if (!*keywords_in)
+	*keywords_in = new_keywords ();
+    keywords = *keywords_in;
 
     copy = xstrdup(arg);
     next = copy;
     switch (*next++) {
 	case 'e':
-	    include = 0;
+	    include = false;
 	    break;
 	case 'i':
-	    include = 1;
+	    include = true;
 	    break;
 	default:
 	    free(copy);
@@ -8654,7 +8680,7 @@ RCS_setincexc (const char *arg)
     if (include)
 	for (keyword = keywords; keyword->string != NULL; keyword++)
 	{
-	    keyword->expandit = 0;
+	    keyword->expandit = false;
 	}
 
     key = strtok(next, ",");

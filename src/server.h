@@ -150,7 +150,6 @@ void server_pause_check (void);
 
 #ifdef AUTH_SERVER_SUPPORT
 extern char *CVS_Username;
-extern bool system_auth;
 #endif /* AUTH_SERVER_SUPPORT */
 
 #endif /* SERVER_SUPPORT */

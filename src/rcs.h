@@ -241,8 +241,8 @@ int rcs_change_text (const char *, char *, size_t, const char *,
 void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, const char *,
 		 enum rcs_delta_op, char **, size_t *,
 		 char **, size_t *);
-void RCS_setincexc (const char *arg);
-void RCS_setlocalid (const char *arg);
+void RCS_setincexc (void **, const char *arg);
+void RCS_setlocalid (void **, const char *arg);
 char *make_file_label (const char *, const char *, RCSNode *);
 
 extern bool preserve_perms;
@@ -252,3 +252,4 @@ extern int add_rcs_file (const char *, const char *, const char *,
                          const char *, const char *, const char *,
                          const char *, int, char **, const char *, size_t,
                          FILE *, bool);
+void free_keywords (void *keywords);
