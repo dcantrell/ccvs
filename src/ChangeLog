@@ -1,3 +1,7 @@
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (set_lock), subr.c (sleep_past): Assume we have nanosleep.
+
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* root.c (normalize_cvsroot): Use asnprintf in preference to other

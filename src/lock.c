@@ -66,10 +66,6 @@
 
 #include "cvs.h"
 
-#if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
-  /* use select as a workaround */
-# include "xselect.h"
-#endif /* !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT */
 
 
 struct lock {
@@ -1096,7 +1092,6 @@ set_lock (struct lock *lock, int will_wait)
 	if (!waited && us < 1000)
 	{
 	    us += us;
-#if defined HAVE_NANOSLEEP
 	    {
 		struct timespec ts;
 		ts.tv_sec = 0;
@@ -1104,18 +1099,6 @@ set_lock (struct lock *lock, int will_wait)
 		(void)nanosleep (&ts, NULL);
 		continue;
 	    }
-#elif defined HAVE_USLEEP
-	    (void)usleep (us);
-	    continue;
-#elif defined HAVE_SELECT
-	    {
-		struct timeval tv;
-		tv.tv_sec = 0;
-		tv.tv_usec = us;
-		(void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
-		continue;
-	    }
-#endif
 	}
 
 	lock_wait (lock->repository);

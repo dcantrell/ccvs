@@ -827,33 +827,12 @@ sleep_past (time_t desttime)
 	us = 20000;
 #endif
 
-#if defined(HAVE_NANOSLEEP)
 	{
 	    struct timespec ts;
 	    ts.tv_sec = s;
 	    ts.tv_nsec = us * 1000;
 	    (void)nanosleep (&ts, NULL);
 	}
-#elif defined(HAVE_USLEEP)
-	if (s > 0)
-	    (void)sleep (s);
-	else
-	    (void)usleep (us);
-#elif defined(HAVE_SELECT)
-	{
-	    /* use select instead of sleep since it is a fairly portable way of
-	     * sleeping for ms.
-	     */
-	    struct timeval tv;
-	    tv.tv_sec = s;
-	    tv.tv_usec = us;
-	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL,
-                          &tv);
-	}
-#else
-	if (us > 0) s++;
-	(void)sleep(s);
-#endif
     }
 }
 
