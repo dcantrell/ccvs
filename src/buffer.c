@@ -2122,7 +2122,7 @@ static int
 fd_buffer_flush (void *closure)
 {
     struct fd_buffer *fb = closure;
-    if (fdatasync (fb->fd) < 0)
+    if (fsync (fb->fd) < 0 && errno != EROFS && errno != EINVAL)
 	return errno;
     return 0;
 }

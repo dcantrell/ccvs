@@ -127,9 +127,10 @@ log_buffer_flush (void *closure)
     assert (lb->buf->flush);
 
     /* We don't really have to flush the log file here, but doing it
-       will let tail -f on the log file show what is sent to the
-       network as it is sent.  */
-    if (lb->log && fflush (lb->log) || fdatasync (fileno (lb->log)))
+     * will let tail -f on the log file show what is sent to the
+     * network as it is sent.
+     */
+    if (lb->log && fflush (lb->log) || fsync (fileno (lb->log)))
         error (0, errno, "flushing log file");
 
     return (*lb->buf->flush) (lb->buf->closure);
