@@ -100,7 +100,7 @@ scramble (str)
   strcpy (s + 1, str);
 
   for (i = 1; s[i]; i++)
-    s[i] = shifts[(s[i])];
+    s[i] = shifts[(unsigned char)(s[i])];
 
   return s;
 }
