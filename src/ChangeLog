@@ -1,5 +1,10 @@
 2003-11-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (server): Test that the global `-l' option is ignored
+	nonfatally.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
 	* server.c (serve_global_option): Warn that -l is being ignored rather
 	than exiting fatally due to backwards compatibility complaints from
 	administrators.
