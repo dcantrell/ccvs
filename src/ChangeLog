@@ -1,3 +1,8 @@
+Wed Oct  2 10:47:33 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* client.c (send_repository): initialize some variables before
+ 	first usage
+
 Tue Oct  1 13:01:24 1996  Jim Blandy  <jimb@floss.cyclic.com>
 
 	Revert some of Greg's changes; they're welcome later, but we're
