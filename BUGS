@@ -355,48 +355,14 @@ diff -c -2 -r1.1.1.1 commit.c
   	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 
 
-* From: "Charles M. Hannum" <mycroft@ai.mit.edu>
-  To: remote-cvs@cyclic.com
-  Subject: Regarding `rcsmerge -E'
-  Date: Thu, 23 Feb 1995 21:49:41 -0500
-  
-  In the source jimb is distributing, he's turned off the use of
-  `rcsmerge -E' -- in one of the 2 invocations.  This needs to be made
-  consistent.
-  
-  I've just grabbed RCS 5.6.7.4, which has the `-E' option, so I'm going
-  to enable it in my copy of CVS.
-  
-  (You can get RCS 5.6.7.4 from
-  ftp.cs.purdue.edu:/pub/RCS/rcs-5.6.7.4-beta.tar.gz.)
+* Somewhere in the documentation we should warn users to avoid RCS
+versions 5.6.[5-7] beta because rcsmerge uses -A by default instead of
+-E (-E is correct).  CVS can't just pass -E unless it tests at runtime
+whether RCS supports it (configure time is not good enough, the
+version of RCS might change, CVS might be copied to a different
+machine, etc.).  RCS 5.6.0.1 does not support -E.  We also might
+supply an RCS patch.
 
-
-  From: Jim Blandy <jimb@totoro.bio.indiana.edu>
-  To: "Charles M. Hannum" <mycroft@ai.mit.edu>
-  Cc: remote-cvs@cyclic.com
-  Subject: Regarding `rcsmerge -E'
-  Date: Thu, 23 Feb 1995 22:05:13 -0500
-
-  >In the source jimb is distributing, he's turned off the use of
-  >`rcsmerge -E' -- in one of the 2 invocations.  This needs to be made
-  >consistent.
-  >
-  >I've just grabbed RCS 5.6.7.4, which has the `-E' option, so I'm going
-  >to enable it in my copy of CVS.
-  
-  Right you are.  I'm not clear on exactly what the -E option does, but
-  if it should be used whenever `rcsmerge' is run, it should be added to
-  the definition of RCS_RCSMERGE in rcs.h, not to any .c file.
-  
-  I've fixed this in the cvs module on totoro.cyclic.com:/u/src/master
-  (by removing the other -E), and will put a new disty on ftp.cyclic.com
-  soon.
-  
-  I think it's pretty goofy the way CVS hard-codes its usage of switches
-  of the subprograms it uses.  Perhaps the autoconf script should check
-  to see what switches the utility programs on the host machine seem to
-  accept, and tweak the definitions in rcs.h appropriately.
-  
 
 * From: "Charles M. Hannum" <mycroft@ai.mit.edu>
   To: remote-cvs@cyclic.com
