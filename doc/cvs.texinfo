@@ -2398,11 +2398,11 @@ int main(int argc,
         gencode();
     else
         fprintf(stderr, "No code generated.\n");
-<<<<<<< driver.c
+@asis{}<<<<<<< driver.c
     exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-=======
+@asis{}=======
     exit(!!nerr);
->>>>>>> 1.6
+@asis{}>>>>>>> 1.6
 @}
 @end example
 
