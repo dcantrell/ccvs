@@ -522,9 +522,9 @@ error 0 %s: no such user\n", user);
         }
 #ifdef CLIENT_SUPPORT
         else if (!getenv ("CVS_IGNORE_REMOTE_ROOT"))
-#else
+#else /* ! CLIENT_SUPPORT */
         else
-#endif
+#endif /* CLIENT_SUPPORT */
         {
             /*
 	     * Now for the hard part, compare the two directories. If they
@@ -543,6 +543,19 @@ error 0 %s: no such user\n", user);
         }
     }
 #endif /* CVSADM_ROOT */
+
+    /* CVSroot may need fixing up, if an access-method was specified,
+     * but not a user.  Later code assumes that if CVSroot contains an
+     * access-method, then it also has a user.  We print a warning and
+     * die if we can't guarantee that.
+     */
+    if ((CVSroot[0] == ':')
+        &&
+        (strchr (CVSroot, '@') == NULL))
+      {
+        error (1, 0,
+               "must also give a username if specifying access method");
+      }
 
     /*
      * Specifying just the '-H' flag to the sub-command causes a Usage

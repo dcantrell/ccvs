@@ -149,19 +149,16 @@ login (argc, argv)
      inefficient, but we're not talking about a gig of data here. */
 
   fp = fopen (passfile, "r");
-  if (fp == NULL)
+  if (fp != NULL)
     {
-      error (1, errno, "unable to open %s", passfile);
-      return 1;
-    }
-
-  /* Check each line to see if we have this entry already. */
-  while (fgets (linebuf, MAXLINELEN, fp) != NULL)
-    {
-      if (strncmp (CVSroot, linebuf, root_len) == 0)
+      /* Check each line to see if we have this entry already. */
+      while (fgets (linebuf, MAXLINELEN, fp) != NULL)
         {
-          already_entered = 1;
-          break;
+          if (strncmp (CVSroot, linebuf, root_len) == 0)
+            {
+              already_entered = 1;
+              break;
+            }
         }
     }
   fclose (fp);

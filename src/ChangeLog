@@ -1,5 +1,11 @@
 Mon Dec 11 15:58:47 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * login.c (login): if client password file doesn't exist, create
+        it, duh.
+
+        * main.c (main): die if CVSroot has access-method but no
+        username.
+
         * root.c: added some comments.
 
         * main.c: removed all code pertaining to the "-a" option.  We
