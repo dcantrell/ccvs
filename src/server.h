@@ -173,6 +173,6 @@ struct request
 extern struct request requests[];
 
 /* Gzip library, see zlib.c.  */
-extern void gunzip_and_write PROTO ((int, char *, unsigned char *, size_t));
-extern void read_and_gzip PROTO ((int, char *, unsigned char **, size_t *,
-				  size_t *, int));
+extern int gunzip_and_write PROTO ((int, char *, unsigned char *, size_t));
+extern int read_and_gzip PROTO ((int, char *, unsigned char **, size_t *,
+				 size_t *, int));

@@ -17708,7 +17708,52 @@ EOF
 	    fi
 	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
 
+	    # Now some tests of gzip-file-contents (used by jCVS).
+	    awk 'BEGIN {
+printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", 
+31, 139, 8, 0, 5, 7, 0, 3, 225, 2, 0, 198, 185, 5, 0, 0, 0}' \
+	      </dev/null >gzipped.dat
+	    echo Root ${TESTDIR}/crerepos >session.dat
+	    # Note that the CVS client sends "-b 1.1.1", and this
+	    # test doesn't.  But the server also defaults to that.
+	    cat <<EOF >>session.dat
+UseUnchanged
+gzip-file-contents 3
+Argument -m
+Argument msg
+Argumentx 
+Argument dir1
+Argument tag1
+Argument tag2
+Directory .
+in-real-life-this-is-funky-but-server-seems-to-ignore-it
+Modified file1
+u=rw,g=r,o=r
+z25
+EOF
+	    cat gzipped.dat >>session.dat
+	    echo import >>session.dat
+	    if ${testcvs} server >${TESTDIR}/server.tmp <session.dat; then
+	      dotest server-4 "cat ${TESTDIR}/server.tmp" "M N dir1/file1
+M 
+M No conflicts created by this import
+M 
+ok"
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-4
+	    fi
+	    dotest server-5 \
+"${testcvs} -q -d ${TESTDIR}/crerepos co -p dir1/file1" "test"
+
+	    if test "$keep" = yes; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
+	    fi
+
 	    rm -rf ${TESTDIR}/crerepos
+	    rm gzipped.dat session.dat
+	    rm ${TESTDIR}/server.tmp
 	  fi # skip the whole thing for local
 	  ;;
 

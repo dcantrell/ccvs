@@ -843,25 +843,6 @@ int gzip_level;
  */
 int file_gzip_level;
 
-int filter_through_gzip (fd, dir, level, pidp)
-    int fd, dir, level;
-    pid_t *pidp;
-{
-    static char buf[5] = "-";
-    static char *gzip_argv[3] = { "gzip", buf };
-
-    sprintf (buf+1, "%d", level);
-    return filter_stream_through_program (fd, dir, &gzip_argv[0], pidp);
-}
-
-int filter_through_gunzip (fd, dir, pidp)
-    int fd, dir;
-    pid_t *pidp;
-{
-    static char *gunzip_argv[3] = { "gzip", "-d" };
-    return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
-}
-
 #endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
 
 #ifdef CLIENT_SUPPORT
@@ -1865,7 +1846,10 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		read_from_server (buf, size);
 
 		if (use_gzip)
-		    gunzip_and_write (fd, short_pathname, buf, size);
+		{
+		    if (gunzip_and_write (fd, short_pathname, buf, size))
+			error (1, 0, "aborting due to compression error");
+		}
 		else if (write (fd, buf, size) != size)
 		    error (1, errno, "writing %s", short_pathname);
 	    }
@@ -4947,9 +4931,10 @@ send_modified (file, short_pathname, vers)
     {
 	size_t newsize = 0;
 
-	read_and_gzip (fd, short_pathname, (unsigned char **)&buf,
-		       &bufsize, &newsize,
-		       file_gzip_level);
+	if (read_and_gzip (fd, short_pathname, (unsigned char **)&buf,
+			   &bufsize, &newsize,
+			   file_gzip_level))
+	    error (1, 0, "aborting due to compression error");
 
 	if (close (fd) < 0)
 	    error (0, errno, "warning: can't close %s", short_pathname);

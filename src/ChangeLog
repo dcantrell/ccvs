@@ -1,3 +1,22 @@
+1998-10-20  Jim Kingdon
+
+	Use the gzip library on the server.  Probably doesn't speed things
+	up as currently implemented, but does avoid hassles in terms of
+	finding an external gzip program.
+	* zlib.c, server.h (gunzip_and_write, read_and_gzip): Now returns
+	whether a fatal error occurred, rather than expecting error (1,
+	...) to work.
+	* client.c (update_entries, send_modified): Change callers.
+	* server.c (receive_file): Rewrite gzip code to use
+	gunzip_and_write rather than filter_through_gunzip.
+	(server_updated): Likewise, use read_and_gzip rather than
+	filter_through_gzip.
+	* client.c, client.h (filter_through_gzip, filter_through_gunzip),
+	run.c, cvs.h (filter_stream_through_program): Removed; no longer used.
+	* sanity.sh (server): New tests server-4 and server-5 test
+	this feature (note that CVS 1.10 also passes these tests; the
+	behavior is supposed to be unchanged).
+
 1998-10-19  Jim Kingdon
 
 	* sanity.sh (multiroot3): New test, tests for a few more
