@@ -727,14 +727,12 @@ fnfold (char *filename)
 char *
 cvs_temp_name ()
 {
-    char value[L_tmpnam + 1];
     char *retval;
 
-    /* FIXME: should be using TMP, by using _tempnam.  */
-    retval = tmpnam (value);
+    retval = _tempnam (NULL, NULL);
     if (retval == NULL)
 	error (1, errno, "cannot generate temporary filename");
-    return xstrdup (retval);
+    return retval;
 }
 
 /* Return non-zero iff FILENAME is absolute.

@@ -1,3 +1,7 @@
+Tue May 14 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* filesubr.c (cvs_temp_name): Call _tempnam not tmpnam.
+
 Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (cvs_temp_name): New function..
