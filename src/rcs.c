@@ -4928,7 +4928,7 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
    or zero for success.  */
 int
 RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
-	     const char *message, const char *rev, int flags)
+	     const char *message, const char *rev, time_t citime, int flags)
 {
     RCSVers *delta, *commitpt;
     Deltatext *dtext;
@@ -4995,6 +4995,8 @@ RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
 	}
 	modtime = ws.st_mtime;
     }
+    else if (flags & RCS_FLAGS_USETIME)
+	modtime = citime;
     else
 	(void) time (&modtime);
     ftm = gmtime (&modtime);
