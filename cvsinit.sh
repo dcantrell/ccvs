@@ -140,7 +140,7 @@ fi
 # versions of CVS be in the CVS binary, not the repository?
 # Shouldn't we at *least* version control the file so they can get
 # back their editted version after we clobber it?
-for contrib in commit_prep log_accum cln_hist; do
+for contrib in log commit_prep log_accum cln_hist; do
     echo "Copying the new version of '${contrib}'"
     echo "  to $CVSROOT/CVSROOT for you..."
     cp $CVSLIB/contrib/$contrib $CVSROOT/CVSROOT/$contrib
