@@ -194,7 +194,6 @@ noinst_LIBRARIES = libcvs.a
 #	exitfail.h \
 #	xalloc.h \
 #	xmalloc.c \
-#	xstrdup.c
 #getdate_SOURCES += \
 #	progname.c
 #getdate_CPPFLAGS = -DTEST
@@ -225,7 +224,7 @@ libcvs_a_SOURCES = \
 	wait.h \
 	xselect.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
+basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)
@@ -256,8 +255,8 @@ am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
 	sighandle.$(OBJEXT) strftime.$(OBJEXT) yesno.$(OBJEXT) \
 	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
 	exitfail.$(OBJEXT) getdate.$(OBJEXT) gettime.$(OBJEXT) \
-	save-cwd.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT) \
-	xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT)
+	save-cwd.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
+	xgetcwd.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 check_PROGRAMS =
 
@@ -289,8 +288,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/save-cwd.Po ./$(DEPDIR)/sighandle.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/strftime.Po ./$(DEPDIR)/stripslash.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/xalloc-die.Po ./$(DEPDIR)/xgetcwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/xstrdup.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -387,7 +385,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xalloc-die.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmalloc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstrdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yesno.Po@am__quote@
 
 .c.o:

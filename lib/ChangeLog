@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Remove xstrdup.c.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* xstrdup.c: Remove this obsolete file.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
