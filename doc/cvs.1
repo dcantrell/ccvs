@@ -59,16 +59,16 @@ Cederqvist manual (via the
 command or otherwise,
 as described in the SEE ALSO section of this manpage).  Cross-references
 in this man page refer to nodes in the same.
-.SH "CVS commands"
-.SS "Guide to CVS commands"
+\.SH "CVS commands"
+\.SS "Guide to CVS commands"
 .SP
 This appendix describes the overall structure of
 \fBcvs\fP commands, and describes some commands in
 detail (others are described elsewhere; for a quick
-reference to \fBcvs\fP commands, see node `Invoking CVS' in the CVS manual).
+reference to \fBcvs\fP commands, see node \`Invoking CVS\(aq in the CVS manual).
 .SP
-.SH "Structure"
-.SS "Overall structure of CVS commands"
+\.SH "Structure"
+\.SS "Overall structure of CVS commands"
 .IX "Structure"
 .IX "CVS command structure"
 .IX "Command structure"
@@ -83,18 +83,18 @@ cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
 .PD
 .IP "" 0
 .SP
-.IP "" 0
+\.IP "" 0
 \fBcvs\fP
 .IP "" 2
 The name of the \fBcvs\fP program.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBcvs_options\fP
 .IP "" 2
 Some options that affect all sub-commands of \fBcvs\fP.  These are
 described below.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBcvs_command\fP
 .IP "" 2
 One of several different sub-commands.  Some of the commands have
@@ -104,12 +104,12 @@ where you may omit \fBcvs_command\fP: \fBcvs -H\fP elicits a
 list of available commands, and \fBcvs -v\fP displays version
 information on \fBcvs\fP itself.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBcommand_options\fP
 .IP "" 2
 Options that are specific for the command.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBcommand_args\fP
 .IP "" 2
 Arguments to the commands.
@@ -123,8 +123,8 @@ be accepted by more commands.  In other words, do not
 take the above categorization too seriously.  Look at
 the documentation instead.
 .SP
-.SH "Exit status"
-.SS "CVS's exit status"
+\.SH "Exit status"
+\.SS "CVS\(aqs exit status"
 .IX "Exit status, of CVS"
 .SP
 \fBcvs\fP can indicate to the calling environment whether it
@@ -146,8 +146,8 @@ way to detect errors, in the future it is possible that
 \fBcvs diff\fP will be changed to behave like the
 other \fBcvs\fP commands.
 .SP
-.SH "~/.cvsrc"
-.SS "Default options and the ~/.cvsrc file"
+\.SH "~/.cvsrc"
+\.SS "Default options and the ~/.cvsrc file"
 .IX ".cvsrc file"
 .IX "Option defaults"
 .SP
@@ -175,7 +175,7 @@ options from the command line.
 If a command has two names (e.g., \fBcheckout\fP and
 \fBco\fP), the official name, not necessarily the one
 used on the command line, will be used to match against
-the file.  So if this is the contents of the user's
+the file.  So if this is the contents of the user\(aqs
 \fB~/.cvsrc\fP file:
 .SP
 .PD 0
@@ -203,12 +203,12 @@ With the example file above, the output from @samp{cvs
 diff foobar} will be in unidiff format.  @samp{cvs diff
 -c foobar} will provide context diffs, as usual.
 Getting "old" format diffs would be slightly more
-complicated, because \fBdiff\fP doesn't have an option
+complicated, because \fBdiff\fP doesn\(aqt have an option
 to specify use of the "old" format, so you would need
 \fBcvs -f diff foobar\fP.
 .SP
 In place of the command name you can use \fBcvs\fP to
-specify global options (see node `Global options' in the CVS manual).  For
+specify global options (see node \`Global options\(aq in the CVS manual).  For
 example the following line in \fB.cvsrc\fP
 .SP
 .PD 0
@@ -220,8 +220,7 @@ cvs -z6
 .SP
 causes \fBcvs\fP to use compression level 6.
 .SP
-.SH "Global options"
-.SS "Global options"
+\.SH "Global options"
 .IX "Options, global"
 .IX "Global options"
 .IX "Left-hand options"
@@ -229,28 +228,28 @@ causes \fBcvs\fP to use compression level 6.
 The available \fBcvs_options\fP (that are given to the
 left of \fBcvs_command\fP) are:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--allow-root=\fIrootdir\fP\fP
 .IP "" 2
 Specify legal \fBcvsroot\fP directory.  See
-see node `Password authentication server' in the CVS manual.
+see node \`Password authentication server\(aq in the CVS manual.
 .SP
 .IX "Authentication, stream"
 .IX "Stream authentication"
-.IP "" 0
+\.IP "" 0
 \fB-a\fP
 .IP "" 2
 Authenticate all communication between the client and
 the server.  Only has an effect on the \fBcvs\fP client.
 As of this writing, this is only implemented when using
-a GSSAPI connection (see node `GSSAPI authenticated' in the CVS manual).
+a GSSAPI connection (see node \`GSSAPI authenticated\(aq in the CVS manual).
 Authentication prevents certain sorts of attacks
 involving hijacking the active \fBtcp\fP connection.
 Enabling authentication does not enable encryption.
 .SP
 .IX "RCSBIN, overriding"
 .IX "Overriding RCSBIN"
-.IP "" 0
+\.IP "" 0
 \fB-b \fIbindir\fP\fP
 .IP "" 2
 In \fBcvs\fP 1.9.18 and older, this specified that
@@ -261,7 +260,7 @@ but it does nothing.
 .SP
 .IX "TMPDIR, overriding"
 .IX "Overriding TMPDIR"
-.IP "" 0
+\.IP "" 0
 \fB-T \fItempdir\fP\fP
 .IP "" 2
 Use \fItempdir\fP as the directory where temporary files are
@@ -274,24 +273,24 @@ vice versa.)
 .SP
 .IX "CVSROOT, overriding"
 .IX "Overriding CVSROOT"
-.IP "" 0
+\.IP "" 0
 \fB-d \fIcvs_root_directory\fP\fP
 .IP "" 2
 Use \fIcvs_root_directory\fP as the root directory
 pathname of the repository.  Overrides the setting of
-the \fB$CVSROOT\fP environment variable.  see node `Repository' in the CVS manual.
+the \fB$CVSROOT\fP environment variable.  see node \`Repository\(aq in the CVS manual.
 .SP
 .IX "EDITOR, overriding"
 .IX "Overriding EDITOR"
-.IP "" 0
+\.IP "" 0
 \fB-e \fIeditor\fP\fP
 .IP "" 2
 Use \fIeditor\fP to enter revision log information.  Overrides the
 setting of the \fB$CVSEDITOR\fP and \fB$EDITOR\fP
 environment variables.  For more information, see
-see node `Committing your changes' in the CVS manual.
+see node \`Committing your changes\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 Do not read the \fB~/.cvsrc\fP file.  This
@@ -303,25 +302,25 @@ option to turn the display on.  So if you have
 \fB-N\fP in the \fB~/.cvsrc\fP entry for \fBlog\fP,
 you may need to use \fB-f\fP to show the tag names.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-H\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--help\fP
 .IP "" 2
 Display usage information about the specified \fBcvs_command\fP
-(but do not actually execute the command).  If you don't specify
+(but do not actually execute the command).  If you don\(aqt specify
 a command name, \fBcvs -H\fP displays overall help for
 \fBcvs\fP, including a list of other help options.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Do not log the \fBcvs_command\fP in the command history (but execute it
-anyway).  see node `history' in the CVS manual, for information on command history.
+anyway).  see node \`history\(aq in the CVS manual, for information on command history.
 .SP
 .IX "Read-only mode"
-.IP "" 0
+\.IP "" 0
 \fB-n\fP
 .IP "" 2
 Do not change any files.  Attempt to execute the
@@ -334,13 +333,13 @@ the output will be the same, but in other cases
 \fBcvs\fP will skip some of the processing that would
 have been required to produce the exact same output.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-Q\fP
 .IP "" 2
 Cause the command to be really quiet; the command will only
 generate output for serious problems.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-q\fP
 .IP "" 2
 Cause the command to be somewhat quiet; informational messages,
@@ -348,39 +347,39 @@ such as reports of recursion through subdirectories, are
 suppressed.
 .SP
 .IX "Read-only files, and -r"
-.IP "" 0
+\.IP "" 0
 \fB-r\fP
 .IP "" 2
 Make new working files read-only.  Same effect
 as if the \fB$CVSREAD\fP environment variable is set
-(see node `Environment variables' in the CVS manual).  The default is to
+(see node \`Environment variables\(aq in the CVS manual).  The default is to
 make working files writable, unless watches are on
-(see node `Watches' in the CVS manual).
+(see node \`Watches\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-s \fIvariable\fP=@var{value\fP}
 .IP "" 2
-Set a user variable (see node `Variables' in the CVS manual).
+Set a user variable (see node \`Variables\(aq in the CVS manual).
 .SP
 .IX "Trace"
-.IP "" 0
+\.IP "" 0
 \fB-t\fP
 .IP "" 2
 Trace program execution; display messages showing the steps of
 \fBcvs\fP activity.  Particularly useful with \fB-n\fP to explore the
 potential impact of an unfamiliar command.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-v\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--version\fP
 .IP "" 2
 Display version and copyright information for \fBcvs\fP.
 .SP
 .IX "CVSREAD, overriding"
 .IX "Overriding CVSREAD"
-.IP "" 0
+\.IP "" 0
 \fB-w\fP
 .IP "" 2
 Make new working files read-write.  Overrides the
@@ -388,22 +387,22 @@ setting of the \fB$CVSREAD\fP environment variable.
 Files are created read-write by default, unless \fB$CVSREAD\fP is
 set or \fB-r\fP is given.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-x\fP
 .IP "" 2
 .IX "Encryption"
 Encrypt all communication between the client and the
 server.  Only has an effect on the \fBcvs\fP client.  As
 of this writing, this is only implemented when using a
-GSSAPI connection (see node `GSSAPI authenticated' in the CVS manual) or a
-Kerberos connection (see node `Kerberos authenticated' in the CVS manual).
+GSSAPI connection (see node \`GSSAPI authenticated\(aq in the CVS manual) or a
+Kerberos connection (see node \`Kerberos authenticated\(aq in the CVS manual).
 Enabling encryption implies that message traffic is
 also authenticated.  Encryption support is not
 available by default; it must be enabled using a
 special configure option, \fB--enable-encryption\fP,
 when you build \fBcvs\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-z \fIgzip-level\fP\fP
 .IP "" 2
 .IX "Compression"
@@ -415,8 +414,8 @@ compression (the default).
 Only has an effect on the \fBcvs\fP client.
 .SP
 .SP
-.SH "Common options"
-.SS "Common command options"
+\.SH "Common options"
+\.SS "Common command options"
 .IX "Common options"
 .IX "Right-hand options"
 .SP
@@ -438,7 +437,7 @@ many options that conflict even with these standard options.}
 .IX "Dates"
 .IX "Time"
 .IX "Specifying dates"
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate_spec\fP\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate_spec\fP.
@@ -449,13 +448,13 @@ The specification is \fIsticky\fP when you use it to make a
 private copy of a source file; that is, when you get a working
 file using \fB-D\fP, \fBcvs\fP records the date you specified, so that
 further updates in the same directory will use the same date
-(for more information on sticky tags/dates, see node `Sticky tags' in the CVS manual).
+(for more information on sticky tags/dates, see node \`Sticky tags\(aq in the CVS manual).
 .SP
 \fB-D\fP is available with the \fBannotate\fP, \fBcheckout\fP,
 \fBdiff\fP, \fBexport\fP, \fBhistory\fP,
 \fBrdiff\fP, \fBrtag\fP, and \fBupdate\fP commands.
 (The \fBhistory\fP command uses this option in a
-slightly different way; see node `history options' in the CVS manual).
+slightly different way; see node \`history options\(aq in the CVS manual).
 .SP
 .IX "Timezone, in input"
 .IX "Zone, time, in input"
@@ -478,7 +477,7 @@ are:
 .IP "" 2
 .SP
 There are a lot more ISO8601 date formats, and \fBcvs\fP
-accepts many of them, but you probably don't want to
+accepts many of them, but you probably don\(aqt want to
 hear the \fIwhole\fP long story :-).
 .SP
 In addition to the dates allowed in Internet e-mail
@@ -511,7 +510,7 @@ and day in the other order; \fB1/4/96\fP is January 4,
 not April 1.
 .SP
 Remember to quote the argument to the \fB-D\fP
-flag so that your shell doesn't interpret spaces as
+flag so that your shell doesn\(aqt interpret spaces as
 argument separators.  A command using the \fB-D\fP
 flag can look like this:
 .SP
@@ -523,7 +522,7 @@ $ cvs diff -D "1 hour ago" cvs.texinfo
 .IP "" 2
 .SP
 .IX "Forcing a tag match"
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 When you specify a particular date or tag to \fBcvs\fP commands, they
@@ -546,14 +545,14 @@ give an error if you mistype a tag name.
 \fBWARNING:  The \fBcommit\fP and @code{remove\fP
 commands also have a
 \fB-f\fP option, but it has a different behavior for
-those commands.  See see node `commit options' in the CVS manual, and
-see node `Removing files' in the CVS manual.}
+those commands.  See see node \`commit options\(aq in the CVS manual, and
+see node \`Removing files\(aq in the CVS manual.}
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIkflag\fP\fP
 .IP "" 2
 Alter the default processing of keywords.
-see node `Keyword substitution' in the CVS manual, for the meaning of
+see node \`Keyword substitution\(aq in the CVS manual, for the meaning of
 \fIkflag\fP.  Your \fIkflag\fP specification is
 \fIsticky\fP when you use it to create a private copy
 of a source file; that is, when you use this option
@@ -566,7 +565,7 @@ The \fB-k\fP option is available with the \fBadd\fP,
 \fBcheckout\fP, \fBdiff\fP, \fBimport\fP and
 \fBupdate\fP commands.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory, rather than
@@ -580,7 +579,7 @@ and \fBwatchers\fP.
 .SP
 .IX "Editor, avoiding invocation of"
 .IX "Avoiding editor invocation"
-.IP "" 0
+\.IP "" 0
 \fB-m \fImessage\fP\fP
 .IP "" 2
 Use \fImessage\fP as log information, instead of
@@ -589,12 +588,12 @@ invoking an editor.
 Available with the following commands: \fBadd\fP,
 \fBcommit\fP and \fBimport\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n\fP
 .IP "" 2
 Do not run any tag program.  (A program can be
 specified to run in the modules
-database (see node `modules' in the CVS manual); this option bypasses it).
+database (see node \`modules\(aq in the CVS manual); this option bypasses it).
 .SP
 \fBNote: this is not the same as the @samp{cvs -n\fP
 program option, which you can specify to the left of a cvs command!}
@@ -602,19 +601,19 @@ program option, which you can specify to the left of a cvs command!}
 Available with the \fBcheckout\fP, \fBcommit\fP, \fBexport\fP,
 and \fBrtag\fP commands.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-P\fP
 .IP "" 2
-Prune empty directories.  See see node `Removing directories' in the CVS manual.
+Prune empty directories.  See see node \`Removing directories\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-p\fP
 .IP "" 2
 Pipe the files retrieved from the repository to standard output,
 rather than writing them in the current directory.  Available
 with the \fBcheckout\fP and \fBupdate\fP commands.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Process directories recursively.  This is on by default.
@@ -625,7 +624,7 @@ Available with the following commands: \fBannotate\fP, \fBcheckout\fP,
 \fBstatus\fP, \fBtag\fP, \fBunedit\fP, \fBupdate\fP, \fBwatch\fP,
 and \fBwatchers\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fItag\fP\fP
 .IP "" 2
 .IX "HEAD, special tag"
@@ -641,11 +640,11 @@ The tag specification is sticky when you use this
 with \fBcheckout\fP or \fBupdate\fP to make your own
 copy of a file: \fBcvs\fP remembers the tag and continues to use it on
 future update commands, until you specify otherwise (for more information
-on sticky tags/dates, see node `Sticky tags' in the CVS manual).
+on sticky tags/dates, see node \`Sticky tags\(aq in the CVS manual).
 .SP
 The tag can be either a symbolic or numeric tag, as
-described in see node `Tags' in the CVS manual, or the name of a branch, as
-described in see node `Branching and merging' in the CVS manual.
+described in see node \`Tags\(aq in the CVS manual, or the name of a branch, as
+described in see node \`Branching and merging\(aq in the CVS manual.
 .SP
 Specifying the \fB-q\fP global option along with the
 \fB-r\fP command option is often useful, to suppress
@@ -659,7 +658,7 @@ which you can specify to the left of a \fBcvs\fP command!}
 \fBdiff\fP, \fBhistory\fP, \fBexport\fP, \fBrdiff\fP,
 \fBrtag\fP, and \fBupdate\fP commands.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-W\fP
 .IP "" 2
 Specify file names that should be filtered.  You can
@@ -670,15 +669,15 @@ Available with the following commands: \fBimport\fP,
 and \fBupdate\fP.
 .SP
 .SP
-.SH "admin"
-.SS "admin---Administration"
+\.SH "admin"
+\.SS "Administration"
 .IX "Admin (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository, working directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synonym: rcs
 .SP
 This is the \fBcvs\fP interface to assorted
@@ -700,50 +699,49 @@ create a group with no users in it.  On NT, the
 \fBcvsadmin\fP feature does not exist and all users
 can run \fBcvs admin\fP.
 .SP
-.SH "admin options"
-.SS "admin options"
+\.SH "admin options"
 .SP
 Some of these options have questionable usefulness for
 \fBcvs\fP but exist for historical purposes.  Some even
 make it impossible to use \fBcvs\fP until you undo the
 effect!
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-A\fIoldfile\fP\fP
 .IP "" 2
 Might not work together with \fBcvs\fP.  Append the
 access list of \fIoldfile\fP to the access list of the
 \fBrcs\fP file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-a\fIlogins\fP\fP
 .IP "" 2
 Might not work together with \fBcvs\fP.  Append the
 login names appearing in the comma-separated list
 \fIlogins\fP to the access list of the \fBrcs\fP file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-b[\fIrev\fP]\fP
 .IP "" 2
 Set the default branch to \fIrev\fP.  In \fBcvs\fP, you
 normally do not manipulate default branches; sticky
-tags (see node `Sticky tags' in the CVS manual) are a better way to decide
+tags (see node \`Sticky tags\(aq in the CVS manual) are a better way to decide
 which branch you want to work on.  There is one reason
-to run \fBcvs admin -b\fP: to revert to the vendor's
+to run \fBcvs admin -b\fP: to revert to the vendor\(aqs
 version when using vendor branches (@pxref{Reverting
 local changes}).
 There can be no space between \fB-b\fP and its argument.
 .SP
 .IX "Comment leader"
-.IP "" 0
+\.IP "" 0
 \fB-c\fIstring\fP\fP
 .IP "" 2
 Sets the comment leader to \fIstring\fP.  The comment
 leader is not used by current versions of \fBcvs\fP or
 \fBrcs\fP 5.7.  Therefore, you can almost surely not
-worry about it.  see node `Keyword substitution' in the CVS manual.
+worry about it.  see node \`Keyword substitution\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-e[\fIlogins\fP]\fP
 .IP "" 2
 Might not work together with \fBcvs\fP.  Erase the login
@@ -752,7 +750,7 @@ names appearing in the comma-separated list
 \fIlogins\fP is omitted, erase the entire access list.
 There can be no space between \fB-e\fP and its argument.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-I\fP
 .IP "" 2
 Run interactively, even if the standard input is not a
@@ -760,15 +758,15 @@ terminal.  This option does not work with the
 client/server \fBcvs\fP and is likely to disappear in
 a future release of \fBcvs\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-i\fP
 .IP "" 2
 Useless with \fBcvs\fP.  This creates and initializes a
 new \fBrcs\fP file, without depositing a revision.  With
 \fBcvs\fP, add files with the \fBcvs add\fP command
-(see node `Adding files' in the CVS manual).
+(see node \`Adding files\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k\fIsubst\fP\fP
 .IP "" 2
 Set the default keyword
@@ -777,7 +775,7 @@ substitution}.  Giving an explicit \fB-k\fP option to
 \fBcvs update\fP, \fBcvs export\fP, or @code{cvs
 checkout} overrides this default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l[\fIrev\fP]\fP
 .IP "" 2
 Lock the revision with number \fIrev\fP.  If a branch
@@ -796,7 +794,7 @@ in that directory for disclaimers about the unsupported
 nature of contrib).  According to comments in that
 file, locking must set to strict (which is the default).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-L\fP
 .IP "" 2
 Set locking to strict.  Strict locking means that the
@@ -809,20 +807,20 @@ set; see the discussion under the \fB-l\fP option above.
 .IX "Correcting a log message"
 .IX "Fixing a log message"
 .IX "Log message, correcting"
-.IP "" 0
+\.IP "" 0
 \fB-m\fIrev\fP:@var{msg\fP}
 .IP "" 2
 Replace the log message of revision \fIrev\fP with
 \fImsg\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-N\fIname\fP[:[@var{rev\fP]]}
 .IP "" 2
 Act like \fB-n\fP, except override any previous
 assignment of \fIname\fP.  For use with magic branches,
-see see node `Magic branch numbers' in the CVS manual.
+see see node \`Magic branch numbers\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n\fIname\fP[:[@var{rev\fP]]}
 .IP "" 2
 Associate the symbolic name \fIname\fP with the branch
@@ -847,7 +845,7 @@ working files.
 .IX "Deleting revisions"
 .IX "Outdating revisions"
 .IX "Saving space"
-.IP "" 0
+\.IP "" 0
 \fB-o\fIrange\fP\fP
 .IP "" 2
 Deletes (\fIoutdates\fP) the revisions given by
@@ -870,7 +868,7 @@ first.
 .SP
 Specify \fIrange\fP in one of the following ways:
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev1\fP::@var{rev2\fP}
 .IP "" 4
 Collapse all revisions between rev1 and rev2, so that
@@ -884,7 +882,7 @@ differences between 1.3 and 1.4.  Other examples:
 effect, because there are no intermediate revisions to
 remove.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB::\fIrev\fP\fP
 .IP "" 4
 Collapse revisions between the beginning of the branch
@@ -894,20 +892,20 @@ example, \fB-o ::1.3.2.6\fP deletes revision 1.3.2.1,
 revision 1.3.2.5, and everything in between, but leaves
 1.3 and 1.3.2.6 intact.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev\fP::\fP
 .IP "" 4
 Collapse revisions between \fIrev\fP and the end of the
 branch containing \fIrev\fP.  Revision \fIrev\fP is
 left intact but the head revision is deleted.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev\fP\fP
 .IP "" 4
 Delete the revision \fIrev\fP.  For example, @samp{-o
 1.3} is equivalent to \fB-o 1.2::1.4\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev1\fP:@var{rev2\fP}
 .IP "" 4
 Delete the revisions from \fIrev1\fP to \fIrev2\fP,
@@ -924,14 +922,14 @@ impossible to retrieve R_1_02; R_1_03 will also have to
 be restored from the tapes!  In most cases you want to
 specify \fIrev1\fP::\fIrev2\fP instead.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB:\fIrev\fP\fP
 .IP "" 4
 Delete revisions from the beginning of the
 branch containing \fIrev\fP up to and including
 \fIrev\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev\fP:\fP
 .IP "" 4
 Delete revisions from revision \fIrev\fP, including
@@ -952,26 +950,26 @@ non-\fB::\fP syntaxes, then \fBcvs\fP will delete the
 revisions but leave the symbolic names pointing to
 nonexistent revisions.  This behavior is preserved for
 compatibility with previous versions of \fBcvs\fP, but
-because it isn't very useful, in the future it may
+because it isn\(aqt very useful, in the future it may
 change to be like the \fB::\fP case.
 .SP
 Due to the way \fBcvs\fP handles branches \fIrev\fP
 cannot be specified symbolically if it is a branch.
-see node `Magic branch numbers' in the CVS manual, for an explanation.
+see node \`Magic branch numbers\(aq in the CVS manual, for an explanation.
 .SP
 Make sure that no-one has checked out a copy of the
 revision you outdate.  Strange things will happen if he
 starts to edit it and tries to check it back in.  For
 this reason, this option is not a good way to take back
 a bogus commit; commit a new revision undoing the bogus
-change instead (see node `Merging two revisions' in the CVS manual).
+change instead (see node \`Merging two revisions\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-q\fP
 .IP "" 2
 Run quietly; do not print diagnostics.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-s\fIstate\fP[:@var{rev\fP]}
 .IP "" 2
 Useful with \fBcvs\fP.  Set the state attribute of the
@@ -984,22 +982,22 @@ acceptable for \fIstate\fP.  A useful set of states is
 stable), and \fBRel\fP (for released).  By default,
 the state of a new revision is set to \fBExp\fP when
 it is created.  The state is visible in the output from
-\fIcvs log\fP (see node `log' in the CVS manual), and in the
+\fIcvs log\fP (see node \`log\(aq in the CVS manual), and in the
 \fB$@splitrcskeyword{Log\fP$} and \fB$@splitrcskeyword{State\fP$} keywords
-(see node `Keyword substitution' in the CVS manual).  Note that \fBcvs\fP
+(see node \`Keyword substitution\(aq in the CVS manual).  Note that \fBcvs\fP
 uses the \fBdead\fP state for its own purposes; to
 take a file to or from the \fBdead\fP state use
 commands like \fBcvs remove\fP and \fBcvs add\fP, not
 \fBcvs admin -s\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t[\fIfile\fP]\fP
 .IP "" 2
 Useful with \fBcvs\fP.  Write descriptive text from the
 contents of the named \fIfile\fP into the RCS file,
 deleting the existing text.  The \fIfile\fP pathname
 may not begin with \fB-\fP.  The descriptive text can be seen in the
-output from \fBcvs log\fP (see node `log' in the CVS manual).
+output from \fBcvs log\fP (see node \`log\(aq in the CVS manual).
 There can be no space between \fB-t\fP and its argument.
 .SP
 If \fIfile\fP is omitted,
@@ -1008,7 +1006,7 @@ end-of-file or by a line containing \fB.\fP by itself.
 Prompt for the text if interaction is possible; see
 \fB-I\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t-\fIstring\fP\fP
 .IP "" 2
 Similar to \fB-t\fIfile\fP\fP. Write descriptive text
@@ -1016,7 +1014,7 @@ from the \fIstring\fP into the \fBrcs\fP file, deleting
 the existing text.
 There can be no space between \fB-t\fP and its argument.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-U\fP
 .IP "" 2
 Set locking to non-strict.  Non-strict locking means
@@ -1025,7 +1023,7 @@ checkin.  For use with \fBcvs\fP, strict locking must be
 set; see the discussion under the \fB-l\fP option
 above.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-u[\fIrev\fP]\fP
 .IP "" 2
 See the option \fB-l\fP above, for a discussion of
@@ -1036,10 +1034,10 @@ omitted, remove the latest lock held by the caller.
 Normally, only the locker of a revision may unlock it;
 somebody else unlocking a revision breaks the lock.
 This causes the original locker to be sent a \fBcommit\fP
-notification (see node `Getting Notified' in the CVS manual).
+notification (see node \`Getting Notified\(aq in the CVS manual).
 There can be no space between \fB-u\fP and its argument.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-V\fIn\fP\fP
 .IP "" 2
 In previous versions of \fBcvs\fP, this option meant to
@@ -1047,7 +1045,7 @@ write an \fBrcs\fP file which would be acceptable to
 \fBrcs\fP version \fIn\fP, but it is now obsolete and
 specifying it will produce an error.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-x\fIsuffixes\fP\fP
 .IP "" 2
 In previous versions of \fBcvs\fP, this was documented
@@ -1057,18 +1055,18 @@ files.  However, \fBcvs\fP has always required that the
 this option has never done anything useful.
 .SP
 .SP
-.SH "checkout"
-.SS "checkout---Check out sources for editing"
+\.SH "checkout"
+\.SS "Check out sources for editing"
 .IX "checkout (subcommand)"
 .IX "co (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis: checkout [options] modules\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: working directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synonyms: co, get
 .SP
 Create or update a working directory containing copies of the
@@ -1082,7 +1080,7 @@ symbolic names for some
 collection of source directories and files, or paths to
 directories or files in the repository.  The symbolic
 names are defined in the \fBmodules\fP file.
-see node `modules' in the CVS manual.
+see node \`modules\(aq in the CVS manual.
 .SP
 Depending on the modules you specify, \fBcheckout\fP may
 recursively create directories and populate them with
@@ -1106,10 +1104,10 @@ area (unless you specify the \fB-Q\fP global option).
 .SP
 The files created by \fBcheckout\fP are created
 read-write, unless the \fB-r\fP option to \fBcvs\fP
-(see node `Global options' in the CVS manual) is specified, the
+(see node \`Global options\(aq in the CVS manual) is specified, the
 \fBCVSREAD\fP environment variable is specified
-(see node `Environment variables' in the CVS manual), or a watch is in
-effect for that file (see node `Watches' in the CVS manual).
+(see node \`Environment variables\(aq in the CVS manual), or a watch is in
+effect for that file (see node \`Watches\(aq in the CVS manual).
 .SP
 Note that running \fBcheckout\fP on a directory that was already
 built by a prior \fBcheckout\fP is also permitted.
@@ -1122,28 +1120,27 @@ However, \fBcheckout\fP takes a module name whereas
 to use \fBcheckout\fP this way it must be run from the
 top level directory (where you originally ran
 \fBcheckout\fP from), so before you run
-\fBcheckout\fP to update an existing directory, don't
+\fBcheckout\fP to update an existing directory, don\(aqt
 forget to change your directory to the top level
 directory.
 .SP
 For the output produced by the \fBcheckout\fP command
-see see node `update output' in the CVS manual.
+see see node \`update output\(aq in the CVS manual.
 .SP
-.SH "checkout options"
-.SS "checkout options"
+\.SH "checkout options"
 .SP
 These standard options are supported by \fBcheckout\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate\fP\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate\fP.
 This option is sticky, and implies \fB-P\fP.  See
-see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 Only useful with the \fB-D \fIdate\fP\fP or @samp{-r
@@ -1151,67 +1148,67 @@ Only useful with the \fB-D \fIdate\fP\fP or @samp{-r
 retrieve the most recent revision (instead of ignoring
 the file).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIkflag\fP\fP
 .IP "" 2
 Process keywords according to \fIkflag\fP.  See
-see node `Keyword substitution' in the CVS manual.
+see node \`Keyword substitution\(aq in the CVS manual.
 This option is sticky; future updates of
 this file in this working directory will use the same
 \fIkflag\fP.  The \fBstatus\fP command can be viewed
-to see the sticky options.  See see node `Invoking CVS' in the CVS manual, for
+to see the sticky options.  See see node \`Invoking CVS\(aq in the CVS manual, for
 more information on the \fBstatus\fP command.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n\fP
 .IP "" 2
 Do not run any checkout program (as specified
 with the \fB-o\fP option in the modules file;
-see node `modules' in the CVS manual).
+see node \`modules\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-P\fP
 .IP "" 2
-Prune empty directories.  See see node `Moving directories' in the CVS manual.
+Prune empty directories.  See see node \`Moving directories\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-p\fP
 .IP "" 2
 Pipe files to the standard output.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Checkout directories recursively.  This option is on by default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fItag\fP\fP
 .IP "" 2
 Use revision \fItag\fP.  This option is sticky, and implies \fB-P\fP.
-See see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+See see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
 In addition to those, you can use these special command
 options with \fBcheckout\fP:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-A\fP
 .IP "" 2
 Reset any sticky tags, dates, or \fB-k\fP options.
-See see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+See see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-c\fP
 .IP "" 2
 Copy the module file, sorted, to the standard output,
 instead of creating or modifying any files or
 directories in your working directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d \fIdir\fP\fP
 .IP "" 2
 Create a directory called \fIdir\fP for the working
@@ -1222,9 +1219,9 @@ command without the \fB-d\fP flag.
 .SP
 There is an important exception, however.  It is very
 convenient when checking out a single item to have the
-output appear in a directory that doesn't contain empty
+output appear in a directory that doesn\(aqt contain empty
 intermediate directories.  In this case \fIonly\fP,
-\fBcvs\fP tries to ``shorten'' pathnames to avoid those empty
+\fBcvs\fP tries to \`\`shorten\(aq\(aq pathnames to avoid those empty
 directories.
 .SP
 For example, given a module \fBfoo\fP that contains
@@ -1243,7 +1240,7 @@ and place \fBbar.c\fP inside, while @samp{cvs co -N -d
 dir bar/baz} will create directories \fBdir/bar/baz\fP
 and place \fBquux.c\fP inside.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-j \fItag\fP\fP
 .IP "" 2
 With two \fB-j\fP options, merge changes from the
@@ -1265,27 +1262,26 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 \fB-j\fISymbolic_Tag\fP:@var{Date_Specifier\fP}.
 .SP
-see node `Branching and merging' in the CVS manual.
+see node \`Branching and merging\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-N\fP
 .IP "" 2
 Only useful together with \fB-d \fIdir\fP\fP.  With
-this option, \fBcvs\fP will not ``shorten'' module paths
+this option, \fBcvs\fP will not \`\`shorten\(aq\(aq module paths
 in your working directory when you check out a single
 module.  See the \fB-d\fP flag for examples and a
 discussion.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-s\fP
 .IP "" 2
 Like \fB-c\fP, but include the status of all modules,
-and sort it by the status string.  see node `modules' in the CVS manual, for
+and sort it by the status string.  see node \`modules\(aq in the CVS manual, for
 info about the \fB-s\fP option that is used inside the
 modules file to set the module status.
 .SP
-.SH "checkout examples"
-.SS "checkout examples"
+\.SH "checkout examples"
 .SP
 Get a copy of the module \fBtc\fP:
 .SP
@@ -1306,25 +1302,25 @@ $ cvs checkout -D yesterday tc
 .PD
 .IP "" 0
 .SP
-.SH "commit"
-.SS "commit---Check files into the repository"
+\.SH "commit"
+\.SS "Check files into the repository"
 .IX "commit (subcommand)"
 .SP
-.IP "\(bu" 2
-Synopsis: commit [-lnRf] [-m 'log_message' |
+\.IP "\(bu" 2
+Synopsis: commit [-lnRf] [-m \(aqlog_message\(aq |
 -F file] [-r revision] [files\&...]
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: working directory, repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synonym: ci
 .SP
 Use \fBcommit\fP when you want to incorporate changes
 from your working source files into the source
 repository.
 .SP
-If you don't specify particular files to commit, all of
+If you don\(aqt specify particular files to commit, all of
 the files in your working current directory are
 examined.  \fBcommit\fP is careful to change in the
 repository only those files that you have really
@@ -1338,63 +1334,62 @@ current directory only.
 to date with the current revisions in the source
 repository; it will notify you, and exit without
 committing, if any of the specified files must be made
-current first with \fBupdate\fP (see node `update' in the CVS manual).
+current first with \fBupdate\fP (see node \`update\(aq in the CVS manual).
 \fBcommit\fP does not call the \fBupdate\fP command
 for you, but rather leaves that for you to do when the
 time is right.
 .SP
 When all is well, an editor is invoked to allow you to
 enter a log message that will be written to one or more
-logging programs (see node `modules' in the CVS manual, and see node `loginfo' in the CVS manual)
+logging programs (see node \`modules\(aq in the CVS manual, and see node \`loginfo\(aq in the CVS manual)
 and placed in the \fBrcs\fP file inside the
 repository.  This log message can be retrieved with the
-\fBlog\fP command; see see node `log' in the CVS manual.  You can specify the
+\fBlog\fP command; see see node \`log\(aq in the CVS manual.  You can specify the
 log message on the command line with the @samp{-m
 \fImessage\fP} option, and thus avoid the editor invocation,
 or use the \fB-F \fIfile\fP\fP option to specify
 that the argument file contains the log message.
 .SP
-.SH "commit options"
-.SS "commit options"
+\.SH "commit options"
 .SP
 These standard options are supported by \fBcommit\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Commit directories recursively.  This is on by default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fIrevision\fP\fP
 .IP "" 2
 Commit to \fIrevision\fP.  \fIrevision\fP must be
 either a branch, or a revision on the main trunk that
 is higher than any existing revision number
-(see node `Assigning revisions' in the CVS manual).  You
+(see node \`Assigning revisions\(aq in the CVS manual).  You
 cannot commit to a specific revision on a branch.
 .SP
 \fBcommit\fP also supports these options:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-F \fIfile\fP\fP
 .IP "" 2
 Read the log message from \fIfile\fP, instead
 of invoking an editor.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 Note that this is not the standard behavior of
-the \fB-f\fP option as defined in see node `Common options' in the CVS manual.
+the \fB-f\fP option as defined in see node \`Common options\(aq in the CVS manual.
 .SP
-Force \fBcvs\fP to commit a new revision even if you haven't
+Force \fBcvs\fP to commit a new revision even if you haven\(aqt
 made any changes to the file.  If the current revision
 of \fIfile\fP is 1.7, then the following two commands
 are equivalent:
@@ -1413,23 +1408,22 @@ implies \fB-l\fP).  To force \fBcvs\fP to commit a new
 revision for all files in all subdirectories, you must
 use \fB-f -R\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-m \fImessage\fP\fP
 .IP "" 2
 Use \fImessage\fP as the log message, instead of
 invoking an editor.
 .SP
 @need 2000
-.SH "commit examples"
-.SS "commit examples"
+\.SH "commit examples"
 .SP
-.SS "Committing to a branch"
+\.SS "Committing to a branch"
 .SP
 You can commit to a branch revision (one that has an
 even number of dots) with the \fB-r\fP option.  To
 create a branch revision, use the \fB-b\fP option
 of the \fBrtag\fP or \fBtag\fP commands
-(see node `Branching and merging' in the CVS manual).  Then, either \fBcheckout\fP or
+(see node \`Branching and merging\(aq in the CVS manual).  Then, either \fBcheckout\fP or
 \fBupdate\fP can be used to base your sources on the
 newly created branch.  From that point on, all
 \fBcommit\fP changes made within these working sources
@@ -1457,7 +1451,7 @@ $ cvs commit
 This works automatically since the \fB-r\fP option is
 sticky.
 .SP
-.SS "Creating the branch after editing"
+\.SS "Creating the branch after editing"
 .SP
 Say you have been working on some extremely
 experimental software, based on whatever revision you
@@ -1516,15 +1510,15 @@ $ cvs checkout -r EXPR1 whatever_module
 .PD
 .IP "" 0
 .SP
-.SH "diff"
-.SS "diff---Show differences between revisions"
+\.SH "diff"
+\.SS "Show differences between revisions"
 .IX "diff (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files\&...]
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: working directory, repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: nothing.
 .SP
 The \fBdiff\fP command is used to compare different
@@ -1537,39 +1531,38 @@ compared.  If any directories are given, all files
 under them will be compared.
 .SP
 The exit status for diff is different than for other
-\fBcvs\fP commands; for details see node `Exit status' in the CVS manual.
+\fBcvs\fP commands; for details see node \`Exit status\(aq in the CVS manual.
 .SP
-.SH "diff options"
-.SS "diff options"
+\.SH "diff options"
 .SP
 These standard options are supported by \fBdiff\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate\fP\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate\fP.
 See \fB-r\fP for how this affects the comparison.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIkflag\fP\fP
 .IP "" 2
 Process keywords according to \fIkflag\fP.  See
-see node `Keyword substitution' in the CVS manual.
+see node \`Keyword substitution\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Examine directories recursively.  This option is on by
 default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fItag\fP\fP
 .IP "" 2
 Compare with revision \fItag\fP.  Zero, one or two
@@ -1590,7 +1583,7 @@ Most options have two equivalent names, one of which is a single letter
 preceded by \fB-\fP, and the other of which is a long name preceded by
 \fB--\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-\fIlines\fP\fP
 .IP "" 2
 Show \fIlines\fP (an integer) lines of context.  This option does not
@@ -1598,43 +1591,43 @@ specify an output format by itself; it has no effect unless it is
 combined with \fB-c\fP or \fB-u\fP.  This option is obsolete.  For proper
 operation, \fBpatch\fP typically needs at least two lines of context.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-a\fP
 .IP "" 2
 Treat all files as text and compare them line-by-line, even if they
 do not seem to be text.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-b\fP
 .IP "" 2
 Ignore trailing white space and consider all other sequences of one or
 more white space characters to be equivalent.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-B\fP
 .IP "" 2
 Ignore changes that just insert or delete blank lines.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--binary\fP
 .IP "" 2
 Read and write data in binary mode.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--brief\fP
 .IP "" 2
 Report only whether the files differ, not the details of the
 differences.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-c\fP
 .IP "" 2
 Use the context output format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-C \fIlines\fP\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--context@r{[\fP=\fIlines\fP@r{]}}
 .IP "" 2
 Use the context output format, showing \fIlines\fP (an integer) lines of
@@ -1642,265 +1635,265 @@ context, or three if \fIlines\fP is not given.
 For proper operation, \fBpatch\fP typically needs at least two lines of
 context.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--changed-group-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a line group containing differing lines from
-both files in if-then-else format.  see node `Line group formats' in the CVS manual.
+both files in if-then-else format.  see node \`Line group formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d\fP
 .IP "" 2
 Change the algorithm to perhaps find a smaller set of changes.  This makes
 \fBdiff\fP slower (sometimes much slower).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-e\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--ed\fP
 .IP "" 2
 Make output that is a valid \fBed\fP script.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--expand-tabs\fP
 .IP "" 2
 Expand tabs to spaces in the output, to preserve the alignment of tabs
 in the input files.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 Make output that looks vaguely like an \fBed\fP script but has changes
 in the order they appear in the file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-F \fIregexp\fP\fP
 .IP "" 2
 In context and unified format, for each hunk of differences, show some
 of the last preceding line that matches \fIregexp\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--forward-ed\fP
 .IP "" 2
 Make output that looks vaguely like an \fBed\fP script but has changes
 in the order they appear in the file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-H\fP
 .IP "" 2
 Use heuristics to speed handling of large files that have numerous
 scattered small changes.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--horizon-lines=\fIlines\fP\fP
 .IP "" 2
 Do not discard the last \fIlines\fP lines of the common prefix
 and the first \fIlines\fP lines of the common suffix.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-i\fP
 .IP "" 2
 Ignore changes in case; consider upper- and lower-case letters
 equivalent.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-I \fIregexp\fP\fP
 .IP "" 2
 Ignore changes that just insert or delete lines that match \fIregexp\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ifdef=\fIname\fP\fP
 .IP "" 2
 Make merged if-then-else output using \fIname\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ignore-all-space\fP
 .IP "" 2
 Ignore white space when comparing lines.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ignore-blank-lines\fP
 .IP "" 2
 Ignore changes that just insert or delete blank lines.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ignore-case\fP
 .IP "" 2
 Ignore changes in case; consider upper- and lower-case to be the same.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ignore-matching-lines=\fIregexp\fP\fP
 .IP "" 2
 Ignore changes that just insert or delete lines that match \fIregexp\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--ignore-space-change\fP
 .IP "" 2
 Ignore trailing white space and consider all other sequences of one or
 more white space characters to be equivalent.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--initial-tab\fP
 .IP "" 2
 Output a tab rather than a space before the text of a line in normal or
 context format.  This causes the alignment of tabs in the line to look
 normal.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-L \fIlabel\fP\fP
 .IP "" 2
 Use \fIlabel\fP instead of the file name in the context format
 and unified format headers.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--label=\fIlabel\fP\fP
 .IP "" 2
 Use \fIlabel\fP instead of the file name in the context format
 and unified format headers.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--left-column\fP
 .IP "" 2
 Print only the left column of two common lines in side by side format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--line-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output all input lines in if-then-else format.
-see node `Line formats' in the CVS manual.
+see node \`Line formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--minimal\fP
 .IP "" 2
 Change the algorithm to perhaps find a smaller set of changes.  This
 makes \fBdiff\fP slower (sometimes much slower).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n\fP
 .IP "" 2
 Output RCS-format diffs; like \fB-f\fP except that each command
 specifies the number of lines affected.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-N\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--new-file\fP
 .IP "" 2
 In directory comparison, if a file is found in only one directory,
 treat it as present but empty in the other directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--new-group-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a group of lines taken from just the second
-file in if-then-else format.  see node `Line group formats' in the CVS manual.
+file in if-then-else format.  see node \`Line group formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--new-line-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a line taken from just the second file in
-if-then-else format.  see node `Line formats' in the CVS manual.
+if-then-else format.  see node \`Line formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--old-group-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a group of lines taken from just the first
-file in if-then-else format.  see node `Line group formats' in the CVS manual.
+file in if-then-else format.  see node \`Line group formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--old-line-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a line taken from just the first file in
-if-then-else format.  see node `Line formats' in the CVS manual.
+if-then-else format.  see node \`Line formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-p\fP
 .IP "" 2
 Show which C function each change is in.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--rcs\fP
 .IP "" 2
 Output RCS-format diffs; like \fB-f\fP except that each command
 specifies the number of lines affected.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--report-identical-files\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB-s\fP
 .IP "" 2
 Report when two files are the same.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--show-c-function\fP
 .IP "" 2
 Show which C function each change is in.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--show-function-line=\fIregexp\fP\fP
 .IP "" 2
 In context and unified format, for each hunk of differences, show some
 of the last preceding line that matches \fIregexp\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--side-by-side\fP
 .IP "" 2
 Use the side by side output format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--speed-large-files\fP
 .IP "" 2
 Use heuristics to speed handling of large files that have numerous
 scattered small changes.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--suppress-common-lines\fP
 .IP "" 2
 Do not print common lines in side by side format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t\fP
 .IP "" 2
 Expand tabs to spaces in the output, to preserve the alignment of tabs
 in the input files.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-T\fP
 .IP "" 2
 Output a tab rather than a space before the text of a line in normal or
 context format.  This causes the alignment of tabs in the line to look
 normal.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--text\fP
 .IP "" 2
 Treat all files as text and compare them line-by-line, even if they
 do not appear to be text.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-u\fP
 .IP "" 2
 Use the unified output format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--unchanged-group-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a group of common lines taken from both files
-in if-then-else format.  see node `Line group formats' in the CVS manual.
+in if-then-else format.  see node \`Line group formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--unchanged-line-format=\fIformat\fP\fP
 .IP "" 2
 Use \fIformat\fP to output a line common to both files in if-then-else
-format.  see node `Line formats' in the CVS manual.
+format.  see node \`Line formats\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-U \fIlines\fP\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--unified@r{[\fP=\fIlines\fP@r{]}}
 .IP "" 2
 Use the unified output format, showing \fIlines\fP (an integer) lines of
@@ -1908,26 +1901,25 @@ context, or three if \fIlines\fP is not given.
 For proper operation, \fBpatch\fP typically needs at least two lines of
 context.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-w\fP
 .IP "" 2
 Ignore white space when comparing lines.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-W \fIcolumns\fP\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fB--width=\fIcolumns\fP\fP
 .IP "" 2
 Use an output width of \fIcolumns\fP in side by side format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-y\fP
 .IP "" 2
 Use the side by side output format.
 .SP
-.SH "Line group formats"
-.SS "Line group formats"
+\.SH "Line group formats"
 .SP
 Line group formats let you specify formats suitable for many
 applications that allow if-then-else input, including programming
@@ -1944,17 +1936,17 @@ regions are surrounded by \fB\\begin{bf@\fP}-\fB\\end{bf@\fP} lines.
 .IP "" 2
 cvs diff \\
 .IP "" 2
-   --old-group-format='\\begin{em}
+   --old-group-format=\(aq\\begin{em}
 .IP "" 2
 %<\\end{em}
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --new-group-format='\\begin{bf}
+   --new-group-format=\(aq\\begin{bf}
 .IP "" 2
 %>\\end{bf}
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
    myfile
 
@@ -1968,21 +1960,21 @@ little more verbose, because it spells out the default line group formats.
 .IP "" 2
 cvs diff \\
 .IP "" 2
-   --old-group-format='\\begin{em}
+   --old-group-format=\(aq\\begin{em}
 .IP "" 2
 %<\\end{em}
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --new-group-format='\\begin{bf}
+   --new-group-format=\(aq\\begin{bf}
 .IP "" 2
 %>\\end{bf}
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --unchanged-group-format='%=' \\
+   --unchanged-group-format=\(aq%=\(aq \\
 .IP "" 2
-   --changed-group-format='\\begin{em}
+   --changed-group-format=\(aq\\begin{em}
 .IP "" 2
 %<\\end{em}
 .IP "" 2
@@ -1990,7 +1982,7 @@ cvs diff \\
 .IP "" 2
 %>\\end{bf}
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
    myfile
 
@@ -1998,27 +1990,27 @@ cvs diff \\
 .IP "" 0
 .SP
 Here is a more advanced example, which outputs a diff listing with
-headers containing line numbers in a ``plain English'' style.
+headers containing line numbers in a \`\`plain English\(aq\(aq style.
 .SP
 .PD 0
 .IP "" 2
 cvs diff \\
 .IP "" 2
-   --unchanged-group-format='' \\
+   --unchanged-group-format=\(aq\(aq \\
 .IP "" 2
-   --old-group-format='-------- %dn line%(n=1?:s) deleted at %df:
+   --old-group-format=\(aq-------- %dn line%(n=1?:s) deleted at %df:
 .IP "" 2
-%<' \\
+%<\(aq \\
 .IP "" 2
-   --new-group-format='-------- %dN line%(N=1?:s) added after %de:
+   --new-group-format=\(aq-------- %dN line%(N=1?:s) added after %de:
 .IP "" 2
-%>' \\
+%>\(aq \\
 .IP "" 2
-   --changed-group-format='-------- %dn line%(n=1?:s) changed at %df:
+   --changed-group-format=\(aq-------- %dn line%(n=1?:s) changed at %df:
 .IP "" 2
 %<-------- to:
 .IP "" 2
-%>' \\
+%>\(aq \\
 .IP "" 2
    myfile
 
@@ -2030,14 +2022,14 @@ listed below.  You can specify up to four line group formats, one for
 each kind of line group.  You should quote \fIformat\fP, because it
 typically contains shell metacharacters.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--old-group-format=\fIformat\fP\fP
 .IP "" 2
 These line groups are hunks containing only lines from the first file.
 The default old group format is the same as the changed group format if
 it is specified; otherwise it is a format that outputs the line group as-is.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--new-group-format=\fIformat\fP\fP
 .IP "" 2
 These line groups are hunks containing only lines from the second
@@ -2045,14 +2037,14 @@ file.  The default new group format is same as the the changed group
 format if it is specified; otherwise it is a format that outputs the
 line group as-is.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--changed-group-format=\fIformat\fP\fP
 .IP "" 2
 These line groups are hunks containing lines from both files.  The
 default changed group format is the concatenation of the old and new
 group formats.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--unchanged-group-format=\fIformat\fP\fP
 .IP "" 2
 These line groups contain lines common to both files.  The default
@@ -2062,79 +2054,79 @@ In a line group format, ordinary characters represent themselves;
 conversion specifications start with \fB%\fP and have one of the
 following forms.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%<\fP
 .IP "" 2
 stands for the lines from the first file, including the trailing newline.
-Each line is formatted according to the old line format (see node `Line formats' in the CVS manual).
+Each line is formatted according to the old line format (see node \`Line formats\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%>\fP
 .IP "" 2
 stands for the lines from the second file, including the trailing newline.
 Each line is formatted according to the new line format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%=\fP
 .IP "" 2
 stands for the lines common to both files, including the trailing newline.
 Each line is formatted according to the unchanged line format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%%\fP
 .IP "" 2
 stands for \fB%\fP.
 .SP
-.IP "" 0
-\fB%c'\fIC\fP'\fP
+\.IP "" 0
+\fB%c\(aq\fIC\fP\(aq\fP
 .IP "" 2
 where \fIC\fP is a single character, stands for \fIC\fP.
 \fIC\fP may not be a backslash or an apostrophe.
-For example, \fB%c':'\fP stands for a colon, even inside
+For example, \fB%c\(aq:\(aq\fP stands for a colon, even inside
 the then-part of an if-then-else format, which a colon would
 normally terminate.
 .SP
-.IP "" 0
-\fB%c'\\\fIO\fP'\fP
+\.IP "" 0
+\fB%c\(aq\\\fIO\fP\(aq\fP
 .IP "" 2
 where \fIO\fP is a string of 1, 2, or 3 octal digits,
 stands for the character with octal code \fIO\fP.
-For example, \fB%c'\\0'\fP stands for a null character.
+For example, \fB%c\(aq\\0\(aq\fP stands for a null character.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB\fIF\fP@var{n\fP}
 .IP "" 2
 where \fIF\fP is a \fBprintf\fP conversion specification and \fIn\fP is one
-of the following letters, stands for \fIn\fP's value formatted with \fIF\fP.
+of the following letters, stands for \fIn\fP\(aqs value formatted with \fIF\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBe\fP
 .IP "" 4
 The line number of the line just before the group in the old file.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBf\fP
 .IP "" 4
 The line number of the first line in the group in the old file;
 equals \fIe\fP + 1.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBl\fP
 .IP "" 4
 The line number of the last line in the group in the old file.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBm\fP
 .IP "" 4
 The line number of the line just after the group in the old file;
 equals \fIl\fP + 1.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBn\fP
 .IP "" 4
 The number of lines in the group in the old file; equals \fIl\fP - \fIf\fP + 1.
 .SP
-.IP "" 2
+\.IP "" 2
 \fBE, F, L, M, N\fP
 .IP "" 4
 Likewise, for lines in the new file.
@@ -2150,22 +2142,21 @@ optional integer specifying the minimum number of digits.
 For example, \fB%5dN\fP prints the number of new lines in the group
 in a field of width 5 characters, using the \fBprintf\fP format \fB"%5d"\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB(\fIA\fP=@var{B\fP?\fIT\fP:\fIE\fP)}
 .IP "" 2
 If \fIA\fP equals \fIB\fP then \fIT\fP else \fIE\fP.
 \fIA\fP and \fIB\fP are each either a decimal constant
 or a single letter interpreted as above.
 This format spec is equivalent to \fIT\fP if
-\fIA\fP's value equals \fIB\fP's; otherwise it is equivalent to \fIE\fP.
+\fIA\fP\(aqs value equals \fIB\fP\(aqs; otherwise it is equivalent to \fIE\fP.
 .SP
 For example, \fB%(N=0?no:%dN) line%(N=1?:s)\fP is equivalent to
 \fBno lines\fP if \fIN\fP (the number of lines in the group in the the
 new file) is 0, to \fB1 line\fP if \fIN\fP is 1, and to \fB%dN lines\fP
 otherwise.
 .SP
-.SH "Line formats"
-.SS "Line formats"
+\.SH "Line formats"
 .SP
 Line formats control how each line taken from an input file is
 output as part of a line group in if-then-else format.
@@ -2180,17 +2171,17 @@ newlines are desired on output.
 .IP "" 2
 cvs diff \\
 .IP "" 2
-   --old-line-format='-%l
+   --old-line-format=\(aq-%l
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --new-line-format='|%l
+   --new-line-format=\(aq|%l
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --unchanged-line-format=' %l
+   --unchanged-line-format=\(aq %l
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
    myfile
 
@@ -2200,22 +2191,22 @@ cvs diff \\
 To specify a line format, use one of the following options.  You should
 quote \fIformat\fP, since it often contains shell metacharacters.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--old-line-format=\fIformat\fP\fP
 .IP "" 2
 formats lines just from the first file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--new-line-format=\fIformat\fP\fP
 .IP "" 2
 formats lines just from the second file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--unchanged-line-format=\fIformat\fP\fP
 .IP "" 2
 formats lines common to both files.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB--line-format=\fIformat\fP\fP
 .IP "" 2
 formats all lines; in effect, it sets all three above options simultaneously.
@@ -2224,45 +2215,45 @@ In a line format, ordinary characters represent themselves;
 conversion specifications start with \fB%\fP and have one of the
 following forms.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%l\fP
 .IP "" 2
 stands for the the contents of the line, not counting its trailing
 newline (if any).  This format ignores whether the line is incomplete.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%L\fP
 .IP "" 2
 stands for the the contents of the line, including its trailing newline
 (if any).  If a line is incomplete, this format preserves its
 incompleteness.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB%%\fP
 .IP "" 2
 stands for \fB%\fP.
 .SP
-.IP "" 0
-\fB%c'\fIC\fP'\fP
+\.IP "" 0
+\fB%c\(aq\fIC\fP\(aq\fP
 .IP "" 2
 where \fIC\fP is a single character, stands for \fIC\fP.
 \fIC\fP may not be a backslash or an apostrophe.
-For example, \fB%c':'\fP stands for a colon.
+For example, \fB%c\(aq:\(aq\fP stands for a colon.
 .SP
-.IP "" 0
-\fB%c'\\\fIO\fP'\fP
+\.IP "" 0
+\fB%c\(aq\\\fIO\fP\(aq\fP
 .IP "" 2
 where \fIO\fP is a string of 1, 2, or 3 octal digits,
 stands for the character with octal code \fIO\fP.
-For example, \fB%c'\\0'\fP stands for a null character.
+For example, \fB%c\(aq\\0\(aq\fP stands for a null character.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB\fIF\fPn\fP
 .IP "" 2
 where \fIF\fP is a \fBprintf\fP conversion specification,
 stands for the line number formatted with \fIF\fP.
 For example, \fB%.5dn\fP prints the line number using the
-\fBprintf\fP format \fB"%.5d"\fP.  see node `Line group formats' in the CVS manual, for
+\fBprintf\fP format \fB"%.5d"\fP.  see node \`Line group formats\(aq in the CVS manual, for
 more about printf conversion specifications.
 .SP
 .SP
@@ -2276,44 +2267,43 @@ format is just after a tab stop (e.g.@: by preceding \fB%l\fP or
 .SP
 Taken together, the line and line group formats let you specify many
 different formats.  For example, the following command uses a format
-similar to \fBdiff\fP's normal format.  You can tailor this command
-to get fine control over \fBdiff\fP's output.
+similar to \fBdiff\fP\(aqs normal format.  You can tailor this command
+to get fine control over \fBdiff\fP\(aqs output.
 .SP
 .PD 0
 .IP "" 2
 cvs diff \\
 .IP "" 2
-   --old-line-format='< %l
+   --old-line-format=\(aq< %l
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --new-line-format='> %l
+   --new-line-format=\(aq> %l
 .IP "" 2
-\' \\
+\(aq \\
 .IP "" 2
-   --old-group-format='%df%(f=l?:,%dl)d%dE
+   --old-group-format=\(aq%df%(f=l?:,%dl)d%dE
 .IP "" 2
-%<' \\
+%<\(aq \\
 .IP "" 2
-   --new-group-format='%dea%dF%(F=L?:,%dL)
+   --new-group-format=\(aq%dea%dF%(F=L?:,%dL)
 .IP "" 2
-%>' \\
+%>\(aq \\
 .IP "" 2
-   --changed-group-format='%df%(f=l?:,%dl)c%dF%(F=L?:,%dL)
+   --changed-group-format=\(aq%df%(f=l?:,%dl)c%dF%(F=L?:,%dL)
 .IP "" 2
 %<---
 .IP "" 2
-%>' \\
+%>\(aq \\
 .IP "" 2
-   --unchanged-group-format='' \\
+   --unchanged-group-format=\(aq\(aq \\
 .IP "" 2
    myfile
 
 .PD
 .IP "" 0
 .SP
-.SH "diff examples"
-.SS "diff examples"
+\.SH "diff examples"
 .SP
 The following line produces a Unidiff (\fB-u\fP flag)
 between revision 1.14 and 1.19 of
@@ -2361,15 +2351,15 @@ $ cvs diff -u | less
 .PD
 .IP "" 0
 .SP
-.SH "export"
-.SS "export---Export sources from CVS, similar to checkout"
+\.SH "export"
+\.SS "Export sources from CVS, similar to checkout"
 .IX "export (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: current directory.
 .SP
 This command is a variant of \fBcheckout\fP; use it
@@ -2385,7 +2375,7 @@ One often would like to use \fB-kv\fP with @code{cvs
 export}.  This causes any keywords to be
 expanded such that an import done at some other site
 will not lose the keyword revision information.  But be
-aware that doesn't handle an export containing binary
+aware that doesn\(aqt handle an export containing binary
 files correctly.  Also be aware that after having used
 \fB-kv\fP, one can no longer use the \fBident\fP
 command (which is part of the \fBrcs\fP suite---see
@@ -2393,40 +2383,39 @@ ident(1)) which looks for keyword strings.  If
 you want to be able to use \fBident\fP you must not
 use \fB-kv\fP.
 .SP
-.SH "export options"
-.SS "export options"
+\.SH "export options"
 .SP
 These standard options are supported by \fBexport\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate\fP\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n\fP
 .IP "" 2
 Do not run any checkout program.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Export directories recursively.  This is on by default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fItag\fP\fP
 .IP "" 2
 Use revision \fItag\fP.
@@ -2434,35 +2423,35 @@ Use revision \fItag\fP.
 In addition, these options (that are common to
 \fBcheckout\fP and \fBexport\fP) are also supported:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d \fIdir\fP\fP
 .IP "" 2
 Create a directory called \fIdir\fP for the working
 files, instead of using the module name.
-see node `checkout options' in the CVS manual, for complete details on how
+see node \`checkout options\(aq in the CVS manual, for complete details on how
 \fBcvs\fP handles this flag.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIsubst\fP\fP
 .IP "" 2
-Set keyword expansion mode (see node `Substitution modes' in the CVS manual).
+Set keyword expansion mode (see node \`Substitution modes\(aq in the CVS manual).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-N\fP
 .IP "" 2
 Only useful together with \fB-d \fIdir\fP\fP.
-see node `checkout options' in the CVS manual, for complete details on how
+see node \`checkout options\(aq in the CVS manual, for complete details on how
 \fBcvs\fP handles this flag.
 .SP
-.SH "history"
-.SS "history---Show status of files and users"
+\.SH "history"
+\.SS "Show status of files and users"
 .IX "history (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis:     history [-report] [-flags] [-options args] [files\&...]
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: the file \fB$CVSROOT/CVSROOT/history\fP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: nothing.
 .SP
 \fBcvs\fP can keep a history file that tracks each use of the
@@ -2476,21 +2465,20 @@ Logging must be enabled by creating the file
 .SP
 \fBNote: \fBhistory\fP uses @samp{-f\fP, \fB-l\fP,
 \fB-n\fP, and \fB-p\fP in ways that conflict with the
-normal use inside \fBcvs\fP (see node `Common options' in the CVS manual).}
+normal use inside \fBcvs\fP (see node \`Common options\(aq in the CVS manual).}
 .SP
-.SH "history options"
-.SS "history options"
+\.SH "history options"
 .SP
 Several options (shown above as \fB-report\fP)  control  what
 kind of report is generated:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-c\fP
 .IP "" 2
 Report on each time commit was used (i.e., each time
 the repository was modified).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-e\fP
 .IP "" 2
 Everything (all record types).  Equivalent to
@@ -2498,25 +2486,25 @@ specifying \fB-x\fP with all record types.  Of course,
 \fB-e\fP will also include record types which are
 added in a future version of \fBcvs\fP; if you are
 writing a script which can only handle certain record
-types, you'll want to specify \fB-x\fP.
+types, you\(aqll want to specify \fB-x\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-m \fImodule\fP\fP
 .IP "" 2
 Report on a particular module.  (You can meaningfully
 use \fB-m\fP more than once on the command line.)
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-o\fP
 .IP "" 2
 Report on checked-out modules.  This is the default report type.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-T\fP
 .IP "" 2
 Report on all tags.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-x \fItype\fP\fP
 .IP "" 2
 Extract a particular set of record types \fItype\fP from the \fBcvs\fP
@@ -2525,43 +2513,43 @@ which you may specify in combination.
 .SP
 Certain commands have a single record type:
 .SP
-.IP "" 2
+\.IP "" 2
 \fBF\fP
 .IP "" 4
 release
-.IP "" 2
+\.IP "" 2
 \fBO\fP
 .IP "" 4
 checkout
-.IP "" 2
+\.IP "" 2
 \fBE\fP
 .IP "" 4
 export
-.IP "" 2
+\.IP "" 2
 \fBT\fP
 .IP "" 4
 rtag
 .SP
 One of five record types may result from an update:
 .SP
-.IP "" 2
+\.IP "" 2
 \fBC\fP
 .IP "" 4
 A merge was necessary but collisions were
 detected (requiring manual merging).
-.IP "" 2
+\.IP "" 2
 \fBG\fP
 .IP "" 4
 A merge was necessary and it succeeded.
-.IP "" 2
+\.IP "" 2
 \fBU\fP
 .IP "" 4
 A working file was copied from the repository.
-.IP "" 2
+\.IP "" 2
 \fBP\fP
 .IP "" 4
 A working file was patched to match the repository.
-.IP "" 2
+\.IP "" 2
 \fBW\fP
 .IP "" 4
 The working copy of a file was deleted during
@@ -2569,15 +2557,15 @@ update (because it was gone from the repository).
 .SP
 One of three record types results from commit:
 .SP
-.IP "" 2
+\.IP "" 2
 \fBA\fP
 .IP "" 4
 A file was added for the first time.
-.IP "" 2
+\.IP "" 2
 \fBM\fP
 .IP "" 4
 A file was modified.
-.IP "" 2
+\.IP "" 2
 \fBR\fP
 .IP "" 4
 A file was removed.
@@ -2585,18 +2573,18 @@ A file was removed.
 The options shown as \fB-flags\fP constrain or expand
 the report without requiring option arguments:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-a\fP
 .IP "" 2
 Show data for all users (the default is to show data
 only for the user executing \fBhistory\fP).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Show last modification only.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-w\fP
 .IP "" 2
 Show only the records for modifications done from the
@@ -2606,41 +2594,41 @@ executing.
 The options shown as \fB-options \fIargs\fP\fP constrain the report
 based on an argument:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-b \fIstr\fP\fP
 .IP "" 2
 Show data back to a record containing  the  string
 \fIstr\fP  in  either the module name, the file name, or
 the repository path.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate\fP\fP
 .IP "" 2
 Show data since \fIdate\fP.  This is slightly different
 from the normal use of \fB-D \fIdate\fP\fP, which
 selects the newest revision older than \fIdate\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f \fIfile\fP\fP
 .IP "" 2
 Show data for a particular file
 (you can specify several \fB-f\fP options on the same command line).
 This is equivalent to specifying the file on the command line.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-n \fImodule\fP\fP
 .IP "" 2
 Show data for a particular module
 (you can specify several \fB-n\fP options on the same command line).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-p \fIrepository\fP\fP
 .IP "" 2
 Show data for a particular source repository  (you
 can specify several \fB-p\fP options on the same command
 line).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fIrev\fP\fP
 .IP "" 2
 Show records referring to revisions since the revision
@@ -2648,7 +2636,7 @@ or tag named \fIrev\fP appears in individual \fBrcs\fP
 files.  Each \fBrcs\fP file is searched for the revision or
 tag.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t \fItag\fP\fP
 .IP "" 2
 Show records since tag \fItag\fP was last added to the
@@ -2656,26 +2644,26 @@ history file.  This differs from the \fB-r\fP flag
 above in that it reads only the history file, not the
 \fBrcs\fP files, and is much faster.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-u \fIname\fP\fP
 .IP "" 2
 Show records for user \fIname\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-z \fItimezone\fP\fP
 .IP "" 2
 Show times in the selected records using the specified
 time zone instead of UTC.
 .SP
-.SH "import"
-.SS "import---Import sources into CVS, using vendor branches"
+\.SH "import"
+\.SS "Import sources into CVS, using vendor branches"
 .IX "import (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis: import [-options] repository vendortag releasetag\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: Repository, source distribution directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: repository.
 .SP
 Use \fBimport\fP to incorporate an entire source
@@ -2683,7 +2671,7 @@ distribution from an outside source (e.g., a source
 vendor) into your source repository directory.  You can
 use this command both for initial creation of a
 repository, and for wholesale updates to the module
-from the outside source.  see node `Tracking sources' in the CVS manual, for
+from the outside source.  see node \`Tracking sources\(aq in the CVS manual, for
 a discussion on this subject.
 .SP
 The \fIrepository\fP argument gives a directory name
@@ -2699,15 +2687,15 @@ in the two branches of development; use @samp{checkout
 you to do.
 .SP
 If \fBcvs\fP decides a file should be ignored
-(see node `cvsignore' in the CVS manual), it does not import it and prints
-\fBI \fP followed by the filename (see node `import output' in the CVS manual, for a
+(see node \`cvsignore\(aq in the CVS manual), it does not import it and prints
+\fBI \fP followed by the filename (see node \`import output\(aq in the CVS manual, for a
 complete description of the output).
 .SP
 If the file \fB$CVSROOT/CVSROOT/cvswrappers\fP exists,
 any file whose names match the specifications in that
 file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
-before being imported.  see node `Wrappers' in the CVS manual.
+before being imported.  see node \`Wrappers\(aq in the CVS manual.
 .SP
 The outside source is saved in a first-level
 branch, by default 1.1.1.  Updates are leaves of this
@@ -2728,15 +2716,14 @@ directory in which you invoke it.  In particular, it
 does not set up that directory as a \fBcvs\fP working
 directory; if you want to work with the sources import
 them first and then check them out into a different
-directory (see node `Getting the source' in the CVS manual).
+directory (see node \`Getting the source\(aq in the CVS manual).
 .SP
-.SH "import options"
-.SS "import options"
+\.SH "import options"
 .SP
 This standard option is supported by \fBimport\fP
-(see node `Common options' in the CVS manual, for a complete description):
+(see node \`Common options\(aq in the CVS manual, for a complete description):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-m \fImessage\fP\fP
 .IP "" 2
 Use \fImessage\fP as log information, instead of
@@ -2744,33 +2731,33 @@ invoking an editor.
 .SP
 There are the following additional special options.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-b \fIbranch\fP\fP
 .IP "" 2
-See see node `Multiple vendor branches' in the CVS manual.
+See see node \`Multiple vendor branches\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIsubst\fP\fP
 .IP "" 2
 Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
-the repository.  See see node `Substitution modes' in the CVS manual, for a
+the repository.  See see node \`Substitution modes\(aq in the CVS manual, for a
 list of valid \fB-k\fP settings.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-I \fIname\fP\fP
 .IP "" 2
 Specify file names that should be ignored during
 import.  You can use this option repeatedly.  To avoid
 ignoring any files at all (even those ignored by
-default), specify `-I !'.
+default), specify \`-I !\(aq.
 .SP
 \fIname\fP can be a file name pattern of the same type
 that you can specify in the \fB.cvsignore\fP file.
-see node `cvsignore' in the CVS manual.
+see node \`cvsignore\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-W \fIspec\fP\fP
 .IP "" 2
 Specify file names that should be filtered during
@@ -2778,63 +2765,61 @@ import.  You can use this option repeatedly.
 .SP
 \fIspec\fP can be a file name pattern of the same type
 that you can specify in the \fB.cvswrappers\fP
-file. see node `Wrappers' in the CVS manual.
+file. see node \`Wrappers\(aq in the CVS manual.
 .SP
-.SH "import output"
-.SS "import output"
+\.SH "import output"
 .SP
 \fBimport\fP keeps you informed of its progress by printing a line
 for each file, preceded by one character indicating the status of the file:
 .SP
-.IP "" 0
+\.IP "" 0
 \fBU \fIfile\fP\fP
 .IP "" 2
 The file already exists in the repository and has not been locally
 modified; a new revision has been created (if necessary).
 .SP
-.IP "" 0
+\.IP "" 0
 \fBN \fIfile\fP\fP
 .IP "" 2
 The file is a new file which has been added to the repository.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBC \fIfile\fP\fP
 .IP "" 2
 The file already exists in the repository but has been locally modified;
 you will have to merge the changes.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBI \fIfile\fP\fP
 .IP "" 2
-The file is being ignored (see node `cvsignore' in the CVS manual).
+The file is being ignored (see node \`cvsignore\(aq in the CVS manual).
 .SP
 .IX "Symbolic link, importing"
 .IX "Link, symbolic, importing"
-.IP "" 0
+\.IP "" 0
 \fBL \fIfile\fP\fP
 .IP "" 2
 The file is a symbolic link; \fBcvs import\fP ignores symbolic links.
 People periodically suggest that this behavior should
 be changed, but if there is a consensus on what it
-should be changed to, it doesn't seem to be apparent.
+should be changed to, it doesn\(aqt seem to be apparent.
 (Various options in the \fBmodules\fP file can be used
 to recreate symbolic links on checkout, update, etc.;
-see node `modules' in the CVS manual.)
+see node \`modules\(aq in the CVS manual.)
 .SP
-.SH "import examples"
-.SS "import examples"
+\.SH "import examples"
 .SP
-See see node `Tracking sources' in the CVS manual, and see node `From files' in the CVS manual.
+See see node \`Tracking sources\(aq in the CVS manual, and see node \`From files\(aq in the CVS manual.
 .SP
-.SH "log"
-.SS "log---Print out log information for files"
+\.SH "log"
+\.SS "Print out log information for files"
 .IX "log (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synopsis: log [options] [files\&...]
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository, working directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: nothing.
 .SP
 Display log information for files.  \fBlog\fP used to
@@ -2856,56 +2841,55 @@ Coordinated Universal Time (UTC).  (Other parts of
 \fBcvs\fP print times in the local timezone).
 .SP
 \fBNote: \fBlog\fP uses @samp{-R\fP in a way that conflicts
-with the normal use inside \fBcvs\fP (see node `Common options' in the CVS manual).}
+with the normal use inside \fBcvs\fP (see node \`Common options\(aq in the CVS manual).}
 .SP
-.SH "log options"
-.SS "log options"
+\.SH "log options"
 .SP
 By default, \fBlog\fP prints all information that is
 available.  All other options restrict the output.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-b\fP
 .IP "" 2
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d \fIdates\fP\fP
 .IP "" 2
 Print information about revisions with a checkin
 date/time in the range given by the
 semicolon-separated list of dates.  The date formats
 accepted are those accepted by the \fB-D\fP option to
-many other \fBcvs\fP commands (see node `Common options' in the CVS manual).
+many other \fBcvs\fP commands (see node \`Common options\(aq in the CVS manual).
 Dates can be combined into ranges as follows:
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fId1\fP<@var{d2\fP}
 .IP "" 4
-.IP "" 2
+\.IP "" 2
 \fB\fId2\fP>@var{d1\fP}
 .IP "" 4
 Select the revisions that were deposited between
 \fId1\fP and \fId2\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB<\fId\fP\fP
 .IP "" 4
-.IP "" 2
+\.IP "" 2
 \fB\fId\fP>\fP
 .IP "" 4
 Select all revisions dated \fId\fP or earlier.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fId\fP<\fP
 .IP "" 4
-.IP "" 2
+\.IP "" 2
 \fB>\fId\fP\fP
 .IP "" 4
 Select all revisions dated \fId\fP or later.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fId\fP\fP
 .IP "" 4
 Select the single, latest revision dated \fId\fP or
@@ -2917,7 +2901,7 @@ exclusive one.
 .SP
 Note that the separator is a semicolon (;).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-h\fP
 .IP "" 2
 Print only the name of the \fBrcs\fP file, name
@@ -2925,27 +2909,27 @@ of the file in the working directory, head,
 default branch, access list, locks, symbolic names, and
 suffix.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
 Local; run only in current working directory.  (Default
 is to run recursively).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-N\fP
 .IP "" 2
 Do not print the list of tags for this file.  This
 option can be very useful when your site uses a lot of
-tags, so rather than "more"'ing over 3 pages of tag
+tags, so rather than "more"\(aqing over 3 pages of tag
 information, the log information is presented without
 tags at all.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Print only the name of the \fBrcs\fP file.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r\fIrevisions\fP\fP
 .IP "" 2
 Print information about revisions given in the
@@ -2953,54 +2937,54 @@ comma-separated list \fIrevisions\fP of revisions and
 ranges.  The following table explains the available
 range formats:
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev1\fP:@var{rev2\fP}
 .IP "" 4
 Revisions \fIrev1\fP to \fIrev2\fP (which must be on
 the same branch).
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev1\fP::@var{rev2\fP}
 .IP "" 4
 The same, but excluding \fIrev1\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB:\fIrev\fP\fP
 .IP "" 4
-.IP "" 2
+\.IP "" 2
 \fB::\fIrev\fP\fP
 .IP "" 4
 Revisions from the beginning of the branch up to
 and including \fIrev\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev\fP:\fP
 .IP "" 4
 Revisions starting with \fIrev\fP to the end of the
 branch containing \fIrev\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIrev\fP::\fP
 .IP "" 4
 Revisions starting just after \fIrev\fP to the end of the
 branch containing \fIrev\fP.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIbranch\fP\fP
 .IP "" 4
 An argument that is a branch means all revisions on
 that branch.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIbranch1\fP:@var{branch2\fP}
 .IP "" 4
-.IP "" 2
+\.IP "" 2
 \fB\fIbranch1\fP::@var{branch2\fP}
 .IP "" 4
 A range of branches means all revisions
 on the branches in that range.
 .SP
-.IP "" 2
+\.IP "" 2
 \fB\fIbranch\fP.\fP
 .IP "" 4
 The latest revision in \fIbranch\fP.
@@ -3010,29 +2994,29 @@ revision on the default branch, normally the trunk.
 There can be no space between the \fB-r\fP option and
 its argument.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-S\fP
 .IP "" 2
 Suppress the header if no revisions are selected.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-s \fIstates\fP\fP
 .IP "" 2
 Print information about revisions whose state
 attributes match one of the states given in the
 comma-separated list \fIstates\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t\fP
 .IP "" 2
 Print the same as \fB-h\fP, plus the descriptive text.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-w\fIlogins\fP\fP
 .IP "" 2
 Print information about revisions checked in by users
 with login names appearing in the comma-separated list
-\fIlogins\fP.  If \fIlogins\fP is omitted, the user's
+\fIlogins\fP.  If \fIlogins\fP is omitted, the user\(aqs
 login is assumed.  There can be no space between the
 \fB-w\fP option and its argument.
 .SP
@@ -3041,29 +3025,28 @@ selected with the options \fB-d\fP, \fB-s\fP, and
 \fB-w\fP, intersected with the union of the revisions
 selected by \fB-b\fP and \fB-r\fP.
 .SP
-.SH "log examples"
-.SS "log examples"
+\.SH "log examples"
 .SP
 Contributed examples are gratefully accepted.
 .SP
-.SH "rdiff"
-.SS "rdiff---'patch' format diffs between releases"
+\.SH "rdiff"
+\.SS "\(aqpatch\(aq format diffs between releases"
 .IX "rdiff (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 rdiff [-flags] [-V vn] [-r t|-D d [-r t2|-D d2]] modules\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: nothing.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Synonym: patch
 .SP
 Builds a Larry Wall format patch(1) file between two
 releases, that can be fed directly into the \fBpatch\fP
 program to bring an old release up-to-date with the new
 release.  (This is one of the few \fBcvs\fP commands that
-operates directly from the repository, and doesn't
+operates directly from the repository, and doesn\(aqt
 require a prior checkout.) The diff output is sent to
 the standard output device.
 .SP
@@ -3080,47 +3063,46 @@ specify the \fB-p\fP option to the \fBpatch\fP command when
 patching the old sources, so that \fBpatch\fP is able to find
 the files that are located in other directories.
 .SP
-.SH "rdiff options"
-.SS "rdiff options"
+\.SH "rdiff options"
 .SP
 These standard options are supported by \fBrdiff\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D \fIdate\fP\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 If no matching revision is found, retrieve the most
 recent revision (instead of ignoring the file).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
-Local; don't descend subdirectories.
+Local; don\(aqt descend subdirectories.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Examine directories recursively.  This option is on by default.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r \fItag\fP\fP
 .IP "" 2
 Use revision \fItag\fP.
 .SP
 In addition to the above, these options are available:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-c\fP
 .IP "" 2
 Use the context diff format.  This is the default format.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-s\fP
 .IP "" 2
 Create a summary change report instead of a patch.  The
@@ -3130,23 +3112,23 @@ the standard output device.  This is useful for finding
 out, for example, which files have changed between two
 dates or revisions.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-t\fP
 .IP "" 2
 A diff of the top two revisions is sent to the standard
 output device.  This is most useful for seeing what the
 last change to a file was.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-u\fP
 .IP "" 2
 Use the unidiff format for the context diffs.
 Remember that old versions
-of the \fBpatch\fP program can't handle the unidiff
+of the \fBpatch\fP program can\(aqt handle the unidiff
 format, so if you plan to post this patch to the net
 you should probably not use \fB-u\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-V \fIvn\fP\fP
 .IP "" 2
 Expand keywords according to the rules current in
@@ -3155,8 +3137,7 @@ Expand keywords according to the rules current in
 longer accepted.  \fBcvs\fP will always expand keywords the
 way that \fBrcs\fP version 5 does.
 .SP
-.SH "rdiff examples"
-.SS "rdiff examples"
+\.SH "rdiff examples"
 .SP
 Suppose you receive mail from @t{foo@example.net} asking for an
 update from release 1.2 to 1.4 of the tc compiler.  You
@@ -3167,7 +3148,7 @@ easily be fixed with a command such as this:
 .IP "" 2
 $ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \\
 .IP "" 2
-$$ Mail -s 'The patches you asked for' foo@example.net
+$$ Mail -s \(aqThe patches you asked for\(aq foo@example.net
 
 .PD
 .IP "" 0
@@ -3193,24 +3174,24 @@ File bar.h,v changed from revision 1.29.2.1 to 1.2
 .PD
 .IP "" 0
 .SP
-.SH "release"
-.SS "release---Indicate that a Module is no longer in use"
+\.SH "release"
+\.SS "Indicate that a Module is no longer in use"
 .IX "release (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 release [-d] directories\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: Working directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: Working directory, history log.
 .SP
 This command is meant to safely cancel the effect of
-\fBcvs checkout\fP.  Since \fBcvs\fP doesn't lock files, it
-isn't strictly necessary to use this command.  You can
+\fBcvs checkout\fP.  Since \fBcvs\fP doesn\(aqt lock files, it
+isn\(aqt strictly necessary to use this command.  You can
 always simply delete your working directory, if you
 like; but you risk losing changes you may have
 forgotten, and you leave no trace in the \fBcvs\fP history
-file (see node `history file' in the CVS manual) that you've abandoned your
+file (see node \`history file\(aq in the CVS manual) that you\(aqve abandoned your
 checkout.
 .SP
 Use \fBcvs release\fP to avoid these problems.  This
@@ -3225,12 +3206,11 @@ leaves a record of its execution (attesting to your
 intentionally abandoning your checkout) in the \fBcvs\fP
 history log.
 .SP
-.SH "release options"
-.SS "release options"
+\.SH "release options"
 .SP
 The \fBrelease\fP command supports one command option:
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d\fP
 .IP "" 2
 Delete your working copy of the file if the release
@@ -3242,27 +3222,26 @@ all directories and files recursively.  This
 has the very serious side-effect that any directory
 that you have created inside your checked-out sources,
 and not added to the repository (using the \fBadd\fP
-command; see node `Adding files' in the CVS manual) will be silently deleted---even
+command; see node \`Adding files\(aq in the CVS manual) will be silently deleted---even
 if it is non-empty!}
 .SP
-.SH "release output"
-.SS "release output"
+\.SH "release output"
 .SP
 Before \fBrelease\fP releases your sources it will
 print a one-line message for any file that is not
 up-to-date.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBU \fIfile\fP\fP
 .IP "" 2
-.IP "" 0
+\.IP "" 0
 \fBP \fIfile\fP\fP
 .IP "" 2
 There exists a newer revision of this file in the
 repository, and you have not modified your local copy
 of the file (\fBU\fP and \fBP\fP mean the same thing).
 .SP
-.IP "" 0
+\.IP "" 0
 \fBA \fIfile\fP\fP
 .IP "" 2
 The file has been added to your private copy of the
@@ -3270,32 +3249,31 @@ sources, but has not yet been committed to the
 repository.  If you delete your copy of the sources
 this file will be lost.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBR \fIfile\fP\fP
 .IP "" 2
 The file has been removed from your private copy of the
 sources, but has not yet been removed from the
 repository, since you have not yet committed the
-removal.  see node `commit' in the CVS manual.
+removal.  see node \`commit\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBM \fIfile\fP\fP
 .IP "" 2
 The file is modified in your working directory.  There
 might also be a newer revision inside the repository.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB? \fIfile\fP\fP
 .IP "" 2
 \fIfile\fP is in your working directory, but does not
 correspond to anything in the source repository, and is
 not in the list of files for \fBcvs\fP to ignore (see the
 description of the \fB-I\fP option, and
-see node `cvsignore' in the CVS manual).  If you remove your working
+see node \`cvsignore\(aq in the CVS manual).  If you remove your working
 sources, this file will be lost.
 .SP
-.SH "release examples"
-.SS "release examples"
+\.SH "release examples"
 .SP
 Release the \fBtc\fP directory, and delete your local working copy
 of the files.
@@ -3310,25 +3288,25 @@ $ cvs release -d tc
 .IP "" 2
 You have [0] altered files in this repository.
 .IP "" 2
-Are you sure you want to release (and delete) directory `tc': y
+Are you sure you want to release (and delete) directory \`tc\(aq: y
 .IP "" 2
 $
 
 .PD
 .IP "" 0
 .SP
-.SH "update"
-.SS "update---Bring work tree in sync with repository"
+\.SH "update"
+\.SS "Bring work tree in sync with repository"
 .IX "update (subcommand)"
 .SP
-.IP "\(bu" 2
+\.IP "\(bu" 2
 update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files\&...
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Requires: repository, working directory.
-.IP "\(bu" 2
+\.IP "\(bu" 2
 Changes: working directory.
 .SP
-After you've run checkout to create your private copy
+After you\(aqve run checkout to create your private copy
 of source from the common repository, other developers
 will continue changing the central source.  From time
 to time, when it is convenient in your development
@@ -3337,21 +3315,20 @@ within your working directory to reconcile your work
 with any revisions applied to the source repository
 since your last checkout or update.
 .SP
-.SH "update options"
-.SS "update options"
+\.SH "update options"
 .SP
 These standard options are available with \fBupdate\fP
-(see node `Common options' in the CVS manual, for a complete description of
+(see node \`Common options\(aq in the CVS manual, for a complete description of
 them):
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-D date\fP
 .IP "" 2
 Use the most recent revision no later than \fIdate\fP.
 This option is sticky, and implies \fB-P\fP.
-See see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+See see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-f\fP
 .IP "" 2
 Only useful with the \fB-D \fIdate\fP\fP or @samp{-r
@@ -3359,67 +3336,67 @@ Only useful with the \fB-D \fIdate\fP\fP or @samp{-r
 retrieve the most recent revision (instead of ignoring
 the file).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-k \fIkflag\fP\fP
 .IP "" 2
 Process keywords according to \fIkflag\fP.  See
-see node `Keyword substitution' in the CVS manual.
+see node \`Keyword substitution\(aq in the CVS manual.
 This option is sticky; future updates of
 this file in this working directory will use the same
 \fIkflag\fP.  The \fBstatus\fP command can be viewed
-to see the sticky options.  See see node `Invoking CVS' in the CVS manual, for
+to see the sticky options.  See see node \`Invoking CVS\(aq in the CVS manual, for
 more information on the \fBstatus\fP command.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-l\fP
 .IP "" 2
-Local; run only in current working directory.  see node `Recursive behavior' in the CVS manual.
+Local; run only in current working directory.  see node \`Recursive behavior\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-P\fP
 .IP "" 2
-Prune empty directories.  See see node `Moving directories' in the CVS manual.
+Prune empty directories.  See see node \`Moving directories\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-p\fP
 .IP "" 2
 Pipe files to the standard output.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-R\fP
 .IP "" 2
 Update directories recursively (default).  @xref{Recursive
 behavior}.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-r rev\fP
 .IP "" 2
 Retrieve revision/tag \fIrev\fP.  This option is sticky,
 and implies \fB-P\fP.
-See see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+See see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
 @need 800
 These special options are also available with
 \fBupdate\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-A\fP
 .IP "" 2
 Reset any sticky tags, dates, or \fB-k\fP options.
-See see node `Sticky tags' in the CVS manual, for more information on sticky tags/dates.
+See see node \`Sticky tags\(aq in the CVS manual, for more information on sticky tags/dates.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-C\fP
 .IP "" 2
 Overwrite locally modified files with clean copies from
 the repository (the modified file is saved in
 \fB.#\fIfile\fP.@var{revision\fP}, however).
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-d\fP
 .IP "" 2
 Create any directories that exist in the repository if
-they're missing from the working directory.  Normally,
+they\(aqre missing from the working directory.  Normally,
 \fBupdate\fP acts only on directories and files that
 were already enrolled in your working directory.
 .SP
@@ -3433,17 +3410,17 @@ explicitly the files and directories you wanted on the
 command line), then updating with \fB-d\fP will create
 those directories, which may not be what you want.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-I \fIname\fP\fP
 .IP "" 2
 Ignore files whose names match \fIname\fP (in your
 working directory) during the update.  You can specify
 \fB-I\fP more than once on the command line to specify
 several files to ignore.  Use \fB-I !\fP to avoid
-ignoring any files at all.  see node `cvsignore' in the CVS manual, for other
+ignoring any files at all.  see node \`cvsignore\(aq in the CVS manual, for other
 ways to make \fBcvs\fP ignore some files.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-W\fIspec\fP\fP
 .IP "" 2
 Specify file names that should be filtered during
@@ -3451,9 +3428,9 @@ update.  You can use this option repeatedly.
 .SP
 \fIspec\fP can be a file name pattern of the same type
 that you can specify in the \fB.cvswrappers\fP
-file. see node `Wrappers' in the CVS manual.
+file. see node \`Wrappers\(aq in the CVS manual.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB-j\fIrevision\fP\fP
 .IP "" 2
 With two \fB-j\fP options, merge changes from the
@@ -3471,7 +3448,7 @@ the revision specified in the \fB-j\fP option.
 Note that using a single \fB-j \fItagname\fP\fP option rather than
 \fB-j \fIbranchname\fP\fP to merge changes from a branch will
 often not remove files which were removed on the branch.
-see node `Merging adds and removals' in the CVS manual, for more.
+see node \`Merging adds and removals\(aq in the CVS manual, for more.
 .SP
 In addition, each \fB-j\fP option can contain an optional
 date specification which, when used with branches, can
@@ -3480,32 +3457,31 @@ date.  An optional date is specified by adding a colon
 (:) to the tag:
 \fB-j\fISymbolic_Tag\fP:@var{Date_Specifier\fP}.
 .SP
-see node `Branching and merging' in the CVS manual.
+see node \`Branching and merging\(aq in the CVS manual.
 .SP
 .SP
-.SH "update output"
-.SS "update output"
+\.SH "update output"
 .SP
 \fBupdate\fP and \fBcheckout\fP keep you informed of
 their progress by printing a line for each file, preceded
 by one character indicating the status of the file:
 .SP
-.IP "" 0
+\.IP "" 0
 \fBU \fIfile\fP\fP
 .IP "" 2
 The file was brought up to date with respect to the
 repository.  This is done for any file that exists in
 the repository but not in your source, and for files
-that you haven't changed but are not the most recent
+that you haven\(aqt changed but are not the most recent
 versions available in the repository.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBP \fIfile\fP\fP
 .IP "" 2
 Like \fBU\fP, but the \fBcvs\fP server sends a patch instead of an entire
 file.  This accomplishes the same thing as \fBU\fP using less bandwidth.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBA \fIfile\fP\fP
 .IP "" 2
 The file has been added to your private copy of the
@@ -3513,7 +3489,7 @@ sources, and will be added to the source repository
 when you run \fBcommit\fP on the file.  This is a
 reminder to you that the file needs to be committed.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBR \fIfile\fP\fP
 .IP "" 2
 The file has been removed from your private copy of the
@@ -3521,13 +3497,13 @@ sources, and will be removed from the source repository
 when you run \fBcommit\fP on the file.  This is a
 reminder to you that the file needs to be committed.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBM \fIfile\fP\fP
 .IP "" 2
 The file is modified in  your  working  directory.
 .SP
 \fBM\fP can indicate one of two states for a file
-you're working on: either there were no modifications
+you\(aqre working on: either there were no modifications
 to the same file in the repository, so that your file
 remains as you last saw it; or there were modifications
 in the repository as well as in your copy, but they
@@ -3539,7 +3515,7 @@ and a backup copy of your working file (as it looked
 before you ran \fBupdate\fP) will be made.  The exact
 name of that file is printed while \fBupdate\fP runs.
 .SP
-.IP "" 0
+\.IP "" 0
 \fBC \fIfile\fP\fP
 .IP "" 2
 .IX ".# files"
@@ -3553,7 +3529,7 @@ is also in your working directory, with the name
 \fB.#\fIfile\fP.@var{revision\fP} where \fIrevision\fP
 is the revision that your modified file started
 from.  Resolve the conflict as described in
-see node `Conflicts example' in the CVS manual.
+see node \`Conflicts example\(aq in the CVS manual.
 (Note that some systems automatically purge
 files that begin with \fB.#\fP if they have not been
 accessed for a few days.  If you intend to keep a copy
@@ -3561,14 +3537,14 @@ of your original file, it is a very good idea to rename
 it.)  Under \fBvms\fP, the file name starts with
 \fB__\fP rather than \fB.#\fP.
 .SP
-.IP "" 0
+\.IP "" 0
 \fB? \fIfile\fP\fP
 .IP "" 2
 \fIfile\fP is in your working directory, but does not
 correspond to anything in the source repository, and is
 not in the list of files for \fBcvs\fP to ignore (see the
 description of the \fB-I\fP option, and
-see node `cvsignore' in the CVS manual).
+see node \`cvsignore\(aq in the CVS manual).
 .SH "AUTHORS"
 .TP
 Dick Grune
@@ -3591,8 +3567,7 @@ Helped Brian with the design of the
 .B cvs
 module and vendor branch support and author of the
 .BR checkin ( 1 )
-shell script (the ancestor of
-.` "cvs import").
+shell script (the ancestor of \fBcvs import\fP).
 .TP
 Larry Jones, Derek R. Price, and Mark D. Baushke
 Have helped maintain
@@ -3611,7 +3586,11 @@ cvs.ps (PostScript), cvs.texinfo (Texinfo source), or cvs.html.
 For CVS updates, more information on documentation, software related
 to CVS, development of CVS, and more, see:
 .in +1i
+.SP
+.PD 0
+.IP "" 4
 .B http://cvshome.org
+.IP "" 4
 .B http://www.loria.fr/~molli/cvs-index.html
 .in -1i
 .SP

@@ -48,6 +48,7 @@ for my $file (@ARGV)
 	my $inexample = 0;
 	my $inmenu = 0;
 	my $intable = 0;
+	my $last_header = "";
 	my @table_headers;
 	my @table_footers;
 	my $table_header = "";
@@ -98,7 +99,8 @@ for my $file (@ARGV)
 			s/\@dots{}/\\&.../g;
 			s/\@([{}])/$1/g;
 			s/\@\@/\@/g;
-			s/^'/\\'/g;
+			s/'/\\(aq/g;
+			s/`/\\`/g;
 			s/^\./\\./g;
 
 			# Preserve the newline.
@@ -144,8 +146,15 @@ for my $file (@ARGV)
 		}
 
 		# Chapter headers.
-		s/^\@node (.*)$/.SH "$1"/;
-		s/^\@appendix\w* (.*)$/.SS "$1"/;
+		$last_header = $1 if s/^\@node (.*)$/.SH "$1"/;
+		if (/^\@appendix\w* (.*)$/)
+		{
+			my $content = $1;
+			$content =~ s/^$last_header(---| +)?//;
+			next if $content =~ /^\s*$/;
+			s/^\@appendix\w* .*$/.SS "$content"/;
+		}
+			
 
 		# Tables are similar to examples, except we need to handle the
 		# keywords.
@@ -205,7 +214,8 @@ for my $file (@ARGV)
 		s/\@dots{}/\\&.../g;
 		s/\@([{}])/$1/g;
 		s/\@\@/\@/g;
-		s/^'/\\'/g;
+		s/'/\\(aq/g;
+		s/`/\\`/g;
 		s/^\./\\./g;
 
 		# Index entries.
