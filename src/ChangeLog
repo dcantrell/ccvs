@@ -1,3 +1,10 @@
+1998-07-21  Jim Meyering  <meyering@ascend.com>
+
+	* rcs.c (RCS_checkout): Hoist frees of rev and value.
+	Warn and return 1 in several cases rather than exiting via
+	`error (1, ...'.  The latter could abort a multi-file commit
+	in mid-stream, leaving stale locks in the repository.
+
 1998-07-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* build_src.com (rcscmds.c): Also look for include files in
