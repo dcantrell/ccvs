@@ -11,14 +11,14 @@ we don't try to list the platforms for which that is true.
 
 Alpha:
 	DEC Alpha running OSF/1 version 1.3 using cc (about 1.4A2)
-	DEC Alpha running OSF/1 version 2.0 (1.4.90)
+	DEC Alpha running OSF/1 version 2.0 (1.8)
 	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
 	DEC Alpha running OSF/1 version 3.0 (1.5.95) (footnote 7)
 	DEC Alpha running OSF/1 version 3.2 (1.7+obvious patch)
 	DEC Alpha running VMS 6.2 (1.8.85 client-only)
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
-	HP 9000/715 running HP-UX 9.01 (1.6)
+	HPPA running HP-UX 9 (1.8)
 	HPPA running HP-UX 10.01 (1.7)
         HPPA 1.1 running HP-UX A.09.03 (1.5.95) (footnote 8)
         HPPA 1.1 running HP-UX A.09.04 (1.7.1)
@@ -34,7 +34,8 @@ i386 family:
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 	SCO OpenServer 5.0.0, "CC='cc -b elf' configure"
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
-	Windows NT 3.51 (1.8.86 client-only)
+	Windows NT 3.51 (1.8.86 client; 1.8.3 local)
+	Windows 95 (1.8.86 client and local)
 	QNX 4 (1.7 + obvious patches)
 	OS/2 Version 3 using IBM C/C++ Tools 2.01 (1.7.86 with patches)
 m68k:
@@ -49,19 +50,19 @@ MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.8.85)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
-	SGI running Irix 5.3 (1.7)
+	SGI running Irix 5.3 (1.8)
 	SGI running Irix-6 (about 1.4.90) (footnote 3)
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)
 PowerPC or RS/6000:
 	IBM RS/6000 running AIX 3.1 using gcc and cc (1.6.86)
-	IBM RS/6000 running AIX 3.2.5 (1.7.87)
+	IBM RS/6000 running AIX 3.2.5 (1.8)
 	IBM RS/6000 running AIX 4.1 using gcc and cc (about 1.4A2) (footnote 1)
 	Lynx 2.3.1 120495 (1.6.86) (footnote 9)
 SPARC:
-	Sun SPARC running SunOS 4.1.x (1.6.86)
+	Sun SPARC running SunOS 4.1.x (1.8)
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
-	Sun SPARC running Solaris 2.5 (2.5 beta?) (1.7)
+	Sun SPARC running Solaris 2.5 (2.5 beta?) (1.8)
 	NextSTEP 3.3 (1.7)
 
 (footnote 1)
