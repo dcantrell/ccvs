@@ -25466,9 +25466,42 @@ EOF
 	  rm -rf first-dir/dir2
 
 	  dotest release-16 "${testcvs} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating first-dir"
+"$SPROG update: Updating \.
+$SPROG update: Updating first-dir"
+
+	  # Check to make sure release isn't overwriting a
+	  # CVS/Entries file in the current directory (using data
+	  # from the released directory).
+
+	  # cvs 1.11 (remote) fails on release-21 (a message about
+          # chdir into the removed directory), although it seemingly
+	  # unedits and removes the directory correctly.  If
+	  # you manually continue, it then fails on release-22 do
+	  # to the messed up CVS/Entries file from release-21.
+          cd first-dir
+	  mkdir second-dir
+	  dotest release-18 "$testcvs add second-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir/second-dir added to the repository"
+
+	  cd second-dir
+	  touch file1
+	  dotest release-19 "$testcvs -Q add file1"
+	  dotest release-20 '$testcvs -q ci -m add' \
+"RCS file: $CVSROOT_DIRNAME/first-dir/second-dir/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/first-dir/second-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest release-21 "$testcvs edit file1"
 	  cd ..
+	  dotest release-22 "echo yes | $testcvs release -d second-dir" \
+"You have \[0\] altered files in this repository.
+Are you sure you want to release (and delete) directory \`second-dir': "
+	  dotest release-23 "$testcvs -q update -d" "U second-dir/file1"
+	  dotest release-24 "$testcvs edit"
+
+	  cd ../..
 	  rm -rf 1 $CVSROOT_DIRNAME/first-dir
 	  ;;
 

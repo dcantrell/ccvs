@@ -549,10 +549,7 @@ handle_valid_requests( char *args, int len )
     }
 }
 
-/* This variable holds the result of Entries_Open, so that we can
-   close Entries_Close on it when we move on to a new directory, or
-   when we finish.  */
-static List *last_entries;
+
 
 /*
  * Do all the processing for PATHNAME, where pathname consists of the
@@ -565,14 +562,14 @@ static List *last_entries;
  * SHORT_PATHNAME.  When we call FUNC, the curent directory points to
  * the directory portion of SHORT_PATHNAME.  */
 
-static char *last_dir_name;
-
 static void
 call_in_directory( char *pathname,
                    void (*func) ( char *_data, List *_ent_list,
                                   char *_short_pathname, char *_filename ),
                    char *data )
 {
+    /* This variable holds the result of Entries_Open. */
+    List *last_entries = NULL;
     char *dir_name;
     char *filename;
     /* This is what we get when we hook up the directory (working directory
@@ -602,6 +599,7 @@ call_in_directory( char *pathname,
     char *reposdirname;
     char *rdirp;
     int reposdirname_absolute;
+    int newdir = 0;
 
     reposname = NULL;
     read_line (&reposname);
@@ -654,286 +652,272 @@ call_in_directory( char *pathname,
     strcpy (short_pathname, pathname);
     strcat (short_pathname, filename);
 
-    if (last_dir_name == NULL
-	|| strcmp (last_dir_name, dir_name) != 0)
+    if (toplevel_wd == NULL)
     {
-	int newdir;
-
-	if (strcmp (command_name, "export") != 0)
-	    if (last_entries)
-		Entries_Close (last_entries);
-
-	if (last_dir_name)
-	    free (last_dir_name);
-	last_dir_name = dir_name;
-
+	toplevel_wd = xgetwd ();
 	if (toplevel_wd == NULL)
+	    error (1, errno, "could not get working directory");
+    }
+
+    if (CVS_CHDIR (toplevel_wd) < 0)
+	error (1, errno, "could not chdir to %s", toplevel_wd);
+
+    /* Create the CVS directory at the top level if needed.  The
+       isdir seems like an unneeded system call, but it *does*
+       need to be called both if the CVS_CHDIR below succeeds
+       (e.g.  "cvs co .") or if it fails (e.g. basicb-1a in
+       testsuite).  We only need to do this for the "." case,
+       since the server takes care of forcing this directory to be
+       created in all other cases.  If we don't create CVSADM
+       here, the call to Entries_Open below will fail.  FIXME:
+       perhaps this means that we should change our algorithm
+       below that calls Create_Admin instead of having this code
+       here? */
+    if (/* I think the reposdirname_absolute case has to do with
+	   things like "cvs update /foo/bar".  In any event, the
+	   code below which tries to put toplevel_repos into
+	   CVS/Repository is almost surely unsuited to
+	   the reposdirname_absolute case.  */
+	!reposdirname_absolute
+	&& (strcmp (dir_name, ".") == 0)
+	&& ! isdir (CVSADM))
+    {
+	char *repo;
+	char *r;
+
+	newdir = 1;
+
+	repo = xmalloc (strlen (toplevel_repos)
+			+ 10);
+	strcpy (repo, toplevel_repos);
+	r = repo + strlen (repo);
+	if (r[-1] != '.' || r[-2] != '/')
+	    strcpy (r, "/.");
+
+	Create_Admin (".", ".", repo, (char *) NULL,
+		      (char *) NULL, 0, 1, 1);
+
+	free (repo);
+    }
+
+    if (CVS_CHDIR (dir_name) < 0)
+    {
+	char *dir;
+	char *dirp;
+	
+	if (! existence_error (errno))
+	    error (1, errno, "could not chdir to %s", dir_name);
+	
+	/* Directory does not exist, we need to create it.  */
+	newdir = 1;
+
+	/* Provided we are willing to assume that directories get
+	   created one at a time, we could simplify this a lot.
+	   Do note that one aspect still would need to walk the
+	   dir_name path: the checking for "fncmp (dir, CVSADM)".  */
+
+	dir = xmalloc (strlen (dir_name) + 1);
+	dirp = dir_name;
+	rdirp = reposdirname;
+
+	/* This algorithm makes nested directories one at a time
+	   and create CVS administration files in them.  For
+	   example, we're checking out foo/bar/baz from the
+	   repository:
+
+	   1) create foo, point CVS/Repository to <root>/foo
+	   2)     .. foo/bar                   .. <root>/foo/bar
+	   3)     .. foo/bar/baz               .. <root>/foo/bar/baz
+	   
+	   As you can see, we're just stepping along DIR_NAME (with
+	   DIRP) and REPOSDIRNAME (with RDIRP) respectively.
+
+	   We need to be careful when we are checking out a
+	   module, however, since DIR_NAME and REPOSDIRNAME are not
+	   going to be the same.  Since modules will not have any
+	   slashes in their names, we should watch the output of
+	   STRCHR to decide whether or not we should use STRCHR on
+	   the RDIRP.  That is, if we're down to a module name,
+	   don't keep picking apart the repository directory name.  */
+
+	do
 	{
-	    toplevel_wd = xgetwd ();
-	    if (toplevel_wd == NULL)
-		error (1, errno, "could not get working directory");
-	}
-
-	if (CVS_CHDIR (toplevel_wd) < 0)
-	    error (1, errno, "could not chdir to %s", toplevel_wd);
-	newdir = 0;
-
-	/* Create the CVS directory at the top level if needed.  The
-	   isdir seems like an unneeded system call, but it *does*
-	   need to be called both if the CVS_CHDIR below succeeds
-	   (e.g.  "cvs co .") or if it fails (e.g. basicb-1a in
-	   testsuite).  We only need to do this for the "." case,
-	   since the server takes care of forcing this directory to be
-	   created in all other cases.  If we don't create CVSADM
-	   here, the call to Entries_Open below will fail.  FIXME:
-	   perhaps this means that we should change our algorithm
-	   below that calls Create_Admin instead of having this code
-	   here? */
-	if (/* I think the reposdirname_absolute case has to do with
-	       things like "cvs update /foo/bar".  In any event, the
-	       code below which tries to put toplevel_repos into
-	       CVS/Repository is almost surely unsuited to
-	       the reposdirname_absolute case.  */
-	    !reposdirname_absolute
-	    && (strcmp (dir_name, ".") == 0)
-	    && ! isdir (CVSADM))
-	{
-	    char *repo;
-	    char *r;
-
-	    newdir = 1;
-
-	    repo = xmalloc (strlen (toplevel_repos)
-			    + 10);
-	    strcpy (repo, toplevel_repos);
-	    r = repo + strlen (repo);
-	    if (r[-1] != '.' || r[-2] != '/')
-	        strcpy (r, "/.");
-
-	    Create_Admin (".", ".", repo, (char *) NULL,
-			  (char *) NULL, 0, 1, 1);
-
-	    free (repo);
-	}
-
-	if ( CVS_CHDIR (dir_name) < 0)
-	{
-	    char *dir;
-	    char *dirp;
-	    
-	    if (! existence_error (errno))
-		error (1, errno, "could not chdir to %s", dir_name);
-	    
-	    /* Directory does not exist, we need to create it.  */
-	    newdir = 1;
-
-	    /* Provided we are willing to assume that directories get
-	       created one at a time, we could simplify this a lot.
-	       Do note that one aspect still would need to walk the
-	       dir_name path: the checking for "fncmp (dir, CVSADM)".  */
-
-	    dir = xmalloc (strlen (dir_name) + 1);
-	    dirp = dir_name;
-	    rdirp = reposdirname;
-
-	    /* This algorithm makes nested directories one at a time
-               and create CVS administration files in them.  For
-               example, we're checking out foo/bar/baz from the
-               repository:
-
-	       1) create foo, point CVS/Repository to <root>/foo
-	       2)     .. foo/bar                   .. <root>/foo/bar
-	       3)     .. foo/bar/baz               .. <root>/foo/bar/baz
-	       
-	       As you can see, we're just stepping along DIR_NAME (with
-	       DIRP) and REPOSDIRNAME (with RDIRP) respectively.
-
-	       We need to be careful when we are checking out a
-	       module, however, since DIR_NAME and REPOSDIRNAME are not
-	       going to be the same.  Since modules will not have any
-	       slashes in their names, we should watch the output of
-	       STRCHR to decide whether or not we should use STRCHR on
-	       the RDIRP.  That is, if we're down to a module name,
-	       don't keep picking apart the repository directory name.  */
-
-	    do
+	    dirp = strchr (dirp, '/');
+	    if (dirp)
 	    {
-		dirp = strchr (dirp, '/');
-		if (dirp)
-		{
-		    strncpy (dir, dir_name, dirp - dir_name);
-		    dir[dirp - dir_name] = '\0';
-		    /* Skip the slash.  */
-		    ++dirp;
-		    if (rdirp == NULL)
-			/* This just means that the repository string has
-			   fewer components than the dir_name string.  But
-			   that is OK (e.g. see modules3-8 in testsuite).  */
-			;
-		    else
-			rdirp = strchr (rdirp, '/');
-		}
-		else
-		{
-		    /* If there are no more slashes in the dir name,
-                       we're down to the most nested directory -OR- to
-                       the name of a module.  In the first case, we
-                       should be down to a DIRP that has no slashes,
-                       so it won't help/hurt to do another STRCHR call
-                       on DIRP.  It will definitely hurt, however, if
-                       we're down to a module name, since a module
-                       name can point to a nested directory (that is,
-                       DIRP will still have slashes in it.  Therefore,
-                       we should set it to NULL so the routine below
-                       copies the contents of REMOTEDIRNAME onto the
-                       root repository directory (does this if rdirp
-                       is set to NULL, because we used to do an extra
-                       STRCHR call here). */
-
-		    rdirp = NULL;
-		    strcpy (dir, dir_name);
-		}
-
-		if (fncmp (dir, CVSADM) == 0)
-		{
-		    error (0, 0, "cannot create a directory named %s", dir);
-		    error (0, 0, "because CVS uses \"%s\" for its own uses",
-			   CVSADM);
-		    error (1, 0, "rename the directory and try again");
-		}
-
-		if (mkdir_if_needed (dir))
-		{
-		    /* It already existed, fine.  Just keep going.  */
-		}
-		else if (strcmp (command_name, "export") == 0)
-		    /* Don't create CVSADM directories if this is export.  */
+		strncpy (dir, dir_name, dirp - dir_name);
+		dir[dirp - dir_name] = '\0';
+		/* Skip the slash.  */
+		++dirp;
+		if (rdirp == NULL)
+		    /* This just means that the repository string has
+		       fewer components than the dir_name string.  But
+		       that is OK (e.g. see modules3-8 in testsuite).  */
 		    ;
 		else
-		{
-		    /*
-		     * Put repository in CVS/Repository.  For historical
-		     * (pre-CVS/Root) reasons, this is an absolute pathname,
-		     * but what really matters is the part of it which is
-		     * relative to cvsroot.
-		     */
-		    char *repo;
-		    char *r, *b;
-
-		    repo = xmalloc (strlen (reposdirname)
-				    + strlen (toplevel_repos)
-				    + 80);
-		    if (reposdirname_absolute)
-			r = repo;
-		    else
-		    {
-			strcpy (repo, toplevel_repos);
-			strcat (repo, "/");
-			r = repo + strlen (repo);
-		    }
-
-		    if (rdirp)
-		    {
-			/* See comment near start of function; the only
-			   way that the server can put the right thing
-			   in each CVS/Repository file is to create the
-			   directories one at a time.  I think that the
-			   CVS server has been doing this all along.  */
-			error (0, 0, "\
-warning: server is not creating directories one at a time");
-			strncpy (r, reposdirname, rdirp - reposdirname);
-			r[rdirp - reposdirname] = '\0';
-		    }
-		    else
-			strcpy (r, reposdirname);
-
-		    Create_Admin (dir, dir, repo,
-				  (char *)NULL, (char *)NULL, 0, 0, 1);
-		    free (repo);
-
-		    b = strrchr (dir, '/');
-		    if (b == NULL)
-			Subdir_Register ((List *) NULL, (char *) NULL, dir);
-		    else
-		    {
-			*b = '\0';
-			Subdir_Register ((List *) NULL, dir, b + 1);
-			*b = '/';
-		    }
-		}
-
-		if (rdirp != NULL)
-		{
-		    /* Skip the slash.  */
-		    ++rdirp;
-		}
-
-	    } while (dirp != NULL);
-	    free (dir);
-	    /* Now it better work.  */
-	    if ( CVS_CHDIR (dir_name) < 0)
-		error (1, errno, "could not chdir to %s", dir_name);
-	}
-	else if (strcmp (command_name, "export") == 0)
-	    /* Don't create CVSADM directories if this is export.  */
-	    ;
-	else if (!isdir (CVSADM))
-	{
-	    /*
-	     * Put repository in CVS/Repository.  For historical
-	     * (pre-CVS/Root) reasons, this is an absolute pathname,
-	     * but what really matters is the part of it which is
-	     * relative to cvsroot.
-	     */
-	    char *repo;
-
-	    if (reposdirname_absolute)
-		repo = reposdirname;
+		    rdirp = strchr (rdirp, '/');
+	    }
 	    else
 	    {
+		/* If there are no more slashes in the dir name,
+		   we're down to the most nested directory -OR- to
+		   the name of a module.  In the first case, we
+		   should be down to a DIRP that has no slashes,
+		   so it won't help/hurt to do another STRCHR call
+		   on DIRP.  It will definitely hurt, however, if
+		   we're down to a module name, since a module
+		   name can point to a nested directory (that is,
+		   DIRP will still have slashes in it.  Therefore,
+		   we should set it to NULL so the routine below
+		   copies the contents of REMOTEDIRNAME onto the
+		   root repository directory (does this if rdirp
+		   is set to NULL, because we used to do an extra
+		   STRCHR call here). */
+
+		rdirp = NULL;
+		strcpy (dir, dir_name);
+	    }
+
+	    if (fncmp (dir, CVSADM) == 0)
+	    {
+		error (0, 0, "cannot create a directory named %s", dir);
+		error (0, 0, "because CVS uses \"%s\" for its own uses",
+		       CVSADM);
+		error (1, 0, "rename the directory and try again");
+	    }
+
+	    if (mkdir_if_needed (dir))
+	    {
+		/* It already existed, fine.  Just keep going.  */
+	    }
+	    else if (strcmp (command_name, "export") == 0)
+		/* Don't create CVSADM directories if this is export.  */
+		;
+	    else
+	    {
+		/*
+		 * Put repository in CVS/Repository.  For historical
+		 * (pre-CVS/Root) reasons, this is an absolute pathname,
+		 * but what really matters is the part of it which is
+		 * relative to cvsroot.
+		 */
+		char *repo;
+		char *r, *b;
+
 		repo = xmalloc (strlen (reposdirname)
 				+ strlen (toplevel_repos)
-				+ 10);
-		strcpy (repo, toplevel_repos);
-		strcat (repo, "/");
-		strcat (repo, reposdirname);
+				+ 80);
+		if (reposdirname_absolute)
+		    r = repo;
+		else
+		{
+		    strcpy (repo, toplevel_repos);
+		    strcat (repo, "/");
+		    r = repo + strlen (repo);
+		}
+
+		if (rdirp)
+		{
+		    /* See comment near start of function; the only
+		       way that the server can put the right thing
+		       in each CVS/Repository file is to create the
+		       directories one at a time.  I think that the
+		       CVS server has been doing this all along.  */
+		    error (0, 0, "\
+warning: server is not creating directories one at a time");
+		    strncpy (r, reposdirname, rdirp - reposdirname);
+		    r[rdirp - reposdirname] = '\0';
+		}
+		else
+		    strcpy (r, reposdirname);
+
+		Create_Admin (dir, dir, repo,
+			      (char *)NULL, (char *)NULL, 0, 0, 1);
+		free (repo);
+
+		b = strrchr (dir, '/');
+		if (b == NULL)
+		    Subdir_Register ((List *) NULL, (char *) NULL, dir);
+		else
+		{
+		    *b = '\0';
+		    Subdir_Register ((List *) NULL, dir, b + 1);
+		    *b = '/';
+		}
 	    }
 
-	    Create_Admin (".", ".", repo, (char *)NULL, (char *)NULL, 0, 1, 1);
-	    if (repo != reposdirname)
-		free (repo);
+	    if (rdirp != NULL)
+	    {
+		/* Skip the slash.  */
+		++rdirp;
+	    }
+
+	} while (dirp != NULL);
+	free (dir);
+	/* Now it better work.  */
+	if ( CVS_CHDIR (dir_name) < 0)
+	    error (1, errno, "could not chdir to %s", dir_name);
+    }
+    else if (strcmp (command_name, "export") == 0)
+	/* Don't create CVSADM directories if this is export.  */
+	;
+    else if (!isdir (CVSADM))
+    {
+	/*
+	 * Put repository in CVS/Repository.  For historical
+	 * (pre-CVS/Root) reasons, this is an absolute pathname,
+	 * but what really matters is the part of it which is
+	 * relative to cvsroot.
+	 */
+	char *repo;
+
+	if (reposdirname_absolute)
+	    repo = reposdirname;
+	else
+	{
+	    repo = xmalloc (strlen (reposdirname)
+			    + strlen (toplevel_repos)
+			    + 10);
+	    strcpy (repo, toplevel_repos);
+	    strcat (repo, "/");
+	    strcat (repo, reposdirname);
 	}
 
-	if (strcmp (command_name, "export") != 0)
+	Create_Admin (".", ".", repo, (char *)NULL, (char *)NULL, 0, 1, 1);
+	if (repo != reposdirname)
+	    free (repo);
+    }
+
+    if (strcmp (command_name, "export") != 0)
+    {
+	last_entries = Entries_Open (0, dir_name);
+
+	/* If this is a newly created directory, we will record
+	   all subdirectory information, so call Subdirs_Known in
+	   case there are no subdirectories.  If this is not a
+	   newly created directory, it may be an old working
+	   directory from before we recorded subdirectory
+	   information in the Entries file.  We force a search for
+	   all subdirectories now, to make sure our subdirectory
+	   information is up to date.  If the Entries file does
+	   record subdirectory information, then this call only
+	   does list manipulation.  */
+	if (newdir)
+	    Subdirs_Known (last_entries);
+	else
 	{
-	    last_entries = Entries_Open (0, dir_name);
+	    List *dirlist;
 
-	    /* If this is a newly created directory, we will record
-	       all subdirectory information, so call Subdirs_Known in
-	       case there are no subdirectories.  If this is not a
-	       newly created directory, it may be an old working
-	       directory from before we recorded subdirectory
-	       information in the Entries file.  We force a search for
-	       all subdirectories now, to make sure our subdirectory
-	       information is up to date.  If the Entries file does
-	       record subdirectory information, then this call only
-	       does list manipulation.  */
-	    if (newdir)
-		Subdirs_Known (last_entries);
-	    else
-	    {
-		List *dirlist;
-
-		dirlist = Find_Directories ((char *) NULL, W_LOCAL,
-					    last_entries);
-		dellist (&dirlist);
-	    }
+	    dirlist = Find_Directories ((char *) NULL, W_LOCAL,
+					last_entries);
+	    dellist (&dirlist);
 	}
     }
-    else
-	free (dir_name);
     free (reposdirname);
     (*func) (data, last_entries, short_pathname, filename);
+    if (last_entries != NULL)
+	Entries_Close (last_entries);
+    free (dir_name);
     free (short_pathname);
     free (reposname);
 }
@@ -2873,6 +2857,8 @@ get_server_responses( void )
     return 0;
 }
 
+
+
 /* Get the responses and then close the connection.  */
 
 /*
@@ -2890,12 +2876,6 @@ get_responses_and_close( void )
 {
     int errs = get_server_responses ();
     int status;
-
-    if (last_entries != NULL)
-    {
-	Entries_Close (last_entries);
-	last_entries = NULL;
-    }
 
     /* The following is necessary when working with multiple cvsroots, at least
      * with commit.  It used to be buried nicely in do_deferred_progs() before
@@ -3489,9 +3469,6 @@ start_server( void )
     if (toplevel_repos != NULL)
 	free (toplevel_repos);
     toplevel_repos = NULL;
-    if (last_dir_name != NULL)
-	free (last_dir_name);
-    last_dir_name = NULL;
     if (last_repos != NULL)
 	free (last_repos);
     last_repos = NULL;
