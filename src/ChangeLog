@@ -1,12 +1,16 @@
 2005-02-25  Derek Price  <derek@ximbiot.com>
 
+	* client.c (send_modified): Suppress a -Wall warning.
+
+2005-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (global_session_id): New global declaration.
 	* import.c (add_rcs_file), rcs.c (RCS_checkin): Save commitid.
 	* log.c (log_version), status.c (status_fileproc): Output commitid.
 	* main.c (global_session_id): Define new global.
 	(main): Create session ID.
 	* sanity.sh: Update to compensate.
-        (Original patch from Frank Hemer <frank@hemer.org>.)
+	(Original patch from Frank Hemer <frank@hemer.org>.)
 
 2005-02-24 Derek Price <derek@ximbiot.com>
 
