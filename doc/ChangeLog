@@ -1,3 +1,8 @@
+2003-11-13  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.texinfo (Reverting local changes): Use the same vendor tag
+	in the admin command as was used in the previous import commands.
+
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.
