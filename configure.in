@@ -195,7 +195,10 @@ AC_REPLACE_FUNCS(\
 	waitpid \
 )
 
-
+#
+# Special hack for a SunOS 5.7 (aka Solaris 7) select() problem.
+#
+ccvs_FUNC_SELECT
 
 #
 # Begin GNULIB stuff.

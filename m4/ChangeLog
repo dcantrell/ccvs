@@ -1,3 +1,8 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sunos57-select.m4: New file. Work around Solaris 7 select()
+	hang.
+
 2004-10-18  Derek Price  <derek@ximbiot.com>
 
 	* getopt.m4: Update file from GNULIB.

@@ -1,3 +1,9 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sunos57-select.c: New file. Work around Solaris 7 select()
+	hang.
+	* Makefile.in: Regenerate for new configure.in.
+
 2004-10-18  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Define DEVNULL here when necessary.  Don't include

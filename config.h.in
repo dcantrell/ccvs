@@ -1006,6 +1006,9 @@
    supported. Do not define if restrict is supported directly. */
 #undef restrict
 
+/* Define to rpl_select if the replacement function should be used. */
+#undef select
+
 /* Define to empty if the C compiler doesn't support this keyword. */
 #undef signed
 

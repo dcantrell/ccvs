@@ -1,3 +1,7 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2004-10-20  Derek Price  <derek@ximbiot.com>
 
 	* validate_repo.in: Minor changes to help text.
