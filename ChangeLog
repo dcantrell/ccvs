@@ -1,5 +1,10 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dep: Regenerated for lib/lib.dsp change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Retroactively add CVE issue name for the piped etc issue.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
