@@ -1,3 +1,12 @@
+2004-10-21  Mark D. Baushke  <mdb@cvshome.org>
+
+	* add.c (add): Pay attention to cvswrite mode when resurrecting a
+	file that was not yet committed.
+	(Report from Frank Hemer <frank@hemer.org>.)
+	* sanity.sh (resurrection): Add new tests to deal with read-only
+	mode on a cvs add durring a resurrection. Verify that -r is not
+	honored when the resurrected file must be committed to be seen.
+
 2004-10-21 Derek Price <derek@ximbiot.com>
 
 	* ls.c (ls_fileproc): Deal with files specified on the command line.

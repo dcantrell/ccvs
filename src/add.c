@@ -611,7 +611,7 @@ add (int argc, char **argv)
 					   vers->vn_user, vers->tag,
 					   vers->options, RUN_TTY,
 					   NULL, NULL);
-		    xchmod (finfo.file, 1);
+		    xchmod (finfo.file, cvswrite);
 		    if (status != 0)
 		    {
 			error (0, 0, "Failed to resurrect revision %s.",
