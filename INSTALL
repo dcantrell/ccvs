@@ -116,37 +116,17 @@ Installation under Unix:
     pages in sub-directory "man", and libraries in sub-directory "lib".
 
     This release of CVS also requires RCS commands to be installed in
-    the user's PATH (or a path you have configured in src/options.h).
-    If you don't have RCS, you will need to get it from GNU as well.  It
-    is best to get the version 5.7 (or later) version of RCS, available
-    from prep.ai.mit.edu in the file pub/gnu/rcs-5.7.tar.gz.  It is best
-    (although not essential) to avoid RCS versions 5.6.[5-7] beta
-    because the rcsmerge therein defaults to -A instead of -E which
-    affects the way CVS handles conflicts (this is fixed in RCS 5.6.8
-    and RCS 5.7).
+    the user's PATH (or a path you have configured in src/options.h,
+    or a path specified with the -b option).  If you don't have RCS,
+    you will need to get it from GNU as well.  It is best to get the
+    version 5.7 (or later) version of RCS, available from
+    prep.ai.mit.edu in the file pub/gnu/rcs-5.7.tar.gz.
 
-    Along with RCS, you will want to run GNU diffutils.  This will allow
-    revision control of files with binary data (a real nice feature).
-    You will need at least version 1.15 of GNU diff for this to work.
-    The current version of GNU diffutils is 2.7, and it is also
-    available from prep.ai.mit.edu in the file pub/gnu/diffutils-2.7.tar.gz.
-
-    WARNING:  Be sure that you (have) configure(d) RCS to work correctly
-    with GNU diff to avoid other configuration problems.
-
-    Configure will attempt to discern the location of your most capable
-    version of diff, and tries to find the GNU Diffutils version first.
-    You can explicitly tell configure to use the diffutils that's
-    installed in the same place you intend to install CVS:
-
-	$ ./configure --with-diffutils
-
-    Or, if you've installed it somewhere else, you can give configure
-    the full pathname:
-
-	$ ./configure --with-diffutils=/usr/gnu/bin/diff
-
-    If you are using the remote client, you will need patch installed.
+    If you want version control of files with binary data, make sure
+    that the RCS configure script finds GNU diff 1.15 or later and
+    notices that diff supports the -a option.  CVS itself is much less
+    picky about which version of diff it uses, and you shouldn't need
+    to worry about that.
 
     NOTE: The configure program will cache the results of the previous
     configure execution.  If you need to re-run configure from scratch, you
@@ -197,9 +177,7 @@ Installation under Unix:
     invocation locations of programs like DIFF, GREP, RM, and SORT.
     Also glance at the default values for the environment variables
     that CVS uses, in particular, the RCSBIN variable, which holds the
-    path to where the RCS programs live on your system.  The
-    likelihood is that you don't have to change anything here, except
-    perhaps adding the -a option to DIFF if you are using GNU diff.
+    path to where the RCS programs live on your system.
 
 3)  Try to build it:
 
@@ -334,7 +312,6 @@ Supported options are:
 	--exec_prefix=DIR	If you want executables in a
 				host-dependent place and shared
 				things in a host-independent place.
-	--with-diffutils[=PATH]	Assume use of GNU diffutils is possible.
 
 The following environment variables override configure's default
 behaviour:
