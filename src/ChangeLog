@@ -1,3 +1,10 @@
+Fri Oct 25 07:52:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* logmsg.c (logfile_write): Give an error for several cases which
+	should not be legal.  Adjust comments accordingly.
+	* mkmodules.c (loginfo_contents): Make description of loginfo much
+	more concise.  This should be a reminder, not full documentation.
+
 Tue Oct 22 10:37:37 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* commit.c (update_delproc): free structure members rev_old and

@@ -495,6 +495,11 @@ title_proc (p, closure)
 		    (void) strcat (str_list, (li->rev_new
 					      ? li->rev_new : "NONE"));
 		    break;
+		/* All other characters, we insert an empty field (but
+		   we do put in the comma separating it from other
+		   fields).  This way if future CVS versions add formatting
+		   characters, one can write a loginfo file which at least
+		   won't blow up on an old CVS.  */
 		}
 		if (*(c + 1) != '\0')
 		    (void) strcat (str_list, ",");
@@ -550,10 +555,9 @@ logfile_write (repository, filter, message, logfp, changes)
 
        The solution is to allow a format string that allows us to
        specify those other pieces of information.  The format string
-       will be composed of a `%' followed by a space, or followed by a
-       single format character, or followed by a set of format
-       characters surrounded by `{' and `}' as separators.  The format
-       characters are:
+       will be composed of `%' followed by a single format character,
+       or followed by a set of format characters surrounded by `{' and
+       `}' as separators.  The format characters are:
 
          s = file name
 	 V = old version number (pre-checkin)
@@ -561,7 +565,7 @@ logfile_write (repository, filter, message, logfp, changes)
 
        For example, valid format strings are:
 
-         %
+         %{}
 	 %s
 	 %{s}
 	 %{sVv}
@@ -571,10 +575,6 @@ logfile_write (repository, filter, message, logfp, changes)
        etc.]) -- the code modifications would be minimal (logmsg.c
        (title_proc) and commit.c (check_fileproc)).
 
-       If a space appears after the `%' character (that is, the
-       percent sign appears by itself), only the name of the
-       repository will be generated.
-	 
        The output will be a string of tokens separated by spaces.  For
        backwards compatibility, the the first token will be the
        repository name.  The rest of the tokens will be
@@ -606,8 +606,13 @@ logfile_write (repository, filter, message, logfp, changes)
 
 	if ((*(fmt_percent + 1) == ' ') || (*(fmt_percent + 1) == '\0'))
 	{
-	    /* The percent stands alone. */
+	    /* The percent stands alone.  This is an error.  We could
+	       be treating ' ' like any other formatting character, but
+	       using it as a formatting character seems like it would be
+	       a mistake.  */
 
+	    /* Would be nice to also be giving the line number.  */
+	    error (0, 0, "loginfo: '%%' not followed by formatting character");
 	    fmt_begin = fmt_percent + 1;
 	    fmt_end = fmt_begin;
 	    fmt_continue = fmt_begin;
@@ -629,13 +634,16 @@ logfile_write (repository, filter, message, logfp, changes)
 		/* There was no close brace -- assume that format
                    string continues to the end of the line. */
 
+		/* Would be nice to also be giving the line number.  */
+		error (0, 0, "loginfo: '}' missing");
 		fmt_end = fmt_begin + strlen (fmt_begin);
 		fmt_continue = fmt_end;
 	    }
 	}
 	else
 	{
-	    /* The percent has a single character following it. */
+	    /* The percent has a single character following it.  FIXME:
+	       %% should expand to a regular percent sign.  */
 
 	    fmt_begin = fmt_percent + 1;
 	    fmt_end = fmt_begin + 1;
