@@ -1,3 +1,13 @@
+2003-03-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* commit.c (check_fileproc): Remove unused variables.
+
+	* patch.c (patch): Pass local to do_module so that -l actually works.
+	(Reported by John Coers <coers@intrinsity.com>.)
+	(patch_fileproc): Fix uninitialized variables.
+	* sanity.sh: Define a DATE pattern for rdiff and use it.
+	(basic2-24a): New test for above.
+
 2003-03-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* entries.c (WriteTemplate): New function to control updates to
