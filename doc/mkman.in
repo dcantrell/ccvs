@@ -25,22 +25,41 @@ use IO::File;
 
 
 
-# Return replacement for \@$keyword{$content}.
-sub do_keyword
+sub keyword_mode
 {
-		my ($keyword, $content) = @_;
+	my ($keyword) = @_;
 
-		return "see node \`$content\\(aq in the CVS manual"
-			if $keyword =~ /^(p?x)?ref$/;
-		return "\\fB$content\\fP"
-			if $keyword =~ /^(strong|sc|code|file|samp)$/;
-		return "\\fI$content\\fP"
-						if $keyword =~ /^(emph|var|dfn)$/;
+	return "\\fR"
+		if $keyword =~ /^(|r|t)$/;
+	return "\\fB"
+		if $keyword =~ /^(strong|sc|code|file|samp)$/;
+	return "\\fI"
+		if $keyword =~ /^(emph|var|dfn)$/;
+	die "no handler for keyword $keyword\n";
 }
 
 
 
-my $texi_num = 0;
+# Return replacement for \@$keyword{$content}.
+sub do_keyword
+{
+	my ($parent, $keyword, $content) = @_;
+
+	return "see node \`$content\\(aq in the CVS manual"
+		if $keyword =~ /^(p?x)?ref$/;
+	return "\\fP\\fP$content"
+		if $keyword =~ /^splitrcskeyword$/;
+
+	my $endmode = keyword_mode $parent;
+	my $startmode = keyword_mode $keyword;
+
+	return "$startmode$content$endmode";
+}
+
+
+
+my $texi_num = 0; # Keep track of how many texinfo files have been encountered.
+my @parent;       # This needs to be global to be used inside of a regex later.
 for my $file (@ARGV)
 {
 	my $fh = new IO::File "< $file"
@@ -124,9 +143,7 @@ for my $file (@ARGV)
 			s/\@\@/\@/g;
 
 			# Preserve the newline.
-			print qq{.IP "" $indent\n};
-			print $_;
-			next;
+			$_ = qq{.IP "" $indent\n} . $_;
 		}
 
 		# Compress blank lines into a single line.  This and its
@@ -159,6 +176,9 @@ for my $file (@ARGV)
 		# It's okay to ignore this keyword - we're not using any
 		# first-line indent commands at all.
 		next if s/^\@noindent\s*$//;
+
+		# @need is only significant in printed manuals.
+		next if s/^\@need\s+.*$//;
 
 		# If we didn't hit the previous check and $inblank is set, then
 		# we just finished with some number of blanks.  Print the man
@@ -232,17 +252,23 @@ for my $file (@ARGV)
 		# Trap keywords
 		my $nk = qr/
 				\@(\w+)\{
-				(
+				(?{ push @parent, $1 })       # Keep track of the last keyword
+				                              # keyword we encountered.
+				((?:
 					(?> (?:[^{}]|(?<=\@)[{}])*) # Non-braces without backtracking
 						|
 					(??{ $nk })                 # Nested keywords
-				)
+				)*)
 				\}
+				(?{ pop (@parent) })            # Lose track of the current keyword.
 			/x;
 
-		while (s/$nk/do_keyword($1, $2)/e)
+		@parent = ("");
+		while (s/$nk/do_keyword pop (@parent), $1, $2/e)
 		{
-			# Do nothing - the replacement above is handling it.
+			# Do nothing except replace our last-replacement tracker -
+			# the replacement regex above is handling everything else.
+			@parent = ("");
 		}
 
 		if (/\@\w+\{/)
