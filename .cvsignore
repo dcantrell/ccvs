@@ -5,6 +5,7 @@ config.cache
 config.h
 config.log
 config.status
+cvs-*.spec
 cvs-*.tar.gz
 cvsinit
 cvsnt.vcp
