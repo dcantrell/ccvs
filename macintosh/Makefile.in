@@ -1,3 +1,11 @@
+#### Under MacOS and CodeWarrier, we use project files, not
+#### this makefile.  However, we need this file in order for 'make
+#### dist' to work properly on Unix machines.
+
+srcdir     = @srcdir@
+top_srcdir = @top_srcdir@
+cvs_srcdir = @top_srcdir@/src
+VPATH      = @srcdir@
 
 SHELL = /bin/sh
 
@@ -9,12 +17,14 @@ HEADERS = \
   config.h \
   options.h \
   maccvs.pch
+  
 SOURCES = \
   macos_filesys.c \
   pwd.c \
   rcmd.c \
   run.c \
   server_if.c
+  
 DISTFILES = \
   ${HEADERS} \
   ${SOURCES} \
@@ -22,7 +32,8 @@ DISTFILES = \
   Makefile.in \
   services \
   maccvs.rsrc.sit.hqx \
-  maccvs_projects.sit.hqx
+  maccvs165.patch \
+  maccvs.projects.sit.hqx
 
 all:
 
@@ -46,7 +57,7 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
+		ln $(srcdir)/$${i} ${DISTDIR}; \
 	done
 
 clean:

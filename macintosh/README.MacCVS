@@ -1,16 +1,19 @@
+NOTE: this port is still in progress and should not be considered a
+      finished product.  Use at your own risk.
+
 __________________________________
 MacOS / Concurrent Versions System (CVS)
-Current Mac port version: d3
+Current Mac port version: d5
 
 Mike Ladwig <mike@twinpeaks.prc.com>
 __________________________________
 
-This is a port of the CVS client (1.6.1 ) to MacOS.
+This is a port of the CVS client (1.6.5 ) to MacOS.
 
 1. Setup
 
 In order to use this, you must be willing to consider the Macintosh 
-a trusted host to the UN*X box where the CVS 1.6.1 server resides.
+a trusted host to the UN*X box where the CVS 1.6.3 server resides.
 This is a really dumb thing to do if you have any security concerns.
 I don't, so I can live with the problem.
 
@@ -57,12 +60,27 @@ and make the changes you want.
 3. Building MacCVS
 
 I have included the the two MacCVS project files as a binhex stuffit
-archive ('maccvs_projects.sit.hqx').   Copy them out to the folder above
-the cvs-1.6.1 folder.
+archive ('maccvs.projects.sit.hqx').  You will also have to extract the
+MacCVS resource file (maccvs.rsrc.sit.hqx).
 
-You may have to fiddle with the access paths.  I have a "Projects" folder,
-where I have the cvs-1.6.1 folder, the CWGUSI folder, and the MacCVS
-project files.
+**** Note for the intrim release (pre- cvs baseline integration):  You must apply
+**** the maccvs-165.patch file to the base cvs 1.6.5 distribution with GNU patch.
+**** Hopefully this patch will be applied and part of the base distribution soon,
+**** it has not yet been accepted by the cvs maintainers.
+
+If you are building MacCVS for an Open Transport system, you will need to
+work around a problem between OT and GUSI:
+
+Open the project file for GUSI (GUSI.PPC.µ).  In the file "GUSITCP.cp", find the ~TCPSocket (destructor) method.  Change the line:
+
+        pb->csCode                    = TCPClose;
+to:
+        pb->csCode                    = TCPAbort; 
+
+Recompile GUSI.
+
+You may also have to fiddle with the access paths.  I have a "Projects" folder,
+where I have the cvs-x.y.z folder and the CWGUSI folder.
 
 
 4. Feedback
@@ -72,7 +90,18 @@ Any ideas for improvements, stuff for the 'README.MacOS' file, or
 anything else would be appreciated.
 
 
-5. MacCVS History
+5. Pre mainstream distribution MacCVS History
+
+Wed Jan 10 11:40:32 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* CVS Code base updated to cvs-1.6.5 1/8/95 snapshot
+
+Fri Dec 27 14:20:12 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Cleanup of rcmd code, removing inappropriate tests
+	* CVS Code base updated to cvs-1.6.3 12/27/95 snapshot
+	* Again fixed(?) binary/text file handling.
+	* OT problem traced to GUSI - OT bug.  Corresponding with Matthias.
 
 Fri Dec 08 12:39:22 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
 

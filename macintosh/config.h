@@ -96,6 +96,7 @@
 #define CVS_STAT macos_stat
 #define CVS_RENAME macos_rename
 #define CVS_UNLINK macos_unlink
+#define CVS_CHMOD macos_chmod
 
 extern int macos_rename (const char *, const char *);
 extern int macos_stat (const char *, struct stat *);
@@ -107,6 +108,7 @@ extern int macos_creat( const char *path, mode_t mode );
 extern int macos_open( const char *path, int oflag, ... );
 extern int macos_mkdir( const char *path, int oflag );
 extern int macos_unlink (const char *);
+extern int macos_chmod( const char *path, mode_t mode );
 
 /* Kludges from pwd.c  */
 extern struct passwd *getpwnam (char *name);
@@ -129,6 +131,6 @@ extern void macos_start_server (int *tofd, int *fromfd,
 			      char *server_user,
 			      char *server_host,
 			      char *server_cvsroot);
-extern void macos_shutdown_server (int fd);
+extern void macos_shutdown_server (int to);
 
 

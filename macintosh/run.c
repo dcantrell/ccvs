@@ -5,6 +5,7 @@
  */
 
 #include <cvs.h>
+#include <stdio.h>
 
 void run_arg (const char *s) { }
 void run_print (FILE * fp) { }
@@ -16,5 +17,3 @@ int pclose(FILE *fp) { return 0; }
 int piped_child (char **, int *, int *) { return 0; }
 void close_on_exec (int) { }
 int filter_stream_through_program (int, int, char **, pid_t *) { return 0; }
-
-void convert_file (char *INFILE,  int INFLAGS, char *OUTFILE, int OUTFLAGS) { }
