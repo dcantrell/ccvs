@@ -1,5 +1,11 @@
 Thu Jan  4 09:58:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (find_fileproc): Print "nothing known about foo" and
+	return 1 if the file doesn't exist and isn't in CVS/Entries.
+	(commit): If the recursion over find_fileproc returns an error,
+	print "correct above errors first!" just like local CVS.
+	* sanity.sh (basica): Test for above-fixed bug.
+
 	* release.c (release): If we are the client, only unedit if the
 	server supports it.
 
