@@ -2946,8 +2946,8 @@ echo "default place for GSSAPI is $GSSAPI"
 
 
 echo $ac_n "checking for gssapi.h""... $ac_c" 1>&6
-hold_cflags=$CFLAGS
-CFLAGS="$CFLAGS -I$GSSAPI/include "
+hold_cppflags=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -I$GSSAPI/include "
 ac_safe=`echo "gssapi/gssapi.h" | tr './\055' '___'`
 echo $ac_n "checking for gssapi/gssapi.h""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
@@ -3029,7 +3029,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-CFLAGS=$hold_cflags
+CPPFLAGS=$hold_cppflags
 
 # Check whether --enable-encryption or --disable-encryption was given.
 if test "${enable_encryption+set}" = set; then
