@@ -566,8 +566,8 @@ isProxyServer (void)
     if (!hostname)
     {
 	hostname = xmalloc (MAXHOSTNAMELEN);
-	gethostname (hostname, sizeof hostname);
-	hostname[sizeof hostname - 1] = '\0';
+	gethostname (hostname, MAXHOSTNAMELEN);
+	hostname[MAXHOSTNAMELEN - 1] = '\0';
     }
     if (!strcmp (config->PrimaryServer->hostname, hostname)
 	&& !strcmp (config->PrimaryServer->directory,

@@ -1,3 +1,7 @@
+2004-10-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (isProxyServer): Fix hostname setup.
+
 2004-10-26 Derek Price <derek@ximbiot.com>
 
 	Call all exit handlers via atexit() & exit().  Signal handlers exit().
