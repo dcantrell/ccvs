@@ -44,7 +44,7 @@ static void RCS_deltas PROTO ((RCSNode *, FILE *, char *, enum rcs_delta_op,
 			       char **, size_t *, char **, size_t *));
 
 /* Routines for reading, parsing and writing RCS files. */
-static RCSVers *getdelta PROTO ((FILE *, char *));
+static RCSVers *getdelta PROTO ((FILE *, char *, char **, char **));
 static Deltatext *RCS_getdeltatext PROTO ((RCSNode *, FILE *));
 static void freedeltatext PROTO ((Deltatext *));
 
@@ -330,7 +330,7 @@ RCS_reparsercsfile (rdata, pfp)
 
     Node *q, *kv;
     RCSVers *vnode;
-    long fpos;
+    int gotkey;
     char *cp;
     char *key, *value;
 
@@ -351,15 +351,15 @@ RCS_reparsercsfile (rdata, pfp)
      * process all the special header information, break out when we get to
      * the first revision delta
      */
+    gotkey = 0;
     for (;;)
     {
-	fpos = ftell (fp);
-
 	/* get the next key/value pair */
 
 	/* if key is NULL here, then the file is missing some headers
 	   or we had trouble reading the file. */
-	if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
+	if ((gotkey ? 0 : getrcskey (fp, &key, &value, NULL) == -1)
+	    || key == NULL)
 	{
 	    if (ferror(fp))
 	    {
@@ -371,6 +371,8 @@ RCS_reparsercsfile (rdata, pfp)
 		       rcsfile);
 	    }
 	}
+
+	gotkey = 0;
 
 	/* Skip head and branch tags; we already have them. */
 	if (strcmp (key, RCSHEAD) == 0 || strcmp (key, RCSBRANCH) == 0)
@@ -389,7 +391,6 @@ RCS_reparsercsfile (rdata, pfp)
 	{
 	    if (value != NULL)
 		rdata->locks_data = xstrdup (value);
-	    fpos = ftell (fp);
 	    if (getrcskey (fp, &key, &value, NULL) >= 0 &&
 		strcmp (key, "strict") == 0 &&
 		value == NULL)
@@ -397,7 +398,7 @@ RCS_reparsercsfile (rdata, pfp)
 		rdata->strict_locks = 1;
 	    }
 	    else
-		(void) fseek (fp, fpos, SEEK_SET);
+		gotkey = 1;
 	    continue;
 	}
 
@@ -421,7 +422,7 @@ RCS_reparsercsfile (rdata, pfp)
 	 */
 	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 	     /* do nothing */ ;
-	if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
+	if (*cp == '\0' && strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) == 0)
 	    break;
 
 	if (strcmp (key, RCSDESC) == 0)
@@ -448,15 +449,11 @@ RCS_reparsercsfile (rdata, pfp)
 	/* if we haven't grabbed it yet, we didn't want it */
     }
 
-    /*
-     * we got out of the loop, so we have the first part of the first
-     * revision delta in our hand key=the revision and value=the date key and
-     * its value
-     */
-    /* First, seek back to the start of the delta block. */
-    (void) fseek (fp, fpos, SEEK_SET);
+    /* We got out of the loop, so we have the first part of the first
+       revision delta in KEY (the revision) and VALUE (the date key
+       and its value).  This is what getdelta expects to receive.  */
 
-    while ((vnode = getdelta (fp, rcsfile)) != NULL)
+    while ((vnode = getdelta (fp, rcsfile, &key, &value)) != NULL)
     {
 	/* get the node */
 	q = getnode ();
@@ -476,7 +473,8 @@ RCS_reparsercsfile (rdata, pfp)
 	}
     }
 
-    (void) getrcskey (fp, &key, &value, NULL);
+    /* Here KEY and VALUE are whatever caused getdelta to return NULL.  */
+
     if (key != NULL && strcmp (key, RCSDESC) == 0)
     {
 	if (rdata->desc != NULL)
@@ -774,13 +772,13 @@ rcsvers_delproc (p)
  *    o skip whitespace
  *    o fill in key with everything up to next white 
  *      space or semicolon 
- *    o if key == "desc" then key and data are NULL and return -1 
  *    o if key wasn't terminated by a semicolon, skip white space and fill 
  *      in value with everything up to a semicolon 
  *    o compress all whitespace down to a single space 
  *    o if a word starts with @, do funky rcs processing
  *    o strip whitespace off end of value or set value to NULL if it empty 
- *    o return 0 since we found something besides "desc"
+ *    o if we didn't get an EOF before the semicolon, return 0
+ *    o if we got an EOF, set *KEYP and *VALUEP to NULL, and return -1
  *
  * Sets *KEYP and *VALUEP to point to storage managed by the getrcskey
  * function; the contents are only valid until the next call to
@@ -5803,39 +5801,56 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	       rcs->path);
 }
 
+/* Read the information for a single delta from the RCS file FP, whose
+   name is RCSFILE.  *KEYP and *VALP are either NULL, or the first
+   key/value pair to read, as set by getrcskey. Return NULL if there
+   are no more deltas.  Store the key/value pair which terminated the
+   read in *KEYP and *VALP.  */
+
 static RCSVers *
-getdelta (fp, rcsfile)
+getdelta (fp, rcsfile, keyp, valp)
     FILE *fp;
     char *rcsfile;
+    char **keyp;
+    char **valp;
 {
     RCSVers *vnode;
     char *key, *value, *cp;
-    long fpos;
     Node *kv;
 
-    vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
-    memset (vnode, 0, sizeof (RCSVers));
-
-    /* Get revision number. This uses getrcskey because it doesn't
-       croak when encountering unexpected input.  As a result, we have
-       to play unholy games with `key' and `value'. */
-    fpos = ftell (fp);
-    getrcskey (fp, &key, &value, NULL);
+    /* Get revision number if it wasn't passed in. This uses getrcskey
+       because it doesn't croak when encountering unexpected input.
+       As a result, we have to play unholy games with `key' and
+       `value'. */
+    if (*keyp != NULL)
+    {
+	key = *keyp;
+	value = *valp;
+    }
+    else
+    {
+	if (getrcskey (fp, &key, &value, NULL) < 0)
+	    error (1, 0, "%s: unexpected EOF", rcsfile);
+    }
 
     /* Make sure that it is a revision number and not a cabbage 
        or something. */
     for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 	/* do nothing */ ;
-    if (*cp != '\0' || strncmp (RCSDATE, value, strlen (RCSDATE)) != 0)
+    if (*cp != '\0' || strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) != 0)
     {
-	(void) fseek (fp, fpos, SEEK_SET);
-	free (vnode);
+	*keyp = key;
+	*valp = value;
 	return NULL;
     }
+
+    vnode = (RCSVers *) xmalloc (sizeof (RCSVers));
+    memset (vnode, 0, sizeof (RCSVers));
+
     vnode->version = xstrdup (key);
 
     /* grab the value of the date from value */
-    cp = value + strlen (RCSDATE);/* skip the "date" keyword */
+    cp = value + (sizeof RCSDATE) - 1;	/* skip the "date" keyword */
     while (whitespace (*cp))		/* take space off front of value */
 	cp++;
 
@@ -5866,12 +5881,12 @@ unable to parse rcs file; `state' not in the expected place");
        are not there.  */
 
     /* fill in the branch list (if any branches exist) */
-    fpos = ftell (fp);
     (void) getrcskey (fp, &key, &value, NULL);
     /* FIXME: should be handling various error conditions better.  */
     if (key != NULL && strcmp (key, RCSDESC) == 0)
     {
-	(void) fseek (fp, fpos, SEEK_SET);
+	*keyp = key;
+	*valp = value;
 	return vnode;
     }
     if (value != (char *) NULL)
@@ -5881,12 +5896,12 @@ unable to parse rcs file; `state' not in the expected place");
     }
 
     /* fill in the next field if there is a next revision */
-    fpos = ftell (fp);
     (void) getrcskey (fp, &key, &value, NULL);
     /* FIXME: should be handling various error conditions better.  */
     if (key != NULL && strcmp (key, RCSDESC) == 0)
     {
-	(void) fseek (fp, fpos, SEEK_SET);
+	*keyp = key;
+	*valp = value;
 	return vnode;
     }
     if (value != (char *) NULL)
@@ -5899,7 +5914,6 @@ unable to parse rcs file; `state' not in the expected place");
     /* FIXME: Does not correctly handle errors, e.g. from stdio.  */
     while (1)
     {
-	fpos = ftell (fp);
 	if (getrcskey (fp, &key, &value, NULL) < 0)
 	    break;
 
@@ -5947,9 +5961,9 @@ unable to parse rcs file; `state' not in the expected place");
 	}
      }
 
-    /* We got here because we read beyond the end of a delta.  Seek back
-       to the beginning of the erroneous read. */
-    (void) fseek (fp, fpos, SEEK_SET);
+    /* Return the key which caused us to fail back to the caller.  */
+    *keyp = key;
+    *valp = value;
 
     return vnode;
 }
