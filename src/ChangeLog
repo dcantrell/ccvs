@@ -4,7 +4,8 @@ Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 	* client.c (read_line): Change input_index and result_size to size_t.
 	(update_entries): Remove unused variables buf2, size_left, size_read.
 	(handle_mode): Prototype.
-	* client.c, client.h (send_to_server, read_from_server): Change len to size_t.
+	* client.c, client.h (send_to_server, read_from_server): Change
+	len to size_t.
 	* client.c (send_to_server): Change wrtn to size_t.
 	(read_from_server): Change red to size_t.
 	* client.c, myndbm.c, edit.c, fileattr.c: Include getline.h.
@@ -12,7 +13,8 @@ Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 	* commit.c, update.c: Include edit.h.
 	* edit.c (onoff_filesdoneproc): Prototype.
 	(ncheck_fileproc,edit_fileproc): Change "return" to "return 0".
-	(notify_do): Cast a signed value to unsigned before comparing with unsigned.
+	(notify_do): Cast a signed value to unsigned before comparing
+	with unsigned value.
 
 Thu Dec 21 15:24:37 1995  Karl Fogel  <kfogel@occs.cs.oberlin.edu>
 
