@@ -1,3 +1,7 @@
+Sat Feb 10 11:18:37 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* cvs.texinfo (Variables): Fix @table commands.
+
 Fri Feb  9 17:31:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Variables): New node.
