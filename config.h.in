@@ -234,6 +234,9 @@
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
 
+/* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
+#undef HAVE_INTMAX_T
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -268,8 +271,14 @@
 /* Define to 1 if you have the `logout' function. */
 #undef HAVE_LOGOUT
 
+/* Define if you have the 'long double' type. */
+#undef HAVE_LONG_DOUBLE
+
 /* Define to 1 if you support file names longer than 14 characters. */
 #undef HAVE_LONG_FILE_NAMES
+
+/* Define if you have the 'long long' type. */
+#undef HAVE_LONG_LONG
 
 /* Define to 1 if `lstat' has the bug that it succeeds when given the
    zero-length file name argument. */
@@ -318,6 +327,9 @@
    pointers. */
 #undef HAVE_PRINTF_PTR
 
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
+
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 
@@ -363,6 +375,9 @@
 
 /* Define to 1 if you have the `sigvec' function. */
 #undef HAVE_SIGVEC
+
+/* Define to 1 if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
@@ -473,6 +488,9 @@
 /* Define to 1 if you have the `valloc' function. */
 #undef HAVE_VALLOC
 
+/* Define to 1 if you have the `vasnprintf' function. */
+#undef HAVE_VASNPRINTF
+
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
 
@@ -487,6 +505,15 @@
 
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
+
+/* Define if you have the 'wchar_t' type. */
+#undef HAVE_WCHAR_T
+
+/* Define to 1 if you have the `wcslen' function. */
+#undef HAVE_WCSLEN
+
+/* Define if you have the 'wint_t' type. */
+#undef HAVE_WINT_T
 
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
@@ -674,6 +701,9 @@
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef gid_t
 
+/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
+#undef intmax_t
+
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
 
@@ -692,6 +722,12 @@
 /* Define to equivalent of C99 restrict keyword, or to nothing if this is not
    supported. Do not define if restrict is supported directly. */
 #undef restrict
+
+/* Define to empty if the C compiler doesn't support this keyword. */
+#undef signed
+
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#undef size_t
 
 /* Define as a signed type of the same size as size_t. */
 #undef ssize_t
