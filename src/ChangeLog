@@ -1,3 +1,16 @@
+Mon Aug 19 18:13:32 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (linevector_init): Make inline.  Set lines_alloced to 0,
+	not 10.  Set vector to NULL.
+	(linevector_add): Remove assertion that lines_alloced is greater
+	than zero.  Initialize lines_alloced if necessary.
+	(linevector_copy): Initialize lines_alloced if necessary.
+	(linevector_free): Only free vector if it is not NULL.
+	(RCS_deltas): Always call linevector_init and linevector_free on
+	curlines, headlines, and trunklines.
+ 	(RCS_fast_checkout): Remove #if 0 around code that calls
+	RCS_deltas.
+
 Fri Aug 16 17:52:54 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (linevector_add): Handle zero length correctly.
