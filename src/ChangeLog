@@ -1,5 +1,11 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* patch.c (patch_proc): Avoid memory leak.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+	(patch_proc): Reformat a few long lines for readability.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* vers_ts.c (Version_TS): Move variable declaration inside the only
 	block where it is used and remove uneeded reinitialization.
 
