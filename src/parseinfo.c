@@ -436,6 +436,7 @@ warning: this CVS does not support PreservePermissions");
 	    }
 	}
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+#ifdef SECONDARY_SUPPORT
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
 	    PrimaryServer = parse_cvsroot (p);
@@ -494,6 +495,7 @@ warning: this CVS does not support PreservePermissions");
 	    MaxSecondaryBufferSize = strtoul (p, NULL, 10);
 	    MaxSecondaryBufferSize = xtimes (MaxSecondaryBufferSize, factor);
 	}
+#endif /* SECONDARY_SUPPORT */
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a

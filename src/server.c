@@ -709,6 +709,7 @@ reprocess_secondary_log (void)
 
 
 
+#if 0
 /* Relocate the bytes from SRC to the end of the file FD to DEST.  If
  * DEST < SRC, truncate the file.
  *
@@ -818,6 +819,7 @@ replace_file_offset (int fd, off_t offset, size_t rlen, void *buf, size_t len)
     if (lseek (fd, 0, SEEK_END) < 0)
 	error (1, errno, "Failed to set file position to EOF after replace");
 }
+#endif /* 0 */
 
 
 

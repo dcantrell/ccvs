@@ -1,5 +1,14 @@
 2004-08-05  Derek Price  <derek@ximbiot.com>
 
+	Beginnings of support for turning off writeproxy support (still broke.)
+	* cvs.h (PrimaryServer, MaxSecondaryBufferSize), main.c (PrimaryServer,
+	MaxSecondaryBufferSize), mkmodules.c (config_contents), parseinfo.c
+	(parse_config): Switch off when writeproxy support disabled.
+	* server.c (replace_file_offset, move_file_offset): Comment out
+	temporarily.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
 	* filesubr.c (copy_file): Don't fsync.  It's slow.
 
 2004-08-05  Derek Price  <derek@ximbiot.com>
