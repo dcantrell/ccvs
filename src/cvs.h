@@ -379,15 +379,17 @@ extern int noexec;		/* Don't modify disk anywhere */
 extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
 
-extern int top_level_admin;
+extern bool top_level_admin;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 extern bool UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-extern int ImportNewFilesToVendorBranchOnly;
+extern bool ImportNewFilesToVendorBranchOnly;
 #ifdef PROXY_SUPPORT
 extern cvsroot_t *PrimaryServer;
 extern size_t MaxProxyBufferSize;
 #endif /* PROXY_SUPPORT */
+extern size_t MaxCommentLeaderLength;
+extern bool UseArchiveCommentLeader;
 
 
 

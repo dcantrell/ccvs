@@ -513,6 +513,28 @@ static const char *const config_contents[] = {
     "#\n",
     "#   MaxProxyBufferSize=1G\n",
 #endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+    "\n",
+    "# Set `MaxCommentLeaderLength' to the maximum length permitted for the\n",
+    "# automagically determined comment leader used when expanding the Log\n",
+    "# keyword, in bytes.  CVS's behavior when the automagically determined\n",
+    "# comment leader exceeds this length is dependant on the value of\n",
+    "# `UseArchiveCommentLeader' set in this file.  `unlimited' is a valid\n",
+    "# setting for this value.  Defaults to 20 bytes.\n",
+    "#\n",
+    "# For example:\n",
+    "#\n",
+    "#   MaxCommentLeaderLength=20\n",
+    "\n",
+    "# Set `UseArchiveCommentLeader' to `yes' to cause CVS to fall back on\n",
+    "# the comment leader set in the RCS archive file, if any, when the\n",
+    "# automagically determined comment leader exceeds `MaxCommentLeaderLength'\n",
+    "# bytes.  If `UseArchiveCommentLeader' is not set and a comment leader\n",
+    "# greater than `MaxCommentLeaderLength' is calculated, the Log keyword\n",
+    "# being examined will not be expanded.  Defaults to `no'.\n",
+    "#\n",
+    "# For example:\n",
+    "#\n",
+    "#   UseArchiveCommentLeader=no\n",
     NULL
 };
 

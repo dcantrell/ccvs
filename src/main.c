@@ -54,22 +54,24 @@ int logoff = 0;
 /* Set if we should be writing CVSADM directories at top level.  At
    least for now we'll make the default be off (the CVS 1.9, not CVS
    1.9.2, behavior). */
-int top_level_admin = 0;
+bool top_level_admin = false;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 bool UseNewInfoFmtStrings = false;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 cvsroot_t *PrimaryServer;
 #if defined PROXY_SUPPORT && ! defined TRUST_OS_FILE_CACHE
-size_t MaxProxyBufferSize = (size_t)(8 * 2^10 * 2^10); /* 8 megabytes,
-                                                       * by default.
-                                                       */
+size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
+                                                        * by default.
+                                                        */
 #endif /* PROXY_SUPPORT && ! TRUST_OS_FILE_CACHE */
+size_t MaxCommentLeaderLength = 20;
+bool UseArchiveCommentLeader = false;
 
 
 
 /* Control default behavior of 'cvs import' (-X option on or off) in
    CVSROOT/config.  Defaults to off, for backward compatibility. */
-int ImportNewFilesToVendorBranchOnly = 0;
+bool ImportNewFilesToVendorBranchOnly = false;
 
 mode_t cvsumask = UMASK_DFLT;
 

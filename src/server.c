@@ -114,7 +114,7 @@ static char *Pserver_Repos = NULL;
 
 /* Should we check for system usernames/passwords?  Can be changed by
    CVSROOT/config.  */
-int system_auth = 1;
+bool system_auth = true;
 
 # endif /* AUTH_SERVER_SUPPORT */
 

@@ -1,3 +1,22 @@
+2004-09-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (top_level_admin, ImportNewFilesToVendorBranchOnly):
+	s/int/bool/.
+	(MaxCommentLeaderLength, UseArchiveCommentLeader): New vars.
+	* main.c: Ditto, for all four vars above.
+	* mkmodules.c (config_contents): Add default info for
+	MaxCommentLeaderLength & UseArchiveCommentLeader.
+	* parseinfo.c (readBool, readSizeT): New functions.
+	(parse_info): Use new functions.  Parse MaxCommentLeaderLength &
+	UseArchiveCommentLeader.
+	* rcs.c (expand_keywords): Limit the size of the comment leader to
+	MaxCommentLeaderLength & fall back to the comment leader specified in
+	the RCS archive when requested.
+	(preserve_perms): s/int/bool/.
+	* rcs.h (preserve_perms), server.c (system_auth), server.h
+	(system_auth): Likewise.
+	* sanity.sh (keywordlog): Add new tests for the above.
+
 2004-09-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* rcs.c (RCS_checkout): Allow noexec to do checkouts when
