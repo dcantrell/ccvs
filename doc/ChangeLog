@@ -1,3 +1,9 @@
+2000-10-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Connection): Add additional notes about common
+	pserver error messages.  Remove information about unsetting $HOME
+	since CVS no longer pays any attention to it in server mode.
+
 2000-09-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.in: Use @bindir@, @libdir@, @infodir@, and @mandir@
