@@ -877,6 +877,7 @@ if test x"$*" = x; then
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
+	tests="$tests import-quirks"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6 join7"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
@@ -7724,6 +7725,7 @@ modify-on-br1
 		# head -- intended to test vendor branches and HEAD,
 		#   although it doesn't really do it yet.
 		# import-CVS -- refuse to import directories named "CVS".
+		# import-quirks -- short tests of import quirks.
 
 		# import
 		mkdir import-dir ; cd import-dir
@@ -7984,7 +7986,8 @@ Use the following command to help the merge:"
 	  echo 'my own stuff' >mine2.c
 	  dotest_fail importb-3 \
 "${testcvs} import -m add -b 1 second-dir dummy really_dumb_y" \
-"${PROG} \[[a-z]* aborted\]: Only branches with two dots are supported: 1"
+"$PROG \[import aborted\]: Only numeric branch specifications with two dots are
+supported by import, not \`1'\.  For example: \`1\.1\.1'\."
 	  : when we implement main-branch import, should be \
 "N second-dir/mine1\.c
 N second-dir/mine2\.c
@@ -8201,6 +8204,36 @@ $PROG import: Importing $CVSROOT_DIRNAME/import-CVS/sdir"
 	  rm -r import-CVS
 	  rm -rf $CVSROOT_DIRNAME/import-CVS
 	  ;;
+
+
+
+	import-quirks)
+	  # Short tests of quirky import behavior.
+	  #
+	  # For a list of other import tests with short descriptions, see the
+	  # comment header of the "import" test.
+	  mkdir import-quirks
+	  cd import-quirks
+	  touch file1 file2 file3
+
+	  # CVS prior to 1.11.18 and 1.12.10 used to happily import to
+	  # "branch 1.1", creating RCS archives with revisions like,
+	  # "1.1..1".  That double-dot is *not* a typo.
+	  dotest_fail import-quirks-1 \
+"$testcvs import -b1.1. -mbad-bad-bad import-quirks VB RT" \
+"$PROG \[import aborted\]: Only numeric branch specifications with two dots are
+supported by import, not \`1.1.'\.  For example: \`1\.1\.1'\."
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r import-quirks
+	  ;;
+
+
 
 	import-after-initial)
 	  # Properly handle the case in which the first version of a
