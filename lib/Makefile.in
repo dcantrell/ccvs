@@ -227,7 +227,16 @@ EXTRA_DIST = \
 alloca_.h fnmatch_.h fnmatch_loop.c stdbool_.h
 getdate_SOURCES = \
 	getdate.y \
-	gettime.c
+	gettime.c\
+\
+	error.c \
+	exitfail.c \
+	exitfail.h \
+	xalloc.h \
+	xmalloc.c \
+	xstrdup.c\
+\
+	progname.c
 
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
@@ -251,7 +260,10 @@ am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getnline.$(OBJEXT) \
 	gettime.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 check_PROGRAMS = getdate$(EXEEXT)
-am_getdate_OBJECTS = getdate-getdate.$(OBJEXT) getdate-gettime.$(OBJEXT)
+am_getdate_OBJECTS = getdate-getdate.$(OBJEXT) getdate-gettime.$(OBJEXT) \
+	getdate-error.$(OBJEXT) getdate-exitfail.$(OBJEXT) \
+	getdate-xmalloc.$(OBJEXT) getdate-xstrdup.$(OBJEXT) \
+	getdate-progname.$(OBJEXT)
 getdate_OBJECTS = $(am_getdate_OBJECTS)
 getdate_DEPENDENCIES = @LIBOBJS@
 getdate_LDFLAGS =
@@ -278,8 +290,13 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/basename.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/dirname.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-error.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-exitfail.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getdate-getdate.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getdate-gettime.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-progname.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-xmalloc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate-xstrdup.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/gettime.Po ./$(DEPDIR)/md5.Po \
@@ -374,8 +391,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-error.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-gettime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-progname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xmalloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xstrdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
@@ -455,6 +477,116 @@ getdate-gettime.obj: gettime.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-gettime.Po' tmpdepfile='$(DEPDIR)/getdate-gettime.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`
+
+getdate-error.o: error.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-error.o -MD -MP -MF "$(DEPDIR)/getdate-error.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-error.Tpo" "$(DEPDIR)/getdate-error.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-error.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='error.c' object='getdate-error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-error.Po' tmpdepfile='$(DEPDIR)/getdate-error.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+getdate-error.obj: error.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-error.obj -MD -MP -MF "$(DEPDIR)/getdate-error.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-error.Tpo" "$(DEPDIR)/getdate-error.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-error.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='error.c' object='getdate-error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-error.Po' tmpdepfile='$(DEPDIR)/getdate-error.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
+
+getdate-exitfail.o: exitfail.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-exitfail.o -MD -MP -MF "$(DEPDIR)/getdate-exitfail.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-exitfail.o `test -f 'exitfail.c' || echo '$(srcdir)/'`exitfail.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-exitfail.Tpo" "$(DEPDIR)/getdate-exitfail.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-exitfail.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='exitfail.c' object='getdate-exitfail.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-exitfail.Po' tmpdepfile='$(DEPDIR)/getdate-exitfail.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-exitfail.o `test -f 'exitfail.c' || echo '$(srcdir)/'`exitfail.c
+
+getdate-exitfail.obj: exitfail.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-exitfail.obj -MD -MP -MF "$(DEPDIR)/getdate-exitfail.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-exitfail.obj `if test -f 'exitfail.c'; then $(CYGPATH_W) 'exitfail.c'; else $(CYGPATH_W) '$(srcdir)/exitfail.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-exitfail.Tpo" "$(DEPDIR)/getdate-exitfail.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-exitfail.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='exitfail.c' object='getdate-exitfail.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-exitfail.Po' tmpdepfile='$(DEPDIR)/getdate-exitfail.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-exitfail.obj `if test -f 'exitfail.c'; then $(CYGPATH_W) 'exitfail.c'; else $(CYGPATH_W) '$(srcdir)/exitfail.c'; fi`
+
+getdate-xmalloc.o: xmalloc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xmalloc.o -MD -MP -MF "$(DEPDIR)/getdate-xmalloc.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xmalloc.Tpo" "$(DEPDIR)/getdate-xmalloc.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-xmalloc.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmalloc.c' object='getdate-xmalloc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-xmalloc.Po' tmpdepfile='$(DEPDIR)/getdate-xmalloc.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
+
+getdate-xmalloc.obj: xmalloc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xmalloc.obj -MD -MP -MF "$(DEPDIR)/getdate-xmalloc.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xmalloc.Tpo" "$(DEPDIR)/getdate-xmalloc.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-xmalloc.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmalloc.c' object='getdate-xmalloc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-xmalloc.Po' tmpdepfile='$(DEPDIR)/getdate-xmalloc.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
+
+getdate-xstrdup.o: xstrdup.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xstrdup.o -MD -MP -MF "$(DEPDIR)/getdate-xstrdup.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-xstrdup.o `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xstrdup.Tpo" "$(DEPDIR)/getdate-xstrdup.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-xstrdup.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xstrdup.c' object='getdate-xstrdup.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-xstrdup.Po' tmpdepfile='$(DEPDIR)/getdate-xstrdup.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xstrdup.o `test -f 'xstrdup.c' || echo '$(srcdir)/'`xstrdup.c
+
+getdate-xstrdup.obj: xstrdup.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xstrdup.obj -MD -MP -MF "$(DEPDIR)/getdate-xstrdup.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-xstrdup.obj `if test -f 'xstrdup.c'; then $(CYGPATH_W) 'xstrdup.c'; else $(CYGPATH_W) '$(srcdir)/xstrdup.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xstrdup.Tpo" "$(DEPDIR)/getdate-xstrdup.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-xstrdup.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xstrdup.c' object='getdate-xstrdup.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-xstrdup.Po' tmpdepfile='$(DEPDIR)/getdate-xstrdup.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xstrdup.obj `if test -f 'xstrdup.c'; then $(CYGPATH_W) 'xstrdup.c'; else $(CYGPATH_W) '$(srcdir)/xstrdup.c'; fi`
+
+getdate-progname.o: progname.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-progname.o -MD -MP -MF "$(DEPDIR)/getdate-progname.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-progname.Tpo" "$(DEPDIR)/getdate-progname.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-progname.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='getdate-progname.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-progname.Po' tmpdepfile='$(DEPDIR)/getdate-progname.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+
+getdate-progname.obj: progname.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-progname.obj -MD -MP -MF "$(DEPDIR)/getdate-progname.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o getdate-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-progname.Tpo" "$(DEPDIR)/getdate-progname.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/getdate-progname.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='getdate-progname.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/getdate-progname.Po' tmpdepfile='$(DEPDIR)/getdate-progname.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
 
 .y.c:
 	$(SHELL) $(YLWRAP) `test -f '$<' || echo '$(srcdir)/'`$< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
