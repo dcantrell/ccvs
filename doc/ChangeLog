@@ -1,3 +1,7 @@
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
 2003-11-13  Larry Jones  <lawrence.jones@eds.com>
 
 	* cvs.texinfo (Reverting local changes): Use the same vendor tag
