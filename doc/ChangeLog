@@ -1,3 +1,12 @@
+2003-03-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Server temporary directory): Reorder list of places
+	to match code.
+	(Connection): Add additional example error message and note about
+	firewall software.
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-03-25  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti: Regenerated.

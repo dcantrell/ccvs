@@ -2928,11 +2928,11 @@ cvs-serv@var{pid}
 
 @noindent
 where @var{pid} is the process identification number of
-the server.  They are located in the directory
-specified by the @code{TMPDIR} environment variable
-(@pxref{Environment variables}), the @samp{-T} global
-option (@pxref{Global options}), or failing that
-@file{/tmp}.
+the server.
+They are located in the directory specified by 
+the @samp{-T} global option (@pxref{Global options}), 
+the @code{TMPDIR} environment variable (@pxref{Environment variables}), 
+or, failing that, @file{/tmp}.
 
 In most cases the server will remove the temporary
 directory when it is done, whether it finishes normally
@@ -14326,10 +14326,12 @@ directions given for :ext:.
 Errors along the lines of "connection refused" typically indicate
 that inetd isn't even listening for connections on port 2401
 whereas errors like "connection reset by peer",
-"received broken pipe signal", or "recv() from server: EOF"
+"received broken pipe signal", "recv() from server: EOF",
+or "end of file from server"
 typically indicate that inetd is listening for
 connections but is unable to start @sc{cvs} (this is frequently
-caused by having an incorrect path in @file{inetd.conf}).
+caused by having an incorrect path in @file{inetd.conf}
+or by firewall software rejecting the connection).
 "unrecognized auth response" errors are caused by a bad command
 line in @file{inetd.conf}, typically an invalid option or forgetting
 to put the @samp{pserver} command at the end of the line.
