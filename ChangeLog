@@ -1,3 +1,7 @@
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note checkoutlist error message handling fix.
+
 2003-08-27  Larry Jones  <lawrence.jones@eds.com>
 
 	* NEWS: Note client/server messages have real command name, client/
