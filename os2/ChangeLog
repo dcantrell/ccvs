@@ -1,6 +1,10 @@
 Fri Nov 17 21:13:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * getdate.c: took out some cruft that the more portable versions
+        need.
+
         * Makefile.in: use getdate.c from os2/ subdir, not lib/.
+        We don't use startserver.c anymore, so don't build it.
 
         * client.c (change_mode): never set anything executable, until we
         understand what that means in OS/2.
