@@ -4193,11 +4193,11 @@ rcsmerge: warning: conflicts during merge
 U file2"
 	  dotest join3-13 "cat file1" \
 "initial contents of file1
-<<<<<<< file1
+[<]<<<<<< file1
 br1:line1
-=======
+[=]======
 trunk:line1
->>>>>>> 1\.2"
+[>]>>>>>> 1\.2"
 	  rm file1
 
 	  # OK, we'll try the same thing with a revision on br2.
@@ -4225,12 +4225,12 @@ Merging differences between 1\.1 and 1\.2\.2\.1 into file1
 rcsmerge: warning: conflicts during merge"
 	  dotest join3-18 "cat file1" \
 "initial contents of file1
-<<<<<<< file1
+[<]<<<<<< file1
 br1:line1
-=======
+[=]======
 trunk:line1
 br2:line1
->>>>>>> 1\.2\.2\.1"
+[>]>>>>>> 1\.2\.2\.1"
 
 	  cd ../..
 	  rm -r 1
@@ -7410,7 +7410,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
           # Restore and clean up
           cd ..
-          rm -rf binwrap3
+          rm -rf binwrap3 CVSROOT
           CVSWRAPPERS=${CVSWRAPPERS_SAVED}
           ;; 
 
