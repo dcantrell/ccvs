@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* dirname.m4, dos.m4: Updated from GNULIB.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add gnulib.m4.
 	* gnulib.m4: New file.
 	* xalloc.m4: Update from GNULIB.
