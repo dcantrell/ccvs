@@ -959,7 +959,8 @@ static int lock_filesdoneproc (void *callerdat, int err,
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (void *callerdat, int err, char *repository, char *update_dir, List *entries)
+lock_filesdoneproc (void *callerdat, int err, char *repository,
+                    char *update_dir, List *entries)
 {
     Node *p;
 
