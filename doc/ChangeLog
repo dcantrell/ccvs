@@ -1,5 +1,7 @@
 Fri Jul 18 08:41:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): Add "cannot start server via rcmd".
+
 	* cvs.texinfo (Error messages): Add "cannot open CVS/Root" for cvs
 	init.
 
