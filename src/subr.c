@@ -64,7 +64,11 @@ xrealloc (ptr, bytes)
    memory which is likely to get as big as MAX_INCR shouldn't be doing
    it in one block which must be contiguous, but since getrcskey does
    so, we might as well limit the wasted memory to MAX_INCR or so
-   bytes.  */
+   bytes.
+
+   MIN_INCR and MAX_INCR should both be powers of two and we generally
+   try to keep our allocations to powers of two for the most part.
+   Most malloc implementations these days tend to like that.  */
 
 #define MIN_INCR 1024
 #define MAX_INCR (2*1024*1024)
@@ -84,11 +88,15 @@ expand_string (strptr, n, newsize)
 	while (*n < newsize)
 	{
 	    if (*n < MIN_INCR)
-		*n += MIN_INCR;
-	    else if (*n > MAX_INCR)
+		*n = MIN_INCR;
+	    else if (*n >= MAX_INCR)
 		*n += MAX_INCR;
 	    else
+	    {
 		*n *= 2;
+		if (*n > MAX_INCR)
+		    *n = MAX_INCR;
+	    }
 	}
 	*strptr = xrealloc (*strptr, *n);
     }
