@@ -18508,13 +18508,15 @@ echo "ok"
 cat >${TESTDIR}/client.tmp
 EOF
 	    chmod u=rw,go= file1
+	    # By specifying the time zone in local time, we don't
+	    # know exactly how that will translate to GMT.
 	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
 	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
 "Root ${TESTDIR}/cvsroot
 Valid-responses [-a-zA-Z ]*
 valid-requests
 Argument -D
-Argument 4 Oct 1999 04:00:00 -0000
+Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
 Directory \.
 ${TESTDIR}/cvsroot/first-dir
 Entry /file1/1\.2///
