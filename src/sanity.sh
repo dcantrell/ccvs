@@ -11911,10 +11911,11 @@ done"
 
 	  # OK, here is the test.  The idea is to see what
 	  # No_Difference does if it can't open the file.
-	  chmod a= aa
 	  # If we don't change the st_mtime, CVS doesn't even try to read
-	  # the file.
+	  # the file.  Note that some versions of "touch" require that we
+	  # do this while the file is still writable.
 	  touch aa
+	  chmod a= aa
 	  dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
 "${PROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
 "${PROG} \[update aborted\]: reading aa: Permission denied"
