@@ -1,3 +1,26 @@
+Wed Jul 12 22:35:04 1995  Jim Meyering  (meyering@comco.com)
+
+	* client.c (get_short_pathname): Add const qualifier to parameter dcl.
+	(copy_a_file): Remove set-but-not-used variable, LEN.
+	(handle_clear_static_directory): Likewise: SHORT_PATHNAME.
+	(set_sticky): Likewise: LEN.
+	(handle_set_sticky): Likewise: SHORT_PATHNAME.
+	(handle_clear_sticky): Likewise: SHORT_PATHNAME.
+	(start_rsh_server): Convert perl-style `cond || stmt' to more
+	conventional C-style `if (cond) stmt.'  Sheesh.
+	Remove dcl of unused file-static, SEND_CONTENTS.
+
+	* history.c: Remove dcls of set-but-not-used file-statics,
+	HISTSIZE, HISTDATA.
+	(read_hrecs): Don't set them.
+
+	* import.c (add_rev): Remove dcl of set-but-not-used local, RETCODE.
+
+	* repos.c (Name_Repository): Remove dcl of set-but-not-used local,
+	HAS_CVSADM.
+
+	* cvsrc.c (read_cvsrc): Parenthesize assignment used as truth value.
+
 Tue Jul 11 16:49:41 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* hash.h (struct entnode, Entnode): moved from here...
@@ -39,9 +62,9 @@ Tue Jul 11 14:20:00 1995  Loren James Rittle  <rittle@supra.comm.mot.com>
 	with RCS 5.7.
 
 Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
-        
+
 	* .cvsignore: added new backup file
-        
+
 	* options.h.in: our new configure.in finds the right diff and
         grep paths now....
 
@@ -68,8 +91,8 @@ Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
 	(from previous local changes)
 
 	* status.c: add support for -q and -Q (from previous local changes)
-        
-        
+
+
 Sun Jul  9 18:44:32 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * log.c: trivial change to test ChangeLog stuff.
@@ -123,7 +146,7 @@ Mon Jun 26 15:17:45 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 Fri Jun 23 13:38:28 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
 
-	* server.c (dirswitch, serve_co): Use CVSADM macro instead of 
+	* server.c (dirswitch, serve_co): Use CVSADM macro instead of
         literal "CVS".
 
 Fri Jun 23 00:00:51 1995  James Kingdon  <kingdon@harvey.cyclic.com>
@@ -191,7 +214,7 @@ Wed Jun 14 11:29:42 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 	  RCS_check_tag, RCS_parse): Added const qualifiers as
 	  appropriate.
 	* rcs.h (RCS_isdead): Added prototype.
-	  
+
 	* hash.h (walklist, sortlist): correct function prototypes.
 
 	* ignore.c (ign_setup): don't bother checking to see if file
@@ -333,7 +356,7 @@ Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 	  process Entries Log files left over from previous crashes or
 	  aborted runs.
 	  (Entries_Close): New function, write out Entries file if
-	  neccessary and erase Log file.  
+	  neccessary and erase Log file.
 	  (Register): Append changed records to Log file instead of
 	  re-writing file.
 	  (fgetentent): New function, parse one Entry record from a file.
@@ -521,7 +544,7 @@ Fri Apr  7 15:49:25 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 	  create CVS/Root file if it is not present.  Identical code
 	  in update_filesdone_proc() will perform these same actions.
 	  Also removed code that read and verfied CVS/Root.  This is
-	  expensive, and if it is necessary should happen in the 
+	  expensive, and if it is necessary should happen in the
 	  general recursion processor rather than in the update
 	  callbacks.
 
@@ -877,7 +900,7 @@ Thu Oct 13 07:36:11 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	client_import_done): New functions.
 	* import.c (import, import_descend): Use them.
 	* import.c (import_descend): If server, don't mention ignored CVS
-	directories. 
+	directories.
 	* import.c (import_descend_dir): If client, don't print warm
 	fuzzies, or make directories in repository.  If server, print warm
 	fuzzies to stdout not stderr.
@@ -891,7 +914,7 @@ Thu Oct 13 07:36:11 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	(call_in_directory, update_entries): If command is export, don't
 	create CVS directories, CVS/Entries files, etc.
 	* update.c (update_filesdone_proc): Don't remove CVS directories if
-	client_active. 
+	client_active.
 
 	* client.c (send_a_repository): Instead of insisting that
 	repository end with update_dir, just strip as many pathname
@@ -965,7 +988,7 @@ Mon Sep 26 12:02:15 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 Mon Sep 26 08:51:10 1994  Anthony J. Lill  (ajlill@ajlc.waterloo.on.ca)
 
 	* rcs.c (getrcskey): Allocate space for terminating '\0' if
-	necessary. 
+	necessary.
 
 Sat Sep 24 09:07:37 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
@@ -1006,7 +1029,7 @@ Fri Sep 16 08:38:02 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* diff.c (diff_fileproc): Set top_rev from vn_user, not vn_rcs.
 	Rename it to user_file_rev because it need not be the head of any
-	branch. 
+	branch.
 	(diff_file_nodiff): After checking user_file_rev, if we have both
 	use_rev1 and use_rev2, compare them instead of going on to code
 	which assumes use_rev2 == NULL.
@@ -1082,7 +1105,7 @@ Fri Sep  9 07:05:35 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 Thu Sep  8 14:23:05 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* server.c (serve_repository): Check for error from fopen on
-	CVSADM_ENT. 
+	CVSADM_ENT.
 
 	* update.c (update, update_dirent_proc): Check for errors when
 	removing Entries.Static.
@@ -1095,7 +1118,7 @@ Thu Sep  8 14:23:05 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 	* server.c: Add code to deal with Static-directory request.
 
 	* server.c, client.c: Use strchr and strrchr instead of index and
-	rindex. 
+	rindex.
 
 	* server.c (serve_unchanged, serve_lost): Change comments which
 	referred to changing timestamp; we don't always change the
@@ -1201,7 +1224,7 @@ Thu Aug 18 14:38:21 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
 	(main): Recognize it and set gzip_level.
 	* client.c (filter_through_gzip, filter_through_gunzip): New
 	functions to handle compression.
-	(update_entries): If size starts with "z", uncompress 
+	(update_entries): If size starts with "z", uncompress
 	(start_server): If gzip_level is non-zero and server supports it,
 	issue gzip-file-contents request.
 	(send_fileproc): Optionally compress file contents.  Use a
@@ -1237,7 +1260,7 @@ Wed Aug 10 20:50:47 1994  Mark Eichin  (eichin@cygnus.com)
 
 	* diff.c (diff_fileproc): if ts_user and ts_rcs match, then the
 	file is at the top of the tree -- so we might not even have a
-	copy. Put the revision into diff_rev1 or diff_rev2.	
+	copy. Put the revision into diff_rev1 or diff_rev2.
 
 Wed Aug 10 14:55:38 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
 
@@ -1637,7 +1660,7 @@ Mon Apr 18 22:07:53 1994  John Gilmore  (gnu@cygnus.com)
 	Add support for remote `cvs diff'.
 
 	* diff.c (diff):  Break guts out into new fn do_diff.
-	Add code to handle starting server, writing args, 
+	Add code to handle starting server, writing args,
 	sending files, and retrieving responses.
 	(includes): Use PARAMS for static function declarations.
 	* client.c (to_server, from_server, rsh_pid,
@@ -1713,7 +1736,7 @@ Wed May 19 10:11:51 1993  Mark Eichin (eichin@cygnus.com)
 
 	* client.c (update_entries): handle short reads over the net
 	(SVR4 fread is known to be broken, specifically for short
-	reads off of streams.)	
+	reads off of streams.)
 
 Tue May 18 15:53:44 1993  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
