@@ -1,5 +1,12 @@
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (precommit_list_to_args_proc), logmsg.c (do_editor), subr.c
+	(format_cmdline), tag.c (pretag_list_to_args_proc):
+	s/atribute/attribute/.
+	(Report from Matthew Doar <matt@trpz.com>.)
+
+2004-03-17  Derek Price  <derek@ximbiot.com>
+
 	* src/subr.c (pathname_levels): Get it right this time.
 
 2004-03-17  Derek Price  <derek@ximbiot.com>

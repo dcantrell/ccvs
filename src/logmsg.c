@@ -396,7 +396,7 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
 
 /* Runs the user-defined verification script as part of the commit or import 
    process.  This verification is meant to be run whether or not the user 
-   included the -m atribute.  unlike the do_editor function, this is 
+   included the -m attribute.  unlike the do_editor function, this is 
    independant of the running of an editor for getting a message.
  */
 void
@@ -621,7 +621,7 @@ logmsg_list_to_args_proc(Node *p, void *closure)
 
     f = c->format;
     d = *c->d;
-    /* foreach requested atribute */
+    /* foreach requested attribute */
     while (*f)
     {
 	switch (*f++)
@@ -649,7 +649,7 @@ logmsg_list_to_args_proc(Node *p, void *closure)
 		else
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 		    error (1, 0,
-		           "Unknown format character or not a list atribute: %c", f[-1]);
+		           "Unknown format character or not a list attribute: %c", f[-1]);
 		/* NOTREACHED */
 		break;
 	}

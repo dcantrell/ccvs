@@ -1486,7 +1486,7 @@ format_cmdline (char *format, ...)
      *        tuple to be inserted for each list item with a space between
      *        items.
      *        e.g."V W1,X1,Z1 W2,X2,Z2 W3,X3,Z3 Y1 Y2" where V is not a list
-     *        variable, W,X,&Z are atributes of a list with 3 items and Y is an
+     *        variable, W,X,&Z are attributes of a list with 3 items and Y is an
      *        attribute of a second list with 2 items.
      * %,{VWXYZ} means to separate the args.  The previous example would produce
      *        V W1 X1 Z1 W2 X2 Z2 W3 X3 Z3 Y1 Y2, where each variable is now a

@@ -1079,7 +1079,7 @@ precommit_list_to_args_proc( p, closure )
 
     f = c->format;
     d = *c->d;
-    /* foreach requested atribute */
+    /* foreach requested attribute */
     while (*f)
     {
    	switch (*f++)
@@ -1095,7 +1095,7 @@ precommit_list_to_args_proc( p, closure )
 		break;
 	    default:
 		error (1, 0,
-		       "Unknown format character or not a list atribute: %c",
+		       "Unknown format character or not a list attribute: %c",
 		       f[-1]);
 		/* NOTREACHED */
 		break;
