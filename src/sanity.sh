@@ -592,7 +592,7 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot pserver client"
+	tests="${tests} multiroot multiroot2 pserver client"
 else
 	tests="$*"
 fi
@@ -16972,6 +16972,100 @@ anyone
 	  # clean up after ourselves
 	  cd ..
 	  rm -r 1
+
+	  # clean up our repositories
+	  rm -rf root1 root2
+	  ;;
+
+	multiroot2)
+	  # More multiroot tests.  In particular, nested directories.
+
+	  CVSROOT1_DIRNAME=${TESTDIR}/root1
+	  CVSROOT2_DIRNAME=${TESTDIR}/root2
+	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
+	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
+	  if test "x$remote" = xyes; then
+	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
+	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
+	  fi
+
+	  dotest multiroot2-1 "${testcvs} -d ${CVSROOT1} init" ""
+	  dotest multiroot2-2 "${testcvs} -d ${CVSROOT2} init" ""
+
+	  mkdir imp-dir; cd imp-dir
+	  echo file1 >file1
+	  mkdir sdir
+	  echo sfile >sdir/sfile
+	  mkdir sdir/ssdir
+	  echo ssfile >sdir/ssdir/ssfile
+	  dotest_sort multiroot2-3 \
+"${testcvs} -d ${CVSROOT1} import -m import-to-root1 dir1 vend rel" "
+
+N dir1/file1
+N dir1/sdir/sfile
+N dir1/sdir/ssdir/ssfile
+No conflicts created by this import
+${PROG} [a-z]*: Importing ${TESTDIR}/root1/dir1/sdir
+${PROG} [a-z]*: Importing ${TESTDIR}/root1/dir1/sdir/ssdir"
+	  cd sdir
+	  dotest_sort multiroot2-4 \
+"${testcvs} -d ${CVSROOT2} import -m import-to-root2 sdir vend2 rel2" "
+
+N sdir/sfile
+N sdir/ssdir/ssfile
+No conflicts created by this import
+${PROG} [a-z]*: Importing ${TESTDIR}/root2/sdir/ssdir"
+	  cd ../..
+
+	  mkdir 1; cd 1
+	  # Get TopLevelAdmin-like behavior.
+	  dotest multiroot2-5 "${testcvs} -d ${CVSROOT1} -q co -l ."
+	  dotest multiroot2-5 "${testcvs} -d ${CVSROOT1} -q co dir1" \
+"U dir1/file1
+U dir1/sdir/sfile
+U dir1/sdir/ssdir/ssfile"
+	  cd dir1
+	  dotest multiroot2-6 "${testcvs} -Q release -d sdir" ""
+	  dotest multiroot2-7 "${testcvs} -d ${CVSROOT2} -q co sdir" \
+"U sdir/sfile
+U sdir/ssdir/ssfile"
+	  cd ..
+	  # This has one subtle effect - it deals with Entries.Log
+	  # so that the next test doesn't get trace messages for
+	  # Entries.Log
+	  dotest multiroot2-8 "${testcvs} update" \
+"${PROG} update: Updating \.
+${PROG} update: Updating dir1
+${PROG} update: Updating dir1/sdir
+${PROG} update: Updating dir1/sdir/ssdir" \
+"${PROG} server: Updating \.
+${PROG} server: Updating dir1
+${PROG} server: Updating \.
+${PROG} server: Updating dir1
+${PROG} server: Updating dir1/sdir
+${PROG} server: Updating dir1/sdir/ssdir"
+	  # Two reasons we don't run this on the server: (1) the server
+	  # also prints some trace messages, and (2) the server trace
+	  # messages are subject to out-of-order bugs (this one is hard
+	  # to work around).
+	  if test "$remote" = no; then
+	    dotest multiroot2-9 "${testcvs} -t update" \
+"${PROG} update: notice: main loop with CVSROOT=${TESTDIR}/root1
+${PROG} update: Updating \.
+${PROG} update: Updating dir1
+${PROG} update: notice: main loop with CVSROOT=${TESTDIR}/root2
+${PROG} update: Updating dir1/sdir
+${PROG} update: Updating dir1/sdir/ssdir"
+	  fi
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  # clean up after ourselves
+	  cd ..
+	  rm -r imp-dir 1
 
 	  # clean up our repositories
 	  rm -rf root1 root2
