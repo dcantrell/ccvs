@@ -539,6 +539,15 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	goto do_module_return;
     }
 
+    if (mfile != NULL && modargc > 1)
+    {
+	error (0, 0, "\
+module `%s' is a request for a file in a module which is not a directory",
+	       mname);
+	++err;
+	goto do_module_return;
+    }
+
     /* otherwise, process this module */
     err += callback_proc (&modargc, modargv, where, mwhere, mfile, shorten,
 			  local_specified, mname, msg);
