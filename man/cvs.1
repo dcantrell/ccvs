@@ -208,14 +208,6 @@ Do not read the
 .B cvs
 startup file (\fI~/.cvsrc\fP).
 .TP
-.B \-l
-Do not log the
-.I cvs_command
-in the command history (but execute it anyway).  See the description
-of the
-.B history
-command for information on command history.
-.TP
 .B \-n
 Do not change any files.  Attempt to execute the
 .IR cvs_command ,
@@ -529,15 +521,6 @@ subdirectories.   Available with the following commands:
 .BR checkout ", " commit ", " diff ", "
 .BR export ", " remove ", " rdiff ", " rtag ", "
 .BR status ", " tag ", and " update .
-.I Warning:
-this is not the same
-as the overall
-.` "cvs \-l"
-option, which you can specify to the
-.I left
-of a
-.B cvs
-command!
 .TP
 .B \-n
 Do
@@ -1429,7 +1412,7 @@ is able to find the files that are located in other directories.
 .SP
 The standard option \fIflags\fP \fB\-f\fP, and \fB\-l\fP
 are available with this command.  There are also several
-special options flags:
+special option flags:
 .SP
 If you use the
 .B \-s
