@@ -1,3 +1,8 @@
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
+	* realloc.c: New file from GNULIB.
+	* system.h (HAVE_REALLOC, CVS_REALLOC): Add support for realloc.c.
+
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
 	* stat.c: Don't compile LSTAT code unless configure detected that we
