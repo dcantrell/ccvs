@@ -1,5 +1,8 @@
 2000-05-17  Jim Meyering  <meyering@lucent.com>
 
+	* sanity.sh (TESTDIR): Fix braino in last change:
+	cd to /tmp before invoking pwd.
+
 	* sanity.sh: Set TESTDIR so that `make check' passes even when /tmp
 	is a symlink.
 	(join-36): Use $TESTDIR rather than hard-coding `/tmp/cvs-sanity'.
