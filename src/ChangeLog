@@ -1,3 +1,8 @@
+1998-02-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (rcs_internal_unlockfile, RCS_rewrite): Don't assume errno
+	means anything just because ferror is set.
+
 Sat Feb 21 20:02:24 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* Makefile.in (clean): Change "/bin/rm" to "rm".
