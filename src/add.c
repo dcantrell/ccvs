@@ -697,7 +697,7 @@ skip_this_file:
 	 * above.  The const is for everybody else.
 	 */
 	free ((char *) finfo.fullname);
-	free ((char *) filename);
+	free (filename);
     }
     if (added_files && !really_quiet)
 	error (0, 0, "use `%s commit' to add %s permanently",
