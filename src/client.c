@@ -1,5 +1,9 @@
 /* CVS client-related stuff.  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"
@@ -8,23 +12,24 @@
 
 #include "md5.h"
 
-#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS
-#ifdef HAVE_WINSOCK_H
-#include <winsock.h>
-#else /* No winsock.h */
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#endif /* No winsock.h */
-#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS */
+#if defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP
+#  ifdef HAVE_WINSOCK_H
+#    include <winsock.h>
+#  else /* No winsock.h */
+#    include <sys/socket.h>
+#    include <netinet/in.h>
+#    include <netdb.h>
+#  endif /* No winsock.h */
+#endif /* defined(AUTH_CLIENT_SUPPORT) || HAVE_KERBEROS || USE_DIRECT_TCP */
 
 #ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password PROTO((char *user, char *host, char *cvsrooot));
 #endif /* AUTH_CLIENT_SUPPORT */
 
-#if HAVE_KERBEROS
+#if HAVE_KERBEROS || USE_DIRECT_TCP
 #define CVS_PORT 1999
 
+#if HAVE_KERBEROS
 #include <krb.h>
 
 extern char *krb_realmofhost ();
@@ -33,6 +38,7 @@ extern char *krb_realmofhost ();
 #endif /* HAVE_KRB_GET_ERR_TEXT */
 #endif /* HAVE_KERBEROS */
 
+#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -890,8 +896,16 @@ copy_a_file (data, ent_list, short_pathname, filename)
     char *filename;
 {
     char *newname;
+    char *p;
 
     read_line (&newname, 0);
+
+#ifdef USE_VMS_FILENAMES
+    /* Mogrify the filename so VMS is happy with it. */
+    for(p = newname; *p; p++)
+       if(*p == '.' || *p == '#') *p = '_';
+#endif
+
     copy_file (filename, newname);
     free (newname);
 }
@@ -1088,11 +1102,17 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	free (size_string);
 
 	temp_filename = xmalloc (strlen (filename) + 80);
+#ifdef USE_VMS_FILENAMES
+        /* A VMS rename of "blah.dat" to "foo" to implies a
+           destination of "foo.dat" which is unfortinate for CVS */
+       sprintf (temp_filename, "%s_new_", filename);
+#else
 #ifdef _POSIX_NO_TRUNC
 	sprintf (temp_filename, ".new.%.9s", filename);
 #else /* _POSIX_NO_TRUNC */
 	sprintf (temp_filename, ".new.%s", filename);
 #endif /* _POSIX_NO_TRUNC */
+#endif /* USE_VMS_FILENAMES */
 	buf = xmalloc (size);
 
         /* Some systems, like OS/2 and Windows NT, end lines with CRLF
@@ -2242,6 +2262,11 @@ send_to_server (str, len)
 #ifdef NO_SOCKET_TO_FD
   if (use_socket_style)
     {
+#ifdef VMS
+      /* send() blocks under VMS */
+      if (send (server_sock, str + wrtn, len - wrtn, 0) < 0)
+        error (1, errno, "writing to server socket");
+#else /* VMS */
       int just_wrtn = 0;
       size_t wrtn = 0;
 
@@ -2250,12 +2275,13 @@ send_to_server (str, len)
           just_wrtn = send (server_sock, str + wrtn, len - wrtn, 0);
 
           if (just_wrtn == -1)
-            error (1, errno, "reading from server socket");
+            error (1, errno, "writing to server socket");
           
           wrtn += just_wrtn;
           if (wrtn == len)
             break;
         }
+#endif  /* VMS */
     }
   else
 #endif /* NO_SOCKET_TO_FD */
@@ -2406,7 +2432,7 @@ get_responses_and_close ()
     else
 #endif /* NO_SOCKET_TO_FD */
       {
-#if defined(HAVE_KERBEROS) || defined(AUTH_CLIENT_SUPPORT)
+#if defined(HAVE_KERBEROS) || defined(USE_DIRECT_TCP) || defined(AUTH_CLIENT_SUPPORT)
         if (server_fd != -1)
           {
             if (shutdown (server_fd, 1) < 0)
@@ -2423,7 +2449,7 @@ get_responses_and_close ()
               }
           }
         else
-#endif /* HAVE_KERBEROS || AUTH_CLIENT_SUPPORT */
+#endif /* HAVE_KERBEROS || USE_DIRECT_TCP || AUTH_CLIENT_SUPPORT */
           
 #ifdef SHUTDOWN_SERVER
           SHUTDOWN_SERVER (fileno (to_server));
@@ -2672,7 +2698,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 #endif /* AUTH_CLIENT_SUPPORT */
 
 
-#if HAVE_KERBEROS
+#if HAVE_KERBEROS || USE_DIRECT_TCP
 
 /*
  * FIXME: this function has not been changed to deal with
@@ -2682,19 +2708,24 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
  * have to make take care of this.
  */
 void
-start_kerberos_server (tofdp, fromfdp)
+start_tcp_server (tofdp, fromfdp)
      int *tofdp, *fromfdp;
 {
   int tofd, fromfd;
 
   struct hostent *hp;
   char *hname;
-  const char *realm;
   const char *portenv;
   int port;
   struct sockaddr_in sin;
   int s;
+
+
+#if HAVE_KERBEROS
   KTEXT_ST ticket;
+  const char *realm;
+#endif /* HAVE_KERBEROS */
+
   int status;
   
   /*
@@ -2711,14 +2742,19 @@ start_kerberos_server (tofdp, fromfdp)
   hname = xmalloc (strlen (hp->h_name) + 1);
   strcpy (hname, hp->h_name);
   
+#if HAVE_KERBEROS
   realm = krb_realmofhost (hname);
+#endif /* HAVE_KERBEROS */
   
+  /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
   portenv = getenv ("CVS_CLIENT_PORT");
   if (portenv != NULL)
     {
       port = atoi (portenv);
       if (port <= 0)
         goto try_rsh_no_message;
+      if (trace)
+        fprintf(stderr, "Using TCP port %d to contact server.\n", port);
       port = htons (port);
     }
   else
@@ -2750,11 +2786,12 @@ start_kerberos_server (tofdp, fromfdp)
   tofd = -1;
   if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
     {
-      error (0, errno, "kerberos connect");
+      error (0, errno, "connect");
       close (s);
     }
   else
     {
+#ifdef HAVE_KERBEROS
       struct sockaddr_in laddr;
       int laddrlen;
       MSG_DAT msg_data;
@@ -2776,10 +2813,15 @@ start_kerberos_server (tofdp, fromfdp)
         }
       else
         {
+#endif /* HAVE_KERBEROS */
+
           server_fd = s;
           close_on_exec (server_fd);
           tofd = fromfd = s;
+
+#ifdef HAVE_KERBEROS
         }
+#endif /* HAVE_KERBEROS */
     }
   
   if (tofd == -1)
@@ -2803,7 +2845,7 @@ start_kerberos_server (tofdp, fromfdp)
   *fromfdp = fromfd;
 }
 
-#endif /* HAVE_KERBEROS */
+#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
 
 static int send_variable_proc PROTO ((Node *, void *));
 
@@ -2827,6 +2869,9 @@ start_server ()
   int tofd, fromfd;
   char *log = getenv ("CVS_CLIENT_LOG");
 
+  tofd = -1;
+  fromfd = -1;
+
   /* Init these to NULL.  They will be set later if logging is on. */
   from_server_logfile = (FILE *) NULL;
   to_server_logfile   = (FILE *) NULL;
@@ -2841,22 +2886,30 @@ start_server ()
     else
 #endif /* AUTH_CLIENT_SUPPORT */
       {
-#if HAVE_KERBEROS
-        start_kerberos_server (&tofd, &fromfd);
-#else /* ! HAVE_KERBEROS */
+#if HAVE_KERBEROS || USE_DIRECT_TCP
+      if(tofd == -1 && fromfd == -1)
+        start_tcp_server (&tofd, &fromfd);
+#else /* HAVE_KERBEROS || USE_DIRECT_TCP */
 
 #if ! RSH_NOT_TRANSPARENT
+      if(tofd == -1 && fromfd == -1)
         start_rsh_server (&tofd, &fromfd);
 #else /* RSH_NOT_TRANSPARENT */
 
 #if defined(START_SERVER)
+      if(tofd == -1 && fromfd == -1)
         START_SERVER (&tofd, &fromfd, getcaller (),
                       server_user, server_host, server_cvsroot);
 #endif /* defined(START_SERVER) */
-
 #endif /* ! RSH_NOT_TRANSPARENT */
-#endif /* HAVE_KERBEROS */
+#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
       }
+
+#ifdef VMS && NO_SOCKET_TO_FD
+    /* Avoid mixing sockets with stdio */
+    use_socket_style = 1;
+    server_sock = tofd;
+#endif /* VMS && NO_SOCKET_TO_FD */
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;

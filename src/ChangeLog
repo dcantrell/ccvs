@@ -1,3 +1,23 @@
+Wed Feb 28 22:07:20 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* client.c: VMS CVS client specific changes.
+
+	Added USE_DIRECT_TCP to allow CVS_PORT to be used to specify
+	a TCP connection port (no Kerberos).  Changed
+	start_kerberos_server() to start_tcp_server().
+
+	In copy_a_file(): transform a backup file to have a
+        VMS-friendly name.  Changed 
+
+	Added HAVE_CONFIG_H to include "config.h".  
+
+	start_server() will starts the first successful of any
+	mutually exclusive methods of starting the CVS server
+	which might be enabled.
+
+	Initialized use_socket_style and server_sock for VMS in
+	start_server().
+
 Wed Feb 28 21:49:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* find_names.c, recurse.c, cvs.h: Changed Find_Dirs() to
