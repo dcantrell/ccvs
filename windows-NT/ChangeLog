@@ -1,3 +1,9 @@
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
+	* config.h (PROTOTYPES): Remove definition.
+	* filesubr.c: s/PROTO/.
+	* run.c: Ditto.
+
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (cvs_temp_file): Add a FIXME comment in regards to using
