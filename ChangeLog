@@ -1,5 +1,9 @@
 Tue Sep 10 19:55:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (DISTFILES): Add build.com and README.VMS.
+	(SUBDIRS): Add vms.
+	* build.com: Also recurse into zlib directory.
+
 	* NEWS: Mention Win95.
 
 Fri Sep  6 11:43:26 1996  Ian Lance Taylor  <ian@cygnus.com>

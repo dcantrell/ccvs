@@ -91,6 +91,7 @@ FLAGS_TO_PASS = \
 DISTFILES = \
 	COPYING COPYING.LIB INSTALL README TODO PROJECTS \
 	BUGS MINOR-BUGS FAQ HACKING TESTS \
+	README.VMS build.com \
 	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh \
@@ -101,7 +102,8 @@ DISTFILES = \
 # Unix source subdirs, where we'll want to run lint and etags:
 USOURCE_SUBDIRS = lib zlib src
 # All other subdirs:
-SUBDIRS = ${USOURCE_SUBDIRS} man doc contrib tools windows-NT os2 macintosh
+SUBDIRS = ${USOURCE_SUBDIRS} man doc contrib tools \
+	windows-NT os2 macintosh vms
 # Only make TAGS/tags files in these directories, in this order
 #    [Why in this order?  If we didn't have to stick to this order, we
 #    could make "TSUBDIRS = ${USOURCE_SUBDIRS}".  -Karl]
