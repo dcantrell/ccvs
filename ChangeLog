@@ -1,3 +1,24 @@
+Sat Sep 20 01:17:10 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	[notes: (1) includes the patches to config.h.in which he sent
+	(presumably generated), (2) I have omitted a change, which was
+	sent without a ChangeLog entry, to change re_exec to
+	re_compile_pattern in configure.in, (3) Also adds diff/Makefile in
+	AC_OUTPUT -kingdon]
+
+	* Makefile.in (USOURCE_SUBDIRS, check, remotecheck, installcheck):
+	Add diff.
+
+	Note that AC_CHECK_FUNCS(vfork)
+	has been replaced by AC_FUNC_VFORK... libdiff wants the more
+	specific test, and it seems unlikely to break CVS.
+
+	* configure.in: Add AC_FUNC_CLOSEDIR_VOID, AC_FUNC_VFORK,
+	AC_STRUCT_ST_BLKSIZE.
+	(AC_CHECK_HEADERS): Add limits.h and sys/file.h.
+	(AC_REPLACE_FUNCS): Add memchr.
+	(AC_CHECK_FUNCS): Remove vfork.
+
 Fri Sep 19 09:59:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Add item #191, concerning how to store binary files.
