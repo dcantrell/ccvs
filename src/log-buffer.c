@@ -79,6 +79,8 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	n_to_write = *got;
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (0, errno, "writing to log file");
+	fflush (lb->log);
+	fsync (fileno (lb->log));
     }
 
     return 0;
@@ -105,6 +107,8 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 	n_to_write = *wrote;
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (0, errno, "writing to log file");
+	fflush (lb->log);
+	fsync (fileno (lb->log));
     }
 
     return 0;
