@@ -230,6 +230,7 @@ EXTRA_DIST = \
 	realloc.m4 \
 	regex.m4 \
 	restrict.m4 \
+	save-cwd.m4 \
 	signed.m4 \
 	size_max.m4 \
 	st_mtim.m4 \
