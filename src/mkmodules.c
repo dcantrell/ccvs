@@ -349,6 +349,14 @@ static const char *const config_contents[] = {
     "# Be warned that these strings could be disabled in any new version of CVS.\n",
     "UseNewInfoFmtStrings=yes\n",
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    "\n",
+    "# Set `PrimaryServer' to the CVSROOT to the primary, or write, server when\n",
+    "# establishing one or more read-only mirrors which serve as proxies for\n",
+    "# the write server in write mode.\n",
+    "#\n",
+    "# For example:\n",
+    "#\n",
+    "#   PrimaryServer=:fork:localhost/cvsroot\n",
     NULL
 };
 
