@@ -1,3 +1,10 @@
+1997-11-16  Karl Fogel  <kfogel@floss.red-bean.com>
+
+	* client.c (update_entries): parse server-sent entries line even
+	in the case of "cvs export", because we need to know if -kb option
+	is set.
+	Init `options' to NULL like anything else.
+
 Tue Nov 18 09:20:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.21.

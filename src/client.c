@@ -1416,7 +1416,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *vn;
     /* Timestamp field.  Always empty according to the protocol.  */
     char *ts;
-    char *options;
+    char *options = NULL;
     char *tag = NULL;
     char *date = NULL;
     char *tag_or_date;
@@ -1432,49 +1432,39 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     /*
      * Parse the entries line.
      */
-    if (strcmp (command_name, "export") != 0)
-    {
-	scratch_entries = xstrdup (entries_line);
+    scratch_entries = xstrdup (entries_line);
 
-	if (scratch_entries[0] != '/')
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	user = scratch_entries + 1;
-	if ((cp = strchr (user, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	vn = cp;
-	if ((cp = strchr (vn, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	
-	ts = cp;
-	if ((cp = strchr (ts, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	options = cp;
-	if ((cp = strchr (options, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	tag_or_date = cp;
+    if (scratch_entries[0] != '/')
+        error (1, 0, "bad entries line `%s' from server", entries_line);
+    user = scratch_entries + 1;
+    if ((cp = strchr (user, '/')) == NULL)
+        error (1, 0, "bad entries line `%s' from server", entries_line);
+    *cp++ = '\0';
+    vn = cp;
+    if ((cp = strchr (vn, '/')) == NULL)
+        error (1, 0, "bad entries line `%s' from server", entries_line);
+    *cp++ = '\0';
+    
+    ts = cp;
+    if ((cp = strchr (ts, '/')) == NULL)
+        error (1, 0, "bad entries line `%s' from server", entries_line);
+    *cp++ = '\0';
+    options = cp;
+    if ((cp = strchr (options, '/')) == NULL)
+        error (1, 0, "bad entries line `%s' from server", entries_line);
+    *cp++ = '\0';
+    tag_or_date = cp;
+    
+    /* If a slash ends the tag_or_date, ignore everything after it.  */
+    cp = strchr (tag_or_date, '/');
+    if (cp != NULL)
+        *cp = '\0';
+    if (*tag_or_date == 'T')
+        tag = tag_or_date + 1;
+    else if (*tag_or_date == 'D')
+        date = tag_or_date + 1;
 
-	/* If a slash ends the tag_or_date, ignore everything after it.  */
-	cp = strchr (tag_or_date, '/');
-	if (cp != NULL)
-	    *cp = '\0';
-	if (*tag_or_date == 'T')
-	    tag = tag_or_date + 1;
-	else if (*tag_or_date == 'D')
-	    date = tag_or_date + 1;
-    }
-    else
-	/* For cvs export, assume it is a text file.  FIXME: This is
-	   broken behavior--we should be having the server tell us
-	   whether it is text or binary and dealing accordingly.  I
-	   think maybe we can parse the entries line, get the options,
-	   and then ignore the entries line otherwise, but I haven't
-	   checked to see whether the server sends the entries line
-	   correctly in this case.  */
-	options = NULL;
+    /* Done parsing the entries line. */
 
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH
