@@ -20,10 +20,52 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+
+
+# Need Perl 5.005 or greater for re 'eval'.
+require 5.005;
+
+# The usual.
 use strict;
 use IO::File;
 
-my $texi_num = 0;
+
+
+sub keyword_mode
+{
+	my ($keyword) = @_;
+
+	return "\\fR"
+		if $keyword =~ /^(|r|t)$/;
+	return "\\fB"
+		if $keyword =~ /^(strong|sc|code|file|samp)$/;
+	return "\\fI"
+		if $keyword =~ /^(emph|var|dfn)$/;
+	die "no handler for keyword $keyword\n";
+}
+
+
+
+# Return replacement for \@$keyword{$content}.
+sub do_keyword
+{
+	my ($parent, $keyword, $content) = @_;
+
+	return "see node \`$content\\(aq in the CVS manual"
+		if $keyword =~ /^(p?x)?ref$/;
+	return "\\fP\\fP$content"
+		if $keyword =~ /^splitrcskeyword$/;
+
+	my $endmode = keyword_mode $parent;
+	my $startmode = keyword_mode $keyword;
+
+	return "$startmode$content$endmode";
+}
+
+
+
+my $texi_num = 0; # Keep track of how many texinfo files have been encountered.
+my @parent;       # This needs to be global to be used inside of a regex later.
 for my $file (@ARGV)
 {
 	my $fh = new IO::File "< $file"
@@ -53,6 +95,7 @@ for my $file (@ARGV)
 	my @table_footers;
 	my $table_header = "";
 	my $table_footer = "";
+	my $last;
 	while ($_ = $fh->getline)
 	{
 		if (!$gotone && /^\@c ----- START MAN $texi_num -----$/)
@@ -71,6 +114,12 @@ for my $file (@ARGV)
 		# lines, since literal back slashes can appear there too.
 		s/\\/\\\\/g;
 		s/^\./\\&./;
+		s/([\s])\./$1\\&./;
+		s/'/\\(aq/g;
+		s/`/\\`/g;
+		s/(?<!-)---(?!-)/\\(em/g;
+		s/\@bullet({}|\b)/\\(bu/g;
+		s/\@dots({}|\b)/\\&.../g;
 
 		# Examples should be indented and otherwise untouched
 		if (/^\@example$/)
@@ -95,18 +144,8 @@ for my $file (@ARGV)
 				next;
 			}
 
-			# Replace special chars.
-			s/\@dots{}/\\&.../g;
-			s/\@([{}])/$1/g;
-			s/\@\@/\@/g;
-			s/'/\\(aq/g;
-			s/`/\\`/g;
-			s/^\./\\./g;
-
 			# Preserve the newline.
-			print qq{.IP "" $indent\n};
-			print $_;
-			next;
+			$_ = qq{.IP "" $indent\n} . $_;
 		}
 
 		# Compress blank lines into a single line.  This and its
@@ -136,6 +175,13 @@ for my $file (@ARGV)
 		# Remove comments
 		next if /^\@c(omment)?\b/;
 
+		# It's okay to ignore this keyword - we're not using any
+		# first-line indent commands at all.
+		next if s/^\@noindent\s*$//;
+
+		# @need is only significant in printed manuals.
+		next if s/^\@need\s+.*$//;
+
 		# If we didn't hit the previous check and $inblank is set, then
 		# we just finished with some number of blanks.  Print the man
 		# page blank symbol before continuing processing of this line.
@@ -146,19 +192,18 @@ for my $file (@ARGV)
 		}
 
 		# Chapter headers.
-		$last_header = $1 if s/^\@node (.*)$/.SH "$1"/;
-		if (/^\@appendix\w* (.*)$/)
+		$last_header = $1 if s/^\@node\s+(.*)$/.SH "$1"/;
+		if (/^\@appendix\w*\s+(.*)$/)
 		{
 			my $content = $1;
-			$content =~ s/^$last_header(---| +)?//;
+			$content =~ s/^$last_header(\\\(em|\s+)?//;
 			next if $content =~ /^\s*$/;
-			s/^\@appendix\w* .*$/.SS "$content"/;
+			s/^\@appendix\w*\s+.*$/.SS "$content"/;
 		}
-			
 
 		# Tables are similar to examples, except we need to handle the
 		# keywords.
-		if (/^\@(itemize|table)( (.*))?$/)
+		if (/^\@(itemize|table)(\s+(.*))?$/)
 		{
 			$indent += 2;
 			push @table_headers, $table_header;
@@ -166,13 +211,8 @@ for my $file (@ARGV)
 			my $content = $3;
 			if (/^\@itemize/)
 			{
-				my $bullet = "";
-				if ($content)
-				{
-					$bullet = "\\(bu"
-						if $content =~ /^\@bullet$/;
-				}
-				$table_header = qq{.IP "$bullet" $indent};
+				my $bullet = $content;
+				$table_header = qq{.IP "$bullet" $indent\n};
 				$table_footer = "";
 			}
 			else
@@ -200,30 +240,52 @@ for my $file (@ARGV)
 				$intable--;
 				next;
 			}
-			s/^\@itemx?( (.*))?$/$table_header$2$table_footer/;
+			s/^\@itemx?(\s+(.*))?$/$table_header$2$table_footer/;
 			# Fall through so the rest of the table lines are
 			# processed normally.
 		}
-			
-		# Keywords
-		s/^\@noindent\s*//;
-		s/\@(p?x)?ref{([^}]+)}/see node \`$2' in the CVS manual/g;
-		s/\@(strong){([^}]+)}/\\fB$2\\fP/g;
-		s/\@(sc|code|file|samp){([^}]+)}/\\fB$2\\fP/g;
-		s/\@(emph|var|dfn){([^}]+)}/\\fI$2\\fP/g;
-		s/\@dots{}/\\&.../g;
-		s/\@([{}])/$1/g;
-		s/\@\@/\@/g;
-		s/'/\\(aq/g;
-		s/`/\\`/g;
-		s/^\./\\./g;
 
 		# Index entries.
-		if (/^\@cindex (.*)$/)
+		s/^\@cindex\s+(.*)$/.IX "$1"/;
+
+		$_ = "$last$_" if $last;
+		undef $last;
+
+		# Trap keywords
+		my $nk = qr/
+				\@(\w+)\{
+				(?{ push @parent, $1 })       # Keep track of the last keyword
+				                              # keyword we encountered.
+				((?:
+					(?> (?:[^{}]|(?<=\@)[{}])*) # Non-braces without backtracking
+						|
+					(??{ $nk })                 # Nested keywords
+				)*)
+				\}
+				(?{ pop (@parent) })            # Lose track of the current keyword.
+			/x;
+
+		@parent = ("");
+		while (s/$nk/do_keyword pop (@parent), $1, $2/e)
 		{
-			print qq{.IX "$1"\n};
+			# Do nothing except replace our last-replacement tracker -
+			# the replacement regex above is handling everything else.
+			@parent = ("");
+		}
+
+		if (/\@\w+\{/)
+		{
+			# If there is still an opening keyword left, we need to
+			# find the close bracket.  Set $last to append the next
+			# line in the next pass.
+			$last = $_;
 			next;
 		}
+
+		# Finally, unprotect texinfo special characters.
+		s/\@://g;
+		s/\@([{}])/$1/g;
+		s/\@\@/\@/g;
 
 		# And print whatever's left.
 		print $_;
