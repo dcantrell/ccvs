@@ -322,6 +322,7 @@ struct vers_ts
 					 *    -vers = user file to be removed */
     char *vn_rcs;			/* the version for the rcs file
 					 * (tag version?) 	 */
+    char *vn_tag;		        /* the symbolic tag name */
     char *ts_user;			/* the timestamp for the user file */
     char *ts_rcs;			/* the user timestamp from entries */
     char *options;			/* opts from Entries file

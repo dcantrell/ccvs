@@ -242,13 +242,13 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
     p->delproc = tag_delproc;
     vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       file, 0, 0, entries, srcfiles);
-    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
     if (p->data != NULL)
     {
         int addit = 1;
         char *oversion;
         
-        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
         if (oversion == NULL) 
         {
             if (delete)
@@ -409,7 +409,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
         nversion = RCS_getversion(vers->srcfile,
                                   numtag,
                                   date,
-                                  force_tag_match);
+                                  force_tag_match, 0);
         if (nversion == NULL)
         {
 	    freevers_ts (&vers);
@@ -428,7 +428,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
 	 * "rcs" to remove the tag... trust me.
 	 */
 
-	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
 	if (version == NULL || vers->srcfile == NULL)
 	{
 	    freevers_ts (&vers);
@@ -507,7 +507,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
      * module -- which I have found to be a typical tagging operation.
      */
     rev = branch_mode ? RCS_magicrev (vers->srcfile, version) : version;
-    oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+    oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
     if (oversion != NULL)
     {
        int isbranch = RCS_isbranch (file, symtag, srcfiles);

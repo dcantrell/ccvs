@@ -363,7 +363,7 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     if (isattic && rev2 == NULL && date2 == NULL)
 	vers_head = NULL;
     else
-	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match);
+	vers_head = RCS_getversion (rcsfile, rev2, date2, force_tag_match, 0);
 
     if (toptwo_diffs)
     {
@@ -381,7 +381,7 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	    return (1);
 	}
     }
-    vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match);
+    vers_tag = RCS_getversion (rcsfile, rev1, date1, force_tag_match, 0);
 
     if (vers_tag == NULL && (vers_head == NULL || isattic))
 	return (0);			/* nothing known about specified revs */
