@@ -817,7 +817,9 @@ modify_repo ()
 {
     eval "$*"
     if $proxy; then
-	$TESTDIR/sync-secondary "repo modification" "modify_repo"
+	# Avoid timestamp comparison issues with rsync.
+	sleep 1
+	$TESTDIR/sync-secondary "repo modification" "modify_repo" "$*"
     fi
 }
 
@@ -15373,13 +15375,13 @@ G@#..!@#=&"
 	  # OK, now change the tab to a space, and see that CVS gives
 	  # a reasonable error (this is database corruption but CVS should
 	  # not lose its mind).
-	  sed -e 's/Fw2	/Fw2 /' <${CVSROOT_DIRNAME}/first-dir/CVS/fileattr \
-	    >${CVSROOT_DIRNAME}/first-dir/CVS/fileattr.new
+	  sed -e 's/Fw2	/Fw2 /' <$CVSROOT_DIRNAME/first-dir/CVS/fileattr \
+	    >$CVSROOT_DIRNAME/first-dir/CVS/fileattr.new
 	  modify_repo mv $CVSROOT_DIRNAME/first-dir/CVS/fileattr.new \
 			 $CVSROOT_DIRNAME/first-dir/CVS/fileattr
 	  mkdir 2; cd 2
-	  dotest_fail devcom3-10 "${testcvs} -Q co ." \
-"${SPROG} \[checkout aborted\]: file attribute database corruption: tab missing in ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr"
+	  dotest_fail devcom3-10 "$testcvs -Q co ." \
+"$SPROG \[checkout aborted\]: file attribute database corruption: tab missing in $CVSROOT_DIRNAME/first-dir/CVS/fileattr"
 
 	  dokeep
 	  cd ..
