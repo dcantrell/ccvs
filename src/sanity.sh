@@ -808,7 +808,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2"
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
-	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
+	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6"
@@ -7036,6 +7036,160 @@ ${PROG} rtag: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1 
 
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	tag-space)
+	  # Test tags with spaces in the names.
+	  #
+	  # Prior to releases 1.11.18 & 1.12.10, some commands used with
+	  # tags with spaces in the names could hang CVS.
+
+	  # Setup; check in first-dir/file1
+	  mkdir 1; cd 1
+	  dotest tag-space-init-1 "$testcvs -q co -l ."
+	  mkdir first-dir
+	  dotest tag-space-init-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest tag-space-init-3 "$testcvs add file1" \
+"$PROG add: scheduling file \`file1' for addition
+$PROG add: use '$PROG commit' to add this file permanently"
+	  dotest tag-space-init-4 "$testcvs -Q ci -m add" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # Reportedly, the following two tags make it past WinCVS.
+	  dotest_fail tag-space-1 "$testcvs tag ' spacetag '" \
+"$PROG \[tag aborted\]: tag \` spacetag ' must start with a letter"
+	  dotest_fail tag-space-2 "$testcvs tag 'spacetag '" \
+"$PROG \[tag aborted\]: tag \`spacetag ' has non-visible graphic characters"
+
+	  if $remote; then
+	    # Verify that this isn't a client check.
+	    dotest tag-space-3 "$testcvs server" \
+"E $PROG \[tag aborted\]: tag \` spacetag ' must start with a letter
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+UseUnchanged
+Argument --
+Argument  spacetag 
+Directory .
+$CVSROOT_DIRNAME/first-dir
+Entry /file1/1.1///
+Unchanged file1
+tag
+EOF
+
+	    dotest tag-space-4 "$testcvs server" \
+"E $PROG \[tag aborted\]: tag \`spacetag ' has non-visible graphic characters
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+UseUnchanged
+Argument --
+Argument spacetag 
+Directory .
+$CVSROOT_DIRNAME/first-dir
+Entry /file1/1.1///
+Unchanged file1
+tag
+EOF
+	  fi # $remote
+
+	  # Any number of normal tags and branches were handled correctly.
+	  dotest tag-space-5 "$testcvs -Q tag t1"
+	  dotest tag-space-5b "$testcvs -Q tag t2"
+	  dotest tag-space-5c "$testcvs -Q tag -b b1"
+
+	  cd ../..
+	  mkdir 2; cd 2
+
+	  # But once a vendor branch exists, it's all over.
+	  mkdir project; cd project
+	  touch file1
+	  dotest tag-space-init-4 \
+"$testcvs -Q import -mimport second-dir VENDOR RELEASE"
+
+	  cd ..
+
+	  dotest_fail tag-space-6 "$testcvs -Q co -r ' spacetag ' first-dir" \
+"$PROG \[checkout aborted\]: tag \` spacetag ' must start with a letter"
+
+	  # But when any files were imported, this test hung prior to CVS
+	  # versions 1.11.18 & 1.12.10.
+	  dotest_fail tag-space-7 "$testcvs -Q co -r ' spacetag ' second-dir" \
+"$PROG \[checkout aborted\]: tag \` spacetag ' must start with a letter"
+
+	  if $remote; then
+	    # I based the client input in the next two tests on actual input
+	    # from WinCVS 1.2.
+	    dotest tag-space-8 "$testcvs server" \
+"E $PROG \[checkout aborted\]: tag \` spacetag ' must start with a letter
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+Argument -P
+Argument -r
+Argument  spacetag 
+Argument first-dir
+Directory .
+$CVSROOT_DIRNAME
+co
+EOF
+
+	    # Verify the test is not on the client side.
+	    dotest tag-space-9 "$testcvs server" \
+"E $PROG \[checkout aborted\]: tag \` spacetag ' must start with a letter
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+Argument -P
+Argument -r
+Argument  spacetag 
+Argument second-dir
+Directory .
+$CVSROOT_DIRNAME
+co
+EOF
+	  fi # $remote
+
+	  dotest tag-space-10 "$testcvs -Q co second-dir"
+	  cd second-dir
+
+	  # This test would also hang.
+	  dotest_fail tag-space-11 "$testcvs -Q up -r ' spacetag '" \
+"$PROG \[update aborted\]: tag \` spacetag ' must start with a letter"
+
+	  if $remote; then
+	    dotest tag-space-12 "$testcvs server" \
+"E $PROG \[update aborted\]: tag \` spacetag ' must start with a letter
+error  " <<EOF
+Root $CVSROOT_DIRNAME
+Argument -r
+Argument  spacetag 
+Argument -u
+Argument --
+Directory .
+$CVSROOT_DIRNAME
+Unchanged file1
+update
+EOF
+	  fi # $remote
+
+	  # I'm skipping tests for other commands that may have had the same
+	  # problem.  Hopefully, if a new issue arises, one of the above tests
+	  # will catch the problem.
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -r 1 2
+	  rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/second-dir
 	  ;;
 
 	rcslib)
