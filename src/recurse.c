@@ -54,6 +54,78 @@ struct recursion_frame {
   int dosrcs;
 };
 
+struct saved_cwd
+  {
+    int desc;
+    char *name;
+  };
+
+static void
+save_cwd (cwd)
+     struct saved_cwd *cwd;
+{
+  static int have_working_fchdir = 1;
+
+  if (have_working_fchdir)
+    {
+#ifdef HAVE_FCHDIR
+      cwd->desc = open (".", O_RDONLY);
+      if (cwd->desc < 0)
+	error (1, errno, "cannot open current directory");
+
+      /* On SunOS 4, fchdir returns EINVAL if accounting is enabled,
+	 so we have to fall back to chdir.  */
+      if (fchdir (cwd->desc))
+	{
+	  if (errno == EINVAL)
+	    {
+	      close (cwd->desc);
+	      cwd->desc = -1;
+	      have_working_fchdir = 0;
+	    }
+	  else
+	    {
+	      error (1, errno, "current directory");
+	    }
+	}
+#else
+#define fchdir(x) (abort (), 0)
+      have_working_fchdir = 0;
+#endif
+    }
+
+  if (!have_working_fchdir)
+    {
+      cwd->desc = -1;
+      cwd->name = xgetwd ();
+      if (cwd->name == NULL)
+	error (1, errno, "cannot get current directory");
+    }
+  else
+    {
+      cwd->name = NULL;
+    }
+}
+
+static void
+restore_cwd (cwd, dest, current)
+     const struct saved_cwd *cwd;
+     const char *dest;
+     const char *current;
+{
+  if (cwd->desc >= 0)
+    {
+      if (fchdir (cwd->desc))
+	error (1, errno, "cannot return to %s%s%s", dest,
+	       (current ? " from " : ""),
+	       (current ? current : ""));
+    }
+  else if (chdir (cwd->name) < 0)
+    {
+      error (1, errno, "%s", cwd->name);
+    }
+}
+
 /*
  * Called to start a recursive command.
  *
@@ -437,11 +509,7 @@ do_dir_proc (p, closure)
     Dtype dir_return = R_PROCESS;
     int stripped_dot = 0;
     int err = 0;
-#ifndef HAVE_FCHDIR
-    char savewd[PATH_MAX];
-#else
-    int savefd;
-#endif
+    struct saved_cwd cwd;
 
     /* set up update_dir - skip dots if not at start */
     if (strcmp (dir, ".") != 0)
@@ -485,13 +553,7 @@ do_dir_proc (p, closure)
     if (dir_return != R_SKIP_ALL)
     {
 	/* save our current directory and static vars */
-#ifdef HAVE_FCHDIR
-	if ((savefd = open (".", O_RDONLY)) < 0)
-	    error (1, errno, "could not open working directory");
-#else
-	if (getwd (savewd) == NULL)
-	    error (1, 0, "could not get working directory: %s", savewd);
-#endif
+        save_cwd (&cwd);
 	sdirlist = dirlist;
 	srepository = repository;
 	dirlist = NULL;
@@ -524,14 +586,9 @@ do_dir_proc (p, closure)
 	    err = dirleaveproc (dir, err, update_dir);
 
 	/* get back to where we started and restore state vars */
-#ifdef HAVE_FCHDIR
-	if (fchdir (savefd) < 0) 
-	    error (1, errno, "could not fchdir back to saved working directory");
-	(void) close (savefd);
-#else
-	if (chdir (savewd) < 0)
-	    error (1, errno, "could not chdir to %s", savewd);
-#endif
+	restore_cwd (&cwd, "saved working directory", NULL);
+	if (cwd.name)
+	    free (cwd.name);
 	dirlist = sdirlist;
 	repository = srepository;
     }
@@ -597,11 +654,7 @@ unroll_files_proc (p, closure)
     int err = 0;
     List *save_dirlist;
     char *save_update_dir = NULL;
-#ifndef HAVE_FCHDIR
-    char savewd[PATH_MAX];
-#else
-    int savefd;
-#endif
+    struct saved_cwd cwd;
 
     /* if this dir was also an explicitly named argument, then skip
        it.  We'll catch it later when we do dirs. */
@@ -616,14 +669,7 @@ unroll_files_proc (p, closure)
 
     if (strcmp(p->key, ".") != 0)
     {
-#ifdef HAVE_FCHDIR
-	if ((savefd = open (".", O_RDONLY)) < 0)
-	    error (1, errno, "could not open working directory");
-#else
-	if (getwd (savewd) == NULL)
-	    error (1, 0, "could not get working directory: %s", savewd);
-#endif
-
+        save_cwd (&cwd);
 	if (chdir (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
@@ -645,14 +691,9 @@ unroll_files_proc (p, closure)
 	(void) strcpy (update_dir, save_update_dir);
 	free (save_update_dir);
 
-#ifdef HAVE_FCHDIR
-	if (fchdir (savefd) < 0) 
-	    error (1, errno, "could not fchdir back to saved working directory");
-	(void) close (savefd);
-#else
-	if (chdir (savewd) < 0)
-	    error (1, errno, "could not chdir to %s", savewd);
-#endif
+	restore_cwd (&cwd, "saved working directory", NULL);
+	if (cwd.name)
+	    free (cwd.name);
     }
 
     dirlist = save_dirlist;
