@@ -1,3 +1,11 @@
+1999-01-26  Jim Kingdon  <http://www.cyclic.com>
+
+	Fix one facet of the "cvs add -kb" re-adding problem (the other
+	known facet is tested for by binfiles3-8).
+	* add.c (add): When re-adding a file, set the keyword expansion
+	as we normally would.
+	* sanity.sh (binfiles3): New test binfiles3-6a tests for this.
+
 1999-01-22  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (rmadd2): New tests, for undoing a commit.
