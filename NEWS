@@ -1,9 +1,6 @@
 Changes since 1.11.10:
 **********************
 
-* Add support for large files. Use --disable-largefile to omit support
-  for large files.
-
 Changes from 1.11.9 to 1.11.10:
 *******************************
 
