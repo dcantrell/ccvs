@@ -1,3 +1,8 @@
+2000-10-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (pserver_authenticate_connection): Fix stupid mistake
+	in previous change.
+
 2000-10-11  Derek Price  <derek.price@openavenue.com>
 
 	* main.c (main): Dispose old CVSroot when parsing a '-d' option if

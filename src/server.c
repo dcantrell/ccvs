@@ -5695,8 +5695,10 @@ pserver_authenticate_connection ()
 	error (1, 0, "bad auth protocol end: %s", tmp);
     }
     if (!root_allow_ok (repository))
+    {
 	printf ("error 0 %s: no such repository\n", repository);
 	goto i_hate_you;
+    }
 
     /* OK, now parse the config file, so we can use it to control how
        to check passwords.  If there was an error parsing the config
