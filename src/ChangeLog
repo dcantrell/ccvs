@@ -1,3 +1,14 @@
+1998-09-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* lock.c, cvs.h: New variable lock_dir.
+	* parseinfo.c (parse_config): New option LockDir.
+	* lock.c (lock_name): New function, abstracts out lock file naming
+	and also supports LockDir.
+	* lock.c (lock_simple_remove, Reader_Lock, write_lock, set_lock):
+	Call it (6 places, to create/remove read/write/master locks).
+	(Lock_Cleanup): Refuse to reenter this function.
+	* sanity.sh (lockfiles): New test, tests for this feature.
+
 1998-09-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (multiroot): Expect ${TESTDIR} in output instead of

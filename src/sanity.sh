@@ -579,7 +579,11 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 binfiles3"
 	tests="${tests} mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info taginfo config"
-	tests="${tests} serverpatch log log2 ann ann-id crerepos rcs rcs2"
+	tests="${tests} serverpatch log log2 ann ann-id"
+	# Repository Storage (RCS file format, CVS lock files, creating
+	# a repository without "cvs init", &c).
+	tests="${tests} crerepos rcs rcs2 lockfiles"
+	# More history browsing, &c.
 	tests="${tests} history"
 	tests="${tests} big modes modes2 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
@@ -12357,6 +12361,58 @@ EOF
 
 	  cd ..
 	  rm -r first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	lockfiles)
+	  # Tests of CVS lock files.
+	  # TODO-maybe: Add a test where we arrange for a loginfo
+	  # script (or some such) to ensure that locks are in place
+	  # so then we can see how they are behaving.
+
+	  mkdir 1; cd 1
+	  mkdir sdir
+	  mkdir sdir/ssdir
+	  echo file >sdir/ssdir/file1
+	  dotest lockfiles-1 \
+"${testcvs} -Q import -m import-it first-dir bar baz" ""
+	  cd ..
+
+	  mkdir 2; cd 2
+	  dotest lockfiles-2 "${testcvs} -q co first-dir" \
+"U first-dir/sdir/ssdir/file1"
+	  dotest lockfiles-3 "${testcvs} -Q co CVSROOT" ""
+	  cd CVSROOT
+	  echo "LockDir=${TESTDIR}/locks" >config
+	  dotest lockfiles-4 "${testcvs} -q ci -m config-it" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../first-dir/sdir/ssdir
+	  # The error message appears twice because Lock_Cleanup only
+	  # stops recursing after the first attempt.
+	  dotest_fail lockfiles-5 "${testcvs} -q update" \
+"${PROG} \[[a-z]* aborted\]: cannot make directory ${TESTDIR}/locks/first-dir: No such file or directory
+${PROG} \[[a-z]* aborted\]: cannot make directory ${TESTDIR}/locks/first-dir: No such file or directory"
+	  mkdir ${TESTDIR}/locks
+	  dotest lockfiles-6 "${testcvs} -q update" ""
+	  dotest lockfiles-7 "ls ${TESTDIR}/locks/first-dir/sdir/ssdir" ""
+	  cd ../../..
+	  dotest lockfiles-8 "${testcvs} -q update" ""
+
+	  cd CVSROOT
+	  echo "# nobody here but us comments" >config
+	  dotest lockfiles-cleanup-1 "${testcvs} -q ci -m config-it" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+	  rm -r ${TESTDIR}/locks
+	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

@@ -520,6 +520,9 @@ void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
 
 /* See lock.c for description.  */
 extern void lock_dir_for_write PROTO ((char *));
+
+/* LockDir setting from CVSROOT/config.  */
+extern char *lock_dir;
 
 void Scratch_Entry PROTO((List * list, char *fname));
 void ParseTag PROTO((char **tagp, char **datep, int *nonbranchp));
