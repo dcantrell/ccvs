@@ -1,3 +1,8 @@
+Thu Feb 15 14:00:00 1996  Gary Oberbrunner  <garyo@avs.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Add vasprintf.c and mkmodules.c
+
 Tue Feb 13 20:05:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_REPLACE_FUNCS): Add strtoul.
