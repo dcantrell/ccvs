@@ -1,3 +1,10 @@
+Mon Jan 12 10:45:27 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (mkdir_p): Don't try to create nameless directories
+	(i.e., given "/foo//bar", don't try to create "/foo/",
+	just "/foo" and "/foo//bar") since it isn't necessary and
+	it fails on some systems in unexpected ways.
+
 1998-01-11  enami tsugutomo  <enami@but-b.or.jp>
 
 	* rcs.c (linevector_copy): Delete lines before overwriting them.
