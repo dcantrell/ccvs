@@ -71,6 +71,10 @@ shift
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
 
+# You may need to add '-b /path/to/rcsbin_dflt' if you didn't want to
+# set RCSBIN_DFLT in options.h...
+testcvs="${testcvs} -b /local/bin -D /local/gnu/bin/diff"
+
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -1435,10 +1439,10 @@ O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* third-dir           =third
 
 		mkdir testimport
 		cd testimport
-		echo '$''Id$' > foo
-		echo '$''Name$' >> foo
-		echo '$''Id$' > bar
-		echo '$''Name$' >> bar
+		echo '$''Id: foo,v 9.42 1995/03/20 01:00:54 someone Exp $' > foo
+		echo '$''Name: HELLO $' >> foo
+		echo '$''Id: bar,v 9.41 1995/03/20 01:01:45 someone Exp $' > bar
+		echo '$''Name: HELLO $' >> bar
 		dotest rdiff-1 \
 		  "${testcvs} import -I ! -m test-import-with-keyword trdiff TRDIFF T1" \
 'N trdiff/foo
@@ -1458,7 +1462,7 @@ U trdiff/foo'
 /tmp/cvs-sanity/cvsroot/trdiff/foo,v  <--  foo
 new revision: 1\.2; previous revision: 1\.1
 done'
-		echo '#ident	"@(#)trdiff:$''Name$:$''Id$"' > new
+		echo '#ident	"@(#)trdiff:$''Name''$:$''Id''$"' > new
 		echo "new file" >> new
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
@@ -1506,10 +1510,10 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id\$
-! \$''Name\$
+! \$''Id: foo,v 9\.42 1995/03/20 01:00:54 someone Exp \$
+! \$''Name: HELLO \$
 --- 1,3 ----
-! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
+! \$''Id: foo,v 1\.2 .* Exp \$
 ! \$''Name: local-v0 \$
 ! something
 Index: trdiff/new
@@ -1522,7 +1526,7 @@ diff -c /dev/null trdiff/new:1\.1
 '"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$"
 '"${PLUS}"' new file'
 
-		# This appears to be broken client/server
+		#### XXX something is broken with the client/server here...
 		if test "x$remote" = xno; then
 		dotest rdiff-9 \
 		  "${testcvs} rdiff -Ko -kv -r T1 -r local-v0 trdiff" \
@@ -1533,10 +1537,10 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id\$
-! \$''Name\$
+! \$''Id: foo,v 9\.42 1995/03/20 01:00:54 someone Exp \$
+! \$''Name: HELLO \$
 --- 1,3 ----
-! foo,v 1\.2 .* Exp
+! foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp
 ! local-v0
 ! something
 Index: trdiff/new
@@ -1546,9 +1550,9 @@ diff -c /dev/null trdiff/new:1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1,2 ----
-'"${PLUS}"' #ident	"@(#)trdiff:local-v0:new,v 1\.1 .* Exp"
+'"${PLUS}"' #ident	"@(#)trdiff:local-v0:new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp"
 '"${PLUS}"' new file'
-		fi # end tests we are skipping for client/server
+		fi #### XXX end of tests ignored
 
 # FIXME: will this work here?
 #		if test "$keep" = yes; then
