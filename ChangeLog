@@ -1,3 +1,9 @@
+Mon Jun 16 19:07:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (SUBDIRS): Add emx.
+	* configure.in (AC_OUTPUT): Add emx.
+	* configure: Regenerated.
+
 Sun Jun  8 23:44:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in (AC_CHECK_FUNCS): Remove mkfifo; not used anywhere.
