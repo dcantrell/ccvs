@@ -16,7 +16,8 @@ SERVER SECURITY ISSUES
 
 * Piped checkouts of paths above $CVSROOT no longer work.  Previously, clients
   could have requested the contents of RCS archive files anywhere on a CVS
-  server.
+  server.  This addresses CVE issue CAN-2004-1080.  Please see
+  <http://www.cve.mitre.org> for more information.
 
 CLIENT SECURITY ISSUES
 
