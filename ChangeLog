@@ -1,3 +1,8 @@
+2003-12-04  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Update for release 1.11.10.
+	* configure: Regenerated.
+
 2003-12-03  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Always AC_LIBOBJ(fncase) when filenames are found to be
