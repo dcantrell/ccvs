@@ -1,5 +1,8 @@
 Thu Feb  6 10:55:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* patch.c (patch): Give a fatal error for -V option (see comment
+	for rationale).
+
 	* diff.c (diff): Also send "options" to server.  Pretty much the
 	patch submitted independently by josef.nelissen@munich.ixos.de and
 	Ronald Khoo <ronald@demon.net>.
