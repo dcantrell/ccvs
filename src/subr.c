@@ -1896,7 +1896,7 @@ Xasprintf (const char *format, ...)
 
 
 
-/* Like xasmprintf(), but consider all errors fatal (may never return NULL).
+/* Like xasnprintf(), but consider all errors fatal (may never return NULL).
  */
 char *
 Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)

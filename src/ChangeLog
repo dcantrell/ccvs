@@ -1,5 +1,9 @@
 2004-11-19  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (Xasnprintf): Improve header comment block.
+
+2004-11-19  Derek Price  <derek@ximbiot.com>
+
 	* root.c (normalize_cvsroot): Improve header comment block.
 
 2004-11-19  Derek Price  <derek@ximbiot.com>
