@@ -1,3 +1,10 @@
+2004-08-24  Derek Price <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Strip trailing CWD indirections on
+	repository.
+	* sanity.sh (rstar-toplevel): Update to account for new behavior.
+	(Report from Dan Peterson <dbpete@aol.com>.)
+
 2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
 
 	* recurse.c (do_recursion): Correct test for calling
