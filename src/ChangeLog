@@ -1,5 +1,10 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* vers_ts.c (Version_TS): Move variable declaration inside the only
+	block where it is used and remove uneeded reinitialization.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* server.h: s/^extern// off of function declarations per HACKING.
 	Reformat protos for readability.
 

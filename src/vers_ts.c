@@ -42,10 +42,6 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     Entnode *entdata;
     char *rcsexpand = NULL;
 
-#ifdef UTIME_EXPECTS_WRITABLE
-    int change_it_back = 0;
-#endif
-
     /* get a new Vers_TS struct */
     vers_ts = (Vers_TS *) xmalloc (sizeof (Vers_TS));
     memset ((char *) vers_ts, 0, sizeof (*vers_ts));
@@ -227,6 +223,10 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 		t.modtime = RCS_getrevtime (rcsdata, vers_ts->vn_rcs, 0, 0);
 		if (t.modtime != (time_t) -1)
 		{
+#ifdef UTIME_EXPECTS_WRITABLE
+		    int change_it_back = 0;
+#endif
+
 		    (void) time (&t.actime);
 
 #ifdef UTIME_EXPECTS_WRITABLE
@@ -246,10 +246,7 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
 
 #ifdef UTIME_EXPECTS_WRITABLE
 		    if (change_it_back)
-		    {
 			xchmod (finfo->file, 0);
-			change_it_back = 0;
-		    }
 #endif  /*  UTIME_EXPECTS_WRITABLE  */
 		}
 	    }
