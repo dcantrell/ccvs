@@ -1,3 +1,9 @@
+Mon Feb 12 16:30:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.1, cvsinit.8: Remove references to mkmodules, rm, sort
+	* cvs.5: Remove references to mkmodules.
+	* mkmodules.1: Removed.
+
 Tue Jan 30 18:32:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Revise comment regarding install and installdirs.
