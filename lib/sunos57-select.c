@@ -31,6 +31,9 @@
 # include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+/* The rpl_select function calls the real select. */
+#undef select
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -43,9 +46,6 @@
 
 #include "minmax.h"
 #include "xtime.h"
-
-/* The rpl_select function calls the real select. */
-#undef select
 
 static struct stat devnull;
 static int devnull_set = -1;
