@@ -1,3 +1,8 @@
+Fri Jan  5 17:03:09 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Makefile.in: "lib_dir", not "libdir", to avoid conflict with
+        top-level Makefile.
+
 Mon Jan  1 22:59:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Makefile is not in srcdir.
