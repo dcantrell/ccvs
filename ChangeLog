@@ -1,3 +1,11 @@
+Fri Jul 25 17:02:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Refer to cvs.texinfo as the Cederqvist manual; that
+	seems to be the description which best applies no matter how it
+	was obtained.  Be a little more explicit about the "$" prompt
+	convention and setting environment variables.  Use double quotes
+	because they work on both DOS and Unix.
+
 Thu Jul 24 12:22:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Also mention SystemAuth.

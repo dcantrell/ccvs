@@ -23,11 +23,11 @@ includes a list of platforms which have been tested.
 
 2) Set the CVSROOT environment variable to where you want to put your
    source repository.  See the "Setting up the repository" section of
-   cvs.texinfo for details, but the quick summary is just to pick some
-   directory.  We'll use /src/master as an example.  For users of a
-   POSIX shell (sh/bash/ksh) on unix, the following commands can be
-   placed in user's ~/.profile, ~/.bash_profile file; or in the
-   site-wide /etc/profile:
+   the Cederqvist manual for details, but the quick summary is just to
+   pick some directory.  We'll use /src/master as an example.  For
+   users of a POSIX shell (sh/bash/ksh) on unix, the following
+   commands can be placed in user's ~/.profile, ~/.bash_profile file;
+   or in the site-wide /etc/profile:
 
        CVSROOT=/src/master; export CVSROOT
 
@@ -44,7 +44,8 @@ includes a list of platforms which have been tested.
        set CVSROOT=:local:d:\src\master
 
    If these environment variables are not already set in your current
-   shell, set them now (or source the login script you just edited).
+   shell, set them now by typing the above line at the command prompt
+   (or source the login script you just edited).
    The instructions for the remaining steps assume that you have set
    the CVSROOT environment variable.
 
@@ -54,13 +55,16 @@ includes a list of platforms which have been tested.
 
        $ cvs init
 
+   In this and subsequent examples we use "$" to indicate the command
+   prompt; do not type the "$".
+
 4) It might be a good idea to jump right in and put the CVS distribution
    directly under CVS control.  From within the top-level directory of
    the CVS distribution (the one that contains this INSTALL file) run
    the following commands:
 
        $ make distclean
-       $ cvs import -m 'CVS 1.6 distribution' ccvs CVS_DIST CVS-1_6
+       $ cvs import -m "CVS 1.6 distribution" ccvs CVS_DIST CVS-1_6
 
 5) Having done step 4, one should be able to checkout a fresh copy of the
    CVS distribution and hack away at the sources with the following command:
@@ -72,7 +76,7 @@ includes a list of platforms which have been tested.
    populate it with the appropriate CVS files and directories.
 
 6) You may wish to customize the various administrative files, in particular
-   modules.  See cvs.texinfo for details.
+   modules.  See the Cederqvist manual for details.
 
 7) Read the NEWS file to see what's new.
 
