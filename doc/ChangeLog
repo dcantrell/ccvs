@@ -1,4 +1,4 @@
-2004-02-15  Derek Price <derek@ximbiot.com>
+2004-02-17  Derek Price <derek@ximbiot.com>
 
 	* cvs.texinfo (syntax, updating commit files, commitinfo,
 	verifymsg, loginfo, taginfo, user-defined logging):
