@@ -1,3 +1,7 @@
+Mon Aug 10 10:26:38 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* version.c: Change version number to 1.9.30.
+
 Thu Aug  6 17:44:50 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* server.c (serve_rdiff): change the name of the command (for
