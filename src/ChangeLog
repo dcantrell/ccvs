@@ -1,3 +1,7 @@
+Tue Jan 30 09:43:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (branches): New tests (branches off of branches, etc.).
+
 Tue Jan 30 11:55:34 MET 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* main.c (main): Add change to run getopt_long twice again.
