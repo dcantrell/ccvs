@@ -1,3 +1,9 @@
+2000-07-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin): Handle -t in client so reading from files works
+	correctly in client/server mode.
+	* sanity.sh (log2): Update to match.
+
 2000-07-04  Karl Fogel  <kfogel@red-bean.com>
 
 	* server.c (pserver_authenticate_connection): use new

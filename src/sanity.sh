@@ -12991,18 +12991,13 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 1
 ============================================================================="
 
-	  # I believe that in Real Life (TM), this is broken for remote.
-	  # That is, the filename in question must be the filename of a
-	  # file on the server.  It only happens to work here because the
-	  # client machine and the server machine are one and the same.
 	  echo 'longer description' >${TESTDIR}/descrip
 	  echo 'with two lines' >>${TESTDIR}/descrip
 	  dotest log2-7 "${testcvs} admin -t${TESTDIR}/descrip file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
 	  dotest_fail log2-7a "${testcvs} admin -t${TESTDIR}/nonexist file1" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
-${PROG} \[[a-z]* aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
+"${PROG} \[[a-z]* aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
 	  dotest log2-8 "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
@@ -13021,22 +13016,13 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 1
 ============================================================================="
 
-	  # Reading the description from stdin is broken for remote.
-	  # See comments in cvs.texinfo for a few more notes on this.
-	  if test "x$remote" = xno; then
+	  # TODO: `cvs admin -t "my message" file1' is a request to
+	  # read the message from stdin and to operate on two files.
+	  # Should test that there is an error because "my message"
+	  # doesn't exist.
 
-	    # TODO: `cvs admin -t "my message" file1' is a request to
-	    # read the message from stdin and to operate on two files.
-	    # Should test that there is an error because "my message"
-	    # doesn't exist.
-
-	    if echo change from stdin | ${testcvs} admin -t -q file1
-	    then
-	      pass log2-9
-	    else
-	      fail log2-9
-	    fi
-	    dotest log2-10 "${testcvs} log -N file1" "
+	  dotest log2-9 "echo change from stdin | ${testcvs} admin -t -q file1" ""
+	  dotest log2-10 "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.1
@@ -13052,8 +13038,6 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 1
 ============================================================================="
-
-	  fi # end of tests skipped for remote
 
 	  cd ..
 	  rm ${TESTDIR}/descrip
