@@ -65,14 +65,15 @@ open_module ()
     char *mfile;
     DBM *retval;
 
-    if (CVSroot_original == NULL)
+    if (current_parsed_root == NULL)
     {
 	error (0, 0, "must set the CVSROOT environment variable");
 	error (1, 0, "or specify the '-d' global option");
     }
-    mfile = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_MODULES) + 20);
-    (void) sprintf (mfile, "%s/%s/%s", CVSroot_directory,
+    mfile = xmalloc (strlen (current_parsed_root->directory)
+		     + sizeof (CVSROOTADM)
+		     + sizeof (CVSROOTADM_MODULES) + 3);
+    (void) sprintf (mfile, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSROOTADM_MODULES);
     retval = dbm_open (mfile, O_RDONLY, 0666);
     free (mfile);
@@ -211,19 +212,21 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	int is_found = 0;
 
 	/* check to see if mname is a directory or file */
-	file = xmalloc (strlen (CVSroot_directory) + strlen (mname) + 10);
-	(void) sprintf (file, "%s/%s", CVSroot_directory, mname);
-	attic_file = xmalloc (strlen (CVSroot_directory) + strlen (mname)
-			      + sizeof (CVSATTIC) + sizeof (RCSEXT) + 15);
+	file = xmalloc (strlen (current_parsed_root->directory)
+			+ strlen (mname) + sizeof(RCSEXT) + 2);
+	(void) sprintf (file, "%s/%s", current_parsed_root->directory, mname);
+	attic_file = xmalloc (strlen (current_parsed_root->directory)
+			      + strlen (mname)
+			      + sizeof (CVSATTIC) + sizeof (RCSEXT) + 3);
 	if ((acp = strrchr (mname, '/')) != NULL)
 	{
 	    *acp = '\0';
-	    (void) sprintf (attic_file, "%s/%s/%s/%s%s", CVSroot_directory,
+	    (void) sprintf (attic_file, "%s/%s/%s/%s%s", current_parsed_root->directory,
 			    mname, CVSATTIC, acp + 1, RCSEXT);
 	    *acp = '/';
 	}
 	else
-	    (void) sprintf (attic_file, "%s/%s/%s%s", CVSroot_directory,
+	    (void) sprintf (attic_file, "%s/%s/%s%s", current_parsed_root->directory,
 			    CVSATTIC, mname, RCSEXT);
 
 	if (isdir (file))
@@ -400,7 +403,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
      */
 
     /* Put the value on a line with XXX prepended for getopt to eat */
-    line = xmalloc (strlen (value) + 10);
+    line = xmalloc (strlen (value) + 5);
     strcpy(line, "XXX ");
     strcpy(line + 4, value);
 

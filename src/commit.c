@@ -344,7 +344,7 @@ commit (argc, argv)
     if (geteuid () == (uid_t) 0
 #  ifdef CLIENT_SUPPORT
 	/* Who we are on the client side doesn't affect logging.  */
-	&& !client_active
+	&& !current_parsed_root->isremote
 #  endif
 	)
     {
@@ -432,7 +432,7 @@ commit (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	struct find_data find_args;
 
@@ -783,7 +783,7 @@ check_fileproc (callerdat, finfo)
     struct commit_info *ci;
     struct logfile_info *li;
 
-    size_t cvsroot_len = strlen (CVSroot_directory);
+    size_t cvsroot_len = strlen (current_parsed_root->directory);
 
     if (!finfo->repository)
     {
@@ -791,7 +791,7 @@ check_fileproc (callerdat, finfo)
 	return (1);
     }
 
-    if (strncmp (finfo->repository, CVSroot_directory, cvsroot_len) == 0
+    if (strncmp (finfo->repository, current_parsed_root->directory, cvsroot_len) == 0
 	&& ISDIRSEP (finfo->repository[cvsroot_len])
 	&& strncmp (finfo->repository + cvsroot_len + 1,
 		    CVSROOTADM,
@@ -1433,12 +1433,12 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
     {
 	char *p;
 
-	if (strncmp (CVSroot_directory, repository,
-		     strlen (CVSroot_directory)) != 0)
+	if (strncmp (current_parsed_root->directory, repository,
+		     strlen (current_parsed_root->directory)) != 0)
 	    error (0, 0,
 		 "internal error: repository (%s) doesn't begin with root (%s)",
-		   repository, CVSroot_directory);
-	p = repository + strlen (CVSroot_directory);
+		   repository, current_parsed_root->directory);
+	p = repository + strlen (current_parsed_root->directory);
 	if (*p == '/')
 	    ++p;
 	if (strcmp ("CVSROOT", p) == 0

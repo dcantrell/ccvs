@@ -162,7 +162,7 @@ rtag (argc, argv)
     RCS_check_tag (symtag);
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
@@ -242,11 +242,11 @@ rtag_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *repository;
     char *where;
 
-    repository = xmalloc (strlen (CVSroot_directory) + strlen (argv[0])
-			  + (mfile == NULL ? 0 : strlen (mfile)) + 30);
-    (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
-    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile))
-		     + 10);
+    repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
+			  + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
+    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
+		     + 1);
     (void) strcpy (where, argv[0]);
 
     /* if mfile isn't null, we need to set up to do only part of the module */

@@ -132,15 +132,10 @@ login (argc, argv)
     if (argc < 0)
 	usage (login_usage);
 
-    /* FIXME - should be removing ':password' from CVSroot_original and
-     * saving CVSroot_password into .cvspass if the password was
-     * specified in CVSROOT
-     */
-
-    if (CVSroot_method != pserver_method)
+    if (current_parsed_root->method != pserver_method)
     {
 	error (0, 0, "can only use pserver method with `login' command");
-	error (1, 0, "CVSROOT: %s", CVSroot_original);
+	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
 
     cvsroot_canonical = normalize_cvsroot(	getcaller(),
@@ -148,9 +143,9 @@ login (argc, argv)
     printf ("Logging in to %s\n", cvsroot_canonical);
     fflush (stdout);
 
-    if (CVSroot_password)
+    if (current_parsed_root->password)
     {
-	typed_password = scramble (CVSroot_password);
+	typed_password = scramble (current_parsed_root->password);
     }
     else
     {
@@ -316,8 +311,8 @@ get_cvs_password ()
     int line_length;
     char *cvsroot_canonical;
 
-    if (CVSroot_password)
-	return (scramble(CVSroot_password));
+    if (current_parsed_root->password)
+	return (scramble(current_parsed_root->password));
 
     /* If someone (i.e., login()) is calling connect_to_pserver() out of
        context, then assume they have supplied the correct, scrambled
@@ -341,10 +336,10 @@ get_cvs_password ()
     /* Else get it from the file.  First make sure that the CVSROOT
        variable has the appropriate fields filled in. */
 
-    if (CVSroot_method != pserver_method)
+    if (current_parsed_root->method != pserver_method)
     {
 	error (0, 0, "can only call GET_CVS_PASSWORD  with pserver method");
-	error (1, 0, "CVSROOT: %s", CVSroot_original);
+	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
 
     cvsroot_canonical = normalize_cvsroot(getcaller(), get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT));
@@ -422,10 +417,10 @@ logout (argc, argv)
     if (argc < 0)
 	usage (logout_usage);
 
-    if (CVSroot_method != pserver_method)
+    if (current_parsed_root->method != pserver_method)
     {
 	error (0, 0, "can only use pserver method with `logout' command");
-	error (1, 0, "CVSROOT: %s", CVSroot_original);
+	error (1, 0, "CVSROOT: %s", current_parsed_root->original);
     }
     
     /* Hmm.  Do we want a variant of this command which deletes _all_

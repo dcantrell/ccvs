@@ -539,7 +539,7 @@ history (argc, argv)
 	error (1, 0, "Only one report type allowed from: \"-Tcomxe\".");
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	struct file_list_str *f1;
 	char **mod;
@@ -670,9 +670,9 @@ history (argc, argv)
 	fname = xstrdup (histfile);
     else
     {
-	fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
+	fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
 			 + sizeof (CVSROOTADM_HISTORY) + 10);
-	(void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+	(void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_HISTORY);
     }
 
@@ -716,9 +716,9 @@ history_write (type, update_dir, revs, name, repository)
 	return;
     if ( strchr(logHistory, type) == NULL )	
 	return;
-    fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_HISTORY) + 10);
-    (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+    fname = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
+		     + sizeof (CVSROOTADM_HISTORY) + 3);
+    (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSROOTADM_HISTORY);
 
     /* turn off history logging if the history file does not exist */

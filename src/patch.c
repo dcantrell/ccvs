@@ -12,6 +12,7 @@
  * release as either a date or a revision number.
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 
@@ -189,7 +190,7 @@ patch (argc, argv)
 	options = xstrdup ("");
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
@@ -282,11 +283,11 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *repository;
     char *where;
 
-    repository = xmalloc (strlen (CVSroot_directory) + strlen (argv[0])
-			  + (mfile == NULL ? 0 : strlen (mfile)) + 30);
-    (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
-    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile))
-		     + 10);
+    repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
+			  + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
+    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
+		     + 1);
     (void) strcpy (where, argv[0]);
 
     /* if mfile isn't null, we need to set up to do only part of the module */
@@ -307,7 +308,7 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	}
 
 	/* take care of the rest */
-	path = xmalloc (strlen (repository) + strlen (mfile) + 5);
+	path = xmalloc (strlen (repository) + strlen (mfile) + 2);
 	(void) sprintf (path, "%s/%s", repository, mfile);
 	if (isdir (path))
 	{
@@ -637,13 +638,14 @@ failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
 		    goto out;
 		}
 	    }
-	    if (CVSroot_directory != NULL)
+	    assert (current_parsed_root != NULL);
+	    assert (current_parsed_root->directory != NULL);
 	    {
-		strippath = xmalloc (strlen (CVSroot_directory) + 10);
-		(void) sprintf (strippath, "%s/", CVSroot_directory);
+		strippath = xmalloc (strlen (current_parsed_root->directory) + 2);
+		(void) sprintf (strippath, "%s/", current_parsed_root->directory);
 	    }
-	    else
-		strippath = xstrdup (REPOS_STRIP);
+	    /*else
+		strippath = xstrdup (REPOS_STRIP); */
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
 		rcs += strlen (strippath);
 	    free (strippath);

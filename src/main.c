@@ -928,7 +928,9 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		   variable.  Parse it to see if we're supposed to do
 		   remote accesses or use a special access method. */
 
-		if (parse_cvsroot (current_root))
+		if (current_parsed_root != NULL)
+		    free_cvsroot_t (current_parsed_root);
+		if ((current_parsed_root = parse_cvsroot (current_root)) == NULL)
 		    error (1, 0, "Bad CVSROOT.");
 
 		if (trace)
@@ -938,15 +940,15 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		/*
 		 * Check to see if the repository exists.
 		 */
-		if (!client_active)
+		if (!current_parsed_root->isremote)
 		{
 		    char *path;
 		    int save_errno;
 
-		    path = xmalloc (strlen (CVSroot_directory)
+		    path = xmalloc (strlen (current_parsed_root->directory)
 				    + sizeof (CVSROOTADM)
-				    + 20);
-		    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
+				    + 2);
+		    (void) sprintf (path, "%s/%s", current_parsed_root->directory, CVSROOTADM);
 		    if (!isaccessible (path, R_OK | X_OK))
 		    {
 			save_errno = errno;
@@ -991,7 +993,7 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		&& !server_active
 #endif
 #ifdef CLIENT_SUPPORT
-		&& !client_active
+		&& !current_parsed_root->isremote
 #endif
 		)
 	    {
@@ -999,11 +1001,15 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 		   already printed an error.  We keep going.  Why?  Because
 		   if we didn't, then there would be no way to check in a new
 		   CVSROOT/config file to fix the broken one!  */
-		parse_config (CVSroot_directory);
+		parse_config (current_parsed_root->directory);
 	    }
 
 #ifdef CLIENT_SUPPORT
-	    if (client_active)
+	    /* Need to check for current_parsed_root != NULL here since
+	     * we could still be in server mode before the server function
+	     * gets called below and sets the root
+	     */
+	    if (current_parsed_root != NULL && current_parsed_root->isremote)
 	    {
 		/* Create a new list for directory names that we've
 		   sent to the server. */

@@ -321,9 +321,9 @@ find_dirs (dir, list, checkadm, entries)
        Emptydir.  Except in the CVSNULLREPOS case, Emptydir is just
        a normal directory name.  */
     if (isabsolute (dir)
-	&& strncmp (dir, CVSroot_directory, strlen (CVSroot_directory)) == 0
-	&& ISDIRSEP (dir[strlen (CVSroot_directory)])
-	&& strcmp (dir + strlen (CVSroot_directory) + 1, CVSROOTADM) == 0)
+	&& strncmp (dir, current_parsed_root->directory, strlen (current_parsed_root->directory)) == 0
+	&& ISDIRSEP (dir[strlen (current_parsed_root->directory)])
+	&& strcmp (dir + strlen (current_parsed_root->directory) + 1, CVSROOTADM) == 0)
 	skip_emptydir = 1;
 
     /* set up to read the dir */

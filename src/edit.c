@@ -81,7 +81,7 @@ watch_onoff (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	start_server ();
 
@@ -235,7 +235,7 @@ send_notifications (argc, argv, local)
     /* OK, we've done everything which needs to happen on the client side.
        Now we can try to contact the server; if we fail, then the
        notifications stay in CVSADM_NOTIFY to be sent next time.  */
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	if (strcmp (command_name, "release") != 0)
 	{
@@ -869,11 +869,11 @@ notify_do (type, filename, who, val, watches, repository)
 	    size_t line_len = 0;
 
 	    args.notifyee = NULL;
-	    usersname = xmalloc (strlen (CVSroot_directory)
+	    usersname = xmalloc (strlen (current_parsed_root->directory)
 				 + sizeof CVSROOTADM
 				 + sizeof CVSROOTADM_USERS
 				 + 20);
-	    strcpy (usersname, CVSroot_directory);
+	    strcpy (usersname, current_parsed_root->directory);
 	    strcat (usersname, "/");
 	    strcat (usersname, CVSROOTADM);
 	    strcat (usersname, "/");
@@ -1114,7 +1114,7 @@ editors (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	start_server ();
 	ign_setup ();

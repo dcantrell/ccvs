@@ -253,7 +253,7 @@ checkout (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	int expand_modules;
 
@@ -391,13 +391,13 @@ safe_location ()
     /* FIXME-arbitrary limit: should be retrying this like xgetwd.
        But how does readlink let us know that the buffer was too small?
        (by returning sizeof hardpath - 1?).  */
-    x = readlink(CVSroot_directory, hardpath, sizeof hardpath - 1);
+    x = readlink(current_parsed_root->directory, hardpath, sizeof hardpath - 1);
 #else
     x = -1;
 #endif
     if (x == -1)
     {
-        strcpy(hardpath, CVSroot_directory);
+        strcpy(hardpath, current_parsed_root->directory);
     }
     else
     {
@@ -529,11 +529,11 @@ checkout_proc (argc, argv, where_orig, mwhere, mfile, shorten,
     /* Set up the repository (maybe) for the bottom directory.
        Allocate more space than we need so we don't need to keep
        reallocating this string. */
-    repository = xmalloc (strlen (CVSroot_directory)
+    repository = xmalloc (strlen (current_parsed_root->directory)
 			  + strlen (argv[0])
 			  + (mfile == NULL ? 0 : strlen (mfile))
 			  + 10);
-    (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
+    (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
     Sanitize_Repository_Name (repository);
 
 
@@ -709,11 +709,11 @@ checkout_proc (argc, argv, where_orig, mwhere, mfile, shorten,
 	struct dir_to_build *head;
 	char *reposcopy;
 
-	if (strncmp (repository, CVSroot_directory,
-		     strlen (CVSroot_directory)) != 0)
+	if (strncmp (repository, current_parsed_root->directory,
+		     strlen (current_parsed_root->directory)) != 0)
 	    error (1, 0, "\
 internal error: %s doesn't start with %s in checkout_proc",
-		   repository, CVSroot_directory);
+		   repository, current_parsed_root->directory);
 
 	/* We always create at least one directory, which corresponds to
 	   the entire strings for WHERE and REPOSITORY.  */
@@ -798,7 +798,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		 bar   -> Emptydir   (generated dir -- not in repos)
 		 baz   -> quux       (finally!) */
 
-	    if (strcmp (reposcopy, CVSroot_directory) == 0)
+	    if (strcmp (reposcopy, current_parsed_root->directory) == 0)
 	    {
 		/* We can't walk up past CVSROOT.  Instead, the
                    repository should be Emptydir. */
@@ -822,7 +822,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		new->repository = xmalloc (strlen (reposcopy) + 5);
 		(void) strcpy (new->repository, reposcopy);
 		    
-		if (strcmp (reposcopy, CVSroot_directory) == 0)
+		if (strcmp (reposcopy, current_parsed_root->directory) == 0)
 		{
 		    /* Special case -- the repository name needs
 		       to be "/path/to/repos/." (the trailing dot
@@ -841,7 +841,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    int where_is_absolute = isabsolute (where);
 	    
 	    /* The top-level CVSADM directory should always be
-	       CVSroot_directory.  Create it, but only if WHERE is
+	       current_parsed_root->directory.  Create it, but only if WHERE is
 	       relative.  If WHERE is absolute, our current directory
 	       may not have a thing to do with where the sources are
 	       being checked out.  If it does, build_dirs_and_chdir
@@ -855,7 +855,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    {
 		/* It may be argued that we shouldn't set any sticky
 		   bits for the top-level repository.  FIXME?  */
-		build_one_dir (CVSroot_directory, ".", argc <= 1);
+		build_one_dir (current_parsed_root->directory, ".", argc <= 1);
 
 #ifdef SERVER_SUPPORT
 		/* We _always_ want to have a top-level admin
@@ -867,7 +867,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		   will be ignored on the client side.  */
 
 		if (server_active)
-		    server_clear_entstat (".", CVSroot_directory);
+		    server_clear_entstat (".", current_parsed_root->directory);
 #endif
 	    }
 
@@ -1096,11 +1096,11 @@ emptydir_name ()
 {
     char *repository;
 
-    repository = xmalloc (strlen (CVSroot_directory) 
+    repository = xmalloc (strlen (current_parsed_root->directory) 
 			  + sizeof (CVSROOTADM)
 			  + sizeof (CVSNULLREPOS)
-			  + 10);
-    (void) sprintf (repository, "%s/%s/%s", CVSroot_directory,
+			  + 3);
+    (void) sprintf (repository, "%s/%s/%s", current_parsed_root->directory,
 		    CVSROOTADM, CVSNULLREPOS);
     if (!isfile (repository))
     {

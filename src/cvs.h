@@ -372,24 +372,28 @@ typedef enum {
 extern char *method_names[];	/* change this in root.c if you change
 				   the enum above */
 
+typedef struct cvsroot_s {
+    char *original;		/* the complete source CVSroot string */
+    CVSmethod method;		/* one of the enum values above */
+    char *username;		/* the username or NULL if method == local */
+    char *password;		/* the username or NULL if method == local */
+    char *hostname;		/* the hostname or NULL if method == local */
+    int port;			/* the port or zero if method == local */
+    char *directory;		/* the directory name */
+#ifdef CLIENT_SUPPORT
+    unsigned char isremote;	/* nonzero if we are doing remote access */
+#endif /* CLIENT_SUPPORT */
+} cvsroot_t;
+
 /* This global variable holds the global -d option.  It is NULL if -d
    was not used, which means that we must get the CVSroot information
    from the CVSROOT environment variable or from a CVS/Root file.  */
 extern char *CVSroot_cmdline;
 
-extern char *CVSroot_original;	/* the active, complete CVSroot string */
-extern int client_active;	/* nonzero if we are doing remote access */
-extern CVSmethod CVSroot_method; /* one of the enum values above */
-extern char *CVSroot_username;	/* the username or NULL if method == local */
-extern char *CVSroot_password;	/* the username or NULL if method == local */
-extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
-extern int CVSroot_port;	/* the port or zero if method == local */
-extern char *CVSroot_directory;	/* the directory name */
-
 /* These variables keep track of all of the CVSROOT directories that
    have been seen by the client and the current one of those selected.  */
 extern List *root_directories;
-extern char *current_root;
+extern cvsroot_t *current_parsed_root;
 
 extern char *emptydir_name PROTO ((void));
 extern int safe_location PROTO ((void));
@@ -452,8 +456,9 @@ char *Short_Repository PROTO((char *repository));
 void Sanitize_Repository_Name PROTO((char *repository));
 
 char *Name_Root PROTO((char *dir, char *update_dir));
-int parse_cvsroot PROTO((char *CVSroot));
-void set_local_cvsroot PROTO((char *dir));
+void free_CVSroot_t PROTO((cvsroot_t *root_in));
+cvsroot_t *parse_cvsroot PROTO((char *root));
+cvsroot_t *local_cvsroot PROTO((char *dir));
 void Create_Root PROTO((char *dir, char *rootdir));
 void root_allow_add PROTO ((char *));
 void root_allow_free PROTO ((void));

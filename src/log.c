@@ -256,7 +256,7 @@ cvslog (argc, argv)
     wrap_setup ();
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	struct datelist *p;
 	struct option_revlist *rp;
