@@ -1,5 +1,8 @@
 Wed Jan 31 18:32:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* ChangeLog-9395: Remove duplicate entries from 1996 which
+	accidentally got into this file.
+
 	* client.c (read_line, read_from_server): Change "premature end of
 	file from server" message to "end of file from server (consult
 	above messages if any)" because 99% of the time it means rsh has
