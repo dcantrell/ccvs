@@ -1,5 +1,10 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* commit.c, create_adm.c, entries.c, filesubr.c, hash.c, update.c:
+	Gratuitious reformatting.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* ls.c (ls_direntproc): Remove unneeded assertion.
 
 2004-04-27  Derek Price  <derek@ximbiot.com>
