@@ -22,6 +22,9 @@
 /* Define if your struct stat has st_blksize.  */
 #undef HAVE_ST_BLKSIZE
 
+/* Define if your struct stat has st_rdev.  */
+#undef HAVE_ST_RDEV
+
 /* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
 #undef HAVE_SYS_WAIT_H
 
@@ -182,6 +185,9 @@
 
 /* Define if you have the wait3 function.  */
 #undef HAVE_WAIT3
+
+/* Define if you have the mknod function.  */
+#undef HAVE_MKNOD
 
 /* Define if you have the <direct.h> header file.  */
 #undef HAVE_DIRECT_H
