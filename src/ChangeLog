@@ -1,3 +1,10 @@
+Fri Oct  6 21:07:22 1995  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
+
+	* cvsrc.c (read_cvsrc): fix look up of command names in cvsrc file
+	to use full name from command table rather than possible nickname
+	in argv. Fixes errors with things like `cvs di' when cvsrc has
+	`diff -u5' in it.
+
 Thu Aug  3 01:03:52 1995  Vince DeMarco  <vdemarco@bou.shl.com>
 
 	* parseinfo.c (Parse_Info): Add code to call expand_path function

@@ -40,6 +40,7 @@ read_cvsrc (argc, argv)
   
     char *optstart;
 
+    int command_len;
     int found = 0;
 
     int i;
@@ -80,6 +81,7 @@ read_cvsrc (argc, argv)
 
     /* now scan the file until we find the line for the command in question */
 
+    command_len = strlen (command_name);
     cvsrcfile = open_file (homeinit, "r");
     while (fgets (linebuf, MAXLINELEN, cvsrcfile))
     {
@@ -88,7 +90,8 @@ read_cvsrc (argc, argv)
 	    continue;
 
 	/* stop if we match the current command */
-	if (!strncmp (linebuf, (*argv)[0], strlen ((*argv)[0])))
+	if (!strncmp (linebuf, command_name, command_len)
+	    && isspace (*(linebuf + command_len)))
 	{
 	    found = 1;
 	    break;
@@ -100,8 +103,8 @@ read_cvsrc (argc, argv)
     if (found)
     {
 	/* skip over command in the options line */
-	optstart = strtok(linebuf+strlen((*argv)[0]), "\t \n");
-      
+	optstart = strtok (linebuf + command_len, "\t \n");
+
 	do
 	{
 	    new_argv [new_argc] = xstrdup (optstart);
