@@ -1,3 +1,7 @@
+2001-04-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (pserver): Add tests for readers and writers.
+
 2001-04-27  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (version-2r): Update to handle patch releases in version
