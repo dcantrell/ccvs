@@ -1,3 +1,8 @@
+Tue Oct 10 18:01:50 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * Makefile.in (cvs_srcdir): define cvs_srcdir to be ../src, then
+        include it with -I so save_cwd.c can find error.h (for example).
+
 Sun Oct  8 12:27:57 1995  Peter Wemm  <peter@haywire.DIALix.COM>
 
 	* system.h: define POSIX_SIGNALS or BSD_SIGNALS if configure has

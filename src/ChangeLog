@@ -1,3 +1,7 @@
+Tue Oct 10 18:33:47 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * Makefile.in (COMMON_OBJECTS): added error.o.
+
 Tue Oct 10 12:02:37 1995  Thorsten Lockert  <tholo@sigmasoft.com>
 
 	* cvsbug.sh: Cater to lame versions of sh (4.4BSD ash) by using
