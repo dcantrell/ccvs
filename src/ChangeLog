@@ -1,3 +1,10 @@
+2002-05-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* login.c (password_entry_operation): Get cvsroot_canonical before
+	trying to read the user's password file so we have it even if the
+	file doesn't exist.
+	(Reported by Sarah Thompson <sthompson@fsl.noaa.gov>.)
+
 2002-05-08  Derek Price  <oberon@umich.edu>
 
 	* Makefile.am (cvs_SOURCES): Add options.h explicitly - since we
