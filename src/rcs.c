@@ -92,11 +92,6 @@ static void expand_keywords PROTO((RCSNode *, RCSVers *, const char *,
 				   size_t, char **, size_t *));
 static void cmp_file_buffer PROTO((void *, const char *, size_t));
 
-enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
-static void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, char *,
-			       enum rcs_delta_op, char **, size_t *,
-			       char **, size_t *));
-
 /* Routines for reading, parsing and writing RCS files. */
 static RCSVers *getdelta PROTO ((struct rcsbuffer *, char *, char **,
 				 char **));
@@ -7000,7 +6995,7 @@ rcs_change_text (name, textbuf, textlen, diffbuf, difflen, retbuf, retlen)
 
    On error, give a fatal error.  */
 
-static void
+void
 RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
     RCSNode *rcs;
     FILE *fp;
@@ -8357,138 +8352,6 @@ RCS_abandon (rcs)
     rcs->comment = NULL;
     rcs->desc = NULL;
     rcs->flags |= PARTIAL;
-}
-
-
-/* Annotate command.  In rcs.c for historical reasons (from back when
-   what is now RCS_deltas was part of annotate_fileproc).  */
-
-/* Options from the command line.  */
-
-static int force_tag_match = 1;
-static char *tag = NULL;
-static char *date = NULL;
-
-static int annotate_fileproc PROTO ((void *callerdat, struct file_info *));
-
-static int
-annotate_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
-{
-    FILE *fp = NULL;
-    struct rcsbuffer *rcsbufp = NULL;
-    struct rcsbuffer rcsbuf;
-    char *version;
-
-    if (finfo->rcs == NULL)
-        return (1);
-
-    if (finfo->rcs->flags & PARTIAL)
-    {
-        RCS_reparsercsfile (finfo->rcs, &fp, &rcsbuf);
-	rcsbufp = &rcsbuf;
-    }
-
-    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match,
-			      (int *) NULL);
-    if (version == NULL)
-        return 0;
-
-    /* Distinguish output for various files if we are processing
-       several files.  */
-    cvs_outerr ("Annotations for ", 0);
-    cvs_outerr (finfo->fullname, 0);
-    cvs_outerr ("\n***************\n", 0);
-
-    RCS_deltas (finfo->rcs, fp, rcsbufp, version, RCS_ANNOTATE, NULL,
-		NULL, NULL, NULL);
-    free (version);
-    return 0;
-}
-
-static const char *const annotate_usage[] =
-{
-    "Usage: %s %s [-lRf] [-r rev|-D date] [files...]\n",
-    "\t-l\tLocal directory only, no recursion.\n",
-    "\t-R\tProcess directories recursively.\n",
-    "\t-f\tUse head revision if tag/date not found.\n",
-    "\t-r rev\tAnnotate file as of specified revision/tag.\n",
-    "\t-D date\tAnnotate file as of specified date.\n",
-    "(Specify the --help global option for a list of other help options)\n",
-    NULL
-};
-
-/* Command to show the revision, date, and author where each line of a
-   file was modified.  */
-
-int
-annotate (argc, argv)
-    int argc;
-    char **argv;
-{
-    int local = 0;
-    int c;
-
-    if (argc == -1)
-	usage (annotate_usage);
-
-    optind = 0;
-    while ((c = getopt (argc, argv, "+lr:D:fR")) != -1)
-    {
-	switch (c)
-	{
-	    case 'l':
-		local = 1;
-		break;
-	    case 'R':
-		local = 0;
-		break;
-	    case 'r':
-	        tag = optarg;
-		break;
-	    case 'D':
-	        date = Make_Date (optarg);
-		break;
-	    case 'f':
-	        force_tag_match = 0;
-		break;
-	    case '?':
-	    default:
-		usage (annotate_usage);
-		break;
-	}
-    }
-    argc -= optind;
-    argv += optind;
-
-#ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote)
-    {
-	start_server ();
-	ign_setup ();
-
-	if (local)
-	    send_arg ("-l");
-	if (!force_tag_match)
-	    send_arg ("-f");
-	option_with_arg ("-r", tag);
-	if (date)
-	    client_senddate (date);
-	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
-	send_to_server ("annotate\012", 0);
-	return get_responses_and_close ();
-    }
-#endif /* CLIENT_SUPPORT */
-
-    if (tag != NULL)
-	tag_check_valid (tag, argc, argv, local, 0, "");
-
-    return start_recursion (annotate_fileproc, (FILESDONEPROC) NULL,
-			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
-			    1);
 }
 
 /*

@@ -29,6 +29,7 @@ bin_SCRIPTS = cvsbug
 cvs_SOURCES = \
 	add.c \
 	admin.c \
+	annotate.c \
 	buffer.c \
 	checkin.c \
 	checkout.c \

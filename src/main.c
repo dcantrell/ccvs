@@ -127,6 +127,7 @@ static const struct cmd
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     { "pserver",  NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR }, /* placeholder */
 #endif
+    { "rannotate","rann",     "ra",        annotate,  0 },
     { "rdiff",    "patch",    "pa",        patch,     0 },
     { "release",  "re",       "rel",       release,   0 },
     { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
@@ -217,6 +218,7 @@ static const char *const cmd_usage[] =
 #if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
     "        pserver      Password server mode\n",
 #endif
+    "        rannotate    Show last revision where each line of module was modified\n",
     "        rdiff        Create 'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Remove an entry from the repository\n",

@@ -530,13 +530,11 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 	/* End section which is identical to patch_proc.  */
 
 	which = W_REPOS | W_ATTIC;
-	repository = NULL;
     }
     else
     {
         where = NULL;
         which = W_LOCAL | W_REPOS | W_ATTIC;
-        repository = "";
     }
 
     err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,

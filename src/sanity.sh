@@ -12019,9 +12019,6 @@ initial revision: 1\.1
 done"
 	  dotest errmsg2-18 "${testcvs} -Q tag test" ''
 
-	  dotest_fail errmsg2-19 "${testcvs} annotate -rtest -Dyesterday" \
-"${PROG} \[[a-z]* aborted\]: rcsbuf_open: internal error"
-
 	  # trying to import the repository
 
 	  if $remote; then :; else
@@ -15296,8 +15293,54 @@ done"
 	  dotest_fail ann-14 "${testcvs} ann -r bill-clintons-chastity file1" \
 "${PROG} \[[a-z]* aborted\]: no such tag bill-clintons-chastity"
 
+	  # Now get rid of the working directory and test rannotate
+
 	  cd ../..
 	  rm -r 1
+	  dotest ann-r10 "${testcvs} rann first-dir" \
+"Annotations for first-dir/file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.3          (${username} *[0-9a-zA-Z-]*): trunk file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line"
+	  dotest ann-r11 "${testcvs} rann -r br first-dir" \
+"Annotations for first-dir/file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.1          (${username} *[0-9a-zA-Z-]*): file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+	  dotest ann-r12 "${testcvs} rann -r 1.2.0.2 first-dir/file1" ""
+	  dotest ann-r13 "${testcvs} rann -r 1.2.2 first-dir/file1" \
+"Annotations for first-dir/file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.1          (${username} *[0-9a-zA-Z-]*): file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+	  dotest_fail ann-r14 "${testcvs} rann -r bill-clintons-chastity first-dir/file1" \
+"${PROG} \[[a-z]* aborted\]: no such tag bill-clintons-chastity"
+
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
