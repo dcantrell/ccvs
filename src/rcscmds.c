@@ -47,6 +47,8 @@ RCS_settag(path, tag, rev)
     const char *tag;
     const char *rev;
 {
+    /* FIXME: This check should be moved to RCS_check_tag.  There is no
+       reason for it to be here.  */
     if (strcmp (tag, TAG_BASE) == 0
 	|| strcmp (tag, TAG_HEAD) == 0)
     {
