@@ -1,5 +1,11 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Make error() accessible to the GNULIB functions.
+
+	* error.h: Move in from ../src.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	* strerror.c: Update to latest version from gnulib.
 
 2003-12-14  Mark D. Baushke  <mdb@cvshome.org>
