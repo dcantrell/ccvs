@@ -262,6 +262,7 @@ find_fileproc (callerdat, finfo)
 	    error (0, 0,
 		   "`%s' should be removed and is still there (or is back"
 		   " again)", finfo->fullname);
+	    freevers_ts (&vers);
 	    return 1;
 	}
 	/* else */
@@ -924,6 +925,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    error (0, 0,
 			   "`%s' should be removed and is still there (or is"
 			   " back again)", finfo->fullname);
+		    freevers_ts (&vers);
 		    return 1;
 		}
 
