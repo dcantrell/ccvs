@@ -1,3 +1,7 @@
+7 Jul 1997  Frederic Van Haren  <Frederic.Van.Haren@lhs.be>
+
+	* scc.c (SccHistory): file_names is LPSTR * not LPSTR.
+
 Mon Jul  7 16:45:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* scc.c (SccGetVersion): Change arguments from () to (void).
