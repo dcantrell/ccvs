@@ -585,10 +585,10 @@ cd $TESTDIR
 
 
 
+: ${TIMING=false}
 if test -n "$remotehost"; then
     # Now override our CVS_RSH in order to forward variables which affect the
     # test suite through.
-    : ${TIMING=false}
     if $TIMING; then
 	time="/usr/bin/time -ao'$TESTDIR/time.out'"
     else
@@ -23989,14 +23989,14 @@ $SPROG commit: Rebuilding administrative file database"
 	    chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
 	  fi
 	  echo more stuff >> a-lock
-	  dotest_fail_sort reserved-13b "${testcvs} ci -m '' a-lock" \
-"${SPROG} commit: warning: commitinfo line contains no format strings:
-    \"${TESTDIR}/lockme\"
+	  dotest_fail_sort reserved-13b "$testcvs ci -m '' a-lock" \
+"    \"$TESTDIR/lockme\"
 Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+$SPROG \[commit aborted\]: correct above errors first!
+$SPROG commit: Pre-commit check failed
+$SPROG commit: warning: commitinfo line contains no format strings:
 deprecated\.
-fred has file a-lock locked for version  1\.1
-${SPROG} commit: Pre-commit check failed
-${SPROG} \[commit aborted\]: correct above errors first!"
+fred has file a-lock locked for version  1\.1"
 	  # OK, now test "cvs admin -l" in the case where someone
 	  # else has the file locked.
 	  dotest_fail reserved-13c "${testcvs} admin -l a-lock" \
