@@ -7867,7 +7867,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
-          echo "ALL echo %sux >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "first-dir echo %sux >>$TESTDIR/testlog2; cat >/dev/null" \
+            >> loginfo
 
 	  # Might be nice to move this to crerepos tests; it should
 	  # work to create a loginfo file if you didn't create one

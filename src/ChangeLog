@@ -1,5 +1,8 @@
 Fri Jan 30 11:32:41 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Also test "first-dir" as the regexp in loginfo in
+	addition to ALL.
+
 	* main.c (main): Update year in copyright notice to 1998.
 
 Thu Jan 29 00:01:05 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
