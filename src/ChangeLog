@@ -1,5 +1,9 @@
 Thu Jan 22 10:05:55 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server.c (serve_is_modified): Don't call xmalloc; we aren't
+	allowed to call error() here.  Remove duplicate (and potentially
+	confusing) variable 'p'.
+
 	* log.c (log_fileproc): Look for first character of version
 	'0' AND second character '\0', rather than OR.  I didn't try to
 	come up with a test case but this looks like a simple thinko
