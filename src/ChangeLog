@@ -1,5 +1,9 @@
 2004-08-11  Derek Price  <derek@ximbiot.com>
 
+	* ms-buffer.h, ms-buffer.c: Disable contents without PROXY_SUPPORT.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
 	* server.c (isProxyServer): Declare inline.
 	(reprocess_proxy_log): Rename to...
 	(rewind_buf_from_net): ...this and change all callers.
