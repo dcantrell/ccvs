@@ -1,3 +1,8 @@
+Tue Feb 27 23:57:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* vers_ts.c: gmtime() returns NULL on some systems (VMS)
+	revert to local time via ctime() if GMT is not avaiable.
+
 Tue Feb 27 13:07:45 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	The changes listed below cause cvs to parse each rcs file (and
