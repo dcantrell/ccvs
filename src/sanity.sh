@@ -5353,8 +5353,28 @@ U first-dir/file2"
 
 	modules2)
 	  # More tests of modules, in particular the & feature.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  mkdir ${CVSROOT_DIRNAME}/second-dir
+	  mkdir 1; cd 1
+	  dotest modules2-setup-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir second-dir third-dir
+	  dotest modules2-setup-2 \
+"${testcvs} add first-dir second-dir third-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository
+Directory ${TESTDIR}/cvsroot/second-dir added to the repository
+Directory ${TESTDIR}/cvsroot/third-dir added to the repository"
+	  cd third-dir
+	  touch file3
+	  dotest modules2-setup-3 "${testcvs} add file3" \
+"${PROG} [a-z]*: scheduling file .file3. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest modules2-setup-4 "${testcvs} -q ci -m add file3" \
+"RCS file: ${TESTDIR}/cvsroot/third-dir/file3,v
+done
+Checking in file3;
+${TESTDIR}/cvsroot/third-dir/file3,v  <--  file3
+initial revision: 1\.1
+done"
+	  cd ../..
+	  rm -r 1
 
 	  mkdir 1
 	  cd 1
@@ -5363,6 +5383,7 @@ U first-dir/file2"
 'U CVSROOT/modules'
 	  cd CVSROOT
 	  echo 'ampermodule &first-dir &second-dir' > modules
+	  echo 'combmodule third-dir file3 &first-dir' >> modules
 	  # Depending on whether the user also ran the modules test
 	  # we will be checking in revision 1.2 or 1.3.
 	  dotest modules2-2 "${testcvs} -q ci -m add-modules" \
@@ -5415,8 +5436,77 @@ ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 A first-dir/amper1
 ${PROG} [a-z]*: Updating second-dir"
 
+	  if test "$remote" = no; then
+	    dotest modules2-13 "${testcvs} -q ci -m add-it ampermodule" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/amper1,v
+done
+Checking in ampermodule/first-dir/amper1;
+${TESTDIR}/cvsroot/first-dir/amper1,v  <--  amper1
+initial revision: 1\.1
+done"
+	  else
+	    # Trying this as above led to a "protocol error" message.
+	    # Work around this bug.
+	    cd ampermodule
+	    dotest modules2-13 "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/amper1,v
+done
+Checking in first-dir/amper1;
+${TESTDIR}/cvsroot/first-dir/amper1,v  <--  amper1
+initial revision: 1\.1
+done"
+	    cd ..
+	  fi
+
+	  # Now test the "combmodule" module (combining regular modules
+	  # and ampersand modules in the same module definition).
+	  cd ..
+	  rm -r 1
+	  mkdir 1; cd 1
+	  dotest modules2-14 "${testcvs} co combmodule" \
+"U combmodule/file3
+${PROG} [a-z]*: Updating first-dir
+U first-dir/amper1"
+	  dotest modules2-15 "test -f combmodule/file3" ""
+	  dotest modules2-16 "test -f combmodule/first-dir/amper1" ""
+	  cd combmodule
+	  rm -r first-dir
+	  # Might be possible to have a more graceful error message,
+	  # but at least for now there is no way to tell CVS that
+	  # some files/subdirectories come from one repository directory,
+	  # and others from another.
+	  if test "$remote" = no; then
+	    dotest_fail modules2-17 "${testcvs} update -d" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating first-dir
+${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/third-dir/first-dir: No such file or directory"
+	    # Clean up the droppings left by the previous command.
+	    # This should definitely not be necessary (I think).
+	    rm -r first-dir
+	  else
+	    # This seems like a pretty sensible behavior to me, in the
+	    # sense that first-dir doesn't "really" exist within
+	    # third-dir, so CVS just acts as if there is nothing there
+	    # to do.
+	    dotest modules2-17 "${testcvs} update -d" \
+"${PROG} server: Updating \."
+	  fi
+
+	  cd ..
+	  dotest modules2-18 "${testcvs} -q co combmodule" \
+"U first-dir/amper1"
+	  dotest modules2-19 "test -f combmodule/first-dir/amper1" ""
+	  cd ..
+	  rm -r 1
+
 	  # Test that CVS gives an error if one combines -a with
 	  # other options.
+	  # Probably would be better to break this out into a separate
+	  # test.  Although it is short, it shares no files/state with
+	  # the rest of the modules2 tests.
+	  mkdir 1; cd 1
+	  dotest modules2-a0.5 "${testcvs} -q co CVSROOT/modules" \
+'U CVSROOT/modules'
 	  cd CVSROOT
 	  echo 'aliasopt -a -d onedir first-dir' >modules
 	  dotest modules2-a0 "${testcvs} -q ci -m add-modules" \
@@ -5437,6 +5527,7 @@ ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
+	  rm -rf ${CVSROOT_DIRNAME}/third-dir
 	  ;;
 
 	modules3)
