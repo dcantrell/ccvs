@@ -1492,16 +1492,22 @@ checkaddfile (file, repository, tag, srcfiles)
 	fp = fopen (fname, "r");
 	/* If the file does not exist, no big deal.  In particular, the
 	   server does not (yet at least) create CVSEXT_OPT files.  */
-	if (fp == NULL && errno != ENOENT)
-	    error (1, errno, "cannot open %s", fname);
-	while (fp != NULL && fgets (fname, sizeof (fname), fp) != NULL)
+	if (fp == NULL)
 	{
-	    if ((cp = strrchr (fname, '\n')) != NULL)
-		*cp = '\0';
-	    if (*fname)
-		run_arg (fname);
+	    if (errno != ENOENT)
+		error (1, errno, "cannot open %s", fname);
 	}
-	(void) fclose (fp);
+	else
+	{
+	    while (fgets (fname, sizeof (fname), fp) != NULL)
+	    {
+		if ((cp = strrchr (fname, '\n')) != NULL)
+		    *cp = '\0';
+		if (*fname)
+		    run_arg (fname);
+	    }
+	    (void) fclose (fp);
+	}
 	run_arg (rcs);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 	{
