@@ -1,5 +1,8 @@
 Changes since 1.11.7:
 
+* A problem in the CVS getpass library that could cause passwords to echo on
+  some systems has been fixed.
+
 Changes from 1.11.6 to 1.11.7:
 
 * A segfault that could occur in very rare cases where the stat of a file
