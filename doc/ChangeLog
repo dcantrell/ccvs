@@ -1,3 +1,15 @@
+2000-12-14  Derek Price  <derek.price@openavenue.com>
+	    Linus Tolke  <linus@epact.se>
+
+	* cvs.texinfo (Merging a branch): changed some references to "BRANCH"
+	to "BRANCHNAME" for consistancy.  Add a warning about merging using a
+	single tagname reference with an xref to "Merging adds and removals"
+	for the long explanation
+	(Merging adds and removals): Add the long explanation of why merging
+	from a single tagname can be tricky
+	(update): Add a warning about merging using a single tagname reference
+	with an xref to "Merging adds and removals" for the long explanation
+	
 2000-11-13  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.texinfo: use '@sc{cvs}' instead of 'CVS' in various locations
