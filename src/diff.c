@@ -340,7 +340,9 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	/* Backup the current version of the file to CVS/,,filename */
 	sprintf(fname,"%s/%s%s",CVSADM, CVSPREFIX, file);
-	unlink_file (fname);
+	if (unlink_file_dir (fname) < 0)
+	    if (errno != ENOENT)
+		error (1, errno, "cannot remove %s", file);
 	rename_file (file, fname);
 	/* Copy the wrapped file to the current directory then go to work */
 	copy_file (tocvsPath, file);
@@ -408,9 +410,13 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 
     if (tocvsPath)
     {
-	unlink_file (file);
+	if (unlink_file_dir (file) < 0)
+	    if (errno != ENOENT)
+		error (1, errno, "cannot remove %s", file);
+
 	rename_file (fname,file);
-	unlink_file (tocvsPath);
+	if (unlink_file (tocvsPath) < 0)
+	    error (1, errno, "cannot remove %s", file);
     }
 
     if (empty_file == DIFF_REMOVED)

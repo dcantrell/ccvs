@@ -215,7 +215,7 @@ scheduling %s `%s' for addition on branch `%s'",
 #ifdef DEATH_SUPPORT
 	    else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	    {
-		if (isdir (user))
+		if (isdir (user) && !wrap_name_has (user, WRAP_TOCVS))
 		{
 		    error (0, 0, "the directory `%s' cannot be added because a file of the", user);
 		    error (1, 0, "same name already exists in the repository.");
