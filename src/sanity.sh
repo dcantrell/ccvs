@@ -216,6 +216,7 @@ esac
 shift
 
 # Verify that $testcvs looks like CVS.
+# we can't use test -x since BSD 4.3 doesn't support it.
 if test ! -f ${testcvs} || test ! -r ${testcvs}; then
   echo "No such file or file not readable: ${testcvs}" >&2
   exit 1
@@ -240,7 +241,7 @@ false)
 esac
 
 # verify that $servercvs works.
-if test false != "${servercvs}"; then
+if test false != ${servercvs}; then
   if test ! -f ${servercvs} || test ! -r ${servercvs}; then
     echo "No such file or file not readable: ${testcvs}" >&2
     exit 1
@@ -253,7 +254,7 @@ if test false != "${servercvs}"; then
 fi
 
 # default ${servercvs} to ${testcvs}
-if test false != "${servercvs}"; then :; else
+if test false != ${servercvs}; then :; else
 	servercvs=${testcvs}
 fi
 
@@ -2879,7 +2880,8 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../..
 	  dotest deep-4a2 "${testcvs} -q update -P dir6/dir7" ''
-	  # Should be using "test -e" if that is portable enough.
+	  # Should be using "test -e", but it's not portable enough -
+	  # Solaris 2.5 does not have it.
 	  dotest_fail deep-4a3 "test -d dir6/dir7/dir8" ''
 
 	  # Test that if we remove the working directory, CVS does not
