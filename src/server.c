@@ -298,27 +298,7 @@ serve_root (arg)
     
     if (error_pending()) return;
 
-    if (parse_cvsroot (arg))
-    {
-	pending_error_text = malloc (40);
-	if (pending_error_text != NULL)
-	    sprintf (pending_error_text, "E Bad CVSROOT");
-	pending_error = 0;
-	return;
-    }
-
-    /* Make sure the root being passed was a local directory. */
-
-    if (CVSroot_method != local_method)
-    {
-	pending_error_text = malloc (80 + strlen (CVSroot_original));
-	if (pending_error_text != NULL)
-	    sprintf (pending_error_text,
-		     "E CVSROOT `%s' is not a local pathname",
-		     CVSroot_original);
-	pending_error = 0;
-	return;
-    }
+    set_local_cvsroot (arg);
     
     (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
@@ -3247,14 +3227,7 @@ static void
 serve_init (arg)
     char *arg;
 {
-    if (parse_cvsroot (arg))
-    {
-	pending_error_text = malloc (40);
-	if (pending_error_text != NULL)
-	    sprintf (pending_error_text, "E Bad CVSROOT");
-	pending_error = 0;
-	return;
-    }
+    set_local_cvsroot (arg);
 
     do_cvs_command (init);
 }
