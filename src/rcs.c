@@ -5688,7 +5688,7 @@ RCS_setbranch (rcs, rev)
 int
 RCS_lock (rcs, rev, lock_quiet)
      RCSNode *rcs;
-     const char *rev;
+     char *rev;
      int lock_quiet;
 {
     List *locks;
@@ -5707,32 +5707,16 @@ RCS_lock (rcs, rev, lock_quiet)
     /* A revision number of NULL means lock the head or default branch. */
     if (rev == NULL)
 	xrev = RCS_head (rcs);
-
-    /* If rev is a branch number, lock the latest revision on that
-       branch. I think that if the branch doesn't exist, it's
-       okay to return 0 -- that just means that the branch is new,
-       so we don't need to lock it anyway. -twp */
-    else if (RCS_nodeisbranch (rcs, rev))
-    {
-	xrev = RCS_getbranch (rcs, (char *) rev, 1);
-	if (xrev == NULL)
-	{
-	    if (!lock_quiet)
-		error (0, 0, "%s: branch %s absent", rcs->path, rev);
-	    return 1;
-	}
-    }
-
-    if (xrev == NULL)
-	xrev = xstrdup (rev);
+    else
+	xrev = RCS_gettag (rcs, rev, 1, (int *) NULL);
 
     /* Make sure that the desired revision exists.  Technically,
        we can update the locks list without even checking this,
        but RCS 5.7 did this.  And it can't hurt. */
-    if (findnode (rcs->versions, xrev) == NULL)
+    if (xrev == NULL || findnode (rcs->versions, xrev) == NULL)
     {
 	if (!lock_quiet)
-	    error (0, 0, "%s: revision %s absent", rcs->path, xrev);
+	    error (0, 0, "%s: revision %s absent", rcs->path, rev);
 	free (xrev);
 	return 1;
     }
@@ -5798,7 +5782,7 @@ RCS_lock (rcs, rev, lock_quiet)
 int
 RCS_unlock (rcs, rev, unlock_quiet)
      RCSNode *rcs;
-     const char *rev;
+     char *rev;
      int unlock_quiet;
 {
     Node *lock;
@@ -5848,20 +5832,15 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	    return 0;	/* no lock found, ergo nothing to do */
 	xrev = xstrdup (lock->key);
     }
-    else if (RCS_nodeisbranch (rcs, rev))
+    else
     {
-	/* If rev is a branch number, unlock the latest revision on that
-	   branch. */
-	xrev = RCS_getbranch (rcs, (char *) rev, 1);
+	xrev = RCS_gettag (rcs, rev, 1, (int *) NULL);
 	if (xrev == NULL)
 	{
-	    error (0, 0, "%s: branch %s absent", rcs->path, rev);
+	    error (0, 0, "%s: revision %s absent", rcs->path, rev);
 	    return 1;
 	}
     }
-    else
-	/* REV is an exact revision number. */
-	xrev = xstrdup (rev);
 
     lock = findnode (RCS_getlocks (rcs), xrev);
     if (lock == NULL)
