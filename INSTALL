@@ -57,7 +57,7 @@ MIPS:
 	DECstation running Ultrix 4.3 (1.8.85)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
 	SGI running Irix 5.3 using gcc 2.7.2 (1.8.87)
-	SGI running Irix-6 (about 1.4.90) (footnote 3)
+	SGI running Irix-6.2 (1.9.8)
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)
 PowerPC or RS/6000:
 	IBM RS/6000 running AIX 3.1 using gcc and cc (1.6.86)
@@ -85,10 +85,6 @@ VAX:
 	CVS.  We believe this is a bug in the Irix malloc.  You can
 	workaround this bug by linking with "-lmalloc" if necessary.
 	(about 1.4A2).
-
-(footnote 3)
-        There are some warnings about pointer casts which can safely be
-        ignored.  (about 1.4.90).
 
 (footnote 4) Comment out the include of sys/time.h in src/server.c. (1.4.93)
 	You also may have to make sure TIME_WITH_SYS_TIME is undef'ed.
