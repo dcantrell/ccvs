@@ -32,7 +32,7 @@ And many others too numerous to mention here.
 The most comprehensive manual for CVS is
 Version Management with CVS by Per Cederqvist et al.  Depending on
 your system, you may be able to get it with the
-.B info cvs
+.B info CVS
 command or it may be available as cvs.pdf (Portable Document Format),
 cvs.ps (PostScript), cvs.texinfo (Texinfo source), or cvs.html.
 .SP
