@@ -1,5 +1,9 @@
 Thu May 23 21:11:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (checkout options): Add comment regarding
+	subdirectories (lack of clarity pointed out by ian@cygnus.com).
+	Add comment about that infernal "short as possible" wording.
+
 	* cvs.texinfo (Global options): Fix error ("diff" -> "log")
 	(reported by ian@cygnus.com).
 	Remove footnote "Yes, this really should be fixed, and it's being
