@@ -23,7 +23,6 @@ libcvs_a_SOURCES = \
 	argmatch.c \
 	md5.c \
 	sighandle.c \
-	strftime.c \
 	yesno.c \
 	error.h \
 	getpagesize.h \
@@ -172,6 +171,9 @@ MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
 ## For GNULIB's strcase module.
 libcvs_a_SOURCES += strcase.h
+
+## For GNULIB's strftime module.
+libcvs_a_SOURCES += strftime.c strftime.h
 
 ## For GNULIB's time_r module.
 libcvs_a_SOURCES += time_r.h
