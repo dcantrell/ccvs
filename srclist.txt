@@ -161,6 +161,10 @@ $GNULIB/m4/stdbool.m4				m4		no NI
 # $GNULIB/modules/strerror
 $GNULIB/lib/strerror.c				lib		no NI
 $GNULIB/m4/strerror.m4				m4		no NI
+# $GNULIB/modules/timespec
+$GNULIB/lib/timespec.h				lib		no NI
+$GNULIB/m4/st_mtim.m4				m4		no NI
+$GNULIB/m4/timespec.m4				m4		no NI
 # $GNULIB/modules/unlocked-io
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
