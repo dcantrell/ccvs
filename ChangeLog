@@ -1,3 +1,8 @@
+1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Add item about PreservePermissions.  Fix unclear wording
+	in gserver item.
+
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* acconfig.h, configure.in: Add PRESERVE_PERMISSIONS_SUPPORT and
