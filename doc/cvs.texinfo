@@ -937,12 +937,12 @@ override the @code{$CVSROOT} environment variable.
 Once you've checked a working copy out from the
 repository, it will remember where its repository is
 (the information is recorded in the
-@file{@sc{cvs}/Root} file in the working copy).  
+@file{CVS/Root} file in the working copy).  
 
-The @code{-d} option and the @file{@sc{cvs}/Root} file
+The @code{-d} option and the @file{CVS/Root} file
 both override the @code{$CVSROOT} environment variable;
 however, @sc{CVS} will complain if the @file{-d}
-argument and the @file{@sc{cvs}/Root} file disagree.
+argument and the @file{CVS/Root} file disagree.
 
 There is nothing magical about the name
 @file{/usr/local/cvsroot}.  You can choose to place the
@@ -1121,25 +1121,18 @@ In some situations it is a good idea to have more than
 one repository, for instance if you have two
 development groups that work on separate projects
 without sharing any code.  All you have to do to have
-several repositories is to set @code{$CVSROOT} to the
-repository you want to use at the moment.
-
-There are disadvantages to having more than one
-repository.  In @sc{cvs} 1.3 you @emph{must} make sure
-that @code{$CVSROOT} always points to the correct
-repository.  If the same filename is used in two
-repositories, and you mix up the setting of
-@code{$CVSROOT}, you might lose data.  @sc{cvs} 1.4
-solves this problem by saving the repository
-information in the local @file{CVS} administration
-files.  If you try to use the wrong repository,
-@sc{cvs} will warn you of the attempt and then exit.
+several repositories is to specify the appropriate
+repository, using the @code{CVSROOT} environment
+variable, the @samp{-d} option to @sc{cvs}, or (once
+you have checked out a working directories) by
+simply allowing @sc{cvs} to use the repository that was
+used to check out the working directory (@pxref{Repository}).
 
 Notwithstanding, it can be confusing to have two or
 more repositories.
 
-All examples in this manual assume that you have a
-single repository.
+None of the examples in this manual show multiple
+repositories.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Creating a repository
@@ -1326,10 +1319,10 @@ directories inside @samp{$CVSROOT} are reasonable.
 @cindex Module, defining
 @cindex Modules file, changing
 
-The next step is to define the module in the @file{modules} file.  Some
-@sc{cvs} commands work without this step, but others (most notably
-@code{release}) require that all modules are properly defined in the
-@file{modules} file.
+The next step is to define the module in the
+@file{modules} file.  This is not strictly necessary,
+but modules can be convenient in grouping together
+related files and directories.
 
 In simple cases these steps are sufficient to define a module.
 
@@ -3149,8 +3142,7 @@ specified as an absolute pathname.
 @item -d @var{cvs_root_directory}
 Use @var{cvs_root_directory} as the root directory
 pathname of the repository.  Overrides the setting of
-the @code{$CVSROOT} environment variable.  This parameter
-should be specified as an absolute pathname.
+the @code{$CVSROOT} environment variable.  @xref{Repository}.
 
 @cindex EDITOR, overriding
 @cindex Overriding EDITOR
@@ -5217,7 +5209,8 @@ Note that no warning message like this is printed for
 spurious directories that @sc{cvs} encounters.  The
 directory, and all its contents, are silently ignored.
 
-@c FIXME -- this should be fixed for CVS 1.4
+@c FIXME -- CVS should be fixed to print "? foo" for
+@c such spurious directories
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -6592,21 +6585,11 @@ kept).  This information must be available to @sc{cvs} for
 most commands to execute; if @code{$CVSROOT} is not set,
 or if you wish to override it for one invocation, you
 can supply it on the command line: @samp{cvs -d cvsroot
-cvs_command@dots{}} You may not need to set
-@code{$CVSROOT} if your @sc{cvs} binary has the right path
-compiled in.
-
-@ignore
-@c FIXME--update the rest of this manual to reflect CVS/Root.
-If your site has several repositories, you must be
-careful to set @code{$CVSROOT} to the appropriate one
-when you use @sc{cvs}, even if you just run @samp{cvs
-update} inside an already checked-out module.  Future
-releases of @sc{cvs} will probably store information about
-which repository the module came from inside the
-@file{CVS} directory, but version 1.3 relies totally on
-@code{$CVSROOT}.
-@end ignore
+cvs_command@dots{}} Once you have checked out a working
+directory, @sc{cvs} stores the appropriate root (in
+the file @file{CVS/Root}), so normally you only need to
+worry about this when initially checking out a working 
+directory.
 
 @cindex EDITOR
 @cindex CVSEDITOR
