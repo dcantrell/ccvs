@@ -1,3 +1,9 @@
+2000-07-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in, config.h.in: Add checks for mknod() and st_rdev
+	since some systems (notably Plan 9) don't have them.
+	* configure: Regenerated.
+
 2000-07-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS: Note the new "version" command.
