@@ -417,6 +417,8 @@ int
 unlink_file_dir (f)
     const char *f;
 {
+    struct stat sb;
+
     if (trace
 #ifdef SERVER_SUPPORT
 	/* This is called by the server parent process in contexts where
@@ -433,20 +435,23 @@ unlink_file_dir (f)
     /* For at least some unices, if root tries to unlink() a directory,
        instead of doing something rational like returning EISDIR,
        the system will gleefully go ahead and corrupt the filesystem.
-       So we first call isdir() to see if it is OK to call unlink().  This
+       So we first call stat() to see if it is OK to call unlink().  This
        doesn't quite work--if someone creates a directory between the
-       call to isdir() and the call to unlink(), we'll still corrupt
+       call to stat() and the call to unlink(), we'll still corrupt
        the filesystem.  Where is the Unix Haters Handbook when you need
        it?  */
-    if (isdir(f)) 
-	return deep_remove_dir(f);
-    else
+    if (stat (f, &sb) < 0)
     {
-	if (unlink (f) != 0)
+	if (existence_error (errno))
+	{
+	    /* The file or directory doesn't exist anyhow.  */
 	    return -1;
+	}
     }
-    /* We were able to remove the file from the disk */
-    return 0;
+    else if (S_ISDIR (sb.st_mode))
+	return deep_remove_dir (f);
+
+    return unlink (f);
 }
 
 /* Remove a directory and everything it contains.  Returns 0 for
