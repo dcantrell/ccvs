@@ -943,6 +943,13 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     if (noexec)
 	return (0);
 
+    /* Note that as the code stands now, the -k option overrides any
+       settings in wrappers (whether CVSROOT/cvswrappers, -W, or
+       whatever).  Some have suggested this should be the other way
+       around.  As far as I know the documentation doesn't say one way
+       or the other.  Before making a change of this sort, should think
+       about what is best, document it (in cvs.texinfo and NEWS), &c.  */
+
     if (local_opt == NULL)
     {
 	if (wrap_name_has (user, WRAP_RCSOPTION))
