@@ -326,9 +326,20 @@ parse_config (cvsroot)
 	else if (strcmp (line, "SystemAuth") == 0)
 	{
 	    if (strcmp (p, "no") == 0)
+#ifdef AUTH_SERVER_SUPPORT
 		system_auth = 0;
+#else
+		/* Still parse the syntax but ignore the
+		   option.  That way the same config file can
+		   be used for local and server.  */
+		;
+#endif
 	    else if (strcmp (p, "yes") == 0)
+#ifdef AUTH_SERVER_SUPPORT
 		system_auth = 1;
+#else
+		;
+#endif
 	    else
 	    {
 		error (0, 0, "unrecognized value '%s' for SystemAuth", p);
