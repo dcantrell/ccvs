@@ -1,5 +1,8 @@
 Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* subr.c (run_setup, run_args): Changed variable argument
+	  processing to work on machines that use <varargs.h>.
+
 	* subr.c (copy_file, xcmp): Changed to read the file(s) by blocks
 	  rather than by reading the whole file into a huge buffer.  The
 	  claim that this was reasonable because source files tend to be
