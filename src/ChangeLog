@@ -1,5 +1,7 @@
 2001-04-16  Larry Jones  <larry.jones@sdrc.com>
 
+	* checkout.c, update.c: Note in usage message that -k is sticky.
+
 	* server.c: (server_cleanup, wait_sig): Remove ancient SunOS kludge.
 	(Suggested by Rob Saccoccio <robs@chelsea.net>.)
 
