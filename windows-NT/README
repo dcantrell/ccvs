@@ -30,9 +30,10 @@ Bourne shell good enough to execute the script).  Sanity.sh provides
 pretty minimal feature coverage, but still gives me some confidence it
 isn't totally broken.
 
-You will also need GNU patch installed on your system.  GZIP is useful
-but not required.  The Congruent ports of these packages to Windows
-NT, binary and source, are available in:
+You will also need GNU patch installed on your system.  GREP is also
+manditory (for resolving merge conflicts).  GZIP is useful but not
+required.  The Congruent ports of these packages to Windows NT, binary
+and source, are available in:
 
 	ftp://microlib.cc.utexas.edu/microlib/nt/gnu
 
