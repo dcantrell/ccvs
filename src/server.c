@@ -3815,10 +3815,14 @@ authenticate_connection ()
   /* Primitive authorization for testing. */
   if (strcmp (password, "unguessable"))
     {
-      printf ("*** cvs server: you fail: %d %s\n", 
-              strlen (password), password);
+      printf ("I HATE YOU\n");
       fflush (stdout);
       exit (1);
+    }
+  else
+    {
+      printf ("I LOVE YOU\n");
+      fflush (stdout);
     }
   
   /* Do everything that kerberos did. */

@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+char *get_cvs_password PROTO((char *user, char *host, char *cvsrooot));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
@@ -2182,10 +2183,6 @@ connect_to_pserver (tofdp, fromfdp, log)
   int tofd, fromfd;
   struct hostent *host;
   struct sockaddr_in client_sai;
-  char *test_str = "this is a test\n";
-  char read_buf[1];
-  char c;
-  int i, len;
 
   sock = socket (AF_INET, SOCK_STREAM, 0);
   if (sock == -1)
@@ -2196,19 +2193,23 @@ connect_to_pserver (tofdp, fromfdp, log)
   init_sockaddr (&client_sai, server_host, CVS_AUTH_PORT);
   connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
 
-  /* Run the auth protocol before anything else. */
+  /* Run the authorization mini-protocol before anything else. */
   {
+    int i;
+    char ch, read_buf[PATH_MAX];
     char *begin      = "BEGIN AUTH REQUEST\n";
     char *repository = server_cvsroot;
     char *username   = server_user;
     char *password   = NULL;
     char *end        = "END AUTH REQUEST\n";
 
-    /* todo: for now, read password from prompt. */
-    password = getpass ("CVS Password: ");
+    /* Get the password, probably from ~/.cvspass. */
+    password = get_cvs_password (server_user, server_host, server_cvsroot);
 
+    /* Announce that we're starting the authorization protocol. */
     write (sock, begin, strlen (begin));
 
+    /* Send the data the server needs. */
     write (sock, repository, strlen (repository));
     write (sock, "\n", 1);
     write (sock, username, strlen (username));
@@ -2216,7 +2217,49 @@ connect_to_pserver (tofdp, fromfdp, log)
     write (sock, password, strlen (password));
     write (sock, "\n", 1);
 
+    /* Announce that we're ending the authorization protocol. */
     write (sock, end, strlen (end));
+
+    /* Paranoia. */
+    bzero (password, strlen (password));
+
+    /* Get ACK or NACK from the server. 
+     * 
+     * We could avoid this careful read-char loop by having the ACK
+     * and NACK cookies be of the same length, so we'd simply read
+     * that length and see what we got.  But then there'd be Yet
+     * Another Protocol Requirement floating around, and someday
+     * someone would make a change that breaks it and spend a hellish
+     * day tracking it down.  Therefore, we use "\n" to mark off the
+     * end of both ACK and NACK, and we read until "\n".
+     */
+    ch = 0;
+    bzero (read_buf, PATH_MAX);
+    for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
+      {
+        read (sock, &ch, 1);
+        read_buf[i] = ch;
+      }
+
+    if (strcmp (read_buf, "I HATE YOU\n") == 0)
+      {
+        /* Authorization not granted. */
+	if (shutdown (sock, 2) < 0)
+	    error (1, errno, "shutdown() failed (server %s)", server_host);
+        error (1, 0, 
+               "authorization failed: server %s rejected access", 
+               server_host);
+      }
+    else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
+      {
+        /* Unrecognized response from server. */
+	if (shutdown (sock, 2) < 0)
+	    error (1, errno, "shutdown() failed (server %s)", server_host);
+        error (1, 0, 
+               "unrecognized response from %s in authorization protocol", 
+               server_host);
+      }
+    /* Else authorization granted, so we can go on... */
   }
 
   /* This was stolen straight from start_kerberos_server(). */
