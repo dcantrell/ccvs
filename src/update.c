@@ -706,9 +706,9 @@ update_filesdone_proc (err, repository, update_dir)
     }
 #ifdef CVSADM_ROOT
 #ifdef SERVER_SUPPORT
-    else if (!server_active)
+    else if (!server_active && !pipeout)
 #else
-    else
+    else if (!pipeout)
 #endif /* SERVER_SUPPORT */
     {
         /* If there is no CVS/Root file, add one */
