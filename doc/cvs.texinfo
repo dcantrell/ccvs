@@ -2283,6 +2283,11 @@ The @samp{--allow-root} option specifies the allowable
 different @sc{cvsroot} directory will not be allowed to
 connect.  If there is more than one @sc{cvsroot}
 directory which you want to allow, repeat the option.
+(Unfortunately, many versions of @code{inetd} have very small
+limits on the number of arguments and/or the total length
+of the command.  The usual solution to this problem is
+to have @code{inetd} run a shell script which then invokes
+@sc{cvs} with the necessary arguments.)
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in

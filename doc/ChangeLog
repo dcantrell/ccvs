@@ -1,3 +1,8 @@
+1999-07-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Password authentication server): Note inetd limits
+	and suggest using shell script to avoid.
+
 1999-06-01  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Requests): For the import command, the
