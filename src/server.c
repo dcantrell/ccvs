@@ -778,6 +778,8 @@ static int max_dotdot_limit = 0;
 void
 server_pathname_check (char *path)
 {
+    TRACE (TRACE_FUNCTION, "server_pathname_check (%s)", path);
+
     /* An absolute pathname is almost surely a path on the *client* machine,
        and is unlikely to do us any good here.  It also is probably capable
        of being a security hole in the anonymous readonly case.  */
@@ -907,6 +909,8 @@ dirswitch (char *dir, char *repos)
     int status;
     FILE *f;
     size_t dir_len;
+
+    TRACE (TRACE_FUNCTION, "dirswitch (%s, %s)", dir, repos);
 
     server_write_entries ();
 
