@@ -219,13 +219,23 @@ false when executed and are intended to be used like,
                   EOL
    * $username  = regexp to match a username
    * $hostname  = regexp to match a hostname
-   * $PROG      = regexp to match progname in CVS error messages
+   * $SPROG     = regexp to match server progname in CVS error messages.  For
+                  tests run in local and remote mode, this is usually the
+                  string to test for, since some messages can be printed either
+                  by the CVS client or CVS server, dependant on the mode.  In
+                  local mode it will = $PROG.
+   * $PROG      = regexp to match client progname in CVS error messages.  Use
+                  this to match error messages known to be printed only from
+                  the CVS client.
    * $remote    = ':' (true) or 'false', depending on whether the script is
                   running with a remote CVSROOT
    * $keep      = ':' (true) or 'false'.  When set, the first test run will
                   leave any files and directories it created in $testdir and
                   exit when complete.
    * $servercvs = cvs executable to be run as CVS_SERVER in remote testing
+   * $testcvs_server_support
+                = ':' (true) or 'false', depending whether server support was
+                  detected in the ${testcvs} executable.
 
 And, of course, some characters like '.' in regexps need to be '\' escaped when
 you mean them literally.  Some characters may be interpreted by the shell,
