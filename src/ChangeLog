@@ -1,3 +1,7 @@
+Fri Nov  1 18:22:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* error.h: Define PROTO if it is not defined.
+
 Wed Oct 30 08:53:20 1996  jalving@ibm.net
 
 	* patch.c (patch_fileproc): Set line1 and line2 to NULL up-front
