@@ -94,7 +94,7 @@ scramble (str)
    * scrambling this is (the first, obviously, since we only do one
    * kind of scrambling so far), and then the '\0' of course.
    */
-  s = xmalloc (strlen (str) + 2);
+  s = (char *) xmalloc (strlen (str) + 2);
 
   s[0] = 'A';   /* Scramble (TM) version prefix. */
   strcpy (s + 1, str);
@@ -110,7 +110,8 @@ char *
 descramble (str)
      char *str;
 {
-  char *s, *ret;
+  char *s;
+  int i;
 
   /* For now we can only handle one kind of scrambling.  In the future
    * there may be other kinds, and this `if' will become a `switch'.
@@ -129,12 +130,12 @@ descramble (str)
   /* Method `A' is symmetrical, so scramble again to decrypt. */
   s = scramble (str + 1);
 
-  /* Make sure the string we return can be free()'d! */
-  ret = xmalloc (strlen (s));
-  strcpy (ret, s + 1);        /* scoot past the 'A' */
-  free (s);
+  /* Shift the whole string one char to the left, pushing the unwanted
+     'A' off the left end.  Safe, because s is null-terminated. */
+  for (i = 0; s[i]; i++)
+      s[i] = s[i + 1];
 
-  return ret;
+  return s;
 }
 
 #endif /* (AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT) from top of file */
