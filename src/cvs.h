@@ -382,6 +382,7 @@ extern int client_active;	/* nonzero if we are doing remote access */
 extern CVSmethod CVSroot_method; /* one of the enum values above */
 extern char *CVSroot_username;	/* the username or NULL if method == local */
 extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
+extern int CVSroot_port;	/* the port or zero if method == local */
 extern char *CVSroot_directory;	/* the directory name */
 
 /* These variables keep track of all of the CVSROOT directories that
