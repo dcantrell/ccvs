@@ -1,3 +1,9 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* .cvsignore: Added .deps directory and alphabetized
+	* Makefile.am: New file needed by Automake
+	* Makefile.in: Regenerated
+
 2000-11-15  Derek Price  <derek.price@openavenue.com>
 
 	* system.h:  Added CVS_FDOPEN to conform to CVS_FOPEN precedent
