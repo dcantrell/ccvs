@@ -475,8 +475,9 @@ process_import_file (message, vfile, vtag, targc, targv)
 	     * repository nor in the Attic -- create it anew.
 	     */
 	    add_log ('N', vfile);
-	    retval = add_rcs_file (message, rcs, vfile, vhead, vbranch,
-				   vtag, targc, targv, logfp);
+	    retval = add_rcs_file (message, rcs, vfile, vhead, keyword_opt,
+				   vbranch, vtag, targc, targv,
+				   NULL, 0, logfp);
 	    free (rcs);
 	    return retval;
 	}
@@ -880,22 +881,32 @@ get_comment (user)
 /* Create a new RCS file from scratch.
 
    This probably should be moved to rcs.c now that it is called from
-   places outside import.c.  */
+   places outside import.c.
+
+   Return value is 0 for success, or nonzero for failure (in which
+   case an error message will have already been printed).  */
 int
-add_rcs_file (message, rcs, user, add_vhead, add_vbranch, vtag, targc, targv,
-	      add_logfp)
-    /* Log message for the addition.  */
+add_rcs_file (message, rcs, user, add_vhead, key_opt,
+	      add_vbranch, vtag, targc, targv,
+	      desctext, desclen, add_logfp)
+    /* Log message for the addition.  Not used if add_vhead == NULL.  */
     char *message;
     /* Filename of the RCS file to create.  */
     char *rcs;
     /* Filename of the file to serve as the contents of the initial
-       revision.  */
+       revision.  Even if add_vhead is NULL, we use this to determine
+       the modes to give the new RCS file.  */
     char *user;
 
     /* Revision number of head that we are adding.  Normally 1.1 but
        could be another revision as long as ADD_VBRANCH is a branch
-       from it.  */
+       from it.  If NULL, then just add an empty file without any
+       revisions (similar to the one created by "rcs -i").  */
     char *add_vhead;
+
+    /* Keyword expansion mode, e.g., "b" for binary.  NULL means the
+       default behavior.  */
+    char *key_opt;
 
     /* Vendor branch to import to, or NULL if none.  If non-NULL, then
        vtag should also be non-NULL.  */
@@ -903,6 +914,11 @@ add_rcs_file (message, rcs, user, add_vhead, add_vbranch, vtag, targc, targv,
     char *vtag;
     int targc;
     char *targv[];
+
+    /* If non-NULL, description for the file.  If NULL, the description
+       will be empty.  */
+    char *desctext;
+    size_t desclen;
 
     /* Write errors to here as well as via error (), or NULL if we should
        use only error ().  */
@@ -921,7 +937,7 @@ add_rcs_file (message, rcs, user, add_vhead, add_vbranch, vtag, targc, targv,
     mode_t mode;
     char *tocvsPath;
     char *userfile;
-    char *local_opt = keyword_opt;
+    char *local_opt = key_opt;
     char *free_opt = NULL;
 
     if (noexec)
@@ -955,8 +971,17 @@ add_rcs_file (message, rcs, user, add_vhead, add_vbranch, vtag, targc, targv,
     /*
      * putadmin()
      */
-    if (fprintf (fprcs, "head     %s;\012", add_vhead) < 0)
-	goto write_error;
+    if (add_vhead != NULL)
+    {
+	if (fprintf (fprcs, "head     %s;\012", add_vhead) < 0)
+	    goto write_error;
+    }
+    else
+    {
+	if (fprintf (fprcs, "head     ;\012") < 0)
+	    goto write_error;
+    }
+
     if (add_vbranch != NULL)
     {
 	if (fprintf (fprcs, "branch   %s;\012", add_vbranch) < 0)
@@ -1002,125 +1027,141 @@ add_rcs_file (message, rcs, user, add_vhead, add_vbranch, vtag, targc, targv,
     if (fprintf (fprcs, "\012") < 0)
       goto write_error;
 
-    /*
-     * puttree()
-     */
+    /* Get information on modtime and mode.  */
     if (fstat (fileno (fpuser), &sb) < 0)
 	error (1, errno, "cannot fstat %s", user);
-    if (use_file_modtime)
-	now = sb.st_mtime;
-    else
-	(void) time (&now);
+
+    /* Write the revision(s), with the date and author and so on
+       (that is "delta" rather than "deltatext" from rcsfile(5)).  */
+    if (add_vhead != NULL)
+    {
+	if (use_file_modtime)
+	    now = sb.st_mtime;
+	else
+	    (void) time (&now);
 #ifdef HAVE_RCS5
-    ftm = gmtime (&now);
+	ftm = gmtime (&now);
 #else
-    ftm = localtime (&now);
+	ftm = localtime (&now);
 #endif
-    (void) sprintf (altdate1, DATEFORM,
-		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+	(void) sprintf (altdate1, DATEFORM,
+			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
+			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
+			ftm->tm_min, ftm->tm_sec);
 #ifdef HAVE_RCS5
 #define	altdate2 altdate1
 #else
-    /*
-     * If you don't have RCS V5 or later, you need to lie about the ci
-     * time, since RCS V4 and earlier insist that the times differ.
-     */
-    now++;
-    ftm = localtime (&now);
-    (void) sprintf (altdate2, DATEFORM,
-		    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
-		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
-		    ftm->tm_min, ftm->tm_sec);
+	/* If you don't have RCS V5 or later, you need to lie about the ci
+	   time, since RCS V4 and earlier insist that the times differ.  */
+	now++;
+	ftm = localtime (&now);
+	(void) sprintf (altdate2, DATEFORM,
+			ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
+			ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
+			ftm->tm_min, ftm->tm_sec);
 #endif
-    author = getcaller ();
+	author = getcaller ();
 
-    if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
+	if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
 	fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
 		 altdate1, author) < 0)
 	goto write_error;
 
-    if (fprintf (fprcs, "branches") < 0)
-	goto write_error;
-    if (add_vbranch != NULL)
-    {
-	if (fprintf (fprcs, " %s.1", add_vbranch) < 0)
+	if (fprintf (fprcs, "branches") < 0)
 	    goto write_error;
-    }
-    if (fprintf (fprcs, ";\012") < 0)
-	goto write_error;
-
-    if (fprintf (fprcs, "next     ;\012") < 0)
-	goto write_error;
-    if (add_vbranch != NULL)
-    {
-	if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
-	    fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
-		     altdate2, author) < 0 ||
-	    fprintf (fprcs, "branches ;\012") < 0 ||
-	    fprintf (fprcs, "next     ;\012\012") < 0)
-	    goto write_error;
-    }
-    if (
-	/*
-	 * putdesc()
-	 */
-	fprintf (fprcs, "\012desc\012") < 0 ||
-	fprintf (fprcs, "@@\012\012\012") < 0 ||
-	/*
-	 * putdelta()
-	 */
-	fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
-	fprintf (fprcs, "log\012@") < 0)
-	goto write_error;
-    if (add_vbranch != NULL)
-    {
-	/* We are going to put the log message in the revision on the
-	   branch.  So putting it here too seems kind of redundant, I
-	   guess (and that is what CVS has always done, anyway).  */
-	if (fprintf (fprcs, "Initial revision\012") < 0)
-	    goto write_error;
-    }
-    else
-    {
-	if (expand_at_signs (message, (off_t) strlen (message), fprcs) < 0)
-	    goto write_error;
-    }
-    if (fprintf (fprcs, "@\012") < 0 ||
-	fprintf (fprcs, "text\012@") < 0)
-    {
-	goto write_error;
-    }
-
-    /* Now copy over the contents of the file, expanding at signs.  */
-    {
-	char buf[8192];
-	unsigned int len;
-
-	while (1)
+	if (add_vbranch != NULL)
 	{
-	    len = fread (buf, 1, sizeof buf, fpuser);
-	    if (len == 0)
-	    {
-		if (ferror (fpuser))
-		    error (1, errno, "cannot read file %s for copying", user);
-		break;
-	    }
-	    if (expand_at_signs (buf, len, fprcs) < 0)
+	    if (fprintf (fprcs, " %s.1", add_vbranch) < 0)
+		goto write_error;
+	}
+	if (fprintf (fprcs, ";\012") < 0)
+	    goto write_error;
+
+	if (fprintf (fprcs, "next     ;\012") < 0)
+	    goto write_error;
+	if (add_vbranch != NULL)
+	{
+	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
+		fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
+			 altdate2, author) < 0 ||
+		fprintf (fprcs, "branches ;\012") < 0 ||
+		fprintf (fprcs, "next     ;\012\012") < 0)
 		goto write_error;
 	}
     }
-    if (fprintf (fprcs, "@\012\012") < 0)
+
+    /* Now write the description (possibly empty).  */
+    if (fprintf (fprcs, "\012desc\012") < 0 ||
+	fprintf (fprcs, "@") < 0)
 	goto write_error;
-    if (add_vbranch != NULL)
+    if (desctext != NULL)
     {
-	if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
-	    fprintf (fprcs, "log\012@") < 0 ||
-	    expand_at_signs (message, (off_t) strlen (message), fprcs) < 0 ||
-	    fprintf (fprcs, "@\012text\012") < 0 ||
-	    fprintf (fprcs, "@@\012") < 0)
+	/* The use of off_t not size_t for the second argument is very
+	   strange, since we are dealing with something which definitely
+	   fits in memory.  */
+	if (expand_at_signs (desctext, (off_t) desclen, fprcs) < 0)
 	    goto write_error;
+    }
+    if (fprintf (fprcs, "@\012\012\012") < 0)
+	goto write_error;
+
+    /* Now write the log messages and contents for the revision(s) (that
+       is, "deltatext" rather than "delta" from rcsfile(5)).  */
+    if (add_vhead != NULL)
+    {
+	if (fprintf (fprcs, "\012%s\012", add_vhead) < 0 ||
+	    fprintf (fprcs, "log\012@") < 0)
+	    goto write_error;
+	if (add_vbranch != NULL)
+	{
+	    /* We are going to put the log message in the revision on the
+	       branch.  So putting it here too seems kind of redundant, I
+	       guess (and that is what CVS has always done, anyway).  */
+	    if (fprintf (fprcs, "Initial revision\012") < 0)
+		goto write_error;
+	}
+	else
+	{
+	    if (expand_at_signs (message, (off_t) strlen (message), fprcs) < 0)
+		goto write_error;
+	}
+	if (fprintf (fprcs, "@\012") < 0 ||
+	    fprintf (fprcs, "text\012@") < 0)
+	{
+	    goto write_error;
+	}
+
+	/* Now copy over the contents of the file, expanding at signs.  */
+	{
+	    char buf[8192];
+	    unsigned int len;
+
+	    while (1)
+	    {
+		len = fread (buf, 1, sizeof buf, fpuser);
+		if (len == 0)
+		{
+		    if (ferror (fpuser))
+			error (1, errno, "cannot read file %s for copying",
+			       user);
+		    break;
+		}
+		if (expand_at_signs (buf, len, fprcs) < 0)
+		    goto write_error;
+	    }
+	}
+	if (fprintf (fprcs, "@\012\012") < 0)
+	    goto write_error;
+	if (add_vbranch != NULL)
+	{
+	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
+		fprintf (fprcs, "log\012@") < 0 ||
+		expand_at_signs (message,
+				 (off_t) strlen (message), fprcs) < 0 ||
+		fprintf (fprcs, "@\012text\012") < 0 ||
+		fprintf (fprcs, "@@\012") < 0)
+		goto write_error;
+	}
     }
 
     if (fclose (fprcs) == EOF)

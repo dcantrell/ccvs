@@ -468,3 +468,75 @@ out:
 	free (line);
     return result;
 }
+
+/* Read the entire contents of the file NAME into *BUF.  *BUF
+   is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
+   bytes of space.  The actual size is returned in *LEN.  On error,
+   give a fatal error.  The name of the file to use in error messages
+   (typically will include a directory if we have changed directory)
+   is FULLNAME.  MODE is "r" for text or "rb" for binary.  */
+
+void
+get_file (name, fullname, mode, buf, bufsize, len)
+    char *name;
+    char *fullname;
+    char *mode;
+    char **buf;
+    size_t *bufsize;
+    size_t *len;
+{
+    struct stat s;
+    size_t nread;
+    char *tobuf;
+    FILE *e;
+
+    if (CVS_STAT (name, &s) < 0)
+	error (1, errno, "can't stat %s", fullname);
+
+    if (*bufsize < s.st_size)
+    {
+	*bufsize = s.st_size;
+	*buf = xrealloc (*buf, *bufsize);
+    }
+
+    e = open_file (name, mode);
+
+    tobuf = *buf;
+    nread = 0;
+    while (1)
+    {
+	size_t got;
+
+	got = fread (tobuf, 1, *bufsize - (tobuf - *buf), e);
+	if (ferror (e))
+	    error (1, errno, "can't read %s", fullname);
+	nread += got;
+	tobuf += got;
+
+	if (feof (e))
+	    break;
+
+	/* It's probably paranoid to think S.ST_SIZE might be
+	   too small to hold the entire file contents, but we
+	   handle it just in case.  */
+	if (tobuf == *buf + *bufsize)
+	{
+	    int c;
+	    long off;
+
+	    c = getc (e);
+	    if (c == EOF)
+		break;
+	    off = tobuf - *buf;
+	    expand_string (buf, bufsize, *bufsize + 100);
+	    tobuf = *buf + off;
+	    *tobuf++ = c;
+	    ++nread;
+	}
+    }
+
+    if (fclose (e) < 0)
+	error (0, errno, "cannot close %s", fullname);
+
+    *len = nread;
+}

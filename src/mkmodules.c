@@ -795,8 +795,12 @@ init (argc, argv)
 	       "initial checkin" but I fail to see the point as we know what
 	       file it is from the name.  */
 	    retcode = add_rcs_file ("initial checkin", info_v,
-				    fileptr->filename, "1.1", NULL, NULL,
-				    0, NULL, NULL);
+				    fileptr->filename, "1.1", NULL,
+
+				    /* No vendor branch.  */
+				    NULL, NULL, 0, NULL,
+
+				    NULL, 0, NULL);
 	    if (retcode != 0)
 		/* add_rcs_file already printed an error message.  */
 		err = 1;

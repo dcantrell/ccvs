@@ -1842,29 +1842,62 @@ internal error: `%s' didn't move out of the attic",
     {
 	/* this is the first time we have ever seen this file; create
 	   an rcs file.  */
-	run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);
 
+	char *desc;
+	size_t descalloc;
+	size_t desclen;
+
+	char *opt;
+
+	desc = NULL;
+	descalloc = 0;
+	desclen = 0;
 	fname = xmalloc (strlen (file) + sizeof (CVSADM)
 			 + sizeof (CVSEXT_LOG) + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	/* If the file does not exist, no big deal.  In particular, the
 	   server does not (yet at least) create CVSEXT_LOG files.  */
 	if (isfile (fname))
-	    run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
+	    /* FIXME: Should be including update_dir in the appropriate
+	       place here.  */
+	    get_file (fname, fname, "r", &desc, &descalloc, &desclen);
 	free (fname);
+
+	/* From reading the RCS 5.7 source, "rcs -i" adds a newline to the
+	   end of the log message if the message is nonempty.
+	   Do it.  RCS also deletes certain whitespace, in cleanlogmsg,
+	   which we don't try to do here.  */
+	if (desclen > 0)
+	{
+	    expand_string (&desc, &descalloc, desclen + 1);
+	    desc[desclen++] = '\012';
+	}
 
 	/* Set RCS keyword expansion options.  */
 	if (options && options[0] == '-' && options[1] == 'k')
-	    run_arg (options);
-	run_arg (rcs);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+	    opt = options + 2;
+	else
+	    opt = NULL;
+
+	/* This message is an artifact of the time when this
+	   was implemented via "rcs -i".  It should be revised at
+	   some point (does the "initial revision" in the message from
+	   RCS_checkin indicate that this is a new file?  Or does the
+	   "RCS file" message serve some function?).  */
+	cvs_output ("RCS file: ", 0);
+	cvs_output (rcs, 0);
+	cvs_output ("\ndone\n", 0);
+
+	if (add_rcs_file (NULL, rcs, file, NULL, opt,
+			  NULL, NULL, 0, NULL,
+			  desc, desclen, NULL) != 0)
 	{
-	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		   "could not create %s", rcs);
 	    retval = 1;
 	    goto out;
 	}
 	newfile = 1;
+	if (desc != NULL)
+	    free (desc);
     }
 
     /* when adding a file for the first time, and using a tag, we need
@@ -1985,7 +2018,14 @@ internal error: `%s' didn't move out of the attic",
 
     fileattr_newfile (file);
 
+    /* I don't think fix_rcs_modes is needed any more.  In the
+       add_rcs_file case, the algorithms used by add_rcs_file and
+       fix_rcs_modes are the same, so there is no need to go through
+       it all twice.  In the other cases, I think we want to just
+       preserve the mode that the file had before we started.  That is
+       a behavior change, but I would think a desirable one.  */
     fix_rcs_modes (rcs, file);
+
     retval = 0;
 
  out:
