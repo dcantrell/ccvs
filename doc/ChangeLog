@@ -1,3 +1,7 @@
+Sat Nov 22 12:29:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Entries Lines): Clarify options in entries line.
+
 Tue Nov 18 09:23:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Be more explicit about "export" and
