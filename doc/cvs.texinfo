@@ -7507,9 +7507,33 @@ in the @sc{cvs} source repository.
 A module definition can refer to other modules by
 including @samp{&@var{module}} in its definition.
 @code{checkout} creates a subdirectory for each such
-module, in your working directory.
-@c -- Nope. "in your working directory" is wrong. What
-@c -- is right?
+module, in the directory containing the module.  For
+example, if modules contains
+
+@example
+m4test &unsupported
+@end example
+
+then a checkout will create an @code{m4test} directory
+which contains a directory called @code{unsupported},
+which in turns contains all the directories and files
+which live there.
+@c FIXME: this is hard to describe since we don't tell
+@c the user what the repository contains.  Best way to
+@c fix this whole mess is an extended example where we
+@c first say what is in the repository, then show a
+@c regular module, an alias module, and an & module.
+@c We should mention the concept of options only
+@c *after* we've taken care of those basics.
+@c 
+@c FIXCVS: What happens if regular and & modules are
+@c combined, as in "ampermodule first-dir &second-dir"?
+@c When I tried it, it seemed to just ignore the
+@c "first-dir".  I think perhaps it should be an error
+@c (but this needs further investigation).
+@c In addition to discussing what each one does, we
+@c should put in a few words about why you would use one or
+@c the other in various situations.
 
 @table @code
 @item -d @var{name}

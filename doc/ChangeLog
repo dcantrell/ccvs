@@ -1,3 +1,7 @@
+Thu Oct 10 16:05:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (modules): Describe what & does.
+
 Mon Oct  7 17:20:11 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (Removing files): Correct apparent cut and paste
