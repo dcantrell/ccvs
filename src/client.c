@@ -319,6 +319,7 @@ log_buffer_input (closure, data, need, size, got)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
     int status;
+    size_t n_to_write;
 
     if (lb->buf->input == NULL)
 	abort ();
@@ -328,8 +329,11 @@ log_buffer_input (closure, data, need, size, got)
 	return status;
 
     if (*got > 0)
-	if (fwrite (data, 1, *got, lb->log) != *got)
+    {
+	n_to_write = *got;
+	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (0, errno, "writing to log file");
+    }
 
     return 0;
 }
@@ -345,6 +349,7 @@ log_buffer_output (closure, data, have, wrote)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
     int status;
+    size_t n_to_write;
 
     if (lb->buf->output == NULL)
 	abort ();
@@ -354,8 +359,11 @@ log_buffer_output (closure, data, have, wrote)
 	return status;
 
     if (*wrote > 0)
-	if (fwrite (data, 1, *wrote, lb->log) != *wrote)
+    {
+	n_to_write = *wrote;
+	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (0, errno, "writing to log file");
+    }
 
     return 0;
 }
