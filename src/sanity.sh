@@ -5797,6 +5797,10 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest modules2-5 "test -d ampermodule/second-dir" ''
 
 	  # Test ability of cvs release to handle multiple arguments
+	  # Other CVS release tests:
+	  #   info-cleanup-0 for "cvs -n release".
+	  #   ignore-193 for the text of the question that cvs release asks.
+	  #     Also for interactions with cvsignore.
 	  cd ampermodule
 	  if ${testcvs} release -d first-dir second-dir <<EOF >>${LOGFILE}
 yes
@@ -10206,6 +10210,9 @@ new revision: 1\.[0-9]; previous revision: 1\.[0-9]
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
+
+	  dotest_fail info-cleanup-0 "${testcvs} -n release -d CVSROOT" \
+"${PROG} \[release aborted\]: cannot run command ${DOTSTAR}"
 
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
 	    pass info-cleanup
