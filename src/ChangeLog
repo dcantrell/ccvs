@@ -1,3 +1,30 @@
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Use dotest_fail instead of dotest_status for diff tests
+	since CVS only returns success/fail rather than 0/1/2 like diff does.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	Fix a client/server bug introduced via the data loss fix of 2003-03-17.
+	Basically, the server was reporting ambiguous filename requests when it
+	should have been trusting the user to type the intended case or using
+	the case the client preserved in CVS/Entries before it tried to look
+	anything up in case insensitive mode.
+
+	* rcs.c (locate_rcs): Use the filename exactly as cased before
+	investigating a case insensitive lookup, per the client/server protocol
+	specification.  Expand comments.
+	* subr.c (locate_file_in_dir): This function only needs to locate files
+	case insensitively.  Expand comments.
+	* cvs.h (locate_file_in_dir): Only prototype when servers which need to
+	handle case insensitivity are being compiled.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (locate_rcs): Declare static.  Move to an earlier location in
+	file to avoid prototyping.
+	* rcs.h (locate_rcs): Remove proto.
+
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
 	* lock.c (lock_filesdoneproc): Reformat long function prototype.
@@ -322,7 +349,7 @@
 
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
-	* checkout.c (checkaddfile): Simplify the logic here, using assumptions
+	* commit.c (checkaddfile): Simplify the logic here, using assumptions
 	already made later in the function to remove calls to locate_rcs and
 	some conditionals.  Use same assumptions to remove some variables.
 

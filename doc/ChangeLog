@@ -1,3 +1,9 @@
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Add recommendation to client developers to
+	avoid the `Case' request.
+	* stamp-1, version-client.texi: Regenerated.
+
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.

@@ -241,9 +241,6 @@ void RCS_deltas (RCSNode *, FILE *, struct rcsbuffer *, char *,
 void RCS_setincexc (const char *arg);
 void RCS_setlocalid (const char *arg);
 char *make_file_label (char *, char *, RCSNode *);
-char *locate_rcs ( const char *repository,
-                          const char *file,
-                          int *inattic );
 
 extern int preserve_perms;
 
