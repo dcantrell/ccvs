@@ -857,10 +857,10 @@ admin_fileproc (callerdat, finfo)
 		    continue;
 		}
 		*p = '\0';
-		rev = RCS_gettag (rcs, arg + 2, 0, NULL);
+		rev = RCS_gettag (rcs, arg + 2, 1, NULL); /* Force tag match */
 		if (rev == NULL)
 		{
-		    error (0, 0, "%s: no such revision %s", rcs->path, rev);
+		    error (0, 0, "%s: no such revision %s", rcs->path, arg+2);
 		    status = 1;
 		    continue;
 		}
