@@ -116,7 +116,10 @@ EXTRA_DIST = \
 	version.c \
 	version.c.in
 
-check-local:
+check-local: localcheck remotecheck
+
+.PHONY: localcheck
+localcheck:
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 
 .PHONY: remotecheck

@@ -579,7 +579,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
 	uninstall-binPROGRAMS uninstall-binSCRIPTS
 
 
-check-local:
+check-local: localcheck remotecheck
+
+.PHONY: localcheck
+localcheck:
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
 
 .PHONY: remotecheck
