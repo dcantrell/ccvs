@@ -1,3 +1,9 @@
+Tue Jan 23 13:02:24 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* pcl-cvs.el (pcl-cvs-bugs-address): change the default address
+	as suggested by Per Cederqvist.
+	* pcl-cvs.el: removed comments refering to Signum, etc.
+
 Sun Jan 21 12:51:12 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* pcl-cvs.el (cvs-parse-stderr): fix typo (missing '\') that was
