@@ -1,3 +1,15 @@
+2004-10-04 Derek Price <derek@ximbiot.com>
+
+	* cvs.h (CVSROOT_DFLT): Undef rather than defining to NULL.
+	* main.c (main): Untangle parsing of CVSROOT, eliminating several
+	variables in the process.  Simplify xmalloc/sprintf with asnprintf.
+
+2004-10-01  Mark D. Baushke  <mdb@cvshome.org>
+
+	* main.c (main): Initialize CVSroot before it is used.
+	(Report and patch by Martin Neitzel <neitzel@sco.gaertner.de>.)
+	* sanity.sh (status): Test it.
+
 2004-09-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (parseroot2): Correct two test names.  Restore CVSROOT.
