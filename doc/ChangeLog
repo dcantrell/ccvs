@@ -1,3 +1,9 @@
+1999-04-22  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvsclient.texi (Responses): The text in the "M" response is not
+	designed for machine parsing.  Likewise for "error" in regular
+	protocol.  Likewise for "E" and "error" in authentication protocol.
+
 1999-04-19  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "Cannot check out files into
