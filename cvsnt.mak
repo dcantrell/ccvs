@@ -1,6 +1,6 @@
 # Microsoft Developer Studio Generated NMAKE File, Based on cvsnt.dsp
 !IF "$(CFG)" == ""
-CFG=cvsnt - Win32 Release
+CFG=cvsnt - Win32 Debug
 !MESSAGE No configuration specified. Defaulting to cvsnt - Win32 Release.
 !ENDIF 
 
