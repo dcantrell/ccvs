@@ -1,3 +1,10 @@
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
+	Distribute demo PAM configs.
+	* Makefile.am, Makefile.in: New files.
+	* .cvsignore: New file.
+	(Thanks to a report from Brian Murphy.)
+
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
 	* cvs.linux: New file.
