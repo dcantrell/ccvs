@@ -1,3 +1,43 @@
+1998-09-22  Noel Cragg  <noel@swish.red-bean.com>
+
+	* sanity.sh (devcom-180): fixed typo in regexp.
+
+	* main.c (main): remove need_to_create_root and related code
+	(including CVS_IGNORE_REMOTE_ROOT environment variable).  The
+	current implementation (just removed) of rewriting the contents of
+	the CVS/Root file isn't desirable for a number of reasons:
+
+	  1) Only the top-level CVS/Root directory is updated.  If we're
+	  really interested in pointing our WD at another CVSROOT, we
+	  should have a separate command.
+
+	  2) With the new multiroot mods, we don't ever want to rewrite
+	  CVS/Root files in the way the removed code did.  Consider:
+	  
+	    cvs -d repository1 co a
+	    cd a
+	    cvs -d repository2 co b
+            cvs -d repository2 update b
+
+	  The update command would rewrite the contents of a/CVS/Root to
+	  the incorrect value.  Bad.  We then wouldn't be talking to the
+	  correct repository for files in a.
+	  
+	  3) The removed code seems to be a quick hack to support working
+	  directories checked out from multiple repositories.  With the
+	  CVS_IGNORE_REMOTE_ROOT variable set, one could perform commands
+	  as in example 2, above, without worring about updating CVS/Root
+	  files.  While in pre-1.10.1 recursive commands wouldn't handle
+	  that working directory hierarchy, one could use commands like
+	  "cvs foo -l" instead.  While not great, this allows you (with a
+	  lot of manual interaction) to have a multiroot WD.  Since we now
+	  have multiroot mods checked in, we don't need this code.
+
+	(lookup_command_attribute): while we don't need the
+	CVS_CMD_USES_WORK_DIR flag anymore (since it only was supporting
+	the need_to_create_root code), I'm leaving it in.  It may come in
+	handy at some later date.
+
 1998-09-18  Jim Kingdon  <kingdon@pennington.cyclic.com>
 
 	* version.c: Advance version number to 1.10.2.1.

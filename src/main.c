@@ -432,7 +432,6 @@ main (argc, argv)
     /* `getopt_long' stores the option index here, but right now we
         don't use it. */
     int option_index = 0;
-    int need_to_create_root = 0;
 
 #ifdef SYSTEM_INITIALIZE
     /* Hook for OS-specific behavior, for example socket subsystems on
@@ -835,34 +834,6 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		    CVSroot = CVSADM_Root;
 		    cvs_update_env = 1;	/* need to update environment */
 		}
-		/* Let -d override CVS/Root file.  The user might want
-		   to change the access method, use a different server
-		   (if there are two server machines which share the
-		   repository using a networked file system), etc.  */
-		else if (
-#ifdef CLIENT_SUPPORT
-		    !getenv ("CVS_IGNORE_REMOTE_ROOT") &&
-#endif
-		    strcmp (CVSroot, CVSADM_Root) != 0)
-		{
-		    /* Once we have verified that this root is usable,
-		       we will want to write it into CVS/Root.
-
-		       Don't do it for the "login" command, however.
-		       Consider: if the user executes "cvs login" with
-		       the working directory inside an already checked
-		       out module, we'd incorrectly change the
-		       CVS/Root file to reflect the CVSROOT of the
-		       "cvs login" command.  Ahh, the things one
-		       discovers. */
-
-		    if (lookup_command_attribute (command_name)
-			& CVS_CMD_USES_WORK_DIR)
-		    {
-			need_to_create_root = 1;
-		    }
-
-		}
 	    }
 
 	    /* Now we've reconciled CVSROOT from the command line, the
@@ -1033,17 +1004,6 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 
 	    err = (*(cm->func)) (argc, argv);
 	
-	    if (need_to_create_root)
-	    {
-		/* Update the CVS/Root file.  We might want to do this in
-		   all directories that we recurse into, but currently we
-		   don't.  Note that if there is an error writing the file,
-		   we give an error/warning.  This is so if users try to rewrite
-		   CVS/Root with the -d option (a documented feature), they will
-		   either succeed, or be told why it didn't work.  */
-		Create_Root (NULL, CVSroot);
-	    }
-
 	    /* Mark this root directory as done.  When the server is
                active, current_root will be NULL -- don't try and
                remove it from the list. */

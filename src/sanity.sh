@@ -8977,7 +8977,7 @@ done"
 	  # strings should vary based on locale does not strike me as
 	  # self-evident.
 	  dotest devcom-180 "${testcvs} editors" \
-"abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9]* [0-9:]* [0-9][0-9][0-9][0-9] GMT	[a-zA-Z-_.]*	${TESTDIR}/2/first-dir"
+"abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9]* [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.]*	${TESTDIR}/2/first-dir"
 
 	  echo aaaa >>abb
 	  if ${testcvs} ci -m modify abb >>${LOGFILE} 2>&1; then
