@@ -1,0 +1,109 @@
+Tue Nov  8 06:26:54 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Add stamp-h.in.  Remove it from .cvsignore.
+
+Fri Oct 28 11:50:51 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in: Comment out autoconf and autoheader rules.
+
+Tue Oct 25 17:44:13 1994  Ken Raeburn  <raeburn@cujo.cygnus.com>
+
+	* Makefile.in (all, install, uninstall): Fail if make in
+	subdirectory fails.
+
+Tue Oct 18 13:26:15 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in (FLAGS_TO_PASS): Pass INSTALL*.  Add comment about
+	why we need to.
+
+Tue Sep 27 08:27:06 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in (SUBDIRS): Reinstate "contrib".
+	* configure.in (AC_OUTPUT): Add contrib/Makefile.
+	* configure: Regenerated.
+
+Tue Sep 27 01:03:59 1994  John Gilmore  (gnu@cygnus.com)
+
+	* Makefile.in (SUBDIRS):  Comment out "contrib".  Since we don't
+	bother to configure it, we shouldn't make it either.
+
+Wed Aug 10 14:52:57 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
+
+	* Makefile.in (FLAGS_TO_PASS): Don't include LIBS or CFLAGS twice.
+
+	* configure.in: Include waitpid and memmove in AC_REPLACE_FUNCS
+	list.  Don't check for memmove separately.
+	* configure: Regenerated.
+	* config.h.in: Regenerated for Mark's change.
+
+Wed Aug 10 14:32:24 1994  Mark Eichin  (eichin@cygnus.com)
+
+	* configure.in (KRB4): recognize --with-krb4=path. Also test for
+	krb_get_err_text so src/main.c and src/client.c can deal
+	appropriately.
+
+Tue Aug  9 15:49:07 1994  Ken Raeburn  (raeburn@cujo.cygnus.com)
+
+	* configure.in: Check sizes of `long' and `int', needed for md5
+	code.
+	* acconfig.h: New file.  Mention HAVE_KERBEROS, to keep autoheader
+	happy.
+	* configure, config.h.in: Regenerated.
+
+Tue Jul 19 11:23:21 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* configure.in: Check not only that krb.h exists, but that it will
+	actually compile correctly.
+	* configure: Regenerated.
+
+Mon Jul 11 07:04:36 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* configure.in: Add comment re autoheader.
+
+Tue Jun 28 22:09:23 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* configure.in: Only look for -lsocket and -lnsl if we don't
+	already have connect.
+	* configure: Regenerated.
+
+Mon Jun 27 17:21:48 1994  Ian Lance Taylor  (ian@sanguine.cygnus.com)
+
+	* configure.in: Correct "krb_libdir" to "${krb_libdir}".
+	* configure: Regenerated.
+
+Fri Jun  3 10:15:24 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* configure.in: Check for -lsocket and -lnsl.
+	* configure: Regenerated.
+
+Fri May 27 18:12:43 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* configure.in: Add valloc to AC_REPLACE_FUNCS.  Add getpagesize
+	to AC_HAVE_FUNCS.  Check for krb.h and -lkrb.  If not found, look
+	in /usr/kerberos if native.  If found somewhere, define
+	HAVE_KERBEROS and also look for -ldes.  Substitute includeopt.
+	* configure: Regenerated.
+
+Fri Mar 11 13:11:51 1994  Ian Lance Taylor  (ian@tweedledumb.cygnus.com)
+
+	* configure.in: Check for <sys/select.h>; used by src/server.c.
+	* configure: Regenerated.
+
+Sun Jan  9 12:04:15 1994  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
+
+	* configure.in: Check for timezone function, for NetBSD support.
+	* configure: Regenerated.
+
+Wed Dec 15 18:05:21 1993  david d `zoo' zuhn  (zoo@andros.cygnus.com)
+
+	* Makefile.in: add MAKEINFO to MDEFINES, pass down MDEFINES on all
+	  recursive make invocations that require it; define
+	  INSTALL_PROGRAM and use it; reorganize MDEFINES; set infodir and
+	  add to MDEFINES; use YACC instead of BISON
+
+
+Mon Dec  6 17:02:18 1993  K. Richard Pixley  (rich@sendai.cygnus.com)
+
+	* src/diff.c (diff_fileproc): add support for "cvs diff -N" which
+	  allows for adding or removing files via patches.
+

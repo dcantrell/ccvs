@@ -1,0 +1,13 @@
+Makefile
+cvs.info
+cvs.info-*
+cvs.log
+cvs.dvi
+cvs.aux
+cvs.toc
+cvs.cp
+cvs.fn
+cvs.vr
+cvs.tp
+cvs.ky
+cvs.pg
