@@ -345,7 +345,7 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 /* So "tcpip.h" gets included in lib/system.h: */
 #define USE_OWN_TCPIP_H 1
 /* The IBM TCP/IP library gets initialized in main(): */
-#define INITIALIZE_SOCKET_SUBSYSTEM init_sockets
+#define SYSTEM_INITIALIZE(pargc,pargv) init_sockets()
 extern void init_sockets();
 
 /* Under OS/2, we have our own popen() and pclose()... */

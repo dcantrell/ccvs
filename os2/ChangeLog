@@ -1,3 +1,8 @@
+Fri Jun  7 13:07:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Change INITIALIZE_SOCKET_SUBSYSTEM to
+	SYSTEM_INITIALIZE to reflect change in ../src/main.c.
+
 Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (cvs_temp_name): New function.
