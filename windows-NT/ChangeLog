@@ -1,3 +1,9 @@
+1998-09-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	(This was reported by someone else but I don't remember who).
+	* config.h: Define SYSTEM_CLEANUP.
+	* win32.c (wnt_cleanup): New function, implements it.
+
 1998-09-28  Johannes Stezenbach <johannes.stezenbach@propack-data.de>
 	    and Jim Kingdon
 
