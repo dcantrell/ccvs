@@ -3135,6 +3135,7 @@ copy the changes onto another branch.
 * Merging a branch::            Merging an entire branch
 * Merging more than once::      Merging from a branch several times
 * Merging two revisions::       Merging differences between two revisions
+* Merging adds and removals::   What if files are added or removed?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3292,6 +3293,31 @@ that make up a module.  You almost always use symbolic
 tags rather than revision numbers when operating on
 multiple files.
 
+@node Merging adds and removals
+@section Merging can add or remove files
+
+If the changes which you are merging involve removing
+or adding some files, @code{update -j} will reflect
+such additions or removals.
+
+@c FIXME: This example needs a lot more explanation.
+@c We also need other examples for some of the other
+@c cases (not all--there are too many--as long as we present a
+@c coherent general principle).
+For example:
+@example
+cvs update -A
+touch a b c
+cvs add a b c ; cvs ci -m "added" a b c
+cvs tag -b branchtag
+cvs update -r branchtag
+touch d ; cvs add d
+rm a ; cvs rm a
+cvs ci -m "added d, removed a"
+cvs update -A
+cvs update -jbranchtag
+@end example
+
 @c ---------------------------------------------------------------------
 @node Recursive behavior
 @chapter Recursive behavior
@@ -3365,48 +3391,113 @@ $ cvs update -l         # @r{Don't update files in subdirectories}
 
 @c ---------------------------------------------------------------------
 @node Adding files
-@chapter Adding files to a module
+@chapter Adding files to a directory
 @cindex Adding files
 
-To add a new file to a module, follow these steps.
+To add a new file to a directory, follow these steps.
 
 @itemize @bullet
 @item
-You must have a working copy of the module.
+You must have a working copy of the directory.
 @xref{Getting the source}.
 
 @item
-Create the new file inside your working copy of the module.
+Create the new file inside your working copy of the directory.
 
 @item
 Use @samp{cvs add @var{filename}} to tell @sc{cvs} that you
-want to version control the file.
+want to version control the file.  If the file contains
+binary data, specify @samp{-kb} (@pxref{Binary files}).
 
 @item
 Use @samp{cvs commit @var{filename}} to actually check
 in the file into the repository.  Other developers
 cannot see the file until you perform this step.
-
-@item
-If the file contains binary data it might be necessary
-to change the default keyword substitution.
-@xref{Keyword substitution}.  @xref{admin examples}.
 @end itemize
 
 You can also use the @code{add} command to add a new
-directory inside a module.
+directory.
+@c FIXCVS and/or FIXME: Adding a directory doesn't
+@c require the commit step.  This probably can be
+@c considered a CVS bug, but it is possible we should
+@c warn people since this behavior probably won't be
+@c changing right away.
 
 Unlike most other commands, the @code{add} command is
 not recursive.  You cannot even type @samp{cvs add
 foo/bar}!  Instead, you have to
+@c FIXCVS: This is, of course, not a feature.  It is
+@c just that noone has gotten around to fixing "cvs add
+@c foo/bar". 
 
 @example
 $ cd foo
 $ cvs add bar
 @end example
 
-@xref{add}, for a more complete description of the @code{add}
-command.
+@cindex add (subcommand)
+@deffn Command {cvs add} [@code{-k} kflag] [@code{-m} message] files @dots{}
+
+Schedule @var{files} to be added to the repository.
+The files or directories specified with @code{add} must
+already exist in the current directory.  To add a whole
+new directory hierarchy to the source repository (for
+example, files received from a third-party vendor), use
+the @code{import} command instead.  @xref{import}.
+
+The added files are not placed in the source repository
+until you use @code{commit} to make the change
+permanent.  Doing an @code{add} on a file that was
+removed with the @code{remove} command will undo the
+effect of the @code{remove}, unless a @code{commit}
+command intervened.  @xref{Removing files}, for an
+example.
+
+The @samp{-k} option specifies the default way that
+this file will be checked out; for more information see
+@ref{Substitution modes}.
+
+@c FIXCVS: I kind of think this feature is broken (and
+@c has been at least since 1.4A2 or so), although I
+@c haven't verified.  It's not in the testsuite (Sep 96).
+The @samp{-m} option specifies a description for the
+file.  This description appears in the history log (if
+it is enabled, @pxref{history file}).  It will also be
+saved in the version history inside the repository when
+the file is committed.  The @code{log} command displays
+this description.  The description can be changed using
+@samp{admin -t}.  @xref{admin}.  If you omit the
+@samp{-m @var{description}} flag, an empty string will
+be used.  You will not be prompted for a description.
+@end deffn
+
+For example, the following commands add the file
+@file{backend.c} to the repository:
+
+@c This example used to specify
+@c     -m "Optimizer and code generation passes." 
+@c to the cvs add command, but unless -m is known to
+@c work, seems better to not discuss that subject.
+@example
+$ cvs add backend.c
+$ cvs commit -m "Early version. Not yet compilable." backend.c
+@end example
+
+When you add a file it is added only on the branch
+which you are working on (@pxref{Branches}).  You can
+later merge the additions to another branch if you want
+(@pxref{Merging adds and removals}).
+@c Should we mention that earlier versions of CVS
+@c lacked this feature (1.3) or implemented it in a buggy
+@c way (well, 1.8 had many bugs in cvs update -j)?
+@c Should we mention the bug/limitation regarding a
+@c file being a regular file on one branch and a directory
+@c on another?
+@c FIXME: This needs an example, or several, here or
+@c elsewhere, for it to make much sense.
+@c Somewhere we need to discuss the aspects of death
+@c support which don't involve branching, I guess.
+@c Like the ability to re-create a release from a tag.
 
 @c ---------------------------------------------------------------------
 @node Removing files
@@ -3505,6 +3596,11 @@ $ cvs update oj.c
 cvs update: warning: oj.c was lost
 U oj.c
 @end example
+
+When you remove a file it is added only on the branch
+which you are working on (@pxref{Branches}).  You can
+later merge the additions to another branch if you want
+(@pxref{Merging adds and removals}).
 
 @c ---------------------------------------------------------------------
 @node Tracking sources
@@ -4497,7 +4593,6 @@ particular subcommand, see @ref{Index}.
 * ~/.cvsrc::                    Default options with the ~/.csvrc file
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
-* add::                         Add a new file/directory to the repository
 * admin::                       Administration front end for rcs
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
@@ -4971,126 +5066,6 @@ which you can specify to the left of a cvs command!
 @code{rtag}, and @code{update} commands.
 
 @end table
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node add
-@appendixsec add---Add a new file/directory to the repository
-@cindex Add (subcommand)
-
-@itemize @bullet
-@item
-Synopsis: add [-k kflag] [-m 'message'] files@dots{}
-@item
-Requires: repository, working directory.
-@item
-Changes: working directory.
-@item
-Synonym: new
-@end itemize
-
-Use the @code{add} command to create a new file or directory in the 
-source repository.  The files or directories specified with @code{add}
-must already exist in the current directory (which must have been
-created with the @code{checkout} command).  To add a whole new directory
-hierarchy to the source repository (for example, files received
-from a third-party vendor), use the @code{import} command
-instead.  @xref{import}.
-
-If the argument to @code{add} refers to an immediate
-sub-directory, the directory is created at the correct place in
-the source repository, and the necessary @sc{cvs} administration
-files are created in your working directory.  If the directory
-already exists in the source repository, @code{add} still creates
-the administration files in your version of the directory.
-This allows you to use @code{add} to add a particular directory
-to your private sources even if someone else created that
-directory after your checkout of the sources.  You can do the
-following:
-
-@example
-$ mkdir new_directory
-$ cvs add new_directory
-$ cvs update new_directory
-@end example
-
-An alternate approach using @code{update} might be:
-
-@example
-$ cvs update -d new_directory
-@end example
-
-(To add any available new directories to your working directory,
-it's probably simpler to use @code{checkout} (@pxref{checkout})
-or @samp{update -d} (@pxref{update})).
-
-The added files are not placed in the source repository until you
-use @code{commit} to make the change permanent.  Doing an
-@code{add} on a file that was removed with the @code{remove}
-command will resurrect the file, unless a @code{commit} command
-intervened.
-@xref{Removing files}, for an example.
-
-
-Unlike most other commands @code{add} never recurses down
-directories.  It cannot yet handle relative paths.  Instead of
-
-@example
-$ cvs add foo/bar.c
-@end example
-
-you have to do
-
-@example
-$ cd foo
-$ cvs add bar.c
-@end example
-
-@menu
-* add options::                 add options
-* add examples::                add examples
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node add options
-@appendixsubsec add options
-@cindex Add options
-
-There are only two options you can give to @samp{add}:
-
-@table @code
-@item -k @var{kflag}
-This option specifies the default way that this file
-will be checked out.  The @var{kflag} argument
-(@pxref{Substitution modes}) is stored in the @sc{rcs}
-file and can be changed with @code{admin -k}
-(@pxref{admin options}).  See @ref{Binary files}, for
-information on using this option for binary files.
-
-@item -m @var{description}
-Using this option, you can give a description for the file.  This
-description appears in the history log (if it is enabled,
-@pxref{history file}).  It will also be saved in the @sc{rcs} history
-file inside the repository when the file is committed.  The
-@code{log} command displays this description.
-
-The description can be changed using @samp{admin -t}.
-@xref{admin}.
-
-If you omit the @samp{-m @var{description}} flag, an empty string will be
-used.  You will not be prompted for a description.
-@end table
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node add examples
-@appendixsubsec add examples
-
-To add the file @file{backend.c} to the repository, with a
-description, the following can be used.
-
-@example
-$ cvs add -m "Optimizer and code generation passes." backend.c
-$ cvs commit -m "Early version. Not yet compilable." backend.c
-@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin
@@ -6732,12 +6707,12 @@ Delete your working copy of the file if the release
 succeeds.  If this flag is not given your files will
 remain in your working directory.
 
-@strong{Warning:}  The @code{release} command uses
-@samp{rm -r @file{module}} to delete your file.  This
+@strong{Warning:}  The @code{release} command deletes
+all directories and files recursively.  This
 has the very serious side-effect that any directory
 that you have created inside your checked-out sources,
 and not added to the repository (using the @code{add}
-command; @pxref{add}) will be silently deleted---even
+command; @pxref{Adding files}) will be silently deleted---even
 if it is non-empty!
 @end table
 
@@ -6751,9 +6726,10 @@ up-to-date.
 
 @strong{Warning:}  Any new directories that you have
 created, but not added to the @sc{cvs} directory hierarchy
-with the @code{add} command (@pxref{add}) will be
+with the @code{add} command (@pxref{Adding files}) will be
 silently ignored (and deleted, if @samp{-d} is
 specified), even if they contain files.
+@c FIXCVS: This is a bug.
 
 @table @code
 @item U @var{file}
@@ -6885,6 +6861,13 @@ are available:
 
 @table @code
 @item -a
+@c FIXME: What is an "Attic"?  And what does this
+@c option mean in terms of user concepts, not CVS
+@c internals?
+@c FIXME-also: Need to explain attic somewhere, since
+@c it appears in user messages.  Should clarify that
+@c whether a file is in the attic is not something users
+@c should worry about.  Need index entry for "attic".
 Use the @samp{-a} option to have @code{rtag} look in the
 @file{Attic} (@pxref{Removing files}) for removed files
 that contain the specified tag.  The tag is removed from
