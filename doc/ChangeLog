@@ -1,3 +1,13 @@
+Wed Jul 24 17:01:41 1996  Larry Jones  <larry.jones@sdrc.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (checkout): Refer to "update output" node.
+	(import): Add new import output node.
+	(release): Correct release output menu entry (used to be
+	release options instead).
+	(update output): Say this is output from checkout as well as
+	update.
+
 Mon Sep 16 16:18:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Clarify that CVS uses MM/DD/YY dates.
