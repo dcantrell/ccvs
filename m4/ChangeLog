@@ -1,3 +1,10 @@
+2003-05-22  Derek Price  <derek@ximbiot.com>
+
+	* acx_with_external_zlib.m4: Check version of unused ZLIBs and warn
+	when they are newer than the selected version.
+	* acx_extract_cpp_defn.m4: New file.
+	* asx_version_compare.m4: Ditto.
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Autoconf version 1.7.5.
