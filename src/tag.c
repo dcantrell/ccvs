@@ -62,7 +62,6 @@ struct master_lists
 };
 
 static List *mtlist;
-static List *tlist;
 
 static const char rtag_opts[] = "+aBbdFflnQqRr:D:";
 static const char *const rtag_usage[] =
@@ -649,11 +648,11 @@ pretag_proc(char *repository, char *filter, void *closure)
 	"t", "s", ppd->symtag,
 	"o", "s", ppd->delete_flag ? "del" :
 	          ppd->force_tag_move ? "mov" : "add",
-    	"b", "hhc", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+    	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
-	NULL
+	(char *)NULL
 	);
 
     if (disposefilter) free(filter);
@@ -724,17 +723,17 @@ tag_delproc(Node *p)
 static int
 pretag_list_to_args_proc(Node *p, void *closure)
 {
+    struct tag_info *taginfo = (struct tag_info *)p->data;
     struct format_cmdline_walklist_closure *c =
             (struct format_cmdline_walklist_closure *)closure;
-    char *arg;
+    char *arg = NULL;
     char *f, *d;
     size_t doff;
-    int firstarg = 1;
 
-    if (p->data == NULL) return (1);
+    if (p->data == NULL) return 1;
 
     f = c->format;
-    d = *(c->d);
+    d = *c->d;
     /* foreach requested atribute */
     while (*f)
     {
@@ -744,12 +743,10 @@ pretag_list_to_args_proc(Node *p, void *closure)
 		arg = p->key;
 		break;
 	    case 'v':
-		arg = ((struct tag_info *) p->data)->rev ?
-                        ((struct tag_info *) p->data)->rev : "NONE";
+		arg = taginfo->rev ? taginfo->rev : "NONE";
 		break;
 	    case 'V':
-		arg = ((struct tag_info *) p->data)->oldrev ?
-                        ((struct tag_info *) p->data)->oldrev : "NONE";
+		arg = taginfo->oldrev ? taginfo->oldrev : "NONE";
 		break;
 	    default:
 		error(1,0,
@@ -760,32 +757,32 @@ pretag_list_to_args_proc(Node *p, void *closure)
 	/* copy the attribute into an argument */
 	if (c->quotes)
 	{
-	    arg = cmdlineescape(c->quotes, arg);
+	    arg = cmdlineescape (c->quotes, arg);
 	}
 	else
 	{
-	    arg = cmdlinequote('"', arg);
+	    arg = cmdlinequote ('"', arg);
 	}
 
-	doff = d - *(c->buf);
-	expand_string (c->buf, c->length, doff + strlen(arg));
-	d = *(c->buf) + doff;
-	strncpy(d, arg, strlen(arg));
-	d += strlen(arg);
+	doff = d - *c->buf;
+	expand_string (c->buf, c->length, doff + strlen (arg));
+	d = *c->buf + doff;
+	strncpy (d, arg, strlen (arg));
+	d += strlen (arg);
 
-	free(arg);
+	free (arg);
 
 	/* and always put the extra space on.  we'll have to back up a char when we're
 	 * done, but that seems most efficient
 	 */
-	doff = d - *(c->buf);
+	doff = d - *c->buf;
 	expand_string (c->buf, c->length, doff + 1);
-	d = *(c->buf) + doff;
+	d = *c->buf + doff;
 	*d++ = ' ';
     }
     /* correct our original pointer into the buff */
-    *(c->d) = d;
-    return (0);
+    *c->d = d;
+    return 0;
 }
 
 

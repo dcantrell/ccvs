@@ -1,5 +1,18 @@
 2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* run.c: Include the appropriate headers for wchar_t and wint_t,
+	create a typedef for convproc and use it (required for va_arg),
+	add explicit comparisons to keep gcc -Wall happy, remove unused
+	variables.
+	(format_cmdline): Fix bugs and portability problems.
+	* tag.c: Remove unused global variable.
+	(pretag_proc): Correct call to format_cmdline: %hhc is not a valid
+	printf format (should just be %c) and NULL must be cast to the correct
+	type in a varargs call.
+	(pretag_list_to_args_proc): Initialize arg to keep gcc -Wall happy,
+	remove unused variable, add auxiliary variable to simplify code,
+	clean up coding style.
+
 	* commit.c (precommit_list_to_args_proc): Initialize arg to keep
 	gcc -Wall happy, remove unused variable, clean up coding style.
 	(precommit_proc): Cast NULL to the correct type in varargs call.
