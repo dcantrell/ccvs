@@ -4400,7 +4400,7 @@ authenticate_connection ()
 #endif /* HAVE_PUTENV */
 }
 
-#endif AUTH_SERVER_SUPPORT
+#endif /* AUTH_SERVER_SUPPORT */
 
 
 #endif /* SERVER_SUPPORT */
