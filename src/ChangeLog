@@ -1,5 +1,9 @@
 Tue Nov 14 18:54:01 1995  Greg A. Woods  <woods@most.weird.com>
 
+	* patch.c:
+	- fix orientation of test for result of getline() call
+	- use fputs() not printf() when just copying file out
+
 	* cvsbug.sh:
 	- add space after #!
 	- new rcs id
