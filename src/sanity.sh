@@ -634,21 +634,6 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
-# This will show up in cvs history output where it prints the working
-# directory.  It should *not* appear in any cvs output referring to the
-# repository; cvs should use the name of the repository as specified.
-#
-# Note that using pwd here rather than /bin/pwd will make it even less
-# likely that we test whether CVS is distinguishing between TMPPWD
-# and TESTDIR.  However, there is no guarantee that will test it anyway.
-# If we really care, we should do something along the lines of:
-#   cd /tmp/cvs-sanity  # In reality, overridable with environment variable?
-#   mkdir realdir
-#   ln -s realdir testdir
-#   TESTDIR=/tmp/cvs-sanity/testdir
-#   TMPPWD=/tmp/cvs-sanity/realdir
-TMPPWD=`pwd`
-
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home
 HOME=${TESTDIR}/home; export HOME
@@ -3434,29 +3419,29 @@ ${PROG} [a-z]*: Updating dir1/dir2"
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -x TOFWUCGMAR -a" \
-"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TMPPWD}/\*
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TMPPWD}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TMPPWD}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TMPPWD}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == ${TMPPWD}
-A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TMPPWD}
-M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TMPPWD}
-R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == ${TMPPWD}
-F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TMPPWD}/\*
+"O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TESTDIR}/\*
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TESTDIR}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TESTDIR}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TESTDIR}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TESTDIR}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1      == ${TESTDIR}
+A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TESTDIR}
+M [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TESTDIR}
+R [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir/dir1/dir2 == ${TESTDIR}
+F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TESTDIR}/\*
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TMPPWD}/\*
-U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}/first-dir
-U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}/first-dir" \
+O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TESTDIR}/\*
+U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TESTDIR}/first-dir
+U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TESTDIR}/first-dir" \
 "O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
@@ -22397,6 +22382,7 @@ echo "OK, all tests completed."
 #     this needs to be documented in cvs.texinfo, but is not)
 #   - Test that unrecognized files in CVS directories (e.g. CVS/Foobar)
 #     are ignored (per cvs.texinfo).
+#   - Test repositories with symlinks in the path.
 # End of TODO list.
 
 # Exit if keep set
@@ -22406,15 +22392,7 @@ if $keep; then
 fi
 
 # Remove the test directory, but first change out of it.
-#
-# FIXME
-# I've never heard a bug report, so I guess it's probably not a big problem,
-# but we don't require TESTDIR be a child of '/tmp'.  Therefore, we should
-# probably be cd'ing somewhere we know is safe like `dirname ${TESTDIR}`, the
-# ${HOME} from before this script sets it, or '/'.  I'm avoiding the simple
-# '/' solution because I don't want some user running this script as root,
-# setting TESTDIR=etc, TESTDIR=., or the like, and flaming us.
-cd /tmp
+cd `dirname ${TESTDIR}`
 rm -rf ${TESTDIR}
 
 # end of sanity.sh
