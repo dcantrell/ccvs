@@ -587,19 +587,19 @@ gunzip_and_write (fd, fullname, buf, size)
 	return 1;
     }
 
-    if (crc != (buf[pos]
-		+ (buf[pos + 1] << 8)
-		+ (buf[pos + 2] << 16)
-		+ (buf[pos + 3] << 24)))
+    if (crc != ((unsigned long)buf[pos]
+		+ ((unsigned long)buf[pos + 1] << 8)
+		+ ((unsigned long)buf[pos + 2] << 16)
+		+ ((unsigned long)buf[pos + 3] << 24)))
     {
 	error (0, 0, "CRC error uncompressing %s", fullname);
 	return 1;
     }
 
-    if (zstr.total_out != (buf[pos + 4]
-			   + (buf[pos + 5] << 8)
-			   + (buf[pos + 6] << 16)
-			   + (buf[pos + 7] << 24)))
+    if (zstr.total_out != ((unsigned long)buf[pos + 4]
+			   + ((unsigned long)buf[pos + 5] << 8)
+			   + ((unsigned long)buf[pos + 6] << 16)
+			   + ((unsigned long)buf[pos + 7] << 24)))
     {
 	error (0, 0, "invalid length uncompressing %s", fullname);
 	return 1;
@@ -742,15 +742,15 @@ read_and_gzip (fd, fullname, buf, size, len, level)
 	assert(zstr.avail_out + zstr.total_out == *size);
 	assert(zstr.next_out == *buf + zstr.total_out);
     } 
-    *zstr.next_out++ = crc & 0xff;
-    *zstr.next_out++ = (crc >> 8) & 0xff;
-    *zstr.next_out++ = (crc >> 16) & 0xff;
-    *zstr.next_out++ = (crc >> 24) & 0xff;
+    *zstr.next_out++ = (unsigned char)(crc & 0xff);
+    *zstr.next_out++ = (unsigned char)((crc >> 8) & 0xff);
+    *zstr.next_out++ = (unsigned char)((crc >> 16) & 0xff);
+    *zstr.next_out++ = (unsigned char)((crc >> 24) & 0xff);
 
-    *zstr.next_out++ = zstr.total_in & 0xff;
-    *zstr.next_out++ = (zstr.total_in >> 8) & 0xff;
-    *zstr.next_out++ = (zstr.total_in >> 16) & 0xff;
-    *zstr.next_out++ = (zstr.total_in >> 24) & 0xff;
+    *zstr.next_out++ = (unsigned char)(zstr.total_in & 0xff);
+    *zstr.next_out++ = (unsigned char)((zstr.total_in >> 8) & 0xff);
+    *zstr.next_out++ = (unsigned char)((zstr.total_in >> 16) & 0xff);
+    *zstr.next_out++ = (unsigned char)((zstr.total_in >> 24) & 0xff);
 
     zstr.total_out += 8;
     zstr.avail_out -= 8;
