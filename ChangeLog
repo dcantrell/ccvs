@@ -1,3 +1,9 @@
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.dep: New generated file.
+	* cvsnt.mak: Regenerated.
+	(Original patch from Conrad T. Pino <conrad@pino.com>.)
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note use of POSIX.2 fnmatch.
