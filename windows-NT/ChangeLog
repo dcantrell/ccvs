@@ -1,3 +1,8 @@
+2004-11-16  Derek Price  <derek@ximbiot.com>
+
+	* mkconfig.pl (save_copy): Revert previous change.
+	(make_config_h): Don't output full paths to generated comment.
+
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
 	* mkconfig.pl (save_copy): Try to deal with not having write
