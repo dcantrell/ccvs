@@ -3519,7 +3519,15 @@ connect_to_forked_server (to_server_p, from_server_p)
 
     command[0] = getenv ("CVS_SERVER");
     if (! command[0])
+# ifdef SERVER_SUPPORT
 	command[0] = program_path;
+# else /* SERVER_SUPPORT */
+    {
+	error( 0, 0, "You must set the CVS_SERVER environment variable when" );
+	error( 0, 0, "using the :fork: access method." );
+	error( 1, 0, "This CVS was not compiled with server support." );
+    }
+# endif /* SERVER_SUPPORT */
     
     command[1] = "server";
     command[2] = NULL;

@@ -447,15 +447,6 @@ parse_cvsroot (root_in)
 	goto error_exit;
     }
 # endif
-
-# if !defined (SERVER_SUPPORT)
-    if (newroot->method == fork_method)
-    {
-	error (0, 0, "CVSROOT is set to use the :fork: access method but your");
-	error (0, 0, "CVS executable doesn't support it.");
-	goto error_exit;
-     }
-# endif
 #endif /* ! DEBUG */
 
 #ifdef CLIENT_SUPPORT
@@ -467,7 +458,7 @@ parse_cvsroot (root_in)
 	       cvsroot_copy);
 
     if ((newroot->method != local_method)
-#ifdef SERVER_SUPPORT
+#ifdef CLIENT_SUPPORT
 	&& ( newroot->method != fork_method )
 #endif /* SERVER_SUPPORT */
        )
