@@ -175,7 +175,7 @@ rtag (argc, argv)
 	if (branch_mode)
 	    send_arg("-b");
 	if (force_tag_move)
-	    send_arg("-T");
+	    send_arg("-F");
 	if (run_module_prog)
 	    send_arg("-n");
 	if (attic_too)
