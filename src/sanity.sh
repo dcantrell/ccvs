@@ -3625,29 +3625,18 @@ done"
 	  # basica or some other test instead, always good to keep the
 	  # testsuite concise).
 
-	  # I wrote this test to worry about problems in do_module;
-	  # but then I found that the CVS server has its own problems
-	  # with filenames starting with "-".  Work around it for now.
-	  if $remote; then
-	    dashb=dashb
-	    dashc=dashc
-	  else
-	    dashb=-b
-	    dashc=-c
-	  fi
-
 	  mkdir 1; cd 1
 	  dotest spacefiles-1 "${testcvs} -q co -l ." ""
-	  touch ./${dashc} top
-	  dotest spacefiles-2 "${testcvs} add -- ${dashc} top" \
-"${PROG} [a-z]*: scheduling file .${dashc}. for addition
+	  touch ./-c top
+	  dotest spacefiles-2 "${testcvs} add -- -c top" \
+"${PROG} [a-z]*: scheduling file .-c. for addition
 ${PROG} [a-z]*: scheduling file .top. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest spacefiles-3 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIRNAME}/${dashc},v
+"RCS file: ${CVSROOT_DIRNAME}/-c,v
 done
-Checking in ${dashc};
-${CVSROOT_DIRNAME}/${dashc},v  <--  ${dashc}
+Checking in -c;
+${CVSROOT_DIRNAME}/-c,v  <--  -c
 initial revision: 1\.1
 done
 RCS file: ${CVSROOT_DIRNAME}/top,v
@@ -3659,9 +3648,9 @@ done"
 	  mkdir 'first dir'
 	  dotest spacefiles-4 "${testcvs} add 'first dir'" \
 "Directory ${CVSROOT_DIRNAME}/first dir added to the repository"
-	  mkdir ./${dashb}
-	  dotest spacefiles-5 "${testcvs} add -- ${dashb}" \
-"Directory ${CVSROOT_DIRNAME}/${dashb} added to the repository"
+	  mkdir ./-b
+	  dotest spacefiles-5 "${testcvs} add -- -b" \
+"Directory ${CVSROOT_DIRNAME}/-b added to the repository"
 	  cd 'first dir'
 	  touch 'a file'
 	  dotest spacefiles-6 "${testcvs} add 'a file'" \
@@ -3683,11 +3672,11 @@ done"
 	  # "top", rather than "-c") it has worked in CVS 1.10.6 and
 	  # presumably back to CVS 1.3 or so.
 	  dotest spacefiles-9 "${testcvs} -q co -- /top" "U \./top"
-	  dotest spacefiles-10 "${testcvs} co -- ${dashb}" \
-"${PROG} [a-z]*: Updating ${dashb}"
-	  dotest spacefiles-11 "${testcvs} -q co -- ${dashc}" "U \./${dashc}"
-	  rm ./${dashc}
-	  dotest spacefiles-12 "${testcvs} -q co -- /${dashc}" "U \./${dashc}"
+	  dotest spacefiles-10 "${testcvs} co -- -b" \
+"${PROG} [a-z]*: Updating -b"
+	  dotest spacefiles-11 "${testcvs} -q co -- -c" "U \./-c"
+	  rm ./-c
+	  dotest spacefiles-12 "${testcvs} -q co -- /-c" "U \./-c"
 	  dotest spacefiles-13 "${testcvs} -q co 'first dir'" \
 "U first dir/a file"
 	  cd ..
@@ -3699,8 +3688,8 @@ done"
 
 	  rm -r 1 2 3
 	  rm -rf "${CVSROOT_DIRNAME}/first dir"
-	  rm -r ${CVSROOT_DIRNAME}/${dashb}
-	  rm -f ${CVSROOT_DIRNAME}/${dashc},v ${CVSROOT_DIRNAME}/top,v
+	  rm -r ${CVSROOT_DIRNAME}/-b
+	  rm -f ${CVSROOT_DIRNAME}/-c,v ${CVSROOT_DIRNAME}/top,v
 	  ;;
 
 	commit-readonly)
