@@ -5238,7 +5238,7 @@ ${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
 	  # OK, now add a directory to both working directories
 	  # and see that CVS doesn't lose its mind.
 	  mkdir sdir
-	  dotest conficts3-14 "${testcvs} add sdir" \
+	  dotest conflicts3-14 "${testcvs} add sdir" \
 "Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
 	  cd ../../2/first-dir
 
@@ -5264,6 +5264,11 @@ ${PROG} [a-z]*: ignoring sdir (CVS/Repository missing)"
 	    dotest conflicts3-16 "${testcvs} -q update" \
 "${QUESTION} sdir
 ${PROG} [a-z]*: ignoring sdir (CVS/Entries missing)"
+	    cd ..
+	    dotest conflicts3-16a "${testcvs} -q update first-dir" \
+"${QUESTION} first-dir/sdir
+${PROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
+	    cd first-dir
 	  fi
 	  rm -r sdir
 
@@ -5278,6 +5283,10 @@ ${PROG} [a-z]*: ignoring sdir (CVS/Entries missing)"
 	  touch newdir/CVS/Repository
 	  dotest conflicts3-19 "${testcvs} -q update" \
 "${PROG} [a-z]*: ignoring newdir (CVS/Entries missing)"
+	  cd ..
+	  dotest conflicts3-20 "${testcvs} -q update first-dir" \
+"${PROG} [a-z]*: ignoring first-dir/newdir (CVS/Entries missing)"
+	  cd first-dir
 	  rm -r newdir
 
 	  cd ../..
