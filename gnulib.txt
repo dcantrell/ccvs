@@ -63,3 +63,11 @@ lib/save-cwd.c
 m4/save-cwd.m4
 
 m4/onceonly_2_57.m4
+lib/dirname.h
+lib/dirname.c
+lib/basename.c
+lib/stripslash.c
+m4/dos.m4
+m4/dirname.m4
+
+m4/onceonly_2_57.m4
