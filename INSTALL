@@ -141,7 +141,7 @@ i386 family:
 	Windows NT 3.51 service pack 5 (1.9) -- DOES NOT WORK (footnote 11)
 	Windows NT 4.0 (1.9 client and local)
 	Windows 95 (1.9 client and local)
-	QNX 4 (1.7 + obvious patches)
+	QNX (1.9.1 + patches for strippath() and va_list)
 	OS/2 Version 3 using IBM C/C++ Tools 2.01 (1.8.86 + patches, client)
 	OS/2 Version 3 using EMX 0.9c (1.9.10 + patches, client)
 	OS/2 Version 3 using Watcom version ? (? - has this been tested?)
