@@ -3943,10 +3943,40 @@ ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.2; previous revision: 1\.1
 done
 ${SPROG} commit: Rebuilding administrative file database"
-	  CVSROOT=${CVSROOT_save}
+
+	  if $remote; then
+	    # I only test these when testing remote in case CVS was compiled
+	    # without client support.
+
+	    # logout does not try to contact the server.
+	    CVSROOT=":pserver;proxy=localhost;proxyport=8080:localhost/dev/null"
+	    dotest parseroot-3r "$testcvs -d'$CVSROOT' logout" \
+"Logging out of :pserver:oberon@localhost:2401/dev/null
+$CPROG logout: warning: failed to open $HOME/\.cvspass for reading: No such file or directory
+$CPROG logout: Entry not found."
+	    CVSROOT=":pserver;proxyport=8080:localhost/dev/null"
+	    dotest_fail parseroot-4r "$testcvs -d'$CVSROOT' logout" \
+"$CPROG logout: Proxy port specified in CVSROOT without proxy host\.
+$CPROG \[logout aborted\]: Bad CVSROOT: \`:pserver;proxyport=8080:localhost/dev/null'\."
+	    CVSROOT=":pserver;optionnoarg:localhost/dev/null"
+	    dotest_fail parseroot-5r "$testcvs -d'$CVSROOT' logout" \
+"$CPROG logout: Option (\`optionnoarg') has no argument in CVSROOT\.
+$CPROG \[logout aborted\]: Bad CVSROOT: \`:pserver;optionnoarg:localhost/dev/null'\."
+	    CVSROOT=":pserver;notanoption=anything:localhost/dev/null"
+	    dotest_fail parseroot-6r "$testcvs -d'$CVSROOT' logout" \
+"$CPROG logout: Unknown option (\`notanoption') in CVSROOT\.
+$CPROG \[logout aborted\]: Bad CVSROOT: \`:pserver;notanoption=anything:localhost/dev/null'\."
+	    CVSROOT=":local;proxy=localhost:/dev/null"
+	    dotest_fail parseroot-7r "$testcvs -d'$CVSROOT' logout" \
+"$CPROG logout: CVSROOT proxy specification is only valid for gserver and
+$CPROG logout: pserver connection methods\.
+$CPROG \[logout aborted\]: Bad CVSROOT: \`:local;proxy=localhost:/dev/null'\."
+	  fi
 
 	  dokeep
 
+	  # Clean up
+	  CVSROOT=${CVSROOT_save}
 	  cd ..
 	  rm -r 1
 	  ;;

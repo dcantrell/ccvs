@@ -1,5 +1,16 @@
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
+	Import Jim Kingdon's old, old patch which allows CVS to work via a
+	web proxy server.
+	* client.c (*): Some gratuitous restyling.
+	(get_proxy_port_number): New function.
+	(connect_to_pserver): Connect via proxy.
+	* client.h (CVS_PROXY_PORT): Define.
+	* root.c (parse_cvsroot): Parse method options.
+	* sanity.sh (parseroot): Add new tests.
+	
+2004-04-06  Derek Price  <derek@ximbiot.com>
+
 	* root.h (cvsroot_t): Move username, password, hostname, port inside
 	CLIENT_SUPPORT ifdefs.
 	* buffer.c, gssapi-client.c, root.c, sever.c: Add #ifdefs as necessary

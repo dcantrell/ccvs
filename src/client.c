@@ -20,6 +20,7 @@
 #include "buffer.h"
 #include "log-buffer.h"
 #include "savecwd.h"
+#include "vasnprintf.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -383,7 +384,7 @@ static struct buffer *global_to_server;
 /* Buffer used to read from the server.  */
 static struct buffer *global_from_server;
 
-
+
 
 /*
  * Read a line from the server.  Result does not include the terminating \n.
@@ -393,8 +394,8 @@ static struct buffer *global_from_server;
  * Returns number of bytes read.
  */
 static int
-read_line_via( struct buffer *via_from_buffer, struct buffer *via_to_buffer,
-               char **resultp )
+read_line_via (struct buffer *via_from_buffer, struct buffer *via_to_buffer,
+               char **resultp)
 {
     int status;
     char *result;
@@ -408,7 +409,8 @@ read_line_via( struct buffer *via_from_buffer, struct buffer *via_to_buffer,
     if (status != 0)
     {
 	if (status == -1)
-	    error (1, 0, "end of file from server (consult above messages if any)");
+	    error (1, 0,
+                   "end of file from server (consult above messages if any)");
 	else if (status == -2)
 	    error (1, 0, "out of memory");
 	else
@@ -423,8 +425,10 @@ read_line_via( struct buffer *via_from_buffer, struct buffer *via_to_buffer,
     return len;
 }
 
+
+
 static int
-read_line( char **resultp )
+read_line (char **resultp)
 {
   return read_line_via (global_from_server, global_to_server, resultp);
 }
@@ -2960,7 +2964,7 @@ supported_request( char *name )
  * 	defaultport
  */
 static int
-get_port_number( const char *envname, const char *portname, int defaultport )
+get_port_number (const char *envname, const char *portname, int defaultport)
 {
     struct servent *s;
     char *port_s;
@@ -2996,16 +3000,9 @@ get_port_number( const char *envname, const char *portname, int defaultport )
  *
  * and yes, I know none of the commands do that now, but here's to planning
  * for the future, eh?  cheers.
- *
- * FIXME - We could cache the port lookup safely right now as we never change
- * it for a single root on the fly, but we'd have to un'const some other
- * functions - REMOVE_FIXME? This may be unecessary.  We're talking about,
- * what, usually one, sometimes two lookups of the port per invocation.  I
- * think twice is by far the rarer of the two cases - only the login function
- * will need to do it to save the canonical CVSROOT. -DRP
  */
 int
-get_cvs_port_number( const cvsroot_t *root )
+get_cvs_port_number (const cvsroot_t *root)
 {
 
     if (root->port) return root->port;
@@ -3019,19 +3016,35 @@ get_cvs_port_number( const cvsroot_t *root )
 	case pserver_method:
 # endif /* AUTH_CLIENT_SUPPORT */
 # if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
-	    return get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
+	    return get_port_number ("CVS_CLIENT_PORT", "cvspserver",
+                                    CVS_PROXY_PORT);
 # endif /* defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
 # ifdef HAVE_KERBEROS
 	case kserver_method:
 	    return get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
 # endif /* HAVE_KERBEROS */
 	default:
-	    error(1, EINVAL, "internal error: get_cvs_port_number called for invalid connection method (%s)",
-		    method_names[root->method]);
+	    error(1, EINVAL,
+"internal error: get_cvs_port_number called for invalid connection method (%s)",
+		  method_names[root->method]);
 	    break;
     }
     /* NOTREACHED */
     return -1;
+}
+
+
+
+/* get the port number for a client to connect to based on the proxy port
+ * of a cvsroot_t.
+ */
+static int
+get_proxy_port_number (const cvsroot_t *root)
+{
+
+    if (root->proxy_port) return root->proxy_port;
+
+    return get_port_number ("CVS_PROXY_PORT", NULL, CVS_AUTH_PORT);
 }
 
 
@@ -3112,31 +3125,83 @@ connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
                     int do_gssapi )
 {
     int sock;
-    int port_number;
+    int port_number, proxy_port_number;
     struct sockaddr_in client_sai;
     struct hostent *hostinfo;
     struct buffer *to_server, *from_server;
 
     sock = socket (AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
-    {
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
-    }
     port_number = get_cvs_port_number (root);
-    hostinfo = init_sockaddr (&client_sai, root->hostname, port_number);
-    TRACE ( 1, "Connecting to %s(%s):%d",
-	    root->hostname,
-	    inet_ntoa (client_sai.sin_addr), port_number );
+
+    /* if we have a proxy connect to that instead */
+    if (root->proxy_hostname)
+    {
+        proxy_port_number = get_proxy_port_number (root);
+	hostinfo = init_sockaddr (&client_sai, root->proxy_hostname,
+                                  proxy_port_number);
+        TRACE (1, "Connecting to %s:%d via proxy %s(%s):%d.",
+               root->hostname, port_number, root->proxy_hostname,
+               inet_ntoa (client_sai.sin_addr), proxy_port_number);
+    }
+    else
+    {
+	hostinfo = init_sockaddr (&client_sai, root->hostname, port_number);
+        TRACE (1, "Connecting to %s(%s):%d.",
+               root->hostname,
+               inet_ntoa (client_sai.sin_addr), port_number);
+    }
+
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
-	       root->hostname,
+	       root->proxy_hostname ? root->proxy_hostname : root->hostname,
 	       inet_ntoa (client_sai.sin_addr),
-	       port_number, SOCK_STRERROR (SOCK_ERRNO));
+	       root->proxy_hostname ? proxy_port_number : port_number,
+               SOCK_STRERROR (SOCK_ERRNO));
 
     make_bufs_from_fds (sock, sock, 0, &to_server, &from_server, 1);
 
-    auth_server (root, to_server, from_server, verify_only, do_gssapi, hostinfo);
+    /* if we have proxy then connect to the proxy first */
+    if (root->proxy_hostname)
+    {
+#define CONNECT_STRING "CONNECT %s:%d HTTP/1.0\r\n\r\n"
+	/* Send a "CONNECT" command to proxy: */
+	char* read_buf;
+	int codenum, count;
+	/* 4 characters for port covered by the length of %s & %d */
+	char* write_buf = asnprintf (NULL, &count, CONNECT_STRING,
+                                     root->hostname, port_number);
+	send_to_server_via (to_server, write_buf, count);
+
+	/* Wait for HTTP status code, bail out if you don't get back a 2xx
+         * code.
+         */
+	read_line_via (from_server, to_server, &read_buf);
+	sscanf (read_buf, "%s %d", write_buf, &codenum);
+
+	if ((codenum / 100) != 2)
+	    error (1, 0, "proxy server %s:%d does not support http tunnelling",
+		   root->proxy_hostname, proxy_port_number);
+	free (read_buf);
+	free (write_buf);
+
+	/* Skip through remaining part of MIME header, recv_line
+           consumes the trailing \n */
+	while (read_line_via (from_server, to_server, &read_buf) > 0)
+	{
+	    if (read_buf[0] == '\r' || read_buf[0] == 0)
+	    {
+		free (read_buf);
+		break;
+	    }
+	    free (read_buf);
+	}
+    }
+
+    auth_server (root, to_server, from_server, verify_only, do_gssapi,
+                 hostinfo);
 
     if (verify_only)
     {
@@ -3170,9 +3235,9 @@ connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
 
 
 static void
-auth_server( cvsroot_t *root, struct buffer *to_server,
+auth_server (cvsroot_t *root, struct buffer *to_server,
              struct buffer *from_server, int verify_only, int do_gssapi,
-             struct hostent *hostinfo )
+             struct hostent *hostinfo)
 {
     char *username = NULL;		/* the username we use to connect */
     char no_passwd = 0;			/* gets set if no password found */
@@ -3181,13 +3246,14 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
     if (do_gssapi)
     {
 # ifdef HAVE_GSSAPI
-	FILE *fp = stdio_buffer_get_file(to_server);
-	int fd = fp ? fileno(fp) : -1;
+	FILE *fp = stdio_buffer_get_file (to_server);
+	int fd = fp ? fileno (fp) : -1;
 	struct stat s;
 
 	if ((fd < 0) || (fstat (fd, &s) < 0) || !S_ISSOCK(s.st_mode))
 	{
-	    error (1, 0, "gserver currently only enabled for socket connections");
+	    error (1, 0,
+                   "gserver currently only enabled for socket connections");
 	}
 
 	if (! connect_to_gserver (root, fd, hostinfo))
@@ -3197,7 +3263,8 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 		    root->hostname, root->directory);
 	}
 # else /* ! HAVE_GSSAPI */
-	error (1, 0, "INTERNAL ERROR: This client does not support GSSAPI authentication");
+	error (1, 0,
+"INTERNAL ERROR: This client does not support GSSAPI authentication");
 # endif /* HAVE_GSSAPI */
     }
     else /* ! do_gssapi */
@@ -3278,7 +3345,7 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 		 * since GSSAPI doesn't use username.
 		 */
 		error (0, 0,
-		       "authorization failed: server %s rejected access to %s for user %s",
+"authorization failed: server %s rejected access to %s for user %s",
 		       root->hostname, root->directory,
 		       username ? username : "(null)");
 
@@ -3288,7 +3355,7 @@ auth_server( cvsroot_t *root, struct buffer *to_server,
 		if (no_passwd)
 		{
 		    error (0, 0,
-			    "used empty password; try \"cvs login\" with a real password");
+"used empty password; try \"cvs login\" with a real password");
 		}
 		exit (EXIT_FAILURE);
 	    }

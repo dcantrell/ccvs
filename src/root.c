@@ -368,7 +368,7 @@ parse_cvsroot (const char *root_in)
 					 */
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
 #ifdef CLIENT_SUPPORT
-    int check_hostname, no_port, no_password;
+    int check_hostname, no_port, no_password, no_proxy;
 #endif /* CLIENT_SUPPORT */
 
     assert (root_in != NULL);
@@ -405,6 +405,13 @@ parse_cvsroot (const char *root_in)
 	*p = '\0';
 	cvsroot_copy = ++p;
 
+#ifdef CLIENT_SUPPORT
+	/* Look for method options, for instance, proxy, proxyport.
+	 * Calling strtok again is saved until after parsing the method.
+	 */
+	method = strtok (method, ";");
+#endif /* CLIENT_SUPPORT */
+
 	/* Now we have an access method -- see if it's valid. */
 
 	if (strcmp (method, "local") == 0)
@@ -426,6 +433,50 @@ parse_cvsroot (const char *root_in)
 	    error (0, 0, "Unknown method (`%s') in CVSROOT.", method);
 	    goto error_exit;
 	}
+
+#ifdef CLIENT_SUPPORT
+	/* Parse the method options, for instance, proxy, proxyport */
+	while (p = strtok (NULL, ";"))
+	{
+	    char *q = strchr (p, '=');
+	    if (q == NULL)
+	    {
+	        error (0, 0, "Option (`%s') has no argument in CVSROOT.",
+                       p);
+	        goto error_exit;
+	    }
+
+	    *q++ = '\0';
+	    if (strcmp (p, "proxy") == 0)
+	    {
+		newroot->proxy_hostname = xstrdup (q);
+	    }
+	    else if (strcmp (p, "proxyport") == 0)
+	    {
+		char *r = q;
+		if (*r == '-') r++;
+		while (*r)
+		{
+		    if (!isdigit(*r++))
+		    {
+			error (0, 0,
+"CVSROOT may only specify a positive, non-zero, integer proxy port (not `%s').",
+			       q);
+			goto error_exit;
+		    }
+		}
+		if ((newroot->proxy_port = atoi (q)) <= 0)
+		    error (0, 0,
+"CVSROOT may only specify a positive, non-zero, integer proxy port (not `%s').",
+			   q);
+	    }
+	    else
+	    {
+	        error (0, 0, "Unknown option (`%s') in CVSROOT.", p);
+	        goto error_exit;
+	    }
+	}
+#endif /* CLIENT_SUPPORT */
     }
     else
     {
@@ -580,6 +631,7 @@ parse_cvsroot (const char *root_in)
     /* We won't have attempted to parse these without CLIENT_SUPPORT */
     check_hostname = 0;
     no_password = 1;
+    no_proxy = 1;
     no_port = 0;
 #endif /* CLIENT_SUPPORT */
     switch (newroot->method)
@@ -653,6 +705,7 @@ parse_cvsroot (const char *root_in)
 	goto error_exit;
 # else
 	check_hostname = 1;
+	no_proxy = 0;
 	/* no_password already set */
 	break;
 # endif
@@ -664,6 +717,7 @@ parse_cvsroot (const char *root_in)
 	break;
     case pserver_method:
 	no_password = 0;
+	no_proxy = 0;
 	check_hostname = 1;
 	break;
 #endif /* CLIENT_SUPPORT */
@@ -678,6 +732,19 @@ parse_cvsroot (const char *root_in)
 	error (0, 0, "pserver connection method.");
 	goto error_exit;
     }
+    if (no_proxy && (newroot->proxy_hostname || newroot->proxy_port))
+    {
+	error (0, 0,
+"CVSROOT proxy specification is only valid for gserver and");
+	error (0, 0, "pserver connection methods.");
+	goto error_exit;
+    }
+
+    if (!newroot->proxy_hostname && newroot->proxy_port)
+    {
+	error (0, 0, "Proxy port specified in CVSROOT without proxy host.");
+	goto error_exit;
+    }
 
     if (check_hostname && !newroot->hostname)
     {
@@ -686,11 +753,12 @@ parse_cvsroot (const char *root_in)
     }
 
     if (no_port && newroot->port)
-	{
-	    error (0, 0, "CVSROOT port specification is only valid for gserver, kserver,");
-	    error (0, 0, "and pserver connection methods.");
-	    goto error_exit;
-	}
+    {
+        error (0, 0,
+"CVSROOT port specification is only valid for gserver, kserver,");
+        error (0, 0, "and pserver connection methods.");
+        goto error_exit;
+    }
 #endif /*CLIENT_SUPPORT */
 
     if (*newroot->directory == '\0')
