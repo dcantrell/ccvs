@@ -1,5 +1,12 @@
 Mon Nov  6 16:29:00 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * test-makefile (CFLAGS): -DHAVE_CONFIG_H -- this turns out to be
+        important for stuff in lib/.
+        Other trivial changes.
+
+        * config.h (HAVE_DIRENT_H): define to 1, now that we have our own
+        dirent.h and dirent.c.
+
         * Makefile.in (OS2_SOURCES): added filesubr.c; this may not be
         permanent.
 
