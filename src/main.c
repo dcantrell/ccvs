@@ -42,7 +42,6 @@ int quiet = 0;
 int trace = 0;
 int noexec = 0;
 int logoff = 0;
-int multiroot_debug = 0;
 
 /* Set if we should be writing CVSADM directories at top level.  At
    least for now we'll make the default be off (the CVS 1.9, not CVS
@@ -249,8 +248,7 @@ static const char *const opt_usage[] =
 };
 
 
-static
-int
+static int
 set_root_directory (p, ignored)
     Node *p;
     void *ignored;
@@ -513,7 +511,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xam", long_options, &option_index))
+            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xa", long_options, &option_index))
            != EOF)
     {
 	switch (c)
@@ -634,9 +632,6 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
                    have it in their .cvsrc and not cause any trouble.
                    We will issue an error later if stream
                    authentication is not supported.  */
-		break;
-	    case 'm':
-		multiroot_debug = 1;
 		break;
 	    case '?':
 	    default:
@@ -947,9 +942,9 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		if (parse_cvsroot (current_root))
 		    error (1, 0, "Bad CVSROOT.");
 
-		if (multiroot_debug)
-		  error (0, 0, "notice: main loop with CVSROOT=%s",
-			 current_root);
+		if (trace)
+		    error (0, 0, "notice: main loop with CVSROOT=%s",
+			   current_root);
 
 		/*
 		 * Check to see if we can write into the history file.  If not,
