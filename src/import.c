@@ -122,6 +122,7 @@ import (argc, argv)
 #else
 		use_editor = 0;
 #endif
+		if (message) free (message);
 		message = xstrdup(optarg);
 		break;
 	    case 'I':

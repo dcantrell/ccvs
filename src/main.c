@@ -556,11 +556,13 @@ distribution kit for a complete list of contributors and copyrights.\n",
 		   either new or old CVS.  */
 		break;
 	    case 'T':
+		if (free_Tmpdir) free (Tmpdir);
 		Tmpdir = xstrdup (optarg);
 		free_Tmpdir = 1;
 		tmpdir_update_env = 1;	/* need to update environment */
 		break;
 	    case 'e':
+		if (free_Editor) free (Editor);
 		Editor = xstrdup (optarg);
 		free_Editor = 1;
 		break;
@@ -727,7 +729,10 @@ distribution kit for a complete list of contributors and copyrights.\n",
 	}
 
 	if (Tmpdir == NULL || Tmpdir[0] == '\0')
+	{
+	    if (free_Tmpdir) free (Tmpdir);
 	    Tmpdir = "/tmp";
+	}
 
 #ifdef HAVE_PUTENV
 	if (tmpdir_update_env)

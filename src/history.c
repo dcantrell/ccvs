@@ -236,7 +236,7 @@ static short tz_local;
 static time_t tz_seconds_east_of_GMT;
 static char *tz_name = "+0000";
 
-char *logHistory = ALL_HISTORY_REC_TYPES;
+char *logHistory;
 
 /* -r, -t, or -b options, malloc'd.  These are "" if the option in
    question is not specified or is overridden by another option.  The

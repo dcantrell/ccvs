@@ -80,12 +80,12 @@ add (argc, argv)
 	switch (c)
 	{
 	    case 'k':
-		if (options)
-		    free (options);
+		if (options) free (options);
 		options = RCS_check_kflag (optarg);
 		break;
 
 	    case 'm':
+		if (message) free (message);
 		message = xstrdup (optarg);
 		break;
 	    case '?':
@@ -890,6 +890,7 @@ out:
     if (restore_cwd (&cwd, NULL))
 	error_exit ();
     free_cwd (&cwd);
+    if (message) free (message);
     if (rcsdir != NULL)
 	free (rcsdir);
     return 0;
