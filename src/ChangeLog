@@ -1,3 +1,9 @@
+2003-10-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (parseroot): Perform this test in a subdirectory.
+	It should avoid problems on case-insensitive systems where 
+	CVSROOT and cvsroot are the same directory (eg, MacOS X).
+
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
 	* update.c (join_file): Restore the optimization Mark recently removed,
