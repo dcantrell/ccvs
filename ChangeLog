@@ -1,5 +1,9 @@
 Wed Jan 10 01:17:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Don't set exec_prefix.  Set bindir from prefix if
+	exec_prefix isn't set.
+	* configure: Regenerated.
+
 	* INSTALL: Update list of machines for 1.6.85 (further changes to
 	the list of machines will not receive ChangeLog entries).
 
