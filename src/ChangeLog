@@ -1,3 +1,13 @@
+2001-03-09  Larry Jones  <larry.jones@sdrc.com>
+
+	* edit.c (edit_fileproc, unedit_fileproc): Some implementations of
+	asctime/ctime apparently use a leading zero on the date instead
+	of the space required by the C Standard.  Correct for this so that
+	shared working directories work without hassle.
+	(Reported by David L. Martin <dlmart2@home.com>.)
+	* entries.c (fgetentent): Ditto.
+	* vers_ts.c (time_stamp_server, time_stamp) Ditto.
+
 2001-03-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (basica, binfiles2, head, admin): Update to match
