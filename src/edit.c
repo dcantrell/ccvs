@@ -16,6 +16,7 @@
 #include "edit.h"
 #include "fileattr.h"
 
+static int check_edited = 0;
 static int watch_onoff PROTO ((int, char **));
 
 static int setting_default;
@@ -24,6 +25,8 @@ static int turning_on;
 static int setting_tedit;
 static int setting_tunedit;
 static int setting_tcommit;
+
+static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int onoff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
@@ -351,9 +354,10 @@ edit_fileproc (callerdat, finfo)
 
 static const char *const edit_usage[] =
 {
-    "Usage: %s %s [-lR] [files...]\n",
-    "-l: Local directory only, not recursive\n",
-    "-R: Process directories recursively\n",
+    "Usage: %s %s [-cflR] [files...]\n",
+    "-c: Check that working files are unedited\n",
+    "-f: Force edit if working files are unedited (default)\n",
+    "-R: Process directories recursively (default)\n",
     "-a: Specify what actions for temporary watch, one of\n",
     "    edit,unedit,commit,all,none\n",
     "(Specify the --help global option for a list of other help options)\n",
@@ -367,7 +371,7 @@ edit (argc, argv)
 {
     int local = 0;
     int c;
-    int err;
+    int err = 0;
     int a_omitted;
 
     if (argc == -1)
@@ -378,10 +382,16 @@ edit (argc, argv)
     setting_tunedit = 0;
     setting_tcommit = 0;
     optind = 0;
-    while ((c = getopt (argc, argv, "+lRa:")) != -1)
+    while ((c = getopt (argc, argv, "+cflRa:")) != -1)
     {
 	switch (c)
 	{
+	    case 'c':
+		check_edited = 1;
+		break;
+	    case 'f':
+		check_edited = 0;
+		break;
 	    case 'l':
 		local = 1;
 		break;
@@ -429,15 +439,122 @@ edit (argc, argv)
 
     /* No need to readlock since we aren't doing anything to the
        repository.  */
-    err = start_recursion (edit_fileproc, (FILESDONEPROC) NULL,
+    err = start_recursion (check_fileproc, (FILESDONEPROC) NULL,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   0);
+			   argc, argv, local, W_LOCAL, 0, 1, 
+			   (char *)NULL, 1);
 
-    err += send_notifications (argc, argv, local);
+     
+    if(err)
+    {
+        error (1, 0, "files being edited!");
+    }
+    else
+    {
+        err = start_recursion (edit_fileproc, (FILESDONEPROC) NULL,
+                                (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+                                argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
+                                0);
+        err += send_notifications (argc, argv, local);
+    }
 
     return err;
 }
+
+/* check file that is to be edited if it's already being edited */
+
+static int
+check_fileproc (callerdat, finfo)
+    void *callerdat;
+    struct file_info *finfo;
+{
+    char *editors;
+    FILE *fp;
+    time_t now;
+    int status;
+    char *ascnow;
+    char *basefilename;
+
+    /* This is a somewhat screwy way to check for this, because it
+       doesn't help errors other than the nonexistence of the file
+       (e.g. permissions problems).  It might be better to rearrange
+       the code so that CVSADM_NOTIFY gets written only after the
+       various actions succeed (but what if only some of them
+       succeed).  */
+    if (!isfile (finfo->file))
+    {
+       error (0, 0, "no such file %s; ignored", finfo->fullname);
+       return 0;
+    }
+
+    editors = fileattr_get0 (finfo->file, "_editors");
+    if(!really_quiet && editors != NULL)
+    {
+        char *p;
+
+        cvs_output(finfo->fullname, 0);
+        cvs_output(" edited by:\n", 0);
+
+        p = editors;
+        while(1)
+        {
+            cvs_output("\t", 1);
+            while (*p != '>' && *p != '\0')
+                cvs_output (p++, 1);
+            if (*p == '\0')
+            {
+                /* Only happens if attribute is misformed.  */
+                cvs_output ("\n", 1);
+                break;
+            }
+            ++p;
+            cvs_output ("@", 1);
+            while (*p != '+' && *p != ',' && *p != '\0') /* skip timestamp */
+                ++p;
+            if (*p == '\0')
+            {
+                cvs_output ("\n", 1);
+                break;
+            }
+            ++p;
+            while (*p != '+' && *p != ',' && *p != '\0') /* hostname */
+                cvs_output (p++, 1);
+            if (*p == '\0')
+            {
+                cvs_output ("\n", 1);
+                break;
+            }
+            ++p;
+            cvs_output (":", 1);
+            while (*p != '+' && *p != ',' && *p != '\0') /* directory */
+                cvs_output (p++, 1);
+            cvs_output ("/", 1);
+            cvs_output(finfo->file, 0);
+            cvs_output ("\n", 1);
+            if (*p != ',')
+            {
+                ++p;
+                break;
+            }
+            ++p;
+        }
+    }
+
+    if(check_edited && editors != NULL)
+    {
+        status = 1;
+    }
+    else
+    {
+        status = 0;
+    }
+
+    if(editors != NULL)
+        free(editors);
+
+    return status;
+}
+
 
 static int unedit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
@@ -553,6 +670,18 @@ unedit_fileproc (callerdat, finfo)
     return 0;
 }
 
+static const char *const unedit_usage[] = 
+{
+    "Usage: %s %s [-lR] [files...]\n",
+    "-l: Local directory only, not recursive\n",
+    "-R: Process directories recursively (default)\n",
+    "-a: Specify what actions for temporary watch, one of\n",
+    "    edit,unedit,commit,all,none\n",
+    "(Specify the --help global option for a list of other help options)\n",
+    NULL
+};
+
+
 int
 unedit (argc, argv)
     int argc;
@@ -563,7 +692,7 @@ unedit (argc, argv)
     int err;
 
     if (argc == -1)
-	usage (edit_usage);
+	usage (unedit_usage);
 
     optind = 0;
     while ((c = getopt (argc, argv, "+lR")) != -1)
@@ -578,7 +707,7 @@ unedit (argc, argv)
 		break;
 	    case '?':
 	    default:
-		usage (edit_usage);
+		usage (unedit_usage);
 		break;
 	}
     }
