@@ -1,3 +1,7 @@
+Fri Sep  6 22:31:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_checkout): Fix indentation.
+
 Fri Sep  6 11:48:08 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_checkout): Replace tag parameter with rev and nametag
