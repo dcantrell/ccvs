@@ -18454,8 +18454,7 @@ U file2"
 
 	  # Now try with a numeric revision.
 	  dotest sticky-21 "${testcvs} -q update -r 1.1 file1" "U file1"
-	  rm file1
-	  dotest sticky-22 "${testcvs} rm file1" \
+	  dotest sticky-22 "${testcvs} rm -f file1" \
 "${PROG} [a-z]*: cannot remove file .file1. which has a numeric sticky tag of .1\.1."
 	  # The old behavior was that remove allowed this and then commit
 	  # gave an error, which was somewhat hard to clear.  I mean, you
@@ -18464,11 +18463,19 @@ U file2"
 	  # why CVS should have a concept of conflict that arises, not from
 	  # parallel development, but from CVS's own sticky tags.
 
+	  # Ditto with a sticky date.
+	  #
 	  # I'm kind of surprised that the "file1 was lost" doesn't crop
 	  # up elsewhere in the testsuite.  It is a long-standing
 	  # discrepency between local and remote CVS and should probably
 	  # be cleaned up at some point.
-	  dotest sticky-23 "${testcvs} -q update -A" \
+	  dotest sticky-23 "${testcvs} -q update -Dnow file1" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1" "U file1"
+	  dotest sticky-24 "${testcvs} rm -f file1" \
+"${PROG} [a-z]*: cannot remove file .file1. which has a sticky date of .[0-9.]*."
+
+	  dotest sticky-25 "${testcvs} -q update -A" \
 "${PROG} [a-z]*: warning: file1 was lost
 U file1" "U file1"
 
