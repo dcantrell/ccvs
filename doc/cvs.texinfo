@@ -6976,7 +6976,7 @@ tag'' feature. It was used in conjunction with the
 what they called the @code{tagexpand=} option. In
 @sc{cvs} this other option is known as the
 @code{KeywordExpand} option. 
-See @ref{Configuring Keyword Expansion} for more
+See @ref{Configuring keyword expansion} for more
 details.
 
 Examples from popular projects include:
@@ -7084,7 +7084,7 @@ keywords to include or exclude using the
 @file{CVSROOT/config} file--see @ref{Configuring keyword expansion}
 for more details. This feature is intended primarily
 for use with the @code{LocalKeyword} option--see
-@ref{Local keyword}.
+@ref{Keyword list}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Substitution modes

@@ -1,3 +1,8 @@
+2003-06-11  Mark D. Baushke  <mdb@gnu.org>
+
+	* cvs.texinfo (Keyword list): Fix broken reference.
+	(Avoiding substitution): Ditto.
+
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti: Regenerated.
