@@ -1,5 +1,13 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* cvsbug.in: Import use of mktemp function from RedHat 8.0's
+	CVS 1.11.2 RPM.  Use new MKTEMP configure variable.  Use new
+	SENDMAIL from configure.
+
+	* Makefile.in: Regenerated.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (user_admin_options): New global config option.
 	* admin.c (admin): Handle user_admin_options.
 	* parseinfo.c (parse_config): Handle UserAdminOptions.
