@@ -20,10 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #ifndef GETLINE_H_
 # define GETLINE_H_ 1
 
-#if HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 # include <stddef.h>
 # include <stdio.h>
 
@@ -31,17 +27,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 # include <sys/types.h>
 
 /* glibc2 has these functions declared in <stdio.h>.  Avoid redeclarations.  */
-# if !HAVE_WORKING_GETLINE
+# if __GLIBC__ < 2
 
 extern ssize_t getline (char **_lineptr, size_t *_linesize, FILE *_stream);
 
-# endif /* ! have getline */
-
-# if !HAVE_GETDELIM
-
 extern ssize_t getdelim (char **_lineptr, size_t *_linesize, int _delimiter,
-			 FILE *_stream);
+			  FILE *_stream);
 
-# endif /* ! have getdelim */
+# endif
 
 #endif /* not GETLINE_H_ */

@@ -1,3 +1,7 @@
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
+	* getline.h: Sync this file with GNULIB.
+
 2003-07-24  Derek Price  <derek@ximbiot.com>
 
 	* getline.c, getline.h, getndelim2.c, getndelim2.h, getnline.c,
