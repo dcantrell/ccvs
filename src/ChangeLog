@@ -1,4 +1,12 @@
+Thu Apr 10 00:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c: Refer to doc/RCSFILES in comment.
+
 Wed Apr  9 09:49:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basicb): New tests basicb-11 through basicb-13 test
+	ability to specify several directory levels in co -d (commented
+	out).
 
 	* filesubr.c (fopen_case): If CVS_OPENDIR gives an
 	existence_error, return it to the caller instead of giving a fatal

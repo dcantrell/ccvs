@@ -51,8 +51,8 @@
    many tools (not just CVS and RCS) can at least import this format.
    RCS and CVS must preserve the current ability to import/export it
    (preferably improved--magic branches are currently a roadblock).
-   TODO: improve rcsfile.5 in the RCS distribution so that it more
-   completely documents this format.
+   See doc/RCSFILES in the CVS distribution for documentation of this
+   file format.
 
    On somewhat related notes:
 
