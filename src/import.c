@@ -172,9 +172,8 @@ import (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
-	/* Do this now; don't ask for a log message if we can't talk to the
-	   server.  But if there is a syntax error in the options, give
-	   an error message without connecting.  */
+	/* For rationale behind calling start_server before do_editor, see
+	   commit.c  */
 	start_server ();
     }
 #endif

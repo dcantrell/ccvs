@@ -449,12 +449,16 @@ commit (argc, argv)
 	find_args.argc = 0;
 	walklist (find_args.ulist, copy_ulist, &find_args);
 
-	/*
-	 * Do this before calling do_editor; don't ask for a log
-	 * message if we can't talk to the server.  But do it after we
-	 * have made the checks that we can locally (to more quickly
-	 * catch syntax errors, the case where no files are modified,
-	 * added or removed, etc.).  */
+	/* Do this before calling do_editor; don't ask for a log
+	   message if we can't talk to the server.  But do it after we
+	   have made the checks that we can locally (to more quickly
+	   catch syntax errors, the case where no files are modified,
+	   added or removed, etc.).
+
+	   On the other hand, calling start_server before do_editor
+	   means that we chew up server resources the whole time that
+	   the user has the editor open (hours or days if the user
+	   forgets about it), which seems dubious.  */
 	start_server ();
 
 	/*

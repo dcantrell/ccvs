@@ -1,3 +1,8 @@
+Thu Aug 15 23:38:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c, import.c: Revise comments regarding the fact that we
+	call start_server before do_editor.
+
 Thu Aug 15 11:30:55 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* server.c: Include <sys/socket.h> if AUTH_SERVER_SUPPORT.
