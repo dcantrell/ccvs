@@ -5713,39 +5713,74 @@ File: file5            	Status: Up-to-date
 	  dotest tagc-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
 	  cd first-dir
-	  touch file1
-	  dotest tagc-3 "${testcvs} add file1" \
+	  touch file1 file2
+	  dotest tagc-3 "${testcvs} add file1 file2" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
-${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
 	  dotest tagc-4 "${testcvs} -q ci -m add" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
 Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+done
+Checking in file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+initial revision: 1\.1
 done"
-	  dotest tagc-5 "${testcvs} -q tag -c tag1" "T file1"
-	  touch file1
-	  dotest tagc-6 "${testcvs} -q tag -c tag2" "T file1"
+	  dotest tagc-5 "${testcvs} -q tag -c tag1" \
+"T file1
+T file2"
+	  touch file1 file2
+	  dotest tagc-6 "${testcvs} -q tag -c tag2" \
+"T file1
+T file2"
 	  # Avoid timestamp granularity bugs (FIXME: CVS should be
 	  # doing the sleep, right?).
 	  sleep 1
 	  echo myedit >>file1
+	  dotest tagc-6a "${testcvs} rm -f file2" \
+"${PROG} [a-z]*: scheduling .file2. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  touch file3
+	  dotest tagc-6b "${testcvs} add file3" \
+"${PROG} [a-z]*: scheduling file .file3. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest_fail tagc-7 "${testcvs} -q tag -c tag3" \
 "${PROG} [a-z]*: file1 is locally modified
+${PROG} [a-z]*: file2 is locally modified
+${PROG} [a-z]*: file3 is locally modified
 ${PROG} \[[a-z]* aborted\]: correct the above errors first!"
 	  cd ../..
 	  mkdir 2
 	  cd 2
-	  dotest tagc-8 "${testcvs} -q co first-dir" "U first-dir/file1"
+	  dotest tagc-8 "${testcvs} -q co first-dir" \
+"U first-dir/file1
+U first-dir/file2"
 	  cd ../1/first-dir
 	  dotest tagc-9 "${testcvs} -q ci -m modify" \
 "Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
+done
+Removing file2;
+${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
+new revision: delete; previous revision: 1\.1
+done
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file3,v
+done
+Checking in file3;
+${CVSROOT_DIRNAME}/first-dir/file3,v  <--  file3
+initial revision: 1\.1
 done"
 	  cd ../../2/first-dir
-	  dotest tagc-10 "${testcvs} -q tag -c tag4" "T file1"
+	  dotest tagc-10 "${testcvs} -q tag -c tag4" \
+"${PROG} [a-z]*: file2 is no longer in the repository
+T file1
+T file2"
 	  cd ../..
 
 	  rm -r 1 2

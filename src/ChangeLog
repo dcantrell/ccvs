@@ -1,3 +1,10 @@
+2002-06-26  Larry Jones  <lawrence.jones@eds.com>
+
+	* tag.c (check_fileproc): When checking up-to-date, T_REMOVE_ENTRY
+	is also a valid status.
+	(Reported by David Everly <David.Everly@wcom.com>.)
+	* sanity.sh (tagc): New tests for above.
+
 2002-06-18  Larry Jones  <lawrence.jones@eds.com>
 
 	* update.c (patch_file): Don't patch if diff bigger than file.

@@ -423,11 +423,21 @@ check_fileproc (callerdat, finfo)
     
     if (check_uptodate) 
     {
-	Ctype status = Classify_File (finfo, (char *) NULL, (char *) NULL,
-				      (char *) NULL, 1, 0, &vers, 0);
-	if ((status != T_UPTODATE) && (status != T_CHECKOUT) &&
-	    (status != T_PATCH))
+	switch (Classify_File (finfo, (char *) NULL, (char *) NULL,
+				      (char *) NULL, 1, 0, &vers, 0))
 	{
+	case T_UPTODATE:
+	case T_CHECKOUT:
+	case T_PATCH:
+	case T_REMOVE_ENTRY:
+	    break;
+	case T_UNKNOWN:
+	case T_CONFLICT:
+	case T_NEEDS_MERGE:
+	case T_MODIFIED:
+	case T_ADDED:
+	case T_REMOVED:
+	default:
 	    error (0, 0, "%s is locally modified", finfo->fullname);
 	    freevers_ts (&vers);
 	    return (1);
