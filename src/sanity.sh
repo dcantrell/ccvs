@@ -43,8 +43,8 @@ exit_help ()
     echo "-f FROM-TEST	run TESTS-TO-RUN, skipping all tests in the list before"
     echo "		FROM-TEST"
     echo
-    echo "TESTS-TO-RUN are the names of the tests to run; if omitted, defaults to"
-    echo "all tests."
+    echo "CVS-TO-TEST	the path to the CVS executable to be tested"
+    echo "TESTS-TO-RUN	the names of the tests to run (defaults to all tests)"
     exit 2
 }
 
