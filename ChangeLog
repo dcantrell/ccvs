@@ -1,3 +1,7 @@
+2004-02-06  Derek Price  <derek@ximbiot.com>
+
+	* README: Undo accidental overwrite.
+
 2004-02-04  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that alias module recursion is now more comprehensive.
