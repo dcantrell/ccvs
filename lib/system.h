@@ -277,6 +277,23 @@ char *getcwd ();
 char *getwd ();
 #endif
 
+/* check for POSIX signals */
+#if defined(HAVE_SIGACTION) && defined(HAVE_SIGPROCMASK)
+# define POSIX_SIGNALS
+#endif
+
+/* MINIX 1.6 doesn't properly support sigaction */
+#if defined(_MINIX)
+# undef POSIX_SIGNALS
+#endif
+
+/* If !POSIX, try for BSD.. Reason: 4.4BSD implements these as wrappers */
+#if !defined(POSIX_SIGNALS)
+# if defined(HAVE_SIGVEC) && defined(HAVE_SIGSETMASK) && defined(HAVE_SIGBLOCK)
+#  define BSD_SIGNALS
+# endif
+#endif
+
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #else

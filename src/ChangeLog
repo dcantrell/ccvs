@@ -1,3 +1,8 @@
+Sun Oct  8 12:32:15 1995  Peter Wemm  <peter@haywire.DIALix.COM>
+
+	* run.c: detect/use POSIX/BSD style reliable signals for critical
+	section masking etc.  Helps prevent stray locks on interruption.
+
 Sat Oct  7 23:26:54 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* admin.c (admin): If group CVS_ADMIN_GROUP exists, allow only
