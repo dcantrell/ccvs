@@ -917,7 +917,7 @@ serve_max_dotdot (arg)
     int i;
     char *p;
 
-    if (lim < 0)
+    if (lim < 0 || lim > 10000)
 	return;
     p = xmalloc (strlen (server_temp_dir) + 2 * lim + 10);
     if (p == NULL)
@@ -2055,6 +2055,9 @@ serve_notify (arg)
     {
 	char *cp;
 
+	if (!data[0])
+	    goto error;
+
 	if (strchr (data, '+'))
 	    goto error;
 
@@ -2186,6 +2189,14 @@ serve_argument (arg)
     char *p;
 
     if (error_pending()) return;
+    
+    if (argument_count >= 10000)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text, 
+		     "E Protocol error: too many arguments");
+	return;
+    }
 
     if (argument_vector_size <= argument_count)
     {
@@ -2216,6 +2227,14 @@ serve_argumentx (arg)
     char *p;
 
     if (error_pending()) return;
+    
+    if (argument_count <= 1) 
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+		     "E Protocol error: called argumentx without prior call to argument");
+	return;
+    }
 
     p = argument_vector[argument_count - 1];
     p = xrealloc (p, strlen (p) + 1 + strlen (arg) + 1);
@@ -2549,7 +2568,7 @@ check_command_legal_p (cmd_name)
 		    save some code here...  -kff */
 
 		 /* Chop newline by hand, for strcmp()'s sake. */
-		 if (linebuf[num_red - 1] == '\n')
+                 if (num_red > 0 && linebuf[num_red - 1] == '\n')
 		     linebuf[num_red - 1] = '\0';
 
 		 if (strcmp (linebuf, CVS_Username) == 0)
@@ -2604,7 +2623,7 @@ check_command_legal_p (cmd_name)
 	 while ((num_red = getline (&linebuf, &linebuf_len, fp)) >= 0)
 	 {
 	     /* Chop newline by hand, for strcmp()'s sake. */
-	     if (linebuf[num_red - 1] == '\n')
+	     if (num_red > 0 && linebuf[num_red - 1] == '\n')
 		 linebuf[num_red - 1] = '\0';
 
 	     if (strcmp (linebuf, CVS_Username) == 0)
