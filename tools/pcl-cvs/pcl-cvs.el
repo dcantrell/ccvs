@@ -3288,7 +3288,13 @@ for more details."
   "See if ChangeLog entry at point is for the current user, today.
 Return non-nil iff it is."
   ;; Code adapted from add-change-log-entry.
-  (looking-at (concat (regexp-quote (substring (current-time-string)
+  (or (looking-at
+       (regexp-quote (format "%s  %s  <%s>"
+			     (format-time-string "%Y-%m-%d")
+			     add-log-full-name
+			     add-log-mailing-address)))
+      (looking-at
+       (concat (regexp-quote (substring (current-time-string)
                                                0 10))
                       ".* "
                       (regexp-quote (substring (current-time-string) -4))
@@ -3301,7 +3307,7 @@ Return non-nil iff it is."
 		      (regexp-quote (if (and (boundp 'add-log-mailing-address)
 					     add-log-mailing-address)
 					add-log-mailing-address
-				      user-mail-address)))))
+			       user-mail-address))))))
 
 (defun cvs-relative-path (base child)
   "Return a directory path relative to BASE for CHILD.
