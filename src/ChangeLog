@@ -1,3 +1,9 @@
+1998-06-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* call_diff_write_output, call_diff_printf_output,
+	call_diff_flush_output, call_diff_write_stdout, call_diff_error,
+	call_diff_stdout_callbacks, call_diff_file_callbacks): Re-indent.
+
 1998-06-19  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (merge_file): Make sure the time stamp of the file is
