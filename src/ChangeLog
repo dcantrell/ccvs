@@ -1,5 +1,8 @@
 1998-08-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (basicc): Add tests for a serious bug in "cvs release
+	-d .".
+
 	More error handling fixes:
 	* ignore.c (ignore_files): Check for errors from opendir and
 	readdir.

@@ -1141,6 +1141,8 @@ Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  # and then blow it away (don't complain if it does not
 	  # exist).  But that is perfectly legal; people who are used
 	  # to the old behavior especially may be interested.
+	  # FIXME: this test is intended for the TopLevelAdmin=yes case;
+	  # should adjust/move it accordingly.
 	  rm -rf CVS
 	  dotest basicc-4 "echo *" "first-dir second-dir"
 	  dotest basicc-5 "${testcvs} update" \
@@ -1149,6 +1151,21 @@ ${PROG} [a-z]*: Updating second-dir" \
 "${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating first-dir
 ${PROG} [a-z]*: Updating second-dir"
+
+	  cd first-dir
+	  dotest basicc-6 "${testcvs} release -d" ""
+	  dotest basicc-7 "test -d ../first-dir" ""
+	  # On Unix, the st_ino check happens to save our butt before
+	  # we delete second-dir and so on.  But the butts of NT users
+	  # are in grave danger.
+	  dotest basicc-8 "${testcvs} -Q release -d ." \
+"cvs release: Parent dir on a different disk, delete of \. aborted"
+	  dotest basicc-9 "test -d ../second-dir" ""
+	  dotest basicc-10 "test -d ../first-dir" ""
+	  # For CVS to make a syntactic check for "." wouldn't suffice.
+	  dotest basicc-11 "${testcvs} -Q release -d ./." \
+"cvs release: Parent dir on a different disk, delete of \./\. aborted"
+	  cd ..
 
 	  cd ..
 	  rm -r 1
@@ -6030,6 +6047,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  #   info-cleanup-0 for "cvs -n release".
 	  #   ignore-193 for the text of the question that cvs release asks.
 	  #     Also for interactions with cvsignore.
+	  #   basicc for "cvs release -d ."
 	  cd ampermodule
 	  if ${testcvs} release -d first-dir second-dir <<EOF >>${LOGFILE}
 yes
