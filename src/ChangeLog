@@ -1,3 +1,10 @@
+1998-11-13  Jim Kingdon
+
+	* tag.c (check_fileproc): Log tag deletions.
+	* rtag.c (check_fileproc): Likewise.
+	* sanity.sh (taginfo-14 through taginfo-18): New tests, for
+	these behaviors.
+
 1998-11-12  Jim Kingdon
 
 	* sanity.sh (mwrap-7): Update for the noexec fix.
