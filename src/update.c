@@ -1912,12 +1912,10 @@ ignore_files (ilist, update_dir)
 	    }
 #endif
     	}
-	
-	/* We ignore any things which:
-	 *  1. not a file, or
-	 *  2. it is a file on the ignore list.
-	 */
-	if (!S_ISREG (sb.st_mode) || ign_name (file))
+
+	/* We could be ignoring FIFOs and other files which are neither
+	   regular files nor directories here.  */
+	if (ign_name (file))
 	    continue;
 	(void) write_letter (file, '?', xdir);
     }

@@ -1002,6 +1002,10 @@ for what in $tests; do
 			echo imported file"$i" > imported-file"$i"
 		done
 
+		# This directory should be on the default ignore list,
+		# so it shouldn't get imported.
+		mkdir RCS
+		echo ignore.me >RCS/ignore.me
 		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
 			echo "PASS: test 96" >>${LOGFILE}
 		else
@@ -1024,6 +1028,11 @@ for what in $tests; do
 				echo "FAIL: test 98-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
+		if test -d RCS; then
+		  echo "FAIL: test 98.5" | tee -a ${LOGFILE} ; exit 1
+		else
+		  echo "PASS: test 98.5" >>${LOGFILE}
+		fi
 
 		# remove
 		rm imported-file1
