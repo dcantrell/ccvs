@@ -51,8 +51,8 @@ static void
 fileattr_delproc (node)
     Node *node;
 {
-    if (node && node->data)
-	free (node->data);
+    assert (node->data != NULL);
+    free (node->data);
     node->data = NULL;
 }
 

@@ -263,8 +263,6 @@ findnode (list, key)
        the callers to see if any are relying on this behavior.  */
     if ((list == (List *) NULL))
 	return ((Node *) NULL);
-    if (key == NULL)
-	return ((Node *) NULL);
 
     head = list->hasharray[hashp (key)];
     if (head == (Node *) NULL)
@@ -288,8 +286,6 @@ findnode_fn (list, key)
     Node *head, *p;
 
     if (list == (List *) NULL)
-	return ((Node *) NULL);
-    if (key == NULL)
 	return ((Node *) NULL);
 
     head = list->hasharray[hashp (key)];

@@ -1,3 +1,11 @@
+Mon Mar 11 00:09:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hash.c (findnode, findnode_fn): Revert changes of 7-8 Mar 1996.
+	The correct style is to assert() that key != NULL (see HACKING),
+	which is already done in the hashp function.
+	* fileattr.c (fileattr_delproc): Likewise, assert() that
+	node->data != NULL rather than trying to deal with it being NULL.
+
 Fri Mar  8 01:31:04 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* hash.c (findnode_fn): one more place to avoid calling hashp()
