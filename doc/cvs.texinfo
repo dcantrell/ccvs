@@ -631,7 +631,7 @@ $ cvs release -d tc
 M driver.c
 ? tc
 You have [1] altered files in this repository.
-Are you sure you want to release (and delete) module `tc': n
+Are you sure you want to release (and delete) directory `tc': n
 ** `release' aborted by user choice.
 @end example
 
@@ -693,7 +693,7 @@ $ cd ..
 $ cvs release -d tc
 ? tc
 You have [0] altered files in this repository.
-Are you sure you want to release (and delete) module `tc': y
+Are you sure you want to release (and delete) directory `tc': y
 @end example
 
 @c ---------------------------------------------------------------------
@@ -3185,7 +3185,7 @@ taginfo file (@pxref{user-defined logging}).
 @cindex tag, example
 The following example shows how you can add a tag to a
 file.  The commands must be issued inside your working
-copy of the module.  That is, you should issue the
+directory.  That is, you should issue the
 command in the directory where @file{backend.c}
 resides.
 
@@ -4097,8 +4097,8 @@ will @emph{remove} all changes made between revision
 
 If you try to use this option when operating on
 multiple files, remember that the numeric revisions will
-probably be very different between the various files
-that make up a module.  You almost always use symbolic
+probably be very different between the various files.
+You almost always use symbolic
 tags rather than revision numbers when operating on
 multiple files.
 
@@ -4188,7 +4188,7 @@ subdirectories
 
 @item
 @samp{cvs update .} or just @samp{cvs update} updates
-all files in the @code{tc} module
+all files in the @code{tc} directory
 @end itemize
 
 If no arguments are given to @code{update} it will
@@ -4350,7 +4350,7 @@ later merge the additions to another branch if you want
 @c be its own section, for example, as could the
 @c various bits about undoing mistakes in adding and
 @c removing).
-Modules change.  New files are added, and old files
+Directories change.  New files are added, and old files
 disappear.  Still, you want to be able to retrieve an
 exact copy of old releases.
 
@@ -4601,7 +4601,7 @@ files inside the repository.  Read this entire section
 before trying it out!
 
 @example
-$ cd $CVSROOT/@var{module}
+$ cd $CVSROOT/@var{dir}
 $ mv @var{old},v @var{new},v
 @end example
 
@@ -4621,7 +4621,7 @@ Disadvantages:
 
 @itemize @bullet
 @item
-Old releases of the module cannot easily be fetched from the
+Old releases cannot easily be fetched from the
 repository.  (The file will show up as @var{new} even
 in revisions from the time before it was renamed).
 
@@ -4643,10 +4643,10 @@ repository.  It is safe, but not without drawbacks.
 
 @example
 # @r{Copy the @sc{rcs} file inside the repository}
-$ cd $CVSROOT/@var{module}
+$ cd $CVSROOT/@var{dir}
 $ cp @var{old},v @var{new},v
 # @r{Remove the old file}
-$ cd ~/@var{module}
+$ cd ~/@var{dir}
 $ rm @var{old}
 $ cvs remove @var{old}
 $ cvs commit @var{old}
@@ -4659,7 +4659,7 @@ $ cvs tag -d @var{tag2} @var{new}
 @end example
 
 By removing the tags you will be able to check out old
-revisions of the module.
+revisions.
 
 @noindent
 Advantages:
@@ -4718,16 +4718,16 @@ like this:
 
 @enumerate
 @item
-Inform everyone who has a copy of the module that the
+Inform everyone who has a checked out copy of the directory that the
 directory will be renamed.  They should commit all
-their changes, and remove their working copies of the
-module, before you take the steps below.
+their changes, and remove their working copies,
+before you take the steps below.
 
 @item
 Rename the directory inside the repository.
 
 @example
-$ cd $CVSROOT/@var{module}
+$ cd $CVSROOT/@var{parent-dir}
 $ mv @var{old-dir} @var{new-dir}
 @end example
 
@@ -4736,12 +4736,12 @@ Fix the @sc{cvs} administrative files, if necessary (for
 instance if you renamed an entire module).
 
 @item
-Tell everyone that they can check out the module and continue
+Tell everyone that they can check out again and continue
 working.
 
 @end enumerate
 
-If someone had a working copy of the module the @sc{cvs} commands will
+If someone had a working copy the @sc{cvs} commands will
 cease to work for him, until he removes the directory
 that disappeared inside the repository.
 
@@ -5519,8 +5519,7 @@ these options, see @ref{Invoking CVS}.
 When you want to update or merge a file, use the @code{update}
 command.  For files that are not up to date this is roughly equivalent
 to a @code{checkout} command: the newest revision of the file is
-extracted from the repository and put in your working copy of the
-module.
+extracted from the repository and put in your working directory.
 
 Your modifications to a file are never lost when you
 use @code{update}.  If no newer revision exists,
@@ -6312,8 +6311,8 @@ goal, which is to get software written.
 @comment   version control, so we must not accidentally
 @comment   include a valid keyword in the running text.
 
-As long as you edit source files inside your working
-copy of a module you can always find out the state of
+As long as you edit source files inside a working
+directory you can always find out the state of
 your files via @samp{cvs status} and @samp{cvs log}.
 But as soon as you export the files from your
 development environment it becomes harder to identify
@@ -6677,9 +6676,9 @@ placed on the main trunk, and made the `head'
 revision.
 
 @menu
-* First import::                Importing a module for the first time
-* Update imports::              Updating a module with the import command
-* Reverting local changes::     Reverting a module to the latest vendor release
+* First import::                Importing for the first time
+* Update imports::              Updating with the import command
+* Reverting local changes::     Reverting to the latest vendor release
 * Binary files in imports::     Binary files require special handling
 * Keywords in imports::         Keyword substitution might be undesirable
 * Multiple vendor branches::    What if you get sources from several places?
@@ -6687,7 +6686,7 @@ revision.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node First import
-@section Importing a module for the first time
+@section Importing for the first time
 @cindex Importing modules
 
 @c Should mention naming conventions for vendor tags,
@@ -6732,7 +6731,7 @@ example, and the only release tag assigned is
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Update imports
-@section Updating a module with the import command
+@section Updating with the import command
 
 When a new release of the source arrives, you import it into the
 repository with the same @code{import} command that you used to set up
@@ -7109,7 +7108,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * import::                      Import sources into CVS, using vendor branches
 * log::                         Show log messages for files
 * rdiff::                       'patch' format diffs between releases
-* release::                     Indicate that a Module is no longer in use
+* release::                     Indicate that a directory is no longer in use
 * update::                      Bring work tree in sync with repository
 @end menu
 
@@ -9625,7 +9624,7 @@ sources, this file will be lost.
 @node release examples
 @appendixsubsec release examples
 
-Release the module, and delete your local working copy
+Release the @file{tc} directory, and delete your local working copy
 of the files.
 
 @example
@@ -9633,7 +9632,7 @@ $ cd ..         # @r{You must stand immediately above the}
                 # @r{sources when you issue @samp{cvs release}.}
 $ cvs release -d tc
 You have [0] altered files in this repository.
-Are you sure you want to release (and delete) module `tc': y
+Are you sure you want to release (and delete) directory `tc': y
 $
 @end example
 
@@ -11342,9 +11341,11 @@ removed, and modified files).
 
 @cindex exit status, of commitinfo
 The first line with a regular expression matching the
-relative path to the module will be used.  If the
+directory within the repository will be used.  If the
 command returns a non-zero exit status the commit will
 be aborted.
+@c FIXME: need example(s) of what "directory within the
+@c repository" means.
 
 @cindex DEFAULT in commitinfo
 If the repository name does not match any of the
@@ -11404,7 +11405,7 @@ One thing that should be noted is that the @samp{ALL}
 keyword is not supported.  If more than one matching
 line is found, the first one is used.  This can be
 useful for specifying a default verification script in a
-module, and then overriding it in a subdirectory.
+directory, and then overriding it in a subdirectory.
 
 @cindex DEFAULT in verifymsg
 If the repository name does not match any of the
