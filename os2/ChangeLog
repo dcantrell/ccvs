@@ -1,5 +1,8 @@
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * run.c: new file, copied from ../windows-NT/run.c.  Started
+        making changes for OS/2.
+
         * test-makefile (all): don't bother to echo $CFLAGS; we can just
         read the compilation command.
 
