@@ -4503,7 +4503,7 @@ send_modified (file, short_pathname, vers)
     int fd;
     char *buf;
     char *mode_string;
-    int bufsize;
+    size_t bufsize;
     int bin;
 
     if (trace)
@@ -4556,7 +4556,7 @@ send_modified (file, short_pathname, vers)
 
     if (file_gzip_level && sb.st_size > 100)
     {
-	int newsize = 0;
+	size_t newsize = 0;
 
 	read_and_gzip (fd, short_pathname, (unsigned char **)&buf,
 		       &bufsize, &newsize,
