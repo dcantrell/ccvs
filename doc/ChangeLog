@@ -1,5 +1,8 @@
 Tue May 14 08:56:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Environment variables): Try to document somewhat
+	more accurately where we put temporary files.
+
 	* cvs.texinfo (From files): Say directory tree instead of module
 	where that is what we mean.  Use @var{wdir} and @var{rdir} in the
 	example instead of using @var{dir} for two different things.

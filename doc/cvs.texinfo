@@ -7633,7 +7633,28 @@ seconds so that you can attach to it with a debugger.
 Used under OS/2 only.  It specifies the name of the
 command interpreter and defaults to @sc{cmd.exe}.
 
+@cindex TMPDIR
+@item $TMPDIR
+@cindex TMP
+@itemx $TMP
+@cindex TEMP
+@itemx $TEMP
+@cindex temporary files, location of
+@c I'm not even sure I've documented all the
+@c conventions here.  Furthermore, those conventions are
+@c pretty crazy and they should be simplified.
+Directory in which temporary files are located.  Those
+parts of @sc{cvs} which are implemented using @sc{rcs}
+inspect the above variables in the order they appear
+above and the first value found is taken; if none of
+them are set, a host-dependent default is used,
+typically @file{/tmp}.  The @sc{cvs} server checks
+@code{TMPDIR}, and if not set, it uses @file{/tmp}.
+Some parts of @sc{cvs} will always use @file{/tmp} (via
+the @code{tmpnam} function provided by the system).
 
+On Windows NT, @code{TMP} is used (via the @code{_tempnam}
+function provided by the system).
 @end table
 
 @sc{cvs} is a front-end to @sc{rcs}.  The following environment
@@ -7659,18 +7680,6 @@ Options prepended to the argument list, separated by
 spaces.  A backslash escapes spaces within an option.
 The @code{$RCSINIT} options are prepended to the
 argument lists of most @sc{rcs} commands.
-
-@cindex TMPDIR
-@item $TMPDIR
-@cindex TMP
-@itemx $TMP
-@cindex TEMP
-@itemx $TEMP
-Name of the temporary directory.  The environment
-variables are inspected in the order they appear above
-and the first value found is taken; if none of them are
-set, a host-dependent default is used, typically
-@file{/tmp}.
 @end table
 
 @c ---------------------------------------------------------------------
