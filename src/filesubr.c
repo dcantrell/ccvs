@@ -684,53 +684,154 @@ xcmp (file1, file2)
 }
 
 /* Generate a unique temporary filename.  Returns a pointer to a newly
-   malloc'd string containing the name.  Returns successfully or not at
-   all.  */
-/* There are at least three functions for generating temporary
-   filenames.  We use tempnam (SVID 3) if possible, else mktemp (BSD
-   4.3), and as last resort tmpnam (POSIX). Reason is that tempnam and
-   mktemp both allow to specify the directory in which the temporary
-   file will be created.  */
-#ifdef HAVE_TEMPNAM
+ * malloc'd string containing the name.  Returns successfully or not at
+ * all.
+ *
+ *     THIS FUNCTION IS DEPRECATED!!!  USE cvs_temp_file INSTEAD!!!
+ *
+ * and yes, I know about the way the rcs commands use temp files.  I think
+ * they should be converted too but I don't have time to look into it right
+ * now.
+ */
 char *
 cvs_temp_name ()
 {
-    char *retval;
+    char *fn;
+    FILE *fp;
 
-    retval = tempnam (Tmpdir, "cvs");
-    if (retval == NULL)
-	error (1, errno, "cannot generate temporary filename");
+    fp = cvs_temp_file (&fn);
+    if (fp == NULL)
+	error (1, errno, "Failed to create temporary file");
+    if (fclose (fp) == EOF)
+	error (0, errno, "Failed to close temporary file %s", fn);
+    return fn;
+}
+
+/* Generate a unique temporary filename and return an open file stream
+ * to the truncated file by that name
+ *
+ * INPUTS
+ *   filename	where to place the pointer to the newly allocated file
+ *   		name string or NULL
+ *
+ * OUTPUTS
+ *   filename	dereferenced, will point to the newly allocated file name
+ *   		string, unless filename was NULL initially.
+ *   		This value is undefined if the function returns an error
+ *
+ * RETURNS
+ *   An open file pointer to a read/write mode empty temporary file with the
+ *   unique file name or NULL on failure.
+ *
+ * ERRORS
+ *   on error, errno will be set to some value either by CVS_FOPEN or
+ *   whatever system function is called to generate the temporary file name
+ */
+/* There are at least four functions for generating temporary
+ * filenames.  We use mkstemp (BSD 4.3) if possible, else tempnam (SVID 3),
+ * else mktemp (BSD 4.3), and as last resort tmpnam (POSIX).  Reason is that
+ * mkstemp, tempnam, and mktemp both allow to specify the directory in which
+ * the temporary file will be created.
+ *
+ * And the _correct_ way to use the deprecated functions probably involves
+ * opening file descriptors using O_EXCL & O_CREAT and even doing the annoying
+ * NFS locking thing, but until I hear of more problems, I'm not going to
+ * bother.
+ */
+FILE *cvs_temp_file (filename)
+    char **filename;
+{
+    char *fn;
+    FILE *fp;
+
+    /* FIXME - I'd like to be returning NULL here in noexec mode, but I think
+     * some of the rcs & diff functions which rely on a temp file run in
+     * noexec mode too.
+     */
+#ifdef HAVE_MKSTEMP
+
+    {
+    int fd;
+
+    fn = xmalloc (strlen (Tmpdir) + 11);
+    sprintf (fn, "%s/%s", Tmpdir, "cvsXXXXXX" );
+    fd = mkstemp (fn);
+
+    /* a NULL return will be interpreted by callers as an error and
+     * errno should still be set
+     */
+    if (fd == -1) fp = NULL;
+    else fp = CVS_FDOPEN (fd, "w+");
+
+    if (fp == NULL) free (fn);
+
+    /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
+    /* FIXME - configure can probably tell us which version of glibc we are
+     * linking to
+     */
+    chmod (fn, 0600);
+    }
+
+#elif HAVE_TEMPNAM
+
+    /* tempnam has been deprecated due to under-specification */
+
+    fn = tempnam (Tmpdir, "cvs");
+    if (fn == NULL) fp = NULL;
+    else
+    {
+	fp = CVS_FOPEN (fn, "w+");
+	if (fp == NULL) free (fn);
+	else chmod (fn, 0600);
+    }
+
     /* tempnam returns a pointer to a newly malloc'd string, so there's
-       no need for a xstrdup  */
-    return retval;
-}
+     * no need for a xstrdup
+     */
+
+#elif HAVE_MKTEMP
+
+    /* mktemp has been deprecated due to the BSD 4.3 specification specifying
+     * that XXXXXX will be replaced by a PID and a letter, creating only 26
+     * possibilities, a security risk, and a race condition.
+     */
+
+    {
+    char *ifn;
+
+    ifn = xmalloc (strlen (Tmpdir) + 11);
+    sprintf (ifn, "%s/%s", Tmpdir, "cvsXXXXXX" );
+    fn = mktemp (ifn);
+
+    if (fn == NULL) fp = NULL;
+    else fp = CVS_FOPEN (fn, "w+");
+
+    if (fp == NULL) free (ifn);
+    else chmod (fn, 0600);
+    }
+
 #else
-char *
-cvs_temp_name ()
-{
-#  ifdef HAVE_MKTEMP
-    char *value;
-    char *retval;
 
-    value = xmalloc (strlen (Tmpdir) + 40);
-    sprintf (value, "%s/%s", Tmpdir, "cvsXXXXXX" );
-    retval = mktemp (value);
+    /* tmpnam is deprecated */
 
-    if (retval == NULL)
-	error (1, errno, "cannot generate temporary filename");
-    return value;
-#  else
-    char value[L_tmpnam + 1];
-    char *retval;
+    {
+    char ifn[L_tmpnam + 1];
 
-    retval = tmpnam (value);
-    if (retval == NULL)
-	error (1, errno, "cannot generate temporary filename");
-    return xstrdup (value);
-#  endif
-}
+    fn = tmpnam (ifn);
+
+    if (fn == NULL) fp = NULL;
+    else fp = CVS_FOPEN (ifn, "w+");
+
+    if (fp != NULL) fn = xstrdup (ifn);
+    else chmod (fn, 0600);
+    }
+
 #endif
-
+
+    *filename = fn;
+    return fp;
+}
+
 /* Return non-zero iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
 int

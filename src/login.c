@@ -224,13 +224,8 @@ login (argc, argv)
 	    char *tmp_name;
 	    FILE *tmp_fp;
 
-	    tmp_name = cvs_temp_name ();
-	    if ((tmp_fp = CVS_FOPEN (tmp_name, "w")) == NULL)
-            {
+	    if ((tmp_fp = cvs_temp_file (&tmp_name)) == NULL)
 		error (1, errno, "unable to open temp file %s", tmp_name);
-		return 1;
-            }
-	    chmod (tmp_name, 0600);
 
 	    fp = CVS_FOPEN (passfile, "r");
 	    if (fp == NULL)
@@ -463,13 +458,8 @@ logout (argc, argv)
      * yeah it is.  anyone with permissions to write /tmp (read, "everybody")
      * can just chmod the file into readability
      */
-    tmp_name = cvs_temp_name ();
-    if ((tmp_fp = CVS_FOPEN (tmp_name, "w")) == NULL)
-    {
+    if ((tmp_fp = cvs_temp_file (&tmp_name)) == NULL)
 	error (1, errno, "unable to open temp file %s", tmp_name);
-	return 1;
-    }
-    chmod (tmp_name, 0600);
 
     root_len = strlen (cvsroot_canonical);
     root_len_no_port = strlen (cvsroot_canonical_no_port);

@@ -503,9 +503,7 @@ patch_fileproc (callerdat, finfo)
 
     /* Create 3 empty files.  I'm not really sure there is any advantage
        to doing so now rather than just waiting until later.  */
-    tmpfile1 = cvs_temp_name ();
-    fp1 = CVS_FOPEN (tmpfile1, "w+");
-    if (fp1 == NULL)
+    if ((fp1 = cvs_temp_file (&tmpfile1)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile1);
 	ret = 1;
@@ -514,9 +512,7 @@ patch_fileproc (callerdat, finfo)
     else
 	if (fclose (fp1) < 0)
 	    error (0, errno, "warning: cannot close %s", tmpfile1);
-    tmpfile2 = cvs_temp_name ();
-    fp2 = CVS_FOPEN (tmpfile2, "w+");
-    if (fp2 == NULL)
+    if ((fp2 = cvs_temp_file (&tmpfile2)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile2);
 	ret = 1;
@@ -525,9 +521,7 @@ patch_fileproc (callerdat, finfo)
     else
 	if (fclose (fp2) < 0)
 	    error (0, errno, "warning: cannot close %s", tmpfile2);
-    tmpfile3 = cvs_temp_name ();
-    fp3 = CVS_FOPEN (tmpfile3, "w+");
-    if (fp3 == NULL)
+    if ((fp3 = cvs_temp_file (&tmpfile3)) == NULL)
     {
 	error (0, errno, "cannot create temporary file %s", tmpfile3);
 	ret = 1;

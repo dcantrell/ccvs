@@ -591,8 +591,7 @@ commit (argc, argv)
 	    char *fname;
 	    FILE *fp;
 
-	    fname = cvs_temp_name ();
-	    fp = CVS_FOPEN (fname, "w+");
+	    fp = cvs_temp_file (&fname);
 	    if (fp == NULL)
 		error (1, 0, "cannot create temporary file %s", fname);
 	    if (fwrite (saved_message, 1, strlen (saved_message), fp)
@@ -601,6 +600,7 @@ commit (argc, argv)
 	    if (fclose (fp) < 0)
 		error (0, errno, "cannot close temporary file %s", fname);
 	    error (0, 0, "saving log message in %s", fname);
+	    free (fname);
 	}
 	return err;
     }
