@@ -135,6 +135,23 @@ char *alloca ();
 #define mkfifo(path, mode) (mknod ((path), (mode) | S_IFIFO, 0))
 #endif
 
+#ifdef NEED_DECOY_PERMISSIONS        /* OS/2, really */
+
+#define	S_IRUSR S_IREAD
+#define	S_IWUSR S_IWRITE
+#define	S_IXUSR S_IEXEC
+#define	S_IRWXU	(S_IRUSR | S_IWUSR | S_IXUSR)
+#define	S_IRGRP S_IREAD
+#define	S_IWGRP S_IWRITE
+#define	S_IXGRP S_IEXEC
+#define	S_IRWXG	(S_IRGRP | S_IWGRP | S_IXGRP)
+#define	S_IROTH S_IREAD
+#define	S_IWOTH S_IWRITE
+#define	S_IXOTH S_IEXEC
+#define	S_IRWXO	(S_IROTH | S_IWOTH | S_IXOTH)
+
+#else /* ! NEED_DECOY_PERMISSIONS */
+
 #ifndef S_IRUSR
 #define	S_IRUSR 0400
 #define	S_IWUSR 0200
@@ -153,7 +170,8 @@ char *alloca ();
 #define	S_IXOTH	(S_IXGRP >> 3)	/* Execute by others.  */
 /* Read, write, and execute by others.  */
 #define	S_IRWXO	(S_IRWXG >> 3)
-#endif
+#endif /* !def S_IRUSR */
+#endif /* NEED_DECOY_PERMISSIONS */
 
 #if defined(POSIX) || defined(HAVE_UNISTD_H)
 #include <unistd.h>
@@ -403,23 +421,6 @@ char *getwd ();
  * Some UNIX distributions don't include these in their stat.h Defined here
  * because "config.h" is always included last.
  */
-#ifdef NEED_DECOY_PERMISSIONS        /* OS/2, really */
-
-#define	S_IRUSR S_IREAD
-#define	S_IWUSR S_IWRITE
-#define	S_IXUSR S_IEXEC
-#define	S_IRWXU	(S_IRUSR | S_IWUSR | S_IXUSR)
-#define	S_IRGRP S_IREAD
-#define	S_IWGRP S_IWRITE
-#define	S_IXGRP S_IEXEC
-#define	S_IRWXG	(S_IRGRP | S_IWGRP | S_IXGRP)
-#define	S_IROTH S_IREAD
-#define	S_IWOTH S_IWRITE
-#define	S_IXOTH S_IEXEC
-#define	S_IRWXO	(S_IROTH | S_IWOTH | S_IXOTH)
-
-#else /* ! NEED_DECOY_PERMISSIONS */
-
 #ifndef S_IWRITE
 #define	S_IWRITE	0000200		/* write permission, owner */
 #endif
@@ -429,9 +430,6 @@ char *getwd ();
 #ifndef S_IWOTH
 #define	S_IWOTH		0000002		/* write permission, other */
 #endif
-
-#endif /* NEED_DECOY_PERMISSIONS */
-
 
 /* Under MS-DOS and its derivatives (like Windows NT), mkdir takes only one
    argument; permission is handled very differently on those systems than in
