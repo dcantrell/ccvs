@@ -13468,7 +13468,7 @@ repository with LockDir enabled.
 @cindex LogHistory, in CVSROOT/config
 @item LogHistory=@var{value}
 Control what is logged to the @file{CVSROOT/history} file (@pxref{history}).
-Default of @samp{TOFEWGCMAR} (or simply @samp{all}) will log
+Default of @samp{TOEFWUCGMAR} (or simply @samp{all}) will log
 all transactions.  Any subset of the default is
 legal.  (For example, to only log transactions that modify the
 @file{*,v} files, use @samp{LogHistory=TMAR}.)
