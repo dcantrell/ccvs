@@ -1,3 +1,7 @@
+2005-03-15  Mark D. Baushke  <mdb@cvshome.org>
+
+	* history.c (select_hrec): Avoid possible memory leak.
+
 2005-03-15  Derek Price  <derek@ximbiot.com>
 
 	* patch.c (patch_proc): Avoid memory leak.
