@@ -50,7 +50,7 @@ char *program_path;
  * Initialize comamnd_name to "cvs" so that the first call to
  * read_cvsrc tries to find global cvs options.
  */
-char *command_name = "cvs";
+char *command_name = "";
 
 /*
  * Since some systems don't define this...
@@ -337,7 +337,7 @@ main (argc, argv)
      * Scan cvsrc file for global options.
      */
     if (use_cvsrc)
-	read_cvsrc(&argc, &argv);
+	read_cvsrc (&argc, &argv, "cvs");
 
     optind = 1;
     opterr = 1;
@@ -741,7 +741,7 @@ error 0 %s: no such user\n", user);
 #endif
 
 	if (use_cvsrc)
-	  read_cvsrc(&argc, &argv);
+	  read_cvsrc (&argc, &argv, command_name);
 
 #ifdef CLIENT_SUPPORT
 	/* If cvsroot contains a colon, try to do it via the protocol.  */
