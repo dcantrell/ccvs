@@ -1,3 +1,8 @@
+2001-08-22  Derek Price  <dprice@collab.net>
+
+	* commit.c (commit): Don't call do_verify in client mode since we know
+	do_verify will just return anyhow.
+
 2001-08-20  Derek Price  <dprice@collab.net>
 
 	* Makefile.am (cvs_SOURCES): Add version.c and version.h.
