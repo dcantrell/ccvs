@@ -1,3 +1,7 @@
+Tue Oct 28 14:50:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c: Also define call_diff and call_diff3.
+
 Sat Sep 13 20:13:09 1997    <Martin.Sjoelin@ubs.ch>
 	indentation/whitespace fixes by Jim Kingdon
 
