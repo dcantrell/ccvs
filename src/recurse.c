@@ -62,7 +62,7 @@ struct recursion_frame {
  * we operate.  In the special case of no arguments, we default to
  * ".".
  *
- * The general algorythm is as follows.
+ * The general algorithm is as follows.
  */
 int
 start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
