@@ -134,12 +134,6 @@ static struct buffer *buf_from_net_save;
 
 
 
-/* These are the names of the writeproxy log files so we can delete them on
- * cleanup.
- */
-static char *secondary_log_name;
-static char *secondary_log_out_name;
-
 /* These are the secondary log buffers so that we can disable them after
  * creation, when it is determined that they are unneeded, regardless of what
  * other filters have been prepended to the buffer chain.
@@ -666,46 +660,6 @@ input_memory_error (struct buffer *buf)
 
 
 
-/* Close the secondary log and reopen it for read.
- *
- * NOTES
- *   This function actually only disables further logging (fflushing the FILE
- *   *), then rewinds the file pointer and  returns its FD, since this is
- *   faster than closing and reopening it.
- *
- * GLOBALS
- *   secondary_log		The write proxy log buffer.
- *   secondary_log_name		The file backing the above.
- *
- * RETURNS
- *   A file descriptor to be read from.
- *
- * ERRORS
- *   This function exits with a fatal error if it fails to repoen the log for
- *   read.
- */
-static int
-read_secondary_log (struct buffer **buf_in, const char *name)
-{
-    FILE *fp;
-    int fd;
-    struct buffer *buf = *buf_in;
-
-    assert (buf);
-
-    /* Disable the secondary log.  */
-    fp = log_buffer_disable (buf);
-    *buf_in = NULL;
-
-    /* And "reopen" the log.  The fp has already been fflushed.  */
-    fd = fileno (fp);
-    lseek (fd, 0, SEEK_SET);
-
-    return fd;
-}
-
-
-
 /* This function reprocesses the write proxy log file if it exists.  If it
  * does not exist, this function will return without errors.  This has the
  * effect of both allowing this function to be called twice in certain cases
@@ -742,9 +696,8 @@ reprocess_secondary_log (void)
 	argument_count = 1;
     }
 
-    fd = read_secondary_log (&secondary_log, secondary_log_name);
-
-    log = fd_buffer_initialize (fd, 0, NULL, true, outbuf_memory_error);
+    log = log_buffer_rewind (secondary_log);
+    secondary_log = NULL;
     /* Dispose of any read but unused data in the net buffer since it will
      * already be in the log.
      */
@@ -2291,12 +2244,17 @@ become_proxy (void)
     struct buffer *buf_from_primary;
 
     /* Close the client log and open it for read.  */
-    int clientlog_fd = read_secondary_log (&secondary_log_out,
-                                           secondary_log_out_name);
+    struct buffer *buf_clientlog = log_buffer_rewind (secondary_log_out);
     int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
 
     /* Call presecondary script.  */
     bool pre = true;
+
+	    char *data;
+	    size_t thispass, got;
+	    int s;
+	    char *newdata;
+
     Parse_Info (CVSROOTADM_PREPROXY, current_parsed_root->directory,
 		prepost_proxy_proc, PIOPT_ALL, &pre);
 
@@ -2460,37 +2418,43 @@ become_proxy (void)
 	/* Avoid resending data from the server which we already sent to the
 	 * client.  Otherwise clients get really confused.
 	 */
-	if (clientlog_fd != -1
+	if (buf_clientlog
 	    && buf_from_primary && !buf_empty_p (buf_from_primary))
 	{
 	    /* Dispose of data we already sent to the client.  */
-	    char data[4096];
-	    while (clientlog_fd != -1 && toread > 0)
+	    while (buf_clientlog && toread > 0)
 	    {
-		size_t thispass = toread > sizeof (data)
-		                  ? sizeof (data)
-		                  : toread;
-		ssize_t got = read (clientlog_fd, data, thispass);
-		if (got < 0)
-		    error (1, errno, "Error reading writeproxy log.");
-		else if (got == 0)
+		s = buf_read_data (buf_clientlog, toread, &data, &got);
+		if (s == -2)
+		    error (1, ENOMEM, "Failed to read data.");
+		if (s == -1)
 		{
-		    close (clientlog_fd);
-		    clientlog_fd = -1;
+		    buf_shutdown (buf_clientlog);
+		    buf_clientlog = NULL;
 		}
-		thispass = got;
-		while (thispass > 0)
+		else if (s)
+		    error (1, s, "Error reading writeproxy log.");
+		else
 		{
-		    char *newdata;
-		    size_t read;
-		    buf_read_data (buf_from_primary, thispass, &newdata, &got);
-		    /* Verify that we are throwing away what we think we are.
-		     */
-		    if (memcmp (data, newdata, got))
-			error (1, 0, "Secondary out of sync with primary!");
-		    thispass -= got;
+		    thispass = got;
+		    while (thispass > 0)
+		    {
+			/* No need to check for errors here since we know we
+			 * won't read more than buf_input read into
+			 * BUF_FROM_PRIMARY (see how TOREAD is set above).
+			 */
+			buf_read_data (buf_from_primary, thispass, &newdata,
+				       &got);
+			/* Verify that we are throwing away what we think we
+			 * are.
+			 */
+			if (memcmp (data, newdata, got))
+			    error (1, 0, "Secondary out of sync with primary!");
+			data += got;
+			thispass -= got;
+		    }
+		    toread -= got;
 		}
-		toread -= got;
 	    }
 	}
 
@@ -5808,12 +5772,6 @@ server_cleanup (void)
 	    noexec = 0;
 	    unlink_file_dir (orig_server_temp_dir);
 	    noexec = save_noexec;
-
-	    if (secondary_log_name && CVS_UNLINK (secondary_log_name))
-                error (0, errno, "Failed to delete log file.");
-	    if (secondary_log_out_name && CVS_UNLINK (secondary_log_out_name))
-                error (0, errno, "Failed to delete log file.");
-
 	    SIG_endCrSect();
 	} /* !dont_delete_temp */
 
@@ -5891,56 +5849,17 @@ server (int argc, char **argv)
      * secondary or primary.
      */
     {
-	FILE *fp;
-
-	/* This has to be in a critical section since an interrupt can cause
-	 * server_cleanup() to be called while this function is running.
-	 * server_cleanup() can then attempt to dispose of the secondary log
-	 * via secondary_log_name, the contents of which is undefined if
-	 * cvs_temp_file() returns an error.
-	 */
-	SIG_beginCrSect();
-	fp = cvs_temp_file (&secondary_log_name);
-	if (!fp) secondary_log_name = NULL;
-	SIG_endCrSect();
-
-	if (fp)
-	{
-	    /* The secondary log was successfully opened.  Store this info.  */
-	    buf_from_net = log_buffer_initialize (buf_from_net, fp, true, true,
-	                                          outbuf_memory_error);
-	    secondary_log = buf_from_net;
-	}
-	else
-	{
-	    /* This error is not fatal... if we failed to open the log though,
-	     * this fact will cause a fatal error later in serve_root() if we
-	     * discover that we are actually a secondary server.
-	     */
-	    error (0, errno, "Failed to open writeproxy log.");
-	}
+	/* Open the secondary log.  */
+	buf_from_net = log_buffer_initialize (buf_from_net, NULL, true,
+					      true, MaxSecondaryBufferSize,
+					      outbuf_memory_error);
+	secondary_log = buf_from_net;
 
 	/* And again for the out log.  */
-	SIG_beginCrSect();
-	fp = cvs_temp_file (&secondary_log_out_name);
-	if (!fp) secondary_log_out_name = NULL;
-	SIG_endCrSect();
-
-	if (fp)
-	{
-	    /* The secondary log was successfully opened.  Store this info.  */
-	    buf_to_net = log_buffer_initialize (buf_to_net, fp, true, false,
-	                                        outbuf_memory_error);
-	    secondary_log_out = buf_to_net;
-	}
-	else
-	{
-	    /* This error is not fatal... if we failed to open the log though,
-	     * this fact will cause a fatal error later in serve_root() if we
-	     * discover that we are actually a secondary server.
-	     */
-	    error (0, errno, "Failed to open writeproxy log.");
-	}
+	buf_to_net = log_buffer_initialize (buf_to_net, NULL, true, false,
+					    MaxSecondaryBufferSize,
+					    outbuf_memory_error);
+	secondary_log_out = buf_to_net;
     }
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);

@@ -489,6 +489,20 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   PrimaryServer=:fork:localhost/cvsroot\n",
+    "\n",
+    "# Set `MaxSecondaryBufferSize' to the the maximum allowable secondary\n",
+    "# buffer memory cache size before the buffer begins being stored to disk, in\n",
+    "# bytes.  Must be a positive integer but may end in `k', `M', `G', or `T' (for\n",
+    "# kiilo, mega, giga, tera).  If an otherwise valid number you specifyis greater\n",
+    "# than the SIZE_MAX defined by your system's C compiler, then it will be\n",
+    "# resolved to SIZE_MAX without a warning.  Defaults to 32M.\n",
+    "#\n",
+    "# High values for MaxSecondaryBufferSize may speed up a secondary server\n",
+    "# with a lot of available memory.\n",
+    "#\n",
+    "# For example:\n",
+    "#\n",
+    "#   MaxSecondaryBufferSize=1G\n",
     NULL
 };
 

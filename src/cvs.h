@@ -384,6 +384,7 @@ extern int top_level_admin;
 extern int UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 extern cvsroot_t *PrimaryServer;
+extern size_t MaxSecondaryBufferSize;
 
 
 
