@@ -28,7 +28,6 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 
 SOURCES = \
-	alloca.c \
 	argmatch.c \
 	dup2.c \
 	fnmatch.c \
@@ -62,7 +61,7 @@ SOURCES = \
 HEADERS = getline.h getopt.h fnmatch.h regex.h system.h wait.h md5.h savecwd.h
 
 OBJECTS = \
-    @ALLOCA@ @LIBOBJS@ \
+    @LIBOBJS@ \
     argmatch.o \
     getline.o \
     getopt.o \
