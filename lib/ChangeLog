@@ -1,3 +1,9 @@
+Mon Feb 10 18:52:18 1997  Ullrich von Bassewitz <uz@musoftware.com>
+
+	* md5.c: Make the parameter to getu32 const since the function will
+        only read the values and this will avoid compiler warnings in other
+        places.
+
 Mon Feb 10 18:29:04 1997  Ullrich von Bassewitz <uz@musoftware.com>
 
 	* vasprintf.c: Added a #define for systems where a va_list is
