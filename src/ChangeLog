@@ -1,3 +1,18 @@
+2000-11-15  Derek Price  <derek.price@openavenue.com>
+
+	* filesubr.c (cvs_temp_file): added cvs_temp_file
+	function to use mkstemp rather than one of the other temp file
+	generators as gcc keeps complaining I should.
+	(cvs_temp_name): altered this function to simply wrap cvs_temp_file
+	and deprecated it
+	* cvs.h: added prototype for cvs_temp_file
+	* commit.c (commit): use the new function instead of the old and plug
+	an old (though related) memory leak.
+	* import.c (import): use the new function
+	* login.c (login): Ditto
+	* logmsg.c (do_editor, do_verify): Ditto
+	* patch.c (patch_fileproc): Ditto
+
 2000-11-14  Larry Jones  <larry.jones@sdrc.com>
 
 	* update.c, update.h (do_update): Add xdotemplate parameter.

@@ -489,6 +489,7 @@ char *xreadlink PROTO((const char *link));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
 char *cvs_temp_name PROTO ((void));
+FILE *cvs_temp_file PROTO ((char **filename));
 
 int numdots PROTO((const char *s));
 char *increment_revnum PROTO ((const char *));

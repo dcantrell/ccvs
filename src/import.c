@@ -290,8 +290,7 @@ import (argc, argv)
     make_directories (repository);
 
     /* Create the logfile that will be logged upon completion */
-    tmpfile = cvs_temp_name ();
-    if ((logfp = CVS_FOPEN (tmpfile, "w+")) == NULL)
+    if ((logfp = cvs_temp_file (&tmpfile)) == NULL)
 	error (1, errno, "cannot create temporary file `%s'", tmpfile);
     /* On systems where we can unlink an open file, do so, so it will go
        away no matter how we exit.  FIXME-maybe: Should be checking for
