@@ -1,5 +1,8 @@
 Fri Sep  5 09:14:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c: Only declare start_rsh_server if we are going to
+	define it (!NO_EXT_METHOD).
+
 	* subr.c, cvs.h (check_numeric): New function.
 	* admin.c (admin): Call it.
 	* sanity.sh (admin): New tests admin-10a and admin-10b test for fix.
