@@ -1290,7 +1290,6 @@ read_diff (filea, fileb, output_placement)
     {
       my_callbacks = *callbacks;
       my_callbacks.write_output = NULL;
-      my_callbacks.printf_output = NULL;
       my_callbacks.flush_output = NULL;
       my_callbacks_arg = &my_callbacks;
     }
