@@ -1,3 +1,7 @@
+2000-07-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (main): Remove unused variables.
+
 2000-07-10  Jim Meyering  <meyering@lucent.com>
 
 	When a command like `cvs update -kk -jT1 -jT2' creates a new file
@@ -11,7 +15,7 @@
 	check-out.
 	* sanity.sh (join-admin): New test for this.
 
-2000-07-10  Larry Jones  <larry.jones@sdrc.com>
+2000-07-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* version.c, cvs.h (version): New function.
 	* main.c (cmds[]): Add version command to invoke it.

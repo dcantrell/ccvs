@@ -420,8 +420,6 @@ main (argc, argv)
     char **argv;
 {
     char *CVSroot = CVSROOT_DFLT;
-    extern char *version_string;
-    extern char *config_string;
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
