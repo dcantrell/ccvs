@@ -262,9 +262,10 @@ xchmod (fname, writable)
     (void) umask (oumask);
     if (writable)
     {
-	mode = sb.st_mode | ~oumask & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0) |
-				       ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0) |
-				       ((sb.st_mode & S_IROTH) ? S_IWOTH : 0));
+	mode = sb.st_mode | (~oumask
+			     & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0)
+				| ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0)
+				| ((sb.st_mode & S_IROTH) ? S_IWOTH : 0)));
     }
     else
     {
