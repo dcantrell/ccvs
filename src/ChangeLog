@@ -1,3 +1,8 @@
+Thu Aug  8 14:40:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c: Remove synonyms for "cvs annotate".  Synonyms create
+	user confusion.
+
 Thu Aug  8 10:24:04 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* main.c: Revert (undocumented) change to rename the cvs history
