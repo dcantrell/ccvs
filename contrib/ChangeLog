@@ -1,3 +1,7 @@
+Sun Oct  1 02:02:57 1995  Peter Wemm  <peter@haywire.dialix.com>
+
+	* Makefile.in: supply a suffix rule to deal with .sh "source"
+
 Sat Jul 29 17:29:13 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* log.pl: Use global options -Qq, not command options -Qq.
