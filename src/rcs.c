@@ -740,8 +740,8 @@ RCS_fully_parse (rcs)
 	vers = findnode (rcs->versions, key);
 	if (vers == NULL)
 	    error (1, 0,
-		   "mismatch in rcs file %s between deltas and deltatexts",
-		   rcs->path);
+		   "mismatch in rcs file %s between deltas and deltatexts (%s)",
+		   rcs->path, key);
 
 	vnode = (RCSVers *) vers->data;
 
@@ -7206,8 +7206,8 @@ RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
 	    node = findnode (rcs->versions, key);
 	    if (node == NULL)
 	        error (1, 0,
-		       "mismatch in rcs file %s between deltas and deltatexts",
-		       rcs->path);
+		       "mismatch in rcs file %s between deltas and deltatexts (%s)",
+		       rcs->path, key);
 
 	    /* Stash the previous version.  */
 	    prev_vers = vers;
@@ -7699,8 +7699,8 @@ RCS_getdeltatext (rcs, fp, rcsbuf)
 
     p = findnode (rcs->versions, num);
     if (p == NULL)
-	error (1, 0, "mismatch in rcs file %s between deltas and deltatexts",
-	       rcs->path);
+	error (1, 0, "mismatch in rcs file %s between deltas and deltatexts (%s)",
+	       rcs->path, num);
 
     d = (Deltatext *) xmalloc (sizeof (Deltatext));
     d->version = xstrdup (num);
