@@ -134,15 +134,22 @@ AC_CHECK_FUNCS(\
 	ftime \
 	ftruncate \
 	getgroups \
+	getopt \
 	getpagesize \
 	getpassphrase \
 	gettimeofday \
 	initgroups \
+	login \
+	logout \
 	mknod \
 	mkstemp \
 	mktemp \
 	putenv \
 	readlink \
+	regcomp \
+	regerror \
+	regexec \
+	regfree \
 	sigaction \
 	sigblock \
 	sigprocmask \
@@ -204,7 +211,8 @@ AC_SYS_LONG_FILE_NAMES
 
 AC_FUNC_FNMATCH
 if test "$ac_cv_func_fnmatch_works" = no; then
-  LIBOBJS="$LIBOBJS fnmatch.o"
+  AC_LIBOBJ(fnmatch)
+  AC_LIBSOURCE(fnmatch.h)
 fi
 
 dnl for the buffer routine replacements

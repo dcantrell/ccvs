@@ -1,3 +1,13 @@
+2002-04-27  Derek Price  <oberon@umich.edu>
+
+	* configure.in: Set LIBOBJ for fnmatch.c and fnmatch.h using the
+	correct functions.  Add checks for some functions whose names conflict
+	with functions on Mac OS X 10.1 with the most recent dev packages.
+	This should be removable after the Mac dev packages are fixed.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
 2002-04-18  Derek Price  <oberon@umich.edu>
 
 	* NEWS: Add a dummy entry so automake will let me update the version.
