@@ -7757,8 +7757,11 @@ when you build @sc{cvs}.
 @item -z @var{gzip-level}
 @cindex Compression
 @cindex Gzip
-Set the compression level.  Only has an effect on the
-@sc{cvs} client.
+Set the compression level.
+Valid levels are 1 (high speed, low compression) to
+9 (low speed, high compression), or 0 to disable
+compression (the default).
+Only has an effect on the @sc{cvs} client.
 
 @end table
 
@@ -10322,17 +10325,14 @@ Make new working files read-write.  See @ref{Global
 options}.
 
 @item -x
-Encrypt all communication (client only).  See
-@ref{Global options}.
+Encrypt all communication (client only).
+See @ref{Global options}.
 
 @item -z @var{gzip-level}
 @cindex Compression
 @cindex Gzip
 Set the compression level (client only).
-@c FIXME: what are the valid values for gzip-level.
-@c And shouldn't this be documented in at least a
-@c little bit of detail somewhere?
-
+See @ref{Global options}.
 @end table
 
 Keyword expansion modes (@pxref{Substitution modes}):

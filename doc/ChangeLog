@@ -1,5 +1,9 @@
 2000-01-18  Larry Jones  <larry.jones@sdrc.com>
 
+	* cvs.texinfo (Global options): Document compression levels.
+
+2000-01-18  Larry Jones  <larry.jones@sdrc.com>
+
 	* cvs.texinfo: Minor editorial changes from Ken Foskey
 	<waratah@zip.com.au>.
 
