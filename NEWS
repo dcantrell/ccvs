@@ -1,4 +1,10 @@
-Changes since 1.8:
+Changes since 1.9:
+
+* The "cvs export" command is now logged in the history file and there
+is a "cvs history -x E" command to select history file entries
+produced by export.
+
+Changes from 1.8 to 1.9:
 
 * Windows NT client should now work on Windows 95 as well.
 
