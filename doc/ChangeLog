@@ -1,3 +1,8 @@
+1999-05-11  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvs.texinfo (config): Use comma after @xref (thanks to Pavel
+	Roskin for the report/fix).
+
 1999-05-10  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Requests): Document restrictions on characters

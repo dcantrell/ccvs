@@ -12361,7 +12361,7 @@ The default is @samp{yes}.  For more on pserver, see
 Enable support for saving special device files,
 symbolic links, file permissions and ownerships in the
 repository.  The default value is @samp{no}.
-@xref{Special Files} for the full implications of using
+@xref{Special Files}, for the full implications of using
 this keyword.
 
 @cindex TopLevelAdmin, in CVSROOT/config
