@@ -1,5 +1,8 @@
 2001-06-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* recurse.c (start_recursion): Use strip_trailing_slashes instead
+	of doing it by hand.
+
 	* server.c (pserver_authenticate_connection): Don't clear out
 	descrambled_password until *after* it's (potentially) logged.
 	(Reported by Eric Hanchrow <offby1@blarg.net>.)
