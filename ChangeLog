@@ -1,3 +1,8 @@
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Add HPPA 2.0 running HP-UX 10.20 for CVS 1.11.9.
+	(Report from Tom Kuiper <kuiper@DSNra.JPL.NASA.gov>.)
+
 2003-10-10  Derek Price  <derek@ximbiot.com>
 
 	* NEWS (Changes since 1.11.9): New section.
