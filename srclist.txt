@@ -111,9 +111,6 @@ $GNULIB/m4/realloc.m4				m4		no NI
 # $GNULIB/modules/stat
 $GNULIB/lib/stat.c				lib		yes NI
 $GNULIB/m4/stat.m4				m4		no NI
-# $GNULIB/modules/stdbool
-$GNULIB/lib/stdbool_.h				lib		no NI
-$GNULIB/m4/stdbool.m4				m4		no NI
 # $GNULIB/modules/strerror
 $GNULIB/lib/strerror.c				lib		no NI
 $GNULIB/m4/strerror.m4				m4		no NI
