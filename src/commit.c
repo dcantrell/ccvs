@@ -1756,14 +1756,19 @@ checkaddfile (file, repository, tag, options, rcsnode)
 
 	rev = RCS_getversion (rcsfile, tag, NULL, 1, (int *) NULL);
 	/* and lock it */
-	if (lock_RCS (file, rcsfile, rev, repository)) {
+	if (lock_RCS (file, rcsfile, rev, repository))
+	{
 	    error (0, 0, "cannot lock `%s'.", rcs);
-	    free (rev);
+	    if (rev != NULL)
+		free (rev);
 	    return (1);
 	}
 
-	free (rev);
-    } else {
+	if (rev != NULL)
+	    free (rev);
+    }
+    else
+    {
 	/* this is the first time we have ever seen this file; create
 	   an rcs file.  */
 	run_setup ("%s%s -x,v/ -i", Rcsbin, RCS);

@@ -1,3 +1,9 @@
+Fri Oct 18 15:53:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (checkaddfile): Free rev only if it is non-NULL (thanks
+	to cwong@world.std.com (Christopher Wong) for diagnosing this; the
+	death2-15 test in sanity.sh hits it).
+
 Thu Oct 17 15:21:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Reenable rdiff tests.  Delete rdiff-9 test to reflect
