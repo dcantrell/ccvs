@@ -1184,7 +1184,6 @@ tag_check_valid (name, argc, argv, local, aflag, repository)
 {
     DBM *db;
     char *valtags_filename;
-    int err;
     int nowrite = 0;
     datum mytag;
     struct val_args the_val_args;
@@ -1281,11 +1280,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	}
     }
 
-    err = start_recursion (val_fileproc, (FILESDONEPROC) NULL,
-			   val_direntproc, (DIRLEAVEPROC) NULL,
-			   (void *)&the_val_args,
-			   argc, argv, local, which, aflag,
-			   CVS_LOCK_READ, NULL, 1, repository);
+    start_recursion (val_fileproc, (FILESDONEPROC) NULL,
+		     val_direntproc, (DIRLEAVEPROC) NULL,
+		     (void *)&the_val_args,
+		     argc, argv, local, which, aflag,
+		     CVS_LOCK_READ, NULL, 1, repository);
     if (repository != NULL && repository[0] != '\0')
     {
 	if (restore_cwd (&cwd, NULL))
