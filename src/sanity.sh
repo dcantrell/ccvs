@@ -9546,10 +9546,9 @@ done"
 "${testcvs} -Q import -minitial join7 vendor vers-2" \
 ""
 	  cd ../join7
-	  if $remote; then
-            # FIXCVS: This test should NOT return a
-	    # "temp.txt: No such file or directory" error message.
-	  else
+          # FIXCVS: This test should NOT return a
+	  # "temp.txt: No such file or directory" error message.
+	  if $remote; then :; else
 	    dotest join7-5 \
 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
 "RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
