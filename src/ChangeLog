@@ -1,3 +1,10 @@
+1999-11-03  K.J. Paradise (kj@sourcegear.com>
+
+	* history.c:  modify parsing routines to parse the history
+	file a block at a time, rather than all at once.  This allows
+	people with large history files and small amount of memory 
+	to still get some functionality out of the history file. 
+
 1999-11-03  Karl Fogel  <kfogel@red-bean.com>
 
 	* log.c (log_usage): correct usage message for -d and -s options.
