@@ -4399,6 +4399,7 @@ File: aa\.c             	Status: Unresolved Conflict
 	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
 	  echo topfiles -a first-dir/file1 first-dir/file2 >>CVSROOT/modules
 	  echo world -a . >>CVSROOT/modules
+	  echo statusmod -s Mungeable >>CVSROOT/modules
 
 	  # Options must come before arguments.  It is possible this should
 	  # be relaxed at some point (though the result would be bizarre for
@@ -4418,13 +4419,15 @@ bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
 realmodule   first-dir/subdir a
+statusmod    -s Mungeable
 topfiles     -a first-dir/file1 first-dir/file2
-world        -a .'
-	  # I don't know why aliasmodule isn't printed (I would have thought
-	  # that it gets printed without the -a; although I'm not sure that
-	  # printing expansions without options is useful).
+world        -a \.'
+	  # There is code in modules.c:save_d which explicitly skips
+	  # modules defined with -a, which is why aliasmodule is not
+	  # listed.
 	  dotest 148a1 "${testcvs} co -s" \
-'bogusalias   NONE        first-dir/subdir/a -a
+'statusmod    Mungeable  
+bogusalias   NONE        first-dir/subdir/a -a
 dirmodule    NONE        first-dir/subdir
 namedmodule  NONE        first-dir/subdir
 realmodule   NONE        first-dir/subdir a'
