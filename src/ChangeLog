@@ -1,3 +1,8 @@
+2001-03-30  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (rm-update-message): New test for local/client-server
+	warning message discrepency.
+
 2001-03-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* annotate.c: Move annotate() here from rcs.c, support rannotate.

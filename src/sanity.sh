@@ -661,8 +661,8 @@ if test x"$*" = x; then
 	tests="version basica basicb basicc basic1 deep basic2"
 	tests="${tests} files spacefiles commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
-	tests="${tests} branches branches2 tagc tagf"
+	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
+	tests="${tests} dirs dirs2 branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -4596,6 +4596,42 @@ diff -N file1
 ${PLUS} first revision"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	rm-update-message)
+	  # FIXME
+	  # local CVS prints a warning message when update notices a missing
+	  # file and client/server CVS doesn't.  These should be identical.
+	  mkdir rm-update-message; cd rm-update-message
+	  mkdir $CVSROOT_DIRNAME/rm-update-message
+	  dotest rm-update-message-setup-1 "$testcvs -q co rm-update-message" ''
+	  cd rm-update-message
+	  file=x
+	  echo >$file
+	  dotest rm-update-message-setup-2 "$testcvs -q add $file" \
+"$PROG [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest rm-update-message-setup-3 "$testcvs -q ci -mcreate $file" \
+"RCS file: $CVSROOT_DIRNAME/rm-update-message/$file,v
+done
+Checking in $file;
+$CVSROOT_DIRNAME/rm-update-message/$file,v  <--  $file
+initial revision: 1\.1
+done"
+
+	  rm $file
+	  if $remote; then
+	    dotest rm-update-message-1 "$testcvs up $file" "U $file"
+	  else
+	    dotest rm-update-message-1 "$testcvs up $file" \
+"$PROG [a-z]*: warning: $file was lost
+U $file"
+	  fi
+
+	  cd ..
+	  if $keep; then :; else
+	    rm -rf rm-update-message
+	    rm -rf $CVSROOT_DIRNAME/rm-update-message
+	  fi
 	  ;;
 
 	rmadd)
