@@ -390,7 +390,6 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
 	/* Push this dir onto our parent directory's listing.  */
 	char *buf;
 	size_t length;
-        assert (p);
 
 	if (entries_format)
 	    buf = asnprintf (NULL, &length, "D/%s////\n", dir);
