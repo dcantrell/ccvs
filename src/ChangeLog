@@ -1,3 +1,14 @@
+2003-06-28  Larry Jones  <lawrence.jones@eds.com>
+
+	* add.c (add): Fix -Wall complaints.
+	* diff.c (diff_file_nodiff): Ditto.
+	* filesubr.c (cvs_casecmp): Ditto.
+	* patch.c (patch_fileproc): Ditto.
+	* rcs.c (RCS_cmp_file): Ditto.
+	* root.c (parse_cvsroot): Ditto.
+	* subr.c (locate_file_in_dir): Ditto.
+	* cvs.h (cvs_casecmp, locate_file_in_dir): Update prototypes.
+
 2003-06-27  Larry Jones  <lawrence.jones@eds.com>
 
 	* lock.c (readers_exist): Use LockDir rather than always looking

@@ -365,7 +365,6 @@ parse_cvsroot (root_in)
 					 */
     char *cvsroot_copy, *p, *q;		/* temporary pointers for parsing */
     int check_hostname, no_port, no_password;
-    int i;				/* `for' loop counter. */
 
     /* allocate some space */
     newroot = new_cvsroot_t();
