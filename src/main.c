@@ -64,8 +64,12 @@ char *Editor = EDITOR_DFLT;
 List *root_directories = NULL;
 
 /* We step through the above values.  This variable is set to reflect
-   the currently active value. */
-char *current_root = NULL;
+ * the currently active value.
+ *
+ * Now static.  FIXME - this variable should be removable (well, localizable)
+ * with a little more work.
+ */
+static char *current_root = NULL;
 
 
 static const struct cmd
