@@ -171,7 +171,8 @@ pathname_levels (path)
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '.' && (p[1] == '\0' || p[1] == '/'))
+	else if (p[0] == '\0' || p[0] == '/' ||
+		 (p[0] == '.' && (p[1] == '\0' || p[1] == '/')))
 	    ;
 	else
 	    ++level;

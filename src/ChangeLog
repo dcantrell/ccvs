@@ -1,5 +1,9 @@
 2000-08-01  Larry Jones  <larry.jones@sdrc.com>
 
+	* subr.c (pathname_levels): Fix bug that miscounts adjacent
+	slashes.
+	(Patch submitted by Tanaka Akira <akr@m17n.org>.)
+
 	* loginc.c (login): If available, use getpassphrase instead of
 	getpass to support long passwords on Solaris.
 
