@@ -1,3 +1,12 @@
+Tue Oct  8 09:09:56 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh (prune-e): remote output includes another line of
+	output for some reason:  "Updating ." 
+	- also don't have testcvsoptions any more, so don't use it in
+	setting CVS_SERVER for remote tests.
+	- fix comment about using mkdir in repository.
+	(modules-155d3): disable for remote -- it's still broken.
+
 Mon Oct  7 01:16:50 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh (modules): oops -- forgot modules is sorted.
