@@ -13,7 +13,7 @@
 #endif
 
 static int checkout_file PROTO((char *file, char *temp));
-static void make_tempfile PROTO((char *temp));
+static char *make_tempfile PROTO((void));
 static void rename_rcsfile PROTO((char *temp, char *real));
 
 #ifndef MY_NDBM
@@ -333,7 +333,7 @@ mkmodules (dir)
 {
     struct saved_cwd cwd;
     /* FIXME: arbitrary limit */
-    char temp[PATH_MAX];
+    char *temp;
     char *cp, *last, *fname;
 #ifdef MY_NDBM
     DBM *db;
@@ -352,7 +352,7 @@ mkmodules (dir)
     /*
      * First, do the work necessary to update the "modules" database.
      */
-    make_tempfile (temp);
+    temp = make_tempfile ();
     switch (checkout_file (CVSROOTADM_MODULES, temp))
     {
 
@@ -381,12 +381,13 @@ mkmodules (dir)
     }					/* switch on checkout_file() */
 
     (void) unlink_file (temp);
+    free (temp);
 
     /* Checkout the files that need it in CVSROOT dir */
     for (fileptr = filelist; fileptr && fileptr->filename; fileptr++) {
 	if (fileptr->errormsg == NULL)
 	    continue;
-	make_tempfile (temp);
+	temp = make_tempfile ();
 	if (checkout_file (fileptr->filename, temp) == 0)
 	    rename_rcsfile (temp, fileptr->filename);
 #if 0
@@ -401,6 +402,7 @@ mkmodules (dir)
 	    error (0, 0, fileptr->errormsg, fileptr->filename);
 #endif
 	(void) unlink_file (temp);
+	free (temp);
     }
 
     /* Use 'fopen' instead of 'open_file' because we want to ignore error */
@@ -431,7 +433,7 @@ mkmodules (dir)
 		;
 	    *cp = '\0';
 
-	    make_tempfile (temp);
+	    temp = make_tempfile ();
 	    if (checkout_file (fname, temp) == 0)
 	    {
 		rename_rcsfile (temp, fname);
@@ -443,6 +445,7 @@ mkmodules (dir)
 		if (cp < last && *cp)
 		    error (0, 0, cp, fname);
 	    }
+	    free (temp);
 	}
 	(void) fclose (fp);
     }
@@ -457,15 +460,16 @@ mkmodules (dir)
 /*
  * Yeah, I know, there are NFS race conditions here.
  */
-static void
-make_tempfile (temp)
-    char *temp;
+static char *
+make_tempfile ()
 {
     static int seed = 0;
     int fd;
+    char *temp;
 
     if (seed == 0)
 	seed = getpid ();
+    temp = xmalloc (sizeof (BAKPREFIX) + 40);
     while (1)
     {
 	(void) sprintf (temp, "%s%d", BAKPREFIX, seed++);
@@ -476,6 +480,7 @@ make_tempfile (temp)
     }
     if (close(fd) < 0)
 	error(1, errno, "cannot close temporary file %s", temp);
+    return temp;
 }
 
 static int
@@ -655,21 +660,25 @@ rename_rcsfile (temp, real)
     char *temp;
     char *real;
 {
-    char bak[50];
+    char *bak;
     struct stat statbuf;
-    char rcs[PATH_MAX];
-    
+    char *rcs;
+
     /* Set "x" bits if set in original. */
+    rcs = xmalloc (strlen (real) + sizeof (RCSEXT) + 10);
     (void) sprintf (rcs, "%s%s", real, RCSEXT);
     statbuf.st_mode = 0; /* in case rcs file doesn't exist, but it should... */
     (void) CVS_STAT (rcs, &statbuf);
+    free (rcs);
 
     if (chmod (temp, 0444 | (statbuf.st_mode & 0111)) < 0)
 	error (0, errno, "warning: cannot chmod %s", temp);
+    bak = xmalloc (strlen (real) + sizeof (BAKPREFIX) + 10);
     (void) sprintf (bak, "%s%s", BAKPREFIX, real);
     (void) unlink_file (bak);		/* rm .#loginfo */
     (void) CVS_RENAME (real, bak);		/* mv loginfo .#loginfo */
     (void) CVS_RENAME (temp, real);		/* mv "temp" loginfo */
+    free (bak);
 }
 
 const char *const init_usage[] = {

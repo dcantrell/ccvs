@@ -239,7 +239,6 @@ patch (argc, argv)
  * callback proc for doing the real work of patching
  */
 /* ARGSUSED */
-static char where[PATH_MAX];
 static int
 patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    mname, msg)
@@ -256,8 +255,11 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     int err = 0;
     int which;
     char repository[PATH_MAX];
+    char *where;
 
     (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
+    where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile))
+		     + 10);
     (void) strcpy (where, argv[0]);
 
     /* if mfile isn't null, we need to set up to do only part of the module */
@@ -326,6 +328,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 			   (DIRLEAVEPROC) NULL, NULL,
 			   *pargc - 1, argv + 1, local,
 			   which, 0, 1, where, 1);
+    free (where);
 
     return (err);
 }

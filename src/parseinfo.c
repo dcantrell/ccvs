@@ -24,7 +24,7 @@ Parse_Info (infofile, repository, callproc, all)
 {
     int err = 0;
     FILE *fp_info;
-    char infopath[PATH_MAX];
+    char *infopath;
     char line[MAXLINELEN];
     char *default_value = NULL;
     char *expanded_value= NULL;
@@ -40,6 +40,10 @@ Parse_Info (infofile, repository, callproc, all)
     }
 
     /* find the info file and open it */
+    infopath = xmalloc (strlen (CVSroot_directory)
+			+ strlen (infofile)
+			+ sizeof (CVSROOTADM)
+			+ 10);
     (void) sprintf (infopath, "%s/%s/%s", CVSroot_directory,
 		    CVSROOTADM, infofile);
     if ((fp_info = CVS_FOPEN (infopath, "r")) == NULL)
@@ -157,6 +161,7 @@ Parse_Info (infofile, repository, callproc, all)
 	free (default_value);
     if (expanded_value != NULL)
 	free (expanded_value);
+    free (infopath);
 
     return (err);
 }

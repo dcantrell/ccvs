@@ -610,7 +610,6 @@ logfile_write (repository, filter, message, logfp, changes)
     FILE *logfp;
     List *changes;
 {
-    char cwd[PATH_MAX];
     FILE *pipefp;
     char *prog;
     char *cp;
@@ -790,8 +789,17 @@ logfile_write (repository, filter, message, logfp, changes)
 	return (1);
     }
     (void) fprintf (pipefp, "Update of %s\n", repository);
-    (void) fprintf (pipefp, "In directory %s:%s\n\n", hostname,
-		    ((cp = getwd (cwd)) != NULL) ? cp : cwd);
+    (void) fprintf (pipefp, "In directory %s:", hostname);
+    cp = xgetwd ();
+    if (cp == NULL)
+	fprintf (pipefp, "<cannot get working directory: %s>\n\n",
+		 strerror (errno));
+    else
+    {
+	fprintf (pipefp, "%s\n\n", cp);
+	free (cp);
+    }
+
     setup_tmpfile (pipefp, "", changes);
     (void) fprintf (pipefp, "Log Message:\n%s\n", message);
     if (logfp != (FILE *) 0)
