@@ -1,4 +1,11 @@
+Changes since 1.11.2:
+
+* This is a dummy entry to please automake.
+
 Changes since 1.11.1p1:
+
+* zlib has been updated to version 1.4.  There is a security advisory
+out in regards to 1.3.  This should fix that problem.
 
 * The "log" and "rlog" commands now have a -S option to suppress the
 header information when no revisions are selected.
