@@ -119,6 +119,16 @@ username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 # This appears in certain diff output.
 tempname="[-a-zA-Z0-9/.%_]*"
 
+# On cygwin32, we may not have /bin/sh.
+if [ -r /bin/sh ]; then
+  TESTSHELL="/bin/sh"
+else
+  TESTSHELL=`type -p sh 2>/dev/null`
+  if [ ! -r "$TESTSHELL" ]; then
+    TESTSHELL="/bin/sh"
+  fi
+fi
+
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -484,6 +494,22 @@ dotest_status ()
     fail "$1"
   fi
   dotest_internal "$1" "$3" "$4" "$5"
+}
+
+# Like dotest except output is sorted.
+dotest_sort ()
+{
+  rm -f ${TESTDIR}/dotest.ex? 2>&1
+  if $2 >${TESTDIR}/dotest.tmp1 2>&1; then
+    : so far so good
+  else
+    status=$?
+    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  fi
+  sort < ${TESTDIR}/dotest.tmp1 > ${TESTDIR}/dotest.tmp
+  dotest_internal "$@"
 }
 
 # clean any old remnants
@@ -2024,11 +2050,12 @@ O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 		echo '$''Name$' >> foo
 		echo '$''Id$' > bar
 		echo '$''Name$' >> bar
-		dotest rdiff-1 \
+		dotest_sort rdiff-1 \
 		  "${testcvs} import -I ! -m test-import-with-keyword trdiff TRDIFF T1" \
-'N trdiff/foo
-N trdiff/bar
+'
 
+N trdiff/bar
+N trdiff/foo
 No conflicts created by this import'
 		dotest rdiff-2 \
 		  "${testcvs} co -ko trdiff" \
@@ -5648,7 +5675,7 @@ done"
 	  # Our "editor" puts "x" at the start of each line, so we
 	  # can see the "CVS:" lines.
 	  cat >${TESTDIR}/editme <<EOF
-#!/bin/sh
+#!${TESTSHELL}
 sleep 1
 sed <\$1 -e 's/^/x&/g' >${TESTDIR}/edit.new
 mv ${TESTDIR}/edit.new \$1
@@ -6472,6 +6499,11 @@ C file1"
 	  ;;
 
 	ignore)
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
+
 	  dotest 187a1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
@@ -6504,32 +6536,27 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  mkdir dir-to-import
 	  cd dir-to-import
 	  touch foobar.c bar.c rootig.c defig.o envig.c optig.c
-	  # We really should allow the files to be listed in any order.
-	  # But we (kludgily) just list the orders which have been observed.
-	  dotest 188a "${testcvs} import -m m -I optig.c first-dir tag1 tag2" \
-	    'N first-dir/foobar.c
-N first-dir/bar.c
-I first-dir/rootig.c
+	  # We use sort because we can't predict the order in which
+	  # the files will be listed.
+	  dotest_sort 188a "${testcvs} import -m m -I optig.c first-dir tag1 tag2" \
+'
+
 I first-dir/defig.o
 I first-dir/envig.c
 I first-dir/optig.c
-
-No conflicts created by this import' 'I first-dir/defig.o
-I first-dir/envig.c
-I first-dir/optig.c
-N first-dir/foobar.c
-N first-dir/bar.c
 I first-dir/rootig.c
-
+N first-dir/bar.c
+N first-dir/foobar.c
 No conflicts created by this import'
-	  dotest 188b "${testcvs} import -m m -I ! second-dir tag3 tag4" \
-	    'N second-dir/foobar.c
+	  dotest_sort 188b "${testcvs} import -m m -I ! second-dir tag3 tag4" \
+'
+
 N second-dir/bar.c
-N second-dir/rootig.c
 N second-dir/defig.o
 N second-dir/envig.c
+N second-dir/foobar.c
 N second-dir/optig.c
-
+N second-dir/rootig.c
 No conflicts created by this import'
 	  cd ..
 	  rm -r dir-to-import
@@ -6550,11 +6577,12 @@ U first-dir/foobar.c'
 	  dotest 189c "${testcvs} -q update -I optig.c" "${QUESTION} notig.c"
 	  # The fact that CVS requires us to specify -I CVS here strikes me
 	  # as a bug.
-	  dotest 189d "${testcvs} -q update -I ! -I CVS" "${QUESTION} rootig.c
-${QUESTION} defig.o
+	  dotest_sort 189d "${testcvs} -q update -I ! -I CVS" \
+"${QUESTION} defig.o
 ${QUESTION} envig.c
+${QUESTION} notig.c
 ${QUESTION} optig.c
-${QUESTION} notig.c"
+${QUESTION} rootig.c"
 
 	  # Now test that commands other than update also print "? notig.c"
 	  # where appropriate.  Only test this for remote, because local
@@ -6580,26 +6608,17 @@ ${QUESTION} notig.c"
 	  echo notig.c >first-dir/.cvsignore
 	  echo foobar.c >second-dir/.cvsignore
 	  touch first-dir/notig.c second-dir/notig.c second-dir/foobar.c
-	  dotest 190 "${testcvs} -qn update" \
+	  dotest_sort 190 "${testcvs} -qn update" \
 "${QUESTION} first-dir/.cvsignore
 ${QUESTION} second-dir/.cvsignore
-${QUESTION} second-dir/notig.c" \
+${QUESTION} second-dir/notig.c"
+	  dotest_sort 191 "${testcvs} -qn update -I! -I CVS" \
 "${QUESTION} first-dir/.cvsignore
-${QUESTION} second-dir/notig.c
-${QUESTION} second-dir/.cvsignore"
-	  dotest 191 "${testcvs} -qn update -I! -I CVS" \
-"${QUESTION} first-dir/rootig.c
 ${QUESTION} first-dir/defig.o
 ${QUESTION} first-dir/envig.c
-${QUESTION} first-dir/.cvsignore
+${QUESTION} first-dir/rootig.c
 ${QUESTION} second-dir/.cvsignore
-${QUESTION} second-dir/notig.c" \
-"${QUESTION} first-dir/rootig.c
-${QUESTION} first-dir/defig.o
-${QUESTION} first-dir/envig.c
-${QUESTION} first-dir/.cvsignore
-${QUESTION} second-dir/notig.c
-${QUESTION} second-dir/.cvsignore"
+${QUESTION} second-dir/notig.c"
 
 	  if echo yes | ${testcvs} release -d first-dir \
 	    >${TESTDIR}/ignore.tmp; then
@@ -6626,6 +6645,8 @@ You have \[1\] altered files in this repository.
 Are you sure you want to release (and delete) directory .second-dir': "
 	  cd ..
 	  rm -r 1
+	  cd ..
+	  rm -r wnt
 	  rm ${TESTDIR}/ignore.tmp
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
@@ -6974,7 +6995,7 @@ done"
 [UP] brmod-trmod
 [UP] brmod-wdmod"
 	  dotest_fail binfiles2-7 "test -f binfile.dat" ''
-	  dotest binfile2-7-brmod "cmp ../binfile brmod"
+	  dotest binfiles2-7-brmod "cmp ../binfile brmod"
 	  cp ../binfile3 brmod-trmod
 	  dotest binfiles2-7a "${testcvs} -q ci -m tr-modify" \
 "Checking in brmod-trmod;
@@ -7357,6 +7378,12 @@ File: foo\.exe          	Status: Up-to-date
           binwrap3_text="${binwrap3_line1}${binwrap3_line2}${binwrap3_line3}"
 
           cd ${TESTDIR}
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
+
           mkdir binwrap3 # the 0th dir
           mkdir binwrap3/sub1
           mkdir binwrap3/sub2
@@ -7536,6 +7563,8 @@ done"
           # Restore and clean up
           cd ..
 	  rm -r binwrap3 CVSROOT
+	  cd ..
+	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/binwrap3
           CVSWRAPPERS=${CVSWRAPPERS_SAVED}
           ;; 
@@ -7556,6 +7585,11 @@ done"
 
 	  # This test is similar to binfiles-con1; -m 'COPY' specifies
 	  # non-mergeableness the same way that -kb does.
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
 
 	  dotest mwrap-c1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
@@ -7618,6 +7652,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 	  rm -r CVSROOT
 	  rm -r m1 m2
+	  cd ..
+	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -7630,6 +7666,12 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # verifymsg: info
 	  # cvswrappers: mwrap
 	  # config: config
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
+
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
@@ -7701,7 +7743,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  # Now test verifymsg
 	  cat >${TESTDIR}/vscript <<EOF
-#!/bin/sh
+#!${TESTSHELL}
 if head -1 < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
 else
@@ -7765,12 +7807,19 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  else
 	    fail info-cleanup-2
 	  fi
+	  cd ..
+	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	config)
 	  # Tests of the CVSROOT/config file.  See the comment at the
 	  # "info" tests for a full list of administrative file tests.
+
+	  # On Windows, we can't check out CVSROOT, because the case
+	  # insensitivity means that this conflicts with cvsroot.
+	  mkdir wnt
+	  cd wnt
 
 	  dotest config-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
@@ -7801,6 +7850,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
 	  cd ..
 	  rm -r CVSROOT
+	  cd ..
+	  rm -r wnt
 	  ;;
 
 	serverpatch)
@@ -10700,7 +10751,7 @@ add
 	  # but we can't use "cvs log" because "cvs commit" has a lock.
 
 	  cat >${TESTDIR}/lockme <<EOF
-#!/bin/sh
+#!${TESTSHELL}
 line=\`grep <\$1/\$2,v 'locks ${username}:1\.[0-9];'\`
 if test -z "\$line"; then
   # It isn't locked

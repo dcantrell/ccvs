@@ -1,5 +1,21 @@
 Thu Jan 15 21:24:59 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh (dotest_sort): New variant of dotest which sorts the
+	output, for use when the output depends upon details of the file
+	system, typically when doing an import.
+	(rdiff): Use dotest_sort for rdiff-1.
+	(ignore): Use dotest_sort for 188a, 188b, 189d, 190, and 191.
+
+	* sanity.sh: (TESTSHELL): New variable.
+	(editor, info, reserved): Use TESTSHELL in temporary script.
+
+	* sanity.sh (ignore): Do all tests in subdirectory, to avoid
+	conflict between cvsroot and CVSROOT on Windows.
+	(binwrap3, mwrap, info, config): Likewise.
+
+	* sanity.sh (binfiles2): Correct test name binfile2-7-brmod to
+	binfiles2-7-brmod.
+
 	* release.c (release_delete): If __CYGWIN32__ is defined, don't
  	worry about mismatched inodes.  This is a hack, but then I think
  	the test is rather peculiar anyhow.
