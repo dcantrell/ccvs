@@ -1,3 +1,8 @@
+2004-11-21  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvsnt.dep: Add "xgethostname.h" to project.
+	* cvsnt.dsp: Add "xgethostname.h" to project.
+	
 2004-11-20  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove note about BSDI test failure.

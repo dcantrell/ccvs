@@ -234,6 +234,12 @@
 	".\xgetcwd.h"\
 	
 
+.\xgethostname.c : \
+	"..\windows-NT\config.h"\
+	".\xgethostname.h"\
+	".\xalloc.h"\
+
+
 .\xmalloc.c : \
 	"..\windows-NT\config.h"\
 	".\xalloc.h"\

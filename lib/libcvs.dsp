@@ -221,6 +221,10 @@ SOURCE=.\xgetcwd.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\xgethostname.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\xmalloc.c
 # End Source File
 # Begin Source File
@@ -455,6 +459,10 @@ SOURCE=.\xalloc.h
 # Begin Source File
 
 SOURCE=.\xgetcwd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xgethostname.h
 # End Source File
 # Begin Source File
 
