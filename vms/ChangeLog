@@ -1,3 +1,7 @@
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in: Remove obsolete timeb cruft.
+
 2005-02-21  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in: Undo some changes accidentally imported from 1.11.x.
