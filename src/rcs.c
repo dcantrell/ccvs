@@ -3424,16 +3424,18 @@ linevector_init (vec)
     vec->vector = NULL;
 }
 
-static void linevector_add PROTO ((struct linevector *vec, char *text,
-				   size_t len, RCSVers *vers,
-				   unsigned int pos));
+static int linevector_add PROTO ((struct linevector *vec, char *text,
+				  size_t len, RCSVers *vers,
+				  unsigned int pos));
 
 /* Given some text TEXT, add each of its lines to VEC before line POS
    (where line 0 is the first line).  The last line in TEXT may or may
    not be \n terminated.  All \n in TEXT are changed to \0 (FIXME: I
    don't think this is needed, or used, now that we have the ->len
-   field).  Set the version for each of the new lines to VERS.  */
-static void
+   field).  Set the version for each of the new lines to VERS.  This
+   function returns non-zero for success.  It returns zero if the line
+   number is out of range.  */
+static int
 linevector_add (vec, text, len, vers, pos)
     struct linevector *vec;
     char *text;
@@ -3448,7 +3450,7 @@ linevector_add (vec, text, len, vers, pos)
     struct line *lines;
 
     if (len == 0)
-	return;
+	return 1;
 
     textend = text + len;
 
@@ -3476,7 +3478,7 @@ linevector_add (vec, text, len, vers, pos)
 	vec->vector[i] = vec->vector[i - nnew];
 
     if (pos > vec->nlines)
-	error (1, 0, "invalid rcs file: line to add out of range");
+	return 0;
 
     /* Actually add the lines, to LINES and VEC->VECTOR.  */
     i = pos;
@@ -3502,6 +3504,8 @@ linevector_add (vec, text, len, vers, pos)
 	}
     lines[i - pos - 1].len = p - lines[i - pos - 1].text;
     vec->nlines += nnew;
+
+    return 1;
 }
 
 static void linevector_delete PROTO ((struct linevector *, unsigned int,
@@ -3579,6 +3583,141 @@ month_printname (month)
     if (mnum < 1 || mnum > 12)
 	return "???";
     return (char *)months[mnum - 1];
+}
+
+static int
+apply_rcs_changes PROTO ((struct linevector *, const char *, size_t,
+			  const char *, RCSVers *, RCSVers *));
+
+/* Apply changes to the line vector LINES.  DIFFBUF is a buffer of
+   length DIFFLEN holding the change text from an RCS file (the output
+   of diff -n).  NAME is used in error messages.  The VERS field of
+   any line added is set to ADDVERS.  The VERS field of any line
+   deleted is set to DELVERS, unless DELVERS is NULL, in which case
+   the VERS field of deleted lines is unchanged.  The function returns
+   non-zero if the change text is applied successfully.  It returns
+   zero if the change text does not appear to apply to LINES (e.g., a
+   line number is invalid).  If the change text is improperly
+   formatted (e.g., it is not the output of diff -n), the function
+   calls error with a status of 1, causing the program to exit.  */
+
+static int
+apply_rcs_changes (lines, diffbuf, difflen, name, addvers, delvers)
+     struct linevector *lines;
+     const char *diffbuf;
+     size_t difflen;
+     const char *name;
+     RCSVers *addvers;
+     RCSVers *delvers;
+{
+    const char *p;
+    const char *q;
+    int op;
+    /* The RCS format throws us for a loop in that the deltafrags (if
+       we define a deltafrag as an add or a delete) need to be applied
+       in reverse order.  So we stick them into a linked list.  */
+    struct deltafrag {
+	enum {ADD, DELETE} type;
+	unsigned long pos;
+	unsigned long nlines;
+	char *new_lines;
+	size_t len;
+	struct deltafrag *next;
+    };
+    struct deltafrag *dfhead;
+    struct deltafrag *df;
+
+    dfhead = NULL;
+    for (p = diffbuf; p != NULL && p < diffbuf + difflen; )
+    {
+	op = *p++;
+	if (op != 'a' && op != 'd')
+	    /* Can't just skip over the deltafrag, because the value
+	       of op determines the syntax.  */
+	    error (1, 0, "unrecognized operation '%c' in %s", op, name);
+	df = (struct deltafrag *) xmalloc (sizeof (struct deltafrag));
+	df->next = dfhead;
+	dfhead = df;
+	df->pos = strtoul (p, (char **) &q, 10);
+
+	if (p == q)
+	    error (1, 0, "number expected in %s", name);
+	p = q;
+	if (*p++ != ' ')
+	    error (1, 0, "space expected in %s", name);
+	df->nlines = strtoul (p, (char **) &q, 10);
+	if (p == q)
+	    error (1, 0, "number expected in %s", name);
+	p = q;
+	if (*p++ != '\012')
+	    error (1, 0, "linefeed expected in %s", name);
+
+	if (op == 'a')
+	{
+	    unsigned int i;
+
+	    df->type = ADD;
+	    i = df->nlines;
+	    /* The text we want is the number of lines specified, or
+	       until the end of the value, whichever comes first (it
+	       will be the former except in the case where we are
+	       adding a line which does not end in newline).  */
+	    for (q = p; i != 0; ++q)
+		if (*q == '\n')
+		    --i;
+		else if (q == diffbuf + difflen)
+		{
+		    if (i != 1)
+			error (1, 0, "premature end of change in %s", name);
+		    else
+			break;
+		}
+
+	    /* Copy the text we are adding into allocated space.  */
+	    df->new_lines = block_alloc (q - p);
+	    memcpy (df->new_lines, p, q - p);
+	    df->len = q - p;
+
+	    p = q;
+	}
+	else
+	{
+	    /* Correct for the fact that line numbers in RCS files
+	       start with 1.  */
+	    --df->pos;
+
+	    assert (op == 'd');
+	    df->type = DELETE;
+	}
+    }
+
+    for (df = dfhead; df != NULL;)
+    {
+	unsigned int ln;
+
+	switch (df->type)
+	{
+	case ADD:
+	    if (! linevector_add (lines, df->new_lines, df->len, addvers,
+				  df->pos))
+		return 0;
+	    break;
+	case DELETE:
+	    if (df->pos > lines->nlines
+		|| df->pos + df->nlines > lines->nlines)
+		return 0;
+	    if (delvers != NULL)
+		for (ln = df->pos; ln < df->pos + df->nlines; ++ln)
+		    lines->vector[ln]->vers = delvers;
+	    linevector_delete (lines, df->pos, df->nlines);
+	    break;
+	}
+	df = df->next;
+	free (dfhead);
+	dfhead = df;
+    }
+
+    return 1;
 }
 
 /* Walk the deltas in RCS to get to revision VERSION.
@@ -3723,132 +3862,18 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 		    p = block_alloc (vallen);
 		    memcpy (p, value, vallen);
 
-		    linevector_add (&curlines, p, vallen, NULL, 0);
+		    if (! linevector_add (&curlines, p, vallen, NULL, 0))
+			error (1, 0, "invalid rcs file %s", rcs->path);
+
 		    ishead = 0;
 		}
 		else if (isnext)
 		{
-		    char *p;
-		    char *q;
-		    int op;
-		    /* The RCS format throws us for a loop in that the
-		       deltafrags (if we define a deltafrag as an
-		       add or a delete) need to be applied in reverse
-		       order.  So we stick them into a linked list.  */
-		    struct deltafrag {
-			enum {ADD, DELETE} type;
-			unsigned long pos;
-			unsigned long nlines;
-			char *new_lines;
-		        size_t len;
-			struct deltafrag *next;
-		    };
-		    struct deltafrag *dfhead;
-		    struct deltafrag *df;
-
-		    dfhead = NULL;
-		    for (p = value; p != NULL && p < value + vallen; )
-		    {
-			op = *p++;
-			if (op != 'a' && op != 'd')
-			    /* Can't just skip over the deltafrag, because
-			       the value of op determines the syntax.  */
-			    error (1, 0, "unrecognized operation '%c' in %s",
-				   op, rcs->path);
-			df = (struct deltafrag *)
-			    xmalloc (sizeof (struct deltafrag));
-			df->next = dfhead;
-			dfhead = df;
-			df->pos = strtoul (p, &q, 10);
-
-			if (p == q)
-			    error (1, 0, "number expected in %s",
-				   rcs->path);
-			p = q;
-			if (*p++ != ' ')
-			    error (1, 0, "space expected in %s",
-				   rcs->path);
-			df->nlines = strtoul (p, &q, 10);
-			if (p == q)
-			    error (1, 0, "number expected in %s",
-				   rcs->path);
-			p = q;
-			if (*p++ != '\012')
-			    error (1, 0, "linefeed expected in %s",
-				   rcs->path);
-
-			if (op == 'a')
-			{
-			    unsigned int i;
-
-			    df->type = ADD;
-			    i = df->nlines;
-			    /* The text we want is the number of lines
-			       specified, or until the end of the value,
-			       whichever comes first (it will be the former
-			       except in the case where we are adding a line
-			       which does not end in newline).  */
-			    for (q = p; i != 0; ++q)
-				if (*q == '\n')
-				    --i;
-				else if (q == value + vallen)
-				{
-				    if (i != 1)
-					error (1, 0, "\
-invalid rcs file %s: premature end of value",
-					       rcs->path);
-				    else
-					break;
-				}
-
-			    /* Copy the text we are adding into allocated
-			       space.  */
-			    df->new_lines = block_alloc (q - p);
-			    memcpy (df->new_lines, p, q - p);
-			    df->len = q - p;
-
-			    p = q;
-			}
-			else
-			{
-			    /* Correct for the fact that line numbers in RCS
-			       files start with 1.  */
-			    --df->pos;
-
-			    assert (op == 'd');
-			    df->type = DELETE;
-			}
-		    }
-		    for (df = dfhead; df != NULL;)
-		    {
-			unsigned int ln;
-
-			switch (df->type)
-			{
-			case ADD:
-			    linevector_add (&curlines, df->new_lines,
-					    df->len,
-					    onbranch ? vers : NULL,
-					    df->pos);
-			    break;
-			case DELETE:
-			    if (df->pos > curlines.nlines
-				|| df->pos + df->nlines > curlines.nlines)
-				error (1, 0, "\
-invalid rcs file %s (`d' operand out of range)",
-				       rcs->path);
-			    if (! onbranch)
-			        for (ln = df->pos;
-				     ln < df->pos + df->nlines;
-				     ++ln)
-				    curlines.vector[ln]->vers = prev_vers;
-			    linevector_delete (&curlines, df->pos, df->nlines);
-			    break;
-			}
-		        df = df->next;
-			free (dfhead);
-			dfhead = df;
-		    }
+		    if (! apply_rcs_changes (&curlines, value, vallen,
+					     rcs->path,
+					     onbranch ? vers : NULL,
+					     onbranch ? NULL : prev_vers))
+			error (1, 0, "invalid change text in %s", rcs->path);
 		}
 		break;
 	    }

@@ -1,3 +1,11 @@
+Fri Apr 18 18:09:57 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (apply_rcs_changes): New static function, broken out of
+	RCS_deltas.
+	(RCS_deltas): Call it.
+	(linevector_add): Change return type to int.  Return an indication
+	of an error for an invalid add, rather than calling error.
+
 Fri Apr 18 11:24:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.9.
