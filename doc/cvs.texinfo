@@ -2020,6 +2020,11 @@ some adjustments on both the server and client sides.
 @node Password authentication server
 @subsubsection Setting up the server for password authentication
 
+First of all, you probably want to tighten the
+permissions on the @file{$CVSROOT} and
+@file{$CVSROOT/CVSROOT} directories.  See @ref{Password
+authentication security}, for more details.
+
 @cindex Pserver (subcommand)
 @cindex password server, setting up
 @cindex authenticating server, setting up
@@ -2271,9 +2276,21 @@ Note that because the @file{$CVSROOT/CVSROOT} directory
 contains @file{passwd} and other files which are used
 to check security, you must control the permissions on
 this directory as tightly as the permissions on
-@file{/etc}.  Anyone who has write access to this
-directory will have the ability to become any user on
-the system.
+@file{/etc}.  The same applies to the @file{$CVSROOT}
+directory itself.  Anyone who has write access to
+either directory will have the ability to become any
+user on the system.  Note that these permissions are
+typically tighter than you would use if you are not
+using pserver.
+@c TODO: Would be really nice to document/implement a
+@c scheme where the CVS server can run as some non-root
+@c user, e.g. "cvs".  CVSROOT/passwd would contain a
+@c bunch of entries of the form foo:xxx:cvs (or the "cvs"
+@c would be implicit).  This would greatly reduce
+@c security risks such as those hinted at in the
+@c previous paragraph.  I think minor changes to CVS
+@c might be required but mostly this would just need
+@c someone who wants to play with it, document it, &c.
 
 In summary, anyone who gets the password gets
 repository access, and some measure of general system
