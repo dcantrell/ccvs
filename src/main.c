@@ -277,7 +277,7 @@ set_root_directory (Node *p, void *ignored)
     if (current_parsed_root == NULL && p->data != NULL)
     {
 	current_parsed_root = p->data;
-	original_root = current_parsed_root->original;
+	original_parsed_root = current_parsed_root;
 	return 1;
     }
     return 0;
@@ -1068,7 +1068,7 @@ cause intermittent sandbox corruption.");
 #endif /* SERVER_SUPPORT */
 	    {
 		Node *n = findnode (root_directories,
-				    original_root);
+				    original_parsed_root->original);
 		assert (n != NULL);
 		assert (n->data != NULL);
 		free_cvsroot_t (n->data);

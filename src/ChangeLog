@@ -1,5 +1,20 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* client.c (arg_should_not_be_sent_to_server), create_adm.c
+	(Create_Admin), recurse.c (start_recursion, do_recursion, do_dir_proc),
+	release.c (release), repos.c (Name_Repository, Short_Repository),
+	update.c (update_filesdone_proc):
+	s/original_root/original_parsed_root->MEMBER/.
+	* main.c (set_root_directory): Set original_parsed_root when setting
+	current_parsed_root.
+	(main): s/original_root/original_parsed_root->MEMBER/.
+	* root.c (original_root): Make cvsroot_t and rename to...
+	(original_parsed_root): ...this.
+	* root.h: Update extern decl to match.
+	* server.c (serve_root): Set original_parsed_root.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* server.c (serve_questionable): Use pending errors per API.
 
 2004-10-01  Derek Price <derek@ximbiot.com>

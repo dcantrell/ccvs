@@ -72,7 +72,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
 
     /* record the current cvs root for later use */
 
-    Create_Root (dir, original_root);
+    Create_Root (dir, original_parsed_root->original);
     if (dir != NULL)
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM_REP);
     else

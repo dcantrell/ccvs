@@ -100,7 +100,10 @@ Name_Repository (const char *dir, const char *update_dir)
 	*cp = '\0';			/* strip the newline */
 
     /* If this is a relative repository pathname, turn it into an absolute
-     * one by tacking on the current root.
+     * one by tacking on the current root.  There is no need to grab it from
+     * the CVS/Root file via the Name_Root() function because by the time
+     * this function is called, we the contents of CVS/Root have already been
+     * compared to original_root and found to match.
      */
     if (!isabsolute (repos))
     {
@@ -121,7 +124,7 @@ Name_Repository (const char *dir, const char *update_dir)
 	    error (1, 0, "invalid source repository");
 	}
 	newrepos = asnprintf (NULL, &dummy, "%s/%s",
-			      current_parsed_root->directory, repos);
+			      original_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }
@@ -145,10 +148,10 @@ Short_Repository (const char *repository)
 
     /* If repository matches CVSroot at the beginning, strip off CVSroot */
     /* And skip leading '/' in rep, in case CVSroot ended with '/'. */
-    if (strncmp (current_parsed_root->directory, repository,
-		 strlen (current_parsed_root->directory)) == 0)
+    if (strncmp (original_parsed_root->directory, repository,
+		 strlen (original_parsed_root->directory)) == 0)
     {
-	const char *rep = repository + strlen (current_parsed_root->directory);
+	const char *rep = repository + strlen (original_parsed_root->directory);
 	return (*rep == '/') ? rep+1 : rep;
     }
     else

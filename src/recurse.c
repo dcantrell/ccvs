@@ -259,7 +259,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    cvsroot_t *root = Name_Root (NULL, update_dir);
 	    if (root)
 	    {
-		if (strcmp (root->original, original_root))
+		if (strcmp (root->original, original_parsed_root->original))
 		    /* We're skipping this directory because it is for
 		     * a different root.  Therefore, we just want to
 		     * do the subdirectories only.  Processing files would
@@ -700,8 +700,9 @@ do_recursion (struct recursion_frame *frame)
 	{
 	    if (findnode (root_directories, this_root->original))
 	    {
-		process_this_directory = !strcmp (original_root,
-						  this_root->original);
+		process_this_directory =
+		    !strcmp (original_parsed_root->original,
+			     this_root->original);
 		free_cvsroot_t (this_root);
 	    }
 	    else
@@ -1161,8 +1162,9 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	{
 	    if (findnode (root_directories, this_root->original))
 	    {
-		process_this_directory = !strcmp (original_root,
-						  this_root->original);
+		process_this_directory =
+		    !strcmp (original_parsed_root->original,
+			     this_root->original);
 		free_cvsroot_t (this_root);
 	    }
 	    else
