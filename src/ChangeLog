@@ -1,3 +1,18 @@
+1999-02-27  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* sanity.sh:  Added rm_CVS/Root test to test that CVS uses
+	$CVSROOT rather than dumping core when running remotely and
+	the admin file CVS/Root is deleted from the workspace.
+
+	Also, altered a few 'cvs commit' 's in regular expressions to
+	fit the .${PROG} commit. portability syntax.
+	
+	* recurse.c:  Stopped CVS from dumping core in the case tested
+	above.
+
+	* root.c:  Fixed somebody's improper english.
+
 1999-02-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (keyword2-12): Use ${QUESTION} instead of ? in the

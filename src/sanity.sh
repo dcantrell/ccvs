@@ -597,7 +597,7 @@ if test x"$*" = x; then
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
-	tests="${tests} reposmv pserver server client"
+	tests="${tests} rm_CVS/Root reposmv pserver server client"
 else
 	tests="$*"
 fi
@@ -10912,7 +10912,7 @@ done"
 	  cp ../binfile.dat file1
 	  dotest binfiles3-6 "${testcvs} add -kb file1" \
 "${PROG} [a-z]*: re-adding file file1 (in place of dead revision 1\.2)
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  # The idea behind this test is to make sure that the file
 	  # gets opened in binary mode to send to "cvs ci".
 	  dotest binfiles3-6a "cat CVS/Entries" \
@@ -17567,24 +17567,24 @@ ${PROG} [a-z]*: Tagging mod2-2"
 ${PROG} [a-z]*: scheduling file .mod2-1/anotherfile2-1. for addition
 ${PROG} [a-z]*: scheduling file .mod2-2/mod1-2/anotherfile1-2. for addition
 ${PROG} [a-z]*: scheduling file .mod1-2/mod2-2/anotherfile2-2. for addition
-${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
           else
 	    cd mod1-1
 	    dotest multiroot-add-1a "${testcvs} add anotherfile1-1" \
 "${PROG} [a-z]*: scheduling file .anotherfile1-1. for addition
-${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	    cd ../mod2-1
 	    dotest multiroot-add-1b "${testcvs} add anotherfile2-1" \
 "${PROG} [a-z]*: scheduling file .anotherfile2-1. for addition
-${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	    cd ../mod2-2/mod1-2
 	    dotest multiroot-add-1c "${testcvs} add anotherfile1-2" \
 "${PROG} [a-z]*: scheduling file .anotherfile1-2. for addition
-${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	    cd ../../mod1-2/mod2-2
 	    dotest multiroot-add-1d "${testcvs} add anotherfile2-2" \
 "${PROG} [a-z]*: scheduling file .anotherfile2-2. for addition
-${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	    cd ../..
           fi
 
@@ -18674,6 +18674,47 @@ done"
 	  unset CVSROOT1
 	  unset CVSROOT2
 	  ;;
+
+	rm_CVS/Root)
+	  # When the Entries/Root file is removed from an existing
+	  # workspace, CVS should assume $CVSROOT instead
+	  #
+	  # Right now only checking that CVS exits normally on an
+	  # update once CVS/Root is deleted
+	  #
+	  # There was a time when this would core dump when run in
+	  # client/server mode
+
+	  mkdir 1; cd 1
+	  dotest rm_CVS/root-setup-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest rm_CVS/root-setup-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  touch file1 file2
+	  dotest rm_CVS/Root-setup-3 "${testcvs} add file1 file2" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest rm_CVS/Root-setup-4 "${testcvs} -q commit -minit" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	rm CVS/Root
+	dotest rm_CVS/Root-1 "${testcvs} -q update" ''
+
+	cd ../..
+	rm -rf 1
+	;;
 
 	reposmv)
 	  # More tests of repositories and specifying them.
