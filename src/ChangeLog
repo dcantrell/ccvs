@@ -1,5 +1,26 @@
 Wed Feb 18 01:56:04 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (rcsbuf_cache, rcsbuf_cache_open, rcsbuf_cache_close): New
+	static functions to avoid closing and reopening the RCS file.
+	(cached_rcs, cached_rcsbuf): New static variables.
+ 	(RCS_parse): Call rcsbuf_cache_close.  Don't call fclose.
+	(RCS_parsercsfile): Likewise.
+	(RCS_parsercsfile_i): Call rcsbuf_cache rather than
+	rcsbuf_close.  Call fclose on error.  Remove comment about
+	inefficiency of opening file twice.
+	(RCS_reparsercsfile): Call rcsbuf_cache_open rather than fopen and
+	rcsbuf_open.  Call rcsbuf_cache rather than rcsbuf_close and
+	fclose.
+	(RCS_fully_parse, RCS_checkout, RCS_deltas): Likewise.
+	(RCS_rewrite): Likewise.
+	(RCS_checkin): Call rcsbuf_cache_close.
+
+	* rcs.c (RCS_copydeltas): Fix code which checks for an extra
+	newline in buffered data.
+
+	* rcs.c (rcsbuf_getkey): Save an indirection by using start rather
+	than *valp when trimming trailing whitespace from value.
+
 	* rcs.c (rcsbuf_get_buffered): New static function.
 	(RCS_copydeltas): After we have done all the required special
  	actions, and inserted any new revision, just copy the file bytes
