@@ -1385,7 +1385,7 @@ done'
 		fi
 
 		# directory copies are done in an oblique way in order to avoid a bug in sun's tmp filesystem.
-		mkdir first-dir.cpy ; (cd first-dir ; tar cf - * | (cd ../first-dir.cpy ; tar xf -))
+		mkdir first-dir.cpy ; (cd first-dir ; tar cf - . | (cd ../first-dir.cpy ; tar xf -))
 
 		directory_cmp first-dir export-dir
 
@@ -1432,7 +1432,7 @@ No conflicts created by this import'
 
 		rm -rf export-dir first-dir
 		mkdir first-dir
-		(cd first-dir.cpy ; tar cf - * | (cd ../first-dir ; tar xf -))
+		(cd first-dir.cpy ; tar cf - . | (cd ../first-dir ; tar xf -))
 
 		# update the top, cancelling sticky tags, retag, update other copy, compare.
 		cd first-dir

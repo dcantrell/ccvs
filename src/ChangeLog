@@ -1,3 +1,8 @@
+Thu Apr 24 13:21:15 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* sanity.sh: use "tar cf - ." instead of "tar cf - *" for
+		  directory copies.
+
 Wed Apr 23 23:41:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (serve_update_prog): If in readonly mode, give an error.
