@@ -1077,8 +1077,8 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	return (0);
     if (getwd (cwd) == NULL)
     {
-	fperror (logfp, 0, 0, "ERROR: cannot get working directory: %s", cwd);
-	error (0, 0, "ERROR: cannot get working directory: %s", cwd);
+	fperror (logfp, 0, 0, "ERROR: cannot get working directory");
+	error (0, 0, "ERROR: cannot get working directory");
 	return (1);
     }
     if (repository[0] == '\0')
