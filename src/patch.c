@@ -462,23 +462,39 @@ patch_fileproc (callerdat, finfo)
 
     if (patch_short)
     {
-	(void) printf ("File %s ", finfo->fullname);
+	cvs_output ("File ", 0);
+	cvs_output (finfo->fullname, 0);
 	if (vers_tag == NULL)
-	    (void) printf ("is new; current revision %s\n", vers_head);
+	{
+	    cvs_output (" is new; current revision ", 0);
+	    cvs_output (vers_head, 0);
+	    cvs_output ("\n", 1);
+	}
 	else if (vers_head == NULL)
 	{
-	    (void) printf ("is removed; not included in ");
+	    cvs_output (" is removed; not included in ", 0);
 	    if (rev2 != NULL)
-		(void) printf ("release tag %s", rev2);
+	    {
+		cvs_output ("release tag ", 0);
+		cvs_output (rev2, 0);
+	    }
 	    else if (date2 != NULL)
-		(void) printf ("release date %s", date2);
+	    {
+		cvs_output ("release date ", 0);
+		cvs_output (date2, 0);
+	    }
 	    else
-		(void) printf ("current release");
-	    (void) printf ("\n");
+		cvs_output ("current release", 0);
+	    cvs_output ("\n", 1);
 	}
 	else
-	    (void) printf ("changed from revision %s to %s\n",
-			   vers_tag, vers_head);
+	{
+	    cvs_output (" changed from revision ", 0);
+	    cvs_output (vers_tag, 0);
+	    cvs_output (" to ", 0);
+	    cvs_output (vers_head, 0);
+	    cvs_output ("\n", 1);
+	}
 	ret = 0;
 	goto out2;
     }
@@ -559,9 +575,9 @@ patch_fileproc (callerdat, finfo)
 	     */
 
 	    /* Output an "Index:" line for patch to use */
-	    (void) fflush (stdout);
-	    (void) printf ("Index: %s\n", finfo->fullname);
-	    (void) fflush (stdout);
+	    cvs_output ("Index: ", 0);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output ("\n", 1);
 
 	    fp = open_file (tmpfile3, "r");
 	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
@@ -631,19 +647,38 @@ patch_fileproc (callerdat, finfo)
 	       have produced it.  */
 	    if (unidiff)
 	    {
-		(void) printf ("diff -u %s %s\n", file1, file2);
-		(void) printf ("--- %s%s+++ ", file1, cp1);
+		cvs_output ("diff -u ", 0);
+		cvs_output (file1, 0);
+		cvs_output (" ", 1);
+		cvs_output (file2, 0);
+		cvs_output ("\n", 1);
+
+		cvs_output ("--- ", 0);
+		cvs_output (file1, 0);
+		cvs_output (cp1, 0);
+		cvs_output ("+++ ", 0);
 	    }
 	    else
 	    {
-		(void) printf ("diff -c %s %s\n", file1, file2);
-		(void) printf ("*** %s%s--- ", file1, cp1);
+		cvs_output ("diff -c ", 0);
+		cvs_output (file1, 0);
+		cvs_output (" ", 1);
+		cvs_output (file2, 0);
+		cvs_output ("\n", 1);
+
+		cvs_output ("*** ", 0);
+		cvs_output (file1, 0);
+		cvs_output (cp1, 0);
+		cvs_output ("--- ", 0);
 	    }
 
-	    (void) printf ("%s%s", finfo->fullname, cp2);
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (cp2, 0);
+
 	    /* spew the rest of the diff out */
 	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
-		(void) fputs (line1, stdout);
+		cvs_output (line1, 0);
+
 	    (void) fclose (fp);
 	    free (file1);
 	    free (file2);
