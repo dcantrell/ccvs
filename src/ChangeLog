@@ -1,3 +1,10 @@
+2003-02-14  Derek Price  <derek@ximbiot.com>
+
+	* watch.c (watch_usage): Mention default for -a.  Mention multiple
+	invocations of -a.  Mention -R as default.  Use required () rather than
+	optional [] around watch subcommand list in invocation spec.  Use
+	`path' instead of `file'.  Put variable <> around `action' and `path'.
+
 2003-02-12  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Update copyright message to 2003.
