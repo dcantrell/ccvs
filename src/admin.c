@@ -5,10 +5,8 @@
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
  * 
- * Administration
+ * Administration ("cvs admin")
  * 
- * For now, this is basically a front end for rcs.  All options are passed
- * directly on.
  */
 
 #include "cvs.h"
