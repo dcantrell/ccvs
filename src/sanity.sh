@@ -7037,11 +7037,9 @@ file3"
 	  dotest branches2-14-ls-4 "$testcvs ls -eRrHEAD" \
 "\.:
 /file1/1\.1/$DATE//THEAD
-/file2/1\.1/$DATE//THEAD
 D/dir1////
 
-dir1:
-/file3/1\.1/$DATE//THEAD"
+dir1:"
 	  dotest branches2-14-ls-5 "$testcvs ls -eRrb1" \
 "\.:
 /file1/1\.1/$DATE//Tb1
