@@ -1181,7 +1181,7 @@ usage (register const char *const *cpp)
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)
 	(void) fprintf (stderr, *cpp);
-    error_exit ();
+    exit (EXIT_FAILURE);
 }
 
 /* vim:tabstop=8:shiftwidth=4

@@ -26,11 +26,7 @@ int error_use_protocol;
 extern char *strerror (int);
 #endif
 
-void
-error_exit (void)
-{
-    exit (EXIT_FAILURE);
-}
+
 
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args.  This is a very limited printf subset:
@@ -155,7 +151,7 @@ error (int status, int errnum, const char *message, ...)
     }
 
     if (status)
-	error_exit ();
+	exit (EXIT_FAILURE);
     errno = save_errno;
 }
 
@@ -178,5 +174,5 @@ fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
     putc ('\n', fp);
     fflush (fp);
     if (status)
-	error_exit ();
+	exit (EXIT_FAILURE);
 }

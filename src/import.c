@@ -1586,7 +1586,7 @@ import_descend_dir (char *message, char *dir, char *vtag, int targc, char **targ
     else
 	repository[0] = '\0';
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
     return (err);
 }

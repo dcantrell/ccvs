@@ -206,7 +206,7 @@ add (int argc, char **argv)
 		char *filedir;
 
 		if (save_cwd (&cwd))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 
 		filedir = xstrdup (argv[j]);
 		p = last_component (filedir);
@@ -251,7 +251,7 @@ add (int argc, char **argv)
 		    send_a_repository ("", repository, update_dir);
 
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		free_cwd (&cwd);
 
 		if (tag)
@@ -295,7 +295,7 @@ add (int argc, char **argv)
 	memset (&finfo, 0, sizeof finfo);
 
 	if (save_cwd (&cwd))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 
 	finfo.fullname = xstrdup (argv[i]);
 	p = last_component (argv[i]);
@@ -637,7 +637,7 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	Entries_Close (entries);
 
 	if (restore_cwd (&cwd, NULL))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
 
 	free (finfo.fullname);
@@ -816,7 +816,7 @@ add_directory (struct file_info *finfo)
 	free (date);
 
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
     Subdir_Register (entries, (char *) NULL, dir);
@@ -831,7 +831,7 @@ add_directory (struct file_info *finfo)
 
 out:
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
     if (rcsdir != NULL)
 	free (rcsdir);

@@ -254,7 +254,7 @@ RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, c
 		      (RCSCHECKOUTPROC)0, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
-	error_exit();
+	exit (EXIT_FAILURE);
     }
 
     cvs_output ("retrieving revision ", 0);
@@ -266,7 +266,7 @@ RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, c
 		      (RCSCHECKOUTPROC)0, NULL))
     {
 	cvs_outerr ("rcsmerge: co failed\n", 0);
-	error_exit();
+	exit (EXIT_FAILURE);
     }
 
     /* Merge changes. */
@@ -302,7 +302,7 @@ RCS_merge(RCSNode *rcs, char *path, char *workfile, char *options, char *rev1, c
     if (retval == 1)
 	cvs_outerr ("rcsmerge: warning: conflicts during merge\n", 0);
     else if (retval == 2)
-	error_exit();
+	exit (EXIT_FAILURE);
 
     if (diffout)
 	copy_file (diffout, workfile);

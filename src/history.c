@@ -770,13 +770,13 @@ history_write (int type, char *update_dir, char *revs, char *name, char *reposit
 		char *homedir;
 
 		if (save_cwd (&cwd))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 
 		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
 		    homedir = pwdir;
 
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		free_cwd (&cwd);
 
 		i = strlen (homedir);
