@@ -521,7 +521,8 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword toplevel head tagdate admin reserved"
+	tests="${tests} sticky keyword toplevel head tagdate multibranch2"
+	tests="${tests} admin reserved"
 	tests="${tests} cvsadm diffmerge1 diffmerge2"
 else
 	tests="$*"
@@ -9650,7 +9651,7 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.4\.1; previous revision: 1\.1
 done"
 
-	  dotest multibranch2-9 "${testcvs} -q update -r A" 'U file1'
+	  dotest multibranch2-9 "${testcvs} -q update -r A" '[UP] file1'
 	  echo branch-A >file1
 	  # When using cvs-1.9.20, this commit gets a failed assertion in rcs.c.
 	  dotest multibranch2-10 "${testcvs} -q ci -m modify-on-A" \
@@ -9661,7 +9662,7 @@ done"
 
 	  dotest multibranch2-11 "${testcvs} -q log" \
 "
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.1
 branch:
@@ -9691,7 +9692,7 @@ modify-on-A
 	  # This one is more concise.
 	  dotest multibranch2-12 "${testcvs} -q log -r1.1" \
 "
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.1
 branch:

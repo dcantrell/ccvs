@@ -1,5 +1,13 @@
 Thu Dec  4 18:19:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h: Remove mempcpy definition.  I think the polite way to
+	describe my feelings about mempcpy is something like "we don't
+	have agreement that it is a good idea".
+	* rcs.c (truncate_revnum): Don't call it.
+	* sanity.sh: Run multibranch2 test by default.
+	(multibranch2): Use ${TESTDIR} a few places.
+	(multibranch2-9): Accept "P file1" as well as "U file1".
+
 	* sanity.sh: Don't add 1997 to the copyright notice.  Add GPL
 	terms.  Add discussion of copyright issues.
 	* rcs.c (truncate_revnum, truncate_revnum_in_place,

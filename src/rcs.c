@@ -3298,7 +3298,8 @@ truncate_revnum (r)
     assert (dot);
     len = dot - r;
     new_r = xmalloc (len + 1);
-    *(char *) mempcpy (new_r, r, len) = '\0';
+    memcpy (new_r, r, len);
+    *(new_r + len) = '\0';
     return new_r;
 }
 
