@@ -9546,6 +9546,7 @@ like this:
 @c words for this functionality.
 @cindex keeping a checked out copy
 @cindex checked out copy, keeping
+@cindex web pages, maintaining with CVS
 
 It is often useful to maintain a directory tree which
 contains files which correspond to the latest version
