@@ -1,3 +1,7 @@
+Tue Mar 26 10:46:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Document reservation of some tag names.
+
 Fri Mar 22 10:45:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Clarify that RCS is only for server or local.
