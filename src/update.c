@@ -94,6 +94,7 @@ static char *tag_update_dir;
 static char *join_rev1, *date_rev1;
 static char *join_rev2, *date_rev2;
 static int aflag = 0;
+static int toss_local_changes = 0;
 static int force_tag_match = 1;
 static int update_build_dirs = 0;
 static int update_prune_dirs = 0;
@@ -110,6 +111,7 @@ static const char *const update_usage[] =
     "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",
+    "\t-C\tOverwrite locally modified files with clean repository copies.\n",
     "\t-d\tBuild directories, like checkout does.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, no recursion.\n",
@@ -145,12 +147,15 @@ update (argc, argv)
 
     /* parse the args */
     optind = 0;
-    while ((c = getopt (argc, argv, "+ApPflRQqduk:r:D:j:I:W:")) != -1)
+    while ((c = getopt (argc, argv, "+ApCPflRQqduk:r:D:j:I:W:")) != -1)
     {
 	switch (c)
 	{
 	    case 'A':
 		aflag = 1;
+		break;
+	    case 'C':
+		toss_local_changes = 1;
 		break;
 	    case 'I':
 		ign_add (optarg, 0);
@@ -252,6 +257,8 @@ update (argc, argv)
 		send_arg("-f");
 	    if (aflag)
 		send_arg("-A");
+	    if (toss_local_changes)
+		send_arg("-C");
 	    if (update_prune_dirs)
 		send_arg("-P");
 	    client_prune_dirs = update_prune_dirs;
@@ -284,10 +291,20 @@ update (argc, argv)
 
 	    if (failed_patches == NULL)
 	    {
+                unsigned int flags = 0;
+                
+                if (update_build_dirs)
+                    flags |= SEND_BUILD_DIRS;
+
+                if (toss_local_changes) {
+                    flags |= SEND_NO_CONTENTS;
+                    flags |= BACKUP_MODIFIED_FILES;
+                }
+
 		/* If noexec, probably could be setting SEND_NO_CONTENTS.
 		   Same caveats as for "cvs status" apply.  */
-		send_files (argc, argv, local, aflag,
-			    update_build_dirs ? SEND_BUILD_DIRS : 0);
+
+		send_files (argc, argv, local, aflag, flags);
 		send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    }
 	    else
@@ -641,54 +658,82 @@ update_fileproc (callerdat, finfo)
 		break;
 	    case T_MODIFIED:		/* locally modified */
 		retval = 0;
-		if (vers->ts_conflict)
-		{
-		    char *filestamp;
-		    int retcode;
-
-		    /*
-		     * If the timestamp has changed and no conflict indicators
-		     * are found, it isn't a 'C' any more.
-		     */
+                if (toss_local_changes)
+                {
+                    char *bakname;
+                    bakname = backup_file (finfo->file, vers->vn_user);
+                    /* This behavior is sufficiently unexpected to
+                       justify overinformativeness, I think. */
 #ifdef SERVER_SUPPORT
-		    if (server_active)
-			retcode = vers->ts_conflict[0] != '=';
-		    else {
-			filestamp = time_stamp (finfo->file);
-			retcode = strcmp (vers->ts_conflict, filestamp);
-			free (filestamp);
-		    }
+                    if ((! really_quiet) && (! server_active))
+#else /* ! SERVER_SUPPORT */
+                    if (! really_quiet)
+#endif /* SERVER_SUPPORT */
+                        (void) printf ("(Locally modified %s moved to %s)\n",
+                                       finfo->file, bakname);
+                    free (bakname);
+
+                    /* The locally modified file is still present, but
+                       it will be overwritten by the repository copy
+                       after this. */
+                    status = T_CHECKOUT;
+                    retval = checkout_file (finfo, vers, 0, 0, 1);
+                }
+                else 
+                {
+                    if (vers->ts_conflict)
+                    {
+                        char *filestamp;
+                        int retcode;
+
+                        /*
+                         * If the timestamp has changed and no
+                         * conflict indicators are found, it isn't a
+                         * 'C' any more.
+                         */
+
+#ifdef SERVER_SUPPORT
+                        if (server_active)
+                            retcode = vers->ts_conflict[0] != '=';
+                        else 
+                        {
+                            filestamp = time_stamp (finfo->file);
+                            retcode = strcmp (vers->ts_conflict, filestamp);
+                            free (filestamp);
+                        }
 #else
-		    filestamp = time_stamp (finfo->file);
-		    retcode = strcmp (vers->ts_conflict, filestamp);
-		    free (filestamp);
+                        filestamp = time_stamp (finfo->file);
+                        retcode = strcmp (vers->ts_conflict, filestamp);
+                        free (filestamp);
 #endif
 
-		    if (retcode)
-		    {
-			/* The timestamps differ.  But if there are conflict
-			   markers print 'C' anyway.  */
-			retcode = !file_has_markers (finfo);
-		    }
+                        if (retcode)
+                        {
+                            /* The timestamps differ.  But if there
+                               are conflict markers print 'C' anyway.  */
+                            retcode = !file_has_markers (finfo);
+                        }
 
-		    if (!retcode)
-		    {
-			write_letter (finfo, 'C');
-			retval = 1;
-		    }
-		    else
-		    {
-			/* Reregister to clear conflict flag. */
-			Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_rcs,
-				  vers->options, vers->tag,
-				  vers->date, (char *)0);
-		    }
-		}
-		if (!retval)
-		{
-		    write_letter (finfo, 'M');
-		    retval = 0;
-		}
+                        if (!retcode)
+                        {
+                            write_letter (finfo, 'C');
+                            retval = 1;
+                        }
+                        else
+                        {
+                            /* Reregister to clear conflict flag. */
+                            Register (finfo->entries, finfo->file, 
+                                      vers->vn_rcs, vers->ts_rcs,
+                                      vers->options, vers->tag,
+                                      vers->date, (char *)0);
+                        }
+                    }
+                    if (!retval)
+                    {
+                        write_letter (finfo, 'M');
+                        retval = 0;
+                    }
+                }
 		break;
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */

@@ -1,3 +1,33 @@
+2000-01-02  John P Cavanaugh <cavanaug@sr.hp.com>
+        and Karl Fogel <kfogel@red-bean.com>
+	
+	New -C option to update: overwrites local changes with clean
+	copies from the repository.  (This is an unreversion of the
+	1999-12-10 change, further modified to work remotely.)
+	
+	* client.h (BACKUP_MODIFIED_FILES): new #define.
+	
+	* client.c (struct send_data): new element `backup_modified'.
+	(send_files): set above element if BACKUP_MODIFIED_FILES flag is
+	present.
+	
+	* filesubr.c (backup_file): new function.
+	
+	* cvs.h: prototype for new function `backup_file'.
+	
+	* update.c (toss_local_changes): new file-scoped global.
+	(update): set toss_local_changes if -C flag seen.  If
+	client_active, send "-C" to server, and set SEND_NO_CONTENTS and
+	BACKUP_MODIFIED_FILES flags before calling send_files().
+
+	(update_fileproc): if file is modified and toss_local_changes is
+	set, then back the file up and then check out a fresh copy from
+	the repository.  Also, fixed indentation and formatting for a
+	particularly bad stretch of code near (but unrelated to) these
+	changes.
+
+	* sanity.sh: new test `clean', for update -C option.
+	
 1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
 
 	* history.c (read_hrecs): st_blksize is unsigned long, not int.
