@@ -235,7 +235,7 @@ primary_root_translate (const char *root_in)
 
 /* Translate a primary root in reverse for PATHNAMEs in responses.
  */
-inline char *
+char *
 primary_root_inverse_translate (const char *root_in)
 {
     if (primary_root_out

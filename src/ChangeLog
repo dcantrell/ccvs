@@ -1,3 +1,7 @@
+2004-09-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* root.c (primary_root_inverse_translate): No longer inline.
+
 2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
 
 	* server.c: Add comment before #if at line 5580 to move it further
