@@ -1,5 +1,13 @@
 2004-09-03  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_checkin), commit.c (remove_file): Accept UPDATE_DIR
+	argument and use it to output full relative path on commit.
+	* rcs.h (RCS_checkin): Update prototype.
+	* checkin.c, commit.c, import.c: Change all callers.
+	* sanity.sh: Adjust to compensate.
+
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
 	* client.c (call_in_directory): Change passed in function to accept
 	void * to avoid typecasting.  Change all functions using this API.
 

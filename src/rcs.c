@@ -4860,6 +4860,10 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
    unlinking the working file is standard RCS behavior, but is rarely
    appropriate for CVS.
 
+   UPDATE_DIR is used to print the path for the file.  This argument is
+   unnecessary when FLAGS & RCS_FLAGS_QUIET since the path won't be printed
+   anyhow.
+
    This function should almost exactly mimic the behavior of `rcs ci'.  The
    principal point of difference is the support here for preserving file
    ownership and permissions in the delta nodes.  This is not a clean
@@ -4871,8 +4875,8 @@ RCS_addbranch (RCSNode *rcs, const char *branch)
    or zero for success.  */
 
 int
-RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
-             const char *rev, int flags)
+RCS_checkin (RCSNode *rcs, const char *update_dir, const char *workfile_in,
+	     const char *message, const char *rev, int flags)
 {
     RCSVers *delta, *commitpt;
     Deltatext *dtext;
@@ -4917,6 +4921,11 @@ RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
     {
 	cvs_output (rcs->path, 0);
 	cvs_output ("  <--  ", 7);
+	if (update_dir && strlen (update_dir))
+	{
+	    cvs_output (update_dir, 0);
+	    cvs_output ("/", 1);
+	}
 	cvs_output (workfile, 0);
 	cvs_output ("\n", 1);
     }

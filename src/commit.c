@@ -1753,8 +1753,8 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     if (corev != NULL)
 	free (corev);
 
-    retcode = RCS_checkin (finfo->rcs, finfo->file, message, rev,
-			   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
+    retcode = RCS_checkin (finfo->rcs, NULL, finfo->file, message,
+			   rev, RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
 	if (!quiet)
@@ -1778,6 +1778,11 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     {
 	cvs_output (old_path, 0);
 	cvs_output ("  <--  ", 0);
+	if (finfo->update_dir && strlen (finfo->update_dir))
+	{
+	    cvs_output (finfo->update_dir, 0);
+	    cvs_output ("/", 1);
+	}
 	cvs_output (finfo->file, 0);
 	cvs_output ("\nnew revision: delete; previous revision: ", 0);
 	cvs_output (prev_rev, 0);
@@ -2107,7 +2112,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* commit a dead revision. */
 	    (void) sprintf (tmp, "file %s was initially added on branch %s.",
 			    file, tag);
-	    retcode = RCS_checkin (rcs, NULL, tmp, NULL,
+	    retcode = RCS_checkin (rcs, NULL, NULL, tmp, NULL,
 				   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
 	    free (tmp);
 	    if (retcode != 0)
