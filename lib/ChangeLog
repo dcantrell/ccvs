@@ -1,3 +1,7 @@
+2005-03-02  Derek Price  <derek@ximbiot.com>
+
+	* gettext.h, setenv.c, vasnprintf.c, vasprintf.c: Update from GNULIB.
+
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
 	Update installed GNULIB modules.
