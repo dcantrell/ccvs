@@ -38,7 +38,7 @@ contrib_SCRIPTS = \
 	log \
 	log_accum \
 	mfpipe \
-	pvcs2cvs \
+	pvcs2rcs \
 	rcs-to-cvs \
 	rcs2log \
 	rcslock \
