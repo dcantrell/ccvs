@@ -520,7 +520,7 @@ admin (argc, argv)
     err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
 			   (DIRLEAVEPROC) NULL, (void *)&admin_data,
 			   argc, argv, 0,
-			   W_LOCAL, 0, LOCK_NONE, (char *) NULL, 1);
+			   W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1);
     Lock_Cleanup ();
 
  return_it:
