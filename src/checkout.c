@@ -339,7 +339,7 @@ checkout (argc, argv)
     {
 	char repository[PATH_MAX];
 
-	(void) mkdir (where, 0777);
+	(void) CVS_MKDIR (where, 0777);
 	if (chdir (where) < 0)
 	    error (1, errno, "cannot chdir to %s", where);
 	preload_update_dir = xstrdup (where);
@@ -349,7 +349,7 @@ checkout (argc, argv)
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
 			    CVSNULLREPOS);
 	    if (!isfile (repository))
-		(void) mkdir (repository, 0777);
+		(void) CVS_MKDIR (repository, 0777);
 
 	    /* I'm not sure whether this check is redundant.  */
 	    if (!isdir (repository))
@@ -679,7 +679,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 
 	    /* get the contents of the previously existing repository */
 	    repos = Name_Repository ((char *) NULL, preload_update_dir);
-	    if (strcmp (repository, repos) != 0)
+	    if (fncmp (repository, repos) != 0)
 	    {
 		error (0, 0, "existing repository %s does not match %s",
 		       repos, repository);
@@ -820,7 +820,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
     {
 	*slash = '\0';
 	*slash2 = '\0';
-	(void) mkdir (cp, 0777);
+	(void) CVS_MKDIR (cp, 0777);
 	if (chdir (cp) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", cp);
@@ -848,7 +848,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	*slash = '/';
 	*slash2 = '/';
     }
-    (void) mkdir (cp, 0777);
+    (void) CVS_MKDIR (cp, 0777);
     if (chdir (cp) < 0)
     {
 	error (0, errno, "cannot chdir to %s", cp);

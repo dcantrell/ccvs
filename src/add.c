@@ -439,7 +439,7 @@ add_directory (repository, dir)
 #endif
 
 	omask = umask ((mode_t) 2);
-	if (mkdir (rcsdir, 0777) < 0)
+	if (CVS_MKDIR (rcsdir, 0777) < 0)
 	{
 	    error (0, errno, "cannot mkdir %s", rcsdir);
 	    (void) umask (omask);
