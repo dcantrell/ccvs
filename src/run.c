@@ -533,9 +533,7 @@ cmdline_bindings_hash_node_delete (p)
  * the caller is responsible for disposing of the new string
  */
 char *
-cmdlinequote (quotes, s)
-    char quotes;
-    char *s;
+cmdlinequote (char quotes, char *s)
 {
     char *quoted = cmdlineescape (quotes, s);
     char *buf = xmalloc(strlen(quoted)+3);
@@ -562,9 +560,7 @@ cmdlinequote (quotes, s)
  * in subr.c.
  */
 char *
-cmdlineescape (quotes, s)
-    char quotes;
-    char *s;
+cmdlineescape (char quotes, char *s)
 {
     char *buf = NULL;
     size_t length = 0;
@@ -883,8 +879,7 @@ format_cmdline (char *format, ...)
 			b->data = asnprintf(NULL, &dummy, buf, arg_char);
 			break;
 		    }
-#ifdef HAVE_WINT_T
-#ifdef UNIQUE_INT_TYPE_WINT_T
+#ifdef UNIQUE_INT_TYPE_WINT_T		/* implies HAVE_WINT_T */
 		    case sizeof(wint_t):
 		    {
 		    	wint_t arg_wint_t = va_arg (args, wint_t);
@@ -892,7 +887,6 @@ format_cmdline (char *format, ...)
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_WINT_T */
-#endif /* HAVE_WINT_T */
 #ifdef UNIQUE_INT_TYPE_SHORT
 		    case sizeof(short):
 		    {
@@ -909,6 +903,30 @@ format_cmdline (char *format, ...)
 			break;
 		    }
 #endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_LONG
+		    case sizeof(long):
+		    {
+		    	long arg_long = va_arg (args, long);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long);
+			break;
+		    }
+#endif /* UNIQUE_INT_TYPE_LONG */
+#ifdef UNIQUE_INT_TYPE_LONG_LONG	/* implies HAVE_LONG_LONG */
+		    case sizeof(long long):
+		    {
+		    	long long arg_long_long = va_arg (args, long long);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_long);
+			break;
+		    }
+#endif /* UNIQUE_INT_TYPE_LONG_LONG */
+#ifdef UNIQUE_INT_TYPE_INTMAX_T		/* implies HAVE_INTMAX_T */
+		    case sizeof(intmax_t):
+		    {
+		    	intmax_t arg_intmax_t = va_arg (args, intmax_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
+			break;
+		    }
+#endif /* UNIQUE_INT_TYPE_INTMAX_T */
 #ifdef UNIQUE_INT_TYPE_SIZE_T
 		    case sizeof(size_t):
 		    {
@@ -924,44 +942,6 @@ format_cmdline (char *format, ...)
 			b->data = asnprintf(NULL, &dummy, buf, arg_ptrdiff_t);
 			break;
 		    }
-#endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
-#ifdef UNIQUE_INT_TYPE_LONG
-		    case sizeof(long):
-		    {
-		    	long arg_long = va_arg (args, long);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long);
-			break;
-		    }
-#endif /* UNIQUE_INT_TYPE_LONG */
-#ifdef HAVE_LONG_LONG
-#ifdef UNIQUE_INT_TYPE_LONG_LONG
-		    case sizeof(long long):
-		    {
-		    	long long arg_long_long = va_arg (args, long long);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_long);
-			break;
-		    }
-#endif /* UNIQUE_INT_TYPE_LONG_LONG */
-#endif /* HAVE_LONG_LONG */
-#ifdef UNIQUE_INT_TYPE_INTMAX_T
-		    case sizeof(intmax_t):
-		    {
-		    	intmax_t arg_intmax_t = va_arg (args, intmax_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
-			break;
-		    }
-#endif /* UNIQUE_INT_TYPE_INTMAX_T */
-#ifdef UNIQUE_INT_TYPE_SIZE_T
-		    case sizeof(size_t):
-		    	arg_size_t = va_arg (args, size_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
-			break;
-#endif /* UNIQUE_INT_TYPE_SIZE_T */
-#ifdef UNIQUE_INT_TYPE_PTRDIFF_T
-		    case sizeof(ptrdiff_t):
-		    	arg_ptrdiff_t = va_arg (args, ptrdiff_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_ptrdiff_t);
-			break;
 #endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
 		    default:
 	    		dellist(&pflist);
@@ -998,10 +978,7 @@ format_cmdline (char *format, ...)
 			b->data = asnprintf(NULL, &dummy, buf, arg_double);
 			break;
 		    }
-/* UNIQUE_FLOAT_TYPE_LONG_DOUBLE implies HAVE_LONG_DOUBLE since configure.in
- * will not run the uniqueness tests if there is no long double.
- */
-#ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
+#ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE	/* implies HAVE_LONG_DOUBLE */
 		    case sizeof(long double):
 		    {
 		    	long double arg_long_double = va_arg (args, long double);

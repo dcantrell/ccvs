@@ -1,5 +1,10 @@
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* run.c (cmdlinequote, cmdlineescape): Use prototype in definition
+	to match cvs.h.
+	(format_cmdline): UNIQUE_*_TYPE_* macros imply HAVE_*, so no need
+	to check for both.  Remove duplicate code for size_t and ptrdiff_t.
+
 	* tag.c (check_fileproc): Remove spurious invalid cast, clean up
 	coding style.
 
