@@ -15,6 +15,7 @@
  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
@@ -985,18 +986,23 @@ commit_filesdoneproc (err, repository, update_dir)
 
     if (err == 0 && run_module_prog)
     {
-	char *cp;
 	FILE *fp;
-	char line[MAXLINELEN];
-	char *repository;
 
 	if ((fp = fopen (CVSADM_CIPROG, "r")) != NULL)
 	{
-	    /* FIXME--arbitrary limit.  */
-	    if (fgets (line, sizeof (line), fp) != NULL)
+	    char *line;
+	    int line_length;
+	    size_t line_chars_allocated;
+	    char *repository;
+
+	    line = NULL;
+	    line_chars_allocated = 0;
+	    line_length = getline (&line, &line_chars_allocated, fp);
+	    if (line_length > 0)
 	    {
-		if ((cp = strrchr (line, '\n')) != NULL)
-		    *cp = '\0';
+		/* Remove any trailing newline.  */
+		if (line[line_length - 1] == '\n')
+		    line[--line_length] = '\0';
 		repository = Name_Repository ((char *) NULL, update_dir);
 		run_setup ("%s %s", line, repository);
 		(void) printf ("%s %s: Executing '", program_name,
@@ -1012,6 +1018,8 @@ commit_filesdoneproc (err, repository, update_dir)
 		    error (0, errno, "warning: error reading %s",
 			   CVSADM_CIPROG);
 	    }
+	    if (line != NULL)
+		free (line);
 	    if (fclose (fp) < 0)
 		error (0, errno, "warning: cannot close %s", CVSADM_CIPROG);
 	}
