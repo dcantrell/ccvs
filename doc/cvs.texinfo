@@ -1329,8 +1329,8 @@ example, @samp{Sun Apr  7 01:29:26 1996}).  One may
 write a string which is not in that format, for
 example, @samp{Result of merge}, to indicate that the
 file should always be considered to be modified.  This
-need not be a special case; to see whether a file is
-modified a program can take the timestamp of the file
+is not be a special case; to see whether a file is
+modified a program should take the timestamp of the file
 and simply do a string compare with @var{timestamp}.
 @var{conflict} indicates that there was
 a conflict; if it is the same as the actual
