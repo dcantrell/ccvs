@@ -1,3 +1,8 @@
+Mon Jun 10 20:03:16 1996  J.T. Conklin  <jtc@cygnus.com>
+
+	* rcs.c (RCS_gettag): No longer set p to NULL if rcs is also NULL.
+  	rcs will never be null, thanks to the assertion at top of function.
+
 Mon Jun 10 16:28:14 1996  Ian Lance Taylor  <ian@cygnus.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
