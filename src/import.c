@@ -6,7 +6,9 @@
  * specified in the README file that comes with the CVS 1.4 kit.
  * 
  * "import" checks in the vendor release located in the current directory into
- * the CVS source repository.  The CVS vendor branch support is utilized.
+ * the CVS source repository.  The CVS vendor branch support is utilized by
+ * default, though the trunk or some other branch can be specified with the
+ * '-b' option.
  * 
  * At least three arguments are expected to follow the options:
  *	repository	Where the source belongs relative to the CVSROOT
@@ -14,10 +16,12 @@
  *	VendorReleTag	Tag for this particular release
  *
  * Additional arguments specify more Vendor Release Tags.
+ *
  */
 
 #include "cvs.h"
 #include "savecwd.h"
+#include <assert.h>
 
 #define	FILE_HOLDER	".#cvsxxx"
 
@@ -39,22 +43,28 @@ static int update_rcs_file PROTO((char *message, char *vfile, char *vtag, int ta
 static void add_log PROTO((int ch, char *fname));
 
 static int repos_len;
-static char vhead[50];
-static char vbranch[50];
+static char vhead[50] = { '\0' };		/* XXX magic numbers! */
+static char vbranch[50];			/* XXX magic numbers! */
+#if 0
+static char cbranch[50];			/* XXX magic numbers! */
+#endif
 static FILE *logfp;
 static char repository[PATH_MAX];
 static int conflicts;
-static int use_file_modtime;
+static int use_file_modtime = 0;
 static char *keyword_opt = NULL;
 
 static const char *const import_usage[] =
 {
-    "Usage: %s %s [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
+    "Usage: %s %s [-d] [-k subst] [-I ign] [-m msg] [-b branch [-c rel-br]]\n",
     "    [-W spec] repository vendor-tag release-tags...\n",
     "\t-d\tUse the file's modification time as the time of import.\n",
     "\t-k sub\tSet default RCS keyword substitution mode.\n",
     "\t-I ign\tMore files to ignore (! to reset).\n",
-    "\t-b bra\tVendor branch id.\n",
+    "\t-b bra\tVendor branch number (must have 0 or 2 dots).\n",
+#if 0
+    "\t-c rel\tLocal Release Branch name for conflict detection.\n",
+#endif
     "\t-m msg\tLog message.\n",
     "\t-W spec\tWrappers specification line.\n",
     NULL
@@ -81,7 +91,7 @@ import (argc, argv)
 
     (void) strcpy (vbranch, CVSBRANCH);
     optind = 1;
-    while ((c = getopt (argc, argv, "Qqdb:m:I:k:W:")) != -1)
+    while ((c = getopt (argc, argv, "Qqdb:c:m:I:k:W:")) != -1)
     {
 	switch (c)
 	{
@@ -100,8 +110,15 @@ import (argc, argv)
 		use_file_modtime = 1;
 		break;
 	    case 'b':
-		(void) strcpy (vbranch, optarg);
+		(void) strncpy (vbranch, optarg, sizeof(vbranch));
+		vbranch[sizeof(vbranch) - 1] = '\0';
 		break;
+#if 0
+	    case 'c':
+		(void) strncpy (cbranch, optarg, sizeof(cbranch));
+		cbranch[sizeof(cbranch) - 1] = '\0';
+		break;
+#endif
 	    case 'm':
 #ifdef FORCE_USE_EDITOR
 		use_editor = TRUE;
@@ -138,6 +155,14 @@ import (argc, argv)
 	RCS_check_tag (argv[i]);
 
     /* XXX - this should be a module, not just a pathname */
+#if 0
+    db = open_module ();
+    err += do_module (db, argv[i], m_type, "Importing", import_proc,
+			  where, shorten, local, run_module_prog,
+			  (char *) NULL);
+    close_module (db);
+#else /* 0 XXX searching for a module name */
+
     if (! isabsolute (argv[0]))
     {
 	if (CVSroot_directory == NULL)
@@ -154,6 +179,7 @@ import (argc, argv)
 	(void) strcpy (repository, argv[0]);
 	repos_len = 0;
     }
+#endif
 
     /*
      * Consistency checks on the specified vendor branch.  It must be
@@ -164,12 +190,21 @@ import (argc, argv)
     for (cp = vbranch; *cp != '\0'; cp++)
 	if (!isdigit (*cp) && *cp != '.')
 	    error (1, 0, "%s is not a numeric branch", vbranch);
-    if (numdots (vbranch) != 2)
-	error (1, 0, "Only branches with two dots are supported: %s", vbranch);
-    (void) strcpy (vhead, vbranch);
-    cp = strrchr (vhead, '.');
-    *cp = '\0';
-
+    switch (numdots (vbranch))
+    {
+    case 2:
+	(void) strcpy (vhead, vbranch);
+	cp = strrchr (vhead, '.');	/* truncate level number */
+	*cp = '\0';
+	break;
+    case 0:
+	*vhead = '\0';
+	break;
+    default:
+	error (1, 0,
+	       "Only branches with zero or two dots are supported: %s",
+	       vbranch);
+    }
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
@@ -208,6 +243,10 @@ import (argc, argv)
 
 	if (vbranch[0] != '\0')
 	    option_with_arg ("-b", vbranch);
+#if 0
+	if (*cbranch)
+	    option_with_arg ("-c", cbranch);
+#endif
 	if (message)
 	    option_with_arg ("-m", message);
 	if (keyword_opt != NULL)
@@ -516,6 +555,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 #else
 				NULL,
 #endif
+				(char *) NULL,
 				xtmpfile);
 	if (retcode != 0)
 	{
@@ -563,8 +603,10 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	return (1);
     }
 
-    if (vers->srcfile->branch == NULL || inattic ||
-	strcmp (vers->srcfile->branch, vbranch) != 0)
+    if (strchr(vbranch, '.') &&		/* no conflict if vendor on trunk */
+	(!vers->srcfile->branch ||
+	 inattic ||	/* implies local change even if was just removed */
+	 strcmp (vers->srcfile->branch, vbranch) != 0))	/* compare default branch */
     {
 	conflicts++;
 	letter = 'C';
@@ -699,7 +741,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
     finfo.repository = repository;
     finfo.entries = NULL;
     finfo.rcs = NULL;
-    vers = Version_TS (&finfo, NULL, vtag, NULL, 1, 0);
+    vers = Version_TS (&finfo, (char *) NULL, vtag, (char *) NULL, 1, 0);
     for (i = 0; i < targc; i++)
     {
 	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)
@@ -863,12 +905,12 @@ get_comment (user)
 
 static int
 add_rcs_file (message, rcs, user, vtag, targc, targv)
-    char *message;
-    char *rcs;
-    char *user;
-    char *vtag;
-    int targc;
-    char *targv[];
+    char *message;			/* message for initial revision */
+    char *rcs;				/* name of the RCS file */
+    char *user;				/* name of the input file */
+    char *vtag;				/* vendor branch tag */
+    int targc;				/* number of vendor release tags */
+    char *targv[];			/* vendor release tags */
 {
     FILE *fprcs, *fpuser;
     struct stat sb;
@@ -899,6 +941,55 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 
     tocvsPath = wrap_tocvs_process_file (user);
     userfile = (tocvsPath == NULL ? user : tocvsPath);
+    if (!*vhead)			/* importing to trunk? */
+    {
+	/*
+	 * let's try it this more proper way for now....
+	 */
+	if (stat (user, &sb) < 0)
+	{
+	    error (0, errno, "cannot stat %s", user);
+	    goto read_error;
+	}
+	run_setup ("%s%s", Rcsbin, RCS_CI);
+	run_arg ("-u");
+	run_args ("-i%s.1", vbranch);
+	for (i = 0; i < targc; i++)
+	    run_args ("-n%s", targv[i]);
+	run_args ("-m%s", make_message_rcslegal (message));
+	run_arg ("-q");
+	run_arg ("-t-");		/* XXX empty description */
+	if (keyword_opt)
+	    run_args ("-k%s", keyword_opt);
+	run_args ("-w%s", getcaller ());
+	if (use_file_modtime)
+	    run_arg ("-d");
+	run_arg (userfile);
+	run_arg (rcs);
+	err = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+
+	/*
+	 * XXX This is horrible, two exec's, but this one is not so big
+	 */
+	run_setup ("%s%s", Rcsbin, RCS);
+	run_arg ("-q");
+	run_args ("-n%s:%s", vtag, vbranch);
+#ifndef HAVE_RCS5
+	/*
+	 * XXX note we cannot set comment prefix with ci,
+	 * XXX but it only matters for pre-RCS-5.x, as 5.x
+	 * XXX now uses the leader to $Log if necessary
+	 */
+	run_args ("-c%s", get_comment (userfile));
+#endif
+	run_arg (rcs);
+	err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+
+	if (!tocvsPath)			/* reset mode on userfile */
+	    chmod(userfile, sb.st_mode); /* since ci changes it */
+
+	goto fixmodes;			/* yes, ugly, but saves re-indent */
+    }
     fpuser = CVS_FOPEN (userfile, "r");
     if (fpuser == NULL)
     {
@@ -911,7 +1002,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     if (fprcs == NULL)
     {
 	ierrno = errno;
-	goto write_error_noclose;
+	goto write_error_noclose_fprcs;
     }
 
     /*
@@ -1038,10 +1129,11 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     if (fclose (fprcs) == EOF)
     {
 	ierrno = errno;
-	goto write_error_noclose;
+	goto write_error_noclose_fprcs;
     }
     (void) fclose (fpuser);
 
+fixmodes:
     /*
      * Fix the modes on the RCS files.  The user modes of the original
      * user file are propagated to the group and other modes as allowed
@@ -1071,7 +1163,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
 write_error:
     ierrno = errno;
     (void) fclose (fprcs);
-write_error_noclose:
+write_error_noclose_fprcs:
     (void) fclose (fpuser);
     fperror (logfp, 0, ierrno, "ERROR: cannot write file %s", rcs);
     error (0, ierrno, "ERROR: cannot write file %s", rcs);
