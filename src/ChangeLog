@@ -1,5 +1,12 @@
 Thu Feb 29 16:54:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsrc.c, cvs.h (read_cvsrc): Pass in command name rather than
+	using global variable command_name.
+	* main.c (command_name): Initialize to "", not "cvs" so that error
+	messages don't say "cvs cvs".  Update calls to read_cvsrc to pass
+	in command_name or "cvs" as appropriate.
+	* sanity.sh (basica): New test basica-9 tests for above-fixed bug.
+
 	* lock.c: Rename unlock to lock_simple_remove to avoid conflict
 	with builtin function on QNX.
 

@@ -605,7 +605,7 @@ int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     int dosrcs, int wd_is_repos));
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
-void read_cvsrc PROTO((int *argc, char ***argv));
+void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));
 
 char *make_message_rcslegal PROTO((char *message));
 
