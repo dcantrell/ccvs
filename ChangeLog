@@ -1,3 +1,7 @@
+2005-02-20  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note `cvs -n release' fix.
+
 2005-02-19  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (--with-rsh): Prefer ssh to rsh.
