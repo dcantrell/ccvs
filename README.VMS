@@ -153,6 +153,9 @@ to the link.
 declares something as an int when it should be void *.  Not *our*
 fault!
 
+* Remove the #define's of mode_t in vms/vms.h and pid_t in vms/pwd.h.
+Add "#include <sys/types.h>" in vms/pwd.h.
+
 Credits:
 
 Initial VMS port by Benjamin J. Lee <benjamin@cyclic.com>, Cyclic
