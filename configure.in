@@ -164,6 +164,8 @@ AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 if test "$ac_cv_func_connect" = yes; then
 AC_DEFINE(CLIENT_SUPPORT)
 AC_DEFINE(SERVER_SUPPORT)
+# As far as I know this works on all machines which use configure (i.e. unix)
+AC_DEFINE(AUTH_SERVER_SUPPORT)
 fi
 
 test -f src/options.h && (
