@@ -2872,29 +2872,29 @@ total revisions: 6;	selected revisions: 6
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 trunk-change-after-branch
 ----------------------------
 revision 1\.2
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 branches:  1\.2\.2;
 trunk-before-branch
 ----------------------------
 revision 1\.1
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;
+date: [0-9/: ]*;  author: ${username};  state: Exp;
 add-it
 ----------------------------
 revision 1\.2\.2\.2
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 change-on-br1
 ----------------------------
 revision 1\.2\.2\.1
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 branches:  1\.2\.2\.1\.2;
 modify
 ----------------------------
 revision 1\.2\.2\.1\.2\.1
-date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/: ]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 modify
 ============================================================================="
 	  dotest_status branches-14.4 1 \
@@ -3469,10 +3469,10 @@ rcsmerge: warning: conflicts during merge"
 		dotest import-116 'cat imported-f2' \
 'imported file2
 [<]<<<<<< imported-f2
-import should not expand \$''Id: imported-f2,v 1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
+import should not expand \$''Id: imported-f2,v 1\.2 [0-9/]* [0-9:]* '"${username}"' Exp \$
 local-change
 [=]======
-import should not expand \$''Id: imported-f2,v 1\.1\.1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
+import should not expand \$''Id: imported-f2,v 1\.1\.1\.2 [0-9/]* [0-9:]* '"${username}"' Exp \$
 rev 2 of file 2
 [>]>>>>>> 1\.1\.1\.2'
 
@@ -6023,11 +6023,11 @@ done"
 
 	  dotest devcom-a1 "${testcvs} watch add" ''
 	  dotest devcom-a2 "${testcvs} watchers" \
-'abb	[a-z0-9]*	edit	unedit	commit
-abc	[a-z0-9]*	edit	unedit	commit'
+"abb	${username}	edit	unedit	commit
+abc	${username}	edit	unedit	commit"
 	  dotest devcom-a3 "${testcvs} watch remove -a unedit abb" ''
 	  dotest devcom-a4 "${testcvs} watchers abb" \
-'abb	[a-z0-9]*	edit	commit'
+"abb	${username}	edit	commit"
 
 	  # Check tagging and checking out while we have a CVS
 	  # directory in the repository.
@@ -7246,7 +7246,7 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done"
 	  cd ..
-	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=[a-z0-9@][a-z0-9@]*=${TESTDIR}/cvsroot="
+	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
           dotest info-10 "cat $TESTDIR/testlog2" 'first-dir file1,NONE,1.1
 first-dir 1.1
 first-dir file1

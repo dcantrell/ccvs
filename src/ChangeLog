@@ -1,3 +1,7 @@
+1997-11-01  Peter Brandstrom  <d91-pbr@nada.kth.se>
+
+	* sanity.sh: Use ${username} more places.
+
 Sat Nov  1 00:14:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (rcs_internal_lockfile): Add comments about what we are
