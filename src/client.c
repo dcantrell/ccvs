@@ -2192,9 +2192,6 @@ send_to_server (str, len)
     {
       int wrtn = 0;
       
-      if (len == 0)
-        len = strlen (str);
-      
       while (wrtn < len)
         {
           wrtn += fwrite (str + wrtn, 1, len - wrtn, to_server);
