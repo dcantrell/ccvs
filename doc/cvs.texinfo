@@ -2408,9 +2408,10 @@ if it still needs to wait.  If a lock seems to stick
 around for an undue amount of time, find the person
 holding the lock and ask them about the cvs command
 they are running.  If they aren't running a cvs
-command, look for and remove files starting with
-@file{#cvs.tfl}, @file{#cvs.rfl}, or @file{#cvs.wfl}
-from the repository.
+command, look in the repository directory mentioned in
+the message and remove files which they own whose names
+start with @file{#cvs.tfl}, @file{#cvs.rfl}, or
+@file{#cvs.wfl}.
 
 Note that these locks are to protect @sc{cvs}'s
 internal data structures and have no relationship to
@@ -6872,13 +6873,6 @@ not in the list of files for @sc{cvs} to ignore (see the
 description of the @samp{-I} option, and
 @pxref{cvsignore}).  If you remove your working
 sources, this file will be lost.
-
-Note that no warning message like this is printed for
-spurious directories that @sc{cvs} encounters.  The
-directory, and all its contents, are silently ignored.
-
-@c FIXME -- CVS should be fixed to print "? foo" for
-@c such spurious directories
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -7404,10 +7398,6 @@ correspond to anything in the source repository, and is
 not in the list of files for @sc{cvs} to ignore (see the
 description of the @samp{-I} option, and
 @pxref{cvsignore}).
-
-Note that no warning message like this is printed for
-spurious directories that @sc{cvs} encounters.  The
-directory, and all its contents, are silently ignored.
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
