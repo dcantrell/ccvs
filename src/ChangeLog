@@ -1,3 +1,8 @@
+1998-05-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (ann): New tests ann-12 and ann-13 test for specifying
+	a numeric branch.
+
 1998-05-02  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c: Add comments about getting rid of rcsbuf_getid,
