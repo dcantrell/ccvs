@@ -15878,6 +15878,53 @@ ${log_keyword}
 total revisions: 3;	selected revisions: 0
 description:
 ${log_trailer}"
+	  dotest log-d4a "${testcvs} -q log -t -rbranch" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6
+description:
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v.
+${log_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3
+description:
+${log_trailer}"
+	  dotest log-d4b "${testcvs} -q log -tS -rbranch" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6;	selected revisions: 2
+description:
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
+	  dotest log-d4c "${testcvs} -q log -h -rbranch" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v.
+${log_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3
+${log_trailer}"
+	  dotest log-d4d "${testcvs} -q log -hS -rbranch" \
+"${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6;	selected revisions: 2
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
+	  dotest log-d4e "${testcvs} -q log -R -rbranch" \
+"${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest log-d4f "${testcvs} -q log -R -S -rbranch" \
+"${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
 	  dotest log-rd4 "${testcvs} -q rlog -rbranch first-dir" \
 "${rlog_header1}
 ${log_tags1}
@@ -15894,6 +15941,53 @@ ${log_keyword}
 total revisions: 3;	selected revisions: 0
 description:
 ${log_trailer}"
+	  dotest log-rd4a "${testcvs} -q rlog -t -rbranch first-dir" \
+"${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6
+description:
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v.
+${rlog_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3
+description:
+${log_trailer}"
+	  dotest log-rd4b "${testcvs} -q rlog -St -rbranch first-dir" \
+"${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6;	selected revisions: 2
+description:
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
+	  dotest log-rd4c "${testcvs} -q rlog -h -rbranch first-dir" \
+"${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v.
+${rlog_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3
+${log_trailer}"
+	  dotest log-rd4d "${testcvs} -q rlog -Sh -rbranch first-dir" \
+"${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 6;	selected revisions: 2
+${log_trailer}
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
+	  dotest log-rd4e "${testcvs} -q rlog -R -rbranch first-dir" \
+"${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  dotest log-rd4f "${testcvs} -q rlog -R -S -rbranch first-dir" \
+"${CVSROOT_DIRNAME}/first-dir/Attic/file1,v
+${PROG} [a-z]*: warning: no revision .branch. in .${CVSROOT_DIRNAME}/first-dir/file2,v."
 	  dotest log-d5 "${testcvs} log -r1.2.2.1:1.2.2.2 file1" \
 "${log_header1}
 ${log_tags1}
@@ -15977,6 +16071,17 @@ description:
 ${log_rev3}
 ${log_rev22}
 ${log_trailer}"
+	  dotest log-d8a "${testcvs} -q log -rtag1:tag2 -S" \
+"${PROG} [a-z]*: warning: no revision .tag1. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
+${PROG} [a-z]*: warning: no revision .tag2. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
+${log_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev22}
+${log_trailer}"
 	  dotest log-rd8 "${testcvs} -q rlog -rtag1:tag2 first-dir" \
 "${PROG} [a-z]*: warning: no revision .tag1. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
 ${PROG} [a-z]*: warning: no revision .tag2. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
@@ -15986,6 +16091,17 @@ ${log_keyword}
 total revisions: 6;	selected revisions: 0
 description:
 ${log_trailer}
+${rlog_header2}
+${log_tags2}
+${log_keyword}
+total revisions: 3;	selected revisions: 2
+description:
+${log_rev3}
+${log_rev22}
+${log_trailer}"
+	  dotest log-rd8a "${testcvs} -q rlog -rtag1:tag2 -S first-dir" \
+"${PROG} [a-z]*: warning: no revision .tag1. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
+${PROG} [a-z]*: warning: no revision .tag2. in .${CVSROOT_DIRNAME}/first-dir/Attic/file1,v.
 ${rlog_header2}
 ${log_tags2}
 ${log_keyword}
