@@ -1418,11 +1418,18 @@ don't want that, remove the history file after running
 @cindex Repositories, remote
 @cindex Remote repositories
 @cindex Client/Server Operation
+@cindex server, CVS
 
         Your working copy of the sources can be on a
-different machine than the repository.  Generally,
-using a remote repository is just like using a local
-one, except that the format of the repository name is:
+different machine than the repository.  Using @sc{cvs}
+in this manner is known as @dfn{client/server}
+operation.  You run @sc{cvs} on a machine which can
+mount your working directory, known as the
+@dfn{client}, and tell it to communicate to a machine
+which can mount the repository, known as the
+@dfn{server}.  Generally, using a remote
+repository is just like using a local one, except that
+the format of the repository name is:
 
 @example
 :@var{method}:@var{user}@@@var{hostname}:/path/to/repository
@@ -1444,6 +1451,12 @@ described in @ref{Connecting via rsh}.
 @c Platforms like OS/2 and NT probably could plausibly
 @c default either way (modulo -b troubles).
 
+@c FIXME: We need to have a better way of explaining
+@c what method to use.  This presentation totally
+@c obscures the fact that :ext: and CVS_RSH is the way to
+@c use SSH, for example.  Plus it incorrectly implies
+@c that you need an @code{rsh} binary on the client to use
+@c :server:.
 @menu
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords

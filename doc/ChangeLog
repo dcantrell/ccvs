@@ -1,5 +1,9 @@
 Thu Nov 14 10:22:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Remote repositories): Add a few sentences defining
+	"client" and "server"; before we had been using the terms without
+	defining them.
+
 	* cvs.texinfo (What is CVS?): Add paragraph about reporting bugs.
 	Reword and expand comp.software.config-mgmt description (and add
 	comments about other newsgroup facts).  Point people at GNU list
