@@ -1,3 +1,7 @@
+Sat Oct 28 01:01:41 1995  Jim Meyering  (meyering@comco.com)
+
+	* entries.c (ParseTag): Use getline instead of fgets.
+
 Fri Oct 27 13:44:20 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.h: do nothing about alloca ifdef ALLOCA_IN_STDLIB.  I am
