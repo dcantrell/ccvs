@@ -23604,7 +23604,19 @@ yes
 EOF
 	  dotest release-14 "test -d first-dir/dir1" ''
 	  dotest release-15 "test -d first-dir/dir2/dir3" ''
-	  rm -rf first-dir/dir1 first-dir/dir2
+
+	  mkdir first-dir/dir1/dir4
+	  # FIXCVS: There should be a path showing in front of dir below,
+	  # I believe.
+	  dotest release-unrecognized-dir-1 \
+"${testcvs} release -d first-dir/dir1" \
+"${QUESTION} dir4
+You have .0. altered files in this repository.
+Are you sure you want to release (and delete) directory \`first-dir/dir1': " <<EOF
+yes
+EOF
+
+	  rm -rf first-dir/dir2
 
 	  dotest release-16 "${testcvs} update" \
 "${SPROG} [a-z]*: Updating \.
