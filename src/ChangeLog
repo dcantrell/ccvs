@@ -1,3 +1,9 @@
+2003-06-11  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Change warning messages to note that defective tools
+	can result in defective results, both pass and fail.  Also change
+	"which" to "that" for errant grammar pedants.
+
 2003-06-10  Derek Price  <derek@ximbiot.com>
 
 	* recurse.c (start_recursion): Avoid unneeded allocation.
