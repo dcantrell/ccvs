@@ -1,5 +1,10 @@
 2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
 
+	* allocsa.h, allocsa.valgrind: Update from GNULIB.
+	* Makefile.in: Regenerated.
+
+2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
+
 	* sunos57-select.c: Move '#undef select' before system #include
 	statements to avoid conflicting declarations on BSDI BSD/OS 4.2.
 	

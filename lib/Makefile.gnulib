@@ -59,6 +59,7 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 ## begin gnulib module allocsa
 
 libgnu_a_SOURCES += allocsa.h allocsa.c
+EXTRA_DIST += allocsa.valgrind
 
 ## end   gnulib module allocsa
 

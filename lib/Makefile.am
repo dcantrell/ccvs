@@ -58,6 +58,7 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 ## For GNULIB's allocsa module.
 libcvs_a_SOURCES += allocsa.h allocsa.c
+EXTRA_DIST += allocsa.valgrind
 
 ## For GNULIB's dirname module.
 libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c

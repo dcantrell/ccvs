@@ -96,6 +96,10 @@ SOURCE=.\src\admin.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\allocsa.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\annotate.c
 # End Source File
 # Begin Source File
@@ -288,6 +292,10 @@ SOURCE=".\src\rsh-client.c"
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\readlink.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\windows-NT\run.c"
 # End Source File
 # Begin Source File
@@ -356,6 +364,10 @@ SOURCE=.\src\wrapper.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\xreadlink.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\zlib.c
 # End Source File
 # End Group
@@ -365,6 +377,10 @@ SOURCE=.\src\zlib.c
 # Begin Source File
 
 SOURCE=.\lib\alloca.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lib\allocsa.h
 # End Source File
 # Begin Source File
 
@@ -528,10 +544,6 @@ SOURCE=.\lib\regex.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lib\readlink.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\src\root.h
 # End Source File
 # Begin Source File
@@ -617,10 +629,6 @@ SOURCE=.\lib\xalloc.h
 # Begin Source File
 
 SOURCE=.\lib\xgetcwd.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\xreadlink.c
 # End Source File
 # Begin Source File
 
