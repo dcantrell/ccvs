@@ -1240,8 +1240,16 @@ patch_file (file, repository, entries, srcfiles, vers_ts, update_dir,
 
     if (! fail)
     {
-        /* Assumes diff -u is supported.  */
-        run_setup ("%s -u %s %s", DIFF, file1, file2);
+	/* FIXME: This whole thing with diff/patch is rather more
+	   convoluted than necessary (lots of forks and execs, need to
+	   worry about versions of diff and patch, etc.).  Also, we
+	   send context lines which aren't needed (in the rare case in
+	   which the diff doesn't apply, the checksum would catches it).
+	   Solution perhaps is to librarify the RCS routines which apply
+	   deltas or something equivalent.  */
+	/* This is -c, not -u, because we have no way of knowing which
+	   DIFF is in use.  */
+	run_setup ("%s -c %s %s", DIFF, file1, file2);
 
 	/* A retcode of 0 means no differences.  1 means some differences.  */
 	if ((retcode = run_exec (RUN_TTY, file, RUN_TTY, RUN_NORMAL)) != 0
