@@ -1201,8 +1201,28 @@ emptydir_name ()
 }
 
 /* Build all the dirs along the path to DIRS with CVS subdirs with appropriate
-   repositories.  If ->repository is NULL, do not create a CVSADM directory
-   for that subdirectory; just CVS_CHDIR into it.  */
+ * repositories.  If DIRS->repository is NULL or the directory already exists,
+ * do not create a CVSADM directory for that subdirectory; just CVS_CHDIR into
+ * it.  Frees all storage used by DIRS.
+ *
+ * ASSUMPTIONS
+ *   1. Parent directories will be listed in DIRS before their children.
+ *   2. At most a single directory will need to be changed at one time.  In
+ *      other words, if we are in /a/b/c, and our final destination is
+ *      /a/b/c/d/e/f, then we will build d, then d/e, then d/e/f.
+ *
+ * INPUTS
+ *   dirs	Simple list composed of dir_to_build structures, listing
+ *		information about directories to build.
+ *   sticky	Passed to build_one_dir to tell it whether there are any sticky
+ *		tags or dates to be concerned with.
+ *
+ * RETURNS
+ *   1 on error, 0 otherwise.
+ *
+ * ERRORS
+ *  The only nonfatal error this function may return is if the CHDIR fails.
+ */
 static int
 build_dirs_and_chdir (dirs, sticky)
     struct dir_to_build *dirs;
