@@ -1,3 +1,18 @@
+Thu Dec  7 18:44:51 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * options.h.in (CVS_PASSWORDS_CASE_SENSITIVE): replaces
+        CVS_PASSWORDS_CASE_INSENSITIVE; passwords are now insensitive by
+        default.  Expanded explanatory comment.
+
+        * login.c (get_cvs_password): Use memset(), not bzero().  I
+        botched this change earlier.
+
+        * server.c (check_repository_password): no need to check
+        xmalloc()'s return value.
+        (check_repository_password): check for false prefix-matches (for
+        example, username is "theo" and linebuf contains user
+        "theocracy").
+
 Thu Dec  7 14:49:16 1995  Jim Meyering  (meyering@comco.com)
 
 	* filesubr.c (isaccessible): Rename from isaccessable.

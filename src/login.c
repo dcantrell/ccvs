@@ -253,7 +253,7 @@ get_cvs_password (user, host, cvsroot)
   /* Check each line to see if we have this entry already. */
   while (fgets (linebuf, MAXLINELEN, fp) != NULL)
     {
-      if (! strncmp (CVSroot, linebuf, root_len))
+      if (strncmp (CVSroot, linebuf, root_len) == 0)
         {
           /* This is it!  So break out and deal with linebuf. */
           found_it = 1;
@@ -273,7 +273,7 @@ get_cvs_password (user, host, cvsroot)
       tmp = xmalloc (strlen (password) + 1);
       strcpy (tmp, password);
       tmp[strlen (password)] = '\0';
-      bzero (password, 0, strlen (password));
+      memset (password, 0, strlen (password));
       return tmp;
     }
   else
