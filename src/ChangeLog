@@ -1,3 +1,24 @@
+1999-11-04  Karl Fogel  <kfogel@red-bean.com>
+
+	Changes for empty/random passwords in anon pserver access:
+	
+	* server.c (check_repository_password): if password empty, grant
+	access no matter what password is received; this is so anon CVS no
+	longer requires a password but remains backwards-compatible with
+	all those clients out there.
+
+	* client.c (connect_to_pserver): proceed with login even if
+	password not found in .cvspass file -- just use empty string as
+	password.  And if such a login fails, print a descriptive error.
+
+	* login.c (get_cvs_password): don't complain if file or password
+	not found.  That condition is no longer a showstopper, now that
+	empty passwords are permissible.
+	Cleaned up conditional chaining a bit, too.
+
+	* sanity.sh (pserver-9, pserver-10, pserver-11, pserver-12,
+	pserver-13): new tests, about empty-password pserver access.
+	
 1999-11-03  K.J. Paradise (kj@sourcegear.com>
 
 	* history.c:  modify parsing routines to parse the history

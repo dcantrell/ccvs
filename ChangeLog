@@ -1,3 +1,7 @@
+1999-11-04  Karl Fogel  <kfogel@red-bean.com>
+
+	* NEWS: added item about anon cvs no longer needing password.
+
 1999-10-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* TESTS: Add note about not running as root.  Remove note about

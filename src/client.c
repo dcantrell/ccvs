@@ -3771,6 +3771,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     int port_number;
     struct sockaddr_in client_sai;
     struct hostent *hostinfo;
+    char no_passwd = 0;   /* gets set if no password found */
 
     sock = socket (AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
@@ -3815,6 +3816,14 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 
 	/* Get the password, probably from ~/.cvspass. */
 	password = get_cvs_password ();
+        
+        /* Send the empty string by default.  This is so anonymous CVS
+           access doesn't require client to have done "cvs login". */
+        if (password == NULL) 
+        {
+            no_passwd = 1;
+            password = scramble ("");
+        }
 
 	/* Announce that we're starting the authorization protocol. */
 	if (send (sock, begin, strlen (begin), 0) < 0)
@@ -3838,8 +3847,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	if (send (sock, end, strlen (end), 0) < 0)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
-	/* Paranoia. */
-	memset (password, 0, strlen (password));
+        /* Paranoia. */
+        memset (password, 0, strlen (password));
     }
 
     {
@@ -3943,9 +3952,20 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	       SOCK_STRERROR (SOCK_ERRNO));
     }
 
-    error (1, 0, 
+    error (0, 0, 
 	   "authorization failed: server %s rejected access", 
 	   CVSroot_hostname);
+
+    /* Output a special error message if authentication was attempted
+       with no password -- the user should be made aware that they may
+       have missed a step. */
+    if (no_passwd)
+    {
+        error (0, 0,
+               "used empty password; try \"cvs login\" with a real password");
+    }
+
+    error_exit();
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 

@@ -1,3 +1,9 @@
+1999-11-04  Karl Fogel  <kfogel@red-bean.com>
+
+	* cvs.texinfo (Password authentication server, Password
+	authentication client): Rewritten to accommodate the [new]
+	possibility of empty passwords.
+
 1999-11-03  Karl Fogel  <kfogel@red-bean.com>
 
 	* cvs.texinfo (Invoking CVS): correct documentation for -d and -s

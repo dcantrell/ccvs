@@ -5169,14 +5169,15 @@ extern char *crypt PROTO((const char *, const char *));
 
 /* 
  * 0 means no entry found for this user.
- * 1 means entry found and password matches.
+ * 1 means entry found and password matches (or found password is empty)
  * 2 means entry found, but password does not match.
  *
- * If success, host_user_ptr will be set to point at the system
+ * If 1, host_user_ptr will be set to point at the system
  * username (i.e., the "real" identity, which may or may not be the
  * CVS username) of this user; caller may free this.  Global
  * CVS_Username will point at an allocated copy of cvs username (i.e.,
  * the username argument below).
+ * kff todo: FIXME: last sentence is not true, it applies to caller.
  */
 static int
 check_repository_password (username, password, repository, host_user_ptr)
@@ -5229,18 +5230,72 @@ check_repository_password (username, password, repository, host_user_ptr)
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", filename);
 
-    /* If found_it != 0, then linebuf contains the information we need. */
+    /* If found_it, then linebuf contains the information we need. */
     if (found_it)
     {
 	char *found_password, *host_user_tmp;
+        char *non_cvsuser_portion;
 
-	strtok (linebuf, ":");
-	found_password = strtok (NULL, ": \n");
-	host_user_tmp = strtok (NULL, ": \n");
+        /* We need to make sure lines such as 
+         *
+         *    "username::sysuser\n"
+         *    "username:\n"
+         *    "username:  \n"
+         *
+         * all result in a found_password of NULL, but we also need to
+         * make sure that
+         *
+         *    "username:   :sysuser\n"
+         *    "username: <whatever>:sysuser\n"
+         *
+         * continues to result in an impossible password.  That way,
+         * an admin would be on safe ground by going in and tacking a
+         * space onto the front of a password to disable the account
+         * (a technique some people use to close accounts
+         * temporarily).
+         */
+
+        /* Make `non_cvsuser_portion' contain everything after the CVS
+           username, but null out any final newline. */
+	non_cvsuser_portion = linebuf + namelen;
+        strtok (non_cvsuser_portion, "\n");
+
+        /* If there's a colon now, we just want to inch past it. */
+        if (strchr (non_cvsuser_portion, ':') == non_cvsuser_portion)
+            non_cvsuser_portion++;
+
+        /* Okay, after this conditional chain, found_password and
+           host_user_tmp will have useful values: */
+
+        if ((non_cvsuser_portion == NULL)
+            || (strlen (non_cvsuser_portion) == 0)
+            || ((strspn (non_cvsuser_portion, " \t"))
+                == strlen (non_cvsuser_portion)))
+        {
+            found_password = NULL;
+            host_user_tmp = NULL;
+        }
+        else if (strncmp (non_cvsuser_portion, ":", 1) == 0)
+        {
+            found_password = NULL;
+            host_user_tmp = non_cvsuser_portion + 1;
+            if (strlen (host_user_tmp) == 0)
+                host_user_tmp = NULL;
+        }
+        else
+        {
+            found_password = strtok (non_cvsuser_portion, ":");
+            host_user_tmp = strtok (NULL, ":");
+        }
+
+        /* Of course, maybe there was no system user portion... */
 	if (host_user_tmp == NULL)
             host_user_tmp = username;
 
-	if (strcmp (found_password, crypt (password, found_password)) == 0)
+        /* Verify blank passwords directly, otherwise use crypt(). */
+        if ((found_password == NULL)
+            || ((strcmp (found_password, crypt (password, found_password))
+                 == 0)))
         {
             /* Give host_user_ptr permanent storage. */
             *host_user_ptr = xstrdup (host_user_tmp);
@@ -5252,7 +5307,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 	    retval         = 2;
         }
     }
-    else
+    else     /* Didn't find this user, so deny access. */
     {
 	*host_user_ptr = NULL;
 	retval = 0;

@@ -19828,7 +19828,7 @@ No such file or directory"
 	pserver)
 	  # Test basic pserver functionality.
 	  if test "$remote" = yes; then
-	    # First set SystemAuth=no.  Not really necessary, I don't
+   	    # First set SystemAuth=no.  Not really necessary, I don't
 	    # think, but somehow it seems like the clean thing for
 	    # the testsuite.
 	    mkdir 1; cd 1
@@ -19843,6 +19843,12 @@ done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	    echo "testme:q6WV9d2t848B2:`id -un`" \
 	      >${CVSROOT_DIRNAME}/CVSROOT/passwd
+	    echo "anonymous::`id -un`" \
+	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
+	    echo "`id -un`:" \
+	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
+	    echo "willfail:   :whocares" \
+	      >>${CVSROOT_DIRNAME}/CVSROOT/passwd
 	    ${testcvs} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
@@ -19912,6 +19918,64 @@ END VERIFICATION REQUEST
 EOF
 	    dotest pserver-8 "cat ${TESTDIR}/pserver.tmp" \
 "${DOTSTAR} LOVE YOU"
+
+# Tests pserver-9 through pserver-13 are about empty passwords
+
+            # Test empty password (both sides) for aliased user
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+A
+END AUTH REQUEST
+EOF
+            dotest pserver-9 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} LOVE YOU"
+
+            # Test empty password (server side only) for aliased user
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Aanythingwouldworkhereittrulydoesnotmatter
+END AUTH REQUEST
+EOF
+            dotest pserver-10 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} LOVE YOU"
+
+            # Test empty (both sides) password for non-aliased user
+            P_THISUSER=`id -un`
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${P_THISUSER}
+A
+END AUTH REQUEST
+EOF
+            dotest pserver-11 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} LOVE YOU"
+
+            # Test empty (server side only) password for non-aliased user
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${P_THISUSER}
+Anypasswordwouldworkwhynotthisonethen
+END AUTH REQUEST
+EOF
+            dotest pserver-12 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} LOVE YOU"
+
+            # Test failure of whitespace password
+	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+willfail
+Amquiteunabletocomeupwithinterestingpasswordsanymore
+END AUTH REQUEST
+EOF
+            dotest pserver-13 "cat ${TESTDIR}/pserver.tmp" \
+"${DOTSTAR} HATE YOU"
 
 	    # Clean up.
 	    echo "# comments only" >config

@@ -2312,86 +2312,126 @@ If you are having trouble setting this up, see
 Because the client stores and transmits passwords in
 cleartext (almost---see @ref{Password authentication
 security}, for details), a separate @sc{cvs} password
-file may be used, so people don't compromise their
-regular passwords when they access the repository.
-This file is @file{$CVSROOT/CVSROOT/passwd}
-(@pxref{Intro administrative files}).  Its format is
-similar to @file{/etc/passwd}, except that it only has
-two or three fields, username, password, and optional
-username for the server to use.  For example:
+file is generally used, so people don't compromise
+their regular passwords when they access the
+repository.  This file is
+@file{$CVSROOT/CVSROOT/passwd} (@pxref{Intro
+administrative files}).  It uses a colon-separated
+format, similar to @file{/etc/passwd} on Unix systems,
+except that it has fewer fields: @sc{cvs} username,
+optional password, and an optional system username for
+@sc{cvs} to run as if authentication succeeds.  Here is
+an example @file{passwd} file with five entries:
 
 @example
+anonymous:
 bach:ULtgRLXo7NRxs
-cwang:1sOp854gDF3DY
+spwang:1sOp854gDF3DY
+melissa:tGX1fS8sun6rY:pubcvs
+qproj:XR4EZcEs0szik:pubcvs
 @end example
 
-The password is encrypted according to the standard
+(The passwords are encrypted according to the standard
 Unix @code{crypt()} function, so it is possible to
 paste in passwords directly from regular Unix
-@file{passwd} files.
+@file{/etc/passwd} files.)
 
-When authenticating a password, the server first checks
-for the user in the @sc{cvs} @file{passwd} file.  If it
-finds the user, it compares against that password.  If
-it does not find the user, or if the @sc{cvs}
-@file{passwd} file does not exist, then the server
-tries to match the password using the system's
-user-lookup routine (using the system's user-lookup
-routine can be disabled by setting @code{SystemAuth=no}
-in the config file, @pxref{config}).  When using the @sc{cvs}
-@file{passwd} file, the server runs as the
-username specified in the third argument in the
-entry, or as the first argument if there is no third
-argument (in this way @sc{cvs} allows imaginary
-usernames provided the @sc{cvs} @file{passwd} file
-indicates corresponding valid system usernames).  In
-any case, @sc{cvs} will have no privileges which the
-(valid) user would not have.
+The first line in the example will grant access to any
+@sc{cvs} client attempting to authenticate as user
+@code{anonymous}, no matter what password they use,
+including an empty password.  (This is typical for
+sites granting anonymous read-only access; for
+information on how to do the "read-only" part, see
+@xref{Read-only access}.)
+
+The second and third lines will grant access to
+@code{bach} and @code{spwang} if they supply their
+respective plaintext passwords.
 
 @cindex user aliases
-        It is possible to ``map'' cvs-specific
-usernames onto system usernames (i.e., onto system
-login names) in the @file{$CVSROOT/CVSROOT/passwd} file
-by appending a colon and the system username after the
-password.  For example:
+The fourth line will grant access to @code{melissa}, if
+she supplies the correct password, but her @sc{cvs}
+operations will actually run on the server side under
+the system user @code{pubcvs}.  Thus, there need not be
+any system user named @code{melissa}, but there
+@emph{must} be one named @code{pubcvs}.
+
+The fifth line shows that system user identities can be
+shared: any client who successfully authenticates as
+@code{qproj} will actually run as @code{pubcvs}, just
+as @code{melissa} does.  That way you could create a
+single, shared system user for each project in your
+repository, and give each developer their own line in
+the @file{$CVSROOT/CVSROOT/passwd} file.  The @sc{cvs}
+username on each line would be different, but the
+system username would be the same.  The reason to have
+different @sc{cvs} usernames is that CVS will log their
+actions under those names: when @code{melissa} commits
+a change to a project, the checkin is recorded in the
+project's history under the name @code{melissa}, not
+@code{pubcvs}.  And the reason to have them share a
+system username is so that you can arrange permissions
+in the relevant area of the repository such that only
+that account has write-permission there.
+
+If the system-user field is present, all
+password-authenticated @sc{cvs} commands run as that
+user; if no system user is specified, @sc{cvs} simply
+takes the @sc{cvs} username as the system username and
+runs commands as that user.  In either case, if there
+is no such user on the system, then the @sc{cvs}
+operation will fail (regardless of whether the client
+supplied a valid password).
+
+The password and system-user fields can both be omitted
+(and if the system-user field is omitted, then also
+omit the colon that would have separated it from the
+encrypted password).  For example, this would be a
+valid @file{$CVSROOT/CVSROOT/passwd} file:
 
 @example
-cvs:ULtgRLXo7NRxs:kfogel
-generic:1sOp854gDF3DY:spwang
-anyone:1sOp854gDF3DY:spwang
+anonymous::pubcvs
+fish:rKa5jzULzmhOo:kfogel
+sussman:1sOp854gDF3DY
 @end example
 
-        Thus, someone remotely accessing the repository
-on @file{faun.example.org} with the following
-command:
+When the password field is omitted or empty, then the
+client's authentication attempt will succeed with any
+password, including the empty string.  However, the
+colon after the @sc{cvs} username is always necessary,
+even if the password is empty.
 
-@example
-cvs -d :pserver:cvs@@faun.example.org:/usr/local/cvsroot checkout foo
-@end example
-
-        would end up running the server under the
-system identity kfogel, assuming successful
-authentication.  However, the remote user would not
-necessarily need to know kfogel's system password, as
-the @file{$CVSROOT/CVSROOT/passwd} file might contain a
-different password, used only for @sc{cvs}.  And as the
-example above indicates, it is permissible to map
-multiple cvs usernames onto a single system username.
-
-        This feature is designed to allow people
-repository access without full system access (in
-particular, see @ref{Read-only access}); however, also
-see @ref{Password authentication security}.  Any sort of
-repository access very likely implies a degree of
-general system access as well.
+CVS can also fall back to use system authentication.
+When authenticating a password, the server first checks
+for the user in the @file{$CVSROOT/CVSROOT/passwd}
+file.  If it finds the user, it will use that entry for
+authentication as described above.  But if it does not
+find the user, or if the @sc{cvs} @file{passwd} file
+does not exist, then the server can try to authenticate
+the username and password using the operating system's
+user-lookup routines (this "fallback" behavior can be
+disabled by setting @code{SystemAuth=no} in the
+@sc{cvs} @file{config} file, @pxref{config}).  Be
+aware, however, that falling back to system
+authentication might be a security risk: @sc{cvs}
+operations would then be authenticated with that user's
+regular login password, and the password flies across
+the network in plaintext.  See @ref{Password
+authentication security} for more on this.
 
 Right now, the only way to put a password in the
 @sc{cvs} @file{passwd} file is to paste it there from
 somewhere else.  Someday, there may be a @code{cvs
 passwd} command.
-Unlike many of the files in @file{$CVSROOT/CVSROOT},
-you edit the @file{passwd} file directly, rather than
-via @sc{cvs}.
+
+Unlike many of the files in @file{$CVSROOT/CVSROOT}, it
+is normal to edit the @file{passwd} file in-place,
+rather than via @sc{cvs}.  This is because of the
+possible security risks of having the @file{password}
+file checked out to people's working copies.  If you do
+want to include the @file{passwd} file in checkouts of
+@file{$CVSROOT/CVSROOT}, see @xref{checkoutlist}.
+
 @c We might also suggest using the @code{htpasswd} command
 @c from freely available web servers as well, but that
 @c would open up a can of worms in that the users next
@@ -2406,65 +2446,89 @@ via @sc{cvs}.
 @cindex password client, using
 @cindex authenticated client, using
 @cindex :pserver:, setting up
-Before connecting to the server, the client must @dfn{log
-in} with the command @code{cvs login}.  Logging in
-verifies a password with the server, and also records
-the password for later transactions with the server.
-The @code{cvs login} command needs to know the
-username, server hostname, and full repository path,
-and it gets this information from the repository
-argument or the @code{CVSROOT} environment variable.
+To run a @sc{cvs} command on a remote repository via
+the password-authenticating server, one specifies the
+@code{pserver} protocol, username, repository host, and
+path to the repository.  For example:
 
-@code{cvs login} is interactive --- it prompts for a
-password:
+@example
+cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot checkout someproj
+@end example
+
+or
+
+@example
+CVSROOT=:pserver:bach@@faun.example.org:/usr/local/cvsroot
+cvs checkout someproj
+@end example
+
+However, unless you're connecting to a public-access
+repository (i.e., one where that username doesn't
+require a password), you'll need to @dfn{log in} first.
+Logging in verifies your password with the repository.
+It's done with the @code{login} command, which will
+prompt you interactively for the password:
 
 @example
 cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot login
 CVS password:
 @end example
 
-The password is checked with the server; if it is
-correct, the @code{login} succeeds, else it fails,
-complaining that the password was incorrect.
+After you enter the password, @sc{cvs} verifies it with
+the server.  If the verification succeeds, then that
+combination of username, host, repository, and password
+is permanently recorded, so future transactions with
+that repository won't require you to run @code{cvs
+login}.  (If verification fails, @sc{cvs} will exit
+complaining that the password was incorrect, and
+nothing will be recorded.)
 
-Once you have logged in, you can force @sc{cvs} to
-connect directly to the server and authenticate with
-the stored password:
+The records are stored, by default, in the file
+@file{$HOME/.cvspass}.  That file's format is
+human-readable, and to a degree human-editable, but
+note that the passwords are not stored in
+cleartext---they are trivially encoded to protect them
+from "innocent" compromise (i.e., inadvertent viewing
+by a system administrator or other non-malicious
+person).
 
+@cindex CVS_PASSFILE, environment variable
+You can change the default location of this file by
+setting the @code{CVS_PASSFILE} environment variable.
+If you use this variable, make sure you set it
+@emph{before} @code{cvs login} is run.  If you were to
+set it after running @code{cvs login}, then later
+@sc{cvs} commands would be unable to look up the
+password for transmission to the server.
+  
+Once you have logged in, all @sc{cvs} commands using
+that remote repository and username will authenticate
+with the stored password.  So, for example
+  
 @example
 cvs -d :pserver:bach@@faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
-The @samp{:pserver:} is necessary because without it,
-@sc{cvs} will assume it should use @code{rsh} to
-connect with the server (@pxref{Connecting via rsh}).
-(Once you have a working copy checked out and are
-running @sc{cvs} commands from within it, there is no
-longer any need to specify the repository explicitly,
-because @sc{cvs} records it in the working copy's
-@file{CVS} subdirectory.)
+should just work (unless the password changes on the
+server side, in which case you'll have to re-run
+@code{cvs login}).
 
-Passwords are stored by default in the file
-@file{$HOME/.cvspass}.  Its format is human-readable,
-but don't edit it unless you know what you are doing.
-The passwords are not stored in cleartext, but are
-trivially encoded to protect them from "innocent"
-compromise (i.e., inadvertently being seen by a system
-administrator who happens to look at that file).
+Note that if the @samp{:pserver:} were not present in
+the repository specification, @sc{cvs} would assume it
+should use @code{rsh} to connect with the server
+instead (@pxref{Connecting via rsh}).
 
-@cindex CVS_PASSFILE, environment variable
-The @code{CVS_PASSFILE} environment variable overrides
-this default.  If you use this variable, make sure you
-set it @emph{before} @code{cvs login} is run.  If you
-were to set it after running @code{cvs login}, then
-later @sc{cvs} commands would be unable to look up the
-password for transmission to the server.
+Of course, once you have a working copy checked out and
+are running @sc{cvs} commands from within it, there is
+no longer any need to specify the repository
+explicitly, because @sc{cvs} can deduce the repository
+from the working copy's @file{CVS} subdirectory.
 
 @c FIXME: seems to me this needs somewhat more
 @c explanation.
 @cindex Logout (subcommand)
-The password for the currently chosen remote repository
-can be removed from the @code{CVS_PASSFILE} by using the
+The password for a given remote repository can be
+removed from the @code{CVS_PASSFILE} by using the
 @code{cvs logout} command.
 
 @node Password authentication security
