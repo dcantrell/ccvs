@@ -4973,7 +4973,7 @@ weak_alias (__re_search_2, re_search_2)
 #ifdef INSIDE_RECURSION
 
 #ifdef MATCH_MAY_ALLOCATE
-# define FREE_VAR(var) if (var) REGEX_FREE (var); var = NULL
+# define FREE_VAR(var) if (var) (void)REGEX_FREE ((void *)var); var = NULL
 #else
 # define FREE_VAR(var) if (var) free (var); var = NULL
 #endif

@@ -1,5 +1,9 @@
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Clarify relative-path up-reference article.
+
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
 	Update regex module from GNULIB.
 
 	* NEWS: Note update.
