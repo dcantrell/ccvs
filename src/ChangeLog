@@ -80,7 +80,7 @@
 
 2003-09-29  Derek Price  <derek@ximbiot.com>
 
-	* diff.c (make_file_label): Optimize the check for labels set by the
+	* diff.c (diff_fileproc): Optimize the check for labels set by the
 	user.
 
 2003-09-26  Derek Price  <derek@ximbiot.com>
