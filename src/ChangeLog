@@ -1,3 +1,10 @@
+Mon Apr 14 11:51:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (call_in_directory): Don't set short_pathname to
+	pathname for a while; just use pathname itself (cleans up a relic
+	of the old "Repository" (not "Directory") code).  Add comment
+	explaining short_pathname.
+
 Sun Apr 13 18:07:50 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_checkout): Add pfn and callerdat parameters.  Change
