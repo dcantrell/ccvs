@@ -13244,6 +13244,13 @@ total revisions: 5;	selected revisions: 1
 description:
 ${log_rev3}
 ${log_trailer}"
+	  dotest log-14f "${testcvs} log -r:: file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
 
 	  dotest log-15 "${testcvs} log -r1.2 file1" \
 "${log_header}
@@ -13318,6 +13325,15 @@ ${log_rev3}
 ${log_rev2}
 ${log_trailer}"
 
+	  dotest log-20a "${testcvs} log -r1.2:: file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev3}
+${log_trailer}"
+
 	  dotest log-21 "${testcvs} log -r:1.2 file1" \
 "${log_header}
 ${log_tags}
@@ -13325,6 +13341,15 @@ ${log_header2}
 total revisions: 5;	selected revisions: 2
 description:
 ${log_rev2}
+${log_rev1}
+${log_trailer}"
+
+	  dotest log-21a "${testcvs} log -r::1.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
 ${log_rev1}
 ${log_trailer}"
 
@@ -13336,6 +13361,23 @@ total revisions: 5;	selected revisions: 2
 description:
 ${log_rev2}
 ${log_rev1}
+${log_trailer}"
+
+	  dotest log-22a "${testcvs} log -r1.1::1.2 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-22b "${testcvs} log -r1.1::1.3 file1" \
+"${log_header}
+${log_tags}
+${log_header2}
+total revisions: 5;	selected revisions: 1
+description:
+${log_rev2}
 ${log_trailer}"
 
 	  dotest log-o0 "${testcvs} admin -o 1.2.2.2:: file1" \
