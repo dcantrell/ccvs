@@ -3666,7 +3666,7 @@ static void
 serve_tag (arg)
     char *arg;
 {
-    do_cvs_command ("cvstag", cvstag);
+    do_cvs_command ("tag", cvstag);
 }
 
 static void
