@@ -1,3 +1,12 @@
+Wed Jun  5 17:18:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add_directory): Don't create the directory if noexec.
+	* sanity.sh (basica): New tests basica-1a10, basica-1a11 test for
+	above fix.
+	* sanity.sh (basicb): New tests basicb-2a10, basicb-2a11,
+	basicb-3a1 test for analogous situation with files rather than
+	directories.
+
 Tue Jun  4 13:38:17 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh: When doing a remote check, use :server: in CVSROOT.

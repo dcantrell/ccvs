@@ -429,14 +429,17 @@ add_directory (repository, dir)
 	}
 #endif
 
-	omask = umask (cvsumask);
-	if (CVS_MKDIR (rcsdir, 0777) < 0)
+	if (!noexec)
 	{
-	    error (0, errno, "cannot mkdir %s", rcsdir);
+	    omask = umask (cvsumask);
+	    if (CVS_MKDIR (rcsdir, 0777) < 0)
+	    {
+		error (0, errno, "cannot mkdir %s", rcsdir);
+		(void) umask (omask);
+		goto out;
+	    }
 	    (void) umask (omask);
-	    goto out;
 	}
-	(void) umask (omask);
 
 	/*
 	 * Set up an update list with a single title node for Update_Logfile
