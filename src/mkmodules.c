@@ -481,6 +481,7 @@ static const char *const config_contents[] = {
     "# Be warned that these strings could be disabled in any new version of CVS.\n",
     "UseNewInfoFmtStrings=yes\n",
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+#ifdef SECONDARY_SUPPORT
     "\n",
     "# Set `PrimaryServer' to the CVSROOT to the primary, or write, server when\n",
     "# establishing one or more read-only mirrors which serve as proxies for\n",
@@ -495,14 +496,16 @@ static const char *const config_contents[] = {
     "# bytes.  Must be a positive integer but may end in `k', `M', `G', or `T' (for\n",
     "# kiilo, mega, giga, tera).  If an otherwise valid number you specifyis greater\n",
     "# than the SIZE_MAX defined by your system's C compiler, then it will be\n",
-    "# resolved to SIZE_MAX without a warning.  Defaults to 32M.\n",
+    "# resolved to SIZE_MAX without a warning.  Defaults to 0.\n",
     "#\n",
     "# High values for MaxSecondaryBufferSize may speed up a secondary server\n",
-    "# with a lot of available memory.\n",
+    "# with old hardware and a lot of available memory but can actually slow a\n",
+    "# modern system down slightly.\n",
     "#\n",
     "# For example:\n",
     "#\n",
     "#   MaxSecondaryBufferSize=1G\n",
+#endif /* SECONDARY_SUPPORT */
     NULL
 };
 
