@@ -1,3 +1,7 @@
+2000-02-13  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (cvs_SOURCES): Remove rtag.c.
+
 2001-02-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (directory_cmp): Return status rather than setting ISDIFF.
