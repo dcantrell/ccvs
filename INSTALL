@@ -167,7 +167,8 @@ distribution, then skip to step 5):
     that the RCS configure script finds GNU diff 1.15 or later and
     notices that diff supports the -a option.  CVS itself is much less
     picky about which version of diff it uses, and you shouldn't need
-    to worry about that.
+    to worry about that.  If you are using GNU diff 2.6 or 2.7, you may
+    want to know about a (subtle) bug described in doc/DIFFUTILS-2.7-BUG.
 
     NOTE: The configure program will cache the results of the previous
     configure execution.  If you need to re-run configure from scratch, you
