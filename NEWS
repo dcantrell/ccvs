@@ -1,5 +1,9 @@
 Changes since 1.11.5:
 
+* Added a UserAdminOptions configuration option to CVSROOT/config to
+control which `cvs admin' commands are not restricted to the `cvsadmin'
+group.
+
 * Miscellaneous documentation corrections.
 
 * Corrected the path in a failed write error message.
