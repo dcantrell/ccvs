@@ -244,19 +244,14 @@ Jeff Polk later helped Brian with the design of the @sc{cvs}
 module and vendor branch support.
 
 @cindex Source, getting CVS source
-You can get @sc{cvs} via anonymous @sc{ftp} from a
-number of sites; for example see
+You can get @sc{cvs} in a variety of ways, including
+free download from the internet.  For more information
+on downloading @sc{cvs} and other @sc{cvs} topics, see:
+
 @example
-http://www.gnu.ai.mit.edu/order/ftp.html
+http://www.cyclic.com/
+http://www.loria.fr/~molli/cvs-index.html
 @end example
-for a list of the @sc{gnu} @sc{ftp} sites.
-@c We could also be pointing to other resources like
-@c the cyclic getting.html, Pascal Molli's page, etc.,
-@c and probably should, when someone gets around to
-@c figuring out which pages are stable enough that we
-@c should cite them, which ones are best to point
-@c people to (supported? binary? source? zero-cost?
-@c buying CD-ROMs? etc.), etc.
 
 @cindex Mailing list
 @cindex List, mailing list
