@@ -1,3 +1,11 @@
+Fri Jul 28 19:48:45 1995  Paul Eggert  <eggert@twinsun.com>
+
+	* rcs2log.sh: Sync with latest Emacs snapshot.
+
+Thu Jul 27 20:29:30 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* rcs2log.sh: import of initial WNT port work
+
 Fri Jul 14 22:38:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* rcs-to-cvs.sh: Changes from David J. Mackenzie.
