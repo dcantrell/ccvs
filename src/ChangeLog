@@ -1,5 +1,10 @@
 2003-05-01  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Ignore -z when CLIENT_SUPPORT is not defined.
+	(Report from Jim Salter <jsalterjim@earthlink.net>.)
+
+2003-05-01  Derek Price  <derek@ximbiot.com>
+
 	* repos.c (Sanitize_Repository_Name): Remove some old comments about
 	the defunct RELATIVE_REPOS macro.
 	* server.c (outside_root): Ditto.
