@@ -10,7 +10,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)logmsg.c 1.48 94/09/29 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 /* this is slightly dangerous, since it could conflict with other systems'

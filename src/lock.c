@@ -14,7 +14,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)lock.c 1.50 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 extern char *ctime ();
