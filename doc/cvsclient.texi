@@ -112,6 +112,19 @@ current @sc{cvs} server) will make sure that it does not have any such
 locks in place whenever it is waiting for communication with the client;
 this prevents one client on a slow or flaky network from interfering
 with the work of others.
+
+@item
+It is a general design goal to provide only one way to do a given
+operation (where possible).  For example, implementations have no choice
+about whether to terminate lines with linefeeds or some other
+character(s), and request and response names are case-sensitive.  This
+is to enhance interoperability.  If a protocol allows more than one way
+to do something, it is all too easy for some implementations to support
+only some of them (perhaps accidentally).
+@c I vaguely remember reading, probably in an RFC, about the problems
+@c that were caused when some people decided that SMTP should accept
+@c other line termination (in the message ("DATA")?) than CRLF.  However, I
+@c can't seem to track down the reference.
 @end itemize
 
 @node Protocol Notes

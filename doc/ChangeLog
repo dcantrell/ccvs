@@ -1,5 +1,8 @@
 Mon Jul  7 12:04:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Goals): Add previously unwritten goal about only
+	one way to do each operation.
+
 	* cvs.texinfo (File permissions): Rewrite paragraph on setuid to
 	be more verbose and less unix-specific.
 
