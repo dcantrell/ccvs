@@ -1,3 +1,8 @@
+Thu Dec 21 12:09:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Add Questionable.  Revise
+	documentation of export and update to explain role of -I option.
+
 Tue Dec 19 16:44:18 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Update binary files info for -kb.

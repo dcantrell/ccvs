@@ -416,6 +416,12 @@ directory where the edit or unedit took place.  @var{watches} are the
 temporary watches to set; if it is followed by \t then the tab and the
 rest of the line are ignored.
 
+@item Questionable @var{filename} \n
+Response expected: no.  Additional data: no.  Tell the server to check
+whether @var{filename} should be ignored, and if not, next time the
+server sends responses, send (in a @code{M} response) @samp{?} followed
+by the directory and filename.
+
 @item Argument @var{text} \n
 Response expected: no.
 Save argument for use in a subsequent command.  Arguments
@@ -442,7 +448,6 @@ rdiff; the latter do not access the working directory and thus have no
 need to expand modules on the client side.
 
 @item co \n
-@itemx update \n
 @itemx ci \n
 @itemx diff \n
 @itemx tag \n
@@ -452,7 +457,6 @@ need to expand modules on the client side.
 @itemx remove \n
 @itemx rdiff \n
 @itemx rtag \n
-@itemx import \n
 @itemx admin \n
 @itemx export \n
 @itemx history \n
@@ -465,6 +469,26 @@ last @code{Repository} sent specifies the working directory at the time
 of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
+
+@itemx update \n
+Response expected: yes.  Actually do a @code{cvs update} command.  This
+uses any previous @code{Argument}, @code{Repository}, @code{Entry},
+@code{Modified}, or @code{Lost} requests, if they have been sent.  The
+last @code{Repository} sent specifies the working directory at the time
+of the operation.  The @code{-I} option is not used--files which the
+client can decide whether to ignore are not mentioned and the client
+sends the @code{Questionable} request for others.
+
+@item import \n
+Response expected: yes.  Actually do a @code{cvs import} command.  This
+uses any previous @code{Argument}, @code{Repository}, @code{Entry},
+@code{Modified}, or @code{Lost} requests, if they have been sent.  The
+last @code{Repository} sent specifies the working directory at the time
+of the operation.  The files to be imported are sent in @code{Modified}
+requests (files which the client knows should be ignored are not sent;
+the server must still process the CVSROOT/cvsignore file unless -I ! is
+sent).  A log message must have been specified with a @code{-m}
+argument.
 
 @item watch-on \n
 @itemx watch-off \n
