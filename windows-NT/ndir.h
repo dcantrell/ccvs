@@ -53,7 +53,7 @@ typedef struct _dirdesc
 
 extern void seekdir (DIR *, long);
 extern long telldir (DIR *);
-extern DIR *opendir (char *);
+extern DIR *opendir (const char *);
 extern void closedir (DIR *);
 extern struct direct *readdir (DIR *);
 
