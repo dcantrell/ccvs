@@ -129,7 +129,7 @@ static const struct cmd
     { "rdiff",    "patch",    "pa",        patch },
     { "release",  "re",       "rel",       release },
     { "remove",   "rm",       "delete",    cvsremove },
-    { "rtag",     "rt",       "rfreeze",   rtag },
+    { "rtag",     "rt",       "rfreeze",   cvstag },
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server },
 #endif

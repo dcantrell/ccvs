@@ -1,3 +1,10 @@
+2001-02-06  Larry Jones  <larry.jones@sdrc.com>
+
+	* tag.c, rtag.c: Merge with tag.c being the surviving file.
+	* Makefile.in: Update to match.
+	* main.c (cmds): rtag() => cvstag().
+	* server.c (serve_rtag): Ditto, and set command name.
+
 2000-02-06  Derek Price  <derek.price@openavenue.com>
 	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
 	    Shawn Smith  <Shawn_Smith@notes.ymp.gov>
