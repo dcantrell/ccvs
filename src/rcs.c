@@ -155,6 +155,7 @@ static const char spacetab[] = {
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
 static char *rcs_lockfile;
+static int rcs_lockfd = -1;
 
 /* A few generic thoughts on error handling, in particular the
    printing of unexpected characters that we find in the RCS file
@@ -7845,21 +7846,8 @@ RCS_putdtree (rcs, rev, fp)
 
     /* Find the delta node for this revision. */
     p = findnode (rcs->versions, rev);
-    if(p == NULL){
-        /* This shouldn't happen if the repository is in good shape.
-            We need to clean up the lockfile, but we can't call 
-            rcs_internal_unlockfile, because that assumes that things 
-            are behaving normally.  rcs_internal_unlockfile copies the
-            lockfile back onto the repository (,v) file.  
-            Since the repository file is corrupt, this isn't a terribly 
-            destructive thing to do, but just in case the user isn't 
-            maintaining backups, and the ,v file does contain useful 
-            information, we'll just delete the lockfile and let the 
-            user sort out the problem. */
- 
-        if (fclose(fp) == EOF)
-            error (1, 0, "error closing lock file %s", rcs_lockfile);
-        unlink_file(rcs_lockfile);
+    if (p == NULL)
+    {
         error (1, 0,
                "error parsing repository file %s, file may be corrupt.", 
                rcs->path);
@@ -8105,7 +8093,7 @@ count_delta_actions (np, ignore)
 /*
  * Clean up temporary files
  */
-static RETSIGTYPE
+RETSIGTYPE
 rcs_cleanup ()
 {
     /* Note that the checks for existence_error are because we are
@@ -8119,11 +8107,18 @@ rcs_cleanup ()
        of a just-created file) reentrancy won't be an issue.  */
     if (rcs_lockfile != NULL)
     {
-	if (unlink_file (rcs_lockfile) < 0
+	char *tmp = rcs_lockfile;
+	rcs_lockfile = NULL;
+	if (rcs_lockfd >= 0)
+	{
+	    if (close (rcs_lockfd) != 0)
+		error (0, errno, "error closing lock file %s", tmp);
+	    rcs_lockfd = -1;
+	}
+	if (unlink_file (tmp) < 0
 	    && !existence_error (errno))
-	    error (0, errno, "cannot remove %s", rcs_lockfile);
+	    error (0, errno, "cannot remove %s", tmp);
     }
-    rcs_lockfile = NULL;
 }
 
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
@@ -8157,7 +8152,6 @@ static FILE *
 rcs_internal_lockfile (rcsfile)
     char *rcsfile;
 {
-    int fd;
     struct stat rstat;
     FILE *fp;
     static int first_call = 1;
@@ -8185,6 +8179,7 @@ rcs_internal_lockfile (rcsfile)
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */
     assert (rcs_lockfile == NULL);
+    assert (rcs_lockfd < 0);
     rcs_lockfile = rcs_lockfilename (rcsfile);
 
     /* Use the existing RCS file mode, or read-only if this is a new
@@ -8211,11 +8206,11 @@ rcs_internal_lockfile (rcsfile)
        rely on O_EXCL these days.  This might be true for unix (I
        don't really know), but I am still pretty skeptical in the case
        of the non-unix systems.  */
-    fd = open (rcs_lockfile,
-	       OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
-	       S_IRUSR | S_IRGRP | S_IROTH);
+    rcs_lockfd = open (rcs_lockfile,
+		       OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
+		       S_IRUSR | S_IRGRP | S_IROTH);
 
-    if (fd < 0)
+    if (rcs_lockfd < 0)
     {
 	error (1, errno, "could not open lock file `%s'", rcs_lockfile);
     }
@@ -8224,10 +8219,10 @@ rcs_internal_lockfile (rcsfile)
     /* Because we change the modes later, we don't worry about
        this in the non-HAVE_FCHMOD case.  */
 #ifdef HAVE_FCHMOD
-    if (fchmod (fd, rstat.st_mode) < 0)
+    if (fchmod (rcs_lockfd, rstat.st_mode) < 0)
 	error (1, errno, "cannot change mode for %s", rcs_lockfile);
 #endif
-    fp = fdopen (fd, FOPEN_BINARY_WRITE);
+    fp = fdopen (rcs_lockfd, FOPEN_BINARY_WRITE);
     if (fp == NULL)
 	error (1, errno, "cannot fdopen %s", rcs_lockfile);
 
@@ -8240,6 +8235,7 @@ rcs_internal_unlockfile (fp, rcsfile)
     char *rcsfile;
 {
     assert (rcs_lockfile != NULL);
+    assert (rcs_lockfd >= 0);
 
     /* Abort if we could not write everything successfully to LOCKFILE.
        This is not a great error-handling mechanism, but should prevent
@@ -8255,6 +8251,7 @@ rcs_internal_unlockfile (fp, rcsfile)
 	error (1, 0, "error writing to lock file %s", rcs_lockfile);
     if (fclose (fp) == EOF)
 	error (1, errno, "error closing lock file %s", rcs_lockfile);
+    rcs_lockfd = -1;
 
     rename_file (rcs_lockfile, rcsfile);
 
