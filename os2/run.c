@@ -333,6 +333,10 @@ Popen (cmd, mode)
 #else
 	(void) fprintf (stderr, "-> Popen(%s,%s)\n", cmd, mode);
 #endif
+
+/* OS/2 doesn't have pipes.  This shouldn't be a problem for the
+   client, but we'll print an error and exit just in case. */
+#if 0
     if (noexec)
 	return (NULL);
 
@@ -344,119 +348,25 @@ Popen (cmd, mode)
 	free (requoted);
 	return result;
     }
+#endif /* 0 */
+
+    fprintf (stderr,
+             "Error: Popen() should never have been called in client.\n");
+    exit (1);
 }
 
 
 /* Running children with pipes connected to them.  */
 
-/* kff: todo: here we are. */
-
-/* It's kind of ridiculous the hoops we're jumping through to get
-   this working.  _pipe and dup2 and _spawnmumble work just fine, except
-   that the child inherits a file descriptor for the writing end of the
-   pipe, and thus will never receive end-of-file on it.  If you know of
-   a better way to implement the piped_child function, please let me know. 
-   
-   You can apparently specify _O_NOINHERIT when you open a file, but there's
-   apparently no fcntl function, so you can't change that bit on an existing
-   file descriptor.  */
-
-/* Given a handle, make an inheritable duplicate of it, and close
-   the original.  */
-static HANDLE
-inheritable (HANDLE in)
-{
-    HANDLE copy;
-    HANDLE self = GetCurrentProcess ();
-
-    if (! DuplicateHandle (self, in, self, &copy, 
-			   0, 1 /* fInherit */,
-			   DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE))
-        return INVALID_HANDLE_VALUE;
-
-    return copy;
-}
-
-
-/* Initialize the SECURITY_ATTRIBUTES structure *LPSA.  Set its
-   bInheritHandle flag according to INHERIT.  */
-static void
-init_sa (LPSECURITY_ATTRIBUTES lpsa, BOOL inherit)
-{
-  lpsa->nLength = sizeof(*lpsa);
-  lpsa->bInheritHandle = inherit;
-  lpsa->lpSecurityDescriptor = NULL;
-}
-
-
-enum inherit_pipe { inherit_reading, inherit_writing };
-
 /* Create a pipe.  Set READWRITE[0] to its reading end, and 
-   READWRITE[1] to its writing end.  If END is inherit_reading,
-   make the only the handle for the pipe's reading end inheritable.
-   If END is inherit_writing, make only the handle for the pipe's
-   writing end inheritable.  Return 0 if we succeed, -1 if we fail.
-
-   Why does inheritability matter?  Consider the case of a
-   pipe carrying data from the parent process to the child
-   process.  The child wants to read data from the parent until
-   it reaches the EOF.  Now, the only way to send an EOF on a pipe
-   is to close all the handles to its writing end.  Obviously, the 
-   parent has a handle to the writing end when it creates the child.
-   If the child inherits this handle, then it will never close it
-   (the child has no idea it's inherited it), and will thus never
-   receive an EOF on the pipe because it's holding a handle
-   to it.
-   
-   In Unix, the child process closes the pipe ends before it execs.
-   In Windows NT, you create the pipe with uninheritable handles, and then use
-   DuplicateHandle to make the appropriate ends inheritable.  */
+   READWRITE[1] to its writing end.  */
 
 static int
-my_pipe (HANDLE *readwrite, enum inherit_pipe end)
+my_pipe (int *readwrite)
 {
-    HANDLE read, write;
-    SECURITY_ATTRIBUTES sa;
-
-    init_sa (&sa, 0);
-    if (! CreatePipe (&read, &write, &sa, 1 << 13))
-    {
-        errno = EMFILE;
-        return -1;
-    }
-    if (end == inherit_reading)
-        read = inheritable (read);
-    else
-        write = inheritable (write);
-
-    if (read == INVALID_HANDLE_VALUE
-        || write == INVALID_HANDLE_VALUE)
-    {
-        CloseHandle (read);
-	CloseHandle (write);
-	errno = EMFILE;
-	return -1;
-    }
-
-    readwrite[0] = read;
-    readwrite[1] = write;
-
-    return 0;
-}
-
-
-/* Initialize the STARTUPINFO structure *LPSI.  */
-static void
-init_si (LPSTARTUPINFO lpsi)
-{
-  memset (lpsi, 0, sizeof (*lpsi));
-  lpsi->cb = sizeof(*lpsi);
-  lpsi->lpReserved = NULL;
-  lpsi->lpTitle = NULL;
-  lpsi->lpReserved2 = NULL;
-  lpsi->cbReserved2 = 0;
-  lpsi->lpDesktop = NULL;
-  lpsi->dwFlags = 0;
+    fprintf (stderr,
+             "Error: my_pipe() doesn't work.\n");
+    exit (1);
 }
 
 
@@ -464,56 +374,11 @@ init_si (LPSTARTUPINFO lpsi)
    and OUT as its standard output.  Return a handle to the child, or
    INVALID_HANDLE_VALUE.  */
 static int
-start_child (char *command, HANDLE in, HANDLE out)
+start_child (char *command, int in, int out)
 {
-  STARTUPINFO si;
-  PROCESS_INFORMATION pi;
-  BOOL status;
-
-  /* The STARTUPINFO structure can specify handles to pass to the
-     child as its standard input, output, and error.  */
-  init_si (&si);
-  si.hStdInput = in;
-  si.hStdOutput = out;
-  si.hStdError  = (HANDLE) _get_osfhandle (2);
-  si.dwFlags = STARTF_USESTDHANDLES;
-
-  status = CreateProcess ((LPCTSTR) NULL,
-                          (LPTSTR) command,
-		          (LPSECURITY_ATTRIBUTES) NULL, /* lpsaProcess */
-		          (LPSECURITY_ATTRIBUTES) NULL, /* lpsaThread */
-		          TRUE, /* fInheritHandles */
-		          0,    /* fdwCreate */
-		          (LPVOID) 0, /* lpvEnvironment */
-		          (LPCTSTR) 0, /* lpszCurDir */
-		          &si,  /* lpsiStartInfo */
-		          &pi); /* lppiProcInfo */
-
-  if (! status)
-  {
-      DWORD error_code = GetLastError ();
-      switch (error_code)
-      {
-      case ERROR_NOT_ENOUGH_MEMORY:
-      case ERROR_OUTOFMEMORY:
-          errno = ENOMEM; break;
-      case ERROR_BAD_EXE_FORMAT:
-          errno = ENOEXEC; break;
-      case ERROR_ACCESS_DENIED:
-          errno = EACCES; break;
-      case ERROR_NOT_READY:
-      case ERROR_FILE_NOT_FOUND:
-      case ERROR_PATH_NOT_FOUND:
-      default:
-          errno = ENOENT; break;
-      }
-      return (int) INVALID_HANDLE_VALUE;
-  }
-
-  /* The _spawn and _cwait functions in the C runtime library
-     seem to operate on raw NT handles, not PID's.  Odd, but we'll
-     deal.  */
-  return (int) pi.hProcess;
+    fprintf (stderr,
+             "Error: start_child() doesn't work.\n");
+    exit (1);
 }
 
 
@@ -593,107 +458,22 @@ build_command (char **argv)
 int
 piped_child (char **argv, int *to, int *from)
 {
-  int child;
-  HANDLE pipein[2], pipeout[2];
-  char *command;
-
-  /* Turn argv into a form acceptable to CreateProcess.  */
-  command = build_command (argv);
-  if (! command)
-      return -1;
-
-  /* Create pipes for communicating with child.  Arrange for
-     the child not to inherit the ends it won't use.  */
-  if (my_pipe (pipein, inherit_reading) == -1
-      || my_pipe (pipeout, inherit_writing) == -1)
-      return -1;  
-
-  child = start_child (command, pipein[0], pipeout[1]);
-  free (command);
-  if (child == (int) INVALID_HANDLE_VALUE)
-      return -1;
-
-  /* Close the pipe ends the parent doesn't use.  */
-  CloseHandle (pipein[0]);
-  CloseHandle (pipeout[1]);
-
-  /* Given the pipe handles, turn them into file descriptors for
-     use by the caller.  */
-  if ((*to      = _open_osfhandle ((long) pipein[1],  _O_BINARY)) == -1
-      || (*from = _open_osfhandle ((long) pipeout[0], _O_BINARY)) == -1)
-      return -1;
-
-  return child;
+    fprintf (stderr,
+             "Error: piped_child() doesn't work.\n");
+    exit (1);
 }
 
 /*
  * dir = 0 : main proc writes to new proc, which writes to oldfd
  * dir = 1 : main proc reads from new proc, which reads from oldfd
  */
-
 int
 filter_stream_through_program (oldfd, dir, prog, pidp)
      int oldfd, dir;
      char **prog;
      pid_t *pidp;
 {
-    HANDLE pipe[2];
-    char *command;
-    int child;
-    HANDLE oldfd_handle;
-    HANDLE newfd_handle;
-    int newfd;
-
-    /* Get the OS handle associated with oldfd, to be passed to the child.  */
-    if ((oldfd_handle = (HANDLE) _get_osfhandle (oldfd)) < 0)
-	return -1;
-
-    if (dir)
-    {
-        /* insert child before parent, pipe goes child->parent.  */
-	if (my_pipe (pipe, inherit_writing) == -1)
-	    return -1;
-	if ((command = build_command (prog)) == NULL)
-	    return -1;
-	child = start_child (command, oldfd_handle, pipe[1]);
-	free (command);
-	if (child == (int) INVALID_HANDLE_VALUE)
-	    return -1;
-	close (oldfd);
-	CloseHandle (pipe[1]);
-	newfd_handle = pipe[0];
-    }
-    else
-    {
-        /* insert child after parent, pipe goes parent->child.  */
-	if (my_pipe (pipe, inherit_reading) == -1)
-	    return -1;
-	if ((command = build_command (prog)) == NULL)
-	    return -1;
-	child = start_child (command, pipe[0], oldfd_handle);
-	free (command);
-	if (child == (int) INVALID_HANDLE_VALUE)
-	    return -1;
-	close (oldfd);
-	CloseHandle (pipe[0]);
-	newfd_handle = pipe[1];
-    }
-
-    if ((newfd = _open_osfhandle ((long) newfd_handle, _O_BINARY)) == -1)
-        return -1;
-
-    *pidp = child;
-    return newfd;    
+    fprintf (stderr,
+             "Error: filter_stream_through_program() doesn't work.\n");
+    exit (1);
 }
-
-
-/* Arrange for the file descriptor FD to not be inherited by child
-   processes.  At the moment, CVS uses this function only on pipes
-   returned by piped_child, and our implementation of piped_child
-   takes care of setting the file handles' inheritability, so this
-   can be a no-op.  */
-void
-close_on_exec (int fd)
-{
-}
-
