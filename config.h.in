@@ -189,6 +189,9 @@
 /* Define if you have the mknod function.  */
 #undef HAVE_MKNOD
 
+/* Define if you have the getpassphrase function.  */
+#undef HAVE_GETPASSPHRASE
+
 /* Define if you have the <direct.h> header file.  */
 #undef HAVE_DIRECT_H
 
