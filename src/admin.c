@@ -618,7 +618,7 @@ admin (int argc, char **argv)
 static int
 admin_fileproc (void *callerdat, struct file_info *finfo)
 {
-    struct admin_data *admin_data = (struct admin_data *) callerdat;
+    struct admin_data *admin_data = callerdat;
     Vers_TS *vers;
     char *version;
     int i;
@@ -657,16 +657,11 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
     if (admin_data->branch != NULL)
     {
 	char *branch = &admin_data->branch[2];
-	if (*branch != '\0' && ! isdigit ((unsigned char) *branch))
+	if (*branch != '\0' && !isdigit ((unsigned char) *branch))
 	{
-	    if (*branch == '.' && !strcmp (branch+1, TAG_TRUNK))
-	        branch = NULL;
-	    else
-	    {
-		error (0, 0, "%s: Symbolic name %s is undefined.",
-		       rcs->path, admin_data->branch + 2);
-		status = 1;
-	    }
+	    error (0, 0, "%s: Symbolic name %s is undefined.",
+		   rcs->path, admin_data->branch + 2);
+	    status = 1;
 	}
 	if (status == 0)
 	    RCS_setbranch (rcs, branch);

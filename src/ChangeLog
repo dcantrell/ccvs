@@ -6,7 +6,7 @@
 	not exist.  Factor common code from then/else.  Add FIXME note.
 	Gratuitous reformatting.  Simplify.
 	(RCS_getorigin): Simplify.
-	(translate_tag): Fratuitous reformatting.
+	(translate_tag): Gratuitous reformatting.
 	* rcs.h (RCS_nodeisbranch): Update prototype.
 
 2005-03-19  Derek Price  <derek@ximbiot.com>
