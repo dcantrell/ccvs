@@ -1,5 +1,8 @@
 Mon Jan  1 09:49:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (read_line): When writing to from_server_logfile, write
+	the \n too.
+
 	* client.c (send_files): No longer call send_file_names.
 	* client.h: Update comment.
 	* add.c, admin.c, commit.c, diff.c, edit.c, log.c, remove.c,
