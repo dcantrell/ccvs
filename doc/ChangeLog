@@ -1,3 +1,7 @@
+Tue Nov 18 09:23:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Remove DIFFUTILS-2.7-BUG.
+
 Mon Nov 17 18:20:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (tag options): Expand comment with reference to FAQ.
