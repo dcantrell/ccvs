@@ -1,3 +1,8 @@
+Wed Feb 12 18:44:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication client, Invoking CVS):
+	Document "cvs logout" command.
+
 Tue Feb 11 20:42:45 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (commit options): Document that the -f option to
