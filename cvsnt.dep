@@ -871,7 +871,6 @@
 ".\windows-NT\JmgStat.c" : \
 	".\windows-NT\JmgStat.h"\
 	".\windows-NT\stdbool.h"\
-	".\windows-NT\stdint.h"\
 	
 
 .\src\lock.c : \
