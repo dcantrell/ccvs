@@ -133,7 +133,6 @@ LIB_SOURCES = \
        ${lib_dir}/savecwd.c \
        ${lib_dir}/sighandle.c \
        ${lib_dir}/valloc.c \
-       ${lib_dir}/xgetwd.c \
        ${lib_dir}/yesno.c \
        ${lib_dir}/getdate.c
 
@@ -213,7 +212,6 @@ LIB_OBJECTS = \
        ${lib_dir}/savecwd.o \
        ${lib_dir}/sighandle.o \
        ${lib_dir}/valloc.o \
-       ${lib_dir}/xgetwd.o \
        ${lib_dir}/yesno.o \
        ${lib_dir}/getdate.o
 
@@ -239,7 +237,7 @@ OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS} ${ZLIB_OBJECTS}
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   ${srcdir}/README ${srcdir}/ChangeLog \
   ${srcdir}/Makefile.in ${srcdir}/.cvsignore \
-  ${srcdir}Makefile
+  ${srcdir}/Makefile
 
 all:
 

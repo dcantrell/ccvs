@@ -1,5 +1,29 @@
 Mon Jun 16 10:58:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README: Change bug submission address to include bug-cvs.
+	Add paragraph (from the mail message of the submission) concerning
+	HPFS and such.  Cosmetic changes (two spaces after periods for
+	example).  Say that ufc-crypt shouldn't be needed currently.
+	Add comment about emx.dll.
+	* config.h, startserver.c, rcmd.h, rcmd.c, system.c: Add
+	"copyright" notice.
+	* system.c (os2_initialize): Add comment about whether we should
+	be expanding wildcards here.  Cosmetic changes throughout
+	(for example, reindenting just about everything).
+	* system.c (xgetwd): Rewritten and renamed from os2_getwd.
+	* config.h (CVS_GETWD, os2_getwd): Removed.
+	* rcmd.c: Add comment about portable versus OS-specific
+	implementations of this functionality.
+	* config.h: Remove SIZEOF_INT, SIZEOF_LONG, HAVE_MKFIFO,
+	HAVE_SETVBUF, and USE_DIRECT_TCP; no longer used.
+	* config.h: Add USE_SETMODE_BINARY.
+	* config.h: Define NO_EXT_METHOD.
+	* Makefile.in (LIB_SOURCES): Remove lib/xgetwd.c; replaced by
+	xgetwd in system.c.
+	(LIB_OBJECTS): Likewise, remove lib/xgetwd.o.
+	* Makefile.in (DISTFILES): Add missing "/".
+	* .cvsignore: Added.
+
 	* New directory.  This consists of the port that Thomas Epting
 	sent to bug-cvs on 18 Mar 97.  He also sent some diffs which go
 	with this; I'll subsequently be checking in some of those diffs
