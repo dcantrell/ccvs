@@ -466,7 +466,7 @@ deep_remove_dir (path)
     const char *path;
 {
     DIR		  *dirp;
-    struct direct *dp;
+    struct dirent *dp;
     char	   buf[PATH_MAX];
 
     if ( rmdir (path) != 0 && errno == ENOTEMPTY )
