@@ -3269,18 +3269,20 @@ diff -c first-dir/dir1/dir2/file7:1\.1 first-dir/dir1/dir2/file7:removed
 - file7
 --- 0 ----"
 		# now export by rtagged-by-head and rtagged-by-tag and compare.
-		dotest basic2-25 "${testcvs} export -r rtagged-by-head first-dir" \
-"${PROG} [a-z]*: Updating first-dir
-U first-dir/file14
-U first-dir/file6
-${PROG} [a-z]*: Updating first-dir/dir1
-U first-dir/dir1/file14
-U first-dir/dir1/file6
-${PROG} [a-z]*: Updating first-dir/dir1/dir2
-U first-dir/dir1/dir2/file14
-U first-dir/dir1/dir2/file6"
+		dotest basic2-25 "${testcvs} export -r rtagged-by-head -d 1dir first-dir" \
+"${PROG} [a-z]*: Updating 1dir
+U 1dir/file14
+U 1dir/file6
+${PROG} [a-z]*: Updating 1dir/dir1
+U 1dir/dir1/file14
+U 1dir/dir1/file6
+${PROG} [a-z]*: Updating 1dir/dir1/dir2
+U 1dir/dir1/dir2/file14
+U 1dir/dir1/dir2/file6"
+		dotest_fail basic2-25a "test -d 1dir/CVS"
+		dotest_fail basic2-25b "test -d 1dir/dir1/CVS"
+		dotest_fail basic2-25c "test -d 1dir/dir1/dir2/CVS"
 
-		mv first-dir 1dir
 		dotest basic2-26 "${testcvs} export -r rtagged-by-tag first-dir" \
 "${PROG} [a-z]*: Updating first-dir
 U first-dir/file14
@@ -3291,11 +3293,15 @@ U first-dir/dir1/file6
 ${PROG} [a-z]*: Updating first-dir/dir1/dir2
 U first-dir/dir1/dir2/file14
 U first-dir/dir1/dir2/file6"
+		dotest_fail basic2-26a "test -d first-dir/CVS"
+		dotest_fail basic2-26b "test -d first-dir/dir1/CVS"
+		dotest_fail basic2-26c "test -d first-dir/dir1/dir2/CVS"
 
 		dotest basic2-27 "directory_cmp 1dir first-dir"
 		rm -r 1dir first-dir
 
 		# checkout by revision vs export by rtagged-by-revision and compare.
+		mkdir export-dir
 		dotest basic2-28 "${testcvs} export -rrtagged-by-revision -d export-dir first-dir" \
 "${PROG} [a-z]*: Updating export-dir
 U export-dir/file14
@@ -3309,6 +3315,9 @@ ${PROG} [a-z]*: Updating export-dir/dir1/dir2
 U export-dir/dir1/dir2/file14
 U export-dir/dir1/dir2/file6
 U export-dir/dir1/dir2/file7"
+		dotest_fail basic2-28a "test -d export-dir/CVS"
+		dotest_fail basic2-28b "test -d export-dir/dir1/CVS"
+		dotest_fail basic2-28c "test -d export-dir/dir1/dir2/CVS"
 
 		dotest basic2-29 "${testcvs} co -r1.1 first-dir" \
 "${PROG} [a-z]*: Updating first-dir
