@@ -1,3 +1,7 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-06-03  Derek Price  <derek@ximbiot.com>
 
 	* README: Add this file to point would-be patchers to please send their
