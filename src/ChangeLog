@@ -1,3 +1,9 @@
+Wed Aug  7 00:07:31 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (translate_symtag): New static function.
+	(RCS_gettag): Use translate_symtag rather than RCS_symbols.
+	(RCS_nodeisbranch, RCS_whatbranch): Likewise.
+
 Tue Aug  6 15:36:09 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	Finish the conversion of cvs log so that it never invokes rlog.
