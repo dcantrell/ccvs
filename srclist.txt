@@ -121,6 +121,9 @@ $GNULIB/m4/progtest.m4				m4		no NI
 $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
 $GNULIB/m4/ulonglong.m4				m4		no NI
+# $GNULIB/modules/gettimeofday
+$GNULIB/lib/gettimeofday.c			lib		no NI
+$GNULIB/m4/gettimeofday.m4			m4		no NI
 # $GNULIB/modules/lstat
 $GNULIB/lib/lstat.c				lib		no NI
 $GNULIB/m4/lstat.m4				m4		yes NI

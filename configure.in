@@ -207,6 +207,7 @@ AC_REPLACE_FUNCS(\
 
 # Look for functions from GNULIB and replace with versions in lib/ when
 # necessary.
+AC_FUNC_GETTIMEOFDAY_CLOBBER
 AM_FUNC_GETLINE
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION dnl work around for autoconf-2.57 bug.
