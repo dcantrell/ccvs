@@ -1,5 +1,10 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (death2): Replace regexp matching temporary file name
+	with new variable ${tempname}.  For most of the tests this is a
+	cosmetic change, but death2-diff-6 had been missing _ which caused
+	it to fail on Solaris (at least sometimes).
+
 	* sanity.sh (modes): Don't use export -n; it doesn't seem
 	to be sufficiently portable.
 
