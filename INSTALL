@@ -241,15 +241,15 @@ VAX:
 
 Building from source code under Unix:
 
-1)  Some combinations of automake and autoconf versions may break the CVS build
+1)  Some combinations of Automake and Autoconf versions may break the CVS build
     if file timestamps aren't set correctly, so you may wish to run
     noautomake.sh to set the timestamps and avoid attempting to run the
     autotools on your system:
 
 	$ ./noautomake.sh --noautoconf
 
-    The CVS makefiles and configure script were built with automake 2.5 and
-    autoconf 2.13, respectively.  Other combinations of autotool versions may
+    The CVS Makefiles and configure script were built using Automake 1.5 and
+    Autoconf 2.13, respectively.  Other combinations of autotool versions may
     or may not work.
 
 2)  Run "configure":
@@ -382,7 +382,8 @@ Detailed information about your interaction with "configure":
 
 The "configure" script and its interaction with its options and the
 environment is described here.  For more detailed documentation about
-"configure", please refer to the GNU Autoconf documentation.
+"configure", please run `./configure --help' or refer to the GNU Autoconf
+documentation.
 
 Supported options are:
 

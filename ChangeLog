@@ -1,3 +1,17 @@
+2001-09-13  Derek Price  <dprice@collab.net>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Updated to require Automake 1.5.
+	* NEWS (Changes since 1.11.1p1): Added note about standardizing on
+	Automake 1.5.
+	* INSTALL (Building from source code under UNIX): It's Automake version
+	`1.5', not `2.5'.
+	(Detailed information about your interaction with "configure"): Added
+	note about using `configure --help'.
+	* README (Installation): Add noautoconf.sh to the list of build and
+	installation commands.
+
+	* Makefile.in: Regenerated.
+
 2001-09-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with automake 1.5.

@@ -92,7 +92,7 @@ am__quote = @am__quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
 
-AUTOMAKE_OPTIONS = 1.4e dist-bzip2
+AUTOMAKE_OPTIONS = 1.5 dist-bzip2
 
 # Unix source subdirs, where we'll want to run lint and etags:
 # This is a legacy variable from b4 Automake
