@@ -783,17 +783,26 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	for (i = 1; i < *pargc; i++)
 	{
 	    char *line;
-	    char *user;
 	    Vers_TS *vers;
+	    struct file_info finfo;
 
-	    user = argv[i];
-	    vers = Version_TS (repository, options, tag, date, user,
-			       force_tag_match, 0, entries, (RCSNode *) NULL);
+	    memset (&finfo, 0, sizeof finfo);
+	    finfo.file = argv[i];
+	    /* Shouldn't be used, so set to arbitrary value.  */
+	    finfo.update_dir = NULL;
+	    finfo.fullname = argv[i];
+	    finfo.repository = repository;
+	    finfo.entries = entries;
+	    finfo.rcs = NULL;
+
+	    vers = Version_TS (&finfo, options, tag, date,
+			       force_tag_match, 0);
 	    if (vers->ts_user == NULL)
 	    {
-		line = xmalloc (strlen (user) + 15);
-		(void) sprintf (line, "Initial %s", user);
-		Register (entries, user, vers->vn_rcs ? vers->vn_rcs : "0",
+		line = xmalloc (strlen (finfo.file) + 15);
+		(void) sprintf (line, "Initial %s", finfo.file);
+		Register (entries, finfo.file,
+			  vers->vn_rcs ? vers->vn_rcs : "0",
 			  line, vers->options, vers->tag,
 			  vers->date, (char *) 0);
 		free (line);

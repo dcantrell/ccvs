@@ -3718,12 +3718,14 @@ send_fileproc (finfo)
     struct file_info *finfo;
 {
     Vers_TS *vers;
+    struct file_info xfinfo;
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
-    vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
-		       (char *)NULL,
-		       finfo->file, 0, 0, finfo->entries, (RCSNode *)NULL);
+    xfinfo = *finfo;
+    xfinfo.repository = NULL;
+    xfinfo.rcs = NULL;
+    vers = Version_TS (&xfinfo, NULL, NULL, NULL, 0, 0);
 
     if (vers->vn_user != NULL)
     {

@@ -285,87 +285,6 @@ enum mtype
 };
 
 /*
- * defines for Classify_File() to determine the current state of a file.
- * These are also used as types in the data field for the list we make for
- * Update_Logfile in commit, import, and add.
- */
-enum classify_type
-{
-    T_UNKNOWN = 1,			/* no old-style analog existed	 */
-    T_CONFLICT,				/* C (conflict) list		 */
-    T_NEEDS_MERGE,			/* G (needs merging) list	 */
-    T_MODIFIED,				/* M (needs checked in) list 	 */
-    T_CHECKOUT,				/* O (needs checkout) list	 */
-    T_ADDED,				/* A (added file) list		 */
-    T_REMOVED,				/* R (removed file) list	 */
-    T_REMOVE_ENTRY,			/* W (removed entry) list	 */
-    T_UPTODATE,				/* File is up-to-date		 */
-#ifdef SERVER_SUPPORT
-    T_PATCH,				/* P Like C, but can patch	 */
-#endif
-    T_TITLE				/* title for node type 		 */
-};
-typedef enum classify_type Ctype;
-
-/*
- * a struct vers_ts contains all the information about a file including the
- * user and rcs file names, and the version checked out and the head.
- *
- * this is usually obtained from a call to Version_TS which takes a tag argument
- * for the RCS file if desired
- */
-struct vers_ts
-{
-    /* rcs version user file derives from, from CVS/Entries.
-     * it can have the following special values:
-     *    empty = no user file
-     *    0 = user file is new
-     *    -vers = user file to be removed.  */
-    char *vn_user;
-
-    /* Numeric revision number corresponding to ->vn_tag (->vn_tag
-       will often be symbolic).  */
-    char *vn_rcs;
-    /* If ->tag corresponds to a tag which really exists in this file,
-       this is just a copy of ->tag.  If not, this is either NULL or
-       the head revision.  (Or something like that, see RCS_getversion
-       and friends).  */
-    char *vn_tag;
-
-    /* This is the timestamp from stating the file in the working directory.
-       It is NULL if there is no file in the working directory.  */
-    char *ts_user;
-    /* Timestamp from CVS/Entries.  For the server, ts_user and ts_rcs
-       are computed in a slightly different way, but the fact remains that
-       if they are equal the file in the working directory is unmodified
-       and if they differ it is modified.  */
-    char *ts_rcs;
-
-    /* Options from CVS/Entries (keyword expansion).  */
-    char *options;
-
-    /* If non-NULL, there was a conflict (or merely a merge?  See merge_file)
-       and the time stamp in this field is the time stamp of the working
-       directory file which was created with the conflict markers in it.
-       This is from CVS/Entries.  */
-    char *ts_conflict;
-
-    /* Tag specified on the command line, or if none, tag stored in
-       CVS/Entries.  */
-    char *tag;
-    /* Date specified on the command line, or if none, date stored in
-       CVS/Entries.  */
-    char *date;
-
-    /* Pointer to entries file node  */
-    Entnode *entdata;
-
-    /* Pointer to parsed src file info */
-    RCSNode *srcfile;
-};
-typedef struct vers_ts Vers_TS;
-
-/*
  * structure used for list-private storage by Entries_Open() and
  * Version_TS().
  */
@@ -469,8 +388,6 @@ char *xmalloc PROTO((size_t bytes));
 void *xrealloc PROTO((void *ptr, size_t bytes));
 char *xstrdup PROTO((const char *str));
 void strip_trailing_newlines PROTO((char *str));
-int No_Difference PROTO((char *file, Vers_TS * vers, List * entries,
-			 char *repository, char *update_dir));
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
 int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
 int Reader_Lock PROTO((char *xrepository));
@@ -520,7 +437,6 @@ void copy_file PROTO((const char *from, const char *to));
 void (*error_set_cleanup PROTO((void (*) (void)))) PROTO ((void));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
-void freevers_ts PROTO((Vers_TS ** versp));
 
 extern int ign_name PROTO ((char *name));
 void ign_add PROTO((char *ign, int hold));
@@ -555,22 +471,12 @@ void update_delproc PROTO((Node * p));
 void usage PROTO((const char *const *cpp));
 void xchmod PROTO((char *fname, int writable));
 char *xgetwd PROTO((void));
-int Checkin PROTO((int type, char *file, char *update_dir,
-		   char *repository, char *rcs, char *rev,
-		   char *tag, char *options, char *message, List *entries));
-Ctype Classify_File PROTO((char *file, char *tag, char *date, char *options,
-		     int force_tag_match, int aflag, char *repository,
-		     List *entries, RCSNode *rcsnode, Vers_TS **versp,
-		     char *update_dir, int pipeout));
 List *Find_Names PROTO((char *repository, int which, int aflag,
 		  List ** optentries));
 void Register PROTO((List * list, char *fname, char *vn, char *ts,
 	       char *options, char *tag, char *date, char *ts_conflict));
 void Update_Logfile PROTO((char *repository, char *xmessage, char *xrevision,
 		     FILE * xlogfp, List * xchanges));
-Vers_TS *Version_TS PROTO((char *repository, char *options, char *tag,
-		     char *date, char *user, int force_tag_match,
-		     int set_time, List * entries, RCSNode * rcs));
 void do_editor PROTO((char *dir, char **messagep,
 		      char *repository, List * changes));
 
@@ -662,6 +568,104 @@ void close_on_exec PROTO((int));
 int filter_stream_through_program PROTO((int, int, char **, pid_t *));
 
 pid_t waitpid PROTO((pid_t, int *, int));
+
+/*
+ * a struct vers_ts contains all the information about a file including the
+ * user and rcs file names, and the version checked out and the head.
+ *
+ * this is usually obtained from a call to Version_TS which takes a
+ * tag argument for the RCS file if desired
+ */
+struct vers_ts
+{
+    /* rcs version user file derives from, from CVS/Entries.
+     * it can have the following special values:
+     *    empty = no user file
+     *    0 = user file is new
+     *    -vers = user file to be removed.  */
+    char *vn_user;
+
+    /* Numeric revision number corresponding to ->vn_tag (->vn_tag
+       will often be symbolic).  */
+    char *vn_rcs;
+    /* If ->tag corresponds to a tag which really exists in this file,
+       this is just a copy of ->tag.  If not, this is either NULL or
+       the head revision.  (Or something like that, see RCS_getversion
+       and friends).  */
+    char *vn_tag;
+
+    /* This is the timestamp from stating the file in the working directory.
+       It is NULL if there is no file in the working directory.  */
+    char *ts_user;
+    /* Timestamp from CVS/Entries.  For the server, ts_user and ts_rcs
+       are computed in a slightly different way, but the fact remains that
+       if they are equal the file in the working directory is unmodified
+       and if they differ it is modified.  */
+    char *ts_rcs;
+
+    /* Options from CVS/Entries (keyword expansion).  */
+    char *options;
+
+    /* If non-NULL, there was a conflict (or merely a merge?  See merge_file)
+       and the time stamp in this field is the time stamp of the working
+       directory file which was created with the conflict markers in it.
+       This is from CVS/Entries.  */
+    char *ts_conflict;
+
+    /* Tag specified on the command line, or if none, tag stored in
+       CVS/Entries.  */
+    char *tag;
+    /* Date specified on the command line, or if none, date stored in
+       CVS/Entries.  */
+    char *date;
+
+    /* Pointer to entries file node  */
+    Entnode *entdata;
+
+    /* Pointer to parsed src file info */
+    RCSNode *srcfile;
+};
+typedef struct vers_ts Vers_TS;
+
+Vers_TS *Version_TS PROTO ((struct file_info *finfo, char *options, char *tag,
+			    char *date, int force_tag_match,
+			    int set_time));
+void freevers_ts PROTO ((Vers_TS ** versp));
+
+/* Miscellaneous CVS infrastructure which layers on top of the recursion
+   processor (for example, needs struct file_info).  */
+
+int Checkin PROTO ((int type, struct file_info *finfo, char *rcs, char *rev,
+		    char *tag, char *options, char *message));
+int No_Difference PROTO ((struct file_info *finfo, Vers_TS *vers));
+
+/*
+ * defines for Classify_File() to determine the current state of a file.
+ * These are also used as types in the data field for the list we make for
+ * Update_Logfile in commit, import, and add.
+ */
+enum classify_type
+{
+    T_UNKNOWN = 1,			/* no old-style analog existed	 */
+    T_CONFLICT,				/* C (conflict) list		 */
+    T_NEEDS_MERGE,			/* G (needs merging) list	 */
+    T_MODIFIED,				/* M (needs checked in) list 	 */
+    T_CHECKOUT,				/* O (needs checkout) list	 */
+    T_ADDED,				/* A (added file) list		 */
+    T_REMOVED,				/* R (removed file) list	 */
+    T_REMOVE_ENTRY,			/* W (removed entry) list	 */
+    T_UPTODATE,				/* File is up-to-date		 */
+#ifdef SERVER_SUPPORT
+    T_PATCH,				/* P Like C, but can patch	 */
+#endif
+    T_TITLE				/* title for node type 		 */
+};
+typedef enum classify_type Ctype;
+
+Ctype Classify_File PROTO
+    ((struct file_info *finfo, char *tag, char *date, char *options,
+      int force_tag_match, int aflag, Vers_TS **versp, int pipeout));
+
 
 /* Wrappers.  */
 

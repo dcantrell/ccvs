@@ -1,5 +1,23 @@
 Fri Jun 28 20:30:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	For reference, this takes CVS's text segment from 271136 bytes to
+	270352 bytes, a saving of 784.  Not as good as I had hoped (oh well,
+	the source *seems* simpler at least).
+	* checkin.c (Checkin), commit.c (finaladd, remove_file), update.c
+	(join_file, checkout_file, patch_file), no_diff.c
+	(No_Differences), server.c (server_updated), classify.c
+	(Classify_File), vers_ts.c (Version_TS), diff.c (diff_file_nodiff):
+	Use a single struct file_info * argument instead of a bunch of
+	separate arguments for each of its fields.  Remove local fullname
+	emulations.  Use fullname in error messages where file had
+	erroneously been used.
+	* cvs.h: Update declarations of above functions and move them to
+	after the struct file_info declaration.
+	* server.h: Update declarations.
+	* add.c, admin.c, checkin.c, checkout.c, classify.c, client.c,
+	commit.c, diff.c, history.c, import.c, update.c, status.c,
+	remove.c, rtag.c, tag.c: Change callers.
+
 	* diff.c (diff): Remove -q and -Q command options.  This somehow
 	slipped through the cracks of the general removal of -q and -Q
 	command options on Jul 21 1995.  Note that there is no need to

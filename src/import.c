@@ -475,9 +475,18 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     int ierrno;
     char *tmpdir;
     char *tocvsPath;
+    struct file_info finfo;
 
-    vers = Version_TS (repository, (char *) NULL, vbranch, (char *) NULL, vfile,
-		       1, 0, (List *) NULL, (RCSNode *) NULL);
+    memset (&finfo, 0, sizeof finfo);
+    finfo.file = vfile;
+    /* Not used, so don't worry about it.  */
+    finfo.update_dir = NULL;
+    finfo.fullname = finfo.file;
+    finfo.repository = repository;
+    finfo.entries = NULL;
+    finfo.rcs = NULL;
+    vers = Version_TS (&finfo, (char *) NULL, vbranch, (char *) NULL,
+		       1, 0);
     if (vers->vn_rcs != NULL
 	&& !RCS_isdead(vers->srcfile, vers->vn_rcs))
     {
@@ -667,6 +676,7 @@ add_tags (rcs, vfile, vtag, targc, targv)
     int i, ierrno;
     Vers_TS *vers;
     int retcode = 0;
+    struct file_info finfo;
 
     if (noexec)
 	return (0);
@@ -680,8 +690,16 @@ add_tags (rcs, vfile, vtag, targc, targv)
 	       "ERROR: Failed to set tag %s in %s", vtag, rcs);
 	return (1);
     }
-    vers = Version_TS (repository, (char *) NULL, vtag, (char *) NULL, vfile,
-		       1, 0, (List *) NULL, (RCSNode *) NULL);
+
+    memset (&finfo, 0, sizeof finfo);
+    finfo.file = vfile;
+    /* Not used, so don't worry about it.  */
+    finfo.update_dir = NULL;
+    finfo.fullname = finfo.file;
+    finfo.repository = repository;
+    finfo.entries = NULL;
+    finfo.rcs = NULL;
+    vers = Version_TS (&finfo, NULL, vtag, NULL, 1, 0);
     for (i = 0; i < targc; i++)
     {
 	if ((retcode = RCS_settag (rcs, targv[i], vers->vn_rcs)) != 0)

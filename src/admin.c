@@ -123,8 +123,7 @@ admin_fileproc (finfo)
     int retcode = 0;
     int status = 0;
 
-    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
+    vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
     version = vers->vn_user;
     if (version == NULL)

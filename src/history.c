@@ -1135,9 +1135,19 @@ select_hrec (hr)
     {
 	Vers_TS *vers;
 	time_t t;
+	struct file_info finfo;
 
-	vers = Version_TS (hr->repos, (char *) NULL, since_rev, (char *) NULL,
-			   hr->file, 1, 0, (List *) NULL, (RCSNode *) NULL);
+	memset (&finfo, 0, sizeof finfo);
+	finfo.file = hr->file;
+	/* Not used, so don't worry about it.  */
+	finfo.update_dir = NULL;
+	finfo.fullname = finfo.file;
+	finfo.repository = hr->repos;
+	finfo.entries = NULL;
+	finfo.rcs = NULL;
+
+	vers = Version_TS (&finfo, (char *) NULL, since_rev, (char *) NULL,
+			   1, 0);
 	if (vers->vn_rcs)
 	{
 	    if ((t = RCS_getrevtime (vers->srcfile, vers->vn_rcs, (char *) 0, 0))

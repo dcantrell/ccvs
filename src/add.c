@@ -137,6 +137,7 @@ add (argc, argv)
     {
 	int begin_err = err;
 	int begin_added_files = added_files;
+	struct file_info finfo;
 
 	user = argv[i];
 	strip_trailing_slashes (user);
@@ -148,12 +149,19 @@ add (argc, argv)
 	    continue;
 	}
 
+	memset (&finfo, 0, sizeof finfo);
+	finfo.file = user;
+	finfo.update_dir = "";
+	finfo.fullname = user;
+	finfo.repository = repository;
+	finfo.entries = entries;
+	finfo.rcs = NULL;
+
 	/* We pass force_tag_match as 1.  If the directory has a
            sticky branch tag, and there is already an RCS file which
            does not have that tag, then the head revision is
            meaningless to us.  */
-	vers = Version_TS (repository, options, (char *) NULL, (char *) NULL,
-			   user, 1, 0, entries, (RCSNode *) NULL);
+	vers = Version_TS (&finfo, options, NULL, NULL, 1, 0);
 	if (vers->vn_user == NULL)
 	{
 	    /* No entry available, ts_rcs is invalid */
