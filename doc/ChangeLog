@@ -1,3 +1,8 @@
+Wed Feb  5 13:02:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Concurrency): Add comment about commit/commit
+	atomicity.
+
 Mon Feb  3 10:55:41 1997  joel boutros <nihilis@moral.addiction.com>
 
 	* cvs.texinfo (Connecting via rsh): Fix typo (programs -> problems).
