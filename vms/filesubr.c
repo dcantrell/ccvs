@@ -894,21 +894,7 @@ FILE *cvs_temp_file (filename)
     *filename = fn;
     return fp;
 }
-
-/* Return non-zero iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.  */
-int
-isabsolute (filename)
-    const char *filename;
-{
-    if(filename[0] == '/'
-       || filename[0] == '['
-       || filename[0] == '<'
-       || strchr(filename, ':'))
-        return 1;
-    else
-        return 0;
-}
+
 
 
 /* char *

@@ -650,15 +650,6 @@ cvs_temp_name ()
 #endif
 
 
-/* Return non-zero iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.
-   Under EMX let _fnisabs do all this work. */
-int
-isabsolute (filename)
-    const char *filename;
-{
-    return _fnisabs(filename);
-}
 
 /* char *
  * xresolvepath ( const char *path )

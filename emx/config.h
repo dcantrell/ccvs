@@ -438,3 +438,8 @@ extern int os2_fnmatch(const char *pattern, const char *name, int flags);
 #define SERVER_LO_WATER (1 * 1024 * 1024)
 
 /* End of CVS options.h section */
+
+/* Return non-zero iff FILENAME is absolute.
+   Trivial under Unix, but more complicated under other systems.
+   Under EMX let _fnisabs do all this work. */
+#define ISABSOLUTE(filename) _fnisabs(filename);
