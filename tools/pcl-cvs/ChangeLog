@@ -1,3 +1,8 @@
+Fri Aug  9 09:44:53 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* pcl-cvs.el (cvs-parse-stderr): Remove extra paren from regexp
+	matching rcsmerge warnings.
+
 Mon Apr 15 01:34:27 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * Makefile: removed.  Why was this in the repository in the first
