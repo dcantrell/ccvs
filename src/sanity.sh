@@ -2274,7 +2274,7 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 ###
 ### Initialize the repository
 ###
-dotest 1 "$testcvs init"
+dotest init-1 "$testcvs init"
 
 # Now hide the primary root above behind a secondary if requested.
 if $proxy; then

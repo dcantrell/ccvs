@@ -1,5 +1,10 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (1): Rename to...
+	(init-1): ...this.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* release.c (release): Simplify string construction with asnprintf().
 	Improve comment.  Some reformatting.
 
