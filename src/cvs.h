@@ -59,12 +59,6 @@ char *getenv();
 char *strerror (int);
 #endif
 
-#ifdef HAVE_FNMATCH
-# include <fnmatch.h> /* This is supposed to be available on Posix systems */
-#else /* HAVE_FNMATCH */
-# include "fnmatch.h" /* Our substitute */
-#endif /* HAVE_FNMATCH */
-
 #include "system.h"
 
 #include "hash.h"
