@@ -2271,8 +2271,7 @@ get_responses_and_close ()
 #if ! RSH_NOT_TRANSPARENT
     if (rsh_pid != -1
 	&& waitpid (rsh_pid, (int *) 0, 0) == -1)
-      if (errno != ECHILD)
-        error (1, errno, "waiting for process %d", rsh_pid);
+	error (1, errno, "waiting for process %d", rsh_pid);
 #endif /* ! RSH_NOT_TRANSPARENT */
 
     to_server = NULL;

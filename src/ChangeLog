@@ -1,5 +1,9 @@
 Sun Dec 17 00:44:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (get_responses_and_close): Really stop ignoring ECHILD
+	errors.  The Nov 30 1995 change claimed to do this, but the code
+	was not actually changed.
+
 	* update.c (ignore_files): Revert H.J. Lu change; it was wrong for
 	directories and sometimes looked at sb.st_mode when it wasn't set.
 	* import.c (import_descend): Revert H.J. Lu change; it was wrong
