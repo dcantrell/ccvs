@@ -1,3 +1,9 @@
+1998-07-01  Andy Mortimer of aeat.co.uk
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server_updated): Use a prototype if we are using them
+	for declarations.
+
 1998-06-29  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (commit-readonly): Protect keyword against expansion

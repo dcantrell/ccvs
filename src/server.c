@@ -3396,6 +3396,17 @@ server_modtime (finfo, vers_ts)
 
 /* See server.h for description.  */
 
+#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
+/* Need to prototype because mode_t might be smaller than int.  */
+void
+server_updated (
+    struct file_info *finfo,
+    Vers_TS *vers,
+    enum server_updated_arg4 updated,
+    mode_t mode,
+    unsigned char *checksum,
+    struct buffer *filebuf)
+#else
 void
 server_updated (finfo, vers, updated, mode, checksum, filebuf)
     struct file_info *finfo;
@@ -3404,6 +3415,7 @@ server_updated (finfo, vers, updated, mode, checksum, filebuf)
     mode_t mode;
     unsigned char *checksum;
     struct buffer *filebuf;
+#endif
 {
     if (noexec)
     {
