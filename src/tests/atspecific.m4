@@ -44,6 +44,17 @@ cd ..
 AT_CHECK([cvs -Q release -d top])dnl
 # Checkout the default project
 AT_CHECK([cvs -Q co project])dnl
+
+#
+# cd into the default project for the workspace.
+#
+# I'm checking for error returns from the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+cd project ||
+  AS_ERROR([Couldn't cd to `project'.  Did \$HOME get set incorrectly?])
 }])dnl
 
 
@@ -121,17 +132,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  AS_ERROR([Couldn't cd to \`project'.  Did \$HOME get set incorrectly?])
 
 ###
 ### End AT_CVS_SETUP([$1])

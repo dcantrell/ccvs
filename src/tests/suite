@@ -249,8 +249,8 @@ $as_unset CDPATH
 
 cvs_project_init() {
 $at_traceoff
-echo "atspecific.m4:47: cvs init"
-echo atspecific.m4:47 >$at_check_line_file
+echo "atspecific.m4:58: cvs init"
+echo atspecific.m4:58 >$at_check_line_file
 ( $at_traceon; cvs init ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -262,7 +262,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "atspecific.m4:47: exit code was $at_status, expected 0"
+   *) echo "atspecific.m4:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -277,8 +277,8 @@ $at_traceon
 # Create the default project
 #
 $at_traceoff
-echo "atspecific.m4:47: cvs -Q co -l -d top ."
-echo atspecific.m4:47 >$at_check_line_file
+echo "atspecific.m4:58: cvs -Q co -l -d top ."
+echo atspecific.m4:58 >$at_check_line_file
 ( $at_traceon; cvs -Q co -l -d top . ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -290,7 +290,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "atspecific.m4:47: exit code was $at_status, expected 0"
+   *) echo "atspecific.m4:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -303,8 +303,8 @@ $at_traceon
 cd top
 mkdir project
 $at_traceoff
-echo "atspecific.m4:47: cvs -Q add project"
-echo atspecific.m4:47 >$at_check_line_file
+echo "atspecific.m4:58: cvs -Q add project"
+echo atspecific.m4:58 >$at_check_line_file
 ( $at_traceon; cvs -Q add project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -316,7 +316,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "atspecific.m4:47: exit code was $at_status, expected 0"
+   *) echo "atspecific.m4:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -328,8 +328,8 @@ fi
 $at_traceon
 cd ..
 $at_traceoff
-echo "atspecific.m4:47: cvs -Q release -d top"
-echo atspecific.m4:47 >$at_check_line_file
+echo "atspecific.m4:58: cvs -Q release -d top"
+echo atspecific.m4:58 >$at_check_line_file
 ( $at_traceon; cvs -Q release -d top ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -341,7 +341,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "atspecific.m4:47: exit code was $at_status, expected 0"
+   *) echo "atspecific.m4:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -353,8 +353,8 @@ fi
 $at_traceon
 # Checkout the default project
 $at_traceoff
-echo "atspecific.m4:47: cvs -Q co project"
-echo atspecific.m4:47 >$at_check_line_file
+echo "atspecific.m4:58: cvs -Q co project"
+echo atspecific.m4:58 >$at_check_line_file
 ( $at_traceon; cvs -Q co project ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
@@ -366,7 +366,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "atspecific.m4:47: exit code was $at_status, expected 0"
+   *) echo "atspecific.m4:58: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -376,6 +376,18 @@ if $at_failed; then
 fi
 
 $at_traceon
+
+#
+# cd into the default project for the workspace.
+#
+# I'm checking for error returns from the cd and printing error messages since,
+# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
+# directories to be pruned by checkout, the project directory will not be
+# created but the `cvs co' will not return an error.
+#
+cd project ||
+  { echo "$as_me: error: Couldn't cd to \`project'.  Did \$HOME get set incorrectly?" >&2
+   { (exit 1); exit 1; }; }
 }
 
 SHELL=${CONFIG_SHELL-/bin/sh}
@@ -1714,19 +1726,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([init])
 ###
@@ -1862,19 +1861,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([init])
@@ -2028,19 +2014,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([init])
@@ -2227,19 +2200,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([init])
 ###
@@ -2352,19 +2312,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([version])
@@ -2566,19 +2513,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([version])
@@ -2797,19 +2731,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([version])
@@ -3064,19 +2985,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([version])
 ###
@@ -3258,19 +3166,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([Operations on empty projects])
 ###
@@ -3446,19 +3341,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Adding directories and files])
@@ -3810,19 +3692,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([tag, update, & diff])
@@ -4195,19 +4064,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([strange revision numbers])
@@ -5400,19 +5256,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([annotate])
 ###
@@ -5587,19 +5430,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([top of repository])
@@ -5910,19 +5740,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Emptydir not special])
@@ -6622,19 +6439,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([delete last revision])
 ###
@@ -6811,19 +6615,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([no admin -H])
 ###
@@ -6933,19 +6724,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Operations on empty projects])
@@ -7154,19 +6932,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Adding directories and files])
@@ -7550,19 +7315,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([tag, update, & diff])
@@ -7967,19 +7719,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([strange revision numbers])
@@ -9204,19 +8943,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([annotate])
 ###
@@ -9423,19 +9149,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([top of repository])
@@ -9778,19 +9491,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Emptydir not special])
@@ -10522,19 +10222,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([delete last revision])
 ###
@@ -10743,19 +10430,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([no admin -H])
 ###
@@ -10882,19 +10556,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Operations on empty projects])
@@ -11120,19 +10781,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Adding directories and files])
@@ -11533,19 +11181,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([tag, update, & diff])
@@ -11967,19 +11602,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([strange revision numbers])
@@ -13221,19 +12843,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([annotate])
 ###
@@ -13457,19 +13066,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([top of repository])
@@ -13829,19 +13425,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Emptydir not special])
@@ -14590,19 +14173,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([delete last revision])
 ###
@@ -14828,19 +14398,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([no admin -H])
 ###
@@ -14999,19 +14556,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Operations on empty projects])
@@ -15269,19 +14813,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Adding directories and files])
@@ -15714,19 +15245,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([tag, update, & diff])
@@ -16180,19 +15698,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([strange revision numbers])
@@ -17466,19 +16971,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([annotate])
 ###
@@ -17734,19 +17226,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([top of repository])
@@ -18138,19 +17617,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([Emptydir not special])
@@ -18931,19 +18397,6 @@ RCSINIT=
 
 cvs_project_init || exit 1
 
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
-
 ###
 ### End AT_CVS_SETUP([delete last revision])
 ###
@@ -19200,19 +18653,6 @@ HOME=$at_group_dir/home; export HOME
 RCSINIT=
 
 cvs_project_init || exit 1
-
-#
-# cd into the default project for the workspace.
-#
-# I'm checking for error returns from the cd and printing error messages since,
-# for instance, if the CVS executable picks up a ~/.cvsrc which causes empty
-# directories to be pruned by checkout, the project directory will not be
-# created but the `cvs co' will not return an error.
-#
-cd project ||
-  { { echo "$as_me:$LINENO: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&5
-echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly?" >&2;}
-   { (exit 1); exit 1; }; }
 
 ###
 ### End AT_CVS_SETUP([no admin -H])

@@ -1,5 +1,11 @@
 2003-11-20  Derek R. Price  <derek@ximbiot.com>
 
+	* atspecific.at (AT_CVS_SETUP): Move directory change...
+	(cvs_project_init): ...here.
+	* suite: Regenerated.
+
+2003-11-20  Derek R. Price  <derek@ximbiot.com>
+
 	* basic.at: Reformat & add some keywords.
 	* suite: Regenerated.
 
