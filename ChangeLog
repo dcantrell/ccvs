@@ -1,5 +1,14 @@
 2001-04-25  Derek Price  <dprice@collab.net>
 
+	* configure.in: Update version to 1.11.1.
+
+	* Makefile.in: Regenerated with AM 1.4e as of today at 18:10 -0400
+	(EDT).
+	* aclocal.m4: Ditto.
+	* configure: Ditto.
+
+2001-04-25  Derek Price  <dprice@collab.net>
+
 	* NEWS: Correct punctuation.
 
 2001-04-25  Larry Jones  <larry.jones@sdr.com>
