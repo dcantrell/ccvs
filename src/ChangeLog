@@ -1,3 +1,8 @@
+2005-02-01  Larry Jones  <lawrence.jones@ugs.com>
+
+	* log.c (log_fileproc, log_expand_revlist): Add support for BASE tag.
+	* sanity.sh (log): New tests for above.
+
 2005-01-31 Derek Price <derek@ximbiot.com>
 
 	* main.c: Update year in copyright notice to match GNU standards.
