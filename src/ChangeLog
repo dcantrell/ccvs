@@ -1,3 +1,9 @@
+Tue Oct 17 18:09:23 1995  Warren Jones <wjones@tc.fluke.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Deal with supplying a relative cvs filename, or
+	with a cvs filename which doesn't have basename "cvs".
+
 Mon Oct 16 15:58:31 1995  Vince Demarco <vdemarco@bou.shl.com>
 
 	* parseinfo.c (Parse_Info): if the Keyword isn't ALL the current

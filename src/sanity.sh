@@ -30,7 +30,13 @@ else
   remote=no
 fi
 
-testcvs=$1; shift
+# Use full path for CVS executable, so that CVS_SERVER gets set properly
+# for remote.
+case $1 in
+     /* ) testcvs=$1 ;;
+      * ) testcvs=`pwd`/$1 ;;
+esac
+shift
 
 # Remaining arguments are the names of tests to run.
 if test x"$*" = x; then
@@ -1452,12 +1458,13 @@ for what in $tests; do
 	  fi
 	  cd ../../2/1dir
 	  ${testcvs} -q update 2>../tst167.err
+	  CVSBASE=`basename $testcvs`	# Get basename of CVS executable.
 	  cat <<EOF >../tst167.ans
-cvs server: warning: foo is not (any longer) pertinent
-cvs update: unable to remove ./foo: Permission denied
+$CVSBASE server: warning: foo is not (any longer) pertinent
+$CVSBASE update: unable to remove ./foo: Permission denied
 EOF
 	  if cmp ../tst167.ans ../tst167.err >/dev/null ||
-	  ( echo 'cvs [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied' | cmp - ../tst167.err >/dev/null )
+	  ( echo "$CVSBASE [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied" | cmp - ../tst167.err >/dev/null )
 	  then
 	    echo 'PASS: test 168' >>${LOGFILE}
 	  else
