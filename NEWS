@@ -1,6 +1,14 @@
 Changes since 1.11.15:
 **********************
 
+SERVER SECURITY FIXES
+
+* A potential buffer overflow vulnerability in the server has been fixed.
+  Prior to this patch, a malicious client could potentially use carefully
+  crafted server requests to run arbitrary programs on the CVS server machine.
+  This addresses the Common Vulnerabilities and Exposures Project's issue
+  #CAN-2004-0396.  Please see <http://www.cve.mitre.org> for more information.
+
 BUG FIXES
 
 * The Microsoft Visual C++ workspace and project files have been repaired and
