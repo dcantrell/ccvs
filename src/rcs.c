@@ -6626,8 +6626,20 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	char *diffbuf;
 	size_t bufsize, len;
 
+#if defined (__CYGWIN32__) || defined (_WIN32)
+	/* FIXME: This is an awful kludge, but at least until I have
+	   time to work on it a little more and test it, I'd rather
+	   give a fatal error than corrupt the file.  I think that we
+	   need to use "-kb" and "--binary" and "rb" to get_file
+	   (probably can do it always, not just for binary files, if
+	   we are consistent between the RCS_checkout and the diff).  */
+	if (strcmp (RCS_getexpand (rcs), "b") == 0)
+	    error (1, 0,
+		   "admin -o not implemented yet for binary on this system");
+#endif
+
 	afterfile = cvs_temp_name();
-	status = RCS_checkout (rcs, NULL, after, NULL, NULL, afterfile,
+	status = RCS_checkout (rcs, NULL, after, NULL, "-ko", afterfile,
 			       (RCSCHECKOUTPROC)0, NULL);
 	if (status > 0)
 	    goto delrev_done;
@@ -6655,7 +6667,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	else
 	{
 	    beforefile = cvs_temp_name();
-	    status = RCS_checkout (rcs, NULL, before, NULL, NULL, beforefile,
+	    status = RCS_checkout (rcs, NULL, before, NULL, "-ko", beforefile,
 				   (RCSCHECKOUTPROC)0, NULL);
 	    if (status > 0)
 		goto delrev_done;
