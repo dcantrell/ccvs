@@ -1,3 +1,16 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Call AM_GNU_GETTEXT.
+	* ABOUT-NLS: New file for GNU gettext support.
+	* config.guess: Ditto.
+	* config.rpath: Ditto.
+	* config.sub: Ditto.
+
+	* Makefile.in: Regenerated.
+	* aclocal.m4: Ditto.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+
 2003-06-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS: New LocalKeyword and KeywordExpand options.
@@ -4447,4 +4460,3 @@ Mon Dec	 6 17:02:18 1993  K. Richard Pixley  (rich@sendai.cygnus.com)
 
 	* src/diff.c (diff_fileproc): add support for "cvs diff -N" which
 	  allows for adding or removing files via patches.
-
