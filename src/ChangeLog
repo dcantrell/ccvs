@@ -1,11 +1,13 @@
-2005-03-01  Mark D. Baushke  <mdb@juniper.net>
+2005-03-01  Mark D. Baushke  <mdb@cvshome.org>
+
+	* checkout.c (emptydir_name): Xasprintf instead of
+	xmalloc/sprintf.
 
 	* add.c (add): Xasprintf instead of xmalloc/sprintf.
 	Gratuitous reformatting.
 	(add_directory, build_entry): Ditto.
 	* annotate.c (rannotate_proc): Ditto.
 	* checkout.c (checkout_proc): Ditto.
-	(emptydir_name): Ditto.
 	* client.c (call_in_directory): Ditto.
 	(template, send_dirent_proc): Ditto.
 	(client_process_import_file): Ditto.
