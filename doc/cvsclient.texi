@@ -132,10 +132,10 @@ A number of enhancements are possible:
 @item
 The @code{Modified} request could be speeded up by sending diffs rather
 than entire files.  The client would need some way to keep the version
-of the file which was originally checked out, which would double client
-disk space requirements or require coordination with editors (e.g. maybe
-it could use emacs numbered backups).  This would also allow local
-operation of @code{cvs diff} without arguments.
+of the file which was originally checked out; probably requiring the use
+of "cvs edit" in this case is the most sensible course (the "cvs edit"
+could be handled by a package like VC for emacs).  This would also allow
+local operation of @code{cvs diff} without arguments.
 
 @item
 Have the client keep a copy of some part of the repository.  This allows

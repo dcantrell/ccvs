@@ -1,3 +1,9 @@
+Mon Aug 26 15:39:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Protocol Notes): When talking about having the
+	client know the original contents of files, suggest cvs edit as a
+	solution.
+
 Thu Aug 22 10:44:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Keyword list): Document Name keyword.
