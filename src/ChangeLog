@@ -1,5 +1,8 @@
 2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* ms-buffer.c (ms_buffer_input): Avoid UNICOS cc error where
+	'Both sides of the assignment operator are not compatible.'
+
 	* sanity.sh (importc, rcs, rcs4, tagdate): Use TZ=UTC0 not TZ=UTC
 	to get proper POSIX behavior on MacOS X.
 
