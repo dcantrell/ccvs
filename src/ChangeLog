@@ -1,5 +1,11 @@
 2004-06-28  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.c (log_buffer_flush): Sync all, not just data.
+	* buffer.c (fd_buffer_flush): Ditto.  Ignore problems synchronizing
+	unsynchronizable descriptors.
+
+2004-06-28  Derek Price  <derek@ximbiot.com>
+
 	Intermediate checkin on the way to enabling the write proxy.
 
 	* server.c (isSecondaryServer): Handle forked primary.
