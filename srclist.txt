@@ -226,6 +226,11 @@ $GNULIB/lib/xalloc.h				lib		no NI
 $GNULIB/lib/xmalloc.c				lib		no NI
 $GNULIB/lib/xstrdup.c				lib		yes NI
 $GNULIB/m4/xalloc.m4				m4		no NI
+# $GNULIB/modules/xgetcwd
+$GNULIB/lib/xgetcwd.h				lib		no NI
+$GNULIB/lib/xgetcwd.c				lib		no NI
+$GNULIB/m4/getcwd.m4				m4		no NI
+$GNULIB/m4/xgetcwd.m4				m4		no NI
 # $GNULIB/modules/xsize
 $GNULIB/lib/xsize.h				lib		no NI
 $GNULIB/m4/xsize.m4				m4		no NI
