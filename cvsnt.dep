@@ -8,7 +8,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -36,7 +35,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -63,7 +61,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -99,7 +96,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -126,7 +122,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -155,7 +150,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -182,7 +176,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -212,7 +205,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
@@ -245,7 +237,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -275,7 +266,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -303,7 +293,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -330,7 +319,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -358,7 +346,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -389,7 +376,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -416,7 +402,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -443,7 +428,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -470,7 +454,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -498,7 +481,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -526,7 +508,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -553,7 +534,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -574,9 +554,7 @@
 	
 
 .\lib\fncase.c : \
-	".\lib\fnmatch.h"\
 	".\lib\gettext.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\xtime.h"\
@@ -607,7 +585,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -635,7 +612,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -664,7 +640,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -692,7 +667,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -719,7 +693,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -746,7 +719,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -773,7 +745,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -801,7 +772,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -829,7 +799,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -856,7 +825,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -888,7 +856,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -917,7 +884,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -946,7 +912,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -974,7 +939,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1005,7 +969,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1033,7 +996,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1061,7 +1023,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1092,7 +1053,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1120,7 +1080,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1150,7 +1109,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1178,7 +1136,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1209,7 +1166,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1236,7 +1192,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1264,7 +1219,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1292,7 +1246,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1319,7 +1272,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1347,7 +1299,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1379,7 +1330,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1408,7 +1358,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1432,9 +1381,7 @@
 	
 
 .\lib\sighandle.c : \
-	".\lib\fnmatch.h"\
 	".\lib\gettext.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\xtime.h"\
@@ -1453,7 +1400,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1481,7 +1427,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1508,7 +1453,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1536,7 +1480,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1568,7 +1511,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\vasnprintf.h"\
@@ -1597,7 +1539,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1626,7 +1567,6 @@
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1651,10 +1591,8 @@
 	
 
 .\lib\valloc.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getpagesize.h"\
 	".\lib\gettext.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\xtime.h"\
@@ -1679,7 +1617,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1706,7 +1643,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1737,7 +1673,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1767,7 +1702,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1795,7 +1729,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
@@ -1816,10 +1749,8 @@
 	
 
 .\lib\xgetwd.c : \
-	".\lib\fnmatch.h"\
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\xtime.h"\
@@ -1851,7 +1782,6 @@
 	".\lib\gettext.h"\
 	".\lib\pathmax.h"\
 	".\lib\regex.h"\
-	".\lib\stdbool.h"\
 	".\lib\system.h"\
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
