@@ -738,7 +738,6 @@ serve_root (arg)
 {
     char *env;
     char *path;
-    int save_errno;
     char *arg_dup;
     
     if (error_pending()) return;
@@ -805,9 +804,8 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
-	save_errno = errno;
-	pending_error_text = malloc (80 + strlen (path));
-	if (pending_error_text != NULL)
+	int save_errno = errno;
+	if (alloc_pending (80 + strlen (path)))
 	    sprintf (pending_error_text, "E Cannot access %s", path);
 	pending_error = save_errno;
     }
@@ -1024,9 +1022,9 @@ dirswitch (dir, repos)
     if (status != 0
 	&& status != EEXIST)
     {
-	pending_error = status;
 	if (alloc_pending (80 + strlen (dir_name)))
 	    sprintf (pending_error_text, "E cannot mkdir %s", dir_name);
+	pending_error = status;
 	return;
     }
 
@@ -1039,17 +1037,18 @@ dirswitch (dir, repos)
     status = create_adm_p (server_temp_dir, dir);
     if (status != 0)
     {
-	pending_error = status;
 	if (alloc_pending (80 + strlen (dir_name)))
 	    sprintf (pending_error_text, "E cannot create_adm_p %s", dir_name);
+	pending_error = status;
 	return;
     }
 
     if ( CVS_CHDIR (dir_name) < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name)))
 	    sprintf (pending_error_text, "E cannot change to %s", dir_name);
+	pending_error = save_errno;
 	return;
     }
     /*
@@ -1058,10 +1057,11 @@ dirswitch (dir, repos)
      */
     if ((CVS_MKDIR (CVSADM, 0777) < 0) && (errno != EEXIST))
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM)))
 	    sprintf (pending_error_text,
 		     "E cannot mkdir %s/%s", dir_name, CVSADM);
+	pending_error = save_errno;
 	return;
     }
 
@@ -1073,18 +1073,20 @@ dirswitch (dir, repos)
     f = CVS_FOPEN (CVSADM_REP, "w");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
 		     "E cannot open %s/%s", dir_name, CVSADM_REP);
+	pending_error = save_errno;
 	return;
     }
     if (fprintf (f, "%s", repos) < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
 		     "E error writing %s/%s", dir_name, CVSADM_REP);
+	pending_error = save_errno;
 	fclose (f);
 	return;
     }
@@ -1097,29 +1099,32 @@ dirswitch (dir, repos)
     {
         if (fprintf (f, "/.") < 0)
 	{
-	    pending_error = errno;
+	    int save_errno = errno;
 	    if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
 		sprintf (pending_error_text,
 			 "E error writing %s/%s", dir_name, CVSADM_REP);
+	    pending_error = save_errno;
 	    fclose (f);
 	    return;
 	}
     }
     if (fprintf (f, "\n") < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
 		     "E error writing %s/%s", dir_name, CVSADM_REP);
+	pending_error = save_errno;
 	fclose (f);
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
 	    sprintf (pending_error_text,
 		     "E error closing %s/%s", dir_name, CVSADM_REP);
+	pending_error = save_errno;
 	return;
     }
     /* We open in append mode because we don't want to clobber an
@@ -1127,16 +1132,18 @@ dirswitch (dir, repos)
     f = CVS_FOPEN (CVSADM_ENT, "a");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_ENT)))
 	    sprintf (pending_error_text, "E cannot open %s", CVSADM_ENT);
+	pending_error = save_errno;
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_ENT)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENT);
+	pending_error = save_errno;
 	return;
     }
 }
@@ -1145,10 +1152,7 @@ static void
 serve_repository (arg)
     char *arg;
 {
-    pending_error_text = malloc (80);
-    if (pending_error_text == NULL)
-	pending_error = ENOMEM;
-    else
+    if (alloc_pending (80))
 	strcpy (pending_error_text,
 		"E Repository request is obsolete; aborted");
     return;
@@ -1205,16 +1209,18 @@ serve_static_directory (arg)
     f = CVS_FOPEN (CVSADM_ENTSTAT, "w+");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_ENTSTAT)))
 	    sprintf (pending_error_text, "E cannot open %s", CVSADM_ENTSTAT);
+	pending_error = save_errno;
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_ENTSTAT)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENTSTAT);
+	pending_error = save_errno;
 	return;
     }
 }
@@ -1230,23 +1236,26 @@ serve_sticky (arg)
     f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_TAG)))
 	    sprintf (pending_error_text, "E cannot open %s", CVSADM_TAG);
+	pending_error = save_errno;
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_TAG)))
 	    sprintf (pending_error_text, "E cannot write to %s", CVSADM_TAG);
+	pending_error = save_errno;
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_TAG)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_TAG);
+	pending_error = save_errno;
 	return;
     }
 }
@@ -1305,10 +1314,10 @@ receive_partial_file (size, file)
 	    nwrote = write (file, data, nread);
 	    if (nwrote < 0)
 	    {
-		pending_error_text = malloc (40);
-		if (pending_error_text != NULL)
-		    sprintf (pending_error_text, "E unable to write");
-		pending_error = errno;
+	        int save_errno = errno;
+		if (alloc_pending (40))
+		    strcpy (pending_error_text, "E unable to write");
+		pending_error = save_errno;
 
 		/* Read and discard the file data.  */
 		while (size > 0)
@@ -1344,10 +1353,10 @@ receive_file (size, file, gzipped)
     fd = CVS_OPEN (arg, O_WRONLY | O_CREAT | O_TRUNC, 0600);
     if (fd < 0)
     {
-	pending_error_text = malloc (40 + strlen (arg));
-	if (pending_error_text)
+	int save_errno = errno;
+	if (alloc_pending (40 + strlen (arg)))
 	    sprintf (pending_error_text, "E cannot open %s", arg);
-	pending_error = errno;
+	pending_error = save_errno;
 	return;
     }
 
@@ -1439,10 +1448,10 @@ receive_file (size, file, gzipped)
  out:
     if (close (fd) < 0 && !error_pending ())
     {
-	pending_error_text = malloc (40 + strlen (arg));
-	if (pending_error_text)
+	int save_errno = errno;
+	if (alloc_pending (40 + strlen (arg)))
 	    sprintf (pending_error_text, "E cannot close %s", arg);
-	pending_error = errno;
+	pending_error = save_errno;
 	return;
     }
 }
@@ -1521,7 +1530,7 @@ serve_modified (arg)
 		{
 		    sprintf (pending_error_text,
 			     "E error reading size for %s", arg);
-		    pending_error = errno;
+		    pending_error = status;
 		}
 	    }
 	}
@@ -1569,9 +1578,10 @@ serve_modified (arg)
 	t.modtime = t.actime = checkin_time;
 	if (utime (arg, &t) < 0)
 	{
-	    pending_error = errno;
+	    int save_errno = errno;
 	    if (alloc_pending (80 + strlen (arg)))
 		sprintf (pending_error_text, "E cannot utime %s", arg);
+	    pending_error = save_errno;
 	    return;
 	}
 	checkin_time_valid = 0;
@@ -1582,8 +1592,7 @@ serve_modified (arg)
 	free (mode_text);
 	if (status)
 	{
-	    pending_error_text = malloc (40 + strlen (arg));
-	    if (pending_error_text)
+	    if (alloc_pending (40 + strlen (arg)))
 		sprintf (pending_error_text,
 			 "E cannot change mode for %s", arg);
 	    pending_error = status;
@@ -1858,9 +1867,10 @@ server_write_entries ()
 	f = CVS_FOPEN (CVSADM_ENT, "a");
 	if (f == NULL)
 	{
-	    pending_error = errno;
+	    int save_errno = errno;
 	    if (alloc_pending (80 + strlen (CVSADM_ENT)))
 		sprintf (pending_error_text, "E cannot open %s", CVSADM_ENT);
+	    pending_error = save_errno;
 	}
     }
     for (p = entries; p != NULL;)
@@ -1869,10 +1879,11 @@ server_write_entries ()
 	{
 	    if (fprintf (f, "%s\n", p->entry) < 0)
 	    {
-		pending_error = errno;
+		int save_errno = errno;
 		if (alloc_pending (80 + strlen(CVSADM_ENT)))
 		    sprintf (pending_error_text,
 			     "E cannot write to %s", CVSADM_ENT);
+		pending_error = save_errno;
 	    }
 	}
 	free (p->entry);
@@ -1883,9 +1894,10 @@ server_write_entries ()
     entries = NULL;
     if (f != NULL && fclose (f) == EOF && !error_pending ())
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_ENT)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_ENT);
+	pending_error = save_errno;
     }
 }
 
@@ -2019,11 +2031,10 @@ serve_notify (arg)
     }
     return;
   error:
-    pending_error_text = malloc (80);
-    if (pending_error_text)
+    pending_error = 0;
+    if (alloc_pending (80))
 	strcpy (pending_error_text,
 		"E Protocol error; misformed Notify request");
-    pending_error = 0;
     return;
 }
 
@@ -4503,24 +4514,27 @@ serve_checkin_prog (arg)
     f = CVS_FOPEN (CVSADM_CIPROG, "w+");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
 	    sprintf (pending_error_text, "E cannot open %s", CVSADM_CIPROG);
+	pending_error = save_errno;
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
 	    sprintf (pending_error_text,
 		     "E cannot write to %s", CVSADM_CIPROG);
+	pending_error = save_errno;
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_CIPROG);
+	pending_error = save_errno;
 	return;
     }
 }
@@ -4546,23 +4560,26 @@ E Flag -u in modules not allowed in readonly mode");
     f = CVS_FOPEN (CVSADM_UPROG, "w+");
     if (f == NULL)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
 	    sprintf (pending_error_text, "E cannot open %s", CVSADM_UPROG);
+	pending_error = save_errno;
 	return;
     }
     if (fprintf (f, "%s\n", arg) < 0)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
 	    sprintf (pending_error_text, "E cannot write to %s", CVSADM_UPROG);
+	pending_error = save_errno;
 	return;
     }
     if (fclose (f) == EOF)
     {
-	pending_error = errno;
+	int save_errno = errno;
 	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
 	    sprintf (pending_error_text, "E cannot close %s", CVSADM_UPROG);
+	pending_error = save_errno;
 	return;
     }
 }
@@ -4883,16 +4900,10 @@ server (argc, argv)
 	   for that case.  */
 	if (!isabsolute (Tmpdir))
 	{
-	    pending_error_text = malloc (80 + strlen (Tmpdir));
-	    if (pending_error_text == NULL)
-	    {
-		pending_error = ENOMEM;
-	    }
-	    else
-	    {
+	    if (alloc_pending (80 + strlen (Tmpdir)))
 		sprintf (pending_error_text,
 			 "E Value of %s for TMPDIR is not absolute", Tmpdir);
-	    }
+
 	    /* FIXME: we would like this error to be persistent, that
 	       is, not cleared by print_pending_error.  The current client
 	       will exit as soon as it gets an error, but the protocol spec
@@ -4959,7 +4970,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	    }
 	    if (status != 0)
 	    {
-		if (alloc_pending (80) + strlen (server_temp_dir))
+		if (alloc_pending (80 + strlen (server_temp_dir)))
 		    sprintf (pending_error_text,
 			    "E can't create temporary directory %s",
 			    server_temp_dir);
@@ -4971,7 +4982,7 @@ error ENOMEM Virtual memory exhausted.\n");
 		if (chmod (server_temp_dir, S_IRWXU) < 0)
 		{
 		    int save_errno = errno;
-		    if (alloc_pending (80) + strlen (server_temp_dir))
+		    if (alloc_pending (80 + strlen (server_temp_dir)))
 			sprintf (pending_error_text,
 "E cannot change permissions on temporary directory %s",
 				server_temp_dir);
