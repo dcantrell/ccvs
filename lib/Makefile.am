@@ -123,14 +123,8 @@ MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
 # Program required by test-getdate.sh for testing getdate.y.
 check_PROGRAMS += getdate
 getdate_SOURCES = \
-	allocsa.c \
 	error.c \
-	exitfail.c exitfail.h \
-	getdate.y \
-	xalloc-die.c \
-	xgetcwd.h xgetcwd.c \
-	xalloc.h \
-	xmalloc.c
+	getdate.y
 ## This source file was added only for the getdate test program when compiled
 ## with GNULIB's error.c.
 getdate_SOURCES += \

@@ -1,3 +1,8 @@
+2005-03-23  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (getdate_SOURCES): Remove sources that are now included
+	via $(noinst_LIBRARIES).
+
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* mktime.c, regex.c, stdint_.h, strftime.c, strtol.c: Update from
