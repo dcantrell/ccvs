@@ -1,5 +1,18 @@
 Fri Sep 27 04:23:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Adding files): Talk about directories, not modules,
+	since that is what is meant.  Suggest using -kb option to add
+	rather than running cvs admin after the fact and xref to Binary
+	files not admin examples.  Incorporate information which had been
+	in "add" node (there was a lot of duplication).  Don't document
+	use of "add" on a directory to take the place of "cvs update -d";
+	the latter is simpler and more logical.
+	(add, add options, add examples): Removed.
+	(release output, release options): Update xrefs accordingly.
+	(Adding files, Removing files): Mention the fact that adds and
+	removes are branch-specific.
+	(Merging adds and removals): New node.
+
 	* cvs.texinfo (Concurrency): When mentioning RCS locks, use the
 	term reserved checkouts and xref to the place where we discuss
 	them in more depth.
