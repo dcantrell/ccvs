@@ -251,6 +251,12 @@
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE
 
+/* Define to 1 if you have the `getcwd' function. */
+#undef HAVE_GETCWD
+
+/* Define if getcwd (NULL, 0) allocates memory for result. */
+#undef HAVE_GETCWD_NULL
+
 /* Define to 1 if you have the `getdelim' function. */
 #undef HAVE_GETDELIM
 
