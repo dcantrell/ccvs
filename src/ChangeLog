@@ -1,3 +1,11 @@
+Tue Dec  5 23:37:39 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (connect_to_pserver): read password from prompt for
+        now.
+
+        * server.c (authenticate_connection): if the password passes
+        muster, then don't abort.
+
 Tue Dec  5 22:46:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * subr.c (strip_trailing_newlines): new func.
