@@ -1,3 +1,8 @@
+Tue Sep  9 22:20:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS (Notes regarding compiling on VAX/VMS): Add item
+	about mode_t and pid_t.
+
 Sun Sep  7 17:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* FAQ: Re-import from FAQ-O-Matic.  The metavariables are back.
