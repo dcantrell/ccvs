@@ -1,3 +1,13 @@
+Wed Feb  8 06:49:49 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* Makefile.in (stamp-h): Pass CONFIG_FILES=$@ to config.status so
+ 	the target is created.
+	* configure.in: Applied `autoupdate' from Autoconf 2.1 to
+ 	modernize macro usage.
+	(AC_RSH): Call removed.  It was obsolete and not doing anything useful.
+	(AC_OUTPUT): Write stamp-h as the Makefile rules expect we will.
+	(AC_TYPE_PID_T): Add this check.
+
 Tue Nov  8 06:26:54 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* Add stamp-h.in.  Remove it from .cvsignore.

@@ -37,7 +37,7 @@ static int local;			/* recursive by default */
 static int force_tag_match = 1;		/* force by default */
 static int force_tag_move;              /* don't move existing tags by default */
 
-static char *rtag_usage[] =
+static const char *const rtag_usage[] =
 {
     "Usage: %s %s [-QaflRnqF] [-b] [-d] [-r tag|-D date] tag modules...\n",
     "\t-Q\tReally quiet.\n",

@@ -1,10 +1,22 @@
 SUMMARY:
 
-These *unofficial* patches extend CVS branch support and allow files
-which have previously been removed to be added once again.  This
-support requires a set of patches to rcs-5.6.6.  Said patches are also
-included.
+The functionality described below has several slightly different
+implementations.  The one which is used by default in Cyclic CVS
+(controlled by the DEATH_STATE define), does not require any RCS
+modifications.  But if you undefine DEATH_STATE, you'll need these RCS
+changes.  The only reason to do so is if you want your repository to
+be usable by old versions of Cygnus CVS.
 
+The patches are against rcs 5.6.6 which is a beta version, but given
+the above you don't really need to worry about where to get it.
+
+The death support extends CVS branch support and allows files which
+have previously been removed to be added once again.
+
+- kingdon, 27 Mar 95 (the rest of this file is older; the parts
+relating to the CVS functionality involved should be merged into the
+main CVS manual, the parts relating to the implementation which
+involves changing RCS can hopefully be flushed at some point).
 
 WHAT THESE PATCHES DO:
 

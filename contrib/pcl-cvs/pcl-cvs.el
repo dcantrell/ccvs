@@ -37,13 +37,13 @@
 ;;; -------------------------------------------------------
 ;;;	    START OF THINGS TO CHECK WHEN INSTALLING
 
-(defvar cvs-program "/usr/gnu/bin/cvs"
+(defvar cvs-program "/usr/local/bin/cvs"
   "*Full path to the cvs executable.")
 
-(defvar cvs-diff-program "/usr/gnu/bin/diff"
+(defvar cvs-diff-program "/usr/local/bin/diff"
   "*Full path to the diff program.")
 
-(defvar cvs-rmdir-program "/usr/gnu/bin/rmdir"
+(defvar cvs-rmdir-program "/usr/local/bin/rmdir"
   "*Full path to the rmdir program. Typically /bin/rmdir.")
 
 ;; Uncomment the following line if you are running on 18.57 or earlier.
@@ -63,6 +63,20 @@
   "*Specifies where the (current) cvs master repository is.
 Overrides the $CVSROOT variable by sending \" -d dir\" to all cvs commands.
 This switch is useful if you have multiple CVS repositories.")
+
+(defvar cvs-cvsroot-required t
+  "*Specifies whether CVS needs to be told where the repository is.
+
+In CVS 1.3, if your CVSROOT environment variable is not set, and you
+do not set the `cvs-cvsroot' lisp variable, CVS will have no idea
+where to find the repository, and refuse to run.  CVS 1.4 and later
+store the repository path with the working directories, so most
+operations don't need to be told where the repository is.
+
+If you work with multiple repositories with CVS 1.4, it's probably
+advisable to leave your CVSROOT environment variable unset, set this
+variable to nil, and let CVS figure out where the repository is for
+itself.")
 
 (defvar cvs-stdout-file nil
   "Name of the file that holds the output that CVS sends to stdout.
@@ -214,7 +228,7 @@ the process when a cvs update process is running.")
 ;;;			 slash.
 ;;;  file-name		 The file name.
 ;;;  base-revision       The revision that the working file was based on.
-;;;                      Onlyy valid for MERGED and CONFLICT files.
+;;;                      Only valid for MERGED and CONFLICT files.
 ;;;  cvs-diff-buffer	 A buffer that contains a 'cvs diff file'.
 ;;;  backup-diff-buffer	 A buffer that contains a 'diff file backup-file'.
 ;;;  full-log		 The output from cvs, unparsed.
@@ -450,7 +464,8 @@ Both LOCAL and DONT-CHANGE-DISC may be non-nil simultaneously.
   (if (not (file-exists-p cvs-program))
       (error "%s: file not found (check setting of cvs-program)"
 	     cvs-program))
-  (if (not (or (getenv "CVSROOT") cvs-cvsroot))
+  (if (and cvs-cvsroot-required
+	   (not (or (getenv "CVSROOT") cvs-cvsroot)))
       (error "Both cvs-cvsroot and environment variable CVSROOT unset."))
   (let* ((this-dir (file-name-as-directory (expand-file-name directory)))
 	 (update-buffer (generate-new-buffer
@@ -898,12 +913,12 @@ This function returns the last cons-cell in the list that is built."
 	 ;; End of RCVS stuff.
 
 	 ;; CVS is descending a subdirectory.
-	 
-	 ((looking-at "cvs update: Updating \\(.*\\)$")
+	 ;; (The "server" case is there to support Cygnus's Remote CVS.)
+	 ((looking-at "cvs \\(update\\|server\\): Updating \\(.*\\)$")
 	  (setq current-dir
 		(cvs-get-current-dir
 		 root-dir
-		 (buffer-substring (match-beginning 1) (match-end 1))))
+		 (buffer-substring (match-beginning 2) (match-end 2))))
 	  (setcdr head (list (cvs-create-fileinfo
 			      'DIRCHANGE current-dir
 			      nil (buffer-substring (match-beginning 0)
@@ -1010,98 +1025,102 @@ second party")
 			   (buffer-substring start (point)))))
 	    (setq head (cdr head))))
 
-       (t
+	 ;; Ignore other messages from Cygnus's Remote CVS.
+	 ((looking-at "cvs server:")
+	  (forward-line 1))
 
-	;; CVS has decided to merge someone elses changes into this
-	;; document. This leads to a lot of garbage being printed.
-	;; First there is two lines that contains no information
-	;; that we skip (but we check that we recognize them).
+	 (t
 
-	(let ((complex-start (point))
-	      initial-revision filename)
+	  ;; CVS has decided to merge someone elses changes into this
+	  ;; document. This leads to a lot of garbage being printed.
+	  ;; First there is two lines that contains no information
+	  ;; that we skip (but we check that we recognize them).
 
-	  (cvs-skip-line stdout-buffer stderr-buffer "^RCS file: .*$")
-	  (setq initial-revision
-		(cvs-skip-line stdout-buffer stderr-buffer
-			       "^retrieving revision \\(.*\\)$" 1))
-	  (cvs-skip-line stdout-buffer stderr-buffer
-			 "^retrieving revision .*$")
+	  (let ((complex-start (point))
+		initial-revision filename)
 
-	  ;; Get the file name from the next line.
-
-	  (setq
-	   filename
-	   (cvs-skip-line
-	    stdout-buffer stderr-buffer
-	    "^Merging differences between [0-9.]+ and [0-9.]+ into \\(.*\\)$"
-	    1))
-
-	  (cond
-	   ;; Was it a conflict?
-	   ((looking-at
-	     ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
-
-	    ;; Yes, this is a conflict.
-	    (cvs-skip-line
-	     stdout-buffer stderr-buffer
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
-
+	    (cvs-skip-line stdout-buffer stderr-buffer "^RCS file: .*$")
+	    (setq initial-revision
+		  (cvs-skip-line stdout-buffer stderr-buffer
+				 "^retrieving revision \\(.*\\)$" 1))
 	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: conflicts found in ")
+			   "^retrieving revision .*$")
 
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'CONFLICT current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
+	    ;; Get the file name from the next line.
 
-	      (cvs-set-fileinfo->base-revision fileinfo initial-revision)
+	    (setq
+	     filename
+	     (cvs-skip-line
+	      stdout-buffer stderr-buffer
+	      "^Merging differences between [0-9.]+ and [0-9.]+ into \\(.*\\)$"
+	      1))
 
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head))))
+	    (cond
+	     ;; Was it a conflict?
+	     ((looking-at
+	       ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
 
-	   ;; Was it a conflict, and was RCS compiled without DIFF3_BIN?
+	      ;; Yes, this is a conflict.
+	      (cvs-skip-line
+	       stdout-buffer stderr-buffer
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
 
-	   ((looking-at
-	     ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps or other probl\
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs \\(update\\|server\\): conflicts found in ")
+
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'CONFLICT current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
+
+		(cvs-set-fileinfo->base-revision fileinfo initial-revision)
+
+		(setcdr head (list fileinfo))
+		(setq head (cdr head))))
+
+	     ;; Was it a conflict, and was RCS compiled without DIFF3_BIN?
+
+	     ((looking-at
+	       ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps or other probl\
 ems during merge$")
 
-	    ;; Yes, this is a conflict.
-	    (cvs-skip-line
-	     stdout-buffer stderr-buffer
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps .*during merge$")
+	      ;; Yes, this is a conflict.
+	      (cvs-skip-line
+	       stdout-buffer stderr-buffer
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps .*during merge$")
 
-	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: could not merge ")
-	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: restoring .* from backup file ")
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs update: could not merge ")
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs update: restoring .* from backup file ")
 
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'CONFLICT current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'CONFLICT current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
 
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head))))	   
+		(setcdr head (list fileinfo))
+		(setq head (cdr head))))	   
 
-	   (t
-	    ;; Not a conflict; it must be a succesful merge.
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'MERGED current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
-	      (cvs-set-fileinfo->base-revision fileinfo initial-revision)
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head)))))))))))
+	     (t
+	      ;; Not a conflict; it must be a succesful merge.
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'MERGED current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
+		(cvs-set-fileinfo->base-revision fileinfo initial-revision)
+		(setcdr head (list fileinfo))
+		(setq head (cdr head)))))))))))
   head)
 
 
 (defun cvs-parse-stdout (stdout-buffer stderr-buffer head root-dir)
-  "Parse the output from CVS that is written to stderr.
+  "Parse the output from CVS that is written to stdout.
 Args: STDOUT-BUFFER STDERR-BUFFER HEAD ROOT-DIR
 STDOUT-BUFFER is the buffer that holds the output to parse.
 STDERR-BUFFER holds the output that cvs sent to stderr. It is only
@@ -1121,11 +1140,11 @@ This function doesn't return anything particular."
        ;; A: The file is "cvs add"ed, but not "cvs ci"ed.
        ;; R: The file is "cvs remove"ed, but not "cvs ci"ed.
        ;; C: Conflict
-       ;; U: The file is copied from the repository.
+       ;; U, P: The file is copied from the repository.
        ;; ?: Unknown file.
 
 
-       ((looking-at "\\([MARCU?]\\) \\(.*\\)$")
+       ((looking-at "\\([MARCUP?]\\) \\(.*\\)$")
 	(let*
 	    ((c         (char-after (match-beginning 1)))
 	     (full-path
@@ -1137,12 +1156,16 @@ This function doesn't return anything particular."
 			      ((eq c ?R) 'REMOVED)
 			      ((eq c ?C) 'CONFLICT)
 			      ((eq c ?U) 'UPDATED)
+			      ;; generated when Cygnus remote CVS
+			      ;; sends a patch instead of the full
+			      ;; file:
+			      ((eq c ?P) 'UPDATED)
 			      ((eq c ??) 'UNKNOWN))
 			(substring (file-name-directory full-path) 0 -1)
 			(file-name-nondirectory full-path)
 			(buffer-substring (match-beginning 0) (match-end 0)))))
 	  ;; Updated files require no further action.
-	  (if (eq c ?U)
+	  (if (memq c '(?U ?P))
 	      (cvs-set-fileinfo->handled fileinfo t))
 
 	  ;; Link this last on the list.

@@ -45,7 +45,7 @@ static char opts[PATH_MAX];
 static int diff_errors;
 static int empty_files = 0;
 
-static char *diff_usage[] =
+static const char *const diff_usage[] =
 {
     "Usage: %s %s [-lN] [rcsdiff-options]\n",
 #ifdef CVS_DIFFDATE

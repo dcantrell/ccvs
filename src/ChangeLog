@@ -1,3 +1,141 @@
+Thu Apr  6 13:05:15 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* commit.c (checkaddfile): If we didn't manage to fopen the file,
+	don't try to fclose it.
+
+	* client.c (handle_m, handle_e): Use fwrite, rather than a loop of
+	putc's.  Sometimes these streams are unbuffered.
+
+Tue Apr  4 11:33:56 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* (DISTFILES): Include cvsbug.sh, ChangeLog, NOTES, RCS-patches,
+	README-rm-add, ChangeLog.fsf, sanity.sh, sanity.el, and
+	.cvsignore.
+
+Mon Mar 27 08:58:42 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* rcs.c (RCS_parsercsfile_i): Accept `dead' state regardless of
+	DEATH_STATE define.  Revise comments regarding DEATH_STATE versus
+	CVSDEA versus the scheme which uses a patched RCS.
+	* README-rm-add, RCS-patches: Explain what versions of CVS need
+	RCS patches.
+
+Sat Mar 25 18:51:39 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c (server_cleanup): Only do the abysmal kludge of waiting
+ 	for command and draining the pipe #ifdef sun.  The code makes
+ 	assumptions not valid on all systems, and is only there to
+ 	workaround a SunOS bug.
+
+Wed Mar 22 21:55:56 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* server.c (mkdir_p): Call stat only if we get the EACCES.  Faster
+	and more elegant.
+
+Tue Jan 31 20:59:19 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
+
+	* server.c: Try to avoid starting the "rm -rf" at cleanup time
+	until after subprocesses have finished.
+	(command_fds_to_drain, max_command_fd): New variables.
+	(do_cvs_command): Set them.
+	(command_pid_is_dead): New variable.
+	(wait_sig): New function.
+	(server_cleanup): If command_pid is nonzero, wait for it to die,
+	draining output from it in the meantime.  If nonzero SIG was
+	passed, send a signal to the subprocess, to encourage it to die
+	soon.
+
+	* main.c (usage): Argument is now `const char *const *'.
+	* cvs.h (usage): Changed prototype.
+	(USE): Make new variable `const'.
+	* add.c (add_usage), admin.c (admin_usage), checkout.c
+	(checkout_usage, export_usage, checkout), commit.c (commit_usage),
+	diff.c (diff_usage), history.c (history_usg), import.c
+	(import_usage, keyword_usage), log.c (log_usage), main.c (usg),
+	patch.c (patch_usage), release.c (release_usage), remove.c
+	(remove_usage), rtag.c (rtag_usage), server.c (server), status.c
+	(status_usage), tag.c (tag_usage), update.c (update_usage): Usage
+	messages are now const arrays of pointers to const char.
+
+	* import.c (comtable): Now const.
+	* main.c (rcsid): Now static.
+	(cmd): Now const.
+	(main): Local variable CM now points to const.
+	* server.c (outbuf_memory_error): Local var MSG now const.
+
+	* client.c (client_commit_usage): Deleted.
+
+Sat Dec 31 15:51:55 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* logmsg.c (do_editor): Allocate enough space for trailing '\0'.
+
+Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it
+	version C1.4A, not 1.4A2-remote.  Send bugs to cyclic-cvs, not
+	remote-cvs.
+
+	* classify.c (Classify_File): Put check for dead file inside
+	"#ifdef DEATH_SUPPORT".
+
+Thu Feb 23 23:03:43 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (join_file): Don't pass the -E option to rcsmerge here,
+	either (see Jan 22 change).
+
+Mon Feb 13 13:28:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Send bug reports to remote-cvs@cyclic.com, rather
+	than to the ordinary CVS bug address.  This does mean we'll have
+	to wade through GNATS-style bug reports, sigh.
+
+Wed Feb  8 06:42:27 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c: Don't include <sys/stat.h>; system.h already does, and
+ 	4.3BSD can't take it twice.
+
+	* subr.c [! HAVE_VPRINTF] (run_setup, run_args): Don't use va_dcl
+ 	in declaration.  Declare the a1..a8 args which are used in the
+ 	sprintf call.
+	* cvs.h [! HAVE_VPRINTF] (run_setup, run_args): Don't prototype
+ 	args, to avoid conflicting with the function definitions
+ 	themselves.
+
+Tue Feb  7 20:10:00 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (update_entries): Pass the patch subprocess the switch
+	"-b ~", not "-b~"; the latter form seems not to work with patch
+	version 2.0 and earlier --- it takes the next argv element as the
+	backup suffix, and thus doesn't notice that the patch file's name
+	has been specified, thus doesn't find the patch, thus...  *aargh*
+
+Fri Feb  3 20:28:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* log.c (log_option_with_arg): New function.
+	(cvslog): Use it and send_arg to handle the rlog options that take
+	arguments.  The code used to use send_option_string for
+	everything, which assumes that "-d1995/01/02" is equivalent to
+	"-d -1 -9 -9 -5 ...".
+
+Tue Jan 31 15:02:01 1995  Jim Blandy  <jimb@floss.life.uiuc.edu>
+
+	* server.c: #include <sys/stat.h> for the new stat call in mkdir_p.
+	(mkdir_p): Don't try to create the intermediate directory if it
+	exists already.  Some systems return EEXIST, but others return
+	EACCES, which we can't otherwise distinguish from a real access
+	problem.
+
+Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
+	and it doesn't look too important, so don't pass it.
+
+Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
+
+	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
+	if it has not been set.
+	(process_prune_candidates): Likewise.
+
 Mon Nov 28 09:59:14 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (client_commit): Move guts of function from here...
