@@ -43,7 +43,7 @@ Name_Repository (dir, update_dir)
      * The assumption here is that the repository is always contained in the
      * first line of the "Repository" file.
      */
-    fpin = fopen (tmp, "r");
+    fpin = CVS_FOPEN (tmp, "r");
 
     if (fpin == NULL)
     {

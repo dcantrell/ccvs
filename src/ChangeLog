@@ -1,3 +1,8 @@
+Fri Jul 19 16:02:11 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* repos.c: Fixed recent patch which added plain fopen rather than
+	CVS_FOPEN
+
 Mon Jul 22 22:25:53 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* logmsg.c (tag): New static variable.
