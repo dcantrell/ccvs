@@ -1,3 +1,8 @@
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_LDADD): Add $(LIBINTL) for gettext.
+	* Makefile.in: Regenerated.
+
 2003-10-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (admin-31): Fix more typos.
