@@ -1,3 +1,7 @@
+Tue Apr 23 20:43:01 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* filesubr.c (get_homedir, expand_wild): New functions.
+
 Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Remove AUTH_SERVER_SUPPORT; no longer should be
