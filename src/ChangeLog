@@ -1,3 +1,8 @@
+Wed Jun 11 22:28:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basicb): Also remove CVSROOT/Emptydir at end of
+	test.  Otherwise it affects the toplevel-9 test for remote.
+
 Tue Jun 10 14:03:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (toplevel): Change "update" and "checkout" to "[a-z]*"
