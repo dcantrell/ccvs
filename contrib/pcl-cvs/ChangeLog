@@ -1,3 +1,11 @@
+Thu Dec 21 16:45:48 1995  Karl Fogel  <kfogel@occs.cs.oberlin.edu>
+
+        * pcl-cvs.el (cvs-parse-stderr): ignore kerberos connection
+        failure, since CVS will automatically try rsh next.  I think this
+        is okay because if a person needs to know that kerberos failed,
+        then chances are the rsh failed too, and *that* error message will
+        clue them in that something's afoot.
+
 Wed Nov 22 11:01:50 1995  Joshua Cowan <jcowan@hermit.reslife.okstate.edu>
 
         * pcl-cvs.el (cvs-changelog-ours-p): use `user-full-name' if

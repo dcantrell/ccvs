@@ -944,6 +944,20 @@ This function returns the last cons-cell in the list that is built."
 	  (setq head (cdr head))
 	  (forward-line 1))
 
+	 ;; Kerberos connection attempted but failed.  This is not
+         ;; really an error, as CVS will automatically fall back to
+         ;; rsh.  Plus it tries kerberos, if available, even when rsh
+         ;; is what you really wanted.
+
+	 ((looking-at "cvs update: kerberos connect:.*$")
+	  (forward-line 1))
+
+         ;; And when kerberos *does* fail, cvs prints out some stuff
+         ;; as it tries rsh.  Ignore that stuff too.
+
+	 ((looking-at "cvs update: trying to start server using rsh$")
+	  (forward-line 1))
+
 	 ;; File removed by you, but recreated by cvs. Ignored.
 
 	 ((looking-at "cvs update: warning: .* was lost$")
