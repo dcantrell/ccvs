@@ -1,5 +1,8 @@
 Mon Sep 30 08:33:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* NEWS: Document change from A4 to US letter.  It may seem minor,
+	but it affects a *lot* of people.
+
 	* README: Revise discussion of US letter vs. A4 to reflect recent
 	change to cvs.texinfo.
 

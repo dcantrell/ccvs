@@ -1,5 +1,11 @@
 Changes since 1.8:
 
+* The postscript documentation (doc/cvs.ps) shipped with CVS is now
+formatted for US letter size instead of A4.  This is not because we
+consider this size "better" than A4, but because we believe that the
+US letter version will print better on A4 paper than the other way
+around.
+
 * Windows NT client should now work on Windows 95 as well.
 
 * New option "--help-synonyms" prints a list of all recognized command
