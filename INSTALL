@@ -32,7 +32,7 @@ i386 family:
 	FreeBSD 2.0.5, i486, gcc (1.5.95)
 	NextSTEP 3.3 (1.7)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
-	SCO OpenServer 5.0.0, "CC='cc -b elf' configure"
+	SCO OpenServer 5.0.0, "CC='cc -b elf' configure" (about 1.6)
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
 	Windows NT 3.51 (1.8.86 client; 1.8.3 local)
 	Windows 95 (1.8.86 client and local)
