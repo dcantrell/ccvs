@@ -1,5 +1,10 @@
 2003-04-30  Derek Price  <derek@ximbiot.com>
 
+	* commit.c: Free vers in single place
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+2003-04-30  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am: Get rid of $includeopt, using $CPPFLAGS as intended by
 	the Autoconf folk.
 	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)

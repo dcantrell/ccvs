@@ -791,6 +791,7 @@ check_fileproc (callerdat, finfo)
     Vers_TS *vers;
     struct commit_info *ci;
     struct logfile_info *li;
+    int retval = 1;
 
     size_t cvsroot_len = strlen (current_parsed_root->directory);
 
@@ -829,8 +830,7 @@ check_fileproc (callerdat, finfo)
 	case T_CONFLICT:
 	case T_REMOVE_ENTRY:
 	    error (0, 0, "Up-to-date check failed for `%s'", finfo->fullname);
-	    freevers_ts (&vers);
-	    return (1);
+	    goto out;
 	case T_MODIFIED:
 	case T_ADDED:
 	case T_REMOVED:
@@ -854,8 +854,7 @@ check_fileproc (callerdat, finfo)
 		    error (0, 0,
 			   "cannot commit with sticky date for file `%s'",
 			   finfo->fullname);
-		    freevers_ts (&vers);
-		    return (1);
+		    goto out;
 		}
 		if (status == T_MODIFIED && vers->tag &&
 		    !RCS_isbranch (finfo->rcs, vers->tag))
@@ -863,8 +862,7 @@ check_fileproc (callerdat, finfo)
 		    error (0, 0,
 			   "sticky tag `%s' for file `%s' is not a branch",
 			   vers->tag, finfo->fullname);
-		    freevers_ts (&vers);
-		    return (1);
+		    goto out;
 		}
 	    }
 	    if (status == T_MODIFIED && !force_ci && vers->ts_conflict)
@@ -880,8 +878,7 @@ check_fileproc (callerdat, finfo)
 		    error (0, 0,
 			  "file `%s' had a conflict and has not been modified",
 			   finfo->fullname);
-		    freevers_ts (&vers);
-		    return (1);
+		    goto out;
 		}
 
 		if (file_has_markers (finfo))
@@ -915,8 +912,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		error (0, 0,
 	"cannot remove file `%s' which has a numeric sticky tag of `%s'",
 			   finfo->fullname, vers->tag);
-		freevers_ts (&vers);
-		return (1);
+		goto out;
 	    }
 	    if (status == T_ADDED)
 	    {
@@ -928,8 +924,7 @@ warning: file `%s' seems to still contain conflict indicators",
 			error (0, 0,
 		    "cannot add file `%s' when RCS file `%s' already exists",
 			       finfo->fullname, finfo->rcs->path);
-			freevers_ts (&vers);
-			return (1);
+			goto out;
 		    }
 		}
 		else if (isdigit ((unsigned char) *vers->tag) &&
@@ -938,8 +933,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    error (0, 0,
 		"cannot add file `%s' with revision `%s'; must be on trunk",
 			       finfo->fullname, vers->tag);
-		    freevers_ts (&vers);
-		    return (1);
+		    goto out;
 		}
 	    }
 
@@ -1041,8 +1035,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    break;
 	case T_UNKNOWN:
 	    error (0, 0, "nothing known about `%s'", finfo->fullname);
-	    freevers_ts (&vers);
-	    return (1);
+	    goto out;
 	case T_UPTODATE:
 	    break;
 	default:
@@ -1050,8 +1043,12 @@ warning: file `%s' seems to still contain conflict indicators",
 	    break;
     }
 
+    retval = 0;
+
+ out:
+
     freevers_ts (&vers);
-    return (0);
+    return retval;
 }
 
 /*
