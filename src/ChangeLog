@@ -1,3 +1,7 @@
+Mon May  1 12:20:02 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* Makefile.in (INCLUDES): Include -I. for options.h.
+
 Fri Apr 28 16:16:33 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* Makefile.in (SOURCES, HEADERS, DISTFILES): Updated.
