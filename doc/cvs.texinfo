@@ -7495,11 +7495,8 @@ revision you last checked out into the current working directory.
 @c for all cvs commands except diff.  For diff, it
 @c seems to be (a) the head of the trunk (or the default
 @c branch?) if there is no sticky tag, (b) the head of the
-@c branch if there is a branch sticky tag, and (c) the
-@c same as BASE if there is a non-branch sticky tag.  (c)
-@c would appear to be strange, maybe accidental, and so there would
-@c presumably be
-@c little problem changing it.  (b) is ugly as it differs
+@c branch for the sticky tag, if there is a sticky tag.
+@c (b) is ugly as it differs
 @c from what HEAD means for other commands, but people
 @c and/or scripts are quite possibly used to it.
 @c See "head" tests in sanity.sh.

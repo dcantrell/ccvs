@@ -1,3 +1,8 @@
+1998-04-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Common options): Update comment about meaning of
+	HEAD in cvs diff.
+
 1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Dates): Also mention log -d.
