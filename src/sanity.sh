@@ -524,7 +524,7 @@ dotest_sort ()
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
   fi
-  tr '\t' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  tr '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
   dotest_internal "$@"
 }
 

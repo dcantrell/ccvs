@@ -1,3 +1,8 @@
+1999-10-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (dotest_sort): Old versions of tr don't understand \t
+	so use a literal tab instead.
+
 1999-10-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (dotest_sort): Convert any tabs in the output into spaces
