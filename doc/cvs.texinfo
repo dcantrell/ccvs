@@ -117,8 +117,7 @@ Free Software Foundation instead of in the original English.
 @c something they can both cope with.
 
 This info manual describes how to use and administer
-@sc{cvs} and is updated to release 1.4 or something
-similar.
+@sc{cvs} version @value{CVSVN}.
 @end ifinfo
 
 @menu
