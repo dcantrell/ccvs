@@ -1,3 +1,7 @@
+Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * threads.c: new file.
+
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * run.c: include <stdarg.h> and <stdio.h>.
