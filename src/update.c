@@ -45,15 +45,6 @@
 #include "buffer.h"
 #include "hardlink.h"
 
-#ifdef HAVE_NANOSLEEP
-# include "xtime.h"
-#else /* HAVE_NANOSLEEP */
-# if !defined HAVE_USLEEP && defined HAVE_SELECT
-    /* use select as a workaround */
-#   include "xselect.h"
-# endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
-#endif /* !HAVE_NANOSLEEP */
-
 static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding, int merging, int update_server));
 #ifdef SERVER_SUPPORT
@@ -522,35 +513,9 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 #endif
 
     /* see if we need to sleep before returning to avoid time-stamp races */
-    while (last_register_time && time ((time_t *) NULL) == last_register_time)
+    if (last_register_time)
     {
-	/* sleep 20 ms */
-#ifdef HAVE_NANOSLEEP
-	{
-	    struct timespec ts;
-	    ts.tv_sec = 0;
-	    ts.tv_nsec = 20000000L;
-	    (void)nanosleep (&ts, NULL);
-	}
-#else	/* HAVE_NANOSLEEP */
-# ifdef HAVE_USLEEP
-	(void)usleep (20000UL);
-# else	/* HAVE_USLEEP */
-#   ifdef HAVE_SELECT
-	{
-	    /* use select instead of sleep since it is a fairly portable way of
-	     * sleeping for ms.
-	     */
-	    struct timeval tv;
-	    tv.tv_sec = 0;
-	    tv.tv_usec = 20000;
-	    (void)select (0, NULL, NULL, NULL, &tv);
-	}
-#   else /* HAVE_SELECT */
-	(void)sleep(1);
-#   endif /* !HAVE_SELECT */
-# endif	/* !HAVE_USLEEP */
-#endif	/* !HAVE_NANOSLEEP */
+	sleep_past (last_register_time);
     }
 
     return (err);

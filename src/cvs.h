@@ -560,7 +560,6 @@ void make_directories PROTO((const char *name));
 void make_directory PROTO((const char *name));
 extern int mkdir_if_needed PROTO ((char *name));
 void rename_file PROTO((const char *from, const char *to));
-char *backup_file PROTO((const char *file, const char *suffix));
 /* Expand wildcards in each element of (ARGC,ARGV).  This is according to the
    files which exist in the current directory, and accordingly to OS-specific
    conventions regarding wildcard syntax.  It might be desirable to change the
@@ -659,8 +658,10 @@ char *make_message_rcslegal PROTO((char *message));
 extern int file_has_markers PROTO ((const struct file_info *));
 extern void get_file PROTO ((const char *, const char *, const char *,
 			     char **, size_t *, size_t *));
-extern void resolve_symlink PROTO ((char **filename));
 extern char *shell_escape PROTO((char *buf, const char *str));
+char *backup_file PROTO((const char *file, const char *suffix));
+extern void resolve_symlink PROTO ((char **filename));
+void sleep_past PROTO ((time_t desttime));
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */

@@ -671,8 +671,7 @@ commit (argc, argv)
     /* see if we need to sleep before returning to avoid time-stamp races */
     if (last_register_time)
     {
-	while (time ((time_t *) NULL) == last_register_time)
-	    sleep (1);
+	sleep_past (last_register_time);
     }
 
     return (err);
