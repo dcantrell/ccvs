@@ -1,3 +1,9 @@
+2004-06-24  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.dsp: Add "./lib/xsize.h" to Header file list.
+	* cvsnt.dep: Regenerated for "./cvsnt.dsp" change.
+	(Patch submitted by Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Conrad's Windows fix.

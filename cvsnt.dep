@@ -14,6 +14,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -45,6 +46,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -75,6 +77,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -105,6 +108,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -135,6 +139,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -167,6 +172,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -197,6 +203,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -230,6 +237,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -265,6 +273,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -298,6 +307,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -329,6 +339,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -359,6 +370,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -390,6 +402,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -424,6 +437,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -454,6 +468,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -484,6 +499,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -514,6 +530,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -545,6 +562,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -576,6 +594,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -606,6 +625,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -636,6 +656,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -667,6 +688,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -699,6 +721,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -730,6 +753,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -760,6 +784,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -790,6 +815,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -820,6 +846,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -851,6 +878,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -882,6 +910,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -912,6 +941,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -942,6 +972,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -972,6 +1003,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1004,6 +1036,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1036,6 +1069,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1067,6 +1101,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1102,6 +1137,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1133,6 +1169,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1164,6 +1201,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1199,6 +1237,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1230,6 +1269,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1263,6 +1303,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1294,6 +1335,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1328,6 +1370,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1358,6 +1401,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1389,6 +1433,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1420,6 +1465,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1450,6 +1496,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1481,6 +1528,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1511,6 +1559,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1543,6 +1592,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1579,6 +1629,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1610,6 +1661,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1640,6 +1692,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1671,6 +1724,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1702,6 +1756,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1733,6 +1788,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1765,6 +1821,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1799,6 +1856,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1829,6 +1887,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1863,6 +1922,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1896,6 +1956,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1927,6 +1988,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1957,6 +2019,7 @@
 	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
+	".\lib\xsize.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
