@@ -3865,7 +3865,7 @@ working files.
 @cindex Outdating revisions
 @cindex Saving space
 @item -o@var{range}
-Useful, but dangerous, with @sc{cvs} (see below).
+Potentially useful, but dangerous, with @sc{cvs} (see below).
 Deletes (@dfn{outdates}) the revisions given by
 @var{range}.  A range consisting of a single revision
 number means that revision.  A range consisting of a
@@ -3886,9 +3886,9 @@ cannot be specified symbolically if it is a branch.
 Make sure that no-one has checked out a copy of the
 revision you outdate.  Strange things will happen if he
 starts to edit it and tries to check it back in.  For
-this reason, you should never use this option to take
-back a bogus commit unless you work alone.  Instead,
-you should fix the file and commit a new revision.
+this reason, this option is not a good way to take back
+a bogus commit; commit a new revision undoing the bogus
+change instead (@pxref{Merging two revisions}).
 
 @item -q
 Run quietly; do not print diagnostics.
