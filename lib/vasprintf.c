@@ -20,7 +20,11 @@ Cambridge, MA 02139, USA.  */
 
 #include <stdio.h>
 #include <string.h>
-#include <ansidecl.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef __STDC__
 #include <stdarg.h>
 #else
@@ -46,7 +50,7 @@ int_vasprintf (result, format, args)
   int total_width = strlen (format) + 1;
   va_list ap;
 
-  memcpy ((PTR) &ap, (PTR) args, sizeof (va_list));
+  memcpy (&ap, args, sizeof (va_list));
 
   while (*p != '\0')
     {

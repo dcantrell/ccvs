@@ -1,3 +1,10 @@
+Wed Feb 14 14:48:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vasprintf.c (int_vasprintf): Don't cast arguments to memcpy.
+	* vasprintf.c, strtoul.c: Don't include ansidecl.h.  Do include
+	config.h if HAVE_CONFIG_H (for const).
+	* strtoul.c: Change CONST to const.
+
 Tue Feb 13 20:04:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* strtoul.c: Added (needed by vasprintf.c, and missing on SunOS4).
