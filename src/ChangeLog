@@ -1,5 +1,10 @@
 2000-12-29  Derek Price  <derek.price@openavenue.com>
 
+	* sanity.sh: remove explicit "$@" from last checkin and move the 'do'
+	to the line following the 'for'.  Apparently this is more portable.
+
+2000-12-29  Derek Price  <derek.price@openavenue.com>
+
 	* sanity.sh: make "$@" explicit in 'for' statement since Solaris 5.6's
 	implementation of Bourne shell doesn't seem to implement this default
 	behavior.
