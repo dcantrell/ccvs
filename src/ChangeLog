@@ -1,3 +1,9 @@
+Fri Feb  9 00:46:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_reparsercsfile): Remove unused variable date.
+
+	* myndbm.c (mydbm_load_file): Fix typo ('015' -> '\015').
+
 Thu Feb  8 13:00:00 1996  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* rcs.c (RCS_parse, RCS_parsercsfile, RCS_reparsercsfile),
