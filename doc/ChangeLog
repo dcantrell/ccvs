@@ -1,3 +1,8 @@
+Wed Nov  6 09:45:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Tracking sources): Add comment regarding added and
+	removed files.
+
 Tue Nov  5 14:00:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Rename node "Invoking CVS" to "CVS commands".

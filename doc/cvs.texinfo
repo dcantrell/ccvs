@@ -3796,6 +3796,7 @@ are checking out contains any files in that directory.
 @cindex Third-party sources
 @cindex Tracking sources
 
+@c FIXME: Need discussion of added and removed files.
 If you modify a program to better fit your site, you
 probably want to include your modifications when the next
 release of the program arrives.  @sc{cvs} can help you with
