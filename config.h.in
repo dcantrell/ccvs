@@ -142,9 +142,6 @@
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
-/* Define to 1 if you have the <errno.h> header file. */
-#undef HAVE_ERRNO_H
-
 /* Define to 1 if you have the `fchdir' function. */
 #undef HAVE_FCHDIR
 
@@ -636,9 +633,6 @@
 
 /* Define to rpl_realloc if the replacement function should be used. */
 #undef realloc
-
-/* Define to `unsigned' if <sys/types.h> does not define. */
-#undef size_t
 
 /* Define as a signed type of the same size as size_t. */
 #undef ssize_t
