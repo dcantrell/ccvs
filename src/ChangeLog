@@ -1,3 +1,18 @@
+1997-11-29  Jim Meyering  <meyering@na-net.ornl.gov>
+
+	* update.c (checkout_file): Initialize `backup'.
+
+	* diff.c (diff_fileproc): Initialize `tmp' and `fname'.
+
+	* modules.c (do_module): Initialize `server_dir_to_restore'.
+	(do_module): Initialize `value' in an else clause.
+
+	* rcs.c (RCS_checkin): Initialize `commitpt'.
+	(RCS_delete_revs): Initialize `revp'.
+	(RCS_copydeltas): Always initialize `insertbefore'.
+
+	* run.c (run_print): Define `outfn' even in error case.
+
 Mon Nov 24 17:28:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_findlock_or_tip): Prototype.
@@ -435,7 +450,7 @@ Mon Oct 20 00:30:16 1997  Tim Pierce  <twp@twp.tezcat.com>
 	Librarify `rcs'.
 	* rcscmds.c, cvs.h (RCS_exec_settag, RCS_exec_deltag,
 	RCS_exec_setbranch, RCS_exec_lock, RCS_exec_unlock): Removed.
-	
+
 	* rcs.c (RCS_settag): Rewritten to eliminate RCS 5.7.
 	* commit.c (checkaddfile): Call RCS_rewrite after calling RCS_settag.
 	* import.c (add_tags): Same.
@@ -625,7 +640,7 @@ Mon Oct 13 22:46:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	longer necessary.  Also remove the code that prevented us from
 	doing "cvs co -d <dir1>/<dir2>" without <dir1> existing, since
 	checkout_proc handles things correctly now.
-	
+
 	* cvs.h: fix typo.
 
 	* rtag.c (rtag): reformat so that we don't run over 80 characters
@@ -747,7 +762,7 @@ Fri Sep 26 15:40:00 1997  Noel Cragg  <noel@swish.red-bean.com>
  	sending "" via the protocol?).  After I make sure that the
  	RELATIVE_REPOS patches still work, I'll check the "" possibility
  	so we don't have to have a this special case.
-	
+
 	* repos.c (Sanitize_Repository_Name): new function that removes
  	(if present) the trailing slash and "." component from the
  	repository name.  Many routines break if we don't guarantee this.
@@ -825,7 +840,7 @@ Sat Sep 20 07:19:18 1997  Tim Pierce  <twp@twp.tezcat.com>
 1997-09-21  Tim Pierce  <twp@xochi.tezcat.com>
 
 	Librarify rcsdiff.
-	
+
 	* diff.c (have_rev1_label, have_rev2_label): New variables.
 	(diff): Generate file labels with make_file_label if necessary;
 	pass labels, revisions and working file name to RCS_exec_rcsdiff.
@@ -1682,7 +1697,7 @@ Thu May 15 11:50:15 1997  Norbert Kiesel  <nk@cosa.de>
 
 	* buffer.c (buf_read_line): initialize a local variable to shut up
 	gcc -O -Wall.
-		   
+
 
 Wed May 14 16:29:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
