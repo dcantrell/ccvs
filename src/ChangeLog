@@ -1,3 +1,7 @@
+Fri Oct  6 14:03:09 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (checkaddfile): Don't try to pass options if it is "".
+
 Thu Oct  5 18:04:46 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * sanity.sh: unset CVSREAD, since it causes the script to bomb.
