@@ -1,3 +1,7 @@
+Thu Jul  3 09:50:07 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (cvs_output): Add comment about whether to fflush.
+
 Wed Jul  2 18:57:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (join2): New tests join2-19 and friends test for a
