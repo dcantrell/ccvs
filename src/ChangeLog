@@ -1,6 +1,12 @@
 Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
+	* main.c (main): Add CLEANUP_SOCKET_SUBSYSTEM hook at end.  Revise
+	comments regarding INITIALIZE_SOCKET_SUBSYSTEM.
+
+Wed Jun 05 10:07:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
 	* main.c (main): Don't mess with signals if DONT_USE_SIGNALS is
 	defined.
 

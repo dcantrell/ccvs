@@ -268,9 +268,10 @@ main (argc, argv)
 
     error_set_cleanup (error_cleanup);
 
-/* The socket subsystems on NT and OS2 must be initialized before use */
 #ifdef INITIALIZE_SOCKET_SUBSYSTEM
-        INITIALIZE_SOCKET_SUBSYSTEM();
+    /* Hook for OS-specific behavior, for example socket subsystems on
+       NT and OS2 or putting up a window on Mac.  */
+    INITIALIZE_SOCKET_SUBSYSTEM ();
 #endif /* INITIALIZE_SOCKET_SUBSYSTEM */
 
     /*
@@ -722,6 +723,13 @@ main (argc, argv)
     }
 
     Lock_Cleanup ();
+
+#ifdef CLEANUP_SOCKET_SUBSYSTEM
+    /* Hook for OS-specific behavior, for example socket subsystems on
+       NT and OS2 or putting up a window on Mac.  */
+    CLEANUP_SOCKET_SUBSYSTEM ();
+#endif
+
     if (err)
 	return (EXIT_FAILURE);
     return 0;
