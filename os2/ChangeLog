@@ -1,3 +1,7 @@
+Fri Feb  9 22:10:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h: Remove SYSTEM_COMMENT_TABLE.
+
 Thu Feb  1 15:07:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h: Remove RM; no longer used.
