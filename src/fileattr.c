@@ -133,6 +133,7 @@ fileattr_read (void)
 		       "file attribute database corruption: tab missing in %s",
 		       fname);
 	    ++p;
+	    if (fileattr_default_attrs) free (fileattr_default_attrs);
 	    fileattr_default_attrs = xstrdup (p);
 	}
 	else

@@ -2184,6 +2184,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		       "could not create initial dead revision %s", rcs->path);
+		free (fname);
 		goto out;
 	    }
 

@@ -505,6 +505,7 @@ Entries_Open (int aflag, char *update_dir)
 		break;
 	    default:
 		/* Ignore unrecognized commands.  */
+		Entnode_Destroy (ent);
 	        break;
 	    }
 	}
