@@ -1,5 +1,8 @@
 Mon Sep 16 17:42:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TODO: In 180, mention issue of network being down.  Add item
+	182, about inclusiveness of "cvs log -r foo -r bar".
+
 	* HACKING: Also mention arbitrary limits and reentrancy.
 	User-visible changes should be documented in cvs.texinfo as well
 	as NEWS.

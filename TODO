@@ -387,7 +387,8 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 
 180. "cvs edit" should show you who is already editing the files,
      probably (that is, do "cvs editors" before executing, or some
-     similar result).
+     similar result).  (But watch out for what happens if the network
+     is down!).
 
 181.  Make a "cvs message" command which prompts for a log message and
      stores it in the CVS directory.  Then "cvs ci" would use it.
@@ -398,3 +399,10 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
      message") or per-file ("cvs message foo.c"), and fixes the
      incompatibility between client/server (per-tree) and
      non-client/server (per-directory).
+
+182.  There should be a way to show log entries corresponding to
+changes from tag "foo" to tag "bar".  "cvs log -rfoo -rbar" doesn't
+cut it, because it is inclusive on the bar end.  I'm not sure that is
+ever a useful or logical behavior ("cvs diff -r foo -r bar" is not
+similarly inclusive), but is compatibility an issue?
+
