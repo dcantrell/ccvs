@@ -216,7 +216,7 @@ error (status, errnum, message, va_alist)
    Exit with status EXIT_FAILURE if STATUS is nonzero.  */
 /* VARARGS */
 void
-#if defined (HAVE_VPRINTF) && __STDC__
+#if defined (HAVE_VPRINTF) && ((__STDC__ - 0) > 0)
 fperror (FILE *fp, int status, int errnum, char *message, ...)
 #else
 fperror (fp, status, errnum, message, va_alist)
