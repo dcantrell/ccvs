@@ -82,11 +82,11 @@ cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi $(cvsclient_TEXINFOS)
 # If they are more generic and cvs.ps is made before cvs.pdf, then cvs.pdf will be
 # generated from the generic target and the PS source, which contains less information
 # than the usual texinfo source.
-cvs-paper.pdf: cvs-paper.ps
+cvs-paper.ps: cvs-paper.ms
 	$(ROFF) -t -p -ms -Tps $< > $@-t
 	mv $@-t $@
 
-cvs-paper.ps: cvs-paper.ms
+cvs-paper.pdf: cvs-paper.ps
 	$(PS2PDF) $< $@
 
 SUFFIXES = .aux .txt .pdf
