@@ -132,6 +132,11 @@ tempname="[-a-zA-Z0-9/.%_]*"
 RFCDATE="[a-zA-Z0-9 ][a-zA-Z0-9 ]* [0-9:][0-9:]* -0000"
 RFCDATE_EPOCH="1 Jan 1970 00:00:00 -0000"
 
+# Regexp to match a date in standard Unix format as used by rdiff
+# FIXCVS: There's no reason for rdiff to use a different date format
+# than diff does
+DATE="[a-zA-Z]* [a-zA-Z]* [ 1-3][0-9] [0-9:]* [0-9]*"
+
 # On cygwin32, we may not have /bin/sh.
 if test -r /bin/sh; then
   TESTSHELL="/bin/sh"
@@ -3223,8 +3228,8 @@ ${PROG} [a-z]*: Tagging first-dir/dir1/dir2"
 "${PROG} [a-z]*: Diffing first-dir
 Index: first-dir/file6
 diff -c first-dir/file6:1\.1 first-dir/file6:1\.2
-\*\*\* first-dir/file6:1\.1	.*
---- first-dir/file6	.*
+\*\*\* first-dir/file6:1\.1	${DATE}
+--- first-dir/file6	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -3232,8 +3237,8 @@ diff -c first-dir/file6:1\.1 first-dir/file6:1\.2
 ${PLUS} file6
 Index: first-dir/file7
 diff -c first-dir/file7:1\.1 first-dir/file7:removed
-\*\*\* first-dir/file7:1.1	.*
---- first-dir/file7	.*
+\*\*\* first-dir/file7:1.1	${DATE}
+--- first-dir/file7	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - file7
@@ -3241,8 +3246,8 @@ diff -c first-dir/file7:1\.1 first-dir/file7:removed
 ${PROG} [a-z]*: Diffing first-dir/dir1
 Index: first-dir/dir1/file6
 diff -c first-dir/dir1/file6:1\.1 first-dir/dir1/file6:1\.2
-\*\*\* first-dir/dir1/file6:1\.1	.*
---- first-dir/dir1/file6	.*
+\*\*\* first-dir/dir1/file6:1\.1	${DATE}
+--- first-dir/dir1/file6	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -3250,8 +3255,8 @@ diff -c first-dir/dir1/file6:1\.1 first-dir/dir1/file6:1\.2
 ${PLUS} file6
 Index: first-dir/dir1/file7
 diff -c first-dir/dir1/file7:1\.1 first-dir/dir1/file7:removed
-\*\*\* first-dir/dir1/file7:1\.1	.*
---- first-dir/dir1/file7	.*
+\*\*\* first-dir/dir1/file7:1\.1	${DATE}
+--- first-dir/dir1/file7	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - file7
@@ -3259,8 +3264,8 @@ diff -c first-dir/dir1/file7:1\.1 first-dir/dir1/file7:removed
 ${PROG} [a-z]*: Diffing first-dir/dir1/dir2
 Index: first-dir/dir1/dir2/file6
 diff -c first-dir/dir1/dir2/file6:1\.1 first-dir/dir1/dir2/file6:1\.2
-\*\*\* first-dir/dir1/dir2/file6:1\.1	.*
---- first-dir/dir1/dir2/file6	.*
+\*\*\* first-dir/dir1/dir2/file6:1\.1	${DATE}
+--- first-dir/dir1/dir2/file6	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -3268,8 +3273,27 @@ diff -c first-dir/dir1/dir2/file6:1\.1 first-dir/dir1/dir2/file6:1\.2
 ${PLUS} file6
 Index: first-dir/dir1/dir2/file7
 diff -c first-dir/dir1/dir2/file7:1\.1 first-dir/dir1/dir2/file7:removed
-\*\*\* first-dir/dir1/dir2/file7:1\.1	.*
---- first-dir/dir1/dir2/file7	.*
+\*\*\* first-dir/dir1/dir2/file7:1\.1	${DATE}
+--- first-dir/dir1/dir2/file7	${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- file7
+--- 0 ----"
+		dotest basic2-24a "${testcvs} rdiff -l -r1.1 -rrtagged-by-head first-dir" \
+"${PROG} [a-z]*: Diffing first-dir
+Index: first-dir/file6
+diff -c first-dir/file6:1\.1 first-dir/file6:1\.2
+\*\*\* first-dir/file6:1\.1	${DATE}
+--- first-dir/file6	${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  file6
+${PLUS} file6
+Index: first-dir/file7
+diff -c first-dir/file7:1\.1 first-dir/file7:removed
+\*\*\* first-dir/file7:1.1	${DATE}
+--- first-dir/file7	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - file7
@@ -3900,8 +3924,8 @@ File: foo              	Status: Up-to-date
 "${PROG}"' [a-z]*: Diffing trdiff
 Index: trdiff/foo
 diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
-\*\*\* trdiff/foo:1\.1\.1\.1	.*
---- trdiff/foo	.*
+\*\*\* trdiff/foo:1\.1\.1\.1	'"${DATE}"'
+--- trdiff/foo	'"${DATE}"'
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
 ! \$''Id: foo,v 1\.1\.1\.1 [0-9/]* [0-9:]* '"${username}"' Exp \$
@@ -3912,8 +3936,8 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 ! something
 Index: trdiff/new
 diff -c /dev/null trdiff/new:1\.1
-\*\*\* /dev/null	.*
---- trdiff/new	.*
+\*\*\* /dev/null	'"${DATE}"'
+--- trdiff/new	'"${DATE}"'
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1,2 ----
@@ -4159,22 +4183,22 @@ T file2'
 "${testcvs} -q rdiff -r bp_branch1 -r branch1 first-dir" \
 "Index: first-dir/file3
 diff -c /dev/null first-dir/file3:1\.1\.2\.1
-\*\*\* /dev/null	.*
---- first-dir/file3	.*
+\*\*\* /dev/null	${DATE}
+--- first-dir/file3	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1 ----
 ${PLUS} line1 from branch1"
 		dotest death-76a1 \
 "${testcvs} -q rdiff -r branch1 -r bp_branch1 first-dir" \
-'Index: first-dir/file3
+"Index: first-dir/file3
 diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
-\*\*\* first-dir/file3:1\.1\.2\.1	.*
---- first-dir/file3	.*
+\*\*\* first-dir/file3:1\.1\.2\.1	${DATE}
+--- first-dir/file3	${DATE}
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 - line1 from branch1
---- 0 ----'
+--- 0 ----"
 
 		# remove
 		rm file3
