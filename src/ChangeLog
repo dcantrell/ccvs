@@ -1,3 +1,12 @@
+Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (crerepos): New tests, to test alternate ways of
+	creating a repository and related matters.
+	* sanity.sh: Remove tests 1 through 3 and related cruft; replace
+	them with a new test 1 which merely tests "cvs init".  By doing
+	the obscure stuff in crerepos we avoid having to do all this stuff
+	any time we run any single test.
+
 Fri Oct 25 13:20:44 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* diff.c (diff_file_nodiff): When setting use_rev1, only return
