@@ -861,7 +861,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	buf = xmalloc (size);
 	fd = open (temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd < 0)
-	    error (1, errno, "writing %s", short_pathname);
+	    error (1, errno, "writing %s%s", short_pathname, temp_filename);
 
 	if (use_gzip)
 	    fd = filter_through_gunzip (fd, 0, &gzip_pid);
@@ -921,31 +921,33 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
+	    (void) unlink_file(temp_filename);
 	    if (retcode == 0)
 	    {
-	        (void) unlink_file (temp_filename);
 		(void) unlink_file (backup);
 	    }
 	    else
 	    {
 	        int old_errno = errno;
-
+		char path_tmp[PATH_MAX];
+		
 	        if (isfile (backup))
 		    rename_file (backup, filename);
+		/* Get rid of the patch reject file */
+		sprintf(path_tmp, "%s.rej", filename);
+		(void) unlink_file(path_tmp);
        
 		/* Save this file to retrieve later.  */
 		failed_patches =
 		    (char **) xrealloc ((char *) failed_patches,
 					((failed_patches_count + 1)
 					 * sizeof (char *)));
-		failed_patches[failed_patches_count] =
-		    xstrdup (short_pathname);
+		sprintf(path_tmp, "%s%s", short_pathname, filename);
+		failed_patches[failed_patches_count] = xstrdup (path_tmp);
 		++failed_patches_count;
-
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? old_errno : 0,
 		       "could not patch %s%s", filename,
 		       retcode == -1 ? "" : "; will refetch");
-
 		stored_checksum_valid = 0;
 
 		return;
@@ -982,6 +984,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	    if (memcmp (checksum, stored_checksum, 16) != 0)
 	    {
+		char path_tmp[PATH_MAX];
 	        if (data->contents != UPDATE_ENTRIES_PATCH)
 		    error (1, 0, "checksum failure on %s",
 			   short_pathname);
@@ -995,8 +998,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		    (char **) xrealloc ((char *) failed_patches,
 					((failed_patches_count + 1)
 					 * sizeof (char *)));
-		failed_patches[failed_patches_count] =
-		    xstrdup (short_pathname);
+		sprintf(path_tmp, "%s%s", short_pathname, filename);
+		failed_patches[failed_patches_count] = xstrdup (path_tmp);
 		++failed_patches_count;
 
 		return;

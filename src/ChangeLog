@@ -1,3 +1,10 @@
+Thu Jul 20 17:51:54 1995  David Lamkin  <drl@net-tel.co.uk>
+
+	* client.c (short_pathname): Fixes the fetching of the whole file
+	after a patch to bring it up to date has failed:
+	   - failed_patches[] now holds short path to file that failed
+	   - patch temp files are unlinked where the patch is done
+
 Thu Jul 20 12:37:10 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h: Declare error_set_cleanup
