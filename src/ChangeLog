@@ -1,3 +1,7 @@
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
+	* client.c: Avoid more typecasts.  Some reformatting.
+
 2004-10-06  Mark D. Baushke  <mdb@cvshome.org>
 
 	* client.c (send_file_names): Use new save-cwd API.
