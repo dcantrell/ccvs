@@ -1,3 +1,7 @@
+2003-11-26  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (binfiles2): Correct yet another Cygwin difficulty.
+
 2003-11-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (release): Perform forgotten cleanup.
