@@ -1,5 +1,9 @@
 Thu Oct 17 12:10:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Reverting local changes): New node, somewhat based
+	on the version of this node from 30 Sep 96 change.
+	(admin options): Refer to it.
+
 	* cvs.texinfo: Reinstate 30 Sep 96 change from A4 to US letter.
 
 	* cvs.texinfo (Concurrency): When telling people how to clean up

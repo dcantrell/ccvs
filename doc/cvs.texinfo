@@ -3756,6 +3756,7 @@ revision.
 @menu
 * First import::                Importing a module for the first time
 * Update imports::              Updating a module with the import command
+* Reverting local changes::     Reverting a module to the latest vendor release
 * Binary files in imports::     Binary files require special handling
 @end menu
 
@@ -3764,6 +3765,8 @@ revision.
 @section Importing a module for the first time
 @cindex Importing modules
 
+@c Should mention naming conventions for vendor tags,
+@c release tags, and perhaps directory names.
 Use the @code{import} command to check in the sources
 for the first time.  When you use the @code{import}
 command to track third-party sources, the @dfn{vendor
@@ -3791,6 +3794,7 @@ $ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 The vendor tag is named @samp{FSF_DIST} in the above
 example, and the only release tag assigned is
 @samp{WDIFF_0_04}.
+@c FIXME: Need to say where fsf/wdiff comes from.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Update imports
@@ -3834,6 +3838,26 @@ $ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
 
 @noindent
 In this case, the two above commands are equivalent.
+
+@node Reverting local changes
+@section Reverting to the latest vendor release
+
+You can also revert local changes completely and return
+to the latest vendor release by changing the `head'
+revision back to the vendor branch on all files.  For
+example, if you have a checked-out copy of the sources
+in @file{~/work.d/wdiff}, and you want to revert to the
+vendor's version for all the files in that directory,
+you would type:
+
+@example
+$ cd ~/work.d/wdiff
+$ cvs admin -bWDIFF .
+@end example
+
+@noindent
+You must specify the @samp{-bWDIFF} without any space
+after the @samp{-b}.  @xref{admin options}.
 
 @node Binary files in imports
 @section How to handle binary files with cvs import
@@ -5244,12 +5268,10 @@ login names appearing in the comma-separated list
 When used with bare @sc{rcs}, this
 option sets the default branch to @var{rev}; in
 @sc{cvs} sticky tags (@pxref{Sticky tags}) are a better
-way to decide which branch you want to work on.  With
-@sc{cvs}, this option can be used to control behavior
-with respect to the vendor branch.
-@c FIXME: document how you use it with the vendor
-@c branch (or fix cvs so that there is a more graceful
-@c way to handle the case).
+way to decide which branch you want to work on.  There
+is one use with @sc{cvs}: to revert to the vendor's
+version when using vendor branches (@pxref{Reverting
+local changes}).
 
 @item -c@var{string}
 Useful with @sc{cvs}.  Sets the comment leader to
