@@ -1,3 +1,9 @@
+Thu Feb  1 14:33:17 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Makefile.in (xlint): new rule; does nothing, as I'm not sure
+        running lint is actually advisable in here, but the top-level
+        Makefile thinks it can `make xlint' here.
+
 Thu Feb  1 15:07:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getopt.c: Remove rcsid.
