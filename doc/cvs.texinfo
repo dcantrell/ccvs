@@ -2847,6 +2847,13 @@ Many version control systems have the ability to export
 export the @sc{rcs} files and then follow the above
 instructions.
 
+Failing that, probably your best bet is to write a
+script that will check out the files one revision at a
+time using the command line interface to the other
+system, and then check the revisions into @sc{cvs}.
+The @file{sccs2rcs} script mentioned below may be a
+useful example to follow.
+
 @cindex SCCS, importing files from
 @item From SCCS
 There is a script in the @file{contrib} directory of
