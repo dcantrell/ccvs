@@ -1,3 +1,10 @@
+Wed Jan  1 18:47:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.spec: Don't include ChangeLog and ChangeLog.zoo in %doc.
+	There is no point in including them without src/ChangeLog,
+	src/ChangeLog-96, etc., but more to the point they really belong
+	in the source distribution rather than a binary distribution anyway.
+
 Mon Dec 30 16:55:54 1996  Abe Feldman  <feldman@harvey.cyclic.com>
 
 	* NEWS: Add entry for changes to checkout command (creating CVS
