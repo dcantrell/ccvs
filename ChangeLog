@@ -1,3 +1,7 @@
+Thu Mar 14 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Regenerate dependencies.
+
 Thu Mar 14 13:45:11 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* configure.in (AC_OUTPUT): Don't create examples/Makefile; we're
