@@ -147,6 +147,7 @@ This info manual describes how to use and administer
 * History browsing::            Viewing the history of files in various ways
 * Keyword substitution::        CVS can include the revision inside the file
 * Binary files::                CVS can handle binary files
+* Builds::                      Issues related to CVS and builds
 * Revision management::         Policy questions for revision management
 * Invoking CVS::                Reference manual for CVS commands
 * Administrative files::        Reference manual for the Administrative files
@@ -469,8 +470,11 @@ Figuring out what files need to be rebuilt when
 something changes is, again, something to be handled
 outside the scope of @sc{cvs}.  One traditional
 approach is to use @code{make} for building, and use
-some automated tool for generating the depencies which
+some automated tool for generating the dependencies which
 @code{make} uses.
+
+See @ref{Builds}, for more information on doing builds
+in conjunction with @sc{cvs}.
 
 @item @sc{cvs} is not a substitute for management.
 
@@ -4721,6 +4725,98 @@ You can also set a default for whether @code{cvs add}
 and @code{cvs import} treat a file as binary based on
 its name; for example you could say that files who
 names end in @samp{.exe} are binary.  @xref{Wrappers}.
+
+@c I'm not sure about the best location for this.  In
+@c one sense, it might belong right after we've introduced
+@c CVS's basic version control model, because people need
+@c to figure out builds right away.  The current location
+@c is based on the theory that it kind of akin to the
+@c "Revision management" section.
+@node Builds
+@chapter How your build system interacts with CVS
+@cindex builds
+@cindex make
+
+As mentioned in the introduction, @sc{cvs} does not
+contain software for building your software from source
+code.  This section describes how various aspects of
+your build system might interact with @sc{cvs}.
+
+@c Is there a way to discuss this without reference to
+@c tools other than CVS?  I'm not sure there is; I
+@c wouldn't think that people who learn CVS first would
+@c even have this concern.
+One common question, especially from people who are
+accustomed to @sc{rcs}, is how to make their build get
+an up to date copy of the sources.  The answer to this
+with @sc{cvs} is two-fold.  First of all, since
+@sc{cvs} itself can recurse through directories, there
+is no need to modify your @file{Makefile} (or whatever
+configuration file your build tool uses) to make sure
+each file is up to date.  Instead, just use two
+commands, first @code{cvs -q update} and then
+@code{make} or whatever the command is to invoke your
+build tool.  Secondly, you do not necessarily
+@emph{want} to get a copy of a change someone else made
+until you have finished your own work.  One suggested
+approach is to first update your sources, then make and
+test the change you were thinking of, and then commit
+your sources (updating first if necessary).  By
+periodically (in between changes, using the approach
+just described) updating your entire tree, you ensure
+that your sources are sufficiently up to date.
+
+@cindex bill of materials
+One common need is to record which versions of which
+source files went into a particular build.  This kind
+of functionality is sometimes called @dfn{bill of
+materials} or something similar.  The best way to do
+this with @sc{cvs} is to use the @code{tag} command to
+record which versions went into a given build
+(@pxref{Tags}).
+
+Using @sc{cvs} in the most straightforward manner
+possible, each developer will have a copy of the entire
+source tree which is used in a particular build.  If
+the source tree is small, or if developers are
+geographically dispersed, this is the preferred
+solution.  In fact one approach for larger projects is
+to break a project down into smaller
+@c I say subsystem instead of module because they may or
+@c may not use the modules file.
+separately-compiled subsystems, and arrange a way of
+releasing them internally so that each developer need
+check out only those subsystems which are they are
+actively working on.
+
+Another approach is to set up a structure which allows
+developers to have their own copies of some files, and
+for other files to access source files from a central
+location.  Many people have come up with some such
+@c two such people are paul@sander.cupertino.ca.us (for
+@c a previous employer)
+@c and gtornblo@senet.abb.se (spicm and related tools),
+@c but as far as I know
+@c noone has nicely packaged or released such a system (or
+@c instructions for constructing one).
+system using features such as the symbolic link feature
+found in many operating systems, or the @code{VPATH}
+feature found in many versions of @code{make}.  One build
+tool which is designed to help with this kind of thing
+is Odin (see
+@code{ftp://ftp.cs.colorado.edu/pub/distribs/odin}).
+@c Should we be saying more about Odin?  Or how you use
+@c it with CVS?  Also, the Prime Time Freeware for Unix
+@c disk (see http://www.ptf.com/) has Odin (with a nice
+@c paragraph summarizing it on the web), so that might be a
+@c semi-"official" place to point people.
+@c
+@c Of course, many non-CVS systems have this kind of
+@c functionality, for example OSF's ODE
+@c (http://www.osf.org/ode/) or mk
+@c (ftp://ftp.interlog.com/pub/unix/mk).  But I'm not sure
+@c there is any point in mentioning them here unless they
+@c can work with CVS.
 
 @c ---------------------------------------------------------------------
 @node Revision management

@@ -1,3 +1,8 @@
+Mon Oct 21 17:33:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Builds): New node.
+	(What is CVS?): Refer to it.
+
 Sat Oct 19 14:32:21 1996  Jim Meyering <meyering@asic.sc.ti.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
