@@ -1,3 +1,11 @@
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* gnulib-modules, gnulib-update, gnulib.txt, srclist.txt: Move these...
+	* maint-aux: ...to this new directory, with minor modifications.
+	* Makefile.am (EXTRA_DIST): Accomodate move of the above files.  Add
+	maint-aux/gnulib-modules.
+	* HACKING: s#srclist.txt#maint-aux/srclist.txt#.
+
 2005-04-05  Derek Price  <derek@ximbiot.com>
 
 	* mkinstalldirs: Remove this obsolete file.  It's work is now done by
