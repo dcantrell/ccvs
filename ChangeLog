@@ -1,5 +1,9 @@
 2004-02-26  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.mak (cvs.exe): Build xmalloc.obj, not xalloc.obj.
+
+2004-02-26  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.mak (xmalloc.obj, xstrdup.obj): s/windows-NT/lib/.
 
 2004-02-25  Derek Price  <derek@ximbiot.com>
