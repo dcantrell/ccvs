@@ -1,3 +1,8 @@
+1998-08-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Update for SCO OpenServer 5 (reported by Jeffery
+	Cann).
+
 1998-08-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Add Unixware 7 (reported by Phillip Porch).
