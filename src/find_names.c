@@ -217,9 +217,6 @@ find_dirs (dir, list, checkadm)
 	if (strcmp (dp->d_name, ".") == 0 ||
 	    strcmp (dp->d_name, "..") == 0 ||
 	    strcmp (dp->d_name, CVSATTIC) == 0 ||
-#ifdef CVSDEA
-	    strcmp (dp->d_name, CVSDEA) == 0 ||
-#endif
 	    strcmp (dp->d_name, CVSLCK) == 0)
 	    continue;
 

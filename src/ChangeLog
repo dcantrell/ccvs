@@ -1,3 +1,9 @@
+Fri Jul 21 17:07:42 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c, cvs.h, commit.c, log.c, find_names.c: Remove CVS.dea
+	stuff.  It is slower than the alternatives and I don't think
+	anyone ever actually used it.
+
 Fri Jul 21 10:35:10 1995  Vince DeMarco <vdemarco@bou.shl.com>
 
 	* Makefile.in (SOURCES, OBJECTS): Add wrapper.c, wrapper.o.
