@@ -151,7 +151,9 @@ add (argc, argv)
     for (i = 0; i < argc; i++)
     {
 	int begin_err = err;
+#ifdef SERVER_SUPPORT
 	int begin_added_files = added_files;
+#endif
 	struct file_info finfo;
 
 	user = argv[i];

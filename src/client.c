@@ -2896,20 +2896,21 @@ supported_request (name)
 
 
 #ifdef AUTH_CLIENT_SUPPORT
-static void init_sockaddr PROTO ((struct sockaddr_in *, const char *,
-				  unsigned short int));
+static void init_sockaddr PROTO ((struct sockaddr_in *, char *,
+				  unsigned int));
 
 static void
 init_sockaddr (name, hostname, port)
     struct sockaddr_in *name;
-    const char *hostname;
-    unsigned short int port;
+    char *hostname;
+    unsigned int port;
 {
     struct hostent *hostinfo;
+	unsigned short shortport = port;
 
     memset (name, 0, sizeof (*name));
     name->sin_family = AF_INET;
-    name->sin_port = htons (port);
+    name->sin_port = htons (shortport);
     hostinfo = gethostbyname (hostname);
     if (hostinfo == NULL)
     {
