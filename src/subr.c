@@ -624,19 +624,18 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf, 
 void
 resolve_symlink (char **filename)
 {
-    if ((! filename) || (! *filename))
+    if (filename == NULL || *filename == NULL)
 	return;
 
     while (islink (*filename))
     {
-	char *newname;
 #ifdef HAVE_READLINK
 	/* The clean thing to do is probably to have each filesubr.c
 	   implement this (with an error if not supported by the
 	   platform, in which case islink would presumably return 0).
 	   But that would require editing each filesubr.c and so the
 	   expedient hack seems to be looking at HAVE_READLINK.  */
-	newname = xreadlink (*filename);
+	char *newname = xreadlink (*filename);
 	
 	if (isabsolute (newname))
 	{

@@ -1441,10 +1441,7 @@ expand_at_signs (char *buf, off_t size, FILE *fp)
     cp = buf;
     while ((next = memchr (cp, '@', size)) != NULL)
     {
-	int len;
-
-	++next;
-	len = next - cp;
+	size_t len = ++next - cp;
 	if (fwrite (cp, 1, len, fp) != len)
 	    return EOF;
 	if (putc ('@', fp) == EOF)
