@@ -734,8 +734,13 @@ set_lockers_name (statp)
 
 /*
  * Persistently tries to make the directory "lckdir", which serves as a
- * lock. If the create time on the directory is greater than CVSLCKAGE
+ * lock.
+ *
+ * #ifdef CVS_FUDGELOCKS
+ * If the create time on the directory is greater than CVSLCKAGE
  * seconds old, just try to remove the directory.
+ * #endif
+ *
  */
 static int
 set_lock (lock, will_wait)
