@@ -16016,6 +16016,7 @@ File: binfile          	Status: Up-to-date
 	  # also used when operating on files instead of whole
 	  # directories
           cd ../..
+	  rm -r 2a
 	  mkdir 3; cd 3
 	  dotest binfiles-5.5b0 "${testcvs} -q co first-dir/binfile" \
 'U first-dir/binfile'
