@@ -51,12 +51,13 @@ extern int client_prune_dirs;
 extern int use_authenticating_server;
 # endif /* AUTH_CLIENT_SUPPORT */
 # if defined (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI)
-void connect_to_pserver (cvsroot_t *,
-				struct buffer **,
-				struct buffer **,
-				int, int );
+void connect_to_pserver (cvsroot_t *, struct buffer **, struct buffer **,
+                         int, int );
 #   ifndef CVS_AUTH_PORT
 #     define CVS_AUTH_PORT 2401
+#   endif /* CVS_AUTH_PORT */
+#   ifndef CVS_PROXY_PORT
+#     define CVS_PROXY_PORT 8080
 #   endif /* CVS_AUTH_PORT */
 # endif /* (AUTH_CLIENT_SUPPORT) || defined (HAVE_GSSAPI) */
 
