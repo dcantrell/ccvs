@@ -2,5 +2,6 @@ Makefile
 example
 minigzip
 foo.gz
-Debug
-Release
+WinDebug
+WinRel
+zlib.001

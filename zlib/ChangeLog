@@ -1,3 +1,10 @@
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* zlib.dep, zlib.mak: New files created by Visual C++ 6.0.
+	* zlib.dsp: Updated by Visual C++ 6.0.
+	* Makefile.in (DISTFILES): Add zlib.dep & zlib.mak.
+	* .cvsignore: Add and remove files for new MSVC++ setup.
+
 2003-08-07  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in (pdf ps): New recursive targets to be ignored for
