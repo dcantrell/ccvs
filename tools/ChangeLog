@@ -1,3 +1,8 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am: New file needed by Automake
+	* Makefile.in: Regenerated
+
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Update now that pcl-cvs is no longer here.

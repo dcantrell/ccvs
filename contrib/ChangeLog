@@ -1,3 +1,8 @@
+2000-12-21  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am: New file needed by Automake
+	* Makefile.in: Regenerated
+
 2000-12-14  Derek Price  <derek.price@openavenue.com>
 	    Thomas Maeder  <maeder@glue.ch>
 
