@@ -1,5 +1,8 @@
 Fri Sep 19 22:57:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* RCSFILES: Grammar fix in first paragraph.  Re-word section on
+	dead newphrase.  Add item about what it means if "expand" is omitted.
+
 	* cvs.texinfo (Magic branch numbers): Change example branch number
 	from 1.2.3 to 1.2.4; CVS assigns even branch numbers and I don't
 	think vendor branches are very relevant to this example.
