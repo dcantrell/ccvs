@@ -14,6 +14,17 @@
 
 #include "rcmd.h"
 
+void
+init_sockets ()
+{
+    if (SockInit () != TRUE)
+    {
+      fprintf (stderr, "SockInit() failed!\n");
+      exit (1);
+    }
+}
+
+
 static int
 resolve_address (const char **ahost, struct sockaddr_in *sai)
 {
