@@ -1,3 +1,8 @@
+2003-01-28  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Remove a reference to options.h.
+	(Thanks to <jenn@anthill.echidna.id.au> for the report.)
+
 2003-01-28  Larry Jones  <lawrence.jones@eds.com>
 
 	* NEWS: Update for 1.11.5, add notes about bug fixes in older

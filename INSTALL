@@ -368,10 +368,7 @@ Building from source code under Unix:
 
     END OF NOTE FOR NDBM GUNK.
 
-3)  Edit src/options.h.  The defaults should be reasonable, and in fact
-    if you are lazy you can safely skip this step.
-
-4)  Try to build it:
+3)  Try to build it:
 
 	$ make
 
@@ -382,7 +379,7 @@ Building from source code under Unix:
     compiler information, make output, and anything else you think
     will be helpful.
 
-4a)  Run the regression tests (optional).
+3a)  Run the regression tests (optional).
 
     You may also wish to validate the correctness of the new binary by
     running the regression tests.  If they succeed, that is nice to
@@ -394,7 +391,7 @@ Building from source code under Unix:
 
     If you want to run the tests, see the file TESTS for more information.
 
-5)  Install the binaries/documentation:
+4)  Install the binaries/documentation:
 
 	$ make install
 
