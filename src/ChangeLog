@@ -6,7 +6,7 @@ Fri Jul 14 22:28:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 	(Thanks, DJM.)
 
 	* cvsbug.sh: Use /usr/sbin/sendmail, unless it doesn't
-	exist, in which case use /usr/bin/sendmail.  (Thanks, DJM.)
+	exist, in which case use /usr/lib/sendmail.  (Thanks, DJM.)
 
 	* server.c (server, server_cleanup): Use "/tmp" instead of
 	"/usr/tmp" when the TMPDIR environment variable isn't set.  This
