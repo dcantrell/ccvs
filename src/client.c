@@ -4179,6 +4179,8 @@ connect_to_gserver (root, sock, hostinfo)
 
 #endif /* HAVE_GSSAPI */
 
+
+
 static int send_variable_proc PROTO ((Node *, void *));
 
 static int
@@ -4194,6 +4196,8 @@ send_variable_proc (node, closure)
     return 0;
 }
 
+
+
 /* Contact the server.  */
 void
 start_server ()
@@ -4205,7 +4209,6 @@ start_server ()
     if (toplevel_repos != NULL)
 	free (toplevel_repos);
     toplevel_repos = NULL;
-
 
     /* Note that generally speaking we do *not* fall back to a different
        way of connecting if the first one does not work.  This is slow
@@ -4581,6 +4584,8 @@ start_server ()
     if (supported_request ("Set"))
 	walklist (variable_list, send_variable_proc, NULL);
 }
+
+
 
 #ifndef NO_EXT_METHOD
 
@@ -5298,8 +5303,8 @@ send_option_string (string)
 }
 
 
-/* Send the names of all the argument files to the server.  */
 
+/* Send the names of all the argument files to the server.  */
 void
 send_file_names (argc, argv, flags)
     int argc;
@@ -5314,35 +5319,6 @@ send_file_names (argc, argv, flags)
        of a performance hit.  Perhaps worth cleaning up someday.  */
     if (flags & SEND_EXPAND_WILD)
 	expand_wild (argc, argv, &argc, &argv);
-
-    /* Send Max-dotdot if needed.  */
-    max_level = 0;
-    for (i = 0; i < argc; ++i)
-    {
-	level = pathname_levels (argv[i]);
-	if (level > max_level)
-	    max_level = level;
-    }
-    if (max_level > 0)
-    {
-	if (supported_request ("Max-dotdot"))
-	{
-            char buf[10];
-            sprintf (buf, "%d", max_level);
-
-	    send_to_server ("Max-dotdot ", 0);
-	    send_to_server (buf, 0);
-	    send_to_server ("\012", 1);
-	}
-	else
-	    /*
-	     * "leading .." is not strictly correct, as this also includes
-	     * cases like "foo/../..".  But trying to explain that in the
-	     * error message would probably just confuse users.
-	     */
-	    error (1, 0,
-		   "leading .. not supported by old (pre-Max-dotdot) servers");
-    }
 
     for (i = 0; i < argc; ++i)
     {
@@ -5483,6 +5459,46 @@ send_file_names (argc, argv, flags)
 }
 
 
+
+/* Calculate and send max-dotdot to the server */
+static void
+send_max_dotdot (argc, argv)
+    int argc;
+    char **argv;
+{
+    int i;
+    int level = 0;
+    int max_level = 0;
+
+    /* Send Max-dotdot if needed.  */
+    for (i = 0; i < argc; ++i)
+    {
+        level = pathname_levels (argv[i]);
+        if (level > max_level)
+            max_level = level;
+    }
+
+    if (max_level > 0)
+    {
+        if (supported_request ("Max-dotdot"))
+        {
+            char buf[10];
+            sprintf (buf, "%d", max_level);
+
+            send_to_server ("Max-dotdot ", 0);
+            send_to_server (buf, 0);
+            send_to_server ("\012", 1);
+        }
+        else
+        {
+            error (1, 0,
+"backreference in path (`..') not supported by old (pre-Max-dotdot) servers");
+        }
+    }
+}
+
+
+
 /* Send Repository, Modified and Entry.  argc and argv contain only
   the files to operate on (or empty for everything), not options.
   local is nonzero if we should not recurse (-l option).  flags &
@@ -5502,6 +5518,8 @@ send_files (argc, argv, local, aflag, flags)
 {
     struct send_data args;
     int err;
+
+    send_max_dotdot (argc, argv);
 
     /*
      * aflag controls whether the tag/date is copied into the vers_ts.
