@@ -748,9 +748,9 @@ diff_dirproc (callerdat, dir, pos_repos, update_dir, entries)
     /* XXX - check for dirs we don't want to process??? */
 
     /* YES ... for instance dirs that don't exist!!! -- DW */
-    if (!isdir (dir) )
-      return (R_SKIP_ALL);
-  
+    if (!isdir (dir))
+	return (R_SKIP_ALL);
+
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);
     return (R_PROCESS);

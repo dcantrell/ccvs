@@ -673,6 +673,14 @@ but CVS uses %s for its own purposes; skipping %s directory",
     if (frame->direntproc != NULL)
 	dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
 					update_dir, frent->entries);
+    else
+    {
+	/* Generic behavior.  I don't see a reason to make the caller specify
+	   a direntproc just to get this.  */
+	if ((frame->which & W_LOCAL) && !isdir (dir))
+	    dir_return = R_SKIP_ALL;
+    }
+
     free (newrepos);
 
     /* only process the dir if the return code was 0 */

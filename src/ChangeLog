@@ -1,3 +1,11 @@
+Wed Oct  8 16:40:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_dir_proc), commit.c (check_direntproc,
+	commit_direntproc, find_dirent_proc): If this
+	directory doesn't exist, skip it.
+	* diff.c (diff_dirproc): Reindent.
+	* sanity.sh (deep-4b0a, deep-4b0b): Check for this fix.
+
 Thu Sep 26 16:30:00 1997  Larry Jones <larry.jones@sdrc.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
