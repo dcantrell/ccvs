@@ -1432,4 +1432,7 @@ echo Ok.
 # * -P option to checkout--(a) refrains from checking out new empty dirs,
 #   (b) prunes empty dirs already there.
 
+# clean any old remnants
+rm -rf ${TESTDIR}
+
 # end of sanity.sh
