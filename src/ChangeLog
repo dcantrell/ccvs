@@ -1,3 +1,18 @@
+2003-11-24  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: Add `-h <hostname>' option to enable testing across a
+	:ext: connection to another host.  Warn when `-h' is specified without
+	$TESTDIR.  Leave $TESTDIR intact when it looks absolute since it may
+	contain symlinks.  Allow $CVS_SERVER to be overridden via the
+	environment for `-h'.  Default $CVS_RSH to `ssh'.
+	(*): Use $CVS_RSH to perform certain commands on the remote host (esp.
+	`ln -s' and `chmod') when `-h' is specified to work around
+	incompatibilities with CygWin & Samba.  Add a few other minor
+	workarounds for Cygwin bugs.
+
+	(newroot): New function.
+	(*): Use newroot when appropriate.
+
 2003-11-21  Larry Jones  <lawrence.jones@eds.com>
 
 	* recurse.c (start_recursion, do_recursion): Cast %p arguments to

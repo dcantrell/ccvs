@@ -23,7 +23,7 @@ usage ()
 {
     echo "Usage: `basename $0` --help"
     echo "Usage: `basename $0` [-klr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
-    echo "                 [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
+    echo "                 [-h HOSTNAME] [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
     echo "                 [TESTS-TO-RUN...]"
 }
 
@@ -46,6 +46,12 @@ exit_help ()
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
     echo "		executable to be tested (defaults to CVS-TO-TEST and"
     echo "		implies --remote)"
+    echo "-h HOSTNAME"
+    echo "--hostname HOSTNAME"
+    echo "              Use :ext:HOSTNAME to run remote tests rather than"
+    echo "              :fork:.  Implies --remote and assumes that \$TESTDIR"
+    echo "              resolves to the same directory on both the client and"
+    echo "              the server."
     echo "-f FROM-TEST"
     echo "--from-test=FROM-TEST"
     echo "		run TESTS-TO-RUN, skipping all tests in the list before"
@@ -98,6 +104,7 @@ export LC_ALL
 #
 unset configfile
 unset fromtest
+unset remotehost
 keep=false
 linkroot=false
 remote=false
@@ -113,7 +120,7 @@ servercvs=false
 #		...
 #	esac
 #
-while getopts Hc:f:klrs:-: option ; do
+while getopts Hc:f:h:klrs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -135,9 +142,17 @@ while getopts Hc:f:klrs:-: option ; do
 		option=f
 		checklongoptarg
 		;;
-	    h|he|hel|help)
+	    h)
+		echo "\`--h' is ambiguous.  Could mean \`--help' or \`--hostname'" >&2
+		exit_usage
+		;;
+	    he|hel|help)
 		option=H
 		OPTARG=
+		;;
+	    ho|hos|host|hostn|hostna|hostnam|hostname)
+		option=h
+		checklongoptarg
 		;;
 	    k|ke|kee|keep)
 		option=k
@@ -166,6 +181,13 @@ while getopts Hc:f:klrs:-: option ; do
 	    ;;
 	f)
 	    fromtest="$OPTARG"
+	    ;;
+	h)
+	    # Set a remotehost to run the remote tests on via :ext:
+	    # Implies `-r' and assumes that $TESTDIR resolves to the same
+	    # directory on the client and the server.
+	    remotehost="$OPTARG"
+	    remote=:
 	    ;;
 	H)
 	    exit_help
@@ -227,6 +249,31 @@ if ${testcvs} --version </dev/null 2>/dev/null |
   exit 1
 fi
 
+# If $remotehost is set, warn if $TESTDIR isn't since we are pretty sure
+# that its default value of `/tmp/cvs-sanity' will not resolve to the same
+# directory on two different machines.
+if test -n "$remotehost" && test -z "$TESTDIR"; then
+    echo "WARNING: CVS server hostname is set and \$TESTDIR is not.  If" >&2
+    echo "$remotehost is not the local machine, then it is unlikely that" >&2
+    echo "the default value assigned to \$TESTDIR will resolve to the same" >&2
+    echo "directory on both this client and the CVS server." >&2
+fi
+
+# Set a default value for $CVS_RSH.
+#
+# FIXME: Since the CVS default can be configured, this default should be set in
+# the config file.
+: ${CVS_RSH=ssh}; export CVS_RSH
+
+if test -n "$remotehost"; then
+    # Verify that $CVS_RSH $remotehost works.
+    result=`$CVS_RSH $remotehost 'echo test'`
+    if test $? != 0 || test "x$result" != "xtest"; then
+	echo "\`$CVS_RSH $remotehost' failed." >&2
+	exit 1
+    fi
+fi
+
 case "${servercvs}" in
 "")
   exit_usage
@@ -240,31 +287,52 @@ false)
   ;;
 esac
 
-# verify that $servercvs works.
 if test false != ${servercvs}; then
-  if test ! -f ${servercvs} || test ! -r ${servercvs}; then
-    echo "No such file or file not readable: ${testcvs}" >&2
-    exit 1
-  fi
-  if ${servercvs} --version </dev/null 2>/dev/null |
-       grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
-    echo "Not a CVS executable: ${servercvs}" >&2
-    exit 1
-  fi
+  # Allow command line to override $CVS_SERVER
+  CVS_SERVER=$servercvs
+else
+  # default $CVS_SERVER to ${testcvs}
+  : ${CVS_SERVER=$testcvs}
+  # With the previous command, effectively defaults $servercvs to $CVS_SERVER,
+  # then $testcvs
+  servercvs=${CVS_SERVER}
 fi
-
-# default ${servercvs} to ${testcvs}
-if test false != ${servercvs}; then :; else
-	servercvs=${testcvs}
-fi
+export CVS_SERVER
 
 # Fail in client/server mode if our ${servercvs} does not contain server
 # support.
 if $remote; then
-  if ${servercvs} --version </dev/null |
-       grep '^Concurrent.*(.*server)$' >/dev/null 2>&1; then :; else
-    echo "CVS executable \`${servercvs}' does not contain server support." >&2
-    exit 1
+  if test -n "$remotehost"; then
+    if $CVS_RSH $remotehost "test ! -f ${servercvs} || test ! -r ${servercvs}"
+    then
+      echo "No such file or file not readable: $remotehost:${testcvs}" >&2
+      exit 1
+    fi
+    if $CVS_RSH $remotehost "${servercvs} --version </dev/null 2>/dev/null |
+         grep '^Concurrent Versions System' >/dev/null 2>&1"; then :; else
+      echo "Not a CVS executable: $remotehost:${servercvs}" >&2
+      exit 1
+    fi
+    if $CVS_RSH $remotehost "${servercvs} --version </dev/null |
+         grep '^Concurrent.*(.*server)$' >/dev/null 2>&1"; then :; else
+      echo "CVS executable \`$remotehost:${servercvs}' does not contain server support." >&2
+      exit 1
+    fi
+  else
+    if test ! -f ${servercvs} || test ! -r ${servercvs}; then
+      echo "No such file or file not readable: ${testcvs}" >&2
+      exit 1
+    fi
+    if ${servercvs} --version </dev/null 2>/dev/null |
+         grep '^Concurrent Versions System' >/dev/null 2>&1; then :; else
+      echo "Not a CVS executable: ${servercvs}" >&2
+      exit 1
+    fi
+    if ${servercvs} --version </dev/null |
+         grep '^Concurrent.*(.*server)$' >/dev/null 2>&1; then :; else
+      echo "CVS executable \`${servercvs}' does not contain server support." >&2
+      exit 1
+    fi
   fi
 fi
 
@@ -286,6 +354,8 @@ then
 else
   testcvs_server_support=false
 fi
+
+
 
 dokeep() 
 { 
@@ -411,8 +481,19 @@ touch check.log
 #     So this would be lost if everything was `pwd`-based.  I suppose
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
-tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+if test -n "$remotehost"; then
+        # We need to set $tmp on the server since $TMPDIR is compared against
+	# messages generated by the server.
+	tmp=`$CVS_RSH $remotehost 'cd /tmp; /bin/pwd || pwd' 2>/dev/null`
+	if test $? != 0; then
+	    echo "$CVS_RSH $remotehost failed." >&2
+	    exit 1
+	fi
+else
+	tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
+fi
 : ${TMPDIR=$tmp}
+export TMPDIR
 
 # Now:
 #	1) Set TESTDIR if it's not set already
@@ -432,8 +513,15 @@ fi
 # wouldn't appreciate that.
 mkdir ${TESTDIR} || exit 1
 cd ${TESTDIR} || exit 1
-TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
 # Ensure $TESTDIR is absolute
+if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
+    # Don't resolve this unless we have to.  This keeps symlinks intact.  This
+    # is important at least when testing using -h $remotehost, because the same
+    # value for $TESTDIR must resolve to the same directory on the client and
+    # the server and we likely used Samba, and possibly symlinks, to do this.
+    TESTDIR=`(/bin/pwd || pwd) 2>/dev/null`
+fi
+
 if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
     echo "Unable to resolve TESTDIR to an absolute directory." >&2
     exit 1
@@ -1791,25 +1879,52 @@ MTGTXM MtatRk = Zy;
 EOF
 }
 
+
+
+# Echo a new CVSROOT based on $1, $remote, and $remotehost
+newroot() {
+  if $remote; then
+    if test -n "$remotehost"; then
+      echo :ext:$remotehost$1
+    else
+      echo :fork:$1
+    fi
+  else
+    echo $1
+  fi
+}
+
+
+
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
+#
+# Currently we test :fork: and :ext: (see crerepos test).  There is a
+# known difference between the two in modes-15 (see comments there).
+#
+# :ext: can be tested against a remote machine if:
+#
+#    1. $remotehost is set using the `-h' option to this script.
+#    2. ${CVS_RSH=rsh} $remotehost works.
+#    3. The path to $TESTDIR is the same on both machines (symlinks are okay)
+#    4. The path to $testcvs is the same on both machines (symlinks are okay)
+#       or $CVS_SERVER is overridden in this script's environment to point to
+#       a working CVS exectuable on the remote machine.
+#
+# Testing :pserver: would be hard (inetd issues).  (How about using tcpserver
+# and some high port number?  DRP)
+
 if $linkroot; then
     mkdir ${TESTDIR}/realcvsroot
     ln -s realcvsroot ${TESTDIR}/cvsroot
 fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
-if $remote; then
-	# Currently we test :fork: and :ext: (see crerepos test).
-	# Testing :pserver: would be hard (inetd issues).
-	# Also :ext: and :fork support CVS_SERVER in a convenient way.
-	# If you want to edit this script to change the next line to
-	# :ext:, you can run the tests that way.  There is a known
-	# difference in modes-15 (see comments there).
-	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
-	CVS_SERVER=${servercvs}; export CVS_SERVER
-else
-	CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
-fi
+CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 
+
+
+###
+### The tests
+###
 dotest 1 "${testcvs} init" ''
 dotest 1a "${testcvs} init" ''
 
@@ -6504,16 +6619,25 @@ File: file5            	Status: Up-to-date
 	branches3)
 	  # test local branch number support
 
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  mkdir branches3; cd branches3
+	  # This test is skipped in $remotehost mode since the
+	  # CVS_LOCAL_BRANCH_NUM is not inherited by the server process as it
+	  # is with :fork:, for hopefully obvious reasons.
+	  #
+	  # FIXCVS?  Is this correct?  Should CVS_LOCAL_BRANCH_NUM be sent as
+	  # a protocol extension or is it reasonable to only want this set on
+	  # the server?
 
-	  dotest branches3-1 "${testcvs} -q co first-dir"
-	  cd first-dir
-	  echo "file1 first revision" > file1
-	  dotest branches3-2 "${testcvs} add file1" \
+	  if test -n "$remotehost"; then :;else
+	    mkdir ${CVSROOT_DIRNAME}/first-dir
+	    mkdir branches3; cd branches3
+
+	    dotest branches3-1 "${testcvs} -q co first-dir"
+	    cd first-dir
+	    echo "file1 first revision" > file1
+	    dotest branches3-2 "${testcvs} add file1" \
 "${SPROG} add: scheduling file .file1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest branches3-3 "${testcvs} commit -m add file1" \
+	    dotest branches3-3 "${testcvs} commit -m add file1" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
 Checking in file1;
@@ -6521,11 +6645,11 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
 
-	  # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
-	  CVS_LOCAL_BRANCH_NUM=1000; export CVS_LOCAL_BRANCH_NUM
-	  dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
-	  unset CVS_LOCAL_BRANCH_NUM
-	  dotest branches3-5 "${testcvs} -q log file1" \
+	    # Tag the file using a CVS_LOCAL_BRANCH_NUM of 1000
+	    CVS_LOCAL_BRANCH_NUM=1000; export CVS_LOCAL_BRANCH_NUM
+	    dotest branches3-4 "${testcvs} -q tag -b tag1" 'T file1'
+	    unset CVS_LOCAL_BRANCH_NUM
+	    dotest branches3-5 "${testcvs} -q log file1" \
 "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -6544,14 +6668,15 @@ date: [0-9/: ]*;  author: ${username};  state: Exp;
 add
 ============================================================================="
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
+	    if $keep; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
+	    fi
 
-	  cd ../..
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -r branches3
+	    cd ../..
+	    rm -rf ${CVSROOT_DIRNAME}/first-dir
+	    rm -r branches3
+	  fi # !$remotehost
 	  ;;
 
 	branches4)
@@ -7340,7 +7465,15 @@ two
 [>]>>>>>> 1\.2"
 
 	  # Test behavior of symlinks in the repository.
-	  dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  if test -n "$remotehost"; then
+	    # Create the link on the remote system.  This is because Cygwin's
+	    # Windows support creates *.lnk files for Windows.  When creating
+	    # these in an SMB share from UNIX, these links won't work from the
+	    # UNIX side.
+	    dotest rcslib-symlink-1remotehost "${CVS_RSH} $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-1 "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 	  dotest rcslib-symlink-2 "${testcvs} update file2" "U file2"
 	  echo "This is a change" >> file2
 	  dotest rcslib-symlink-3 "${testcvs} ci -m because file2" \
@@ -7348,8 +7481,15 @@ two
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
-	  dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+
+	  # Switch as for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-4 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file2,v'" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  else
+	    dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  fi
 
 	  # CVS was failing to check both the symlink and the file
 	  # for timestamp changes for a while.  Test that.
@@ -7374,8 +7514,15 @@ Checking in file3;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
+
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
-	  dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-3f "$CVS_RSH $remotehost 'ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
+
 	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
 
 	  # restore the link to file1 for the following tests
@@ -7387,7 +7534,12 @@ new revision: delete; previous revision: 1\.1\.2\.1
 done"
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
-	  dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-3h "$CVS_RSH $remotehost 'ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v'"
+	  else
+	    dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 
 	  # Test 5 reveals a problem with having symlinks in the
 	  # repository.  CVS will try to tag both of the files
@@ -7400,8 +7552,14 @@ done"
 "${SPROG} tag: Tagging .
 T file1
 W file2 : the_tag already exists on version 1.1.2.3 : NOT MOVING tag to version 1.1.2.1"
-	  dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+	  # As for rcslib-symlink-1
+	  if test -n "$remotehost"; then
+	    dotest rcslib-symlink-6 "$CVS_RSH $remotehost 'ls -l $CVSROOT_DIRNAME/first-dir/file2,v'" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  else
+	    dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+	  fi
 
 	  # Symlinks tend to interact poorly with the Attic.
 	  cd ..
@@ -7435,6 +7593,18 @@ ${SPROG} rtag: could not read RCS file for first-dir/file2"
 	    exit 0
 	  fi
 
+	  # Must remove the symlink first.  Samba doesn't appear to show
+	  # broken symlink across the SMB share, and rm -rf by itself
+	  # will remove file1,v first and leave file2,v a broken link and the
+	  # rm -rf will fail since it doesn't find file2,v and it still gets
+	  # directory not empty errors removing cvsroot/first-dir.
+	  #
+	  # I'm not sure why I need to do this on $remotehost.  The rm above
+	  # rcslib-symlink-3j works fine, but the next one doesn't unless run
+	  # remotely under Cygwin and using a TESTDIR on a Samba share.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v"
+	  fi
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r first-dir 2
 	  ;;
@@ -11517,7 +11687,12 @@ sleep 1
 echo "$i script invoked in \`pwd\`"
 echo "args: \$@"
 EOF
-	    chmod +x ${CVSROOT_DIRNAME}/$i.sh
+	    # Cygwin doesn't set premissions correctly over the Samba share.
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${CVSROOT_DIRNAME}/$i.sh"
+	    else
+	      chmod +x ${CVSROOT_DIRNAME}/$i.sh
+	    fi
 	  done
 
 	  OPTS="-o${CVSROOT_DIRNAME}/checkout.sh -e ${CVSROOT_DIRNAME}/export.sh -t${CVSROOT_DIRNAME}/tag.sh"
@@ -13573,7 +13748,12 @@ U top-dir/file1"
 	  # directory itself was created with 1.9 or older).
 	  rm -r CVS
 	  # Now set the permissions so we can't recreate it.
-	  chmod -w ../1
+	  if test -n "$remotehost"; then
+	    # Cygwin again.
+	    $CVS_RSH $remotehost "chmod -w $TESTDIR/1"
+	  else
+	    chmod -w ../1
+	  fi
 	  # Now see whether CVS has trouble because it can't create CVS.
 	  # First string is for local, second is for remote.
 	  dotest toplevel-12 "${testcvs} co top-dir" \
@@ -14263,11 +14443,20 @@ done"
 	  fi
 
 	  cd ../../2/1dir
-	  dotest 168 "${testcvs} -q update" \
+	  # The second case in the local and remote versions of errmsg1-168
+	  # below happens on Cygwin under Windows, where write privileges
+	  # aren't enforced properly.
+	  if $remote; then
+	    dotest errmsg1-168r "${testcvs} -q update" \
 "${SPROG} update: \`foo' is no longer in the repository
-${CPROG} update: unable to remove foo: Permission denied" \
+${SPROG} update: unable to remove \./foo: Permission denied" \
+"${SPROG} update: \`foo' is no longer in the repository"
+	  else
+	    dotest errmsg1-168 "${testcvs} -q update" \
 "${SPROG} update: \`foo' is no longer in the repository
-${CPROG} update: unable to remove \./foo: Permission denied"
+${SPROG} update: unable to remove foo: Permission denied" \
+"${SPROG} update: \`foo' is no longer in the repository"
+	  fi
 
 	  cd ..
 	  chmod u+w 1dir
@@ -14834,13 +15023,21 @@ G@#..!@#=&"
 	  if $remote; then
 	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
 
-	    # The ${DOTSTAR} matches the exact exec error message
-	    # (which varies) and either "end of file from server"
-	    # (if the process doing the exec exits before the parent
-	    # gets around to sending data to it) or "broken pipe" (if it
-	    # is the other way around).
+	    # The ${DOTSTAR} below matches the exact CVS server error message,
+	    # which in :fork: mode is:
+	    # "$SPROG \[edit aborted\]: cannot exec $TESTDIR/cvs-none: ${DOTSTAR}",
+	    # but which is:
+	    # "bash2: line 1: $TESTDIR/cvs-none: No such file or directory"
+	    # when testing across a :ext:/ssh link to my Linux 2.4 box.
+	    #
+	    # For now, I'm testing for the second part of the error message
+	    # from the client, which varies more consistently, either
+	    # "end of file from server" (if the process doing the exec exits
+	    # before the parent gets around to sending data to it) or
+	    # "received broken pipe signal" (if it is the other way around).
 	    dotest_fail devcom3-9ar "${testcvs} edit w1" \
-"${CPROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: ${DOTSTAR}"
+"${DOTSTAR}end of file from server (consult above messages if any)" \
+"${DOTSTAR}received broken pipe signal"
 	    dotest devcom3-9br "test -w w1" ""
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
@@ -16590,7 +16787,8 @@ new revision: 1\.3; previous revision: 1\.2
 done"
 	  cd ..
 	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${CVSROOT_DIRNAME}="
-          dotest info-10 "cat $TESTDIR/testlog2" 'first-dir file1,NONE,1.1
+          dotest info-10 "cat $TESTDIR/testlog2" \
+'first-dir file1,NONE,1.1
 first-dir 1.1
 first-dir file1
 first-dir NONEAX
@@ -16643,7 +16841,12 @@ else
 	exit 0
 fi
 EOF
-	  chmod +x ${TESTDIR}/vscript*
+	  # Grumble, grumble, mumble, search for "Cygwin".
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/vscript*"
+	  else
+	    chmod +x ${TESTDIR}/vscript*
+	  fi
 	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2" >>verifymsg
 	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript" >>verifymsg
 	  echo "^missing-script\$ ${TESTDIR}/bogus" >>verifymsg
@@ -16719,9 +16922,14 @@ No conflicts created by this import"
 	  fi
 
 	  # check that errors invoking the script cause verification failure
+	  #
+	  # The second text below occurs on Cygwin, where I assume execvp
+	  # does not return to let CVS print the error message when its
+	  # argument does not exist.
 	  dotest_fail info-v7 "${testcvs} import -m bogus missing-script x y" \
 "${SPROG} import: cannot exec ${TESTDIR}/bogus: No such file or directory
-${SPROG} \[import aborted\]: Message verification failed"
+${SPROG} \[import aborted\]: Message verification failed" \
+"${SPROG} \[import aborted\]: Message verification failed"
 
 	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
 "${SPROG} import: verifymsg:25: no such user variable \${=Bogus}
@@ -16877,7 +17085,12 @@ else
   exit 0
 fi
 EOF
-	  chmod +x ${TESTDIR}/1/loggit
+	  # #^@&!^@ Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/1/loggit"
+	  else
+	    chmod +x ${TESTDIR}/1/loggit
+	  fi
 	  echo "ALL ${TESTDIR}/1/loggit" >taginfo
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
 "Checking in taginfo;
@@ -18540,12 +18753,16 @@ Annotations for $file
 	    # would do the trick.
 
 	    # Note that we set CVS_SERVER at the beginning.
-	    CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+	    if test -n "$remotehost"; then
+		CREREPOS_ROOT=:ext:$remotehost${TESTDIR}/crerepos
+	    else
+		CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+	    fi
 
 	    # If we're going to do remote testing, make sure 'rsh' works first.
 	    host="`hostname`"
-	    if test "x`${CVS_RSH-rsh} $host -n 'echo hi'`" != "xhi"; then
-		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH-rsh} $host' fails." >&2
+	    if test "x`${CVS_RSH} $host -n 'echo hi'`" != "xhi"; then
+		echo "ERROR: cannot test remote CVS, because \`${CVS_RSH} $host' fails." >&2
 		exit 1
 	    fi
 
@@ -19464,7 +19681,12 @@ ${SPROG} commit: Rebuilding administrative file database"
 "${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
 ${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
-	  chmod u=rwx,g=r,o= ${TESTDIR}/locks
+	  # Grumble, mumble.  Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod u=rwx,g=r,o= ${TESTDIR}/locks"
+	  else
+	    chmod u=rwx,g=r,o= ${TESTDIR}/locks
+	  fi
 	  umask 0077
 	  CVSUMASK=0077; export CVSUMASK
 	  dotest lockfiles-6 "${testcvs} -q update" ""
@@ -19477,10 +19699,19 @@ ${SPROG} \[update aborted\]: cannot stat ${TESTDIR}/locks: No such file or direc
 	  # inherit the permissions from the parent directory.  CVSUMASK
 	  # isn't right, because typically the reason for LockDir is to
 	  # use a different set of permissions.
-	  dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
-"drwxr----- .*first-dir"
-	  dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
-"drwxr----- .*first-dir/sdir/ssdir"
+	  #
+	  # Bah!  Cygwin!
+	  if test -n "$remotehost"; then
+	    dotest lockfiles-7a "$CVS_RSH $remotehost 'ls -ld ${TESTDIR}/locks/first-dir'" \
+"drwxr-----.*first-dir"
+	    dotest lockfiles-7b "$CVS_RSH $remotehost 'ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir'" \
+"drwxr-----.*first-dir/sdir/ssdir"
+	  else
+	    dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
+"drwxr-----.*first-dir"
+	    dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
+"drwxr-----.*first-dir/sdir/ssdir"
+	  fi
 
 	  cd ../../..
 	  dotest lockfiles-8 "${testcvs} -q update" ""
@@ -19972,8 +20203,14 @@ Checking in aa;
 ${CVSROOT_DIRNAME}/first-dir/aa,v  <--  aa
 initial revision: 1\.1
 done"
-	  dotest modes-5 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  # Yawn.  Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-5remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r--r-- .*"
+	  else
+	    dotest modes-5 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r--r-- .*"
+	  fi
 
 	  # Test for whether we can set the execute bit.
 	  chmod +x aa
@@ -19986,19 +20223,38 @@ done"
 	  # If CVS let us update the execute bit, it would be set here.
 	  # But it doesn't, and as far as I know that is longstanding
 	  # CVS behavior.
-	  dotest modes-7 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  #
+	  # Yeah, yeah.  Search for "Cygwin".
+	  if test -n "$remotehost"; then
+	    dotest modes-7remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r--r-- .*"
+	  else
+	    dotest modes-7 "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r--r-- .*"
+	  fi
 
 	  # OK, now manually change the modes and see what happens.
-	  chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v
+	  #
+	  # Cygwin, already.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v"
+	  else
+	    chmod g=r,o= ${CVSROOT_DIRNAME}/first-dir/aa,v
+	  fi
 	  echo second line >>aa
 	  dotest modes-7a "${testcvs} -q ci -m set-execute-bit" \
 "Checking in aa;
 ${CVSROOT_DIRNAME}/first-dir/aa,v  <--  aa
 new revision: 1\.3; previous revision: 1\.2
 done"
-	  dotest modes-7b "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    dotest modes-7bremotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v'" \
 "-r--r----- .*"
+	  else
+	    dotest modes-7b "ls -l ${CVSROOT_DIRNAME}/first-dir/aa,v" \
+"-r--r----- .*"
+	  fi
 
 	  CVSUMASK=007
 	  export CVSUMASK
@@ -20019,8 +20275,13 @@ done"
 	    # The problem here is that the CVSUMASK environment variable
 	    # needs to be set on the server (e.g. .bashrc).  This is, of
 	    # course, bogus, but that is the way it is currently.
-	    dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
+	    if test -n "$remotehost"; then
+	      dotest modes-10remotehost "$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v'" \
+"-r--r--r--.*"
+	    else
+	      dotest modes-10r "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
 "-r-xr-x---.*" "-r-xr-xr-x.*"
+	    fi
 	  else
 	    dotest modes-10 "ls -l ${CVSROOT_DIRNAME}/first-dir/ab,v" \
 "-r-xr-x---.*"
@@ -20052,9 +20313,15 @@ done"
 	    # first match is for the :ext: method (where the CVSUMASK
 	    # won't be set), while the second is for the :fork: method
 	    # (where it will be).
-	    dotest modes-15r \
+	    if test -n "$remotehost"; then
+	      dotest modes-15r \
+"$CVS_RSH $remotehost 'ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v'" \
+"-r--r--r--.*"
+	    else
+	      dotest modes-15r \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
 "-r--r--r--.*" "-r--r-----.*"
+	    fi
 	  else
 	    dotest modes-15 \
 "ls -l ${CVSROOT_DIRNAME}/first-dir/Attic/ac,v" \
@@ -20104,9 +20371,12 @@ done"
 	  # do this while the file is still writable.
 	  touch aa
 	  chmod a= aa
-	  dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
+	  # Don't try this when permissions are broken, as with Cygwin.
+	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then :; else
+	    dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
 "${CPROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
 "${CPROG} \[update aborted\]: reading aa: Permission denied"
+	  fi
 
 	  chmod u+rwx aa
 	  cd ../..
@@ -20144,18 +20414,69 @@ Checking in second-dir/ab;
 ${CVSROOT_DIRNAME}/second-dir/ab,v  <--  ab
 initial revision: 1\.1
 done"
-	  chmod a= ${CVSROOT_DIRNAME}/first-dir
-	  dotest modes3-5 "${testcvs} update" \
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod a= ${CVSROOT_DIRNAME}/first-dir"
+	  else
+	    chmod a= ${CVSROOT_DIRNAME}/first-dir
+	  fi
+	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
+	    # Use a different test under Cygwin since permissions work
+	    # differently there.
+	    if test -n "$remotehost"; then
+	      cygwin_hack=false
+	    else
+	      cygwin_hack=:
+	      # This has a different effect in remote mode, apparently.
+	      if $remote; then
+		cygwin_hack_2=:
+	      else
+		cygwin_hack_2=false
+	      fi
+	    fi
+	  else
+	    cygwin_hack=false
+	  fi
+
+	  cd $TESTDIR/1
+	  if $cygwin_hack; then
+	    # Use a different test under Cygwin since permissions work
+	    # differently there..
+	    #
+	    # When this is converted to autotest, this should be an XFAIL test
+	    # - I expect the fault lies with Cygwin since `cd first-dir'
+	    # fails and `ls first-dir' does not.  I think what is happening is
+	    # that the open directory works but reading the directory returns
+	    # an empty file list.
+	    if $cygwin_hack_2; then
+	      dotest modes3-5cygwin2 "${testcvs} update" \
+"${SPROG} update: Updating \.
+${SPROG} update: Updating first-dir
+${SPROG} update: Updating second-dir"
+	    else
+	      dotest_fail modes3-5cygwin "${testcvs} update" \
+"${SPROG} update: Updating \.
+${SPROG} update: Updating first-dir
+${SPROG} update: failed to create lock directory for \`$CVSROOT_DIRNAME/first-dir' ($CVSROOT_DIRNAME/first-dir/#cvs.lock): Permission denied
+${SPROG} update: failed to obtain dir lock in repository \`$CVSROOT_DIRNAME/first-dir'
+${SPROG} \[update aborted\]: read lock failed - giving up"
+	    fi
+	  else
+	    dotest modes3-5 "${testcvs} update" \
 "${SPROG} update: Updating \.
 ${SPROG} update: Updating first-dir
 ${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
 ${SPROG} update: skipping directory first-dir
 ${SPROG} update: Updating second-dir"
+	  fi
 
 	  # OK, I can see why one might say the above case could be a
 	  # fatal error, because normally users without access to first-dir
 	  # won't have it in their working directory.  But the next
 	  # one is more of a problem if it is fatal.
+	  #
+	  # The second text string below is for Cygwin again, and again it
+	  # should really be XFAIL under Cygwin, but for now deal with the
+	  # passing opendir by accepting the alternate string.
 	  rm -r first-dir
 	  dotest modes3-6 "${testcvs} update -dP" \
 "${SPROG} update: Updating .
@@ -20164,6 +20485,11 @@ U ${DOTSTAR}
 ${SPROG} update: Updating first-dir
 ${SPROG} update: cannot open directory ${CVSROOT_DIRNAME}/first-dir: Permission denied
 ${SPROG} update: skipping directory first-dir
+${SPROG} update: Updating second-dir" \
+"${SPROG} update: Updating .
+${SPROG} update: Updating CVSROOT
+U ${DOTSTAR}
+${SPROG} update: Updating first-dir
 ${SPROG} update: Updating second-dir"
 
 	  cd ..
@@ -20182,6 +20508,10 @@ ${SPROG} update: Updating second-dir"
 	  cd first-dir
 	  touch aa
 	  echo '$''Id$' >kw
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.touch
 	  ls -l kw >${TESTDIR}/1/stamp.kw.touch
 	  # "sleep 1" would suffice if we could assume ls --full-time, but
@@ -20213,6 +20543,10 @@ Checking in kw;
 ${CVSROOT_DIRNAME}/first-dir/kw,v  <--  kw
 initial revision: 1\.1
 done"
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.ci
 	  ls -l kw >${TESTDIR}/1/stamp.kw.ci
 	  # If there are no keywords, "cvs ci" leaves the timestamp alone
@@ -20264,6 +20598,11 @@ Checking in kw;
 ${CVSROOT_DIRNAME}/first-dir/kw,v  <--  kw
 new revision: 1\.2; previous revision: 1\.1
 done"
+	  
+	  # Cygwin, *cough*, puts the year in the time column until the minute
+	  # is no longer the current minute.  Sleep 60 seconds to avoid this
+	  # problem.
+	  sleep 60
 	  ls -l aa >${TESTDIR}/1/stamp.aa.ci2
 	  ls -l kw >${TESTDIR}/1/stamp.kw.ci2
 	  cd ../..
@@ -22970,7 +23309,12 @@ else
   exit 1
 fi
 EOF
-	  chmod +x ${TESTDIR}/lockme
+	  # Cygwin.  Blaaarg.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod +x ${TESTDIR}/lockme"
+	  else
+	    chmod +x ${TESTDIR}/lockme
+	  fi
 
 	  echo stuff > a-lock
 	  dotest reserved-9 "${testcvs} add a-lock" \
@@ -23006,9 +23350,19 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  # Simulate (approximately) what a-lock would look like
 	  # if someone else had locked revision 1.1.
 	  sed -e 's/locks; strict;/locks fred:1.1; strict;/' ${CVSROOT_DIRNAME}/first-dir/a-lock,v > a-lock,v
-	  chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  # Cygwin.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
+	  else
+	    chmod 644 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  fi
 	  dotest reserved-13 "mv a-lock,v ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
-	  chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  # Cygwin.  Blah.
+	  if test -n "$remotehost"; then
+	    $CVS_RSH $remotehost "chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v"
+	  else
+	    chmod 444 ${CVSROOT_DIRNAME}/first-dir/a-lock,v
+	  fi
 	  echo more stuff >> a-lock
 	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
 "fred has file a-lock locked for version  1\.1
@@ -24029,19 +24383,14 @@ ${SPROG} update: Updating first-dir"
 	  ;;
 	  
 	multiroot)
-	
 	  #
 	  # set up two repositories
 	  #
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root.1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root.2
-	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
-	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  if $remote; then
-	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
-	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
+	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 	  testcvs1="${testcvs} -d ${CVSROOT1}"
 	  testcvs2="${testcvs} -d ${CVSROOT2}"
 
@@ -25168,12 +25517,8 @@ anyone
 
 	  CVSROOT1_DIRNAME=${TESTDIR}/root1
 	  CVSROOT2_DIRNAME=${TESTDIR}/root2
-	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
-	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  if $remote; then
-	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
-	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot $CVSROOT1_DIRNAME`
+	  CVSROOT2=`newroot $CVSROOT2_DIRNAME`
 
 	  dotest multiroot2-1 "${testcvs} -d ${CVSROOT1} init" ""
 	  dotest multiroot2-2 "${testcvs} -d ${CVSROOT2} init" ""
@@ -25320,13 +25665,8 @@ ${PLUS}change him too"
 	  # Not drastically different from multiroot but it covers somewhat
 	  # different stuff.
 
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
-	  fi
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
 	  dotest multiroot3-1 "${testcvs} -d ${CVSROOT1} init" ""
@@ -25445,13 +25785,9 @@ ${SPROG} \[checkout aborted\]: invalid source repository"
 	  # More multiroot tests, in particular we have two roots with
 	  # similarly-named directories and we try to see that CVS can
 	  # keep them separate.
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=:fork:${TESTDIR}/root2 ; export CVSROOT2
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT2=${TESTDIR}/root2 ; export CVSROOT2
-	  fi
+
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT2=`newroot ${TESTDIR}/root2`
 
 	  mkdir 1; cd 1
 	  dotest multiroot4-1 "${testcvs} -d ${CVSROOT1} init" ""
@@ -25557,14 +25893,8 @@ done"
 	  # More tests of repositories and specifying them.
 	  # Similar to crerepos but that test is probably getting big
 	  # enough.
-
-	  if $remote; then
-	    CVSROOT1=:fork:${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT_MOVED=:fork:${TESTDIR}/root-moved ; export CVSROOT1
-	  else
-	    CVSROOT1=${TESTDIR}/root1 ; export CVSROOT1
-	    CVSROOT_MOVED=${TESTDIR}/root-moved ; export CVSROOT1
-	  fi
+	  CVSROOT1=`newroot ${TESTDIR}/root1`
+	  CVSROOT_MOVED=`newroot ${TESTDIR}/root-moved`
 
 	  dotest reposmv-setup-1 "${testcvs} -d ${CVSROOT1} init" ""
 	  mkdir imp-dir; cd imp-dir
@@ -26361,7 +26691,13 @@ echo "xyz"
 echo "ok"
 cat >/dev/null
 EOF
-	    chmod +x ${TESTDIR}/serveme
+	    # Cygwin.  Pthffffffffft!
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/serveme"
+	    else
+	      chmod +x ${TESTDIR}/serveme
+	    fi
+	    save_CVS_SERVER=$CVS_SERVER
 	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
 	    mkdir 1; cd 1
 	    dotest_fail client-1 "${testcvs} -q co first-dir" \
@@ -26426,6 +26762,7 @@ EOF
 	    # By specifying the time zone in local time, we don't
 	    # know exactly how that will translate to GMT.
 	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
+	    # String 2 below is Cygwin again - ptoooey.
 	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
 "Root ${CVSROOT_DIRNAME}
 Valid-responses [-a-zA-Z ]*
@@ -26440,13 +26777,27 @@ Modified file1
 u=rw,g=,o=
 4
 abc
+update" \
+"Root ${CVSROOT_DIRNAME}
+Valid-responses [-a-zA-Z ]*
+valid-requests
+Argument -D
+Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
+Argument --
+Directory \.
+${CVSROOT_DIRNAME}/first-dir
+Entry /file1/1\.2///
+Modified file1
+u=rw,g=r,o=r
+4
+abc
 update"
 
 	    cd ../..
 	    rm -r 1
 	    rmdir ${TESTDIR}/bogus
 	    rm ${TESTDIR}/serveme
-	    CVS_SERVER=${servercvs}; export CVS_SERVER
+	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
 	  fi # skip the whole thing for local
 	  ;;
 
@@ -26455,11 +26806,7 @@ update"
 	  CVSROOT_save=${CVSROOT}
 	  CVSROOT_DIRNAME_save=${CVSROOT_DIRNAME}
 	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
-	  if $remote; then
-	      CVSROOT=:fork:${CVSROOT_DIRNAME}
-	  else
-	      CVSROOT=${CVSROOT_DIRNAME}
-	  fi
+	  CVSROOT=`newroot ${CVSROOT_DIRNAME}`
 
 	  dotest dottedroot-init-1 "${testcvs} init" ""
 	  mkdir dir1
@@ -26499,6 +26846,7 @@ U module1/dir2/file1"
 	  # working, but that test might be better here.
 	  if $remote; then
 	    mkdir fork; cd fork
+	    save_CVS_SERVER=$CVS_SERVER
 	    unset CVS_SERVER
 	    # So looking through $PATH for cvs won't work...
 	    echo "echo junk" >cvs
@@ -26519,13 +26867,11 @@ ${CPROG} version: using the :fork: access method\.
 ${CPROG} \[version aborted\]: This CVS was not compiled with server support\."
 	    fi
 
-	    CVS_SERVER=${servercvs}; export CVS_SERVER
+	    CVS_SERVER=${save_CVS_SERVER}; export CVS_SERVER
+	    unset save_CVS_SERVER
 	    PATH=$save_PATH; unset save_PATH
 
-	    if $keep; then
-	      echo Keeping ${TESTDIR} and exiting due to --keep
-	      exit 0
-	    fi
+	    dokeep
 
 	    cd ..
 	    rm -r fork
