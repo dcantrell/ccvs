@@ -1,5 +1,10 @@
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (config): Note that PrimaryServer hostname must match
+	that returned by uname on the primary server.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
 	* writeproxy.rtf: Update with latest modifications.
 
 2004-06-10  Derek Price  <derek@ximbiot.com>

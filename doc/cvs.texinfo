@@ -14316,13 +14316,18 @@ will have this value set to @samp{yes}, but the default value is @samp{no}.}
 @item PrimaryServer=@var{CVSROOT}
 When specified, and the repository specified by @var{CVSROOT} is not the one
 currently being accessed, then the server will turn itself into a transparent
-proxy to @var{CVSROOT} for write requests.  Only the @samp{:ext:} method is
+proxy to @var{CVSROOT} for write requests.  The @var{hostname} configured as
+part of @var{CVSROOT} must be the same as that returned by the uname command
+on the primary server for this to work.
+
+Only the @samp{:ext:} method is
 currently supported for primaries (actually, @samp{:fork:} is supported as
 well, but only for testing - if you find another use for accessing a primary
 via the @samp{:fork:} method, please send a note to @email{bug-cvs@@gnu.org}
 about it).  See @ref{Write proxies} for more on configuring and using write
 proxies.
 @end table
+
 
 
 @c ---------------------------------------------------------------------
