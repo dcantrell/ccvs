@@ -1,5 +1,9 @@
 Thu Sep  4 17:09:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Binary files): Reword the section on what you need
+	to do with cvs admin -kb to hopefully be a bit clearer.  Still not
+	ideal (see comment).
+
 	* cvs.texinfo (modules): Break node into separate nodes for alias
 	modules, regular modules, ampersand modules, and options.  Expand
 	text with more examples and explanations.  Add index entries.

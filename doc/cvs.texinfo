@@ -6374,21 +6374,29 @@ $ cvs add -m"A test file" kotest
 $ cvs ci -m"First checkin; contains a keyword" kotest
 $ cvs admin -kb kotest
 $ cvs update -A kotest
-$ cvs commit -m "make it binary" kotest  # @r{For non-unix systems}
+# @r{For non-unix systems:}
+# @r{Copy in a good copy of the file from outside CVS}
+$ cvs commit -m "make it binary" kotest
 @end example
 
-When you check in the file @file{kotest} the keywords
-are expanded.  (Try the above example, and do a
-@code{cat kotest} after every command).  The @code{cvs
+@c Trying to describe this for both unix and non-unix
+@c in the same description is very confusing.  Might
+@c want to split the two, or just ditch the unix "shortcut"
+@c (unixheads don't do much with binary files, anyway).
+@c This used to say "(Try the above example, and do a
+@c @code{cat kotest} after every command)".  But that
+@c only really makes sense for the unix case.
+When you check in the file @file{kotest} the file is
+not preserved as a binary file, because you did not
+check it in as a binary file.  The @code{cvs
 admin -kb} command sets the default keyword
 substitution method for this file, but it does not
-alter the working copy of the file that you have.  The
-easiest way to get the unexpanded version of
-@file{kotest} is @code{cvs update -A}.  If you need to
-cope with line endings (that is, you are using a
-@sc{cvs} client on a non-unix system), then you need to
+alter the working copy of the file that you have.  If you need to
+cope with line endings (that is, you are using 
+@sc{cvs} on a non-unix system), then you need to
 check in a new copy of the file, as shown by the
 @code{cvs commit} command above.
+On unix, the @code{cvs update -A} command suffices.
 @c FIXME: should also describe what the *other users*
 @c need to do, if they have checked out copies which
 @c have been corrupted by lack of -kb.  I think maybe
