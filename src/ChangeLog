@@ -1,4 +1,4 @@
-2005-02-24  Derek Price  <derek@ximbiot.com>
+2005-02-25  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (global_session_id): New global declaration.
 	* import.c (add_rcs_file), rcs.c (RCS_checkin): Save commitid.
