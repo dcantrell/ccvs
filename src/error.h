@@ -50,7 +50,7 @@ void error ();
 #ifdef __STDC__
 void error_exit (void) __attribute__ ((__noreturn__));
 #else
-void error_exit (void);
+void error_exit ();
 #endif
 
 /* If non-zero, error will use the CVS protocol to report error

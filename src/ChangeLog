@@ -1,5 +1,7 @@
 2002-01-30  Larry Jones  <larry.jones@sdrc.com>
 
+	* error.h (error_exit): Remove unintended prototype.
+
 	* server.c (serve_root): Remove check for impossible condition.
 	(serve_init): Save and restore current_parsed_root.
 
