@@ -338,15 +338,6 @@ diff -c -2 -r1.1.1.1 commit.c
   	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 
 
-* Somewhere in the documentation we should warn users to avoid RCS
-versions 5.6.[5-7] beta because rcsmerge uses -A by default instead of
--E (-E is correct).  CVS can't just pass -E unless it tests at runtime
-whether RCS supports it (configure time is not good enough, the
-version of RCS might change, CVS might be copied to a different
-machine, etc.).  RCS 5.6.0.1 does not support -E.  We also might
-supply an RCS patch.
-
-
 * From: "Charles M. Hannum" <mycroft@ai.mit.edu>
   To: remote-cvs@cyclic.com
   Subject: Still one more bug
