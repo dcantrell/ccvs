@@ -29,7 +29,7 @@ Bug reports are accepted, however note that someone may or may not
 feel like taking care of your bug report.  Support contracts are
 available from Cyclic Software (http://www.cyclic.com).
 
-To report bugs send mail to cyclic-cvs@cyclic.com, or run the "cvsbug"
+To report bugs send mail to bug-cvs@prep.ai.mit.edu, or run the "cvsbug"
 program and fill out the template:
 
 	$ cvsbug
@@ -108,35 +108,15 @@ Please read the INSTALL file for installation instructions.  Brief summary:
 versions of CVS?
 
 On the web, http://www.winternet.com/~zoo/cvs/ or
-http://www.loria.fr/~molli/cvs-index.html.  Also see the following
-mailing lists.
+http://www.loria.fr/~molli/cvs-index.
 
-Mailing Lists:
-
-Cyclic has set up the following mailing list for users of versions of
-CVS from the Cyclic repository (including this release) and other
-interested parties.  As with other similar mailing lists, there is no
-guarantee that any questions you ask will get answered.  Anyway, the
-mailing lists are:
-
-	cyclic-cvs-request@cyclic.com
-		Requests for addition to or removal from the
-		cyclic-cvs mailing list must be sent to this address.
-		Problems with the list (like bounced mail) should also
-		be sent here.  Please be specific about your email
-		address.
-
-	cyclic-cvs@cyclic.com
-		Questions, bugs, porting problems, hints, or whatever
-		can be sent to this address.  A full FAQ on CVS
-		may be available from host "think.com" in the
-		"/pub/cvs" directory.  Please consult the FAQ before
-		sending questions to cyclic-cvs.  DO NOT SEND ADDITION
-		AND REMOVAL REQUESTS TO THIS ALIAS.
-
-The mailing list for all versions of CVS is info-cvs@prep.ai.mit.edu.
-Send subscription and removal requests for that list to
+The mailing list for CVS is info-cvs@prep.ai.mit.edu.  Send
+subscription and removal requests for that list to
 info-cvs-requests@prep.ai.mit.edu.
+
+[Historical note: info-cvs@prep.ai.mit.edu is now the union of
+ info-cvs@prep and cyclic-cvs@cyclic.com.  Please use the prep
+ address.]
 
 -------------------------------------------------------------------------------
 
