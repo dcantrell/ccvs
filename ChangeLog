@@ -1,3 +1,8 @@
+Mon Sep 22 11:21:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Revise item #191 in response to xdelta 1.10 release and a
+	few other random thoughts.
+
 Sun Sep 21 17:56:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in: Instead of checking for memchr, just define
