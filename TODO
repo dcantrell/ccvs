@@ -872,3 +872,7 @@ wait interval.
 
 230.  Support for options like compression as part of the CVSROOT might be
 nice.  This should be fairly easy to implement now using the method options.
+
+231.  The `cvs watch off' command needs an extension which enables users in the
+cvsadmin group to turn watch off for users whose logins and email address may
+not exist anymore.
