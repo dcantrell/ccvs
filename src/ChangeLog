@@ -1,5 +1,12 @@
 2004-09-04  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (writeproxy-noredirect): Between "Set" and
+	"expand-modules" are the optional Kerberos-encrypt, Gssapi-encrypt
+	and Gssapi-authenticate entries. Use ${DOTSTAR} to deal with
+	these optionally configured requests.
+
+2004-09-04  Mark D. Baushke  <mdb@cvshome.org>
+
 	* import.c (expand_at_signs): Typecasting for fwrite results.
 	* log-buffer.c (log_buffer_input, log_buffer_output,
 	log_buffer_initialize): Ditto.
