@@ -80,16 +80,14 @@ Name_Root(dir, update_dir)
 
     /*
      * root now contains a candidate for CVSroot. It must be an
-     * absolute pathname
+     * absolute pathname or specify a remote server.
      */
 
+    if (
 #ifdef CLIENT_SUPPORT
-    /* It must specify a server via remote CVS or be an absolute pathname.  */
-    if ((strchr (root, ':') == NULL)
-    	&& ! isabsolute (root))
-#else /* ! CLIENT_SUPPORT */
-    if (root[0] != '/')
-#endif /* CLIENT_SUPPORT */
+	(strchr (root, ':') == NULL) &&
+#endif
+    	! isabsolute (root))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,
