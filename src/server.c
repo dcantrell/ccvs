@@ -3604,6 +3604,9 @@ server_set_sticky (update_dir, repository, tag, date)
     char *date;
 {
     static int set_sticky_supported = -1;
+
+    assert (update_dir != NULL);
+
     if (set_sticky_supported == -1)
 	set_sticky_supported = supported_response ("Set-sticky");
     if (!set_sticky_supported) return;

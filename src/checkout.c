@@ -365,7 +365,7 @@ checkout (argc, argv)
 	    if (!isdir (repository))
 		error (1, 0, "there is no repository %s", repository);
 
-	    Create_Admin (".", where, repository,
+	    Create_Admin (".", preload_update_dir, repository,
 			  (char *) NULL, (char *) NULL);
 	    if (!noexec)
 	    {
@@ -667,7 +667,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		if (!isdir (repository))
 		    error (1, 0, "there is no repository %s", repository);
 
-		Create_Admin (".", where, repository,
+		Create_Admin (".", preload_update_dir, repository,
 			      (char *) NULL, (char *) NULL);
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
@@ -683,7 +683,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		if (!isdir (repository))
 		    error (1, 0, "there is no repository %s", repository);
 
-		Create_Admin (".", where, repository, tag, date);
+		Create_Admin (".", preload_update_dir, repository, tag, date);
 	    }
 	}
 	else

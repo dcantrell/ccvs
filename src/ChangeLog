@@ -1,3 +1,16 @@
+Mon May  6 14:12:03 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* checkout.c (checkout): In code to handle multiple arguments,
+	pass preload_update_dir, not where, to Create_Admin.
+	(checkout_proc): Pass preload_update_dir, not where, to
+	Create_Admin.
+
+Thu May 23 19:14:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server_set_sticky): Assert that update_dir != NULL.
+	* sanity.sh (basicb): New test; tests for Ian's fix to checkout.c
+	above.
+
 Thu May 23 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* patch.c (patch_fileproc): Don't ignore a file just because it is
