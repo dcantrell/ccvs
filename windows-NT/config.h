@@ -316,12 +316,6 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 /* This is where old bits go to die under Windows NT.  */
 #define DEVNULL "nul"
 
-/* Make sure that we don't try to perform operations on RCS files on the
-   local machine.  I think I neglected to apply some changes from
-   MHI's port in that area of code, or found some issues I didn't want
-   to deal with.  */
-#define CLIENT_ONLY
-
 /* Don't use an rsh subprocess to connect to the server, because
    the rsh does inappropriate translations on the data (CR-LF/LF).  */
 #define RSH_NOT_TRANSPARENT 1
