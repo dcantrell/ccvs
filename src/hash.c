@@ -8,6 +8,7 @@
  */
 
 #include "cvs.h"
+#include <assert.h>
 
 /* global caches */
 static List *listcache = NULL;
@@ -23,6 +24,8 @@ hashp (key)
     unsigned int h = 0;
     unsigned int g;
 
+    assert(key != NULL);
+    
     while (*key != 0)
     {
 	unsigned int c = *key++;
@@ -255,7 +258,7 @@ findnode (list, key)
 {
     Node *head, *p;
 
-    if (list == (List *) NULL)
+    if ((list == (List *) NULL) || (key == NULL))
 	return ((Node *) NULL);
 
     head = list->hasharray[hashp (key)];
