@@ -6448,7 +6448,7 @@ made by the vendor, you commit it on the vendor branch
 and copy the modifications onto the main trunk.
 
 Use the @code{import} command to create and update
-the vendor branch.  After a successful @code{import}
+the vendor branch.  When you import a new file,
 the vendor branch is made the `head' revision, so
 anyone that checks out a copy of the file gets that
 revision.  When a local modification is committed it is
