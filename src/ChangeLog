@@ -1,3 +1,16 @@
+Sat Dec 23 10:46:41 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* myndbm.h, myndbm.c (dbm_store): New function.
+	* myndbm.h (DBM): Add modified and filename fields.
+	* myndbm.c (dbm_open, dbm_close): Manipulate new fields.  dbm_open
+	no longer fails if the file doesn't exist and O_CREAT is set.
+	* cvs.h (CVSROOTADM_VALTAGS): Added.
+	* tag.c, cvs.h (tag_check_valid): New function.
+	* update.c (update), checkout.c (checkout_proc), commit.c (commit),
+	diff.c (diff), patch.c (patch_proc), rtag.c (rtag_proc), tag.c (tag):
+	Call it.
+	* sanity.sh: Test for rejection of invalid tagname.
+
 Fri Dec 22 18:21:39 1995  Karl Fogel  <kfogel@csxt.cs.oberlin.edu>
 
         * client.c (start_server): don't use kerberos if authenticating

@@ -189,6 +189,7 @@ extern int errno;
 #define CVSROOTADM_TAGINFO      "taginfo"
 #define	CVSROOTADM_EDITINFO	"editinfo"
 #define	CVSROOTADM_HISTORY	"history"
+#define CVSROOTADM_VALTAGS	"val-tags"
 #define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
 #define CVSROOTADM_WRAPPER	"cvswrappers"
@@ -600,3 +601,5 @@ int watchers PROTO ((int argc, char **argv));
 char *scramble PROTO ((char *str));
 char *descramble PROTO ((char *str));
 #endif /* AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT */
+
+extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));

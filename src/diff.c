@@ -212,6 +212,11 @@ diff (argc, argv)
     }
 #endif
 
+    if (diff_rev1 != NULL)
+	tag_check_valid (diff_rev1, argc, argv, local, 0, "");
+    if (diff_rev2 != NULL)
+	tag_check_valid (diff_rev2, argc, argv, local, 0, "");
+
     which = W_LOCAL;
     if (diff_rev2 != NULL || diff_date2 != NULL)
 	which |= W_REPOS | W_ATTIC;

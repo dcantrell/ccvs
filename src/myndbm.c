@@ -13,6 +13,7 @@
  * size, and this code works fine.
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "getline.h"
 
@@ -35,21 +36,52 @@ mydbm_open (file, flags, mode)
     FILE *fp;
     DBM *db;
 
-    if ((fp = fopen (file, "r")) == NULL)
+    fp = fopen (file, "r");
+    if (fp == NULL && !(existence_error (errno) && (flags & O_CREAT)))
 	return ((DBM *) 0);
 
     db = (DBM *) xmalloc (sizeof (*db));
     db->dbm_list = getlist ();
+    db->modified = 0;
+    db->name = xstrdup (file);
 
-    mydbm_load_file (fp, db->dbm_list);
-    (void) fclose (fp);
+    if (fp != NULL)
+    {
+	mydbm_load_file (fp, db->dbm_list);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", file);
+    }
     return (db);
+}
+
+static int
+write_item (node, data)
+    Node *node;
+    void *data;
+{
+    FILE *fp = (FILE *)data;
+    fputs (node->key, fp);
+    fputs (" ", fp);
+    fputs (node->data, fp);
+    fputs ("\n", fp);
+    return 0;
 }
 
 void
 mydbm_close (db)
     DBM *db;
 {
+    if (db->modified)
+    {
+	FILE *fp;
+	fp = fopen (db->name, "w");
+	if (fp == NULL)
+	    error (1, errno, "cannot write %s", db->name);
+	walklist (db->dbm_list, write_item, (void *)fp);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", db->name);
+    }
+    free (db->name);
     dellist (&db->dbm_list);
     free ((char *) db);
 }
@@ -127,6 +159,40 @@ mydbm_nextkey (db)
     }
     db->dbm_next = p->next;
     return (key);
+}
+
+/* Note: only updates the in-memory copy, which is written out at
+   mydbm_close time.  Note: Also differs from DBM in that on duplication,
+   it gives a warning, rather than either DBM_INSERT or DBM_REPLACE
+   behavior.  */
+int
+mydbm_store (db, key, value, flags)
+    DBM *db;
+    datum key;
+    datum value;
+    int flags;
+{
+    Node *node;
+
+    node = getnode ();
+    node->type = NDBMNODE;
+
+    node->key = xmalloc (key.dsize + 1);
+    strncpy (node->key, key.dptr, key.dsize);
+    node->key[key.dsize] = '\0';
+
+    node->data = xmalloc (value.dsize + 1);
+    strncpy (node->data, value.dptr, value.dsize);
+    node->data[value.dsize] = '\0';
+
+    db->modified = 1;
+    if (addnode (db->dbm_list, node) == -1)
+    {
+	error (0, 0, "attempt to insert duplicate key `%s'", node->key);
+	freenode (node);
+	return 0;
+    }
+    return 0;
 }
 
 static void

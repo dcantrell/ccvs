@@ -79,6 +79,18 @@ def' : 'abc$' >/dev/null; then
   STARTANCHOR='\`'
 fi
 
+pass ()
+{
+  echo "PASS: " $1 >>${LOGFILE}
+}
+
+fail ()
+{
+  echo "FAIL: " $1 | tee -a ${LOGFILE}
+  # This way the tester can go and see what remnants were left
+  exit 1
+}
+
 # Usage:
 #  dotest TESTNAME COMMAND OUTPUT
 # TESTNAME is the name used in the log to identify the test.
@@ -96,39 +108,74 @@ dotest ()
   else
     status=$?
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "FAIL: " $1 | tee -a ${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
-    # This way the tester can go and see what remnants were left
-    exit 1
+    fail "$1"
   fi
   # expr can't distinguish between "zero characters matched" and "no match",
   # so special-case it.
   if test -z "$3"; then
     if test -s ${TESTDIR}/dotest.tmp; then
-      echo "FAIL: " $1 | tee -a ${LOGFILE}
       echo "** expected: " >>${LOGFILE}
       echo "$3" >>${LOGFILE}
       echo "** got: " >>${LOGFILE}
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      # This way the tester can go and see what remnants were left
-      exit 1
+      fail "$1"
     else
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      echo "PASS: " $1 >>${LOGFILE}
+      pass "$1"
     fi
   else
     if expr "`cat ${TESTDIR}/dotest.tmp`" : \
 	${STARTANCHOR}"$3"${ENDANCHOR} >/dev/null; then
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      echo "PASS: " $1 >>${LOGFILE}
+      pass "$1"
     else
-      echo "FAIL: " $1 | tee -a ${LOGFILE}
       echo "** expected: " >>${LOGFILE}
       echo "$3" >>${LOGFILE}
       echo "** got: " >>${LOGFILE}
       cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-      # This way the tester can go and see what remnants were left
-      exit 1
+      fail "$1"
+    fi
+  fi
+}
+
+# Like dotest except exitstatus should be nonzero.  Probably their
+# implementations could be unified (if I were a good enough sh script
+# writer to get the quoting right).
+dotest_fail ()
+{
+  if $2 >${TESTDIR}/dotest.tmp 2>&1; then
+    status=$?
+    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "exit status was $status" >>${LOGFILE}
+    fail "$1"
+  else
+    : so far so good
+  fi
+  # expr can't distinguish between "zero characters matched" and "no match",
+  # so special-case it.
+  if test -z "$3"; then
+    if test -s ${TESTDIR}/dotest.tmp; then
+      echo "** expected: " >>${LOGFILE}
+      echo "$3" >>${LOGFILE}
+      echo "** got: " >>${LOGFILE}
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      fail "$1"
+    else
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      pass "$1"
+    fi
+  else
+    if expr "`cat ${TESTDIR}/dotest.tmp`" : \
+	${STARTANCHOR}"$3"${ENDANCHOR} >/dev/null; then
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      pass "$1"
+    else
+      echo "** expected: " >>${LOGFILE}
+      echo "$3" >>${LOGFILE}
+      echo "** got: " >>${LOGFILE}
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+      fail "$1"
     fi
   fi
 }
@@ -1041,6 +1088,21 @@ for what in $tests; do
 			echo "FAIL: test 92" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 92" >>${LOGFILE}
+		fi
+
+		# typo; try to get to the branch and fail
+		dotest_fail 92.1a "${testcvs} update -r brnach1" \
+		  'cvs \[[a-z]* aborted\]: no such tag brnach1'
+		# Make sure we are still on the trunk
+		if test -f file1 ; then
+			echo "FAIL: 92.1b" | tee -a ${LOGFILE} ; exit 1
+		else
+			echo "PASS: 92.1b" >>${LOGFILE}
+		fi
+		if test -f file2 ; then
+			echo "PASS: 92.1c" >>${LOGFILE}
+		else
+			echo "FAIL: 92.1c" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# back to branch1
