@@ -206,6 +206,7 @@ AC_REPLACE_FUNCS(\
 # Look for functions from gnulib and replace with versions in lib/ when
 # necessary.
 jm_FUNC_MALLOC
+jm_FUNC_REALLOC
 jm_FUNC_STAT
 jm_FUNC_LSTAT
 

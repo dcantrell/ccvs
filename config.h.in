@@ -44,7 +44,7 @@
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on
    the command line, or an editor will be started for you. If you like to use
-   logging templates (the rcsinfo file within the /CVSROOT directory),
+   logging templates (the rcsinfo file within the $CVSROOT/CVSROOT directory),
    you might want to force people to use the editor even if they specify a
    message with -m or -F. Enabling FORCE_USE_EDITOR will cause the -m or -F
    message to be appended to the temp file when the editor is started. */
@@ -87,7 +87,7 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define to 1 if your system has a working `fnmatch' function. */
+/* Define to 1 if your system has a working POSIX `fnmatch' function. */
 #undef HAVE_FNMATCH
 
 /* Define to 1 if you have the <fnmatch.h> header file. */
@@ -181,7 +181,8 @@
    zero-length file name argument. */
 #undef HAVE_LSTAT_EMPTY_STRING_BUG
 
-/* Define to 1 if your system has a working `malloc' function. */
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
 #undef HAVE_MALLOC
 
 /* Define if you have memchr (always for CVS). */
@@ -226,6 +227,10 @@
 
 /* Define to 1 if you have the `readlink' function. */
 #undef HAVE_READLINK
+
+/* Define to 1 if your system has a GNU libc compatible `realloc' function,
+   and to 0 otherwise. */
+#undef HAVE_REALLOC
 
 /* Define to 1 if you have the `regcomp' function. */
 #undef HAVE_REGCOMP
@@ -515,11 +520,17 @@
 /* Define to `int' if <sys/types.h> doesn't define. */
 #undef gid_t
 
+/* Define to rpl_malloc if the replacement function should be used. */
+#undef malloc
+
 /* Define to `int' if <sys/types.h> does not define. */
 #undef mode_t
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
+
+/* Define to rpl_realloc if the replacement function should be used. */
+#undef realloc
 
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
