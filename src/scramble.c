@@ -205,6 +205,6 @@ main ()
  *                     meta-chars (delete i meta-chars))))
  *         (setq i (1+ i)))))
  * 
- *   ;; Now use the `scrambled-chars' vector to get your C array. */
+ *   ;; Now use the `scrambled-chars' vector to get your C array.
  *   )
  */
