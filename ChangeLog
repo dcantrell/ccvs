@@ -1,3 +1,7 @@
+2001-04-25  Larry Jones  <larry.jones@sdr.com>
+
+	* depcomp (aix, sgi): Correct previous fixes.
+
 2001-04-24  Larry Jones  <larry.jones@sdr.com>
 
 	* depcomp (sgi): Remove stray HP-UX code.
