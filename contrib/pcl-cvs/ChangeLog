@@ -1,3 +1,7 @@
+Tue May  9 13:56:50 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* Change references to "Cygnus's remote CVS" to "Cyclic CVS".
+
 Wed May  3 13:55:27 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* pcl-cvs.el (cvs-parse-stderr): Handle colons after both
