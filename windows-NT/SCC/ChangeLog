@@ -1,3 +1,8 @@
+Thu Dec 11 22:17:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.txt: Add Access to list of development environments which
+	implement SCC.
+
 Wed Oct 29 11:45:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.txt: CVSwiz runs the command line CVS; it is not an

@@ -62,6 +62,7 @@ worse yet, usenet posting, so it probably should be verified before
 relying on it.
 
 * Microsoft Developer Studio 4.x Professional (not Standard, not 2.x).
+* Microsoft Access V7.0
 * Powersoft's Optima++, PowerJ, and Power++
   (not sure which versions, but this information was added in 1997 if
    that helps.  Someone on usenet reports 32 bit Powerbuilder version
