@@ -1,5 +1,7 @@
 2004-09-25  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (parseroot2): Correct two test names.  Restore CVSROOT.
+
 	* sanity.sh (parseroot2): Expand dokeep inline.
 
 2004-09-24  Derek Price <derek@ximbiot.com>
