@@ -260,20 +260,12 @@ http://www.loria.fr/~molli/cvs-index.html
 @cindex Mailing list
 @cindex List, mailing list
 @cindex Newsgroups
-@c Be careful in editing this--it is worded so that
-@c the long -request address is in the middle of a
-@c line, thus avoiding overfull hboxes.
 There is a mailing list, known as @w{@code{info-cvs}},
 devoted to @sc{cvs}.  To subscribe or
 unsubscribe
-@c could add "to the mailing list,"
-send a message to
-@c or "write to"
-@w{@code{info-cvs-request@@prep.ai.mit.edu}}.  Please
-be specific about your email address.  As of May 1996,
-subscription requests are handled by a busy human
-being, so you cannot expect to be added or removed
-immediately.  If you prefer a usenet group, the right
+write to
+@w{@code{info-cvs-request@@gnu.org}}.
+If you prefer a usenet group, the right
 group is @code{comp.software.config-mgmt} which is for
 @sc{cvs} discussions (along with other configuration
 management systems).  In the future, it might be
