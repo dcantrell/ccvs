@@ -275,21 +275,46 @@ in passwords.  There is a long discussion of character set issues in
 @node Protocol
 @chapter The CVS client/server protocol
 
-In the following, @samp{\n} refers to a linefeed and @samp{\t} refers
-to a horizontal tab.
+In the following, @samp{\n} refers to a linefeed and @samp{\t} refers to
+a horizontal tab; @dfn{requests} are what the client sends and
+@dfn{responses} are what the server sends.  In general, the connection is
+governed by the client---the server does not send responses without
+first receiving requests to do so; see @ref{Response intro} for more
+details of this convention.
 
+It is typical, early in the connection, for the client to transmit a
+@code{Valid-responses} request, containing all the responses it
+supports, followed by a @code{valid-requests} request, which elicits
+from the server a @code{Valid-requests} response containing all the
+requests it understands.  In this way, the client and server each find
+out what the other supports before exchanging large amounts of data
+(such as file contents).
+
+@c Hmm, having 3 sections in this menu makes a certain amount of sense
+@c but that structure gets lots in the printed manual (not sure about
+@c HTML).  Perhaps there is a better way.
 @menu
-* Entries Lines::               
-* Modes::                       
+
+General protocol conventions:
+
+* Entries Lines::                   Transmitting RCS data
+* File Modes::                      Read, write, execute, and possibly more...
 * Filenames::                       Conventions regarding filenames
 * File transmissions::              How file contents are transmitted
 * Strings::                         Strings in various requests and responses
-* Requests::                    
+
+The protocol itself:
+
+* Request intro::                   General conventions relating to requests
+* Requests::                        List of requests
 * Response intro::                  General conventions relating to responses
 * Response pathnames::              The "pathname" in responses
 * Responses::                       List of responses
-* Example::                     
-* Requirements::
+
+An example session, and some further observations:
+
+* Example::                         A conversation between client and server
+* Requirements::                    Things not to omit from an implementation
 * Obsolete::                        Former protocol features
 @end menu
 
@@ -325,8 +350,8 @@ responses); if the client is specifying the @samp{-k} or @samp{-A}
 option to @code{update}, then it is the server which figures out what
 overrides what.
 
-@node Modes
-@section Modes
+@node File Modes
+@section File Modes
 
 A mode is any number of repetitions of
 
@@ -424,14 +449,19 @@ existing practice is probably to just transmit whatever the user
 specifies, and hope that everyone involved agrees which character set is
 in use, or sticks to a common subset.
 
-@node Requests
-@section Requests
+@node Request intro
+@section Request intro
 
 By convention, requests which begin with a capital letter do not elicit
 a response from the server, while all others do -- save one.  The
 exception is @samp{gzip-file-contents}.  Unrecognized requests will
 always elicit a response from the server, even if that request begins
 with a capital letter.
+
+@node Requests
+@section Requests
+
+Here are the requests:
 
 @table @code
 @item Root @var{pathname} \n
