@@ -1,3 +1,9 @@
+2000-01-03  Karl Fogel  <kfogel@red-bean.com>
+
+	* filesubr.c (backup_file): correct suffix length calculation;
+	discard unnecessary `void' cast.  Thanks to Jim Meyering for
+	noticing.
+
 2000-01-03  Larry Jones <larry.jones@sdrc.com>
 
 	* sanity.sh (clean): Fix up expected output.

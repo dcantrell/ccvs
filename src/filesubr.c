@@ -419,8 +419,9 @@ backup_file (filename, suffix)
 
     backup_name = xmalloc (strlen (filename)
                            + sizeof (BAKPREFIX)
-                           + sizeof (suffix) + 10);
-    (void) sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
+                           + strlen (suffix) 
+                           + 1);
+    sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
 
     if (isfile (filename))
         copy_file (filename, backup_name);
