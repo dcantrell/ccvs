@@ -3738,26 +3738,17 @@ Are you sure you want to release (and delete) directory .first-dir.: "
 "${PROG} rtag: Tagging first-dir
 ${PROG} rtag: Tagging first-dir/dir1
 ${PROG} rtag: Tagging first-dir/dir1/dir2"
-		# FIXCVS: val-tags should have a copy of 'rtagged-by-head y'
-		# and others as well. That it does not is a bug.
-		dotest basic2-21a "cat ${CVSROOT_DIRNAME}/CVSROOT/val-tags" \
-""
-		# FIXCVS: The lack of a valid val-tags file is causing
-		# an assert here something like:
+		# The next test used to cause an assert failure
+		# something like:
 		# cvs: ./recurse.c:667: do_recursion: Assertion `repository != ((void *)0)' failed.
-		dotest_fail basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
-"${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
-
-		# Here is how the test SHOULD be written
-#		dotest basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
-#"===================================================================
-#Checking out first-dir/file6
-#RCS:  $CVSROOT_DIRNAME/first-dir/file6,v
-#VERS: 1\.2
-#\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-#file6
-#file6"
-
+		dotest basic2-21b "${testcvs} co -p -r rtagged-by-head first-dir/file6" \
+"===================================================================
+Checking out first-dir/file6
+RCS:  $CVSROOT_DIRNAME/first-dir/file6,v
+VERS: 1\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+file6
+file6"
 		# tag by tag
 		dotest basic2-22 "${testcvs} rtag -r rtagged-by-head rtagged-by-tag first-dir" \
 "${PROG} rtag: Tagging first-dir
@@ -28787,6 +28778,10 @@ done"
 	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
     fi
 
+    # Reset val-tags to a pristine state.
+    if test -s $CVSROOT_DIRNAME/CVSROOT/val-tags; then
+       : > $CVSROOT_DIRNAME/CVSROOT/val-tags
+    fi
     verify_tmp_empty "post $what"
 
 done # The big loop
