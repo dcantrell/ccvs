@@ -1,3 +1,9 @@
+2000-02-21  Karl Fogel  <kfogel@red-bean.com>
+
+	* main.c (main): still check for repository, but not history file
+	(correction to 2000-02-18 change -- that's what I get for
+	believing the comment rather than the code).
+
 2000-02-21  K.J. Paradise <kj@sourcegear.com>
 
 	* history.c mkmodules.c parseinfo.c: control which actions
