@@ -2121,6 +2121,9 @@ serve_global_option (char *arg)
     }
     switch (arg[1])
     {
+	case 'l':
+	    error(0, 0, "WARNING: global `-l' option ignored.");
+	    break;
 	case 'n':
 	    noexec = 1;
 	    logoff = 1;
