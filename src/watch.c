@@ -357,7 +357,7 @@ watch_addremove (argc, argv)
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   1);
 
-    lock_tree_cleanup ();
+    Lock_Cleanup ();
     return err;
 }
 

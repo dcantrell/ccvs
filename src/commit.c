@@ -558,7 +558,7 @@ commit (argc, argv)
 			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 1);
     if (err)
     {
-	lock_tree_cleanup ();
+	Lock_Cleanup ();
 	error (1, 0, "correct above errors first!");
     }
 
@@ -574,7 +574,7 @@ commit (argc, argv)
     /*
      * Unlock all the dirs and clean up
      */
-    lock_tree_cleanup ();
+    Lock_Cleanup ();
     dellist (&mulist);
 
     if (last_register_time)
