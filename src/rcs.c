@@ -1972,7 +1972,8 @@ RCS_getdatebranch (rcs, date, branch)
     if (RCS_datecmp (vers->date, date) <= 0)
 	cur_rev = vers->version;
 
-    /* if no branches list, return now */
+    /* If no branches list, return now.  This is what happens if the branch
+       is a (magic) branch with no revisions yet.  */
     if (vers->branches == NULL)
 	return xstrdup (cur_rev);
 
@@ -1986,9 +1987,11 @@ RCS_getdatebranch (rcs, date, branch)
     free (xbranch);
     if (p == vers->branches->list)
     {
-	/* FIXME: This case would seem to imply that the RCS file is
-           somehow invalid.  Should we give an error message?  */
-	return (NULL);
+	/* This is what happens if the branch is a (magic) branch with
+	   no revisions yet.  Similar to the case where vers->branches ==
+	   NULL, except here there was a another branch off the same
+	   branchpoint.  */
+	return xstrdup (cur_rev);
     }
 
     p = findnode (rcs->versions, p->key);

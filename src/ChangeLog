@@ -1,3 +1,10 @@
+Fri Nov 14 11:28:55 1997  Jim Meyering and Jim Kingdon
+
+	* rcs.c (RCS_getdatebranch): If the branch we are looking for
+	doesn't exist, return a revision which matches the date, not
+	just NULL.
+	* sanity.sh (tagdate): New test, for this.
+
 Thu Nov 13 10:11:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb-21): Fix comment which described a behavior
