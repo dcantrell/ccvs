@@ -7868,6 +7868,7 @@ supported.
 @end ignore
 
 @c ---------------------------------------------------------------------
+@c ----- START MAN 1 -----
 @node CVS commands
 @appendix Guide to CVS commands
 
@@ -11241,6 +11242,8 @@ description of the @samp{-I} option, and
 @pxref{cvsignore}).
 @end table
 
+@c ----- END MAN 1 -----
+@c ---------------------------------------------------------------------
 @node Invoking CVS
 @appendix Quick reference to CVS commands
 @cindex Command reference
