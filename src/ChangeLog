@@ -1,3 +1,9 @@
+Sat Oct 19 12:44:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basic2): In test basic2-64, use -x and specify types
+	which exclude E; the test is not built to deal with E (or any
+	other new types).
+
 Sat Oct 19 12:00:00 1996  Mark Mitchell <mmitchell@usa.net>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

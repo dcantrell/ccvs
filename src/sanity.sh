@@ -1336,7 +1336,7 @@ No conflicts created by this import'
 		# why are there two lines at the end of the local output
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
-		dotest basic2-64 "${testcvs} his -e -a" \
+		dotest basic2-64 "${testcvs} his -x TOFWUCGMAR -a" \
 'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= '"${TMPPWD}"'/cvs-sanity/\*
 A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir           == '"${TMPPWD}"'/cvs-sanity
 A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir           == '"${TMPPWD}"'/cvs-sanity
