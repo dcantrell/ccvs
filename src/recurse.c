@@ -152,18 +152,20 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	    char tmp[PATH_MAX];
 	    char *file_to_try;
 
+	    /* Now break out argv[i] into directory part (DIR) and file part (COMP).
+		   DIR and COMP will each point to a newly malloc'd string.  */
 	    dir = xstrdup (argv[i]);
-	    if ((comp = strrchr (dir, '/')) == NULL)
+	    comp = last_component (dir);
+	    if (comp == dir)
 	    {
 		/* no dir component.  What we have is an implied "./" */
-		comp = dir;
 		dir = xstrdup(".");
 	    }
 	    else
 	    {
 		char *p = comp;
 
-		*p++ = '\0';
+		p[-1] = '\0';
 		comp = xstrdup (p);
 	    }
 
@@ -584,8 +586,9 @@ do_dir_proc (p, closure)
     }
 
     /* put back update_dir */
-    if ((cp = strrchr (update_dir, '/')) != NULL)
-	*cp = '\0';
+    cp = last_component (update_dir);
+    if (cp > update_dir)
+	cp[-1] = '\0';
     else
 	update_dir[0] = '\0';
 

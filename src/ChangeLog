@@ -1,3 +1,16 @@
+Mon Feb 26 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* recurse.c (start_recursion): Use last_component rather than
+	checking for '/' directly.
+	(do_dir_proc): Likewise.
+
+	Visual C++ lint:
+	* client.c (send_to_server): Change wrtn to size_t.
+	(connect_to_pserver): Put tofd and fromfd declarations inside
+	#ifndef NO_SOCKET_TO_FD.
+	* scramble.c (shifts): Change from array of char to array of
+	unsigned char.
+
 Mon Feb 26 13:31:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (check_repository_password): Remove unused variables
