@@ -1,3 +1,9 @@
+Mon Feb 13 13:28:46 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* cvsbug.sh: Send bug reports to remote-cvs@cyclic.com, rather
+	than to the ordinary CVS bug address.  This does mean we'll have
+	to wade through GNATS-style bug reports, sigh.
+
 Wed Feb  8 06:42:27 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 
 	* server.c: Don't include <sys/stat.h>; system.h already does, and
