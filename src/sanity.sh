@@ -13074,7 +13074,7 @@ EOF
 ${PROG} \[log aborted\]: no repository"
 	    cd first-dir
 	    dotest_fail rcs3-5a "${testcvs} log -s nostate file1" \
-".*[Aa]ssertion.*failed${DOTSTAR}"
+"${DOTSTAR}ssertion.*failed${DOTSTAR}"
 	    cd ..
 	  fi # remote
 
@@ -13127,7 +13127,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
 ${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
-	  chmod u=rwx,g=,o= ${TESTDIR}/locks
+	  chmod u=rwx,go= ${TESTDIR}/locks
 	  dotest lockfiles-6 "${testcvs} -q update" ""
 	  dotest lockfiles-7 "ls ${TESTDIR}/locks/first-dir/sdir/ssdir" ""
 
@@ -18395,7 +18395,7 @@ echo "M OK, whatever"
 echo "ok"
 cat >${TESTDIR}/client.tmp
 EOF
-	    chmod u=rw,g=,o= file1
+	    chmod u=rw,go= file1
 	    dotest client-8 "${testcvs} update -D 99-10-04" "OK, whatever"
 	    dotest client-9 "cat ${TESTDIR}/client.tmp" \
 "Root ${TESTDIR}/cvsroot
