@@ -1,3 +1,8 @@
+Mon May 12 11:55:07 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Connection and Authentication): Add item about
+	future expansion.
+
 Thu May  8 11:08:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Update imports): Add comment about wdiff

@@ -234,6 +234,17 @@ protocol, the procedure is the same, except @samp{BEGIN AUTH REQUEST} is
 replaced with @samp{BEGIN VERIFICATION REQUEST}, @samp{END AUTH REQUEST}
 is replaced with @samp{END VERIFICATION REQUEST}, and upon receipt of
 @samp{I LOVE YOU} the connection is closed rather than continuing.
+
+@item future possibilities
+There are a nearly unlimited number of ways to connect and authenticate.
+One might want to allow access based on IP address (similar to the usual
+rsh protocol but with different/no restrictions on ports < 1024), to
+adopt mechanisms such as the General Security Service (GSS) API or
+Pluggable Authentication Modules (PAM), to allow users to run their own
+servers under their own usernames without root access, or any number of
+other possibilities.  The way to add future mechanisms, for the most
+part, should be to continue to use port 2401, but to use different
+strings in place of @samp{BEGIN AUTH REQUEST}.
 @end table
 
 @node Protocol
