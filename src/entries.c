@@ -599,10 +599,12 @@ AddEntryNode (List *list, Entnode *entdata)
 void
 WriteTemplate (char *update_dir, int xdotemplate, char *repository)
 {
+#ifdef SERVER_SUPPORT
+    TRACE (1, "Write_Template (%s, %s)", update_dir, repository);
+
     if (noexec)
 	return;
 
-#ifdef SERVER_SUPPORT
     if (server_active && xdotemplate)
     {
 	/* Clear the CVS/Template if supported to allow for the case
@@ -612,9 +614,9 @@ WriteTemplate (char *update_dir, int xdotemplate, char *repository)
 	server_clear_template (update_dir, repository);
 	server_template (update_dir, repository);
     }
-
-    TRACE (1, "Write_Template (%s, %s)", update_dir, repository);
 #endif
+
+    return;
 }
 
 /*
