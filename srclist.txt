@@ -37,7 +37,7 @@ others.  We update these files directly from the GNULIB CVS repository.
 License: GPL
 Bug Report Email: bug-gnulib@gnu.org
 Project Web Page: http://savannah.gnu.org/projects/gnulib
-CVS Repository: :pserver:anoncvs@subversions.gnu.org:/cvsroot/gnulib
+CVS Repository (via SSH): :ext:anoncvs@savannah.gnu.org/cvsroot/gnulib
 
 Imported files					CVS		Local
 						Directory	Modifications
