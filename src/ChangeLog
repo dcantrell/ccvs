@@ -1,3 +1,11 @@
+Sun May 26 11:58:13 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* mkmodules.c (modules_contents): updated notes about what must be
+	done if you change any of the options for a module.
+	(loginfo_contents): fixed grammar, re-pargraphed, and added 'echo
+	%s;' to the example.
+	(editinfo_contents): minor grammar fix.
+
 Sun May 26 17:51:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vers_ts.c (Version_TS): Remove case where we get options from
