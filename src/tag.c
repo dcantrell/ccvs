@@ -188,7 +188,7 @@ tag (argc, argv)
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
                            argc, argv, local, W_LOCAL, 0, 1,
-                           (char *) NULL, 1, 0);
+                           (char *) NULL, 1);
     
     if (err)
     {
@@ -198,7 +198,7 @@ tag (argc, argv)
     /* start the recursion processor */
     err = start_recursion (tag_fileproc, tag_filesdoneproc, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, argc, argv, local,
-			   W_LOCAL, 0, 0, (char *) NULL, 1, 0);
+			   W_LOCAL, 0, 0, (char *) NULL, 1);
     dellist(&mtlist);
     return (err);
 }
@@ -815,7 +815,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
     err = start_recursion (val_fileproc, (FILESDONEPROC) NULL,
 			   val_direntproc, (DIRLEAVEPROC) NULL,
 			   argc, argv, local, which, aflag,
-			   1, NULL, 1, 0);
+			   1, NULL, 1);
     if (repository != NULL && repository[0] != '\0')
     {
 	if (restore_cwd (&cwd, NULL))

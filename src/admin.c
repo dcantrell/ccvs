@@ -104,7 +104,7 @@ admin (argc, argv)
     /* start the recursion processor */
     err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
 			   (DIRLEAVEPROC) NULL, argc, argv, 0,
-			   W_LOCAL, 0, 1, (char *) NULL, 1, 0);
+			   W_LOCAL, 0, 1, (char *) NULL, 1);
     return (err);
 }
 

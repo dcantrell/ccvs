@@ -1,3 +1,25 @@
+Thu Jun 13 21:16:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basica-9): Update to reflect change to "sufficient
+	access" message.
+
+Thu Jun 13 20:13:55 1996  Ian Lance Taylor  <ian@cygnus.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c, cvs.h (start_recursion): Remove wd_is_repos argument;
+	add comment about meaning of which argument.  Use !(which &
+	W_LOCAL) instead of wd_is_repos.
+	* admin.c, client.c, commit.c, diff.c, edit.c, lock.c, log.c,
+	patch.c, rcs.c, remove.c, rtag.c, status.c, tag.c, update.c,
+	watch.c: Change callers.  This is a semantic change in only two
+	cases: (1) tag_check_valid, where repository was not "", and (2)
+	the pipeout case in checkout_proc.  In both of those cases the
+	previous setting of wd_is_repos did not reflect whether we
+	actually were cd'd into the repository.
+	* recurse.c (start_recursion): Only check for the CVS subdirectory
+	if which & W_LOCAL.
+	* sanity.sh (devcom): Add test case fixed by above patch.
+
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* ignore.c (ignore_files): Skip based on the file name before

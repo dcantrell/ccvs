@@ -322,7 +322,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     /* start the recursion processor */
     err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
 			   (DIRLEAVEPROC) NULL, *pargc - 1, argv + 1, local,
-			   which, 0, 1, where, 1, 1);
+			   which, 0, 1, where, 1);
 
     return (err);
 }

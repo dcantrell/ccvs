@@ -294,7 +294,7 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
                            *pargc - 1, argv + 1, local, which, 0, 1,
-                           where, 1, 1);
+                           where, 1);
     
     if (err)
     {
@@ -304,7 +304,7 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     /* start the recursion processor */
     err = start_recursion (rtag_fileproc, rtag_filesdoneproc, rtag_dirproc,
 			   (DIRLEAVEPROC) NULL, *pargc - 1, argv + 1, local,
-			   which, 0, 0, where, 1, 1);
+			   which, 0, 0, where, 1);
 
     dellist(&mtlist);
 

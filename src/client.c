@@ -4054,7 +4054,7 @@ send_files (argc, argv, local, aflag)
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
 	 send_dirent_proc, (DIRLEAVEPROC)NULL,
-	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0, 0);
+	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
 	exit (EXIT_FAILURE);
     if (toplevel_repos == NULL)

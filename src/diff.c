@@ -209,7 +209,7 @@ diff (argc, argv)
     /* start the recursion processor */
     err = start_recursion (diff_fileproc, diff_filesdoneproc, diff_dirproc,
 			   diff_dirleaveproc, argc, argv, local,
-			   which, 0, 1, (char *) NULL, 1, 0);
+			   which, 0, 1, (char *) NULL, 1);
 
     /* clean up */
     free (options);

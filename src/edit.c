@@ -104,7 +104,7 @@ watch_onoff (argc, argv)
     err = start_recursion (onoff_fileproc, onoff_filesdoneproc,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   0, 0);
+			   0);
 
     lock_tree_cleanup ();
     return err;
@@ -245,7 +245,7 @@ send_notifications (argc, argv, local)
 	err += start_recursion (dummy_fileproc, (FILESDONEPROC) NULL,
 				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-				0, 0);
+				0);
 
 	send_to_server ("noop\012", 0);
 	if (strcmp (command_name, "release") == 0)
@@ -262,7 +262,7 @@ send_notifications (argc, argv, local)
 	err += start_recursion (ncheck_fileproc, (FILESDONEPROC) NULL,
 				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-				0, 0);
+				0);
 	lock_tree_cleanup ();
     }
     return err;
@@ -414,7 +414,7 @@ edit (argc, argv)
     err = start_recursion (edit_fileproc, (FILESDONEPROC) NULL,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   0, 0);
+			   0);
 
     err += send_notifications (argc, argv, local);
 
@@ -515,7 +515,7 @@ unedit (argc, argv)
     err = start_recursion (unedit_fileproc, (FILESDONEPROC) NULL,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   0, 0);
+			   0);
 
     err += send_notifications (argc, argv, local);
 
@@ -1016,5 +1016,5 @@ editors (argc, argv)
     return start_recursion (editors_fileproc, (FILESDONEPROC) NULL,
 			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
-			    0, 0);
+			    0);
 }
