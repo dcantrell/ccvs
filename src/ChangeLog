@@ -1,5 +1,7 @@
 Thu Mar 14 07:06:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Skip tests binfiles-9 through binfiles-13 for remote.
+
 	* options.h.in: Adjust comment to reflect kfogel change.
 
 Thu Mar 14 01:38:30 1996  Karl Fogel  <kfogel@floss.red-bean.com>
