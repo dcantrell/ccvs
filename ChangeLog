@@ -1,3 +1,7 @@
+Sat Feb 15 15:37:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_OUTPUT): Add windows-NT/SCC/Makefile.
+
 Sun Dec 15 13:12:30 1996  Michael Douglass <mikedoug@texas.net>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
