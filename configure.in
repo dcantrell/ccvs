@@ -368,7 +368,7 @@ AC_OUTPUT([Makefile \
 	  windows-NT/Makefile \
 	  windows-NT/SCC/Makefile \
 	  zlib/Makefile],
-	  [chmod -f +x \
+	  [chmod +x \
 	  contrib/clmerge \
 	  contrib/cln_hist \
 	  contrib/commit_prep \
