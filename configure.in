@@ -67,7 +67,9 @@ fi
 rm -f conftest*
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h sys/select.h sys/timeb.h)
+AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
+                 sys/param.h sys/select.h sys/time.h sys/timeb.h \
+                 io.h direct.h)
 AC_HEADER_SYS_WAIT
 AC_HEADER_STAT
 AC_HEADER_TIME
