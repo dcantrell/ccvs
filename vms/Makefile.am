@@ -6,9 +6,9 @@
 
 # Makefile for GNU CVS VMS distribution.
 #
-# Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+# Copyright (C) 1986-2002 The Free Software Foundation, Inc.
 #
-# Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+# Portions Copyright (C) 1998-2002 Derek Price, Ximbiot <http://ximbiot.com>,
 #                                  and others.
 
 # This program is free software; you can redistribute it and/or modify
