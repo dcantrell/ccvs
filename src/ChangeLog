@@ -1,3 +1,9 @@
+1999-11-23  Larry Jones <larry.jones@sdrc.com>
+
+	* checkout.c (checkout_proc): Split declaration and initialization
+	of rp to placate neurotic compilers that gripe about jumping past
+	an initialization, even when the variable is not subsequently used.
+
 1999-11-19  Larry Jones <larry.jones@sdrc.com>
 
 	* server.c (switch_to_user): Correct setgid error messages.

@@ -841,10 +841,11 @@ internal error: %s doesn't start with %s in checkout_proc",
 		{
 		    /* It's a directory in the repository! */
 		    
-		    char *rp = strrchr (reposcopy, '/');
+		    char *rp;
 		    
 		    /* We'll always be below CVSROOT, but check for
 		       paranoia's sake. */
+		    rp = strrchr (reposcopy, '/');
 		    if (rp == NULL)
 			error (1, 0,
 			       "internal error: %s doesn't contain a slash",
