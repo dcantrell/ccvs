@@ -1,5 +1,9 @@
 2005-03-01 Derek Price <derek@ximbiot.com>
 
+	* NEWS: Note GNULIB update.  Expand --disables-* note.
+
+2005-03-01 Derek Price <derek@ximbiot.com>
+
 	* gnulib-update: Correct m4/error.m4 to avoid compiling the GNULIB
 	lib/error.c.
 	(MODULES): Move content to...

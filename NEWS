@@ -3,12 +3,17 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* Some more GNULIB functions have been imported and/or updated for portability
+  reasons.  This change should not be visible to most users, though CVS may now
+  compile on a few more platforms.
+
 * CVS creates a unique session id that gets written to the RCS files during
   import and commit. When committing several files at once, they all get the
   same 'commitid'. The commitid becomes visible with log and status commands,
   and is derived and compatible with the cvsnt project.
 
-* CVS now compiles correctly configured with --disable-client again.
+* CVS once again compiles correctly configured with various combinations of
+  --disable-client, --disable-server, and --disable-proxy.
 
 * CVS now accepts the <tag>:<date> format, which has long been acceptable as an
   argument to -j options, in most places where <tag> used to be acceptable.  An
