@@ -1,5 +1,7 @@
 Thu Feb 15 15:04:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* error.c (error): Free entire and mess when done with them.
+
 	* sanity.sh (info): Correct syntax of .cvsrc file.
 
 	* cvs.h, expand_path.c, edit.c, parseinfo.c, wrapper.c:
