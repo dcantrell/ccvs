@@ -1,5 +1,8 @@
 Fri Jul 26 16:17:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README.MacCVS: Change CVS version number from 1.86 to 1.8.6.
+	They are not the same and the latter is what is intended.
+
 	* run.c: Remove Popen; it has been replaced by run_popen.
 
 	* options.h: Remove RM and SORT; CVS no longer uses them (this
