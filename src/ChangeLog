@@ -1,5 +1,7 @@
 Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in (clean): Also remove check.log check.plog.
+
 	* import.c (comtable): Remove SYSTEM_COMMENT_TABLE; the table
 	should *not* depend on what kind of machine the server happens to
 	be.  Add "mak", "rc", "dlg", "frm", and "bas" types which were
