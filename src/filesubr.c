@@ -690,8 +690,9 @@ cvs_temp_name (void)
  *	unique file name or NULL on failure.
  *
  *  ERRORS
- *	on error, errno will be set to some value either by CVS_FOPEN or
- *	whatever system function is called to generate the temporary file name
+ *	On error, errno will be set to some value either by CVS_FOPEN or
+ *	whatever system function is called to generate the temporary file name.
+ *	The value of filename is undefined on error.
  */
 FILE *cvs_temp_file (char **filename)
 {
@@ -728,11 +729,10 @@ FILE *cvs_temp_file (char **filename)
     }
 
     if (fp == NULL) free (fn);
+#if (__GLIBC__ - 0 < 2 || __GLIBC__ - 0 == 2 && __GLIBC_MINOR__ - 0 == 0)
     /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
-    /* FIXME - configure can probably tell us which version of glibc we are
-     * linking to and not chmod for 2.0.7+
-     */
     else chmod (fn, 0600);
+#endif /* GLIBC API version <= 2.0 */
 
     *filename = fn;
     return fp;
