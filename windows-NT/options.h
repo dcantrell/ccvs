@@ -114,6 +114,17 @@
  * unless the user overrides the default with the RCSBIN environment variable
  * or the "-b" option to CVS.
  * 
+ * If you're compiling the authenticating server (see
+ * AUTH_SERVER_SUPPORT farther down), then you probably want to set
+ * RCSBIN_DFLT.  The authenticating server starts out running as root,
+ * and then switches to run as the appropriate user once
+ * authentication is complete.  No shell is ever started by that user,
+ * so the PATH environment variable may not contain the directory with
+ * the RCS binaries, even though if that user logged in normally, PATH
+ * would include the directory.  An alternative to setting RCSBIN_DFLT
+ * is to make sure that root has the right directory in its path
+ * already.
+ *
  * This define should be either the empty string ("") or a full pathname to the
  * directory containing all the installed programs from the RCS distribution.
  */
@@ -244,10 +255,12 @@
 #endif
 
 /*
- * "cvs login" is under construction.  Don't define this unless you're
- * testing it, in which case you're me and you already know that.
+ * The authenticated client/server is under construction -- it is not
+ * known to work with Windows NT.
  */
-/* #define CVS_LOGIN */
+/* #define AUTH_CLIENT_SUPPORT 1 */
+/* #define AUTH_SERVER_SUPPORT 1 */
+
 
 /* End of CVS configuration section */
 
