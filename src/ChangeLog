@@ -1,3 +1,8 @@
+2004-10-28 Derek Price <derek@ximbiot.com>
+
+	* client.c (handle_redirect): Detect redirect loops.
+	* sanity.sh (client-20): Test that client detects redirect loops.
+
 2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
 
 	* release.c (release): Allow builds of cvs with --disable-server

@@ -591,7 +591,17 @@ handle_valid_requests (char *args, size_t len)
 static void
 handle_redirect (char *args, size_t len)
 {
+    static List *redirects = NULL;
+
     TRACE (TRACE_FUNCTION, "handle_redirect (%s)", args);
+
+    if (redirects && findnode (redirects, args))
+	error (1, 0, "`Redirect' loop detected.  Server misconfiguration?");
+    else
+    {
+	if (!redirects) redirects = getlist();
+	push_string (redirects, args);
+    }
 
     client_referrer = current_parsed_root;
     current_parsed_root = parse_cvsroot (args);
