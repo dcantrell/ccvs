@@ -822,6 +822,20 @@ gas.clean/config/
 /rel/cvsfiles/devo/gas/config/i386.mh
 @end example
 
+If the server wants to tell the client to create a directory, then it
+merely uses the directory in any response, as described above, and the
+client should create the directory if it does not exist.  Some server
+implementations may poorly distinguish between a directory which should
+not exist and a directory which contains no files; in order to refrain
+from creating empty directories a client should both send the @samp{-P}
+option to @code{update} or @code{co}, and should also detect the case in
+which the server asks to create a directory but not any files within it
+(in that case the client should remove the directory or refrain from
+creating it in the first place).  Note that servers could clean this up
+greatly by only telling the client to create directories if the
+directory in question should exist, but until servers do this, clients
+will need to offer the @samp{-P} behavior described above.
+
 Any response always ends with @samp{error} or @samp{ok}.  This indicates
 that the response is over.
 
