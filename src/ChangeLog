@@ -1,3 +1,8 @@
+1998-07-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* build_src.com (rcscmds.c): Also look for include files in
+	[-.diff], just like Ian's 1998-06-18 change to Makefile.in
+
 1998-07-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* tag.c (pretag_proc), rtag.c (pretag_proc): Don't pass RUN_REALLY
