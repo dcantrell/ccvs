@@ -1754,7 +1754,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		/* It's probably paranoid to think S.ST_SIZE might be
                    too small to hold the entire file contents, but we
                    handle it just in case.  */
-		if (tobuf - filebuf == filebufsize)
+		if (tobuf == filebuf + filebufsize)
 		{
 		    int c;
 		    long off;

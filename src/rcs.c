@@ -2660,7 +2660,7 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 	/* Now SUB contains a string which is to replace the string
 	   from SRCH to S.  SUBLEN is the length of SUB.  */
 
-	if (sublen == s - srch)
+	if (srch + sublen == s)
 	{
 	    memcpy (srch, sub, sublen);
 	    free (sub);
@@ -2689,7 +2689,7 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 	    else
 	    {
 		assert (srch >= ebuf_last->data);
-		assert (srch - ebuf_last->data <= ebuf_last->len);
+		assert (srch <= ebuf_last->data + ebuf_last->len);
 		ebuf_len -= ebuf_last->len - (srch - ebuf_last->data);
 		ebuf_last->len = srch - ebuf_last->data;
 	    }
