@@ -181,6 +181,9 @@
    zero-length file name argument. */
 #undef HAVE_LSTAT_EMPTY_STRING_BUG
 
+/* Define to 1 if your system has a working `malloc' function. */
+#undef HAVE_MALLOC
+
 /* Define if you have memchr (always for CVS). */
 #undef HAVE_MEMCHR
 
