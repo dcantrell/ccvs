@@ -430,6 +430,7 @@ char *date_from_time_t (time_t);
 void date_to_internet (char *, const char *);
 void date_to_tm (struct tm *, const char *);
 void tm_to_internet (char *, const struct tm *);
+char *format_date_alloc (char *text);
 
 char *Name_Repository (const char *dir, const char *update_dir);
 const char *Short_Repository (const char *repository);

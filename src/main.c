@@ -1129,8 +1129,10 @@ date_from_time_t (time_t unixtime)
 		    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
 		    ftm->tm_min, ftm->tm_sec);
     ret = xstrdup (date);
-    return (ret);
+    return ret;
 }
+
+
 
 /* Convert a date to RFC822/1123 format.  This is used in contexts like
    dates to send in the protocol; it should not vary based on locale or
@@ -1147,6 +1149,8 @@ date_to_internet (char *dest, const char *source)
     date_to_tm (&date, source);
     tm_to_internet (dest, &date);
 }
+
+
 
 void
 date_to_tm (struct tm *dest, const char *source)
@@ -1166,6 +1170,8 @@ date_to_tm (struct tm *dest, const char *source)
     dest->tm_mon -= 1;
 }
 
+
+
 /* Convert a date to RFC822/1123 format.  This is used in contexts like
    dates to send in the protocol; it should not vary based on locale or
    other such conventions for users.  We should have another routine which
@@ -1183,9 +1189,55 @@ tm_to_internet (char *dest, const struct tm *source)
 	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     
     sprintf (dest, "%d %s %d %02d:%02d:%02d -0000", source->tm_mday,
-	     source->tm_mon < 0 || source->tm_mon > 11 ? "???" : month_names[source->tm_mon],
-	     source->tm_year + 1900, source->tm_hour, source->tm_min, source->tm_sec);
+	     source->tm_mon < 0 || source->tm_mon > 11
+               ? "???" : month_names[source->tm_mon],
+	     source->tm_year + 1900, source->tm_hour, source->tm_min,
+             source->tm_sec);
 }
+
+
+
+/*
+ * Format a date for the current locale.
+ *
+ * Input looks like
+ *	2004-04-29 20:24:22
+ * Output looks the same (for GMT) or with +/-HHMM added to the end, like
+ *	2004-04-29 13:24:22-0700
+ */
+char *
+format_date_alloc (char *datestr)
+{
+    time_t unixtime;
+    struct tm ltm;
+    char buf[sizeof ("yyyy-mm-dd HH:MM:SS -HHMM")];
+    size_t len;
+
+    TRACE (TRACE_FUNCTION, "format_date (%s)", datestr);
+
+    /* Get the date string as a local struct tm. */
+    unixtime = get_date (datestr, NULL);
+    if (unixtime == (time_t)-1)
+    {
+	error (0, 0, "Unable to parse date `%s'.", datestr);
+	goto as_is;
+    }
+
+    ltm = *(localtime (&unixtime));
+
+    if ((len = strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm)) == 0)
+    {
+	error (0, 0, "Unable to reformat date `%s'.", datestr);
+	goto as_is;
+    }
+
+    datestr = buf;
+
+ as_is:
+    return xstrdup (datestr);
+}
+
+
 
 void
 usage (register const char *const *cpp)

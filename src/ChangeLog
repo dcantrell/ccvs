@@ -1,5 +1,21 @@
 2004-05-19  Derek Price  <derek@ximbiot.com>
 
+	Output `cvs log' times in the local timezone.
+
+	* client.c (handle_mt): Handle the new "date" MT response
+	* server.c (cvs_output_tagged): Likewise
+	* cvs.h: Proto for format_date_alloc
+	* main.c (format_date_alloc, tm_diff): Added.
+	* log.c (log_version): Use MT response to tag date output.
+	(Original patch from Bart Robinson  <lomew@riverbed.com>.)
+
+	* sanity.sh (importc, rcs, rcs4): Use TZ=GMT for the duration of these
+	tests to obtain consistent times in output.
+	(ISO8601DATE, ISO8601DATE1971, ISO8601DATE2034): Use more precise
+	regex.
+
+2004-05-19  Derek Price  <derek@ximbiot.com>
+
 	* server.c (serve_unchanged, serve_is_modified): Overwrite existing
 	data in timefields.  Fixes CAN-2004-0396.
 

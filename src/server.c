@@ -6663,8 +6663,15 @@ cvs_output_tagged (const char *tag, const char *text)
     else
 #endif
     {
+	/* No MT support or we are using a local repository. */
 	if (strcmp (tag, "newline") == 0)
 	    cvs_output ("\n", 1);
+	else if (strcmp (tag, "date") == 0)
+	{
+	    char *date = format_date_alloc (text);
+	    cvs_output (date, 0);
+	    free (date);
+	}
 	else if (text != NULL)
 	    cvs_output (text, 0);
     }
