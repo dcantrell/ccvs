@@ -5109,40 +5109,11 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	allocated_workfile = 1;
     }
 
-    /* Is the backend file a symbolic link?  Follow it and replace the
-       filename with the destination of the link.  */
-
-    while (islink (rcs->path))
-    {
-	char *newname;
-#ifdef HAVE_READLINK
-	/* The clean thing to do is probably to have each filesubr.c
-	   implement this (with an error if not supported by the
-	   platform, in which case islink would presumably return 0).
-	   But that would require editing each filesubr.c and so the
-	   expedient hack seems to be looking at HAVE_READLINK.  */
-	newname = xreadlink (rcs->path);
-#else
-	error (1, 0, "internal error: islink doesn't like readlink");
-#endif
-	
-	if (isabsolute (newname))
-	{
-	    free (rcs->path);
-	    rcs->path = newname;
-	}
-	else
-	{
-	    char *oldname = last_component (rcs->path);
-	    int dirlen = oldname - rcs->path;
-	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
-	    strncpy (fullnewname, rcs->path, dirlen);
-	    strcpy (fullnewname + dirlen, newname);
-	    free (newname);
-	    free (rcs->path);
-	    rcs->path = fullnewname;
-	}
-    }
+    /* If the filename is a symbolic link, follow it and replace it
+       with the destination of the link.  We need to do this before
+       calling rcs_internal_lockfile, or else we won't put the lock in
+       the right place. */
+    resolve_symlink (&(rcs->path));
 
     checkin_quiet = flags & RCS_FLAGS_QUIET;
     if (!checkin_quiet)
@@ -8551,6 +8522,9 @@ RCS_rewrite (rcs, newdtext, insertpt)
 
     if (noexec)
 	return;
+
+    /* Make sure we're operating on an actual file and not a symlink.  */
+    resolve_symlink (&(rcs->path));
 
     fout = rcs_internal_lockfile (rcs->path);
 

@@ -642,6 +642,7 @@ char *make_message_rcslegal PROTO((char *message));
 extern int file_has_markers PROTO ((const struct file_info *));
 extern void get_file PROTO ((const char *, const char *, const char *,
 			     char **, size_t *, size_t *));
+extern void resolve_symlink PROTO ((char **filename));
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */

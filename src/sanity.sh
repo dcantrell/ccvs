@@ -3639,7 +3639,19 @@ new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  dotest rcslib-symlink-4 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
-
+	  # Test 5 reveals a problem with having symlinks in the
+	  # repository.  CVS will try to tag both of the files
+	  # separately.  After processing one, it will do the same
+	  # operation to the other, which is actually the same file,
+	  # so the tag will already be there.  FIXME: do we bother
+	  # changing operations to notice cases like this?  This
+	  # strikes me as a difficult problem.  -Noel
+	  dotest rcslib-symlink-5 "${testcvs} tag the_tag" \
+"${PROG} [a-z]*: Tagging .
+T file1
+W file2 : the_tag already exists on version 1.1.2.1 : NOT MOVING tag to version 1.1.2.2"
+	  dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
+".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
 	  cd ..
 
 	  if test "$keep" = yes; then

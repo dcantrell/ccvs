@@ -684,3 +684,49 @@ get_file (name, fullname, mode, buf, bufsize, len)
 	(*buf)[nread] = '\0';
     }
 }
+
+
+/* Follow a chain of symbolic links to its destination.  FILENAME
+   should be a handle to a malloc'd block of memory which contains the
+   beginning of the chain.  This routine will replace the contents of
+   FILENAME with the destination (a real file).  */
+
+void
+resolve_symlink (filename)
+     char **filename;
+{
+    if ((! filename) || (! *filename))
+	return;
+
+    while (islink (*filename))
+    {
+	char *newname;
+#ifdef HAVE_READLINK
+	/* The clean thing to do is probably to have each filesubr.c
+	   implement this (with an error if not supported by the
+	   platform, in which case islink would presumably return 0).
+	   But that would require editing each filesubr.c and so the
+	   expedient hack seems to be looking at HAVE_READLINK.  */
+	newname = xreadlink (*filename);
+#else
+	error (1, 0, "internal error: islink doesn't like readlink");
+#endif
+	
+	if (isabsolute (newname))
+	{
+	    free (*filename);
+	    *filename = newname;
+	}
+	else
+	{
+	    char *oldname = last_component (*filename);
+	    int dirlen = oldname - *filename;
+	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
+	    strncpy (fullnewname, *filename, dirlen);
+	    strcpy (fullnewname + dirlen, newname);
+	    free (newname);
+	    free (*filename);
+	    *filename = fullnewname;
+	}
+    }
+}
