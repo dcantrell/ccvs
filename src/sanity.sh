@@ -17913,10 +17913,10 @@ usage is deprecated\."
 br add first-dir file1 1\.1
 brtag mov first-dir file1 1\.1\.2\.1
 tag1 del first-dir file1 1\.1
-tag1 del first-dir file1 1\.1\.2\.1
+tag1 del first-dir
 tag1 add first-dir file1 1\.1
 tag1 del first-dir file1 1\.1
-tag1 del first-dir file1 1\.1"
+tag1 del first-dir"
 
 	  # now that we've tested the default operation, try a new
 	  # style fmt string.
