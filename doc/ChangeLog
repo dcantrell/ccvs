@@ -1,3 +1,7 @@
+Fri Nov 14 11:02:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (tag options): Add FIXME comment about renaming tags.
+
 Thu Nov 13 10:20:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Remove also has a -f option with a

@@ -9555,6 +9555,9 @@ them):
 @cindex renaming tags
 @cindex tags, renaming
 @cindex moving tags
+@c FIXME: Where does this talk about renaming tags?
+@c And what about rtag?  This needs to be moved to
+@c the body of the manual.
 @item -F 
 Overwrite an existing tag of the same name on a
 different revision.
