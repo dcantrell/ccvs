@@ -8,6 +8,8 @@ pathname of a shell which handles normal shell functions:
 
 	$ make SHELL=/bin/sh5 check
 
+Also note that you must be logged in as a regular user, not root.
+
 WARNING:  This test can take quite a while to run, esp. if your
 disks are slow or over-loaded.
 
@@ -19,10 +21,6 @@ before running them.
 You will probably need GNU expr, which is part of the GNU sh-utils
 package.  This is just for running the tests; CVS itself doesn't
 require expr.
-
-With CVS 1.10 people also had trouble with the Solaris sort program
-not behaving the way that the testsuite expects (with Solaris, lines
-starting with tabs sort before blank lines).
 
 If there is some unexpected output, that is a failure which can be
 somewhat hard to track down.  Finding out which test is producing the

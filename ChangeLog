@@ -1,3 +1,8 @@
+1999-10-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* TESTS: Add note about not running as root.  Remove note about
+	Solaris sort since sanity.sh was changed to avoid the problem.
+
 1999-07-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* TESTS: Remove suspicion that setting LC_COLLATE has fixed the
