@@ -281,6 +281,19 @@ get_cvs_password ()
     if (cvs_password)
 	return cvs_password;
 
+    if (getenv ("CVS_PASSWORD") != NULL)
+    {
+	/* In previous versions of CVS one could specify a password in
+	   CVS_PASSWORD.  This is a bad idea, because in BSD variants
+	   of unix anyone can see the environment variable with 'ps'.
+	   But for users who were using that feature we want to at
+	   least let them know what is going on.  After printing this
+	   warning, we should fall through to the regular error where
+	   we tell them to run "cvs login" (unless they already ran
+	   it, of course).  */
+	error (0, 0, "CVS_PASSWORD is no longer supported; ignored");
+    }
+
     /* Else get it from the file.  First make sure that the CVSROOT
        variable has the appropriate fields filled in. */
 
