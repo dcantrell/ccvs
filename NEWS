@@ -6,8 +6,6 @@ of CVS 1.6.
 * "cvs tag" now supports a "-r | -D" option for tagging an already
 tagged revision / specific revision of a file.
 
-* cvs supports a -f global option to ignore the ~/.cvsrc file.
-
 * There is a "taginfo" file in CVSROOT that supports filtering and
 recording of tag operations.
 
