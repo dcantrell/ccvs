@@ -5262,10 +5262,10 @@ error 0 %s: no such user\n", username);
 #endif
       
 #if HAVE_PUTENV
-    /* Set LOGNAME and USER in the environment, in case they are
-       already set to something else.  */
+    /* Set LOGNAME, USER and CVS_USER in the environment, in case they
+       are already set to something else.  */
     {
-	char *env;
+	char *env, *cvs_user;
 
 	env = xmalloc (sizeof "LOGNAME=" + strlen (username));
 	(void) sprintf (env, "LOGNAME=%s", username);
@@ -5274,6 +5274,11 @@ error 0 %s: no such user\n", username);
 	env = xmalloc (sizeof "USER=" + strlen (username));
 	(void) sprintf (env, "USER=%s", username);
 	(void) putenv (env);
+
+        cvs_user = NULL != CVS_Username ? CVS_Username : "";
+        env = xmalloc (sizeof "CVS_USER=" + strlen (cvs_user));
+        (void) sprintf (env, "CVS_USER=%s", cvs_user);
+        (void) putenv (env);
     }
 #endif /* HAVE_PUTENV */
 }
