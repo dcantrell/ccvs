@@ -1,7 +1,8 @@
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
 	* root.c (normalize_cvsroot): removed references to free_port_s and the
-	now useless call to free now that port_s is on the stack.
+	now useless call to free now that port_s is on the stack.  Thanks to
+	Jon Miner.
 
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
