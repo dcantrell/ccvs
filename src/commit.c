@@ -145,6 +145,13 @@ find_dirent_proc (callerdat, dir, repository, update_dir, entries)
 {
     struct find_data *find_data = (struct find_data *)callerdat;
 
+    /* This check seems to slowly be creeping throughout CVS (update
+       and send_dirent_proc by CVS 1.5, diff in 31 Oct 1995.  My guess
+       is that it (or some variant thereof) should go in all the
+       dirent procs.  Unless someone has some better idea...  */
+    if (!isdir (dir))
+	return (R_SKIP_ALL);
+
     /* initialize the ignore list for this directory */
     find_data->ignlist = getlist ();
     return R_PROCESS;
@@ -1003,6 +1010,9 @@ check_direntproc (callerdat, dir, repos, update_dir, entries)
     char *update_dir;
     List *entries;
 {
+    if (!isdir (dir))
+	return (R_SKIP_ALL);
+
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
 
@@ -1425,6 +1435,9 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     Node *p;
     List *ulist;
     char *real_repos;
+
+    if (!isdir (dir))
+	return (R_SKIP_ALL);
 
     /* find the update list for this dir */
     p = findnode (mulist, update_dir);

@@ -1465,6 +1465,8 @@ done"
 	  # that "cvs release -d" is the way to delete the directory
 	  # and have it stay gone -kingdon, Oct1996).
 	  rm -r dir6
+	  dotest deep-4b0a "${testcvs} -q diff" ''
+	  dotest deep-4b0b "${testcvs} -q ci" ''
 	  dotest deep-4b1 "${testcvs} -q update" ''
 	  dotest deep-4b2 "${testcvs} -q update -d -P" \
 'U dir6/file1
