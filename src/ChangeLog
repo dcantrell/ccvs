@@ -1,3 +1,7 @@
+Tue Jan 30 11:55:34 MET 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* main.c (main): Add change to run getopt_long twice again.
+
 Mon Jan 29 15:59:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	gcc -Wall lint:
