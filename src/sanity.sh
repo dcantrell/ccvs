@@ -6801,27 +6801,44 @@ done"
 	  cd ../..
 	  rm -rf 1; mkdir 1; cd 1
 	  dotest toplevel-5 "${testcvs} co top-dir" \
-"${PROG} checkout: Updating top-dir
+"${PROG} [a-z]*: Updating top-dir
 U top-dir/file1"
 
 	  dotest toplevel-6 "${testcvs} update top-dir" \
-"${PROG} update: Updating top-dir"
+"${PROG} [a-z]*: Updating top-dir"
 	  dotest toplevel-7 "${testcvs} update"  \
-"${PROG} update: Updating \.
-${PROG} update: Updating top-dir"
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating top-dir"
 
 	  dotest toplevel-8 "${testcvs} update -d top-dir" \
-"${PROG} update: Updating top-dir"
+"${PROG} [a-z]*: Updating top-dir"
 	  # FIXME: This test fails in cvs starting from 1.9.2 because
 	  # it updates "file1" in "1".  Test modules3-7f also finds
 	  # (and tolerates) this bug.  The second expect string below
-	  # should be removed when this is fixed.
+	  # should be removed when this is fixed.  The first expect
+	  # string is the behavior of remote CVS.  There is some sentiment
+	  # that
+	  #   "${PROG} [a-z]*: Updating \.
+          #   ${PROG} [a-z]*: Updating top-dir"
+	  # is correct but it isn't clear why that would be correct instead
+	  # of the remote CVS behavior.
 	  dotest toplevel-9 "${testcvs} update -d" \
-"${PROG} update: Updating \.
-${PROG} update: Updating top-dir" \
-"${PROG} update: Updating \.
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating CVSROOT
+U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg
+${PROG} [a-z]*: Updating top-dir" \
+"${PROG} [a-z]*: Updating \.
 U file1
-${PROG} update: Updating top-dir"
+${PROG} [a-z]*: Updating top-dir"
 
 	  cd ..
 	  rm -rf 1
