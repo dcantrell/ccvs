@@ -1,3 +1,11 @@
+Mon Sep 30 14:51:36 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* INSTALL (sun3): 1.8.86+ builds and runs make check.
+
+	* NEWS: describe -D and -g; DIFFBIN and GREPBIN
+
+	* MINOR-BUGS: yet another couple of annoyances...
+
 Mon Sep 30 08:33:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Mention "cvs add -m" client/server bug.

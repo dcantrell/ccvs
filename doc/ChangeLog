@@ -1,3 +1,26 @@
+Mon Sep 30 18:17:34 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* cvs.texinfo (Credits): add comment asking if we should update.
+	Add more detail about printing Letter on A4.
+	Add some comments about internal comments.
+	(From files): describe "cvs import -b 1" for importing existing
+	projects onto the main branch.
+	(First import): add a couple of helpful hints about naming vendor
+	and release tags, etc., and regularize the examples with this.
+	(Tracking sources): noted some reasons why you might use vendor
+	branches with "cvs import".
+	(Update imports): mention using "update" in place of "checkout" if
+	you have an existing working directory.
+	(Binary files in imports): add sub-menu separator comment.
+	(Tracking sources): new menu entry "Reverting to vendor release".
+	(Reverting to vendor release): new node to describe reverting
+	local changes and optionally using patch(1) to move local changes
+	forward.
+	(Global options): describe -D and -g, as well as DIFFBIN and
+	GREPBIN.
+	(export examples): add one.
+	(import options): describe the effect of '-b 1'.
+	
 Mon Sep 30 08:09:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Adjust comments concerning A4 vs. US letter,
