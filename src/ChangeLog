@@ -1,3 +1,10 @@
+2000-01-29  Jim Kingdon  <http://developer.redhat.com/>
+
+	* ignore.c (ignore_files): Correctly set errno to 0 when we go
+	back to the top of the loop.  Fixes spurious errors like "cvs
+	update: error reading current directory: No such file or
+	directory".
+
 2000-01-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* run.c (run_exec): Conditionalize K.J.'s change so that it only
