@@ -1,5 +1,10 @@
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
+	* mkman.in: Handle examples better.  Protect a few more characters.
+	* cvs.1, stamp-vti, version.texi: Regenerated.
+
+2004-04-30  Derek Price  <derek@ximbiot.com>
+
 	* cvs.man.header: Add copyright notice.
 	* cvs.1: Regenerated.
 
