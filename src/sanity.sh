@@ -792,7 +792,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
-        tests="${tests} top-level checkout_repository"
+        tests="${tests} rstar-toplevel checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2 adderrmsg opterrmsg"
 	# Watches, binary files, history browsing, &c.
@@ -13847,14 +13847,14 @@ ${PROG} commit: Rebuilding administrative file database"
 
 
 
-	top-level)
+	rstar-toplevel)
 	  # FIXCVS:
 	  # This test confirms a bug that exists in the r* commands currently
 	  # when run against the top-level project.
 	  #
 	  # The assertion failure is something like:
 	  # do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
-	  dotest_fail top-level-1 "$testcvs rlog ." \
+	  dotest_fail rstar-toplevel-1 "$testcvs rlog ." \
 "${DOTSTAR}ssertion.*failed${DOTSTAR}" "${DOTSTAR}failed assertion${DOTSTAR}"
 
 	  if $keep; then
