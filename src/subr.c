@@ -18,55 +18,7 @@
 
 extern char *getlogin (void);
 
-/*
- * malloc some data and die if it fails
- */
-void *
-xmalloc (size_t bytes)
-{
-    char *cp;
 
-    /* Parts of CVS try to xmalloc zero bytes and then free it.  Some
-       systems have a malloc which returns NULL for zero byte
-       allocations but a free which can't handle NULL, so compensate. */
-    if (bytes == 0)
-	bytes = 1;
-
-    cp = CVS_MALLOC( bytes );
-    if (cp == NULL)
-    {
-	char buf[80];
-	sprintf (buf, "out of memory; can not allocate %lu bytes",
-		 (unsigned long) bytes);
-	error (1, 0, buf);
-    }
-    return (cp);
-}
-
-/*
- * realloc data and die if it fails [I've always wanted to have "realloc" do
- * a "malloc" if the argument is NULL, but you can't depend on it.  Here, I
- * can *force* it.]
- */
-void *
-xrealloc (void *ptr, size_t bytes)
-{
-    char *cp;
-
-    if (!ptr)
-	cp = CVS_MALLOC( bytes );
-    else
-	cp = CVS_REALLOC( ptr, bytes );
-
-    if (cp == NULL)
-    {
-	char buf[80];
-	sprintf (buf, "out of memory; can not reallocate %lu bytes",
-		 (unsigned long) bytes);
-	error (1, 0, buf);
-    }
-    return (cp);
-}
 
 /* Two constants which tune expand_string.  Having MIN_INCR as large
    as 1024 might waste a bit of memory, but it shouldn't be too bad
@@ -110,6 +62,8 @@ expand_string (char **strptr, size_t *n, size_t newsize)
     }
 }
 
+
+
 /* *STR is a pointer to a malloc'd string.  *LENP is its allocated
    length.  Add SRC to the end of it, reallocating if necessary.  */
 void
@@ -118,21 +72,6 @@ xrealloc_and_strcat (char **str, size_t *lenp, const char *src)
 
     expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
     strcat (*str, src);
-}
-
-/*
- * Duplicate a string, calling xmalloc to allocate some dynamic space
- */
-char *
-xstrdup (const char *str)
-{
-    char *s;
-
-    if (str == NULL)
-	return ((char *) NULL);
-    s = xmalloc (strlen (str) + 1);
-    (void) strcpy (s, str);
-    return (s);
 }
 
 

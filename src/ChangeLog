@@ -1,3 +1,11 @@
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	Import xalloc module from GNULIB, as well as its remaining unimported
+	dependency, the exitfail module.
+
+	* cvs.h: #include "xalloc.h".
+	* subr.c (xmalloc, xrealloc, xstrdup): Remove these functions.
+
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* hash.h (struct node): Change data from char * to void *, change
