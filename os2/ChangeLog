@@ -1,3 +1,8 @@
+1999-02-26  Jim Kingdon  <http://www.cyclic.com>
+
+	* options.h: Make RELATIVE_REPOS the default, as in
+	../src/options.h.in.
+
 1998-12-29  Jim Kingdon  <http://www.cyclic.com>
 
 	* Makefile.in: Use the getdate.c in ../lib rather than the one
