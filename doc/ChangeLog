@@ -1,3 +1,11 @@
+Thu Feb 27 15:20:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Multiple developers): Reword section on "cvs admin
+	-l".  As nearly as I can tell based on when it came up on info-cvs
+	and other contexts, people who are into reserved checkouts
+	generally find that cvs admin -l is OK.  Add a bunch more notes
+	(inside @ignore) about reserved checkout implementation ideas.
+
 Sun Feb 23 16:12:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Add various additional comments

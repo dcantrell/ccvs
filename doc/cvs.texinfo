@@ -2216,14 +2216,19 @@ edit the same file simultaneously.  One solution, known
 as @dfn{file locking} or @dfn{reserved checkouts}, is
 to allow only one person to edit each file at a time.
 This is the only solution with some version control
-systems, including @sc{rcs} and @sc{sccs}.  @sc{Cvs}
-doesn't have a very nice implementation of reserved
-checkouts (yet) but there are ways to get it working
-(for example, see the @code{cvs admin -l} command in
-@ref{admin options}).  It also may be possible to use
-the watches features described below, together with
-suitable procedures (not enforced by software), to
-avoid having two people edit at the same time.
+systems, including @sc{rcs} and @sc{sccs}.  Currently
+the usual way to get reserved checkouts with @sc{cvs}
+is the @code{cvs admin -l} command (@pxref{admin
+options}).  This is not as nicely integrated into
+@sc{cvs} as the watch features, described below, but it
+seems that most people with a need for reserved
+checkouts find it adequate.
+@c Or "find it better than worrying about implementing
+@c nicely integrated reserved checkouts" or ...?
+It also may be possible to use the watches
+features described below, together with suitable
+procedures (not enforced by software), to avoid having
+two people edit at the same time.
 
 @c Our unreserved checkout model might not
 @c be quite the same as others.  For example, I
@@ -2243,6 +2248,8 @@ then use @sc{cvs} commands to bring their working copy
 up to date with the repository revision.  This process
 is almost automatic.
 
+@c FIXME? should probably use the word "watch" here, to
+@c tie this into the text below and above.
 @sc{Cvs} also supports mechanisms which facilitate
 various kinds of communcation, without actually
 enforcing rules like reserved checkouts do.
@@ -2290,6 +2297,36 @@ that context, want to ignore the locker field).  But
 note that RCS locks are per-branch, which is the
 correct behavior (this is also an issue for the "watch
 on" features; they should be per-branch too).
+
+Here are a few more random notes about implementation
+details, assuming "cvs watch lock" and
+
+CVS/Watched file?  Or try to fit this into CVS/Entries somehow?
+Cases: (1) file is checked out (unreserved or with watch on) by old
+version of CVS, now we do something with new one, (2) file is checked
+out by new version, now we do something with old one.
+
+Remote protocol would have a "Watched" analogous to "Mode".  Of course
+it would apply to all Updated-like requests.  How do we keep this
+setting up to date?  I guess that there wants to be a Watched request,
+and the server would send a new one if it isn't up to date? (Ugh--hard
+to implement and slows down "cvs -q update"--is there an easier way?)
+
+"cvs edit"--checks CVS/Watched, and if watch lock, then sends
+"edit-lock" request.  Which comes back with a Checked-in with
+appropriate Watched (off, on, lock, locked, or some such?), or error
+message if already locked.
+
+"cvs commit"--only will commit if off/on/locked.  lock is not OK.
+
+Doc:
+note that "cvs edit" must be connected to network if watch lock is in
+effect.
+
+Talk about what to do if someone has locked a file and you want to
+edit that file.  (breaking locks, or lack thereof).
+
+
 @end ignore
 
 @menu
