@@ -1632,6 +1632,18 @@ not create additional files in that directory.  To
 clear it, use the @code{update} command with the
 @samp{-d} option, which will get the additional files
 and remove @file{Entries.Static}.
+@c FIXME: This needs to be better documented, in places
+@c other than Working Directory Storage.
+@c FIXCVS: The fact that this setting exists needs to
+@c be more visible to the user.  For example "cvs
+@c status foo", in the case where the file would be
+@c gotten except for Entries.Static, might say
+@c something to distinguish this from other cases.
+@c One thing that periodically gets suggested is to
+@c have "cvs update" print something when it skips
+@c files due to Entries.Static, but IMHO that kind of
+@c noise pretty much makes the Entries.Static feature
+@c useless.
 
 @cindex Tag file, in CVS directory
 @cindex CVS/Tag file

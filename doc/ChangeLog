@@ -1,3 +1,8 @@
+Tue Sep 30 12:31:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Working directory storage): Add comment about
+	Entries.Static.
+
 Thu Sep 25 23:52:57 1997  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvsclient.texi (Responses): description of Module-expansion was
