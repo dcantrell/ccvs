@@ -228,3 +228,7 @@ m4/xsize.m4
 m4/size_max.m4
 
 m4/onceonly_2_57.m4
+lib/getpagesize.h
+m4/getpagesize.m4
+
+m4/onceonly_2_57.m4
