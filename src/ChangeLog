@@ -1,3 +1,11 @@
+1999-01-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (recv_line): Handle EOF from server.
+
+	* sanity.sh (importc-8, importc-9): Accept anything in the seconds
+	fields of the timestamps since touch doesn't set it reliably.
+	(This isn't great, but it's better than nothing.)
+
 1999-01-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* run.c (run_exec): Adjust comment about vfork; this isn't the place

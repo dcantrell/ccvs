@@ -4542,6 +4542,9 @@ add
 	  # should work.  But GNU touch seems to have other ideas.
 	  # I sort of wonder if this is lossage by the standards bodies,
 	  # I'm not sure.
+	  # Note that some versions of touch when used without -t don't handle
+	  # y2k and/or set the seconds reliably.
+	  # We should probably find a different way of doing this.
 	  touch 0704034371 bdir/subdir/file1
 	  touch 1225180134 cdir/cfile
 	  dotest_sort importc-1 \
@@ -4623,12 +4626,12 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: 2034/12/2[4-6] [0-9][0-9]:01:00;  author: ${username};  state: Exp;
+date: 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9];  author: ${username};  state: Exp;
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: 2034/12/2[4-6] [0-9][0-9]:01:00;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: 2034/12/2[4-6] [0-9][0-9]:01:[0-9][0-9];  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 branches:  1\.1\.1\.1\.2;
 import-it
 ----------------------------
@@ -4653,12 +4656,12 @@ total revisions: 2;	selected revisions: 2
 description:
 ----------------------------
 revision 1\.1
-date: 1971/07/0[3-5] [0-9][0-9]:43:00;  author: ${username};  state: Exp;
+date: 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9];  author: ${username};  state: Exp;
 branches:  1\.1\.1;
 Initial revision
 ----------------------------
 revision 1\.1\.1\.1
-date: 1971/07/0[3-5] [0-9][0-9]:43:00;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+date: 1971/07/0[3-5] [0-9][0-9]:43:[0-9][0-9];  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
 import-it
 ============================================================================="
 	  cd ..
