@@ -1,5 +1,9 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* client.c (start_server): Use bool in place of int.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* subr.c (cvs_trace): Correct header comment.  Some reformatting.
 
 2004-09-28  Mark D. Baushke  <mdb@cvshome.org>

@@ -3867,7 +3867,7 @@ start_server (void)
      */
 
     {
-	int have_global = supported_request ("Global_option");
+	bool have_global = supported_request ("Global_option");
 
 	if (noexec)
 	{
