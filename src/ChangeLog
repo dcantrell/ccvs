@@ -1,3 +1,8 @@
+Sun Apr  6 17:34:08 1997  Robert Bihlmeyer  <robbe@orcus.priv.at>
+
+	* Pass +f not f to getopt_long to prevent options from being
+	permuted with glibc 2.0.1.
+
 Sun Mar 30 00:07:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h (struct vers_ts): Adjust comment regarding ts_user.
