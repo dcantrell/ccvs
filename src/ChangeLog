@@ -1,3 +1,12 @@
+2004-04-02  Derek Price  <derek@ximbiot.com>
+
+	* client.c (send_file_names): Move code which calculates and sends
+	Max-dotdot...
+	(send_max_dotdot): ...to this new function.
+	(send_files): Call send_max_dotdot.
+	* sanity.sh (files-14): Expect .. in paths to work now.
+	(status): Add a few new tests using `..'.
+
 2004-04-01  Derek Price  <derek@ximbiot.com>
 
 	* lock.c: Gratuitous restyling.

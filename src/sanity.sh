@@ -4067,9 +4067,12 @@ ${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3
 done"
 	  if $remote; then
-	    dotest_fail files-14 \
+	    dotest files-14 \
 "${testcvs} commit -fmtest ../../first-dir/dir/.file" \
-"protocol error: .\.\./\.\./first-dir/dir' has too many \.\."
+"Checking in \.\./\.\./first-dir/dir/\.file;
+${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  .file
+new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3
+done"
 	  else
 	    dotest files-14 \
 "${testcvs} commit -fmtest ../../first-dir/dir/.file" \
@@ -4267,14 +4270,65 @@ File: tfile            	Status: Locally Modified
 		dotest status-4 "grep 'Result of merge' CVS/Entries" \
 "/tfile/1\.2/Result of merge${PLUS}[a-zA-Z0-9 :]*//"
 
+                cd ..
+                mkdir fourth-dir
+                dotest status-init-8 "$testcvs add fourth-dir" \
+"Directory $CVSROOT_DIRNAME/fourth-dir added to the repository"
+                cd fourth-dir
+                echo yet another line >t3file
+                dotest status-init-9 "$testcvs add t3file" \
+"$SPROG add: scheduling file .t3file. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+                dotest status-init-10 "$testcvs -q ci -m add" \
+"RCS file: $CVSROOT_DIRNAME/fourth-dir/t3file,v
+done
+Checking in t3file;
+$CVSROOT_DIRNAME/fourth-dir/t3file,v  <--  t3file
+initial revision: 1\.1
+done"
+                cd ../first-dir
+                mkdir third-dir
+                dotest status-init-11 "$testcvs add third-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir/third-dir added to the repository"
+                cd third-dir
+                echo another line >t2file
+                dotest status-init-12 "$testcvs add t2file" \
+"$SPROG add: scheduling file .t2file. for addition
+$SPROG add: use .$SPROG commit. to add this file permanently"
+                dotest status-init-13 "$testcvs -q ci -m add" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/third-dir/t2file,v
+done
+Checking in t2file;
+$CVSROOT_DIRNAME/first-dir/third-dir/t2file,v  <--  t2file
+initial revision: 1\.1
+done"
+                dotest status-5 "$testcvs status ../tfile" \
+"===================================================================
+File: tfile            	Status: Locally Modified
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	$CVSROOT_DIRNAME/first-dir/tfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+                dotest status-6 "$testcvs status ../../fourth-dir/t3file" \
+"===================================================================
+File: t3file           	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	$CVSROOT_DIRNAME/fourth-dir/t3file,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+
 		if $keep; then
-			echo Keeping ${TESTDIR} and exiting due to --keep
+			echo Keeping $TESTDIR and exiting due to --keep
 			exit 0
 		fi
 
-		cd ../..
+		cd ../../..
 		rm -rf status
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
+		rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/fourth-dir
 		;;
 
 	commit-readonlyfs)
