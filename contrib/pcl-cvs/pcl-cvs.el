@@ -37,13 +37,13 @@
 ;;; -------------------------------------------------------
 ;;;	    START OF THINGS TO CHECK WHEN INSTALLING
 
-(defvar cvs-program "/usr/gnu/bin/cvs"
+(defvar cvs-program "/usr/local/bin/cvs"
   "*Full path to the cvs executable.")
 
-(defvar cvs-diff-program "/usr/gnu/bin/diff"
+(defvar cvs-diff-program "/usr/local/bin/diff"
   "*Full path to the diff program.")
 
-(defvar cvs-rmdir-program "/usr/gnu/bin/rmdir"
+(defvar cvs-rmdir-program "/usr/loca/bin/rmdir"
   "*Full path to the rmdir program. Typically /bin/rmdir.")
 
 ;; Uncomment the following line if you are running on 18.57 or earlier.
