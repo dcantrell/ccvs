@@ -187,6 +187,7 @@ for what in $tests; do
 
 	basic1) # first dive - add a files, first singly, then in a group.
 		rm -rf ${CVSROOT_FILENAME}/first-dir
+		rm -rf first-dir
 		mkdir ${CVSROOT_FILENAME}/first-dir
 		# check out an empty directory
 		if ${CVS} co first-dir ${OUTPUT} ; then
