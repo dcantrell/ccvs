@@ -2136,7 +2136,7 @@ U nameddir/b'
 	    # Must import twice since the first time uses inline code that
 	    # avoids RCS call.
 	    echo testb >>test
-	    if ${testcvs} import -m "$message" a-dir A A2 >>${LOGFILE} 2>&1;then
+	    if ${testcvs} import -m "$message" a-dir A1 A2 >>${LOGFILE} 2>&1;then
 	      echo 'PASS: test 157' >>${LOGFILE}
 	    else
 	      echo 'FAIL: test 157' | tee -a ${LOGFILE}
