@@ -1,3 +1,10 @@
+Fri Dec 12 14:00:57 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* configure.in: Add --with-gssapi option, and look for gssapi.h
+	and GSSAPI Kerberos v5 libraries.
+	* acconfig.h: Add HAVE_GSSAPI.
+	* configure, config.h.in: Regenerate.
+
 Thu Dec 11 15:58:06 1997  Eric Mumpower  <nocturne@cygnus.com>
 
 	* configure.in: Let --with-krb4 override the system Kerberos

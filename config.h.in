@@ -71,6 +71,9 @@
 /* Define if you have MIT Kerberos version 4 available.  */
 #undef HAVE_KERBEROS
 
+/* Define if you have GSSAPI with MIT Kerberos version 5 available.  */
+#undef HAVE_GSSAPI
+
 /* Define if you want CVS to be able to be a remote repository client.  */
 #undef CLIENT_SUPPORT
 
@@ -227,6 +230,9 @@
 
 /* Define if you have the crypt library (-lcrypt).  */
 #undef HAVE_LIBCRYPT
+
+/* Define if you have the gen library (-lgen).  */
+#undef HAVE_LIBGEN
 
 /* Define if you have the inet library (-linet).  */
 #undef HAVE_LIBINET
