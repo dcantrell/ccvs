@@ -19,11 +19,10 @@ link time).
 to set $SL in the makefile itself, make sure to quote it ("\\").  On
 the command line (i.e., "make SL=\"), I believe just one will do.
 
-        That should be all -- edit the makefile, then run make twice
-(changing $SL the second time).  You should get executables "cvs.exe"
-and "cvslogin.exe".  Assuming you have edited the `install_dir'
-variable in the Makefile, type "make install" to put them in the right
-place.
+        That should be all -- edit the makefile, run make twice
+(changing $SL the second time), and get os2\cvs.exe.  Assuming you
+have edited the `install_dir' variable in the Makefile, you may type
+"make install" to put cvs.exe in the right place.
 
         You will get warnings during the compilation; ignore them.
 Report bugs to <bug-cvs@prep.ai.mit.edu>.

@@ -79,7 +79,6 @@ OS2_SOURCES = \
        ${srcdir}${SL}filesubr.c \
        ${srcdir}${SL}dirent.c \
        ${srcdir}${SL}run.c \
-       ${srcdir}${SL}login.c \
        ${srcdir}${SL}stripslash.c \
        ${srcdir}${SL}rcmd.c \
        ${srcdir}${SL}waitpid.c \
@@ -113,6 +112,7 @@ COMMON_SOURCES = \
        ${cvs_srcdir}${SL}import.c \
        ${cvs_srcdir}${SL}lock.c \
        ${cvs_srcdir}${SL}log.c \
+       ${cvs_srcdir}${SL}login.c \
        ${cvs_srcdir}${SL}logmsg.c \
        ${cvs_srcdir}${SL}main.c \
        ${cvs_srcdir}${SL}modules.c \
@@ -160,7 +160,6 @@ OS2_OBJECTS = \
        ${srcdir}${SL}filesubr.obj \
        ${srcdir}${SL}dirent.obj \
        ${srcdir}${SL}run.obj \
-       ${srcdir}${SL}login.obj \
        ${srcdir}${SL}stripslash.obj \
        ${srcdir}${SL}rcmd.obj \
        ${srcdir}${SL}waitpid.obj \
@@ -194,6 +193,7 @@ COMMON_OBJECTS = \
        ${cvs_srcdir}${SL}import.obj \
        ${cvs_srcdir}${SL}lock.obj \
        ${cvs_srcdir}${SL}log.obj \
+       ${cvs_srcdir}${SL}login.obj \
        ${cvs_srcdir}${SL}logmsg.obj \
        ${cvs_srcdir}${SL}main.obj \
        ${cvs_srcdir}${SL}modules.obj \
@@ -240,7 +240,6 @@ OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   ${srcdir}${SL}README ${srcdir}${SL}ChangeLog \
-  ${srcdir}${SL}README ${srcdir}${SL}cvslogin.c \
   ${srcdir}${SL}Makefile.in ${srcdir}${SL}.cvsignore \
   ${srcdir}${SL}test-makefile ${srcdir}${SL}Makefile
 
@@ -277,19 +276,15 @@ clean:
 	rm -f ${libdir}${SL}*.obj 
 	rm -f ${cvs_srcdir}${SL}*.obj 
 
-install: cvs.exe cvslogin.exe
+install: cvs.exe
 	cp ${srcdir}${SL}cvs.exe ${install_dir}${SL}cvs.exe
-	cp ${srcdir}${SL}cvslogin.exe ${install_dir}${SL}cvslogin.exe
-
-cvslogin.exe: cvslogin.c
-	icc ${CFLAGS} /Fe$@ cvslogin.c
 
 %.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c
 
 # There seems to be no ICC option for specifying library locations, so
 # we must `set' the path in the compilation environment.  Urgkle. 
-cvs.exe: ${OBJECTS} cvslogin.exe
+cvs.exe: ${OBJECTS}
 	echo Creating icc.in...
 	echo -Q+ -Ti+ -Fe$@ -B"/batch" -B"/NOE" > icc.in
 	echo ${OS2_OBJECTS}                    >> icc.in
