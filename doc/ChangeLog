@@ -1,3 +1,8 @@
+28 Jan 1998  Karl Fogel and Jim Kingdon
+
+	* cvsclient.texi (Requests, Responses): document
+	"wrapper-sendme-rcsOptions" and "Wrapper-rcsOption".
+
 Tue Jan 27 18:37:37 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (Excluding directories): New node, documenting how
