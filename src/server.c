@@ -2795,7 +2795,9 @@ error  \n");
 	close (stderr_pipe[0]);
 	close (stderr_pipe[1]);
 	close (protocol_pipe[0]);
+	close_on_exec (protocol_pipe[1]);
 #ifdef SERVER_FLOWCONTROL
+	close_on_exec (flowcontrol_pipe[0]);
 	close (flowcontrol_pipe[1]);
 #endif /* SERVER_FLOWCONTROL */
 
