@@ -281,7 +281,6 @@ fgetentent(fpin)
 	    struct stat sb;
 	    if (strlen (ts) > 30 && stat (user, &sb) == 0)
 	    {
-		extern char *ctime ();
 		char *c = ctime (&sb.st_mtime);
 		
 		if (!strncmp (ts + 25, c, 24))
