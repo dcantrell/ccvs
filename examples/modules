@@ -11,6 +11,7 @@
 # Where "options" are composed of:
 #	-i prog		Run "prog" on "cvs commit" from top-level of module.
 #	-o prog		Run "prog" on "cvs checkout" of module.
+#	-e prog		Run "prog" on "cvs export" of module.
 #	-t prog		Run "prog" on "cvs rtag" of module.
 #	-u prog		Run "prog" on "cvs update" of module.
 #	-d dir		Place module in directory "dir" instead of module name.
