@@ -1,3 +1,8 @@
+Tue Jan 21 10:21:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Warn people against pre-5.x RCS; describe how to find
+	out what version of RCS you have.
+
 Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, NEWS, README, TODO, configure.in: Remove CVSid; we
