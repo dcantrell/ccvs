@@ -1,3 +1,8 @@
+2001-08-09  Derek Price  <dprice@collab.net>
+
+	* config.h: Define HAVE_GETPAGESIZE under Windows.
+	(Bug report from "Manfred Klug" <manklu@web.de>.)
+
 2001-08-06  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated.
