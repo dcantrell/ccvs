@@ -3325,8 +3325,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     sock = socket (AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
     {
-	fprintf (stderr, "socket() failed\n");
-	error_exit ();
+	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
     port_number = auth_server_port_number ();
     init_sockaddr (&client_sai, CVSroot_hostname, port_number);
@@ -3360,18 +3359,26 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
 	password = get_cvs_password ();
 
 	/* Announce that we're starting the authorization protocol. */
-	send (sock, begin, strlen (begin), 0);
+	if (send (sock, begin, strlen (begin), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* Send the data the server needs. */
-	send (sock, repository, strlen (repository), 0);
-	send (sock, "\012", 1, 0);
-	send (sock, username, strlen (username), 0);
-	send (sock, "\012", 1, 0);
-	send (sock, password, strlen (password), 0);
-	send (sock, "\012", 1, 0);
+	if (send (sock, repository, strlen (repository), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, "\012", 1, 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, username, strlen (username), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, "\012", 1, 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, password, strlen (password), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
+	if (send (sock, "\012", 1, 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* Announce that we're ending the authorization protocol. */
-	send (sock, end, strlen (end), 0);
+	if (send (sock, end, strlen (end), 0) < 0)
+	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* Paranoia. */
 	memset (password, 0, strlen (password));
