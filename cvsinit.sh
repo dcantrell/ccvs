@@ -15,8 +15,13 @@ CVSLIB="xLIBDIRx"
 
 CVS_VERSION="xVERSIONx"
 
-echo "Initialising a $CVS_VERSION repository...."
-echo ""
+# All purpose usage message, also suffices for --help and --version.
+if test $# -gt 0; then
+  echo "cvsinit version $CVS_VERSION"
+  echo "usage: $0"
+  echo "(set CVSROOT to the repository that you want to initialize)"
+  exit 0
+fi
 
 # Make sure that the CVSROOT variable is set
 if [ "x$CVSROOT" = x ]; then
@@ -31,14 +36,12 @@ if [ "x$CVSROOT" = x ]; then
     read CVSROOT
     remind_cvsroot=yes
 else
-    echo "Using $CVSROOT as the source repository."
     remind_cvsroot=no
 fi
-echo ""
 
 # Now, create the $CVSROOT if it is not already there
 if [ ! -d $CVSROOT ]; then
-    echo "Hmmm... $CVSROOT does not exist; trying to make it..."
+    echo "Creating $CVSROOT..."
     path=
     for comp in `echo $CVSROOT | sed -e 's,/, ,g'`; do
 	path=$path/$comp
@@ -47,7 +50,7 @@ if [ ! -d $CVSROOT ]; then
 	fi
     done
 else
-    echo "Good... $CVSROOT already exists."
+    true
 fi
 
 # Next, check for $CVSROOT/CVSROOT
@@ -57,15 +60,14 @@ if [ ! -d $CVSROOT/CVSROOT ]; then
 	echo "I will rename it to $CVSROOT/CVSROOT for you..."
 	mv $CVSROOT/CVSROOT.adm $CVSROOT/CVSROOT
     else
-	echo "Making the $CVSROOT/CVSROOT directory..."
+	echo "Creating the $CVSROOT/CVSROOT directory..."
 	mkdir $CVSROOT/CVSROOT
     fi
 else
-    echo "Wow!... so does $CVSROOT/CVSROOT."
+    true
 fi
-echo ""
 if [ ! -d $CVSROOT/CVSROOT ]; then
-    echo "You still don't have a $CVSROOT/CVSROOT directory."
+    echo "Unable to create $CVSROOT/CVSROOT."
     echo "I give up."
     exit 1
 fi
@@ -75,25 +77,20 @@ fi
 # Trump up a simple modules file, if one doesn't exist
 if [ -f $CVSROOT/CVSROOT/modules,v ]; then
     if [ ! -f $CVSROOT/CVSROOT/modules ]; then
-	echo "You have a $CVSROOT/CVSROOT/modules,v file,"
-	echo "But no $CVSROOT/CVSROOT/modules file.  This is OK."
-	echo "I'll checkout a fresh copy..."
+	echo "Checking out $CVSROOT/CVSROOT/modules"
+	echo "  from $CVSROOT/CVSROOT/modules,v..."
 	(cd $CVSROOT/CVSROOT; co -q modules)
-	echo ""
     fi
 else
     if [ -f $CVSROOT/CVSROOT/modules ]; then
-	echo "You have a $CVSROOT/CVSROOT/modules file,"
-	echo "But no $CVSROOT/CVSROOT/modules,v file."
-	echo "I'll create one for you, but otherwise leave it alone..."
+	echo "Checking in $CVSROOT/CVSROOT/modules,v"
+	echo "  from $CVSROOT/CVSROOT/modules..."
     else
-	echo "The $CVSROOT/CVSROOT/modules file does not exist."
-	echo "Making a simple one for you..."
+	echo "Creating a simple $CVSROOT/CVSROOT/modules file..."
 	sed -n -e '/END_REQUIRED_CONTENT/q' -e p $CVSLIB/examples/modules > $CVSROOT/CVSROOT/modules
 
     fi
     (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of modules' modules)
-    echo ""
 fi
 
 # check to see if there are any references to the old CVSROOT.adm directory
@@ -107,20 +104,16 @@ fi
 # loginfo, like modules, is special-cased
 if [ -f $CVSROOT/CVSROOT/loginfo,v ]; then
     if [ ! -f $CVSROOT/CVSROOT/loginfo ]; then
-	echo "You have a $CVSROOT/CVSROOT/loginfo,v file,"
-	echo "But no $CVSROOT/CVSROOT/loginfo file.  This is OK."
-	echo "I'll checkout a fresh copy..."
+	echo "Checking out $CVSROOT/CVSROOT/loginfo"
+	echo "  from $CVSROOT/CVSROOT/loginfo,v..."
 	(cd $CVSROOT/CVSROOT; co -q loginfo)
-	echo ""
     fi
 else
     if [ -f $CVSROOT/CVSROOT/loginfo ]; then
-	echo "You have a $CVSROOT/CVSROOT/loginfo file,"
-	echo "But no $CVSROOT/CVSROOT/loginfo,v file."
-	echo "I'll create one for you, but otherwise leave it alone..."
+	echo "Checking in $CVSROOT/CVSROOT/loginfo,v"
+	echo "  from $CVSROOT/CVSROOT/loginfo..."
     else
-	echo "The $CVSROOT/CVSROOT/loginfo file does not exist."
-	echo "Making a simple one for you..."
+	echo "Creating a simple $CVSROOT/CVSROOT/loginfo file..."
 	# try to find perl; use fancy log script if we can
 	for perlpath in `echo $PATH | sed -e 's/:/ /g'` x; do
 	    if [ -f $perlpath/perl ]; then
@@ -140,40 +133,39 @@ END_HERE_DOC
 	fi
     fi
     (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of loginfo' loginfo)
-    echo ""
 fi
 
 # These files are generated from the examples files.
 for info in commitinfo rcsinfo editinfo rcstemplate checkoutlist; do
     if [ -f $CVSROOT/CVSROOT/${info},v ]; then
 	if [ ! -f $CVSROOT/CVSROOT/$info ]; then
-	    echo "You have a $CVSROOT/CVSROOT/${info},v file,"
-	    echo "But no $CVSROOT/CVSROOT/$info file.  This is OK."
-	    echo "I'll checkout a fresh copy..."
+	    echo "Checking out $CVSROOT/CVSROOT/$info"
+	    echo "  from $CVSROOT/CVSROOT/${info},v..."
 	    (cd $CVSROOT/CVSROOT; co -q $info)
-	    echo ""
 	fi
     else
 	if [ -f $CVSROOT/CVSROOT/$info ]; then
-	    echo "You have a $CVSROOT/CVSROOT/$info file,"
-	    echo "But no $CVSROOT/CVSROOT/${info},v file."
-	    echo "I'll create one for you, but otherwise leave it alone..."
+	    echo "Checking in $CVSROOT/CVSROOT/${info},v"
+	    echo "  from $CVSROOT/CVSROOT/$info..."
 	else
-	    echo "The $CVSROOT/CVSROOT/$info file does not exist."
-	    echo "Making a simple one for you..."
+	    echo "Creating a simple $CVSROOT/CVSROOT/$info file..."
 	    sed -e 's/^\([^#]\)/#\1/' $CVSLIB/examples/$info > $CVSROOT/CVSROOT/$info
 	fi
 	(cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m"initial checkin of $info" $info)
-	echo ""
     fi
 done
 
 # These files are generated from the contrib files.
+# FIXME: Is it really wise to overwrite local changes like this?
+# Shouldn't anything which is really supposed to be upgraded with new
+# versions of CVS be in the CVS binary, not the repository?
+# Shouldn't we at *least* version control the file so they can get
+# back their editted version after we clobber it?
 for contrib in commit_prep log_accum cln_hist; do
-    echo "Copying the new version of '${contrib}' to $CVSROOT/CVSROOT for you..."
+    echo "Copying the new version of '${contrib}'"
+    echo "  to $CVSROOT/CVSROOT for you..."
     cp $CVSLIB/contrib/$contrib $CVSROOT/CVSROOT/$contrib
 done
-echo "Remember, to install these files you must run 'cvsinit' for each repository!"
 
 # XXX - also add a stub for the cvsignore file
 
@@ -181,16 +173,10 @@ echo "Remember, to install these files you must run 'cvsinit' for each repositor
 if [ ! -f $CVSROOT/CVSROOT/history ]; then
     echo "Enabling CVS history logging..."
     touch $CVSROOT/CVSROOT/history
-    echo ""
 fi
 
 # finish up by running mkmodules
 echo "All done!  Running 'mkmodules' as my final step..."
 mkmodules $CVSROOT/CVSROOT
-
-# and, if necessary, remind them about setting CVSROOT
-if [ $remind_cvsroot = yes ]; then
-    echo "Remember to set the CVSROOT environment variable in your login script"
-fi
 
 exit 0
