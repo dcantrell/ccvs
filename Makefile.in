@@ -242,7 +242,7 @@ spec:
 	echo > .fname cvs-`cat .version`
 	rm -f `cat .fname`.spec
 	sed < $(top_srcdir)/cvs.spec \
-	    -e 's/@VERSION@/'`cat .version`'/' \
+	    -e 's/@VERSION@/'`cat .version`'/g' \
 	    > `cat .fname`.spec
 
 
