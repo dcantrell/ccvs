@@ -32,7 +32,6 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
     char fname[PATH_MAX];
     Vers_TS *vers;
     int set_time;
-    struct file_info xfinfo;
 
     char *tocvsPath = NULL;
 
@@ -79,8 +78,15 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	    if (strcmp (options, "-V4") == 0) /* upgrade to V5 now */
 		options[0] = '\0';
 
+	    /* Reparse the RCS file, so that we can safely call
+               RCS_fast_checkout.  FIXME: We could probably calculate
+               all the changes.  */
+	    freercsnode (&finfo->rcs);
+	    finfo->rcs = RCS_parse (finfo->file, finfo->repository);
+
 	    /* FIXME: should be checking for errors.  */
-	    (void) RCS_checkout (rcs, "", rev, options, RUN_TTY, 0);
+	    (void) RCS_fast_checkout (finfo->rcs, "", rev, options, RUN_TTY,
+				      0);
 
 	    xchmod (finfo->file, 1);
 	    if (xcmp (finfo->file, fname) == 0)
@@ -106,12 +112,8 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	    if (cvswrite == FALSE || fileattr_get (finfo->file, "_watched"))
 		xchmod (finfo->file, 0);
 
-	    /* Re-register with the new data.  Note that finfo->rcs has
-	       not been updated with the checkin we just did, so we can't
-	       use it.  */
-	    xfinfo = *finfo;
-	    xfinfo.rcs = NULL;
-	    vers = Version_TS (&xfinfo, NULL, tag, NULL, 1, set_time);
+	    /* Re-register with the new data.  */
+	    vers = Version_TS (finfo, NULL, tag, NULL, 1, set_time);
 	    if (strcmp (vers->options, "-V4") == 0)
 		vers->options[0] = '\0';
 	    Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_user,
