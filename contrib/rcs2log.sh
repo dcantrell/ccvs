@@ -27,8 +27,9 @@
 # GNU General Public License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with this program; see the file COPYING.  If not, write to
-# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+# along with this program; see the file COPYING.  If not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
 
 tab='	'
 nl='
@@ -364,7 +365,13 @@ EOF
 	'
 
 	initialize_fullname=`
-		(cat /etc/passwd; ypmatch $authors passwd) 2>/dev/null |
+		(
+			cat /etc/passwd
+			for author in $authors
+			do nismatch $author passwd.org_dir
+			done
+			ypmatch $authors passwd
+		) 2>/dev/null |
 		$AWK -F: "$awkscript"
 	`$initialize_fullname
 esac
@@ -414,6 +421,15 @@ case $hostname in
 		echo >&2 "$0: cannot deduce hostname"
 		exit 1
 	}
+
+	case $hostname in
+	*.*) ;;
+	*)
+		domainname=`(domainname) 2>/dev/null` &&
+		case $domainname in
+		*.*) hostname=$hostname.$domainname
+		esac
+	esac
 esac
 
 
