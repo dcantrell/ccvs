@@ -1,5 +1,10 @@
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Substitution modes):  Improve the phrasing of the
+	description of the new treatment of -kb.
+
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo: Put a few errant references to bug-cvs inside @code{}
 	for consistancy.
 
