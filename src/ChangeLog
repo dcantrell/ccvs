@@ -1,5 +1,7 @@
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* README-rm-add: Remove information which is now in cvs.texinfo.
+
 	* sanity.sh: Remove basic0 tests.  Move a few to new tests
 	basica-1a* (but there is no need to test that *every* command
 	gracefully does nothing on an empty directory; exhaustive testing
