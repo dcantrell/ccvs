@@ -281,6 +281,63 @@ AC_SEARCH_LIBS(gethostbyname, netinet)
 
 
 dnl
+dnl Set the default editor to use for log messages
+dnl
+
+AC_ARG_VAR(
+  [EDITOR],
+  [The text editor CVS will use by default for log messages.])
+
+# Let the confiscator request a specific editor
+AC_ARG_WITH(
+  [editor],
+  AC_HELP_STRING(
+    [--with-editor],
+    [The default text editor CVS should use for log messages
+     (default autoselects)]), ,
+  [with_editor="vi emacs pico edit"])
+
+
+if echo $with_editor |grep ^/ >/dev/null; then
+  # If $with_editor is an absolute path, just trust the user and use it
+  EDITOR=$with_editor
+  AC_MSG_CHECKING([for an editor])
+  AC_MSG_RESULT([$EDITOR])
+  if ! test -f $with_editor \
+      || ! test -x $with_editor; then
+    # warn the user that they may encounter problems
+    AC_MSG_WARN([$with_editor is not a path to an executable file])
+  fi
+elif test no != "${with_editor}"; then
+  # Search for an editor
+  AC_CHECK_PROGS([EDITOR], [$with_editor])
+else
+  AC_MSG_CHECKING([for an editor])
+  AC_MSG_RESULT([no])
+fi
+
+if test -n "${EDITOR}"; then
+  dnl FIXME - Using --without-editor will probably break a compile at
+  dnl the moment, but maybe it is reasonable for someone to want to
+  dnl compile a CVS executable that refuses to run if no $EDITOR,
+  dnl $CVS_EDITOR, or -e option is specified?  Making a preliminary
+  dnl design decision in this direction, subject to discussion.
+  AC_DEFINE_UNQUOTED(
+    [EDITOR_DFLT], ["$EDITOR"],
+    [The default editor to use, if one does not specify the "-e" option
+     to cvs, or does not have an EDITOR environment variable.  If this
+     is not set to an absolute path to an executable, use the shell to
+     find where the editor actually is.  This allows sites with
+     /usr/bin/vi or /usr/ucb/vi to work equally well (assuming that their
+     PATH is reasonable).])
+fi
+
+dnl
+dnl done finding an editor
+dnl
+
+
+dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
 dnl If you change this, keep in mind that some systems have a bogus

@@ -18,6 +18,13 @@
    commenting out the lines below. */
 #undef CVS_BADROOT
 
+/* The default editor to use, if one does not specify the "-e" option to cvs,
+   or does not have an EDITOR environment variable. If this is not set to an
+   absolute path to an executable, use the shell to find where the editor
+   actually is. This allows sites with /usr/bin/vi or /usr/ucb/vi to work
+   equally well (assuming that their PATH is reasonable). */
+#undef EDITOR_DFLT
+
 /* Define to enable encryption support. */
 #undef ENCRYPTION
 
