@@ -1,3 +1,8 @@
+Tue May  7 16:41:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Increment version number to 1.8.2 to work around fact
+	that CVS 1.8 (confusingly) calls itself 1.8.1 not 1.8.
+
 Tue May  7 10:44:20 MET DST 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* rcs.c (rcsvers_delproc): fix memory leak by freeing author
