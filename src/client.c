@@ -2829,6 +2829,10 @@ start_tcp_server (tofdp, fromfdp)
   
   if (tofd == -1)
     {
+      /* FIXME: Falling back like this is slow and we should probably
+	 just make it a fatal error (so that people use the right
+	 environment variables or, when we get around to implementing
+	 the right ones, access methods).  */
       error (0, 0, "trying to start server using rsh");
     try_rsh_no_message:
       server_fd = -1;
@@ -2872,8 +2876,10 @@ start_server ()
   int tofd, fromfd;
   char *log = getenv ("CVS_CLIENT_LOG");
 
-  tofd = -1;
-  fromfd = -1;
+  /* Note that generally speaking we do *not* fall back to a different
+     way of connecting if the first one does not work.  This is slow
+     (*really* slow on a 14.4kbps link); the clean way to have a CVS
+     which supports several ways of connecting is with access methods.  */
 
   /* Init these to NULL.  They will be set later if logging is on. */
   from_server_logfile = (FILE *) NULL;
@@ -2890,22 +2896,19 @@ start_server ()
 #endif /* AUTH_CLIENT_SUPPORT */
       {
 #if HAVE_KERBEROS || USE_DIRECT_TCP
-      if(tofd == -1 && fromfd == -1)
         start_tcp_server (&tofd, &fromfd);
-#else /* HAVE_KERBEROS || USE_DIRECT_TCP */
+#else
 
-#if ! RSH_NOT_TRANSPARENT
-      if(tofd == -1 && fromfd == -1)
+#  if ! RSH_NOT_TRANSPARENT
         start_rsh_server (&tofd, &fromfd);
-#else /* RSH_NOT_TRANSPARENT */
+#  else
 
-#if defined(START_SERVER)
-      if(tofd == -1 && fromfd == -1)
+#    if defined(START_SERVER)
         START_SERVER (&tofd, &fromfd, getcaller (),
                       server_user, server_host, server_cvsroot);
-#endif /* defined(START_SERVER) */
-#endif /* ! RSH_NOT_TRANSPARENT */
-#endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
+#    endif
+#  endif
+#endif
       }
 
 #if defined(VMS) && defined(NO_SOCKET_TO_FD)
