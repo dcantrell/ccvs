@@ -1908,10 +1908,10 @@ process_prune_candidates ()
     struct save_dir *q;
 
     if (toplevel_wd[0] != '\0')
-      {
+    {
 	if (chdir (toplevel_wd) < 0)
 	  error (1, errno, "could not chdir to %s", toplevel_wd);
-      }
+    }
     for (p = prune_candidates; p != NULL; )
     {
 	if (client_isemptydir (p->dir))
@@ -1923,6 +1923,7 @@ process_prune_candidates ()
 	free (p);
 	p = q;
     }
+    prune_candidates = NULL;
 }
 
 /* Send a Repository line.  */

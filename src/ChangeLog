@@ -1,4 +1,9 @@
-Mon May  6 14:12:03 1996  Ian Lance Taylor  <ian@cygnus.com>
+Mon May 23 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (process_prune_candidates): Set prune_candidates to
+	NULL at the end of the function.
+
+Mon May 23 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* checkout.c (checkout): In code to handle multiple arguments,
 	pass preload_update_dir, not where, to Create_Admin.
