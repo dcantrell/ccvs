@@ -12212,9 +12212,12 @@ has no effect on what @sc{cvs} does.
 @c explains this whole "patch"/P/Needs Patch thing?
 
 @item dying gasps from @var{server} unexpected
-This message seems to be caused by a hard-to-track-down
-bug in @sc{cvs} or the systems it runs on (we don't
-know---we haven't tracked it down yet!).  If you see it,
+There is a known bug in the server for @sc{cvs} 1.9.18
+and older which can cause this.  For me, this was
+reproducible if I used the @samp{-t} global option.  It
+was fixed by Andy Piper's 14 Nov 1997 change to
+src/filesubr.c, if anyone is curious.
+If you see the message,
 you probably can just retry the operation which failed,
 or if you have discovered information concerning its
 cause, please let us know as described in @ref{BUGS}.
