@@ -1,5 +1,12 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove the forced nondetection of mktemp I was using
+	to test the scripts.
+
+	* configure: Regenerated.
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add checks for mktemp and sendmail.
 	* mktemp.sh: New file.
 

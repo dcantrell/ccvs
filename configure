@@ -3633,7 +3633,6 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
-MKTEMP=mktemp
 if test x"$MKTEMP" = xmktemp; then
 	MKTEMP_SH_FUNCTION=mktemp.sh
 else

@@ -73,7 +73,6 @@ AC_PATH_PROG(PERL, perl, no)
 AC_PATH_PROG(CSH, csh, no)
 # for contrib/rcs2log.sh & src/cvsbug.in.
 AC_PATH_PROG(MKTEMP, mktemp, mktemp)
-MKTEMP=mktemp
 if test x"$MKTEMP" = xmktemp; then
 	MKTEMP_SH_FUNCTION=mktemp.sh
 else
