@@ -681,7 +681,7 @@ if test x"$*" = x; then
 	tests="${tests} history"
 	tests="${tests} big modes modes2 modes3 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
-	tests="${tests} perms symlinks symlinks2 hardlinks"
+	# tests="${tests} perms symlinks symlinks2 hardlinks"
 	# More tag and branch tests, keywords.
 	tests="${tests} sticky keyword keyword2 keywordlog"
 	tests="${tests} head tagdate multibranch2 tag8k"

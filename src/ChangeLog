@@ -1,5 +1,10 @@
 2000-02-17  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh (perms symlinks symlinks2 hardlinks): Don't run by
+	default since PreservePermissions code is now disabled.
+
+2000-02-17  Larry Jones  <larry.jones@sdrc.com>
+
 	* sanity.sh (import-113): Revise to match Jim Meyering's fix.
 
 2000-02-16  Larry Jones  <larry.jones@sdrc.com>
