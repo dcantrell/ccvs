@@ -2231,6 +2231,9 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    fixbranch (rcs, sbranch);
 
 	    head = RCS_getversion (rcs, NULL, NULL, 0, NULL);
+	    if (!head)
+		error (1, 0, "No head revision in archive file `%s'.",
+		       rcs->print_path);
 	    magicrev = RCS_magicrev (rcs, head);
 
 	    /* If this is not a new branch, then we will want a dead

@@ -878,6 +878,13 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		{
 		    tag = xstrdup (arg + 2);
 		    rev = RCS_head (rcs);
+		    if (!rev)
+		    {
+			error (0, 0, "No head revision in archive file `%s'.",
+			       rcs->path);
+			status = 1;
+			continue;
+		    }
 		}
 		else
 		{

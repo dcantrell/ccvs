@@ -875,7 +875,17 @@ checkout_file (char *file, char *temp)
 	free (rcs);
 	return 1;
     }
+
     rcsnode = RCS_parsercsfile (rcs);
+    if (!rcsnode)
+    {
+	/* Probably not necessary (?); RCS_parsercsfile already printed a
+	   message.  */
+	error (0, 0, "Failed to parse `%s'.", rcs);
+	free (rcs);
+	return 1;
+    }
+
     retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp, NULL, NULL);
     if (retcode != 0)
     {
