@@ -1,5 +1,11 @@
 2002-07-31  Derek Price  <oberon@umich.edu>
 
+	* filesubr.c: Add a line so VIM can determine tab stops and shift widths.
+	* root.c: Ditto.
+	* (parse_cvsroot): Add comments and tidy slightly.
+
+2002-07-31  Derek Price  <oberon@umich.edu>
+
 	* sanity.sh: Add another date to the comment about rcs2-7 failing.
 
 2002-07-26  Jim Meyering  <meyering@lucent.com>
