@@ -62,6 +62,12 @@ static FILE *rcs_internal_lockfile PROTO ((char *));
 static void rcs_internal_unlockfile PROTO ((FILE *, char *));
 static char *rcs_lockfilename PROTO ((char *));
 
+/* The RCS file reading functions are called a lot, and they do some
+   string comparisons.  This macro speeds things up a bit by skipping
+   the function call when the first characters are different.  It
+   evaluates its arguments multiple times.  */
+#define STREQ(a, b) ((a)[0] == (b)[0] && strcmp ((a), (b)) == 0)
+
 /*
  * We don't want to use isspace() from the C library because:
  *
@@ -252,7 +258,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
 
-    /* Process HEAD and BRANCH keywords from the RCS header.  
+    /* Process HEAD, BRANCH, and EXPAND keywords from the RCS header.
 
        Most cvs operations on the main branch don't need any more
        information.  Those that do call RCS_reparsercsfile to parse
@@ -270,18 +276,18 @@ RCS_parsercsfile_i (fp, rcsfile)
 
     if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
-    if (strcmp (key, RCSDESC) == 0)
+    if (STREQ (key, RCSDESC))
 	goto l_error;
 
-    if (strcmp (RCSHEAD, key) == 0 && value != NULL)
+    if (STREQ (RCSHEAD, key) && value != NULL)
 	rdata->head = xstrdup (value);
 
     if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
-    if (strcmp (key, RCSDESC) == 0)
+    if (STREQ (key, RCSDESC))
 	goto l_error;
 
-    if (strcmp (RCSBRANCH, key) == 0 && value != NULL)
+    if (STREQ (RCSBRANCH, key) && value != NULL)
     {
 	char *cp;
 
@@ -292,6 +298,30 @@ RCS_parsercsfile_i (fp, rcsfile)
 	    cp = strrchr (rdata->branch, '.');
 	    *cp = '\0';
 	}
+    }
+
+    /* Look ahead for expand, stopping when we see desc or a revision
+       number.  */
+    while (1)
+    {
+	char *cp;
+
+	if (STREQ (RCSEXPAND, key))
+	{
+	    rdata->expand = xstrdup (value);
+	    break;
+	}
+
+	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
+	    /* do nothing */ ;
+	if (*cp == '\0')
+	    break;
+
+	if (STREQ (RCSDESC, key))
+	    break;
+
+	if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
+	    break;
     }
 
     rdata->flags |= PARTIAL;
@@ -365,11 +395,15 @@ RCS_reparsercsfile (rdata, pfp)
 
 	gotkey = 0;
 
-	/* Skip head and branch tags; we already have them. */
-	if (strcmp (key, RCSHEAD) == 0 || strcmp (key, RCSBRANCH) == 0)
+	/* Skip head, branch and expand tags; we already have them. */
+	if (STREQ (key, RCSHEAD)
+	    || STREQ (key, RCSBRANCH)
+	    || STREQ (key, RCSEXPAND))
+	{
 	    continue;
+	}
 
-	if (strcmp (key, "access") == 0)
+	if (STREQ (key, "access"))
 	{
 	    if (value != NULL)
 		rdata->access = xstrdup (value);
@@ -378,7 +412,7 @@ RCS_reparsercsfile (rdata, pfp)
 
 	/* We always save lock information, so that we can handle
            -kkvl correctly when checking out a file. */
-	if (strcmp (key, "locks") == 0)
+	if (STREQ (key, "locks"))
 	{
 	    if (value != NULL)
 		rdata->locks_data = xstrdup (value);
@@ -386,7 +420,7 @@ RCS_reparsercsfile (rdata, pfp)
 	    {
 		error (1, 0, "premature end of file reading %s", rcsfile);
 	    }
-	    if (strcmp (key, "strict") == 0 &&
+	    if (STREQ (key, "strict") &&
 		value == NULL)
 	    {
 		rdata->strict_locks = 1;
@@ -396,16 +430,10 @@ RCS_reparsercsfile (rdata, pfp)
 	    continue;
 	}
 
-	if (strcmp (RCSSYMBOLS, key) == 0)
+	if (STREQ (RCSSYMBOLS, key))
 	{
 	    if (value != NULL)
 		rdata->symbols_data = xstrdup(value);
-	    continue;
-	}
-
-	if (strcmp (RCSEXPAND, key) == 0)
-	{
-	    rdata->expand = xstrdup (value);
 	    continue;
 	}
 
@@ -419,10 +447,10 @@ RCS_reparsercsfile (rdata, pfp)
 	if (*cp == '\0' && strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) == 0)
 	    break;
 
-	if (strcmp (key, RCSDESC) == 0)
+	if (STREQ (key, RCSDESC))
 	    break;
 
-	if (strcmp (key, "comment") == 0)
+	if (STREQ (key, "comment"))
 	{
 	    rdata->comment = xstrdup (value);
 	    continue;
@@ -469,7 +497,7 @@ RCS_reparsercsfile (rdata, pfp)
 
     /* Here KEY and VALUE are whatever caused getdelta to return NULL.  */
 
-    if (key != NULL && strcmp (key, RCSDESC) == 0)
+    if (key != NULL && STREQ (key, RCSDESC))
     {
 	if (rdata->desc != NULL)
 	{
@@ -553,7 +581,7 @@ RCS_fully_parse (rcs)
 
 	while (getrcskey (fp, rcs->path, &key, &value, &vallen) >= 0)
 	{
-	    if (strcmp (key, "text") != 0)
+	    if (! STREQ (key, "text"))
 	    {
 		Node *kv;
 
@@ -575,7 +603,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		continue;
 	    }
 
-	    if (strcmp (vnode->version, rcs->head) != 0)
+	    if (! STREQ (vnode->version, rcs->head))
 	    {
 		unsigned long add, del;
 		char buf[50];
@@ -877,9 +905,9 @@ getrcskey (fp, name, keyp, valp, lenp)
     cur = value;
     max = value + valsize;
 
-    just_string = (strcmp (key, RCSDESC) == 0
-		   || strcmp (key, "text") == 0
-		   || strcmp (key, "log") == 0);
+    just_string = (STREQ (key, RCSDESC)
+		   || STREQ (key, "text")
+		   || STREQ (key, "log"));
 
     /* process the value */
     for (;;)
@@ -1322,7 +1350,7 @@ RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
 	RCS_reparsercsfile (rcs, NULL);
 
     /* If tag is "HEAD", special case to get head RCS revision */
-    if (tag && (strcmp (tag, TAG_HEAD) == 0 || *tag == '\0'))
+    if (tag && (STREQ (tag, TAG_HEAD) || *tag == '\0'))
 #if 0 /* This #if 0 is only in the Cygnus code.  Why?  Death support?  */
 	if (force_tag_match && (rcs->flags & VALID) && (rcs->flags & INATTIC))
 	    return ((char *) NULL);	/* head request for removed file */
@@ -1508,7 +1536,7 @@ checkmagic_proc (p, closure)
     Node *p;
     void *closure;
 {
-    if (strcmp (check_rev, p->data) == 0)
+    if (STREQ (check_rev, p->data))
 	return (1);
     else
 	return (0);
@@ -1918,7 +1946,7 @@ RCS_getdate (rcs, date, force_tag_match)
      */
 
     /* if we found what we're looking for, and it's not 1.1 return it */
-    if (cur_rev != NULL && strcmp (cur_rev, "1.1") != 0)
+    if (cur_rev != NULL && ! STREQ (cur_rev, "1.1"))
 	return (xstrdup (cur_rev));
 
     /* look on the vendor branch */
@@ -2241,7 +2269,7 @@ RCS_check_kflag (arg)
     {
 	for (cpp = kflags; *cpp != NULL; cpp++)
 	{
-	    if (strcmp (arg, *cpp) == 0)
+	    if (STREQ (arg, *cpp))
 		break;
 	}
     }
@@ -2319,8 +2347,6 @@ RCS_getexpand (rcs)
     RCSNode *rcs;
 {
     assert (rcs != NULL);
-    if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
     return rcs->expand;
 }
 
@@ -2969,7 +2995,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	free_rev = 1;
     }
 
-    if (rev == NULL || strcmp (rev, rcs->head) == 0)
+    if (rev == NULL || STREQ (rev, rcs->head))
     {
 	int gothead;
 
@@ -2990,13 +3016,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	getrcsrev (fp, &key);
 	while (getrcskey (fp, rcs->path, &key, &value, &len) >= 0)
 	{
-	    if (strcmp (key, "log") == 0)
+	    if (STREQ (key, "log"))
 	    {
 		log = xmalloc (len);
 		memcpy (log, value, len);
 		loglen = len;
 	    }
-	    if (strcmp (key, "text") == 0)
+	    if (STREQ (key, "text"))
 	    {
 		gothead = 1;
 		break;
@@ -3062,7 +3088,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    ouroptions = rcs->expand;
 
 	for (cpp = kflags; *cpp != NULL; cpp++)
-	    if (strcmp (*cpp, ouroptions) == 0)
+	    if (STREQ (*cpp, ouroptions))
 		break;
 
 	if (*cpp != NULL)
@@ -3234,7 +3260,7 @@ RCS_findlock_or_tip (rcs)
     lock = NULL;
     for (p = locklist->list->next; p != locklist->list; p = p->next)
     {
-	if (strcmp (p->data, user) == 0)
+	if (STREQ (p->data, user))
 	{
 	    if (lock != NULL)
 	    {
@@ -3610,7 +3636,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	dtext->version = xstrdup (newrev);
 	bufsize = 0;
 	get_file (workfile, workfile,
-		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);
 
 	if (!checkin_quiet)
@@ -3676,7 +3702,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	    goto checkin_done;
 	}
 	else if (commitpt->next == NULL
-		 || strcmp (commitpt->version, rcs->head) == 0)
+		 || STREQ (commitpt->version, rcs->head))
 	    delta->version = increment_revnum (commitpt->version);
 	else
 	    delta->version = RCS_addbranch (rcs, commitpt->version);
@@ -3780,7 +3806,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     nodep = findnode (RCS_getlocks (rcs), commitpt->version);
     if (nodep != NULL)
     {
-	if (strcmp (nodep->data, delta->author) != 0)
+	if (! STREQ (nodep->data, delta->author))
 	{
 	    error (0, 0, "%s: revision %s locked by %s",
 		   rcs->path,
@@ -3802,7 +3828,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     tmpfile = cvs_temp_name();
     status = RCS_checkout (rcs, NULL, commitpt->version, NULL,
 			   ((rcs->expand != NULL
-			     && strcmp (rcs->expand, "b") == 0)
+			     && STREQ (rcs->expand, "b"))
 			    ? "-kb"
 			    : "-ko"),
 			   tmpfile,
@@ -3819,18 +3845,18 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
     /* Diff options should include --binary if the RCS file has -kb set
        in its `expand' field. */
-    diffopts = (rcs->expand != NULL && strcmp (rcs->expand, "b") == 0
+    diffopts = (rcs->expand != NULL && STREQ (rcs->expand, "b")
 		? "-a -n --binary"
 		: "-a -n");
 
-    if (strcmp (commitpt->version, rcs->head) == 0 &&
+    if (STREQ (commitpt->version, rcs->head) &&
 	numdots (delta->version) == 1)
     {
 	/* If this revision is being inserted on the trunk, the change text
 	   for the new delta should be the contents of the working file ... */
 	bufsize = 0;
 	get_file (workfile, workfile,
-		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);
 
 	/* ... and the change text for the old delta should be a diff. */
@@ -3866,7 +3892,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	   This should cause no harm, but doesn't strike me as
 	   immensely clean.  */
 	get_file (changefile, changefile,
-		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &commitpt->text->text, &bufsize, &commitpt->text->len);
 
 	/* If COMMITPT->TEXT->TEXT is NULL, it means that CHANGEFILE
@@ -3903,7 +3929,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	/* See the comment above, at the other get_file invocation,
 	   regarding binary vs. text.  */
 	get_file (changefile, changefile, 
-		  rcs->expand != NULL && strcmp (rcs->expand, "b") == 0 ? "rb" : "r",
+		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize,
 		  &dtext->len);
 	if (dtext->text == NULL)
@@ -3927,7 +3953,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
     if (numdots (commitpt->version) == numdots (delta->version))
     {
-	if (strcmp (commitpt->version, rcs->head) == 0)
+	if (STREQ (commitpt->version, rcs->head))
 	{
 	    delta->next = rcs->head;
 	    rcs->head = xstrdup (delta->version);
@@ -4015,13 +4041,13 @@ RCS_cmp_file (rcs, rev, options, filename)
     int retcode;
 
     if (options != NULL && options[0] != '\0')
-	binary = (strcmp (options, "-kb") == 0);
+	binary = STREQ (options, "-kb");
     else
     {
 	char *expand;
 
 	expand = RCS_getexpand (rcs);
-	if (expand != NULL && strcmp (expand, "b") == 0)
+	if (expand != NULL && STREQ (expand, "b"))
 	    binary = 1;
 	else
 	    binary = 0;
@@ -4122,8 +4148,8 @@ RCS_settag (rcs, tag, rev)
 
     /* FIXME: This check should be moved to RCS_check_tag.  There is no
        reason for it to be here.  */
-    if (strcmp (tag, TAG_BASE) == 0
-	|| strcmp (tag, TAG_HEAD) == 0)
+    if (STREQ (tag, TAG_BASE)
+	|| STREQ (tag, TAG_HEAD))
     {
 	/* Print the name of the tag might be considered redundant
 	   with the caller, which also prints it.  Perhaps this helps
@@ -4204,7 +4230,7 @@ RCS_setbranch (rcs, rev)
 
     if (rev == NULL && rcs->branch == NULL)
 	return 0;
-    if (rev != NULL && rcs->branch != NULL && strcmp (rev, rcs->branch) == 0)
+    if (rev != NULL && rcs->branch != NULL && STREQ (rev, rcs->branch))
 	return 0;
 
     if (rcs->branch != NULL)
@@ -4278,7 +4304,7 @@ RCS_lock (rcs, rev, lock_quiet)
     p = findnode (locks, xrev);
     if (p != NULL)
     {
-	if (strcmp (p->data, user) == 0)
+	if (STREQ (p->data, user))
 	{
 	    /* We already own the lock on this revision, so do nothing. */
 	    free (xrev);
@@ -4357,7 +4383,7 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	lock = NULL;
 	for (p = locks->list->next; p != locks->list; p = p->next)
 	{
-	    if (strcmp (p->data, user) == 0)
+	    if (STREQ (p->data, user))
 	    {
 		if (lock != NULL)
 		{
@@ -4396,7 +4422,7 @@ RCS_unlock (rcs, rev, unlock_quiet)
 	return 0;
     }
 
-    if (strcmp (lock->data, user) != 0)
+    if (! STREQ (lock->data, user))
     {
         /* If the revision is locked by someone else, notify
 	   them.  Note that this shouldn't ever happen if RCS_unlock
@@ -4441,7 +4467,7 @@ RCS_addaccess (rcs, user)
 	access = xstrdup (rcs->access);
 	for (a = strtok (access, " "); a != NULL; a = strtok (NULL, " "))
 	{
-	    if (strcmp (a, user) == 0)
+	    if (STREQ (a, user))
 	    {
 		free (access);
 		return;
@@ -4512,7 +4538,7 @@ findtag (node, arg)
 {
     char *rev = (char *)arg;
 
-    if (strcmp (node->data, rev) == 0)
+    if (STREQ (node->data, rev))
 	return 1;
     else
 	return 0;
@@ -4605,7 +4631,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     {
 	/* A range consisting of a branch number means the latest revision
 	   on that branch. */
-	if (RCS_isbranch (rcs, rev1) && strcmp (rev1, rev2) == 0)
+	if (RCS_isbranch (rcs, rev1) && STREQ (rev1, rev2))
 	    rev1 = rev2 = RCS_getbranch (rcs, rev1, 0);
 	else
 	{
@@ -4696,12 +4722,12 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	    *bp = '.';
 	}
     }
-    else if (strcmp (rev1, branchpoint) != 0)
+    else if (! STREQ (rev1, branchpoint))
     {
 	/* Walk deltas from BRANCHPOINT on, looking for REV1. */
 	nodep = findnode (rcs->versions, branchpoint);
 	revp = (RCSVers *) nodep->data;
-	while (revp->next != NULL && strcmp (revp->next, rev1) != 0)
+	while (revp->next != NULL && ! STREQ (revp->next, rev1))
 	{
 	    revp = (RCSVers *) nodep->data;
 	    nodep = findnode (rcs->versions, revp->next);
@@ -4750,7 +4776,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	revp = (RCSVers *) nodep->data;
 
 	if (rev2 != NULL)
-	    found = (strcmp (revp->version, rev2) == 0);
+	    found = STREQ (revp->version, rev2);
 	next = revp->next;
 
 	if ((!found && next != NULL) || rev2_inclusive || rev2 == NULL)
@@ -4931,7 +4957,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
        outdated.  (FIXME: would it be safe to use the `dead' field for
        this?  Doubtful.) */
     for (next = rev1;
-	 next != NULL && (after == NULL || strcmp (next, after) != 0);
+	 next != NULL && (after == NULL || ! STREQ (next, after));
 	 next = revp->next)
     {
 	nodep = findnode (rcs->versions, next);
@@ -4956,13 +4982,13 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	    /* beforep's ->next field already should be equal to after,
 	       which I think is always NULL in this case.  */
 	    ;
-	else if (strcmp (rev1, branchpoint) == 0)
+	else if (STREQ (rev1, branchpoint))
 	{
 	    nodep = findnode (rcs->versions, before);
 	    revp = (RCSVers *) nodep->data;
 	    nodep = revp->branches->list->next;
 	    while (nodep != revp->branches->list &&
-		   strcmp (nodep->key, rev1) != 0)
+		   ! STREQ (nodep->key, rev1))
 		nodep = nodep->next;
 	    assert (nodep != revp->branches->list);
 	    if (after == NULL)
@@ -5544,7 +5570,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     do {
 	getrcsrev (fp, &key);
 
-	if (next != NULL && strcmp (next, key) != 0)
+	if (next != NULL && ! STREQ (next, key))
 	{
 	    /* This is not the next version we need.  It is a branch
                version which we want to ignore.  */
@@ -5570,7 +5596,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 
 	    /* Compare key and trunkversion now, because key points to
 	       storage controlled by getrcskey.  */
-	    if (strcmp (branchversion, key) == 0)
+	    if (STREQ (branchversion, key))
 	        isversion = 1;
 	    else
 	        isversion = 0;
@@ -5580,15 +5606,15 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	{
 	    if (log != NULL
 		&& isversion
-		&& strcmp (key, "log") == 0
-		&& strcmp (branchversion, version) == 0)
+		&& STREQ (key, "log")
+		&& STREQ (branchversion, version))
 	    {
 		*log = xmalloc (vallen);
 		memcpy (*log, value, vallen);
 		*loglen = vallen;
 	    }
 
-	    if (strcmp (key, "text") == 0)
+	    if (STREQ (key, "text"))
 	    {
 		if (ishead)
 		{
@@ -5616,7 +5642,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	{
 	    /* This is either the version we want, or it is the
                branchpoint to the version we want.  */
-	    if (strcmp (branchversion, version) == 0)
+	    if (STREQ (branchversion, version))
 	    {
 	        /* This is the version we want.  */
 		linevector_copy (&headlines, &curlines);
@@ -5864,7 +5890,7 @@ getdelta (fp, rcsfile, keyp, valp)
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key == NULL || strcmp (key, "author") != 0)
+    if (key == NULL || ! STREQ (key, "author"))
 	error (1, 0, "\
 unable to parse %s; `author' not in the expected place", rcsfile);
     vnode->author = xstrdup (value);
@@ -5874,11 +5900,11 @@ unable to parse %s; `author' not in the expected place", rcsfile);
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key == NULL || strcmp (key, "state") != 0)
+    if (key == NULL || ! STREQ (key, "state"))
 	error (1, 0, "\
 unable to parse %s; `state' not in the expected place", rcsfile);
     vnode->state = xstrdup (value);
-    if (strcmp (value, "dead") == 0)
+    if (STREQ (value, "dead"))
     {
 	vnode->dead = 1;
     }
@@ -5891,7 +5917,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key != NULL && strcmp (key, RCSDESC) == 0)
+    if (key != NULL && STREQ (key, RCSDESC))
     {
 	*keyp = key;
 	*valp = value;
@@ -5910,7 +5936,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key != NULL && strcmp (key, RCSDESC) == 0)
+    if (key != NULL && STREQ (key, RCSDESC))
     {
 	*keyp = key;
 	*valp = value;
@@ -5932,14 +5958,14 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 
 	assert (key != NULL);
 
-	if (strcmp (key, RCSDESC) == 0)
+	if (STREQ (key, RCSDESC))
 	    break;
 
 	/* Enable use of repositories created by certain obsolete
 	   versions of CVS.  This code should remain indefinately;
 	   there is no procedure for converting old repositories, and
 	   checking for it is harmless.  */
-	if (strcmp(key, RCSDEAD) == 0)
+	if (STREQ (key, RCSDEAD))
 	{
 	    vnode->dead = 1;
 	    if (vnode->state != NULL)
@@ -6033,7 +6059,7 @@ RCS_getdeltatext (rcs, fp)
     /* Get the log message. */
     if (getrcskey (fp, rcs->path, &key, &value, NULL) < 0)
 	error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
-    if (strcmp (key, "log") != 0)
+    if (! STREQ (key, "log"))
 	error (1, 0, "%s, delta %s: expected `log', got `%s'",
 	       rcs->path, num, key);
     d->log = xstrdup (value);
@@ -6041,7 +6067,7 @@ RCS_getdeltatext (rcs, fp)
     /* Get random newphrases. */
     d->other = getlist();
     for (n = getrcskey (fp, rcs->path, &key, &value, &textlen);
-	 n >= 0 && strcmp (key, "text") != 0;
+	 n >= 0 && ! STREQ (key, "text");
 	 n = getrcskey (fp, rcs->path, &key, &value, &textlen))
     {
 	p = getnode();
@@ -6133,9 +6159,9 @@ putrcsfield_proc (node, vfp)
 
     /* desc, log and text fields should not be terminated with semicolon;
        all other fields should be. */
-    if (strcmp (node->key, "desc") != 0 &&
-	strcmp (node->key, "log") != 0 &&
-	strcmp (node->key, "text") != 0)
+    if (! STREQ (node->key, "desc") &&
+	! STREQ (node->key, "log") &&
+	! STREQ (node->key, "text"))
     {
 	putc (';', fp);
     }
@@ -6183,7 +6209,7 @@ RCS_putadmin (rcs, fp)
 	expand_at_signs (rcs->comment, (off_t) strlen (rcs->comment), fp);
 	fputs ("@;\n", fp);
     }
-    if (rcs->expand && strcmp (rcs->expand, "kv") != 0)
+    if (rcs->expand && ! STREQ (rcs->expand, "kv"))
 	fprintf (fp, "%s\t@%s@;\n", RCSEXPAND, rcs->expand);
 
     walklist (rcs->other, putrcsfield_proc, (void *) fp);
@@ -6324,7 +6350,7 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
     found = 0;
     while ((dtext = RCS_getdeltatext (rcs, fin)) != NULL)
     {
-	found = (insertpt != NULL && strcmp (dtext->version, insertpt) == 0);
+	found = (insertpt != NULL && STREQ (dtext->version, insertpt));
 	if (found && insertbefore)
 	    putdeltatext (fout, newdtext);
 
