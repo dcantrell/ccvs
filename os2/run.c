@@ -469,9 +469,15 @@ piped_child (char **argv, int *to, int *from)
  * dir = 0 : main proc writes to new proc, which writes to oldfd
  * dir = 1 : main proc reads from new proc, which reads from oldfd
  */
+
+#if 0
+/* There seems to be a library bug that makes the passing of argv[]s
+ * to spanw unreliable.  Ick.  So the alternate version uses
+ * DosExegPgm.
+ */
 int
 filter_stream_through_program (int oldfd, int dir,
-							   char **prog, int *pidp)
+			   char **prog, int *pidp)
 {
 	int newfd;  /* Gets set to one end of the pipe and returned. */
     HFILE from, to;
@@ -545,7 +551,115 @@ filter_stream_through_program (int oldfd, int dir,
 
     return newfd;
 }
+#else /* ! 0/1 */
+int
+filter_stream_through_program (int oldfd, int dir,
+			   char **prog, int *pidp)
+{
+	int newfd;  /* Gets set to one end of the pipe and returned. */
+    HFILE from, to;
+	HFILE Old0 = -1, Old1 = -1, Old2 = -1, Tmp;
 
+	/* Stuff used in setting up DosExecPgm(). */
+	int Rc, i;
+	RESULTCODES Result;
+    char Fail[256], *Args, CmdLine[256], *CmdExe;
+
+
+    if (DosCreatePipe (&from, &to, 4096))
+        return FALSE;
+
+    /* Save std{in,out,err} */
+    DosDupHandle (STDIN, &Old0);
+    DosSetFHState (Old1, OPEN_FLAGS_NOINHERIT);
+    DosDupHandle (STDOUT, &Old1);
+    DosSetFHState (Old2, OPEN_FLAGS_NOINHERIT);
+    DosDupHandle (STDERR, &Old2);
+    DosSetFHState (Old2, OPEN_FLAGS_NOINHERIT);
+
+    /* Redirect std{in,out,err} */
+	if (dir)    /* Who goes where? */
+	{
+		Tmp = STDIN;
+		DosDupHandle (oldfd, &Tmp);
+		Tmp = STDOUT;
+		DosDupHandle (to, &Tmp);
+		Tmp = STDERR;
+		DosDupHandle (to, &Tmp);
+
+		newfd = from;
+		_setmode (newfd, O_BINARY);
+
+		DosClose (oldfd);
+		DosClose (to);
+		DosSetFHState (from, OPEN_FLAGS_NOINHERIT);
+	}
+	else
+	{
+		Tmp = STDIN;
+		DosDupHandle (from, &Tmp);
+		Tmp = STDOUT;
+		DosDupHandle (oldfd, &Tmp);
+		Tmp = STDERR;
+		DosDupHandle (oldfd, &Tmp);
+
+		newfd = to;
+		_setmode (newfd, O_BINARY);
+
+		DosClose (oldfd);
+		DosClose (from);
+		DosSetFHState (to, OPEN_FLAGS_NOINHERIT);
+	}
+
+    if( ( CmdExe = getenv("COMSPEC")) == NULL )
+        CmdExe = "cmd.exe";
+
+    strcpy( CmdLine, CmdExe );
+    Args = CmdLine + strlen( CmdLine ) + 1; /* skip zero */
+    strcpy( Args, "/c " );
+	for (i = 0; prog[i]; i++)
+	{
+		strcat( Args, prog[i] );
+	}
+    Args[ strlen( Args ) + 1] = '\0'; /* two zeroes */
+    Rc = DosExecPgm(Fail, sizeof(Fail), EXEC_ASYNCRESULT, 
+					(unsigned char *) CmdLine, 0, &Result,
+					(unsigned char *) CmdExe);
+
+	if (Rc != 0)
+	{
+		error (1, 0, "%s subprocess failed: %d",
+			   prog[0], Rc);
+	}
+
+	printf ("*** commandline: %s, PID: %d\n",
+			CmdLine, Result.codeTerminate);
+	fflush (stdout);
+
+	/* Record the PID for _cwait() later. */
+	*pidp = Result.codeTerminate;
+
+    /* Restore std{in,out,err} */
+    Tmp = STDIN;
+    DosDupHandle (Old0, &Tmp);
+    DosClose (Old0);
+    Tmp = STDOUT;
+    DosDupHandle (Old1, &Tmp);
+    DosClose (Old1);
+    Tmp = STDERR;
+    DosDupHandle (Old2, &Tmp);
+    DosClose (Old2);
+
+    if(*pidp < 0) 
+    {
+        DosClose (from);
+        DosClose (to);
+        return -1;
+    }
+
+    return newfd;
+}
+#endif /* 0/1 */
 
 int
 pipe (int *filedesc)
