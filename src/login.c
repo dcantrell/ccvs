@@ -25,34 +25,40 @@ static char *cvs_password = NULL;
 char *
 construct_cvspass_filename ()
 {
-  char *homedir;
-  char *passfile;
+    char *homedir;
+    char *passfile;
 
-  /* Environment should override file. */
-  if ((passfile = getenv ("CVS_PASSFILE")) != NULL)
-    return xstrdup (passfile);
+    /* Environment should override file. */
+    if ((passfile = getenv ("CVS_PASSFILE")) != NULL)
+	return xstrdup (passfile);
 
-  /* Construct absolute pathname to user's password file. */
-  /* todo: does this work under OS/2 ? */
-  homedir = get_homedir ();
-  if (! homedir)
+    /* Construct absolute pathname to user's password file. */
+    /* todo: does this work under OS/2 ? */
+    homedir = get_homedir ();
+    if (! homedir)
     {
-      error (1, errno, "could not find out home directory");
-      return (char *) NULL;
+	error (1, errno, "could not find out home directory");
+	return (char *) NULL;
     }
-  
-  passfile =
-    (char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
-  strcpy (passfile, homedir);
-  strcat (passfile, "/");
-  strcat (passfile, CVS_PASSWORD_FILE);
-  
-  /* Safety first and last, Scouts. */
-  if (isfile (passfile))
-    /* xchmod() is too polite. */
-    chmod (passfile, 0600);
 
-  return passfile;
+    passfile =
+	(char *) xmalloc (strlen (homedir) + strlen (CVS_PASSWORD_FILE) + 3);
+    strcpy (passfile, homedir);
+#ifndef NO_SLASH_AFTER_HOME
+    /* NO_SLASH_AFTER_HOME is defined for VMS, where foo:[bar]/.cvspass is not
+       a legal filename but foo:[bar].cvspass is.  A more clean solution would
+       be something more along the lines of a "join a directory to a filename"
+       kind of thing....  */
+    strcat (passfile, "/");
+#endif
+    strcat (passfile, CVS_PASSWORD_FILE);
+
+    /* Safety first and last, Scouts. */
+    if (isfile (passfile))
+	/* xchmod() is too polite. */
+	chmod (passfile, 0600);
+
+    return passfile;
 }
 
 
