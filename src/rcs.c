@@ -6396,6 +6396,18 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	goto delrev_done;
     }
 
+    if (after == NULL && before == NULL)
+    {
+	/* The user is trying to delete all revisions.  While an
+	   RCS file without revisions makes sense to RCS (e.g. the
+	   state after "rcs -i"), CVS has never been able to cope with
+	   it.  So at least for now we just make this an error.
+
+	   We don't include rcs->path in the message since "cvs admin"
+	   already printed "RCS file:" and the name.  */
+	error (1, 0, "attempt to delete all revisions");
+    }
+
     /* The conditionals at this point get really hairy.  Here is the
        general idea:
 
@@ -6407,8 +6419,6 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
          check out both revisions and diff -n them.  This could use
 	 RCS_exec_rcsdiff with some changes, like being able
 	 to suppress diagnostic messages and to direct output. */
-
-    assert (before != NULL || after != NULL);
 
     if (after != NULL)
     {

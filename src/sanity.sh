@@ -1068,7 +1068,23 @@ Checking in aa;
 ${TESTDIR}/cvsroot/second-dir/aa,v  <--  aa
 initial revision: 1\.1
 done"
-	  cd ../..
+	  cd ..
+
+	  # Try to remove all revisions in a file.
+	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
+"RCS file: ${TESTDIR}/cvsroot/topfile,v
+deleting revision 1\.1
+${PROG} \[[a-z]* aborted\]: attempt to delete all revisions"
+	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
+"U first-dir/Emptydir/sfile1
+U first-dir/sdir2/sfile2"
+	  dotest_fail basicb-o3 \
+"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir2/sfile2,v
+deleting revision 1\.2
+deleting revision 1\.1
+${PROG} \[[a-z]* aborted\]: attempt to delete all revisions"
+	  cd ..
 	  rm -r 1
 
 	  mkdir 1; cd 1
@@ -13136,6 +13152,7 @@ done"
 	  # For -o, see:
 	  #   admin-22-o1 through admin-23 (various cases not involving ::)
 	  #   binfiles2-o* (:rev, rev on trunk; rev:, deleting entire branch)
+	  #   basicb-o* (attempt to delete all revisions)
 	  #   basica-o1 through basica-o3 (basic :: usage)
 	  #   head-o1 (::branch, where this deletes a revision or is noop)
 	  #   branches-o1 (::branch, similar, with different branch topology)
