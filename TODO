@@ -420,3 +420,47 @@ modifying it), but even as to the general idea, I don't have a clear
 idea about whether it would be good (see what I mean about the need
 for better documentation?  I work on CVS full-time, and even I don't
 understand the state of the art on this subject).
+
+186.  There is a frequent discussion of multisite features.
+
+* There may be some overlap with the client/server CVS, which is good
+especially when there is a single developer at each location.  But by
+"multisite" I mean something in which each site is more autonomous, to
+one extent or another.
+
+* Vendor branches are the closest thing that CVS currently has for
+multisite features.  They have fixable drawbacks (such as poor
+handling of added and removed files), and more fundamental drawbacks
+(when you import a vendor branch, you are importing a set of files,
+not importing any knowledge of their version history outside the
+current repository).
+
+* One approach would be to require checkins (or other modifications to
+the repository) to succeed at every site before they are allowed to
+complete.  This approach may break down if the network is unreliable
+but it has the advantages that reading the local repository is assured
+of having an up-to-date copy with no network traffic.  It also becomes
+possible to cut over from one set of servers to another (might want to
+look at something at least vaguely similar to the quorums used by
+VMSclusters, so if one server gets out of touch with the others, the
+system can continue to operate after a suitable timeout, and then when
+the out-of-touch server connects again, it updates its data before
+doing anything else).
+
+* Another approach is a master/slave one.  Checkins happen at the
+master site, and slave sites need to check whether their local
+repository is up to date before relying on its information.
+
+* Another approach is to have each site own a particular branch.  This
+one is the most tolerant of flaky networks; if checkins happen at each
+site independently there is no particular problem.  The big question
+is whether merges happen only manually, as with existing CVS branches,
+or whether there is a feature whereby there are circumstances in which
+merges from one branch to the other happen automatically (for example,
+the case in which the branches have not diverged).  This might be a
+legitimate question to ask even quite aside from multisite features.
+
+One additional random tidbit is to note that Eric Raymond has some
+interest in this sort of thing.  The item "Cooperative distributed
+freeware development" on http://www.ccil.org/~esr/ has a very brief
+introduction to what he is thinking about.
