@@ -1090,6 +1090,21 @@ message and exiting---this should be investigated further).
 Any set of responses always ends with @samp{error} or @samp{ok}.  This
 indicates that the response is over.
 
+@c "file updating response" and "file update modifying response" are
+@c lame terms (mostly because they are so awkward).  Any better ideas?
+The responses @code{Checked-in}, @code{New-entry}, @code{Updated},
+@code{Created}, @code{Update-existing}, @code{Merged}, and
+@code{Patched} are refered to as @dfn{file updating} responses, because
+they change the status of a file in the working directory in some way.
+The responses @code{Mode}, @code{Mod-time}, and @code{Checksum} are
+referred to as @dfn{file update modifying} responses because they modify
+the next file updating response.  In no case shall a file update
+modifying response apply to a file updating response other than the next
+one.  Nor can the same file update modifying response occur twice for
+a given file updating response (if servers diagnose this problem, it may
+aid in detecting the case where clients send an update modifying
+response without following it by a file updating response).
+
 @node Response pathnames
 @section The "pathname" in responses
 
@@ -1232,13 +1247,14 @@ only support @code{Patched}.
 
 @item Mode @var{mode} \n
 This @var{mode} applies to the next file mentioned in
-@code{Checked-in}.  It does not apply to any request which follows a
-@code{Checked-in}, @code{New-entry}, @code{Updated}, @code{Merged}, or
-@code{Patched} response.
+@code{Checked-in}.  @code{Mode} is a file update modifying response
+as described in @ref{Response intro}.
 
 @item Mod-time @var{time} \n
-Set the modification time of the next file sent to @var{time}.  Next
-file sent means sent by @code{Checked-in}, @code{Created}, etc.  The
+Set the modification time of the next file sent to @var{time}.
+@code{Mod-time} is a file update modifying response
+as described in @ref{Response intro}.
+The
 @var{time} is in the format specified by RFC822 as modified by RFC1123.
 The server may specify any timezone it chooses; clients will want to
 convert that to their own timezone as appropriate.  An example of this
@@ -1254,8 +1270,10 @@ synchronized.  The server just sends its recommendation for a timestamp
 it (this means that the time might be in the future, for example).
 
 @item Checksum @var{checksum}\n
-The @var{checksum} applies to the next file sent over via
-@code{Updated}, @code{Merged}, or @code{Patched}.  In the case of
+The @var{checksum} applies to the next file sent (that is,
+@code{Checksum} is a file update modifying response
+as described in @ref{Response intro}).
+In the case of
 @code{Patched}, the checksum applies to the file after being patched,
 not to the patch itself.  The client should compute the checksum itself,
 after receiving the file or patch, and signal an error if the checksums
