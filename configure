@@ -2071,7 +2071,7 @@ if eval $ac_link; then
   krb_h=yes krb_incdir=
 else
   rm -rf conftest*
-  if test -z "$cross_compiling" && test -r $KRB4/include/krb.h; then
+  if test "$cross_compiling" != yes && test -r $KRB4/include/krb.h; then
      hold_cflags=$CFLAGS
      CFLAGS="$CFLAGS -I$KRB4/include"
      echo "checking for krb.h in $KRB4/include" 1>&6
@@ -2127,7 +2127,7 @@ echo "$ac_t""$ac_cv_lib_krb" 1>&6
 if test "$ac_cv_lib_krb" = yes; then
   krb_lib=yes krb_libdir=
 else
-  if test -z "$cross_compiling" && test -r $KRB4/lib/libkrb.a; then
+  if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
        krb_lib=yes krb_libdir=$KRB4/lib
      fi
 fi

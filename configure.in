@@ -52,7 +52,7 @@ AC_REQUIRE([AC_CROSS_CHECK])
 krb_h=
 AC_COMPILE_CHECK(krb.h,[#include <krb.h>],[int i;],
   [krb_h=yes krb_incdir=],
-  [if test -z "$cross_compiling" && test -r $KRB4/include/krb.h; then
+  [if test "$cross_compiling" != yes && test -r $KRB4/include/krb.h; then
      hold_cflags=$CFLAGS
      CFLAGS="$CFLAGS -I$KRB4/include"
      AC_COMPILE_CHECK(krb.h in $KRB4/include,
@@ -63,7 +63,7 @@ AC_COMPILE_CHECK(krb.h,[#include <krb.h>],[int i;],
 if test -n "$krb_h"; then
   krb_lib=
   AC_HAVE_LIBRARY(-lkrb,[krb_lib=yes krb_libdir=],
-    [if test -z "$cross_compiling" && test -r $KRB4/lib/libkrb.a; then
+    [if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
        krb_lib=yes krb_libdir=$KRB4/lib
      fi])
   if test -n "$krb_lib"; then

@@ -1,5 +1,8 @@
 Thu Jun 29 01:02:09 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in, configure: cross_compiling gets set to "no", not
+	empty--change test accordingly.
+
 	* Version 1.4.93.
 
 Wed Jun 28 22:33:54 1995  James Kingdon  <kingdon@harvey.cyclic.com>
