@@ -1,3 +1,8 @@
+2003-12-12  Derek Price  <derek@ximbiot.com>
+
+	* cvs.spec.in (%post): Remove info's uncompressed info file cache after
+	installing the new gzipped files.
+
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in(AC_FUNC_FSEEKO): Add. Include handling for fseeko
@@ -12,7 +17,7 @@
 	(ftello.c, fseeko.c, exithandle.c, getndelim2): Add new source
 	file definitions.
 	(Patch from Rob Clevenger <rob@robsite.org>.)
-	
+
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Add section for 1.12.4.
