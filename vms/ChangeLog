@@ -1,5 +1,7 @@
 Thu Sep 25 15:26:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* ndir.c, ndir.h: Change return type of closedir from void to int.
+
 	* config.h (HAVE_NDIR_H): Define.
 	* vms.h: Add comment about the include of ndir.h.
 	* ndir.h: Protect against multiple inclusion.
