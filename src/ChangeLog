@@ -1,5 +1,9 @@
 1998-09-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h: dirs_sent_to_server should not be inside
+	AUTH_SERVER_SUPPORT (reported by both Richard Levitte and Murray
+	Bishop, thanks).
+
 	* lock.c, cvs.h: New variable lock_dir.
 	* parseinfo.c (parse_config): New option LockDir.
 	* lock.c (lock_name): New function, abstracts out lock file naming
