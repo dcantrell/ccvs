@@ -1,3 +1,11 @@
+Tue Jan  9 16:43:15 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * run.c (sleep): commented out this definition.
+        * config.h: #define sleep() in terms of DosSleep(), unless sleep()
+        is defined already.  Normally it's defined in
+        tcpip/include/utils.h, however on beezley that definition is
+        commented out for some reason.
+
 Tue Jan  9 16:22:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* .cvsignore: Add cvs.exe and icc.in.
