@@ -11170,8 +11170,16 @@ argument lists of most @sc{rcs} commands.
 @node Troubleshooting
 @appendix Troubleshooting
 
+If you are having trouble with @sc{cvs}, this appendix
+may help.  If there is a particular error message which
+you are seeing, then you can look up the message
+alphabetically.  If not, you can look through the
+section on other problems to see if your problem is
+mentioned there.
+
 @menu
 * Error messages::              Partial list of CVS errors
+* Other problems::              Problems not readily listed by error message
 @end menu
 
 @ignore
@@ -11356,6 +11364,23 @@ exit 0
 @c Would be nice to write these up--they are
 @c potentially confusing for the new user.
 @end table
+
+@node Other problems
+@appendixsec Other common problems
+
+Here is a list of problems which cannot be readily
+looked up based on an error message.  They are in no
+particular order.
+
+@itemize @bullet
+@item
+If @code{cvs update} finds a conflict and tries to
+merge, as described in @ref{Conflicts example}, but
+doesn't tell you there were conflicts, then you may
+have an old version of @sc{rcs}.  For more information
+on how to set this up, see the @file{INSTALL} file in
+the @sc{cvs} source distribution.
+@end itemize
 
 @c ---------------------------------------------------------------------
 @node Copying
