@@ -1,3 +1,12 @@
+1999-11-03  Karl Fogel  <kfogel@red-bean.com>
+
+	* log.c (log_usage): correct usage message for -d and -s options.
+	Because the space between the option letter and its argument has
+	been eliminated, I capitalized the argument portion to distinguish
+	it from the option letter.  This makes it slightly inconsistent
+	with other such usage summaries, but at least it is now both
+	correct and readable.
+
 1999-10-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (dotest_sort): Old versions of tr don't understand \t

@@ -10675,7 +10675,7 @@ Print out history information for files.  See @ref{log}.
 @item -b
 Only list revisions on the default branch.  See @ref{log options}.
 
-@item -d @var{dates}
+@item -d@var{dates}
 Specify dates (@var{d1}<@var{d2} for range, @var{d} for
 latest before).  See @ref{log options}.
 
@@ -10694,7 +10694,7 @@ Only print name of RCS file.  See @ref{log options}.
 @item -r@var{revs}
 Only list revisions @var{revs}.  See @ref{log options}.
 
-@item -s @var{states}
+@item -s@var{states}
 Only list revisions with specified states.  See @ref{log options}.
 
 @item -t
