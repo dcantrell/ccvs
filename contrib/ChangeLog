@@ -1,3 +1,11 @@
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* newcvsroot.sh: New file.
+	* Makefile.am (contrib_SCRIPTS, EXTRA_DIST): Add newcvsroot.
+	* .cvsignore: Ditto.
+
+	* Makefile.in: Regenerated.
+
 2002-12-16  Derek Price  <derek@ximbiot.com>
 
 	* cvs_acls.in: Fix split loop error with Perl 5.8.0.
