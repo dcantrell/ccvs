@@ -504,8 +504,10 @@ supported_response (char *name)
 
 
 
+/* Return true if two paths match, resolving symlinks.
+ */
 static inline bool
-same_path (const char *path1_in, const char *path2_in)
+isSamePath (const char *path1_in, const char *path2_in)
 {
     char *p1, *p2;
     bool same;
@@ -531,6 +533,31 @@ same_path (const char *path1_in, const char *path2_in)
     free (p1);
     free (p2);
     return same;
+}
+
+
+
+/* Return true if OTHERHOST resolves to this host in the DNS.
+ */
+static inline bool
+isThisHost (const char *otherhost)
+{
+    /* THISHOST is static so that it may be cached.  Our hostname will not
+     * change from one call to the next.
+     */
+    static char *thishost = NULL;
+    struct hostent *hinfo;
+
+    /* Our hostname must also match for this to be the primary.  */
+    if (!thishost)
+    {
+	thishost = xmalloc (MAXHOSTNAMELEN);
+	gethostname (thishost, MAXHOSTNAMELEN);
+	thishost[MAXHOSTNAMELEN - 1] = '\0';
+    }
+
+    hinfo = gethostbyname (otherhost);
+    return !strcmp (thishost, hinfo->h_name);
 }
 
 
@@ -563,10 +590,6 @@ same_path (const char *path1_in, const char *path2_in)
 static inline bool
 isProxyServer (void)
 {
-    /* HOSTNAME is static so that it may be cached.  Our hostname will not
-     * change from one call to the next.
-     */
-    static char *hostname = NULL;
     assert (current_parsed_root);
 
     /***
@@ -579,31 +602,21 @@ isProxyServer (void)
      */
     if (!config || !config->PrimaryServer) return false;
 
-    /* The directory must not match for fork.  */
-    if (config->PrimaryServer->method == fork_method)
-    {
-	if (same_path (config->PrimaryServer->directory,
-		       current_parsed_root->directory))
-	    return false;
+    /* The directory must not match for all methods.  */
+    if (!isSamePath (config->PrimaryServer->directory,
+		     current_parsed_root->directory))
 	return true;
-    }
+
+    /* Only the directory is important for fork.  */
+    if (config->PrimaryServer->method == fork_method)
+	return false;
 
     /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
      * parsed.
      */
     assert (config->PrimaryServer->method == ext_method);
 
-    /* Our hostname and directory must match for this to be the primary.  */
-    if (!hostname)
-    {
-	hostname = xmalloc (MAXHOSTNAMELEN);
-	gethostname (hostname, MAXHOSTNAMELEN);
-	hostname[MAXHOSTNAMELEN - 1] = '\0';
-    }
-
-    if (!strcmp (config->PrimaryServer->hostname, hostname)
-	&& same_path (config->PrimaryServer->directory,
-		      current_parsed_root->directory))
+    if (isThisHost (config->PrimaryServer->hostname))
 	return false;
 
     return true;
