@@ -1,3 +1,39 @@
+Fri Jul 12 18:55:26 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* zlib.c: New file.
+	* client.c (log_buffer_block): Call set_block and set_nonblock,
+	rather than lb->buf->block.
+	(log_buffer_shutdown): New static function.
+	(get_responses_and_close): Call buf_shutdown on to_server and
+	from_server.
+	(start_server): If "Gzip-stream" is supported, use it rather than
+	"gzip-file-contents".
+	* server.c (print_error): Call buf_flush rather than
+	buf_send_output.
+	(print_pending_error, serve_valid_responses): Likewise.
+	(serve_expand_modules, serve_valid_requests): Likewise.
+	(do_cvs_command): Call buf_flush rather than buf_send_output
+	before the fork, and in the parent after the child has completed.
+	In the child, set buf_to_net and buf_from_net to NULL.
+	(serve_gzip_stream): New static function.
+	(requests): Add "Gzip-stream".
+	(server_cleanup): Don't do anything with buf_to_net if it is
+	NULL.  Call buf_flush rather than buf_send_output.  Call
+	buf_shutdown on buf_to_net and buf_from_net.  Call error for an
+	malloc failure rather than buf_output to buf_to_net.
+	* buffer.h (struct buffer): Add shutdown field.
+	(buf_initialize): Update declaration for new shutdown parameter.
+	(compress_buffer_initialize): Declare.
+	(buf_shutdown): Declare.
+	* buffer.c (buf_initialize): Add shutdown parameter.  Change all
+	callers.
+	(buf_shutdown): New function.
+	* Makefile.in (SOURCES): Add zlib.c
+	(OBJECTS): Add zlib.o.
+	($(PROGS)): Depend upon ../zlib/libz.a.
+	(cvs): Link against ../zlib/libz.a.
+	(zlib.o): New target.
+
 Fri Jul 12 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* client.c (log_buffer_input, log_buffer_output): Use size_t

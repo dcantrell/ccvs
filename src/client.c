@@ -284,6 +284,7 @@ static int log_buffer_input PROTO((void *, char *, int, int, int *));
 static int log_buffer_output PROTO((void *, const char *, int, int *));
 static int log_buffer_flush PROTO((void *));
 static int log_buffer_block PROTO((void *, int));
+static int log_buffer_shutdown PROTO((void *));
 
 /* Create a log buffer.  */
 
@@ -303,6 +304,7 @@ log_buffer_initialize (buf, fp, input, memory)
 			   input ? NULL : log_buffer_output,
 			   input ? NULL : log_buffer_flush,
 			   log_buffer_block,
+			   log_buffer_shutdown,
 			   memory,
 			   n);
 }
@@ -397,10 +399,21 @@ log_buffer_block (closure, block)
 {
     struct log_buffer *lb = (struct log_buffer *) closure;
 
-    if (lb->buf->block == NULL)
-	abort ();
+    if (block)
+	return set_block (lb->buf);
+    else
+	return set_nonblock (lb->buf);
+}
 
-    return (*lb->buf->block) (lb->buf->closure, block);
+/* The shutdown function for a log buffer.  */
+
+static int
+log_buffer_shutdown (closure)
+     void *closure;
+{
+    struct log_buffer *lb = (struct log_buffer *) closure;
+
+    return buf_shutdown (lb->buf);
 }
 
 #ifdef NO_SOCKET_TO_FD
@@ -447,6 +460,7 @@ socket_buffer_initialize (socket, input, memory)
 			   input ? NULL : socket_buffer_output,
 			   input ? NULL : socket_buffer_flush,
 			   (int (*) PROTO((void *, int))) NULL,
+			   (int (*) PROTO((void *))) NULL,
 			   memory,
 			   n);
 }
@@ -2800,6 +2814,7 @@ int
 get_responses_and_close ()
 {
     int errs = get_server_responses ();
+    int status;
 
     if (last_entries != NULL)
     {
@@ -2811,6 +2826,19 @@ get_responses_and_close ()
 
     if (client_prune_dirs)
 	process_prune_candidates ();
+
+    /* The calls to buf_shutdown are currently only meaningful when we
+       are using compression.  First we shut down TO_SERVER.  That
+       tells the server that its input is finished.  It then shuts
+       down the buffer it is sending to us, at which point our shut
+       down of FROM_SERVER will complete.  */
+
+    status = buf_shutdown (to_server);
+    if (status != 0)
+        error (0, status, "shutting down buffer to server");
+    status = buf_shutdown (from_server);
+    if (status != 0)
+	error (0, status, "shutting down buffer from server");
 
 #ifdef NO_SOCKET_TO_FD
     if (use_socket_style)
@@ -3510,7 +3538,28 @@ start_server ()
     }
     if (gzip_level)
     {
-	if (supported_request ("gzip-file-contents"))
+	if (supported_request ("Gzip-stream"))
+	{
+	    char gzip_level_buf[5];
+	    send_to_server ("Gzip-stream ", 0);
+	    sprintf (gzip_level_buf, "%d", gzip_level);
+	    send_to_server (gzip_level_buf, 0);
+	    send_to_server ("\012", 1);
+
+	    /* All further communication with the server will be
+               compressed.  */
+
+	    to_server = compress_buffer_initialize (to_server, 0, gzip_level,
+						    buf_memory_error);
+	    from_server = compress_buffer_initialize (from_server, 1,
+						      gzip_level,
+						      buf_memory_error);
+
+	    /* Set gzip_level to 0 so that we don't try to gzip file
+               contents.  */
+	    gzip_level = 0;
+	}
+	else if (supported_request ("gzip-file-contents"))
 	{
             char gzip_level_buf[5];
 	    send_to_server ("gzip-file-contents ", 0);

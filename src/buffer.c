@@ -16,11 +16,12 @@ static inline struct buffer_data *get_buffer_data PROTO((void));
 /* Initialize a buffer structure.  */
 
 struct buffer *
-buf_initialize (input, output, flush, block, memory, closure)
+buf_initialize (input, output, flush, block, shutdown, memory, closure)
      int (*input) PROTO((void *, char *, int, int, int *));
      int (*output) PROTO((void *, const char *, int, int *));
      int (*flush) PROTO((void *));
      int (*block) PROTO((void *, int));
+     int (*shutdown) PROTO((void *));
      void (*memory) PROTO((struct buffer *));
      void *closure;
 {
@@ -34,6 +35,7 @@ buf_initialize (input, output, flush, block, memory, closure)
     buf->output = output;
     buf->flush = flush;
     buf->block = block;
+    buf->shutdown = shutdown;
     buf->memory_error = memory;
     buf->closure = closure;
     return buf;
@@ -50,6 +52,7 @@ buf_nonio_initialize (memory)
 	     (int (*) PROTO((void *, const char *, int, int *))) NULL,
 	     (int (*) PROTO((void *))) NULL,
 	     (int (*) PROTO((void *, int))) NULL,
+	     (int (*) PROTO((void *))) NULL,
 	     memory,
 	     (void *) NULL));
 }
@@ -1136,6 +1139,17 @@ buf_copy_counted (outbuf, inbuf, special)
     /*NOTREACHED*/
 }
 
+/* Shut down a buffer.  This returns 0 on success, or an errno code.  */
+
+int
+buf_shutdown (buf)
+     struct buffer *buf;
+{
+    if (buf->shutdown)
+	return (*buf->shutdown) (buf->closure);
+    return 0;
+}
+
 /* The simplest type of buffer is one built on top of a stdio FILE.
    For simplicity, and because it is all that is required, we do not
    implement setting this type of buffer into nonblocking mode.  The
@@ -1157,6 +1171,7 @@ struct buffer
 			   input ? NULL : stdio_buffer_output,
 			   input ? NULL : stdio_buffer_flush,
 			   (int (*) PROTO((void *, int))) NULL,
+			   (int (*) PROTO((void *))) NULL,
 			   memory,
 			   (void *) fp);
 }
