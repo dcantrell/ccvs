@@ -11699,7 +11699,7 @@ If using remote access methods (pserver, ext, etc.),
 @sc{cvs} will execute this program on the server from a temporary
 directory. The path is searched for this program.
 
-If using ``local access'' (on a local or remote NFS filesystem, i.e.
+If using ``local access'' (on a local or remote NFS file system, i.e.
 repository set just to a path),
 the program will be executed from the newly checked-out tree, if
 found there, or alternatively searched for in the path if not.
@@ -12870,7 +12870,11 @@ Put @sc{cvs} lock files in @var{directory} rather than
 directly in the repository.  This is useful if you want
 to let users read from the repository while giving them
 write access only to @var{directory}, not to the
-repository.  You need to create @var{directory}, but
+repository.
+It can also be used to put the locks on a very fast
+in-memory file system to speed up locking and unlocking
+the repository.
+You need to create @var{directory}, but
 @sc{cvs} will create subdirectories of @var{directory} as it
 needs them.  For information on @sc{cvs} locks, see
 @ref{Concurrency}.
