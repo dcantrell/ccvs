@@ -1,3 +1,8 @@
+1998-09-30  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Committing your changes, Environment variables):
+	Document VISUAL.
+
 1998-09-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication server): Say explicitly
