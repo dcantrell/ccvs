@@ -1,5 +1,9 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* stamp-1, version-client.texi: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (ls & rls options): Document new -P option.
 	* stamp-vti, version.texi: Regenerated.
 
