@@ -1,3 +1,7 @@
+Tue Sep 17 00:09:44 1996  Assar Westerlund  <assar@pdc.kth.se>
+
+	* login.c (login): Print usage if argc < 0.
+
 Tue Sep 17 00:09:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* lock.c: In comment, mention one more function of readlocks
