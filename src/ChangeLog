@@ -1,3 +1,8 @@
+2000-11-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh: Some versions of sed require a space between -e and
+	the value.
+
 2000-10-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout): Don't check for a safe location if just
