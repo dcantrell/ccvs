@@ -12,6 +12,9 @@
 #include "cvs.h"
 #include "getline.h"
 
+/* For functions with variable numbers of arguments */
+#include <stdarg.h>
+
 #ifdef HAVE_NANOSLEEP
 # include "xtime.h"
 #else /* HAVE_NANOSLEEP */
@@ -1029,7 +1032,7 @@ void cvs_trace ( int level, const char *fmt, ... )
     {
 	va_list va;
 
-	VA_START(va, fmt);
+	va_start( va, fmt );
 #ifdef SERVER_SUPPORT
 	fprintf(stderr,"%c -> ",server_active?'S':' ');
 #else /* ! SERVER_SUPPORT */

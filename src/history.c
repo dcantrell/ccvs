@@ -199,7 +199,7 @@ static long hrec_idx;
 static void fill_hrec (char *line, struct hrec * hr);
 static int accept_hrec (struct hrec * hr, struct hrec * lr);
 static int select_hrec (struct hrec * hr);
-static int sort_order (const PTR l, const PTR r);
+static int sort_order (const void *l, const void *r);
 static int within (char *find, char *string);
 static void expand_modules (void);
 static void read_hrecs (char *fname);
@@ -317,8 +317,8 @@ static const char *const history_usg[] =
 */
 static int
 sort_order (l, r)
-    const PTR l;
-    const PTR r;
+    const void *l;
+    const void *r;
 {
     int i;
     const struct hrec *left = (const struct hrec *) l;
@@ -679,7 +679,7 @@ history (argc, argv)
     read_hrecs (fname);
     if(hrec_count>0)
     {
-	qsort ((PTR) hrec_head, hrec_count, 
+	qsort ((void *) hrec_head, hrec_count, 
 		sizeof (struct hrec), sort_order);
     }
     report_hrecs ();

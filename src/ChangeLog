@@ -1,5 +1,17 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Remove support for the PTR macro, since we can assume void *
+	under C89.  It also was not being made use of in very many places so
+	even most K&R compilers must have supported it, or nobody was using
+	K&R compilers.  We can also assume <stdarg.h> under C89, but move the
+	include...
+	* error.c: ...here, de-macro VA_START, and...
+	* subr.c: ...put a copy here too, as well as de-macroing VA_START.
+	* history.c: s/PTR /void */g;
+	* modules.c: Ditto.
+
+2003-07-22  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Include GNULIB exit.h.
 
 2003-07-20  Derek Price  <derek@ximbiot.com>

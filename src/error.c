@@ -16,6 +16,9 @@
 
 #include "cvs.h"
 
+/* For functions with variable numbers of arguments */
+#include <stdarg.h>
+
 /* If non-zero, error will use the CVS protocol to stdout to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
@@ -96,7 +99,7 @@ error (int status, int errnum, const char *message, ...)
 	}
 	cvs_outerr (": ", 2);
 
-	VA_START (args, message);
+	va_start( args, message );
 	p = message;
 	while ((q = strchr (p, '%')) != NULL)
 	{
@@ -181,7 +184,7 @@ fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
     va_list args;
 
     fprintf (fp, "%s: ", program_name);
-    VA_START (args, message);
+    va_start( args, message );
     vfprintf (fp, message, args);
     va_end (args);
     if (errnum)

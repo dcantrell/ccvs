@@ -16,14 +16,6 @@
 # include <config.h>		/* this is stuff found via autoconf */
 #endif /* CONFIG_H */
 
-/* Changed from if __STDC__ to ifdef __STDC__ because of Sun's acc compiler */
-
-#ifdef __STDC__
-#define	PTR	void *
-#else
-#define	PTR	char *
-#endif
-
 /* Add GNU attribute suppport.  */
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
@@ -46,18 +38,6 @@
 #  define __printf__	printf
 # endif
 #endif /* __attribute__ */
-
-/* Begin includes for functions with variable numbers of arguments */
-#if STDC_HEADERS
-# include <stdarg.h>
-# define VA_START(args, lastarg) va_start(args, lastarg)
-#else /* ! STDC_HEADERS */
-# ifdef HAVE_VARARGS_H
-#   include <varargs.h>
-#   define VA_START(args, lastarg) va_start(args)
-# endif /* HAVE_VARARGS_H */
-#endif /* STD_HEADERS */
-/* End includes for functions with variable numbers of arguments */
 
 #include "exit.h"
 

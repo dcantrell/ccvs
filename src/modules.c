@@ -50,7 +50,7 @@ struct sortrec
     char *comment;
 };
 
-static int sort_order (const PTR l, const PTR r);
+static int sort_order (const void *l, const void *r);
 static void save_d (char *k, int ks, char *d, int ds);
 
 
@@ -768,8 +768,8 @@ static char def_status[] = "NONE";
 */
 static int
 sort_order (l, r)
-    const PTR l;
-    const PTR r;
+    const void *l;
+    const void *r;
 {
     int i;
     const struct sortrec *left = (const struct sortrec *) l;
@@ -899,7 +899,7 @@ cat_module (status)
     close_module (db);
 
     /* Sort the list as requested */
-    qsort ((PTR) s_head, s_count, sizeof (struct sortrec), sort_order);
+    qsort ((void *) s_head, s_count, sizeof (struct sortrec), sort_order);
 
     /*
      * Run through the sorted array and format the entries
