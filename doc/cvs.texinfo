@@ -949,6 +949,7 @@ user-defined modules.
 * Intro administrative files::  Defining modules
 * Multiple repositories::       Multiple repositories
 * Creating a repository::       Creating a repository
+* Backing up::                  Backing up a repository
 * Remote repositories::         Accessing repositories on remote machines
 * Read-only access::            Granting read-only access to the repository
 @end menu
@@ -1665,6 +1666,58 @@ repository.
 @code{cvs init} will enable history logging; if you
 don't want that, remove the history file after running
 @code{cvs init}.  @xref{history file}.
+
+@node Backing up
+@section Backing up a repository
+@cindex Repository, backing up
+@cindex Backing up, repository
+
+There is nothing particularly magical about the files
+in the repository; for the most part it is possible to
+back them up just like any other files.  However, there
+are a few issues to consider.
+
+The first is that to be paranoid, one should either not
+use @sc{cvs} during the backup, or have the backup
+program lock @sc{cvs} while doing the backup.  To not
+use @sc{cvs}, you might forbid logins to machines which
+can access the repository, turn off your @sc{cvs}
+server, or similar mechanisms.  The details would
+depend on your operating system and how you have
+@sc{cvs} set up.  To lock @sc{cvs}, you would create
+@file{#cvs.rfl} locks in each repository directory.
+See @ref{Concurrency}, for more on @sc{cvs} locks.
+Having said all this, if you just back up without any
+of these precautions, the results are unlikely to be
+particularly dire.  Restoring from backup, the
+repository might be in an inconsistent state, but this
+would not be particularly hard to fix manually.
+
+When you restore a repository from backup, assuming
+that changes in the repository were made after the time
+of the backup, working directories which were not
+affected by the failure may refer to revisions which no
+longer exist in the repository.  Trying to run @sc{cvs}
+in such directories will typically produce an error
+message.  One way to get those changes back into the
+repository is as follows:
+
+@itemize @bullet
+@item
+Get a new working directory.
+
+@item
+Copy the files from the working directory from before
+the failure over to the new working directory (do not
+copy the contents of the @file{CVS} directories, of
+course).
+
+@item
+Working in the new working directory, use commands such
+as @code{cvs update} and @code{cvs diff} to figure out
+what has changed, and then when you are ready, commit
+the changes into the repository.
+@end itemize
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Remote repositories

@@ -1,5 +1,7 @@
 Sat May  3 10:51:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Backing up): New node.
+
 	* cvs.texinfo (Repository): Be more explicit about the repository
 	and the working directory not being subdirectories of each other.
 
