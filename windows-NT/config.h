@@ -1151,3 +1151,7 @@ char *sock_strerror (int errnum);
    moot since the use of buffer.c ensures that writes will only be as big
    as the buffers).  */
 #define SEND_NEVER_PARTIAL 1
+
+/* getpagesize is missing on Windows, but 4096 seems to do the right
+   thing. */
+#define getpagesize() 4096
