@@ -350,7 +350,6 @@ good places to start are:
 
 @example
 http://www.cyclic.com
-  @r{particularly the Unsupported Resources page}
 http://www.loria.fr/~molli/cvs-index.html
 @end example
 
