@@ -477,6 +477,12 @@ done'
 "${PROG}: .*/tmp/cvs-sanity/cvsroot value for CVS Root found in CVS/Root
 ${PROG}"': does not match command line -d /tmp/cvs-sanity/nonexist setting
 '"${PROG}"': you may wish to try the cvs command again without the -d option '
+
+	  dotest basica-10 "${testcvs} annotate" \
+'Annotations for sdir/ssdir/ssfile
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1.1          .[a-z@][a-z@ ]* [0-9a-zA-Z-]*.: ssfile
+1.2          .[a-z@][a-z@ ]* [0-9a-zA-Z-]*.: ssfile line 2'
 	  cd ..
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir

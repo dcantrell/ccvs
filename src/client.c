@@ -4365,4 +4365,14 @@ client_init (argc, argv)
 
     return init (argc, argv);	/* Call real code */
 }
+
+int
+client_annotate (argc, argv)
+    int argc;
+    char **argv;
+{
+    parse_cvsroot ();
+
+    return annotate (argc, argv);	/* Call real code */
+}
 #endif /* CLIENT_SUPPORT */

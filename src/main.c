@@ -132,6 +132,7 @@ const struct cmd
 
     CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
     CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
+    CMD_ENTRY("annotate", NULL,    NULL,      annotate,  client_annotate),
     CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
     CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
     CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),
@@ -200,6 +201,7 @@ static const char *const cmd_usage[] =
     "CVS commands are:\n",
     "        add          Adds a new file/directory to the repository\n",
     "        admin        Administration front end for rcs\n",
+    "        annotate     Show revision where each line was modified\n",
     "        checkout     Checkout sources for editing\n",
     "        commit       Checks files into the repository\n",
     "        diff         Runs diffs between revisions\n",

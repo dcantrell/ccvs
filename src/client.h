@@ -36,6 +36,7 @@ extern int client_editors PROTO((int argc, char **argv));
 extern int client_edit PROTO((int argc, char **argv));
 extern int client_unedit PROTO((int argc, char **argv));
 extern int client_init PROTO ((int argc, char **argv));
+extern int client_annotate PROTO ((int argc, char **argv));
 
 /*
  * Flag variable for seeing whether common code is running as a client

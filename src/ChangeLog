@@ -1,3 +1,19 @@
+Thu Mar 28 10:56:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c: Add "cvs annotate" command and related code.
+	(getrcskey): Move special handling of RCSDESC from here to
+	callers.  Handle those keys (desc, log, text) which do not
+	end in a semicolon.
+	* rcs.h (RCSVers): Add author field.
+	* rcs.c (RCS_reparsercsfile): Set it.
+	* cvs.h (annotate), main.c (cmd_usage, cmds), client.h client.c
+	(client_annotate), server.c (serve_annotate, requests): Usual
+	machinery to add a new command.
+	* sanity.sh (basica): Test cvs annotate.
+
+	* sanity.sh (branches): More tests, of things like adding files on
+	the trunk after a branch has been made.
+
 Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* expand_path.c: Don't declare free and xmalloc; cvs.h already
