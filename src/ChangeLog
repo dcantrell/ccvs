@@ -1,3 +1,28 @@
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
+	Enable the writeproxy log and turn it off when we determine we are not
+	running as a secondary server.
+
+	* log-buffer.c: Compile log buffer routines in server mode for write
+	proxy.
+	(struct log_buffer): Add fatal_error member.
+	(log_buffer_initialize, log_buffer_input): Allow for fatal write errors
+	for writeproxy.
+	(log_buffer_disable): Turn off the log when asked.
+	(log_buffer_shutdown): Close log via log_buffer_disable.
+	(log_buffer_input, log_buffer_output, log_buffer_flush): Don't operate
+	on the log when it doesn't exist.
+	(*): Misc gratuitous cleanup.
+	(setup_logfiles): Use new log_buffer_initialize API.
+	* log-buffer.h (log_buffer_initialize, log_buffer_disable): New
+	prototypes.
+	(log_buffer_initialize): Update prototype.
+	* server.c: Include log-buffer.h.  Gratuitous reformatting of pragmas.
+	(secondary_log_name, secondary_log): New globals.
+	(server): Set up recording for writeproxy.
+	(serve_root): Turn off recording when we determine that we are not a
+	secondary.
+
 2004-06-21  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (writeproxy): Verify that secondary is updated after a

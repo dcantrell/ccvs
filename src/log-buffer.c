@@ -17,7 +17,7 @@
 #include "cvs.h"
 #include "buffer.h"
 
-#ifdef CLIENT_SUPPORT
+#if defined CLIENT_SUPPORT || defined SERVER_SUPPORT
 
 /* We want to be able to log data sent between us and the server.  We
    do it using log buffers.  Each log buffer has another buffer which
@@ -31,6 +31,8 @@ struct log_buffer
     struct buffer *buf;
     /* The file to log information to.  */
     FILE *log;
+    /* Whether errors writing to the log file should be fatal or not.  */
+    bool fatal_errors;
 };
 
 static int log_buffer_input (void *, char *, int, int, int *);
@@ -41,14 +43,15 @@ static int log_buffer_shutdown (struct buffer *);
 
 /* Create a log buffer.  */
 
-static struct buffer *
-log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (struct buffer *))
+struct buffer *
+log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
+                       bool input, void (*memory) (struct buffer *))
 {
     struct log_buffer *n;
-
-    n = (struct log_buffer *) xmalloc (sizeof *n);
+    n = xmalloc (sizeof *n);
     n->buf = buf;
     n->log = fp;
+    n->fatal_errors = fatal_errors;
     return buf_initialize (input ? log_buffer_input : NULL,
 			   input ? NULL : log_buffer_output,
 			   input ? NULL : log_buffer_flush,
@@ -63,7 +66,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (
 static int
 log_buffer_input (void *closure, char *data, int need, int size, int *got)
 {
-    struct log_buffer *lb = (struct log_buffer *) closure;
+    struct log_buffer *lb = closure;
     int status;
     size_t n_to_write;
 
@@ -74,11 +77,11 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
     if (status != 0)
 	return status;
 
-    if (*got > 0)
+    if (lb->log && *got > 0)
     {
 	n_to_write = *got;
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (0, errno, "writing to log file");
+	    error (lb->fatal_errors, errno, "writing to log file");
     }
 
     return 0;
@@ -89,7 +92,7 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 static int
 log_buffer_output (void *closure, const char *data, int have, int *wrote)
 {
-    struct log_buffer *lb = (struct log_buffer *) closure;
+    struct log_buffer *lb = closure;
     int status;
     size_t n_to_write;
 
@@ -100,7 +103,7 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
     if (status != 0)
 	return status;
 
-    if (*wrote > 0)
+    if (lb->log && *wrote > 0)
     {
 	n_to_write = *wrote;
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
@@ -115,7 +118,7 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 static int
 log_buffer_flush (void *closure)
 {
-    struct log_buffer *lb = (struct log_buffer *) closure;
+    struct log_buffer *lb = closure;
 
     if (lb->buf->flush == NULL)
 	abort ();
@@ -123,7 +126,7 @@ log_buffer_flush (void *closure)
     /* We don't really have to flush the log file here, but doing it
        will let tail -f on the log file show what is sent to the
        network as it is sent.  */
-    if (fflush (lb->log) != 0)
+    if (lb->log && fflush (lb->log) != 0)
         error (0, errno, "flushing log file");
 
     return (*lb->buf->flush) (lb->buf->closure);
@@ -134,7 +137,7 @@ log_buffer_flush (void *closure)
 static int
 log_buffer_block (void *closure, int block)
 {
-    struct log_buffer *lb = (struct log_buffer *) closure;
+    struct log_buffer *lb = closure;
 
     if (block)
 	return set_block (lb->buf);
@@ -147,14 +150,28 @@ log_buffer_block (void *closure, int block)
 static int
 log_buffer_shutdown (struct buffer *buf)
 {
-    struct log_buffer *lb = (struct log_buffer *) buf->closure;
+    struct log_buffer *lb = buf->closure;
     int retval;
 
-    retval = buf_shutdown (lb->buf);
-    if (fclose (lb->log) < 0)
-	error (0, errno, "closing log file");
-    return retval;
+    log_buffer_disable (buf);
+    return buf_shutdown (lb->buf);
 }
+
+
+
+/* Disable logging without shutting down the next buffer in the chain.  */
+void
+log_buffer_disable (struct buffer *buf)
+{
+    struct log_buffer *lb = buf->closure;
+
+    SIG_beginCrSect();
+    if (lb->log && fclose (lb->log) < 0)
+	error (0, errno, "closing log file");
+    lb->log = NULL;
+    SIG_endCrSect();
+}
+
 
 
 void
@@ -189,19 +206,19 @@ setup_logfiles (struct buffer **to_server_p, struct buffer **from_server_p)
       if (fp == NULL)
 	error (0, errno, "opening to-server logfile %s", buf);
       else
-	*to_server_p = log_buffer_initialize (*to_server_p, fp, 0,
-					      (BUFMEMERRPROC) NULL);
+	*to_server_p = log_buffer_initialize (*to_server_p, fp, false, false,
+					      NULL);
 
       strcpy (p, ".out");
       fp = open_file (buf, "wb");
       if (fp == NULL)
 	error (0, errno, "opening from-server logfile %s", buf);
       else
-	*from_server_p = log_buffer_initialize (*from_server_p, fp, 1,
-						(BUFMEMERRPROC) NULL);
+	*from_server_p = log_buffer_initialize (*from_server_p, fp, false,
+                                                true, NULL);
 
       free (buf);
     }
 }
 
-#endif /* CLIENT_SUPPORT */
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */
