@@ -252,7 +252,7 @@ free download from the internet.  For more information
 on downloading @sc{cvs} and other @sc{cvs} topics, see:
 
 @example
-http://www.cyclic.com/
+http://www.cvshome.org/
 http://www.loria.fr/~molli/cvs-index.html
 @end example
 
@@ -13493,7 +13493,6 @@ report, there are companies which will do that for a
 fee.  Two such companies are:
 
 @cindex Signum Support
-@cindex Cyclic Software
 @cindex Support, getting CVS support
 @example
 Signum Support AB
@@ -13505,10 +13504,6 @@ Phone: +46 (0)13 - 21 46 00
 Fax:   +46 (0)13 - 21 47 00
 http://www.signum.se/
 
-Cyclic Software
-United States of America
-http://www.cyclic.com/
-info@@cyclic.com
 @end example
 
 @item
@@ -13532,7 +13527,7 @@ There may be resources on the net which can help.  Two
 good places to start are:
 
 @example
-http://www.cyclic.com
+http://www.cvshome.org
 http://www.loria.fr/~molli/cvs-index.html
 @end example
 
