@@ -511,9 +511,7 @@ main (argc, argv)
 	       ignores CVS directories and CVS/Root is likely to
 	       specify a different repository than the one we are
 	       importing to.  */
-	    if (strcmp (argv[0], "import") != 0
-		&& strcmp (argv[0], "im") != 0
-		&& strcmp (argv[0], "imp") != 0)
+	    if (strcmp (command_name, "import") != 0)
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
 
 	    if (CVSADM_Root != NULL)
