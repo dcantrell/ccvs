@@ -3725,6 +3725,7 @@ W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <
 		;;
 
 	parseroot)
+	  mkdir 1; cd 1
 	  # Test odd cases involving CVSROOT.  At the moment, that means we
 	  # are testing roots with '/'s on the end, which CVS should parse off.
 	  CVSROOT_SAVED=${CVSROOT}
@@ -3738,6 +3739,14 @@ new revision: 1\.2; previous revision: 1\.1
 done
 ${SPROG} commit: Rebuilding administrative file database"
 	  CVSROOT=${CVSROOT_SAVED}
+
+	  if $keep; then
+		echo Keeping ${TESTDIR} and exiting due to --keep
+		exit 0
+	  fi
+
+	  cd ..
+	  rm -r 1
 	  ;;
 
 	files)
