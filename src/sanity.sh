@@ -569,10 +569,9 @@ dotest_internal_debug ()
 dotest ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
-    : so far so good
-  else
-    status=$?
+  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  status=$?
+  if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
@@ -584,10 +583,9 @@ dotest ()
 dotest_lit ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
-    : so far so good
-  else
-    status=$?
+  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  status=$?
+  if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
@@ -608,15 +606,13 @@ dotest_lit ()
 dotest_fail ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if eval "$2" >${TESTDIR}/dotest.tmp 2>&1; then
-    status=$?
+  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  status=$?
+  if test "$status" = 0; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
-  else
-    : so far so good
-  fi 2>${TESTDIR}/dotest.tmp1
-  cat ${TESTDIR}/dotest.tmp1 >>${TESTDIR}/dotest.tmp
+  fi
   dotest_internal "$@"
 }
 
@@ -625,9 +621,7 @@ dotest_status ()
 {
   eval "$3" >${TESTDIR}/dotest.tmp 2>&1
   status=$?
-  if test "$status" = "$2"; then
-    : so far so good
-  else
+  if test "$status" != "$2"; then
     cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
     echo "exit status was $status; expected $2" >>${LOGFILE}
     fail "$1"
@@ -639,10 +633,9 @@ dotest_status ()
 dotest_sort ()
 {
   rm -f ${TESTDIR}/dotest.ex? 2>&1
-  if eval "$2" >${TESTDIR}/dotest.tmp1 2>&1; then
-    : so far so good
-  else
-    status=$?
+  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  status=$?
+  if test "$status" != 0; then
     cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"

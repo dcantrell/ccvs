@@ -1,5 +1,8 @@
 2001-04-04  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh (dotest, dotest_lit, dotest_fail, dotest_status,
+	dotest_sort): Don't count on $? being set in then or else clauses.
+
 	* ignore.c (ignore_files): Collect unignored files into a list and
 	sort it before calling PROC to avoid order dependencies.  Rewrite
 	the while loop to allow normal continues instead of goto.
