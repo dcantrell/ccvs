@@ -1,3 +1,8 @@
+Wed Jun 18 00:03:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication server): Document
+	--allow-root.
+
 Tue Jun 17 09:58:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "unknown option" from RCS.
