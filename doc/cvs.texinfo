@@ -2365,8 +2365,8 @@ multiple cvs usernames onto a single system username.
 
         This feature is designed to allow people
 repository access without full system access (in
-particular, see @xref{Read-only access}); however, also
-@xref{Password authentication security}.  Any sort of
+particular, see @ref{Read-only access}); however, also
+see @ref{Password authentication security}.  Any sort of
 repository access very likely implies a degree of
 general system access as well.
 
@@ -6075,7 +6075,7 @@ The full pathname of the RCS file.
 @cindex State keyword
 @item $@asis{State}$
 The state assigned to the revision.  States can be
-assigned with @code{cvs admin -s}---@xref{admin options}.
+assigned with @code{cvs admin -s}---see @ref{admin options}.
 
 @end table
 
@@ -6179,7 +6179,7 @@ option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the @samp{-k} or @samp{-A} options to @code{cvs
 checkout} or @code{cvs update}.  @code{cvs diff} also
 has a @samp{-k} option.  For some examples,
-@xref{Binary files}.
+see @ref{Binary files}.
 @c The fact that -A is overloaded to mean both reset
 @c sticky options and reset sticky tags/dates is
 @c somewhat questionable.  Perhaps there should be
@@ -7183,7 +7183,7 @@ Available with the @code{checkout}, @code{commit}, @code{export},
 and @code{rtag} commands.
 
 @item -P
-Prune empty directories.  See @xref{Removing directories}.
+Prune empty directories.  See @ref{Removing directories}.
 
 @item -p
 Pipe the files retrieved from the repository to standard output,
@@ -7831,7 +7831,7 @@ enter a log message that will be written to one or more
 logging programs (@pxref{modules}, and @pxref{loginfo})
 and placed in the @sc{rcs} history file inside the
 repository.  This log message can be retrieved with the
-@code{log} command; @xref{log}.  You can specify the
+@code{log} command; see @ref{log}.  You can specify the
 log message on the command line with the @samp{-m
 @var{message}} option, and thus avoid the editor invocation,
 or use the @samp{-F @var{file}} option to specify
@@ -7878,7 +7878,7 @@ of invoking an editor.
 
 @item -f
 Note that this is not the standard behavior of
-the @samp{-f} option as defined in @xref{Common options}.
+the @samp{-f} option as defined in @ref{Common options}.
 
 Force @sc{cvs} to commit a new revision even if you haven't
 made any changes to the file.  If the current revision
@@ -8461,7 +8461,7 @@ If the file @file{$CVSROOT/CVSROOT/cvswrappers} exists,
 any file whose names match the specifications in that
 file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
-before being imported, @xref{Wrappers}.
+before being imported.  @xref{Wrappers}.
 
 The outside source is saved in a first-level @sc{rcs}
 branch, by default 1.1.1.  Updates are leaves of this
@@ -8583,7 +8583,7 @@ to recreate symbolic links on checkout, update, etc.;
 @node import examples
 @appendixsubsec import examples
 
-@xref{Tracking sources}, and @xref{From files}.
+See @ref{Tracking sources}, and @ref{From files}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node log
@@ -10190,7 +10190,7 @@ Inside the repository, in the directory
 supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
 fashion without any of them, but if they are set up
 properly they can help make life easier.  For a
-discussion of how to edit them, @xref{Intro
+discussion of how to edit them, see @ref{Intro
 administrative files}.
 
 The most important of these files is the @file{modules}
@@ -10411,7 +10411,7 @@ changes.
 @c FIXME: which version is copied over which version?
 The @samp{-m} wrapper option only affects behavior when
 merging is done on update; it does not affect how files
-are stored.  See @xref{Binary files}, for more on
+are stored.  See @ref{Binary files}, for more on
 binary files.
 
 The basic format of the file @file{cvswrappers} is:
