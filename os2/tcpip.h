@@ -1,35 +1,35 @@
 /****************************************************************
-**
-**	TCPIP.H	- Portable TCP/IP header file
-**
-**	TCP/IP on OS/2 is an add-on and thus is not fully integrated
-**	with the operating system. To ensure portability, follow
-**	these rules:
-**
-**	  * Always call SockInit() at the beginning of your program
-**	    and check that it returns TRUE.
-**
-**	  * Use SockSend() & SockRecv() instead of read(), write(),
-**	    send(), or recv() when working with sockets.
-**
-**	  * Use SockClose() instead of close() with sockets.
-**
-**	  * Use SOCK_ERRNO when using functions that use or return
-**	    sockets, such as SockSend() or accept().
-**
-**	  * Use HOST_ERRNO when using gethostbyname() or gethostbyaddr()
-**	    functions.
-**
-**	  * As far as I can tell, getservbyname() and related functions
-**	    never set any error variable.
-**
-**	  * Use SockStrError() & HostStrError() to convert SOCK_ERRNO
-**	    and HOST_ERRNO to error strings.
-**
-**	  * In .MAK files, include $(TCPIP_MAK) & use $(TCPIPLIB)
-**	    when linking applications using TCP/IP.
-**
-****************************************************************/
+ *
+ * TCPIP.H - Portable TCP/IP header file
+ *
+ * TCP/IP on OS/2 is an add-on and thus is not fully integrated
+ * with the operating system. To ensure portability, follow
+ * these rules:
+ *
+ *  * Always call SockInit() at the beginning of your program
+ *    and check that it returns TRUE.
+ *
+ *  * Use SockSend() & SockRecv() instead of read(), write(),
+ *    send(), or recv() when working with sockets.
+ *
+ *  * Use SockClose() instead of close() with sockets.
+ *
+ *  * Use SOCK_ERRNO when using functions that use or return
+ *    sockets, such as SockSend() or accept().
+ *
+ *  * Use HOST_ERRNO when using gethostbyname() or gethostbyaddr()
+ *    functions.
+ *
+ *  * As far as I can tell, getservbyname() and related functions
+ *    never set any error variable.
+ *
+ *  * Use SockStrError() & HostStrError() to convert SOCK_ERRNO
+ *    and HOST_ERRNO to error strings.
+ *
+ *  * In .MAK files, include $(TCPIP_MAK) & use $(TCPIPLIB)
+ *    when linking applications using TCP/IP.
+ *
+ ****************************************************************/
 
 #if !defined( IN_TCPIP_H )
 #define IN_TCPIP_H
@@ -37,8 +37,8 @@
 #if defined( TCPIP_IBM )
 #	include	<types.h>
 #	if !defined( TCPIP_IBM_NOHIDE )
-/* #		define send		IbmSockSend
-   #		define recv		IbmSockRecv */
+#		define send IbmSockSend
+#		define recv IbmSockRecv
 #	endif
 #endif
 
@@ -66,15 +66,15 @@
 #	define	SockInit()		(!sock_init())
 #	define	SockSend		IbmSockSend
 #	define	SockRecv		IbmSockRecv
-const char
-   *HostStrError( int HostErrno ),
-   *SockStrError( int SockErrno );
 
-int IbmSockSend( int Socket, char *Data, int Len, int Flags ),
-    IbmSockRecv( int Socket, char *Data, int Len, int Flags );
+const char *HostStrError(int HostErrno);
+const char *SockStrError(int SockErrno);
+
+int IbmSockSend (int Socket, char *Data, int Len, int Flags);
+int IbmSockRecv (int Socket, char *Data, int Len, int Flags);
 
 #if !defined( h_errno )
-extern int h_errno;    /* IBM forgot to declare this in current header files */
+extern int h_errno; /* IBM forgot to declare this in current header files */
 #endif
 
 #elif defined( __unix )
@@ -96,8 +96,8 @@ extern int select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 #	define	SockSend		send
 #	define	SockRecv		recv
 #	define	SockStrError(E) strerror(E)
-const char
-		*HostStrError( int HostErrno );
+
+const char *HostStrError( int HostErrno );
 
 #else
 #	error Undefined version of TCP/IP specified
