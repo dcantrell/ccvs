@@ -1,3 +1,8 @@
+Wed Jun 15 07:52:22 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* client.c (send_modified, update_entries): Fixed bug which didn't
+	handle binary file transfers in BROKEN_READWRITE_CONVERSION.
+
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 		 and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
