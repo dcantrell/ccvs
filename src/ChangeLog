@@ -1,3 +1,7 @@
+Thu May  2 13:34:37 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* Version 1.7.88
+
 Thu May  2 01:40:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* server.c (HAVE_INITGROUPS): Use initgroups() only if
