@@ -149,13 +149,18 @@ by having inetd call "cvs kserver") which defaults to 1999.  The client
 connects, sends the usual kerberos authentication information, and then
 starts the cvs protocol.  Note: port 1999 is officially registered for
 another use, and in any event one cannot register more than one port for
-CVS, so the kerberized client and server should be changed to use port
-2401 (see below), and send a different string in place of @samp{BEGIN
-AUTH REQUEST} to identify the authentication method in use.  However,
-noone has yet gotten around to implementing this.
+CVS, so GSS-API (see below) is recommended instead of kserver as a way
+to support kerberos.
 
 @item pserver
-The password authenticated server listens on a port (in the current
+The name @dfn{pserver} is somewhat confusing.  It refers to both a
+generic framework which allows the CVS protocol to support several
+authentication mechanisms, and a name for a specific mechanism which
+transfers a username and a cleartext password.  Servers need not support
+all mechanisms, and in fact servers will typically want to support only
+those mechanisms which meet the relevant security needs.
+
+The pserver server listens on a port (in the current
 implementation, by having inetd call "cvs pserver") which defaults to
 2401 (this port is officially registered).  The client
 connects, and sends the following:
@@ -222,8 +227,13 @@ replaced with BEGIN VERIFICATION REQUEST, END AUTH REQUEST
 is replaced with END VERIFICATION REQUEST, and upon receipt of
 I LOVE YOU the connection is closed rather than continuing.
 
-The pserver can also handle GSSAPI authentication, if it has been built
-with a GSSAPI library.  The procedure here is to start with @samp{BEGIN
+Another mechanism is GSSAPI authentication.  GSSAPI is a
+generic interface to security services such as kerberos.  GSSAPI is
+specified in RFC2078 (GSSAPI version 2) and RFC1508 (GSSAPI version 1);
+we are not aware of differences between the two which affect the
+protocol in incompatible ways, so we make no attempt to specify one
+version or the other.
+The procedure here is to start with @samp{BEGIN
 GSSAPI REQUEST}.  GSSAPI authentication information is then exchanged
 between the client and the server.  Each packet of information consists
 of a two byte big endian length, followed by that many bytes of data.
@@ -779,12 +789,22 @@ the client and server encrypt the compressed data, as opposed to
 compressing the encrypted data.  Encrypted data is generally
 incompressible.
 
+Note that this request does not fully prevent an attacker from hijacking
+the connection, in the sense that it does not prevent hijacking the
+connection between the initial authentication and the
+@code{Kerberos-encrypt} request.
+
 @item Gssapi-encrypt \n
 Response expected: no.
 Use GSSAPI encryption to encrypt all further communication between the
 client and the server.  This will only work if the connection was made
 over GSSAPI in the first place.  See @code{Kerberos-encrypt}, above, for
 the relation between @code{Gssapi-encrypt} and @code{Gzip-stream}.
+
+Note that this request does not fully prevent an attacker from hijacking
+the connection, in the sense that it does not prevent hijacking the
+connection between the initial authentication and the
+@code{Gssapi-encrypt} request.
 
 @item Gssapi-authenticate \n
 Response expected: no.
@@ -795,6 +815,11 @@ automatically authenticated, so using both @code{Gssapi-authenticate}
 and @code{Gssapi-encrypt} has no effect beyond that of
 @code{Gssapi-encrypt}.  Unlike encrypted data, it is reasonable to
 compress authenticated data.
+
+Note that this request does not fully prevent an attacker from hijacking
+the connection, in the sense that it does not prevent hijacking the
+connection between the initial authentication and the
+@code{Gssapi-authenticate} request.
 
 @item Set @var{variable}=@var{value} \n
 Response expected: no.
