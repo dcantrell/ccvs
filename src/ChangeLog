@@ -1,3 +1,9 @@
+Sun Dec 14 14:13:05 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* recurse.c (do_dir_proc): Only check for CVS/Repository if
+	W_LOCAL.
+	* sanity.sh (devcom-t2, devcom-t3): New tests for above patch.
+
 Sun Dec 14 00:27:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* root.c (parse_cvsroot): Initialize check_hostname (fixes thinko

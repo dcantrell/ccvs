@@ -680,6 +680,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
        (e.g. send_dirent_proc and whether to send the directory), and
        (2) so that the warm fuzzy doesn't get printed if we skip the
        directory.  */
+    if (frame->which & W_LOCAL)
     {
 	char *cvsadmdir;
 
