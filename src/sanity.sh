@@ -4070,7 +4070,7 @@ U first-dir/abc'
 	  ;;
 
 	ignore)
-	  dotest 187a1 "${testcvs} -q co CVSROOT" 'U CVSROOT/modules'
+	  dotest 187a1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
 	  echo rootig.c >cvsignore
 	  dotest 187a2 "${testcvs} add cvsignore" "${PROG}"' [a-z]*: scheduling file `cvsignore'"'"' for addition
