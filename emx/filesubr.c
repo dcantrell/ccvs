@@ -307,49 +307,60 @@ mkdir_if_needed (name)
 /*
  * Change the mode of a file, either adding write permissions, or removing
  * all write permissions.  Either change honors the current umask setting.
+ * The EMX doc (0.9c, emxlib.doc) says that chmod sets/clears the readonly
+ * bit.  But it always seemed to be a noop when I tried it.  Therefore,
+ * I've copied over the "attrib" code from os2/filesubr.c.
  */
 void
 xchmod (fname, writable)
     char *fname;
     int writable;
 {
-    struct stat sb;
-    mode_t mode, oumask;
+    char *attrib_cmd;
+    char *attrib_option;
+    char *whole_cmd;
+    char *p;
+    char *q;
 
-    if (stat (fname, &sb) < 0)
+    if (!isfile (fname))
     {
-	if (!noexec)
-	    error (0, errno, "cannot stat %s", fname);
+	error (0, 0, "cannot change mode of file %s; it does not exist",
+	       fname);
 	return;
     }
-    oumask = umask (0);
-    (void) umask (oumask);
+
+    attrib_cmd = "attrib "; /* No, really? */
+
     if (writable)
-    {
-	mode = sb.st_mode | (~oumask
-			     & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0)
-				| ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0)
-				| ((sb.st_mode & S_IROTH) ? S_IWOTH : 0)));
-    }
+        attrib_option = "-r ";  /* make writeable */
     else
+        attrib_option = "+r ";  /* make read-only */
+        
+    whole_cmd = xmalloc (strlen (attrib_cmd)
+                         + strlen (attrib_option)
+                         + strlen (fname)
+                         + 1);
+
+    strcpy (whole_cmd, attrib_cmd);
+    strcat (whole_cmd, attrib_option);
+
+    /* Copy fname to the end of whole_cmd, translating / to \.
+	   Attrib doesn't take / but many parts of CVS rely
+       on being able to use it.  */
+    p = whole_cmd + strlen (whole_cmd);
+    q = fname;
+    while (*q)
     {
-	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
+	if (*q == '/')
+	    *p++ = '\\';
+	else
+	    *p++ = *q;
+	++q;
     }
+    *p = '\0';
 
-    if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
-			(server_active) ? 'S' : ' ', fname,
-			(unsigned int) mode);
-#else
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname,
-			(unsigned int) mode);
-#endif
-    if (noexec)
-	return;
-
-    if (chmod (fname, mode) < 0)
-	error (0, errno, "cannot change mode of file %s", fname);
+    system (whole_cmd);
+    free (whole_cmd);
 }
 
 /*

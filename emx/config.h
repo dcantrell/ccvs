@@ -323,3 +323,6 @@ extern int os2_fnmatch(const char *pattern, const char *name, int flags);
 
 /* See above; we can't use rsh without -b.  */
 #define RSH_NOT_TRANSPARENT 1
+
+/* See discussion at xchmod in filesubr.c.  */
+#define CHMOD_BROKEN 1
