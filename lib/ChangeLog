@@ -1,3 +1,10 @@
+2000-02-20  Derek Price  <derek.price@openavenue.com>
+
+	* xgssapi.h: New file to perform GSSAPI include magic.
+	* Makefile.am (EXTRA_DIST): Add xgssapi.h.
+
+	* Makefile.in: Regenerated.
+
 2000-02-14  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Add xtime.h & xselect.h.

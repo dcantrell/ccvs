@@ -80,7 +80,8 @@ libcvs_a_LIBADD = @LIBOBJS@
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
-	build_lib.com
+	build_lib.com \
+	xgssapi.h
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
