@@ -1,3 +1,9 @@
+Tue Nov 19 17:21:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (OS2_SOURCES): Remove strippath.c
+	(OS2_OBJECTS): Remove strippath.obj.
+	* strippath.c: Removed.
+
 Fri Nov  8 14:28:19 1996  Ullrich von Bassewitz  <uz@wuschel.ibb.schwaben.com>
 
 	* filesubr.c (expand_wild): Check for ERROR_NO_MORE_FILES from
