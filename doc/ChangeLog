@@ -1,3 +1,7 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2004-10-04  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (assorted edit and commit related sections): Add

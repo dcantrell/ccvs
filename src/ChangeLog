@@ -1,3 +1,7 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2004-10-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* add.c (add): Backout last typecasts cleanup.

@@ -1,3 +1,7 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
 	Distribute demo PAM configs.

@@ -1,3 +1,10 @@
+2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure.in (ccvs_FUNC_SELECT): Work around Solaris 7 select()
+	hang.
+	* Makefile.in, aclocal.m4, config.h.in, configure:
+	Regenerate for new configure.in.
+
 2004-10-20  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note validate_repo change.
