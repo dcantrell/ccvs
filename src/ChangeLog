@@ -1,3 +1,9 @@
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
+	Make error() accessible to the GNULIB functions.
+
+	* error.h: Move into the ../lib directory.
+
 2004-02-13  Derek Price  <derek@ximbiot.com>
 
 	* lock.c (Reader_Lock, lock_dir_for_write): Plug memory leaks.
