@@ -681,6 +681,54 @@ but CVS uses %s for its own purposes; skipping %s directory",
 	    dir_return = R_SKIP_ALL;
     }
 
+    /* Now we check for CVS/Repository.  We do this now rather than wait
+       for Name_Repository, so we can make this a nonfatal error.  */
+    if (dir_return != R_SKIP_ALL)
+    {
+	char *cvsadmdir;
+
+	cvsadmdir = xmalloc (strlen (dir)
+			     + sizeof (CVSADM_REP)
+			     + 80);
+
+	strcpy (cvsadmdir, dir);
+	strcat (cvsadmdir, "/");
+	strcat (cvsadmdir, CVSADM_REP);
+	if (!isfile (cvsadmdir))
+	{
+	    /* Some commands like update may have printed "? foo" but
+	       if we were planning to recurse, and don't on account of
+	       CVS/Repository, we want to say why.  This case can
+	       happen if the user hit ^C at the wrong time in a
+	       checkout.  */
+	    error (0, 0, "ignoring %s (%s missing)", update_dir, CVSADM_REP);
+	    dir_return = R_SKIP_ALL;
+	}
+	free (cvsadmdir);
+    }
+
+    /* Likewise for CVS/Entries.  */
+    if (dir_return != R_SKIP_ALL)
+    {
+	char *cvsadmdir;
+
+	cvsadmdir = xmalloc (strlen (dir)
+			     + sizeof (CVSADM_ENT)
+			     + 80);
+
+	strcpy (cvsadmdir, dir);
+	strcat (cvsadmdir, "/");
+	strcat (cvsadmdir, CVSADM_ENT);
+	if (!isfile (cvsadmdir))
+	{
+	    /* As with CVS/Repository, don't rely on just the "? foo"
+	       message.  */
+	    error (0, 0, "ignoring %s (%s missing)", update_dir, CVSADM_ENT);
+	    dir_return = R_SKIP_ALL;
+	}
+	free (cvsadmdir);
+    }
+
     free (newrepos);
 
     /* only process the dir if the return code was 0 */
