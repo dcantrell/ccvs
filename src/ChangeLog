@@ -1,3 +1,9 @@
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
+	* run.c (format_cmdline): Correct some typos and cut/paste errors.
+	Switch on HAVE_WINT_T for Solaris.  Switch on HAVE_INTMAX_T for other
+	pre-C99 platforms.
+
 2004-02-19  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (crerepos): Correct comment.

@@ -777,29 +777,31 @@ format_cmdline (char *format, ...)
 			s++;
 		    }
 		    break;
+#ifdef HAVE_INTMAX_T
 		case 'j':
 		    integer_conversion = 1;
 		    length = sizeof (intmax_t);
 		    s++;
 		    break;
+#endif /* HAVE_INTMAX_T */
 		case 'l':
 		    integer_conversion = 1;
 		    if (s[1] == 'l')
 		    {
-			length = sizeof(long int);
+			length = sizeof (long long int);
 			s += 2;
 		    }
 		    else
 		    {
 			char_conversion = 2;
 			string_conversion = 2;
-			length = sizeof(long long int);
+			length = sizeof (long int);
 			s++;
 		    }
 		    break;
 		case 't':
 		    integer_conversion = 1;
-		    length = sizeof (size_t);
+		    length = sizeof (ptrdiff_t);
 		    s++;
 		    break;
 		case 'z':
@@ -837,9 +839,14 @@ format_cmdline (char *format, ...)
 		    conversion_error = 1;
 		    break;
 		}
-		if (char_conversion = 2)
+		if (char_conversion == 2)
 		{
+#ifdef HAVE_WINT_T
 		    length = sizeof (wint_t);
+#else
+		    conversion_error = 1;
+		    break;
+#endif
 		}
 	    case 'd':
 	    case 'i':
@@ -860,40 +867,40 @@ format_cmdline (char *format, ...)
 		switch (length)
 		{
 		    char arg_char;
-#ifdef UNIQUE_INT_TYPE_WIN_T
+#ifdef UNIQUE_INT_TYPE_WINT_T
 		    wint_t arg_wint_t;
-#endif /* UNIQUE_INT_TYPE_WIN_T */
+#endif /* UNIQUE_INT_TYPE_WINT_T */
 #ifdef UNIQUE_INT_TYPE_SHORT_INT
 		    short int arg_short_int;
 #endif /* UNIQUE_INT_TYPE_SHORT_INT */
 #ifdef UNIQUE_INT_TYPE_INT
 		    int arg_int;
 #endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_LONG
+		    long int arg_long_int;
+#endif /* UNIQUE_INT_TYPE_LONG */
+#ifdef UNIQUE_INT_TYPE_LONG_LONG
+		    long long int arg_long_long_int;
+#endif /* UNIQUE_INT_TYPE_LONG_LONG */
+#ifdef UNIQUE_INT_TYPE_INTMAX_T
+		    intmax_t arg_intmax_t;
+#endif /* UNIQUE_INT_TYPE_INTMAX_T */
 #ifdef UNIQUE_INT_TYPE_SIZE_T
 		    size_t arg_size_t;
 #endif /* UNIQUE_INT_TYPE_SIZE_T */
 #ifdef UNIQUE_INT_TYPE_PTRDIFF_T
-		    size_t arg_size_t;
+		    ptrdiff_t arg_ptrdiff_t;
 #endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
-#ifdef UNIQUE_INT_TYPE_LONG_INT
-		    long int arg_long_int;
-#endif /* UNIQUE_INT_TYPE_LONG_INT */
-#ifdef UNIQUE_INT_TYPE_LONG_LONG_INT
-		    long long int arg_long_long_int;
-#endif /* UNIQUE_INT_TYPE_LONG_LONG_INT */
-#ifdef UNIQUE_INT_TYPE_INTMAX_T
-		    intmax_t arg_intmax_t;
-#endif /* UNIQUE_INT_TYPE_INTMAX_T */
 		    case sizeof(char):
 		    	arg_char = (char) va_arg (args, int);
 			b->data = asnprintf(NULL, &dummy, buf, arg_char);
 			break;
-#ifdef UNIQUE_INT_TYPE_WIN_T
+#ifdef UNIQUE_INT_TYPE_WINT_T
 		    case sizeof(wint_t):
 		    	arg_wint_t = va_arg (args, wint_t);
 			b->data = asnprintf(NULL, &dummy, buf, arg_wint_t);
 			break;
-#endif /* UNIQUE_INT_TYPE_WIN_T */
+#endif /* UNIQUE_INT_TYPE_WINT_T */
 #ifdef UNIQUE_INT_TYPE_SHORT_INT
 		    case sizeof(short int):
 		    	arg_short_int = (short int) va_arg (args, int);
@@ -906,6 +913,24 @@ format_cmdline (char *format, ...)
 			b->data = asnprintf(NULL, &dummy, buf, arg_int);
 			break;
 #endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_LONG
+		    case sizeof(long int):
+		    	arg_long_int = va_arg (args, long int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_LONG */
+#ifdef UNIQUE_INT_TYPE_LONG_LONG
+		    case sizeof(long long int):
+		    	arg_long_long_int = va_arg (args, long long int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_long_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_LONG_LONG */
+#ifdef UNIQUE_INT_TYPE_INTMAX_T
+		    case sizeof(intmax_t):
+		    	arg_intmax_t = va_arg (args, intmax_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
+			break;
+#endif /* UNIQUE_INT_TYPE_INTMAX_T */
 #ifdef UNIQUE_INT_TYPE_SIZE_T
 		    case sizeof(size_t):
 		    	arg_size_t = va_arg (args, size_t);
@@ -913,29 +938,11 @@ format_cmdline (char *format, ...)
 			break;
 #endif /* UNIQUE_INT_TYPE_SIZE_T */
 #ifdef UNIQUE_INT_TYPE_PTRDIFF_T
-		    case sizeof(size_t):
-		    	arg_size_t = va_arg (args, size_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
+		    case sizeof(ptrdiff_t):
+		    	arg_ptrdiff_t = va_arg (args, ptrdiff_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_ptrdiff_t);
 			break;
 #endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
-#ifdef UNIQUE_INT_TYPE_LONG_INT
-		    case sizeof(long int):
-		    	arg_long_int = va_arg (args, long int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_int);
-			break;
-#endif /* UNIQUE_INT_TYPE_LONG_INT */
-#ifdef UNIQUE_INT_TYPE_LONG_LONG_INT
-		    case sizeof(long long int):
-		    	arg_long_long_int = va_arg (args, long long int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_long_int);
-			break;
-#endif /* UNIQUE_INT_TYPE_LONG_LONG_INT */
-#ifdef UNIQUE_INT_TYPE_INTMAX_T
-		    case sizeof(intmax_t):
-		    	arg_intmax_t = va_arg (args, intmax_t);
-			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
-			break;
-#endif /* UNIQUE_INT_TYPE_INTMAX_T */
 		    default:
 	    		dellist(&pflist);
 	    		free(b);
@@ -995,7 +1002,8 @@ format_cmdline (char *format, ...)
 			break;
 		    case 2:
 		    	arg_wchar_t_string = va_arg (args, wchar_t *);
-			b->data = asnprintf(NULL, &dummy, buf, arg_wchar_t_string);
+			b->data = asnprintf (NULL, &dummy, buf,
+			                     arg_wchar_t_string);
 			break;
 		    default:
 			conversion_error = 1;
