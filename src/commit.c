@@ -580,7 +580,7 @@ check_fileproc (finfo)
 		    return (1);
 		}
 		if (status == T_MODIFIED && vers->tag &&
-		    !RCS_isbranch (finfo->file, vers->tag, finfo->rcs))
+		    !RCS_isbranch (finfo->rcs, vers->tag))
 		{
 		    if (finfo->update_dir[0] == '\0')
 			error (0, 0,
@@ -763,7 +763,7 @@ check_fileproc (finfo)
 		if (isdigit (*vers->tag))
 		    ci->rev = xstrdup (vers->tag);
 		else
-		    ci->rev = RCS_whatbranch (finfo->file, vers->tag, finfo->rcs);
+		    ci->rev = RCS_whatbranch (finfo->rcs, vers->tag);
 	    else
 		ci->rev = (char *) NULL;
 	    ci->tag = xstrdup (vers->tag);
@@ -962,7 +962,7 @@ commit_fileproc (finfo)
 
 	if (ci->tag) {
 	    locate_rcs (finfo->file, finfo->repository, rcs);
-	    ci->rev = RCS_whatbranch (finfo->file, ci->tag, finfo->rcs);
+	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
 	    err = Checkin ('A', finfo->file, finfo->update_dir, finfo->repository, rcs, ci->rev,
 			   ci->tag, ci->options, message, finfo->entries);
 	    if (err != 0)
@@ -1274,7 +1274,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     locate_rcs (file, repository, rcs);
 
     branch = 0;
-    if (tag && !(branch = RCS_isbranch (file, tag, rcsnode)))
+    if (tag && !(branch = RCS_isbranch (rcsnode, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
 	if ((retcode = RCS_deltag (rcs, tag, 1)) != 0) 
@@ -1300,7 +1300,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
     {
 	char *branchname;
 
-	rev = RCS_whatbranch (file, tag, rcsnode);
+	rev = RCS_whatbranch (rcsnode, tag);
 	if (rev == NULL)
 	{
 	    error (0, 0, "cannot find branch \"%s\".", tag);
@@ -1663,7 +1663,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    return (1);
 	}
 	
-	if (!RCS_nodeisbranch (tag, rcsfile)) {
+	if (!RCS_nodeisbranch (rcsfile, tag)) {
 	    /* branch does not exist.  Stub it.  */
 	    char *head;
 	    char *magicrev;

@@ -16,7 +16,6 @@ static int tag_list_proc PROTO((Node * p, void *closure));
 
 static int local = 0;
 static int long_format = 0;
-static char *xfile;
 static RCSNode *xrcsnode;
 
 static const char *const status_usage[] =
@@ -195,8 +194,8 @@ status_fileproc (finfo)
 		{
 		    char *branch = NULL;
 	
-		    if (RCS_isbranch (finfo->file, edata->tag, finfo->rcs))
-			branch = RCS_whatbranch(finfo->file, edata->tag, finfo->rcs);
+		    if (RCS_isbranch (finfo->rcs, edata->tag))
+			branch = RCS_whatbranch(finfo->rcs, edata->tag);
 
 		    (void) printf ("   Sticky Tag:\t\t%s (%s: %s)\n",
 				   edata->tag,
@@ -228,7 +227,6 @@ status_fileproc (finfo)
 	    (void) printf ("\n   Existing Tags:\n");
 	    if (symbols)
 	    {
-		xfile = finfo->file;
 		xrcsnode = finfo->rcs;
 		(void) walklist (symbols, tag_list_proc, NULL);
 	    }
@@ -267,8 +265,8 @@ tag_list_proc (p, closure)
 {
     char *branch = NULL;
 
-    if (RCS_isbranch (xfile, p->key, xrcsnode))
-	branch = RCS_whatbranch(xfile, p->key, xrcsnode) ;
+    if (RCS_isbranch (xrcsnode, p->key))
+	branch = RCS_whatbranch(xrcsnode, p->key) ;
 
     (void) printf ("\t%-25.25s\t(%s: %s)\n", p->key,
 		   branch ? "branch" : "revision",

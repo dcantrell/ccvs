@@ -500,7 +500,7 @@ tag_fileproc (finfo)
     oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
     if (oversion != NULL)
     {
-       int isbranch = RCS_isbranch (finfo->file, symtag, finfo->rcs);
+       int isbranch = RCS_isbranch (finfo->rcs, symtag);
 
        /*
 	* if versions the same and neither old or new are branches don't have 
