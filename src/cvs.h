@@ -427,10 +427,6 @@ extern int RCS_exec_rcsdiff PROTO ((RCSNode *rcsfile,
 extern int diff_exec PROTO ((char *file1, char *file2,
 			     char *label1, char *label2,
 			     char *options, char *out));
-extern int diff_execv PROTO ((char *file1, char *file2,
-			      char *label1, char *label2,
-			      char *options, char *out));
-
 
 
 #include "error.h"
