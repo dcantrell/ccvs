@@ -558,7 +558,7 @@ if test x"$*" = x; then
 	# Basic/miscellaneous functionality
 	tests="basica basicb basicc basic1 deep basic2 commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff death death2 branches branches2"
+	tests="${tests} rdiff death death2 dirs branches branches2"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} join join2 join3 join-readonly-conflict"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -2929,6 +2929,59 @@ diff -N file1
 ${PLUS} first revision"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	dirs)
+	  # Tests related to removing and adding directories.
+	  mkdir imp-dir; cd imp-dir
+	  echo file1 >file1
+	  mkdir sdir
+	  echo sfile >sdir/sfile
+	  dotest_sort dirs-1 \
+"${testcvs} import -m import-it dir1 vend rel" "
+
+N dir1/file1
+N dir1/sdir/sfile
+No conflicts created by this import
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/dir1/sdir"
+	  cd ..
+
+	  mkdir 1; cd 1
+	  dotest dirs-2 "${testcvs} -Q co dir1" ""
+
+	  # Various CVS administrators are in the habit of removing
+	  # the repository directory for things they don't want any
+	  # more.  I've even been known to do it myself (on rare
+	  # occasions).  Not the usual recommended practice, but we want
+	  # to try to come up with some kind of reasonable/documented/sensible
+	  # behavior.
+	  rm -rf ${CVSROOT_DIRNAME}/dir1/sdir
+
+	  dotest_fail dirs-3 "${testcvs} update" \
+"${PROG} [a-z]*: Updating dir1
+${PROG} [a-z]*: Updating dir1/sdir
+${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory"
+
+	  # Hmm, a successful exit status seems a bit odd.  But it
+	  # seems to be current behavior for whatever that's worth.
+	  dotest dirs-4 "${testcvs} release -d dir1/sdir" \
+"${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1/sdir: No such file or directory
+${PROG} release: unable to release .dir1/sdir."
+
+	  # OK, if "cvs release" won't help, we'll try it the other way...
+	  rm -r dir1/sdir
+
+	  dotest dirs-5 "cat dir1/CVS/Entries" \
+"/file1/1.1.1.1/[a-zA-Z0-9 :]*//
+D/sdir////"
+	  dotest dirs-6 "${testcvs} update" "${PROG} [a-z]*: Updating dir1"
+
+	  cd ..
+
+	  rm -r imp-dir 1
+
+	  # clean up our repositories
+	  rm -rf ${CVSROOT_DIRNAME}/dir1
 	  ;;
 
 	branches)
