@@ -17,7 +17,7 @@ static const char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
 USE(rcsid);
 #endif
 
-char *version_string = "\nConcurrent Versions System (CVS) 1.5.91";
+char *version_string = "\nConcurrent Versions System (CVS) 1.5.92";
 
 #ifdef CLIENT_SUPPORT
 #ifdef SERVER_SUPPORT

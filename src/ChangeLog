@@ -1,3 +1,7 @@
+Sun Oct  1 14:51:59 1995  Harlan Stenn  <Harlan.Stenn@pfcs.com>
+
+        * main.c: don't #include <pwd.h>; cvs.h does that already.
+
 Fri Sep 29 15:21:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * version.c: upped to 1.5.91 for another pre-1.6 release.
