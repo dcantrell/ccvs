@@ -1,5 +1,9 @@
 2004-02-19  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (crerepos): Correct comment.
+
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (crerepos): Don't create directories named `tmp' in
 	$TESTDIR to avoid conflicts with the default value of $TMPDIR.
 
