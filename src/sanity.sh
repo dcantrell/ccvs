@@ -7350,11 +7350,21 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 
 	  # Currently the way to import an RCS file is to copy it
 	  # directly into the repository.
+	  #
 	  # This file was written by RCS 5.7, and then the dates were
 	  # hacked so that we test year 2000 stuff.  Note also that
 	  # "author" names are just strings, as far as importing
 	  # RCS files is concerned--they need not correspond to user
 	  # IDs on any particular system.
+	  #
+	  # I also tried writing a file with the RCS supplied with
+	  # HPUX A.09.05.  According to "man rcsintro" this is
+	  # "Revision Number: 3.0; Release Date: 83/05/11".  There
+	  # were a few minor differences like whitespace but at least
+	  # in simple cases like this everything else seemed the same
+	  # as the file written by RCS 5.7 (so I won't try to make it
+	  # a separate test case).
+
 	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
 head	1.3;
 access;
@@ -7506,6 +7516,113 @@ add file1
 	  else
 	    fail rcs-4
 	  fi
+
+	  # OK, here is another one.  This one was written by hand based on
+	  # doc/RCSFILES and friends.
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file2,v
+head			 	1.5                 ;
+     branch        1.2.6;
+access ;
+symbols;
+locks;
+testofanewphrase @without newphrase we'd have trouble extending @@ all@ ;
+1.5 date 71.01.01.01.00.00; author joe; state bogus; branches; next 1.4;
+1.4 date 71.01.01.00.00.05; author joe; state bogus; branches; next 1.3;
+1.3 date 70.12.31.15.00.05; author joe; state bogus; branches; next 1.2;
+1.2 date 70.12.31.12.15.05; author me; state bogus; branches 1.2.6.1; next 1.1;
+1.1 date 70.12.31.11.00.05; author joe; state bogus; branches; next; newph;
+1.2.6.1 date 71.01.01.08.00.05; author joe; state Exp; branches; next;
+desc @@
+1.5 log @@ newphrase1; newphrase2 42; text @head revision@
+1.4 log @@ text @d1 1
+a1 1
+new year revision@
+1.3 log @@ text @d1 1
+a1 1
+old year revision@
+1.2 log @@ text @d1 1
+a1 1
+mid revision@ 1.1
+
+log           @@ text @d1 1
+a1 1
+start revision@
+1.2.6.1 log @@ text @d1 1
+a1 1
+branch revision@
+EOF
+	  # First test the default branch.
+	  dotest rcs-5 "${testcvs} -q update file2" "U file2"
+	  dotest rcs-6 "cat file2" "branch revision"
+
+	  # Now get rid of the default branch, it will get in the way.
+	  #
+	  # Note that the message about "warning: Unknown phrases" is
+	  # braindamage of the highest order.  Well, maybe not the
+	  # highest order, but features for future expansion don't
+	  # enable future expansion if using them will clutter the
+	  # users' screens and freak them out, now do they?  Anyway,
+	  # when we implement "cvs admin" within CVS we'll be able to
+	  # handle newphrases silently.
+
+	  dotest rcs-7 "${testcvs} admin -b file2" \
+"rcs: ${TESTDIR}/cvsroot/first-dir/file2,v: warning: Unknown phrases like .testofanewphrase ...;. are present.
+RCS file: /home/kingdon/tmp/cvs-sanity/cvsroot/first-dir/file2,v
+done"
+	  # But we do want to make sure that "cvs admin" leaves the newphrases
+	  # in the file.
+	  dotest rcs-8 \
+"grep testofanewphrase ${CVSROOT_DIRNAME}/first-dir/file2,v" \
+"testofanewphrase @without newphrase we'd have trouble extending @@ all@ ;"
+
+	  # For remote, the "update -p -D" usage seems not to work.
+	  # I'm not sure what is going on.
+	  if test "x$remote" = "xno"; then
+
+	  if ${testcvs} -q update -p -D '1970-12-31 11:30 UT' file2 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-9 "cat ${TESTDIR}/rcs4.tmp" "start revision"
+	  else
+	    fail rcs-9
+	  fi
+
+	  if ${testcvs} -q update -p -D '1970-12-31 12:30 UT' file2 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-10 "cat ${TESTDIR}/rcs4.tmp" "mid revision"
+	  else
+	    fail rcs-10
+	  fi
+
+	  if ${testcvs} -q update -p -D '1971-01-01 00:30 UT' file2 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-11 "cat ${TESTDIR}/rcs4.tmp" "new year revision"
+	  else
+	    fail rcs-11
+	  fi
+
+	  # Same test as rcs-10, but with am/pm.
+	  if ${testcvs} -q update -p -D 'December 31, 1970 12:30pm UT' file2 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-12 "cat ${TESTDIR}/rcs4.tmp" "mid revision"
+	  else
+	    fail rcs-12
+	  fi
+
+	  # Same test as rcs-11, but with am/pm.
+	  if ${testcvs} -q update -p -D 'January 1, 1971 12:30am UT' file2 \
+	      >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-13 "cat ${TESTDIR}/rcs4.tmp" "new year revision"
+	  else
+	    fail rcs-13
+	  fi
+
+	  fi # end of tests skipped for remote
+
 	  cd ..
 
 	  rm -r first-dir ${TESTDIR}/rcs4.tmp
@@ -8446,6 +8563,7 @@ ${PLUS} modify on branch after brtag"
 	  # For -l and -u, see "reserved" and "keyword" tests.
 	  # "binfiles" test has a test of "cvs admin -k".
 	  # "log2" test has tests of -t and -q options to cvs admin.
+	  # "rcs" tests -b option also.
 	  mkdir 1; cd 1
 	  dotest admin-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
