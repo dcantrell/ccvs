@@ -1012,6 +1012,7 @@ user-defined modules.
 * Multiple repositories::       Multiple repositories
 * Creating a repository::       Creating a repository
 * Remote repositories::         Accessing repositories on remote machines
+* Read-only access::            Granting read-only access to the repository
 @end menu
 
 @node Specifying a repository
@@ -1683,6 +1684,43 @@ indicates corresponding valid system usernames).  In
 any case, @sc{cvs} will have no privileges which the
 (valid) user would not have.
 
+@cindex user aliases
+        It is possible to ``map'' cvs-specific
+usernames onto system usernames (i.e., onto system
+login names) in the @file{$CVSROOT/CVSROOT/passwd} file
+by appending a colon and the system username after the
+password.  For example:
+
+@example
+cvs:ULtgRLXo7NRxs:kfogel
+generic:1sOp854gDF3DY:spwang
+anyone:1sOp854gDF3DY:spwang
+@end example
+
+        Thus, someone remotely accessing the repository
+on @file{chainsaw.brickyard.com} with the following
+command:
+
+@example
+cvs -d :pserver:cvs@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
+@end example
+
+        would end up running the server under the
+system identity kfogel, assuming successful
+authentication.  However, the remote user would not
+necessarily need to know kfogel's system password, as
+the @file{$CVSROOT/CVSROOT/passwd} file might contain a
+different password, used only for @sc{cvs}.  And as the
+example above indicates, it is permissible to map
+multiple cvs usernames onto a single system username.
+
+        This feature is designed to allow people
+repository access without full system access (in
+particular, see @xref{Read-only access}); however, also
+@xref{Password authentication security}.  Any sort of
+repository access very likely implies a degree of
+general system access as well.
+
 Right now, the only way to put a password in the
 @sc{cvs} @file{passwd} file is to paste it there from
 somewhere else.  Someday, there may be a @code{cvs
@@ -1833,6 +1871,84 @@ cvs -d :kserver:chainsaw.brickyard.com:/user/local/cvsroot checkout foo
 
 Previous versions of @sc{cvs} would fall back to a
 connection via rsh; this version will not do so.
+
+@c ---------------------------------------------------------------------
+@node Read-only access
+@section Read-only repository access
+@cindex read-only repository access
+@cindex readers (admin file)
+@cindex writers (admin file)
+
+        It is possible to grant read-only repository
+access to people using the password-authenticated
+server (@pxref{Password authenticated}).  (The
+other access methods do not have explicit support for
+read-only users because those methods all assume login
+access to the repository machine anyway, and therefore
+the user can do whatever local file permissions allow
+her to do.)  
+
+        A user who has read-only access can do only
+those @sc{cvs} operations which do not modify the
+repository.  It may be desirable to use this feature in
+conjunction with user-aliasing (@pxref{Password
+authentication server}).  However, note that read-only
+access does not repeal the existing security
+considerations in @xref{Password authentication
+security}, nor the usual requirement that read-only
+users be able to create locks and write the history
+file.
+
+        There are two ways to specify read-only access
+for a user: by inclusion, and by exclusion.
+
+        "Inclusion" means listing that user
+specifically in the @file{$CVSROOT/CVSROOT/readers}
+file, which is simply a newline-separated list of
+users.  Here is a sample @file{readers} file:
+
+@example
+melissa
+splotnik
+jrandom
+@end example
+
+        (Don't forget the newline after the last user.)
+
+        "Exclusion" means explicitly listing everyone
+who has @emph{write} access---if the
+@file{$CVSROOT/CVSROOT/writers} file exists, then only
+those users listed in it have write access, and
+everyone else has read-only access (of course, even the
+read-only users still need to be listed in the
+@file{$CVSROOT/CVSROOT/passwd} file).  The
+@file{writers} file has the same format as the
+@file{readers} file.
+
+        Note: if your @file{$CVSROOT/CVSROOT/passwd}
+file maps cvs users onto system users (@pxref{Password
+authentication server}), make sure you deny or grant
+read-only access using the @emph{cvs} usernames, not
+the system usernames.  That is, the @file{readers} and
+@file{writers} files contain cvs usernames, which may
+or may not be the same as system usernames.
+
+        Here is a complete description of the server's
+behavior in deciding whether to grant read-only or
+read-write access:
+
+        If @file{readers} exists, and this user is
+listed in it, then she gets read-only access.  Or if
+@file{writers} exists, and this user is NOT listed in
+it, then she also gets read-only access (this is true
+even if @file{readers} exists but she is not listed
+there).  Otherwise, she gets full read-write access.
+
+        Of course there is a conflict if the user is
+listed in both files.  This is resolved in the more
+conservative way, it being better to protect the
+repository too much than too little: such a user gets
+read-only access.
 
 @c ---------------------------------------------------------------------
 @node Starting a new project

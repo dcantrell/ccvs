@@ -1,3 +1,10 @@
+Thu Jan  2 09:34:51 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
+
+        * cvs.texinfo (Read-only access): new node.
+        (Repository): new menu item for above new node.
+        (Password authentication server): document the user-aliasing
+        feature.  Why was this undocumented before?
+
 Wed Jan  1 18:12:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Conflicts example): Use @asis in example to prevent
