@@ -597,7 +597,7 @@ if test x"$*" = x; then
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
-	tests="${tests} rm_CVS/Root reposmv pserver server client"
+	tests="${tests} rmroot reposmv pserver server client"
 else
 	tests="$*"
 fi
@@ -18675,7 +18675,7 @@ done"
 	  unset CVSROOT2
 	  ;;
 
-	rm_CVS/Root)
+	rmroot)
 	  # When the Entries/Root file is removed from an existing
 	  # workspace, CVS should assume $CVSROOT instead
 	  #
@@ -18686,17 +18686,17 @@ done"
 	  # client/server mode
 
 	  mkdir 1; cd 1
-	  dotest rm_CVS/root-setup-1 "${testcvs} -q co -l ." ''
+	  dotest rmroot-setup-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
-	  dotest rm_CVS/root-setup-2 "${testcvs} add first-dir" \
+	  dotest rmroot-setup-2 "${testcvs} add first-dir" \
 "Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
           cd first-dir
 	  touch file1 file2
-	  dotest rm_CVS/Root-setup-3 "${testcvs} add file1 file2" \
+	  dotest rmroot-setup-3 "${testcvs} add file1 file2" \
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: scheduling file .file2. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
-	  dotest rm_CVS/Root-setup-4 "${testcvs} -q commit -minit" \
+	  dotest rmroot-setup-4 "${testcvs} -q commit -minit" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
 Checking in file1;
@@ -18709,12 +18709,12 @@ Checking in file2;
 ${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
 initial revision: 1\.1
 done"
-	rm CVS/Root
-	dotest rm_CVS/Root-1 "${testcvs} -q update" ''
+	  rm CVS/Root
+	  dotest rmroot-1 "${testcvs} -q update" ''
 
-	cd ../..
-	rm -rf 1
-	;;
+	  cd ../..
+	  rm -rf 1
+	  ;;
 
 	reposmv)
 	  # More tests of repositories and specifying them.

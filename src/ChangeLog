@@ -1,5 +1,10 @@
 1999-03-07  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (Index): Rename new test from rm_CVS/Root to rmroot
+	(we don't have a formal rule about funky punctuation in test names
+	but both underscore and a slash is too funky for me :-)).
+	Reindent a few tests which were off.
+
 	* root.c: Remove the sentence which had the improper English;
 	there isn't really a need for that sentence and it isn't
 	particularly accurate any more.
