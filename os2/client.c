@@ -661,10 +661,7 @@ call_in_directory (pathname, func, data)
                      */
 		    if (errno != EACCESS)
                       {
-                        /* Dang it, we're going to print out the right
-                           error message whether they want us to or
-                           not. */
-			error (1, EEXIST, "cannot make directory %s", dir);
+			error (1, errno, "cannot make directory %s", dir);
                       }
 		    /* It already existed, fine.  Just keep going.  */
 		}
