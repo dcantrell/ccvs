@@ -557,6 +557,8 @@ get_linkinfo_proc( void *callerdat, struct file_info *finfo )
 }
 #endif
 
+
+
 /*
  * This is the callback proc for update.  It is called for each file in each
  * directory by the recursion code.  The current directory is the local
@@ -685,8 +687,8 @@ update_fileproc (void *callerdat, struct file_info *finfo)
                 {
                     if (vers->ts_conflict)
                     {
-			if ( file_has_conflict ( finfo, vers->ts_conflict )
-			     || file_has_markers ( finfo ) )
+			if (file_has_conflict (finfo, vers->ts_conflict)
+			    || file_has_markers (finfo))
                         {
                             write_letter (finfo, 'C');
                             retval = 1;
@@ -701,10 +703,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
                         }
                     }
                     if (!retval)
-                    {
                         write_letter (finfo, 'M');
-                        retval = 0;
-                    }
                 }
 		break;
 	    case T_PATCH:		/* needs patch */
@@ -774,7 +773,7 @@ update_fileproc (void *callerdat, struct file_info *finfo)
     }
 
     freevers_ts (&vers);
-    return (retval);
+    return retval;
 }
 
 
@@ -1881,6 +1880,8 @@ write_letter (struct file_info *finfo, int letter)
     return;
 }
 
+
+
 /*
  * Do all the magic associated with a file which needs to be merged
  */
@@ -1952,8 +1953,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	goto out;
     }
 
-    status = RCS_merge(finfo->rcs, vers->srcfile->path, finfo->file,
-		       vers->options, vers->vn_user, vers->vn_rcs);
+    status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
+		        vers->options, vers->vn_user, vers->vn_rcs);
     if (status != 0 && status != 1)
     {
 	error (0, status == -1 ? errno : 0,
@@ -2047,6 +2048,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     free (backup);
     return retval;
 }
+
+
 
 /*
  * Do all the magic associated with a file which needs to be joined
@@ -2621,6 +2624,8 @@ out:
     free (rev2);
     free (backup);
 }
+
+
 
 /*
  * Report whether revisions REV1 and REV2 of FINFO agree on:
