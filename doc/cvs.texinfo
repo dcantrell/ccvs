@@ -2953,12 +2953,6 @@ went into a particular release, one uses a @dfn{tag},
 which is a symbolic revision which can be assigned to a
 numeric revision in each file.
 
-Another useful feature, especially when maintaining
-several releases of a software product at once, is the
-ability to make branches on the revision tree.
-@c FIXME: probably want another sentence or two, very
-@c briefly motivating branches.
-
 @menu
 * Revision numbers::            The meaning of a revision number
 * Versions revisions releases::  Terminology used in this manual
@@ -2993,71 +2987,12 @@ a few revisions, with newer revisions to the right.
        +-----+    +-----+    +-----+    +-----+    +-----+
 @end example
 
-@c Probably should move the following down a few
-@c sections, until after "branch motivation".
-@sc{cvs} is not limited to linear development.  The
-@dfn{revision tree} can be split into @dfn{branches},
-where each branch is a self-maintained line of
-development.  Changes made on one branch can easily be
-moved back to the main trunk.  
-
-Each branch has a @dfn{branch number}, consisting of an
-odd number of period-separated decimal integers.  The
-branch number is created by appending an integer to the
-revision number where the corresponding branch forked
-off.  Having branch numbers allows more than one branch
-to be forked off from a certain revision.
-
-@need 3500
-All revisions on a branch have revision numbers formed
-by appending an ordinal number to the branch number.
-The following figure illustrates branching with an
-example.
-
-@example
-@group
-                                      +-------------+
-           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
-                                    / +-------------+
-                                   /
-                                  /
-                 +---------+    +---------+    +---------+
-Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
-               / +---------+    +---------+    +---------+
-              /
-             /
-+-----+    +-----+    +-----+    +-----+    +-----+
-! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !  <- The main trunk
-+-----+    +-----+    +-----+    +-----+    +-----+
-                !
-                !
-                !   +---------+    +---------+    +---------+
-Branch 1.2.4 -> +---! 1.2.4.1 !----! 1.2.4.2 !----! 1.2.4.3 !
-                    +---------+    +---------+    +---------+
-
-@end group
-@end example
-
-@c --   However, at least for me the figure is not enough.  I suggest more
-@c --   text to accompany it.  "A picture is worth a thousand words", so you
-@c --   have to make sure the reader notices the couple of hundred words
-@c --   *you* had in mind more than the others!
-
-@c --   Why an even number of segments?  This section implies that this is
-@c --   how the main trunk is distinguished from branch roots, but you never
-@c --   explicitly say that this is the purpose of the [by itself rather
-@c --   surprising] restriction to an even number of segments.
-
-The exact details of how the branch number is
-constructed is not something you normally need to be
-concerned about, but here is how it works: When
-@sc{cvs} creates a branch number it picks the first
-unused even integer, starting with 2.  So when you want
-to create a branch from revision 6.4 it will be
-numbered 6.4.2.  All branch numbers ending in a zero
-(such as 6.4.0) are used internally by @sc{cvs}
-(@pxref{Magic branch numbers}).  The branch 1.1.1 has a
-special meaning.  @xref{Tracking sources}.
+It is also possible to end up with numbers containing
+more than one period, for example @samp{1.3.2.2}.  Such
+revisions represent revisions on branches
+(@pxref{Branching and merging}); such revision numbers
+are explained in detail in @ref{Branches and
+revisions}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Versions revisions releases
@@ -3322,8 +3257,15 @@ like this:
 @cindex Changes, copying between branches
 @cindex Modifications, copying between branches
 
-You can include the changes made between any two
-revisions into your working copy, by @dfn{merging}.
+CVS allows you to isolate changes onto a separate
+line of development, known as a @dfn{branch}.  When you
+change files on a branch, those changes do not appear
+on the main trunk or other branches.
+
+Later you can move changes from one branch to another
+branch (or the main trunk) by @dfn{merging}.  Merging
+involves first running @code{cvs update -j}, to merge
+the changes into the working directory.
 You can then commit that revision, and thus effectively
 copy the changes onto another branch.
 
@@ -3331,6 +3273,7 @@ copy the changes onto another branch.
 * Branches motivation::         What branches are good for
 * Creating a branch::           Creating a branch
 * Sticky tags::                 Sticky tags
+* Branches and revisions::      Branches are reflected in revision numbers
 * Magic branch numbers::        Magic branch numbers
 * Merging a branch::            Merging an entire branch
 * Merging more than once::      Merging from a branch several times
@@ -3345,6 +3288,14 @@ copy the changes onto another branch.
 @cindex What branches are good for
 @cindex Motivation for branches
 
+@c FIXME: this node mentions one way to use branches,
+@c but it is by no means the only way.  For example,
+@c the technique of committing a new feature on a branch,
+@c until it is ready for the main trunk.  The whole
+@c thing is generally speaking more akin to the
+@c "Revision management" node although it isn't clear to
+@c me whether policy matters should be centralized or
+@c distributed throughout the relevant sections.
 Suppose that release 1.0 of tc has been made.  You are continuing to
 develop tc, planning to create release 1.1 in a couple of months.  After a
 while your customers start to complain about a fatal bug.  You check
@@ -3358,7 +3309,7 @@ The thing to do in a situation like this is to create a @dfn{branch} on
 the revision trees for all the files that make up
 release 1.0 of tc.  You can then make
 modifications to the branch without disturbing the main trunk.  When the
-modifications are finished you can select to either incorporate them on
+modifications are finished you can elect to either incorporate them on
 the main trunk, or leave them on the branch.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -3438,7 +3389,7 @@ number is created by adding a digit at the tail of the revision number
 it is based on.  (If @samp{release-1-0} corresponds to revision 1.4, the
 branch's revision number will be 1.4.2.  For obscure reasons @sc{cvs} always
 gives branches even numbers, starting at 2.
-@xref{Revision numbers}.).
+@xref{Branches and revisions}.).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Sticky tags
@@ -3552,6 +3503,86 @@ new revision: 1.3; previous revision: 1.2
 done
 $ 
 @end example
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Branches and revisions
+@section Branches and revisions
+@cindex Branch number
+@cindex Number, branch
+@cindex Revision numbers (branches)
+
+Ordinarily, a file's revision history is a linear
+series of increments (@pxref{Revision numbers}):
+
+@example
+       +-----+    +-----+    +-----+    +-----+    +-----+
+       ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !
+       +-----+    +-----+    +-----+    +-----+    +-----+
+@end example
+
+However, @sc{cvs} is not limited to linear development.  The
+@dfn{revision tree} can be split into @dfn{branches},
+where each branch is a self-maintained line of
+development.  Changes made on one branch can easily be
+moved back to the main trunk.  
+
+Each branch has a @dfn{branch number}, consisting of an
+odd number of period-separated decimal integers.  The
+branch number is created by appending an integer to the
+revision number where the corresponding branch forked
+off.  Having branch numbers allows more than one branch
+to be forked off from a certain revision.
+
+@need 3500
+All revisions on a branch have revision numbers formed
+by appending an ordinal number to the branch number.
+The following figure illustrates branching with an
+example.
+
+@example
+@group
+                                      +-------------+
+           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
+                                    / +-------------+
+                                   /
+                                  /
+                 +---------+    +---------+    +---------+
+Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
+               / +---------+    +---------+    +---------+
+              /
+             /
++-----+    +-----+    +-----+    +-----+    +-----+
+! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !  <- The main trunk
++-----+    +-----+    +-----+    +-----+    +-----+
+                !
+                !
+                !   +---------+    +---------+    +---------+
+Branch 1.2.4 -> +---! 1.2.4.1 !----! 1.2.4.2 !----! 1.2.4.3 !
+                    +---------+    +---------+    +---------+
+
+@end group
+@end example
+
+@c --   However, at least for me the figure is not enough.  I suggest more
+@c --   text to accompany it.  "A picture is worth a thousand words", so you
+@c --   have to make sure the reader notices the couple of hundred words
+@c --   *you* had in mind more than the others!
+
+@c --   Why an even number of segments?  This section implies that this is
+@c --   how the main trunk is distinguished from branch roots, but you never
+@c --   explicitly say that this is the purpose of the [by itself rather
+@c --   surprising] restriction to an even number of segments.
+
+The exact details of how the branch number is
+constructed is not something you normally need to be
+concerned about, but here is how it works: When
+@sc{cvs} creates a branch number it picks the first
+unused even integer, starting with 2.  So when you want
+to create a branch from revision 6.4 it will be
+numbered 6.4.2.  All branch numbers ending in a zero
+(such as 6.4.0) are used internally by @sc{cvs}
+(@pxref{Magic branch numbers}).  The branch 1.1.1 has a
+special meaning.  @xref{Tracking sources}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Magic branch numbers
@@ -4719,8 +4750,8 @@ ability to merge two revisions.  For @sc{cvs} this
 happens in two contexts.  The first is when users make
 changes in separate working directories
 (@pxref{Multiple developers}).  The second is when one
-merges from one branch to another with the @samp{update
--j} command (@pxref{Merging a branch}).
+merges explicitly with the @samp{update -j} command
+(@pxref{Branching and merging}).
 
 In the case of text
 files, @sc{cvs} can merge changes made independently,

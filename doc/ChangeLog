@@ -1,3 +1,23 @@
+Mon Dec 22 11:46:05 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+			  and Jim Kingdon
+
+	Cleanups related to recent separation of revisions from
+	branching/merging:
+	* cvs.texinfo (Revisions): Take paragraph introducing branches,
+	rewrite it and move it to "Branching and merging".
+	(Branching and merging): Also rewrite merging intro.
+	(Revision numbers): Don't go into detail about branch revision
+	numbers here, just mention that they happen and refer to new
+	node "Branches and revisions".
+	(Branches and revisions): New node under "Branching and merging",
+	inherits text from "Revision numbers".
+	(Creating a branch): Refer to "Branches and revisions" now, not
+	"Revision numbers".
+	(Binary why): Rewrite sentence which refers to merging, so that
+	it isn't specific to branch merging.
+	(Branches motivation): Fix typo (select -> elect).  Add comment
+	about what this node is accomplishing, in general.
+
 Sun Dec 21 20:57:24 1997  Karl Fogel  <kfogel@floss.red-bean.com>
 			  and Jim Kingdon
 
