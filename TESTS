@@ -27,13 +27,22 @@ provide multiple versions of tools (typically an ancient, traditional
 version and a new, standards-conforming version), so you may already
 have a usable version even if the default version isn't.  If you don't
 have a suitable tool, you can probably get one from the GNU Project (see
-http://www.gnu.org).  expr and id are both part of the GNU shellutils
-package, tr is part of the GNU textutils package, and awk is part of the
-GNU gawk package.  The test script tries to verify that the tools exist
-and are usable; if not, it tries to find the GNU versions and use them
-instead.  If it can't find the GNU versions either, it will print an
-error message and, depending on the severity of the deficiency, it may
-exit.
+http://www.gnu.org).  At this writting, expr and id are both part of the
+GNU shellutils package, tr is part of the GNU textutils package, and awk
+is part of the GNU gawk package.  The test script tries to verify that
+the tools exist and are usable; if not, it tries to find the GNU
+versions and use them instead.  If it can't find the GNU versions
+either, it will print an error message and, depending on the severity of
+the deficiency, it may exit.  There are environment variables you can
+set to use a particular version of a tool -- see the test script
+(src/sanity.sh) for details.
+
+Some of the tests use fairly long command lines -- this usually isn't a
+problem, but if you have a very short command line length limit (or a
+lot of environment variables), you may run into trouble.  Also, some of
+the tests expect your local timezone to be an integral number of hours
+from UTC -- if you usually use a fractional timezone, use a different
+(integral) timezone when running the tests to avoid spurious failures.
 
 If there is some unexpected output, that is a failure which can be
 somewhat hard to track down.  Finding out which test is producing the

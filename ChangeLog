@@ -1,5 +1,8 @@
 2001-06-27  Larry Jones  <larry.jones@sdr.com>
 
+	* TESTS: Note environment variables to select certain tools,
+	potential problems with big environments.
+
 	* TODO: Add note about non-canonical paths.  Reformat long lines.
 
 	* NEWS (Changes since 1.11): Note new loginfo format string expansion.
