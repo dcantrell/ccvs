@@ -1,5 +1,10 @@
 2000-02-10  Larry Jones  <larry.jones@sdrc.com>
 
+	* parseinfo.c (Parse_Info): Treat matching lines with bad expansions
+	as errors rather than just ignoring.
+
+2000-02-10  Larry Jones  <larry.jones@sdrc.com>
+
 	* edit.c (edit): Check for invalid characters in hostname and CurDir.
 	(Reported by "Andrew S. Townley" <atownley@informix.com>.)
 	* sanity.sh (devcom2): New tests for above.
