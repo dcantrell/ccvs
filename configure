@@ -2173,14 +2173,12 @@ if test $ccvs_cv_sys_working_fnmatch = no; then
 fi
 echo "$ac_t""$ccvs_cv_sys_working_fnmatch" 1>&6
 
+KRB4=/usr/kerberos
 
 # Check whether --with-krb4 or --without-krb4 was given.
 withval="$with_krb4"
 if test -n "$withval"; then
   KRB4=$withval
-else
-  KRB4=/usr/kerberos
-
 fi
 echo "default place for krb4 is $KRB4"
 
@@ -2193,7 +2191,7 @@ else
     { echo "configure: error: can not run test program while cross compiling" 1>&2; exit 1; }
 else
 cat > conftest.$ac_ext <<EOF
-#line 2197 "configure"
+#line 2195 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 main()
@@ -2227,7 +2225,7 @@ else
     { echo "configure: error: can not run test program while cross compiling" 1>&2; exit 1; }
 else
 cat > conftest.$ac_ext <<EOF
-#line 2231 "configure"
+#line 2229 "configure"
 #include "confdefs.h"
 #include <stdio.h>
 main()
@@ -2265,7 +2263,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 2269 "configure"
+#line 2267 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -2283,7 +2281,7 @@ echo "$ac_t""$ac_cv_c_cross" 1>&6
 
 echo "checking for krb.h" 1>&6
 cat > conftest.$ac_ext <<EOF
-#line 2287 "configure"
+#line 2285 "configure"
 #include "confdefs.h"
 #include <krb.h>
 int main() { return 0; }
@@ -2301,7 +2299,7 @@ else
      CFLAGS="$CFLAGS -I$KRB4/include"
      echo "checking for krb.h in $KRB4/include" 1>&6
 cat > conftest.$ac_ext <<EOF
-#line 2305 "configure"
+#line 2303 "configure"
 #include "confdefs.h"
 #include <krb.h>
 int main() { return 0; }
@@ -2320,6 +2318,47 @@ rm -f conftest*
 fi
 rm -f conftest*
 
+if test -z "$krb_h"; then
+  echo "checking for krb.h" 1>&6
+cat > conftest.$ac_ext <<EOF
+#line 2325 "configure"
+#include "confdefs.h"
+#include <krb.h>
+int main() { return 0; }
+int t() {
+int i;
+; return 0; }
+EOF
+if eval $ac_link; then
+  rm -rf conftest*
+  krb_h=yes krb_incdir=
+else
+  rm -rf conftest*
+  if test "$cross_compiling" != yes && test -r $KRB4/include/kerberosIV/krb.h; then
+       hold_cflags=$CFLAGS
+       CFLAGS="$CFLAGS -I$KRB4/include/kerberosIV"
+       echo "checking for krb.h in $KRB4/include/kerberosIV" 1>&6
+cat > conftest.$ac_ext <<EOF
+#line 2343 "configure"
+#include "confdefs.h"
+#include <krb.h>
+int main() { return 0; }
+int t() {
+int i;
+; return 0; }
+EOF
+if eval $ac_link; then
+  rm -rf conftest*
+  krb_h=yes krb_incdir=$KRB4/include/kerberosIV
+fi
+rm -f conftest*
+
+       CFLAGS=$hold_cflags
+     fi
+fi
+rm -f conftest*
+
+fi
 if test -n "$krb_h"; then
   krb_lib=
   echo $ac_n "checking for -lkrb""... $ac_c" 1>&6
@@ -2329,7 +2368,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lkrb  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2333 "configure"
+#line 2372 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2371,7 +2410,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-ldes  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2375 "configure"
+#line 2414 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2408,7 +2447,7 @@ if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2412 "configure"
+#line 2451 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -2463,7 +2502,7 @@ if eval "test \"`echo '$''{'ac_cv_func_connect'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2467 "configure"
+#line 2506 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char connect(); below.  */
@@ -2509,7 +2548,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl_s  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2513 "configure"
+#line 2552 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2551,7 +2590,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2555 "configure"
+#line 2594 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2593,7 +2632,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2597 "configure"
+#line 2636 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2635,7 +2674,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-linet  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2639 "configure"
+#line 2678 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2676,7 +2715,7 @@ if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2680 "configure"
+#line 2719 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -2728,7 +2767,7 @@ if eval "test \"`echo '$''{'ac_cv_func_gethostname'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2732 "configure"
+#line 2771 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char gethostname(); below.  */

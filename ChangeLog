@@ -1,3 +1,8 @@
+Tue Oct 10 16:34:25 1995  Thorsten Lockert  <tholo@sigmasoft.com>
+
+	* configure.in: More crud looking for kerberos, this time for 4.4BSD.
+	* configure: Regenerated.
+
 Sun Oct  8 12:22:19 1995  Peter Wemm  <peter@haywire.DIALix.COM>
 
 	* configure.in: check for POSIX and BSD style reliable signals
