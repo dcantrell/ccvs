@@ -5801,13 +5801,13 @@ done"
 	  # try accidentally deleting branch tag, "tag -d"
 	  dotest_fail tagf-16 "${testcvs} tag -d br" \
 "${PROG} [a-z]*: Untagging \.
-${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v.\.
-${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v.\."
+${PROG} [a-z]*: Not removing branch tag .br. from .${CVSROOT_DIRNAME}/first-dir/file1,v.\.
+${PROG} [a-z]*: Not removing branch tag .br. from .${CVSROOT_DIRNAME}/first-dir/file2,v.\."
 	  # try accidentally deleting branch tag, "rtag -d"
 	  dotest_fail tagf-17 "${testcvs} rtag -d br first-dir" \
 "${PROG} [a-z]*: Untagging first-dir
-${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v.\.
-${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v.\."
+${PROG} [a-z]*: Not removing branch tag .br. from .${CVSROOT_DIRNAME}/first-dir/file1,v.\.
+${PROG} [a-z]*: Not removing branch tag .br. from .${CVSROOT_DIRNAME}/first-dir/file2,v.\."
 	  # try accidentally converting branch tag to non-branch tag "tag -F"
 	  dotest tagf-18 "${testcvs} tag -r1.1 -F br file1" \
 "${PROG} [a-z]*: file1: Not moving branch tag .br. from 1\.1\.4\.1 to 1\.1\."
@@ -5829,13 +5829,13 @@ ${PROG} [a-z]*: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.
 ${PROG} [a-z]*: first-dir/file2: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.0\.4 due to .-B. option\."
 	  # Try accidentally deleting non-branch: (tag -d -B)
 	  dotest_fail tagf-23 "${testcvs} tag -d -B regulartag file1" \
-"${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v. due to .-B. option\."
+"${PROG} [a-z]*: Not removing non-branch tag .regulartag. from .${CVSROOT_DIRNAME}/first-dir/file1,v. due to .-B. option\."
 	  # Try accidentally deleting non-branch: (rtag -d -B)
 	  dotest_fail tagf-24 \
 		"${testcvs} rtag -d -B regulartag first-dir" \
 "${PROG} [a-z]*: Untagging first-dir
-${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v. due to .-B. option\.
-${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v. due to .-B. option\."
+${PROG} [a-z]*: Not removing non-branch tag .regulartag. from .${CVSROOT_DIRNAME}/first-dir/file1,v. due to .-B. option\.
+${PROG} [a-z]*: Not removing non-branch tag .regulartag. from .${CVSROOT_DIRNAME}/first-dir/file2,v. due to .-B. option\."
 
 	  # the following tests (throught the next commit) keep moving the same
 	  # tag back and forth between 1.1.6 & 1.1.8  in file1 and between
