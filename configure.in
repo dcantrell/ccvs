@@ -1158,6 +1158,34 @@ dnl
 
 
 dnl
+dnl begin --enable-proxy
+dnl
+
+dnl
+dnl Give the confiscator control over whether the proxy server code is compiled
+dnl
+AC_ARG_ENABLE(
+  [proxy],
+  AC_HELP_STRING(
+    [--enable-proxy],
+    [Include code for running as a transparent proxy server.  Disabling this
+     may produce a slight performance gain on some systems, at the expense of
+     write proxy support. (default)]), ,
+  [enable_proxy=yes])
+
+if test no != "$enable_proxy"; then
+  AC_DEFINE(
+    [PROXY_SUPPORT], [1],
+    [Define if you want CVS to be able to serve as a transparent proxy for
+     write operations.  Disabling this may produce a slight performance gain on
+     some systems, at the expense of write proxy support.])
+fi
+dnl
+dnl end --enable-proxy
+dnl
+
+
+dnl
 dnl begin --enable-pam
 dnl
 
@@ -1254,6 +1282,42 @@ fi
 
 dnl
 dnl end --enable-case-sensitivity
+dnl
+
+
+dnl
+dnl begin --enable-file-cache-trust
+dnl
+
+dnl
+dnl Give the confiscator control over whether CVS trusts the file cache
+dnl provided by the operating system.
+dnl
+dnl FIXME?
+dnl It's possible that this could be efficiently autodetected.
+dnl
+AC_ARG_ENABLE(
+  [file-cache-trust],
+  AC_HELP_STRING(
+    [--enable-file-cache-trust],
+    [Don't include code which second-guesses the system file cache.  On some
+     systems, disabling this option may provide a performance boost, but on 
+     most modern operating systems it probably won't.  If you find a system
+     where this option improves CVS's performance, please send a note
+     describing it to the <bug-cvs@gnu.org> mailing list. (default)]), ,
+  [enable_file_cache_trust=yes])
+
+if test no != "$enable_file_cache_trust"; then
+  AC_DEFINE(
+    [TRUST_OS_FILE_CACHE], [1],
+    [Define if you want CVS to attempt to second-guess the system file cacne.
+     On some systems, disabling this option may provide a performance boost,
+     but on most modern operating systems it probably won't.  If you find a
+     system where this option improves CVS's performance, please send a note
+     describing it to the <bug-cvs@gnu.org> mailing list.])
+fi
+dnl
+dnl end --enable-file-cache-trust
 dnl
 
 

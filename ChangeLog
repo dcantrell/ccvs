@@ -1,3 +1,8 @@
+2004-08-27  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (--enable-file-cache-trust, --enable-proxy): New
+	options.
+
 2004-08-25  Derek Price  <derek@ximbiot.com>
 
 	* TODO (232): New item.
