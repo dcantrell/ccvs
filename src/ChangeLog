@@ -1,3 +1,8 @@
+Thu May  8 14:21:00 1997  Larry Jones  <larry.jones@sdrc.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (checkout_proc): Free finfo.rcs (memory leak).
+
 8 May 1997  Larry Jones  <larry.jones@sdrc.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
