@@ -1517,7 +1517,10 @@ cvs -b /usr/local/bin pserver
 
 The @samp{-b} option specifies the directory which contains
 the @sc{rcs} binaries on the server.  You could also use the
-@samp{-T} option to specify a temporary directory.
+@samp{-T} option to specify a temporary directory, the
+@samp{-D} option to specify the pathname for the diff
+program, and the @samp{-g} option to specify the
+pathname for the grep program.
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -4857,6 +4860,22 @@ Use @var{bindir} as the directory where @sc{rcs} programs are
 located.  Overrides the setting of the @code{$RCSBIN} environment
 variable and any precompiled directory.  This parameter should be
 specified as an absolute pathname.
+
+@cindex DIFFBIN, overriding
+@cindex Overriding DIFFBIN
+@item -D @var{diff}
+Use @var{diff} as the name or location of the
+@sc{diff} program.  Overrides the setting of the
+@code{$DIFFBIN} environment variable and any
+precompiled name.
+
+@cindex GREPBIN, overriding
+@cindex Overriding GREPBIN
+@item -g @var{grep}
+Use @var{grep} as the name or location of the
+@sc{grep} program.  Overrides the setting of the
+@code{$GREPBIN} environment variable and any
+precompiled name.
 
 @cindex TMPDIR, overriding
 @cindex Overriding TMPDIR
@@ -8330,6 +8349,16 @@ This is the value @sc{cvs} is using for where to find
 @sc{rcs} binaries.  @xref{Global options}, for a
 description of how to specify this.
 
+@item DIFFBIN
+This is the value @sc{cvs} is using for where to find
+the @sc{diff} program.  @xref{Global options}, for a
+description of how to specify this.
+
+@item GREPBIN
+This is the value @sc{cvs} is using for where to find
+the @sc{grep} program.  @xref{Global options}, for a
+description of how to specify this.
+
 @item CVSEDITOR
 @itemx VISUAL
 @itemx EDITOR
@@ -8427,7 +8456,19 @@ programs it uses.
 @item $RCSBIN
 This is the value @sc{cvs} is using for where to find
 @sc{rcs} binaries.  @xref{Global options}, for a
-description of how to specify this.  If not set, a
+description of how to specify this.  If it is not set, a
+compiled-in value is used, or your @code{$PATH} is searched.
+
+@item DIFFBIN
+This is the value @sc{cvs} is using for where to find
+the @sc{diff} program.  @xref{Global options}, for a
+description of how to specify this.  If it is not set, a
+compiled-in value is used, or your @code{$PATH} is searched.
+
+@item GREPBIN
+This is the value @sc{cvs} is using for where to find
+the @sc{grep} program.  @xref{Global options}, for a
+description of how to specify this.  If it is not set, a
 compiled-in value is used, or your @code{$PATH} is searched.
 
 @cindex HOME
