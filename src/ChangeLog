@@ -1,5 +1,9 @@
 Wed Jan  1 19:50:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* modules.c (do_module): Give an error message if one tries to
+	specify -a together with another option.
+	* sanity.sh (modules2): New tests modules2-a* test for above fix.
+
 	* sanity.sh (devcom): Add tests devcom-a-nonexist and
 	devcom-t-nonexist for "cvs watchers" on nonexistent argument.
 

@@ -117,6 +117,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     datum key, val;
     char *cp;
     int c, err = 0;
+    int nonalias_opt = 0;
 
 #ifdef SERVER_SUPPORT
     int restore_server_dir = 0;
@@ -431,26 +432,33 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		alias = 1;
 		break;
 	    case 'd':
+		nonalias_opt = 1;
 		if (mwhere)
 		    free (mwhere);
 		mwhere = xstrdup (optarg);
 		break;
 	    case 'i':
+		nonalias_opt = 1;
 		checkin_prog = optarg;
 		break;
 	    case 'l':
+		nonalias_opt = 1;
 		local_specified = 1;
 		break;
 	    case 'o':
+		nonalias_opt = 1;
 		checkout_prog = optarg;
 		break;
 	    case 'e':
+		nonalias_opt = 1;
 		export_prog = optarg;
 		break;
 	    case 't':
+		nonalias_opt = 1;
 		tag_prog = optarg;
 		break;
 	    case 'u':
+		nonalias_opt = 1;
 		update_prog = optarg;
 		break;
 	    case '?':
@@ -475,6 +483,17 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	free (zvalue);
 	free_cwd (&cwd);
 	return (++err);
+    }
+
+    if (alias && nonalias_opt)
+    {
+	/* The documentation has never said it is legal to specify
+	   -a along with another option.  And I believe that in the past
+	   CVS has ignored the options other than -a, more or less, in this
+	   situation.  */
+	error (0, 0, "\
+-a cannot be specified in the modules file along with other options");
+	return ++err;
     }
 
     /* if this was an alias, call ourselves recursively for each module */
