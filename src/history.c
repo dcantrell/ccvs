@@ -728,9 +728,8 @@ history_write (type, update_dir, revs, name, repository)
 	goto out;
     }
 
-    if (trace)
-	fprintf (stderr, "%s-> fopen(%s,a)\n",
-		 CLIENT_SERVER_STR, fname);
+    TRACE ( 1, "fopen(%s,a)", fname );
+
     if (noexec)
 	goto out;
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);

@@ -64,14 +64,8 @@ Parse_Info (infofile, repository, callproc, all)
     /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> Parse_Info (%s, %s, %s)\n",
-#ifdef SERVER_SUPPORT
-			server_active ? "S" : " ",
-#else
-			"",
-#endif
-			infopath, srepos, all ? "ALL" : "not ALL");
+    TRACE ( 1, "Parse_Info (%s, %s, %s)",
+	    infopath, srepos, all ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
     callback_done = line_number = 0;

@@ -34,9 +34,8 @@ copy_file (from, to)
     struct utimbuf t;
     int fdin, fdout;
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> copy(%s,%s)\n",
-			CLIENT_SERVER_STR, from, to);
+    TRACE ( 1, "copy(%s,%s)", from, to );
+
     if (noexec)
 	return;
 
@@ -376,10 +375,8 @@ xchmod (fname, writable)
 	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
     }
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> chmod(%s,%o)\n",
-			CLIENT_SERVER_STR, fname,
-			(unsigned int) mode);
+    TRACE ( 1, "chmod(%s,%o)", fname, (unsigned int) mode );
+
     if (noexec)
 	return;
 
@@ -395,9 +392,8 @@ rename_file (from, to)
     const char *from;
     const char *to;
 {
-    if (trace)
-	(void) fprintf (stderr, "%s-> rename(%s,%s)\n",
-			CLIENT_SERVER_STR, from, to);
+    TRACE ( 1, "rename(%s,%s)", from, to );
+
     if (noexec)
 	return;
 
@@ -412,9 +408,8 @@ int
 unlink_file (f)
     const char *f;
 {
-    if (trace)
-	(void) fprintf (stderr, "%s-> unlink_file(%s)\n",
-			CLIENT_SERVER_STR, f);
+    TRACE ( 1, "unlink_file(%s)", f );
+
     if (noexec)
 	return (0);
 
@@ -432,15 +427,13 @@ unlink_file_dir (f)
 {
     struct stat sb;
 
-    if (trace
 #ifdef SERVER_SUPPORT
 	/* This is called by the server parent process in contexts where
 	   it is not OK to send output (e.g. after we sent "ok" to the
 	   client).  */
-	&& !server_active
+	if ( !server_active )
 #endif
-	)
-	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
+	TRACE ( 1, "unlink_file_dir(%s)", f );
 
     if (noexec)
 	return (0);

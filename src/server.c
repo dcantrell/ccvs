@@ -2188,7 +2188,7 @@ serve_global_option (arg)
 	    logoff = 1;
 	    break;
 	case 't':
-	    trace = 1;
+	    trace++;
 	    break;
 	default:
 	    goto error_return;
@@ -3390,15 +3390,10 @@ server_register (name, version, timestamp, options, tag, date, conflict)
     if (options == NULL)
 	options = "";
 
-    if (trace)
-    {
-	(void) fprintf (stderr,
-			"%s-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
-			CLIENT_SERVER_STR,
-			name, version, timestamp ? timestamp : "", options,
-			tag ? tag : "", date ? date : "",
-			conflict ? conflict : "");
-    }
+    TRACE ( 1, "server_register(%s, %s, %s, %s, %s, %s, %s)",
+	    name, version, timestamp ? timestamp : "", options,
+	    tag ? tag : "", date ? date : "",
+	    conflict ? conflict : "" );
 
     if (entries_line != NULL)
     {
