@@ -1,3 +1,9 @@
+2004-10-14 Derek Price <derek@ximbiot.com>
+
+	* import.c (import): Verify branch specifications more thoroughly.
+	* sanity.sh (importb): Adapt to new error message.
+	(import-quirks): New test.
+
 2004-10-14  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (server_pause_check, do_cvs_command, server_cleanup):
