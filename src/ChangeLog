@@ -1,5 +1,9 @@
 2001-05-29  Derek Price  <dprice@collab.net>
 
+	* checkout.c (safe_location): Correct formatting.
+
+2001-05-29  Derek Price  <dprice@collab.net>
+
 	* root.c (parse_cvsroot): Fix a comment.
 
 2001-05-26  Larry Jones  <larry.jones@sdrc.com>

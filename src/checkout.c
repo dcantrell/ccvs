@@ -412,18 +412,17 @@ safe_location (where)
 
     if( where != NULL )
     {
-	char *temp;
 	if( chdir( where ) != -1 )
 	{
-	  where_location = xgetwd();
-	  if( where_location == NULL )
-              error( 1, errno, "could not get working directory" );
+	    where_location = xgetwd();
+	    if( where_location == NULL )
+		error( 1, errno, "could not get working directory" );
 
-          if( chdir( current ) == -1 )
-              error( 1, errno, "Could not change directory" );
+	    if( chdir( current ) == -1 )
+		error( 1, errno, "Could not change directory" );
 
-          free( current );
-          current = where_location;
+	    free( current );
+	    current = where_location;
         }
     }
 
