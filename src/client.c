@@ -3764,7 +3764,7 @@ connect_to_gserver (sock, hostinfo)
 					 0, NULL, tok_in_ptr, NULL, &tok_out,
 					 NULL, NULL);
 	if (stat_maj != GSS_S_COMPLETE && stat_maj != GSS_S_CONTINUE_NEEDED)
-	  {
+	{
 	    OM_uint32 message_context;
 
 	    message_context = 0;
@@ -3772,7 +3772,7 @@ connect_to_gserver (sock, hostinfo)
 				GSS_C_NULL_OID, &message_context, &tok_out);
 	    error (1, 0, "GSSAPI authentication failed: %s",
 		   (char *) tok_out.value);
-	  }
+	}
 
 	if (tok_out.length == 0)
 	{
