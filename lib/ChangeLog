@@ -1,5 +1,8 @@
 Fri Nov 17 20:08:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * system.h (NEED_DECOY_PERMISSIONS): moved this section to where
+        it belongs, duh.
+
         * getdate.c: if STDC_HEADERS, then just include <stdlib.h> instead
         of declaring malloc() and realloc() to be char *.
 
