@@ -1,3 +1,7 @@
+Fri Jan 12 10:36:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (dist-dir, DISTFILES): Makefile is not in srcdir.
+
 Wed Jan 10 20:43:33 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * Makefile.in (DISTFILES): added `Makefile'.
