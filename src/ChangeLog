@@ -1,3 +1,9 @@
+Sat Jul 13 19:11:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (annotate): In sending options to server, reverse sense of
+	test so that we send -f iff -f was specified, rather than iff -f was
+	not specified.
+
 Fri Jul 12 20:23:54 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* zlib.c (compress_buffer_input): add a couple of casts for
