@@ -128,7 +128,21 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
      * error will indicate problems.
      */
     if (force)
-	(void) unlink (file);
+    {
+	if (!noexec)
+	{
+	    if (unlink (file) < 0 && errno != ENOENT)
+	    {
+		if (update_dir[0] == '\0')
+		    error (0, errno, "unable to remove %s", file);
+		else
+		    error (0, errno, "unable to remove %s/%s", update_dir,
+			   file);
+	    }
+	}
+	/* else FIXME should probably act as if the file doesn't exist
+	   in doing the following checks.  */
+    }
 
     vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       file, 0, 0, entries, srcfiles);
@@ -149,8 +163,7 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
 	/*
 	 * It's a file that has been added, but not commited yet. So,
 	 * remove the ,t file for it and scratch it from the
-	 * entries file.
-	 */
+	 * entries file.  */
 	Scratch_Entry (entries, file);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	(void) unlink_file (fname);
