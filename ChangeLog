@@ -1,3 +1,12 @@
+2000-10-18  Derek Price  <derek.price@openavenue.com>
+
+	* .cvsignore: Added .fname & .version, two temporary files used in spec
+	file creation.
+	* Makefile.in (distclean-local): clean .fname & .version
+	* cvs.spec: Replaced with a new version based on RedHat 6.2's spec file
+	for cvs 1.10.7.  Edited heavily to include a krb5 subpackage for the
+	gssapi binary and fixed RedHat's info and man file placement.
+
 2000-10-17  Derek Price  <derek.price@openavenue.com>
 
 	* NEWS: added a comment about the new CVSROOT format for pserver.
