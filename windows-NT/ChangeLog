@@ -1,3 +1,8 @@
+2003-07-30  Derek Price  <derek@ximbiot.com>
+
+	* README: Correct name and links to the Cygwin project.
+	(Original patch from Max Bowsher <maxb@ukf.net>.)
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* win32.c (gethostname): Remove this function.  It has been commented
