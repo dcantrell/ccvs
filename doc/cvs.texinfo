@@ -135,6 +135,7 @@ similar.
 * Moving files::                Moving and renaming files
 * Moving directories::          Moving and renaming directories
 * Keyword substitution::        CVS can include the revision inside the file
+* Binary files::                CVS can handle binary files
 * Revision management::         Policy questions for revision management
 * Invoking CVS::                Reference manual for CVS commands
 * Administrative files::        Reference manual for the Administrative files
@@ -3261,9 +3262,7 @@ into something like @samp{$@asis{}Author: ceder $}.
 There is unfortunately no way to selectively turn off
 keyword substitution.  You can use @samp{-ko}
 (@pxref{Substitution modes}) to turn off keyword
-substitution entirely.  (If you put binaries under
-version control you are strongly encouraged to use that
-option, for obvious reasons).
+substitution entirely.
 
 In many cases you can avoid using @sc{rcs} keywords in
 the source, even though they appear in the final
@@ -3285,7 +3284,7 @@ options}).  The @samp{-k} option is available with the
 @code{add}, @code{checkout}, @code{diff} and
 @code{update} commands.
 
-Five different modes are available.  They are:
+The modes available are:
 
 @table @samp
 @item -kkv
@@ -3313,10 +3312,17 @@ file just before it was checked in.  For example, for
 the @code{Revision} keyword, generate the string
 @code{$@asis{}Revision: 1.1 $} instead of
 @code{$@asis{}Revision: 5.7 $} if that is how the
-string appeared when the file was checked in.  This can
-be useful for binary file formats that cannot tolerate
-any changes to substrings that happen to take the form
-of keyword strings.
+string appeared when the file was checked in.
+
+@item -kb
+Like @samp{-ko}, but also inhibit conversion of line
+endings between the canonical form in which they are
+stored in the repository (linefeed only), and the form
+appropriate to the operating system in use on the
+client.  For systems, like unix, which use linefeed
+only to terminate lines, this is the same as
+@samp{-ko}.  For more information on binary files, see
+@ref{Binary files}.
 
 @item -kv
 Generate only keyword values for keyword strings.  For
@@ -3329,8 +3335,9 @@ further keyword substitution cannot be performed once
 the keyword names are removed, so this option should be
 used with care.
 
-This option is always use by @code{cvs
-export}---@pxref{export}.
+One often would like to use @samp{-kv} with @code{cvs
+export}---@pxref{export}.  But be aware that doesn't
+handle an export containing binary files correctly.
 
 @end table
 
@@ -3363,6 +3370,65 @@ keyword should be inserted @emph{last} in the file, and
 not in the files header, if it is to be used at all.
 That way the long list of change messages will not
 interfere with everyday source file browsing.
+
+@c ---------------------------------------------------------------------
+@node Binary files
+@chapter Handling binary files
+@cindex Binary files
+
+There are two issues with using @sc{cvs} to store
+binary files.  The first is that @sc{cvs} by default
+convert line endings between the canonical form in
+which they are stored in the repository (linefeed
+only), and the form appropriate to the operating system
+in use on the client (for example, carriage return
+followed by line feed for Windows NT).
+
+The second is that a binary file might happen to
+contain data which looks like a keyword (@pxref{Keyword
+substitution}), so keyword expansion must be turned
+off.
+
+The @samp{-kb} option available with some @sc{cvs}
+commands insures that neither line ending conversion
+nor keyword expansion will be done.  If you are using
+an old version of @sc{rcs} without this option, and you
+are using an operating system, such as unix, which
+terminates lines with linefeeds only, you can use
+@samp{-ko} instead; if you are on another operating
+system, upgrade to a version of @sc{rcs}, such as 5.7
+or later, which supports @samp{-kb}.
+
+Here is an example of how you can create a new file
+using the @samp{-kb} flag:
+
+@example
+$ echo '$@asis{}Id$' > kotest
+$ cvs add -kb -m"A test file" kotest
+$ cvs ci -m"First checkin; contains a keyword" kotest
+@end example
+
+If a file accidentally gets added without @samp{-kb},
+one can use the @code{cvs admin} command to recover.
+For example:
+
+@example
+$ echo '$@asis{}Id$' > kotest
+$ cvs add -m"A test file" kotest
+$ cvs ci -m"First checkin; contains a keyword" kotest
+$ cvs admin -kb kotest
+$ rm kotest
+$ cvs update kotest
+@end example
+
+When you check in the file @file{kotest} the keywords
+are expanded.  (Try the above example, and do a
+@code{cat kotest} after every command).  The @code{cvs
+admin -kb} command sets the default keyword
+substitution method for this file, but it does not
+alter the working copy of the file that you have.  The
+easiest way to get the unexpanded version of
+@file{kotest} is to remove it and check it out again.
 
 @c ---------------------------------------------------------------------
 @node Revision management
@@ -3930,17 +3996,11 @@ There are only two options you can give to @samp{add}:
 @table @code
 @item -k @var{kflag}
 This option specifies the default way that this file
-will be checked out.  See rcs(1) and co(1).  The
-@var{kflag} argument (@pxref{Substitution modes}) is
-stored in the @sc{rcs} file and can be changed with
-@code{admin -k} (@pxref{admin options}).  Specifying
-@samp{-ko} is useful for checking in binaries that
-should not have the @sc{rcs} id strings expanded.
-
-@strong{Warning:} this option is reported to be broken in
-version 1.3 and 1.3-s2 of @sc{cvs}.  Use @samp{admin -k}
-after the commit instead.  @xref{admin examples}.
-@c -- broken--
+will be checked out.  The @var{kflag} argument
+(@pxref{Substitution modes}) is stored in the @sc{rcs}
+file and can be changed with @code{admin -k}
+(@pxref{admin options}).  See @ref{Binary files}, for
+information on using this option for binary files.
 
 @item -m @var{description}
 Using this option, you can give a description for the file.  This
@@ -4237,37 +4297,6 @@ changed between R_1_02 and R_1_03 the file will have
 the tags R_1_02 and R_1_03.  So not only will it be
 impossible to retrieve R_1_02; R_1_03 will also have to
 be restored from the tapes!
-
-@need 1200
-@appendixsubsubsec Handling binary files
-@cindex Binary files (inhibit keyword expansion)
-@cindex Inhibiting keyword expansion
-@cindex Keyword expansion, inhibiting
-
-If you use @sc{cvs} to store binary files, where
-keyword strings (@pxref{Keyword substitution}) might
-accidentally appear inside the file, you should use
-@code{cvs admin -ko} to make sure that they are not
-modified automatically.  Here is an example of how you
-can create a new file using the @samp{-ko} flag:
-
-@example
-$ echo '$@asis{}Id$' > kotest
-$ cvs add -m"A test file" kotest
-$ cvs ci -m"First checkin; contains a keyword" kotest
-$ cvs admin -ko kotest
-$ rm kotest
-$ cvs update kotest
-@end example
-
-When you check in the file @file{kotest} the keywords
-are expanded.  (Try the above example, and do a
-@code{cat kotest} after every command!)  The @code{cvs
-admin -ko} command sets the default keyword
-substitution method for this file, but it does not
-alter the working copy of the file that you have.  The
-easiest way to get the unexpanded version of
-@file{kotest} is to remove it and check it out again.
 
 @appendixsubsubsec Comment leaders
 @cindex Comment leader
@@ -5211,16 +5240,11 @@ reset to 1.1.1.  Warning: This behavior might change
 in the future.
 
 @item -k @var{subst}
-Indicate the RCS keyword expansion mode desired.  This setting will
-apply to all files created during the import, but not to any files that
-previously existed in the repository.  See co(1) for a complete list of
-valid @samp{-k} settings.
-
-If you are checking in sources that contain @sc{rcs} keywords, and you
-wish those keywords to remain intact, use the @samp{-ko} flag when
-importing the files.  This setting indicates that no keyword expansion
-is to be performed by @sc{rcs} when checking files out.  It is also
-useful for checking in binaries.
+Indicate the RCS keyword expansion mode desired.  This
+setting will apply to all files created during the
+import, but not to any files that previously existed in
+the repository.  See @ref{Substitution modes} for a
+list of valid @samp{-k} settings.
 
 @item -I @var{name}
 Specify file names that should be ignored during
