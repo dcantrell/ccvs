@@ -1419,18 +1419,9 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 	if (*p == '/')
 	    ++p;
 	if (strcmp ("CVSROOT", p) == 0
-
-#if 0
-	    /* This causes the emptydir-8 test in the testsuite to print
-	       "cvs server: 'cvs checkout' is less functional without
-	       a modules file", apparently because we pass the subdirectory
-	       to mkmodules() and mkmodules() is written to expect the
-	       CVSROOT directory itself.  Furthermore, that same problem
-	       would also seem to prevent CVS from finding checkoutlist.  */
 	    /* Check for subdirectories because people may want to create
 	       subdirectories and list files therein in checkoutlist.  */
 	    || strncmp ("CVSROOT/", p, strlen ("CVSROOT/")) == 0
-#endif
 	    )
 	{
 	    /* "Database" might a little bit grandiose and/or vague,
@@ -1439,11 +1430,19 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 	       case modules.{pag,dir,db}" is verbose and excessively
 	       focused on how the database is implemented.  */
 
+	    /* mkmodules requires the absolute name of the CVSROOT directory.
+	       Remove anything after the `CVSROOT' component -- this is
+	       necessary when committing in a subdirectory of CVSROOT.  */
+	    char *admin_dir = xstrdup (repository);
+	    assert (admin_dir[p - repository + strlen ("CVSROOT")] == '\0'
+		    || admin_dir[p - repository + strlen ("CVSROOT")] == '/');
+	    admin_dir[p - repository + strlen ("CVSROOT")] = '\0';
+
 	    cvs_output (program_name, 0);
 	    cvs_output (" ", 1);
 	    cvs_output (command_name, 0);
 	    cvs_output (": Rebuilding administrative file database\n", 0);
-	    mkmodules (repository);
+	    mkmodules (admin_dir);
 	}
     }
 

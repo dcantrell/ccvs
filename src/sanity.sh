@@ -7664,7 +7664,8 @@ done
 Checking in emptyfile;
 ${TESTDIR}/cvsroot/CVSROOT/Emptydir/emptyfile,v  <--  emptyfile
 initial revision: 1\.1
-done"
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 	  rm -r CVS dir2d1
 
@@ -8058,7 +8059,7 @@ ${PROG} [a-z]*: Updating top-dir"
 	  cat >${TESTDIR}/editme <<EOF
 #!${TESTSHELL}
 sleep 1
-sed <\$1 -e 's/^/x&/g' >${TESTDIR}/edit.new
+sed <\$1 -e 's/^/x/' >${TESTDIR}/edit.new
 mv ${TESTDIR}/edit.new \$1
 exit 0
 EOF
