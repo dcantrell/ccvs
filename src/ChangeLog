@@ -1,3 +1,7 @@
+Fri Sep 27 15:21:47 1996  Peter Wemm  <peter@spinner.dialix.com>
+
+	* logmsg.c (do_editor): Do not use editinfo if running on the client.
+
 Fri Oct  4 15:11:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (server_cleanup): Temporarily clear noexec when calling
