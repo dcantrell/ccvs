@@ -1,3 +1,11 @@
+2001-06-06  Derek Price  <dprice@collab.net>
+
+	(Reformatting, rewording, & additions to a patch from
+	Stephen Cameron <steve.cameron@compaq.com>.)
+
+	* cvs.texinfo (Invoking cvs, Modifying tags)
+	  document new -B option of rtag and tag commands.
+
 2001-06-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.am: Remove commented out DISTFILES &
