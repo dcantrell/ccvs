@@ -304,6 +304,7 @@ import (argc, argv)
     li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
     li->type = T_TITLE;
     li->tag = xstrdup (vbranch);
+    li->rev_old = li->rev_new = NULL;
     p->data = (char *) li;
     (void) addnode (ulist, p);
     Update_Logfile (repository, message, logfp, ulist);

@@ -1,5 +1,9 @@
 Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* add.c (add_directory): Set rev_old and rev_new fields of struct
+	logfile_info to NULL (prevents us from trying to free them later).
+	* commit.c (find_fileproc), import.c (import): Likewise.
+
 	* sanity.sh (crerepos): New tests, to test alternate ways of
 	creating a repository and related matters.
 	* sanity.sh: Remove tests 1 through 3 and related cruft; replace

@@ -499,6 +499,7 @@ add_directory (repository, entries, dir)
 	li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
 	li->type = T_TITLE;
 	li->tag = xstrdup (tag);
+	li->rev_old = li->rev_new = NULL;
 	p->data = (char *) li;
 	(void) addnode (ulist, p);
 	Update_Logfile (rcsdir, message, (FILE *) NULL, ulist);

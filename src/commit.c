@@ -271,6 +271,7 @@ find_fileproc (callerdat, finfo)
     data = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
     data->type = status;
     data->tag = xstrdup (vers->tag);
+    data->rev_old = data->rev_new = NULL;
 
     node->type = UPDATE;
     node->delproc = update_delproc;
