@@ -1,3 +1,7 @@
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
+	* strerror.c: Update to latest version from gnulib.
+
 2003-12-14  Mark D. Baushke  <mdb@cvshome.org>
 
 	* fseeko.c: Remove unnecessary #ifdef code.
