@@ -1,3 +1,11 @@
+Wed May  8 14:06:24 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh (test): - convert all '[' to test ala GCD
+
+Wed May  8 13:46:56 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* sanity.sh (expr): - make a valiant attempt to find GNU expr
+
 Tue May  7 16:41:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Increment version number to 1.8.2 to work around fact
