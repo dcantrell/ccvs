@@ -535,9 +535,9 @@ diff_fileproc (callerdat, finfo)
     }
 
     /* Output an "Index:" line for patch to use */
-    (void) fflush (stdout);
-    (void) printf ("Index: %s\n", finfo->fullname);
-    (void) fflush (stdout);
+    cvs_output ("Index: ", 0);
+    cvs_output (finfo->fullname, 0);
+    cvs_output ("\n", 1);
 
     tocvsPath = wrap_tocvs_process_file(finfo->file);
     if (tocvsPath)
@@ -560,9 +560,15 @@ diff_fileproc (callerdat, finfo)
     {
 	/* This is file, not fullname, because it is the "Index:" line which
 	   is supposed to contain the directory.  */
-	(void) printf ("===================================================================\nRCS file: %s\n",
-		       finfo->file);
-	(void) printf ("diff -N %s\n", finfo->file);
+	cvs_output ("\
+===================================================================\n\
+RCS file: ", 0);
+	cvs_output (finfo->file, 0);
+	cvs_output ("\n", 1);
+
+	cvs_output ("diff -N ", 0);
+	cvs_output (finfo->file, 0);
+	cvs_output ("\n", 1);
 
 	if (empty_file == DIFF_ADDED)
 	{
@@ -653,7 +659,6 @@ diff_fileproc (callerdat, finfo)
 	free (tmp);
     }
 
-    (void) fflush (stdout);
     freevers_ts (&vers);
     diff_mark_errors (err);
     return (err);

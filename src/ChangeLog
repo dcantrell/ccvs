@@ -1,8 +1,13 @@
 Sun Jul  6 13:36:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c (diff_fileproc): Call cvs_output not printf.  Remove
+	calls to fflush (should be handled now by call to cvs_outflush in
+	recurse.c).
+
 	* rcscmds.c, cvs.h (diff_exec): New function.
 	* diff.c (diff_fileproc), patch.c (patch_fileproc),
 	update.c (patch_file): Call it.
+
 	* rcscmds.c: Adjust comments concerning diff library to point to
 	new, expanded comments at diff_exec.  Remove comments concerning
 	patch library; Rcs-diff should be adequate.
