@@ -1,3 +1,7 @@
+Tue Sep 24 14:39:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Add TMPDIR_DFLT.
+
 Wed Sep  4 13:40:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (Makefile): New rule.

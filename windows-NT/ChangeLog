@@ -1,3 +1,7 @@
+Tue Sep 24 14:37:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Add TMPDIR_DFLT.
+
 Tue Sep 10 19:20:25 1996  Mark A. Solinski  <markso@mcs.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

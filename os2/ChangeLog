@@ -1,3 +1,7 @@
+Tue Sep 24 14:39:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Add TMPDIR_DFLT.
+
 Mon Aug 26 12:31:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (mkdir_if_needed): Added.
