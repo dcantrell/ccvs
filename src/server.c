@@ -1059,9 +1059,12 @@ dirswitch (dir, repos)
     if ((CVS_MKDIR (CVSADM, 0777) < 0) && (errno != EEXIST))
     {
 	pending_error = errno;
+	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM)))
+	    sprintf (pending_error_text,
+		     "E cannot mkdir %s/%s", dir_name, CVSADM);
 	return;
     }
-    
+
     /* The following will overwrite the contents of CVSADM_REP.  This
        is the correct behavior -- mkdir_p may have written a
        placeholder value to this file and we need to insert the
@@ -1071,11 +1074,17 @@ dirswitch (dir, repos)
     if (f == NULL)
     {
 	pending_error = errno;
+	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	    sprintf (pending_error_text,
+		     "E cannot open %s/%s", dir_name, CVSADM_REP);
 	return;
     }
     if (fprintf (f, "%s", repos) < 0)
     {
 	pending_error = errno;
+	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	    sprintf (pending_error_text,
+		     "E error writing %s/%s", dir_name, CVSADM_REP);
 	fclose (f);
 	return;
     }
@@ -1089,6 +1098,9 @@ dirswitch (dir, repos)
         if (fprintf (f, "/.") < 0)
 	{
 	    pending_error = errno;
+	    if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+		sprintf (pending_error_text,
+			 "E error writing %s/%s", dir_name, CVSADM_REP);
 	    fclose (f);
 	    return;
 	}
@@ -1096,12 +1108,18 @@ dirswitch (dir, repos)
     if (fprintf (f, "\n") < 0)
     {
 	pending_error = errno;
+	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	    sprintf (pending_error_text,
+		     "E error writing %s/%s", dir_name, CVSADM_REP);
 	fclose (f);
 	return;
     }
     if (fclose (f) == EOF)
     {
 	pending_error = errno;
+	if (alloc_pending (80 + strlen (dir_name) + strlen (CVSADM_REP)))
+	    sprintf (pending_error_text,
+		     "E error closing %s/%s", dir_name, CVSADM_REP);
 	return;
     }
     /* We open in append mode because we don't want to clobber an

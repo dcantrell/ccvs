@@ -1,3 +1,8 @@
+2000-04-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (dirswitch): Set pending_error_text in addition to
+	pending_error to aid in problem determination.
+
 2000-03-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* mkmodules.c (mkmodules): Return without doing anything if noexec
