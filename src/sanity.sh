@@ -2047,6 +2047,9 @@ C a'
 	  ${testcvs} add subdir >>${LOGFILE}
 	  cd subdir
 
+	  mkdir ssdir
+	  ${testcvs} add ssdir >>${LOGFILE}
+
 	  touch a b
 
 	  if ${testcvs} add a b 2>>${LOGFILE} ; then
@@ -2086,6 +2089,8 @@ C a'
 	  echo dirmodule first-dir/subdir >>CVSROOT/modules
 	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
+	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
+
 	  # Options must come before arguments.  It is possible this should
 	  # be relaxed at some point (though the result would be bizarre for
 	  # -a); for now test the current behavior.
@@ -2100,6 +2105,7 @@ C a'
 	  cd ..
 	  dotest 148a0 "${testcvs} co -c" 'CVSROOT      CVSROOT
 aliasmodule  -a first-dir/subdir/a
+aliasnested  -a first-dir/subdir/ssdir
 bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
@@ -2240,8 +2246,23 @@ U nameddir/b'
 	    echo 'FAIL: test 154' | tee -a ${LOGFILE}
 	    exit 1
 	  fi
+
 	  cd ..
-	  rm -rf 1 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf 1
+
+	  mkdir 2
+	  cd 2
+	  dotest modules-155a0 "${testcvs} co aliasnested" \
+"${PROG} [a-z]*: Updating first-dir/subdir/ssdir"
+	  dotest modules-155a1 "test -d first-dir" ''
+	  dotest modules-155a2 "test -d first-dir/subdir" ''
+	  dotest modules-155a3 "test -d first-dir/subdir/ssdir" ''
+	  # Test that nothing extraneous got created.
+	  dotest modules-155a4 "ls -1" "first-dir"
+	  cd ..
+	  rm -rf 2
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 	mflag)
 	  for message in '' ' ' '	

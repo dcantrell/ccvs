@@ -863,7 +863,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    /* I'm not sure whether this check is redundant.  */
 	    if (!isdir (repository))
 		error (1, 0, "there is no repository %s", repository);
-	    Create_Admin (".", cp, repository, sticky ? (char *) NULL : tag,
+	    Create_Admin (".", path, repository, sticky ? (char *) NULL : tag,
 			  sticky ? (char *) NULL : date);
 	    if (!noexec)
 	    {
