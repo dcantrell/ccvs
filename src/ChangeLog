@@ -1,3 +1,11 @@
+2003-05-18  Larry Jones  <lawrence.jones@eds.com>
+
+	* checkout.c (safe_location): Remove unused variable.
+	* hash.c (walklist, printnode, printlist): Use %p to print pointers
+	if available, convert to unsigned long if not.
+	* recurse.c (start_recursion, do_recursion): Ditto.
+	* tag.c (rtag_proc, tag_check_valid): Ditto.
+
 2003-05-18  Mark D. Baushke  <mdb@gnu.org>
 
 	* Makefile.am (localcheck,remotecheck): Use cvs$(EXEEXT) not cvs.

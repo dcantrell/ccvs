@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
+ *
  * General recursion handler
- * 
+ *
  */
 
 #include "cvs.h"
@@ -124,16 +124,33 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
     List *files_by_dir = NULL;
     struct recursion_frame frame;
 
+#ifdef HAVE_PRINTF_PTR
     TRACE ( TRACE_FLOW,
-	    "start_recursion ( fileproc=%x, filesdoneproc=%x,\n"
-       "                       direntproc=%x, dirleavproc=%x,\n"
-       "                       callerdat=%x, argc=%d, argv=%x,\n"
+	    "start_recursion ( fileproc=%p, filesdoneproc=%p,\n"
+       "                       direntproc=%p, dirleavproc=%p,\n"
+       "                       callerdat=%p, argc=%d, argv=%p,\n"
        "                       local=%d, which=%d, aflag=%d,\n"
        "                       locktype=%d, update_preload=%s\n"
        "                       dosrcs=%d, repository_in=%s )",
-	       fileproc, filesdoneproc, direntproc, dirleaveproc,
-	       callerdat, argc, argv, local, which, aflag, locktype,
+	       (void *) fileproc, (void *) filesdoneproc,
+	       (void *) direntproc, (void *) dirleaveproc,
+	       callerdat, argc, (void *) argv,
+	       local, which, aflag, locktype,
 	       update_preload, dosrcs, repository_in );
+#else
+    TRACE ( TRACE_FLOW,
+	    "start_recursion ( fileproc=%lx, filesdoneproc=%lx,\n"
+       "                       direntproc=%lx, dirleavproc=%lx,\n"
+       "                       callerdat=%lx, argc=%d, argv=%lx,\n"
+       "                       local=%d, which=%d, aflag=%d,\n"
+       "                       locktype=%d, update_preload=%s\n"
+       "                       dosrcs=%d, repository_in=%s )",
+	       (unsigned long) fileproc, (unsigned long) filesdoneproc,
+	       (unsigned long) direntproc, (unsigned long) dirleaveproc,
+	       (unsigned long) callerdat, argc, (unsigned long) argv,
+	       local, which, aflag, locktype,
+	       update_preload, dosrcs, repository_in );
+#endif
 
     frame.fileproc = fileproc;
     frame.filesdoneproc = filesdoneproc;
@@ -263,7 +280,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
      * other possibility is named entities whicha are not currently in
      * the working directory.
      */
-    
+
     for (i = 0; i < argc; i++)
     {
 	/* if this argument is a directory, then add it to the list of
@@ -422,7 +439,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	   current_cvsroot.
 
 	   The algorithm should be:
-		   
+
 	   1) construct a tree of all directory names where each
 	   element contains a directory name and a flag which notes if
 	   that directory is checked out from current_cvsroot
@@ -455,7 +472,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 
 	   3) Walk the tree and spit out "Argument" commands to tell
 	   the server which directories to munge.
-		   
+
 	   Yuck.  It's not clear this is worth spending time on, since
 	   we might want to disable cvs commands entirely from
 	   directories that do not have CVSADM files...
@@ -511,7 +528,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	dellist (&args_to_send_when_finished);
     }
 #endif
-    
+
     return (err);
 }
 
@@ -530,7 +547,11 @@ do_recursion (frame)
     int locktype;
     int process_this_directory = 1;
 
-    TRACE ( TRACE_FLOW, "do_recursion ( frame=%x )", frame );
+#ifdef HAVE_PRINT_PTR
+    TRACE ( TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame );
+#else
+    TRACE ( TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame );
+#endif
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
@@ -586,7 +607,7 @@ do_recursion (frame)
        usual.  THIS_ROOT might be NULL if we're doing an initial
        checkout -- check before using it.  The default should be that
        we process a directory's contents and only skip those contents
-       if a CVS/Root file exists. 
+       if a CVS/Root file exists.
 
        If we're running the server, we want to process all
        directories, since we're guaranteed to have only one CVSROOT --
@@ -795,7 +816,7 @@ do_recursion (frame)
 #endif
     dellist (&dirlist);
 
-    if (entries) 
+    if (entries)
     {
 	Entries_Close (entries);
 	entries = NULL;
@@ -854,7 +875,7 @@ do_file_proc (p, closure)
 	    return 0;
 	}
     }
-    else 
+    else
         finfo->rcs = (RCSNode *) NULL;
     ret = frfile->frame->fileproc (frfile->frame->callerdat, finfo);
 
