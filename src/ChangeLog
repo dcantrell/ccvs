@@ -1,5 +1,8 @@
 Fri Oct  6 14:03:09 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* ignore.c (ign_setup): Don't try to look for a file in CVSroot if
+	client.  (The recent tightening of the error checking detects this).
+
 	* commit.c (checkaddfile): Don't try to pass options if it is "".
 
 Thu Oct  5 18:04:46 1995  Karl Fogel  <kfogel@totoro.cyclic.com>

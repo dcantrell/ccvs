@@ -50,9 +50,20 @@ ign_setup ()
     ign_add (tmp, 0);
     free (tmp);
 
-    /* Then add entries found in repository, if it exists */
-    (void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM, CVSROOTADM_IGNORE);
-    ign_add_file (file, 0);
+#ifdef CLIENT_SUPPORT
+    /* Chances are we should have some way to provide this feature
+       client/server, but I'm not sure how (surely not by introducing
+       another network turnaround to each operation--perhaps by
+       putting a file in the CVS directory on checkout, or with some
+       sort of "slave cvsroot" on the client).  */
+    if (!client_active)
+#endif
+    {
+	/* Then add entries found in repository, if it exists */
+	(void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM,
+			CVSROOTADM_IGNORE);
+	ign_add_file (file, 0);
+    }
 
     /* Then add entries found in home dir, (if user has one) and file exists */
     if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
