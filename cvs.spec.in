@@ -5,7 +5,7 @@ Release: 1
 Copyright: GPL
 Group: Development/Tools
 Source: ftp://ftp.cvshome.com/pub/cvs-%{version}/cvs-%{version}.tar.gz
-URL: http://CVSHome.org
+URL: http://cvshome.org
 Prereq: /sbin/install-info
 Prefix: %{_prefix}
 Buildroot: %{_tmppath}/%{name}-root
@@ -32,7 +32,7 @@ Install the cvs package if you need to use a version control system.
 %package krb5
 Summary: A version control system with Kerberos authentication.
 Group: Development/Tools
-Requires: cvs krb5-libs
+Requires: cvs
 BuildRequires: krb5-devel
 
 %description krb5
@@ -69,8 +69,8 @@ control system with Kerberos authentication and encryption.
 %configure --with-gssapi=/usr/kerberos --enable-encryption
 
 make LDFLAGS=-s
-mv src/cvs src/cvs.krb5
 
+mv src/cvs src/cvs.krb5
 rm config.cache
 %endif
 
@@ -78,52 +78,55 @@ rm config.cache
 %configure --without-gssapi
 
 make LDFLAGS=-s
-make -C doc info
 
 %install
-rm -rf $RPM_BUILD_ROOT
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %makeinstall
 # The Kerberized binary
 %if %gssapi
 ./install-sh src/cvs.krb5 $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
 %endif
-
-rm -f $RPM_BUILD_ROOT${_infodir}/dir
-gzip -9nf $RPM_BUILD_ROOT%{_infodir}/cvs*
-strip $RPM_BUILD_ROOT%{_bindir}/cvs
-%if %gssapi
-strip $RPM_BUILD_ROOT%{_kerberosbindir}/cvs
-%endif
+# forcefully compress the info pages so that install-info will work properly
+# in the %%post
+gzip $RPM_BUILD_ROOT/%{_infodir}/cvs* || true
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+[ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 %post
-    /sbin/install-info --info-dir=%{_infodir} %{_infodir}/cvs.info.gz
-    /sbin/install-info --info-dir=%{_infodir} %{_infodir}/cvsclient.info.gz
+/sbin/install-info /%{_infodir}/cvs.info.gz /%{_infodir}/dir
+/sbin/install-info /%{_infodir}/cvsclient.info.gz /%{_infodir}/dir 
+
 %preun
 if [ $1 = 0 ]; then
-    # uninstall the info reference in the dir file
-    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/cvs.info.gz
-    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/cvsclient.info.gz
+# uninstall the info reference in the dir file
+/sbin/install-info --delete /%{_infodir}/cvs.info.gz /%{_infodir}/dir
+/sbin/install-info --delete /%{_infodir}/cvsclient.info.gz /%{_infodir}/dir
 fi
 
 %files
 %defattr(-,root,root)
-%doc BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
+%defattr(-,root,root)
+%doc AUTHORS BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
 %doc doc/RCSFILES doc/*.ps
-%{_bindir}
-%{_infodir}/cvs*.gz
-%{_mandir}
+%{_bindir}/*
+%{_mandir}/*/*
+%{_infodir}/*.info*
+%{_datadir}/%{name}
 
 %if %gssapi
 %files krb5
 %defattr(-,root,root)
-%{_kerberosdir}
+%{_kerberosbindir}/*
 %endif
 
 %changelog
+* Thu Mar 29 2002 Derek Price <oberon@umich.edu>
+- Misc changes imported from RedHat's spec files.
+- Let RPM pick up the krb5-libs dependency.
+- `CVSHome.org' => `cvshome.org'.
+
 * Thu Apr 26 2001 Derek Price <dprice@collab.net>
 - avoid picking up %{_infodir}/dir.
 - remove krb5-configs from requirements since RedHat doesn't use it anymore.
