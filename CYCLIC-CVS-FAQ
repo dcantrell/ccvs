@@ -1,11 +1,11 @@
-			 Remote CVS Mini-FAQ
+			 Cyclic CVS Mini-FAQ
 		ftp://ftp.cyclic.com/pub/cvs/mini-FAQ
 		     Jim Blandy <jimb@cyclic.com>
 				   
 
-* What is Remote CVS?
+* What is Cyclic CVS?
 
-Remote CVS is a variant of CVS able to access repositories on remote
+Cyclic CVS is a variant of CVS able to access repositories on remote
 machines.  This is amazingly helpful when collaborating on a project
 with someone across a long-haul network.
 
@@ -18,10 +18,10 @@ Features include:
 - never holds CVS locks while waiting for communication with client,
   making it robust over flaky networks
 
-Remote CVS was written by the talented folks at Cygnus Support
+Cyclic CVS was written by the talented folks at Cygnus Support
 <info@cygnus.com>, but they can't spare the time to support it or
 distribute it themselves.  They don't want bug reports or questions.
-Instead, send those to the remote-cvs mailing list, described below.
+Instead, send those to the cyclic-cvs mailing list, described below.
 
 
 * Aren't there other similar CVS hacks out there?
@@ -33,12 +33,12 @@ implementations, so I can't comment on them.  Are they better?  Worse?
 Do they have the same name?  Let me know!
 
 
-* How can I get Remote CVS?
+* How can I get Cyclic CVS?
 
 If you'd like to try this implementation out, it's available via
 anonymous ftp from ftp.cyclic.com, as /pub/cvs/cvs.tar.gz.  The
-mailing list remote-cvs@cyclic.com has been set up to handle bug
-reports and questions; send mail to remote-cvs-request@cyclic.com to
+mailing list cyclic-cvs@cyclic.com has been set up to handle bug
+reports and questions; send mail to cyclic-cvs-request@cyclic.com to
 subscribe or unsubscribe.
 
 Nota bene:
@@ -46,19 +46,19 @@ Nota bene:
   bugs, portability problems, documentation inconsistencies.
 - I can't promise any support for it.  If you need it, get in touch
   with me; maybe we can work something out.
-- Nevertheless, please send all bug reports to remote-cvs@cyclic.com.
+- Nevertheless, please send all bug reports to cyclic-cvs@cyclic.com.
   Most people on the info-cvs mailing list probably won't be able to
   fix them (since they don't use the package).
 
 
-If you are a good hacker, and want to participate in Remote CVS's
+If you are a good hacker, and want to participate in Cyclic CVS's
 development, there's a better way to get started.  For this to work,
 you have to have an account on totoro.cyclic.com, and the ability to
 rsh to it.  You need to be in the `cvs' group, too.  Send me mail if
 you need an account or need to be added to the `cvs' group.
 
 Retrieve the file /pub/cvs/bootstrap-cvs.tar.gz from ftp.cyclic.com.
-Unpack it, configure, and build Remote CVS.  Now, since that tar file
+Unpack it, configure, and build Cyclic CVS.  Now, since that tar file
 contains all the version management info CVS needs, you can use the
 tar file you just unpacked as your working tree, and use the
 executable you just built to check out the latest version of its own
@@ -68,6 +68,6 @@ source.  Go to the top directory of the distribution and type
 
 * Where are the remote features documented?
 
-Check out doc/cvsclient.texi in the Remote CVS distribution.  Would
-you like to update the main doc file, cvs.texinfo to describe Remote
+Check out doc/cvsclient.texi in the Cyclic CVS distribution.  Would
+you like to update the main doc file, cvs.texinfo to describe Cyclic
 CVS's features?
