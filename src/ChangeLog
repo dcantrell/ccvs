@@ -1,5 +1,9 @@
 2004-07-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (serve_notify): Handle secondary_log.
+
+2004-07-10  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (CVSROOTADM_POSTWATCH): New macro.
 	* fileattr.c (*): Misc cleanup.
 	(postwatch_proc): New function.
