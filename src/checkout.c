@@ -37,7 +37,7 @@
 #include "cvs.h"
 
 static char *findslash PROTO((char *start, char *p));
-static int checkout_proc PROTO((int *pargc, char **argv, char *where,
+static int checkout_proc PROTO((int argc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
@@ -496,9 +496,9 @@ build_one_dir (repository, dirpath, sticky)
  */
 /* ARGSUSED */
 static int
-checkout_proc (pargc, argv, where_orig, mwhere, mfile, shorten,
+checkout_proc (argc, argv, where_orig, mwhere, mfile, shorten,
 	       local_specified, omodule, msg)
-    int *pargc;
+    int argc;
     char **argv;
     char *where_orig;
     char *mwhere;
@@ -508,6 +508,7 @@ checkout_proc (pargc, argv, where_orig, mwhere, mfile, shorten,
     char *omodule;
     char *msg;
 {
+    char *myargv[2];
     int err = 0;
     int which;
     char *cp;
@@ -669,26 +670,10 @@ checkout_proc (pargc, argv, where_orig, mwhere, mfile, shorten,
 	{
 	    /* It's a file, which means we have to screw around with
                argv. */
-
-	    int i;
-
-
-	    /* Paranoia check. */
-	    
-	    if (*pargc > 1)
-	    {
-		error (0, 0, "checkout_proc: trashing argv elements!");
-		for (i = 1; i < *pargc; i++)
-		{
-		    error (0, 0, "checkout_proc: argv[%d] `%s'",
-			   i, argv[i]);
-		}
-	    }
-
-	    for (i = 1; i < *pargc; i++)
-		free (argv[i]);
-	    argv[1] = xstrdup (mfile);
-	    (*pargc) = 2;
+	    myargv[0] = argv[0];
+	    myargv[1] = mfile;
+	    argc = 2;
+	    argv = myargv;
 	}
 	free (path);
     }
@@ -895,7 +880,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    {
 		/* It may be argued that we shouldn't set any sticky
 		   bits for the top-level repository.  FIXME?  */
-		build_one_dir (CVSroot_directory, ".", *pargc <= 1);
+		build_one_dir (CVSroot_directory, ".", argc <= 1);
 
 #ifdef SERVER_SUPPORT
 		/* We _always_ want to have a top-level admin
@@ -917,7 +902,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	       contain a CVS subdir yet, but all the others contain
 	       CVS and Entries.Static files */
 
-	    if (build_dirs_and_chdir (head, *pargc <= 1) != 0)
+	    if (build_dirs_and_chdir (head, argc <= 1) != 0)
 	    {
 		error (0, 0, "ignoring module %s", omodule);
 		err = 1;
@@ -930,7 +915,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	{
 	    FILE *fp;
 
-	    if (!noexec && *pargc > 1)
+	    if (!noexec && argc > 1)
 	    {
 		/* I'm not sure whether this check is redundant.  */
 		if (!isdir (repository))
@@ -1001,7 +986,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	which = W_REPOS;
 	if (tag != NULL && !tag_validated)
 	{
-	    tag_check_valid (tag, *pargc - 1, argv + 1, 0, aflag, NULL);
+	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag, NULL);
 	    tag_validated = 1;
 	}
     }
@@ -1010,7 +995,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	which = W_LOCAL | W_REPOS;
 	if (tag != NULL && !tag_validated)
 	{
-	    tag_check_valid (tag, *pargc - 1, argv + 1, 0, aflag,
+	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag,
 			     repository);
 	    tag_validated = 1;
 	}
@@ -1022,10 +1007,10 @@ internal error: %s doesn't start with %s in checkout_proc",
     if (! join_tags_validated)
     {
         if (join_rev1 != NULL)
-	    tag_check_valid_join (join_rev1, *pargc - 1, argv + 1, 0, aflag,
+	    tag_check_valid_join (join_rev1, argc - 1, argv + 1, 0, aflag,
 				  repository);
 	if (join_rev2 != NULL)
-	    tag_check_valid_join (join_rev2, *pargc - 1, argv + 1, 0, aflag,
+	    tag_check_valid_join (join_rev2, argc - 1, argv + 1, 0, aflag,
 				  repository);
 	join_tags_validated = 1;
     }
@@ -1035,7 +1020,7 @@ internal error: %s doesn't start with %s in checkout_proc",
      * update recursion processor.  We will be recursive unless either local
      * only was specified, or we were passed arguments
      */
-    if (!(local_specified || *pargc > 1))
+    if (!(local_specified || argc > 1))
     {
 	if (m_type == CHECKOUT && !pipeout)
 	    history_write ('O', preload_update_dir, history_name, where,
@@ -1058,7 +1043,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 
 	/* we are only doing files, so register them */
 	entries = Entries_Open (0, NULL);
-	for (i = 1; i < *pargc; i++)
+	for (i = 1; i < argc; i++)
 	{
 	    char *line;
 	    Vers_TS *vers;
@@ -1100,7 +1085,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		       repository);
 
     /* go ahead and call update now that everything is set */
-    err += do_update (*pargc - 1, argv + 1, options, tag, date,
+    err += do_update (argc - 1, argv + 1, options, tag, date,
 		      force_tag_match, local_specified, 1 /* update -d */,
 		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
 		      join_rev2, preload_update_dir);

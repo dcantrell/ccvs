@@ -20,7 +20,7 @@ static Dtype patch_dirproc PROTO ((void *callerdat, char *dir,
 				   char *repos, char *update_dir,
 				   List *entries));
 static int patch_fileproc PROTO ((void *callerdat, struct file_info *finfo));
-static int patch_proc PROTO((int *pargc, char **argv, char *xwhere,
+static int patch_proc PROTO((int argc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
 		       int local_specified, char *mname, char *msg));
 
@@ -261,9 +261,9 @@ patch (argc, argv)
  */
 /* ARGSUSED */
 static int
-patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
+patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	    mname, msg)
-    int *pargc;
+    int argc;
     char **argv;
     char *xwhere;
     char *mwhere;
@@ -273,6 +273,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *mname;
     char *msg;
 {
+    char *myargv[2];
     int err = 0;
     int which;
     char *repository;
@@ -314,13 +315,10 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	}
 	else
 	{
-	    int i;
-
-	    /* a file means muck argv */
-	    for (i = 1; i < *pargc; i++)
-		free (argv[i]);
-	    argv[1] = xstrdup (mfile);
-	    (*pargc) = 2;
+	    myargv[0] = argv[0];
+	    myargv[1] = mfile;
+	    argc = 2;
+	    argv = myargv;
 	}
 	free (path);
     }
@@ -341,19 +339,19 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     if (rev1 != NULL && !rev1_validated)
     {
-	tag_check_valid (rev1, *pargc - 1, argv + 1, local, 0, NULL);
+	tag_check_valid (rev1, argc - 1, argv + 1, local, 0, NULL);
 	rev1_validated = 1;
     }
     if (rev2 != NULL && !rev2_validated)
     {
-	tag_check_valid (rev2, *pargc - 1, argv + 1, local, 0, NULL);
+	tag_check_valid (rev2, argc - 1, argv + 1, local, 0, NULL);
 	rev2_validated = 1;
     }
 
     /* start the recursion processor */
     err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL,
-			   *pargc - 1, argv + 1, local,
+			   argc - 1, argv + 1, local,
 			   which, 0, 1, where, 1);
     free (where);
 

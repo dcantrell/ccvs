@@ -4368,9 +4368,9 @@ serve_ignore (arg)
 }
 
 static int
-expand_proc (pargc, argv, where, mwhere, mfile, shorten,
+expand_proc (argc, argv, where, mwhere, mfile, shorten,
 	     local_specified, omodule, msg)
-    int *pargc;
+    int argc;
     char **argv;
     char *where;
     char *mwhere;
@@ -4409,7 +4409,7 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
     {
 	/* We may not need to do this anymore -- check the definition
            of aliases before removing */
-	if (*pargc == 1)
+	if (argc == 1)
 	{
 	    buf_output0 (buf_to_net, "Module-expansion ");
 	    if (server_dir != NULL)
@@ -4422,7 +4422,7 @@ expand_proc (pargc, argv, where, mwhere, mfile, shorten,
 	}
 	else
 	{
-	    for (i = 1; i < *pargc; ++i)
+	    for (i = 1; i < argc; ++i)
 	    {
 	        buf_output0 (buf_to_net, "Module-expansion ");
 		if (server_dir != NULL)

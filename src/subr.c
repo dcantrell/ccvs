@@ -218,9 +218,7 @@ line2argv (pargc, argv, line, sepchars)
     int argv_allocated;
 
     /* Small for testing.  */
-    /* argv_allocated must be at least 3 because at some places
-       (e.g. checkout_proc) cvs alters argv[2].  */
-    argv_allocated = 4;
+    argv_allocated = 1;
     *argv = (char **) xmalloc (argv_allocated * sizeof (**argv));
 
     *pargc = 0;

@@ -579,7 +579,7 @@ void do_editor PROTO((char *dir, char **messagep,
 
 void do_verify PROTO((char *message, char *repository));
 
-typedef	int (*CALLBACKPROC)	PROTO((int *pargc, char *argv[], char *where,
+typedef	int (*CALLBACKPROC)	PROTO((int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,
 	char *omodule, char *msg));
 
