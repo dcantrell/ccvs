@@ -1,5 +1,7 @@
 Wed Mar 13 16:01:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Connection and Authentication): New node.
+
 	* cvsclient.texi (Requests): Expand discussion of Root a bit.
 
 	* cvs.texinfo (Setting up): Don't refer to INSTALL file; revise to

@@ -13,6 +13,7 @@ regular CVS manual for that.
 * Goals::             Basic design decisions, requirements, scope, etc.
 * Notes::             Notes on the current implementation
 * Protocol Notes::    Possible enhancements, limitations, etc. of the protocol
+* Connection and Authentication::  Various ways to connect to the server
 * Protocol::          Complete description of the protocol
 @end menu
 
@@ -117,6 +118,48 @@ more files), because it can't keep locks open while waiting for the
 network.  Perhaps this whole thing is irrelevant if client-side
 repositories are implemented, and the rcsmerge is done by the client.
 @end itemize
+
+@node Connection and Authentication
+@chapter How to Connect to and Authenticate Oneself to the CVS server
+
+Connection and authentication occurs before the CVS protocol itself is
+started.  There are several ways to connect.
+
+@table @asis
+@item rsh
+If the client has a way to execute commands on the server, and provide
+input to the commands and output from them, then it can connect that
+way.  This could be the usual rsh (port 514) protocol, Kerberos rsh,
+SSH, or any similar mechanism.  The client may allow the user to specify
+the name of the server program; the default is @code{cvs}.  It is
+invoked with one argument, @code{server}.  Once it invokes the server,
+the client proceeds to start the cvs protocol.
+
+@item kserver
+The kerberized server listens on a port (in the current implementation,
+by having inetd call "cvs kserver") which defaults to 1999 (this port is
+officially reserved for another use, so it may change in the future).
+The client connects, sends the usual kerberos authentication
+information, and then starts the cvs protocol.
+
+@item pserver
+The password authenticated server listens on a port (in the current
+implementation, by having inetd call "cvs pserver") which defaults to
+2401 (this port is not officially registered, so it may change in the
+future).  The client connects, sends the string @samp{BEGIN AUTH
+REQUEST}, a linefeed, the cvs root, a linefeed, the username, a
+linefeed, the password trivially encoded (see scramble.c in the cvs
+sources), a linefeed, the string @samp{END AUTH REQUEST}, and a
+linefeed.  The server responds with @samp{I LOVE YOU} and a linefeed if
+the authentication is successful or @samp{I HATE YOU} and a linefeed if
+the authentication fails.  After receiving @samp{I LOVE YOU}, the client
+proceeds with the cvs protocol.  If the client wishes to merely
+authenticate without starting the cvs protocol, the procedure is the
+same, except @samp{BEGIN AUTH REQUEST} is replaced with @samp{BEGIN
+VERIFICATION REQUEST}, @samp{END AUTH REQUEST} is replaced with
+@samp{END VERIFICATION REQUEST}, and upon receipt of @samp{I LOVE YOU}
+the connection is closed rather than continuing.
+@end table
 
 @node Protocol
 @chapter The CVS client/server protocol
