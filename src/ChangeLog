@@ -1,5 +1,8 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_cmp_file): Change NULL to RUN_TTY in passing sout to
+	RCS_checkout, for clarity.
+
 	* import.c (update_rcs_file): Remove unused variable ierrno.
 
 	* add.c, checkout.c, commit.c, diff.c, edit.c, import.c,
