@@ -22,8 +22,6 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getnline.c \
-	getopt.c \
-	getopt1.c \
 	md5.c \
 	sighandle.c \
 	strftime.c \
@@ -32,7 +30,6 @@ libcvs_a_SOURCES = \
 	getline.h \
 	getndelim2.h \
 	getnline.h \
-	getopt.h \
 	getpagesize.h \
 	md5.h \
 	minmax.h \
@@ -119,6 +116,18 @@ libcvs_a_SOURCES += getdate.h getdate.y
 #	@LIBOBJS@ \
 #	$(LIB_CLOCK_GETTIME) \
 #	$(LIBINTL)
+
+## For GNULIB's getopt module.
+BUILT_SOURCES += $(GETOPT_H)
+EXTRA_DIST += getopt_.h getopt_int.h
+
+# We need the following in order to create an <getopt.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libgnu_a_OBJECTS): $(GETOPT_H)
+getopt.h: getopt_.h
+	cp $(srcdir)/getopt_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## For GNULIB's gettext module.
 libcvs_a_SOURCES += gettext.h

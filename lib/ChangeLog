@@ -1,5 +1,11 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* getopt.h: Remove file.
+	* getopt_.h, getopt_int.h: New files from GNULIB.
+	* getopt1.c: Update from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* mkstemp.c, tempname.c: Update from GNULIB.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
