@@ -1173,7 +1173,7 @@ isemptydir (dir, might_not_exist)
 	return (0);
     }
     errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
+    while ((dp = CVS_READDIR (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") != 0
 	    && strcmp (dp->d_name, "..") != 0)
@@ -1182,7 +1182,7 @@ isemptydir (dir, might_not_exist)
 	    {
 		/* An entry other than the CVS directory.  The directory
 		   is certainly not empty. */
-		(void) closedir (dirp);
+		(void) CVS_CLOSEDIR (dirp);
 		return (0);
 	    }
 	    else
@@ -1213,7 +1213,7 @@ isemptydir (dir, might_not_exist)
 		{
 		    /* There are files that have been removed, but not
 		       committed!  Do not consider the directory empty. */
-		    (void) closedir (dirp);
+		    (void) CVS_CLOSEDIR (dirp);
 		    return (0);
 		}
 	    }
@@ -1223,10 +1223,10 @@ isemptydir (dir, might_not_exist)
     if (errno != 0)
     {
 	error (0, errno, "cannot read directory %s", dir);
-	(void) closedir (dirp);
+	(void) CVS_CLOSEDIR (dirp);
 	return (0);
     }
-    (void) closedir (dirp);
+    (void) CVS_CLOSEDIR (dirp);
     return (1);
 }
 

@@ -425,7 +425,7 @@ import_descend (message, vtag, targc, targv)
     else
     {
 	errno = 0;
-	while ((dp = readdir (dirp)) != NULL)
+	while ((dp = CVS_READDIR (dirp)) != NULL)
 	{
 	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
 		goto one_more_time_boys;
@@ -496,7 +496,7 @@ import_descend (message, vtag, targc, targv)
 	    error (0, errno, "cannot read directory");
 	    ++err;
 	}
-	(void) closedir (dirp);
+	(void) CVS_CLOSEDIR (dirp);
     }
 
     if (dirlist != NULL)
