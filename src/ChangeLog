@@ -1,3 +1,8 @@
+2003-10-26  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join6): Fix a few typos in the last test and remove a
+	misplaced test.
+
 2003-10-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (parseroot): Use dokeep function.
