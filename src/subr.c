@@ -1815,24 +1815,24 @@ isabsolute (filename)
 /*
  * void cvs_trace(int level, const char *fmt, ...)
  *
- * Print tracing information to stderr on request.  I haven't decided to
- * actually use levels yet, but I did implement them as CVSNT did.
+ * Print tracing information to stderr on request.  Levels are implemented
+ * as with CVSNT.
  */
-void cvs_trace ( int level, const char *fmt, ... )
+void cvs_trace (int level, const char *fmt, ...)
 {
-    if(trace >= level)
+    if (trace >= level)
     {
 	va_list va;
 
-	va_start( va, fmt );
+	va_start (va, fmt);
 #ifdef SERVER_SUPPORT
-	fprintf(stderr,"%c -> ",server_active?'S':' ');
+	fprintf (stderr,"%c -> ",server_active?'S':' ');
 #else /* ! SERVER_SUPPORT */
-	fprintf(stderr,"  -> ");
+	fprintf (stderr,"  -> ");
 #endif
-	vfprintf(stderr, fmt, va);
-	fprintf(stderr,"\n");
-	va_end(va);
+	vfprintf (stderr, fmt, va);
+	fprintf (stderr,"\n");
+	va_end (va);
     }
 }
 
