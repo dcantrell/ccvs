@@ -1,3 +1,8 @@
+1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Invoking CVS): No space is allowed between -r or -w
+	and its argument, for the log command.
+
 1998-04-11  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Dates): New section, explaining the deal with

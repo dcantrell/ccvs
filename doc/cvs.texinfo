@@ -10405,7 +10405,7 @@ Do not list tags.  See @ref{log options}.
 @item -R
 Only print name of RCS file.  See @ref{log options}.
 
-@item -r @var{revs}
+@item -r@var{revs}
 Only list revisions @var{revs}.  See @ref{log options}.
 
 @item -s @var{states}
@@ -10415,7 +10415,7 @@ Only list revisions with specified states.  See @ref{log options}.
 Only print header and descriptive text.  See @ref{log
 options}.
 
-@item -w @var{logins}
+@item -w@var{logins}
 Only list revisions checked in by specified logins.  See @ref{log options}.
 @end table
 
