@@ -1,3 +1,7 @@
+Wed Jan 24 20:26:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Adjust to reflect existence of 1.7.
+
 Tue Jan 23 14:20:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* devel-cvs: New file, not to be included in the distribution.

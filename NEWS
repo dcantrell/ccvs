@@ -1,4 +1,8 @@
-Changes since 1.6:
+Changes since 1.7:
+
+<none yet>
+
+Changes from 1.6 to 1.7:
 
 * The default ignore list has changed slightly: *.obj has been added
 and CVS* has been changed to CVS CVS.adm.
