@@ -1,3 +1,9 @@
+Mon Jan 13 11:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* mkmodules.c (filelist): Add readers and writers.  Add comment
+	about why passwd is not included.  Add comment about meaning of
+	NULL contents field.
+
 Fri Jan 10 13:23:09 1997  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* release.c (release): Initialize delete_flag before reading it

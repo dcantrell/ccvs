@@ -28,14 +28,20 @@ struct admin_file {
 
    /* This is a one line description of what the file is for.  It is not
       currently used, although one wonders whether it should be, somehow.
-      If NULL, then don't process this file in mkmodules (FIXME: a bit of
+      If NULL, then don't process this file in mkmodules (FIXME?: a bit of
       a kludge; probably should replace this with a flags field).  */
    char *errormsg;
 
    /* Contents which the file should have in a new repository.  To avoid
       problems with brain-dead compilers which choke on long string constants,
       this is a pointer to an array of char * terminated by NULL--each of
-      the strings is concatenated.  */
+      the strings is concatenated.
+
+      If this field is NULL, the file is not created in a new
+      repository, but it can be added with "cvs add" (just as if one
+      had created the repository with a version of CVS which didn't
+      know about the file) and the checked-out copy will be updated
+      without having to add it to checkoutlist.  */
    const char * const *contents;
 };
 
@@ -303,6 +309,20 @@ static const struct admin_file filelist[] = {
 	/* modules is special-cased in mkmodules.  */
 	NULL,
 	modules_contents},
+    {CVSROOTADM_READERS,
+	"a %s file specifies read-only users",
+	NULL},
+    {CVSROOTADM_WRITERS,
+	"a %s file specifies read/write users",
+	NULL},
+    /* Some have suggested listing CVSROOTADM_PASSWD here too.  The
+       security implications of transmitting hashed passwords over the
+       net are no worse than transmitting cleartext passwords which pserver
+       does, so this isn't a problem.  But I'm worried about the implications
+       of storing old passwords--if someone used a password in the past
+       they might be using it elsewhere, using a similar password, etc,
+       and so it doesn't seem to me like we should be saving old passwords,
+       even hashed.  */
     {NULL, NULL}
 };
 
