@@ -1,3 +1,8 @@
+Sun Dec 14 10:14:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (loginfo): Add comment about which commands run
+	loginfo.
+
 Sat Dec 13 08:41:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): State that
