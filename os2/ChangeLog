@@ -1,5 +1,7 @@
 Tue Nov 21 16:34:37 1995  unknown  (unknown@beezley)
 
+        * run.c (filter_stream_through_program): defined for OS/2.
+
         * client.c (start_server): pass a char **argv to popenRW and get a
         pid in return (instead of a return code).
 

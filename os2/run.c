@@ -460,15 +460,82 @@ piped_child (char **argv, int *to, int *from)
  * dir = 1 : main proc reads from new proc, which reads from oldfd
  */
 int
-filter_stream_through_program (oldfd, dir, prog, pidp)
-     int oldfd, dir;
-     char **prog;
-     pid_t *pidp;
+filter_stream_through_program (int oldfd, int dir,
+							   char **prog, PID *pidp)
 {
-    fprintf (stderr,
-             "Error: filter_stream_through_program() doesn't work.\n");
-    exit (1);
+	int newfd;  /* Gets set to one end of the pipe and returned. */
+    HFILE from, to;
+	HFILE Old0 = -1, Old1 = -1, Old2 = -1, Tmp;
+
+    if (DosCreatePipe (&from, &to, 4096))
+        return FALSE;
+
+    /* Save std{in,out,err} */
+    DosDupHandle (STDIN, &Old0);
+    DosSetFHState (Old1, OPEN_FLAGS_NOINHERIT);
+    DosDupHandle (STDOUT, &Old1);
+    DosSetFHState (Old2, OPEN_FLAGS_NOINHERIT);
+    DosDupHandle (STDERR, &Old2);
+    DosSetFHState (Old2, OPEN_FLAGS_NOINHERIT);
+
+    /* Redirect std{in,out,err} */
+	if (dir)    /* Who goes where? */
+	{
+		Tmp = STDIN;
+		DosDupHandle (oldfd, &Tmp);
+		Tmp = STDOUT;
+		DosDupHandle (to, &Tmp);
+		Tmp = STDERR;
+		DosDupHandle (to, &Tmp);
+
+		newfd = from;
+		_setmode (newfd, O_BINARY);
+
+		DosClose (oldfd);
+		DosClose (to);
+		DosSetFHState (from, OPEN_FLAGS_NOINHERIT);
+	}
+	else
+	{
+		Tmp = STDIN;
+		DosDupHandle (from, &Tmp);
+		Tmp = STDOUT;
+		DosDupHandle (oldfd, &Tmp);
+		Tmp = STDERR;
+		DosDupHandle (oldfd, &Tmp);
+
+		newfd = to;
+		_setmode (newfd, O_BINARY);
+
+		DosClose (oldfd);
+		DosClose (from);
+		DosSetFHState (to, OPEN_FLAGS_NOINHERIT);
+	}
+
+    /* Spawn we now our hoary brood. */
+	*pidp = spawnvp (P_NOWAIT, prog[0], prog);
+
+    /* Restore std{in,out,err} */
+    Tmp = STDIN;
+    DosDupHandle (Old0, &Tmp);
+    DosClose (Old0);
+    Tmp = STDOUT;
+    DosDupHandle (Old1, &Tmp);
+    DosClose (Old1);
+    Tmp = STDERR;
+    DosDupHandle (Old2, &Tmp);
+    DosClose (Old2);
+
+    if(*pidp < 0) 
+    {
+        DosClose (from);
+        DosClose (to);
+        return -1;
+    }
+
+    return newfd;
 }
+
 
 int
 pipe (int *filedesc)
