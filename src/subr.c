@@ -30,7 +30,8 @@ xmalloc (bytes)
 
     cp = malloc (bytes);
     if (cp == NULL)
-	error (1, 0, "can not allocate %lu bytes", (unsigned long) bytes);
+	error (1, 0, "out of memory; can not allocate %lu bytes",
+	       (unsigned long) bytes);
     return (cp);
 }
 
