@@ -499,13 +499,11 @@ history (int argc, char **argv)
 		     * Convert a known time with the given timezone to time_t.
 		     * Use the epoch + 23 hours, so timezones east of GMT work.
 		     */
-		    static char f[] = "1/1/1970 23:00 %s";
-		    char *buf = xmalloc (sizeof (f) - 2 + strlen (optarg));
-		    time_t t;
-		    sprintf (buf, f, optarg);
-		    t = get_date (buf, (struct timeb *) NULL);
-		    free (buf);
-		    if (t == (time_t) -1)
+		    size_t length;
+		    char *buf = asnprintf (NULL, &length, "1/1/1970 23:00 %s",
+                                           optarg);
+		    struct timespec t;
+		    if (!get_date (&t, buf, NULL))
 			error (0, 0, "%s is not a known time zone", optarg);
 		    else
 		    {
@@ -513,9 +511,11 @@ history (int argc, char **argv)
 			 * Convert to seconds east of GMT, removing the
 			 * 23-hour offset mentioned above.
 			 */
-			tz_seconds_east_of_GMT = (time_t)23 * 60 * 60  -  t;
+			tz_seconds_east_of_GMT = (time_t)23 * 60 * 60
+                                                 - t.tv_sec;
 			tz_name = optarg;
 		    }
+		    free (buf);
 		}
 		break;
 	    case '?':

@@ -109,6 +109,8 @@ cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
 	$(ZLIB_LIBS) \
+	$(LIB_CLOCK_GETTIME) \
+	$(LIB_NANOSLEEP) \
 	$(LIBINTL)
 
 # General

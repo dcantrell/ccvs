@@ -1,5 +1,14 @@
 2004-04-28  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (cvs_LIBADD): Use libs for nanosleep & clock_gettime when
+	necessary.
+	* cvs.h: Remove get_date() proto and #include getdate.h.
+	* client.c, history.c, main.c, rcs.c, server.c: Use new form of
+	get_date().
+	* Makefile.in: Regenerated.
+
+2004-04-28  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (set_lock), subr.c (sleep_past): Assume we have nanosleep.
 
 2004-04-27  Derek Price  <derek@ximbiot.com>
