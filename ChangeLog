@@ -1,3 +1,8 @@
+Fri Nov 29 10:19:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_CHECK_FUNCS): Also check for readlink.
+	* config.h.in: Regenerated using autoheader 2.10.
+
 Fri Nov 22 16:30:27 1996  Brendan Kehoe  <brendan@cygnus.com>
 
 	* configure.in: Check for -lsocket, etc., before checking for
