@@ -475,7 +475,7 @@ build_one_dir (repository, dirpath, sticky)
 			     then rewrite it later via WriteTag, once
 			     we've had a chance to call RCS_nodeisbranch
 			     on each file.  */
-			  0, 1))
+			  0, 1, 1))
 	    return;
 
 	if (!noexec)
@@ -922,7 +922,8 @@ internal error: %s doesn't start with %s in checkout_proc",
 		    error (1, 0, "there is no repository %s", repository);
 
 		Create_Admin (".", preload_update_dir, repository,
-			      (char *) NULL, (char *) NULL, 0, 0);
+			      (char *) NULL, (char *) NULL, 0, 0,
+			      m_type == CHECKOUT);
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
@@ -945,7 +946,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 				 then rewrite it later via WriteTag, once
 				 we've had a chance to call RCS_nodeisbranch
 				 on each file.  */
-			      0, 0);
+			      0, 0, m_type == CHECKOUT);
 	    }
 	}
 	else

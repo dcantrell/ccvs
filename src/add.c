@@ -245,7 +245,7 @@ add (argc, argv)
 		sprintf (rcsdir, "%s/%s", repository, p);
 
 		Create_Admin (p, argv[i], rcsdir, tag, date,
-			      nonbranch, 0);
+			      nonbranch, 0, 1);
 
 		if (found_slash)
 		    send_a_repository ("", repository, update_dir);
@@ -800,10 +800,8 @@ add_directory (finfo)
 
 #ifdef SERVER_SUPPORT
     if (!server_active)
-	Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0);
-#else
-    Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0);
 #endif
+        Create_Admin (".", finfo->fullname, rcsdir, tag, date, nonbranch, 0, 1);
     if (tag)
 	free (tag);
     if (date)

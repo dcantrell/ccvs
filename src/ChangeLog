@@ -1,3 +1,10 @@
+2000-06-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* create_adm.c, cvs.h (Create_Admin): Add dotemplate argument.
+	Change all callers.
+	* checkout.c (checkout_proc): Don't create CVS/Template if
+	exporting.
+
 2000-06-26  Pavel Roskin <proski@gnu.org>
 	and Larry Jones  <larry.jones@sdrc.com>
 

@@ -969,7 +969,8 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 			  /* This is a guess.  We will rewrite it later
 			     via WriteTag.  */
 			  0,
-			  0);
+			  0,
+			  1);
 	    rewrite_tag = 1;
 	    nonbranch = 0;
 	    Subdir_Register (entries, (char *) NULL, dir);

@@ -553,7 +553,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	    nullrepos = emptydir_name ();
 
 	    Create_Admin (".", dir,
-			  nullrepos, (char *) NULL, (char *) NULL, 0, 0);
+			  nullrepos, (char *) NULL, (char *) NULL, 0, 0, 1);
 	    if (!noexec)
 	    {
 		FILE *fp;

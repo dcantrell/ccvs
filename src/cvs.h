@@ -500,7 +500,7 @@ void *valloc PROTO((size_t bytes));
 time_t get_date PROTO((char *date, struct timeb *now));
 extern int Create_Admin PROTO ((char *dir, char *update_dir,
 				char *repository, char *tag, char *date,
-				int nonbranch, int warn));
+				int nonbranch, int warn, int dotemplate));
 extern int expand_at_signs PROTO ((char *, off_t, FILE *));
 
 /* Locking subsystem (implemented in lock.c).  */
