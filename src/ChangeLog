@@ -1,3 +1,12 @@
+Thu May 16 16:45:51 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* client.c (start_tcp_server): Error message modified to tell the
+ 	user to use ":server:" instead of setting CVS_CLIENT_PORT to a
+ 	negative number.
+
+	* main.c (main): Add #ifdefs for turning off buffering of
+ 	stdio/stderr, so we don't get it by default.
+
 Thu May 16 01:29:47 1996  noel  <noel@BOAT_ANCHOR>
 
 	* commit.c (commit_filesdoneproc): Print the repository and root
