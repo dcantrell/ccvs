@@ -716,10 +716,10 @@ diff -r1\.2 -r1\.3"
 "${PROG} [a-z]*: scheduling file .topfile. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 	  dotest basicb-0c "${testcvs} -q ci -m add-it topfile" \
-"RCS file: ${TESTDIR}/cvsroot/./topfile,v
+"RCS file: ${TESTDIR}/cvsroot/\./topfile,v
 done
 Checking in topfile;
-${TESTDIR}/cvsroot/./topfile,v  <--  topfile
+${TESTDIR}/cvsroot/\./topfile,v  <--  topfile
 initial revision: 1\.1
 done"
 	  cd ..
