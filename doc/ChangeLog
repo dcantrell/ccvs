@@ -1,5 +1,8 @@
 Sat Mar 29 12:32:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Add paragraph about each Directory
+	request specifying a new local-directory and repository.
+
 	* cvsclient.texi (Requests): Add paragraph about renaming
 	local-directory in Directory request.  Use "local-directory"
 	consistently instead of "working directory", for clarity.

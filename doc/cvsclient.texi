@@ -393,6 +393,11 @@ the various @code{Directory} requests for a single command (for example,
 @code{update} or @code{ci} request) should name a particular directory
 with the same @var{local-directory}.
 
+Each @code{Directory} request specifies a brand-new
+@var{local-directory} and @var{repository}; that is,
+@var{local-directory} and @var{repository} are never relative to paths
+specified in any previous @code{Directory} request.
+
 @item Max-dotdot @var{level} \n
 Response expected: no.
 Tell the server that @var{level} levels of directories above the
