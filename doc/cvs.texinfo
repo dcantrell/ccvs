@@ -3014,15 +3014,13 @@ Arguments to the commands.
 @end table
 
 There is unfortunately some confusion between
-@code{cvs_options} and @code{command_options}.  For
-example, @samp{-q} can often (but not always) be given
-as both a @code{cvs_option} and a
-@code{command_option}.  @samp{-l}, when given as a
-@code{cvs_option}, only affects some of the commands.
-When it is given as a @code{command_option} is has a
-different meaning, and is accepted by more commands.
-In other words, do not take the above categorization
-too seriously.  Look at the documentation instead.
+@code{cvs_options} and @code{command_options}.
+@samp{-l}, when given as a @code{cvs_option}, only
+affects some of the commands.  When it is given as a
+@code{command_option} is has a different meaning, and
+is accepted by more commands.  In other words, do not
+take the above categorization too seriously.  Look at
+the documentation instead.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node ~/.cvsrc
@@ -3330,19 +3328,6 @@ Pipe the files retrieved from the repository to standard output,
 rather than writing them in the current directory.  Available
 with the @code{checkout} and @code{update} commands.
 
-@item -Q
-Cause the command to be really quiet; the command will only
-generate output for serious problems.  Available with the following
-commands: @code{checkout}, @code{import}, @code{export},
-@code{rdiff}, @code{rtag}, @code{tag}, and @code{update}.
-
-@item -q
-Cause the command to be somewhat quiet; informational messages,
-such as reports of recursion through subdirectories, are
-suppressed.  Available with the following commands:
-@code{checkout}, @code{import}, @code{export}, @code{rtag},
-@code{tag}, and @code{update}.
-
 @item -W
 Specify file names that should be filtered.  You can
 use this option repeatedly.  The spec can be a file
@@ -3366,9 +3351,10 @@ future update commands, until you specify otherwise.  The
 tag can be either a symbolic or numeric tag.
 @xref{Tags}.
 
-Specifying the @samp{-q} option along with the @samp{-r} option is often
-useful, to suppress the warning messages when the @sc{rcs} history file does
-not contain the specified tag.  
+Specifying the @samp{-q} global option along with the
+@samp{-r} command option is often useful, to suppress
+the warning messages when the @sc{rcs} history file
+does not contain the specified tag.
 
 @strong{Warning:} this is not the same as the overall `cvs -r' option,
 which you can specify to the left of a cvs command!
@@ -3869,7 +3855,7 @@ sub-directory may have a different name, but you can be
 sure that it will be a sub-directory, and that
 @code{checkout} will show the relative path leading to
 each file as it is extracted into your private work
-area (unless you specify the @samp{-Q} option).
+area (unless you specify the @samp{-Q} global option).
 
 Running @code{checkout} on a directory that was already
 built by a prior @code{checkout} is also permitted, and
@@ -3922,12 +3908,6 @@ Prune empty directories.
 
 @item -p
 Pipe files to the standard output.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 
 @item -r @var{tag}
 Use revision @var{tag}.  This option is sticky, and implies @samp{-P}.
@@ -4310,12 +4290,6 @@ co(1).
 @item -l
 Local; run only in current working directory.
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -R
 Examine directories recursively.  This option is on by
 default.
@@ -4439,12 +4413,6 @@ Local; run only in current working directory.
 
 @item -n
 Do not run any checkout program.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 
 @item -R
 Export directories recursively.  This is on by default.
@@ -4730,20 +4698,13 @@ the leaves created each time you execute @code{import}.
 @node import options
 @appendixsubsec import options
 
-These standard options are supported by @code{import}
-(@pxref{Common options}, for a complete description of
-them):
+This standard option is supported by @code{import}
+(@pxref{Common options}, for a complete description):
 
 @table @code
 @item -m @var{message}
 Use @var{message} as log information, instead of
 invoking an editor.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 @end table
 
 There are three additional special options.
@@ -5027,12 +4988,6 @@ recent revision (instead of ignoring the file).
 @item -l
 Local; don't descend subdirectories.
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -r @var{tag}
 Use revision @var{tag}.
 @end table
@@ -5143,18 +5098,7 @@ history log.
 @node release options
 @appendixsubsec release options
 
-Only these standard options are supported by @code{release}.
-
-@table @code
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-@end table
-
-In addition to the above, it supports one additional
-flag.
+The @code{release} command supports one command option:
 
 @table @code
 @item -d
@@ -5404,12 +5348,6 @@ Do not run any tag program that was specified with the
 @samp{-t} flag inside the @file{modules} file.
 (@pxref{modules}).
 
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
-
 @item -R
 Commit directories recursively.  This is on by default.
 
@@ -5461,7 +5399,7 @@ module).
 
 @itemize @bullet
 @item
-status [-lR] [-v] [-qQ] [files@dots{}]
+status [-lR] [-v] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -5495,12 +5433,6 @@ Local; run only in current working directory.
 
 @item -R
 Commit directories recursively.  This is on by default.
-
-@item -Q
-Really quiet.  Do not print empty sticky parts.
-
-@item -q
-Somewhat quiet.
 @end table
 
 There is one additional option:
@@ -5592,12 +5524,6 @@ Local; run only in current working directory.
 
 @item -R
 Commit directories recursively.  This is on by default.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 @end table
 
 Two special options are available:
@@ -5691,12 +5617,6 @@ Prune empty directories.
 
 @item -p
 Pipe files to the standard output.
-
-@item -Q
-Really quiet.
-
-@item -q
-Somewhat quiet.
 
 @item -R
 Commit directories recursively.  This is on by default.

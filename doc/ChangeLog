@@ -1,3 +1,7 @@
+Mon Jul 24 19:09:12 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Remove references to -q and -Q command options.
+
 Fri Jul 21 10:33:07 1995  Vince DeMarco <vdemarco@bou.shl.com>
 
 	* cvs.texinfo: Changes for CVSEDITOR and wrappers.
