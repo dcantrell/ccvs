@@ -1,3 +1,7 @@
+1998-11-11  Jim Kingdon
+
+	* HACKING: Change prep.ai.mit.edu to gnu.org.
+
 1998-10-26  Jim Kingdon
 
 	* INSTALL: Add information for Sequent DYNIX/ptx4.0, from a report
