@@ -60,10 +60,6 @@ static Key_schedule sched;
 #include <sys/select.h>
 #endif
 
-#if HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
 #ifndef O_NONBLOCK
 #define O_NONBLOCK O_NDELAY
 #endif

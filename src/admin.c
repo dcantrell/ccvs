@@ -38,6 +38,7 @@ admin (argc, argv)
     int err;
 #ifdef CVS_ADMIN_GROUP
     struct group *grp;
+    struct group *getgrnam();
 #endif
     if (argc <= 1)
 	usage (admin_usage);

@@ -2488,7 +2488,7 @@ modify-on-br1
 		mkdir import-dir ; cd import-dir
 
 		for i in 1 2 3 4 ; do
-			echo imported file"$i" > imported-file"$i"
+			echo imported file"$i" > imported-f"$i"
 		done
 
 		# This directory should be on the default ignore list,
@@ -2496,8 +2496,8 @@ modify-on-br1
 		mkdir RCS
 		echo ignore.me >RCS/ignore.me
 
-		echo 'import should not expand $''Id$' >>imported-file2
-		cp imported-file2 ../imported-file2-orig.tmp
+		echo 'import should not expand $''Id$' >>imported-f2
+		cp imported-f2 ../imported-f2-orig.tmp
 
 		if ${CVS} import -m first-import first-dir vendor-branch junk-1_0  ; then
 			echo "PASS: test 96" >>${LOGFILE}
@@ -2505,7 +2505,7 @@ modify-on-br1
 			echo "FAIL: test 96" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		if cmp ../imported-file2-orig.tmp imported-file2; then
+		if cmp ../imported-f2-orig.tmp imported-f2; then
 		  pass 96.5
 		else
 		  fail 96.5
@@ -2521,7 +2521,7 @@ modify-on-br1
 
 		cd first-dir
 		for i in 1 2 3 4 ; do
-			if test -f imported-file"$i" ; then
+			if test -f imported-f"$i" ; then
 				echo "PASS: test 98-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 98-$i" | tee -a ${LOGFILE} ; exit 1
@@ -2534,15 +2534,15 @@ modify-on-br1
 		fi
 
 		# remove
-		rm imported-file1
-		if ${CVS} rm imported-file1  2>> ${LOGFILE}; then
+		rm imported-f1
+		if ${CVS} rm imported-f1  2>> ${LOGFILE}; then
 			echo "PASS: test 99" >>${LOGFILE}
 		else
 			echo "FAIL: test 99" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# change
-		echo local-change >> imported-file2
+		echo local-change >> imported-f2
 
 		# commit
 		if ${CVS} ci -m local-changes  >> ${LOGFILE} 2>&1; then
@@ -2552,7 +2552,7 @@ modify-on-br1
 		fi
 
 		# log
-		if ${CVS} log imported-file1 | grep '1.1.1.2 (dead)'  ; then
+		if ${CVS} log imported-f1 | grep '1.1.1.2 (dead)'  ; then
 			echo "FAIL: test 101" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 101" >>${LOGFILE}
@@ -2566,16 +2566,16 @@ modify-on-br1
 		fi
 
 		# remove file4 on the vendor branch
-		rm imported-file4
+		rm imported-f4
 
-		if ${CVS} rm imported-file4  2>> ${LOGFILE}; then
+		if ${CVS} rm imported-f4  2>> ${LOGFILE}; then
 			echo "PASS: test 103" >>${LOGFILE}
 		else
 			echo "FAIL: test 103" | tee -a ${LOGFILE} ; exit 1
 		fi
 
 		# commit
-		if ${CVS} ci -m vendor-removed imported-file4 >>${LOGFILE}; then
+		if ${CVS} ci -m vendor-removed imported-f4 >>${LOGFILE}; then
 			echo "PASS: test 104" >>${LOGFILE}
 		else
 			echo "FAIL: test 104" | tee -a ${LOGFILE} ; exit 1
@@ -2591,16 +2591,16 @@ modify-on-br1
 		# second import - file4 deliberately unchanged
 		cd ../import-dir
 		for i in 1 2 3 ; do
-			echo rev 2 of file $i >> imported-file"$i"
+			echo rev 2 of file $i >> imported-f"$i"
 		done
-		cp imported-file2 ../imported-file2-orig.tmp
+		cp imported-f2 ../imported-f2-orig.tmp
 
 		if ${CVS} import -m second-import first-dir vendor-branch junk-2_0  ; then
 			echo "PASS: test 106" >>${LOGFILE}
 		else
 			echo "FAIL: test 106" | tee -a ${LOGFILE} ; exit 1
 		fi
-		if cmp ../imported-file2-orig.tmp imported-file2; then
+		if cmp ../imported-f2-orig.tmp imported-f2; then
 		  pass 106.5
 		else
 		  fail 106.5
@@ -2616,14 +2616,14 @@ modify-on-br1
 
 		cd first-dir
 
-		if test -f imported-file1 ; then
+		if test -f imported-f1 ; then
 			echo "FAIL: test 108" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 108" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
-			if test -f imported-file"$i" ; then
+			if test -f imported-f"$i" ; then
 				echo "PASS: test 109-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 109-$i" | tee -a ${LOGFILE} ; exit 1
@@ -2637,7 +2637,7 @@ modify-on-br1
 			echo "FAIL: test 110" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		if test -f imported-file4 ; then
+		if test -f imported-f4 ; then
 			echo "PASS: test 111" >>${LOGFILE}
 		else
 			echo "FAIL: test 111" | tee -a ${LOGFILE} ; exit 1
@@ -2654,36 +2654,36 @@ modify-on-br1
 
 		dotest import-113 \
 "${testcvs} -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
-"${PROG}"' [a-z]*: file first-dir/imported-file1 is present in revision junk-2_0
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/imported-file2,v
+"${PROG}"' [a-z]*: file first-dir/imported-f1 is present in revision junk-2_0
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/imported-f2,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
-Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-file2
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into imported-f2
 rcsmerge: warning: conflicts during merge'
 
 		cd first-dir
 
-		if test -f imported-file1 ; then
+		if test -f imported-f1 ; then
 			echo "FAIL: test 114" | tee -a ${LOGFILE} ; exit 1
 		else
 			echo "PASS: test 114" >>${LOGFILE}
 		fi
 
 		for i in 2 3 ; do
-			if test -f imported-file"$i" ; then
+			if test -f imported-f"$i" ; then
 				echo "PASS: test 115-$i" >>${LOGFILE}
 			else
 				echo "FAIL: test 115-$i" | tee -a ${LOGFILE} ; exit 1
 			fi
 		done
 
-		dotest import-116 'cat imported-file2' \
+		dotest import-116 'cat imported-f2' \
 'imported file2
-[<]<<<<<< imported-file2
-import should not expand \$''Id: imported-file2,v 1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
+[<]<<<<<< imported-f2
+import should not expand \$''Id: imported-f2,v 1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 local-change
 [=]======
-import should not expand \$''Id: imported-file2,v 1\.1\.1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
+import should not expand \$''Id: imported-f2,v 1\.1\.1\.2 [0-9/]* [0-9:]* [a-z0-9@][a-z0-9@]* Exp \$
 rev 2 of file 2
 [>]>>>>>> 1\.1\.1\.2'
 
