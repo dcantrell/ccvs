@@ -1,3 +1,8 @@
+2004-11-16  Derek Price  <derek@ximbiot.com>
+
+	* zconf.in.h: Remove unneeded file.
+	* Makefile.in (distclean): Don't "configure clean".  Remove Makefile.
+
 2004-11-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in (DISTFILES): Update for zlib 1.2.1.

@@ -208,9 +208,7 @@ clean:
 realclean: distclean
 maintainer-clean: distclean
 distclean: clean
-	cp -p Makefile.in Makefile
-	cp -p zconf.in.h zconf.h
-	rm -f .DS_Store
+	rm -f Makefile .DS_Store
 
 zip:
 	mv Makefile Makefile~; cp -p Makefile.in Makefile
