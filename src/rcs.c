@@ -3768,6 +3768,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     RCS_rewrite (rcs, dtext, commitpt->version);
 
     unlink_file (workfile);
+    unlink_file (tmpfile);
+    unlink_file (changefile);
 
     if (!quiet)
 	cvs_output ("done\n", 5);

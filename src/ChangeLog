@@ -1,3 +1,8 @@
+1997-10-23  enami tsugutomo  <enami@but-b.or.jp>
+
+	* rcs.c (RCS_checkin): Unlink temporary files stored in variable
+	`tmpfile' and `changefile'.
+
 Wed Oct 22 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (rcs_lockfilename): Allocate enough memory for terminating
