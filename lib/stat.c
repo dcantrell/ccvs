@@ -27,7 +27,7 @@
 #ifndef errno
 extern int errno;
 #endif
-#ifdef LSTAT
+#if defined( LSTAT ) && !defined( LSTAT_FOLLOWS_SLASHED_SYMLINK )
 # include <string.h>
 
 # if HAVE_STDLIB_H
@@ -94,7 +94,7 @@ slash_aware_lstat (const char *file, struct stat *sbuf)
 
   return lstat_result;
 }
-#endif /* LSTAT */
+#endif /* LSTAT && !LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* This is a wrapper for stat/lstat.
    If FILE is the empty string, fail with errno == ENOENT.
@@ -109,7 +109,11 @@ slash_aware_lstat (const char *file, struct stat *sbuf)
 
 #ifdef LSTAT
 # define rpl_xstat rpl_lstat
-# define xstat_return_val(F, S) slash_aware_lstat (F, S)
+# ifdef LSTAT_FOLLOWS_SLASHED_SYMLINK
+#   define xstat_return_val(F, S) lstat (F, S)
+# else /* !LSTAT_FOLLOWS_SLASHED_SYMLINK */
+#   define xstat_return_val(F, S) slash_aware_lstat (F, S)
+# endif /* LSTAT_FOLLOWS_SLASHED_SYMLINK */
 #else
 # define rpl_xstat rpl_stat
 # define xstat_return_val(F, S) stat (F, S)
