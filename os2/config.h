@@ -306,9 +306,6 @@ extern pid_t getpid (void);
 /* We definitely have prototypes.  */
 #define USE_PROTOTYPES 1
 
-/* This should really be DosSleep(). */
-unsigned sleep (unsigned);
-
 /* Under OS/2, filenames are case-insensitive, and both / and \
    are path component separators.  */
 #define FOLD_FN_CHAR(c) (OS2_filename_classes[(unsigned char) (c)])
