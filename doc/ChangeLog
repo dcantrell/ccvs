@@ -1,3 +1,8 @@
+1998-03-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keeping a checked out copy): The magic loginfo
+	incantation isn't too likely to work except on unix.
+
 1998-02-23  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (user-defined logging): Double "@" literal.
