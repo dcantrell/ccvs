@@ -1,3 +1,8 @@
+Mon Apr 21 00:08:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diff.c (diff_fileproc): Add comment concerning updating the
+	client timestamp.
+
 Sun Apr 20 23:20:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (commit): Add comment regarding SEND_FORCE rationale.
