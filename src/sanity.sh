@@ -35,7 +35,7 @@ exit_help ()
 {
     usage
     echo
-    echo "-h|--help	display this text"
+    echo "-H|--help	display this text"
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test remote instead of local cvs"
