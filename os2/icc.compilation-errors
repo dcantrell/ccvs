@@ -70,50 +70,6 @@ C:\src\cvs-1.6.1\src\classify.c(504:0) : informational EDC0802: Static variable 
 Compilation finished at Mon Nov 06 14:03:50
 
 ------------------------------------------------------------------------
-::: client
-
-cd c:/src/cvs-1.6.1/os2/
-make -f test-makefile THIS_BASENAME=../src/client
-ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
-ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/client.obj ../src/client.c
-C:\src\cvs-1.6.1\src\client.c(484:2) : warning EDC0185: Function read_line has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(553:10) : warning EDC0185: Function getwd has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(724:5) : warning EDC0185: Function call_in_directory has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(724:30) : warning EDC0185: Function copy_a_file has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1131:30) : warning EDC0185: Function update_entries has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1193:30) : warning EDC0185: Function remove_entry has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1213:30) : warning EDC0185: Function remove_entry_and_file has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1269:30) : warning EDC0185: Function set_static has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1295:9) : warning EDC0185: Function is_cvsroot_level has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1303:34) : warning EDC0185: Function clear_static has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1352:34) : warning EDC0185: Function set_sticky has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1387:34) : warning EDC0185: Function clear_sticky has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1489:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\client.c(1489:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\client.c(1490:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\client.c(1490:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\client.c(1490:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\client.c(1492:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1499:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1504:13) : warning EDC0185: Function closedir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(1658:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\client.c(1693:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\client.c(1728:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\client.c(1812:4) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\client.c(2581:3) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\client.c(2708:2) : warning EDC0185: Function send_modified has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(2808:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\client.c(2810:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\client.c(2902:3) : warning EDC0185: Function send_fileproc has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(2903:3) : warning EDC0185: Function send_dirent_proc has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\client.c(3033:5) : warning EDC0185: Function parse_cvsroot has not been prototyped prior to use.
-make: *** [../src/client.obj] Error 12
-
-Compilation exited abnormally with code 2 at Mon Nov 06 14:04:06
-
-------------------------------------------------------------------------
 ::: client [after installing dirent]
 
 cd c:/src/cvs-1.6.1/os2/
@@ -295,42 +251,17 @@ make: *** [../src/filesubr.obj] Error 12
 Compilation exited abnormally with code 2 at Mon Nov 06 14:06:39
 
 ------------------------------------------------------------------------
-::: find_names
+::: find_names [after installing dirent]
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/find_names
 ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
 ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/find_names.obj ../src/find_names.c
-C:\src\cvs-1.6.1\src\find_names.c(170:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\find_names.c(170:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\find_names.c(173:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\find_names.c(177:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\find_names.c(179:23) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(183:23) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(187:24) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(192:12) : warning EDC0185: Function closedir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\find_names.c(194:0) : informational EDC0805: Automatic variable dp is set but not referenced.
-C:\src\cvs-1.6.1\src\find_names.c(210:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\find_names.c(210:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\find_names.c(219:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(220:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(221:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(222:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(223:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\find_names.c(232:27) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(233:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\find_names.c(235:34) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(237:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\find_names.c(255:7) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\find_names.c(261:44) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(263:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\find_names.c(269:20) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
-C:\src\cvs-1.6.1\src\find_names.c(275:0) : informational EDC0805: Automatic variable dp is set but not referenced.
-make: *** [../src/find_names.obj] Error 12
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/find_names.obj ../src/find_names.c
+C:\src\cvs-1.6.1\src\find_names.c(275:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
 
-Compilation exited abnormally with code 2 at Mon Nov 06 14:06:50
+Compilation finished at Mon Nov 06 19:17:28
 
 ------------------------------------------------------------------------
 ::: hash
@@ -381,28 +312,13 @@ Compilation finished at Mon Nov 06 14:07:38
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/import
 ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
 ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/import.obj ../src/import.c
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/import.obj ../src/import.c
 C:\src\cvs-1.6.1\src\import.c(87:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\import.c(317:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(317:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(318:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\import.c(318:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(318:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(319:5) : error EDC0349: Unexpected text 'int' ignored.
-C:\src\cvs-1.6.1\src\import.c(319:9) : error EDC0041: Identifier err must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(320:10) : error EDC0348: Syntax error: possible missing ':'.
-C:\src\cvs-1.6.1\src\import.c(326:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\import.c(332:15) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\import.c(335:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\import.c(347:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\import.c(362:7) : error EDC0041: Identifier dirlist must be declared before it is used.
-C:\src\cvs-1.6.1\src\import.c(368:0) : informational EDC0805: Automatic variable n is set but not referenced.
-C:\src\cvs-1.6.1\src\import.c(391:9) : warning EDC0185: Function closedir has not been prototyped prior to use.
-make: *** [../src/import.obj] Error 12
+C:\src\cvs-1.6.1\src\import.c(1181:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
 
-Compilation exited abnormally with code 2 at Mon Nov 06 14:07:57
+Compilation finished at Mon Nov 06 19:19:04
 
 ------------------------------------------------------------------------
 ::: lock
@@ -410,27 +326,12 @@ Compilation exited abnormally with code 2 at Mon Nov 06 14:07:57
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/lock
 ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
 ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/lock.obj ../src/lock.c
-C:\src\cvs-1.6.1\src\lock.c(395:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(395:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(396:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\lock.c(396:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(396:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(397:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\lock.c(397:17) : error EDC0349: Unexpected text sb ignored.
-C:\src\cvs-1.6.1\src\lock.c(398:5) : error EDC0349: Unexpected text 'int' ignored.
-C:\src\cvs-1.6.1\src\lock.c(398:9) : error EDC0041: Identifier ret must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(404:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\lock.c(408:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\lock.c(418:23) : error EDC0041: Identifier sb must be declared before it is used.
-C:\src\cvs-1.6.1\src\lock.c(436:6) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
-C:\src\cvs-1.6.1\src\lock.c(443:5) : warning EDC0185: Function closedir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\lock.c(541:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-make: *** [../src/lock.obj] Error 12
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/lock.obj ../src/lock.c
+C:\src\cvs-1.6.1\src\lock.c(608:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
 
-Compilation exited abnormally with code 2 at Mon Nov 06 14:08:08
+Compilation finished at Mon Nov 06 19:20:35
 
 ------------------------------------------------------------------------
 ::: log
@@ -761,43 +662,18 @@ C:\src\cvs-1.6.1\src\tag.c(582:0) : informational EDC0802: Static variable stand
 Compilation finished at Mon Nov 06 14:15:04
 
 ------------------------------------------------------------------------
-::: update
+::: update [after fixing S_IF* macros]
 
 cd c:/src/cvs-1.6.1/os2/
 make -f test-makefile THIS_BASENAME=../src/update
 ECHO is on.
--C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
 ECHO is on.
-icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/update.obj ../src/update.c
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I../os2 -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/update.obj ../src/update.c
 C:\src\cvs-1.6.1\src\update.c(138:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\update.c(869:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(869:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(870:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\update.c(870:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(870:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(872:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\update.c(877:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\update.c(882:13) : warning EDC0185: Function closedir has not been prototyped prior to use.
-C:\src\cvs-1.6.1\src\update.c(1813:5) : error EDC0041: Identifier DIR must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1813:10) : error EDC0041: Identifier dirp must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1814:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\update.c(1814:12) : error EDC0041: Identifier direct must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1814:20) : error EDC0041: Identifier dp must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1815:5) : error EDC0349: Unexpected text 'struct' ignored.
-C:\src\cvs-1.6.1\src\update.c(1815:17) : error EDC0349: Unexpected text sb ignored.
-C:\src\cvs-1.6.1\src\update.c(1816:5) : error EDC0349: Unexpected text 'char' ignored.
-C:\src\cvs-1.6.1\src\update.c(1816:11) : error EDC0041: Identifier file must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1817:5) : error EDC0349: Unexpected text 'char' ignored.
-C:\src\cvs-1.6.1\src\update.c(1817:11) : error EDC0041: Identifier xdir must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1836:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\update.c(1838:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\update.c(1844:16) : error EDC0041: Identifier sb must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1851:3) : error EDC0041: Identifier S_IFMT must be declared before it is used.
-C:\src\cvs-1.6.1\src\update.c(1857:7) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-C:\src\cvs-1.6.1\src\update.c(1872:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
-make: *** [../src/update.obj] Error 12
+C:\src\cvs-1.6.1\src\update.c(1882:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
 
-Compilation exited abnormally with code 2 at Mon Nov 06 14:15:14
+Compilation finished at Mon Nov 06 20:29:55
 
 ------------------------------------------------------------------------
 ::: vers_ts
