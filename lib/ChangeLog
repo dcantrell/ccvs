@@ -1,3 +1,9 @@
+Sun Oct 22 14:15:44 1995  Jim Meyering  (meyering@comco.com)
+
+	* getline.c, getline.h: New files.
+	* Makefile.in (SOURCES, OBJECTS, HEADERS): Add getline.c, getline.o,
+	and getline.h, respectively.
+
 Tue Oct 10 18:01:50 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * Makefile.in (cvs_srcdir): define cvs_srcdir to be ../src, then
@@ -32,9 +38,9 @@ Sun Oct  1 21:03:40 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
         * regex.c: reverted below change.
 
 Thu Sep 28 13:37:04 1995  Larry Jones <larry.jones@sdrc.com>
-        
+
         * regexp.c: check for ISC.
-        
+
 Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
 
 	* save-cwd.c: #include <direct.h> and <io.h>, on systems that
