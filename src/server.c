@@ -5888,7 +5888,7 @@ error 0 kerberos: %s\n", krb_get_err_text(status));
     }
 
     /* Switch to run as this user. */
-    switch_to_user (user);
+    switch_to_user ("Kerberos 4", user);
 }
 #endif /* HAVE_KERBEROS */
 
