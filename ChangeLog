@@ -1,3 +1,9 @@
+Thu May 29 15:53:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* DEVEL-CVS: Add "Policy regarding checkout-only access" to
+	replace parenthetical remark about checkout-only access.  This is
+	more of a cosmetic/editorial change than a new policy.
+
 Wed May 21 17:02:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add item about wrappers.
