@@ -819,13 +819,17 @@ char *
 get_homedir ()
 {
     static char *home = NULL;
-    char *env = getenv ("HOME");
+    char *env;
     struct passwd *pw;
 
     if (home != NULL)
 	return home;
 
-    if (env)
+    if (
+#ifdef SERVER_SUPPORT
+	!server_active &&
+#endif
+	(env = getenv ("HOME")) != NULL)
 	home = env;
     else if ((pw = (struct passwd *) getpwuid (getuid ()))
 	     && pw->pw_dir)
