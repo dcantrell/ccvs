@@ -1,8 +1,8 @@
 Tue Jun  6 15:26:16 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
-	* subr.c (run_setup, run_args): Add const qualifier to format
-	  argument.
-	* cvs.h (run_setup, run_args): Likewise.
+	* subr.c (run_setup, run_args, run_add_arg, xstrdup): Add const
+	  qualifier to format argument.
+	* cvs.h (run_setup, run_args, xstrdup): Likewise.
 
 	* Makefile.in (SOURCES): Added rcscmds.c.
 	  (OBJECTS): Added rcscmds.o.
