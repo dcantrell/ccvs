@@ -1,3 +1,11 @@
+2004-01-12  Mark D. Baushke  <mdb@cvshome.org>
+
+	* lock.c (lock_name): Deal with potentially NULL string pointers
+	in calls to TRACE.
+	(promotable_lock): Ditto.
+	(set_lock): Ditto.
+	* sanity.sh (trace): Update to latest patterns.
+
 2004-01-07  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* checkout.c (safe_location): Remove unused variable(s).
