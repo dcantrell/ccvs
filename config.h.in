@@ -9,6 +9,15 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
+/* When committing a permanent change, CVS and RCS make a log entry of who
+   committed the change. If you are committing the change logged in as "root"
+   (not under "su" or other root-priv giving program), CVS/RCS cannot
+   determine who is actually making the change. As such, by default, CVS
+   prohibits changes committed by users logged in as "root". You can disable
+   checking by passing the "--enable-rootcommit" option to configure or by
+   commenting out the lines below. */
+#undef CVS_BADROOT
+
 /* Define to enable encryption support. */
 #undef ENCRYPTION
 

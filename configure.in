@@ -370,8 +370,7 @@ fi
 # Check for options requesting client and server feature. If none are
 # given and we have connect(), we want the full client & server arrangement.
 AC_ARG_ENABLE(client,
-[  --enable-client         include code for running as a remote client (default)
-  --disable-client        don't include remote client code], ,
+[  --enable-client         include code for running as a remote client (default)], ,
 [if test "$ac_cv_search_connect" != no; then
   enable_client=yes
 fi])
@@ -381,8 +380,7 @@ if test "$enable_client" = yes; then
 fi
 
 AC_ARG_ENABLE(server,
-[  --enable-server         include code for running as a server (default)
-  --disable-server        don't include server code], ,
+[  --enable-server         include code for running as a server (default)], ,
 [if test "$ac_cv_search_connect" != no; then
   enable_server=yes
 fi])
@@ -402,6 +400,33 @@ dnl
 [Define if you want to use the password authenticated server.])
 ])dnl AC_SEARCH_LIBS
 fi # enable_server
+
+dnl
+dnl I don't like this here, but I don't really like options.h, either.
+dnl Besides, this is causing some problems currently when compiling under
+dnl Windows and moving it here should avoid the issue (the wrong options.h
+dnl is being used).
+dnl
+dnl I don't like making this a runtime option either.  I think I just don't
+dnl like making it easy to get to, but putting it here goes along with the
+dnl Autoconf ideal.
+dnl
+AC_ARG_ENABLE(rootcommit,
+  [  --enable-rootcommit     allow the root user to commit files
+                          (disabled by default)], ,
+  [enable_rootcommit=no])
+if test "$enable_rootcommit" = no; then
+  AC_DEFINE(CVS_BADROOT, 1,
+[When committing a permanent change, CVS and RCS make a log entry of
+who committed the change.  If you are committing the change logged
+in as "root" (not under "su" or other root-priv giving program),
+CVS/RCS cannot determine who is actually making the change.
+
+As such, by default, CVS prohibits changes committed by users
+logged in as "root".  You can disable checking by passing the
+"--enable-rootcommit" option to configure or by commenting out the
+lines below.])
+fi
 
 dnl For the moment we will assume that all systems which have
 dnl the unixyness to run configure are unixy enough to do the
