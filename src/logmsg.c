@@ -195,8 +195,11 @@ do_editor (dir, messagep, repository, changes)
     struct stat pre_stbuf, post_stbuf;
     int retcode = 0;
 
-    assert (current_parsed_root->isremote && !repository
-	    || !current_parsed_root->isremote && repository);
+#ifdef CLIENT_SUPPORT
+    assert (!current_parsed_root->isremote != !repository);
+#else
+    assert (repository);
+#endif
 
     if (noexec || reuse_log_message)
 	return;
@@ -712,6 +715,11 @@ title_proc (p, closure)
 		   fields).  This way if future CVS versions add formatting
 		   characters, one can write a loginfo file which at least
 		   won't blow up on an old CVS.  */
+		/* Note that people who have to deal with spaces in file
+		   and directory names are using space to get a known
+		   delimiter for the directory name, so it's probably
+		   not a good idea to ever define that as a formatting
+		   character.  */
 		}
 		if (*(c + 1) != '\0')
 		{
