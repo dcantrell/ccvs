@@ -225,10 +225,11 @@
 #endif
 
 /*
- * The authenticated client/server is under construction -- it is not
- * known to work with Windows NT.
+ * Yes, we can do the authenticated client.
  */
-/* #define AUTH_CLIENT_SUPPORT 1 */
+#define AUTH_CLIENT_SUPPORT 1
+
+/* Authenticated server doesn't work yet on NT.  */
 /* #define AUTH_SERVER_SUPPORT 1 */
 
 /*
@@ -239,7 +240,7 @@
  * and recv(), or maybe one has to link against a different library or something,
  * I don't know.  So this is commented out.
  */
-/* #define NO_SOCKET_TO_FD 1 */
+#define NO_SOCKET_TO_FD 1
 
 /* End of CVS configuration section */
 

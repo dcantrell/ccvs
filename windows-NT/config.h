@@ -365,3 +365,5 @@ extern void wnt_shutdown_server (int fd);
 
 #define INITIALIZE_SOCKET_SUBSYSTEM init_winsock
 extern void init_winsock();
+
+#define HAVE_WINSOCK_H
