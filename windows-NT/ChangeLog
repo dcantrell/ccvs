@@ -1,5 +1,11 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in: Define HAVE_ALLOCA_H and HAVE_ALLOCA to get around the
+	dain bramage of a few GNULIB modules.
+	* config.h, stamp-ch: Regenerated.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* fix-msvc-mak.pl: Remove default build configuration hooks.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
