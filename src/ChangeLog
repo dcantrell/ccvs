@@ -1,5 +1,9 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Use symbolic name for trace level.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* client.c (connect_to_forked_server): Use TRACE macro rather than the
 	old style.
 
