@@ -358,6 +358,15 @@ warning: this CVS does not support PreservePermissions");
 		goto error_return;
 	    }
 	}
+	else if (strcmp (line, "LockDir") == 0)
+	{
+	    if (lock_dir != NULL)
+		free (lock_dir);
+	    lock_dir = xstrdup (p);
+	    /* Could try some validity checking, like whether we can
+	       opendir it or something, but I don't see any particular
+	       reason to do that now rather than waiting until lock.c.  */
+	}
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a
