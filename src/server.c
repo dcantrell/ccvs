@@ -5727,10 +5727,12 @@ pserver_authenticate_connection ()
 
     /* Make sure the protocol starts off on the right foot... */
     if (getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX) < 0)
-	/* FIXME: what?  We could try writing error/eof, but chances
-	   are the network connection is dead bidirectionally.  log it
-	   somewhere?  */
-	;
+	{
+#ifdef HAVE_SYSLOG_H
+	    syslog (LOG_DAEMON | LOG_NOTICE, "bad auth protocol start: EOF");
+#endif
+	    error (1, 0, "bad auth protocol start: EOF");
+	}
 
     if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
 	verify_and_exit = 1;
