@@ -1589,7 +1589,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
-	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
+	        run_setup ("%s -f -s -b ~ %s %s", Patchbin,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
@@ -3717,8 +3717,8 @@ start_rsh_server (tofdp, fromfdp)
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
+    char *cvs_rsh = getenv (CVS_RSH_ENV);
+    char *cvs_server = getenv (CVS_SERVER_ENV);
     char command[PATH_MAX];
     int i = 0;
     /* This needs to fit "rsh", "-b", "-l", "USER", "host",
@@ -3726,9 +3726,9 @@ start_rsh_server (tofdp, fromfdp)
     char *rsh_argv[10];
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
-	cvs_server = "cvs";
+	cvs_server = CVS_SERVER_DFLT;
 
     /* If you are running a very old (Nov 3, 1994, before 1.5)
      * version of the server, you need to make sure that your .bashrc
@@ -3789,9 +3789,9 @@ start_rsh_server (tofdp, fromfdp)
     char *command;
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
-	cvs_server = "cvs";
+	cvs_server = CVS_SERVER_DFLT;
 
     /* Pass the command to rsh as a single string.  This shouldn't
        affect most rsh servers at all, and will pacify some buggy
