@@ -32,26 +32,28 @@
 /* C89 hosted headers we _think_ GCC supplies even on freestanding systems.
  * If we find any systems which do not have them, a replacement header should
  * be discussed with the GNULIB folks.
- * See HACKING for more.
+ *
+ * For more information, please see the `Portability' section of the `HACKING'
+ * file.
  */
 #include <stdlib.h>
 #include <string.h>
 
-#if HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
+/* We assume this because it has been around forever despite not being a part
+ * of any of the other standards we assume conformance to.  So far this hasn't
+ * been a problem.
+ *
+ * For more information, please see the `Portability' section of the `HACKING'
+ * file.
+ */
+#include <sys/types.h>
+
 #if HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */
-#if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif /* !STDC_HEADERS && HAVE_MEMORY_H */
-# include <string.h>
-#endif /* HAVE_STRING_H */
-#if HAVE_STRINGS_H
-# include <strings.h>
-#endif /* HAVE_STRINGS_H */
+#if !STDC_HEADERS && HAVE_MEMORY_H
+# include <memory.h>
+#endif /* !STDC_HEADERS && HAVE_MEMORY_H */
 #if HAVE_INTTYPES_H
 # include <inttypes.h>
 #else /* ! HAVE_INTTYPES_H */

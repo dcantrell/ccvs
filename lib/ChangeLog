@@ -1,3 +1,8 @@
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* system.h: Assume <string.h> and <sys/types.h> per the notes in
+	HACKING.
+
 2003-09-30  Larry Jones  <lawrence.jones@eds.com>
 
 	* getpass.c: Fix bug that caused password to be echoed on many
@@ -13,7 +18,7 @@
 	* atexit.c: New file.
 	* Makefile.in: Regenerated.
 
-2003-08-19  Derek Price  <derek@ximbiot.com>
+2003-08-29  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Assume more headers, re C89 & GNULIB.
 
