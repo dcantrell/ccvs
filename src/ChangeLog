@@ -1,5 +1,7 @@
 Tue Mar 26 09:48:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (mflag): Don't use tag name reserved to CVS.
+
 	NT local changes plus miscellaneous things noticed in the process:
 	* import.c (add_rcs_file): Use binary mode to write RCS file.  Use
 	\012 where linefeed is intended.  Copy data a small block at a
