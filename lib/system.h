@@ -27,8 +27,14 @@
 #undef S_ISNWK
 #endif
 
-/* Not all systems have S_IFMT, but we probably want to use it if we
-   do.  See ChangeLog for a more detailed discussion. */
+/* Not all systems have S_IFMT, but we want to use it if we have it.
+   The S_IFMT code below looks right (it masks and compares).  The
+   non-S_IFMT code looks bogus (are there really systems on which
+   S_IFBLK, S_IFLNK, &c, each have their own bit?  I suspect it was
+   written for OS/2 using the IBM C/C++ Tools 2.01 compiler).
+
+   Of course POSIX systems will have S_IS*, so maybe the issue is
+   semi-moot.  */
 
 #if !defined(S_ISBLK) && defined(S_IFBLK)
 # if defined(S_IFMT)

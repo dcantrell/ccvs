@@ -1,5 +1,8 @@
 Sun Sep  7 17:35:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* system.h: Replace comment referring to ChangeLog with a
+	comment based on the ChangeLog entries.
+
 	* strdup.c: Removed, per change to ../configure.in
 	* Makefile.in (SOURCES): Remove strdup.c.
 
