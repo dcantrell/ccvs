@@ -164,10 +164,11 @@ rtag (argc, argv)
     {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
-	
+
 	ign_setup ();
 
-	/* FIXME: is there any reason why we ignore force_tag_match?  */
+	if (!force_tag_match)
+	    send_arg ("-f");
 	if (local)
 	    send_arg("-l");
 	if (delete_flag)

@@ -156,6 +156,8 @@ cvstag (argc, argv)
 	
 	ign_setup ();
 
+	if (!force_tag_match)
+	    send_arg ("-f");
 	if (local)
 	    send_arg("-l");
 	if (delete_flag)

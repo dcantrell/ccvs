@@ -1,5 +1,9 @@
 Sun Feb  9 12:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* tag.c (cvstag), rtag.c (rtag): Pass -f to server if specified in
+	the client.  I haven't tried to come up with a test case because
+	the fix seems obvious.
+
 	* import.c (add_rcs_file): Change size of altdate1 and altdate2 to
 	MAXDATELEN.
 	* cvs.h (MAXDATELEN): Fix comments; describe what this is for.
