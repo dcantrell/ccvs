@@ -14587,8 +14587,8 @@ done"
 	  mkdir 2; cd 2
 	  dotest backuprecover-7 "${testcvs} -Q co first-dir" ''
 	  cd first-dir
-	  sed -e"s/looks like/just looks like/" file1 >tmp; mv tmp file1
-	  sed -e"s/don't use/don't just use/" dir/file2 >tmp; mv tmp dir/file2
+	  sed -e "s/looks like/just looks like/" file1 >tmp; mv tmp file1
+	  sed -e "s/don't use/don't just use/" dir/file2 >tmp; mv tmp dir/file2
 
 	  # developer 1 is on a roll
 	  cd ../../1/first-dir
@@ -14637,7 +14637,7 @@ done"
 	  mkdir 4; cd 4
 	  dotest backuprecover-10 "${testcvs} -Q co first-dir" ''
 	  cd first-dir
-	  sed -e"s/quit and/be fired so he can/" dir/file2 >tmp; mv tmp dir/file2
+	  sed -e "s/quit and/be fired so he can/" dir/file2 >tmp; mv tmp dir/file2
 
 	  # And back to developer 1
 	  cd ../../1/first-dir
@@ -14665,7 +14665,7 @@ done"
 	  # developer 3'll do a bit of work that never gets checked in
 	  cd ../../3/first-dir
 	  dotest backuprecover-13 "${testcvs} -Q update" ''
-	  sed -e"s/very/some extremely/" file1 >tmp; mv tmp file1
+	  sed -e "s/very/some extremely/" file1 >tmp; mv tmp file1
 	  dotest backuprecover-14 "${testcvs} -q ci -mtest" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
