@@ -742,6 +742,16 @@ NODEP_CPP_SERVE=\
 ################################################################################
 # Begin Source File
 
+SOURCE=.\lib\fnmatch.h.in
+
+".\lib\fnmatch.h" : $(SOURCE)
+   copy $(SOURCE) .\lib\fnmatch.h
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
 SOURCE=.\src\diff.c
 DEP_CPP_DIFF_=\
 	".\src\cvs.h"\
@@ -3626,9 +3636,6 @@ NODEP_CPP_FNCAS=\
 
 "$(INTDIR)\fncase.obj" : $(SOURCE) $(DEP_CPP_FNCAS) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
-
-".\lib\fnmatch.h" : .\lib\fnmatch.h.in
-	-@copy .\lib\fnmatch.h.in .\lib\fnmatch.h
 
 # End Source File
 # End Target
