@@ -1023,7 +1023,7 @@ if test x"$*" = x; then
 	tests="${tests} rm-update-message rmadd rmadd2 rmadd3"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
-	tests="${tests} rcslib multibranch import importb importc"
+	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join4 join5 join6"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
@@ -7765,6 +7765,7 @@ modify-on-br1
 		# info -- imports which are rejected by verifymsg
 		# head -- intended to test vendor branches and HEAD,
 		#   although it doesn't really do it yet.
+		# import-CVS -- refuse to import directories named "CVS".
 
 		# import
 		mkdir import-dir ; cd import-dir
@@ -8205,6 +8206,42 @@ import-it
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	import-CVS)
+	  mkdir import-CVS
+	  cd import-CVS
+	  touch file1 file2 file3
+	  dotest_fail import-CVS-1 "$testcvs import CVS vtag rtag" \
+"$CPROG import: The word \`CVS' is reserved by CVS and may not be used
+$CPROG \[import aborted\]: as a directory in a path or as a file name\."
+	  mkdir sdir
+	  mkdir sdir/CVS
+	  touch sdir/CVS/file4 sdir/CVS/file5 sdir/file6 sdir/file7
+	  # Calling the imported directory import-CVS is dual purpose in the
+	  # following test.  It makes sure the path test which matched above
+	  # wasn't too strict.
+	  dotest_sort import-CVS-2 \
+"$testcvs import -I! -mimport import-CVS vtag rtag" \
+"
+
+I import-CVS/sdir/CVS
+N import-CVS/file1
+N import-CVS/file2
+N import-CVS/file3
+N import-CVS/sdir/file6
+N import-CVS/sdir/file7
+No conflicts created by this import
+$SPROG import: Importing $CVSROOT_DIRNAME/import-CVS/sdir"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r import-CVS
+	  rm -rf $CVSROOT_DIRNAME/import-CVS
 	  ;;
 
 	import-after-initial)
