@@ -1,0 +1,54 @@
+
+SHELL = /bin/sh
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+
+HEADERS = \
+  config.h \
+  options.h \
+  maccvs.pch
+SOURCES = \
+  macos_filesys.c \
+  pwd.c \
+  rcmd.c \
+  run.c \
+  server_if.c
+DISTFILES = \
+  ${HEADERS} \
+  ${SOURCES} \
+  README.MacCVS \
+  Makefile.in \
+  services \
+  maccvs.rsrc.sit.hqx \
+  maccvs_projects.sit.hqx
+
+all:
+
+.PHONY: all install uninstall
+all install uninstall:
+
+.PHONY: tags TAGS
+tags TAGS:
+
+.PHONY: ls
+ls:
+	@echo ${DISTFILES}
+
+.PHONY: clean distclean realclean mostlyclean
+clean distclean realclean mostlyclean:
+
+.PHONY: lint
+lint:
+
+.PHONY: dist-dir
+dist-dir:
+	mkdir ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+
+clean:
+	@echo make clean does nothing in macintosh subdir
+
