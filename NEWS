@@ -5,10 +5,6 @@ fuctionality previously allowed executables to be specified in the modules file
 to be run at update and checkin time, but users could edit these files on a per
 workspace basis, creating a security hole.
 
-* Autoconf and Automake are no longer run automatically unless you run
-configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
-no longer needed and has been removed.
-
 * CVSROOTs which contain a symlink to a real repository should work.
 
 * contrib/rcs2log and src/cvsbug now use the BSD mktemp program to create
@@ -27,13 +23,21 @@ option to turn on read-only repository mode for local repositories.
 This allows users to checkout from a CDROM repository or other
 read-only filesystem.
 
+* There is a new CVS_LOCAL_BRANCH_NUM environment variable, which
+may be used to give control over the branch number to be used next.
+Useful for having local changes in a CVSup mirrored repository.
+
 * Miscellaneous documentation corrections.
 
 * Corrected the path in a failed write error message.
 
-* There is a new CVS_LOCAL_BRANCH_NUM environment variable, which
-may be used to give control over the branch number to be used next.
-Useful for having local changes in a CVSup mirrored repository.
+* Autoconf and Automake are no longer run automatically unless you run
+configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
+no longer needed and has been removed.
+
+* We've standardized on Autoconf version 2.57 to get at a few new macros.
+Again, this should only really affect developers.  See the section of the
+INSTALL file about using the autotools if you are compiling CVS yourself.
 
 Changes from 1.11.4 to 1.11.5:
 
