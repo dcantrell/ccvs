@@ -1,3 +1,7 @@
+1998-10-13  Jim Kingdon
+
+	* TODO (149): Update since -d doesn't rewrite CVS/Root any more.
+
 1998-10-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO (31): Mention the ,foo.c, and SIGINT issue.
