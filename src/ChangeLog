@@ -1,5 +1,13 @@
 Wed Oct 16 10:16:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Remove tests 4, 4.5, and 4.75; this functionality is
+	already tested by 45, 45.5 and other tests.
+	(ignore): New tests ignore-192, ignore-193, ignore-194, and
+	ignore-195 test output from "cvs release".
+	(modules2): New tests modules2-6, modules2-7, and modules2-8 test
+	ability of cvs release to handle multiple arguments.  Since it
+	currently doesn't, the tests are kludged.
+
 	* server.c, cvs.h (cvs_flushout): New function.
 	* recurse.c (do_file_proc): Call it.
 	* server.c (cvs_outerr): Call fflush (stdout) in non-server case.

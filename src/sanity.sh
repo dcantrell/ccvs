@@ -494,29 +494,10 @@ cd .. ; rm -rf tmp
 # (now that mkmodules is gone, this doesn't test -i the way it
 # used to.  In fact, it looks like a noop to me).
 echo "CVSROOT		CVSROOT" > cvsroot/CVSROOT/modules
-# The following line stolen from cvsinit.sh.  FIXME: create our
-# repository via cvsinit.sh; that way we test it too.
+# The following line stolen from the old cvsinit.sh.  FIXME:
+# create our repository via cvs init; that way we test it too.
 (cd cvsroot/CVSROOT; ci -q -u -t/dev/null \
   -m'initial checkin of modules' modules)
-
-# This one should succeed.  No warnings.
-mkdir tmp ; cd tmp
-if ${CVS} -d `pwd`/../cvsroot co CVSROOT ; then
-	echo "PASS: test 4" >>${LOGFILE}
-else
-	echo "FAIL: test 4" | tee -a ${LOGFILE}
-	exit 1
-fi
-
-if echo "yes" | ${CVS} -d `pwd`/../cvsroot release -d CVSROOT ; then
-	echo "PASS: test 4.5" >>${LOGFILE}
-else
-	echo "FAIL: test 4.5" | tee -a ${LOGFILE}
-	exit 1
-fi
-# this had better be empty
-cd ..; rmdir tmp
-dotest_fail 4.75 "test -d tmp" ''
 
 # a simple function to compare directory contents
 #
@@ -3753,6 +3734,22 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest modules2-4 "test -d ampermodule/first-dir" ''
 	  dotest modules2-5 "test -d ampermodule/second-dir" ''
 
+	  # Test ability of cvs release to handle multiple arguments
+	  cd ampermodule
+	  if echo yes | ${testcvs} release -d first-dir second-dir \
+	    >>${LOGFILE}; then
+	    pass modules2-6
+	  else
+	    fail modules2-6
+	  fi
+	  dotest_fail modules2-7 "test -d first-dir" ''
+	  # FIXCVS: The previous command was supposed to delete second-dir,
+	  # but CVS is currently broken in this respect.  So until it is
+	  # fixed....
+	  rm -rf second-dir
+	  dotest_fail modules2-8 "test -d second-dir" ''
+
+	  cd ..
 	  cd ..
 	  rm -rf 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -4213,7 +4210,30 @@ ${QUESTION} second-dir/CVS
 ${QUESTION} second-dir/notig.c
 ${QUESTION} second-dir/.cvsignore"
 
-	  rm -rf first-dir second-dir
+	  if echo yes | ${testcvs} release -d first-dir \
+	    >${TESTDIR}/ignore.tmp; then
+	    pass ignore-192
+	  else
+	    fail ignore-192
+	  fi
+	  dotest ignore-193 "cat ${TESTDIR}/ignore.tmp" \
+"${QUESTION} \.cvsignore
+You have \[0\] altered files in this repository.
+Are you sure you want to release (and delete) module .first-dir': "
+
+	  echo add a line >>second-dir/foobar.c
+	  rm second-dir/notig.c second-dir/.cvsignore
+	  if echo yes | ${testcvs} release -d second-dir \
+	    >${TESTDIR}/ignore.tmp; then
+	    pass ignore-194
+	  else
+	    fail ignore-194
+	  fi
+	  dotest ignore-195 "cat ${TESTDIR}/ignore.tmp" \
+"M foobar.c
+You have \[1\] altered files in this repository.
+Are you sure you want to release (and delete) module .second-dir': "
+	  rm ${TESTDIR}/ignore.tmp
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
