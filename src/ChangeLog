@@ -1,3 +1,12 @@
+Fri Apr 18 11:24:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* commit.c (struct find_data): Add field force.
+	(find_fileproc, commit): Use it instead of force_ci to decide
+	whether to send files to server.
+	(commit): Set it if either -f or -r is specified.
+	* sanity.sh (basica): Add tests basica-8a0, basica-8a1, and
+	basica-8a2; tests for above fix.
+
 Wed Apr 16 11:50:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* zlib.c: Remove paragraph with Free Software Foundation address.

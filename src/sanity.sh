@@ -656,10 +656,23 @@ done'
 
 	  # Test the -f option to ci
 	  cd sdir/ssdir
+	  dotest basica-8a0 "${testcvs} -q ci -m not-modified ssfile" ''
 	  dotest basica-8a "${testcvs} -q ci -f -m force-it" \
 'Checking in ssfile;
 /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 1\.3; previous revision: 1\.2
+done'
+	  dotest basica-8a1 "${testcvs} -q ci -m bump-it -r 2.0" \
+'Checking in ssfile;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 2\.0; previous revision: 1\.3
+done'
+	  # -f should not be necessary, but it should be harmless.
+	  # Also test the "-r 3" (rather than "-r 3.0") usage.
+	  dotest basica-8a2 "${testcvs} -q ci -m bump-it -f -r 3" \
+'Checking in ssfile;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 3\.1; previous revision: 2\.0
 done'
 	  cd ../..
 	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \

@@ -124,6 +124,10 @@ struct find_data {
        the repository (pointer into storage managed by the recursion
        processor.  */
     char *repository;
+
+    /* Non-zero if we should force the commit.  This is enabled by
+       either -f or -r options, unlike force_ci which is just -f.  */
+    int force;
 };
 
 static Dtype find_dirent_proc PROTO ((void *callerdat, char *dir,
@@ -255,7 +259,7 @@ find_fileproc (callerdat, finfo)
 	status = T_ADDED;
     else if (vers->ts_user != NULL
 	     && vers->ts_rcs != NULL
-	     && (force_ci || strcmp (vers->ts_user, vers->ts_rcs) != 0))
+	     && (args->force || strcmp (vers->ts_user, vers->ts_rcs) != 0))
 	/* If we are forcing commits, pretend that the file is
            modified.  */
 	status = T_MODIFIED;
@@ -431,6 +435,12 @@ commit (argc, argv)
 	find_args.ignlist = NULL;
 	find_args.repository = NULL;
 
+	/* It is possible that only a numeric tag should set this.
+	   I haven't really thought about it much.
+	   Anyway, I suspect that setting it unnecessarily only causes
+	   a little unneeded network traffic.  */
+	find_args.force = force_ci || tag != NULL;
+
 	err = start_recursion (find_fileproc, find_filesdoneproc,
 			       find_dirent_proc, (DIRLEAVEPROC) NULL,
 			       (void *)&find_args,
@@ -537,7 +547,7 @@ commit (argc, argv)
 	   Thing, or at least Not Such A Bad Thing.  */
 	send_file_names (find_args.argc, find_args.argv, 0);
 	send_files (find_args.argc, find_args.argv, local, 0,
-		    force_ci ? SEND_FORCE : 0);
+		    find_args.force ? SEND_FORCE : 0);
 
 	send_to_server ("ci\012", 0);
 	return get_responses_and_close ();
