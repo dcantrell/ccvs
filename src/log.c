@@ -529,6 +529,7 @@ rlog_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
     }
     else
     {
+        repository = NULL;
         where = NULL;
         which = W_LOCAL | W_REPOS | W_ATTIC;
     }
