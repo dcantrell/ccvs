@@ -1646,10 +1646,7 @@ T file2'
 			echo "FAIL: test 76" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		# Remote CVS outputs nothing for 76a0 and 76a1; until
-		# this bug is fixed just skip those tests for remote.
-		if test "x$remote" = xno; then
-		  dotest death-76a0 \
+		dotest death-76a0 \
 "${testcvs} -q rdiff -r bp_branch1 -r branch1 first-dir" \
 "Index: first-dir/file3
 diff -c /dev/null first-dir/file3:1\.1\.2\.1
@@ -1659,7 +1656,7 @@ diff -c /dev/null first-dir/file3:1\.1\.2\.1
 \*\*\* 0 \*\*\*\*
 --- 1 ----
 ${PLUS} line1 from branch1"
-		  dotest death-76a1 \
+		dotest death-76a1 \
 "${testcvs} -q rdiff -r branch1 -r bp_branch1 first-dir" \
 'Index: first-dir/file3
 diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
@@ -1669,7 +1666,6 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 \*\*\* 1 \*\*\*\*
 - line1 from branch1
 --- 0 ----'
-		fi
 
 		# remove
 		rm file3

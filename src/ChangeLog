@@ -1,6 +1,11 @@
+Thu Feb 27 15:29:58 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh (death): Enable death-76a0 and death-76a1 tests for
+	remote, since they now work.
+
 Wed Feb 26 16:13:26 1997  Ian Lance Taylor  <ian@cygnus.com>
 
-	* client.c (add_prune_candidate): Skip addding this directory if
+	* client.c (add_prune_candidate): Skip adding this directory if
 	it is the same as the first directory already on the list.
 
 Mon Feb 24 21:36:43 1997  Noel Cragg  <noel@gargle.rain.org>
