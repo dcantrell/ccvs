@@ -1,5 +1,10 @@
 2004-04-29  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove AC_PROG_YACC invocation in favor of gl_BISON.
+	* configure: Regenerated.
+
+2004-04-29  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: s/jm_FUNC_GLIBC_UNLOCKED_IO/gl_FUNC_GLIBC_UNLOCKED_IO/.
 	* aclocal.m4, configure: Regenerated.
 
