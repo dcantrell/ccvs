@@ -7209,7 +7209,7 @@ scripts from the @samp{contrib} directory.)
 Before administrative files are processed various
 strings are expanded:
 
-@table
+@table @code
 @item ~
 @itemx ~@var{user}
 Either of these strings followed by @samp{/} or the
@@ -7235,7 +7235,7 @@ If @var{variable} begins with a letter, it is the name
 of an internal @sc{cvs} variable.  Currently the only
 ones defined are:
 
-@table
+@table @code
 @item CVSROOT
 This is the value of the @sc{cvs} root in use.
 @xref{Repository}, for a description of the various
