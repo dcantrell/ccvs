@@ -3584,6 +3584,7 @@ C aa\.c"
 	  echo aliasnested -a first-dir/subdir/ssdir >>CVSROOT/modules
 	  echo topfiles -a first-dir/file1 first-dir/file2 >>CVSROOT/modules
 	  echo world -a . >>CVSROOT/modules
+	  echo 'submodule &first-dir' >>CVSROOT/modules
 
 	  # Options must come before arguments.  It is possible this should
 	  # be relaxed at some point (though the result would be bizarre for
@@ -3605,7 +3606,8 @@ dirmodule    first-dir/subdir
 namedmodule  -d nameddir first-dir/subdir
 realmodule   first-dir/subdir a
 topfiles     -a first-dir/file1 first-dir/file2
-world        -a .'
+world        -a .
+submodule    &first-dir'
 	  # I don't know why aliasmodule isn't printed (I would have thought
 	  # that it gets printed without the -a; although I'm not sure that
 	  # printing expansions without options is useful).
@@ -3613,7 +3615,8 @@ world        -a .'
 bogusalias   NONE        first-dir/subdir/a -a
 dirmodule    NONE        first-dir/subdir
 namedmodule  NONE        first-dir/subdir
-realmodule   NONE        first-dir/subdir a'
+realmodule   NONE        first-dir/subdir a
+submodule    NONE        &first-dir'
 
 	  # Test that real modules check out to realmodule/a, not subdir/a.
 	  if ${testcvs} co realmodule >>${LOGFILE}; then
@@ -3806,6 +3809,17 @@ U first-dir/file2"
 	  dotest modules-155c5 "${testcvs} -q co topfiles" ""
 	  cd ..
 	  rm -rf 1
+
+	  # Now, test that modules that include sub-modules (&foo) are
+	  # checked out correctly.
+	  # FIXME: this should put some files there too, no???
+	  mkdir 3
+	  cd 3
+	  dotest modules-155d1 "${CVS} co submodule" ''
+	  dotest_status modules-155d2 0 "test -d submodule" ''
+	  dotest_status modules-155d3 0 "test -d submodule/first-dir" ''
+	  cd ..
+	  rm -rf 3
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
