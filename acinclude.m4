@@ -18,7 +18,9 @@ AC_DEFUN([ACX_WITH_GSSAPI],[
 #
 AC_ARG_WITH(
   [gssapi],
-  [  --with-gssapi=value     GSSAPI directory (default autoselects)], ,
+  AC_HELP_STRING(
+    [--with-gssapi],
+    [GSSAPI directory (default autoselects)]), ,
   [with_gssapi=yes])dnl
 
 dnl
