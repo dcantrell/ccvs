@@ -6077,9 +6077,9 @@ RCS_rewrite (rcs, newdtext, insertpt)
 
     RCS_copydeltas (rcs, fin, fout, newdtext, insertpt);
 
-    fclose (fin);
     if (ferror (fin))
 	error (0, errno, "warning: when closing RCS file `%s'", rcs->path);
+    fclose (fin);
 
     rcs_internal_unlockfile (fout, rcs->path);
 }
