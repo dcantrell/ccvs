@@ -1,3 +1,8 @@
+Tue Oct 24 11:13:15 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvs.h: Declare valloc again, but this time with the right
+	  signature (also changed in libs/valloc.c)
+
 Mon Oct 23 12:17:03 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c (do_editor): Check for errors from stdio calls.
