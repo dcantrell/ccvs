@@ -12766,7 +12766,7 @@ above message.  For more information on setting up a
 @item cvs [update aborted]: EOF in key in RCS file @var{file},v
 @itemx cvs [checkout aborted]: EOF while looking for end of string in RCS file @var{file},v
 This means that there is a syntax error in the given
-RCS file.  Note that this might be true even if RCS can
+@sc{rcs} file.  Note that this might be true even if @sc{rcs} can
 read the file OK; @sc{cvs} does more error checking of
 errors in the RCS file.  That is why you may see this
 message when upgrading from @sc{cvs} 1.9 to @sc{cvs}
@@ -12775,6 +12775,9 @@ hardware, the operating system, or the like.  Of
 course, if you find a case in which @sc{cvs} seems to
 corrupting the file, by all means report it,
 (@pxref{BUGS}).
+There are quite a few variations of this error message,
+depending on exactly where in the @sc{rcs} file @sc{cvs}
+finds the syntax error.
 
 @cindex mkmodules
 @item cvs commit: Executing 'mkmodules'
@@ -12857,6 +12860,9 @@ older expects the logfile as an argument whereas the
 logfile to be specified with a @samp{-f} option.  Of
 course, if you don't need @file{log.pl} you can just
 comment it out of @file{loginfo}.
+
+@item cvs [update aborted]: unexpected EOF reading @var{file},v
+See @samp{EOF in key in RCS file}.
 
 @item cvs [login aborted]: unrecognized auth response from @var{server}
 This message typically means that the server is not set
