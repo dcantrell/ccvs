@@ -4224,6 +4224,7 @@ recv_bytes (sock, buf, need)
  * Besides, I added some cruft to reenable the socket which shouldn't be
  * there.  This would also enable its removal.
  */
+#define BUFSIZE 1024
 static int
 connect_to_gserver (root, sock, hostinfo)
     cvsroot_t *root;
@@ -4231,7 +4232,7 @@ connect_to_gserver (root, sock, hostinfo)
     struct hostent *hostinfo;
 {
     char *str;
-    char buf[1024];
+    char buf[BUFSIZE];
     gss_buffer_desc *tok_in_ptr, tok_in, tok_out;
     OM_uint32 stat_min, stat_maj;
     gss_name_t server_name;
@@ -4241,6 +4242,8 @@ connect_to_gserver (root, sock, hostinfo)
     if (send (sock, str, strlen (str), 0) < 0)
 	error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
+    if (strlen (hostinfo->h_name) > BUFSIZE - 5)
+	error (1, 0, "Internal error: hostname exceeds length of buffer");
     sprintf (buf, "cvs@%s", hostinfo->h_name);
     tok_in.length = strlen (buf);
     tok_in.value = buf;
