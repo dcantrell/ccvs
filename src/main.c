@@ -34,7 +34,6 @@
  */
 
 #include "cvs.h"
-#include "patchlevel.h"
 
 #if HAVE_KERBEROS
 #include <sys/socket.h>
@@ -257,7 +256,6 @@ main (argc, argv)
     static int version_flag = FALSE;
     static int help_commands = FALSE;
     int rcsbin_update_env, cvs_update_env = 0;
-    char tmp[PATH_MAX];
     static struct option long_options[] =
       {
         {"help", 0, &help, TRUE},
@@ -398,11 +396,9 @@ main (argc, argv)
     }
 
     if (version_flag == TRUE)
-      {
+    {
         (void) fputs (version_string, stdout);
         (void) fputs (config_string, stdout);
-        (void) sprintf (tmp, "Patch Level: %d\n", PATCHLEVEL);
-        (void) fputs (tmp, stdout);
         (void) fputs ("\n", stdout);
         (void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
         (void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
@@ -412,7 +408,7 @@ main (argc, argv)
         (void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
         (void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
         exit (0);
-      }
+    }
     else if (help_commands)
 	usage (cmd_usage);
 

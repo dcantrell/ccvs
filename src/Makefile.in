@@ -64,7 +64,7 @@ MOBJECTS = hash.o mkmodules.o myndbm.o
 
 COMMON_OBJECTS = subr.o filesubr.o run.o version.o error.o
 
-HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
+HEADERS = cvs.h rcs.h hash.h myndbm.h \
 	update.h server.h client.h error.h fileattr.h edit.h watch.h
 
 TAGFILES = $(HEADERS) options.h.in $(SOURCES) $(MSOURCES)
