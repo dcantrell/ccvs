@@ -165,7 +165,7 @@ strip_trailing_newlines (str)
     int len, origlen;
     len = origlen = strlen (str) - 1;
 
-    while (str[len] == '\n')
+    while (str[len] == '\n' && len >= 0)
 	str[len--] = '\0';
 
     return len != origlen;
