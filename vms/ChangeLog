@@ -1,3 +1,7 @@
+Sat Dec 27 16:57:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (LINES_CRLF_TERMINATED): Remove; no longer used.
+
 Sat Nov 29 22:21:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	See lib/ChangeLog for rationale:

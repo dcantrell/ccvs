@@ -278,13 +278,7 @@ extern int fncmp (const char *n1, const char *n2);
    definition for this.  */
 extern void fnfold (char *FILENAME);
 
-/* #define this if your system terminates lines in text files with
-   CRLF instead of plain LF, and your I/O functions automatically
-   translate between using LF in memory and CRLF on disk, unless you
-   specifically tell them not to.  */
-#define LINES_CRLF_TERMINATED 1
-
-/* Likewise, when writing binary data to stdout, we better set
+/* When writing binary data to stdout, we better set
    stdout to binary mode using setmode.  */
 #define USE_SETMODE_STDOUT 1
 
