@@ -16,3 +16,9 @@
 
 /* Define if you have the connect function.  */
 #undef HAVE_CONNECT
+
+/* Define if you have memchr (always for CVS).  */
+#undef HAVE_MEMCHR
+
+/* Define if you have strchr (always for CVS).  */
+#undef HAVE_STRCHR

@@ -1,5 +1,11 @@
 Sun Sep 21 17:56:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Instead of checking for memchr, just define
+	HAVE_MEMCHR and HAVE_STRCHR.
+	Add comment about AC_FUNC_VFORK and vfork in general.
+	* acconfig.h: Add HAVE_MEMCHR and HAVE_STRCHR.
+	* configure, config.h.in: Regenerated.
+
 	* config.h.in: Regenerate using autoheader from autoconf 2.10.
 
 Sat Sep 20 01:17:10 1997  Tim Pierce  <twp@twp.tezcat.com>
