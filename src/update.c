@@ -93,7 +93,7 @@ static const char *const update_usage[] =
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
-    "\t-p\tSend updates to standard output (avoids stickines).\n",
+    "\t-p\tSend updates to standard output (avoids stickiness).\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     "\t-r rev\tUpdate using specified revision/tag (is sticky).\n",
     "\t-D date\tSet date to update from (is sticky).\n",
