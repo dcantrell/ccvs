@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="zlib" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="libz" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=zlib - Win32 Debug
+CFG=libz - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "zlib.mak".
+!MESSAGE NMAKE /f "libz.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "zlib.mak" CFG="zlib - Win32 Debug"
+!MESSAGE NMAKE /f "libz.mak" CFG="libz - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "zlib - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "zlib - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libz - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "libz - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=zlib - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "zlib - Win32 Release"
+!IF  "$(CFG)" == "libz - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -51,7 +51,7 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libz - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -78,8 +78,8 @@ LIB32=link.exe -lib
 
 # Begin Target
 
-# Name "zlib - Win32 Release"
-# Name "zlib - Win32 Debug"
+# Name "libz - Win32 Release"
+# Name "libz - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "*.c"

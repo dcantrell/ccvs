@@ -1,20 +1,20 @@
-# Microsoft Developer Studio Generated NMAKE File, Based on zlib.dsp
+# Microsoft Developer Studio Generated NMAKE File, Based on libz.dsp
 !IF "$(CFG)" == ""
-CFG=zlib - Win32 Debug
-!MESSAGE No configuration specified. Defaulting to zlib - Win32 Debug.
+CFG=libz - Win32 Debug
+!MESSAGE No configuration specified. Defaulting to libz - Win32 Debug.
 !ENDIF 
 
-!IF "$(CFG)" != "zlib - Win32 Release" && "$(CFG)" != "zlib - Win32 Debug"
+!IF "$(CFG)" != "libz - Win32 Release" && "$(CFG)" != "libz - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "zlib.mak" CFG="zlib - Win32 Debug"
+!MESSAGE NMAKE /f "libz.mak" CFG="libz - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "zlib - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "zlib - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "libz - Win32 Release" (based on "Win32 (x86) Static Library")
+!MESSAGE "libz - Win32 Debug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 !ERROR An invalid configuration is specified.
 !ENDIF 
@@ -25,7 +25,7 @@ NULL=
 NULL=nul
 !ENDIF 
 
-!IF  "$(CFG)" == "zlib - Win32 Release"
+!IF  "$(CFG)" == "libz - Win32 Release"
 
 OUTDIR=.\WinRel
 INTDIR=.\WinRel
@@ -33,7 +33,7 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
-ALL : "$(OUTDIR)\zlib.lib"
+ALL : "$(OUTDIR)\libz.lib"
 
 
 CLEAN :
@@ -54,13 +54,13 @@ CLEAN :
 	-@erase "$(INTDIR)\uncompr.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\zutil.obj"
-	-@erase "$(OUTDIR)\zlib.lib"
+	-@erase "$(OUTDIR)\libz.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\libz.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -94,11 +94,11 @@ CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"$(INTD
 
 RSC=rc.exe
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\zlib.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libz.bsc" 
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\zlib.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libz.lib" 
 LIB32_OBJS= \
 	"$(INTDIR)\adler32.obj" \
 	"$(INTDIR)\compress.obj" \
@@ -117,12 +117,12 @@ LIB32_OBJS= \
 	"$(INTDIR)\uncompr.obj" \
 	"$(INTDIR)\zutil.obj"
 
-"$(OUTDIR)\zlib.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+"$(OUTDIR)\libz.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-!ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
+!ELSEIF  "$(CFG)" == "libz - Win32 Debug"
 
 OUTDIR=.\WinDebug
 INTDIR=.\WinDebug
@@ -130,7 +130,7 @@ INTDIR=.\WinDebug
 OutDir=.\WinDebug
 # End Custom Macros
 
-ALL : "$(OUTDIR)\zlib.lib"
+ALL : "$(OUTDIR)\libz.lib"
 
 
 CLEAN :
@@ -151,13 +151,13 @@ CLEAN :
 	-@erase "$(INTDIR)\uncompr.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\zutil.obj"
-	-@erase "$(OUTDIR)\zlib.lib"
+	-@erase "$(OUTDIR)\libz.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\zlib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"$(INTDIR)\libz.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -191,11 +191,11 @@ CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /Fp"$
 
 RSC=rc.exe
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\zlib.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libz.bsc" 
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\zlib.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libz.lib" 
 LIB32_OBJS= \
 	"$(INTDIR)\adler32.obj" \
 	"$(INTDIR)\compress.obj" \
@@ -214,7 +214,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\uncompr.obj" \
 	"$(INTDIR)\zutil.obj"
 
-"$(OUTDIR)\zlib.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+"$(OUTDIR)\libz.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
@@ -223,15 +223,15 @@ LIB32_OBJS= \
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
-!IF EXISTS("zlib.dep")
-!INCLUDE "zlib.dep"
+!IF EXISTS("libz.dep")
+!INCLUDE "libz.dep"
 !ELSE 
-!MESSAGE Warning: cannot find "zlib.dep"
+!MESSAGE Warning: cannot find "libz.dep"
 !ENDIF 
 !ENDIF 
 
 
-!IF "$(CFG)" == "zlib - Win32 Release" || "$(CFG)" == "zlib - Win32 Debug"
+!IF "$(CFG)" == "libz - Win32 Release" || "$(CFG)" == "libz - Win32 Debug"
 SOURCE=.\adler32.c
 
 "$(INTDIR)\adler32.obj" : $(SOURCE) "$(INTDIR)"
