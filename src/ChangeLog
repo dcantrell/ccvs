@@ -1,3 +1,8 @@
+2005-03-10 Derek Price <derek@ximbiot.com>
+
+	* fileattr.c (fileattr_read): Only eat a newline when it really is a
+	newline.
+
 2005-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* zlib.c: Include "pagealign_alloc.h".
