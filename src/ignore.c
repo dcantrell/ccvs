@@ -22,7 +22,9 @@ static int ign_size;			/* This many slots available (plus
 static int ign_hold;			/* Index where first "temporary" item
 					 * is held */
 
-const char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state .nse_depinfo #* .#* cvslog.* ,* CVS CVS.adm .del-* *.a *.o *.obj *.so *.Z *~ *.old *.elc *.ln *.bak *.BAK *.orig *.rej";
+const char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state\
+ .nse_depinfo #* .#* cvslog.* ,* CVS CVS.adm .del-* *.a *.olb *.o *.obj\
+ *.so *.Z *~ *.old *.elc *.ln *.bak *.BAK *.orig *.rej *.exe _$* *$";
 
 #define IGN_GROW 16			/* grow the list by 16 elements at a
 					 * time */

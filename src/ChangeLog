@@ -1,3 +1,8 @@
+Wed Feb 28 21:26:22 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* ignore.c: Added the patterns *.olb *.exe _$* *$ to default
+	ignore list for VMS.
+
 Wed Feb 28 13:32:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c (do_editor): Fix indentation.
