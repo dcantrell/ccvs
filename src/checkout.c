@@ -477,6 +477,7 @@ safe_location (where)
 
 		if( CVS_CHDIR ( where_location ) != -1 )
 		{
+		    free( where_location );
 		    where_location = xgetwd();
 		    if( where_location == NULL )
 			error( 1, errno, "could not get working directory (nominally `%s')", where_location );
