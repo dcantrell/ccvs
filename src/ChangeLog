@@ -1,3 +1,22 @@
+2003-05-31  Derek Price  <derek@ximbiot.com>
+
+	* root.c (parse_cvsroot): Refuse :fork: only in client mode, not
+	server.
+	* client.c (connect_to_forked_server): Die without SERVER_SUPPORT when
+	CVSSERVER isn't supplied in the environment.
+	* sanity.sh: Default $servercvs to $testcvs.  Add SPROG so that testing
+	a client and server with different names works in order to test the
+	above changes.  s/PROG/SPROG/ almost everywhere.  Misc corrections to
+	tests when ${PROG} is required not to use [a-z]*.  Misc uniqifications
+	of test names.  Misc replacement of CVS_SERVER=${testcvs} with
+	CVS_SERVER=${servercvs}.  Confirm ${testcvs} & ${servercvs} exist and
+	are executable.  Set testcvs_server_support=true if the ${testcvs}
+	executable has server support.  Misc comment corrections.
+	(pserver): s/\$\{testcvs\}/${servercvs}/ for invocations of pserver.
+	(server): Ditto for invocations of `cvs server'.
+	(fork): Accept the `was not compiled with server support' error
+	message.
+
 2003-05-29  Derek Price  <derek@ximbiot.com>
 
 	* client.c (start_server): Don't send -l to server.
