@@ -1,5 +1,14 @@
 2003-08-29  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Delete reference to CVSADMROOT_EDITINFO.
+	* logmsg.c (editinfo_proc): Delete function and proto.
+	(do_editor): Don't look for editinfo script.
+	* mkmodules.c (editinfo_contents): Delete.
+	* sanity.sh (*): Remove references to editinfo in updates of the
+	CVSROOT module.
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
 	* remove.c (cvsremove): Update quotes for consistency.
 
 2003-08-27  Larry Jones  <lawrence.jones@eds.com>

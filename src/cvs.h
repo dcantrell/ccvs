@@ -154,7 +154,6 @@ char *strerror (int);
 #define	CVSROOTADM_RCSINFO	"rcsinfo"
 #define CVSROOTADM_COMMITINFO	"commitinfo"
 #define CVSROOTADM_TAGINFO      "taginfo"
-#define	CVSROOTADM_EDITINFO	"editinfo"
 #define CVSROOTADM_VERIFYMSG    "verifymsg"
 #define	CVSROOTADM_HISTORY	"history"
 #define CVSROOTADM_VALTAGS	"val-tags"
