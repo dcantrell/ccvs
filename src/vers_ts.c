@@ -58,8 +58,11 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 	sdtp = (struct stickydirtag *) finfo->entries->list->data; /* list-private */
     }
 
-    entdata = NULL;
-    if (p != NULL)
+    if (p == NULL)
+    {
+	entdata = NULL;
+    }
+    else
     {
 	entdata = (Entnode *) p->data;
 
