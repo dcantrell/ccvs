@@ -44,7 +44,8 @@ All packages can be found on ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu
 
 Change to the `emx' directory, do "make" and get emx\cvs.exe.  I had
 to comment out the "Makefile" rule in emx/Makefile to avoid a
-complaint about ../config.status not existing.
+complaint about ../config.status not existing.  You also might need to
+edit srcdir to be "." and top_srcdir to be "..".
 
 Assuming you have edited the `install_dir' variable in the Makefile,
 you may type "make install-cvs" to put cvs.exe in the right place.
