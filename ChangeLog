@@ -1,3 +1,7 @@
+Mon Aug 21 15:26:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Add comment regarding AC_SET_MAKE.
+
 Sat Aug 19 21:57:51 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* configure.in: Define CVS_SUPPORT, to tell certain library
