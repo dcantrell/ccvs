@@ -1,3 +1,8 @@
+Mon Dec 30 16:55:54 1996  Abe Feldman  <feldman@harvey.cyclic.com>
+
+	* NEWS: Add entry for changes to checkout command (creating CVS
+	directory at top of working directory)
+
 Tue Dec 17 13:13:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Add entry for verifymsg.
