@@ -1,3 +1,7 @@
+Mon Dec  4 14:27:42 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Version 1.6.3.
+
 Mon Dec  4 16:28:25 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* release.c (release): add return (0) as last line
@@ -8,6 +12,10 @@ Mon Dec  4 16:28:25 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 	  (main): set program_path
 
 	* release.c (release): use program_path for update_cmd
+
+Mon Dec  4 11:22:42 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Version 1.6.2.
 
 Sun Dec  3 20:02:29 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
