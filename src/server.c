@@ -697,6 +697,7 @@ serve_root (arg)
     char *env;
     char *path;
     int save_errno;
+    char *arg_dup;
     
     if (error_pending()) return;
 
@@ -738,7 +739,14 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 			 arg, Pserver_Repos);
 	}
     }
-    set_local_cvsroot (arg);
+    arg_dup = malloc (strlen (arg) + 1);
+    if (arg_dup == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    strcpy (arg_dup, arg);
+    set_local_cvsroot (arg_dup);
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
