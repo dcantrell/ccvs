@@ -1,0 +1,812 @@
+ICC compilation errors, warnings, and informationals.
+
+------------------------------------------------------------------------
+::: add
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/add
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/add.obj ../src/add.c
+C:\src\cvs-1.6.1\src\add.c(70:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\add.c(335:0) : informational EDC0805: Automatic variable begin_added_files is set but not referenced.
+C:\src\cvs-1.6.1\src\add.c(539:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:02:55
+
+------------------------------------------------------------------------
+::: admin
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/admin
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/admin.obj ../src/admin.c
+C:\src\cvs-1.6.1\src\admin.c(179:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:03:12
+
+------------------------------------------------------------------------
+::: checkin
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/checkin
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/checkin.obj ../src/checkin.c
+C:\src\cvs-1.6.1\src\checkin.c(204:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:03:25
+
+------------------------------------------------------------------------
+::: checkout
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/checkout
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/checkout.obj ../src/checkout.c
+C:\src\cvs-1.6.1\src\checkout.c(140:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\checkout.c(436:5) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\checkout.c(874:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:03:38
+
+------------------------------------------------------------------------
+::: classify
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/classify
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/classify.obj ../src/classify.c
+C:\src\cvs-1.6.1\src\classify.c(504:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:03:50
+
+------------------------------------------------------------------------
+::: client
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/client
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/client.obj ../src/client.c
+C:\src\cvs-1.6.1\src\client.c(484:2) : warning EDC0185: Function read_line has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(553:10) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(724:5) : warning EDC0185: Function call_in_directory has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(724:30) : warning EDC0185: Function copy_a_file has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1131:30) : warning EDC0185: Function update_entries has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1193:30) : warning EDC0185: Function remove_entry has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1213:30) : warning EDC0185: Function remove_entry_and_file has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1269:30) : warning EDC0185: Function set_static has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1295:9) : warning EDC0185: Function is_cvsroot_level has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1303:34) : warning EDC0185: Function clear_static has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1352:34) : warning EDC0185: Function set_sticky has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1387:34) : warning EDC0185: Function clear_sticky has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1489:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\client.c(1489:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\client.c(1490:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\client.c(1490:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\client.c(1490:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\client.c(1492:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1499:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1504:13) : warning EDC0185: Function closedir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(1658:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\client.c(1693:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\client.c(1728:7) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\client.c(1812:4) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\client.c(2581:3) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\client.c(2708:2) : warning EDC0185: Function send_modified has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(2808:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\client.c(2810:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\client.c(2902:3) : warning EDC0185: Function send_fileproc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(2903:3) : warning EDC0185: Function send_dirent_proc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\client.c(3033:5) : warning EDC0185: Function parse_cvsroot has not been prototyped prior to use.
+make: *** [../src/client.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:04:06
+
+------------------------------------------------------------------------
+::: commit
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/commit
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/commit.obj ../src/commit.c
+C:\src\cvs-1.6.1\src\commit.c(122:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\commit.c(1834:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:04:21
+
+------------------------------------------------------------------------
+::: create_adm
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/create_adm
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/create_adm.obj ../src/create_adm.c
+C:\src\cvs-1.6.1\src\create_adm.c(144:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:04:34
+
+------------------------------------------------------------------------
+::: cvsrc
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/cvsrc
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/cvsrc.obj ../src/cvsrc.c
+C:\src\cvs-1.6.1\src\cvsrc.c(151:0) : informational EDC0805: Automatic variable line_length is set but not referenced.
+C:\src\cvs-1.6.1\src\cvsrc.c(151:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:04:51
+
+------------------------------------------------------------------------
+::: diff
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/diff
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/diff.obj ../src/diff.c
+C:\src\cvs-1.6.1\src\diff.c(89:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\diff.c(633:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:05:17
+
+------------------------------------------------------------------------
+::: entries
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/entries
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/entries.obj ../src/entries.c
+C:\src\cvs-1.6.1\src\entries.c(142:6) : warning EDC0185: Function write_entries has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\entries.c(187:15) : warning EDC0185: Function Entnode_Create has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\entries.c(372:27) : warning EDC0185: Function freesdt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\entries.c(439:5) : warning EDC0185: Function Entnode_Destroy has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\entries.c(463:18) : warning EDC0185: Function Entries_delproc has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\entries.c(556:0) : informational EDC0801: Automatic variable cp is not referenced.
+C:\src\cvs-1.6.1\src\entries.c(556:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:05:29
+
+------------------------------------------------------------------------
+::: error
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/error
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/error.obj ../src/error.c
+C:\src\cvs-1.6.1\src\error.c(188:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:05:40
+
+------------------------------------------------------------------------
+::: expand_path
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/expand_path
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/expand_path.obj ../src/expand_path.c
+
+Compilation finished at Mon Nov 06 14:06:02
+
+------------------------------------------------------------------------
+::: filesubr
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/filesubr
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/filesubr.obj ../src/filesubr.c
+C:\src\cvs-1.6.1\src\filesubr.c(108:12) : warning EDC0185: Function utime has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\filesubr.c(126:13) : error EDC0041: Identifier S_IFMT must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(207:37) : error EDC0041: Identifier S_IFMT must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(209:27) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\src\filesubr.c(209:27) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(209:27) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(209:33) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
+C:\src\cvs-1.6.1\src\filesubr.c(226:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\src\filesubr.c(226:16) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(226:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(226:22) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
+C:\src\cvs-1.6.1\src\filesubr.c(240:19) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\src\filesubr.c(240:19) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(240:19) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(240:25) : error EDC0327: Redeclarations and function calls must be compatible with prototype.
+C:\src\cvs-1.6.1\src\filesubr.c(329:13) : warning EDC0185: Function link has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\filesubr.c(380:22) : error EDC0041: Identifier EISDIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(380:41) : error EDC0041: Identifier EPERM must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(400:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(400:13) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(401:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\filesubr.c(401:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(401:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(402:5) : error EDC0349: Unexpected text 'char' ignored.
+C:\src\cvs-1.6.1\src\filesubr.c(402:13) : error EDC0041: Identifier buf must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(404:17) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\src\filesubr.c(404:17) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(404:17) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(404:40) : error EDC0041: Identifier ENOTEMPTY must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(406:14) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\filesubr.c(412:15) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\filesubr.c(416:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\filesubr.c(422:16) : error EDC0041: Identifier EISDIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(422:35) : error EDC0041: Identifier EPERM must be declared before it is used.
+C:\src\cvs-1.6.1\src\filesubr.c(426:4) : warning EDC0185: Function closedir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\filesubr.c(441:16) : warning EDC0322: Type of the parameter cannot conflict with previous declaration of function.
+C:\src\cvs-1.6.1\src\filesubr.c(441:16) : informational EDC0141: Prototype has type pointer to unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(441:16) : informational EDC0147: Argument has type pointer to constant unsigned character.
+C:\src\cvs-1.6.1\src\filesubr.c(466:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\filesubr.c(472:6) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\filesubr.c(525:14) : warning EDC0185: Function block_read has not been prototyped prior to use.
+make: *** [../src/filesubr.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:06:39
+
+------------------------------------------------------------------------
+::: find_names
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/find_names
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/find_names.obj ../src/find_names.c
+C:\src\cvs-1.6.1\src\find_names.c(170:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\find_names.c(170:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\find_names.c(173:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\find_names.c(177:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\find_names.c(179:23) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(183:23) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(187:24) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(192:12) : warning EDC0185: Function closedir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\find_names.c(194:0) : informational EDC0805: Automatic variable dp is set but not referenced.
+C:\src\cvs-1.6.1\src\find_names.c(210:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\find_names.c(210:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\find_names.c(219:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(220:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(221:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(222:14) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(223:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\find_names.c(232:27) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(233:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\find_names.c(235:34) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(237:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\find_names.c(255:7) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\find_names.c(261:44) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(263:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\find_names.c(269:20) : error EDC0372: The arrow operator cannot be applied to an incomplete struct or union.
+C:\src\cvs-1.6.1\src\find_names.c(275:0) : informational EDC0805: Automatic variable dp is set but not referenced.
+make: *** [../src/find_names.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:06:50
+
+------------------------------------------------------------------------
+::: hash
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/hash
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/hash.obj ../src/hash.c
+C:\src\cvs-1.6.1\src\hash.c(219:12) : warning EDC0185: Function hashp has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\hash.c(379:11) : warning EDC0185: Function nodetypestring has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\hash.c(400:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:07:06
+
+------------------------------------------------------------------------
+::: history
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/history
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/history.obj ../src/history.c
+C:\src\cvs-1.6.1\src\history.c(381:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\history.c(730:8) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\history.c(1489:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:07:28
+
+------------------------------------------------------------------------
+::: ignore
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/ignore
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/ignore.obj ../src/ignore.c
+C:\src\cvs-1.6.1\src\ignore.c(286:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:07:38
+
+------------------------------------------------------------------------
+::: import
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/import
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/import.obj ../src/import.c
+C:\src\cvs-1.6.1\src\import.c(87:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\import.c(317:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(317:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(318:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\import.c(318:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(318:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(319:5) : error EDC0349: Unexpected text 'int' ignored.
+C:\src\cvs-1.6.1\src\import.c(319:9) : error EDC0041: Identifier err must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(320:10) : error EDC0348: Syntax error: possible missing ':'.
+C:\src\cvs-1.6.1\src\import.c(326:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\import.c(332:15) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\import.c(335:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\import.c(347:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\import.c(362:7) : error EDC0041: Identifier dirlist must be declared before it is used.
+C:\src\cvs-1.6.1\src\import.c(368:0) : informational EDC0805: Automatic variable n is set but not referenced.
+C:\src\cvs-1.6.1\src\import.c(391:9) : warning EDC0185: Function closedir has not been prototyped prior to use.
+make: *** [../src/import.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:07:57
+
+------------------------------------------------------------------------
+::: lock
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/lock
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/lock.obj ../src/lock.c
+C:\src\cvs-1.6.1\src\lock.c(395:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(395:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(396:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\lock.c(396:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(396:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(397:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\lock.c(397:17) : error EDC0349: Unexpected text sb ignored.
+C:\src\cvs-1.6.1\src\lock.c(398:5) : error EDC0349: Unexpected text 'int' ignored.
+C:\src\cvs-1.6.1\src\lock.c(398:9) : error EDC0041: Identifier ret must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(404:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\lock.c(408:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\lock.c(418:23) : error EDC0041: Identifier sb must be declared before it is used.
+C:\src\cvs-1.6.1\src\lock.c(436:6) : error EDC0200: A break statement cannot be placed outside a while, do, for or switch statement.
+C:\src\cvs-1.6.1\src\lock.c(443:5) : warning EDC0185: Function closedir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\lock.c(541:3) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+make: *** [../src/lock.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:08:08
+
+------------------------------------------------------------------------
+::: log
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/log
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/log.obj ../src/log.c
+C:\src\cvs-1.6.1\src\log.c(178:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:09:46
+
+------------------------------------------------------------------------
+::: login
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/login
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/login.obj ../src/login.c
+
+Compilation finished at Mon Nov 06 14:10:03
+
+------------------------------------------------------------------------
+::: logmsg
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/logmsg
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/logmsg.obj ../src/logmsg.c
+C:\src\cvs-1.6.1\src\logmsg.c(448:14) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\logmsg.c(461:13) : warning EDC0185: Function _pclose has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\logmsg.c(486:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:10:15
+
+------------------------------------------------------------------------
+::: main
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/main
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/main.obj ../src/main.c
+C:\src\cvs-1.6.1\src\main.c(250:24) : warning EDC0185: Function error_cleanup has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\main.c(259:10) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\main.c(698:31) : warning EDC0185: Function main_cleanup has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\main.c(785:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:10:29
+
+------------------------------------------------------------------------
+::: mkmodules
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/mkmodules
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/mkmodules.obj ../src/mkmodules.c
+C:\src\cvs-1.6.1\src\mkmodules.c(435:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:10:42
+
+------------------------------------------------------------------------
+::: modules
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/modules
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/modules.obj ../src/modules.c
+C:\src\cvs-1.6.1\src\modules.c(405:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\modules.c(884:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:11:26
+
+------------------------------------------------------------------------
+::: myndbm
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/myndbm
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/myndbm.obj ../src/myndbm.c
+C:\src\cvs-1.6.1\src\myndbm.c(43:5) : warning EDC0185: Function mydbm_load_file has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\myndbm.c(213:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:11:36
+
+------------------------------------------------------------------------
+::: no_diff
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/no_diff
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/no_diff.obj ../src/no_diff.c
+C:\src\cvs-1.6.1\src\no_diff.c(135:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:11:46
+
+------------------------------------------------------------------------
+::: parseinfo
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/parseinfo
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/parseinfo.obj ../src/parseinfo.c
+C:\src\cvs-1.6.1\src\parseinfo.c(171:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:11:59
+
+------------------------------------------------------------------------
+::: patch
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/patch
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/patch.obj ../src/patch.c
+C:\src\cvs-1.6.1\src\patch.c(72:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\patch.c(444:10) : warning EDC0185: Function utime has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\patch.c(499:10) : warning EDC0185: Function getline has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\patch.c(613:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:12:12
+
+------------------------------------------------------------------------
+::: rcs
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/rcs
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/rcs.obj ../src/rcs.c
+C:\src\cvs-1.6.1\src\rcs.c(890:2) : warning EDC0185: Function RCS_reparsercsfile has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\rcs.c(1710:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:12:35
+
+------------------------------------------------------------------------
+::: rcscmds
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/rcscmds
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/rcscmds.obj ../src/rcscmds.c
+
+Compilation finished at Mon Nov 06 14:12:45
+
+------------------------------------------------------------------------
+::: recurse
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/recurse
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/recurse.obj ../src/recurse.c
+C:\src\cvs-1.6.1\src\recurse.c(312:9) : warning EDC0185: Function getwd has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\recurse.c(634:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:13:05
+
+------------------------------------------------------------------------
+::: release
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/release
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/release.obj ../src/release.c
+C:\src\cvs-1.6.1\src\release.c(49:21) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\release.c(164:16) : warning EDC0185: Function _popen has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\release.c(164:14) : warning EDC0117: The operation between these types is not valid.
+C:\src\cvs-1.6.1\src\release.c(164:11) : informational EDC0140: Operand has type pointer to structure __file.
+C:\src\cvs-1.6.1\src\release.c(164:16) : informational EDC0140: Operand has type signed integer.
+C:\src\cvs-1.6.1\src\release.c(179:16) : warning EDC0185: Function _pclose has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\release.c(229:0) : informational EDC0805: Automatic variable srepos is set but not referenced.
+C:\src\cvs-1.6.1\src\release.c(261:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:13:21
+
+------------------------------------------------------------------------
+::: remove
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/remove
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/remove.obj ../src/remove.c
+C:\src\cvs-1.6.1\src\remove.c(55:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\remove.c(213:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:13:32
+
+------------------------------------------------------------------------
+::: repos
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/repos
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/repos.obj ../src/repos.c
+C:\src\cvs-1.6.1\src\repos.c(147:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:13:40
+
+------------------------------------------------------------------------
+::: root
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/root
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/root.obj ../src/root.c
+C:\src\cvs-1.6.1\src\root.c(182:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:13:55
+
+------------------------------------------------------------------------
+::: rtag
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/rtag
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/rtag.obj ../src/rtag.c
+C:\src\cvs-1.6.1\src\rtag.c(96:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\rtag.c(692:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:14:15
+
+------------------------------------------------------------------------
+::: run
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/run
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/run.obj ../src/run.c
+C:\src\cvs-1.6.1\src\run.c(251:11) : warning EDC0185: Function fork has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\run.c(274:9) : warning EDC0185: Function execvp has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\run.c(314:21) : error EDC0041: Identifier SIGQUIT must be declared before it is used.
+C:\src\cvs-1.6.1\src\run.c(323:17) : warning EDC0185: Function wait has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\run.c(338:27) : error EDC0041: Identifier SIGPIPE must be declared before it is used.
+C:\src\cvs-1.6.1\src\run.c(384:0) : informational EDC0805: Automatic variable qstat is set but not referenced.
+C:\src\cvs-1.6.1\src\run.c(415:13) : warning EDC0185: Function _popen has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\run.c(415:5) : warning EDC0176: Return type must be compatible with the declaration of function Popen.
+C:\src\cvs-1.6.1\src\run.c(430:9) : warning EDC0185: Function pipe has not been prototyped prior to use.
+make: *** [../src/run.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:14:23
+
+------------------------------------------------------------------------
+::: server
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/server
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/server.obj ../src/server.c
+
+Compilation finished at Mon Nov 06 14:14:34
+
+------------------------------------------------------------------------
+::: status
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/status
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/status.obj ../src/status.c
+C:\src\cvs-1.6.1\src\status.c(50:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\status.c(282:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:14:42
+
+------------------------------------------------------------------------
+::: subr
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/subr
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/subr.obj ../src/subr.c
+C:\src\cvs-1.6.1\src\subr.c(310:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:14:54
+
+------------------------------------------------------------------------
+::: tag
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/tag
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/tag.obj ../src/tag.c
+C:\src\cvs-1.6.1\src\tag.c(85:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\tag.c(582:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:15:04
+
+------------------------------------------------------------------------
+::: update
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/update
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/update.obj ../src/update.c
+C:\src\cvs-1.6.1\src\update.c(138:17) : warning EDC0185: Function getopt has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\update.c(869:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(869:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(870:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\update.c(870:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(870:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(872:17) : warning EDC0185: Function opendir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\update.c(877:18) : warning EDC0185: Function readdir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\update.c(882:13) : warning EDC0185: Function closedir has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\update.c(1813:5) : error EDC0041: Identifier DIR must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1813:10) : error EDC0041: Identifier dirp must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1814:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\update.c(1814:12) : error EDC0041: Identifier direct must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1814:20) : error EDC0041: Identifier dp must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1815:5) : error EDC0349: Unexpected text 'struct' ignored.
+C:\src\cvs-1.6.1\src\update.c(1815:17) : error EDC0349: Unexpected text sb ignored.
+C:\src\cvs-1.6.1\src\update.c(1816:5) : error EDC0349: Unexpected text 'char' ignored.
+C:\src\cvs-1.6.1\src\update.c(1816:11) : error EDC0041: Identifier file must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1817:5) : error EDC0349: Unexpected text 'char' ignored.
+C:\src\cvs-1.6.1\src\update.c(1817:11) : error EDC0041: Identifier xdir must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1836:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\update.c(1838:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\update.c(1844:16) : error EDC0041: Identifier sb must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1851:3) : error EDC0041: Identifier S_IFMT must be declared before it is used.
+C:\src\cvs-1.6.1\src\update.c(1857:7) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+C:\src\cvs-1.6.1\src\update.c(1872:6) : error EDC0201: A continue statement cannot be placed outside a while, do or for loop.
+make: *** [../src/update.obj] Error 12
+
+Compilation exited abnormally with code 2 at Mon Nov 06 14:15:14
+
+------------------------------------------------------------------------
+::: vers_ts
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/vers_ts
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/vers_ts.obj ../src/vers_ts.c
+C:\src\cvs-1.6.1\src\vers_ts.c(176:10) : warning EDC0185: Function utime has not been prototyped prior to use.
+C:\src\cvs-1.6.1\src\vers_ts.c(312:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:15:27
+
+------------------------------------------------------------------------
+::: version
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/version
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/version.obj ../src/version.c
+C:\src\cvs-1.6.1\src\version.c(34:0) : informational EDC0802: Static variable standalone_semis_illegal_sigh is not referenced.
+
+Compilation finished at Mon Nov 06 14:15:36
+
+------------------------------------------------------------------------
+::: wrapper
+
+cd c:/src/cvs-1.6.1/os2/
+make -f test-makefile THIS_BASENAME=../src/wrapper
+ECHO is on.
+-C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include
+ECHO is on.
+icc -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm -Is:/ibmcpp/include -Is:/toolkt21/c/os2h -DIBM_CPP -I. -I../src -I../lib -DTCPIP_IBM -Is:\ibmtcpip\include /Fo../src/wrapper.obj ../src/wrapper.c
+C:\src\cvs-1.6.1\src\wrapper.c(333:21) : warning EDC0185: Function wrap_matching_entry has not been prototyped prior to use.
+
+Compilation finished at Mon Nov 06 14:15:46
