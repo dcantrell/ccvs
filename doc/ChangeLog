@@ -1,3 +1,11 @@
+2004-04-06  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* cvs.texinfo (Assigning revisions): Note that client/server mode
+	only considers files sent to the server to determine the major
+	revision for new files.
+	(Reported by Krzysztof GORBIEL <Krzysztof_GORBIEL@raiffeisen.pl>.)
+	* stamp-vti, version.texi: Regenerated.
+
 2004-03-15  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.
