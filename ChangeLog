@@ -1,3 +1,8 @@
+Sun Nov  3 21:54:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Move detailed information on compatibility to
+	the manual; simply point to it here.
+
 Thu Oct 31 07:20:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Add note about cvs import of binary files on non-unix.
