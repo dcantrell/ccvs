@@ -177,7 +177,7 @@ mkmodules: $(MOBJECTS) $(COMMON_OBJECTS)
 
 cvsbug: cvsbug.sh
 	echo > .fname \
-	  cvs-`sed < version.c \
+	  cvs-`sed < $(srcdir)/version.c \
 		    -e '/version_string/!d' \
 		    -e 's/[^0-9.]*\([0-9.]*\).*/\1/' \
 		    -e q`
