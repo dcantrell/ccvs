@@ -5571,14 +5571,54 @@ Checking in sfile;
 ${TESTDIR}/cvsroot/first-dir/subdir/sfile,v  <--  sfile
 initial revision: 1\.1
 done"
-	  cd ../..
+	  cd ../../..
 	  mkdir 2; cd 2
 	  dotest watch4-7 "${testcvs} -q co first-dir" "U first-dir/file1
 U first-dir/subdir/sfile"
 	  dotest_fail watch4-8 "test -w first-dir/file1" ''
 	  dotest_fail watch4-9 "test -w first-dir/subdir/sfile" ''
-	  cd ..
-	  cd ..
+	  cd first-dir
+	  dotest watch4-10 "${testcvs} edit file1" ''
+	  echo 'edited in 2' >file1
+	  cd ../..
+
+	  cd 1/first-dir
+	  dotest watch4-11 "${testcvs} edit file1" ''
+	  echo 'edited in 1' >file1
+	  dotest watch4-12 "${testcvs} -q ci -m edit-in-1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../..
+	  cd 2/first-dir
+	  dotest watch4-13 "${testcvs} -q update" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into file1
+rcsmerge: warning: conflicts during merge
+${PROG} [a-z]*: conflicts found in file1
+C file1"
+	  if (echo yes | ${testcvs} unedit file1) >>${LOGFILE}; then
+	    pass watch4-14
+	  else
+	    fail watch4-15
+	  fi
+	  # This could plausibly be defined to either go back to the revision
+	  # which was cvs edit'd (the status quo), or back to revision 1.2
+	  # (that is, the merge could update CVS/Base/file1).  We pick the
+	  # former because it is easier to implement, not because we have
+	  # thought much about which is better.
+	  dotest watch4-16 "cat file1" ''
+	  # Make sure CVS really thinks we are at 1.1.
+	  dotest watch4-17 "${testcvs} -q update" "U file1"
+	  dotest watch4-18 "cat file1" "edited in 1"
+	  cd ../..
+
+	  # As a sanity check, make sure we are in the right place.
+	  dotest watch4-cleanup-1 "test -d 1" ''
+	  dotest watch4-cleanup-1 "test -d 2" ''
 	  # Specify -f because of the readonly files.
 	  rm -rf 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir

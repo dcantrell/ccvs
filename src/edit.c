@@ -338,6 +338,14 @@ edit_fileproc (callerdat, finfo)
     copy_file (finfo->file, basefilename);
     free (basefilename);
 
+    {
+	Node *node;
+
+	node = findnode_fn (finfo->entries, finfo->file);
+	if (node != NULL)
+	    base_register (finfo, ((Entnode *) node->data)->version);
+    }
+
     return 0;
 }
 
@@ -486,6 +494,39 @@ unedit_fileproc (callerdat, finfo)
 	else
 	    error (0, errno, "cannot close %s/%s", finfo->update_dir,
 		   CVSADM_NOTIFY);
+    }
+
+    /* Now update the revision number in CVS/Entries from CVS/Baserev.
+       The basic idea here is that we are reverting to the revision
+       that the user edited.  If we wanted "cvs update" to update
+       CVS/Base as we go along (so that an unedit could revert to the
+       current repository revision), we would need:
+
+       update (or all send_files?) (client) needs to send revision in
+       new Entry-base request.  update (server/local) needs to check
+       revision against repository and send new Update-base response
+       (like Update-existing in that the file already exists.  While
+       we are at it, might try to clean up the syntax by having the
+       mode only in a "Mode" response, not in the Update-base itself).  */
+    {
+	char *baserev;
+	Node *node;
+	Entnode *entdata;
+
+	baserev = base_get (finfo);
+	node = findnode_fn (finfo->entries, finfo->file);
+	/* The case where node is NULL probably should be an error or
+	   something, but I don't want to think about it too hard right
+	   now.  */
+	if (node != NULL)
+	{
+	    entdata = (Entnode *) node->data;
+	    Register (finfo->entries, finfo->file, baserev, entdata->timestamp,
+		      entdata->options, entdata->tag, entdata->date,
+		      entdata->conflict);
+	}
+	free (baserev);
+	base_deregister (finfo);
     }
 
     xchmod (finfo->file, 0);

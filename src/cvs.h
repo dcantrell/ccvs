@@ -127,6 +127,8 @@ extern int errno;
 #define CVSADM_NOTIFY   "CVS/Notify."
 #define CVSADM_NOTIFYTMP "CVS/Notify.tmp"
 #define CVSADM_BASE      "CVS/Base"
+#define CVSADM_BASEREV   "CVS/Baserev."
+#define CVSADM_BASEREVTMP "CVS/Baserev.tmp"
 #define CVSADM_TEMPLATE "CVS/Template."
 #else /* USE_VMS_FILENAMES */
 #define	CVSADM		"CVS"
@@ -144,6 +146,8 @@ extern int errno;
 /* A directory in which we store base versions of files we currently are
    editing with "cvs edit".  */
 #define CVSADM_BASE     "CVS/Base"
+#define CVSADM_BASEREV  "CVS/Baserev"
+#define CVSADM_BASEREVTMP "CVS/Baserev.tmp"
 /* File which contains the template for use in log messages.  */
 #define CVSADM_TEMPLATE "CVS/Template"
 #endif /* USE_VMS_FILENAMES */
@@ -422,6 +426,7 @@ List *Entries_Open PROTO((int aflag));
 void Subdirs_Known PROTO((List *entries));
 void Subdir_Register PROTO((List *, const char *, const char *));
 void Subdir_Deregister PROTO((List *, const char *, const char *));
+
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 
@@ -724,6 +729,11 @@ void freevers_ts PROTO ((Vers_TS ** versp));
 int Checkin PROTO ((int type, struct file_info *finfo, char *rcs, char *rev,
 		    char *tag, char *options, char *message));
 int No_Difference PROTO ((struct file_info *finfo, Vers_TS *vers));
+
+/* CVSADM_BASEREV stuff, from entries.c.  */
+extern char *base_get PROTO ((struct file_info *));
+extern void base_register PROTO ((struct file_info *, char *));
+extern void base_deregister PROTO ((struct file_info *));
 
 /*
  * defines for Classify_File() to determine the current state of a file.
