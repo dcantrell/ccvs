@@ -383,10 +383,10 @@ extern int top_level_admin;
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 extern int UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
 extern cvsroot_t *PrimaryServer;
 extern size_t MaxSecondaryBufferSize;
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
 
 
 

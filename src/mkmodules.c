@@ -481,7 +481,7 @@ static const char *const config_contents[] = {
     "# Be warned that these strings could be disabled in any new version of CVS.\n",
     "UseNewInfoFmtStrings=yes\n",
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef SECONDARY_SUPPORT
+#ifdef PROXY_SUPPORT
     "\n",
     "# Set `PrimaryServer' to the CVSROOT to the primary, or write, server when\n",
     "# establishing one or more read-only mirrors which serve as proxies for\n",
@@ -505,7 +505,7 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   MaxSecondaryBufferSize=1G\n",
-#endif /* SECONDARY_SUPPORT */
+#endif /* PROXY_SUPPORT */
     NULL
 };
 
