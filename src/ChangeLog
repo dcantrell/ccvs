@@ -1,3 +1,8 @@
+1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (multiroot): Change a few comments which said modules
+	when they meant directories.
+
 1998-09-25  Jim Meyering  <meyering@ascend.com>
 
 	* sanity.sh (devcom-180): Add 0-9 to the range of characters allowed
