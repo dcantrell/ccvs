@@ -53,7 +53,8 @@ export LC_ALL
 #     So this would be lost if everything was `pwd`-based.  I suppose
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
-: ${TESTDIR=/tmp/cvs-sanity}
+tmp=`(/bin/pwd || pwd) 2>/dev/null`
+: ${TESTDIR=$tmp/cvs-sanity}
 
 # "debugger"
 #set -x
@@ -5807,7 +5808,7 @@ U file7"
 	  # happens to do the right thing; see above join-20.
 	  dotest join-36 "${testcvs} -q up -j T3 -j T4" \
 "A file7
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file7,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file7,v
 retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into file7"
@@ -6422,8 +6423,6 @@ Checking in a;
 ${TESTDIR}/cvsroot/first-dir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
 done"
-
-		rm aa
 
 		# OK, the user saw the warning (good user), and now
 		# resolves it for real.
