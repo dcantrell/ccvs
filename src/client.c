@@ -1,5 +1,3 @@
-/* JT thinks BeOS is worth the trouble. */
-
 /* CVS client-related stuff.
 
    This program is free software; you can redistribute it and/or modify
