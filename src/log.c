@@ -535,6 +535,7 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (repository);
+	    free( where );
 	    return (1);
 	}
 	free (repository);
@@ -552,6 +553,9 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 			   (DIRLEAVEPROC) NULL, (void *) &log_data,
 			   argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
 			   where, 1);
+
+    if( where ) free( where );
+
     return err;
 }
 
