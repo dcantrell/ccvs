@@ -10434,6 +10434,12 @@ and value is a single-quote delimited value.
 *.nib    -f 'unwrap %s' -t 'wrap %s %s' -m 'COPY'
 *.c      -t 'indent %s %s'
 @end example
+@c When does the filter need to be an absolute pathname
+@c and when will something like the above work?  I
+@c suspect it relates to the PATH of the server (which
+@c in turn depends on all kinds of stuff, e.g. inetd
+@c for pserver).  I'm not sure whether/where to discuss
+@c this.
 
 @noindent
 The above example of a @file{cvswrappers} file
