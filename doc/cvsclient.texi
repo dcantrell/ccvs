@@ -74,8 +74,16 @@ Do not assume any access to the repository other than via this protocol.
 It does not depend on NFS, rdist, etc.
 
 @item
-Providing a reliable transport is outside this protocol.  It is expected
-that it runs over TCP, UUCP, etc.
+Providing a reliable transport is outside this protocol.  The protocol
+expects a reliable transport that is transparent (that is, there is no
+translation of characters, including characters such as such as
+linefeeds or carriage returns), and can transmit all 256 octets (for
+example for proper handling of binary files, compression, and
+encryption).  The encoding of characters specified by the protocol (the
+names of requests and so on) is the invariant ISO 646 character set (a
+subset of most popular character sets including ASCII and others).  For
+more details on running the protocol over the TCP reliable transport,
+see @ref{Connection and Authentication}.
 
 @item
 Security and authentication are handled outside this protocol (but see
@@ -202,6 +210,8 @@ to a horizontal tab.
 * Entries Lines::               
 * Modes::                       
 * Filenames::                       Conventions regarding filenames
+* File transmissions::              How file contents are transmitted
+* Strings::                         Strings in various requests and responses
 * Requests::                    
 * Responses::                   
 * Example::                     
@@ -282,6 +292,56 @@ the same answer (and what to do if future server ports are operating
 on a repository like e:/foo or CVS_ROOT:[FOO.BAR] has not been
 carefully thought out).
 
+Characters outside the invariant ISO 646 character set should be avoided
+in filenames.  This restriction may need to be relaxed to allow for
+characters such as @samp{[} and @samp{]} (see above about non-unix
+servers); this has not been carefully considered (and currently
+implementations probably use whatever character sets that the operating
+systems they are running on allow, and/or that users specify).  Of
+course the most portable practice is to restrict oneself further, to the
+POSIX portable filename character set as specified in POSIX.1.
+
+@node File transmissions
+@section File transmissions
+
+File contents (noted below as @var{file transmission}) can be sent in
+one of two forms.  The simpler form is a number of bytes, followed by a
+linefeed, followed by the specified number of bytes of file contents.
+These are the entire contents of the specified file.  Second, if both
+client and server support @samp{gzip-file-contents}, a @samp{z} may
+precede the length, and the `file contents' sent are actually compressed
+with @samp{gzip} (RFC1952/1951) compression.  The length specified is
+that of the compressed version of the file.
+
+In neither case are the file content followed by any additional data.
+The transmission of a file will end with a linefeed iff that file (or its
+compressed form) ends with a linefeed.
+
+The encoding of file contents depends on the value for the @samp{-k}
+option.  If the file is binary (as specified by the @samp{-kb} option in
+the appropriate place), then it is just a certain number of octets, and
+the protocol contributes nothing towards determining the encoding (using
+the file name is one widespread, if not universally popular, mechanism).
+If the file is text (not binary), then the file is sent as a series of
+lines, separated by linefeeds.  If the keyword expansion is set to
+something other than @samp{-ko}, then it is expected that the file
+conform to the RCS expectations regarding keyword expansion---in
+particular, that it is in a character set such as ASCII in which 0x24 is
+a dollar sign (@samp{$}).
+
+@node Strings
+@section Strings
+
+In various contexts, for example the @code{Argument} request and the
+@code{M} response, one transmits what is essentially an arbitrary
+string.  Often this will have been supplied by the user (for example,
+the @samp{-m} option to the @code{ci} request).  The protocol has no
+mechanism to specify the character set of such strings; it would be
+fairly safe to stick to the invariant ISO 646 character set but the
+existing practice is probably to just transmit whatever the user
+specifies, and hope that everyone involved agrees which character set is
+in use, or sticks to a common subset.
+
 @node Requests
 @section Requests
 
@@ -290,19 +350,6 @@ a response from the server, while all others do -- save one.  The
 exception is @samp{gzip-file-contents}.  Unrecognized requests will
 always elicit a response from the server, even if that request begins
 with a capital letter.
-
-File contents (noted below as @var{file transmission}) can be sent in
-one of two forms.  The simpler form is a number of bytes, followed by a
-newline, followed by the specified number of bytes of file contents.
-These are the entire contents of the specified file.  Second, if both
-client and server support @samp{gzip-file-contents}, a @samp{z} may
-precede the length, and the `file contents' sent are actually compressed
-with @samp{gzip} (RFC1952/1951) compression.  The length specified is
-that of the compressed version of the file.
-
-In neither case are the file content followed by any additional data.
-The transmission of a file will end with a newline iff that file (or its
-compressed form) ends with a newline.
 
 @table @code
 @item Root @var{pathname} \n
@@ -723,7 +770,7 @@ message and exiting---this should be investigated further).
 In the following, @var{pathname} actually indicates a pair of
 pathnames.  First, a local directory name
 relative to the directory in which the command was given (i.e. the last
-@code{Directory} before the command).  Then a newline and a repository
+@code{Directory} before the command).  Then a linefeed and a repository
 name.  Then
 a slash and the filename (without a @samp{,v} ending).
 For example, for a file @file{i386.mh}

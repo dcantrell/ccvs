@@ -1,5 +1,12 @@
 Sat Mar 29 12:32:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi: Change "newline" to "linefeed".  Most of the
+	document already reads "linefeed" and that is what is intended.
+	(File transmissions): New node, moved here from Requests.
+	(Goals, Filenames, File transmissions, new node Strings): Add
+	discussion of character sets and what we expect from the transport
+	protocol we run on.
+
 	* cvsclient.texi (Requests): Add paragraph about each Directory
 	request specifying a new local-directory and repository.
 
