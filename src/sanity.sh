@@ -18777,6 +18777,12 @@ Annotations for $file
 	  # local.
 	  if $remote; then
 
+	    # Workaround any X11Forwarding by ssh. Otherwise this text:
+	    #   Warning: No xauth data; using fake authentication data for X11 forwarding.
+	    # has been known to end up in the test results below
+	    # causing the test to fail.
+	    [ -n "$DISPLAY" ] && unset DISPLAY
+
 	    # For remote, just create the repository.  We don't yet do
 	    # the various other tests above for remote but that should be
 	    # changed.
@@ -29737,14 +29743,18 @@ S -> write_lock(${CVSROOT_DIRNAME}/trace)
 done
 new revision: delete; previous revision: 1\.2"
 
-	  dotest_sort trace-19 "${testcvs} -t -t -t history file1" \
+	  # SGI IRIX seems to have problems with the stdout and stderr
+	  # mix for this test, so separate them.
+	  dotest_sort trace-19 "${testcvs} -t -t -t history file1 2>stderr19" \
+"O ${ISODATE} ${username} trace =trace= ${TESTDIR}/trace/\*" \
+"O ${ISODATE} ${username} trace =trace= <remote>/\*"
+	  dotest_sort trace-19stderr "sort < stderr19" \
 "  *-> Lock_Cleanup()
   *-> main loop with CVSROOT=${CVSROOT_DIRNAME}
   *-> parse_cvsroot ( ${CVSROOT_DIRNAME} )
   *-> remove_locks()
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
-  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
-O ${ISODATE} ${username} trace =trace= ${TESTDIR}/trace/\*" \
+  *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )" \
 "
   *-> Forking server: ${CVS_SERVER} server
   *-> main loop with CVSROOT=${CVSROOT}
@@ -29752,7 +29762,6 @@ O ${ISODATE} ${username} trace =trace= ${TESTDIR}/trace/\*" \
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
   *-> walklist ( list=${PFMT}, proc=${PFMT}, closure=${PFMT} )
-O ${ISODATE} ${username} trace =trace= <remote>/\*
 S -> Lock_Cleanup()
 S -> Lock_Cleanup()
 S -> remove_locks()
@@ -29760,6 +29769,7 @@ S -> remove_locks()
 S -> server_cleanup()
 S -> server_cleanup()
 S -> server_notify()"
+	  rm stderr19
 
 	  cd ..
 	  dotest_sort \
