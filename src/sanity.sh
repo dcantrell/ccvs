@@ -739,9 +739,8 @@ done"
 :	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
 	  dotest basicb-1a "test -d CVS" ''
-	  # See comment at modules3-7f for more on this behavior.
 	  dotest basicb-1b "cat CVS/Repository" \
-"${TESTDIR}/cvsroot/first-dir" "${TESTDIR}/cvsroot/\."
+"${TESTDIR}/cvsroot/\."
 	  dotest basicb-1c "cat first-dir/CVS/Repository" \
 "${TESTDIR}/cvsroot/first-dir"
 
@@ -834,9 +833,8 @@ U first-dir1/sdir2/sfile2'
 'U newdir/Emptydir/sfile1
 U newdir/sdir2/sfile2'
 	  dotest basicb-9a "test -d CVS" ''
-	  # See comment at modules3-7f for more on this behavior.
 	  dotest basicb-9b "cat CVS/Repository" \
-"${TESTDIR}/cvsroot/first-dir" "${TESTDIR}/cvsroot/\."
+"${TESTDIR}/cvsroot/\."
 	  dotest basicb-9c "cat newdir/CVS/Repository" \
 "${TESTDIR}/cvsroot/CVSROOT/Emptydir"
 	  dotest basicb-10 "cat newdir/Emptydir/sfile1 newdir/sdir2/sfile2" \
@@ -4907,15 +4905,9 @@ done"
 	  dotest modules3-7e "${testcvs} -q co nestshallow" \
 "U src/dir/fileb"
 
-	  # Using ${TESTDIR}/cvsroot/second-dir/suba instead of
-	  # ${TESTDIR}/cvsroot/second-dir seems wrong, it seems like the
-	  # 30 Dec 1996 change to build_dirs_and_chdir simply failed
-	  # to consider what to put in CVS/Repository.
-	  # Remote does "${TESTDIR}/cvsroot/\." which seems equally wrong,
-	  # if in a different way, but variety is the spice of life,
-	  # eh?
+	  # Remote does "${TESTDIR}/cvsroot/\." which seems wrong.
 	  dotest modules3-7f "cat CVS/Repository" \
-"${TESTDIR}/cvsroot/second-dir/suba" "${TESTDIR}/cvsroot/\."
+"${TESTDIR}/cvsroot/second-dir" "${TESTDIR}/cvsroot/\."
 
 	  dotest modules3-7g "cat src/CVS/Repository" \
 "${TESTDIR}/cvsroot/second-dir/suba"
@@ -8121,16 +8113,11 @@ ${PROG} [a-z]*: Updating top-dir"
 
 	  dotest toplevel-8 "${testcvs} update -d top-dir" \
 "${PROG} [a-z]*: Updating top-dir"
-	  # FIXME: This test fails in cvs starting from 1.9.2 because
-	  # it updates "file1" in "1".  Test modules3-7f also finds
-	  # (and tolerates) this bug.  The second expect string below
-	  # should be removed when this is fixed.  The first expect
-	  # string is the behavior of remote CVS.  There is some sentiment
-	  # that
+	  # There is some sentiment that
 	  #   "${PROG} [a-z]*: Updating \.
           #   ${PROG} [a-z]*: Updating top-dir"
 	  # is correct but it isn't clear why that would be correct instead
-	  # of the remote CVS behavior.
+	  # of the remote CVS behavior (which also updates CVSROOT).
 	  #
 	  # The DOTSTAR matches of a bunch of lines like
 	  # "U CVSROOT/checkoutlist".  Trying to match them more precisely
@@ -8141,9 +8128,6 @@ ${PROG} [a-z]*: Updating top-dir"
 "${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating CVSROOT
 ${DOTSTAR}
-${PROG} [a-z]*: Updating top-dir" \
-"${PROG} [a-z]*: Updating \.
-U file1
 ${PROG} [a-z]*: Updating top-dir"
 
 	  cd ..
@@ -8151,17 +8135,10 @@ ${PROG} [a-z]*: Updating top-dir"
 	  dotest toplevel-10 "${testcvs} co top-dir" \
 "${PROG} [a-z]*: Updating top-dir
 U top-dir/file1"
-	  # This one is particularly a "real life" example of why this
-	  # bug is annoying.
-	  if test "x$remote" = xyes; then
-	    # This is correct behavior.
-	    dotest toplevel-11 "${testcvs} -q update -d second-dir" \
+	  # This tests more or less the same thing, in a particularly
+	  # "real life" example.
+	  dotest toplevel-11 "${testcvs} -q update -d second-dir" \
 "U second-dir/file2"
-	  else
-	    # This is the buggy behavior.
-	    dotest toplevel-11 "${testcvs} -q update -d second-dir" \
-"${PROG} update: nothing known about second-dir"
-	  fi
 
 	  # Now remove the CVS directory (people may do this manually,
 	  # especially if they formed their habits with CVS
