@@ -1,3 +1,8 @@
+2000-11-16  Derek Price  <derek.price@openavenue.com>
+
+	* filesubr.c (cvs_temp_file): fixed a garble or two, added some
+	additional error checking, and added a comment
+
 2000-11-15  Derek Price  <derek.price@openavenue.com>
 
 	* filesubr.c (cvs_temp_file): added cvs_temp_file
