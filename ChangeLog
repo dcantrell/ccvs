@@ -1,3 +1,48 @@
+Mon Feb 17 11:46:34 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* config.h.in, configure, stamp.h.in: regenerated using
+	autoconf-2.12.
+
+	* Makefile.in (Makefile): cause this target to fail after
+ 	rebuilding Makefile to force you to run make again to use the new
+ 	Makefile.  [this can be a bit of a pain but it's the only portable
+	way to ensure the user doesn't build the wrong configuration]
+
+	* Makefile.in (configure, config.h.in, stamp.h.in): re-enable
+	these targets, but make them just print a message about *not*
+	running autoconf and/or autoheader.  Also change the comment to
+	note that 'make dist' should really be the mechanism used for
+	commenting out the real rules and adding the echo statements.
+	(stamp-h): stamp-h and config.h must both be built in tandem by
+	running config.status to keep the dependencies in order.
+	(config.status): add setting of CC for the recheck (ala CFLAGS).
+	
+	* configure.in (AC_CONFIG_HEADER): multiple header file names must
+	are not allowed.
+	(AC_PREREQ): 2.12 -- go for it, it's been out for a while now!
+	(AC_C_CROSS): deprecated by autoconf-2.12.
+	(AC_LANG_C): set compilation test mechanisms to use CC & CPP & *.c.
+ 	(VERSION): new variable & define to specify pkg version.
+	(PACKAGE): new variable & define to specify pkg name.
+	(AC_ARG_PROGRAM): allow program name transforms.
+	(--with-rcsbin): allow RCSBIN_DFLT to be set.
+	(--with-diff): allow DIFF_DFLT to be set.
+	(--with-patch): allow PATCH_DFLT to be set.
+	(--with-editor): allow EDITOR_DFLT to be set.
+	(--with-tmpdir): allow TMPDIR_DFLT to be set.
+	(--with-cvs_server): allow CVS_SERVER_DFLT to be set.
+	(--with-rsh): allow RSH_DFLT to be set, default to the appropriate
+	path of either rsh or remsh.
+	(--enable-force_editor): to set FORCE_USE_EDITOR.
+	(--enable-admin_group): to set CVS_ADMIN_GROUP.
+	(AC_OUTPUT): [] quote the arguments.
+	Remove the handling of options.h.in et al.
+	
+	* acconfig.h: added all the stuff from src/options.h.in.
+	Rename some variables to match configure.in and the general naming
+	conventions elsewhere (_DFLT's are used to set default values that
+	can be changed by command-line or environment variable options).
+	
 Mon Feb 17 09:55:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure: Regenerated.
