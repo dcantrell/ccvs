@@ -632,6 +632,8 @@ parse_cvsroot (root_in)
     case pserver_method:
 	check_hostname = 1;
 	break;
+    default:
+	error (1, 0, "Invalid method found in parse_cvsroot");
     }
 
     if (no_password && newroot->password)
@@ -643,7 +645,7 @@ parse_cvsroot (root_in)
 
     if (check_hostname && !newroot->hostname)
     {
-	error (0, 0, "Didn't specify hostname in CVSROOT.", root_in);
+	error (0, 0, "Didn't specify hostname in CVSROOT.");
 	goto error_exit;
     }
 
@@ -656,7 +658,7 @@ parse_cvsroot (root_in)
 
     if (*newroot->directory == '\0')
     {
-	error (0, 0, "Missing directory in CVSROOT.", root_in);
+	error (0, 0, "Missing directory in CVSROOT.");
 	goto error_exit;
     }
     
