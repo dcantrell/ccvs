@@ -2928,9 +2928,9 @@ Args:  POS."
 			  cvs-emerge-tmp-head-file			; file-B
 			  (cvs-fileinfo->full-path fileinfo)		; file-out
 			  nil						; start-hooks
-			  '(lambda ()					; quit-hooks
-			     (delete-file cvs-emerge-tmp-head-file)
-			     (makunbound 'cvs-emerge-tmp-head-file))))
+			  (cons '(lambda ()				; quit-hooks
+				   (delete-file cvs-emerge-tmp-head-file)
+				   (makunbound 'cvs-emerge-tmp-head-file)) nil)))
 		    (error "Emerge session failed"))))
 
 	   ;; re-do the same merge rcsmerge supposedly just did....
@@ -2941,27 +2941,27 @@ Args:  POS."
 		  (cvs-retrieve-revision-to-tmpfile fileinfo
 						    (cvs-fileinfo->head-revision
 						     fileinfo)))
-	    (let ((cvs-emerge-tmp-backup-working-file
-		   (cvs-fileinfo->backup-file fileinfo))
-		  (cvs-emerge-tmp-ancestor-file
-		   (cvs-retrieve-revision-to-tmpfile fileinfo
-						     (cvs-fileinfo->base-revision
-						      fileinfo))))
-	      (unwind-protect
-		  (if (not (emerge-files-with-ancestor
-			    t						; arg
-			    cvs-emerge-tmp-backup-working-file		; file-A
-			    ;; this is an un-avoidable compiler reference to a free variable
-			    cvs-emerge-tmp-head-file			; file-B
-			    cvs-emerge-tmp-ancestor-file		; file-ancestor
-			    (cvs-fileinfo->full-path fileinfo)		; file-out
-			    nil						; start-hooks
-			    '(lambda ()					; quit-hooks
-			       (delete-file cvs-emerge-tmp-backup-file)
-			       (delete-file cvs-emerge-tmp-ancestor-file)
-			       (delete-file cvs-emerge-tmp-head-file)
-			       (makunbound 'cvs-emerge-tmp-head-file))))
-		      (error "Emerge session failed")))))
+ 	    (setq cvs-emerge-tmp-backup-working-file
+		  (cvs-fileinfo->backup-file fileinfo))
+	    (setq cvs-emerge-tmp-ancestor-file
+		  (cvs-retrieve-revision-to-tmpfile fileinfo
+						    (cvs-fileinfo->base-revision
+						     fileinfo)))
+	    (unwind-protect
+		(if (not (emerge-files-with-ancestor
+			  t						; arg
+			  cvs-emerge-tmp-backup-working-file		; file-A
+			  ;; this is an un-avoidable compiler reference to a free variable
+			  cvs-emerge-tmp-head-file			; file-B
+			  cvs-emerge-tmp-ancestor-file		; file-ancestor
+			  (cvs-fileinfo->full-path fileinfo)		; file-out
+			  nil						; start-hooks
+			  (cons '(lambda ()				; quit-hooks
+				   (delete-file cvs-emerge-tmp-backup-working-file)
+				   (delete-file cvs-emerge-tmp-ancestor-file)
+				   (delete-file cvs-emerge-tmp-head-file)
+				   (makunbound 'cvs-emerge-tmp-head-file)) nil)))
+		    (error "Emerge session failed"))))
 	   (t
 	    (error "Can only e-merge \"Modified\", \"Merged\" or \"Conflict\" files"))))
       (error "There is no file to e-merge."))))
