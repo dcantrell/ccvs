@@ -632,11 +632,12 @@ with the \fBcheckout\fR and \fBupdate\fR commands.
 .IP "" 0
 \fB-R\fR
 .IP "" 2
-Process directories recursively.  This is on by default.
+Process directories recursively.  This is the default for all \fBcvs\fR
+commands, with the exception of \fBls\fR & \fBrls\fR.
 .SP
 Available with the following commands: \fBannotate\fR, \fBcheckout\fR,
 \fBcommit\fR, \fBdiff\fR, \fBedit\fR, \fBeditors\fR, \fBexport\fR,
-\fBrdiff\fR, \fBremove\fR, \fBrtag\fR,
+\fBls\fR, \fBrdiff\fR, \fBremove\fR, \fBrls\fR, \fBrtag\fR,
 \fBstatus\fR, \fBtag\fR, \fBunedit\fR, \fBupdate\fR, \fBwatch\fR,
 and \fBwatchers\fR.
 .SP
@@ -3081,9 +3082,30 @@ Changes: nothing.
 Synonym: \fBdir\fR & \fBlist\fR are synonyms for \fBls\fR and \fBrdir\fR
 & \fBrlist\fR are synonyms for \fBrls\fR.
 .SP
+The \fBls\fR and \fBrls\fR commands are used to list
+files and directories in the repository.
+.SP
+By default \fBls\fR lists the files and directories
+that belong in your working directory, what would be
+there after an \fBupdate\fR.
+.SP
+By default \fBrls\fR lists the files and directories
+on the tip of the trunk in the topmost directory of the
+repository.
+.SP
+Both commands accept an optional list of file and
+directory names, relative to the working directory for
+\fBls\fR and the topmost directory of the repository
+for \fBrls\fR.  Neither is recursive by default.
+.SP
 .SH "ls & rls options"
 .SP
 These standard options are supported by \fBls\fR & \fBrls\fR:
+.SP
+.IP "" 0
+\fB-d\fR
+.IP "" 2
+Show dead revisions (with tag when specified).
 .SP
 .IP "" 0
 \fB-e\fR
