@@ -1,3 +1,8 @@
+1998-03-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (check_password): If shadow passwords are supported but no
+	entry is found in the shadow file, check the regular password file.
+
 1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Rename permissions test to perms since that is what
