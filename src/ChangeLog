@@ -1,5 +1,9 @@
 2004-08-11  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (sync-secondary): Don't bother to log sync activity.
+
+2004-08-11  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_copy_data), buffer.h (buf_copy_data), log-buffer.c
 	(log_buffer_initialize, log_buffer_input, log_buffer_output,
 	log_buffer_rewind, log_buffer_closelog), log-buffer.h
