@@ -946,6 +946,12 @@ call_in_directory (pathname, func, data)
 	    
 	    /* Directory does not exist, we need to create it.  */
 	    newdir = 1;
+
+	    /* Provided we are willing to assume that directories get
+	       created one at a time, we could simplify this a lot.
+	       Do note that one aspect still would need to walk the
+	       dir_name path: the checking for "fncmp (dir, CVSADM)".  */
+
 	    dir = xmalloc (strlen (dir_name) + 1);
 	    dirp = dir_name;
 	    rdirp = reposdirname;
@@ -980,8 +986,10 @@ call_in_directory (pathname, func, data)
 		    /* Skip the slash.  */
 		    ++dirp;
 		    if (rdirp == NULL)
-			error (0, 0,
-			       "internal error: repository string too short.");
+			/* This just means that the repository string has
+			   fewer components than the dir_name string.  But
+			   that is OK (e.g. see modules3-8 in testsuite).  */
+			;
 		    else
 			rdirp = strchr (rdirp, '/');
 		}
@@ -1046,6 +1054,13 @@ call_in_directory (pathname, func, data)
 
 		    if (rdirp)
 		    {
+			/* See comment near start of function; the only
+			   way that the server can put the right thing
+			   in each CVS/Repository file is to create the
+			   directories one at a time.  I think that the
+			   CVS server has been doing this all along.  */
+			error (0, 0, "\
+warning: server is not creating directories one at a time");
 			strncpy (r, reposdirname, rdirp - reposdirname);
 			r[rdirp - reposdirname] = '\0';
 		    }

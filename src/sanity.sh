@@ -4103,9 +4103,6 @@ done'
 "${TESTDIR}/cvsroot/second-dir/suba/subb"
 	  cd ..; rm -r 1
 
-	  if test "x$remote" = xno; then
-	  # Remote fails with:
-	  # "cvs checkout: internal error: repository string too short."
 	  mkdir 1
 	  cd 1
 	  dotest modules3-8 "${testcvs} -q co namednest" \
@@ -4113,13 +4110,10 @@ done'
 	  dotest modules3-9 "test -f src/sub/dir/file1" ''
 	  cd ..
 	  rm -r 1
-	  fi # end of tests bypassed for remote
 
 	  # Try the same thing, but with the directories nested even
 	  # deeper (deeply enough so they are nested more deeply than
 	  # the number of directories from / to ${TESTDIR}).
-	  if test "x$remote" = xno; then
-	  # I assume this will be like modules3-8 for remote
 	  mkdir 1
 	  cd 1
 	  dotest modules3-10 "${testcvs} -q co nestdeeper" \
@@ -4127,7 +4121,6 @@ done'
 	  dotest modules3-11 "test -f src/sub1/sub2/sub3/dir/file1" ''
 	  cd ..
 	  rm -r 1
-	  fi # end of tests bypassed for remote
 
 	  # This one is almost too twisted for words.  The pathname output
 	  # in the message from "co" doesn't include the "path/in/modules",
