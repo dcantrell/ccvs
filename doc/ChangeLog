@@ -1,5 +1,7 @@
 Thu Oct 17 12:10:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo: Reinstate 30 Sep 96 change from A4 to US letter.
+
 	* cvs.texinfo (Concurrency): When telling people how to clean up
 	locks, tell them to make sure the locks are owned by the person
 	who has the stale locks.
