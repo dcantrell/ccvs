@@ -1,3 +1,8 @@
+Wed May 15 23:38:15 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* NEWS: add info about access methods and document behavior change
+ 	for "cvs login."
+
 Wed May 01 00:18:01 1996  noel  <noel@BOAT_ANCHOR>
 
 	* cvsnt.mak: remove all of those unnecessary libraries!  We only
