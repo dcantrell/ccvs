@@ -2158,6 +2158,14 @@ if $proxy; then
     # Where the secondary root will be
     SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
 
+    tryrsync=`which rsync`
+    if test -r "$tryrsync"; then
+	RSYNC=$tryrsync
+    else
+	echo "Unable to test in proxy mode: No rsync found in $PATH" >&2
+	exit 1
+    fi
+
     # Script to sync the secondary root.
     cat >$TESTDIR/sync-secondary <<EOF
 #! $TESTSHELL

@@ -1,5 +1,9 @@
 2004-09-15  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Set $RSYNC in proxy mode.
+
+2004-09-15  Derek Price  <derek@ximbiot.com>
+
 	* main.c: Fix typo in comment.
 
 2004-09-15  Derek Price  <derek@ximbiot.com>
