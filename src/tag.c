@@ -32,6 +32,7 @@ static int branch_mode;			/* make an automagic "branch" tag */
 static int local;			/* recursive by default */
 static int force_tag_match = 1;         /* force tag to match by default */
 static int force_tag_move;		/* don't force tag to move by default */
+static int check_uptodate;		/* no uptodate-check by default */
 
 struct tag_info
 {
@@ -51,14 +52,15 @@ static List *tlist;
 
 static const char *const tag_usage[] =
 {
-    "Usage: %s %s [-lRF] [-b] [-d] [-r tag|-D date] tag [files...]\n",
+    "Usage: %s %s [-lRF] [-b] [-d] [-c] [-r tag|-D date] tag [files...]\n",
     "\t-l\tLocal directory only, not recursive.\n",
     "\t-R\tProcess directories recursively.\n",
-    "\t-d\tDelete the given Tag.\n",
+    "\t-d\tDelete the given tag.\n",
     "\t-[rD]\tExisting tag or date.\n",
-    "\t-f\tForce a head revision if tag etc not found.\n",
+    "\t-f\tForce a head revision if specified tag not found.\n",
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
-    "\t-F\tMove tag if it already exists\n",
+    "\t-F\tMove tag if it already exists.\n",
+    "\t-c\tCheck that working files are unmodified.\n",
     NULL
 };
 
@@ -74,7 +76,7 @@ tag (argc, argv)
 	usage (tag_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "FQqlRdr:D:bf")) != -1)
+    while ((c = getopt (argc, argv, "FQqlRcdr:D:bf")) != -1)
     {
 	switch (c)
 	{
@@ -97,6 +99,9 @@ tag (argc, argv)
 		break;
 	    case 'd':
 		delete_flag = 1;
+		break;
+	    case 'c':
+		check_uptodate = 1;
 		break;
             case 'r':
                 numtag = optarg;
@@ -148,6 +153,8 @@ tag (argc, argv)
 	    send_arg("-l");
 	if (delete_flag)
 	    send_arg("-d");
+	if (check_uptodate)
+	    send_arg("-c");
 	if (branch_mode)
 	    send_arg("-b");
 	if (force_tag_move)
@@ -205,6 +212,19 @@ check_fileproc (finfo)
     char *xdir;
     Node *p;
     Vers_TS *vers;
+    
+    if (check_uptodate) 
+    {
+	Ctype status = Classify_File (finfo->file, (char *) NULL, (char *) NULL,
+				      (char *) NULL, 1, 0, finfo->repository,
+				      finfo->entries, finfo->rcs, &vers,
+				      finfo->update_dir, 0);
+	if ((status != T_UPTODATE) && (status != T_CHECKOUT))
+	{
+	    error (0, 0, "%s is not up-to-date", finfo->file);
+	    return (1);
+	}
+    }
     
     if (finfo->update_dir[0] == '\0')
 	xdir = ".";
