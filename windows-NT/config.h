@@ -1002,6 +1002,10 @@
 # undef __EXTENSIONS__
 #endif
 
+/* Define to rpl_ if the getopt replacement functions and variables should be
+   used. */
+#define __GETOPT_PREFIX rpl_
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
@@ -1010,16 +1014,6 @@
 
 /* Define to a replacement function name for getline(). */
 #undef getline
-
-/* Define to rpl_getopt if the replacement function should be used. */
-#define getopt rpl_getopt
-
-/* Define to rpl_getopt_long if the replacement function should be used. */
-#define getopt_long rpl_getopt_long
-
-/* Define to rpl_getopt_long_only if the replacement function should be used.
-   */
-#define getopt_long_only rpl_getopt_long_only
 
 /* Define to a replacement function name for getpass(). */
 #undef getpass
@@ -1065,18 +1059,6 @@
 
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
-
-/* Define to rpl_optarg if the replacement variable should be used. */
-#define optarg rpl_optarg
-
-/* Define to rpl_opterr if the replacement variable should be used. */
-#define opterr rpl_opterr
-
-/* Define to rpl_optind if the replacement variable should be used. */
-#define optind rpl_optind
-
-/* Define to rpl_optopt if the replacement variable should be used. */
-#define optopt rpl_optopt
 
 /* Define to `int' if <sys/types.h> does not define. */
 #define pid_t int
