@@ -571,11 +571,10 @@ set_lock (repository, will_wait)
 	    return (L_ERROR);
 	}
 
-	/*
-	 * stat the dir - if it is non-existent, re-try the loop since
-	 * someone probably just removed it (thus releasing the lock)
-	 */
-	if ( CVS_STAT (masterlock, &sb) < 0)
+	/* Find out who owns the lock.  If the lock directory is
+	   non-existent, re-try the loop since someone probably just
+	   removed it (thus releasing the lock).  */
+	if (CVS_STAT (masterlock, &sb) < 0)
 	{
 	    if (existence_error (errno))
 		continue;
