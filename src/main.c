@@ -41,15 +41,6 @@
 extern int gethostname ();
 #endif
 
-#if HAVE_KERBEROS
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <krb.h>
-#ifndef HAVE_KRB_GET_ERR_TEXT
-#define krb_get_err_text(status) krb_err_txt[status]
-#endif
-#endif
-
 char *program_name;
 char *program_path;
 /*
