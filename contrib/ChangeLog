@@ -1,5 +1,10 @@
 2001-10-16  Derek Price  <dprice@collab.net>
 
+	* sccs2rcs.in: Replace Y2K bug fix with something more succint.
+	(Suggested by SAKAI Hiroaki <sakai.hiroaki@pfu.fujitsu.com>.)
+
+2001-10-16  Derek Price  <dprice@collab.net>
+
 	* rcs2sccs.in: Fix Y2K bug.
 	(Patch from SAKAI Hiroaki <sakai.hiroaki@pfu.fujitsu.com>.)
 
