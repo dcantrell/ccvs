@@ -1,5 +1,13 @@
 Changes since 1.8:
 
+* "cvs diff" has a bunch of new options, mostly long options.  Most of
+these work only if rcsdiff and diff support them, and are named the
+same as the corresponding options to diff.
+
+* The -q and -Q command options to "cvs diff" were removed (use the
+global options instead).  This brings "cvs diff" into line with the
+rest of the CVS commands.
+
 * The "annotate" command can now be used to annotate a revision other
 than the head revision on the trunk (see the -r, -D, and -f options in
 the annotate node of cvs.texinfo for details).
