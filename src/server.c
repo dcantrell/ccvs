@@ -3409,6 +3409,10 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 	size = 0;
 	if (sb.st_size > 0)
 	{
+	    /* Throughout this section we use binary mode to read the
+	       file we are sending.  The client handles any line ending
+	       translation if necessary.  */
+
 	    if (gzip_level
 		/*
 		 * For really tiny files, the gzip process startup
@@ -3421,11 +3425,11 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 		int status, fd, gzip_status;
 		pid_t gzip_pid;
 
-		fd = open (file, O_RDONLY, 0);
+		fd = open (file, O_RDONLY | OPEN_BINARY, 0);
 		if (fd < 0)
 		    error (1, errno, "reading %s", short_pathname);
 		fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
-		f = fdopen (fd, "r");
+		f = fdopen (fd, "rb");
 		status = buf_read_file_to_eof (f, &list, &last);
 		size = buf_chain_length (list);
 		if (status == -2)
@@ -3448,7 +3452,7 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 		long status;
 
 		size = sb.st_size;
-		f = fopen (file, "r");
+		f = fopen (file, "rb");
 		if (f == NULL)
 		    error (1, errno, "reading %s", short_pathname);
 		status = buf_read_file (f, sb.st_size, &list, &last);

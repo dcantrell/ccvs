@@ -3408,6 +3408,10 @@ send_modified (file, short_pathname, vers)
 #endif /* LINES_CRLF_TERMINATED */
 
 	fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
+
+	/* FIXME: is there any reason to go through all this realloc'ing
+	   when we could just be writing the data to the network as we read
+	   it from gzip?  */
 	while (1)
 	{
 	    if ((bufp - buf) + readsize >= bufsize)
@@ -3470,6 +3474,11 @@ send_modified (file, short_pathname, vers)
 	    char *bufp = buf;
 	    int len;
 
+	    /* FIXME: This is gross.  It assumes that we might read
+	       less than st_size bytes (true on NT), but not more.
+	       Instead of this we should just be reading a block of
+	       data (e.g. 8192 bytes), writing it to the network, and
+	       so on until EOF.  */
 	    while ((len = read (fd, bufp, (buf + sb.st_size) - bufp)) > 0)
 	        bufp += len;
 

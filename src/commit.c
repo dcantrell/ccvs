@@ -269,6 +269,7 @@ commit (argc, argv)
 	if (message)
 	    error (1, 0, "cannot specify both a message and a log file");
 
+	/* FIXME: Why is this binary?  Needs more investigation.  */
 	if ((logfd = open (logfile, O_RDONLY | OPEN_BINARY)) < 0)
 	    error (1, errno, "cannot open log file %s", logfile);
 
@@ -277,6 +278,8 @@ commit (argc, argv)
 
 	message = xmalloc (statbuf.st_size + 1);
 
+	/* FIXME: Should keep reading until EOF, rather than assuming the
+	   first read gets the whole thing.  */
 	if ((n = read (logfd, message, statbuf.st_size + 1)) < 0)
 	    error (1, errno, "cannot read log message from %s", logfile);
 
