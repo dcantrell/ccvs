@@ -1,5 +1,20 @@
 Fri Jul 26 16:17:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server_if.c: Revert to version before Ladwig's 26 Jul 96
+	submission.  In particular, this is to pick up the following
+	changes:
+
+	Tue Mar 19 17:51:52 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* server_if.c (macos_start_server): Added support for
+	  CVS_RCMD_PORT (and thus made consistent with WindowsNT and VMS)
+
+	Wed Feb 28 11:31:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server_if.c (macos_start_server): Don't use alloca.
+
+Fri Jul 26 16:17:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
 	* Makefile.in (HEADERS): Remove SIOUX*.h.
 	(SOURCES): Remove SIOUX.c.  These files are copyright by
 	metrowerks and therefore we cannot distribute them.
