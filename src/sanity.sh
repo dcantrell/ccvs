@@ -641,9 +641,12 @@ directory_cmp ()
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 CVSROOT=${CVSROOT_DIRNAME} ; export CVSROOT
 if test "x$remote" = xyes; then
-	# Use rsh so we can test it without having to muck with inetd
-	# or anything like that.  Also needed to get CVS_SERVER to
-	# work.
+	# Currently we test :fork: and :ext: (see crerepos test).
+	# Testing :pserver: would be hard (inetd issues).
+	# Also :ext: and :fork support CVS_SERVER in a convenient way.
+	# If you want to edit this script to change the next line to
+	# :ext:, you can run the tests that way.  There is a known
+	# difference in modes-15 (see comments there).
 	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
@@ -11672,8 +11675,26 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    mkdir crerepos
 	    mkdir crerepos/CVSROOT
 
-	    CREREPOS_ROOT=:fork:${TESTDIR}/crerepos
+	    # Use :ext: rather than :fork:.  Most of the tests use :fork:,
+	    # so we want to make sure that we test :ext: _somewhere_.
 
+	    # Maybe a bit dubious in the sense that people need to
+	    # have rsh working to run the tests, but at least it
+	    # isn't inetd :-).  Might want to think harder about this -
+	    # maybe try :ext:, and if it fails, print a (single, nice)
+	    # message and fall back to :fork:.  Maybe testing :ext:
+	    # with our own CVS_RSH rather than worrying about a system one
+	    # would do the trick.
+
+	    # Note that we set CVS_SERVER at the beginning.
+	    CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+
+	    # If we're going to do remote testing, make sure 'rsh' works first.
+	    host="`hostname`"
+	    if test "x`${CVS_RSH-rsh} $host -n 'echo hi'`" != "xhi"; then
+		echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
+		exit 1
+	    fi
 	  fi
 
 	  if test "x$remote" = "xno"; then
@@ -11692,16 +11713,20 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  else # remote
 	    # Test that CVS rejects a relative path in CVSROOT.
 	    mkdir 1; cd 1
+	    # Note that having the client reject the pathname (as :fork:
+	    # does), does _not_ test for the bugs we are trying to catch
+	    # here.  The point is that malicious clients might send all
+	    # manner of things and the server better protect itself.
 	    dotest_fail crerepos-6a \
-"${testcvs} -q -d :fork:../crerepos get ." \
-"${PROG} \[[a-z]* aborted\]: CVSROOT ../crerepos must be an absolute pathname"
+"${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
+"Root ../crerepos must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b \
-"${testcvs} -d :fork:crerepos init" \
-"${PROG} \[[a-z]* aborted\]: CVSROOT crerepos must be an absolute pathname"
+"${testcvs} -d :ext:`hostname`:crerepos init" \
+"Root crerepos must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 	  fi # end of tests to be skipped for remote
