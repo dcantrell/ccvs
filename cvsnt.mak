@@ -244,7 +244,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/getopt.obj" \
 	"$(INTDIR)/exitfail.obj" \
 	"$(INTDIR)/xstrdup.obj" \
-	"$(INTDIR)/xalloc.obj" \
+	"$(INTDIR)/xmalloc.obj" \
 	"$(INTDIR)/checkin.obj" \
 	"$(INTDIR)/fileattr.obj" \
 	"$(INTDIR)/modules.obj" \
@@ -437,7 +437,7 @@ CLEAN :
 	-@erase ".\WinDebug\getopt.obj"
 	-@erase ".\WinDebug\exitfail.obj"
 	-@erase ".\WinDebug\xstrdup.obj"
-	-@erase ".\WinDebug\xalloc.obj"
+	-@erase ".\WinDebug\xmalloc.obj"
 	-@erase ".\WinDebug\entries.obj"
 	-@erase ".\WinDebug\getopt1.obj"
 	-@erase ".\WinDebug\2\version.obj"
@@ -580,7 +580,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/getopt.obj" \
 	"$(INTDIR)/exitfail.obj" \
 	"$(INTDIR)/xstrdup.obj" \
-	"$(INTDIR)/xalloc.obj" \
+	"$(INTDIR)/xmalloc.obj" \
 	"$(INTDIR)/entries.obj" \
 	"$(INTDIR)/getopt1.obj" \
 	"$(INTDIR)/2/version.obj" \
