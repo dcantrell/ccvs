@@ -587,7 +587,7 @@ if test x"$*" = x; then
 	# PreservePermissions stuff: permissions, symlinks et al.
 	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
-	tests="${tests} sticky keyword keywordlog"
+	tests="${tests} sticky keyword keyword2 keywordlog"
 	tests="${tests} head tagdate multibranch2 tag8k"
 	# "cvs admin", reserved checkouts.
 	tests="${tests} admin reserved"
@@ -14241,6 +14241,7 @@ U file1" "U file1"
 	  # "rdiff" tests "cvs co -k".
 	  # "binfiles" (and this test) test "cvs update -k".
 	  # "binwrap" tests setting the mode from wrappers.
+	  # "keyword2" tests "cvs update -kk -j" with text and binary files
 	  # I don't think any test is testing "cvs import -k".
 	  # Other keyword expansion tests:
 	  #   keywordlog - $Log.
@@ -14627,6 +14628,169 @@ xx"
 	  cd ../..
 
 	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	keyword2)
+	  # Test merging on files with keywords:
+	  #   without -kk
+	  #   with -kk
+	  #     on text files
+	  #     on binary files
+	  # Note:  This test assumes that CVS has already passed the binfiles
+	  #    test sequence
+	  # Note2:  We are testing positive on binary corruption here
+	  #    we probably really DON'T want to 'cvs update -kk' a binary file...
+	  mkdir 1; cd 1
+	  dotest keyword2-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest keyword2-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+
+	  echo '$''Revision$' >> file1
+	  echo "I" >>file1
+	  echo "like" >>file1
+	  echo "long" >>file1
+	  echo "files!" >>file1
+	  echo "" >>file1
+	  echo "a test line for our times" >>file1
+	  echo "" >>file1
+	  echo "They" >>file1
+	  echo "make" >>file1
+	  echo "diff" >>file1
+	  echo "look like it" >>file1
+	  echo "did a much better" >>file1
+	  echo "job." >>file1
+	  dotest keyword2-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  awk 'BEGIN { printf "%c%c%c$Revision$@%c%c", 2, 10, 137, 13, 10 }' \
+	    </dev/null | tr '@' '\000' >../binfile.dat
+	  cp ../binfile.dat .
+	  dotest keyword2-5 "${testcvs} add -kb binfile.dat" \
+"${PROG} [a-z]*: scheduling file .binfile\.dat. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+
+	  dotest keyword2-6 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/binfile\.dat,v
+done
+Checking in binfile\.dat;
+${TESTDIR}/cvsroot/first-dir/binfile\.dat,v  <--  binfile\.dat
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  dotest keyword2-7 "${testcvs} -q tag -b branch" \
+"T binfile\.dat
+T file1"
+
+	  sed -e 's/our/the best of and the worst of/' file1 >f; mv f file1
+	  dotest keyword2-8 "${testcvs} -q ci -m change" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  dotest keyword2-9 "${testcvs} -q update -r branch" '[UP] file1'
+
+	  echo "what else do we have?" >>file1
+	  dotest keyword2-10 "${testcvs} -q ci -m change" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+
+	  # Okay, first a conflict in file1 - should be okay with binfile.dat
+	  dotest keyword2-11 "${testcvs} -q update -A -j branch" \
+"U file1
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into file1
+rcsmerge: warning: conflicts during merge"
+
+	  dotest_fail keyword2-12 "${testcvs} diff file1" \
+"Index: file1
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.2
+diff -r1\.2 file1
+0a1
+> <<<<<<< file1
+1a3,5
+> =======
+> \\\$Revision$
+> >>>>>>> 1\.1\.2\.1
+14a19
+> what else do we have?"
+
+	  # Here's the problem... shouldn't -kk a binary file...
+	  rm file1
+	  if test "$remote" = yes; then
+	    dotest keyword2-13 "${testcvs} -q update -A -kk -j branch" \
+"U binfile.dat
+U file1
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
+	  else
+	    dotest keyword2-13 "${testcvs} -q update -A -kk -j branch" \
+"U binfile.dat
+${PROG} [a-z]*: warning: file1 was lost
+U file1
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into file1"
+	  fi
+
+	  # binfile won't get checked in, but it is now corrupt and could
+	  # have been checked in if it had changed on the branch...
+	  dotest keyword2-14 "${testcvs} -q ci -m change" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  dotest_fail keyword2-15 "cmp binfile.dat ../binfile.dat" \
+"binfile\.dat \.\./binfile\.dat differ: char 13, line 2"
+
+	  # Okay, restore everything and make CVS try and merge a binary file...
+	  dotest keyword2-16 "${testcvs} -q update -A" \
+"[UP] binfile.dat
+[UP] file1"
+	  dotest keyword2-17 "${testcvs} -q tag -b branch2" \
+"T binfile\.dat
+T file1"
+	  dotest keyword2-18 "${testcvs} -q update -r branch2" ''
+
+	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	    </dev/null | tr '@' '\000' >>binfile.dat
+	  dotest keyword2-19 "${testcvs} -q ci -m badbadbad" \
+"Checking in binfile\.dat;
+${TESTDIR}/cvsroot/first-dir/binfile\.dat,v  <--  binfile\.dat
+new revision: 1\.1\.4\.1; previous revision: 1\.1
+done"
+	  dotest keyword2-20 "${testcvs} -q update -A -kk -j branch2" \
+"U binfile\.dat
+RCS file: ${TESTDIR}/cvsroot/first-dir/binfile\.dat,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.4\.1
+Merging differences between 1\.1 and 1\.1\.4\.1 into binfile\.dat
+U file1"
+
+	  # Yep, it's broke, 'cept for that gal in Hodunk who uses -kk
+	  # so that some files only merge when she says so.  Time to clean up...
+	  cd ../..
+	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

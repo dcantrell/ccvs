@@ -1,3 +1,8 @@
+1999-02-23  Derek Price  <http://www.cyclic.com>
+	and Jim Kingdon.
+
+	* sanity.sh (keyword2): New test, tests for merging with -kk.
+
 1999-02-22  Jim Kingdon  <http://www.cyclic.com>
 
 	* version.c: Ease version number to 1.10.5.1.
