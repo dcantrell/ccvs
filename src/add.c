@@ -650,7 +650,8 @@ add_directory (repository, entries, dir)
 
     Subdir_Register (entries, (char *) NULL, dir);
 
-    (void) printf ("%s", message);
+    cvs_output (message, 0);
+
     free (rcsdir);
     free (message);
 

@@ -1,3 +1,15 @@
+Wed Jul 23 13:55:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vers_ts.c (Version_TS): If entdata is for a directory, don't set
+	vn_user and friends.
+	* server.c (dirswitch): Add comment about why Subdir_Register is
+	sometimes a noop here.
+	* cvs.h (struct vers_ts): Fix comments about NULL vs. "" in vn_user.
+	* sanity.sh (errmsg2): New tests errmsg2-10 through errmsg2-12 test
+	for above fix.
+	* add.c (add_directory): Call cvs_output not printf.  This fixes
+	an out-of-order bug which was showing up in the testcase.
+
 21 Jul 1997  Jim Kingdon
 
 	* subr.c (get_file): Put st_size into an unsigned variable to

@@ -653,10 +653,16 @@ pid_t waitpid PROTO((pid_t, int *, int));
 struct vers_ts
 {
     /* rcs version user file derives from, from CVS/Entries.
-     * it can have the following special values:
-     *    empty = no user file
-     *    0 = user file is new
-     *    -vers = user file to be removed.  */
+       It can have the following special values:
+
+       NULL = file is not mentioned in Entries (this is also used for a
+	      directory).
+       "" = ILLEGAL!  The comment used to say that it meant "no user file"
+	    but as far as I know CVS didn't actually use it that way.
+	    Note that according to cvs.texinfo, "" is not legal in the
+	    Entries file.
+       0 = user file is new
+       -vers = user file to be removed.  */
     char *vn_user;
 
     /* Numeric revision number corresponding to ->vn_tag (->vn_tag

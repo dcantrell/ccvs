@@ -697,6 +697,12 @@ dirswitch (dir, repos)
 	return;
     }
 
+    /* Note that this call to Subdir_Register will be a noop if the parent
+       directory does not yet exist (for example, if the client sends
+       "Directory foo" followed by "Directory .", then the subdirectory does
+       not get registered, but if the client sends "Directory ." followed
+       by "Directory foo", then the subdirectory does get registered.
+       This seems pretty fishy, but maybe it is the way it needs to work.  */
     b = strrchr (dir_name, '/');
     *b = '\0';
     Subdir_Register ((List *) NULL, dir_name, b + 1);
