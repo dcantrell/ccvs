@@ -438,7 +438,7 @@ Lock_Cleanup (void)
 static int
 unlock_proc (Node *p, void *closure)
 {
-    remove_lock_files ((struct lock *)p->data, 0);
+    remove_lock_files (p->data, 0);
     return 0;
 }
 

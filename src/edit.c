@@ -513,7 +513,7 @@ unedit_fileproc (void *callerdat, struct file_info *finfo)
 	   now.  */
 	if (node != NULL)
 	{
-	    entdata = (Entnode *) node->data;
+	    entdata = node->data;
 	    if (baserev == NULL)
 	    {
 		/* This can only happen if the CVS/Baserev file got

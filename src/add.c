@@ -740,7 +740,7 @@ add_directory (struct file_info *finfo)
 	li->type = T_TITLE;
 	li->tag = xstrdup (tag);
 	li->rev_old = li->rev_new = NULL;
-	p->data = (char *) li;
+	p->data = li;
 	(void) addnode (ulist, p);
 	Update_Logfile (rcsdir, message, (FILE *) NULL, ulist);
 	dellist (&ulist);

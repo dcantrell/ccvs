@@ -1272,9 +1272,9 @@ addfile (List **listp, char *dir, char *file)
     }
 
     n->type = DIRS;
-    fl = (List *) n->data;
+    fl = n->data;
     addlist (&fl, file);
-    n->data = (char *) fl;
+    n->data = fl;
     return;
 }
 
@@ -1295,7 +1295,7 @@ unroll_files_proc (Node *p, void *closure)
 	return (0);
 
     /* otherwise, call dorecusion for this list of files. */
-    filelist = (List *) p->data;
+    filelist = p->data;
     p->data = NULL;
     save_dirlist = dirlist;
     dirlist = NULL;

@@ -86,7 +86,7 @@ lookup_file_by_inode (const char *filepath)
 	hp = getnode ();
 	hp->type = NT_UNKNOWN;
 	hp->key = inodestr;
-	hp->data = (char *) getlist();
+	hp->data = getlist();
 	hp->delproc = dellist;
 	(void) addnode (hardlist, hp);
     }
@@ -95,14 +95,14 @@ lookup_file_by_inode (const char *filepath)
 	free (inodestr);
     }
 
-    p = findnode ((List *) hp->data, filepath);
+    p = findnode (hp->data, filepath);
     if (p == NULL)
     {
 	p = getnode();
 	p->type = NT_UNKNOWN;
 	p->key = xstrdup (filepath);
 	p->data = NULL;
-	(void) addnode ((List *) hp->data, p);
+	(void) addnode (hp->data, p);
     }
 
     return p;
@@ -141,8 +141,8 @@ update_hardlink_info (const char *file)
     }
 
     if (n->data == NULL)
-	n->data = (char *) xmalloc (sizeof (struct hardlink_info));
-    hlinfo = (struct hardlink_info *) n->data;
+	n->data = xmalloc (sizeof (struct hardlink_info));
+    hlinfo = n->data;
     hlinfo->status = T_UPTODATE;
     hlinfo->checked_out = 1;
 }
@@ -194,10 +194,10 @@ list_linked_files_on_disk (char *file)
 
     /* Make sure the files linked to this inode are sorted. */
     n = findnode (hardlist, inodestr);
-    sortlist ((List *) n->data, fsortcmp);
+    sortlist (n->data, fsortcmp);
 
     free (inodestr);
-    return (List *) n->data;
+    return n->data;
 }
 
 /* Compare the files in the `key' fields of two lists, returning 1 if
@@ -285,7 +285,7 @@ find_checkedout_proc (Node *node, void *data)
 	return 0;
     }
 
-    hlinfo = (struct hardlink_info *) link->data;
+    hlinfo = link->data;
     if (hlinfo->checked_out)
     {
 	/* This file has been checked out recently, so it's safe to

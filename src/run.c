@@ -518,7 +518,8 @@ static void
 cmdline_bindings_hash_node_delete (p)
     Node *p;
 {
-    struct cmdline_bindings *b = (struct cmdline_bindings *) p->data;
+    struct cmdline_bindings *b = p->data;
+
     if (b->conversion != ',')
     {
 	free (b->data);
@@ -1088,7 +1089,7 @@ format_cmdline (char *format, ...)
 	    p->key = xmalloc((q - s) + 1);
 	    strncpy (p->key, s, q - s);
 	    p->key[q-s] = '\0';
-	    p->data = (void *) tb;
+	    p->data = tb;
 	    p->delproc = cmdline_bindings_hash_node_delete;
 	    addnode(pflist,p);
 	}
@@ -1108,7 +1109,7 @@ format_cmdline (char *format, ...)
     b->data = xstrdup( "" );
     p = getnode();
     p->key = xstrdup( "n" );
-    p->data = (void *) b;
+    p->data = b;
     p->delproc = cmdline_bindings_hash_node_delete;
     addnode( pflist,p );
 
@@ -1312,7 +1313,7 @@ format_cmdline (char *format, ...)
 		key[0] = *q;
 		if ((p = findnode (pflist, key)) != NULL)
 		{
-		    b = (struct cmdline_bindings *) p->data;
+		    b = p->data;
 		    if (b->conversion == ',')
 		    {
 			/* process the rest of the format string as a list */
@@ -1328,9 +1329,7 @@ format_cmdline (char *format, ...)
 			c.firstpass = 1;
 			c.srepos = srepos;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-			walklist((List *)b->data,
-			         (CONVPROC_t)b->convproc,
-			         (void *)&c);
+			walklist(b->data, b->convproc, &c);
 			d--;	/* back up one space.  we know that ^
 				   always adds 1 extra */
 			q += strlen(q);

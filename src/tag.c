@@ -476,7 +476,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	ml = (struct master_lists *)
 	    xmalloc (sizeof (struct master_lists));
 	ml->tlist = tlist;
-	p->data = (char *) ml;
+	p->data = ml;
 	p->delproc = masterlist_delproc;
 	(void) addnode (mtlist, p);
     }
@@ -688,9 +688,8 @@ pretag_proc(char *repository, char *filter, void *closure)
 static void
 masterlist_delproc(Node *p)
 {
-    struct master_lists *ml;
+    struct master_lists *ml = p->data;
 
-    ml = (struct master_lists *)p->data;
     dellist(&ml->tlist);
     free(ml);
     return;
