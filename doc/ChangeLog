@@ -1,3 +1,11 @@
+Mon Dec 11 12:20:55 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Responses): Add Notified and Mode.
+	(Requests): Add Notify, noop, watch-on, watch-off, watch-add,
+	watch-remove, watchers, and editors.
+	* cvs.texinfo (Watches): New node, to describe new developer
+	communication features.
+
 Thu Nov 23 08:59:09 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (admin options): In saying that cvs admin -o is not

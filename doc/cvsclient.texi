@@ -110,7 +110,7 @@ the existing @code{cvs fix} command work remotely.
 @itemize @bullet
 @item
 Add a declaration for the @code{fix} function, which already implements
-the @code{cvs fix} command, to @file{server.c}.
+the @code{cvs fix} command, to @file{cvs.h}.
 @item
 Now, the client side.
 Add a function @code{client_fix} to @file{client.c}, which calls 
@@ -148,14 +148,15 @@ and handles responses from the server.  Sample code:
         /* We're the local client.  Fire up the remote server.  */
         start_server ();
 
+	ign_setup ();
+
         if (local)
-            if (fprintf (to_server, "Argument -l\n") == EOF)
-                error (1, errno, "writing to server");
+            send_arg ("-l");
         send_option_string (options);
 
         send_files (argc, argv, local);
 
-        if (fprintf (to_server, "fix\n") == EOF)
+        if (fprintf (to_server, "fix\n") < 0)
             error (1, errno, "writing to server");
         err = get_responses_and_close ();
     @}
@@ -398,6 +399,23 @@ unchanged.  This is necessary for correct behavior since only the server
 knows what possible files may exist, and thus what files are
 nonexistent.
 
+@item Notify @var{filename} \n
+Tell the server that a @code{edit} or @code{unedit} command has taken
+place.  The server needs to send a @code{Notified} response, but such
+response is deferred until the next time that the server is sending
+responses.  Response expected: no.  Additional data:
+@example
+@var{notification-type} \t @var{time} \t @var{clienthost} \t
+@var{working-dir} \t @var{watches} \n
+@end example
+where @var{notification-type} is @samp{E} for edit or @samp{U} for
+unedit, @var{time} is the time at which the edit or unedit took place,
+@var{clienthost} is the name of the host on which the edit or unedit
+took place, and @var{working-dir} is the pathname of the working
+directory where the edit or unedit took place.  @var{watches} are the
+temporary watches to set; if it is followed by \t then the tab and the
+rest of the line are ignored.
+
 @item Argument @var{text} \n
 Response expected: no.
 Save argument for use in a subsequent command.  Arguments
@@ -438,7 +456,8 @@ need to expand modules on the client side.
 @itemx admin \n
 @itemx export \n
 @itemx history \n
-@itemx release \n
+@itemx watchers \n
+@itemx editors \n
 Response expected: yes.  Actually do a cvs command.  This uses any
 previous @code{Argument}, @code{Repository}, @code{Entry},
 @code{Modified}, or @code{Lost} requests, if they have been sent.  The
@@ -446,6 +465,27 @@ last @code{Repository} sent specifies the working directory at the time
 of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
+
+@item watch-on \n
+@itemx watch-off \n
+@itemx watch-add \n
+@itemx watch-remove \n
+Response expected: yes.  Actually do the @code{cvs watch on}, @code{cvs
+watch off}, @code{cvs watch add}, and @code{cvs watch remove} commands,
+respectively.  This uses any previous @code{Argument},
+@code{Repository}, @code{Entry}, @code{Modified}, or @code{Lost}
+requests, if they have been sent.  The last @code{Repository} sent
+specifies the working directory at the time of the operation.
+
+@item release \n
+Response expected: yes.  Note that a @code{cvs release} command has
+taken place and update the history file accordingly.
+
+@item noop \n
+Response expected: yes.  This request is a null command in the sense
+that it doesn't do anything, but merely (as with any other requests
+expecting a response) sends back any responses pertaining to pending
+errors, pending @code{Notified} responses, etc.
 
 @item update-patches \n
 This request does not actually do anything.  It is used as a signal that
@@ -541,6 +581,12 @@ This will only be used when the client has an exact copy of an earlier
 revision of a file.  This response is only used if the @code{update}
 command is given the @samp{-u} argument.
 
+@item Mode @var{mode} \n
+This @var{mode} applies to the next file mentioned in
+@code{Checked-in}.  It does not apply to any request which follows a
+@code{Checked-in}, @code{New-entry}, @code{Updated}, @code{Merged}, or
+@code{Patched} response.
+
 @item Checksum @var{checksum}\n
 The @var{checksum} applies to the next file sent over via
 @code{Updated}, @code{Merged}, or @code{Patched}.  In the case of
@@ -595,6 +641,13 @@ for future operations.
 Additional data: @var{prog} \n.  Tell the client to set an update
 program, which should be supplied with the @code{Update-prog} request
 for future operations.
+
+@item Notified @var{pathname} \n
+Indicate to the client that the notification for @var{pathname} has been
+done.  There should be one such response for every @code{Notify}
+request; if there are several @code{Notify} requests for a single file,
+the requests should be processed in order; the first @code{Notified}
+response pertains to the first @code{Notify} request, etc.
 
 @item Module-expansion @var{pathname} \n
 Return a file or directory which is included in a particular module.
