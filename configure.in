@@ -174,7 +174,7 @@ AC_CHECK_HEADERS(\
 	sys/timeb.h \
 	unistd.h \
 	utime.h\
-	varargs.h\
+	varargs.h \
 )
 AC_HEADER_STAT
 AC_HEADER_TIME
@@ -419,6 +419,11 @@ dnl TODO - I tried to put these in alphabetical order, but ACX_WITH_GSSAPI
 dnl fails unless called after the KRB4 stuff.  I don't know why.
 dnl
 ACX_WITH_GSSAPI
+
+dnl
+dnl WITH_EXTERNAL_ZLIB is external
+dnl
+ACX_WITH_EXTERNAL_ZLIB
 
 dnl
 dnl begin --with-rsh
