@@ -1995,8 +1995,6 @@ internal error: `%s' didn't move out of the attic",
 	fp = fopen (file, "w");
 	if (fp == NULL)
 	    error (1, errno, "cannot open %s for writing", file);
-	/* Do we really care about the error status on fclose?  We're just
-	   creating an empty file, after all... */
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", file);
 

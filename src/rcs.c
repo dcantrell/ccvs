@@ -2923,6 +2923,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     int change_rcs_group = 0;
     int change_rcs_mode = 0;
     int special_file = 0;
+    unsigned long devnum_long;
     dev_t devnum = 0;
 
     if (trace)
@@ -3098,7 +3099,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	       whether it should be considered an error for `dest' to exist
 	       at this point.  If so, the unlink call should be removed and
 	       `symlink' should signal the error. -twp) */
-	    if (unlink (dest) < 0 && errno != ENOENT)
+	    if (unlink (dest) < 0 && existence_error (errno))
 		error (1, errno, "cannot remove %s", dest);
 	    if (symlink (info->data, dest) < 0)
 		error (1, errno, "cannot create symbolic link from %s to %s",
@@ -3135,9 +3136,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    char devtype[16];
 
 	    if (sscanf (info->data, "%16s %lu",
-			devtype, (unsigned long *) &devnum) < 2)
+			devtype, &devnum_long) < 2)
 		error (1, 0, "%s:%s has bad `special' newphrase %s",
 		       workfile, vers->version, info->data);
+	    devnum = devnum_long;
 	    if (strcmp (devtype, "character") == 0)
 		special_file = S_IFCHR;
 	    else if (strcmp (devtype, "block") == 0)
@@ -3206,7 +3208,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
 	/* Unlink `dest', just in case.  It's okay if this provokes a
 	   ENOENT error. */
-	if (unlink (dest) < 0 && errno != ENOENT)
+	if (unlink (dest) < 0 && existence_error (errno))
 	    error (1, errno, "cannot remove %s", dest);
 	if (mknod (dest, special_file, devnum) < 0)
 	    error (1, errno, "could not create special file %s",
