@@ -331,8 +331,9 @@ mkdir_if_needed (name)
 {
     if (mkdir (name, 0777) < 0)
     {
-	if (errno != EEXIST && !isdir (name))
-	    error (1, errno, "cannot make directory %s", name);
+	int save_errno = errno;
+	if (save_errno != EEXIST && !isdir (name))
+	    error (1, save_errno, "cannot make directory %s", name);
 	return 1;
     }
     return 0;
@@ -1170,7 +1171,7 @@ locate_rcs ( repository, file, inattic )
     (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
 
     /* Search in the top dir given */
-    if ( retval = locate_file_in_dir ( repository, rcsfile ) )
+    if (( retval = locate_file_in_dir ( repository, rcsfile )) != NULL )
     {
 	if ( inattic )
 	    *inattic = 0;

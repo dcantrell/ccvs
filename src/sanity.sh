@@ -11832,7 +11832,7 @@ U ${TESTDIR}/1/2/file1"
 "${PROG} \[server aborted\]: absolute pathname .${TESTDIR}/barf/sub. illegal for server"
 	  else
 	    dotest_fail abspath-4 "${testcvs} co -d ${TESTDIR}/barf/sub mod1" \
-"${PROG} \[[a-z]* aborted\]: cannot make directory sub: No such file or directory"
+"${PROG} \[[a-z]* aborted\]: cannot make directory sub: Permission denied"
 	  fi
 	  chmod +w ${TESTDIR}/barf
 	  rmdir ${TESTDIR}/barf
