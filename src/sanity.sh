@@ -18951,7 +18951,7 @@ done"
 	  # the doc seems to agree that the non-update case shouldn't include
 	  # a substitution, I think this is a bug in the update case.  Why
 	  # should branch tags be treated differently than static tags here?
-	  # FIXME - BUG
+	  # FIXCVS - BUG
 	  #
 	  # Of course, as far as it being natural that the non-update case not
 	  # contain the substitution, why shouldn't it?  an update -kk or -A
