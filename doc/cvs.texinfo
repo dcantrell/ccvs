@@ -10691,6 +10691,16 @@ is @emph{not} referring to whether it can find @var{file}.
 @c Even after that change is made, probably want to
 @c preserve this message, see above about old messages.
 
+@item cvs update: could not patch @var{file}; will refetch
+This means that for whatever reason the client was
+unable to apply a patch that the server sent.  The
+message is nothing to be concerned about, because
+inability to apply the patch only slows things down and
+has no effect on what @sc{cvs} does.
+@c xref to update output.  Or File status?
+@c Or some place else that
+@c explains this whole "patch"/P/Needs Patch thing?
+
 @item dying gasps from @var{server} unexpected
 This message seems to be caused by a hard-to-track-down
 bug in @sc{cvs} or the systems it runs on (we don't

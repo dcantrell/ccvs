@@ -1,3 +1,7 @@
+Thu Apr 10 15:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "could not patch; will refetch".
+
 Wed Apr  9 15:21:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): New node.
