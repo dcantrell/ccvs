@@ -236,7 +236,6 @@ checkout (argc, argv)
 
     if (client_active)
     {
-	int errs;
 	int expand_modules;
 
 	start_server ();
