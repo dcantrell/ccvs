@@ -1,4 +1,17 @@
+Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* classify.c (Classify_File): Don't report a conflict for a
+	pending remove if somebody else has already removed the file.
+
 Thu May 16 09:44:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* fileattr.c (fileattr_set): In the case where we are about to
+	call delproc, don't free ->data; delproc does that.
+	* sanity.sh (devcom): New tests devcom-b* test for this fix.
+
+	* sanity.sh (conflicts): Remove redundant clean up from previous
+	tests at the beginning of the test.  Use dotest a few more places.
+	(conflicts2): New test, tests for Ian's fix to Classify_File.
 
 	* client.c (remove_entry_and_file): Add comment about
 	existence_error's.
