@@ -1,5 +1,8 @@
 1998-05-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (commit_filesdoneproc): #if 0 the new code until it can
+	be fixed.
+
 	* commit.c (commit_filesdoneproc): Add comment explaining last
 	change.
 
