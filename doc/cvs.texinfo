@@ -11945,6 +11945,14 @@ particular moment).
 @c FIXME: What is the correct way to format a multiline
 @c error message here?  Maybe @table is the wrong
 @c choice?  Texinfo gurus?
+@item cvs @var{command}: authorization failed: server @var{host} rejected access
+This is a generic response when trying to connect to a
+pserver server which chooses not to provide a
+specific reason for denying authorization.  Check that
+the username and password specified are correct and
+that the CVSROOT specified is allowed by --allow-root
+in inetd.conf.  See @ref{Password authenticated}.
+
 @item @var{file}:@var{line}: Assertion '@var{text}' failed
 The exact format of this message may vary depending on
 your system.  It indicates a bug in @sc{cvs}, which can
