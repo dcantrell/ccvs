@@ -273,8 +273,9 @@ checkout (int argc, char **argv)
     }
 #endif
 
-    if (!cat && !pipeout && !safe_location( where )) {
-        error(1, 0, "Cannot check out files into the repository itself");
+    if (!cat && !pipeout && !safe_location (where))
+    {
+        error (1, 0, "Cannot check out files into the repository itself");
     }
 
 #ifdef CLIENT_SUPPORT
@@ -307,18 +308,18 @@ checkout (int argc, char **argv)
 	if (!force_tag_match)
 	    send_arg ("-f");
 	if (aflag)
-	    send_arg("-A");
+	    send_arg ("-A");
 	if (!shorten)
-	    send_arg("-N");
+	    send_arg ("-N");
 	if (checkout_prune_dirs && m_type == CHECKOUT)
-	    send_arg("-P");
+	    send_arg ("-P");
 	client_prune_dirs = checkout_prune_dirs;
 	if (cat && !status)
-	    send_arg("-c");
+	    send_arg ("-c");
 	if (where != NULL)
 	    option_with_arg ("-d", where);
 	if (status)
-	    send_arg("-s");
+	    send_arg ("-s");
 	if (options != NULL && options[0] != '\0')
 	    send_arg (options);
 	option_with_arg ("-r", tag);
@@ -379,10 +380,7 @@ checkout (int argc, char **argv)
 	else if (!tag)
 	    history_name = date;
 	else
-	{
-	    history_name = xmalloc (strlen (tag) + strlen (date) + 2);
-	    sprintf (history_name, "%s:%s", tag, date);
-	}
+	    history_name = Xasprintf ("%s:%s", tag, date);
     }
 
 

@@ -788,24 +788,12 @@ add_directory (struct file_info *finfo)
     }
 
     /* setup the log message */
-    message = xmalloc (strlen (rcsdir)
-		       + 36
-		       + (tag == NULL ? 0 : strlen (tag) + 38)
-		       + (date == NULL ? 0 : strlen (date) + 39));
-    (void) sprintf (message, "Directory %s added to the repository\n",
-		    rcsdir);
-    if (tag)
-    {
-	(void) strcat (message, "--> Using per-directory sticky tag `");
-	(void) strcat (message, tag);
-	(void) strcat (message, "'\n");
-    }
-    if (date)
-    {
-	(void) strcat (message, "--> Using per-directory sticky date `");
-	(void) strcat (message, date);
-	(void) strcat (message, "'\n");
-    }
+    message = Xasprintf ("Directory %s added to the repository\n%s%s%s%s%s%s",
+			 rcsdir,
+			 tag ? "--> Using per-directory sticky tag `" : "",
+			 tag ? tag : "", tag ? "'\n" : "",
+			 date ? "--> Using per-directory sticky date `" : "",
+			 date ? date : "", date ? "'\n" : "");
 
     if (!isdir (rcsdir))
     {

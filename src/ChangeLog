@@ -1,3 +1,23 @@
+2005-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* add.c (add_directory): Xasprintf instead of xmalloc/sprintf+strcat.
+	* admin.c (arg_add): Ditto.
+	(admin_fileproc, postadmin_proc, admin_fileproc): Gratuitous
+	reformatting.
+
+	* client.c (mode_to_string): Use Xasprintf.
+	
+	* checkout.c (checkout): Xasprintf instead of xmalloc/sprintf.
+	Gratuitous reformatting.
+	* entries.c (WriteTag): Ditto
+	(subdir_record, base_walk): Ditto.
+	* fileattr.c (fileattr_read, fileattr_set, fileattr_write): Ditto.
+	* filesubr.c (deep_remove_dir, cvs_temp_file): Ditto.
+	(strcat_filename_onto_homedir): Ditto.
+	* find_names.c (Find_Names): Ditto.
+
+	* filesubr.c (expand_wild): Use xnmalloc instead of xmalloc.
+
 2005-02-26  Larry Jones  <lawrence.jones@ugs.com>
 
 	* release.c (release): Remove unneeded code.

@@ -642,13 +642,7 @@ WriteTag (const char *dir, const char *tag, const char *date, int nonbranch,
     if (noexec)
 	return;
 
-    tmp = xmalloc ((dir ? strlen (dir) : 0)
-		   + sizeof (CVSADM_TAG)
-		   + 10);
-    if (dir == NULL)
-	(void) strcpy (tmp, CVSADM_TAG);
-    else
-	(void) sprintf (tmp, "%s/%s", dir, CVSADM_TAG);
+    tmp = Xasprintf ("%s%s%s", dir ? dir : "", dir ? "/" : "", CVSADM_TAG);
 
     if (tag || date)
     {
@@ -826,20 +820,14 @@ subdir_record (int cmd, const char *parent, const char *dir)
     /* None of the information associated with a directory is
        currently meaningful.  */
     entnode = Entnode_Create (ENT_SUBDIR, dir, "", "", "",
-			      (char *) NULL, (char *) NULL,
-			      (char *) NULL);
+			      NULL, NULL, NULL);
 
     if (!noexec)
     {
 	if (parent == NULL)
 	    entfilename = CVSADM_ENTLOG;
 	else
-	{
-	    entfilename = xmalloc (strlen (parent)
-				   + sizeof CVSADM_ENTLOG
-				   + 10);
-	    sprintf (entfilename, "%s/%s", parent, CVSADM_ENTLOG);
-	}
+	    entfilename = Xasprintf ("%s/%s", parent, CVSADM_ENTLOG);
 
 	entfile = CVS_FOPEN (entfilename, "a");
 	if (entfile == NULL)
@@ -857,7 +845,8 @@ subdir_record (int cmd, const char *parent, const char *dir)
 	    }
 	    else
 	    {
-		sprintf (entfilename, "%s/%s", parent, CVSADM);
+		free (entfilename);
+		entfilename = Xasprintf ("%s/%s", parent, CVSADM);
 		if (! isdir (entfilename))
 		{
 		    free (entfilename);
@@ -999,23 +988,16 @@ base_walk (enum base_walk code, struct file_info *finfo, char **rev)
        computation probably should be broken out into a separate function,
        as recurse.c does it too and places like Entries_Open should be
        doing it.  */
-    baserev_fullname = xmalloc (sizeof (CVSADM_BASEREV)
-				+ strlen (finfo->update_dir)
-				+ 2);
-    baserev_fullname[0] = '\0';
-    baserevtmp_fullname = xmalloc (sizeof (CVSADM_BASEREVTMP)
-				   + strlen (finfo->update_dir)
-				   + 2);
-    baserevtmp_fullname[0] = '\0';
-    if (finfo->update_dir[0] != '\0')
-    {
-	strcat (baserev_fullname, finfo->update_dir);
-	strcat (baserev_fullname, "/");
-	strcat (baserevtmp_fullname, finfo->update_dir);
-	strcat (baserevtmp_fullname, "/");
-    }
-    strcat (baserev_fullname, CVSADM_BASEREV);
-    strcat (baserevtmp_fullname, CVSADM_BASEREVTMP);
+    baserev_fullname = Xasprintf ("%s%s%s",
+				  finfo->update_dir[0] != '\0'
+				  ? finfo->update_dir : "",
+				  finfo->update_dir[0] != '\0' ? "/" : "",
+				  CVSADM_BASEREV);
+    baserevtmp_fullname = Xasprintf ("%s%s%s",
+				     finfo->update_dir[0] != '\0'
+				     ? finfo->update_dir : "",
+				     finfo->update_dir[0] != '\0' ? "/" : "",
+				     CVSADM_BASEREVTMP);
 
     fp = CVS_FOPEN (CVSADM_BASEREV, "r");
     if (fp == NULL)
