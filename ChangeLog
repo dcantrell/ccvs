@@ -1,5 +1,8 @@
 2000-09-07  Larry Jones  <larry.jones@sdrc.com>
 
+	* Makefile.in: Use @bindir@, @libdir@, @infodir@, and @mandir@
+	from autoconf.
+
 	* acconfig.h: Copy HAVE_CRYPT, HAVE_GETSPNAM, REGEX_MALLOC, and
 	_REGEX_RE_COMP from config.h.in to here, where they should have
 	been in the first place.
