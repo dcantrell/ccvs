@@ -1302,9 +1302,11 @@ stdio_buffer_flush (closure)
    The translation functions should just translate; they may not
    significantly increase or decrease the amount of data.  The actual
    size of the initial data is part of the translated data.  The
-   output translation routine may add up to 16 additional bytes, and
-   the input translation routine should shrink the data
+   output translation routine may add up to PACKET_SLOP additional
+   bytes, and the input translation routine should shrink the data
    correspondingly.  */
+
+#define PACKET_SLOP (100)
 
 /* This structure is the closure field of a packetizing buffer.  */
 
@@ -1323,8 +1325,8 @@ struct packetizing_buffer
        data in INPUT, storing the result in OUTPUT.  The first two
        bytes in INPUT will be the size of the data, and so will SIZE.
        This should set *TRANSLATED to the amount of translated data in
-       OUTPUT.  OUTPUT is large enough to hold SIZE + 16 bytes.  This
-       should return 0 on success, or an errno code.  */
+       OUTPUT.  OUTPUT is large enough to hold SIZE + PACKET_SLOP
+       bytes.  This should return 0 on success, or an errno code.  */
     int (*outfn) PROTO((void *fnclosure, const char *input, char *output,
 			int size, int *translated));
     /* A closure for the translation function.  */
@@ -1374,8 +1376,10 @@ packetizing_buffer_initialize (buf, inpfn, outfn, fnclosure, memory)
 
     if (inpfn != NULL)
     {
-	/* We add some space to the buffer to hold the packet length.  */
-	pb->holdbufsize = BUFFER_DATA_SIZE + 16;
+	/* Add PACKET_SLOP to handle larger translated packets, and
+           add 2 for the count.  This buffer is increased if
+           necessary.  */
+	pb->holdbufsize = BUFFER_DATA_SIZE + PACKET_SLOP + 2;
 	pb->holdbuf = xmalloc (pb->holdbufsize);
     }
 
@@ -1431,7 +1435,7 @@ packetizing_buffer_input (closure, data, need, size, got)
     {
 	int get, status, nread, count, tcount;
 	char *bytes;
-	char stackoutbuf[BUFFER_DATA_SIZE + 16];
+	char stackoutbuf[BUFFER_DATA_SIZE + PACKET_SLOP];
 	char *inbuf, *outbuf;
 
 	/* If we don't already have the two byte count, get it.  */
@@ -1611,13 +1615,13 @@ packetizing_buffer_output (closure, data, have, wrote)
      int *wrote;
 {
     struct packetizing_buffer *pb = (struct packetizing_buffer *) closure;
-    char inbuf[BUFFER_DATA_SIZE + 16];
-    char stack_outbuf[BUFFER_DATA_SIZE + 20];
+    char inbuf[BUFFER_DATA_SIZE + 2];
+    char stack_outbuf[BUFFER_DATA_SIZE + PACKET_SLOP + 4];
     struct buffer_data *outdata;
     char *outbuf;
     int size, status, translated;
 
-    if (have >= BUFFER_DATA_SIZE)
+    if (have > BUFFER_DATA_SIZE)
     {
 	/* It would be easy to malloc a buffer, but I don't think this
            case can ever arise.  */
@@ -1630,11 +1634,11 @@ packetizing_buffer_output (closure, data, have, wrote)
 
     size = have + 2;
 
-    /* The output function is permitted to add up to 16 bytes, and we
-       need 2 bytes for the size of the translated data.  If we can
-       guarantee that the result will fit in a buffer_data, we
-       translate directly into one to avoid a memcpy in buf_output.  */
-    if (size + 18 > BUFFER_DATA_SIZE)
+    /* The output function is permitted to add up to PACKET_SLOP
+       bytes, and we need 2 bytes for the size of the translated data.
+       If we can guarantee that the result will fit in a buffer_data,
+       we translate directly into one to avoid a memcpy in buf_output.  */
+    if (size + PACKET_SLOP + 2 > BUFFER_DATA_SIZE)
 	outbuf = stack_outbuf;
     else
     {
@@ -1656,8 +1660,9 @@ packetizing_buffer_output (closure, data, have, wrote)
     if (status != 0)
 	return status;
 
-    /* The output function is permitted to add up to 16 bytes.  */
-    if (translated > size + 16)
+    /* The output function is permitted to add up to PACKET_SLOP
+       bytes.  */
+    if (translated > size + PACKET_SLOP)
 	abort ();
 
     outbuf[0] = (translated >> 8) & 0xff;
