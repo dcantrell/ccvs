@@ -1,3 +1,9 @@
+2001-06-06  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (crerepos-6a): Set CVS_RSH=false and only for the actual
+	test call at Larry's suggestion.  Also, test the error message since
+	it's fixed now.
+
 2001-06-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_unlock): Note when breaking someone else's lock.
