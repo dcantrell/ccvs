@@ -1,5 +1,7 @@
 Tue Jan 13 13:17:33 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* run.c (run_setup): Adjust for new calling convention.
+
 	* options.h (DIFF, RCSBIN_DFLT, CVS_LOGIN): Remove; no longer used.
 
 Wed Dec 31 15:24:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
