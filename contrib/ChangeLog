@@ -1,3 +1,50 @@
+2001-09-06  Larry Jones  <larry.jones@sdrc.com>
+            for Paul Eggert  <eggert@twinsun.com>
+
+	Sync with revision 1.48 of the GNU Emacs sources.  This
+	incorporates the following changes:
+
+	* rcs2log (Help, mainline code): Add new option -L FILE.
+	(Copyright): Update year.
+
+	(LANG, LANGUAGE, LC_ALL, LC_COLLATE, LC_CTYPE, LC_MESSAGES,
+	LC_NUMERIC, LC_TIME): New shell vars, to make sure we live in the C locale.
+
+	(mainline code): Handle nonstandard -u option differently, by
+	transforming it to standard form.  Check for "Working file: ", not
+	"Working file:".  Allow file names with spaces.
+
+	(SOH, rlogfile): New shell vars.
+	(rlogout): Remove.  Its old functionality is mostly migrated to rlogfile.
+
+	Append ';;' to the last arm of every case statement, for portability to
+	ancient broken BSD shells.
+
+	(logins): Fix bug; was not being computed at all, lowering performance.
+
+	(pository): New var.  This fixes some bugs where repositories are
+	remote, or have trailing slashes.
+
+	(authors): $llogout is never an empty shell var, so don't worry about that
+	possibility.
+
+	(printlogline, mainline code): Fix bug with SOH's being put into the output.
+
+
+	2001-07-20  Gerd Moellmann  <gerd@gnu.org>
+
+	* rcs2log: Update copyright notice.
+
+
+	2001-01-03  Paul Eggert  <eggert@twinsun.com>
+
+	* rcs2log: Avoid security hole allowing attacker to
+	cause user of rcs2log to overwrite arbitrary files, fixing
+	a bug reported by Morten Welinder.
+
+	Don't put "exit 1" at the end of the exit trap; it's
+	ineffective in POSIX shells.
+
 2001-09-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with automake 1.5.
