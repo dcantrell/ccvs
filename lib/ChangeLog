@@ -1,5 +1,9 @@
 2004-05-02  Derek Price  <derek@ximbiot.com>
 
+	* progname.c (progname): Assume = "getdate" for now.
+
+2004-05-02  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (getdate_SOURCES): Add xmalloc, xstrdup, error, exitfail,
 	and progname for getdate test program on some systems.
 	* error.c, progname.c: New file.
