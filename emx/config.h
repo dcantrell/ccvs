@@ -320,3 +320,6 @@ extern int os2_fnmatch(const char *pattern, const char *name, int flags);
    we should deal with this, then it will avoid having people rely on
    behaviors which will need to change.  */
 #define NO_EXT_METHOD 1
+
+/* See above; we can't use rsh without -b.  */
+#define RSH_NOT_TRANSPARENT 1
