@@ -1,3 +1,9 @@
+Fri Sep 27 04:23:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Concurrency): When mentioning RCS locks, use the
+	term reserved checkouts and xref to the place where we discuss
+	them in more depth.
+
 Thu Sep 26 08:26:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (log): Add comments about timezones.
