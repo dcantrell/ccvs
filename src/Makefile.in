@@ -66,7 +66,7 @@ HEADERS = buffer.h cvs.h rcs.h hash.h myndbm.h \
 TAGFILES = $(HEADERS) options.h.in $(SOURCES)
 
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog-9395 ChangeLog-9194 \
-	    NOTES \
+	    NOTES README-rm-add \
             sanity.sh cvsbug.sh $(TAGFILES) build_src.com
 
 PROGS = cvs cvsbug
@@ -168,7 +168,7 @@ saber: $(SOURCES)
 	# load $(CFLAGS) $(SOURCES)
 	# load ../lib/libcvs.a $(LIBS)
 
-cvsbug: cvsbug.sh $(srcdir)/version.c
+cvsbug: cvsbug.sh
 	echo > .fname \
 	  cvs-`sed < $(srcdir)/version.c \
 		    -e '/version_string/!d' \

@@ -3,31 +3,6 @@ Low-priority bugs go here.  Actually, most every documented bug is
 has gotten around to fixing it.
 
 
-* "cvs update -ko -p -r REV file" doesn't seem to pay attention to the
-  '-ko', at least in client/server mode.  A simple work around is to
-  temporarily change the db file with "cvs admin -ko file", then switch
-  it back to the original modes after the checkout (probably '-kkv').
-
-* "cvs status" has a difference in its output between local and
-  client/server mode.  Namely there's a tab character followed by a
-  ctime(3)-style date string at the end of the "Working revision:"
-  field.
-
-* commands which don't work in a local working directory should probably
-  ignore any CVS/Root values and revert to using CVSROOT alone.  The
-  current use of CVS/Root can be very confusing if you forget you're in
-  a working directory for a remote module -- something that's very easy
-  to do since CVS hides the client operation very well, esp. for
-  commands which fail for this reason.  The only clue might be the word
-  "server" in a message such as this:
-	cvs server: cannot find module `patch' - ignored
-
-* cvs init may gave a strange error at times:
-	ttyp4:<woods@clapton> $ cvs -d /local/src-CVS init
-	cvs [init aborted]: cannot open CVS/Root: No such file or directory
-  but it seemed to work just the same....  Note that at the time CVSROOT
-  was set to point to a CVS server using the ":server:" option.
-
 * If a ~/CVS/Root file exists on the server and you are using rsh to
 connect to the server, CVS may loose its mind (this was reported in
 May 1995 and I suspect the symptoms have changed, but I have no

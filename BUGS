@@ -15,24 +15,14 @@ similar file for the unix-like operating systems (not yet, at least).
 This file also might contain some platform-specific bugs.
 
 
+* The ~/.cvsignore file is not consulted on windows-NT and perhaps on
+other non-unix systems (note to implementors: should be calling
+get_homedir not getpwuid).
+
+
 * The "&" feature of the modules file does not work correctly with
 client/server CVS.  The documented behavior (which is implemented by
 non-client/server CVS) is the correct one.
-
-
-* The -m option to "cvs add" does not work with client/server CVS.
-CVS will accept the option, but it won't actually set the
-file's description.
-
-
-* cvs update walks into a user's work directory if there's a directory
-  of the same name in the repository even if the user's directory
-  doesn't yet have a CVS admin sub-directory.  This can greatly confuse
-  users who try to add the same directory at nearly the same time.
-
-
-* 'cvs admin' dumped core when files were missing from working directory
-  (and from the repository)?
 
 
 * `cvs checkout -d nested/dir/path <module>' just doesn't work.  The
