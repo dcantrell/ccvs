@@ -1,5 +1,9 @@
 2003-09-12  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Move last blurb into an item with more detail.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Add the recent checkoutlist fix as "Other miscellaneous
 	bug fixes."
 

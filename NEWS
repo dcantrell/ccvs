@@ -1,5 +1,10 @@
 Changes since 1.12.1:
 
+* Any user with write privleges to the CVSROOT/checkoutlist file could pass
+arbitrary format strings directly through to a printf function.  This was
+probably bad and has been fixed.  White space at the beginning of error strings
+in checkoutlist is now ignored properly.
+
 * A chmod 0600 that CVS performed on temp files it created designed to work
 around a bug in versions of GLIBC eariler than 2.0.7 has been removed since it
 still left a race condition open to exploitation and provided a false sense of
@@ -59,8 +64,6 @@ revision numbers but the same content.
 
 * The global '-l' option, which suppressed history logging, has been removed
 from both client and server.
-
-* Other miscellaneous bug fixes.
 
 Changes from 1.11.5 to 1.12.1:
 
