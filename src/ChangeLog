@@ -1,3 +1,29 @@
+2004-11-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh: Backport find_tool changes from 1.12.9.1.
+	(SEARCHPATH): New list of PATH directories to search.
+	(Which): Use $SEARCHPATH. Support -a switch.
+	(badtools,set_bad_tool,is_bad_tool): Keep track of tools that do
+	not work for us.
+	(version_test): Obtain the version of tools under test if
+	possible.
+	(tool_find): Rewrite. API changed to allow a list of
+	tests to be used against a list of possible command names found on
+	the SEARCHPATH.
+	(id_tool_test): Check that 'id -u' and 'id -un' work.
+	(expr_tooltest1): Check for NextStep 3.3 expr bug.
+	(expr_tooltest2): Check for SunOS expr multi-line pattern bug.
+	(expr_create_bar): Create a test file for expr testing.
+	(expr_tooltest3): Use it and test for big multi-line identity
+	matches.
+	(expr_set_ENDANCHOR): Find and set the right value for ENDANCHOR.
+	(expr_set_DOTSTAR): Find and set the right value for DOTSTAR.
+	(expr_tooltest_DOTSTAR): Ensure that DOTSTAR works with big
+	matches.
+	(tr_tooltest1): Verify that tr handles NUL bytes.
+	(awk_tooltest1): Verify that awk the BEGIN clause works properly.
+	(awk_tooltest2): Verify that print %c format item works properly.
+
 2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (MAXSIZE): New macro.
