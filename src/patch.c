@@ -16,8 +16,9 @@
 #include "getline.h"
 
 static RETSIGTYPE patch_cleanup PROTO((void));
-static Dtype patch_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int patch_fileproc PROTO((struct file_info *finfo));
+static Dtype patch_dirproc PROTO ((void *callerdat, char *dir,
+				   char *repos, char *update_dir));
+static int patch_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int patch_proc PROTO((int *pargc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
 		       int local_specified, char *mname, char *msg));
@@ -321,7 +322,8 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     /* start the recursion processor */
     err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
-			   (DIRLEAVEPROC) NULL, *pargc - 1, argv + 1, local,
+			   (DIRLEAVEPROC) NULL, NULL,
+			   *pargc - 1, argv + 1, local,
 			   which, 0, 1, where, 1);
 
     return (err);
@@ -333,7 +335,8 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
  */
 /* ARGSUSED */
 static int
-patch_fileproc (finfo)
+patch_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     struct utimbuf t;
@@ -603,7 +606,8 @@ patch_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-patch_dirproc (dir, repos, update_dir)
+patch_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;

@@ -17,8 +17,9 @@
 
 #include "cvs.h"
 
-static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
-static int log_fileproc PROTO((struct file_info *finfo));
+static Dtype log_dirproc PROTO ((void *callerdat, char *dir,
+				 char *repository, char *update_dir));
+static int log_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static const char *const log_usage[] =
 {
@@ -77,7 +78,8 @@ cvslog (argc, argv)
 #endif
 
     err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
-			   (DIRLEAVEPROC) NULL, argc - i, argv + i, local,
+			   (DIRLEAVEPROC) NULL, NULL,
+			   argc - i, argv + i, local,
 			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
 			   (char *) NULL, 1);
     return (err);
@@ -89,7 +91,8 @@ cvslog (argc, argv)
  */
 /* ARGSUSED */
 static int
-log_fileproc (finfo)
+log_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Node *p;
@@ -149,7 +152,8 @@ log_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-log_dirproc (dir, repository, update_dir)
+log_dirproc (callerdat, dir, repository, update_dir)
+    void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;

@@ -16,12 +16,15 @@
 
 #include "cvs.h"
 
-static Dtype diff_dirproc PROTO((char *dir, char *pos_repos, char *update_dir));
-static int diff_filesdoneproc PROTO((int err, char *repos, char *update_dir));
-static int diff_dirleaveproc PROTO((char *dir, int err, char *update_dir));
+static Dtype diff_dirproc PROTO ((void *callerdat, char *dir,
+				  char *pos_repos, char *update_dir));
+static int diff_filesdoneproc PROTO ((void *callerdat, int err,
+				      char *repos, char *update_dir));
+static int diff_dirleaveproc PROTO ((void *callerdat, char *dir,
+				     int err, char *update_dir));
 static int diff_file_nodiff PROTO ((struct file_info *finfo, Vers_TS *vers,
 				    int just_set_rev));
-static int diff_fileproc PROTO((struct file_info *finfo));
+static int diff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
 static char *diff_rev1, *diff_rev2;
@@ -284,7 +287,7 @@ diff (argc, argv)
 
     /* start the recursion processor */
     err = start_recursion (diff_fileproc, diff_filesdoneproc, diff_dirproc,
-			   diff_dirleaveproc, argc, argv, local,
+			   diff_dirleaveproc, NULL, argc, argv, local,
 			   which, 0, 1, (char *) NULL, 1);
 
     /* clean up */
@@ -297,7 +300,8 @@ diff (argc, argv)
  */
 /* ARGSUSED */
 static int
-diff_fileproc (finfo)
+diff_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     int status, err = 2;		/* 2 == trouble, like rcsdiff */
@@ -580,7 +584,8 @@ diff_mark_errors (err)
  */
 /* ARGSUSED */
 static Dtype
-diff_dirproc (dir, pos_repos, update_dir)
+diff_dirproc (callerdat, dir, pos_repos, update_dir)
+    void *callerdat;
     char *dir;
     char *pos_repos;
     char *update_dir;
@@ -601,7 +606,8 @@ diff_dirproc (dir, pos_repos, update_dir)
  */
 /* ARGSUSED */
 static int
-diff_filesdoneproc (err, repos, update_dir)
+diff_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -614,7 +620,8 @@ diff_filesdoneproc (err, repos, update_dir)
  */
 /* ARGSUSED */
 static int
-diff_dirleaveproc (dir, err, update_dir)
+diff_dirleaveproc (callerdat, dir, err, update_dir)
+    void *callerdat;
     char *dir;
     int err;
     char *update_dir;

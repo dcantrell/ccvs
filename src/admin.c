@@ -16,8 +16,9 @@
 #include <grp.h>
 #endif
 
-static Dtype admin_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int admin_fileproc PROTO((struct file_info *finfo));
+static Dtype admin_dirproc PROTO ((void *callerdat, char *dir,
+				   char *repos, char *update_dir));
+static int admin_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static const char *const admin_usage[] =
 {
@@ -103,7 +104,7 @@ admin (argc, argv)
 
     /* start the recursion processor */
     err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
-			   (DIRLEAVEPROC) NULL, argc, argv, 0,
+			   (DIRLEAVEPROC) NULL, NULL, argc, argv, 0,
 			   W_LOCAL, 0, 1, (char *) NULL, 1);
     return (err);
 }
@@ -113,7 +114,8 @@ admin (argc, argv)
  */
 /* ARGSUSED */
 static int
-admin_fileproc (finfo)
+admin_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     Vers_TS *vers;
@@ -156,7 +158,8 @@ admin_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-admin_dirproc (dir, repos, update_dir)
+admin_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;

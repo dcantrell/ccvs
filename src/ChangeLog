@@ -1,5 +1,17 @@
 Tue Jul  9 04:33:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h, recurse.c (start_recursion): Add callerdat argument.
+	* cvs.h: Add callerdat argument to recursion processor callbacks.
+	* recurse.c: add it to struct recursion_frame and pass it to all
+	the callbacks.
+	* admin.c, client.c, commit.c, diff.c, edit.c, lock.c, log.c,
+	patch.c, rcs.c, remove.c, rtag.c, status.c, tag.c, update.c,
+	watch.c: Update all the functions used as callbacks.  Update calls
+	to start_recursion.
+	* commit.c (find_filesdoneproc, find_fileproc, find_dirent_proc,
+	commit), tag.c (val_fileproc, tag_check_valid): Use callerdat
+	instead of a static variable.
+
 	* recurse.c (do_recursion): Make static and move declaration to here...
 	* cvs.h: ...from here.
 	* recurse.c (do_recursion): Replace plethora of arguments with

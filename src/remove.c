@@ -17,8 +17,9 @@
 
 #include "cvs.h"
 
-static int remove_fileproc PROTO((struct file_info *finfo));
-static Dtype remove_dirproc PROTO((char *dir, char *repos, char *update_dir));
+static int remove_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static Dtype remove_dirproc PROTO ((void *callerdat, char *dir,
+				    char *repos, char *update_dir));
 
 static int force;
 static int local;
@@ -84,7 +85,8 @@ cvsremove (argc, argv)
 
     /* start the recursion processor */
     err = start_recursion (remove_fileproc, (FILESDONEPROC) NULL,
-                           remove_dirproc, (DIRLEAVEPROC) NULL, argc, argv,
+                           remove_dirproc, (DIRLEAVEPROC) NULL, NULL,
+			   argc, argv,
                            local, W_LOCAL, 0, 1, (char *) NULL, 1);
 
     if (removed_files)
@@ -106,7 +108,8 @@ cvsremove (argc, argv)
  */
 /* ARGSUSED */
 static int
-remove_fileproc (finfo)
+remove_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char fname[PATH_MAX];
@@ -188,7 +191,8 @@ remove_fileproc (finfo)
  */
 /* ARGSUSED */
 static Dtype
-remove_dirproc (dir, repos, update_dir)
+remove_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;

@@ -14,16 +14,19 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-static int check_fileproc PROTO((struct file_info *finfo));
-static int check_filesdoneproc PROTO((int err, char *repos, char *update_dir));
+static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int check_filesdoneproc PROTO ((void *callerdat, int err,
+				       char *repos, char *update_dir));
 static int pretag_proc PROTO((char *repository, char *filter));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
-static Dtype tag_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int tag_fileproc PROTO((struct file_info *finfo));
-static int tag_filesdoneproc PROTO((int err, char *repos, char *update_dir));
+static Dtype tag_dirproc PROTO ((void *callerdat, char *dir,
+				 char *repos, char *update_dir));
+static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int tag_filesdoneproc PROTO ((void *callerdat, int err,
+				     char *repos, char *update_dir));
 
 static char *numtag;
 static char *date = NULL;
@@ -186,7 +189,7 @@ tag (argc, argv)
 
     mtlist = getlist();
     err = start_recursion (check_fileproc, check_filesdoneproc,
-                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
                            argc, argv, local, W_LOCAL, 0, 1,
                            (char *) NULL, 1);
     
@@ -197,7 +200,7 @@ tag (argc, argv)
      
     /* start the recursion processor */
     err = start_recursion (tag_fileproc, tag_filesdoneproc, tag_dirproc,
-			   (DIRLEAVEPROC) NULL, argc, argv, local,
+			   (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
 			   W_LOCAL, 0, 0, (char *) NULL, 1);
     dellist(&mtlist);
     return (err);
@@ -207,7 +210,8 @@ tag (argc, argv)
 /* All we do here is add it to our list */
 
 static int
-check_fileproc (finfo)
+check_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *xdir;
@@ -298,7 +302,8 @@ check_fileproc (finfo)
 }
                          
 static int
-check_filesdoneproc(err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -406,7 +411,8 @@ pretag_list_proc(p, closure)
  */
 /* ARGSUSED */
 static int
-tag_fileproc (finfo)
+tag_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *version, *oversion;
@@ -580,7 +586,8 @@ tag_fileproc (finfo)
 /* Clear any lock we may hold on the current directory.  */
 
 static int
-tag_filesdoneproc(err, repos, update_dir)
+tag_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -595,7 +602,8 @@ tag_filesdoneproc(err, repos, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-tag_dirproc (dir, repos, update_dir)
+tag_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
@@ -678,18 +686,15 @@ struct val_args {
     int found;
 };
 
-/* Pass as a static until we get around to fixing start_recursion to pass along
-   a void * where we can stash it.  */
-static struct val_args *val_args_static;
-
-static int val_fileproc PROTO ((struct file_info *finfo));
+static int val_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-val_fileproc (finfo)
+val_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     RCSNode *rcsdata;
-    struct val_args *args = val_args_static;
+    struct val_args *args = (struct val_args *)callerdat;
     char *tag;
 
     if ((rcsdata = finfo->rcs) == NULL)
@@ -707,10 +712,11 @@ val_fileproc (finfo)
     return 0;
 }
 
-static Dtype val_direntproc PROTO ((char *, char *, char *));
+static Dtype val_direntproc PROTO ((void *, char *, char *, char *));
 
 static Dtype
-val_direntproc (dir, repository, update_dir)
+val_direntproc (callerdat, dir, repository, update_dir)
+    void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
@@ -813,7 +819,6 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
     the_val_args.name = name;
     the_val_args.found = 0;
-    val_args_static = &the_val_args;
 
     which = W_REPOS | W_ATTIC;
 
@@ -832,6 +837,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
     err = start_recursion (val_fileproc, (FILESDONEPROC) NULL,
 			   val_direntproc, (DIRLEAVEPROC) NULL,
+			   (void *)&the_val_args,
 			   argc, argv, local, which, aflag,
 			   1, NULL, 1);
     if (repository != NULL && repository[0] != '\0')

@@ -29,6 +29,7 @@ struct recursion_frame {
   FILESDONEPROC filesdoneproc;
   DIRENTPROC direntproc;
   DIRLEAVEPROC dirleaveproc;
+  void *callerdat;
   Dtype flags;
   int which;
   int aflag;
@@ -56,13 +57,14 @@ struct frame_and_file {
    files on which we operate.  In the special case of no arguments, we
    default to ".".  */
 int
-start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
+start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 		 argc, argv, local, which, aflag, readlock,
 		 update_preload, dosrcs)
     FILEPROC fileproc;
     FILESDONEPROC filesdoneproc;
     DIRENTPROC 	direntproc;
     DIRLEAVEPROC dirleaveproc;
+    void *callerdat;
 
     int argc;
     char **argv;
@@ -104,6 +106,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     frame.filesdoneproc = filesdoneproc;
     frame.direntproc = direntproc;
     frame.dirleaveproc = dirleaveproc;
+    frame.callerdat = callerdat;
     frame.flags = local ? R_SKIP_DIRS : R_PROCESS;
     frame.which = which;
     frame.aflag = aflag;
@@ -440,7 +443,7 @@ do_recursion (frame)
 
     /* call-back files done proc (if any) */
     if (dodoneproc && frame->filesdoneproc != NULL)
-	err = frame->filesdoneproc (err, repository,
+	err = frame->filesdoneproc (frame->callerdat, err, repository,
 				    update_dir[0] ? update_dir : ".");
 
     fileattr_write ();
@@ -449,9 +452,9 @@ do_recursion (frame)
     /* process the directories (if necessary) */
     if (dirlist != NULL)
 	err += walklist (dirlist, do_dir_proc, frame);
-#ifdef notdef
+#if 0
     else if (frame->dirleaveproc != NULL)
-	err += frame->dirleaveproc(".", err, ".");
+	err += frame->dirleaveproc (frame->callerdat, ".", err, ".");
 #endif
     dellist (&dirlist);
 
@@ -493,7 +496,7 @@ do_file_proc (p, closure)
 	finfo->rcs = RCS_parse (finfo->file, repository);
     else 
         finfo->rcs = (RCSNode *) NULL;
-    ret = frfile->frame->fileproc (finfo);
+    ret = frfile->frame->fileproc (frfile->frame->callerdat, finfo);
 
     freercsnode(&finfo->rcs);
     free (finfo->fullname);
@@ -557,7 +560,8 @@ do_dir_proc (p, closure)
 
     /* call-back dir entry proc (if any) */
     if (frame->direntproc != NULL)
-	dir_return = frame->direntproc (dir, newrepos, update_dir);
+	dir_return = frame->direntproc (frame->callerdat, dir, newrepos,
+					update_dir);
 
     /* only process the dir if the return code was 0 */
     if (dir_return != R_SKIP_ALL)
@@ -595,7 +599,7 @@ do_dir_proc (p, closure)
 
 	/* call-back dir leave proc (if any) */
 	if (frame->dirleaveproc != NULL)
-	    err = frame->dirleaveproc (dir, err, update_dir);
+	    err = frame->dirleaveproc (frame->callerdat, dir, err, update_dir);
 
 	/* get back to where we started and restore state vars */
 	if (restore_cwd (&cwd, NULL))

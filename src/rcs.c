@@ -2109,10 +2109,11 @@ static int force_tag_match = 1;
 static char *tag = NULL;
 static char *date = NULL;
 
-static int annotate_fileproc PROTO ((struct file_info *));
+static int annotate_fileproc PROTO ((void *callerdat, struct file_info *));
 
 static int
-annotate_fileproc (finfo)
+annotate_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *version, *branchversion, *cpversion;
@@ -2577,7 +2578,7 @@ annotate (argc, argv)
 #endif /* CLIENT_SUPPORT */
 
     return start_recursion (annotate_fileproc, (FILESDONEPROC) NULL,
-			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 			    1);
 }

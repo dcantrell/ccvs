@@ -13,16 +13,19 @@
 
 #include "cvs.h"
 
-static int check_fileproc PROTO((struct file_info *finfo));
-static int check_filesdoneproc PROTO((int err, char *repos, char *update_dir));
+static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int check_filesdoneproc PROTO ((void *callerdat, int err,
+				       char *repos, char *update_dir));
 static int pretag_proc PROTO((char *repository, char *filter));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
-static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
-static int rtag_fileproc PROTO((struct file_info *finfo));
-static int rtag_filesdoneproc PROTO((int err, char *repos, char *update_dir));
+static Dtype rtag_dirproc PROTO ((void *callerdat, char *dir,
+				  char *repos, char *update_dir));
+static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
+static int rtag_filesdoneproc PROTO ((void *callerdat, int err,
+				      char *repos, char *update_dir));
 static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
@@ -292,7 +295,7 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     mtlist = getlist();
     err = start_recursion (check_fileproc, check_filesdoneproc,
-                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+                           (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
                            *pargc - 1, argv + 1, local, which, 0, 1,
                            where, 1);
     
@@ -303,7 +306,8 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
      
     /* start the recursion processor */
     err = start_recursion (rtag_fileproc, rtag_filesdoneproc, rtag_dirproc,
-			   (DIRLEAVEPROC) NULL, *pargc - 1, argv + 1, local,
+			   (DIRLEAVEPROC) NULL, NULL,
+			   *pargc - 1, argv + 1, local,
 			   which, 0, 0, where, 1);
 
     dellist(&mtlist);
@@ -315,7 +319,8 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 /* All we do here is add it to our list */
 
 static int
-check_fileproc (finfo)
+check_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *xdir;
@@ -389,7 +394,8 @@ check_fileproc (finfo)
 }
                          
 static int
-check_filesdoneproc(err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -496,7 +502,8 @@ pretag_list_proc(p, closure)
  */
 /* ARGSUSED */
 static int
-rtag_fileproc (finfo)
+rtag_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     RCSNode *rcsfile;
@@ -670,7 +677,8 @@ rtag_delete (rcsfile)
 /* Clear any lock we may hold on the current directory.  */
 
 static int
-rtag_filesdoneproc(err, repos, update_dir)
+rtag_filesdoneproc (callerdat, err, repos, update_dir)
+    void *callerdat;
     int err;
     char *repos;
     char *update_dir;
@@ -685,7 +693,8 @@ rtag_filesdoneproc(err, repos, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-rtag_dirproc (dir, repos, update_dir)
+rtag_dirproc (callerdat, dir, repos, update_dir)
+    void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;

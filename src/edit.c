@@ -29,20 +29,22 @@ static int setting_tedit;
 static int setting_tunedit;
 static int setting_tcommit;
 
-static int onoff_fileproc PROTO ((struct file_info *finfo));
+static int onoff_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-onoff_fileproc (finfo)
+onoff_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     fileattr_set (finfo->file, "_watched", turning_on ? "" : NULL);
     return 0;
 }
 
-static int onoff_filesdoneproc PROTO ((int, char *, char *));
+static int onoff_filesdoneproc PROTO ((void *, int, char *, char *));
 
 static int
-onoff_filesdoneproc (err, repository, update_dir)
+onoff_filesdoneproc (callerdat, err, repository, update_dir)
+    void *callerdat;
     int err;
     char *repository;
     char *update_dir;
@@ -102,7 +104,7 @@ watch_onoff (argc, argv)
     lock_tree_for_write (argc, argv, local, 0);
 
     err = start_recursion (onoff_fileproc, onoff_filesdoneproc,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   0);
 
@@ -128,10 +130,11 @@ watch_off (argc, argv)
     return watch_onoff (argc, argv);
 }
 
-static int dummy_fileproc PROTO ((struct file_info *finfo));
+static int dummy_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-dummy_fileproc (finfo)
+dummy_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     /* This is a pretty hideous hack, but the gist of it is that recurse.c
@@ -140,7 +143,7 @@ dummy_fileproc (finfo)
     return 0;
 }
 
-static int ncheck_fileproc PROTO ((struct file_info *finfo));
+static int ncheck_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 /* Check for and process notifications.  Local only.  I think that doing
    this as a fileproc is the only way to catch all the
@@ -149,7 +152,8 @@ static int ncheck_fileproc PROTO ((struct file_info *finfo));
    processed the directory.  */
 
 static int
-ncheck_fileproc (finfo)
+ncheck_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     int notif_type;
@@ -243,7 +247,7 @@ send_notifications (argc, argv, local)
 	}
 
 	err += start_recursion (dummy_fileproc, (FILESDONEPROC) NULL,
-				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 				0);
 
@@ -260,7 +264,7 @@ send_notifications (argc, argv, local)
 
 	lock_tree_for_write (argc, argv, local, 0);
 	err += start_recursion (ncheck_fileproc, (FILESDONEPROC) NULL,
-				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+				(DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 				argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 				0);
 	lock_tree_cleanup ();
@@ -268,10 +272,11 @@ send_notifications (argc, argv, local)
     return err;
 }
 
-static int edit_fileproc PROTO ((struct file_info *finfo));
+static int edit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-edit_fileproc (finfo)
+edit_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     FILE *fp;
@@ -412,7 +417,7 @@ edit (argc, argv)
     /* No need to readlock since we aren't doing anything to the
        repository.  */
     err = start_recursion (edit_fileproc, (FILESDONEPROC) NULL,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   0);
 
@@ -421,10 +426,11 @@ edit (argc, argv)
     return err;
 }
 
-static int unedit_fileproc PROTO ((struct file_info *finfo));
+static int unedit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-unedit_fileproc (finfo)
+unedit_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     FILE *fp;
@@ -513,7 +519,7 @@ unedit (argc, argv)
     /* No need to readlock since we aren't doing anything to the
        repository.  */
     err = start_recursion (unedit_fileproc, (FILESDONEPROC) NULL,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
 			   0);
 
@@ -915,10 +921,11 @@ static const char *const editors_usage[] =
     NULL
 };
 
-static int editors_fileproc PROTO ((struct file_info *finfo));
+static int editors_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 
 static int
-editors_fileproc (finfo)
+editors_fileproc (callerdat, finfo)
+    void *callerdat;
     struct file_info *finfo;
 {
     char *them;
@@ -1014,7 +1021,7 @@ editors (argc, argv)
 #endif /* CLIENT_SUPPORT */
 
     return start_recursion (editors_fileproc, (FILESDONEPROC) NULL,
-			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
 			    0);
 }
