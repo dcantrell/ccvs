@@ -1,5 +1,10 @@
 2001-01-29  Derek Price  <derek.price@openavenue.com>
 
+	* NEWS: Rewrite the comment on the new ~/.cvspass functionality
+	* TODO: Add a note about testing login/logout
+
+2001-01-29  Derek Price  <derek.price@openavenue.com>
+
 	* configure.in: Rewrite args to AC_TRY_COMMAND in a form that is
 	acceptable to both Autoconf 1.13 and the new 1.49 beta.
 
