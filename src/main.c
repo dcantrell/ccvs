@@ -18,7 +18,7 @@
 #ifdef HAVE_WINSOCK_H
 # include <winsock.h>
 #elif !HAVE_GETHOSTNAME
-extern int gethostname (char *, size_t);
+extern int gethostname (char *, int);
 #endif
 
 char *program_name;
