@@ -38,6 +38,7 @@ static int finaladd (struct file_info *finfo, char *revision, char *tag,
 		     char *options);
 static int findmaxrev (Node * p, void *closure);
 static int lock_RCS (char *user, RCSNode *rcs, char *rev, char *repository);
+static int precommit_list_to_args_proc (Node * p, void *closure);
 static int precommit_list_proc (Node * p, void *closure);
 static int precommit_proc (char *repository, char *filter, void *closure);
 static int remove_file (struct file_info *finfo, char *tag,
@@ -945,15 +946,14 @@ warning: file `%s' seems to still contain conflict indicators",
 	    {
 		struct master_lists *ml;
 
-		ulist = getlist ();
-		cilist = getlist ();
+		ml = (struct master_lists *)
+		    xmalloc( sizeof( struct master_lists ) );
+		ulist = ml->ulist = getlist();
+		cilist = ml->cilist = getlist();
+
 		p = getnode ();
 		p->key = xstrdup (xdir);
 		p->type = UPDATE;
-		ml = (struct master_lists *)
-		    xmalloc (sizeof (struct master_lists));
-		ml->ulist = ulist;
-		ml->cilist = cilist;
 		p->data = (char *) ml;
 		p->delproc = masterlist_delproc;
 		(void) addnode (mulist, p);
@@ -1063,21 +1063,72 @@ check_direntproc (void *callerdat, char *dir, char *repos, char *update_dir, Lis
 }
 
 /*
- * Walklist proc to run pre-commit checks
+ * Walklist proc to generate an arg list from the line in commitinfo
  */
 static int
-precommit_list_proc (Node *p, void *closure)
+precommit_list_to_args_proc( p, closure )
+    Node *p;
+    void *closure;
 {
+    struct format_cmdline_walklist_closure *c;
     struct logfile_info *li;
+    char *arg;
+    char *f, *d;
+    size_t doff;
+    int firstarg = 1;
 
-    li = (struct logfile_info *) p->data;
-    if (li->type == T_ADDED
-	|| li->type == T_MODIFIED
-	|| li->type == T_REMOVED)
+    if( p->data == NULL ) return 1;
+
+    c = (struct format_cmdline_walklist_closure *) closure;
+    f = c->format;
+    d = *( c->d );
+    /* foreach requested atribute */
+    while( *f )
     {
-	run_arg (p->key);
+   	switch( *f++ )
+	{
+	    case 's':
+		li = (struct logfile_info *) p->data;
+		if( li->type == T_ADDED
+			|| li->type == T_MODIFIED
+			|| li->type == T_REMOVED )
+		{
+		    arg = p->key;
+		}
+		break;
+	    default:
+		error( 1, 0,
+		       "Unknown format character or not a list atribute: %c",
+		       f[-1] );
+		break;
+	}
+	/* copy the attribute into an argument */
+	if( c->quotes )
+	{
+	    arg = cmdlineescape( c->quotes, arg );
+	}
+	else
+	{
+	    arg = cmdlinequote( '"', arg );
+	}
+	doff = d - *( c->buf );
+	expand_string( c->buf, c->length, doff + strlen( arg ) );
+	d = *( c->buf ) + doff;
+	strncpy( d, arg, strlen( arg ) );
+	d += strlen( arg );
+	free( arg );
+
+	/* and always put the extra space on.  we'll have to back up a char
+	 * when we're done, but that seems most efficient
+	 */
+	doff = d - *(c->buf);
+	expand_string( c->buf, c->length, doff + 1 );
+	d = *( c->buf ) + doff;
+	*d++ = ' ';
     }
-    return (0);
+    /* correct our original pointer into the buff */
+    *( c->d ) = d;
+    return 0;
 }
 
 /*
@@ -1086,30 +1137,51 @@ precommit_list_proc (Node *p, void *closure)
 static int
 precommit_proc(char *repository, char *filter, void *closure)
 {
-    /* see if the filter is there, only if it's a full path */
-    if (isabsolute (filter))
-    {
-    	char *s, *cp;
+    int disposefilter = 0;
+    char *cmdline;
+    char *srepos = Short_Repository (repository);
+    List *ulist = (List *)closure;
 
-	s = xstrdup (filter);
-	for (cp = s; *cp; cp++)
-	    if (isspace ((unsigned char) *cp))
-	    {
-		*cp = '\0';
-		break;
-	    }
-	if (!isfile (s))
-	{
-	    error (0, errno, "cannot find pre-commit filter `%s'", s);
-	    free (s);
-	    return (1);			/* so it fails! */
-	}
-	free (s);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (!strchr(filter, '%'))
+    {
+	char *tmpfilter;
+	error(0,0,
+              "warning: commitinfo line contains no format strings:\n"
+              "    \"%s\"\n"
+              "Appending defaults (\" %%r/%%p %%s\"), but please be aware that this usage is\n"
+              "deprecated.", filter);
+	tmpfilter = xmalloc (strlen(filter) + 10);
+	strcpy (tmpfilter, filter);
+	strcat (tmpfilter, " %r/%p %s");
+	filter = tmpfilter;
+	disposefilter = 1;
+    }
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		    0, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	filter,
+    	"p", "s", srepos,
+	"r", "s", current_parsed_root->directory,
+	"s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
+	NULL
+	);
+
+    if (disposefilter) free(filter);
+
+    if (!cmdline || !strlen(cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error(0, 0, "precommit proc resolved to the empty string!");
+	return (1);
     }
 
-    run_setup (filter);
-    run_arg (repository);
-    (void) walklist( (List *)closure, precommit_list_proc, NULL );
+    run_setup(cmdline);
+    free(cmdline);
+
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
 
@@ -1118,7 +1190,8 @@ precommit_proc(char *repository, char *filter, void *closure)
  */
 /* ARGSUSED */
 static int
-check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, List *entries)
+check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
+                     List *entries)
 {
     int n;
     Node *p;

@@ -646,58 +646,40 @@ struct notify_proc_args {
     char *file;
 };
 
-static int notify_proc ( char *repository, char *filter, void *closure );
-
 static int
 notify_proc(char *repository, char *filter, void *closure)
 {
+    char *cmdline;
     FILE *pipefp;
     char *prog;
     char *expanded_prog;
     char *p;
     char *q;
-    char *srepos;
+    char *srepos = Short_Repository (repository);
     struct notify_proc_args *args = (struct notify_proc_args *)closure;
 
-    srepos = Short_Repository (repository);
-    prog = xmalloc (strlen (filter) + strlen (args->notifyee) + 1);
-    /* Copy FILTER to PROG, replacing the first occurrence of %s with
-       the notifyee.  We only allocated enough memory for one %s, and I doubt
-       there is a need for more.  */
-    for (p = filter, q = prog; *p != '\0'; ++p)
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		    0, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	filter,
+    	"p", "s", srepos,
+	"r", "s", current_parsed_root->directory,
+	"s", "s", args->notifyee,
+	NULL
+	);
+    if (!cmdline || !strlen(cmdline))
     {
-	if (p[0] == '%')
-	{
-	    if (p[1] == 's')
-	    {
-		strcpy (q, args->notifyee);
-		q += strlen (q);
-		strcpy (q, p + 2);
-		q += strlen (q);
-		break;
-	    }
-	    else
-		continue;
-	}
-	*q++ = *p;
-    }
-    *q = '\0';
-
-    /* FIXME: why are we calling expand_proc?  Didn't we already
-       expand it in Parse_Info, before passing it to notify_proc?  */
-    expanded_prog = expand_path (prog, "notify", 0);
-    if (!expanded_prog)
-    {
-	free (prog);
-	return 1;
+	if (cmdline) free (cmdline);
+	error(0, 0, "pretag proc resolved to the empty string!");
+	return (1);
     }
 
-    pipefp = run_popen (expanded_prog, "w");
+    pipefp = run_popen (cmdline, "w");
     if (pipefp == NULL)
     {
-	error (0, errno, "cannot write entry to notify filter: %s", prog);
-	free (prog);
-	free (expanded_prog);
+	error (0, errno, "cannot write entry to notify filter: %s", cmdline);
+	free(cmdline);
 	return 1;
     }
 
@@ -708,8 +690,7 @@ notify_proc(char *repository, char *filter, void *closure)
     /* Lots more potentially useful information we could add here; see
        logfile_write for inspiration.  */
 
-    free (prog);
-    free (expanded_prog);
+    free(cmdline);
     return (pclose (pipefp));
 }
 

@@ -4317,6 +4317,8 @@ server_clear_template (char *update_dir, char *repository)
     }
 }
 
+
+
 void
 server_template (char *update_dir, char *repository)
 {
@@ -4326,7 +4328,9 @@ server_template (char *update_dir, char *repository)
     (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc,
 		       PIOPT_ALL, &data);
 }
-
+
+
+
 static void
 serve_gzip_contents (char *arg)
 {

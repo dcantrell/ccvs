@@ -375,6 +375,9 @@ extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
 
 extern int top_level_admin;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+extern int UseNewInfoFmtStrings;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 
 #define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
@@ -459,9 +462,9 @@ char *xstrdup (const char *str)
 int strip_trailing_newlines (char *str);
 int pathname_levels (char *path);
 
-typedef	int (*CALLPROC)	( char *repository, char *value, void *closure );
-int Parse_Info (char *infofile, char *repository, CALLPROC callproc,
-                int opt, void *closure);
+typedef	int (*CALLPROC)	(char *_repository, char *_value, void *_closure);
+int Parse_Info (char *_infofile, char *_repository, CALLPROC _callproc,
+                int _opt, void *_closure);
 int parse_config (char *);
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	();
@@ -469,7 +472,7 @@ int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
 int isdir (const char *file);
 int isfile (const char *file);
 int islink (const char *file);
-int isdevice (const char *);
+int isdevice (const char *file);
 int isreadable (const char *file);
 int iswritable (const char *file);
 int isaccessible (const char *file, const int mode);
@@ -672,7 +675,36 @@ void run_arg (const char *s);
 void run_print (FILE * fp);
 void run_setup (const char *prog);
 int run_exec (const char *stin, const char *stout, const char *sterr,
-		    int flags);
+              int flags);
+/* for format_cmdline function - when a list variable is bound to a user string,
+ * we need to pass some data through walklist into the callback function.
+ * We use this struct.
+ */
+struct format_cmdline_walklist_closure
+{
+    char *format;	/* the format string the user passed us */
+    char **buf;		/* *dest = our NUL terminated and possibly too short
+			 * destination string
+			 */
+    size_t *length;	/* *dlen = how many bytes have already been allocated to
+			 * *dest.
+			 */
+    char **d;		/* our pointer into buf where the next char should go */
+    char quotes;	/* quotes we are currently between, if any */
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    int onearg;
+    int firstpass;
+    char *srepos;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    void *closure;	/* our user defined closure */
+};
+char *cmdlinequote (char quotes, char *s);
+char *cmdlineescape (char quotes, char *s);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+char *format_cmdline (int oldway, char *srepos, char *format, ...);
+#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
+char *format_cmdline (char *format, ...);
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen (const char *, const char *);
@@ -834,7 +866,7 @@ void wrap_unparse_rcs_options (char **, int);
 #endif /* SERVER_SUPPORT || CLIENT_SUPPORT */
 
 /* Pathname expansion */
-char *expand_path (char *name, char *file, int line);
+char *expand_path (char *name, char *file, int line, int formatsafe);
 
 /* User variables.  */
 extern List *variable_list;

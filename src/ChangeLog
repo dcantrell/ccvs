@@ -1,3 +1,74 @@
+2004-02-17  Derek Price <derek@ximbiot.com>
+
+	* commit.c (precommit_proc): Installed new format_cmdline() instead
+	of the old, nonuniform info file interpreter.  Support for new user
+	data field in Parse_Info() callbacks.  Use cmdlinequote() instead of c.
+	10 lines of quote processing.
+	* cvs.h (expand_path):  Update proto.
+	(UseNewInfoFmtStrings): New global variable to keep track of the config
+	option of the same name.
+	(format_cmdline): Added function prototypes and type definitions to
+	support this new function.
+	* edit.c (notify_proc):  Added the formatsafe flag to an
+	expand_path() call.  Installed new format_cmdline() instead of the old,
+	nonuniform info file interpreter.  Support for new user data field in
+	Parse_Info() callbacks.
+	* expand_path.c (expand_path):  Added the formatsafe flag to and some
+	code to double up '%'s in variable subs if formatsafe is set on the
+	presumption that the variables that expand_path() subs into the string
+	are already working paths to files or whatever.  It should be quoting
+	too but I haven't done that yet.
+	* logmsg.c (title_proc, logmsg_list_to_args_proc, update_logfile_proc,
+	rcsinfo_proc, editinfo_proc, verifymsg_proc, logfile_write): Installed
+	new format_cmdline() instead of the old, nonuniform info file
+	interpreter.  Support for new user data field in Parse_Info()
+	callbacks.
+	* main.c:  Added global UseNewInfoFmtStrings variable to keep track
+	of the config file option of the same name (see above).
+	* mkmodules.c (commitinfo_contents, editinfo_contents,
+	taginfo_contents, verifymsg_contents, loginfo_contents: Document new
+	format string features.
+	(config_contents): Added new UseNewInfoFmtStrings option with default
+	of yes.
+	* modules.c (do_module):  Added the formatsafe flag to an
+	expand_path call.
+	* parseinfo.c (Parse_Info, parse_config):  Added the formatsafe flag
+	to an expand_path() call.  Added handling for UseNewInfoFmtStrings
+	option in the config file.  Set to no, modifications needed to set to
+	yes are harmless.  Set to yes, modifications needed for full
+	compatibility cause deprecation warnings.  Eliminating deprecation
+	warnings should allow executable to be compile with
+	--disable-old-info-format-support passed into configure.  Added user
+	data field (closure) which is passed through into callproc to
+	Parse_Info().
+	* run.c (format_cmdline): New function to provide uniform handling of
+	*info file scripting hook lines.
+	(cmdline_bindings_hash_node_delete,
+	(cmdlineescape, cmdlinequote): New functions to "quote" and "escape"
+	strings like you would to get them past a command line parser as an
+	argument.
+	(run_setup): Made quote aware
+	* sanity.sh (info, taginfo, config, pserver, lockfiles, reserved):
+	New tests for the new format string functionality as well as the
+	support of backwards compatibility.  Had to alter a few of the tests to
+	not care which version of some of the (shared) config files they'd just
+	checked in so that the tests can be run in any order.
+	(taginfo): Add tests for file names with spaces in them.
+	* server.c (template_proc): Support for new user data field in
+	Parse_Info() callbacks.
+	* tag.c (pretag_proc): Installed new format_cmdline() instead of the
+	old, nonuniform info file interpreter.  Add support for new user data
+	field in Parse_Info() callbacks.
+	(check_fileproc): Add proper tag_info struct as node data rather than a
+	single revision number in a string and pass tlist properly rather than
+	in a global variable.
+	(check_filesdone_proc): Altered to use non-global tlist.
+	(tag_delproc): Handle new tag_info struct data members.
+	(pretag_list_to_args_proc): Ditto.
+	(pretag_list_proc): Deleted.
+	* wrapper.c (Parse_Info): Added the formatsafe flag to an expand_path()
+	call.
+
 2004-02-17  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Check for $PWD != $TESTDIR after each set of tests rather

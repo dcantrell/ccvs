@@ -13,12 +13,14 @@
    GNU General Public License for more details.  */
 
 #include "cvs.h"
+#include "vasnprintf.h"
 
 #ifndef HAVE_UNISTD_H
 extern int execvp (char *file, char **argv);
 #endif
 
 static void run_add_arg (const char *s);
+static void cmdline_bindings_hash_node_delete (Node *p);
 
 extern char *strtok (char *, const char *);
 
@@ -42,9 +44,13 @@ static int run_argc_allocated;
 void 
 run_setup( const char *prog )
 {
-    char *cp;
     int i;
     char *run_prog;
+    char *buf, *d, *s;
+    size_t length;
+    size_t doff;
+    char inquotes;
+    int dolastarg;
 
     /* clean out any malloc'ed values from run_argv */
     for (i = 0; i < run_argc; i++)
@@ -59,9 +65,50 @@ run_setup( const char *prog )
 
     run_prog = xstrdup (prog);
 
+    s = run_prog;
+    d = buf = NULL;
+    length = 0;
+    dolastarg = 1;
+    inquotes = '\0';
+    doff = d - buf;
+    expand_string(&buf, &length, doff + 1);
+    d = buf + doff;
+    while (*d = *s++)
+    {
+	switch (*d)
+	{
+	    case '\\':
+		if (*s) *d = *s++;
+		d++;
+		break;
+	    case '"':
+	    case '\'':
+		if (inquotes == *d) inquotes = '\0';
+		else inquotes = *d;
+		break;
+	    case ' ':
+	    case '\t':
+		if (inquotes) d++;
+		else
+		{
+		    *d = '\0';
+		    run_add_arg (buf);
+		    d = buf;
+		    while (isspace(*s)) s++;
+		    if (!*s) dolastarg = 0;
+		}
+		break;
+	    default:
+		d++;
+		break;
+	}
+	doff = d - buf;
+	expand_string(&buf, &length, doff + 1);
+	d = buf + doff;
+    }
+    if (dolastarg) run_add_arg (buf);
     /* put each word into run_argv, allocating it as we go */
-    for (cp = strtok (run_prog, " \t"); cp; cp = strtok ((char *) NULL, " \t"))
-	run_add_arg (cp);
+    if (buf) free (buf);
     free (run_prog);
 }
 
@@ -442,4 +489,950 @@ close_on_exec (int fd)
     if (fcntl (fd, F_SETFD, 1) == -1)
 	error (1, errno, "can't set close-on-exec flag on %d", fd);
 #endif
+}
+
+
+
+/* used to store callback data in a list indexed by the user format string
+ */
+struct cmdline_bindings
+{
+    char conversion;
+    void *data;
+    int (*convproc) (Node *, void *);
+    void *closure;
+};
+/* since we store the above in a list, we need to dispose of the data field.
+ * we don't have to worry about convproc or closure since pointers are stuck
+ * in there directly and format_cmdline's caller is responsible for disposing
+ * of those if necessary.
+ */
+static void
+cmdline_bindings_hash_node_delete (p)
+    Node *p;
+{
+    struct cmdline_bindings *b = (struct cmdline_bindings *) p->data;
+    if (b->conversion != ',')
+    {
+	free (b->data);
+    }
+    free (b);
+}
+
+/*
+ * assume s is a literal argument and put it between quotes,
+ * escaping as appropriate for a shell command line
+ *
+ * the caller is responsible for disposing of the new string
+ */
+char *
+cmdlinequote (quotes, s)
+    char quotes;
+    char *s;
+{
+    char *quoted = cmdlineescape (quotes, s);
+    char *buf = xmalloc(strlen(quoted)+3);
+
+    buf[0] = quotes;
+    buf[1] = '\0';
+    strcat (buf, quoted);
+    buf[strlen(buf)+1] = '\0';
+    buf[strlen(buf)] = quotes;
+    return (buf);
+}
+
+/* read quotes as the type of quotes we are between (if any) and then make our
+ * argument so it could make it past a cmdline parser (using sh as a model)
+ * inside the quotes (if any).
+ *
+ * if you were planning on expanding any paths, it should be done before
+ * calling this function, as it escapes shell metacharacters.
+ *
+ * the caller is responsible for disposing of the new string
+ *
+ * FIXME: See about removing/combining this functionality with shell_escape()
+ * in subr.c.
+ */
+char *
+cmdlineescape (quotes, s)
+    char quotes;
+    char *s;
+{
+    char *buf = NULL;
+    size_t length = 0;
+    char *d = NULL;
+    size_t doff;
+    char *lastspace;
+
+    lastspace = s - 1;
+    do
+    {
+	/* FIXME: Single quotes only require other single quotes to be escaped
+	 * for Bourne Shell.
+	 */
+	if ( isspace( *s ) ) lastspace = s;
+	if( quotes
+	    ? ( *s == quotes
+	        || ( quotes == '"'
+	             && ( *s == '$' || *s == '`' || *s == '\\' ) ) )
+	    : ( strchr( "\\$`'\"*?", *s )
+	        || isspace( *s )
+	        || ( lastspace == ( s - 1 )
+	             && *s == '~' ) ) )
+	{
+	    doff = d - buf;
+	    expand_string (&buf, &length, doff + 1);
+	    d = buf + doff;
+	    *d++ = '\\';
+	}	
+	doff = d - buf;
+	expand_string (&buf, &length, doff + 1);
+	d = buf + doff;
+    } while (*d++ = *s++);
+    return (buf);
+}
+
+
+
+/* expand format strings in a command line.  modeled roughly after printf
+ *
+ * this function's arg list must be NULL terminated
+ *
+ * assume a space delimited list of args is the desired final output,
+ * but args can be quoted (" or ').
+ *
+ * the best usage examples are in tag.c & logmsg.c, but here goes:
+ *
+ * INPUTS
+ *    int oldway	to support old format strings
+ *    char *srepos	you guessed it
+ *    char *format	the format string to parse
+ *    ...		NULL terminated data list in the following format:
+ *    			char *userformat, char *printfformat, <type> data
+ *    			    where
+ *    				char *userformat	a list of possible
+ *    							format characters the
+ *    							end user might pass us
+ *    							in the format string
+ *    							(e.g. those found in
+ *    							taginfo or loginfo)
+ *    							multiple characters in
+ *    							this strings will be
+ *    							aliai for each other
+ *    				char *printfformat	the same list of args
+ *    							printf uses to
+ *    							determine what kind of
+ *    							data the next arg will
+ *    							be
+ *    				<type> data		a piece of data to be
+ *    							formatted into the user
+ *    							string, <type>
+ *    							determined by the
+ *    							printfformat string.
+ *    		or	
+ *    			char *userformat, char *printfformat, List *data,
+ *    				int (*convproc) (Node *, void *), void *closure
+ *    			    where
+ *    				char *userformat	same as above, except
+ *    							multiple characters in
+ *    							this string represent
+ *    							different node
+ *    							attributes which can be
+ *    							retrieved from data by
+ *    							convproc
+ *    				char *printfformat	= ","
+ *				List *data		the list to be walked
+ *							with walklist &
+ *							convproc to retrieve
+ *							data for each of the
+ *							possible format
+ *							characters in
+ *							userformat
+ *				int (*convproc)		see data
+ *				void *closure		arg to be passed into
+ *							walklist as closure
+ *							data for convproc
+ *
+ * EXAMPLE
+ *    (ignoring oldway variable and srepos since those are only around while we
+ *    SUPPORT_OLD_INFO_FMT_STRINGS)
+ *    format_cmdline( "/cvsroot/CVSROOT/mytaginfoproc %t %o %{sVv}",
+ *                    "t", "s", "newtag",
+ *                    "o", "s", "mov",
+ *                    "xG", "ld", longintwhichwontbeusedthispass,
+ *                    "sVv", ",", tlist, pretag_list_to_args_proc,
+ *                      (void *) mydata,
+ *                    NULL);
+ *
+ *    would generate the following command line, assuming two files in tlist,
+ *    file1 & file2, each with old versions 1.1 and new version 1.1.2.3:
+ *
+ *    	  /cvsroot/CVSROOT/mytaginfoproc "newtag" "mov" "file1" "1.1" "1.1.2.3" "file2" "1.1" "1.1.2.3"
+ *
+ * RETURNS
+ *    pointer to newly allocated string.  the caller is responsible for
+ *    disposing of this string.
+ */
+char *
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+format_cmdline (int oldway, char *srepos, char *format, ...)
+#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
+format_cmdline (char *format, ...)
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+{
+    va_list args;	/* our input function args */
+    char *buf;		/* where we store our output string */
+    size_t length;	/* the allocated length of our output string in bytes.
+			 * used as a temporary storage for the length of the
+			 * next function argument during function
+			 * initialization
+			 */
+    char *pfmt;		/* initially the list of fmt keys passed in,
+			 * but used as a temporary key buffer later
+			 */
+    size_t plen;	/* pfmt length near the end where it becomes a
+			 * temporary buffer
+			 */
+    char *fmt;		/* buffer for format string which we are processing */
+    size_t flen;	/* length of fmt buffer */
+    char *d, *q, *r,
+         *s;		/* for walking strings */
+    size_t doff, qoff;
+    char inquotes;
+
+    List *pflist = getlist();	/* our list of input data indexed by format
+				 * "strings"
+				 */
+    Node *p;
+    struct cmdline_bindings *b;
+    static int warned_of_deprecation = 0;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    /* state varialbes in the while loop which parses the actual
+     * format string in the final parsing pass*/
+    int onearg;
+    int subbedsomething;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (oldway && !warned_of_deprecation)
+    {
+	/* warn the user that we don't like his kind 'round these parts */
+	warned_of_deprecation = 1;
+	error (0, 0,
+"warning:  Set to use deprecated info format strings.  Establish\n"
+"compatibility with the new info file format strings (add a temporary '1' in\n"
+"all info files after each '%%' which doesn't represent a literal percent)\n"
+"and set UseNewInfoFmtStrings=yes in CVSROOT/config.  After that, convert\n"
+"individual command lines and scripts to handle the new format at your\n"
+"leisure.");
+    }
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    va_start (args, format);
+
+    /* read our possible format strings
+     * expect a certain number of arguments by type and a NULL format
+     * string to terminate the list.
+     */
+    while (pfmt = va_arg (args, char *))
+    {
+	char *conversion = va_arg (args, char *);
+
+	char conversion_error = 0;
+	char char_conversion = 0;
+	char decimal_conversion = 0;
+	char integer_conversion = 0;
+	char string_conversion = 0;
+
+	/* allocate space to save our data */
+	b = xmalloc(sizeof(struct cmdline_bindings));
+
+	/* where did you think we were going to store all this data??? */
+	b->convproc = NULL;
+	b->closure = NULL;
+
+	/* read a length from the conversion string */
+	s = conversion;
+	length = 0;
+	while (!length && *s)
+	{
+	    switch (*s)
+	    {
+		case 'h':
+		    char_conversion = 1;
+		    integer_conversion = 1;
+		    if (s[1] == 'h')
+		    {
+			length = sizeof (char);
+			s += 2;
+		    }
+		    else
+		    {
+			length = sizeof (short int);
+			s++;
+		    }
+		    break;
+		case 'j':
+		    integer_conversion = 1;
+		    length = sizeof (intmax_t);
+		    s++;
+		    break;
+		case 'l':
+		    integer_conversion = 1;
+		    if (s[1] == 'l')
+		    {
+			length = sizeof(long int);
+			s += 2;
+		    }
+		    else
+		    {
+			char_conversion = 2;
+			string_conversion = 2;
+			length = sizeof(long long int);
+			s++;
+		    }
+		    break;
+		case 't':
+		    integer_conversion = 1;
+		    length = sizeof (size_t);
+		    s++;
+		    break;
+		case 'z':
+		    integer_conversion = 1;
+		    length = sizeof (size_t);
+		    s++;
+		    break;
+		case 'L':
+		    decimal_conversion = 1;
+		    length = sizeof (long double);
+		    s++;
+		    break;
+		default:
+		    char_conversion = 1;
+		    decimal_conversion = 1;
+		    integer_conversion = 1;
+		    string_conversion = 1;
+		    /* take care of it when we find out what we're looking for */
+		    length = -1;
+		    break;
+	    }
+	}
+	/* if we don't have a valid conversion left, that is an error */
+	/* read an argument conversion */
+	buf = xmalloc (strlen(conversion) + 2);
+	*buf = '%';
+	strcpy (buf+1, conversion);
+	switch (*s)
+	{
+	    size_t dummy;
+	    case 'c':
+		/* chars (an integer conversion) */
+		if (!char_conversion)
+		{
+		    conversion_error = 1;
+		    break;
+		}
+		if (char_conversion = 2)
+		{
+		    length = sizeof (wint_t);
+		}
+	    case 'd':
+	    case 'i':
+	    case 'o':
+	    case 'u':
+	    case 'x':
+	    case 'X':
+		/* integer conversions */
+		if (!integer_conversion)
+		{
+		    conversion_error = 1;
+		    break;
+		}
+		if (length == -1)
+		{
+		    length = sizeof (int);
+		}
+		switch (length)
+		{
+		    char arg_char;
+#ifdef UNIQUE_INT_TYPE_WIN_T
+		    wint_t arg_wint_t;
+#endif /* UNIQUE_INT_TYPE_WIN_T */
+#ifdef UNIQUE_INT_TYPE_SHORT_INT
+		    short int arg_short_int;
+#endif /* UNIQUE_INT_TYPE_SHORT_INT */
+#ifdef UNIQUE_INT_TYPE_INT
+		    int arg_int;
+#endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_SIZE_T
+		    size_t arg_size_t;
+#endif /* UNIQUE_INT_TYPE_SIZE_T */
+#ifdef UNIQUE_INT_TYPE_PTRDIFF_T
+		    size_t arg_size_t;
+#endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
+#ifdef UNIQUE_INT_TYPE_LONG_INT
+		    long int arg_long_int;
+#endif /* UNIQUE_INT_TYPE_LONG_INT */
+#ifdef UNIQUE_INT_TYPE_LONG_LONG_INT
+		    long long int arg_long_long_int;
+#endif /* UNIQUE_INT_TYPE_LONG_LONG_INT */
+#ifdef UNIQUE_INT_TYPE_INTMAX_T
+		    intmax_t arg_intmax_t;
+#endif /* UNIQUE_INT_TYPE_INTMAX_T */
+		    case sizeof(char):
+		    	arg_char = (char) va_arg (args, int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_char);
+			break;
+#ifdef UNIQUE_INT_TYPE_WIN_T
+		    case sizeof(wint_t):
+		    	arg_wint_t = va_arg (args, wint_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_wint_t);
+			break;
+#endif /* UNIQUE_INT_TYPE_WIN_T */
+#ifdef UNIQUE_INT_TYPE_SHORT_INT
+		    case sizeof(short int):
+		    	arg_short_int = (short int) va_arg (args, int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_short_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_SHORT_INT */
+#ifdef UNIQUE_INT_TYPE_INT
+		    case sizeof(int):
+		    	arg_int = va_arg (args, int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_SIZE_T
+		    case sizeof(size_t):
+		    	arg_size_t = va_arg (args, size_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
+			break;
+#endif /* UNIQUE_INT_TYPE_SIZE_T */
+#ifdef UNIQUE_INT_TYPE_PTRDIFF_T
+		    case sizeof(size_t):
+		    	arg_size_t = va_arg (args, size_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
+			break;
+#endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
+#ifdef UNIQUE_INT_TYPE_LONG_INT
+		    case sizeof(long int):
+		    	arg_long_int = va_arg (args, long int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_LONG_INT */
+#ifdef UNIQUE_INT_TYPE_LONG_LONG_INT
+		    case sizeof(long long int):
+		    	arg_long_long_int = va_arg (args, long long int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_long_int);
+			break;
+#endif /* UNIQUE_INT_TYPE_LONG_LONG_INT */
+#ifdef UNIQUE_INT_TYPE_INTMAX_T
+		    case sizeof(intmax_t):
+		    	arg_intmax_t = va_arg (args, intmax_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
+			break;
+#endif /* UNIQUE_INT_TYPE_INTMAX_T */
+		    default:
+	    		dellist(&pflist);
+	    		free(b);
+			error (1, 0,
+"internal error:  unknown integer arg size (%d)",
+                               length);
+			break;
+		}
+		break;
+	    case 'a':
+	    case 'A':
+	    case 'e':
+	    case 'E':
+	    case 'f':
+	    case 'F':
+	    case 'g':
+	    case 'G':
+		/* decimal conversions */
+		if (!decimal_conversion)
+		{
+		    conversion_error = 1;
+		    break;
+		}
+		if (length == -1)
+		{
+		    length = sizeof (double);
+		}
+		switch (length)
+		{
+		    double arg_double;
+		    long double arg_long_double;
+		    case sizeof(double):
+		    	arg_double = va_arg (args, double);
+			b->data = asnprintf(NULL, &dummy, buf, arg_double);
+			break;
+#ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
+		    case sizeof(long double):
+		    	arg_long_double = va_arg (args, long double);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_double);
+			break;
+#endif /* UNIQUE_FLOAT_TYPE_LONG_DOUBLE */
+		    default:
+	    		dellist(&pflist);
+	    		free(b);
+			error (1, 0,
+"internal error:  unknown floating point arg size (%d)",
+                               length);
+			break;
+		}
+		break;
+	    case 's':
+		switch (string_conversion)
+		{
+		    wchar_t *arg_wchar_t_string;
+		    case 1:
+			b->data = xstrdup (va_arg (args, char *));
+			break;
+		    case 2:
+		    	arg_wchar_t_string = va_arg (args, wchar_t *);
+			b->data = asnprintf(NULL, &dummy, buf, arg_wchar_t_string);
+			break;
+		    default:
+			conversion_error = 1;
+			break;
+		}
+		break;
+	    case ',':
+		if (length != -1)
+		{
+		    conversion_error = 1;
+		    break;
+		}
+		b->data = va_arg (args, List *);
+		b->convproc = va_arg (args, void (*));
+		b->closure = va_arg (args, void *);
+		break;
+	    default:
+		conversion_error = 1;
+		break;
+	}
+	free (buf);
+	/* fail if we found an error or haven't found the end of the string */
+	if (conversion_error || s[1])
+	{
+	    dellist(&pflist);
+	    free(b);
+	    error (1, 0,
+"internal error (format_cmdline): '%s' is not a valid conversion!!!",
+                   conversion);
+	}
+
+
+	/* save our type  - we really only care wheter it's a list type (',')
+	 * or not from now on, but what the hell...
+	 */
+	b->conversion = *s;
+
+	/* separate the user format string into parts and stuff our data into
+	 * the pflist (once for each possible string - diverse keys can have
+	 * duplicate data).
+	 */
+	q = pfmt;
+	while (*q)
+	{
+    	    struct cmdline_bindings *tb;
+	    if (*q == '{')
+	    {
+		s = q + 1;
+		while (*++q && *q != '}');
+		r = q + 1;
+	    }
+	    else
+	    {
+		s = q++;
+		r = q;
+	    }
+	    if (*r)
+	    {
+		/* copy the data since we'll need it again */
+    	    	tb = xmalloc(sizeof(struct cmdline_bindings));
+		if (b->conversion = ',')
+		{
+		    tb->data = b->data;
+		}
+		else
+		{
+		    tb->data = xstrdup(b->data);
+		}
+		tb->conversion = b->conversion;
+		tb->convproc = b->convproc;
+		tb->closure = b->closure;
+	    }
+	    else
+	    {
+		/* we're done after this, so we don't need to copy the data */
+		tb = b;
+	    }
+	    p = getnode();
+	    p->key = xmalloc((q - s) + 1);
+	    strncpy (p->key, s, q - s);
+	    p->key[q-s] = '\0';
+	    p->data = (void *) tb;
+	    p->delproc = cmdline_bindings_hash_node_delete;
+	    addnode(pflist,p);
+	}
+    }
+
+    /* we're done with va_list */
+    va_end(args);
+
+    /* All formatted strings include a format character that resolves to the
+     * empty string by default, so put it in pflist.
+     */
+    /* allocate space to save our data */
+    b = xmalloc(sizeof(struct cmdline_bindings));
+    b->convproc = NULL;
+    b->closure = NULL;
+    b->data = xstrdup( "" );
+    p = getnode();
+    p->key = xstrdup( "n" );
+    p->data = (void *) b;
+    p->delproc = cmdline_bindings_hash_node_delete;
+    addnode( pflist,p );
+
+    /* finally, read the user string and copy it into rargv as appropriate */
+    /* user format strings look as follows:
+     *
+     * %% is a literal %
+     * \X, where X is any character = \X, (this is the escape you'd expect, but
+     *        we are leaving the \ for an expected final pass which splits our
+     *        output string into separate arguments
+     *
+     * %X means sub var "X" into location
+     * %{VWXYZ} means sub V,W,X,Y,Z into location as a single arg.  The shell
+     *        || would be to quote the comma separated arguments.  Each list
+     *        that V, W, X, Y, and Z represent attributes of will cause a new
+     *        tuple to be inserted for each list item with a space between
+     *        items.
+     *        e.g."V W1,X1,Z1 W2,X2,Z2 W3,X3,Z3 Y1 Y2" where V is not a list
+     *        variable, W,X,&Z are atributes of a list with 3 items and Y is an
+     *        attribute of a second list with 2 items.
+     * %,{VWXYZ} means to separate the args.  The previous example would produce
+     *        V W1 X1 Z1 W2 X2 Z2 W3 X3 Z3 Y1 Y2, where each variable is now a
+     *        separate, space delimited, arguments within a single argument.
+     * a%{XY}, where 'a' is a literal, still produces a single arg (a"X Y", in
+     *        shell)
+     * a%1{XY}, where 'a' is a literal, splits the literal as it produces
+     *        multiple args (a X Y).  The rule is that each sub will produce a
+     *        separate arg.  Without a comma, attributes will still be grouped
+     *        together & comma separated in what could be a single argument,
+     *        but internal quotes, commas, and spaces are not excaped.
+     *
+     * clearing the variable oldway, passed into this function, causes the
+     * behavior of '1' and "," in the format string to reverse.
+     */
+
+    /* for convenience, use fmt as a temporary key buffer.
+     * for speed, attempt to realloc it as little as possible
+     */
+    fmt = NULL;
+    flen = 0;
+    
+    /* buf = current argv entry being built
+     * length = current length of buf
+     * s = next char in source buffer to read
+     * d = next char location to write (in buf)
+     * inquotes = current quote char or NUL
+     */
+    s = format;
+    d = buf = NULL;
+    length = 0;
+    doff = d - buf;
+    expand_string (&buf, &length, doff + 1);
+    d = buf + doff;
+
+    inquotes = '\0';
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    subbedsomething = 0;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    while (*d++ = *s)
+    {
+	int list = 0;
+	switch (*s++)
+	{
+	    case '\\':
+		/* the character after a \ goes unprocessed but leave the \ in
+		 * the string so the function that splits this string into a
+		 * command line later can deal with quotes properly
+		 *
+		 * ignore a NUL
+		 */
+		if (*s)
+		{
+    		    doff = d - buf;
+		    expand_string (&buf, &length, doff + 1);
+		    d = buf + doff;
+		    *d++ = *s++;
+		}
+		break;
+	    case '\'':
+	    case '"':
+		/* keep track of quotes so we can escape quote chars we sub in
+		 * - the API is that a quoted format string will guarantee that
+		 * it gets passed into the command as a single arg
+		 */
+		if (!inquotes) inquotes = s[-1];
+		else if (s[-1] == inquotes) inquotes = '\0';
+		break;
+	    case '%':
+		if (*s == '%')
+		{
+		    /* "%%" is a literal "%" */
+		    s++;
+		    break;
+		}
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		if (oldway && subbedsomething)
+		{
+		    /* the old method was to sub only the first format string */
+		    break;
+		}
+		/* initialize onearg each time we get a new format string */
+		onearg = oldway ? 1 : 0;
+		subbedsomething = 1;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		d--;	/* we're going to overwrite the '%' regardless
+			 * of other factors... */
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		/* detect '1' && ',' in the fmt string. */
+		if (*s == '1')
+		{
+		    onearg = 1;
+		    s++;
+		    if (!oldway)
+		    {
+			/* FIXME - add FILE && LINE */
+			error (0, 0,
+"Using deprecated info format strings.  Convert your scripts to use\n"
+"the new argument format and remove '1's from your info file format strings.");
+		    }
+		}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		    
+		/* parse the format string and sub in... */
+		if (*s == '{')
+		{
+		    list = 1;
+		    s++;
+		}
+		/* q = fmt start
+		 * r = fmt end + 1
+		 */
+		q = fmt;
+		do
+		{
+		    qoff = q - fmt;
+		    expand_string (&fmt, &flen, qoff + 1);
+		    q = fmt + qoff;
+		} while ((*q = *s++) && list && *q++ != '}');
+		/* we will always copy one character, so, whether in list mode
+		 * or not, if we just copied a '\0', then we hit the end of the
+		 * string before we should have
+		 */
+		if (!s[-1])
+		{
+		    /* if we copied a NUL while processing a list, fail
+		     * - we had an empty fmt string or didn't find a list
+		     * terminator ('}')
+		     */
+		    /* FIXME - this wants a file name and line number in a bad
+		     * way.
+		     */
+		    if (fmt) free (fmt);
+		    if (buf) free(buf);
+		    dellist(&pflist);
+		    error(1, 0,
+"unterminated format string encountered in command spec.\n"
+"This error is likely to have been caused by an invalid line in a hook script\n"
+"spec (see taginfo, loginfo, verifymsginfo, etc. in the Cederqvist).  Most\n"
+"likely the offending line would end with a '%' character or contain a string\n"
+"beginning \"%{\" and no closing '}' before the end of the line.");
+		}
+		if (list)
+		{
+		    q[-1] = '\0';
+		}
+		else
+		{
+		    /* We're not in a list, so we must have just copied a
+		     * single character.  Terminate the string.
+		     */
+		    q++;
+		    qoff = q - fmt;
+		    expand_string (&fmt, &flen, qoff + 1);
+		    q = fmt + qoff;
+		    *q = '\0';
+		}
+		/* fmt is now a pointer to a list of fmt chars, though the list
+		 * could be a single element one
+		 */
+		q = fmt;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		/* always add quotes in the deprecated onearg case - for
+		 * backwards compatibility
+		 */
+		if (onearg)
+		{
+		    doff = d - buf;
+		    expand_string (&buf, &length, doff + 1);
+		    d = buf + doff;
+		    *d++ = '"';
+		}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		char key[] = "\0\0";
+		/*
+		 * for each character in the fmt string,
+		 *
+		 * all output will be separate quoted arguments (with
+		 * internal quotes escaped) if the argument is in quotes
+		 * unless the oldway variable is set, in which case the fmt
+		 * statment will correspond to a single argument with
+		 * internal space or comma delimited arguments
+		 *
+		 * see the "user format strings" section above for more info
+		 */
+		key[0] = *q;
+		if (p = findnode (pflist, key))
+		{
+		    b = (struct cmdline_bindings *) p->data;
+		    if (b->conversion == ',')
+		    {
+			/* process the rest of the format string as a list */
+			struct format_cmdline_walklist_closure c;
+			c.format = q;
+			c.buf = &buf;
+			c.length = &length;
+			c.d = &d;
+			c.quotes = inquotes;
+			c.closure = b->closure;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			c.onearg = onearg;
+			c.firstpass = 1;
+			c.srepos = srepos;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			walklist((List *)((struct cmdline_bindings *)p->data)->data,
+			         (void (*))((struct cmdline_bindings *)p->data)->convproc,
+			         (void *)&c);
+			d--;	/* back up one space.  we know that ^
+				   always adds 1 extra */
+			q += strlen(q);
+		    }
+		    else
+		    {
+			/* got a flat item */
+			char *outstr;
+			if (strlen(q) > 1)
+			{
+			    if (fmt) free (fmt);
+			    if (buf) free(buf);
+			    dellist(&pflist);
+			    error (1, 0,
+"Multiple non-list variables are not allowed in a single format string.");
+			}
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			if (onearg)
+			{
+			    outstr = b->data;
+			}
+			else /* !onearg */
+			{
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			    /* the *only* case possible without
+			     * SUPPORT_OLD_INFO_FORMAT_STRINGS
+			     * - !onearg */
+			    if (!inquotes)
+			    {
+				doff = d - buf;
+				expand_string (&buf, &length, doff + 1);
+				d = buf + doff;
+				*d++ = '"';
+			    }
+			    outstr = cmdlineescape (inquotes ? inquotes : '"', b->data);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			} /* onearg */
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			doff = d - buf;
+			expand_string (&buf, &length, doff + strlen(outstr));
+			d = buf + doff;
+			strncpy(d, outstr, strlen(outstr));
+			d += strlen(outstr);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			if (!onearg)
+			{
+			    free(outstr);
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			    if (!inquotes)
+			    {
+				doff = d - buf;
+				expand_string (&buf, &length, doff + 1);
+				d = buf + doff;
+				*d++ = '"';
+			    }
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+			}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+			q++;
+		    }
+		}
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		else if (onearg)
+		{
+		    /* the old standard was to ignore unknown format
+		     * characters (print the empty string), but also that
+		     * any format character meant print srepos first
+		     */
+		    q++;
+		    doff = d - buf;
+		    expand_string (&buf, &length, doff + strlen(srepos));
+		    d = buf + doff;
+		    strncpy(d, srepos, strlen(srepos));
+		    d += strlen(srepos);
+		}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		else /* no key */
+		{
+		    /* print an error message to the user
+		     * FIXME - this should have a file and line number!!! */
+		    if (fmt) free (fmt);
+		    if (buf) free(buf);
+		    dellist(&pflist);
+		    error (1, 0,
+"Unknown format character in info file ('%s').\n"
+"Info files are the hook files, verifymsg, taginfo, commitinfo, etc.",
+                           q);
+		}
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		/* always add quotes in the deprecated onearg case - for
+		 * backwards compatibility
+		 */
+		if (onearg)
+		{
+		    doff = d - buf;
+		    expand_string (&buf, &length, doff + 1);
+		    d = buf + doff;
+		    *d++ = '"';
+		}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		break;
+	}
+	doff = d - buf;
+	expand_string (&buf, &length, doff + 1);
+	d = buf + doff;
+    } /* while (*d++ = *s) */
+    if (fmt) free (fmt);
+    if (inquotes)
+    {
+	/* FIXME - we shouldn't need this - Parse_Info should be handling
+	 * multiple lines...
+	 */
+	if (buf) free (buf);
+	dellist(&pflist);
+	error (1, 0, "unterminated quote in format string: %s", format);
+    }
+    return(buf);
 }
