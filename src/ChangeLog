@@ -1,5 +1,13 @@
 1999-06-01  Jim Kingdon  <http://www.cyclic.com>
 
+	Make "cvs status -v" on a removed file work:
+	* status.c (cvsstatus): Reindent the client code.
+	(status_fileproc): Don't need a CVS/Entries listing to show the
+	tags.
+	* sanity.sh (rmadd2): New test rmadd2-16 tests the existing
+	behavior with "cvs log"; new test rmadd2-17 tests the new behavior
+	with "cvs status".
+
 	* sanity.sh (basicc): To match no output in dotest, put the empty
 	regexp first.  Remove tests which check that first-dir exists,
 	since that isn't true in the case where the OS let us delete it.
