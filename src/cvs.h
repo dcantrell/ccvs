@@ -422,7 +422,10 @@ int unlink_file_dir PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
 int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
+#if 0
+/* Some systems (e.g. linux) declare this in a conflicting way in stdlib.h.  */
 char * valloc PROTO((int bytes));
+#endif
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
 			 char *repository, char *tag, char *date));
