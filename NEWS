@@ -46,8 +46,15 @@ BUG FIXES
 
 DEVELOPER ISSUES
 
-* The CVS build files are now being generated with Autoconf 2.59 & Automake
-  1.9.3.  Please see the HACKING file for more information.
+* We've standardized on Automake 1.9.3 to get some at new features that make
+  our jobs easier.  See the note below on the Autoconf upgrade for more
+  details.
+
+* We've standardized on Autoconf version 2.59 to get presumed bug fixes and
+  features, but nothing specific.  Mostly, once we decide to upgrade one of the
+  autotools we just figure it'll save time later to grab the most current
+  versions of the others too.  See the HACKING file for more on using the
+  autotools with CVS.
 
 Changes from 1.11.16 to 1.11.17:
 ********************************
