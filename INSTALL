@@ -141,6 +141,16 @@ Installation under Unix:
     If you are using gcc and are planning to modify CVS, you may want to
     configure with -Wall; see the file HACKING for details.
 
+    If you have Kerberos 4 installed, you can specify the location of
+    the header files and libraries using the --with-krb4=DIR option.
+    DIR should be a directory with subdirectories include and lib
+    holding the Kerberos 4 header files and libraries, respectively.
+    The default value is /usr/kerberos.
+
+    If you want to enable support for encryption over Kerberos, use
+    the --enable-encryption option.  This option is disabled by
+    default.
+
     Try './configure --help' for further information on its usage.
 
     NOTE ON CVS's USE OF NDBM:

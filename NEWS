@@ -8,7 +8,9 @@ RCS "rlog" program.  The main user-visible consequence is that
 symbolic branch names now work (for example "cvs log -rbranch1").
 
 * Encryption is now supported over a Kerberos client/server
-connection.  The new "-x" global option requests it.
+connection.  The new "-x" global option requests it.  You must
+configure with the --enable-encryption option in order to enable
+encryption.
 
 * The format of the CVS commit message has changed slightly when
 committing changes on a branch.  The tag on which the commit is
