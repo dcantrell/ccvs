@@ -1,5 +1,12 @@
 2003-05-08  Derek Price  <derek@ximbiot.com>
 
+	* client.c (init_sockaddr): Move...
+	* socket-client.c (init_sockaddr): ...here.
+	* socket-client.h (init_sockaddr): Prototype.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+2003-05-08  Derek Price  <derek@ximbiot.com>
+
 	* client.c (send_to_server): Move most of the functionality to and
 	wrap...
 	(send_to_server_via): ...this new function which accepts the buffer
