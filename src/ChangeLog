@@ -1,5 +1,13 @@
 2002-05-20  Derek Price  <oberon@umich.edu>
 
+	* buffer.h: New prototype for...
+	* buffer.c (stdio_buffer_get_file): this new function to abstract
+	access to a buffer's file descriptor.
+	* client.c (auth_server): Use the new function.
+	(Original patch from Jonathan Kamens <jik@kamens.brookline.ma.us>.)
+
+2002-05-20  Derek Price  <oberon@umich.edu>
+
 	* main.c (main): Add 2002 to the copyright years output with the
 	version string.
 
