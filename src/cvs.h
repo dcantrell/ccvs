@@ -93,8 +93,10 @@ extern int errno;
 #include "system.h"
 
 #include "hash.h"
+#if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"
 #include "client.h"
+#endif
 
 #ifdef MY_NDBM
 #include "myndbm.h"
@@ -276,7 +278,9 @@ enum classify_type
     T_REMOVED,				/* R (removed file) list	 */
     T_REMOVE_ENTRY,			/* W (removed entry) list	 */
     T_UPTODATE,				/* File is up-to-date		 */
+#ifdef SERVER_SUPPORT
     T_PATCH,				/* P Like C, but can patch	 */
+#endif
     T_TITLE				/* title for node type 		 */
 };
 typedef enum classify_type Ctype;
@@ -357,8 +361,6 @@ extern int really_quiet, quiet;
 extern int use_editor;
 extern int cvswrite;
 
-extern int gzip_level;
-
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
@@ -424,6 +426,7 @@ void cat_module PROTO((int status));
 void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
 void copy_file PROTO((const char *from, const char *to));
+void (*error_set_cleanup PROTO((void (*) PROTO((void)))));
 void error PROTO((int status, int errnum, char *message,...));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));

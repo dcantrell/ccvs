@@ -62,12 +62,14 @@ No_Difference (file, vers, entries, repository, update_dir)
 	    Register (entries, file,
 		      vers->vn_user ? vers->vn_user : vers->vn_rcs, ts,
 		      options, vers->tag, vers->date, (char *) 0);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 	    {
 		/* We need to update the entries line on the client side.  */
 		server_update_entries
 		  (file, update_dir, repository, SERVER_UPDATED);
 	    }
+#endif
 	    free (ts);
 
 	    /* update the entdata pointer in the vers_ts structure */
@@ -93,8 +95,12 @@ No_Difference (file, vers, entries, repository, update_dir)
     }
 
     if (trace)
+#ifdef SERVER_SUPPORT
 	(void) fprintf (stderr, "%c-> unlink2 (%s)\n",
 			(server_active) ? 'S' : ' ', tmp);
+#else
+	(void) fprintf (stderr, "-> unlink (%s)\n", tmp);
+#endif
     if (unlink (tmp) < 0)
 	error (0, errno, "could not remove %s", tmp);
     free (options);

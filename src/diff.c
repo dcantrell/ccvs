@@ -162,6 +162,7 @@ diff (argc, argv)
     if (!options)
 	options = xstrdup ("");
 
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the client side.  Fire up the remote server.  */
 	start_server ();
@@ -201,6 +202,7 @@ diff (argc, argv)
 	free (options);
 	return (err);
     }
+#endif
 
     which = W_LOCAL;
     if (diff_rev2 != NULL || diff_date2 != NULL)

@@ -109,6 +109,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *cp;
     int c, err = 0;
 
+#ifdef SERVER_SUPPORT
     if (trace)
       {
 	fprintf (stderr, "%c-> do_module (%s, %s, %s, %s)\n",
@@ -116,6 +117,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
                 mname, msg, where ? where : "",
                 extra_arg ? extra_arg : "");
       }
+#endif
 
     /* remember where we start */
     if (getwd (cwd) == NULL)
@@ -357,8 +359,10 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		    fp = open_file (CVSADM_ENTSTAT, "w+");
 		    if (fclose (fp) == EOF)
 			error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		    if (server_active)
 			server_set_entstat (dir, nullrepos);
+#endif
 		}
 	    }
 	  out:

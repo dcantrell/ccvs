@@ -1,3 +1,20 @@
+Thu Jul 20 12:37:10 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h: Declare error_set_cleanup
+	* main.c: Call it.
+	(error_cleanup): New function.
+
+Thu Jul 20 12:17:16 1995  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
+
+	* add.c, admin.c, checkin.c, checkout.c, classify.c, client.c,
+	client.h, commit.c, create_adm.c, cvs.h, diff.c, entries.c,
+	history.c, import.c, log.c, main.c, modules.c, no_diff.c, patch.c,
+	release.c, remove.c, repos.c, rtag.c, server.c, server.h,
+	status.c, subr.c, tag.c, update.c, vers_ts.c, version.c: Put
+	client code inside #ifdef CLIENT_SUPPORT, server code inside
+	#ifdef SERVER_SUPPORT.  When reporting version, report whether
+	client and/or server are compiled in.
+
 Fri Jul 14 22:28:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* server.c (dirswitch, serve_static_directory, serve_sticky,

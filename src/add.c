@@ -92,6 +92,7 @@ add (argc, argv)
     /* find the repository associated with our current dir */
     repository = Name_Repository ((char *) NULL, (char *) NULL);
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
       {
 	int i;
@@ -129,6 +130,7 @@ add (argc, argv)
 	  error (1, errno, "writing to server");
 	return get_responses_and_close ();
       }
+#endif
 
     entries = Entries_Open (0);
 
@@ -313,8 +315,10 @@ add (argc, argv)
 	    err += add_directory (repository, user);
 	    continue;
 	}
+#ifdef SERVER_SUPPORT
 	if (server_active && begin_added_files != added_files)
 	    server_checked_in (user, ".", repository);
+#endif
     }
     if (added_files)
 	error (0, 0, "use 'cvs commit' to add %s permanently",
@@ -370,7 +374,11 @@ add_directory (repository, dir)
 	error (0, errno, "cannot chdir to %s", dir);
 	return (1);
     }
+#ifdef SERVER_SUPPORT
     if (!server_active && isfile (CVSADM))
+#else
+    if (isfile (CVSADM))
+#endif
     {
 	error (0, 0, "%s/%s already exists", dir, CVSADM);
 	goto out;
@@ -442,8 +450,12 @@ add_directory (repository, dir)
 	dellist (&ulist);
     }
 
+#ifdef SERVER_SUPPORT
     if (!server_active)
 	Create_Admin (".", dir, rcsdir, tag, date);
+#else
+    Create_Admin (".", dir, rcsdir, tag, date);
+#endif
     if (tag)
 	free (tag);
     if (date)

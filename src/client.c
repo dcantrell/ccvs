@@ -1,6 +1,9 @@
 /* CVS client-related stuff.  */
 
 #include "cvs.h"
+
+#ifdef CLIENT_SUPPORT
+
 #include "update.h"		/* Things shared with update.c */
 #include "md5.h"
 
@@ -20,7 +23,10 @@ extern char *krb_realmofhost ();
 
 static void add_prune_candidate PROTO((char *));
 
+#endif /* CLIENT_SUPPORT */
 
+#if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
+
 /* Shared with server.  */
 
 /*
@@ -127,7 +133,11 @@ change_mode (filename, mode_string)
 	return errno;
     return 0;
 }
+
+#endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
 
+#ifdef CLIENT_SUPPORT
+
 /* The host part of CVSROOT.  */
 static char *server_host;
 /* The user part of CVSROOT */
@@ -227,7 +237,11 @@ read_line (resultp, eof_ok)
 	free (result);
     return input_index;
 }
+
+#endif /* CLIENT_SUPPORT */
 
+#if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
+
 static void
 close_on_exec (fd)
      int fd;
@@ -243,7 +257,7 @@ close_on_exec (fd)
  * dir = 1 : main proc reads from new proc, which reads from oldfd
  */
 
-int
+static int
 filter_stream_through_program (oldfd, dir, prog, pidp)
      int oldfd, dir;
      char **prog;
@@ -300,6 +314,12 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
     }
 }
 
+/*
+ * Zero if compression isn't supported or requested; non-zero to indicate
+ * a compression level to request from gzip.
+ */
+int gzip_level;
+
 int filter_through_gzip (fd, dir, level, pidp)
      int fd, dir, level;
      pid_t *pidp;
@@ -318,7 +338,11 @@ int filter_through_gunzip (fd, dir, pidp)
   static char *gunzip_argv[2] = { "gunzip" };
   return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
 }
+
+#endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
 
+#ifdef CLIENT_SUPPORT
+
 /*
  * The Repository for the top level of this command (not necessarily
  * the CVSROOT, just the current directory at the time we do it).
@@ -364,8 +388,6 @@ handle_error (args, len)
     if (something_printed)
 	putc ('\n', stderr);
 }
-
-extern int use_unchanged;	/* see server.c */
 
 static void
 handle_valid_requests (args, len)
@@ -1860,40 +1882,59 @@ handle_e (args, len)
   putc ('\n', stderr);
 }
 
+#endif /* CLIENT_SUPPORT */
+#if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
+
 /* This table must be writeable if the server code is included.  */
 struct response responses[] =
 {
-    {"ok", handle_ok, response_type_ok, rs_essential},
-    {"error", handle_error, response_type_error, rs_essential},
-    {"Valid-requests", handle_valid_requests, response_type_normal,
-       rs_essential},
-    {"Checked-in", handle_checked_in, response_type_normal, rs_essential},
-    {"New-entry", handle_new_entry, response_type_normal, rs_optional},
-    {"Checksum", handle_checksum, response_type_normal, rs_optional},
-    {"Copy-file", handle_copy_file, response_type_normal, rs_optional},
-    {"Updated", handle_updated, response_type_normal, rs_essential},
-    {"Merged", handle_merged, response_type_normal, rs_essential},
-    {"Patched", handle_patched, response_type_normal, rs_optional},
-    {"Removed", handle_removed, response_type_normal, rs_essential},
-    {"Remove-entry", handle_remove_entry, response_type_normal, rs_optional},
-    {"Set-static-directory", handle_set_static_directory, response_type_normal,
-       rs_optional},
-    {"Clear-static-directory", handle_clear_static_directory,
+#ifdef CLIENT_SUPPORT
+#define RSP_LINE(n, f, t, s) {n, f, t, s}
+#else
+#define RSP_LINE(n, f, t, s) {n, s}
+#endif
+
+    RSP_LINE("ok", handle_ok, response_type_ok, rs_essential),
+    RSP_LINE("error", handle_error, response_type_error, rs_essential),
+    RSP_LINE("Valid-requests", handle_valid_requests, response_type_normal,
+       rs_essential),
+    RSP_LINE("Checked-in", handle_checked_in, response_type_normal,
+       rs_essential),
+    RSP_LINE("New-entry", handle_new_entry, response_type_normal, rs_optional),
+    RSP_LINE("Checksum", handle_checksum, response_type_normal, rs_optional),
+    RSP_LINE("Copy-file", handle_copy_file, response_type_normal, rs_optional),
+    RSP_LINE("Updated", handle_updated, response_type_normal, rs_essential),
+    RSP_LINE("Merged", handle_merged, response_type_normal, rs_essential),
+    RSP_LINE("Patched", handle_patched, response_type_normal, rs_optional),
+    RSP_LINE("Removed", handle_removed, response_type_normal, rs_essential),
+    RSP_LINE("Remove-entry", handle_remove_entry, response_type_normal,
+       rs_optional),
+    RSP_LINE("Set-static-directory", handle_set_static_directory,
        response_type_normal,
-       rs_optional},
-    {"Set-sticky", handle_set_sticky, response_type_normal, rs_optional},
-    {"Clear-sticky", handle_clear_sticky, response_type_normal, rs_optional},
-    {"Set-checkin-prog", handle_set_checkin_prog, response_type_normal,
-       rs_optional},
-    {"Set-update-prog", handle_set_update_prog, response_type_normal,
-       rs_optional},
-    {"Module-expansion", handle_module_expansion, response_type_normal,
-       rs_optional},
-    {"M", handle_m, response_type_normal, rs_essential},
-    {"E", handle_e, response_type_normal, rs_essential},
+       rs_optional),
+    RSP_LINE("Clear-static-directory", handle_clear_static_directory,
+       response_type_normal,
+       rs_optional),
+    RSP_LINE("Set-sticky", handle_set_sticky, response_type_normal,
+       rs_optional),
+    RSP_LINE("Clear-sticky", handle_clear_sticky, response_type_normal,
+       rs_optional),
+    RSP_LINE("Set-checkin-prog", handle_set_checkin_prog, response_type_normal,
+       rs_optional),
+    RSP_LINE("Set-update-prog", handle_set_update_prog, response_type_normal,
+       rs_optional),
+    RSP_LINE("Module-expansion", handle_module_expansion, response_type_normal,
+       rs_optional),
+    RSP_LINE("M", handle_m, response_type_normal, rs_essential),
+    RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     /* Possibly should be response_type_error.  */
-    {NULL, NULL, response_type_normal, rs_essential}
+    RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
+
+#undef RSP_LINE
 };
+
+#endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
+#ifdef CLIENT_SUPPORT
 
 /*
  * Get some server responses and process them.  Returns nonzero for
@@ -3056,3 +3097,5 @@ client_release (argc, argv)
     
     return release (argc, argv);	/* Call real code */
 }
+
+#endif /* CLIENT_SUPPORT */

@@ -487,6 +487,7 @@ sticky_ck (file, aflag, vers, entries)
 	    Register (entries, file, vers->vn_user, vers->ts_rcs,
 		      vers->options, vers->tag, vers->date, vers->ts_conflict);
 
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 	    {
 		/* We need to update the entries line on the client side.
@@ -497,6 +498,7 @@ sticky_ck (file, aflag, vers, entries)
 		   strcmp (vers->ts_rcs, vers->ts_user) == 0 ?
 		   SERVER_UPDATED : SERVER_MERGED);
 	    }
+#endif
 	}
     }
 }

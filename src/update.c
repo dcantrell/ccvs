@@ -34,8 +34,12 @@
  */
 
 #include "cvs.h"
+#ifdef CLIENT_SUPPORT
 #include "update.h"
+#endif
+#ifdef SERVER_SUPPORT
 #include "md5.h"
+#endif
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
@@ -185,9 +189,11 @@ update (argc, argv)
 		    join_rev1 = optarg;
 		break;
 	    case 'u':
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    patches = 1;
 		else
+#endif
 		    usage (update_usage);
 		break;
 	    case '?':
@@ -199,6 +205,7 @@ update (argc, argv)
     argc -= optind;
     argv += optind;
 
+#ifdef CLIENT_SUPPORT
     if (client_active) 
     {
 	/* The first pass does the regular update.  If we receive at least
@@ -292,6 +299,7 @@ update (argc, argv)
 
 	return 0;
     }
+#endif
 
     /*
      * If we are updating the entire directory (for real) and building dirs
@@ -304,16 +312,20 @@ update (argc, argv)
 	{
 	    if (unlink_file (CVSADM_ENTSTAT) < 0 && errno != ENOENT)
 		error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_clear_entstat (".", Name_Repository (NULL, NULL));
+#endif
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
 	    WriteTag ((char *) NULL, tag, date);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_set_sticky (".", Name_Repository (NULL, NULL), tag, date);
+#endif
 	}
     }
 
@@ -459,7 +471,9 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 	    case T_MODIFIED:		/* locally modified */
 	    case T_REMOVED:		/* removed but not committed */
 	    case T_CHECKOUT:		/* needs checkout */
+#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
+#endif
 		retval = checkout_file (file, repository, entries, srcfiles,
 					vers, update_dir);
 		break;
@@ -507,13 +521,19 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		     * If the timestamp has changed and no conflict indicators
 		     * are found, it isn't a 'C' any more.
 		     */
+#ifdef SERVER_SUPPORT
 		    if (server_active)
 			retcode = vers->ts_conflict[0] != '=';
 		    else {
+			filestamp = time_stamp (file);
+			retcode = strcmp (vers->ts_conflict, filestamp);
+			free (filestamp);
+		    }
+#else
 		    filestamp = time_stamp (file);
 		    retcode = strcmp (vers->ts_conflict, filestamp);
 		    free (filestamp);
-		    }
+#endif
 
 		    if (retcode)
 		    {
@@ -554,6 +574,7 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		if (!retval)
 		    retval = write_letter (file, 'M', update_dir);
 		break;
+#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
 		if (patches)
 		{
@@ -578,13 +599,16 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		   file out.  It's simpler and faster than starting up
 		   two new processes (diff and patch).  */
 		/* Fall through.  */
+#endif
 	    case T_CHECKOUT:		/* needs checkout */
 		retval = checkout_file (file, repository, entries, srcfiles,
 					vers, update_dir);
+#ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		    server_updated (file, update_dir, repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
+#endif
 		break;
 	    case T_ADDED:		/* added but not committed */
 		retval = write_letter (file, 'A', update_dir);
@@ -594,10 +618,12 @@ update_file_proc (file, update_dir, repository, entries, srcfiles)
 		break;
 	    case T_REMOVE_ENTRY:	/* needs to be un-registered */
 		retval = scratch_file (file, repository, entries, update_dir);
+#ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		    server_updated (file, update_dir, repository,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
+#endif
 		break;
 	    default:			/* can't ever happen :-) */
 		error (0, 0,
@@ -668,7 +694,11 @@ update_filesdone_proc (err, repository, update_dir)
 	(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     }
 #ifdef CVSADM_ROOT
+#ifdef SERVER_SUPPORT
     else if (!server_active)
+#else
+    else
+#endif /* SERVER_SUPPORT */
     {
         /* If there is no CVS/Root file, add one */
 #ifdef CLIENT_SUPPORT
@@ -741,16 +771,20 @@ update_dirent_proc (dir, repository, update_dir)
 	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_ENTSTAT);
 	    if (unlink_file (tmp) < 0 && errno != ENOENT)
 		error (1, errno, "cannot remove file %s", tmp);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_clear_entstat (update_dir, repository);
+#endif
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
 	if (aflag || tag || date)
 	{
 	    WriteTag (dir, tag, date);
+#ifdef SERVER_SUPPORT
 	    if (server_active)
 		server_set_sticky (update_dir, repository, tag, date);
+#endif
 	}
 
 	/* initialize the ignore list for this directory */
@@ -1367,6 +1401,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	vers->vn_user = xstrdup (vers->vn_rcs);
     }
 
+#ifdef SERVER_SUPPORT
     /* Send the new contents of the file before the message.  If we
        wanted to be totally correct, we would have the client write
        the message only after the file has safely been written.  */
@@ -1376,6 +1411,7 @@ merge_file (file, repository, entries, vers, update_dir)
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
+#endif
 
     if (!noexec && !xcmp (backup, file))
     {
@@ -1631,6 +1667,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 
     /* OK, so we have two revisions; continue on */
 
+#ifdef SERVER_SUPPORT
     if (server_active && !isreadable (file))
     {
 	int retcode;
@@ -1642,6 +1679,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", file);
     }
+#endif
     
     /*
      * The users currently modified file is moved to a backup file name
@@ -1692,12 +1730,14 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	    free(cp);
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active)
     {
 	server_copy_file (file, update_dir, repository, backup);
 	server_updated (file, update_dir, repository, SERVER_MERGED,
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
+#endif
 }
 
 /*

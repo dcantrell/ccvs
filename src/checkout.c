@@ -234,6 +234,7 @@ checkout (argc, argv)
 	options = RCS_check_kflag ("v");/* -kv must be on */
     }
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	int expand_modules;
@@ -315,6 +316,7 @@ checkout (argc, argv)
 
 	return get_responses_and_close ();
     }
+#endif
 
     if (cat || status)
     {
@@ -357,8 +359,10 @@ checkout (argc, argv)
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (preload_update_dir, repository);
+#endif
 	    }
 	}
     }
@@ -629,8 +633,10 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (where, repository);
+#endif
 	    }
 	    else
 	    {
@@ -807,8 +813,10 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
+#ifdef SERVER_SUPPORT
 		if (server_active)
 		    server_set_entstat (path, repository);
+#endif
 	    }
 	}
 	*slash = '/';

@@ -7,6 +7,8 @@
 #define STDERR_FILENO 2
 #endif
 
+#ifdef SERVER_SUPPORT
+
 /*
  * Nonzero if we are using the server.  Used by various places to call
  * server-specific functions.
@@ -78,6 +80,7 @@ extern void server_update_entries
 enum progs {PROG_CHECKIN, PROG_UPDATE};
 extern void server_prog PROTO((char *, char *, enum progs));
 
+#endif /* SERVER_SUPPORT */
 
 /* Stuff shared with the client.  */
 struct request
@@ -85,11 +88,13 @@ struct request
   /* Name of the request.  */
   char *name;
 
+#ifdef SERVER_SUPPORT
   /*
    * Function to carry out the request.  ARGS is the text of the command
    * after name and, if present, a single space, have been stripped off.
    */
   void (*func) PROTO((char *args));
+#endif
 
   /* Stuff for use by the client.  */
   enum {
@@ -121,3 +126,5 @@ struct request
 
 /* Table of requests ending with an entry with a NULL name.  */
 extern struct request requests[];
+
+extern int use_unchanged;

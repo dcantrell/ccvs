@@ -155,6 +155,7 @@ Checkin (type, file, update_dir, repository,
 	(void) RCS_unlock (rcs, NULL);
     }
 
+#ifdef SERVER_SUPPORT
     if (server_active)
     {
 	if (set_time)
@@ -164,6 +165,7 @@ Checkin (type, file, update_dir, repository,
 	else
 	    server_checked_in (file, update_dir, repository);
     }
+#endif
 
     return (0);
 }

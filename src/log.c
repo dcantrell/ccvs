@@ -93,6 +93,7 @@ cvslog (argc, argv)
     argc -= numopt;
     argv += numopt;
 
+#ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the local client.  Fire up the remote server.  */
 	start_server ();
@@ -122,6 +123,7 @@ cvslog (argc, argv)
         err = get_responses_and_close ();
 	return err;
     }
+#endif
 
     err = start_recursion (log_fileproc, (int (*) ()) NULL, log_dirproc,
 			   (int (*) ()) NULL, argc, argv, local,
@@ -141,11 +143,17 @@ log_option_with_arg (name, var, opt)
   if (*var)
     error (1, 0, "only one %s can be specified", name);
   *var = opt;
+#ifdef CLIENT_SUPPORT
   if (! client_active)
     {
       (void) strcat (options, " ");
       (void) strcat (options, opt);
     }
+#else
+  (void) strcat (options, " ");
+  (void) strcat (options, opt);
+#endif
+
 }
 
 /*

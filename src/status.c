@@ -77,6 +77,7 @@ status (argc, argv)
     argc -= optind;
     argv += optind;
 
+#ifdef CLIENT_SUPPORT
     if (client_active) {
       start_server ();
 
@@ -95,6 +96,7 @@ status (argc, argv)
 
       return err;
     }
+#endif
 
     /* start the recursion processor */
     err = start_recursion (status_fileproc, (int (*) ()) NULL, status_dirproc,
@@ -131,9 +133,11 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 	case T_CHECKOUT:
 	    sstat = "Needs Checkout";
 	    break;
+#ifdef SERVER_SUPPORT
 	case T_PATCH:
 	    sstat = "Needs Patch";
 	    break;
+#endif
 	case T_CONFLICT:
 	    sstat = "Unresolved Conflict";
 	    break;
@@ -173,8 +177,10 @@ status_fileproc (file, update_dir, repository, entries, srcfiles)
 	(void) printf ("   Working revision:\tNo entry for %s\n", file);
     else if (vers->vn_user[0] == '0' && vers->vn_user[1] == '\0')
 	(void) printf ("   Working revision:\tNew file!\n");
+#ifdef SERVER_SUPPORT
     else if (server_active)
 	(void) printf ("   Working revision:\t%s\n", vers->vn_user);
+#endif
     else
 	(void) printf ("   Working revision:\t%s\t%s\n", vers->vn_user,
 		       vers->ts_rcs);

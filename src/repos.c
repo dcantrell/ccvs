@@ -108,7 +108,11 @@ Name_Repository (dir, update_dir)
 	(void) strcpy (path, repos);
 	(void) sprintf (repos, "%s/%s", CVSroot, path);
     }
+#ifdef CLIENT_SUPPORT
     if (!client_active && !isdir (repos))
+#else
+    if (!isdir (repos))
+#endif
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (1, 0, "there is no repository %s", repos);

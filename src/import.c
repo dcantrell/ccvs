@@ -164,6 +164,7 @@ import (argc, argv)
     cp = strrchr (vhead, '.');
     *cp = '\0';
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	/* Do this now; don't ask for a log message if we can't talk to the
@@ -171,6 +172,7 @@ import (argc, argv)
 	   an error message without connecting.  */
 	start_server ();
     }
+#endif
 
     if (use_editor)
     {
@@ -191,6 +193,7 @@ import (argc, argv)
 	message = nm;
     }
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	int err;
@@ -226,6 +229,7 @@ import (argc, argv)
 	err += get_responses_and_close ();
 	return err;
     }
+#endif
 
     /*
      * Make all newly created directories writable.  Should really use a more

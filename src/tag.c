@@ -98,6 +98,7 @@ tag (argc, argv)
 	error (0, 0, "warning: -b ignored with -d options");
     RCS_check_tag (symtag);
 
+#ifdef CLIENT_SUPPORT
     if (client_active)
     {
 	/* We're the client side.  Fire up the remote server.  */
@@ -132,6 +133,7 @@ tag (argc, argv)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
+#endif
 
     /* start the recursion processor */
     err = start_recursion (tag_fileproc, (int (*) ()) NULL, tag_dirproc,
