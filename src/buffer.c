@@ -1,25 +1,10 @@
 /* Code for the buffer data structure.  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "buffer.h"
 
 #ifdef SERVER_SUPPORT
-
-#if HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
-#ifndef O_NONBLOCK
-#define O_NONBLOCK O_NDELAY
-#endif
-
-/* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
-   return it, rather than EAGAIN, for nonblocking writes.  */
-#ifdef EWOULDBLOCK
-#define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
-#else
-#define blocking_error(err) ((err) == EAGAIN)
-#endif
 
 /* Linked list of available buffer_data structures.  */
 static struct buffer_data *free_buffer_data;
@@ -27,6 +12,47 @@ static struct buffer_data *free_buffer_data;
 /* Local functions.  */
 static void allocate_buffer_datas PROTO((void));
 static inline struct buffer_data *get_buffer_data PROTO((void));
+
+/* Initialize a buffer structure.  */
+
+struct buffer *
+buf_initialize (input, output, flush, block, memory, closure)
+     int (*input) PROTO((void *, char *, int, int, int *));
+     int (*output) PROTO((void *, const char *, int, int *));
+     int (*flush) PROTO((void *));
+     int (*block) PROTO((void *, int));
+     void (*memory) PROTO((struct buffer *));
+     void *closure;
+{
+    struct buffer *buf;
+
+    buf = (struct buffer *) xmalloc (sizeof (struct buffer));
+    buf->data = NULL;
+    buf->last = NULL;
+    buf->nonblocking = 0;
+    buf->input = input;
+    buf->output = output;
+    buf->flush = flush;
+    buf->block = block;
+    buf->memory_error = memory;
+    buf->closure = closure;
+    return buf;
+}
+
+/* Initialize a buffer structure which is not to be used for I/O.  */
+
+struct buffer *
+buf_nonio_initialize (memory)
+     void (*memory) PROTO((struct buffer *));
+{
+    return (buf_initialize
+	    ((int (*) PROTO((void *, char *, int, int, int *))) NULL,
+	     (int (*) PROTO((void *, const char *, int, int *))) NULL,
+	     (int (*) PROTO((void *))) NULL,
+	     (int (*) PROTO((void *, int))) NULL,
+	     memory,
+	     (void *) NULL));
+}
 
 /* Allocate more buffer_data structures.  */
 
@@ -204,7 +230,7 @@ int
 buf_send_output (buf)
      struct buffer *buf;
 {
-    if (! buf->output)
+    if (buf->output == NULL)
 	abort ();
 
     while (buf->data != NULL)
@@ -212,45 +238,38 @@ buf_send_output (buf)
 	struct buffer_data *data;
 
 	data = buf->data;
-	while (data->size > 0)
+
+	if (data->size > 0)
 	{
-	    int nbytes;
+	    int status, nbytes;
 
-	    nbytes = write (buf->fd, data->bufp, data->size);
-	    if (nbytes <= 0)
+	    status = (*buf->output) (buf->closure, data->bufp, data->size,
+				     &nbytes);
+	    if (status != 0)
 	    {
-		int status;
-
-		if (buf->nonblocking
-		    && (nbytes == 0
-			|| blocking_error (errno)))
-		{
-		    /*
-		     * A nonblocking write failed to write any data.
-		     * Just return.
-		     */
-		    return 0;
-		}
-
-		/*
-		 * An error, or EOF.  Throw away all the data and
-		 * return.
-		 */
-		if (nbytes == 0)
-		    status = EIO;
-		else
-		    status = errno;
+		/* Some sort of error.  Discard the data, and return.  */
 
 		buf->last->next = free_buffer_data;
 		free_buffer_data = buf->data;
 		buf->data = NULL;
 		buf->last = NULL;
 
-		return status;
+	        return status;
 	    }
 
-	    data->size -= nbytes;
-	    data->bufp += nbytes;
+	    if (nbytes != data->size)
+	    {
+		/* Not all the data was written out.  This is only
+                   permitted in nonblocking mode.  Adjust the buffer,
+                   and return.  */
+
+		assert (buf->nonblocking);
+
+		data->size -= nbytes;
+		data->bufp += nbytes;
+
+		return 0;
+	    }
 	}
 
 	buf->data = data->next;
@@ -263,19 +282,65 @@ buf_send_output (buf)
     return 0;
 }
 
+/*
+ * Flush any data queued up in the buffer.  If BLOCK is nonzero, then
+ * if the buffer is in nonblocking mode, put it into blocking mode for
+ * the duration of the flush.
+ */
+
+int
+buf_flush (buf, block)
+     struct buffer *buf;
+     int block;
+{
+    int nonblocking;
+    int status;
+
+    if (buf->flush == NULL)
+        abort ();
+
+    nonblocking = buf->nonblocking;
+    if (nonblocking && block)
+    {
+        status = set_block (buf);
+	if (status != 0)
+	    return status;
+    }
+
+    status = buf_send_output (buf);
+    if (status == 0)
+        status = (*buf->flush) (buf->closure);
+
+    if (nonblocking && block)
+    {
+        int blockstat;
+
+        blockstat = set_nonblock (buf);
+	if (status == 0)
+	    status = blockstat;
+    }
+
+    return status;
+}
+
+/*
+ * Set buffer BUF to nonblocking I/O.  Returns 0 for success or errno
+ * code.
+ */
+
 int
 set_nonblock (buf)
      struct buffer *buf;
 {
-    int flags;
+    int status;
 
     if (buf->nonblocking)
 	return 0;
-    flags = fcntl (buf->fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-    if (fcntl (buf->fd, F_SETFL, flags | O_NONBLOCK) < 0)
-	return errno;
+    if (buf->block == NULL)
+        abort ();
+    status = (*buf->block) (buf->closure, 0);
+    if (status != 0)
+	return status;
     buf->nonblocking = 1;
     return 0;
 }
@@ -289,15 +354,15 @@ int
 set_block (buf)
      struct buffer *buf;
 {
-    int flags;
+    int status;
 
     if (! buf->nonblocking)
 	return 0;
-    flags = fcntl (buf->fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-    if (fcntl (buf->fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-	return errno;
+    if (buf->block == NULL)
+        abort ();
+    status = (*buf->block) (buf->closure, 1);
+    if (status != 0)
+	return status;
     buf->nonblocking = 0;
     return 0;
 }
@@ -316,9 +381,6 @@ buf_send_counted (buf)
 {
     int size;
     struct buffer_data *data;
-
-    if (! buf->output)
-	abort ();
 
     size = 0;
     for (data = buf->data; data != NULL; data = data->next)
@@ -514,11 +576,11 @@ buf_chain_length (buf)
 }
 
 /*
- * Read an arbitrary amount of data from a file descriptor into an
- * input buffer.  The file descriptor will be in nonblocking mode, and
- * we just grab what we can.  Return 0 on success, or -1 on end of
- * file, or -2 if out of memory, or an error code.  If COUNTP is not
- * NULL, *COUNTP is set to the number of bytes read.
+ * Read an arbitrary amount of data into an input buffer.  The buffer
+ * will be in nonblocking mode, and we just grab what we can.  Return
+ * 0 on success, or -1 on end of file, or -2 if out of memory, or an
+ * error code.  If COUNTP is not NULL, *COUNTP is set to the number of
+ * bytes read.
  */
 
 int
@@ -526,7 +588,7 @@ buf_input_data (buf, countp)
      struct buffer *buf;
      int *countp;
 {
-    if (buf->output)
+    if (buf->input == NULL)
 	abort ();
 
     if (countp != NULL)
@@ -535,7 +597,7 @@ buf_input_data (buf, countp)
     while (1)
     {
 	int get;
-	int nbytes;
+	int status, nbytes;
 
 	if (buf->data == NULL
 	    || (buf->last->bufp + buf->last->size
@@ -563,31 +625,235 @@ buf_input_data (buf, countp)
 
 	get = ((buf->last->text + BUFFER_DATA_SIZE)
 	       - (buf->last->bufp + buf->last->size));
-	nbytes = read (buf->fd, buf->last->bufp + buf->last->size, get);
-	if (nbytes <= 0)
-	{
-	    if (nbytes == 0)
-	    {
-		/*
-		 * This assumes that we are using POSIX or BSD style
-		 * nonblocking I/O.  On System V we will get a zero
-		 * return if there is no data, even when not at EOF.
-		 */
-		return -1;
-	    }
 
-	    if (blocking_error (errno))
-	      return 0;
-
-	    return errno;
-	}
+	status = (*buf->input) (buf->closure,
+				buf->last->bufp + buf->last->size,
+				0, get, &nbytes);
+	if (status != 0)
+	    return status;
 
 	buf->last->size += nbytes;
 	if (countp != NULL)
 	    *countp += nbytes;
+
+	if (nbytes < get)
+	{
+	    /* If we did not fill the buffer, then presumably we read
+               all the available data.  */
+	    return 0;
+	}
     }
 
     /*NOTREACHED*/
+}
+
+/*
+ * Read a line (characters up to a newline) from an input buffer.
+ * This returns 0 on success, or -1 on end of file, or -2 if out of
+ * memory, or an error code.  If it succeeds, it sets *LINE to an
+ * allocated buffer holding the contents of the line.  The trailing
+ * newline is not included in the buffer.
+ */
+
+int
+buf_read_line (buf, line)
+     struct buffer *buf;
+     char **line;
+{
+    if (buf->input == NULL)
+        abort ();
+
+    *line = NULL;
+
+    while (1)
+    {
+	int len, finallen;
+	struct buffer_data *data;
+	char *nl;
+
+	/* See if there is a newline in BUF.  */
+	len = 0;
+	for (data = buf->data; data != NULL; data = data->next)
+	{
+	    nl = memchr (data->bufp, '\n', data->size);
+	    if (nl != NULL)
+	    {
+	        finallen = nl - data->bufp;
+	        len += finallen;
+		break;
+	    }
+	    len += data->size;
+	}
+
+	/* If we found a newline, copy the line into a memory buffer,
+           and remove it from BUF.  */
+	if (data != NULL)
+	{
+	    char *p;
+	    struct buffer_data *nldata;
+
+	    p = malloc (len + 1);
+	    if (p == NULL)
+		return -2;
+	    *line = p;
+
+	    nldata = data;
+	    data = buf->data;
+	    while (data != nldata)
+	    {
+		struct buffer_data *next;
+
+		memcpy (p, data->bufp, data->size);
+		p += data->size;
+		next = data->next;
+		data->next = free_buffer_data;
+		free_buffer_data = data;
+		data = next;
+	    }
+
+	    memcpy (p, data->bufp, finallen);
+	    p[finallen] = '\0';
+
+	    data->size -= finallen + 1;
+	    data->bufp = nl + 1;
+	    buf->data = data;
+
+	    return 0;
+	}
+
+	/* Read more data until we get a newline.  */
+	while (1)
+	{
+	    int size, status, nbytes;
+	    char *mem;
+
+	    if (buf->data == NULL
+		|| (buf->last->bufp + buf->last->size
+		    == buf->last->text + BUFFER_DATA_SIZE))
+	    {
+		data = get_buffer_data ();
+		if (data == NULL)
+		{
+		    (*buf->memory_error) (buf);
+		    return -2;
+		}
+
+		if (buf->data == NULL)
+		    buf->data = data;
+		else
+		    buf->last->next = data;
+		data->next = NULL;
+		buf->last = data;
+
+		data->bufp = data->text;
+		data->size = 0;
+	    }
+
+	    mem = buf->last->bufp + buf->last->size;
+	    size = (buf->last->text + BUFFER_DATA_SIZE) - mem;
+
+	    /* We need to read at least 1 byte.  We can handle up to
+               SIZE bytes.  This will only be efficient if the
+               underlying communication stream does its own buffering,
+               or is clever about getting more than 1 byte at a time.  */
+	    status = (*buf->input) (buf->closure, mem, 1, size, &nbytes);
+	    if (status != 0)
+		return status;
+
+	    buf->last->size += nbytes;
+
+	    /* Optimize slightly to avoid an unnecessary call to
+               memchr.  */
+	    if (nbytes == 1)
+	    {
+		if (*mem == '\n')
+		    break;
+	    }
+	    else
+	    {
+		if (memchr (mem, '\n', nbytes) != NULL)
+		    break;
+	    }
+	}
+    }
+}
+
+/*
+ * Extract data from the input buffer BUF.  This will read up to WANT
+ * bytes from the buffer.  It will set *RETDATA to point at the bytes,
+ * and set *GOT to the number of bytes to be found there.  Any buffer
+ * call which uses BUF may change the contents of the buffer at *DATA,
+ * so the data should be fully processed before any further calls are
+ * made.  This returns 0 on success, or -1 on end of file, or -2 if
+ * out of memory, or an error code.
+ */
+
+int
+buf_read_data (buf, want, retdata, got)
+     struct buffer *buf;
+     int want;
+     char **retdata;
+     int *got;
+{
+    if (buf->input == NULL)
+	abort ();
+
+    while (buf->data != NULL && buf->data->size == 0)
+    {
+	struct buffer_data *next;
+
+	next = buf->data->next;
+	buf->data->next = free_buffer_data;
+	free_buffer_data = buf->data;
+	buf->data = next;
+	if (next == NULL)
+	    buf->last = NULL;
+    }
+
+    if (buf->data == NULL)
+    {
+	struct buffer_data *data;
+	int get, status, nbytes;
+
+	data = get_buffer_data ();
+	if (data == NULL)
+	{
+	    (*buf->memory_error) (buf);
+	    return -2;
+	}
+
+	buf->data = data;
+	buf->last = data;
+	data->next = NULL;
+	data->bufp = data->text;
+	data->size = 0;
+
+	if (want < BUFFER_DATA_SIZE)
+	    get = want;
+	else
+	    get = BUFFER_DATA_SIZE;
+	status = (*buf->input) (buf->closure, data->bufp, get,
+				BUFFER_DATA_SIZE, &nbytes);
+	if (status != 0)
+	    return status;
+
+	data->size = nbytes;
+    }
+
+    *retdata = buf->data->bufp;
+    if (want < buf->data->size)
+    {
+        *got = want;
+	buf->data->size -= want;
+	buf->data->bufp += want;
+    }
+    else
+    {
+        *got = buf->data->size;
+	buf->data->size = 0;
+    }
+
+    return 0;
 }
 
 /*
@@ -603,9 +869,6 @@ buf_copy_lines (outbuf, inbuf, command)
      struct buffer *inbuf;
      int command;
 {
-    if (! outbuf->output || inbuf->output)
-	abort ();
-
     while (1)
     {
 	struct buffer_data *data;
@@ -686,9 +949,6 @@ buf_copy_counted (outbuf, inbuf)
      struct buffer *outbuf;
      struct buffer *inbuf;
 {
-    if (! outbuf->output || inbuf->output)
-	abort ();
-
     while (1)
     {
 	struct buffer_data *data;
@@ -807,6 +1067,140 @@ buf_copy_counted (outbuf, inbuf)
     }
 
     /*NOTREACHED*/
+}
+
+/* The simplest type of buffer is one built on top of a stdio FILE.
+   For simplicity, and because it is all that is required, we do not
+   implement setting this type of buffer into nonblocking mode.  The
+   closure field is just a FILE *.  */
+
+static int stdio_buffer_input PROTO((void *, char *, int, int, int *));
+static int stdio_buffer_output PROTO((void *, const char *, int, int *));
+static int stdio_buffer_flush PROTO((void *));
+
+/* Initialize a buffer built on a stdio FILE.  */
+
+struct buffer
+*stdio_buffer_initialize (fp, input, memory)
+     FILE *fp;
+     int input;
+     void (*memory) PROTO((struct buffer *));
+{
+    return buf_initialize (input ? stdio_buffer_input : NULL,
+			   input ? NULL : stdio_buffer_output,
+			   input ? NULL : stdio_buffer_flush,
+			   (int (*) PROTO((void *, int))) NULL,
+			   memory,
+			   (void *) fp);
+}
+
+/* The buffer input function for a buffer built on a stdio FILE.  */
+
+static int
+stdio_buffer_input (closure, data, need, size, got)
+     void *closure;
+     char *data;
+     int need;
+     int size;
+     int *got;
+{
+    FILE *fp = (FILE *) closure;
+    int nbytes;
+
+    /* Since stdio does its own buffering, we don't worry about
+       getting more bytes than we need.  */
+
+    if (need == 0 || need == 1)
+    {
+        int ch;
+
+	ch = getc (fp);
+
+	if (ch == EOF)
+	{
+	    if (feof (fp))
+		return -1;
+	    else if (errno == 0)
+		return EIO;
+	    else
+		return errno;
+	}
+
+	*data = ch;
+	*got = 1;
+	return 0;
+    }
+
+    nbytes = fread (data, 1, need, fp);
+
+    if (nbytes == 0)
+    {
+	*got = 0;
+	if (feof (fp))
+	    return -1;
+	else if (errno == 0)
+	    return EIO;
+	else
+	    return errno;
+    }
+
+    *got = nbytes;
+
+    return 0;
+}
+
+/* The buffer output function for a buffer built on a stdio FILE.  */
+
+static int
+stdio_buffer_output (closure, data, have, wrote)
+     void *closure;
+     const char *data;
+     int have;
+     int *wrote;
+{
+    FILE *fp = (FILE *) closure;
+
+    *wrote = 0;
+
+    while (have > 0)
+    {
+	int nbytes;
+
+	nbytes = fwrite (data, 1, have, fp);
+
+	if (nbytes != have)
+	{
+	    if (errno == 0)
+		return EIO;
+	    else
+		return errno;
+	}
+
+	*wrote += nbytes;
+	have -= nbytes;
+	data += nbytes;
+    }
+
+    return 0;
+}
+
+/* The buffer flush function for a buffer built on a stdio FILE.  */
+
+static int
+stdio_buffer_flush (closure)
+     void *closure;
+{
+    FILE *fp = (FILE *) closure;
+
+    if (fflush (fp) != 0)
+    {
+	if (errno == 0)
+	    return EIO;
+	else
+	    return errno;
+    }
+
+    return 0;
 }
 
 #endif /* SERVER_SUPPORT */

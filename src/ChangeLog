@@ -1,3 +1,46 @@
+Wed Jul 10 15:00:55 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Abstract the buffer data structure away from the underlying
+	communication medium.
+	* buffer.h (struct buffer): Remove fd and output fields.  Add
+	input, output, flush, block, and closure fields.
+	(buf_initialize, buf_nonio_initialize): Declare.
+	(stdio_buffer_initialize, buf_flush): Declare.
+	(buf_read_line, buf_read_data): Declare.
+	* buffer.c: Include <assert.h>.  Don't include <fcntl.h>.
+	(O_NONBLOCK, blocking_error): Don't define.
+	(buf_initialize, buf_nonio_initialize): New functions.
+	(buf_send_output): Use output function, rather than write.
+	(buf_flush): New function.
+	(set_nonblock, set_block): Use block function, rather than calling
+	fcntl.
+	(buf_send_counted): Don't check output.
+	(buf_input_data): Call input function, rather than read.
+	(buf_read_line, buf_read_data): New functions.
+	(buf_copy_lines, buf_copy_counted): Don't check output.
+	(stdio_buffer_initialize): New function.
+	(stdio_buffer_input, stdio_buffer_output): New static functions.
+	(stdio_bufer_flush): New static function.
+	* server.c: Include "getline.h".
+	(buf_to_net): Change to be a pointer.  Change all uses.
+	(protocol, saved_output, saved_outerr): Likewise.
+	(buf_from_net): New static variable.
+	(no_mem_error, NO_MEM_ERROR, read_line): Remove.
+	(struct fd_buffer): Define.
+	(fd_buffer_initialize, fd_buffer_input): New static functions.
+	(fd_buffer_output, fd_buffer_flush): New static functions.
+	(fd_buffer_block): New static function.
+	(serve_directory): Call buf_read_line rather than read_line.
+	(serve_notify, server): Likewise.
+	(receive_partial_file): Call buf_read_data rather than fread.
+	(serve_modified): Call buf_read_line rather than read_line.  Call
+	buf_read_data rather than fread.
+	(do_cvs_command): Initialize buffers with fd_buffer_initialize.
+	Change stdoutbuf, stderrbuf, and protocol_inbuf to be pointers.
+	(server): Initialize buffers using fd_buffer_initialize,
+	stdio_buffer_initialize, and buf_nonio_initialize.
+	(check_repository_password): Call getline rather than read_line.
+
 Wed Jul 10 15:51:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (find_fileproc): Add comments describing a few cases
