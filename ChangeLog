@@ -1,7 +1,15 @@
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add call to jm_FUNC_REALLOC.
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+	* aclocal.m4: Ditto.
+
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
 	* aclocal.m4: Regenerated.
-	* configure.in: Ditto.
+	* configure: Ditto.
 
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
