@@ -2,6 +2,9 @@
 
 	* configure.in: Remove gethostname from AC_REPLACE_FUNCS call and add a
 	call to gl_FUNC_GETHOSTNAME.
+	* srclist.txt ($GNULIB/modules/gethostname): Add this source.
+
+	* aclocal.m4, config.h.in, configure: Regenerated.
 
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
