@@ -1,3 +1,19 @@
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (script hooks/*): Tidy.  Document new hooks as
+	implemented.
+
+2004-06-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Reference new script hooks.
+	(Administrative files): Move relevant parts of FIXME and references to
+	*info files...
+	(commit files): ...and most of the menu items from this node...
+	(script hooks): ...to this new node.
+	(postadmin, posttag, postwatch): New nodes.
+	(syntax, taginfo): Point at "script hooks" rather than
+	"Administrative files" node.
+
 2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (config): Document ImportNewFilesToVendorBranchOnly
