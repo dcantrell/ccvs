@@ -27,11 +27,11 @@
 #endif
 
 #ifdef HAVE_KERBEROS
-#include <netinet/in.h>
-#include <krb.h>
-#ifndef HAVE_KRB_GET_ERR_TEXT
-#define krb_get_err_text(status) krb_err_txt[status]
-#endif
+#  include <netinet/in.h>
+#  include <krb.h>
+#  ifndef HAVE_KRB_GET_ERR_TEXT
+#    define krb_get_err_text(status) krb_err_txt[status]
+#  endif
 
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
@@ -57,13 +57,13 @@ static void gserver_authenticate_connection PROTO((void));
 /* Whether we are already wrapping GSSAPI communication.  */
 static int cvs_gssapi_wrapping;
 
-#ifdef ENCRYPTION
+#  ifdef ENCRYPTION
 /* Whether to encrypt GSSAPI communication.  We use a global variable
    like this because we use the same buffer type (gssapi_wrap) to
    handle both authentication and encryption, and we don't want
    multiple instances of that buffer in the communication stream.  */
 int cvs_gssapi_encrypt;
-#endif
+#  endif
 
 #endif
 
@@ -3934,12 +3934,12 @@ struct request requests[] =
   REQ_LINE("Gzip-stream", serve_gzip_stream, rq_optional),
   REQ_LINE("Set", serve_set, rq_optional),
 #ifdef ENCRYPTION
-#ifdef HAVE_KERBEROS
+#  ifdef HAVE_KERBEROS
   REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, rq_optional),
-#endif
-#ifdef HAVE_GSSAPI
+#  endif
+#  ifdef HAVE_GSSAPI
   REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, rq_optional),
-#endif
+#  endif
 #endif
 #ifdef HAVE_GSSAPI
   REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, rq_optional),
