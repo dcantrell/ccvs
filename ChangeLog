@@ -1,5 +1,9 @@
 Thu Jun  6 14:08:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* lib/savecwd.c: Revert CVS_* patch.  The include files where
+	CVS_* is defined were not included, and the code in question was
+	inside HAVE_FCHDIR which isn't defined on the Mac anyway.
+
 	* src/filesubr.c: Revert CVS_* patch in this one file.  The mac
 	port should have its own copy of filesubr.c instead.
 
