@@ -1,3 +1,8 @@
+Thu Aug  8 16:00:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Change entry regarding "cvs log" not invoking "rlog" so
+	that it emphasizes user-visible behaviors.
+
 Tue Aug  6 17:01:23 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* TODO: Remove item #167 (cvs log doesn't understand symbolic
