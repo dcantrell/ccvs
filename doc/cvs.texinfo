@@ -3,7 +3,6 @@
 @comment Documentation for CVS.
 @comment Copyright (C) 1992, 1993 Signum Support AB
 @comment Copyright (C) 1993 Free Software Foundation, Inc.
-@comment Copyright (C) 1995 Cyclic Software.
 
 @comment This file is part of the CVS distribution.
 
@@ -39,7 +38,6 @@
 @ifinfo
 Copyright @copyright{} 1992, 1993 Signum Support AB
 Copyright @copyright{} 1993, 1994 Free Software Foundation, Inc.
-Copyright @copyright{} 1995, Cyclic Software.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -80,7 +78,7 @@ Free Software Foundation instead of in the original English.
 @sp 3
 @center Per Cederqvist
 @sp 3
-@center last updated 12 Oct 1995 (Cyclic Software)
+@center last updated 12 Oct 1995
 @comment -date-
 
 @comment  The following two commands start the copyright page
