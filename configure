@@ -12348,6 +12348,7 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_KERBEROS 1
 _ACEOF
 
+    cvs_client_objects="$cvs_client_objects kerberos4-client.o"
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
     # Put -L${krb_libdir} in LDFLAGS temporarily so that it appears before
     # -ldes in the command line.  Don't do it permanently so that we honor

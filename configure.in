@@ -400,6 +400,7 @@ if test -n "$krb_h"; then
   if test -n "$krb_lib"; then
     AC_DEFINE([HAVE_KERBEROS], 1,
 	      [Define if you have MIT Kerberos version 4 available.])
+    cvs_client_objects="$cvs_client_objects kerberos4-client.o"
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
     # Put -L${krb_libdir} in LDFLAGS temporarily so that it appears before
     # -ldes in the command line.  Don't do it permanently so that we honor
