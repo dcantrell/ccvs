@@ -1,3 +1,9 @@
+Fri Nov 14 13:37:33 1997  Abe Feldman and Jim Kingdon
+
+	* savecwd.c: New file, copied from lib/savecwd.c except it calls
+	_chdir2 not chdir.
+	* Makefile.in: Put savecwd in emx directory not lib directory.
+
 Tue Nov  4 18:20:08 1997  Abe Feldman  <feldman@cyclic.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
