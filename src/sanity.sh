@@ -2046,7 +2046,7 @@ O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-di
 	  file=m
 
 	  # Include an rcs keyword to be expanded.
-	  echo '$Id$' > $file
+	  echo '$Id''$' > $file
 
 	  dotest commit-readonly-3 "$testcvs add $file" \
 "${PROG} [a-z]*: scheduling file .$file. for addition
@@ -2059,7 +2059,7 @@ ${TESTDIR}/cvsroot/$module/$file,v  <--  $file
 initial revision: 1\.1
 done"
 
-	  echo line2 > $file
+	  echo line2 >> $file
 	  # Make the file read-only.
 	  chmod a-w $file
 
