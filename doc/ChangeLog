@@ -1,5 +1,11 @@
 Sun Feb  9 13:58:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (commit options): Don't try to document what CVS 1.3
+	does with -f and how recent versions differ: 1.3 is pretty old
+	anyway, we generally only try to document the current version, and
+	the way it was described here was pretty confusing.
+	(Environment variables): Likewise for CVSEDITOR.
+
 	* cvs.texinfo (import output): Add index entries for symbolic
 	links.  Add brief mention of whether behavior should be
 	different.  Add comments on other symbolic link issues.

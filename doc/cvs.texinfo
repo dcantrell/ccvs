@@ -6288,14 +6288,11 @@ cannot commit to a specific revision on a branch.
 
 @table @code
 @item -F @var{file}
-This option is present in @sc{cvs} releases 1.3-s3 and
-later.  Read the log message from @var{file}, instead
+Read the log message from @var{file}, instead
 of invoking an editor.
 
 @item -f
-@c -- rename-f-F--
-This option is present in @sc{cvs} 1.3-s3 and later releases
-of @sc{cvs}.  Note that this is not the standard behavior of
+Note that this is not the standard behavior of
 the @samp{-f} option as defined in @xref{Common options}.
 
 Force @sc{cvs} to commit a new revision even if you haven't
@@ -6307,15 +6304,6 @@ are equivalent:
 $ cvs commit -f @var{file}
 $ cvs commit -r 1.8 @var{file}
 @end example
-
-@item -f @var{file}
-@c -- rename-f-F--
-This option is present in @sc{cvs} releases 1.3, 1.3-s1 and
-1.3-s2.  Note that this is not the standard behavior of
-the @samp{-f} option as defined in @xref{Common options}.
-
-Read the log message from @var{file}, instead
-of invoking an editor.
 
 @item -m @var{message}
 Use @var{message} as the log message, instead of
@@ -9753,9 +9741,7 @@ directory.
 Specifies the program to use for recording log messages
 during commit.  If not set, the default is
 @samp{/usr/ucb/vi}.  @code{$CVSEDITOR} overrides
-@code{$EDITOR}.  @code{$CVSEDITOR} does not exist in
-@sc{cvs} 1.3, but the next release will probably
-include it.
+@code{$EDITOR}.
 
 @cindex PATH
 @item $PATH
