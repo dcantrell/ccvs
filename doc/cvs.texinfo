@@ -10950,6 +10950,7 @@ and value is a single-quote delimited value.
 @c in turn depends on all kinds of stuff, e.g. inetd
 @c for pserver).  I'm not sure whether/where to discuss
 @c this.
+@c FIXME: What do the %s's stand for?
 
 @noindent
 The above example of a @file{cvswrappers} file
