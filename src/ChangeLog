@@ -1,3 +1,8 @@
+1999-03-21  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (tagf): New test, tests for moving a branch tag to a
+	non-branch tag and trying to recover.
+
 1999-03-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (branches): Tweak test branches-5 to test the case in

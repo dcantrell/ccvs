@@ -560,7 +560,7 @@ if test x"$*" = x; then
 	tests="basica basicb basicc basic1 deep basic2 files commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
-	tests="${tests} branches branches2 tagc"
+	tests="${tests} branches branches2 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} import-after-initial"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -4078,6 +4078,118 @@ ${PROG} \[[a-z]* aborted\]: correct the above errors first!"
 	  cd ../..
 
 	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	tagf)
+	  # More tagging tests, including using tag -F to convert a
+	  # branch tag to a regular tag and recovering thereof.
+
+	  # Setup; check in first-dir/file1
+	  mkdir 1; cd 1
+	  dotest tagf-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest tagf-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch file1 file2
+	  dotest tagf-3 "${testcvs} add file1 file2" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest tagf-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+
+	  # Now create a branch and commit a revision there.
+	  dotest tagf-5 "${testcvs} -q tag -b br" "T file1
+T file2"
+	  dotest tagf-6 "${testcvs} -q update -r br" ""
+	  echo brmod >> file1
+	  echo brmod >> file2
+	  dotest tagf-7 "${testcvs} -q ci -m modify" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  # Here we make it a non-branch tag.  Some think this should
+	  # be an error.  But if -F means "I want to put this tag here,
+	  # never mind whether there was a tag of that name before", then
+	  # an error wouldn't fit.
+	  dotest tagf-8 "${testcvs} -q tag -F br" "T file1
+T file2"
+	  echo moremod >> file1
+	  echo moremod >> file2
+	  dotest tagf-9 "${testcvs} -q status -v file1" \
+"===================================================================
+File: file1            	Status: Locally Modified
+
+   Working revision:	1\.1\.2\.1.*
+   Repository revision:	1\.1\.2\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		br (revision: 1\.1\.2\.1)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	br                       	(revision: 1\.1\.2\.1)"
+
+	  # Now, how do we recover?
+	  dotest tagf-10 "${testcvs} -q tag -d br" "D file1
+D file2"
+	  # This creates a new branch, 1.1.4.  See the code in RCS_magicrev
+	  # which will notice that there is a (non-magic) 1.1.2 and thus
+	  # skip that number.
+	  dotest tagf-11 "${testcvs} -q tag -r 1.1 -b br file1" "T file1"
+	  # The error would seem to be a bug in RCS_exist_rev (at least as
+	  # applied here).  Whether 1.1.2 exists or not shouldn't depend
+	  # on whether a tag points to it (cf admin-18, admin-26-4).
+	  # I'm not sure I see a workaround.
+	  dotest_fail tagf-12 "${testcvs} -q admin -nbr:1.1.2 file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} \[[a-z]* aborted\]: revision .1\.1\.2' does not exist"
+	  # Another variation on the file2 test would be to use two working
+	  # directories so that the update -r br would need to
+	  # a merge to get from 1.1.2.1 to the head of the 1.1.2 branch.
+	  dotest tagf-13 "${testcvs} -q update -r br file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1\.2\.1
+retrieving revision 1\.1
+Merging differences between 1\.1\.2\.1 and 1\.1 into file1
+rcsmerge: warning: conflicts during merge
+cvs [a-z]*: conflicts found in file1
+C file1"
+	  # CVS is giving a conflict because we are trying to get back to
+	  # 1.1.4.  I'm not sure why it is a conflict rather than just
+	  # "M file1".
+	  dotest tagf-14 "cat file1" \
+"<<<<<<< file1
+brmod
+moremod
+[=]======
+[>]>>>>>> 1\.1"
+	  echo resolve >file1
+	  dotest tagf-15 "${testcvs} -q ci -m recovered file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.4\.1; previous revision: 1\.1
+done"
+	  cd ../..
+
+	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -15253,6 +15365,7 @@ done"
 	  #     1.3.2.6::1.3.2
 	  #     1.3.2.1::1.3.2.6
 	  #     1.3::1.3.2.6 (error?  or synonym for ::1.3.2.6?)
+	  # -n: admin, tagf tests.
 
 	  mkdir 1; cd 1
 	  dotest admin-1 "${testcvs} -q co -l ." ''
