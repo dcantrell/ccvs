@@ -15,8 +15,14 @@ pid_t waitpid (pid, statusp, options)
      int *statusp;
      int options;
 {
-    /* We don't know how to deal with any options yet.  */
-    assert (options == 0);
-    
-    return _cwait (statusp, pid, WAIT_CHILD);
+  /* We don't know how to deal with any options yet.  */
+  assert (options == 0);
+  
+  if (_cwait (statusp, pid, WAIT_CHILD) == -1)
+    {
+      if (errno == ECHILD)
+        return pid;
+      else
+        return -1;
+    }
 }
