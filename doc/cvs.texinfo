@@ -9338,6 +9338,15 @@ Show data since @var{date}.  This is slightly different
 from the normal use of @samp{-D @var{date}}, which
 selects the newest revision older than @var{date}.
 
+@item -f @var{file}
+Show data for a particular file
+(you can specify several @samp{-f} options on the same command line).
+This is equivalent to specifying the file on the command line.
+
+@item -n @var{module}
+Show data for a particular module
+(you can specify several @samp{-n} options on the same command line).
+
 @item -p @var{repository}
 Show data for a particular source repository  (you
 can specify several @samp{-p} options on the same command
@@ -9357,6 +9366,10 @@ above in that it reads only the history file, not the
 
 @item -u @var{name}
 Show records for user @var{name}.
+
+@item -z @var{timezone}
+Show times in the selected records using the specified
+time zone instead of UTC.
 @end table
 
 @ignore
