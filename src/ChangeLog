@@ -1,3 +1,9 @@
+2001-05-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* history.c (history_write): Handle the case where the user's home
+	directory doesn't exist gracefully instead of erroring out.
+	(Reported by David Hoover <dhoover@cadence.com>.)
+
 2001-05-03  Derek Price  <dprice@collab.net>
 
 	* cvs.h: s/allocate_and_strcat/xrealloc_and_strcat/ since that is what
