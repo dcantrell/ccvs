@@ -638,6 +638,13 @@ diff_run (argc, argv, out)
     outfile = stdout;
   else
     {
+#ifdef HAVE_SETMODE
+      /* A diff which is full of ^Z and such isn't going to work
+         very well in text mode.  */
+      if (binary_I_O)
+	outfile = fopen (out, "wb");
+      else
+#endif
       outfile = fopen (out, "w");
       if (outfile == NULL)
         {
