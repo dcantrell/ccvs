@@ -1,3 +1,10 @@
+2003-04-01  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Remove obsolete bug.
+	* configure.in: Tail the BUGS file for status.
+
+	* configure: Regenerated.
+
 2003-03-31  Derek Price  <derek@ximbiot.com>
 
 	* NEWS (Changes since 1.11.5): Note symlinked CVSROOT now works.
