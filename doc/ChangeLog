@@ -1,3 +1,8 @@
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (script hooks/*): Tidy.  Document new hooks as
+	implemented.
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (config): Note that PrimaryServer hostname must match
