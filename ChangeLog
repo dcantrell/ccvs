@@ -1,5 +1,10 @@
 Sun Sep  7 17:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  Features comment from
+	julian@whistle about update -r branch:date.  It also clobbered the
+	metavariables (confusion about "<" as data vs. HTML tag I would
+	guess), which I plan on fixing in a moment.
+
 	* configure.in: Add comment about re_exec and regexp syntax.
 
 	* configure.in (AC_REPLACE_FUNCS): Remove strdup; CVS was long
