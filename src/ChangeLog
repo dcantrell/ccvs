@@ -1,5 +1,8 @@
 2004-08-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (sshstdio): Fix comment typo plus gratuitous
+	reformatting.
+
 	* client.c (handle_m): Workaround to deal with stdio getting put
 	into non-blocking via redirection of stderr and interaction with
 	ssh on some platforms. On those boxes, stdio can put stdout
