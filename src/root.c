@@ -198,7 +198,8 @@ char *CVSroot_hostname;		/* the hostname or NULL if method == local */
 char *CVSroot_directory;	/* the directory name */
 
 int
-parse_cvsroot (char *CVSroot)
+parse_cvsroot (CVSroot)
+    char *CVSroot;
 {
     static int cvsroot_parsed = 0;
     char *cvsroot_copy, *p;
@@ -353,7 +354,8 @@ parse_cvsroot (char *CVSroot)
    repository DIR. */
 
 void
-set_local_cvsroot (char *dir)
+set_local_cvsroot (dir)
+    char *dir;
 {
     CVSroot_original = xstrdup (dir);
     CVSroot_method = local_method;
@@ -370,38 +372,36 @@ set_local_cvsroot (char *dir)
 #include <stdio.h>
 
 char *CVSroot;
-char *program_name;
-char *command_name = "testing";
+char *program_name = "testing";
+char *command_name = "parse_cvsroot";		/* XXX is this used??? */
 
 void
-error (int a, int b, const char *str, ...)
+main (argc, argv)
+    int argc;
+    char *argv[];
 {
-  puts (str);
-  if (a)
-    exit (1);
-}
+    program_name = argv[0];
 
-void
-main (int argc, char *argv[])
-{
-  program_name = argv[0];
-
-  if (argc != 2)
-      error (1, 0, "Usage: %s <CVSROOT>\n", program_name);
+    if (argc != 2)
+    {
+	fprintf (stderr, "Usage: %s <CVSROOT>\n", program_name);
+	exit (2);
+    }
   
-  if (parse_cvsroot (argv[1]))
-  {
-      puts ("Parsing failed.");
-      exit (1);
-  }
-  printf ("CVSroot: %s\n", argv[1]);
-  printf ("CVSroot_method: %s\n", method_names[CVSroot_method]);
-  printf ("CVSroot_username: %s\n",
-	  CVSroot_username ? CVSroot_username : "NULL");
-  printf ("CVSroot_hostname: %s\n",
-	  CVSroot_hostname ? CVSroot_hostname : "NULL");
-  printf ("CVSroot_directory: %s\n", CVSroot_directory);
+    if (parse_cvsroot (argv[1]))
+    {
+	fprintf (stderr, "%s: Parsing failed.", program_name);
+	exit (1);
+    }
+    printf ("CVSroot: %s\n", argv[1]);
+    printf ("CVSroot_method: %s\n", method_names[CVSroot_method]);
+    printf ("CVSroot_username: %s\n",
+	    CVSroot_username ? CVSroot_username : "NULL");
+    printf ("CVSroot_hostname: %s\n",
+	    CVSroot_hostname ? CVSroot_hostname : "NULL");
+    printf ("CVSroot_directory: %s\n", CVSroot_directory);
 
-  exit (0);
+   exit (0);
+   /* NOTREACHED */
 }
 #endif
