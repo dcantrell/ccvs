@@ -1,3 +1,10 @@
+2000-10-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* checkout.c (checkout): Don't check for a safe location if just
+	cat'ing the module database.
+	(Reported by Ilya Martynov <m_ilya@agava.com>.)
+	Have -s set cat as well as status; it simplifies the code.
+
 2000-10-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (join-admin-2): Check output from all commands instead
