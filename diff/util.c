@@ -377,7 +377,7 @@ printf_output (format, va_alist)
 /* Flush the output file.  */
 
 void
-flush_output (void)
+flush_output ()
 {
   if (callbacks && callbacks->flush_output)
     (*callbacks->flush_output) ();
