@@ -1,5 +1,14 @@
 2003-07-16  Derek Price  <derek@ximbiot.com>
 
+	* pathmax.h: New file.
+
+	* Makefile.am (libcvs_a_SOURCES): Add pathmax.h.
+	* system.h: Remove PATH_MAX stuff.
+
+	* Makefile.in: Regenerated.
+
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
 	* getnline.c: New file based on GNULIB and resubmitted to GNULIB.
 	* getnline.h: Ditto.
 
