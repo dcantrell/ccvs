@@ -13,14 +13,6 @@ static const char rcsid[] = "$CVSid: @(#)vers_ts.c 1.45 94/10/07 $";
 USE(rcsid);
 #endif
 
-/* ctime() is a macro on some systems, so we must undef it before
-   redefining it. */
-#ifdef ctime
-#undef ctime
-#endif
-
-#define ctime(X)	do not use ctime, please
-
 #ifdef SERVER_SUPPORT
 static void time_stamp_server PROTO((char *, Vers_TS *));
 #endif
