@@ -102,6 +102,7 @@ extern int buf_flush PROTO((struct buffer *, int));
 extern int set_nonblock PROTO((struct buffer *));
 extern int set_block PROTO((struct buffer *));
 extern int buf_send_counted PROTO((struct buffer *));
+extern int buf_send_special_count PROTO((struct buffer *, int));
 extern void buf_append_data PROTO((struct buffer *,
 				   struct buffer_data *,
 				   struct buffer_data *));
@@ -113,7 +114,7 @@ extern int buf_input_data PROTO((struct buffer *, int *));
 extern int buf_read_line PROTO((struct buffer *, char **, int *));
 extern int buf_read_data PROTO((struct buffer *, int, char **, int *));
 extern void buf_copy_lines PROTO((struct buffer *, struct buffer *, int));
-extern int buf_copy_counted PROTO((struct buffer *, struct buffer *));
+extern int buf_copy_counted PROTO((struct buffer *, struct buffer *, int *));
 extern int buf_chain_length PROTO((struct buffer_data *));
 
 #ifdef SERVER_FLOWCONTROL

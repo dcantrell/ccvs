@@ -78,6 +78,7 @@ static void handle_set_update_prog PROTO((char *, int));
 static void handle_module_expansion PROTO((char *, int));
 static void handle_m PROTO((char *, int));
 static void handle_e PROTO((char *, int));
+static void handle_f PROTO((char *, int));
 static void handle_notified PROTO((char *, int));
 
 static void buf_memory_error PROTO((struct buffer *));
@@ -2584,6 +2585,15 @@ handle_e (args, len)
   putc ('\n', stderr);
 }
 
+/*ARGSUSED*/
+static void
+handle_f (args, len)
+     char *args;
+     int len;
+{
+    fflush (stderr);
+}
+
 #endif /* CLIENT_SUPPORT */
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
@@ -2636,6 +2646,7 @@ struct response responses[] =
        rs_optional),
     RSP_LINE("M", handle_m, response_type_normal, rs_essential),
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
+    RSP_LINE("F", handle_f, response_type_normal, rs_optional),
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
 

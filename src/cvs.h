@@ -712,6 +712,7 @@ extern void tag_unlockdir PROTO ((void));
 
 extern void cvs_output PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((char *, size_t));
+extern void cvs_flusherr PROTO ((void));
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"
