@@ -1982,13 +1982,23 @@ internal error: `%s' didn't move out of the attic",
     if (tag && newfile)
     {
 	char *tmp;
+	FILE *fp;
 
 	/* move the new file out of the way. */
 	fname = xmalloc (strlen (file) + sizeof (CVSADM)
 			 + sizeof (CVSPREFIX) + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, CVSPREFIX, file);
 	rename_file (file, fname);
-	copy_file (DEVNULL, file);
+
+	/* Create empty FILE.  Can't use copy_file with a DEVNULL
+	   argument -- copy_file now ignores device files. */
+	fp = fopen (file, "w");
+	if (fp == NULL)
+	    error (1, errno, "cannot open %s for writing", file);
+	/* Do we really care about the error status on fclose?  We're just
+	   creating an empty file, after all... */
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", file);
 
 	tmp = xmalloc (strlen (file) + strlen (tag) + 80);
 	/* commit a dead revision. */
@@ -2183,7 +2193,8 @@ lock_RCS (user, rcs, rev, repository)
 
 /* Called when "add"ing files to the RCS respository.  It doesn't seem to
    be possible to get RCS to use the right mode, so we change it after
-   the fact.  */
+   the fact.  TODO: now that RCS has been librarified, we have the power
+   to change this. */
 
 static void
 fix_rcs_modes (rcs, user)
@@ -2193,6 +2204,10 @@ fix_rcs_modes (rcs, user)
     struct stat sb;
     mode_t rcs_mode;
 
+    /* Do ye nothing to the modes on a symbolic link. */
+    if (preserve_perms && islink (user))
+	return;
+
     if (CVS_STAT (user, &sb) < 0)
     {
 	/* FIXME: Should be ->fullname.  */
@@ -2201,6 +2216,9 @@ fix_rcs_modes (rcs, user)
     }
 
     /* Now we compute the new mode.
+
+       TODO: decide whether this whole thing can/should be skipped
+       when `preserve_perms' is set.  Almost certainly so. -twp
 
        The algorithm that we use is:
 

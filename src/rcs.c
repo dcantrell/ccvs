@@ -12,6 +12,8 @@
 #include "cvs.h"
 #include "edit.h"
 
+int preserve_perms = 0;
+
 /* The RCS -k options, and a set of enums that must match the array.
    These come first so that we can use enum kflag in function
    prototypes.  */
@@ -2887,6 +2889,11 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
    options.  It may be NULL to use the default expansion mode of the
    file, typically "-kkv".  */
 
+/* This function mimics the behavior of `rcs co' almost exactly.  The
+   chief difference is in its support for preserving file ownership,
+   permissions, and special files across checkin and checkout -- see
+   comments in RCS_checkin for some issues about this. -twp */
+
 int
 RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
      RCSNode *rcs;
@@ -2900,7 +2907,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 {
     int free_rev = 0;
     enum kflag expand;
-    FILE *fp;
+    FILE *fp, *ofp;
     struct stat sb;
     char *key;
     char *value;
@@ -2908,7 +2915,15 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     int free_value = 0;
     char *log = NULL;
     size_t loglen;
-    FILE *ofp;
+    Node *vp = NULL;
+    uid_t rcs_owner;
+    gid_t rcs_group;
+    mode_t rcs_mode;
+    int change_rcs_owner = 0;
+    int change_rcs_group = 0;
+    int change_rcs_mode = 0;
+    int special_file = 0;
+    dev_t devnum = 0;
 
     if (trace)
     {
@@ -3052,17 +3067,101 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
     }
 
-    if (expand != KFLAG_O && expand != KFLAG_B)
+    /* Handle special files and permissions, if that is desired. */
+    if (preserve_perms)
     {
-	Node *p;
-	char *newvalue;
+	RCSVers *vers;
+	Node *info;
 
-	p = findnode (rcs->versions, rev == NULL ? rcs->head : rev);
-	if (p == NULL)
+	vp = findnode (rcs->versions, rev == NULL ? rcs->head : rev);
+	if (vp == NULL)
 	    error (1, 0, "internal error: no revision information for %s",
 		   rev == NULL ? rcs->head : rev);
+	vers = (RCSVers *) vp->data;
 
-	expand_keywords (rcs, (RCSVers *) p->data, nametag, log, loglen,
+	/* First we look for symlinks, which are simplest to handle. */
+	info = findnode (vers->other_delta, "symlink");
+	if (info != NULL)
+	{
+	    char *dest;
+
+	    if (pfn != NULL || (workfile == NULL && sout == RUN_TTY))
+		error (1, 0, "symbolic link %s:%s cannot be piped",
+		       rcs->path, vers->version);
+	    if (workfile == NULL)
+		dest = sout;
+	    else
+		dest = workfile;
+
+	    /* Remove `dest', just in case.  It's okay to get ENOENT here,
+	       since we just want the file not to be there.  (TODO: decide
+	       whether it should be considered an error for `dest' to exist
+	       at this point.  If so, the unlink call should be removed and
+	       `symlink' should signal the error. -twp) */
+	    if (unlink (dest) < 0 && errno != ENOENT)
+		error (1, errno, "cannot remove %s", dest);
+	    if (symlink (info->data, dest) < 0)
+		error (1, errno, "cannot create symbolic link from %s to %s",
+		       dest, info->data);
+	    if (free_value)
+		free (value);
+	    if (free_rev)
+		free (rev);
+	    return 0;
+	}
+
+	info = findnode (vers->other_delta, "owner");
+	if (info != NULL)
+	{
+	    change_rcs_owner = 1;
+	    rcs_owner = (uid_t) strtoul (info->data, NULL, 10);
+	}
+	info = findnode (vers->other_delta, "group");
+	if (info != NULL)
+	{
+	    change_rcs_group = 1;
+	    rcs_group = (gid_t) strtoul (info->data, NULL, 10);
+	}
+	info = findnode (vers->other_delta, "permissions");
+	if (info != NULL)
+	{
+	    change_rcs_mode = 1;
+	    rcs_mode = (mode_t) strtoul (info->data, NULL, 8);
+	}
+	info = findnode (vers->other_delta, "special");
+	if (info != NULL)
+	{
+	    /* If the size of `devtype' changes, fix the sscanf call also */
+	    char devtype[16];
+
+	    if (sscanf (info->data, "%16s %lu",
+			devtype, (unsigned long *) &devnum) < 2)
+		error (1, 0, "%s:%s has bad `special' newphrase %s",
+		       workfile, vers->version, info->data);
+	    if (strcmp (devtype, "character") == 0)
+		special_file = S_IFCHR;
+	    else if (strcmp (devtype, "block") == 0)
+		special_file = S_IFBLK;
+	    else
+		error (0, 0, "%s is a special file of unsupported type `%s'",
+		       workfile, info->data);
+	}
+    }
+
+    if (expand != KFLAG_O && expand != KFLAG_B)
+    {
+	char *newvalue;
+
+	/* Don't fetch the delta node again if we already have it. */
+	if (vp == NULL)
+	{
+	    vp = findnode (rcs->versions, rev == NULL ? rcs->head : rev);
+	    if (vp == NULL)
+		error (1, 0, "internal error: no revision information for %s",
+		       rev == NULL ? rcs->head : rev);
+	}
+
+	expand_keywords (rcs, (RCSVers *) vp->data, nametag, log, loglen,
 			 expand, value, len, &newvalue, &len);
 
 	if (newvalue != value)
@@ -3082,19 +3181,51 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 
     if (pfn != NULL)
     {
+	if (special_file)
+	    error (1, 0, "special file %s cannot be piped to anything",
+		   rcs->path);
 	/* The PFN interface is very simple to implement right now, as
            we always have the entire file in memory.  */
 	if (len != 0)
 	    pfn (callerdat, value, len);
     }
+    else if (special_file)
+    {
+	char *dest;
+
+	/* Can send either to WORKFILE or to SOUT, as long as SOUT is
+	   not RUN_TTY. */
+	dest = workfile;
+	if (dest == NULL)
+	{
+	    if (sout == RUN_TTY)
+		error (1, 0, "special file %s cannot be written to stdout",
+		       rcs->path);
+	    dest = sout;
+	}
+
+	/* Unlink `dest', just in case.  It's okay if this provokes a
+	   ENOENT error. */
+	if (unlink (dest) < 0 && errno != ENOENT)
+	    error (1, errno, "cannot remove %s", dest);
+	if (mknod (dest, special_file, devnum) < 0)
+	    error (1, errno, "could not create special file %s",
+		   dest);
+    }
     else
     {
+	/* Not a special file: write to WORKFILE or SOUT. */
 	if (workfile == NULL)
 	{
 	    if (sout == RUN_TTY)
 		ofp = stdout;
 	    else
 	    {
+		/* Symbolic links should be removed before replacement, so that
+		   `fopen' doesn't follow the link and open the wrong file. */
+		if (islink (sout))
+		    if (unlink_file (sout) < 0)
+			error (1, errno, "cannot remove %s", sout);
 		ofp = CVS_FOPEN (sout, expand == KFLAG_B ? "wb" : "w");
 		if (ofp == NULL)
 		    error (1, errno, "cannot open %s", sout);
@@ -3102,6 +3233,11 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
 	else
 	{
+	    /* Output is supposed to go to WORKFILE, so we should open that
+	       file.  Symbolic links should be removed first (see above). */
+	    if (islink (workfile))
+		if (unlink_file (workfile) < 0)
+		    error (1, errno, "cannot remove %s", workfile);
 	    ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
 	    if (ofp == NULL)
 		error (1, errno, "cannot open %s", workfile);
@@ -3146,21 +3282,36 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		    nstep = nleft;
 	    }
 	}
+    }
 
-	if (workfile != NULL)
+    if (workfile != NULL)
+    {
+	int ret;
+
+	if (!special_file && fclose (ofp) < 0)
+	    error (1, errno, "cannot close %s", workfile);
+
+	if (change_rcs_owner || change_rcs_group)
 	{
-	    if (fclose (ofp) < 0)
-		error (1, errno, "cannot close %s", workfile);
-	    if (chmod (workfile,
-		       sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
-		error (0, errno, "cannot change mode of file %s",
+	    if (chown (workfile, rcs_owner, rcs_group) < 0)
+		error (0, errno, "could not change file ownership on %s",
 		       workfile);
 	}
-	else if (sout != RUN_TTY)
+
+	ret = chmod (workfile,
+		     change_rcs_mode
+		     ? rcs_mode
+		     : sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH));
+	if (ret < 0)
 	{
-	    if (fclose (ofp) < 0)
-		error (1, errno, "cannot close %s", sout);
+	    error (0, errno, "cannot change mode of file %s",
+		   workfile);
 	}
+    }
+    else if (sout != RUN_TTY)
+    {
+	if (!special_file && fclose (ofp) < 0)
+	    error (1, errno, "cannot close %s", sout);
     }
 
     if (free_value)
@@ -3462,6 +3613,12 @@ RCS_addbranch (rcs, branch)
    use the working file's modification time for the checkin time.
    WORKFILE is the working file to check in from, or NULL to use the usual
    RCS rules for deriving it from the RCSFILE.
+
+   This function should almost exactly mimic the behavior of `rcs ci'.  The
+   principal point of difference is the support here for preserving file
+   ownership and permissions in the delta nodes.  This is not a clean
+   solution -- precisely because it diverges from RCS's behavior -- but
+   it doesn't seem feasible to do this anywhere else in the code. [-twp]
    
    Return value is -1 for error (and errno is set to indicate the
    error), positive for error (and an error message has been printed),
@@ -3546,6 +3703,68 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     }
     else
 	delta->state = xstrdup ("Exp");
+
+    /* If permissions should be preserved on this project, then
+       save the permission info. */
+    if (preserve_perms)
+    {
+	Node *np;
+	struct stat sb;
+	char buf[64];	/* static buffer should be safe: see usage. -twp */
+
+	delta->other_delta = getlist();
+
+	if (CVS_LSTAT (workfile, &sb) < 0)
+	    error (1, 1, "cannot lstat %s", workfile);
+
+	if (S_ISLNK (sb.st_mode))
+	{
+	    np = getnode();
+	    np->key = xstrdup ("symlink");
+	    np->data = xreadlink (workfile);
+	    addnode (delta->other_delta, np);
+	}
+	else
+	{
+	    (void) sprintf (buf, "%u", sb.st_uid);
+	    np = getnode();
+	    np->key = xstrdup ("owner");
+	    np->data = xstrdup (buf);
+	    addnode (delta->other_delta, np);
+
+	    (void) sprintf (buf, "%u", sb.st_gid);
+	    np = getnode();
+	    np->key = xstrdup ("group");
+	    np->data = xstrdup (buf);
+	    addnode (delta->other_delta, np);
+	    
+	    (void) sprintf (buf, "%o", sb.st_mode & 07777);
+	    np = getnode();
+	    np->key = xstrdup ("permissions");
+	    np->data = xstrdup (buf);
+	    addnode (delta->other_delta, np);
+
+	    /* Save device number. */
+	    switch (sb.st_mode & S_IFMT)
+	    {
+		case S_IFREG: break;
+		case S_IFCHR:
+		case S_IFBLK:
+		    np = getnode();
+		    np->key = xstrdup ("special");
+		    sprintf (buf, "%s %lu",
+			     ((sb.st_mode & S_IFMT) == S_IFCHR
+			      ? "character" : "block"),
+			     (unsigned long) sb.st_rdev);
+		    np->data = xstrdup (buf);
+		    addnode (delta->other_delta, np);
+		    break;
+
+		default:
+		    error (0, 0, "special file %s has unknown type", workfile);
+	    }
+	}
+    }
 
     /* Create a new deltatext node. */
     dtext = (Deltatext *) xmalloc (sizeof (Deltatext));
@@ -3989,6 +4208,7 @@ RCS_cmp_file (rcs, rev, options, filename)
     FILE *fp;
     struct cmp_file_data data;
     int retcode;
+    char *tmp;
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");
@@ -4003,30 +4223,53 @@ RCS_cmp_file (rcs, rev, options, filename)
 	    binary = 0;
     }
 
-    fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
+    /* If CVS is to deal properly with special files (when
+       PreservePermissions is on), the best way is to check out the
+       revision to a temporary file and call `xcmp' on the two disk
+       files.  xcmp needs to handle non-regular files properly anyway,
+       so calling it simplifies RCS_cmp_file.  We *could* just yank
+       the delta node out of the version tree and look for device
+       numbers, but writing to disk and calling xcmp is a better
+       abstraction (therefore probably more robust). -twp */
 
-    data.filename = filename;
-    data.fp = fp;
-    data.different = 0;
-
-    retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
-			    options, RUN_TTY, cmp_file_buffer,
-			    (void *) &data);
-
-    /* If we have not yet found a difference, make sure that we are at
-       the end of the file.  */
-    if (! data.different)
+    if (preserve_perms)
     {
-	if (getc (fp) != EOF)
-	    data.different = 1;
+	tmp = cvs_temp_name();
+	retcode = RCS_checkout(rcs, NULL, rev, NULL, options, tmp, NULL, NULL);
+	if (retcode != 0)
+	    return 1;
+
+	retcode = xcmp (tmp, filename);
+	CVS_UNLINK (tmp);
+	return retcode;
     }
-
-    fclose (fp);
-
-    if (retcode != 0)
-	return 1;
-
-    return data.different;
+    else
+    {
+        fp = CVS_FOPEN (filename, binary ? FOPEN_BINARY_READ : "r");
+	
+        data.filename = filename;
+        data.fp = fp;
+        data.different = 0;
+	
+        retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
+				options, RUN_TTY, cmp_file_buffer,
+				(void *) &data);
+	
+        /* If we have not yet found a difference, make sure that we are at
+           the end of the file.  */
+        if (! data.different)
+        {
+	    if (getc (fp) != EOF)
+		data.different = 1;
+        }
+	
+        fclose (fp);
+	
+	if (retcode != 0)
+	    return 1;
+	
+        return data.different;
+    }
 }
 
 /* This is a subroutine of RCS_cmp_file.  It is passed to

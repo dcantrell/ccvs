@@ -461,10 +461,12 @@ int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
 int isdir PROTO((const char *file));
 int isfile PROTO((const char *file));
 int islink PROTO((const char *file));
+int isdevice PROTO ((const char *));
 int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
 int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
+char *xreadlink PROTO((const char *link));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
 char *cvs_temp_name PROTO ((void));
@@ -727,6 +729,9 @@ void freevers_ts PROTO ((Vers_TS ** versp));
 int Checkin PROTO ((int type, struct file_info *finfo, char *rcs, char *rev,
 		    char *tag, char *options, char *message));
 int No_Difference PROTO ((struct file_info *finfo, Vers_TS *vers));
+/* TODO: can the finfo argument to special_file_mismatch be changed? -twp */
+int special_file_mismatch PROTO ((struct file_info *finfo,
+				  char *rev1, char *rev2));
 
 /* CVSADM_BASEREV stuff, from entries.c.  */
 extern char *base_get PROTO ((struct file_info *));

@@ -977,6 +977,7 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     char *userfile;
     char *local_opt = key_opt;
     char *free_opt = NULL;
+    mode_t file_type;
 
     if (noexec)
 	return (0);
@@ -1004,20 +1005,39 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
        which does not depend on what the client or server OS is, as
        documented in cvsclient.texi), but as long as the server just
        runs on unix it is a moot point.  */
-    fpuser = CVS_FOPEN (userfile,
-			((local_opt != NULL && strcmp (local_opt, "b") == 0)
-			 ? "rb"
-			 : "r")
-			);
-    if (fpuser == NULL)
+
+    /* If PreservePermissions is set, then make sure that the file
+       is a plain file before trying to open it.  Longstanding (although
+       often unpopular) CVS behavior has been to follow symlinks, so we
+       maintain that behavior if PreservePermissions is not on.
+
+       NOTE: this error message used to be `cannot fstat', but is now
+       `cannot lstat'.  I don't see a way around this, since we must
+       stat the file before opening it. -twp */
+
+    if (CVS_LSTAT (userfile, &sb) < 0)
+	error (1, errno, "cannot lstat %s", user);
+    file_type = sb.st_mode & S_IFMT;
+
+    fpuser = NULL;
+    if (!preserve_perms || file_type == S_IFREG)
     {
-	/* not fatal, continue import */
-	if (add_logfp != NULL)
-	    fperror (add_logfp, 0, errno, "ERROR: cannot read file %s",
-		     userfile);
-	error (0, errno, "ERROR: cannot read file %s", userfile);
-	goto read_error;
+	fpuser = CVS_FOPEN (userfile,
+			    ((local_opt != NULL && strcmp (local_opt, "b") == 0)
+			     ? "rb"
+			     : "r")
+	    );
+	if (fpuser == NULL)
+	{
+	    /* not fatal, continue import */
+	    if (add_logfp != NULL)
+		fperror (add_logfp, 0, errno,
+			 "ERROR: cannot read file %s", userfile);
+	    error (0, errno, "ERROR: cannot read file %s", userfile);
+	    goto read_error;
+	}
     }
+
     fprcs = CVS_FOPEN (rcs, "w+b");
     if (fprcs == NULL)
     {
@@ -1084,10 +1104,6 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     if (fprintf (fprcs, "\012") < 0)
       goto write_error;
 
-    /* Get information on modtime and mode.  */
-    if (fstat (fileno (fpuser), &sb) < 0)
-	error (1, errno, "cannot fstat %s", user);
-
     /* Write the revision(s), with the date and author and so on
        (that is "delta" rather than "deltatext" from rcsfile(5)).  */
     if (add_vhead != NULL)
@@ -1120,13 +1136,98 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 
 	if (fprintf (fprcs, "next     ;\012") < 0)
 	    goto write_error;
+
+	/* Store initial permissions if necessary. */
+	if (preserve_perms)
+	{
+	    if (file_type == S_IFLNK)
+	    {
+		char *link = xreadlink (userfile);
+		if (fprintf (fprcs, "symlink\t@") < 0 ||
+		    expand_at_signs (link, strlen (link), fprcs) < 0 ||
+		    fprintf (fprcs, "@;\012") < 0)
+		    goto write_error;
+		free (link);
+	    }
+	    else
+	    {
+		if (fprintf (fprcs, "owner\t%u;\012", sb.st_uid) < 0)
+		    goto write_error;
+		if (fprintf (fprcs, "group\t%u;\012", sb.st_gid) < 0)
+		    goto write_error;
+		if (fprintf (fprcs, "permissions\t%o;\012",
+			     sb.st_mode & 07777) < 0)
+		    goto write_error;
+		switch (file_type)
+		{
+		    case S_IFREG: break;
+		    case S_IFCHR:
+		    case S_IFBLK:
+			if (fprintf (fprcs, "special\t%s %lu;\012",
+				     (file_type == S_IFCHR
+				      ? "character"
+				      : "block"),
+				     (unsigned long) sb.st_rdev) < 0)
+			    goto write_error;
+			break;
+		    default:
+			error (0, 0,
+			       "can't import %s: unknown kind of special file",
+			       userfile);
+		}
+	    }
+	}
+
 	if (add_vbranch != NULL)
 	{
 	    if (fprintf (fprcs, "\012%s.1\012", add_vbranch) < 0 ||
 		fprintf (fprcs, "date     %s;  author %s;  state Exp;\012",
 			 altdate1, author) < 0 ||
 		fprintf (fprcs, "branches ;\012") < 0 ||
-		fprintf (fprcs, "next     ;\012\012") < 0)
+		fprintf (fprcs, "next     ;\012") < 0)
+		goto write_error;
+
+	    /* Store initial permissions if necessary. */
+	    if (preserve_perms)
+	    {
+		if (file_type == S_IFLNK)
+		{
+		    char *link = xreadlink (userfile);
+		    if (fprintf (fprcs, "symlink\t@") < 0 ||
+			expand_at_signs (link, strlen (link), fprcs) < 0 ||
+			fprintf (fprcs, "@;\012") < 0)
+			goto write_error;
+		    free (link);
+		}
+		else
+		{
+		    if (fprintf (fprcs, "owner\t%u;\012", sb.st_uid) < 0 ||
+			fprintf (fprcs, "group\t%u;\012", sb.st_gid) < 0 ||
+			fprintf (fprcs, "permissions\t%o;\012",
+				 sb.st_mode & 07777) < 0)
+			goto write_error;
+	    
+		    switch (file_type)
+		    {
+			case S_IFREG: break;
+			case S_IFCHR:
+			case S_IFBLK:
+			    if (fprintf (fprcs, "special\t%s %lu;\012",
+					 (file_type == S_IFCHR
+					  ? "character"
+					  : "block"),
+					 (unsigned long) sb.st_rdev) < 0)
+				goto write_error;
+			    break;
+			default:
+			    error (0, 0,
+			      "cannot import %s: special file of unknown type",
+			       userfile);
+		    }
+		}
+	    }
+
+	    if (fprintf (fprcs, "\012") < 0)
 		goto write_error;
 	}
     }
@@ -1172,7 +1273,9 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	    goto write_error;
 	}
 
-	/* Now copy over the contents of the file, expanding at signs.  */
+	/* Now copy over the contents of the file, expanding at signs.
+	   If preserve_perms is set, do this only for regular files. */
+	if (!preserve_perms || file_type == S_IFREG)
 	{
 	    char buf[8192];
 	    unsigned int len;
@@ -1210,7 +1313,9 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
 	ierrno = errno;
 	goto write_error_noclose;
     }
-    (void) fclose (fpuser);
+    /* Close fpuser only if we opened it to begin with. */
+    if (fpuser != NULL)
+	(void) fclose (fpuser);
 
     /*
      * Fix the modes on the RCS files.  The user modes of the original
