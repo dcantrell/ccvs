@@ -3740,10 +3740,7 @@ done
 ${SPROG} commit: Rebuilding administrative file database"
 	  CVSROOT=${CVSROOT_SAVED}
 
-	  if $keep; then
-		echo Keeping ${TESTDIR} and exiting due to --keep
-		exit 0
-	  fi
+	  dokeep
 
 	  cd ..
 	  rm -r 1

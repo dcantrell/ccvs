@@ -1,5 +1,7 @@
 2003-10-25  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (parseroot): Use dokeep function.
+
 	* sanity.sh (parseroot): Perform this test in a subdirectory.
 	It should avoid problems on case-insensitive systems where 
 	CVSROOT and cvsroot are the same directory (eg, MacOS X).
