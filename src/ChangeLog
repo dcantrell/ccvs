@@ -1,3 +1,8 @@
+1998-12-22  Jim Kingdon
+
+	* sanity.sh (rcs3): The assertion failure message varies slightly
+	depending on whether CVS was built with srcdir != ".".  Fix regexp.
+
 1998-12-21  Jim Kingdon
 
 	* rcs.c (RCS_getdate): Reindent Jim Meyering's change; remove

@@ -12965,7 +12965,7 @@ EOF
 	    # Ouch, didn't expect this one.  FIXCVS.  Or maybe just remove
 	    # the feature, if this is a -s problem?
 	    dotest_fail rcs3-5 "${testcvs} log -s nostate first-dir/file1" \
-"${PROG}: .*/hash.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
+"${PROG}: .*hash\.c:[0-9]*: findnode: Assertion .key != ((void \*)0)' failed.
 
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: first-dir/file1
