@@ -1,3 +1,9 @@
+2000-09-27  Larry Jones  <larry.jones@sdrc.com> 
+
+	* checkout.c (checkout_proc): Match up user directories with
+	repository directories instead of using Emptydir.
+	* sanity.sh (cvsadm, emptydir): Update to match.
+
 2000-09-19  Larry Jones  <larry.jones@sdrc.com> 
 
 	* version.c: Push version number to 1.11.0.1.
