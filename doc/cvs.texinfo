@@ -12295,6 +12295,22 @@ you should be able to just ignore the message.
 However, if you have discovered information concerning its
 cause, please let us know as described in @ref{BUGS}.
 
+@item Too many arguments!
+This message is typically printed by the @file{log.pl}
+script which is in the @file{contrib} directory in the
+@sc{cvs} source distribution.  In some versions of
+@sc{cvs}, @file{log.pl} has been part of the default
+@sc{cvs} installation.  The @file{log.pl} script gets
+called from the @file{loginfo} administrative file.
+Check that the arguments passed in @file{loginfo} match
+what your version of @file{log.pl} expects.  In
+particular, the @file{log.pl} from @sc{cvs} 1.3 and
+older expects the logfile as an argument whereas the
+@file{log.pl} from @sc{cvs} 1.5 and newer expects the
+logfile to be specified with a @samp{-f} option.  Of
+course, if you don't need @file{log.pl} you can just
+comment it out of @file{loginfo}.
+
 @item cvs commit: Up-to-date check failed for `@var{file}'
 This means that someone else has committed a change to
 that file since the last time that you did a @code{cvs
