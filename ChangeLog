@@ -1,5 +1,11 @@
 2004-04-02  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Instruct users to use the Workspace file and not the project
+	file for MSVC++.
+	(Patch from Conrad T. Pino <conrad@pino.com>.)
+
+2004-04-02  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Make some notes as to client/serverness of changes.
 
 2004-04-02  Derek Price  <derek@ximbiot.com>

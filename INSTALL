@@ -458,7 +458,7 @@ You may find interesting information in windows-NT/README.
 
 * Using Microsoft Visual C++ 6.x.
 
-1) Using Microsoft Visual C++ 6.x, open the project `cvsnt.dsp',
+1) Using Microsoft Visual C++ 6.x, open the project `cvsnt.dsw',
    in the top directory of the CVS distribution.  If you have an older
    version of Visual C++, take a look at windows-NT/README.
 2) Choose "Build cvs.exe" from the "Project" menu.
