@@ -437,6 +437,7 @@ void Subdir_Deregister PROTO((List *, const char *, const char *));
 
 char *Make_Date PROTO((char *rawdate));
 char *date_from_time_t PROTO ((time_t));
+void date_to_internet PROTO ((char *, char *));
 
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Short_Repository PROTO((char *repository));

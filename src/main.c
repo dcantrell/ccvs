@@ -1025,6 +1025,34 @@ date_from_time_t (unixtime)
     return (ret);
 }
 
+/* Convert a date to RFC822/1123 format.  This is used in contexts like
+   dates to send in the protocol; it should not vary based on locale or
+   other such conventions for users.  We should have another routine which
+   does that kind of thing.
+
+   The SOURCE date is in our internal RCS format.  DEST should point to
+   storage managed by the caller, at least MAXDATELEN characters.  */
+void
+date_to_internet (dest, source)
+    char *dest;
+    char *source;
+{
+    int year, month, day, hour, minute, second;
+
+    /* Just to reiterate, these strings are from RFC822 and do not vary
+       according to locale.  */
+    static const char *const month_names[] =
+      {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+    sscanf (source, SDATEFORM, &year, &month, &day, &hour, &minute, &second);
+    /* FIXME? shouldn't we be sending a 4 digit year even if before
+       2000?  */
+    sprintf (dest, "%d %s %d %d:%d:%d -0000", day,
+	     month < 1 || month > 12 ? "???" : month_names[month - 1],
+	     year, hour, minute, second);
+}
+
 void
 usage (cpp)
     register const char *const *cpp;

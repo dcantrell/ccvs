@@ -1115,6 +1115,11 @@ receive_file (size, file, gzipped)
 /* Kopt for the next file sent in Modified or Is-modified.  */
 static char *kopt;
 
+/* Timestamp (Checkin-time) for next file sent in Modified or
+   Is-modified.  */
+static int checkin_time_valid;
+static time_t checkin_time;
+
 static void serve_modified PROTO ((char *));
 
 static void
@@ -1216,6 +1221,22 @@ serve_modified (arg)
     {
 	receive_file (size, arg, gzipped);
 	if (error_pending ()) return;
+    }
+
+    if (checkin_time_valid)
+    {
+	struct utimbuf t;
+
+	memset (&t, 0, sizeof (t));
+	t.modtime = t.actime = checkin_time;
+	if (utime (arg, &t) < 0)
+	{
+	    pending_error = errno;
+	    if (alloc_pending (80 + strlen (arg)))
+		sprintf (pending_error_text, "E cannot utime %s", arg);
+	    return;
+	}
+	checkin_time_valid = 0;
     }
 
     {
@@ -1441,6 +1462,34 @@ serve_kopt (arg)
 	return;
     }
     strcpy (kopt, arg);
+}
+
+static void serve_checkin_time PROTO ((char *));
+
+static void
+serve_checkin_time (arg)
+     char *arg;
+{
+    if (error_pending ())
+	return;
+
+    if (checkin_time_valid)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E protocol error: duplicate Checkin-time request: %s",
+		     arg);
+	return;
+    }
+
+    checkin_time = get_date (arg, NULL);
+    if (checkin_time == (time_t)-1)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text, "E cannot parse date %s", arg);
+	return;
+    }
+    checkin_time_valid = 1;
 }
 
 static void
@@ -3364,33 +3413,21 @@ server_modtime (finfo, vers_ts)
     Vers_TS *vers_ts;
 {
     char date[MAXDATELEN];
-    int year, month, day, hour, minute, second;
-    /* Note that these strings are specified in RFC822 and do not vary
-       according to locale.  */
-    static const char *const month_names[] =
-      {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    char outdate[MAXDATELEN];
 
     assert (vers_ts->vn_rcs != NULL);
 
     if (!supported_response ("Mod-time"))
 	return;
 
-    /* The only hard part about this routine is converting the date
-       formats.  In terms of functionality it all boils down to the
-       call to RCS_getrevtime.  */
     if (RCS_getrevtime (finfo->rcs, vers_ts->vn_rcs, date, 0) == (time_t) -1)
 	/* FIXME? should we be printing some kind of warning?  For one
 	   thing I'm not 100% sure whether this happens in non-error
 	   circumstances.  */
 	return;
-
-    sscanf (date, SDATEFORM, &year, &month, &day, &hour, &minute, &second);
-    sprintf (date, "%d %s %d %d:%d:%d -0000", day,
-	     month < 1 || month > 12 ? "???" : month_names[month - 1],
-	     year, hour, minute, second);
+    date_to_internet (outdate, date);
     buf_output0 (protocol, "Mod-time ");
-    buf_output0 (protocol, date);
+    buf_output0 (protocol, outdate);
     buf_output0 (protocol, "\n");
 }
 
@@ -4145,6 +4182,7 @@ struct request requests[] =
   REQ_LINE("Update-prog", serve_update_prog, rq_optional),
   REQ_LINE("Entry", serve_entry, rq_essential),
   REQ_LINE("Kopt", serve_kopt, rq_optional),
+  REQ_LINE("Checkin-time", serve_checkin_time, rq_optional),
   REQ_LINE("Modified", serve_modified, rq_essential),
   REQ_LINE("Is-modified", serve_is_modified, rq_optional),
 

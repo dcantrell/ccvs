@@ -5226,7 +5226,7 @@ client_import_setup (repository)
  */
 int
 client_process_import_file (message, vfile, vtag, targc, targv, repository,
-                            all_files_binary)
+                            all_files_binary, modtime)
     char *message;
     char *vfile;
     char *vtag;
@@ -5234,6 +5234,9 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository,
     char *targv[];
     char *repository;
     int all_files_binary;
+
+    /* Nonzero for "import -d".  */
+    int modtime;
 {
     char *update_dir;
     char *fullname;
@@ -5282,6 +5285,28 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository,
 	else
 	    error (0, 0,
 		   "warning: ignoring -k options due to server limitations");
+    }
+    if (modtime)
+    {
+	if (supported_request ("Checkin-time"))
+	{
+	    struct stat sb;
+	    char *rcsdate;
+	    char netdate[MAXDATELEN];
+
+	    if (CVS_STAT (vfile, &sb) < 0)
+		error (1, errno, "cannot stat %s", fullname);
+	    rcsdate = date_from_time_t (sb.st_mtime);
+	    date_to_internet (netdate, rcsdate);
+	    free (rcsdate);
+
+	    send_to_server ("Checkin-time ", 0);
+	    send_to_server (netdate, 0);
+	    send_to_server ("\012", 1);
+	}
+	else
+	    error (0, 0,
+		   "warning: ignoring -d option due to server limitations");
     }
     send_modified (vfile, fullname, &vers);
     if (vers.options != NULL)
