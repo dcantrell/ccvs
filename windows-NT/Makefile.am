@@ -76,9 +76,9 @@ DISTCLEANFILES += stamp-ch
 config.h.in: stamp-chi
 stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig config.h.in.in \
            $(top_srcdir)/config.h.in
-	./mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
+	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
 	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h $(srcdir)/$@
+	@cp $(srcdir)/config.h.in $(srcdir)/$@
 MAINTAINERCLEANFILES += $(srcdir)/stamp-chi $(srcdir)/config.h.in
 
 stdbool.h: stamp-sh

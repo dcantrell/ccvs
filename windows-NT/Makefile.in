@@ -527,9 +527,9 @@ stamp-ch: config.h.in Makefile
 config.h.in: stamp-chi
 stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig config.h.in.in \
            $(top_srcdir)/config.h.in
-	./mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
+	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
 	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h $(srcdir)/$@
+	@cp $(srcdir)/config.h.in $(srcdir)/$@
 
 stdbool.h: stamp-sh
 stamp-sh: $(top_srcdir)/lib/stdbool_.h
