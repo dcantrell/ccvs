@@ -453,17 +453,6 @@ char *Name_Repository (const char *dir, const char *update_dir);
 const char *Short_Repository (const char *repository);
 void Sanitize_Repository_Name (char *repository);
 
-char *Name_Root (char *dir, char *update_dir);
-void free_cvsroot_t (cvsroot_t *root_in);
-cvsroot_t *parse_cvsroot (const char *root)
-	__attribute__ ((__malloc__));
-cvsroot_t *local_cvsroot (const char *dir)
-	__attribute__ ((__malloc__));
-void Create_Root (const char *dir, const char *rootdir);
-void root_allow_add (char *);
-void root_allow_free (void);
-int root_allow_ok (char *);
-
 char *previous_rev (RCSNode *rcs, const char *rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);

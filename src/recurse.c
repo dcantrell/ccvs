@@ -256,21 +256,24 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 	    && CVSroot_cmdline == NULL
 	    && current_parsed_root->isremote)
 	{
-	    char *root = Name_Root (NULL, update_dir);
-	    if (root && strcmp (root, current_parsed_root->original) != 0)
-		/* We're skipping this directory because it is for
-		   a different root.  Therefore, we just want to
-		   do the subdirectories only.  Processing files would
-		   cause a working directory from one repository to be
-		   processed against a different repository, which could
-		   cause all kinds of spurious conflicts and such.
-
-		   Question: what about the case of "cvs update foo"
-		   where we process foo/bar and not foo itself?  That
-		   seems to be handled somewhere (else) but why should
-		   it be a separate case?  Needs investigation...  */
-		just_subdirs = 1;
-	    free (root);
+	    cvsroot_t *root = Name_Root (NULL, update_dir);
+	    if (root)
+	    {
+		if (strcmp (root->original, current_parsed_root->original))
+		    /* We're skipping this directory because it is for
+		     * a different root.  Therefore, we just want to
+		     * do the subdirectories only.  Processing files would
+		     * cause a working directory from one repository to be
+		     * processed against a different repository, which could
+		     * cause all kinds of spurious conflicts and such.
+		     *
+		     * Question: what about the case of "cvs update foo"
+		     * where we process foo/bar and not foo itself?  That
+		     * seems to be handled somewhere (else) but why should
+		     * it be a separate case?  Needs investigation...  */
+		    just_subdirs = 1;
+		free_cvsroot_t (root);
+	    }
 	}
 #endif
 
@@ -607,7 +610,7 @@ do_recursion (struct recursion_frame *frame)
     char *srepository = NULL;
     List *entries = NULL;
     int locktype;
-    int process_this_directory = 1;
+    bool process_this_directory = true;
 
 #ifdef HAVE_PRINT_PTR
     TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame);
@@ -692,26 +695,30 @@ do_recursion (struct recursion_frame *frame)
 #endif
 	)
     {
-	char *this_root = Name_Root (NULL, update_dir);
+	cvsroot_t *this_root = Name_Root (NULL, update_dir);
 	if (this_root != NULL)
 	{
-	    if (findnode (root_directories, this_root) == NULL)
+	    if (findnode (root_directories, this_root->original))
+	    {
+		process_this_directory = !strcmp (current_parsed_root->original,
+						  this_root->original);
+		free_cvsroot_t (this_root);
+	    }
+	    else
 	    {
 		/* Add it to our list. */
 
 		Node *n = getnode ();
 		n->type = NT_UNKNOWN;
-		n->key = xstrdup (this_root);
+		n->key = xstrdup (this_root->original);
+		n->data = this_root;
 
 		if (addnode (root_directories, n))
-		    error (1, 0, "cannot add new CVSROOT %s", this_root);
-	
-	    }
-	
-	    process_this_directory =
-		    (strcmp (current_parsed_root->original, this_root) == 0);
+		    error (1, 0, "cannot add new CVSROOT %s",
+			   this_root->original);
 
-	    free (this_root);
+		process_this_directory = 0;
+	    }
 	}
     }
 
@@ -982,7 +989,7 @@ do_dir_proc (Node *p, void *closure)
     int err = 0;
     struct saved_cwd cwd;
     char *saved_update_dir;
-    int process_this_directory = 1;
+    bool process_this_directory = true;
 
     if (fncmp (dir, CVSADM) == 0)
     {
@@ -1138,25 +1145,30 @@ but CVS uses %s for its own purposes; skipping %s directory",
 #endif
 	)
     {
-	char *this_root = Name_Root (dir, update_dir);
+	cvsroot_t *this_root = Name_Root (dir, update_dir);
 	if (this_root != NULL)
 	{
-	    if (findnode (root_directories, this_root) == NULL)
+	    if (findnode (root_directories, this_root->original))
+	    {
+		process_this_directory = !strcmp (current_parsed_root->original,
+						  this_root->original);
+		free_cvsroot_t (this_root);
+	    }
+	    else
 	    {
 		/* Add it to our list. */
 
 		Node *n = getnode ();
 		n->type = NT_UNKNOWN;
-		n->key = xstrdup (this_root);
+		n->key = xstrdup (this_root->original);
+		n->data = this_root;
 
 		if (addnode (root_directories, n))
-		    error (1, 0, "cannot add new CVSROOT %s", this_root);
+		    error (1, 0, "cannot add new CVSROOT %s",
+			   this_root->original);
 
+		process_this_directory = 0;
 	    }
-
-	    process_this_directory = (strcmp (current_parsed_root->original, this_root) == 0);
-
-	    free (this_root);
 	}
     }
 

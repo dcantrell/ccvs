@@ -88,15 +88,6 @@ char *Editor = EDITOR_DFLT;
    values in CVS/Root files, we maintain a list of them.  */
 List *root_directories = NULL;
 
-/* We step through the above values.  This variable is set to reflect
- * the currently active value.
- *
- * Now static.  FIXME - this variable should be removable (well, localizable)
- * with a little more work.
- */
-static char *current_root = NULL;
-
-
 static const struct cmd
 {
     char *fullname;		/* Full name of the function (e.g. "commit") */
@@ -301,9 +292,9 @@ static const char *const opt_usage[] =
 static int
 set_root_directory (Node *p, void *ignored)
 {
-    if (current_root == NULL && p->data == NULL)
+    if (current_parsed_root == NULL && p->data != NULL)
     {
-	current_root = p->key;
+	current_parsed_root = p->data;
 	return 1;
     }
     return 0;
@@ -441,6 +432,7 @@ int
 main (int argc, char **argv)
 {
     char *CVSroot = CVSROOT_DFLT;
+    cvsroot_t *CVSroot_parsed = NULL;
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
@@ -868,12 +860,9 @@ cause intermittent sandbox corruption.");
 	if (!server_active)
 #endif
 	{
-	    char *CVSADM_Root;
-	    
 	    /* See if we are able to find a 'better' value for CVSroot
 	       in the CVSADM_ROOT directory. */
-
-	    CVSADM_Root = NULL;
+	    cvsroot_t *CVSADM_Root = NULL;
 
 	    /* "cvs import" shouldn't check CVS/Root; in general it
 	       ignores CVS directories and CVS/Root is likely to
@@ -889,28 +878,25 @@ cause intermittent sandbox corruption.");
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
 	    }
 
-	    if (CVSADM_Root != NULL)
-	    {
-		if (CVSroot == NULL || !cvs_update_env)
-		{
-		    CVSroot = CVSADM_Root;
-		    cvs_update_env = 1;	/* need to update environment */
-		}
-	    }
 
 	    /* Now we've reconciled CVSROOT from the command line, the
 	       CVS/Root file, and the environment variable.  Do the
 	       last sanity checks on the variable. */
 
-	    if (! CVSroot)
+	    if (!CVSroot && !CVSADM_Root)
 	    {
 		error (0, 0,
 		       "No CVSROOT specified!  Please use the `-d' option");
 		error (1, 0,
 		       "or set the %s environment variable.", CVSROOT_ENV);
 	    }
-	    
-	    if (! *CVSroot)
+
+	    if (CVSADM_Root && (!CVSroot || !cvs_update_env))
+	    {
+		CVSroot_parsed = CVSADM_Root;
+		cvs_update_env = 1;	/* need to update environment */
+	    }
+	    else if (!*CVSroot)
 	    {
 		error (0, 0,
 		       "CVSROOT is set but empty!  Make sure that the");
@@ -921,6 +907,12 @@ cause intermittent sandbox corruption.");
 		       CVSROOT_ENV);
 		error (1, 0,
 		       "CVS/Root file (if any).");
+	    }
+	    else
+	    {
+		if (!(CVSroot_parsed = parse_cvsroot (CVSroot)))
+		     error (1, 0, "Bad CVSROOT: `%s'.", CVSroot);
+		if (CVSADM_Root) free_cvsroot_t (CVSADM_Root);
 	    }
 	}
 
@@ -933,19 +925,19 @@ cause intermittent sandbox corruption.");
 	root_directories = getlist ();
 
 	/* Prime it. */
-	if (CVSroot != NULL)
+	if (CVSroot_parsed)
 	{
 	    Node *n;
 	    n = getnode ();
 	    n->type = NT_UNKNOWN;
-	    n->key = xstrdup (CVSroot);
-	    n->data = NULL;
+	    n->key = xstrdup (CVSroot_parsed->original);
+	    n->data = CVSroot_parsed;
 
 	    if (addnode (root_directories, n))
 		error (1, 0, "cannot add initial CVSROOT %s", n->key);
 	}
 
-	assert (current_root == NULL);
+	assert (current_parsed_root == NULL);
 
 	/* If we're running the server, we want to execute this main
 	   loop once and only once (we won't be serving multiple roots
@@ -972,14 +964,10 @@ cause intermittent sandbox corruption.");
 		   variable.  Parse it to see if we're supposed to do
 		   remote accesses or use a special access method. */
 
-		if (current_parsed_root != NULL)
-		    free_cvsroot_t (current_parsed_root);
-		if ((current_parsed_root = parse_cvsroot (current_root)) == NULL)
-		    error (1, 0, "Bad CVSROOT: `%s'.", current_root);
-
-		TRACE ( TRACE_FUNCTION,
-			"main loop with CVSROOT=%s",
-			current_root ? current_root : "(null)");
+		TRACE (TRACE_FUNCTION,
+		       "main loop with CVSROOT=%s",
+		       current_parsed_root ? current_parsed_root->directory
+					   : "(null)");
 
 		/*
 		 * Check to see if the repository exists.
@@ -1088,21 +1076,21 @@ cause intermittent sandbox corruption.");
 	    err = (*(cm->func)) (argc, argv);
 	
 	    /* Mark this root directory as done.  When the server is
-               active, current_root will be NULL -- don't try and
+               active, our list will be empty -- don't try and
                remove it from the list. */
 
-	    if (current_root != NULL)
+#ifdef SERVER_SUPPORT
+	    if (!server_active)
+#endif /* SERVER_SUPPORT */
 	    {
-		Node *n = findnode (root_directories, current_root);
+		Node *n = findnode (root_directories,
+				    current_parsed_root->original);
 		assert (n != NULL);
-		n->data = (void *) 1;
-		current_root = NULL;
+		assert (n->data != NULL);
+		free_cvsroot_t (n->data);
+		n->data = NULL;
+		current_parsed_root = NULL;
 	    }
-	
-#if 0
-	    /* This will not work yet, since it tries to free (void *) 1. */
-	    dellist (&root_directories);
-#endif
 
 #ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -1110,6 +1098,7 @@ cause intermittent sandbox corruption.");
 #endif
 	} /* end of loop for cvsroot values */
 
+	dellist (&root_directories);
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 
     if (free_CVSroot)
