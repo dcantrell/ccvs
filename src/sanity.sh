@@ -738,6 +738,13 @@ ${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
 	  dotest basica-o2 "${testcvs} admin -o 1.2::1.2 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 done"
+	  dotest basica-o2a "${testcvs} admin -o 1.1::NOT_RESERVED ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done"
+	  dotest_fail basica-o2b "${testcvs} admin -o 1.1::NOT_EXIST ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+rcs: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v: Revision NOT_EXIST doesn't exist.
+${PROG} [a-z]*: cannot modify RCS file for .ssfile."
 	  dotest basica-o3 "${testcvs} admin -o 1.2::1.3 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 done"

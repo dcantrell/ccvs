@@ -4374,7 +4374,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     /* Make sure both revisions exist. */
     if (tag1 != NULL)
     {
-	rev1 = RCS_gettag (rcs, tag1, 0, NULL);
+	rev1 = RCS_gettag (rcs, tag1, 1, NULL);
 	if (rev1 == NULL || (nodep = findnode (rcs->versions, rev1)) == NULL)
 	{
 	    rcserror (rcs->path, "Revision %s doesn't exist.", tag1);
@@ -4383,7 +4383,7 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     }
     if (tag2 != NULL)
     {
-	rev2 = RCS_gettag (rcs, tag2, 0, NULL);
+	rev2 = RCS_gettag (rcs, tag2, 1, NULL);
 	if (rev2 == NULL || (nodep = findnode (rcs->versions, rev2)) == NULL)
 	{
 	    rcserror (rcs->path, "Revision %s doesn't exist.", tag2);
