@@ -1,9 +1,3 @@
-14. Pathname stripper, for checkout, as well as for writing the
-    Repository file.
-    [[ I have a simple one, but need to make sure to call it at all the
-       appropriate points ]]
-    (I'm not sure what this means -kingdon, Jun 1995).
-
 22. Catch signals for cleanup when "add"ing files.
 
 24. Insist on a log message.
@@ -400,3 +394,10 @@ similarly inclusive), but is compatibility an issue?
 183.  "cvs status" should report on Entries.Static flag and CVS/Tag (how?
 maybe a "cvs status -d" to give directory status?).  There should also
 be more documentation of how these get set and how/when to re-set them.
+
+184.  Would be nice to implement the FreeBSD MD5-based password hash
+algorithm in pserver.  For more info see "6.1. DES, MD5, and Crypt" in
+the FreeBSD Handbook, and src/lib/libcrypt/crypt.c in the FreeBSD
+sources.  Certainly in the context of non-unix servers this algorithm
+makes more sense than the traditional unix crypt() algorithm, which
+suffers from export control problems.
