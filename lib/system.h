@@ -104,10 +104,6 @@
 # endif
 #endif
 
-#if !defined(HAVE_MKFIFO)
-#define mkfifo(path, mode) (mknod ((path), (mode) | S_IFIFO, 0))
-#endif
-
 #ifdef NEED_DECOY_PERMISSIONS        /* OS/2, really */
 
 #define	S_IRUSR S_IREAD
