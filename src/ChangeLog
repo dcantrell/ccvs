@@ -1,3 +1,9 @@
+2001-06-13  Derek Price  <dprice@collab.net>
+
+        * client.c: Fix incorrect fixed-size buffer usage in
+        connect_to_gserver().
+	(Minor changes to a patch from Alexey Mahotkin  <alexm@hsys.msk.ru>.)
+
 2001-06-11  Derek Price  <dprice@collab.net>
 
 	* main.c (main): Always print $CVSROOT when parse_cvsroot fails.
