@@ -4,7 +4,7 @@
 #include "cvs.h"
 #include "buffer.h"
 
-#ifdef SERVER_SUPPORT
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
 /* Linked list of available buffer_data structures.  */
 static struct buffer_data *free_buffer_data;
@@ -285,7 +285,8 @@ buf_send_output (buf)
 /*
  * Flush any data queued up in the buffer.  If BLOCK is nonzero, then
  * if the buffer is in nonblocking mode, put it into blocking mode for
- * the duration of the flush.
+ * the duration of the flush.  This returns 0 on success, or an error
+ * code.
  */
 
 int
@@ -648,17 +649,21 @@ buf_input_data (buf, countp)
 }
 
 /*
- * Read a line (characters up to a newline) from an input buffer.
- * This returns 0 on success, or -1 on end of file, or -2 if out of
- * memory, or an error code.  If it succeeds, it sets *LINE to an
- * allocated buffer holding the contents of the line.  The trailing
- * newline is not included in the buffer.
+ * Read a line (characters up to a \012) from an input buffer.  (We
+ * use \012 rather than \n for the benefit of non Unix clients for
+ * which \n means something else).  This returns 0 on success, or -1
+ * on end of file, or -2 if out of memory, or an error code.  If it
+ * succeeds, it sets *LINE to an allocated buffer holding the contents
+ * of the line.  The trailing \012 is not included in the buffer.  If
+ * LENP is not NULL, then *LENP is set to the number of bytes read;
+ * strlen may not work, because there may be embedded null bytes.
  */
 
 int
-buf_read_line (buf, line)
+buf_read_line (buf, line, lenp)
      struct buffer *buf;
      char **line;
+     int *lenp;
 {
     if (buf->input == NULL)
         abort ();
@@ -675,7 +680,7 @@ buf_read_line (buf, line)
 	len = 0;
 	for (data = buf->data; data != NULL; data = data->next)
 	{
-	    nl = memchr (data->bufp, '\n', data->size);
+	    nl = memchr (data->bufp, '\012', data->size);
 	    if (nl != NULL)
 	    {
 	        finallen = nl - data->bufp;
@@ -717,6 +722,9 @@ buf_read_line (buf, line)
 	    data->size -= finallen + 1;
 	    data->bufp = nl + 1;
 	    buf->data = data;
+
+	    if (lenp != NULL)
+	        *lenp = len;
 
 	    return 0;
 	}
@@ -766,12 +774,12 @@ buf_read_line (buf, line)
                memchr.  */
 	    if (nbytes == 1)
 	    {
-		if (*mem == '\n')
+		if (*mem == '\012')
 		    break;
 	    }
 	    else
 	    {
-		if (memchr (mem, '\n', nbytes) != NULL)
+		if (memchr (mem, '\012', nbytes) != NULL)
 		    break;
 	    }
 	}
@@ -1203,4 +1211,4 @@ stdio_buffer_flush (closure)
     return 0;
 }
 
-#endif /* SERVER_SUPPORT */
+#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */

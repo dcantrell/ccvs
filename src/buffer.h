@@ -1,6 +1,6 @@
 /* Declarations concerning the buffer data structure.  */
 
-#ifdef SERVER_SUPPORT
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
 /*
  * We must read data from a child process and send it across the
@@ -110,7 +110,7 @@ extern int buf_read_file PROTO((FILE *, long, struct buffer_data **,
 extern int buf_read_file_to_eof PROTO((FILE *, struct buffer_data **,
 				       struct buffer_data **));
 extern int buf_input_data PROTO((struct buffer *, int *));
-extern int buf_read_line PROTO((struct buffer *, char **));
+extern int buf_read_line PROTO((struct buffer *, char **, int *));
 extern int buf_read_data PROTO((struct buffer *, int, char **, int *));
 extern void buf_copy_lines PROTO((struct buffer *, struct buffer *, int));
 extern int buf_copy_counted PROTO((struct buffer *, struct buffer *));
@@ -120,4 +120,4 @@ extern int buf_chain_length PROTO((struct buffer_data *));
 extern int buf_count_mem PROTO((struct buffer *));
 #endif /* SERVER_FLOWCONTROL */
 
-#endif /* SERVER_SUPPORT */
+#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */

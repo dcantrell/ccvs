@@ -1,3 +1,47 @@
+Thu Jul 11 20:10:21 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Change the client to use the buffer data structure.
+	* client.c: Include "buffer.h".
+	(to_server): Change to be struct buffer *.
+	(to_server_fp): New static variable.
+	(from_server): Change to be struct buffer *.
+	(from_server_fp): New static variable.
+	(from_server_logfile, to_server_logfile): Remove.
+	(buf_memory_error): New static function.
+	(struct log_buffer): Define.
+	(log_buffer_initialize, log_buffer_input): New static functions.
+	(log_buffer_output, log_buffer_flush): New static functions.
+	(log_buffer_block): New static function.
+	(struct socket_buffer): Define if NO_SOCKET_TO_FD.
+	(socket_buffer_initialize): New static function if
+	NO_SOCKET_TO_FD.
+	(socket_buffer_input, socket_buffer_output): Likewise.
+	(socket_buffer_flush): Likewise.
+	(read_line): Rewrite to use buf_read_line.  Remove eof_ok
+	parameter (it was always passed as 0); change all callers.
+	(send_to_server): Rewrite to use buf_output.
+	(try_read_from_server): Rewrite to use buf_read_data.
+	(get_responses_and_close): Use from_server_fp and to_server_fp for
+	the streams.  Check buf_empty_p when checking for dying gasps.
+	(start_server): Don't set from_server_logfile and
+	to_server_logfile; instead, call log_buffer_initialize.  If
+	NO_SOCKET_TO_FD and use_socket_style, call
+	socket_buffer_initialize; otherwise, call
+	stdio_buffer_initialize.
+	* buffer.c: Compile if CLIENT_SUPPORT is defined.
+	(buf_flush): Fix comment to describe return value.
+	(buf_read_line): Add lenp parameter.  Change all callers.  Look
+	for a line terminated by \012 rather than \n.
+	* buffer.h: Compile if CLIENT_SUPPORT is defined.
+	(buf_read_line): Update declaration.
+
+	* server.c (server): Initialize buf_to_net, buf_from_net,
+	saved_output, and saved_outerr before setting error_use_protocol.
+	(pserver_authenticate_connection): Don't set error_use_protocol.
+	Errors before the authentication is complete aren't handled
+	cleanly anyhow.  Change error call after authentication to use
+	printf.
+
 Thu Jul 11 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* client.c (start_server): Open logfiles in binary, not text, mode.

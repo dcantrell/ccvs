@@ -7,6 +7,7 @@
 #include "cvs.h"
 #include "getline.h"
 #include "edit.h"
+#include "buffer.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -79,6 +80,7 @@ static void handle_m PROTO((char *, int));
 static void handle_e PROTO((char *, int));
 static void handle_notified PROTO((char *, int));
 
+static void buf_memory_error PROTO((struct buffer *));
 static size_t try_read_from_server PROTO ((char *, size_t));
 #endif /* CLIENT_SUPPORT */
 
@@ -235,24 +237,15 @@ int client_prune_dirs;
 
 static List *ignlist = (List *) NULL;
 
-#ifdef NO_SOCKET_TO_FD
-/* Under certain circumstances, we must communicate with the server
-   via a socket using send() and recv().  This is because under some
-   operating systems (OS/2 and Windows 95 come to mind), a socket
-   cannot be converted to a file descriptor -- it must be treated as a
-   socket and nothing else. */
-static int use_socket_style = 0;
-static int server_sock;
-#endif /* NO_SOCKET_TO_FD */
+/* Buffer to write to the server.  */
+static struct buffer *to_server;
+/* The stream underlying to_server, if we are using a stream.  */
+static FILE *to_server_fp;
 
-/* Stream to write to the server.  */
-static FILE *to_server;
-/* Stream to read from the server.  */
-static FILE *from_server;
-
-/* We might want to log client/server traffic. */
-static FILE *from_server_logfile;
-static FILE *to_server_logfile;
+/* Buffer used to read from the server.  */
+static struct buffer *from_server;
+/* The stream underlying from_server, if we are using a stream.  */
+static FILE *from_server_fp;
 
 #if ! RSH_NOT_TRANSPARENT
 /* Process ID of rsh subprocess.  */
@@ -260,106 +253,314 @@ static int rsh_pid = -1;
 #endif /* ! RSH_NOT_TRANSPARENT */
 
 
+/* This routine is called when one of the buffer routines runs out of
+   memory.  */
+
+static void
+buf_memory_error (buf)
+     struct buffer *buf;
+{
+    error (1, 0, "out of memory");
+}
+
+/* We want to be able to log data sent between us and the server.  We
+   do it using log buffers.  Each log buffer has another buffer which
+   handles the actual I/O, and a file to log information to.
+
+   This structure is the closure field of a log buffer.  */
+
+struct log_buffer
+{
+    /* The underlying buffer.  */
+    struct buffer *buf;
+    /* The file to log information to.  */
+    FILE *log;
+};
+
+static struct buffer *log_buffer_initialize
+  PROTO((struct buffer *, FILE *, int, void (*) (struct buffer *)));
+static int log_buffer_input PROTO((void *, char *, int, int, int *));
+static int log_buffer_output PROTO((void *, const char *, int, int *));
+static int log_buffer_flush PROTO((void *));
+static int log_buffer_block PROTO((void *, int));
+
+/* Create a log buffer.  */
+
+static struct buffer *
+log_buffer_initialize (buf, fp, input, memory)
+     struct buffer *buf;
+     FILE *fp;
+     int input;
+     void (*memory) PROTO((struct buffer *));
+{
+    struct log_buffer *n;
+
+    n = (struct log_buffer *) xmalloc (sizeof *n);
+    n->buf = buf;
+    n->log = fp;
+    return buf_initialize (input ? log_buffer_input : NULL,
+			   input ? NULL : log_buffer_output,
+			   input ? NULL : log_buffer_flush,
+			   log_buffer_block,
+			   memory,
+			   n);
+}
+
+/* The input function for a log buffer.  */
+
+static int
+log_buffer_input (closure, data, need, size, got)
+     void *closure;
+     char *data;
+     int need;
+     int size;
+     int *got;
+{
+    struct log_buffer *lb = (struct log_buffer *) closure;
+    int status;
+
+    if (lb->buf->input == NULL)
+	abort ();
+
+    status = (*lb->buf->input) (lb->buf->closure, data, need, size, got);
+    if (status != 0)
+	return status;
+
+    if (*got > 0)
+	if (fwrite (data, 1, *got, lb->log) != *got)
+	    error (0, errno, "writing to log file");
+
+    return 0;
+}
+
+/* The output function for a log buffer.  */
+
+static int
+log_buffer_output (closure, data, have, wrote)
+     void *closure;
+     const char *data;
+     int have;
+     int *wrote;
+{
+    struct log_buffer *lb = (struct log_buffer *) closure;
+    int status;
+
+    if (lb->buf->output == NULL)
+	abort ();
+
+    status = (*lb->buf->output) (lb->buf->closure, data, have, wrote);
+    if (status != 0)
+	return status;
+
+    if (*wrote > 0)
+	if (fwrite (data, 1, *wrote, lb->log) != *wrote)
+	    error (0, errno, "writing to log file");
+
+    return 0;
+}
+
+/* The flush function for a log buffer.  */
+
+static int
+log_buffer_flush (closure)
+     void *closure;
+{
+    struct log_buffer *lb = (struct log_buffer *) closure;
+
+    if (lb->buf->flush == NULL)
+	abort ();
+
+    /* We don't really have to flush the log file here, but doing it
+       will let tail -f on the log file show what is sent to the
+       network as it is sent.  */
+    if (fflush (lb->log) != 0)
+        error (0, errno, "flushing log file");
+
+    return (*lb->buf->flush) (lb->buf->closure);
+}
+
+/* The block function for a log buffer.  */
+
+static int
+log_buffer_block (closure, block)
+     void *closure;
+     int block;
+{
+    struct log_buffer *lb = (struct log_buffer *) closure;
+
+    if (lb->buf->block == NULL)
+	abort ();
+
+    return (*lb->buf->block) (lb->buf->closure, block);
+}
+
+#ifdef NO_SOCKET_TO_FD
+
+/* Under certain circumstances, we must communicate with the server
+   via a socket using send() and recv().  This is because under some
+   operating systems (OS/2 and Windows 95 come to mind), a socket
+   cannot be converted to a file descriptor -- it must be treated as a
+   socket and nothing else.  */
+
+static int use_socket_style = 0;
+static int server_sock;
+
+/* These routines implement a buffer structure which uses send and
+   recv.  We don't need the block routine, so we don't implement it.  */
+
+/* We use an instance of this structure as the closure field.  */
+
+struct socket_buffer
+{
+    /* The socket number.  */
+    int socket;
+};
+
+static struct buffer *socket_buffer_initialize
+  PROTO ((int, int, void (*) (struct buffer *)));
+static int socket_buffer_input PROTO((void *, char *, int, int, int *));
+static int socket_buffer_output PROTO((void *, const char *, int, int *));
+static int socket_buffer_flush PROTO((void *));
+
+/* Create a buffer based on a socket.  */
+
+static struct buffer *
+socket_buffer_initialize (socket, input, memory)
+     int socket;
+     int input;
+     void (*memory) PROTO((struct buffer *));
+{
+    struct socket_buffer *n;
+
+    n = (struct socket_buffer *) xmalloc (sizeof *n);
+    n->socket = socket;
+    return buf_initialize (input ? socket_buffer_input : NULL,
+			   input ? NULL : socket_buffer_output,
+			   input ? NULL : socket_buffer_flush,
+			   (int (*) PROTO((void *, int))) NULL,
+			   memory,
+			   n);
+}
+
+/* The buffer input function for a buffer built on a socket.  */
+
+static int
+socket_buffer_input (closure, data, need, size, got)
+     void *closure;
+     char *data;
+     int need;
+     int size;
+     int *got;
+{
+    struct socket_buffer *sb = (struct socket_buffer *) closure;
+    int nbytes;
+
+    /* I believe that the recv function gives us exactly the semantics
+       we want.  If there is a message, it returns immediately with
+       whatever it could get.  If there is no message, it waits until
+       one comes in.  In other words, it is not like read, which in
+       blocking mode normally waits until all the requested data is
+       available.  */
+
+    *got = 0;
+
+    while (need > 0)
+    {
+	nbytes = recv (sb->socket, data, size, 0);
+	if (nbytes < 0)
+	    error (1, errno, "reading from server");
+	need -= nbytes;
+	size -= nbytes;
+	data += nbytes;
+	*got += nbytes;
+    }
+
+    return 0;
+}
+
+/* The buffer output function for a buffer built on a socket.  */
+
+static int
+socket_buffer_output (closure, data, have, wrote)
+     void *closure;
+     const char *data;
+     int have;
+     int *wrote;
+{
+    struct socket_buffer *sb = (struct socket_buffer *) closure;
+
+    *wrote = have;
+
+#ifdef VMS
+    /* send() blocks under VMS */
+    if (send (sb->socket, data, have, 0) < 0)
+	error (1, errno, "writing to server socket");
+#else /* VMS */
+    while (have > 0)
+    {
+	int nbytes;
+
+	nbytes = send (sb->socket, data, have, 0);
+	if (nbytes < 0)
+	    error (1, errno, "writing to server socket");
+
+	have -= nbytes;
+	data += nbytes;
+    }
+#endif  /* VMS */
+
+    return 0;
+}
+
+/* The buffer flush function for a buffer built on a socket.  */
+
+/*ARGSUSED*/
+static int
+socket_buffer_flush (closure)
+     void *closure;
+{
+    /* Nothing to do.  Sockets are always flushed.  */
+    return 0;
+}
+
+#endif /* NO_SOCKET_TO_FD */
+
 /*
  * Read a line from the server.  Result does not include the terminating \n.
  *
  * Space for the result is malloc'd and should be freed by the caller.
  *
- * Returns number of bytes read.  If EOF_OK, then return 0 on end of file,
- * else end of file is an error.
+ * Returns number of bytes read.
  */
 static int
-read_line (resultp, eof_ok)
+read_line (resultp)
     char **resultp;
-    int eof_ok;
 {
-    int c;
+    int status;
     char *result;
-    size_t input_index = 0;
-    size_t result_size = 80;
+    int len;
 
-#ifdef NO_SOCKET_TO_FD
-    if (! use_socket_style)
-#endif /* NO_SOCKET_TO_FD */
-	fflush (to_server);
+    status = buf_flush (to_server, 1);
+    if (status != 0)
+	error (1, status, "writing to server");
 
-    result = (char *) xmalloc (result_size);
-
-    while (1)
+    status = buf_read_line (from_server, &result, &len);
+    if (status != 0)
     {
-
-#ifdef NO_SOCKET_TO_FD
-	if (use_socket_style)
-        {
-	    char ch;
-	    /* Yes, this sucks performance-wise.  Short of implementing
-	       our own buffering, I'm not sure how to effect a big
-	       improvement.  We could at least avoid calling
-	       read_from_server() for each character if we were willing
-	       to duplicate a lot of its code, but I'm not sure that's
-	       worth it. */
-	    read_from_server (&ch, 1);
-	    c = ch;
-        }
+	if (status == -1)
+	    error (1, 0, "end of file from server (consult above messages if any)");
+	else if (status == -2)
+	    error (1, 0, "out of memory");
 	else
-#endif /* NO_SOCKET_TO_FD */
-	    c = getc (from_server);
-
-	if (c == EOF)
-	{
-	    free (result);
-
-#ifdef NO_SOCKET_TO_FD
-	    if (! use_socket_style)
-#endif /* NO_SOCKET_TO_FD */
-		if (ferror (from_server))
-		    error (1, errno, "reading from server");
- 
-	    /* It's end of file.  */
-	    if (eof_ok)
-		return 0;
-	    else
-		error (1, 0, "end of file from server (consult above messages if any)");
-	}
-
-	if (c == '\012')
-	    break;
-
-	result[input_index++] = c;
-	while (input_index + 1 >= result_size)
-	{
-	    result_size *= 2;
-	    result = (char *) xrealloc (result, result_size);
-	}
+	    error (1, status, "reading from server");
     }
 
-    if (resultp)
+    if (resultp != NULL)
 	*resultp = result;
-
-    /* Terminate it just for kicks, but we *can* deal with embedded NULs.  */
-    result[input_index] = '\0';
-
-#ifdef NO_SOCKET_TO_FD
-    if (! use_socket_style)
-#endif /* NO_SOCKET_TO_FD */
-    {
-	/*
-	 * If we're using socket style, then everything has already
-	 * been logged because read_from_server() was used to get the
-	 * individual chars, and read_from_server() logs already.
-	 */
-	if (from_server_logfile)
-	{
-	    if (fwrite (result, 1, input_index, from_server_logfile)
-		< input_index)
-		error (0, errno, "writing to from-server logfile");
-	    putc ('\n', from_server_logfile);
-	}
-    }
-
-    if (resultp == NULL)
+    else
 	free (result);
-    return input_index;
+
+    return len;
 }
 
 #endif /* CLIENT_SUPPORT */
@@ -567,7 +768,7 @@ call_in_directory (pathname, func, data)
 
     reposname = NULL;
     if (use_directory)
-	read_line (&reposname, 0);
+	read_line (&reposname);
 
     reposdirname_absolute = 0;
     if (reposname != NULL)
@@ -854,7 +1055,7 @@ copy_a_file (data, ent_list, short_pathname, filename)
     char *p;
 #endif
 
-    read_line (&newname, 0);
+    read_line (&newname);
 
 #ifdef USE_VMS_FILENAMES
     /* Mogrify the filename so VMS is happy with it. */
@@ -902,7 +1103,7 @@ read_counted_file (filename, fullname)
 
     FILE *fp;
 
-    read_line (&size_string, 0);
+    read_line (&size_string);
     if (size_string[0] == 'z')
 	error (1, 0, "\
 protocol error: compressed files not supported for that operation");
@@ -1082,7 +1283,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *scratch_entries;
     int bin;
 
-    read_line (&entries_line, 0);
+    read_line (&entries_line);
 
     /*
      * Parse the entries line.
@@ -1145,9 +1346,9 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	int use_gzip, gzip_status;
 	pid_t gzip_pid = 0;
 
-	read_line (&mode_string, 0);
+	read_line (&mode_string);
 	
-	read_line (&size_string, 0);
+	read_line (&size_string);
 	if (size_string[0] == 'z')
 	{
 	    use_gzip = 1;
@@ -1671,7 +1872,7 @@ handle_set_static_directory (args, len)
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
-	read_line (NULL, 0);
+	read_line (NULL);
 	return;
     }
     call_in_directory (args, set_static, (char *)NULL);
@@ -1696,7 +1897,7 @@ handle_clear_static_directory (pathname, len)
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
-	read_line (NULL, 0);
+	read_line (NULL);
 	return;
     }
 
@@ -1721,7 +1922,7 @@ set_sticky (data, ent_list, short_pathname, filename)
     char *tagspec;
     FILE *f;
 
-    read_line (&tagspec, 0);
+    read_line (&tagspec);
     f = open_file (CVSADM_TAG, "w+");
     if (fprintf (f, "%s\n", tagspec) < 0)
 	error (1, errno, "writing %s", CVSADM_TAG);
@@ -1738,9 +1939,9 @@ handle_set_sticky (pathname, len)
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
-	read_line (NULL, 0);
+	read_line (NULL);
         /* Swallow the tag line.  */
-	(void) read_line (NULL, 0);
+	read_line (NULL);
 	return;
     }
     if (is_cvsroot_level (pathname))
@@ -1751,9 +1952,9 @@ handle_set_sticky (pathname, len)
 	 */
 
 	/* Swallow the repository.  */
-	read_line (NULL, 0);
+	read_line (NULL);
         /* Swallow the tag line.  */
-	(void) read_line (NULL, 0);
+	read_line (NULL);
 	return;
     }
 
@@ -1779,7 +1980,7 @@ handle_clear_sticky (pathname, len)
     if (strcmp (command_name, "export") == 0)
     {
 	/* Swallow the repository.  */
-	read_line (NULL, 0);
+	read_line (NULL);
 	return;
     }
 
@@ -1842,7 +2043,7 @@ handle_set_checkin_prog (args, len)
 {
     char *prog;
     struct save_prog *p;
-    read_line (&prog, 0);
+    read_line (&prog);
     p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
     p->next = checkin_progs;
     p->dir = xstrdup (args);
@@ -1857,7 +2058,7 @@ handle_set_update_prog (args, len)
 {
     char *prog;
     struct save_prog *p;
-    read_line (&prog, 0);
+    read_line (&prog);
     p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
     p->next = update_progs;
     p->dir = xstrdup (args);
@@ -2455,55 +2656,26 @@ send_to_server (str, len)
      char *str;
      size_t len;
 {
-  if (len == 0)
-    len = strlen (str);
-  
-#ifdef NO_SOCKET_TO_FD
-  if (use_socket_style)
-    {
-      int just_wrtn = 0;
-      size_t wrtn = 0;
+    static int nbytes;
 
-#ifdef VMS
-      /* send() blocks under VMS */
-      if (send (server_sock, str + wrtn, len - wrtn, 0) < 0)
-        error (1, errno, "writing to server socket");
-#else /* VMS */
-      while (wrtn < len)
-        {
-          just_wrtn = send (server_sock, str + wrtn, len - wrtn, 0);
+    if (len == 0)
+	len = strlen (str);
 
-          if (just_wrtn == -1)
-            error (1, errno, "writing to server socket");
-          
-          wrtn += just_wrtn;
-          if (wrtn == len)
-            break;
-        }
-#endif  /* VMS */
-    }
-  else
-#endif /* NO_SOCKET_TO_FD */
+    buf_output (to_server, str, len);
+      
+    /* There is no reason not to send data to the server, so do it
+       whenever we've accumulated enough information in the buffer to
+       make it worth sending.  */
+    nbytes += len;
+    if (nbytes >= 2 * BUFFER_DATA_SIZE)
     {
-      size_t wrtn = 0;
-      
-      while (wrtn < len)
-        {
-          wrtn += fwrite (str + wrtn, 1, len - wrtn, to_server);
-          
-          if (wrtn == len)
-            break;
-          
-          if (ferror (to_server))
-            error (1, errno, "writing to server");
-          if (feof (to_server))
-            error (1, 0, "premature end-of-file on server");
-        }
+	int status;
+
+        status = buf_send_output (to_server);
+	if (status != 0)
+	    error (1, status, "error writing to server");
+	nbytes = 0;
     }
-      
-  if (to_server_logfile)
-    if (fwrite (str, 1, len, to_server_logfile) < len)
-      error (0, errno, "writing to to-server logfile");
 }
 
 /* Read up to LEN bytes from the server.  Returns actual number of
@@ -2514,33 +2686,22 @@ try_read_from_server (buf, len)
     char *buf;
     size_t len;
 {
-    int nread;
+    int status, nread;
+    char *data;
 
-#ifdef NO_SOCKET_TO_FD
-    if (use_socket_style)
+    status = buf_read_data (from_server, len, &data, &nread);
+    if (status != 0)
     {
-	nread = recv (server_sock, buf, len, 0);
-	if (nread == -1)
-	    error (1, errno, "reading from server");
-    }
-    else
-#endif
-    {
-	nread = fread (buf, 1, len, from_server);
-	if (ferror (from_server))
-	    error (1, errno, "reading from server");
-	if (feof (from_server))
+	if (status == -1)
 	    error (1, 0,
 		   "end of file from server (consult above messages if any)");
+	else if (status == -2)
+	    error (1, 0, "out of memory");
+	else
+	    error (1, status, "reading from server");
     }
 
-    /* Log, if that's what we're doing. */
-    if (from_server_logfile != NULL && nread > 0)
-    {
-	size_t towrite = nread;
-	if (fwrite (buf, 1, towrite, from_server_logfile) < towrite)
-	    error (0, errno, "writing to from-server logfile");
-    }
+    memcpy (buf, data, nread);
 
     return nread;
 }
@@ -2574,7 +2735,7 @@ get_server_responses ()
 	char *cmd;
 	int len;
 	
-	len = read_line (&cmd, 0);
+	len = read_line (&cmd);
 	for (rs = responses; rs->name != NULL; ++rs)
 	    if (strncmp (cmd, rs->name, strlen (rs->name)) == 0)
 	    {
@@ -2649,9 +2810,9 @@ get_responses_and_close ()
             /*
              * This test will always be true because we dup the descriptor
              */
-            if (fileno (from_server) != fileno (to_server))
+            if (fileno (from_server_fp) != fileno (to_server_fp))
               {
-                if (fclose (to_server) != 0)
+                if (fclose (to_server_fp) != 0)
                   error (1, errno,
                          "closing down connection to %s",
                          CVSroot_hostname);
@@ -2661,26 +2822,27 @@ get_responses_and_close ()
 #endif /* HAVE_KERBEROS || USE_DIRECT_TCP || AUTH_CLIENT_SUPPORT */
           
 #ifdef SHUTDOWN_SERVER
-          SHUTDOWN_SERVER (fileno (to_server));
+          SHUTDOWN_SERVER (fileno (to_server_fp));
 #else /* ! SHUTDOWN_SERVER */
         {
           
 #ifdef START_RSH_WITH_POPEN_RW
-          if (pclose (to_server) == EOF)
+          if (pclose (to_server_fp) == EOF)
 #else /* ! START_RSH_WITH_POPEN_RW */
-            if (fclose (to_server) == EOF)
+            if (fclose (to_server_fp) == EOF)
 #endif /* START_RSH_WITH_POPEN_RW */
               {
                 error (1, errno, "closing connection to %s", CVSroot_hostname);
               }
         }
 
-        if (getc (from_server) != EOF)
+        if (! buf_empty_p (from_server)
+	    || getc (from_server_fp) != EOF)
           error (0, 0, "dying gasps from %s unexpected", CVSroot_hostname);
-        else if (ferror (from_server))
+        else if (ferror (from_server_fp))
           error (0, errno, "reading from %s", CVSroot_hostname);
         
-        fclose (from_server);
+        fclose (from_server_fp);
 #endif /* SHUTDOWN_SERVER */
       }
         
@@ -3089,10 +3251,6 @@ start_server ()
        (*really* slow on a 14.4kbps link); the clean way to have a CVS
        which supports several ways of connecting is with access methods.  */
 
-    /* Init these to NULL.  They will be set later if logging is on. */
-    from_server_logfile = (FILE *) NULL;
-    to_server_logfile   = (FILE *) NULL;
-
     switch (CVSroot_method)
     {
 
@@ -3138,35 +3296,15 @@ start_server ()
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
 
-    /* Set up logfiles, if any. */
-    if (log)
-    {
-	int len = strlen (log);
-	char *buf = xmalloc (len + 5);
-	char *p;
-
-	strcpy (buf, log);
-	p = buf + len;
-
-	/* Open logfiles in binary mode so that they reflect
-	   exactly what was transmitted and received (that is
-	   more important than that they be maximally
-	   convenient to view).  */
-	strcpy (p, ".in");
-	to_server_logfile = open_file (buf, "wb");
-        if (to_server_logfile == NULL)
-	    error (0, errno, "opening to-server logfile %s", buf);
-
-	strcpy (p, ".out");
-	from_server_logfile = open_file (buf, "wb");
-        if (from_server_logfile == NULL)
-	    error (0, errno, "opening from-server logfile %s", buf);
-
-	free (buf);
-    }
-
 #ifdef NO_SOCKET_TO_FD
-    if (! use_socket_style)
+    if (use_socket_style)
+    {
+	to_server = socket_buffer_initialize (server_sock, 0,
+					      buf_memory_error);
+	from_server = socket_buffer_initialize (server_sock, 1,
+						buf_memory_error);
+    }
+    else
 #endif /* NO_SOCKET_TO_FD */
     {
         /* todo: some OS's don't need these calls... */
@@ -3184,12 +3322,51 @@ start_server ()
 	}
 
         /* These will use binary mode on systems which have it.  */
-        to_server = fdopen (tofd, FOPEN_BINARY_WRITE);
-        if (to_server == NULL)
+        to_server_fp = fdopen (tofd, FOPEN_BINARY_WRITE);
+        if (to_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for write", tofd);
-        from_server = fdopen (fromfd, FOPEN_BINARY_READ);
-        if (from_server == NULL)
+	to_server = stdio_buffer_initialize (to_server_fp, 0,
+					     buf_memory_error);
+
+        from_server_fp = fdopen (fromfd, FOPEN_BINARY_READ);
+        if (from_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for read", fromfd);
+	from_server = stdio_buffer_initialize (from_server_fp, 1,
+					       buf_memory_error);
+    }
+
+    /* Set up logfiles, if any. */
+    if (log)
+    {
+	int len = strlen (log);
+	char *buf = xmalloc (len + 5);
+	char *p;
+	FILE *fp;
+
+	strcpy (buf, log);
+	p = buf + len;
+
+	/* Open logfiles in binary mode so that they reflect
+	   exactly what was transmitted and received (that is
+	   more important than that they be maximally
+	   convenient to view).  */
+	strcpy (p, ".in");
+	fp = open_file (buf, "wb");
+        if (fp == NULL)
+	    error (0, errno, "opening to-server logfile %s", buf);
+	else
+	    to_server = log_buffer_initialize (to_server, fp, 0,
+					       buf_memory_error);
+
+	strcpy (p, ".out");
+	fp = open_file (buf, "wb");
+        if (fp == NULL)
+	    error (0, errno, "opening from-server logfile %s", buf);
+	else
+	    from_server = log_buffer_initialize (from_server, fp, 1,
+						 buf_memory_error);
+
+	free (buf);
     }
 
     /* Clear static variables.  */
