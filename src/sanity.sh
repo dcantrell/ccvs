@@ -13766,7 +13766,8 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
-"${PROG} \[[a-z]* aborted\]: CVSROOT \"crerepos\" must be an absolute pathname"
+"${PROG} [a-z]*: CVSROOT \"crerepos\" must be an absolute pathname
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 	    cd ..
 	    rm -r 1
 	  else # remote
