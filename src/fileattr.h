@@ -91,7 +91,7 @@ extern char *fileattr_get0 PROTO ((const char *filename,
      => "abc=val;def=v2"
    fileattr_modify ("abc=v1;def=v2", "def", "val", '=', ';'))
      => "abc=v1;def=val"
-   fileattr_modify ("abc=v1;def=v2", "xxx", "val"))
+   fileattr_modify ("abc=v1;def=v2", "xxx", "val", '=', ';'))
      => "abc=v1;def=v2;xxx=val"
    fileattr_modify ("abc=v1;def=v2;ghi=v3", "def", "val", '=', ';'))
      => "abc=v1;def=val;ghi=v3"
