@@ -38,7 +38,7 @@ xmalloc (bytes)
     if (bytes == 0)
 	bytes = 1;
 
-    cp = malloc (bytes);
+    cp = CVS_MALLOC( bytes );
     if (cp == NULL)
     {
 	char buf[80];
@@ -62,9 +62,9 @@ xrealloc (ptr, bytes)
     char *cp;
 
     if (!ptr)
-	cp = malloc (bytes);
+	cp = CVS_MALLOC( bytes );
     else
-	cp = realloc (ptr, bytes);
+	cp = CVS_REALLOC( ptr, bytes );
 
     if (cp == NULL)
     {
