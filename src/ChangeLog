@@ -1,3 +1,8 @@
+Thu Sep  5 17:32:39 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* sanity.sh: When testing remote, use :ext: instead of :server: to
+ 	match change made earlier today.
+
 Thu Sep  5 13:57:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_tcp_server): Don't allow :kserver: to mean
