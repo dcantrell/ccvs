@@ -3032,7 +3032,7 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 {
     char tdate[MAXDATELEN];
     struct tm xtm, *ftm;
-    struct timespec revdate = {0, 0};
+    time_t revdate = 0;
     Node *p;
     RCSVers *vers;
 
@@ -3071,23 +3071,22 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
 		    xtm.tm_min, xtm.tm_sec);
 
     /* turn it into seconds since the epoch */
-    if (get_date (&revdate, tdate, NULL))
+    revdate = get_date (tdate, (struct timeb *) NULL);
+    if (revdate != (time_t) -1)
     {
-	revdate.tv_sec -= fudge;	/* remove "fudge" seconds */
+	revdate -= fudge;		/* remove "fudge" seconds */
 	if (date)
 	{
 	    /* put an appropriate string into ``date'' if we were given one */
-	    ftm = gmtime (&revdate.tv_sec);
+	    ftm = gmtime (&revdate);
 	    (void) sprintf (date, DATEFORM,
 			    ftm->tm_year + (ftm->tm_year < 100 ? 0 : 1900),
 			    ftm->tm_mon + 1, ftm->tm_mday, ftm->tm_hour,
 			    ftm->tm_min, ftm->tm_sec);
 	}
     }
-    return revdate.tv_sec;
+    return revdate;
 }
-
-
 
 List *
 RCS_getlocks (RCSNode *rcs)

@@ -1413,7 +1413,7 @@ static char *kopt;
 /* Timestamp (Checkin-time) for next file sent in Modified or
    Is-modified.  */
 static int checkin_time_valid;
-static struct timespec checkin_time;
+static time_t checkin_time;
 
 
 
@@ -1534,7 +1534,7 @@ serve_modified (char *arg)
 	struct utimbuf t;
 
 	memset (&t, 0, sizeof (t));
-	t.modtime = t.actime = checkin_time.tv_sec;
+	t.modtime = t.actime = checkin_time;
 	if (utime (arg, &t) < 0)
 	{
 	    int save_errno = errno;
@@ -1794,7 +1794,8 @@ serve_checkin_time (char *arg)
 	return;
     }
 
-    if (!get_date (&checkin_time, arg, NULL))
+    checkin_time = get_date (arg, NULL);
+    if (checkin_time == (time_t)-1)
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text, "E cannot parse date %s", arg);
