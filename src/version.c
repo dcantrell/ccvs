@@ -17,4 +17,4 @@ static const char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
 USE(rcsid)
 #endif
 
-char *version_string = "\nConcurrent Versions System (CVS) 1.4.93\n";
+char *version_string = "\nConcurrent Versions System (CVS) 1.5\n";
