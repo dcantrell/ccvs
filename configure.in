@@ -200,17 +200,23 @@ AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
 if test "$ac_cv_func_connect" = yes; then
 AC_DEFINE(CLIENT_SUPPORT)
 AC_DEFINE(SERVER_SUPPORT)
-# Define AUTH_SERVER_SUPPORT only if we could locate the crypt() function
-AC_CHECK_FUNC(crypt, :,
-[case "$LIBS" in
-*-lcrypt*) ;;
-*) AC_CHECK_LIB(crypt, crypt) ;;
-esac
-AC_CHECK_FUNCS(crypt)])
-  if test "$ac_cv_func_crypt" = yes; then
+
+### The auth server needs to be able to check passwords against passwd
+### file entries, so we only #define AUTH_SERVER_SUPPORT if we can
+### find the crypt function. 
+###
+### We used to test for crypt in libc first, and only add -lcrypt if
+### we couldn't find it, but that interacts badly with the cache
+### variables, the 'unset' command isn't portable, and I'm not sure
+### there's any harm in just testing for -lcrypt first.
+
+AC_CHECK_LIB(crypt, crypt)
+AC_CHECK_FUNCS(crypt)
+
+if test "$ac_cv_func_crypt" = yes; then
   AC_DEFINE(AUTH_SERVER_SUPPORT)
-  fi
 fi
+fi # for ac_cv_func_connect
 
 test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
