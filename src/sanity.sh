@@ -31843,7 +31843,9 @@ exec $CVS_SERVER \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
 #! $TESTSHELL
-CVS_SERVER_LOG=/tmp/cvsprimarylog; export CVS_SERVER_LOG
+if test -n "\$CVS_SERVER_LOG"; then
+	CVS_SERVER_LOG=$TMPDIR/cvsprimarylog; export CVS_SERVER_LOG
+fi
 exec $CVS_SERVER "\$@"
 EOF
 
