@@ -1,3 +1,10 @@
+2002-06-18  Larry Jones  <lawrence.jones@eds.com>
+
+	* update.c (patch_file): Don't patch if diff bigger than file.
+	Don't bother adjusting the permission on the diff output if
+	we're not going to use it.
+
+
 2002-06-18  Derek Price  <oberon@umich.edu>
 
 	* server.c: Handle HPUX password expiration fields in the passwd

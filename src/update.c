@@ -1777,45 +1777,59 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	{
 	    fail = 1;
 	}
-	else
-	{
+    }
+
+    if (! fail)
+    {
+	struct stat file2_info;
+
+	/* Check to make sure the patch is really shorter */
+	if (CVS_STAT (file2, &file2_info) < 0)
+	    error (1, errno, "could not stat %s", file2);
+	if (CVS_STAT (finfo->file, file_info) < 0)
+	    error (1, errno, "could not stat %s", finfo->file);
+	if (file2_info.st_size <= file_info->st_size)
+	    fail = 1;
+    }
+
+    if (! fail)
+    {
 # define BINARY "Binary"
-	    char buf[sizeof BINARY];
-	    unsigned int c;
+	char buf[sizeof BINARY];
+	unsigned int c;
 
-	    /* Stat the original RCS file, and then adjust it the way
-	       that RCS_checkout would.  FIXME: This is an abstraction
-	       violation.  */
-	    if (CVS_STAT (vers_ts->srcfile->path, file_info) < 0)
-		error (1, errno, "could not stat %s", vers_ts->srcfile->path);
-	    if (chmod (finfo->file,
-		       file_info->st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH))
-		< 0)
-		error (0, errno, "cannot change mode of file %s", finfo->file);
-	    if (cvswrite
-		&& !fileattr_get (finfo->file, "_watched"))
-		xchmod (finfo->file, 1);
-
-	    /* Check the diff output to make sure patch will be handle it.  */
-	    e = CVS_FOPEN (finfo->file, "r");
-	    if (e == NULL)
-		error (1, errno, "could not open diff output file %s",
-		       finfo->fullname);
-	    c = fread (buf, 1, sizeof BINARY - 1, e);
-	    buf[c] = '\0';
-	    if (strcmp (buf, BINARY) == 0)
-	    {
-		/* These are binary files.  We could use diff -a, but
-		   patch can't handle that.  */
-		fail = 1;
-	    }
-	    fclose (e);
+	/* Check the diff output to make sure patch will be handle it.  */
+	e = CVS_FOPEN (finfo->file, "r");
+	if (e == NULL)
+	    error (1, errno, "could not open diff output file %s",
+		   finfo->fullname);
+	c = fread (buf, 1, sizeof BINARY - 1, e);
+	buf[c] = '\0';
+	if (strcmp (buf, BINARY) == 0)
+	{
+	    /* These are binary files.  We could use diff -a, but
+	       patch can't handle that.  */
+	    fail = 1;
 	}
+	fclose (e);
     }
 
     if (! fail)
     {
         Vers_TS *xvers_ts;
+
+	/* Stat the original RCS file, and then adjust it the way
+	   that RCS_checkout would.  FIXME: This is an abstraction
+	   violation.  */
+	if (CVS_STAT (vers_ts->srcfile->path, file_info) < 0)
+	    error (1, errno, "could not stat %s", vers_ts->srcfile->path);
+	if (chmod (finfo->file,
+		   file_info->st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH))
+	    < 0)
+	    error (0, errno, "cannot change mode of file %s", finfo->file);
+	if (cvswrite
+	    && !fileattr_get (finfo->file, "_watched"))
+	    xchmod (finfo->file, 1);
 
         /* This stuff is just copied blindly from checkout_file.  I
 	   don't really know what it does.  */
