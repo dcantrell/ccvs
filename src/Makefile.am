@@ -15,8 +15,12 @@
 SHELL = /bin/sh
 
 # $(includeopt) is CVS specific and set by configure
+# FIXME - This includes line is dependant on its order.  This means there is
+# some namespace hackery going on that maybe shouldn't be.  Long term fix is to
+# try and remove naming ocnflicts and fix Automake to allow particular includes
+# to be attached only to particular object files.  Short term fix is either or.
 ##INCLUDES = -I. -I.. -I$(srcdir) -I$(top_srcdir)/lib
-INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(includeopt)
+INCLUDES = -I$(top_srcdir)/lib -I$(top_srcdir)/diff -I$(top_srcdir)/zlib $(includeopt)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
