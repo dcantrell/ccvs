@@ -3400,7 +3400,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     char *user;
     char *diffopts;
     int bufsize, buflen, chtextlen;
-    int status, quiet, allocated_workfile;
+    int status, checkin_quiet, allocated_workfile;
     struct tm *ftm;
     time_t modtime;
 
@@ -3421,8 +3421,8 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	allocated_workfile = 1;
     }
 
-    quiet = flags & RCS_FLAGS_QUIET;
-    if (!quiet)
+    checkin_quiet = flags & RCS_FLAGS_QUIET;
+    if (!checkin_quiet)
     {
 	cvs_output (rcs->path, 0);
 	cvs_output ("  <--  ", 7);
@@ -3503,7 +3503,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	bufsize = 0;
 	get_file(workfile, workfile, "r", &dtext->text, &bufsize, &dtext->len);
 
-	if (!quiet)
+	if (!checkin_quiet)
 	{
 	    cvs_output ("initial revision: ", 0);
 	    cvs_output (rcs->head, 0);
@@ -3520,7 +3520,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 
 	unlink_file (workfile);
 
-	if (!quiet)
+	if (!checkin_quiet)
 	    cvs_output ("done\n", 5);
 
 	return 0;
@@ -3551,7 +3551,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 	   head of the delta tree), then increment its revision number
 	   to obtain the new revnum.  Otherwise, start a new
 	   branch. */
-	commitpt = RCS_findlock_or_tip (rcs, quiet);
+	commitpt = RCS_findlock_or_tip (rcs, checkin_quiet);
 	if (commitpt == NULL)
 	{
 	    status = 1;
@@ -3774,7 +3774,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     (void) addnode (rcs->versions, nodep);
 	
     /* Write the new RCS file, inserting the new delta at COMMITPT. */
-    if (!quiet)
+    if (!checkin_quiet)
     {
 	cvs_output ("new revision: ", 14);
 	cvs_output (delta->version, 0);
@@ -3789,7 +3789,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     unlink_file (tmpfile);
     unlink_file (changefile);
 
-    if (!quiet)
+    if (!checkin_quiet)
 	cvs_output ("done\n", 5);
 
  checkin_done:
@@ -4035,7 +4035,7 @@ RCS_setbranch (rcs, rev)
     return 0;
 }
 
-/* Lock revision REV.  QUIET is 1 to suppress output.  FIXME:
+/* Lock revision REV.  LOCK_QUIET is 1 to suppress output.  FIXME:
    This is only required because the RCS ci program requires a lock.
    If we eventually do the checkin ourselves, this can become a no-op.  */
 /* FIXME-twp: if a lock owned by someone else is broken, should this
@@ -4044,10 +4044,10 @@ RCS_setbranch (rcs, rev)
    about. */
 
 int
-RCS_lock (rcs, rev, quiet)
+RCS_lock (rcs, rev, lock_quiet)
      RCSNode *rcs;
      const char *rev;
-     int quiet;
+     int lock_quiet;
 {
     List *locks;
     Node *p;
@@ -4075,7 +4075,7 @@ RCS_lock (rcs, rev, quiet)
 	xrev = RCS_getbranch (rcs, (char *) rev, 1);
 	if (xrev == NULL)
 	{
-	    if (!quiet)
+	    if (!lock_quiet)
 		rcserror (rcs->path, "branch %s absent", rev);
 	    return 1;
 	}
@@ -4089,7 +4089,7 @@ RCS_lock (rcs, rev, quiet)
        but RCS 5.7 did this.  And it can't hurt. */
     if (findnode (rcs->versions, xrev) == NULL)
     {
-	if (!quiet)
+	if (!lock_quiet)
 	    rcserror (rcs->path, "revision %s absent", xrev);
 	free (xrev);
 	return 1;
@@ -4107,7 +4107,7 @@ RCS_lock (rcs, rev, quiet)
 	}
 
 	/* Break the lock. */	    
-	if (!quiet)
+	if (!lock_quiet)
 	{
 	    cvs_output (rev, 0);
 	    cvs_output (" unlocked\n", 0);
@@ -4121,7 +4121,7 @@ RCS_lock (rcs, rev, quiet)
     p->data = xstrdup (getcaller());
     (void) addnode_at_front (locks, p);
 
-    if (!quiet)
+    if (!lock_quiet)
     {
 	cvs_output (xrev, 0);
 	cvs_output (" locked\n", 0);
@@ -4130,7 +4130,7 @@ RCS_lock (rcs, rev, quiet)
     return 0;
 }
 
-/* Unlock revision REV.  QUIET is 1 to suppress output.  FIXME:
+/* Unlock revision REV.  UNLOCK_QUIET is 1 to suppress output.  FIXME:
    Like RCS_lock, this can become a no-op if we do the checkin
    ourselves.
 
@@ -4139,10 +4139,10 @@ RCS_lock (rcs, rev, quiet)
    queries the user about whether or not to break the lock. */
 
 int
-RCS_unlock (rcs, rev, quiet)
+RCS_unlock (rcs, rev, unlock_quiet)
      RCSNode *rcs;
      const char *rev;
-     int quiet;
+     int unlock_quiet;
 {
     Node *lock;
     List *locks;
@@ -4162,7 +4162,7 @@ RCS_unlock (rcs, rev, quiet)
 	/* No-ops: attempts to unlock an empty tree or an unlocked file. */
 	if (rcs->head == NULL)
 	{
-	    if (!quiet)
+	    if (!unlock_quiet)
 		cvs_outerr ("can't unlock an empty tree\n", 0);
 	    return 0;
 	}
@@ -4170,7 +4170,7 @@ RCS_unlock (rcs, rev, quiet)
 	locks = RCS_getlocks (rcs);
 	if (locks == NULL)
 	{
-	    if (!quiet)
+	    if (!unlock_quiet)
 		cvs_outerr ("No locks are set.\n", 0);
 	    return 0;
 	}
@@ -4182,7 +4182,7 @@ RCS_unlock (rcs, rev, quiet)
 	    {
 		if (lock != NULL)
 		{
-		    if (!quiet)
+		    if (!unlock_quiet)
 			rcserror (rcs->path,
 "multiple revisions locked by %s; please specify one", user);
 		    return 1;
@@ -4232,7 +4232,7 @@ RCS_unlock (rcs, rev, quiet)
     }
 
     delnode (lock);
-    if (!quiet)
+    if (!unlock_quiet)
     {
 	cvs_output (xrev, 0);
 	cvs_output (" unlocked\n", 0);

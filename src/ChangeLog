@@ -1,5 +1,9 @@
 Tue Nov  4 12:19:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_checkin, RCS_lock, RCS_unlock): Rename local variable
+	quiet to checkin_quiet or some such, to avoid confusion with
+	global variable quiet.
+
 	* lock.c: Update comment to refer to add_rcs_file rather than "rcs
 	-i".
 
