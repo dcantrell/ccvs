@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 #
 # $Id$
 # Based on the CVS 1.0 checkin csh script.

@@ -20,7 +20,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 #define	FILE_HOLDER	".#cvsxxx"

@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)admin.c 1.20 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static Dtype admin_dirproc PROTO((char *dir, char *repos, char *update_dir));
