@@ -1,5 +1,12 @@
 2001-03-23  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.am (ps):  Make 'ps' an alias for 'doc'.
+	(doc, pdf, ps, txt): declare as '.PHONY'.
+
+	* Makefile.in:  Regenerated.
+
+2001-03-23  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am (MOSTLYCLEANFILES):  Add cvs.cps & cvs.fns as a temporary
 	workaround for an Automake deficiency.
 

@@ -63,11 +63,14 @@ CLEANFILES = \
 MAINTAINERCLEANFILES = \
 	cvs-paper.ps
 
-doc: $(POSTSCRIPTS)
+doc ps: $(POSTSCRIPTS)
+.PHONY: doc ps
 
 pdf: $(PDFS)
+.PHONY: pdf
 
 txt: $(TXTS)
+.PHONY: txt
 
 dvi: cvs.dvi cvsclient.dvi
 .PHONY: dvi
