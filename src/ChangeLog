@@ -1,5 +1,16 @@
 2003-05-07  Derek Price  <derek@ximbiot.com>
 
+	* client.c (make_bufs_from_fds, connect_to_forked_server,
+	start_tcp_server): Rename struct buffer ** arguments to s/$/_p/ in an
+	attempt to denote their pointerness more clearly.
+	* rsh-client.c (start_rsh_client): Ditto.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* client.h (make_bufs_from_fds): Sanitize prototype so that the
+	argument name change doesn't clash.
+
+2003-05-07  Derek Price  <derek@ximbiot.com>
+
 	* client.h (make_bufs_from_fd): Prototype in order to make available to
 	rsh-client.c.
 	* client.c (start_rsh_server): Moved most of the RSH (:ext:) client

@@ -11,12 +11,10 @@ extern int file_gzip_level;
 struct buffer;
 #endif
 
-void make_bufs_from_fds PROTO((int tofd,
-			       int fromfd,
-			       int child_pid,
-			       struct buffer **to_server,
-			       struct buffer **from_server,
-			       int is_sock));
+void make_bufs_from_fds PROTO(( int, int, int,
+			        struct buffer **,
+			        struct buffer **,
+			        int ));
 
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)

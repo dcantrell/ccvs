@@ -35,10 +35,10 @@
    up and running, and that's most important. */
 
 void
-start_rsh_server (root, to_server, from_server)
+start_rsh_server (root, to_server_p, from_server_p)
     cvsroot_t *root;
-    struct buffer **to_server;
-    struct buffer **from_server;
+    struct buffer **to_server_p;
+    struct buffer **from_server_p;
 {
     int pipes[2];
     int child_pid;
@@ -114,16 +114,16 @@ start_rsh_server (root, to_server, from_server)
 	error (1, errno, "cannot start server via rsh");
 
     /* Give caller the file descriptors in a form it can deal with. */
-    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server, from_server, 0);
+    make_bufs_from_fds (pipes[0], pipes[1], child_pid, to_server_p, from_server_p, 0);
 }
 
 # else /* ! START_RSH_WITH_POPEN_RW */
 
 void
-start_rsh_server (root, to_server, from_server)
+start_rsh_server (root, to_server_p, from_server_p)
     cvsroot_t *root;
-    struct buffer **to_server;
-    struct buffer **from_server;
+    struct buffer **to_server_p;
+    struct buffer **from_server_p;
 {
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
@@ -186,7 +186,7 @@ start_rsh_server (root, to_server, from_server)
     }
     free (command);
 
-    make_bufs_from_fds (tofd, fromfd, child_pid, to_server, from_server, 0);
+    make_bufs_from_fds (tofd, fromfd, child_pid, to_server_p, from_server_p, 0);
 }
 
 # endif /* START_RSH_WITH_POPEN_RW */
