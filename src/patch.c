@@ -432,7 +432,7 @@ patch_fileproc (callerdat, finfo)
 	if (!date1)
 	    date1 = xmalloc (MAXDATELEN);
 	*date1 = '\0';
-	if (RCS_getrevtime (rcsfile, vers_head, date1, 1) == -1)
+	if (RCS_getrevtime (rcsfile, vers_head, date1, 1) == (time_t)-1)
 	{
 	    if (!really_quiet)
 		error (0, 0, "cannot find date in rcs file %s revision %s",

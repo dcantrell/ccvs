@@ -1,7 +1,9 @@
+$ set verify
 $ CC :== CC/NOOPT/DEB/STANDARD=VAXC/DEFINE=HAVE_CONFIG_H-
 /INCLUDE_DIR=([-],[-.VMS],[-.LIB])/PREFIX=ALL
 $ CC add.c
 $ CC admin.c
+$ CC annotate.c
 $ CC buffer.c
 $ CC checkin.c
 $ CC checkout.c
@@ -51,7 +53,7 @@ $ CC vers_ts.c
 $ CC watch.c
 $ CC wrapper.c
 $ CC/INCLUDE_DIR=([-],[-.VMS],[-.LIB],[-.zlib]) zlib.c
-$ LIBRARY/CREATE cvslib.olb add.obj,admin.obj,buffer.obj,checkin.obj,-
+$ LIBRARY/CREATE cvslib.olb add.obj,admin.obj,annotate.obj,buffer.obj,checkin.obj,-
 checkout.obj,-
 classify.obj,client.obj,commit.obj,create_adm.obj,cvsrc.obj,-
 diff.obj,edit.obj,entries.obj,error.obj,expand_path.obj,fileattr.obj,-
@@ -64,4 +66,5 @@ status.obj,-
 subr.obj,tag.obj,update.obj,version.obj,vers_ts.obj,watch.obj,wrapper.obj,-
 zlib.obj
 $ link/nodeb/exe=cvs.exe main.obj,cvslib.olb/lib,[-.vms]openvmslib.olb/lib,-
-    [-.zlib]zlib.olb/lib,[-.diff]diff.olb/lib,[-.lib]gnulib.olb/lib
+    [-.zlib]libz.olb/lib,[-.diff]diff.olb/lib,[-.lib]gnulib.olb/lib
+$ set noverify
