@@ -4770,25 +4770,27 @@ server_cleanup (sig)
 	 * have generated any final output, we shut down BUF_TO_NET.
 	 */
 
-	status = buf_shutdown (buf_from_net);
-	if (status != 0)
-	    error (0, status, "shutting down buffer from client");
-	buf_free (buf_from_net);
-	buf_from_net = NULL;
-    }
+	if (buf_from_net != NULL)
+	{
+	    status = buf_shutdown (buf_from_net);
+	    if (status != 0)
+		error (0, status, "shutting down buffer from client");
+	    buf_free (buf_from_net);
+	    buf_from_net = NULL;
+	}
 
-    if (dont_delete_temp)
-    {
-	if (buf_to_net != NULL)
+	if (dont_delete_temp)
 	{
 	    (void) buf_flush (buf_to_net, 1);
 	    (void) buf_shutdown (buf_to_net);
 	    buf_free (buf_to_net);
 	    buf_to_net = NULL;
 	    error_use_protocol = 0;
+	    return;
 	}
-	return;
     }
+    else if (dont_delete_temp)
+	return;
 
     /* What a bogus kludge.  This disgusting code makes all kinds of
        assumptions about SunOS, and is only for a bug in that system.
