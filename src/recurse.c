@@ -213,6 +213,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		    /* look for it in the repository. */
 		    repos = Name_Repository (dir, update_dir);
 		    (void) sprintf (tmp, "%s/%s", repos, comp);
+		    free (repos);
 
 		    if (!wrap_name_has (comp, WRAP_TOCVS) && isdir(tmp))
 			addlist (&dirlist, argv[i]);
