@@ -1,3 +1,10 @@
+Wed Nov  8 11:10:59 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * system.h (STAT_MACROS): ifdef S_IFMT, then use it as before; but
+        if it's not defined, then just do a single mask and assume
+        acceptance any of non-zero result.  Norbert, I trust you'll let me
+        know if this is unsatisfactory. :-)
+
 Wed Nov  8 13:18:51 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* valloc.c: omit malloc declaration (it's already in system.h
