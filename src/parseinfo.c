@@ -435,8 +435,8 @@ warning: this CVS does not support PreservePermissions");
 	else if (strcmp (line, "PrimaryServer") == 0)
 	{
 	    PrimaryServer = parse_cvsroot (p);
-	    if (PrimaryServer->method != fork
-		&& PrimaryServer->method != ext)
+	    if (PrimaryServer->method != fork_method
+		&& PrimaryServer->method != ext_method)
 		/* I intentionally neglect to mention :fork: here.  It is
 	         * really only useful for testing.
 		 */
