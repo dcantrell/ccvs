@@ -1,5 +1,7 @@
 Fri Apr 18 11:24:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Version 1.9.8.
+
 	* commit.c (struct find_data): Add field force.
 	(find_fileproc, commit): Use it instead of force_ci to decide
 	whether to send files to server.
