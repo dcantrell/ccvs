@@ -1,3 +1,11 @@
+2004-04-13  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note validation of paths passed to the client.
+
+2004-04-13  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note restriction of modules to within $CVSROOT.
+
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Clarify relative-path up-reference article.
