@@ -1,3 +1,15 @@
+Tue Jan  9 09:41:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* edit.c (notify_proc): After copying in string following %s,
+	don't clobber it.  Instead set up q to end of string.
+
+	* watch.c (watch_modify_watchers), edit.c (editor_set): Fix sense
+	of test in trying to decide whether attributes are changed.
+
+	* cvs.h (CVSROOTADM_USERS): New macro.
+	* edit.c (notify_do): Look up notifyee in CVSROOTADM_USERS if it
+	exists.
+
 Tue Jan  9 21:39:45 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * expand_path.c: don't redundantly #include things that cvs.h

@@ -199,7 +199,7 @@ watch_modify_watchers (file, what)
 	if (!((curattr_new == NULL && curattr == NULL)
 	      || (curattr_new != NULL
 		  && curattr != NULL
-		  && strcmp (curattr_new, curattr) != 0)))
+		  && strcmp (curattr_new, curattr) == 0)))
 	    fileattr_set (file,
 			  "_watchers",
 			  curattr_new);
