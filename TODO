@@ -285,7 +285,7 @@ trying to accomplish and what the best way is -kingdon, Jul 1997).
 151. Also, is there a flag I am missing that allows replacing Ulrtx_Build
      by Ultrix_build?  I.E. I would like a tag replacement to be a one step
      operation rather than a two step "cvs rtag -r Ulrtx_Build Ultrix_Build"
-     followed by "cvs tag -d Ulrtx_Build"
+     followed by "cvs rtag -d Ulrtx_Build"
 
 152. The "cvs -n" option does not work as one would expect for all the
      commands.  In particular, for "commit" and "import", where one would
