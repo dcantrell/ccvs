@@ -1,8 +1,7 @@
-﻿2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
+2004-09-09  Conrad T. Pino  <Conrad@Pino.com>
 
-	* cvsnt.dsp: Add "windows-NT/JmgStat.c" to project.
-		Add "windows-NT/JmgStat.h" to project.
-		Add "src/ms-buffer.h" to project.
+	* cvsnt.dsp: Add "windows-NT/JmgStat.c" to project.  Add
+	"windows-NT/JmgStat.h" to project.  Add "src/ms-buffer.h" to project.
 
 2004-09-07  Derek Price  <derek@ximbiot.com>
 
