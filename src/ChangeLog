@@ -1,3 +1,10 @@
+1999-05-17  Steve Cameron of Compaq
+
+	* sanity.sh: Modified to no longer use "test -e" for existence
+	test as it has turned out to be not portable enough.  Instead use
+	"test -f", "test -d", etc.
+	[SCO Unixware 7 apparently doesn't always support it -kingdon]
+
 1999-05-17  Jim Kingdon  <http://www.cyclic.com>
 
 	* version.c: Push version number to 1.10.6.1.
