@@ -1,3 +1,8 @@
+Sat Jan 27 16:18:20 1996  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * filesubr.c (rename_file): rename() returns non-zero error codes,
+        not necessarily negative.
+
 Fri Jan 26 00:52:12 1996  unknown  (unknown@beezley)
 
 	* filesubr.c (copy_file): Open the file we are writing, not 

@@ -466,7 +466,7 @@ rename_file (from, to)
 	return;
 
     unlink_file (to);
-    if (rename (from, to) < 0)
+    if (rename (from, to) != 0)
 	error (1, errno, "cannot rename file %s to %s", from, to);
 }
 
