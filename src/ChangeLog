@@ -27,7 +27,7 @@
 
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
-	* server.c (cvs_outerr): Quote error test in syslog messages.
+	* server.c (cvs_outerr): Quote error text in syslog messages.
 
 2005-03-15  Mark D. Baushke  <mdb@cvshome.org>
 
