@@ -1,5 +1,12 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h (user_admin_options): New global config option.
+	* admin.c (admin): Handle user_admin_options.
+	* parseinfo.c (parse_config): Handle UserAdminOptions.
+	(Original patch from Dan Peterson <dbpete@aol.com>.)
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* watch.c (watch_usage): Use {} rather than () for literals.
 
 2003-02-21  Larry Jones  <lawrence.jones@eds.com>

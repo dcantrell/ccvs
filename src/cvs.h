@@ -573,6 +573,9 @@ extern void lock_dir_for_write PROTO ((char *));
 
 /* LockDir setting from CVSROOT/config.  */
 extern char *lock_dir;
+
+/* AllowedAdminOptions setting from CVSROOT/config.  */
+extern char *user_admin_options;
 
 void Scratch_Entry PROTO((List * list, char *fname));
 void ParseTag PROTO((char **tagp, char **datep, int *nonbranchp));
