@@ -1,3 +1,8 @@
+Thu Jan 18 14:53:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (CFLAGS): Don't use +=.  This makefile must be
+	portable because it is used on all platforms (e.g. for "make dist").
+
 Thu Jan 11 12:04:42 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* options.h: remove CVS_NOADMIN

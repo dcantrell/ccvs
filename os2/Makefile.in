@@ -33,9 +33,10 @@ LIB = s:${SL}ibmcpp${SL}lib;s:${SL}toolkt21${SL}os2lib;
 CINC = -Is:${SL}ibmcpp${SL}include -Is:${SL}toolkt21${SL}c${SL}os2h
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -C+
-CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
-CFLAGS += -I${srcdir} -I${lib_dir} -I${cvs_srcdir}
-CFLAGS += -DIBM_CPP -DHAVE_CONFIG_H
+CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC} \
+  -I${srcdir} -I${lib_dir} -I${cvs_srcdir} \
+  -DIBM_CPP -DHAVE_CONFIG_H \
+  -DTCPIP_IBM -Is:${SL}ibmtcpip${SL}include
 
 # needed to make command-line wildcard expansion work right.  That's
 # right, DOS-descendants handle this from the program, not the shell.
@@ -43,8 +44,6 @@ ARGVLIB = s:${SL}ibmcpp${SL}lib${SL}setargv.obj
 
 # TCP/IP stuff
 TCPIPLIB = s:${SL}ibmtcpip${SL}lib${SL}tcp32dll.lib	s:${SL}ibmtcpip${SL}lib${SL}so32dll.lib
-
-CFLAGS 	 += -DTCPIP_IBM -Is:${SL}ibmtcpip${SL}include
 
 
 # headers specific to OS/2
