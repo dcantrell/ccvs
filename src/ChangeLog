@@ -1,3 +1,8 @@
+1999-11-30  K.J. Paradise (kj@sourcegear.com)
+
+	* history.c: fixed seg fault caused by 11-03 changes.  
+	off by one in block memory allocations. 
+
 1999-11-29  Karl Fogel  <kfogel@red-bean.com>
 
 	* login.c (logout): free `tmp_name' when done.
