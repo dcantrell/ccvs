@@ -359,6 +359,9 @@ lookup_command_attribute (const char *cmd_name)
  *   Nothing.  This function will always exit.  It should exit with an exit
  *   status of 1, but might not, as noted in the ERRORS section above.
  */
+#ifndef DONT_USE_SIGNALS
+static RETSIGTYPE main_cleanup (int) __attribute__ ((__noreturn__));
+#endif /* DONT_USE_SIGNALS */
 static RETSIGTYPE
 main_cleanup (int sig)
 {
@@ -406,7 +409,12 @@ main_cleanup (int sig)
 	break;
     }
 
+    /* This always exits, which will cause our exit handlers to be called.  */
     error (1, 0, "received %s signal", name);
+    /* but make the exit explicit to silence warnings when gcc processes the
+     * noreturn attribute.
+     */
+    exit (EXIT_FAILURE);
 #endif /* !DONT_USE_SIGNALS */
 }
 

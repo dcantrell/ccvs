@@ -38,12 +38,26 @@ signals_register (RETSIGTYPE (*handler)(int))
 #endif /* !DONT_USE_SIGNALS */
 }
 
+
+
 /*
  * Register a handler for all signals and exit.
  */
 void
 cleanup_register (void (*handler) (void))
 {
-    signals_register (handler);
     atexit (handler);
+
+    /* Always calling this function before any other exit handlers guarantees
+     * that signals will be blocked by the time the other exit handlers are
+     * called.
+     *
+     * SIG_beginCrSect will be called once for each handler registered via
+     * cleanup_register, but there is no unregister routine for atexit() and
+     * this seems like minimal overhead.
+     *
+     * There is no reason to unblock signals again when the exit handlers are
+     * done since the program will be exiting anyhow.
+     */
+    atexit (SIG_beginCrSect);
 }
