@@ -1,3 +1,7 @@
+Fri Jun 16 11:23:44 1995  Jim Meyering  (meyering@comco.com)
+
+	* entries.c (fgetentent): Parenthesize assignment in if-conditional.
+
 Thu Jun 15 17:33:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* server.c (get_buffer_data, buf_append_char, buf_append_data):
