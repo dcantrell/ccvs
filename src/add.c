@@ -195,7 +195,8 @@ add (argc, argv)
 		     * See if a directory exists in the repository with
 		     * the same name.  If so, blow this request off.
 		     */
-		    char dname[PATH_MAX];
+		    char *dname = xmalloc (strlen (repository) + strlen (user)
+					   + 10);
 		    (void) sprintf (dname, "%s/%s", repository, user);
 		    if (isdir (dname))
 		    {
@@ -206,6 +207,7 @@ add (argc, argv)
 			       dname);
 			error (1, 0, "illegal filename overlap");
 		    }
+		    free (dname);
 
 		    if (vers->options == NULL || *vers->options == '\0')
 		    {
@@ -394,9 +396,9 @@ add_directory (repository, entries, dir)
     List *entries;
     char *dir;
 {
-    char rcsdir[PATH_MAX];
+    char *rcsdir = NULL;
     struct saved_cwd cwd;
-    char message[PATH_MAX + 100];
+    char *message = NULL;
     char *tag, *date;
 
     if (strchr (dir, '/') != NULL)
@@ -432,6 +434,7 @@ add_directory (repository, entries, dir)
 	goto out;
     }
 
+    rcsdir = xmalloc (strlen (repository) + strlen (dir) + 10);
     (void) sprintf (rcsdir, "%s/%s", repository, dir);
     if (isfile (rcsdir) && !isdir (rcsdir))
     {
@@ -440,6 +443,7 @@ add_directory (repository, entries, dir)
     }
 
     /* setup the log message */
+    message = xmalloc (strlen (rcsdir) + 80);
     (void) sprintf (message, "Directory %s added to the repository\n", rcsdir);
     if (tag)
     {
@@ -524,6 +528,8 @@ add_directory (repository, entries, dir)
     Subdir_Register (entries, (char *) NULL, dir);
 
     (void) printf ("%s", message);
+    free (rcsdir);
+    free (message);
 
     return (0);
 
@@ -531,6 +537,8 @@ out:
     if (restore_cwd (&cwd, NULL))
 	error_exit ();
     free_cwd (&cwd);
+    if (rcsdir != NULL)
+	free (rcsdir);
     return (0);
 }
 
@@ -547,7 +555,7 @@ build_entry (repository, user, options, message, entries, tag)
     List *entries;
     char *tag;
 {
-    char fname[PATH_MAX];
+    char *fname;
     char line[MAXLINELEN];
     FILE *fp;
 
@@ -559,12 +567,14 @@ build_entry (repository, user, options, message, entries, tag)
      * file user,t.  If the "message" argument is set, use it as the
      * initial creation log (which typically describes the file).
      */
+    fname = xmalloc (strlen (user) + 80);
     (void) sprintf (fname, "%s/%s%s", CVSADM, user, CVSEXT_LOG);
     fp = open_file (fname, "w+");
     if (message && fputs (message, fp) == EOF)
 	    error (1, errno, "cannot write to %s", fname);
     if (fclose(fp) == EOF)
         error(1, errno, "cannot close %s", fname);
+    free (fname);
 
     /*
      * Create the entry now, since this allows the user to interrupt us above

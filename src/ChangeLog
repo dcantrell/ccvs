@@ -1,5 +1,8 @@
 Tue Oct 29 12:49:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* add.c, checkin.c, checkout.c, filesubr.c: Nuke arbitrary limit
+	of PATH_MAX.  Many more such limits surely remain.
+
 	* fileattr.c (fileattr_set): Set attrs_modified *after* we might
 	call fileattr_read, because fileattr_read clears it.
 	* sanity.sh (devcom2): New tests, test for above fix and other

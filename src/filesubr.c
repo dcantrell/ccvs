@@ -682,19 +682,24 @@ last_component (path)
 }
 
 /* Return the home directory.  Returns a pointer to storage
-   managed by this function or its callees (currently getenv).  */
+   managed by this function or its callees (currently getenv).
+   This function will return the same thing every time it is
+   called.  */
 char *
 get_homedir ()
 {
-    static char home[PATH_MAX];
+    static char *home = NULL;
     char *env = getenv ("HOME");
     struct passwd *pw;
 
+    if (home != NULL)
+	return home;
+
     if (env)
-	strcpy (home, env);
+	home = env;
     else if ((pw = (struct passwd *) getpwuid (getuid ()))
 	     && pw->pw_dir)
-	strcpy (home, pw->pw_dir);
+	home = xstrdup (pw->pw_dir);
     else
 	return 0;
 
