@@ -723,6 +723,9 @@ internal error: %s doesn't start with %s in checkout_proc",
 	/* Make a copy of the repository name to play with. */
 	reposcopy = xstrdup (repository);
 
+	/* FIXME: this should be written in terms of last_component instead
+	   of hardcoding '/'.  This presumably affects OS/2, NT, &c, if
+	   the user specifies '\'.  Likewise for the call to findslash.  */
 	cp = strrchr (where, '/');
 	while (cp != NULL)
 	{
