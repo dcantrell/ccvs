@@ -9397,8 +9397,8 @@ Pipe files to the standard output.
 Update directories recursively (default).  @xref{Recursive
 behavior}.
 
-@item -r tag
-Retrieve revision @var{tag}.  This option is sticky,
+@item -r rev
+Retrieve revision/tag @var{rev}.  This option is sticky,
 and implies @samp{-P}.
 See @ref{Sticky tags}, for more information on sticky tags/dates.
 @end table
