@@ -1,5 +1,12 @@
 2002-12-27  Derek Price  <derek@ximbiot.com>
 
+	* stamp-1: Regenerated for dev version 1.11.3.1.
+	* stamp-vti: Ditto.
+	* version-client.texi: Ditto.
+	* version.texi: Ditto.
+
+2002-12-27  Derek Price  <derek@ximbiot.com>
+
 	* stamp-1: Regenerated.
 	* stamp-vti: Ditto.
 	* version-client.texi: Ditto.
