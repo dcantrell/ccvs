@@ -1,3 +1,8 @@
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Subdivide Changes section into "SERVER SECURITY CHANGES" and
+	"OTHER CHANGES".  Note module abspath issue in security section.
+
 2003-11-10  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Add some detail to the last two notes Mark added.
