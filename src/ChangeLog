@@ -1,3 +1,8 @@
+Wed Jan  1 19:50:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (devcom): Add tests devcom-a-nonexist and
+	devcom-t-nonexist for "cvs watchers" on nonexistent argument.
+
 1997-01-01  Fred Fish  <fnf@ninemoons.com>
 
 	* run.c (piped_child, filter_stream_through_program): Actually
