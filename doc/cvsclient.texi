@@ -364,8 +364,8 @@ S: ok
 @end example
 
 In this example the response shown is @code{Clear-sticky}, but it could
-be another response instead.  The first one, @file{moddir/}, indicates
-the working
+be another response instead.  Note that it returns two pathnames.
+The first one, @file{moddir/}, indicates the working
 directory to check out into.  The second one, ending in @file{1dir/},
 indicates the directory to pass back to the server in a subsequent
 @code{Directory} request.  For example, a subsequent @code{update}
