@@ -1,4 +1,13 @@
+Wed Jan 10 01:11:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (serve_notify): Cast return value from malloc.
+
+	* edit.c (notify_do): Use struct assignment, not struct
+	initialization (which SunOS4 /bin/cc doesn't have).
+
 Tue Jan  9 09:41:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Version 1.6.85.
 
 	We use version numbers instead of patchlevels.  But there was some
 	confusing patchlevel stuff lying around.  Nuke it:
