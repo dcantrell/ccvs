@@ -63,7 +63,7 @@ Parse_Info (infofile, repository, callproc, all)
     srepos = Short_Repository (repository);
 
     if (trace)
-	(void) fprintf (stderr, "-> ParseInfo(%s, %s, %s)\n",
+	(void) fprintf (stderr, " -> ParseInfo(%s, %s, %s)\n",
 			infopath, srepos, all ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */

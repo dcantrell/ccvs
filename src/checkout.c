@@ -259,7 +259,7 @@ checkout (argc, argv)
            server send the check-in and update programs for the
            various modules/dirs requested.  If we turn this off and
            simply request the names of the modules and directories (as
-           below in !expand_modules), those files (CVS/Checking.prog
+           below in !expand_modules), those files (CVS/Checkin.prog
            or CVS/Update.prog) don't get created.  Grrr.  */
 	
 	expand_modules = (!cat && !status && !pipeout
