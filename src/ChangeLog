@@ -1,3 +1,10 @@
+2001-12-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* annotate.c (annotate, annotate_fileproc): Don't annotate binary
+	files unless new -F option given.
+	* sanity.sh (basica, ann, ann-id, rcs, keywordlog, tagdate): Update
+	to match.
+
 2001-11-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* admin.c (admin): Allow unrestricted usage of -q in addition to -k.

@@ -1787,7 +1787,8 @@ ${PROG} [a-z]*: invalid context length argument"
 "${PROG} \[[a-z]* aborted\]: ${TESTDIR}/nonexist/CVSROOT: .*"
 
 	  dotest basica-10 "${testcvs} annotate" \
-'Annotations for sdir/ssdir/ssfile
+'
+Annotations for sdir/ssdir/ssfile
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile
 1\.2          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile line 2'
@@ -16280,7 +16281,8 @@ done"
 	  # fairly bogus, but it is the longstanding behavior for
 	  # whatever that is worth.
 	  dotest ann-10 "${testcvs} ann" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16292,7 +16294,8 @@ done"
 1\.2          (${username} *[0-9a-zA-Z-]*): blank
 1\.2          (${username} *[0-9a-zA-Z-]*): line"
 	  dotest ann-11 "${testcvs} ann -r br" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16308,7 +16311,8 @@ done"
 	  # FIXCVS: shouldn't "-r 1.2.0.2" be the same as "-r br"?
 	  dotest ann-12 "${testcvs} ann -r 1.2.0.2 file1" ""
 	  dotest ann-13 "${testcvs} ann -r 1.2.2 file1" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16329,7 +16333,8 @@ done"
 	  cd ../..
 	  rm -r 1
 	  dotest ann-r10 "${testcvs} rann first-dir" \
-"Annotations for first-dir/file1
+"
+Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16341,7 +16346,8 @@ done"
 1\.2          (${username} *[0-9a-zA-Z-]*): blank
 1\.2          (${username} *[0-9a-zA-Z-]*): line"
 	  dotest ann-r11 "${testcvs} rann -r br first-dir" \
-"Annotations for first-dir/file1
+"
+Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16356,7 +16362,8 @@ done"
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
 	  dotest ann-r12 "${testcvs} rann -r 1.2.0.2 first-dir/file1" ""
 	  dotest ann-r13 "${testcvs} rann -r 1.2.2 first-dir/file1" \
-"Annotations for first-dir/file1
+"
+Annotations for first-dir/file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (${username} *[0-9a-zA-Z-]*): this
 1\.1          (${username} *[0-9a-zA-Z-]*): is
@@ -16412,7 +16419,8 @@ done"
 	  # The version number after $file,v should be `1.2'.
 	  # 1.9.28.1 puts `1.1' there.
 	  dotest ann-id-6 "$testcvs -Q ann $file" \
-"Annotations for $file
+"
+Annotations for $file
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1.2          ($username *[0-9a-zA-Z-]*): "'\$'"Id: $file,v 1.1 [0-9/]* [0-9:]* $username Exp "'\$'"
 1.2          ($username *[0-9a-zA-Z-]*): line2"
@@ -16798,7 +16806,8 @@ add file1
 	  # last two digits of the year.  Make sure it does that rather
 	  # than some bogosity like "100".
 	  dotest rcs-4a "${testcvs} annotate file1" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1          (kingdon  24-Nov-96): This is the first line
 1\.2          (kingdon  24-Nov-96): This is the third line
@@ -18844,7 +18853,8 @@ xx"
 	  # The same issue occurs with annotate and other keywords,
 	  # I think, although it is particularly noticeable for $Log.
 	  dotest keywordlog-22 "${testcvs} ann -r br file1" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.3          (${username} *[0-9a-zA-Z-]*): initial
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
@@ -18854,7 +18864,8 @@ xx"
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): xx
 1\.4\.2\.1      (${username} *[0-9a-zA-Z-]*): br-change"
 	  dotest keywordlog-23 "${testcvs} ann -r HEAD file1" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.3          (${username} *[0-9a-zA-Z-]*): initial
 1\.5          (${username} *[0-9a-zA-Z-]*): xx "'\$'"Log: file1,v "'\$'"
@@ -19317,12 +19328,14 @@ done"
 	  # Now for annotate
 	  cd ../1/first-dir
 	  dotest tagdate-16 "${testcvs} annotate -rbr2 -D'1 minute ago'" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1\.4\.1      (${username} *[0-9a-zA-Z-]*): br2-1"
 
 	  dotest tagdate-17 "${testcvs} annotate -rbr2 -Dnow" \
-"Annotations for file1
+"
+Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 1\.1\.4\.2      (${username} *[0-9a-zA-Z-]*): br2-2"
 
