@@ -1,5 +1,12 @@
 2004-10-21 Derek Price <derek@ximbiot.com>
 
+	* buffer.c: Don't maintain last_index & last_count for buffers.
+	* buffer.h (struct buffer): Update struct.
+	(buf_initialize): Update proto.
+	* log-buffer.c, ms-buffer.c, zlib.c: Update all callers.
+
+2004-10-21 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh: Fail gracefully in proxy mode when rsync is defective.
 	(depends_on_rsync): New function.
 	(writeproxy, writeproxy-noredirect, writeproxy-ssh): Skip these tests

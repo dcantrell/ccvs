@@ -29,8 +29,7 @@ static struct buffer_data *get_buffer_data (void);
 
 /* Initialize a buffer structure.  */
 struct buffer *
-buf_initialize (size_t last_index, size_t last_count,
-                int (*input) (void *, char *, size_t, size_t, size_t *),
+buf_initialize (int (*input) (void *, char *, size_t, size_t, size_t *),
 	        int (*output) (void *, const char *, size_t, size_t *),
                 int (*flush) (void *),
                 int (*block) (void *, bool),
@@ -46,8 +45,6 @@ buf_initialize (size_t last_index, size_t last_count,
     buf->last = NULL;
     buf->nonblocking = false;
     buf->input = input;
-    buf->last_index = last_index;
-    buf->last_count = last_count;
     buf->output = output;
     buf->flush = flush;
     buf->block = block;
@@ -83,8 +80,7 @@ buf_free (struct buffer *buf)
 struct buffer *
 buf_nonio_initialize( void (*memory) (struct buffer *) )
 {
-    return buf_initialize (0, 0, NULL, NULL, NULL, NULL, NULL, NULL, memory,
-                           NULL);
+    return buf_initialize (NULL, NULL, NULL, NULL, NULL, NULL, memory, NULL);
 }
 
 
@@ -562,7 +558,7 @@ buf_free_data (struct buffer *buffer)
 
 
 /* Append the data in one buffer to another.  This removes the data
- * from the source buffer, maintaining LAST_INDEX and LAST_COUNT.
+ * from the source buffer.
  */
 void
 buf_append_buffer (struct buffer *to, struct buffer *from)
@@ -572,13 +568,9 @@ buf_append_buffer (struct buffer *to, struct buffer *from)
     /* Copy the data pointer to the new buf.  */
     buf_append_data (to, from->data, from->last);
 
-    /* Maintain index and count.  */
-    from->last_index += from->last_count;
-    from->last_count = 0;
     n = from->data;
     while (n)
     {
-	from->last_count += n->size;
 	if (n == from->last) break;
 	n = n->next;
     }
@@ -826,8 +818,6 @@ buf_input_data (struct buffer *buf, size_t *countp)
  * of the line.  The trailing \012 is not included in the buffer.  If
  * LENP is not NULL, then *LENP is set to the number of bytes read;
  * strlen may not work, because there may be embedded null bytes.
- *
- * Maintains LAST_INDEX & LAST_COUNT.
  */
 int
 buf_read_line (struct buffer *buf, char **line, size_t *lenp)
@@ -838,8 +828,6 @@ buf_read_line (struct buffer *buf, char **line, size_t *lenp)
 
 
 /* Like buf_read_line, but return -2 if no newline is found in MAX characters.
- *
- * Maintains LAST_INDEX & LAST_COUNT.
  */
 int
 buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
@@ -906,9 +894,6 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
 
 	    if (lenp != NULL)
 	        *lenp = len;
-
-	    buf->last_index += buf->last_count;
-	    buf->last_count = len;
 
 	    return 0;
 	}
@@ -983,8 +968,6 @@ buf_read_short_line (struct buffer *buf, char **line, size_t *lenp,
  * so the data should be fully processed before any further calls are
  * made.  This returns 0 on success, or -1 on end of file, or -2 if
  * out of memory, or an error code.
- *
- * Maintains LAST_INDEX & LAST_COUNT.
  */
 int
 buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
@@ -1047,17 +1030,14 @@ buf_read_data (struct buffer *buf, size_t want, char **retdata, size_t *got)
 	buf->data->size = 0;
     }
 
-    buf->last_index += buf->last_count;
-    buf->last_count = *got;
-
     return 0;
 }
 
 
 
 /*
- * Copy lines from an input buffer to an output buffer, maintaining LAST_INDEX
- * and LAST_COUNT.  This copies all complete lines (characters up to a
+ * Copy lines from an input buffer to an output buffer.
+ * This copies all complete lines (characters up to a
  * newline) from INBUF to OUTBUF.  Each line in OUTBUF is preceded by the
  * character COMMAND and a space.
  */
@@ -1094,17 +1074,13 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 	buf_append_char (outbuf, command);
 	buf_append_char (outbuf, ' ');
 
-	inbuf->last_index += inbuf->last_count;
-	inbuf->last_count = 0;
 	if (inbuf->data != nldata)
 	{
 	    /*
 	     * Simply move over all the buffers up to the one containing
 	     * the newline.
 	     */
-	    for (data = inbuf->data; data->next != nldata; data = data->next)
-		inbuf->last_count += data->size;
-	    inbuf->last_count += data->size;
+	    for (data = inbuf->data; data->next != nldata; data = data->next);
 	    data->next = NULL;
 	    buf_append_data (outbuf, inbuf->data, data);
 	    inbuf->data = nldata;
@@ -1122,12 +1098,10 @@ buf_copy_lines (struct buffer *outbuf, struct buffer *inbuf, int command)
 		inbuf->last = NULL;
 
 	    nldata->next = NULL;
-	    inbuf->last_count += nldata->size;
 	    buf_append_data (outbuf, nldata, nldata);
 	}
 	else
 	{
-	    inbuf->last_count += len;
 	    buf_output (outbuf, nldata->bufp, len);
 	    nldata->bufp += len;
 	    nldata->size -= len;
@@ -1237,8 +1211,6 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	 * START, and remove STARTOFF bytes from START, so that we can
 	 * forget about STARTOFF.
 	 */
-	inbuf->last_index += inbuf->last_count;
-	inbuf->last_count = startoff;
 	start->bufp += startoff;
 	start->size -= startoff;
 
@@ -1253,7 +1225,6 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 
 	while (inbuf->data != start)
 	{
-	    inbuf->last_count += inbuf->data->size;
 	    data = inbuf->data;
 	    inbuf->data = data->next;
 	    data->next = free_buffer_data;
@@ -1275,9 +1246,7 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	if (start != stop)
 	{
 	    /* Attach the buffers from START through STOP to OUTBUF.  */
-	    for (data = start; data->next != stop; data = data->next)
-		inbuf->last_count += data->size;
-	    inbuf->last_count += data->size;
+	    for (data = start; data->next != stop; data = data->next);
 	    inbuf->data = stop;
 	    data->next = NULL;
 	    buf_append_data (outbuf, start, data);
@@ -1286,7 +1255,6 @@ buf_copy_counted (struct buffer *outbuf, struct buffer *inbuf, int *special)
 	if (stopwant > 0)
 	{
 	    buf_output (outbuf, stop->bufp, stopwant);
-	    inbuf->last_count += stopwant;
 	    stop->bufp += stopwant;
 	    stop->size -= stopwant;
 	}
@@ -1414,8 +1382,7 @@ packetizing_buffer_initialize (struct buffer *buf,
 	pb->holdbuf = xmalloc (pb->holdbufsize);
     }
 
-    return buf_initialize (buf->last_index, buf->last_count,
-                           inpfn != NULL ? packetizing_buffer_input : NULL,
+    return buf_initialize (inpfn != NULL ? packetizing_buffer_input : NULL,
 			   inpfn != NULL ? NULL : packetizing_buffer_output,
 			   inpfn != NULL ? NULL : packetizing_buffer_flush,
 			   packetizing_buffer_block,
@@ -1802,8 +1769,7 @@ fd_buffer_initialize (int fd, pid_t child_pid, cvsroot_t *root, bool input,
     n->child_pid = child_pid;
     n->root = root;
     fd_buffer_block (n, true);
-    return buf_initialize (0, 0,
-                           input ? fd_buffer_input : NULL,
+    return buf_initialize (input ? fd_buffer_input : NULL,
 			   input ? NULL : fd_buffer_output,
 			   input ? NULL : fd_buffer_flush,
 			   fd_buffer_block, fd_buffer_get_fd,

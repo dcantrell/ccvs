@@ -113,8 +113,7 @@ compress_buffer_initialize (struct buffer *buf, int input, int level,
        be modified to handle multiple input buffers.  */
     assert (! input || buf->data == NULL || buf->data->next == NULL);
 
-    return buf_initialize (buf->last_index, buf->last_count,
-                           input ? compress_buffer_input : NULL,
+    return buf_initialize (input ? compress_buffer_input : NULL,
 			   input ? NULL : compress_buffer_output,
 			   input ? NULL : compress_buffer_flush,
 			   compress_buffer_block, compress_buffer_get_fd,

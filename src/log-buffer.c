@@ -144,8 +144,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp,
     lb->tofile = false;
     lb->back_buf = buf_nonio_initialize (memory);
 #endif /* PROXY_SUPPORT */
-    retbuf = buf_initialize (0, 0,
-                             input ? log_buffer_input : NULL,
+    retbuf = buf_initialize (input ? log_buffer_input : NULL,
 			     input ? NULL : log_buffer_output,
 			     input ? NULL : log_buffer_flush,
 			     log_buffer_block, log_buffer_get_fd,
