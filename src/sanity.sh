@@ -237,7 +237,7 @@ cd ${TESTDIR}
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basica basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore binfiles"
+	tests="basica basic0 basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles"
 else
 	tests="$*"
 fi
@@ -1255,6 +1255,94 @@ done'
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
+	branches)
+	  # More branch tests, including branches off of branches
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest branches-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo 1:ancest >file1
+	  echo 2:ancest >file2
+	  echo 3:ancest >file3
+	  dotest branches-2 "${testcvs} add file1 file2 file3" \
+'cvs [a-z]*: scheduling file `file1'\'' for addition
+cvs [a-z]*: scheduling file `file2'\'' for addition
+cvs [a-z]*: scheduling file `file3'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add these files permanently'
+	  dotest branches-3 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1.1
+done
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file3,v
+done
+Checking in file3;
+/tmp/cvs-sanity/cvsroot/first-dir/file3,v  <--  file3
+initial revision: 1.1
+done'
+	  dotest branches-4 "${testcvs} tag -b br1" 'cvs [a-z]*: Tagging \.
+T file1
+T file2
+T file3'
+	  dotest branches-5 "${testcvs} update -r br1" \
+'cvs [a-z]*: Updating \.'
+	  echo 1:br1 >file1
+	  echo 2:br1 >file2
+	  dotest branches-6 "${testcvs} -q ci -m modify" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.1.2.1; previous revision: 1.1
+done
+Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1.1.2.1; previous revision: 1.1
+done'
+	  dotest branches-7 "${testcvs} -q tag -b brbr" 'T file1
+T file2
+T file3'
+	  dotest branches-8 "${testcvs} -q update -r brbr" ''
+	  echo 1:brbr >file1
+	  dotest branches-9 "${testcvs} -q ci -m modify" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.1.2.1.2.1; previous revision: 1.1.2.1
+done'
+	  dotest branches-10 "cat file1 file2 file3" '1:brbr
+2:br1
+3:ancest'
+	  dotest branches-11 "${testcvs} -q update -r br1" 'U file1' 'P file1'
+	  dotest branches-12 "cat file1 file2 file3" '1:br1
+2:br1
+3:ancest'
+	  dotest branches-13 "${testcvs} -q update -A" '. file1
+. file2'
+	  dotest branches-14 "cat file1 file2 file3" '1:ancest
+2:ancest
+3:ancest'
+	  dotest branches-15 \
+	    "${testcvs} update -j 1.1.2.1 -j 1.1.2.1.2.1 file1" \
+	    'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+retrieving revision 1.1.2.1
+retrieving revision 1.1.2.1.2.1
+Merging differences between 1.1.2.1 and 1.1.2.1.2.1 into file1
+rcsmerge: warning: conflicts during merge'
+	  dotest branches-16 "cat file1" '<<<<<<< file1
+1:ancest
+=======
+1:brbr
+>>>>>>> 1.1.2.1.2.1'
+	  cd ..
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r first-dir
+	  ;;
 
 	import) # test death after import
 		# import
