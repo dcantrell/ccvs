@@ -1,3 +1,13 @@
+1998-08-21  Ian Lance Taylor  <ian@cygnus.com>
+
+	* import.c (import): Output suggested merge command using
+	cvs_output_tagged rather than just cvs_output.  Don't put
+	CVSroot_cmdline in the log file.
+	* client.c (importmergecmd): New static struct.
+	(handle_mt): Handle +importmergecmd tag.
+	* sanity.sh (import): Use an explicit -d in importb-2, to test
+	whether it is reported in the suggested merge command.
+
 1998-08-20  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (import): Rewrite tests to use dotest.

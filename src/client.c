@@ -1319,6 +1319,23 @@ static int updated_seen;
 /* Filename from an "fname" tagged response within +updated/-updated.  */
 static char *updated_fname;
 
+/* This struct is used to hold data when reading the +importmergecmd
+   and -importmergecmd tags.  We put the variables in a struct only
+   for namespace issues.  FIXME: As noted above, we need to develop a
+   more systematic approach.  */
+static struct
+{
+    /* Nonzero if we have seen +importmergecmd and not -importmergecmd.  */
+    int seen;
+    /* Number of conflicts, from a "conflicts" tagged response.  */
+    int conflicts;
+    /* First merge tag, from a "mergetag1" tagged response.  */
+    char *mergetag1;
+    /* Second merge tag, from a "mergetag2" tagged response.  */
+    char *mergetag2;
+    /* Repository, from a "repository" tagged response.  */
+    char *repository;
+} importmergecmd;
 
 /* Nonzero if we should arrange to return with a failure exit status.  */
 static int failure_exit;
@@ -3049,10 +3066,61 @@ handle_mt (args, len)
 	case '+':
 	    if (strcmp (tag, "+updated") == 0)
 		updated_seen = 1;
+	    else if (strcmp (tag, "+importmergecmd") == 0)
+		importmergecmd.seen = 1;
 	    break;
 	case '-':
 	    if (strcmp (tag, "-updated") == 0)
 		updated_seen = 0;
+	    else if (strcmp (tag, "-importmergecmd") == 0)
+	    {
+		char buf[80];
+
+		/* Now that we have gathered the information, we can
+                   output the suggested merge command.  */
+
+		if (importmergecmd.conflicts == 0
+		    || importmergecmd.mergetag1 == NULL
+		    || importmergecmd.mergetag2 == NULL
+		    || importmergecmd.repository == NULL)
+		{
+		    error (0, 0,
+			   "invalid server: incomplete importmergecmd tags");
+		    break;
+		}
+
+		sprintf (buf, "\n%d conflicts created by this import.\n",
+			 importmergecmd.conflicts);
+		cvs_output (buf, 0);
+		cvs_output ("Use the following command to help the merge:\n\n",
+			    0);
+		cvs_output ("\t", 1);
+		cvs_output (program_name, 0);
+		if (CVSroot_cmdline != NULL)
+		{
+		    cvs_output (" -d ", 0);
+		    cvs_output (CVSroot_cmdline, 0);
+		}
+		cvs_output (" checkout -j", 0);
+		cvs_output (importmergecmd.mergetag1, 0);
+		cvs_output (" -j", 0);
+		cvs_output (importmergecmd.mergetag2, 0);
+		cvs_output (" ", 1);
+		cvs_output (importmergecmd.repository, 0);
+		cvs_output ("\n\n", 0);
+
+		/* Clear the static variables so that everything is
+                   ready for any subsequent importmergecmd tag.  */
+		importmergecmd.conflicts = 0;
+		free (importmergecmd.mergetag1);
+		importmergecmd.mergetag1 = NULL;
+		free (importmergecmd.mergetag2);
+		importmergecmd.mergetag2 = NULL;
+		free (importmergecmd.repository);
+		importmergecmd.repository = NULL;
+
+		importmergecmd.seen = 0;
+	    }
 	    break;
 	default:
 	    if (updated_seen)
@@ -3074,6 +3142,21 @@ handle_mt (args, len)
 		/* Swallow all other tags.  Either they are extraneous
 		   or they reflect future extensions that we can
 		   safely ignore.  */
+	    }
+	    else if (importmergecmd.seen)
+	    {
+		if (strcmp (tag, "conflicts") == 0)
+		    importmergecmd.conflicts = atoi (text);
+		else if (strcmp (tag, "mergetag1") == 0)
+		    importmergecmd.mergetag1 = xstrdup (text);
+		else if (strcmp (tag, "mergetag2") == 0)
+		    importmergecmd.mergetag2 = xstrdup (text);
+		else if (strcmp (tag, "repository") == 0)
+		    importmergecmd.repository = xstrdup (text);
+		/* Swallow all other tags.  Either they are text for
+                   which we are going to print our own version when we
+                   see -importmergecmd, or they are future extensions
+                   we can safely ignore.  */
 	    }
 	    else if (strcmp (tag, "newline") == 0)
 		printf ("\n");

@@ -297,35 +297,50 @@ import (argc, argv)
     {
 	if (!really_quiet)
 	{
-	    char buf[80];
-	    sprintf (buf, "\n%d conflicts created by this import.\n",
-		     conflicts);
-	    cvs_output (buf, 0);
-	    cvs_output ("Use the following command to help the merge:\n\n",
-			0);
-	    cvs_output ("\t", 1);
-	    cvs_output (program_name, 0);
+	    char buf[20];
+	    char *buf2;
+
+	    cvs_output_tagged ("+importmergecmd", NULL);
+	    cvs_output_tagged ("newline", NULL);
+	    sprintf (buf, "%d", conflicts);
+	    cvs_output_tagged ("conflicts", buf);
+	    cvs_output_tagged ("text", " conflicts created by this import.");
+	    cvs_output_tagged ("newline", NULL);
+	    cvs_output_tagged ("text",
+			       "Use the following command to help the merge:");
+	    cvs_output_tagged ("newline", NULL);
+	    cvs_output_tagged ("newline", NULL);
+	    cvs_output_tagged ("text", "\t");
+	    cvs_output_tagged ("text", program_name);
 	    if (CVSroot_cmdline != NULL)
-	    {
-		cvs_output (" -d ", 0);
-		cvs_output (CVSroot_cmdline, 0);
-	    }
-	    cvs_output (" checkout -j", 0);
-	    cvs_output (argv[1], 0);
-	    cvs_output (":yesterday -j", 0);
-	    cvs_output (argv[1], 0);
-	    cvs_output (" ", 1);
-	    cvs_output (argv[0], 0);
-	    cvs_output ("\n\n", 0);
+	      {
+		cvs_output_tagged ("text", " -d ");
+		cvs_output_tagged ("text", CVSroot_cmdline);
+	      }
+	    cvs_output_tagged ("text", " checkout -j");
+	    buf2 = xmalloc (strlen (argv[1]) + 20);
+	    sprintf (buf2, "%s:yesterday", argv[1]);
+	    cvs_output_tagged ("mergetag1", buf2);
+	    free (buf2);
+	    cvs_output_tagged ("text", " -j");
+	    cvs_output_tagged ("mergetag2", argv[1]);
+	    cvs_output_tagged ("text", " ");
+	    cvs_output_tagged ("repository", argv[0]);
+	    cvs_output_tagged ("newline", NULL);
+	    cvs_output_tagged ("newline", NULL);
+	    cvs_output_tagged ("-importmergecmd", NULL);
 	}
 
+	/* FIXME: I'm not sure whether we need to put this information
+           into the loginfo.  If we do, then note that it does not
+           report any required -d option.  There is no particularly
+           clean way to tell the server about the -d option used by
+           the client.  */
 	(void) fprintf (logfp, "\n%d conflicts created by this import.\n",
 			conflicts);
 	(void) fprintf (logfp,
 			"Use the following command to help the merge:\n\n");
 	(void) fprintf (logfp, "\t%s checkout ", program_name);
-	if (CVSroot_cmdline != NULL)
-	    (void) fprintf (logfp, "-d %s ", CVSroot_cmdline);
 	(void) fprintf (logfp, "-j%s:yesterday -j%s %s\n\n",
 			argv[1], argv[1], argv[0]);
     }

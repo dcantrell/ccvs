@@ -3951,12 +3951,14 @@ No conflicts created by this import"
 	  echo 'FreeMunger sources' >file2
 	  # Not completely sure how the conflict detection is supposed to
 	  # be working here (haven't really thought about it).
+	  # We use an explicit -d option to test that it is reflected
+	  # in the suggested checkout.
 	  dotest_sort importb-2 \
-"${testcvs} import -m add -b 1.1.3 first-dir freemunger freemunger-1_0" \
+"${testcvs} -d ${CVSROOT} import -m add -b 1.1.3 first-dir freemunger freemunger-1_0" \
 "
 
 
-	${PROG} checkout -jfreemunger:yesterday -jfreemunger first-dir
+	${PROG} -d ${CVSROOT} checkout -jfreemunger:yesterday -jfreemunger first-dir
 2 conflicts created by this import.
 C first-dir/file1
 C first-dir/file2
