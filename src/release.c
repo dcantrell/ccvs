@@ -271,7 +271,6 @@ release_delete (dir)
 {
     struct stat st;
     ino_t ino;
-    int retcode = 0;
 
     (void) stat (".", &st);
     ino = st.st_ino;
