@@ -1,3 +1,11 @@
+1999-09-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* log.c (log_parse_revlist): Handle peculiar revision specs like
+	"-r.", "-r:", and "-r," correctly.  (Thanks to Pavel Roskin
+	<pavel_roskin@geocities.com> for submitting a patch, this fix is
+	somewhat different.)
+	* sanity.sh (log): New tests for above.
+
 1999-09-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (basica-8b1): New test to check fix for bad diff options

@@ -262,14 +262,7 @@ log_parse_revlist (argstring)
        latest revision on the default branch, so we must support that
        for compatibility.  */
     if (argstring == NULL)
-    {
-	ret = (struct option_revlist *) xmalloc (sizeof *ret);
-	ret->first = NULL;
-	ret->last = NULL;
-	ret->next = NULL;
-	ret->branchhead = 0;
-	return ret;
-    }
+	argstring = "";
 
     ret = NULL;
     pr = &ret;
@@ -282,43 +275,33 @@ log_parse_revlist (argstring)
     while (copy != NULL)
     {
 	char *comma;
-	char *cp;
-	char *first, *last;
 	struct option_revlist *r;
 
 	comma = strchr (copy, ',');
 	if (comma != NULL)
 	    *comma++ = '\0';
 
-	first = copy;
-	cp = strchr (copy, ':');
-	if (cp == NULL)
-	    last = copy;
-	else
-	{
-	    *cp++ = '\0';
-	    last = cp;
-	}
-
-	if (*first == '\0')
-	    first = NULL;
-	if (*last == '\0')
-	    last = NULL;
-
 	r = (struct option_revlist *) xmalloc (sizeof *r);
 	r->next = NULL;
-	r->first = first;
-	r->last = last;
-	if (first != last
-	    || first[strlen (first) - 1] != '.')
-	{
-	    r->branchhead = 0;
-	}
+	r->first = copy;
+	r->branchhead = 0;
+	r->last = strchr (copy, ':');
+	if (r->last != NULL)
+	    *r->last++ = '\0';
 	else
 	{
-	    r->branchhead = 1;
-	    first[strlen (first) - 1] = '\0';
+	    r->last = r->first;
+	    if (r->first[0] != '\0' && r->first[strlen (r->first) - 1] == '.')
+	    {
+		r->branchhead = 1;
+		r->first[strlen (r->first) - 1] = '\0';
+	    }
 	}
+
+	if (*r->first == '\0')
+	    r->first = NULL;
+	if (*r->last == '\0')
+	    r->last = NULL;
 
 	*pr = r;
 	pr = &r->next;
