@@ -1,3 +1,7 @@
+Thu Feb 20 21:57:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keeping a checked out copy): Add "web" to index.
+
 Wed Feb 12 18:44:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication client, Invoking CVS):
