@@ -1,3 +1,23 @@
+Tue Feb 17 18:34:01 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	Rewrite RCS file reading routines for speed:
+	* rcs.c (struct rcsbuffer): Define.
+	(rcsbuf_open, rcsbuf_close, rcsbuf_getkey, rcsbuf_getrevnum,
+	rcsbuf_fill, rcsbuf_valcopy, rcsbuf_valpolish,
+	rcsbuf_valpolish_internal, rcsbuf_ftell): New static functions.
+	(getrcskey, getrcsrev, getrevnum): Remove.
+	(many functions): Change to use new rcsbuf functions instead of
+	old getrcskey/getrcsrev/getrevnum functions.
+	(RCS_reparsercsfile): Add rcsbufp parameter.  Change all callers.
+	(RCS_deltas): Add rcsbuf parameter.  Change all callers.
+	(getdelta): Change fp parameter to rcsbuf parameter.  Change all
+	callers.
+	(RCS_getdeltatext): Add rcsbuf parameter.  Change all callers.
+	(RCS_copydeltas): Add rcsbufin parameter.  Change all callers.
+	* rcs.h (RCS_reparsercsfile): Update declaration.
+	* admin.c (admin_fileproc): Update calls to RCS_reparsercsfile for
+	new parameters.
+
 1998-02-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (toplevel): Also clean up second-dir (not a new

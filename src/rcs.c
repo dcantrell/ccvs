@@ -21,13 +21,51 @@ static const char *const kflags[] =
   {"kv", "kvl", "k", "v", "o", "b", (char *) NULL};
 enum kflag { KFLAG_KV = 0, KFLAG_KVL, KFLAG_K, KFLAG_V, KFLAG_O, KFLAG_B };
 
+/* A structure we use to buffer the contents of an RCS file.  The
+   various fields are only referenced directly by the rcsbuf_*
+   functions.  We declare the struct here so that we can allocate it
+   on the stack, rather than in memory.  */
+
+struct rcsbuffer
+{
+    /* Points to the current position in the buffer.  */
+    char *ptr;
+    /* Points just after the last valid character in the buffer.  */
+    char *ptrend;
+    /* The file.  */
+    FILE *fp;
+    /* The name of the file, used for error messages.  */
+    const char *filename;
+    /* The starting file position of the data in the buffer.  */
+    unsigned long pos;
+    /* The length of the value.  */
+    size_t vlen;
+    /* Whether the value contains an '@' string.  If so, we can not
+       compress whitespace characters.  */
+    int at_string;
+    /* The number of embedded '@' characters in an '@' string.  If
+       this is non-zero, we must search the string for pairs of '@'
+       and convert them to a single '@'.  */
+    int embedded_at;
+};
+
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
-static int getrcskey PROTO((FILE * fp, const char *name,
-			    char **keyp, char **valp,
-			    size_t *lenp));
-static void getrcsrev PROTO ((FILE *fp, char **revp));
-static int getrevnum PROTO ((FILE *fp, char **revp));
+static void rcsbuf_open PROTO ((struct rcsbuffer *, FILE *fp,
+				const char *filename, unsigned long pos));
+static void rcsbuf_close PROTO ((struct rcsbuffer *));
+static int rcsbuf_getkey PROTO ((struct rcsbuffer *, char **keyp,
+				 char **valp));
+static int rcsbuf_getrevnum PROTO ((struct rcsbuffer *, char **revp));
+static char *rcsbuf_fill PROTO ((struct rcsbuffer *, char *ptr, char **keyp,
+				 char **valp));
+static char *rcsbuf_valcopy PROTO ((struct rcsbuffer *, char *val, int polish,
+				    size_t *lenp));
+static void rcsbuf_valpolish PROTO ((struct rcsbuffer *, char *val, int polish,
+				     size_t *lenp));
+static void rcsbuf_valpolish_internal PROTO ((struct rcsbuffer *, char *to,
+					      const char *from, size_t *lenp));
+static unsigned long rcsbuf_ftell PROTO ((struct rcsbuffer *));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -44,12 +82,15 @@ static void expand_keywords PROTO((RCSNode *, RCSVers *, const char *,
 static void cmp_file_buffer PROTO((void *, const char *, size_t));
 
 enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
-static void RCS_deltas PROTO ((RCSNode *, FILE *, char *, enum rcs_delta_op,
-			       char **, size_t *, char **, size_t *));
+static void RCS_deltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *, char *,
+			       enum rcs_delta_op, char **, size_t *,
+			       char **, size_t *));
 
 /* Routines for reading, parsing and writing RCS files. */
-static RCSVers *getdelta PROTO ((FILE *, char *, char **, char **));
-static Deltatext *RCS_getdeltatext PROTO ((RCSNode *, FILE *));
+static RCSVers *getdelta PROTO ((struct rcsbuffer *, char *, char **,
+				 char **));
+static Deltatext *RCS_getdeltatext PROTO ((RCSNode *, FILE *,
+					   struct rcsbuffer *));
 static void freedeltatext PROTO ((Deltatext *));
 
 static void RCS_putadmin PROTO ((RCSNode *, FILE *));
@@ -58,7 +99,8 @@ static void RCS_putdesc PROTO ((RCSNode *, FILE *));
 static void putdelta PROTO ((RCSVers *, FILE *));
 static int putrcsfield_proc PROTO ((Node *, void *));
 static int putsymbol_proc PROTO ((Node *, void *));
-static void RCS_copydeltas PROTO ((RCSNode *, FILE *, FILE *, Deltatext *, char *));
+static void RCS_copydeltas PROTO ((RCSNode *, FILE *, struct rcsbuffer *,
+				   FILE *, Deltatext *, char *));
 static void putdeltatext PROTO ((FILE *, Deltatext *));
 
 static FILE *rcs_internal_lockfile PROTO ((char *));
@@ -253,6 +295,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     const char *rcsfile;
 {
     RCSNode *rdata;
+    struct rcsbuffer rcsbuf;
     char *key, *value;
 
     /* make a node */
@@ -277,15 +320,17 @@ RCS_parsercsfile_i (fp, rcsfile)
        So making the case in which we call RCS_reparsercsfile fast is
        not as important.  */
 
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
+    rcsbuf_open (&rcsbuf, fp, rcsfile, 0);
+
+    if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	goto l_error;
     if (STREQ (key, RCSDESC))
 	goto l_error;
 
     if (STREQ (RCSHEAD, key) && value != NULL)
-	rdata->head = xstrdup (value);
+	rdata->head = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
 
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
+    if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	goto l_error;
     if (STREQ (key, RCSDESC))
 	goto l_error;
@@ -294,7 +339,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     {
 	char *cp;
 
-	rdata->branch = xstrdup (value);
+	rdata->branch = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
 	if ((numdots (rdata->branch) & 1) != 0)
 	{
 	    /* turn it into a branch if it's a revision */
@@ -311,7 +356,8 @@ RCS_parsercsfile_i (fp, rcsfile)
 
 	if (STREQ (RCSEXPAND, key))
 	{
-	    rdata->expand = xstrdup (value);
+	    rdata->expand = rcsbuf_valcopy (&rcsbuf, value, 0,
+					    (size_t *) NULL);
 	    break;
 	}
 
@@ -323,9 +369,11 @@ RCS_parsercsfile_i (fp, rcsfile)
 	if (STREQ (RCSDESC, key))
 	    break;
 
-	if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1 || key == NULL)
+	if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	    break;
     }
+
+    rcsbuf_close (&rcsbuf);
 
     rdata->flags |= PARTIAL;
     return rdata;
@@ -333,6 +381,7 @@ RCS_parsercsfile_i (fp, rcsfile)
 l_error:
     error (0, 0, "`%s' does not appear to be a valid rcs file",
 	   rcsfile);
+    rcsbuf_close (&rcsbuf);
     freercsnode (&rdata);
     return (NULL);
 }
@@ -345,13 +394,14 @@ l_error:
    If PFP is NULL, close the file when done.  Otherwise, leave it open
    and store the FILE * in *PFP.  */
 void
-RCS_reparsercsfile (rdata, pfp)
+RCS_reparsercsfile (rdata, pfp, rcsbufp)
     RCSNode *rdata;
     FILE **pfp;
+    struct rcsbuffer *rcsbufp;
 {
     FILE *fp;
     char *rcsfile;
-
+    struct rcsbuffer rcsbuf;
     Node *q, *kv;
     RCSVers *vnode;
     int gotkey;
@@ -364,6 +414,8 @@ RCS_reparsercsfile (rdata, pfp)
     fp = CVS_FOPEN (rcsfile, FOPEN_BINARY_READ);
     if (fp == NULL)
 	error (1, 0, "unable to reopen `%s'", rcsfile);
+
+    rcsbuf_open (&rcsbuf, fp, rcsfile, 0);
 
     /* make a node */
     /* This probably shouldn't be done until later: if a file has an
@@ -381,19 +433,11 @@ RCS_reparsercsfile (rdata, pfp)
 	/* get the next key/value pair */
 	if (!gotkey)
 	{
-	    if (getrcskey (fp, rcsfile, &key, &value, NULL) == -1)
+	    if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	    {
 		error (1, 0, "`%s' does not appear to be a valid rcs file",
 		       rcsfile);
 	    }
-	}
-
-	/* If key is NULL here, then the file is missing some headers
-	   or we had trouble reading the file.  */
-	if (key == NULL)
-	{
-	    error (1, 0, "`%s' does not appear to be a valid rcs file",
-		   rcsfile);
 	}
 
 	gotkey = 0;
@@ -409,7 +453,14 @@ RCS_reparsercsfile (rdata, pfp)
 	if (STREQ (key, "access"))
 	{
 	    if (value != NULL)
-		rdata->access = xstrdup (value);
+	    {
+		/* We pass the POLISH parameter as 1 because
+                   RCS_addaccess expects nothing but spaces.  FIXME:
+                   It would be easy and more efficient to change
+                   RCS_addaccess.  */
+		rdata->access = rcsbuf_valcopy (&rcsbuf, value, 1,
+						(size_t *) NULL);
+	    }
 	    continue;
 	}
 
@@ -418,13 +469,13 @@ RCS_reparsercsfile (rdata, pfp)
 	if (STREQ (key, "locks"))
 	{
 	    if (value != NULL)
-		rdata->locks_data = xstrdup (value);
-	    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+		rdata->locks_data = rcsbuf_valcopy (&rcsbuf, value, 0,
+						    (size_t *) NULL);
+	    if (! rcsbuf_getkey (&rcsbuf, &key, &value))
 	    {
 		error (1, 0, "premature end of file reading %s", rcsfile);
 	    }
-	    if (STREQ (key, "strict") &&
-		value == NULL)
+	    if (STREQ (key, "strict") && value == NULL)
 	    {
 		rdata->strict_locks = 1;
 	    }
@@ -436,7 +487,8 @@ RCS_reparsercsfile (rdata, pfp)
 	if (STREQ (RCSSYMBOLS, key))
 	{
 	    if (value != NULL)
-		rdata->symbols_data = xstrdup(value);
+		rdata->symbols_data = rcsbuf_valcopy (&rcsbuf, value, 0,
+						      (size_t *) NULL);
 	    continue;
 	}
 
@@ -447,6 +499,9 @@ RCS_reparsercsfile (rdata, pfp)
 	 */
 	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 	     /* do nothing */ ;
+	/* Note that when comparing with RCSDATE, we are not massaging
+           VALUE from the string found in the RCS file.  This is OK
+           since we know exactly what to expect.  */
 	if (*cp == '\0' && strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) == 0)
 	    break;
 
@@ -455,7 +510,8 @@ RCS_reparsercsfile (rdata, pfp)
 
 	if (STREQ (key, "comment"))
 	{
-	    rdata->comment = xstrdup (value);
+	    rdata->comment = rcsbuf_valcopy (&rcsbuf, value, 0,
+					     (size_t *) NULL);
 	    continue;
 	}
 	if (rdata->other == NULL)
@@ -463,7 +519,7 @@ RCS_reparsercsfile (rdata, pfp)
 	kv = getnode ();
 	kv->type = RCSFIELD;
 	kv->key = xstrdup (key);
-	kv->data = xstrdup (value);
+	kv->data = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
 	if (addnode (rdata->other, kv) != 0)
 	{
 	    error (0, 0, "warning: duplicate key `%s' in RCS file `%s'",
@@ -478,7 +534,7 @@ RCS_reparsercsfile (rdata, pfp)
        revision delta in KEY (the revision) and VALUE (the date key
        and its value).  This is what getdelta expects to receive.  */
 
-    while ((vnode = getdelta (fp, rcsfile, &key, &value)) != NULL)
+    while ((vnode = getdelta (&rcsbuf, rcsfile, &key, &value)) != NULL)
     {
 	/* get the node */
 	q = getnode ();
@@ -500,7 +556,7 @@ RCS_reparsercsfile (rdata, pfp)
 
     /* Here KEY and VALUE are whatever caused getdelta to return NULL.  */
 
-    if (key != NULL && STREQ (key, RCSDESC))
+    if (STREQ (key, RCSDESC))
     {
 	if (rdata->desc != NULL)
 	{
@@ -509,19 +565,21 @@ RCS_reparsercsfile (rdata, pfp)
 		   key, rcsfile);
 	    free (rdata->desc);
 	}
-	rdata->desc = xstrdup (value);
+	rdata->desc = rcsbuf_valcopy (&rcsbuf, value, 0, (size_t *) NULL);
     }
 
-    rdata->delta_pos = ftell (fp);
+    rdata->delta_pos = rcsbuf_ftell (&rcsbuf);
 
     if (pfp == NULL)
     {
+	rcsbuf_close (&rcsbuf);
 	if (fclose (fp) < 0)
 	    error (0, errno, "cannot close %s", rcsfile);
     }
     else
     {
 	*pfp = fp;
+	*rcsbufp = rcsbuf;
     }
     rdata->flags &= ~PARTIAL;
 }
@@ -543,26 +601,20 @@ RCS_fully_parse (rcs)
     RCSNode *rcs;
 {
     FILE *fp;
+    struct rcsbuffer rcsbuf;
 
-    RCS_reparsercsfile (rcs, &fp);
+    RCS_reparsercsfile (rcs, &fp, &rcsbuf);
 
     while (1)
     {
-	int c;
 	char *key, *value;
-	size_t vallen;
 	Node *vers;
 	RCSVers *vnode;
 
 	/* Rather than try to keep track of how much information we
            have read, just read to the end of the file.  */
-	c = getrevnum (fp, &key);
-	if (c == EOF)
-	{
-	    if (ferror (fp))
-		error (1, errno, "cannot read %s", rcs->path);
+	if (! rcsbuf_getrevnum (&rcsbuf, &key))
 	    break;
-	}
 
 	vers = findnode (rcs->versions, key);
 	if (vers == NULL)
@@ -572,7 +624,7 @@ RCS_fully_parse (rcs)
 
 	vnode = (RCSVers *) vers->data;
 
-	while (getrcskey (fp, rcs->path, &key, &value, &vallen) >= 0)
+	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
 	    if (! STREQ (key, "text"))
 	    {
@@ -583,7 +635,7 @@ RCS_fully_parse (rcs)
 		kv = getnode ();
 		kv->type = RCSFIELD;
 		kv->key = xstrdup (key);
-		kv->data = xstrdup (value);
+		kv->data = rcsbuf_valcopy (&rcsbuf, value, 1, (size_t *) NULL);
 		if (addnode (vnode->other, kv) != 0)
 		{
 		    error (0, 0,
@@ -608,8 +660,10 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 		del = 0;
 		if (value != NULL)
 		{
+		    size_t vallen;
 		    const char *cp;
 
+		    rcsbuf_valpolish (&rcsbuf, value, 0, &vallen);
 		    cp = value;
 		    while (cp < value + vallen)
 		    {
@@ -689,6 +743,7 @@ warning: duplicate key `%s' in version `%s' of RCS file `%s'",
 	}
     }
 
+    rcsbuf_close (&rcsbuf);
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", rcs->path);
 }
@@ -785,321 +840,768 @@ rcsvers_delproc (p)
 {
     free_rcsvers_contents ((RCSVers *) p->data);
 }
+
+/* These functions retrieve keys and values from an RCS file using a
+   buffer.  We use this somewhat complex approach because it turns out
+   that for many common operations, CVS spends most of its time
+   reading keys, so it's worth doing some fairly hairy optimization.  */
 
-/*
- * getrcskey - fill in the key and value from the rcs file the algorithm is
- *             as follows 
- *
- *    o skip whitespace
- *    o fill in key with everything up to next white 
- *      space or semicolon 
- *    o if key wasn't terminated by a semicolon, skip white space and fill 
- *      in value with everything up to a semicolon 
- *    o compress all whitespace down to a single space 
- *    o if a word starts with @, do funky rcs processing
- *    o strip whitespace off end of value or set value to NULL if it empty 
- *    o if we didn't get an EOF before the semicolon, return 0
- *    o if we got an EOF, set *KEYP and *VALUEP to NULL, and return -1
- *
- * On error, give a fatal error.
- *
- * Sets *KEYP and *VALUEP to point to storage managed by the getrcskey
- * function; the contents are only valid until the next call to
- * getrcskey, getrcsrev, or getrevnum.  If LENP is not NULL, this sets
- * *LENP to the length of *VALUEP; this is needed if the string might
- * contain binary data.
- */
+/* The number of bytes we try to read each time we need more data.  */
 
-static char *key = NULL;
-static char *value = NULL;
-static size_t keysize = 0;
-static size_t valsize = 0;
+#define RCSBUF_BUFSIZE (8192)
+
+/* The buffer we use to store data.  This grows as needed.  */
+
+static char *rcsbuf_buffer = NULL;
+static size_t rcsbuf_buffer_size = 0;
+
+/* Whether rcsbuf_buffer is in use.  This is used as a sanity check.  */
+
+static int rcsbuf_inuse;
+
+/* Set up to start gathering keys and values from an RCS file.  This
+   initializes RCSBUF.  */
+
+static void
+rcsbuf_open (rcsbuf, fp, filename, pos)
+    struct rcsbuffer *rcsbuf;
+    FILE *fp;
+    const char *filename;
+    unsigned long pos;
+{
+    if (rcsbuf_inuse)
+	error (1, 0, "rcsbuf_open: internal error");
+    rcsbuf_inuse = 1;
+
+    if (rcsbuf_buffer_size < RCSBUF_BUFSIZE)
+	expand_string (&rcsbuf_buffer, &rcsbuf_buffer_size, RCSBUF_BUFSIZE);
+
+    rcsbuf->ptr = rcsbuf_buffer;
+    rcsbuf->ptrend = rcsbuf_buffer;
+    rcsbuf->fp = fp;
+    rcsbuf->filename = filename;
+    rcsbuf->pos = pos;
+    rcsbuf->vlen = 0;
+    rcsbuf->at_string = 0;
+    rcsbuf->embedded_at = 0;
+}
+
+/* Stop gathering keys from an RCS file.  */
+
+static void
+rcsbuf_close (rcsbuf)
+    struct rcsbuffer *rcsbuf;
+{
+    if (! rcsbuf_inuse)
+	error (1, 0, "rcsbuf_close: internal error");
+    rcsbuf_inuse = 0;
+}
+
+/* Read a key/value pair from an RCS file.  This sets *KEYP to point
+   to the key, and *VALUEP to point to the value.  A missing or empty
+   value is indicated by setting *VALUEP to NULL.
+
+   This function returns 1 on success, or 0 on EOF.  If there is an
+   error reading the file, or an EOF in an unexpected location, it
+   gives a fatal error.
+
+   This sets *KEYP and *VALUEP to point to storage managed by
+   rcsbuf_getkey.  Moreover, *VALUEP has not been massaged from the
+   RCS format: it may contain embedded whitespace and embedded '@'
+   characters.  Call rcsbuf_valcopy or rcsbuf_valpolish to do
+   appropriate massaging.  */
 
 static int
-getrcskey (fp, name, keyp, valp, lenp)
-    FILE *fp;
-    /* Name of file FP, for use in error messages.  */
-    const char *name;
+rcsbuf_getkey (rcsbuf, keyp, valp)
+    struct rcsbuffer *rcsbuf;
     char **keyp;
     char **valp;
-    size_t *lenp;
 {
-    char *cur, *max;
-    int c;
-    int just_string;
+    register const char * const my_spacetab = spacetab;
+    register char *ptr, *ptrend;
+    char c;
 
-    if (lenp != NULL)
-        *lenp = 0;
+#define my_whitespace(c)	(my_spacetab[(unsigned char)c] != 0)
 
-    /* skip leading whitespace */
-    do
+    rcsbuf->vlen = 0;
+    rcsbuf->at_string = 0;
+    rcsbuf->embedded_at = 0;
+
+    ptr = rcsbuf->ptr;
+    ptrend = rcsbuf->ptrend;
+
+    /* Sanity check.  */
+    if (ptr < rcsbuf_buffer || ptr > rcsbuf_buffer + rcsbuf_buffer_size)
+	abort ();
+
+    /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
+       buffer, move back to the start of the buffer.  This keeps the
+       buffer from growing indefinitely.  */
+    if (ptr - rcsbuf_buffer >= RCSBUF_BUFSIZE)
     {
-	c = getc (fp);
-	if (c == EOF)
-	{
-	    *keyp = (char *) NULL;
-	    *valp = (char *) NULL;
-	    goto stdio_error;
-	}
-    } while (whitespace (c));
+	int len;
 
-    /* fill in key */
-    cur = key;
-    max = key + keysize;
-    while (!whitespace (c) && c != ';')
+	len = ptrend - ptr;
+
+	/* Sanity check: we don't read more than RCSBUF_BUFSIZE bytes
+           at a time, so we can't have more bytes than that past PTR.  */
+	if (len > RCSBUF_BUFSIZE)
+	    abort ();
+
+	/* Update the POS field, which holds the file offset of the
+           first byte in the RCSBUF_BUFFER buffer.  */
+	rcsbuf->pos += ptr - rcsbuf_buffer;
+
+	memcpy (rcsbuf_buffer, ptr, len);
+	ptr = rcsbuf_buffer;
+	ptrend = ptr + len;
+	rcsbuf->ptrend = ptrend;
+    }
+
+    /* Skip leading whitespace.  */
+
+    while (1)
     {
-	if (cur >= max)
+	if (ptr >= ptrend)
 	{
-	    size_t curoff = cur - key;
-	    expand_string (&key, &keysize, keysize + 1);
-	    cur = key + curoff;
-	    max = key + keysize;
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    if (ptr == NULL)
+		return 0;
+	    ptrend = rcsbuf->ptrend;
 	}
-	*cur++ = c;
 
-	c = getc (fp);
-	if (c == EOF)
+	c = *ptr;
+	if (! my_whitespace (c))
+	    break;
+
+	++ptr;
+    }
+
+    /* We've found the start of the key.  */
+
+    *keyp = ptr;
+
+    if (c != ';')
+    {
+	while (1)
 	{
-	    *keyp = (char *) NULL;
-	    *valp = (char *) NULL;
-	    goto stdio_error;
+	    ++ptr;
+	    if (ptr >= ptrend)
+	    {
+		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
+		if (ptr == NULL)
+		    error (1, 0, "EOF in key in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+	    c = *ptr;
+	    if (c == ';' || my_whitespace (c))
+		break;
 	}
     }
-    if (cur >= max)
-    {
-	size_t curoff = cur - key;
-	expand_string (&key, &keysize, keysize + 1);
-	cur = key + curoff;
-	max = key + keysize;
-    }
-    *cur = '\0';
 
-    /* skip whitespace between key and val */
-    while (whitespace (c))
-    {
-	c = getc (fp);
-	if (c == EOF)
-	{
-	    *keyp = (char *) NULL;
-	    *valp = (char *) NULL;
-	    goto stdio_error;
-	}
-    } 
+    /* Here *KEYP points to the key in the buffer, C is the character
+       we found at the of the key, and PTR points to the location in
+       the buffer where we found C.  We must set *PTR to \0 in order
+       to terminate the key.  If the key ended with ';', then there is
+       no value.  */
 
-    /* if we ended key with a semicolon, there is no value */
+    *ptr = '\0';
+    ++ptr;
+
     if (c == ';')
     {
-	*keyp = key;
-	*valp = (char *) NULL;
-	return (0);
-    }
-
-    /* otherwise, there might be a value, so fill it in */
-    cur = value;
-    max = value + valsize;
-
-    just_string = (STREQ (key, RCSDESC)
-		   || STREQ (key, "text")
-		   || STREQ (key, "log"));
-
-    /* process the value */
-    for (;;)
-    {
-	/* handle RCS "strings" */
-	if (c == '@') 
-	{
-	    for (;;)
-	    {
-		c = getc (fp);
-		if (c == EOF)
-		{
-		    *keyp = (char *) NULL;
-		    *valp = (char *) NULL;
-		    goto stdio_error;
-		}
-
-		if (c == '@')
-		{
-		    c = getc (fp);
-		    if (c == EOF)
-		    {
-			*keyp = (char *) NULL;
-			*valp = (char *) NULL;
-			goto stdio_error;
-		    }
-		    
-		    if (c != '@')
-			break;
-		}
-
-		if (cur >= max)
-		{
-		    size_t curoff = cur - value;
-		    expand_string (&value, &valsize, valsize + 1);
-		    cur = value + curoff;
-		    max = value + valsize;
-		}
-		*cur++ = c;
-	    }
-	}
-
-	/* The syntax for some key-value pairs is different; they
-	   don't end with a semicolon.  */
-	if (just_string)
-	    break;
-
-	/* compress whitespace down to a single space */
-	if (whitespace (c))
-	{
-	    do {
-		c = getc (fp);
-		if (c == EOF)
-		{
-		    *keyp = (char *) NULL;
-		    *valp = (char *) NULL;
-		    goto stdio_error;
-		}
-	    } while (whitespace (c));
-
-	    /* Do not include any trailing whitespace in the value. */
-	    if (c != ';')
-	    {
-		if (cur >= max)
-		{
-		    size_t curoff = cur - value;
-		    expand_string (&value, &valsize, valsize + 1);
-		    cur = value + curoff;
-		    max = value + valsize;
-		}
-		*cur++ = ' ';
-	    }
-	}
-
-	/* if we got a semi-colon we are done with the entire value */
-	if (c == ';')
-	    break;
-
-	if (cur >= max)
-	{
-	    size_t curoff = cur - value;
-	    expand_string (&value, &valsize, valsize + 1);
-	    cur = value + curoff;
-	    max = value + valsize;
-	}
-	*cur++ = c;
-
-	c = getc (fp);
-	if (c == EOF)
-	{
-	    *keyp = (char *) NULL;
-	    *valp = (char *) NULL;
-	    goto stdio_error;
-	}
-    }
-
-    /* terminate the string */
-    if (cur >= max)
-    {
-	size_t curoff = cur - value;
-	expand_string (&value, &valsize, valsize + 1);
-	cur = value + curoff;
-	max = value + valsize;
-    }
-    *cur = '\0';
-
-    /* if the string is empty, make it null */
-    if (value && cur != value)
-    {
-	*valp = value;
-	if (lenp != NULL)
-	    *lenp = cur - value;
-    }
-    else
 	*valp = NULL;
-    *keyp = key;
-    return (0);
- stdio_error:
-    /* Some stdio function returned EOF.  Could be error or end of file.  */
-    if (ferror (fp))
-	error (1, errno, "cannot read %s", name);
-    return -1;	
-}
-
-/* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
-   it points to space managed by getrcsrev which is only good until
-   the next call to getrcskey, getrcsrev, or getrevnum.  */
-static void
-getrcsrev (fp, revp)
-    FILE *fp;
-    char **revp;
-{
-    int c;
-
-    c = getrevnum (fp, revp);
-    if (c == EOF)
-    {
-	/* FIXME: should be including filename in error message.  */
-	if (ferror (fp))
-	    error (1, errno, "cannot read rcs file");
-	else
-	    error (1, 0, "unexpected end of file reading rcs file");
+	rcsbuf->ptr = ptr;
+	return 1;
     }
+
+    /* C must be whitespace.  Skip whitespace between the key and the
+       value.  If we find ';' now, there is no value.  */
+
+    while (1)
+    {
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, keyp, (char **) NULL);
+	    if (ptr == NULL)
+		error (1, 0, "EOF while looking for value in RCS file %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+	c = *ptr;
+	if (c == ';')
+	{
+	    *valp = NULL;
+	    rcsbuf->ptr = ptr + 1;
+	    return 1;
+	}
+	if (! my_whitespace (c))
+	    break;
+	++ptr;
+    }
+
+    /* Now PTR points to the start of the value, and C is the first
+       character of the value.  */
+
+    if (c != '@')
+	*valp = ptr;
+    else
+    {
+	char *pat;
+	size_t vlen;
+
+	/* Optimize the common case of a value composed of a single
+	   '@' string.  */
+
+	rcsbuf->at_string = 1;
+
+	++ptr;
+
+	*valp = ptr;
+
+	while (1)
+	{
+	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
+	    {
+		/* Note that we pass PTREND as the PTR value to
+                   rcsbuf_fill, so that we will wind up setting PTR to
+                   the location corresponding to the old PTREND, so
+                   that we don't search the same bytes again.  */
+		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
+		if (ptr == NULL)
+		    error (1, 0,
+			   "EOF while looking for end of string in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+
+	    /* Handle the special case of an '@' right at the end of
+               the known bytes.  */
+	    if (pat + 1 >= ptrend)
+	    {
+		/* Note that we pass PAT, not PTR, here.  */
+		pat = rcsbuf_fill (rcsbuf, pat, keyp, valp);
+		if (pat == NULL)
+		{
+		    /* EOF here is OK; it just means that the last
+		       character of the file was an '@' terminating a
+		       value for a key type which does not require a
+		       trailing ';'.  */
+		    pat = rcsbuf->ptrend - 1;
+
+		}
+		ptrend = rcsbuf->ptrend;
+
+		/* Note that the value of PTR is bogus here.  This is
+		   OK, because we don't use it.  */
+	    }
+
+	    if (pat + 1 >= ptrend || pat[1] != '@')
+		break;
+
+	    /* We found an '@' pair in the string.  Keep looking.  */
+	    ++rcsbuf->embedded_at;
+	    ptr = pat + 2;
+	}
+
+	/* Here PAT points to the final '@' in the string.  */
+
+	*pat = '\0';
+
+	vlen = pat - *valp;
+	if (vlen == 0)
+	    *valp = NULL;
+	rcsbuf->vlen = vlen;
+
+	ptr = pat + 1;
+    }
+
+    /* Certain keywords only have a '@' string.  If there is no '@'
+       string, then the old getrcskey function assumed that they had
+       no value, and we do the same.  */
+
+    {
+	char *k;
+
+	k = *keyp;
+	if (STREQ (k, RCSDESC)
+	    || STREQ (k, "text")
+	    || STREQ (k, "log"))
+	{
+	    if (c != '@')
+		*valp = NULL;
+	    rcsbuf->ptr = ptr;
+	    return 1;
+	}
+    }
+
+    /* If we've already gathered a '@' string, try to skip whitespace
+       and find a ';'.  */
+    if (c == '@')
+    {
+	while (1)
+	{
+	    char n;
+
+	    if (ptr >= ptrend)
+	    {
+		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
+		if (ptr == NULL)
+		    error (1, 0, "EOF in value in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+	    n = *ptr;
+	    if (n == ';')
+	    {
+		/* We're done.  We already set everything up for this
+                   case above.  */
+		rcsbuf->ptr = ptr + 1;
+		return 1;
+	    }
+	    if (! my_whitespace (n))
+		break;
+	    ++ptr;
+	}
+
+	/* The value extends past the '@' string.  We need to undo the
+           closing of the '@' done in the default case above.  This
+           case never happens in a plain RCS file, but it can happen
+           if user defined phrases are used.  */
+	if (rcsbuf->vlen != 0)
+	    (*valp)[rcsbuf->vlen] = ' ';
+	else
+	    *valp = ptr;
+    }
+
+    /* Here we have a value which is not a simple '@' string.  We need
+       to gather up everything until the next ';', including any '@'
+       strings.  *VALP points to the start of the value.  If
+       RCSBUF->VLEN is not zero, then we have already read an '@'
+       string, and PTR points to the data following the '@' string.
+       Otherwise, PTR points to the start of the value.  */
+
+    while (1)
+    {
+	char *start, *psemi, *pat;
+
+	/* Find the ';' which must end the value.  */
+	start = ptr;
+	while ((psemi = memchr (ptr, ';', ptrend - ptr)) == NULL)
+	{
+	    int slen;
+
+	    /* Note that we pass PTREND as the PTR value to
+	       rcsbuf_fill, so that we will wind up setting PTR to the
+	       location corresponding to the old PTREND, so that we
+	       don't search the same bytes again.  */
+	    slen = start - *valp;
+	    ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
+	    if (ptr == NULL)
+		error (1, 0, "EOF in value in RCS file %s", rcsbuf->filename);
+	    start = *valp + slen;
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	/* See if there are any '@' strings in the value.  */
+	pat = memchr (start, '@', psemi - start);
+
+	if (pat == NULL)
+	{
+	    size_t vlen;
+
+	    /* We're done with the value.  Trim any trailing
+               whitespace.  */
+
+	    rcsbuf->ptr = psemi + 1;
+
+	    start = *valp;
+	    while (psemi > start && my_whitespace (psemi[-1]))
+		--psemi;
+	    *psemi = '\0';
+
+	    vlen = psemi - *valp;
+	    if (vlen == 0)
+		*valp = NULL;
+	    rcsbuf->vlen = vlen;
+
+	    return 1;
+	}
+
+	/* We found an '@' string in the value.  We set
+	   RCSBUF->AT_STRING, which means that we won't be able to
+	   compress whitespace correctly for this type of value.
+	   Since this type of value never arises in a normal RCS file,
+	   this should not be a big deal.  It means that if anybody
+	   adds a phrase which can have both an '@' string and regular
+	   text, they will have to handle whitespace compression
+	   themselves.  */
+
+	rcsbuf->at_string = 1;
+
+	*pat = ' ';
+
+	ptr = pat + 1;
+
+	while (1)
+	{
+	    while ((pat = memchr (ptr, '@', ptrend - ptr)) == NULL)
+	    {
+		/* Note that we pass PTREND as the PTR value to
+                   rcsbuff_fill, so that we will wind up setting PTR
+                   to the location corresponding to the old PTREND, so
+                   that we don't search the same bytes again.  */
+		ptr = rcsbuf_fill (rcsbuf, ptrend, keyp, valp);
+		if (ptr == NULL)
+		    error (1, 0,
+			   "EOF while looking for end of string in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+
+	    /* Handle the special case of an '@' right at the end of
+               the known bytes.  */
+	    if (pat + 1 >= ptrend)
+	    {
+		ptr = rcsbuf_fill (rcsbuf, ptr, keyp, valp);
+		if (ptr == NULL)
+		    error (1, 0, "EOF in value in RCS file %s",
+			   rcsbuf->filename);
+		ptrend = rcsbuf->ptrend;
+	    }
+
+	    if (pat[1] != '@')
+		break;
+
+	    /* We found an '@' pair in the string.  Keep looking.  */
+	    ++rcsbuf->embedded_at;
+	    ptr = pat + 2;
+	}
+
+	/* Here PAT points to the final '@' in the string.  */
+
+	*pat = ' ';
+
+	ptr = pat + 1;
+    }
+
+#undef my_whitespace
 }
 
-/* Read an RCS revision number from FP.  Put a pointer to it in *REVP;
-   it points to space managed by getrevnum which is only good until
-   the next call to getrevnum, getrcskey, or getrcsrev.  Return the
-   last character read (last call to getc, which may be EOF).  */
+/* Read an RCS revision number from an RCS file.  This sets *REVP to
+   point to the revision number; it will point to space that is
+   managed by the rcsbuf functions, and is only good until the next
+   call to rcsbuf_getkey or rcsbuf_getrevnum.
+
+   This function returns 1 on success, or 0 on EOF.  If there is an
+   error reading the file, or an EOF in an unexpected location, it
+   gives a fatal error.  */
+
 static int
-getrevnum (fp, revp)
-    FILE *fp;
+rcsbuf_getrevnum (rcsbuf, revp)
+    struct rcsbuffer *rcsbuf;
     char **revp;
 {
-    char *cur;
-    char *max;
-    int c;
+    char *ptr, *ptrend;
+    char c;
+
+    ptr = rcsbuf->ptr;
+    ptrend = rcsbuf->ptrend;
 
     *revp = NULL;
-    do {
-	c = getc (fp);
-	if (c == EOF)
-	    return c;
-    } while (whitespace (c));
 
-    if (!(isdigit (c) || c == '.'))
-	return c;
+    /* Skip leading whitespace.  */
 
-    cur = key;
-    max = key + keysize;
-    while (isdigit (c) || c == '.')
+    while (1)
     {
-	if (cur >= max)
+	if (ptr >= ptrend)
 	{
-	    size_t curoff = cur - key;
-	    expand_string (&key, &keysize, keysize + 1);
-	    cur = key + curoff;
-	    max = key + keysize;
+	    ptr = rcsbuf_fill (rcsbuf, ptr, (char **) NULL, (char **) NULL);
+	    if (ptr == NULL)
+		return 0;
+	    ptrend = rcsbuf->ptrend;
 	}
-	*cur = c;
 
-	c = getc (fp);
-	if (c == EOF)
+	c = *ptr;
+	if (! whitespace (c))
 	    break;
-	cur++;
+
+	++ptr;
     }
 
-    if (cur >= max)
+    if (! isdigit (c) && c != '.')
+	error (1, 0,
+	       "unexpected `%c' reading revision number in RCS file %s",
+	       c, rcsbuf->filename);
+
+    *revp = ptr;
+
+    do
     {
-	size_t curoff = cur - key;
-	expand_string (&key, &keysize, keysize + 1);
-	cur = key + curoff;
-	max = key + keysize;
+	++ptr;
+	if (ptr >= ptrend)
+	{
+	    ptr = rcsbuf_fill (rcsbuf, ptr, revp, (char **) NULL);
+	    if (ptr == NULL)
+		error (1, 0,
+		       "unexpected EOF reading revision number in RCS file %s",
+		       rcsbuf->filename);
+	    ptrend = rcsbuf->ptrend;
+	}
+
+	c = *ptr;
     }
-    *cur = '\0';
-    *revp = key;
-    return c;
+    while (isdigit (c) || c == '.');
+
+    if (! whitespace (c))
+	error (1, 0, "unexpected `%c' reading revision number in RCS file %s",
+	       c, rcsbuf->filename);
+
+    *ptr = '\0';
+
+    rcsbuf->ptr = ptr + 1;
+
+    return 1;
 }
 
+/* Fill RCSBUF_BUFFER with bytes from the file associated with RCSBUF,
+   updating PTR and the PTREND field.  If KEYP and *KEYP are not NULL,
+   then *KEYP points into the buffer, and must be adjusted if the
+   buffer is changed.  Likewise for VALP.  Returns the new value of
+   PTR, or NULL on error.  */
+
+static char *
+rcsbuf_fill (rcsbuf, ptr, keyp, valp)
+    struct rcsbuffer *rcsbuf;
+    char *ptr;
+    char **keyp;
+    char **valp;
+{
+    int got;
+
+    if (rcsbuf->ptrend - rcsbuf_buffer + RCSBUF_BUFSIZE > rcsbuf_buffer_size)
+    {
+	int poff, peoff, koff, voff;
+
+	poff = ptr - rcsbuf_buffer;
+	peoff = rcsbuf->ptrend - rcsbuf_buffer;
+	if (keyp != NULL && *keyp != NULL)
+	    koff = *keyp - rcsbuf_buffer;
+	if (valp != NULL && *valp != NULL)
+	    voff = *valp - rcsbuf_buffer;
+
+	expand_string (&rcsbuf_buffer, &rcsbuf_buffer_size,
+		       rcsbuf_buffer_size + RCSBUF_BUFSIZE);
+
+	ptr = rcsbuf_buffer + poff;
+	rcsbuf->ptrend = rcsbuf_buffer + peoff;
+	if (keyp != NULL && *keyp != NULL)
+	    *keyp = rcsbuf_buffer + koff;
+	if (valp != NULL && *valp != NULL)
+	    *valp = rcsbuf_buffer + voff;
+    }
+
+    got = fread (rcsbuf->ptrend, 1, RCSBUF_BUFSIZE, rcsbuf->fp);
+    if (got == 0)
+    {
+	if (ferror (rcsbuf->fp))
+	    error (1, errno, "cannot read %s", rcsbuf->filename);
+	return NULL;
+    }
+
+    rcsbuf->ptrend += got;
+
+    return ptr;
+}
+
+/* Copy the value VAL returned by rcsbuf_getkey into a memory buffer,
+   returning the memory buffer.  Polish the value like
+   rcsbuf_valpolish, q.v.  */
+
+static char *
+rcsbuf_valcopy (rcsbuf, val, polish, lenp)
+    struct rcsbuffer *rcsbuf;
+    char *val;
+    int polish;
+    size_t *lenp;
+{
+    size_t vlen;
+    int embedded_at;
+    char *ret;
+
+    if (val == NULL)
+    {
+	if (lenp != NULL)
+	    *lenp = 0;
+	return NULL;
+    }
+
+    vlen = rcsbuf->vlen;
+    embedded_at = rcsbuf->embedded_at;
+
+    ret = xmalloc (vlen - embedded_at + 1);
+
+    if (rcsbuf->at_string ? embedded_at == 0 : ! polish)
+    {
+	/* No special action to take.  */
+	memcpy (ret, val, vlen + 1);
+	if (lenp != NULL)
+	    *lenp = vlen;
+	return ret;
+    }
+
+    rcsbuf_valpolish_internal (rcsbuf, ret, val, lenp);
+    return ret;
+}
+
+/* Polish the value VAL returned by rcsbuf_getkey.  The POLISH
+   parameter is non-zero if multiple embedded whitespace characters
+   should be compressed into a single whitespace character.  Note that
+   leading and trailing whitespace was already removed by
+   rcsbuf_getkey.  Within an '@' string, pairs of '@' characters are
+   compressed into a single '@' character regardless of the value of
+   POLISH.  If LENP is not NULL, set *LENP to the length of the value.  */
+
+static void
+rcsbuf_valpolish (rcsbuf, val, polish, lenp)
+    struct rcsbuffer *rcsbuf;
+    char *val;
+    int polish;
+    size_t *lenp;
+{
+    if (val == NULL)
+    {
+	if (lenp != NULL)
+	    *lenp= 0;
+	return;
+    }
+
+    if (rcsbuf->at_string ? rcsbuf->embedded_at == 0 : ! polish)
+    {
+	/* No special action to take.  */
+	if (lenp != NULL)
+	    *lenp = rcsbuf->vlen;
+	return;
+    }
+
+    rcsbuf_valpolish_internal (rcsbuf, val, val, lenp);
+}
+
+/* Internal polishing routine, called from rcsbuf_valcopy and
+   rcsbuf_valpolish.  */
+
+static void
+rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
+    struct rcsbuffer *rcsbuf;
+    char *to;
+    const char *from;
+    size_t *lenp;
+{
+    size_t len;
+
+    len = rcsbuf->vlen;
+
+    if (! rcsbuf->at_string)
+    {
+	char *orig_to;
+	size_t clen;
+
+	orig_to = to;
+
+	for (clen = len; clen > 0; ++from, --clen)
+	{
+	    char c;
+
+	    c = *from;
+	    if (whitespace (c))
+	    {
+		/* Note that we know that clen can not drop to zero
+                   while we have whitespace, because we know there is
+                   no trailing whitespace.  */
+		while (whitespace (from[1]))
+		{
+		    ++from;
+		    --clen;
+		}
+		c = ' ';
+	    }
+	    *to++ = c;
+	}
+
+	*to = '\0';
+
+	if (lenp != NULL)
+	    *lenp = to - orig_to;
+    }
+    else
+    {
+	const char *orig_from;
+	char *orig_to;
+	int embedded_at;
+	size_t clen;
+
+	orig_from = from;
+	orig_to = to;
+
+	embedded_at = rcsbuf->embedded_at;
+
+	if (lenp != NULL)
+	    *lenp = len - embedded_at;
+
+	for (clen = len; clen > 0; ++from, --clen)
+	{
+	    char c;
+
+	    c = *from;
+	    *to++ = c;
+	    if (c == '@')
+	    {
+		++from;
+
+		/* Sanity check.  */
+		if (*from != '@' || clen == 0)
+		    abort ();
+
+		--clen;
+
+		--embedded_at;
+		if (embedded_at == 0)
+		{
+		    /* We've found all the embedded '@' characters.
+                       We can just memcpy the rest of the buffer after
+                       this '@' character.  */
+		    if (orig_to != orig_from)
+			memcpy (to, from + 1, clen - 1);
+		    else
+			memmove (to, from + 1, clen - 1);
+		    from += clen;
+		    to += clen - 1;
+		    break;
+		}
+	    }
+	}
+
+	/* Sanity check.  */
+	if (from != orig_from + len
+	    || to != orig_to + (len - rcsbuf->embedded_at))
+	{
+	    abort ();
+	}
+
+	*to = '\0';
+    }
+}
+
+/* Return the current position of an rcsbuf.  */
+
+static unsigned long
+rcsbuf_ftell (rcsbuf)
+    struct rcsbuffer *rcsbuf;
+{
+    return rcsbuf->pos + (rcsbuf->ptr - rcsbuf_buffer);
+}
+
 /*
  * process the symbols list of the rcs file
  */
@@ -1299,7 +1801,7 @@ RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
 
     /* XXX this is probably not necessary, --jtc */
     if (rcs->flags & PARTIAL) 
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* If tag is "HEAD", special case to get head RCS revision */
     if (tag && (STREQ (tag, TAG_HEAD) || *tag == '\0'))
@@ -1642,7 +2144,7 @@ RCS_getbranch (rcs, tag, force_tag_match)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* find out if the tag contains a dot, or is on the trunk */
     cp = strrchr (tag, '.');
@@ -1860,7 +2362,7 @@ RCS_getdate (rcs, date, force_tag_match)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* if the head is on a branch, try the branch first */
     if (rcs->branch != NULL)
@@ -1947,7 +2449,7 @@ RCS_getdatebranch (rcs, date, branch)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     p = findnode (rcs->versions, xrev);
     free (xrev);
@@ -2044,7 +2546,7 @@ RCS_getrevtime (rcs, rev, date, fudge)
     assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* look up the revision */
     p = findnode (rcs->versions, rev);
@@ -2096,7 +2598,7 @@ RCS_getlocks (rcs)
     assert(rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rcs->locks_data) {
 	rcs->locks = getlist ();
@@ -2115,7 +2617,7 @@ RCS_symbols(rcs)
     assert(rcs != NULL);
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rcs->symbols_data) {
 	rcs->symbols = getlist ();
@@ -2137,7 +2639,7 @@ translate_symtag (rcs, tag)
     const char *tag;
 {
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rcs->symbols != NULL)
     {
@@ -2279,7 +2781,7 @@ RCS_isdead (rcs, tag)
     RCSVers *version;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     p = findnode (rcs->versions, tag);
     if (p == NULL)
@@ -2913,6 +3415,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     enum kflag expand;
     FILE *fp, *ofp;
     struct stat sb;
+    struct rcsbuffer rcsbuf;
     char *key;
     char *value;
     size_t len;
@@ -2972,7 +3475,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	/* We want the head revision.  Try to read it directly.  */
 
 	if (rcs->flags & PARTIAL)
-	    RCS_reparsercsfile (rcs, &fp);
+	    RCS_reparsercsfile (rcs, &fp, &rcsbuf);
 	else
 	{
 	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
@@ -2980,19 +3483,17 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		error (1, 0, "unable to reopen `%s'", rcs->path);
 	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
 		error (1, 0, "cannot fseek RCS file");
+	    rcsbuf_open (&rcsbuf, fp, rcs->path, rcs->delta_pos);
 	}
 
 	gothead = 0;
-	getrcsrev (fp, &key);
-	while (getrcskey (fp, rcs->path, &key, &value, &len) >= 0)
+	if (! rcsbuf_getrevnum (&rcsbuf, &key))
+	    error (1, 0, "unexpected EOF reading %s", rcs->path);
+	while (rcsbuf_getkey (&rcsbuf, &key, &value))
 	{
 	    if (STREQ (key, "log"))
-	    {
-		log = xmalloc (len);
-		memcpy (log, value, len);
-		loglen = len;
-	    }
-	    if (STREQ (key, "text"))
+		log = rcsbuf_valcopy (&rcsbuf, value, 0, &loglen);
+	    else if (STREQ (key, "text"))
 	    {
 		gothead = 1;
 		break;
@@ -3007,6 +3508,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    return 1;
 	}
 
+	rcsbuf_valpolish (&rcsbuf, value, 0, &len);
+
+	rcsbuf_close (&rcsbuf);
+
 	if (fstat (fileno (fp), &sb) < 0)
 	    error (1, errno, "cannot fstat %s", rcs->path);
 
@@ -3015,12 +3520,14 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     }
     else
     {
+	struct rcsbuffer *rcsbufp;
+
 	/* It isn't the head revision of the trunk.  We'll need to
 	   walk through the deltas.  */
 
 	fp = NULL;
 	if (rcs->flags & PARTIAL)
-	    RCS_reparsercsfile (rcs, &fp);
+	    RCS_reparsercsfile (rcs, &fp, &rcsbuf);
 
 	if (fp == NULL)
 	{
@@ -3028,14 +3535,17 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	       here too.  Probably should change it thusly....  */
 	    if (stat (rcs->path, &sb) < 0)
 		error (1, errno, "cannot stat %s", rcs->path);
+	    rcsbufp = NULL;
 	}
 	else
 	{
 	    if (fstat (fileno (fp), &sb) < 0)
 		error (1, errno, "cannot fstat %s", rcs->path);
+	    rcsbufp = &rcsbuf;
 	}
 
-	RCS_deltas (rcs, fp, rev, RCS_FETCH, &value, &len, &log, &loglen);
+	RCS_deltas (rcs, fp, rcsbufp, rev, RCS_FETCH, &value, &len,
+		    &log, &loglen);
 	free_value = 1;
     }
 
@@ -3656,7 +4166,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
     commitpt = NULL;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* Get basename of working file.  Is there a library function to
        do this?  I couldn't find one. -twp */
@@ -4344,7 +4854,7 @@ RCS_settag (rcs, tag, rev)
     Node *node;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* FIXME: This check should be moved to RCS_check_tag.  There is no
        reason for it to be here.  */
@@ -4403,7 +4913,7 @@ RCS_deltag (rcs, tag)
     List *symbols;
     Node *node;
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     symbols = RCS_symbols (rcs);
     if (symbols == NULL)
@@ -4426,7 +4936,7 @@ RCS_setbranch (rcs, rev)
      const char *rev;
 {
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rev == NULL && rcs->branch == NULL)
 	return 0;
@@ -4460,7 +4970,7 @@ RCS_lock (rcs, rev, lock_quiet)
     char *xrev = NULL;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     locks = RCS_getlocks (rcs);
     if (locks == NULL)
@@ -4556,7 +5066,7 @@ RCS_unlock (rcs, rev, unlock_quiet)
 
     user = getcaller();
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* If rev is NULL, unlock the latest revision (first in
        rcs->locks) held by the caller. */
@@ -4658,7 +5168,7 @@ RCS_addaccess (rcs, user)
     char *access, *a;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rcs->access == NULL)
 	rcs->access = xstrdup (user);
@@ -4691,7 +5201,7 @@ RCS_delaccess (rcs, user)
     int ulen;
 
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     if (rcs->access == NULL)
 	return;
@@ -4722,7 +5232,7 @@ RCS_getaccess (rcs)
     RCSNode *rcs;
 {
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     return rcs->access;
 }
@@ -5695,9 +6205,10 @@ rcs_change_text (name, textbuf, textlen, diffbuf, difflen, retbuf, retlen)
    On error, give a fatal error.  */
 
 static void
-RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
+RCS_deltas (rcs, fp, rcsbuf, version, op, text, len, log, loglen)
     RCSNode *rcs;
     FILE *fp;
+    struct rcsbuffer *rcsbuf;
     char *version;
     enum rcs_delta_op op;
     char **text;
@@ -5705,6 +6216,7 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     char **log;
     size_t *loglen;
 {
+    struct rcsbuffer rcsbuf_local;
     char *branchversion;
     char *cpversion;
     char *key;
@@ -5714,7 +6226,6 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     RCSVers *prev_vers;
     RCSVers *trunk_vers;
     char *next;
-    int n;
     int ishead, isnext, isversion, onbranch;
     Node *node;
     struct linevector headlines;
@@ -5729,6 +6240,8 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	    error (1, 0, "unable to reopen `%s'", rcs->path);
 	if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
 	    error (1, 0, "cannot fseek RCS file");
+	rcsbuf_open (&rcsbuf_local, fp, rcs->path, rcs->delta_pos);
+	rcsbuf = &rcsbuf_local;
     }
 
     ishead = 1;
@@ -5755,7 +6268,8 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
         *cpversion = '\0';
 
     do {
-	getrcsrev (fp, &key);
+	if (! rcsbuf_getrevnum (rcsbuf, &key))
+	    error (1, 0, "unexpected EOF reading RCS file %s", rcs->path);
 
 	if (next != NULL && ! STREQ (next, key))
 	{
@@ -5782,27 +6296,30 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 	    next = vers->next;
 
 	    /* Compare key and trunkversion now, because key points to
-	       storage controlled by getrcskey.  */
+	       storage controlled by rcsbuf_getkey.  */
 	    if (STREQ (branchversion, key))
 	        isversion = 1;
 	    else
 	        isversion = 0;
 	}
 
-	while ((n = getrcskey (fp, rcs->path, &key, &value, &vallen)) >= 0)
+	while (1)
 	{
+	    if (! rcsbuf_getkey (rcsbuf, &key, &value))
+		error (1, 0, "%s does not appear to be a valid rcs file",
+		       rcs->path);
+
 	    if (log != NULL
 		&& isversion
 		&& STREQ (key, "log")
 		&& STREQ (branchversion, version))
 	    {
-		*log = xmalloc (vallen);
-		memcpy (*log, value, vallen);
-		*loglen = vallen;
+		*log = rcsbuf_valcopy (rcsbuf, value, 0, loglen);
 	    }
 
 	    if (STREQ (key, "text"))
 	    {
+		rcsbuf_valpolish (rcsbuf, value, 0, &vallen);
 		if (ishead)
 		{
 		    if (! linevector_add (&curlines, value, vallen, NULL, 0))
@@ -5821,9 +6338,6 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
 		break;
 	    }
 	}
-	if (n < 0)
-	    error (1, 0, "%s does not appear to be a valid rcs file",
-		   rcs->path);
 
 	if (isversion)
 	{
@@ -5909,7 +6423,9 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     } while (next != NULL);
 
     free (branchversion);
-    
+
+    rcsbuf_close (rcsbuf);
+
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close %s", rcs->path);
 
@@ -6017,15 +6533,15 @@ RCS_deltas (rcs, fp, version, op, text, len, log, loglen)
     return;
 }
 
-/* Read the information for a single delta from the RCS file FP, whose
-   name is RCSFILE.  *KEYP and *VALP are either NULL, or the first
-   key/value pair to read, as set by getrcskey. Return NULL if there
-   are no more deltas.  Store the key/value pair which terminated the
-   read in *KEYP and *VALP.  */
+/* Read the information for a single delta from the RCS buffer RCSBUF,
+   whose name is RCSFILE.  *KEYP and *VALP are either NULL, or the
+   first key/value pair to read, as set by rcsbuf_getkey. Return NULL
+   if there are no more deltas.  Store the key/value pair which
+   terminated the read in *KEYP and *VALP.  */
 
 static RCSVers *
-getdelta (fp, rcsfile, keyp, valp)
-    FILE *fp;
+getdelta (rcsbuf, rcsfile, keyp, valp)
+    struct rcsbuffer *rcsbuf;
     char *rcsfile;
     char **keyp;
     char **valp;
@@ -6034,10 +6550,10 @@ getdelta (fp, rcsfile, keyp, valp)
     char *key, *value, *cp;
     Node *kv;
 
-    /* Get revision number if it wasn't passed in. This uses getrcskey
-       because it doesn't croak when encountering unexpected input.
-       As a result, we have to play unholy games with `key' and
-       `value'. */
+    /* Get revision number if it wasn't passed in. This uses
+       rcsbuf_getkey because it doesn't croak when encountering
+       unexpected input.  As a result, we have to play unholy games
+       with `key' and `value'. */
     if (*keyp != NULL)
     {
 	key = *keyp;
@@ -6045,7 +6561,7 @@ getdelta (fp, rcsfile, keyp, valp)
     }
     else
     {
-	if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+	if (! rcsbuf_getkey (rcsbuf, &key, &value))
 	    error (1, 0, "%s: unexpected EOF", rcsfile);
     }
 
@@ -6053,6 +6569,9 @@ getdelta (fp, rcsfile, keyp, valp)
        or something. */
     for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 	/* do nothing */ ;
+    /* Note that when comparing with RCSDATE, we are not massaging
+       VALUE from the string found in the RCS file.  This is OK since
+       we know exactly what to expect.  */
     if (*cp != '\0' || strncmp (RCSDATE, value, (sizeof RCSDATE) - 1) != 0)
     {
 	*keyp = key;
@@ -6065,7 +6584,8 @@ getdelta (fp, rcsfile, keyp, valp)
 
     vnode->version = xstrdup (key);
 
-    /* grab the value of the date from value */
+    /* Grab the value of the date from value.  Note that we are not
+       massaging VALUE from the string found in the RCS file.  */
     cp = value + (sizeof RCSDATE) - 1;	/* skip the "date" keyword */
     while (whitespace (*cp))		/* take space off front of value */
 	cp++;
@@ -6073,24 +6593,24 @@ getdelta (fp, rcsfile, keyp, valp)
     vnode->date = xstrdup (cp);
 
     /* Get author field.  */
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    if (! rcsbuf_getkey (rcsbuf, &key, &value))
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key == NULL || ! STREQ (key, "author"))
+    if (! STREQ (key, "author"))
 	error (1, 0, "\
 unable to parse %s; `author' not in the expected place", rcsfile);
-    vnode->author = xstrdup (value);
+    vnode->author = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
 
     /* Get state field.  */
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    if (! rcsbuf_getkey (rcsbuf, &key, &value))
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key == NULL || ! STREQ (key, "state"))
+    if (! STREQ (key, "state"))
 	error (1, 0, "\
 unable to parse %s; `state' not in the expected place", rcsfile);
-    vnode->state = xstrdup (value);
+    vnode->state = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
     if (STREQ (value, "dead"))
     {
 	vnode->dead = 1;
@@ -6100,11 +6620,11 @@ unable to parse %s; `state' not in the expected place", rcsfile);
        to doc/RCSFILES.  */
 
     /* fill in the branch list (if any branches exist) */
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    if (! rcsbuf_getkey (rcsbuf, &key, &value))
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key != NULL && STREQ (key, RCSDESC))
+    if (STREQ (key, RCSDESC))
     {
 	*keyp = key;
 	*valp = value;
@@ -6115,15 +6635,17 @@ unable to parse %s; `state' not in the expected place", rcsfile);
     if (value != (char *) NULL)
     {
 	vnode->branches = getlist ();
+	/* Note that we are not massaging VALUE from the string found
+           in the RCS file.  */
 	do_branches (vnode->branches, value);
     }
 
     /* fill in the next field if there is a next revision */
-    if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+    if (! rcsbuf_getkey (rcsbuf, &key, &value))
     {
 	error (1, 0, "unexpected end of file reading %s", rcsfile);
     }
-    if (key != NULL && STREQ (key, RCSDESC))
+    if (STREQ (key, RCSDESC))
     {
 	*keyp = key;
 	*valp = value;
@@ -6132,7 +6654,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	return vnode;
     }
     if (value != (char *) NULL)
-	vnode->next = xstrdup (value);
+	vnode->next = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
 
     /*
      * XXX - this is where we put the symbolic link stuff???
@@ -6140,10 +6662,8 @@ unable to parse %s; `state' not in the expected place", rcsfile);
      */
     while (1)
     {
-	if (getrcskey (fp, rcsfile, &key, &value, NULL) < 0)
+	if (! rcsbuf_getkey (rcsbuf, &key, &value))
 	    error (1, 0, "unexpected end of file reading %s", rcsfile);
-
-	assert (key != NULL);
 
 	if (STREQ (key, RCSDESC))
 	    break;
@@ -6163,6 +6683,9 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	/* if we have a new revision number, we're done with this delta */
 	for (cp = key; (isdigit (*cp) || *cp == '.') && *cp != '\0'; cp++)
 	    /* do nothing */ ;
+	/* Note that when comparing with RCSDATE, we are not massaging
+	   VALUE from the string found in the RCS file.  This is OK
+	   since we know exactly what to expect.  */
 	if (*cp == '\0' && strncmp (RCSDATE, value, strlen (RCSDATE)) == 0)
 	    break;
 
@@ -6173,7 +6696,7 @@ unable to parse %s; `state' not in the expected place", rcsfile);
 	kv = getnode ();
 	kv->type = RCSFIELD;
 	kv->key = xstrdup (key);
-	kv->data = xstrdup (value);
+	kv->data = rcsbuf_valcopy (rcsbuf, value, 1, (size_t *) NULL);
 	if (addnode (vnode->other_delta, kv) != 0)
 	{
 	    /* Complaining about duplicate keys in newphrases seems
@@ -6210,25 +6733,21 @@ freedeltatext (d)
 }
 
 static Deltatext *
-RCS_getdeltatext (rcs, fp)
+RCS_getdeltatext (rcs, fp, rcsbuf)
     RCSNode *rcs;
     FILE *fp;
+    struct rcsbuffer *rcsbuf;
 {
     char *num;
     char *key, *value;
-    int n;
     Node *p;
     Deltatext *d;
-    size_t textlen;
 
     /* Get the revision number. */
-    n = getrevnum (fp, &num);
-    if (ferror (fp))
-	error (1, errno, "%s: cannot read", rcs->path);
-    if (n == EOF)
+    if (! rcsbuf_getrevnum (rcsbuf, &num))
     {
-	/* If n == EOF and num == NULL, it means we reached EOF
-	   naturally.  That's fine. */
+	/* If num == NULL, it means we reached EOF naturally.  That's
+	   fine. */
 	if (num == NULL)
 	    return NULL;
 	else
@@ -6244,36 +6763,36 @@ RCS_getdeltatext (rcs, fp)
     d->version = xstrdup (num);
 
     /* Get the log message. */
-    if (getrcskey (fp, rcs->path, &key, &value, NULL) < 0)
+    if (! rcsbuf_getkey (rcsbuf, &key, &value))
 	error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
     if (! STREQ (key, "log"))
 	error (1, 0, "%s, delta %s: expected `log', got `%s'",
 	       rcs->path, num, key);
-    d->log = xstrdup (value);
+    d->log = rcsbuf_valcopy (rcsbuf, value, 0, (size_t *) NULL);
 
     /* Get random newphrases. */
     d->other = getlist();
-    for (n = getrcskey (fp, rcs->path, &key, &value, &textlen);
-	 n >= 0 && ! STREQ (key, "text");
-	 n = getrcskey (fp, rcs->path, &key, &value, &textlen))
+    while (1)
     {
+	if (! rcsbuf_getkey (rcsbuf, &key, &value))
+	    error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
+
+	if (STREQ (key, "text"))
+	    break;
+
 	p = getnode();
 	p->type = RCSFIELD;
 	p->key = xstrdup (key);
-	p->data = xstrdup (value);
+	p->data = rcsbuf_valcopy (rcsbuf, value, 1, (size_t *) NULL);
 	if (addnode (d->other, p) < 0)
 	{
 	    error (0, 0, "warning: %s, delta %s: duplicate field `%s'",
 		   rcs->path, num, key);
 	}
     }
-    if (n < 0)
-	error (1, 0, "%s, delta %s: unexpected EOF", rcs->path, num);
 
     /* Get the change text. We already know that this key is `text'. */
-    d->text = (char *) malloc (textlen + 1);
-    d->len = textlen;
-    memcpy (d->text, value, textlen);
+    d->text = rcsbuf_valcopy (rcsbuf, value, 0, &d->len);
 
     return d;
 }
@@ -6518,9 +7037,10 @@ putdeltatext (fp, d)
    increasing order.) */
 
 static void
-RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
+RCS_copydeltas (rcs, fin, rcsbufin, fout, newdtext, insertpt)
     RCSNode *rcs;
     FILE *fin;
+    struct rcsbuffer *rcsbufin;
     FILE *fout;
     Deltatext *newdtext;
     char *insertpt;
@@ -6535,7 +7055,7 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
     insertbefore = (newdtext != NULL && numdots (newdtext->version) == 1);
 
     found = 0;
-    while ((dtext = RCS_getdeltatext (rcs, fin)) != NULL)
+    while ((dtext = RCS_getdeltatext (rcs, fin, rcsbufin)) != NULL)
     {
 	found = (insertpt != NULL && STREQ (dtext->version, insertpt));
 	if (found && insertbefore)
@@ -6723,6 +7243,7 @@ RCS_rewrite (rcs, newdtext, insertpt)
     char *insertpt;
 {
     FILE *fin, *fout;
+    struct rcsbuffer rcsbufin;
 
     if (noexec)
 	return;
@@ -6738,6 +7259,7 @@ RCS_rewrite (rcs, newdtext, insertpt)
 	error (1, errno, "cannot open RCS file `%s' for reading", rcs->path);
     if (fseek (fin, rcs->delta_pos, SEEK_SET) < 0)
 	error (1, errno, "cannot fseek in RCS file %s", rcs->path);
+    rcsbuf_open (&rcsbufin, fin, rcs->path, rcs->delta_pos);
 
     /* Update delta_pos to the current position in the output file.
        Do NOT move these statements: they must be done after fin has
@@ -6747,8 +7269,9 @@ RCS_rewrite (rcs, newdtext, insertpt)
     if (rcs->delta_pos == -1)
 	error (1, errno, "cannot ftell in RCS file %s", rcs->path);
 
-    RCS_copydeltas (rcs, fin, fout, newdtext, insertpt);
+    RCS_copydeltas (rcs, fin, &rcsbufin, fout, newdtext, insertpt);
 
+    rcsbuf_close (&rcsbufin);
     if (ferror (fin))
 	error (0, errno, "warning: when closing RCS file `%s'", rcs->path);
     if (fclose (fin) < 0)
@@ -6775,13 +7298,18 @@ annotate_fileproc (callerdat, finfo)
     struct file_info *finfo;
 {
     FILE *fp = NULL;
+    struct rcsbuffer *rcsbufp = NULL;
+    struct rcsbuffer rcsbuf;
     char *version;
 
     if (finfo->rcs == NULL)
         return (1);
 
     if (finfo->rcs->flags & PARTIAL)
-        RCS_reparsercsfile (finfo->rcs, &fp);
+    {
+        RCS_reparsercsfile (finfo->rcs, &fp, &rcsbuf);
+	rcsbufp = &rcsbuf;
+    }
 
     version = RCS_getversion (finfo->rcs, tag, date, force_tag_match,
 			      (int *) NULL);
@@ -6794,7 +7322,7 @@ annotate_fileproc (callerdat, finfo)
     cvs_outerr (finfo->fullname, 0);
     cvs_outerr ("\n***************\n", 0);
 
-    RCS_deltas (finfo->rcs, fp, version, RCS_ANNOTATE, (char **) NULL,
+    RCS_deltas (finfo->rcs, fp, rcsbufp, version, RCS_ANNOTATE, (char **) NULL,
 		(size_t) NULL, (char **) NULL, (size_t *) NULL);
     free (version);
     return 0;

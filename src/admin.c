@@ -478,7 +478,7 @@ admin_fileproc (callerdat, finfo)
 
     rcs = vers->srcfile;
     if (rcs->flags & PARTIAL)
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     status = 0;
 
@@ -793,7 +793,7 @@ admin_fileproc (callerdat, finfo)
 	   RCS data structure.  Forcing a reparse does the trick,
 	   but leaks memory and is kludgey.  Should we export
 	   free_rcsnode_contents for this purpose? */
-	RCS_reparsercsfile (rcs, NULL);
+	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
     }
 
   exitfunc:
