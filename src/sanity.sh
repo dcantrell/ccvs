@@ -2996,6 +2996,83 @@ diff -c -F\.\*( -r1\.1 rgx\.c
 ! mumble;
   }"
 
+	  # Tests of rcsmerge/diff3.  Merge operations get a good general
+	  # workout elsewhere; we want to make sure that options are still
+	  # handled properly.  Try merging two branches with -kv, to test
+	  # both -j and -k switches.
+
+	  cd ..
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r first-dir
+
+	  mkdir 1; cd 1
+	  dotest rcslib-merge-1 "${testcvs} -q co -l ." ""
+	  mkdir first-dir
+	  dotest rcslib-merge-2 "${testcvs} -q add first-dir" \
+"Directory ${TESTDIR}/cvsroot.*/first-dir added to the repository"
+	  cd ..; rm -r 1
+
+	  dotest rcslib-merge-3 "${testcvs} -q co first-dir" ""
+	  cd first-dir
+
+	  echo '$''Revision$' > file1
+	  echo '2' >> file1
+	  echo '3' >> file1
+	  dotest rcslib-merge-4 "${testcvs} -q add file1" \
+"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest rcslib-merge-5 "${testcvs} -q commit -m '' file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  sed -e 's/2/two/' file1 > f; mv f file1
+	  dotest rcslib-merge-6 "${testcvs} -q commit -m '' file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest rcslib-merge-7 "${testcvs} -q tag -b -r 1.1 patch1" "T file1"
+	  dotest rcslib-merge-8 "${testcvs} -q update -r patch1" "U file1"
+	  dotest rcslib-merge-9 "${testcvs} -q status" \
+"===================================================================
+File: file1            	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file1,v
+   Sticky Tag:		patch1 (branch: 1\.1\.2)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest rcslib-merge-10 "cat file1" \
+'$''Revision: 1\.1 $
+2
+3'
+	  sed -e 's/3/three/' file1 > f; mv f file1
+	  dotest rcslib-merge-11 "${testcvs} -q commit -m '' file1" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest rcslib-merge-12 "${testcvs} -q update -kv -j1.2" \
+"U file1
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into file1
+rcsmerge: warning: conflicts during merge"
+	  dotest rcslib-merge-13 "cat file1" \
+"<<<<<<< file1
+1\.1\.2\.1
+2
+three
+[=]======
+1\.2
+two
+3
+[>]>>>>>> 1\.2"
+
 	  cd ..
 
 	  if test "$keep" = yes; then

@@ -126,30 +126,114 @@ RCS_exec_unlock(path, rev, noerr)
 }
 
 /* Merge revisions REV1 and REV2. */
+
 int
-RCS_merge(path, options, rev1, rev2)
-     const char *path;
-     const char *options;
-     const char *rev1;
-     const char *rev2;
+RCS_merge(rcs, path, workfile, options, rev1, rev2)
+    RCSNode *rcs;
+    char *path;
+    char *workfile;
+    char *options;
+    char *rev1;
+    char *rev2;
 {
-    int status;
+    char *xrev1, *xrev2;
+    char *tmp1, *tmp2;
+    char *diffout = NULL;
+    int retval;
 
-    /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
+    if (options != NULL && options[0] != '\0')
+      assert (options[0] == '-' && options[1] == 'k');
 
-    run_setup ("%s%s -x,v/ %s -r%s -r%s %s", Rcsbin, RCS_RCSMERGE,
-	       options, rev1, rev2, path);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-#ifndef HAVE_RCS5
-    if (status == 0) 
+    cvs_output ("RCS file: ", 0);
+    cvs_output (rcs->path, 0);
+    cvs_output ("\n", 1);
+
+    /* Calculate numeric revision numbers from rev1 and rev2 (may be
+       symbolic). */
+    xrev1 = RCS_gettag (rcs, rev1, 0, NULL);
+    xrev2 = RCS_gettag (rcs, rev2, 0, NULL);
+
+    /* Check out chosen revisions.  The error message when RCS_checkout
+       fails is not very informative -- it is taken verbatim from RCS 5.7,
+       and relies on RCS_checkout saying something intelligent upon failure. */
+    cvs_output ("retrieving revision ", 0);
+    cvs_output (xrev1, 0);
+    cvs_output ("\n", 1);
+
+    tmp1 = cvs_temp_name();
+    if (RCS_checkout (rcs, NULL, xrev1, rev1, options, tmp1,
+		      (RCSCHECKOUTPROC)0, NULL))
     {
-	error (1, 0, "CVS no longer supports RCS versions older than RCS5");
-	/* This case needs to call file_has_markers to see if the file
-	   contains conflict indicators.  But is anyone using the !HAVE_RCS5
-	   code any more?  */
+	cvs_outerr ("rcsmerge: co failed\n", 0);
+	error_exit();
     }
-#endif
-    return status;
+
+    cvs_output ("retrieving revision ", 0);
+    cvs_output (xrev2, 0);
+    cvs_output ("\n", 1);
+
+    tmp2 = cvs_temp_name();
+    if (RCS_checkout (rcs, NULL, xrev2, rev2, options, tmp2,
+		      (RCSCHECKOUTPROC)0, NULL))
+    {
+	cvs_outerr ("rcsmerge: co failed\n", 0);
+	error_exit();
+    }
+
+    /* Merge changes. */
+    cvs_output ("Merging differences between ", 0);
+    cvs_output (xrev1, 0);
+    cvs_output (" and ", 0);
+    cvs_output (xrev2, 0);
+    cvs_output (" into ", 0);
+    cvs_output (workfile, 0);
+    cvs_output ("\n", 1);
+
+    /* Remember that the first word in the `run_setup' string is used now
+       only for diagnostic messages -- CVS no longer forks to run diff3. */
+    diffout = cvs_temp_name();
+    run_setup ("diff3 -E -am -L%s -L%s -L%s %s %s %s", workfile, xrev1,
+	       xrev2, workfile, tmp1, tmp2);
+
+    retval = call_diff3 (diffout);
+
+    if (retval == 1)
+	cvs_outerr ("rcsmerge: warning: conflicts during merge\n", 0);
+    else if (retval == 2)
+	error_exit();
+
+    if (diffout)
+	copy_file (diffout, workfile);
+
+    /* Clean up. */
+    {
+	int save_noexec = noexec;
+	noexec = 0;
+	if (unlink_file (tmp1) < 0)
+	{
+	    if (!existence_error (errno))
+		error (0, errno, "cannot remove temp file %s", tmp1);
+	}
+	free (tmp1);
+	if (unlink_file (tmp2) < 0)
+	{
+	    if (!existence_error (errno))
+		error (0, errno, "cannot remove temp file %s", tmp2);
+	}
+	free (tmp2);
+	if (diffout)
+	{
+	    if (unlink_file (diffout) < 0)
+	    {
+		if (!existence_error (errno))
+		    error (0, errno, "cannot remove temp file %s", diffout);
+	    }
+	    free (diffout);
+	}
+	noexec = save_noexec;
+    }
+
+    return retval;
 }
 
 /* Check in to RCSFILE with revision REV (which must be greater than the

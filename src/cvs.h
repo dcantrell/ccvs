@@ -401,7 +401,7 @@ int RCS_exec_deltag PROTO((const char *, const char *, int));
 int RCS_exec_setbranch PROTO((const char *, const char *));
 int RCS_exec_lock PROTO((const char *, const char *, int));
 int RCS_exec_unlock PROTO((const char *, const char *, int));
-int RCS_merge PROTO((const char *, const char *, const char *, const char *));
+int RCS_merge PROTO((RCSNode *, char *, char *, char *, char *, char *));
 /* Flags used by RCS_* functions.  See the description of the individual
    functions for which flags mean what for each function.  */
 #define RCS_FLAGS_FORCE 1
@@ -647,6 +647,7 @@ void run_args ();
 #endif
 int run_exec PROTO((char *stin, char *stout, char *sterr, int flags));
 int call_diff PROTO((char *out));
+int call_diff3 PROTO((char *out));
 
 /* other similar-minded stuff from run.c.  */
 FILE *run_popen PROTO((const char *, const char *));

@@ -393,8 +393,6 @@ int
 call_diff (out)
     char *out;
 {
-    extern int optind;
-
     /* Try to keep the out-of-order bugs at bay (protocol_pipe for cvs_output
        with has "Index: foo" and such; stdout and/or stderr for diff's
        output).  I think the only reason that this used to not be such
@@ -406,13 +404,33 @@ call_diff (out)
        and cvs_outerr).  */
     sleep (1);
 
-    /* Getopt has already been run by CVS, but we need to run it again
-       to process diff options.  Reset it artificially. */
-    optind = 0;
     if (out == RUN_TTY)
 	return diff_run (run_argc, run_argv, NULL);
     else
 	return diff_run (run_argc, run_argv, out);
+}
+
+int diff3_run PROTO((int argc, char **argv, char *out));
+
+int
+call_diff3 (out)
+    char *out;
+{
+    /* Try to keep the out-of-order bugs at bay (protocol_pipe for cvs_output
+       with has "Index: foo" and such; stdout and/or stderr for diff's
+       output).  I think the only reason that this used to not be such
+       a problem is that the time spent on the fork() and exec() of diff
+       slowed us down enough to let the "Index:" make it through first.
+
+       The real fix, of course, will be to have the diff library do all
+       its output through callbacks (which CVS will supply as cvs_output
+       and cvs_outerr).  */
+    sleep (1);
+
+    if (out == RUN_TTY)
+	return diff3_run (run_argc, run_argv, NULL);
+    else
+	return diff3_run (run_argc, run_argv, out);
 }
 
 void

@@ -1616,7 +1616,7 @@ merge_file (finfo, vers)
 	goto out;
     }
 
-    status = RCS_merge(vers->srcfile->path, 
+    status = RCS_merge(finfo->rcs, vers->srcfile->path, finfo->file,
 		       vers->options, vers->vn_user, vers->vn_rcs);
     if (status != 0 && status != 1)
     {
@@ -2129,7 +2129,7 @@ join_file (finfo, vers)
 	write_letter (finfo->file, 'C', finfo->update_dir);
     }
     else
-	status = RCS_merge (vers->srcfile->path, options, rev1, rev2);
+	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file, options, rev1, rev2);
 
     if (status != 0 && status != 1)
     {
