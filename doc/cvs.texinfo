@@ -11668,6 +11668,24 @@ every place it appears in your @code{modules}
 file.  For more information on the @code{modules} file,
 see @ref{modules}.
 
+@c This messsage comes from "co", and I believe is
+@c possible only with older versions of CVS which call
+@c co.  The problem with being able to create the bogus
+@c RCS file still exists, though (and I think maybe
+@c there is a different symptom(s) now).
+@c FIXME: Would be nice to have a more exact wording
+@c for this message.
+@item missing author
+Typically this can happen if you created an RCS file
+with your username set to empty.  CVS will, bogusly,
+create an illegal RCS file with no value for the author
+field.  The solution is to make sure your username is
+set to a non-empty value and re-create the RCS file.
+@c "make sure your username is set" is complicated in
+@c and of itself, as there are the environment
+@c variables the system login name, &c, and it depends
+@c on the version of CVS.
+
 @item *PANIC* administration files missing
 This typically means that there is a directory named
 CVS but it does not contain the administrative files
