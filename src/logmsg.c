@@ -251,8 +251,9 @@ do_editor (dir, messagep, repository, changes)
   "%s----------------------------------------------------------------------\n",
 		    CVSEDITPREFIX);
     (void) fprintf (fp,
-  "%sEnter Log.  Lines beginning with `%s' are removed automatically\n%s\n",
-		    CVSEDITPREFIX, CVSEDITPREFIX, CVSEDITPREFIX);
+  "%sEnter Log.  Lines beginning with `%.*s' are removed automatically\n%s\n",
+		    CVSEDITPREFIX, CVSEDITPREFIXLEN, CVSEDITPREFIX,
+		    CVSEDITPREFIX);
     if (dir != NULL && *dir)
 	(void) fprintf (fp, "%sCommitting in %s\n%s\n", CVSEDITPREFIX,
 			dir, CVSEDITPREFIX);
@@ -323,7 +324,7 @@ do_editor (dir, messagep, repository, changes)
 		    error (0, errno, "warning: cannot read %s", fname);
 		break;
 	    }
-	    if (strncmp (line, CVSEDITPREFIX, sizeof (CVSEDITPREFIX) - 1) == 0)
+	    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
 		continue;
 	    (void) strcpy (p, line);
 	    p += line_length;
