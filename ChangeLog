@@ -1,3 +1,9 @@
+Fri Apr 28 14:36:49 1995  Ken Raeburn  (raeburn@kr-pc.cygnus.com)
+
+	* Makefile.in: Set "all" as default target instead of ".PHONY".
+	Some versions of make will otherwise try building all of the phony
+	targets, in order.
+
 Mon May  1 14:02:42 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* configure.in: Set up src/options.h for the user.  Its defaults are
