@@ -34,15 +34,12 @@ EMACS=emacs
 # The rest of this file should not need to be modified.
 #
 
-srcdir = @srcdir@
-VPATH = @srcdir@
-
 # Just in case...
 SHELL = /bin/sh
 
-ELFILES = pcl-cvs.el pcl-cvs-lucid.el pcl-cvs-startup.el
+ELFILES = pcl-cvs.el pcl-cvs-lucid.el
 ELCFILES = pcl-cvs.elc pcl-cvs-lucid.elc
-INFOFILES = pcl-cvs.info*
+INFOFILES = pcl-cvs
 TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
 	pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky pcl-cvs.pg \
 	pcl-cvs.cps pcl-cvs.fns pcl-cvs.kys pcl-cvs.pgs pcl-cvs.tps \
@@ -51,8 +48,8 @@ TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
 INSTALL = install
 INSTALL_DATA = $(INSTALL)
 
-pcl-cvs.elc pcl-cvs-lucid.elc elcfiles:
-	$(EMACS) -batch -l ${srcdir}/compile-all.el -f compile-pcl-cvs
+elcfiles:
+	$(EMACS) -batch -l ./compile-all.el -f compile-pcl-cvs
 
 all: elcfiles info
 
@@ -66,44 +63,21 @@ install: install_elc
 install_elc: elcfiles
 	for i in $(ELCFILES); do $(INSTALL_DATA) $$i $(lispdir)/$$i; done
 
-install_info: pcl-cvs.info
-	$(INSTALL_DATA) pcl-cvs.info* $(infodir)/pcl-cvs.info
+install_info: pcl-cvs
+	$(INSTALL_DATA) pcl-cvs $(infodir)/pcl-cvs
 
-info pcl-cvs.info: pcl-cvs.texinfo
-	makeinfo --fill-column=70 ${srcdir}/pcl-cvs.texinfo
+info pcl-cvs: pcl-cvs.texinfo
+	makeinfo +fill-column=70 pcl-cvs.texinfo
 
-pcl-cvs.aux pcl-cvs.dvi: pcl-cvs.texinfo
-	tex ${srcdir}/pcl-cvs.texinfo
-	tex ${srcdir}/pcl-cvs.texinfo
+pcl-cvs.dvi: pcl-cvs.texinfo
+	tex pcl-cvs.texinfo
+	tex pcl-cvs.texinfo
 	-texindex pcl-cvs.cp pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky \
 		pcl-cvs.pg
-	tex ${srcdir}/pcl-cvs.texinfo
-
-DVIPS=dvips
-pcl-cvs.ps: pcl-cvs.dvi
-	${DVIPS} pcl-cvs.dvi -o pcl-cvs.ps
+	tex pcl-cvs.texinfo
 
 mostlyclean clean realclean:
 	rm -f *~ core $(ELCFILES) $(INFOFILES) $(TEXTMPS)
 
 tags TAGS:
 	etags *.el
-
-DISTFILES = \
-	.cvsignore ChangeLog INSTALL Makefile.in NEWS README \
-	${ELFILES} ${ELCFILES} compile-all.el \
-	pcl-cvs.texinfo texinfo.tex
-OBJDIR_DISTFILES = pcl-cvs.aux pcl-cvs.ps
-
-dist-dir: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
-	mkdir ${DISTDIR}
-	for i in ${DISTFILES}; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
-	done
-	ln ${OBJDIR_DISTFILES} ${DISTDIR}
-	ln pcl-cvs.info* ${DISTDIR}
-.PHONY: dist-dir
-
-subdir = contrib/pcl-cvs
-Makefile: ../../config.status Makefile.in
-	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

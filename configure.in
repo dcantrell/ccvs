@@ -1,29 +1,31 @@
 dnl configure.in for cvs
 AC_INIT(src/cvs.h)
+AC_PREREQ(2.1)dnl Required Autoconf version.
 AC_CONFIG_HEADER(config.h)
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_MINIX
-AC_CONST
-AC_STDC_HEADERS
-AC_HAVE_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h sys/select.h sys/timeb.h sys/wait.h)
-AC_RETSIGTYPE
+AC_C_CONST
+AC_HEADER_STDC
+AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h sys/select.h sys/timeb.h)
+AC_HEADER_SYS_WAIT
+AC_TYPE_SIGNAL
 AC_DIR_HEADER
-AC_UID_T
-AC_MODE_T
-AC_SIZE_T
-AC_CHAR_UNSIGNED
+AC_TYPE_UID_T
+AC_TYPE_MODE_T
+AC_TYPE_SIZE_T
+AC_TYPE_PID_T
+AC_C_CHAR_UNSIGNED
 AC_STRUCT_TM
 AC_REPLACE_FUNCS(fnmatch getwd mkdir rename strdup dup2 strerror valloc waitpid memmove)
-AC_HAVE_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize)
-AC_FUNC_CHECK(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
-AC_FUNC_CHECK(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
-AC_UTIME_NULL
-AC_ALLOCA
-AC_RSH
-AC_LONG_FILE_NAMES
+AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize)
+AC_CHECK_FUNC(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
+AC_CHECK_FUNC(gethostname, :, LIBOBJS="$LIBOBJS hostname.o")
+AC_FUNC_UTIME_NULL
+AC_FUNC_ALLOCA
+AC_SYS_LONG_FILE_NAMES
 dnl
 dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
@@ -36,8 +38,8 @@ echo "default place for krb4 is $KRB4"
 AC_SUBST(KRB4)])dnl
 WITH_KRB4
 
-AC_SIZEOF_TYPE(long)
-AC_SIZEOF_TYPE(int)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(int)
 
 AC_REQUIRE([AC_CROSS_CHECK])
 krb_h=
@@ -68,12 +70,13 @@ if test -n "$krb_h"; then
     fi
   fi
 fi
-AC_HAVE_FUNCS(krb_get_err_text)
+AC_CHECK_FUNCS(krb_get_err_text)
 # If we can't find connect, try looking in -lsocket and -lnsl.  The
 # Irix 5 libc.so has connect and gethostbyname, but Irix 5 also has
 # libsocket.so which has a bad implementation of gethostbyname (it
 # only looks in /etc/hosts), so we only look for -lsocket if we need
 # it.
-AC_FUNC_CHECK(connect, :, [AC_HAVE_LIBRARY(-lsocket) AC_HAVE_LIBRARY(-lnsl)])
+AC_CHECK_FUNC(connect, :, [AC_HAVE_LIBRARY(-lsocket) AC_HAVE_LIBRARY(-lnsl)])
 
-AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile contrib/Makefile examples/Makefile)
+AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile \
+ 	  contrib/Makefile examples/Makefile stamp-h)

@@ -121,6 +121,7 @@ mkdir_p (dir)
     char *p;
     char *q = malloc (strlen (dir) + 1);
     int retval;
+    struct stat dummy;
 
     if (q == NULL)
 	return ENOMEM;
@@ -138,17 +139,13 @@ mkdir_p (dir)
 	{
 	    strncpy (q, dir, p - dir);
 	    q[p - dir] = '\0';
-	    if (mkdir (q, 0777) < 0)
+
+	    /* If the directory doesn't exist, try to create it.  */
+	    if (stat (q, &dummy) < 0
+		&& mkdir (q, 0777) < 0)
 	    {
-		/*
-		 * Is there ever another error code (EACCES?) in any case
-		 * where the directory already exists?
-		 */
-		if (errno != EEXIST)
-		{
-		    retval = errno;
-		    goto done;
-		}
+	        retval = errno;
+		goto done;
 	    }
 	    ++p;
 	}
