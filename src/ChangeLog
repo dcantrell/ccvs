@@ -1,3 +1,8 @@
+Tue Sep  3 20:50:11 1996  William A. Hoffman  <hoffman@albirio.crd.ge.com>
+
+	* rcs.c (RCS_fast_checkout): If workfile is NULL, don't try to
+	include it in error message.
+
 Mon Aug 26 12:27:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* mkmodules.c (mkdir_if_needed): Move from here ...
