@@ -1,3 +1,8 @@
+Sun Dec  3 20:05:10 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in: Remove grep stuff.
+	* configure: Regenerated.
+
 Fri Dec  1 11:16:18 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* configure, config.h.in: re-ran autoconf

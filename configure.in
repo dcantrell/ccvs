@@ -324,59 +324,6 @@ rm -f conftest*
 
 AC_DEFINE_UNQUOTED(DIFF, "$DIFF $DIFFFLAGS")
 
-AC_ARG_WITH(gnugrep,
-  [  --with-gnugrep          assume GNU grep is similarly installed],
-  [with_gnugrep=$withval],
-  [with_gnugrep=no]
-)
-case "$with_gnugrep" in
-yes)
-  : ${GGREP=$bindir/grep}
-  ;;
-no)
-  : ${GGREP=''}
-  ;;
-*)
-  : ${GGREP=$with_gnugrep}
-  ;;
-esac
-
-dnl hmmm, I wonder if egrep will ever be appropriate?
-dnl
-AC_PATH_PROGS(ggrep_path, $GGREP ggrep gnugrep grep, grep)
-AC_MSG_CHECKING(to see if $ggrep_path supports -s)
-[echo foostring | $ggrep_path -s foostring > conftest.out 2>/dev/null]
-dnl
-dnl FIXME: We use a work-around for SunOS users with /usr/5bin first in their
-dnl FIXME: path but we should really iterate through all the possible grep's
-dnl FIXME: for one that works the way we want it to.
-dnl FIXME: On the other hand, we should handle the failure to find a "working"
-dnl FIXME: -s option by doing the old fashioned ">/dev/null".....
-dnl
-if test $? -ne 0 ; then
-  AC_MSG_WARN($ggrep_path does not support -s, used when checking for merge conflicts)
-else
-  AC_MSG_RESULT(yes)
-  AC_MSG_CHECKING(to see if $ggrep_path -s means to work silently)
-  if test -s conftest.out ; then
-    AC_MSG_RESULT(no)
-    if test "$ggrep_path" != /usr/bin/grep ; then
-      AC_MSG_CHECKING(to see if /usr/bin/grep has the right -s)
-      [echo foostring | /usr/bin/grep -s foostring > conftest.out 2>/dev/null]
-      if test $? -eq 0 -a ! -s foostring ; then
-	AC_MSG_RESULT(yes; using /usr/bin/grep)
-	ggrep_path=/usr/bin/grep
-      else
-	AC_MSG_RESULT(no)
-      fi
-    fi
-  else
-    AC_MSG_RESULT(yes)
-  fi
-fi
-AC_DEFINE_UNQUOTED(GREP, "$ggrep_path")
-rm -f conftest*
-
 AC_HEADER_STDC
 AC_CHECK_HEADERS(errno.h unistd.h string.h memory.h utime.h fcntl.h ndbm.h \
                  sys/param.h sys/select.h sys/time.h sys/timeb.h \
