@@ -1354,6 +1354,14 @@ silently ignore files which are in the directory but
 which are not documented here, to allow for future
 expansion.
 
+The files are stored according to the text file
+convention for the system in question.  This means that
+working directories are not portable between systems
+with differing conventions for storing text files.
+This is intentional, on the theory that the files being
+managed by CVS probably will not be portable between
+such systems either.
+
 @table @file
 @item Root
 This file contains the current @sc{cvs} root, as
@@ -1395,19 +1403,15 @@ or
 yoyodyne/tc
 @end example
 
+If the particular working directory does not correspond
+to a directory in the repository, then @file{Repository}
+should contain @file{CVSROOT/Emptydir}.
+
 @cindex Entries file, in CVS directory
 @cindex CVS/Entries file
 @item Entries
 This file lists the files and directories in the
-working directory.  It is a text file according to the
-conventions appropriate for the operating system in
-question.
-@c Using OS text file conventions makes it impossible (it
-@c would seem) to share a working directory via a
-@c networked file system between systems with diverse
-@c text file conventions.  But that might be correct,
-@c because the text files under CVS control are subject
-@c to the same problem.  It is also the status quo.
+working directory.
 The first character of each line indicates what sort of
 line it is.  If the character is unrecognized, programs
 reading the file should silently skip that line, to
@@ -1469,6 +1473,8 @@ all the @var{filler} fields should be silently ignored,
 for future expansion.  Programs which modify
 @code{Entries} files should preserve these fields.
 
+The lines in the @file{Entries} file can be in any order.
+
 @cindex Entries.Log file, in CVS directory
 @cindex CVS/Entries.Log file
 @item Entries.Log
@@ -1496,6 +1502,9 @@ future expansion).  If the second character of the line
 in @file{Entries.Log} is not a space, then it was
 written by an older version of @sc{cvs} (not documented
 here).
+
+Programs which are writing rather than reading can
+safely ignore @file{Entries.Log} if they so choose.
 
 @cindex Entries.Backup file, in CVS directory
 @cindex CVS/Entries.Backup file

@@ -1,3 +1,14 @@
+1998-12-16  Jim Kingdon
+
+	Thanks to Ram Rajadhyaksha of the MacCVS Pro team for raising the
+	following issues.
+	* cvs.texinfo (Working directory storage): The deal about storing
+	files as text files applies to all the CVS/* files, not just
+	CVS/Entries.  State the rationale too.
+	Document CVSROOT/Emptydir in CVS/Repository.
+	There is no set order in CVS/Entries.
+	Explicitly say that writing Entries.Log is optional.
+
 1998-12-03  Jim Kingdon
 
 	* cvs.texinfo (Error messages): Add "unrecognized auth response".
