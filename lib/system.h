@@ -173,8 +173,11 @@ extern long timezone;
 **         NEC                 SVR4
 */
 
-/* On MOST systems this will get you MAXPATHLEN */
+/* On MOST systems this will get you MAXPATHLEN.
+   Windows NT doesn't have this file, tho.  */
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 
 #ifndef PATH_MAX  
 #  ifdef MAXPATHLEN
@@ -190,8 +193,6 @@ extern long timezone;
 #    endif  /* PATH_MAX   */
 #  endif  /* MAXPATHLEN */
 #endif  /* PATH_MAX   */
-
-
 
 
 /* The NeXT (without _POSIX_SOURCE, which we don't want) has a utime.h
@@ -313,4 +314,3 @@ char *getwd ();
 #ifndef S_IWOTH
 #define	S_IWOTH		0000002		/* write permission, other */
 #endif
-
