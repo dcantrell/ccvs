@@ -1,3 +1,9 @@
+2004-08-11  Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (basicc): Work around a problem in Linux 2.2 & Bash 2.05b
+	which prevents a `cd ..' from a deleted directory from working.
+	(Original patch from Matthew Ogilvie <mmo9317bd@mailcan.com>.)
+
 2004-07-18  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (newb-123j0): Use DOTSTAR at end of response.

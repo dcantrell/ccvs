@@ -2628,7 +2628,8 @@ ${SPROG} update: Updating second-dir"
 	  # On Linux 2.2 systems, the cwd may be gone, so we recreate it
           # to allow basicc-11 to actually happen 
 	  if test ! -d ../first-dir; then
-	    cd ..
+	    # Apparently `cd ..' doesn't work with Linux 2.2 & Bash 2.05b.
+	    cd $TESTDIR/1
 	    mkdir ./first-dir
             cd ./first-dir
 	  fi
@@ -2636,8 +2637,7 @@ ${SPROG} update: Updating second-dir"
 "" "${CPROG} release: deletion of directory \./\. failed: .*"
 	  dotest basicc-11a "test -d ../second-dir" ""
 
-	  cd ..
-	  cd ..
+	  cd ../..
 
 	  mkdir 2; cd 2
 	  dotest basicc-12 "${testcvs} -Q co ." ""
