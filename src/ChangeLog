@@ -1,3 +1,11 @@
+1997-01-08  Jim Kingdon
+
+	* client.c (send_file_names): When looking name up in Entries,
+	call Entries_Open and Entries_Close.  This has two effects:
+	(1) we look at Entries.Log, and (2) we don't skip 'D' entries,
+	both of which are needed to make us get the right (command
+	line) name for a directory we are adding.
+
 Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, cvs.h, hash.h, myndbm.h, rcs.h: Remove CVSid; we

@@ -4311,11 +4311,6 @@ send_file_names (argc, argv, flags)
     char *q;
     int level;
     int max_level;
-    char *line;
-    size_t line_allocated;
-
-    line = NULL;
-    line_allocated = 0;
 
     /* The fact that we do this here as well as start_recursion is a bit 
        of a performance hit.  Perhaps worth cleaning up someday.  */
@@ -4371,6 +4366,7 @@ send_file_names (argc, argv, flags)
     {
 	char buf[1];
 	char *p = argv[i];
+	char *line = NULL;
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 	/* We want to send the file name as it appears
@@ -4382,39 +4378,28 @@ send_file_names (argc, argv, flags)
 	   non-local case too, though.  */
 	if (p == last_component (p))
 	{
-	    FILE *ent;
+	    List *entries;
+	    Node *node;
 
-	    ent = CVS_FOPEN (CVSADM_ENT, "r");
-	    if (ent == NULL)
+	    /* If we were doing non-local directory,
+	       we would save_cwd, CVS_CHDIR
+	       like in update.c:isemptydir.  */
+	    /* Note that if we are adding a directory,
+	       the following will read the entry
+	       that we just wrote there, that is, we
+	       will get the case specified on the
+	       command line, not the case of the
+	       directory in the filesystem.  This
+	       is correct behavior.  */
+	    entries = Entries_Open (0);
+	    node = findnode_fn (entries, p);
+	    if (node != NULL)
 	    {
-		if (!existence_error (errno))
-		    error (0, errno, "cannot read %s", CVSADM_ENT);
+		line = xstrdup (node->key);
+		p = line;
+		delnode (node);
 	    }
-	    else
-	    {
-		while (getline (&line, &line_allocated, ent) > 0)
-		{
-		    char *cp;
-
-		    if (line[0] != '/')
-			continue;
-		    cp = strchr (line + 1, '/');
-		    if (cp == NULL)
-			continue;
-		    *cp = '\0';
-		    if (fncmp (p, line + 1) == 0)
-		    {
-			p = line + 1;
-			break;
-		    }
-		}
-		if (ferror (ent))
-		    error (0, errno, "cannot read %s", CVSADM_ENT);
-		if (fclose (ent) < 0)
-		    error (0, errno, "cannot close %s", CVSADM_ENT);
-		/* We don't attempt to look at CVS/Entries.Log.  In a few cases that might
-		   lead to strange behaviors, but they should be fairly obscure.  */
-	    }
+	    Entries_Close (entries);
 	}
 #endif /* FILENAMES_CASE_INSENSITIVE */
 
@@ -4439,10 +4424,9 @@ send_file_names (argc, argv, flags)
 	    ++p;
 	}
 	send_to_server ("\012", 1);
+	if (line != NULL)
+	    free (line);
     }
-
-    if (line != NULL)
-	free (line);
 
     if (flags & SEND_EXPAND_WILD)
     {
