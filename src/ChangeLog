@@ -1,5 +1,8 @@
 Wed Jan  3 18:25:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* ignore.c (ign_default): Change CVS* to CVS CVS.adm.  CVS* is too
+	broad, especially in a case-insensitive filesystem.
+
 	* Makefile.in (cvsbug): version.c is in srcdir.
 
 Wed Jan  3 17:30:45 1996  Phi-Long Tran  <ptran@autodesk.com>
