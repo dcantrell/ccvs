@@ -6164,7 +6164,7 @@ File: b                	Status: Up-to-date
 	  $testcvs -Q update -r T > /dev/null 2>&1
 	  $testcvs update -kk -jM1 -jM2 > /dev/null 2>&1
 
-	  # Verify that $Id$ is not expanded.
+	  # Verify that the $Id.$ string is not expanded.
 	  dotest join-admin-2-2 "cat e" '$''Id$'
 
 	  cd ../..
