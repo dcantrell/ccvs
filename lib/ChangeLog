@@ -1,4 +1,9 @@
 Wed Jun 05 10:14:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* system.h: If ERRNO_H_MISSING is defined, don't include errno.h.
+
+Wed Jun 05 10:14:29 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* regex.c: Don't define MAX and MIN if already defined.
 
