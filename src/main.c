@@ -299,6 +299,12 @@ main (argc, argv)
     SYSTEM_INITIALIZE (&argc, &argv);
 #endif
 
+#ifdef HAVE_TZSET
+    /* On systems that have tzset (which is almost all the ones I know
+       of), it's a good idea to call it.  */
+    tzset ();
+#endif
+
     /*
      * Just save the last component of the path for error messages
      */
