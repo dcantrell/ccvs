@@ -598,7 +598,7 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot pserver"
+	tests="${tests} multiroot pserver client"
 else
 	tests="$*"
 fi
@@ -17014,6 +17014,87 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
 	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd
+	  fi # skip the whole thing for local
+	  ;;
+
+	client)
+	  # Some tests of the client (independent of the server).
+	  if test "$remote" = yes; then
+	    cat >${TESTDIR}/serveme <<EOF
+#!${TESTSHELL}
+# This is admittedly a bit cheezy, in the sense that we make lots
+# of assumptions about what the client is going to send us.
+# We don't mention Repository, because current clients don't require it.
+# Sending these at our own pace, rather than waiting for the client to
+# make the requests, is bogus, but hopefully we can get away with it.
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "M special message"
+echo "Created first-dir/"
+echo "${TESTDIR}/cvsroot/first-dir/file1"
+echo "/file1/1.1///"
+echo "u=rw,g=rw,o=rw"
+echo "4"
+echo "xyz"
+echo "ok"
+cat >/dev/null
+EOF
+	    chmod +x ${TESTDIR}/serveme
+	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
+	    mkdir 1; cd 1
+	    dotest_fail client-1 "${testcvs} -q co first-dir" \
+"${PROG} \[checkout aborted\]: This server does not support the global -q option\."
+	    dotest client-2 "${testcvs} co first-dir" "special message"
+
+	    cat >${TESTDIR}/serveme <<EOF
+#!${TESTSHELL}
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "M merge-it"
+echo "Copy-file ./"
+echo "${TESTDIR}/cvsroot/first-dir/file1"
+echo "${TESTDIR}/bogus/.#file1.1.1"
+echo "Merged ./"
+echo "${TESTDIR}/cvsroot/first-dir/file1"
+echo "/file1/1.2///"
+echo "u=rw,g=rw,o=rw"
+echo "4"
+echo "abd"
+echo "ok"
+cat >/dev/null
+EOF
+	    cd first-dir
+	    mkdir ${TESTDIR}/bogus
+	    dotest_fail client-3 "${testcvs} update" "merge-it
+${PROG} \[update aborted\]: protocol error: Copy-file tried to specify directory"
+	    cat >${TESTDIR}/serveme <<EOF
+#!${TESTSHELL}
+echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
+echo "ok"
+echo "M merge-it"
+echo "Copy-file ./"
+echo "${TESTDIR}/cvsroot/first-dir/file1"
+echo ".#file1.1.1"
+echo "Merged ./"
+echo "${TESTDIR}/cvsroot/first-dir/file1"
+echo "/file1/1.2///"
+echo "u=rw,g=rw,o=rw"
+echo "4"
+echo "abc"
+echo "ok"
+cat >/dev/null
+EOF
+	    dotest client-4 "${testcvs} update" "merge-it"
+	    dotest client-5 "cat .#file1.1.1" "xyz"
+	    dotest client-6 "cat CVS/Entries" "/file1/1.2/[A-Za-z0-9 :]*//
+D"
+	    dotest client-7 "cat file1" "abc"
+
+	    cd ../..
+	    rm -r 1
+	    rmdir ${TESTDIR}/bogus
+	    rm ${TESTDIR}/serveme
+	    CVS_SERVER=${testcvs}; export CVS_SERVER
 	  fi # skip the whole thing for local
 	  ;;
 

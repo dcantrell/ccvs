@@ -1,5 +1,8 @@
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c: Refuse to Copy-file to another directory
+	* sanity.sh (client): New test, tests for this.
+
 	* edit.c (editors_fileproc), watch.c (watchers_fileproc): Use
 	cvs_output rather than writing to stdout.
 	* sanity.sh (devcom): Use dotest for tests 178, 180, and 183
