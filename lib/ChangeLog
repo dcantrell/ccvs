@@ -1,3 +1,8 @@
+Tue Feb 13 20:04:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* strtoul.c: Added (needed by vasprintf.c, and missing on SunOS4).
+	* Makefile.in (SOURCES): Add strtoul.c.
+
 Mon Feb 12 10:04:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vasprintf.c: Added (same contents as before).
