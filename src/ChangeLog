@@ -1,4 +1,5 @@
-Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
+Fri Dec 12 17:38:15 1997  Chris Provenzano <proven@cygnus.com>
+	and Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.h (CVSmethod): Add gserver_method.
 	* root.c (method_names): Add gserver.
@@ -44,6 +45,8 @@ Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
 	(main): Handle -a.  Handle pserver if HAVE_GSSAPI, in addition to
 	existing cases.
 	* login.c (login): Pass new argument to connect_to_pserver.
+
+Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* buffer.c (PACKET_SLOP): Define.
 	(packetizing_buffer_initialize): Use PACKET_SLOP when allocating
