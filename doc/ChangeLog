@@ -1,5 +1,9 @@
 Sun Sep 29 11:14:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (File permissions): Expand CVSUMASK stuff a bit.
+	(Setting a watch, Environment variables, Global options): Update
+	index entries for "read-only files, and ...".
+
 	* cvsclient.texi (Requests): State that Gzip-stream is preferred
 	to gzip-file-contents.  Cite RFC1952/1951 rather than just "gzip".
 	Say that RFC1950/1951 compression is also known as "zlib".
