@@ -1,3 +1,8 @@
+Mon Aug 12 10:33:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server): If TMPDIR is not an absolute pathname, give
+	an error.
+
 Mon Aug 12 10:34:43 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* main.c: add synonym "ann" for "annotate" again
