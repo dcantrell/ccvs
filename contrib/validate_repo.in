@@ -24,15 +24,15 @@
 #
 ########################################################################
 
-=head1 check_cvs.pl
+=head1 validate_repo.pl
 
 Script to check the integrity of the Repository.
 
 =head1 SYNOPSIS
 
-    perldoc check_cvs.pl
-    check_cvs.pl --help [--verbose!]
-    check_cvs.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
+    perldoc validate_repo.pl
+    validate_repo.pl --help [--verbose!]
+    validate_repo.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
                  [--all-revisions!] [module]...
 
 =head1 DESCRIPTION
@@ -103,10 +103,10 @@ F<./CVS/Repository> file when it exists and is readable, then to F<.>
 =head1 EXAMPLES
 
     setenv CVSROOT /release/111/cvs
-    check_cvs.pl
+    validate_repo.pl
 
 
-    check_cvs.pl -d /another/cvsroot --verbose --exec '
+    validate_repo.pl -d /another/cvsroot --verbose --exec '
     system "grep \"This string means Im a bad, bad file!\" <&"
            . fileno( $_[3] )
 	       . ">/dev/null"
