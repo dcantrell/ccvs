@@ -1,3 +1,8 @@
+2003-11-25  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (devcom3-9ar): Ignore the stderr output since it varies
+	considerably between platforms.
+
 2003-11-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* diff.c (diff_file_nodiff): use_rev1 does *not* imply that diff_rev1
