@@ -20,10 +20,8 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 libcvs_a_SOURCES = \
-	md5.c \
 	sighandle.c \
 	error.h \
-	md5.h \
 	system.h \
 	wait.h \
 	xselect.h \
@@ -141,6 +139,9 @@ libcvs_a_SOURCES += gettext.h
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
+
+## For GNULIB's md5 module.
+libcvs_a_SOURCES += md5.c md5.h
 
 ## For GNULIB's minmax module.
 libcvs_a_SOURCES += minmax.h

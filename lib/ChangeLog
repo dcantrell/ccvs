@@ -1,3 +1,8 @@
+2004-10-22  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Move md5 to its own section.
+	* md5.c, md5.h: Update from GNULIB.
+
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am, rpmatch.c, yesno.h, yesno.c: Back out recent changes.
