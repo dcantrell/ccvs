@@ -49,6 +49,7 @@ libcvs_a_SOURCES = \
 	getpagesize.h \
 	md5.h \
 	regex.h \
+        PROTO.h \
 	savecwd.h \
 	system.h \
 	unlocked-io.h \

@@ -34,14 +34,7 @@
 
 #include <string.h>	/* for memcpy() and memset() */
 
-/* Add prototype support.  */
-#ifndef PROTO
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#define PROTO(ARGS) ARGS
-#else
-#define PROTO(ARGS) ()
-#endif
-#endif
+#include "PROTO.h"
 
 #include "md5.h"
 
