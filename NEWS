@@ -54,6 +54,12 @@ DEVELOPER ISSUES
   section of the INSTALL file about using the autotools if you are compiling
   CVS yourself.
 
+* Support has been added to the test suite to support testing over a :ext: link
+  to another machine, subject to some stringent requirements.  This support can
+  be used, for instance, to test the operation of a case insensitive client
+  against a case sensitive server.  Please see the comments in TEST and the
+  src/sanity.sh test script itself for more.
+
 Changes from 1.11.8 to 1.11.9:
 
 * CVS now knows how to report, as well as record, `P' record types.
