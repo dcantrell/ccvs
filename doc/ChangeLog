@@ -1,3 +1,7 @@
+2003-08-12  Derek Price  <derek@ximbiot.com>
+
+	* stamp-vti, version.texi: Regenerated.
+
 2003-08-07  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore {cvs,cvsclient}.txt.
