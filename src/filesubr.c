@@ -616,11 +616,6 @@ xcmp (file1, file2)
     return (ret);
 }
 
-/* Just in case this implementation does not define this.  */
-#ifndef L_tmpnam
-#define	L_tmpnam 50
-#endif
-
 /* Generate a unique temporary filename.  Returns a pointer to a newly
    malloc'd string containing the name.  Returns successfully or not at
    all.  */
@@ -646,18 +641,26 @@ cvs_temp_name ()
 char *
 cvs_temp_name ()
 {
+#  ifdef HAVE_MKTEMP
+    char *value;
+    char *retval;
+
+    value = xmalloc (strlen (Tmpdir) + 40);
+    sprintf (value, "%s/%s", Tmpdir, "cvsXXXXXX" );
+    retval = mktemp (value);
+
+    if (retval == NULL)
+	error (1, errno, "cannot generate temporary filename");
+    return value;
+#  else
     char value[L_tmpnam + 1];
     char *retval;
 
-#ifdef HAVE_MKTEMP
-    sprintf (value, "%s/%s", Tmpdir, "cvsXXXXXX" );
-    retval = mktemp (value);
-#else
     retval = tmpnam (value);
-#endif
     if (retval == NULL)
 	error (1, errno, "cannot generate temporary filename");
     return xstrdup (value);
+#  endif
 }
 #endif
 
