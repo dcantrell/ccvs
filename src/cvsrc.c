@@ -76,7 +76,7 @@ read_cvsrc (argc, argv)
 
     /* if it can't be read, there's no point to continuing */
 
-    if (access (homeinit, R_OK) != 0)
+    if (!isreadable (homeinit))
     {
 	free (homeinit);
 	return;

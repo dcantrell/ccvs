@@ -280,7 +280,7 @@ serve_root (arg)
     if (error_pending()) return;
     
     (void) sprintf (path, "%s/%s", arg, CVSROOTADM);
-    if (access (path, R_OK | X_OK))
+    if (!isaccessable (path, R_OK | X_OK))
     {
 	save_errno = errno;
 	pending_error_text = malloc (80 + strlen (path));
@@ -290,7 +290,7 @@ serve_root (arg)
     }
     (void) strcat (path, "/");
     (void) strcat (path, CVSROOTADM_HISTORY);
-    if (isfile (path) && access (path, R_OK | W_OK))
+    if (isfile (path) && !isaccessable (path, R_OK | W_OK))
     {
 	save_errno = errno;
 	pending_error_text = malloc (80 + strlen (path));
