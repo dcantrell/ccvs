@@ -1843,44 +1843,44 @@ No conflicts created by this import"
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -x TOFWUCGMAR -a" \
-"O [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= ${TMPPWD}/\*
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir/dir1/dir2 == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir           == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir           == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir/dir1      == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir/dir1      == ${TMPPWD}
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir/dir1/dir2 == ${TMPPWD}
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir/dir1/dir2 == ${TMPPWD}
-F [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]*                     =first-dir= ${TMPPWD}/\*
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1\.1\]
-O [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* \[1\.1\] first-dir           =first-dir= ${TMPPWD}/\*
-U [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir           == ${TMPPWD}/first-dir
-U [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file7     first-dir           == ${TMPPWD}/first-dir" \
-"O [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= <remote>/\*
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file6     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file7     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir           == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir           == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir/dir1      == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.1 file14    first-dir/dir1/dir2 == <remote>
-M [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* 1\.2 file6     first-dir/dir1/dir2 == <remote>
-F [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]*                     =first-dir= <remote>/\*
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1\.1\]
-O [0-9/]* [0-9:]* ${PLUS}0000 [a-z0-9@][a-z0-9@]* \[1\.1\] first-dir           =first-dir= <remote>/\*"
+"O [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= ${TMPPWD}/\*
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == ${TMPPWD}
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == ${TMPPWD}
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == ${TMPPWD}
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == ${TMPPWD}
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == ${TMPPWD}
+F [0-9/]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= ${TMPPWD}/\*
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
+O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TMPPWD}/\*
+U [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TMPPWD}/first-dir
+U [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TMPPWD}/first-dir" \
+"O [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir           == <remote>
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1      == <remote>
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file14    first-dir/dir1/dir2 == <remote>
+M [0-9/]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir/dir1/dir2 == <remote>
+F [0-9/]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= <remote>/\*
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
+O [0-9/]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*"
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir

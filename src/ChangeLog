@@ -1,5 +1,8 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (basic2): In test basic2-64, match usernames with
+	${username}.
+
 	* root.c: Reindent a few things.
 	* root.c, cvs.h (same_directories): Remove.  Never used,
 	portability hassle.
