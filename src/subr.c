@@ -44,7 +44,7 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 void
 xrealloc_and_strcat (char **str, size_t *lenp, const char *src)
 {
-    short newstr = !*lenp;
+    bool newstr = !*lenp;
     expand_string (str, lenp, (newstr ? 0 : strlen (*str)) + strlen (src) + 1);
     if (newstr)
 	strcpy (*str, src);
