@@ -17,6 +17,8 @@ Sat Sep 21 02:33:26 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 	fails just because you don't have the local host in your .rhosts
 	file.
 
+	* version.c (version_string): Bump to 1.8.85.
+
 Thu Sep 19 09:15:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Define SERVER_FLOWCONTROL, SERVER_HI_WATER,
