@@ -837,6 +837,9 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
+  --enable-cvs-ndbm       Use the NDBM library distributed with CVS rather
+                          than attempting to use a system NDBM library.
+                          Disabling this may not work. (default)
   --enable-client         Include code for running as a remote client
                           (default)
   --enable-password-authenticated-client
@@ -9216,6 +9219,22 @@ _ACEOF
 fi
 
 
+# Check whether --enable-cvs-ndbm or --disable-cvs-ndbm was given.
+if test "${enable_cvs_ndbm+set}" = set; then
+  enableval="$enable_cvs_ndbm"
+
+else
+  enable_cvs_ndbm=yes
+fi;
+if test no != "$enable_cvs_ndbm"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define MY_NDBM 1
+_ACEOF
+
+fi
+
+
 
 
 
@@ -9515,6 +9534,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
 
 
 

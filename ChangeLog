@@ -1,3 +1,14 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Remove references to options.h.
+	* cvsnt.mak: Ditto.
+	* FAQ: Ditto, plus some references to installing RCS & DIFF.  Wow.
+	That was _really_ out of date.
+	* configure.in: Define MY_NDBM here rather than in src/options.h.
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+
 2002-12-16  Derek Price  <derek@ximbiot.com>
 
 	* INSTALL: Add a platform to the tested platforms list.
