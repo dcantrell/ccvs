@@ -3451,7 +3451,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
         proxy_port_number = get_proxy_port_number (root);
 	hostinfo = init_sockaddr (&client_sai.addr_in, root->proxy_hostname,
                                   proxy_port_number);
-        TRACE (1, "Connecting to %s:%d via proxy %s(%s):%d.",
+        TRACE (TRACE_FUNCTION, "Connecting to %s:%d via proxy %s(%s):%d.",
                root->hostname, port_number, root->proxy_hostname,
                inet_ntoa (client_sai.addr_in.sin_addr), proxy_port_number);
     }
@@ -3459,7 +3459,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
     {
 	hostinfo = init_sockaddr (&client_sai.addr_in, root->hostname,
 				  port_number);
-        TRACE (1, "Connecting to %s(%s):%d.",
+        TRACE (TRACE_FUNCTION, "Connecting to %s(%s):%d.",
                root->hostname,
                inet_ntoa (client_sai.addr_in.sin_addr), port_number);
     }
@@ -4215,7 +4215,7 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     size_t bufsize;
     int bin;
 
-    TRACE (1, "Sending file `%s' to server", file);
+    TRACE (TRACE_FUNCTION, "Sending file `%s' to server", file);
 
     /* Don't think we can assume fstat exists.  */
     if (CVS_STAT (file, &sb) < 0)

@@ -162,7 +162,7 @@ Scratch_Entry (List *list, const char *fname)
 {
     Node *node;
 
-    TRACE ( 1, "Scratch_Entry(%s)", fname );
+    TRACE (TRACE_FUNCTION, "Scratch_Entry(%s)", fname);
 
     /* hashlookup to see if it is there */
     if ((node = findnode_fn (list, fname)) != NULL)
@@ -211,10 +211,10 @@ Register (List *list, const char *fname, const char *vn, const char *ts,
     }
 #endif
 
-    TRACE ( 1, "Register(%s, %s, %s%s%s, %s, %s %s)",
-	    fname, vn, ts ? ts : "",
-	    ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
-	    options, tag ? tag : "", date ? date : "" );
+    TRACE (TRACE_FUNCTION, "Register(%s, %s, %s%s%s, %s, %s %s)",
+	   fname, vn, ts ? ts : "",
+	   ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
+	   options, tag ? tag : "", date ? date : "");
 
     entnode = Entnode_Create (ENT_FILE, fname, vn, ts, options, tag, date,
 			      ts_conflict);
@@ -608,7 +608,7 @@ void
 WriteTemplate (const char *update_dir, int xdotemplate, const char *repository)
 {
 #ifdef SERVER_SUPPORT
-    TRACE (1, "Write_Template (%s, %s)", update_dir, repository);
+    TRACE (TRACE_FUNCTION, "Write_Template (%s, %s)", update_dir, repository);
 
     if (noexec)
 	return;

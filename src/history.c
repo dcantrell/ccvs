@@ -737,7 +737,7 @@ history_write (int type, const char *update_dir, const char *revs,
 	goto out;
     }
 
-    TRACE ( 1, "fopen(%s,a)", fname );
+    TRACE (TRACE_FUNCTION, "fopen(%s,a)", fname);
 
     if (noexec)
 	goto out;
