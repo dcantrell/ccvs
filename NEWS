@@ -5,12 +5,6 @@ line of a file, with the revision number, user checking in the
 modification, and date of the modification.  For more information see
 the `annotate' node in cvs.texinfo.
 
-* Tag names containing only uppercase letters (no lowercase letters,
-digits, or punctuation) are now reserved for CVS; it will not let you
-add such tags (you can still use the tags if they were added with a
-previous version of CVS).  This is so that CVS can in the future add
-more special tag names analogous to BASE and HEAD.
-
 * The cvsinit shell script has been replaced by a cvs init command.
 
 * Added the patterns *.olb *.exe _$* *$ to default ignore list.
