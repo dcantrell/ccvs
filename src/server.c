@@ -134,7 +134,7 @@ mkdir_p (dir)
 	{
 	    strncpy (q, dir, p - dir);
 	    q[p - dir] = '\0';
-	    if (mkdir (q, 0777) < 0)
+	    if (CVS_MKDIR (q, 0777) < 0)
 	    {
 		if (errno != EEXIST
 		    && (errno != EACCES || !isdir(q)))
@@ -147,7 +147,7 @@ mkdir_p (dir)
 	}
 	else
 	{
-	    if (mkdir (dir, 0777) < 0)
+	    if (CVS_MKDIR (dir, 0777) < 0)
 		retval = errno;
 	    else
 		retval = 0;
@@ -390,7 +390,7 @@ dirswitch (dir, repos)
      * This is pretty much like calling Create_Admin, but Create_Admin doesn't
      * report errors in the right way for us.
      */
-    if (mkdir (CVSADM, 0777) < 0)
+    if (CVS_MKDIR (CVSADM, 0777) < 0)
     {
 	if (errno == EEXIST)
 	    /* Don't create the files again.  */
