@@ -328,6 +328,7 @@ fd_buffer_shutdown (buf)
      struct buffer *buf;
 {
     free (buf->closure);
+    buf->closure = NULL;
     return 0;
 }
 

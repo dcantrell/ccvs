@@ -60,6 +60,11 @@ void
 buf_free (buf)
      struct buffer *buf;
 {
+    if (buf->closure != NULL)
+    {
+	free (buf->closure);
+	buf->closure = NULL;
+    }
     if (buf->data != NULL)
     {
 	buf->last->next = free_buffer_data;

@@ -1,3 +1,12 @@
+2004-02-11  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.c (buf_free): Plug a memory leak.
+	* commit.c (checkaddfile): Ditto.
+
+	* server.c (fd_buffer_shutdown): Avoid a double free().
+
+	* parseinfo.c (parse_config): Fix comments.
+
 2004-02-11  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (stdio_buffer_shutdown): Add logic to avoid attempting to
