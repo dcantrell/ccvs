@@ -13,6 +13,13 @@
 
 #include "cvs.h"
 
+/* Printable names for things in the CVSroot_method enum variable.
+   Watch out if the enum is changed in cvs.h! */
+
+char *method_names[] = {
+  "local", "server (rsh)", "pserver", "kserver"
+};
+
 #ifndef DEBUG
 
 char *
@@ -50,8 +57,7 @@ Name_Root(dir, update_dir)
      * It is possible that not all repositories will have a CVS/Root
      * file. This is ok, but the user will need to specify -d
      * /path/name or have the environment variable CVSROOT set in
-     * order to continue.
-     */
+     * order to continue.  */
     if ((!isdir (cvsadm)) || (!isreadable (tmp)))
         return (NULL);
 
@@ -349,10 +355,6 @@ parse_cvsroot (char *CVSroot)
 /* This is for testing the parsing function. */
 
 #include <stdio.h>
-
-static char *method_names[] = {
-  "local", "server (rsh)", "pserver", "kserver"
-};
 
 char *CVSroot;
 char *program_name;

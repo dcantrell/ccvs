@@ -412,6 +412,8 @@ extern mode_t cvsumask;
 typedef enum {
   local_method, server_method, pserver_method, kserver_method
 } CVSmethod;
+extern char *method_names[];	/* change this in root.c if you change
+				   the enum above */
 
 extern char *CVSroot_original;	/* the active, complete CVSroot string */
 extern int client_active;	/* nonzero if we are doing remote access */

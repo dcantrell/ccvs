@@ -2788,7 +2788,7 @@ start_tcp_server (tofdp, fromfdp)
     {
       port = atoi (portenv);
       if (port <= 0)
-        goto try_rsh_no_message;
+        error (1, 0, "CVS_CLIENT_PORT must be a positive number!");
       if (trace)
         fprintf(stderr, "Using TCP port %d to contact server.\n", port);
       port = htons (port);
@@ -2861,23 +2861,15 @@ start_tcp_server (tofdp, fromfdp)
     }
   
   if (tofd == -1)
-    {
-      /* FIXME: Falling back like this is slow and we should probably
-	 just make it a fatal error (so that people use the right
-	 environment variables or, when we get around to implementing
-	 the right ones, access methods).  */
-      error (0, 0, "trying to start server using rsh");
-    try_rsh_no_message:
-      server_fd = -1;
-#if ! RSH_NOT_TRANSPARENT
-      start_rsh_server (&tofd, &fromfd);
-#else /* RSH_NOT_TRANSPARENT */
-#if defined (START_SERVER)
-      START_SERVER (&tofd, &fromfd, getcaller (),
-                    CVSroot_username, CVSroot_hostname, CVSroot_directory);
-#endif /* defined (START_SERVER) */
-#endif /* ! RSH_NOT_TRANSPARENT */
-    }
+  {
+#ifdef HAVE_KERBEROS
+      error (0, 0, "Kerberos connect failed");
+#else
+      error (0, 0, "Direct TCP connect failed");
+#endif
+      error (1, 0, "couldn't connect to remote host %s", CVSroot_hostname);
+  }
+
   free (hname);
 
   /* Give caller the values it wants. */
@@ -2918,31 +2910,39 @@ start_server ()
   from_server_logfile = (FILE *) NULL;
   to_server_logfile   = (FILE *) NULL;
 
+  switch (CVSroot_method)
+  {
+
 #ifdef AUTH_CLIENT_SUPPORT
-    if (CVSroot_method == pserver_method)
-      {
-        /* Toss the return value.  It will die with error if anything
-           goes wrong anyway. */
-        connect_to_pserver (&tofd, &fromfd, 0);
-      }
-    else
-#endif /* AUTH_CLIENT_SUPPORT */
-      {
+  case pserver_method:
+      /* Toss the return value.  It will die with error if anything
+	 goes wrong anyway. */
+      connect_to_pserver (&tofd, &fromfd, 0);
+      break;
+#endif
+
 #if HAVE_KERBEROS || USE_DIRECT_TCP
-        start_tcp_server (&tofd, &fromfd);
+  case kserver_method:
+      start_tcp_server (&tofd, &fromfd);
+      break;
+#endif
+
+  case server_method:
+#if ! RSH_NOT_TRANSPARENT
+      start_rsh_server (&tofd, &fromfd);
 #else
 
-#  if ! RSH_NOT_TRANSPARENT
-        start_rsh_server (&tofd, &fromfd);
-#  else
-
-#    if defined(START_SERVER)
-        START_SERVER (&tofd, &fromfd, getcaller (),
-                      CVSroot_username, CVSroot_hostname, CVSroot_directory);
-#    endif
+#  if defined(START_SERVER)
+      START_SERVER (&tofd, &fromfd, getcaller (),
+		    CVSroot_username, CVSroot_hostname, CVSroot_directory);
 #  endif
 #endif
-      }
+      break;
+
+  default:
+      error (1, 0, "(start_server): unknown access method %s");
+      break;
+  }
 
 #if defined(VMS) && defined(NO_SOCKET_TO_FD)
     /* Avoid mixing sockets with stdio */

@@ -1,3 +1,12 @@
+Sun Apr 28 14:57:38 1996  Noel Cragg  <noel@gargle>
+
+	* client.c (start_tcp_server): get rid of the "fall through"
+ 	stuff, now that we have access methods.
+	(start_server): switch off the access method to choose routine
+ 	that starts the server.
+
+	* root.c: new variable METHOD_NAMES for error reporting purposes.
+
 Sun Apr 28 17:22:15 1996  Noel Cragg  <noel@occs.cs.oberlin.edu>
 
 	* server.c: moved kerberos #includes from main.c for the
