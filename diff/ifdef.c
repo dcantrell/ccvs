@@ -1,5 +1,5 @@
 /* #ifdef-format output routines for GNU DIFF.
-   Copyright (C) 1989, 1991, 1992, 1993, 1994, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1989, 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -27,13 +27,13 @@ struct group
   int from, upto; /* start and limit lines for this group of lines */
 };
 
-static char *format_group PARAMS((int, char *, int, struct group const *));
+static char *format_group PARAMS((FILE *, char *, int, struct group const *));
 static char *scan_char_literal PARAMS((char *, int *));
 static char *scan_printf_spec PARAMS((char *));
 static int groups_letter_value PARAMS((struct group const *, int));
 static void format_ifdef PARAMS((char *, int, int, int, int));
 static void print_ifdef_hunk PARAMS((struct change *));
-static void print_ifdef_lines PARAMS((int, char *, struct group const *));
+static void print_ifdef_lines PARAMS((FILE *, char *, struct group const *));
 
 static int next_line;
 
@@ -103,18 +103,18 @@ format_ifdef (format, beg0, end0, beg1, end1)
   groups[1].file = &files[1];
   groups[1].from = beg1;
   groups[1].upto = end1;
-  format_group (1, format, '\0', groups);
+  format_group (outfile, format, '\0', groups);
 }
 
-/* If DOIT is non-zero, output a set of lines according to FORMAT.
+/* Print to file OUT a set of lines according to FORMAT.
    The format ends at the first free instance of ENDCHAR.
    Yield the address of the terminating character.
    GROUPS specifies which lines to print.
    If OUT is zero, do not actually print anything; just scan the format.  */
 
 static char *
-format_group (doit, format, endchar, groups)
-     int doit;
+format_group (out, format, endchar, groups)
+     register FILE *out;
      char *format;
      int endchar;
      struct group const *groups;
@@ -137,7 +137,7 @@ format_group (doit, format, endchar, groups)
 	      /* Print if-then-else format e.g. `%(n=1?thenpart:elsepart)'.  */
 	      {
 		int i, value[2];
-		int thendoit, elsedoit;
+		FILE *thenout, *elseout;
 
 		for (i = 0; i < 2; i++)
 		  {
@@ -159,13 +159,13 @@ format_group (doit, format, endchar, groups)
 		      goto bad_format;
 		  }
 		if (value[0] == value[1])
-		  thendoit = doit, elsedoit = 0;
+		  thenout = out, elseout = 0;
 		else
-		  thendoit = 0, elsedoit = doit;
-		f = format_group (thendoit, f, ':', groups);
+		  thenout = 0, elseout = out;
+		f = format_group (thenout, f, ':', groups);
 		if (*f)
 		  {
-		    f = format_group (elsedoit, f + 1, ')', groups);
+		    f = format_group (elseout, f + 1, ')', groups);
 		    if (*f)
 		      f++;
 		  }
@@ -174,17 +174,17 @@ format_group (doit, format, endchar, groups)
 
 	    case '<':
 	      /* Print lines deleted from first file.  */
-	      print_ifdef_lines (doit, line_format[OLD], &groups[0]);
+	      print_ifdef_lines (out, line_format[OLD], &groups[0]);
 	      continue;
 
 	    case '=':
 	      /* Print common lines.  */
-	      print_ifdef_lines (doit, line_format[UNCHANGED], &groups[0]);
+	      print_ifdef_lines (out, line_format[UNCHANGED], &groups[0]);
 	      continue;
 
 	    case '>':
 	      /* Print lines inserted from second file.  */
-	      print_ifdef_lines (doit, line_format[NEW], &groups[1]);
+	      print_ifdef_lines (out, line_format[NEW], &groups[1]);
 	      continue;
 
 	    default:
@@ -211,11 +211,11 @@ format_group (doit, format, endchar, groups)
 			goto bad_format;
 		      break;
 		  }
-		if (doit)
+		if (out)
 		  {
 		    /* Temporarily replace e.g. "%3dnx" with "%3d\0x".  */
 		    *speclim = 0;
-		    printf_output (spec - 1, value);
+		    fprintf (out, spec - 1, value);
 		    /* Undo the temporary replacement.  */
 		    *speclim = c;
 		  }
@@ -228,12 +228,8 @@ format_group (doit, format, endchar, groups)
 	      break;
 	    }
 	}
-      if (doit)
-	{
-	  /* Don't take the address of a register variable.  */
-	  char cc = c;
-	  write_output (&cc, 1);
-	}
+      if (out)
+	putc (c, out);
     }
   return f;
 }
@@ -261,11 +257,11 @@ groups_letter_value (g, letter)
     }
 }
 
-/* Output using FORMAT to print the line group GROUP.
-   But do nothing if DOIT is zero.  */
+/* Print to file OUT, using FORMAT to print the line group GROUP.
+   But do nothing if OUT is zero.  */
 static void
-print_ifdef_lines (doit, format, group)
-     int doit;
+print_ifdef_lines (out, format, group)
+     register FILE *out;
      char *format;
      struct group const *group;
 {
@@ -273,7 +269,7 @@ print_ifdef_lines (doit, format, group)
   char const * const *linbuf = file->linbuf;
   int from = group->from, upto = group->upto;
 
-  if (!doit)
+  if (!out)
     return;
 
   /* If possible, use a single fwrite; it's faster.  */
@@ -281,15 +277,15 @@ print_ifdef_lines (doit, format, group)
     {
       if (format[1] == 'l' && format[2] == '\n' && !format[3])
 	{
-	  write_output (linbuf[from],
-			(linbuf[upto] + (linbuf[upto][-1] != '\n')
-			 - linbuf[from]));
+	  fwrite (linbuf[from], sizeof (char),
+		  linbuf[upto] + (linbuf[upto][-1] != '\n') -  linbuf[from],
+		  out);
 	  return;
 	}
       if (format[1] == 'L' && !format[2])
 	{
-	  write_output (linbuf[from],
-			linbuf[upto] -  linbuf[from]);
+	  fwrite (linbuf[from], sizeof (char),
+		  linbuf[upto] -  linbuf[from], out);
 	  return;
 	}
     }
@@ -298,7 +294,6 @@ print_ifdef_lines (doit, format, group)
     {
       register char c;
       register char *f = format;
-      char cc;
 
       while ((c = *f++) != 0)
 	{
@@ -347,7 +342,7 @@ print_ifdef_lines (doit, format, group)
 		      }
 		    /* Temporarily replace e.g. "%3dnx" with "%3d\0x".  */
 		    *speclim = 0;
-		    printf_output (spec - 1, value);
+		    fprintf (out, spec - 1, value);
 		    /* Undo the temporary replacement.  */
 		    *speclim = c;
 		  }
@@ -359,10 +354,7 @@ print_ifdef_lines (doit, format, group)
 		  break;
 		}
 	    }
-
-	  /* Don't take the address of a register variable.  */
-	  cc = c;
-	  write_output (&cc, 1);
+	  putc (c, out);
 	}
     }
 }

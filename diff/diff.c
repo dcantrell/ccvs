@@ -1,5 +1,5 @@
 /* GNU DIFF entry routine.
-   Copyright (C) 1988, 1989, 1992, 1993, 1994, 1997, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1989, 1992, 1993, 1994, 1997 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -231,11 +231,10 @@ static struct option const longopts[] =
 };
 
 int
-diff_run (argc, argv, out, callbacks_arg)
+diff_run (argc, argv, out)
      int argc;
      char *argv[];
      char *out;
-     const struct diff_callbacks *callbacks_arg;
 {
   int val;
   int c;
@@ -243,9 +242,6 @@ diff_run (argc, argv, out, callbacks_arg)
   int width = DEFAULT_WIDTH;
   int show_c_function = 0;
   int optind_old;
-  int opened_file = 0;
-
-  callbacks = callbacks_arg;
 
   /* Do our initializations.  */
   initialize_main (&argc, &argv);
@@ -480,14 +476,7 @@ diff_run (argc, argv, out, callbacks_arg)
 	  break;
 
 	case 'v':
-	  if (callbacks && callbacks->write_stdout)
-	    {
-	      (*callbacks->write_stdout) ("diff - GNU diffutils version ");
-	      (*callbacks->write_stdout) (diff_version_string);
-	      (*callbacks->write_stdout) ("\n");
-	    }
-	  else
-	    printf ("diff - GNU diffutils version %s\n", diff_version_string);
+	  printf ("diff - GNU diffutils version %s\n", diff_version_string);
 	  return 0;
 
 	case 'w':
@@ -566,8 +555,7 @@ diff_run (argc, argv, out, callbacks_arg)
 
 	case 141:
 	  usage ();
-	  if (! callbacks || ! callbacks->write_stdout)
-	    check_output (stdout);
+	  check_output (stdout);
 	  return 0;
 
 	case 142:
@@ -657,35 +645,23 @@ diff_run (argc, argv, out, callbacks_arg)
 
   switch_string = option_list (argv + 1, optind - 1);
 
-  if (callbacks && callbacks->write_output)
-    {
-      if (out != NULL)
-	{
-	  diff_error ("write callback with output file", 0, 0);
-	  return 2;
-	}
-    }
+  if (out == NULL)
+    outfile = stdout;
   else
     {
-      if (out == NULL)
-	outfile = stdout;
-      else
-	{
 #if HAVE_SETMODE
-	  /* A diff which is full of ^Z and such isn't going to work
-	     very well in text mode.  */
-	  if (binary_I_O)
-	    outfile = fopen (out, "wb");
-	  else
+      /* A diff which is full of ^Z and such isn't going to work
+         very well in text mode.  */
+      if (binary_I_O)
+	outfile = fopen (out, "wb");
+      else
 #endif
-	    outfile = fopen (out, "w");
-	  if (outfile == NULL)
-	    {
-	      perror_with_name ("could not open output file");
-	      return 2;
-	    }
-	  opened_file = 1;
-	}
+      outfile = fopen (out, "w");
+      if (outfile == NULL)
+        {
+	  perror_with_name ("could not open output file");
+	  return 2;
+        }
     }
 
   /* Set the jump buffer, so that diff may abort execution without
@@ -693,7 +669,7 @@ diff_run (argc, argv, out, callbacks_arg)
   if ((val = setjmp (diff_abort_buf)) != 0)
     {
       optind = optind_old;
-      if (opened_file)
+      if (outfile != stdout)
 	fclose (outfile);
       return val;
     }
@@ -706,14 +682,10 @@ diff_run (argc, argv, out, callbacks_arg)
   free (switch_string);
 
   optind = optind_old;
-
-  if (! callbacks || ! callbacks->write_output)
-    check_output (outfile);
-
-  if (opened_file)
+  check_output (outfile);
+  if (outfile != stdout)
     if (fclose (outfile) != 0)
-	perror_with_name ("close error on output file");
-
+	perror ("close error on output file");
   return val;
 }
 
@@ -827,27 +799,10 @@ usage ()
 {
   char const * const *p;
 
-  if (callbacks && callbacks->write_stdout)
-    {
-      (*callbacks->write_stdout) ("Usage: ");
-      (*callbacks->write_stdout) (diff_program_name);
-      (*callbacks->write_stdout) (" [OPTION]... FILE1 FILE2\n\n");
-      for (p = option_help;  *p;  p++)
-	{
-	  (*callbacks->write_stdout) ("  ");
-	  (*callbacks->write_stdout) (*p);
-	  (*callbacks->write_stdout) ("\n");
-	}
-      (*callbacks->write_stdout)
-	("\nIf FILE1 or FILE2 is `-', read standard input.\n");
-    }
-  else
-    {
-      printf ("Usage: %s [OPTION]... FILE1 FILE2\n\n", diff_program_name);
-      for (p = option_help;  *p;  p++)
-	printf ("  %s\n", *p);
-      printf ("\nIf FILE1 or FILE2 is `-', read standard input.\n");
-    }
+  printf ("Usage: %s [OPTION]... FILE1 FILE2\n\n", diff_program_name);
+  for (p = option_help;  *p;  p++)
+    printf ("  %s\n", *p);
+  printf ("\nIf FILE1 or FILE2 is `-', read standard input.\n");
 }
 
 static int
@@ -1192,7 +1147,7 @@ compare_files (dir0, name0, dir1, name1, depth)
 		 inf[0].name, inf[1].name);
     }
   else
-    flush_output ();
+    fflush (outfile);
 
   if (free0)
     free (free0);

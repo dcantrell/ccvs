@@ -1,5 +1,5 @@
 /* sdiff-format output routines for GNU DIFF.
-   Copyright (C) 1991, 1992, 1993, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1991, 1992, 1993 Free Software Foundation, Inc.
 
 This file is part of GNU DIFF.
 
@@ -50,16 +50,17 @@ static unsigned
 tab_from_to (from, to)
      unsigned from, to;
 {
+  FILE *out = outfile;
   unsigned tab;
 
   if (! tab_expand_flag)
     for (tab = from + TAB_WIDTH - from % TAB_WIDTH;  tab <= to;  tab += TAB_WIDTH)
       {
-	write_output ("\t", 1);
+	putc ('\t', out);
 	from = tab;
       }
   while (from++ < to)
-    write_output (" ", 1);
+    putc (' ', out);
   return to;
 }
 
@@ -73,6 +74,7 @@ print_half_line (line, indent, out_bound)
      char const * const *line;
      unsigned indent, out_bound;
 {
+  FILE *out = outfile;
   register unsigned in_position = 0, out_position = 0;
   register char const
 	*text_pointer = line[0],
@@ -81,9 +83,6 @@ print_half_line (line, indent, out_bound)
   while (text_pointer < text_limit)
     {
       register unsigned char c = *text_pointer++;
-      /* We use CC to avoid taking the address of the register
-         variable C.  */
-      char cc;
 
       switch (c)
 	{
@@ -98,14 +97,13 @@ print_half_line (line, indent, out_bound)
 		    if (out_bound < tabstop)
 		      tabstop = out_bound;
 		    for (;  out_position < tabstop;  out_position++)
-		      write_output (" ", 1);
+		      putc (' ', out);
 		  }
 		else
 		  if (tabstop < out_bound)
 		    {
 		      out_position = tabstop;
-		      cc = c;
-		      write_output (&cc, 1);
+		      putc (c, out);
 		    }
 	      }
 	    in_position += spaces;
@@ -114,8 +112,7 @@ print_half_line (line, indent, out_bound)
 
 	case '\r':
 	  {
-	    cc = c;
-	    write_output (&cc, 1);
+	    putc (c, out);
 	    tab_from_to (0, indent);
 	    in_position = out_position = 0;
 	  }
@@ -126,12 +123,11 @@ print_half_line (line, indent, out_bound)
 	    if (out_position <= in_position)
 	      /* Add spaces to make up for suppressed tab past out_bound.  */
 	      for (;  out_position < in_position;  out_position++)
-		write_output (" ", 1);
+		putc (' ', out);
 	    else
 	      {
 		out_position = in_position;
-		cc = c;
-		write_output (&cc, 1);
+		putc (c, out);
 	      }
 	  break;
 
@@ -139,10 +135,7 @@ print_half_line (line, indent, out_bound)
 	case '\v':
 	control_char:
 	  if (in_position < out_bound)
-	    {
-	      cc = c;
-	      write_output (&cc, 1);
-	    }
+	    putc (c, out);
 	  break;
 
 	default:
@@ -153,8 +146,7 @@ print_half_line (line, indent, out_bound)
 	  if (in_position++ < out_bound)
 	    {
 	      out_position = in_position;
-	      cc = c;
-	      write_output (&cc, 1);
+	      putc (c, out);
 	    }
 	  break;
 
@@ -178,6 +170,7 @@ print_1sdiff_line (left, sep, right)
      int sep;
      char const * const *right;
 {
+  FILE *out = outfile;
   unsigned hw = sdiff_half_width, c2o = sdiff_column2_offset;
   unsigned col = 0;
   int put_newline = 0;
@@ -191,13 +184,10 @@ print_1sdiff_line (left, sep, right)
 
   if (sep != ' ')
     {
-      char cc;
-
       col = tab_from_to (col, (hw + c2o - 1) / 2) + 1;
       if (sep == '|' && put_newline != (right[1][-1] == '\n'))
 	sep = put_newline ? '/' : '\\';
-      cc = sep;
-      write_output (&cc, 1);
+      putc (sep, out);
     }
 
   if (right)
@@ -212,7 +202,7 @@ print_1sdiff_line (left, sep, right)
     }
 
   if (put_newline)
-    write_output ("\n", 1);
+    putc ('\n', out);
 }
 
 /* Print lines common to both files in side-by-side format.  */
@@ -225,7 +215,7 @@ print_sdiff_common_lines (limit0, limit1)
   if (! sdiff_skip_common_lines  &&  (i0 != limit0 || i1 != limit1))
     {
       if (sdiff_help_sdiff)
-	printf_output ("i%d,%d\n", limit0 - i0, limit1 - i1);
+	fprintf (outfile, "i%d,%d\n", limit0 - i0, limit1 - i1);
 
       if (! sdiff_left_only)
 	{
@@ -262,7 +252,7 @@ print_sdiff_hunk (hunk)
   print_sdiff_common_lines (first0, first1);
 
   if (sdiff_help_sdiff)
-    printf_output ("c%d,%d\n", last0 - first0 + 1, last1 - first1 + 1);
+    fprintf (outfile, "c%d,%d\n", last0 - first0 + 1, last1 - first1 + 1);
 
   /* Print ``xxx  |  xxx '' lines */
   if (inserts && deletes)

@@ -111,10 +111,6 @@ fileattr_read ()
 	    Node *newnode;
 
 	    p = strchr (line, '\t');
-	    if (p == NULL)
-		error (1, 0,
-		       "file attribute database corruption: tab missing in %s",
-		       fname);
 	    *p++ = '\0';
 	    newnode = getnode ();
 	    newnode->type = FILEATTR;
@@ -134,10 +130,6 @@ fileattr_read ()
 	    /* Currently nothing to skip here, but for future expansion,
 	       ignore anything located here.  */
 	    p = strchr (line, '\t');
-	    if (p == NULL)
-		error (1, 0,
-		       "file attribute database corruption: tab missing in %s",
-		       fname);
 	    ++p;
 	    fileattr_default_attrs = xstrdup (p);
 	}
