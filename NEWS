@@ -1,6 +1,14 @@
 Changes since 1.11.13:
 **********************
 
+GENERAL USER ISSUES
+
+* Several memory leaks have been plugged.
+
+DEVELOPER ISSUES
+
+* Misc cosmetic, readability, and commenting fixes.
+
 Changes from 1.11.12 to 1.11.13:
 ********************************
 
@@ -14,8 +22,6 @@ GENERAL USER ISSUES
 * An unlikely potential segfault when using the :fork: connection method has
   been fixed.
 
-* Misc cosmetic, readability, and commenting fixes.
-
 * The CVS server has had the protocol check for unused data from the client
   partially restored.
 
@@ -26,6 +32,10 @@ GENERAL USER ISSUES
   compiling under Windows has been fixed.
 
 * Tests have been added to the test suite.
+
+DEVELOPER ISSUES
+
+* Misc cosmetic, readability, and commenting fixes.
 
 Changes from 1.11.11 to 1.11.12:
 ********************************

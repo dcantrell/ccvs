@@ -1,3 +1,7 @@
+2004-02-17  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note recent commenting of src/checkout.c and Mark's leak fixes.
+
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Mark D. Baushke's recent memory leak plugs.
