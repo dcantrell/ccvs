@@ -1,3 +1,8 @@
+2003-09-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (make_file_label): Do not return an uninitialized label.
+	(Reported by "Todd C. Miller" <Todd.Miller@courtesan.com>)
+
 2003-09-24  Derek Price  <derek@ximbiot.com>
 
 	* lock.c (lock_name): Remove useless prototype.
