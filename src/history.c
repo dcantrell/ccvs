@@ -288,9 +288,9 @@ static const char *const history_usg[] =
     "        -o              Checked out modules\n",
     "        -m <module>     Look for specified module (repeatable)\n",
     "        -x [TOEFWUCGMAR] Extract by record type\n",
+    "        -e              Everything (same as -x, but all record types)\n",
     "   Flags:\n",
     "        -a              All users (Default is self)\n",
-    "        -e              Everything (same as -x, but all record types)\n",
     "        -l              Last modified (committed or modified report)\n",
     "        -w              Working directory must match\n",
     "   Options:\n",
@@ -523,13 +523,17 @@ history (argc, argv)
 		break;
 	}
     }
-    c = optind;				/* Save the handled option count */
+    argc -= optind;
+    argv += optind;
+    for (i = 0; i < argc; i++)
+	save_file ("", argv[i], (char *) NULL);
+
 
     /* ================ Now analyze the arguments a bit */
     if (!report_count)
 	v_checkout++;
     else if (report_count > 1)
-	error (1, 0, "Only one report type allowed from: \"-Tcomx\".");
+	error (1, 0, "Only one report type allowed from: \"-Tcomxe\".");
 
 #ifdef CLIENT_SUPPORT
     if (client_active)
@@ -656,11 +660,6 @@ history (argc, argv)
 	rec_types = xrealloc (rec_types, strlen (rec_types) + 5);
 	(void) strcat (rec_types, "T");
     }
-
-    argc -= c;
-    argv += c;
-    for (i = 0; i < argc; i++)
-	save_file ("", argv[i], (char *) NULL);
 
     if (histfile)
 	fname = xstrdup (histfile);

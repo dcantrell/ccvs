@@ -14294,11 +14294,27 @@ M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/
 C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
 M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
 
-	    # For reasons that are completely unclear to me, the number
-	    # of spaces betwen "kingdon" and "1.281" is different than
-	    # for the other tests.
 	  dotest history-3 "${testcvs} history -e -a -D '10 Jun 2001 13:00 UT'" \
 "M 06/10 17:33 ${PLUS}0000 kingdon 1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc"
+
+	  dotest history-4 "${testcvs} history -ac sanity.sh" \
+"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+
+	  dotest history-5 "${testcvs} history -a -xCGUWAMR README sanity.sh" \
+"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+
+	  dotest history-6 "${testcvs} history -xCGUWAMR -a -f README -f sanity.sh" \
+"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+
+	  dotest history-7 "${testcvs} history -xCGUWAMR -a -f sanity.sh README" \
+"M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
+C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
+M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 	  ;;
 
 	big)
