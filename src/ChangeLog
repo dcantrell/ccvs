@@ -1,5 +1,12 @@
 2001-07-03  Derek Price  <dprice@collab.net>
 
+	* rcs.c (rcsbuf_open): Reduce memory consumption still further by not
+	mmapping the entire file when pos is specified.
+	(rcsbuf_cache_open): Add FIXME comment wrt read-only mmaps and rcsbuf
+	caching.
+
+2001-07-03  Derek Price  <dprice@collab.net>
+
 	* rcs.c (rcsbuf_open): Use mmap when possible to reduce memory
 	consumption, especially with large (e.g. binary) files.
 	(rcsbuf_close): Call munmap.
