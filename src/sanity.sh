@@ -557,7 +557,8 @@ if test x"$*" = x; then
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} binwrap3 mwrap info config"
 	tests="${tests} serverpatch log log2 ann crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword toplevel head tagdate multibranch2"
+	tests="${tests} sticky keyword keywordlog"
+	tests="${tests} toplevel head tagdate multibranch2"
 	tests="${tests} admin reserved"
 	tests="${tests} cvsadm diffmerge1 diffmerge2"
 else

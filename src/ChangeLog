@@ -1,5 +1,7 @@
 Fri Jan 16 12:41:03 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Add keywordlog to list of tests run by default.
+
 	* rcs.c (RCS_deltas): Don't call cvs_output if length is zero;
 	passing zero length to cvs_output does not mean output zero
 	bytes.  The 27 Dec 1997 change to no longer '\0'-terminate the
