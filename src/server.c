@@ -666,84 +666,6 @@ input_memory_error (struct buffer *buf)
 
 
 
-static void
-loop_over_inputs (void)
-{
-    while (1)
-    {
-	char *cmd, *orig_cmd;
-	struct request *rq;
-	int status;
-
-	status = buf_read_line (buf_from_net, &cmd, NULL);
-	if (status == -2)
-	{
-	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
-error ENOMEM Virtual memory exhausted.\n");
-	    break;
-	}
-	if (status != 0)
-	    break;
-
-	orig_cmd = cmd;
-	for (rq = requests; rq->name != NULL; ++rq)
-	    if (strncmp (cmd, rq->name, strlen (rq->name)) == 0)
-	    {
-		int len = strlen (rq->name);
-		if (cmd[len] == '\0')
-		    cmd += len;
-		else if (cmd[len] == ' ')
-		    cmd += len + 1;
-		else
-		    /*
-		     * The first len characters match, but it's a different
-		     * command.  e.g. the command is "cooperate" but we matched
-		     * "co".
-		     */
-		    continue;
-
-		if (!(rq->flags & RQ_ROOTLESS)
-		    && current_parsed_root == NULL)
-		{
-		    /* For commands which change the way in which data
-		       is sent and received, for example Gzip-stream,
-		       this does the wrong thing.  Since the client
-		       assumes that everything is being compressed,
-		       unconditionally, there is no way to give this
-		       error to the client without turning on
-		       compression.  The obvious fix would be to make
-		       Gzip-stream RQ_ROOTLESS (with the corresponding
-		       change to the spec), and that might be a good
-		       idea but then again I can see some settings in
-		       CVSROOT about what compression level to allow.
-		       I suppose a more baroque answer would be to
-		       turn on compression (say, at level 1), just
-		       enough to give the "Root request missing"
-		       error.  For now we just lose.  */
-		    if (alloc_pending (80))
-			sprintf (pending_error_text,
-				 "E Protocol error: Root request missing");
-		}
-		else
-		    (*rq->func) (cmd);
-		break;
-	    }
-	if (rq->name == NULL)
-	{
-	    if (!print_pending_error ())
-	    {
-		buf_output0 (buf_to_net, "error  unrecognized request `");
-		buf_output0 (buf_to_net, cmd);
-		buf_append_char (buf_to_net, '\'');
-		buf_append_char (buf_to_net, '\n');
-	    }
-	}
-	free (orig_cmd);
-    }
-}
-
-
-
 /* Close the secondary log and reopen it for read.
  *
  * NOTES
@@ -6142,7 +6064,78 @@ error ENOMEM Virtual memory exhausted.\n");
     sprintf(error_prog_name, "%s server", program_name);
     argument_vector[0] = error_prog_name;
 
-    loop_over_inputs ();
+    while (1)
+    {
+	char *cmd, *orig_cmd;
+	struct request *rq;
+	int status;
+
+	status = buf_read_line (buf_from_net, &cmd, NULL);
+	if (status == -2)
+	{
+	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
+error ENOMEM Virtual memory exhausted.\n");
+	    break;
+	}
+	if (status != 0)
+	    break;
+
+	orig_cmd = cmd;
+	for (rq = requests; rq->name != NULL; ++rq)
+	    if (strncmp (cmd, rq->name, strlen (rq->name)) == 0)
+	    {
+		int len = strlen (rq->name);
+		if (cmd[len] == '\0')
+		    cmd += len;
+		else if (cmd[len] == ' ')
+		    cmd += len + 1;
+		else
+		    /*
+		     * The first len characters match, but it's a different
+		     * command.  e.g. the command is "cooperate" but we matched
+		     * "co".
+		     */
+		    continue;
+
+		if (!(rq->flags & RQ_ROOTLESS)
+		    && current_parsed_root == NULL)
+		{
+		    /* For commands which change the way in which data
+		       is sent and received, for example Gzip-stream,
+		       this does the wrong thing.  Since the client
+		       assumes that everything is being compressed,
+		       unconditionally, there is no way to give this
+		       error to the client without turning on
+		       compression.  The obvious fix would be to make
+		       Gzip-stream RQ_ROOTLESS (with the corresponding
+		       change to the spec), and that might be a good
+		       idea but then again I can see some settings in
+		       CVSROOT about what compression level to allow.
+		       I suppose a more baroque answer would be to
+		       turn on compression (say, at level 1), just
+		       enough to give the "Root request missing"
+		       error.  For now we just lose.  */
+		    if (alloc_pending (80))
+			sprintf (pending_error_text,
+				 "E Protocol error: Root request missing");
+		}
+		else
+		    (*rq->func) (cmd);
+		break;
+	    }
+	if (rq->name == NULL)
+	{
+	    if (!print_pending_error ())
+	    {
+		buf_output0 (buf_to_net, "error  unrecognized request `");
+		buf_output0 (buf_to_net, cmd);
+		buf_append_char (buf_to_net, '\'');
+		buf_append_char (buf_to_net, '\n');
+	    }
+	}
+	free (orig_cmd);
+    }
+
     free (error_prog_name);
 
     /* We expect the client is done talking to us at this point.  If there is

@@ -1,3 +1,8 @@
+2004-08-04  Derek Price  <derek@ximbiot.com>
+
+	* server.c (loop_over_inputs): Remove function, moving contents back...
+	(server): ...to here.
+
 2004-08-03  Derek Price  <derek@ximbiot.com>
 
 	Checking in IO changes intended to improve speed for posterity since
