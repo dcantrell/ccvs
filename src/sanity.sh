@@ -39,7 +39,7 @@ exit_help ()
     echo
     echo "-h|--help	display this text"
     echo "-l|--link-root"
-    echo "              test CVS using a symlink to a real CVSROOT"
+    echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test client/server, as opposed to local, CVS"
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
@@ -67,17 +67,10 @@ exit_help ()
 }
 
 unset longoptmode
-getlongoptarg()
+checklongoptarg()
 {
-    if echo "$OPTARG" |grep = >/dev/null; then
-	OPTION=`echo "$OPTARG" |sed 's/=.*$//'`
-	OPTARG=`echo "$OPTARG" |sed 's/^.*=//'`
-    else
-	OPTION=$OPTARG
-	OPTARG=
-    fi
     if test "x$longoptmode" != xoptional && test -z "$OPTARG"; then
-	echo "option \`--$OPTION' requires an argument" >&2
+	echo "option \`--$LONGOPT' requires an argument" >&2
 	exit_usage
     fi
 }
@@ -123,34 +116,45 @@ servercvs=false
 while getopts Hc:f:klrs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
-	case "$OPTARG" in
-	    [cC]|[cC][oO]|[cC][oO][nN]|[cC][oO][nN][fF]|[cC][oO][nN][fF][iI]|[cC][oO][nN][fF][iI][gG]|[cC]=*|[cC][oO]=*|[cC][oO][nN]=*|[cC][oO][nN][fF]=*|[cC][oO][nN][fF][iI]=*|[cC][oO][nN][fF][iI][gG]=*)
+	# remove any argument
+	if echo "$OPTARG" |grep = >/dev/null; then
+	    LONGOPT=`echo "$OPTARG" |sed 's/=.*$//'`
+	    OPTARG=`echo "$OPTARG" |sed -e 's/^.*=//'`
+	else
+	    LONGOPT=$OPTARG
+	    OPTARG=
+	fi
+	# Convert LONGOPT to lower case
+	LONGOPT=`echo "$LONGOPT" |sed 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+	echo "LONGOPT=.$LONGOPT."
+	case "$LONGOPT" in
+	    c|co|con|conf|confi|config)
 		option=c
-		getlongoptarg
+		checklongoptarg
 		;;
-	    [fF]|[fF][rR]|[fF][rR][oO]|[fF][rR][oO][mM]|[fF][rR][oO][mM]-|[fF][rR][oO][mM]-[tT]|[fF][rR][oO][mM]-[tT][eE]|[fF][rR][oO][mM]-[tT][eE][sS]|[fF][rR][oO][mM]-[tT][eE][sS][tT]|[fF]=*|[fF][rR]=*|[fF][rR][oO]=*|[fF][rR][oO][mM]=*|[fF][rR][oO][mM]-=*|[fF][rR][oO][mM]-[tT]=*|[fF][rR][oO][mM]-[tT][eE]=*|[fF][rR][oO][mM]-[tT][eE][sS]=*|[fF][rR][oO][mM]-[tT][eE][sS][tT]=*)
+	    f|fr|fro|from|from-|from-t|from-te|from-tes|from-test)
 		option=f
-		getlongoptarg
+		checklongoptarg
 		;;
-	    [hH]|[hH][eE]|[hH][eE][lL]|[hH][eE][lL][pP])
-		option=H;
+	    h|he|hel|help)
+		option=H
 		OPTARG=
 		;;
-	    [kK]|[kK][eE]|[kK][eE][eE]|[kK][eE][eE][pP])
-		option=k;
+	    k|ke|kee|keep)
+		option=k
 		OPTARG=
 		;;
-	    [lL]|[lL][iI]|[lL][iI][nN]|[lL][iI][nN][kK]|[lL][iI][nN][kK]-|[lL][iI][nN][kK]-[rR]|[lL][iI][nN][kK]-[rR][oO]|[lL][iI][nN][kK]-[rR][oO][oO]|[lL][iI][nN][kK]-[rR][oO][oO][tT])
-		option=l;
+	    l|li|lin|link|link-|link-r]|link-ro|link-roo|link-root)
+		option=l
 		OPTARG=
 		;;
-	    [rR]|[rR][eE]|[rR][eE][mM]|[rR][eE][mM][oO]|[rR][eE][mM][oO][tT]|[rR][eE][mM][oO][tT][eE])
-		option=r;
+	    r|re|rem|remo|remot|remote)
+		option=r
 		OPTARG=
 		;;
-	    [sS]|[sS][eE]|[sS][eE][rR]|[sS][eE][rR][vV]|[sS][eE][rR][vV][eE]|[sS][eE][rR][vV][eE][rR]|[sS]=*|[sS][eE]=*|[sS][eE][rR]=*|[sS][eE][rR][vV]=*|[sS][eE][rR][vV][eE]=*|[sS][eE][rR][vV][eE][rR]=*)
+	    s|se|ser|serv|serve|server)
 		option=s
-		getlongoptarg
+		checklongoptarg
 		;;
 	    *)
 		option=\?
