@@ -7011,7 +7011,7 @@ the file.  So if this is the contents of the user's
 log -N
 diff -u
 update -P
-co -P
+checkout -P
 @end example
 
 @noindent

@@ -1,5 +1,9 @@
 1998-03-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (~/.cvsrc): In example, put "checkout" rather than
+	"co" into .cvsrc; we just finished explaining that only the former
+	works!  Thanks to Lenny Foner for reporting this.
+
 	* cvs.texinfo (Copying): Remove this node.  This basically
 	restores the status quo prior to 18 Oct 1996 (before then the node
 	existed but was empty).
