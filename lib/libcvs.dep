@@ -1,18 +1,18 @@
 # Microsoft Developer Studio Generated Dependency File, included by libcvs.mak
 
 .\argmatch.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	
 
 .\fncase.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\system.h"\
 	".\xtime.h"\
 	
 
 .\fnmatch.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\fnmatch.h"\
 	".\system.h"\
@@ -20,53 +20,53 @@
 	
 
 .\getdate.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\xtime.h"\
 	
 
 .\getline.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\getline.h"\
 	
 
 .\getopt.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\getopt.h"\
 	
 
 .\getopt1.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\getopt.h"\
 	
 
 .\md5.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\md5.h"\
 	
 
 .\regex.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\regex.h"\
 	
 
 .\savecwd.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	".\savecwd.h"\
 	
 
 .\sighandle.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\system.h"\
 	".\xtime.h"\
 	
 
 .\stripslash.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	
 
 .\valloc.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\getpagesize.h"\
 	".\system.h"\
@@ -74,14 +74,14 @@
 	
 
 .\xgetwd.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\system.h"\
 	".\xtime.h"\
 	
 
 .\yesno.c : \
-	"..\windows-nt\config.h"\
+	"..\windows-NT\config.h"\
 	
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"

@@ -1,3 +1,10 @@
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
+	* libcvs.dsp: Header file list updated.
+	* libcvs.dep: Regenerated for "libcvs.dsp" changes.
+	* libcvs.mak: Regenerated for "libcvs.dsp" changes.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
 2004-05-13  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Changed for "libcvs.dsp" changes.

@@ -149,6 +149,14 @@ SOURCE=.\yesno.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE="..\windows-NT\config.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\fnmatch.h.in
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
@@ -173,6 +181,42 @@ InputPath=.\fnmatch.h.in
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\getline.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getpagesize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\md5.h
+# End Source File
+# Begin Source File
+
+SOURCE="..\windows-NT\ndir.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\regex.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\savecwd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\system.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\xtime.h
 # End Source File
 # End Group
 # End Target
