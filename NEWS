@@ -1,5 +1,9 @@
 Changes since 1.11.6:
 
+* A bug that allowed a write lock to be created in a directory despite
+there being existing read locks when using LockDir in CVSROOT/config has
+been fixed.
+
 * A bug with short patches (`rdiff -s') which caused rdiff to sometimes report
 differences that did not exist has been fixed.
 
