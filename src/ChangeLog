@@ -1,5 +1,10 @@
 2000-03-01  Larry Jones  <larry.jones@sdrc.com>
 
+	* import.c (import): Don't allow importing the repository.
+	* sanity.sh (errmsg2-20, errmsg2-21): New tests for above.
+
+2000-03-01  Larry Jones  <larry.jones@sdrc.com>
+
 	* main.c (main): Update year in copyright message.
 
 2000-03-01  Larry Jones  <larry.jones@sdrc.com>

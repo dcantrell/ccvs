@@ -272,6 +272,20 @@ import (argc, argv)
     }
 #endif
 
+    /* Make sure we're not trying to import the repository */
+    {
+	char *dir = xgetwd ();
+	size_t dir_len;
+
+	if (dir == NULL)
+	    error (1, errno, "could not get working directory");
+	dir_len = strlen (dir);
+	if (strncmp (dir, repository, dir_len) == 0 &&
+	    (dir_len == repos_len || ISDIRSEP (repository[dir_len])))
+	    error (1, 0, "attempt to import the repository");
+	free (dir);
+    }
+
     /*
      * Make all newly created directories writable.  Should really use a more
      * sophisticated security mechanism here.

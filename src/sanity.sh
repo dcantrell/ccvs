@@ -10223,6 +10223,16 @@ done"
 	  dotest_fail errmsg2-19 "${testcvs} annotate -rtest -Dyesterday" \
 "${PROG} \[[a-z]* aborted\]: rcsbuf_open: internal error"
 
+	  # trying to import the repository
+
+	  if test "$remote" = "no"; then
+	    cd ${CVSROOT_DIRNAME}
+	    dotest_fail errmsg2-20 "${testcvs} import -mtest . A B" \
+"${PROG} \[[a-z]* aborted\]: attempt to import the repository"
+	    dotest_fail errmsg2-21 "${testcvs} import -mtest first-dir A B" \
+"${PROG} \[[a-z]* aborted\]: attempt to import the repository"
+	  fi
+
 	  cd ..
 	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
