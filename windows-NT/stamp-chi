@@ -112,11 +112,12 @@
 /* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
 
-/* Define to 1 if you have `alloca', as a function or macro. */
+/* Define to 1 if you have `alloca' after including <alloca.h>, a header that
+   may be supplied by this distribution. */
 #undef HAVE_ALLOCA
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
+/* Define HAVE_ALLOCA_H for backward compatibility with older code that
+   includes <alloca.h> only if HAVE_ALLOCA_H is defined. */
 #define HAVE_ALLOCA_H 1
 
 /* Define to 1 if you have the `atexit' function. */
