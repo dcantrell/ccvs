@@ -237,7 +237,7 @@ cd ${TESTDIR}
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basica basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
+	tests="basica basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore binfiles"
 else
 	tests="$*"
 fi
@@ -2255,6 +2255,45 @@ U first-dir/foobar.c'
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
+	binfiles)
+	  # Test cvs's ability to handle binary files.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1; cd 1
+	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
+	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
+	    </dev/null >binfile.dat
+	  cat binfile.dat binfile.dat >binfile2.dat
+	  cd first-dir
+	  cp ../binfile.dat binfile
+	  dotest binfiles-2 "${testcvs} add -kb binfile" \
+'cvs [a-z]*: scheduling file `binfile'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest binfiles-3 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/binfile,v
+done
+Checking in binfile;
+/tmp/cvs-sanity/cvsroot/first-dir/binfile,v  <--  binfile
+initial revision: 1.1
+done'
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest binfiles-4 "${testcvs} -q co first-dir" 'U first-dir/binfile'
+	  cd first-dir
+	  dotest binfiles-5 "cmp ../../1/binfile.dat binfile" ''
+	  cp ../../1/binfile2.dat binfile
+	  dotest binfiles-6 "${testcvs} -q ci -m modify-it" \
+'Checking in binfile;
+/tmp/cvs-sanity/cvsroot/first-dir/binfile,v  <--  binfile
+new revision: 1.2; previous revision: 1.1
+done'
+	  cd ../../1/first-dir
+	  dotest binfiles-7 "${testcvs} -q update" '[UP] binfile'
+	  dotest binfiles-8 "cmp ../binfile2.dat binfile" ''
+
+	  cd ../..
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1 2
+	  ;;
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
@@ -2269,7 +2308,6 @@ echo "OK, all tests completed."
 # * Test `cvs update foo bar' (where foo and bar are both from the same
 #   repository).  Suppose one is a branch--make sure that both directories
 #   get updated with the respective correct thing.
-# * Zero length files (check in, check out).
 # * `cvs update ../foo'.  Also ../../foo ./../foo foo/../../bar /foo/bar
 #   foo/.././../bar foo/../bar etc.
 # * Test all flags in modules file.

@@ -1,5 +1,15 @@
 Wed Jan 24 20:26:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* configure.in: Remove diff stuff.  Also remove AC_CANONICAL_HOST
+	and bindir crud as that was the only place they were used.
+	* config.h.in, configure: Regenerated.
+	* config.sub, config.guess: Removed.
+	* src/options.h.in (DIFF): Change to "diff" and change comment to tell
+	people not to use -a.
+	* src/sanity.sh: New test binfiles tests for above-fixed bug (see
+	comments in patch_file in update.c--passing -a to diff generates a
+	patch which patch cannot apply).
+
 	* NEWS: Adjust to reflect existence of 1.7.
 
 Tue Jan 23 14:20:39 1996  Jim Blandy  <jimb@totoro.cyclic.com>
