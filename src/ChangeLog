@@ -1,5 +1,13 @@
 1998-05-13  Jim Meyering  <meyering@ascend.com>
 
+	* sanity.sh (editor): Change bogus sed command, `s/^/x&/g', to `s/^/x/'.
+	The former exercised a bug in GNU sed-3.01-beta3.
+	(emptydir-8): Add `Rebuilding administrative file database' message,
+	since now it does that.
+	* commit.c (commit_filesdoneproc): Pass only the admin directory
+	pathname to mkmodules.
+	Remove #if 0, now that it's fixed.
+
 	* status.c (cvsstatus): Rename from `status' to avoid shadowing
 	lots of locals and parameters by the same name.
 	* server.c (serve_status): Update caller.
