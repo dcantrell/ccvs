@@ -8378,8 +8378,12 @@ Report on each time commit was used (i.e., each time
 the repository was modified).
 
 @item -e 
-Everything (all record types); equivalent to specifying
-@samp{-xMACFROGWUT}.
+Everything (all record types).  Equivalent to
+specifying @samp{-x} with all record types.  Of course,
+@samp{-e} will also include record types which are
+added in a future version of @sc{cvs}; if you are
+writing a script which can only handle certain record
+types, you'll want to specify @samp{-x}.
 
 @item -m @var{module}
 Report on a particular module.  (You can meaningfully
