@@ -1855,7 +1855,8 @@ linevector_add (vec, text, vers, pos)
 	    lines[i - pos].text = p + 1;
 	    lines[i - pos].vers = vers;
 	    lines[i - pos].has_newline = 0;
-	    vec->vector[i++] = &lines[i - pos];
+	    vec->vector[i] = &lines[i - pos];
+	    ++i;
 	}
     vec->nlines += nnew;
 }
@@ -1872,8 +1873,10 @@ linevector_delete (vec, pos, nlines)
     unsigned int nlines;
 {
     unsigned int i;
+    unsigned int last;
 
-    for (i = pos; i < vec->nlines; ++i)
+    last = vec->nlines - nlines;
+    for (i = pos; i < last; ++i)
 	vec->vector[i] = vec->vector[i + nlines];
     vec->nlines -= nlines;
 }
