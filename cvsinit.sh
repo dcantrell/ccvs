@@ -77,7 +77,7 @@ fi
 # Create the special control files and templates within $CVSROOT/CVSROOT
 
 EXAMPLES="checkoutlist commitinfo cvswrappers editinfo loginfo modules 
-rcsinfo rcstemplate taginfo wrap unwrap"
+rcsinfo rcstemplate taginfo wrap unwrap notify"
 
 NEWSAMPLE=false
 for info in $EXAMPLES; do
