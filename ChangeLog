@@ -1,3 +1,7 @@
+Fri Mar 22 10:45:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Clarify that RCS is only for server or local.
+
 Mon Mar 18 10:15:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Mention info@cyclic.com where we mention support
