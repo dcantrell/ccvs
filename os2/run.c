@@ -18,15 +18,25 @@
 
 #include "cvs.h"
 
-/* kff: todo: */
-/* #include <os2.h> */
-#include <stdarg.h>
+#define INCL_DOSQUEUES
+#define INCL_DOSPROCESS
+#define INCL_DOSSESMGR
+#include <os2.h>
+#include <process.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <process.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <fcntl.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <io.h>
-#include <fcntl.h>
+
+#define STDIN       0
+#define STDOUT      1
+#define STDERR      2
 
 static void run_add_arg PROTO((const char *s));
 static void run_init_prog PROTO((void));
@@ -461,7 +471,7 @@ piped_child (char **argv, int *to, int *from)
  */
 int
 filter_stream_through_program (int oldfd, int dir,
-							   char **prog, PID *pidp)
+							   char **prog, int *pidp)
 {
 	int newfd;  /* Gets set to one end of the pipe and returned. */
     HFILE from, to;
