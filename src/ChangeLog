@@ -1,7 +1,8 @@
 2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (do_cvs_command): Plug a memory leak.
-
+	(Use buf_free() rather than free().)
+	
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (lockfiles): Reformat a comment for 80 characters.  Fix a

@@ -2674,12 +2674,12 @@ error  \n");
 	   protocol.  */
 	if (buf_to_net != NULL)
 	{
-	    free (buf_to_net);
+	    buf_free (buf_to_net);
 	    buf_to_net = NULL;
 	}
 	if (buf_from_net != NULL)
 	{
-	    free (buf_from_net);
+	    buf_free (buf_from_net);
 	    buf_from_net = NULL;
 	}
 
