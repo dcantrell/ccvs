@@ -1,3 +1,12 @@
+2002-01-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* log.c (log_version_requested): Change :: in revision spec to be
+	exclusive just on the low end (so -r tag1::tag2 gives revisions
+	after tag1 but up to and including tag2), which is much more useful
+	than the previous (exclusive at both ends) behavior.
+	(log_usage): Update to match.
+	* sanity.sh (log): Update to match.
+
 2002-01-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* server.c (LOG_DAEMON): Define if needed.

@@ -15537,8 +15537,9 @@ ${log_trailer}"
 "${log_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 1
+total revisions: 5;	selected revisions: 2
 description:
+${log_rev2}
 ${log_rev1}
 ${log_trailer}"
 
@@ -15556,16 +15557,18 @@ ${log_trailer}"
 "${log_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 0
+total revisions: 5;	selected revisions: 1
 description:
+${log_rev2}
 ${log_trailer}"
 
 	  dotest log-22b "${testcvs} log -r1.1::1.3 file1" \
 "${log_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 1
+total revisions: 5;	selected revisions: 2
 description:
+${log_rev3}
 ${log_rev2}
 ${log_trailer}"
 
@@ -15757,8 +15760,9 @@ ${log_trailer}"
 "${rlog_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 1
+total revisions: 5;	selected revisions: 2
 description:
+${log_rev2}
 ${log_rev1}
 ${log_trailer}"
 
@@ -15776,16 +15780,18 @@ ${log_trailer}"
 "${rlog_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 0
+total revisions: 5;	selected revisions: 1
 description:
+${log_rev2}
 ${log_trailer}"
 
 	  dotest log-r22b "${testcvs} rlog -r1.1::1.3 first-dir/file1" \
 "${rlog_header1}
 ${log_tags1}
 ${log_keyword}
-total revisions: 5;	selected revisions: 1
+total revisions: 5;	selected revisions: 2
 description:
+${log_rev3}
 ${log_rev2}
 ${log_trailer}"
 
