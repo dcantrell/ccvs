@@ -1,5 +1,9 @@
 2004-03-28  Derek Price  <derek@ximbiot.com>
 
+	* libdiff.mak: Remove absolute path again.
+
+2004-03-28  Derek Price  <derek@ximbiot.com>
+
 	* libdiff.dsp, libdiff.mak: Repair & regenerate, relativizing path
 	that MSVC seems intent on keeping absolute.
 
