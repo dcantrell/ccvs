@@ -1,3 +1,9 @@
+Mon Aug  4 09:58:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* scc.c: Split out the interface declarations into a new file
+	pubscc.h.  This should make it easier to handle multiple
+	scc.c-equivalents.
+
 Mon Jul 14 15:58:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* scc.c: Add many comments and defines to document additional
