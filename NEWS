@@ -1,5 +1,9 @@
 Changes since 1.11.5:
 
+* Autoconf and Automake are no longer run automatically unless you run
+configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
+no longer needed and has been removed.
+
 * CVSROOTs which contain a symlink to a real repository should work.
 
 * contrib/rcs2log and src/cvsbug now use the BSD mktemp program to create

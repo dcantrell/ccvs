@@ -88,6 +88,7 @@ HAVE_PUTENV = @HAVE_PUTENV@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
+MAINT = @MAINT@
 MKTEMP = @MKTEMP@
 PACKAGE = @PACKAGE@
 PERL = @PERL@
@@ -163,13 +164,13 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .aux .txt .pdf .dvi .info .ps .texi .texinfo .txi
-$(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  doc/Makefile
-Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
+Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 
-$(srcdir)/version.texi:  $(srcdir)/stamp-vti
+$(srcdir)/version.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-vti
 	@:
 $(srcdir)/stamp-vti: cvs.texinfo $(top_srcdir)/configure.in
 	@(set `$(SHELL) $(srcdir)/mdate-sh $(srcdir)/cvs.texinfo`; \
@@ -187,12 +188,12 @@ mostlyclean-vti:
 	-rm -f vti.tmp
 
 maintainer-clean-vti:
-	-rm -f $(srcdir)/stamp-vti $(srcdir)/version.texi
+@MAINTAINER_MODE_TRUE@	-rm -f $(srcdir)/stamp-vti $(srcdir)/version.texi
 
 cvs.info: cvs.texinfo $(srcdir)/version.texi
 cvs.dvi: cvs.texinfo $(srcdir)/version.texi
 
-$(srcdir)/version-client.texi:  $(srcdir)/stamp-1
+$(srcdir)/version-client.texi: @MAINTAINER_MODE_TRUE@ $(srcdir)/stamp-1
 	@:
 $(srcdir)/stamp-1: cvsclient.texi $(top_srcdir)/configure.in
 	@(set `$(SHELL) $(srcdir)/mdate-sh $(srcdir)/cvsclient.texi`; \
@@ -210,7 +211,7 @@ mostlyclean-1:
 	-rm -f 1.tmp
 
 maintainer-clean-1:
-	-rm -f $(srcdir)/stamp-1 $(srcdir)/version-client.texi
+@MAINTAINER_MODE_TRUE@	-rm -f $(srcdir)/stamp-1 $(srcdir)/version-client.texi
 
 cvsclient.info: cvsclient.texi $(srcdir)/version-client.texi
 cvsclient.dvi: cvsclient.texi $(srcdir)/version-client.texi
