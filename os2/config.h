@@ -392,6 +392,14 @@ extern void init_sockets();
 /* ... and we use popenRW to start the rsh server. */
 #define START_RSH_WITH_POPEN_RW 1
 
+/*
+ * This tells the client that it must use send()/recv() to talk to the
+ * server if it is connected to the server via a socket.  Sigh.
+ * Windows 95 also cannot convert sockets to file descriptors,
+ * apparently.
+ */
+#define NO_SOCKET_TO_FD 1
+
 /* Rule Number 1 of OS/2 Programming: If the function you're looking
    for doesn't exist, try putting "Dos" in front of it. */
 #ifndef sleep
