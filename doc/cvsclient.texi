@@ -479,7 +479,7 @@ For the @samp{-D} option to the @code{annotate}, @code{co}, @code{diff},
 and @code{update} requests, the server should support two formats:
 
 @example
-26 May 1997 13:01:40 GMT  ; @r{RFC 822 as modified by RFC 1123}
+26 May 1997 13:01:40 -0000  ; @r{RFC 822 as modified by RFC 1123}
 5/26/1997 13:01:40 GMT    ; @r{traditional}
 @end example
 
@@ -491,7 +491,9 @@ least support RFC 822/1123 format.  Clients are encouraged to use this
 format too (traditionally the command line CVS client has just passed
 along the date format specified by the user, however).
 
-For @code{Mod-time}, see the description of that response.
+The @code{Mod-time} response and @code{Checkin-time} request use RFC
+822/1123 format (see the descriptions of that response and request for
+details).
 
 For @code{Notify}, see the description of that request.
 
