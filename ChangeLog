@@ -1,3 +1,9 @@
+2004-03-31  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note contrb script renames.
+	* configure.in: Rename contrib scripts.
+	* configure: Regenerated.
+
 2004-03-31  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.spec.in (BuildRequires): Do not fail if info DIR file does
