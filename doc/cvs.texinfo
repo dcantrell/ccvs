@@ -1054,6 +1054,7 @@ the file permissions appropriate for the repository.
 * Repository files::            What files are stored in the repository
 * File permissions::            File permissions
 * Attic::                       Some files are stored in the Attic
+* CVSROOT storage::             A few things about CVSROOT are different
 @end menu
 
 @node Repository files
@@ -1146,7 +1147,9 @@ known as @dfn{RCS files}, because the first program to
 store files in that format was a version control system
 known as @sc{rcs}.  For a full
 description of the file format, see the @code{man} page
-@cite{rcsfile(5)}, distributed with @sc{rcs}.  This
+@cite{rcsfile(5)}, distributed with @sc{rcs}, or the
+file @file{doc/RCSFILES} in the @sc{cvs} source
+distribution.  This
 file format has become very common---many systems other
 than @sc{cvs} or @sc{rcs} can at least import history
 files in this format.
@@ -1299,6 +1302,61 @@ non-@code{dead} state.
 @c here, or somewhere (not sure exactly how we should
 @c arrange the discussion of the dead state, versus
 @c discussion of the attic).
+
+@node CVSROOT storage
+@subsection How files are stored in the CVSROOT directory
+@cindex CVSROOT, storage of files
+
+The @file{$CVSROOT/CVSROOT} directory contains the
+various administrative files.  In some ways this
+directory is just like any other directory in the
+repository; it contains @sc{rcs} files whose names end
+in @samp{,v}, and many of the @sc{cvs} commands operate
+on it the same way.  However, there are a few
+differences.
+
+For each administrative file, in addition to the
+@sc{rcs} file, there is also a checked out copy of the
+file.  For example, there is an @sc{rcs} file
+@file{loginfo,v} and a file @file{loginfo} which 
+contains the latest revision contained in
+@file{loginfo,v}.  When you check in an administrative
+file, @sc{cvs} should print 
+
+@example
+cvs commit: Rebuilding administrative file database
+@end example
+
+@noindent
+@cindex checkoutlist
+and update the checked out copy in
+@file{$CVSROOT/CVSROOT}.  If it does not, there is
+something wrong (@pxref{BUGS}).  To add your own files
+to the files to be updated in this fashion, you can add
+them to the @file{checkoutlist} administrative file.
+@c FIXME: checkoutlist probably should be documented
+@c somewhat more completely.
+
+@cindex modules.db
+@cindex modules.pag
+@cindex modules.dir
+By default, the @file{modules} file behaves as
+described above.  If the modules file is very large,
+storing it as a flat text file may make looking up
+modules slow (I'm not sure whether this is as much of a
+concern now as when @sc{cvs} first evolved this
+feature; I haven't seen benchmarks).  Therefore, by
+making appropriate edits to the @sc{cvs} source code
+one can store the modules file in a database which
+implements the @code{ndbm} interface, such as Berkeley
+db or GDBM.  If this option is in use, then the modules
+database will be stored in the files @file{modules.db},
+@file{modules.pag}, and/or @file{modules.dir}.
+@c I think fileattr also will use the database stuff.
+@c Anything else?
+
+For information on the meaning of the various
+administrative files, see @ref{Administrative files}.
 
 @node Working directory storage
 @section How data is stored in the working directory
@@ -10874,8 +10932,8 @@ matching regular expression or @samp{DEFAULT}.
 @c it or anything.  In particular we should say
 @c how to version control the template file.  A
 @c probably better answer than the /usr/cvsssupport
-@c stuff is to use checkoutlist.  FIXME: it doesn't
-@c seem like checkoutlist is documented at all!
+@c stuff is to use checkoutlist (with xref to the
+@c checkoutlist doc).
 @c Also I am starting to see a connection between
 @c this and the Keeping a checked out copy node.
 @c Probably want to say something about that.
