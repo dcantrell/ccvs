@@ -5895,6 +5895,16 @@ sending an entire file accomplishes the same thing.
 Someone else has committed a newer revision to the repository, and you
 have also made modifications to the file.
 
+@item Unresolved Conflict
+@cindex Unresolved Conflict
+@c FIXCVS - This file status needs to be changed to some more informative
+@c text that distinguishes it more clearly from each of the Locally Added,
+@c File had conflicts on merge, and Unknown status types, but an exact and
+@c succinct wording escapes me at the moment.
+A file with the same name as this new file has been added to the repository
+from a second workspace.  This file will need to be moved out of the way
+to allow an @code{update} to complete.
+
 @item File had conflicts on merge
 @cindex File had conflicts on merge
 @c is it worth saying that this message was "Unresolved
