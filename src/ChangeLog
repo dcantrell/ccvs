@@ -1,3 +1,9 @@
+Thu Mar 27 10:21:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (dotest_internal): Write test output to logfile even
+	if test succeeds.  This was the behavior prior to 30 Sep 1996.
+	See the comment for rationale.
+
 Tue Mar 25 13:26:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h, entries.c (WriteTag): Add arguments nonbranch,

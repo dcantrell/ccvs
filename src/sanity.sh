@@ -251,11 +251,24 @@ dotest_internal ()
   else
     if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
 	"$3"${ENDANCHOR} >/dev/null; then
+      # See below about writing this to the logfile.
+      cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
       pass "$1"
     else
       if test x"$4" != x; then
 	if $EXPR "`cat ${TESTDIR}/dotest.tmp`" : \
 	    "$4"${ENDANCHOR} >/dev/null; then
+	  # Why, I hear you ask, do we write this to the logfile
+	  # even when the test passes?  The reason is that the test
+	  # may give us the regexp which we were supposed to match,
+	  # but sometimes it may be useful to look at the exact
+	  # text which was output.  For example, suppose one wants
+	  # to grep for a particular warning, and make _sure_ that
+	  # CVS never hits it (even in cases where the tests might
+	  # match it with .*).  Or suppose one wants to see the exact
+	  # date format output in a certain case (where the test will
+	  # surely use a somewhat non-specific pattern).
+	  cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
 	  pass "$1"
 	else
 	  echo "** expected: " >>${LOGFILE}
