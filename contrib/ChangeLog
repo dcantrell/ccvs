@@ -1,3 +1,13 @@
+2004-09-06  Mark D. Baushke  <mdb@cvshome.org>
+
+	* log_accum.in (UseNewFmtStrings, new_directory,
+	imported_sources): New variables to adapt command-line processings
+	to support use of UseNewFmtStrings=yes in the CVSROOT/config file.
+
+	* log_accum.in: Change Log processing state machine to avoid being
+	confused by user uses of the key phrases 'Modified *', 'Added *,
+	'Removed * and 'Log * in their log message.
+
 2004-08-30  Derek Price  <derek@ximbiot.com>
 
 	* log_accum.in: Changes to supress warnings under Perl 5.8.5.
