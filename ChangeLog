@@ -1,3 +1,7 @@
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that we build on systems with gettext installed now.
+
 2003-10-21  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Mark's recent admin -m fix.
