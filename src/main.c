@@ -49,8 +49,6 @@ char *CurDir;
  * Defaults, for the environment variables that are not set
  */
 char *Rcsbin = RCSBIN_DFLT;
-char *Diffbin = DIFFBIN_DFLT;
-char *Grepbin = GREPBIN_DFLT;
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 /*
@@ -160,8 +158,6 @@ static const char *const usg[] =
     "        -b bindir    Find RCS programs in 'bindir'\n",
     "        -T tmpdir    Use 'tmpdir' for temporary files\n",
     "        -e editor    Use 'editor' for editing log information\n",
-    "        -D diff      Use 'diff' for 'patch' and 'server update'\n",
-    "        -g grep      Use 'grep' for searching for conflicts\n",
     "        -d CVS_root  Overrides $CVSROOT as the root of the CVS tree\n",
     "        -f           Do not use the ~/.cvsrc file\n",
 #ifdef CLIENT_SUPPORT
@@ -311,8 +307,7 @@ main (argc, argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int rcsbin_update_env, diffbin_update_env, grepbin_update_env,
-	    tmpdir_update_env, cvs_update_env;
+    int rcsbin_update_env, tmpdir_update_env, cvs_update_env;
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
@@ -359,18 +354,6 @@ main (argc, argv)
     {
 	Rcsbin = cp;
 	rcsbin_update_env = 0;		/* it's already there */
-    }
-    diffbin_update_env = *Diffbin;	/* DIFF must be set */
-    if ((cp = getenv (DIFFBIN_ENV)) != NULL)
-    {
-	Diffbin = cp;
-	diffbin_update_env = 0;		/* it's already there */
-    }
-    grepbin_update_env = *Grepbin;	/* GREP must be set */
-    if ((cp = getenv (GREPBIN_ENV)) != NULL)
-    {
-	Grepbin = cp;
-	grepbin_update_env = 0;		/* it's already there */
     }
     tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
@@ -424,7 +407,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:D:g:T:e:d:Hfz:s:x", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:T:e:d:Hfz:s:x", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -473,14 +456,6 @@ main (argc, argv)
 	    case 'b':
 		Rcsbin = optarg;
 		rcsbin_update_env = 1;	/* need to update environment */
-		break;
-	    case 'D':
-		Diffbin = optarg;
-		diffbin_update_env = 1;	/* need to update environment */
-		break;
-	    case 'g':
-		Grepbin = optarg;
-		grepbin_update_env = 1;	/* need to update environment */
 		break;
 	    case 'T':
 		Tmpdir = optarg;
@@ -628,13 +603,9 @@ main (argc, argv)
 	       ignores CVS directories and CVS/Root is likely to
 	       specify a different repository than the one we are
 	       importing to.  */
-#if 0
-	    if (lookup_command_attribute (command_name) & CVS_CMD_IGNORE_ADMROOT)
-		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#else
 	    if (strcmp (command_name, "import") != 0)
 		CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#endif
+
 	    if (CVSADM_Root != NULL)
 	    {
 		if (CVSroot == NULL || !cvs_update_env)
@@ -663,16 +634,7 @@ main (argc, argv)
 		       "cvs login" command.  Ahh, the things one
 		       discovers. */
 
-#if 0
-		    if (lookup_command_attribute (command_name) & CVS_CMD_USES_WORK_DIR)
-#else
-		    if ((strcmp (command_name, "checkout") != 0) &&
-			(strcmp (command_name, "init") != 0) &&
-			(strcmp (command_name, "login") != 0) &&
-			(strcmp (command_name, "rdiff") != 0) &&
-			(strcmp (command_name, "release") != 0) &&
-			(strcmp (command_name, "rtag") != 0))
-#endif
+		    if (strcmp (command_name, "login") != 0)
 			need_to_create_root = 1;
 		}
 	    }
@@ -782,22 +744,6 @@ main (argc, argv)
 	    char *env;
 	    env = xmalloc (strlen (RCSBIN_ENV) + strlen (Rcsbin) + 1 + 1);
 	    (void) sprintf (env, "%s=%s", RCSBIN_ENV, Rcsbin);
-	    (void) putenv (env);
-	    /* do not free env, as putenv has control of it */
-	}
-	if (diffbin_update_env)
-	{
-	    char *env;
-	    env = xmalloc (strlen (DIFFBIN_ENV) + strlen (Diffbin) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", DIFFBIN_ENV, Diffbin);
-	    (void) putenv (env);
-	    /* do not free env, as putenv has control of it */
-	}
-	if (grepbin_update_env)
-	{
-	    char *env;
-	    env = xmalloc (strlen (GREPBIN_ENV) + strlen (Grepbin) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", GREPBIN_ENV, Grepbin);
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
