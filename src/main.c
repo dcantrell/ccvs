@@ -920,6 +920,30 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		    error (0, 0, "notice: main loop with CVSROOT=%s",
 			   current_root);
 
+		/*
+		 * Check to see if the repository exists.
+		 */
+		if (!client_active)
+		{
+		    char *path;
+		    int save_errno;
+
+		    path = xmalloc (strlen (CVSroot_directory)
+				    + sizeof (CVSROOTADM)
+				    + 20);
+		    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
+		    if (!isaccessible (path, R_OK | X_OK))
+		    {
+			save_errno = errno;
+			/* If this is "cvs init", the root need not exist yet.  */
+			if (strcmp (command_name, "init") != 0)
+			{
+			    error (1, save_errno, "%s", path);
+			}
+		    }
+		    free (path);
+		}
+
 #ifdef HAVE_PUTENV
 		/* Update the CVSROOT environment variable if necessary. */
 		/* FIXME (njc): should we always set this with the CVSROOT from the command line? */
