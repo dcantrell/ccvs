@@ -632,7 +632,7 @@ int is_valid_client_path (const char *pathname)
     /* 2. No Max-dotdot paths registered.  */
     if (uppaths == NULL) return 0;
 
-    return walklist (uppaths, path_list_prefixed, pathname);
+    return walklist (uppaths, path_list_prefixed, (void *)pathname);
 }
 
 
@@ -649,8 +649,7 @@ int is_valid_client_path (const char *pathname)
  * the directory portion of SHORT_PATHNAME.  */
 static void
 call_in_directory (const char *pathname,
-                   void (*func) (char *_data, List *_ent_list,
-                                 char *_short_pathname, char *_filename),
+                   void (*func) (void *, List *, char *, char *),
                    void *data)
 {
     /* This variable holds the result of Entries_Open. */
@@ -1027,7 +1026,7 @@ warning: server is not creating directories one at a time");
 
 
 static void
-copy_a_file (char *data, List *ent_list, char *short_pathname, char *filename)
+copy_a_file (void *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *newname;
 #ifdef USE_VMS_FILENAMES
@@ -1935,7 +1934,7 @@ handle_rcs_diff (char *args, int len)
 
 
 static void
-remove_entry (char *data, List *ent_list, char *short_pathname,
+remove_entry (void *data, List *ent_list, char *short_pathname,
               char *filename)
 {
     Scratch_Entry (ent_list, filename);
@@ -1952,7 +1951,7 @@ handle_remove_entry (char *args, int len)
 
 
 static void
-remove_entry_and_file (char *data, List *ent_list, char *short_pathname,
+remove_entry_and_file (void *data, List *ent_list, char *short_pathname,
                        char *filename)
 {
     Scratch_Entry (ent_list, filename);
@@ -1988,7 +1987,7 @@ is_cvsroot_level (char *pathname)
 
 
 static void
-set_static (char *data, List *ent_list, char *short_pathname, char *filename)
+set_static (void *data, List *ent_list, char *short_pathname, char *filename)
 {
     FILE *fp;
     fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -2013,7 +2012,7 @@ handle_set_static_directory (char *args, int len)
 
 
 static void
-clear_static (char *data, List *ent_list, char *short_pathname,
+clear_static (void *data, List *ent_list, char *short_pathname,
               char *filename)
 {
     if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
@@ -2046,7 +2045,7 @@ handle_clear_static_directory (char *pathname, int len)
 
 
 static void
-set_sticky (char *data, List *ent_list, char *short_pathname, char *filename)
+set_sticky (void *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *tagspec;
     FILE *f;
@@ -2106,7 +2105,7 @@ handle_set_sticky (char *pathname, int len)
 
 
 static void
-clear_sticky (char *data, List *ent_list, char *short_pathname,
+clear_sticky (void *data, List *ent_list, char *short_pathname,
               char *filename)
 {
     if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
@@ -2140,7 +2139,7 @@ handle_clear_sticky (char *pathname, int len)
 
 
 static void
-template (char *data, List *ent_list, char *short_pathname, char *filename)
+template (void *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *buf = xmalloc ( strlen ( short_pathname )
 	    		  + strlen ( CVSADM_TEMPLATE )
@@ -2161,7 +2160,7 @@ handle_template (char *pathname, int len)
 
 
 static void
-clear_template (char *data, List *ent_list, char *short_pathname,
+clear_template (void *data, List *ent_list, char *short_pathname,
                 char *filename)
 {
     if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
@@ -4908,7 +4907,7 @@ client_import_done (void)
 
 
 static void
-notified_a_file (char *data, List *ent_list, char *short_pathname,
+notified_a_file (void *data, List *ent_list, char *short_pathname,
                  char *filename)
 {
     FILE *fp;
