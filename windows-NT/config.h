@@ -429,7 +429,7 @@
 #undef HAVE_RENAME
 
 /* Define to 1 if you have run the test for working tzset. */
-#undef HAVE_RUN_TZSET_TEST
+#define HAVE_RUN_TZSET_TEST 1
 
 /* Define if the diff library should use setmode for binary files. */
 #define HAVE_SETMODE 1
@@ -952,7 +952,7 @@
 #define mode_t int
 
 /* Define to the name of the strftime replacement function. */
-#undef my_strftime
+#define my_strftime nstrftime
 
 /* Define to rpl_nanosleep if the replacement function should be used. */
 #undef nanosleep
