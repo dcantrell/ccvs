@@ -1,3 +1,8 @@
+Thu Oct 19 15:06:15 1995  Jim Meyering  (meyering@comco.com)
+
+	* commit.c (checkaddfile): Remove dcls of unused variables.
+	* lock.c (unlock): Remove dcl of unused variable.
+
 Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* root.c (Create_Root): If noexec, don't create CVS/Root.
@@ -5,7 +10,7 @@ Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 Wed Oct 18 11:19:40 1995  J.T. Conklin  <jtc@slave.cygnus.com>
 
 	* lock.c (unlock): Change order of comparison so that Check_Owner
-	is called only if other conditions are true.  This performance 
+	is called only if other conditions are true.  This performance
 	enhancement was broken when the AFS support was added.
 
 Wed Oct 18 12:51:33 1995  Karl Fogel  <kfogel@floss.cyclic.com>
@@ -40,7 +45,7 @@ Thu Oct 12 02:52:13 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
 	* expand_path.c: Don't #include <pwd.h>, since cvs.h already does,
 	and not all systems' <pwd.h>s are protected from multiple inclusion.
 	* login.c: Likewise.
-	
+
 Wed Oct 11 15:23:24 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (login): handle everything correctly now.
@@ -211,11 +216,11 @@ Fri Sep 29 13:22:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 	* diff.c (diff): Doc fix.
 
 Fri Sep 29 14:32:36 1995  Norbert Kiesel <nk@col.sw-ley.de>
-        
+
         * repos.c (Short_Repository): chop superfluous "/".
-        
+
         * tag.c (pretag_proc): correct user-visible string.
-        
+
         * rtag.c (pretag_proc): correct user-visible string.
 
 Fri Sep 29 13:45:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
@@ -224,9 +229,9 @@ Fri Sep 29 13:45:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         nothing.
 
 Thu Sep 28 13:37:05 1995  Larry Jones <larry.jones@sdrc.com>
-        
+
         * server.c: ifdef ISC, include <sys/bsdtypes.h>.
-        
+
 Fri Sep 29 07:54:22 1995  Mike Sutton  <mws115@llcoolj.dayton.saic.com>
 
 	* filesubr.c (last_component): Don't use ANSI style declaration.
@@ -305,7 +310,7 @@ Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
 Thu Sep  7 14:38:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * ALL FILES: add semicolon, as indicated below.
-        
+
         * cvs.h (USE): don't provide semicolon in the expansion of the USE
         macro; we'd rather the callers provided it themselves because that
         way etags doesn't get fooled.
