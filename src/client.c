@@ -2139,40 +2139,29 @@ struct response responses[] =
  * We need this "bottleneck function" because not all systems treat
  * sockets the same as file descriptors.  From now on, all data to the
  * server goes through here.
- */
+ * 
+ * It is called like printf, which is kind of crock performance-wise
+ * because it means all kinds of extra processing (e.g. memory
+ * allocation) and most callers don't use it.  We should have a
+ * fputs_to_server instead (or in addition, although I'm not sure
+ * there is any need for the printf-like calling convention when those
+ * rare callers that need it can just do an sprintf).  */
 int
-#if defined (HAVE_VPRINTF) && __STDC__
+#if __STDC__
 send_to_server (char *data, ...)
-#else /* ! (HAVE_VPRINTF && __STDC__) */
+#else /* !__STDC__ */
 send_to_server (data, va_alist)
      char *data;
      va_dcl
-#endif /* HAVE_VPRINTF && __STDC__ */
+#endif /* !__STDC__ */
 {
-  /* Yeah, this is a crock, but what can one do? */
-  static char buf[MAXLINELEN];
   int len;
-#ifdef HAVE_VPRINTF
+  char *buf;
   va_list args;
-#endif
 
-#ifdef HAVE_A_NICE_DAY
-  have_a_nice_day ();
-#endif /* HAVE_A_NICE_DAY */
-
-  /* If we could depend on automatic arrays always being zeroed by
-     default, then I wouldn't declare it static and wouldn't bother
-     with memset().  But I don't think we can.  If you know otherwise,
-     go ahead and change this.  -Karl */
-  memset (buf, 0, MAXLINELEN);
-
-#ifdef HAVE_VPRINTF
   VA_START (args, data);
-  len = vsprintf (buf, data, args);
+  len = vasprintf (&buf, data, args);
   va_end (args);
-#else /* ! HAVE_VPRINTF */
-  len = sprintf (buf, data, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif  /* HAVE_VPRINTF */
 
   /* 
    * TODO: for the moment, we just do pretty much what the old
@@ -2183,8 +2172,6 @@ send_to_server (data, va_alist)
    */
   return fprintf (to_server, "%s", buf);
 }
-
-
 
 /*
  * Get some server responses and process them.  Returns nonzero for
