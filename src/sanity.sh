@@ -972,12 +972,25 @@ depends_on_rsync ()
   done
 
   if test -f "$RSYNC" && test -r "$RSYNC" \
-     && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
-	       >/dev/null 2>&1
+    && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
+	      >/dev/null 2>&1 \
+    && test -f $TESTDIR/rsync-test/5 && rm $TESTDIR/rsync-test/5 \
+    && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy \
+	      >/dev/null 2>&1
   then
-    # good, it works
-    rm -r $TESTDIR/rsync-test $TESTDIR/rsync-test-copy
+    if test -f $TESTDIR/rsync-test-copy/5; then
+      rsyncworks=false
+    else
+      # good, it works
+      rsyncworks=:
+    fi
   else
+    rsyncworks=false
+  fi
+
+  rm -rf $TESTDIR/rsync-test $TESTDIR/rsync-test-copy
+
+  if $rsyncworks; then :; else
     rm -r $TESTDIR/rsync-test
     RSYNC=`find_tool rsync`
     if test -z "$RSYNC" ; then
