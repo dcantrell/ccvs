@@ -1,3 +1,10 @@
+2000-05-16  Jim Kingdon  <kingdon@redhat.com>
+
+	* TODO (186): Remove paragraph about Eric Raymond's interest.
+	This is still on the future projects on his site, it just seems to
+	brief (and too long ago updated) that I don't really see the need
+	to mention it.
+
 2000-05-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* TESTS: Add notes about required tools and where to get them.
