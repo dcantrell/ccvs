@@ -1,3 +1,10 @@
+Tue Aug 20 09:19:19 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* checkout.c (checkout_proc): Call RCS_parse to get the default
+ 	options from the RCS file.
+
+	* sanity.sh (binfiles): Add tests 5.5b0 and 5.5b1 for the above fix
+
 Mon Aug 19 18:13:32 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (linevector_init): Make inline.  Set lines_alloced to 0,

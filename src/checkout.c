@@ -808,7 +808,9 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	    finfo.fullname = argv[i];
 	    finfo.repository = repository;
 	    finfo.entries = entries;
-	    finfo.rcs = NULL;
+	    /* The rcs slot is needed to get the options from the RCS
+               file */
+	    finfo.rcs = RCS_parse (finfo.file, repository);
 
 	    vers = Version_TS (&finfo, options, tag, date,
 			       force_tag_match, 0);
