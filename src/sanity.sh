@@ -2938,6 +2938,64 @@ diff -r1\.1 foo\.c
 < I am the first foo, and my name is \$""Name:  \$\.
 ---
 > I am the once and future foo, and my name is \$""Name\$\."
+
+	  # Test handling of libdiff options.  diff gets quite enough
+	  # of a workout elsewhere in sanity.sh, so we assume that it's
+	  # mostly working properly if it passes all the other tests.
+	  # The main one we want to try is regex handling, since we are
+	  # using CVS's regex matcher and not diff's.
+
+	  cat >rgx.c <<EOF
+test_regex (whiz, bang)
+{
+foo;
+bar;
+baz;
+grumble;
+}
+EOF
+
+	  dotest rcslib-diffrgx-1 "${testcvs} -q add -m '' rgx.c" \
+"${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest rcslib-diffrgx-2 "${testcvs} -q ci -m '' rgx.c" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/rgx\.c,v
+done
+Checking in rgx\.c;
+${TESTDIR}/cvsroot/first-dir/rgx\.c,v  <--  rgx\.c
+initial revision: 1\.1
+done"
+	  cat >rgx.c <<EOF
+test_regex (whiz, bang)
+{
+foo;
+bar;
+baz;
+mumble;
+}
+EOF
+	  # Use dotest_fail because exit status from `cvs diff' must be 1.
+	  dotest_fail rcslib-diffrgx-3 "${testcvs} diff -c -F.*( rgx.c" \
+"Index: rgx\.c
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/rgx\.c,v
+retrieving revision 1\.1
+diff -c -F\.\*( -r1\.1 rgx\.c
+\*\*\* rgx\.c	[0-9/]* [0-9:]*	1\.1
+--- rgx\.c	[0-9/]* [0-9:]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\* test_regex (whiz, bang)
+\*\*\* 3,7 \*\*\*\*
+  foo;
+  bar;
+  baz;
+! grumble;
+  }
+--- 3,7 ----
+  foo;
+  bar;
+  baz;
+! mumble;
+  }"
+
 	  cd ..
 
 	  if test "$keep" = yes; then

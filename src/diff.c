@@ -105,7 +105,7 @@ static struct option const longopts[] =
 {
     {"ignore-blank-lines", 0, 0, 'B'},
     {"context", 2, 0, 143},
-    {"ifdef", 1, 0, 147},
+    {"ifdef", 1, 0, 131},
     {"show-function-line", 1, 0, 'F'},
     {"speed-large-files", 0, 0, 'H'},
     {"ignore-matching-lines", 1, 0, 'I'},
@@ -265,12 +265,12 @@ diff (argc, argv)
 		strcat_and_allocate (&opts, &opts_allocated, tmp);
 		strcat_and_allocate (&opts, &opts_allocated, optarg);
 		break;
-	    case 147:
+	    case 131:
 		/* --ifdef.  */
 		strcat_and_allocate (&opts, &opts_allocated, " -D");
 		strcat_and_allocate (&opts, &opts_allocated, optarg);
 		break;
-	    case 129: case 130: case 131: case 132: case 133: case 134:
+	    case 129: case 130:           case 132: case 133: case 134:
 	    case 135: case 136: case 137: case 138: case 139: case 140:
 	    case 141: case 142: case 143: case 144: case 145: case 146:
 	    case 147: case 148:
