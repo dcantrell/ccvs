@@ -979,6 +979,7 @@ ${PROG} [a-z]*: Updating second-dir"
 
 	  cd ..
 	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	basic1)

@@ -1,3 +1,7 @@
+Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basicc): Clean up first-dir at end of test.
+
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (join): Fix cut and paste error in join-28
