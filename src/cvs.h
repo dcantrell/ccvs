@@ -399,7 +399,7 @@ extern List *dirs_sent_to_server; /* used to decide which "Argument
 				     server in multiroot mode. */
 #endif
 
-extern char hostname[];
+extern char *hostname;
 
 /* Externs that are included directly in the CVS sources */
 
