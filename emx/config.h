@@ -1,6 +1,16 @@
 /* config.h --- configuration file for OS/2 EMX
    Thomas Epting <tepting@swol.de> --- Feb 1997  */
 
+/* This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.  */
+
 /* This file lives in the emx/ subdirectory, which is only included
  * in your header search path if you use emx/Makefile (with GNU make
  * for OS/2). Thus, this is the right place to put configuration
@@ -67,30 +77,25 @@
 /* Define to `int' if <sys/types.h> doesn't define.  */
 /* #undef uid_t */
 
-/* Define if you want direct TCP access to server */
-#define USE_DIRECT_TCP 1
-
 /* Define if you have MIT Kerberos version 4 available.  */
 #undef HAVE_KERBEROS
 
 /* Define if you want CVS to be able to be a remote repository client.  */
 #define CLIENT_SUPPORT 1
 
+#if 0
+/* This doesn't work yet, and I'm sure I don't want the hassles of seeing
+   whether it will compile.  */
 /* Define if you want CVS to be able to serve repositories to remote
    clients.  */
 #define SERVER_SUPPORT 1
 
 /* Define if you want to use the password authenticated server.  */
 #define AUTH_SERVER_SUPPORT
+#endif /* 0 */
 
 /* Define if you want encryption support.  */
 /* #undef ENCRYPTION */
-
-/* The number of bytes in a int.  */
-#define SIZEOF_INT 4
-
-/* The number of bytes in a long.  */
-#define SIZEOF_LONG 4
 
 /* Define if you have the connect function.  */
 #define HAVE_CONNECT 1
@@ -125,17 +130,11 @@
 /* Define if you have the krb_get_err_text function.  */
 /* #undef HAVE_KRB_GET_ERR_TEXT */
 
-/* Define if you have the mkfifo function.  */
-/* #undef HAVE_MKFIFO */
-
 /* Define if you have the putenv function.  */
 #define HAVE_PUTENV 1
 
 /* Define if you have the readlink function.  */
 /* #define HAVE_READLINK */
-
-/* Define if you have the setvbuf function.  */
-#define HAVE_SETVBUF 1
 
 /* Define if you have the sigaction function.  */
 #define HAVE_SIGACTION 1
@@ -304,11 +303,20 @@ extern void os2_initialize (int *pargc, char ***pargv);
 
 #define CVS_STAT     os2_stat
 #define CVS_CHDIR    os2_chdir
-#define CVS_GETWD    os2_getwd
 #define CVS_FNMATCH  os2_fnmatch
 
 extern int os2_stat(const char *name, struct stat *buffer);
 extern int os2_chdir(const char *name);
-extern char * os2_getwd(char *buffer);
 extern int os2_fnmatch(const char *pattern, const char *name, int flags);
 
+/* Pipes need to be put into binary mode using setmode ().  */
+#define USE_SETMODE_BINARY 1
+
+/* The reason for this is that we don't know whether to pass -b to
+   rsh.  The system-supplied rsh on OS/2 wants it.  Some other rsh
+   replacement might not accept it.  Historically, the NT port of CVS
+   has not passed -b, and the OS/2 port has.  What a mess.  If we can
+   get away with just not accepting :ext: until we can figure out how
+   we should deal with this, then it will avoid having people rely on
+   behaviors which will need to change.  */
+#define NO_EXT_METHOD 1

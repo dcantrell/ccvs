@@ -3,11 +3,17 @@ CVS for OS/2
 based on EMX 0.9c (patch 02)
 
 
-This port requires EMX 0.9c (patch 02) and the BSD libraries. It should
-work in local mode, in client mode and also in server mode. Server mode
+This port works well in local mode.  It fully respects the OS/2
+filename conventions, but only works on HPFS or other filesystem types
+which support long filenames (like ext2fs or Netware FS with OS/2
+namespace).  It does _not_ work on FAT partitions or any other fs which
+does not support long filenames.  The port also works in client mode.
+
+This port requires EMX 0.9c (patch 02) and the BSD libraries.  It should
+work in local mode, in client mode and also in server mode.  nServer mode
 will only work if the client uses the :server: method, because the CRLF
-handling of IBM's RSHD.EXE is not "compatible" with CVS. (If you find a
-better rshd for OS/2, please let me know!)
+handling of IBM's RSHD.EXE is not "compatible" with CVS.  (If you find a
+better rshd for OS/2, please let us know!)
 
 To compile CVS for OS/2, you must install the following packages:
 
@@ -25,20 +31,25 @@ To compile CVS for OS/2, you must install the following packages:
 
       GNUMAKE.ZIP
 
- - ufc.a (ufc-crypt) as a replacement for crypt (this my be something
-   different if you live inside the USA)
+ - ufc.a (ufc-crypt) as a replacement for crypt (this may be something
+   different if you live inside the USA).  I don't think you need this
+   one currently, because the port of the server to OS/2 isn't done yet.
 
       GNUUFC.ZIP
 
 All packages can be found on ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu
 (You may also try http://www.leo.org/pub/comp/os/os2/leo/gnu).
 
-Change to the `emx' directory, do "make" and get emx\cvs.exe. Assuming
+Change to the `emx' directory, do "make" and get emx\cvs.exe.  Assuming
 you have edited the `install_dir' variable in the Makefile, you may type
-"make install-cvs" to put cvs.exe in the right place. You may also "make
+"make install-cvs" to put cvs.exe in the right place.  You may also "make
 clean-cvs" to clean up object and library files.
 
+The cvs.exe generated will require emx.dll to run.  You can try
+compiling with -Zomf -Zsys to generate a cvs.exe without this
+requirement, but I'm not sure whether that works yet (if it does work,
+it almost surely would be for client not local, as EMX in this mode
+lacks fork()).
+
 You will get warnings during the compilation; ignore them.
-Report bugs to <tepting@swol.de>.
-
-
+Report bugs to tepting@swol.de and bug-cvs@prep.ai.mit.edu.
