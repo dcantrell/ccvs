@@ -1,3 +1,7 @@
+Wed Dec 10 15:39:44 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* buffer.c (stdio_buffer_initialize): Correct formatting.
+
 Sun Dec  7 09:37:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb-0d0): New test, for checkout on existing
