@@ -1,3 +1,9 @@
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Require -----... before the revision
+	marker, not a revision marker after -----...
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2003-08-09  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.in: Don't use unneeded Cwd module.

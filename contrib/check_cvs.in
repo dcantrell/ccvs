@@ -460,11 +460,15 @@ sub get_history
     {
 		if( $ignore == 1 ) 
 		{
-			die "Couldn't read revision from `cvs rlog'.\n"
-			    . "line = $line"
-				unless ( $revision ) = $line =~ /^revision (\S+)/;
-			$ignore++;
-			next;
+			if( ( $revision ) = $line =~ /^revision (\d+\.\d[\d.]*)$/ )
+			{
+				$ignore++;
+				next;
+			}
+
+			# We require ---- before a ^revision tag, not a revision
+			# after every ----.
+			$ignore = 0;
         }
 		if( $ignore == 2 )
 		{
