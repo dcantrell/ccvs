@@ -289,11 +289,11 @@ InputPath=.\alloca_.h
 
 !ENDIF 
 
-SOURCE="..\lib\fnmatch_.h"
+SOURCE=.\fnmatch_.h
 
 !IF  "$(CFG)" == "LIB - Win32 Release"
 
-InputPath="..\lib\fnmatch_.h"
+InputPath=.\fnmatch_.h
 
 ".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	<<tempfile.bat 
@@ -304,7 +304,7 @@ InputPath="..\lib\fnmatch_.h"
 
 !ELSEIF  "$(CFG)" == "LIB - Win32 Debug"
 
-InputPath="..\lib\fnmatch_.h"
+InputPath=.\fnmatch_.h
 
 ".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	<<tempfile.bat 
