@@ -1,6 +1,7 @@
 Wed Dec 20 02:05:19 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * login.c (login): took out debugging printf's.
+        (login): Removed unused variable `p'.
 
 Wed Dec 20 00:27:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
