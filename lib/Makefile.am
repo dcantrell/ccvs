@@ -44,6 +44,7 @@ libcvs_a_SOURCES = \
 	stripslash.c \
 	xgetwd.c \
 	yesno.c \
+	error.h \
 	exit.h \
 	getline.h \
 	getndelim2.h \

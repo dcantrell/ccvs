@@ -1,3 +1,8 @@
+2004-03-13  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Add error.h.
+	* Makefile.in: Regenerated.
+
 2004-03-11  Derek Price  <derek@ximbiot.com>
 
 	* xsize.h: Move the default definition of SIZE_MAX into
