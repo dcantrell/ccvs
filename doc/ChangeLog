@@ -1,5 +1,10 @@
 Tue Mar 26 08:46:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Substitution modes): Try to describe how the
+	various keyword expansion settings interract.
+	(Binary files): Suggest cvs update -A, not removing file and then
+	updating it, to get effect of new keyword expansion options.
+
 	* cvs.texinfo (admin options): Mention CVS's use of `dead' state.
 
 Thu Mar 21 08:25:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
