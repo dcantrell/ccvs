@@ -120,7 +120,7 @@ Installation under Unix:
     value is "/usr/local", with binaries in sub-directory "bin", manual
     pages in sub-directory "man", and libraries in sub-directory "lib".
 
-    This release of CVS also requires RCS commands to be installed in
+    If you are using server or local CVS, RCS needs to be installed in
     the user's PATH (or a path you have configured in src/options.h,
     or a path specified with the -b option).  If you don't have RCS,
     you will need to get it from GNU as well.  It is best to get the
