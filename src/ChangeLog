@@ -1,3 +1,8 @@
+Mon Mar 24 13:02:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* classify.c (Classify_File): Add comment about how specifying a
+	tag (bogusly?) suppresses certain messages.
+
 Fri Mar 21 13:37:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.h (struct rcsnode): Add comment about case of PATH.
