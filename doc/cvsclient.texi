@@ -558,6 +558,12 @@ Response expected: yes.
 Ask the server to send back a @code{Valid-requests} response.
 The @code{Root} request need not have been previously sent.
 
+@item Command-prep @var{command} \n
+Response expected: yes.
+Notify the server of the command that we are leading up to.  Intended to allow
+the server to send a redirect for write operations.  Requires either an
+@code{ok} or @code{Redirect} respnose.
+
 @item Directory @var{local-directory} \n
 @itemx Relative-directory @var{local-directory} \n
 Additional data: @var{repository} \n.  Response expected: no.
@@ -1480,6 +1486,11 @@ Indicate what requests the server will accept.  @var{request-list}
 is a space separated list of tokens.  If the server supports sending
 patches, it will include @samp{update-patches} in this list.  The
 @samp{update-patches} request does not actually do anything.
+
+@item Redirect @var{CVSROOT}
+Request that the client redirect its connection to @var{CVSROOT} and begin
+again.  This response is only valid in response to a @code{Command-prep}
+request.
 
 @item Checked-in @var{pathname} \n
 Additional data: New Entries line, \n.  This means a file @var{pathname}
