@@ -949,7 +949,7 @@ main (argc, argv)
 	       already printed an error.  We keep going.  Why?  Because
 	       if we didn't, then there would be no way to check in a new
 	       CVSROOT/config file to fix the broken one!  */
-	    parse_config ();
+	    parse_config (CVSroot_directory);
 	}
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 

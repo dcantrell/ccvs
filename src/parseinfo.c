@@ -195,10 +195,14 @@ Parse_Info (infofile, repository, callproc, all)
    KEYWORD=VALUE.  There is currently no way to have a multi-line
    VALUE (would be nice if there was, probably).
 
+   CVSROOT is the $CVSROOT directory (CVSroot_directory might not be
+   set yet).
+
    Returns 0 for success, negative value for failure.  Call
    error(0, ...) on errors in addition to the return value.  */
 int
-parse_config ()
+parse_config (cvsroot)
+    char *cvsroot;
 {
     char *infopath;
     FILE *fp_info;
@@ -206,8 +210,17 @@ parse_config ()
     size_t line_allocated = 0;
     size_t len;
     char *p;
+    /* FIXME-reentrancy: If we do a multi-threaded server, this would need
+       to go to the per-connection data structures.  */
+    static int parsed = 0;
 
-    infopath = malloc (strlen (CVSroot_directory)
+    /* Authentication code and serve_root might both want to call us.
+       Let this happen smoothly.  */
+    if (parsed)
+	return 0;
+    parsed = 1;
+
+    infopath = malloc (strlen (cvsroot)
 			+ sizeof (CVSROOTADM_CONFIG)
 			+ sizeof (CVSROOTADM)
 			+ 10);
@@ -217,7 +230,7 @@ parse_config ()
 	goto error_return;
     }
 
-    strcpy (infopath, CVSroot_directory);
+    strcpy (infopath, cvsroot);
     strcat (infopath, "/");
     strcat (infopath, CVSROOTADM);
     strcat (infopath, "/");
@@ -308,6 +321,18 @@ parse_config ()
 	    {
 		Rcsbin[len] = '/';
 		Rcsbin[len + 1] = '\0';
+	    }
+	}
+	else if (strcmp (line, "SystemAuth") == 0)
+	{
+	    if (strcmp (p, "no") == 0)
+		system_auth = 0;
+	    else if (strcmp (p, "yes") == 0)
+		system_auth = 1;
+	    else
+	    {
+		error (0, 0, "unrecognized value '%s' for SystemAuth", p);
+		goto error_return;
 	    }
 	}
 	else
