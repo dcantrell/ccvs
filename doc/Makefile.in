@@ -233,7 +233,7 @@ TEXINFOS = cvs.texinfo cvsclient.texi
 NROFF = nroff
 MANS = $(man_MANS)
 DIST_COMMON = $(srcdir)/Makefile.in ChangeLog Makefile.am mdate-sh \
-	mkman.in stamp-1 stamp-vti texinfo.tex version-client.texi \
+	mkman.pl stamp-1 stamp-vti texinfo.tex version-client.texi \
 	version.texi
 all: all-am
 
@@ -244,7 +244,7 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configu
 	  $(AUTOMAKE) --gnu  doc/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-mkman: $(top_builddir)/config.status mkman.in
+mkman: $(top_builddir)/config.status mkman.pl
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 .texinfo.info:
@@ -610,7 +610,7 @@ cvs-paper.pdf: cvs-paper.ps
 
 # Targets to build a man page from cvs.texinfo.
 cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
-	$(PERL) $(srcdir)/mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
+	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
 .texinfo.txt:
 	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \

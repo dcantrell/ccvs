@@ -1,3 +1,9 @@
+2004-09-25  Derek Price  <derek@ximbiot.com>
+
+	* mkman.in: Move to...
+	* mkman.pl: ...here.
+	* Makefile.am (cvs.1): mkman is in build dir, not src dir.
+
 2004-09-24  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (cvs.1): Add paths in hopes of getting more consistent
