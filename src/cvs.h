@@ -452,7 +452,8 @@ void Subdirs_Known (List *entries);
 void Subdir_Register (List *, const char *, const char *);
 void Subdir_Deregister (List *, const char *, const char *);
 
-char *Make_Date (char *rawdate);
+void parse_tagdate (char **tag, char **date, const char *input);
+char *Make_Date (const char *rawdate);
 char *date_from_time_t (time_t);
 void date_to_internet (char *, const char *);
 void date_to_tm (struct tm *, const char *);
@@ -885,8 +886,6 @@ char *normalize_cvsroot (const cvsroot_t *root)
 #endif /* AUTH_CLIENT_SUPPORT */
 
 void tag_check_valid (char *, int, char **, int, int, char *, bool);
-void tag_check_valid_join (char *, int, char **, int, int,
-                           char *);
 
 #include "server.h"
 

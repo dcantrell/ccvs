@@ -91,11 +91,11 @@ static int pipeout;
 static int aflag;
 static char *options;
 static char *tag;
-static int tag_validated;
+static bool tag_validated;
 static char *date;
-static char *join_rev1;
-static char *join_rev2;
-static int join_tags_validated;
+static char *join_rev1, *join_date1;
+static char *join_rev2, *join_date2;
+static bool join_tags_validated;
 static char *preload_update_dir;
 static char *history_name;
 static enum mtype m_type;
@@ -113,6 +113,7 @@ checkout (int argc, char **argv)
     char *where = NULL;
     const char *valid_options;
     const char *const *valid_usage;
+    char *join_orig1, *join_orig2;
 
     /* initialize static options */
     force_tag_match = 1;
@@ -121,9 +122,10 @@ checkout (int argc, char **argv)
 	free (options);
 	options = NULL;
     }
-    tag = date = join_rev1 = join_rev2 = preload_update_dir = NULL;
+    tag = date = join_rev1 = join_date1 = join_rev2 = join_date2 =
+	  join_orig1 = join_orig2 = preload_update_dir = NULL;
     history_name = NULL;
-    tag_validated = join_tags_validated = 0;
+    tag_validated = join_tags_validated = false;
 
 
     /*
@@ -210,20 +212,29 @@ checkout (int argc, char **argv)
 		force_tag_match = 0;
 		break;
 	    case 'r':
-		tag = optarg;
+		parse_tagdate (&tag, &date, optarg);
 		checkout_prune_dirs = 1;
 		break;
 	    case 'D':
+		if (date) free (date);
 		date = Make_Date (optarg);
 		checkout_prune_dirs = 1;
 		break;
 	    case 'j':
-		if (join_rev2)
+		if (join_rev2 || join_date2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_rev1)
-		    join_rev2 = optarg;
+		if (join_rev1 || join_date1)
+		{
+		    if (join_orig2) free (join_orig2);
+		    join_orig2 = xstrdup (optarg);
+		    parse_tagdate (&join_rev2, &join_date2, optarg);
+		}
 		else
-		    join_rev1 = optarg;
+		{
+		    if (join_orig1) free (join_orig1);
+		    join_orig1 = xstrdup (optarg);
+		    parse_tagdate (&join_rev1, &join_date1, optarg);
+		}
 		break;
 	    case '?':
 	    default:
@@ -251,7 +262,7 @@ checkout (int argc, char **argv)
 	if (!tag && !date)
 	    error (1, 0, "must specify a tag or date");
 
-	if (tag && isdigit ((unsigned char) tag[0]))
+	if (tag && isdigit (tag[0]))
 	    error (1, 0, "tag `%s' must be a symbolic tag", tag);
     }
 
@@ -313,10 +324,10 @@ checkout (int argc, char **argv)
 	option_with_arg ("-r", tag);
 	if (date)
 	    client_senddate (date);
-	if (join_rev1 != NULL)
-	    option_with_arg ("-j", join_rev1);
-	if (join_rev2 != NULL)
-	    option_with_arg ("-j", join_rev2);
+	if (join_orig1)
+	    option_with_arg ("-j", join_orig1);
+	if (join_orig2)
+	    option_with_arg ("-j", join_orig2);
 	send_arg ("--");
 
 	if (expand_modules)
@@ -1034,36 +1045,36 @@ internal error: %s doesn't start with %s in checkout_proc",
 	    goto out;
 	}
 	which = W_REPOS;
-	if (tag != NULL && !tag_validated)
+	if (tag && !tag_validated)
 	{
 	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag,
 			     repository, false);
-	    tag_validated = 1;
+	    tag_validated = true;
 	}
     }
     else
     {
 	which = W_LOCAL | W_REPOS;
-	if (tag != NULL && !tag_validated)
+	if (tag && !tag_validated)
 	{
 	    tag_check_valid (tag, argc - 1, argv + 1, 0, aflag,
 			     repository, false);
-	    tag_validated = 1;
+	    tag_validated = true;
 	}
     }
 
-    if (tag != NULL || date != NULL || join_rev1 != NULL)
+    if (tag || date || join_rev1 || join_date2)
 	which |= W_ATTIC;
 
-    if (! join_tags_validated)
+    if (!join_tags_validated)
     {
-        if (join_rev1 != NULL)
-	    tag_check_valid_join (join_rev1, argc - 1, argv + 1, 0, aflag,
-				  repository);
-	if (join_rev2 != NULL)
-	    tag_check_valid_join (join_rev2, argc - 1, argv + 1, 0, aflag,
-				  repository);
-	join_tags_validated = 1;
+        if (join_rev1)
+	    tag_check_valid (join_rev1, argc - 1, argv + 1, 0, aflag,
+			     repository, false);
+	if (join_rev2)
+	    tag_check_valid (join_rev2, argc - 1, argv + 1, 0, aflag,
+			     repository, false);
+	join_tags_validated = true;
     }
 
     /*
@@ -1079,7 +1090,8 @@ internal error: %s doesn't start with %s in checkout_proc",
 	err += do_update (0, NULL, options, tag, date,
 			  force_tag_match, false /* !local */ ,
 			  true /* update -d */ , aflag, checkout_prune_dirs,
-			  pipeout, which, join_rev1, join_rev2,
+			  pipeout, which, join_rev1, join_date1,
+			  join_rev2, join_date2,
 			  preload_update_dir, m_type == CHECKOUT,
 			  repository);
 	goto out;
@@ -1137,8 +1149,8 @@ internal error: %s doesn't start with %s in checkout_proc",
     err += do_update (argc - 1, argv + 1, options, tag, date,
 		      force_tag_match, local_specified, true /* update -d */,
 		      aflag, checkout_prune_dirs, pipeout, which, join_rev1,
-		      join_rev2, preload_update_dir, m_type == CHECKOUT,
-		      repository);
+		      join_date1, join_rev2, join_date2, preload_update_dir,
+		      m_type == CHECKOUT, repository);
 out:
     free (preload_update_dir);
     preload_update_dir = oldupdate;

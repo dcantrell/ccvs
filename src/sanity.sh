@@ -6031,8 +6031,8 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 		fi
 
 		# join
-		dotest 86 "${testcvs} -q update -j branch1" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+		dotest death-86 "$testcvs -q update -j branch1" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
 retrieving revision 1\.3
 retrieving revision 1\.3\.2\.1
 Merging differences between 1\.3 and 1\.3\.2\.1 into file1
@@ -6751,7 +6751,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest rmadd2-6 "${testcvs} -q ci -m remove" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.1"
-	  dotest rmadd2-7 "${testcvs} -q update -j 1.2 -j 1.1 file1" "U file1"
+	  dotest rmadd2-7 "$testcvs -q update -j 1.2 -j 1.1 file1" "U file1"
 	  dotest rmadd2-8 "${testcvs} -q ci -m readd" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2"
@@ -24668,9 +24668,9 @@ new revision: 1\.1\.4\.1; previous revision: 1\.1"
 	  # Then the case where br2 does have revisions:
 	  dotest tagdate-11 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
 
-	  # For some reason, doing this on a branch seems to be relevant.
-	  dotest_fail tagdate-12 "${testcvs} -q update -j:yesterday" \
-"${SPROG} \[update aborted\]: argument to join may not contain a date specifier without a tag"
+	  # Joins from dates on the head used to be prohibited.
+	  dotest tagdate-12 "$testcvs -q update -j:yesterday -j:now"
+	  dotest tagdate-12b "$testcvs -Q update -C"
 	  # And check export
 
 	  echo br2-2 >file1
@@ -24681,9 +24681,14 @@ new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1"
 
 	  cd ../..
 	  mkdir 2; cd 2
-	  dotest tagdate-14 "${testcvs} -q export -r br2 -D'$date_T3' first-dir" \
+	  dotest tagdate-14 \
+"$testcvs -q export -r br2 -D'$date_T3' first-dir" \
 "[UP] first-dir/file1"
-	  dotest tagdate-15 "cat first-dir/file1" "br2-1"
+	  dotest tagdate-14b "cat first-dir/file1" "br2-1"
+	  dotest tagdate-15 \
+"$testcvs -q export -rbr2:'$date_T3' -dsecond-dir first-dir" \
+"[UP] second-dir/file1"
+	  dotest tagdate-15b "cat second-dir/file1" "br2-1"
 
 	  # Now for annotate
 	  cd ../1/first-dir
@@ -29147,6 +29152,7 @@ ${SPROG} update: Updating dir1/sdir/ssdir"
 	    dotest multiroot2-9a "${testcvs} -t update" \
 " *-> main loop with CVSROOT=${TESTDIR}/root1
  *-> parse_config ($TESTDIR/root1)
+ *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
  *-> Write_Template (\., ${TESTDIR}/root1)
 ${CPROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
@@ -29157,6 +29163,7 @@ ${CPROG} update: Updating dir1
  *-> Simple_Lock_Cleanup()
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> parse_config ($TESTDIR/root2)
+ *-> do_update ((null), (null), (null), 1, 0, 0, 0, 0, 0, 3, (null), (null), (null), (null), (null), 1, (null))
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
 ${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)

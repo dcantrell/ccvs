@@ -96,8 +96,8 @@ static int warned;
    the setting.  See update_dirent_proc.  */
 static char *tag_update_dir;
 
-static char *join_rev1, *date_rev1;
-static char *join_rev2, *date_rev2;
+static char *join_rev1, *join_date1;
+static char *join_rev2, *join_date2;
 static int aflag = 0;
 static int toss_local_changes = 0;
 static int force_tag_match = 1;
@@ -144,9 +144,15 @@ update (int argc, char **argv)
     int c, err;
     int local = 0;			/* recursive by default */
     int which;				/* where to look for files and dirs */
+    char *xjoin_rev1, *xjoin_date1,
+	 *xjoin_rev2, *xjoin_date2,
+	 *join_orig1, *join_orig2;
 
     if (argc == -1)
 	usage (update_usage);
+
+    xjoin_rev1 = xjoin_date1 = xjoin_rev2 = xjoin_date2 = join_orig1 =
+	         join_orig2 = NULL;
 
     ign_setup ();
     wrap_setup ();
@@ -198,9 +204,10 @@ update (int argc, char **argv)
 		force_tag_match = 0;
 		break;
 	    case 'r':
-		tag = optarg;
+		parse_tagdate (&tag, &date, optarg);
 		break;
 	    case 'D':
+		if (date) free (date);
 		date = Make_Date (optarg);
 		break;
 	    case 'P':
@@ -211,12 +218,18 @@ update (int argc, char **argv)
 		noexec = 1;		/* so no locks will be created */
 		break;
 	    case 'j':
-		if (join_rev2)
+		if (join_orig2)
 		    error (1, 0, "only two -j options can be specified");
-		if (join_rev1)
-		    join_rev2 = optarg;
+		if (join_orig1)
+		{
+		    join_orig2 = xstrdup (optarg);
+		    parse_tagdate (&xjoin_rev2, &xjoin_date2, optarg);
+		}
 		else
-		    join_rev1 = optarg;
+		{
+		    join_orig1 = xstrdup (optarg);
+		    parse_tagdate (&xjoin_rev1, &xjoin_date1, optarg);
+		}
 		break;
 	    case 'u':
 #ifdef SERVER_SUPPORT
@@ -273,10 +286,10 @@ update (int argc, char **argv)
 		send_arg (options);
 	    if (date)
 		client_senddate (date);
-	    if (join_rev1)
-		option_with_arg ("-j", join_rev1);
-	    if (join_rev2)
-		option_with_arg ("-j", join_rev2);
+	    if (join_orig1)
+		option_with_arg ("-j", join_orig1);
+	    if (join_orig2)
+		option_with_arg ("-j", join_orig2);
 	    wrap_send ();
 
 	    if (failed_patches_count == 0)
@@ -373,9 +386,9 @@ update (int argc, char **argv)
     if (tag != NULL)
 	tag_check_valid (tag, argc, argv, local, aflag, "", false);
     if (join_rev1 != NULL)
-        tag_check_valid_join (join_rev1, argc, argv, local, aflag, "");
+	tag_check_valid (xjoin_rev1, argc, argv, local, aflag, "", false);
     if (join_rev2 != NULL)
-        tag_check_valid_join (join_rev2, argc, argv, local, aflag, "");
+	tag_check_valid (xjoin_rev2, argc, argv, local, aflag, "", false);
 
     /*
      * If we are updating the entire directory (for real) and building dirs
@@ -414,17 +427,21 @@ update (int argc, char **argv)
     which = W_LOCAL | W_REPOS;
 
     /* look in the attic too if a tag or date is specified */
-    if (tag != NULL || date != NULL || joining())
+    if (tag || date || join_orig1)
+    {
+	TRACE (TRACE_DATA, "update: searching attic");
 	which |= W_ATTIC;
+    }
 
     /* call the command line interface */
     err = do_update (argc, argv, options, tag, date, force_tag_match,
 		     local, update_build_dirs, aflag, update_prune_dirs,
-		     pipeout, which, join_rev1, join_rev2, NULL, 1, NULL);
+		     pipeout, which, xjoin_rev1, xjoin_date1, xjoin_rev2,
+		     xjoin_date2, NULL, 1, NULL);
 
-    /* free the space Make_Date allocated if necessary */
-    if (date != NULL)
-	free (date);
+    /* Free the space allocated for tags and dates, if necessary.  */
+    if (tag) free (tag);
+    if (date) free (date);
 
     return err;
 }
@@ -442,11 +459,22 @@ update (int argc, char **argv)
 int
 do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
            int xforce, int local, int xbuild, int xaflag, int xprune,
-           int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2,
+           int xpipeout, int which, char *xjoin_rev1, char *xjoin_date1,
+	   char *xjoin_rev2, char *xjoin_date2,
            char *preload_update_dir, int xdotemplate, char *repository)
 {
     int err = 0;
-    char *cp;
+
+    TRACE (TRACE_FUNCTION,
+"do_update (%s, %s, %s, %d, %d, %d, %d, %d, %d, %d, %s, %s, %s, %s, %s, %d, %s)",
+           xoptions ? xoptions : "(null)", xtag ? xtag : "(null)",
+	   xdate ? xdate : "(null)", xforce, local, xbuild, xaflag, xprune,
+	   xpipeout, which, xjoin_rev1 ? xjoin_rev1 : "(null)",
+	   xjoin_date1 ? xjoin_date1 : "(null)",
+	   xjoin_rev2 ? xjoin_rev2 : "(null)",
+	   xjoin_date2 ? xjoin_date2 : "(null)",
+	   preload_update_dir ? preload_update_dir : "(null)", xdotemplate,
+	   repository ? repository : "(null)");
 
     /* fill in the statics */
     options = xoptions;
@@ -461,21 +489,9 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
 
     /* setup the join support */
     join_rev1 = xjoin_rev1;
+    join_date1 = xjoin_date1;
     join_rev2 = xjoin_rev2;
-    if (join_rev1 && (cp = strchr (join_rev1, ':')) != NULL)
-    {
-	*cp++ = '\0';
-	date_rev1 = Make_Date (cp);
-    }
-    else
-	date_rev1 = NULL;
-    if (join_rev2 && (cp = strchr (join_rev2, ':')) != NULL)
-    {
-	*cp++ = '\0';
-	date_rev2 = Make_Date (cp);
-    }
-    else
-	date_rev2 = NULL;
+    join_date2 = xjoin_date2;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
     if (preserve_perms)
@@ -1538,7 +1554,8 @@ struct patch_file_data
  * itself.
  */
 static int
-patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct stat *file_info, unsigned char *checksum)
+patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
+	    struct stat *file_info, unsigned char *checksum)
 {
     char *backup;
     char *file1;
@@ -2112,8 +2129,8 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 
     jrev1 = join_rev1;
     jrev2 = join_rev2;
-    jdate1 = date_rev1;
-    jdate2 = date_rev2;
+    jdate1 = join_date1;
+    jdate2 = join_date2;
 
     /* Determine if we need to do anything at all.  */
     if (vers->srcfile == NULL ||
@@ -2964,5 +2981,5 @@ special_file_mismatch (struct file_info *finfo, char *rev1, char *rev2)
 int
 joining (void)
 {
-    return join_rev1 != NULL;
+    return join_rev1 || join_date1;
 }

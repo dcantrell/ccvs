@@ -1612,39 +1612,3 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
     dbm_close (db);
     free (valtags_filename);
 }
-
-
-
-/*
- * Check whether a join tag is valid.  This is just like
- * tag_check_valid, but we must stop before the colon if there is one.
- */
-void
-tag_check_valid_join (char *join_tag, int argc, char **argv, int local,
-                      int aflag, char *repository)
-{
-    char *c, *s;
-
-    c = xstrdup (join_tag);
-    s = strchr (c, ':');
-    if (s != NULL)
-    {
-        if (isdigit ((unsigned char) join_tag[0]))
-	    error (1, 0,
-		   "Numeric join tag %s may not contain a date specifier",
-		   join_tag);
-
-        *s = '\0';
-	/* hmmm...  I think it makes sense to allow -j:<date>, but
-	 * for now this fixes a bug where CVS just spins and spins (I
-	 * think in the RCS code) looking for a zero length tag.
-	 */
-	if (!*c)
-	    error (1, 0,
-"argument to join may not contain a date specifier without a tag");
-    }
-
-    tag_check_valid (c, argc, argv, local, aflag, repository, false);
-
-    free (c);
-}
