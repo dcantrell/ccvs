@@ -162,7 +162,19 @@ AC_CHECK_FUNCS(krb_get_err_text)
 # only looks in /etc/hosts), so we only look for -lsocket if we need
 # it.
 AC_CHECK_FUNC(connect, :, 
-[AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
+[case $LIBS in
+*-lnsl*) ;;
+*) AC_CHECK_LIB(nsl_s, main) ;;
+esac
+case $LIBS in
+*-lnsl*) ;;
+*) AC_CHECK_LIB(nsl, main) ;;
+esac
+case $LIBS in
+*-lsocket*) ;;
+*) AC_CHECK_LIB(socket, connect) ;;
+esac
+AC_CHECK_FUNCS(connect)])
 
 # On Unix systems, we want the full client & server arrangement.
 AC_DEFINE(SERVER_SUPPORT)
