@@ -1,3 +1,7 @@
+2004-10-29 Derek Price <derek@ximbiot.com>
+
+	* server.c (isSameHost): Use strcasecmp to compare host names.
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c: Need to #include <netdb.h> for either PROXY_SUPPORT or
@@ -14,7 +18,7 @@
 	(xreadlink): Deal with symlinks longer than 127 bytes.
 	(Problem reported as issue 190 by Gottfried Ganssauge
 	<gotti@cvshome.org>.)
-	
+
 2004-10-29 Derek Price <derek@ximbiot.com>
 
 	* server.c (isSameHost): New fuction.
