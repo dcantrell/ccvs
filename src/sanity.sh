@@ -9156,10 +9156,9 @@ done"
 	  # matches the second argument to -j: CVS doesn't bother attempting
 	  # the merge since it already knows that the target contains the
 	  # change.
-	  dotest join6-3.2 "${testcvs} diff temp\.txt" ""
-	  dotest join6-3.3 "${testcvs} update -j1.1 -j1.2 temp\.txt" \
+	  dotest join6-3.3 "${testcvs} update -j1.1 -j1.2 temp.txt" \
 "temp\.txt already contains the differences between 1\.1 and 1\.2"
-	  dotest join6-3.4 "${testcvs} diff temp\.txt" ""
+	  dotest join6-3.4 "${testcvs} diff temp.txt" ""
 
 	  # The case where the merge target is modified but already contains
 	  # the change.
