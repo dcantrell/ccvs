@@ -12,9 +12,6 @@
 # Especially if they regularly beat on the same directory. Anyway if you 
 # think anyone would be interested here it is. 
 #
-#      $Id$
-#
-#
 #	File:		mfpipe
 #
 #	Author:		John Clyne

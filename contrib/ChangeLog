@@ -1,3 +1,11 @@
+Wed Feb 12 10:27:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cln_hist.pl, commit_prep.pl, cvs2vendor.sh, cvs_acls.pl,
+	cvscheck.man, cvscheck.sh, cvshelp.man, descend.man, descend.sh,
+	log_accum.pl, mfpipe.pl, rcs-to-cvs.sh, rcs2log.sh, rcs2sccs.sh,
+	sccs2rcs.csh: Remove $Id; we decided to get rid of these some
+	time ago.
+
 Wed Feb 12 00:24:33 1997  Greg A. Woods  <woods@most.weird.com>
 
 	* cvs2vendor.sh: new script.

@@ -28,7 +28,6 @@
 # 
 # The copyright is in the Public Domain.
 #
-#ident	"@(#)cvs/contrib:$Name$:$Id$"
 
 if [ $# -ne 2 ]; then
 	echo USAGE: $0 srcdir dstdir

@@ -12,8 +12,6 @@
 
 # Author: Paul Eggert <eggert@twinsun.com>
 
-# $Id$
-
 # Copyright 1992, 1993, 1994, 1995 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify

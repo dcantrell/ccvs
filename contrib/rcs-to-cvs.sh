@@ -1,6 +1,5 @@
 #! /bin/sh
 #
-# $Id$
 # Based on the CVS 1.0 checkin csh script.
 # Contributed by Per Cederqvist <ceder@signum.se>.
 # Rewritten in sh by David MacKenzie <djm@cygnus.com>.
