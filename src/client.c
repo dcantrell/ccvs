@@ -711,6 +711,10 @@ call_in_directory (pathname, func, data)
     if (last_dir_name == NULL
 	|| strcmp (last_dir_name, dir_name) != 0)
     {
+	if (strcmp (command_name, "export") != 0)
+	    if (last_entries)
+		Entries_Close (last_entries);
+
 	if (last_dir_name)
 	    free (last_dir_name);
 	last_dir_name = dir_name;
@@ -872,11 +876,7 @@ call_in_directory (pathname, func, data)
 	}
 
 	if (strcmp (command_name, "export") != 0)
-	{
-	    if (last_entries)
-		Entries_Close (last_entries);
 	    last_entries = Entries_Open (0);
-	}
     }
     else
 	free (dir_name);
