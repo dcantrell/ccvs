@@ -8,7 +8,7 @@ project: cvs.exe
 # .SUFFIXES .c .obj .exe
 
 # path slash
-PS = \\
+PS = /
 
 # I don't want to fool around with autoconf right now.  First get it
 # working, then make it fancy.
