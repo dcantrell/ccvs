@@ -151,3 +151,8 @@ lib/gettimeofday.c
 m4/gettimeofday.m4
 
 m4/onceonly_2_57.m4
+lib/timespec.h
+m4/st_mtim.m4
+m4/timespec.m4
+
+m4/onceonly_2_57.m4
