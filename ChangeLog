@@ -1,5 +1,8 @@
 Fri Jul 28 02:27:54 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
+	* Makefile.in (DISTFILES): Add cvsnt.mak and cvsnt.vcp.
+	(SUBDIRS): Add windows-NT.
+
 	* config.h.in: Regenerated from configure.in by autoheader.
 
 Wed Jul 19 18:00:00 1995  Jim Blandy  <jimb@cyclic.com>

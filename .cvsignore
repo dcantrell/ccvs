@@ -5,4 +5,4 @@ config.cache
 config.h
 stamp-h
 cvsinit
-ccvs-*.tar.gz
+cvs-*.tar.gz
