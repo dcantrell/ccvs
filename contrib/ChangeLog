@@ -1,3 +1,8 @@
+2003-06-20  Derek Price  <derek@ximbiot.com>
+
+	* Don't call CVS with the -l option since CVS no longer accepts it.
+	(Suggestion from Matt Doar <matt@trpz.com>.)
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Automake version 1.7.5.
