@@ -1,5 +1,8 @@
 Sat Nov 18 13:39:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * client.c, filesubr.c: Use new macro `existence_error', instead
+        of comparing errno to ENOENT directly.
+
         * popen.c (popenRW): fixed misleading comment.
 
         * client.c:
