@@ -1,8 +1,8 @@
 This is an experimental attempt to interface to the SCC API.
 
-Note that although Developer Studio does recognize this code (it
-should show a grayed out "Source Control" item on the Tools menu if
-you install it right), it doesn't (yet) do anything useful.
+Note that this code doesn't (yet) do anything useful; this file
+is currently for people who want to help hack on our SCC interface,
+not people who want to use it.
 
 To install it, build scc.dll and then add the following
 to the registry using the registry editor:
@@ -27,6 +27,30 @@ to use either or both, so you should set both of them.
 Note also that we are using "CVS" as the supplier of CVS.
 CVS is not owned by any one company, so CVS seems like the
 most appropriate string to put there.
+
+If you do this right, then "Source Control" should appear
+under the "Tools" menu.
+
+NOW WHAT?
+
+Well, I haven't yet figured out _all_ the different ways
+that projects work at the SCC level.  But here is what I
+have done which has worked.  SPECIAL NOTE: many paths are
+hardcoded in scc.c, so you will need to fix that or put
+things the same place I did.  As you try the following you
+will want to follow along in d:\debug.scc.
+
+* Create a dummy project in d:\sccwork.
+* On the Tools/Source Control menu, select "Share from CVS..."
+* This will cause SccAddFromScc to be called, which will
+  claim there are two files, foo.c and bar.c, which should
+  appear as source controlled (grey) files in the file
+  listing.
+* Now select one of the files and pick "Get Latest Version..."
+  from Tools/Source Control.  You'll get a cheezy dialog (we
+  need to see why it is cheezy--by that I mean the size and
+  placement are funny), and if you say OK, then SccGet will
+  get called (which doesn't currently do anything).
 
 TOOLS IMPLEMENTING THE SCC
 

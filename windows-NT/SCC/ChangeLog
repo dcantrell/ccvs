@@ -1,3 +1,13 @@
+14 Mar 1997  Jim Kingdon
+
+	* scc.c: Go back to using debuglog not outproc for
+	most debugging messages.  Developer Studio tends to
+	erase the outproc messages on an error.
+	More playing around with projects.
+	* README.txt: Describe results of this.  I am making
+	grey (source controlled) file icons appear, which is
+	exciting.
+
 4 Mar 1997  Jim Kingdon
 
 	Still some distance from being able to open a
