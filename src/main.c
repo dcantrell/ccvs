@@ -945,8 +945,11 @@ main (argc, argv)
 #endif
 	    )
 	{
-	    if (parse_config (0) < 0)
-		error (1, 0, "cannot parse CVSROOT/config");
+	    /* If there was an error parsing the config file, parse_config
+	       already printed an error.  We keep going.  Why?  Because
+	       if we didn't, then there would be no way to check in a new
+	       CVSROOT/config file to fix the broken one!  */
+	    parse_config ();
 	}
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 

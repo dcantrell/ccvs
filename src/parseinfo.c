@@ -195,12 +195,10 @@ Parse_Info (infofile, repository, callproc, all)
    KEYWORD=VALUE.  There is currently no way to have a multi-line
    VALUE (would be nice if there was, probably).
 
-   Returns 0 for success, negative value for failure.  Unless NOERR is
-   set, will call error() with errors in addition to the return value.
-   NOERR is a total crock to cope with the fact that we can't call
-   error() when called from serve_root.  */
+   Returns 0 for success, negative value for failure.  Call
+   error(0, ...) on errors in addition to the return value.  */
 int
-parse_config (noerr)
+parse_config ()
 {
     char *infopath;
     FILE *fp_info;
@@ -209,10 +207,16 @@ parse_config (noerr)
     size_t len;
     char *p;
 
-    infopath = xmalloc (strlen (CVSroot_directory)
+    infopath = malloc (strlen (CVSroot_directory)
 			+ sizeof (CVSROOTADM_CONFIG)
 			+ sizeof (CVSROOTADM)
 			+ 10);
+    if (infopath == NULL)
+    {
+	error (0, 0, "out of memory; cannot allocate infopath");
+	goto error_return;
+    }
+
     strcpy (infopath, CVSroot_directory);
     strcat (infopath, "/");
     strcat (infopath, CVSROOTADM);
@@ -225,10 +229,9 @@ parse_config (noerr)
 	/* If no file, don't do anything special.  */
 	if (!existence_error (errno))
 	{
-	    if (!noerr)
-		/* Just a warning message; doesn't affect return
-		   value, currently at least.  */
-		error (0, errno, "cannot open %s", infopath);
+	    /* Just a warning message; doesn't affect return
+	       value, currently at least.  */
+	    error (0, errno, "cannot open %s", infopath);
 	}
 	free (infopath);
 	return 0;
@@ -271,10 +274,9 @@ parse_config (noerr)
 	p = strchr (line, '=');
 	if (p == NULL)
 	{
-	    if (!noerr)
-		/* Probably should be printing line number.  */
-		error (0, 0, "syntax error in %s: line '%s' is missing '='",
-		       infopath, line);
+	    /* Probably should be printing line number.  */
+	    error (0, 0, "syntax error in %s: line '%s' is missing '='",
+		   infopath, line);
 	    goto error_return;
 	}
 
@@ -291,8 +293,10 @@ parse_config (noerr)
 	    if (Rcsbin == NULL)
 	    {
 		free_Rcsbin = 0;
-		if (!noerr)
-		    error (1, ENOMEM, "Cannot allocate Rcsbin");
+		/* Could be a fatal error, I guess, except we don't
+		   currently have the machinery to do fatal error from
+		   here.  */
+		error (0, ENOMEM, "Cannot allocate Rcsbin");
 		goto error_return;
 	    }
 	    free_Rcsbin = 1;
@@ -308,22 +312,19 @@ parse_config (noerr)
 	}
 	else
 	{
-	    if (!noerr)
-		error (0, 0, "%s: unrecognized keyword '%s'",
-		       infopath, line);
+	    error (0, 0, "%s: unrecognized keyword '%s'",
+		   infopath, line);
 	    goto error_return;
 	}
     }
     if (ferror (fp_info))
     {
-	if (!noerr)
-	    error (0, errno, "cannot read %s", infopath);
+	error (0, errno, "cannot read %s", infopath);
 	goto error_return;
     }
     if (fclose (fp_info) < 0)
     {
-	if (!noerr)
-	    error (0, errno, "cannot close %s", infopath);
+	error (0, errno, "cannot close %s", infopath);
 	goto error_return;
     }
     free (infopath);
@@ -332,7 +333,8 @@ parse_config (noerr)
     return 0;
 
  error_return:
-    free (infopath);
+    if (infopath != NULL)
+	free (infopath);
     if (line != NULL)
 	free (line);
     return -1;
