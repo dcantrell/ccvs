@@ -134,7 +134,6 @@ static void handle_e PROTO((char *, int));
 static void handle_f PROTO((char *, int));
 static void handle_notified PROTO((char *, int));
 
-static void buf_memory_error PROTO((struct buffer *));
 static size_t try_read_from_server PROTO ((char *, size_t));
 #endif /* CLIENT_SUPPORT */
 
@@ -304,16 +303,6 @@ static FILE *from_server_fp;
 /* Process ID of rsh subprocess.  */
 static int rsh_pid = -1;
 
-
-/* This routine is called when one of the buffer routines runs out of
-   memory.  */
-
-static void
-buf_memory_error (buf)
-     struct buffer *buf;
-{
-    error (1, 0, "out of memory");
-}
 
 /* We want to be able to log data sent between us and the server.  We
    do it using log buffers.  Each log buffer has another buffer which
@@ -4012,9 +4001,9 @@ the :server: access method is not supported by this port of CVS");
     if (use_socket_style)
     {
 	to_server = socket_buffer_initialize (server_sock, 0,
-					      buf_memory_error);
+					      (BUFMEMERRPROC) NULL);
 	from_server = socket_buffer_initialize (server_sock, 1,
-						buf_memory_error);
+						(BUFMEMERRPROC) NULL);
     }
     else
 #endif /* NO_SOCKET_TO_FD */
@@ -4038,13 +4027,13 @@ the :server: access method is not supported by this port of CVS");
         if (to_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for write", tofd);
 	to_server = stdio_buffer_initialize (to_server_fp, 0,
-					     buf_memory_error);
+					     (BUFMEMERRPROC) NULL);
 
         from_server_fp = fdopen (fromfd, FOPEN_BINARY_READ);
         if (from_server_fp == NULL)
 	    error (1, errno, "cannot fdopen %d for read", fromfd);
 	from_server = stdio_buffer_initialize (from_server_fp, 1,
-					       buf_memory_error);
+					       (BUFMEMERRPROC) NULL);
     }
 
     /* Set up logfiles, if any. */
@@ -4071,7 +4060,7 @@ the :server: access method is not supported by this port of CVS");
 	    error (0, errno, "opening to-server logfile %s", buf);
 	else
 	    to_server = log_buffer_initialize (to_server, fp, 0,
-					       buf_memory_error);
+					       (BUFMEMERRPROC) NULL);
 
 	strcpy (p, ".out");
 	fp = open_file (buf, "wb");
@@ -4079,7 +4068,7 @@ the :server: access method is not supported by this port of CVS");
 	    error (0, errno, "opening from-server logfile %s", buf);
 	else
 	    from_server = log_buffer_initialize (from_server, fp, 1,
-						 buf_memory_error);
+						 (BUFMEMERRPROC) NULL);
 
 	free (buf);
     }
@@ -4240,10 +4229,10 @@ the :server: access method is not supported by this port of CVS");
 	    send_to_server ("Kerberos-encrypt\012", 0);
 	    to_server = krb_encrypt_buffer_initialize (to_server, 0, sched,
 						       kblock,
-						       buf_memory_error);
+						       (BUFMEMERRPROC) NULL);
 	    from_server = krb_encrypt_buffer_initialize (from_server, 1,
 							 sched, kblock,
-							 buf_memory_error);
+							 (BUFMEMERRPROC) NULL);
 	}
 	else
 #endif /* HAVE_KERBEROS */
@@ -4255,10 +4244,12 @@ the :server: access method is not supported by this port of CVS");
 	    send_to_server ("Gssapi-encrypt\012", 0);
 	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
 							   gcontext,
-							   buf_memory_error);
+							   ((BUFMEMERRPROC)
+							    NULL));
 	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
 							     gcontext,
-							     buf_memory_error);
+							     ((BUFMEMERRPROC)
+							      NULL));
 	    cvs_gssapi_encrypt = 1;
 	}
 	else
@@ -4283,10 +4274,10 @@ the :server: access method is not supported by this port of CVS");
                compressed.  */
 
 	    to_server = compress_buffer_initialize (to_server, 0, gzip_level,
-						    buf_memory_error);
+						    (BUFMEMERRPROC) NULL);
 	    from_server = compress_buffer_initialize (from_server, 1,
 						      gzip_level,
-						      buf_memory_error);
+						      (BUFMEMERRPROC) NULL);
 	}
 #ifndef NO_CLIENT_GZIP_PROCESS
 	else if (supported_request ("gzip-file-contents"))
@@ -4327,10 +4318,12 @@ the :server: access method is not supported by this port of CVS");
 	    send_to_server ("Gssapi-authenticate\012", 0);
 	    to_server = cvs_gssapi_wrap_buffer_initialize (to_server, 0,
 							   gcontext,
-							   buf_memory_error);
+							   ((BUFMEMERRPROC)
+							    NULL));
 	    from_server = cvs_gssapi_wrap_buffer_initialize (from_server, 1,
 							     gcontext,
-							     buf_memory_error);
+							     ((BUFMEMERRPROC)
+							      NULL));
 	}
 	else
 	    error (1, 0, "Stream authentication is only supported when using GSSAPI");

@@ -1,3 +1,34 @@
+Sun Feb  8 15:49:39 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	Don't have the server check out a revision into a file and then
+	immediately read the file; just read into a buffer instead.
+	* update.c: Include buffer.h.
+	(update_fileproc): Let checkout_file call server_updated.
+	(checkout_file): Add merging and update_server parameters.  Change
+	all callers.  If server_active, don't mess with backup files.  If
+	server_active, copy the revision into a buffer rather than a file
+	when possible.  If update_server, call server_updated.  Fix
+	handling of error status.
+	(checkout_to_buffer): New static function used by checkout_file.
+	(merge_file): Let checkout_file call server_updated.
+	(join_file): Likewise.
+	* server.c (server_updated): Change file_info parameter to mode
+	parameter.  Add filebuf parameter.  Change all callers.  If
+	filebuf is not NULL, don't read the file.
+	* server.h (server_updated): Update declaration.
+	* buffer.c (buf_free): New function.
+	(buf_append_buffer): New function.
+	(buf_length): New function.
+	* buffer.h (buf_free, buf_append_buffer, buf_length): Declare.
+
+	* buffer.c: (buf_initialize): If the memory parameter is NULL, use
+	buf_default_memory_error.
+	(buf_default_memory_error): New static function.
+	* buffer.h (BUFMEMERRPROC): Define typedef.
+	* client.c (buf_memory_error): Remove.
+	(start_server): Pass NULL rather than buf_memory_error as buffer
+	memory error function.
+
 Sat Feb  7 16:27:30 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_parsercsfile_i): Read the expand keyword from the RCS
