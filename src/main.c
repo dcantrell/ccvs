@@ -396,6 +396,8 @@ main (int argc, char **argv)
     int c, err = 0;
     int tmpdir_update_env, cvs_update_env;
     int free_CVSroot = 0;
+    int free_Editor = 0;
+    int free_Tmpdir = 0;
 
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
@@ -570,11 +572,15 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
 		   either new or old CVS.  */
 		break;
 	    case 'T':
+		if (free_Tmpdir) free (Tmpdir);
 		Tmpdir = xstrdup (optarg);
+		free_Tmpdir = 1;
 		tmpdir_update_env = 1;	/* need to update environment */
 		break;
 	    case 'e':
+		if (free_Editor) free (Editor);
 		Editor = xstrdup (optarg);
+		free_Editor = 1;
 		break;
 	    case 'd':
 		if (CVSroot_cmdline != NULL)
