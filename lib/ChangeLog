@@ -1,3 +1,9 @@
+2004-04-29  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Restore unforked version from GNULIB.
+	* unlocked-io.h: Update to most recent version from GNULIB.
+	* getdate.y: Regenerated.
+
 2004-04-28  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Add getdate executable.
