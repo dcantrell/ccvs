@@ -11011,6 +11011,10 @@ try hard to make the files in your working directory
 read-only.  When this is not set, the default behavior
 is to permit modification of your working files.
 
+@item $CVSUMASK
+Controls permissions of files in the repository.  See
+@ref{File permissions}.
+
 @cindex CVSROOT
 @item $CVSROOT
 Should contain the full pathname to the root of the @sc{cvs}
