@@ -1,5 +1,9 @@
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
+	* srclist.txt: Remove getdate module.
+
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
 	* gnulib-update (MODULES): Add allocsa, setenv, getdate.
 
 2004-10-30  Mark D. Baushke  <mdb@juniper.net>
