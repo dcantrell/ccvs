@@ -1,3 +1,21 @@
+2005-03-03  Derek Price  <derek@ximbiot.com>
+
+	Use new pagealign_alloc() and pagealign_free() functions in
+	lieu of maintaining pointers for reuse.  On most systems this should be
+	faster.
+	* buffer.c: Include "pagealign_alloc.h".
+	(free_buffer_data): Remove this global.
+	(allocate_buffer_datas): Remove this function.
+	(buf_free, buf_send_output): Call buf_free_data().
+	(get_buffer_data): Use pagealign_alloc().
+	(buf_free_datas): New function.
+	(buf_send_output, buf_free_data, buf_read_file, buf_read_file_to_eof,
+	buf_read_short_line, buf_read_data, buf_copy_counted): Call
+	buf_free_datas().
+	* buffer.h: Include "getpagesize.h".
+	(BUFFER_DATA_SIZE): Default to getpagesize ();
+	* rcs.c: Lean on m4/mmap-anon.m4 to simplify mmap setup.
+
 2005-03-02  Jim Meyering  <jim@meyering.net>
 
 	Detect and report write failure for e.g., cvs up -p FILE > /dev/full

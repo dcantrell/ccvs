@@ -20,13 +20,8 @@
 
 /* These need to be source after cvs.h or HAVE_MMAP won't be set... */
 #ifdef HAVE_MMAP
+# include "getpagesize.h"
 # include <sys/mman.h>
-# ifndef HAVE_GETPAGESIZE
-#  include "getpagesize.h"
-# endif
-# ifndef MAP_FAILED
-#  define MAP_FAILED NULL
-# endif
 #endif
 
 /* The RCS -k options, and a set of enums that must match the array.
