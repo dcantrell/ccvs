@@ -1,3 +1,7 @@
+2001-08-31  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Backed out accidental commit from yesterday.
+
 2001-08-30  Derek Price  <dprice@collab.net>
 
 	* server.c (pserver_authenticate_connection): Don't print from the
