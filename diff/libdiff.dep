@@ -1,7 +1,7 @@
 # Microsoft Developer Studio Generated Dependency File, included by libdiff.mak
 
 .\analyze.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\cmpbuf.h"\
@@ -18,7 +18,7 @@
 	
 
 .\context.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -29,7 +29,7 @@
 .\diff.c : \
 	"..\lib\fnmatch.h"\
 	"..\lib\getopt.h"\
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -46,7 +46,7 @@
 	
 
 .\dir.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -55,7 +55,7 @@
 	
 
 .\ed.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -63,14 +63,8 @@
 	".\system.h"\
 	
 
-!IF  "$(CFG)" == "libdiff - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-!ENDIF 
-
 .\ifdef.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -79,7 +73,7 @@
 	
 
 .\io.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -88,7 +82,7 @@
 	
 
 .\normal.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -97,7 +91,7 @@
 	
 
 .\side.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -106,7 +100,7 @@
 	
 
 .\util.c : \
-	"..\lib\regex.h"\
+	"..\LIB\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\

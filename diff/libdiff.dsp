@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "WinRel"
 # PROP Target_Dir ".\libdiff"
 # ADD BASE CPP /nologo /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /I ".\WinDebug" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -113,30 +113,7 @@ SOURCE=.\ed.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\lib\fnmatch.h.in
-
-!IF  "$(CFG)" == "libdiff - Win32 Release"
-
-# Begin Custom Build
-InputPath=..\lib\fnmatch.h.in
-
-".\WinDebug\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy ..\lib\fnmatch.h.in .\WinDebug\fnmatch.h
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-# Begin Custom Build
-InputPath=..\lib\fnmatch.h.in
-
-".\WinDebug\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy ..\lib\fnmatch.h.in .\WinDebug\fnmatch.h
-
-# End Custom Build
-
-!ENDIF 
-
+SOURCE=..\lib\fnmatch.h
 # End Source File
 # Begin Source File
 

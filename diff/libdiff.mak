@@ -38,11 +38,11 @@ OutDir=.\WinRel
 
 !IF "$(RECURSE)" == "0" 
 
-ALL : ".\WinDebug\fnmatch.h" "$(OUTDIR)\libdiff.lib"
+ALL : "$(OUTDIR)\libdiff.lib"
 
 !ELSE 
 
-ALL : "LIB - Win32 Release" ".\WinDebug\fnmatch.h" "$(OUTDIR)\libdiff.lib"
+ALL : "LIB - Win32 Release" "$(OUTDIR)\libdiff.lib"
 
 !ENDIF 
 
@@ -66,12 +66,11 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(OUTDIR)\libdiff.lib"
-	-@erase ".\WinDebug\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /I ".\WinDebug" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "..\lib" /D "_WINDOWS" /D "HAVE_TIME_H" /D "CLOSEDIR_VOID" /D "NDEBUG" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /Fp"$(INTDIR)\libdiff.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libdiff.bsc" 
 BSC32_SBRS= \
@@ -109,11 +108,11 @@ OutDir=.\WinDebug
 
 !IF "$(RECURSE)" == "0" 
 
-ALL : ".\WinDebug\fnmatch.h" "$(OUTDIR)\libdiff.lib"
+ALL : "$(OUTDIR)\libdiff.lib"
 
 !ELSE 
 
-ALL : "LIB - Win32 Debug" ".\WinDebug\fnmatch.h" "$(OUTDIR)\libdiff.lib"
+ALL : "LIB - Win32 Debug" "$(OUTDIR)\libdiff.lib"
 
 !ENDIF 
 
@@ -137,7 +136,6 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\version.obj"
 	-@erase "$(OUTDIR)\libdiff.lib"
-	-@erase ".\WinDebug\fnmatch.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -248,32 +246,6 @@ SOURCE=.\ed.c
 "$(INTDIR)\ed.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=..\lib\fnmatch.h.in
-
-!IF  "$(CFG)" == "libdiff - Win32 Release"
-
-InputPath=..\lib\fnmatch.h.in
-
-".\WinDebug\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy ..\lib\fnmatch.h.in .\WinDebug\fnmatch.h
-<< 
-	
-
-!ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
-
-InputPath=..\lib\fnmatch.h.in
-
-"$(INTDIR)\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	<<tempfile.bat 
-	@echo off 
-	copy ..\lib\fnmatch.h.in .\WinDebug\fnmatch.h
-<< 
-	
-
-!ENDIF 
-
 SOURCE=.\ifdef.c
 
 "$(INTDIR)\ifdef.obj" : $(SOURCE) "$(INTDIR)"
@@ -307,24 +279,24 @@ SOURCE=.\version.c
 !IF  "$(CFG)" == "libdiff - Win32 Release"
 
 "LIB - Win32 Release" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "\Documents and Settings\Derek R. Price\My Documents\ccvs-clean\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" 
    cd "..\diff"
 
 "LIB - Win32 ReleaseCLEAN" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "\Documents and Settings\Derek R. Price\My Documents\ccvs-clean\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
 
 "LIB - Win32 Debug" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "\Documents and Settings\Derek R. Price\My Documents\ccvs-clean\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
    cd "..\diff"
 
 "LIB - Win32 DebugCLEAN" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "\Documents and Settings\Derek R. Price\My Documents\ccvs-clean\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\diff"
 
