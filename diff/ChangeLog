@@ -1,3 +1,7 @@
+2001-03-24  Noel Cragg  <noel@shave.red-bean.com>
+
+	* diff.c: fix typo in usage string.
+
 2001-03-20  Derek Price  <derek.price@openavenue.com>
 	    for Karl Tomlinson  <k.tomlinson@auckland.ac.nz>
 
