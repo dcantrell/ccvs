@@ -1,3 +1,11 @@
+1998-06-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Using keywords): Rewrite to be less specific to
+	source code in C.  The old text was worse than that; it was
+	specific to certain versions of GCC (not even current GCC's, I
+	don't think) (reported most recently by Mitchell Perilstein;
+	if memory serves by others before that).
+
 1998-06-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Concurrency): Also mention #cvs.lock.  Don't

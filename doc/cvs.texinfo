@@ -6217,36 +6217,21 @@ relevant text string, such as @code{$@asis{Id}$}, inside the
 file, and commit the file.  @sc{cvs} will automatically
 expand the string as part of the commit operation.
 
-@need 800
-It is common to embed @code{$@asis{}Id$} string in the
-C source code.  This example shows the first few lines
-of a typical file, after keyword substitution has been
-performed:
+It is common to embed the @code{$@asis{}Id$} string in
+the source files so that it gets passed through to
+generated files.  For example, if you are managing
+computer program source code, you might include a
+variable which is initialized to contain that string.
+Or some C compilers may provide a @code{#pragma ident}
+directive.  Or a document management system might
+provide a way to pass a string through to generated
+files.
 
-@c Hmm.  Someone says that
-@c "static const char rcsid[] = "foo"
-@c is a simpler way to shut up GCC.  But I really
-@c suspect that we should be avoiding specifics in general
-@c (what about Java, Ada, and who knows how many other
-@c languages?  What about #pragma ident and #ident and
-@c other non-GCC C compilers?  What about the VMS help
-@c system and other systems which take text and convert
-@c them to a generated file?
-@example
-static char *rcsid="$@asis{}Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
-/* @r{The following lines will prevent @code{gcc} version 2.@var{x}}
-   @r{from issuing an "unused variable" warning}. */
-#if __GNUC__ == 2
-#define USE(var) static void * use_##var = (&use_##var, (void *) &var)
-USE (rcsid);
-#endif
-@end example
-
-Even though a clever optimizing compiler could remove
-the unused variable @code{rcsid}, most compilers tend
-to include the string in the binary.  Some compilers
-have a @code{#pragma} directive to include literal text
-in the binary.
+@c Would be nice to give an example, but doing this in
+@c portable C is not possible and the problem with
+@c picking any one language (VMS HELP files, Ada,
+@c troff, whatever) is that people use CVS for all
+@c kinds of files.
 
 @cindex Ident (shell command)
 The @code{ident} command (which is part of the @sc{rcs}
