@@ -1,5 +1,9 @@
 Wed Nov 12 21:57:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (File permissions, Connecting via rsh, Environment
+	variables): When putting an environment variable in the index, say
+	it is an environment variable.  Don't index the same name twice.
+
 	* cvs.texinfo: Many edits to reflect the fact that CVS no longer
 	invokes external RCS programs.
 

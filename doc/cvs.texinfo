@@ -1234,7 +1234,7 @@ Each @sc{rcs} file will be owned by the user who last
 checked it in.  This has little significance; what
 really matters is who owns the directories.
 
-@cindex CVSUMASK
+@cindex CVSUMASK, environment variable
 @cindex umask, for repository files
 @sc{cvs} tries to set up reasonable file permissions
 for new directories that are added inside the tree, but
@@ -2245,7 +2245,7 @@ Then test that @code{rsh} is working with
 rsh -l bach chainsaw.yard.com 'echo $PATH'
 @end example
 
-@cindex CVS_SERVER
+@cindex CVS_SERVER, environment variable
 Next you have to make sure that @code{rsh} will be able
 to find the server.  Make sure that the path which
 @code{rsh} printed in the above example includes the
@@ -11877,17 +11877,17 @@ This is a complete list of all environment variables
 that affect @sc{cvs}.
 
 @table @code
-@cindex CVSIGNORE
+@cindex CVSIGNORE, environment variable
 @item $CVSIGNORE
 A whitespace-separated list of file name patterns that
 @sc{cvs} should ignore. @xref{cvsignore}.
 
-@cindex CVSWRAPPERS
+@cindex CVSWRAPPERS, environment variable
 @item $CVSWRAPPERS
 A whitespace-separated list of file name patterns that
 @sc{cvs} should treat as wrappers. @xref{Wrappers}.
 
-@cindex CVSREAD
+@cindex CVSREAD, environment variable
 @cindex read-only files, and CVSREAD
 @item $CVSREAD
 If this is set, @code{checkout} and @code{update} will
@@ -11899,7 +11899,6 @@ is to permit modification of your working files.
 Controls permissions of files in the repository.  See
 @ref{File permissions}.
 
-@cindex CVSROOT
 @item $CVSROOT
 Should contain the full pathname to the root of the @sc{cvs}
 source repository (where the @sc{rcs} files are
@@ -11913,25 +11912,23 @@ the file @file{CVS/Root}), so normally you only need to
 worry about this when initially checking out a working 
 directory.
 
-@cindex EDITOR
-@cindex CVSEDITOR
 @item $EDITOR
 @itemx $CVSEDITOR
 Specifies the program to use for recording log messages
 during commit.  @code{$CVSEDITOR} overrides
 @code{$EDITOR}.  See @ref{Committing your changes}.
 
-@cindex PATH
+@cindex PATH, environment variable
 @item $PATH
 If @code{$RCSBIN} is not set, and no path is compiled
 into @sc{cvs}, it will use @code{$PATH} to try to find all
 programs it uses.
 
-@cindex HOME
+@cindex HOME, environment variable
 @item $HOME
-@cindex HOMEPATH
+@cindex HOMEPATH, environment variable
 @item $HOMEPATH
-@cindex HOMEDRIVE
+@cindex HOMEDRIVE, environment variable
 @item $HOMEDRIVE
 Used to locate the directory where the @file{.cvsrc}
 file, and other such files, are searched.  On Unix, CVS
@@ -11942,7 +11939,7 @@ probably need to set HOMEDRIVE and HOMEPATH yourself.
 @c We are being vague about whether HOME works on
 @c Windows; see long comment in windows-NT/filesubr.c.
 
-@cindex CVS_RSH
+@cindex CVS_RSH, environment variable
 @item $CVS_RSH
 Specifies the external program which CVS connects with,
 when @code{:ext:} access method is specified.
@@ -11965,13 +11962,13 @@ Used in client-server mode when accessing the server
 via Kerberos.
 @pxref{Kerberos authenticated}
 
-@cindex CVS_RCMD_PORT
+@cindex CVS_RCMD_PORT, environment variable
 @item $CVS_RCMD_PORT
 Used in client-server mode.  If set, specifies the port
 number to be used when accessing the @sc{rcmd} demon on
 the server side. (Currently not used for Unix clients).
 
-@cindex CVS_CLIENT_LOG
+@cindex CVS_CLIENT_LOG, environment variable
 @item $CVS_CLIENT_LOG
 Used for debugging only in client-server
 mode.  If set, everything send to the server is logged
@@ -11979,27 +11976,27 @@ into @file{@code{$CVS_CLIENT_LOG}.in} and everything
 send from the server is logged into
 @file{@code{$CVS_CLIENT_LOG}.out}.
 
-@cindex CVS_SERVER_SLEEP
+@cindex CVS_SERVER_SLEEP, environment variable
 @item $CVS_SERVER_SLEEP
 Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
 server child process the specified amount of
 seconds so that you can attach to it with a debugger.
 
-@cindex CVS_IGNORE_REMOTE_ROOT
+@cindex CVS_IGNORE_REMOTE_ROOT, environment variable
 @item $CVS_IGNORE_REMOTE_ROOT
 (What is the purpose of this variable?)
 
-@cindex COMSPEC
+@cindex COMSPEC, environment variable
 @item $COMSPEC
 Used under OS/2 only.  It specifies the name of the
 command interpreter and defaults to @sc{cmd.exe}.
 
-@cindex TMPDIR
+@cindex TMPDIR, environment variable
 @item $TMPDIR
-@cindex TMP
+@cindex TMP, environment variable
 @itemx $TMP
-@cindex TEMP
+@cindex TEMP, environment variable
 @itemx $TEMP
 @cindex temporary files, location of
 @c This is quite nuts.  We don't talk about tempnam
