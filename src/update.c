@@ -1509,7 +1509,7 @@ struct patch_file_data
     /* Whether to compute the MD5 checksum.  */
     int compute_checksum;
     /* Data structure for computing the MD5 checksum.  */
-    struct MD5Context context;
+    struct cvs_MD5Context context;
     /* Set if the file has a final newline.  */
     int final_nl;
 };
@@ -1641,7 +1641,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	data.fp = e;
 	data.final_nl = 0;
 	data.compute_checksum = 1;
-	MD5Init (&data.context);
+	cvs_MD5Init (&data.context);
 
 	retcode = RCS_checkout (vers_ts->srcfile, (char *) NULL,
 				vers_ts->vn_rcs, (char *) NULL,
@@ -1654,7 +1654,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	if (retcode != 0 || ! data.final_nl)
 	    fail = 1;
 	else
-	    MD5Final (checksum, &data.context);
+	    cvs_MD5Final (checksum, &data.context);
     }	  
 
     retcode = 0;
@@ -1813,7 +1813,7 @@ patch_file_write (callerdat, buffer, len)
     data->final_nl = (buffer[len - 1] == '\n');
 
     if (data->compute_checksum)
-	MD5Update (&data->context, (unsigned char *) buffer, len);
+	cvs_MD5Update (&data->context, (unsigned char *) buffer, len);
 }
 
 #endif /* SERVER_SUPPORT */
