@@ -558,7 +558,7 @@ Response expected: yes.
 Ask the server to send back a @code{Valid-requests} response.
 The @code{Root} request need not have been previously sent.
 
-@item Command-prenotify @var{command} \n
+@item Command-prep @var{command} \n
 Response expected: yes.
 Notify the server of the command that we are leading up to.  Intended to allow
 the server to send a redirect for write operations.  Requires either an
@@ -1471,7 +1471,7 @@ patches, it will include @samp{update-patches} in this list.  The
 
 @item Redirect @var{CVSROOT}
 Request that the client redirect its connection to @var{CVSROOT} and begin
-again.  This response is only valid in response to a @code{Command-prenotify}
+again.  This response is only valid in response to a @code{Command-prep}
 request.
 
 @item Checked-in @var{pathname} \n
