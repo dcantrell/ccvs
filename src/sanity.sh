@@ -22419,6 +22419,246 @@ Amquiteunabletocomeupwithinterestingpasswordsanymore
 END AUTH REQUEST
 EOF
 
+	    # The following tests are for read-only access
+
+	    # Check that readers can only read, everyone else can write
+
+	    cat >${CVSROOT_DIRNAME}/CVSROOT/readers <<EOF
+anonymous
+EOF
+
+	    dotest pserver-14 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-15 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-16 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-17 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-18 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-19 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Anything
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    # Check that writers can write, everyone else can only read
+	    # even if not listed in readers
+
+	    cat >${CVSROOT_DIRNAME}/CVSROOT/writers <<EOF
+testme
+EOF
+
+	    dotest pserver-20 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-21 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-22 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-23 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-24 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-25 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Anything
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    # Should work the same without readers
+
+	    rm ${CVSROOT_DIRNAME}/CVSROOT/readers
+
+	    dotest pserver-26 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-27 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+anonymous
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-28 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-29 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
+	    dotest pserver-30 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+M Concurrent Versions System (CVS) .*
+ok" <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Ay::'d
+END AUTH REQUEST
+Root ${CVSROOT_DIRNAME}
+version
+EOF
+
+	    dotest pserver-31 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E ${PROG} \\[server aborted\\]: .init. requires write access to the repository
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+${username}
+Anything
+END AUTH REQUEST
+init ${CVSROOT_DIRNAME}
+EOF
+
 	    # Clean up.
 	    echo "# comments only" >config
 	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \
@@ -22429,7 +22669,7 @@ done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
-	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd
+	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd ${CVSROOT_DIRNAME}/CVSROOT/writers
 	  fi # skip the whole thing for local
 	  ;;
 
