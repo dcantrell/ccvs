@@ -5778,27 +5778,15 @@ option_with_arg (option, arg)
 
    We then convert that to the format required in the protocol
    (including the "-D" option) and send it.  According to
-   cvsclient.texi, RFC 822/1123 format is preferred, but for now we
-   use the format that we always have, for
-   conservatism/laziness/paranoia.  As far as I know all servers
-   support the RFC 822/1123 format, so probably there would be no
-   particular danger in switching.  */
+   cvsclient.texi, RFC 822/1123 format is preferred.  */
 
 void
 client_senddate (date)
     const char *date;
 {
-    int year, month, day, hour, minute, second;
-    char buf[100];
+    char buf[MAXDATELEN];
 
-    if (sscanf (date, SDATEFORM, &year, &month, &day, &hour, &minute, &second)
-	!= 6)
-    {
-        error (1, 0, "client_senddate: sscanf failed on date");
-    }
-
-    sprintf (buf, "%d/%d/%d %d:%d:%d GMT", month, day, year,
-	     hour, minute, second);
+    date_to_internet (buf, (char *)date);
     option_with_arg ("-D", buf);
 }
 

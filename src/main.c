@@ -1124,10 +1124,19 @@ date_to_internet (dest, source)
       {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 	 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-    sscanf (source, SDATEFORM, &year, &month, &day, &hour, &minute, &second);
-    /* FIXME? shouldn't we be sending a 4 digit year even if before
-       2000?  */
-    sprintf (dest, "%d %s %d %d:%d:%d -0000", day,
+    if (sscanf (source, SDATEFORM,
+		&year, &month, &day, &hour, &minute, &second)
+	!= 6)
+	/* Is there a better way to handle errors here?  I made this
+	   non-fatal in case we are called from the code which can't
+	   deal with fatal errors.  */
+	error (0, 0, "internal error: bad date %s", source);
+
+    /* Always send a four digit year.  */
+    if (year < 100)
+	year += 1900;
+
+    sprintf (dest, "%d %s %d %02d:%02d:%02d -0000", day,
 	     month < 1 || month > 12 ? "???" : month_names[month - 1],
 	     year, hour, minute, second);
 }
