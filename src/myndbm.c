@@ -54,6 +54,8 @@ mydbm_open (file, flags, mode)
     return (db);
 }
 
+static int write_item PROTO ((Node *, void *));
+
 static int
 write_item (node, data)
     Node *node;
