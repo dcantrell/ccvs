@@ -617,7 +617,8 @@ history (argc, argv)
 	 * If the user has not specified a date oriented flag ("Since"), sort
 	 * by Repository/file before date.  Default is "just" date.
 	 */
-	if (!since_date && !*since_rev && !*since_tag && !*backto)
+	if (last_entry
+	    || (!since_date && !*since_rev && !*since_tag && !*backto))
 	{
 	    repos_sort++;
 	    file_sort++;
@@ -646,7 +647,8 @@ history (argc, argv)
 	/* See comments in "modified" above */
 	if (!last_entry && user_list)
 	    user_sort++;
-	if (!since_date && !*since_rev && !*since_tag && !*backto)
+	if (last_entry
+	    || (!since_date && !*since_rev && !*since_tag && !*backto))
 	    file_sort++;
     }
 

@@ -14281,7 +14281,10 @@ done"
 	  # slowly and carefully.
 	  cat >${CVSROOT_DIRNAME}/CVSROOT/history <<EOF
 O3395c677|anonymous|<remote>/*0|ccvs||ccvs
+O3396c677|anonymous|<remote>/src|ccvs||src
+O3397c677|kingdon|<remote>/*0|ccvs||ccvs
 M339cafae|nk|<remote>|ccvs/src|1.229|sanity.sh
+M339cafff|anonymous|<remote>|ccvs/src|1.23|Makefile
 M339dc339|kingdon|~/work/*0|ccvs/src|1.231|sanity.sh
 W33a6eada|anonymous|<remote>*4|ccvs/emx||Makefile.in
 C3b235f50|kingdon|<remote>|ccvs/emx|1.3|README
@@ -14289,7 +14292,10 @@ M3b23af50|kingdon|~/work/*0|ccvs/doc|1.281|cvs.texinfo
 EOF
 	  dotest history-1 "${testcvs} history -e -a" \
 "O 06/04 19:48 ${PLUS}0000 anonymous ccvs     =ccvs= <remote>/\*
+O 06/05 14:00 ${PLUS}0000 anonymous ccvs     =src=  <remote>/\*
+M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
 W 06/17 19:51 ${PLUS}0000 anonymous       Makefile\.in ccvs/emx == <remote>/emx
+O 06/06 08:12 ${PLUS}0000 kingdon   ccvs     =ccvs= <remote>/\*
 M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity\.sh   ccvs/src == ~/work/ccvs/src
 C 06/10 11:51 ${PLUS}0000 kingdon   1\.3   README      ccvs/emx == <remote>
 M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs\.texinfo ccvs/doc == ~/work/ccvs/doc
@@ -14322,6 +14328,32 @@ M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
 "M 06/10 21:12 ${PLUS}0000 kingdon 1\.231 sanity\.sh ccvs/src == ~/work/ccvs/src
 C 06/10 11:51 ${PLUS}0000 kingdon 1\.3   README    ccvs/emx == <remote>
 M 06/10 01:36 ${PLUS}0000 nk      1\.229 sanity\.sh ccvs/src == <remote>"
+
+	  dotest history-8 "${testcvs} history -ca -D '1970-01-01 00:00 UT'" \
+"M 06/10 01:36 ${PLUS}0000 nk        1\.229 sanity.sh   ccvs/src == <remote>
+M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src
+M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc"
+
+	  dotest history-9 "${testcvs} history -acl" \
+"M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
+M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
+
+	  dotest history-10 "${testcvs} history -lca -D '1970-01-01 00:00 UT'" \
+"M 06/10 17:33 ${PLUS}0000 kingdon   1\.281 cvs.texinfo ccvs/doc == ~/work/ccvs/doc
+M 06/10 01:38 ${PLUS}0000 anonymous 1\.23  Makefile    ccvs/src == <remote>
+M 06/10 21:12 ${PLUS}0000 kingdon   1\.231 sanity.sh   ccvs/src == ~/work/ccvs/src"
+
+	  dotest history-11 "${testcvs} history -aw" \
+"O 06/04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
+O 06/05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
+O 06/06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
+
+	  dotest history-12 "${testcvs} history -aw -D'1970-01-01 00:00 UT'" \
+"O 06/04 19:48 ${PLUS}0000 anonymous ccvs =ccvs= <remote>/\*
+O 06/05 14:00 ${PLUS}0000 anonymous ccvs =src=  <remote>/\*
+O 06/06 08:12 ${PLUS}0000 kingdon   ccvs =ccvs= <remote>/\*"
 	  ;;
 
 	big)
