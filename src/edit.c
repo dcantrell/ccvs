@@ -607,6 +607,7 @@ notify_proc (repository, filter)
 {
     FILE *pipefp;
     char *prog;
+    char *expanded_prog;
     char *p;
     char *q;
     char *srepos;
@@ -636,11 +637,19 @@ notify_proc (repository, filter)
     }
     *q = '\0';
 
-    pipefp = Popen (prog, "w");
+    expanded_prog = expand_path (prog);
+	if (!expanded_prog)
+	{
+	error (0, 0, "Invalid environmental variable in notify filter: %s",prog);
+	free (prog);
+	return 1;
+	}
+    pipefp = Popen (expanded_prog, "w");
     if (pipefp == NULL)
     {
 	error (0, errno, "cannot write entry to notify filter: %s", prog);
 	free (prog);
+	free (expanded_prog);
 	return 1;
     }
 
@@ -652,6 +661,7 @@ notify_proc (repository, filter)
        logfile_write for inspiration.  */
 
     free (prog);
+    free (expanded_prog);
     return (pclose (pipefp));
 }
 
