@@ -10,6 +10,7 @@ debug_check_log
 log
 log_accum
 mfpipe
+newcvsroot
 pvcs2rcs
 rcs-to-cvs
 rcs2log

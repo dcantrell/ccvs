@@ -27,6 +27,7 @@ contrib_SCRIPTS = \
 	log \
 	log_accum \
 	mfpipe \
+	newcvsroot \
 	pvcs2rcs \
 	rcs-to-cvs \
 	rcs2log \
@@ -54,6 +55,7 @@ EXTRA_DIST = \
 	descend.sh \
 	descend.man \
 	dirfns.shar \
+	newcvsroot.sh \
 	rcs-to-cvs.sh \
 	rcs2log.sh \
 	rcs2sccs.sh
