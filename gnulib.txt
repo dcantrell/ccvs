@@ -243,3 +243,8 @@ m4/stdint.m4
 m4/inttypes.m4
 
 m4/onceonly_2_57.m4
+lib/yesno.c
+lib/yesno.h
+m4/yesno.m4
+
+m4/onceonly_2_57.m4
