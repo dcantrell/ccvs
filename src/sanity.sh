@@ -4035,15 +4035,32 @@ T abc'
 	  cd 3
 	  dotest devcom-t1 "${testcvs} -q co -rtag first-dir/abb" \
 'U first-dir/abb'
+	  cd ..
+	  rm -rf 3
 
 	  # Now remove all the file attributes
-	  cd ../2/first-dir
+	  cd 2/first-dir
 	  dotest devcom-b0 "${testcvs} watch off" ''
 	  dotest devcom-b1 "${testcvs} watch remove" ''
 	  # Test that CVS 1.6 and earlier can handle the repository.
 	  dotest_fail devcom-b2 "test -d ${CVSROOT_DIRNAME}/first-dir/CVS"
 
+	  # Now test watching just some, not all, files.
+	  dotest devcom-some0 "${testcvs} watch on abc" ''
 	  cd ../..
+	  mkdir 3
+	  cd 3
+	  dotest devcom-some1 "${testcvs} -q co first-dir" 'U first-dir/abb
+U first-dir/abc'
+	  dotest devcom-some2 "test -w first-dir/abb" ''
+	  dotest_fail devcom-some3 "test -w first-dir/abc" ''
+	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping /tmp/cvs-sanity and exiting due to --keep
+	    exit 0
+	  fi
+
 	  rm -rf 1 2 3 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

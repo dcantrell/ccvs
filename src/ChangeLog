@@ -1,5 +1,8 @@
 Fri Oct 18 15:53:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (devcom): Add tests devcom-some* to test watching just
+	a single file.
+
 	* root.c (Name_Root): Use isabsolute to test whether a pathname is
 	absolute instead of checking for the first character being '/'.
 	(Reported by Antoine P. Brusseau <brusseau@jprc.com>).
