@@ -33,6 +33,10 @@ struct dirdata
 static int compare_names PARAMS((void const *, void const *));
 static int dir_sort PARAMS((struct file_data const *, struct dirdata *));
 
+#ifdef _WIN32
+#define CLOSEDIR_VOID 1
+#endif
+
 static int
 dir_sort (dir, dirdata)
      struct file_data const *dir;

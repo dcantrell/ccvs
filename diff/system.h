@@ -85,6 +85,13 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define STDERR_FILENO 2
 #endif
 
+/* I believe that all relevant systems have
+   time.h.  It is in ANSI, for example.  The
+   code below looks quite bogus as I don't think
+   sys/time.h is ever a substitute for time.h;
+   it is something different.  */
+#define HAVE_TIME_H 1
+
 #if HAVE_TIME_H
 #include <time.h>
 #else
