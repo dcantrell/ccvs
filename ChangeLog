@@ -1,3 +1,8 @@
+Thu Feb 22 22:32:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in: Remove AC_FUNC_ALLOCA.
+	* configure: Regenerated.
+
 Mon Feb 19 09:39:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* HACKING: Add comments about portability and assert().
