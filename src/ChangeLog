@@ -1,5 +1,13 @@
 Sun Nov 30 18:03:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* run.c, cvs.h (run_setup): Replace varargs nonsense with a single
+	argument which gets parsed as the result of the vasprintf
+	used to.
+	* client.c, commit.c, logmsg.c, modules.c, rtag.c, tag.c, update.c,
+	wrapper.c: Update callers, either to do the sprintf themself or to
+	just call run_arg if it will do the job.
+	* rcscmds.c: Likewise for call_diff_setup and callers.
+
 	* run.c, cvs.h (run_args): Remove; nowhere used.
 
 Sat Nov 29 22:15:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>

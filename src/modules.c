@@ -696,7 +696,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    expanded_path = expand_path (prog, "modules", 0);
 	    if (expanded_path != NULL)
 	    {
-		run_setup ("%s %s", expanded_path, real_where);
+		run_setup (expanded_path);
+		run_arg (real_where);
 
 		if (extra_arg)
 		    run_arg (extra_arg);

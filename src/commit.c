@@ -1080,7 +1080,8 @@ precommit_proc (repository, filter)
 	free (s);
     }
 
-    run_setup ("%s %s", filter, repository);
+    run_setup (filter);
+    run_arg (repository);
     (void) walklist (ulist, precommit_list_proc, NULL);
     return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
@@ -1400,7 +1401,8 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 		if (line[line_length - 1] == '\n')
 		    line[--line_length] = '\0';
 		repository = Name_Repository ((char *) NULL, update_dir);
-		run_setup ("%s %s", line, repository);
+		run_setup (line);
+		run_arg (repository);
 		cvs_output (program_name, 0);
 		cvs_output (" ", 1);
 		cvs_output (command_name, 0);

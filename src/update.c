@@ -896,7 +896,8 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	{
 	    if ((cp = strrchr (line, '\n')) != NULL)
 		*cp = '\0';
-	    run_setup ("%s %s", line, repository);
+	    run_setup (line);
+	    run_arg (repository);
 	    cvs_output (program_name, 0);
 	    cvs_output (" ", 1);
 	    cvs_output (command_name, 0);

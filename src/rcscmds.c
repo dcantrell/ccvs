@@ -57,24 +57,9 @@ static void RCS_output_diff_options PROTO ((char *, char *, char *, char *));
    to resemble a command line rather than something closer to "struct
    log_data" in log.c.  */
 
-#ifdef HAVE_VPRINTF
-#  if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
-#    include <stdarg.h>
-#    define VA_START(args, lastarg) va_start(args, lastarg)
-#  else
-#    include <varargs.h>
-#    define VA_START(args, lastarg) va_start(args)
-#  endif
-#else
-you lose
-#endif
-
-extern int vasprintf ();
-
-/* First call call_diff_setup to setup any initial
-   arguments.  The arguments to run_setup are essentially like printf().  The
-   arguments will be parsed into whitespace separated words and added to the
-   global call_diff_argv list.
+/* First call call_diff_setup to setup any initial arguments.  The
+   argument will be parsed into whitespace separated words and added
+   to the global call_diff_argv list.
 
    Then, optionally, call call_diff_arg for each additional argument
    that you'd like to pass to the diff library.
@@ -86,28 +71,15 @@ static int call_diff_argc;
 static int call_diff_argc_allocated;
 
 static void call_diff_add_arg PROTO ((const char *));
-#ifdef HAVE_VPRINTF
-static void call_diff_setup PROTO ((const char *fmt,...));
-#else
-you lose
-#endif
+static void call_diff_setup PROTO ((const char *prog));
 static int call_diff PROTO ((char *out));
 static int call_diff3 PROTO ((char *out));
 
 /* VARARGS */
-#if defined (HAVE_VPRINTF) && (defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__))
 static void 
-call_diff_setup (const char *fmt,...)
-#else
-static void 
-call_diff_setup (fmt, va_alist)
-    char *fmt;
-    va_dcl
-#endif
+call_diff_setup (prog)
+    const char *prog;
 {
-#ifdef HAVE_VPRINTF
-    va_list args;
-#endif
     char *cp;
     int i;
     char *call_diff_prog;
@@ -123,16 +95,7 @@ call_diff_setup (fmt, va_alist)
     }
     call_diff_argc = 0;
 
-    /* process the varargs into call_diff_prog */
-#ifdef HAVE_VPRINTF
-    VA_START (args, fmt);
-    (void) vasprintf (&call_diff_prog, fmt, args);
-    va_end (args);
-#else
-    you lose
-#endif
-    if (call_diff_prog == NULL)
-	error (1, 0, "out of memory");
+    call_diff_prog = xstrdup (prog);
 
     /* put each word into call_diff_argv, allocating it as we go */
     for (cp = strtok (call_diff_prog, " \t");
@@ -285,8 +248,20 @@ RCS_merge(rcs, path, workfile, options, rev1, rev2)
     /* Remember that the first word in the `call_diff_setup' string is used now
        only for diagnostic messages -- CVS no longer forks to run diff3. */
     diffout = cvs_temp_name();
-    call_diff_setup ("diff3 -E -am -L%s -L%s -L%s %s %s %s", workfile, xrev1,
-	       xrev2, workfile, tmp1, tmp2);
+    call_diff_setup ("diff3");
+    call_diff_arg ("-E");
+    call_diff_arg ("-am");
+
+    call_diff_arg ("-L");
+    call_diff_arg (workfile);
+    call_diff_arg ("-L");
+    call_diff_arg (xrev1);
+    call_diff_arg ("-L");
+    call_diff_arg (xrev2);
+
+    call_diff_arg (workfile);
+    call_diff_arg (tmp1);
+    call_diff_arg (tmp2);
 
     retval = call_diff3 (diffout);
 
@@ -510,8 +485,13 @@ diff_exec (file1, file2, options, out)
     char *options;
     char *out;
 {
+    char *args = xmalloc (strlen (options) + 10);
     /* The first word in this string is used only for error reporting. */
-    call_diff_setup ("diff %s %s %s", options, file1, file2);
+    sprintf (args, "diff %s", options);
+    call_diff_setup (args);
+    call_diff_arg (file1);
+    call_diff_arg (file2);
+    free (args);
 
     return call_diff (out);
 }
@@ -525,14 +505,18 @@ diff_execv (file1, file2, label1, label2, options, out)
     char *options;
     char *out;
 {
+    char *args = xmalloc (strlen (options) + 10);
     /* The first word in this string is used only for error reporting.  */
-    call_diff_setup ("diff%s", options);
+    /* I guess we are pretty confident that options starts with a space.  */
+    sprintf (args, "diff%s", options);
+    call_diff_setup (args);
     if (label1)
 	call_diff_arg (label1);
     if (label2)
 	call_diff_arg (label2);
     call_diff_arg (file1);
     call_diff_arg (file2);
+    free (args);
 
     return call_diff (out);
 }
