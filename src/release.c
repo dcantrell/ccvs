@@ -164,6 +164,9 @@ release (argc, argv)
 	       modified, and asking if she still wants to do the
 	       release.  */
 	    fp = run_popen (update_cmd, "r");
+	    if (fp == NULL)
+		error (1, 0, "cannot run command %s", update_cmd);
+
 	    c = 0;
 
 	    while (getline (&line, &line_allocated, fp) >= 0)

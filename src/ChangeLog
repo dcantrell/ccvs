@@ -1,3 +1,8 @@
+Sat Aug 30 17:37:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c (run_popen): Add comment on return value.
+	* release.c (release): Check for NULL return from popen.
+
 Fri Aug 29 17:49:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (get_server_responses): Add comment about "ok^M".

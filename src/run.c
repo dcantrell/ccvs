@@ -410,6 +410,11 @@ run_print (fp)
     }
 }
 
+/* Return value is NULL for error, or if noexec was set.  If there was an
+   error, return NULL and I'm not sure whether errno was set (the Red Hat
+   Linux 4.1 popen manpage was kind of vague but discouraging; and the noexec
+   case complicates this even aside from popen behavior).  */
+
 FILE *
 run_popen (cmd, mode)
     const char *cmd;
