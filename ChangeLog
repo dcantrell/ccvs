@@ -1,3 +1,8 @@
+1999-11-04  Jim Kingdon  <http://developer.redhat.com/>
+
+	* README (Installation): Yet another prep.ai.mit.edu -> gnu.org
+	change (can't believe we still haven't gotten them all).
+
 1999-11-04  Karl Fogel  <kfogel@red-bean.com>
 
 	* NEWS: added item about anon cvs no longer needing password.
