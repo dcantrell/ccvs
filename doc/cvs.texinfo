@@ -2275,6 +2275,7 @@ The separate @sc{cvs} password file (@pxref{Password
 authentication server}) allows people
 to use a different password for repository access than
 for login access.  On the other hand, once a user has
+non-read-only
 access to the repository, she can execute programs on
 the server system through a variety of means.  Thus, repository
 access implies fairly broad system access as well.  It
@@ -2383,9 +2384,16 @@ repository, except for certain ``administrative'' files
 (such as lock files and the history file).  It may be
 desirable to use this feature in conjunction with
 user-aliasing (@pxref{Password authentication server}).
-However, note that read-only access does not repeal the
-existing security considerations in @xref{Password
-authentication security}.
+
+Unlike with previous versions of @sc{cvs}, read-only
+users should be able merely to read the repository, and
+not to execute programs on the server or otherwise gain
+unexpected levels of access.  Or to be more accurate,
+the @emph{known} holes have been plugged.  Because this
+feature is new and has not received a comprehensive
+security audit, you should use whatever level of
+caution seems warranted given your attitude concerning
+security.
 
         There are two ways to specify read-only access
 for a user: by inclusion, and by exclusion.

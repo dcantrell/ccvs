@@ -1,5 +1,9 @@
 Mon Jun 23 18:28:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Read-only access, Password authentication
+	security): The known holes which let a read-only user execute
+	arbitrary programs on the server are gone.
+
 	* cvsclient.texi (Protocol Notes): Remove multisite item; it is
 	replaced by item 186 in TODO.  Add a general reference to TODO.
 	Rewrite accordingly the sentence about multisite in the item
