@@ -8,6 +8,21 @@
 	* error.c (error): Make buf char instead of unsigned char to avoid
 	type clashes.
 
+	* modules.c (do_module): Change callback_proc to pass argc by
+	value instead of by reference: callback procs shouldn't be
+	messing with the callers argc/argv, it makes correct memory
+	management impossible.  Plug memory leaks.
+	* cvs.h: Change to match.
+	* checkout.c (checkout_proc): Ditto; use a local argv array instead
+	of messing with caller's.
+	* modules.c (callback_proc): Ditto.
+	* patch.c (patch_proc): Ditto; use a local argv array instead
+	of messing with caller's.
+	* rtag.c (rtag_proc): Ditto; use a local argv array instead
+	of messing with caller's.
+	* server.c (expand_proc): Ditto.
+	* subr.c (line2argv): Change initial argv_allocated back to 1.
+
 2000-06-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Plug memory leaks.

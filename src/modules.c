@@ -120,7 +120,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     int modargc;
     int xmodargc;
     char **modargv;
-    char **xmodargv;
+    char **xmodargv = NULL;
     /* Found entry from modules file, including options and such.  */
     char *value = NULL;
     char *zvalue = NULL;
@@ -292,7 +292,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		error_exit ();
 	    cwd_saved = 1;
 
-	    err += callback_proc (&modargc, modargv, where, mwhere, mfile,
+	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
 				  shorten,
 				  local_specified, mname, msg);
 
@@ -523,7 +523,7 @@ module `%s' is a request for a file in a module which is not a directory",
     /* otherwise, process this module */
     if (modargc > 0)
     {
-	err += callback_proc (&modargc, modargv, where, mwhere, mfile, shorten,
+	err += callback_proc (modargc, modargv, where, mwhere, mfile, shorten,
 			      local_specified, mname, msg);
     }
     else
@@ -579,6 +579,7 @@ module `%s' is a request for a file in a module which is not a directory",
   do_special:
 
     free_names (&xmodargc, xmodargv);
+    xmodargv = NULL;
 
     /* blow off special options if -l was specified */
     if (local_specified)
@@ -751,6 +752,8 @@ module `%s' is a request for a file in a module which is not a directory",
 
  do_module_return:
     /* clean up */
+    if (xmodargv != NULL)
+	free_names (&xmodargc, xmodargv);
     if (mwhere)
 	free (mwhere);
     if (checkin_prog)
