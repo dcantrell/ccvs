@@ -15544,6 +15544,10 @@ done"
 	  # Then the case where br2 does have revisions:
 	  dotest tagdate-11 "${testcvs} -q update -p -r br1 -D now" "trunk-1"
 
+	  # For some reason, doing this on a branch seems to be relevant.
+	  dotest_fail tagdate-12 "${testcvs} -q update -j:yesterday" \
+"${PROG} \[[a-z]* aborted\]: argument to join may not contain a date specifier without a tag"
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
