@@ -499,23 +499,43 @@ patch_fileproc (callerdat, finfo)
 	ret = 0;
 	goto out2;
     }
+
+    /* Create 3 empty files.  I'm not really sure there is any advantage
+       to doing so now rather than just waiting until later.  */
     tmpfile1 = cvs_temp_name ();
-    if ((fp1 = CVS_FOPEN (tmpfile1, "w+")) != NULL)
-	(void) fclose (fp1);
-    tmpfile2 = cvs_temp_name ();
-    if ((fp2 = CVS_FOPEN (tmpfile2, "w+")) != NULL)
-	(void) fclose (fp2);
-    tmpfile3 = cvs_temp_name ();
-    if ((fp3 = CVS_FOPEN (tmpfile3, "w+")) != NULL)
-	(void) fclose (fp3);
-    if (fp1 == NULL || fp2 == NULL || fp3 == NULL)
+    fp1 = CVS_FOPEN (tmpfile1, "w+");
+    if (fp1 == NULL)
     {
-	/* FIXME: should be printing a proper error message, with errno-based
-	   message, and the filename which we could not create.  */
-	error (0, 0, "cannot create temporary files");
+	error (0, errno, "cannot create temporary file %s", tmpfile1);
 	ret = 1;
 	goto out;
     }
+    else
+	if (fclose (fp1) < 0)
+	    error (0, errno, "warning: cannot close %s", tmpfile1);
+    tmpfile2 = cvs_temp_name ();
+    fp2 = CVS_FOPEN (tmpfile2, "w+");
+    if (fp2 == NULL)
+    {
+	error (0, errno, "cannot create temporary file %s", tmpfile2);
+	ret = 1;
+	goto out;
+    }
+    else
+	if (fclose (fp2) < 0)
+	    error (0, errno, "warning: cannot close %s", tmpfile2);
+    tmpfile3 = cvs_temp_name ();
+    fp3 = CVS_FOPEN (tmpfile3, "w+");
+    if (fp3 == NULL)
+    {
+	error (0, errno, "cannot create temporary file %s", tmpfile3);
+	ret = 1;
+	goto out;
+    }
+    else
+	if (fclose (fp3) < 0)
+	    error (0, errno, "warning: cannot close %s", tmpfile3);
+
     if (vers_tag != NULL)
     {
 	retcode = RCS_checkout (rcsfile, (char *) NULL, vers_tag,
