@@ -6399,26 +6399,15 @@ U first-dir/amper1"
 	  dotest modules2-16 "test -f combmodule/first-dir/amper1" ""
 	  cd combmodule
 	  rm -r first-dir
-	  # Might be possible to have a more graceful error message,
-	  # but at least for now there is no way to tell CVS that
+	  # At least for now there is no way to tell CVS that
 	  # some files/subdirectories come from one repository directory,
 	  # and others from another.
-	  if test "$remote" = no; then
-	    dotest_fail modules2-17 "${testcvs} update -d" \
-"${PROG} [a-z]*: Updating \.
-${PROG} [a-z]*: Updating first-dir
-${PROG} \[[a-z]* aborted\]: cannot open directory ${TESTDIR}/cvsroot/third-dir/first-dir: No such file or directory"
-	    # Clean up the droppings left by the previous command.
-	    # This should definitely not be necessary (I think).
-	    rm -r first-dir
-	  else
-	    # This seems like a pretty sensible behavior to me, in the
-	    # sense that first-dir doesn't "really" exist within
-	    # third-dir, so CVS just acts as if there is nothing there
-	    # to do.
-	    dotest modules2-17 "${testcvs} update -d" \
-"${PROG} server: Updating \."
-	  fi
+	  # This seems like a pretty sensible behavior to me, in the
+	  # sense that first-dir doesn't "really" exist within
+	  # third-dir, so CVS just acts as if there is nothing there
+	  # to do.
+	  dotest modules2-17 "${testcvs} update -d" \
+"${PROG} [a-z]*: Updating \."
 
 	  cd ..
 	  dotest modules2-18 "${testcvs} -q co combmodule" \
