@@ -16,6 +16,8 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "edit.h"
+#include "fileattr.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";

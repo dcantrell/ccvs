@@ -15,6 +15,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "cvs.h"
+#include "getline.h"
 #include "fileattr.h"
 #include <assert.h>
 

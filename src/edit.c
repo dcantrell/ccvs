@@ -15,6 +15,7 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "cvs.h"
+#include "getline.h"
 #include "watch.h"
 #include "edit.h"
 #include "fileattr.h"
@@ -41,6 +42,8 @@ onoff_fileproc (file, update_dir, repository, entries, srcfiles)
     fileattr_set (file, "_watched", turning_on ? "" : NULL);
     return 0;
 }
+
+static int onoff_filesdoneproc PROTO ((int, char *, char *));
 
 static int
 onoff_filesdoneproc (err, repository, update_dir)
@@ -184,7 +187,7 @@ ncheck_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	if (!existence_error (errno))
 	    error (0, errno, "cannot open %s", CVSADM_NOTIFY);
-	return;
+	return 0;
     }
     while (getline (&line, &line_len, fp) > 0)
     {
@@ -296,7 +299,7 @@ edit_fileproc (file, update_dir, repository, entries, srcfiles)
     char *basefilename;
 
     if (noexec)
-	return;
+	return 0;
 
     fp = open_file (CVSADM_NOTIFY, "a");
 
@@ -676,7 +679,7 @@ notify_do (type, filename, who, val, watches, repository)
 	    break;
 	nextp = strchr (p, ',');
 
-	if (endp - p == strlen (who) && strncmp (who, p, endp - p) == 0)
+	if ((size_t)(endp - p) == strlen (who) && strncmp (who, p, endp - p) == 0)
 	{
 	    /* Don't notify user of their own changes.  Would perhaps
 	       be better to check whether it is the same working

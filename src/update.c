@@ -38,6 +38,8 @@
 #include "md5.h"
 #endif
 #include "watch.h"
+#include "fileattr.h"
+#include "edit.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
