@@ -79,7 +79,6 @@ CLEAN :
 	-@erase ".\WinRel\ignore.obj"
 	-@erase ".\WinRel\expand_path.obj"
 	-@erase ".\WinRel\repos.obj"
-	-@erase ".\WinRel\rtag.obj"
 	-@erase ".\WinRel\valloc.obj"
 	-@erase ".\WinRel\cvsrc.obj"
 	-@erase ".\WinRel\lock.obj"
@@ -209,7 +208,6 @@ LINK32_OBJS= \
 	"$(INTDIR)/ignore.obj" \
 	"$(INTDIR)/expand_path.obj" \
 	"$(INTDIR)/repos.obj" \
-	"$(INTDIR)/rtag.obj" \
 	"$(INTDIR)/valloc.obj" \
 	"$(INTDIR)/cvsrc.obj" \
 	"$(INTDIR)/lock.obj" \
@@ -377,7 +375,6 @@ CLEAN :
 	-@erase ".\WinDebug\mkdir.obj"
 	-@erase ".\WinDebug\uncompr.obj"
 	-@erase ".\WinDebug\ignore.obj"
-	-@erase ".\WinDebug\rtag.obj"
 	-@erase ".\WinDebug\root.obj"
 	-@erase ".\WinDebug\trees.obj"
 	-@erase ".\WinDebug\checkin.obj"
@@ -509,7 +506,6 @@ LINK32_OBJS= \
 	"$(INTDIR)/mkdir.obj" \
 	"$(INTDIR)/uncompr.obj" \
 	"$(INTDIR)/ignore.obj" \
-	"$(INTDIR)/rtag.obj" \
 	"$(INTDIR)/root.obj" \
 	"$(INTDIR)/trees.obj" \
 	"$(INTDIR)/checkin.obj" \
@@ -978,42 +974,6 @@ NODEP_CPP_TAG_C=\
 	
 
 "$(INTDIR)\tag.obj" : $(SOURCE) $(DEP_CPP_TAG_C) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\src\rtag.c
-DEP_CPP_RTAG_=\
-	".\src\cvs.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\options.h"\
-	".\lib\fnmatch.h"\
-	".\windows-NT\pwd.h"\
-	".\lib\system.h"\
-	".\src\hash.h"\
-	".\src\client.h"\
-	".\src\myndbm.h"\
-	".\lib\regex.h"\
-	".\lib\getopt.h"\
-	".\lib\wait.h"\
-	".\src\rcs.h"\
-	".\src\update.h"\
-	".\src\server.h"\
-	{$(INCLUDE)}"\sys\Types.h"\
-	{$(INCLUDE)}"\sys\Stat.h"\
-	{$(INCLUDE)}"\sys\Timeb.h"\
-	{$(INCLUDE)}"\sys\Utime.h"\
-	".\windows-NT\ndir.h"\
-	
-NODEP_CPP_RTAG_=\
-	".\src\popen.h"\
-	".\lib\tcpip.h"\
-	
-
-"$(INTDIR)\rtag.obj" : $(SOURCE) $(DEP_CPP_RTAG_) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 

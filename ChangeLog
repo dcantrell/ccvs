@@ -1,3 +1,8 @@
+2001-02-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvsnt.dsp: Remove references to rtag.c & rtag.obj.
+	* cvsnt.mak: Ditto.
+
 2001-02-13  Derek Price  <derek.price@openavenue.com>
 
 	* TODO: Add note about merging rdiff & diff.
