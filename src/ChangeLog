@@ -1,5 +1,10 @@
 2001-04-02  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (rm-update-message): Create a test directory again but
+	change back to the correct directory upon completion this time.
+
+2001-04-02  Derek Price  <dprice@collab.net>
+
 	* sanity.sh: Change last two '[.*]'s to 'test's for
 	consistency and remove...
 	(TODO): the note from the TODO list.
