@@ -1,3 +1,7 @@
+Fri Mar  1 01:51:56 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* listener.c: added as mentioned in ../README.VMS
+
 Mon Feb 19 13:37:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Don't just tell people "we don't want your script"; tell
