@@ -549,6 +549,7 @@ serve_root (arg)
 Sorry, you don't have read/write access to the history file %s", path);
 	pending_error = save_errno;
     }
+    free (path);
 
 #ifdef HAVE_PUTENV
     env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot_directory) + 1 + 1);
