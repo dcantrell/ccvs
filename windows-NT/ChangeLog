@@ -1,5 +1,10 @@
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add unistd.h.
+	(Thanks to a report from Chris Bohn <cbohn@rrinc.com>.)
+
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in (getopt, getopt_long, getopt_long_only, optarg,
 	opterr, optind, optopt): Remove obsolete definitions.
 	(__GETOPT_PREFIX): Define this for GNULIB getopt.
