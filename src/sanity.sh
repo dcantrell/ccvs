@@ -11714,9 +11714,9 @@ Design Change Details:
 Implications:
 @
 text
-@/* \$Header$ */
+@/* \$""Header:   L:/gpanels/dis/sgrid.h_v   1.1.1.0   24 Jan 1996 14:59:20   PAULT  \$ */
 /*
- * \$Log$
+ * \$""Log:   L:/gpanels/dis/sgrid.h_v  \$
  * 
  *    Rev 1.1.1.0   24 Jan 1996 14:59:20   PAULT
  * Branched
@@ -12221,10 +12221,10 @@ log
 text
 @d1 1
 a1 1
-/* \$Header$ */
+/* \$""Header: /usr/local/repository/cmnsrc/review/src/sgrid.h,v 1.1 1997/04/02 11:20:05 colinl Exp \$ */
 d3 1
 a3 12
- * \$Log$
+ * \$""Log: sgrid.h,v \$
  * Revision 1.1  1997/04/02 11:20:05  colinl
  * Project:     DEV1175
  * DCN:
