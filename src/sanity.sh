@@ -468,9 +468,9 @@ Checking in sdir/ssdir/ssfile;
 initial revision: 1.1
 done'
 	  dotest_fail basica-5a \
-	    "${testcvs} -q tag RESERVED sdir/ssdir/ssfile" \
-"${PROG} [a-z]*: tags containing only uppercase letters are reserved to cvs
-${PROG} \[[a-z]* aborted\]: failed to set tag RESERVED to revision 1.1 in /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v"
+	    "${testcvs} -q tag BASE sdir/ssdir/ssfile" \
+"${PROG} [a-z]*: Attempt to add reserved tag name BASE
+${PROG} \[[a-z]* aborted\]: failed to set tag BASE to revision 1.1 in /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v"
 	  dotest basica-5b "${testcvs} -q tag NOT_RESERVED" \
 'T sdir/ssdir/ssfile'
 
