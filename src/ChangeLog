@@ -1,4 +1,14 @@
+Tue Jul 25 00:52:26 1995  James Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkout.c (safe_location): Don't use PROTO in function definition.
+
 Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* checkout.c (safe_location):  fix a compiler warning. (Declare
+	safe_location). Changed code in safe_location to call getwd
+	instead of getcwd. getwd is declared in the ../lib directory and
+	used exclusively thoughout the code. (this helps portability on
+	non POSIX systems).
 
 	* wrapper.c:  updateed Andrew Athan's email address.
 
