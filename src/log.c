@@ -234,6 +234,15 @@ log_fileproc (file, update_dir, repository, entries, srcfiles)
 
     run_setup ("%s%s %s", Rcsbin, RCS_RLOG, options);
     run_arg (rcsfile->path);
+
+    if (*update_dir)
+    {
+      char *workfile = xmalloc (strlen (update_dir) + strlen (file) + 2);
+      sprintf (workfile, "%s/%s", update_dir, file);
+      run_arg (workfile);
+      free (workfile);
+    }
+
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY)) == -1)
     {
 	error (1, errno, "fork failed for rlog on %s", file);
