@@ -25,6 +25,22 @@ esac
 # required to make this script work properly.
 unset CVSREAD
 
+# The default value of /tmp/cvs-sanity for TESTDIR is dubious,
+# because it loses if two people/scripts try to run the tests
+# at the same time.  Some possible solutions:
+# 1.  Use /tmp/cvs-test$$.  One disadvantage is that the old
+#     cvs-test* directories would pile up, because they wouldn't
+#     necessarily get removed.
+# 2.  Have everyone/everything running the testsuite set
+#     TESTDIR to some appropriate directory.
+# 3.  Have the default value of TESTDIR be some variation of
+#     `pwd`/cvs-sanity.  The biggest problem here is that we have
+#     been fairly careful to test that CVS prints in messages the
+#     actual pathnames that we pass to it, rather than a different
+#     pathname for the same directory, as may come out of `pwd`.
+#     So this would be lost if everything was `pwd`-based.  I suppose
+#     if we wanted to get baroque we could start making symlinks
+#     to ensure the two are different.
 TESTDIR=${TESTDIR:-/tmp/cvs-sanity}
 
 # "debugger"
