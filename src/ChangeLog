@@ -1,3 +1,11 @@
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (CVSvn.texi): specify $(srcdir) explicitly in target rule
+	so version.c gets built properly for all makes.
+	(version.o): specify $(srcdir)/version.c explicitly so dependency is
+	found and built properly
+	* Makefile.in: regenerated
+
 2001-01-09  Derek Price  <derek.price@openavenue.com>
 
 	* version.c: updated timestamp

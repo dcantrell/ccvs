@@ -71,7 +71,10 @@ remotecheck: all
 # - It is guaranteed (with GNU Make) that when the version in configure.in
 #   is changed, acversion.m4 is built only after the new version number is
 #   propagated to the Makefile.  (Libtool uses the same guarantee.)
-version.c: $(srcdir)/version.c.in $(top_srcdir)/configure.in
+# - need the explicit version.o dependency or else make won't match
+#   $(srcdir)/version.c when looking for a dependency for version.c
+version.o: $(srcdir)/version.c
+$(srcdir)/version.c: $(srcdir)/version.c.in $(top_srcdir)/configure.in
 	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/version.c.in >version.tc
 	mv version.tc $(srcdir)/version.c
 
