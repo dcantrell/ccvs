@@ -1,5 +1,7 @@
 1999-05-17  Jim Kingdon  <http://www.cyclic.com>
 
+	* version.c: Push version number to 1.10.6.1.
+
 	* version.c: Version 1.10.6.
 
 1999-05-16  Jim Kingdon  <http://www.cyclic.com>
