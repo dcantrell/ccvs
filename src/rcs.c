@@ -2348,7 +2348,7 @@ RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
 	RCS_reparsercsfile (rcs, (FILE **) NULL, (struct rcsbuffer *) NULL);
 
     /* If tag is "HEAD", special case to get head RCS revision */
-    if (tag && (STREQ (tag, TAG_HEAD) || *tag == '\0'))
+    if (tag && STREQ (tag, TAG_HEAD))
 #if 0 /* This #if 0 is only in the Cygnus code.  Why?  Death support?  */
 	if (force_tag_match && (rcs->flags & VALID) && (rcs->flags & INATTIC))
 	    return ((char *) NULL);	/* head request for removed file */
@@ -3290,6 +3290,8 @@ translate_symtag (rcs, tag)
 
 	    while (! whitespace (*cp) && *cp != '\0')
 		++cp;
+	    if (*cp == '\0')
+		break;
 	}
     }
 
