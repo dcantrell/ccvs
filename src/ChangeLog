@@ -1,3 +1,9 @@
+2004-12-08  Derek Price  <derek@ximbiot.com>
+
+	* root.c (Name_root), server.c (serve_referrer): Don't free cvsroot_t.
+	* server.sh (reposmv): Reaccount for multiple potential warnings and
+	comment.
+
 2004-12-07  Derek Price  <derek@ximbiot.com>
 
 	* root.c (parse_cvsroot): Cache parsed values for efficiency and to
