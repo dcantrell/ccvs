@@ -1,3 +1,8 @@
+2001-03-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (admin options): Update description of -u option to
+	refer back to notify.
+
 2001-03-23  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (ps):  Make 'ps' an alias for 'doc'.
