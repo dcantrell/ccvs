@@ -1,3 +1,9 @@
+2001-04-20  Larry Jones  <larry.jones@sdrc.com>
+
+	* classify.c (Classify_File): Treat a dead revision like the RCS
+	file doesn't exist.
+	* sanity.sh: Update to match.
+
 2001-04-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c, update.c: Fix usage messages: -r and -D are not
