@@ -469,7 +469,7 @@ error 0 %s: no such user\n", user);
 
 #ifdef CVS_LOGIN
 #ifdef SERVER_SUPPORT
-    if (! strcmp (argv[0], "pserver"))
+    else if (strcmp (argv[0], "pserver") == 0)
       {
         /* todo:
          * Here, `user' will have to gotten somehow, and looked up in
