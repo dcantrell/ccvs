@@ -1,5 +1,7 @@
 Thu Jul  3 10:07:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL (i386 family): Add lines about Watcom and EMX on OS/2.
+
 	* TODO: Add notes about popt and option parsing in general.
 
 Wed Jul  2 13:11:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
