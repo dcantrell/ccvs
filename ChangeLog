@@ -1,3 +1,7 @@
+8 Jul 1997  Jim Kingdon
+
+	* cvsnt.dsp: Turn on browse information.
+
 Thu Jul  3 10:07:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Sending exact suggested text is almost as good as a diff.
