@@ -21557,7 +21557,7 @@ echo "OK, all tests completed."
 
 # Exit if keep set
 if test $keep = yes; then
-  echo Keeping ${TESTDIR} and exiting due to -k (keep) option
+  echo "Keeping ${TESTDIR} and exiting due to -k (keep) option."
   exit 0
 fi
 
