@@ -6214,6 +6214,8 @@ Certain commands have a single record type:
 release
 @item O
 checkout
+@item E
+export
 @item T
 rtag
 @end table
