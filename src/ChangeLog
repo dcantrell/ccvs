@@ -1,3 +1,10 @@
+Tue Jul  2 20:38:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add): Change message which said "version 1.2 of foo.c
+	will be resurrected"; the message was confusing because it made
+	people think that the old contents of the file would come back
+	instead of the contents in the working directory.
+
 Mon Jul  1 01:38:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* find_names.c (find_dirs): Add comment explaining why we bother

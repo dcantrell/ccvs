@@ -231,8 +231,12 @@ scheduling %s `%s' for addition on branch `%s'",
 			error (0, 0, "file `%s' will be added on branch `%s' from version %s",
 			       user, vers->tag, vers->vn_rcs);
 		    else
-			error (0, 0, "version %s of `%s' will be resurrected",
-			       vers->vn_rcs, user);
+			/* I'm not sure that mentioning vers->vn_rcs makes
+			   any sense here; I can't think of a way to word the
+			   message which is not confusing.  */
+			error (0, 0, "\
+re-adding file %s (in place of dead revision %s)",
+			       user, vers->vn_rcs);
 		    Register (entries, user, "0", vers->ts_user, NULL,
 			      vers->tag, NULL, NULL);
 		    ++added_files;
