@@ -1,5 +1,21 @@
 2001-03-16  Derek Price  <dprice@collab.net>
 
+	* sanity.sh (?): Additional test for ampersand module behavior with
+	'-d'.
+
+	    for Greg Klanderman  <greg@itasoftware.com>
+
+	* checkout.c (build_one_dir): Fix typo where clauses of two
+	conditionals were reversed in call to Create_Admin.  This caused
+	the CVS/Tag file to be removed in cases where it should have been
+	set, and vice-versa.  It only surfaced in rare cases as this code
+	is only invoked when using the -d option to build the path to
+	check out in.  Further, the bug would only matter when checking
+	out a module containing ampersand modules within it, via
+	client/server CVS.
+
+2001-03-16  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (admin-28-5): Confirm that a missing tag during an
 	'admin -n' operation is not a fatal error.
 
