@@ -26085,41 +26085,45 @@ ${PROG} \[diff aborted\]: read lock failed - giving up"
 	  dotest multiroot3-11 "${testcvs} -q diff dir1/file1 dir2/file2" ""
 
 	  # make sure we can't access across repositories
-	  # FIXCVS: we probably shouldn't even create the local directories
-	  # in this case, but we do, so deal with it.
 	  mkdir 1a
 	  cd 1a
 	  dotest_fail multiroot3-12 \
-"${testcvs} -d ${CVSROOT1} -q co ../root2/dir2" \
-"${PROG} checkout: in directory \.\./root2/dir2:
-${PROG} checkout: .\.\..-relative repositories are not supported.
-${PROG} \[checkout aborted\]: illegal source repository"
-	  rm -rf ../root2
+"$testcvs -d $CVSROOT1 -q co ../root2/dir2" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-13 \
-"${testcvs} -d ${CVSROOT2} -q co ../root1/dir1" \
-"${PROG} checkout: in directory \.\./root1/dir1:
-${PROG} checkout: .\.\..-relative repositories are not supported.
-${PROG} \[checkout aborted\]: illegal source repository"
-	  rm -rf ../root1
+"$testcvs -d $CVSROOT2 -q co ../root1/dir1" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root1/dir1'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-14 \
-"${testcvs} -d ${CVSROOT1} -q co ./../root2/dir2" \
-"${PROG} checkout: in directory \./\.\./root2/dir2:
-${PROG} checkout: .\.\..-relative repositories are not supported.
-${PROG} \[checkout aborted\]: illegal source repository"
-	  rm -rf ../root2
+"$testcvs -d $CVSROOT1 -q co ./../root2/dir2" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root2/dir2'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 	  dotest_fail multiroot3-15 \
-"${testcvs} -d ${CVSROOT2} -q co ./../root1/dir1" \
-"${PROG} checkout: in directory \./\.\./root1/dir1:
-${PROG} checkout: .\.\..-relative repositories are not supported.
-${PROG} \[checkout aborted\]: illegal source repository"
-	  rm -rf ../root1
-
-	  cd ../..
+"$testcvs -d $CVSROOT2 -q co ./../root1/dir1" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  dotest_fail multiroot3-16 \
+"$testcvs -d $CVSROOT1 -q co -p ../root2/dir2" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\.\./root2/dir2'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  dotest_fail multiroot3-17 \
+"$testcvs -d $CVSROOT1 -q co -p ./../root1/dir1" \
+"$PROG \[checkout aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\." \
+"$PROG \[server aborted\]: up-level in module reference (\`..') invalid: \`\./\.\./root1/dir1'\.
+$PROG \[checkout aborted\]: end of file from server (consult above messages if any)"
 
 	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    echo Keeping $TESTDIR and exiting due to --keep
 	    exit 0
 	  fi
+
+	  cd ../..
 
 	  rm -r 1
 	  rm -rf ${TESTDIR}/root1 ${TESTDIR}/root2
