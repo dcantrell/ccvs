@@ -1,3 +1,10 @@
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
+	* HACKING (Indentation style): Note the new C89 literal string
+	standard.
+	(Portability): Ditto, plus mention the headers we assume from C89.
+	* NEWS: Mention that we dropped K&R support.
+
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: We can assume <limits.h> and <stdarg.h>, so we no

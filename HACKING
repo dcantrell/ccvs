@@ -40,6 +40,9 @@ foo (arg)
 	    aflag = 1;
 	    break;
     }
+    printf ("Literal string line 1\n"
+	    "Literal string line 2\n"
+	    "Literal string line 3\n");
 }
 
 The file cvs-format.el contains settings for emacs and the NEWS file
@@ -63,9 +66,24 @@ for any number of unanticipated reasons.
 The current consequence of that general rule seems to be that if it
 is in ANSI C and it is in SunOS4 (using /bin/cc), generally it is OK
 to use it without ifdefs (for example, assert() and void * as long as
-you add more casts to and from void * than ANSI requires.  But not
-function prototypes).  Such constructs are generally portable enough,
-including to NT, OS/2, VMS, etc.
+you add more casts to and from void * than ANSI requires).  Such constructs
+are generally portable enough, including to NT, OS/2, VMS, etc.
+
+The following headers are assumed and included from lib/system.h: <ctype.h>,
+<pwd.h>, <signal.h>, <stdio.h>.
+
+The following headers can be assumed and are included from lib/system.h for a
+freestanding C89 implementation: <float.h>, <limits.h>, <stdarg.h>, <stddef.h>.
+We are not assuming the other standard headers listed by C89 because these four
+headers are the only headers guaranteed to be shipped with a C89 compiler
+(frestanding compiler).  We are not currently assuming that the system the
+compiler is running on provides the rest of the C89 headers.
+
+Please do not use multi-line strings.  Despite their common acceptance by many
+compilers, they are not part of the ANSI C specification.  As of GCC version
+3.3, they are no longer supported.  See the Indentation Style section above for
+an example of a literal string which is not multi-line but which will print
+multiple lines.
 
 * Run-time behaviors
 
