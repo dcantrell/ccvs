@@ -1,5 +1,11 @@
 2004-04-11  Derek Price  <derek@ximbiot.com>
 
+	* modules.c (do_module): Don't allow up-level references in paths to
+	step out of the repository.
+	* sanity.sh (multiroot3): Update tests and add a few more.
+
+2004-04-11  Derek Price  <derek@ximbiot.com>
+
 	* client.c (get_proxy_port_number): Use CVS_PROXY_PORT as the default
 	proxy port rather than CVS_AUTH_PORT.
 
