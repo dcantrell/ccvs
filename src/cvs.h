@@ -118,6 +118,22 @@ extern int errno;
  * Definitions for the CVS Administrative directory and the files it contains.
  * Here as #define's to make changing the names a simple task.
  */
+
+#ifdef USE_VMS_FILENAMES
+#define CVSADM          "CVS"
+#define CVSADM_ENT      "CVS/Entries."
+#define CVSADM_ENTBAK   "CVS/Entries.Backup"
+#define CVSADM_ENTLOG   "CVS/Entries.Log"
+#define CVSADM_ENTSTAT  "CVS/Entries.Static"
+#define CVSADM_REP      "CVS/Repository."
+#define CVSADM_ROOT     "CVS/Root."
+#define CVSADM_CIPROG   "CVS/Checkin.prog"
+#define CVSADM_UPROG    "CVS/Update.prog"
+#define CVSADM_TAG      "CVS/Tag."
+#define CVSADM_NOTIFY   "CVS/Notify."
+#define CVSADM_NOTIFYTMP "CVS/Notify.tmp"
+#define CVSADM_BASE      "CVS/Base"
+#else /* USE_VMS_FILENAMES */
 #define	CVSADM		"CVS"
 #define	CVSADM_ENT	"CVS/Entries"
 #define	CVSADM_ENTBAK	"CVS/Entries.Backup"
@@ -133,6 +149,7 @@ extern int errno;
 /* A directory in which we store base versions of files we currently are
    editing with "cvs edit".  */
 #define CVSADM_BASE     "CVS/Base"
+#endif /* USE_VMS_FILENAMES */
 
 /* This is the special directory which we use to store various extra
    per-directory information in the repository.  It must be the same as
@@ -195,10 +212,16 @@ extern int errno;
 #define	CVSLCKAGE	(60*60)		/* 1-hour old lock files cleaned up */
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
+
+#ifdef USE_VMS_FILENAMES
+#define BAKPREFIX       "_$"
+#define DEVNULL         "NLA0:"
+#else /* USE_VMS_FILENAMES */
 #define	BAKPREFIX	".#"		/* when rcsmerge'ing */
 #ifndef DEVNULL
 #define	DEVNULL		"/dev/null"
 #endif
+#endif /* USE_VMS_FILENAMES */
 
 #define	FALSE		0
 #define	TRUE		1
@@ -420,7 +443,7 @@ int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
 
 DBM *open_module PROTO((void));
 FILE *open_file PROTO((const char *, const char *));
-List *Find_Dirs PROTO((char *repository, int which));
+List *Find_Directories PROTO((char *repository, int which));
 void Entries_Close PROTO((List *entries));
 List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));

@@ -114,7 +114,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	 * called with the list of sub-dirs of the current dir as args
 	 */
 	if ((which & W_LOCAL) && !isdir (CVSADM))
-	    dirlist = Find_Dirs ((char *) NULL, W_LOCAL);
+	    dirlist = Find_Directories ((char *) NULL, W_LOCAL);
 	else
 	    addlist (&dirlist, ".");
 
@@ -382,7 +382,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 
 	/* find sub-directories if we will recurse */
 	if (flags != R_SKIP_DIRS)
-	    dirlist = Find_Dirs (repository, which);
+	    dirlist = Find_Directories (repository, which);
     }
     else
     {
