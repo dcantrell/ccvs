@@ -1,5 +1,8 @@
 Fri Mar 28 13:59:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Add example, hopefully making it
+	clearer what REPOSITORY and LOCAL-DIRECTORY mean to Directory.
+
 	* cvs.texinfo (Attic): New node.
 	(rtag options): Adjust discussion of -a accordingly.
 	(Repository files): Adjust accordingly.

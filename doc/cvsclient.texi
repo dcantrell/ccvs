@@ -339,6 +339,44 @@ the top level at which the command is occurring (i.e. the last
 to indicate that top level, @samp{.} should be send for
 @var{local-directory}.
 
+Here is an example of where a client gets @var{repository} and
+@var{local-directory}.  Suppose that there is a module defined by
+
+@example
+moddir 1dir
+@end example
+
+That is, one can check out @code{moddir} and it will take @code{1dir} in
+the repository and check it out to @code{moddir} in the working
+directory.  Then an initial check out could proceed like this:
+
+@example
+C: Root /home/kingdon/zwork/cvsroot
+. . .
+C: Argument moddir
+C: Directory .
+C: /home/kingdon/zwork/cvsroot
+C: co
+S: Clear-sticky moddir/
+S: /home/kingdon/zwork/cvsroot/1dir/
+. . .
+S: ok
+@end example
+
+Note that @code{Clear-sticky} (and other responses) return two
+pathnames.  The first one, @file{moddir/}, indicates the working
+directory to check out into.  The second one, ending in @file{1dir/},
+indicates the directory to pass back to the server in a subsequent
+@code{Directory} request.  For example, a subsequent @code{update}
+request might look like:
+
+@example
+C: Directory moddir
+C: /home/kingdon/zwork/cvsroot/1dir
+. . .
+C: update
+@end example
+
 @item Max-dotdot @var{level} \n
 Response expected: no.
 Tell the server that @var{level} levels of directories above the
