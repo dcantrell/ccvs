@@ -1,3 +1,7 @@
+2000-02-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (find_tool): New function to replace duplicated code.
+
 2000-02-25  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (add_rcs_file): Don't abort just because lstat fails.
