@@ -858,3 +858,38 @@ for the emacs folks to get their act together and merge their changes into the
 glibc version.
 
 214.  Make options.h options configure script options.
+
+215.  Add reditors and rwatchers commands.
+
+216.  Avoid command-line keyword expansion modes overriding binary mode
+(or make binary mode completely separate from keyword expansion mode).
+
+217.  Fix assertion failures that occur when CVSROOT is a symlink to the
+actual repository location.
+
+218.  Fix "checkout -d ." in client/server mode.
+
+219.  Fix "checkout -d multi/level/dir" in client/server mode.
+
+220.  Send correct Max-dotdot in client/server mode (broken by change to
+support multiple repositories).
+
+221.  Handle spaces in file/directory names.  (Most, if not all, of the
+internal infrastructure already handles them correctly, but most of the
+administrative file interfaces do not.)
+
+222.  Fix assertion failure (*rcsnode == NULL in commit.c, line 2056)
+when adding a file from a case-insensitive client that matches an Attic
+file with case differences.
+
+223.  Internationalization support.  This probably means using some kind
+of universal character set (ISO 10646?) internally and converting on
+input and output, which opens the locale can of worms.
+
+224.  Better timezone handling.  Many people would like to see times
+output in local time rather than UTC, but that's tricky since the
+conversion from internal form is currently done by the server who has no
+idea what the user's timezone even is, let alone the rules for
+converting to it.
+
+225.  Add support for --allow-root to server command.
