@@ -27157,24 +27157,24 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	    # think, but somehow it seems like the clean thing for
 	    # the testsuite.
 	    mkdir 1; cd 1
-	    dotest pserver-1 "${testcvs} -Q co CVSROOT" ""
+	    dotest pserver-1 "$testcvs -Q co CVSROOT" ""
 	    cd CVSROOT
 	    echo "SystemAuth=no" >>config
-	    dotest pserver-2 "${testcvs} -q ci -m config-it" \
+	    dotest pserver-2 "$testcvs -q ci -m config-it" \
 "$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
-	    cat >${CVSROOT_DIRNAME}/CVSROOT/passwd <<EOF
+	    cat >$CVSROOT_DIRNAME/CVSROOT/passwd <<EOF
 testme:q6WV9d2t848B2:$username
 dontroot:q6WV9d2t848B2:root
 anonymous::$username
 $username:
 willfail:   :whocares
 EOF
-	    dotest_fail pserver-3 "${servercvs} pserver" \
+	    dotest_fail pserver-3 "$servercvs pserver" \
 "error 0 Server configuration missing --allow-root in inetd.conf" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
@@ -27197,7 +27197,7 @@ EOF
 	      i=`expr $i + 1`
 	    done
 	    dotest_fail pserver-auth-no-dos \
-"${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
 "$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Cannot allocate memory" <garbageinput
 	    unset i
 	    rm garbageseg garbageseg2 garbageinput
@@ -27205,39 +27205,38 @@ EOF
 	    # Sending the Root and noop before waiting for the
 	    # "I LOVE YOU" is bogus, but hopefully we can get
 	    # away with it.
-#export CVS_PARENT_SERVER_SLEEP=30
-	    dotest pserver-4 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
+	    dotest pserver-4 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
 ok" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-Root ${CVSROOT_DIRNAME}
+Root $CVSROOT_DIRNAME
 noop
 EOF
 
 	    dotest_fail pserver-4.2 \
-"${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
 "error 0: root not allowed" <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 dontroot
 Ay::'d
 END AUTH REQUEST
 EOF
 
-	    dotest pserver-5 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
-"${DOTSTAR} LOVE YOU
-E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+	    dotest pserver-5 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
+"$DOTSTAR LOVE YOU
+E Protocol error: Root says \"$TESTDIR/1\" but pserver says \"$CVSROOT_DIRNAME\"
 error  " <<EOF
 BEGIN AUTH REQUEST
-${CVSROOT_DIRNAME}
+$CVSROOT_DIRNAME
 testme
 Ay::'d
 END AUTH REQUEST
-Root ${TESTDIR}/1
+Root $TESTDIR/1
 noop
 EOF
 
