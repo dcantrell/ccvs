@@ -1,3 +1,7 @@
+2004-03-28  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note MSVC pathing problem when exporting makefiles.
+
 2004-03-26  Derek Price  <derek@ximbiot.com>
 
 	* README: Note build files generated using MSVC 6.0.  Erase uneccessary
