@@ -1,3 +1,7 @@
+Sat Dec 09 15:29:16 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
+
+		* options.h (DIFF, GREP): don't expect autoconf to help us out.
+
 Sat Dec 09 15:05:41 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
 		* makefile.in (libdir): Fixed.

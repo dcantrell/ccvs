@@ -65,7 +65,7 @@
  */
 
 #ifndef DIFF
-#define	DIFF	"@gdiff_path@"
+#define	DIFF	"diff"
 #endif
 
 /*
@@ -76,7 +76,7 @@
  */
 
 #ifndef GREP
-#define GREP "@ggrep_path@"
+#define GREP "grep"
 #endif
 
 /*
