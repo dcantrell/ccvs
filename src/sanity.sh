@@ -79,6 +79,20 @@ def' : 'abc$' >/dev/null; then
   STARTANCHOR='\`'
 fi
 
+# Work around another GNU expr (version 1.10) bug/incompatibility.
+# "." doesn't appear to match a newline (it does with SunOS 4.1.3 expr).
+# Note that the workaround is not a complete equivalent of .* because
+# the first parenthesized expression in the regexp must match something
+# in order for expr to return a successful exit status.
+DOTSTAR='.*'
+if expr 'abc
+def' : "a${DOTSTAR}f" >/dev/null; then
+  : good, it works
+else
+  DOTSTAR='\(.\|
+\)*'
+fi
+
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
@@ -194,7 +208,7 @@ cd ${TESTDIR}
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
+	tests="basica basic0 basic1 basic2 rtags death import new conflicts modules mflag errmsg1 devcom ignore"
 else
 	tests="$*"
 fi
@@ -347,6 +361,47 @@ touch ${CVSROOT_DIRNAME}/CVSROOT/history
 ### The big loop
 for what in $tests; do
 	case $what in
+	basica)
+	  # Similar in spirit to some of the basic0, basic1, and basic2
+	  # tests, but hopefully a lot faster.  Also tests operating on
+	  # files two directories down *without* operating on the parent dirs.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest basica-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  mkdir sdir
+	  dotest basica-2 "${testcvs} add sdir" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir added to the repository'
+	  cd sdir
+	  mkdir ssdir
+	  dotest basica-3 "${testcvs} add ssdir" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir added to the repository'
+	  cd ssdir
+	  echo ssfile >ssfile
+	  dotest basica-4 "${testcvs} add ssfile" \
+'cvs [a-z]*: scheduling file `ssfile'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  cd ../..
+	  dotest basica-5 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
+done
+Checking in sdir/ssdir/ssfile;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+initial revision: 1.1
+done'
+	  dotest basica-6 "${testcvs} -q update" ''
+	  echo "ssfile line 2" >>sdir/ssdir/ssfile
+	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
+'Checking in sdir/ssdir/ssfile;
+/tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
+done'
+	  dotest basica-8 "${testcvs} -q update" ''
+	  cd ..
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r first-dir
+	  ;;
+
 	basic0) # Now, let's build something.
 #		mkdir first-dir
 		# this doesn't yet work, though I think maybe it should.  xoxorich.
@@ -2052,9 +2107,11 @@ EOF
 	  echo rootig.c >cvsignore
 	  dotest 187a2 "${testcvs} add cvsignore" 'cvs [a-z]*: scheduling file `cvsignore'"'"' for addition
 cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
-	  dotest 187a3 " ${testcvs} ci -m added" 'cvs [a-z]*: Examining .
-cvs [a-z]*: Committing .
-RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v
+
+	  # As of Jan 96, local CVS prints "Examining ." and remote doesn't.
+	  # Accept either.
+	  dotest 187a3 " ${testcvs} ci -m added" \
+"${DOTSTAR}"'CS file: /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v
 done
 Checking in cvsignore;
 /tmp/cvs-sanity/cvsroot/CVSROOT/cvsignore,v  <--  cvsignore
