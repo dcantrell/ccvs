@@ -1,3 +1,7 @@
+Fri Mar  7 16:51:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Just talked to a NT 4.0 user; add it to the list.
+
 Sun Mar  2 22:01:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Add item about "cvs admin" vs. "cvs admin .".
