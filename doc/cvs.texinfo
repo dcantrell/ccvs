@@ -2305,7 +2305,7 @@ command @code{cvs pserver} when it receives a
 connection on the right port.  By default, the port
 number is 2401; it would be different if your client
 were compiled with @code{CVS_AUTH_PORT} defined to
-something else, though.  This can also be sepcified in the CVSROOT variable
+something else, though.  This can also be specified in the CVSROOT variable
 (@pxref{Remote repositories}) or overridden with the CVS_CLIENT_PORT
 environment variable (@pxref{Environment variables}).
 
