@@ -219,6 +219,7 @@ import (argc, argv)
 	    send_arg ("-I");
 	    send_arg ("!");
 	}
+	wrap_send ();
 
 	{
 	    int i;

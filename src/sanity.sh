@@ -3592,9 +3592,6 @@ File: binfile          	Status: Up-to-date
 	  # We could also be testing the ability to use the other
 	  # ways to specify a wrapper (CVSROOT/cvswrappers, etc.).
 
-	  # Skip the whole thing for remote, as wrappers don't work
-	  if test "x$remote" = "xno"; then
-
 	  mkdir dir-to-import
 	  cd dir-to-import
 	  touch foo.c foo.exe
@@ -3627,8 +3624,6 @@ File: foo\.exe          	Status: Up-to-date
    Sticky Date:		(none)
    Sticky Options:	-kb'
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
-
-	  fi # matches if test "x$remote" = "xno"
 	  ;;
 
 	info)
