@@ -1,3 +1,7 @@
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (EXTRA_DIST): Remove zlib.dep.
+
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
 	* zlib.mak: Regenerated with VC++ 5.0.
