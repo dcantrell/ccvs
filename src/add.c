@@ -518,7 +518,7 @@ file `%s' will be added on branch `%s' from version %s",
 				   can't think of a way to word the
 				   message which is not confusing.  */
 				error (0, 0, "\
-re-adding file %s (in place of dead revision %s)",
+re-adding file `%s' (in place of dead revision %s)",
 					finfo.fullname, vers->vn_rcs);
 			}
 			Register (entries, finfo.file, "0", vers->ts_user,
