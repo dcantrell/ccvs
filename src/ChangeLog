@@ -1,3 +1,9 @@
+Tue Apr  8 10:45:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (modules3): Add tests modules3-8 to modules3-11, to
+	test for ability to supply a path to -d in modules.  Mostly
+	commented out as CVS is buggy in this area.
+
 Mon Apr  7 12:41:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* add.c (add): Add comment about SEND_NO_CONTENTS.
