@@ -1,3 +1,10 @@
+2003-03-04  Derek Price  <derek@ximbiot.com>
+
+	* history.c (history_write): Remove unneeded O_CREAT in the call to
+	open() since we abort a few lines earlier if the file doesn't exist.
+	Add a comment to the effect that this is not the optimal method of
+	doing things and needs fixed.
+
 2003-02-28  Derek Price  <derek@ximbiot.com>
 
 	* root.c (parse_cvsroot): s/no_passwd/no_password/ in comments.
