@@ -1,5 +1,7 @@
 1998-04-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.27.1.
+
 	* Version 1.9.27.
 
 1998-04-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
