@@ -1,3 +1,11 @@
+2003-10-31  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note Cygwin as an option for building CVS under Windows.
+
+2003-10-31  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: s/cvsgui/wincvs/.
+
 2003-10-27  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Move case sensitivity test to the enable-* section and
