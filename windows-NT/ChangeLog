@@ -1,5 +1,9 @@
 2003-01-16  Derek Price  <derek@ximbiot.com>
 
+	* config.h: Update to CVS version 1.11.5.
+
+2003-01-16  Derek Price  <derek@ximbiot.com>
+
 	* config.h (PACKAGE_STRING): Update for dev version (1.11.4.1).
 
 2002-12-28  Derek Price  <derek@ximbiot.com>
