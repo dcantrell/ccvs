@@ -1,3 +1,10 @@
+2000-03-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* mkmodules.c (init): Use mkdir_if_needed to create CVSROOT/Emptydir
+	so we don't fail if run multiple times.  (Reported by KOIE Hidetaka
+	<hide@koie.org>.)
+	* sanity.sh (1a): New test for above.
+
 2000-03-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c: Use identical #if's in the command table and the code
