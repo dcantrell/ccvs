@@ -149,7 +149,7 @@ ms_buffer_initialize (void (*memory) (struct buffer *),
     p->data = buf2;
     p->delproc = delbuflist;
     addnode (mb->bufs, p);
-    retbuf = buf_initialize (0, 0, ms_buffer_input, NULL, NULL,
+    retbuf = buf_initialize (ms_buffer_input, NULL, NULL,
 			     ms_buffer_block, ms_buffer_get_fd,
 			     ms_buffer_shutdown, memory, mb);
     if (!buf_empty_p (buf)) buf_append_buffer (retbuf, buf);
