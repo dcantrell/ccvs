@@ -1,15 +1,16 @@
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
-	* client.c (last_entries): Move global variable...
-	(call_in_directory): ...here (now a local variable).  Remove test that
-	always evaluates to true.
-	(last_dir_name): Remove unused global variable.
 	* release.c (release): Restore the initial directory before and after
 	calling various sections of code that expect it to prevent corruption
 	of CVS/Entries files on release of a subdir and tell unedit() what to
 	release.
 	* sanity.sh: Add test case for release.c fix.
 	(Original patch from Matthew Ogilvie  <mmo9317bd@mailcan.com>.)
+
+	* client.c (last_entries): Move global variable...
+	(call_in_directory): ...here (now a local variable).  Remove test that
+	always evaluates to true.
+	(last_dir_name): Remove unused global variable.
 
 2004-02-24  Larry Jones  <lawrence.jones@ugsplm.com>
 
