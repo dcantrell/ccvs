@@ -1,5 +1,8 @@
 Thu Apr 10 00:14:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (modules3): New tests modules3-12 through modules3-15
+	test use of a module name which contains a slash.
+
 	* sanity.sh (basicb): New tests basicb-14 to basicb-20 test use of
 	co -d with two or more arguments.
 

@@ -4007,6 +4007,7 @@ mod1 -a first-dir/file1
 bigmod -a mod1 first-dir/file1
 namednest -d src/sub/dir first-dir
 nestdeeper -d src/sub1/sub2/sub3/dir first-dir
+path/in/modules &mod1
 EOF
 	  dotest modules3-5 "${testcvs} -q ci -m add-modules" \
 "Checking in modules;
@@ -4050,6 +4051,37 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 	  rm -r 1
 	  fi # matches "if false".
+
+	  # This one is almost too twisted for words.  The pathname output
+	  # in the message from "co" doesn't include the "path/in/modules",
+	  # but those directories do get created (with no CVSADM except
+	  # in "modules" which has a CVSNULLREPOS).
+	  # I'm not sure anyone is relying on this nonsense or whether we
+	  # need to keep doing it, but it is what CVS currently does...
+	  # Skip it for remote; the remote code has the good sense to
+	  # not deal with it (on the minus side it gives
+	  # "internal error: repository string too short." instead of a
+	  # real error).
+	  # I kind of suspect that it would be OK to just make it a fatal
+	  # error to have '/' in a module name.
+	  if test "x$remote" = xno; then
+	  mkdir 1; cd 1
+	  dotest modules3-12 "${testcvs} -q co path/in/modules" \
+"U first-dir/file1"
+	  dotest modules3-13 "test -f path/in/modules/first-dir/file1" ''
+	  cd ..; rm -r 1
+
+	  # Now here is where it gets seriously bogus.
+	  mkdir 1; cd 1
+	  dotest modules3-14 \
+"${testcvs} -q rtag tag1 path/in/modules" ''
+	  # CVS creates this even though rtag should *never* affect
+	  # the directory current when it is called!
+	  dotest modules3-15 "test -d path/in/modules" ''
+	  # Just for trivia's sake, rdiff is not similarly vulnerable
+	  # because it passes 0 for run_module_prog to do_module.
+	  cd ..; rm -r 1
+	  fi # end of tests skipped for remote
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
