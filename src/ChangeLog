@@ -1,4 +1,8 @@
-2000-10-02  Larry Jones  <larry.jones@sdrc.com> 
+2000-10-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* filesubr.c (get_homedir): Ignore $HOME when running in server mode.
+
+2000-10-02  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.h: Define (and use) T_PATCH as a valid file classification
 	even when SERVER_SUPPORT isn't defined -- it simplifies the code.
@@ -9,13 +13,13 @@
 	* tag.c (check_fileproc): Accept T_PATCH in addition to T_CHECKOUT.
 	* sanity.sh (tagc-10): Update to match.
 
-2000-09-29  Larry Jones  <larry.jones@sdrc.com> 
+2000-09-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (get_responses_and_close): Reset server_fd to -1 after
 	shutting down.
 	(Reported by Joerg Thoennes <Joerg.Thoennes@data-sciences.de>.)
 
-2000-09-27  Larry Jones  <larry.jones@sdrc.com> 
+2000-09-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* commit.c (commit): Don't sleep before returning in server mode,
 	just let the client do it.
@@ -27,7 +31,7 @@
 	repository directories instead of using Emptydir.
 	* sanity.sh (cvsadm, emptydir): Update to match.
 
-2000-09-19  Larry Jones  <larry.jones@sdrc.com> 
+2000-09-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* version.c: Push version number to 1.11.0.1.
 
