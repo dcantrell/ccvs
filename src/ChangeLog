@@ -1,3 +1,8 @@
+2003-04-03  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h: Avoid __pure__ for GCC versions < 2.96 & __malloc__ for GCC
+	versions < 3.0.
+
 2003-04-02  Larry Jones  <lawrence.jones@eds.com>
 
 	* update.c (update, update_fileproc, update_filesdone_proc,
