@@ -294,6 +294,8 @@ diff (argc, argv)
 	if (empty_files)
 	    send_arg("-N");
 	send_option_string (opts);
+	if (options[0] != '\0')
+	    send_arg (options);
 	if (diff_rev1)
 	    option_with_arg ("-r", diff_rev1);
 	if (diff_date1)
