@@ -579,6 +579,10 @@ Note that a client may be capable of performing an @code{edit} or
 @code{unedit} operation without connecting to the server at that time,
 and instead connecting to the server when it is convenient (for example,
 when a laptop is on the net again) to send the @code{Notify} requests.
+Even if a client is capable of deferring notifications, it should
+attempt to send them immediately (one can send @code{Notify} requests
+together with a @code{noop} request, for example), unless perhaps if
+they can know that a connection would be impossible.
 
 @item Questionable @var{filename} \n
 Response expected: no.  Additional data: no.  Tell the server to check

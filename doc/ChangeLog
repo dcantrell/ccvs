@@ -1,5 +1,8 @@
 Mon Apr 14 12:37:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Clients should try to send
+	notifications right away.
+
 	* cvsclient.texi (Requests): For Notify request, clarify a few
 	future expansion situations.  Specify the format of the time.
 
