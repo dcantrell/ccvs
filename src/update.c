@@ -1769,7 +1769,13 @@ join_file (file, srcfiles, vers, update_dir, entries)
     free (rev1);
     free (rev2);
 
-    if (status == 1)
+    /*
+     * If we're in server mode, then we need to re-register the file
+     * even if there were no conflicts (status == 0).
+     * This tells server_updated() to send the modified file back to
+     * the client.
+     */
+    if (status == 1 || (status == 0 && server_active))
     {
 	char *cp = 0;
 
