@@ -41,6 +41,8 @@ void printf_output PARAMS((char const *, ...))
      ;
 void flush_output PARAMS((void));
 
+char * cvs_temp_name PARAMS((void));
+
 /*
  * Internal data structures and macros for the diff3 program; includes
  * data structures for both diff3 diffs and normal diffs.
@@ -1274,7 +1276,7 @@ read_diff (filea, fileb, output_placement)
   *ap++ = fileb;
   *ap = 0;
 
-  diffout = tmpnam(NULL);
+  diffout = cvs_temp_name ();
 
   outfile_hold = outfile;
   callbacks_hold = callbacks;
