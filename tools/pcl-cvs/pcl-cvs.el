@@ -48,30 +48,27 @@
 
 ;; also use $GNU here, since may folks might install CVS as a GNU package
 ;;
-(defvar local-path (cond
-		      ((getenv "LOCAL")
-		       (getenv "LOCAL"))
-		      ((getenv "GNU")
-		       (getenv "GNU"))
-		      (t
-		       "/usr/local"))
-  "*Path prefix for most locally installed things.")
+(defun cvs-find-program (program)
+  (let ((path (list (getenv "LOCAL")
+		    (getenv "GNU")
+		    "/usr/local/bin"
+		    "/usr/bin"
+		    "/bin")))
+    (while path
+      (if (stringp (car path))
+	  (let ((abs-program (expand-file-name program (car path))))
+	    (if (file-executable-p abs-program)
+		(setq path nil
+		      program abs-program))))
+      (setq path (cdr path)))
+    program))
 
-;; this isn't likely to be right all the time....
-;;
-(defvar local-gnu-path (cond
-		      ((getenv "GNU")
-		       (getenv "GNU"))
-		      (t
-		       "/usr/local"))	; or "/usr/gnu"?
-  "*Path prefix for locally installed GNU software.")
-
-(defvar cvs-program (concat local-path "/bin/cvs")
+(defvar cvs-program (cvs-find-program "cvs")
   "*Full path to the cvs executable.")
 
 ;; SunOS-4.1.1_U1 has "diff.c 1.12 88/08/04 SMI; from UCB 4.6 86/04/03"
 ;;
-(defvar cvs-diff-program (concat local-gnu-path "/bin/diff")
+(defvar cvs-diff-program (cvs-find-program "diff")
   "*Full path to the best diff program you've got.
 NOTE:  there are some nasty bugs in the context diff variants of some vendor
 versions, such as the one in SunOS-4.1.1_U1")
