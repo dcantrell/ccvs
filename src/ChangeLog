@@ -1,3 +1,9 @@
+2001-08-23  Derek Price  <dprice@collab.net>
+
+	* sanity.sh (info): Demonstrate that the verifymsg scripts can
+	sometimes, but not always, retreive information on which directory is
+	being committed to.
+
 2001-08-22  Derek Price  <dprice@collab.net>
 
 	* logmsg.c: Back out the last change - the repository which is passed
