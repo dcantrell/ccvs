@@ -1332,6 +1332,10 @@ Response expected: yes.
 Request that the server transmit mappings from filenames to keyword
 expansion modes in @code{Wrapper-rcsOption} responses.
 
+@item version \n
+Response expected: yes.
+Request that the server transmit its version message.
+
 @item @var{other-request} @var{text} \n
 Response expected: yes.
 Any unrecognized request expects a response, and does not

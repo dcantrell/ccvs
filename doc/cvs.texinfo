@@ -11030,6 +11030,11 @@ Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
 More wrappers.  See @ref{import options}.
 @end table
 
+@item version
+
+Display the version of @sc{cvs} being used.  If the repository
+is remote, display both the client and server versions.
+
 @item watch [on|off|add|remove] [@var{options}] [@var{files}@dots{}]
 
 on/off: turn on/off read-only checkouts of files.  See
