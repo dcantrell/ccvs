@@ -1,3 +1,7 @@
+Tue Nov 14 15:47:44 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* cvsinit.8: remove the .pl extension from filenames
+
 Wed Oct 18 11:07:07 1995  Vince Demarco  <vdemarco@bou.shl.com>
 
 	* cvs.1 (Flag): Updated the CVSROOT/wrappers stuff. Everyone seems
