@@ -1,5 +1,10 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (strip_trailing_newlines): Leave the K&R function decl on this
+	branch.
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (strip_trailing_newlines): Update prototype.
 	* subr.c (strip_trailing_newlines): Return true when newlines are
 	removed.
