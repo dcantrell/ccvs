@@ -1,5 +1,9 @@
 2001-01-10  Derek Price  <derek.price@openavenue.com>
 
+	* main.c (current_root): explicitly list this as a static global
+
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+
 	* cvs.h (get_cvs_port_number): change name & prototype from
 	get_port_number
 	* client.c (get_cvs_port_number): new function which returns a port
