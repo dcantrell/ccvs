@@ -114,6 +114,9 @@ SUBDIRS = lib src man doc contrib examples
 # Only make TAGS/tags files in these directories, in this order
 TSUBDIRS= src lib
 
+# Set default target.
+all:
+
 .PHONY: all install uninstall
 all install uninstall: config.h Makefile all-local
 	@for subdir in $(SUBDIRS); do \
