@@ -754,6 +754,11 @@ done"
 	  dotest basica-o5 "${testcvs} admin -o ::1.1 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 done"
+	  dotest basica-o5a "${testcvs} -n admin -o 1.2::3.1 ssfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+deleting revision 2\.0
+deleting revision 1\.3
+done"
 	  dotest basica-o6 "${testcvs} admin -o 1.2::3.1 ssfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 deleting revision 2\.0
@@ -2761,6 +2766,7 @@ ${PLUS} first revision"
 '"${PROG}"' [a-z]*: scheduling file `file3'\'' for addition
 '"${PROG}"' [a-z]*: scheduling file `file4'\'' for addition
 '"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add these files permanently'
+	  dotest branches-2a "${testcvs} -n -q ci -m dont-commit" ""
 	  dotest_lit branches-3 "${testcvs} -q ci -m add-it" <<HERE
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
@@ -2793,6 +2799,13 @@ HERE
 ${TESTDIR}/cvsroot/first-dir/file4,v  <--  file4
 new revision: 1\.2; previous revision: 1\.1
 done"
+	  # The "cvs log file4" in test branches-14.3 will test that we
+	  # didn't really add the tag.
+	  dotest branches-3.3 "${testcvs} -qn tag dont-tag" \
+"T file1
+T file2
+T file3
+T file4"
 	  dotest branches-4 "${testcvs} tag -b br1" "${PROG}"' [a-z]*: Tagging \.
 T file1
 T file2

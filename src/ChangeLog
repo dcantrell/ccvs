@@ -1,3 +1,8 @@
+Mon Nov  3 10:17:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_rewrite): Don't write the file if noexec.
+	* sanity.sh (basica, branches): Test for this.
+
 Sat Nov  1 10:01:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.h (struct deltatext): Comment text and log fields.

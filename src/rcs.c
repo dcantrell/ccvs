@@ -6259,6 +6259,9 @@ RCS_rewrite (rcs, newdtext, insertpt)
 {
     FILE *fin, *fout;
 
+    if (noexec)
+	return;
+
     fout = rcs_internal_lockfile (rcs->path);
 
     RCS_putadmin (rcs, fout);
