@@ -1,5 +1,17 @@
 Thu May 23 21:11:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Credits): Rewrite section on FAQ to reflect the
+	fact that FAQ is no longer maintained.
+	(What is CVS?): Mention comp.software.config-mgmt as well as
+	info-cvs.  Mention the fact that info-cvs-request can be slow in
+	responding.
+	(What is CVS?): Rather than say that cvs is not a configuration
+	mangement system, say specifically what it lacks (change control,
+	etc.).  I added process control (which was sorely lacking from the
+	list of configuration management functionality), and deleted some
+	functions such as tape construction which are not provided by the
+	well-known configuration management systems.
+
 	* cvs.texinfo (checkout options): Add comment regarding
 	subdirectories (lack of clarity pointed out by ian@cygnus.com).
 	Add comment about that infernal "short as possible" wording.

@@ -274,12 +274,11 @@ David G. Grubbs <@t{dgg@@think.com}>.
 Some text has been extracted from the man pages for
 @sc{rcs}.
 
-The @sc{cvs} @sc{faq} (@pxref{What is CVS?}) by David
-G. Grubbs has been used as a check-list to make sure
-that this manual is as complete as possible.  (This
-manual does however not include all of the material in
-the @sc{faq}).  The @sc{faq} contains a lot of useful
-information.
+The @sc{cvs} @sc{faq} by David G. Grubbs has provided
+useful material.  The @sc{faq} is no longer maintained,
+however, and this manual about the closest thing there
+is to a successor (with respect to documenting how to
+use @sc{cvs}, at least).
 
 In addition, the following persons have helped by
 telling me about mistakes I've made:
@@ -400,14 +399,17 @@ sites, for instance @t{prep.ai.mit.edu} in
 
 @cindex Mailing list
 @cindex List, mailing list
-There is a mailing list for @sc{cvs} where bug reports
-can be sent, questions can be asked, an FAQ is posted,
-and discussion about future enhancements to @sc{cvs}
-take place.  To submit a message to the list, write to
-<@t{info-cvs@@prep.ai.mit.edu}>.  To subscribe or
+@cindex Newsgroups
+There is a mailing list for @sc{cvs}.  To subscribe or
 unsubscribe, write to
-<@t{info-cvs-request@@prep.ai.mit.edu}>. Please be
-specific about your email address.
+<@t{info-cvs-request@@prep.ai.mit.edu}>.  Please be
+specific about your email address.  As of May 1996,
+subscription requests are handled by a busy human
+being, so you cannot expect to be added or removed
+immediately.  The usenet group
+@code{comp.software.config-mgmt} is also a suitable
+place for @sc{cvs} discussions (along with other
+configuration management systems).
 
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -433,7 +435,7 @@ checked out working directories.  If you write your
 @file{Makefile}s or scripts in every directory so they
 have to know the relative positions of everything else,
 you wind up requiring the entire repository to be
-checked out.  That's simply bad planning.
+checked out.
 
 If you modularize your work, and construct a build
 system that will share files (via links, mounts,
@@ -442,13 +444,18 @@ arrange your disk usage however you like.
 
 But you have to remember that @emph{any} such system is
 a lot of work to construct and maintain.  @sc{cvs} does
-not address the issues involved.  You must use your
-brain and a collection of other tools to provide a
-build scheme to match your plans.
+not address the issues involved.
 
 Of course, you should place the tools created to
 support such a build system (scripts, @file{Makefile}s,
 etc) under @sc{cvs}.
+
+Figuring out what files need to be rebuilt when
+something changes is, again, something to be handled
+outside the scope of @sc{cvs}.  One traditional
+approach is to use @code{make} for building, and use
+some automated tool for generating the depencies which
+@code{make} uses.
 
 @item @sc{cvs} is not a substitute for management.
 
@@ -489,34 +496,63 @@ Acquire the habit of reading specs and talking to your
 peers.
 
 
-@item @sc{cvs} is not a configuration management system.
+@item @sc{cvs} does not have change control
 
-@sc{cvs} is a source control system.  The phrase
-``configuration management'' is a marketing term, not
-an industry-recognized set of functions.
+Change control refers to a number of things.  First of
+all it can mean @dfn{bug-tracking}, that is being able
+to keep a database of reported bugs and the status of
+each one (is it fixed?  in what release?  has the bug
+submitter agreed that it is fixed?).  For interfacing
+@sc{cvs} to an external bug-tracking system, see the
+@file{rcsinfo} and @file{editinfo} files
+(@pxref{Administrative files}).
 
-A true ``configuration management system'' would contain
-elements of the following:
+Another aspect of change control is keeping track of
+the fact that changes to several files were in fact
+changed together as one logical change.  If you check
+in several files in a single @code{cvs commit}
+operation, @sc{cvs} then forgets that those files were
+checked in together, and the fact that they have the
+same log message is the only thing tying them
+together.  Keeping a @sc{gnu} style @file{ChangeLog}
+can help somewhat.
+@c FIXME: should have an xref to a section which talks
+@c more about keeping ChangeLog's with CVS, but that
+@c section hasn't been written yet.
 
-@itemize @bullet
-@item Source control.
-@item Dependency tracking.
-@item Build systems (i.e. What to build and how to find
-things during a build.  What is shared?  What is local?)
-@item Bug tracking.
-@item Automated Testing procedures.
-@item Release Engineering documentation and procedures.
-@item Tape Construction.
-@item Customer Installation.
-@item A way for users to run different versions of the same
-software on the same host at the same time.
-@end itemize
+Another aspect of change control, in some systems, is
+the ability to keep track of the status of each
+change.  Some changes have been written by a developer,
+others have been reviewed by a second developer, and so
+on.  Generally, the way to do this with @sc{cvs} is to
+generate a diff (using @code{cvs diff} or @code{diff})
+and email it to someone who can then apply it using the
+@code{patch} utility.  This is very flexible, but
+depends on mechanisms outside @sc{cvs} to make sure
+nothing falls through the cracks.
 
-@sc{cvs} provides only the first.
+@item @sc{cvs} is not an automated testing program
+
+It should be possible to enforce mandatory use of a
+testsuite using the @code{commitinfo} file.  I haven't
+heard a lot about projects trying to do that or whether
+there are subtle gotchas, however.
+
+@item @sc{cvs} does not have a builtin process model
+
+Some systems provide ways to ensure that changes or
+releases go through various steps, with various
+approvals as needed.  Generally, one can accomplish
+this with @sc{cvs} but it might be a little more work.
+In some cases you'll want to use the @file{commitinfo},
+@file{loginfo}, @file{rcsinfo}, or @file{editinfo}
+files, to require that certain steps be performed
+before cvs will allow a checkin.  Also consider whether
+features such as branches and tags can be used to
+perform tasks such as doing work in a development tree
+and then merging certain changes over to a stable tree
+only once they have been proven.
 @end table
-
-This section is taken from release 2.3 of the @sc{cvs}
-@sc{faq}.
 
 @c ---------------------------------------------------------------------
 @node Basic concepts
