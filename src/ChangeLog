@@ -1,3 +1,13 @@
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (checkoutlist_contents): Document the optional portions
+	of this file format more accurately.
+	(mkmodules): Ditto, in comments.  Fix bug that always failed to ignore
+	whitespace before error messages.
+	* sanity.sh (mkmodules-temp-file-removal): Rename to...
+	(mkmodules): ...this and add a test of the checkoutlist error message.
+	Add cleanup step to restore checkoutlist.
+
 2003-09-08  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (cvs_temp_file): Replace a chmod 0600, which shouldn't

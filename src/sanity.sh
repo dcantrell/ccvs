@@ -918,7 +918,7 @@ if test x"$*" = x; then
 	tests="${tests} keywordexpand"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
-	tests="${tests} mkmodules-temp-file-removal"
+	tests="${tests} mkmodules"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
@@ -11726,25 +11726,44 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  rm -r modules6
 	  ;;
 
-	mkmodules-temp-file-removal)
+	mkmodules)
 	  # When a file listed in checkoutlist doesn't exist, cvs-1.10.4
 	  # would fail to remove the CVSROOT/.#[0-9]* temporary file it
 	  # creates while mkmodules is in the process of trying to check
 	  # out the missing file.
 
 	  mkdir 1; cd 1
-	  dotest mtfr-1 "${testcvs} -Q co CVSROOT" ''
+	  dotest mkmodules-temp-file-removal-1 "${testcvs} -Q co CVSROOT" ''
 	  cd CVSROOT
 	  echo no-such-file >> checkoutlist
-	  dotest mtfr-2 "${testcvs} -Q ci -m. checkoutlist" \
+	  dotest mkmodules-temp-file-removal-2 "${testcvs} -Q ci -m. checkoutlist" \
 "Checking in checkoutlist;
 $CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
 new revision: 1\.2; previous revision: 1\.1
 done
 ${SPROG} commit: Rebuilding administrative file database"
 
-	  dotest mtfr-3 "echo $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
+	  dotest mkmodules-temp-file-removal-3 "echo $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
 	    "$CVSROOT_DIRNAME/CVSROOT/\.#\[0-9\]\*"
+
+	  # Versions 1.12.1 of CVS and printed most of the white space included
+	  # before error messages in checkoutlist.
+	  echo "no-such-file     Failed to update no-such-file." >checkoutlist
+	  dotest mkmodules-error-message-1 "${testcvs} -Q ci -m. checkoutlist" \
+"Checking in checkoutlist;
+$CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
+new revision: 1\.3; previous revision: 1\.2
+done
+${SPROG} commit: Rebuilding administrative file database
+${SPROG} commit: Failed to update no-such-file\."
+
+	  dotest mkmodules-cleanup-1 "${testcvs} -Q up -pr1.1 checkoutlist >checkoutlist"
+	  dotest mkmodules-cleanup-2 "${testcvs} -Q ci -m. checkoutlist" \
+"Checking in checkoutlist;
+$CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
+new revision: 1\.4; previous revision: 1\.3
+done
+${SPROG} commit: Rebuilding administrative file database"
 
 	  cd ../..
 	  rm -rf 1
