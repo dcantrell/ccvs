@@ -1,3 +1,7 @@
+Wed Oct 15 10:55:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO (#191): Add thoughts on external difference programs.
+
 1997-10-11  Noel Cragg  <noel@swish.red-bean.com>
 
 	* BUGS: remove note about the `-d' flag bug that was just fixed.
