@@ -222,6 +222,8 @@ cvstag (argc, argv)
 	if (date)
 	    client_senddate (date);
 
+	send_arg ("--");
+
 	send_arg (symtag);
 
 	if (is_rtag)
@@ -233,7 +235,6 @@ cvstag (argc, argv)
 	}
 	else
 	{
-
 	    send_files (argc, argv, local, 0,
 
 		    /* I think the -c case is like "cvs status", in

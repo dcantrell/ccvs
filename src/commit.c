@@ -559,6 +559,7 @@ commit (argc, argv)
 	if (!run_module_prog)
 	    send_arg("-n");
 	option_with_arg ("-r", saved_tag);
+	send_arg ("--");
 
 	/* FIXME: This whole find_args.force/SEND_FORCE business is a
 	   kludge.  It would seem to be a server bug that we have to

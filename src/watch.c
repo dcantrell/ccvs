@@ -318,25 +318,14 @@ watch_addremove (argc, argv)
 	/* FIXME: copes poorly with "all" if server is extended to have
 	   new watch types and client is still running an old version.  */
 	if (the_args.edit)
-	{
-	    send_arg ("-a");
-	    send_arg ("edit");
-	}
+	    option_with_arg ("-a", "edit");
 	if (the_args.unedit)
-	{
-	    send_arg ("-a");
-	    send_arg ("unedit");
-	}
+	    option_with_arg ("-a", "unedit");
 	if (the_args.commit)
-	{
-	    send_arg ("-a");
-	    send_arg ("commit");
-	}
+	    option_with_arg ("-a", "commit");
 	if (!the_args.edit && !the_args.unedit && !the_args.commit)
-	{
-	    send_arg ("-a");
-	    send_arg ("none");
-	}
+	    option_with_arg ("-a", "none");
+	send_arg ("--");
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server (the_args.adding ?
@@ -516,6 +505,7 @@ watchers (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
+	send_arg ("--");
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
 	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("watchers\012", 0);

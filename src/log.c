@@ -383,6 +383,7 @@ cvslog (argc, argv)
 	dellist (&log_data.statelist);
 	send_arg_list ("-w", log_data.authorlist);
 	dellist (&log_data.authorlist);
+	send_arg ("--");
 
 	if (is_rlog)
 	{
