@@ -1,5 +1,12 @@
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (unlock_proc): Don't expect an int in closure as it is not
+	condoned in the C standard.  For now, just assume zero since this
+	function is currently only called from one location.
+	(remove_locks): Pass NULL for the closure argument to unlock_proc().
+
+2004-02-12  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (unlock_proc): Use closure as true/false free_repository
 	free_repository argument to remove_lock_files.  Move to a position
 	above remove_locks and delete prototype.
