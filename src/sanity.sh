@@ -10695,8 +10695,8 @@ ${PROG} \[checkout aborted\]: cannot expand modules"
 	  cd first-dir
 	  echo file1 >file1
 	  dotest modules3-2 "${testcvs} add file1" \
-"${PROG}"' add: scheduling file `file1'\'' for addition
-'"${PROG}"' add: use .'"${PROG}"' commit. to add this file permanently'
+"${PROG} add: scheduling file \`file1' for addition
+${PROG} add: use '${PROG} commit' to add this file permanently"
 	  dotest modules3-3 "${testcvs} -q ci -m add-it" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
