@@ -1,3 +1,18 @@
+Sun Oct  6 22:46:22 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* configure.in (--with-rsh): I'll get this right eventually!
+
+Fri Oct  4 02:21:58 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* configure.in (--with-rsh): check for restricted shell had a
+	broken regex for expr (naughty cut&paste!).
+
+	* NEWS: - fix previous two changes to represent their current state.
+	- mention options.h going bye-bye.
+	- mention new option -P.
+	- mention fix for "update -P" and removed files.
+	- mention fix for modules file "&" option.
+
 Wed Oct  2 17:01:54 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* configure.in: fixed RCS Id string.

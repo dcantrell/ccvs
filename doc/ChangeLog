@@ -1,3 +1,21 @@
+Sun Oct  6 14:16:12 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* cvs.texinfo (Password authentication server): note -p for
+	inetd.conf command line.
+	(Global options): GREPBIN -> GREP.
+	(Global options): DIFFBIN -> DIFF.
+	(Global options): new environment variable PATCH, and '-p'.
+	(Variables): GREPBIN -> GREP.
+	(Variables): DIFFBIN -> DIFF.
+	(Variables): new variable PATCH.
+	(Environment variables): GREPBIN -> GREP.
+	(Environment variables): DIFFBIN -> DIFF.
+	(Environment variables): new environment variable PATCH.
+
+	* cvsclient.texi (Responses): attempt to describe new Change-dir
+	response.  So far this is only in terms of the support for nested
+	sub-modules, but perhaps it should be more generic?
+
 Mon Sep 30 18:17:34 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* cvs.texinfo (Credits): add comment asking if we should update.

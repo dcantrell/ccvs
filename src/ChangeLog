@@ -1,3 +1,66 @@
+Mon Oct  7 00:17:26 1996  Greg A. Woods  <woods@most.weird.com>
+
+	Patches from Mark Mitchell <mmitchell@usa.net>:
+	* sanity.sh: (modules) test sub-module feature (&).
+
+Sun Oct  6 13:37:17 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* update.c (isemptydir): fix a stupid typo in some new error
+	handling tests.
+
+	Patches from Mark Mitchell <mmitchell@usa.net>:
+	* sanity.sh: add "prune" to test "cvs update -P" on empty
+	directories with as yet un-committed, removed files.
+	
+	* sanity.sh: fix typo in last change.
+
+	* update.c: forgot "savecwd.h" for Mark's patch.
+	(isemptydir): don't cast isremoved() -- we've already declared and
+	defined it above (is it safe to pass static func to another module?).
+	some minor cosmetic fixes.
+	
+	* client.c (call_in_directory): fix typo in applying Mark's patch.
+
+	* sanity.sh: make it possible to set arbitrary global options to
+	the "$testcvs" invocation.
+
+	Patches from Mark Mitchell <mmitchell@usa.net>:
+	* server.h (server_change_dir): new function prototype.
+	* modules.c (do_module): add server support for sub-modules.
+	(do_module): new local variable changed_dir for server support.
+	(do_module): before handling spec_opt, if server_active and
+	spec_opt set, call server_change_dir() to go into the sub-module
+	dir and set changed_dir.
+	(do_module): before writing out checkin/update prog files, if
+	server_active and changed_dir set, cd back up to parent directory.
+	* server.c (server_change_dir): new function to send "Change-dir".
+	* client.c: (handle_change_dir): new function prototype and
+	definition.
+	(submodule_dir): new global holding sub-module directory name.
+	(call_in_directory): cd to submodule_dir if it's set.
+	(handle_change_dir): new function to handle Change-dir cmd.
+	(responses): add new protocol command "Change-dir".
+
+Sat Oct  4 12:38:12 1996  Greg A. Woods  <woods@most.weird.com>
+
+	Patches from Mark Mitchell <mmitchell@usa.net>:
+	* client.c: some minor cosmetic changes (needs more).
+	(client_isemptydir): removed [use new global isemptydir()].
+	(process_prune_candidates): call global isemptydir().
+	* update.h (isemptydir): add function prototype.
+	(isemptydir): now a global function.
+ 	(isemptydir): remove static prototype.
+	(isemptydir): dir arg is really a "const".
+	(isemptydir): don't report open faliure unless dir exists.
+	(isemptydir): don't report empty if there are any un-committed
+	removed files still present in CVS/Entries.
+	(isremoved): new function & prototype used in isemptydir().
+
+	* update.c (isemptydir): add some error handling for readdir()
+	from client_isemptydir().
+
+	* version.c: let CVS keep track of its own release name.
+
 Wed Oct  2 00:04:14 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* client.c (start_rsh_server): get rid of the magic strings for
