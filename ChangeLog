@@ -1,5 +1,15 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dsp: Set PROP BASE directories to projet standard,
+	synchronize ADD BASE statements with ADD counter part,
+	remove child note property overrides which taken together
+	reduce file size and "Reset" function uses project defaults.
+	Place project libraries first in link library order.
+	* cvsnt.mak: Regenerated for cvsnt.dsp change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.dep: Regenerated for lib/lib.dsp change.
 	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
 
