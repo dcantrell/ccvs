@@ -241,12 +241,15 @@ diff_run (argc, argv, out)
   int prev = -1;
   int width = DEFAULT_WIDTH;
   int show_c_function = 0;
+  int optind_old;
 
   /* Do our initializations.  */
   initialize_main (&argc, &argv);
 
   /* Decode the options.  */
 
+  optind_old = optind;
+  optind = 0;
   while ((c = getopt_long (argc, argv,
 			   "0123456789abBcC:dD:efF:hHiI:lL:nNpPqrsS:tTuU:vwW:x:X:y",
 			   longopts, 0)) != EOF)
@@ -647,6 +650,7 @@ diff_run (argc, argv, out)
      terminating the process. */
   if ((val = setjmp (diff_abort_buf)) != 0)
     {
+      optind = optind_old;
       if (outfile != stdout)
 	fclose (outfile);
       return val;
@@ -657,6 +661,7 @@ diff_run (argc, argv, out)
   /* Print any messages that were saved up for last.  */
   print_message_queue ();
 
+  optind = optind_old;
   check_output (outfile);
   if (outfile != stdout)
     if (fclose (outfile) != 0)

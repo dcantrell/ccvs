@@ -1,3 +1,55 @@
+Fri Sep 26 14:24:42 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* diff.c (diff_run): Save old value of optind before calling
+	getopt_long, then restore before returning.  Eventually it would
+	be nice if diff_run were fully reentrant.
+
+	New diff3 library for CVS.
+	* Makefile.in (SOURCES): Add diff3.c.
+	(OBJECTS): Add diff3.o.
+	* diff3.c: New file, copied from diffutils-2.7.  See diffutils for
+	earlier ChangeLogs.  Undefine initialize_main macro. Remove <signal.h>.
+	(diff3_run): Renamed from main().  Add `outfile' argument.  Remove
+	SIGCLD handling; we do not fork.  Save optind and reset to 0
+	before calling getopt_long; restore after option processing done.
+	(read_diff): Use diff_run with a temporary output file,
+	instead of forking a diff subprocess and reading from a pipe.
+	Change DIFF_PROGRAM to "diff"; this argument is now used only for
+	diagnostic reporting.
+	(xmalloc, xrealloc): Removed.
+	(diff_program): Removed.
+	(diff_program_name): Made extern, so it may be used in other
+	library calls like `error'.
+	(initialize_main): New function.
+
+	Namespace munging.  util.c defines both fatal() and
+ 	perror_with_exit(), but these cannot be used to abort diff3: both
+ 	attempt to longjmp() to a buffer set in diff.c, used only by
+ 	diff_run.  This is an awful solution, but necessary until the code
+ 	can be cleaned up.  (These functions do not *have* to be renamed,
+ 	since both are declared static to diff3.c and should not clash
+ 	with libdiff.a, but it reduces potential confusion.)
+	* diff3.c (diff3_fatal): Renamed from fatal.
+	(diff3_perror_with_exit): Renamed from perror_with_exit.
+
+	Eliminate exit calls.
+	(try_help): Change from `void' to `int'.  Return, do not exit.
+	(diff3_fatal, diff3_perror_with_exit, process_diff): Change `exit'
+	to DIFF3_ABORT.
+	(diff3_run): Initialize jump buffer for nonlocal exits.  Change
+ 	exit calls to returns.  Change `perror_with_exit' to
+ 	`perror_with_name' and add a return.  Change `fatal' to
+ 	`diff_error' and add a return.  The reasoning is that we shouldn't
+ 	rely on setjmp/longjmp any more than necessary.
+
+	Redirect stdout.
+	(check_output): Renamed from check_stdout.  Take stream argument
+	instead of blindly checking stdout.  Do not close stream, but
+	merely fflush it.
+	(diff3_run): Initialize outstream, and close when done.  Pass this
+	stream (instead of stdout) to output_diff3_edscript,
+	output_diff3_merge, and output_diff3.
+
 Thu Sep 25 14:34:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* util.c (begin_output, finish_output): If PR_PROGRAM is not
