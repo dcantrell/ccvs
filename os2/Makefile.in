@@ -14,7 +14,7 @@ PS = /
 
 srcdir     = @srcdir@
 top_srcdir = @top_srcdir@
-libdir     = @top_srcdir@${PS}src
+libdir     = @top_srcdir@${PS}lib
 cvs_srcdir = @top_srcdir@${PS}src
 
 # Do we need these?
