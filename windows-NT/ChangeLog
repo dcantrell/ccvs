@@ -1,3 +1,9 @@
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* config.h.in.footer (getpagesize): Define as 4096 because GNULIB
+	assumes it can include <sys/param.h> which is not available.
+	* config.h.in, config.h, stamp-chi: Regenerated.
+	
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (HAVE_OS_H): Undef this on Windoze.
