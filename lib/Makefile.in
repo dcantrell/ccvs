@@ -52,6 +52,7 @@ SOURCES = \
 	strerror.c \
 	strippath.c \
 	stripslash.c \
+	strtoul.c \
 	valloc.c \
 	vasprintf.c \
 	waitpid.c \
