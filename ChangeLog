@@ -1,3 +1,10 @@
+2003-12-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure.in (AC_SYS_LARGEFILE): Add. The history file on
+	Solaris boxes can grow beyond 2GB.
+	* configure, config.h.in: Regenerated.
+	* NEWS: Note addition of --disable-largefiles option.
+
 2003-12-05  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Update to require Automake 1.7.9.
