@@ -1,5 +1,21 @@
 Wed Jun  7 11:28:31 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
+	* cvs.h (Popen): Add prototype.
+	  (Fopen, open_file, isreadable, iswritable, isdir, isfile,
+	  islink, make_directory, make_directories, rename_file,
+	  link_file, unlink_file, copy_file): Add const qualifers to
+	  prototype arguments.
+	* subr.c (Fopen, Popen, open_file, isreadable, iswritable, isdir,
+	  isfile, islink, make_directory, make_directories, rename_file,
+	  link_file, unlink_file, copy_file): Add const qualifiers to
+	  function arguments.
+
+	* logmsg.c (logfile_write), recurse.c (do_recursion, addfile):
+	  Don't cast void functions to a void expression.  There is at
+	  least one compiler (MPW) that balks at this.
+
+	* rcs.c (keysize, valsize): Change type to size_t.
+
 	* add.c (add_directory): Don't cast umask() argument to int.
 
 	* import.c (add_rcs_file): Changed type of mode to mode_t.

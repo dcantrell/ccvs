@@ -590,9 +590,9 @@ null_delproc (p)
  */
 
 static char *key = NULL;
-static int keysize = 0;
 static char *value = NULL;
-static int valsize = 0;
+static size_t keysize = 0;
+static size_t valsize = 0;
 
 #define ALLOCINCR 1024
 

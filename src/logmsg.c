@@ -428,7 +428,7 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     if (logfp != (FILE *) 0)
     {
 	(void) fprintf (pipefp, "Status:\n");
-	(void) rewind (logfp);
+	rewind (logfp);
 	while ((c = getc (logfp)) != EOF)
 	    (void) putc ((char) c, pipefp);
     }

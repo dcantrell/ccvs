@@ -61,8 +61,8 @@ extern char *strtok ();
  */
 void
 copy_file (from, to)
-    char *from;
-    char *to;
+    const char *from;
+    const char *to;
 {
     struct stat sb;
     struct utimbuf t;
@@ -116,7 +116,7 @@ copy_file (from, to)
  */
 int
 isdir (file)
-    char *file;
+    const char *file;
 {
     struct stat sb;
 
@@ -130,7 +130,7 @@ isdir (file)
  */
 int
 islink (file)
-    char *file;
+    const char *file;
 {
 #ifdef S_ISLNK
     struct stat sb;
@@ -148,7 +148,7 @@ islink (file)
  */
 int
 isfile (file)
-    char *file;
+    const char *file;
 {
     struct stat sb;
 
@@ -163,7 +163,7 @@ isfile (file)
  */
 int
 isreadable (file)
-    char *file;
+    const char *file;
 {
     return (access (file, R_OK) != -1);
 }
@@ -174,7 +174,7 @@ isreadable (file)
  */
 int
 iswritable (file)
-    char *file;
+    const char *file;
 {
     return (access (file, W_OK) != -1);
 }
@@ -184,8 +184,8 @@ iswritable (file)
  */
 FILE *
 open_file (name, mode)
-    char *name;
-    char *mode;
+    const char *name;
+    const char *mode;
 {
     FILE *fp;
 
@@ -199,8 +199,8 @@ open_file (name, mode)
  */
 FILE *
 Fopen (name, mode)
-    char *name;
-    char *mode;
+    const char *name;
+    const char *mode;
 {
     if (trace)
 	(void) fprintf (stderr, "%c-> fopen(%s,%s)\n",
@@ -216,7 +216,7 @@ Fopen (name, mode)
  */
 void
 make_directory (name)
-    char *name;
+    const char *name;
 {
     struct stat buf;
 
@@ -232,7 +232,7 @@ make_directory (name)
  */
 void
 make_directories (name)
-    char *name;
+    const char *name;
 {
     char *cp;
 
@@ -360,8 +360,8 @@ xchmod (fname, writable)
  */
 void
 rename_file (from, to)
-    char *from;
-    char *to;
+    const char *from;
+    const char *to;
 {
     if (trace)
 	(void) fprintf (stderr, "%c-> rename(%s,%s)\n",
@@ -378,7 +378,8 @@ rename_file (from, to)
  */
 int
 link_file (from, to)
-    char *from, *to;
+    const char *from;
+    const char *to;
 {
     if (trace)
 	(void) fprintf (stderr, "%c-> link(%s,%s)\n",
@@ -394,7 +395,7 @@ link_file (from, to)
  */
 int
 unlink_file (f)
-    char *f;
+    const char *f;
 {
     if (trace)
 	(void) fprintf (stderr, "%c-> unlink(%s)\n",
@@ -440,13 +441,13 @@ xcmp (file1, file2)
 	    ret = 0;
 	else
 	{
-	    buf1 = xmalloc ((int) size);
-	    buf2 = xmalloc ((int) size);
+	    buf1 = xmalloc ((size_t) size);
+	    buf2 = xmalloc ((size_t) size);
 	    if (read (fd1, buf1, (int) size) != (int) size)
 		error (1, errno, "cannot read file %s for comparing", file1);
 	    if (read (fd2, buf2, (int) size) != (int) size)
 		error (1, errno, "cannot read file %s for comparing", file2);
-	    ret = memcmp(buf1, buf2, (int) size);
+	    ret = memcmp(buf1, buf2, (size_t) size);
 	    free (buf1);
 	    free (buf2);
 	}
@@ -906,13 +907,15 @@ run_print (fp)
 
 FILE *
 Popen (cmd, mode)
-    char *cmd, *mode;
+    const char *cmd;
+    const char *mode;
 {
     if (trace)
 	(void) fprintf (stderr, "%c-> Popen(%s,%s)\n",
 			(server_active) ? 'S' : ' ', cmd, mode);
     if (noexec)
 	return (NULL);
+
     return (popen (cmd, mode));
 }
 
