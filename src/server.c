@@ -641,7 +641,7 @@ serve_directory (arg)
     char *repos;
 
     use_dir_and_repos = 1;
-    status = buf_read_line (buf_from_net, &repos);
+    status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
 	dirswitch (arg, repos);
@@ -880,7 +880,7 @@ serve_modified (arg)
      * read the file if we can.
      */
 
-    status = buf_read_line (buf_from_net, &mode_text);
+    status = buf_read_line (buf_from_net, &mode_text, (int *) NULL);
     if (status != 0)
     {
         if (status == -2)
@@ -906,7 +906,7 @@ serve_modified (arg)
 	return;
     }
 
-    status = buf_read_line (buf_from_net, &size_text);
+    status = buf_read_line (buf_from_net, &size_text, (int *) NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -1211,7 +1211,7 @@ serve_notify (arg)
     }
     strcpy (new->filename, arg);
 
-    status = buf_read_line (buf_from_net, &data);
+    status = buf_read_line (buf_from_net, &data, (int *) NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -3512,6 +3512,13 @@ server (argc, argv)
     }
     /* Ignore argc and argv.  They might be from .cvsrc.  */
 
+    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
+				       outbuf_memory_error);
+    buf_from_net = stdio_buffer_initialize (stdin, 1, outbuf_memory_error);
+
+    saved_output = buf_nonio_initialize (outbuf_memory_error);
+    saved_outerr = buf_nonio_initialize (outbuf_memory_error);
+
     /* Since we're in the server parent process, error should use the
        protocol to report error messages.  */
     error_use_protocol = 1;
@@ -3613,12 +3620,6 @@ error ENOMEM Virtual memory exhausted.\n");
     argument_count = 1;
     argument_vector[0] = "Dummy argument 0";
 
-    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, outbuf_memory_error);
-    buf_from_net = stdio_buffer_initialize (stdin, 1, outbuf_memory_error);
-
-    saved_output = buf_nonio_initialize (outbuf_memory_error);
-    saved_outerr = buf_nonio_initialize (outbuf_memory_error);
-
     server_active = 1;
 
     while (1)
@@ -3627,7 +3628,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	struct request *rq;
 	int status;
 	
-	status = buf_read_line (buf_from_net, &cmd);
+	status = buf_read_line (buf_from_net, &cmd, (int *) NULL);
 	if (status == -2)
 	{
 	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\
@@ -3880,10 +3881,6 @@ pserver_authenticate_connection ()
    * big deal.
    */
 
-  /* Since we're in the server parent process, error should use the
-     protocol to report error messages.  */
-  error_use_protocol = 1;
-
   /* Make sure the protocol starts off on the right foot... */
   fgets (tmp, PATH_MAX, stdin);
   if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
@@ -3938,9 +3935,9 @@ pserver_authenticate_connection ()
   pw = getpwnam (host_user);
   if (pw == NULL)
     {
-      error (1, 0,
-             "fatal error, aborting.\nerror 0 %s: no such user\n",
-             username);
+      printf ("E Fatal error, aborting.\n\
+error 0 %s: no such user\n", username);
+      exit (EXIT_FAILURE);
     }
   
 #if HAVE_INITGROUPS
