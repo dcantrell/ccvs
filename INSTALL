@@ -27,7 +27,6 @@ m68k:
 m88k:
 	Data General AViiON running dgux 5.4R2.10 (1.5)
 	Harris Nighthawk 5800 running CX/UX 7.1 (1.5) (footnote 7)
-        Data General dgux 5.4R2.10 generic AViiON mc88100
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.5)
