@@ -1,3 +1,9 @@
+2003-03-20  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (env): Try more than one ps command if the first one
+	fails. This may let the test succeed on more platforms. Also,
+	keep the ps output that was processed for the error report.
+
 2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (env): Use 'ps -el' rather than 'ps -l' so that
