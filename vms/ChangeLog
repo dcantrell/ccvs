@@ -1,5 +1,7 @@
 Tue, 9 Sep 1997  Jim Kingdon
 
+	* config.h: Define HAVE_VPRINTF.
+
 	* pwd.h, vms.h: Define pid_t and mode_t.
 
 Tue Sep  9 18:53:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>

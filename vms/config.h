@@ -123,7 +123,7 @@
 #define HAVE_VFORK
 
 /* Define if you have the vprintf function.  */
-/* #undef HAVE_VPRINTF */
+#define HAVE_VPRINTF
 
 /* Define if you have the <errno.h> header file.  */
 /* #undef HAVE_ERRNO_H */
