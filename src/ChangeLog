@@ -1,3 +1,8 @@
+1998-05-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* wrapper.c (wrap_add): Disable -t/-f wrappers at least until the
+	serious bug can be fixed.
+
 1998-05-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkout.c (checkout): Call server_pathname_check on the
