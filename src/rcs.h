@@ -212,6 +212,7 @@ char *RCS_branch_head PROTO ((RCSNode *rcs, char *rev));
 
 int RCS_isdead PROTO((RCSNode *, const char *));
 char *RCS_getexpand PROTO ((RCSNode *));
+void RCS_setexpand PROTO ((RCSNode *, char *));
 int RCS_checkout PROTO ((RCSNode *, char *, char *, char *, char *, char *,
 			 RCSCHECKOUTPROC, void *));
 int RCS_checkin PROTO ((RCSNode *rcs, char *workfile, char *message,

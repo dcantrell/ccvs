@@ -604,12 +604,9 @@ admin_fileproc (callerdat, finfo)
     if (admin_data->kflag != NULL)
     {
 	char *kflag = admin_data->kflag + 2;
-	if (!rcs->expand || strcmp (rcs->expand, kflag) != 0)
-	{
-	    if (rcs->expand)
-		free (rcs->expand);
-	    rcs->expand = xstrdup (kflag);
-	}
+	char *oldexpand = RCS_getexpand (rcs);
+	if (oldexpand == NULL || strcmp (oldexpand, kflag) != 0)
+	    RCS_setexpand (rcs, kflag);
     }
 
     /* Handle miscellaneous options.  TODO: decide whether any or all

@@ -1,3 +1,13 @@
+1999-01-29  Jim Kingdon  <http://www.cyclic.com>
+
+	* rcs.c, rcs.h (RCS_setexpand): New function.
+	* admin.c (admin_fileproc): Access keyword expansion field via
+	RCS_getexpand and RCS_setexpand, rather than directly.
+	* commit.c (checkaddfile): When resurrecting, set the keyword
+	expansion mode.
+	* sanity.sh (binfiles3): Adjust tests binfiles3-7 and binfiles3-8
+	for the new behavior.
+
 1999-01-27  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (multiroot3): Add new variant of multiroot3-10 test
