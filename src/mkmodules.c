@@ -7,6 +7,7 @@
 
 #include "cvs.h"
 #include "savecwd.h"
+#include "getline.h"
 
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
@@ -332,15 +333,14 @@ mkmodules (dir)
     char *dir;
 {
     struct saved_cwd cwd;
-    /* FIXME: arbitrary limit */
     char *temp;
     char *cp, *last, *fname;
 #ifdef MY_NDBM
     DBM *db;
 #endif
     FILE *fp;
-    /* FIXME: arbitrary limit */
-    char line[512];
+    char *line = NULL;
+    size_t line_allocated = 0;
     const struct admin_file *fileptr;
 
     if (save_cwd (&cwd))
@@ -405,7 +405,6 @@ mkmodules (dir)
 	free (temp);
     }
 
-    /* Use 'fopen' instead of 'open_file' because we want to ignore error */
     fp = CVS_FOPEN (CVSROOTADM_CHECKOUTLIST, "r");
     if (fp)
     {
@@ -415,7 +414,7 @@ mkmodules (dir)
 	 *
 	 * comment lines begin with '#'
 	 */
-	while (fgets (line, sizeof (line), fp) != NULL)
+	while (getline (&line, &line_allocated, fp) >= 0)
 	{
 	    /* skip lines starting with # */
 	    if (line[0] == '#')
@@ -447,7 +446,16 @@ mkmodules (dir)
 	    }
 	    free (temp);
 	}
-	(void) fclose (fp);
+	if (ferror (fp))
+	    error (0, errno, "cannot read %s", CVSROOTADM_CHECKOUTLIST);
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", CVSROOTADM_CHECKOUTLIST);
+    }
+    else
+    {
+	/* Error from CVS_FOPEN.  */
+	if (!existence_error (errno))
+	    error (0, errno, "cannot open %s", CVSROOTADM_CHECKOUTLIST);
     }
 
     if (restore_cwd (&cwd, NULL))

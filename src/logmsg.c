@@ -553,10 +553,13 @@ title_proc (p, closure)
 	   You can verify that this assumption is safe by checking the
 	   code in add.c (add_directory) and import.c (import). */
 
+	str_list = xrealloc (str_list, strlen (str_list) + 5);
 	(void) strcat (str_list, " ");
 
 	if (li->type == T_TITLE)
 	{
+	    str_list = xrealloc (str_list,
+				 strlen (str_list) + strlen (p->key) + 5);
 	    (void) strcat (str_list, p->key);
 	}
 	else
@@ -568,13 +571,28 @@ title_proc (p, closure)
 		switch (*c)
 		{
 		case 's':
+		    str_list =
+			xrealloc (str_list,
+				  strlen (str_list) + strlen (p->key) + 5);
 		    (void) strcat (str_list, p->key);
 		    break;
 		case 'V':
+		    str_list =
+			xrealloc (str_list,
+				  (strlen (str_list)
+				   + (li->rev_old ? strlen (li->rev_old) : 0)
+				   + 10)
+				  );
 		    (void) strcat (str_list, (li->rev_old
 					      ? li->rev_old : "NONE"));
 		    break;
 		case 'v':
+		    str_list =
+			xrealloc (str_list,
+				  (strlen (str_list)
+				   + (li->rev_new ? strlen (li->rev_new) : 0)
+				   + 10)
+				  );
 		    (void) strcat (str_list, (li->rev_new
 					      ? li->rev_new : "NONE"));
 		    break;
@@ -585,18 +603,15 @@ title_proc (p, closure)
 		   won't blow up on an old CVS.  */
 		}
 		if (*(c + 1) != '\0')
+		{
+		    str_list = xrealloc (str_list, strlen (str_list) + 5);
 		    (void) strcat (str_list, ",");
+		}
 	    }
 	}
     }
     return (0);
 }
-
-/*
- * Since some systems don't define this...  */
-#ifndef MAXHOSTNAMELEN
-#define	MAXHOSTNAMELEN	256
-#endif
 
 /*
  * Writes some stuff to the logfile "filter" and returns the status of the
@@ -734,11 +749,11 @@ logfile_write (repository, filter, message, logfp, changes)
 	str_list_format = xmalloc (sizeof (char) * (len + 1));
 	strncpy (str_list_format, fmt_begin, len);
 	str_list_format[len] = '\0';
-	
-	/* Allocate a chunk of memory to hold the string. */
 
+	/* Allocate an initial chunk of memory.  As we build up the string
+	   we will realloc it.  */
 	if (!str_list)
-	    str_list = xmalloc (MAXLISTLEN);
+	    str_list = xmalloc (1);
 	str_list[0] = '\0';
 
 	/* Add entries to the string.  Don't bother looking for
