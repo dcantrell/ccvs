@@ -15,6 +15,10 @@ extern int cvsencrypt;
 /* Whether the connection should use per-packet authentication.  */
 extern int cvsauthenticate;
 
+#ifdef __STDC__
+struct buffer;
+#endif
+
 # ifdef ENCRYPTION
 
 #   ifdef HAVE_KERBEROS

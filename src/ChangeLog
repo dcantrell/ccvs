@@ -1,3 +1,8 @@
+2001-05-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.h: Declare "struct buffer" outside prototype for __STDC__
+	compilers.
+
 2001-05-04  Derek Price  <dprice@collab.net>
 
 	* client.c:  General refactoring.  Removed several global variables in
