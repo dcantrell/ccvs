@@ -1,5 +1,9 @@
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (join-rm): New test for issue #104 & #159.
+
+2004-02-02  Derek Price  <derek@ximbiot.com>
+
 	Continue removal from server of handling of case insensitive clients.
 
 	* cvs.h: Remove extern declaration of ign_case.
