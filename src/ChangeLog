@@ -1,5 +1,10 @@
 2003-08-19  Derek Price  <derek@ximbiot.com>
 
+	* logmsg.c (do_editor): Use cvs_temp_file rather than cvs_temp_name to
+	create and open the temporary file.  Remove FIXME to this effect.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
 	* logmsg.c (do_editor): Move editinfo processing to before creation of
 	the temp file so that it may be skipped when no editor is defined.
 	Remove related FIXME.  Add comments.  Remove some processing of
