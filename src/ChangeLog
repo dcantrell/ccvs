@@ -1,3 +1,10 @@
+Sun Nov 19 11:22:43 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_recursion): Don't call server_pause_check if there
+	are writelocks around.  Revise comment to reflect fact we are no
+	longer relying on a writelock'd operations being "unable" to
+	generate enough data to pause.
+
 Sun Nov 19 10:04:50 1995  Peter Wemm  <peter@haywire.DIALix.COM>
 
 	* server.c, server.h, options.h.in: Implement hooks for doing
