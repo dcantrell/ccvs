@@ -1,3 +1,11 @@
+1999-04-30  Jim Kingdon  <http://www.cyclic.com>
+
+	* rcs.c (annotate_fileproc): Don't cast NULL in passing it to
+	RCS_deltas.  Because there is a prototype in scope the cast is
+	unnecessary (per HACKING's ANSI C or SunOS4 rule), and in fact it
+	was causing failures on UNICOS because it cast to size_t instead
+	of size_t*.  (Thanks to Dean Kopesky for reporting this).
+
 1999-04-29  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh: If invoked without any arguments, print a usage
