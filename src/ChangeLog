@@ -1,3 +1,13 @@
+Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (server): Revise code which checks for errors creating
+	temporary directory.  This won't solve the intermittent
+	  can't create temporary directory
+	  Unknown error -1
+	but it will mean (a) the right message based on errno gets
+	printed, instead of "unknown error -1", and (b) the message says
+	that it happened in chmod instead of mkdir_p.
+
 Sat Mar 15 16:47:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (modes): New tests.  Note that (for now) these are

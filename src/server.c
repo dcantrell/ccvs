@@ -3986,19 +3986,26 @@ error ENOMEM Virtual memory exhausted.\n");
                700, to discourage random people from tampering with
                it.  */
 	    status = mkdir_p (server_temp_dir);
-	    if (status == EEXIST)
-		status = 0;
-#ifndef CHMOD_BROKEN
-	    if (status == 0)
-		status = chmod (server_temp_dir, S_IRWXU);
-#endif
-	    if (status != 0)
+	    if (status != 0 && status != EEXIST)
 	    {
 		if (alloc_pending (80))
 		    strcpy (pending_error_text,
 			    "E can't create temporary directory");
 		pending_error = status;
 	    }
+#ifndef CHMOD_BROKEN
+	    else
+	    {
+		if (chmod (server_temp_dir, S_IRWXU) < 0)
+		{
+		    int save_errno = errno;
+		    if (alloc_pending (80))
+			strcpy (pending_error_text, "\
+E cannot change permissions on temporary directory");
+		    pending_error = save_errno;
+		}
+	    }
+#endif
 	}
     }
 
