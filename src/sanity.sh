@@ -14404,7 +14404,11 @@ else
   exit 1
 fi
 EOF
-	    chmod +x ${TESTDIR}/env/test-cvs-pid
+	    if test -n "$remotehost"; then
+	      $CVS_RSH $remotehost "chmod +x ${TESTDIR}/env/test-cvs-pid"
+	    else
+	      chmod +x ${TESTDIR}/env/test-cvs-pid
+	    fi
 	    cd CVSROOT
 	    echo "^env ${TESTDIR}/env/test-cvs-pid" >>commitinfo
 	    dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
