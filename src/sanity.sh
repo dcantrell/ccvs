@@ -1494,6 +1494,11 @@ echo Ok.
 # * cvs rm twice (should be a nice error message).
 # * -P option to checkout--(a) refrains from checking out new empty dirs,
 #   (b) prunes empty dirs already there.
+# * Test that cvs -d `hostname`:/tmp/cvs-sanity/non/existent co foo
+#   gives an appropriate error (e.g. 
+#     Cannot access /foo/bar/CVSROOT
+#     No such file or directory).
+# End of TODO list.
 
 # Remove the test directory, but first change out of it.
 cd /tmp
