@@ -1,5 +1,10 @@
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo: Put a few errant references to bug-cvs inside @code{}
+	for consistancy.
+
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo: Update WARNINGs and Notes for a more consistent
 	appearance.  Remove some obsolete comments.
 
