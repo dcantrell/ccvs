@@ -978,7 +978,23 @@ done'
 'U dir6/file1
 U dir6/dir7/file1'
 
-	  cd ../../../../../..
+	  # Test what happens if one uses -P when there are files removed
+	  # but not committed.
+	  cd dir6/dir7
+	  dotest deep-rm1 "${testcvs} rm -f file1" \
+"${PROG} [a-z]*: scheduling .file1. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  cd ..
+	  dotest deep-rm2 "${testcvs} -q update -d -P" 'R dir7/file1'
+	  dotest deep-rm3 "test -d dir7" ''
+	  dotest deep-rm4 "${testcvs} -q ci -m rm-it" 'Removing dir7/file1;
+/tmp/cvs-sanity/cvsroot/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done'
+	  dotest deep-rm5 "${testcvs} -q update -d -P" ''
+	  dotest_fail deep-rm6 "test -d dir7" ''
+
+	  cd ../../../../../../..
 
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then
 	    pass deep-5

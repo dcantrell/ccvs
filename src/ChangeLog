@@ -1,3 +1,18 @@
+Sat Oct 19 12:00:00 1996  Mark Mitchell <mmitchell@usa.net>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (isemptydir, new function isremoved): Avoid pruning
+	directories that contain files marked for removal but not
+	comitted.
+	* update.c, update.h (isemptydir): Now extern, not static.
+	* update.c (isemptydir): New parameter might_not_exist handles
+	difference in functionality from old client_isemptydir.  Bring
+	over the improved error checking from client_isemptydir.
+	* client.c (client_isemptydir): Removed; isemptydir now suffices.
+	* update.c (update_dirleave_proc), client.c
+	(process_prune_candidates): Update callers.
+	* sanity.sh (deep): Add tests deep-rm* for above fix.
+
 Fri Oct 18 15:53:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (devcom): Add tests devcom-some* to test watching just
