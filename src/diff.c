@@ -21,8 +21,7 @@ static int diff_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int diff_dirleaveproc PROTO((char *dir, int err, char *update_dir));
 static int diff_file_nodiff PROTO((char *file, char *repository, List *entries,
 			     List *srcfiles, Vers_TS *vers));
-static int diff_fileproc PROTO((char *file, char *update_dir, char *repository,
-			  List * entries, List * srcfiles));
+static int diff_fileproc PROTO((struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
 static char *diff_rev1, *diff_rev2;
@@ -222,12 +221,8 @@ diff (argc, argv)
  */
 /* ARGSUSED */
 static int
-diff_fileproc (file, update_dir, repository, entries, srcfiles)
-    char *file;
-    char *update_dir;
-    char *repository;
-    List *entries;
-    List *srcfiles;
+diff_fileproc (finfo)
+    struct file_info *finfo;
 {
     int status, err = 2;		/* 2 == trouble, like rcsdiff */
     Vers_TS *vers;
@@ -244,8 +239,8 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 #ifdef SERVER_SUPPORT
     user_file_rev = 0;
 #endif
-    vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       file, 1, 0, entries, srcfiles);
+    vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
+		       finfo->file, 1, 0, finfo->entries, finfo->srcfiles);
 
     if (diff_rev2 != NULL || diff_date2 != NULL)
     {
@@ -254,7 +249,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
     }
     else if (vers->vn_user == NULL)
     {
-	error (0, 0, "I know nothing about %s", file);
+	error (0, 0, "I know nothing about %s", finfo->file);
 	freevers_ts (&vers);
 	diff_mark_errors (err);
 	return (err);
@@ -265,7 +260,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	    empty_file = DIFF_ADDED;
 	else
 	{
-	    error (0, 0, "%s is a new entry, no comparison available", file);
+	    error (0, 0, "%s is a new entry, no comparison available", finfo->file);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -277,7 +272,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	    empty_file = DIFF_REMOVED;
 	else
 	{
-	    error (0, 0, "%s was removed, no comparison available", file);
+	    error (0, 0, "%s was removed, no comparison available", finfo->file);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -287,7 +282,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	if (vers->vn_rcs == NULL && vers->srcfile == NULL)
 	{
-	    error (0, 0, "cannot find revision control file for %s", file);
+	    error (0, 0, "cannot find revision control file for %s", finfo->file);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -296,7 +291,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	{
 	    if (vers->ts_user == NULL)
 	    {
-		error (0, 0, "cannot find %s", file);
+		error (0, 0, "cannot find %s", finfo->file);
 		freevers_ts (&vers);
 		diff_mark_errors (err);
 		return (err);
@@ -313,7 +308,7 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
     }
 
-    if (empty_file == DIFF_NEITHER && diff_file_nodiff (file, repository, entries, srcfiles, vers))
+    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo->file, finfo->repository, finfo->entries, finfo->srcfiles, vers))
     {
 	freevers_ts (&vers);
 	return (0);
@@ -324,34 +319,34 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 
     /* Output an "Index:" line for patch to use */
     (void) fflush (stdout);
-    if (update_dir[0])
-	(void) printf ("Index: %s/%s\n", update_dir, file);
+    if (finfo->update_dir[0])
+	(void) printf ("Index: %s/%s\n", finfo->update_dir, finfo->file);
     else
-	(void) printf ("Index: %s\n", file);
+	(void) printf ("Index: %s\n", finfo->file);
     (void) fflush (stdout);
 
-    tocvsPath = wrap_tocvs_process_file(file);
+    tocvsPath = wrap_tocvs_process_file(finfo->file);
     if (tocvsPath)
     {
 	/* Backup the current version of the file to CVS/,,filename */
-	sprintf(fname,"%s/%s%s",CVSADM, CVSPREFIX, file);
+	sprintf(fname,"%s/%s%s",CVSADM, CVSPREFIX, finfo->file);
 	if (unlink_file_dir (fname) < 0)
 	    if (! existence_error (errno))
-		error (1, errno, "cannot remove %s", file);
-	rename_file (file, fname);
+		error (1, errno, "cannot remove %s", finfo->file);
+	rename_file (finfo->file, fname);
 	/* Copy the wrapped file to the current directory then go to work */
-	copy_file (tocvsPath, file);
+	copy_file (tocvsPath, finfo->file);
     }
 
     if (empty_file == DIFF_ADDED || empty_file == DIFF_REMOVED)
     {
 	(void) printf ("===================================================================\nRCS file: %s\n",
-		       file);
-	(void) printf ("diff -N %s\n", file);
+		       finfo->file);
+	(void) printf ("diff -N %s\n", finfo->file);
 
 	if (empty_file == DIFF_ADDED)
 	{
-	    run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, file);
+	    run_setup ("%s %s %s %s", DIFF, opts, DEVNULL, finfo->file);
 	}
 	else
 	{
@@ -408,13 +403,13 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
 
     if (tocvsPath)
     {
-	if (unlink_file_dir (file) < 0)
+	if (unlink_file_dir (finfo->file) < 0)
 	    if (! existence_error (errno))
-		error (1, errno, "cannot remove %s", file);
+		error (1, errno, "cannot remove %s", finfo->file);
 
-	rename_file (fname,file);
+	rename_file (fname,finfo->file);
 	if (unlink_file (tocvsPath) < 0)
-	    error (1, errno, "cannot remove %s", file);
+	    error (1, errno, "cannot remove %s", finfo->file);
     }
 
     if (empty_file == DIFF_REMOVED)

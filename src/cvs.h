@@ -550,8 +550,34 @@ void do_editor PROTO((char *dir, char **messagep,
 typedef	int (*CALLBACKPROC)	PROTO((int *pargc, char *argv[], char *where,
 	char *mwhere, char *mfile, int horten, int local_specified,
 	char *omodule, char *msg));
-typedef	int (*FILEPROC)		PROTO((char *file, char *update_dir, char *repository,
-	List *	entries, List *	srcfiles));
+
+/* This is the structure that the recursion processor passes to the
+   fileproc to tell it about a particular file.  */
+struct file_info
+{
+    /* Name of the file, without any directory component.  */
+    char *file;
+
+    /* Name of the directory we are in, relative to the directory in
+       which this command was issued.  We have cd'd to this directory
+       (either in the working directory or in the repository, depending
+       on which sort of recursion we are doing).  If we are in the directory
+       in which the command was issued, this is "".  */
+    char *update_dir;
+
+    /* Name of the directory corresponding to the repository which contains
+       this file.  */
+    char *repository;
+
+    /* The pre-parsed entries for this directory.  */
+    List *entries;
+
+    /* The pre-parsed versions of the RCS files.  This is filled in only
+       if dosrcs was passed as nonzero to start_recursion.  */
+    List *srcfiles;
+};
+
+typedef	int (*FILEPROC)		PROTO((struct file_info *finfo));
 typedef	int (*FILESDONEPROC)	PROTO((int err, char *repository, char *update_dir));
 typedef	Dtype (*DIRENTPROC)	PROTO((char *dir, char *repos, char *update_dir));
 typedef	int (*DIRLEAVEPROC)	PROTO((char *dir, int err, char *update_dir));
