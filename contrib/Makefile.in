@@ -84,7 +84,7 @@ CONTRIB_PROGS = clmerge cln_hist commit_prep cvs_acls cvscheck log log_accum \
 all: Makefile $(PROGS) $(CONTRIB_PROGS)
 .PHONY: all
 
-install: all $(libdir)/cvs/contrib
+install: all installdirs
 	for f in $(CONTRIB_FILES) ; do\
 		$(INSTALL_DATA) $(srcdir)/$$f $(libdir)/cvs/contrib/$$f; \
 	done
@@ -96,8 +96,9 @@ install: all $(libdir)/cvs/contrib
 	done
 .PHONY: install
 
-$(libdir)/cvs/contrib:
+installdirs:
 	$(top_srcdir)/mkinstalldirs $(libdir)/cvs/contrib
+.PHONY: installdirs
 
 tags:
 .PHONY: tags

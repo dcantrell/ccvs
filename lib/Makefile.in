@@ -97,6 +97,9 @@ all: libcvs.a
 install: all
 .PHONY: install
 
+installdirs:
+.PHONY: installdirs
+
 tags: $(DISTFILES)
 	ctags `for i in $(DISTFILES); do echo $(srcdir)/$$i; done`
 

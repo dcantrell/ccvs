@@ -1,3 +1,7 @@
+Fri Aug 16 16:06:22 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* Makefile.in (installdirs): new (empty) target
+
 Mon Aug 12 14:45:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Remove CLIENT_ONLY; it is nowhere used.
