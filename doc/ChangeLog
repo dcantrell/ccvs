@@ -1,3 +1,9 @@
+2003-03-24  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Update copyright notice.
+
+	* Makefile.in: Regenerated.
+
 2003-03-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Environment variables): Move @end table tag to after
