@@ -1,5 +1,13 @@
 2004-05-20  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in.footer (ssize_t): Move...
+	* config.h.in (size_t): ...here.
+	(MBLEN, MBRLEN, HAVE_RUN_TZSET_TEST, HAVE_STRFTIME,
+	TZSET_CLOBBERS_LOCALTIME_BUFFER, my_strftime, tzset): New macros.
+	* config.h.in, stamp-chi: Regenerated.
+
+2004-05-20  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (stamp-chi): Don't cross line boundries since this does
 	not work portably when @MAINTAINER_MODE_TRUE@ is replaced with a
 	comment.  Add config.h.in.footer.

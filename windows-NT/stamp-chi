@@ -472,7 +472,7 @@
 #undef HAVE_STRERROR_R
 
 /* Define to 1 if you have the `strftime' function. */
-#undef HAVE_STRFTIME
+#define HAVE_STRFTIME 1
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -967,7 +967,7 @@
 #undef size_t
 
 /* Define as a signed type of the same size as size_t. */
-#undef ssize_t
+#define ssize_t int
 
 /* Define to rpl_tzset if the wrapper function should be used. */
 #undef tzset
@@ -1077,6 +1077,3 @@ char *sock_strerror (int errnum);
    moot since the use of buffer.c ensures that writes will only be as big
    as the buffers).  */
 #define SEND_NEVER_PARTIAL 1
-
-/* ssize_t not available under Windows */
-typedef int ssize_t;
