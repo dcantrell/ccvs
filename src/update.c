@@ -1088,6 +1088,7 @@ checkout_file (finfo, vers_ts, adding)
 	if (isfile (finfo->file))
 	    rename_file (finfo->file, backup);
 	else
+	{
 	    /* If -f/-t wrappers are being used to wrap up a directory,
 	       then backup might be a directory instead of just a file.  */
 	    if (unlink_file_dir (backup) < 0)
@@ -1097,6 +1098,9 @@ checkout_file (finfo, vers_ts, adding)
 		    /* FIXME: should include update_dir in message.  */
 		    error (0, errno, "error removing %s", backup);
 	    }
+	    free (backup);
+	    backup = NULL;
+	}
     }
 
     file_is_dead = RCS_isdead (vers_ts->srcfile, vers_ts->vn_rcs);
@@ -1231,8 +1235,12 @@ VERS: ", 0);
     {
 	int old_errno = errno;		/* save errno value over the rename */
 
-	if (!pipeout && isfile (backup))
+	if (!pipeout && backup != NULL)
+	{
 	    rename_file (backup, finfo->file);
+	    free (backup);
+	    backup = NULL;
+	}
 
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? old_errno : 0,
 	       "could not check out %s", finfo->fullname);
@@ -1240,7 +1248,7 @@ VERS: ", 0);
 	retval = retcode;
     }
 
-    if (!pipeout)
+    if (!pipeout && backup != NULL)
     {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
