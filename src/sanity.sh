@@ -23290,6 +23290,32 @@ Root ${TESTDIR}/1
 noop
 EOF
 
+	    dotest pserver-5a "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E Protocol error: init says \"${TESTDIR}/2\" but pserver says \"${CVSROOT_DIRNAME}\"
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+init ${TESTDIR}/2
+EOF
+	    dotest_fail pserver-5b "test -d ${TESTDIR}/2" ''
+
+	    dotest pserver-5c "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} LOVE YOU
+E init xxx must be an absolute pathname
+error  " <<EOF
+BEGIN AUTH REQUEST
+${CVSROOT_DIRNAME}
+testme
+Ay::'d
+END AUTH REQUEST
+init xxx
+EOF
+	    dotest_fail pserver-5d "test -d xxx" ''
+
 	    dotest_fail pserver-6 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "I HATE YOU" <<EOF
 BEGIN AUTH REQUEST

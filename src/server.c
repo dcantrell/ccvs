@@ -771,6 +771,7 @@ serve_root (arg)
 		sprintf (pending_error_text, "\
 E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 			 arg, Pserver_Repos);
+	    return;
 	}
     }
 #endif
@@ -3792,14 +3793,31 @@ static void
 serve_init (arg)
     char *arg;
 {
+
     if (!isabsolute (arg))
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text,
-		     "E Root %s must be an absolute pathname", arg);
-	/* Fall through to do_cvs_command which will return the
-	   actual error.  */
+		     "E init %s must be an absolute pathname", arg);
     }
+#ifdef AUTH_SERVER_SUPPORT
+    else if (Pserver_Repos != NULL)
+    {
+	if (strcmp (Pserver_Repos, arg) != 0)
+	{
+	    if (alloc_pending (80 + strlen (Pserver_Repos) + strlen (arg)))
+		/* The explicitness is to aid people who are writing clients.
+		   I don't see how this information could help an
+		   attacker.  */
+		sprintf (pending_error_text, "\
+E Protocol error: init says \"%s\" but pserver says \"%s\"",
+			 arg, Pserver_Repos);
+	}
+    }
+#endif
+
+    if (print_pending_error ())
+	return;
 
     if (current_parsed_root != NULL)
 	free_cvsroot_t (current_parsed_root);
