@@ -44,11 +44,6 @@
 #endif
 #endif
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
-USE(rcsid);
-#endif
-
 char *program_name;
 char *program_path;
 /*

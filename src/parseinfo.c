@@ -8,11 +8,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)parseinfo.c 1.18 94/09/23 $";
-USE(rcsid);
-#endif
-
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
  * the first line in the file that matches the REPOSITORY, or if ALL != 0, any lines

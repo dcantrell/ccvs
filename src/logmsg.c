@@ -9,11 +9,6 @@
 #include "cvs.h"
 #include "getline.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)logmsg.c 1.48 94/09/29 $";
-USE(rcsid);
-#endif
-
 static int find_type PROTO((Node * p, void *closure));
 static int fmt_proc PROTO((Node * p, void *closure));
 static int logfile_write PROTO((char *repository, char *filter, char *title,

@@ -27,11 +27,6 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
-USE(rcsid);
-#endif
-
 static int add_directory PROTO((char *repository, char *dir));
 static int build_entry PROTO((char *repository, char *user, char *options,
 		        char *message, List * entries, char *tag));

@@ -13,11 +13,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)mkmodules.c 1.45 94/09/30 $";
-USE(rcsid);
-#endif
-
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
 #endif

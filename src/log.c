@@ -17,11 +17,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)log.c 1.44 94/09/30 $";
-USE(rcsid);
-#endif
-
 static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
 static int log_fileproc PROTO((char *file, char *update_dir, char *repository,
 			 List * entries, List * srcfiles));

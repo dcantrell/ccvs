@@ -14,11 +14,6 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
-USE(rcsid);
-#endif
-
 static int check_fileproc PROTO((char *file, char *update_dir,
      			 char *repository, List * entries,
 			 List * srcfiles));

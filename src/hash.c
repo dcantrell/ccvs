@@ -9,11 +9,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)hash.c 1.19 94/09/23 $";
-USE(rcsid);
-#endif
-
 /* global caches */
 static List *listcache = NULL;
 static Node *nodecache = NULL;

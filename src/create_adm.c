@@ -13,11 +13,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)create_adm.c 1.28 94/09/23 $";
-USE(rcsid);
-#endif
-
 /* update_dir includes dir as its last component.  */
 
 void

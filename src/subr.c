@@ -10,11 +10,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
-USE(rcsid);
-#endif
-
 extern char *getlogin ();
 
 /*

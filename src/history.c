@@ -178,11 +178,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)history.c 1.33 94/09/21 $";
-USE(rcsid);
-#endif
-
 static struct hrec
 {
     char *type;		/* Type of record (In history record) */

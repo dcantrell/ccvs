@@ -19,11 +19,6 @@
 #include "edit.h"
 #include "fileattr.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
-USE(rcsid);
-#endif
-
 static Dtype check_direntproc PROTO((char *dir, char *repos, char *update_dir));
 static int check_fileproc PROTO((char *file, char *update_dir, char *repository,
 			   List * entries, List * srcfiles));

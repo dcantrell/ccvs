@@ -47,13 +47,6 @@ char *alloca ();
 #endif
 #endif
 
-#if __GNUC__ == 2
-#define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var)
-#else
-#define USE(var) static const char standalone_semis_illegal_sigh
-#endif
-
-
 #include <stdio.h>
 
 /* Under OS/2, <stdio.h> doesn't define popen()/pclose(). */

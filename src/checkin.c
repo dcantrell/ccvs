@@ -19,11 +19,6 @@
 #include "fileattr.h"
 #include "edit.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";
-USE(rcsid);
-#endif
-
 int
 Checkin (type, file, update_dir, repository,
 	 rcs, rev, tag, options, message, entries)

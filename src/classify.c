@@ -9,11 +9,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)classify.c 1.17 94/10/07 $";
-USE(rcsid);
-#endif
-
 #ifdef SERVER_SUPPORT
 static void sticky_ck PROTO((char *file, int aflag, Vers_TS * vers,
 			     List * entries,
