@@ -1,3 +1,9 @@
+2000-01-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo: Add index entries for "Compression" and "Gzip".
+	Correct typography in many index entries (English phrases should
+	have initial caps, subcommands/files/etc. should be as-is).
+
 2000-01-10  Karl Fogel  <kfogel@red-bean.com>
 
 	* cvs.texinfo (loginfo): correctly describe CVSROOT/loginfo's

@@ -859,8 +859,8 @@ the file permissions appropriate for the repository.
 @node Repository files
 @subsection Where files are stored within the repository
 
-@c @cindex filenames, legal
-@c @cindex legal filenames
+@c @cindex Filenames, legal
+@c @cindex Legal filenames
 @c Somewhere we need to say something about legitimate
 @c characters in filenames in working directory and
 @c repository.  Not "/" (not even on non-unix).  And
@@ -989,12 +989,12 @@ rules see @ref{Tags}.
 @c -- Move this to @node Creating a repository or similar
 @cindex Security, file permissions in repository
 @cindex File permissions, general
-@cindex permissions, general
+@cindex Permissions, general
 @c FIXME: we need to somehow reflect "permissions in
 @c repository" versus "permissions in working
 @c directory" in the index entries.
 @cindex Group
-@cindex read-only files, in repository
+@cindex Read-only files, in repository
 All @samp{,v} files are created read-only, and you
 should not change the permission of those files.  The
 directories inside the repository should be writable by
@@ -1029,7 +1029,7 @@ checked it in.  This has little significance; what
 really matters is who owns the directories.
 
 @cindex CVSUMASK, environment variable
-@cindex umask, for repository files
+@cindex Umask, for repository files
 @sc{cvs} tries to set up reasonable file permissions
 for new directories that are added inside the tree, but
 you must fix the permissions manually when a new
@@ -1091,10 +1091,10 @@ permissions on the @sc{cvsroot} directory and
 directories above it in the tree; see @ref{Password
 authentication security}.
 
-@cindex setuid
-@cindex setgid
-@cindex security, setuid
-@cindex installed images (VMS)
+@cindex Setuid
+@cindex Setgid
+@cindex Security, setuid
+@cindex Installed images (VMS)
 Some operating systems have features which allow a
 particular program to run with the ability to perform
 operations which the caller of the program could not.
@@ -1118,7 +1118,7 @@ carefully if you are considering this option
 @subsection File Permission issues specific to Windows
 @cindex Windows, and permissions
 @cindex File permissions, Windows-specific
-@cindex permissions, Windows-specific
+@cindex Permissions, Windows-specific
 
 Some file permission issues are specific to Windows
 operating systems (Windows 95, Windows NT, and
@@ -1140,7 +1140,7 @@ something out, please let us know as described in
 
 @node Attic
 @subsection The attic
-@cindex attic
+@cindex Attic
 
 You will notice that sometimes @sc{cvs} stores an
 @sc{rcs} file in the @code{Attic}.  For example, if the
@@ -1159,7 +1159,7 @@ but if it goes in the attic, it would be in
 /usr/local/cvsroot/yoyodyne/tc/Attic/backend.c,v
 @end example
 
-@cindex dead state
+@cindex Dead state
 instead.  It should not matter from a user point of
 view whether a file is in the attic; @sc{cvs} keeps
 track of this and looks in the attic when it needs to.
@@ -1276,7 +1276,7 @@ there must be a single tab character there and no spaces.
 @cindex #cvs.rfl, technical details
 @cindex #cvs.wfl, technical details
 @cindex #cvs.lock, technical details
-@cindex locks, cvs, technical details
+@cindex Locks, cvs, technical details
 For an introduction to CVS locks focusing on
 user-visible behavior, see @ref{Concurrency}.  The
 following section is aimed at people who are writing
@@ -1907,7 +1907,7 @@ in the repository; for the most part it is possible to
 back them up just like any other files.  However, there
 are a few issues to consider.
 
-@cindex locks, cvs, and backups
+@cindex Locks, cvs, and backups
 @cindex #cvs.rfl, and backups
 The first is that to be paranoid, one should either not
 use @sc{cvs} during the backup, or have the backup
@@ -1953,9 +1953,9 @@ the changes into the repository.
 
 @node Moving a repository
 @section Moving a repository
-@cindex repository, moving
-@cindex moving a repository
-@cindex copying a repository
+@cindex Repository, moving
+@cindex Moving a repository
+@cindex Copying a repository
 
 Just as backing up the files in the repository is
 pretty much like backing up any other files, if you
@@ -1990,7 +1990,7 @@ isn't worth it.
 @cindex Repositories, remote
 @cindex Remote repositories
 @cindex Client/Server Operation
-@cindex server, CVS
+@cindex Server, CVS
 
         Your working copy of the sources can be on a
 different machine than the repository.  Using @sc{cvs}
@@ -2252,9 +2252,9 @@ permissions on the @file{$CVSROOT} and
 @file{$CVSROOT/CVSROOT} directories.  See @ref{Password
 authentication security}, for more details.
 
-@cindex Pserver (subcommand)
-@cindex password server, setting up
-@cindex authenticating server, setting up
+@cindex pserver (subcommand)
+@cindex Password server, setting up
+@cindex Authenticating server, setting up
 @c FIXME: this isn't quite right regarding port
 @c numbers; CVS looks up "cvspserver" in
 @c /etc/services (on unix, but what about non-unix?).
@@ -2348,7 +2348,7 @@ The second and third lines will grant access to
 @code{bach} and @code{spwang} if they supply their
 respective plaintext passwords.
 
-@cindex user aliases
+@cindex User aliases
 The fourth line will grant access to @code{melissa}, if
 she supplies the correct password, but her @sc{cvs}
 operations will actually run on the server side under
@@ -2443,8 +2443,8 @@ want to include the @file{passwd} file in checkouts of
 @node Password authentication client
 @subsubsection Using the client with password authentication
 @cindex Login (subcommand)
-@cindex password client, using
-@cindex authenticated client, using
+@cindex Password client, using
+@cindex Authenticated client, using
 @cindex :pserver:, setting up
 To run a @sc{cvs} command on a remote repository via
 the password-authenticating server, one specifies the
@@ -2534,7 +2534,7 @@ removed from the @code{CVS_PASSFILE} by using the
 @node Password authentication security
 @subsubsection Security considerations with password authentication
 
-@cindex security, of pserver
+@cindex Security, of pserver
 The passwords are stored on the client side in a
 trivial encoding of the cleartext, and transmitted in
 the same encoding.  The encoding is done only to
@@ -2598,7 +2598,7 @@ security, get Kerberos.
 @subsection Direct connection with GSSAPI
 
 @cindex GSSAPI
-@cindex security, GSSAPI
+@cindex Security, GSSAPI
 @cindex :gserver:, setting up
 @cindex Kerberos, using :gserver:
 GSSAPI is a generic interface to network security
@@ -2652,7 +2652,7 @@ cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
 @subsection Direct connection with kerberos
 
 @cindex Kerberos, using :kserver:
-@cindex security, kerberos
+@cindex Security, kerberos
 @cindex :kserver:, setting up
 The easiest way to use kerberos is to use the kerberos
 @code{rsh}, as described in @ref{Connecting via rsh}.
@@ -2737,7 +2737,7 @@ environment variable.
 @c ---------------------------------------------------------------------
 @node Read-only access
 @section Read-only repository access
-@cindex read-only repository access
+@cindex Read-only repository access
 @cindex readers (admin file)
 @cindex writers (admin file)
 
@@ -2826,8 +2826,8 @@ read-only access.
 
 @node Server temporary directory
 @section Temporary directories for the server
-@cindex temporary directories, and server
-@cindex server, temporary directories
+@cindex Temporary directories, and server
+@cindex Server, temporary directories
 
 While running, the @sc{cvs} server creates temporary
 directories.  They are named
@@ -3360,7 +3360,7 @@ taginfo file (@pxref{user-defined logging}).
 @c issues which arise.
 
 @cindex Adding a tag
-@cindex tag, example
+@cindex Tag, example
 The following example shows how you can add a tag to a
 file.  The commands must be issued inside your working
 directory.  That is, you should issue the
@@ -3471,7 +3471,7 @@ like this:
 @node Tagging the working directory
 @section Specifying what to tag from the working directory
 
-@cindex Tag (subcommand)
+@cindex tag (subcommand)
 The example in the previous section demonstrates one of
 the most common ways to choose which revisions to tag.
 Namely, running the @code{cvs tag} command without
@@ -3503,7 +3503,7 @@ cvs [tag aborted]: correct the above errors first!
 
 @node Tagging by date/tag
 @section Specifying what to tag by date or revision
-@cindex Rtag (subcommand)
+@cindex rtag (subcommand)
 
 The @code{cvs rtag} command tags the repository as of a
 certain date or time (or can be used to tag the latest
@@ -3565,9 +3565,9 @@ recover from errors.  If you are a @sc{cvs}
 administrator, you may consider restricting these
 commands with taginfo (@pxref{user-defined logging}).
 
-@cindex deleting tags
-@cindex removing tags
-@cindex tags, deleting
+@cindex Deleting tags
+@cindex Removing tags
+@cindex Tags, deleting
 To delete a tag, specify the @samp{-d} option to either
 @code{cvs tag} or @code{cvs rtag}.  For example:
 
@@ -3577,8 +3577,8 @@ cvs rtag -d rel-0-4 tc
 
 deletes the tag @code{rel-0-4} from the module @code{tc}.
 
-@cindex moving tags
-@cindex tags, moving
+@cindex Moving tags
+@cindex Tags, moving
 When we say @dfn{move} a tag, we mean to make the same
 name point to different revisions.  For example, the
 @code{stable} tag may currently point to revision 1.4
@@ -3592,8 +3592,8 @@ accomplished as:
 cvs tag -r 1.6 -F stable backend.c
 @end example
 
-@cindex renaming tags
-@cindex tags, renaming
+@cindex Renaming tags
+@cindex Tags, renaming
 When we say @dfn{rename} a tag, we mean to make a
 different name point to the same revisions as the old
 tag.  For example, one may have misspelled the tag name
@@ -3695,7 +3695,7 @@ you delete them with @samp{cvs update -A}.  The
 the head of the trunk, and forgets any sticky tags,
 dates, or options.
 
-@cindex sticky date
+@cindex Sticky date
 The most common use of sticky tags is to identify which
 branch one is working on, as described in
 @ref{Accessing branches}.  However, non-branch
@@ -4824,8 +4824,8 @@ later merge the removals to another branch if you want
 
 @node Removing directories
 @section Removing directories
-@cindex removing directories
-@cindex directories, removing
+@cindex Removing directories
+@cindex Directories, removing
 
 In concept removing directories is somewhat similar to
 removing files---you want the directory to not exist in
@@ -5277,7 +5277,7 @@ Notified}); this command is useful even if you are not
 using @code{cvs watch on}.
 
 @cindex taginfo
-@cindex exit status, of taginfo
+@cindex Exit status, of taginfo
 The @file{taginfo} file defines programs to execute
 when someone executes a @code{tag} or @code{rtag}
 command.  The @file{taginfo} file has the standard form
@@ -5545,8 +5545,8 @@ considerably with the operating system.
 @cindex File locking
 @cindex Locking files
 @cindex Working copy
-@cindex reserved checkouts
-@cindex unreserved checkouts
+@cindex Reserved checkouts
+@cindex Unreserved checkouts
 @cindex RCS-style locking
 
 When more than one person works on a software project
@@ -5846,7 +5846,7 @@ these options, see @ref{Invoking CVS}.
 @cindex Bringing a file up to date
 @cindex Updating a file
 @cindex Merging a file
-@cindex update, introduction
+@cindex Update, introduction
 
 When you want to update or merge a file, use the @code{update}
 command.  For files that are not up to date this is roughly equivalent
@@ -6090,7 +6090,7 @@ newsgroup.
 @node Concurrency
 @section Several developers simultaneously attempting to run CVS
 
-@cindex locks, cvs, introduction
+@cindex Locks, cvs, introduction
 @c For a discussion of *why* CVS creates locks, see
 @c the comment at the start of src/lock.c
 If several developers try to run @sc{cvs} at the same
@@ -6227,7 +6227,7 @@ certain files are to be watched.
 @cindex watch on (subcommand)
 @deffn Command {cvs watch on} [@code{-lR}] files @dots{}
 
-@cindex read-only files, and watches
+@cindex Read-only files, and watches
 Specify that developers should run @code{cvs edit}
 before editing @var{files}.  CVS will create working
 copies of @var{files} read-only, to remind developers
@@ -6386,7 +6386,7 @@ changing.
 @node Editing files
 @subsection How to edit a file which is being watched
 
-@cindex checkout, as term for getting ready to edit
+@cindex Checkout, as term for getting ready to edit
 Since a file which is being watched is checked out
 read-only, you cannot simply edit it.  To make it
 read-write, and inform others that you are planning to
@@ -6442,8 +6442,8 @@ your changes, or not to make any changes, you can use
 the @code{cvs unedit} command.
 
 @cindex unedit (subcommand)
-@cindex abandoning work
-@cindex reverting to repository version
+@cindex Abandoning work
+@cindex Reverting to repository version
 @deffn Command {cvs unedit} [@code{-lR}] files @dots{}
 
 Abandon work on the working files @var{files}, and revert them to the
@@ -6526,7 +6526,7 @@ that will restore the repository to a state which
 
 @node Choosing a model
 @section Choosing between reserved or unreserved checkouts
-@cindex choosing, reserved or unreserved checkouts
+@cindex Choosing, reserved or unreserved checkouts
 
 Reserved and unreserved checkouts each have pros and
 cons.  Let it be said that a lot of this is a matter of
@@ -7049,7 +7049,7 @@ directory; if you want to work with the sources import
 them first and then check them out into a different
 directory (@pxref{Getting the source}).
 
-@cindex Wdiff (import example)
+@cindex wdiff (import example)
 Suppose you have the sources to a program called
 @code{wdiff} in a directory @file{wdiff-0.04},
 and are going to make private modifications that you
@@ -7227,7 +7227,7 @@ an error in some future release.
 @c "Revision management" section.
 @node Builds
 @chapter How your build system interacts with CVS
-@cindex builds
+@cindex Builds
 @cindex make
 
 As mentioned in the introduction, @sc{cvs} does not
@@ -7260,7 +7260,7 @@ periodically (in between changes, using the approach
 just described) updating your entire tree, you ensure
 that your sources are sufficiently up to date.
 
-@cindex bill of materials
+@cindex Bill of materials
 One common need is to record which versions of which
 source files went into a particular build.  This kind
 of functionality is sometimes called @dfn{bill of
@@ -7320,12 +7320,12 @@ is Odin (see
 @node Special Files
 @chapter Special Files
 
-@cindex special files
-@cindex device nodes
-@cindex ownership, saving in CVS
-@cindex permissions, saving in CVS
-@cindex hard links
-@cindex symbolic links
+@cindex Special files
+@cindex Device nodes
+@cindex Ownership, saving in CVS
+@cindex Permissions, saving in CVS
+@cindex Hard links
+@cindex Symbolic links
 
 In normal circumstances, CVS works only with regular
 files.  Every file in a project is assumed to be
@@ -7507,7 +7507,7 @@ the documentation instead.
 
 @node Exit status
 @appendixsec CVS's exit status
-@cindex exit status, of CVS
+@cindex Exit status, of CVS
 
 CVS can indicate to the calling environment whether it
 succeeded or failed by setting its @dfn{exit status}.
@@ -7543,7 +7543,7 @@ other @sc{cvs} commands.
 @node ~/.cvsrc
 @appendixsec Default options and the ~/.cvsrc file
 @cindex .cvsrc file
-@cindex option defaults
+@cindex Option defaults
 
 There are some @code{command_options} that are used so
 often that you might have set up an alias or some other
@@ -7617,8 +7617,8 @@ left of @samp{cvs_command}) are:
 Specify legal @sc{cvsroot} directory.  See
 @ref{Password authentication server}.
 
-@cindex authentication, stream
-@cindex stream authentication
+@cindex Authentication, stream
+@cindex Stream authentication
 @item -a
 Authenticate all communication between the client and
 the server.  Only has an effect on the @sc{cvs} client.
@@ -7706,7 +7706,7 @@ Cause the command to be somewhat quiet; informational messages,
 such as reports of recursion through subdirectories, are
 suppressed.
 
-@cindex read-only files, and -r
+@cindex Read-only files, and -r
 @item -r
 Make new working files read-only.  Same effect
 as if the @code{$CVSREAD} environment variable is set
@@ -7741,8 +7741,8 @@ set or @samp{-r} is given.
 @c be the same as a get and a cvs edit?), but I'm not
 @c completely sure whether to document it this way.
 
-@cindex encryption
 @item -x
+@cindex Encryption
 Encrypt all communication between the client and the
 server.  Only has an effect on the @sc{cvs} client.  As
 of this writing, this is only implemented when using a
@@ -7755,6 +7755,8 @@ special configure option, @file{--enable-encryption},
 when you build @sc{cvs}.
 
 @item -z @var{gzip-level}
+@cindex Compression
+@cindex Gzip
 Set the compression level.  Only has an effect on the
 @sc{cvs} client.
 
@@ -7865,8 +7867,8 @@ slightly different way; @pxref{history options}).
 @c Headers Issue 4, Version 2 (September 1994), in the
 @c entry for getdate() on page 231
 
-@cindex timezone, in input
-@cindex zone, time, in input
+@cindex Timezone, in input
+@cindex Zone, time, in input
 A wide variety of date formats are supported by
 @sc{cvs}.  The most standard ones are ISO8601 (from the
 International Standards Organization) and the Internet
@@ -8193,7 +8195,7 @@ There can be no space between @samp{-b} and its argument.
 @c work, as of 17 Sep 1997, but probably will once "cvs
 @c admin" is internal to CVS.
 
-@cindex comment leader
+@cindex Comment leader
 @item -c@var{string}
 Sets the comment leader to @var{string}.  The comment
 leader is not used by current versions of @sc{cvs} or
@@ -8494,8 +8496,8 @@ this option has never done anything useful.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node checkout
 @appendixsec checkout---Check out sources for editing
-@cindex Checkout (subcommand)
-@cindex Co (subcommand)
+@cindex checkout (subcommand)
+@cindex co (subcommand)
 
 @itemize @bullet
 @item
@@ -8727,7 +8729,7 @@ $ cvs checkout -D yesterday tc
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commit
 @appendixsec commit---Check files into the repository
-@cindex Commit (subcommand)
+@cindex commit (subcommand)
 
 @itemize @bullet
 @item
@@ -8927,7 +8929,7 @@ $ cvs checkout -r EXPR1 whatever_module
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node diff
 @appendixsec diff---Show differences between revisions
-@cindex Diff (subcommand)
+@cindex diff (subcommand)
 
 @itemize @bullet
 @item
@@ -9107,7 +9109,7 @@ $ cvs diff -u | less
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node export
 @appendixsec export---Export sources from CVS, similar to checkout
-@cindex Export (subcommand)
+@cindex export (subcommand)
 
 @itemize @bullet
 @item
@@ -9202,7 +9204,7 @@ Contributed examples are gratefully accepted.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history
 @appendixsec history---Show status of files and users
-@cindex History (subcommand)
+@cindex history (subcommand)
 
 @itemize @bullet
 @item
@@ -9384,7 +9386,7 @@ Contributed examples will gratefully be accepted.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node import
 @appendixsec import---Import sources into CVS, using vendor branches
-@cindex Import (subcommand)
+@cindex import (subcommand)
 
 @c FIXME: This node is way too long for one which has subnodes.
 
@@ -9526,8 +9528,8 @@ you will have to merge the changes.
 @item I @var{file}
 The file is being ignored (@pxref{cvsignore}).
 
-@cindex symbolic link, importing
-@cindex link, symbolic, importing
+@cindex Symbolic link, importing
+@cindex Link, symbolic, importing
 @c FIXME: also (somewhere else) probably
 @c should be documenting what happens if you "cvs add"
 @c a symbolic link.  Also maybe what happens if
@@ -9553,7 +9555,7 @@ See @ref{Tracking sources}, and @ref{From files}.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node log
 @appendixsec log---Print out log information for files
-@cindex Log (subcommand)
+@cindex log (subcommand)
 
 @itemize @bullet
 @item
@@ -9571,8 +9573,8 @@ determines the format of the output and the options,
 which are not quite in the style of the other @sc{cvs}
 commands.
 
-@cindex timezone, in output
-@cindex zone, time, in output
+@cindex Timezone, in output
+@cindex Zone, time, in output
 @c Kind of a funny place to document the timezone used
 @c in output from commands other than @code{log}.
 @c There is also more we need to say about this,
@@ -9754,7 +9756,7 @@ Contributed examples are gratefully accepted.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node rdiff
 @appendixsec rdiff---'patch' format diffs between releases
-@cindex Rdiff (subcommand)
+@cindex rdiff (subcommand)
 
 @itemize @bullet
 @item
@@ -9884,7 +9886,7 @@ File bar.h,v changed from revision 1.29.2.1 to 1.2
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node release
 @appendixsec release---Indicate that a Module is no longer in use
-@cindex Release (subcommand)
+@cindex release (subcommand)
 
 @itemize @bullet
 @item
@@ -10010,7 +10012,7 @@ $
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node update
 @appendixsec update---Bring work tree in sync with repository
-@cindex Update (subcommand)
+@cindex update (subcommand)
 
 @itemize @bullet
 @item
@@ -10324,6 +10326,8 @@ Encrypt all communication (client only).  See
 @ref{Global options}.
 
 @item -z @var{gzip-level}
+@cindex Compression
+@cindex Gzip
 Set the compression level (client only).
 @c FIXME: what are the valid values for gzip-level.
 @c And shouldn't this be documented in at least a
@@ -11312,7 +11316,7 @@ a future release of @sc{cvs}.
 
 @node Excluding directories
 @appendixsubsec Excluding directories
-@cindex excluding directories, in modules file
+@cindex Excluding directories, in modules file
 @cindex !, in modules file
 
 An alias module may exclude particular directories from
@@ -11335,7 +11339,7 @@ the subdirectory @samp{first-dir/sdir}.
 
 @node Module options
 @appendixsubsec Module options
-@cindex options, in modules file
+@cindex Options, in modules file
 
 Either regular modules or ampersand modules can contain
 options, which supply additional information concerning
@@ -11714,7 +11718,7 @@ all have a common format.  The purpose of the files are
 described later on.  The common syntax is described
 here.
 
-@cindex regular expression syntax
+@cindex Regular expression syntax
 Each line contains the following:
 @itemize @bullet
 @item
@@ -11784,7 +11788,7 @@ repository is appended to the template, followed by the
 file names of any files involved in the commit (added,
 removed, and modified files).
 
-@cindex exit status, of commitinfo
+@cindex Exit status, of commitinfo
 The first line with a regular expression matching the
 directory within the repository will be used.  If the
 command returns a non-zero exit status the commit will
@@ -11827,7 +11831,7 @@ repositories}).
 @node verifymsg
 @appendixsec Verifying log messages
 @cindex verifymsg (admin file)
-@cindex log message, verifying
+@cindex Log message, verifying
 
 Once you have entered a log message, you can evaluate
 that message to check for specific content, such as
@@ -11857,7 +11861,7 @@ If the repository name does not match any of the
 regular expressions in this file, the @samp{DEFAULT}
 line is used, if it is specified.
 
-@cindex exit status, of verifymsg
+@cindex Exit status, of verifymsg
 If the verification script exits with a non-zero exit status,
 the commit is aborted.
 
@@ -12158,9 +12162,9 @@ like this:
 @c What other index entries?  It seems like
 @c people might want to use a lot of different
 @c words for this functionality.
-@cindex keeping a checked out copy
-@cindex checked out copy, keeping
-@cindex web pages, maintaining with CVS
+@cindex Keeping a checked out copy
+@cindex Checked out copy, keeping
+@cindex Web pages, maintaining with CVS
 
 It is often useful to maintain a directory tree which
 contains files which correspond to the latest version
@@ -12634,7 +12638,7 @@ A whitespace-separated list of file name patterns that
 @sc{cvs} should treat as wrappers. @xref{Wrappers}.
 
 @cindex CVSREAD, environment variable
-@cindex read-only files, and CVSREAD
+@cindex Read-only files, and CVSREAD
 @item $CVSREAD
 If this is set, @code{checkout} and @code{update} will
 try hard to make the files in your working directory
@@ -12750,7 +12754,7 @@ command interpreter and defaults to @sc{cmd.exe}.
 @itemx $TMP
 @cindex TEMP, environment variable
 @itemx $TEMP
-@cindex temporary files, location of
+@cindex Temporary files, location of
 @c This is quite nuts.  We don't talk about tempnam
 @c or mkstemp which we sometimes use.  The discussion
 @c of "Global options" is semi-incoherent.
@@ -12779,8 +12783,8 @@ if your server and client are both running @sc{cvs}
 @appendix Compatibility between CVS Versions
 
 @cindex CVS, versions of
-@cindex versions, of CVS
-@cindex compatibility, between CVS versions
+@cindex Versions, of CVS
+@cindex Compatibility, between CVS versions
 @c We don't mention versions older than CVS 1.3
 @c on the theory that it would clutter it up for the vast
 @c majority of people, who don't have anything that old.
@@ -13256,7 +13260,7 @@ This is a normal message, not an error.  See
 @ref{Concurrency}, for more details.
 
 @item cvs commit: warning: editor session failed
-@cindex exit status, of editor
+@cindex Exit status, of editor
 This means that the editor which @sc{cvs} is using exits with a nonzero
 exit status.  Some versions of vi will do this even when there was not
 a problem editing the file.  If so, point the
