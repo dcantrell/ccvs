@@ -11719,6 +11719,19 @@ distribution.
 @c RCS binaries which are correctly set up, but that
 @c answer is kind of complex and subject to change.
 
+@item cvs checkout: could not check out @var{file}
+With CVS 1.9, this can mean that the @code{co} program
+(part of @sc{rcs}) returned a failure.  It should be
+preceded by another error message, however it has been
+observed without another error message and the cause is
+not well-understood.  With the current version of CVS,
+which does not run @code{co}, if this message occurs
+without another error message, it is definitely a CVS
+bug (@pxref{BUGS}).
+@c My current suspicion is that the RCS in the rcs (not
+@c cvs/winnt/rcs57nt.zip) directory on the _Practical_
+@c CD is bad.  But that remains to be confirmed.
+
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the
 @code{patch} program.  Make sure that it is in your
