@@ -1,3 +1,9 @@
+2003-02-04  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (conflicts2- c. 142d): New test for double add and two
+	attempted commits of files with the same name.  Fill out some comments
+	and change one FIXME to a FIXCVS THEN FIXME.
+
 2003-02-03  Derek Price  <derek@ximbiot.com>
 
 	* client.c (start_Server): Send multiple trace options when
