@@ -413,6 +413,7 @@ char *last_component PROTO((char *path));
 int joining PROTO((void));
 int numdots PROTO((const char *s));
 int unlink_file PROTO((const char *f));
+int unlink_file_dir PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
 int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
