@@ -1,3 +1,10 @@
+Fri Nov  7 13:23:38 1997  Karl Fogel  <kfogel@floss.red-bean.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (diffmerge1, diffmerge2): new tests, for bugs, or
+	potential bugs, in ../diff/analyze.c which were fixed by Paul
+	Eggert's patch.
+
 Sun Nov  9 10:28:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_settag): Reindent.
