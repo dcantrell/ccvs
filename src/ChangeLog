@@ -1,3 +1,7 @@
+2000-07-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (client-3): Allow for a potential "broken pipe".
+
 2000-07-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* commit.c (commit_filesdoneproc): Flush stdout before running script.

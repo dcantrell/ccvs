@@ -20693,8 +20693,10 @@ cat >/dev/null
 EOF
 	    cd first-dir
 	    mkdir ${TESTDIR}/bogus
+	    # The ${DOTSTAR} is to match a potential "broken pipe" if the
+	    # client exits before the server script sends everything
 	    dotest_fail client-3 "${testcvs} update" "merge-it
-${PROG} \[update aborted\]: protocol error: Copy-file tried to specify directory"
+${PROG} \[update aborted\]: protocol error: Copy-file tried to specify director${DOTSTAR}"
 	    cat >${TESTDIR}/serveme <<EOF
 #!${TESTSHELL}
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
