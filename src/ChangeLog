@@ -1,6 +1,10 @@
 1998-11-24  Jim Kingdon
 
-	* sanity.sh (dirs): Clean up working directory at end of test.
+	* entries.c (Register): If we can't write Entries.Log, make it a
+	nonfatal error.
+	* sanity.sh (dirs2): Test for this fix.
+
+	* sanity.sh (dirs2): Clean up working directory at end of test.
 
 1998-11-23  Jim Kingdon
 
