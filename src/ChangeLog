@@ -1,3 +1,7 @@
+Thu Oct  5 18:04:46 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * sanity.sh: unset CVSREAD, since it causes the script to bomb.
+
 Thu Oct  5 18:29:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* remove.c, add.c, commit.c, cvs.h: Remove CVSEXT_OPT stuff; it

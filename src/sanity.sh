@@ -10,6 +10,9 @@
 
 # See TODO list at end of file.
 
+# required to make this script work properly.
+unset CVSREAD
+
 TESTDIR=/tmp/cvs-sanity
 
 # "debugger"
