@@ -1,3 +1,15 @@
+Tue Jul 23 15:05:01 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (update_fileproc): In T_REMOVE_ENTRY case, only call
+	server_scratch_entry_only if ts_user is NULL.
+	* sanity.sh (death2): Add death2-20 test for above patch.
+
+	* diff.c (diff_fileproc): If a file is not in the working
+	directory, check that the tag is present before warning that no
+	comparison is possible.
+	* sanity.sh (death2): Add death2-diff-9 and death2-diff-10 tests
+	for above patch.
+
 Tue Jul 23 12:05:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* tag.c (tag_check_valid): Fix indentation.
