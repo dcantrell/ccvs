@@ -1809,11 +1809,11 @@ send_repository (dir, repos, update_dir)
      * getting set from the -d argument either... ?
      */
     if (repos == NULL)
-      {
+    {
         /* Lame error.  I want a real fix but can't stay up to track
            this down right now. */
         error (1, 0, "no repository");
-      }
+    }
 
     if (update_dir == NULL || update_dir[0] == '\0')
 	update_dir = ".";
