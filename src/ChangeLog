@@ -1,5 +1,11 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* client.h (buf_output, buf_outerr): Check that our buffers exist
+	before sending them data.
+	(buf_output_binary): Assert that the output buffer is not NULL.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* client.h, rcs.c, rcs.h, server.h: Assume __STDC__ since it is
 	defined as part of the C89 spec.
 

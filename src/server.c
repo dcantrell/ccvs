@@ -6017,15 +6017,13 @@ cvs_output (const char *str, size_t len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol)
+    if (error_use_protocol && buf_to_net)
     {
-	assert(buf_to_net);
 	buf_output (saved_output, str, len);
 	buf_copy_lines (buf_to_net, saved_output, 'M');
     }
-    else if (server_active)
+    else if (server_active && protocol)
     {
-	assert(protocol);
 	buf_output (saved_output, str, len);
 	buf_copy_lines (protocol, saved_output, 'M');
 	buf_send_counted (protocol);
@@ -6071,6 +6069,8 @@ cvs_output_binary (char *str, size_t len)
 	    buf = buf_to_net;
 	else
 	    buf = protocol;
+
+	assert (buf);
 
 	if (!supported_response ("Mbinary"))
 	{
@@ -6145,15 +6145,13 @@ cvs_outerr (const char *str, size_t len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol)
+    if (error_use_protocol && buf_to_net)
     {
-	assert(buf_to_net);
 	buf_output (saved_outerr, str, len);
 	buf_copy_lines (buf_to_net, saved_outerr, 'E');
     }
-    else if (server_active)
+    else if (server_active && protocol)
     {
-	assert(protocol);
 	buf_output (saved_outerr, str, len);
 	buf_copy_lines (protocol, saved_outerr, 'E');
 	buf_send_counted (protocol);
