@@ -940,6 +940,21 @@ dotest_internal_debug ()
   fi
 }
 
+run_filter ()
+{
+  if test -n "$TEST_FILTER"; then
+    # Make sure there is an EOL
+    echo >>$TESTDIR/dotest.tmp
+    sed '${/^$/d}' <$TESTDIR/dotest.tmp >$TESTDIR/dotest.tmp.step2
+    # Run the filter
+    eval "$TEST_FILTER" <$TESTDIR/dotest.tmp.step2 >$TESTDIR/dotest.tmp.filtered
+    diff -u $TESTDIR/dotest.tmp $TESTDIR/dotest.tmp.filtered \
+	    >$TESTDIR/dotest.diff
+    mv $TESTDIR/dotest.tmp.filtered $TESTDIR/dotest.tmp
+    rm $TESTDIR/dotest.tmp.step2
+  fi
+}
+
 # Usage:
 #  dotest TESTNAME COMMAND OUTPUT [OUTPUT2]
 # TESTNAME is the name used in the log to identify the test.
@@ -955,11 +970,12 @@ dotest_internal_debug ()
 # lack \|).
 dotest ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp >>$LOGFILE
     echo "exit status was $status" >>${LOGFILE}
     fail "$1"
   fi
@@ -969,22 +985,23 @@ dotest ()
 # Like dotest except only 2 args and result must exactly match stdin
 dotest_lit ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
-  cat >${TESTDIR}/dotest.exp
-  if cmp ${TESTDIR}/dotest.exp ${TESTDIR}/dotest.tmp >/dev/null 2>&1; then
+  cat >$TESTDIR/dotest.exp
+  if cmp $TESTDIR/dotest.exp $TESTDIR/dotest.tmp >/dev/null 2>&1; then
     pass "$1"
   else
-    echo "** expected: " >>${LOGFILE}
-    cat ${TESTDIR}/dotest.exp >>${LOGFILE}
-    echo "** got: " >>${LOGFILE}
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
+    echo "** expected: " >>$LOGFILE
+    cat $TESTDIR/dotest.exp >>$LOGFILE
+    echo "** got: " >>$LOGFILE
+    cat $TESTDIR/dotest.tmp >>$LOGFILE
     fail "$1"
   fi
 }
@@ -992,12 +1009,13 @@ dotest_lit ()
 # Like dotest except exitstatus should be nonzero.
 dotest_fail ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp 2>&1
   status=$?
+  run_filter
   if test "$status" = 0; then
-    cat ${TESTDIR}/dotest.tmp >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
   dotest_internal "$@"
@@ -1006,15 +1024,16 @@ dotest_fail ()
 # Like dotest except output is sorted.
 dotest_sort ()
 {
-  rm -f ${TESTDIR}/dotest.ex? 2>&1
-  eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
+  rm -f $TESTDIR/dotest.ex? 2>&1
+  eval "$2" >$TESTDIR/dotest.tmp1 2>&1
   status=$?
+  run_filter
   if test "$status" != 0; then
-    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp1 >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
-  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  $TR '	' ' ' < $TESTDIR/dotest.tmp1 | sort > $TESTDIR/dotest.tmp
   dotest_internal "$@"
 }
 
@@ -1024,18 +1043,19 @@ dotest_fail_sort ()
   rm -f ${TESTDIR}/dotest.ex? 2>&1
   eval "$2" >${TESTDIR}/dotest.tmp1 2>&1
   status=$?
+  run_filter
   if test "$status" = 0; then
-    cat ${TESTDIR}/dotest.tmp1 >>${LOGFILE}
-    echo "exit status was $status" >>${LOGFILE}
+    cat $TESTDIR/dotest.tmp1 >>$LOGFILE
+    echo "exit status was $status" >>$LOGFILE
     fail "$1"
   fi
-  ${TR} '	' ' ' < ${TESTDIR}/dotest.tmp1 | sort > ${TESTDIR}/dotest.tmp
+  $TR '	' ' ' < $TESTDIR/dotest.tmp1 | sort > $TESTDIR/dotest.tmp
   dotest_internal "$@"
 }
 
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home
-HOME=${TESTDIR}/home; export HOME
+HOME=$TESTDIR/home; export HOME
 
 # Make sure this variable is not defined to anything that would
 # change the format of rcs dates.  Otherwise people using e.g.,
@@ -3022,7 +3042,7 @@ new revision: delete; previous revision: 1\.1"
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  done
 	  cd ../../../../../../../../..
-	  dotest_lit deep-4 "${testcvs} -q ci -m add-them first-dir" <<HERE
+	  dotest_lit deep-4 "$testcvs -q ci -m add-them first-dir" <<HERE
 $CVSROOT_DIRNAME/first-dir/dir1/file1,v  <--  file1
 initial revision: 1.1
 $CVSROOT_DIRNAME/first-dir/dir1/dir2/file1,v  <--  file1
