@@ -327,13 +327,13 @@ echo '(Note that the test can take an hour or more to run and periodically stops
 echo 'for as long as one minute.  Do not assume there is a problem just because'
 echo 'nothing seems to happen for a long time.)'
 
-# Regexp to match what CVS will call itself in output that it prints.
+# Regexp to match what the CVS client will call itself in output that it prints.
 # FIXME: we don't properly quote this--if the name contains . we'll
 # just spuriously match a few things; if the name contains other regexp
 # special characters we are probably in big trouble.
-PROG=`basename ${testcvs}`
+CPROG=`basename ${testcvs}`
 # And the regexp for the CVS server when we have one.  In local mode, this
-# defaults to $PROG since $servercvs already did.
+# defaults to $CPROG since $servercvs already did.
 # FIXCVS: There are a few places in error messages where CVS suggests a command
 # and outputs $SPROG as the suggested executable.  This could hopefully use
 # MT (tagged text - see doc/cvs-client.texi) to request that the client print
@@ -1906,10 +1906,10 @@ Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
 	  # that I consider to be more correct, but local cvs prints the
 	  # "nothing known" message and noone has gotten around to fixing it.
 	  dotest_fail basica-notadded "${testcvs} -q ci ssfile" \
-"${PROG} commit: use .${PROG} add. to create an entry for ssfile
-${PROG}"' \[commit aborted\]: correct above errors first!' \
-"${PROG}"' commit: nothing known about `ssfile'\''
-'"${PROG}"' \[commit aborted\]: correct above errors first!'
+"${CPROG} commit: use .${CPROG} add. to create an entry for ssfile
+${CPROG}"' \[commit aborted\]: correct above errors first!' \
+"${CPROG}"' commit: nothing known about `ssfile'\''
+'"${CPROG}"' \[commit aborted\]: correct above errors first!'
 
 	  dotest basica-4 "${testcvs} add ssfile" \
 "${SPROG}"' [a-z]*: scheduling file `ssfile'\'' for addition
@@ -1973,8 +1973,8 @@ ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 1\.2; previous revision: 1\.1
 done"
 	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
-"${PROG}"' commit: nothing known about `nonexist'\''
-'"${PROG}"' \[commit aborted\]: correct above errors first!'
+"${CPROG}"' commit: nothing known about `nonexist'\''
+'"${CPROG}"' \[commit aborted\]: correct above errors first!'
 	  dotest basica-8 "${testcvs} -q update ." ''
 
 	  # Test the -f option to ci
@@ -2024,7 +2024,7 @@ done"
 "${SPROG}: cannot access cvs root ${TESTDIR}/nonexist: .*"
 	  dotest_fail basica-9a \
 	    "${testcvs} -q -d ${TESTDIR}/nonexist update" \
-"${PROG} \[update aborted\]: ${TESTDIR}/nonexist/CVSROOT: .*"
+"${CPROG} \[update aborted\]: ${TESTDIR}/nonexist/CVSROOT: .*"
 
 	  dotest basica-10 "${testcvs} annotate" \
 '
@@ -2058,8 +2058,8 @@ done"
 	  # a few "cvs admin -o" invocations.
 	  cd sdir/ssdir
 	  dotest_fail basica-o1 "${testcvs} admin -o 1.2::1.2" \
-"${PROG} admin: while processing more than one file:
-${PROG} \[admin aborted\]: attempt to specify a numeric revision"
+"${CPROG} admin: while processing more than one file:
+${CPROG} \[admin aborted\]: attempt to specify a numeric revision"
 	  dotest basica-o2 "${testcvs} admin -o 1.2::1.2 ssfile" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
 done"
@@ -2208,8 +2208,8 @@ File: sfile1           	Status: Locally Added
 "${SPROG} [a-z]*: scheduling file .sfile2. for addition
 ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  dotest basicb-4a "${testcvs} -q ci CVS" \
-"${PROG} commit: warning: directory CVS specified in argument
-${PROG} commit: but CVS uses CVS for its own purposes; skipping CVS directory"
+"${CPROG} commit: warning: directory CVS specified in argument
+${CPROG} commit: but CVS uses CVS for its own purposes; skipping CVS directory"
 	  cd ..
 	  dotest basicb-5 "${testcvs} -q ci -m add" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/Emptydir/sfile1,v
@@ -2351,7 +2351,7 @@ ${SPROG} \[[a-z]* aborted\]: attempt to delete all revisions"
 	  # And I switched it to "invalid". -DRP
 	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
 "admin: invalid option -- H
-${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
+${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
 
@@ -2369,8 +2369,8 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  # More tests of basic/miscellaneous functionality.
 	  mkdir 1; cd 1
 	  dotest_fail basicc-1 "${testcvs} diff" \
-"${PROG} diff: in directory \.:
-${PROG} \[diff aborted\]: there is no version here; run .${PROG} checkout. first"
+"${CPROG} diff: in directory \.:
+${CPROG} \[diff aborted\]: there is no version here; run .${CPROG} checkout. first"
 	  dotest basicc-2 "${testcvs} -q co -l ." ''
 	  mkdir first-dir second-dir
 	  dotest basicc-3 "${testcvs} add first-dir second-dir" \
@@ -2400,7 +2400,7 @@ ${SPROG} [a-z]*: Updating second-dir"
 	  # the point is that CVS must not mess with anything *outside* "."
 	  # the way that CVS 1.10 and older tried to.
 	  dotest basicc-8 "${testcvs} -Q release -d ." \
-"" "${PROG} release: deletion of directory \. failed: .*"
+"" "${CPROG} release: deletion of directory \. failed: .*"
 	  dotest basicc-9 "test -d ../second-dir" ""
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
 	  # On Linux 2.2 systems, the cwd may be gone, so we recreate it
@@ -2411,7 +2411,7 @@ ${SPROG} [a-z]*: Updating second-dir"
             cd ./first-dir
 	  fi
 	  dotest basicc-11 "${testcvs} -Q release -d ./." \
-"" "${PROG} release: deletion of directory \./\. failed: .*"
+"" "${CPROG} release: deletion of directory \./\. failed: .*"
 	  dotest basicc-11a "test -d ../second-dir" ""
 
 	  cd ..
@@ -3363,9 +3363,9 @@ File: no file file7		Status: Locally Removed
 #		fi
 
 		dotest basic2-16 "${testcvs} ci -m 'third dive' first-dir" \
-"${PROG} commit: Examining first-dir
-${PROG} commit: Examining first-dir/dir1
-${PROG} commit: Examining first-dir/dir1/dir2
+"${CPROG} commit: Examining first-dir
+${CPROG} commit: Examining first-dir/dir1
+${CPROG} commit: Examining first-dir/dir1/dir2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file14,v
 done
 Checking in first-dir/file14;
@@ -4097,7 +4097,7 @@ File: tfile            	Status: Locally Modified
 	  dotest commit-readonlyfs-1 "${testcvs} -Q import -m . $module X Y" ''
 	  if $remote; then
 	    dotest_fail commit-readonlyfs-2r1 "${testcvs} -Q -R co $module" \
-"${PROG} \[checkout aborted\]: Read-only repository feature unavailable with remote roots (cvsroot = ${CVSROOT_DIRNAME})"
+"${CPROG} \[checkout aborted\]: Read-only repository feature unavailable with remote roots (cvsroot = ${CVSROOT_DIRNAME})"
 	    dotest commit-readonlyfs-2r2 "${testcvs} -Q co $module" ''
           else
 	    dotest commit-readonlyfs-2 "${testcvs} -Q -R co $module" ''
@@ -5703,7 +5703,7 @@ done"
 "${QUESTION} sdir
 ${SPROG} server: Updating \.
 ${SPROG} server: Updating sdir
-${PROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away sdir/file1; it is in the way
 C sdir/file1"
 	    rm sdir/file1
 	    rm -r sdir/CVS
@@ -5716,11 +5716,11 @@ ${SPROG} server: Updating sdir
 U sdir/file1"
 	  else
 	    dotest dirs2-6 "${testcvs} update -d" \
-"${PROG} update: Updating \.
+"${CPROG} update: Updating \.
 ${QUESTION} sdir"
 	    rm sdir/file1
 	    dotest dirs2-7 "${testcvs} update -d" \
-"${PROG} update: Updating \.
+"${CPROG} update: Updating \.
 ${QUESTION} sdir"
 	  fi
 	  cd ../..
@@ -5745,12 +5745,12 @@ ${SPROG} \[server aborted\]: no such tag br"
 "${QUESTION} sdir
 ${SPROG} server: Updating \.
 ${SPROG} server: Updating sdir
-${PROG} update: move away sdir/file1; it is in the way
+${CPROG} update: move away sdir/file1; it is in the way
 C sdir/file1"
 	  else
 	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
-"${PROG} update: in directory sdir:
-${PROG} \[update aborted\]: there is no version here; do '${PROG} checkout' first"
+"${CPROG} update: in directory sdir:
+${CPROG} \[update aborted\]: there is no version here; do '${CPROG} checkout' first"
 	  fi
 	  cd ../..
 
@@ -5781,7 +5781,7 @@ ${SPROG} server: Updating \.
 ${SPROG} server: Updating sdir"
 	  else
 	    dotest dirs2-14 "${testcvs} update -d -r br" \
-"${PROG} update: Updating \.
+"${CPROG} update: Updating \.
 ${QUESTION} sdir"
 	  fi
 	  cd ../..
@@ -6881,7 +6881,7 @@ U file2"
 	  echo changes >> file1
 	  echo changes >> file2
 	  dotest tagf-28 "${testcvs} ci -m changes" \
-"${PROG} commit: Examining \.
+"${CPROG} commit: Examining \.
 Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.8\.1; previous revision: 1\.1
@@ -7384,7 +7384,7 @@ U first-dir/imported-f4"
 
 		# commit
 		dotest import-100 "${testcvs} ci -m local-changes" \
-"${PROG} commit: Examining .
+"${CPROG} commit: Examining .
 Removing imported-f1;
 ${CVSROOT_DIRNAME}/first-dir/imported-f1,v  <--  imported-f1
 new revision: delete; previous revision: 1\.1\.1\.1
@@ -7461,7 +7461,7 @@ done"
 "
 
 
- ${PROG} checkout -j<prev_rel_tag> -jjunk-2_0 first-dir
+ ${CPROG} checkout -j<prev_rel_tag> -jjunk-2_0 first-dir
 2 conflicts created by this import.
 C first-dir/imported-f1
 C first-dir/imported-f2
@@ -7571,7 +7571,7 @@ No conflicts created by this import"
 "
 
 
- ${PROG} -d ${CVSROOT} checkout -j<prev_rel_tag> -jfreemunger-1_0 first-dir
+ ${CPROG} -d ${CVSROOT} checkout -j<prev_rel_tag> -jfreemunger-1_0 first-dir
 2 conflicts created by this import.
 C first-dir/file1
 C first-dir/file2
@@ -7586,7 +7586,7 @@ Use the following command to help the merge:"
 	  echo 'my own stuff' >mine2.c
 	  dotest_fail importb-3 \
 "${testcvs} import -m add -b 1 second-dir dummy really_dumb_y" \
-"${PROG} \[import aborted\]: Only branches with two dots are supported: 1"
+"${CPROG} \[import aborted\]: Only branches with two dots are supported: 1"
 	  : when we implement main-branch import, should be \
 "N second-dir/mine1\.c
 N second-dir/mine2\.c
@@ -7757,10 +7757,10 @@ import-it
 	  cd ../1
 	  dotest_fail importc-10 \
 "${testcvs} import -m imp ../other vendor release2" \
-"${PROG} \[import aborted\]: directory \.\./other not relative within the repository"
+"${CPROG} \[import aborted\]: directory \.\./other not relative within the repository"
 	  dotest_fail importc-11 \
 "${testcvs} import -m imp ${TESTDIR}/other vendor release3" \
-"${PROG} \[import aborted\]: directory ${TESTDIR}/other not relative within the repository"
+"${CPROG} \[import aborted\]: directory ${TESTDIR}/other not relative within the repository"
 	  dotest_fail importc-12 "test -d ${TESTDIR}/other" ""
 	  cd ..
 
@@ -9607,8 +9607,8 @@ ${SPROG} [a-z]*: use .${SPROG} commit. to remove this file permanently"
 	  if $remote; then
 	    # Haven't investigated this one.
 	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
-"${PROG} add: in directory \.:
-${PROG} \[add aborted\]: there is no version here; do '${PROG} checkout' first"
+"${CPROG} add: in directory \.:
+${CPROG} \[add aborted\]: there is no version here; do '${CPROG} checkout' first"
 	    cd first-dir
 	  else
 	    # The "nothing known" is a bug.  Correct behavior is for a to get
@@ -9716,17 +9716,17 @@ done"
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
 "${QUESTION} aa\.c
 ${QUESTION} same\.c
-${PROG} update: move away \./aa\.c; it is in the way
+${CPROG} update: move away \./aa\.c; it is in the way
 C aa\.c
 ${SPROG} server: conflict: bb\.c created independently by second party
 C bb\.c
-${PROG} update: move away \./same\.c; it is in the way
+${CPROG} update: move away \./same\.c; it is in the way
 C same\.c"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
-"${PROG} update: move away aa\.c; it is in the way
+"${CPROG} update: move away aa\.c; it is in the way
 C aa\.c
-${PROG} update: conflict: bb\.c created independently by second party
+${CPROG} update: conflict: bb\.c created independently by second party
 C bb\.c
 U same\.c"
 	  fi
@@ -9913,13 +9913,13 @@ ${SPROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 	  dotest conflicts3-17 "${testcvs} -q update" "${QUESTION} newdir"
 	  echo "D/newdir////" >> CVS/Entries
 	  dotest conflicts3-18 "${testcvs} -q update" \
-"${PROG} update: ignoring newdir (CVS/Repository missing)"
+"${CPROG} update: ignoring newdir (CVS/Repository missing)"
 	  touch newdir/CVS/Repository
 	  dotest conflicts3-19 "${testcvs} -q update" \
-"${PROG} update: ignoring newdir (CVS/Entries missing)"
+"${CPROG} update: ignoring newdir (CVS/Entries missing)"
 	  cd ..
 	  dotest conflicts3-20 "${testcvs} -q update first-dir" \
-"${PROG} update: ignoring first-dir/newdir (CVS/Entries missing)"
+"${CPROG} update: ignoring first-dir/newdir (CVS/Entries missing)"
 	  cd first-dir
 	  rm -r newdir
 
@@ -9937,7 +9937,7 @@ ${SPROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 	  if $remote; then
 	    dotest_fail conflicts3-23 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir
-${PROG} update: move away sdir/sfile; it is in the way
+${CPROG} update: move away sdir/sfile; it is in the way
 C sdir/sfile"
 	  else
 	    dotest conflicts3-23 "${testcvs} -q update -PdA" \
@@ -10292,8 +10292,8 @@ ${SPROG} [a-z]*: scheduling file .b. for addition
 ${SPROG} [a-z]*: use .${SPROG} commit. to add these files permanently"
 
 	  dotest modules-145 "${testcvs} ci -m added" \
-"${PROG} commit: Examining .
-${PROG} commit: Examining ssdir
+"${CPROG} commit: Examining .
+${CPROG} commit: Examining ssdir
 RCS file: ${CVSROOT_DIRNAME}/first-dir/subdir/a,v
 done
 Checking in a;
@@ -10384,7 +10384,7 @@ Are you sure you want to release (and delete) directory .realmodule.: "
 	  dotest_fail modules-149b1 "${testcvs} co realmodule/a" \
 "${SPROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory' \
 "${SPROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
-'"${PROG}"' \[checkout aborted\]: cannot expand modules'
+'"${CPROG}"' \[checkout aborted\]: cannot expand modules'
 
 	  # Now test the ability to check out a single file from a directory
 	  dotest modules-150c "${testcvs} co dirmodule/a" "U dirmodule/a"
@@ -10692,7 +10692,7 @@ ${SPROG} [a-z]*: Updating second-dir"
 	  dotest_fail modules2-23 "${testcvs} co badmod" \
 "${SPROG} [a-z]*: modules file missing directory for module badmod" \
 "${SPROG} [a-z]*: modules file missing directory for module badmod
-${PROG} \[checkout aborted\]: cannot expand modules"
+${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd ..
 	  rm -r 1
 
@@ -10763,7 +10763,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  dotest_fail modules2-a1 "${testcvs} -q co aliasopt" \
 "${SPROG} [a-z]*: -a cannot be specified in the modules file along with other options" \
 "${SPROG} [a-z]*: -a cannot be specified in the modules file along with other options
-${PROG} \[checkout aborted\]: cannot expand modules"
+${CPROG} \[checkout aborted\]: cannot expand modules"
 	  cd ..;  rm -r 1
 
 	  # Clean up.
@@ -11084,8 +11084,8 @@ ${SPROG} [a-z]*: scheduling file .b. for addition
 ${SPROG} [a-z]*: use .${SPROG} commit. to add these files permanently"
 
 	  dotest modules5-5 "${testcvs} ci -m added" \
-"${PROG} commit: Examining .
-${PROG} commit: Examining ssdir
+"${CPROG} commit: Examining .
+${CPROG} commit: Examining ssdir
 RCS file: ${CVSROOT_DIRNAME}/first-dir/subdir/a,v
 done
 Checking in a;
@@ -11207,7 +11207,7 @@ args: realmodule"
 	  dotest_fail modules5-17 "${testcvs} co realmodule/a" \
 "${SPROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory' \
 "${SPROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
-'"${PROG}"' \[checkout aborted\]: cannot expand modules'
+'"${CPROG}"' \[checkout aborted\]: cannot expand modules'
 
 	  # Now test the ability to check out a single file from a directory
 	  if $remote; then
@@ -11497,7 +11497,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 ${SPROG} [a-z]*: cannot find module .badname. - ignored" \
 "${SPROG} [a-z]*: warning: NULL value for key .badname. at line 2 of .${CVSROOT_DIRNAME}/CVSROOT/modules.
 ${SPROG} [a-z]*: cannot find module .badname. - ignored
-${PROG} \[checkout aborted\]: cannot expand modules"
+${CPROG} \[checkout aborted\]: cannot expand modules"
 
 	  # cleanup
 	  cd CVSROOT
@@ -11627,15 +11627,15 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  echo "2d2mod -d dir2d2/sub2d2 mod2/sub2" >> CVSROOT/modules
 	  echo "2d2mod-2 -d dir2d2-2/sub2d2-2 mod2-2/sub2-2" >> CVSROOT/modules
 	  dotest cvsadm-1e "${testcvs} ci -m add-modules" \
-"${PROG} commit: Examining .
-${PROG} commit: Examining CVSROOT
+"${CPROG} commit: Examining .
+${CPROG} commit: Examining CVSROOT
 Checking in CVSROOT/modules;
 ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} [a-z]*: Rebuilding administrative file database" \
-"${PROG} commit: Examining .
-${PROG} commit: Examining CVSROOT"
+"${CPROG} commit: Examining .
+${CPROG} commit: Examining CVSROOT"
 	  rm -rf CVS CVSROOT;
 
 	  # Create the various modules
@@ -11667,12 +11667,12 @@ ${SPROG} [a-z]*: scheduling file .mod2-2/sub2-2/file2-2. for addition
 ${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
 
 	  dotest cvsadm-2b "${testcvs} ci -m yup mod1 mod1-2 mod2 mod2-2" \
-"${PROG} commit: Examining mod1
-${PROG} commit: Examining mod1-2
-${PROG} commit: Examining mod2
-${PROG} commit: Examining mod2/sub2
-${PROG} commit: Examining mod2-2
-${PROG} commit: Examining mod2-2/sub2-2
+"${CPROG} commit: Examining mod1
+${CPROG} commit: Examining mod1-2
+${CPROG} commit: Examining mod2
+${CPROG} commit: Examining mod2/sub2
+${CPROG} commit: Examining mod2-2
+${CPROG} commit: Examining mod2-2/sub2-2
 RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
 done
 Checking in mod1/file1;
@@ -12716,13 +12716,13 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  echo "comb -a 2d1modb 2d1moda" >> CVSROOT/modules
 
 	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
-"${PROG} commit: Examining CVSROOT
+"${CPROG} commit: Examining CVSROOT
 Checking in CVSROOT/modules;
 ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} [a-z]*: Rebuilding administrative file database" \
-"${PROG} commit: Examining CVSROOT"
+"${CPROG} commit: Examining CVSROOT"
 	  rm -rf CVS CVSROOT
 
 	  mkdir ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
@@ -12769,7 +12769,7 @@ U dir2d1/sub/sub2d1/file1"
 "${SPROG} \[[a-z]* aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
 	  mkdir emptydir
 	  dotest_fail emptydir-8 "${testcvs} add emptydir" \
-"${PROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
+"${CPROG} \[add aborted\]: cannot add to ${CVSROOT_DIRNAME}/CVSROOT/Emptydir"
 	  cd ..
 	  rm -rf CVS dir2d1
 
@@ -12838,8 +12838,8 @@ ${SPROG} [a-z]*: use '${SPROG} commit' to add this file permanently"
           cd ..
 
 	  dotest abspath-1c "${testcvs} ci -m yup mod1 mod2" \
-"${PROG} commit: Examining mod1
-${PROG} commit: Examining mod2
+"${CPROG} commit: Examining mod1
+${CPROG} commit: Examining mod2
 RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
 done
 Checking in mod1/file1;
@@ -12885,7 +12885,7 @@ U ${TESTDIR}/1/file1"
 	  # this is the behavior of CVS 1.9 and earlier.
 	  if $remote; then :; else
 	    dotest_fail abspath-3.1 "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
-"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .${TESTDIR}/1.: No such file or directory"
+"${CPROG} \[checkout aborted\]: could not change directory to requested checkout directory .${TESTDIR}/1.: No such file or directory"
 	  fi
 	  dotest_fail abspath-3.2 "${testcvs} co -d 1/2 mod1" \
 "${SPROG} \[[a-z]* aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
@@ -13139,10 +13139,10 @@ U top-dir/file1"
 	  dotest toplevel-12 "${testcvs} co top-dir" \
 "${SPROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
 ${SPROG} [a-z]*: Updating top-dir" \
-"${PROG} checkout: warning: cannot make directory CVS in \.: Permission denied
-${PROG} checkout: warning: cannot make directory CVS in \.: Permission denied
-${PROG} checkout: in directory \.:
-${PROG} checkout: cannot open CVS/Entries for reading: No such file or directory
+"${CPROG} checkout: warning: cannot make directory CVS in \.: Permission denied
+${CPROG} checkout: warning: cannot make directory CVS in \.: Permission denied
+${CPROG} checkout: in directory \.:
+${CPROG} checkout: cannot open CVS/Entries for reading: No such file or directory
 ${SPROG} [a-z]*: Updating top-dir"
 
 	  chmod +w ../1
@@ -13261,7 +13261,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
         checkout_repository)
           dotest_fail checkout_repository-1 \
 "${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${CPROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
 "${SPROG} \[server aborted\]: absolute pathnames invalid for server (specified \`${CVSROOT_DIRNAME}')"
 
 	  # The behavior of the client/server test below should be correct.
@@ -13271,29 +13271,29 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  # should be a fairly rare occurance.
 	  cd ${CVSROOT_DIRNAME}
           dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${CPROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
 "${SPROG} server: Updating CVSROOT
-${PROG} checkout: move away CVSROOT/checkoutlist; it is in the way
+${CPROG} checkout: move away CVSROOT/checkoutlist; it is in the way
 C CVSROOT/checkoutlist
-${PROG} checkout: move away CVSROOT/commitinfo; it is in the way
+${CPROG} checkout: move away CVSROOT/commitinfo; it is in the way
 C CVSROOT/commitinfo
-${PROG} checkout: move away CVSROOT/config; it is in the way
+${CPROG} checkout: move away CVSROOT/config; it is in the way
 C CVSROOT/config
-${PROG} checkout: move away CVSROOT/cvswrappers; it is in the way
+${CPROG} checkout: move away CVSROOT/cvswrappers; it is in the way
 C CVSROOT/cvswrappers
-${PROG} checkout: move away CVSROOT/editinfo; it is in the way
+${CPROG} checkout: move away CVSROOT/editinfo; it is in the way
 C CVSROOT/editinfo
-${PROG} checkout: move away CVSROOT/loginfo; it is in the way
+${CPROG} checkout: move away CVSROOT/loginfo; it is in the way
 C CVSROOT/loginfo
-${PROG} checkout: move away CVSROOT/modules; it is in the way
+${CPROG} checkout: move away CVSROOT/modules; it is in the way
 C CVSROOT/modules
-${PROG} checkout: move away CVSROOT/notify; it is in the way
+${CPROG} checkout: move away CVSROOT/notify; it is in the way
 C CVSROOT/notify
-${PROG} checkout: move away CVSROOT/rcsinfo; it is in the way
+${CPROG} checkout: move away CVSROOT/rcsinfo; it is in the way
 C CVSROOT/rcsinfo
-${PROG} checkout: move away CVSROOT/taginfo; it is in the way
+${CPROG} checkout: move away CVSROOT/taginfo; it is in the way
 C CVSROOT/taginfo
-${PROG} checkout: move away CVSROOT/verifymsg; it is in the way
+${CPROG} checkout: move away CVSROOT/verifymsg; it is in the way
 C CVSROOT/verifymsg"
 
           dotest checkout_repository-3 \
@@ -13540,7 +13540,7 @@ EOF
 "
 Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
-Action: (continue) ${PROG} \[commit aborted\]: aborted by user"
+Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 
 	  # Test CVS's response to an empty log message
 	  cat >${TESTDIR}/editme <<EOF
@@ -13554,7 +13554,7 @@ EOF
 "
 Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
-Action: (continue) ${PROG} \[commit aborted\]: aborted by user"
+Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 
 	  # Test CVS's response to a log message with one blank line
 	  cat >${TESTDIR}/editme <<EOF
@@ -13568,7 +13568,7 @@ EOF
 "
 Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
-Action: (continue) ${PROG} \[commit aborted\]: aborted by user"
+Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 
 	  # Test CVS's response to a log message with only comments
 	  cat >${TESTDIR}/editme <<EOF
@@ -13583,7 +13583,7 @@ EOF
 "
 Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
-Action: (continue) ${PROG} \[commit aborted\]: aborted by user"
+Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 
 	  # Test CVS's response to a log message that is zero bytes
 	  # in length. This caused core dumps in cvs 1.11.5 on Solaris
@@ -13610,7 +13610,7 @@ exit 1
 EOF
 	  chmod +x ${TESTDIR}/editme
 	  dotest editor-emptylog-continue-3 "echo c |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
-"${PROG} commit: warning: editor session failed
+"${CPROG} commit: warning: editor session failed
 
 Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
@@ -13827,9 +13827,9 @@ done"
 	  cd ../../2/1dir
 	  dotest 168 "${testcvs} -q update" \
 "${SPROG} [a-z]*: foo is no longer in the repository
-${PROG} update: unable to remove foo: Permission denied" \
+${CPROG} update: unable to remove foo: Permission denied" \
 "${SPROG} [a-z]*: foo is no longer in the repository
-${PROG} update: unable to remove \./foo: Permission denied"
+${CPROG} update: unable to remove \./foo: Permission denied"
 
 	  cd ..
 	  chmod u+w 1dir
@@ -13854,7 +13854,7 @@ ${PROG} update: unable to remove \./foo: Permission denied"
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
           cd first-dir
 	  dotest_fail errmsg2-3 "${testcvs} add CVS" \
-"${PROG} add: cannot add special file .CVS.; skipping"
+"${CPROG} add: cannot add special file .CVS.; skipping"
 	  touch file1
 	  # For the most part add returns a failure exitstatus if
 	  # there are any errors, even if the remaining files are
@@ -13862,7 +13862,7 @@ ${PROG} update: unable to remove \./foo: Permission denied"
 	  # special file" message fits this pattern, at
 	  # least currently.
 	  dotest_fail errmsg2-4 "${testcvs} add CVS file1" \
-"${PROG} add: cannot add special file .CVS.; skipping
+"${CPROG} add: cannot add special file .CVS.; skipping
 ${SPROG} [a-z]*: scheduling file .file1. for addition
 ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  # I'm not sure these tests completely convey the various strange
@@ -13870,9 +13870,9 @@ ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  # "..".  Suffice it to say that these are unlikely to work right
 	  # without a special case.
 	  dotest_fail errmsg2-5 "${testcvs} add ." \
-"${PROG} add: cannot add special file .\..; skipping"
+"${CPROG} add: cannot add special file .\..; skipping"
 	  dotest_fail errmsg2-6 "${testcvs} add .." \
-"${PROG} add: cannot add special file .\.\..; skipping"
+"${CPROG} add: cannot add special file .\.\..; skipping"
 	  # Make sure that none of the error messages left droppings
 	  # which interfere with normal operation.
 	  dotest errmsg2-7 "${testcvs} -q ci -m add-file1" \
@@ -13888,11 +13888,11 @@ done"
 "Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
 	  # while we're here... check commit with no CVS directory
 	  dotest_fail errmsg2-8a "${testcvs} -q ci first-dir nonexistant" \
-"${PROG} commit: nothing known about .nonexistant'
-${PROG} \[commit aborted\]: correct above errors first!"
+"${CPROG} commit: nothing known about .nonexistant'
+${CPROG} \[commit aborted\]: correct above errors first!"
 	  dotest_fail errmsg2-8b "${testcvs} -q ci nonexistant first-dir" \
-"${PROG} commit: nothing known about .nonexistant'
-${PROG} \[commit aborted\]: correct above errors first!"
+"${CPROG} commit: nothing known about .nonexistant'
+${CPROG} \[commit aborted\]: correct above errors first!"
 	  dotest errmsg2-8c "${testcvs} -q ci first-dir" ""
 
 	  cd first-dir
@@ -13942,8 +13942,8 @@ ${SPROG} [a-z]*: use .${SPROG} commit. to add this file permanently"
 	  dotest_fail errmsg2-16 "${testcvs} add bogus-dir/file16" \
 "${SPROG} [a-z]*: in directory bogus-dir:
 ${SPROG} \[[a-z]* aborted\]: there is no version here; do .${SPROG} checkout. first" \
-"${PROG} add: cannot open CVS/Entries for reading: No such file or directory
-${PROG} \[add aborted\]: no repository"
+"${CPROG} add: cannot open CVS/Entries for reading: No such file or directory
+${CPROG} \[add aborted\]: no repository"
 	  rm -r bogus-dir
 
 	  # One error condition we don't test for is trying to add a file
@@ -13993,7 +13993,7 @@ done"
 
 	  # try to add the admin dir
 	  dotest_fail adderrmsg-1 "${testcvs} add CVS" \
-"${PROG} add: cannot add special file .CVS.; skipping"
+"${CPROG} add: cannot add special file .CVS.; skipping"
 	  # might not want to see this message when you 'cvs add *'
 	  dotest_fail adderrmsg-2 "${testcvs} -q add CVS" ""
 
@@ -14042,13 +14042,13 @@ done"
 	  # attempted `cvs -z -n up' when the -n was read as the argument to
 	  # -z.
 	  dotest_fail opterrmsg-1 "${testcvs} -z -n up" \
-"${PROG}: gzip compression level must be between 0 and 9"
+"${CPROG}: gzip compression level must be between 0 and 9"
 
 	  # Some general -z checks
 	  dotest_fail opterrmsg-2 "${testcvs} -z -1 up" \
-"${PROG}: gzip compression level must be between 0 and 9"
+"${CPROG}: gzip compression level must be between 0 and 9"
 	  dotest_fail opterrmsg-3 "${testcvs} -z10 up" \
-"${PROG}: gzip compression level must be between 0 and 9"
+"${CPROG}: gzip compression level must be between 0 and 9"
 	  ;;
 
 	devcom)
@@ -14321,11 +14321,11 @@ U first-dir/w3'
 	  cd first-dir
 	  # OK, now we want to try files in various states with cvs edit.
 	  dotest devcom2-12 "${testcvs} edit w4" \
-"${PROG} edit: no such file w4; ignored"
+"${CPROG} edit: no such file w4; ignored"
 	  # Try the same thing with a per-directory watch set.
 	  dotest devcom2-13 "${testcvs} watch on" ''
 	  dotest devcom2-14 "${testcvs} edit w5" \
-"${PROG} edit: no such file w5; ignored"
+"${CPROG} edit: no such file w5; ignored"
 	  dotest devcom2-15 "${testcvs} editors" ''
 	  dotest devcom2-16 "${testcvs} editors w4" ''
 	  # Make sure there are no droppings lying around
@@ -14345,7 +14345,7 @@ U first${PLUS}dir/w2
 U first${PLUS}dir/w3"
 	  cd first+dir
 	  dotest_fail devcom2-19 "${testcvs} edit" \
-"${PROG} \[edit aborted\]: current directory (${TESTDIR}/2/first${PLUS}dir) contains an invalid character (${PLUS},>;=\\\\t\\\\n)"
+"${CPROG} \[edit aborted\]: current directory (${TESTDIR}/2/first${PLUS}dir) contains an invalid character (${PLUS},>;=\\\\t\\\\n)"
 
 	  # Make sure there are no droppings lying around
 	  dotest devcom2-20 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
@@ -14423,7 +14423,7 @@ G@#..!@#=&"
 	    # gets around to sending data to it) or "broken pipe" (if it
 	    # is the other way around).
 	    dotest_fail devcom3-9ar "${testcvs} edit w1" \
-"${PROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: ${DOTSTAR}"
+"${CPROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: ${DOTSTAR}"
 	    dotest devcom3-9br "test -w w1" ""
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
@@ -14628,8 +14628,8 @@ done"
 
 	  # This will fail on most systems.
 	  dotest unedit-without-baserev-4 "echo yes |${testcvs} -Q unedit $file" \
-"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
-${PROG} unedit: run update to complete the unedit"
+"m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
+${CPROG} unedit: run update to complete the unedit"
 
 	  # SunOS4.1.4 systems make it this far, but with a corrupted
 	  # CVS/Entries file.  Demonstrate the corruption!
@@ -14640,7 +14640,7 @@ ${PROG} unedit: run update to complete the unedit"
 	    dotest unedit-without-baserev-6r "${testcvs} -q update" "U m"
 	  else
 	    dotest unedit-without-baserev-6 "${testcvs} -q update" \
-"${PROG} update: warning: m was lost
+"${CPROG} update: warning: m was lost
 U m"
 	  fi
 
@@ -14678,13 +14678,13 @@ ${SPROG} [a-z]*: conflicts found in m
 C m"
 	  rm CVS/Baserev
 	  dotest unedit-without-baserev-14 "echo yes |${testcvs} unedit m" \
-"m has been modified; revert changes${QUESTION} ${PROG} unedit: m not mentioned in CVS/Baserev
-${PROG} unedit: run update to complete the unedit"
+"m has been modified; revert changes${QUESTION} ${CPROG} unedit: m not mentioned in CVS/Baserev
+${CPROG} unedit: run update to complete the unedit"
 	  if $remote; then
 	    dotest unedit-without-baserev-15r "${testcvs} -q update" "U m"
 	  else
 	    dotest unedit-without-baserev-15 "${testcvs} -q update" \
-"${PROG} update: warning: m was lost
+"${CPROG} update: warning: m was lost
 U m"
 	  fi
 	  # The following tests are kind of degenerate compared with
@@ -14714,7 +14714,7 @@ U m"
 '"${SPROG}"' [a-z]*: use .'"${SPROG}"' commit. to add this file permanently'
 
 	  dotest ignore-3 " ${testcvs} ci -m added" \
-"${PROG} commit: Examining \.
+"${CPROG} commit: Examining \.
 RCS file: ${CVSROOT_DIRNAME}/CVSROOT/cvsignore,v
 done
 Checking in cvsignore;
@@ -15612,7 +15612,7 @@ done"
 	  # While we're here, test for rejection of duplicate tag names.
 	  dotest_fail binwrap-0 \
 	    "${testcvs} import -m msg -I ! first-dir dup dup" \
-"${PROG} \[import aborted\]: tag .dup. was specified more than once"
+"${CPROG} \[import aborted\]: tag .dup. was specified more than once"
 
 	  if ${testcvs} import -m message -I ! -W "*.exe -k 'b'" \
 	      first-dir tag1 tag2 >>${LOGFILE}; then
@@ -16395,7 +16395,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
 
 	  dotest_fail info-cleanup-0 "${testcvs} -n release -d CVSROOT" \
-"${PROG} \[release aborted\]: cannot run command ${DOTSTAR}"
+"${CPROG} \[release aborted\]: cannot run command ${DOTSTAR}"
 
 	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
 	    pass info-cleanup
@@ -16632,8 +16632,8 @@ done"
 	  dotest serverpatch-8 "${testcvs} -q update" \
 'U file1' \
 'P file1
-'"${PROG}"' update: checksum failure after patch to ./file1; will refetch
-'"${PROG}"' client: refetching unpatchable files
+'"${CPROG}"' update: checksum failure after patch to ./file1; will refetch
+'"${CPROG}"' client: refetching unpatchable files
 U file1'
 
 	  cd ../..
@@ -17741,7 +17741,7 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done"
 	  dotest_fail log2-7a "${testcvs} admin -t${TESTDIR}/nonexist file1" \
-"${PROG} \[admin aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
+"${CPROG} \[admin aborted\]: can't stat ${TESTDIR}/nonexist: No such file or directory"
 	  dotest log2-8 "${testcvs} log -N file1" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 Working file: file1
@@ -18155,19 +18155,19 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # manner of things and the server better protect itself.
 	    dotest_fail crerepos-6a-r \
 "${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
-"${PROG} checkout: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
-${PROG} checkout: Perhaps you entered a relative pathname${QUESTION}
-${PROG} \[checkout aborted\]: Bad CVSROOT: .:ext:${hostname}:\.\./crerepos.\."
+"${CPROG} checkout: CVSROOT may only specify a positive, non-zero, integer port (not .\.\..)\.
+${CPROG} checkout: Perhaps you entered a relative pathname${QUESTION}
+${CPROG} \[checkout aborted\]: Bad CVSROOT: .:ext:${hostname}:\.\./crerepos.\."
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b-r \
 "${testcvs} -d :ext:`hostname`:crerepos init" \
-"${PROG} init: CVSROOT requires a path spec:
-${PROG} init: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
-${PROG} init: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
-${PROG} \[init aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
+"${CPROG} init: CVSROOT requires a path spec:
+${CPROG} init: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
+${CPROG} init: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
+${CPROG} \[init aborted\]: Bad CVSROOT: .:ext:${hostname}:crerepos.\."
 	    cd ..
 	    rm -r 1
 	  else # local
@@ -18807,7 +18807,7 @@ EOF
 "2000 is also a good year for leaping"
 	  # 29 Feb 2003 is invalid
 	  dotest_fail rcs2-5 "${testcvs} -q update -p -D '2003-02-29 11:30 UT' file1" \
-"${PROG} \[update aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
+"${CPROG} \[update aborted\]: Can't parse date/time: 2003-02-29 11:30 UT"
 
 	  dotest rcs2-6 "${testcvs} -q update -p -D 2007-01-07 file1" \
 "head revision"
@@ -19659,8 +19659,8 @@ done"
 	  touch aa
 	  chmod a= aa
 	  dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
-"${PROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
-"${PROG} \[update aborted\]: reading aa: Permission denied"
+"${CPROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
+"${CPROG} \[update aborted\]: reading aa: Permission denied"
 
 	  chmod u+rwx aa
 	  cd ../..
@@ -20399,8 +20399,8 @@ done"
 	  # patch_file function in update.c.
 	  dotest keyword-21 "${testcvs} -q update -r tag1" "U file1" \
 "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to \./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
@@ -20409,8 +20409,8 @@ U file1"
 	    # Like serverpatch-8.  Not sure there is anything much we
 	    # can or should do about this.
 	    dotest keyword-23r "${testcvs} update -A file1" "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to \./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 	  else
 	    dotest keyword-23 "${testcvs} update -A file1" "[UP] file1"
@@ -20704,8 +20704,8 @@ done"
 	  # FIXCVS - see note above keyword-21
 	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "U file1" \
 "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to \./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
@@ -20718,8 +20718,8 @@ T file2"
 	  # FIXCVS - see note above keyword-21
 	  dotest keywordname-update-5 "${testcvs} -q up -A" "U file1" \
 "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to \./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -20730,8 +20730,8 @@ new data"
 	  # FIXCVS - see same note above
 	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "U file1" \
 "P file1
-${PROG} update: checksum failure after patch to \./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to \./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
@@ -20739,8 +20739,8 @@ U file1"
 	  # And reverify the trunk update when the change is actually removed.
 	  dotest keywordname-update-11 "${testcvs} -q up -A" "[UP] file1" \
 "P file1
-${PROG} update: checksum failure after patch to ./file1; will refetch
-${PROG} client: refetching unpatchable files
+${CPROG} update: checksum failure after patch to ./file1; will refetch
+${CPROG} client: refetching unpatchable files
 U file1"
 	  dotest keywordname-update-12 "cat file1" \
 '\$'"Name:  "'\$'"
@@ -21464,9 +21464,9 @@ done"
           cd first-dir
 
 	  dotest_fail admin-3 "${testcvs} -q admin -i file1" \
-"${PROG} admin: the -i option to admin is not supported
-${PROG} admin: run add or import to create an RCS file
-${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
+"${CPROG} admin: the -i option to admin is not supported
+${CPROG} admin: run add or import to create an RCS file
+${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	  dotest_fail admin-4 "${testcvs} -q log file1" \
 "${SPROG} [a-z]*: nothing known about file1"
 	  dotest_fail admin-4a "${testcvs} -q admin file1" \
@@ -21530,11 +21530,11 @@ done"
 	  # If we wanted to comprehensive about this, we would also test
 	  # this for -l, -u, and all the different -o syntaxes.
 	  dotest_fail admin-10a "${testcvs} -q admin -b1.1.2" \
-"${PROG} admin: while processing more than one file:
-${PROG} \[admin aborted\]: attempt to specify a numeric revision"
+"${CPROG} admin: while processing more than one file:
+${CPROG} \[admin aborted\]: attempt to specify a numeric revision"
 	  dotest_fail admin-10b "${testcvs} -q admin -m1.1:bogus file1 file2" \
-"${PROG} admin: while processing more than one file:
-${PROG} \[admin aborted\]: attempt to specify a numeric revision"
+"${CPROG} admin: while processing more than one file:
+${CPROG} \[admin aborted\]: attempt to specify a numeric revision"
 
 	  # try a bad symbolic revision
 	  dotest_fail admin-10c "${testcvs} -q admin -bBOGUS" \
@@ -23456,9 +23456,9 @@ Directory ${CVSROOT1_DIRNAME}/mod1-2 added to the repository"
 ${SPROG} [a-z]*: scheduling file .mod1-2/file1-2. for addition
 ${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
 	  dotest multiroot-setup-7 "${testcvs1} commit -m is" \
-"${PROG} commit: Examining \.
-${PROG} commit: Examining mod1-1
-${PROG} commit: Examining mod1-2
+"${CPROG} commit: Examining \.
+${CPROG} commit: Examining mod1-1
+${CPROG} commit: Examining mod1-2
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
 done
 Checking in mod1-1/file1-1;
@@ -23490,9 +23490,9 @@ Directory ${CVSROOT2_DIRNAME}/mod2-2 added to the repository"
 ${SPROG} [a-z]*: scheduling file .mod2-2/file2-2. for addition
 ${SPROG} [a-z]*: use '${SPROG} commit' to add these files permanently"
 	  dotest multiroot-setup-10 "${testcvs2} commit -m anyone" \
-"${PROG} commit: Examining \.
-${PROG} commit: Examining mod2-1
-${PROG} commit: Examining mod2-2
+"${CPROG} commit: Examining \.
+${CPROG} commit: Examining mod2-1
+${CPROG} commit: Examining mod2-2
 RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
 done
 Checking in mod2-1/file2-1;
@@ -23686,10 +23686,10 @@ diff -r1\.1 file2-2
 > down"
 
 	  dotest multiroot-commit-1 "${testcvs} commit -m actually" \
-"${PROG} commit: Examining \.
-${PROG} commit: Examining mod1-1
-${PROG} commit: Examining mod1-2
-${PROG} commit: Examining mod2-2/mod1-2
+"${CPROG} commit: Examining \.
+${CPROG} commit: Examining mod1-1
+${CPROG} commit: Examining mod1-2
+${CPROG} commit: Examining mod2-2/mod1-2
 Checking in mod1-1/file1-1;
 ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
 new revision: 1.2; previous revision: 1.1
@@ -23698,9 +23698,9 @@ Checking in mod1-2/file1-2;
 ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
 new revision: 1.2; previous revision: 1.1
 done
-${PROG} commit: Examining mod1-2/mod2-2
-${PROG} commit: Examining mod2-1
-${PROG} commit: Examining mod2-2
+${CPROG} commit: Examining mod1-2/mod2-2
+${CPROG} commit: Examining mod2-1
+${CPROG} commit: Examining mod2-2
 Checking in mod2-1/file2-1;
 ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  file2-1
 new revision: 1.2; previous revision: 1.1
@@ -23711,15 +23711,15 @@ new revision: 1.2; previous revision: 1.1
 done"
 
 	  dotest multiroot-update-2 "${testcvs} update" \
-"${PROG} update: Updating \.
-${PROG} update: Updating mod1-1
-${PROG} update: Updating mod1-2
-${PROG} update: Updating mod2-2/mod1-2
+"${CPROG} update: Updating \.
+${CPROG} update: Updating mod1-1
+${CPROG} update: Updating mod1-2
+${CPROG} update: Updating mod2-2/mod1-2
 U mod2-2/mod1-2/file1-2
-${PROG} update: Updating mod1-2/mod2-2
+${CPROG} update: Updating mod1-2/mod2-2
 U mod1-2/mod2-2/file2-2
-${PROG} update: Updating mod2-1
-${PROG} update: Updating mod2-2" \
+${CPROG} update: Updating mod2-1
+${CPROG} update: Updating mod2-2" \
 "${SPROG} server: Updating \.
 ${SPROG} server: Updating mod1-1
 ${SPROG} server: Updating mod1-2
@@ -24023,10 +24023,10 @@ File: file2-2          	Status: Up-to-date
 	cattle                   	(revision: 1\.2)"
 
 	  dotest multiroot-commit-2 "${testcvs} commit -m reading" \
-"${PROG} commit: Examining \.
-${PROG} commit: Examining mod1-1
-${PROG} commit: Examining mod1-2
-${PROG} commit: Examining mod2-2/mod1-2
+"${CPROG} commit: Examining \.
+${CPROG} commit: Examining mod1-1
+${CPROG} commit: Examining mod1-2
+${CPROG} commit: Examining mod2-2/mod1-2
 RCS file: ${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v
 done
 Checking in mod1-1/anotherfile1-1;
@@ -24039,9 +24039,9 @@ Checking in mod2-2/mod1-2/anotherfile1-2;
 ${CVSROOT1_DIRNAME}/mod1-2/anotherfile1-2,v  <--  anotherfile1-2
 initial revision: 1\.1
 done
-${PROG} commit: Examining mod1-2/mod2-2
-${PROG} commit: Examining mod2-1
-${PROG} commit: Examining mod2-2
+${CPROG} commit: Examining mod1-2/mod2-2
+${CPROG} commit: Examining mod2-1
+${CPROG} commit: Examining mod2-2
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v
 done
 Checking in mod1-2/mod2-2/anotherfile2-2;
@@ -24056,14 +24056,14 @@ initial revision: 1\.1
 done"
 
 	  dotest multiroot-update-3 "${testcvs} update" \
-"${PROG} update: Updating \.
-${PROG} update: Updating mod1-1
-${PROG} update: Updating mod1-2
+"${CPROG} update: Updating \.
+${CPROG} update: Updating mod1-1
+${CPROG} update: Updating mod1-2
 U mod1-2/anotherfile1-2
-${PROG} update: Updating mod2-2/mod1-2
-${PROG} update: Updating mod1-2/mod2-2
-${PROG} update: Updating mod2-1
-${PROG} update: Updating mod2-2
+${CPROG} update: Updating mod2-2/mod1-2
+${CPROG} update: Updating mod1-2/mod2-2
+${CPROG} update: Updating mod2-1
+${CPROG} update: Updating mod2-2
 U mod2-2/anotherfile2-2" \
 "${SPROG} server: Updating \.
 ${SPROG} server: Updating mod1-1
@@ -24611,10 +24611,10 @@ U sdir/ssdir/ssfile"
 	  # so that the next test doesn't get trace messages for
 	  # Entries.Log
 	  dotest multiroot2-8 "${testcvs} update" \
-"${PROG} update: Updating \.
-${PROG} update: Updating dir1
-${PROG} update: Updating dir1/sdir
-${PROG} update: Updating dir1/sdir/ssdir" \
+"${CPROG} update: Updating \.
+${CPROG} update: Updating dir1
+${CPROG} update: Updating dir1/sdir
+${CPROG} update: Updating dir1/sdir/ssdir" \
 "${SPROG} server: Updating \.
 ${SPROG} server: Updating dir1
 ${SPROG} server: Updating dir1
@@ -24629,21 +24629,21 @@ ${SPROG} server: Updating dir1/sdir/ssdir"
 " *-> parse_cvsroot ( ${TESTDIR}/root1 )
  *-> main loop with CVSROOT=${TESTDIR}/root1
  *-> Write_Template (\., ${TESTDIR}/root1)
-${PROG} update: Updating \.
+${CPROG} update: Updating \.
  *-> Reader_Lock(${TESTDIR}/root1)
  *-> Lock_Cleanup()
  *-> Write_Template (dir1, ${TESTDIR}/root1/dir1)
-${PROG} update: Updating dir1
+${CPROG} update: Updating dir1
  *-> Reader_Lock(${TESTDIR}/root1/dir1)
  *-> Lock_Cleanup()
  *-> parse_cvsroot ( ${TESTDIR}/root2 )
  *-> main loop with CVSROOT=${TESTDIR}/root2
  *-> Write_Template (dir1/sdir, ${TESTDIR}/root2/dir1/sdir)
-${PROG} update: Updating dir1/sdir
+${CPROG} update: Updating dir1/sdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir)
  *-> Lock_Cleanup()
  *-> Write_Template (dir1/sdir/ssdir, ${TESTDIR}/root2/sdir/ssdir)
-${PROG} update: Updating dir1/sdir/ssdir
+${CPROG} update: Updating dir1/sdir/ssdir
  *-> Reader_Lock(${TESTDIR}/root2/sdir/ssdir)
  *-> Lock_Cleanup()
  *-> Lock_Cleanup()"
@@ -24986,9 +24986,9 @@ No conflicts created by this import"
 No such file or directory"
 	  else
 	    dotest reposmv-2 "${testcvs} update" "${DOTSTAR}
-${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${PROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1: No such file or directory
-${PROG} update: skipping directory "
+${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${CPROG} update: cannot open directory ${CVSROOT_DIRNAME}/dir1: No such file or directory
+${CPROG} update: skipping directory "
 	  fi
 
 	  # CVS/Root overrides $CVSROOT
@@ -25004,8 +25004,8 @@ No such file or directory"
 	    CVSROOT=${TESTDIR}/root-moved; export CVSROOT
 	    dotest reposmv-3 "${testcvs} update" \
 "${DOTSTAR}
-${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${PROG} update: Updating \.
+${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${CPROG} update: Updating \.
 ${DOTSTAR}"
 	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  fi
@@ -25024,9 +25024,9 @@ No such file or directory"
 	    CVSROOT_SAVED=${CVSROOT}
 	    CVSROOT=${TESTDIR}/root-none; export CVSROOT
 	    dotest_fail reposmv-4 "${testcvs} update" \
-"${PROG} update: in directory \.:
-${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${PROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
+"${CPROG} update: in directory \.:
+${CPROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
+${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
 	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
 	  fi
 
@@ -25726,7 +25726,7 @@ EOF
 	    CVS_SERVER=${TESTDIR}/serveme; export CVS_SERVER
 	    mkdir 1; cd 1
 	    dotest_fail client-1 "${testcvs} -q co first-dir" \
-"${PROG} \[checkout aborted\]: This server does not support the global -q option${DOTSTAR}"
+"${CPROG} \[checkout aborted\]: This server does not support the global -q option${DOTSTAR}"
 	    dotest client-2 "${testcvs} co first-dir" "special message"
 
 	    cat >${TESTDIR}/serveme <<EOF
@@ -25751,7 +25751,7 @@ EOF
 	    # The ${DOTSTAR} is to match a potential "broken pipe" if the
 	    # client exits before the server script sends everything
 	    dotest_fail client-3 "${testcvs} update" "merge-it
-${PROG} \[update aborted\]: protocol error: Copy-file tried to specify director${DOTSTAR}"
+${CPROG} \[update aborted\]: protocol error: Copy-file tried to specify director${DOTSTAR}"
 	    cat >${TESTDIR}/serveme <<EOF
 #!${TESTSHELL}
 echo "Valid-requests Root Valid-responses valid-requests Directory Entry Modified Unchanged Argument Argumentx ci co update"
@@ -25875,9 +25875,9 @@ Server: \1'
 		dotest_fail fork-1-noss \
 "$testcvs -d:fork:$CVSROOT_DIRNAME version" \
 "Client: .*
-Server: ${PROG} version: You must set the CVS_SERVER environment variable when
-${PROG} version: using the :fork: access method\.
-${PROG} \[version aborted\]: This CVS was not compiled with server support\."
+Server: ${CPROG} version: You must set the CVS_SERVER environment variable when
+${CPROG} version: using the :fork: access method\.
+${CPROG} \[version aborted\]: This CVS was not compiled with server support\."
 	    fi
 
 	    CVS_SERVER=${servercvs}; export CVS_SERVER

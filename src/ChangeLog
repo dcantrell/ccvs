@@ -1,5 +1,8 @@
 2003-07-09  Larry Jones  <lawrence.jones@eds.com>
 
+	* sanity.sh: Use ${CPROG} instead of ${PROG} so that changes merged
+	from cvs1-11-x-branch without updating won't appear to work.
+
 	* sanity.sh (keywordexpand): Use ${SPROG} instead of ${PROG} as
 	required.
 
