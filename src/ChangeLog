@@ -1,5 +1,7 @@
 2004-07-17  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (basic2-14): Use DOTSTAR to be more portable.
+	
 	* status.c (status_fileproc): Print datetimes using output_cvs_tagged.
 	* sanity.sh (basic2-14): Allow for an extra blank line at the end.
 	
