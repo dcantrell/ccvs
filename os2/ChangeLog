@@ -1,3 +1,8 @@
+Mon Feb 12 03:33:27 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* run.c: Changed Popen() to run_popen() for the benefit of
+	case-insensitive linkers (VMS) which confuse Popen() with popen()
+
 Mon Feb 12 03:14:36 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * options.h (PATCH_PROGRAM): "cvspatch" (see comment).

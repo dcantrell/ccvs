@@ -1,3 +1,8 @@
+Mon Feb 12 03:33:27 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+        * run.c: Changed Popen() to run_popen() for the benefit of
+        case-insensitive linkers (VMS) which confuse Popen() with popen()
+
 Fri Feb  9 22:10:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (distclean): Remove Makefile.
