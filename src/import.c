@@ -839,6 +839,7 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     int i, ierrno, err = 0;
     mode_t mode;
     char *tocvsPath;
+    char *userfile;
 
     if (noexec)
 	return (0);
@@ -849,9 +850,20 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
        we'll need to decide what to do with the open_file call below.  */
     abort ();
 #endif
-    fprcs = open_file (rcs, "w+");
     tocvsPath = wrap_tocvs_process_file (user);
-    fpuser = open_file (tocvsPath == NULL ? user : tocvsPath, "r");
+    userfile = (tocvsPath == NULL ? user : tocvsPath);
+    fpuser = fopen (userfile, "r");
+    if (fpuser == NULL) {
+	/* not fatal, continue import */
+	fperror (logfp, 0, errno, "ERROR: cannot read file %s", userfile);
+	error (0, errno, "ERROR: cannot read file %s", userfile);
+	goto read_error;
+    }
+    fprcs = fopen (rcs, "w+");
+    if (fprcs == NULL) {
+	ierrno = errno;
+	goto write_error_noclose;
+    }
 
     /*
      * putadmin()
@@ -1008,6 +1020,7 @@ write_error_noclose:
 	fperror (logfp, 0, 0, "ERROR: out of space - aborting");
 	error (1, 0, "ERROR: out of space - aborting");
     }
+read_error:
     if (tocvsPath)
 	if (unlink_file_dir (tocvsPath) < 0)
 	    error (0, errno, "cannot remove %s", tocvsPath);

@@ -1,5 +1,7 @@
 Thu Sep 14 14:17:52 1995  Peter Wemm  <peter@haywire.dialix.com>
 
+	* import.c: Recover from being unable to open the user file.
+
 	* update.c (join_file): Print a message in the case where the file
 	was added.
 
