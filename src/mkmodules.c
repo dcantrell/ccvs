@@ -197,7 +197,7 @@ static const char *const checkoutlist_contents[] = {
     "#\n",
     "# File format:\n",
     "#\n",
-    "#	[<whitespace>]<filename><whitespace><error message><end-of-line>\n",
+    "#	[<whitespace>]<filename>[<whitespace><error message>]<end-of-line>\n",
     "#\n",
     "# comment lines begin with '#'\n",
     NULL
@@ -460,7 +460,7 @@ mkmodules (dir)
     {
 	/*
 	 * File format:
-	 *  [<whitespace>]<filename><whitespace><error message><end-of-line>
+	 *  [<whitespace>]<filename>[<whitespace><error message>]<end-of-line>
 	 *
 	 * comment lines begin with '#'
 	 */
@@ -491,12 +491,13 @@ mkmodules (dir)
 	    }
 	    else
 	    {
+		/* Skip leading white space before the error message.  */
 		for (cp++;
-		     cp < last && *last && isspace ((unsigned char) *last);
+		     cp < last && *cp && isspace ((unsigned char) *cp);
 		     cp++)
 		    ;
 		if (cp < last && *cp)
-		    error (0, 0, cp, fname);
+		    error (0, 0, cp);
 	    }
 	    if (unlink_file (temp) < 0
 		&& !existence_error (errno))
