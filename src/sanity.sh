@@ -10396,7 +10396,6 @@ done"
 	  dotest binfiles-13 "${testcvs} -q update -A" ''
 
 	  cd ../..
-	  rm -r 1
 
 	  mkdir 3
 	  cd 3
@@ -10532,8 +10531,14 @@ keyword substitution: v
 total revisions: 1
 ============================================================================="
 
+	  # Check that the contents were right.  This isn't the hard case
+	  # (in which RCS_delete_revs does a diff), but might as well.
+	  dotest binfiles-o4 "${testcvs} -q update binfile" "U binfile"
+	  dotest binfiles-o5 "cmp binfile ../../1/binfile.dat" ""
+
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r 1
 	  rm -r 2
 	  ;;
 
@@ -10779,6 +10784,33 @@ access list:
 keyword substitution: b
 total revisions: 3
 ============================================================================="
+
+	  # OK, now test admin -o on a binary file.  See "admin"
+	  # test for a more complete list of admin -o tests.
+	  cp ${TESTDIR}/1/binfile.dat ${TESTDIR}/1/binfile4.dat
+	  echo '%%$$##@@!!jjiiuull' | tr j '\000' >>${TESTDIR}/1/binfile4.dat
+	  cp ${TESTDIR}/1/binfile4.dat ${TESTDIR}/1/binfile5.dat
+	  echo 'aawwee%$$##@@!!jjil' | tr w '\000' >>${TESTDIR}/1/binfile5.dat
+
+	  cp ../binfile4.dat file1
+	  dotest binfiles3-9 "${testcvs} -q ci -m change" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+	  cp ../binfile5.dat file1
+	  dotest binfiles3-10 "${testcvs} -q ci -m change" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.5; previous revision: 1\.4
+done"
+	  dotest binfiles3-11 "${testcvs} admin -o 1.3::1.5 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+deleting revision 1\.4
+done"
+	  dotest binfiles3-12 "${testcvs} -q update -r 1.3 file1" "U file1"
+	  dotest binfiles3-13 "cmp file1 ${TESTDIR}/1/binfile.dat" ""
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -14891,7 +14923,8 @@ done"
 	  #   head-o1 (::branch, where this deletes a revision or is noop)
 	  #   branches-o1 (::branch, similar, with different branch topology)
 	  #   log-o1 (1.3.2.1::)
-	  #   binfiles-o1 (1.3:: and ::1.3)
+	  #   binfiles-o1 (1.3:: and ::1.3; binary files)
+	  #   binfiles3-9 (binary files)
 	  #   Also could be testing:
 	  #     1.3.2.6::1.3.2.8
 	  #     1.3.2.6::1.3.2

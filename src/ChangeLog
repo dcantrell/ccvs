@@ -1,3 +1,11 @@
+1999-02-08  Jim Kingdon  <http://www.cyclic.com>
+
+	* rcs.c (RCS_delete_revs): Pass -a to diff_exec.
+	* sanity.sh (binfiles3): New tests binfiles3-9 through
+	binfiles3-13 test for this fix.
+	* sanity.sh (binfiles): New tests binfiles-o4 and binfiles-o5
+	(which don't test this bug, just on general principles).
+
 1999-02-04  Jim Kingdon  <http://www.cyclic.com>
 
 	* lock.c (lock_name): Permissions of directories in LockDir
