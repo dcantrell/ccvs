@@ -1,3 +1,7 @@
+Tue May 14 13:38:51 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (cvs_temp_name): New function.
+
 Tue May  7 10:50:13 MET DST 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* filesubr.c (expand_wild): Real implementation (like
