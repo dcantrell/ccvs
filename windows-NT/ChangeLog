@@ -1,3 +1,7 @@
+Sun Sep  7 19:59:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Add section on coding standards (win32, ANSI, &c).
+
 Fri Aug 29 19:13:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (isabsolute): Add comment about interaction with
