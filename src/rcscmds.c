@@ -77,6 +77,8 @@ static void RCS_output_diff_options PROTO ((char *, char *, char *, char *));
 you lose
 #endif
 
+extern int vasprintf ();
+
 /* First call call_diff_setup to setup any initial
    arguments.  The arguments to run_setup are essentially like printf().  The
    arguments will be parsed into whitespace separated words and added to the
