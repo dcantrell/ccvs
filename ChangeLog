@@ -1,3 +1,10 @@
+Thu Feb 29 00:28:08 1996  Peter Wemm  <peter@jhome.DIALix.COM>
+
+	* configure.in: correctly spell FNM_PATHNAME in fnmatch() test,
+	the supplied test fails on proposed POSIX.2, lib/fnmatch.*, Linux,
+	FreeBSD, etc.
+	* configure: Regenerated.
+
 Tue Feb 27 10:43:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Change submission address to bug-cvs from info-cvs.
