@@ -274,7 +274,7 @@ do_editor (dir, messagep, repository, changes)
 	free (editinfo_editor);
     editinfo_editor = (char *) NULL;
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
 	; /* nothing, leave editinfo_editor NULL */
     else
 #endif
@@ -398,7 +398,7 @@ do_verify (message, repository)
     int retcode = 0;
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
 	return;
 #endif

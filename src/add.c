@@ -93,7 +93,7 @@ add (argc, argv)
     if (argc <= 0)
 	usage (add_usage);
 
-    cvsroot_len = strlen (CVSroot_directory);
+    cvsroot_len = strlen (current_parsed_root->directory);
 
     /* First some sanity checks.  I know that the CVS case is (sort of)
        also handled by add_directory, but we need to check here so the
@@ -148,7 +148,7 @@ add (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active)
+    if (current_parsed_root->isremote)
     {
 	int i;
 
@@ -228,7 +228,7 @@ add (argc, argv)
 		repository = Name_Repository (NULL, update_dir);
 
 		/* don't add stuff to Emptydir */
-		if (strncmp (repository, CVSroot_directory, cvsroot_len) == 0
+		if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
 		    && ISDIRSEP (repository[cvsroot_len])
 		    && strncmp (repository + cvsroot_len + 1,
 				CVSROOTADM,
@@ -324,7 +324,7 @@ add (argc, argv)
 	repository = Name_Repository (NULL, finfo.update_dir);
 
 	/* don't add stuff to Emptydir */
-	if (strncmp (repository, CVSroot_directory, cvsroot_len) == 0
+	if (strncmp (repository, current_parsed_root->directory, cvsroot_len) == 0
 	    && ISDIRSEP (repository[cvsroot_len])
 	    && strncmp (repository + cvsroot_len + 1,
 			CVSROOTADM,

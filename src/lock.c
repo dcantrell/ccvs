@@ -172,12 +172,13 @@ lock_name (repository, name)
 
 	/* The interesting part of the repository is the part relative
 	   to CVSROOT.  */
-	assert (CVSroot_directory != NULL);
-	assert (strncmp (repository, CVSroot_directory,
-			 strlen (CVSroot_directory)) == 0);
-	short_repos = repository + strlen (CVSroot_directory) + 1;
+	assert (current_parsed_root != NULL);
+	assert (current_parsed_root->directory != NULL);
+	assert (strncmp (repository, current_parsed_root->directory,
+			 strlen (current_parsed_root->directory)) == 0);
+	short_repos = repository + strlen (current_parsed_root->directory) + 1;
 
-	if (strcmp (repository, CVSroot_directory) == 0)
+	if (strcmp (repository, current_parsed_root->directory) == 0)
 	    short_repos = ".";
 	else
 	    assert (short_repos[-1] == '/');

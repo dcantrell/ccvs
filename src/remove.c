@@ -77,7 +77,7 @@ cvsremove (argc, argv)
     wrap_setup ();
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) {
+    if (current_parsed_root->isremote) {
 	/* Call expand_wild so that the local removal of files will
            work.  It's ok to do it always because we have to send the
            file names expanded anyway.  */

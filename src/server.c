@@ -420,10 +420,10 @@ create_adm_p (base_dir, dir)
 	       differently.  */
 
 	    char *empty;
-	    empty = malloc (strlen (CVSroot_directory)
+	    empty = malloc (strlen (current_parsed_root->directory)
 			    + sizeof (CVSROOTADM)
 			    + sizeof (CVSNULLREPOS)
-			    + 10);
+			    + 3);
 	    if (! empty)
 	    {
 		retval = ENOMEM;
@@ -431,7 +431,7 @@ create_adm_p (base_dir, dir)
 	    }
 
 	    /* Create the directory name. */
-	    (void) sprintf (empty, "%s/%s/%s", CVSroot_directory,
+	    (void) sprintf (empty, "%s/%s/%s", current_parsed_root->directory,
 			    CVSROOTADM, CVSNULLREPOS);
 
 	    /* Create the directory if it doesn't exist. */
@@ -773,7 +773,7 @@ serve_root (arg)
        new connection.  Doing this would cause interoperability
        headaches, so it should be a different request, if there is
        any reason why such a feature is needed.  */
-    if (CVSroot_directory != NULL)
+    if (current_parsed_root != NULL)
     {
 	if (alloc_pending (80 + strlen (arg)))
 	    sprintf (pending_error_text,
@@ -796,21 +796,24 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	}
     }
 #endif
-    set_local_cvsroot (arg);
+
+    if (current_parsed_root != NULL)
+	free_cvsroot_t (current_parsed_root);
+    current_parsed_root = local_cvsroot (arg);
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
-    parse_config (CVSroot_directory);
+    parse_config (current_parsed_root->directory);
 
-    path = malloc (strlen (CVSroot_directory)
+    path = malloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
-		   + 10);
+		   + 2);
     if (path == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
+    (void) sprintf (path, "%s/%s", current_parsed_root->directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
 	int save_errno = errno;
@@ -821,13 +824,13 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     free (path);
 
 #ifdef HAVE_PUTENV
-    env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot_directory) + 1 + 1);
+    env = malloc (strlen (CVSROOT_ENV) + strlen (current_parsed_root->directory) + 2);
     if (env == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    (void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot_directory);
+    (void) sprintf (env, "%s=%s", CVSROOT_ENV, current_parsed_root->directory);
     (void) putenv (env);
     /* do not free env, as putenv has control of it */
 #endif
@@ -870,14 +873,14 @@ server_pathname_check (path)
 static int outside_root PROTO ((char *));
 
 /* Is file or directory REPOS an absolute pathname within the
-   CVSroot_directory?  If yes, return 0.  If no, set pending_error
+   current_parsed_root->directory?  If yes, return 0.  If no, set pending_error
    and return 1.  */
 static int
 outside_root (repos)
     char *repos;
 {
     size_t repos_len = strlen (repos);
-    size_t root_len = strlen (CVSroot_directory);
+    size_t root_len = strlen (current_parsed_root->directory);
 
     /* I think isabsolute (repos) should always be true, and that
        any RELATIVE_REPOS stuff should only be in CVS/Repository
@@ -892,15 +895,15 @@ E protocol error: %s is not absolute", repos);
     }
 
     if (repos_len < root_len
-	|| strncmp (CVSroot_directory, repos, root_len) != 0)
+	|| strncmp (current_parsed_root->directory, repos, root_len) != 0)
     {
     not_within:
-	if (alloc_pending (strlen (CVSroot_directory)
+	if (alloc_pending (strlen (current_parsed_root->directory)
 			   + strlen (repos)
 			   + 80))
 	    sprintf (pending_error_text, "\
 E protocol error: directory '%s' not within root '%s'",
-		     repos, CVSroot_directory);
+		     repos, current_parsed_root->directory);
 	return 1;
     }
     if (repos_len > root_len)
@@ -1103,8 +1106,9 @@ dirswitch (dir, repos)
        (e.g., an entry like ``world -a .'') by putting /. at the end
        of the Repository file, so we do the same.  */
     if (strcmp (dir, ".") == 0
-	&& CVSroot_directory != NULL
-	&& strcmp (CVSroot_directory, repos) == 0)
+	&& current_parsed_root != NULL
+	&& current_parsed_root->directory != NULL
+	&& strcmp (current_parsed_root->directory, repos) == 0)
     {
         if (fprintf (f, "/.") < 0)
 	{
@@ -2491,13 +2495,13 @@ check_command_legal_p (cmd_name)
          int found_it = 0;
          
          /* else */
-         flen = strlen (CVSroot_directory)
+         flen = strlen (current_parsed_root->directory)
                 + strlen (CVSROOTADM)
                 + strlen (CVSROOTADM_READERS)
                 + 3;
 
          fname = xmalloc (flen);
-         (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+         (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_READERS);
 
          fp = fopen (fname, "r");
@@ -2543,13 +2547,13 @@ check_command_legal_p (cmd_name)
 
 	 /* Now check the writers file.  */
 
-         flen = strlen (CVSroot_directory)
+         flen = strlen (current_parsed_root->directory)
                 + strlen (CVSROOTADM)
                 + strlen (CVSROOTADM_WRITERS)
                 + 3;
 
          fname = xmalloc (flen);
-         (void) sprintf (fname, "%s/%s/%s", CVSroot_directory,
+         (void) sprintf (fname, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_WRITERS);
 
          fp = fopen (fname, "r");
@@ -3758,7 +3762,10 @@ serve_init (arg)
 	/* Fall through to do_cvs_command which will return the
 	   actual error.  */
     }
-    set_local_cvsroot (arg);
+
+    if (current_parsed_root != NULL)
+	free_cvsroot_t (current_parsed_root);
+    current_parsed_root = local_cvsroot (arg);
 
     do_cvs_command ("init", init);
 }
@@ -5150,7 +5157,7 @@ error ENOMEM Virtual memory exhausted.\n");
 		    continue;
 
 		if (!(rq->flags & RQ_ROOTLESS)
-		    && CVSroot_directory == NULL)
+		    && current_parsed_root == NULL)
 		{
 		    /* For commands which change the way in which data
 		       is sent and received, for example Gzip-stream,
@@ -5335,7 +5342,7 @@ check_repository_password (username, password, repository, host_user_ptr)
     int found_it = 0;
     int namelen;
 
-    /* We don't use CVSroot_directory because it hasn't been set yet
+    /* We don't use current_parsed_root->directory because it hasn't been set yet
      * -- our `repository' argument came from the authentication
      * protocol, not the regular CVS protocol.
      */

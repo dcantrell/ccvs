@@ -234,7 +234,7 @@ update (argc, argv)
     argv += optind;
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) 
+    if (current_parsed_root->isremote) 
     {
 	int pass;
 
@@ -873,7 +873,7 @@ update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     {
         /* If there is no CVS/Root file, add one */
         if (!isfile (CVSADM_ROOT))
-	    Create_Root ((char *) NULL, CVSroot_original);
+	    Create_Root ((char *) NULL, current_parsed_root->original);
     }
 
     return (err);

@@ -1,3 +1,53 @@
+2001-01-09  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.h: Remove the various CVSroot_* bits and replace them with a
+	single structure of type cvsroot_t (current_parsed_root)
+
+	* root.c (parse_cvsroot): return pointer to a new cvsroot_t rather than
+	altering global variables
+	(local_cvsroot): return a pointer to a new cvsroot_t rather than
+	setting globals.  changed the name of this function from
+	set_local_cvsroot to better explain new functionality
+	(new_cvsroot_t): new initializer function
+	(free_cvsroot_t): new function
+	(others): use current_parsed_root rather than the old CVSroot_* globals
+
+	* add.c: use current_parsed_root rather than the old CVSroot_* globals
+	* admin.c: ditto
+	* checkout.c: ditto
+	* client.c: ditto
+	* commit.c: ditto
+	* create_adm.c: ditto
+	* diff.c: ditto
+	* edit.c: ditto
+	* expand_path.c: ditto
+	* find_names.c: ditto
+	* history.c: ditto
+	* ignore.c: ditto
+	* import.c: ditto
+	* lock.c: ditto
+	* log.c: ditto
+	* login.c: ditto
+	* logmsg.c: ditto
+	* main.c: ditto
+	* mkmodules.c: ditto
+	* modules.c: ditto
+	* parseinfo.c: ditto
+	* patch.c: ditto
+	* rcs.c: ditto
+	* recurse.c: ditto
+	* release.c: ditto
+	* remove.c: ditto
+	* repos.c: ditto
+	* rtag.c: ditto
+	* server.c: ditto
+	* status.c: ditto
+	* tag.c: ditto
+	* update.c: ditto
+	* version.c: ditto
+	* watch.c: ditto
+	* wrapper.c: ditto
+
 2001-01-05  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.h (enum CVSmethod): add null_method

@@ -68,13 +68,13 @@ ign_setup ()
        processing, and only if !ign_inhibit_server), letting the server
        know about the files and letting it decide whether to ignore
        them based on CVSROOOTADM_IGNORE.  */
-    if (!client_active)
+    if (!current_parsed_root->isremote)
 #endif
     {
-	char *file = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
+	char *file = xmalloc (strlen (current_parsed_root->directory) + sizeof (CVSROOTADM)
 			      + sizeof (CVSROOTADM_IGNORE) + 10);
 	/* Then add entries found in repository, if it exists */
-	(void) sprintf (file, "%s/%s/%s", CVSroot_directory,
+	(void) sprintf (file, "%s/%s/%s", current_parsed_root->directory,
 			CVSROOTADM, CVSROOTADM_IGNORE);
 	ign_add_file (file, 0);
 	free (file);

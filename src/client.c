@@ -198,7 +198,7 @@ arg_should_not_be_sent_to_server (arg)
        4) the argument lies within one of the paths in
        dirs_sent_to_server.
 
-       4) */
+       */
 
     if (list_isempty (dirs_sent_to_server))
 	return 0;		/* always send it */
@@ -263,8 +263,8 @@ arg_should_not_be_sent_to_server (arg)
 	}
 
 	/* Now check the value for root. */
-	if (this_root && current_root
-	    && (strcmp (this_root, current_root) != 0))
+	if (this_root && current_parsed_root
+	    && (strcmp (this_root, current_parsed_root->original) != 0))
 	{
 	    /* Don't send this, since the CVSROOTs don't match. */
 	    free (this_root);
@@ -2308,7 +2308,7 @@ static int
 is_cvsroot_level (pathname)
     char *pathname;
 {
-    if (strcmp (toplevel_repos, CVSroot_directory) != 0)
+    if (strcmp (toplevel_repos, current_parsed_root->directory) != 0)
 	return 0;
 
     return strchr (pathname, '/') == NULL;
@@ -2948,14 +2948,14 @@ send_a_repository (dir, repository, update_dir)
                    from REPOSITORY.  If the path elements don't exist
                    in REPOSITORY, or the removal of those path
                    elements mean that we "step above"
-                   CVSroot_directory, set toplevel_repos to
-                   CVSroot_directory. */
+                   current_parsed_root->directory, set toplevel_repos to
+                   current_parsed_root->directory. */
 		if ((repository_len > update_dir_len)
 		    && (strcmp (repository + repository_len - update_dir_len,
 				update_dir) == 0)
-		    /* TOPLEVEL_REPOS shouldn't be above CVSroot_directory */
+		    /* TOPLEVEL_REPOS shouldn't be above current_parsed_root->directory */
 		    && ((repository_len - update_dir_len)
-			> strlen (CVSroot_directory)))
+			> strlen (current_parsed_root->directory)))
 		{
 		    /* The repository name contains UPDATE_DIR.  Set
                        toplevel_repos to the repository name without
@@ -2969,7 +2969,7 @@ send_a_repository (dir, repository, update_dir)
 		}
 		else
 		{
-		    toplevel_repos = xstrdup (CVSroot_directory);
+		    toplevel_repos = xstrdup (current_parsed_root->directory);
 		}
 	    }
 	}
@@ -3027,7 +3027,7 @@ client_expand_modules (argc, argv, local)
 
     for (i = 0; i < argc; ++i)
 	send_arg (argv[i]);
-    send_a_repository ("", CVSroot_directory, "");
+    send_a_repository ("", current_parsed_root->directory, "");
 
     send_to_server ("expand-modules\012", 0);
 
@@ -3065,13 +3065,13 @@ client_send_expansions (local, where, build_dirs)
 	if (isfile (argv[0]))
 	    send_files (1, argv, local, 0, build_dirs ? SEND_BUILD_DIRS : 0);
     }
-    send_a_repository ("", CVSroot_directory, "");
+    send_a_repository ("", current_parsed_root->directory, "");
 }
 
 void
 client_nonexpanded_setup ()
 {
-    send_a_repository ("", CVSroot_directory, "");
+    send_a_repository ("", current_parsed_root->directory, "");
 }
 
 /* Receive a cvswrappers line from the server; it must be a line
@@ -3586,7 +3586,7 @@ get_responses_and_close ()
 	{
 	    if (shutdown (server_fd, 1) < 0)
 		error (1, 0, "shutting down connection to %s: %s",
-		       CVSroot_hostname, SOCK_STRERROR (SOCK_ERRNO));
+		       current_parsed_root->hostname, SOCK_STRERROR (SOCK_ERRNO));
 	    server_fd = -1;
             /*
              * This test will always be true because we dup the descriptor
@@ -3596,7 +3596,7 @@ get_responses_and_close ()
 		if (fclose (to_server_fp) != 0)
 		    error (1, errno,
 			   "closing down connection to %s",
-			   CVSroot_hostname);
+			   current_parsed_root->hostname);
 	    }
 	}
         else
@@ -3614,15 +3614,15 @@ get_responses_and_close ()
 #endif /* START_RSH_WITH_POPEN_RW */
 		{
 		    error (1, errno, "closing connection to %s",
-			   CVSroot_hostname);
+			   current_parsed_root->hostname);
 		}
         }
 
 	if (! buf_empty_p (from_server)
 	    || getc (from_server_fp) != EOF)
-	    error (0, 0, "dying gasps from %s unexpected", CVSroot_hostname);
+	    error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
 	else if (ferror (from_server_fp))
-	    error (0, errno, "reading from %s", CVSroot_hostname);
+	    error (0, errno, "reading from %s", current_parsed_root->hostname);
 
 	fclose (from_server_fp);
 #endif /* SHUTDOWN_SERVER */
@@ -3756,7 +3756,7 @@ recv_line (sock, resultp)
 	int n;
 	n = recv (sock, &ch, 1, 0);
 	if (n <= 0)
-	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
+	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
 		   n == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
 
 	if (ch == '\012')
@@ -3836,11 +3836,13 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
     }
-    port_number = CVSroot_port ? CVSroot_port : get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
-    hostinfo = init_sockaddr (&client_sai, CVSroot_hostname, port_number);
+    port_number = current_parsed_root->port
+	    	  ? current_parsed_root->port
+		  : get_port_number ("CVS_CLIENT_PORT", "cvspserver", CVS_AUTH_PORT);
+    hostinfo = init_sockaddr (&client_sai, current_parsed_root->hostname, port_number);
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
-	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
+	error (1, 0, "connect to %s:%d failed: %s", current_parsed_root->hostname,
 	       port_number, SOCK_STRERROR (SOCK_ERRNO));
 
     /* Run the authorization mini-protocol before anything else. */
@@ -3851,7 +3853,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	{
 	    error (0, 0,
 		    "authorization failed: server %s rejected access to %s",
-		    CVSroot_hostname, CVSroot_directory);
+		    current_parsed_root->hostname, current_parsed_root->directory);
 	    goto rejected;
 	}
 #else
@@ -3877,7 +3879,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 
 	/* Get the password, probably from ~/.cvspass. */
 	password = get_cvs_password ();
-        username = CVSroot_username ? CVSroot_username : getcaller();
+        username = current_parsed_root->username ? current_parsed_root->username : getcaller();
 
         /* Send the empty string by default.  This is so anonymous CVS
            access doesn't require client to have done "cvs login". */
@@ -3892,7 +3894,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* Send the data the server needs. */
-	if (send (sock, CVSroot_directory, strlen (CVSroot_directory), 0) < 0)
+	if (send (sock, current_parsed_root->directory, strlen (current_parsed_root->directory), 0) < 0)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 	if (send (sock, "\012", 1, 0) < 0)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
@@ -3936,7 +3938,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 		 */
 		error (0, 0,
 			"authorization failed: server %s rejected access to %s for user %s",
-			CVSroot_hostname, CVSroot_directory, username);
+			current_parsed_root->hostname, current_parsed_root->directory, username);
 
 		/* Output a special error message if authentication was attempted
 		with no password -- the user should be made aware that they may
@@ -3983,15 +3985,15 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 		{
 		    error (0, 0,
 			   "unrecognized auth response from %s: %s", 
-			   CVSroot_hostname, read_buf);
+			   current_parsed_root->hostname, read_buf);
 		    error (1, 0,
 			   "shutdown() failed, server %s: %s",
-			   CVSroot_hostname,
+			   current_parsed_root->hostname,
 			   SOCK_STRERROR (SOCK_ERRNO));
 		}
 		error (1, 0, 
 		       "unrecognized auth response from %s: %s", 
-		       CVSroot_hostname, read_buf);
+		       current_parsed_root->hostname, read_buf);
 	    }
 	    free (read_buf);
 	}
@@ -4000,7 +4002,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     if (verify_only)
     {
 	if (shutdown (sock, 2) < 0)
-	    error (0, 0, "shutdown() failed, server %s: %s", CVSroot_hostname,
+	    error (0, 0, "shutdown() failed, server %s: %s", current_parsed_root->hostname,
 		   SOCK_STRERROR (SOCK_ERRNO));
 	return;
     }
@@ -4029,7 +4031,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
 	error (0, 0,
 	       "shutdown() failed (server %s): %s",
-	       CVSroot_hostname,
+	       current_parsed_root->hostname,
 	       SOCK_STRERROR (SOCK_ERRNO));
     }
 
@@ -4061,15 +4063,15 @@ start_tcp_server (tofdp, fromfdp)
 	error (1, 0, "cannot create socket: %s", SOCK_STRERROR (SOCK_ERRNO));
 
     /* Get CVS_CLIENT_PORT or look up cvs/tcp with CVS_PORT as default */
-    port = CVSroot_port ? CVSroot_port : get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
+    port = current_parsed_root->port ? current_parsed_root->port : get_port_number ("CVS_CLIENT_PORT", "cvs", CVS_PORT);
 
-    hp = init_sockaddr (&sin, CVSroot_hostname, port);
+    hp = init_sockaddr (&sin, current_parsed_root->hostname, port);
 
     hname = xmalloc (strlen (hp->h_name) + 1);
     strcpy (hname, hp->h_name);
   
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
-	error (1, 0, "connect to %s:%d failed: %s", CVSroot_hostname,
+	error (1, 0, "connect to %s:%d failed: %s", current_parsed_root->hostname,
 	       port, SOCK_STRERROR (SOCK_ERRNO));
 
     {
@@ -4125,7 +4127,7 @@ recv_bytes (sock, buf, need)
 
 	got = recv (sock, buf, need, 0);
 	if (got < 0)
-	    error (1, 0, "recv() from server %s: %s", CVSroot_hostname,
+	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
 		   SOCK_STRERROR (SOCK_ERRNO));
 	buf += got;
 	need -= got;
@@ -4219,11 +4221,11 @@ connect_to_gserver (sock, hostinfo)
 		got = recv (sock, buf + 2, sizeof buf - 2, 0);
 		if (got < 0)
 		    error (1, 0, "recv() from server %s: %s",
-			   CVSroot_hostname, SOCK_STRERROR (SOCK_ERRNO));
+			   current_parsed_root->hostname, SOCK_STRERROR (SOCK_ERRNO));
 		buf[got + 2] = '\0';
 		if (buf[got + 1] == '\n')
 		    buf[got + 1] = '\0';
-		error (1, 0, "error from server %s: %s", CVSroot_hostname,
+		error (1, 0, "error from server %s: %s", current_parsed_root->hostname,
 		       buf);
 	    }
 
@@ -4275,7 +4277,7 @@ start_server ()
        (*really* slow on a 14.4kbps link); the clean way to have a CVS
        which supports several ways of connecting is with access methods.  */
 
-    switch (CVSroot_method)
+    switch (current_parsed_root->method)
     {
 
 #ifdef AUTH_CLIENT_SUPPORT
@@ -4311,8 +4313,8 @@ start_server ()
 	case server_method:
 #if defined(START_SERVER)
 	    START_SERVER (&tofd, &fromfd, getcaller (),
-			  CVSroot_username, CVSroot_hostname,
-			  CVSroot_directory);
+			  current_parsed_root->username, current_parsed_root->hostname,
+			  current_parsed_root->directory);
 #  if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
 	    /* This is a system on which we can only write to a socket
 	       using send/recv.  Therefore its START_SERVER needs to
@@ -4443,7 +4445,7 @@ the :server: access method is not supported by this port of CVS");
     if (!rootless)
     {
 	send_to_server ("Root ", 0);
-	send_to_server (CVSroot_directory, 0);
+	send_to_server (current_parsed_root->directory, 0);
 	send_to_server ("\012", 1);
     }
 
@@ -4573,7 +4575,7 @@ the :server: access method is not supported by this port of CVS");
            on encryption, bomb out; don't let the user think the data
            is being encrypted when it is not.  */
 #ifdef HAVE_KERBEROS
-	if (CVSroot_method == kserver_method)
+	if (current_parsed_root->method == kserver_method)
 	{
 	    if (! supported_request ("Kerberos-encrypt"))
 		error (1, 0, "This server does not support encryption");
@@ -4588,7 +4590,7 @@ the :server: access method is not supported by this port of CVS");
 	else
 #endif /* HAVE_KERBEROS */
 #ifdef HAVE_GSSAPI
-	if (CVSroot_method == gserver_method)
+	if (current_parsed_root->method == gserver_method)
 	{
 	    if (! supported_request ("Gssapi-encrypt"))
 		error (1, 0, "This server does not support encryption");
@@ -4661,7 +4663,7 @@ the :server: access method is not supported by this port of CVS");
 	   ability to decrypt the data stream is itself a form of
 	   authentication.  */
 #ifdef HAVE_GSSAPI
-	if (CVSroot_method == gserver_method)
+	if (current_parsed_root->method == gserver_method)
 	{
 	    if (! supported_request ("Gssapi-authenticate"))
 		error (1, 0,
@@ -4765,13 +4767,13 @@ start_rsh_server (tofdp, fromfdp)
 #endif /* RSH_NEEDS_BINARY_FLAG */
 
     /* Then we strcat more things on the end one by one. */
-    if (CVSroot_username != NULL)
+    if (current_parsed_root->username != NULL)
     {
 	rsh_argv[i++] = "-l";
-	rsh_argv[i++] = CVSroot_username;
+	rsh_argv[i++] = current_parsed_root->username;
     }
 
-    rsh_argv[i++] = CVSroot_hostname;
+    rsh_argv[i++] = current_parsed_root->hostname;
     rsh_argv[i++] = cvs_server;
     rsh_argv[i++] = "server";
 
@@ -4818,7 +4820,7 @@ start_rsh_server (tofdp, fromfdp)
        versions of rsh that grab switches out of the middle of the
        command (they're calling the GNU getopt routines incorrectly).  */
     command = xmalloc (strlen (cvs_server)
-		       + strlen (CVSroot_directory)
+		       + strlen (current_parsed_root->directory)
 		       + 50);
 
     /* If you are running a very old (Nov 3, 1994, before 1.5)
@@ -4832,15 +4834,15 @@ start_rsh_server (tofdp, fromfdp)
 	char **p = argv;
 
 	*p++ = cvs_rsh;
-	*p++ = CVSroot_hostname;
+	*p++ = current_parsed_root->hostname;
 
 	/* If the login names differ between client and server
 	 * pass it on to rsh.
 	 */
-	if (CVSroot_username != NULL)
+	if (current_parsed_root->username != NULL)
 	{
 	    *p++ = "-l";
-	    *p++ = CVSroot_username;
+	    *p++ = current_parsed_root->username;
 	}
 
 	*p++ = command;
@@ -5567,7 +5569,7 @@ send_files (argc, argv, local, aflag, flags)
 	 * latter case; I don't think toplevel_repos matters for the
 	 * former.
 	 */
-	toplevel_repos = xstrdup (CVSroot_directory);
+	toplevel_repos = xstrdup (current_parsed_root->directory);
     send_repository ("", toplevel_repos, ".");
 }
 
@@ -5686,7 +5688,7 @@ client_import_done ()
 	 */
         /* FIXME: "can't happen" now that we call client_import_setup
 	   at the beginning.  */
-	toplevel_repos = xstrdup (CVSroot_directory);
+	toplevel_repos = xstrdup (current_parsed_root->directory);
     send_repository ("", toplevel_repos, ".");
 }
 
@@ -5866,9 +5868,9 @@ client_senddate (date)
 void
 send_init_command ()
 {
-    /* This is here because we need the CVSroot_directory variable.  */
+    /* This is here because we need the current_parsed_root->directory variable.  */
     send_to_server ("init ", 0);
-    send_to_server (CVSroot_directory, 0);
+    send_to_server (current_parsed_root->directory, 0);
     send_to_server ("\012", 0);
 }
 
