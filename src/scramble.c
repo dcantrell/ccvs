@@ -113,7 +113,7 @@ char *
 descramble (str)
      char *str;
 {
-  char *s;
+  char *s, *ret;
 
   /* For now we can only handle one kind of scrambling.  In the future
    * there may be other kinds, and this `if' will become a `switch'.
@@ -121,9 +121,15 @@ descramble (str)
   if (str[0] != 'A')
     error (1, 0, "descramble: unknown scrambling method");
 
+  /* Method `A' is symmetrical, so scramble again to decrypt. */
   s = scramble (str + 1);
-  ++s;  /* scoot past the 'A' */
-  return s;
+
+  /* Make sure the string we return can be free()'d! */
+  ret = xmalloc (strlen (s));
+  strcpy (ret, s + 1);        /* scoot past the 'A' */
+  free (s);
+
+  return ret;
 }
 
 #endif /* (AUTH_CLIENT_SUPPORT || AUTH_SERVER_SUPPORT) from top of file */
