@@ -1,3 +1,8 @@
+2001-01-10  Derek Price  <derek.price@openavenue.com>
+	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
+
+	* NEWS (new since 1.11): Add comment about VMS wildcards
+
 2001-01-05  Derek Price  <derek.price@openavenue.com>
 
 	* configure.in (AC_OUTPUT): Move some script targets here
