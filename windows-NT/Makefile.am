@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	config.h.in \
 	config.h.in.in \
 	config.h.in.footer \
+	stamp-chi \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
@@ -75,8 +76,8 @@ DISTCLEANFILES += stamp-ch
 # The shell portion of this target is so that this file will be regenerated
 # when it is missing, even when not in maintainer mode.
 config.h.in: @MAINTAINER_MODE_TRUE@ stamp-chi
-	@if test ! -f $@; then \
-	  rm -f stamp-chi; \
+	@if test ! -f $(srcdir)/$@; then \
+	  rm -f $(srcdir)/stamp-chi; \
 	  $(MAKE) stamp-chi; \
 	else :; fi
 
@@ -89,9 +90,8 @@ stamp-chi: mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in \
 	   $(srcdir)/config.h.in.footer
 	@./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
 	               $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
-	@cp $(srcdir)/config.h.in $@
-DISTCLEANFILES += stamp-chi
-MAINTAINERCLEANFILES += $(srcdir)/config.h.in
+	@cp $(srcdir)/config.h.in $(srcdir)/$@
+MAINTAINERCLEANFILES += $(srcdir)/config.h.in $(srcdir)/stamp-chi
 
 stdbool.h: stamp-sh
 stamp-sh: $(top_srcdir)/lib/stdbool_.h
