@@ -63,8 +63,8 @@
 # include <types.h>
 #else /* defined(vms) */
 # include <sys/types.h>
-# include "xtime.h"
 #endif	/* !defined(vms) */
+# include "xtime.h"
 
 #if defined (STDC_HEADERS) || defined (USG)
 #include <string.h>
