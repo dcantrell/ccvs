@@ -656,7 +656,6 @@ char *backup_file PROTO((const char *file, const char *suffix));
 extern void resolve_symlink PROTO ((char **filename));
 void sleep_past PROTO ((time_t desttime));
 int set_nonblock_fd PROTO((int _fd));
-int set_block_fd PROTO((int _fd));
 
 /* flags for run_exec(), the fast system() for CVS */
 #define	RUN_NORMAL		0x0000	/* no special behaviour */
