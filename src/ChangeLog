@@ -1,5 +1,15 @@
 1998-08-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* release.c (release): Use save_cwd and restore_cwd to get back to
+	where we started, rather than hoping that CVS_CHDIR ("..") will do
+	something useful.  This removes the need for most of
+	release_delete, so remove that function and inline what is left.
+	* sanity.sh (basicc): Adjust tests for this fix, also some tests
+	with multiple arguments to "cvs release" (in the non-"-d"-case, it
+	would seem like the old code would CVS_CHDIR into directories and not
+	CVS_CHDIR back, but I'm not going to investigate this and it
+	should be a moot point with this fix.).
+
 	* sanity.sh (basicc): Add tests for a serious bug in "cvs release
 	-d .".
 

@@ -1155,20 +1155,25 @@ ${PROG} [a-z]*: Updating second-dir"
 	  cd first-dir
 	  dotest basicc-6 "${testcvs} release -d" ""
 	  dotest basicc-7 "test -d ../first-dir" ""
-	  # On Unix, the st_ino check happens to save our butt before
-	  # we delete second-dir and so on.  But the butts of NT users
-	  # are in grave danger.
 	  dotest basicc-8 "${testcvs} -Q release -d ." \
-"cvs release: Parent dir on a different disk, delete of \. aborted"
+"${PROG} release: deletion of directory \. failed: Operation not permitted"
 	  dotest basicc-9 "test -d ../second-dir" ""
 	  dotest basicc-10 "test -d ../first-dir" ""
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
 	  dotest basicc-11 "${testcvs} -Q release -d ./." \
-"cvs release: Parent dir on a different disk, delete of \./\. aborted"
+"${PROG} release: deletion of directory \./\. failed: Operation not permitted"
+	  cd ..
 	  cd ..
 
+	  mkdir 2; cd 2
+	  dotest basicc-12 "${testcvs} -Q co ." ""
+	  dotest basicc-13 "echo *" "CVS CVSROOT first-dir second-dir"
+	  dotest basicc-14 "${testcvs} -Q release first-dir second-dir" ""
+	  dotest basicc-15 "${testcvs} -Q release -d first-dir second-dir" ""
+	  dotest basicc-16 "echo *" "CVS CVSROOT"
+
 	  cd ..
-	  rm -r 1
+	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
@@ -6047,7 +6052,11 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  #   info-cleanup-0 for "cvs -n release".
 	  #   ignore-193 for the text of the question that cvs release asks.
 	  #     Also for interactions with cvsignore.
-	  #   basicc for "cvs release -d ."
+	  #   basicc for:
+	  #     * "cvs release -d ."
+	  #     * "cvs -Q release"
+	  #     * "cvs release foo bar" (>1 argument).
+	  #     * "cvs release" without -d.
 	  cd ampermodule
 	  if ${testcvs} release -d first-dir second-dir <<EOF >>${LOGFILE}
 yes
