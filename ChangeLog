@@ -1,3 +1,7 @@
+Sun Oct  1 15:32:01 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * (configure): re-ran autoconf.
+
 Sun Oct  1 11:35:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Remove item about setting comment leader automatically;
