@@ -1,3 +1,7 @@
+2004-10-20 Derek Price <derek@ximbiot.com>
+
+	* add.c (add): Avoid unnecessary typecast.
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerate for new configure.in.
