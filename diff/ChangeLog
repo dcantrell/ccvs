@@ -1,3 +1,8 @@
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
+	* diff3.c (read_diff): Fix memory leak.
+	(Patch from Kenneth Lorber <keni@his.com>.)
+
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate for new configure.in.

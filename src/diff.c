@@ -687,9 +687,10 @@ RCS file: ", 0);
 				   label1, label2,
 				   finfo->file );
 
-	if (label1) free (label1);
-	if (label2) free (label2);
     }
+
+    if( label1 ) free( label1 );
+    if( label2 ) free( label2 );
 
     switch (status)
     {
