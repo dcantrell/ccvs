@@ -1768,6 +1768,16 @@ working directory.
 @c branches.  It could also do something about the case
 @c where the RCS file had a (non-magic) "0" branch.
 
+The @sc{rcs} file should not be locked when you move it
+into @sc{cvs}; if it is, @sc{cvs} will have trouble
+letting you operate on it.
+@c What is the easiest way to unlock your files if you
+@c have them locked?  Especially if you have a lot of them?
+@c This is a CVS bug/misfeature; importing RCS files
+@c should ignore whether they are locked and leave them in
+@c an unlocked state.  Yet another reason for a separate
+@c "import RCS file" command.
+
 @c How many is "many"? Or do they just import RCS files?
 @item From another version control system
 Many version control systems have the ability to export
