@@ -3,6 +3,47 @@ Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
 	* cvs.h (CVSmethod): Add gserver_method.
 	* root.c (method_names): Add gserver.
 	(parse_cvsroot): Handle :gserver:.
+	* client.h (cvsauthenticate): Declare.
+	(cvs_gssapi_encrypt): Declare if HAVE_GSSAPI and ENCRYPTION.
+	(cvs_gssapi_wrap_buffer_initialize): Declare if HAVE_GSSAPI.
+	(connect_to_pserver): Update declaration.
+	(pserver_authenticate_connection): Declare when HAVE_GSSAPI and
+	SERVER_SUPPORT is defined in addition to other case.
+	* client.c: If HAVE_GSSAPI, include GSSAPI header files.
+	(gcontext): New static variable if HAVE_GSSAPI.
+	(connect_to_pserver): Add do_gssapi parameter.  Change all
+	callers.  Move rejection handling to bottom of function.
+	(recv_bytes): New static function if HAVE_GSSAPI.
+	(connect_to_gserver): Likewise.
+	(start_server): Handle gserver_method.  Handle GSSAPI encryption
+	and authentication.
+	* server.c: Include <sys/socket.h> if HAVE_GSSAPI, in addition to
+	existing cases.  If HAVE_GSSAPI, include GSSAPI header files.
+	Include <grp.h> even if AUTH_SERVER_SUPPORT is not defined.
+	(gcontext, cvs_gssapi_wrapping): New static variables if
+	HAVE_GSSAPI.
+	(cvs_gssapi_encrypt): New global variable if HAVE_GSSAPI and
+	ENCRYPTION.
+	(serve_gssapi_encrypt): New static function if HAVE_GSSAPI and
+	ENCRYPTION.
+	(serve_gssapi_authenticate): New static function if HAVE_GSSAPI.
+	(requests): Add Gssapi-encrypt if HAVE_GSSAPI and ENCRYPTION.  Add
+	Gssapi-authenticate if HAVE_GSSAPI.
+	(switch_to_user): Compile if HAVE_GSSAPI, in addition to existing
+	cases.
+	(pserver_authenticate_connection): Likewise.  Ifdef out part of
+	the code for AUTH_SERVER_SUPPORT.  Handle a GSSAPI request.
+	(gserver_authenticate_connection): New static function if
+	HAVE_GSSAPI.
+	(cvsauthenticate): New global variable.
+	(struct cvs_gssapi_wrap_data): Define if HAVE_GSSAPI.
+	(cvs_gssapi_wrap_buffer_initialize): New function if HAVE_GSSAPI.
+	(cvs_gssapi_wrap_input): New static function if HAVE_GSSAPI.
+	(cvs_gssapi_wrap_output): Likewise.
+	* main.c (opt_usage): Mention -a.
+	(main): Handle -a.  Handle pserver if HAVE_GSSAPI, in addition to
+	existing cases.
+	* login.c (login): Pass new argument to connect_to_pserver.
 
 	* buffer.c (PACKET_SLOP): Define.
 	(packetizing_buffer_initialize): Use PACKET_SLOP when allocating

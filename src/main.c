@@ -223,6 +223,7 @@ static const char *const opt_usage[] =
 #ifdef ENCRYPTION
     "    -x           Encrypt all net traffic.\n",
 #endif
+    "    -a           Authenticate all net traffic.\n",
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
     "(Specify the --help option for a list of other help options)\n",
@@ -472,7 +473,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:x", long_options, &option_index))
+            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xa", long_options, &option_index))
            != EOF)
     {
 	switch (c)
@@ -582,6 +583,15 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
                    If no ENCRYPTION, we still accept -x, but issue an
                    error if we are being run as a client.  */
 		break;
+	    case 'a':
+#ifdef CLIENT_SUPPORT
+		cvsauthenticate = 1;
+#endif
+		/* If no CLIENT_SUPPORT, ignore -a, so that users can
+                   have it in their .cvsrc and not cause any trouble.
+                   We will issue an error later if stream
+                   authentication is not supported.  */
+		break;
 	    case '?':
 	    default:
                 usage (usg);
@@ -658,7 +668,7 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 #endif /* HAVE_KERBEROS */
 
 
-#if defined(AUTH_SERVER_SUPPORT) && defined(SERVER_SUPPORT)
+#if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
 	if (strcmp (command_name, "pserver") == 0)
 	{
 	    /* The reason that --allow-root is not a command option
@@ -675,7 +685,7 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 	    /* Pretend we were invoked as a plain server.  */
 	    command_name = "server";
 	}
-#endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
+#endif /* (AUTH_SERVER_SUPPORT || HAVE_GSSAPI) && SERVER_SUPPORT */
 
 #ifdef SERVER_SUPPORT
 	server_active = strcmp (command_name, "server") == 0;

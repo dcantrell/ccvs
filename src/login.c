@@ -144,7 +144,7 @@ login (argc, argv)
 
     cvs_password = xstrdup (typed_password);
 
-    connect_to_pserver (NULL, NULL, 1);
+    connect_to_pserver (NULL, NULL, 1, 0);
 
     /* IF we have a password for this "[user@]host:/path" already
      *  THEN

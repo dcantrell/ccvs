@@ -22,7 +22,7 @@
 #include <winsock.h>
 #endif
 
-#if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS)
+#if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_KERBEROS) || defined (HAVE_GSSAPI)
 #include <sys/socket.h>
 #endif
 
@@ -36,6 +36,34 @@
 /* Information we need if we are going to use Kerberos encryption.  */
 static C_Block kblock;
 static Key_schedule sched;
+
+#endif
+
+#ifdef HAVE_GSSAPI
+
+#include <netdb.h>
+#include <gssapi/gssapi.h>
+#include <gssapi/gssapi_generic.h>
+
+/* We use Kerberos 5 routines to map the GSSAPI credential to a user
+   name.  */
+#include <krb5.h>
+
+/* We need this to wrap data.  */
+static gss_ctx_id_t gcontext;
+
+static void gserver_authenticate_connection PROTO((void));
+
+/* Whether we are already wrapping GSSAPI communication.  */
+static int cvs_gssapi_wrapping;
+
+#ifdef ENCRYPTION
+/* Whether to encrypt GSSAPI communication.  We use a global variable
+   like this because we use the same buffer type (gssapi_wrap) to
+   handle both authentication and encryption, and we don't want
+   multiple instances of that buffer in the communication stream.  */
+int cvs_gssapi_encrypt;
+#endif
 
 #endif
 
@@ -76,12 +104,12 @@ static Key_schedule sched;
 #ifdef HAVE_GETSPNAM
 #include <shadow.h>
 #endif
+#endif /* AUTH_SERVER_SUPPORT */
+
 /* For initgroups().  */
 #if HAVE_INITGROUPS
 #include <grp.h>
 #endif /* HAVE_INITGROUPS */
-#endif /* AUTH_SERVER_SUPPORT */
-
 
 #ifdef AUTH_SERVER_SUPPORT
 
@@ -1662,6 +1690,7 @@ serve_set (arg)
 }
 
 #ifdef ENCRYPTION
+
 #ifdef HAVE_KERBEROS
 
 static void
@@ -1679,7 +1708,68 @@ serve_kerberos_encrypt (arg)
 }
 
 #endif /* HAVE_KERBEROS */
+
+#ifdef HAVE_GSSAPI
+
+static void
+serve_gssapi_encrypt (arg)
+     char *arg;
+{
+    if (cvs_gssapi_wrapping)
+    {
+	/* We're already using a gssapi_wrap buffer for stream
+           authentication.  Flush everything we've output so far, and
+           turn on encryption for future data.  On the input side, we
+           should only have unwrapped as far as the Gssapi-encrypt
+           command, so future unwrapping will become encrypted.  */
+	buf_flush (buf_to_net, 1);
+	cvs_gssapi_encrypt = 1;
+	return;
+    }
+
+    /* All future communication with the client will be encrypted.  */
+
+    cvs_gssapi_encrypt = 1;
+
+    buf_to_net = cvs_gssapi_wrap_buffer_initialize (buf_to_net, 0,
+						    gcontext,
+						    buf_to_net->memory_error);
+    buf_from_net = cvs_gssapi_wrap_buffer_initialize (buf_from_net, 1,
+						      gcontext,
+						      buf_from_net->memory_error);
+
+    cvs_gssapi_wrapping = 1;
+}
+
+#endif /* HAVE_GSSAPI */
+
 #endif /* ENCRYPTION */
+
+#ifdef HAVE_GSSAPI
+
+static void
+serve_gssapi_authenticate (arg)
+     char *arg;
+{
+    if (cvs_gssapi_wrapping)
+    {
+	/* We're already using a gssapi_wrap buffer for encryption.
+           That includes authentication, so we don't have to do
+           anything further.  */
+	return;
+    }
+
+    buf_to_net = cvs_gssapi_wrap_buffer_initialize (buf_to_net, 0,
+						    gcontext,
+						    buf_to_net->memory_error);
+    buf_from_net = cvs_gssapi_wrap_buffer_initialize (buf_from_net, 1,
+						      gcontext,
+						      buf_from_net->memory_error);
+
+    cvs_gssapi_wrapping = 1;
+}
+
+#endif /* HAVE_GSSAPI */
 
 #ifdef SERVER_FLOWCONTROL
 /* The maximum we'll queue to the remote client before blocking.  */
@@ -3847,6 +3937,12 @@ struct request requests[] =
 #ifdef HAVE_KERBEROS
   REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, rq_optional),
 #endif
+#ifdef HAVE_GSSAPI
+  REQ_LINE("Gssapi-encrypt", serve_gssapi_encrypt, rq_optional),
+#endif
+#endif
+#ifdef HAVE_GSSAPI
+  REQ_LINE("Gssapi-authenticate", serve_gssapi_authenticate, rq_optional),
 #endif
   REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
   REQ_LINE("ci", serve_ci, rq_essential),
@@ -4294,7 +4390,7 @@ error ENOMEM Virtual memory exhausted.\n");
 }
 
 
-#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT)
+#if defined (HAVE_KERBEROS) || defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 static void switch_to_user PROTO((const char *));
 
 static void
@@ -4600,6 +4696,10 @@ handle_return:
     return host_user;
 }
 
+#endif /* AUTH_SERVER_SUPPORT */
+
+#if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
+
 /* Read username and password from client (i.e., stdin).
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
@@ -4608,6 +4708,7 @@ pserver_authenticate_connection ()
 {
     char *tmp = NULL;
     size_t tmp_allocated = 0;
+#ifdef AUTH_SERVER_SUPPORT
     char *repository = NULL;
     size_t repository_allocated = 0;
     char *username = NULL;
@@ -4617,6 +4718,7 @@ pserver_authenticate_connection ()
 
     char *host_user;
     char *descrambled_password;
+#endif /* AUTH_SERVER_SUPPORT */
     int verify_and_exit = 0;
 
     /* The Authentication Protocol.  Client sends:
@@ -4681,8 +4783,26 @@ pserver_authenticate_connection ()
 
     if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
 	verify_and_exit = 1;
-    else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
+    else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") == 0)
+	;
+    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST\n") == 0)
+    {
+#ifdef HAVE_GSSAPI
+	free (tmp);
+	gserver_authenticate_connection ();
+	return;
+#else
+	error (1, 0, "GSSAPI authentication not supported by this server");
+#endif
+    }
+    else
 	error (1, 0, "bad auth protocol start: %s", tmp);
+
+#ifndef AUTH_SERVER_SUPPORT
+
+    error (1, 0, "Password authentication not supported by this server");
+
+#else /* AUTH_SERVER_SUPPORT */
 
     /* Get the three important pieces of information in order. */
     /* See above comment about error handling.  */
@@ -4772,9 +4892,11 @@ pserver_authenticate_connection ()
     free (repository);
     free (username);
     free (password);
-}
 
 #endif /* AUTH_SERVER_SUPPORT */
+}
+
+#endif /* AUTH_SERVER_SUPPORT || HAVE_GSSAPI */
 
 
 #ifdef HAVE_KERBEROS
@@ -4854,6 +4976,122 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
 }
 #endif /* HAVE_KERBEROS */
 
+#ifdef HAVE_GSSAPI
+
+#ifndef MAXHOSTNAMELEN
+#define MAXHOSTNAMELEN (256)
+#endif
+
+/* Authenticate a GSSAPI connection.  This is called from
+   pserver_authenticate_connection, and it handles success and failure
+   the same way.  */
+
+static void
+gserver_authenticate_connection ()
+{
+    char hostname[MAXHOSTNAMELEN];
+    struct hostent *hp;
+    gss_buffer_desc tok_in, tok_out;
+    char buf[1024];
+    OM_uint32 stat_min, ret;
+    gss_name_t server_name, client_name;
+    gss_cred_id_t server_creds;
+    int nbytes;
+    gss_OID mechid;
+
+    gethostname (hostname, sizeof hostname);
+    hp = gethostbyname (hostname);
+    if (hp == NULL)
+	error (1, 0, "can't get canonical hostname");
+
+    sprintf (buf, "cvs@%s", hp->h_name);
+    tok_in.value = buf;
+    tok_in.length = strlen (buf);
+
+    if (gss_import_name (&stat_min, &tok_in, gss_nt_service_name,
+			 &server_name) != GSS_S_COMPLETE)
+	error (1, 0, "could not import GSSAPI service name %s", buf);
+
+    /* Acquire the server credential to verify the client's
+       authentication.  */
+    if (gss_acquire_cred (&stat_min, server_name, 0, GSS_C_NULL_OID_SET,
+			  GSS_C_ACCEPT, &server_creds,
+			  NULL, NULL) != GSS_S_COMPLETE)
+	error (1, 0, "could not acquire GSSAPI server credentials");
+
+    gss_release_name (&stat_min, &server_name);
+
+    /* The client will send us a two byte length followed by that many
+       bytes.  */
+    if (fread (buf, 1, 2, stdin) != 2)
+	error (1, errno, "read of length failed");
+
+    nbytes = ((buf[0] & 0xff) << 8) | (buf[1] & 0xff);
+    assert (nbytes <= sizeof buf);
+
+    if (fread (buf, 1, nbytes, stdin) != nbytes)
+	error (1, errno, "read of data failed");
+
+    gcontext = GSS_C_NO_CONTEXT;
+    tok_in.length = nbytes;
+    tok_in.value = buf;
+
+    if (gss_accept_sec_context (&stat_min,
+                                &gcontext,	/* context_handle */
+                                server_creds,	/* verifier_cred_handle */
+                                &tok_in,	/* input_token */
+                                NULL,		/* channel bindings */
+                                &client_name,	/* src_name */
+                                &mechid,	/* mech_type */
+                                &tok_out,	/* output_token */
+                                &ret,
+                                NULL,	 	/* ignore time_rec */
+                                NULL)		/* ignore del_cred_handle */
+	!= GSS_S_COMPLETE)
+    {
+	error (1, 0, "could not verify credentials");
+    }
+
+    /* FIXME: Use Kerberos v5 specific code to authenticate to a user.
+       We could instead use an authentication to access mapping.  */
+    {
+	krb5_context kc;
+	krb5_principal p;
+	gss_buffer_desc desc;
+
+	krb5_init_context (&kc);
+	if (gss_display_name (&stat_min, client_name, &desc,
+			      &mechid) != GSS_S_COMPLETE
+	    || krb5_parse_name (kc, ((gss_buffer_t) &desc)->value, &p) != 0
+	    || krb5_aname_to_localname (kc, p, sizeof buf, buf) != 0
+	    || krb5_kuserok (kc, p, buf) != TRUE)
+	{
+	    error (1, 0, "access denied");
+	}
+	krb5_free_principal (kc, p);
+	krb5_free_context (kc);
+    }
+
+    if (tok_out.length != 0)
+    {
+	char cbuf[2];
+
+	cbuf[0] = (tok_out.length >> 8) & 0xff;
+	cbuf[1] = tok_out.length & 0xff;
+	if (fwrite (cbuf, 1, 2, stdout) != 2
+	    || (fwrite (tok_out.value, 1, tok_out.length, stdout)
+		!= tok_out.length))
+	    error (1, errno, "fwrite failed");
+    }
+
+    switch_to_user (buf);
+
+    printf ("I LOVE YOU\n");
+    fflush (stdout);
+}
+
+#endif /* HAVE_GSSAPI */
+
 #endif /* SERVER_SUPPORT */
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
@@ -4861,6 +5099,135 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
 /* This global variable is non-zero if the user requests encryption on
    the command line.  */
 int cvsencrypt;
+
+/* This global variable is non-zero if the users requests stream
+   authentication on the command line.  */
+int cvsauthenticate;
+
+#ifdef HAVE_GSSAPI
+
+/* An buffer interface using GSSAPI.  This is built on top of a
+   packetizing buffer.  */
+
+/* This structure is the closure field of the GSSAPI translation
+   routines.  */
+
+struct cvs_gssapi_wrap_data
+{
+    /* The GSSAPI context.  */
+    gss_ctx_id_t gcontext;
+};
+
+static int cvs_gssapi_wrap_input PROTO((void *, const char *, char *, int));
+static int cvs_gssapi_wrap_output PROTO((void *, const char *, char *, int,
+					 int *));
+
+/* Create a GSSAPI wrapping buffer.  We use a packetizing buffer with
+   GSSAPI wrapping routines.  */
+
+struct buffer *
+cvs_gssapi_wrap_buffer_initialize (buf, input, gcontext, memory)
+     struct buffer *buf;
+     int input;
+     gss_ctx_id_t gcontext;
+     void (*memory) PROTO((struct buffer *));
+{
+    struct cvs_gssapi_wrap_data *gd;
+
+    gd = (struct cvs_gssapi_wrap_data *) xmalloc (sizeof *gd);
+    gd->gcontext = gcontext;
+
+    return (packetizing_buffer_initialize
+	    (buf,
+	     input ? cvs_gssapi_wrap_input : NULL,
+	     input ? NULL : cvs_gssapi_wrap_output,
+	     gd,
+	     memory));
+}
+
+/* Unwrap data using GSSAPI.  */
+
+static int
+cvs_gssapi_wrap_input (fnclosure, input, output, size)
+     void *fnclosure;
+     const char *input;
+     char *output;
+     int size;
+{
+    struct cvs_gssapi_wrap_data *gd =
+	(struct cvs_gssapi_wrap_data *) fnclosure;
+    gss_buffer_desc inbuf, outbuf;
+    OM_uint32 stat_min;
+    int conf;
+
+    inbuf.value = (void *) input;
+    inbuf.length = size;
+
+    if (gss_unwrap (&stat_min, gd->gcontext, &inbuf, &outbuf, &conf, NULL)
+	!= GSS_S_COMPLETE)
+    {
+	error (1, 0, "gss_unwrap failed");
+    }
+
+    if (outbuf.length > size)
+	abort ();
+
+    memcpy (output, outbuf.value, outbuf.length);
+
+    /* The real packet size is stored in the data, so we don't need to
+       remember outbuf.length.  */
+
+    gss_release_buffer (&stat_min, &outbuf);
+
+    return 0;
+}
+
+/* Wrap data using GSSAPI.  */
+
+static int
+cvs_gssapi_wrap_output (fnclosure, input, output, size, translated)
+     void *fnclosure;
+     const char *input;
+     char *output;
+     int size;
+     int *translated;
+{
+    struct cvs_gssapi_wrap_data *gd =
+	(struct cvs_gssapi_wrap_data *) fnclosure;
+    gss_buffer_desc inbuf, outbuf;
+    OM_uint32 stat_min;
+    int conf_req, conf;
+
+    inbuf.value = (void *) input;
+    inbuf.length = size;
+
+#ifdef ENCRYPTION
+    conf_req = cvs_gssapi_encrypt;
+#else
+    conf_req = 0;
+#endif
+
+    if (gss_wrap (&stat_min, gd->gcontext, conf_req, GSS_C_QOP_DEFAULT,
+		  &inbuf, &conf, &outbuf) != GSS_S_COMPLETE)
+	error (1, 0, "gss_wrap failed");
+
+    /* The packetizing buffer only permits us to add 100 bytes.
+       FIXME: I don't know what, if anything, is guaranteed by GSSAPI.
+       This may need to be increased for a different GSSAPI
+       implementation, or we may need a different algorithm.  */
+    if (outbuf.length > size + 100)
+	abort ();
+
+    memcpy (output, outbuf.value, outbuf.length);
+
+    *translated = outbuf.length;
+
+    gss_release_buffer (&stat_min, &outbuf);
+
+    return 0;
+}
+
+#endif /* HAVE_GSSAPI */
 
 #ifdef ENCRYPTION
 
@@ -4884,8 +5251,8 @@ static int krb_encrypt_input PROTO((void *, const char *, char *, int));
 static int krb_encrypt_output PROTO((void *, const char *, char *, int,
 				     int *));
 
-/* Create an encryption buffer.  We use a packetizing buffer with
-   Kerberos encryption translation routines.  */
+/* Create a Kerberos encryption buffer.  We use a packetizing buffer
+   with Kerberos encryption translation routines.  */
 
 struct buffer *
 krb_encrypt_buffer_initialize (buf, input, sched, block, memory)
