@@ -18,13 +18,20 @@ fi
 AC_PREFIX_PROGRAM(cvs)
 
 dnl FIXME: configure normally doesn't expand these until it is too late
-dnl to make any use of them
+dnl to make any use of them (the rule for --with-diffutils uses bindir).
 dnl
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # NOTE:  don't quote the ${prefix} here -- it'll be replaced properly later
-test "x$exec_prefix" = xNONE && exec_prefix=${prefix}
+# No it won't the "later" code only runs if exec_prefix is NONE--this code
+# breaks the feature whereby "make install prefix=foo" works--and is therefore
+# commented out
+# test "x$exec_prefix" = xNONE && exec_prefix=${prefix}
+#
 # NOTE:  we hope most makefiles will have a similar line to this
+# Setting bindir here should be harmless as long as our Makefile.in
+# doesn't use @bindir@ (currently it doesn't).
 bindir=$exec_prefix/bin
+test "x$exec_prefix" = xNONE && bindir=${prefix}/bin
 
 AC_C_CROSS
 
