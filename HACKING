@@ -88,10 +88,10 @@ Although this is a long-term goal, it also would be nice to move CVS
 in the direction of reentrancy.  This reduces the size of the data
 segment and will allow a multi-threaded server if that is desirable.
 It is also useful to write the code so that it can be easily be made
-reentrant later.  For example, if you need to pass data from a
-Parse_Info caller to its callproc, you need a static variable.  But
-use a single pointer so that when Parse_Info is fixed to pass along a
-void * argument, then the code can easily use that argument.
+reentrant later.  For example, if you need to pass data to some functions,
+you need a static variable, but use a single pointer so that when the function
+is fixed to pass along the argument, then the code can easily use that
+argument.
 
 * Coding standards in general
 

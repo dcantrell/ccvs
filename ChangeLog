@@ -1,5 +1,10 @@
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
+	* HACKING: Update note on reentrancy.
+	(Original patch from Ken Lorber <keni@his.com>.)
+
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Call AM_GNU_GETTEXT.
 	* ABOUT-NLS: New file for GNU gettext support.
 	* config.guess: Ditto.
