@@ -1,6 +1,9 @@
+*.dvi
 Makefile
+cvs-paper.ps
 cvs.aux
 cvs.cp
+cvs.cps
 cvs.dvi
 cvs.fn
 cvs.info
@@ -12,3 +15,4 @@ cvs.ps
 cvs.toc
 cvs.tp
 cvs.vr
+cvsclient.info
