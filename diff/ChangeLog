@@ -1,3 +1,12 @@
+1998-08-15  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diffrun.h (struct diff_callbacks): Change calling convention of
+	write_output so that a zero length means to output zero bytes.
+	The cvs_output convention is just too ugly/error-prone.
+	* util.c (printf_output): Rewrite to parse format string
+	overselves rather than calling vasprintf, which cannot be
+	implemented in portable C.
+
 1998-08-06  David Masterson of kla-tencor.com
 
 	* util.c (flush_output): Don't prototype.
