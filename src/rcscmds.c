@@ -11,6 +11,7 @@
 
 #include "cvs.h"
 #include <assert.h>
+#include "diffrun.h"
 
 /* This file, rcs.h, and rcs.c, together sometimes known as the "RCS
    library", are intended to define our interface to RCS files.
@@ -132,9 +133,6 @@ call_diff_add_arg (s)
 	call_diff_argv[call_diff_argc] = (char *) 0;
 }
 
-/* diff_run is imported from libdiff.a. */
-extern int diff_run PROTO ((int argc, char **argv, char *out));
-
 static int
 call_diff (out)
     char *out;
@@ -151,12 +149,10 @@ call_diff (out)
     sleep (1);
 
     if (out == RUN_TTY)
-	return diff_run (call_diff_argc, call_diff_argv, NULL);
+	return diff_run (call_diff_argc, call_diff_argv, NULL, NULL);
     else
-	return diff_run (call_diff_argc, call_diff_argv, out);
+	return diff_run (call_diff_argc, call_diff_argv, out, NULL);
 }
-
-extern int diff3_run PROTO ((int argc, char **argv, char *out));
 
 static int
 call_diff3 (out)
@@ -174,9 +170,9 @@ call_diff3 (out)
     sleep (1);
 
     if (out == RUN_TTY)
-	return diff3_run (call_diff_argc, call_diff_argv, NULL);
+	return diff3_run (call_diff_argc, call_diff_argv, NULL, NULL);
     else
-	return diff3_run (call_diff_argc, call_diff_argv, out);
+	return diff3_run (call_diff_argc, call_diff_argv, out, NULL);
 }
 
 
