@@ -1,3 +1,12 @@
+1998-11-22  Jim Kingdon
+
+	* find_names.c (Find_Names): If we can't read the repository, make
+	it a nonfatal error.  Tell the caller whether this happened.
+	(find_rcs): Add comment regarding this behavior.
+	* recurse.c (do_recursion): If Find_Names gives an error, skip
+	the directory and print a message saying so.
+	* sanity.sh (modes3): New test, for this.
+
 1998-11-18  Jim Kingdon
 
 	* rtag.c (rtag_usage), tag.c (tag_usage): Use "-r rev"

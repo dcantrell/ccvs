@@ -638,8 +638,18 @@ do_recursion (frame)
 
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
+	    {
 		filelist = Find_Names (repository, lwhich, frame->aflag,
 				       &entries);
+		if (filelist == NULL)
+		{
+		    error (0, 0, "skipping directory %s", update_dir);
+		    /* Note that Find_Directories and the filesdoneproc
+		       in particular would do bad things ("? foo.c" in
+		       the case of some filesdoneproc's).  */
+		    goto skip_directory;
+		}
+	    }
 	}
 
 	/* find sub-directories if we will recurse */
@@ -703,6 +713,7 @@ do_recursion (frame)
 				    update_dir[0] ? update_dir : ".",
 				    entries);
 
+ skip_directory:
     fileattr_write ();
     fileattr_free ();
 

@@ -579,7 +579,7 @@ if test x"$*" = x; then
 	tests="${tests} crerepos rcs rcs2 lockfiles"
 	# More history browsing, &c.
 	tests="${tests} history"
-	tests="${tests} big modes modes2 stamps"
+	tests="${tests} big modes modes2 modes3 stamps"
 	# PreservePermissions stuff: permissions, symlinks et al.
 	tests="${tests} perms symlinks hardlinks"
 	# More tag and branch tests, keywords.
@@ -13093,6 +13093,50 @@ done"
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	modes3)
+	  # Repository permissions.  Particularly, what happens if we
+	  # can't read/write in the repository.
+	  # TODO: the case where we can access the repository, just not
+	  # the attic (may that one can remain a fatal error, seems less
+	  # useful for access control).
+	  mkdir 1; cd 1
+	  dotest modes-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir second-dir
+	  dotest modes-2 "${testcvs} add first-dir second-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository
+Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
+	  touch first-dir/aa second-dir/ab
+	  dotest modes-3 "${testcvs} add first-dir/aa second-dir/ab" \
+"${PROG} [a-z]*: scheduling file .first-dir/aa. for addition
+${PROG} [a-z]*: scheduling file .second-dir/ab. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest modes-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/aa,v
+done
+Checking in first-dir/aa;
+${TESTDIR}/cvsroot/first-dir/aa,v  <--  aa
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/second-dir/ab,v
+done
+Checking in second-dir/ab;
+${TESTDIR}/cvsroot/second-dir/ab,v  <--  ab
+initial revision: 1\.1
+done"
+	  chmod a= ${TESTDIR}/cvsroot/first-dir
+	  dotest modes-5 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/first-dir: Permission denied
+${PROG} [a-z]*: skipping directory first-dir
+${PROG} [a-z]*: Updating second-dir"
+
+	  cd ..
+	  rm -r 1
+	  chmod u+rwx ${TESTDIR}/cvsroot/first-dir
+	  rm -rf ${TESTDIR}/cvsroot/first-dir ${TESTDIR}/cvsroot/second-dir
 	  ;;
 
 	stamps)
