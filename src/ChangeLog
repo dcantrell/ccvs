@@ -1,5 +1,9 @@
 Tue Oct 10 19:11:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * login.c: include cvs.h before checking CVS_LOGIN, so it has a
+        chance to get defined before we ask if it's defined.
+        (login): oops, use semi not comma in `for' loop init.
+
         * Makefile.in (SOURCES, OBJECTS): include login.c, login.o.
 
         * main.c: added protoype for login().
