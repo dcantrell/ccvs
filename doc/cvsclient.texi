@@ -3,6 +3,11 @@
 @setfilename cvsclient.info
 @include CVSvn.texi
 
+@dircategory Programming
+@direntry
+* cvsclient: (cvsclient).      The CVS client/server protocol.
+@end direntry
+
 @node Top
 @top CVS Client/Server
 
