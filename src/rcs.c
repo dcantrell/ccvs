@@ -3301,8 +3301,6 @@ RCS_check_kflag (const char *arg)
       "(Specify the --help global option for a list of other help options)\n",
       NULL,
     };
-    /* Big enough to hold any of the strings from kflags.  */
-    char karg[10];
     char const *const *cpp = NULL;
 
     if (arg)
@@ -3319,8 +3317,7 @@ RCS_check_kflag (const char *arg)
 	usage (keyword_usage);
     }
 
-    (void) sprintf (karg, "-k%s", *cpp);
-    return xstrdup (karg);
+    return Xasprintf ("-k%s", *cpp);
 }
 
 

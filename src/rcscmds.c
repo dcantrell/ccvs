@@ -565,9 +565,8 @@ diff_exec (const char *file1, const char *file2, const char *label1,
     }
 #endif
 
-    args = xmalloc (strlen (options) + 10);
     /* The first word in this string is used only for error reporting. */
-    sprintf (args, "diff %s", options);
+    args = Xasprintf ("diff %s", options);
     call_diff_setup (args);
     if (label1)
 	call_diff_arg (label1);
@@ -593,9 +592,7 @@ RCS_output_diff_options (const char *opts, const char *rev1, const char *rev2,
 {
     char *tmp;
 
-    tmp = (char *) xmalloc (strlen (opts) + strlen (rev1) + 10);
-
-    sprintf (tmp, "diff%s -r%s", opts, rev1);
+    tmp = Xasprintf ("diff%s -r%s", opts, rev1);
     cvs_output (tmp, 0);
     free (tmp);
 

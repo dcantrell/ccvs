@@ -500,10 +500,8 @@ history (int argc, char **argv)
 		     * Convert a known time with the given timezone to time_t.
 		     * Use the epoch + 23 hours, so timezones east of GMT work.
 		     */
-		    static char f[] = "1/1/1970 23:00 %s";
-		    char *buf = xmalloc (sizeof (f) - 2 + strlen (optarg));
 		    struct timespec t;
-		    sprintf (buf, f, optarg);
+		    char *buf = Xasprintf ("1/1/1970 23:00 %s", optarg);
 		    if (get_date (&t, buf, NULL))
 		    {
 			/*

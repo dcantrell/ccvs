@@ -198,11 +198,7 @@ remove_fileproc (void *callerdat, struct file_info *finfo)
 	 * remove the ,t file for it and scratch it from the
 	 * entries file.  */
 	Scratch_Entry (finfo->entries, finfo->file);
-	fname = xmalloc (strlen (finfo->file)
-			 + sizeof (CVSADM)
-			 + sizeof (CVSEXT_LOG)
-			 + 10);
-	(void) sprintf (fname, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
+	fname = Xasprintf ("%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
 	if (unlink_file (fname) < 0
 	    && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", CVSEXT_LOG);

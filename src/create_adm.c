@@ -87,7 +87,7 @@ Create_Admin (const char *dir, const char *update_dir, const char *repository,
     if (dir != NULL)
 	tmp = Xasprintf ("%s/%s", dir, CVSADM_REP);
     else
-	tmp = Xasprintf ("%s", CVSADM_REP);
+	tmp = xstrdup (CVSADM_REP);
     fout = CVS_FOPEN (tmp, "w+");
     if (fout == NULL)
     {

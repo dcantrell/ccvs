@@ -50,12 +50,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     }
 
     /* find the info file and open it */
-    infopath = xmalloc (strlen (current_parsed_root->directory)
-			+ strlen (infofile)
-			+ sizeof (CVSROOTADM)
-			+ 3);
-    (void) sprintf (infopath, "%s/%s/%s", current_parsed_root->directory,
-		    CVSROOTADM, infofile);
+    infopath = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+			  CVSROOTADM, infofile);
     fp_info = CVS_FOPEN (infopath, "r");
     if (fp_info == NULL)
     {
