@@ -1,3 +1,8 @@
+1998-04-11  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Dates): New section, explaining the deal with
+	date formats.
+
 1998-04-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Global options, Invoking CVS): Fix typo
