@@ -1,5 +1,13 @@
 Fri Oct 27 13:43:35 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * save-cwd.c: use __PROTO instead of __P (see below).
+
+        * getline.h (__PROTO): same as below.
+
+        * save-cwd.h (__PROTO): replaces __P.  New name, so don't ask if
+        already defined.  The conflict was that OS/2 w/ IBM C/C++ uses
+        `__P' for something else, in <ctype.h> of all places.
+
         * system.h: do nothing about alloca ifdef ALLOCA_IN_STDLIB (see
         ../src/ChangeLog).
 
