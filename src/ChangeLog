@@ -21,7 +21,7 @@
 	(expr_tooltest3): Use it and test for big multi-line identity
 	matches.
 	(expr_set_ENDANCHOR): Find and set the right value for ENDANCHOR.
-	(expr_et_DOTSTAR): Find and set the right value for DOTSTAR.
+	(expr_set_DOTSTAR): Find and set the right value for DOTSTAR.
 	(expr_tooltest_DOTSTAR): Ensure that DOTSTAR works with big
 	matches.
 	(tr_tooltest1): Verify that tr handles NUL bytes.
