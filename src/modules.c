@@ -84,7 +84,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *mname;
     enum mtype m_type;
     char *msg;
-    int (*callback_proc) ();
+    CALLBACKPROC callback_proc;
     char *where;
     int shorten;
     int local_specified;

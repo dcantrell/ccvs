@@ -26,10 +26,10 @@ static void addfile PROTO((List **listp, char *dir, char *file));
 /*
  * Local static versions eliminates the need for globals
  */
-static int (*fileproc) ();
-static int (*filesdoneproc) ();
-static Dtype (*direntproc) ();
-static int (*dirleaveproc) ();
+static FILEPROC fileproc;
+static FILESDONEPROC filesdoneproc;
+static DIRENTPROC direntproc;
+static DIRLEAVEPROC dirleaveproc;
 static int which;
 static Dtype flags;
 static int aflag;
@@ -44,10 +44,10 @@ static List *filelist = NULL; /* holds list of files on which to operate */
 static List *dirlist = NULL; /* holds list of directories on which to operate */
 
 struct recursion_frame {
-  int (*fileproc)();
-  int (*filesdoneproc) ();
-  Dtype (*direntproc) ();
-  int (*dirleaveproc) ();
+  FILEPROC fileproc;
+  FILESDONEPROC filesdoneproc;
+  DIRENTPROC direntproc;
+  DIRLEAVEPROC dirleaveproc;
   Dtype flags;
   int which;
   int aflag;
@@ -68,10 +68,10 @@ int
 start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		 argc, argv, local, which, aflag, readlock,
 		 update_preload, dosrcs, wd_is_repos)
-    int (*fileproc) ();
-    int (*filesdoneproc) ();
-    Dtype (*direntproc) ();
-    int (*dirleaveproc) ();
+    FILEPROC fileproc;
+    FILESDONEPROC filesdoneproc;
+    DIRENTPROC 	direntproc;
+    DIRLEAVEPROC dirleaveproc;
     int argc;
     char **argv;
     int local;
@@ -266,10 +266,10 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 int
 do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	      xflags, xwhich, xaflag, xreadlock, xdosrcs)
-    int (*xfileproc) ();
-    int (*xfilesdoneproc) ();
-    Dtype (*xdirentproc) ();
-    int (*xdirleaveproc) ();
+    FILEPROC xfileproc;
+    FILESDONEPROC xfilesdoneproc;
+    DIRENTPROC xdirentproc;
+    DIRLEAVEPROC xdirleaveproc;
     Dtype xflags;
     int xwhich;
     int xaflag;

@@ -86,8 +86,8 @@ cvslog (argc, argv)
     av = argv;
 #endif
 
-    err = start_recursion (log_fileproc, (int (*) ()) NULL, log_dirproc,
-			   (int (*) ()) NULL, argc - i, argv + i, local,
+    err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
+			   (DIRLEAVEPROC) NULL, argc - i, argv + i, local,
 			   W_LOCAL | W_REPOS | W_ATTIC, 0, 1,
 			   (char *) NULL, 1, 0);
     return (err);
