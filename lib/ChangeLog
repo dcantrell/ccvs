@@ -1,3 +1,12 @@
+2004-04-21  Derek Price  <derek@ximbiot.com>
+
+	Add stdbool module from GNULIB.
+
+	* stdbool_.h: New file.
+	* Makefile.am (stdbool.h, BUILT_SOURCES, EXTRA_DIST, MOSTLYCLEANFILES):
+	Add stdbool cruft.
+	* Makefile.in: Regenerated.
+
 2004-04-20  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Correct comments.
