@@ -923,7 +923,7 @@ if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" != yes"; then
 fi
 ])
 
-# getline.m4 serial 9
+# getline.m4 serial 10
 
 dnl Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 dnl Foundation, Inc.
@@ -981,9 +981,17 @@ AC_DEFUN([AM_FUNC_GETLINE],
     AC_DEFINE([getline], [gnu_getline],
       [Define to a replacement function name for getline().])
     AC_LIBOBJ(getline)
-    AC_LIBOBJ(getndelim2)
     gl_PREREQ_GETLINE
-    gl_PREREQ_GETNDELIM2
+    dnl The following lines used to be here:
+    dnl
+    dnl   AC_LIBOBJ(getndelim2)
+    dnl   gl_PREREQ_GETNDELIM2
+    dnl
+    dnl The fix to Autoconf that forbids multiple inclusions in LIBOBJ of the
+    dnl same filename went in before release 2.58, so after GNULIB requires
+    dnl Autoconf 2.58 or greater, the following line can be removed and the
+    dnl above two restored.
+    gl_GETNDELIM2
   fi
 ])
 
@@ -993,7 +1001,7 @@ AC_DEFUN([gl_PREREQ_GETLINE],
   AC_CHECK_FUNCS(getdelim)
 ])
 
-# getndelim2.m4 serial 1
+# getndelim2.m4 serial 3
 dnl Copyright (C) 2003 Free Software Foundation, Inc.
 dnl This file is free software, distributed under the terms of the GNU
 dnl General Public License.  As a special exception to the GNU General
@@ -1003,7 +1011,14 @@ dnl the same distribution terms as the rest of that program.
 
 AC_DEFUN([gl_GETNDELIM2],
 [
-  AC_LIBOBJ(getndelim2)
+  dnl The fix to Autoconf that forbids multiple inclusions in LIBOBJ of the
+  dnl same filename went in before release 2.58, so after GNULIB requires
+  dnl Autoconf 2.58 or greater, the variable set below and check to prevent
+  dnl running AC_LIBOBJ twice will no longer be necessary.
+  if test -z "$gl_getndelim2_invoked"; then
+    gl_getndelim2_invoked=:
+    AC_LIBOBJ(getndelim2)
+  fi
   gl_PREREQ_GETNDELIM2
 ])
 
@@ -1012,8 +1027,7 @@ AC_DEFUN([gl_PREREQ_GETNDELIM2],
 [
   dnl Prerequisites of lib/getndelim2.h.
   AC_REQUIRE([gt_TYPE_SSIZE_T])
-  dnl Prerequisites of lib/getndelim2.c.
-  AC_REQUIRE([AC_HEADER_STDC])
+  dnl No prerequisites of lib/getndelim2.c.
 ])
 
 # ssize_t.m4 serial 3 (gettext-0.12.2)
