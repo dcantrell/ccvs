@@ -39,12 +39,12 @@ ALL : "$(OUTDIR)\libdiff.lib"
 
 !ELSE 
 
-ALL : "LIB - Win32 Release" "$(OUTDIR)\libdiff.lib"
+ALL : "libcvs - Win32 Release" "$(OUTDIR)\libdiff.lib"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"LIB - Win32 ReleaseCLEAN" 
+CLEAN :"libcvs - Win32 ReleaseCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -121,7 +121,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\side.obj" \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\version.obj" \
-	"..\LIB\WinRel\libcvs.lib"
+	"..\lib\WinRel\libcvs.lib"
 
 "$(OUTDIR)\libdiff.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -142,12 +142,12 @@ ALL : "$(OUTDIR)\libdiff.lib"
 
 !ELSE 
 
-ALL : "LIB - Win32 Debug" "$(OUTDIR)\libdiff.lib"
+ALL : "libcvs - Win32 Debug" "$(OUTDIR)\libdiff.lib"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"LIB - Win32 DebugCLEAN" 
+CLEAN :"libcvs - Win32 DebugCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -224,7 +224,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\side.obj" \
 	"$(INTDIR)\util.obj" \
 	"$(INTDIR)\version.obj" \
-	"..\LIB\WinDebug\libcvs.lib"
+	"..\lib\WinDebug\libcvs.lib"
 
 "$(OUTDIR)\libdiff.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -311,26 +311,26 @@ SOURCE=.\version.c
 
 !IF  "$(CFG)" == "libdiff - Win32 Release"
 
-"LIB - Win32 Release" : 
+"libcvs - Win32 Release" : 
    cd "..\lib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Release" 
    cd "..\diff"
 
-"LIB - Win32 ReleaseCLEAN" : 
+"libcvs - Win32 ReleaseCLEAN" : 
    cd "..\lib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" RECURSE=1 CLEAN 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Release" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
 
-"LIB - Win32 Debug" : 
+"libcvs - Win32 Debug" : 
    cd "..\lib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Debug" 
    cd "..\diff"
 
-"LIB - Win32 DebugCLEAN" : 
+"libcvs - Win32 DebugCLEAN" : 
    cd "..\lib"
-   $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" RECURSE=1 CLEAN 
+   $(MAKE) /$(MAKEFLAGS) /F ".\libcvs.mak" CFG="libcvs - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ENDIF 
