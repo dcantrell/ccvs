@@ -152,6 +152,29 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 
     if (argc == 0)
     {
+	int just_subdirs = (which & W_LOCAL) && !isdir (CVSADM);
+
+#ifdef CLIENT_SUPPORT
+	if (!just_subdirs
+	    && CVSroot_cmdline == NULL
+	    && client_active)
+	{
+	    char *root = Name_Root (NULL, update_dir);
+	    if (strcmp (root, current_root) != 0)
+		/* We're skipping this directory because it is for
+		   a different root.  Therefore, we just want to
+		   do the subdirectories only.  Processing files would
+		   cause a working directory from one repository to be
+		   processed against a different repository, which could
+		   cause all kinds of spurious conflicts and such.
+
+		   Question: what about the case of "cvs update foo"
+		   where we process foo/bar and not foo itself?  That
+		   seems to be handled somewhere (else) but why should
+		   it be a separate case?  Needs investigation...  */
+		just_subdirs = 1;
+	}
+#endif
 
 	/*
 	 * There were no arguments, so we'll probably just recurse. The
@@ -160,7 +183,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	 * process each of the sub-directories, so we pretend like we were
 	 * called with the list of sub-dirs of the current dir as args
 	 */
-	if ((which & W_LOCAL) && !isdir (CVSADM))
+	if (just_subdirs)
 	{
 	    dirlist = Find_Directories ((char *) NULL, W_LOCAL, (List *) NULL);
 	    /* If there are no sub-directories, there is a certain logic in
