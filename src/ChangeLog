@@ -4,6 +4,27 @@ Fri Aug  4 00:13:47 1995  Jim Meyering  (meyering@comco.com)
 	(options.h): Depend on ../config.status and options.h.in.
 	Add rule to build it from dependents.
 
+	* add.c: Include save-cwd.h.
+	(add_directory): Use save_cwd and restore_cwd instead of
+	explicit getwd then chdir.
+	* import.c (import_descend_dir): Likewise.
+	* modules.c (do_module): Likewise.
+
+	* recurse.c (save_cwd, restore_cwd, free_cwd): Remove functions.
+	New versions have been broken out into save-cwd.c.
+	(do_dir_proc): Adapt to handle status code returned by new versions
+	of save_cwd and restore_cwd -- and one fewer argument to restore_cwd.
+	(unroll_files_proc): Likewise.
+
+	* wrapper.c (wrap_name_has): Add default: abort () to switch
+	statement to avoid warning from gcc -Wall.
+	(wrap_matching_entry): Remove dcl of unused TEMP.
+	(wrap_tocvs_process_file): Remove dcl of unused ERR.
+	(wrap_fromcvs_process_file): Likewise.
+
+	* cvs.h: Remove prototype for error.  Instead, include error.h.
+	Also, remove trailing white space.
+
 Thu Aug  3 10:12:20 1995  Jim Meyering  (meyering@comco.com)
 
 	* import.c (import_descend_dir): Don't print probably-bogus CWD
