@@ -496,11 +496,6 @@ commit (argc, argv)
 	if (use_editor)
 	    do_editor (".", &saved_message, (char *)NULL, find_args.ulist);
 
-	/* Run the user-defined script to verify/check information in
-	 *the log message
-	 */
-	do_verify (saved_message, (char *)NULL);
-
 	/* We always send some sort of message, even if empty.  */
 	/* FIXME: is that true?  There seems to be some code in do_editor
 	   which can leave the message NULL.  */
