@@ -1,4 +1,13 @@
-2001-09-18  Derek Price  <dprice@collab.net>
+2001-09-19  Derek Price  <dprice@collab.net>
+
+	* rcs.c (rcsbuf_valpolish_internal): Restore one of the
+	"if ( ... ) abort();" sequences since it seems to check the validity of
+	the RCS file rather than for a programming error.  Also added a FIXME
+	comment to the effect that we should explain the RCS file error to the
+	user as such if it is such.
+	(Thanks to Larry Jones  <scjones@sdrc.com>.)
+
+2001-09-19  Derek Price  <dprice@collab.net>
 
 	* rcs.c (rcsbuf_getkey, rcsbuf_valpolish_internal): Replace some code
 	of the form "if ( ... ) abort();" with equivalent calls to assert().
