@@ -8528,6 +8528,9 @@ annotate (argc, argv)
     }
 #endif /* CLIENT_SUPPORT */
 
+    if (tag != NULL)
+	tag_check_valid (tag, argc, argv, local, 0, "");
+
     return start_recursion (annotate_fileproc, (FILESDONEPROC) NULL,
 			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
