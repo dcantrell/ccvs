@@ -491,20 +491,6 @@ pretag_list_proc(p, closure)
     return (0);
 }
 
-/* It would be nice to provide consistency with respect to commits;
-   however CVS lacks the infrastructure to do that (see Concurrency
-   in cvs.texinfo and comment in do_recursion).  We can and will
-   prevent simultaneous tag operations from interfering with
-   each other, by write locking each directory as we enter
-   it, and unlocking it as we leave it.
-
-   This variable holds the write locked directory.  We lock it in
-   tag_fileproc and clear the lock in tag_filesdoneproc.  We don't use
-   a direntproc and dirleaveproc because those won't handle the case
-   where the user specifies a list of files on the command line.  */
-static char *locked_dir;
-static List *locked_list;
-
 /*
  * Called to tag a particular file, as appropriate with the options that were
  * set above.
@@ -518,28 +504,9 @@ rtag_fileproc (finfo)
     char *version, *rev;
     int retcode = 0;
 
-    /* If we haven't write locked the directory yet, do it now.  */
-    if (finfo->repository != NULL
-	&& (locked_dir == NULL
-	    || strcmp (locked_dir, finfo->repository) != 0))
-    {
-        Node *node;
-
-        if (locked_dir != NULL)
-	{
-	    Lock_Cleanup ();
-	    dellist (&locked_list);
-	    free (locked_dir);
-	}
-
-	locked_dir = xstrdup (finfo->repository);
-	locked_list = getlist ();
-	node = getnode ();
-	node->type = LOCK;
-	node->key = xstrdup (finfo->repository);
-	(void) addnode (locked_list, node);
-	Writer_Lock (locked_list);
-    }
+    /* Lock the directory if it is not already locked.  We might be
+       able to rely on rtag_dirproc for this.  */
+    tag_lockdir (finfo->repository);
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
@@ -709,13 +676,7 @@ rtag_filesdoneproc(err, repos, update_dir)
     char *repos;
     char *update_dir;
 {
-    if (locked_dir != NULL)
-    {
-        Lock_Cleanup ();
-	dellist (&locked_list);
-	free (locked_dir);
-	locked_dir = NULL;
-    }
+    tag_unlockdir ();
 
     return (err);
 }

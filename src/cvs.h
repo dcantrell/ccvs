@@ -703,6 +703,8 @@ char *get_cvs_password PROTO((void));
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
 extern void tag_check_valid_join PROTO ((char *, int, char **, int, int,
 					 char *));
+extern void tag_lockdir PROTO ((char *));
+extern void tag_unlockdir PROTO ((void));
 
 extern void cvs_output PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((char *, size_t));

@@ -1,3 +1,15 @@
+Mon Jun 17 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Cleaner implementation of tag locking code added Jun 13 1996:
+	* cvs.h (tag_lockdir, tag_unlockdir): Declare.
+	* rtag.c (locked_dir, locked_list): Remove.
+	(rtag_fileproc): Don't lock here; just call tag_lockdir.
+	(rtag_filesdoneproc): Don't unlock here; just call tag_unlockdir.
+	* tag.c (locked_dir, locked_list): Move farther down in file.
+	(tag_fileproc): Don't lock here; just call tag_lockdir.
+	(tag_filesdoneproc): Don't unlock here; just call tag_unlockdir.
+	(tag_lockdir, tag_unlockdir): New functions.
+
 Wed Jun 15 07:52:22 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 
 	* client.c (send_modified, update_entries): Fixed bug which didn't
