@@ -1,3 +1,8 @@
+Thu Oct  9 10:57:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* parseinfo.c (parse_config): Add comment about compatibility
+	issues with adding keywords.
+
 Wed Oct  8 16:40:37 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_dir_proc), commit.c (check_direntproc,
