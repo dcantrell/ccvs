@@ -3051,10 +3051,10 @@ repository:
 @example
 $ tar xfz wdiff-0.04.tar.gz
 $ cd wdiff-0.04
-$ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF WDIFF_0_04
+$ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 @end example
 
-The vendor tag is named @samp{FSF} in the above
+The vendor tag is named @samp{FSF_DIST} in the above
 example, and the only release tag assigned is
 @samp{WDIFF_0_04}.
 
@@ -3070,7 +3070,7 @@ specify a different release tag this time.
 @example
 $ tar xfz wdiff-0.05.tar.gz
 $ cd wdiff-0.05
-$ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF WDIFF_0_05
+$ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
 For files that have not been modified locally, the newly created
@@ -3079,12 +3079,12 @@ changes, @code{import} will warn you that you must merge the changes
 into the main trunk, and tell you to use @samp{checkout -j} to do so.
 
 @example
-$ cvs checkout -jFSF:yesterday -jFSF wdiff
+$ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
 @end example
 
 @noindent
 The above command will check out the latest revision of
-@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF}
+@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF_DIST}
 since yesterday into the working copy.  If any conflicts arise during
 the merge they should be resolved in the normal way (@pxref{Conflicts
 example}).  Then, the modified files may be committed.

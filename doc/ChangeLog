@@ -1,5 +1,8 @@
 Tue Mar 26 08:46:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo: In various examples, change tag names to avoid tag
+	names reserved to CVS.
+
 	* cvs.texinfo (Tags): Document what is a valid tag name.
 
 	* cvs.texinfo (Substitution modes): Try to describe how the
