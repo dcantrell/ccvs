@@ -93,6 +93,10 @@ SOURCE=.\cmpbuf.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\cmpbuf.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\context.c
 # End Source File
 # Begin Source File
@@ -101,7 +105,15 @@ SOURCE=.\diff.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\diff3.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diffrun.h
 # End Source File
 # Begin Source File
 
@@ -110,10 +122,6 @@ SOURCE=.\dir.c
 # Begin Source File
 
 SOURCE=.\ed.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\lib\fnmatch.h
 # End Source File
 # Begin Source File
 
