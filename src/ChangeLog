@@ -1,3 +1,7 @@
+Wed Sep 20 15:32:49 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* ignore.c (ign_add_file): Check for errors from fopen and fclose.
+
 Tue Sep 19 18:02:16 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in (DISTFILES): Remove sanity.el from this list; the
