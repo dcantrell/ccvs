@@ -690,34 +690,8 @@ update_fileproc (callerdat, finfo)
                 {
                     if (vers->ts_conflict)
                     {
-                        char *filestamp;
-                        int retcode;
-
-                        /*
-                         * If the timestamp has changed and no
-                         * conflict indicators are found, it isn't a
-                         * 'C' any more.
-                         */
-
-#ifdef SERVER_SUPPORT
-                        if (server_active)
-                            retcode = vers->ts_conflict[0] != '=';
-                        else 
-#endif /* SERVER_SUPPORT */
-			{
-			    filestamp = time_stamp (finfo->file);
-			    retcode = strcmp (vers->ts_conflict, filestamp);
-			    free (filestamp);
-			}
-
-                        if (retcode)
-                        {
-                            /* The timestamps differ.  But if there
-                               are conflict markers print 'C' anyway.  */
-                            retcode = !file_has_markers (finfo);
-                        }
-
-                        if (!retcode)
+			if ( file_has_conflict ( finfo, vers->ts_conflict )
+			     || file_has_markers ( finfo ) )
                         {
                             write_letter (finfo, 'C');
                             retval = 1;
