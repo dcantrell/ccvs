@@ -1,3 +1,9 @@
+1999-04-08  Jim Kingdon  <http://www.cyclic.com>
+
+	* configure.in (AC_OUTPUT): Remove macintosh/Makefile (overlooked
+	in change of 1999-02-26; thanks to Erik Bertelsen for reporting it).
+	* configure: Regenerated.
+
 1999-02-26  Jim Kingdon  <http://www.cyclic.com>
 
 	* macintosh: Remove this subdirectory and all its contents.  It
