@@ -779,7 +779,8 @@ init (argc, argv)
 	    /* Now check the file in.  FIXME: we could be using
 	       add_rcs_file from import.c which is faster (if it were
 	       tweaked slightly).  */
-	    run_setup ("%s%s -x,v/ -q -u -t-", Rcsbin, RCS_CI);
+	    run_setup ("%s%s -x,v/ -q -u -t- -w%s", Rcsbin, RCS_CI,
+		       getcaller ());
 	    run_args ("-minitial checkin of %s", fileptr->filename);
 	    run_arg (fileptr->filename);
 	    retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);

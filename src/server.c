@@ -89,7 +89,7 @@ static Key_schedule sched;
    the same as the system username the server eventually switches to
    run as.  CVS_Username gets set iff password authentication is
    successful. */
-static char *CVS_Username = NULL;
+char *CVS_Username = NULL;
 
 /* Used to check that same repos is transmitted in pserver auth and in
    later CVS protocol.  Exported because root.c also uses. */

@@ -1,3 +1,10 @@
+Thu May 29 16:32:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c (RCS_checkin), mkmodules.c (init): Pass -w option to
+	"ci", specifying getcaller ().
+	* server.h, server.c (CVS_Username): Now extern.
+	* subr.c (getcaller): Return CVS_Username if it is set.
+
 Wed May 28 22:31:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (update_fileproc): If wrap_merge_is_copy and we would
