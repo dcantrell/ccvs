@@ -1,5 +1,10 @@
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
+	* mkconfig.pl (make_config_h): Use stricter regex to avoid warning of
+	the use of "#define" in comments.
+
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add JmgStat.c & JmgStat.h.
 	(Thanks to a report from Chris Bohn <cbohn@rrinc.com>.)
 
