@@ -708,6 +708,7 @@ if test "x$remote" = xyes; then
 fi
 
 dotest 1 "${testcvs} init" ''
+dotest 1a "${testcvs} init" ''
 
 ### The big loop
 for what in $tests; do

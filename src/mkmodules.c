@@ -870,7 +870,7 @@ init (argc, argv)
 	error (1, errno, "cannot change to directory %s", adm);
 
     /* Make Emptydir so it's there if we need it */
-    make_directory (CVSNULLREPOS);
+    mkdir_if_needed (CVSNULLREPOS);
 
     /* 80 is long enough for all the administrative file names, plus
        "/" and so on.  */
