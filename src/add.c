@@ -575,10 +575,11 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 		     * There is an RCS file, so remove the "-" from the
 		     * version number and restore the file
 		     */
-		    char *tmp = xmalloc (strlen (finfo.file) + 50);
-
+		    char *tmp = xmalloc( strlen( finfo.file ) );
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
+		    free( tmp );
+		    tmp = xmalloc( strlen( finfo.file ) + 13 );
 		    (void) sprintf (tmp, "Resurrected %s", finfo.file);
 		    Register (entries, finfo.file, vers->vn_user, tmp,
 			      vers->options,
