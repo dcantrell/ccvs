@@ -660,13 +660,14 @@ notify_proc (const char *repository, const char *filter, void *closure)
     char *cmdline;
     FILE *pipefp;
     const char *srepos = Short_Repository (repository);
-    struct notify_proc_args *args = (struct notify_proc_args *)closure;
+    struct notify_proc_args *args = closure;
 
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 		    0, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	filter,
+	"c", "s", cvs_cmd_name,
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"s", "s", args->notifyee,
@@ -881,7 +882,7 @@ notify_do (int type, const char *filename, const char *who, const char *val,
 	    args.file = filename;
 
 	    (void) Parse_Info (CVSROOTADM_NOTIFY, repository, notify_proc,
-			PIOPT_ALL, &args);
+			       PIOPT_ALL, &args);
             /* It's okay to cast out the const for the free() below since we
              * just allocated this a few lines above.  The const was for
              * everybody else.
@@ -989,7 +990,7 @@ static const char *const editors_usage[] =
     NULL
 };
 
-static int editors_fileproc (void *callerdat, struct file_info *finfo);
+
 
 static int
 editors_fileproc (void *callerdat, struct file_info *finfo)
@@ -1041,6 +1042,8 @@ editors_fileproc (void *callerdat, struct file_info *finfo)
     return 0;
 }
 
+
+
 int
 editors (int argc, char **argv)
 {
@@ -1086,9 +1089,7 @@ editors (int argc, char **argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    return start_recursion
-	( editors_fileproc, (FILESDONEPROC) NULL,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, 1, (char *) NULL,
-	  0, (char *) NULL );
+    return start_recursion (editors_fileproc, NULL, NULL, NULL, NULL,
+			    argc, argv, local, W_LOCAL, 0, CVS_LOCK_READ, NULL,
+			    0, NULL);
 }

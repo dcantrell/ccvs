@@ -1,3 +1,21 @@
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
+	* admin.c (postadmin_proc), commit.c (precommit_proc), edit.c
+	(notify_proc), fileattr.c (postwatch_proc), logmsg.c (logfile_write),
+	server.c (prepost_proxy_proc), tag.c (posttag_proc, pretag_proc): Add
+	default %c format string.
+	* client.c, edit.c, lock.c, fileattr.c, mkmodules.c, myndbm.c,
+	parseinfo.c, recurse.c: Misc gratuitous cleanup.
+	* commit.c (commit_filesdoneproc): Move loginfo call to after CVSROOT
+	sync.
+	* checkout.c (checkout_proc), fileattr.c (fileattr_read), myndbm.c
+	(mydbm_open, mydbm_load_file): Print primary path.
+	* server.c (serve_checkin_time): Handle secondary log.
+	(prepost_proxy_proc): Move before first call.
+	(become_proxy): Move before first call.
+	(serve_notify): Become proxy for this request.
+	* sanity.sh: Misc accommodations.
+
 2004-07-10  Derek Price  <derek@ximbiot.com>
 
 	* server.c (serve_notify): Handle secondary_log.

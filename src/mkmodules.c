@@ -590,7 +590,7 @@ mkmodules (char *dir)
     if (save_cwd (&cwd))
 	exit (EXIT_FAILURE);
 
-    if ( CVS_CHDIR (dir) < 0)
+    if (CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
 
     /*
@@ -715,8 +715,10 @@ mkmodules (char *dir)
 	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
-    return (0);
+    return 0;
 }
+
+
 
 /*
  * Yeah, I know, there are NFS race conditions here.
@@ -744,10 +746,11 @@ make_tempfile (void)
     return temp;
 }
 
+
+
 /* Get a file.  If the file does not exist, return 1 silently.  If
    there is an error, print a message and return 1 (FIXME: probably
    not a very clean convention).  On success, return 0.  */
-
 static int
 checkout_file (char *file, char *temp)
 {
@@ -764,11 +767,10 @@ checkout_file (char *file, char *temp)
     if (!isfile (rcs))
     {
 	free (rcs);
-	return (1);
+	return 1;
     }
     rcsnode = RCS_parsercsfile (rcs);
-    retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp,
-			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
+    retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp, NULL, NULL);
     if (retcode != 0)
     {
 	/* Probably not necessary (?); RCS_checkout already printed a
@@ -778,8 +780,10 @@ checkout_file (char *file, char *temp)
     }
     freercsnode (&rcsnode);
     free (rcs);
-    return (retcode);
+    return retcode;
 }
+
+
 
 #ifndef MY_NDBM
 

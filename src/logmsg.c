@@ -785,7 +785,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
        Why this duplicates the old behavior when the format string is
        `%s' is left as an exercise for the reader. */
 
-    /* %p = shortrepos
+    /* %c = cvs_cmd_name
+     * %p = shortrepos
      * %r = repository
      * %{sVv} = file name, old revision (precommit), new revision (postcommit)
      */
@@ -794,6 +795,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
 	                      !UseNewInfoFmtStrings, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
+	                      "c", "s", cvs_cmd_name,
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      "sVv", ",", changes,
@@ -908,9 +910,10 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 
     verifymsg_script = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-                                       0, srepos,
+                                       false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
                                        script,
+				       "c", "s", cvs_cmd_name,
                                        "p", "s", srepos,
                                        "r", "s",
                                        current_parsed_root->directory,
