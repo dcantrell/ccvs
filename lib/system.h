@@ -120,6 +120,14 @@ off_t lseek ();
 # endif
 #endif
 
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+
+#ifdef HAVE_DIRECT_H
+#include <direct.h>
+#endif
+
 #ifdef timezone
 #undef timezone /* needed for sgi */
 #endif
@@ -247,7 +255,7 @@ int utime ();
 #define bzero(s, n) memset ((s), 0, (n))
 #endif /* bzero */
 
-#else /* not STDC_HJEADERS and not HAVE_STRING_H */
+#else /* not STDC_HEADERS and not HAVE_STRING_H */
 #include <strings.h>
 /* memory.h and strings.h conflict on some systems. */
 #endif /* not STDC_HEADERS and not HAVE_STRING_H */
@@ -325,4 +333,50 @@ char *getwd ();
 #endif
 #ifndef S_IWOTH
 #define	S_IWOTH		0000002		/* write permission, other */
+#endif
+
+
+/* Under MS-DOS and its derivatives (like Windows NT), mkdir takes only one
+   argument; permission is handled very differently on those systems than in
+   in Unix.  So we leave such systems a hook on which they can hang their
+   own definitions.  */
+#ifndef CVS_MKDIR
+#define CVS_MKDIR mkdir
+#endif
+
+/* Some file systems are case-insensitive.  If FOLD_FN_CHAR is #defined, it maps
+   the character C onto its "canonical" form.  In a case-insensitive system,
+   it would map all alphanumeric characters to lower case.  Under Windows NT,
+   / and \ are both path component separators, so FOLD_FN_CHAR would map them both
+   to /.  */
+#ifndef FOLD_FN_CHAR
+#define FOLD_FN_CHAR(c) (c)
+#define fnfold(filename) (filename)
+#define fncmp strcmp
+#endif
+
+/* Different file systems have different path component separators.
+   For the VMS port we might need to abstract further back than this.  */
+#ifndef ISDIRSEP
+#define ISDIRSEP(c) ((c) == '/')
+#endif
+
+
+/* On some systems, lines in text files should be terminated with CRLF,
+   not just LF, and the read and write routines do this translation
+   for you.  LINES_CRLF_TERMINATED is #defined on such systems.
+   - OPEN_BINARY is the flag to pass to the open function for
+     untranslated I/O.
+   - FOPEN_BINARY_READ is the string to pass to fopen to get
+     untranslated reading.
+   - FOPEN_BINARY_WRITE is the string to pass to fopen to get
+     untranslated writing.  */
+#if LINES_CRLF_TERMINATED
+#define OPEN_BINARY (O_BINARY)
+#define FOPEN_BINARY_READ ("rb")
+#define FOPEN_BINARY_WRITE ("wb")
+#else
+#define OPEN_BINARY (0)
+#define FOPEN_BINARY_READ ("r")
+#define FOPEN_BINARY_WRITE ("w")
 #endif
