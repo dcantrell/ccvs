@@ -1,3 +1,15 @@
+1998-04-11  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (client_senddate): Pass SDATEFORM not DATEFORM to
+	sscanf.  This fixes a Y2K bug.
+
+	* history.c (history, select_hrec): Change since_date from time_t
+	to RCS format.  Use the usual machinery (in particular, Make_Date
+	and client_senddate) so that it will work on VMS too.
+	* main.c, cvs.h (date_from_time_t): New function.
+	* sanity.sh (history): New test, to test that this didn't break
+	anything (also tests client_senddate fix).
+
 1998-04-11  Norbert Kiesel  <nk@iname.com>
 
 	* server.c (cvs_output_binary): Shut up "gcc -Wall" by removing
