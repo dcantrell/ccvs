@@ -1,3 +1,8 @@
+Wed Nov 22 11:29:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * config.h (KFF_DEBUG): expand to nothing; we don't want to print
+        out debugging messages in a production copy.
+
 Tue Nov 21 17:36:16 1995  unknown  (unknown@beezley)
 
         * popen.c: #include <fcntl.h>.
