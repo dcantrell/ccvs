@@ -1,3 +1,8 @@
+Tue Dec 19 17:13:14 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Mention -kb (strictly speaking a bugfix, not a new
+	feature, I guess, but it seems worth mentioning anyway).
+
 Tue Dec 19 17:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* TODO: Remove "regular TODO list:" line which accidentally got
