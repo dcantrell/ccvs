@@ -53,12 +53,15 @@ static int isemptydir PROTO((char *dir));
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((struct file_info *finfo));
 static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
-					char *repository, char *update_dir));
+					char *repository, char *update_dir,
+					List *entries));
 static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
-					int err, char *update_dir));
+					int err, char *update_dir,
+					List *entries));
 static int update_fileproc PROTO ((void *callerdat, struct file_info *));
 static int update_filesdone_proc PROTO ((void *callerdat, int err,
-					 char *repository, char *update_dir));
+					 char *repository, char *update_dir,
+					 List *entries));
 static int write_letter PROTO((char *file, int letter, char *update_dir));
 #ifdef SERVER_SUPPORT
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
@@ -660,16 +663,17 @@ update_ignproc (file, dir)
 
 /* ARGSUSED */
 static int
-update_filesdone_proc (callerdat, err, repository, update_dir)
+update_filesdone_proc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
     {
-	ignore_files (ignlist, update_dir, update_ignproc);
+	ignore_files (ignlist, entries, update_dir, update_ignproc);
 	dellist (&ignlist);
     }
 
@@ -705,11 +709,12 @@ update_filesdone_proc (callerdat, err, repository, update_dir)
  * recursion code should skip this directory.
  */
 static Dtype
-update_dirent_proc (callerdat, dir, repository, update_dir)
+update_dirent_proc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     if (ignore_directory (update_dir))
     {
@@ -736,6 +741,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir)
 	    /* otherwise, create the dir and appropriate adm files */
 	    make_directory (dir);
 	    Create_Admin (dir, update_dir, repository, tag, date);
+	    Subdir_Register (entries, (char *) NULL, dir);
 	}
     }
     /* Do we need to check noexec here? */
@@ -809,11 +815,12 @@ update_dirent_proc (callerdat, dir, repository, update_dir)
  */
 /* ARGSUSED */
 static int
-update_dirleave_proc (callerdat, dir, err, update_dir)
+update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     void *callerdat;
     char *dir;
     int err;
     char *update_dir;
+    List *entries;
 {
     FILE *fp;
 
@@ -852,6 +859,7 @@ update_dirleave_proc (callerdat, dir, err, update_dir)
 	       this code used to ignore all errors, I'll play it safe.	*/
 	    if (unlink_file_dir (dir) < 0 && !existence_error (errno))
 		error (0, errno, "cannot remove %s directory", dir);
+	    Subdir_Deregister (entries, (char *) NULL, dir);
 	}
     }
 

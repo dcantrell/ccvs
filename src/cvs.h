@@ -265,9 +265,16 @@ extern int errno;
 #define	MAXLISTLEN	40000		/* For [A-Z]list holders */
 #define MAXDATELEN	50		/* max length for a date */
 
+/* The type of an entnode.  */
+enum ent_type
+{
+    ENT_FILE, ENT_SUBDIR
+};
+
 /* structure of a entry record */
 struct entnode
 {
+    enum ent_type type;
     char *user;
     char *version;
     char *timestamp;
@@ -286,13 +293,19 @@ enum mtype
 
 /*
  * structure used for list-private storage by Entries_Open() and
- * Version_TS().
+ * Version_TS() and Find_Directories().
  */
 struct stickydirtag
 {
+    /* These fields pass sticky tag information from Entries_Open() to
+       Version_TS().  */
     int aflag;
     char *tag;
     char *date;
+    /* This field is set by Entries_Open() if there was subdirectory
+       information; Find_Directories() uses it to see whether it needs
+       to scan the directory itself.  */
+    int subdirs;
 };
 
 /* Flags for find_{names,dirs} routines */
@@ -373,6 +386,9 @@ FILE *open_file PROTO((const char *, const char *));
 List *Find_Directories PROTO((char *repository, int which, List *entries));
 void Entries_Close PROTO((List *entries));
 List *Entries_Open PROTO((int aflag));
+void Subdirs_Known PROTO((List *entries));
+void Subdir_Register PROTO((List *, const char *, const char *));
+void Subdir_Deregister PROTO((List *, const char *, const char *));
 char *Make_Date PROTO((char *rawdate));
 char *Name_Repository PROTO((char *dir, char *update_dir));
 char *Name_Root PROTO((char *dir, char *update_dir));
@@ -445,7 +461,7 @@ void ign_setup PROTO((void));
 void ign_dir_add PROTO((char *name));
 int ignore_directory PROTO((char *name));
 typedef void (*Ignore_proc) PROTO ((char *, char *));
-extern void ignore_files PROTO ((List *, char *, Ignore_proc));
+extern void ignore_files PROTO ((List *, List *, char *, Ignore_proc));
 extern int ign_inhibit_server;
 extern int ign_case;
 
@@ -515,11 +531,13 @@ struct file_info
 
 typedef	int (*FILEPROC) PROTO ((void *callerdat, struct file_info *finfo));
 typedef	int (*FILESDONEPROC) PROTO ((void *callerdat, int err,
-				     char *repository, char *update_dir));
+				     char *repository, char *update_dir,
+				     List *entries));
 typedef	Dtype (*DIRENTPROC) PROTO ((void *callerdat, char *dir,
-				    char *repos, char *update_dir));
+				    char *repos, char *update_dir,
+				    List *entries));
 typedef	int (*DIRLEAVEPROC) PROTO ((void *callerdat, char *dir, int err,
-				    char *update_dir));
+				    char *update_dir, List *entries));
 
 extern int mkmodules PROTO ((char *dir));
 extern int init PROTO ((int argc, char **argv));

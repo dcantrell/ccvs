@@ -20,18 +20,24 @@
 #include "fileattr.h"
 
 static Dtype check_direntproc PROTO ((void *callerdat, char *dir,
-				      char *repos, char *update_dir));
+				      char *repos, char *update_dir,
+				      List *entries));
 static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int check_filesdoneproc PROTO ((void *callerdat, int err,
-				       char *repos, char *update_dir));
+				       char *repos, char *update_dir,
+				       List *entries));
 static int checkaddfile PROTO((char *file, char *repository, char *tag,
 			       char *options, RCSNode **rcsnode)); 
-static Dtype commit_direntproc PROTO ((void *callerdat, char *dir, char *repos, char *update_dir));
+static Dtype commit_direntproc PROTO ((void *callerdat, char *dir,
+				       char *repos, char *update_dir,
+				       List *entries));
 static int commit_dirleaveproc PROTO ((void *callerdat, char *dir,
-				       int err, char *update_dir));
+				       int err, char *update_dir,
+				       List *entries));
 static int commit_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int commit_filesdoneproc PROTO ((void *callerdat, int err,
-					char *repository, char *update_dir));
+					char *repository, char *update_dir,
+					List *entries));
 static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
 			   char *options));
 static int findmaxrev PROTO((Node * p, void *closure));
@@ -119,14 +125,16 @@ struct find_data {
 };
 
 static Dtype find_dirent_proc PROTO ((void *callerdat, char *dir,
-				      char *repository, char *update_dir));
+				      char *repository, char *update_dir,
+				      List *entries));
 
 static Dtype
-find_dirent_proc (callerdat, dir, repository, update_dir)
+find_dirent_proc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     struct find_data *find_data = (struct find_data *)callerdat;
 
@@ -157,14 +165,16 @@ find_ignproc (file, dir)
 }
 
 static int find_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repository, char *update_dir));
+				      char *repository, char *update_dir,
+				      List *entries));
 
 static int
-find_filesdoneproc (callerdat, err, repository, update_dir)
+find_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     struct find_data *find_data = (struct find_data *)callerdat;
     find_data->repository = repository;
@@ -173,7 +183,7 @@ find_filesdoneproc (callerdat, err, repository, update_dir)
     if (find_data->ignlist)
     {
 	find_data_static = find_data;
-	ignore_files (find_data->ignlist, update_dir, find_ignproc);
+	ignore_files (find_data->ignlist, entries, update_dir, find_ignproc);
 	dellist (&find_data->ignlist);
     }
 
@@ -894,11 +904,12 @@ check_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-check_direntproc (callerdat, dir, repos, update_dir)
+check_direntproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     if (!quiet)
 	error (0, 0, "Examining %s", update_dir);
@@ -962,11 +973,12 @@ precommit_proc (repository, filter)
  */
 /* ARGSUSED */
 static int
-check_filesdoneproc (callerdat, err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     int n;
     Node *p;
@@ -1157,11 +1169,12 @@ out:
  */
 /* ARGSUSED */
 static int
-commit_filesdoneproc (callerdat, err, repository, update_dir)
+commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     Node *p;
     List *ulist;
@@ -1257,11 +1270,12 @@ commit_filesdoneproc (callerdat, err, repository, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-commit_direntproc (callerdat, dir, repos, update_dir)
+commit_direntproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     Node *p;
     List *ulist;
@@ -1298,11 +1312,12 @@ commit_direntproc (callerdat, dir, repos, update_dir)
  */
 /* ARGSUSED */
 static int
-commit_dirleaveproc (callerdat, dir, err, update_dir)
+commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
     void *callerdat;
     char *dir;
     int err;
     char *update_dir;
+    List *entries;
 {
     /* update the per-directory tag info */
     if (err == 0 && write_dirtag != NULL)
@@ -1331,6 +1346,8 @@ findmaxrev (p, closure)
     Entnode *entdata;
 
     entdata = (Entnode *) p->data;
+    if (entdata->type != ENT_FILE)
+	return (0);
     cp = strchr (entdata->version, '.');
     if (cp != NULL)
 	*cp = '\0';

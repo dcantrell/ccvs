@@ -327,21 +327,37 @@ int ignore_directory (name)
 }
 
 /*
- * Process the current directory, looking for files not in ILIST and not on
- * the global ignore list for this directory.  If we find one, call PROC
- * passing it the name of the file and the update dir.
+ * Process the current directory, looking for files not in ILIST and
+ * not on the global ignore list for this directory.  If we find one,
+ * call PROC passing it the name of the file and the update dir.
+ * ENTRIES is the entries list, which is used to identify known
+ * directories.  ENTRIES may be NULL, in which case we assume that any
+ * directory with a CVS administration directory is known.
  */
 void
-ignore_files (ilist, update_dir, proc)
+ignore_files (ilist, entries, update_dir, proc)
     List *ilist;
+    List *entries;
     char *update_dir;
     Ignore_proc proc;
 {
+    int subdirs;
     DIR *dirp;
     struct dirent *dp;
     struct stat sb;
     char *file;
     char *xdir;
+
+    /* Set SUBDIRS if we have subdirectory information in ENTRIES.  */
+    if (entries == NULL)
+	subdirs = 0;
+    else
+    {
+	struct stickydirtag *sdtp;
+
+	sdtp = (struct stickydirtag *) entries->list->data;
+	subdirs = sdtp == NULL || sdtp->subdirs;
+    }
 
     /* we get called with update_dir set to "." sometimes... strip it */
     if (strcmp (update_dir, ".") == 0)
@@ -363,6 +379,29 @@ ignore_files (ilist, update_dir, proc)
 	    continue;
 	if (findnode_fn (ilist, file) != NULL)
 	    continue;
+	if (subdirs)
+	{
+	    Node *node;
+
+	    node = findnode_fn (entries, file);
+	    if (node != NULL
+		&& ((Entnode *) node->data)->type == ENT_SUBDIR)
+	    {
+		char *p;
+		int dir;
+
+		/* For consistency with past behaviour, we only ignore
+		   this directory if there is a CVS subdirectory.
+		   This will normally be the case, but the user may
+		   have messed up the working directory somehow.  */
+		p = xmalloc (strlen (file) + sizeof CVSADM + 10);
+		sprintf (p, "%s/%s", file, CVSADM);
+		dir = isdir (p);
+		free (p);
+		if (dir)
+		    continue;
+	    }
+	}
 
 	/* We could be ignoring FIFOs and other files which are neither
 	   regular files nor directories here.  */
@@ -382,11 +421,14 @@ ignore_files (ilist, update_dir, proc)
 #endif
 		S_ISDIR(sb.st_mode))
 	    {
-		char temp[PATH_MAX];
+		if (! subdirs)
+		{
+		    char temp[PATH_MAX];
 
-		(void) sprintf (temp, "%s/%s", file, CVSADM);
-		if (isdir (temp))
-		    continue;
+		    (void) sprintf (temp, "%s/%s", file, CVSADM);
+		    if (isdir (temp))
+			continue;
+		}
 	    }
 #ifdef S_ISLNK
 	    else if (

@@ -16,17 +16,20 @@
 
 static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int check_filesdoneproc PROTO ((void *callerdat, int err,
-				       char *repos, char *update_dir));
+				       char *repos, char *update_dir,
+				       List *entries));
 static int pretag_proc PROTO((char *repository, char *filter));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
 static Dtype tag_dirproc PROTO ((void *callerdat, char *dir,
-				 char *repos, char *update_dir));
+				 char *repos, char *update_dir,
+				 List *entries));
 static int tag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int tag_filesdoneproc PROTO ((void *callerdat, int err,
-				     char *repos, char *update_dir));
+				     char *repos, char *update_dir,
+				     List *entries));
 
 static char *numtag;
 static char *date = NULL;
@@ -302,11 +305,12 @@ check_fileproc (callerdat, finfo)
 }
                          
 static int
-check_filesdoneproc (callerdat, err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     int n;
     Node *p;
@@ -586,11 +590,12 @@ tag_fileproc (callerdat, finfo)
 /* Clear any lock we may hold on the current directory.  */
 
 static int
-tag_filesdoneproc (callerdat, err, repos, update_dir)
+tag_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     tag_unlockdir ();
 
@@ -602,11 +607,12 @@ tag_filesdoneproc (callerdat, err, repos, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-tag_dirproc (callerdat, dir, repos, update_dir)
+tag_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
@@ -712,14 +718,15 @@ val_fileproc (callerdat, finfo)
     return 0;
 }
 
-static Dtype val_direntproc PROTO ((void *, char *, char *, char *));
+static Dtype val_direntproc PROTO ((void *, char *, char *, char *, List *));
 
 static Dtype
-val_direntproc (callerdat, dir, repository, update_dir)
+val_direntproc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     /* This is not quite right--it doesn't get right the case of "cvs
        update -d -r foobar" where foobar is a tag which exists only in

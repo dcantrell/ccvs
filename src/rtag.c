@@ -15,17 +15,20 @@
 
 static int check_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int check_filesdoneproc PROTO ((void *callerdat, int err,
-				       char *repos, char *update_dir));
+				       char *repos, char *update_dir,
+				       List *entries));
 static int pretag_proc PROTO((char *repository, char *filter));
 static void masterlist_delproc PROTO((Node *p));
 static void tag_delproc PROTO((Node *p));
 static int pretag_list_proc PROTO((Node *p, void *closure));
 
 static Dtype rtag_dirproc PROTO ((void *callerdat, char *dir,
-				  char *repos, char *update_dir));
+				  char *repos, char *update_dir,
+				  List *entries));
 static int rtag_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int rtag_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repos, char *update_dir));
+				      char *repos, char *update_dir,
+				      List *entries));
 static int rtag_proc PROTO((int *pargc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
 		      int local_specified, char *mname, char *msg));
@@ -394,11 +397,12 @@ check_fileproc (callerdat, finfo)
 }
                          
 static int
-check_filesdoneproc (callerdat, err, repos, update_dir)
+check_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     int n;
     Node *p;
@@ -677,11 +681,12 @@ rtag_delete (rcsfile)
 /* Clear any lock we may hold on the current directory.  */
 
 static int
-rtag_filesdoneproc (callerdat, err, repos, update_dir)
+rtag_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     tag_unlockdir ();
 
@@ -693,11 +698,12 @@ rtag_filesdoneproc (callerdat, err, repos, update_dir)
  */
 /* ARGSUSED */
 static Dtype
-rtag_dirproc (callerdat, dir, repos, update_dir)
+rtag_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     if (!quiet)
 	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);

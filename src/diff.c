@@ -26,11 +26,14 @@ enum diff_file
 };
 
 static Dtype diff_dirproc PROTO ((void *callerdat, char *dir,
-				  char *pos_repos, char *update_dir));
+				  char *pos_repos, char *update_dir,
+				  List *entries));
 static int diff_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repos, char *update_dir));
+				      char *repos, char *update_dir,
+				      List *entries));
 static int diff_dirleaveproc PROTO ((void *callerdat, char *dir,
-				     int err, char *update_dir));
+				     int err, char *update_dir,
+				     List *entries));
 static enum diff_file diff_file_nodiff PROTO ((struct file_info *finfo,
 					       Vers_TS *vers,
 					       enum diff_file));
@@ -632,11 +635,12 @@ diff_mark_errors (err)
  */
 /* ARGSUSED */
 static Dtype
-diff_dirproc (callerdat, dir, pos_repos, update_dir)
+diff_dirproc (callerdat, dir, pos_repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *pos_repos;
     char *update_dir;
+    List *entries;
 {
     /* XXX - check for dirs we don't want to process??? */
 
@@ -654,11 +658,12 @@ diff_dirproc (callerdat, dir, pos_repos, update_dir)
  */
 /* ARGSUSED */
 static int
-diff_filesdoneproc (callerdat, err, repos, update_dir)
+diff_filesdoneproc (callerdat, err, repos, update_dir, entries)
     void *callerdat;
     int err;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     return (diff_errors);
 }
@@ -668,11 +673,12 @@ diff_filesdoneproc (callerdat, err, repos, update_dir)
  */
 /* ARGSUSED */
 static int
-diff_dirleaveproc (callerdat, dir, err, update_dir)
+diff_dirleaveproc (callerdat, dir, err, update_dir, entries)
     void *callerdat;
     char *dir;
     int err;
     char *update_dir;
+    List *entries;
 {
     return (diff_errors);
 }

@@ -40,14 +40,15 @@ onoff_fileproc (callerdat, finfo)
     return 0;
 }
 
-static int onoff_filesdoneproc PROTO ((void *, int, char *, char *));
+static int onoff_filesdoneproc PROTO ((void *, int, char *, char *, List *));
 
 static int
-onoff_filesdoneproc (callerdat, err, repository, update_dir)
+onoff_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     if (setting_default)
 	fileattr_set (NULL, "_watched", turning_on ? "" : NULL);

@@ -865,6 +865,8 @@ call_in_directory (pathname, func, data)
     if (last_dir_name == NULL
 	|| strcmp (last_dir_name, dir_name) != 0)
     {
+	int newdir;
+
 	if (strcmp (command_name, "export") != 0)
 	    if (last_entries)
 		Entries_Close (last_entries);
@@ -880,6 +882,7 @@ call_in_directory (pathname, func, data)
 
 	if ( CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
+	newdir = 0;
 	if ( CVS_CHDIR (dir_name) < 0)
 	{
 	    char *dir;
@@ -889,6 +892,7 @@ call_in_directory (pathname, func, data)
 		error (1, errno, "could not chdir to %s", dir_name);
 	    
 	    /* Directory does not exist, we need to create it.  */
+	    newdir = 1;
 	    dir = xmalloc (strlen (dir_name) + 1);
 	    dirp = dir_name;
 	    rdirp = reposdirname;
@@ -989,7 +993,7 @@ call_in_directory (pathname, func, data)
 		     * relative to cvsroot.
 		     */
 		    char *repo;
-		    char *r;
+		    char *r, *b;
 
 		    repo = xmalloc (strlen (reposdirname)
 				    + strlen (toplevel_repos)
@@ -1014,6 +1018,16 @@ call_in_directory (pathname, func, data)
 		    Create_Admin (dir, dir, repo,
 				  (char *)NULL, (char *)NULL);
 		    free (repo);
+
+		    b = strrchr (dir, '/');
+		    if (b == NULL)
+			Subdir_Register ((List *) NULL, (char *) NULL, dir);
+		    else
+		    {
+			*b = '\0';
+			Subdir_Register ((List *) NULL, dir, b + 1);
+			*b = '/';
+		    }
 		}
 
 		if (rdirp != NULL)
@@ -1037,6 +1051,8 @@ call_in_directory (pathname, func, data)
 	{
 	    char *repo;
 	    char *r;
+
+	    newdir = 1;
 
 	    repo = xmalloc (strlen (reposdirname)
 			    + strlen (toplevel_repos)
@@ -1063,7 +1079,30 @@ call_in_directory (pathname, func, data)
 	}
 
 	if (strcmp (command_name, "export") != 0)
+	{
 	    last_entries = Entries_Open (0);
+
+	    /* If this is a newly created directory, we will record
+	       all subdirectory information, so call Subdirs_Known in
+	       case there are no subdirectories.  If this is not a
+	       newly created directory, it may be an old working
+	       directory from before we recorded subdirectory
+	       information in the Entries file.  We force a search for
+	       all subdirectories now, to make sure our subdirectory
+	       information is up to date.  If the Entries file does
+	       record subdirectory information, then this call only
+	       does list manipulation.  */
+	    if (newdir)
+		Subdirs_Known (last_entries);
+	    else
+	    {
+		List *dirlist;
+
+		dirlist = Find_Directories ((char *) NULL, W_LOCAL,
+					    last_entries);
+		dellist (&dirlist);
+	    }
+	}
     }
     else
 	free (dir_name);
@@ -2221,7 +2260,17 @@ process_prune_candidates ()
     {
 	if (client_isemptydir (p->dir))
 	{
-          unlink_file_dir (p->dir);
+	    char *b;
+
+	    unlink_file_dir (p->dir);
+	    b = strrchr (p->dir, '/');
+	    if (b == NULL)
+		Subdir_Deregister ((List *) NULL, (char *) NULL, p->dir);
+	    else
+	    {
+		*b = '\0';
+		Subdir_Deregister ((List *) NULL, p->dir, b + 1);
+	    }
 	}
 	free (p->dir);
 	q = p->next;
@@ -4184,26 +4233,27 @@ send_ignproc (file, dir)
     }
 }
 
-static int send_filesdoneproc PROTO ((void *, int, char *, char *));
+static int send_filesdoneproc PROTO ((void *, int, char *, char *, List *));
 
 static int
-send_filesdoneproc (callerdat, err, repository, update_dir)
+send_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     /* if this directory has an ignore list, process it then free it */
     if (ignlist)
     {
-	ignore_files (ignlist, update_dir, send_ignproc);
+	ignore_files (ignlist, entries, update_dir, send_ignproc);
 	dellist (&ignlist);
     }
 
     return (err);
 }
 
-static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *));
+static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *, List *));
 
 /*
  * send_dirent_proc () is called back by the recursion processor before a
@@ -4214,11 +4264,12 @@ static Dtype send_dirent_proc PROTO ((void *, char *, char *, char *));
  *
  */
 static Dtype
-send_dirent_proc (callerdat, dir, repository, update_dir)
+send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     int dir_exists;
     char *cvsadm_name;

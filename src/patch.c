@@ -17,7 +17,8 @@
 
 static RETSIGTYPE patch_cleanup PROTO((void));
 static Dtype patch_dirproc PROTO ((void *callerdat, char *dir,
-				   char *repos, char *update_dir));
+				   char *repos, char *update_dir,
+				   List *entries));
 static int patch_fileproc PROTO ((void *callerdat, struct file_info *finfo));
 static int patch_proc PROTO((int *pargc, char **argv, char *xwhere,
 		       char *mwhere, char *mfile, int shorten,
@@ -606,11 +607,12 @@ patch_fileproc (callerdat, finfo)
  */
 /* ARGSUSED */
 static Dtype
-patch_dirproc (callerdat, dir, repos, update_dir)
+patch_dirproc (callerdat, dir, repos, update_dir, entries)
     void *callerdat;
     char *dir;
     char *repos;
     char *update_dir;
+    List *entries;
 {
     if (!quiet)
 	error (0, 0, "Diffing %s", update_dir);

@@ -667,7 +667,8 @@ lock_obtained (repos)
 }
 
 static int lock_filesdoneproc PROTO ((void *callerdat, int err,
-				      char *repository, char *update_dir));
+				      char *repository, char *update_dir,
+				      List *entries));
 static int fsortcmp PROTO((const Node * p, const Node * q));
 
 static List *lock_tree_list;
@@ -677,11 +678,12 @@ static List *lock_tree_list;
  */
 /* ARGSUSED */
 static int
-lock_filesdoneproc (callerdat, err, repository, update_dir)
+lock_filesdoneproc (callerdat, err, repository, update_dir, entries)
     void *callerdat;
     int err;
     char *repository;
     char *update_dir;
+    List *entries;
 {
     Node *p;
 

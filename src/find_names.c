@@ -21,6 +21,8 @@
 static int find_dirs PROTO((char *dir, List * list, int checkadm,
 			    List *entries));
 static int find_rcs PROTO((char *dir, List * list));
+static int add_subdir_proc PROTO((Node *, void *));
+static int register_subdir_proc PROTO((Node *, void *));
 
 static List *filelist;
 
@@ -33,7 +35,12 @@ add_entries_proc (node, closure)
      Node *node;
      void *closure;
 {
+    Entnode *entnode;
     Node *fnode;
+
+    entnode = (Entnode *) node->data;
+    if (entnode->type != ENT_FILE)
+	return (0);
 
     fnode = getnode ();
     fnode->type = FILES;
@@ -107,6 +114,48 @@ Find_Names (repository, which, aflag, optentries)
 }
 
 /*
+ * Add an entry from the subdirs list to the directories list.  This
+ * is called via walklist.
+ */
+
+static int
+add_subdir_proc (p, closure)
+     Node *p;
+     void *closure;
+{
+    List *dirlist = (List *) closure;
+    Entnode *entnode;
+    Node *dnode;
+
+    entnode = (Entnode *) p->data;
+    if (entnode->type != ENT_SUBDIR)
+	return 0;
+
+    dnode = getnode ();
+    dnode->type = DIRS;
+    dnode->key = xstrdup (entnode->user);
+    if (addnode (dirlist, dnode) != 0)
+	freenode (dnode);
+    return 0;
+}
+
+/*
+ * Register a subdirectory.  This is called via walklist.
+ */
+
+/*ARGSUSED*/
+static int
+register_subdir_proc (p, closure)
+     Node *p;
+     void *closure;
+{
+    List *entries = (List *) closure;
+
+    Subdir_Register (entries, (char *) NULL, p->key);
+    return 0;
+}
+
+/*
  * create a list of directories to traverse from the current directory
  */
 List *
@@ -123,9 +172,46 @@ Find_Directories (repository, which, entries)
     /* find the local ones */
     if (which & W_LOCAL)
     {
-	/* look only for CVS controlled sub-directories */
-	if (find_dirs (".", dirlist, 1, entries) != 0)
-	    error (1, errno, "cannot open current directory");
+	List *tmpentries;
+	struct stickydirtag *sdtp;
+
+	/* Look through the Entries file.  */
+
+	if (entries != NULL)
+	    tmpentries = entries;
+	else if (isfile (CVSADM_ENT))
+	    tmpentries = Entries_Open (0);
+	else
+	    tmpentries = NULL;
+
+	if (tmpentries != NULL)
+	    sdtp = (struct stickydirtag *) tmpentries->list->data;
+
+	/* If we do have an entries list, then if sdtp is NULL, or if
+           sdtp->subdirs is nonzero, all subdirectory information is
+           recorded in the entries list.  */
+	if (tmpentries != NULL && (sdtp == NULL || sdtp->subdirs))
+	    walklist (tmpentries, add_subdir_proc, (void *) dirlist);
+	else
+	{
+	    /* This is an old working directory, in which subdirectory
+               information is not recorded in the Entries file.  Find
+               the subdirectories the hard way, and, if possible, add
+               it to the Entries file for next time.  */
+	    if (find_dirs (".", dirlist, 1, tmpentries) != 0)
+		error (1, errno, "cannot open current directory");
+	    if (tmpentries != NULL)
+	    {
+		if (! list_isempty (dirlist))
+		    walklist (dirlist, register_subdir_proc,
+			      (void *) tmpentries);
+		else
+		    Subdirs_Known (tmpentries);
+	    }
+	}
+
+	if (entries == NULL && tmpentries != NULL)
+	    Entries_Close (tmpentries);
     }
 
     /* look for sub-dirs in the repository */
