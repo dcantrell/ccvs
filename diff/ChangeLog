@@ -1,5 +1,11 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* libdiff.dsp: Set default configuration on generated make files to
+	Win32 Debug.
+	* libdiff.mak: Regenerated.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add libdiff.dep.
 	* Makefile.in: Regenerated.
 
