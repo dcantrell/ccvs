@@ -1,3 +1,26 @@
+Tue Sep 24 11:32:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Remove item about version numbers; we now have version
+	numbers.  Remove item about server using /usr/tmp; this has been
+	changed.  Remove item about deadlocks between server and client
+	and file contents being interpreted as commands; I believe this
+	refers to the case which was fixed by Ian's 7 Aug 96 change to
+	receive_partial_file.  Remove item about server temp directory
+	becoming full; I'm not sure all bugs related to that have been
+	fixed, but I think the ones mentioned have been.  Remove item
+	about .# files; this is a documented behavior.  Refer to
+	platform-specific documentation.  Add bug with & in modules file
+	and client/server CVS.  Move bug about weird use of long file
+	names to end; the bug report is so long people won't want to read
+	past it.  Refer to README concerning reporting bugs.  Add
+	introduction.  Reword some bug descriptions.  Add bug concerning
+	~/.cvsignore on NT.
+	* MINOR-BUGS: Add introduction.  Reword some bug descriptions.
+	Remove item about "premature end of file"--we've improved that
+	error message as much as we can figure out how.  Remove item about
+	filenames getting truncated (with rcs2log?)--I think this is a fixed
+	bug although I couldn't quickly find a ChangeLog entry for the fix.
+
 Tue Sep 17 12:46:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* .cvsignore: Add cvs-*.spec.
