@@ -1,3 +1,8 @@
+Tue Apr  1 07:51:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Sending Is-modified is enough to
+	prevent the file from being considered "lost".
+
 Sun Mar 30 00:31:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Add Is-modified request.  Clarify
