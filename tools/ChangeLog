@@ -1,3 +1,7 @@
+2002-04-17  Derek Price  <oberon@umich.edu>
+
+	* README: Replace cyclic.com with cvshome.org.
+
 2001-09-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with automake 1.5.
