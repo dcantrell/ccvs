@@ -1,5 +1,14 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am: Macro subsitution for zlib include path and library
+	location
+	* zlib.c: #ifdef inclusion of <zlib.h> versus "zlib.h"
+	(Original patch from Anthon Pang <apang@telus.net>.)
+
+	* Makefile.in: Regenerated
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h: Move the standard includes into lib/system.h.
 	* subr.c: s/malloc/CVS_MALLOC/;s/realloc/CVS_REALLOC/.
 

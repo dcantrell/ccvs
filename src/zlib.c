@@ -22,7 +22,11 @@
 
 #if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 
-#include "zlib.h"
+#if HAVE_ZLIB_H
+# include <zlib.h>
+#else
+# include "zlib.h"
+#endif
 
 /* OS/2 doesn't have EIO.  FIXME: this whole notion of turning
    a different error into EIO strikes me as pretty dubious.  */

@@ -102,13 +102,16 @@ STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
+ZLIB_CPPFLAGS = @ZLIB_CPPFLAGS@
+ZLIB_LIBS = @ZLIB_LIBS@
+ZLIB_SUBDIRS = @ZLIB_SUBDIRS@
 am__include = @am__include@
 am__quote = @am__quote@
 cvs_client_objects = @cvs_client_objects@
 install_sh = @install_sh@
 with_default_rsh = @with_default_rsh@
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff -I$(top_srcdir)/zlib
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
@@ -193,7 +196,7 @@ cvs_DEPENDENCIES = $(cvs_client_objects)
 cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
-	../zlib/libz.a
+	$(ZLIB_LIBS)
 
 
 # General
