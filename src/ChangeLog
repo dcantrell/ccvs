@@ -1,5 +1,9 @@
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move some includes into lib/system.h.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
 	(*.{c,h}): Run these through GNU indent as per the NEWS file to fix
 	some of the long function decls which came out of protoize.
 
