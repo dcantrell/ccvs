@@ -1,3 +1,7 @@
+2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
+
+	* lock.c (lock_exists): Plug a memory leak.
+
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
 	* modules.c: Reformat comment and line to fit in 80 chars.
