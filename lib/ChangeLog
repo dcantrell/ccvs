@@ -1,3 +1,8 @@
+2005-03-03  Derek Price  <derek@ximbiot.com>
+
+	* pagealign_alloc.c, pagealign_alloc.h: New files from GNULIB.
+	* valloc.c: Remove this obsolete file.
+
 2005-03-02  Jim Meyering  <jim@meyering.net>
 
 	* Makefile.am (libcvs_a_SOURCES): Add the following to support
