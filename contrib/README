@@ -110,3 +110,7 @@ An attempt at a table of Contents for this directory:
 			by hostname, then runs a subprocess whose input/output
 			is redirected through the port.
 			Contributed by Benjamin J. Lee <benjamin@cyclic.com>
+	patch-2.1-.new-fix
+			A fix for GNU Patch version 2.1 which (more) properly
+			handles creation of new files.
+			Contributed by Greg A. Woods <woods@planix.com>
