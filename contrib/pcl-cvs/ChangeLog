@@ -1,3 +1,8 @@
+Tue Apr 25 21:33:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* pcl-cvs.el: (cvs-parse-stderr): Recognize "conflicts" as well as
+	"overlaps" before "during merge."
+
 Thu Feb 16 12:17:20 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* pcl-cvs.el (cvs-parse-stderr): Recognize "conflicts found in..."
