@@ -1,5 +1,10 @@
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
+	* stamp-1, stamp-vti, version-client.texi, version.texi: Regenerated
+	for release 1.12.4.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Locks): Provide technical details for promotable
 	readlocks.
 
