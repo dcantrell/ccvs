@@ -1,3 +1,8 @@
+Wed Apr 16 11:50:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* zlib.c: Remove paragraph with Free Software Foundation address.
+	See 2 Jan 1997 entry in ../ChangeLog for rationale.
+
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (patch_file_write): Always assign to final_nl, so that
