@@ -496,7 +496,7 @@ int fseeko (FILE *, off_t, int);
 #ifdef FILENAMES_CASE_INSENSITIVE
 
 # if defined (__CYGWIN32__) || defined (WOE32)
-    /* Under Windows NT, filenames are case-insensitive, and both / and \
+    /* Under Windows, filenames are case-insensitive, and both / and \
        are path component separators.  */
 #   define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
 extern unsigned char WNT_filename_classes[];
@@ -505,12 +505,14 @@ extern unsigned char WNT_filename_classes[];
 #   define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
 #   define ISABSOLUTE(s) (ISDIRSEP(s[0]) || FOLD_FN_CHAR(s[0]) >= 'a' && FOLD_FN_CHAR(s[0]) <= 'z' && s[1] == ':' && ISDIRSEP(s[2]))
 # else /* ! WOE32 */
-  /* As far as I know, both Cygwin and Macintosh OS X can make it here,
+  /* As far as I know, just Macintosh OS X can make it here,
    * but since the OS X fold just folds a-z into A-Z or visa-versa, I'm just
-   * using it for Cygwin too.  The var name below could probably use a
-   * rename.
+   * allowing it to be used for any case insensitive system which we aren't
+   * yet making other specific folds or exceptions for (basically, anything
+   * case insensitive other than Windows, where \ and C:\ style absolute paths
+   * also need to be accounted for).
    *
-   * Under Mac OS X & Cygwin, filenames are case-insensitive.
+   * Under Mac OS X, filenames are case-insensitive.
    */
 #   define FOLD_FN_CHAR(c) (OSX_filename_classes[(unsigned char) (c)])
 extern unsigned char OSX_filename_classes[];

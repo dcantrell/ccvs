@@ -1,3 +1,9 @@
+2004-04-20  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (unlink_file_dir, deep_remove_dir): Handle errno of
+	ENOTEMPTY from dirs under Windows XP.
+	(Report and suggested fix from Ken Raeburn <raeburn@mit.edu>.)
+
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in: Define HAVE_ALLOCA_H and HAVE_ALLOCA to get around the
