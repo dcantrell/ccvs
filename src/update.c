@@ -1056,6 +1056,9 @@ checkout_file (finfo, vers_ts, adding)
     int status;
     int file_is_dead;
 
+    /* Solely to suppress a warning from gcc -Wall.  */
+    backup = NULL;
+
     /* don't screw with backup files if we're going to stdout */
     if (!pipeout)
     {
