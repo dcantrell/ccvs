@@ -353,6 +353,7 @@ AC_OUTPUT([Makefile \
 	  contrib/log \
 	  contrib/log_accum \
 	  contrib/mfpipe \
+	  contrib/pvcs2cvs \
 	  contrib/rcslock \
 	  contrib/sccs2rcs \
 	  diff/Makefile \
@@ -376,6 +377,7 @@ AC_OUTPUT([Makefile \
 	  contrib/log \
 	  contrib/log_accum \
 	  contrib/mfpipe \
+	  contrib/pvcs2cvs \
 	  contrib/rcslock \
 	  contrib/sccs2rcs \
 	  src/cvsbug])
