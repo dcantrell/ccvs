@@ -1287,7 +1287,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 		      strlen(file) +
 		      sizeof(RCSEXT) + 1);
 	(void) sprintf (tmp, "%s/%s", repository, CVSATTIC);
-	omask = umask (2);
+	omask = umask (cvsumask);
 	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
@@ -1445,7 +1445,7 @@ checkaddfile (file, repository, tag, options, srcfiles)
     if (tag)
     {
 	(void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
-	omask = umask (2);
+	omask = umask (cvsumask);
 	if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
 	    error (1, errno, "cannot make directory `%s'", rcs);;
 	(void) umask (omask);

@@ -473,6 +473,7 @@ set_lock (repository, will_wait)
     int will_wait;
 {
     struct stat sb;
+    mode_t omask;
 #ifdef CVS_FUDGELOCKS
     time_t now;
 #endif
@@ -487,30 +488,39 @@ set_lock (repository, will_wait)
     cleanup_lckdir = 0;
     for (;;)
     {
+	int status = -1;
+	omask = umask (cvsumask);
 	SIG_beginCrSect ();
 	if (CVS_MKDIR (masterlock, 0777) == 0)
 	{
 #ifdef AFSCVS
-	  char uidlock[PATH_MAX];
-	  FILE *fp;
+	    char uidlock[PATH_MAX];
+	    FILE *fp;
 
-	  sprintf(uidlock, "%s/uidlock%d", masterlock, geteuid() );
-	  if( (fp = fopen(uidlock, "w+")) == NULL )
+	    sprintf(uidlock, "%s/uidlock%d", masterlock, geteuid() );
+	    if ((fp = fopen(uidlock, "w+")) == NULL)
 	    {
-	      /* We failed to create the uidlock, so rm masterlock and leave */
-	      rmdir(masterlock);
-	      SIG_endCrSect ();
-	      return (L_ERROR);
+		/* We failed to create the uidlock,
+		   so rm masterlock and leave */
+		rmdir(masterlock);
+		SIG_endCrSect ();
+		status = L_ERROR;
+		goto out;
 	    }
 
-	  /* We successfully created the uid lock, so close the file */
-	  fclose(fp);
+	    /* We successfully created the uid lock, so close the file */
+	    fclose(fp);
 #endif
 	    cleanup_lckdir = 1;
 	    SIG_endCrSect ();
-	    return (L_OK);
+	    status = L_OK;
+	    goto out;
 	}
 	SIG_endCrSect ();
+      out:
+	(void) umask (omask);
+	if (status != -1)
+	    return status;
 
 	if (errno != EEXIST)
 	{

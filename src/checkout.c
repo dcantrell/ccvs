@@ -360,7 +360,12 @@ checkout (argc, argv)
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
 			    CVSNULLREPOS);
 	    if (!isfile (repository))
+	    {
+		mode_t omask;
+		omask = umask (cvsumask);
 		(void) CVS_MKDIR (repository, 0777);
+		(void) umask (omask);
+	    }
 
 	    /* I'm not sure whether this check is redundant.  */
 	    if (!isdir (repository))

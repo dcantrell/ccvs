@@ -232,6 +232,9 @@ extern int errno;
 #define	IGNORE_ENV	"CVSIGNORE"	/* More files to ignore */
 #define WRAPPER_ENV     "CVSWRAPPERS"   /* name of the wrapper file */
 
+#define	CVSUMASK_ENV	"CVSUMASK"	/* Effective umask for repository */
+/* #define	CVSUMASK_DFLT		   Set by config.h */
+
 /*
  * If the beginning of the Repository matches the following string, strip it
  * so that the output to the logfile does not contain a full pathname.
@@ -358,6 +361,7 @@ extern char *CurDir;
 extern int really_quiet, quiet;
 extern int use_editor;
 extern int cvswrite;
+extern mode_t cvsumask;
 
 extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */

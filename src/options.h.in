@@ -133,6 +133,19 @@
 #endif
 
 /*
+ * The default umask to use when creating or otherwise setting file or
+ * directory permissions in the repository.  Must be a value in the
+ * range of 0 through 0777.  For example, a value of 002 allows group
+ * rwx access and world rx access; a value of 007 allows group rwx
+ * access but no world access.  This value is overridden by the value
+ * of the CVSUMASK environment variable, which is interpreted as an
+ * octal number.
+ */
+#ifndef UMASK_DFLT
+#define	UMASK_DFLT	002
+#endif
+
+/*
  * The Repository file holds the path to the directory within the source
  * repository that contains the RCS ,v files for each CVS working directory.
  * This path is either a full-path or a path relative to CVSROOT.

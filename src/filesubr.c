@@ -242,8 +242,7 @@ make_directories (name)
 
 /*
  * Change the mode of a file, either adding write permissions, or removing
- * all write permissions.  Adding write permissions honors the current umask
- * setting.
+ * all write permissions.  Either change honors the current umask setting.
  */
 void
 xchmod (fname, writable)
@@ -259,17 +258,17 @@ xchmod (fname, writable)
 	    error (0, errno, "cannot stat %s", fname);
 	return;
     }
+    oumask = umask (0);
+    (void) umask (oumask);
     if (writable)
     {
-	oumask = umask (0);
-	(void) umask (oumask);
 	mode = sb.st_mode | ~oumask & (((sb.st_mode & S_IRUSR) ? S_IWUSR : 0) |
 				       ((sb.st_mode & S_IRGRP) ? S_IWGRP : 0) |
 				       ((sb.st_mode & S_IROTH) ? S_IWOTH : 0));
     }
     else
     {
-	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH);
+	mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH) & ~oumask;
     }
 
     if (trace)
