@@ -371,6 +371,11 @@ main_cleanup (sig)
 
     switch (sig)
     {
+#ifdef SIGABRT
+    case SIGABRT:
+	name = "abort";
+	break;
+#endif
 #ifdef SIGHUP
     case SIGHUP:
 	name = "hangup";
@@ -778,25 +783,23 @@ Copyright (c) 1989-2000 Brian Berliner, david d `zoo' zuhn, \n\
 
 #ifndef DONT_USE_SIGNALS
 	/* make sure we clean up on error */
+#ifdef SIGABRT
+	(void) SIG_register (SIGABRT, main_cleanup);
+#endif
 #ifdef SIGHUP
 	(void) SIG_register (SIGHUP, main_cleanup);
-	(void) SIG_register (SIGHUP, Lock_Cleanup);
 #endif
 #ifdef SIGINT
 	(void) SIG_register (SIGINT, main_cleanup);
-	(void) SIG_register (SIGINT, Lock_Cleanup);
 #endif
 #ifdef SIGQUIT
 	(void) SIG_register (SIGQUIT, main_cleanup);
-	(void) SIG_register (SIGQUIT, Lock_Cleanup);
 #endif
 #ifdef SIGPIPE
 	(void) SIG_register (SIGPIPE, main_cleanup);
-	(void) SIG_register (SIGPIPE, Lock_Cleanup);
 #endif
 #ifdef SIGTERM
 	(void) SIG_register (SIGTERM, main_cleanup);
-	(void) SIG_register (SIGTERM, Lock_Cleanup);
 #endif
 #endif /* !DONT_USE_SIGNALS */
 

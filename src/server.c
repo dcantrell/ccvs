@@ -5023,6 +5023,9 @@ error ENOMEM Virtual memory exhausted.\n");
 	}
     }
 
+#ifdef SIGABRT
+    (void) SIG_register (SIGABRT, server_cleanup);
+#endif
 #ifdef SIGHUP
     (void) SIG_register (SIGHUP, server_cleanup);
 #endif
