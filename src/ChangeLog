@@ -1,3 +1,8 @@
+2004-11-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.c (fd_buffer_block): Deal with BSD and BSDI problems to
+	set block/nonblock on /dev/null.
+
 2004-11-17  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (distclean-local): Clean check.plog~.
