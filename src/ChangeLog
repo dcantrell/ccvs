@@ -1,3 +1,10 @@
+Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (update_fileproc): Call server_scratch_entry_only when
+	handling T_REMOVE_ENTRY on the server.
+	* sanity.sh (conflicts2): Remove special case for remote server
+	bug fixed by above patch.
+
 Thu Jun 13 21:16:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basica-9): Update to reflect change to "sufficient

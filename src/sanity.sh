@@ -2328,14 +2328,8 @@ done'
 	  dotest conflicts2-142c2 "${testcvs} rm abc" \
 "${PROG} [a-z]*: scheduling .abc. for removal
 ${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
-	  # The presence of the "unable to remove" message is a bug
-	  # in remote cvs, but noone has fixed it yet.  We don't use -q
-	  # to work around the fact that dotest can't deal with
-	  # a fourth argument if the third one is ''.
 	  dotest conflicts2-142c3 "${testcvs} update" \
-"${PROG} [a-z]*: Updating \." \
-"${PROG} [a-z]*: Updating \.
-${PROG} update: unable to remove ./abc: No such file or directory"
+"${PROG} [a-z]*: Updating \."
 	  cd ../..
 
 	  # conflicts2-142d*: test that if one party adds a file, and another
