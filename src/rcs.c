@@ -5904,6 +5904,7 @@ RCS_addaccess (rcs, user)
 		return;
 	    }
 	}
+	free (access);
 	rcs->access = (char *) xrealloc
 	    (rcs->access, strlen (rcs->access) + strlen (user) + 2);
 	strcat (rcs->access, " ");

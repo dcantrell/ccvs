@@ -1,3 +1,15 @@
+2000-06-13  Larry Jones  <larry.jones@sdrc.com>
+
+	* add.c (add): Plug memory leaks.
+	* admin.c (admin_fileproc): Ditto.
+	* checkout.c (build_dirs_and_chdir): Ditto.
+	* edit.c (editors_fileproc): Ditto.
+	* log.c (cvslog, log_parse_revlist, log_parse_date): Ditto.
+	* rcs.c (RCS_addaccess): Ditto.
+	* tag.c (check_fileproc): Ditto.
+	* vers_ts.c (Version_TS): Ditto.
+	* watch.c (watchers_fileproc): Ditto.
+
 2000-06-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (rcsbuf_valword): Set rcsbuf->vlen to keep rcsbuf_valcopy()
