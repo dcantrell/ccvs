@@ -1,4 +1,15 @@
 Changes since 1.12.2:
+*********************
+
+SERVER SECURITY ISSUES
+
+* Malformed module requests could cause the CVS server to attempt to create
+  directories and possibly files at the root of the filesystem holding the CVS
+  repository.  Filesystem permissions usually prevent the creation of these
+  misplaced directories, but nevertheless, the CVS server now rejects the
+  malformed requests.
+
+OTHER ISSUES
 
 * We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
   new macros.  Again, this should only really affect developers.  See the

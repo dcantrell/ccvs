@@ -1,5 +1,15 @@
 2003-11-18  Derek Price  <derek@ximbiot.com>
 
+	* modules.c (do_module): Reject absolute paths.
+	(Report and suggested fix from Tony Hoyle <tmh@nodomain.org>.)
+
+	* sanity.sh (abspath2): Check for the above.
+	(spacefiles): Remove tests that expect absolute paths to files in the
+	top level repository directory to work.
+	(tests): Add abspath2.
+
+2003-11-18  Derek Price  <derek@ximbiot.com>
+
 	* socket-client.c: Correct a typo that happened to compile.
 	(Report and suggested fix from Patrick Brown <BrownP@symbol.com>.)
 

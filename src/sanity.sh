@@ -913,7 +913,7 @@ if test x"$*" = x; then
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules"
-	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
+	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
@@ -3894,22 +3894,15 @@ done"
 
 	  mkdir 1; cd 1
 	  dotest spacefiles-1 "${testcvs} -q co -l ." ""
-	  touch ./-c top
-	  dotest spacefiles-2 "${testcvs} add -- -c top" \
+	  touch ./-c
+	  dotest spacefiles-2 "${testcvs} add -- -c" \
 "${SPROG} add: scheduling file .-c. for addition
-${SPROG} add: scheduling file .top. for addition
-${SPROG} add: use .${SPROG} commit. to add these files permanently"
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest spacefiles-3 "${testcvs} -q ci -m add" \
 "RCS file: ${CVSROOT_DIRNAME}/-c,v
 done
 Checking in -c;
 ${CVSROOT_DIRNAME}/-c,v  <--  -c
-initial revision: 1\.1
-done
-RCS file: ${CVSROOT_DIRNAME}/top,v
-done
-Checking in top;
-${CVSROOT_DIRNAME}/top,v  <--  top
 initial revision: 1\.1
 done"
 	  mkdir 'first dir'
@@ -3934,16 +3927,10 @@ done"
 	  cd ../..
 
 	  mkdir 2; cd 2
-	  # Leading slash strikes me as kind of oddball, but there is
-	  # a special case for it in do_module.  And (in the case of
-	  # "top", rather than "-c") it has worked in CVS 1.10.6 and
-	  # presumably back to CVS 1.3 or so.
-	  dotest spacefiles-9 "${testcvs} -q co -- /top" "U \./top"
 	  dotest spacefiles-10 "${testcvs} co -- -b" \
 "${SPROG} checkout: Updating -b"
 	  dotest spacefiles-11 "${testcvs} -q co -- -c" "U \./-c"
 	  rm ./-c
-	  dotest spacefiles-12 "${testcvs} -q co -- /-c" "U \./-c"
 	  dotest spacefiles-13 "${testcvs} -q co 'first dir'" \
 "U first dir/a file"
 	  cd ..
@@ -3956,7 +3943,7 @@ done"
 	  rm -r 1 2 3
 	  rm -rf "${CVSROOT_DIRNAME}/first dir"
 	  rm -r ${CVSROOT_DIRNAME}/-b
-	  rm -f ${CVSROOT_DIRNAME}/-c,v ${CVSROOT_DIRNAME}/top,v
+	  rm -f ${CVSROOT_DIRNAME}/-c,v
 	  ;;
 
 	commit-readonly)
@@ -13459,6 +13446,24 @@ ${SPROG} \[checkout aborted\]: than the 0 which Max-dotdot specified"
 	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/mod2
 
 	  ;;
+
+
+
+	abspath2)
+	  # More absolute path checks.  The following used to attempt to create
+	  # directories in /:
+	  #
+	  # $ cvs -d:fork:/cvsroot co /foo
+	  # cvs checkout: warning: cannot make directory CVS in /: Permission denied
+	  # cvs [checkout aborted]: cannot make directory /foo: Permission denied
+	  # $
+	  dotest_fail abspath2-1 "${testcvs} co /foo" \
+"$CPROG \[checkout aborted\]: Absolute module reference invalid: \`/foo'" \
+"$SPROG \[server aborted\]: Absolute module reference invalid: \`/foo'
+$CPROG \[checkout aborted\]: end of file from server (consult above messages if any)"
+	  ;;
+
+
 
 	toplevel)
 	  # test the feature that cvs creates a CVS subdir also for
