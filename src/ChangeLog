@@ -1,3 +1,7 @@
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
+	* error.c (error): Simplify using vasnprintf.
+
 2005-03-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* admin.c (postadmin_proc): Cast NULL when it is an argument to
