@@ -1092,7 +1092,8 @@ rcsbuf_getkey (rcsbuf, keyp, valp)
     ptrend = rcsbuf->ptrend;
 
     /* Sanity check.  */
-    assert (ptr >= rcsbuf_buffer && ptr < rcsbuf_buffer + rcsbuf_buffer_size);
+    assert (ptr >= rcsbuf_buffer && ptr <= rcsbuf_buffer + rcsbuf_buffer_size);
+    assert (ptrend >= rcsbuf_buffer && ptrend <= rcsbuf_buffer + rcsbuf_buffer_size);
 
 #ifndef HAVE_MMAP
     /* If the pointer is more than RCSBUF_BUFSIZE bytes into the
@@ -1586,10 +1587,6 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
 
 	poff = ptr - rcsbuf_buffer;
 	peoff = rcsbuf->ptrend - rcsbuf_buffer;
-	if (keyp != NULL && *keyp != NULL)
-	    koff = *keyp - rcsbuf_buffer;
-	if (valp != NULL && *valp != NULL)
-	    voff = *valp - rcsbuf_buffer;
 	koff = keyp == NULL ? 0 : *keyp - rcsbuf_buffer;
 	voff = valp == NULL ? 0 : *valp - rcsbuf_buffer;
 
@@ -1598,9 +1595,9 @@ rcsbuf_fill (rcsbuf, ptr, keyp, valp)
 
 	ptr = rcsbuf_buffer + poff;
 	rcsbuf->ptrend = rcsbuf_buffer + peoff;
-	if (keyp != NULL && *keyp != NULL)
+	if (keyp != NULL)
 	    *keyp = rcsbuf_buffer + koff;
-	if (valp != NULL && *valp != NULL)
+	if (valp != NULL)
 	    *valp = rcsbuf_buffer + voff;
     }
 
