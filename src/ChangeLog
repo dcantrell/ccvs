@@ -1,3 +1,9 @@
+2003-12-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (trace): Remove trace from the set of tests to run.
+	The regexps used take an excessive amount of time and need to
+	be simplified.
+
 2003-12-08  Mark D. Baushke  <mdb@cvshome.org>
 
 	* rcs.c (rcsbuf_ftell): Rename to...

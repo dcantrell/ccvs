@@ -1055,7 +1055,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} dottedroot fork commit-d template trace"
+	tests="${tests} dottedroot fork commit-d template"
 else
 	tests="$*"
 fi
