@@ -1,5 +1,10 @@
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.am (INCLUDES): Fixed typo
+        * Makefile.in: Regenerated
+
+2000-12-22  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am (INCLUDES): Added $(top_srcdir)/src
         * Makefile.in: Regenerated
 

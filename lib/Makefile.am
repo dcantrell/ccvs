@@ -24,7 +24,7 @@
 # be unecessary now.  Should look more deeply into this
 #
 # $(includeopt) is CVS specific and set by configure
-INCLUDES = -I$(top_srcdir)/$(src) $(includeopt)
+INCLUDES = -I$(top_srcdir)/src $(includeopt)
 
 noinst_LIBRARIES = libcvs.a
 
