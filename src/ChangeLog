@@ -1,3 +1,12 @@
+Sun May  5 21:39:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vers_ts.c (Version_TS): If sdtp is NULL, go ahead and check
+	RCS_getexpand for options.  Fixes binaries and non-unix clients.
+	* sanity.sh: Fix binfiles-5.5 to test for the correct behavior
+	rather than the buggy behavior which existed when the binfiles-5.5
+	test was written.
+	(binfiles-14c,binfiles-14f): Likewise.
+
 Sun May  5 17:38:21 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
         Integrated changes submitted by Ian Taylor <ian@cygnus.com>
