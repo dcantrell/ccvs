@@ -519,6 +519,7 @@ safe_location (where)
     else
 	retval = 1;
     free (current);
+    free( hardpath );
     return retval;
 }
 
