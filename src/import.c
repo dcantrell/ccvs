@@ -1012,7 +1012,9 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     if (fpuser == NULL)
     {
 	/* not fatal, continue import */
-	fperror (add_logfp, 0, errno, "ERROR: cannot read file %s", userfile);
+	if (add_logfp != NULL)
+	    fperror (add_logfp, 0, errno, "ERROR: cannot read file %s",
+		     userfile);
 	error (0, errno, "ERROR: cannot read file %s", userfile);
 	goto read_error;
     }
@@ -1224,8 +1226,9 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
     if (chmod (rcs, mode) < 0)
     {
 	ierrno = errno;
-	fperror (add_logfp, 0, ierrno,
-		 "WARNING: cannot change mode of file %s", rcs);
+	if (add_logfp != NULL)
+	    fperror (add_logfp, 0, ierrno,
+		     "WARNING: cannot change mode of file %s", rcs);
 	error (0, ierrno, "WARNING: cannot change mode of file %s", rcs);
 	err++;
     }
@@ -1241,12 +1244,14 @@ write_error:
     (void) fclose (fprcs);
 write_error_noclose:
     (void) fclose (fpuser);
-    fperror (add_logfp, 0, ierrno, "ERROR: cannot write file %s", rcs);
+    if (add_logfp != NULL)
+	fperror (add_logfp, 0, ierrno, "ERROR: cannot write file %s", rcs);
     error (0, ierrno, "ERROR: cannot write file %s", rcs);
     if (ierrno == ENOSPC)
     {
 	(void) CVS_UNLINK (rcs);
-	fperror (add_logfp, 0, 0, "ERROR: out of space - aborting");
+	if (add_logfp != NULL)
+	    fperror (add_logfp, 0, 0, "ERROR: out of space - aborting");
 	error (1, 0, "ERROR: out of space - aborting");
     }
 read_error:
