@@ -1,3 +1,9 @@
+Fri Aug 23 11:28:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* wrapper.c, cvs.h: Remove conflictHook field of WrapperEntry,
+	WRAP_CONFLICT in WrapMergeHas, and 'c' option in wrap_add; they
+	are never used.
+
 Fri Aug 23 11:41:46 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* server.c (switch_to_user): use #ifdef SETXID_SUPPORT instead of

@@ -35,11 +35,6 @@ typedef struct {
     char *wildCard;
     char *tocvsFilter;
     char *fromcvsFilter;
-
-    /* FIXME: conflictHook, WRAP_CONFLICT, and the -c option are never
-       used.  Nuke them.  */
-    char *conflictHook;
-
     char *rcsOption;
     WrapMergeMethod mergeMethod;
 } WrapperEntry;
@@ -196,8 +191,6 @@ wrap_free_entry_internal(e)
 	free (e->tocvsFilter);
     if (e->fromcvsFilter)
 	free (e->fromcvsFilter);
-    if (e->conflictHook)
-	free (e->conflictHook);
     if (e->rcsOption)
 	free (e->rcsOption);
 }
@@ -301,16 +294,9 @@ wrap_add (line, isTemp)
             if (!e.tocvsFilter)
 		error (1, 0, "Correct above errors first");
 	    break;
-	case 'c':
-	    if(e.conflictHook)
-		free(e.conflictHook);
-	    /* FIXME: error message should say where the bad value
-	       came from.  */
-	    e.conflictHook=expand_path (temp, "<wrapper>", 0);
-            if (!e.conflictHook)
-		error (1, 0, "Correct above errors first");
-	    break;
 	case 'm':
+	    /* FIXME: look into whether this option is still relevant given
+	       the 24 Jun 96 change to merge_file.  */
 	    if(*temp=='C' || *temp=='c')
 		e.mergeMethod=WRAP_COPY;
 	    else
@@ -355,7 +341,6 @@ wrap_add_entry(e, temp)
     wrap_list[x]->wildCard=e->wildCard;
     wrap_list[x]->fromcvsFilter=e->fromcvsFilter;
     wrap_list[x]->tocvsFilter=e->tocvsFilter;
-    wrap_list[x]->conflictHook=e->conflictHook;
     wrap_list[x]->mergeMethod=e->mergeMethod;
     wrap_list[x]->rcsOption = e->rcsOption;
 }
@@ -377,9 +362,6 @@ wrap_name_has (name,has)
 		break;
 	    case WRAP_FROMCVS:
 		temp=wrap_list[x]->fromcvsFilter;
-		break;
-	    case WRAP_CONFLICT:
-		temp=wrap_list[x]->conflictHook;
 		break;
 	    case WRAP_RCSOPTION:
 		temp = wrap_list[x]->rcsOption;
