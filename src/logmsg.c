@@ -288,7 +288,11 @@ do_editor (dir, messagep, repository, changes)
 		    || *line == '\n' || *line == 'c' || *line == 'C')
 		break;
 	    if (*line == 'a' || *line == 'A')
-		error (1, 0, "aborted by user");
+		{
+		    if (unlink_file (fname) < 0)
+			error (0, errno, "warning: cannot remove temp file %s", fname);
+		    error (1, 0, "aborted by user");
+		}
 	    if (*line == 'e' || *line == 'E')
 		goto again;
 	    if (*line == '!')

@@ -1,3 +1,8 @@
+Tue May 14 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* logmsg.c (do_editor): If user aborts the commit, still remove the
+	temporary file.
+
 Tue May 14 11:45:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c, cvs.h (cvs_temp_name): New function.  Move L_tmpnam
