@@ -1,5 +1,13 @@
 2003-07-19  Derek Price  <derek@ximbiot.com>
 
+	* getndelim2.c: Make limit an ssize_t rather than int, as per the
+	return type.
+	* getndelim2.h: Ditto.
+	* getnline.c: Ditto.
+	* getnline.h: Ditto.
+
+2003-07-19  Derek Price  <derek@ximbiot.com>
+
 	* getline.c (getdelim): Return ssize_t, as per getline.h.
 
 2003-07-17  Derek Price  <derek@ximbiot.com>
