@@ -1,3 +1,9 @@
+2004-11-04 Derek Price <derek@ximbiot.com>
+
+	* sanity.sh (depends_on_rsync): Minor simplifications.  Make sure that
+	an rsync that doesn't understand `--version' sends its error message to
+	the log file too.
+
 2004-11-04  Mark D. Baushke  <mdb@cvshome.org>
 	
 	* sanity.sh (set_bad_tool, is_bad_tool): Avoid printing errors

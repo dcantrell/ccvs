@@ -1002,44 +1002,34 @@ depends_on_rsync ()
   	      >/dev/null 2>&1 \
       && $rsync -rglop --delete --include Attic --exclude '*/' \
   	      $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy2 \
-  	      >/dev/null 2>&1
+  	      >/dev/null 2>&1 \
+      && test ! -f $TESTDIR/rsync-test-copy/5 \
+      && test ! -f $TESTDIR/rsync-test-copy2/5 \
+      && test -f $TESTDIR/rsync-test-copy2/Attic/5 \
+      && test ! -f $TESTDIR/rsync-test-copy2/otherdir/7
     then
-      if test -f $TESTDIR/rsync-test-copy/5 \
-        || test -f $TESTDIR/rsync-test-copy2/5 \
-        || test ! -f $TESTDIR/rsync-test-copy2/Attic/5 \
-        || test -f $TESTDIR/rsync-test-copy2/otherdir/7
-      then
-        set_bad_tool `Which $rsync`
-        rsyncworks=false
-      else
-        # good, it works
-        rsyncworks=:
-	RSYNC=$rsync
-      fi
+      # good, it works
+      rsyncworks=:
+      RSYNC=$rsync
     else
       set_bad_tool `Which $rsync`
-      rsyncworks=false
     fi
   
     rm -rf $TESTDIR/rsync-test $TESTDIR/rsync-test-copy \
-      $TESTDIR/rsync-test-copy2
+       $TESTDIR/rsync-test-copy2
 
     if $rsyncworks; then
       return 0
     else
       echo $rsync failed to work properly
       echo "====="; echo "$rsync --version"; $rsync --version; echo "====="
-      (echo "$rsync --version"; $rsync --version) >>$LOGFILE
+      (echo "$rsync --version"; $rsync --version) >>$LOGFILE 2>&1
     fi
   done
 
-  if $rsyncworks; then :; else
-    unset RSYNC
-    skipreason="unusable or no rsync found"
-    return 77
-  fi
-
-  return 0
+  unset RSYNC
+  skipreason="unusable or no rsync found"
+  return 77
 }
 
 # Test that $1 works as a remote shell.  If so, set $host, $CVS_RSH, &
