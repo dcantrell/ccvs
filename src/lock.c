@@ -43,6 +43,9 @@
    (when a file is being added).  This state is a state in which the
    RCS file parsing routines in rcs.c cannot parse the file.
 
+   * Readlocks ensure that a reader won't try to look at a
+   half-written fileattr file (fileattr is not updated atomically).
+
    (see also the description of anonymous read-only access in
    "Password authentication security" node in doc/cvs.texinfo).
 
@@ -66,7 +69,8 @@
 
    5.  Like #4 but use shared memory or something so that the servers
    merely need to all be on the same machine.  This is a much smaller
-   change to CVS.  */
+   change to CVS (it functions much like #2; shared memory might be an
+   unneeded complication although it presumably would be faster).  */
 
 #include "cvs.h"
 
