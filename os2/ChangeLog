@@ -1,3 +1,8 @@
+Wed Dec 13 20:58:12 1995  Karl Fogel  (kfogel@floss.cyclic.com)
+
+        * waitpid.c (waitpid): oops, make sure there is storage for local_statusp.
+        Don't assign to *statusp if statusp is NULL.
+
 Wed Dec 13 19:52:08 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * waitpid.c (waitpid): be more careful about child's exit status,
