@@ -675,7 +675,8 @@ history_write (type, update_dir, revs, name, repository)
 {
     char fname[PATH_MAX], workdir[PATH_MAX], homedir[PATH_MAX];
     static char username[20];		/* !!! Should be global */
-    FILE *fp;
+    int fd;
+    char *line;
     char *slash = "", *cp, *cp2, *repos;
     int i;
     static char *tilde = "";
@@ -692,8 +693,13 @@ history_write (type, update_dir, revs, name, repository)
 	return;
     }
 
-    if (!(fp = Fopen (fname, "a")))	/* Some directory not there! */
+    if (trace)
+	fprintf (stderr, "%c-> fopen(%s,a)\n",
+		 (server_active) ? 'S' : ' ', fname);
+    if (noexec)
 	return;
+    if ((fd = open (fname, O_WRONLY | O_APPEND | O_CREAT, 0666)) < 0)
+	error (1, errno, "cannot open history file: %s", fname);
 
     repos = Short_Repository (repository);
 
@@ -801,10 +807,23 @@ history_write (type, update_dir, revs, name, repository)
 	(void) sprintf ((cp + 1), "*%x", i);
     }
 
-    if (fprintf (fp, "%c%08x|%s|%s|%s|%s|%s\n", type, time ((time_t *) NULL),
-		 username, workdir, repos, revs ? revs : "", name) < 0)
+    if (!revs)
+	revs = "";
+    line = xmalloc (strlen (username) + strlen (workdir) + strlen (repos)
+		    + strlen (revs) + strlen (name) + 100);
+    sprintf (line, "%c%08lx|%s|%s|%s|%s|%s\n",
+	     type, (long) time ((time_t *) NULL),
+	     username, workdir, repos, revs, name);
+
+    /* Avoid some race conditions on non-Posix-compliant hosts.  */
+    if (lseek (fd, (off_t) 0, SEEK_END) == -1)
+	error (1, errno, "cannot seek to end of history file: %s", fname);
+
+    if (write (fd, line, strlen (line)) < 0)
 	error (1, errno, "cannot write to history file: %s", fname);
-    (void) fclose (fp);
+    free (line);
+    if (close (fd) != 0)
+	error (1, errno, "cannot close history file: %s", fname);
 }
 
 /*

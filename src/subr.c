@@ -200,23 +200,6 @@ open_file (name, mode)
 }
 
 /*
- * Open a file if allowed and return.
- */
-FILE *
-Fopen (name, mode)
-    const char *name;
-    const char *mode;
-{
-    if (trace)
-	(void) fprintf (stderr, "%c-> fopen(%s,%s)\n",
-			(server_active) ? 'S' : ' ', name, mode);
-    if (noexec)
-	return (NULL);
-
-    return (fopen (name, mode));
-}
-
-/*
  * Make a directory and die if it fails
  */
 void

@@ -361,7 +361,6 @@ int RCS_unlock PROTO((const char *, const char *));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
 
 DBM *open_module PROTO((void));
-FILE *Fopen PROTO((const char *, const char *));
 FILE *Popen PROTO((const char *, const char *));
 FILE *open_file PROTO((const char *, const char *));
 List *Find_Dirs PROTO((char *repository, int which));
