@@ -1,3 +1,8 @@
+Sat Jan 17 08:01:51 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (ann-10, ann-11): Don't make assumptions about the
+	number of characters in the username.
+
 Fri Jan 16 15:34:02 1998  Larry Jones  <larry.jones@sdrc.com>
 
 	* diff.c (diff_fileproc): Free label1 and label2 when finished.

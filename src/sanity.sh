@@ -8392,29 +8392,29 @@ done"
 	  dotest ann-10 "${testcvs} ann" \
 "Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username}  [0-9a-zA-Z-]*): this
-1\.1          (${username}  [0-9a-zA-Z-]*): is
-1\.2          (${username}  [0-9a-zA-Z-]*): a
-1\.3          (${username}  [0-9a-zA-Z-]*): trunk file
-1\.2          (${username}  [0-9a-zA-Z-]*): 
-1\.2          (${username}  [0-9a-zA-Z-]*): with
-1\.2          (${username}  [0-9a-zA-Z-]*): a
-1\.2          (${username}  [0-9a-zA-Z-]*): blank
-1\.2          (${username}  [0-9a-zA-Z-]*): line"
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.3          (${username} *[0-9a-zA-Z-]*): trunk file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line"
 	  dotest ann-11 "${testcvs} ann -r br" \
 "Annotations for file1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          (${username}  [0-9a-zA-Z-]*): this
-1\.1          (${username}  [0-9a-zA-Z-]*): is
-1\.2          (${username}  [0-9a-zA-Z-]*): a
-1\.1          (${username}  [0-9a-zA-Z-]*): file
-1\.2          (${username}  [0-9a-zA-Z-]*): 
-1\.2          (${username}  [0-9a-zA-Z-]*): with
-1\.2          (${username}  [0-9a-zA-Z-]*): a
-1\.2          (${username}  [0-9a-zA-Z-]*): blank
-1\.2          (${username}  [0-9a-zA-Z-]*): line
-1\.2\.2\.1      (${username}  [0-9a-zA-Z-]*): and some
-1\.2\.2\.1      (${username}  [0-9a-zA-Z-]*): branched content"
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.1          (${username} *[0-9a-zA-Z-]*): file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
 
 	  cd ../..
 	  rm -r 1
