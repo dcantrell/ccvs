@@ -2,3 +2,5 @@
 .pure
 Makefile
 fnmatch.h
+WinDebug
+WinRel

@@ -85,7 +85,15 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\exitfail.c
+SOURCE=.\argmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fncase.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.c
 # End Source File
 # Begin Source File
 
@@ -97,10 +105,6 @@ SOURCE=.\getline.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\getndelim2.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\getopt.c
 # End Source File
 # Begin Source File
@@ -109,19 +113,35 @@ SOURCE=.\getopt1.c
 # End Source File
 # Begin Source File
 
-SOURCE=".\printf-args.c"
-# End Source File
-# Begin Source File
-
-SOURCE=".\printf-parse.c"
-# End Source File
-# Begin Source File
-
-SOURCE=.\realloc.c
+SOURCE=.\md5.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\regex.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\savecwd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sighandle.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\valloc.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\xgetwd.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\yesno.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -129,69 +149,30 @@ SOURCE=.\regex.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\alloca_.h
+SOURCE=.\fnmatch.h.in
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 # Begin Custom Build
-InputPath=.\alloca_.h
+InputPath=.\fnmatch.h.in
 
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\alloca_.h .\alloca.h
+".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\fnmatch.h.in .\fnmatch.h
 
 # End Custom Build
 
 !ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
 
 # Begin Custom Build
-InputPath=.\alloca_.h
+InputPath=.\fnmatch.h.in
 
-".\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\alloca_.h .\alloca.h
+".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\fnmatch.h.in .\fnmatch.h
 
 # End Custom Build
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE="..\windows-NT\config.h"
-# End Source File
-# Begin Source File
-
-SOURCE=.\fnmatch_.h
-
-!IF  "$(CFG)" == "libcvs - Win32 Release"
-
-# Begin Custom Build
-InputPath=.\fnmatch_.h
-
-".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\fnmatch_.h .\fnmatch.h
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
-
-# Begin Custom Build
-InputPath=.\fnmatch_.h
-
-".\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy .\fnmatch_.h .\fnmatch.h
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\regex.h
-# End Source File
-# Begin Source File
-
-SOURCE="..\windows-NT\stdbool.h"
 # End Source File
 # End Group
 # End Target
