@@ -1,3 +1,9 @@
+Tue Sep 10 19:15:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (START_SERVER_RETURNS_SOCKET, SEND_NEVER_PARTIAL):
+	Define.  This just preserves the behavior the VMS port has had all
+	along.
+
 Mon Aug 26 12:51:52 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (mkdir_if_needed): Added.
