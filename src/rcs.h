@@ -10,7 +10,6 @@
 
 #define	RCS		"rcs"
 #define	RCS_CI		"ci"
-#define	RCS_CO		"co"
 #define	RCS_DIFF	"rcsdiff"
 #define	RCS_RCSMERGE	"rcsmerge"
 
