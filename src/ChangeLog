@@ -1,3 +1,10 @@
+2004-10-29 Derek Price <derek@ximbiot.com>
+
+	* server.c (isSameHost): New fuction.
+	(same_path): Rename to...
+	(isSamePath): ...this.
+	(isProxyServer): Use new functions/names.
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (writeproxy): Use DOTSTAR to avoid problems with
