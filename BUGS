@@ -28,6 +28,13 @@ former, for this usage, note that client_process_import_file has no
 way of knowing about CVSROOT/cvswrappers which is off on the server).
 
 
+* I don't think that "cvs add" honors any of the -k wrappers, at least
+not in client/server mode.  I would think it should.  Getting
+CVSROOT/cvswrappers to work would presumably best be done by keeping a
+copy of it in the CVS directory on the client, as has also been
+discussed for CVS/Template, &c.
+
+
 * Wrappers (-t/-f) do not work client/server, and there are a variety of other
 bugs and annoyances with wrappers.
 
