@@ -42,7 +42,7 @@ static int repos_len;
 static char vhead[50];
 static char vbranch[50];
 static FILE *logfp;
-static char repository[PATH_MAX];
+static char *repository;
 static int conflicts;
 static int use_file_modtime;
 static char *keyword_opt = NULL;
@@ -146,11 +146,14 @@ import (argc, argv)
 	    error (1, 0, "Set it or specify the '-d' option to %s.",
 		   program_name);
 	}
+	repository = xmalloc (strlen (CVSroot_directory) + strlen (argv[0])
+			      + 10);
 	(void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
 	repos_len = strlen (CVSroot_directory);
     }
     else
     {
+	repository = xmalloc (strlen (argv[0]) + 5);
 	(void) strcpy (repository, argv[0]);
 	repos_len = 0;
     }
@@ -318,6 +321,7 @@ import (argc, argv)
 
     if (message)
 	free (message);
+    free (repository);
 
     return (err);
 }
@@ -435,18 +439,24 @@ process_import_file (message, vfile, vtag, targc, targv)
     int targc;
     char *targv[];
 {
-    char attic_name[PATH_MAX];
-    char rcs[PATH_MAX];
+    char *rcs;
     int inattic = 0;
 
+    rcs = xmalloc (strlen (repository) + strlen (vfile) + sizeof (RCSEXT)
+		   + 5);
     (void) sprintf (rcs, "%s/%s%s", repository, vfile, RCSEXT);
     if (!isfile (rcs))
     {
+	char *attic_name;
+
+	free (rcs);
+	attic_name = xmalloc (strlen (repository) + strlen (vfile) +
+			      sizeof (CVSATTIC) + sizeof (RCSEXT) + 10);
 	(void) sprintf (attic_name, "%s/%s/%s%s", repository, CVSATTIC,
 			vfile, RCSEXT);
 	if (!isfile (attic_name))
 	{
-
+	    free (attic_name);
 	    /*
 	     * A new import source file; it doesn't exist as a ,v within the
 	     * repository nor in the Attic -- create it anew.
@@ -454,9 +464,11 @@ process_import_file (message, vfile, vtag, targc, targv)
 	    add_log ('N', vfile);
 	    return (add_rcs_file (message, rcs, vfile, vtag, targc, targv));
 	}
+	free (attic_name);
 	inattic = 1;
     }
 
+    free (rcs);
     /*
      * an rcs file exists. have to do things the official, slow, way.
      */
@@ -495,10 +507,11 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     if (vers->vn_rcs != NULL
 	&& !RCS_isdead(vers->srcfile, vers->vn_rcs))
     {
-	char xtmpfile[PATH_MAX];
+	char *xtmpfile;
 	int different;
 	int retcode = 0;
 
+	xtmpfile = xmalloc (strlen (Tmpdir) + 40);
 	(void) sprintf (xtmpfile, "%s/cvs-imp%ld", Tmpdir, (long) getpid());
 
 	/*
@@ -528,6 +541,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 		   "ERROR: cannot co revision %s of file %s", vers->vn_rcs,
 		   vers->srcfile->path);
 	    (void) unlink_file (xtmpfile);
+	    free (xtmpfile);
 	    return (1);
 	}
 
@@ -538,6 +552,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 		error (0, errno, "cannot remove %s", tocvsPath);
 
 	(void) unlink_file (xtmpfile);
+	free (xtmpfile);
 	if (!different)
 	{
 	    int retval = 0;
@@ -833,9 +848,11 @@ get_comment (user)
     char *user;
 {
     char *cp, *suffix;
-    char suffix_path[PATH_MAX];
+    char *suffix_path;
     int i;
+    char *retval;
 
+    suffix_path = xmalloc (strlen (user) + 5);
     cp = strrchr (user, '.');
     if (cp != NULL)
     {
@@ -855,11 +872,21 @@ get_comment (user)
 	suffix = "";			/* will use the default */
     for (i = 0;; i++)
     {
-	if (comtable[i].suffix == NULL)	/* default */
-	    return (comtable[i].comlead);
+	if (comtable[i].suffix == NULL)
+	{
+	    /* Default.  Note we'll always hit this case before we
+	       ever return NULL.  */
+	    retval = comtable[i].comlead;
+	    break;
+	}
 	if (strcmp (suffix, comtable[i].suffix) == 0)
-	    return (comtable[i].comlead);
+	{
+	    retval = comtable[i].comlead;
+	    break;
+	}
     }
+    free (suffix_path);
+    return retval;
 }
 
 static int
@@ -1175,6 +1202,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
     struct saved_cwd cwd;
     char *cp;
     int ierrno, err;
+    char *rcs = NULL;
 
     if (islink (dir))
 	return (0);
@@ -1183,13 +1211,24 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	fperror (logfp, 0, 0, "ERROR: cannot get working directory");
 	return (1);
     }
+
+    /* Concatenate DIR to the end of REPOSITORY.  */
     if (repository[0] == '\0')
-	(void) strcpy (repository, dir);
+    {
+	char *new = xstrdup (dir);
+	free (repository);
+	repository = new;
+    }
     else
     {
-	(void) strcat (repository, "/");
-	(void) strcat (repository, dir);
+	char *new = xmalloc (strlen (repository) + strlen (dir) + 10);
+	strcpy (new, repository);
+	(void) strcat (new, "/");
+	(void) strcat (new, dir);
+	free (repository);
+	repository = new;
     }
+
 #ifdef CLIENT_SUPPORT
     if (!quiet && !client_active)
 #else
@@ -1211,12 +1250,12 @@ import_descend_dir (message, dir, vtag, targc, targv)
     if (!isdir (repository))
 #endif
     {
-	char rcs[PATH_MAX];
-
+	rcs = xmalloc (strlen (repository) + sizeof (RCSEXT) + 5);
 	(void) sprintf (rcs, "%s%s", repository, RCSEXT);
 	if (isfile (repository) || isfile(rcs))
 	{
-	    fperror (logfp, 0, 0, "ERROR: %s is a file, should be a directory!",
+	    fperror (logfp, 0, 0,
+		     "ERROR: %s is a file, should be a directory!",
 		     repository);
 	    error (0, 0, "ERROR: %s is a file, should be a directory!",
 		   repository);
@@ -1236,6 +1275,8 @@ import_descend_dir (message, dir, vtag, targc, targv)
     }
     err = import_descend (message, vtag, targc, targv);
   out:
+    if (rcs != NULL)
+	free (rcs);
     if ((cp = strrchr (repository, '/')) != NULL)
 	*cp = '\0';
     else
