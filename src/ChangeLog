@@ -1,3 +1,9 @@
+Wed May  3 11:08:32 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* create_adm.c, entries.c, import.c, root.c: Changed conditionals
+	  so that return value of *printf is tested less than 0 instead of
+	  equal to EOF --- That's all Standard C requires.
+
 Wed May  3 18:03:37 1995  Samuel Tardieu  <tardieu@emma.enst.fr>
 
 	* rcs.h: removed #ifdef CVS_PRIVATE and #endif because cvs didn't
