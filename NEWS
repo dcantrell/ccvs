@@ -3,12 +3,14 @@ Changes since 1.12.10:
 
 NEW FEATURES
 
-* Thanks to a report from Chris Bohn <cbohn@rrinc.com>, all the source files
-  needed to build on Windows are now included in the source distribution.
-
 * Date handling has been improved slightly.
 
 * Miscellaneous bug fixes.
+
+BUG FIXES
+
+* Thanks to a report from Chris Bohn <cbohn@rrinc.com>, all the source files
+  needed to build on Windows are now included in the source distribution.
 
 Changes from 1.12.9 to 1.12.10:
 *******************************
