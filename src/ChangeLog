@@ -1,5 +1,7 @@
 2004-09-08  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (join7): Fix if-then-else conditional.
+
 	* sanity.sh (join7): Re-order join7-5 and join7-6 tests.
 
 2004-09-08  Conrad T. Pino  <Conrad@Pino.com>
@@ -16,7 +18,7 @@
 
 	* buffer.c (packetizing_buffer_input): Use size_t rather than int.
 	(struct packetizing_buffer): Ditto.
-	
+
 2004-09-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (server_updated): Deal with cvs -n update -jt1 -jt2
