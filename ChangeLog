@@ -1,3 +1,13 @@
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note short patch fix.
+
+2003-06-09  Derek Price  <derek@ximbiot.com>
+
+	* TODO (45): Combine this with...
+	(30): ...this item (as #30).  Remove reference to diff since the
+	modules file is only consulted for the r* commands.
+
 2003-06-02  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note empty diff change text fix.
