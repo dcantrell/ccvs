@@ -1926,6 +1926,11 @@ $(INTDIR)/zlib.obj :  $(SOURCE)  $(DEP_ZLIB_) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\ChangeLog
+# End Source File
 # End Group
 ################################################################################
 # Begin Group "lib"

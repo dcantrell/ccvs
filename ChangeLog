@@ -1,3 +1,8 @@
+Mon Jul 15 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Add src/ChangeLog (lets us edit it from within
+	the integrated development environment).
+
 Sun Jul 14 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* cvsnt.mak: Add src/zlib.c.  Add zlib group containing the .c
