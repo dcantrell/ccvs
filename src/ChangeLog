@@ -1,5 +1,7 @@
 Mon Jul  7 14:39:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (update_entries): Reindent a line.
+
 	* sanity.sh (death2): Add comment about Sun diff.  Thanks to
 	Warren Jones <wjones@TC.FLUKE.COM> for reporting this.
 
