@@ -74,3 +74,6 @@ dist-dir:
 clean:
 	@echo make clean does nothing in macintosh subdir
 
+subdir = macintosh
+Makefile: ../config.status Makefile.in
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status

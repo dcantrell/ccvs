@@ -1,3 +1,7 @@
+Wed Sep  4 13:40:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (Makefile): New rule.
+
 Mon Aug 26 12:46:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (mkdir_if_needed): Added.
