@@ -1010,93 +1010,93 @@ second party")
 			   (buffer-substring start (point)))))
 	    (setq head (cdr head))))
 
-       (t
+	 (t
 
-	;; CVS has decided to merge someone elses changes into this
-	;; document. This leads to a lot of garbage being printed.
-	;; First there is two lines that contains no information
-	;; that we skip (but we check that we recognize them).
+	  ;; CVS has decided to merge someone elses changes into this
+	  ;; document. This leads to a lot of garbage being printed.
+	  ;; First there is two lines that contains no information
+	  ;; that we skip (but we check that we recognize them).
 
-	(let ((complex-start (point))
-	      initial-revision filename)
+	  (let ((complex-start (point))
+		initial-revision filename)
 
-	  (cvs-skip-line stdout-buffer stderr-buffer "^RCS file: .*$")
-	  (setq initial-revision
-		(cvs-skip-line stdout-buffer stderr-buffer
-			       "^retrieving revision \\(.*\\)$" 1))
-	  (cvs-skip-line stdout-buffer stderr-buffer
-			 "^retrieving revision .*$")
-
-	  ;; Get the file name from the next line.
-
-	  (setq
-	   filename
-	   (cvs-skip-line
-	    stdout-buffer stderr-buffer
-	    "^Merging differences between [0-9.]+ and [0-9.]+ into \\(.*\\)$"
-	    1))
-
-	  (cond
-	   ;; Was it a conflict?
-	   ((looking-at
-	     ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
-
-	    ;; Yes, this is a conflict.
-	    (cvs-skip-line
-	     stdout-buffer stderr-buffer
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
-
+	    (cvs-skip-line stdout-buffer stderr-buffer "^RCS file: .*$")
+	    (setq initial-revision
+		  (cvs-skip-line stdout-buffer stderr-buffer
+				 "^retrieving revision \\(.*\\)$" 1))
 	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: conflicts found in ")
+			   "^retrieving revision .*$")
 
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'CONFLICT current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
+	    ;; Get the file name from the next line.
 
-	      (cvs-set-fileinfo->base-revision fileinfo initial-revision)
+	    (setq
+	     filename
+	     (cvs-skip-line
+	      stdout-buffer stderr-buffer
+	      "^Merging differences between [0-9.]+ and [0-9.]+ into \\(.*\\)$"
+	      1))
 
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head))))
+	    (cond
+	     ;; Was it a conflict?
+	     ((looking-at
+	       ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
 
-	   ;; Was it a conflict, and was RCS compiled without DIFF3_BIN?
+	      ;; Yes, this is a conflict.
+	      (cvs-skip-line
+	       stdout-buffer stderr-buffer
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
 
-	   ((looking-at
-	     ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps or other probl\
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs update: conflicts found in ")
+
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'CONFLICT current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
+
+		(cvs-set-fileinfo->base-revision fileinfo initial-revision)
+
+		(setcdr head (list fileinfo))
+		(setq head (cdr head))))
+
+	     ;; Was it a conflict, and was RCS compiled without DIFF3_BIN?
+
+	     ((looking-at
+	       ;; Allow both RCS 5.5 and 5.6. (5.6 prints "rcs" and " warning").
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps or other probl\
 ems during merge$")
 
-	    ;; Yes, this is a conflict.
-	    (cvs-skip-line
-	     stdout-buffer stderr-buffer
-	     "^\\(rcs\\)?merge\\( warning\\)?: overlaps .*during merge$")
+	      ;; Yes, this is a conflict.
+	      (cvs-skip-line
+	       stdout-buffer stderr-buffer
+	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps .*during merge$")
 
-	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: could not merge ")
-	    (cvs-skip-line stdout-buffer stderr-buffer
-			   "^cvs update: restoring .* from backup file ")
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs update: could not merge ")
+	      (cvs-skip-line stdout-buffer stderr-buffer
+			     "^cvs update: restoring .* from backup file ")
 
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'CONFLICT current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'CONFLICT current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
 
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head))))	   
+		(setcdr head (list fileinfo))
+		(setq head (cdr head))))	   
 
-	   (t
-	    ;; Not a conflict; it must be a succesful merge.
-	    (let ((fileinfo
-		   (cvs-create-fileinfo
-		    'MERGED current-dir
-		    filename
-		    (buffer-substring complex-start (point)))))
-	      (cvs-set-fileinfo->base-revision fileinfo initial-revision)
-	      (setcdr head (list fileinfo))
-	      (setq head (cdr head)))))))))))
+	     (t
+	      ;; Not a conflict; it must be a succesful merge.
+	      (let ((fileinfo
+		     (cvs-create-fileinfo
+		      'MERGED current-dir
+		      filename
+		      (buffer-substring complex-start (point)))))
+		(cvs-set-fileinfo->base-revision fileinfo initial-revision)
+		(setcdr head (list fileinfo))
+		(setq head (cdr head)))))))))))
   head)
 
 
