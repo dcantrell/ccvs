@@ -824,8 +824,9 @@ if test x"$*" = x; then
 	tests="${tests} commit-add-missing"
 	tests="${tests} status"
 	# Branching, tagging, removing, adding, multiple directories
-	tests="${tests} rdiff diff death death2 rm-update-message rmadd rmadd2"
-	tests="${tests} dirs dirs2 branches branches2 branches3 tagc tagf"
+	tests="${tests} rdiff rdiff2 diff death death2 rm-update-message rmadd"
+	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
+	tests="${tests} tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
 	tests="${tests} join join2 join3 join-readonly-conflict"
@@ -4145,6 +4146,73 @@ diff -c /dev/null trdiff/new:1\.1
 		rm -r testimport
 		rm -rf ${CVSROOT_DIRNAME}/trdiff
 		;;
+
+	rdiff2)
+	  # Test for the segv problem reported by James Cribb
+	  # Somewhere to work
+	  mkdir rdiff2; cd rdiff2	  
+	  # Create a module "m" with files "foo" and "d/bar"
+	  mkdir m; cd m
+	  echo foo >foo
+	  mkdir d
+	  echo bar >d/bar
+	  dotest_sort  rdiff2-1 \
+"${testcvs} -q import -I ! -m initial-import m vendor initial" \
+'
+
+N m/d/bar
+N m/foo
+No conflicts created by this import'
+
+	  cd ..
+	  rm -r m
+	  
+	  # Remove "foo"
+	  dotest rdiff2-2 "${testcvs} get m" \
+"${PROG} [a-z]*: Updating m
+U m/foo
+${PROG} [a-z]*: Updating m/d
+U m/d/bar"
+	  cd m
+	  dotest rdiff2-3 "${testcvs} rm -f foo" \
+"${PROG} [a-z]*: scheduling .foo. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+
+	  dotest rdiff2-4 "${testcvs} commit -m Removed foo" \
+"Removing foo;
+${CVSROOT_DIRNAME}/m/foo,v  <--  foo
+new revision: delete; previous revision: 1\.1\.1\.1
+done"
+	  
+	  # Modify "d/bar"
+	  echo foo >d/bar
+	  dotest rdiff2-5 "${testcvs} commit -m Changed d/bar" \
+"Checking in d/bar;
+${CVSROOT_DIRNAME}/m/d/bar,v  <--  bar
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  
+	  # Crash before showing d/bar diffs
+	  dotest_fail rdiff2-6 "${testcvs} rdiff -t m" \
+"${PROG} [a-z]*: Diffing m
+${PROG} [a-z]*: Diffing m/d
+Index: m/d/bar
+diff -c m/d/bar:1\.1\.1\.1 m/d/bar:1\.2
+\*\*\* m/d/bar:1\.1\.1\.1	${DATE}
+--- m/d/bar	${DATE}
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+! bar
+--- 1 ----
+! foo"
+	  if $keep; then
+		echo Keeping ${TESTDIR} and exiting due to --keep
+		exit 0
+	  fi
+	  cd ../..
+	  rm -rf rdiff2
+	  rm -rf ${CVSROOT_DIRNAME}/m
+	  ;;
 
 	diff)
 	  # Various tests specific to the "cvs diff" command.

@@ -1,3 +1,9 @@
+2003-03-27  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (rdiff2): Add new test case for SEGV problem reported
+	against cvs 1.11.5.
+	(Report from James Cribb <gjc@fortisclearing.com.au>)
+
 2003-03-26  Derek Price  <derek@ximbiot.com>
 
 	* client.c: Fix, reorganize, and comment ifdefs for AUTH_CLIENT_SUPPORT
