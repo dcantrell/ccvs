@@ -1,3 +1,29 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (EXTRA_DIST): Add new files and a few forgotten files.
+
+	* codeset.m4: New gettext support macros.
+	* gettext.m4: Ditto.
+	* glibc21.m4: Ditto.
+	* iconv.m4: Ditto.
+	* intdiv0.m4: Ditto.
+	* inttypes-pri.m4: Ditto.
+	* inttypes.m4: Ditto.
+	* inttypes_h.m4: Ditto.
+	* isc-posix.m4: Ditto.
+	* lcmessage.m4: Ditto.
+	* lib-ld.m4: Ditto.
+	* lib-link.m4: Ditto.
+	* lib-prefix.m4: Ditto.
+	* nls.m4: Ditto.
+	* po.m4: Ditto.
+	* progtest.m4: Ditto.
+	* stdint_h.m4: Ditto.
+	* uintmax_t.m4: Ditto.
+	* ulonglong.m4: Ditto.
+
+	* Makefile.in: Regenerated.
+
 2003-05-28  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated with README included in DIST_COMMON.
