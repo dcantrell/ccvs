@@ -932,6 +932,23 @@ get_homedir ()
     return getenv ("HOME");
 }
 
+/* Compose a path to a file in the home directory.  This is different than
+ * the UNIX version since, on VMS, foo:[bar]/.cvspass is not
+ * a legal filename but foo:[bar].cvspass is.
+ *
+ * A more clean solution would be something more along the lines of a
+ * "join a directory to a filename" kind of thing which was not specific to
+ * the homedir.  This should aid portability between UNIX, Mac, Windows, VMS,
+ * and possibly others.  This is already handled by Perl - it might be
+ * interesting to see how much of the code was written in C since Perl is under
+ * the GPL and the Artistic license - we might be able to use it.
+ */
+char *
+strcat_filename_onto_homedir (char *dir, char *file)
+{
+    return strcat (dir, file);
+}
+
 #ifndef __VMS_VER
 #define __VMS_VER 0
 #endif
