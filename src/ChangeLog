@@ -1,4 +1,12 @@
-2001-01-09  Larry Jones  <larry.jones@sdrc.com>
+2001-01-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c, rcs.h (RCS_lock, RCS_unlock): Use RCS_gettag to find the
+	correct revision so that symbolic tags work correctly.  (This
+	requires removing the "const" from the rev parameter since it's
+	passed to RCS_gettag which might modify it.)
+	(Reported by irina sturm <irina.sturm@st.com>.)
+
+2001-01-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* run.c (close_on_exec): Remove check for FD_CLOEXEC.  As far as I
 	can see, it's *never* been defined, which defeats the whole point.
@@ -7,6 +15,7 @@
 	* server.c (do_cvs_command): Call close_on_exec on the protocol and
 	flow control pipes in the child process so they don't get inherited
 	by any subsidiary processes.
+	(Reported by Tristan Gingold <tgi@netgem.com>.)
 
 	* cvs.h (free_cvsroot_t): Spell correctly (was free_CVSroot_t).
 
