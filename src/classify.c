@@ -66,13 +66,7 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
 	else if (RCS_isdead (vers->srcfile, vers->vn_rcs))
 	{
 	    if (vers->ts_user == NULL)
-		/*
-		 * Logically seems to me this should be T_UPTODATE.
-		 * But the joining code in update.c seems to expect
-		 * T_CHECKOUT, and that is what has traditionally been
-		 * returned for this case.
-		 */
-		ret = T_CHECKOUT;
+		ret = T_UPTODATE;
 	    else
 	    {
 		error (0, 0, "use `cvs add' to create an entry for %s",
