@@ -1,5 +1,11 @@
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* configure.in(AC_FUNC_FSEEKO): Add. Include handling for fseeko
+	and ftello with AC_LIBOBJ.
+	(AC_REPLACE_FUNCS): Remove fseeko and ftello.
+	
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
 	* cvsnt.mak (CLEAN, CPP_SBRS): Add ftello, fseeko, exithandle and
 	getndelim2.
 	(ftello.c, fseeko.c, exithandle.c, getndelim2): Add new source

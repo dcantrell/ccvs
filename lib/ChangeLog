@@ -1,5 +1,10 @@
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* ftello.c: Rework for AC_FUNC_FSEEKO.
+	* system.h: Rework fseeko and ftello prototypes.
+
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
 	* xgetwd.c (pathmax.h): Add new include.
 	(Patch from Rob Clevenger <rob@robsite.org>.)
 
