@@ -2346,7 +2346,6 @@ E CVS locks may need cleaning up.\n",
 
  free_args_and_return:
     /* Now free the arguments.  */
-
     {
 	/* argument_vector[0] is a dummy argument, we don't mess with it.  */
 	char **cp;
