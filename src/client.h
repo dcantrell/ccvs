@@ -11,7 +11,7 @@ extern int filter_through_gunzip PROTO((int, int, pid_t *));
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 
-extern int encrypt;
+extern int cvsencrypt;
 
 #ifdef HAVE_KERBEROS
 

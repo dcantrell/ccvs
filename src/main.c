@@ -413,7 +413,7 @@ main (argc, argv)
 		break;
 	    case 'x':
 #ifdef CLIENT_SUPPORT
-	        encrypt = 1;
+	        cvsencrypt = 1;
 #endif
 		/* If no CLIENT_SUPPORT, ignore -x, so that users can
                    have it in their .cvsrc and not cause any trouble.  */

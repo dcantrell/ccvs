@@ -1,5 +1,8 @@
 Thu Jul 25 12:06:45 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (cvsencrypt): Rename from encrypt, to avoid conflict
+	with NetBSD unistd.h.  Rename all uses.
+
 	* server.c (krb_encrypt_buffer_output): Fix typo in comment (reply
 	-> replay).
 
