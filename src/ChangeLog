@@ -1,3 +1,9 @@
+2003-12-17  Larry Jones  <lawrence.jones@eds.com>
+
+	* run.c (close_on_exec): fcntl is not documented to return 0 for
+	success (and QNX doesn't), only -1 for error.
+	(Patch from George Refseth <george.refseth@arxi.no>.)
+
 2003-12-10  Larry Jones  <lawrence.jones@eds.com>
 
 	* rcs.c: Cleanup HAVE_MMAP code in preparation for falling back to
