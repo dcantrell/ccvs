@@ -23,6 +23,7 @@ static int pretag_list_proc PROTO((Node *p, void *closure));
 
 static Dtype tag_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int tag_fileproc PROTO((struct file_info *finfo));
+static int tag_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 
 static char *numtag;
 static char *date = NULL;
@@ -195,9 +196,9 @@ tag (argc, argv)
     }
      
     /* start the recursion processor */
-    err = start_recursion (tag_fileproc, (FILESDONEPROC) NULL, tag_dirproc,
+    err = start_recursion (tag_fileproc, tag_filesdoneproc, tag_dirproc,
 			   (DIRLEAVEPROC) NULL, argc, argv, local,
-			   W_LOCAL, 0, 1, (char *) NULL, 1, 0);
+			   W_LOCAL, 0, 0, (char *) NULL, 1, 0);
     dellist(&mtlist);
     return (err);
 }
@@ -402,6 +403,19 @@ pretag_list_proc(p, closure)
     return (0);
 }
 
+/* We do not need to acquire a full write lock for the tag operation:
+   the revisions are obtained from the working directory, so we do not
+   require consistency across the entire repository.  However, we do
+   need to prevent simultaneous tag operations from interfering with
+   each other.  Therefore, we write lock each directory as we enter
+   it, and unlock it as we leave it.
+
+   This variable holds the write locked directory.  We lock it in
+   tag_fileproc and clear the lock in tag_filesdoneproc.  We don't use
+   a direntproc and dirleaveproc because those won't handle the case
+   where the user specifies a list of files on the command line.  */
+static char *locked_dir;
+static List *locked_list;
 
 /*
  * Called to tag a particular file (the currently checked out version is
@@ -417,6 +431,29 @@ tag_fileproc (finfo)
     char *rev;
     Vers_TS *vers;
     int retcode = 0;
+
+    /* If we haven't write locked the directory yet, do it now.  */
+    if (finfo->repository != NULL
+	&& (locked_dir == NULL
+	    || strcmp (locked_dir, finfo->repository) != 0))
+    {
+        Node *node;
+
+        if (locked_dir != NULL)
+	{
+	    Lock_Cleanup ();
+	    dellist (&locked_list);
+	    free (locked_dir);
+	}
+
+	locked_dir = xstrdup (finfo->repository);
+	locked_list = getlist ();
+	node = getnode ();
+	node->type = LOCK;
+	node->key = xstrdup (finfo->repository);
+	(void) addnode (locked_list, node);
+	Writer_Lock (locked_list);
+    }
 
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
@@ -574,6 +611,25 @@ tag_fileproc (finfo)
     }
     freevers_ts (&vers);
     return (0);
+}
+
+/* Clear any lock we may hold on the current directory.  */
+
+static int
+tag_filesdoneproc(err, repos, update_dir)
+    int err;
+    char *repos;
+    char *update_dir;
+{
+    if (locked_dir != NULL)
+    {
+        Lock_Cleanup ();
+	dellist (&locked_list);
+	free (locked_dir);
+	locked_dir = NULL;
+    }
+
+    return (err);
 }
 
 /*
