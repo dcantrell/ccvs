@@ -1,3 +1,7 @@
+Sat Jul 13 21:11:50 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* NEWS: Mention that -z now uses zlib.
+
 Fri Jul 12 18:54:21 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* Makefile.in (USOURCE_SUBDIRS): Add zlib.
