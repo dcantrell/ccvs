@@ -998,21 +998,28 @@ rcsbuf_open (rcsbuf, fp, filename, pos)
 	 * buffering and caching for us
 	 */
 	struct stat fs;
+	size_t mmap_off = 0;
 
 	if ( fstat (fileno(fp), &fs) < 0 )
 	    error ( 1, errno, "Could not stat RCS archive %s for mapping", filename );
 
+	if (pos)
+	{
+	    long ps = sysconf ( _SC_PAGE_SIZE );
+	    mmap_off = ( pos / ps ) * ps;
+	}
+
 	/* Map private here since this particular buffer is read only */
-	rcsbuf_buffer = mmap ( NULL, fs.st_size,
+	rcsbuf_buffer = mmap ( NULL, fs.st_size - mmap_off,
 				PROT_READ | PROT_WRITE,
-				MAP_PRIVATE, fileno(fp), 0 );
+				MAP_PRIVATE, fileno(fp), mmap_off );
 	if ( rcsbuf_buffer == NULL || rcsbuf_buffer == MAP_FAILED )
 	    error ( 1, errno, "Could not map memory to RCS archive %s", filename );
 
-	rcsbuf_buffer_size = fs.st_size;
-	rcsbuf->ptr = rcsbuf_buffer + pos;
-	rcsbuf->ptrend = rcsbuf_buffer + fs.st_size;
-	rcsbuf->pos = 0;
+	rcsbuf_buffer_size = fs.st_size - mmap_off;
+	rcsbuf->ptr = rcsbuf_buffer + pos - mmap_off;
+	rcsbuf->ptrend = rcsbuf_buffer + fs.st_size - mmap_off;
+	rcsbuf->pos = mmap_off;
     }
 #else /* HAVE_MMAP */
     if (rcsbuf_buffer_size < RCSBUF_BUFSIZE)
@@ -2007,6 +2014,14 @@ rcsbuf_cache_open (rcs, pos, pfp, prcsbuf)
     else
     {
 #endif /* ifndef HAVE_MMAP */
+	/* FIXME:  If these routines can be rewritten to not write to the
+	 * rcs file buffer, there would be a considerably larger memory savings
+	 * from using mmap since the shared file would never need be copied to
+	 * process memory.
+	 *
+	 * If this happens, cached mmapped buffers would be usable, but don't
+	 * forget to make sure rcs->pos < pos here...
+	 */
 	if (cached_rcs != NULL)
 	    rcsbuf_cache_close ();
 
