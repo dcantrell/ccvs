@@ -419,6 +419,8 @@ do_verify (messagep, repository)
     char *fname;
     int retcode = 0;
 
+    struct stat pre_stbuf, post_stbuf;
+
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root->isremote)
 	/* The verification will happen on the server.  */
@@ -428,6 +430,14 @@ do_verify (messagep, repository)
     /* FIXME? Do we really want to skip this on noexec?  What do we do
        for the other administrative files?  */
     if (noexec)
+	return;
+
+    /* Get the name of the verification script to run  */
+
+    if (repository != NULL)
+	(void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
+			   verifymsg_proc, 0);
+    if (!verifymsg_script)
 	return;
 
     /* open a temporary file, write the message to the 
@@ -445,106 +455,93 @@ do_verify (messagep, repository)
     if (fclose (fp) == EOF)
 	error (1, errno, "%s", fname);
 
-    /* Get the name of the verification script to run  */
-
-    if (repository != NULL)
-	(void) Parse_Info (CVSROOTADM_VERIFYMSG, repository, 
-			   verifymsg_proc, 0);
-
-    /* Run the verification script  */
-
-    if (verifymsg_script)
+    if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
-	struct stat pre_stbuf, post_stbuf;
+	/* Remember the status of the temp file for later */
+	if ( CVS_STAT (fname, &pre_stbuf) != 0 )
+	    error (1, errno, "cannot stat temp file %s", fname);
 
-	if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
-	{
-	    /* Remember the status of the temp file for later */
-	    if ( CVS_STAT (fname, &pre_stbuf) != 0 )
-		error (1, errno, "cannot stat temp file %s", fname);
-
-	    /*
-	     * See if we need to sleep before running the verification
-	     * script to avoid time-stamp races.
-	     */
-	    sleep_past (pre_stbuf.st_mtime);
-	}
-
-	run_setup (verifymsg_script);
-	run_arg (fname);
-	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-				 RUN_NORMAL | RUN_SIGIGNORE)) != 0)
-	{
-	    /* Since following error() exits, delete the temp file now.  */
-	    if (unlink_file (fname) < 0)
-		error (0, errno, "cannot remove %s", fname);
-
-	    error (1, retcode == -1 ? errno : 0, 
-		   "Message verification failed");
-	}
-
-	/* Get the mod time and size of the possibly new log message
-	 * in always and stat modes.
+	/*
+	 * See if we need to sleep before running the verification
+	 * script to avoid time-stamp races.
 	 */
-	if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	    RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+	sleep_past (pre_stbuf.st_mtime);
+    }
+
+    run_setup (verifymsg_script);
+    run_arg (fname);
+    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
+    {
+	/* Since following error() exits, delete the temp file now.  */
+	if (unlink_file (fname) < 0)
+	    error (0, errno, "cannot remove %s", fname);
+
+	error (1, retcode == -1 ? errno : 0, 
+	       "Message verification failed");
+    }
+
+    /* Get the mod time and size of the possibly new log message
+     * in always and stat modes.
+     */
+    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+    {
+	if ( CVS_STAT (fname, &post_stbuf) != 0 )
+	    error (1, errno, "cannot find size of temp file %s", fname);
+    }
+
+    /* And reread the log message in `always' mode or in `stat' mode when it's
+     * changed
+     */
+    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
+	    (pre_stbuf.st_mtime != post_stbuf.st_mtime ||
+	     pre_stbuf.st_size != post_stbuf.st_size)))
+    {
+	/* put the entire message back into the *messagep variable */
+
+	if (*messagep) free (*messagep);
+
+	if (post_stbuf.st_size == 0)
+	    *messagep = NULL;
+	else
 	{
-	    if ( CVS_STAT (fname, &post_stbuf) != 0 )
-		error (1, errno, "cannot find size of temp file %s", fname);
-	}
+	    char *line = NULL;
+	    int line_length;
+	    size_t line_chars_allocated = 0;
+	    char *p;
 
-	/* And reread the log message in `always' mode or in `stat' mode when it's
-	 * changed
-	 */
-	if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	    (RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
-		(pre_stbuf.st_mtime != post_stbuf.st_mtime ||
-		 pre_stbuf.st_size != post_stbuf.st_size)))
-	{
-	    /* put the entire message back into the *messagep variable */
+	    if ( (fp = open_file (fname, "r")) == NULL )
+		error (1, errno, "cannot open temporary file %s", fname);
 
-	    if (*messagep) free (*messagep);
+	    /* On NT, we might read less than st_size bytes,
+	       but we won't read more.  So this works.  */
+	    p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
+	    *messagep[0] = '\0';
 
-	    if (post_stbuf.st_size == 0)
-		*messagep = NULL;
-	    else
+	    while (1)
 	    {
-		char *line = NULL;
-		int line_length;
-		size_t line_chars_allocated = 0;
-		char *p;
-
-		if ( (fp = open_file (fname, "r")) == NULL )
-		    error (1, errno, "cannot open temporary file %s", fname);
-
-		/* On NT, we might read less than st_size bytes,
-		   but we won't read more.  So this works.  */
-		p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
-		*messagep[0] = '\0';
-
-		while (1)
+		line_length = getline (&line,
+				       &line_chars_allocated,
+				       fp);
+		if (line_length == -1)
 		{
-		    line_length = getline (&line,
-					   &line_chars_allocated,
-					   fp);
-		    if (line_length == -1)
-		    {
-			if (ferror (fp))
+		    if (ferror (fp))
 			/* Fail in this case because otherwise we will have no
 			 * log message
 			 */
 			error (1, errno, "cannot read %s", fname);
-			break;
-		    }
-		    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
-			continue;
-		    (void) strcpy (p, line);
-		    p += line_length;
+		    break;
 		}
-		if (line) free (line);
-		if (fclose (fp) < 0)
-		    error (0, errno, "warning: cannot close %s", fname);
+		if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
+		    continue;
+		(void) strcpy (p, line);
+		p += line_length;
 	    }
+	    if (line) free (line);
+	    if (fclose (fp) < 0)
+	        error (0, errno, "warning: cannot close %s", fname);
 	}
     }
 
