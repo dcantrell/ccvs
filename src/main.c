@@ -602,9 +602,9 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	    case 'z':
 #ifdef CLIENT_SUPPORT
 		gzip_level = atoi (optarg);
-		if (gzip_level <= 0 || gzip_level > 9)
+		if (gzip_level < 0 || gzip_level > 9)
 		  error (1, 0,
-			 "gzip compression level must be between 1 and 9");
+			 "gzip compression level must be between 0 and 9");
 #endif
 		/* If no CLIENT_SUPPORT, we just silently ignore the gzip
 		   level, so that users can have it in their .cvsrc and not
