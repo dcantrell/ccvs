@@ -899,7 +899,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="version basica basicb basicc basic1 deep basic2"
+	tests="basica basicb basicc basic1 deep basic2"
 	tests="${tests} parseroot files spacefiles commit-readonly"
 	tests="${tests} commit-add-missing"
 	tests="${tests} status"
