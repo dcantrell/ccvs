@@ -1,3 +1,7 @@
+Fri May 23 09:45:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Builds): In comment, update URL of mk.
+
 Thu May 22 09:25:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add comment about yet another way
