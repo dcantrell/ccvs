@@ -496,12 +496,6 @@ int fseeko (FILE *, off_t, int);
 #endif /* WIN32 */
 
 
-#ifdef WOE32
-  /* Under Windows NT, filenames are case-insensitive.  */
-# define FILENAMES_CASE_INSENSITIVE 1
-#endif /* WOE32 */
-
-
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 
