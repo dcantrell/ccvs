@@ -1,5 +1,9 @@
 2004-03-26  Derek Price  <derek@ximbiot.com>
 
+	* INSTALL: Note that build files have been regenerated with MSVC 6.0.
+
+2004-03-26  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note Windows build file regeneration.
 
 2004-03-25  Derek Price  <derek@ximbiot.com>
