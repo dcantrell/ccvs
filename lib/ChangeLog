@@ -1,3 +1,7 @@
+Thu Jan 30 11:35:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* regex.h: Don't prototype re_comp and re_exec.
+
 Tue Jan 28 17:45:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* md5.c, md5.h: Changes so these work without having an integer
