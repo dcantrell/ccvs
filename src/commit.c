@@ -1539,8 +1539,8 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
 	return (R_SKIP_FILES);
 
     /* get commit message */
-    real_repos = Name_Repository (dir, update_dir);
     got_message = 1;
+    real_repos = Name_Repository (dir, update_dir);
     if (
 #ifdef SERVER_SUPPORT
         !server_active &&
@@ -1573,12 +1573,6 @@ commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
 	char *repos = Name_Repository (NULL, update_dir);
 	WriteTag (NULL, write_dirtag, NULL, write_dirnonbranch,
 		  update_dir, repos);
-	free (repos);
-    }
-    if (err == 0)
-    {
-	char *repos = Name_Repository (NULL, update_dir);
-	WriteTemplate (update_dir, 1, repos);
 	free (repos);
     }
 
