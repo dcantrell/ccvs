@@ -89,7 +89,7 @@ DISTFILES = \
 	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh \
-	cvsnt.mak \
+	cvsnt.mak cvsnt.dsp \
 	.cvsignore cvs.spec
 
 ### Subdirectories to run make in for the primary targets.
