@@ -1,3 +1,7 @@
+Tue Dec  2 22:14:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* MINOR-BUGS: Update per info-cvs mail from Steve Cameron.
+
 1997-11-29  Jim Kingdon
 
 	* cvsnt.mak: Remove lib/getwd.c (see lib/ChangeLog for rationale).
