@@ -118,6 +118,13 @@ change_mode (filename, mode_string)
     char *p;
     mode_t mode = 0;
 
+    /* All the USR/GRP/OTH stuff is meaningless under OS/2.  The masks
+       are really all identical; see lib/system.h for details of what
+       happens when NEED_DECOY_PERMISSIONS is set. */
+
+    /* Also, execute seems to be special under OS/2.  You can't pass
+       it to chmod(), because chmod will chmoke on it.  What to do? */
+
     p = mode_string;
     while (*p != '\0')
     {
@@ -142,7 +149,10 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWUSR;
 		if (can_execute)
-		    mode |= S_IXUSR;
+                  {
+                    KFF_DEBUG (printf ("*** S_IXUSR in change_mode().\n"));
+		    /* mode |= S_IXUSR; */
+                  }
 	    }
 	    else if (p[0] == 'g')
 	    {
@@ -151,7 +161,10 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWGRP;
 		if (can_execute)
-		    mode |= S_IXGRP;
+                  {
+                    KFF_DEBUG (printf ("*** S_IXGRP in change_mode().\n"));
+		    /* mode |= S_IXGRP; */
+                  }
 	    }
 	    else if (p[0] == 'o')
 	    {
@@ -160,7 +173,10 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWOTH;
 		if (can_execute)
-		    mode |= S_IXOTH;
+                  {
+                    KFF_DEBUG (printf ("*** S_IXOTH in change_mode().\n"));
+		    /* mode |= S_IXOTH; */
+                  }
 	    }
 	}
 	/* Skip to the next field.  */
