@@ -1,5 +1,12 @@
 2003-10-27  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Move case sensitivity test to the enable-* section and
+	allow override via command line switch.
+	* NEWS: Update last news item to reflect new command line switch.
+	* configure, config.h.in: Regenerated.
+
+2003-10-27  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Add new test for a case insensitive file system.
 	* configure, config.h.in: Regenerated.
 	* NEWS: Note the above change.
