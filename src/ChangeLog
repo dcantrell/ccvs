@@ -1,5 +1,8 @@
 1998-02-16  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* patch.c (patch_fileproc): Check for errors from fclose; if we
+	get -1 from getline check for end of file vs. error.
+
 	* rcs.c (RCS_checkout): Comment return value (0/1, not -1).
 	* commit.c, diff.c, mkmodules.c, patch.c, rcs.c, update.c: Update
 	to match this convention.  Don't suppress errors based on
