@@ -753,7 +753,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
     valtags_filename = xmalloc (strlen (CVSroot_directory)
 				+ sizeof CVSROOTADM
-				+ sizeof CVSROOTADM_HISTORY + 20);
+				+ sizeof CVSROOTADM_VALTAGS + 20);
     strcpy (valtags_filename, CVSroot_directory);
     strcat (valtags_filename, "/");
     strcat (valtags_filename, CVSROOTADM);

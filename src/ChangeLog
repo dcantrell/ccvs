@@ -1,5 +1,10 @@
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* tag.c (tag_check_valid): Correct sizeof CVSROOTADM_HISTORY to
+	use CVSROOTADM_VALTAGS.
+
+Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
+
 	* lock.c (Writer_Lock): If we called lock_wait to wait for a lock,
 	then call lock_obtained when we get it.
 	(set_lock): Likewise.
