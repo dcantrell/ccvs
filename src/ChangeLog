@@ -1,3 +1,8 @@
+2004-06-21  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (writeproxy): Verify that secondary is updated after a
+	commit.  Comment test that verifies that commit took place on primary.
+
 2004-06-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (writeproxy): Test response to a failing rsync.
