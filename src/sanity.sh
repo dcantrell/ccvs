@@ -811,7 +811,7 @@ if test x"$*" = x; then
 	tests="${tests} dirs dirs2 branches branches2 tagc tagf tag-space"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join4 join5 join6"
+	tests="${tests} join join2 join3 join4 join5 join6 join7"
 	tests="${tests} join-readonly-conflict join-admin join-admin-2"
 	tests="${tests} join-rm"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
@@ -9517,6 +9517,71 @@ U temp2\.txt
 	  rm -r join6
 	  rm -rf ${CVSROOT_DIRNAME}/join6
 	  ;;
+
+	join7)
+	  # This test deals with joins that happen with the -n switch
+	  mkdir join7; cd join7
+	  mkdir impdir; cd impdir
+          echo aaa >temp.txt
+	  echo bbb >>temp.txt
+	  echo ccc >>temp.txt
+	  dotest join7-1 \
+"${testcvs} -Q import -minitial join7 vendor vers-1" \
+""
+	  cd ..
+	  dotest join7-2 "${testcvs} -Q co join7" ""
+	  cd join7
+	  echo ddd >> temp.txt
+	  dotest join7-3 "${testcvs} -Q ci -madded-line temp.txt" \
+"Checking in temp.txt;
+$CVSROOT_DIRNAME/join7/temp.txt,v  <--  temp.txt
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../impdir
+	  echo aaaa >temp.txt
+	  echo bbbb >>temp.txt
+	  echo ccc >>temp.txt
+	  echo eee >>temp.txt
+	  dotest join7-4 \
+"${testcvs} -Q import -minitial join7 vendor vers-2" \
+""
+	  cd ../join7
+	  if $remote; then
+            # FIXCVS: This test should NOT return a
+	    # "temp.txt: No such file or directory" error message.
+	  else
+	    dotest join7-5 \
+"${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
+"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.2
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
+rcsmerge: warning: conflicts during merge"
+	  fi
+	  touch temp.txt
+	  dotest join7-6 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
+"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.2
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
+rcsmerge: warning: conflicts during merge" \
+"RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.2
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
+rcsmerge: warning: conflicts during merge"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+            exit 0
+	  fi
+
+	  cd ../..
+	  rm -r join7
+	  rm -rf $CVSROOT_DIRNAME/join7
+	  ;;
+
+
 
 	join-readonly-conflict)
 	  # Previously, only tests 1 & 11 were being tested.  I added the

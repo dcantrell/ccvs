@@ -4119,6 +4119,7 @@ server_updated (finfo, vers, updated, mode, checksum, filebuf)
 	    free (scratched_file);
 	    scratched_file = NULL;
 	}
+	buf_send_counted (protocol);
 	return;
     }
 
