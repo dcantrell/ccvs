@@ -9325,11 +9325,11 @@ U dir2d1/sub2d1/file1"
 	  # else) in Emptydir; Emptydir is a placeholder indicating that
 	  # the working directory doesn't correspond to anything in
 	  # the repository.
-	  dotest emptydir-7 "${testcvs} add emptyfile" \
-"${PROG} [a-z]*: scheduling file .emptyfile. for addition
-${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
-	  dotest_fail emptydir-8 "${testcvs} -q ci -m add" \
-"${PROG} \[[a-z]* aborted\]: cannot check in to ${TESTDIR}/cvsroot/CVSROOT/Emptydir"
+	  dotest_fail emptydir-7 "${testcvs} add emptyfile" \
+"${PROG} \[[a-z]* aborted\]: cannot add to ${TESTDIR}/cvsroot/CVSROOT/Emptydir"
+	  mkdir emptydir
+	  dotest_fail emptydir-8 "${testcvs} add emptydir" \
+"${PROG} \[[a-z]* aborted\]: cannot add to ${TESTDIR}/cvsroot/CVSROOT/Emptydir"
 	  cd ..
 	  rm -rf CVS dir2d1
 

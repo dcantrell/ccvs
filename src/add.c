@@ -59,6 +59,7 @@ add (argc, argv)
     /* Nonzero if we found a slash, and are thus adding files in a
        subdirectory.  */
     int found_slash = 0;
+    const size_t cvsroot_len = strlen (CVSroot_directory);
 
     if (argc == 1 || argc == -1)
 	usage (add_usage);
@@ -219,6 +220,17 @@ add (argc, argv)
 		/* find the repository associated with our current dir */
 		repository = Name_Repository (NULL, update_dir);
 
+		/* don't add stuff to Emptydir */
+		if (strncmp (repository, CVSroot_directory, cvsroot_len) == 0
+		    && ISDIRSEP (repository[cvsroot_len])
+		    && strncmp (repository + cvsroot_len + 1,
+				CVSROOTADM,
+				sizeof CVSROOTADM - 1) == 0
+		    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
+		    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
+			       CVSNULLREPOS) == 0)
+		    error (1, 0, "cannot add to %s", repository);
+
 		/* before we do anything else, see if we have any
 		   per-directory tags */
 		ParseTag (&tag, &date, &nonbranch);
@@ -303,6 +315,17 @@ add (argc, argv)
 
 	/* Find the repository associated with our current dir.  */
 	repository = Name_Repository (NULL, finfo.update_dir);
+
+	/* don't add stuff to Emptydir */
+	if (strncmp (repository, CVSroot_directory, cvsroot_len) == 0
+	    && ISDIRSEP (repository[cvsroot_len])
+	    && strncmp (repository + cvsroot_len + 1,
+			CVSROOTADM,
+			sizeof CVSROOTADM - 1) == 0
+	    && ISDIRSEP (repository[cvsroot_len + sizeof CVSROOTADM])
+	    && strcmp (repository + cvsroot_len + sizeof CVSROOTADM + 1,
+		       CVSNULLREPOS) == 0)
+	    error (1, 0, "cannot add to %s", repository);
 
 	entries = Entries_Open (0, NULL);
 
