@@ -1,5 +1,7 @@
 2000-10-10  Larry Jones  <larry.jones@sdrc.com>
 
+	* server.c (print_error): Make up a message if strerror fails.
+
 	* server.c (pserver_authenticate_connection): Give a real error
 	message for an invalid repository.
 

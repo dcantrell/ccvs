@@ -597,10 +597,16 @@ print_error (status)
     int status;
 {
     char *msg;
+    char tmpstr[80];
+
     buf_output0 (buf_to_net, "error  ");
     msg = strerror (status);
-    if (msg)
-	buf_output0 (buf_to_net, msg);
+    if (msg == NULL)
+    {
+       sprintf (tmpstr, "unknown error %d", status);
+       msg = tmpstr;
+    }
+    buf_output0 (buf_to_net, msg);
     buf_append_char (buf_to_net, '\n');
 
     buf_flush (buf_to_net, 0);
