@@ -263,7 +263,7 @@ extern pid_t getpid (void);
 #define USE_PROTOTYPES 1
 
 /* This is just a call to the Win32 Sleep function.  */
-unsigned sleep (unsigned);
+unsigned int sleep (unsigned int);
 
 /* Don't worry, Microsoft, it's okay for these functions to
    be in our namespace.  */

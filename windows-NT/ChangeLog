@@ -1,3 +1,11 @@
+Thu Aug 22 19:12:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	The following changes are said to be necessary (but not
+	sufficient) for Win95:
+	* config.h (sleep): Use "unsigned int" not just "unsigned".
+	* filesubr.c (deep_remove_dir): Treat EACCES as well as ENOTEMPTY
+	as an indication that we need to remove the directory.
+
 Fri Aug 16 16:06:22 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* Makefile.in (installdirs): new (empty) target
