@@ -1,3 +1,7 @@
+2000-07-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (modules5): New tests for module programs.
+
 2000-07-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* filesubr.c (copy_file, xcmp): Handle systems (like Plan 9) that

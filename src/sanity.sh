@@ -638,7 +638,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
 	# Checking out various places (modules, checkout -d, &c)
-	tests="${tests} modules modules2 modules3 modules4"
+	tests="${tests} modules modules2 modules3 modules4 modules5"
 	tests="${tests} mkmodules-temp-file-removal"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
 	# Log messages, error messages.
@@ -7045,6 +7045,7 @@ bluegill"
 	  # ampersand modules: modules2
 	  # -s: modules.
 	  # -d: modules, modules3, cvsadm
+	  # -i, -o, -u, -e, -t: modules5
 	  # slashes in module names: modules3
 
 	  ############################################################
@@ -7854,6 +7855,225 @@ add-it
 	  rm -r 1
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	modules5)
+	  # Test module programs
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  dotest modules5-1 "${testcvs} -q co first-dir" ""
+	  cd first-dir
+	  mkdir subdir
+	  dotest modules5-2 "${testcvs} add subdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/subdir added to the repository"
+	  cd subdir
+	  mkdir ssdir
+	  dotest modules5-3 "${testcvs} add ssdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/subdir/ssdir added to the repository"
+	  touch a b
+	  dotest modules5-4 "${testcvs} add a b" \
+"${PROG} [a-z]*: scheduling file .a. for addition
+${PROG} [a-z]*: scheduling file .b. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+
+	  dotest modules5-5 "${testcvs} ci -m added" \
+"${PROG} [a-z]*: Examining .
+${PROG} [a-z]*: Examining ssdir
+RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/a,v
+done
+Checking in a;
+${TESTDIR}/cvsroot/first-dir/subdir/a,v  <--  a
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/b,v
+done
+Checking in b;
+${TESTDIR}/cvsroot/first-dir/subdir/b,v  <--  b
+initial revision: 1\.1
+done"
+
+	  cd ..
+	  dotest modules5-6 "${testcvs} -q co CVSROOT" \
+"U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/editinfo
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg"
+
+	  for i in checkin checkout update export tag; do
+	    cat >> ${CVSROOT_DIRNAME}/$i.sh <<EOF
+#! /bin/sh
+echo "$i script invoked in \`pwd\`"
+echo "args: \$@"
+EOF
+	    chmod +x ${CVSROOT_DIRNAME}/$i.sh
+	  done
+
+	  OPTS="-i ${CVSROOT_DIRNAME}/checkin.sh -o${CVSROOT_DIRNAME}/checkout.sh -u ${CVSROOT_DIRNAME}/update.sh -e ${CVSROOT_DIRNAME}/export.sh -t${CVSROOT_DIRNAME}/tag.sh"
+	  cat >CVSROOT/modules <<EOF
+realmodule ${OPTS} first-dir/subdir a
+dirmodule ${OPTS} first-dir/subdir
+namedmodule -d nameddir ${OPTS} first-dir/subdir
+EOF
+
+	  dotest modules5-7 "${testcvs} ci -m 'add modules' CVSROOT/modules" \
+"Checking in CVSROOT/modules;
+${TESTDIR}/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ..
+	  rm -rf first-dir
+	  # Test that real modules check out to realmodule/a, not subdir/a.
+	  if test "$remote" = "yes"; then
+	    dotest modules5-8 "${testcvs} co realmodule" \
+"U realmodule/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .realmodule..
+checkout script invoked in .*
+args: realmodule"
+	  else
+	    dotest modules5-8 "${testcvs} co realmodule" \
+"U realmodule/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .realmodule..
+checkout script invoked in ${TESTDIR}/1
+args: realmodule"
+	  fi
+	  dotest modules5-9 "test -d realmodule && test -f realmodule/a" ""
+	  dotest_fail modules5-10 "test -f realmodule/b" ""
+	  if test "$remote" = "yes"; then
+	    dotest modules5-11 "${testcvs} -q co realmodule" \
+"checkout script invoked in .*
+args: realmodule"
+	    dotest modules5-12 "${testcvs} -q update" \
+"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in /.*/realmodule
+args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    echo "change" >>realmodule/a
+	    dotest modules5-13 "${testcvs} -q ci -m." \
+"Checking in realmodule/a;
+${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+checkin script invoked in /.*/realmodule
+args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	  else
+	    dotest modules5-11 "${testcvs} -q co realmodule" \
+"checkout script invoked in ${TESTDIR}/1
+args: realmodule"
+	    dotest modules5-12 "${testcvs} -q update" \
+"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in ${TESTDIR}/1/realmodule
+args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    echo "change" >>realmodule/a
+	    dotest modules5-13 "${testcvs} -q ci -m." \
+"Checking in realmodule/a;
+${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+checkin script invoked in ${TESTDIR}/1/realmodule
+args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	  fi
+	  dotest modules5-14 "echo yes | ${testcvs} release -d realmodule" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .realmodule.: "
+	  dotest modules5-15 "${testcvs} -q rtag -Dnow MYTAG realmodule" \
+"tag script invoked in ${TESTDIR}/1
+args: realmodule MYTAG"
+	  if test "$remote" = "yes"; then
+	    dotest modules5-16 "${testcvs} -q export -r MYTAG realmodule" \
+"U realmodule/a
+export script invoked in .*
+args: realmodule"
+	  else
+	    dotest modules5-16 "${testcvs} -q export -r MYTAG realmodule" \
+"U realmodule/a
+export script invoked in ${TESTDIR}/1
+args: realmodule"
+	  fi
+
+	  dotest_fail modules5-17 "${testcvs} co realmodule/a" \
+"${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory' \
+"${PROG}"' [a-z]*: module `realmodule/a'\'' is a request for a file in a module which is not a directory
+'"${PROG}"' \[[a-z]* aborted\]: cannot expand modules'
+
+	  # FIXCVS: The client gets confused in these cases and tries to
+	  # store the scripts in the wrong places.
+	  if test "$remote" != "yes"; then
+	    # Now test the ability to check out a single file from a directory
+	    dotest modules5-18 "${testcvs} co dirmodule/a" \
+"U dirmodule/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
+checkout script invoked in ${TESTDIR}/1
+args: dirmodule"
+	    dotest modules5-19 "test -d dirmodule && test -f dirmodule/a" ""
+	    dotest_fail modules5-20 "test -f dirmodule/b" ""
+	    dotest modules5-21 "echo yes | ${testcvs} release -d dirmodule" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .dirmodule.: "
+
+	    # Now test the ability to correctly reject a non-existent filename.
+	    # For maximum studliness we would check that an error message is
+	    # being output.
+	    # We accept a zero exit status because it is what CVS does
+	    # (Dec 95).  Probably the exit status should be nonzero,
+	    # however.
+	    dotest modules5-22 "${testcvs} co dirmodule/nonexist" \
+"${PROG} [a-z]*: warning: new-born dirmodule/nonexist has disappeared
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkout\.sh. .dirmodule..
+checkout script invoked in ${TESTDIR}/1
+args: dirmodule"
+
+	    # We tolerate the creation of the dirmodule directory, since that
+	    # is what CVS does, not because we view that as preferable to not
+	    # creating it.
+	    dotest_fail modules5-23 "test -f dirmodule/a || test -f dirmodule/b" ""
+	    rm -r dirmodule
+
+	    # Now test that a module using -d checks out to the specified
+	    # directory.
+	    dotest modules5-24 "${testcvs} -q co namedmodule" \
+"U nameddir/a
+U nameddir/b
+checkout script invoked in ${TESTDIR}/1
+args: nameddir"
+	    dotest modules5-25 "test -f nameddir/a && test -f nameddir/b" ""
+	    echo add line >>nameddir/a
+	    # This seems suspicious: when we checkout an existing directory,
+	    # the checkout script gets executed in addition to the update
+	    # script.  Is that by design or accident?
+	    dotest modules5-26 "${testcvs} -q co namedmodule" \
+"M nameddir/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in ${TESTDIR}/1/nameddir
+args: ${CVSROOT_DIRNAME}/first-dir/subdir
+checkout script invoked in ${TESTDIR}/1
+args: nameddir"
+	    rm nameddir/a
+	    dotest modules5-27 "${testcvs} -q co namedmodule" \
+"U nameddir/a
+${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
+update script invoked in ${TESTDIR}/1/nameddir
+args: ${CVSROOT_DIRNAME}/first-dir/subdir
+checkout script invoked in ${TESTDIR}/1
+args: nameddir"
+	    dotest modules5-28 "echo yes | ${testcvs} release -d nameddir" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .nameddir.: "
+	  fi
+
+	  cd ..
+	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/*.sh
 	  ;;
 
 	mkmodules-temp-file-removal)
