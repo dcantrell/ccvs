@@ -1770,6 +1770,13 @@ diff -c -r1\.1 ssfile
 --- 1,2 ----
   ssfile
 ${PLUS} ssfile line 2"
+	  dotest_fail basica-6.4 "${testcvs} -q diff -c -rBASE -C3isacrowd" \
+"Index: sdir/ssdir/ssfile
+===================================================================
+RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
+retrieving revision 1\.1
+diff -c -C3isacrowd -r1\.1 ssfile
+${PROG} [a-z]*: invalid context length argument"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
 "Checking in sdir/ssdir/ssfile;
 ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
@@ -1816,22 +1823,9 @@ done"
 	  dotest basica-8a5 "${testcvs} -q up -A ./" "[UP] ssfile"
 
 	  cd ../..
-	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \
-"Index: sdir/ssdir/ssfile
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
-retrieving revision 1\.2
-retrieving revision 1\.3
-diff -r1\.2 -r1\.3"
-
-	  dotest_fail basica-8b1 "${testcvs} -q diff -r1.2 -r1.3 -C 3isacrowd" \
-"Index: sdir/ssdir/ssfile
-===================================================================
-RCS file: ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v
-retrieving revision 1\.2
-retrieving revision 1\.3
-diff -C3isacrowd -r1\.2 -r1\.3
-${PROG} [a-z]*: invalid context length argument"
+	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" ''
+	  dotest basica-8b1 "${testcvs} -q diff -r1.2 -r1.3 -C 3isacrowd" \
+''
 
 	  # The .* here will normally be "No such file or directory",
 	  # but if memory serves some systems (AIX?) have a different message.
@@ -4571,7 +4565,13 @@ done"
 	  # Test diff of a dead file.
 	  dotest_fail death2-diff-3 \
 "${testcvs} -q diff -r1.1 -rbranch -c file1" \
-"${PROG} [a-z]*: file1 was removed, no comparison available"
+"${PROG} [a-z]*: Tag branch refers to a dead (removed) revision in file .file1.\.
+${PROG} [a-z]*: No comparison available\.  Pass .-N. to .${PROG} diff.${QUESTION}"
+	  # and in reverse
+	  dotest_fail death2-diff-3a \
+"${testcvs} -q diff -rbranch -r1.1 -c file1" \
+"${PROG} [a-z]*: Tag branch refers to a dead (removed) revision in file .file1.\.
+${PROG} [a-z]*: No comparison available\.  Pass .-N. to .${PROG} diff.${QUESTION}"
 
 	  dotest_fail death2-diff-4 \
 "${testcvs} -q diff -r1.1 -rbranch -N -c file1" \
@@ -4585,6 +4585,20 @@ diff -N file1
 \*\*\* 1 \*\*\*\*
 - first revision
 --- 0 ----"
+	  # and in reverse
+	  dotest_fail death2-diff-4a \
+"${testcvs} -q diff -rbranch -r1.1 -N -c file1" \
+"Index: file1
+===================================================================
+RCS file: file1
+diff -N file1
+\*\*\* /dev/null	${RFCDATE_EPOCH}
+--- file1	${RFCDATE}	[0-9.]*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 0 \*\*\*\*
+--- 1 ----
++ first revision"
+
 
 	  dotest_fail death2-diff-5 "${testcvs} -q diff -rtag -c ." \
 "${PROG} [a-z]*: file1 no longer exists, no comparison available"
@@ -4802,7 +4816,8 @@ U file4"
 
 	  # Make sure diff only reports appropriate files.
 	  dotest_fail death2-diff-13 "${testcvs} -q diff -r rdiff-tag" \
-"${PROG} [a-z]*: file1 is a new entry, no comparison available"
+"${PROG} [a-z]*: Tag rdiff-tag refers to a dead (removed) revision in file .file1.\.
+${PROG} [a-z]*: No comparison available\.  Pass .-N. to .${PROG} diff.${QUESTION}"
 
 	  dotest_fail death2-diff-14 "${testcvs} -q diff -r rdiff-tag -c -N" \
 "Index: file1

@@ -222,7 +222,8 @@ int RCS_checkout PROTO ((RCSNode *, char *, char *, char *, char *, char *,
 			 RCSCHECKOUTPROC, void *));
 int RCS_checkin PROTO ((RCSNode *rcs, char *workfile, char *message,
 			char *rev, int flags));
-int RCS_cmp_file PROTO ((RCSNode *, char *, char *, const char *));
+int RCS_cmp_file PROTO(( RCSNode *, char *, char **, char *, char *,
+			 const char * ));
 int RCS_settag PROTO ((RCSNode *, const char *, const char *));
 int RCS_deltag PROTO ((RCSNode *, const char *));
 int RCS_setbranch PROTO((RCSNode *, const char *));
