@@ -1240,21 +1240,22 @@ typical for newly created files, except that sometimes
 @sc{cvs} creates them read-only (see the sections on
 watches, @ref{Setting a watch}; -r, @ref{Global
 options}; or CVSREAD, @ref{Environment variables}).
+
+Note that using the client/server @sc{cvs}
+(@pxref{Remote repositories}), there is no good way to
+set @code{CVSUMASK}; the setting on the client machine
+has no effect.  If you are connecting with @code{rsh}, you
+can set @code{CVSUMASK} in @file{.bashrc} or @file{.cshrc}, as
+described in the documentation for your operating
+system.  This behavior might change in future versions
+of @sc{cvs}; do not rely on the setting of
+@code{CVSUMASK} on the client having no effect.
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
 @c FIXME: Need one place which discusses this
 @c read-only files thing.  Why would one use -r or
 @c CVSREAD?  Why would one use watches?  How do they interact?
-@c FIXCVS: Currently CVSUMASK does not control the mode
-@c of the history files (e.g. if CVSUMASK is 002 and the
-@c user's umask is 077, then the history files get created with
-@c mode 0400 or 0500, which means other users cannot check
-@c them out.  This is a bug; the user's umask should
-@c only control the mode used in working directories).
-@c The wording above tries to waffle because
-@c we don't want to mislead people, yet it is not clear
-@c we should document this (broken) behavior instead of fixing it.
-@c We need to state
+@c FIXME: We need to state
 @c whether using CVSUMASK removes the need for manually
 @c fixing permissions (in fact, if we are going to mention
 @c manually fixing permission, we better document a lot
