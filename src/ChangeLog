@@ -1,4 +1,9 @@
-2005-03-15  Derek Price  <derek@ximbiot.com>
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (setup_logfiles): Failure to open a debug log file
+	should be non-fatal.
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* server.c (cvs_outerr): Quote error test in syslog messages.
 
