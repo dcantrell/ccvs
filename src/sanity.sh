@@ -6196,6 +6196,7 @@ done"
 	  cat >modules <<EOF
 all -a first-dir
 some -a !first-dir/subdir first-dir
+somewhat -a first-dir !first-dir/subdir
 EOF
 	  dotest modules4-8 "${testcvs} -q ci -m add-modules" \
 "Checking in modules;
@@ -6215,6 +6216,21 @@ U first-dir/subdir/file2"
 
 	  dotest modules4-10 "${testcvs} -q co some" "U first-dir/file1"
 	  dotest_fail modules4-11 "test -d first-dir/subdir" ''
+	  rm -r first-dir
+
+	  if test "$remote" = no; then
+	    # This is strange behavior, in that the order of the
+	    # "!first-dir/subdir" and "first-dir" matter, and it isn't
+	    # clear that they should.  I suspect it is long-standing
+	    # strange behavior but I haven't verified that.
+	    dotest modules4-11a "${testcvs} -q co somewhat" \
+"U first-dir/file1
+U first-dir/subdir/file2"
+	  else
+	    # But remote seems to do it the other way.
+	    dotest modules4-11a "${testcvs} -q co somewhat" "U first-dir/file1"
+	    dotest_fail modules4-11b "test -d first-dir/subdir" ''
+	  fi
 	  rm -r first-dir
 
 	  cd ..
