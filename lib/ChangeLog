@@ -1,5 +1,10 @@
 2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* test-getdate.sh: Remove non-portable 'Feb 29, 2096 8 years'
+	test case. Add comments about portable dates.
+
+2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
+
 	* test-getdate.sh (TZ): Set to UTC0 instead of UTC to fix MacOS X
 	problem.
 
