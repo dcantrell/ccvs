@@ -795,3 +795,5 @@ we need to add a call to strip_trailing_slashes in root.c
 can tell, unlink_file aborts in noexec mode and CVS_UNLINK does not.  I'm not
 sure it would be possible to remove even the use of temp files in noexec mode,
 but most unlinks should probably be using unlink_file and not CVS_UNLINK.
+
+198.  Remove references to deprecated cvs_temp_name function.
