@@ -1011,8 +1011,17 @@ done'
 			echo "FAIL: test 69" | tee -a ${LOGFILE} ; exit 1
 		fi
 
-		# add again and create second file
-		touch file1 file2
+		dotest_fail 69a0 "test -f file1" ''
+		# get the old contents of file1 back
+		if ${testcvs} update -p -r 1.1 file1 >file1 2>>${LOGFILE}; then
+		  pass 69a1
+		else
+		  fail 69a1
+		fi
+		dotest 69a2 "cat file1" ''
+
+		# create second file
+		touch file2
 		if ${CVS} add file1 file2  2>> ${LOGFILE}; then
 			echo "PASS: test 70" >>${LOGFILE}
 		else

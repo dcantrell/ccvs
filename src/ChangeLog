@@ -1,3 +1,8 @@
+Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: New tests 69a* test use of update -p to restore old
+	version of dead file.
+
 Wed Jan 31 18:32:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* ChangeLog-9395: Remove duplicate entries from 1996 which
