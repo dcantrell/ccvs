@@ -184,6 +184,7 @@ extern void fnfold (char *FILENAME);
 #define START_SERVER_RETURNS_SOCKET 1
 #define SEND_NEVER_PARTIAL 1
 #define SYSTEM_GETCALLER() getlogin ()
+#define GETPWNAM_MISSING 1
 
 /* Avoid name conflicts with VMS libraries.  */
 #define getopt cvs_getopt

@@ -1,5 +1,8 @@
 Tue Sep  9 18:53:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* pwd.h, pwd.c: Remove getpwnam per change to expand_path.
+	* config.h: Define GETPWNAM_MISSING.
+
 	* pwd.c (getpwuid): Declare argument as unsigned int not uid_t.
 
 	* config.h (SYSTEM_GETCALLER): Define.
