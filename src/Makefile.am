@@ -90,6 +90,7 @@ cvs_SOURCES = \
 	fileattr.h \
 	hardlink.h \
 	hash.h \
+	history.h \
 	myndbm.h \
 	rcs.h \
 	root.h \
