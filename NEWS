@@ -35,7 +35,8 @@ GENERAL USER ISSUES
   for case insensitive clients - servers are relying on the client to preserve
   the case of checked out files.
 
-* Thanks to Ville Skyttä the man page is a bit more accurate.
+* Thanks to Ville Skyttä the man page has a few less spelling errors and is
+  slightly more accurate.
 
 * Thanks to Ville Skyttä some unused variables were removed from the log_accum
   Perl script in contrib.

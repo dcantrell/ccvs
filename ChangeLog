@@ -1,5 +1,9 @@
 2004-02-12  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note Ville Skyttä's other recent man page patch.
+
+2004-02-12  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note lock wait seg fault fix.
 
 2004-02-11  Derek Price  <derek@ximbiot.com>
