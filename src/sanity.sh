@@ -4010,6 +4010,32 @@ T file1
 W file2 : the_tag already exists on version 1.1.2.1 : NOT MOVING tag to version 1.1.2.2"
 	  dotest rcslib-symlink-6 "ls -l $CVSROOT_DIRNAME/first-dir/file2,v" \
 ".*$CVSROOT_DIRNAME/first-dir/file2,v -> file1,v"
+
+	  # Symlinks tend to interact poorly with the Attic.
+	  cd ..
+	  mkdir 2; cd 2
+	  dotest rcslib-symlink-7 "${testcvs} -q co first-dir" \
+"U first-dir/file1
+U first-dir/file2"
+	  cd first-dir
+	  dotest rcslib-symlink-8 "${testcvs} rm -f file2" \
+"${PROG} [a-z]*: scheduling .file2. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest rcslib-symlink-9 "${testcvs} -q ci -m rm-it" \
+"Removing file2;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file2
+new revision: delete; previous revision: 1\.2
+done"
+	  # OK, why this message happens twice is relatively clear
+	  # (the check_* and rtag_* calls to start_recursion).
+	  # Why it happens a third time I didn't try to find out.
+	  dotest rcslib-symlink-10 \
+"${testcvs} -q rtag -b -r the_tag brtag first-dir" \
+"${PROG} [a-z]*: could not read RCS file for file2
+${PROG} [a-z]*: could not read RCS file for first-dir/file2
+${PROG} [a-z]*: could not read RCS file for first-dir/file2"
+	  cd ..
+
 	  cd ..
 
 	  if test "$keep" = yes; then
@@ -4018,7 +4044,7 @@ W file2 : the_tag already exists on version 1.1.2.1 : NOT MOVING tag to version 
 	  fi
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -r first-dir
+	  rm -r first-dir 2
 	  ;;
 
 	multibranch)
@@ -17818,11 +17844,17 @@ No conflicts created by this import"
 
 	  # There were some duplicated warnings and such; only test
 	  # for the part of the error message which makes sense.
-	  dotest_fail reposmv-2 "${testcvs} update" "${DOTSTAR}
+	  # Bug: "skipping directory " without filename.
+	  if test "$remote" = no; then
+	    dotest reposmv-2 "${testcvs} update" "${DOTSTAR}
 ${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
-${PROG} \[update aborted\]: cannot open directory ${TESTDIR}/cvsroot/dir1: No such file or directory" \
+${PROG} update: cannot open directory ${TESTDIR}/cvsroot/dir1: No such file or directory
+${PROG} update: skipping directory "
+	  else
+	    dotest_fail reposmv-2 "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
+	  fi
 
 	  # CVS/Root overrides $CVSROOT
 	  if test "$remote" = no; then

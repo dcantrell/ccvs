@@ -1,5 +1,11 @@
 1998-11-24  Jim Kingdon
 
+	* recurse.c (do_file_proc): Check for errors from RCS_parse.
+	* sanity.sh (rcslib-symlink-7 through rcslib-symlink-10): New
+	tests, test for this.
+
+	* sanity.sh (reposmv-2): Adjust for 22-Nov change to Find_Names.
+
 	* entries.c (Register): If we can't write Entries.Log, make it a
 	nonfatal error.
 	* sanity.sh (dirs2): Test for this fix.
