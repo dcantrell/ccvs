@@ -1,10 +1,26 @@
 #! @PERL@ -w
 ########################################################################
+#
 #  Copyright (c) 2000, 2001 by Donald Sharp <sharpd@cisco.com>
 #  All Rights Reserved
 #
+#  Some portions Copyright (c) 2002, 2003 by
+#                Derek R. Price <mailto:derek@ximbiot.com>
+#                & Ximbiot <http://ximbiot.com>.
+#  All rights reserved.
+#
 #  Permission is granted to copy and/or distribute this file, with or
 #  without modifications, provided this notice is preserved.
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2, or (at your option)
+#  any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.])
 #
 ########################################################################
 
@@ -14,31 +30,54 @@
 
 =head1 SYNOPSIS
 
-    check_cvs.pl
+    perldoc check_cvs.pl
+    check_cvs.pl --help
+    check_cvs.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
+                 [module]...
 
 =head1 DESCRIPTION
 
     This script will search through a repository and determine if
     any of the files in it are corrupted.
 
-    Please do not run this script inside of the repository itself,
-    it will cause it too fail.
-
-    Also it currently can only be run over the entire repository,
-    so only point your CVSROOT at the actual CVSROOT.
+    Please do not run this script inside of the repository itself.
+    This will cause it too fail.
 
 =head1 OPTIONS
 
-    There are no options.
+    --help           Print this very help text.
+    -d,--cvsroot=CVSROOT
+                     Use repository specified by CVSROOT.  Defaults to
+                     the contents of the ./CVS/Root file when it exists
+                     and is readable, then to the contents of the
+                     $CVSROOT environment variable when it is set and
+                     non-empty.
+    -e,--exec=SCRIPT Execute (as from command prompt) or evaluate (as a
+                     perl script) SCRIPT for each RCS archive in
+                     CVSROOT.  Executed scripts are passed CVSROOT FILE
+                     NAME, where CVSROOT is what you'd think, FILE is
+                     the path to the file relative to CVSROOT and
+                     suitable for use as an argument to cvs co, cvs
+                     rlog, and so on, and NAME is FILE minus the path.
+                     An evaluated SCRIPT will find the same three
+                     arguments in the same order in @_.
+    -v,--verbose     Print verbose debugging information.
+
+=head1 ARGUMENTS
+
+    modules   The module in the repository to examine.  Defaults to the
+              contents of the ./CVS/Repository file when it exists and
+              is readable, then to "." (all modules).
 
 =head1 EXAMPLES
 
     setenv CVSROOT /release/111/cvs
-
-    # To see more verbose output
-    setenv CVSDEBUGEDIT 1
-
     check_cvs.pl
+
+
+    check_cvs.pl -d /another/cvsroot --verbose --exec '
+    system "grep", "This string means I\'m a bad file!", "$_[2],v"
+        or die "File $_[0]/$_[1],v is bad!"'
 
 =head1 SEE ALSO
 
@@ -51,23 +90,32 @@
 ######################################################################
 use strict;
 
+use Cwd;
 use File::Find;
 use File::Basename;
 use File::Path;
-use Cwd;
+use File::Spec;
+use Getopt::Long;
+use IO::File;
+use Pod::Usage;
 
 ######################################################################
 #                    GLOBALS                                         #
 ######################################################################
 
-my @list_of_broken_files;
-my @extra_files;
-my $verbose = 0;
+use vars qw(
+            $cvsroot
+            @extra_files
+            @ignore_files
+            @list_of_broken_files
+            @scripts
+            $total_revisions
+            $total_interesting_revisions
+            $total_files
+            $verbose
+           );
 
-my $total_revisions;
-my $total_interesting_revisions;
-my $total_files;
-my @ignore_files;
+
 
 ######################################################################
 #                    SUBROUTINES                                     #
@@ -85,11 +133,12 @@ my @ignore_files;
 #      NONE
 #
 #    GLOBALS :
-#      $ENV{ CVSROOT }       - The CVS repository to search through
-#      $ENV{ CVSDEBUGEDIT }  - Turn on Debugging.
+#      $cvsroot              - The CVS repository to search through.
+#      $ENV{ CVSROOT }       - The default CVS repository to search through.
 #      @list_of_broken_files - The list of files that need to
 #                              be fixed.
 #      $verbose              - is verbose mode on?
+#      @scripts              - scripts to run on checked out files.
 #      $total_revisions      - The number of revisions considered
 #      $total_interesting_revisions - The number of revisions used
 #      $total_files          - The total number of files looked at.
@@ -102,56 +151,111 @@ my @ignore_files;
 #      a nice safe spot( like /tmp ) outside of the repository.
 #
 ######################################################################
-my $directory_to_look_at;
-
-select (STDOUT); $| = 1;    # make unbuffered
-
-$total_revisions = 0;
-$total_interesting_revisions = 0;
-$total_files = 0;
-
-if( !exists( $ENV{ CVSROOT } ) )
+sub main
 {
-    die( "The script should be run with the CVSROOT environment variable set" );
+	my $help;
+
+	$total_revisions = 0;
+	$total_interesting_revisions = 0;
+	$total_files = 0;
+
+	Getopt::Long::Configure( "bundling" );
+	unless( GetOptions( 'verbose|v!' => \$verbose,
+	                    'cvsroot|d=s' => \$cvsroot,
+	                    'help|h|?!' => \$help,
+	                    'exec|e=s' => \@scripts ) )
+	{
+		pod2usage( 2 );
+		exit 2;
+	}
+
+	pod2usage( -exitval => 2,
+	           -verbose => 1,
+	           -output => \*STDOUT )
+		if $help;
+
+	print STDERR "Verbose Mode Turned On\n" if $verbose;
+
+	if( $verbose )
+	{
+		my $count;
+		foreach my $script (@scripts)
+		{
+			$count++;
+			print STDERR "Script $count: ***** ***** ***** ***** *****\n"
+				. $script . "\n";
+		}
+	}
+
+	if( !$cvsroot && -f "CVS/Root" && -r "CVS/Root" )
+	{
+		my $file = new IO::File "< CVS/Root";
+		$cvsroot = $file->getline;
+		chomp $cvsroot;
+	}
+	$cvsroot = $ENV{'CVSROOT'} unless $cvsroot;
+	pod2usage( "error: Must set CVSROOT" ) unless $cvsroot;
+
+	if( $cvsroot =~ /^:\w+:/ && $cvsroot !~ /^:local:/
+	    || $cvsroot =~ /@/ )
+	{
+		print STDERR "CVSROOT must be :local:\n";
+		exit 2;
+	}
+
+	for (@scripts)
+	{
+		$_ = File::Spec->rel2abs ($_) if -x $_;
+	}
+
+
+	if( !scalar( @ARGV ) && -f "CVS/Repository" && -r "CVS/Repository" )
+	{
+		my $file = new IO::File "< CVS/Repository";
+		my $module = $file->getline;
+		chomp $module;
+		push @ARGV, $module;
+	}
+
+	push @ARGV, "." unless( scalar @ARGV );
+
+	foreach my $directory_to_look_at ( @ARGV )
+	{
+		$directory_to_look_at = File::Spec->catfile( $cvsroot,
+		                                             $directory_to_look_at );
+
+		my $sym_count = 0;
+		while( -l $directory_to_look_at )
+		{
+			$directory_to_look_at = readlink( $directory_to_look_at );
+			$sym_count += 1;
+			die( "Encountered too many symlinks for CVSROOT ($cvsroot)\n" )
+				if( $sym_count > 5 );
+		}
+
+		print STDERR "Processing: $directory_to_look_at\n" if( $verbose );
+		@ignore_files = get_ignore_files_from_cvsroot( $directory_to_look_at );
+		find( \&process_file, $directory_to_look_at );
+
+		my $num_files = @list_of_broken_files;
+		print( "List of corrupted files\n" ) if( $num_files > 0 );
+		foreach my $broken ( @list_of_broken_files )
+		{
+			print( "**** File: $broken\n" );
+		}
+
+		$num_files = @extra_files;
+		print( "List of Files That Don't belong in Repository:\n" ) if( $num_files > 0 );
+		foreach my $extra ( @extra_files )
+		{
+			print( "**** File: $extra\n" );
+		}
+		print( "Total Files: $total_files\n" );
+		print( "Total Revisions: $total_revisions Interesting Revisions: $total_interesting_revisions\n" );
+	}
 }
 
-if( exists( $ENV{ CVSDEBUGEDIT } ) )
-{
-    $verbose = 1;
-    print( "Verbose Mode Turned On\n" );
-}
 
-$directory_to_look_at = $ENV{ CVSROOT };
-my $sym_count = 0;
-while( -l $directory_to_look_at )
-{
-    $directory_to_look_at = readlink( $directory_to_look_at );
-    $sym_count += 1;
-    if( $sym_count > 5 )
-    {
-        die( "Encountered too many symlinks for $ENV{ CVSROOT }\n" );
-    }
-}
-
-print( "Processing: $directory_to_look_at\n" ) if( $verbose );
-@ignore_files = &get_ignore_files_from_cvsroot( $directory_to_look_at );
-find( \&process_file, $directory_to_look_at );
-
-my $num_files = @list_of_broken_files;
-print( "List of corrupted files\n" ) if( $num_files > 0 );
-foreach my $broken ( @list_of_broken_files )
-{
-    print( "**** File: $broken\n" );
-}
-
-$num_files = @extra_files;
-print( "List of Files That Don't belong in Repository:\n" ) if( $num_files > 0 );
-foreach my $extra ( @extra_files )
-{
-    print( "**** File: $extra\n" );
-}
-print( "Total Files: $total_files\n" );
-print( "Total Revisions: $total_revisions Interesting Revisions: $total_interesting_revisions\n" );
 
 ######################################################################
 #
@@ -167,7 +271,8 @@ print( "Total Revisions: $total_revisions Interesting Revisions: $total_interest
 #      NONE
 #
 #    GLOBALS :
-#      $ENV{ CVSROOT } - The CVS repository to search through
+#      $cvsroot               - The CVS repository to search through
+#      $File::Find::name      - The absolute path of the file being examined.
 #
 #    RETURNS :
 #      NONE
@@ -181,9 +286,8 @@ sub process_file
     my $path = $File::Find::name;
 
     $total_files += 1;
-    $path =~ s/^$directory_to_look_at\///;
+    $path =~ s#^$cvsroot/##;
 
-    print( "\tProcessing File: $path\n" ) if( $verbose );
     if( $path =~ /,v$/ )
     {
         $path =~ s/,v$//;
@@ -192,10 +296,9 @@ sub process_file
     elsif( ! -d $File::Find::name )
     {
         my $save = 0;
-
         foreach my $ignore ( @ignore_files )
         {
-            if( $path =~ /$ignore/ )
+            if( $path =~ $ignore )
             {
                 $save = 1;
                 last;
@@ -223,10 +326,16 @@ sub process_file
 #      b)  For Each revision try to retrieve that version
 #              - If that fails the file is broken, save the fact
 #                and continue processing other files.
-#      c)  Continue on 
+#      c)  Attempt to exec or evaluate any scripts in @scripts (passed in as
+#          arguments to --exec).  If executable scripts exit with a non-zero
+#          status or evaluated scripts set $@ (die), print $status or $@
+#          as a warning.
+#      d)  Continue on 
 #
 #    PARAMETERS :
-#      $file - The file to look at.
+#      $file - The path of the file to look at, relative to $cvsroot and
+#              suitable for use as an argument to `cvs co', `cvs rlog', and
+#              the rest of CVS's r* commands.
 #
 #    GLOBALS :
 #      NONE
@@ -243,9 +352,9 @@ sub process_file
 sub look_at_cvs_file
 {
     my( $file ) = @_;
-    my( $name, $path, $suffix ) = fileparse( $file );
+    my( $name, $path ) = fileparse( $file );
 
-    if( $path =~ s/Attic\/$// )
+    if( $path =~ s#Attic/$## )
     {
         $file = $path . $name;
     }
@@ -254,7 +363,9 @@ sub look_at_cvs_file
 
     if( !defined( $revisions ) )
     {
-        print( "\t$file is corrupted, this was determined via a cvs log command\n" ) if( $verbose );
+        print "\t$file is corrupted, this was determined via a cvs log command"
+		      . "\n"
+			if $verbose;
         push( @list_of_broken_files, $file );
         return();
     }
@@ -263,15 +374,37 @@ sub look_at_cvs_file
 
     foreach my $revision ( @int_revisions )
     {
-        print( "\t\tLooking at Revision: $revision\n" ) if( $verbose );
+        print "\t\tLooking at Revision: $revision\n" if $verbose;
         if( !check_revision( $file, $revision ) )
         {
-            print( "\t$file is corrupted in revision: $revision\n" ) if( $verbose );
+            print "\t$file is corrupted in revision: $revision\n"
+				if $verbose;
             push( @list_of_broken_files, $file );
             return();
         }
     }
 
+	my $count;
+	foreach my $script (@scripts)
+	{
+		$count++;
+		if (-x $script)
+		{
+			# exec external script
+			my $status = system $script, $cvsroot, $file, $name;
+			warn "'$script $cvsroot $file $name' exited with status " . $status
+				if $status;
+		}
+		else
+		{
+			# eval script
+			@_ = ($cvsroot, $file, $name);
+			eval $script;
+			warn "script $count ($cvsroot, $file, $name) exited abnormally: "
+			     . $@
+				if $@;
+		}
+	}
 }
 
 ######################################################################
@@ -301,36 +434,34 @@ sub look_at_cvs_file
 ######################################################################
 sub get_history
 {
-    my( $file ) = @_;
-    $file =~ s/(["\$`\\])/\\$1/g;
-    my @revisions;
-    my $revision;
-    my $ignore = 1;
-    my $save_ = $_;
+	my( $file ) = @_;
+	$file =~ s/(["\$`\\])/\\$1/g;
+	my @revisions;
+	my $revision;
 
-    open( FILE, "rlog -N \"$file\" 2>&1 |" ) or die( "unable to run rlog, help" );
+	my $fh = new IO::File( "rlog -N \"$file\" 2>&1 |" )
+		or die( "unable to run rlog, help" );
 
-    while( <FILE> )
+	my $ignore = 1;
+    while( my $line = $fh->getline )
     {
-        #rlog outputs a "----" line before the actual revision
-        #without this we'll pick up peoples comments if they 
-        #happen to start with revision
-	if( /^----------------------------$/ )
-	{
-	    $ignore = 0;
-            next;
-        }
+		# rlog outputs a "----" line before the actual revision
+		# without this we'll pick up peoples comments if they 
+		# happen to start with revision
+		if( $line =~ /^----------------------------$/ )
+		{
+			$ignore = 0;
+			next;
+		}
 
-	if( ( !$ignore ) && ( ( $revision ) = m/^revision (\S+)/ ) )
-	{
-            push( @revisions, $revision );
-            $ignore = 1;
+		if( ( !$ignore ) && ( ( $revision ) = $line =~ m/^revision (\S+)/ ) )
+		{
+			push( @revisions, $revision );
+			$ignore = 1;
         }
     }
 
-    $_ = $save_;
-
-    if( !close( FILE ) )
+    if( !$fh->close )
     {
         return( undef );
     }
@@ -374,12 +505,12 @@ sub get_history
 sub check_revision
 {
     my( $file, $revision ) = @_;
-    $file =~ s/(["\$`\\])/\\$1/g;
+	$file =~ s/(["\$`\\])/\\$1/g;
 
     my $cwd = getcwd();
     chdir( "/tmp" );
 
-    my $ret_code = 0xffff & system( "cvs -l co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
+    my $ret_code = 0xffff & system( "cvs -d $cvsroot -l co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
 
     chdir( $cwd );
     return( 1 ) if ( $ret_code == 0 );
@@ -735,7 +866,7 @@ sub branch_split
 
     @split_rev = split /\./, $revision;
 
-    my $numbers = @split_rev;
+    my $numbers = @split_rev;     
     @split_rev = reverse( @split_rev );
     $branch = pop( @split_rev );
     for( $count = 0; $count < $numbers - 2 ; $count++ )
@@ -772,54 +903,55 @@ sub branch_split
 ######################################################################
 sub get_ignore_files_from_cvsroot {
     my( $cvsroot ) = @_;
-    my @ignore = ( 'CVS\/fileattr$',
-                   '^CVSROOT\/loginfo',
-                   '^CVSROOT\/.#loginfo',
-                   '^CVSROOT\/rcsinfo',
-                   '^CVSROOT\/.#rcsinfo',
-                   '^CVSROOT\/editinfo',
-                   '^CVSROOT\/.#editinfo',
-                   '^CVSROOT\/verifymsg',
-                   '^CVSROOT\/.#verifymsg',
-                   '^CVSROOT\/commitinfo',
-                   '^CVSROOT\/.#commitinfo',
-                   '^CVSROOT\/taginfo',
-                   '^CVSROOT\/.#taginfo',
-                   '^CVSROOT\/cvsignore',
-                   '^CVSROOT\/.#cvsignore',
-                   '^CVSROOT\/checkoutlist',
-                   '^CVSROOT\/.#checkoutlist',
-                   '^CVSROOT\/cvswrappers',
-                   '^CVSROOT\/.#cvswrappers',
-                   '^CVSROOT\/notify',
-                   '^CVSROOT\/.#notify',
-                   '^CVSROOT\/modules',
-                   '^CVSROOT\/.#modules',
-                   '^CVSROOT\/readers',
-                   '^CVSROOT\/.#readers',
-                   '^CVSROOT\/writers',
-                   '^CVSROOT\/.#writers',
-                   '^CVSROOT\/passwd',
-                   '^CVSROOT\/config',
-                   '^CVSROOT\/.#config',
-                   '^CVSROOT\/val-tags',
-                   '^CVSROOT\/.#val-tags',
-                   '^CVSROOT\/history' );
-    my $checkoutlist_file = "$cvsroot\/CVSROOT\/checkoutlist";
-    open( CHECKOUTLIST, "<$cvsroot\/CVSROOT\/checkoutlist" )
-        or die( "Unable to read checkoutlist file: $!\n" );
+    my @ignore = (
+	               qr{CVS/fileattr$}o,
+                   qr{^(./)?CVSROOT/.#[^/]*$}o,
+                   qr{^(./)?CVSROOT/loginfo$}o,
+                   qr{^(./)?CVSROOT/rcsinfo$}o,
+                   qr{^(./)?CVSROOT/editinfo$}o,
+                   qr{^(./)?CVSROOT/verifymsg$}o,
+                   qr{^(./)?CVSROOT/commitinfo$}o,
+                   qr{^(./)?CVSROOT/taginfo$}o,
+                   qr{^(./)?CVSROOT/cvsignore$}o,
+                   qr{^(./)?CVSROOT/checkoutlist$}o,
+                   qr{^(./)?CVSROOT/cvswrappers$}o,
+                   qr{^(./)?CVSROOT/notify$}o,
+                   qr{^(./)?CVSROOT/modules$}o,
+                   qr{^(./)?CVSROOT/readers$}o,
+                   qr{^(./)?CVSROOT/writers$}o,
+                   qr{^(./)?CVSROOT/passwd$}o,
+                   qr{^(./)?CVSROOT/config$}o,
+                   qr{^(./)?CVSROOT/val-tags$}o,
+                   qr{^(./)?CVSROOT/history$}o
+	             );
 
-    my @list = <CHECKOUTLIST>;
-    chomp( @list );
-    close( CHECKOUTLIST )
-        or die( "Unable to close checkoutlist file: $!\n" );
+    my $checkoutlist_file = "$cvsroot/CVSROOT/checkoutlist";
+	if( -f $checkoutlist_file && -r $checkoutlist_file )
+	{
+		my $fh = new IO::File "<$checkoutlist_file"
+			or die "Unable to read checkoutlist file ($checkoutlist_file): $!\n";
 
-    foreach my $line( @list )
-    {
-        next if( $line =~ /^#/ || $line =~ /^$/ );
-        if( $line =~ /^\s*(\S*)\s*/ ) { $line = $1 };
-        push( @ignore, "^CVSROOT\/$line", "^CVSROOT\/\.#$line" );
-    }	
+		my @list = $fh->getlines;
+		chomp( @list );
+		$fh->close or die( "Unable to close checkoutlist file: $!\n" );
+
+		foreach my $line( @list )
+		{
+			next if( $line =~ /^#/ || $line =~ /^\s*$/ );
+			$line =~ s/^\s*(\S*)\s*$/$1/;
+			push @ignore, qr{^(./)?CVSROOT/$line$};
+		}
+	}	
 
     return @ignore;
 }
+
+
+
+######
+###### Go.
+######
+
+exit main @ARGV;
+
+# vim:tabstop=4:shiftwidth=4
