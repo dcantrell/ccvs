@@ -1,3 +1,10 @@
+2000-10-05  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (call_in_directory): Create CVSADM directory if it doesn't
+	exist in the directory.  This makes client/server work more like
+	standalone when checking out into an existing (non-CVS) directory.
+	* sanity.sh (dirs2, conflicts3, toplevel): Update to match.
+
 2000-10-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* filesubr.c (get_homedir): Ignore $HOME when running in server mode.
