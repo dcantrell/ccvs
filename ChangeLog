@@ -3,6 +3,7 @@
 	* configure.in(AC_FUNC_FSEEKO): Add. Include handling for fseeko
 	and ftello with AC_LIBOBJ.
 	(AC_REPLACE_FUNCS): Remove fseeko and ftello.
+	* config.h.in, configure: Regenerated.
 	
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
