@@ -1,5 +1,10 @@
 2003-07-25  Derek Price  <derek@ximbiot.com>
 
+	* lstat.c: Sync with GNULIB.
+	* stat.c: Almost sync'd with GNULIB.
+
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
 	* getline.h: Sync this file with GNULIB.
 
 2003-07-24  Derek Price  <derek@ximbiot.com>
