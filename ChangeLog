@@ -1,5 +1,11 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dsp: Set default configuration on generated make files to
+	Win32 Debug.
+	* cvsnt.dep, cvsnt.mak: Regenerated.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Note MSVC++ project file regeneration.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
