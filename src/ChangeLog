@@ -1,5 +1,7 @@
 Wed Sep  4 13:35:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Increment version number to 1.8.8.
+
 	* Version 1.8.7.
 
 Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
