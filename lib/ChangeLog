@@ -1,3 +1,9 @@
+2004-05-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in (check-TESTS): Correct the script to deal with some
+	make (BSD) that use 'sh -e' which will terminate whenever a
+	command (such as test -n "") fails.	
+
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (getdate_LDADD): Add $(LIBINTL), needed on some systems.
