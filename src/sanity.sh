@@ -3448,7 +3448,7 @@ C aa\.c"
 	    exit 1
 	  fi
 
-	  echo realmodule first-dir/subdir a >>CVSROOT/modules
+	  echo realmodule first-dir/subdir a >CVSROOT/modules
 	  echo dirmodule first-dir/subdir >>CVSROOT/modules
 	  echo namedmodule -d nameddir first-dir/subdir >>CVSROOT/modules
 	  echo aliasmodule -a first-dir/subdir/a >>CVSROOT/modules
@@ -3468,8 +3468,7 @@ C aa\.c"
 	    exit 1
 	  fi
 	  cd ..
-	  dotest 148a0 "${testcvs} co -c" 'CVSROOT      CVSROOT
-aliasmodule  -a first-dir/subdir/a
+	  dotest 148a0 "${testcvs} co -c" 'aliasmodule  -a first-dir/subdir/a
 aliasnested  -a first-dir/subdir/ssdir
 bogusalias   first-dir/subdir/a -a
 dirmodule    first-dir/subdir
@@ -3480,8 +3479,8 @@ world        -a .'
 	  # I don't know why aliasmodule isn't printed (I would have thought
 	  # that it gets printed without the -a; although I'm not sure that
 	  # printing expansions without options is useful).
-	  dotest 148a1 "${testcvs} co -s" 'CVSROOT      NONE        CVSROOT
-bogusalias   NONE        first-dir/subdir/a -a
+	  dotest 148a1 "${testcvs} co -s" \
+'bogusalias   NONE        first-dir/subdir/a -a
 dirmodule    NONE        first-dir/subdir
 namedmodule  NONE        first-dir/subdir
 realmodule   NONE        first-dir/subdir a'
@@ -3633,7 +3632,7 @@ U nameddir/b'
 	  mkdir 1
 	  cd 1
 	  dotest modules-155b "${testcvs} -q co world" \
-"U CVSROOT/modules
+"U CVSROOT/${DOTSTAR}
 U first-dir/subdir/a
 U first-dir/subdir/b"
 	  cd ..

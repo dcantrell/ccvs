@@ -1,5 +1,12 @@
 Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (modules): In tests 148a0 and 148a1, don't expect a
+	module which defines CVSROOT to itself, since we don't define one
+	any more.  Also change test to rewrite modules rather than append
+	to it (in case any previous tests are changed to do something with
+	modules).  Change test 155b to allow any number of files in
+	CVSROOT, not just modules.
+
 	* add.c (add_directory): Set rev_old and rev_new fields of struct
 	logfile_info to NULL (prevents us from trying to free them later).
 	* commit.c (find_fileproc), import.c (import): Likewise.
