@@ -60,75 +60,75 @@ char *alloca ();
 #if !defined(S_ISBLK) && defined(S_IFBLK)
 # if defined(S_IFMT)
 # define	S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
-# endif
-#else
+# else
 # define S_ISBLK(m) ((m) & S_IFBLK)
+# endif
 #endif
 
 #if !defined(S_ISCHR) && defined(S_IFCHR)
 # if defined(S_IFMT)
 # define	S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
-# endif
-#else
+# else
 # define S_ISCHR(m) ((m) & S_IFCHR)
+# endif
 #endif
 
 #if !defined(S_ISDIR) && defined(S_IFDIR)
 # if defined(S_IFMT)
 # define	S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
-# endif
-#else
+# else
 # define S_ISDIR(m) ((m) & S_IFDIR)
+# endif
 #endif
 
 #if !defined(S_ISREG) && defined(S_IFREG)
 # if defined(S_IFMT)
 # define	S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
-# endif
-#else
+# else
 # define S_ISREG(m) ((m) & S_IFREG)
+# endif
 #endif
 
 #if !defined(S_ISFIFO) && defined(S_IFIFO)
 # if defined(S_IFMT)
 # define	S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
-# endif
-#else
+# else
 # define S_ISFIFO(m) ((m) & S_IFIFO)
+# endif
 #endif
 
 #if !defined(S_ISLNK) && defined(S_IFLNK)
 # if defined(S_IFMT)
 # define	S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
-# endif
-#else
+# else
 # define S_ISLNK(m) ((m) & S_IFLNK)
+# endif
 #endif
 
 #if !defined(S_ISSOCK) && defined(S_IFSOCK)
 # if defined(S_IFMT)
 # define	S_ISSOCK(m) (((m) & S_IFMT) == S_IFSOCK)
-# endif
-#else
+# else
 # define S_ISSOCK(m) ((m) & S_IFSOCK)
+# endif
 #endif
 
 #if !defined(S_ISMPB) && defined(S_IFMPB) /* V7 */
 # if defined(S_IFMT)
 # define S_ISMPB(m) (((m) & S_IFMT) == S_IFMPB)
 # define S_ISMPC(m) (((m) & S_IFMT) == S_IFMPC)
-# endif
-#else
+# else
 # define S_ISMPB(m) ((m) & S_IFMPB)
 # define S_ISMPC(m) ((m) & S_IFMPC)
+# endif
 #endif
 
 #if !defined(S_ISNWK) && defined(S_IFNWK) /* HP/UX */
 # if defined(S_IFMT)
 # define S_ISNWK(m) (((m) & S_IFMT) == S_IFNWK)
-# endif
-#else
+# else
 # define S_ISNWK(m) ((m) & S_IFNWK)
+# endif
 #endif
 
 #if !defined(HAVE_MKFIFO)
@@ -274,10 +274,8 @@ extern long timezone;
    have to debug the configure check across all the machines).  */
 #if defined (HAVE_UTIME_H) && !defined (NeXT)
 #include <utime.h>
-#else
-# if defined (HAVE_SYS_UTIME_H)
+#elif defined (HAVE_SYS_UTIME_H)
 # include <sys/utime.h>
-# endif
 #else
 #ifndef ALTOS
 struct utimbuf
