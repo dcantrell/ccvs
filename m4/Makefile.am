@@ -37,6 +37,7 @@ EXTRA_DIST = \
 	getopt.m4 \
 	gettext.m4 \
 	glibc21.m4 \
+	gettimeofday.m4 \
 	iconv.m4 \
 	intdiv0.m4 \
 	intmax_t.m4 \
