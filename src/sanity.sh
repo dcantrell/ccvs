@@ -13003,9 +13003,9 @@ ${PROG} commit: Rebuilding administrative file database"
 "${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
 "${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
 	  cd ${CVSROOT_DIRNAME}
-          dotest_fail check_repository-2 "${testcvs} co CVSROOT" \
+          dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
 "${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
-          dotest check_repository-3 "${testcvs} co -p CVSROOT/modules >/dev/null" \
+          dotest checkout_repository-3 "${testcvs} co -p CVSROOT/modules >/dev/null" \
 "===================================================================
 Checking out CVSROOT/modules
 RCS:  ${CVSROOT_DIRNAME}/CVSROOT/modules,v
