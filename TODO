@@ -140,8 +140,9 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 93. Need to think hard about release and development environments.  Think
     about execsets as well.
 
-97. Think about some way to undo a change.  This looks hard given the
-    current framework of CVS.
+97. The documentation should describe how to undo a change ("cvs
+update -j 1.2 -j 1.1 foo.c" followed by a commit undoes the change
+from 1.1 to 1.2).
 
 98. If diff3 bombs out (too many differences) cvs then thinks that the file
     has been updated and is OK to be commited even though the file 
@@ -157,7 +158,8 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 104. cvs should recover nicely on unreadable files/directories.
 
 105. cvs should have administrative tools to allow for changing permissions
-     and modes and what not.
+     and modes and what not.  In particular, this would make cvs a
+     more attractive alternative to rdist.
 
 107. It should be possible to specify a list of symbolic revisions to
      checkout such that the list is processed in reverse order looking for
@@ -310,7 +312,8 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 
 146. The merging of files should be controlled via a hook so that programs
      other than "rcsmerge" can be used, like Sun's filemerge or emacs's
-     emerge.el.
+     emerge.el.  (but be careful in making this work client/server--it means
+     doing the interactive merging at the end after the server is done).
 
 148. It would be nice if cvs import (and perhaps commit when the rcs file
      is created) would set the comment leader automagically to the prefix
@@ -405,33 +408,15 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 161. The date parser included with CVS (lib/getdate.y) does not support
      such RCS-supported dates as "1992/03/07".  It probably should.
 
-162. We have had a number of cases where some idiot does a "cd" into $CVSROOT
-     and tries to run checkout.  I suggest you make it impossible for someone
-     to check out anything directly into $CVSROOT.  This works (though there
-     is no error checking):
- 
-	getwd(curdir);
-	chdir(getenv("CVSROOT"));
-	getwd(cvsrootdir);
-	strcat(cvsrootdir, "/");
-	chdir(curdir);
- 
- 	if (!strncmp (curdir, cvsrootdir, strlen(cvsrootdir))) {
-		abort with a nasty message about writing into the repository.
-	}
-
-     (In other words, if the real path where $CVSROOT is stored is a parent of
-     the real pathname of your current directory, die horribly.)
-
 163. The rtag/tag commands should have an option that removes the specified
      tag from any file that is in the attic.  This allows one to re-use a
      tag (like "Mon", "Tue", ...) all the time and still have it tag the
      real main-line code.
 
-164. The rcsinfo file should be able to expand environment variables to
-     find the pathname to the template file.  Perhaps it should just
-     popen("cat <line>"); and read the resulting output, to let the shell
-     do the dirty work.
+164. The *info files should allow multiple ocurrences of $CVSROOT and/or
+     other cvs variables.  They probably should *not* expand environment
+     variables, as their behavior probably should not depend on who is 
+     running CVS.
 
 165. The "import" command will create RCS files automatically, but will
      screw-up when trying to create long file names on short file name
@@ -503,17 +488,6 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
      its tag is different from the "main" distribution. I've tried to
      use "-I" to ignore the directory, as well as .cvsignore, but this
      doesn't work.
-
-178. At our site we tag all releases of the sw with
-     product name and version number, the tag is pretty
-     long and if you by accident write an old tag which
-     was in use on an old release, the default behaviour
-     of cvs is to change the old tag!!!
-
-     Could the CVS system reject to reuse an old tag?
-     You have the possibility to manually remove it,
-     but you will not have to be afraid of one tag
-     silently changing.
 
 179. "cvs admin" does not log its actions with loginfo, nor does it check
      whether the action is allowed with commitinfo.  It should.
