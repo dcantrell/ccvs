@@ -1,3 +1,9 @@
+Fri Sep 05 12:21:56 1997  Jim Kingdon
+
+	* filesubr.c (xchmod): Replace with "attrib"-based code from
+	os2/filesubr.c.
+	* config.h (CHMOD_BROKEN): Define.
+
 Wed Jul 30 15:35:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: In comment about Makefile rule, remove note about
