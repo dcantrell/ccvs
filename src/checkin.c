@@ -114,7 +114,7 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	     * If we want read-only files, muck the permissions here, before
 	     * getting the file time-stamp.
 	     */
-	    if (cvswrite == FALSE || fileattr_get (finfo->file, "_watched"))
+	    if (!cvswrite || fileattr_get (finfo->file, "_watched"))
 		xchmod (finfo->file, 0);
 
 	    /* Re-register with the new data.  */

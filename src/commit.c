@@ -360,9 +360,9 @@ commit (argc, argv)
 		break;
 	    case 'm':
 #ifdef FORCE_USE_EDITOR
-		use_editor = TRUE;
+		use_editor = 1;
 #else
-		use_editor = FALSE;
+		use_editor = 0;
 #endif
 		if (message)
 		{
@@ -389,9 +389,9 @@ commit (argc, argv)
 		break;
 	    case 'F':
 #ifdef FORCE_USE_EDITOR
-		use_editor = TRUE;
+		use_editor = 1;
 #else
-		use_editor = FALSE;
+		use_editor = 0;
 #endif
 		logfile = optarg;
 		break;

@@ -433,7 +433,7 @@ logout (argc, argv)
 	if (strncmp (CVSroot_original, linebuf, root_len)) 
 	    fprintf (tmp_fp, "%s", linebuf);
 	else
-	    found = TRUE;
+	    found = 1;
     }
     if (linebuf)
         free (linebuf);

@@ -1,3 +1,12 @@
+Wed Nov  5 20:16:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* checkin.c, checkout.c, commit.c, cvs.h, import.c, login.c,
+	main.c, update.c: Change FALSE to 0 and TRUE to 1 and replace
+	monstrosities like "cvswrite == TRUE" with just "cvswrite".  FALSE
+	and TRUE sometimes conflicted with system headers (NextStep3.3?),
+	but more to the point, good old 1 and 0 are fine and were used by
+	most of CVS already.
+
 Tue Nov  4 12:19:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkin, RCS_lock, RCS_unlock): Rename local variable

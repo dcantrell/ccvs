@@ -1116,7 +1116,7 @@ VERS: ", 0);
 	{
 	    Vers_TS *xvers_ts;
 
-	    if (cvswrite == TRUE
+	    if (cvswrite
 		&& !file_is_dead
 		&& !fileattr_get (finfo->file, "_watched"))
 		xchmod (finfo->file, 1);
@@ -1442,7 +1442,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 		       file_info->st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH))
 		< 0)
 		error (0, errno, "cannot change mode of file %s", finfo->file);
-	    if (cvswrite == TRUE
+	    if (cvswrite
 		&& !fileattr_get (finfo->file, "_watched"))
 		xchmod (finfo->file, 1);
 

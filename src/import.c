@@ -104,9 +104,9 @@ import (argc, argv)
 		break;
 	    case 'm':
 #ifdef FORCE_USE_EDITOR
-		use_editor = TRUE;
+		use_editor = 1;
 #else
-		use_editor = FALSE;
+		use_editor = 0;
 #endif
 		message = xstrdup(optarg);
 		break;
