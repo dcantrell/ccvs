@@ -17,6 +17,7 @@
  */
 
 #include "cvs.h"
+#include "save-cwd.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
@@ -1069,16 +1070,15 @@ import_descend_dir (message, dir, vtag, targc, targv)
     int targc;
     char *targv[];
 {
-    char cwd[PATH_MAX];
+    struct saved_cwd cwd;
     char *cp;
     int ierrno, err;
 
     if (islink (dir))
 	return (0);
-    if (getwd (cwd) == NULL)
+    if (save_cwd (&cwd))
     {
 	fperror (logfp, 0, 0, "ERROR: cannot get working directory");
-	error (0, 0, "ERROR: cannot get working directory");
 	return (1);
     }
     if (repository[0] == '\0')
@@ -1142,7 +1142,8 @@ import_descend_dir (message, dir, vtag, targc, targv)
 	*cp = '\0';
     else
 	repository[0] = '\0';
-    if (chdir (cwd) < 0)
-	error (1, errno, "cannot chdir to %s", cwd);
+    if (restore_cwd (&cwd, NULL))
+      exit (1);
+    free_cwd (&cwd);
     return (err);
 }
