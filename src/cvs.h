@@ -242,6 +242,18 @@ extern int errno;
 #define	MAXLISTLEN	40000		/* For [A-Z]list holders */
 #define MAXDATELEN	50		/* max length for a date */
 
+/* structure of a entry record */
+struct entnode
+{
+    char *version;
+    char *timestamp;
+    char *options;
+    char *tag;
+    char *date;
+    char *conflict;
+};
+typedef struct entnode Entnode;
+
 /* The type of request that is being done in do_module() */
 enum mtype
 {

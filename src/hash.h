@@ -44,17 +44,6 @@ struct list
 };
 typedef struct list List;
 
-struct entnode
-{
-    char *version;
-    char *timestamp;
-    char *options;
-    char *tag;
-    char *date;
-    char *conflict;
-};
-typedef struct entnode Entnode;
-
 List *getlist PROTO((void));
 Node *findnode PROTO((List * list, const char *key));
 Node *getnode PROTO((void));

@@ -1,3 +1,8 @@
+Tue Jul 11 16:49:41 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* hash.h (struct entnode, Entnode): moved from here...
+	* cvs.h: to here.
+
 Wed Jul 12 19:45:24 1995  Dominik Westner (dominik@gowest.ppp.informatik.uni-muenchen.de)
 
         * client.c (server_user): new var.
