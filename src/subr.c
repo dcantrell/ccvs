@@ -78,38 +78,33 @@ strip_trailing_newlines (char *str)
  *   "foo/../../bar" -> 1
  */
 int
-pathname_levels (char *path)
+pathname_levels (const char *p)
 {
-    char *p;
-    char *q;
     int level;
     int max_level;
 
     if (p == NULL) return 0;
 
     max_level = 0;
-    p = path;
     level = 0;
     do
     {
-	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
-	q = p;
-	while (*q != '\0' && !ISDIRSEP (*q)) q++;
-	if (*q != '\0') q++;
-
 	/* Now look for pathname level-ups.  */
-	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP(p[2])))
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP (p[2])))
 	{
 	    --level;
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '\0' || ISDIRSEP(p[0]) ||
-		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP(p[1]))))
+	else if (p[0] == '\0' || ISDIRSEP (p[0]) ||
+		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP (p[1]))))
 	    ;
 	else
 	    ++level;
-	p = q;
+
+	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
+	while (*p != '\0' && !ISDIRSEP (*p)) p++;
+	if (*p != '\0') p++;
     } while (*p != '\0');
     return max_level;
 }
