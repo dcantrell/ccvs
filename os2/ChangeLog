@@ -1,5 +1,7 @@
 Mon Dec 18 14:54:04 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
+        * getpass.c (getpass): removed debugging garbage.
+
         * options.h (NO_SOCKET_TO_FD): fixed comment (Windows 95, not NT,
         has this problem).
         (AUTH_CLIENT_SUPPORT): on by default.
