@@ -80,7 +80,9 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (0, errno, "writing to log file");
 	fflush (lb->log);
+#ifdef HAVE_FSYNC
 	fsync (fileno (lb->log));
+#endif
     }
 
     return 0;
