@@ -1834,8 +1834,8 @@ In simple cases these steps are sufficient to define a module.
 Get a working copy of the modules file.
 
 @example
-$ cvs checkout modules
-$ cd modules
+$ cvs checkout CVSROOT/modules
+$ cd CVSROOT
 @end example
 
 @item
@@ -1860,7 +1860,7 @@ Release the modules module.
 
 @example
 $ cd ..
-$ cvs release -d modules
+$ cvs release -d CVSROOT
 @end example
 @end enumerate
 
