@@ -8,6 +8,11 @@ SERVER SECURITY ISSUES
   longer leads directly to a root hack.  Attempts to root will also be logged
   via the syslog.
 
+GENERAL USER ISSUES
+
+* The Windows build files were updated to allow building of the current version
+  under Windows.
+
 Changes between 1.12.3 and 1.12.4:
 **********************************
 
