@@ -3,6 +3,8 @@
 	* Makefile.am (INCLUDES): Add -I$(top_srcdir)/lib for platforms which
 	need the regex library there.
 
+	* Makefile.in: Regenerated.
+
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
 	* .cvsignore: Added '.deps'.
