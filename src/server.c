@@ -77,14 +77,6 @@ static Key_schedule sched;
 #define O_NONBLOCK O_NDELAY
 #endif
 
-/* EWOULDBLOCK is not defined by POSIX, but some BSD systems will
-   return it, rather than EAGAIN, for nonblocking writes.  */
-#ifdef EWOULDBLOCK
-#define blocking_error(err) ((err) == EWOULDBLOCK || (err) == EAGAIN)
-#else
-#define blocking_error(err) ((err) == EAGAIN)
-#endif
-
 /* For initgroups().  */
 #if HAVE_INITGROUPS
 #include <grp.h>
@@ -142,177 +134,6 @@ static int dont_delete_temp;
 
 static void server_write_entries (void);
 
-/* All server communication goes through buffer structures.  Most of
-   the buffers are built on top of a file descriptor.  This structure
-   is used as the closure field in a buffer.  */
-
-struct fd_buffer
-{
-    /* The file descriptor.  */
-    int fd;
-    /* Nonzero if the file descriptor is in blocking mode.  */
-    int blocking;
-};
-
-static struct buffer *fd_buffer_initialize
-  (int, int, void (*) (struct buffer *));
-static int fd_buffer_input (void *, char *, int, int, int *);
-static int fd_buffer_output (void *, const char *, int, int *);
-static int fd_buffer_flush (void *);
-static int fd_buffer_block (void *, int);
-static int fd_buffer_shutdown (struct buffer *);
-
-/* Initialize a buffer built on a file descriptor.  FD is the file
-   descriptor.  INPUT is nonzero if this is for input, zero if this is
-   for output.  MEMORY is the function to call when a memory error
-   occurs.  */
-
-static struct buffer *
-fd_buffer_initialize (int fd, int input, void (*memory) (struct buffer *))
-{
-    struct fd_buffer *n;
-
-    n = (struct fd_buffer *) xmalloc (sizeof *n);
-    n->fd = fd;
-    n->blocking = 1;
-    return buf_initialize (input ? fd_buffer_input : NULL,
-			   input ? NULL : fd_buffer_output,
-			   input ? NULL : fd_buffer_flush,
-			   fd_buffer_block,
-			   fd_buffer_shutdown,
-			   memory,
-			   n);
-}
-
-/* The buffer input function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_input (void *closure, char *data, int need, int size, int *got)
-{
-    struct fd_buffer *fd = (struct fd_buffer *) closure;
-    int nbytes;
-
-    if (! fd->blocking)
-	nbytes = read (fd->fd, data, size);
-    else
-    {
-	/* This case is not efficient.  Fortunately, I don't think it
-	   ever actually happens.  */
-	nbytes = read (fd->fd, data, need == 0 ? 1 : need);
-    }
-
-    if (nbytes > 0)
-    {
-	*got = nbytes;
-	return 0;
-    }
-
-    *got = 0;
-
-    if (nbytes == 0)
-    {
-	/* End of file.  This assumes that we are using POSIX or BSD
-	   style nonblocking I/O.  On System V we will get a zero
-	   return if there is no data, even when not at EOF.  */
-	return -1;
-    }
-
-    /* Some error occurred.  */
-
-    if (blocking_error (errno))
-    {
-	/* Everything's fine, we just didn't get any data.  */
-	return 0;
-    }
-
-    return errno;
-}
-
-/* The buffer output function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_output (void *closure, const char *data, int have, int *wrote)
-{
-    struct fd_buffer *fd = (struct fd_buffer *) closure;
-
-    *wrote = 0;
-
-    while (have > 0)
-    {
-	int nbytes;
-
-	nbytes = write (fd->fd, data, have);
-
-	if (nbytes <= 0)
-	{
-	    if (! fd->blocking
-		&& (nbytes == 0 || blocking_error (errno)))
-	    {
-		/* A nonblocking write failed to write any data.  Just
-		   return.  */
-		return 0;
-	    }
-
-	    /* Some sort of error occurred.  */
-
-	    if (nbytes == 0)
-		return EIO;
-
-	    return errno;
-	}
-
-	*wrote += nbytes;
-	data += nbytes;
-	have -= nbytes;
-    }
-
-    return 0;
-}
-
-/* The buffer flush function for a buffer built on a file descriptor.  */
-
-/*ARGSUSED*/
-static int
-fd_buffer_flush (void *closure)
-{
-    /* Nothing to do.  File descriptors are always flushed.  */
-    return 0;
-}
-
-/* The buffer block function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_block (void *closure, int block)
-{
-    struct fd_buffer *fd = (struct fd_buffer *) closure;
-    int flags;
-
-    flags = fcntl (fd->fd, F_GETFL, 0);
-    if (flags < 0)
-	return errno;
-
-    if (block)
-	flags &= ~O_NONBLOCK;
-    else
-	flags |= O_NONBLOCK;
-
-    if (fcntl (fd->fd, F_SETFL, flags) < 0)
-	return errno;
-
-    fd->blocking = block;
-
-    return 0;
-}
-
-/* The buffer shutdown function for a buffer built on a file descriptor.  */
-
-static int
-fd_buffer_shutdown (struct buffer *buf)
-{
-    free (buf->closure);
-    buf->closure = NULL;
-    return 0;
-}
 
 /* Populate all of the directories between BASE_DIR and its relative
    subdirectory DIR with CVSADM directories.  Return 0 for success or
@@ -690,6 +511,16 @@ serve_valid_responses (char *arg)
 	    rs->status = rs_not_supported;
     }
 }
+
+
+
+/*
+ * Process IDs of the subprocess, or negative if that subprocess
+ * does not exist.
+ */
+static pid_t command_pid;
+
+
 
 static void
 serve_root (char *arg)
@@ -1238,7 +1069,9 @@ serve_sticky (char *arg)
 	return;
     }
 }
-
+
+
+
 /*
  * Read SIZE bytes from buf_from_net, write them to FILE.
  *
@@ -2845,7 +2678,7 @@ error  \n");
 	   flag.  */
 	error_use_protocol = 0;
 
-	protocol = fd_buffer_initialize (protocol_pipe[1], 0,
+	protocol = fd_buffer_initialize (protocol_pipe[1], 0, NULL, false,
 					 protocol_memory_error);
 
 	/* At this point we should no longer be using buf_to_net and
@@ -2984,13 +2817,13 @@ error  \n");
 	    goto error_exit;
 	}
 
-	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 1,
+	stdoutbuf = fd_buffer_initialize (stdout_pipe[0], 0, NULL, true,
 					  input_memory_error);
 
-	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 1,
+	stderrbuf = fd_buffer_initialize (stderr_pipe[0], 0, NULL, true,
 					  input_memory_error);
 
-	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 1,
+	protocol_inbuf = fd_buffer_initialize (protocol_pipe[0], 0, NULL, true,
 					       input_memory_error);
 
 	set_nonblock (buf_to_net);
@@ -3404,7 +3237,9 @@ E CVS locks may need cleaning up.\n");
 
     return;
 }
-
+
+
+
 #ifdef SERVER_FLOWCONTROL
 /*
  * Called by the child at convenient points in the server's execution for
@@ -4297,9 +4132,7 @@ CVS server internal error: unhandled case in server_updated");
 	else if (filebuf == NULL)
 	    buf_append_data (protocol, list, last);
 	else
-	{
 	    buf_append_buffer (protocol, filebuf);
-	}
 	/* Note we only send a newline here if the file ended with one.  */
 
 	/*
@@ -4569,6 +4402,8 @@ serve_gzip_contents (char *arg)
 	level = 6;
     file_gzip_level = level;
 }
+
+
 
 static void
 serve_gzip_stream (char *arg)
@@ -5155,12 +4990,25 @@ server (int argc, char **argv)
     if (getenv ("CVS_PARENT_SERVER_SLEEP"))
     {
 	int secs = atoi (getenv ("CVS_PARENT_SERVER_SLEEP"));
+	TRACE (TRACE_DATA, "Sleeping CVS_PARENT_SERVER_SLEEP (%d) seconds",
+	       secs);
 	sleep (secs);
     }
+    else
+	TRACE (TRACE_DATA, "CVS_PARENT_SERVER_SLEEP not set.");
 
-    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
-				       outbuf_memory_error);
-    buf_from_net = stdio_buffer_initialize (stdin, 0, 1, outbuf_memory_error);
+    /* pserver_authenticate_connection () (called from main ()) can initialize
+     * these.
+     */
+    if (!buf_to_net)
+    {
+	buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+					   outbuf_memory_error);
+	buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+					     outbuf_memory_error);
+    }
+
+    setup_logfiles ("CVS_SERVER_LOG", &buf_to_net, &buf_from_net);
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);
     saved_outerr = buf_nonio_initialize (outbuf_memory_error);
@@ -5953,21 +5801,45 @@ handle_return:
 
 #if defined (AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)
 
+static void
+pserver_read_line (char **tmp, size_t *tmp_len)
+{
+    int status;
+
+    /* Make sure the protocol starts off on the right foot... */
+    status = buf_read_short_line (buf_from_net, tmp, tmp_len, PATH_MAX);
+    if (status == -1)
+    {
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE,
+	        "unexpected EOF encountered during authentication");
+#endif
+	error (1, 0, "unexpected EOF encountered during authentication");
+    }
+    if (status == -2)
+	status = ENOMEM;
+    if (status != 0)
+    {
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE,
+                "error reading from net while validating pserver");
+#endif
+	error (1, status, "error reading from net while validating pserver");
+    }
+}
+
 /* Read username and password from client (i.e., stdin).
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
 void
 pserver_authenticate_connection (void)
 {
-    char *tmp = NULL;
-    size_t tmp_allocated = 0;
+    char *tmp;
+    size_t tmp_len;
 #ifdef AUTH_SERVER_SUPPORT
     char *repository = NULL;
-    size_t repository_allocated = 0;
     char *username = NULL;
-    size_t username_allocated = 0;
     char *password = NULL;
-    size_t password_allocated = 0;
 
     char *host_user;
     char *descrambled_password;
@@ -6016,6 +5888,12 @@ pserver_authenticate_connection (void)
      * big deal.
      */
 
+    /* Initialize buffers.  */
+    buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0, NULL, false,
+				       outbuf_memory_error);
+    buf_from_net = fd_buffer_initialize (STDIN_FILENO, 0, NULL, true,
+					 outbuf_memory_error);
+
 #ifdef SO_KEEPALIVE
     /* Set SO_KEEPALIVE on the socket, so that we don't hang forever
        if the client dies while we are waiting for input.  */
@@ -6033,19 +5911,13 @@ pserver_authenticate_connection (void)
 #endif
 
     /* Make sure the protocol starts off on the right foot... */
-    if( getnline( &tmp, &tmp_allocated, PATH_MAX, stdin ) < 0 )
-	{
-#ifdef HAVE_SYSLOG_H
-	    syslog (LOG_DAEMON | LOG_NOTICE, "bad auth protocol start: EOF");
-#endif
-	    error (1, 0, "bad auth protocol start: EOF");
-	}
+    pserver_read_line (&tmp, NULL);
 
-    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
+    if (strcmp (tmp, "BEGIN VERIFICATION REQUEST") == 0)
 	verify_and_exit = 1;
-    else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") == 0)
+    else if (strcmp (tmp, "BEGIN AUTH REQUEST") == 0)
 	;
-    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST\n") == 0)
+    else if (strcmp (tmp, "BEGIN GSSAPI REQUEST") == 0)
     {
 #ifdef HAVE_GSSAPI
 	free (tmp);
@@ -6064,36 +5936,29 @@ pserver_authenticate_connection (void)
 
 #else /* AUTH_SERVER_SUPPORT */
 
+    free (tmp);
+
     /* Get the three important pieces of information in order. */
     /* See above comment about error handling.  */
-    getnline( &repository, &repository_allocated, PATH_MAX, stdin );
-    getnline( &username, &username_allocated, PATH_MAX, stdin );
-    getnline( &password, &password_allocated, PATH_MAX, stdin );
-
-    /* Make them pure.
-     *
-     * We check that none of the lines were truncated by getnline in order
-     * to be sure that we don't accidentally allow a blind DOS attack to
-     * authenticate, however slim the odds of that might be.
-     */
-    if (!strip_trailing_newlines (repository)
-	|| !strip_trailing_newlines (username)
-	|| !strip_trailing_newlines (password))
-	error (1, 0, "Maximum line length exceeded during authentication.");
+    pserver_read_line (&repository, NULL);
+    pserver_read_line (&username, NULL);
+    pserver_read_line (&password, NULL);
 
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
-    getnline( &tmp, &tmp_allocated, PATH_MAX, stdin );
+    pserver_read_line (&tmp, NULL);
     if (strcmp (tmp,
 		verify_and_exit ?
-		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
+		"END VERIFICATION REQUEST" : "END AUTH REQUEST")
 	!= 0)
     {
 	error (1, 0, "bad auth protocol end: %s", tmp);
     }
+    free (tmp);
+
     if (!root_allow_ok (repository))
     {
-	printf ("error 0 %s: no such repository\n", repository);
+	error (1, 0, "%s: no such repository", repository);
 #ifdef HAVE_SYSLOG_H
 	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
 #endif
@@ -6118,8 +5983,8 @@ pserver_authenticate_connection (void)
 	memset (descrambled_password, 0, strlen (descrambled_password));
 	free (descrambled_password);
     i_hate_you:
-	printf ("I HATE YOU\n");
-	fflush (stdout);
+	buf_output0 (buf_to_net, "I HATE YOU\n");
+	buf_flush (buf_to_net, true);
 
 	/* Don't worry about server_cleanup, server_active isn't set
 	   yet.  */
@@ -6131,9 +5996,9 @@ pserver_authenticate_connection (void)
     /* Don't go any farther if we're just responding to "cvs login". */
     if (verify_and_exit)
     {
-	printf ("I LOVE YOU\n");
-	fflush (stdout);
-	exit (0);
+	buf_output0 (buf_to_net, "I LOVE YOU\n");
+	buf_flush (buf_to_net, true);
+	exit (EXIT_SUCCESS);
     }
 
     /* Set Pserver_Repos so that we can check later that the same
@@ -6144,13 +6009,12 @@ pserver_authenticate_connection (void)
     /* Switch to run as this user. */
     switch_to_user (username, host_user);
     free (host_user);
-    free (tmp);
     free (repository);
     free (username);
     free (password);
 
-    printf ("I LOVE YOU\n");
-    fflush (stdout);
+    buf_output0 (buf_to_net, "I LOVE YOU\n");
+    buf_flush (buf_to_net, true);
 #endif /* AUTH_SERVER_SUPPORT */
 }
 

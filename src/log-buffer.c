@@ -37,6 +37,7 @@ static int log_buffer_input (void *, char *, int, int, int *);
 static int log_buffer_output (void *, const char *, int, int *);
 static int log_buffer_flush (void *);
 static int log_buffer_block (void *, int);
+static int log_buffer_get_fd (void *);
 static int log_buffer_shutdown (struct buffer *);
 
 /* Create a log buffer.  */
@@ -52,7 +53,7 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, int input, void (*memory) (
     return buf_initialize (input ? log_buffer_input : NULL,
 			   input ? NULL : log_buffer_output,
 			   input ? NULL : log_buffer_flush,
-			   log_buffer_block,
+			   log_buffer_block, log_buffer_get_fd,
 			   log_buffer_shutdown,
 			   memory,
 			   n);
@@ -150,8 +151,19 @@ log_buffer_block (void *closure, int block)
 	return set_nonblock (lb->buf);
 }
 
-/* The shutdown function for a log buffer.  */
 
+
+/* Return the file descriptor underlying any child buffers.  */
+static int
+log_buffer_get_fd (void *closure)
+{
+    struct log_buffer *lb = closure;
+    return buf_get_fd (lb->buf);
+}
+
+
+
+/* The shutdown function for a log buffer.  */
 static int
 log_buffer_shutdown (struct buffer *buf)
 {

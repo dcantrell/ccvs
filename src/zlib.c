@@ -54,6 +54,7 @@ static int compress_buffer_input (void *, char *, int, int, int *);
 static int compress_buffer_output (void *, const char *, int, int *);
 static int compress_buffer_flush (void *);
 static int compress_buffer_block (void *, int);
+static int compress_buffer_get_fd (void *);
 static int compress_buffer_shutdown_input (struct buffer *);
 static int compress_buffer_shutdown_output (struct buffer *);
 
@@ -113,7 +114,7 @@ compress_buffer_initialize (struct buffer *buf, int input, int level, void (*mem
     return buf_initialize (input ? compress_buffer_input : NULL,
 			   input ? NULL : compress_buffer_output,
 			   input ? NULL : compress_buffer_flush,
-			   compress_buffer_block,
+			   compress_buffer_block, compress_buffer_get_fd,
 			   (input
 			    ? compress_buffer_shutdown_input
 			    : compress_buffer_shutdown_output),
@@ -335,8 +336,19 @@ compress_buffer_block (void *closure, int block)
 	return set_nonblock (cb->buf);
 }
 
-/* Shut down an input buffer.  */
 
+
+/* Return the file descriptor underlying any child buffers.  */
+static int
+compress_buffer_get_fd (void *closure)
+{
+    struct compress_buffer *cb = closure;
+    return buf_get_fd (cb->buf);
+}
+
+
+
+/* Shut down an input buffer.  */
 static int
 compress_buffer_shutdown_input (struct buffer *buf)
 {
