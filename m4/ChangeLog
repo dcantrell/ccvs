@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* realloc.m4: Remove this file.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* malloc.m4: Remove this file.
 
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
