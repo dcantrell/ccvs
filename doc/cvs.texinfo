@@ -8799,18 +8799,33 @@ imagination is the limit!
 @cindex Common syntax of info files
 
 @c FIXME: having this so totally separate from the
-@c Variables node is rather bogus.  Also, this syntax
-@c applies to taginfo and others, but we don't say so.
+@c Variables node is rather bogus.
 
-The four files @file{commitinfo}, @file{loginfo},
-@file{rcsinfo} and @file{editinfo} all have a common
-format.  The purpose of the files are described later
-on.  The common syntax is described here.
+The administrative files such as @file{commitinfo},
+@file{loginfo}, @file{rcsinfo}, @file{editinfo}, etc.,
+all have a common format.  The purpose of the files are
+described later on.  The common syntax is described
+here.
 
+@cindex regular expression syntax
 Each line contains the following:
 @itemize @bullet
 @item
-A regular expression
+@c Say anything about DEFAULT and ALL?  Right now we
+@c leave that to the description of each file (and in fact
+@c the practice is inconsistent which is really annoying).
+A regular expression.  This is a basic regular
+expression in the syntax used by GNU emacs.
+@c FIXME: What we probably should be saying is "POSIX Basic
+@c Regular Expression with the following extensions (`\('
+@c `\|' '+' etc)"
+@c rather than define it with reference to emacs.
+@c The reference to emacs is not strictly speaking
+@c true, as we don't support \=, \s, or \S.  Also it isn't
+@c clear we should document and/or promise to continue to
+@c support all the obscure emacs extensions like \<.
+@c Also need to better cite (or include) full
+@c documentation for the syntax.
 
 @item
 A whitespace separator---one or more spaces and/or tabs.
@@ -8828,6 +8843,13 @@ any way.
 The first regular expression that matches the current
 directory name in the repository is used.  The rest of the line
 is used as a file name or command-line as appropriate.
+
+@c FIXME: need an example.  In particular, show what
+@c the regular expression is matched against (one
+@c ordinarily clueful person got confused about whether it
+@c includes the filename--"directory name" above should be
+@c unambiguous but there is nothing like an example to
+@c confirm people's understanding of this sort of thing).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node commitinfo
