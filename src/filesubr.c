@@ -417,13 +417,16 @@ int
 unlink_file_dir (f)
     const char *f;
 {
-    if (trace)
+    if (trace
 #ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> unlink_file_dir(%s)\n",
-			(server_active) ? 'S' : ' ', f);
-#else
-	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
+	/* This is called by the server parent process in contexts where
+	   it is not OK to send output (e.g. after we sent "ok" to the
+	   client).  */
+	&& !server_active
 #endif
+	)
+	(void) fprintf (stderr, "-> unlink_file_dir(%s)\n", f);
+
     if (noexec)
 	return (0);
 
