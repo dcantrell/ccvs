@@ -229,20 +229,7 @@ isaccessible (file, mode)
 #endif
 }
 
-/*
- * Open a file and die if it fails
- */
-FILE *
-open_file (name, mode)
-    const char *name;
-    const char *mode;
-{
-    FILE *fp;
 
-    if ((fp = fopen (name, mode)) == NULL)
-	error (1, errno, "cannot open %s", name);
-    return (fp);
-}
 
 /*
  * Make a directory and die if it fails
