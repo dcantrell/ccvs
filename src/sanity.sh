@@ -10576,7 +10576,9 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 	  ;;
 
 	ann)
-	  # Tests of "cvs annotate".  See also basica-10.
+	  # Tests of "cvs annotate".  See also:
+	  #   basica-10  A simple annotate test
+	  #   rcs        Annotate and the year 2000
 	  mkdir 1; cd 1
 	  dotest ann-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
@@ -11039,6 +11041,29 @@ add file1
 	  else
 	    fail rcs-4
 	  fi
+
+	  # Intended behavior for "cvs annotate" is that it displays the
+	  # last two digits of the year.  Make sure it does that rather
+	  # than some bogosity like "100".
+	  dotest rcs-4a "${testcvs} annotate file1" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (kingdon  24-Nov-96): This is the first line
+1\.2          (kingdon  24-Nov-96): This is the third line
+1\.2          (kingdon  24-Nov-96): This is the fourth line
+1\.2          (kingdon  24-Nov-96): This is the fifth line
+1\.2          (kingdon  24-Nov-96): This is the sixth line
+1\.2          (kingdon  24-Nov-96): This is the seventh line
+1\.2          (kingdon  24-Nov-96): This is the eighth line
+1\.2          (kingdon  24-Nov-96): This is the ninth line
+1\.2          (kingdon  24-Nov-96): This is the tenth line
+1\.2          (kingdon  24-Nov-96): This is the eleventh line
+1\.3          (kingdon  24-Nov-00): This is the twelfth line (and what a line it is)
+1\.2          (kingdon  24-Nov-96): This is the thirteenth line"
+
+	  # Probably should split this test into two at this point (file1
+	  # above this line and file2 below), as the two share little
+	  # data/setup.
 
 	  # OK, here is another one.  This one was written by hand based on
 	  # doc/RCSFILES and friends.  One subtle point is that none of
