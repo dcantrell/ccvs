@@ -1,3 +1,11 @@
+Tue Oct  1 13:01:24 1996  Jim Blandy  <jimb@floss.cyclic.com>
+
+	Revert some of Greg's changes; they're welcome later, but we're
+	trying to keep CVS stable for pre-release testing at the moment. 
+	* checkin.c, commit.c, cvs.h, diff.c, import.c, main.c, no_diff.c,
+	options.h.in, patch.c, rcs.c, rcs.h, rcscmds.c, sanity.sh, update.c:
+	Revert changes of Sep 29 and 30.
+
 Tue Oct  1 13:17:31 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	Make sure the server temporary directory is removed even if
