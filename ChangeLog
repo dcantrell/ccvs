@@ -1,3 +1,7 @@
+Fri Sep  1 09:20:09 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (DISTFILES): Remove cvsnt.vcp; it's been deleted.
+
 Thu Aug 31 13:47:35 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (stamp-h): Rebuild config.status before trying to
@@ -5,6 +9,19 @@ Thu Aug 31 13:47:35 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Change "cd foo; make" to "cd foo && make";
 	otherwise we get into an infinite loop if an objdir doesn't exist.
+
+Thu Aug 31 11:07:06 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in: Arrange not to touch options.h if we haven't
+	modified it.  AC_CONFIG_HEADER checks if the file is unmodified,
+	whereas AC_OUTPUT doesn't, and they're otherwise identical, so...
+	(AC_CONFIG_HEADER): ... mention src/options.h here...
+	(AC_OUTPUT): ... not here.
+	Copy src/options.h to src/options.h-SAVED, don't move it.
+	Otherwise, configure will create it again every time.
+	Remove the code to compare the new src/options.h with
+	src/options.h-SAVED and move it back if it's unchanged; autoconf
+	writes that for us now.
 
 Wed Aug 30 18:45:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
