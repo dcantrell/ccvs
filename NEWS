@@ -1,4 +1,10 @@
-Changes since 1.9:
+Changes since 1.10:
+
+* It is now possible to put the CVS lock files in a directory
+set by the new LockDir option in CVSROOT/config.  The default
+continues to be to put the lock files in the repository itself.
+
+Changes from 1.9 to 1.10:
 
 * There is a new feature, enabled by TopLevelAdmin in CVSROOT/config,
 which tells CVS to modify the behavior of the "checkout" command.  The
