@@ -2970,6 +2970,40 @@ handle_f (args, len)
     fflush (stderr);
 }
 
+static void
+handle_mt (args, len)
+    char *args;
+    int len;
+{
+    char *p;
+    char *tag = args;
+    char *text;
+
+    /* See comment at handle_m for more details.  */
+    fflush (stderr);
+
+    p = strchr (args, ' ');
+    if (p == NULL)
+	text = NULL;
+    else
+    {
+	*p++ = '\0';
+	text = p;
+    }
+
+    switch (tag[0])
+    {
+	case '+':
+	case '-':
+	    break;
+	default:
+	    if (strcmp (tag, "newline") == 0)
+		printf ("\n");
+	    else if (text != NULL)
+		printf ("%s", text);
+    }
+}
+
 #endif /* CLIENT_SUPPORT */
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
@@ -3026,6 +3060,7 @@ struct response responses[] =
     RSP_LINE("Mbinary", handle_mbinary, response_type_normal, rs_optional),
     RSP_LINE("E", handle_e, response_type_normal, rs_essential),
     RSP_LINE("F", handle_f, response_type_normal, rs_optional),
+    RSP_LINE("MT", handle_mt, response_type_normal, rs_optional),
     /* Possibly should be response_type_error.  */
     RSP_LINE(NULL, NULL, response_type_normal, rs_essential)
 

@@ -1,3 +1,15 @@
+Sun Dec 14 00:27:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Implement tagged text feature:
+	* update.c (write_letter): Take a single finfo argument rather
+	than file and update_dir.  While we are at it change it to return
+	void (since the returned value always had been 0).
+	* update.c: Update callers.
+	* server.c, cvs.h (cvs_output_tagged): New function.
+	* client.c (responses): Add "MT" response.
+	(handle_mt): New function.
+	* update.c (write_letter): Output via cvs_output_tagged.
+
 Sun Dec 14 14:13:05 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* recurse.c (do_dir_proc): Only check for CVS/Repository if
