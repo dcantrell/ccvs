@@ -1,5 +1,9 @@
 2000-05-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* recurse.c (unroll_files_proc): Plug memory leak.
+
+	* recurse.c (addfile): Fix nonportable pointer cast.
+
 	* rcs.c (rcsbuf_getstring, rcsbuf_getword, getdelta): Plug memory
 	leaks.
 
