@@ -51,15 +51,6 @@ Imported files					CVS		Local
 # $GNULIB/modules/error
 $GNULIB/lib/error.c				lib		no NI
 $GNULIB/m4/strerror_r.m4			lib		no NI
-# $GNULIB/modules/extensions
-$GNULIB/m4/extensions.m4			m4		no NI
-# $GNULIB/modules/fnmatch-posix
-# $GNULIB/modules/fnmatch
-$GNULIB/lib/fnmatch.c				lib		no NI
-$GNULIB/lib/fnmatch_.h				lib		no NI
-$GNULIB/lib/fnmatch_loop.c			lib		no NI
-$GNULIB/m4/mbstate_t.m4				m4		no NI
-$GNULIB/m4/fnmatch.m4				m4		no NI
 # $GNULIB/modules/getdate
 $GNULIB/lib/getdate.h				lib		no NI
 $GNULIB/lib/getdate.y				lib		no NI
