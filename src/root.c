@@ -38,16 +38,13 @@ Name_Root(dir, update_dir)
     if (dir != NULL)
     {
 	(void) sprintf (cvsadm, "%s/%s", dir, CVSADM);
+	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ROOT);
     }
     else
     {
 	(void) strcpy (cvsadm, CVSADM);
-    }
-
-    if (dir != NULL)
-	(void) sprintf (tmp, "%s/%s", dir, CVSADM_ROOT);
-    else
 	(void) strcpy (tmp, CVSADM_ROOT);
+    }
 
     /*
      * Do not bother looking for a readable file if there is no cvsadm
