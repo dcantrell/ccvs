@@ -13,7 +13,7 @@ Cyclic CVS can access repositories on remote machines.  This is very
 helpful when collaborating on a project with someone across a
 wide-area network.
 
-Here are some of Cyclic CVS's features:
+Here are some of the features of the remote implementation:
 - It uses reliable transport protocols (TCP/IP) for remote repository
   access, not NFS.  NFS is unusable over long distances (and sometimes
   over short distances)
@@ -23,14 +23,16 @@ Here are some of Cyclic CVS's features:
 - The server never holds CVS locks while waiting for a reply from the client;
   this makes the system robust when used over flaky networks.
 
-* Aren't there other similar CVS hacks out there?
+Cyclic CVS can also be used locally, like other CVS versions, if you
+have no need for remote access.
 
-There have been several CVS variants designed with similar goals.
-contrib/pcl-cvs/pcl-cvs.el mentions one or two, for example.  However,
-I've had a hard time finding more information about those
-implementations, so I can't comment on them.  The sense of the
-info-cvs mailing list seems to be that CCVS is the best extant
-implementation.
+
+* How do I get up-to-date information and information about other
+versions of CVS?
+
+On the web, http://www.winternet.com/~zoo/cvs/ or
+http://www.loria.fr/~molli/cvs-index.html.  Also see the Cyclic CVS
+mailing list mentioned below.
 
 
 * How can I get Cyclic CVS?
