@@ -453,7 +453,11 @@ piped_child (command, tofdp, fromfdp)
     if (pipe (from_child_pipe) < 0)
 	error (1, errno, "cannot create pipe");
 
+#ifdef HAVE_VFORK
+    pid = vfork ();
+#else
     pid = fork ();
+#endif
     if (pid < 0)
 	error (1, errno, "cannot fork");
     if (pid == 0)
@@ -510,7 +514,11 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
 
     if (pipe (p))
 	error (1, errno, "cannot create pipe");
+#ifdef HAVE_VFORK
+    newpid = vfork ();
+#else
     newpid = fork ();
+#endif
     if (pidp)
 	*pidp = newpid;
     switch (newpid)

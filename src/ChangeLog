@@ -1,3 +1,10 @@
+1997-01-01  Fred Fish  <fnf@ninemoons.com>
+
+	* run.c (piped_child, filter_stream_through_program): Actually
+	install these HAVE_VFORK patches that got missed.
+	(There was a log entry for these changes for 29 Nov 1996 but it
+	seems I accidentally forgot to actually check them in -kingdon).
+
 Wed Jan  1 18:32:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in: Add ChangeLog-96.
