@@ -27236,7 +27236,8 @@ EOF
 	    done
 	    dotest_fail pserver-auth-no-dos \
 "$servercvs --allow-root=$CVSROOT_DIRNAME pserver" \
-"$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Cannot allocate memory" <garbageinput
+"$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Cannot allocate memory" \
+"$CPROG \\[pserver aborted\\]: error reading from net while validating pserver: Not enough space" <garbageinput
 	    unset i
 	    rm garbageseg garbageseg2 garbageinput
 

@@ -1,3 +1,10 @@
+2004-07-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (pserver-auth-no-dos): ENOMEM on Solaris 7, 8, 9, and
+	AIX 4.3 all use the text "Not enough space" instead of the text
+	"Cannot allocate memory" as is printed on GNU/Linux, NetBSD, and
+	FreeBSD systems.
+
 2004-07-28  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (ssh-wrapper): Export CVS_RSH on remote host.
