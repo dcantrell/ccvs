@@ -42,15 +42,14 @@ static int finaladd PROTO((struct file_info *finfo, char *revision, char *tag,
 			   char *options));
 static int findmaxrev PROTO((Node * p, void *closure));
 static int lock_RCS PROTO((char *user, char *rcs, char *rev, char *repository));
-static int lockrcsfile PROTO((char *file, char *repository, char *rev));
 static int precommit_list_proc PROTO((Node * p, void *closure));
 static int precommit_proc PROTO((char *repository, char *filter));
 static int remove_file PROTO ((struct file_info *finfo, char *tag,
 			       char *message));
 static void fix_rcs_modes PROTO((char *rcs, char *user));
 static void fixaddfile PROTO((char *file, char *repository));
-static void fixbranch PROTO((char *file, char *repository, char *branch));
-static void unlockrcs PROTO((char *file, char *repository));
+static void fixbranch PROTO((char *rcs, char *branch));
+static void unlockrcs PROTO((char *rcs));
 static void ci_delproc PROTO((Node *p));
 static void masterlist_delproc PROTO((Node *p));
 static void locate_rcs PROTO((char *file, char *repository, char *rcs));
@@ -1024,7 +1023,6 @@ commit_fileproc (callerdat, finfo)
     int err = 0;
     List *ulist, *cilist;
     struct commit_info *ci;
-    char rcs[PATH_MAX];
 
     if (finfo->update_dir[0] == '\0')
 	p = findnode (mulist, ".");
@@ -1058,9 +1056,12 @@ commit_fileproc (callerdat, finfo)
     ci = (struct commit_info *) p->data;
     if (ci->status == T_MODIFIED)
     {
-	if (lockrcsfile (finfo->file, finfo->repository, ci->rev) != 0)
+	if (finfo->rcs == NULL)
+	    error (1, 0, "internal error: no parsed RCS file");
+	if (lock_RCS (finfo->file, finfo->rcs->path, ci->rev,
+		      finfo->repository) != 0)
 	{
-	    unlockrcs (finfo->file, finfo->repository);
+	    unlockrcs (finfo->rcs->path);
 	    err = 1;
 	    goto out;
 	}
@@ -1079,15 +1080,17 @@ commit_fileproc (callerdat, finfo)
 	   Since the branch test was done in check_fileproc for
 	   modified files, we need to stub it in again here. */
 
-	if (ci->tag) {
-	    locate_rcs (finfo->file, finfo->repository, rcs);
+	if (ci->tag)
+	{
+	    if (finfo->rcs == NULL)
+		error (1, 0, "internal error: no parsed RCS file");
 	    ci->rev = RCS_whatbranch (finfo->rcs, ci->tag);
-	    err = Checkin ('A', finfo, rcs, ci->rev,
+	    err = Checkin ('A', finfo, finfo->rcs->path, ci->rev,
 			   ci->tag, ci->options, message);
 	    if (err != 0)
 	    {
-		unlockrcs (finfo->file, finfo->repository);
-		fixbranch (finfo->file, finfo->repository, sbranch);
+		unlockrcs (finfo->rcs->path);
+		fixbranch (finfo->rcs->path, sbranch);
 	    }
 
 	    (void) time (&last_register_time);
@@ -1121,17 +1124,16 @@ commit_fileproc (callerdat, finfo)
     }
     else if (ci->status == T_MODIFIED)
     {
-	locate_rcs (finfo->file, finfo->repository, rcs);
 	err = Checkin ('M', finfo,
-		       rcs, ci->rev, ci->tag,
+		       finfo->rcs->path, ci->rev, ci->tag,
 		       ci->options, message);
 
 	(void) time (&last_register_time);
 
 	if (err != 0)
 	{
-	    unlockrcs (finfo->file, finfo->repository);
-	    fixbranch (finfo->file, finfo->repository, sbranch);
+	    unlockrcs (finfo->rcs->path);
+	    fixbranch (finfo->rcs->path, sbranch);
 	}
     }
     else if (ci->status == T_REMOVED)
@@ -1377,7 +1379,6 @@ remove_file (finfo, tag, message)
 {
     mode_t omask;
     int retcode;
-    char rcs[PATH_MAX];
     char *tmp;
 
     int branch;
@@ -1392,17 +1393,19 @@ remove_file (finfo, tag, message)
 
     retcode = 0;
 
-    locate_rcs (finfo->file, finfo->repository, rcs);
+    if (finfo->rcs == NULL)
+	error (1, 0, "internal error: no parsed RCS file");
 
     branch = 0;
     if (tag && !(branch = RCS_isbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	if ((retcode = RCS_deltag (rcs, tag, 1)) != 0) 
+	if ((retcode = RCS_deltag (finfo->rcs->path, tag, 1)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
-		       "failed to remove tag `%s' from `%s'", tag, rcs);
+		       "failed to remove tag `%s' from `%s'", tag,
+		       finfo->fullname);
 	    return (1);
 	}
 	Scratch_Entry (finfo->entries, finfo->file);
@@ -1416,7 +1419,7 @@ remove_file (finfo, tag, message)
     (void) printf ("Removing %s;\n", finfo->fullname);
 
     rev = NULL;
-    lockflag = RCS_FLAGS_LOCK;
+    lockflag = 1;
     if (branch)
     {
 	char *branchname;
@@ -1428,11 +1431,6 @@ remove_file (finfo, tag, message)
 	    return (1);
 	}
 	
-	if (finfo->rcs == NULL)
-	{
-	    error (0, 0, "boy, I'm confused.");
-	    return (1);
-	}
 	branchname = RCS_getbranch (finfo->rcs, rev, 1);
 	if (branchname == NULL)
 	{
@@ -1450,13 +1448,7 @@ remove_file (finfo, tag, message)
 
     } else  /* Not a branch */
     {
-
         /* Get current head revision of file. */
-	if (finfo->rcs == NULL)
-	{
-	    error (0, 0, "could not find parsed rcsfile %s", finfo->fullname);
-	    return (1);
-	}
 	prev_rev = RCS_head (finfo->rcs);
     }
     
@@ -1464,10 +1456,10 @@ remove_file (finfo, tag, message)
        branch is the trunk. */
     if (!tag && !branch)
     {
-        if (RCS_setbranch (rcs, NULL) != 0) 
+        if (RCS_setbranch (finfo->rcs->path, NULL) != 0) 
 	{
 	    error (0, 0, "cannot change branch to default for %s",
-		   rcs);
+		   finfo->fullname);
 	    return (1);
 	}
     }
@@ -1483,28 +1475,32 @@ remove_file (finfo, tag, message)
 #endif
 
     /* check something out.  Generally this is the head.  If we have a
-       particular rev, then name it.  except when creating a branch,
-       lock the rev we're checking out.  */
-    retcode = RCS_checkout (rcs, "", rev ? corev : NULL, NULL, RUN_TTY,
-                            lockflag);
+       particular rev, then name it.  */
+    retcode = RCS_fast_checkout (finfo->rcs, "", rev ? corev : NULL, NULL,
+				 RUN_TTY, 0);
     if (retcode != 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
-		   "failed to check out `%s'", rcs);
+		   "failed to check out `%s'", finfo->fullname);
 	return (1);
     }
+
+    /* Except when we are creating a branch, lock the revision so that
+       we can check in the new revision.  */
+    if (lockflag)
+	RCS_lock (finfo->rcs->path, rev ? corev : NULL, 0);
 
     if (corev != NULL)
 	free (corev);
 
-    retcode = RCS_checkin (rcs, NULL, message, rev,
+    retcode = RCS_checkin (finfo->rcs->path, NULL, message, rev,
 			   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
-		   "failed to commit dead revision for `%s'", rcs);
+		   "failed to commit dead revision for `%s'", finfo->fullname);
 	return (1);
     }
 
@@ -1526,9 +1522,9 @@ remove_file (finfo, tag, message)
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC, finfo->file, RCSEXT);
 	
-	if (strcmp (rcs, tmp) != 0
-	    && CVS_RENAME (rcs, tmp) == -1
-	    && (isreadable (rcs) || !isreadable (tmp)))
+	if (strcmp (finfo->rcs->path, tmp) != 0
+	    && CVS_RENAME (finfo->rcs->path, tmp) == -1
+	    && (isreadable (finfo->rcs->path) || !isreadable (tmp)))
 	{
 	    free(tmp);
 	    return (1);
@@ -1537,7 +1533,7 @@ remove_file (finfo, tag, message)
     }
 
     /* Print message that file was removed. */
-    (void) printf ("%s  <--  %s\n", rcs, finfo->file);
+    (void) printf ("%s  <--  %s\n", finfo->rcs->path, finfo->file);
     (void) printf ("new revision: delete; ");
     (void) printf ("previous revision: %s\n", prev_rev);
     (void) printf ("done\n");
@@ -1580,14 +1576,10 @@ finaladd (finfo, rev, tag, options)
  * Unlock an rcs file
  */
 static void
-unlockrcs (file, repository)
-    char *file;
-    char *repository;
+unlockrcs (rcs)
+    char *rcs;
 {
-    char rcs[PATH_MAX];
-    int retcode = 0;
-
-    locate_rcs (file, repository, rcs);
+    int retcode;
 
     if ((retcode = RCS_unlock (rcs, NULL, 0)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
@@ -1620,17 +1612,14 @@ fixaddfile (file, repository)
  * put the branch back on an rcs file
  */
 static void
-fixbranch (file, repository, branch)
-    char *file;
-    char *repository;
+fixbranch (rcs, branch)
+    char *rcs;
     char *branch;
 {
-    char rcs[PATH_MAX];
-    int retcode = 0;
+    int retcode;
 
     if (branch != NULL && branch[0] != '\0')
     {
-	locate_rcs (file, repository, rcs);
 	if ((retcode = RCS_setbranch (rcs, branch)) != 0)
 	    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 		   "cannot restore branch to %s for %s", branch, rcs);
@@ -1834,24 +1823,6 @@ checkaddfile (file, repository, tag, options, rcsnode)
 }
 
 /*
- * Lock the rcs file ``file''
- */
-static int
-lockrcsfile (file, repository, rev)
-    char *file;
-    char *repository;
-    char *rev;
-{
-    char rcs[PATH_MAX];
-
-    locate_rcs (file, repository, rcs);
-    if (lock_RCS (file, rcs, rev, repository) != 0)
-	return (1);
-    else
-	return (0);
-}
-
-/*
  * Attempt to place a lock on the RCS file; returns 0 if it could and 1 if it
  * couldn't.  If the RCS file currently has a branch as the head, we must
  * move the head back to the trunk before locking the file, and be sure to
@@ -1922,7 +1893,7 @@ lock_RCS (user, rcs, rev, repository)
 
     /* try to restore the branch if we can on error */
     if (branch != NULL)
-	fixbranch (user, repository, branch);
+	fixbranch (rcs, branch);
 
     if (branch)
 	free (branch);

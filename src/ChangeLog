@@ -1,3 +1,24 @@
+Thu Aug 22 14:18:43 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.h (RCS_FLAGS_LOCK): Don't define.
+	(RCS_FLAGS_*): Adjust values to fill in hole left by removal of
+	RCS_FLAGS_LOCK.
+	* rcs.c (RCS_fast_checkout): Don't check for RCS_FLAGS_LOCK.
+	* rcscmds.c (RCS_checkout): Likewise.
+	* commit.c (commit_fileproc): Remove rcs local variable.  If
+	status is T_MODIFIED, require that finfo->rcs be set, call
+	Lock_RCS directly, and don't call locate_rcs.  If adding to a tag,
+	require that finfo->rcs be set, and don't call locate_rcs.
+	(remove_file): Remove rcs local variable.  Require that finfo->rcs
+	be set.  Don't call locate_rcs.  Don't pass RCS_FLAGS_LOCK to
+	RCS_checkout; use RCS_lock instead.  Call RCS_fast_checkout rather
+	than RCS_checkout.
+	(unlockrcs): Use a single rcs parameter rather than two parameters
+	for file and repository.  Change all callers.  Don't call
+	locate_rcs.
+	(fixbranch): Likewise.
+	(lockrcsfile): Remove; no more callers.
+
 Tue Aug 20 10:13:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* buffer.c, rcs.c: Don't use inline.  It wasn't being used in a

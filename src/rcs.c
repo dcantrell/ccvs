@@ -2090,8 +2090,8 @@ RCS_getexpand (rcs)
    keyword expansion options, or NULL if there are none.  If WORKFILE
    is NULL, run regardless of noexec; if non-NULL, noexec inhibits
    execution.  SOUT is what to do with standard output (typically
-   RUN_TTY).  If FLAGS & RCS_FLAGS_LOCK, lock it.  If FLAGS &
-   RCS_FLAGS_FORCE, check out even on top of an existing file.  */
+   RUN_TTY).  If FLAGS & RCS_FLAGS_FORCE, check out even on top of an
+   existing file.  */
 
 int
 RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
@@ -2104,8 +2104,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 {
     if ((workfile == NULL || *workfile != '\0')
 	&& ! noexec
-	&& (sout == RUN_TTY || workfile == NULL)
-	&& (flags & RCS_FLAGS_LOCK) == 0)
+	&& (sout == RUN_TTY || workfile == NULL))
     {
         FILE *fp;
 	struct stat sb;
