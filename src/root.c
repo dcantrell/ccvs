@@ -105,7 +105,11 @@ Name_Root (const char *dir, const char *update_dir)
 	goto out;
     }
 
-    if (!ret->isremote && !isdir (ret->directory))
+    if (
+#ifdef CLIENT_SUPPORT
+        !ret->isremote &&
+#endif
+        !isdir (ret->directory))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (0, 0,

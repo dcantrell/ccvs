@@ -1316,7 +1316,9 @@ VERS: ", 0);
 		   for us to stat.  */
 		if( CVS_STAT( vers_ts->srcfile->path, &sb ) < 0 )
 		{
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
 		    buf_free (revbuf);
+#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
 		    error (1, errno, "cannot stat %s",
 			   vers_ts->srcfile->path);
 		}
@@ -1483,8 +1485,10 @@ VERS: ", 0);
 	free (backup);
     }
 
+#if defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT)
     if (revbuf != NULL)
 	buf_free (revbuf);
+#endif /* defined (SERVER_SUPPORT) || defined (CLIENT_SUPPORT) */
     return retval;
 }
 
