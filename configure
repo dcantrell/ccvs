@@ -615,6 +615,8 @@ EOF
   else
     CC="$CC -Xp"
   fi
+  CFLAGS="$CFLAGS -DISC"
+  LIBS="$LIBS -linet"
 else
   echo "$ac_t""no" 1>&6
   ISC=
