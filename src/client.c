@@ -1647,16 +1647,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    {
 		if (stored_checksum_valid)
 		{
-		    struct cvs_MD5Context context;
 		    unsigned char checksum[16];
 
 		    /* We have a checksum.  Check it before writing
 		       the file out, so that we don't have to read it
 		       back in again.  */
-		    cvs_MD5Init (&context);
-		    cvs_MD5Update (&context,
-				   (unsigned char *) patchedbuf, patchedlen);
-		    cvs_MD5Final (checksum, &context);
+		    md5_buffer (patchedbuf, patchedlen, checksum);
 		    if (memcmp (checksum, stored_checksum, 16) != 0)
 		    {
 			error (0, 0,
@@ -1693,7 +1689,7 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	if (stored_checksum_valid && ! patch_failed)
 	{
 	    FILE *e;
-	    struct cvs_MD5Context context;
+	    struct md5_ctx context;
 	    unsigned char buf[8192];
 	    unsigned len;
 	    unsigned char checksum[16];
@@ -1712,12 +1708,12 @@ update_entries (void *data_arg, List *ent_list, const char *short_pathname,
 	    if (e == NULL)
 	        error (1, errno, "could not open %s", short_pathname);
 
-	    cvs_MD5Init (&context);
+	    md5_init_ctx (&context);
 	    while ((len = fread (buf, 1, sizeof buf, e)) != 0)
-		cvs_MD5Update (&context, buf, len);
+		md5_process_bytes (buf, len, &context);
 	    if (ferror (e))
 		error (1, errno, "could not read %s", short_pathname);
-	    cvs_MD5Final (checksum, &context);
+	    md5_finish_ctx (&context, checksum);
 
 	    fclose (e);
 
