@@ -1,3 +1,18 @@
+Wed Mar 12 22:16:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add_directory): If repository has an extraneous "."
+	directory at the end, strip it off.  This fixes a bug which was
+	introduced when strip_path was nuked (this fix is much more
+	limited in scope than strip_path was; I _think_ that is a good
+	thing).
+	(add): Likewise, for client.
+	(combine_dir): New function, helps with above.
+	* sanity.sh (modules3): Reenable tests for this behavior.
+	(basica-0b, basicb-0e): Adjust test to reflect "foo/bar" instead
+	of "foo/./bar" in message.  As with the rest of this, I believe
+	this is just restoring the behavior prior to the strip_path nuking
+	(I tried it with CVS 1.9).
+
 Sun Mar  9 10:06:29 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* root.c (parse_cvsroot), server.c (serve_root, serve_init):

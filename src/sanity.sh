@@ -531,7 +531,7 @@ for what in $tests; do
 	  dotest basica-0a "${testcvs} -q co -l ." ''
 	  mkdir first-dir
 	  dotest basica-0b "${testcvs} add first-dir" \
-"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
+"Directory /tmp/cvs-sanity/cvsroot/first-dir added to the repository"
 	  cd ..
 	  rm -rf 1
 
@@ -688,7 +688,7 @@ done'
 	  dotest basicb-0d "${testcvs} -q co -l ." "U topfile"
 	  mkdir first-dir
 	  dotest basicb-0e "${testcvs} add first-dir" \
-"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
+"Directory /tmp/cvs-sanity/cvsroot/first-dir added to the repository"
 	  cd ..
 	  rm -rf 2
 
@@ -3894,20 +3894,10 @@ ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  # First just set up a directory first-dir and a file file1 in it.
 	  mkdir 1; cd 1
 
-	  # Creating the directory with "cvs add" puts
-	  # "${CVSROOT_DIRNAME}/./first-dir" in first-dir/CVS/Repository, 
-	  # which causes test modules3-6 to fail with 
-	  # "existing repository . . . does not match . . ."
-	  # Might be worth fixing CVS (probably make it omit "."),
-	  # but for now we work around it.
-:	  dotest modules3-0 "${testcvs} -q co -l ." ''
-:	  mkdir first-dir
-:	  dotest modules3-1 "${testcvs} add first-dir" \
-"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
-	  # begin workaround
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest modules3-1a "${testcvs} -q co first-dir" ''
-	  # end workaround
+	  dotest modules3-0 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest modules3-1 "${testcvs} add first-dir" \
+"Directory /tmp/cvs-sanity/cvsroot/first-dir added to the repository"
 
 	  cd first-dir
 	  echo file1 >file1
