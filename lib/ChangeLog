@@ -1,3 +1,8 @@
+2003-10-21  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_LIBADD): Add $(LIBINTL) for gettext.
+	* Makefile.in: Regenerated.
+
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
 	* sighandle.c (SIG_handle): With the last commit, avoid allowing a
