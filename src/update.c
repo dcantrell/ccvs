@@ -64,7 +64,7 @@ static int update_fileproc PROTO ((void *callerdat, struct file_info *));
 static int update_filesdone_proc PROTO ((void *callerdat, int err,
 					 char *repository, char *update_dir,
 					 List *entries));
-static int write_letter PROTO((char *file, int letter, char *update_dir));
+static void write_letter PROTO ((struct file_info *finfo, int letter));
 #ifdef SERVER_SUPPORT
 static void join_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts));
 #else
@@ -551,13 +551,13 @@ update_fileproc (callerdat, finfo)
 		break;
 	    case T_CONFLICT:		/* old punt-type errors */
 		retval = 1;
-		(void) write_letter (finfo->file, 'C', finfo->update_dir);
+		write_letter (finfo, 'C');
 		break;
 	    case T_NEEDS_MERGE:		/* needs merging */
 		if (noexec)
 		{
 		    retval = 1;
-		    (void) write_letter (finfo->file, 'C', finfo->update_dir);
+		    write_letter (finfo, 'C');
 		}
 		else
 		{
@@ -598,7 +598,7 @@ update_fileproc (callerdat, finfo)
 
 		    if (!retcode)
 		    {
-			(void) write_letter (finfo->file, 'C', finfo->update_dir);
+			write_letter (finfo, 'C');
 			retval = 1;
 		    }
 		    else
@@ -610,7 +610,10 @@ update_fileproc (callerdat, finfo)
 		    }
 		}
 		if (!retval)
-		    retval = write_letter (finfo->file, 'M', finfo->update_dir);
+		{
+		    write_letter (finfo, 'M');
+		    retval = 0;
+		}
 		break;
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
@@ -649,10 +652,12 @@ update_fileproc (callerdat, finfo)
 #endif
 		break;
 	    case T_ADDED:		/* added but not committed */
-		retval = write_letter (finfo->file, 'A', finfo->update_dir);
+		write_letter (finfo, 'A');
+		retval = 0;
 		break;
 	    case T_REMOVED:		/* removed but not committed */
-		retval = write_letter (finfo->file, 'R', finfo->update_dir);
+		write_letter (finfo, 'R');
+		retval = 0;
 		break;
 	    case T_REMOVE_ENTRY:	/* needs to be un-registered */
 		retval = scratch_file (finfo);
@@ -702,7 +707,23 @@ update_ignproc (file, dir)
     char *file;
     char *dir;
 {
-    (void) write_letter (file, '?', dir);
+    struct file_info finfo;
+
+    memset (&finfo, 0, sizeof (finfo));
+    finfo.file = file;
+    finfo.update_dir = dir;
+    if (dir[0] == '\0')
+	finfo.fullname = xstrdup (file);
+    else
+    {
+	finfo.fullname = xmalloc (strlen (file) + strlen (dir) + 10);
+	strcpy (finfo.fullname, dir);
+	strcat (finfo.fullname, "/");
+	strcat (finfo.fullname, file);
+    }
+
+    write_letter (&finfo, '?');
+    free (finfo.fullname);
 }
 
 /* ARGSUSED */
@@ -1205,7 +1226,7 @@ VERS: ", 0);
 
 	    if (!really_quiet && !file_is_dead)
 	    {
-		write_letter (finfo->file, 'U', finfo->update_dir);
+		write_letter (finfo, 'U');
 	    }
 	}
     }
@@ -1493,7 +1514,7 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 
 	if (!really_quiet)
 	{
-	    write_letter (finfo->file, 'P', finfo->update_dir);
+	    write_letter (finfo, 'P');
 	}
     }
     else
@@ -1548,27 +1569,45 @@ patch_file_write (callerdat, buffer, len)
  * Several of the types we process only print a bit of information consisting
  * of a single letter and the name.
  */
-static int
-write_letter (file, letter, update_dir)
-    char *file;
+static void
+write_letter (finfo, letter)
+    struct file_info *finfo;
     int letter;
-    char *update_dir;
 {
     if (!really_quiet)
     {
-	char buf[2];
+	char *tag = NULL;
+	/* Big enough for "+updated" or any of its ilk.  */
+	char buf[80];
+
+	switch (letter)
+	{
+	    case 'U':
+		tag = "updated";
+		break;
+	    default:
+		/* We don't yet support tagged output except for "U".  */
+		break;
+	}
+
+	if (tag != NULL)
+	{
+	    sprintf (buf, "+%s", tag);
+	    cvs_output_tagged (buf, NULL);
+	}
 	buf[0] = letter;
 	buf[1] = ' ';
-	cvs_output (buf, 2);
-	if (update_dir[0])
+	buf[2] = '\0';
+	cvs_output_tagged ("text", buf);
+	cvs_output_tagged ("fname", finfo->fullname);
+	cvs_output_tagged ("newline", NULL);
+	if (tag != NULL)
 	{
-	    cvs_output (update_dir, 0);
-	    cvs_output ("/", 1);
+	    sprintf (buf, "-%s", tag);
+	    cvs_output_tagged (buf, NULL);
 	}
-	cvs_output (file, 0);
-	cvs_output ("\n", 1);
     }
-    return (0);
+    return;
 }
 
 /*
@@ -1629,7 +1668,7 @@ merge_file (finfo, vers)
 	error (0, 0, "revision %s from repository is now in %s",
 	       vers->vn_rcs, finfo->fullname);
 	error (0, 0, "file from working directory is now in %s", backup);
-	write_letter (finfo->file, 'C', finfo->update_dir);
+	write_letter (finfo, 'C');
 
 	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
@@ -1700,7 +1739,7 @@ merge_file (finfo, vers)
 	if (!noexec)
 	    error (0, 0, "conflicts found in %s", finfo->fullname);
 
-	write_letter (finfo->file, 'C', finfo->update_dir);
+	write_letter (finfo, 'C');
 
 	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
 
@@ -1712,7 +1751,7 @@ merge_file (finfo, vers)
     }
     else
     {
-	write_letter (finfo->file, 'M', finfo->update_dir);
+	write_letter (finfo, 'M');
 	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
     }
@@ -2110,7 +2149,7 @@ join_file (finfo, vers)
 	   simple "U foo" is good here; it seems analogous to the case in
 	   which the file was added on the branch in terms of what to
 	   print.  */
-	write_letter (finfo->file, 'U', finfo->update_dir);
+	write_letter (finfo, 'U');
     }
     else if (strcmp (options, "-kb") == 0
 	     || wrap_merge_is_copy (finfo->file))
@@ -2147,10 +2186,11 @@ join_file (finfo, vers)
 	error (0, 0, "revision %s from repository is now in %s",
 	       rev2, finfo->fullname);
 	error (0, 0, "file from working directory is now in %s", backup);
-	write_letter (finfo->file, 'C', finfo->update_dir);
+	write_letter (finfo, 'C');
     }
     else
-	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file, options, rev1, rev2);
+	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
+			    options, rev1, rev2);
 
     if (status != 0 && status != 1)
     {

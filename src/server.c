@@ -5570,3 +5570,62 @@ cvs_flushout ()
 #endif
 	fflush (stdout);
 }
+
+/* Output TEXT, tagging it according to TAG.  There are lots more
+   details about what TAG means in cvsclient.texi but for the simple
+   case (e.g. non-client/server), TAG is just "newline" to output a
+   newline (in which case TEXT must be NULL), and any other tag to
+   output normal text.
+
+   Note that there is no way to output either \0 or \n as part of TEXT.  */
+
+void
+cvs_output_tagged (tag, text)
+    char *tag;
+    char *text;
+{
+    if (text != NULL && strchr (text, '\n') != NULL)
+	/* Uh oh.  The protocol has no way to cope with this.  For now
+	   we dump core, although that really isn't such a nice
+	   response given that this probably can be caused by newlines
+	   in filenames and other causes other than bugs in CVS.  Note
+	   that we don't want to turn this into "MT newline" because
+	   this case is a newline within a tagged item, not a newline
+	   as extraneous sugar for the user.  */
+	assert (0);
+
+    /* Start and end tags don't take any text, per cvsclient.texi.  */
+    if (tag[0] == '+' || tag[0] == '-')
+	assert (text == NULL);
+
+#ifdef SERVER_SUPPORT
+    if (server_active && supported_response ("MT"))
+    {
+	struct buffer *buf;
+
+	if (error_use_protocol)
+	    buf = buf_to_net;
+	else
+	    buf = protocol;
+
+	buf_output0 (buf, "MT ");
+	buf_output0 (buf, tag);
+	if (text != NULL)
+	{
+	    buf_output (buf, " ", 1);
+	    buf_output0 (buf, text);
+	}
+	buf_output (buf, "\n", 1);
+
+	if (!error_use_protocol)
+	    buf_send_counted (protocol);
+    }
+    else
+#endif
+    {
+	if (strcmp (tag, "newline") == 0)
+	    cvs_output ("\n", 1);
+	else if (text != NULL)
+	    cvs_output (text, 0);
+    }
+}
