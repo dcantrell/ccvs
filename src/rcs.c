@@ -64,8 +64,7 @@ static char *RCS_getdatebranch (RCSNode * rcs, const char *date,
 static void rcsbuf_open (struct rcsbuffer *, FILE *fp,
                          const char *filename, unsigned long pos);
 static void rcsbuf_close (struct rcsbuffer *);
-static int rcsbuf_getkey (struct rcsbuffer *, char **keyp,
-				 char **valp);
+static int rcsbuf_getkey (struct rcsbuffer *, char **keyp, char **valp);
 static int rcsbuf_getrevnum (struct rcsbuffer *, char **revp);
 static char *rcsbuf_fill (struct rcsbuffer *, char *ptr, char **keyp,
                           char **valp);
@@ -78,11 +77,10 @@ static void rcsbuf_valpolish_internal (struct rcsbuffer *, char *to,
                                        const char *from, size_t *lenp);
 static off_t rcsbuf_ftello (struct rcsbuffer *);
 static void rcsbuf_get_buffered (struct rcsbuffer *, char **datap,
-					size_t *lenp);
+				 size_t *lenp);
 static void rcsbuf_cache (RCSNode *, struct rcsbuffer *);
 static void rcsbuf_cache_close (void);
-static void rcsbuf_cache_open (RCSNode *, off_t, FILE **,
-				      struct rcsbuffer *);
+static void rcsbuf_cache_open (RCSNode *, off_t, FILE **, struct rcsbuffer *);
 static int checkmagic_proc (Node *p, void *closure);
 static void do_branches (List * list, char *val);
 static void do_symbols (List * list, char *val);
@@ -102,10 +100,8 @@ static void expand_keywords (RCSNode *, RCSVers *, const char *,
 static void cmp_file_buffer (void *, const char *, size_t);
 
 /* Routines for reading, parsing and writing RCS files. */
-static RCSVers *getdelta (struct rcsbuffer *, char *, char **,
-				 char **);
-static Deltatext *RCS_getdeltatext (RCSNode *, FILE *,
-					   struct rcsbuffer *);
+static RCSVers *getdelta (struct rcsbuffer *, char *, char **, char **);
+static Deltatext *RCS_getdeltatext (RCSNode *, FILE *, struct rcsbuffer *);
 static void freedeltatext (Deltatext *);
 
 static void RCS_putadmin (RCSNode *, FILE *);
@@ -114,8 +110,8 @@ static void RCS_putdesc (RCSNode *, FILE *);
 static void putdelta (RCSVers *, FILE *);
 static int putrcsfield_proc (Node *, void *);
 static int putsymbol_proc (Node *, void *);
-static void RCS_copydeltas (RCSNode *, FILE *, struct rcsbuffer *,
-				   FILE *, Deltatext *, char *);
+static void RCS_copydeltas (RCSNode *, FILE *, struct rcsbuffer *, FILE *,
+			    Deltatext *, char *);
 static int count_delta_actions (Node *, void *);
 static void putdeltatext (FILE *, Deltatext *);
 
@@ -2140,7 +2136,7 @@ RCS_getversion (RCSNode *rcs, const char *tag, const char *date,
 	/* Fetch the revision of branch as of date.  */
 	rev = RCS_getdatebranch (rcs, date, branch);
 	free (branch);
-	return (rev);
+	return rev;
     }
     else if (tag)
 	return RCS_gettag (rcs, tag, force_tag_match, simple_tag);
@@ -2231,7 +2227,7 @@ RCS_tag2rev (RCSNode *rcs, char *tag)
 
     /* If tag is "HEAD", special case to get head RCS revision */
     if (tag && STREQ (tag, TAG_HEAD))
-        return (RCS_head (rcs));
+        return RCS_head (rcs);
 
     /* If valid tag let translate_symtag say yea or nay. */
     rev = translate_symtag (rcs, tag);
@@ -2574,7 +2570,7 @@ RCS_whatbranch (RCSNode *rcs, const char *rev)
 	return NULL;
     dots = numdots (version);
     if ((dots & 1) == 0)
-	return (version);
+	return version;
 
     /* got a symbolic tag match, but it's not a branch; see if it's magic */
     if (dots > 2)
@@ -2594,7 +2590,7 @@ RCS_whatbranch (RCSNode *rcs, const char *rev)
 	    *cp = '\0';			/* turn it into a revision */
 	    (void) sprintf (magic, "%s.%s", version, branch);
 	    free (version);
-	    return (magic);
+	    return magic;
 	}
 	free (magic);
     }
@@ -2642,9 +2638,9 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
 	    {
 		free (xtag);
 		if (force_tag_match)
-		    return (NULL);
+		    return NULL;
 		else
-		    return (RCS_head (rcs));
+		    return RCS_head (rcs);
 	    }
 	    vn = p->data;
 	    cp = vn->next;
@@ -2653,11 +2649,11 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
 	if (cp == NULL)
 	{
 	    if (force_tag_match)
-		return (NULL);
+		return NULL;
 	    else
-		return (RCS_head (rcs));
+		return RCS_head (rcs);
 	}
-	return (xstrdup (cp));
+	return xstrdup (cp);
     }
 
     /* if it had a `.', terminate the string so we have the base revision */
@@ -2673,15 +2669,15 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
     {
 	/* if the base revision didn't exist, return head or NULL */
 	if (force_tag_match)
-	    return (NULL);
+	    return NULL;
 	else
-	    return (RCS_head (rcs));
+	    return RCS_head (rcs);
     }
 
     /* find the first element of the branch we are looking for */
     vn = p->data;
     if (vn->branches == NULL)
-	return (NULL);
+	return NULL;
     xtag = xmalloc (strlen (tag) + 1 + 1);	/* 1 for the extra '.' */
     (void) strcpy (xtag, tag);
     (void) strcat (xtag, ".");
@@ -2695,9 +2691,9 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
     {
 	/* we didn't find a match so return head or NULL */
 	if (force_tag_match)
-	    return (NULL);
+	    return NULL;
 	else
-	    return (RCS_head (rcs));
+	    return RCS_head (rcs);
     }
 
     /* now walk the next pointers of the branch */
@@ -2709,16 +2705,16 @@ RCS_getbranch (RCSNode *rcs, const char *tag, int force_tag_match)
 	{
 	    /* a link in the chain is missing - return head or NULL */
 	    if (force_tag_match)
-		return (NULL);
+		return NULL;
 	    else
-		return (RCS_head (rcs));
+		return RCS_head (rcs);
 	}
 	vn = p->data;
 	nextvers = vn->next;
     } while (nextvers != NULL);
 
     /* we have the version in our hand, so go for it */
-    return (xstrdup (vn->version));
+    return xstrdup (vn->version);
 }
 
 
@@ -2880,7 +2876,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
     {
 	retval = RCS_getdatebranch (rcs, date, rcs->branch);
 	if (retval != NULL)
-	    return (retval);
+	    return retval;
     }
 
     /* otherwise if we have a trunk, try it */
@@ -2922,7 +2918,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
     if (cur_rev != NULL)
     {
 	if (! STREQ (cur_rev, "1.1"))
-	    return (xstrdup (cur_rev));
+	    return xstrdup (cur_rev);
 
 	/* This is 1.1;  if the date of 1.1 is not the same as that for the
 	   1.1.1.1 version, then return 1.1.  This happens when the first
@@ -2948,7 +2944,7 @@ RCS_getdate (RCSNode *rcs, const char *date, int force_tag_match)
      * date of the first rev
      */
     if (retval != NULL)
-	return (retval);
+	return retval;
 
     if (!force_tag_match ||
 	(vers != NULL && RCS_datecmp (vers->date, date) <= 0))
@@ -2978,7 +2974,7 @@ RCS_getdatebranch (RCSNode *rcs, const char *date, const char *branch)
     if (cp == NULL)
     {
 	free (xrev);
-	return (NULL);
+	return NULL;
     }
     *cp = '\0';				/* turn it into a revision */
 
@@ -2990,7 +2986,7 @@ RCS_getdatebranch (RCSNode *rcs, const char *date, const char *branch)
     p = findnode (rcs->versions, xrev);
     free (xrev);
     if (p == NULL)
-	return (NULL);
+	return NULL;
     vers = p->data;
 
     /* Tentatively use this revision, if it is early enough.  */
@@ -3086,7 +3082,7 @@ RCS_getrevtime (RCSNode *rcs, const char *rev, char *date, int fudge)
     /* look up the revision */
     p = findnode (rcs->versions, rev);
     if (p == NULL)
-	return (-1);
+	return -1;
     vers = p->data;
 
     /* split up the date */
@@ -3706,7 +3702,7 @@ expand_keywords (RCSNode *rcs, RCSVers *ver, const char *name, const char *log,
 		    if (keyword->expandto == KEYWORD_HEADER)
 			path = rcs->print_path;
 		    else if (keyword->expandto == KEYWORD_CVSHEADER)
-			path = getfullCVSname(rcs->print_path, &old_path);
+			path = getfullCVSname (rcs->print_path, &old_path);
 		    else
 			path = last_component (rcs->print_path);
 		    path = escape_keyword_value (path, &free_path);
@@ -6013,7 +6009,8 @@ RCS_unlock (RCSNode *rcs, char *rev, int unlock_quiet)
 	char *repos, *workfile;
 	if (!unlock_quiet)
 	    error (0, 0, "\
-%s: revision %s locked by %s; breaking lock", rcs->print_path, xrev, (char *)lock->data);
+%s: revision %s locked by %s; breaking lock", rcs->print_path, xrev,
+		   (char *)lock->data);
 	repos = xstrdup (rcs->path);
 	workfile = strrchr (repos, '/');
 	*workfile++ = '\0';
@@ -6906,8 +6903,8 @@ linevector_free (struct linevector *vec)
    strings based on the locale; they are standard abbreviations (for
    example in rfc822 mail messages) which should be widely understood.
    Returns a pointer into static readonly storage.  */
-static char *
-month_printname (char *month)
+static const char *
+month_printname (const char *month)
 {
     static const char *const months[] =
       {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -6917,7 +6914,7 @@ month_printname (char *month)
     mnum = atoi (month);
     if (mnum < 1 || mnum > 12)
 	return "???";
-    return (char *)months[mnum - 1];
+    return months[mnum - 1];
 }
 
 

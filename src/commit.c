@@ -134,7 +134,7 @@ static Dtype
 find_dirent_proc (void *callerdat, const char *dir, const char *repository,
                   const char *update_dir, List *entries)
 {
-    struct find_data *find_data = (struct find_data *)callerdat;
+    struct find_data *find_data = callerdat;
 
     /* This check seems to slowly be creeping throughout CVS (update
        and send_dirent_proc by CVS 1.5, diff in 31 Oct 1995.  My guess
@@ -168,7 +168,7 @@ find_ignproc (const char *file, const char *dir)
 {
     struct question *p;
 
-    p = (struct question *) xmalloc (sizeof (struct question));
+    p = xmalloc (sizeof (struct question));
     p->dir = xstrdup (dir);
     p->repos = xstrdup (find_data_static->repository);
     p->file = xstrdup (file);
@@ -182,7 +182,7 @@ static int
 find_filesdoneproc (void *callerdat, int err, const char *repository,
                     const char *update_dir, List *entries)
 {
-    struct find_data *find_data = (struct find_data *)callerdat;
+    struct find_data *find_data = callerdat;
     find_data->repository = repository;
 
     /* if this directory has an ignore list, process it then free it */
@@ -210,7 +210,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
     enum classify_type status;
     Node *node;
-    struct find_data *args = (struct find_data *)callerdat;
+    struct find_data *args = callerdat;
     struct logfile_info *data;
     struct file_info xfinfo;
 
@@ -296,7 +296,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
     node = getnode ();
     node->key = xstrdup (finfo->fullname);
 
-    data = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+    data = xmalloc (sizeof (struct logfile_info));
     data->type = status;
     data->tag = xstrdup (vers->tag);
     data->rev_old = data->rev_new = NULL;
@@ -317,7 +317,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 static int
 copy_ulist (Node *node, void *data)
 {
-    struct find_data *args = (struct find_data *)data;
+    struct find_data *args = data;
     args->argv[args->argc++] = node->key;
     return 0;
 }
@@ -732,16 +732,16 @@ classify_file_internal (struct file_info *finfo, Vers_TS **vers)
 	/* If the tag is for the trunk, make sure we're at the head */
 	if (numdots (saved_tag) < 2)
 	{
-	    status = Classify_File (finfo, (char *) NULL, (char *) NULL,
-				    (char *) NULL, 1, aflag, vers, 0);
+	    status = Classify_File (finfo, NULL, NULL,
+				    NULL, 1, aflag, vers, 0);
 	    if (status == T_UPTODATE || status == T_MODIFIED ||
 		status == T_ADDED)
 	    {
 		Ctype xstatus;
 
 		freevers_ts (vers);
-		xstatus = Classify_File (finfo, saved_tag, (char *) NULL,
-					 (char *) NULL, 1, aflag, vers, 0);
+		xstatus = Classify_File (finfo, saved_tag, NULL,
+					 NULL, 1, aflag, vers, 0);
 		if (xstatus == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 		else if (status == T_MODIFIED && xstatus == T_CONFLICT)
@@ -764,16 +764,16 @@ classify_file_internal (struct file_info *finfo, Vers_TS **vers)
 		cp = strrchr (xtag, '.');
 		*cp = '\0';
 	    }
-	    status = Classify_File (finfo, xtag, (char *) NULL,
-				    (char *) NULL, 1, aflag, vers, 0);
+	    status = Classify_File (finfo, xtag, NULL,
+				    NULL, 1, aflag, vers, 0);
 	    if ((status == T_REMOVE_ENTRY || status == T_CONFLICT)
 		&& (cp = strrchr (xtag, '.')) != NULL)
 	    {
 		/* pluck one more dot off the revision */
 		*cp = '\0';
 		freevers_ts (vers);
-		status = Classify_File (finfo, xtag, (char *) NULL,
-					(char *) NULL, 1, aflag, vers, 0);
+		status = Classify_File (finfo, xtag, NULL,
+					NULL, 1, aflag, vers, 0);
 		if (status == T_UPTODATE || status == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 	    }
@@ -784,8 +784,7 @@ classify_file_internal (struct file_info *finfo, Vers_TS **vers)
 	}
     }
     else
-	status = Classify_File (finfo, saved_tag, (char *) NULL, (char *) NULL,
-				1, 0, vers, 0);
+	status = Classify_File (finfo, saved_tag, NULL, NULL, 1, 0, vers, 0);
     noexec = save_noexec;
     quiet = save_quiet;
     really_quiet = save_really_quiet;
@@ -985,8 +984,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    {
 		struct master_lists *ml;
 
-		ml = (struct master_lists *)
-		    xmalloc( sizeof( struct master_lists ) );
+		ml = xmalloc (sizeof (struct master_lists ));
 		ulist = ml->ulist = getlist();
 		cilist = ml->cilist = getlist();
 
@@ -1003,8 +1001,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    p->key = xstrdup (finfo->file);
 	    p->type = UPDATE;
 	    p->delproc = update_delproc;
-	    li = ((struct logfile_info *)
-		  xmalloc (sizeof (struct logfile_info)));
+	    li = xmalloc (sizeof (struct logfile_info));
 	    li->type = status;
 
 	    if (check_valid_edit)
@@ -1069,7 +1066,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    p->key = xstrdup (finfo->file);
 	    p->type = UPDATE;
 	    p->delproc = ci_delproc;
-	    ci = (struct commit_info *) xmalloc (sizeof (struct commit_info));
+	    ci = xmalloc (sizeof (struct commit_info));
 	    ci->status = status;
 	    if (vers->tag)
 		if (isdigit ((unsigned char) *vers->tag))
@@ -1077,7 +1074,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		else
 		    ci->rev = RCS_whatbranch (finfo->rcs, vers->tag);
 	    else
-		ci->rev = (char *) NULL;
+		ci->rev = NULL;
 	    ci->tag = xstrdup (vers->tag);
 	    ci->options = xstrdup(vers->options);
 	    p->data = ci;
@@ -1110,8 +1107,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		       the current file's status and the links listed in its
 		       `hardlinks' delta field.  We will append this
 		       hardlink_info node to the appropriate hardlist entry. */
-		    hlinfo = (struct hardlink_info *)
-			xmalloc (sizeof (struct hardlink_info));
+		    hlinfo = xmalloc (sizeof (struct hardlink_info));
 		    hlinfo->status = status;
 		    linkp->data = hlinfo;
 		}
@@ -1241,7 +1237,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
     char *newfilter = NULL;
     char *cmdline;
     const char *srepos = Short_Repository (repository);
-    List *ulist = (List *)closure;
+    List *ulist = closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (!strchr (filter, '%'))
@@ -1269,7 +1265,7 @@ precommit_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
         "p", "s", srepos,
         "r", "s", current_parsed_root->directory,
-        "s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
+        "s", ",", ulist, precommit_list_to_args_proc, (void *)NULL,
         (char *)NULL
 	);
 
@@ -1451,7 +1447,7 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
      */
     if (ci->status == T_ADDED)
     {
-	char *xrev = (char *) NULL;
+	char *xrev = NULL;
 
 	if (ci->rev == NULL)
 	{
@@ -1501,8 +1497,8 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 			    SERVER_UPDATED,
 
 			    (mode_t) -1,
-			    (unsigned char *) NULL,
-			    (struct buffer *) NULL);
+			    NULL,
+			    NULL);
 	}
 #endif
     }
@@ -1655,7 +1651,7 @@ commit_direntproc (void *callerdat, const char *dir, const char *repos,
     if (p != NULL)
 	ulist = ((struct master_lists *) p->data)->ulist;
     else
-	ulist = (List *) NULL;
+	ulist = NULL;
 
     /* skip the files as an optimization */
     if (ulist == NULL || ulist->list->next == ulist->list)
@@ -1786,7 +1782,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	{
 	    /* no revision exists on this branch.  use the previous
 	       revision but do not lock. */
-	    corev = RCS_gettag (finfo->rcs, tag, 1, (int *) NULL);
+	    corev = RCS_gettag (finfo->rcs, tag, 1, NULL);
 	    prev_rev = xstrdup (corev);
 	    lockflag = 0;
 	} else
@@ -1818,8 +1814,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
     /* check something out.  Generally this is the head.  If we have a
        particular rev, then name it.  */
     retcode = RCS_checkout (finfo->rcs, finfo->file, rev ? corev : NULL,
-			    (char *) NULL, (char *) NULL, RUN_TTY,
-			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
+			    NULL, NULL, RUN_TTY, NULL, NULL);
     if (retcode != 0)
     {
 	error (0, 0,
@@ -2155,7 +2150,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    }
 	}
 
-	rev = RCS_getversion (rcs, tag, NULL, 1, (int *) NULL);
+	rev = RCS_getversion (rcs, tag, NULL, 1, NULL);
 	/* and lock it */
 	if (lock_RCS (file, rcs, rev, repository))
 	{
@@ -2240,7 +2235,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 
 	    fixbranch (rcs, sbranch);
 
-	    head = RCS_getversion (rcs, NULL, NULL, 0, (int *) NULL);
+	    head = RCS_getversion (rcs, NULL, NULL, 0, NULL);
 	    magicrev = RCS_magicrev (rcs, head);
 
 	    retcode = RCS_settag (rcs, tag, magicrev);
