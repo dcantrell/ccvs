@@ -89,6 +89,7 @@ cvs_SOURCES = \
 	hash.h \
 	myndbm.h \
 	rcs.h \
+	root.h \
 	server.h \
 	update.h \
 	watch.h
