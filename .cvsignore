@@ -11,4 +11,7 @@ cvsinit
 *.ncb
 *.opt
 *.plg
+WinDebug
+WinRel
+cvsnt.mdp
 stamp-h

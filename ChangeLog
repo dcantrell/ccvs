@@ -5,6 +5,7 @@
 	couldn't get O'Connor's cvsnt.mak to work with MSVC 4.0 at
 	all (I tried the IDE, which tried to wrap the makefile and
 	wouldn't build even with the wrap, and the command line NMAKE).
+	* .cvsignore: Add back cvsnt.mdp WinDebug WinRel, accordingly.
 
 1999-04-26  Jim Kingdon  <http://www.cyclic.com>
 
