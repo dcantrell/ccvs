@@ -145,6 +145,11 @@ RCS_parse (file, repos)
 	fclose (fp);
 	return (rcs);
     }
+    else if (errno != ENOENT)
+    {
+	error (0, errno, "cannot open %s", rcsfile);
+	return NULL;
+    }
 
     (void) sprintf (rcsfile, "%s/%s/%s%s", repos, CVSATTIC, file, RCSEXT);
     if ((fp = fopen (rcsfile, "r")) != NULL) 
@@ -158,6 +163,11 @@ RCS_parse (file, repos)
 
 	fclose (fp);
 	return (rcs);
+    }
+    else if (errno != ENOENT)
+    {
+	error (0, errno, "cannot open %s", rcsfile);
+	return NULL;
     }
 
     return (NULL);

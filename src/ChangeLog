@@ -1,3 +1,8 @@
+Sat Apr 22 11:17:20 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+
+	* rcs.c (RCS_parse): If we can't open the file, give an error
+	message (except for ENOENT in case callers rely on that).
+
 Wed Apr 19 08:52:37 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (send_repository): Check for CVSADM_ENTSTAT in `dir', not
