@@ -1,5 +1,7 @@
 1998-09-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* wrapper.c (wrap_add): Remove obsolete comment about -m.
+
 	* server.c (server_updated): Check for error from CVS_UNLINK.
 
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
