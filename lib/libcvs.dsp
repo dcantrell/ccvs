@@ -169,6 +169,10 @@ SOURCE=".\save-cwd.c"
 # End Source File
 # Begin Source File
 
+SOURCE=.\setenv.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\sighandle.c
 # End Source File
 # Begin Source File
@@ -186,6 +190,10 @@ SOURCE=.\stripslash.c
 # Begin Source File
 
 SOURCE=.\time_r.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\unsetenv.c
 # End Source File
 # Begin Source File
 
@@ -249,6 +257,10 @@ InputPath=.\alloca_.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=.\allocsa.h
 # End Source File
 # Begin Source File
 
@@ -387,6 +399,10 @@ SOURCE=.\regex.h
 # Begin Source File
 
 SOURCE=".\save-cwd.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\setenv.h
 # End Source File
 # Begin Source File
 

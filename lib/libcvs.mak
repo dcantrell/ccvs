@@ -61,11 +61,13 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\rpmatch.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
+	-@erase "$(INTDIR)\setenv.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
+	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vasprintf.obj"
@@ -122,7 +124,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\unsetenv.obj" \
+	"$(INTDIR)\setenv.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -162,11 +166,13 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\rpmatch.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
+	-@erase "$(INTDIR)\setenv.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
+	-@erase "$(INTDIR)\unsetenv.obj"
 	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vasprintf.obj"
@@ -221,7 +227,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\unsetenv.obj" \
+	"$(INTDIR)\setenv.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -376,6 +384,11 @@ SOURCE=".\save-cwd.c"
 "$(INTDIR)\save-cwd.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\setenv.c
+
+"$(INTDIR)\setenv.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\sighandle.c
 
 "$(INTDIR)\sighandle.obj" : $(SOURCE) "$(INTDIR)"
@@ -399,6 +412,11 @@ SOURCE=.\stripslash.c
 SOURCE=.\time_r.c
 
 "$(INTDIR)\time_r.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\unsetenv.c
+
+"$(INTDIR)\unsetenv.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\valloc.c
