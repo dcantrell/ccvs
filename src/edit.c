@@ -617,13 +617,15 @@ notify_proc (repository, filter)
     }
     *q = '\0';
 
-    expanded_prog = expand_path (prog);
-	if (!expanded_prog)
-	{
-	error (0, 0, "Invalid environmental variable in notify filter: %s",prog);
+    /* FIXME: why are we calling expand_proc?  Didn't we already
+       expand it in Parse_Info, before passing it to notify_proc?  */
+    expanded_prog = expand_path (prog, "notify", 0);
+    if (!expanded_prog)
+    {
 	free (prog);
 	return 1;
-	}
+    }
+
     pipefp = run_popen (expanded_prog, "w");
     if (pipefp == NULL)
     {

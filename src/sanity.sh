@@ -2405,7 +2405,7 @@ done'
 	  # Test CVS's ability to handle *info files.
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
-	  echo "ALL echo x\${=MYENV}\${=OTHER}y >>$TESTDIR/testlog" > loginfo
+	  echo "ALL echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog" > loginfo
 	  dotest info-2 "${testcvs} add loginfo" \
 'cvs [a-z]*: scheduling file `loginfo'"'"' for addition
 cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
@@ -2431,14 +2431,20 @@ cvs [a-z]*: Rebuilding administrative file database'
 	  dotest info-6 "${testcvs} add file1" \
 'cvs [a-z]*: scheduling file `file1'\'' for addition
 cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  echo "cvs -s MYENV=env-" >>$HOME/.cvsrc
-	  echo "cvs -s OTHER=not-this" >>$HOME/.cvsrc
-	  dotest info-7 "${testcvs} -q -s OTHER=value ci -m add-it" \
+	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
+	  dotest info-6a "${testcvs} -q -s OTHER=value ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1.1
+done
+cvs [a-z]*: loginfo:1: no such user variable ${=ZEE}'
+	  echo line1 >>file1
+	  dotest info-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
+'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.2; previous revision: 1.1
 done'
 	  cd ..
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE} ; then
@@ -2446,7 +2452,7 @@ done'
 	  else
 	    fail info-8
 	  fi
-	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valuey'
+	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valueyz=[a-z@][a-z@]*=/tmp/cvs-sanity/cvsroot='
 
 	  # I think this might be doable with cvs remove, or at least
 	  # checking in a version with only comments, but I'm too lazy

@@ -15,7 +15,7 @@
 #include "cvs.h"
 #include <sys/types.h>
 
-static char *expand_variable PROTO((char *env));
+static char *expand_variable PROTO((char *env, char *file, int line));
 extern char *xmalloc ();
 extern void  free ();
 
@@ -82,13 +82,16 @@ variable_set (nameval)
     }
 }
 
-/*  This routine will expand the pathname to account for ~
-    and $ characters as described above.  If an error occurs, NULL
-    is returned (FIXME: we should be printing an error message, so that it
-    is specific, but instead the caller prints a generic message).  */
+/* This routine will expand the pathname to account for ~ and $
+    characters as described above.  If an error occurs, an error
+    message is printed via error() and NULL is returned.  FILE and
+    LINE are the filename and linenumber to include in the error
+    message.  */
 char *
-expand_path (name)
+expand_path (name, file, line)
     char *name;
+    char *file;
+    int line;
 {
     char *s;
     char *d;
@@ -111,7 +114,7 @@ expand_path (name)
 		    : isalnum (*s) == 0 && *s != '_')
 		    break;
 	    *--d = 0;
-	    e = expand_variable (&p[flag]);
+	    e = expand_variable (&p[flag], file, line);
 
 	    if (e)
 	    {
@@ -122,7 +125,8 @@ expand_path (name)
 		    s++;
 	    }
 	    else
-		return NULL;	/* no env variable */
+		/* expand_variable has already printed an error message.  */
+		return NULL;
 	}
     *d = 0;
     s = mybuf;
@@ -144,7 +148,14 @@ expand_path (name)
 	    *p = 0;
 	    ps = getpwnam (s);
 	    if (ps == 0)
-		return NULL;   /* no such user */
+	    {
+		if (line != 0)
+		    error (0, 0, "%s:%d: no such user %s",
+			   file, line, s);
+		else
+		    error (0, 0, "%s: no such user %s", file, s);
+		return NULL;
+	    }
 	    t = ps->pw_dir;
 	}
 	while ((*d++ = *t++))
@@ -166,8 +177,10 @@ expand_path (name)
 }
 
 static char *
-expand_variable (name)
-	char *name;
+expand_variable (name, file, line)
+    char *name;
+    char *file;
+    int line;
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
 	return CVSroot;
@@ -179,11 +192,20 @@ expand_variable (name)
 	return Editor;
     else if (strcmp (name, EDITOR3_ENV) == 0)
 	return Editor;
+    else if (strcmp (name, "USER") == 0)
+	return getcaller ();
     else if (isalpha (name[0]))
-	/* It is a CVS internal variable which is not recognized.
-	   Return an error; we want to reserve these names for
-	   future versions of CVS.  */
+    {
+	/* These names are reserved for future versions of CVS,
+	   so that is why it is an error.  */
+	if (line != 0)
+	    error (0, 0, "%s:%d: no such internal variable $%s",
+		   file, line, name);
+	else
+	    error (0, 0, "%s: no such internal variable $%s",
+		   file, name);
 	return NULL;
+    }
     else if (name[0] == '=')
     {
 	Node *node;
@@ -193,15 +215,29 @@ expand_variable (name)
 	   (existing or future) internal variables.  */
 	node = findnode (variable_list, name + 1);
 	if (node == NULL)
-	    /* No such user variable.  */
+	{
+	    if (line != 0)
+		error (0, 0, "%s:%d: no such user variable ${%s}",
+		       file, line, name);
+	    else
+		error (0, 0, "%s: no such user variable ${%s}",
+		       file, name);
 	    return NULL;
+	}
 	return node->data;
     }
     else
-	/* It is unrecognized character.  We return an
-	   error to reserve these for future versions of CVS;
-	   it is plausible that various crazy syntaxes might be
-	   invented for inserting information about revisions,
-	   branches, etc.  */
+    {
+	/* It is an unrecognized character.  We return an error to
+	   reserve these for future versions of CVS; it is plausible
+	   that various crazy syntaxes might be invented for inserting
+	   information about revisions, branches, etc.  */
+	if (line != 0)
+	    error (0, 0, "%s:%d: unrecognized varaible syntax %s",
+		   file, line, name);
+	else
+	    error (0, 0, "%s: unrecognized varaible syntax %s",
+		   file, name);
 	return NULL;
+    }
 }

@@ -646,7 +646,7 @@ void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
 
 /* Pathname expansion */
-char *expand_path PROTO((char *name));
+char *expand_path PROTO((char *name, char *file, int line));
 
 /* User variables.  */
 extern List *variable_list;
