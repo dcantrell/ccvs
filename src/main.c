@@ -50,7 +50,11 @@ USE(rcsid);
 #endif
 
 char *program_name;
-char *command_name = "";
+/*
+ * Initialize comamnd_name to "cvs" so that the first call to
+ * read_cvsrc tries to find global cvs options.
+ */
+char *command_name = "cvs";
 
 /*
  * Since some systems don't define this...
@@ -288,6 +292,11 @@ main (argc, argv)
 	    error (1, errno, "invalid umask value in %s (%s)",
 		CVSUMASK_ENV, cp);
     }
+
+    /*
+     * Scan cvsrc file for global options.
+     */
+    read_cvsrc(&argc, &argv);
 
     /* This has the effect of setting getopt's ordering to REQUIRE_ORDER,
        which is what we need to distinguish between global options and
