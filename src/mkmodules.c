@@ -480,7 +480,7 @@ mkmodules (char *dir)
 		     cp++)
 		    ;
 		if (cp < last && *cp)
-		    error (0, 0, cp);
+		    error (0, 0, "%s", cp);
 	    }
 	    if (unlink_file (temp) < 0
 		&& !existence_error (errno))

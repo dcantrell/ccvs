@@ -1,5 +1,18 @@
 2003-09-12  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (mkmodules): Correct comments.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (mkmodules): Do not pass a string which came from the
+	checkoutlist file directly to error as a format string since we don't
+	want to trust any user with access to checkoutlist with creating printf
+	format strings.  I already claimed I did this in the NEWS file.
+	(Thanks to Larry Jones for spotting my mistake.)
+	* sanity.sh (mkmodules): Test for the above.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
 	* mkmodules.c (checkoutlist_contents): Document the optional portions
 	of this file format more accurately.
 	(mkmodules): Ditto, in comments.  Fix bug that always failed to ignore
