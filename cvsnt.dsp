@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # ADD BASE CPP /nologo /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /YX /FD /c
 # SUBTRACT BASE CPP /WX /Fr
-# ADD CPP /nologo /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I ".\WinDebug" /D "NDEBUG" /D "WANT_WIN_COMPILER_VERSION" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /YX /FD /c
 # SUBTRACT CPP /WX /Fr
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -50,7 +50,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\Release\zlib.lib diff\Release\libdiff.lib /nologo /subsystem:console /machine:I386 /out:".\Release\cvs.exe"
-# ADD LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\Release\zlib.lib diff\Release\libdiff.lib /nologo /subsystem:console /machine:I386 /out:".\WinRel\cvs.exe"
+# ADD LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\WinRel\zlib.lib diff\WinRel\libdiff.lib /nologo /subsystem:console /machine:I386 /nodefaultlib:"libcmtd.lib" /out:".\WinRel\cvs.exe"
+# SUBTRACT LINK32 /nodefaultlib
 
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
@@ -65,7 +66,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /I "${IntDir}" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
+# ADD CPP /nologo /W3 /Gm /GX /Zi /Ob1 /I ".\windows-NT" /I ".\lib" /I ".\src" /I ".\zlib" /I ".\diff" /D "_DEBUG" /D "_CONSOLE" /D "HAVE_CONFIG_H" /D "WIN32" /D "WANT_WIN_COMPILER_VERSION" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -74,8 +75,8 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\Debug\zlib.lib diff\Debug\libdiff.lib /nologo /subsystem:console /pdb:".\Debug\cvs.pdb" /debug /machine:I386 /out:".\Debug\cvs.exe"
 # SUBTRACT BASE LINK32 /pdb:none
-# ADD LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\WinDebug\zlib.lib diff\WinDebug\libdiff.lib /nologo /subsystem:console /pdb:".\Debug\cvs.pdb" /debug /machine:I386 /out:".\WinDebug\cvs.exe"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib zlib\WinDebug\zlib.lib diff\WinDebug\libdiff.lib  lib\WinDebug\libcvs.lib /nologo /subsystem:console /pdb:".\WinDebug\cvs.pdb" /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:".\WinDebug\cvs.exe"
+# SUBTRACT LINK32 /pdb:none /nodefaultlib
 
 !ENDIF 
 
@@ -97,8 +98,6 @@ SOURCE=.\src\add.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -114,8 +113,6 @@ SOURCE=.\src\admin.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -131,8 +128,6 @@ SOURCE=.\src\annotate.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -148,8 +143,6 @@ SOURCE=.\lib\argmatch.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -157,19 +150,6 @@ SOURCE=.\lib\argmatch.c
 # Begin Source File
 
 SOURCE=.\lib\asnprintf.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -182,8 +162,6 @@ SOURCE=.\src\buffer.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -199,8 +177,6 @@ SOURCE=.\src\checkin.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -216,8 +192,6 @@ SOURCE=.\src\checkout.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -233,8 +207,6 @@ SOURCE=.\src\classify.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -250,8 +222,6 @@ SOURCE=.\src\client.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -267,8 +237,6 @@ SOURCE=.\src\commit.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -284,8 +252,6 @@ SOURCE=.\src\create_adm.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -301,8 +267,6 @@ SOURCE=.\src\cvsrc.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -318,8 +282,6 @@ SOURCE=.\src\diff.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -335,8 +297,6 @@ SOURCE=.\src\edit.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -352,8 +312,6 @@ SOURCE=.\src\entries.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -369,25 +327,6 @@ SOURCE=.\src\error.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\exitfail.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -403,8 +342,6 @@ SOURCE=.\src\exithandle.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -420,8 +357,6 @@ SOURCE=.\src\expand_path.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -437,8 +372,6 @@ SOURCE=.\src\fileattr.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -454,8 +387,6 @@ SOURCE=".\windows-NT\filesubr.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -471,8 +402,6 @@ SOURCE=.\src\find_names.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -488,8 +417,6 @@ SOURCE=.\lib\fncase.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -505,8 +432,6 @@ SOURCE=.\lib\fnmatch.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -522,8 +447,6 @@ SOURCE=.\lib\fseeko.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -539,93 +462,6 @@ SOURCE=.\lib\ftello.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\getdate.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\getline.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\getndelim2.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\getopt.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\getopt1.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -641,8 +477,6 @@ SOURCE=.\src\hash.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -658,8 +492,6 @@ SOURCE=.\src\history.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -675,8 +507,6 @@ SOURCE=.\src\ignore.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -692,8 +522,6 @@ SOURCE=.\src\import.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -709,8 +537,6 @@ SOURCE=.\src\lock.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -726,8 +552,6 @@ SOURCE=".\src\log-buffer.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -743,8 +567,6 @@ SOURCE=.\src\log.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -760,8 +582,6 @@ SOURCE=.\src\login.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -777,8 +597,6 @@ SOURCE=.\src\logmsg.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -794,8 +612,6 @@ SOURCE=.\src\main.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -811,8 +627,6 @@ SOURCE=.\lib\md5.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -828,8 +642,6 @@ SOURCE=".\windows-NT\mkdir.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -845,8 +657,6 @@ SOURCE=.\src\mkmodules.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -862,8 +672,6 @@ SOURCE=.\src\modules.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -879,8 +687,6 @@ SOURCE=.\src\myndbm.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -896,8 +702,6 @@ SOURCE=".\windows-NT\ndir.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -913,8 +717,6 @@ SOURCE=.\src\no_diff.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -930,8 +732,6 @@ SOURCE=.\src\parseinfo.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -947,42 +747,6 @@ SOURCE=.\src\patch.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=".\lib\printf-args.c"
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=".\lib\printf-parse.c"
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -998,8 +762,6 @@ SOURCE=".\windows-NT\pwd.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1015,8 +777,6 @@ SOURCE=".\windows-NT\rcmd.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1032,8 +792,6 @@ SOURCE=.\src\rcs.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1049,25 +807,6 @@ SOURCE=.\src\rcscmds.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\realloc.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1083,25 +822,6 @@ SOURCE=.\src\recurse.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\lib\regex.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1117,8 +837,6 @@ SOURCE=.\src\release.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1134,8 +852,6 @@ SOURCE=.\src\remove.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1151,8 +867,6 @@ SOURCE=.\src\repos.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1168,8 +882,6 @@ SOURCE=.\src\root.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1185,8 +897,6 @@ SOURCE=".\src\rsh-client.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1202,8 +912,6 @@ SOURCE=".\windows-NT\run.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1219,8 +927,6 @@ SOURCE=.\lib\savecwd.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1236,8 +942,6 @@ SOURCE=.\src\scramble.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1253,8 +957,6 @@ SOURCE=.\src\server.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1270,8 +972,6 @@ SOURCE=.\lib\sighandle.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1287,8 +987,6 @@ SOURCE=".\windows-NT\sockerror.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1304,8 +1002,6 @@ SOURCE=".\src\socket-client.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1321,8 +1017,6 @@ SOURCE=.\src\stack.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1338,8 +1032,6 @@ SOURCE=".\windows-NT\startserver.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1355,8 +1047,6 @@ SOURCE=.\src\status.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1372,8 +1062,6 @@ SOURCE=.\lib\stripslash.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1389,8 +1077,6 @@ SOURCE=.\src\subr.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1406,8 +1092,6 @@ SOURCE=.\src\tag.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1423,8 +1107,6 @@ SOURCE=.\src\update.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1440,8 +1122,6 @@ SOURCE=.\lib\valloc.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1449,19 +1129,6 @@ SOURCE=.\lib\valloc.c
 # Begin Source File
 
 SOURCE=.\lib\vasnprintf.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1474,8 +1141,6 @@ SOURCE=.\src\vers_ts.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1491,8 +1156,6 @@ SOURCE=.\src\version.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1508,8 +1171,6 @@ SOURCE=".\windows-NT\waitpid.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1525,8 +1186,6 @@ SOURCE=.\src\watch.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1542,8 +1201,6 @@ SOURCE=".\windows-NT\woe32.c"
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1559,8 +1216,6 @@ SOURCE=.\src\wrapper.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1576,8 +1231,6 @@ SOURCE=.\lib\xgetwd.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1585,36 +1238,10 @@ SOURCE=.\lib\xgetwd.c
 # Begin Source File
 
 SOURCE=.\lib\xmalloc.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=.\lib\xstrdup.c
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-# PROP Intermediate_Dir "WinRel"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -1627,8 +1254,6 @@ SOURCE=.\lib\yesno.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1644,8 +1269,6 @@ SOURCE=.\src\zlib.c
 !ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
 
 # PROP Intermediate_Dir "WinDebug"
-# ADD CPP /I ".\WinDebug"
-# SUBTRACT CPP /I "${IntDir}"
 
 !ENDIF 
 
@@ -1656,24 +1279,7 @@ SOURCE=.\src\zlib.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl;fi;fd"
 # Begin Source File
 
-SOURCE=.\WinDebug\alloca.h
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-# PROP Ignore_Default_Tool 1
-USERDEP__ALLOC=".\lib\alloca_.h"	
-# Begin Custom Build
-InputPath=.\WinDebug\alloca.h
-
-".\WinDebug\alloca.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy ".\lib\alloca_.h" ".\WinDebug\alloca.h"
-
-# End Custom Build
-
-!ENDIF 
-
+SOURCE=.\lib\alloca.h
 # End Source File
 # Begin Source File
 
@@ -1704,6 +1310,10 @@ SOURCE=.\src\client.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=".\windows-NT\config.h"
 # End Source File
 # Begin Source File
 
@@ -1765,23 +1375,7 @@ SOURCE=.\src\fileattr.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WinDebug\fnmatch.h
-
-!IF  "$(CFG)" == "cvsnt - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
-
-USERDEP__FNMAT=".\lib\fnmatch.h.in"	
-# Begin Custom Build
-InputPath=.\WinDebug\fnmatch.h
-
-".\WinDebug\fnmatch.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy ".\lib\fnmatch.h.in" ".\WinDebug\fnmatch.h"
-
-# End Custom Build
-
-!ENDIF 
-
+SOURCE=.\lib\fnmatch.h
 # End Source File
 # Begin Source File
 
