@@ -62,7 +62,7 @@ PROGS = rcs2log
 CONTRIB_PROGS = clmerge cln_hist commit_prep cvs_acls cvscheck log log_accum \
 	mfpipe rcs-to-cvs rcs2log rcslock sccs2rcs
 
-.SUFFIXES: .pl .csh
+.SUFFIXES: .pl .sh .csh
 
 .pl:
 	rm -f $@
@@ -74,6 +74,11 @@ CONTRIB_PROGS = clmerge cln_hist commit_prep cvs_acls cvscheck log log_accum \
 	rm -f $@
 	sed -e 's,xCSH_PATHx,$(csh_path),' $< > $@-t
 	mv $@-t $@
+	chmod +x $@
+
+.sh:
+	rm -f $@
+	cp $< $@
 	chmod +x $@
 
 all: Makefile $(PROGS) $(CONTRIB_PROGS)
