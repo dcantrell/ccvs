@@ -33,8 +33,14 @@ dnl eval is necessary to expand ac_cpp.
 dnl Ultrix and Pyramid sh refuse to redirect output of eval, so use subshell.
 ac_extract_cpp_result=`(eval "$ac_cpp -dM conftest.$ac_ext") 2>&AS_MESSAGE_LOG_FD |
 dnl m4 quote the argument to sed to prevent m4 from eating character classes
+dnl
+dnl C89 6.8.3 Specifies that all whitespace separation in macro definitions is
+dnl equivalent, so eat leading and trailing whitespace to account for
+dnl preprocessor quirks (commands 1.2 & 1.3 in the sed script below).
   sed -n ["/^#define $1 /{
             s/^#define $1 //;
+	    s/^ *//;
+	    s/ *\$//;
             p;}"] 2>&AS_MESSAGE_LOG_FD`
 if test -n "$ac_extract_cpp_result"; then
   $1=$ac_extract_cpp_result

@@ -1,3 +1,8 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* acx_extract_cpp_defn.m4 (ACX_EXTRACT_CPP_DEFN): Remove leading and
+	trailing white space around extracted definitions.
+
 2003-10-23  Derek Price  <derek@ximbiot.com>
 
 	Avoid including getndelim.o in $(LIBOBJ) twice.
