@@ -786,7 +786,7 @@ last_component (const char *path)
     const char *last = 0;
 
     for (scan = path; *scan; scan++)
-        if (ISDIRSEP (*scan))
+        if (ISSLASH (*scan))
 	    last = scan;
 
     if (last && (last != path))

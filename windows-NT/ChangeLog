@@ -1,3 +1,7 @@
+2004-05-11  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (last_component): s/ISDIRSEP/ISSLASH/.
+
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in (FILENAMES_CASE_INSENSITIVE,
