@@ -70,33 +70,62 @@ analyze.o cmpbuf.o: cmpbuf.h
 util.o: util.c Makefile
 	$(COMPILE) -DPR_PROGRAM=\"$(PR_PROGRAM)\" $<
 
+# For CVS, install is dependant on all and uninstall added
 install: all
+uninstall:
+.PHONY: install uninstall
+
+# Remove targeets for CVS
+info:
+.PHONY: info
 
 installdirs:
 	@: nothing to do for installdirs
 .PHONY: installdirs
+
+.PHONY: tags
+tags: TAGS
 
 TAGS: $(SOURCES)
 	etags $(SOURCES)
 
 clean:
 	rm -f *.o *.a core
+.PHONY: clean
 
 mostlyclean: clean
+.PHONY: mostlyclean
 
 distclean: clean
 	rm -f TAGS tags Makefile
+.PHONY: distclean
 
-realclean: distclean
+# for backwards compatibility with the old makefiles
+realclean maintainer-clean: distclean
+.PHONY: realclean maintainer-clean
 
 Makefile: Makefile.in ../config.status
 	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status 
 
-dist-dir:
-	mkdir ${DISTDIR}
-	for i in ${DISTFILES}; do \
-	  ln $(srcdir)/$${i} ${DISTDIR}; \
+# distdir added for CVS.
+top_builddir = ..
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+distdir:
+	for i in `cd $(srcdir); echo ${DISTFILES}`; do \
+	  if test -d $(distdir)/`dirname $$i`; then \
+	    :; \
+	  else \
+	    mkdir $(distdir)/`dirname $$i`; \
+	  fi; \
+	  ln $(srcdir)/$${i} $(distdir)/`dirname $$i`; \
 	done
+.PHONY: distdir
+
+# check added for CVS
+check: all
+.PHONY: check
 
 # Prevent GNU make v3 from overflowing arg limit on SysV.
 .NOEXPORT:
