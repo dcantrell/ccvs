@@ -2258,6 +2258,14 @@ init_sockaddr (name, hostname, port)
   name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
 }
 
+
+int
+auth_server_port_number ()
+{
+  return htons (CVS_AUTH_PORT);
+}
+
+
 void
 connect_to_pserver (tofdp, fromfdp, log)
      int *tofdp, *fromfdp;
@@ -2265,6 +2273,7 @@ connect_to_pserver (tofdp, fromfdp, log)
 {
   int sock;
   int tofd, fromfd;
+  int port_number;
   struct hostent *host;
   struct sockaddr_in client_sai;
 
@@ -2274,7 +2283,8 @@ connect_to_pserver (tofdp, fromfdp, log)
       fprintf (stderr, "socket() failed\n");
       exit (1);
     }
-  init_sockaddr (&client_sai, server_host, CVS_AUTH_PORT);
+  port_number = auth_server_port_number ();
+  init_sockaddr (&client_sai, server_host, port_number);
   connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
 
   /* Run the authorization mini-protocol before anything else. */
