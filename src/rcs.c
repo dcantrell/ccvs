@@ -6138,15 +6138,10 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
    knows that it will be writing later), so that it actually serves as
    a lock.  We don't; instead we rely on CVS writelocks.  This means
    that if someone is running RCS on the file at the same time they
-   are running CVS on it, they might lose (RCS reads the file, then we
-   read it, then RCS writes it, then we write it, clobbering the
+   are running CVS on it, they might lose (we read the file,
+   then RCS writes it, then we write it, clobbering the
    changes made by RCS).  I believe the current sentiment about this
-   is "well, don't do that".  Even if we wanted to adopt the RCS
-   strategy, I'm not sure it works well enough to bother with (O_EXCL
-   and such seems to be seriously nonportable and/or buggy, certainly
-   in the context of NFS, I don't know about AFS and other
-   filesystems, and I also kind of would be surprised if it works well
-   on non-unix operating systems).
+   is "well, don't do that".
 
    A concern has been expressed about whether adopting the RCS
    strategy would slow us down.  I don't think so, since we need to
@@ -6176,12 +6171,18 @@ rcs_internal_lockfile (rcsfile)
     if (stat (rcsfile, &rstat) < 0)
        rstat.st_mode = S_IRUSR | S_IRGRP | S_IROTH;
 
-    /* Try to open exclusively. According to the RCS source, O_TRUNC
-       is necessary to guarantee atomicity with NFS; O_CREAT is not
-       sufficient.  For extensive justification, see the comments for
+    /* Try to open exclusively.  POSIX.1 guarantees that O_EXCL|O_CREAT
+       guarantees an exclusive open.  According to the RCS source, with
+       NFS v2 we must also thow in O_TRUNC and use an open mask that makes
+       the file unwriteable.  For extensive justification, see the comments for
        rcswriteopen() in rcsedit.c, in RCS 5.7.  This is kind of pointless
        in the CVS case; see comment at the start of this file concerning
-       general ,foo, file strategy.  */
+       general ,foo, file strategy.
+
+       There is some sentiment that with NFSv3 and such, that one can
+       rely on O_EXCL these days.  This might be true for unix (I
+       don't really know), but I am still pretty skeptical in the case
+       of the non-unix systems.  */
     fd = open (lockfile, OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
 	       S_IRUSR | S_IRGRP | S_IROTH);
 
