@@ -1,5 +1,13 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* zlib.dsp: Set PROP BASE directories to projet standard,
+	remove child note property overrides which taken together
+	reduce file size and "Reset" function use project defaults.
+	* zlib.mak: Regenerated for zlib.dsp change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in (DISTFILES): Add zlib.dep.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
