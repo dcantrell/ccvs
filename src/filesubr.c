@@ -748,6 +748,7 @@ FILE *cvs_temp_file (filename)
      * some of the rcs & diff functions which rely on a temp file run in
      * noexec mode too.
      */
+
 #ifdef HAVE_MKSTEMP
 
     {
@@ -761,15 +762,26 @@ FILE *cvs_temp_file (filename)
      * errno should still be set
      */
     if (fd == -1) fp = NULL;
-    else fp = CVS_FDOPEN (fd, "w+");
+    else if ((fp = CVS_FDOPEN (fd, "w+")) == NULL)
+    {
+	/* attempt to close and unlink the file since mkstemp returned sucessfully and
+	 * we believe it's been created and opened
+	 */
+ 	int save_errno = errno;
+	if (close (fd))
+	    error (0, errno, "Failed to close temporary file %s", fn);
+	if (unlink (fn))
+	    error (0, errno, "Failed to unlink temporary file %s", fn);
+	errno = save_errno;
+    }
 
     if (fp == NULL) free (fn);
-
     /* mkstemp is defined to open mode 0600 using glibc 2.0.7+ */
     /* FIXME - configure can probably tell us which version of glibc we are
-     * linking to
+     * linking to and not chmod for 2.0.7+
      */
-    chmod (fn, 0600);
+    else chmod (fn, 0600);
+
     }
 
 #elif HAVE_TEMPNAM
@@ -778,12 +790,8 @@ FILE *cvs_temp_file (filename)
 
     fn = tempnam (Tmpdir, "cvs");
     if (fn == NULL) fp = NULL;
-    else
-    {
-	fp = CVS_FOPEN (fn, "w+");
-	if (fp == NULL) free (fn);
-	else chmod (fn, 0600);
-    }
+    else if ((fp = CVS_FOPEN (fn, "w+")) == NULL) free (fn);
+    else chmod (fn, 0600);
 
     /* tempnam returns a pointer to a newly malloc'd string, so there's
      * no need for a xstrdup
@@ -808,9 +816,10 @@ FILE *cvs_temp_file (filename)
 
     if (fp == NULL) free (ifn);
     else chmod (fn, 0600);
+
     }
 
-#else
+#else	/* use tmpnam if all else fails */
 
     /* tmpnam is deprecated */
 
@@ -820,10 +829,12 @@ FILE *cvs_temp_file (filename)
     fn = tmpnam (ifn);
 
     if (fn == NULL) fp = NULL;
-    else fp = CVS_FOPEN (ifn, "w+");
+    else if ((fp = CVS_FOPEN (ifn, "w+")) != NULL)
+    {
+	fn = xstrdup (ifn);
+	chmod (fn, 0600);
+    }
 
-    if (fp != NULL) fn = xstrdup (ifn);
-    else chmod (fn, 0600);
     }
 
 #endif
