@@ -2265,6 +2265,9 @@ Right now, the only way to put a password in the
 @sc{cvs} @file{passwd} file is to paste it there from
 somewhere else.  Someday, there may be a @code{cvs
 passwd} command.
+Unlike many of the files in @file{$CVSROOT/CVSROOT},
+you edit the @file{passwd} file directly, rather than
+via @sc{cvs}.
 @c We might also suggest using the @code{htpasswd} command
 @c from freely available web servers as well, but that
 @c would open up a can of worms in that the users next
