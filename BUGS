@@ -72,11 +72,6 @@ file's description.
       Exit 134
 
 
-* pcl-cvs doesn't like it when you try to check in a file which isn't
-  up-to-date.  The messages produced by the server perhaps don't match
-  what pcl-cvs is looking for.
-
-
 * From: billr@mpd.tandem.com (Bill Robertson)
   Subject: Problem with rtag and the -D option
   Date: Fri, 17 Mar 1995 10:53:29 -0600 (CST)
