@@ -1,5 +1,8 @@
 1999-01-09  Jim Kingdon  <http://www.cyclic.com>
 
+	* client.c (set_sticky): Nonfatal error if we can't write it.
+	* sanity.sh (dirs2-8 through dirs2-14): New tests, for this.
+
 	* sanity.sh (rcs3): Write NUL character with tr not awk, in
 	accordance with Single Unix Specification.  Hopefully will fix
 	rcs3-7 for HPUX.  Will not work on SunOS4, but then again neither

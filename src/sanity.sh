@@ -3283,7 +3283,78 @@ ${QUESTION} sdir"
 	  fi
 	  cd ../..
 
-	  rm -r 1
+	  # Now, the same thing (more or less) on a branch.
+	  mkdir 2; cd 2
+	  dotest dirs2-8 "${testcvs} -q co first-dir" 'U first-dir/sdir/file1'
+	  cd first-dir
+	  dotest dirs2-9 "${testcvs} -q tag -b br" "T sdir/file1"
+	  rm -r sdir/CVS
+	  if test "$remote" = yes; then
+	    # Cute little quirk of val-tags; if we don't recurse into
+	    # the directories where the tag is defined, val-tags won't
+	    # get updated.
+	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
+"${QUESTION} sdir
+${PROG} \[server aborted\]: no such tag br"
+	    dotest dirs2-10-rem \
+"${testcvs} -q rdiff -u -r 1.1 -r br first-dir/sdir/file1" \
+""
+	    dotest_fail dirs2-10-again "${testcvs} update -d -r br" \
+"${QUESTION} sdir
+${PROG} server: Updating \.
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory
+${PROG} update: cannot open CVS/Tag: No such file or directory
+${PROG} update: cannot open CVS/Tag: No such file or directory
+${PROG} server: Updating sdir
+${PROG} update: move away sdir/file1; it is in the way
+C sdir/file1
+${PROG} update: cannot open CVS/Tag: No such file or directory"
+	  else
+	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
+"${PROG} update: in directory sdir:
+${PROG} \[update aborted\]: there is no version here; do 'cvs checkout' first"
+	  fi
+	  cd ../..
+
+	  # OK, the above tests make the situation somewhat harder
+	  # than it might be, in the sense that they actually have a
+	  # file which is alive on the branch we are updating.  Let's
+	  # try it where it is just a directory where all the files
+	  # have been removed.
+	  mkdir 3; cd 3
+	  dotest dirs2-11 "${testcvs} -q co -r br first-dir" \
+"U first-dir/sdir/file1"
+	  cd first-dir
+	  # Hmm, this doesn't mention the branch like add does.  That's
+	  # an odd non-orthogonality.
+	  dotest dirs2-12 "${testcvs} rm -f sdir/file1" \
+"${PROG} [a-z]*: scheduling .sdir/file1. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest dirs2-13 "${testcvs} -q ci -m remove" \
+"Removing sdir/file1;
+${TESTDIR}/cvsroot/first-dir/sdir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1\.2
+done"
+	  cd ../../2/first-dir
+	  if test "$remote" = yes; then
+	    dotest dirs2-14 "${testcvs} update -d -r br" \
+"${QUESTION} sdir
+${PROG} server: Updating \.
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory
+${PROG} update: cannot open CVS/Tag: No such file or directory
+${PROG} update: cannot open CVS/Tag: No such file or directory
+${PROG} server: Updating sdir
+${PROG} update: cannot open CVS/Tag: No such file or directory"
+	  else
+	    dotest dirs2-14 "${testcvs} update -d -r br" \
+"${PROG} update: Updating \.
+${QUESTION} sdir"
+	  fi
+	  cd ../..
+
+	  rm -r 1 2 3
 	  rm -rf ${TESTDIR}/cvsroot/first-dir
 	  ;;
 
