@@ -24806,11 +24806,13 @@ new revision: 1\.2; previous revision: 1\.1
 done
 $PROG [a-z]*: Rebuilding administrative file database"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
-	  # FIXME. This result is wrong!
-	  #dotest template-rcsinfo-3 "cmp CVS/Template ${TESTDIR}/template/temp.def" ''
-	  dotest template-rcsinfo-3 \
+	  if $remote; then
+	    dotest template-rcsinfo-3r \
+"cmp CVS/Template ${TESTDIR}/template/temp.def" ''
+	  else
+	    dotest template-rcsinfo-3 \
 "test ! -f CVS/Template || test ! -s CVS/Template" ''
-
+	  fi
 	  cd ..
 
 	  # Now checkout the first and second modules and see
@@ -24898,6 +24900,25 @@ ${PROG} [a-z]*: Updating second/otherdir"
 "test -f second/otherdir/CVS/Template" ''
           fi
 
+	  # fun with remote protocols and tags
+	  if $remote; then
+	    cd second
+	    echo hello > file1
+	    dotest template-tag-r-1 "${testcvs} -Q add file1" ''
+	    dotest template-tag-r-2 "${testcvs} -Q commit -madd file1" \
+"RCS file: ${CVSROOT_DIRNAME}/second/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/second/file1,v  <--  file1
+initial revision: 1\.1
+done"
+            dotest template-tag-r-3 "${testcvs} -q tag tag" 'T file1'
+	    rm ${CVSROOT_DIRNAME}/CVSROOT/val-tags
+	    cd ..
+	    rm -fr second
+	    dotest template-tag-r-4 "${testcvs} -Q co -rtag second" ''
+	  fi
+
 	  cd CVSROOT
 	  dotest template-norcsinfo-1 "${testcvs} up" \
 "${PROG} [a-z]*: Updating \."
@@ -24917,8 +24938,7 @@ new revision: 1\.3; previous revision: 1\.2
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # Did the CVSROOT/CVS/Template file get the updated version?
-	  # FIXME. This result is wrong!
-	  #dotest template-norcsinfo-4 "test -f CVS/Template" ''
+	  # The file should be gone or of zero length.
 	  dotest template-norcsinfo-4 \
 "test ! -f CVS/Template || test ! -s CVS/Template" ''
 	  cd ..

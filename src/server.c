@@ -4410,6 +4410,7 @@ template_proc (repository, template)
 	    return 1;
 	}
     }
+    buf_send_counted (protocol);
     if (fclose (fp) < 0)
 	error (0, errno, "cannot close rcsinfo template file %s", template);
     return 0;
