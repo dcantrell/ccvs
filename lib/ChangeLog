@@ -1,3 +1,8 @@
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y, getopt.c, getopt1.c, getopt_.h, getopt_int.h, xgetcwd.c:
+	Update from GNULIB.
+
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_LIBADD): Add @ALLOCA@.
