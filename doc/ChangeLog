@@ -1,3 +1,8 @@
+Thu Dec 19 12:36:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Credits): Update Roland Pesch email address per his
+	request.
+
 Tue Dec 17 12:57:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (verifymsg): In example, remove text "and reedit if

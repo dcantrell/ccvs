@@ -283,7 +283,7 @@ to use it.
 
 @cindex Contributors (manual)
 @cindex Credits (manual)
-Roland Pesch, Cygnus Support <@t{pesch@@cygnus.com}>
+Roland Pesch, then of Cygnus Support <@t{roland@@wrs.com}>
 wrote the manual pages which were distributed with
 @sc{cvs} 1.3.  Appendix A and B contain much text that
 was extracted from them.  He also read an early draft
