@@ -1810,6 +1810,7 @@ handle_e (args, len)
   putc ('\n', stderr);
 }
 
+/* This table must be writeable if the server code is included.  */
 struct response responses[] =
 {
     {"ok", handle_ok, response_type_ok, rs_essential},
@@ -2800,16 +2801,6 @@ client_senddate (date)
     option_with_arg ("-D", buf);
 }
 
-static char *client_commit_usage[] =
-{
-    "Usage: %s %s [-nl] [-m msg] [-r rev] files...\n",
-    "\t-n\tDo not run the module program (if any).\n",
-    "\t-l\tLocal directory only (not recursive).\n",
-    "\t-m msg\tLog message.\n",
-    "\t-r rev\tCommit to this branch or trunk revision.\n",
-    NULL
-};
-
 int
 client_commit (argc, argv)
     int argc;
