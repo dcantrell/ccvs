@@ -295,11 +295,6 @@ char *calloc ();
 extern int errno;
 #endif
 
-/* SunOS4 apparently does not define this in stdlib.h.  */
-#ifndef EXIT_FAILURE
-#define EXIT_FAILURE 1
-#endif
-
 /* check for POSIX signals */
 #if defined(HAVE_SIGACTION) && defined(HAVE_SIGPROCMASK)
 # define POSIX_SIGNALS

@@ -1,3 +1,8 @@
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* system.h (EXIT_FAILURE): Don't define here since it's defined in
+	exit.h.
+
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
 	* getpass.c: Update to new version from GNULIB with Larry's fix
