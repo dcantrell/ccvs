@@ -1,3 +1,10 @@
+1999-02-01  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (keywordlog): New tests keywordlog-22 and
+	keywordlog-23 test keyword expansion and $Log.  Adjust other tests
+	so that revisions differ more from each other, so this is a
+	better test.
+
 1999-01-29  Jim Kingdon  <http://www.cyclic.com>
 
 	* commit.c (checkaddfile): If options is "", treat it the same as
