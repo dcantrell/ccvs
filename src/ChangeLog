@@ -1,3 +1,8 @@
+Sun Dec 31 16:40:41 1995  Peter Chubb  <peterc@bookworm.sw.oz.au>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* admin.c (admin_fileproc): Call freevers_ts before returning.
+
 Mon Dec 25 12:20:06 1995  Peter Wemm  <peter@haywire.DIALix.COM>
 
 	* logmsg.c (rcsinfo_proc): initialise line and

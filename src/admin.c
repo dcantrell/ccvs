@@ -135,17 +135,18 @@ admin_fileproc (file, update_dir, repository, entries, srcfiles)
     char **argv;
     int argc;
     int retcode = 0;
+    int status = 0;
 
     vers = Version_TS (repository, (char *) NULL, (char *) NULL, (char *) NULL,
 		       file, 0, 0, entries, srcfiles);
 
     version = vers->vn_user;
     if (version == NULL)
-	return (0);
+	goto exitfunc;
     else if (strcmp (version, "0") == 0)
     {
 	error (0, 0, "cannot admin newly added file `%s'", file);
-	return (0);
+	goto exitfunc;
     }
 
     run_setup ("%s%s", Rcsbin, RCS);
@@ -157,9 +158,12 @@ admin_fileproc (file, update_dir, repository, entries, srcfiles)
 	if (!quiet)
 	    error (0, retcode == -1 ? errno : 0,
 		   "%s failed for `%s'", RCS, file);
-	return (1);
+	status = 1;
+	goto exitfunc;
     }
-    return (0);
+  exitfunc:
+    freevers_ts (&vers);
+    return status;
 }
 
 /*
