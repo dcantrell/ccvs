@@ -14730,7 +14730,7 @@ diff -r1\.2 file1
 > \\\$""Revision: 1\.1\.2\.1 \\\$
 > >>>>>>> 1\.1\.2\.1
 14a19
-> what else do we have?"
+> what else do we have${QUESTION}"
 
 	  # Here's the problem... shouldn't -kk a binary file...
 	  rm file1
