@@ -206,7 +206,6 @@ libcvs_a_SOURCES = \
 	md5.c \
 	savecwd.c \
 	sighandle.c \
-	stripslash.c \
 	xgetwd.c \
 	yesno.c \
 	error.h \
@@ -259,9 +258,9 @@ libcvs_a_DEPENDENCIES = @LIBOBJS@
 am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
 	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
 	md5.$(OBJEXT) savecwd.$(OBJEXT) sighandle.$(OBJEXT) \
-	stripslash.$(OBJEXT) xgetwd.$(OBJEXT) yesno.$(OBJEXT) \
-	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
-	exitfail.$(OBJEXT) xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
+	xgetwd.$(OBJEXT) yesno.$(OBJEXT) basename.$(OBJEXT) \
+	dirname.$(OBJEXT) stripslash.$(OBJEXT) exitfail.$(OBJEXT) \
+	xmalloc.$(OBJEXT) xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)

@@ -1,5 +1,10 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* system.h: Move definition of FILENAMES_CASE_INSENSITIVE to
+	windows-NT/config.h.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	Add dirname module from GNULIB.
 
 	* Makefile.am (libcvs_SOURCES): Add new files.
