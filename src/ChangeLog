@@ -1,3 +1,11 @@
+2004-07-28  Derek Price  <derek@ximbiot.com>
+
+	* server.c (isSecondaryServer): Fix array out of bounds problem.
+	* sanity.sh (ssh-wrapper): Wrap any rsh implementation we are handed to
+	forward variables relevant to testing.  Add new $TIMING variable to
+	allow timing of processes on a remote host.
+	(*): Gratuitous reformatting.
+
 2004-07-26  Derek Price  <derek@ximbiot.com>
 
 	* server.c (read_secondary_log): Minor comment corrections.
