@@ -967,7 +967,7 @@ format.  Like @code{Rcs-diff}, this response is only used if the
 @code{update} command is given the @samp{-u} argument.
 
 The @code{Patched} response is deprecated in favor of the
-@code{Rcs-diff} response.  However, older clients (pre version 1.10)
+@code{Rcs-diff} response.  However, older clients (CVS 1.9 and earlier)
 only support @code{Patched}.
 
 @item Mode @var{mode} \n
