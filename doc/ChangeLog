@@ -1,5 +1,7 @@
 Tue Jun 24 09:37:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): Add assertion failed.
+
 	* cvsclient.texi (Connection and Authentication): Add "E" and
 	"error" as responses in authentication protocol.  The server
 	already was in the (formerly bad) habit of sending them, and we
