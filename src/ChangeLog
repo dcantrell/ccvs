@@ -1,5 +1,9 @@
 2004-06-30  Derek Price  <derek@ximbiot.com>
 
+	* client.c (connect_to_forked_server): Compile for SERVER_SUPPORT.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_append_buffer): Handle NULL from->data.
 
 2004-06-28  Derek Price  <derek@ximbiot.com>
