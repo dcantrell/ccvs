@@ -24,17 +24,12 @@ AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
-AC_GNU_SOURCE
+dnl This needs to be called to enable certain system extensions before calling
+dnl a C compiler.
+gl_USE_SYSTEM_EXTENSIONS
+
 AC_PROG_CC
 AM_PROG_CC_C_O
-
-dnl FIXME the next two calls should be avoided according to autoconf
-dnl philosophy.  for example, AC_CHECK_LIB should be used to look for crypt.
-dnl
-dnl These are here instead of later because they want to be called before
-dnl anything that calls a C compiler.
-AC_AIX
-AC_MINIX
 
 # Find the posix library needed on INTERACTIVE UNIX (ISC)
 dnl

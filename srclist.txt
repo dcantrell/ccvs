@@ -62,6 +62,8 @@ $GNULIB/lib/exit.h				lib		no NI
 $GNULIB/lib/exitfail.h				lib		no NI
 $GNULIB/lib/exitfail.c				lib		no NI
 $GNULIB/m4/exitfail.m4				m4		no NI
+# $GNULIB/modules/extensions
+$GNULIB/m4/extensions.m4			m4		no NI
 # $GNULIB/modules/fnmatch-posix
 # $GNULIB/modules/fnmatch
 $GNULIB/lib/fnmatch.c				lib		no NI

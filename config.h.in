@@ -817,6 +817,11 @@
 /* Define to force lib/regex.c to define re_comp et al. */
 #undef _REGEX_RE_COMP
 
+/* Enable extensions on Solaris.  */
+#ifndef __EXTENSIONS__
+# undef __EXTENSIONS__
+#endif
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
