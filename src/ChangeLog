@@ -1,3 +1,8 @@
+Wed Feb 28 10:40:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* vers_ts.c (time_stamp, time_stamp_server): Reindent and revise
+	comments.
+
 Tue Feb 27 23:57:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* vers_ts.c: gmtime() returns NULL on some systems (VMS)
