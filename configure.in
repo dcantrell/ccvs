@@ -17,8 +17,8 @@ GNU General Public License for more details.])
 
 AC_INIT([Concurrent Versions System (CVS)],[1.12.9.1],[bug-cvs@gnu.org],[cvs])
 AC_CONFIG_SRCDIR(src/cvs.h)
-AM_INIT_AUTOMAKE([gnu 1.7.9 dist-bzip2 no-define])
-AC_PREREQ(2.58)
+AM_INIT_AUTOMAKE([gnu 1.9.2 dist-bzip2 no-define])
+AC_PREREQ(2.59)
 
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h)
@@ -1511,7 +1511,6 @@ AC_CONFIG_FILES([Makefile \
 	  doc/Makefile \
 	  emx/Makefile \
 	  lib/Makefile \
-	  m4/Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \

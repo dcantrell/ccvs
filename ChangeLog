@@ -1,3 +1,11 @@
+2004-10-07  Derek Price  <derek@ximbiot.com>
+
+	* HACKING, NEWS: Note new Autoconf & Automake version requirements.
+	* Makefile.am (SUBDIRS): Remove m4.
+	(EXTRA_DIST): Distribute m4/ChangeLog.
+	* configure.in (AM_INIT_AUTOMAKE): Require Automake 1.9.2.
+	(AC_PREREQ): Require Automake 2.59.
+
 2004-10-07  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add "lib/getpass.h" and "lib/strcase.h" to project.
