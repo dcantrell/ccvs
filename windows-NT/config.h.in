@@ -448,3 +448,15 @@ typedef int ssize_t;
  * place the version string needs to be updated by hand for a new release.
  */
 #define PACKAGE_STRING "Concurrent Versions System (CVS) %PACKAGE_VERSION%"
+
+/* The following were added to make #include "xsize.h" work. */
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#define inline __inline
+
+/* Define as the maximum value of type 'size_t', if the system doesn't define
+   it. */
+#define SIZE_MAX ((size_t) -1)
+
+/* End of #include "xsize.h" fix. */
