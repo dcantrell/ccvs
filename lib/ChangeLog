@@ -1,3 +1,7 @@
+2005-03-23  Larry Jones  <lawrence.jones@ugs.com>
+
+	* getdate.c: Remove absolute paths from #line directives.
+
 2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
 
 	* xtime.h: added include guards to fix compile errors on IRIX 5.3
