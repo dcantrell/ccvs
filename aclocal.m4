@@ -978,7 +978,11 @@ AC_DEFUN([jm_FUNC_LSTAT],
 [
   AC_FUNC_LSTAT
   dnl Note: AC_FUNC_LSTAT does AC_LIBOBJ(lstat).
-  if test $ac_cv_func_lstat_empty_string_bug = yes; then
+  dnl
+  dnl It might be possible (and hopefully less code) to scan LIBOBJ here
+  dnl rather than checking multiple cache variables.  I just plain don't know.
+  if test $ac_cv_func_lstat_empty_string_bug = yes ||
+     test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
     gl_PREREQ_LSTAT
   fi
 ])
@@ -1421,6 +1425,8 @@ ZLIB_CPPFLAGS=
 ZLIB_LIBS=
 ZLIB_SUBDIRS=
 if test x$acx_zlib_cv_zlib = xno; then
+  # We need ZLIB_CPPFLAGS so that later executions of cpp from configure
+  # don't try to interpret $(top_srcdir)
   ZLIB_CPPFLAGS='-I$(top_srcdir)/zlib'
   ZLIB_LIBS='$(top_builddir)/zlib/libz.a'
   # ZLIB_SUBDIRS is only used in the top level Makefiles.

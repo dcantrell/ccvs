@@ -6203,7 +6203,8 @@ _ACEOF
 
 fi
 
-    if test $ac_cv_func_lstat_empty_string_bug = yes; then
+          if test $ac_cv_func_lstat_empty_string_bug = yes ||
+     test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
 
 
 
@@ -10876,6 +10877,8 @@ ZLIB_CPPFLAGS=
 ZLIB_LIBS=
 ZLIB_SUBDIRS=
 if test x$acx_zlib_cv_zlib = xno; then
+  # We need ZLIB_CPPFLAGS so that later executions of cpp from configure
+  # don't try to interpret $(top_srcdir)
   ZLIB_CPPFLAGS='-I$(top_srcdir)/zlib'
   ZLIB_LIBS='$(top_builddir)/zlib/libz.a'
   # ZLIB_SUBDIRS is only used in the top level Makefiles.
