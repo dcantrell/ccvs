@@ -1773,8 +1773,21 @@ rcsbuf_valpolish_internal (rcsbuf, to, from, lenp)
 	    {
 		++from;
 
-		/* Sanity check.  */
-		assert (*from == '@' && clen > 0);
+		/* Sanity check.
+		 *
+		 * FIXME: I restored this to an abort from an assert based on
+		 * advice from Larry Jones that asserts should not be used to
+		 * confirm the validity of an RCS file...  This leaves two
+		 * issues here: 1) I am uncertain that the fact that we will
+		 * only find double '@'s hasn't already been confirmed; and:
+		 * 2) If this is the proper place to spot the error in the RCS
+		 * file, then we should print a much clearer error here for the
+		 * user!!!!!!!
+		 *
+		 *	- DRP
+		 */
+		if (*from != '@' || clen == 0)
+		    abort ();
 
 		--clen;
 
