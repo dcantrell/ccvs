@@ -1535,7 +1535,7 @@ remove_file (finfo, tag, message)
 	error (1, 0, "internal error: no parsed RCS file");
 
     branch = 0;
-    if (tag && !(branch = RCS_isbranch (finfo->rcs, tag)))
+    if (tag && !(branch = RCS_nodeisbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
 	if ((retcode = RCS_deltag (finfo->rcs, tag, 1)) != 0) 
