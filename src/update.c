@@ -206,9 +206,12 @@ update (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active) 
     {
+	int pass;
+
 	/* The first pass does the regular update.  If we receive at least
 	   one patch which failed, we do a second pass and just fetch
 	   those files whose patches failed.  */
+	pass = 1;
 	do
 	{
 	    int status;
@@ -284,9 +287,27 @@ update (argc, argv)
 	    send_to_server ("update\012", 0);
 
 	    status = get_responses_and_close ();
-	    if (status != 0)
-		return status;
 
+	    /* If there are any conflicts, the server will return a
+               non-zero exit status.  If any patches failed, we still
+               want to run the update again.  We use a pass count to
+               avoid an endless loop.  */
+
+	    /* Notes: (1) assuming that status != 0 implies a
+	       potential conflict is the best we can cleanly do given
+	       the current protocol.  I suppose that trying to
+	       re-fetch in cases where there was a more serious error
+	       is probably more or less harmless, but it isn't really
+	       ideal.  (2) it would be nice to have a testsuite case for the
+	       conflict-and-patch-failed case.  */
+
+	    if (status != 0
+		&& (failed_patches == NULL || pass > 1))
+	    {
+		return status;
+	    }
+
+	    ++pass;
 	} while (failed_patches != NULL);
 
 	return 0;
