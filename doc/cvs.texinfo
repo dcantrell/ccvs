@@ -7570,7 +7570,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
 * admin::                       Administration
-* annotate::                    Show last revision where each line was changed.
+* annotate::                    What revision modified each line of a file?
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
@@ -8613,7 +8613,7 @@ this option has never done anything useful.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node annotate
-@appendixsec annotate---Show last revision where each line was changed.
+@appendixsec annotate---What revision modified each line of a file?
 @cindex annotate (subcommand)
 
 @itemize @bullet
