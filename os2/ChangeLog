@@ -1,3 +1,14 @@
+Mon Dec 18 21:59:07 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * getpass.c: removed -- getpass() lives in os2/login.c now.
+
+        * cvslogin.c: filled in.
+
+        * login.c: new file.
+
+        * Makefile.in: moved login.c and login.obj from COMMON to OS2
+        section.
+
 Mon Dec 18 19:55:43 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvslogin.c: added long explanatory comment.

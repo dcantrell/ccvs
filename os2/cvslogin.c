@@ -23,76 +23,76 @@
  *
  * "cvslogin" is called every time "cvs login" is invoked.  It first
  * checks to see if the block already exists (i.e., there's another
- * "cvslogin" process running already).  If so, it just uses it like
- * any other client.  If not, it creates the block, does whatever was
- * requested, and then (most importantly) fails to die.
+ * "cvslogin" process running already).  If so, it just uses it.  If
+ * not, it creates the block, stores the password, and then (most
+ * importantly) fails to die.
  * 
  * The block stores one password at a time.
  */
 
 #define INCL_DOSMEMMGR
+#define INCL_DOSPROCESS
 #include <os2.h>
 #include <bsememf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+void
+record_first_time (char **p, char *name,
+                   unsigned long size, char *passwd)
+{
+  int rc;
+
+  rc = DosAllocSharedMem (p, name, size,
+                          PAG_READ | PAG_WRITE | PAG_COMMIT);
+  if (rc != 0)
+    {
+      fprintf (stderr, "DosAllocSharedMem() failed: %d\n", rc);
+      exit (1);
+    }
+
+  strcpy (*p, passwd);
+
+  /* Wait forever.  We need to stay alive so the memory is still there
+     when other processes try to read it. */
+  while (1)
+    DosSleep (60000);
+}
+
 
 int
 main (int argc, char **argv)
 {
-    void *addr;
-    char *p;
-    char *name = "\\SHAREMEM\\MYMEM";
-    unsigned long size = 40;
+    char *addr = NULL;
+    char *name = "\\SHAREMEM\\CVSPASS.WRD";
+    /* Sizes always get rounded up to a multiple of 4k anyway. */
+    unsigned long size = 4096;
     int rc, i;
 
-    addr = 0;
-
-    if (argc < 2)
+    if (argc != 2)
     {
-        /* Set up the mem. */
-        printf ("*** addr before alloc: %p\n", addr); fflush (stdout);
-        rc = DosAllocSharedMem (&addr, name, size,
-                                PAG_READ | PAG_WRITE | PAG_COMMIT);
-        printf ("*** addr after alloc: %p\n", addr); fflush (stdout);
-        if (rc != 0)
-        {
-            fprintf (stderr,
-                     "DosAllocSharedMem() failed: %d\n",
-                     rc);
-            exit (1);
-        }
+      fprintf (stderr,
+               "cvslogin: wrong number of arguments: %d",
+               argc);
+      exit (1);
     }
 
-    addr = NULL;
-
-    printf ("*** addr before get: %p\n", addr); fflush (stdout);
     rc = DosGetNamedSharedMem (&addr, name, PAG_READ | PAG_WRITE);
-    printf ("*** addr after get: %p\n", addr); fflush (stdout);
     if (rc != 0)
-    {
-        fprintf (stderr,
-                 "DosGetNamedSharedMem() failed: %d\n",
-                 rc);
-        exit (1);
-    }
+      {
+        /*
+         * No problem -- just means this is the first time we've been
+         * called, so the block has not been allocated yet.
+         */
 
-    p = addr;
-    if (argc < 2)
-    {
-        printf ("*** before strcpy\n"); fflush (stdout);
-        strcpy (p, "this is what I wrote\n");
-        printf ("*** after strcpy\n"); fflush (stdout);
-
-        DosSleep (30);
-    }
+        /* This will never return -- it sleeps forever after creating
+           the block. */
+        record_first_time (&addr, name, size, passwd);
+      }
     else
-    {
-        for (i = 0; p[i]; i++)
-            printf ("| %c", p[i]);
-    }
-
-    printf ("\nDone.\n");
-    return 0;
+      {
+        /* Else we got the block, so put the new password into it. */
+        strcpy (addr, argv[1]);
+      }
 }
