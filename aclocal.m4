@@ -113,11 +113,9 @@ if test x$acx_gssapi_cv_gssapi != xno; then
   # define HAVE_GSSAPI and set up the includes
   AC_DEFINE([HAVE_GSSAPI], ,
 [Define if you have GSSAPI with Kerberos version 5 available.])
-  includeopt=$includeopt$GSSAPI_INCLUDES
+  CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
 
   # locate any other headers
-  acx_gssapi_save_CPPFLAGS=$CPPFLAGS
-  CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
   dnl We don't use HAVE_KRB5_H anywhere, but including it here might make it
   dnl easier to spot errors by reading configure output
   AC_CHECK_HEADERS([gssapi.h gssapi/gssapi.h gssapi/gssapi_generic.h krb5.h])
@@ -176,8 +174,6 @@ if test x$acx_gssapi_cv_gssapi != xno; then
 in the gssapi.h header file.  MIT Kerberos 1.2.1 requires this.  Only relevant
 when using GSSAPI.])
   else :; fi
-
-  CPPFLAGS=$acx_gssapi_save_CPPFLAGS
 
   # Expect the libs to be installed parallel to the headers
   #

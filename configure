@@ -7344,8 +7344,6 @@ fi
 echo "$as_me:$LINENO: result: $krb_h" >&5
 echo "${ECHO_T}$krb_h" >&6
 
-includeopt=
-
 if test -n "$krb_h"; then
   krb_lib=
   if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
@@ -7741,7 +7739,7 @@ fi
 
     LDFLAGS=$hold_ldflags
     if test -n "$krb_incdir"; then
-      includeopt="${includeopt} -I$krb_incdir"
+      CPPFLAGS="$CPPFLAGS -I$krb_incdir"
     fi
   fi
 fi
@@ -8042,11 +8040,9 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_GSSAPI
 _ACEOF
 
-  includeopt=$includeopt$GSSAPI_INCLUDES
+  CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
 
   # locate any other headers
-  acx_gssapi_save_CPPFLAGS=$CPPFLAGS
-  CPPFLAGS=$CPPFLAGS$GSSAPI_INCLUDES
 
 
 
@@ -8281,8 +8277,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
   else :; fi
-
-  CPPFLAGS=$acx_gssapi_save_CPPFLAGS
 
   # Expect the libs to be installed parallel to the headers
   #
@@ -10836,7 +10830,6 @@ s,@MAKE_TARGETS_IN_VPATH_FALSE@,$MAKE_TARGETS_IN_VPATH_FALSE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
 s,@KRB4@,$KRB4,;t t
-s,@includeopt@,$includeopt,;t t
 s,@with_default_rsh@,$with_default_rsh,;t t
 s,@EDITOR@,$EDITOR,;t t
 CEOF
