@@ -1,3 +1,8 @@
+Tue Apr 30 15:46:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (check_password): Don't use ANSI string concatenation.
+	Reindent function.
+
 Wed Apr 24 17:27:53 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* vers_ts.c (Version_TS): xmalloc enough space (1 more

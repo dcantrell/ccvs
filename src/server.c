@@ -4356,50 +4356,51 @@ check_repository_password (username, password, repository, host_user_ptr)
 /* Return a hosting username if password matches, else NULL. */
 char *
 check_password (username, password, repository)
-     char *username, *password, *repository;
+    char *username, *password, *repository;
 {
-  int rc;
-  char *host_user;
+    int rc;
+    char *host_user;
 
-  /* First we see if this user has a password in the CVS-specific
-     password file.  If so, that's enough to authenticate with.  If
-     not, we'll check /etc/passwd. */
+    /* First we see if this user has a password in the CVS-specific
+       password file.  If so, that's enough to authenticate with.  If
+       not, we'll check /etc/passwd. */
 
-  rc = check_repository_password (username, password, repository, &host_user);
+    rc = check_repository_password (username, password, repository,
+				    &host_user);
 
-  if (rc == 1)
-    return host_user;
-  else if (rc == 2)
-    return 0;
-  else if (rc == 0)
+    if (rc == 1)
+	return host_user;
+    else if (rc == 2)
+	return 0;
+    else if (rc == 0)
     {
-      /* No cvs password found, so try /etc/passwd. */
+	/* No cvs password found, so try /etc/passwd. */
 
-      struct passwd *pw;
-      char *found_passwd;
+	struct passwd *pw;
+	char *found_passwd;
 
-      pw = getpwnam (username);
-      if (pw == NULL)
+	pw = getpwnam (username);
+	if (pw == NULL)
         {
-          printf ("E Fatal error, aborting.\n"
-                  "error 0 %s: no such user\n", username);
-          exit (EXIT_FAILURE);
-        }
-      found_passwd = pw->pw_passwd;
-      
-      if (found_passwd && *found_passwd)
-        return (! strcmp (found_passwd, crypt (password, found_passwd))) ?
-          username : NULL;
-      else if (password && *password)
-        return username;
-      else
-        return NULL;
+	    printf ("E Fatal error, aborting.\n\
+error 0 %s: no such user\n", username);
+	    exit (EXIT_FAILURE);
+	}
+	found_passwd = pw->pw_passwd;
+
+	if (found_passwd && *found_passwd)
+	    return ((! strcmp (found_passwd, crypt (password, found_passwd)))
+		    ? username : NULL);
+	else if (password && *password)
+	    return username;
+	else
+	    return NULL;
     }
-  else
+    else
     {
-      /* Something strange happened.  We don't know what it was, but
-         we certainly won't grant authorization. */
-      return NULL;
+	/* Something strange happened.  We don't know what it was, but
+	   we certainly won't grant authorization. */
+	return NULL;
     }
 }
 
