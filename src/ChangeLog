@@ -1,3 +1,7 @@
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c: Improve comments.
+
 2004-08-02  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (ssh-wrapper): Export CVSUMASK to remote host.
