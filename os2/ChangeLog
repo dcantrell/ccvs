@@ -1,3 +1,8 @@
+Wed Nov 29 16:34:34 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (start_server): declare pipes[] as int, not FILE *.
+        Kinda nice that it worked anyway, but scary.  Ugh.
+
 Wed Nov 22 11:29:11 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * config.h (KFF_DEBUG): expand to nothing; we don't want to print
