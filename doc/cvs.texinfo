@@ -5975,6 +5975,12 @@ module, in your working directory.
 Name the working directory something other than the
 module name.
 
+@cindex Export program
+@item -e @var{prog}
+Specify a program @var{prog} to run whenever files in a
+module are exported.  @var{prog} runs with a single
+argument, the module name.
+
 @cindex Checkin program
 @item -i @var{prog}
 Specify a program @var{prog} to run whenever files in a
