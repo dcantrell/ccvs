@@ -51,7 +51,7 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
     }
     else
     {
-	p = findnode (entries, user);
+	p = findnode_fn (entries, user);
 	sdtp = (struct stickydirtag *) entries->list->data; /* list-private */
     }
 
