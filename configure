@@ -4139,7 +4139,7 @@ echo "${ECHO_T}no" >&6
 fi
 
 if test x"$MKTEMP" = xmktemp; then
-	MKTEMP_SH_FUNCTION=mktemp.sh
+	MKTEMP_SH_FUNCTION=$srcdir/mktemp.sh
 else
 	MKTEMP_SH_FUNCTION=/dev/null
 fi
