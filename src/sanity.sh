@@ -5593,7 +5593,11 @@ done'
 	  # such as whether a second user can check out the files.  But
 	  # it would be awkward to test the consequences, so we don't.
 
-	  export -n CVSUMASK # if unset, defaults to 002
+	  # Solaris /bin/sh doesn't support export -n.  I'm not sure
+	  # what we can do about this, other than hope that whoever
+	  # is running the tests doesn't have CVSUMASK set.
+	  #export -n CVSUMASK # if unset, defaults to 002
+
 	  umask 077
 	  mkdir 1; cd 1
 	  dotest modes-1 "${testcvs} -q co -l ." ''
