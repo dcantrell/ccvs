@@ -1,3 +1,11 @@
+2000-01-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Password authentication server): Use -f in example
+	inetd.conf line.
+	(Connection): Add advice about using shell script or env to avoid
+	problems with inetd setting HOME in the server's environment.
+	(various): Use @file for inetd.conf.
+
 2000-01-02  John P Cavanaugh <cavanaug@sr.hp.com>
 
 	* cvs.texinfo: document new -C option to update, now that it works
