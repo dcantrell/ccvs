@@ -1,3 +1,9 @@
+Mon Feb 13 13:32:07 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* rcs2log: rcs2log was originally in this tree; how did it get
+	deleted?  Anyway, this is the version distributed with Emacs
+	19.28, hacked to support CVS and Remote CVS.
+
 Mon Jul 26 13:18:23 1993  David J. Mackenzie  (djm@thepub.cygnus.com)
 
 	* rcs-to-cvs: Rewrite in sh.
