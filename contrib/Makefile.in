@@ -48,9 +48,9 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 DISTFILES = \
 	ChangeLog README .cvsignore intro.doc \
 	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs_acls.pl \
-	cvscheck.sh cvscheck.man cvshelp.man descend.sh descend.man dirfns.shar \
-	log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh rcs2log.sh rcslock.pl \
-	sccs2rcs.csh
+	cvscheck.sh cvscheck.man cvshelp.man descend.sh descend.man \
+	dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh rcs2log.sh \
+	rcslock.pl sccs2rcs.csh
 
 # files installed in $(libdir)/cvs/contrib
 #
@@ -66,12 +66,14 @@ CONTRIB_PROGS = clmerge cln_hist commit_prep cvs_acls cvscheck log log_accum \
 
 .pl:
 	rm -f $@
-	sed -e 's,xPERL_PATHx,$(perl_path),' $< >$@
+	sed -e 's,xPERL_PATHx,$(perl_path),' $< > $@-t
+	mv $@-t $@
 	chmod +x $@
 
 .csh:
 	rm -f $@
-	sed -e 's,xCSH_PATHx,$(csh_path),' $< >$@
+	sed -e 's,xCSH_PATHx,$(csh_path),' $< > $@-t
+	mv $@-t $@
 	chmod +x $@
 
 all: Makefile $(PROGS) $(CONTRIB_PROGS)
