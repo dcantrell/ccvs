@@ -1,3 +1,8 @@
+1999-05-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (server-4): Replace bogus directory with real one since
+	the server now checks it.
+
 1999-05-27  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (spacefiles): Clean up -c, top, and -b at end.

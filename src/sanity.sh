@@ -19788,10 +19788,10 @@ EOF
 printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", \
 31, 139, 8, 64, 5, 7, 64, 3, 225, 2, 64, 198, 185, 5, 64, 64, 64}' \
 	      </dev/null | tr '\100' '\000' >gzipped.dat
-	    echo Root ${TESTDIR}/crerepos >session.dat
 	    # Note that the CVS client sends "-b 1.1.1", and this
 	    # test doesn't.  But the server also defaults to that.
-	    cat <<EOF >>session.dat
+	    cat <<EOF >session.dat
+Root ${TESTDIR}/crerepos
 UseUnchanged
 gzip-file-contents 3
 Argument -m
@@ -19801,7 +19801,7 @@ Argument dir1
 Argument tag1
 Argument tag2
 Directory .
-in-real-life-this-is-funky-but-server-seems-to-ignore-it
+${TESTDIR}/crerepos
 Modified file1
 u=rw,g=r,o=r
 z25
