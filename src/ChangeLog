@@ -1,3 +1,8 @@
+Thu Sep 12 12:06:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (update_entries): If we can't write the file, don't
+	make it a fatal error.
+
 Wed Sep 11 12:46:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (start_server): Move START_SERVER_RETURNS_SOCKET code
