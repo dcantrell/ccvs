@@ -1,3 +1,9 @@
+2 Mar 1997  Jim Kingdon
+
+	* scc.c: Add a bunch of things, to SccOpenProject,
+	SccGetProjPath, and perhaps elsewhere.  The project
+	stuff doesn't really work yet, but the outproc does.
+
 27 Feb 1997  Jim Kingdon
 
 	* scc.c (SCC_max_init_path, SCC_max_name): Added.
