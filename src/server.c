@@ -2186,6 +2186,15 @@ serve_questionable (arg)
 	buf_output (&buf_to_net, "\n", 1);
     }
 }
+
+static void serve_case PROTO ((char *));
+
+static void
+serve_case (arg)
+    char *arg;
+{
+    ign_case = 1;
+}
 
 static struct buffer protocol;
 
@@ -3805,6 +3814,7 @@ struct request requests[] =
   REQ_LINE("Unchanged", serve_unchanged, rq_optional),
   REQ_LINE("Notify", serve_notify, rq_optional),
   REQ_LINE("Questionable", serve_questionable, rq_optional),
+  REQ_LINE("Case", serve_case, rq_optional),
   REQ_LINE("Argument", serve_argument, rq_essential),
   REQ_LINE("Argumentx", serve_argumentx, rq_essential),
   REQ_LINE("Global_option", serve_global_option, rq_optional),

@@ -463,7 +463,6 @@ int Reader_Lock PROTO((char *xrepository));
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());
 int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
 int Writer_Lock PROTO((List * list));
-int ign_name PROTO((char *name));
 int isdir PROTO((const char *file));
 int isfile PROTO((const char *file));
 int islink PROTO((const char *file));
@@ -508,6 +507,7 @@ void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
 void freevers_ts PROTO((Vers_TS ** versp));
 
+extern int ign_name PROTO ((char *name));
 void ign_add PROTO((char *ign, int hold));
 void ign_add_file PROTO((char *file, int hold));
 void ign_setup PROTO((void));
@@ -516,6 +516,7 @@ int ignore_directory PROTO((char *name));
 typedef void (*Ignore_proc) PROTO ((char *, char *));
 extern void ignore_files PROTO ((List *, char *, Ignore_proc));
 extern int ign_inhibit_server;
+extern int ign_case;
 
 #include "update.h"
 
