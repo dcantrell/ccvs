@@ -25,14 +25,6 @@
 #define	MY_NDBM
 #endif
 
-/* Directory used for storing temporary files, if not overridden by
-   environment variables or the -T global option.  There should be little
-   need to change this (-T is a better mechanism if you need to use a
-   different directory for temporary files).  */
-#ifndef TMPDIR_DFLT
-#define	TMPDIR_DFLT	"/tmp"
-#endif
-
 /*
  * The default umask to use when creating or otherwise setting file or
  * directory permissions in the repository.  Must be a value in the
