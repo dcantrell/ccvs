@@ -807,7 +807,7 @@ diff_file_nodiff(struct file_info *finfo, Vers_TS *vers, enum diff_file empty_fi
     int retcode;
 
     TRACE (TRACE_FUNCTION, "diff_file_nodiff (%s, %d)",
-           finfo->fullname, empty_file);
+           finfo->fullname ? finfo->fullname : "(null)", empty_file);
 
     /* free up any old use_rev* variables and reset 'em */
     if (use_rev1)

@@ -5485,7 +5485,9 @@ RCS_cmp_file (RCSNode *rcs, char *rev1, char **rev1_cache, char *rev2, char *opt
     int binary;
 
     TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
-           rcs->path, rev1, rev2, options, filename );
+           rcs->path ? rcs->path : "(null)",
+	   rev1 ? rev1 : "(null)", rev2 ? rev2 : "(null)",
+	   options ? options : "(null)", filename ? filename : "(null)" );
 
     if (options != NULL && options[0] != '\0')
 	binary = STREQ (options, "-kb");

@@ -128,7 +128,8 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 #endif
 
     TRACE (TRACE_FUNCTION, "do_module (%s, %s, %s, %s)",
-           mname, msg, where ? where : "NULL", extra_arg ? extra_arg : "NULL");
+           mname ? mname : "(null)", msg ? msg : "(null)",
+           where ? where : "NULL", extra_arg ? extra_arg : "NULL");
 
     /* Don't process absolute directories.  Anything else could be a security
      * problem.  Before this check was put in place:
