@@ -2747,7 +2747,7 @@ void
 start_tcp_server (tofdp, fromfdp)
      int *tofdp, *fromfdp;
 {
-  int tofd, fromfd;
+  int tofd = -1, fromfd;
 
   struct hostent *hp;
   char *hname;
@@ -2819,7 +2819,6 @@ start_tcp_server (tofdp, fromfdp)
   memcpy (&sin.sin_addr, hp->h_addr, hp->h_length);
   sin.sin_port = port;
   
-  tofd = -1;
   if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
     {
       error (0, errno, "connect");

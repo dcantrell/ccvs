@@ -553,7 +553,7 @@ main (argc, argv)
 	       remote accesses or use a special access method. */
 
 	    if (parse_cvsroot (CVSroot))
-		error (1, 0, "Couldn't parse CVSROOT.");
+		error (1, 0, "Bad CVSROOT.");
 
 	    /*
 	     * Check to see if we can write into the history file.  If not,

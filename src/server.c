@@ -302,7 +302,7 @@ serve_root (arg)
     {
 	pending_error_text = malloc (40);
 	if (pending_error_text != NULL)
-	    sprintf (pending_error_text, "E Couldn't parse CVSROOT");
+	    sprintf (pending_error_text, "E Bad CVSROOT");
 	pending_error = 0;
 	return;
     }
@@ -3251,7 +3251,7 @@ serve_init (arg)
     {
 	pending_error_text = malloc (40);
 	if (pending_error_text != NULL)
-	    sprintf (pending_error_text, "E Couldn't parse CVSROOT");
+	    sprintf (pending_error_text, "E Bad CVSROOT");
 	pending_error = 0;
 	return;
     }
