@@ -28,6 +28,9 @@ GENERAL USER ISSUES
 
 DEVELOPER ISSUES
 
+* A new set of tests to test issues specific to case insensitive clients and
+  servers has also been added.
+
 * Support has been added to the test suite to support testing over a :ext: link
   to another machine, subject to some stringent requirements.  This support can
   be used, for instance, to test the operation of a case insensitive client
