@@ -3176,7 +3176,7 @@ invalid rcs file %s (`d' operand out of range)",
 		    /* Now output the date.  */
 		    ym = strchr (prvers->date, '.');
 		    if (ym == NULL)
-			cvs_output ("??-???-??", 0);
+			cvs_output ("?\?-??\?-??", 0);
 		    else
 		    {
 			md = strchr (ym + 1, '.');
