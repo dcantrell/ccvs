@@ -8797,8 +8797,8 @@ the file @samp{bar.c}, the command @samp{cvs co -d dir
 foo} will create directory @samp{dir} and place
 @samp{bar.c} inside.  Similarly, given a module
 @samp{bar} which has subdirectory @samp{baz} wherein
-there is a file @samp{quux.c}, the command @samp{cvs -d
-dir co bar/baz} will create directory @samp{dir} and
+there is a file @samp{quux.c}, the command @samp{cvs co
+-d dir bar/baz} will create directory @samp{dir} and
 place @samp{quux.c} inside.
 
 Using the @samp{-N} flag will defeat this behavior.
