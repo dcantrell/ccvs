@@ -6330,6 +6330,21 @@ _ACEOF
 esac
 
 
+    # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+    # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+    case " $LIBOBJS " in
+    *" getndelim2.$ac_objext "* ) ;;
+    *) case $LIBOBJS in
+    "getndelim2.$ac_objext"   | \
+  *" getndelim2.$ac_objext"   | \
+    "getndelim2.$ac_objext "* | \
+  *" getndelim2.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
+esac
+;;
+    esac
+
+
 
 for ac_func in getdelim
 do
@@ -6432,19 +6447,6 @@ _ACEOF
 fi
 done
 
-
-
-          if test -z "$gl_getndelim2_invoked"; then
-    gl_getndelim2_invoked=:
-    case $LIBOBJS in
-    "getndelim2.$ac_objext"   | \
-  *" getndelim2.$ac_objext"   | \
-    "getndelim2.$ac_objext "* | \
-  *" getndelim2.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
-esac
-
-  fi
 
 
 
@@ -9797,17 +9799,20 @@ done
   fi
 
 
-          if test -z "$gl_getndelim2_invoked"; then
-    gl_getndelim2_invoked=:
-    case $LIBOBJS in
+  # Avoid multiple inclusions of getndelim2.o into LIBOBJS.
+  # This hack won't be needed after gnulib requires Autoconf 2.58 or later.
+  case " $LIBOBJS " in
+  *" getndelim2.$ac_objext "* ) ;;
+  *) case $LIBOBJS in
     "getndelim2.$ac_objext"   | \
   *" getndelim2.$ac_objext"   | \
     "getndelim2.$ac_objext "* | \
   *" getndelim2.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS getndelim2.$ac_objext" ;;
 esac
+;;
+  esac
 
-  fi
 
 
 
