@@ -1656,18 +1656,19 @@ Checking in file1;
 initial revision: 1.1
 done'
 
-	  # Make a branch.
+	  # Make a branch and a non-branch tag.
 	  dotest death2-4 "${testcvs} -q tag -b branch" 'T file1'
+	  dotest death2-5 "${testcvs} -q tag tag" 'T file1'
 
 	  # Switch over to the branch.
-	  dotest death2-5 "${testcvs} -q update -r branch" ''
+	  dotest death2-6 "${testcvs} -q update -r branch" ''
 
 	  # Delete the file on the branch.
 	  rm file1
-	  dotest death2-6 "${testcvs} rm file1" \
+	  dotest death2-7 "${testcvs} rm file1" \
 "${PROG} [a-z]*: scheduling .file1. for removal
 ${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
-	  dotest death2-7 "${testcvs} -q ci -m removed" \
+	  dotest death2-8 "${testcvs} -q ci -m removed" \
 'Removing file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 new revision: delete; previous revision: 1\.1\.2
@@ -1675,14 +1676,64 @@ done'
 
 	  # Readd the file to the branch.
 	  echo "second revision" > file1
-	  dotest death2-8 "${testcvs} add file1" \
+	  dotest death2-9 "${testcvs} add file1" \
 "${PROG}"' [a-z]*: file `file1'\'' will be added on branch `branch'\'' from version 1\.1\.2\.1
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
-	  dotest death2-9 "${testcvs} -q commit -m add" \
+	  dotest death2-10 "${testcvs} -q commit -m add" \
 'Checking in file1;
 /tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done'
+
+	  # Back to the trunk.
+	  dotest death2-11 "${testcvs} -q update -A" 'U file1' 'P file1'
+
+	  # Add another file on the trunk.
+	  echo "first revision" > file2
+	  dotest death2-12 "${testcvs} add file2" \
+"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest death2-13 "${testcvs} -q commit -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1.1
+done'
+
+	  # Back to the branch.
+	  # The ``no longer in the repository'' message doesn't really
+	  # look right to me, but that's what CVS currently prints for
+	  # this case.
+	  dotest death2-14 "${testcvs} -q update -r branch" \
+"U file1
+${PROG} [a-z]*: file2 is no longer in the repository" \
+"P file1
+${PROG} [a-z]*: file2 is no longer in the repository"
+
+	  # Add a file on the branch with the same name.
+	  echo "branch revision" > file2
+	  dotest death2-15 "${testcvs} add file2" \
+"${PROG}"' [a-z]*: scheduling file `file2'\'' for addition on branch `branch'\''
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest death2-16 "${testcvs} -q commit -m add" \
+'Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done'
+
+	  # Switch to the nonbranch tag.
+	  dotest death2-17 "${testcvs} -q update -r tag" \
+"U file1
+${PROG} [a-z]*: file2 is no longer in the repository" \
+"P file1
+${PROG} [a-z]*: file2 is no longer in the repository"
+
+	  # Make sure we can't add a file on this nonbranch tag.
+	  # FIXME: Right now CVS will let you add a file on a
+	  # nonbranch tag, so this test is commented out.
+	  # echo "bad revision" > file2
+	  # dotest death2-18 "${testcvs} add file2" "some error message"
 
 	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 	  ;;
