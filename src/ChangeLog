@@ -1,3 +1,8 @@
+Mon May 29 21:40:54 1995  J.T. Conklin  (jtc@rtl.cygnus.com)
+
+	* recurse.c (start_recursion, do_recursion): Set entries to NULL
+	  after calling Entries_Close().
+
 Sat May 27 08:08:18 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (check): Export RCSBIN only if there exists an
