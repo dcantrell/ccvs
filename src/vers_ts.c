@@ -43,8 +43,8 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
     char *rcsexpand = NULL;
 
     /* get a new Vers_TS struct */
-    vers_ts = (Vers_TS *) xmalloc (sizeof (Vers_TS));
-    memset ((char *) vers_ts, 0, sizeof (*vers_ts));
+    vers_ts = xmalloc (sizeof (Vers_TS));
+    memset (vers_ts, 0, sizeof (*vers_ts));
 
     /*
      * look up the entries file entry and fill in the version and timestamp
@@ -115,38 +115,38 @@ Version_TS (struct file_info *finfo, char *options, char *tag, char *date,
      * will either be needed as a default or to avoid allowing the -k options
      * specified on the command line from overriding binary mode (-kb).
      */
-    if( finfo->rcs != NULL )
-	rcsexpand = RCS_getexpand( finfo->rcs );
+    if (finfo->rcs != NULL)
+	rcsexpand = RCS_getexpand (finfo->rcs);
 
     /*
      * -k options specified on the command line override (and overwrite)
      * options stored in the entries file and default options from the RCS
      * archive, except for binary mode (-kb).
      */
-    if( options && *options != '\0' )
+    if (options && *options != '\0')
     {
-	if( vers_ts->options != NULL )
-	    free( vers_ts->options );
-	if( rcsexpand != NULL && strcmp( rcsexpand, "b" ) == 0 )
-	    vers_ts->options = xstrdup( "-kb" );
+	if (vers_ts->options != NULL)
+	    free (vers_ts->options);
+	if (rcsexpand != NULL && strcmp (rcsexpand, "b") == 0)
+	    vers_ts->options = xstrdup ("-kb");
 	else
-	    vers_ts->options = xstrdup( options );
+	    vers_ts->options = xstrdup (options);
     }
-    else if( ( !vers_ts->options || *vers_ts->options == '\0' )
-             && rcsexpand != NULL )
+    else if ((!vers_ts->options || *vers_ts->options == '\0')
+             && rcsexpand != NULL)
     {
 	/* If no keyword expansion was specified on command line,
 	   use whatever was in the rcs file (if there is one).  This
 	   is how we, if we are the server, tell the client whether
 	   a file is binary.  */
-	if( vers_ts->options != NULL )
-	    free( vers_ts->options );
-	vers_ts->options = xmalloc( strlen( rcsexpand ) + 3 );
-	strcpy( vers_ts->options, "-k" );
-	strcat( vers_ts->options, rcsexpand );
+	if (vers_ts->options != NULL)
+	    free (vers_ts->options);
+	vers_ts->options = xmalloc (strlen (rcsexpand) + 3);
+	strcpy (vers_ts->options, "-k");
+	strcat (vers_ts->options, rcsexpand);
     }
-    if( !vers_ts->options )
-	vers_ts->options = xstrdup( "" );
+    if (!vers_ts->options)
+	vers_ts->options = xstrdup ("");
 
     /*
      * if tags were specified on the command line, they override what is in

@@ -1,3 +1,7 @@
+2004-07-02  Derek Price  <derek@ximbiot.com>
+
+	* vers_ts.c: Gratuitous reformatting & detypecasting.
+
 2004-06-30  Derek Price  <derek@ximbiot.com>
 
 	* log-buffer.c (log_buffer_input, log_buffer_output): Flush logs as
