@@ -1,5 +1,9 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.c: #ifdef PROXY_SUPPORT in appropriate places.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h, log-buffer.h, main.c, mkmodules.c, parseinfo.c, server.c:
 	s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
 

@@ -31,6 +31,8 @@ struct log_buffer
     struct buffer *buf;
     /* The file to log information to.  */
     FILE *log;
+
+#ifdef PROXY_SUPPORT
     /* Whether errors writing to the log file should be fatal or not.  */
     bool fatal_errors;
 
@@ -52,10 +54,12 @@ struct log_buffer
 
     /* Once we start logging to a file we do not want to stop unless asked.  */
     bool tofile;
+#endif /* PROXY_SUPPORT */
 };
 
 
 
+#ifdef PROXY_SUPPORT
 static inline void
 log_buffer_force_file (struct log_buffer *lb)
 {
@@ -67,6 +71,7 @@ log_buffer_force_file (struct log_buffer *lb)
 	    error (lb->fatal_errors, errno, "failed to open log file.");
     }
 }
+#endif /* PROXY_SUPPORT */
 
 
 
@@ -75,11 +80,19 @@ log_buffer_force_file (struct log_buffer *lb)
  * INPUTS
  *   buf		A pointer to the buffer structure to log input from.
  *   fp			A file name to log data to.  May be NULL.
+#ifdef PROXY_SUPPORT
  *   fatal_errors	Whether errors writing to a log file should be
  *			considered fatal.
+#else
+ *   fatal_errors	unused
+#endif
  *   input		Whether we will log data for an input or output
  *			buffer.
+#ifdef PROXY_SUPPORT
  *   max		The maximum size of our memory cache.
+#else
+ *   max		unused
+#endif
  *   memory		The function to call when memory allocation errors are
  *			encountered.
  *
@@ -100,16 +113,17 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
     struct log_buffer *lb = xmalloc (sizeof *lb);
     struct buffer *retbuf;
 
-    assert (size_in_bounds_p (max));
-
     lb->buf = buf;
+    lb->log = fp;
+#ifdef PROXY_SUPPORT
+    assert (size_in_bounds_p (max));
     lb->back_buf = buf_nonio_initialize (memory);
     lb->back_fn = NULL;
-    lb->log = fp;
     lb->fatal_errors = fatal_errors;
     lb->max = max;
     lb->disabled = false;
     lb->tofile = false;
+#endif /* PROXY_SUPPORT */
     retbuf = buf_initialize (0, 0,
                              input ? log_buffer_input : NULL,
 			     input ? NULL : log_buffer_output,
@@ -127,11 +141,13 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
 	 * the auth code will be logged and put in our new buffer).
 	 */
 	struct buffer_data *data;
-	size_t total;
+#ifdef PROXY_SUPPORT
+	size_t total = 0;
+#endif /* PROXY_SUPPORT */
 
-	if (!lb->tofile) total = buf_count_mem (lb->back_buf);
 	for (data = buf->data; data = data->next; data != NULL)
 	{
+#ifdef PROXY_SUPPORT
 	    if (!lb->tofile)
 	    {
 		total = xsum (data->size, total);
@@ -144,15 +160,18 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
 		log_buffer_force_file (lb);
 		if (lb->log)
 		{
+#endif /* PROXY_SUPPORT */
 		    if (fwrite (data->bufp, 1, data->size, lb->log)
 			!= data->size)
 			error (fatal_errors, errno, "writing to log file");
 		    fflush (lb->log);
+#ifdef PROXY_SUPPORT
 		}
 	    }
 	    else
 		/* Log to memory buffer.  */
 		buf_copy_data (lb->back_buf, data, data);
+#endif /* PROXY_SUPPORT */
 	}
 	buf_append_buffer (retbuf, buf);
     }
@@ -174,8 +193,13 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
     if (status != 0)
 	return status;
 
-    if (!lb->disabled && *got > 0)
+    if (
+#ifdef PROXY_SUPPORT
+	!lb->disabled &&
+#endif /* PROXY_SUPPORT */
+	*got > 0)
     {
+#ifdef PROXY_SUPPORT
 	if (!lb->tofile
 	    && xsum (*got, buf_count_mem (lb->back_buf)) >= lb->max)
 	    lb->tofile = true;
@@ -183,16 +207,25 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	if (lb->tofile)
 	{
 	    log_buffer_force_file (lb);
+#endif /* PROXY_SUPPORT */
 	    if (lb->log)
 	    {
 		if (fwrite (data, 1, *got, lb->log) != *got)
-		    error (lb->fatal_errors, errno, "writing to log file");
+		    error (
+#ifdef PROXY_SUPPORT
+			   lb->fatal_errors,
+#else /* !PROXY_SUPPORT */
+			   false,
+#endif /* PROXY_SUPPORT */
+			   errno, "writing to log file");
 		fflush (lb->log);
 	    }
+#ifdef PROXY_SUPPORT
 	}
 	else
 	    /* Log to memory buffer.  */
 	    buf_output (lb->back_buf, data, *got);
+#endif /* PROXY_SUPPORT */
     }
 
     return 0;
@@ -213,8 +246,13 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
     if (status != 0)
 	return status;
 
-    if (!lb->disabled && *wrote > 0)
+    if (
+#ifdef PROXY_SUPPORT
+	!lb->disabled &&
+#endif /* PROXY_SUPPORT */
+	*wrote > 0)
     {
+#ifdef PROXY_SUPPORT
 	if (!lb->tofile
 	    && xsum (*wrote, buf_count_mem (lb->back_buf)) >= lb->max)
 	    lb->tofile = true;
@@ -222,16 +260,25 @@ log_buffer_output (void *closure, const char *data, int have, int *wrote)
 	if (lb->tofile)
 	{
 	    log_buffer_force_file (lb);
+#endif /* PROXY_SUPPORT */
 	    if (lb->log)
 	    {
 		if (fwrite (data, 1, *wrote, lb->log) != *wrote)
-		    error (lb->fatal_errors, errno, "writing to log file");
+		    error (
+#ifdef PROXY_SUPPORT
+			   lb->fatal_errors,
+#else /* !PROXY_SUPPORT */
+			   false,
+#endif /* PROXY_SUPPORT */
+			   errno, "writing to log file");
 		fflush (lb->log);
 	    }
+#ifdef PROXY_SUPPORT
 	}
 	else
 	    /* Log to memory buffer.  */
 	    buf_output (lb->back_buf, data, *wrote);
+#endif /* PROXY_SUPPORT */
     }
 
     return 0;
@@ -273,6 +320,7 @@ log_buffer_block (void *closure, int block)
 
 
 
+#ifdef PROXY_SUPPORT
 /* Disable logging without shutting down the next buffer in the chain.
  */
 struct buffer *
@@ -321,19 +369,25 @@ log_buffer_rewind (struct buffer *buf)
 
     return retbuf;
 }
+#endif /* PROXY_SUPPORT */
 
 
 
 /* Disable logging and close the log without shutting down the next buffer in
  * the chain.
  */
+#ifndef PROXY_SUPPORT
+static
+#endif /* !PROXY_SUPPORT */
 void
 log_buffer_closelog (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
     void *tmp;
 
+#ifdef PROXY_SUPPORT
     lb->disabled = true;
+#endif /* PROXY_SUPPORT */
 
     /* Close the log.  */
     if (lb->log)
@@ -344,6 +398,7 @@ log_buffer_closelog (struct buffer *buf)
 	    error (0, errno, "closing log file");
     }
 
+#ifdef PROXY_SUPPORT
     /* Delete the log if we know its name.  */
     if (lb->back_fn)
     {
@@ -360,6 +415,7 @@ log_buffer_closelog (struct buffer *buf)
 	lb->back_buf = NULL;
 	buf_free (tmp);
     }
+#endif /* PROXY_SUPPORT */
 }
 
 
