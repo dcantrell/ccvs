@@ -1,5 +1,13 @@
 Changes from 1.5 to the present:
 
+* The modules file now takes a -e option which is used instead of -o
+for "cvs export".  If your modules file has a -o option which you want
+to be used for "cvs export", change it to specify -e as well as -o.
+
+* "cvs export" now takes a -k option to set RCS keyword expansion.
+This way you can export binary files.  If you want the old behavior,
+you need to specify -kv.
+
 * "cvs update", "cvs rdiff", "cvs checkout", "cvs import", "cvs
 release", "cvs rtag", and "cvs tag" used to take -q and -Q options
 after the command name (e.g. "cvs update -q").  This was confusing
