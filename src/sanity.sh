@@ -1433,10 +1433,10 @@ O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* third-dir           =third
 
 		mkdir testimport
 		cd testimport
-		echo '$Id$' > foo
-		echo '$Name$' >> foo
-		echo '$Id$' > bar
-		echo '$Name$' >> bar
+		echo '$''Id$' > foo
+		echo '$''Name$' >> foo
+		echo '$''Id$' > bar
+		echo '$''Name$' >> bar
 		dotest rdiff-1 \
 		  "${testcvs} import -I ! -m test-import-with-keyword trdiff TRDIFF T1" \
 'N trdiff/foo
@@ -1456,7 +1456,7 @@ U trdiff/foo'
 /tmp/cvs-sanity/cvsroot/trdiff/foo,v  <--  foo
 new revision: 1\.2; previous revision: 1\.1
 done'
-		echo '#ident	"@(#)trdiff:$Name$:$Id$"' > new
+		echo '#ident	"@(#)trdiff:$''Name$:$''Id$"' > new
 		echo "new file" >> new
 		dotest rdiff-4 \
 		  "${testcvs} add -m new-file-description new" \
@@ -1504,11 +1504,11 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$Id$
-! \$Name$
+! \$''Id\$
+! \$''Name\$
 --- 1,3 ----
-! \$Id$
-! \$Name$
+! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
+! \$''Name: local-v0 \$
 ! something
 Index: trdiff/new
 diff -c /dev/null trdiff/new:1\.1
@@ -1517,7 +1517,7 @@ diff -c /dev/null trdiff/new:1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1,2 ----
-'"${PLUS}"' #ident	"@(#)trdiff:\$Name$:\$Id$"
+'"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$"
 '"${PLUS}"' new file'
 
 		dotest rdiff-9 \
@@ -1529,8 +1529,8 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$Id$
-! \$Name$
+! \$''Id\$
+! \$''Name\$
 --- 1,3 ----
 ! foo,v 1\.2 .* Exp
 ! local-v0

@@ -1,3 +1,8 @@
+Mon Sep 30 13:01:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (rdiff): Fix strings we were matching against which
+	got keyword-expanded in checking in sanity.sh.
+
 Mon Sep 30 03:21:37 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* sanity.sh: change all regexpr literal '.' to '\.'
