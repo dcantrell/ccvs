@@ -171,16 +171,22 @@ static int rcs_lockfd = -1;
  * char *
  * locate_rcs ( const char* file, const char *repository , int *inattic )
  *
- * Find an RCS file in the repository.  Most parts of CVS will want to
- * rely instead on RCS_parse which calls this function and is
- * called by recurse.c which then puts the result in useful places
- * like the rcs field of struct file_info.
+ * Find an RCS file in the repository, case insensitively when the cased name
+ * doesn't exist, we are running as the server, and a client has asked us to
+ * ignore case.
+ *
+ * Most parts of CVS will want to rely instead on RCS_parse which calls this
+ * function and is called by recurse.c which then puts the result in useful
+ * places like the rcs field of struct file_info.
  *
  * INPUTS
  *
  *  repository		the repository (including the directory)
  *  file		the filename within that directory (without RCSEXT).
  *  inattic		NULL or a pointer to the output boolean
+ *
+ * GLOBALS
+ *  ign_case		Whether the client has requested case insensitive mode.
  *
  * OUTPUTS
  *
@@ -192,14 +198,18 @@ static int rcs_lockfd = -1;
  * RETURNS
  *
  *  a newly-malloc'd array containing the absolute pathname of the RCS
- *  file that was found or NULL on error.
+ *  file that was found or NULL when none was found.
  *
  * ERRORS
  *
- *  errno will be set by the system calls in the case of failure.
+ *  errno can be set by the return value of the final call to
+ *  locate_file_in_dir().  This should resolve to the system's existence error
+ *  value (sometime ENOENT) if the Attic directory did not exist and ENOENT if
+ *  the Attic was found but no matching files were found in the Attic or its
+ *  parent.
  */
 static char *
-locate_rcs ( repository, file, inattic )
+locate_rcs (repository, file, inattic)
     const char *repository;
     const char *file;
     int *inattic;
@@ -208,37 +218,69 @@ locate_rcs ( repository, file, inattic )
     char *dir;
     char *retval;
 
-    /* Allocate space and add the RCS extension */
-    rcsfile = xmalloc ( strlen ( file )
-		    + sizeof ( RCSEXT ) );
-    (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
-
-    /* Search in the top dir given */
-    if (( retval = locate_file_in_dir ( repository, rcsfile )) != NULL )
+    /* First, try to find the file as cased. */
+    retval = xmalloc (strlen (repository)
+                      + sizeof (CVSATTIC)
+                      + strlen (file)
+                      + sizeof (RCSEXT)
+                      + 3);
+    sprintf (retval, "%s/%s%s", repository, file, RCSEXT);
+    if (isreadable (retval))
     {
-	if ( inattic )
+	if (inattic)
 	    *inattic = 0;
-	goto out;
+	return retval;
     }
+    sprintf (retval, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
+    if (isreadable (retval))
+    {
+	if (inattic)
+	    *inattic = 1;
+	return retval;
+    }
+    free (retval);
 
-    /* Search in the Attic */
-    dir = xmalloc ( strlen ( repository )
-		    + sizeof ( CVSATTIC )
-		    + 2 );
-    (void) sprintf ( dir,
-		     "%s/%s",
-		     repository,
-		     CVSATTIC );
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+    /* We didn't find the file as cased, so try again case insensitively if the
+     * client has requested that mode.
+     */
+    if (ign_case)
+    {
+	/* Allocate space and add the RCS extension */
+	rcsfile = xmalloc (strlen (file)
+	                   + sizeof (RCSEXT));
+	sprintf (rcsfile, "%s%s", file, RCSEXT);
 
-    if ( ( retval = locate_file_in_dir ( dir, rcsfile ) ) != NULL
-	 && inattic != NULL )
-	*inattic = 1;
 
-    free ( dir );
+	/* Search in the top dir given */
+	if ((retval = locate_file_in_dir (repository, rcsfile)) != NULL)
+	{
+	    if (inattic)
+		*inattic = 0;
+	    goto out;
+	}
 
-out:
-    free ( rcsfile );
-    return retval;
+	/* Search in the Attic */
+	dir = xmalloc (strlen (repository)
+	               + sizeof (CVSATTIC)
+	               + 2);
+	sprintf (dir, "%s/%s", repository, CVSATTIC);
+
+	if ((retval = locate_file_in_dir (dir, rcsfile)) != NULL
+	    && inattic)
+	    *inattic = 1;
+
+	free (dir);
+
+    out:
+	free (rcsfile);
+	return retval;
+    }
+    else /* !ign_case */
+#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
+    {
+	return NULL;
+    }
 }
 
 

@@ -1,5 +1,21 @@
 2003-10-07  Derek Price  <derek@ximbiot.com>
 
+	Fix a client/server bug introduced via the data loss fix of 2003-03-17.
+	Basically, the server was reporting ambiguous filename requests when it
+	should have been trusting the user to type the intended case or using
+	the case the client preserved in CVS/Entries before it tried to look
+	anything up in case insensitive mode.
+
+	* rcs.c (locate_rcs): Use the filename exactly as cased before
+	investigating a case insensitive lookup, per the client/server protocol
+	specification.  Expand comments.
+	* subr.c (locate_file_in_dir): This function only needs to locate files
+	case insensitively.  Expand comments.
+	* cvs.h (locate_file_in_dir): Only prototype when servers which need to
+	handle case insensitivity are being compiled.
+
+2003-10-07  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (locate_rcs): Declare static.  Move to an earlier location in
 	file to avoid prototyping.
 	* rcs.h (locate_rcs): Remove proto.
