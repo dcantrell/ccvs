@@ -1,3 +1,9 @@
+2003-02-14  Larry Jones  <lawrence.jones@eds.com>
+
+	* log.c (log_expand_revlist): Fix crashes in error cases.
+	(Reported by Bart Santy <Bart.Santy@switch.be>.)
+	* sanity.sh (log): New tests for above.
+
 2003-02-14  Derek Price  <derek@ximbiot.com>
 
 	* watch.c (watch_usage): Make the repeatability of -a part of the

@@ -15565,6 +15565,42 @@ ${log_rev3}
 ${log_rev2}
 ${log_trailer}"
 
+	  dotest log-23 "${testcvs} log -rfoo:: file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-24 "${testcvs} log -rfoo::1.3 file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-25 "${testcvs} log -r::foo file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-26 "${testcvs} log -r1.1::foo file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${log_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
 	  # Now the same tests but with rlog
 
 	  dotest log-r11 "${testcvs} rlog first-dir/file1" \
@@ -15786,6 +15822,42 @@ total revisions: 5;	selected revisions: 2
 description:
 ${log_rev3}
 ${log_rev2}
+${log_trailer}"
+
+	  dotest log-r23 "${testcvs} rlog -rfoo:: first-dir/file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r24 "${testcvs} rlog -rfoo::1.3 first-dir/file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r25 "${testcvs} rlog -r::foo first-dir/file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
+${log_trailer}"
+
+	  dotest log-r26 "${testcvs} rlog -r1.1::foo first-dir/file1" \
+"${PROG} [a-z]*: warning: no revision .foo. in .${CVSROOT_DIRNAME}/first-dir/file1,v.
+${rlog_header1}
+${log_tags1}
+${log_keyword}
+total revisions: 5;	selected revisions: 0
+description:
 ${log_trailer}"
 
 	  # Test when head is dead
