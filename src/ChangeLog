@@ -1,3 +1,16 @@
+Wed Aug 14 14:02:00 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* server.c (check_password): if available use getspnam instead of
+ 	getpwnam when reading system passwords.  This allows cvs pserver
+ 	to run on systems with shadow passwords.
+	(switch_to_user): new static function.  Contains the extracted
+ 	common tail of kserver_authenticate_connection and
+ 	pserver_authenticate_connection.  If compiled with SETXID_SUPPORT,
+ 	honor the setgid bit if it is set.
+	(check_repository_password): turn into a static function
+	(check_password): ditto
+	(pserver_authenticate_connection): little code cleanup
+
 Wed Aug 14 01:07:10 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* history.c (history): apply fix posted by Steven Meyer
