@@ -5475,6 +5475,7 @@ struct request requests[] =
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
   REQ_LINE("valid-requests", serve_valid_requests,
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
+  REQ_LINE("Command-prep", serve_noop, 0),
   REQ_LINE("Repository", serve_repository, 0),
   REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
   REQ_LINE("Max-dotdot", serve_max_dotdot, 0),
