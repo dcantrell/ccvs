@@ -479,7 +479,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
-	tests="${tests} multibranch import join join2"
+	tests="${tests} multibranch import importb join join2"
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
 	tests="${tests} devcom devcom2"
@@ -2886,6 +2886,19 @@ modify-on-br1
 	  ;;
 
 	import) # test death after import
+		# Tests of "cvs import":
+		# basic2
+		# rdiff  -- imports with keywords
+		# import  -- more tests of imports with keywords
+		# importb  -- -b option.
+		# modules3
+		# mflag -- various -m messages
+		# ignore  -- import and cvsignore
+		# binwrap -- import and -k wrappers
+		# info -- imports which are rejected by verifymsg
+		# head -- intended to test vendor branches and HEAD,
+		#   although it doesn't really do it yet.
+
 		# import
 		mkdir import-dir ; cd import-dir
 
@@ -3094,6 +3107,102 @@ rev 2 of file 2
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -r import-dir
 		;;
+
+	importb)
+	  # More cvs import tests, especially -b option.
+
+	  # OK, first we get some sources from the NetMunger project, and
+	  # import them into the 1.1.1 vendor branch.
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'OpenMunger sources' >file1
+	  echo 'OpenMunger sources' >file2
+	  dotest importb-1 \
+"${testcvs} import -m add first-dir openmunger openmunger-1_0" \
+"N first-dir/file1
+N first-dir/file2
+
+No conflicts created by this import"
+	  cd ..
+	  rm -r imp-dir
+
+	  # Now we put the sources we get from FreeMunger into 1.1.3
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'FreeMunger sources' >file1
+	  echo 'FreeMunger sources' >file2
+	  # Not completely sure how the conflict detection is supposed to
+	  # be working here (haven't really thought about it).
+	  dotest importb-2 \
+"${testcvs} import -m add -b 1.1.3 first-dir freemunger freemunger-1_0" \
+"C first-dir/file1
+C first-dir/file2
+
+2 conflicts created by this import.
+Use the following command to help the merge:
+
+	cvs checkout -jfreemunger:yesterday -jfreemunger first-dir"
+	  cd ..
+	  rm -r imp-dir
+
+	  # Now a test of main branch import (into second-dir, not first-dir).
+	  mkdir imp-dir
+	  cd imp-dir
+	  echo 'my own stuff' >mine1.c
+	  echo 'my own stuff' >mine2.c
+	  dotest_fail importb-3 \
+"${testcvs} import -m add -b 1 second-dir dummy really_dumb_y" \
+"${PROG} \[[a-z]* aborted\]: Only branches with two dots are supported: 1"
+	  : when we implement main-branch import, should be \
+"N second-dir/mine1\.c
+N second-dir/mine2\.c
+
+No conflicts created by this import"
+	  cd ..
+	  rm -r imp-dir
+
+	  mkdir 1
+	  cd 1
+	  # when we implement main branch import, will want to 
+	  # add "second-dir" here.
+	  dotest importb-4 "${testcvs} -q co first-dir" \
+"U first-dir/file1
+U first-dir/file2"
+	  cd first-dir
+	  dotest importb-5 "${testcvs} -q log file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch: 1\.1\.1
+locks: strict
+access list:
+symbolic names:
+	freemunger-1_0: 1\.1\.3\.1
+	freemunger: 1\.1\.3
+	openmunger-1_0: 1\.1\.1\.1
+	openmunger: 1\.1\.1
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.1;  1\.1\.3;
+Initial revision
+----------------------------
+revision 1\.1\.3\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+add
+----------------------------
+revision 1\.1\.1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}0 -0
+add
+============================================================================="
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+	  ;;
 
 	join)
 	  # Test doing joins which involve adding and removing files.
@@ -7217,6 +7326,14 @@ U file1" "U file1"
 
 	keyword)
 	  # Test keyword expansion.
+	  # Various other tests relate to our ability to correctly
+	  # set the keyword expansion mode.
+	  # "binfiles" tests "cvs admin -k".
+	  # "binfiles" and "binfiles2" test "cvs add -k".
+	  # "rdiff" tests "cvs co -k".
+	  # "binfiles" (and this test) test "cvs update -k".
+	  # "binwrap" tests setting the mode from wrappers.
+	  # I don't think any test is testing "cvs import -k".
 	  mkdir 1; cd 1
 	  dotest keyword-1 "${testcvs} -q co -l ." ''
 	  mkdir first-dir
