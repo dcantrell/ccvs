@@ -1,3 +1,12 @@
+1998-04-11  Norbert Kiesel  <nk@iname.com>
+
+	* server.c (cvs_output_binary): Shut up "gcc -Wall" by removing
+	unnecessary else if test.
+	* server.c (check_password): Fix uninitialized memory read if
+ 	shadow passwords are used.  Also added some comments.
+	* rcs.c (RCS_checkout): Make sure to call chown with -1 for uid or 
+	gid if they should not be changed
+
 1998-04-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (rcs2): New test, tests for various Y2K cases.
