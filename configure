@@ -1452,6 +1452,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+gl_header_list="$gl_header_list stdio_ext.h"
 gl_header_list="$gl_header_list fcntl.h"
 gl_header_list="$gl_header_list sys/time.h"
 gl_header_list="$gl_header_list unistd.h"
@@ -8011,6 +8012,80 @@ _ACEOF
   fi
 
 
+      echo "$as_me:$LINENO: checking whether getpass is declared" >&5
+echo $ECHO_N "checking whether getpass is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl_getpass+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+#ifndef getpass
+  char *p = (char *) getpass;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl_getpass=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl_getpass=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl_getpass" >&5
+echo "${ECHO_T}$ac_cv_have_decl_getpass" >&6
+if test $ac_cv_have_decl_getpass = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_GETPASS 1
+_ACEOF
+
+
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_GETPASS 0
+_ACEOF
+
+
+fi
+
+
+
+
 
 
 
@@ -8163,6 +8238,12 @@ _ACEOF
 fi
 
 done
+
+
+
+
+
+
 
 
 
@@ -12527,6 +12608,38 @@ _ACEOF
   fi
 
 
+
+  :
+
+
+
+
+
+    case $LIBOBJS in
+    "getpass.$ac_objext"   | \
+  *" getpass.$ac_objext"   | \
+    "getpass.$ac_objext "* | \
+  *" getpass.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS getpass.$ac_objext" ;;
+esac
+
+
+
+  :
+
+
+
+
+
+  :
+
+
+cat >>confdefs.h <<\_ACEOF
+#define getpass gnu_getpass
+_ACEOF
+
+
+
 for ac_func in mkstemp
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -16644,24 +16757,6 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
-
-
-    case $LIBOBJS in
-    "getpass.$ac_objext"   | \
-  *" getpass.$ac_objext"   | \
-    "getpass.$ac_objext "* | \
-  *" getpass.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS getpass.$ac_objext" ;;
-esac
-
-
-  :
-
-
-cat >>confdefs.h <<\_ACEOF
-#define getpass gnu_getpass
-_ACEOF
-
 
 
       echo "$as_me:$LINENO: checking whether clearerr_unlocked is declared" >&5
