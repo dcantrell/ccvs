@@ -591,25 +591,18 @@ commit (argc, argv)
     return (err);
 }
 
-/*
- * Check to see if a file is ok to commit and make sure all files are
- * up-to-date
- */
-/* ARGSUSED */
-static int
-check_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
-{
-    Ctype status;
-    char *xdir;
-    Node *p;
-    List *ulist, *cilist;
-    Vers_TS *vers;
-    struct commit_info *ci;
-    struct logfile_info *li;
-    int save_noexec, save_quiet, save_really_quiet;
+/* This routine determines the status of a given file and retrieves
+   the version information that is associated with that file. */
 
+static
+Ctype
+classify_file_internal (finfo, vers)
+    struct file_info *finfo;
+    Vers_TS **vers;
+{
+    int save_noexec, save_quiet, save_really_quiet;
+    Ctype status;
+    
     save_noexec = noexec;
     save_quiet = quiet;
     save_really_quiet = really_quiet;
@@ -622,15 +615,15 @@ check_fileproc (callerdat, finfo)
 	if (numdots (tag) < 2)
 	{
 	    status = Classify_File (finfo, (char *) NULL, (char *) NULL,
-				    (char *) NULL, 1, aflag, &vers, 0);
+				    (char *) NULL, 1, aflag, vers, 0);
 	    if (status == T_UPTODATE || status == T_MODIFIED ||
 		status == T_ADDED)
 	    {
 		Ctype xstatus;
 
-		freevers_ts (&vers);
+		freevers_ts (vers);
 		xstatus = Classify_File (finfo, tag, (char *) NULL,
-					 (char *) NULL, 1, aflag, &vers, 0);
+					 (char *) NULL, 1, aflag, vers, 0);
 		if (xstatus == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 		else if (status == T_MODIFIED && xstatus == T_CONFLICT)
@@ -654,30 +647,53 @@ check_fileproc (callerdat, finfo)
 		*cp = '\0';
 	    }
 	    status = Classify_File (finfo, xtag, (char *) NULL,
-				    (char *) NULL, 1, aflag, &vers, 0);
+				    (char *) NULL, 1, aflag, vers, 0);
 	    if ((status == T_REMOVE_ENTRY || status == T_CONFLICT)
 		&& (cp = strrchr (xtag, '.')) != NULL)
 	    {
 		/* pluck one more dot off the revision */
 		*cp = '\0';
-		freevers_ts (&vers);
+		freevers_ts (vers);
 		status = Classify_File (finfo, xtag, (char *) NULL,
-					(char *) NULL, 1, aflag, &vers, 0);
+					(char *) NULL, 1, aflag, vers, 0);
 		if (status == T_UPTODATE || status == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
 	    }
 	    /* now, muck with vers to make the tag correct */
-	    free (vers->tag);
-	    vers->tag = xstrdup (tag);
+	    free ((*vers)->tag);
+	    (*vers)->tag = xstrdup (tag);
 	    free (xtag);
 	}
     }
     else
 	status = Classify_File (finfo, tag, (char *) NULL, (char *) NULL,
-				1, 0, &vers, 0);
+				1, 0, vers, 0);
     noexec = save_noexec;
     quiet = save_quiet;
     really_quiet = save_really_quiet;
+
+    return status;
+}
+
+/*
+ * Check to see if a file is ok to commit and make sure all files are
+ * up-to-date
+ */
+/* ARGSUSED */
+static int
+check_fileproc (callerdat, finfo)
+    void *callerdat;
+    struct file_info *finfo;
+{
+    Ctype status;
+    char *xdir;
+    Node *p;
+    List *ulist, *cilist;
+    Vers_TS *vers;
+    struct commit_info *ci;
+    struct logfile_info *li;
+    
+    status = classify_file_internal (finfo, &vers);
 
     /*
      * If the force-commit option is enabled, and the file in question
@@ -868,6 +884,8 @@ check_fileproc (callerdat, finfo)
 		  xmalloc (sizeof (struct logfile_info)));
 	    li->type = status;
 	    li->tag = xstrdup (vers->tag);
+	    li->rev_old = xstrdup (vers->vn_rcs);
+	    li->rev_new = NULL;
 	    p->data = (char *) li;
 	    (void) addnode (ulist, p);
 
@@ -1171,6 +1189,33 @@ out:
 	p = findnode (ulist, finfo->file);
 	if (p)
 	    delnode (p);
+    }
+    else
+    {
+	/* On success, retrieve the new version number of the file and
+           copy it into the log information (see logmsg.c
+           (logfile_write) for more details).  We should only update
+           the version number for files that have been added or
+           modified but not removed.  Why?  classify_file_internal
+           will return the version number of a file even after it has
+           been removed from the archive, which is not the behavior we
+           want for our commitlog messages; we want the old version
+           number and then "NONE." */
+	
+	if (ci->status != T_REMOVED)
+	{
+	    p = findnode (ulist, finfo->file);
+	    if (p)
+	    {
+		Vers_TS *vers;
+		struct logfile_info *li;
+	    
+		(void) classify_file_internal (finfo, &vers);
+		li = (struct logfile_info *) p->data;
+		li->rev_new = xstrdup (vers->vn_rcs);
+		freevers_ts (&vers);
+	    }
+	}
     }
 
     return (err);

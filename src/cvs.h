@@ -694,6 +694,10 @@ struct logfile_info
 {
   enum classify_type type;
   char *tag;
+  char *rev_old;		/* rev number before a commit/modify,
+				   NULL for add or import */
+  char *rev_new;		/* rev number after a commit/modify,
+				   add, or import, NULL for remove */
 };
 
 /* Wrappers.  */
