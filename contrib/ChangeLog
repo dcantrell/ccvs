@@ -1,3 +1,12 @@
+Sun Apr 14 11:30:36 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * Removed pcl-cvs/ subdir; see tools/ subdir in the top-level from
+        now on.
+        Added elib/ subdir.
+        
+        * Makefile.in (dist-dir): Removed all references to pcl-cvs/
+        subdir.
+
 Wed Mar  6 10:20:28 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* log_accum.pl: ($MAILER): use sendmail directly to allow other
