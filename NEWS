@@ -1,4 +1,6 @@
-Changes since 1.11.7:
+Changes since 1.11.8:
+
+Changes from 1.11.7 to 1.11.8:
 
 * A problem in the CVS getpass library that could cause passwords to echo on
   some systems has been fixed.
