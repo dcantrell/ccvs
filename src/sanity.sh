@@ -7410,7 +7410,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 
           # Restore and clean up
           cd ..
-          rm -rf binwrap3 CVSROOT
+	  rm -r binwrap3 CVSROOT
+	  rm -rf ${CVSROOT_DIRNAME}/binwrap3
           CVSWRAPPERS=${CVSWRAPPERS_SAVED}
           ;; 
 
