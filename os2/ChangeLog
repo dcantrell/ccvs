@@ -1,4 +1,7 @@
-Mon Aug 12 17:23:52 1996  Jim Kingdon  (unknown@beezley)
+Mon Aug 12 22:59:40 1996  Jim Kingdon  (unknown@beezley)
+
+	* filesubr.c (fncmp): Fix typo (n1 -> n2) which had caused the
+	function to always return 0.
 
 	* Makefile.in (COMMON_OBJECTS): Add buffer.obj.
 	(COMMON_SOURCES): Add buffer.c.
