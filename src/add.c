@@ -438,7 +438,7 @@ add_directory (repository, dir)
 	}
 #endif
 
-	omask = umask ((mode_t) 2);
+	omask = umask (cvsumask);
 	if (CVS_MKDIR (rcsdir, 0777) < 0)
 	{
 	    error (0, errno, "cannot mkdir %s", rcsdir);

@@ -1,3 +1,10 @@
+Sat Oct  7 23:05:24 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* add.c, checkout.c, commit.c, cvs.h, filesubr.c, import.c,
+	lock.c, main.c, modules.c, options.h.in: New variable cvsumask
+	which is used to set mode of files in repository (regardless of
+	umask in effect when cvs is run).
+
 Sat Oct  7 22:40:17 1995  Stephen Bailey  <sjbailey@sand.npl.washington.edu>
 
 	* lock.c: Include AFSCVS ifdefs to deal with AFS's lack of

@@ -69,6 +69,7 @@ int quiet = FALSE;
 int trace = FALSE;
 int noexec = FALSE;
 int logoff = FALSE;
+mode_t cvsumask = UMASK_DFLT;
 
 char *CurDir;
 
@@ -217,7 +218,7 @@ main (argc, argv)
 {
     extern char *version_string;
     extern char *config_string;
-    char *cp;
+    char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
     static int help = FALSE, version_flag = FALSE;
@@ -270,6 +271,14 @@ main (argc, argv)
     }
     if (getenv (CVSREAD_ENV) != NULL)
 	cvswrite = FALSE;
+    if ((cp = getenv (CVSUMASK_ENV)) != NULL)
+    {
+	/* FIXME: Should be accepting symbolic as well as numeric mask.  */
+	cvsumask = strtol (cp, &end, 8) & 0777;
+	if (*end != '\0')
+	    error (1, errno, "invalid umask value in %s (%s)",
+		CVSUMASK_ENV, cp);
+    }
 
     /* This has the effect of setting getopt's ordering to REQUIRE_ORDER,
        which is what we need to distinguish between global options and

@@ -240,7 +240,7 @@ import (argc, argv)
      * Make all newly created directories writable.  Should really use a more
      * sophisticated security mechanism here.
      */
-    (void) umask (2);
+    (void) umask (cvsumask);
     make_directories (repository);
 
     /* Create the logfile that will be logged upon completion */
@@ -989,11 +989,16 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     (void) fclose (fpuser);
 
     /*
-     * Fix the modes on the RCS files.  They must maintain the same modes as
-     * the original user file, except that all write permissions must be
+     * Fix the modes on the RCS files.  The user modes of the original
+     * user file are propagated to the group and other modes as allowed
+     * by the repository umask, except that all write permissions are
      * turned off.
      */
-    mode = sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH);
+    mode = (sb.st_mode |
+	    (sb.st_mode & S_IRWXU) >> 3 |
+	    (sb.st_mode & S_IRWXU) >> 6) &
+	   ~cvsumask &
+	   ~(S_IWRITE | S_IWGRP | S_IWOTH);
     if (chmod (rcs, mode) < 0)
     {
 	ierrno = errno;
