@@ -48,9 +48,25 @@ AC_TYPE_UID_T
 AC_TYPE_MODE_T
 AC_TYPE_SIZE_T
 AC_TYPE_PID_T
-AC_CHECK_LIB(sec, getspnam)
 AC_REPLACE_FUNCS(getwd mkdir rename strdup strstr dup2 strerror valloc waitpid vasprintf strtoul)
-AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize initgroups fchdir sigaction sigprocmask sigvec sigsetmask sigblock getspnam)
+AC_CHECK_FUNCS(fchmod fsync ftime mkfifo putenv setvbuf vfork vprintf ftruncate timezone getpagesize initgroups fchdir sigaction sigprocmask sigvec sigsetmask sigblock)
+
+dnl
+dnl Look for shadow password files before we go ahead and set getspnam.
+dnl On some systems (Linux), the C library has getspnam but shadow
+dnl passwords might not be in use.
+dnl
+AC_MSG_CHECKING([for evidence of shadow passwords])
+if test -f /etc/shadow \
+   || test -f /etc/security/passwd.adjunct \
+   || test -d /etc/security ; then
+  echo "yup"
+  AC_CHECK_LIB(sec, getspnam)
+  AC_CHECK_FUNCS(getspnam)
+else
+  echo "nope"
+fi
+
 AC_CHECK_FUNC(re_exec, :, LIBOBJS="$LIBOBJS regex.o")
 AC_FUNC_UTIME_NULL
 AC_SYS_LONG_FILE_NAMES
