@@ -1,7 +1,7 @@
 2000-02-18  Karl Fogel  <kfogel@red-bean.com>
 
 	* history.c (history_write): don't die if history file not
-	writable, just warn and skip out.
+	writable, just warn (unless `really_quiet') and skip out.
 
 	* main.c (main): don't bother checking if history file is
 	writable.

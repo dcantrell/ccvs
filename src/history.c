@@ -731,7 +731,11 @@ history_write (type, update_dir, revs, name, repository)
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
     if (fd < 0)
     {
-        error (0, errno, "warning: cannot write to history file %s", fname);
+	if (! really_quiet)
+        {
+            error (0, errno, "warning: cannot write to history file %s",
+                   fname);
+        }
         goto out;
     }
 
