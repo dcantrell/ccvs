@@ -1,3 +1,9 @@
+Mon Feb 19 00:35:24 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * getpass.c (EchoOn, EchoOff): new funcs.
+        (getpass): use above new funcs to avoid echoing the password to
+        the screen.
+
 Mon Feb 12 16:09:55 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* run.c (run_popen): Changed more Popen() to run_popen()
