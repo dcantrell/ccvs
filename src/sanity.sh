@@ -21,7 +21,7 @@
 # usage:
 usage ()
 {
-    echo "Usage: `basename $0` -h"
+    echo "Usage: `basename $0` --help"
     echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]"
 }
 
