@@ -52,7 +52,7 @@ xmalloc (bytes)
 /*
  * realloc data and die if it fails [I've always wanted to have "realloc" do
  * a "malloc" if the argument is NULL, but you can't depend on it.  Here, I
- * can *force* it.
+ * can *force* it.]
  */
 void *
 xrealloc (ptr, bytes)
