@@ -1,3 +1,8 @@
+2003-06-11  Larry Jones  <lawrence.jones@eds.com>
+
+	* filesubr.c (xresolvepath): Fix memory leak.
+	(Original patch from Kenneth Lorber <keni@his.com>.)
+
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* commit.c: Change Parse_Info calling convention to include void *
