@@ -2297,8 +2297,9 @@ contains @file{passwd} and other files which are used
 to check security, you must control the permissions on
 this directory as tightly as the permissions on
 @file{/etc}.  The same applies to the @file{$CVSROOT}
-directory itself.  Anyone who has write access to
-either directory will have the ability to become any
+directory itself and any directory
+above it in the tree.  Anyone who has write access to
+such a directory will have the ability to become any
 user on the system.  Note that these permissions are
 typically tighter than you would use if you are not
 using pserver.
