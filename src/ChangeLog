@@ -1,3 +1,8 @@
+Fri Jun  7 18:20:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* status.c (status_fileproc, tag_list_proc): Use cvs_output rather
+	than writing to stdout directly.
+
 Wed Jun  5 13:54:57 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (force_tag_match, tag, date): New static variables.
