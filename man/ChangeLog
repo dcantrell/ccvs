@@ -1,5 +1,14 @@
 Tue Nov 14 15:47:44 1995  Greg A. Woods  <woods@most.weird.com>
 
+	* cvs.5:
+	- list filenames in alpha sort order
+	- describe the cvswrappers file
+	- describe the taginfo file
+	- fix cvsinit chapter number
+	(This is by no means complete -- it's just stuff I noticed.)
+
+	* cvs.1: put the filenames in alpha sort order
+
 	* cvsinit.8: remove the .pl extension from filenames
 
 Wed Oct 18 11:07:07 1995  Vince Demarco  <vdemarco@bou.shl.com>

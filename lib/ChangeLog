@@ -1,3 +1,8 @@
+Tue Nov 14 18:44:57 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* getdate.c: OK, this one is from SunOS-4.1 yacc and may be more
+	portable -- at least it compiles silently here!  ;-)
+
 Mon Nov 13 03:53:45 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * fnmatch.c: conform to 80 column standard (yes, I'm a pedant).
