@@ -4628,8 +4628,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	{
 	    List *stack;
 	    size_t line_len = 0;
-	    const char *q;
-	    char *r, *s;
+	    char *q, *r;
 	    struct saved_cwd sdir;
 
 	    /* Split the argument onto the stack.  */
@@ -4638,7 +4637,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
             /* It's okay to discard the const from the last_component return
              * below since we know we passed in an arg that was not const.
              */
-	    while ((q = last_component (r)) != r)
+	    while ((q = (char *)last_component (r)) != r)
 	    {
 		push (stack, xstrdup (q));
 		*--q = '\0';
@@ -4647,7 +4646,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 
 	    /* Normalize the path into outstr. */
 	    save_cwd (&sdir);
-	    while (s = pop (stack))
+	    while (q = pop (stack))
 	    {
 		Node *node = NULL;
 	        if (isdir (CVSADM))
@@ -4662,7 +4661,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 		       directory in the filesystem.  This
 		       is correct behavior.  */
 		    entries = Entries_Open (0, NULL);
-		    node = findnode_fn (entries, s);
+		    node = findnode_fn (entries, q);
 		    if (node != NULL)
 		    {
 			/* Add the slash unless this is our first element. */
@@ -4682,25 +4681,25 @@ send_file_names (int argc, char **argv, unsigned int flags)
 		    /* Add the slash unless this is our first element. */
 		    if (line_len)
 			xrealloc_and_strcat (&line, &line_len, "/");
-		    xrealloc_and_strcat (&line, &line_len, s);
+		    xrealloc_and_strcat (&line, &line_len, q);
 		    break;
 		}
 
 		/* And descend the tree. */
-		if (isdir (s))
-		    CVS_CHDIR (s);
-		free (s);
+		if (isdir (q))
+		    CVS_CHDIR (q);
+		free (q);
 	    }
 	    restore_cwd (&sdir);
 	    free_cwd (&sdir);
 
 	    /* Now put everything we didn't find entries for back on. */
-	    while (s = pop (stack))
+	    while (q = pop (stack))
 	    {
 		if (line_len)
 		    xrealloc_and_strcat (&line, &line_len, "/");
-		xrealloc_and_strcat (&line, &line_len, s);
-		free (s);
+		xrealloc_and_strcat (&line, &line_len, q);
+		free (q);
 	    }
 
 	    p = line;
