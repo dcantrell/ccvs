@@ -1,3 +1,14 @@
+2000-06-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (serve_root, dirswitch, serve_repository,
+	serve_static_directory, serve_sticky, receive_partial_file,
+	receive_file, serve_modified, server_write_entries, serve_notify,
+	serve_checkin_prog, serve_update_prog, server): Don't set
+	pending_error before calling alloc_pending, it makes it fail;
+	use alloc_pending instead of malloc when reasonable; be sure to
+	save errno before calling functions that might change it.
+	(Patch submitted by Dietmar Petras <dietmar.petras@elsa.de>.)
+
 2000-06-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* commit.c (checkaddfile): Plug memory leak.
