@@ -431,7 +431,7 @@ following also works:
 	C:\> vcvars32
 	C:\> nmake /f cvsnt.mak CFG="cvsnt - Win32 Debug"
 
-* You might also try http://wincvs.org & http://www.cvsnt.org
+* You might also try http://cvsgui.org & http://www.cvsnt.org
 
 -------------------------------------------------------------------------------
 
@@ -441,8 +441,9 @@ For OS/2, see os2/README and emx/README.
 
 For VMS, see README.VMS
 
-For Macintosh, see macintosh/README.MacCVS, or, since that file isn't there
-anymore, you might try http://wincvs.org .
+Mac OS X: Builds fine, just like UNIX.
+
+For older versions of Mac OS, you might try http://cvsgui.org .
 
 For a Java client, see jCVS (which is a separate package from CVS
 itself, but which might be preferable to the Macintosh port mentioned
