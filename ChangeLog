@@ -1,5 +1,26 @@
 1998-09-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Update from FAQ-O-Matic.  This features fewer blank lines
+	and a few more minor formatting changes (not sure whether the
+	FAQ-O-Matic changed or whether this is because I upgraded Lynx).
+	I read through the diffs, and the real changes are: (A) In
+	/Advanced_Topics_/Setting_up_and_Manag/, #1, describe "cvs init",
+	don't describe committing modules file twice
+	(no longer needed now that mkmodules is not a separate program),
+	don't mention "cvs import" here. (B)
+	/Advanced_Topics_/Setting_up_and_Manag/, #5, describe special
+	issues with pserver and repository permissions,
+	(C), /Advanced_Topics_/Tricks_of_the_Trade/, renumber the question
+	"Why do timestamps sometimes get set to the date of the revision"
+	from #17 to #9.  Renumber the questions between #9 and #17
+	accordingly, (D) /User_Tasks_/Less_Common_User_Tas/, "8. How do I
+	split a file into pieces, retaining revision histories?", include
+	a script which may help with this, (E)
+	/What_is_CVS_/How_does_CVS_differ_/, correct the name of SABLIME,
+	(F) /What_is_CVS_/Where_do_I_find_CVS_/, "2. Is there an archive
+	of CVS material?", note that http://www.delos.com/cvs doesn't
+	exist any more.
+
 	* NEWS: Mention :fork:.
 
 1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
