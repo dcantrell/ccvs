@@ -84,10 +84,10 @@ install: all $(libdir)/cvs/contrib
 		$(INSTALL_DATA) $(srcdir)/$$f $(libdir)/cvs/contrib/$$f; \
 	done
 	for f in $(CONTRIB_PROGS) ; do\
-		$(INSTALL_PROGRAM) $(srcdir)/$$f $(libdir)/cvs/contrib/$$f; \
+		$(INSTALL_PROGRAM) $$f $(libdir)/cvs/contrib/$$f; \
 	done
 	for f in $(PROGS) ; do\
-		$(INSTALL_PROGRAM) $(srcdir)/$$f $(bindir)/$$f; \
+		$(INSTALL_PROGRAM) $$f $(bindir)/$$f; \
 	done
 .PHONY: install
 
