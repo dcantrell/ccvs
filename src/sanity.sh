@@ -20150,6 +20150,15 @@ Amquiteunabletocomeupwithinterestingpasswordsanymore
 END AUTH REQUEST
 EOF
 
+            # Test protection from D.o.S. attack during pserver auth phase.
+            #
+            # The unacceptably long line of 'x's should get cut off
+            # after PATH_MAX chars -- see calls to getline_safe() in
+            # server.c -- so even though no newline is ever sent, the
+            # server should claim a bad protocol start.
+	    dotest_fail pserver-14 "(while true; do echo -n x; done) | ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
+"${DOTSTAR} bad auth protocol start: ${DOTSTAR}"
+
 	    # Clean up.
 	    echo "# comments only" >config
 	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \

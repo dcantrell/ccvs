@@ -1,3 +1,16 @@
+2000-07-04  Karl Fogel  <kfogel@red-bean.com>
+
+	* server.c (pserver_authenticate_connection): use new
+	getline_safe() during authentication phase, to avoid a
+	denial-of-service attack in which client sends arbitrary 
+	amounts of data with no newlines.
+	(Reported by <jpmg@eng.cam.ac.uk>.)
+
+	* sanity.sh: new test pserver-14 for above.
+	
+	* myndbm.c: #include getline.h.
+	(mydbm_load_file): pass new GETLINE_NO_LIMIT flag to getstr().
+
 2000-07-03  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (modules): Rewrite using dotest.  Add "modules-"

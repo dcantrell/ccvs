@@ -5628,7 +5628,7 @@ pserver_authenticate_connection ()
 #endif
 
     /* Make sure the protocol starts off on the right foot... */
-    if (getline (&tmp, &tmp_allocated, stdin) < 0)
+    if (getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX) < 0)
 	/* FIXME: what?  We could try writing error/eof, but chances
 	   are the network connection is dead bidirectionally.  log it
 	   somewhere?  */
@@ -5659,9 +5659,9 @@ pserver_authenticate_connection ()
 
     /* Get the three important pieces of information in order. */
     /* See above comment about error handling.  */
-    getline (&repository, &repository_allocated, stdin);
-    getline (&username, &username_allocated, stdin);
-    getline (&password, &password_allocated, stdin);
+    getline_safe (&repository, &repository_allocated, stdin, PATH_MAX);
+    getline_safe (&username, &username_allocated, stdin, PATH_MAX);
+    getline_safe (&password, &password_allocated, stdin, PATH_MAX);
 
     /* Make them pure. */ 
     strip_trailing_newlines (repository);
@@ -5670,7 +5670,7 @@ pserver_authenticate_connection ()
 
     /* ... and make sure the protocol ends on the right foot. */
     /* See above comment about error handling.  */
-    getline (&tmp, &tmp_allocated, stdin);
+    getline_safe (&tmp, &tmp_allocated, stdin, PATH_MAX);
     if (strcmp (tmp,
 		verify_and_exit ?
 		"END VERIFICATION REQUEST\n" : "END AUTH REQUEST\n")
