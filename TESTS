@@ -1,6 +1,21 @@
-To run the tests:
+To run all the tests:
 
 	$ make check
+
+The test suite is currently in a state of transition, as tests are moved from
+sanity.sh into the new Autotest test suite.  See the `sanity.sh' and
+`Autotest suite' sections below for notes on each.
+
+New tests should be added to the Autotest suite, not sanity.sh.  See `ABOUT
+ADDING YOUR OWN TESTS' in the `Autotest suite' section below for more
+information.  
+
+
+* sanity.sh:
+
+New tests should *not* be put in this file.  They should be added to the
+Autotest suite.  See `ABOUT ADDING YOUR OWN TESTS' in the `Autotest suite'
+section below for more information.
 
 Note that if your /bin/sh doesn't support shell functions, you'll
 have to try something like this, where "/bin/sh5" is replaced by the
@@ -101,148 +116,241 @@ having the output appear in a certain order is the correct behavior
 for users using CVS interactively--that users get confused if the
 order is unpredictable.
 
-ABOUT TEST FRAMEWORKS
-*********************
 
-People periodically suggest using dejagnu or some other test
-framework.  A quick look at sanity.sh should make it clear that there
-are indeed reasons to be dissatisfied with the status quo.  Ideally a
-replacement framework would achieve the following:
+ABOUT ADDING YOUR OWN TESTS
+***************************
 
-1.  Widely portable, including to a wide variety of unices, NT, Win95,
-OS/2, VMS, probably DOS and Win3, etc.
+New tests should *not* be put in `sanity.sh'.  They should be added to the
+Autotest suite.  See `ABOUT ADDING YOUR OWN TESTS' in the `Autotest suite'
+section below for more information.
 
-2.  Nicely match extended regular expressions of unlimited length.
 
-3.  Be freely redistributable, and if possible already the kind of
-thing people might have already installed.  The harder it is to get
-and install the framework, the less people will run the tests.
 
-The various contenders are:
+* Autotest suite:
 
-* Bourne shell and GNU expr (the status quo).  Falls short on #1
-(we've only tried unix and NT, although MKS might help with other DOS
-mutants).  #3 is pretty good (the main dependency is GNU expr which is
-fairly widely available).
+The suite prepends `.' and any directories specified via the AUTOTEST_PATH
+environment variable to its $PATH, then uses the first executable named `cvs'
+it can find in its $PATH by default in order to make it easier to test
+installed versions of CVS.
 
-* Bourne shell with a new regexp matcher we would distribute with
-CVS.  This means maintaining a regexp matcher and the makefiles which
-go with it.  Not clearly a win over Bourne shell and GNU expr.
+Some details of the test suite can be configured at run time.  Use
+`suite --help' for more information on available options.
 
-* Bourne shell, and use sed to remove variable portions of output, and
-thus produce a form that can be compared with cmp or diff (this
-sidesteps the need for a full regular expression matcher as mentioned
-in #2 above).  The C News tests are said to work this way.  This would
-appear to rely on variable portions of output having a certain syntax
-and might spuriously recognize them out of context (this issue needs
-more investigation; it isn't clear how big a problem it is in
-practice).  Same portability issues as the other choices based on the
-Bourne shell.
+Note that you must be logged in as a regular user, not root.  (FIXME: This is
+yet to be enforced though it would cause problems.)
 
-* Dejagnu.  This is overkill; most of dejagnu is either unnecessary
-(e.g. libraries for communicating with target boards) or undesirable
-(e.g. the code which stats every file in sight to find the tests).  On
-the plus side, dejagnu is probably closer than any of the other
-choices to having everything which is needed already there.
+Tests will create a subdirectory in the current directory named `suite.dir'.
+This is where tests will be run.
 
-* Write our own small framework directly in tcl and distribute with
-CVS.  The tests would look much like dejagnu tests, but we'd avoid the
-unnecessary baggage.  The only dependency would be on tcl (that is,
-wish).
+WARNING:  These tests can take quite a while to run, esp. if your
+disks are slow or over-loaded.
 
-* perl or python or <any other serious contenders here?>
+The tests use a number of tools (awk, expr, id, tr, etc.) that are not
+required for running CVS itself.  In most cases, the standard vendor-
+supplied versions of these tools work just fine or are compensated for by
+the configure and Autoshell machinery, but there might be some
+exceptions -- `id', especially, has been known to cause problems.
+Note that some vendors provide multiple versions of tools (typically an
+ancient, traditional version and a new, standards-conforming version), so you
+may already have a usable version even if the default version isn't.  If you
+don't have a suitable tool, you can probably get one from the GNU Project (see
+http://www.gnu.org).  At this writting, id is part of the GNU shellutils
+package, tr is part of the GNU textutils package, and awk is part of the GNU
+gawk package.  The test script tries to verify that the tools exist and are
+usable; if not, it tries to find the GNU versions and use them instead.  If it
+can't find the GNU versions either, it will print an error message and,
+depending on the severity of the deficiency, it may exit.  There are
+environment variables you can set to use a particular version of a tool -- see
+src/tests/suite.at for details.
 
-It is worth thinking about how to:
+Some of the tests use fairly long command lines -- this usually isn't a
+problem, but if you have a very short command line length limit (or a
+lot of environment variables), you may run into trouble.  Also, some of
+the tests expect your local timezone to be an integral number of hours
+from UTC -- if you usually use a fractional timezone, use a different
+(integral) timezone when running the tests to avoid spurious failures.
 
-a.  include spaces in arguments which we pass to the program under
-test (sanity.sh dotest cannot do this; see test rcs-9 for a
-workaround).
+When tests fail, information on the failure, including commands run and diffs
+beween the expected output and what was actually received can be found in the
+suite.log file.  In addition, a more concise log can be found for each
+individual failed test in `suite.dir/<test number>/suite.log'.  Only the test
+directories of failed tests are saved unless the `--verbose' option is
+specified to `suite'.
 
-b.  pass stdin to the program under test (sanity.sh, again, handles
-this by bypassing dotest).
+If you choose to submit a bug report based on tests failing, please include the
+full suite.log for the test run (not just the concise version for a particular
+test) and be aware that, as with all bug reports, you may or may not get a
+response, and your odds might be better if you include an analysis of what is
+going wrong.
 
-c.  have a send-expect type dialog with the program under test
-    (e.g. see server-7 or pserver-4 which want to talk the CVS
-    protocol, or the many tests which need to answer the prompt of "cvs
-    release", e.g. deep-5).
+
+FIXME
+*****
+
+It is worth thinking about how to: have a send-expect type dialog with the
+program under test (e.g. see server-7 or pserver-4 which want to talk the CVS
+protocol, or the many tests which need to answer the prompt of "cvs release",
+e.g. deep-5).
+
+
 
 ABOUT ADDING YOUR OWN TESTS
 ***************************
 
 As stated in the HACKING file, patches are not accepted without documentation
-and tests.  Many people seem to be scared off by the large size of the
-sanity.sh script, but it is not really very complicated.
+and tests.
 
-You can probably ignore most of the begining of the script.  This section
-just sets some environment variables and finds the tools the script needs to
-run.
+Autoconf 2.58 is required to regenerate the test suite.
 
-There is one main loop you can find by grepping for "The big loop".  This loop
-repeatedly calls a case statement where the individual cases are of the form:
-
-    testname)
-            ...
-            ;;
-
-If you add a complete new test be sure to add it into the default list of tests
-(grep for 'tests=' near the begining of the script) as well as the case
-statement.  During debugging, be aware that the sanity.sh usage allows for a '-f
-testname' option to continue through the default list "from" a particular test
-as well as interpreting everything in argv past the required options as test
-names to run individual tests.
-
-Within each major test section, individual tests usually look like:
-
-    dotest testname-subtestname "shell command" "optionally multiline regexp"
-
-Tests should always start in $testdir and create a subdirectory to operate in
-and remove their cruft and end back in $testdir.  The dotest functions output
-failure messages and exit if the shell command exits with the wrong exit code or
-its stdin/stderr output doesn't match the regexp.  There are a few dotest
-variations, most notably dotest_fail for expected non-zero exit codes.
-
-Other than that the script is mostly vanilla Bourne shell.  There are a few
-constructs used for versatility and portability.  You can grep for the ones I
-miss, but here are a few important ones.  I'm leaving off long explanations
-after the first few since it probably gives you the idea and the data is in
-sanity.sh.
-
-Note that the boolean variables contain shell commands which return true or
-false when executed and are intended to be used like,
-"if $remote; then ... ; else ... ; fi"
+Writing an Autotest test is much like writing configure.in code for Autoconf.
+There are some macros to use, but Bourne Shell will run.  The best place to get
+this information from is the "Portable Shell", "Programming in M4sh", and
+"Using Autotest" sections of the Autoconf manual, with differences noted below.
+When a AT_CVS_<something> is available below for an AT_<something> macro from
+the Autoconf manual, please use the AT_CVS_<something> version.
 
 
-   * $testdir   = the directory this test is taking place in
-     (CVSROOT=$testdir/cvsroot or CVSROOT=:fork:$testdir/cvsroot)
-   * $testcvs   = full path to the cvs executable we are testing
-   * $PLUS      = expr dependant uninterpreted '+' since this can vary
-   * $DOTSTAR   = expr dependant _interpreted_ .* since some exprs don't match
-                  EOL
-   * $username  = regexp to match a username
-   * $hostname  = regexp to match a hostname
-   * $SPROG     = regexp to match server progname in CVS error messages.  For
-                  tests run in local and remote mode, this is usually the
-                  string to test for, since some messages can be printed either
-                  by the CVS client or CVS server, dependant on the mode.  In
-                  local mode it will = $PROG.
-   * $PROG      = regexp to match client progname in CVS error messages.  Use
-                  this to match error messages known to be printed only from
-                  the CVS client.
-   * $remote    = ':' (true) or 'false', depending on whether the script is
-                  running with a remote CVSROOT
-   * $keep      = ':' (true) or 'false'.  When set, the first test run will
-                  leave any files and directories it created in $testdir and
-                  exit when complete.
-   * $servercvs = cvs executable to be run as CVS_SERVER in remote testing
-   * $testcvs_server_support
-                = ':' (true) or 'false', depending whether server support was
-                  detected in the ${testcvs} executable.
+ADDING A TEST FILE
+******************
 
-And, of course, some characters like '.' in regexps need to be '\' escaped when
-you mean them literally.  Some characters may be interpreted by the shell,
-e.g. backquotes and '$', are usually either escaped or replaced with '.'.
-dotest adds the final '$' anchor to the regexp itself and all the expr
-implementations I know of implicitly supply the start anchor ('^').
+By convention, individual tests are stored in `src/tests/*.at', with the
+exception of `suite.at', which is the base file used to gather the tests
+together when generating a new test suite.
 
-If you only make a few mistakes, the work is, of course, still usable, though we
-may send the patch back to you for repair.  :)
+Each file name should be included in `src/tests/suite.at' using the
+AT_CVS_INCLUDE macro.  For instance:
+
+	AT_CVS_INCLUDE([basic.at])
+
+Each included file actually generates four copies of its tests under a single
+banner, for each possible combination of local/remote and
+link-root/no-link-root (a link-root test uses a symlink to a real CVSROOT in
+place of the real CVSROOT).  Each copy of the test gets the appropriate
+combination of "local", "remote", "link-root", and "no-link-root" assigned as
+keywords as well.
+
+
+Also by convention, only one "bannered section", meaning a group of test groups
+set apart by an ASCII banner is stored in a file.
+
+Each file should begin with a call to AT_CVS_BANNER, similar to:
+
+	AT_CVS_BANNER([Basic functionality])
+
+
+ADDING A TEST GROUP
+*******************
+
+A test group will be run until the first test within it fails.  Each test group
+is assigned a number at build time and given its own directory in `suite.dir'
+of the form `suite.dir/<test number>' at run time.
+
+To begin a test group, use a call to AT_CVS_SETUP.  For example:
+
+	AT_CVS_SETUP([Operations on empty projects])
+
+This declares the begining of the test, creates a repository in $CVSROOT_DIR
+containing project/sdir/ssdir/ssfile,v with a single revision, checks out
+project, and changes the current working directory to project.
+
+
+Optionally, include a call to AT_KEYWORDS containing a space delimited list of
+words which could prove useful when selecting subsets of the test suite, like
+so:
+
+	AT_KEYWORDS([update diff status])
+
+Both the argument to AT_CVS_SETUP and the arguments to AT_KEYWORDS can be used
+to select a subsets of tests from the suite to run using the `--keywords='
+argument to the test script.  By default, each test is assigned some
+combination of the "local", "remote", "link-root", and "no-link-root" keywords
+for each inclusion.
+
+
+Run tests using AT_CHECK, AT_CHECK_NOESCAPE, AT_CVS_CHECK_ANNOTATE,
+AT_CVS_CHECK_LOG, AT_CVS_CHECK_NORMALIZED:
+
+	AT_CHECK		Run a test and compare the result to an
+				expected stderr and stdout.  See the Autoconf
+				manual for more.
+
+	AT_CHECK_NOESCAPE	Like AT_CHECK, but allow for shell expansion.
+				See the Autoconf manual for more.
+
+	AT_CVS_CHECK_ANNOTATE	Like AT_CHECK_NOESCAPE, but normalize the
+				result using sed so that `<username> <date>'
+				portion of each line is replaced with the
+				literal string `USERNAME DATE'.
+
+	AT_CVS_CHECK_LOG	Like AT_CHECK_NOESCAPE, but normalize the
+				result to replace dates with the string `DATE'
+				and usernames with the string `USERNAME'.
+
+	AT_CVS_CHECK_NORMALIZED	Like AT_CHECK_NOESCAPE, but replace dates of
+				the form `cvs diff' outputs with the literal
+				string `RFCDATE' and s/^P /U / to account for
+				possible differences between `cvs update'
+				output between client and server modes.
+
+For example:
+
+	# Test a few operations, to ensure they gracefully do
+	# nothing in an empty directory.
+	AT_CHECK([cvs -q update])
+	AT_CHECK([cvs -q diff -c])
+	AT_CHECK([cvs -q status])
+	AT_CHECK([cvs -q update .])
+
+
+End a test group with a call to AT_CLEANUP.  For example:
+
+	AT_CLEANUP # Operations on empty projects
+
+No other cleanup is needed.  The wrapper script will handle test directory
+cleanup depending on whether the test group failed and whether the verbose flag
+was passed to the test suite.
+
+
+The following environment variables are available to each test group:
+
+	$at_group_dir	This test group's directory.  AT_CVS_SETUP sets
+			$CVSROOT_DIR to `$at_group_dir/cvsroot' and checks
+			`project' out into `$at_group_dir/project'.
+
+	$CVSROOT	The CVSROOT string.
+
+	$CVSROOT_DIR	The directory where the repository is stored, or the
+			link to it in link-root mode.
+
+	$SPROG		String to match server progname in CVS error messages.
+			In local mode, this is the same as $CPROG.
+
+	$CPROG		String to match client progname in CVS error messages.
+			Use this to match error messages known to be printed
+			only from the CVS client.
+
+
+Some other macros that may prove useful:
+
+	AT_CVS_REMOTE([TEST-IF-REMOTE],[TEXT-OTHERWISE])
+		Expands to TEXT-IF-REMOTE for remote tests and TEXT-OTHERWISE
+		otherwise.
+
+	AT_CVS_LOCAL([TEST-IF-LOCAL],[TEXT-OTHERWISE])
+		Expands to TEXT-IF-LOCAL for local tests and TEXT-OTHERWISE
+		otherwise.
+
+
+One other tip, if the test groups in a test file like to start from a similar
+repository, it can help to use the `m4_defun' macro to define a set of commands
+that create the desired repository and call this macro at the start of each
+test group.  See AT_CVS_SIMPLE_PROJECT in `basic.at' for an example.
+
+
+REGENERATING THE TEST SUITE
+***************************
+
+Regenerating the test suite requires Autoconf 2.58.
+
+Use `make suite' in the `src/tests' directory or `make check' from the
+`src/tests' directory or either of its parents.
