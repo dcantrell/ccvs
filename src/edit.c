@@ -534,7 +534,7 @@ unedit_fileproc (callerdat, finfo)
 	   now.  */
 	if (node != NULL)
 	{
-	    entdata = (Entnode *) node->data;
+	    entdata = node->data;
 	    if (baserev == NULL)
 	    {
 		/* This can only happen if the CVS/Baserev file got

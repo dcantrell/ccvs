@@ -1,3 +1,8 @@
+2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* hash.h (struct node): Change data from char * to void *, change
+	all callers.
+
 2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* login.c (password_entry_operation): Initialize line.

@@ -564,7 +564,7 @@ get_linkinfo_proc (callerdat, finfo)
     hlinfo->status = (Ctype) 0;	/* is this dumb? */
     hlinfo->checked_out = 0;
 
-    linkp->data = (char *) hlinfo;
+    linkp->data = hlinfo;
 
     return 0;
 }
@@ -1078,7 +1078,7 @@ isremoved (node, closure)
     Node *node;
     void *closure;
 {
-    Entnode *entdata = (Entnode*) node->data;
+    Entnode *entdata = node->data;
 
     /* If the first character of the version is a '-', the file has been
        removed. */
@@ -2743,7 +2743,7 @@ special_file_mismatch (finfo, rev1, rev2)
     else
     {
 	n = findnode (finfo->rcs->versions, rev1);
-	vp = (RCSVers *) n->data;
+	vp = n->data;
 
 	n = findnode (vp->other_delta, "symlink");
 	if (n != NULL)
@@ -2778,7 +2778,7 @@ special_file_mismatch (finfo, rev1, rev2)
 		if (sscanf (n->data, "%15s %lu", ftype,
 			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
-			   finfo->file, rev1, n->data);
+			   finfo->file, rev1, (char *)n->data);
 		rev1_dev = dev_long;
 		if (strcmp (ftype, "character") == 0)
 		    rev1_mode |= S_IFCHR;
@@ -2821,7 +2821,7 @@ special_file_mismatch (finfo, rev1, rev2)
     else
     {
 	n = findnode (finfo->rcs->versions, rev2);
-	vp = (RCSVers *) n->data;
+	vp = n->data;
 
 	n = findnode (vp->other_delta, "symlink");
 	if (n != NULL)
@@ -2856,7 +2856,7 @@ special_file_mismatch (finfo, rev1, rev2)
 		if (sscanf (n->data, "%15s %lu", ftype,
 			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
-			   finfo->file, rev2, n->data);
+			   finfo->file, rev2, (char *)n->data);
 		rev2_dev = dev_long;
 		if (strcmp (ftype, "character") == 0)
 		    rev2_mode |= S_IFCHR;

@@ -317,7 +317,7 @@ find_fileproc (callerdat, finfo)
 
     node->type = UPDATE;
     node->delproc = update_delproc;
-    node->data = (char *) data;
+    node->data = data;
     (void)addnode (args->ulist, node);
 
     ++args->argc;
@@ -991,7 +991,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    xmalloc (sizeof (struct master_lists));
 		ml->ulist = ulist;
 		ml->cilist = cilist;
-		p->data = (char *) ml;
+		p->data = ml;
 		p->delproc = masterlist_delproc;
 		(void) addnode (mulist, p);
 	    }
@@ -1007,7 +1007,7 @@ warning: file `%s' seems to still contain conflict indicators",
 	    li->tag = xstrdup (vers->tag);
 	    li->rev_old = xstrdup (vers->vn_rcs);
 	    li->rev_new = NULL;
-	    p->data = (char *) li;
+	    p->data = li;
 	    (void) addnode (ulist, p);
 
 	    p = getnode ();
@@ -1025,7 +1025,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		ci->rev = (char *) NULL;
 	    ci->tag = xstrdup (vers->tag);
 	    ci->options = xstrdup(vers->options);
-	    p->data = (char *) ci;
+	    p->data = ci;
 	    (void) addnode (cilist, p);
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
@@ -1058,7 +1058,7 @@ warning: file `%s' seems to still contain conflict indicators",
 		    hlinfo = (struct hardlink_info *)
 			xmalloc (sizeof (struct hardlink_info));
 		    hlinfo->status = status;
-		    linkp->data = (char *) hlinfo;
+		    linkp->data = hlinfo;
 		}
 	    }
 #endif
@@ -1109,9 +1109,7 @@ precommit_list_proc (p, closure)
     Node *p;
     void *closure;
 {
-    struct logfile_info *li;
-
-    li = (struct logfile_info *) p->data;
+    struct logfile_info *li = p->data;
     if (li->type == T_ADDED
 	|| li->type == T_MODIFIED
 	|| li->type == T_REMOVED)
@@ -1260,7 +1258,7 @@ commit_fileproc (callerdat, finfo)
     if (p == NULL)
 	return (0);
 
-    ci = (struct commit_info *) p->data;
+    ci = p->data;
     if (ci->status == T_MODIFIED)
     {
 	if (finfo->rcs == NULL)
@@ -1407,7 +1405,7 @@ out:
 		struct logfile_info *li;
 
 		(void) classify_file_internal (finfo, &vers);
-		li = (struct logfile_info *) p->data;
+		li = p->data;
 		li->rev_new = xstrdup (vers->vn_rcs);
 		freevers_ts (&vers);
 	    }
@@ -1570,15 +1568,14 @@ findmaxrev (p, closure)
     void *closure;
 {
     int thisrev;
-    Entnode *entdata;
+    Entnode *entdata = p->data;
 
-    entdata = (Entnode *) p->data;
     if (entdata->type != ENT_FILE)
-	return (0);
+	return 0;
     thisrev = atoi (entdata->version);
     if (thisrev > maxrev)
 	maxrev = thisrev;
-    return (0);
+    return 0;
 }
 
 /*
@@ -2266,9 +2263,8 @@ void
 update_delproc (p)
     Node *p;
 {
-    struct logfile_info *li;
+    struct logfile_info *li = p->data;
 
-    li = (struct logfile_info *) p->data;
     if (li->tag)
 	free (li->tag);
     if (li->rev_old)
@@ -2285,9 +2281,8 @@ static void
 ci_delproc (p)
     Node *p;
 {
-    struct commit_info *ci;
+    struct commit_info *ci = p->data;
 
-    ci = (struct commit_info *) p->data;
     if (ci->rev)
 	free (ci->rev);
     if (ci->tag)
@@ -2304,9 +2299,8 @@ static void
 masterlist_delproc (p)
     Node *p;
 {
-    struct master_lists *ml;
+    struct master_lists *ml = p->data;
 
-    ml = (struct master_lists *) p->data;
     dellist (&ml->ulist);
     dellist (&ml->cilist);
     free (ml);
