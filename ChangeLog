@@ -1,3 +1,12 @@
+Thu Sep  5 11:30:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: Change bug reporting address to bug-cvs.  In
+	discussing filenames, don't mention a hypothetical behavior
+	involving folding to lowercase (I'm not sure what is meant, and it
+	doesn't sound right to me) and do mention that things might be
+	different now (as a result of recent changes to case sensitivity
+	code).
+
 Wed Sep  4 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* cvsnt.mak: Add windows-NT/ChangeLog.
