@@ -1,5 +1,7 @@
 Fri Dec 15 23:10:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * error.c: expanded comments.
+
         * client.c (connect_to_pserver): verbosify errors.
         (connect_to_pserver): use send() and recv(), not write() and
         read().  Sockets are not file descriptors on all systems.
