@@ -4751,23 +4751,21 @@ done"
 	  cd ../../2/first-dir
 	  echo "don't you dare obliterate this text" >aa.c
 	  echo 'contents unchanged' >same.c
-	  # Doing this test separately for remote and local is a fair
-	  # bit of a kludge, but the exit status differs.  I'm not sure
-	  # which exit status is the more appropriate one.
-	  # Note also the discrepancy in the handling of same.c.  I kind
+	  # Note the discrepancy between local and remote in the handling
+	  # of same.c.  I kind
 	  # of suspect that the local CVS behavior is the more useful one
 	  # although I do sort of wonder whether we should make people run
 	  # cvs add just to get them in that habit (also, trying to implement
 	  # the local CVS behavior for remote without the cvs add seems 
 	  # pretty difficult).
 	  if test "$remote" = yes; then
-	    dotest conflicts2-142d2 "${testcvs} -q update" \
+	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
 "${QUESTION} aa\.c
 ${QUESTION} same\.c
-U aa\.c
 ${PROG} update: move away \./aa\.c; it is in the way
-U same\.c
-${PROG} update: move away \./same\.c; it is in the way"
+C aa\.c
+${PROG} update: move away \./same\.c; it is in the way
+C same\.c"
 	  else
 	    dotest_fail conflicts2-142d2 "${testcvs} -q update" \
 "${PROG} [a-z]*: move away aa\.c; it is in the way
