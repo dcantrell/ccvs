@@ -678,15 +678,13 @@ fi
 
 # a simple function to compare directory contents
 #
-# Returns: {nothing}
-# Side Effects: ISDIFF := true|false
+# Returns: 0 for same, 1 for different
 #
 directory_cmp ()
 {
 	OLDPWD=`pwd`
 	DIR_1=$1
 	DIR_2=$2
-	ISDIFF=false
 
 	cd $DIR_1
 	find . -print | fgrep -v /CVS | sort > /tmp/dc$$d1
@@ -700,8 +698,7 @@ directory_cmp ()
 	then
 		:
 	else
-		ISDIFF=true
-		return
+		return 1
 	fi
 	cd $OLDPWD
 	while read a
@@ -709,11 +706,12 @@ directory_cmp ()
 		if test -f $DIR_1/"$a" ; then
 			cmp -s $DIR_1/"$a" $DIR_2/"$a"
 			if test $? -ne 0 ; then
-				ISDIFF=true
+				return 1
 			fi
 		fi
 	done < /tmp/dc$$d1
 	rm -f /tmp/dc$$*
+	return 0
 }
 
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
@@ -1879,11 +1877,8 @@ done"
 		for i in first-dir dir1 dir2 ; do
 			if test ! -d $i ; then
 				mkdir $i
-				if ${CVS} add $i  >> ${LOGFILE}; then
-				    pass 29-$i
-				else
-				    fail 29-$i
-				fi
+				dotest basic2-2-$i "${testcvs} add $i" \
+"Directory ${CVSROOT_DIRNAME}/.*/$i added to the repository"
 			fi
 
 			cd $i
@@ -1892,31 +1887,93 @@ done"
 				echo $j > $j
 			done
 
-			if ${CVS} add file6 file7  2>> ${LOGFILE}; then
-			    pass 30-$i-$j
-			else
-			    fail 30-$i-$j
-			fi
+			dotest basic2-3-$i "${testcvs} add file6 file7" \
+"${PROG} [a-z]*: scheduling file .file6. for addition
+${PROG} [a-z]*: scheduling file .file7. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+
 		done
 		cd ../../..
-		if ${CVS} update first-dir  ; then
-		    pass 31
-		else
-		    fail 31
-		fi
+		dotest basic2-4 "${testcvs} update first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+A first-dir/file6
+A first-dir/file7
+${PROG} [a-z]*: Updating first-dir/dir1
+A first-dir/dir1/file6
+A first-dir/dir1/file7
+${PROG} [a-z]*: Updating first-dir/dir1/dir2
+A first-dir/dir1/dir2/file6
+A first-dir/dir1/dir2/file7"
 
 		# fixme: doesn't work right for added files.
-		if ${CVS} log first-dir  >> ${LOGFILE}; then
-		    pass 32
-		else
-		    fail 32
-		fi
+		dotest basic2-5 "${testcvs} log first-dir" \
+"${PROG} [a-z]*: Logging first-dir
+${PROG} [a-z]*: file6 has been added, but not committed
+${PROG} [a-z]*: file7 has been added, but not committed
+${PROG} [a-z]*: Logging first-dir/dir1
+${PROG} [a-z]*: file6 has been added, but not committed
+${PROG} [a-z]*: file7 has been added, but not committed
+${PROG} [a-z]*: Logging first-dir/dir1/dir2
+${PROG} [a-z]*: file6 has been added, but not committed
+${PROG} [a-z]*: file7 has been added, but not committed"
 
-		if ${CVS} status first-dir  >> ${LOGFILE}; then
-		    pass 33
-		else
-		    fail 33
-		fi
+		dotest basic2-6 "${testcvs} status first-dir" \
+"${PROG} [a-z]*: Examining first-dir
+===================================================================
+File: file6            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file7            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+${PROG} [a-z]*: Examining first-dir/dir1
+===================================================================
+File: file6            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file7            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+${PROG} [a-z]*: Examining first-dir/dir1/dir2
+===================================================================
+File: file6            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file7            	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 
 # XXX why is this commented out???
 #		if ${CVS} diff -u first-dir   >> ${LOGFILE} || test $? = 1 ; then
@@ -1925,17 +1982,54 @@ done"
 #		    fail 34
 #		fi
 
-		if ${CVS} ci -m "second dive" first-dir  >> ${LOGFILE} 2>&1; then
-		    pass 35
-		else
-		    fail 35
-		fi
+		dotest basic2-8 "${testcvs} -q ci -m 'second dive' first-dir" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file6,v
+done
+Checking in first-dir/file6;
+${TESTDIR}/cvsroot/first-dir/file6,v  <--  file6
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file7,v
+done
+Checking in first-dir/file7;
+${TESTDIR}/cvsroot/first-dir/file7,v  <--  file7
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/file6,v
+done
+Checking in first-dir/dir1/file6;
+${TESTDIR}/cvsroot/first-dir/dir1/file6,v  <--  file6
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/file7,v
+done
+Checking in first-dir/dir1/file7;
+${TESTDIR}/cvsroot/first-dir/dir1/file7,v  <--  file7
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/dir2/file6,v
+done
+Checking in first-dir/dir1/dir2/file6;
+${TESTDIR}/cvsroot/first-dir/dir1/dir2/file6,v  <--  file6
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/dir2/file7,v
+done
+Checking in first-dir/dir1/dir2/file7;
+${TESTDIR}/cvsroot/first-dir/dir1/dir2/file7,v  <--  file7
+initial revision: 1\.1
+done"
 
-		if ${CVS} tag second-dive first-dir  ; then
-		    pass 36
-		else
-		    fail 36
-		fi
+		dotest basic2-9 "${testcvs} tag second-dive first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+T first-dir/file6
+T first-dir/file7
+${PROG} [a-z]*: Tagging first-dir/dir1
+T first-dir/dir1/file6
+T first-dir/dir1/file7
+${PROG} [a-z]*: Tagging first-dir/dir1/dir2
+T first-dir/dir1/dir2/file6
+T first-dir/dir1/dir2/file7"
 
 		# third dive - in bunch o' directories, add bunch o' files,
 		# delete some, change some.
@@ -1949,40 +2043,228 @@ done"
 			# delete a file
 			rm file7
 
-			if ${CVS} rm file7  2>> ${LOGFILE}; then
-			    pass 37-$i
-			else
-			    fail 37-$i
-			fi
+			dotest basic2-10-$i "${testcvs} rm file7" \
+"${PROG} [a-z]*: scheduling .file7. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 
 			# and add a new file
 			echo file14 >file14
 
-			if ${CVS} add file14  2>> ${LOGFILE}; then
-			    pass 38-$i
-			else
-			    fail 38-$i
-			fi
+			dotest basic2-11-$i "${testcvs} add file14" \
+"${PROG} [a-z]*: scheduling file .file14. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 		done
+
 		cd ../../..
-		if ${CVS} update first-dir  ; then
-		    pass 39
-		else
-		    fail 39
-		fi
+		dotest basic2-12 "${testcvs} update first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+A first-dir/file14
+M first-dir/file6
+R first-dir/file7
+${PROG} [a-z]*: Updating first-dir/dir1
+A first-dir/dir1/file14
+M first-dir/dir1/file6
+R first-dir/dir1/file7
+${PROG} [a-z]*: Updating first-dir/dir1/dir2
+A first-dir/dir1/dir2/file14
+M first-dir/dir1/dir2/file6
+R first-dir/dir1/dir2/file7"
 
 		# FIXME: doesn't work right for added files
-		if ${CVS} log first-dir  >> ${LOGFILE}; then
-		    pass 40
-		else
-		    fail 40
-		fi
+		dotest basic2-13 "${testcvs} log first-dir" \
+"${PROG} [a-z]*: Logging first-dir
+${PROG} [a-z]*: file14 has been added, but not committed
 
-		if ${CVS} status first-dir  >> ${LOGFILE}; then
-		    pass 41
-		else
-		    fail 41
-		fi
+RCS file: ${TESTDIR}/cvsroot/first-dir/file6,v
+Working file: first-dir/file6
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+=============================================================================
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/file7,v
+Working file: first-dir/file7
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+=============================================================================
+${PROG} [a-z]*: Logging first-dir/dir1
+${PROG} [a-z]*: file14 has been added, but not committed
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/file6,v
+Working file: first-dir/dir1/file6
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+=============================================================================
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/file7,v
+Working file: first-dir/dir1/file7
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+=============================================================================
+${PROG} [a-z]*: Logging first-dir/dir1/dir2
+${PROG} [a-z]*: file14 has been added, but not committed
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/dir2/file6,v
+Working file: first-dir/dir1/dir2/file6
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+=============================================================================
+
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/dir2/file7,v
+Working file: first-dir/dir1/dir2/file7
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	second-dive: 1\.1
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+second dive
+============================================================================="
+
+		dotest basic2-14 "${testcvs} status first-dir" \
+"${PROG} [a-z]*: Examining first-dir
+===================================================================
+File: file14           	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file6            	Status: Locally Modified
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file6,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file7		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/file7,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+${PROG} [a-z]*: Examining first-dir/dir1
+===================================================================
+File: file14           	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file6            	Status: Locally Modified
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir1/file6,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file7		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir1/file7,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+${PROG} [a-z]*: Examining first-dir/dir1/dir2
+===================================================================
+File: file14           	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file6            	Status: Locally Modified
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir1/dir2/file6,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: no file file7		Status: Locally Removed
+
+   Working revision:	-1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/dir1/dir2/file7,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
 
 # XXX why is this commented out?
 #		if ${CVS} diff -u first-dir  >> ${LOGFILE} || test $? = 1 ; then
@@ -1991,113 +2273,213 @@ done"
 #		    fail 42
 #		fi
 
-		if ${CVS} ci -m "third dive" first-dir  >>${LOGFILE} 2>&1; then
-		    pass 43
-		else
-		    fail 43
-		fi
-		dotest 43.5 "${testcvs} -q update first-dir" ''
+		dotest basic2-16 "${testcvs} ci -m 'third dive' first-dir" \
+"${PROG} [a-z]*: Examining first-dir
+${PROG} [a-z]*: Examining first-dir/dir1
+${PROG} [a-z]*: Examining first-dir/dir1/dir2
+RCS file: ${TESTDIR}/cvsroot/first-dir/file14,v
+done
+Checking in first-dir/file14;
+${TESTDIR}/cvsroot/first-dir/file14,v  <--  file14
+initial revision: 1\.1
+done
+Checking in first-dir/file6;
+${TESTDIR}/cvsroot/first-dir/file6,v  <--  file6
+new revision: 1\.2; previous revision: 1\.1
+done
+Removing first-dir/file7;
+${TESTDIR}/cvsroot/first-dir/file7,v  <--  file7
+new revision: delete; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/file14,v
+done
+Checking in first-dir/dir1/file14;
+${TESTDIR}/cvsroot/first-dir/dir1/file14,v  <--  file14
+initial revision: 1\.1
+done
+Checking in first-dir/dir1/file6;
+${TESTDIR}/cvsroot/first-dir/dir1/file6,v  <--  file6
+new revision: 1\.2; previous revision: 1\.1
+done
+Removing first-dir/dir1/file7;
+${TESTDIR}/cvsroot/first-dir/dir1/file7,v  <--  file7
+new revision: delete; previous revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/dir1/dir2/file14,v
+done
+Checking in first-dir/dir1/dir2/file14;
+${TESTDIR}/cvsroot/first-dir/dir1/dir2/file14,v  <--  file14
+initial revision: 1\.1
+done
+Checking in first-dir/dir1/dir2/file6;
+${TESTDIR}/cvsroot/first-dir/dir1/dir2/file6,v  <--  file6
+new revision: 1\.2; previous revision: 1\.1
+done
+Removing first-dir/dir1/dir2/file7;
+${TESTDIR}/cvsroot/first-dir/dir1/dir2/file7,v  <--  file7
+new revision: delete; previous revision: 1\.1
+done"
+		dotest basic2-17 "${testcvs} -q update first-dir" ''
 
-		if ${CVS} tag third-dive first-dir  ; then
-		    pass 44
-		else
-		    fail 44
-		fi
+		dotest basic2-18 "${testcvs} tag third-dive first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+T first-dir/file14
+T first-dir/file6
+${PROG} [a-z]*: Tagging first-dir/dir1
+T first-dir/dir1/file14
+T first-dir/dir1/file6
+${PROG} [a-z]*: Tagging first-dir/dir1/dir2
+T first-dir/dir1/dir2/file14
+T first-dir/dir1/dir2/file6"
 
-		if echo "yes" | ${CVS} release -d first-dir  ; then
-		    pass 45
-		else
-		    fail 45
-		fi
+		dotest basic2-19 "echo yes | ${testcvs} release -d first-dir" \
+"You have \[0\] altered files in this repository\.
+Are you sure you want to release (and delete) directory .first-dir.: "
 
 		# end of third dive
-		if test -d first-dir ; then
-		    fail 45.5
-		else
-		    pass 45.5
-		fi
+		dotest_fail basic2-20 "test -d first-dir" ""
 
 		# now try some rtags
 
 		# rtag HEADS
-		if ${CVS} rtag rtagged-by-head first-dir  ; then
-		    pass 46
-		else
-		    fail 46
-		fi
+		dotest basic2-21 "${testcvs} rtag rtagged-by-head first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: Tagging first-dir/dir1
+${PROG} [a-z]*: Tagging first-dir/dir1/dir2"
 
 		# tag by tag
-		if ${CVS} rtag -r rtagged-by-head rtagged-by-tag first-dir  ; then
-		    pass 47
-		else
-		    fail 47
-		fi
+		dotest basic2-22 "${testcvs} rtag -r rtagged-by-head rtagged-by-tag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: Tagging first-dir/dir1
+${PROG} [a-z]*: Tagging first-dir/dir1/dir2"
 
 		# tag by revision
-		if ${CVS} rtag -r1.1 rtagged-by-revision first-dir  ; then
-		    pass 48
-		else
-		    fail 48
-		fi
+		dotest basic2-23 "${testcvs} rtag -r1.1 rtagged-by-revision first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: Tagging first-dir/dir1
+${PROG} [a-z]*: Tagging first-dir/dir1/dir2"
 
 		# rdiff by revision
-		if ${CVS} rdiff -r1.1 -rrtagged-by-head first-dir  >> ${LOGFILE} || test $? = 1 ; then
-		    pass 49
-		else
-		    fail 49
-		fi
-
+		dotest basic2-24 "${testcvs} rdiff -r1.1 -rrtagged-by-head first-dir" \
+"${PROG} [a-z]*: Diffing first-dir
+Index: first-dir/file6
+diff -c first-dir/file6:1\.1 first-dir/file6:1\.2
+\*\*\* first-dir/file6:1\.1	.*
+--- first-dir/file6	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  file6
+${PLUS} file6
+Index: first-dir/file7
+diff -c first-dir/file7:1\.1 first-dir/file7:removed
+\*\*\* first-dir/file7:1.1	.*
+--- first-dir/file7	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- file7
+--- 0 ----
+${PROG} [a-z]*: Diffing first-dir/dir1
+Index: first-dir/dir1/file6
+diff -c first-dir/dir1/file6:1\.1 first-dir/dir1/file6:1\.2
+\*\*\* first-dir/dir1/file6:1\.1	.*
+--- first-dir/dir1/file6	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  file6
+${PLUS} file6
+Index: first-dir/dir1/file7
+diff -c first-dir/dir1/file7:1\.1 first-dir/dir1/file7:removed
+\*\*\* first-dir/dir1/file7:1\.1	.*
+--- first-dir/dir1/file7	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- file7
+--- 0 ----
+${PROG} [a-z]*: Diffing first-dir/dir1/dir2
+Index: first-dir/dir1/dir2/file6
+diff -c first-dir/dir1/dir2/file6:1\.1 first-dir/dir1/dir2/file6:1\.2
+\*\*\* first-dir/dir1/dir2/file6:1\.1	.*
+--- first-dir/dir1/dir2/file6	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+--- 1,2 ----
+  file6
+${PLUS} file6
+Index: first-dir/dir1/dir2/file7
+diff -c first-dir/dir1/dir2/file7:1\.1 first-dir/dir1/dir2/file7:removed
+\*\*\* first-dir/dir1/dir2/file7:1\.1	.*
+--- first-dir/dir1/dir2/file7	.*
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+\*\*\* 1 \*\*\*\*
+- file7
+--- 0 ----"
 		# now export by rtagged-by-head and rtagged-by-tag and compare.
-		if ${CVS} export -r rtagged-by-head first-dir  ; then
-		    pass 50
-		else
-		    fail 50
-		fi
+		dotest basic2-25 "${testcvs} export -r rtagged-by-head first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+U first-dir/file14
+U first-dir/file6
+${PROG} [a-z]*: Updating first-dir/dir1
+U first-dir/dir1/file14
+U first-dir/dir1/file6
+${PROG} [a-z]*: Updating first-dir/dir1/dir2
+U first-dir/dir1/dir2/file14
+U first-dir/dir1/dir2/file6"
 
 		mv first-dir 1dir
-		if ${CVS} export -r rtagged-by-tag first-dir  ; then
-		    pass 51
-		else
-		    fail 51
-		fi
+		dotest basic2-26 "${testcvs} export -r rtagged-by-tag first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+U first-dir/file14
+U first-dir/file6
+${PROG} [a-z]*: Updating first-dir/dir1
+U first-dir/dir1/file14
+U first-dir/dir1/file6
+${PROG} [a-z]*: Updating first-dir/dir1/dir2
+U first-dir/dir1/dir2/file14
+U first-dir/dir1/dir2/file6"
 
-		directory_cmp 1dir first-dir
-
-		if $ISDIFF ; then
-		    fail 52
-		else
-		    pass 52
-		fi
+		dotest basic2-27 "directory_cmp 1dir first-dir"
 		rm -r 1dir first-dir
 
 		# checkout by revision vs export by rtagged-by-revision and compare.
-		if ${CVS} export -rrtagged-by-revision -d export-dir first-dir  ; then
-		    pass 53
-		else
-		    fail 53
-		fi
+		dotest basic2-28 "${testcvs} export -rrtagged-by-revision -d export-dir first-dir" \
+"${PROG} [a-z]*: Updating export-dir
+U export-dir/file14
+U export-dir/file6
+U export-dir/file7
+${PROG} [a-z]*: Updating export-dir/dir1
+U export-dir/dir1/file14
+U export-dir/dir1/file6
+U export-dir/dir1/file7
+${PROG} [a-z]*: Updating export-dir/dir1/dir2
+U export-dir/dir1/dir2/file14
+U export-dir/dir1/dir2/file6
+U export-dir/dir1/dir2/file7"
 
-		if ${CVS} co -r1.1 first-dir  ; then
-		    pass 54
-		else
-		    fail 54
-		fi
+		dotest basic2-29 "${testcvs} co -r1.1 first-dir" \
+"${PROG} [a-z]*: Updating first-dir
+U first-dir/file14
+U first-dir/file6
+U first-dir/file7
+${PROG} [a-z]*: Updating first-dir/dir1
+U first-dir/dir1/file14
+U first-dir/dir1/file6
+U first-dir/dir1/file7
+${PROG} [a-z]*: Updating first-dir/dir1/dir2
+U first-dir/dir1/dir2/file14
+U first-dir/dir1/dir2/file6
+U first-dir/dir1/dir2/file7"
 
 		# directory copies are done in an oblique way in order to avoid a bug in sun's tmp filesystem.
 		mkdir first-dir.cpy ; (cd first-dir ; tar cf - . | (cd ../first-dir.cpy ; tar xf -))
 
-		directory_cmp first-dir export-dir
-
-		if $ISDIFF ; then
-		    fail 55
-		else
-		    pass 55
-		fi
+		dotest basic2-30 "directory_cmp first-dir export-dir"
 
 		# interrupt, while we've got a clean 1.1 here, let's import it
 		# into a couple of other modules.
 		cd export-dir
-		dotest_sort 56 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
+		dotest_sort basic2-31 "${testcvs} import -m first-import second-dir first-immigration immigration1 immigration1_0" \
 "
 
 N second-dir/dir1/dir2/file14
@@ -2114,19 +2496,21 @@ ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1
 ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1/dir2"
 		cd ..
 
-		if ${CVS} export -r HEAD second-dir  ; then
-		    pass 57
-		else
-		    fail 57
-		fi
+		dotest basic2-32 "${testcvs} export -r HEAD second-dir" \
+"${PROG} [a-z]*: Updating second-dir
+U second-dir/file14
+U second-dir/file6
+U second-dir/file7
+${PROG} [a-z]*: Updating second-dir/dir1
+U second-dir/dir1/file14
+U second-dir/dir1/file6
+U second-dir/dir1/file7
+${PROG} [a-z]*: Updating second-dir/dir1/dir2
+U second-dir/dir1/dir2/file14
+U second-dir/dir1/dir2/file6
+U second-dir/dir1/dir2/file7"
 
-		directory_cmp first-dir second-dir
-
-		if $ISDIFF ; then
-		    fail 58
-		else
-		    pass 58
-		fi
+		dotest basic2-33 "directory_cmp first-dir second-dir"
 
 		rm -r second-dir
 
@@ -2136,49 +2520,39 @@ ${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/second-dir/dir1/dir2"
 
 		# update the top, cancelling sticky tags, retag, update other copy, compare.
 		cd first-dir
-		if ${CVS} update -A -l *file*  2>> ${LOGFILE}; then
-		    pass 59
-		else
-		    fail 59
-		fi
+		dotest basic2-34 "${testcvs} update -A -l *file*" \
+"[UP] file6
+${PROG} [a-z]*: warning: file7 is not (any longer) pertinent"
 
 		# If we don't delete the tag first, cvs won't retag it.
 		# This would appear to be a feature.
-		if ${CVS} tag -l -d rtagged-by-revision  ; then
-		    pass 60a
-		else
-		    fail 60a
-		fi
-		if ${CVS} tag -l rtagged-by-revision  ; then
-		    pass 60b
-		else
-		    fail 60b
-		fi
+		dotest basic2-35 "${testcvs} tag -l -d rtagged-by-revision" \
+"${PROG} [a-z]*: Untagging \.
+D file14
+D file6"
+		dotest basic2-36 "${testcvs} tag -l rtagged-by-revision" \
+"${PROG} [a-z]*: Tagging \.
+T file14
+T file6"
 
 		cd ..
 		mv first-dir 1dir
 		mv first-dir.cpy first-dir
 		cd first-dir
 
-		dotest 61 "${testcvs} -q diff -u" ''
+		dotest basic2-37 "${testcvs} -q diff -u" ''
 
-		if ${CVS} update  ; then
-		    pass 62
-		else
-		    fail 62
-		fi
+		dotest basic2-38 "${testcvs} update" \
+"${PROG} [a-z]*: Updating .
+${PROG} [a-z]*: Updating dir1
+${PROG} [a-z]*: Updating dir1/dir2"
 
 		cd ..
 
 		#### FIXME: is this expected to work???  Need to investigate
 		#### and fix or remove the test.
-#		directory_cmp 1dir first-dir
-#
-#		if $ISDIFF ; then
-#		    fail 63
-#		else
-#		    pass 63
-#		fi
+#		dotest basic2-39 "directory_cmp 1dir first-dir"
+
 		rm -r 1dir first-dir
 
 		# Test the cvs history command.
