@@ -1,6 +1,6 @@
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
-	* sanity.sh: New tests devcom-a* test ability "cvs watch add",
+	* sanity.sh: New tests devcom-a* test "cvs watch add",
 	"cvs watch remove", and "cvs watchers".
 
 	* sanity.sh: New test 171a0 tests for watch.c bug just fixed by kfogel.
