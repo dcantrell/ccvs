@@ -3747,7 +3747,7 @@ error ENOMEM Virtual memory exhausted.\n");
 #endif /* 1/0 */
 
 
-#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+#if !defined(CVS_PASSWORDS_CASE_SENSITIVE)
 /* Return value needs freeing. */
 char *
 downcase (string)
@@ -3766,7 +3766,7 @@ downcase (string)
   
   return ret;
 }
-#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+#endif /* ! CVS_PASSWORDS_CASE_SENSITIVE */
 
 
 /* 
@@ -3785,11 +3785,11 @@ check_repository_password (username, password, repository)
   char linebuf[MAXLINELEN];
   int found_it = 0, len;
 
-#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+#if !defined(CVS_PASSWORDS_CASE_SENSITIVE)
   pwd_lwr = downcase (password);
-#else /* ! CVS_PASSWORDS_CASE_INSENSITIVE */
+#else /* CVS_PASSWORDS_CASE_SENSITIVE */
   pwd_lwr = password;
-#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+#endif /* ! CVS_PASSWORDS_CASE_SENSITIVE */
 
   filename = xmalloc (strlen (repository)
                       + 1
@@ -3797,12 +3797,7 @@ check_repository_password (username, password, repository)
                       + 1
                       + strlen ("passwd")
                       + 1);
-  if (! filename)
-    {
-      printf ("out of memory\n");
-      fflush (stdout);
-      exit (1);
-    }
+
   strcpy (filename, repository);
   strcat (filename, "/CVSROOT");
   strcat (filename, "/passwd");
@@ -3819,7 +3814,8 @@ check_repository_password (username, password, repository)
   len = strlen (username);
   while (fgets (linebuf, MAXPATHLEN - 1, fp))
     {
-      if (strncmp (linebuf, username, len) == 0)
+      if ((strncmp (linebuf, username, len) == 0)
+          && (linebuf[len] == '@'))
         {
           found_it = 1;
           break;
@@ -3836,10 +3832,10 @@ check_repository_password (username, password, repository)
       found_password = strtok (NULL, ": \n");
 
       /* One of the crypt() calls below is redundant if
-         CVS_PASSWORDS_CASE_INSENSITIVE is not defined, but that's no
+         CVS_PASSWORDS_CASE_SENSITIVE is defined, but that's no
          big deal.  This is client/server anyway, so the speed
          bottleneck is certainly not going to be in the number of
-         calls to crypt()! Readability is more important. */
+         calls to crypt()!  Readability is more important. */
 
       if ((strcmp (found_password, crypt (pwd_lwr, found_password)) == 0)
           ||
@@ -3851,9 +3847,9 @@ check_repository_password (username, password, repository)
   else
     retval = 0;
 
-#ifdef CVS_PASSWORDS_CASE_INSENSITIVE
+#if !defined(CVS_PASSWORDS_CASE_SENSITIVE)
   free (pwd_lwr);
-#endif /* CVS_PASSWORDS_CASE_INSENSITIVE */
+#endif /* ! CVS_PASSWORDS_CASE_SENSITIVE */
   free (filename);
 
   return retval;
