@@ -288,6 +288,9 @@ extern void fnfold (char *FILENAME);
    stdout to binary mode using setmode.  */
 #define USE_SETMODE_STDOUT 1
 
+/* Diff also has an ifdef for setmode, and it is HAVE_SETMODE.  */
+#define HAVE_SETMODE 1
+
 /* Read data from INFILE, and copy it to OUTFILE. 
    Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
    This is useful for converting between CRLF and LF line formats.  */
