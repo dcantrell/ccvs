@@ -368,9 +368,9 @@ remove_locks (void)
     /* clean up simple locks (if any) */
     if (global_readlock.repository != NULL)
     {
-	/* FIXME: This global deserves a tmp var.  */
-	lock_simple_remove (&global_readlock);
+	struct lock tmp = global_readlock;
 	global_readlock.repository = NULL;
+	lock_simple_remove (&tmp);
     }
     /* See note in Lock_Cleanup() above.  */
     SIG_endCrSect();
