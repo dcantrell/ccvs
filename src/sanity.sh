@@ -2195,6 +2195,15 @@ EOF
 	    echo 'FAIL: test 186a7' | tee -a ${LOGFILE}
 	  fi
 
+	  dotest devcom-a0 "cvs watchers" ''
+	  dotest devcom-a1 "cvs watch add" ''
+	  dotest devcom-a2 "cvs watchers" \
+'abb	[a-z0-9]*	edit	unedit	commit
+abc	[a-z0-9]*	edit	unedit	commit'
+	  dotest devcom-a3 "cvs watch remove -a unedit abb" ''
+	  dotest devcom-a4 "cvs watchers abb" \
+'abb	[a-z0-9]*	edit	commit'
+
 	  cd ../..
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
@@ -2360,9 +2369,9 @@ echo "OK, all tests completed."
 #   gives an appropriate error (e.g. 
 #     Cannot access /tmp/cvs-sanity/non-existent/CVSROOT
 #     No such file or directory).
-# * Test "cvs watch add", "cvs watch remove", "cvs watchers", that
-#   notify script gets called where appropriate.
-# * Test "cvs unedit" and that it really reverts a change.
+# * Test ability to send notifications in response to watches.  (currently
+#   hard to test because CVS doesn't send notifications if username is the
+#   same).
 # * Test that remote edit and/or unedit works when disconnected from
 #   server (e.g. set CVS_SERVER to "foobar").
 # End of TODO list.
