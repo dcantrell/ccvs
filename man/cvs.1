@@ -2010,27 +2010,6 @@ Records programs for filtering
 .` "cvs commit"
 requests.
 .TP
-CVSROOT/history
-Log file of \fBcvs\fP transactions.
-.TP
-CVSROOT/modules,v
-Definitions for modules in this repository.
-.TP
-CVSROOT/loginfo,v
-Records programs for piping
-.` "cvs commit"
-log entries.
-.TP
-CVSROOT/rcsinfo,v
-Records pathnames to templates used during a
-.` "cvs commit"
-operation.
-.TP
-CVSROOT/editinfo,v
-Records programs for editing/validating
-.` "cvs commit"
-log entries.
-.TP
 CVSROOT/cvswrappers,v
 Records
 .B cvs
@@ -2040,6 +2019,27 @@ on the way in and out of CVS.  The intended uses are many, one
 possible use would be to reformat a C file before the file is checked
 in, so all of the code in the repository looks the same.
 .TP
+CVSROOT/editinfo,v
+Records programs for editing/validating
+.` "cvs commit"
+log entries.
+.TP
+CVSROOT/history
+Log file of \fBcvs\fP transactions.
+.TP
+CVSROOT/loginfo,v
+Records programs for piping
+.` "cvs commit"
+log entries.
+.TP
+CVSROOT/modules,v
+Definitions for modules in this repository.
+.TP
+CVSROOT/rcsinfo,v
+Records pathnames to templates used during a
+.` "cvs commit"
+operation.
+.TP
 CVSROOT/taginfo,v
 Records programs for validating/logging
 .` "cvs tag"
@@ -2047,7 +2047,7 @@ and
 .` "cvs rtag"
 operations.
 .TP
-Attic
+MODULE/Attic
 Directory for removed source files.
 .TP
 #cvs.lock
