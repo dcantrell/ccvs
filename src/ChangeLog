@@ -1,3 +1,9 @@
+Tue Oct  8 22:35:34 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (death2): In tests death2-diff-{2,4,6,8,10}, allow "-"
+	or "%" in temp file names.  The system (tmpnam or whatever)
+	generates these names so they vary from system to system.
+
 Tue Oct  8 12:37:09 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* options.h.in (HAD_RCS4): Remove; no longer used.
