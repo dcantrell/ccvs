@@ -23,11 +23,6 @@
 #include "cvs.h"
 #include "savecwd.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)modules.c 1.62 94/09/29 $";
-USE(rcsid);
-#endif
-
 struct sortrec
 {
     char *modname;

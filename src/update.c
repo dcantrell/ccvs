@@ -41,11 +41,6 @@
 #include "fileattr.h"
 #include "edit.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
-USE(rcsid);
-#endif
-
 static int checkout_file PROTO((char *file, char *repository, List *entries,
 			  List *srcfiles, Vers_TS *vers_ts, char *update_dir));
 #ifdef SERVER_SUPPORT

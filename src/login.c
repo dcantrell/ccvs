@@ -15,11 +15,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)login.c 1.1 95/10/01 $";
-USE(rcsid);
-#endif
-
 #ifndef CVS_PASSWORD_FILE 
 #define CVS_PASSWORD_FILE ".cvspass"
 #endif

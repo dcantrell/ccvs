@@ -15,11 +15,6 @@
 #include "cvs.h"
 #include "getline.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
-USE(rcsid);
-#endif
-
 static RETSIGTYPE patch_cleanup PROTO((void));
 static Dtype patch_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int patch_fileproc PROTO((char *file, char *update_dir, char *repository,

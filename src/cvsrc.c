@@ -12,11 +12,6 @@
 #include "cvs.h"
 #include "getline.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)cvsrc.c 1.9 94/09/30 $";
-USE(rcsid);
-#endif /* lint */
-
 /* this file is to be found in the user's home directory */
 
 #ifndef	CVSRC_FILENAME

@@ -20,11 +20,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)error.c 1.13 94/09/30 $";
-USE(rcsid);
-#endif /* not lint */
-
 #include <stdio.h>
 
 /* If non-zero, error will use the CVS protocol to stdout to report error

@@ -19,11 +19,6 @@
 
 #ifdef MY_NDBM
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)myndbm.c 1.7 94/09/23 $";
-USE(rcsid);
-#endif
-
 static void mydbm_load_file ();
 
 /* ARGSUSED */

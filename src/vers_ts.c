@@ -8,11 +8,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)vers_ts.c 1.45 94/10/07 $";
-USE(rcsid);
-#endif
-
 #ifdef SERVER_SUPPORT
 static void time_stamp_server PROTO((char *, Vers_TS *));
 #endif

@@ -10,11 +10,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)status.c 1.56 94/10/07 $";
-USE(rcsid);
-#endif
-
 static Dtype status_dirproc PROTO((char *dir, char *repos, char *update_dir));
 static int status_fileproc PROTO((char *file, char *update_dir,
 			    char *repository, List * entries,

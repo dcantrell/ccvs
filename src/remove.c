@@ -17,11 +17,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)remove.c 1.39 94/10/07 $";
-USE(rcsid);
-#endif
-
 static int remove_fileproc PROTO((char *file, char *update_dir,
 			    char *repository, List *entries,
 			    List *srcfiles));

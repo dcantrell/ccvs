@@ -13,11 +13,6 @@
 #include "fileattr.h"
 #include "edit.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)recurse.c 1.31 94/09/30 $";
-USE(rcsid);
-#endif
-
 static int do_dir_proc PROTO((Node * p, void *closure));
 static int do_file_proc PROTO((Node * p, void *closure));
 static void addlist PROTO((List ** listp, char *key));

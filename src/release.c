@@ -11,11 +11,6 @@
 
 #include "cvs.h"
 
-#ifndef lint
-static const char rcsid[] = "$CVSid: @(#)release.c 1.23 94/09/21 $";
-USE(rcsid);
-#endif
-
 static void release_delete PROTO((char *dir));
 
 static const char *const release_usage[] =
