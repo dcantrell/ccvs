@@ -6,6 +6,10 @@
 	* INSTALL (Tested platforms): Add Solaris 2.6 (reported by Russ
 	Allbery).
 
+1998-08-28  Noel Cragg  <noel@swish.red-bean.com>
+
+	* TODO (196): new item.
+
 1998-08-26  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TESTS: Update comments concerning Solaris sort and LC_COLLATE.
