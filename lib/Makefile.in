@@ -237,6 +237,7 @@ EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
 	build_lib.com \
+	LIB.dep \
 	lib.dsp \
 	lib.mak\
 alloca_.h fnmatch_.h fnmatch_loop.c

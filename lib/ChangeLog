@@ -1,5 +1,10 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add LIB.dep.
+	* Makefile.in: Regenerated.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* lib.dsp: Update to compile fnmatch.
 	* LIB.dep: New generated file.
 	* lib.mak: Regenerated.
