@@ -1,3 +1,7 @@
+2001-04-04  Larry Jones  <larry.jones@sdr.com>
+
+	* depcomp: Don't count on $? being set in then or else clauses.
+
 2001-03-30  Larry Jones  <larry.jones@sdr.com>
 
 	* NEWS: Note new rlog and rannotate commands.
