@@ -1,3 +1,9 @@
+Thu Sep 12 14:56:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h, filesubr.c: Add FOLD_FN_CHAR, VMS_filename_classes,
+	fncmp, and fnfold.  This is copied from the NT port except various
+	comments were changed and '/' is not considered the same as '\'.
+
 Wed Sep 11 15:53:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Define NO_SLASH_AFTER_HOME.
