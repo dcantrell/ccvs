@@ -45,6 +45,19 @@ macos_open( const char *path, int oflag, ... )
 }
 
 int
+macos_chmod( const char *path, mode_t mode )
+{
+	char macPath[1024], *sepCh;
+	
+	strcpy( macPath, ":" );
+	strcat( macPath, path );
+	while( (sepCh = strchr(macPath, '/')) != NULL )
+		*sepCh = ':';
+
+	return chmod(macPath, mode);
+}
+
+int
 macos_creat( const char *path, mode_t mode )
 {
 	char macPath[1024], *sepCh;
@@ -157,3 +170,42 @@ macos_fixpath (const char *path)
 	return scratchPath;
 }
 
+/* Shamelessly stolen from the OS2 port.  Oddly, only the fopen calls
+	seem to respect the binary-text distinction, so I have rewritten
+	the code to use fopen, fread, fwrite, and fclose instead of open.	*/
+	
+void
+convert_file (char *infile,  int inflags,
+	      char *outfile, int outflags)
+{
+    FILE *infd, *outfd;
+    char buf[8192];
+    int len;
+    char iflags[10], oflags[10];
+    
+    if( inflags & OPEN_BINARY )
+    	strcpy( iflags, "rb" );
+    else
+    	strcpy( iflags, "r" );
+    	
+    if( outflags & OPEN_BINARY )
+    	strcpy( oflags, "wb" );
+    else
+    	strcpy( oflags, "w" );
+    	
+    if ((infd = CVS_FOPEN (infile, iflags)) == NULL)
+        error (1, errno, "couldn't read %s", infile);
+    if ((outfd = CVS_FOPEN (outfile, oflags)) == NULL)
+        error (1, errno, "couldn't write %s", outfile);
+
+    while ((len = fread (buf, sizeof (char), sizeof (buf), infd)) > 0)
+        if (fwrite (buf, sizeof (char), len, outfd) < 0)
+	    error (1, errno, "error writing %s", outfile);
+    if (len < 0)
+        error (1, errno, "error reading %s", infile);
+
+    if (fclose (outfd) < 0)
+        error (0, errno, "warning: couldn't close %s", outfile);
+    if (fclose (infd) < 0)
+        error (0, errno, "warning: couldn't close %s", infile);
+}

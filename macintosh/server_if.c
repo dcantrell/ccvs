@@ -10,6 +10,8 @@
 #include <GUSI.h>
 #include <sys/socket.h>
 
+static int read_fd, write_fd;
+    
 void
 macos_start_server (int *tofd, int *fromfd,
 		  char *client_user,
@@ -21,7 +23,6 @@ macos_start_server (int *tofd, int *fromfd,
     char *command;
     struct servent *s;
     unsigned short port;
-    int read_fd, write_fd;
 
     if (! (cvs_server = getenv ("CVS_SERVER")))
         cvs_server = "cvs";
@@ -55,7 +56,8 @@ macos_start_server (int *tofd, int *fromfd,
 
 
 void
-macos_shutdown_server (int fd)
+macos_shutdown_server (int to_server)
 {
-	close( fd );
+	if( close (read_fd) != 0 ) perror( "close on read_fd");
+	if( close (write_fd) != 0 ) perror( "close on write_fd");
 }
