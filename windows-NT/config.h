@@ -291,12 +291,6 @@ extern void fnfold (char *FILENAME);
    now we put it here.  */
 #define same_file(s,t) (-1)
 
-/* Read data from INFILE, and copy it to OUTFILE. 
-   Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
-   This is useful for converting between CRLF and LF line formats.  */
-extern void convert_file (char *INFILE,  int INFLAGS,
-			  char *OUTFILE, int OUTFLAGS);
-
 /* This is where old bits go to die under Windows NT.  */
 #define DEVNULL "nul"
 

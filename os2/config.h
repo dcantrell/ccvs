@@ -325,12 +325,6 @@ extern int fncmp (const char *n1, const char *n2);
    definition for this.  */
 extern void fnfold (char *FILENAME);
 
-/* Read data from INFILE, and copy it to OUTFILE. 
-   Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
-   This is useful for converting between CRLF and LF line formats.  */
-extern void convert_file (char *INFILE,  int INFLAGS,
-			  char *OUTFILE, int OUTFLAGS);
-
 /* This is where old bits go to die under OS/2 as well as WinNT.  */
 #define DEVNULL "nul"
 

@@ -1,3 +1,8 @@
+Wed Dec 31 10:56:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h, filesubr.c (convert_file): Remove; no longer used
+	(except for BROKEN_READWRITE_CONVERSION which doesn't apply).
+
 Sat Dec 27 16:57:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h (HAVE_RCS5): Remove; no longer used.

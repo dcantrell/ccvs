@@ -810,33 +810,3 @@ fnfold (char *filename)
 	filename++;
     }
 }
-
-
-/* Read data from INFILE, and copy it to OUTFILE.
-   Open INFILE using INFLAGS, and OUTFILE using OUTFLAGS.
-   This is useful for converting between CRLF and LF line formats.  */
-void
-convert_file (char *infile,  int inflags,
-	      char *outfile, int outflags)
-{
-    int infd, outfd;
-    char buf[8192];
-    int len;
-
-    if ((infd = open (infile, inflags, S_IREAD | S_IWRITE)) < 0)
-        error (1, errno, "couldn't read %s", infile);
-    if ((outfd = open (outfile, outflags, S_IREAD | S_IWRITE)) < 0)
-        error (1, errno, "couldn't write %s", outfile);
-
-    while ((len = read (infd, buf, sizeof (buf))) > 0)
-        if (write (outfd, buf, len) < 0)
-	    error (1, errno, "error writing %s", outfile);
-    if (len < 0)
-        error (1, errno, "error reading %s", infile);
-
-    if (close (outfd) < 0)
-        error (0, errno, "warning: couldn't close %s", outfile);
-    if (close (infd) < 0)
-        error (0, errno, "warning: couldn't close %s", infile);
-}
-
