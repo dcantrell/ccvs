@@ -16,10 +16,20 @@ License along with the GNU C Library; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 675 Mass Ave,
 Cambridge, MA 02139, USA.  */
 
-/* Modified slightly by Brian Berliner <berliner@sun.com> for CVS use */
+/* Modified slightly by Brian Berliner <berliner@sun.com> and
+   Jim Blandy <jimb@cyclic.com> for CVS use */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+/* Some file systems are case-insensitive.  If FOLD_FN_CHAR is #defined, it maps
+   the character C onto its "canonical" form.  In a case-insensitive system,
+   it would map all alphanumeric characters to lower case.  Under Windows NT,
+   / and \ are both path component separators, so FOLD_FN_CHAR would map them both
+   to /.  */
+#ifndef FOLD_FN_CHAR
+#define FOLD_FN_CHAR(c) (c)
 #endif
 
 /* IGNORE(@ */
@@ -169,7 +179,7 @@ fnmatch (pattern, string, flags)
 	  break;
 	  
 	default:
-	  if (c != *n)
+	  if (FOLD_FN_CHAR (c) != FOLD_FN_CHAR (*n))
 	    return FNM_NOMATCH;
 	}
       
