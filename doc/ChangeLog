@@ -1,3 +1,8 @@
+Fri Jan 12 15:29:39 1996  Vince Demarco  <vdemarco@bou.shl.com>
+
+	* cvs.texinfo: Fix the documentation for the com/uncom change
+	to wrap/unwrap. make everything consistant
+
 Wed Jan 10 16:11:54 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Concurrency): Add index entries; minor clarification.

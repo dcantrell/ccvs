@@ -6715,7 +6715,7 @@ and value is a single-quote delimited value.
 @end example
 
 @example
-*.nib    -f 'uncom %s' -t 'wrap %s %s' -m 'COPY'
+*.nib    -f 'unwrap %s' -t 'wrap %s %s' -m 'COPY'
 *.c      -t 'indent %s %s'
 @end example
 
