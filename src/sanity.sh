@@ -294,7 +294,6 @@ if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
 else
   : good, it works
 fi
-rm -f ${TESTDIR}/foo ${TESTDIR}/bar
 
 # That we should have to do this is total bogosity, but GNU expr
 # version 1.9.4-1.12 uses the emacs definition of "$" instead of the unix
@@ -323,6 +322,21 @@ else
   DOTSTAR='\(.\|
 \)*'
 fi
+
+# Now that we have DOTSTAR, make sure it works with big matches
+if $EXPR "`cat ${TESTDIR}/bar`" : "${DOTSTAR}xyzABC${DOTSTAR}$" >/dev/null; then
+  : good, it works
+else
+  EXPR=`find_tool expr`
+  if test -z "$EXPR" ; then
+    echo 'Warning: you are using a version of expr which does not correctly'
+    echo 'match large patterns.  Some tests may spuriously fail.'
+    echo 'You may wish to make sure GNU expr is in your path.'
+    EXPR=expr
+  fi
+fi
+
+rm -f ${TESTDIR}/foo ${TESTDIR}/bar
 
 # Work around yet another GNU expr (version 1.10) bug/incompatibility.
 # "+" is a special character, yet for unix expr (e.g. SunOS 4.1.3)
