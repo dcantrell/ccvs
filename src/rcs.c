@@ -336,10 +336,11 @@ RCS_parsercsfile_i (FILE *fp, const char *rcsfile)
     char *key, *value;
 
     /* make a node */
-    rdata = (RCSNode *) xmalloc (sizeof (RCSNode));
-    memset ((char *)rdata, 0, sizeof (RCSNode));
+    rdata = xmalloc (sizeof (RCSNode));
+    memset (rdata, 0, sizeof (RCSNode));
     rdata->refcount = 1;
     rdata->path = xstrdup (rcsfile);
+    rdata->print_path = primary_root_inverse_translate (rcsfile);
 
     /* Process HEAD, BRANCH, and EXPAND keywords from the RCS header.
 
@@ -879,6 +880,7 @@ freercsnode (RCSNode **rnodep)
 	return;
     }
     free ((*rnodep)->path);
+    free ((*rnodep)->print_path);
     if ((*rnodep)->head != (char *) NULL)
 	free ((*rnodep)->head);
     if ((*rnodep)->branch != (char *) NULL)

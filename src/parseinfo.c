@@ -42,7 +42,7 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     {
 	/* XXX - should be error maybe? */
 	error (0, 0, "CVSROOT variable not set");
-	return (1);
+	return 1;
     }
 
     /* find the info file and open it */
@@ -65,8 +65,8 @@ Parse_Info (const char *infofile, const char *repository, CALLPROC callproc,
     /* strip off the CVSROOT if repository was absolute */
     srepos = Short_Repository (repository);
 
-    TRACE ( 1, "Parse_Info (%s, %s, %s)",
-	    infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
+    TRACE (1, "Parse_Info (%s, %s, %s)",
+	   infopath, srepos,  (opt & PIOPT_ALL) ? "ALL" : "not ALL");
 
     /* search the info file for lines that match */
     callback_done = line_number = 0;

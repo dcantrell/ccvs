@@ -533,7 +533,7 @@ supported_response (char *name)
  *   true                 If this server is configured as a secondary server.
  *   false                Otherwise.
  */
-static bool
+bool
 isSecondaryServer (void)
 {
     char hostname[MAXHOSTNAMELEN];
@@ -769,7 +769,7 @@ read_secondary_log (struct buffer **buf_in, const char *name)
     *buf_in = NULL;
 
     /* And reopen the log.  */
-    fd = open (name, O_RDONLY | O_LARGEFILE);
+    fd = open (name, O_RDONLY);
     if (fd < 0)
     {
 	int err = errno;
@@ -869,7 +869,7 @@ move_file_offset (int fd, off_t src, off_t dest)
     /* Make sure all data written to this file has been committed to disk
      * before mucking around with it.
      */
-    if (fdatasync (fd) < 0)
+    if (fsync (fd) < 0)
 	error (1, 0, "Failed to sync file data before moving");
 
     /* Find EOF.  */
@@ -1522,14 +1522,14 @@ serve_static_directory (char *arg)
     }
 }
 
+
+
 static void
 serve_sticky (char *arg)
 {
     FILE *f;
 
-    if (error_pending ()) return;
-
-    assert (!secondary_log);
+    if (error_pending () || secondary_log) return;
 
     f = CVS_FOPEN (CVSADM_TAG, "w+");
     if (f == NULL)
@@ -2582,6 +2582,9 @@ serve_argument (char *arg)
 
 
 
+/* For secondary servers, this is handled in all passes, as is the `Argument'
+ * request, and for the same reasons.
+ */
 static void
 serve_argumentx (char *arg)
 {
@@ -2589,8 +2592,6 @@ serve_argumentx (char *arg)
 
     if (error_pending()) return;
     
-    assert (!secondary_log);
-
     if (argument_count <= 1) 
     {
 	if (alloc_pending (80))
@@ -3039,6 +3040,54 @@ set_nonblock_fd (fd)
 
 
 
+/*
+ * callback proc to run a script when admin finishes.
+ */
+static int
+prepost_proxy_proc (const char *repository, const char *filter, void *closure)
+{
+    char *cmdline;
+    bool *pre = closure;
+
+    /* %p = shortrepos
+     * %r = repository
+     */
+    TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s)", repository,
+	   filter, *pre ? "pre" : "post");
+
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      0, ".",
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      filter,
+	                      "p", "s", ".",
+	                      "r", "s", current_parsed_root->directory,
+	                      (char *)NULL
+	                     );
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	if (*pre)
+	    error (0, 0, "preadmin proc resolved to the empty string!");
+	else
+	    error (0, 0, "postadmin proc resolved to the empty string!");
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    free (cmdline);
+
+    /* FIXME - read the comment in verifymsg_proc() about why we use abs()
+     * below() and shouldn't.
+     */
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE));
+}
+
+
+
 /* Become a secondary write proxy to a master server.
  *
  * This function opens the connection to the primary, dumps the secondary log
@@ -3064,7 +3113,10 @@ become_proxy (void)
     int status, to_primary_fd, from_primary_fd, to_net_fd, from_net_fd;
     struct buffer *buf_from_net_l;
 
-    /* WRITEPROXY: Call presecondary script.  */
+    /* Call presecondary script.  */
+    bool pre = true;
+    Parse_Info (CVSROOTADM_PREPROXY, current_parsed_root->directory,
+		prepost_proxy_proc, PIOPT_ALL, &pre);
 
     /* Open connection to primary server.  */
     open_connection_to_server (PrimaryServer, &buf_to_primary,
@@ -3088,8 +3140,7 @@ become_proxy (void)
                                            outbuf_memory_error);
 
     from_net_fd = log_fd;
-    while (from_primary_fd >= 0 || from_net_fd >= 0
-           || to_primary_fd >= 0 || to_net_fd >= 0)
+    while (from_primary_fd >= 0 || to_primary_fd >= 0)
     {
 	fd_set readfds, writefds;
 	int status, numfds = -1;
@@ -3298,18 +3349,25 @@ become_proxy (void)
 	if (from_primary_fd < 0
 	    && buf_to_net && buf_empty_p (buf_to_net))
 	{
-	    SIG_beginCrSect();
-	    /* Need only to shut this down and set to NULL, really, in
-	     * crit sec, to ensure no double-dispose and to make sure
-	     * network pipes are closed as properly as possible, but I
-	     * don't see much optimization potential in saving values and
-	     * postponing the free.
-	     */
-	    buf_shutdown (buf_to_net);
-	    buf_free (buf_to_net);
-	    buf_to_net = NULL;
-	    SIG_endCrSect();
 	    to_net_fd = -1;
+	    /* Don't actually shut down or free BUF_TO_NET unless BUF_FROM_NET
+	     * is already closed.  Let the shutdown handlers do it otherwise
+	     * since we might need it later.
+	     */
+	    if (!buf_from_net)
+	    {
+		SIG_beginCrSect();
+		/* Need only to shut this down and set to NULL, really, in
+		 * crit sec, to ensure no double-dispose and to make sure
+		 * network pipes are closed as properly as possible, but I
+		 * don't see much optimization potential in saving values and
+		 * postponing the free.
+		 */
+		buf_shutdown (buf_to_net);
+		buf_free (buf_to_net);
+		buf_to_net = NULL;
+		SIG_endCrSect();
+	    }
 	}
 	if (from_net_fd < 0
 	    && buf_to_primary && buf_empty_p (buf_to_primary))
@@ -3322,6 +3380,10 @@ become_proxy (void)
     }
 
     /* WRITEPROXY: Call postsecondary script.  */
+    /* Call presecondary script.  */
+    pre = false;
+    Parse_Info (CVSROOTADM_POSTPROXY, current_parsed_root->directory,
+		prepost_proxy_proc, PIOPT_ALL, &pre);
 }
 
 
@@ -3364,7 +3426,7 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 	{
 	    become_proxy ();
 	    if (!strcmp (cmd_name, "version"))
-		/* WRITEPROXY: Generate secondary version output.  */;
+		version (0, NULL);
 	    exit (EXIT_SUCCESS);
 	}
 	else if (/* serve_co may have called this already and missing logs

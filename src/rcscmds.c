@@ -238,7 +238,7 @@ RCS_merge (RCSNode *rcs, const char *path, const char *workfile,
       assert (options[0] == '-' && options[1] == 'k');
 
     cvs_output ("RCS file: ", 0);
-    cvs_output (rcs->path, 0);
+    cvs_output (rcs->print_path, 0);
     cvs_output ("\n", 1);
 
     /* Calculate numeric revision numbers from rev1 and rev2 (may be
@@ -380,7 +380,7 @@ RCS_exec_rcsdiff (RCSNode *rcsfile, const char *opts, const char *options,
     cvs_output ("\
 ===================================================================\n\
 RCS file: ", 0);
-    cvs_output (rcsfile->path, 0);
+    cvs_output (rcsfile->print_path, 0);
     cvs_output ("\n", 1);
 
     /* Historically, `cvs diff' has expanded the $Name keyword to the

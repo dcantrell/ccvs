@@ -51,28 +51,41 @@ version (int argc, char **argv)
     if (argc == -1)
 	usage (version_usage);
 
+#ifdef SERVER_SUPPORT
+    if (current_parsed_root && isSecondaryServer ())
+        cvs_output ("Secondary Server: ", 0);
+    else
+#endif
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
-        (void) fputs ("Client: ", stdout);
+        cvs_output ("Client: ", 0);
+#else
+    /* For the else above.  */;
 #endif
 
     /* Having the year here is a good idea, so people have
        some idea of how long ago their version of CVS was
        released.  */
-    (void) fputs (PACKAGE_STRING, stdout);
-    (void) fputs (config_string, stdout);
+    cvs_output (PACKAGE_STRING, 0);
+    cvs_output (config_string, 0);
+
+#ifdef SERVER_SUPPORT
+    if (current_parsed_root && isSecondaryServer ())
+        /* Don't sent the request to the primary - it's already been done.  */
+	return err;
+#endif
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
     {
-	(void) fputs ("Server: ", stdout);
+	cvs_output ("Server: ", 0);
 	start_server ();
 	if (supported_request ("version"))
 	    send_to_server ("version\012", 0);
 	else
 	{
 	    send_to_server ("noop\012", 0);
-	    fputs ("(unknown)\n", stdout);
+	    cvs_output ("(unknown)\n", 0);
 	}
 	err = get_responses_and_close ();
     }

@@ -278,6 +278,107 @@ cvstag (int argc, char **argv)
 
 
 
+struct pretag_proc_data {
+     List *tlist;
+     bool delete_flag;
+     bool force_tag_move;
+     char *symtag;
+};
+
+/*
+ * called from Parse_Info, this routine processes a line that came out
+ * of the posttag file and turns it into a command and executes it.
+ *
+ * RETURNS
+ *    the absolute value of the return value of run_exec, which may or
+ *    may not be the return value of the child process.  this is
+ *    contrained to return positive values because Parse_Info is summing
+ *    return values and testing for non-zeroness to signify one or more
+ *    of its callbacks having returned an error.
+ */
+static int
+posttag_proc (const char *repository, const char *filter, void *closure)
+{
+    char *cmdline;
+    const char *srepos = Short_Repository (repository);
+    struct pretag_proc_data *ppd = closure;
+
+    /* %t = tag being added/moved/removed
+     * %o = operation = "add" | "mov" | "del"
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
+     *                    | "N" (not branch)
+     * %p = path from $CVSROOT
+     * %r = path from root
+     * %{sVv} = attribute list = file name, old version tag will be deleted
+     *                           from, new version tag will be added to (or
+     *                           deleted from until
+     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined).
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	false, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	filter,
+	"t", "s", ppd->symtag,
+	"o", "s", ppd->delete_flag ? "del" :
+	          ppd->force_tag_move ? "mov" : "add",
+    	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+    	"p", "s", srepos,
+	"r", "s", current_parsed_root->directory,
+	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *)NULL,
+	(char *)NULL
+	);
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error (0, 0, "pretag proc resolved to the empty string!");
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    free (cmdline);
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
+}
+
+
+
+/*
+ * Call any postadmin procs.
+ */
+static int
+tag_filesdoneproc (void *callerdat, int err, const char *repository,
+                   const char *update_dir, List *entries)
+{
+    Node *p;
+    List *mtlist, *tlist;
+    struct pretag_proc_data ppd;
+
+    TRACE (TRACE_FUNCTION, "tag_filesdoneproc (%d, %s, %s)", err, repository,
+           update_dir);
+
+    mtlist = callerdat;
+    p = findnode (mtlist, update_dir);
+    if (p != NULL)
+        tlist = ((struct master_lists *) p->data)->tlist;
+    else
+        tlist = NULL;
+    if (tlist == NULL || tlist->list->next == tlist->list)
+        return err;
+
+    ppd.tlist = tlist;
+    ppd.delete_flag = delete_flag;
+    ppd.force_tag_move = force_tag_move;
+    ppd.symtag = symtag;
+    err += Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc,
+                       PIOPT_ALL, &ppd);
+
+    return err;
+}
+
+
+
 /*
  * callback proc for doing the real work of tagging
  */
@@ -399,7 +500,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     /* check to make sure they are authorized to tag all the
        specified files in the repository */
 
-    mtlist = getlist();
+    mtlist = getlist ();
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            NULL, NULL, NULL,
 			   argc - 1, argv + 1, local_specified, which, 0,
@@ -417,7 +518,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     /* start the recursion processor */
     err = start_recursion
 	(is_rtag ? rtag_fileproc : tag_fileproc,
-	 NULL, tag_dirproc, NULL, NULL, argc - 1, argv + 1,
+	 tag_filesdoneproc, tag_dirproc, NULL, mtlist, argc - 1, argv + 1,
 	 local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
 	 repository);
     dellist (&mtlist);
@@ -560,13 +661,6 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
-struct pretag_proc_data {
-     List *tlist;
-     bool delete_flag;
-     bool force_tag_move;
-     char *symtag;
-};
-
 static int
 check_filesdoneproc (void *callerdat, int err, const char *repos,
                      const char *update_dir, List *entries)
@@ -576,25 +670,20 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     List *tlist;
     struct pretag_proc_data ppd;
 
-    p = findnode(mtlist, update_dir);
+    p = findnode (mtlist, update_dir);
     if (p != NULL)
-    {
         tlist = ((struct master_lists *) p->data)->tlist;
-    }
     else
-    {
-        tlist = (List *) NULL;
-    }
-    if ((tlist == NULL) || (tlist->list->next == tlist->list))
-    {
-        return (err);
-    }
+        tlist = NULL;
+    if (tlist == NULL || tlist->list->next == tlist->list)
+        return err;
 
     ppd.tlist = tlist;
     ppd.delete_flag = delete_flag;
     ppd.force_tag_move = force_tag_move;
     ppd.symtag = symtag;
-    if ((n = Parse_Info(CVSROOTADM_TAGINFO, repos, pretag_proc, PIOPT_ALL, &ppd)) > 0)
+    if ((n = Parse_Info (CVSROOTADM_TAGINFO, repos, pretag_proc, PIOPT_ALL,
+			 &ppd)) > 0)
     {
         error (0, 0, "Pre-tag check failed");
         err += n;
@@ -621,17 +710,17 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     char *newfilter = NULL;
     char *cmdline;
     const char *srepos = Short_Repository (repository);
-    struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
+    struct pretag_proc_data *ppd = closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (!strchr(filter, '%'))
+    if (!strchr (filter, '%'))
     {
-	error(0,0,
-              "warning: taginfo line contains no format strings:\n"
-              "    \"%s\"\n"
-              "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
-              "usage is deprecated.", filter);
-	newfilter = xmalloc (strlen(filter) + 16);
+	error (0,0,
+               "warning: taginfo line contains no format strings:\n"
+               "    \"%s\"\n"
+               "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
+               "usage is deprecated.", filter);
+	newfilter = xmalloc (strlen (filter) + 16);
 	strcpy (newfilter, filter);
 	strcat (newfilter, " %t %o %p %{sv}");
 	filter = newfilter;
@@ -640,16 +729,18 @@ pretag_proc (const char *repository, const char *filter, void *closure)
 
     /* %t = tag being added/moved/removed
      * %o = operation = "add" | "mov" | "del"
-     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch) | "N" (not branch)
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
+     *                    | "N" (not branch)
      * %p = path from $CVSROOT
      * %r = path from root
-     * %{sVv} = attribute list = file name, old version tag will be deleted from,
-     *             new version tag will be added to (or deleted from until
-     *             SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
+     * %{sVv} = attribute list = file name, old version tag will be deleted
+     *                           from, new version tag will be added to (or
+     *                           deleted from until
+     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
      */
-    cmdline = format_cmdline(
+    cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	0, srepos,
+	false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	filter,
 	"t", "s", ppd->symtag,
@@ -667,7 +758,7 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error(0, 0, "pretag proc resolved to the empty string!");
+	error (0, 0, "pretag proc resolved to the empty string!");
 	return 1;
     }
 
@@ -692,18 +783,22 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
 }
 
+
+
 static void
-masterlist_delproc(Node *p)
+masterlist_delproc (Node *p)
 {
     struct master_lists *ml = p->data;
 
-    dellist(&ml->tlist);
-    free(ml);
+    dellist (&ml->tlist);
+    free (ml);
     return;
 }
 
+
+
 static void
-tag_delproc(Node *p)
+tag_delproc (Node *p)
 {
     struct tag_info *ti;
     if (p->data != NULL)
@@ -1215,7 +1310,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     if (nversion != NULL)
         free (nversion);
     freevers_ts (&vers);
-    return (retval);
+    return retval;
 }
 
 
@@ -1472,13 +1567,15 @@ Numeric tag %s contains characters other than digits and '.'", name);
     free (valtags_filename);
 }
 
+
+
 /*
  * Check whether a join tag is valid.  This is just like
  * tag_check_valid, but we must stop before the colon if there is one.
  */
-
 void
-tag_check_valid_join (char *join_tag, int argc, char **argv, int local, int aflag, char *repository)
+tag_check_valid_join (char *join_tag, int argc, char **argv, int local,
+                      int aflag, char *repository)
 {
     char *c, *s;
 

@@ -41,6 +41,8 @@ exit_help ()
     echo "-l|--link-root"
     echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test client/server, as opposed to local, CVS"
+    echo "-p|--proxy	test a secondary/primary CVS server (writeproxy)"
+    echo "              cnofiguration (implies --remote)."
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
     echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
@@ -107,6 +109,7 @@ unset fromtest
 unset remotehost
 keep=false
 linkroot=false
+proxy=false
 remote=false
 servercvs=false
 # FIXME - If anyone knows a quick way in shell to expand something like
@@ -120,7 +123,7 @@ servercvs=false
 #		...
 #	esac
 #
-while getopts Hc:f:h:klrs:-: option ; do
+while getopts Hc:f:h:klprs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
@@ -160,6 +163,10 @@ while getopts Hc:f:h:klrs:-: option ; do
 		;;
 	    l|li|lin|link|link-|link-r]|link-ro|link-roo|link-root)
 		option=l
+		OPTARG=
+		;;
+	    p|pr|pro|prox|proxy)
+		option=p
 		OPTARG=
 		;;
 	    r|re|rem|remo|remot|remote)
@@ -202,6 +209,10 @@ while getopts Hc:f:h:klrs:-: option ; do
 	    ;;
 	l)
 	    linkroot=:
+	    ;;
+        p)
+	    proxy=:
+	    remote=:
 	    ;;
 	r)
 	    remote=:
@@ -795,6 +806,32 @@ if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null 2>&1; then
 else
   : good, it works
 fi
+
+# Make a new project.
+mkproj ()
+{
+    for proj in "$@"; do
+	mkdir $CVSROOT_DIRNAME/$proj
+	if $proxy; then
+	    # Could just sync here but since we know what is going on, this is
+	    # an optimization.
+	    mkdir $SECONDARY_CVSROOT_DIRNAME/$proj
+	fi
+    done
+}
+
+# Delete a project from the repository.
+rmproj ()
+{
+    for proj in "$@"; do
+	rm -rf $CVSROOT_DIRNAME/$proj
+	if $proxy; then
+	    # Could just sync here but since we know what is going on, this is
+	    # an optimization.
+	    rm -rf $SECONDARY_CVSROOT_DIRNAME/$proj
+	fi
+    done
+}
 
 pass ()
 {
@@ -2021,10 +2058,79 @@ CVSROOT=`newroot $CVSROOT_DIRNAME`; export CVSROOT
 
 
 ###
+### Initialize the repository
+###
+dotest 1 "$testcvs init" ''
+
+# Now hide the primary root above behind a secondary if requested.
+if $proxy; then
+    # Where the secondary root will be
+    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+
+    # Script to sync the secondary root.
+cat >$TESTDIR/sync-secondary <<EOF
+#! /bin/sh
+date >>$TESTDIR/update-log
+echo "updating after \$1" >>$TESTDIR/update-log
+rsync -gopr --delete $CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+    chmod a+x $TESTDIR/sync-secondary
+
+    # Initialize the primary repository
+    mkdir proxy-init; cd proxy-init
+    dotest proxy-init-1 "$testcvs -Q co CVSROOT"
+    cd CVSROOT
+    cat >>config <<EOF
+PrimaryServer=$CVSROOT
+EOF
+    cat >>loginfo <<EOF
+ALL $TESTDIR/sync-secondary commit
+EOF
+    cat >>postadmin <<EOF
+ALL $TESTDIR/sync-secondary admin
+EOF
+    cat >>posttag <<EOF
+ALL $TESTDIR/sync-secondary tag
+EOF
+    dotest writeproxy-init-3 \
+"$testcvs -Q ci -mconfigure-writeproxy"
+
+    # Save these files for later reference
+    cp loginfo $TESTDIR/loginfo-clean
+    cp config $TESTDIR/config-clean
+
+    # done in here
+    cd ../..
+    rm -rf proxy-init
+
+    # And now init the secondary.
+    $TESTDIR/sync-secondary "- no, before - create secondary root"
+
+    # Wrap the CVS server to allow --primary-root to be set by the
+    # secondary.
+    cat <<EOF >$TESTDIR/secondary-wrapper
+#! /bin/sh
+export CVS_SERVER=$TESTDIR/primary-wrapper
+$CVS_SERVER --primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
+EOF
+    cat <<EOF >$TESTDIR/primary-wrapper
+#! /bin/sh
+# Don't overwrite the log created by the secondary
+if test -n "$CVS_SERVER_LOG"; then
+    CVS_SERVER_LOG=$CVS_SERVER_LOG-primary
+fi
+$CVS_SERVER "\$@"
+EOF
+    chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
+    CVS_SERVER=$TESTDIR/secondary-wrapper
+fi # $proxy
+
+
+
+###
 ### The tests
 ###
-dotest 1 "${testcvs} init" ''
-dotest 1a "${testcvs} init" ''
+dotest 1a "$testcvs init" ''
 
 ### The big loop
 for what in $tests; do
@@ -2052,6 +2158,12 @@ a copy of which can be found with the CVS distribution kit.
 
 Specify the --help option for further information about CVS'
 
+# Maybe someday...
+#	  if $proxy; then
+#		dotest version-2r "${testcvs} version" \
+#'Client: Concurrent Versions System (CVS) [0-9p.]* (client.*)
+#Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)
+#Secondary Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 	  if $remote; then
 		dotest version-2r "${testcvs} version" \
 'Client: Concurrent Versions System (CVS) [0-9p.]* (client.*)
@@ -2061,6 +2173,8 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 'Concurrent Versions System (CVS) [0-9.]*.*'
 	  fi
 	  ;;
+
+
 
 	basica)
 	  # Similar in spirit to some of the basic1, and basic2
@@ -2345,9 +2459,11 @@ add-it
 
 	  cd ..
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  rm -r first-dir
 	  ;;
+
+
 
 	basicb)
 	  # More basic tests, including non-branch tags and co -d.
@@ -2562,10 +2678,11 @@ ${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
 	    exit 0
 	  fi
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/second-dir
-	  rm -f ${CVSROOT_DIRNAME}/topfile,v
+	  rmproj first-dir second-dir
+	  rm -f $CVSROOT_DIRNAME/topfile,v
 	  ;;
+
+
 
 	basicc)
 	  # More tests of basic/miscellaneous functionality.
@@ -2652,12 +2769,14 @@ D/second-dir////"
 
 	  cd ..
 	  rm -r 1 2
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir second-dir
 	  ;;
+
+
 
 	basic1)
 	  # first dive - add a files, first singly, then in a group.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkproj first-dir
 	  mkdir basic1; cd basic1
 	  # check out an empty directory
 	  dotest basic1-1 "${testcvs} -q co first-dir" ''
@@ -3003,12 +3122,14 @@ new revision: delete; previous revision: 1\.1"
 	  fi
 
 	  rm -r basic1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	deep)
 	  # Test the ability to operate on directories nested rather deeply.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkproj first-dir
 	  dotest deep-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 	  for i in dir1 dir2 dir3 dir4 dir5 dir6 dir7 dir8; do
@@ -3108,8 +3229,10 @@ new revision: delete; previous revision: 1\.1"
 	  else
 	    fail deep-5
 	  fi
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	basic2)
 		# Test rtag, import, history, various miscellaneous operations
@@ -3125,7 +3248,7 @@ new revision: delete; previous revision: 1\.1"
 
 ### XXX maybe should use `cvs imprt -b1 -m new-module first-dir F F1' in an
 ### empty directory to do this instead of hacking directly into $CVSROOT
-		mkdir ${CVSROOT_DIRNAME}/first-dir
+		mkproj first-dir
 		dotest basic2-1 "${testcvs} -q co first-dir" ''
 		for i in first-dir dir1 dir2 ; do
 			if test ! -d $i ; then
@@ -3848,8 +3971,8 @@ P [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == 
 W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>"
 
 	  dokeep
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/second-dir
+	  rmproj first-dir
+	  rmproj second-dir
 	  ;;
 
 
@@ -3868,6 +3991,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg"
@@ -3883,6 +4010,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg"
@@ -3901,6 +4032,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg"
@@ -3922,6 +4057,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg
@@ -4119,8 +4258,8 @@ $output_dead"
 
 	  dokeep
 	  cd ../../..
-	  rm -rf ls $CVSROOT_DIRNAME/notcheckedout \
-	            $CVSROOT_DIRNAME/cemetery
+	  rm -r ls
+	  rmproj notcheckedout cemetery
 	  unset output_living output_dead
 	  ;;
 
@@ -4175,6 +4314,8 @@ $CPROG \[logout aborted\]: Bad CVSROOT: \`:local;proxy=localhost:/dev/null'\."
 	  cd ..
 	  rm -r 1
 	  ;;
+
+
 
 	files)
 	  # Test of how we specify files on the command line
@@ -4283,7 +4424,7 @@ new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3"
 	  cd ../../..
 
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
 
 
@@ -4335,9 +4476,7 @@ initial revision: 1\.1"
 	  cd ..
 
 	  rm -r 1 2 3
-	  rm -rf "${CVSROOT_DIRNAME}/first dir"
-	  rm -r ${CVSROOT_DIRNAME}/-b
-	  rm -f ${CVSROOT_DIRNAME}/-c,v
+	  rmproj "first dir" -b -c,v
 	  ;;
 
 
@@ -4374,7 +4513,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 
 	  cd ../..
 	  rm -rf 1
-	  rm -rf $CVSROOT_DIRNAME/$module
+	  rm proj "$module"
 	  ;;
 
 
@@ -4383,7 +4522,7 @@ $SPROG add: use .$SPROG commit. to add this file permanently"
 		# This tests for a bug in the status command which failed to
 		# notice resolved conflicts.
 		mkdir status; cd status
-		dotest status-init-1 "${testcvs} -q co -l ." ""
+		dotest status-init-1 "$testcvs -q co -l ."
 		mkdir first-dir
 		dotest status-init-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -4506,8 +4645,10 @@ File: t3file           	Status: Up-to-date
 
 		cd ../../..
 		rm -rf status
-		rm -rf $CVSROOT_DIRNAME/first-dir $CVSROOT_DIRNAME/fourth-dir
+		rmproj first-dir fourth-dir
 		;;
+
+
 
 	commit-readonlyfs)
 	  mkdir 1; cd 1
@@ -4548,8 +4689,9 @@ ${SPROG} \[commit aborted\]: lock failed - giving up"
 
 	  cd ../..
 	  rm -rf 1
-	  rm -rf ${CVSROOT_DIRNAME}/$module
+	  rmproj "$module"
 	  ;;
+
 
 
 	rdiff)
@@ -4648,8 +4790,10 @@ diff -c /dev/null trdiff/new:1\.1
 
 		cd ..
 		rm -r testimport
-		rm -rf ${CVSROOT_DIRNAME}/trdiff
+		rmproj trdiff
 		;;
+
+
 
 	rdiff-short)
 	  # Test that the short patch behaves as expected
@@ -4745,8 +4889,10 @@ File abc/file2\.txt is new; tag4 revision 1\.1'
 "File abc/file1\.txt changed from revision 1\.2 to 1\.3
 File abc/file2\.txt is new; current revision 1\.1"
 
-	  rm -rf ${CVSROOT_DIRNAME}/abc
+	  rmproj abc
 	  ;;
+
+
 
 	rdiff2)
 	  # Test for the segv problem reported by James Cribb
@@ -4808,8 +4954,10 @@ diff -c m/d/bar:1\.1\.1\.1 m/d/bar:1\.2
 	  fi
 	  cd ../..
 	  rm -rf rdiff2
-	  rm -rf ${CVSROOT_DIRNAME}/m
+	  rmproj m
 	  ;;
+
+
 
 	diff)
 	  # Various tests specific to the "cvs diff" command.
@@ -4819,10 +4967,10 @@ diff -c m/d/bar:1\.1\.1\.1 m/d/bar:1\.2
 	  #   rdiff: cvs rdiff.
 	  #   diffmerge*: nuts and bolts (stuff within diff library)
 	  mkdir 1; cd 1
-	  dotest diff-1 "${testcvs} -q co -l ." ''
+	  dotest diff-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest diff-2 "${testcvs} add first-dir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  dotest diff-2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
 	  cd first-dir
 
 	  # diff is anomalous.  Most CVS commands print the "nothing
@@ -4861,9 +5009,11 @@ extern int gethostname ();
 	  fi
 
 	  cd ../..
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  rm -r 1
 	  ;;
+
+
 
 	diffnl)
 	  # Test handling of 'cvs diff' of files without newlines
@@ -5012,8 +5162,10 @@ diff -u -r1\.4 abc
 	
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	death)
 		# next dive.  test death support.
@@ -5023,12 +5175,8 @@ diff -u -r1\.4 abc
 		# add new death support tests to a new section rather
 		# than continuing to piggyback them onto the tests here.
 
-		mkdir  ${CVSROOT_DIRNAME}/first-dir
-		if ${CVS} co first-dir  ; then
-		    pass 65
-		else
-		    fail 65
-		fi
+		mkproj first-dir
+		dotest death-init-1 "$testcvs -Q co first-dir"
 
 		cd first-dir
 
@@ -5372,13 +5520,19 @@ U first-dir/file3'
 		# trunk version) and HEAD.
 		dotest_fail death-file2-1 "test -f file2" ''
 
-		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+		dokeep
+
+		cd ..
+		rm -r first-dir
+		rmproj first-dir
 		;;
+
+
 
 	death2)
 	  # More tests of death support.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
-	  dotest death2-1 "${testcvs} -q co first-dir" ''
+	  mkproj first-dir
+	  dotest death2-1 "$testcvs -q co first-dir"
 
 	  cd first-dir
 
@@ -5710,15 +5864,21 @@ new revision: delete; previous revision: 1\.2"
 "${SPROG} update: conflict: \`file4' is modified but no longer in the repository
 C file4"
 
-	  cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  dokeep
+
+	  cd ..
+	  rm -r first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	rm-update-message)
 	  # FIXME
 	  # local CVS prints a warning message when update notices a missing
 	  # file and client/server CVS doesn't.  These should be identical.
 	  mkdir rm-update-message; cd rm-update-message
-	  mkdir $CVSROOT_DIRNAME/rm-update-message
+	  mkproj rm-update-message
 	  dotest rm-update-message-setup-1 "$testcvs -q co rm-update-message" ''
 	  cd rm-update-message
 	  file=x
@@ -5734,14 +5894,13 @@ initial revision: 1\.1"
 "${SPROG} update: warning: \`$file' was lost
 U $file"
 
-	  if $keep; then
-	    echo Keeping ${TESTDIR} and exiting due to --keep
-	    exit 0
-	  fi
+	  dokeep
 	  cd ../..
 	  rm -r rm-update-message
-	  rm -rf $CVSROOT_DIRNAME/rm-update-message
+	  rmproj rm-update-message
 	  ;;
+
+
 
 	rmadd)
 	  # More tests of adding and removing files.
@@ -5753,7 +5912,7 @@ U $file"
 	  #   * basica-8a2: likewise.
 	  #   * keywordlog-4: adding a new file with numeric revision.
 	  mkdir 1; cd 1
-	  dotest rmadd-1 "${testcvs} -q co -l ." ''
+	  dotest rmadd-1 "$testcvs -q co -l ."
 	  mkdir first-dir
 	  dotest rmadd-2 "${testcvs} add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
@@ -5934,10 +6093,13 @@ new revision: 9\.1; previous revision: 1\.1"
 	    dotest rmadd-33 "cat sub/CVS/Tag" "T9"
 	  fi
 
+	  dokeep
 	  cd ../..
 	  rm -r 1
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rmproj first-dir
 	  ;;
+
+
 
 	rmadd2)
 	  # Tests of undoing commits, including in the presence of
@@ -6650,6 +6812,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg
@@ -6676,6 +6842,10 @@ CVSROOT:
 ---- $ISO8601DATE 1\.[0-9][0-9]*        loginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        modules
 ---- $ISO8601DATE 1\.[0-9][0-9]*        notify
+---- $ISO8601DATE 1\.[0-9][0-9]*        preproxy
+---- $ISO8601DATE 1\.[0-9][0-9]*        postadmin
+---- $ISO8601DATE 1\.[0-9][0-9]*        postproxy
+---- $ISO8601DATE 1\.[0-9][0-9]*        posttag
 ---- $ISO8601DATE 1\.[0-9][0-9]*        rcsinfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        taginfo
 ---- $ISO8601DATE 1\.[0-9][0-9]*        verifymsg
@@ -6702,6 +6872,10 @@ CVSROOT:
 /loginfo/1\.[0-9][0-9]*/$DATE//
 /modules/1\.[0-9][0-9]*/$DATE//
 /notify/1\.[0-9][0-9]*/$DATE//
+/preproxy/1\.[0-9][0-9]*/$DATE//
+/postadmin/1\.[0-9][0-9]*/$DATE//
+/postproxy/1\.[0-9][0-9]*/$DATE//
+/posttag/1\.[0-9][0-9]*/$DATE//
 /rcsinfo/1\.[0-9][0-9]*/$DATE//
 /taginfo/1\.[0-9][0-9]*/$DATE//
 /verifymsg/1\.[0-9][0-9]*/$DATE//
@@ -6727,6 +6901,10 @@ cvswrappers
 loginfo
 modules
 notify
+preproxy
+postadmin
+postproxy
+posttag
 rcsinfo
 taginfo
 verifymsg
@@ -10781,6 +10959,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -10895,6 +11077,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -10916,6 +11102,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -10940,6 +11130,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg'
@@ -10997,6 +11191,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -11764,6 +11962,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -14042,6 +14244,14 @@ ${CPROG} checkout: move away \`CVSROOT/modules'; it is in the way
 C CVSROOT/modules
 ${CPROG} checkout: move away \`CVSROOT/notify'; it is in the way
 C CVSROOT/notify
+${CPROG} checkout: move away \`CVSROOT/preproxy'; it is in the way
+C CVSROOT/preproxy
+${CPROG} checkout: move away \`CVSROOT/postadmin'; it is in the way
+C CVSROOT/postadmin
+${CPROG} checkout: move away \`CVSROOT/postproxy'; it is in the way
+C CVSROOT/postproxy
+${CPROG} checkout: move away \`CVSROOT/posttag'; it is in the way
+C CVSROOT/posttag
 ${CPROG} checkout: move away \`CVSROOT/rcsinfo'; it is in the way
 C CVSROOT/rcsinfo
 ${CPROG} checkout: move away \`CVSROOT/taginfo'; it is in the way
@@ -28103,7 +28313,7 @@ ${SPROG} update: Updating first/subdir"
 	  if $remote; then
 	    PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
 	    PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
-	    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+	    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
 	    SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
 
 	    # Initialize the primary repository
@@ -28113,33 +28323,34 @@ ${SPROG} update: Updating first/subdir"
 	    dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
 	    cd CVSROOT
 	    cat >>loginfo <<EOF
-ALL rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 EOF
 	    cat >>config <<EOF
 PrimaryServer=$PRIMARY_CVSROOT
 EOF
 	    dotest writeproxy-init-3 \
-"$testcvs -Qd$PRIMARY_CVSROOT ci -mconfigure-writeproxy"
+"$testcvs -Q ci -mconfigure-writeproxy"
 
 	    # And now the secondary.
 	    rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 
 	    # Wrap the CVS server to allow --primary-root to be set by the
 	    # secondary.
-	    cat <<EOF >$TESTDIR/secondary-wrapper
+	    cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
 #! /bin/sh
-export CVS_SERVER=$TESTDIR/primary-wrapper
-$CVS_SERVER --primary-root $TESTDIR/primary_cvsroot=$TESTDIR/secondary_cvsroot "\$@"
+export CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+$CVS_SERVER --primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
 EOF
-	    cat <<EOF >$TESTDIR/primary-wrapper
+	    cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
 #! /bin/sh
 #CVS_SERVER_LOG=/tmp/cvsprimarylog
 $CVS_SERVER "\$@"
 EOF
 
-	    chmod a+x $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
+	    chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
+	              $TESTDIR/writeproxy-primary-wrapper
 	    CVS_SERVER_save=$CVS_SERVER
-	    CVS_SERVER_secondary=$TESTDIR/secondary-wrapper
+	    CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
 	    CVS_SERVER=$CVS_SERVER_secondary
 
 	    # Checkout from secondary
@@ -28162,6 +28373,10 @@ U CVSROOT/cvswrappers
 U CVSROOT/loginfo
 U CVSROOT/modules
 U CVSROOT/notify
+U CVSROOT/preproxy
+U CVSROOT/postadmin
+U CVSROOT/postproxy
+U CVSROOT/posttag
 U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
@@ -28169,7 +28384,7 @@ U CVSROOT/verifymsg"
 	    # Confirm data present
 	    cd CVSROOT
 	    dotest writeproxy-2 "grep rsync loginfo" \
-"ALL rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
+"ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
 	    dotest writeproxy-3 "grep PrimaryServer config" \
 "${DOTSTAR}
 PrimaryServer=$PRIMARY_CVSROOT"
@@ -28238,7 +28453,8 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
 	    cd ../../..
 	    rm -r writeproxy
 	    rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
-	    rm $TESTDIR/secondary-wrapper $TESTDIR/primary-wrapper
+	    rm $TESTDIR/writeproxy-secondary-wrapper \
+	       $TESTDIR/writeproxy-primary-wrapper
 	    CVS_SERVER=$CVS_SERVER_save
 	  fi
 	  ;;
@@ -28269,6 +28485,10 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
   *-> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
+  *-> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
   *-> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -28296,6 +28516,10 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $SECONDARY_CVS
   *-> unlink_file(\.#loginfo)
   *-> unlink_file(\.#modules)
   *-> unlink_file(\.#notify)
+  *-> unlink_file(\.#preproxy)
+  *-> unlink_file(\.#postadmin)
+  *-> unlink_file(\.#postproxy)
+  *-> unlink_file(\.#posttag)
   *-> unlink_file(\.#rcsinfo)
   *-> unlink_file(\.#taginfo)
   *-> unlink_file(\.#verifymsg)
@@ -28318,6 +28542,10 @@ S -> RCS_checkout (cvswrappers,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (loginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (modules,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (notify,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (preproxy,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (postadmin,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (postproxy,v, , , , \.#[0-9][0-9]*)
+S -> RCS_checkout (posttag,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (rcsinfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (taginfo,v, , , , \.#[0-9][0-9]*)
 S -> RCS_checkout (verifymsg,v, , , , \.#[0-9][0-9]*)
@@ -28349,6 +28577,10 @@ S -> unlink_file(\.#cvswrappers)
 S -> unlink_file(\.#loginfo)
 S -> unlink_file(\.#modules)
 S -> unlink_file(\.#notify)
+S -> unlink_file(\.#preproxy)
+S -> unlink_file(\.#postadmin)
+S -> unlink_file(\.#postproxy)
+S -> unlink_file(\.#posttag)
 S -> unlink_file(\.#rcsinfo)
 S -> unlink_file(\.#taginfo)
 S -> unlink_file(\.#verifymsg)" \
@@ -31221,6 +31453,27 @@ You have \[0\] altered files in this repository\."
     # are noticed during single test runs.
     if test "x$TESTDIR" != "x`pwd`"; then
 	    fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
+    fi
+
+    # Test that the last test didn't overwrite any write proxy configuration
+    # which may be in place.
+    if $proxy; then
+	problem=false
+	for file in $SECONDARY_CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $CVSROOT_DIRNAME/CVSROOT/loginfo \
+	            $SECONDARY_CVSROOT_DIRNAME/CVSROOT/config \
+	            $CVSROOT_DIRNAME/CVSROOT/config; do
+	    if cmp $file $TESTDIR/`basename $file`-clean >/dev/null 2>&1; then
+		:;
+	    else
+		echo "\`$file' and \`$TESTDIR/`basename $file`-clean' differ." \
+		     >&2
+		problem=:
+	    fi
+	done
+	if $problem; then
+	    fail "cleanup: write proxy configuration not preserved"
+	fi
     fi
 
     # Test our temp directory for cvs-serv* directories and cvsXXXXXX temp
