@@ -1,3 +1,8 @@
+Wed Nov 26 10:12:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: Always use "rb" and "wb".  Check for O_BINARY with an
+	#ifdef, not the error-prone LINES_CRLF_TERMINATED.
+
 Thu Sep 25 10:57:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.y (get_date): If gmtime returns NULL, try to cope.
