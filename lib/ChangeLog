@@ -1,3 +1,7 @@
+2005-01-31  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am: Update copyright notices.
+
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
 	* regex.c: Back out my change from 2004-04-07 as possibly suppressing
