@@ -1,3 +1,7 @@
+2003-02-01  Derek Price  <derek@ximbiot.com>
+
+	* lock.c: Remove extra line feed on TRACE output.
+
 2003-01-31  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Move header includes in from...
