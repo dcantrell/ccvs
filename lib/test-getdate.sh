@@ -55,8 +55,19 @@
 # 1996-12-12 1 month
 #   Test a relative date.
 #
+# Tue Jan 19 03:14:07 2038 +0000
+#   For machines with 31-bit time_t, any date past this date will be an
+#   invalid date. So, any test date with a value greater than this
+#   time is not portable.
+#
+# Feb. 29, 2096 4 years
+#   4 years from this date is _not_ a leap year, so Feb. 29th does not exist.
+#
 # Feb. 29, 2096 8 years
-#   8 years from this date is _not_ a leap year, so Feb. 29th does not exist.
+#   8 years from this date is a leap year, so Feb. 29th does exist,
+#   but on many hosts with 32-bit time_t types time, this test will
+#   fail. So, this is not a portable test.
+#
 
 TZ=UTC0; export TZ
 
@@ -77,7 +88,6 @@ Enter date, or blank line to exit.
 	> Bad format - couldn't convert.
 	> 1970-01-01 06:00:00.000000000
 	> 1997-01-12 00:00:00.000000000
-	> Bad format - couldn't convert.
 	> 
 EOF
 
@@ -97,7 +107,6 @@ third tuesday in March, 2078
 1969-12-32 2:00:00 -0400
 1970-01-01 2:00:00 -0400
 1996-12-12 1 month
-Feb. 29, 2096 8 years
 EOF
 
 echo >>getdate-got
