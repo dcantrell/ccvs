@@ -1,3 +1,7 @@
+2004-11-30  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Responses): Document the `Referrer' response.
+
 2004-11-29  Larry Jones  <lawrence.jones@ugs.com>
 
 	* cvs.texinfo (Keyword list): Add LocalKeyword and KeywordExpand.

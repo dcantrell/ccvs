@@ -1509,6 +1509,14 @@ is a space separated list of tokens.  If the server supports sending
 patches, it will include @samp{update-patches} in this list.  The
 @samp{update-patches} request does not actually do anything.
 
+@item Referrer @var{CVSROOT}
+Request that the client store @var{CVSROOT} as the name of this server and that
+this name be passed via a @code{Referrer} @emph{request} to any subsequent
+servers contacted as a result of a @code{Redirect} response.  This can be
+useful to allow the secondary administrator to configure the @code{CVSROOT} the
+primary should use to update the secondary in case the client uses a
+non-standard name or even a name that is unique to the client for some reason.
+
 @item Redirect @var{CVSROOT}
 Request that the client redirect its connection to @var{CVSROOT} and begin
 again.  This response is only valid in response to a @code{Command-prep}
