@@ -386,6 +386,7 @@ patch_fileproc (callerdat, finfo)
     size_t line2_chars_allocated;
     char *cp1, *cp2;
     FILE *fp;
+    int line_length;
 
     line1 = NULL;
     line1_chars_allocated = 0;
@@ -676,10 +677,15 @@ patch_fileproc (callerdat, finfo)
 	    cvs_output (cp2, 0);
 
 	    /* spew the rest of the diff out */
-	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
+	    while ((line_length
+		    = getline (&line1, &line1_chars_allocated, fp))
+		   >= 0)
 		cvs_output (line1, 0);
+	    if (line_length < 0 && !feof (fp))
+		error (0, errno, "cannot read %s", tmpfile3);
 
-	    (void) fclose (fp);
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close %s", tmpfile3);
 	    free (file1);
 	    free (file2);
 	    break;
@@ -691,10 +697,12 @@ patch_fileproc (callerdat, finfo)
         free (line1);
     if (line2)
         free (line2);
-    /* FIXME: should be checking for errors.  */
-    (void) CVS_UNLINK (tmpfile1);
-    (void) CVS_UNLINK (tmpfile2);
-    (void) CVS_UNLINK (tmpfile3);
+    if (CVS_UNLINK (tmpfile1) < 0)
+	error (0, errno, "cannot unlink %s", tmpfile1);
+    if (CVS_UNLINK (tmpfile2) < 0)
+	error (0, errno, "cannot unlink %s", tmpfile2);
+    if (CVS_UNLINK (tmpfile3) < 0)
+	error (0, errno, "cannot unlink %s", tmpfile3);
     free (tmpfile1);
     free (tmpfile2);
     free (tmpfile3);

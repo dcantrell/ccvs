@@ -103,6 +103,9 @@ read_cvsrc (argc, argv, cmdname)
 	}
     }
 
+    if (line_length < 0 && !feof (cvsrcfile))
+	error (0, errno, "cannot read %s", homeinit);
+
     fclose (cvsrcfile);
 
     /* setup the new options list */

@@ -345,8 +345,16 @@ do_editor (dir, messagep, repository, changes)
 	    (void) printf ("Action: (continue) ");
 	    (void) fflush (stdout);
 	    line_length = getline (&line, &line_chars_allocated, stdin);
-	    if (line_length <= 0
-		    || *line == '\n' || *line == 'c' || *line == 'C')
+	    if (line_length < 0)
+	    {
+		error (0, errno, "cannot read from stdin");
+		if (unlink_file (fname) < 0)
+		    error (0, errno,
+			   "warning: cannot remove temp file %s", fname);
+		error (1, 0, "aborting");
+	    }
+	    else if (line_length == 0
+		     || *line == '\n' || *line == 'c' || *line == 'C')
 		break;
 	    if (*line == 'a' || *line == 'A')
 		{
