@@ -17,9 +17,9 @@ vms_start_server (int *tofd, int *fromfd,
 
   if (! (cvs_server = getenv ("CVS_SERVER")))
       cvs_server = "cvs";
-  command = alloca(strlen (cvs_server)
-                   + strlen (server_cvsroot)
-                   + 50);
+  command = xmalloc (strlen (cvs_server)
+		     + strlen (server_cvsroot)
+		     + 50);
   sprintf(command, "%s server", cvs_server);
 
 #ifdef USE_PRIVILEGED_RCMD
@@ -52,4 +52,5 @@ vms_start_server (int *tofd, int *fromfd,
 
   *tofd = fd;
   *fromfd = fd;
+  free (command);
 }

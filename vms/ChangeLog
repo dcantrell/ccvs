@@ -1,3 +1,9 @@
+Wed Feb 28 11:08:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* alloca.c: Removed.
+	* build_vms.com: Remove alloca.
+	* startserver.c (vms_start_server): Use xmalloc/free, not alloca.
+
 Wed Feb 28 03:38:42 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* VMS support files added.
