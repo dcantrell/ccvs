@@ -1,3 +1,12 @@
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
+	* config.h (PACKAGE_STRING): updated to 1.12.0.1;
+	changed USE_PROTOTYPES to PROTOTYPES
+	* filesubr.c: synchronized logic in deep_remove_dir() with
+	src/filesubr.c; copied xresolvepath(), cvs_casecmp(),
+	locate_file_in_dir(), and locate_rcs().
+	(Patch from Anthon Pang <apang@telus.net>.)
+
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated.
