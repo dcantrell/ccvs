@@ -1,3 +1,9 @@
+Sun Mar  2 21:56:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.MacCVS: Be a little more explicit about what
+	MacCVS68k.sit.hqx and MacCVSPPC.sit.hqx are; at least one user got
+	confused and throught they were CVS executables.
+
 Wed Jan 29 18:26:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h (GREP): Removed; no longer used.
