@@ -13,7 +13,6 @@ struct passwd {
 };
 
 struct passwd *getpwuid(/* really uid_t, but see above about declaring it */);
-struct passwd *getpwnam(char *);
 char *getlogin(void); 
 
 #else
