@@ -1,5 +1,13 @@
 2003-07-20  Derek Price  <derek@ximbiot.com>
 
+	* server.c: Add PAM support.
+	(cvs_pam_userinfo): New data type for PAM conversations.
+	(cvs_pam_conv): New function.
+	(check_password): Add PAM support.
+	(Original patch from Brian Murphy <brian@murphy.dk>.)
+
+2003-07-20  Derek Price  <derek@ximbiot.com>
+
 	* wrapper.c: Remove mention of obsolete -f and -t wrapper options from
 	a comment.
 
