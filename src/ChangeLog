@@ -1,3 +1,7 @@
+2001-02-14  Larry Jones  <larry.jones@sdrc.com>
+
+	* build_src.com: Remove references to rtag.c & rtag.obj.
+
 2000-02-13  Derek Price  <derek.price@openavenue.com>
 
 	* main.c (date_to_tm): New function to convert an RCS date string to a
