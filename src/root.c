@@ -576,7 +576,7 @@ parse_cvsroot (root_in)
 	    goto error_exit;
 	}
 	no_port = 1;
-	/* no_passwd already set */
+	/* no_password already set */
 	break;
     case fork_method:
 	/* We want :fork: to behave the same as other remote access
@@ -596,7 +596,7 @@ parse_cvsroot (root_in)
 	    goto error_exit;
 	}
 	no_port = 1;
-	/* no_passwd already set */
+	/* no_password already set */
 	break;
     case kserver_method:
 #ifndef HAVE_KERBEROS
@@ -605,7 +605,7 @@ parse_cvsroot (root_in)
 	goto error_exit;
 #else
 	check_hostname = 1;
-	/* no_passwd already set */
+	/* no_password already set */
 	break;
 #endif
     case gserver_method:
@@ -615,13 +615,13 @@ parse_cvsroot (root_in)
 	goto error_exit;
 #else
 	check_hostname = 1;
-	/* no_passwd already set */
+	/* no_password already set */
 	break;
 #endif
     case server_method:
     case ext_method:
 	no_port = 1;
-	/* no_passwd already set */
+	/* no_password already set */
 	check_hostname = 1;
 	break;
     case pserver_method:
