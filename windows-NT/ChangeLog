@@ -1,3 +1,7 @@
+2004-09-17  Derek Price  <derek@ximbiot.com>
+
+	* stripslash.c: Remove file.
+
 2004-09-14  Mark D. Baushke  <mdb@cvshome.org>
 
 	* filesubr.c (cvs_casecmp): Moved to src/subr.c
