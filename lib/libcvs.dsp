@@ -173,6 +173,10 @@ SOURCE=.\sighandle.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\strcasecmp.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\strftime.c
 # End Source File
 # Begin Source File
@@ -202,10 +206,6 @@ SOURCE=.\xgetcwd.c
 # Begin Source File
 
 SOURCE=.\xmalloc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\xstrdup.c
 # End Source File
 # Begin Source File
 
@@ -312,6 +312,37 @@ SOURCE=.\getndelim2.h
 # Begin Source File
 
 SOURCE=.\getopt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\getopt_.h
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+# Begin Custom Build
+InputPath=.\getopt_.h
+
+".\getopt.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\getopt_.h .\getopt.h
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+# Begin Custom Build
+InputPath=.\getopt_.h
+
+".\getopt.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	copy .\getopt_.h .\getopt.h
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\getopt_int.h
 # End Source File
 # Begin Source File
 

@@ -33,7 +33,7 @@ INTDIR=.\WinRel
 OutDir=.\WinRel
 # End Custom Macros
 
-ALL : ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
+ALL : ".\getopt.h" ".\fnmatch.h" ".\alloca.h" "$(OUTDIR)\libcvs.lib"
 
 
 CLEAN :
@@ -59,6 +59,7 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
@@ -68,11 +69,11 @@ CLEAN :
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
-	-@erase "$(INTDIR)\xstrdup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 	-@erase ".\alloca.h"
 	-@erase ".\fnmatch.h"
+	-@erase ".\getopt.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -140,6 +141,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\regex.obj" \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
@@ -148,7 +150,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\xstrdup.obj" \
 	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
@@ -190,6 +191,7 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\strcasecmp.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
 	-@erase "$(INTDIR)\time_r.obj"
@@ -200,7 +202,6 @@ CLEAN :
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
-	-@erase "$(INTDIR)\xstrdup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
 	-@erase "$(OUTDIR)\libcvs.lib"
 
@@ -270,6 +271,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\regex.obj" \
 	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\strcasecmp.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
@@ -278,7 +280,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\xstrdup.obj" \
 	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
@@ -409,6 +410,11 @@ SOURCE=.\sighandle.c
 "$(INTDIR)\sighandle.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\strcasecmp.c
+
+"$(INTDIR)\strcasecmp.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\strftime.c
 
 "$(INTDIR)\strftime.obj" : $(SOURCE) "$(INTDIR)"
@@ -447,11 +453,6 @@ SOURCE=.\xgetcwd.c
 SOURCE=.\xmalloc.c
 
 "$(INTDIR)\xmalloc.obj" : $(SOURCE) "$(INTDIR)"
-
-
-SOURCE=.\xstrdup.c
-
-"$(INTDIR)\xstrdup.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\yesno.c
@@ -506,6 +507,32 @@ InputPath=.\fnmatch_.h
 	<<tempfile.bat 
 	@echo off 
 	copy .\fnmatch_.h .\fnmatch.h
+<< 
+	
+
+!ENDIF 
+
+SOURCE=.\getopt_.h
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+InputPath=.\getopt_.h
+
+".\getopt.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	copy .\getopt_.h .\getopt.h
+<< 
+	
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+InputPath=.\getopt_.h
+
+".\getopt.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	copy .\getopt_.h .\getopt.h
 << 
 	
 

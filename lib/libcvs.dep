@@ -35,6 +35,7 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
+	".\getopt.h"\
 	".\gettext.h"\
 	".\system.h"\
 	".\timespec.h"\
@@ -43,6 +44,7 @@
 
 .\fnmatch.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	".\alloca.h"\
 	".\fnmatch.h"\
 	".\fnmatch_loop.c"\
@@ -70,18 +72,19 @@
 .\getndelim2.c : \
 	"..\windows-NT\config.h"\
 	".\getndelim2.h"\
-	".\unlocked-io.h"\
 	
 
 .\getopt.c : \
 	"..\windows-NT\config.h"\
 	".\getopt.h"\
+	".\getopt_int.h"\
 	".\gettext.h"\
 	
 
 .\getopt1.c : \
 	"..\windows-NT\config.h"\
 	".\getopt.h"\
+	".\getopt_int.h"\
 	
 
 .\gettime.c : \
@@ -131,10 +134,15 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
+	".\getopt.h"\
 	".\gettext.h"\
 	".\system.h"\
 	".\timespec.h"\
 	".\unlocked-io.h"\
+	
+
+.\strcasecmp.c : \
+	"..\windows-NT\config.h"\
 	
 
 .\strftime.c : \
@@ -160,6 +168,7 @@
 	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
+	".\getopt.h"\
 	".\getpagesize.h"\
 	".\gettext.h"\
 	".\system.h"\
@@ -196,14 +205,15 @@
 	".\xalloc.h"\
 	
 
-.\xstrdup.c : \
-	"..\windows-NT\config.h"\
-	".\xalloc.h"\
-	
-
 .\yesno.c : \
 	"..\windows-NT\config.h"\
 	
+
+!IF  "$(CFG)" == "libcvs - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "libcvs - Win32 Debug"
+
+!ENDIF 
 
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
