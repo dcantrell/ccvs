@@ -1,5 +1,10 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Call gl_XGETCWD.
+	* srclist.txt (xgetcwd): New module.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt (pathmax): Remove dependency on onceonly_2_57.m4.
 
 2004-10-05  Derek Price  <derek@ximbiot.com>
