@@ -1,19 +1,25 @@
-2001-05-08  Derek Price  <oberon@umich.edu>
+2002-05-09  Larry Jones  <lawrence.jones@eds.com>
+
+	* getline.c (getstr): Make terminator int instead of char to avoid
+	promotion problems.
+	* getline.h (getstr): Change to match.
+
+2002-05-08  Derek Price  <oberon@umich.edu>
 
 	* Makefile.in: Regenerated.
 	* fnmatch.h: Move this file...
 	* fnmatch.h.in: here.
 
-2001-05-08  Derek Price  <oberon@umich.edu>
+2002-05-08  Derek Price  <oberon@umich.edu>
 
 	* strerror.c: Use HAVE_CONFIG_H and put config.h in brackets rather
 	than quotes.
 
-2001-05-02  Derek Price  <oberon@umich.edu>
+2002-05-02  Derek Price  <oberon@umich.edu>
 
 	* fnmatch.h: More #defines to avoid Mac OS X namespace conflicts.
 
-2001-04-30  Derek Price  <oberon@umich.edu>
+2002-04-30  Derek Price  <oberon@umich.edu>
 
 	* hostname.c: Rename to...
 	* gethostname.c: this.
@@ -21,7 +27,7 @@
 
 	* Makefile.in: Regenerated with automake 1.6.
 
-2001-04-28  Derek Price  <oberon@umich.edu>
+2002-04-28  Derek Price  <oberon@umich.edu>
 
 	* getopt.h: #define new names for functions and variables when they
 	might conflict with system definitions (namely on Mac OS X 10.1 with
