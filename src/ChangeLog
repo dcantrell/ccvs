@@ -1,3 +1,10 @@
+1999-09-29  Larry Jones  <larry.jones@sdrc.com>
+
+	* entries.c (Subdirs_Known): Use entfilename when opening CVSADM_ENTLOG
+	like everywhere else.  Although this isn't strictly necessary (since
+	we immediately close it again), it keeps the code consistent and fixes
+	a bug where an open error reported the wrong file name.
+
 1999-09-16  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (log_parse_revlist): Handle peculiar revision specs like
