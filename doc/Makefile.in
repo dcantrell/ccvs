@@ -133,7 +133,7 @@ distclean: clean
 .PHONY: distclean
 
 realclean: distclean
-	rm -f cvs.info* cvs-paper.ps
+	rm -f cvs.info* cvs.ps cvs-paper.ps cvsclient.info* cvsclient.ps
 .PHONY: realclean
 
 dist-dir: $(DISTFILES)
