@@ -1,3 +1,14 @@
+2002-10-24  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (stdio_buffer_shutdown): Remove the getc() call used to
+	detect spurious output from clients since getc() would sometimes
+	block and hang indefinately if the client kept the conection open but
+	sent no data.  Bug reports state that this hapened frequently with
+	older clients connecting to 1.11.2 servers, especially when
+	compression is enabled.
+	(Original report from Mark D. Baushke <mdb@juniper.net>.
+	 Original patch from Peter Wemm <peter@freebsd.org>.)
+
 2002-10-05  Larry Jones  <lawrence.jones@eds.com>
 
 	* recurse.c (start_recursion, do_recursion): Allow write locking
