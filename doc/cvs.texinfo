@@ -2134,6 +2134,7 @@ variable.
 * GSSAPI authenticated::        Direct connections using GSSAPI
 * Kerberos authenticated::      Direct connections with Kerberos
 * Connecting via fork::         Using a forked @code{cvs server} to connect
+* Write proxies::               Distributing load across several CVS servers
 @end menu
 
 @node Server requirements
@@ -2959,6 +2960,63 @@ cvs -d :fork:/usr/local/cvsroot checkout foo
 As with @code{:ext:}, the server is called @samp{cvs}
 by default, or the value of the @code{CVS_SERVER}
 environment variable.
+
+
+@node Write proxies
+@subsection Distributing load across several CVS servers
+
+@cindex PrimaryServer, in CVSROOT/config
+@cindex Primary server
+@cindex Secondary server
+@cindex proxy, write
+@cindex write proxy
+@sc{cvs} can be configured to distribute usage across several @sc{cvs}
+servers.  This is accomplished by means of one or more @dfn{write proxies}, or
+@dfn{secondary servers}, for a single @dfn{primary server}.
+
+When a @sc{cvs} client accesses a secondary server and only sends read
+requests, then the secondary server handles the entire request.  If the client
+sends any write requests, however, the secondary server becomes a transparent
+proxy for the primary server, which actually handles the write request.
+
+In this manner, any number of read-only secondary servers may be configured as
+write proxies for the primary server, effectively distributing the load from
+all read operations between the secondary servers and restricting the load on
+the primary server to write operations and pushing changes to the secondaries.
+
+Primary servers will not automatically push changes to secondaries.  This must
+be configured via a @file{loginfo} script like the following:
+
+@example
+ALL	rsync -gopr -essh ./ secondary:/cvsroot/%p &
+@end example
+
+You would probably actually want to lock directories for write on the secondary
+and for read on the primary before running the @samp{rsync} in the above
+example, but describing such a setup is beyond the scope of this document.
+
+A secondary advantage of a write proxy setup is that users pointing at the
+secondary server can still execute fast read operations while on a network that
+connects to the primary over a slow link or even one where the link to the
+primary is periodically broken.  Only write operations will require the network
+link to the primary.
+
+To configure write proxies, the primary must be specified with the
+@samp{PrimaryServer} option in @file{CVSROOT/config} (@pxref{config}).
+
+Once a primary server is configured, secondary servers may be configured by:
+
+@enumerate
+@item
+Duplicating the primary repository at the new location.
+@item
+Setting up the loginfo file on the primary to propagate writes to the
+new secondary.
+@item
+Configuring local access to the secondary as you would configure access to any
+other CVS server (@pxref{Remote repositories}).
+@end enumerate
+
 
 @c ---------------------------------------------------------------------
 @node Read-only access
@@ -14087,7 +14145,23 @@ please see @ref{Updating Commit Files}.
 
 @emph{Note that new repositories (created with the @code{cvs init} command)
 will have this value set to @samp{yes}, but the default value is @samp{no}.}
+
+@cindex PrimaryServer, in CVSROOT/config
+@cindex Primary server
+@cindex Secondary server
+@cindex proxy, write
+@cindex write proxy
+@item PrimaryServer=@var{CVSROOT}
+When specified, and the repository specified by @var{CVSROOT} is not the one
+currently being accessed, then the server will turn itself into a transparent
+proxy to @var{CVSROOT} for write requests.  Only the @samp{:ext:} method is
+currently supported for primaries (actually, @samp{:fork:} is supported as
+well, but only for testing - if you find another use for accessing a primary
+via the @samp{:fork:} method, please send a note to @email{bug-cvs@@gnu.org}
+about it).  See @xref{Write proxies} for more on configuring and using write
+proxies.
 @end table
+
 
 @c ---------------------------------------------------------------------
 @node Environment variables

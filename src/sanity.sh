@@ -1106,6 +1106,7 @@ if test x"$*" = x; then
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
 	tests="${tests} dottedroot fork commit-d template"
+	tests="${tests} writeproxy"
 else
 	tests="$*"
 fi
@@ -28090,6 +28091,101 @@ ${SPROG} update: Updating first/subdir"
 	  cd ..
 	  rm -rf template
 	  ;;
+
+
+
+	writeproxy)
+	  # Various tests for a read-only CVS mirror set up as a write-proxy
+	  # for a central server.
+	  #
+	  # These tests are only meaningful in client/server mode.
+	  if $remote; then
+	    PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	    PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	    SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
+	    SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+
+	    # Initialize the primary repository
+	    dotest writeproxy-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
+	    mkdir writeproxy; cd writeproxy
+	    mkdir primary; cd primary
+	    dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	    cd CVSROOT
+	    cat >>loginfo <<EOF
+ALL rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+	    cat >>config <<EOF
+PrimaryServer=$PRIMARY_CVSROOT
+EOF
+	    dotest writeproxy-init-3 \
+"$testcvs -Qd$PRIMARY_CVSROOT ci -mconfigure-writeproxy"
+
+	    # And now the secondary.
+	    rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+	    # Checkout from secondary
+	    cd ../..
+	    mkdir secondary; cd secondary
+	    dotest writeproxy-1 "$testcvs -qd$SECONDARY_CVSROOT co CVSROOT" \
+"U CVSROOT/checkoutlist
+U CVSROOT/commitinfo
+U CVSROOT/config
+U CVSROOT/cvswrappers
+U CVSROOT/loginfo
+U CVSROOT/modules
+U CVSROOT/notify
+U CVSROOT/rcsinfo
+U CVSROOT/taginfo
+U CVSROOT/verifymsg"
+
+	    # Confirm data present
+	    cd CVSROOT
+	    dotest writeproxy-2 "grep rsync loginfo" \
+"ALL rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
+	    dotest writeproxy-3 "grep PrimaryServer config" \
+"${DOTSTAR}
+PrimaryServer=$PRIMARY_CVSROOT"
+
+	    # Checkin to secondary
+	    cd ..
+	    dotest writeproxy-4 "$testcvs -Qd$SECONDARY_CVSROOT co -ldtop ."
+	    cd top
+	    mkdir firstdir
+	    dotest writeproxy-5 "$testcvs -Q add firstdir"
+	    cd firstdir
+	    echo now you see me >file1
+	    dotest writeproxy-6 "$testcvs -Q add file1"
+	    dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
+
+	    # Checkout from primary
+	    cd ../../../primary
+	    dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
+"U firstdir/file1"
+
+	    # Confirm data present
+	    cd firstdir
+	    dotest writeproxy-9 "cat file1" "now you see me"
+
+	    # Commit to primary
+	    echo now you see me again >file1
+	    dotest writeproxy-10 "$testcvs -Q ci -medit file1"
+
+	    # Update from secondary
+	    cd ../../secondary/firstdir
+	    dotest writeproxy-11 "$testcvs -q up" \
+"U file1"
+
+	    # Confirm data present
+	    dotest writeproxy-12 "cat file1" "now you see me again"
+
+	    dokeep
+	    cd ../../..
+	    rm -r writeproxy
+	    rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  fi
+	  ;;
+
+
 
 	trace)
 	  # Check that there are no core dumps lurking in the trace
