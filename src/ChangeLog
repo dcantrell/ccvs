@@ -1,3 +1,12 @@
+Fri Feb 23 09:23:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basica): Add comments regarding creating a top-level
+	directory.
+	(basic1): Don't try to remove first-dir and
+	${CVSROOT_DIRNAME}/first-dir at start of test; tests are now
+	responsible for cleaning up at the end.
+	(PLUS,DOTSTAR,ENDANCHOR): Add comments regarding fixed GNU expr.
+
 Thu Feb 22 22:34:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.h: Remove alloca cruft.

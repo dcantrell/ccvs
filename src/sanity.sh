@@ -69,8 +69,9 @@ fi
 
 # That we should have to do this is total bogosity, but GNU expr
 # version 1.9.4 uses the emacs definition of "$" instead of the unix
-# (e.g. SunOS 4.1.3 expr) one.  IMHO, this is a GNU expr bug, but I
-# don't have a copy of POSIX.2 handy to check.
+# (e.g. SunOS 4.1.3 expr) one.  Rumor has it this will be fixed in the
+# next release of GNU expr after 1.12 (but we still have to cater to the old
+# ones for some time because they are in many linux distributions).
 ENDANCHOR="$"
 if expr 'abc
 def' : 'abc$' >/dev/null; then
@@ -82,6 +83,9 @@ fi
 # Note that the workaround is not a complete equivalent of .* because
 # the first parenthesized expression in the regexp must match something
 # in order for expr to return a successful exit status.
+# Rumor has it this will be fixed in the
+# next release of GNU expr after 1.12 (but we still have to cater to the old
+# ones for some time because they are in many linux distributions).
 DOTSTAR='.*'
 if expr 'abc
 def' : "a${DOTSTAR}f" >/dev/null; then
@@ -95,6 +99,9 @@ fi
 # "+" is a special character, yet for unix expr (e.g. SunOS 4.1.3)
 # it is not.  I doubt that POSIX allows us to use \+ and assume it means
 # (non-special) +, so here is another workaround
+# Rumor has it this will be fixed in the
+# next release of GNU expr after 1.12 (but we still have to cater to the old
+# ones for some time because they are in many linux distributions).
 PLUS='+'
 if expr 'a +b' : "a ${PLUS}b" >/dev/null; then
   : good, it works
@@ -382,6 +389,14 @@ for what in $tests; do
 	  # Similar in spirit to some of the basic1, and basic2
 	  # tests, but hopefully a lot faster.  Also tests operating on
 	  # files two directories down *without* operating on the parent dirs.
+
+	  # Using mkdir in the repository is used throughout these
+	  # tests to create a top-level directory.  I think instead it
+	  # should be:
+	  #   cvs co -l .
+	  #   mkdir first-dir
+	  #   cvs add first-dir
+	  # but currently that works only for local CVS, not remote.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basica-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
@@ -430,8 +445,6 @@ done'
 	  ;;
 
 	basic1) # first dive - add a files, first singly, then in a group.
-		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		rm -rf first-dir
 		mkdir ${CVSROOT_DIRNAME}/first-dir
 		# check out an empty directory
 		if ${CVS} co first-dir  ; then
