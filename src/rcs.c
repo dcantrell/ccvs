@@ -815,7 +815,6 @@ freercsnode (rnodep)
 	return;
     }
     free ((*rnodep)->path);
-    free ((*rnodep)->origpath);
     if ((*rnodep)->head != (char *) NULL)
 	free ((*rnodep)->head);
     if ((*rnodep)->branch != (char *) NULL)
