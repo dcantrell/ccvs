@@ -3044,7 +3044,7 @@ get_proxy_port_number (const cvsroot_t *root)
 
     if (root->proxy_port) return root->proxy_port;
 
-    return get_port_number ("CVS_PROXY_PORT", NULL, CVS_AUTH_PORT);
+    return get_port_number ("CVS_PROXY_PORT", NULL, CVS_PROXY_PORT);
 }
 
 
