@@ -1,3 +1,9 @@
+Mon Feb 17 09:01:12 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* Makefile.in (Makefile): cause this target to fail after
+ 	rebuilding Makefile to force you to run make again to use the new
+ 	Makefile.
+
 Wed Jan 29 18:27:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h (GREP): Remove; no longer used.

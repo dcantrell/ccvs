@@ -1,3 +1,9 @@
+Mon Feb 17 08:53:11 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* Makefile.in (Makefile): cause this target to fail after
+ 	rebuilding Makefile to force you to run make again to use the new
+ 	Makefile.
+
 Wed Feb 12 18:44:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication client, Invoking CVS):
