@@ -75,6 +75,9 @@ makefiles, you might try running ./noautomake.sh after a fresh update
 
 Changes from 1.10 to 1.11:
 
+* The "cvs update" command has a new -C option to get clean copies from
+the repository, abandoning any local changes.
+
 * The new "cvs version" command gives a short version message.  If
 the repository is remote, both the client and server versions are
 reported.
