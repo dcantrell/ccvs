@@ -131,7 +131,7 @@
  *	-p repository	- Only records in which the "repository" string is a
  *			  prefix of the "repos" field are considered.
  *
- *	-m modulename	- Only records which contain "modulename" in the
+ *	-n modulename	- Only records which contain "modulename" in the
  *			  "module" field are considered.
  *
  *
@@ -439,8 +439,8 @@ history (argc, argv)
 		save_file ("", optarg, (char *) NULL);
 		break;
 	    case 'm':			/* Full module report */
-		report_count++;
-		module_report++;
+		if (!module_report++) report_count++;
+		/* fall through */
 	    case 'n':			/* Look for specified module */
 		save_module (optarg);
 		break;

@@ -1,3 +1,7 @@
+2000-12-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* history.c (history): Allow multiple -m options as documented.
+
 2000-11-29  Derek Price  <derek.price@openavenue.com>
 
 	* root.c (parse_cvsroot): back out yesterday's redundant changes
