@@ -1692,6 +1692,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	}
 	else if (data->contents == UPDATE_ENTRIES_PATCH)
 	{
+#ifdef DONT_USE_PATCH
+	    /* Hmm.  We support only Rcs-diff, and the server supports
+	       only Patched (or else it would have sent Rcs-diff instead).
+	       Fall back to transmitting entire files.  */
+	    patch_failed = 1;
+#else /* Use patch.  */
 	    int retcode;
 	    char *backup;
 	    struct stat s;
@@ -1756,6 +1762,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		patch_failed = 1;
 	    }
 	    free (backup);
+#endif /* Use patch.  */
 	}
 	else
 	{

@@ -1,5 +1,12 @@
 Mon Jul  7 14:39:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (update_entries): If DONT_USE_PATCH, then just treat a
+	Patched response as an indication to try again with complete files.
+	* update.c (update): Remove DONT_USE_PATCH ifdefs, since a CVS
+	with DONT_USE_PATCH defined can still handle Rcs-diff.
+	* sanity.sh (serverpatch): Add comment about this coming up in
+	real life if the user modifies the file while CVS is running.
+
 	* client.c (start_server): Add comment about logfiles if there are
 	several connections to the server.
 	(log_buffer_shutdown): Close the logfile after shutting down the
