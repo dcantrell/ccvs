@@ -10559,7 +10559,25 @@ Fnw1	_watched=
 D	_watched="
 	  cd ..
 
-	  cd ..
+	  # Do a little error testing
+	  dotest devcom2-18 "${testcvs} -q co -d first+dir first-dir" \
+"U first${PLUS}dir/nw1
+U first${PLUS}dir/w1
+U first${PLUS}dir/w2
+U first${PLUS}dir/w3"
+	  cd first+dir
+	  dotest_fail devcom2-19 "${testcvs} edit" \
+"${PROG} \[[a-z]* aborted\]: current directory (${TESTDIR}/2/first${PLUS}dir) contains an invalid character (${PLUS},>;=\\\\t\\\\n)"
+
+	  # Make sure there are no droppings lying around
+	  dotest devcom2-20 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
+"Fw1	_watched=
+Fw2	_watched=
+Fw3	_watched=
+Fnw1	_watched=
+D	_watched="
+
+	  cd ../..
 
 	  # Use -f because of the readonly files.
 	  rm -rf 1 2
