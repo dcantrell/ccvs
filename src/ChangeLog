@@ -1,5 +1,11 @@
 2003-05-29  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.c, rsh-client.c, socket-client.c: Allow compilation
+	with --disable-client.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+2003-05-29  Derek Price  <derek@ximbiot.com>
+
 	* gssapi-client.h: Move contents of lib/xgssapi.h here.
 	* server.c: xgssapi.h is no more.
 	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)

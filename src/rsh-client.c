@@ -13,6 +13,9 @@
 #include <config.h>
 
 #include "cvs.h"
+#include "buffer.h"
+
+#ifdef CLIENT_SUPPORT
 
 #include "rsh-client.h"
 
@@ -193,3 +196,4 @@ start_rsh_server (root, to_server_p, from_server_p)
 
 #endif /* NO_EXT_METHOD */
 
+#endif /* CLIENT_SUPPORT */
