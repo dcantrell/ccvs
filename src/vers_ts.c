@@ -95,13 +95,12 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
 	    /* If no keyword expansion was specified on command line,
 	       use whatever was in the file.  This is how we tell the client
 	       whether a file is binary.  */
-	    if (rcs->flags & PARTIAL)
-		RCS_reparsercsfile (rcs);
-	    if (rcs->expand != NULL)
+	    char *rcsexpand = RCS_getexpand (rcs);
+	    if (rcsexpand != NULL)
 	    {
-		vers_ts->options = xmalloc (strlen (rcs->expand) + 2);
+		vers_ts->options = xmalloc (strlen (rcsexpand) + 2);
 		strcpy (vers_ts->options, "-k");
-		strcat (vers_ts->options, rcs->expand);
+		strcat (vers_ts->options, rcsexpand);
 	    }
 	}
     }
