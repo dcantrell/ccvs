@@ -1100,9 +1100,6 @@
    and use ../cvsnt.mak for your project.  Thus, this is the right place to
    put configuration information for Windows NT.  */
 
-/* Define if you have the <sys/timeb.h> header file.  */
-#define HAVE_SYS_TIMEB_H 1
-
 /* Under Windows NT, mkdir only takes one argument.  */
 #define CVS_MKDIR wnt_mkdir
 int wnt_mkdir (const char *PATH, int MODE);

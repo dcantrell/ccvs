@@ -1,3 +1,7 @@
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.footer: Remove obsolete timeb stuff.
+
 2005-02-22  Derek Price  <derek@ximbiot.com>
 
 	* run.c: Sync with src/run.c.
