@@ -1,5 +1,8 @@
 Fri Mar 28 13:59:59 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Add example and further explanation
+	of what expand-modules is for.
+
 	* cvsclient.texi (Requests): Add example, hopefully making it
 	clearer what REPOSITORY and LOCAL-DIRECTORY mean to Directory.
 
