@@ -669,7 +669,7 @@ file_has_conflict (finfo, ts_conflict)
 
 #ifdef SERVER_SUPPORT
     if (server_active)
-	retcode = ts_conflict[0] == '=' && ts_conflict[1] == '\0';
+	retcode = ts_conflict[0] == '=';
     else 
 #endif /* SERVER_SUPPORT */
     {
