@@ -3932,7 +3932,7 @@ W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <
 	ls)
 	  # Test the ls & rls commands.  There are some tests of
 	  # Interaction of ls, rls, and branches in branches2.
-	  mkdir 1; cd 1
+	  mkdir ls; cd ls
 	  dotest ls-init-1 "$testcvs -Q co -dtop ."
 	  cd top
 	  dotest ls-1 "$testcvs ls CVSROOT" \
@@ -3980,7 +3980,7 @@ rcsinfo
 taginfo
 verifymsg"
 
-	  # Make sure the previous command did not leave the notcheckedout
+	  # Make sure the previous command did not create the notcheckedout
 	  # directory.
 	  dotest_fail ls-4 "test -d notcheckedout"
 
@@ -4004,10 +4004,113 @@ verifymsg
 notcheckedout:"
 	  dotest_fail ls-6 "test -d notcheckedout"
 
+	  # Several test for ls -d, which shows dead revisions
+
+	  # Set up the dead files
+	  mkdir cemetery
+	  dotest ls-d-init-1 "$testcvs -Q add cemetery"
+	  cd cemetery
+	  touch dead living
+	  dotest ls-d-init-2 "$testcvs -Q add dead living"
+	  dotest ls-d-init-3 "$testcvs -Q ci -mm dead living" \
+"RCS file: $CVSROOT_DIRNAME/cemetery/dead,v
+done
+Checking in dead;
+$CVSROOT_DIRNAME/cemetery/dead,v  <--  dead
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/cemetery/living,v
+done
+Checking in living;
+$CVSROOT_DIRNAME/cemetery/living,v  <--  living
+initial revision: 1\.1
+done"
+	  dotest ls-d-init-4 "$testcvs -Q tag -b branch"
+	  dotest ls-d-init-5 "$testcvs -Q up -A"
+	  rm dead
+	  dotest ls-d-init-6 "$testcvs -Q rm dead"
+	  dotest ls-d-init-7 "$testcvs -Q ci -mm dead" \
+"Removing dead;
+$CVSROOT_DIRNAME/cemetery/dead,v  <--  dead
+new revision: delete; previous revision: 1\.1
+done"
+	  dotest ls-d-init-8 "$testcvs -Q up -r branch"
+	  rm dead
+	  dotest ls-d-init-9 "$testcvs -Q rm dead"
+	  dotest ls-d-init-10 "$testcvs -Q ci -mm dead" \
+"Removing dead;
+$CVSROOT_DIRNAME/cemetery/Attic/dead,v  <--  dead
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # Possible output
+	  output_living="living"
+	  output_dead="dead
+living"
+
+	  # The basic test is to make sure that dead revisions are shown if and
+	  # only if -d is speficified (and that live revisions are always
+	  # shown).  The following test cases cover all combinations of these
+	  # factors:
+	  #
+	  #    + Working directory is on branch or trunk
+	  #    + ls or rls
+	  #    + implicit branch, explicit trunk, or explicit branch
+	  #    + -d present or absent
+
+	  # Working directory on trunk
+	  $testcvs -Q up -A
+
+	  ## ls
+	  dotest ls-d-1 "$testcvs ls" "$output_living"
+	  dotest ls-d-2 "$testcvs ls -d" "$output_dead"
+
+	  dotest ls-d-3 "$testcvs ls -rHEAD" "$output_living"
+	  dotest ls-d-4 "$testcvs ls -drHEAD" "$output_dead"
+
+	  dotest ls-d-5 "$testcvs ls -rbranch" "$output_living"
+	  dotest ls-d-6 "$testcvs ls -drbranch" "$output_dead"
+
+	  ## rls
+	  dotest ls-d-7 "$testcvs rls cemetery" \
+"$SPROG rls: Listing module: \`cemetery'
+$output_living"
+	  dotest ls-d-8 "$testcvs rls -d cemetery" \
+"$SPROG rls: Listing module: \`cemetery'
+$output_dead"
+
+	  dotest ls-d-9 "$testcvs -q rls -rHEAD cemetery" "$output_living"
+	  dotest ls-d-10 "$testcvs -q rls -drHEAD cemetery" "$output_dead"
+
+	  dotest ls-d-11 "$testcvs -q rls -rbranch cemetery" "$output_living"
+	  dotest ls-d-12 "$testcvs -q rls -drbranch cemetery" "$output_dead"
+
+	  # Working directory on branch
+	  ## ls
+	  dotest ls-d-13 "$testcvs ls" "$output_living"
+	  dotest ls-d-14 "$testcvs ls -d" "$output_dead"
+
+	  dotest ls-d-15 "$testcvs ls -r HEAD" "$output_living"
+	  dotest ls-d-16 "$testcvs ls -d -r HEAD" "$output_dead"
+
+	  dotest ls-d-17 "$testcvs ls -r branch" "$output_living"
+	  dotest ls-d-18 "$testcvs ls -d -r branch" "$output_dead"
+
+	  ## rls
+	  dotest ls-d-19 "$testcvs -q rls cemetery" "$output_living"
+	  dotest ls-d-20 "$testcvs -q rls -d cemetery" "$output_dead"
+
+	  dotest ls-d-21 "$testcvs -q rls -rHEAD cemetery" "$output_living"
+	  dotest ls-d-22 "$testcvs -q rls -drHEAD cemetery" "$output_dead"
+
+	  dotest ls-d-23 "$testcvs -q rls -rbranch cemetery" "$output_living"
+	  dotest ls-d-24 "$testcvs -q rls -drbranch cemetery" "$output_dead"
+
 	  dokeep
-	  cd ../..
-	  rmdir $CVSROOT_DIRNAME/notcheckedout
-	  rm -rf 1 $CVSROOT_DIRNAME/notcheckedout
+	  cd ../../..
+	  rm -rf ls $CVSROOT_DIRNAME/notcheckedout \
+	            $CVSROOT_DIRNAME/cemetery
+	  unset output_living output_dead
 	  ;;
 
 	parseroot)
