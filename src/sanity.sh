@@ -493,10 +493,15 @@ ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0
 PFMT="[0-9a-zA-Z()][0-9a-zA-Z()]*"
 
 # Do not assume that `type -p cmd` is portable
+# Usage: Which [-a] [-x|-f|-r] prog [$PATH:/with/directories:/to/search]
 Which() {
   # Optional first argument for file type, defaults to -x.
   # Second argument is the file or directory to be found.
   # Third argument is the PATH to search.
+  # By default, print only the first file that matches,
+  # -a will cause all matches to be printed.
+  notevery=:
+  if [ "x$1" = "x-a" ]; then notevery=false; shift; fi
   case "$1" in
     -*) t=$1; shift ;;
     *) t=-x ;;
@@ -507,7 +512,7 @@ Which() {
     /*) test $t $1 && echo $1 ;;
     *) for d in `IFS=:; echo ${2-$PATH}`
        do
-         test $t $d/$1 && { echo $d/$1; break; }
+         test $t $d/$1 && { echo $d/$1; if $notevery; then break; fi; }
        done
        ;;
   esac
@@ -691,7 +696,7 @@ fi
 
 find_tool ()
 {
-  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin"
+  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gnu/bin /sw/bin"
   TOOL=""
   for path in $GLOCS ; do
     if test -f $path/g$1 && test -r $path/g$1 &&
@@ -904,6 +909,36 @@ if $remote; then
     fi
 fi
 
+
+# MacOS X (10.2.8) has a /bin/ls that does not work correctly in that
+# it will return true even if the wildcard argument does not match any
+# files.
+if test -d $TESTDIR/ls-test; then
+    chmod -R a+wx $TESTDIR/ls-test
+    rm -rf $TESTDIR/ls-test
+fi
+LS=`Which ls`
+if ${LS} $TESTDIR/ls-test >/dev/null 2>&1; then
+    echo "Notice: The default version of \`ls' in \`${LS}' is defective."
+    altPATH=/usr/local/bin:/usr/contrib:/usr/gnu/bin:/local/bin:/local/gnu/bin:/gnu/bin:/sw/bin
+    for tryls in `Which -a ls $PATH:$altPATH` ; do
+        if [ ${tryls} = ${LS} ]; then continue; fi
+	if ${tryls} $TESTDIR/ls-test >/dev/null 2>&1; then
+	    echo "Attempt to use \`${tryls}' also failed. It is defective."
+        else
+            LS=${tryls}
+	    break
+	fi
+    done
+    if ${LS} $TESTDIR/ls-test >/dev/null 2>&1; then
+        echo 'Warning: you are using a version of ls which does not correctly'
+        echo 'return false for files that do not exist. Some tests may'
+        echo 'spuriously pass or fail.'
+        echo 'You may wish to put a an ls from GNU coreutils into your path.'
+    else
+        echo "Using \`${LS}' as a replacement version of \`ls'."
+    fi
+fi
 
 
 ###
@@ -10568,29 +10603,30 @@ C m"
 
 	join-admin)
 	  mkdir 1; cd 1
-	  dotest join-admin-1 "$testcvs -q co -l ."
+	  dotest join-admin-0-1 "$testcvs -q co -l ."
 	  module=x
 	  mkdir $module
-	  $testcvs -q add $module >>$LOGFILE 2>&1
+	  dotest join-admin-0-2 "$testcvs -q add $module" \
+"Directory $CVSROOT_DIRNAME/$module added to the repository"
 	  cd $module
 
 	  # Create a file so applying the first tag works.
 	  echo foo > a
-	  $testcvs -Q add a > /dev/null 2>&1
-	  $testcvs -Q ci -m. a
+	  dotest join-admin-0-3 "$testcvs -Q add a" ''
+	  dotest join-admin-0-4 "$testcvs -Q ci -m. a" ''
 
-	  $testcvs -Q tag -b B
-	  $testcvs -Q tag -b M1
+	  dotest join-admin-0-5 "$testcvs -Q tag -b B" ''
+	  dotest join-admin-0-6 "$testcvs -Q tag -b M1" ''
 	  echo '$''Id$' > b
-	  $testcvs -Q add b
-	  $testcvs -Q ci -m. b
-	  $testcvs -Q tag -b M2
+	  dotest join-admin-0-7 "$testcvs -Q add b" ''
+	  dotest join-admin-0-8 "$testcvs -Q ci -m. b" ''
+	  dotest join-admin-0-9 "$testcvs -Q tag -b M2" ''
 
-	  $testcvs -Q update -r B
-	  $testcvs -Q update -kk -jM1 -jM2
-	  $testcvs -Q ci -m. b
+	  dotest join-admin-0-10 "$testcvs -Q update -r B" ''
+	  dotest join-admin-0-11 "$testcvs -Q update -kk -jM1 -jM2" ''
+	  dotest join-admin-0-12 "$testcvs -Q ci -m. b" ''
 
-	  $testcvs -Q update -A
+	  dotest join-admin-0-13 "$testcvs -Q update -A" ''
 
 	  # Verify that the -kk flag from the update did not
 	  # propagate to the repository.
@@ -10927,17 +10963,9 @@ Checking out first-dir/a
 RCS:  ${CVSROOT_DIRNAME}/first-dir/a,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*"
-		if ${CVS} co first-dir ; then
-		    pass 127
-		else
-		    fail 127
-		fi
+		dotest conflicts-127 "${testcvs} -Q co first-dir" ''
 		cd first-dir
-		if test -f a; then
-		    pass 127a
-		else
-		    fail 127a
-		fi
+		dotest conflicts-127a "test -f a" ''
 
 		cd ../../1/first-dir
 		echo add a line >>a
@@ -11111,43 +11139,20 @@ File: a                	Status: Up-to-date
 		# set.
 		cd ../1/first-dir
 		mkdir subdir
-		if ${testcvs} add subdir >>${LOGFILE}; then
-		    pass 138
-		else
-		    fail 138
-		fi
+		dotest conflicts-138 "${testcvs} add subdir" "${DOTSTAR}"
 		cd ../..
 		mkdir 3
 		cd 3
-		if ${testcvs} -q co first-dir/abc first-dir/subdir \
-		    >>${LOGFILE}; then
-		    pass 139
-		else
-		    fail 139
-		fi
+		dotest conflicts-139 \
+"${testcvs} -q co first-dir/abc first-dir/subdir" "${DOTSTAR}"
 		cd ../1/first-dir/subdir
 		echo sss >sss
-		if ${testcvs} add sss >>${LOGFILE} 2>&1; then
-		    pass 140
-		else
-		    fail 140
-		fi
-		if ${testcvs} ci -m adding sss >>${LOGFILE} 2>&1; then
-		    pass 140
-		else
-		    fail 140
-		fi
+		dotest conflicts-140 "${testcvs} add sss" "${DOTSTAR}"
+		dotest conflicts-140a "${testcvs} ci -m adding sss" \
+"${DOTSTAR}"
 		cd ../../../3/first-dir
-		if ${testcvs} -q update >>${LOGFILE}; then
-		    pass 141
-		else
-		    fail 141
-		fi
-		if test -f subdir/sss; then
-		    pass 142
-		else
-		    fail 142
-		fi
+		dotest conflicts-141 "${testcvs} -q update" "${DOTSTAR}"
+		dotest conflicts-142 "test -f subdir/sss"
 
 		dokeep
 		cd ../..
@@ -22181,7 +22186,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  touch aa
 	  chmod a= aa
 	  # Don't try this when permissions are broken, as with Cygwin.
-	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then :; else
+	  if ${LS} ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then :; else
 	    dotest_fail modes2-6 "${testcvs} -q update -r 1.1 aa" \
 "${CPROG} \[update aborted\]: cannot open file aa for comparing: Permission denied" \
 "${CPROG} \[update aborted\]: reading aa: Permission denied"
@@ -22219,7 +22224,7 @@ initial revision: 1\.1
 $CVSROOT_DIRNAME/second-dir/ab,v  <--  second-dir/ab
 initial revision: 1\.1"
 	  modify_repo chmod a= $CVSROOT_DIRNAME/first-dir
-	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
+	  if ${LS} ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
 	    # Avoid this test under Cygwin since permissions work differently
 	    # there.
 	    #
@@ -33088,11 +33093,11 @@ You have \[0\] altered files in this repository\."
 	# A true value means ls found files/directories with these names.
 	# Give the server some time to finish, then retry.
 	sleep 1
-	if ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
+	if ${LS} $TMPDIR/cvs-serv* >/dev/null 2>&1; then
 	    fail "Found cvs-serv* directories in $TMPDIR."
 	fi
     fi
-    if ls $TMPDIR/cvs?????? >/dev/null 2>&1; then
+    if ${LS} $TMPDIR/cvs?????? >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
 	fail "Found cvsXXXXXX temp files in $TMPDIR."
     fi
