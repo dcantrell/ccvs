@@ -108,6 +108,8 @@ BSC32_SBRS= \
 	$(INTDIR)/edit.sbr \
 	$(INTDIR)/fileattr.sbr \
 	$(INTDIR)/watch.sbr \
+	$(INTDIR)/login.sbr \
+	$(INTDIR)/scramble.sbr \
 	$(INTDIR)/getwd.sbr \
 	$(INTDIR)/sighandle.sbr \
 	$(INTDIR)/getopt.sbr \
@@ -196,6 +198,8 @@ LINK32_OBJS= \
 	$(INTDIR)/edit.obj \
 	$(INTDIR)/fileattr.obj \
 	$(INTDIR)/watch.obj \
+	$(INTDIR)/login.obj \
+	$(INTDIR)/scramble.obj \
 	$(INTDIR)/getwd.obj \
 	$(INTDIR)/sighandle.obj \
 	$(INTDIR)/getopt.obj \
@@ -307,6 +311,8 @@ BSC32_SBRS= \
 	$(INTDIR)/edit.sbr \
 	$(INTDIR)/fileattr.sbr \
 	$(INTDIR)/watch.sbr \
+	$(INTDIR)/login.sbr \
+	$(INTDIR)/scramble.sbr \
 	$(INTDIR)/getwd.sbr \
 	$(INTDIR)/sighandle.sbr \
 	$(INTDIR)/getopt.sbr \
@@ -395,6 +401,8 @@ LINK32_OBJS= \
 	$(INTDIR)/edit.obj \
 	$(INTDIR)/fileattr.obj \
 	$(INTDIR)/watch.obj \
+	$(INTDIR)/login.obj \
+	$(INTDIR)/scramble.obj \
 	$(INTDIR)/getwd.obj \
 	$(INTDIR)/sighandle.obj \
 	$(INTDIR)/getopt.obj \
@@ -1791,6 +1799,63 @@ DEP_WATCH=\
 	".\windows-NT\ndir.h"
 
 $(INTDIR)/watch.obj :  $(SOURCE)  $(DEP_WATCH) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\login.c
+DEP_LOGIN=\
+	.\src\cvs.h\
+	.\lib\getline.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	.\lib\fnmatch.h\
+	".\windows-NT\pwd.h"\
+	.\lib\system.h\
+	.\src\hash.h\
+	.\src\server.h\
+	.\src\client.h\
+	.\src\myndbm.h\
+	.\lib\regex.h\
+	.\lib\getopt.h\
+	.\lib\wait.h\
+	.\src\rcs.h\
+	.\src\error.h\
+	.\src\update.h\
+	".\windows-NT\alloca.h"\
+	".\windows-NT\ndir.h"
+
+$(INTDIR)/login.obj :  $(SOURCE)  $(DEP_LOGIN) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\scramble.c
+DEP_SCRAM=\
+	.\src\cvs.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	.\lib\fnmatch.h\
+	".\windows-NT\pwd.h"\
+	.\lib\system.h\
+	.\src\hash.h\
+	.\src\server.h\
+	.\src\client.h\
+	.\src\myndbm.h\
+	.\lib\regex.h\
+	.\lib\getopt.h\
+	.\lib\wait.h\
+	.\src\rcs.h\
+	.\src\error.h\
+	.\src\update.h\
+	".\windows-NT\alloca.h"\
+	".\windows-NT\ndir.h"
+
+$(INTDIR)/scramble.obj :  $(SOURCE)  $(DEP_SCRAM) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
