@@ -99,13 +99,22 @@ GNULIB developer has made a statement that if this turns out to be a problem,
 GNULIB <stdlib.h> and <string.h> substitutes could be included in GNULIB, so if
 we discover the problem, this should be discussed on <bug-gnulib@gnu.org>.
 
+A substitute C99 <stdbool.h> is included from GNULIB for platforms that lack
+this header.  Please see the comments in the lib/stdbool_.h file for its
+limitations.
+
 <sys/types.h> can be assumed despite a lack of a presence in even C99, since
 it has been around nearly forever and noone has ever complained about our code
 assuming its existance.
 
-I hope to include the C99 <stdbool.h> substitute from GNULIB soon.
+CVS has also been assuming <pwd.h> for some time.  I am unsure of the
+rationale.
 
-CVS has been assuming <pwd.h> for some time.  I am unsure of the rationale.
+A substitute POSIX.2 <fnmatch.h> header and fnmatch() function is provided for
+systems that lack them.  Similarly for the non-standard <alloca.h> header and
+alloca() function.  Other substitute headers and functions are also provided
+when needed.  See the lib directory or the srclist.txt file for more
+information.
 
 Please do not use multi-line strings.  Despite their common acceptance by many
 compilers, they are not part of the ANSI C specification.  As of GCC version
