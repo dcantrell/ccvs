@@ -1,3 +1,10 @@
+2003-06-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* lock.c (readers_exist): Use LockDir rather than always looking
+	in the repository.
+	(Original patch from Robert Ambalu <Robert.Ambalu@gs.com>.)
+	Remove vestigial lock promotion code.
+
 2003-06-27  Derek Price  <derek@ximbiot.com>
 
 	* checkout.c (safe_location): Don't try and print from a NULL pointer.
