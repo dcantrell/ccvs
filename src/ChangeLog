@@ -1,3 +1,9 @@
+2004-09-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.c (buf_read_file): Fix typo in comment.
+	(buf_read_file_to_eof): Ditto.
+	* server.c (serve_command_prep): Ditto.
+
 2004-09-23  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_ssh, sshstdio): Don't use skip() to skip
