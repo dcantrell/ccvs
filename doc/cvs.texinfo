@@ -7238,6 +7238,10 @@ description of how to specify this.
 These all expand to the same value, which is the editor
 that @sc{cvs} is using.  @xref{Global options}, for how
 to specify this.
+
+@item USER
+Username of the user running @sc{cvs} (on the @sc{cvs}
+server machine).
 @end table
 
 If you want to pass a value to the administrative files

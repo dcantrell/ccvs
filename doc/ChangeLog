@@ -1,3 +1,7 @@
+Thu Feb 15 16:34:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Variables): Add new internal variable $USER.
+
 Wed Feb 14 22:52:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (export, admin): Document -k option to cvs export.
