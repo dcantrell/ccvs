@@ -153,10 +153,10 @@ call_diff_add_arg (s)
 
 static void
 call_diff_write_output (text, len)
-     const char *text;
-     size_t len;
+    const char *text;
+    size_t len;
 {
-  cvs_output (text, len);
+    cvs_output (text, len);
 }
 
 /* Call back function for the diff library to printf output to the
@@ -164,20 +164,20 @@ call_diff_write_output (text, len)
 
 static void
 call_diff_printf_output (format, args)
-     const char *format;
-     va_list args;
+    const char *format;
+    va_list args;
 {
-  char *message;
+    char *message;
 
-  message = NULL;
-  vasprintf (&message, format, args);
+    message = NULL;
+    vasprintf (&message, format, args);
 
-  if (message == NULL)
-    error (1, 0, "out of memory");
+    if (message == NULL)
+	error (1, 0, "out of memory");
 
-  cvs_output (message, 0);
+    cvs_output (message, 0);
 
-  free (message);
+    free (message);
 }
 
 /* Call back function for the diff library to flush the output file.
@@ -186,29 +186,29 @@ call_diff_printf_output (format, args)
 static void
 call_diff_flush_output ()
 {
-  cvs_flushout ();
+    cvs_flushout ();
 }
 
 /* Call back function for the diff library to write to stdout.  */
 
 static void
 call_diff_write_stdout (text)
-     const char *text;
+    const char *text;
 {
-  cvs_output (text, 0);
+    cvs_output (text, 0);
 }
 
 /* Call back function for the diff library to write to stderr.  */
 
 static void
 call_diff_error (format, a1, a2)
-     const char *format;
-     const char *a1;
-     const char *a2;
+    const char *format;
+    const char *a1;
+    const char *a2;
 {
-  /* FIXME: Should we somehow indicate that this error is coming from
-     the diff library?  */
-  error (0, 0, format, a1, a2);
+    /* FIXME: Should we somehow indicate that this error is coming from
+       the diff library?  */
+    error (0, 0, format, a1, a2);
 }
 
 /* This set of callback functions is used if we are sending the diff
@@ -216,11 +216,11 @@ call_diff_error (format, a1, a2)
 
 static struct diff_callbacks call_diff_stdout_callbacks =
 {
-  call_diff_write_output,
-  call_diff_printf_output,
-  call_diff_flush_output,
-  call_diff_write_stdout,
-  call_diff_error
+    call_diff_write_output,
+    call_diff_printf_output,
+    call_diff_flush_output,
+    call_diff_write_stdout,
+    call_diff_error
 };
 
 /* This set of callback functions is used if we are sending the diff
@@ -228,11 +228,11 @@ static struct diff_callbacks call_diff_stdout_callbacks =
 
 static struct diff_callbacks call_diff_file_callbacks =
 {
-  (void (*) PROTO((const char *, size_t))) NULL,
-  (void (*) PROTO((const char *, va_list))) NULL,
-  (void (*) PROTO((void))) NULL,
-  call_diff_write_stdout,
-  call_diff_error
+    (void (*) PROTO((const char *, size_t))) NULL,
+    (void (*) PROTO((const char *, va_list))) NULL,
+    (void (*) PROTO((void))) NULL,
+    call_diff_write_stdout,
+    call_diff_error
 };
 
 static int
