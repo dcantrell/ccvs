@@ -1344,7 +1344,7 @@ out:
            copy it into the log information (see logmsg.c
            (logfile_write) for more details).  We should only update
            the version number for files that have been added or
-           modified but not removed.  Why?  classify_file_internal
+           modified but not removed since classify_file_internal
            will return the version number of a file even after it has
            been removed from the archive, which is not the behavior we
            want for our commitlog messages; we want the old version
