@@ -1060,9 +1060,10 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     {
 	/* Else we are not a secondary server.  There is no point in
 	 * reprocessing since we handle all the requests we can receive
-	 * before `Root' as we receive them.  But close the log.
+	 * before `Root' as we receive them.  But close the logs.
 	 */
 	log_buffer_disable (secondary_log);
+	log_buffer_disable (secondary_log_out);
 	secondary_log = NULL;
     }
 
@@ -4590,7 +4591,7 @@ serve_noop (char *arg)
     bool pe = print_pending_error();
 
     /* The portions below need not be handled until reprocessing anyhow since
-     * there shoulb be no entries or notifications prior to that.  */
+     * there should be no entries or notifications prior to that.  */
     if (!secondary_log)
     {
 	server_write_entries ();
@@ -6799,7 +6800,7 @@ pserver_authenticate_connection (void)
 	int on = 1;
 
 	if (setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
-			   (char *) &on, sizeof on) < 0)
+			&on, sizeof on) < 0)
 	{
 #ifdef HAVE_SYSLOG_H
 	    syslog (LOG_DAEMON | LOG_ERR, "error setting KEEPALIVE: %m");

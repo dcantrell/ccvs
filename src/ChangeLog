@@ -1,5 +1,16 @@
 2004-07-16  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c (fd_buffer_input): Back out previous two changes due to
+	incompatibility with current state of write proxies.
+	* log-buffer.c (log_buffer_initialize): Handle new buffers which
+	already have some data in them.
+	(log_buffer_input): Don't fsync here.  It is slow.
+	* server.c (serve_root): Disable the secondary output log too.
+	(serve_noop, pserver_authenticate_connection): Misc cleanup.
+	* sanity.sh: Misc gratuitous cleanup.
+
+2004-07-16  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (fd_buffer_input): Don't overwrite the input buffer the
 	second time through the blocking read loop.
 

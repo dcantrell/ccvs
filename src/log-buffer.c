@@ -49,18 +49,38 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
                        bool input, void (*memory) (struct buffer *))
 {
     struct log_buffer *n = xmalloc (sizeof *n);
+    struct buffer *retbuf;
 
     n->buf = buf;
     n->log = fp;
     n->fatal_errors = fatal_errors;
-    return buf_initialize (0, 0,
-                           input ? log_buffer_input : NULL,
-			   input ? NULL : log_buffer_output,
-			   input ? NULL : log_buffer_flush,
-			   log_buffer_block, log_buffer_get_fd,
-			   log_buffer_shutdown,
-			   memory,
-			   n);
+    retbuf = buf_initialize (0, 0,
+                             input ? log_buffer_input : NULL,
+			     input ? NULL : log_buffer_output,
+			     input ? NULL : log_buffer_flush,
+			     log_buffer_block, log_buffer_get_fd,
+			     log_buffer_shutdown, memory, n);
+
+    if (!buf_empty_p (buf))
+    {
+	/* If our buffer already had data, log it & copy it.  This can happen,
+	 * for instance, with a pserver, where we deliberately do not
+         * instantiate the log buffer until after authentication so that auth
+         * data does not get logged.
+	 */
+	struct buffer_data *data;
+	for (data = buf->data; data = data->next; data != NULL)
+	{
+	    if (data->size)
+	    {
+		if (fwrite (data->bufp, 1, data->size, fp) != data->size)
+		    error (fatal_errors, errno, "writing to log file");
+		fflush (fp);
+	    }
+	}
+	buf_append_buffer (retbuf, buf);
+    }
+    return retbuf;
 }
 
 
@@ -86,7 +106,6 @@ log_buffer_input (void *closure, char *data, int need, int size, int *got)
 	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
 	    error (lb->fatal_errors, errno, "writing to log file");
 	fflush (lb->log);
-	fsync (fileno (lb->log));
     }
 
     return 0;
@@ -155,22 +174,26 @@ log_buffer_block (void *closure, int block)
 
 
 
-/* Disable logging without shutting down the next buffer in the chain.  */
+/* Disable logging without shutting down the next buffer in the chain.
+ *
+ * For an input buffer, this function also truncates the log before any unread
+ * data based on BUF->LAST_INDEX & BUF->LAST_COUNT.
+ */
 void
 log_buffer_disable (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
 
-    SIG_beginCrSect();
     if (lb->log)
     {
 	fflush (lb->log);
 	fsync (fileno (lb->log));
+	SIG_beginCrSect();
 	if (fclose (lb->log) < 0)
 	    error (0, errno, "closing log file");
 	lb->log = NULL;
+	SIG_endCrSect();
     }
-    SIG_endCrSect();
 }
 
 
