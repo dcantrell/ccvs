@@ -944,9 +944,13 @@ get_homedir ()
  * the GPL and the Artistic license - we might be able to use it.
  */
 char *
-strcat_filename_onto_homedir (char *dir, char *file)
+strcat_filename_onto_homedir (dir, file)
+    const char *dir;
+    const char *file;
 {
-    return strcat (dir, file);
+    char *path = xmalloc (strlen (dir) + strlen(file) + 1);
+    sprintf (path, "%s%s", dir, file);
+    return path;
 }
 
 #ifndef __VMS_VER

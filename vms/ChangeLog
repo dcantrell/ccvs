@@ -1,3 +1,8 @@
+2002-05-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* filesubr.c (strcat_filename_onto_homedir): Make arguments const,
+	move more code here from callers, change all callers.
+
 2002-05-22  Derek Price  <oberon@umich.edu>
 
 	* config.h: Remove obsolete definition of NO_SLASH_AFTER_HOMEDIR.
