@@ -1,5 +1,10 @@
 Fri Jul  5 17:19:57 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* client.c (last_entries): Make file static, rather than function
+	static within call_in_directory.
+	(get_responses_and_close): If last_entries is not NULL, pass it to
+	Entries_Close.
+
 	* server.c (server_pause_check): Check for errors when reading
 	from flowcontrol_pipe.
 
