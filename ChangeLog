@@ -1,3 +1,12 @@
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Add some checks for S_ISSOCK to avoid a problem on
+	SCO OpenServer 5.0.6a.
+	(Reported by Boyd Lynn Gerber <gerberb@zenez.com>.)
+
+	* config.h.in: Regenerated.
+	* configure: Ditto.
+
 2003-05-07  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Add rsh-client.{h,c} to the note that I probably just broke the
