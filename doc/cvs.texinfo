@@ -2257,31 +2257,6 @@ certain revision via e.g. @samp{cvs checkout -r
 @file{Attic} and include any files that contain the
 specified tag.
 
-This method is simple and works quite well, but it has
-some known deficiencies:
-
-@itemize @bullet
-@item
-If you remove the file @file{foo.c}, you cannot later
-create a new file called @file{foo.c} unless you
-manually remove the file @file{Attic/foo.c,v} inside
-the repository.  On the other hand, if you remove
-@file{Attic/foo.c,v} you will of course not be able to
-retrieve any revision of the old file @file{foo.c}.
-
-@item
-If the file @file{bar.c} is present in release 1.0 of a
-product, and was accidentally removed in release 1.1,
-you cannot easily resurrect it to release 1.2.  You
-have to move the file out of the @file{Attic} manually
-inside the repository.  (Do a @samp{mv Attic/@var{file}
-@var{file}}).
-@end itemize
-
-There is a design for a @dfn{rename database} that will
-solve these problems and many others, but it is not yet
-implemented.
-
 @c ---------------------------------------------------------------------
 @node Tracking sources
 @chapter Tracking third-party sources

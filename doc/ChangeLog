@@ -1,3 +1,8 @@
+Tue Sep 12 19:02:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Removing files): Remove section on limitations
+	which are gone now that we have death support.
+
 Wed Aug 30 12:32:29 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.texinfo (Remote Repositories): new node, referred to from
