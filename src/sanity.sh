@@ -1401,11 +1401,25 @@ done'
 		fi
 
 		# commit
-		if ${CVS} ci -m test  >>${LOGFILE} 2>&1; then
-			echo "PASS: test 89" >>${LOGFILE}
-		else
-			echo "FAIL: test 89" | tee -a ${LOGFILE} ; exit 1
-		fi
+# FIXME: the dotstar here is a temporary hack 
+		dotest 89 "${testcvs} -q ci -m test" \
+"${DOTSTAR}" 'Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done
+Checking in file3;
+/tmp/cvs-sanity/cvsroot/first-dir/file3,v  <--  file3
+new revision: 1\.2; previous revision: 1\.1
+done'
+		cd ..
+		mkdir 2
+		cd 2
+		dotest 89a "${testcvs} -q co first-dir" 'U first-dir/file1
+U first-dir/file2
+U first-dir/file3'
+		cd ..
+		rm -rf 2
+		cd first-dir
 
 		# remove first file.
 		rm file1

@@ -1,3 +1,15 @@
+Wed May 22 19:06:23 1996  Mark Immel  <immel@centerline.com>
+
+	* update.c (checkout_file): New arg resurrecting_out, to provide
+	resurrecting flag to caller.
+	(join_file): New arg resurrecting.  Register with "0" if we are
+	the server and are resurrecting.
+	(update_fileproc): Pass the flag from checkout_file to join_file.
+
+Wed May 22 19:06:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (death): Test for above fix, in test 89 and new test 89a.
+
 Mon May 20 10:53:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (find_fileproc): Call freevers_ts.
