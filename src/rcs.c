@@ -6131,10 +6131,27 @@ RCS_copydeltas (rcs, fin, fout, newdtext, insertpt)
 
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
    locking on the specified RCSFILE: for a file called `foo,v', open
-   for writing a file called `,foo,'.  Open exclusively to prevent
-   race conditions... there are some NFS bugs that may thwart this,
-   but it is not clear that anything can be done about them.  See the
-   RCS 5.7 source comments (cited below) for more details.
+   for writing a file called `,foo,'.
+
+   Note that we what do here is quite different from what RCS does.
+   RCS creates the ,foo, file before it reads the RCS file (if it
+   knows that it will be writing later), so that it actually serves as
+   a lock.  We don't; instead we rely on CVS writelocks.  This means
+   that if someone is running RCS on the file at the same time they
+   are running CVS on it, they might lose (RCS reads the file, then we
+   read it, then RCS writes it, then we write it, clobbering the
+   changes made by RCS).  I believe the current sentiment about this
+   is "well, don't do that".  Even if we wanted to adopt the RCS
+   strategy, I'm not sure it works well enough to bother with (O_EXCL
+   and such seems to be seriously nonportable and/or buggy, certainly
+   in the context of NFS, I don't know about AFS and other
+   filesystems, and I also kind of would be surprised if it works well
+   on non-unix operating systems).
+
+   A concern has been expressed about whether adopting the RCS
+   strategy would slow us down.  I don't think so, since we need to
+   write the ,foo, file anyway (unless perhaps if O_EXCL is slower or
+   something).
 
    These do not perform quite the same function as the RCS -l option
    for locking files: they are intended to prevent competing RCS
@@ -6162,7 +6179,9 @@ rcs_internal_lockfile (rcsfile)
     /* Try to open exclusively. According to the RCS source, O_TRUNC
        is necessary to guarantee atomicity with NFS; O_CREAT is not
        sufficient.  For extensive justification, see the comments for
-       rcswriteopen() in rcsedit.c, in RCS 5.7. */
+       rcswriteopen() in rcsedit.c, in RCS 5.7.  This is kind of pointless
+       in the CVS case; see comment at the start of this file concerning
+       general ,foo, file strategy.  */
     fd = open (lockfile, OPEN_BINARY | O_WRONLY | O_CREAT | O_EXCL | O_TRUNC,
 	       S_IRUSR | S_IRGRP | S_IROTH);
 
@@ -6235,7 +6254,7 @@ rcs_lockfilename (rcsfile)
 
 /* Rewrite an RCS file.  The basic idea here is that the caller should
    first call RCS_reparsercsfile, then munge the data structures as
-   desired (via RCS_delete_revs, RCS_checkin, &c), then call RCS_rewrite.  */
+   desired (via RCS_delete_revs, RCS_settag, &c), then call RCS_rewrite.  */
 
 void
 RCS_rewrite (rcs, newdtext, insertpt)
