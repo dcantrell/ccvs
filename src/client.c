@@ -97,20 +97,19 @@ static void handle_notified (char *, int);
 static size_t try_read_from_server (char *, size_t);
 
 static void auth_server (cvsroot_t *, struct buffer *, struct buffer *,
-				int, int, struct hostent *);
+			 int, int, struct hostent *);
+
+
 
 /* We need to keep track of the list of directories we've sent to the
    server.  This list, along with the current CVSROOT, will help us
    decide which command-line arguments to send.  */
 List *dirs_sent_to_server = NULL;
-
-static int is_arg_a_parent_or_listed_dir (Node *, void *);
-
 static int
-is_arg_a_parent_or_listed_dir( Node *n, void *d )
+is_arg_a_parent_or_listed_dir (Node *n, void *d)
 {
     char *directory = n->key;	/* name of the dir sent to server */
-    char *this_argv_elem = (char *) d;	/* this argv element */
+    char *this_argv_elem = d;	/* this argv element */
 
     /* Say we should send this argument if the argument matches the
        beginning of a directory name sent to the server.  This way,
@@ -123,13 +122,12 @@ is_arg_a_parent_or_listed_dir( Node *n, void *d )
     return 0;
 }
 
-static int arg_should_not_be_sent_to_server (char *);
+
 
 /* Return nonzero if this argument should not be sent to the
    server. */
-
 static int
-arg_should_not_be_sent_to_server( char *arg )
+arg_should_not_be_sent_to_server (char *arg)
 {
     /* Decide if we should send this directory name to the server.  We
        should always send argv[i] if:
@@ -199,15 +197,15 @@ arg_should_not_be_sent_to_server( char *arg )
 
 	    /* Since we didn't find it in the list, check the CVSADM
                files on disk.  */
-	    this_root = Name_Root (arg, (char *) NULL);
+	    this_root = Name_Root (arg, NULL);
 	    *t = c;
 	}
 	else
 	{
 	    /* We're at the beginning of the string.  Look at the
                CVSADM files in cwd.  */
-	    this_root = (CVSroot_cmdline ? xstrdup(CVSroot_cmdline)
-			 : Name_Root ((char *) NULL, (char *) NULL));
+	    this_root = (CVSroot_cmdline ? xstrdup (CVSroot_cmdline)
+					 : Name_Root (NULL, NULL));
 	}
 
 	/* Now check the value for root. */
@@ -224,9 +222,6 @@ arg_should_not_be_sent_to_server( char *arg )
     /* OK, let's send it. */
     return 0;
 }
-
-
-
 #endif /* CLIENT_SUPPORT */
 
 
@@ -267,13 +262,15 @@ mode_to_string (mode_t mode)
     return xstrdup(buf);
 }
 
+
+
 /*
  * Change mode of FILENAME to MODE_STRING.
  * Returns 0 for success or errno code.
  * If RESPECT_UMASK is set, then honor the umask.
  */
 int
-change_mode( char *filename, char *mode_string, int respect_umask )
+change_mode (char *filename, char *mode_string, int respect_umask)
 {
 #ifdef CHMOD_BROKEN
     char *p;
@@ -381,14 +378,14 @@ change_mode( char *filename, char *mode_string, int respect_umask )
     return 0;
 #endif /* ! CHMOD_BROKEN */
 }
-
 #endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
-
-#ifdef CLIENT_SUPPORT
 
+
+
+#ifdef CLIENT_SUPPORT
 int client_prune_dirs;
 
-static List *ignlist = (List *) NULL;
+static List *ignlist = NULL;
 
 /* Buffer to write to the server.  */
 static struct buffer *global_to_server;
@@ -444,13 +441,11 @@ read_line (char **resultp)
 {
   return read_line_via (global_from_server, global_to_server, resultp);
 }
-
-
 #endif /* CLIENT_SUPPORT */
 
-
-#if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
+
+#if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 /*
  * Zero if compression isn't supported or requested; non-zero to indicate
  * a compression level to request from gzip.
@@ -476,15 +471,19 @@ static char *toplevel_repos = NULL;
    up on some systems by using savecwd.h here instead of just always
    storing a name.  */
 char *toplevel_wd;
-
+
+
+
 static void
-handle_ok( char *args, int len )
+handle_ok (char *args, int len)
 {
     return;
 }
 
+
+
 static void
-handle_error( char *args, int len )
+handle_error (char *args, int len)
 {
     int something_printed;
     
@@ -633,7 +632,7 @@ int is_valid_client_path (const char *pathname)
     /* 2. No Max-dotdot paths registered.  */
     if (uppaths == NULL) return 0;
 
-    return walklist (uppaths, path_list_prefixed, (void *)pathname);
+    return walklist (uppaths, path_list_prefixed, pathname);
 }
 
 
@@ -648,12 +647,11 @@ int is_valid_client_path (const char *pathname)
  * taking place; and FILENAME is the filename portion only of
  * SHORT_PATHNAME.  When we call FUNC, the curent directory points to
  * the directory portion of SHORT_PATHNAME.  */
-
 static void
 call_in_directory (const char *pathname,
                    void (*func) (char *_data, List *_ent_list,
                                  char *_short_pathname, char *_filename),
-                   char *data)
+                   void *data)
 {
     /* This variable holds the result of Entries_Open. */
     List *last_entries = NULL;
@@ -801,8 +799,7 @@ call_in_directory (const char *pathname,
 	if (r[-1] != '.' || r[-2] != '/')
 	    strcpy (r, "/.");
 
-	Create_Admin (".", ".", repo, (char *) NULL,
-		      (char *) NULL, 0, 1, 1);
+	Create_Admin (".", ".", repo, NULL, NULL, 0, 1, 1);
 
 	free (repo);
     }
@@ -938,17 +935,16 @@ warning: server is not creating directories one at a time");
 		else
 		    strcpy (r, reposdirname);
 
-		Create_Admin (dir, dir, repo,
-			      (char *)NULL, (char *)NULL, 0, 0, 1);
+		Create_Admin (dir, dir, repo, NULL, NULL, 0, 0, 1);
 		free (repo);
 
 		b = strrchr (dir, '/');
 		if (b == NULL)
-		    Subdir_Register ((List *) NULL, (char *) NULL, dir);
+		    Subdir_Register (NULL, NULL, dir);
 		else
 		{
 		    *b = '\0';
-		    Subdir_Register ((List *) NULL, dir, b + 1);
+		    Subdir_Register (NULL, dir, b + 1);
 		    *b = '/';
 		}
 	    }
@@ -990,7 +986,7 @@ warning: server is not creating directories one at a time");
 	    strcat (repo, reposdirname);
 	}
 
-	Create_Admin (".", ".", repo, (char *)NULL, (char *)NULL, 0, 1, 1);
+	Create_Admin (".", ".", repo, NULL, NULL, 0, 1, 1);
 	if (repo != reposdirname)
 	    free (repo);
     }
@@ -1015,8 +1011,7 @@ warning: server is not creating directories one at a time");
 	{
 	    List *dirlist;
 
-	    dirlist = Find_Directories ((char *) NULL, W_LOCAL,
-					last_entries);
+	    dirlist = Find_Directories (NULL, W_LOCAL, last_entries);
 	    dellist (&dirlist);
 	}
     }
@@ -1028,9 +1023,11 @@ warning: server is not creating directories one at a time");
     free (short_pathname);
     free (reposname);
 }
-
+
+
+
 static void
-copy_a_file( char *data, List *ent_list, char *short_pathname, char *filename )
+copy_a_file (char *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *newname;
 #ifdef USE_VMS_FILENAMES
@@ -1056,14 +1053,15 @@ copy_a_file( char *data, List *ent_list, char *short_pathname, char *filename )
     free (newname);
 }
 
-static void
-handle_copy_file( char *args, int len )
-{
-    call_in_directory (args, copy_a_file, (char *)NULL);
-}
-
 
-static void read_counted_file (char *, char *);
+
+static void
+handle_copy_file (char *args, int len)
+{
+    call_in_directory (args, copy_a_file, NULL);
+}
+
+
 
 /* Read from the server the count for the length of a file, then read
    the contents of that file and write them to FILENAME.  FULLNAME is
@@ -1071,7 +1069,7 @@ static void read_counted_file (char *, char *);
    extend this to deal with compressed files and make update_entries
    use it.  On error, gives a fatal error.  */
 static void
-read_counted_file( char *filename, char *fullname )
+read_counted_file (char *filename, char *fullname)
 {
     char *size_string;
     size_t size;
@@ -1139,7 +1137,9 @@ protocol error: compressed files not supported for that operation");
     if (fclose (fp) < 0)
 	error (1, errno, "cannot close %s", fullname);
 }
-
+
+
+
 /* OK, we want to swallow the "U foo.c" response and then output it only
    if we can update the file.  In the future we probably want some more
    systematic approach to parsing tagged text, but for now we keep it
@@ -1181,17 +1181,17 @@ static bool failure_exit;
  */
 static time_t last_register_time;
 
+
+
 /*
  * The Checksum response gives the checksum for the file transferred
  * over by the next Updated, Merged or Patch response.  We just store
  * it here, and then check it in update_entries.
  */
-
 static int stored_checksum_valid;
 static unsigned char stored_checksum[16];
-
 static void
-handle_checksum( char *args, int len )
+handle_checksum (char *args, int len)
 {
     char *s;
     char buf[3];
@@ -1219,28 +1219,26 @@ handle_checksum( char *args, int len )
     stored_checksum_valid = 1;
 }
 
+
+
 /* Mode that we got in a "Mode" response (malloc'd), or NULL if none.  */
 static char *stored_mode;
-
-static void handle_mode (char *, int);
-
 static void
-handle_mode( char *args, int len )
+handle_mode (char *args, int len)
 {
     if (stored_mode != NULL)
 	error (1, 0, "protocol error: duplicate Mode");
     stored_mode = xstrdup (args);
 }
-
+
+
+
 /* Nonzero if time was specified in Mod-time.  */
 static int stored_modtime_valid;
 /* Time specified in Mod-time.  */
 static time_t stored_modtime;
-
-static void handle_mod_time (char *, int);
-
 static void
-handle_mod_time( char *args, int len )
+handle_mod_time (char *args, int len)
 {
     if (stored_modtime_valid)
 	error (0, 0, "protocol error: duplicate Mod-time");
@@ -1250,7 +1248,9 @@ handle_mod_time( char *args, int len )
     else
 	stored_modtime_valid = 1;
 }
-
+
+
+
 /*
  * If we receive a patch, but the patch program fails to apply it, we
  * want to request the original file.  We keep a list of files whose
@@ -1298,13 +1298,15 @@ struct update_entries_data
     char *timestamp;
 };
 
+
+
 /* Update the Entries line for this file.  */
 static void
-update_entries (char *data_arg, List *ent_list, char *short_pathname,
+update_entries (void *data_arg, List *ent_list, char *short_pathname,
                 char *filename)
 {
     char *entries_line;
-    struct update_entries_data *data = (struct update_entries_data *)data_arg;
+    struct update_entries_data *data = data_arg;
 
     char *cp;
     char *user;
@@ -1717,9 +1719,9 @@ update_entries (char *data_arg, List *ent_list, char *short_pathname,
 	if (patch_failed)
 	{
 	    /* Save this file to retrieve later.  */
-	    failed_patches = (char **) xrealloc ((char *) failed_patches,
-						 ((failed_patches_count + 1)
-						  * sizeof (char *)));
+	    failed_patches = xrealloc (failed_patches,
+				       ((failed_patches_count + 1)
+					* sizeof (char *)));
 	    failed_patches[failed_patches_count] = xstrdup (short_pathname);
 	    ++failed_patches_count;
 
@@ -1840,104 +1842,118 @@ handle_checked_in (char *args, int len)
     dat.contents = UPDATE_ENTRIES_CHECKIN;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
 
 
 static void
-handle_new_entry( char *args, int len )
+handle_new_entry (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_CHECKIN;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "dummy timestamp from new-entry";
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
+
+
 static void
-handle_updated( char *args, int len )
+handle_updated (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
-static void handle_created (char *, int);
+
 
 static void
-handle_created( char *args, int len )
+handle_created (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
     dat.existp = UPDATE_ENTRIES_NEW;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
-static void handle_update_existing (char *, int);
+
 
 static void
-handle_update_existing( char *args, int len )
+handle_update_existing (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
     dat.existp = UPDATE_ENTRIES_EXISTING;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
+
+
 static void
-handle_merged( char *args, int len )
+handle_merged (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_UPDATE;
     /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = "Result of merge";
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
+
+
 static void
-handle_patched( char *args, int len )
+handle_patched (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_PATCH;
     /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
 
+
+
 static void
-handle_rcs_diff( char *args, int len )
+handle_rcs_diff (char *args, int len)
 {
     struct update_entries_data dat;
     dat.contents = UPDATE_ENTRIES_RCS_DIFF;
     /* Think this could be UPDATE_ENTRIES_EXISTING, but just in case...  */
     dat.existp = UPDATE_ENTRIES_EXISTING_OR_NEW;
     dat.timestamp = NULL;
-    call_in_directory (args, update_entries, (char *)&dat);
+    call_in_directory (args, update_entries, &dat);
 }
-
+
+
+
 static void
-remove_entry( char *data, List *ent_list, char *short_pathname,
-              char *filename )
+remove_entry (char *data, List *ent_list, char *short_pathname,
+              char *filename)
 {
     Scratch_Entry (ent_list, filename);
 }
 
+
+
 static void
-handle_remove_entry( char *args, int len )
+handle_remove_entry (char *args, int len)
 {
-    call_in_directory (args, remove_entry, (char *)NULL);
+    call_in_directory (args, remove_entry, NULL);
 }
-
+
+
+
 static void
-remove_entry_and_file( char *data, List *ent_list, char *short_pathname,
-                       char *filename )
+remove_entry_and_file (char *data, List *ent_list, char *short_pathname,
+                       char *filename)
 {
     Scratch_Entry (ent_list, filename);
     /* Note that we don't ignore existence_error's here.  The server
@@ -1949,24 +1965,30 @@ remove_entry_and_file( char *data, List *ent_list, char *short_pathname,
 	error (0, errno, "unable to remove %s", short_pathname);
 }
 
+
+
 static void
-handle_removed( char *args, int len )
+handle_removed (char *args, int len)
 {
-    call_in_directory (args, remove_entry_and_file, (char *)NULL);
+    call_in_directory (args, remove_entry_and_file, NULL);
 }
-
+
+
+
 /* Is this the top level (directory containing CVSROOT)?  */
 static int
-is_cvsroot_level( char *pathname )
+is_cvsroot_level (char *pathname)
 {
     if (strcmp (toplevel_repos, current_parsed_root->directory) != 0)
 	return 0;
 
     return strchr (pathname, '/') == NULL;
 }
-
+
+
+
 static void
-set_static( char *data, List *ent_list, char *short_pathname, char *filename )
+set_static (char *data, List *ent_list, char *short_pathname, char *filename)
 {
     FILE *fp;
     fp = open_file (CVSADM_ENTSTAT, "w+");
@@ -1974,8 +1996,10 @@ set_static( char *data, List *ent_list, char *short_pathname, char *filename )
         error (1, errno, "cannot close %s", CVSADM_ENTSTAT);
 }
 
+
+
 static void
-handle_set_static_directory( char *args, int len )
+handle_set_static_directory (char *args, int len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -1983,19 +2007,23 @@ handle_set_static_directory( char *args, int len )
 	read_line (NULL);
 	return;
     }
-    call_in_directory (args, set_static, (char *)NULL);
+    call_in_directory (args, set_static, NULL);
 }
 
+
+
 static void
-clear_static( char *data, List *ent_list, char *short_pathname,
-              char *filename )
+clear_static (char *data, List *ent_list, char *short_pathname,
+              char *filename)
 {
     if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
         error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
 }
 
+
+
 static void
-handle_clear_static_directory( char *pathname, int len )
+handle_clear_static_directory (char *pathname, int len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2012,11 +2040,13 @@ handle_clear_static_directory( char *pathname, int len )
 	 */
 	return;
     }
-    call_in_directory (pathname, clear_static, (char *)NULL);
+    call_in_directory (pathname, clear_static, NULL);
 }
-
+
+
+
 static void
-set_sticky( char *data, List *ent_list, char *short_pathname, char *filename )
+set_sticky (char *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *tagspec;
     FILE *f;
@@ -2043,8 +2073,10 @@ set_sticky( char *data, List *ent_list, char *short_pathname, char *filename )
     free (tagspec);
 }
 
+
+
 static void
-handle_set_sticky( char *pathname, int len )
+handle_set_sticky (char *pathname, int len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2068,19 +2100,23 @@ handle_set_sticky( char *pathname, int len )
 	return;
     }
 
-    call_in_directory (pathname, set_sticky, (char *)NULL);
+    call_in_directory (pathname, set_sticky, NULL);
 }
 
+
+
 static void
-clear_sticky( char *data, List *ent_list, char *short_pathname,
-              char *filename )
+clear_sticky (char *data, List *ent_list, char *short_pathname,
+              char *filename)
 {
     if (unlink_file (CVSADM_TAG) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TAG);
 }
 
+
+
 static void
-handle_clear_sticky( char *pathname, int len )
+handle_clear_sticky (char *pathname, int len)
 {
     if (strcmp (cvs_cmd_name, "export") == 0)
     {
@@ -2098,14 +2134,13 @@ handle_clear_sticky( char *pathname, int len )
 	return;
     }
 
-    call_in_directory (pathname, clear_sticky, (char *)NULL);
+    call_in_directory (pathname, clear_sticky, NULL);
 }
-
 
-static void template (char *, List *, char *, char *);
+
 
 static void
-template( char *data, List *ent_list, char *short_pathname, char *filename )
+template (char *data, List *ent_list, char *short_pathname, char *filename)
 {
     char *buf = xmalloc ( strlen ( short_pathname )
 	    		  + strlen ( CVSADM_TEMPLATE )
@@ -2115,24 +2150,28 @@ template( char *data, List *ent_list, char *short_pathname, char *filename )
     free ( buf );
 }
 
-static void handle_template (char *, int);
+
 
 static void
-handle_template( char *pathname, int len )
+handle_template (char *pathname, int len)
 {
     call_in_directory (pathname, template, NULL);
 }
 
+
+
 static void
-clear_template( char *data, List *ent_list, char *short_pathname,
-                char *filename )
+clear_template (char *data, List *ent_list, char *short_pathname,
+                char *filename)
 {
     if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
 	error (1, errno, "cannot remove %s", CVSADM_TEMPLATE);
 }
 
+
+
 static void
-handle_clear_template( char *pathname, int len )
+handle_clear_template (char *pathname, int len)
 {
     call_in_directory (pathname, clear_template, NULL);
 }
@@ -2155,16 +2194,16 @@ add_prune_candidate (const char *dir)
 	|| (prune_candidates != NULL
 	    && strcmp (dir, prune_candidates->dir) == 0))
 	return;
-    p = (struct save_dir *) xmalloc (sizeof (struct save_dir));
+    p = xmalloc (sizeof (struct save_dir));
     p->dir = xstrdup (dir);
     p->next = prune_candidates;
     prune_candidates = p;
 }
 
-static void process_prune_candidates (void);
+
 
 static void
-process_prune_candidates( void )
+process_prune_candidates (void)
 {
     struct save_dir *p;
     struct save_dir *q;
@@ -2184,11 +2223,11 @@ process_prune_candidates( void )
 		error (0, errno, "cannot remove %s", p->dir);
 	    b = strrchr (p->dir, '/');
 	    if (b == NULL)
-		Subdir_Deregister ((List *) NULL, (char *) NULL, p->dir);
+		Subdir_Deregister (NULL, NULL, p->dir);
 	    else
 	    {
 		*b = '\0';
-		Subdir_Deregister ((List *) NULL, p->dir, b + 1);
+		Subdir_Deregister (NULL, p->dir, b + 1);
 	    }
 	}
 	free (p->dir);
@@ -2198,14 +2237,12 @@ process_prune_candidates( void )
     }
     prune_candidates = NULL;
 }
-
-/* Send a Repository line.  */
 
+
+
+/* Send a Repository line.  */
 static char *last_repos;
 static char *last_update_dir;
-
-
-
 static void
 send_repository (const char *dir, const char *repos, const char *update_dir)
 {
@@ -2355,7 +2392,6 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 
 
 /* Send a Repository line and set toplevel_repos.  */
-
 void
 send_a_repository (const char *dir, const char *repository,
                    const char *update_dir_in)
@@ -2458,38 +2494,40 @@ static int modules_allocated;
 static char **modules_vector;
 
 static void
-handle_module_expansion( char *args, int len )
+handle_module_expansion (char *args, int len)
 {
     if (modules_vector == NULL)
     {
 	modules_allocated = 1; /* Small for testing */
-	modules_vector = (char **) xmalloc
-	  (modules_allocated * sizeof (modules_vector[0]));
+	modules_vector = xmalloc (modules_allocated
+				  * sizeof (modules_vector[0]));
     }
     else if (modules_count >= modules_allocated)
     {
 	modules_allocated *= 2;
-	modules_vector = (char **) xrealloc
-	  ((char *) modules_vector,
-	   modules_allocated * sizeof (modules_vector[0]));
+	modules_vector = xrealloc (modules_vector,
+				   modules_allocated
+				   * sizeof (modules_vector[0]));
     }
     modules_vector[modules_count] = xmalloc (strlen (args) + 1);
     strcpy (modules_vector[modules_count], args);
     ++modules_count;
 }
 
+
+
 /* Original, not "expanded" modules.  */
 static int module_argc;
 static char **module_argv;
 
 void
-client_expand_modules( int argc, char **argv, int local )
+client_expand_modules ( int argc, char **argv, int local)
 {
     int errs;
     int i;
 
     module_argc = argc;
-    module_argv = (char **) xmalloc ((argc + 1) * sizeof (module_argv[0]));
+    module_argv = xmalloc ((argc + 1) * sizeof (module_argv[0]));
     for (i = 0; i < argc; ++i)
 	module_argv[i] = xstrdup (argv[i]);
     module_argv[argc] = NULL;
@@ -2511,8 +2549,10 @@ client_expand_modules( int argc, char **argv, int local )
 	error (errs, 0, "cannot expand modules");
 }
 
+
+
 void
-client_send_expansions( int local, char *where, int build_dirs )
+client_send_expansions (int local, char *where, int build_dirs)
 {
     int i;
     char *argv[1];
@@ -2534,12 +2574,16 @@ client_send_expansions( int local, char *where, int build_dirs )
     send_a_repository ("", current_parsed_root->directory, "");
 }
 
+
+
 void
-client_nonexpanded_setup( void )
+client_nonexpanded_setup (void)
 {
     send_a_repository ("", current_parsed_root->directory, "");
 }
-
+
+
+
 /* Receive a cvswrappers line from the server; it must be a line
    containing an RCS option (e.g., "*.exe   -k 'b'").
 
@@ -2549,9 +2593,8 @@ client_nonexpanded_setup( void )
 
    We need to know the keyword expansion mode so we know whether to
    read the file in text or binary mode.  */
-
 static void
-handle_wrapper_rcs_option( char *args, int len )
+handle_wrapper_rcs_option (char *args, int len)
 {
     char *p;
 
@@ -2575,9 +2618,11 @@ handle_wrapper_rcs_option( char *args, int len )
     error (0, errno, "protocol error: ignoring invalid wrappers %s", args);
 }
 
-
+
+
+
 static void
-handle_m( char *args, int len )
+handle_m (char *args, int len)
 {
     fd_set wfds;
     int s;
@@ -2598,10 +2643,10 @@ handle_m( char *args, int len )
     putc ('\n', stdout);
 }
 
-static void handle_mbinary (char *, int);
+
 
 static void
-handle_mbinary( char *args, int len )
+handle_mbinary (char *args, int len)
 {
     char *size_string;
     size_t size;
@@ -2947,11 +2992,13 @@ try_read_from_server( char *buf, size_t len )
     return nread;
 }
 
+
+
 /*
  * Read LEN bytes from the server or die trying.
  */
 void
-read_from_server( char *buf, size_t len )
+read_from_server (char *buf, size_t len)
 {
     size_t red = 0;
     while (red < len)
@@ -3310,7 +3357,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
                inet_ntoa (client_sai.sin_addr), port_number);
     }
 
-    if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
+    if (connect (sock, &client_sai, sizeof (client_sai))
 	< 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
 	       root->proxy_hostname ? root->proxy_hostname : root->hostname,
@@ -4379,7 +4426,7 @@ static Dtype
 send_dirent_proc (void *callerdat, const char *dir, const char *repository,
                   const char *update_dir, List *entries)
 {
-    struct send_data *args = (struct send_data *) callerdat;
+    struct send_data *args = callerdat;
     int dir_exists;
     char *cvsadm_name;
 
@@ -4465,6 +4512,8 @@ send_dirleave_proc (void *callerdat, const char *dir, int err,
     return err;
 }
 
+
+
 /*
  * Send each option in a string to the server, one by one.
  * This assumes that the options are separated by spaces, for example
@@ -4472,7 +4521,7 @@ send_dirleave_proc (void *callerdat, const char *dir, int err,
  */
 
 void
-send_option_string( char *string )
+send_option_string (char *string)
 {
     char *copy;
     char *p;

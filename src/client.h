@@ -1,8 +1,8 @@
 /* Interface between the client and the rest of CVS.  */
 
 /* Stuff shared with the server.  */
-extern char *mode_to_string (mode_t);
-extern int change_mode (char *, char *, int);
+char *mode_to_string (mode_t);
+int change_mode (char *, char *, int);
 
 extern int gzip_level;
 extern int file_gzip_level;
@@ -10,7 +10,7 @@ extern int file_gzip_level;
 struct buffer;
 
 void make_bufs_from_fds (int, int, int, cvsroot_t *,
-			 struct buffer **, struct buffer **, int );
+			 struct buffer **, struct buffer **, int);
 
 
 #if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
@@ -74,9 +74,9 @@ bool supported_request (const char *);
 void option_with_arg (char *option, char *arg);
 
 /* Get the responses and then close the connection.  */
-extern int get_responses_and_close (void);
+int get_responses_and_close (void);
 
-extern int get_server_responses (void);
+int get_server_responses (void);
 
 /* Start up the connection to the server on the other end.  */
 void
@@ -116,7 +116,7 @@ send_arg (char *string);
 void
 send_option_string (char *string);
 
-extern void send_a_repository (const char *, const char *, const char *);
+void send_a_repository (const char *, const char *, const char *);
 
 #endif /* CLIENT_SUPPORT */
 
@@ -178,22 +178,21 @@ extern struct response responses[];
 
 #ifdef CLIENT_SUPPORT
 
-extern void client_senddate (const char *date);
-extern void client_expand_modules (int argc, char **argv, int local);
-extern void client_send_expansions (int local, char *where,
-					  int build_dirs);
-extern void client_nonexpanded_setup (void);
+void client_senddate (const char *date);
+void client_expand_modules (int argc, char **argv, int local);
+void client_send_expansions (int local, char *where, int build_dirs);
+void client_nonexpanded_setup (void);
 
-extern void send_init_command (void);
+void send_init_command (void);
 
 extern char **failed_patches;
 extern int failed_patches_count;
 extern char *toplevel_wd;
-extern void client_import_setup (char *repository);
-extern int client_process_import_file
+void client_import_setup (char *repository);
+int client_process_import_file
     (char *message, char *vfile, char *vtag, int targc, char *targv[],
      char *repository, int all_files_binary, int modtime);
-extern void client_import_done (void);
-extern void client_notify (const char *, const char *, const char *, int,
-                           const char *);
+void client_import_done (void);
+void client_notify (const char *, const char *, const char *, int,
+                    const char *);
 #endif /* CLIENT_SUPPORT */

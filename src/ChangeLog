@@ -1,5 +1,11 @@
 2004-09-03  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.c, rsh-client.c, client.c: Reformat function headers.
+	Remove unnecessary typecasts and prototypes.
+	* client.h: Remove unnecessary extern declarations on protos.
+
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (skip): New function.
 	(sshstdio): Use new function.
 	(writeproxy): Skip test when rsync isn't found.
