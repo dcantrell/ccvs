@@ -1,5 +1,7 @@
 Thu Sep 25 15:26:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* misc.c, misc.h (fatal, xmalloc, xrealloc): Remove; nowhere used.
+
 	* ndir.c, ndir.h: Change return type of closedir from void to int.
 
 	* config.h (HAVE_NDIR_H): Define.
