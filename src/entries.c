@@ -226,7 +226,7 @@ fgetentent(fpin)
 	else if (*tag_or_date == 'D')
 	    date = tag_or_date + 1;
 	
-	if (ts_conflict = strchr (ts, '+'))
+	if ((ts_conflict = strchr (ts, '+')))
 	    *ts_conflict++ = '\0';
 	    
 	/*
