@@ -9,6 +9,7 @@ Alpha:
 	DEC Alpha running OSF/1 version 1.3 using cc (about 1.4A2)
 	DEC Alpha running OSF/1 version 2.0 (1.4.90)
 	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
+	DEC Alpha running OSF/1 version 3.0 (1.5.95)
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
 	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
