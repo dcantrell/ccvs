@@ -10574,6 +10574,9 @@ The login name of the user who locked the revision
 @code{cvs admin -l} is in use).
 
 @cindex Log keyword
+@cindex MaxCommentLeaderLength
+@cindex UseArchiveCommentLeader
+@cindex Log keyword, configuring substitution behavior
 @item $@splitrcskeyword{Log}$
 The log message supplied during commit, preceded by a
 header containing the @sc{rcs} filename, the revision
@@ -10625,11 +10628,12 @@ assigned with @code{cvs admin -s}---see @ref{admin options}.
 @item Local keyword
 The @code{LocalKeyword} option in the @file{CVSROOT/config} file
 may be used to specify a local keyword which is to be
-used as an alias for one of the other keywords. For
+used as an alias for one of the keywords: $@splitrcskeyword{}Id$,
+$@splitrcskeyword{}Header$, or $@splitrcskeyword{}CVSHeader$. For
 example, if the @file{CVSROOT/config} file contains
 a line with @code{LocalKeyword=MYBSD=CVSHeader}, then a
-file with the local keyword $@splitrcskeyword{MYBSD}$ will be
-expanded as if it were a $@splitrcskeyword{CVSHeader}$ keyword. If
+file with the local keyword $@splitrcskeyword{}MYBSD$ will be
+expanded as if it were a $@splitrcskeyword{}CVSHeader$ keyword. If
 the src/frob.c file contained this keyword, it might
 look something like this:
 
@@ -10665,7 +10669,7 @@ bug to the third-party and reducing the number of
 conflicts that arise during an import of a new version.
 
 All keyword expansion except the local keyword may be
-disabled using the @code{KeywordExpansion} option in
+disabled using the @code{KeywordExpand} option in
 the @file{CVSROOT/config} file---see 
 @ref{Configuring keyword expansion} for more details.
 
@@ -10677,7 +10681,9 @@ the @file{CVSROOT/config} file---see
 
 To include a keyword string you simply include the
 relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
-file, and commit the file.  @sc{cvs} will automatically
+file, and commit the file.  @sc{cvs} will automatically (Or,
+more accurately, as part of the update run that
+automatically happens after a commit.)
 expand the string as part of the commit operation.
 
 It is common to embed the @code{$@splitrcskeyword{}Id$} string in
