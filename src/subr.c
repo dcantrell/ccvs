@@ -56,6 +56,42 @@ xrealloc (ptr, bytes)
     return (cp);
 }
 
+/* Two constants which tune expand_string.  Having MIN_INCR as large
+   as 1024 might waste a bit of memory, but it still smaller than
+   typical values for PATH_MAX and CVS's own (soon to be extinct if I
+   have anything to say about it) limits like MAXPROGLEN.  Probably
+   anything which is going to allocate memory which is likely to get
+   as big as MAX_INCR shouldn't be doing it in one block which must be
+   contiguous, but since getrcskey does so, we might as well limit the
+   wasted memory to MAX_INCR or so bytes.  */
+#define MIN_INCR 1024
+#define MAX_INCR (2*1024*1024)
+
+/* *STRPTR is a pointer returned from malloc (or NULL), pointing to *N
+   characters of space.  Reallocate it so that points to at least
+   NEWSIZE bytes of space.  Gives a fatal error if out of memory;
+   if it returns it was successful.  */
+void
+expand_string (strptr, n, newsize)
+    char **strptr;
+    size_t *n;
+    size_t newsize;
+{
+    if (*n < newsize)
+    {
+	while (*n < newsize)
+	{
+	    if (*n < MIN_INCR)
+		*n += MIN_INCR;
+	    else if (*n > MAX_INCR)
+		*n += MAX_INCR;
+	    else
+		*n *= 2;
+	}
+	*strptr = xrealloc (*strptr, *n);
+    }
+}
+
 /*
  * Duplicate a string, calling xmalloc to allocate some dynamic space
  */

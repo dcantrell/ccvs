@@ -5325,6 +5325,52 @@ add file1
 	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/rcs4.tmp
 	  ;;
 
+	big)
+
+	  # Test ability to operate on big files.  Intention is to
+	  # test various realloc'ing code in RCS_deltas, rcsgetkey,
+	  # etc.  "big" is currently defined to be 1000 lines (64000
+	  # bytes), which in terms of files that users will use is not
+	  # large, merely average, but my reasoning is that this
+	  # should be big enough to make sure realloc'ing is going on
+	  # and that raising it a lot would start to stress resources
+	  # on machines which run the tests, without any significant
+	  # benefit.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest big-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  for i in 0 1 2 3 4 5 6 7 8 9; do
+	    for j in 0 1 2 3 4 5 6 7 8 9; do
+	      for k in 0 1 2 3 4 5 6 7 8 9; do
+		echo \
+"This is line ($i,$j,$k) which goes into the file file1 for testing" >>file1
+	      done
+	    done
+	  done
+	  dotest big-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest big-3 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done'
+	  cd ..
+	  rm -rf first-dir
+	  dotest big-4 "${testcvs} -q get first-dir" "U first-dir/file1"
+
+	  if test "$keep" = yes; then
+	    echo Keeping /tmp/cvs-sanity and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -rf first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	*)
 	   echo $what is not the name of a test -- ignored
 	   ;;
