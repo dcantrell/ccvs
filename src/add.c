@@ -134,6 +134,8 @@ add (argc, argv)
        client won't get all confused in send_file_names.  */
     for (i = 0; i < argc; i++)
     {
+	int skip_file = 0;
+
 	/* If it were up to me I'd probably make this a fatal error.
 	   But some people are really fond of their "cvs add *", and
 	   don't seem to object to the warnings.
@@ -143,9 +145,32 @@ add (argc, argv)
 	    || strcmp (argv[i], "..") == 0
 	    || fncmp (argv[i], CVSADM) == 0)
 	{
-	    int j;
-
 	    error (0, 0, "cannot add special file `%s'; skipping", argv[i]);
+	    skip_file = 1;
+	}
+	else
+	{
+	    char *p;
+	    p = argv[i];
+	    while (*p != '\0')
+	    {
+		if (ISDIRSEP (*p))
+		{
+		    /* In the client case, better check this before we start
+		       calling Create_Admin and such.  */
+		    error (0, 0, "\
+cannot add files with '/' in their name; %s not added",
+			   argv[i]);
+		    skip_file = 1;
+		    break;
+		}
+		++p;
+	    }
+	}
+
+	if (skip_file)
+	{
+	    int j;
 
 	    /* FIXME: We don't do anything about free'ing argv[i].  But
 	       the problem is that it is only sometimes allocated (see
@@ -156,6 +181,7 @@ add (argc, argv)
 	    --argc;
 	    /* Check the new argv[i] again.  */
 	    --i;
+	    ++err;
 	}
     }
 
@@ -172,7 +198,7 @@ add (argc, argv)
 	       check.  We can just forget the whole thing (and we
 	       better, because if we fired up the server and passed it
 	       nothing, it would spit back a usage message).  */
-	    return 0;
+	    return err;
 
 	start_server ();
 	ign_setup ();
@@ -225,7 +251,7 @@ add (argc, argv)
 	if (message)
 	    free (message);
 	free (repository);
-	return get_responses_and_close ();
+	return err + get_responses_and_close ();
     }
 #endif
 
@@ -241,15 +267,6 @@ add (argc, argv)
 	struct file_info finfo;
 
 	user = argv[i];
-	strip_trailing_slashes (user);
-	if (strchr (user, '/') != NULL)
-	{
-	    error (0, 0,
-	     "cannot add files with '/' in their name; %s not added", user);
-	    err++;
-	    continue;
-	}
-
 	memset (&finfo, 0, sizeof finfo);
 	finfo.file = user;
 	finfo.update_dir = "";
