@@ -552,7 +552,8 @@ if test x"$*" = x; then
 	tests="basica basicb basicc basic1 deep basic2"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff death death2 branches branches2"
-	tests="${tests} rcslib multibranch import importb join join2 join3"
+	tests="${tests} rcslib multibranch import importb importc"
+	tests="${tests} join join2 join3"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
@@ -3659,6 +3660,7 @@ modify-on-br1
 		# rdiff  -- imports with keywords
 		# import  -- more tests of imports with keywords
 		# importb  -- -b option.
+		# importc -- bunch o' files in bunch o' directories
 		# modules3
 		# mflag -- various -m messages
 		# ignore  -- import and cvsignore
@@ -3972,6 +3974,56 @@ add
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+	  ;;
+
+	importc)
+	  # Test importing a bunch o' files in a bunch o' directories.
+	  mkdir 1; cd 1
+	  mkdir adir bdir cdir
+	  mkdir adir/sub1 adir/sub2
+	  mkdir adir/sub1/ssdir
+	  mkdir bdir/subdir
+	  touch adir/sub1/file1 adir/sub2/file2 adir/sub1/ssdir/ssfile
+	  touch bdir/subdir/file1
+	  touch cdir/cfile
+	  dotest_sort importc-1 \
+"${testcvs} import -m import-it first-dir vendor release" \
+"
+
+N first-dir/adir/sub1/file1
+N first-dir/adir/sub1/ssdir/ssfile
+N first-dir/adir/sub2/file2
+N first-dir/bdir/subdir/file1
+N first-dir/cdir/cfile
+No conflicts created by this import
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/adir
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/adir/sub1
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/adir/sub1/ssdir
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/adir/sub2
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/bdir
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/bdir/subdir
+${PROG} [a-z]*: Importing ${TESTDIR}/cvsroot/first-dir/cdir"
+	  cd ..
+	  mkdir 2; cd 2
+	  dotest importc-2 "${testcvs} -q co first-dir" \
+"U first-dir/adir/sub1/file1
+U first-dir/adir/sub1/ssdir/ssfile
+U first-dir/adir/sub2/file2
+U first-dir/bdir/subdir/file1
+U first-dir/cdir/cfile"
+	  cd first-dir
+	  dotest importc-3 "${testcvs} update adir/sub1" \
+"${PROG} [a-z]*: Updating adir/sub1
+${PROG} [a-z]*: Updating adir/sub1/ssdir"
+	  dotest importc-4 "${testcvs} update adir/sub1 bdir/subdir" \
+"${PROG} [a-z]*: Updating adir/sub1
+${PROG} [a-z]*: Updating adir/sub1/ssdir
+${PROG} [a-z]*: Updating bdir/subdir"
+	  cd ..
+
+	  cd ..
+	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	join)

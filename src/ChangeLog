@@ -1,3 +1,10 @@
+1998-04-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* recurse.c (do_dir_proc): Restore update_dir rather than a
+	computation which appears to, but does not necessarily, restore it
+	(reported by various people; this fix is from Greg Hudson).
+	* sanity.sh (importc): New test, tests for this fix.
+
 1998-03-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_lock): If the revision is already locked, give an
