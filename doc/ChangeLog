@@ -1,5 +1,8 @@
 1999-11-04  Jim Kingdon  <http://developer.redhat.com/>
 
+	* cvs.texinfo (log options): Revert Karl's change regarding -d and
+	-s.  A space is allowed (see sanity.sh for example).
+
 	* cvs.texinfo (Password authentication server): The name of the
 	file is "passwd" not "password".
 
