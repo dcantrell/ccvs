@@ -1,5 +1,6 @@
-/* realloc() function that is glibc compatible.
-   Copyright (C) 1997, 2003, 2004 Free Software Foundation, Inc.
+/* memrchr -- Find the last occurrence of a byte in a memory block.
+
+   Copyright (C) 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,32 +16,12 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* written by Jim Meyering */
+#if HAVE_DECL_MEMRCHR
+# include <string.h>
+#else
+# include <stddef.h>
 
-#if HAVE_CONFIG_H
-# include <config.h>
+/* Search backwards through a block for a byte (specified as an int).  */
+void *memrchr (void const *, int, size_t);
+
 #endif
-#undef realloc
-
-#include <stdlib.h>
-
-/* Change the size of an allocated block of memory P to N bytes,
-   with error checking.  If N is zero, change it to 1.  If P is NULL,
-   use malloc.  */
-
-void *
-rpl_realloc (void *p, size_t n)
-{
-  if (n == 0)
-    {
-      n = 1;
-
-      /* In theory realloc might fail, so don't rely on it to free.  */
-      free (p);
-      p = NULL;
-    }
-
-  if (p == NULL)
-    return malloc (n);
-  return realloc (p, n);
-}

@@ -96,6 +96,9 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
+## For GNULIB's getcwd module.
+libcvs_a_SOURCES += getcwd.h
+
 ## For GNULIB's getdate module.
 libcvs_a_SOURCES += getdate.h getdate.y
 ## CVS test scripts for getdate.
@@ -106,11 +109,10 @@ check_PROGRAMS += getdate
 getdate_SOURCES = \
 	allocsa.c \
 	error.c \
-	exitfail.c \
-	exitfail.h \
+	exitfail.c exitfail.h \
 	getdate.y \
-	gettime.c \
 	xalloc-die.c \
+	xgetcwd.h xgetcwd.c \
 	xalloc.h \
 	xmalloc.c 
 ## This source file was added only for the getdate test program when compiled
@@ -155,9 +157,6 @@ MOSTLYCLEANFILES += getopt.h getopt.h-t
 ## For GNULIB's gettext module.
 libcvs_a_SOURCES += gettext.h
 
-## For GNULIB's gettime module.
-libcvs_a_SOURCES += gettime.c
-
 ## For GNULIB's md5 module.
 libcvs_a_SOURCES += md5.c md5.h
 
@@ -169,9 +168,6 @@ libcvs_a_SOURCES += pathmax.h
 
 ## For GNULIB's regex module.
 libcvs_a_SOURCES += regex.h
-
-## For GNULIB's save-cwd module.
-libcvs_a_SOURCES += save-cwd.h save-cwd.c
 
 ## For GNULIB's setenv module.
 libcvs_a_SOURCES += setenv.h
@@ -208,6 +204,9 @@ libcvs_a_SOURCES += strcase.h
 
 ## For GNULIB's strftime module.
 libcvs_a_SOURCES += strftime.c strftime.h
+
+## For GNULIB's strstr module.
+libcvs_a_SOURCES += strstr.h
 
 ## For GNULIB's time_r module.
 libcvs_a_SOURCES += time_r.h

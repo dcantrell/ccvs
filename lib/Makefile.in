@@ -58,15 +58,17 @@ host_triplet = @host@
 check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	ChangeLog alloca.c asnprintf.c asprintf.c atexit.c dup2.c \
-	fncase.c fnmatch.c fseeko.c ftello.c ftruncate.c getdate.c \
-	gethostname.c getline.c getndelim2.c getopt.c getopt1.c \
-	getpass.c gettimeofday.c lstat.c malloc.c memmove.c mkdir.c \
-	mkstemp.c mktime.c nanosleep.c printf-args.c printf-parse.c \
-	readlink.c realloc.c regex.c rename.c rpmatch.c setenv.c \
-	stat.c strcasecmp.c strerror.c strncasecmp.c strstr.c \
-	strtoul.c sunos57-select.c tempname.c time_r.c unsetenv.c \
-	valloc.c vasnprintf.c vasprintf.c waitpid.c
+	ChangeLog alloca.c asnprintf.c asprintf.c atexit.c \
+	chdir-long.c chdir-long.h dup2.c fncase.c fnmatch.c fseeko.c \
+	ftello.c ftruncate.c getcwd.c getdate.c gethostname.c \
+	getline.c getndelim2.c getopt.c getopt1.c getpass.c gettime.c \
+	gettimeofday.c lstat.c malloc.c memmove.c mempcpy.c mempcpy.h \
+	memrchr.c memrchr.h mkdir.c mkstemp.c mktime.c nanosleep.c \
+	openat.c openat.h printf-args.c printf-parse.c readlink.c \
+	realloc.c regex.c rename.c rpmatch.c save-cwd.c save-cwd.h \
+	setenv.c stat.c strcasecmp.c strerror.c strncasecmp.c strstr.c \
+	strtol.c strtoul.c sunos57-select.c tempname.c time_r.c \
+	unsetenv.c valloc.c vasnprintf.c vasprintf.c waitpid.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
@@ -74,12 +76,15 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/allocsa.m4 \
 	$(top_srcdir)/m4/asx_version_compare.m4 \
 	$(top_srcdir)/m4/atexit.m4 $(top_srcdir)/m4/bison.m4 \
-	$(top_srcdir)/m4/clock_time.m4 \
+	$(top_srcdir)/m4/chdir-long.m4 $(top_srcdir)/m4/clock_time.m4 \
 	$(top_srcdir)/m4/cvs_func_printf_ptr.m4 \
-	$(top_srcdir)/m4/dirname.m4 $(top_srcdir)/m4/dos.m4 \
+	$(top_srcdir)/m4/d-ino.m4 $(top_srcdir)/m4/dirname.m4 \
+	$(top_srcdir)/m4/dos.m4 $(top_srcdir)/m4/dup2.m4 \
 	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/eoverflow.m4 \
-	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
-	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/getcwd.m4 \
+	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/exitfail.m4 \
+	$(top_srcdir)/m4/extensions.m4 $(top_srcdir)/m4/fnmatch.m4 \
+	$(top_srcdir)/m4/ftruncate.m4 \
+	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/gethostname.m4 \
 	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getndelim2.m4 \
 	$(top_srcdir)/m4/getnline.m4 $(top_srcdir)/m4/getopt.m4 \
@@ -92,19 +97,23 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
 	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
 	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
+	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/readlink.m4 \
-	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/restrict.m4 \
-	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
-	$(top_srcdir)/m4/setenv.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/size_max.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_mtim.m4 $(top_srcdir)/m4/stat.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
-	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/rename.m4 \
+	$(top_srcdir)/m4/restrict.m4 $(top_srcdir)/m4/rpmatch.m4 \
+	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/setenv.m4 \
+	$(top_srcdir)/m4/signed.m4 $(top_srcdir)/m4/size_max.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_mtim.m4 \
+	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdbool.m4 \
+	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
+	$(top_srcdir)/m4/strcase.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/strstr.m4 \
+	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoul.m4 \
 	$(top_srcdir)/m4/sunos57-select.m4 $(top_srcdir)/m4/time_r.m4 \
 	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
 	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/uint32_t.m4 \
@@ -128,14 +137,13 @@ libcvs_a_DEPENDENCIES = @LIBOBJS@ @ALLOCA@
 am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
 	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
-	gettime.$(OBJEXT) md5.$(OBJEXT) save-cwd.$(OBJEXT) \
-	strftime.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
-	xgetcwd.$(OBJEXT) xgethostname.$(OBJEXT) xreadlink.$(OBJEXT) \
-	yesno.$(OBJEXT)
+	md5.$(OBJEXT) strftime.$(OBJEXT) xmalloc.$(OBJEXT) \
+	xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT) xgethostname.$(OBJEXT) \
+	xreadlink.$(OBJEXT) yesno.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 am_getdate_OBJECTS = getdate-allocsa.$(OBJEXT) getdate-error.$(OBJEXT) \
 	getdate-exitfail.$(OBJEXT) getdate-getdate.$(OBJEXT) \
-	getdate-gettime.$(OBJEXT) getdate-xalloc-die.$(OBJEXT) \
+	getdate-xalloc-die.$(OBJEXT) getdate-xgetcwd.$(OBJEXT) \
 	getdate-xmalloc.$(OBJEXT) getdate-progname.$(OBJEXT)
 getdate_OBJECTS = $(am_getdate_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -193,6 +201,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 KRB4 = @KRB4@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
@@ -297,11 +306,11 @@ noinst_LIBRARIES = libcvs.a
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
 	allocsa.h allocsa.c basename.c dirname.c dirname.h \
-	stripslash.c error.h exit.h exitfail.h exitfail.c getdate.h \
-	getdate.y getline.h getnline.h getnline.c getpagesize.h \
-	getpass.h gettext.h gettime.c md5.c md5.h minmax.h pathmax.h \
-	regex.h save-cwd.h save-cwd.c setenv.h stat-macros.h strcase.h \
-	strftime.c strftime.h time_r.h timespec.h unlocked-io.h \
+	stripslash.c error.h exit.h exitfail.h exitfail.c getcwd.h \
+	getdate.h getdate.y getline.h getnline.h getnline.c \
+	getpagesize.h getpass.h gettext.h md5.c md5.h minmax.h \
+	pathmax.h regex.h setenv.h stat-macros.h strcase.h strftime.c \
+	strftime.h strstr.h time_r.h timespec.h unlocked-io.h \
 	printf-args.h printf-parse.h vasnprintf.h vasprintf.h xalloc.h \
 	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xgethostname.h \
 	xgethostname.c xreadlink.h xreadlink.c xsize.h yesno.c yesno.h
@@ -322,7 +331,7 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf Makefile.gnulib build_lib.com \
 	getndelim2.c getndelim2.h getndelim2.c getopt_.h getopt_int.h \
 	stdbool_.h stdint_.h
 getdate_SOURCES = allocsa.c error.c exitfail.c exitfail.h getdate.y \
-	gettime.c xalloc-die.c xalloc.h xmalloc.c progname.c
+	xalloc-die.c xgetcwd.h xgetcwd.c xalloc.h xmalloc.c progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
@@ -388,26 +397,32 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/asprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atexit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/chdir-long.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fseeko.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftello.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/ftruncate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getndelim2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getopt1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/getpass.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gettime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gettimeofday.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/lstat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/malloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memmove.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mempcpy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memrchr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkstemp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mktime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/nanosleep.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/openat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/readlink.Po@am__quote@
@@ -415,12 +430,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rpmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/save-cwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/setenv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strncasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strstr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtoul.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/sunos57-select.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/tempname.Po@am__quote@
@@ -438,15 +455,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-gettime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-progname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xalloc-die.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xgetcwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gettime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/save-cwd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
@@ -527,20 +542,6 @@ getdate-getdate.obj: getdate.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-getdate.obj `if test -f 'getdate.c'; then $(CYGPATH_W) 'getdate.c'; else $(CYGPATH_W) '$(srcdir)/getdate.c'; fi`
 
-getdate-gettime.o: gettime.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.o -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c
-
-getdate-gettime.obj: gettime.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.obj -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`
-
 getdate-xalloc-die.o: xalloc-die.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xalloc-die.o -MD -MP -MF "$(DEPDIR)/getdate-xalloc-die.Tpo" -c -o getdate-xalloc-die.o `test -f 'xalloc-die.c' || echo '$(srcdir)/'`xalloc-die.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xalloc-die.Tpo" "$(DEPDIR)/getdate-xalloc-die.Po"; else rm -f "$(DEPDIR)/getdate-xalloc-die.Tpo"; exit 1; fi
@@ -554,6 +555,20 @@ getdate-xalloc-die.obj: xalloc-die.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xalloc-die.c' object='getdate-xalloc-die.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xalloc-die.obj `if test -f 'xalloc-die.c'; then $(CYGPATH_W) 'xalloc-die.c'; else $(CYGPATH_W) '$(srcdir)/xalloc-die.c'; fi`
+
+getdate-xgetcwd.o: xgetcwd.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xgetcwd.o -MD -MP -MF "$(DEPDIR)/getdate-xgetcwd.Tpo" -c -o getdate-xgetcwd.o `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xgetcwd.Tpo" "$(DEPDIR)/getdate-xgetcwd.Po"; else rm -f "$(DEPDIR)/getdate-xgetcwd.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xgetcwd.c' object='getdate-xgetcwd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xgetcwd.o `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
+
+getdate-xgetcwd.obj: xgetcwd.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xgetcwd.obj -MD -MP -MF "$(DEPDIR)/getdate-xgetcwd.Tpo" -c -o getdate-xgetcwd.obj `if test -f 'xgetcwd.c'; then $(CYGPATH_W) 'xgetcwd.c'; else $(CYGPATH_W) '$(srcdir)/xgetcwd.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xgetcwd.Tpo" "$(DEPDIR)/getdate-xgetcwd.Po"; else rm -f "$(DEPDIR)/getdate-xgetcwd.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xgetcwd.c' object='getdate-xgetcwd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xgetcwd.obj `if test -f 'xgetcwd.c'; then $(CYGPATH_W) 'xgetcwd.c'; else $(CYGPATH_W) '$(srcdir)/xgetcwd.c'; fi`
 
 getdate-xmalloc.o: xmalloc.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xmalloc.o -MD -MP -MF "$(DEPDIR)/getdate-xmalloc.Tpo" -c -o getdate-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c; \
