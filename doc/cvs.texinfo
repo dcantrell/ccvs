@@ -11553,6 +11553,11 @@ In some cases the list includes messages printed by old
 versions of @sc{cvs} (partly because users may not be
 sure which version of @sc{cvs} they are using at any
 particular moment).
+@c If we want to start retiring messages, perhaps we
+@c should pick a cutoff version (for example, no more
+@c messages which are specific to versions before 1.9)
+@c and then move the old messages to an "old messages"
+@c node rather than deleting them completely.
 
 @table @code
 @c FIXME: What is the correct way to format a multiline
@@ -11637,12 +11642,11 @@ This means that there was a problem finding the
 @code{patch} program.  Make sure that it is in your
 @code{PATH}.  Note that despite appearances the message
 is @emph{not} referring to whether it can find @var{file}.
-@c Future versions of @sc{cvs} are
-@c expected to dispense with the need for an external
-@c patch program, but might as well not advertise
-@c vaporware.
-@c Even after that change is made, probably want to
-@c preserve this message, see above about old messages.
+If both the client and the server are running a current
+version of @sc{cvs}, then there is no need for an
+external patch program and you should not see this
+message.  But if either client or server is running
+@sc{cvs} 1.9, then you need @code{patch}.
 
 @item cvs update: could not patch @var{file}; will refetch
 This means that for whatever reason the client was
