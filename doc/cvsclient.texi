@@ -150,10 +150,10 @@ Build it locally.  Copy the new version into somewhere on the
 remote system, in your path so that @code{rsh host cvs} finds it.
 Now you can test it.
 @item
-You may want to set the environment variable @code{CVS_CLIENT_PORT}
-(e.g., 1998) to some bad port value to prevent the client from
-contacting the server via a direct TCP link.  That will force the client
-to fall back to using @code{rsh}, which will run your new binary.
+You may want to set the environment variable @code{CVS_CLIENT_PORT} to
+-1 to prevent the client from contacting the server via a direct TCP
+link.  That will force the client to fall back to using @code{rsh},
+which will run your new binary.
 @item
 Set the environment variable @code{CVS_CLIENT_LOG} to a filename prefix
 such as @file{/tmp/cvslog}.  Whenever you run a remote CVS command,

@@ -1,3 +1,8 @@
+Mon Aug 21 00:23:45 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (How To): The way to force rsh is to set
+	CVS_CLIENT_PORT to -1, not to some bogus value.
+
 Tue Aug 15 17:12:08 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * cvs.texinfo
