@@ -25,6 +25,7 @@
  */
 
 #include "cvs.h"
+#include "save-cwd.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
@@ -356,7 +357,8 @@ add_directory (repository, dir)
     char *repository;
     char *dir;
 {
-    char cwd[PATH_MAX], rcsdir[PATH_MAX];
+    char rcsdir[PATH_MAX];
+    struct saved_cwd cwd;
     char message[PATH_MAX + 100];
     char *tag, *date;
 
@@ -376,11 +378,8 @@ add_directory (repository, dir)
     ParseTag (&tag, &date);
 
     /* now, remember where we were, so we can get back */
-    if (getwd (cwd) == NULL)
-    {
-	error (0, 0, "cannot get working directory: %s", cwd);
+    if (save_cwd (&cwd))
 	return (1);
-    }
     if (chdir (dir) < 0)
     {
 	error (0, errno, "cannot chdir to %s", dir);
@@ -475,8 +474,9 @@ add_directory (repository, dir)
 
     (void) printf ("%s", message);
 out:
-    if (chdir (cwd) < 0)
-	error (1, errno, "cannot chdir to %s", cwd);
+    if (restore_cwd (&cwd, NULL))
+      exit (1);
+    free_cwd (&cwd);
     return (0);
 }
 
