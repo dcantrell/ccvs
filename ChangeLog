@@ -1,3 +1,7 @@
+2001-04-12  Larry Jones  <larry.jones@sdr.com>
+
+	* depcomp: Newer version from Automake.
+
 2001-04-04  Larry Jones  <larry.jones@sdr.com>
 
 	* depcomp: Don't count on $? being set in then or else clauses.
