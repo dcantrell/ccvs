@@ -5326,22 +5326,31 @@ static int
 check_system_password( char *username, char *password )
 {
     pam_handle_t *pamh = NULL;
-    int retval;
+    int retval, err;
     struct cvs_pam_userinfo ui = { username, password };
     struct pam_conv conv = { cvs_pam_conv, (void *)&ui };
+    char *pam_stage = "start";
 
     retval = pam_start(PAM_SERVICE_NAME, username, &conv, &pamh);
 
-    if (retval == PAM_SUCCESS)
+    if (retval == PAM_SUCCESS) {
+	pam_stage = "authenticate";
 	retval = pam_authenticate(pamh, 0);
+    }
 
-    if (retval == PAM_SUCCESS)
+    if (retval == PAM_SUCCESS) {
+	pam_stage = "account";
 	retval = pam_acct_mgmt(pamh, 0);
+    }
 
-    if (pam_end(pamh,retval) != PAM_SUCCESS)
+    if (retval != PAM_SUCCESS)
+	printf("E PAM %s error: %s\n", pam_stage, pam_strerror(pamh, retval));
+
+    if ((err = pam_end(pamh, retval)) != PAM_SUCCESS)
     {
 	printf("E Fatal error, aborting.\n"
-	       "pam failed to release authenticator\n");
+		"pam failed to release authenticator\n"
+		"PAM error %s\n", pam_strerror(NULL, err));
 	error_exit ();
     }
 
