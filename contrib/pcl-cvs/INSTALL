@@ -3,17 +3,16 @@ This text is copied from the TeXinfo manual for pcl-cvs.
 Installation of the pcl-cvs program
 ===================================
 
-  1. Possibly edit the file `Makefile' to reflect the situation at
-     your site.  We say "possibly" because the version of pcl-cvs
-     included with CVS uses a configuration mechanism integrated with
-     the overall mechanisms used by the CVS build and install
-     procedures.  Thus, the file `Makefile' is generated automatically
-     from the file `Makefile.in', and it should not be necessary to
-     edit it further.
+  1. Possibly edit the file `Makefile' to reflect the situation at your
+     site.  We say "possibly" because the version of pcl-cvs included
+     with CVS uses a configuration mechanism integrated with the overall
+     mechanisms used by the CVS build and install procedures.  Thus the
+     file `Makefile' will be generated automatically from the file
+     `Makefile.in', and it should not be necessary to edit it further.
 
-     If you do have to edit the Makefile, the only things you have to
-     change are the definitions of `lispdir' and `infodir'.  The elisp
-     files will be copied to `lispdir', and the info file to
+     If you do have to edit the `Makefile', the only things you have to
+     change is the definition of `lispdir' and `infodir'.  The elisp
+     files will be copied to `lispdir', and the info file(s) to
      `infodir'.
 
   2. Configure pcl-cvs.el
