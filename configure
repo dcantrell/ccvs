@@ -876,6 +876,15 @@ Optional Packages:
                           (default autoselects)
   --with-umask            Set the umask CVS will use by default in the
                           repository (default 002)
+  --with-cvs-admin-group=GROUP
+                          The CVS admin command is restricted to the members
+                          of this group. If this group does not exist, all
+                          users are allowed to run CVS admin. To disable the
+                          CVS admin command for all users, create an empty
+                          group by specifying the --with-cvs-admin-group=
+                          option. To disable access control for CVS admin, run
+                          configure with the --without-cvs-admin-group option.
+                          (default 'cvsadmin')
 
 Some influential environment variables:
   CC          C compiler command
@@ -9183,6 +9192,28 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define UMASK_DFLT $with_umask
 _ACEOF
+
+
+
+
+# Check whether --with-cvs-admin-group or --without-cvs-admin-group was given.
+if test "${with_cvs_admin_group+set}" = set; then
+  withval="$with_cvs_admin_group"
+
+else
+  with_cvs_admin_group=cvsadmin
+fi;
+
+if test yes = "$with_cvs_admin_group"; then
+  with_cvs_admin_group=cvsadmin
+fi
+if test no != "$with_cvs_admin_group"; then
+
+cat >>confdefs.h <<_ACEOF
+#define CVS_ADMIN_GROUP "$with_cvs_admin_group"
+_ACEOF
+
+fi
 
 
 
