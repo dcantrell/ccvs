@@ -424,11 +424,14 @@ admin (argc, argv)
     }
 #endif /* CLIENT_SUPPORT */
 
-    /* start the recursion processor */
+    lock_tree_for_write (argc, argv, 0, 0);
+
     err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
 			   (DIRLEAVEPROC) NULL, (void *)&admin_data,
 			   argc, argv, 0,
-			   W_LOCAL, 0, 1, (char *) NULL, 1);
+			   W_LOCAL, 0, 0, (char *) NULL, 1);
+    Lock_Cleanup ();
+
  return_it:
     if (admin_data.branch != NULL)
 	free (admin_data.branch);
