@@ -89,7 +89,7 @@ AT_CLEANUP # Adding files
 
 
 
-# AT_CVS_BASIC_START_PROJECT()
+# AT_CVS_SIMPLE_PROJECT()
 #
 # This project creates the following starter project.
 #
@@ -98,7 +98,7 @@ AT_CLEANUP # Adding files
 #         \-ssdir
 #             \-ssfile
 #
-m4_defun([AT_CVS_BASIC_START_PROJECT],
+m4_defun([AT_CVS_SIMPLE_PROJECT],
 [mkdir sdir
 AT_CHECK_NOESCAPE([cvs add sdir],,
 [Directory $CVSROOT_DIR/project/sdir added to the repository
@@ -129,7 +129,7 @@ cd ../..
 
 AT_CVS_SETUP([tag, update, & diff])
 
-AT_CVS_BASIC_START_PROJECT()
+AT_CVS_SIMPLE_PROJECT()
 
 AT_CVS_CHECK_NORMALIZED([cvs -q tag BASE sdir/ssdir/ssfile],[1],,
 [[$SPROG tag: Attempt to add reserved tag name BASE
@@ -190,7 +190,7 @@ AT_CVS_SETUP([strange revision numbers])
 
 AT_KEYWORDS([commit commit-r diff diff-r admin admin-o resurrection])
 
-AT_CVS_BASIC_START_PROJECT()
+AT_CVS_SIMPLE_PROJECT()
 
 AT_CHECK([cvs -q tag NOT_RESERVED],,[T sdir/ssdir/ssfile
 ])
@@ -392,7 +392,7 @@ AT_CLEANUP # strange revision numbers
 
 AT_CVS_SETUP([annotate])
 
-AT_CVS_BASIC_START_PROJECT()
+AT_CVS_SIMPLE_PROJECT()
 echo "ssfile line 2" >>sdir/ssdir/ssfile
 AT_CHECK_NOESCAPE([cvs -q ci -m modify-it],,
 [Checking in sdir/ssdir/ssfile;
@@ -451,20 +451,18 @@ AT_CHECK([cvs -q co -l .],,[U topfile
 # module, and such.
 AT_CHECK([cvs -q co -l .])
 
-mkdir first-dir
-AT_CHECK_NOESCAPE([cvs add first-dir],,
-[Directory $CVSROOT_DIR/first-dir added to the repository
+mkdir second-dir
+AT_CHECK_NOESCAPE([cvs add second-dir],,
+[Directory $CVSROOT_DIR/second-dir added to the repository
 ])
 
 cd ..
-AT_CHECK([cvs -q co first-dir])
+AT_CHECK([cvs -q co second-dir])
 
-# The top-level CVS directory is not created by default.
-# I'm leaving basicb-1a and basicb-1b untouched, mostly, in
-# case we decide that the default should be reversed...
+# Verify that the top-level CVS directory is not created by default.
 AT_CHECK([test -d CVS],[1])
 
-AT_CHECK([cat first-dir/CVS/Repository],,[first-dir
+AT_CHECK([cat second-dir/CVS/Repository],,[second-dir
 ])
 
 AT_CLEANUP # top of repository
@@ -472,6 +470,12 @@ AT_CLEANUP # top of repository
 
 
 AT_CVS_SETUP([Emptydir not special])
+
+# FIXME: This test should probably be broken into several, though I'm not sure
+# where.  It came out of basicb in the old sanity.sh test suite, along with the
+# previous test and the following two, but I didn't have time to find where
+# else this one should break since what look like good break points still
+# depend on previous tests for setup.
 
 # Note that the name Emptydir is chosen to test that CVS just
 # treats it like any other directory name.  It should be
@@ -553,137 +557,170 @@ new revision: 1.2; previous revision: 1.1
 done
 ])
 
+AT_CHECK([cvs -q tag release-1],,
+[T Emptydir/sfile1
+T sdir2/sfile2
+])
+
+echo not in time for release-1 >sdir2/sfile2
+AT_CHECK_NOESCAPE([cvs -q ci -m modify-2],,
+[Checking in sdir2/sfile2;
+$CVSROOT_DIR/project/sdir2/sfile2,v  <--  sfile2
+new revision: 1.2; previous revision: 1.1
+done
+])
+
+# FIXCVS:
+# See if CVS can correctly notice when an invalid numeric
+# revision is specified.
+# AT_CHECK([cvs diff -r 1.5 -r 1.7 sfile2],,,
+# [error msg
+# ])
+
+# Test that we recurse into the correct directory when checking
+# for existing files, even if co -d is in use.
+cd ..
+touch project/extra
+AT_CHECK([cvs -q co -d project1 project],,
+[U project1/Emptydir/sfile1
+U project1/sdir2/sfile2
+])
+
+# FIXCVS?  The next test used to check things out like this:
+#   U newdir/Emptydir/sfile1
+#   U newdir/sdir2/sfile2
+# but that's difficult to do.  The whole "shorten" thing
+# is pretty bogus, because it will break on things
+# like "cvs co foo/bar baz/quux".  Unless there's some
+# pretty detailed expansion and analysis of the command-line
+# arguments, we shouldn't do "shorten" stuff at all.
+#
+# DRP: I'm not sure how detailed it would need to be - either all the path
+# prefixes are the same, in which case the matching parts are shortened, or
+# they are not, in which case they are grouped:
+#
+#   cvs co -d short project/Emptydir project/sdir2
+#   U short/Emptydir/sfile1
+#   U short/sdir2
+#
+#   cvs co -d group foo/bar baz/quux
+#   U group/foo/bar/file1
+#   U group/baz/quux/file2
+#
+# How do you group under project if you do want to?  How about:
+#
+#   cvs co -d group/project project/Emptydir project/sdir2
+#   U group/project/Emptydir/sfile1
+#   U group/project/sdir2/sfile2
+#
+AT_CHECK([cvs -q co -d newdir -r release-1 project/Emptydir project/sdir2],,
+[U newdir/project/Emptydir/sfile1
+U newdir/project/sdir2/sfile2
+])
+
+# Verify that the top-level CVS directory is not created by default.
+AT_CHECK([test -d CVS],[1])
+
+# Verify that our CVS/Repository files hold what we expect.
+AT_CHECK([cat newdir/CVS/Repository],,
+[.
+])
+AT_CHECK([cat newdir/project/CVS/Repository],,
+[project
+])
+AT_CHECK([cat newdir/project/Emptydir/CVS/Repository],,
+[project/Emptydir
+])
+AT_CHECK([cat newdir/project/sdir2/CVS/Repository],,
+[project/sdir2
+])
+
+# Verify that our project files contain what we expect.
+AT_CHECK([cat newdir/project/Emptydir/sfile1],,
+[sfile1 develops
+])
+AT_CHECK([cat newdir/project/sdir2/sfile2],,
+[sfile2 starts
+])
+
+# FIXCVS:
+# Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
+# seem to deal with it...
+# AT_CHECK([cvs -q co -d sub1/sub2 project],,
+# [U sub1/sub2/Emptydir/sfile1
+# U sub1/sub2/sdir2/sfile2
+# ])
+#
+# cd sub1
+# AT_CHECK([cvs -q update ./.])
+#
+# touch xx
+# AT_CHECK_NOESCAPE([cvs add xx],,
+# [$SPROG add: scheduling file \`xx' for addition
+# $SPROG add: use \`$SPROG commit' to add this file permanently
+# ])
+#
+# to test: sub1/sub2/sub3
+
 AT_CLEANUP # Emptydir not special
 
 
 
-AT_CVS_SETUP([unprocessed])
+AT_CVS_SETUP([delete last revision])
 
-AT_CHECK([exit 77])
+AT_KEYWORDS([admin admin-o])
 
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
-T sdir2/sfile2'
-	  echo not in time for release-1 >sdir2/sfile2
-	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"Checking in sdir2/sfile2;
-${CVSROOT_DIR}/first-dir/sdir2/sfile2,v  <--  sfile2
-new revision: 1\.2; previous revision: 1\.1
-done"
-	  # See if CVS can correctly notice when an invalid numeric
-	  # revision is specified.
-	  # Commented out until we get around to fixing CVS
-:	  dotest basicb-8a0 "${testcvs} diff -r 1.5 -r 1.7 sfile2" 'error msg'
-	  cd ..
+AT_CVS_SIMPLE_PROJECT()
 
-	  # Test that we recurse into the correct directory when checking
-	  # for existing files, even if co -d is in use.
-	  touch first-dir/extra
-	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/Emptydir/sfile1
-U first-dir1/sdir2/sfile2'
-	  rm -r first-dir1
+cd sdir/ssdir
 
-	  rm -r first-dir
+# Try to remove all revisions in a file.
+AT_CHECK_NOESCAPE([cvs admin -o1.1 ssfile],[1],
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.1
+],
+[[$SPROG [admin aborted]: attempt to delete all revisions
+]])
 
-	  # FIXME? basicb-9 used to check things out like this:
-	  #   U newdir/Emptydir/sfile1
-	  #   U newdir/sdir2/sfile2
-	  # but that's difficult to do.  The whole "shorten" thing
-	  # is pretty bogus, because it will break on things
-	  # like "cvs co foo/bar baz/quux".  Unless there's some
-	  # pretty detailed expansion and analysis of the command-line
-	  # arguments, we shouldn't do "shorten" stuff at all.
-
-	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
-'U newdir/first-dir/Emptydir/sfile1
-U newdir/first-dir/sdir2/sfile2'
-
-	  # basicb-9a and basicb-9b: see note about basicb-1a
-
-	  dotest_fail basicb-9a "test -d CVS" ''
-
-	  dotest basicb-9c "cat newdir/CVS/Repository" "\."
-	  dotest basicb-9d "cat newdir/first-dir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir" \
-"first-dir"
-	  dotest basicb-9e "cat newdir/first-dir/Emptydir/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/Emptydir" \
-"first-dir/Emptydir"
-	  dotest basicb-9f "cat newdir/first-dir/sdir2/CVS/Repository" \
-"${CVSROOT_DIR}/first-dir/sdir2" \
-"first-dir/sdir2"
-
-	  dotest basicb-10 "cat newdir/first-dir/Emptydir/sfile1 newdir/first-dir/sdir2/sfile2" \
-"sfile1 develops
-sfile2 starts"
-
-	  rm -r newdir
-
-	  # Hmm, this might be a case for CVSNULLREPOS, but CVS doesn't
-	  # seem to deal with it...
-	  if false; then
-	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/Emptydir/sfile1
-U sub1/sub2/sdir2/sfile2"
-	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update ./." ''
-	  touch xx
-	  dotest basicb-13 "${testcvs} add xx" fixme
-	  cd ..
-	  rm -r sub1
-	  # to test: sub1/sub2/sub3
-	  fi # end of tests commented out.
-
-	  # Create a second directory.
-	  mkdir 1
-	  cd 1
-	  dotest basicb-14 "${testcvs} -q co -l ." 'U topfile'
-	  mkdir second-dir
-	  dotest basicb-15 "${testcvs} add second-dir" \
-"Directory ${CVSROOT_DIR}/second-dir added to the repository"
-	  cd second-dir
-	  touch aa
-	  dotest basicb-16 "${testcvs} add aa" \
-"${SPROG} add: scheduling file .aa. for addition
-${SPROG} add: use .${SPROG} commit. to add this file permanently"
-	  dotest basicb-17 "${testcvs} -q ci -m add" \
-"RCS file: ${CVSROOT_DIR}/second-dir/aa,v
+echo I will be deleted second. >>ssfile
+AT_CHECK_NOESCAPE([cvs -q ci -mr2],,
+[Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.2; previous revision: 1.1
 done
-Checking in aa;
-${CVSROOT_DIR}/second-dir/aa,v  <--  aa
-initial revision: 1\.1
-done"
-	  cd ..
+])
 
-	  # Try to remove all revisions in a file.
-	  dotest_fail basicb-o1 "${testcvs} admin -o1.1 topfile" \
-"RCS file: ${CVSROOT_DIR}/topfile,v
-deleting revision 1\.1
-${SPROG} \[admin aborted\]: attempt to delete all revisions"
-	  dotest basicb-o2 "${testcvs} -q update -d first-dir" \
-"U first-dir/Emptydir/sfile1
-U first-dir/sdir2/sfile2"
-	  dotest_fail basicb-o3 \
-"${testcvs} admin -o1.1:1.2 first-dir/sdir2/sfile2" \
-"RCS file: ${CVSROOT_DIR}/first-dir/sdir2/sfile2,v
-deleting revision 1\.2
-deleting revision 1\.1
-${SPROG} \[admin aborted\]: attempt to delete all revisions"
-	  cd ..
-	  rm -r 1
+echo I will be deleted first. >>ssfile
+echo "It's kinda like seeing the future." >>ssfile
+AT_CHECK_NOESCAPE([cvs -q ci -mr3],,
+[Checking in ssfile;
+$CVSROOT_DIR/project/sdir/ssdir/ssfile,v  <--  ssfile
+new revision: 1.3; previous revision: 1.2
+done
+])
 
-	  mkdir 1; cd 1
-	  # Note that -H is an invalid option.
-	  # I suspect that the choice between "illegal" and "invalid"
-	  # depends on the user's environment variables, the phase
-	  # of the moon (weirdness with optind), and who knows what else.
-	  # I've been seeing "illegal"...
-	  # And I switched it to "invalid". -DRP
-	  dotest_fail basicb-21 "${testcvs} -q admin -H" \
-"admin: invalid option -- H
-${CPROG} \[admin aborted\]: specify ${CPROG} -H admin for usage information"
-	  cd ..
-	  rmdir 1
+AT_CHECK_NOESCAPE([cvs admin -o1.1:1.3 ssfile],[1],
+[RCS file: $CVSROOT_DIR/project/sdir/ssdir/ssfile,v
+deleting revision 1.3
+deleting revision 1.2
+deleting revision 1.1
+],
+[[$SPROG [admin aborted]: attempt to delete all revisions
+]])
 
-AT_CLEANUP # unprocessed
+AT_CLEANUP # delete last revision
+
+
+
+AT_CVS_SETUP([no admin -H])
+
+AT_KEYWORDS([admin])
+
+# Why in the world do we check for this?
+# Note that -H is an invalid option.
+AT_CHECK_NOESCAPE([cvs -q admin -H],[1],,
+[[admin: invalid option -- H
+$CPROG [admin aborted]: specify $CPROG -H admin for usage information
+]])
+
+AT_CLEANUP # no admin -H
