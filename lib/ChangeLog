@@ -1,5 +1,11 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Move yesno to its own section.
+	* rpmatch.c, yesno.h: New files from GNULIB.
+	* yesno.c: Update from GNULIB.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Move getpagesize to its own section.
 	* getpagesize.h: Update from GNULIB.
 

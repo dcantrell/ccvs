@@ -22,7 +22,6 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = \
 	md5.c \
 	sighandle.c \
-	yesno.c \
 	error.h \
 	md5.h \
 	system.h \
@@ -202,6 +201,9 @@ libcvs_a_SOURCES += xgetcwd.h xgetcwd.c
 
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES += xsize.h
+
+## For GNULIB's yesno module.
+libcvs_a_SOURCES += yesno.c yesno.h
 
 # Until Automake gets its act together
 distclean-local:
