@@ -26,45 +26,12 @@
 #endif
 
 /*
- * The "diff" program to execute when creating patch output.  This "diff"
- * must support the "-c" option for context diffing.  Specify a full
- * pathname if your site wants to use a particular diff.  If you are
- * using the GNU version of diff (version 1.15 or later), this should
- * be "diff -a".
- * 
- * NOTE: this program is only used for the ``patch'' sub-command (and
- * for ``update'' if you are using the server).  The other commands
- * use rcsdiff which will use whatever version of diff was specified
- * when rcsdiff was built on your system.
- */
-
-#ifndef DIFF
-#define	DIFF	"@gdiff_path@"
-#endif
-
-/*
  * The "patch" program to run when using the CVS server and accepting
  * patches across the network.  Specify a full pathname if your site
  * wants to use a particular patch.
  */
 #ifndef PATCH_PROGRAM
 #define PATCH_PROGRAM	"patch"
-#endif
-
-/*
- * By default, RCS programs are executed with the shell or through execlp(),
- * so the user's PATH environment variable is searched.  If you'd like to
- * bind all RCS programs to a certain directory (perhaps one not in most
- * people's PATH) then set the default in RCSBIN_DFLT.  Note that setting
- * this here will cause all RCS programs to be executed from this directory,
- * unless the user overrides the default with the RCSBIN environment variable
- * or the "-b" option to CVS.
- * 
- * This define should be either the empty string ("") or a full pathname to the
- * directory containing all the installed programs from the RCS distribution.
- */
-#ifndef RCSBIN_DFLT
-#define	RCSBIN_DFLT	""
 #endif
 
 /* Directory used for storing temporary files, if not overridden by
@@ -206,12 +173,6 @@
  * [ We have no such thing under OS/2, so far as I know. ]
  */
 #undef SETXID_SUPPORT
-
-/*
- * "cvs login" is under construction.  Don't define this unless you're
- * testing it, in which case you're me and you already know that.
- */
-/* #define CVS_LOGIN */
 
 /* End of CVS configuration section */
 
