@@ -785,3 +785,9 @@ convert_file (char *infile,  int inflags,
     if (close (infd) < 0)
         error (0, errno, "warning: couldn't close %s", infile);
 }
+
+char *
+get_homedir ()
+{
+    return getenv ("HOMEPATH");
+}

@@ -1,3 +1,10 @@
+Fri Feb 23 18:00:00 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* options.h: Define AUTH_CLIENT_SUPPORT and NO_SOCKET_TO_FD.
+	* config.h: Define HAVE_WINSOCK_H.
+	* win32.c (getpass): New function.
+	* filesubr.c (get_homedir): New function.
+
 Mon Feb 12 16:09:24 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* run.c (run_popen): Changed more Popen() to run_popen()
