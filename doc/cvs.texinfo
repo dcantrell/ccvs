@@ -11474,10 +11474,6 @@ the file CVS/Update.prog and `-u'. The program is always executed from
 the top level of the checked-out copy on the client. Again, the program
 is first searched for in the checked-out copy and then using the path.
 
-Note also that the commit and update programs work ONLY when using local
-repository access -- the files simply aren't created when sources are
-checked out from a pserver or other remote CVS.
-
 The programs are all run after the operation has effectively
 completed.
 
