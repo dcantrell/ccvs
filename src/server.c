@@ -6786,8 +6786,8 @@ cvs_pam_conv (int num_msg, const struct pam_message **msg,
 
     assert (msg && resp);
 
-    response = xmalloc(num_msg * sizeof (struct pam_response));
-    memset(response, 0, num_msg * sizeof (struct pam_response));
+    response = xnmalloc (num_msg, sizeof (struct pam_response));
+    memset (response, 0, num_msg * sizeof (struct pam_response));
 
     for (i = 0; i < num_msg; i++)
     {

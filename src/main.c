@@ -298,20 +298,16 @@ cmd_synonyms (void)
 	c++;
     }
     
-    synonyms = (char **) xmalloc(numcmds * sizeof(char *));
+    synonyms = xnmalloc (numcmds, sizeof(char *));
     line = synonyms;
     *line++ = "CVS command synonyms are:\n";
     for (c = &cmds[0]; c->fullname != NULL; c++)
     {
 	if (c->nick1 || c->nick2)
 	{
-	    *line = xmalloc (strlen (c->fullname)
-			     + (c->nick1 != NULL ? strlen (c->nick1) : 0)
-			     + (c->nick2 != NULL ? strlen (c->nick2) : 0)
-			     + 40);
-	    sprintf(*line, "        %-12s %s %s\n", c->fullname,
-		    c->nick1 ? c->nick1 : "",
-		    c->nick2 ? c->nick2 : "");
+	    *line = Xasprintf ("        %-12s %s %s\n", c->fullname,
+			       c->nick1 ? c->nick1 : "",
+			       c->nick2 ? c->nick2 : "");
 	    line++;
 	}
     }
@@ -806,16 +802,14 @@ cause intermittent sandbox corruption.");
 	if (tmpdir_update_env)
 	{
 	    char *env;
-	    env = xmalloc (strlen (TMPDIR_ENV) + strlen (Tmpdir) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", TMPDIR_ENV, Tmpdir);
+	    env = Xasprintf ("%s=%s", TMPDIR_ENV, Tmpdir);
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
 	{
 	    char *env;
 	    /* XXX pid < 10^32 */
-	    env = xmalloc (strlen (CVS_PID_ENV) + 1 + 32 + 1);
-	    (void) sprintf (env, "%s=%ld", CVS_PID_ENV, (long) getpid ());
+	    env = Xasprintf ("%s=%ld", CVS_PID_ENV, (long) getpid ());
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}

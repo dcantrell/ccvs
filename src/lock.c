@@ -158,8 +158,7 @@ lock_name (const char *repository, const char *name)
 	   in the repository, no need to create directories or anything.  */
 	assert (name != NULL);
 	assert (repository != NULL);
-	retval = xmalloc (strlen (repository) + strlen (name) + 10);
-	(void) sprintf (retval, "%s/%s", repository, name);
+	retval = Xasprintf ("%s/%s", repository, name);
     }
     else
     {
@@ -968,16 +967,11 @@ set_lockers_name (struct stat *statp)
 
     if (lockers_name != NULL)
 	free (lockers_name);
-    if ((pw = (struct passwd *)getpwuid (statp->st_uid)) !=
-	(struct passwd *)NULL)
-    {
+    pw = (struct passwd *) getpwuid (statp->st_uid);
+    if (pw != NULL)
 	lockers_name = xstrdup (pw->pw_name);
-    }
     else
-    {
-	lockers_name = xmalloc (20);
-	(void)sprintf (lockers_name, "uid%lu", (unsigned long) statp->st_uid);
-    }
+	lockers_name = Xasprintf ("uid%lu", (unsigned long) statp->st_uid);
 }
 
 

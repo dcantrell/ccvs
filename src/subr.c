@@ -324,10 +324,7 @@ getcaller (void)
     }
     if ((pw = (struct passwd *) getpwuid (uid)) == NULL)
     {
-	char uidname[20];
-
-	(void) sprintf (uidname, "uid%lu", (unsigned long) uid);
-	cache = xstrdup (uidname);
+	cache = Xasprintf ("uid%lu", (unsigned long) uid);
 	return cache;
     }
     cache = xstrdup (pw->pw_name);

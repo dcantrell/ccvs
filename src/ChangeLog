@@ -1,3 +1,40 @@
+2005-03-16  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (RCS_check_kflag): Use Xasprintf instead of
+	sprintf/xstrdup.
+
+	* mkmodules.c (checkout_file): Use Xasprintf instead of
+	xmalloc/strcpy+strcat.
+	* wrapper.c (wrap_unparse_rcs_options): Ditto.
+	(wrap_rcsoption): Ditto.
+
+	* subr.c (getcaller): Use Xasprintf instead of sprintf/xstrdup.
+
+	* history.c (history): Use Xasprintf instead of xmalloc/sprintf.
+	* lock.c (lock_name, set_lockers_name): Ditto.
+	* main.c (cmd_synonyms, main): Ditto.
+	* mkmodules.c (rename_rcsfile, init): Ditto
+	* modules.c (cat_module): Ditto.
+	* parseinfo.c (Parse_Info): Ditto.
+	* rcscmds.c (diff_exec, RCS_output_diff_options): Ditto.
+	* recurse.c (start_recursion, do_dir_proc): Ditto.
+	* remove.c (remove_fileproc): Ditto.
+	* repos.c (Name_Repository): Ditto.
+	* root.c (Name_Root, Create_Root): Ditto.
+	* status.c (status_fileproc, tag_list_proc): Ditto. 
+	* wrapper.c (wrap_setup, wrap_tocvs_process_file): Ditto.
+
+	* hash.c (sortlist): Use xnmalloc.
+	* main.c (cmd_synonyms): Ditto.
+	* server.c (cvs_pam_conv): Ditto.
+
+	* create_adm.c (Create_Admin): Clean up use of Xasprintf/xstrdup.
+	* entries.c (WriteTag, base_walk): Ditto.
+	* modules.c (my_module): Ditto.
+
+	* wrapper.c (wrap_fromcvs_process_file): Use Xasprintf instead of
+	xmalloc/sprintf and clean up control flow.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* history.c (history_write): Remove test that always evaluates to

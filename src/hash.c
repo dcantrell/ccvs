@@ -436,7 +436,7 @@ sortlist (List *list, int (*comp) (const Node *, const Node *))
 	n++;
 
     /* allocate an array of nodes and populate it */
-    array = (Node **) xmalloc (sizeof(Node *) * n);
+    array = xnmalloc (n, sizeof (Node *));
     i = 0;
     for (p = remain; p != head; p = p->next)
 	array[i++] = p;

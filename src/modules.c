@@ -603,12 +603,10 @@ module `%s' is a request for a file in a module which is not a directory",
 	change_to = where ? where : (mwhere ? mwhere : mname);
 	server_dir_to_restore = server_dir;
 	restore_server_dir = 1;
-	server_dir = Xasprintf ("%s%s%s",
-				server_dir_to_restore != NULL
-				? server_dir_to_restore : "",
-				server_dir_to_restore != NULL
-				? "/" : "",
-				change_to);
+	if (server_dir_to_restore != NULL)
+	    server_dir = Xasprintf ("%s/%s", server_dir_to_restore, change_to);
+	else
+	    server_dir = xstrdup (change_to);
     }
 #endif
 
@@ -932,21 +930,18 @@ cat_module (int status)
 	char *line;
 
 	/* Print module name (and status, if wanted) */
-	line = xmalloc (strlen (s_h->modname) + 15);
-	sprintf (line, "%-12s", s_h->modname);
+	line = Xasprintf ("%-12s", s_h->modname);
 	cvs_output (line, 0);
 	free (line);
 	if (status)
 	{
-	    line = xmalloc (strlen (s_h->status) + 15);
-	    sprintf (line, " %-11s", s_h->status);
+	    line = Xasprintf (" %-11s", s_h->status);
 	    cvs_output (line, 0);
 	    free (line);
 	}
 
-	line = xmalloc (strlen (s_h->modname) + strlen (s_h->rest) + 15);
 	/* Parse module file entry as command line and print options */
-	(void) sprintf (line, "%s %s", s_h->modname, s_h->rest);
+	line = Xasprintf ("%s %s", s_h->modname, s_h->rest);
 	line2argv (&moduleargc, &moduleargv, line, " \t");
 	free (line);
 	argc = moduleargc;

@@ -643,7 +643,11 @@ WriteTag (const char *dir, const char *tag, const char *date, int nonbranch,
     if (noexec)
 	return;
 
-    tmp = Xasprintf ("%s%s%s", dir ? dir : "", dir ? "/" : "", CVSADM_TAG);
+    if (dir != NULL)
+	tmp = Xasprintf ("%s/%s", dir, CVSADM_TAG);
+    else
+	tmp = xstrdup (CVSADM_TAG);
+
 
     if (tag || date)
     {
@@ -990,16 +994,18 @@ base_walk (enum base_walk code, struct file_info *finfo, char **rev)
        computation probably should be broken out into a separate function,
        as recurse.c does it too and places like Entries_Open should be
        doing it.  */
-    baserev_fullname = Xasprintf ("%s%s%s",
-				  finfo->update_dir[0] != '\0'
-				  ? finfo->update_dir : "",
-				  finfo->update_dir[0] != '\0' ? "/" : "",
-				  CVSADM_BASEREV);
-    baserevtmp_fullname = Xasprintf ("%s%s%s",
-				     finfo->update_dir[0] != '\0'
-				     ? finfo->update_dir : "",
-				     finfo->update_dir[0] != '\0' ? "/" : "",
-				     CVSADM_BASEREVTMP);
+    if (finfo->update_dir[0] != '\0')
+    {
+	baserev_fullname = Xasprintf ("%s/%s", finfo->update_dir,
+				      CVSADM_BASEREV);
+	baserevtmp_fullname = Xasprintf ("%s/%s", finfo->update_dir,
+					 CVSADM_BASEREVTMP);
+    }
+    else
+    {
+	baserev_fullname = xstrdup (CVSADM_BASEREV);
+	baserevtmp_fullname = xstrdup (CVSADM_BASEREVTMP);
+    }
 
     fp = CVS_FOPEN (CVSADM_BASEREV, "r");
     if (fp == NULL)

@@ -197,8 +197,7 @@ status_fileproc (void *callerdat, struct file_info *finfo)
     else
     {
 	char *buf;
-	buf = xmalloc (strlen (finfo->file) + strlen (sstat) + 80);
-	sprintf (buf, "File: %-17s\tStatus: %s\n\n", finfo->file, sstat);
+	buf = Xasprintf ("File: %-17s\tStatus: %s\n\n", finfo->file, sstat);
 	cvs_output (buf, 0);
 	free (buf);
     }
@@ -376,11 +375,9 @@ tag_list_proc (Node *p, void *closure)
     if (RCS_nodeisbranch (xrcsnode, p->key))
 	branch = RCS_whatbranch(xrcsnode, p->key) ;
 
-    buf = xmalloc (80 + strlen (p->key)
-		   + (branch ? strlen (branch) : strlen (p->data)));
-    sprintf (buf, "\t%-25s\t(%s: %s)\n", p->key,
-	     branch ? "branch" : "revision",
-	     branch ? branch : (char *)p->data);
+    buf = Xasprintf ("\t%-25s\t(%s: %s)\n", p->key,
+		     branch ? "branch" : "revision",
+		     branch ? branch : (char *)p->data);
     cvs_output (buf, 0);
     free (buf);
 
