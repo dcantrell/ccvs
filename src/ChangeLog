@@ -1,3 +1,9 @@
+Tue Aug 26 01:04:48 1997  Steve Ralston <sralston@ppdpost.ks.symbios.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add_directory): In allocating message, also allocate
+	enough for tag and date related text.
+
 Tue Aug 26 01:04:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (update_dirent_proc): Use update_dir not dir in "new
