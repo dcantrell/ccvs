@@ -5245,6 +5245,13 @@ cvs_output (str, len)
 	size_t to_write = len;
 	const char *p = str;
 
+	/* For symmetry with cvs_outerr we would call fflush (stderr)
+	   here.  I guess the assumption is that stderr will be
+	   unbuffered, so we don't need to.  That sounds like a sound
+	   assumption from the manpage I looked at, but if there was
+	   something fishy about it, my guess is that calling fflush
+	   would not produce a significant performance problem.  */
+
 	while (to_write > 0)
 	{
 	    written = fwrite (p, 1, to_write, stdout);
