@@ -1,3 +1,8 @@
+Mon Nov 24 23:00:09 1997  Karl Fogel  <kfogel@floss.red-bean.com> 
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi: Move Protocol Notes node to the end.
+
 Sat Nov 22 12:29:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Entries Lines): Clarify options in entries line.
