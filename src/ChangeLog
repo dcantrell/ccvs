@@ -1,3 +1,8 @@
+Thu Oct  5 18:20:13 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* commit.c (checkaddfile): New argument options; pass it to RCS.
+	(commit_fileproc): Pass it.
+
 Tue Oct  3 09:26:00 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * version.c: upped to 1.6.

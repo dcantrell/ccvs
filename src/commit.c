@@ -26,7 +26,7 @@ static int check_fileproc PROTO((char *file, char *update_dir, char *repository,
 			   List * entries, List * srcfiles));
 static int check_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int checkaddfile PROTO((char *file, char *repository, char *tag,
-			 List *srcfiles)); 
+			       char *options, List *srcfiles)); 
 static Dtype commit_direntproc PROTO((char *dir, char *repos, char *update_dir));
 static int commit_dirleaveproc PROTO((char *dir, int err, char *update_dir));
 static int commit_fileproc PROTO((char *file, char *update_dir, char *repository,
@@ -861,7 +861,8 @@ commit_fileproc (file, update_dir, repository, entries, srcfiles)
     }
     else if (ci->status == T_ADDED)
     {
-	if (checkaddfile (file, repository, ci->tag, srcfiles) != 0)
+	if (checkaddfile (file, repository, ci->tag, ci->options,
+			  srcfiles) != 0)
 	{
 	    fixaddfile (file, repository);
 	    err = 1;
@@ -1426,10 +1427,11 @@ fixbranch (file, repository, branch)
  */
 
 static int
-checkaddfile (file, repository, tag, srcfiles)
+checkaddfile (file, repository, tag, options, srcfiles)
     char *file;
     char *repository;
     char *tag;
+    char *options;
     List *srcfiles;
 {
     FILE *fp;
@@ -1529,6 +1531,10 @@ checkaddfile (file, repository, tag, srcfiles)
 	    }
 	    (void) fclose (fp);
 	}
+	/* when adding binary files, make sure the option is stored in the
+	   repository.  */
+	if (options)
+	    run_arg (options);
 	run_arg (rcs);
 	if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
 	{
@@ -1649,6 +1655,10 @@ checkaddfile (file, repository, tag, srcfiles)
 	    run_arg (fname);
     }
     (void) fclose (fp);
+    /* when adding binary files, make sure the option is stored in the
+       repository.  */
+    if (options)
+	run_arg (options);
     run_arg (rcs);
     if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
     {
