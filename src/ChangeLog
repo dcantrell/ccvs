@@ -1,3 +1,8 @@
+Fri Mar 15 15:12:11 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* server.h: fix prototype of server_pause_check (was
+	  server_check_pause)
+
 Thu Mar 14 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	* vers_ts.c (Version_TS), entries.c (Scratch_Entry, AddEntryNode):

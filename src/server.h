@@ -83,7 +83,7 @@ extern void server_cleanup PROTO((int sig));
 
 #ifdef SERVER_FLOWCONTROL
 /* Pause if it's convenient to avoid memory blowout */
-extern void server_check_pause PROTO((void));
+extern void server_pause_check PROTO((void));
 #endif /* SERVER_FLOWCONTROL */
 
 #endif /* SERVER_SUPPORT */
