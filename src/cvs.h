@@ -526,5 +526,7 @@ int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
 char *wrap_tocvs_process_file PROTO((const char *fileName));
 int   wrap_merge_is_copy PROTO((const char *fileName));
 char *wrap_fromcvs_process_file PROTO((const char *fileName));
+/* Pathname expansion */
+char *expand_path PROTO((char *name));
 void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
