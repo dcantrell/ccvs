@@ -2514,13 +2514,7 @@ static const char *const annotate_usage[] =
 };
 
 /* Command to show the revision, date, and author where each line of a
-   file was modified.  Currently it will only show the trunk, all the
-   way to the head, but it would be useful to enhance it to (a) allow
-   one to specify a revision, and display only as far as that (easy;
-   just have annotate_fileproc set all the ->vers fields to NULL when
-   you hit that revision), and (b) handle branches (not as easy, but
-   doable).  The user interface for both (a) and (b) could be a -r
-   option.  */
+   file was modified.  */
 
 int
 annotate (argc, argv)
