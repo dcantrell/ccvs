@@ -1953,15 +1953,23 @@ large source tree with a fair amount of activity.
 @c Say something about CPU speed too?  I'm even less sure
 @c what to say on that subject...
 
-The real answer, of course, is more complicated.  The
-@sc{cvs} server consists of two processes for each
-client that it is serving.  Memory consumption on the
-child process should remain fairly small.  Memory
-consumption on the parent process, particularly if the
-network connection to the client is slow, can be
-expected to grow to slightly more than the size of the
-sources in a single directory, or two megabytes,
-whichever is larger.
+The real answer, of course, is more complicated.
+Estimating the known areas of large memory consumption
+should be sufficient to estimate memory requirements.
+There are two such areas documented here; other memory
+consumption should be small by comparison (if you find
+that is not the case, let us know, as described in
+@ref{BUGS}, so we can update this documentation).
+
+The first area of big memory consumption is large
+checkouts, when using the @sc{cvs} server.  The server
+consists of two processes for each client that it is
+serving.  Memory consumption on the child process
+should remain fairly small.  Memory consumption on the
+parent process, particularly if the network connection
+to the client is slow, can be expected to grow to
+slightly more than the size of the sources in a single
+directory, or two megabytes, whichever is larger.
 @c "two megabytes" of course is SERVER_HI_WATER.  But
 @c we don't mention that here because we are
 @c documenting the default configuration of CVS.  If it
@@ -1985,14 +1993,36 @@ than physical memory.
 @c in a first in, first out fashion, but I haven't
 @c looked very closely.
 
-Resource consumption for the client or the
-non-client/server @sc{cvs} is even more modest---any
-machine with enough capacity to run the operating system
-in question should have little trouble.
-@c Probably we could be saying more about this.
+The second area of large memory consumption is
+@code{diff}, when checking in large files.  This is
+required even for binary files.  The rule of thumb is
+to allow about ten times the size of the largest file
+you will want to check in, although five times may be
+adequate.  For example, if you want to check in a file
+which is 10 megabytes, you should have 100 megabytes of
+memory on the machine doing the checkin (the server
+machine for client/server, or the machine running
+@sc{cvs} for non-client/server).  This can be swap
+space rather than physical memory.  Because the memory
+is only required briefly, there is no particular need
+to allow memory for more than one such checkin at a
+time.
+@c The 5-10 times rule of thumb is from Paul Eggert for
+@c GNU diff.  I don't think it is in the GNU diff
+@c manual or anyplace like that.
+@c
+@c Probably we could be saying more about
+@c non-client/server CVS.
 @c I would guess for non-client/server CVS in an NFS
-@c environment the biggest issues is the network and
+@c environment the biggest issues are the network and
 @c the NFS server.
+
+Resource consumption for the client is even more
+modest---any machine with enough capacity to run the
+operating system in question should have little
+trouble.
+@c Is that true?  I think the client still wants to
+@c (bogusly) store entire files in memory at times.
 
 For information on disk space requirements, see
 @ref{Creating a repository}.

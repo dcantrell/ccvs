@@ -1,5 +1,7 @@
 Tue Jul  1 09:19:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Server requirements): Discuss memory used by diff.
+
 	* cvs.texinfo (Substitution modes): Add comment about -A resetting
 	both sticky tags/dates and sticky options.
 
