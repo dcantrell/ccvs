@@ -45,13 +45,8 @@
 
 @c -- TODO list:
 @c -- Fix all lines that match "^@c -- "
-@c -- Document how CVS finds the binaries it executes.
-@c Things to include in the index:
-@c Finding RCS binaries
-@c Path to RCS binaries
-@c RCS, how CVS finds them
-@c s/RCS/diff/
-@c -- More on binary files
+@c -- Also places marked with FIXME should be manual
+@c problems (as opposed to FIXCVS for CVS problems).
 
 @ifinfo
 Copyright @copyright{} 1992, 1993 Signum Support AB
@@ -226,12 +221,12 @@ this table.
 
 @table @asis
 @item Binary files
-@sc{cvs} can handle binary files, but
-you must have @sc{rcs} release 5.5 or later and
-a release of @sc{gnu} diff that supports the @samp{-a}
-flag (release 1.15 and later are OK).  You must also
-configure both @sc{rcs} and @sc{cvs} to handle binary
-files when you install them.
+@sc{cvs} can handle binary files, but you must tell it
+which files are binary.  In the past there have been
+many quirks and bugs with binary files, some of which
+are now fixed.
+@c Some of the known quirks and bugs are mentioned in
+@c the BUGS file.
 
 See @ref{Binary files}, for more details on binary files.
 
@@ -2364,11 +2359,10 @@ single line in @file{inetd.conf}) should be sufficient:
 
 @example
 2401  stream  tcp  nowait  root  /usr/local/bin/cvs
-cvs -b /usr/local/bin --allow-root=/usr/cvsroot pserver
+cvs --allow-root=/usr/cvsroot pserver
 @end example
 
-The @samp{-b} option specifies the directory which contains
-the @sc{rcs} binaries on the server.  You could also use the
+You could also use the
 @samp{-T} option to specify a temporary directory.
 
 The @samp{--allow-root} option specifies the allowable
@@ -2376,25 +2370,6 @@ The @samp{--allow-root} option specifies the allowable
 different @sc{cvsroot} directory will not be allowed to
 connect.  If there is more than one @sc{cvsroot}
 directory which you want to allow, repeat the option.
-
-Note that some versions of @code{inetd} may limit the
-number of arguments to four.  If your server outputs
-usage messages instead of the CVS protocol (which will
-typically cause a client to complain with protocol
-errors), then try limiting the number of arguments.
-For example, instead of
-
-@example
--b /usr/local/bin
-@end example
-
-in @file{inetd.conf}, as described above, put the
-following in @file{CVSROOT/config} (as described in
-@pxref{config}):
-
-@example
-RCSBIN=/usr/local/bin
-@end example
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -6452,10 +6427,9 @@ A more serious concern is that @sc{cvs} is not good at
 handling @code{$@asis{}Log$} entries when a branch is
 merged onto the main trunk.  Conflicts often result
 from the merging operation.
-@c We say "cvs" even though it is done via rcsmerge;
-@c this is an implementation detail.  If the merging is
-@c done in CVS instead, should check if this problem
-@c still persists.
+@c Might want to check whether the CVS implementation
+@c of RCS_merge has this problem the same way rcsmerge
+@c does.  I would assume so....
 
 People also tend to "fix" the log entries in the file
 (correcting spelling mistakes and maybe even factual
@@ -6562,13 +6536,7 @@ off.
 
 The @samp{-kb} option available with some @sc{cvs}
 commands insures that neither line ending conversion
-nor keyword expansion will be done.  If you are using
-an old version of @sc{rcs} without this option, and you
-are using an operating system, such as unix, which
-terminates lines with linefeeds only, you can use
-@samp{-ko} instead; if you are on another operating
-system, upgrade to a version of @sc{rcs}, such as 5.7
-or later, which supports @samp{-kb}.
+nor keyword expansion will be done.
 
 Here is an example of how you can create a new file
 using the @samp{-kb} flag:
@@ -6914,7 +6882,7 @@ reference to @sc{cvs} commands, @pxref{Invoking CVS}).
 * ~/.cvsrc::                    Default options with the ~/.csvrc file
 * Global options::              Options you give to the left of cvs_command
 * Common options::              Options you give to the right of cvs_command
-* admin::                       Administration front end for rcs
+* admin::                       Administration
 * checkout::                    Checkout sources for editing
 * commit::                      Check files into the repository
 * diff::                        Show differences between revisions
@@ -7090,10 +7058,11 @@ Specify legal @sc{cvsroot} directory.  See
 @cindex RCSBIN, overriding
 @cindex Overriding RCSBIN
 @item -b @var{bindir}
-Use @var{bindir} as the directory where @sc{rcs} programs are
-located.  Overrides the setting of the @code{$RCSBIN} environment
-variable and any precompiled directory.  This parameter should be
-specified as an absolute pathname.
+In @sc{cvs} 1.9.18 and older, this specified that
+@sc{rcs} programs are in the @var{bindir} directory.
+Current versions of @sc{cvs} do not run @sc{rcs}
+programs; for compatibility this option is accepted,
+but it does nothing.
 
 @cindex TMPDIR, overriding
 @cindex Overriding TMPDIR
@@ -7432,7 +7401,7 @@ will be used).
 that command.  @xref{commit options}.
 
 @item -k @var{kflag}
-Alter the default @sc{rcs} processing of keywords.
+Alter the default processing of keywords.
 @xref{Keyword substitution}, for the meaning of
 @var{kflag}.  Your @var{kflag} specification is
 @dfn{sticky} when you use it to create a private copy
@@ -7544,7 +7513,7 @@ tag can be either a symbolic or numeric tag.
 
 Specifying the @samp{-q} global option along with the
 @samp{-r} command option is often useful, to suppress
-the warning messages when the @sc{rcs} history file
+the warning messages when the @sc{rcs} file
 does not contain the specified tag.
 
 @strong{Warning:} this is not the same as the overall @samp{cvs -r} option,
@@ -7566,7 +7535,7 @@ and @code{update}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node admin
-@appendixsec admin---Administration front end for rcs
+@appendixsec admin---Administration
 @cindex Admin (subcommand)
 
 @itemize @bullet
@@ -7912,10 +7881,10 @@ There can be no space between @samp{-u} and its argument.
 @c whatever it means to "rcs".
 
 @item -V@var{n}
-Emulate @sc{rcs} version @var{n}. Use -V@var{n} to make
-an @sc{rcs} file acceptable to @sc{rcs} version @var{n}
-by discarding information that would confuse version
-@var{n}.
+In previous versions of @sc{cvs}, this option meant to
+write an @sc{rcs} file which would be acceptable to
+@sc{rcs} version @var{n}, but it is now obsolete and
+specifying it will produce an error.
 @c Note that -V without an argument has never been
 @c documented as a cvs admin option.
 
@@ -8029,8 +7998,9 @@ retrieve the most recent revision (instead of ignoring
 the file).
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.  See
-co(1).  This option is sticky; future updates of
+Process keywords according to @var{kflag}.  See
+@ref{Keyword substitution}.
+This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
 to see the sticky options.  See @ref{Invoking CVS}, for
@@ -8197,7 +8167,7 @@ time is right.
 When all is well, an editor is invoked to allow you to
 enter a log message that will be written to one or more
 logging programs (@pxref{modules}, and @pxref{loginfo})
-and placed in the @sc{rcs} history file inside the
+and placed in the @sc{rcs} file inside the
 repository.  This log message can be retrieved with the
 @code{log} command; see @ref{log}.  You can specify the
 log message on the command line with the @samp{-m
@@ -8358,7 +8328,7 @@ $ cvs checkout -r EXPR1 whatever_module
 
 @itemize @bullet
 @item
-Synopsis: diff [-lR] [rcsdiff_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
+Synopsis: diff [-lR] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files@dots{}]
 @item
 Requires: working directory, repository.
 @item
@@ -8396,8 +8366,8 @@ Use the most recent revision no later than @var{date}.
 See @samp{-r} for how this affects the comparison.
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.  See
-co(1).
+Process keywords according to @var{kflag}.  See
+@ref{Keyword substitution}.
 
 @item -l
 Local; run only in current working directory.
@@ -8421,40 +8391,26 @@ outcome in any way).
 
 One or both @samp{-r} options can be replaced by a
 @samp{-D @var{date}} option, described above.
-
-@item --ifdef=@var{arg}
-Output in ifdef format.  Consult the documentation of
-your underlying diff program concerning the @samp{-D}
-option to diff, for more information on this format.
 @end table
 
-@c FIXME?  Probably should document -c here, and
-@c perhaps arrange for CVS to support it via a diff library or
-@c some such.  Or perhaps figure that "all" diff
-@c programs support -c?  Ideas is to preserve the
-@c ability to pass the buck to diff on all the hairy
-@c stuff, while still providing at least one, and
-@c perhaps several popular standard formats.  But this
-@c is all in the idea stage, and probably needs more
-@c thought and refinement.  -u might be similar, in
-@c terms of being something that it might make sense to
-@c document here.
-@c FIXME: also should be a way to pass through
+@c Conceptually, this is a disaster.  There are 3
+@c zillion diff formats that we support via the diff
+@c library.  It is not obvious to me that we should
+@c document them all.  Maybe just the most common ones
+@c like -c and -u, and think about phasing out the
+@c obscure ones.
+@c FIXCVS: also should be a way to specify an external
+@c diff program (which can be different for different
+@c file types) and pass through
 @c arbitrary options, so that the user can do
 @c "--pass=-Z --pass=foo" or something even if CVS
-@c doesn't know about the -Z option to diff.
-@c Note on -N: The current CVS implementation does require that the
-@c underlying diff supports -N so we can document it as
-@c a pass-through even if the implementation details
-@c are more complicated.
-@c
-@c FIXME? Reference to discussion of which diff CVS
-@c uses (one in path, or....).
-The following options are passed through to
-@code{rcsdiff}, which in turn passes them to
-@code{diff}.  The exact meaning of the options depends
-on which @code{diff} you are using.  See the
-documentation for your @code{diff} for details.
+@c doesn't know about the "-Z foo" option to diff.
+@c This would fit nicely with deprecating/eliminating
+@c the obscure options of the diff library, because it
+@c would let people specify an external GNU diff if
+@c they are into that sort of thing.
+The following options specify the format of the
+output.  They have the same meaning as in GNU diff.
 
 @code{-a} @code{-b} @code{-B} @code{-c} @w{@code{-C}
 @var{nlines}} @code{-d} @code{-e} @code{-f} @code{-h}
@@ -8470,6 +8426,7 @@ documentation for your @code{diff} for details.
 @code{--context[=@var{lines}]} @code{--ed}
 @code{--expand-tabs} @code{--forward-ed}
 @code{--horizon-lines=@var{arg}}
+@code{--ifdef=@var{arg}}
 @code{--ignore-all-space} @code{--ignore-blank-lines}
 @code{--ignore-case}
 @code{--ignore-matching-lines=@var{regexp}}
@@ -8548,14 +8505,14 @@ date or tag (with @samp{-D} or @samp{-r}), so that you
 can count on reproducing the source you ship to others.
 
 One often would like to use @samp{-kv} with @code{cvs
-export}.  This causes any @sc{rcs} keywords to be
+export}.  This causes any keywords to be
 expanded such that an import done at some other site
 will not lose the keyword revision information.  But be
 aware that doesn't handle an export containing binary
 files correctly.  Also be aware that after having used
 @samp{-kv}, one can no longer use the @code{ident}
 command (which is part of the @sc{rcs} suite---see
-ident(1)) which looks for @sc{rcs} keyword strings.  If
+ident(1)) which looks for keyword strings.  If
 you want to be able to use @code{ident} you must not
 use @samp{-kv}.
 
@@ -8836,7 +8793,7 @@ file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
 before being imported.  @xref{Wrappers}.
 
-The outside source is saved in a first-level @sc{rcs}
+The outside source is saved in a first-level
 branch, by default 1.1.1.  Updates are leaves of this
 branch; for example, files from the first imported
 collection of source will be revision 1.1.1.1, then
@@ -8886,7 +8843,7 @@ There are the following additional special options.
 See @ref{Multiple vendor branches}.
 
 @item -k @var{subst}
-Indicate the RCS keyword expansion mode desired.  This
+Indicate the keyword expansion mode desired.  This
 setting will apply to all files created during the
 import, but not to any files that previously existed in
 the repository.  See @ref{Substitution modes}, for a
@@ -9059,7 +9016,8 @@ exclusive one.
 Note that the separator is a semicolon (;).
 
 @item -h
-Print only the @sc{rcs} pathname, working pathname, head,
+Print only the name of the @sc{rcs} file, name
+of the file in the working directory, head,
 default branch, access list, locks, symbolic names, and
 suffix.
 
@@ -9075,7 +9033,7 @@ information, the log information is presented without
 tags at all.  
 
 @item -R
-Print only the name of the @sc{rcs} history file.
+Print only the name of the @sc{rcs} file.
 
 @c Note that using a bare revision (in addition to not
 @c being explicitly documented here) is potentially
@@ -9254,7 +9212,7 @@ format, so if you plan to post this patch to the net
 you should probably not use @samp{-u}.
 
 @item -V @var{vn}
-Expand @sc{rcs} keywords according to the rules current in
+Expand keywords according to the rules current in
 @sc{rcs} version @var{vn} (the expansion format changed with
 @sc{rcs} version 5).
 @end table
@@ -9689,8 +9647,9 @@ retrieve the most recent revision (instead of ignoring
 the file).
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.  See
-co(1).  This option is sticky; future updates of
+Process keywords according to @var{kflag}.  See
+@ref{Keyword substitution}.
+This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
 to see the sticky options.  See @ref{Invoking CVS}, for
@@ -9835,11 +9794,11 @@ name of that file is printed while @code{update} runs.
 A conflict was detected while trying to merge your
 changes to @var{file} with changes from the source
 repository.  @var{file} (the copy in your working
-directory) is now the output of the rcsmerge(1) command
-on the two revisions; an unmodified copy of your file
+directory) is now the result of attempting to merge
+the two revisions; an unmodified copy of your file
 is also in your working directory, with the name
 @file{.#@var{file}.@var{revision}} where @var{revision}
-is the @sc{rcs} revision that your modified file started
+is the revision that your modified file started
 from.  Resolve the conflict as described in
 @ref{Conflicts example}.
 @c "some systems" as in out-of-the-box OSes?  Not as
@@ -10241,7 +10200,7 @@ Use the file's modification time as the time of
 import.  See @ref{import options}.
 
 @item -k @var{kflag}
-Set default RCS keyword substitution mode.  See
+Set default keyword substitution mode.  See
 @ref{import options}.
 
 @item -m @var{msg}
@@ -11820,9 +11779,11 @@ This is the value of the @sc{cvs} root in use.
 ways to specify this.
 
 @item RCSBIN
-This is the value @sc{cvs} is using for where to find
-@sc{rcs} binaries.  @xref{Global options}, for a
-description of how to specify this.
+In @sc{cvs} 1.9.18 and older, this specified the
+directory where @sc{cvs} was looking for @sc{rcs}
+programs.  Because @sc{cvs} no longer runs @sc{rcs}
+programs, specifying this internal variable is now an
+error.
 
 @item CVSEDITOR
 @itemx VISUAL
@@ -11890,13 +11851,11 @@ Currently defined keywords are:
 @table @code
 @cindex RCSBIN, in CVSROOT/config
 @item RCSBIN=@var{bindir}
-Look for @sc{rcs} programs in the directory
-@var{bindir}, like the @samp{-b} global option.  It is
-not specified whether this setting overrides the
-@samp{-b} global option or vice versa; the behavior
-with respect to overrides may change in the future.
-@c In other words, I haven't thought very much about
-@c what should override what.
+For @sc{cvs} 1.9.12 through 1.9.18, this setting told
+@sc{cvs} to look for @sc{rcs} programs in the
+@var{bindir} directory.  Current versions of @sc{cvs}
+do not run @sc{rcs} programs; for compatibility this
+setting is accepted, but it does nothing.
 
 @cindex SystemAuth, in CVSROOT/config
 @item SystemAuth=@var{value}
@@ -11943,7 +11902,7 @@ Controls permissions of files in the repository.  See
 @cindex CVSROOT
 @item $CVSROOT
 Should contain the full pathname to the root of the @sc{cvs}
-source repository (where the @sc{rcs} history files are
+source repository (where the @sc{rcs} files are
 kept).  This information must be available to @sc{cvs} for
 most commands to execute; if @code{$CVSROOT} is not set,
 or if you wish to override it for one invocation, you
@@ -11967,13 +11926,6 @@ during commit.  @code{$CVSEDITOR} overrides
 If @code{$RCSBIN} is not set, and no path is compiled
 into @sc{cvs}, it will use @code{$PATH} to try to find all
 programs it uses.
-
-@cindex RCSBIN
-@item $RCSBIN
-This is the value @sc{cvs} is using for where to find
-@sc{rcs} binaries.  @xref{Global options}, for a
-description of how to specify this.  If not set, a
-compiled-in value is used, or your @code{$PATH} is searched.
 
 @cindex HOME
 @item $HOME
@@ -12050,15 +12002,14 @@ command interpreter and defaults to @sc{cmd.exe}.
 @cindex TEMP
 @itemx $TEMP
 @cindex temporary files, location of
-@c I'm not even sure I've documented all the
-@c conventions here.  Furthermore, those conventions are
+@c This is quite nuts.  We don't talk about tempnam
+@c or mkstemp which we sometimes use.  The discussion
+@c of "Global options" is semi-incoherent.
+@c I'm not even sure those are the only inaccuracies.
+@c Furthermore, the conventions are
 @c pretty crazy and they should be simplified.
-Directory in which temporary files are located.  Those
-parts of @sc{cvs} which are implemented using @sc{rcs}
-inspect the above variables in the order they appear
-above and the first value found is taken; if none of
-them are set, a host-dependent default is used,
-typically @file{/tmp}.  The @sc{cvs} server uses
+Directory in which temporary files are located.
+The @sc{cvs} server uses
 @code{TMPDIR}.  @xref{Global options}, for a
 description of how to specify this.
 Some parts of @sc{cvs} will always use @file{/tmp} (via
@@ -12069,33 +12020,10 @@ function provided by the system).
 
 The @code{patch} program which is used by the @sc{cvs}
 client uses @code{TMPDIR}, and if it is not set, uses
-@file{/tmp} (at least with GNU patch 2.1).
-@end table
-
-@sc{cvs} invokes @sc{rcs} to perform certain
-operations.  The following environment
-variables affect @sc{rcs}.  Note that if you are using
-the client/server @sc{cvs}, these variables need to be
-set on the server side (which may or not may be
-possible depending on how you are connecting).  There
-is probably not any need to set any of them, however.
-
-@table @code
-@cindex LOGNAME
-@item $LOGNAME
-@cindex USER
-@itemx $USER
-If set, they affect who @sc{rcs} thinks you are.  If you
-have trouble checking in files it might be because your
-login name differs from the setting of e.g.
-@code{$LOGNAME}.
-
-@cindex RCSINIT
-@item $RCSINIT
-Options prepended to the argument list, separated by
-spaces.  A backslash escapes spaces within an option.
-The @code{$RCSINIT} options are prepended to the
-argument lists of most @sc{rcs} commands.
+@file{/tmp} (at least with GNU patch 2.1).  Note that
+if your server and client are both running @sc{cvs}
+1.9.10 or later, @sc{cvs} will not invoke an external
+@code{patch} program.
 @end table
 
 @c ---------------------------------------------------------------------
@@ -12386,13 +12314,9 @@ This indicates a problem with the installation of
 @code{rcsmerge} was compiled to look for GNU diff3, but
 it is finding unix diff3 instead.  The exact text of
 the message will vary depending on the system.  The
-solution is to make sure @code{rcsmerge} finds GNU
-diff3.  Depending on how @code{rcsmerge} was compiled,
-it might be sufficient to place GNU diff3 in your
-@code{PATH}, or it might be necessary to recompile
-@code{rcsmerge} or find a binary distribution of
-@code{rcsmerge} which looks in the @code{PATH}.
-@c Should we mention the cvsaux binaries here?
+simplest solution is to upgrade to a current version of
+@sc{cvs}, which does not rely on external
+@code{rcsmerge} or @code{diff3} programs.
 
 @item warning: unrecognized response `@var{text}' from cvs server
 If @var{text} contains a valid response (such as
@@ -12439,12 +12363,14 @@ particular order.
 
 @itemize @bullet
 @item
-If @code{cvs update} finds a conflict and tries to
+If you are running @sc{cvs} 1.9.18 or older, and
+@code{cvs update} finds a conflict and tries to
 merge, as described in @ref{Conflicts example}, but
 doesn't tell you there were conflicts, then you may
-have an old version of @sc{rcs}.  For more information
-on how to set this up, see the @file{INSTALL} file in
-the @sc{cvs} source distribution.
+have an old version of @sc{rcs}.  The easiest solution
+probably is to upgrade to a current version of
+@sc{cvs}, which does not rely on external @sc{rcs}
+programs.
 @end itemize
 
 @c ---------------------------------------------------------------------
