@@ -3389,10 +3389,8 @@ connect_to_forked_server (struct buffer **to_server_p,
 
 
 
-static int send_variable_proc (Node *, void *);
-
 static int
-send_variable_proc( Node *node, void *closure )
+send_variable_proc (Node *node, void *closure)
 {
     send_to_server ("Set ", 0);
     send_to_server (node->key, 0);
@@ -3402,9 +3400,11 @@ send_variable_proc( Node *node, void *closure )
     return 0;
 }
 
+
+
 /* Contact the server.  */
 void
-start_server( void )
+start_server (void)
 {
     int rootless;
 
@@ -3412,7 +3412,6 @@ start_server( void )
     if (toplevel_repos != NULL)
 	free (toplevel_repos);
     toplevel_repos = NULL;
-
 
     /* Note that generally speaking we do *not* fall back to a different
        way of connecting if the first one does not work.  This is slow
@@ -3427,20 +3426,23 @@ start_server( void )
 	    /* Toss the return value.  It will die with an error message if
 	     * anything goes wrong anyway.
 	     */
-	    connect_to_pserver (current_parsed_root, &global_to_server, &global_from_server, 0, 0);
+	    connect_to_pserver (current_parsed_root, &global_to_server,
+                                &global_from_server, 0, 0);
 	    break;
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #if HAVE_KERBEROS
 	case kserver_method:
-	    start_kerberos4_server (current_parsed_root, &global_to_server, &global_from_server);
+	    start_kerberos4_server (current_parsed_root, &global_to_server, 
+                                    &global_from_server);
 	    break;
 #endif /* HAVE_KERBEROS */
 
 #ifdef HAVE_GSSAPI
 	case gserver_method:
 	    /* GSSAPI authentication is handled by the pserver.  */
-	    connect_to_pserver (current_parsed_root, &global_to_server, &global_from_server, 0, 1);
+	    connect_to_pserver (current_parsed_root, &global_to_server,
+                                &global_from_server, 0, 1);
 	    break;
 #endif /* HAVE_GSSAPI */
 
@@ -3449,7 +3451,8 @@ start_server( void )
 	    error (0, 0, ":ext: method not supported by this port of CVS");
 	    error (1, 0, "try :server: instead");
 #else /* ! NO_EXT_METHOD */
-	    start_rsh_server (current_parsed_root, &global_to_server, &global_from_server);
+	    start_rsh_server (current_parsed_root, &global_to_server,
+                              &global_from_server);
 #endif /* NO_EXT_METHOD */
 	    break;
 
@@ -3458,12 +3461,15 @@ start_server( void )
 	    {
 	    int tofd, fromfd;
 	    START_SERVER (&tofd, &fromfd, getcaller (),
-			  current_parsed_root->username, current_parsed_root->hostname,
+			  current_parsed_root->username,
+                          current_parsed_root->hostname,
 			  current_parsed_root->directory);
 # ifdef START_SERVER_RETURNS_SOCKET
-	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server, &global_from_server, 1);
+	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server,
+                                &global_from_server, 1);
 # else /* ! START_SERVER_RETURNS_SOCKET */
-	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server, &global_from_server, 0);
+	    make_bufs_from_fds (tofd, fromfd, 0, &global_to_server,
+                                &global_from_server, 0);
 # endif /* START_SERVER_RETURNS_SOCKET */
 	    }
 #else /* ! START_SERVER */
@@ -3480,7 +3486,8 @@ start_server( void )
 	    break;
 
 	default:
-	    error (1, 0, "(start_server internal error): unknown access method");
+	    error (1, 0,
+                   "(start_server internal error): unknown access method");
 	    break;
     }
 
@@ -3636,7 +3643,8 @@ start_server( void )
 	    if (! supported_request ("Kerberos-encrypt"))
 		error (1, 0, "This server does not support encryption");
 	    send_to_server ("Kerberos-encrypt\012", 0);
-           initialize_kerberos4_encryption_buffers(&global_to_server, &global_from_server);
+           initialize_kerberos4_encryption_buffers (&global_to_server,
+                                                    &global_from_server);
 	}
 	else
 #endif /* HAVE_KERBEROS */
@@ -3651,7 +3659,8 @@ start_server( void )
 	}
 	else
 #endif /* HAVE_GSSAPI */
-	    error (1, 0, "Encryption is only supported when using GSSAPI or Kerberos");
+	    error (1, 0,
+"Encryption is only supported when using GSSAPI or Kerberos");
 #else /* ! ENCRYPTION */
 	error (1, 0, "This client does not support encryption");
 #endif /* ! ENCRYPTION */
@@ -3670,10 +3679,11 @@ start_server( void )
 	    /* All further communication with the server will be
                compressed.  */
 
-	    global_to_server = compress_buffer_initialize (global_to_server, 0, gzip_level,
-							   (BUFMEMERRPROC) NULL);
-	    global_from_server = compress_buffer_initialize (global_from_server, 1, gzip_level,
-							     (BUFMEMERRPROC) NULL);
+	    global_to_server = compress_buffer_initialize (global_to_server, 0,
+                                                           gzip_level, NULL);
+	    global_from_server = compress_buffer_initialize (global_from_server,
+                                                             1, gzip_level,
+							     NULL);
 	}
 #ifndef NO_CLIENT_GZIP_PROCESS
 	else if (supported_request ("gzip-file-contents"))
@@ -3775,10 +3785,10 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     size_t bufsize;
     int bin;
 
-    TRACE ( 1, "Sending file `%s' to server", file );
+    TRACE (1, "Sending file `%s' to server", file);
 
     /* Don't think we can assume fstat exists.  */
-    if ( CVS_STAT (file, &sb) < 0)
+    if (CVS_STAT (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);
 
     mode_string = mode_to_string (sb.st_mode);
@@ -3903,10 +3913,11 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
     free (mode_string);
 }
 
+
+
 /* The address of an instance of this structure is passed to
    send_fileproc, send_filesdoneproc, and send_direntproc, as the
    callerdat parameter.  */
-
 struct send_data
 {
     /* Each of the following flags are zero for clear or nonzero for set.  */
@@ -3916,11 +3927,9 @@ struct send_data
     int backup_modified;
 };
 
-static int send_fileproc (void *callerdat, struct file_info *finfo);
-
 /* Deal with one file.  */
 static int
-send_fileproc( void *callerdat, struct file_info *finfo )
+send_fileproc (void *callerdat, struct file_info *finfo)
 {
     struct send_data *args = (struct send_data *) callerdat;
     Vers_TS *vers;
@@ -4005,8 +4014,7 @@ send_fileproc( void *callerdat, struct file_info *finfo )
 		free (opt);
 	    }
 	    else
-		error (0, 0,
-		       "\
+		error (0, 0, "\
 warning: ignoring -k options due to server limitations");
 	}
     }
@@ -4101,7 +4109,7 @@ send_filesdoneproc (void *callerdat, int err, const char *repository,
 	dellist (&ignlist);
     }
 
-    return (err);
+    return err;
 }
 
 
@@ -4127,7 +4135,7 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
 	/* print the warm fuzzy message */
 	if (!quiet)
 	    error (0, 0, "Ignoring %s", update_dir);
-        return (R_SKIP_ALL);
+        return R_SKIP_ALL;
     }
 
     /*
@@ -4182,7 +4190,7 @@ send_dirent_proc (void *callerdat, const char *dir, const char *repository,
 	    send_a_repository (dir, repository, update_dir);
     }
 
-    return (dir_exists ? R_PROCESS : R_SKIP_ALL);
+    return dir_exists ? R_PROCESS : R_SKIP_ALL;
 }
 
 
@@ -4237,10 +4245,10 @@ send_option_string( char *string )
 }
 
 
-/* Send the names of all the argument files to the server.  */
 
+/* Send the names of all the argument files to the server.  */
 void
-send_file_names( int argc, char **argv, unsigned int flags )
+send_file_names (int argc, char **argv, unsigned int flags)
 {
     int i;
     int level;
@@ -4250,35 +4258,6 @@ send_file_names( int argc, char **argv, unsigned int flags )
        of a performance hit.  Perhaps worth cleaning up someday.  */
     if (flags & SEND_EXPAND_WILD)
 	expand_wild (argc, argv, &argc, &argv);
-
-    /* Send Max-dotdot if needed.  */
-    max_level = 0;
-    for (i = 0; i < argc; ++i)
-    {
-	level = pathname_levels (argv[i]);
-	if (level > max_level)
-	    max_level = level;
-    }
-    if (max_level > 0)
-    {
-	if (supported_request ("Max-dotdot"))
-	{
-            char buf[10];
-            sprintf (buf, "%d", max_level);
-
-	    send_to_server ("Max-dotdot ", 0);
-	    send_to_server (buf, 0);
-	    send_to_server ("\012", 1);
-	}
-	else
-	    /*
-	     * "leading .." is not strictly correct, as this also includes
-	     * cases like "foo/../..".  But trying to explain that in the
-	     * error message would probably just confuse users.
-	     */
-	    error (1, 0,
-		   "leading .. not supported by old (pre-Max-dotdot) servers");
-    }
 
     for (i = 0; i < argc; ++i)
     {
@@ -4418,6 +4397,46 @@ send_file_names( int argc, char **argv, unsigned int flags )
 }
 
 
+
+/* Calculate and send max-dotdot to the server */
+static void
+send_max_dotdot (argc, argv)
+    int argc;
+    char **argv;
+{
+    int i;
+    int level = 0;
+    int max_level = 0;
+
+    /* Send Max-dotdot if needed.  */
+    for (i = 0; i < argc; ++i)
+    {
+        level = pathname_levels (argv[i]);
+        if (level > max_level)
+            max_level = level;
+    }
+
+    if (max_level > 0)
+    {
+        if (supported_request ("Max-dotdot"))
+        {
+            char buf[10];
+            sprintf (buf, "%d", max_level);
+
+            send_to_server ("Max-dotdot ", 0);
+            send_to_server (buf, 0);
+            send_to_server ("\012", 1);
+        }
+        else
+        {
+            error (1, 0,
+"backreference in path (`..') not supported by old (pre-Max-dotdot) servers");
+        }
+    }
+}
+
+
+
 /* Send Repository, Modified and Entry.  argc and argv contain only
   the files to operate on (or empty for everything), not options.
   local is nonzero if we should not recurse (-l option).  flags &
@@ -4428,10 +4447,12 @@ send_file_names( int argc, char **argv, unsigned int flags )
   _whether_ a file is modified, not the contents.  Also sends Argument
   lines for argc and argv, so should be called after options are sent.  */
 void
-send_files( int argc, char **argv, int local, int aflag, unsigned int flags )
+send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
 {
     struct send_data args;
     int err;
+
+    send_max_dotdot (argc, argv);
 
     /*
      * aflag controls whether the tag/date is copied into the vers_ts.
@@ -4460,19 +4481,23 @@ send_files( int argc, char **argv, int local, int aflag, unsigned int flags )
 	toplevel_repos = xstrdup (current_parsed_root->directory);
     send_repository ("", toplevel_repos, ".");
 }
-
+
+
+
 void
-client_import_setup( char *repository )
+client_import_setup (char *repository)
 {
     if (toplevel_repos == NULL)		/* should always be true */
         send_a_repository ("", repository, "");
 }
 
+
+
 /*
  * Process the argument import file.
  */
 int
-client_process_import_file( char *message, char *vfile, char *vtag, int targc,
+client_process_import_file (char *message, char *vfile, char *vtag, int targc,
                             char *targv[], char *repository,
                             int all_files_binary,
                             int modtime /* Nonzero for "import -d".  */ )
@@ -4554,8 +4579,10 @@ client_process_import_file( char *message, char *vfile, char *vtag, int targc,
     return 0;
 }
 
+
+
 void
-client_import_done( void )
+client_import_done (void)
 {
     if (toplevel_repos == NULL)
 	/*
@@ -4574,8 +4601,8 @@ client_import_done( void )
 
 
 static void
-notified_a_file( char *data, List *ent_list, char *short_pathname,
-                 char *filename )
+notified_a_file (char *data, List *ent_list, char *short_pathname,
+                 char *filename)
 {
     FILE *fp;
     FILE *newf;
@@ -4672,14 +4699,16 @@ notified_a_file( char *data, List *ent_list, char *short_pathname,
 
     return;
   error2:
-    (void) fclose (newf);
+    (void)fclose (newf);
   error_exit:
     free (line);
-    (void) fclose (fp);
+    (void)fclose (fp);
 }
 
+
+
 static void
-handle_notified( char *args, int len )
+handle_notified (char *args, int len)
 {
     call_in_directory (args, notified_a_file, NULL);
 }
@@ -4702,13 +4731,15 @@ client_notify (const char *repository, const char *update_dir,
     send_to_server ("\t", 1);
     send_to_server (val, 0);
 }
-
+
+
+
 /*
  * Send an option with an argument, dealing correctly with newlines in
  * the argument.  If ARG is NULL, forget the whole thing.
  */
 void
-option_with_arg( char *option, char *arg )
+option_with_arg (char *option, char *arg)
 {
     if (arg == NULL)
 	return;
@@ -4720,24 +4751,27 @@ option_with_arg( char *option, char *arg )
     send_arg (arg);
 }
 
+
+
 /* Send a date to the server.  The input DATE is in RCS format.
    The time will be GMT.
 
    We then convert that to the format required in the protocol
    (including the "-D" option) and send it.  According to
    cvsclient.texi, RFC 822/1123 format is preferred.  */
-
 void
-client_senddate( const char *date )
+client_senddate (const char *date)
 {
     char buf[MAXDATELEN];
 
     date_to_internet (buf, (char *)date);
     option_with_arg ("-D", buf);
 }
-
+
+
+
 void
-send_init_command( void )
+send_init_command (void)
 {
     /* This is here because we need the current_parsed_root->directory variable.  */
     send_to_server ("init ", 0);
@@ -4746,5 +4780,3 @@ send_init_command( void )
 }
 
 #endif /* CLIENT_SUPPORT */
-/* vim:tabstop=8:shiftwidth=4
- */
