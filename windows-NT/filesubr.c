@@ -23,6 +23,8 @@
 
 #include "cvs.h"
 
+#include "JmgStat.h"
+
 static int deep_remove_dir( const char *path );
 
 /* Copies "from" to "to".  Note that the functionality here is similar
@@ -1028,22 +1030,8 @@ static void check_statbuf (const char *file, struct stat *sb)
     if (sb->st_atime == (time_t) -1)
 	error (1, 0, "invalid access time for %s", file);
 
-    time( &long_time );			/* Get time as long integer. */
-    newtime = localtime( &long_time );	/* Convert to local time. */
-
-    /* we know for a fact that the stat function under Windoze NT 4.0 and,
-     * by all reports, many other Windoze systems, will return file times
-     * 3600 seconds too big when daylight savings time is in effect.  This is
-     * a bug since it is defined as returning the time in UTC.
-     *
-     * So correct for it for now.
-     */
-    if (newtime->tm_isdst == 1)
-    {
-	sb->st_ctime -= 3600;
-	sb->st_mtime -= 3600;
-	sb->st_atime -= 3600;
-    }
+    if (!GetUTCFileModTime (file, &sb->st_mtime))
+	error (1, 0, "Failed to retrieve modification time for %s", file);
 }
 
 /* see CVS_STAT */

@@ -1,3 +1,11 @@
+2004-09-07  Derek Price  <derek@ximbiot.com>
+
+	* JmgStat.c, JmgStat.h: New files.
+	* filesubr.c (check_statbuf): Use new Windows mod time routine.
+	(Thanks to a report from Chris Bohn <cbohn@rrinc.com>, help from J. C.
+	Hamlin <jchamlin@ibsys.com>, and a published patch from Jonathan
+	Gilligan.)
+
 2004-09-02  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (PROXY_SUPPORT, TRUST_OS_FILE_CACHE): New defines.
