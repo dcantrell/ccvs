@@ -10,10 +10,6 @@ Mon Feb 17 08:51:37 1997  Greg A. Woods  <woods@most.weird.com>
 	($modulename): add more commentary about using '-M' to to get a
 	meaningful string here.
 	Tweak a few other comments from the Feb. 12 changes.
-	
-	* Makefile.in (Makefile): cause this target to fail after
- 	rebuilding Makefile to force you to run make again to use the new
- 	Makefile.
 
 Wed Feb 12 10:27:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
