@@ -48,7 +48,7 @@ sources, but I expect that to be straightforward.  I'll get around to
 it soon, but as I said, paying work...
 
 Now, strictly speaking, I don't *know* that this port won't correctly
-access repositories on the remote machine.  I haven't tried it.  I
+access repositories on the local machine.  I haven't tried it.  I
 have put calls to abort in places I'm pretty sure are wrong.  If you'd
 like to finish it off and post patches, Morten Hindsholm's port of CVS
 1.4A2 to Windows NT might be helpful; it is available as
