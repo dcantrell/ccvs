@@ -4777,11 +4777,23 @@ file using @samp{-D}, @sc{cvs} records the date you specified, so that
 further updates in the same directory will use the same date
 (for more information on sticky tags/dates, @pxref{Sticky tags}).
 
-A wide variety of date formats are supported by the underlying
-@sc{rcs} facilities, similar to those described in co(1), but not
-exactly the same.  The @var{date_spec} is interpreted as being
-in the local timezone, unless a specific timezone is specified.
-Examples of valid date specifications include:
+@c FIXME: this documentation is lousy.  It just gives
+@c some examples, never describes the rules.  That is
+@c probably because the rules are way too loose and not
+@c carefully thought out.  How to solve this problem?
+@c Maybe document a list of "official" date formats
+@c which are a subset of what CVS accepts?  Maybe at
+@c some point have CVS start give warnings on "unofficial"
+@c formats (many of which might be typos or user
+@c misunderstandings, and/or formats people never/rarely
+@c use to specify dates)?  We want to rely on standards
+@c like ISO8601 and RFC822 as much as practical, but
+@c which standard(s)?....
+A wide variety of date formats are supported by
+@sc{cvs}.  The @var{date_spec} is interpreted as being
+in the local timezone, unless a specific timezone is
+specified.  Examples of valid date specifications
+include:
 
 @example
                     1 month ago
@@ -6413,8 +6425,10 @@ branch, normally the highest branch on the trunk.
 @item -d @var{dates}
 Print information about revisions with a checkin
 date/time in the range given by the
-semicolon-separated list of dates.  The following table
-explains the available range formats:
+semicolon-separated list of dates.  The date formats
+accepted are those accepted by the @samp{-D} option to
+many other @sc{cvs} commands (@pxref{Common options}).
+Dates can be combined into ranges as follows:
 
 @table @code
 @item @var{d1}<@var{d2}
