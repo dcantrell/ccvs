@@ -3730,4 +3730,135 @@ error ENOMEM Virtual memory exhausted.\n");
     return 0;
 }
 
+
+#ifdef CVS_LOGIN
+
+/* This was test code, which we may need again. */
+#if 0
+  /* If we were invoked this way, then stdin comes from the
+     client and stdout/stderr writes to it. */
+  int c;
+  while ((c = getc (stdin)) != EOF && c != '*')
+    {
+      printf ("%c", toupper (c));
+      fflush (stdout);
+    }
+  exit (0);
+#endif /* 1/0 */
+
+
+/* Read username and password from client (i.e., stdin).
+   If correct, then switch to run as that user and send an ACK to the
+   client via stdout, else send NACK and die. */
+
+void
+authenticate_connection ()
+{
+  int len;
+  char tmp[PATH_MAX];
+  char repository[PATH_MAX];
+  char username[PATH_MAX];
+  char password[PATH_MAX];
+  char server_user[PATH_MAX];
+  struct passwd *pw;
+  
+  /* The Authentication Protocol.  Client sends:
+   *
+   *   BEGIN AUTH REQUEST\n
+   *   <REPOSITORY>\n
+   *   <USERNAME>\n
+   *   <PASSWORD>\n
+   *   END AUTH REQUEST\n
+   *
+   * Note that the actual client/server protocol has not started up
+   * yet, because we haven't authenticated!  Therefore, there are
+   * certain things we can't take for granted.  For example, don't use
+   * error() because `error_use_protocol' has not yet been set by
+   * server().  
+   *
+   * And we don't know where the repository is, because that
+   * information normally comes through the client/server protocol.
+   * We need to know it, though, to look up the password, so we have
+   * the client transmit it specially as part of the "authentication
+   * protocol".  It will be redundantly transmitted later, but that's
+   * okay.
+   */
+
+  printf ("cvs pserver: authenticate_connection: start!\n");
+  fflush (stdout);
+
+  /* Make sure the protocol starts off on the right foot... */
+  fgets (tmp, PATH_MAX, stdin);
+  if (strcmp (tmp, "BEGIN AUTH REQUEST\n"))
+    {
+      printf ("error: bad auth protocol start: %s", tmp);
+      fflush (stdout);
+      exit (1);
+    }
+    
+  printf ("cvs pserver: authenticate_connection: got begin...\n");
+  fflush (stdout);
+
+  /* Get the three important pieces of information in order. */
+  fgets (repository, PATH_MAX, stdin);
+  fgets (username, PATH_MAX, stdin);
+  fgets (password, PATH_MAX, stdin);
+
+  printf ("cvs pserver: authenticate_connection: got three data...\n");
+  fflush (stdout);
+
+  /* ... and make sure the protocol ends on the right foot. */
+  fgets (tmp, PATH_MAX, stdin);
+  if (strcmp (tmp, "END AUTH REQUEST\n"))
+    {
+      printf ("error: bad auth protocol end: %s", tmp);
+      fflush (stdout);
+      exit (1);
+    }
+
+  printf ("cvs pserver: authenticate_connection: got end...\n");
+  fflush (stdout);
+
+  printf ("*** AUTH PROTOCOL:\n   %s\n   %s\n   %s\n.",
+          repository, username, password);
+  fflush (stdout);
+  exit (0);
+  /* fooo */
+  
+  pw = getpwnam (username);
+  if (pw == NULL)
+    {
+      printf ("E Fatal error, aborting.\n"
+              "error 0 %s: no such user\n", username);
+      exit (1);
+    }
+  
+  initgroups (pw->pw_name, pw->pw_gid);
+  setgid (pw->pw_gid);
+  setuid (pw->pw_uid);
+  /* Inhibit access by randoms.  Don't want people randomly
+     changing our temporary tree before we check things in.  */
+  umask (077);
+  
+#if HAVE_PUTENV
+  /* Set LOGNAME and USER in the environment, in case they are
+     already set to something else.  */
+  {
+    char *env;
+    
+    env = xmalloc (sizeof "LOGNAME=" + strlen (username));
+    (void) sprintf (env, "LOGNAME=%s", username);
+    (void) putenv (env);
+    
+    env = xmalloc (sizeof "USER=" + strlen (username));
+    (void) sprintf (env, "USER=%s", username);
+    (void) putenv (env);
+  }
+#endif /* HAVE_PUTENV */
+}
+
+#endif CVS_LOGIN
+
+
 #endif /* SERVER_SUPPORT */
+

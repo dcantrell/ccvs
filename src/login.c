@@ -8,11 +8,12 @@
  */
 
 #include "cvs.h"
+
+#ifdef CVS_LOGIN   /* This covers the rest of the file. */
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-
-#ifdef CVS_LOGIN   /* This covers the rest of the file. */
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)login.c 1.1 95/10/01 $";
@@ -69,7 +70,7 @@ login (argc, argv)
   strcat (passfile, CVS_PASSWORD_FILE);
 
   /* Safety first and last, Scouts.
-   * Don't use xchmod(), it's too polite.
+   * (And don't use xchmod(), it's too polite.)
    */
   if (isfile (passfile))
     chmod (passfile, 0600);
@@ -172,60 +173,6 @@ login (argc, argv)
 /* todo: "cvs logout" could erase an entry from the file.
  * But to what purpose?
  */
-
-
-
-void
-init_sockaddr (struct sockaddr_in *name,
-               const char *hostname,
-               unsigned short int port)
-{
-  struct hostent *hostinfo;
-  
-  name->sin_family = AF_INET;
-  name->sin_port = htons (port);
-  hostinfo = gethostbyname (hostname);
-  if (hostinfo == NULL)
-    {
-      fprintf (stderr, "Unknown host %s.\n", hostname);
-      exit (EXIT_FAILURE);
-    }
-  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
-}
-
-
-void
-connect_to_pserver (argc, argv)
-{
-  int sock;
-  struct hostent *host;
-  struct sockaddr_in client_sai;
-  char *test_str = "this is a test\n";
-  char read_buf[1];
-  int i, len;
-
-  sock = socket (AF_INET, SOCK_STREAM, 0);
-  if (sock == -1)
-    {
-      fprintf (stderr, "socket() failed\n");
-      exit (1);
-    }
-  init_sockaddr (&client_sai, "floss.cyclic.com", 2401);
-
-  connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
-
-  len = write (sock, test_str, strlen (test_str));
-
-  /* This sends EOF to the server, which on receiving EOF breaks out
-     of the print loop. */
-  /* shutdown (sock, 1); */
-
-  while (read (sock, read_buf, 1) > 0)
-    {
-      printf ("| %c", read_buf[0]);
-      fflush (stdout);
-    }
-}
 
 #endif /* CVS_LOGIN from beginning of file. */
 

@@ -106,6 +106,12 @@ extern int errno;
 #include "client.h"
 #endif
 
+#ifdef CVS_LOGIN
+/* Authenticating server stuff. */
+extern int use_authenticating_server;
+void connect_to_pserver();
+#endif /* CVS_LOGIN */
+
 #ifdef MY_NDBM
 #include "myndbm.h"
 #else

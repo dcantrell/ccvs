@@ -321,7 +321,7 @@ main (argc, argv)
     optind = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:e:d:Hfz:", long_options, &option_index))
+            (argc, argv, "Qqrawtnlvb:e:d:Hfz:", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -500,62 +500,15 @@ error 0 %s: no such user\n", user);
 #ifdef SERVER_SUPPORT
 
     if (strcmp (argv[0], "pserver") == 0)
-      {
-        /* If we were invoked this way, then stdin comes from the
-           client and stdout/stderr writes to it. */
-        int c;
-        while ((c = getc (stdin)) != EOF && c != '*')
-          {
-            printf ("%c", toupper (c));
-            fflush (stdout);
-          }
-        exit (0);
-
-        /* todo:
-         * Here, `user' will have to gotten somehow, and looked up in
-         * CVSROOT/passwd or else /etc/passwd.
-         */
-        {
-          int len;
-          char user[PATH_MAX];
-          struct passwd *pw;
-          
-          /* user = somehow_get_username (); */
-          
-          pw = getpwnam (user);
-          if (pw == NULL)
-            {
-              printf ("E Fatal error, aborting.\n"
-                      "error 0 %s: no such user\n", user);
-              exit (1);
-            }
-          
-          initgroups (pw->pw_name, pw->pw_gid);
-          setgid (pw->pw_gid);
-          setuid (pw->pw_uid);
-          /* Inhibit access by randoms.  Don't want people randomly
-             changing our temporary tree before we check things in.  */
-          umask (077);
-          
-#if HAVE_PUTENV
-          /* Set LOGNAME and USER in the environment, in case they are
-             already set to something else.  */
-          {
-            char *env;
-            
-            env = xmalloc (sizeof "LOGNAME=" + strlen (user));
-            (void) sprintf (env, "LOGNAME=%s", user);
-            (void) putenv (env);
-            
-            env = xmalloc (sizeof "USER=" + strlen (user));
-            (void) sprintf (env, "USER=%s", user);
-            (void) putenv (env);
-          }
-#endif
-          /* Pretend we were invoked as a plain server.  */
-          argv[0] = "server";
-        }
-      }
+    {
+      /* Gets username and password from client, authenticates, then
+         switches to run as that user and sends an ACK back to the
+         client. */
+      authenticate_connection ();
+      
+      /* Pretend we were invoked as a plain server.  */
+      argv[0] = "server";
+    }
 
 #endif /* SERVER_SUPPORT */
 #endif /* CVS_LOGIN */
