@@ -1885,35 +1885,117 @@ automating that process.  @xref{Informing others}.
 @section File status
 @cindex File status
 @cindex Status of a file
-@cindex Four states of a file
 
-After you have checked out a file out from @sc{cvs}, it is in
-one of these four states:
+Based on what operations you have performed on a
+checked out file, and what operations others have
+performed to that file in the repository, one can
+classify a file in a number of states.  The states, as
+reported by the @code{status} command, are:
 
+@c The order of items is chosen to group logically
+@c similar outputs together.
+@c People who want alphabetical can use the index...
 @table @asis
 @cindex Up-to-date
 @item Up-to-date
 The file is identical with the latest revision in the
-repository.
-@c -- The above is not always true if branching is used.
+repository for the branch in use.
+@c FIXME: should we clarify "in use"?  The answer is
+@c sticky tags, and trying to distinguish branch sticky
+@c tags from non-branch sticky tags seems rather awkward
+@c here.
+@c FIXME: What happens with non-branch sticky tags?  Is
+@c a stuck file "Up-to-date" or "Needs checkout" or what?
 
-@item Locally modified
-@cindex Locally modified
+@item Locally Modified
+@cindex Locally Modified
 You have edited the file, and not yet committed your changes.
 
-@item Needing update
-@cindex Needing update
-Someone else has committed a newer revision to the repository.
+@item Locally Added
+@cindex Locally Added
+You have added the file with @code{add}, and not yet
+committed your changes.
+@c There are many cases involving the file being
+@c added/removed/modified in the working directory, and
+@c added/removed/modified in the repository, which we
+@c don't try to describe here.  I'm not sure that "cvs
+@c status" produces a non-confusing output in most of
+@c those cases.
 
-@item Needing merge
-@cindex Needing merge
-Someone else have committed a newer revision to the repository, and you
+@item Locally Removed
+@cindex Locally Removed
+You have removed the file with @code{remove}, and not yet
+committed your changes.
+
+@item Needs Checkout
+@cindex Needs Checkout
+Someone else has committed a newer revision to the
+repository.  The name is slightly misleading; you will
+ordinarily use @code{update} rather than
+@code{checkout} to get that newer revision.
+
+@item Needs Patch
+@cindex Needs Patch
+@c See also newb-123j0 in sanity.sh (although that case
+@c should probably be changed rather than documented).
+Like Needs Checkout, but the @sc{cvs} server will send
+a patch rather than the entire file.  Sending a patch or
+sending an entire file accomplishes the same thing.
+
+@item Needs Merge
+@cindex Needs Merge
+Someone else has committed a newer revision to the repository, and you
 have also made modifications to the file.
-@c -- What about "added" "removed" and so on?
+
+@item Unresolved Conflict
+@cindex Unresolved Conflict
+This is like Locally Modified, except that a previous
+@code{update} command gave a conflict.  You need to
+resolve the conflict as described in @ref{Conflicts example}.
+
+@item Unknown
+@cindex Unknown
+@sc{Cvs} doesn't know anything about this file.  For
+example, you have created a new file and have not run
+@code{add}.
+@c 
+@c "Entry Invalid" and "Classify Error" are also in the
+@c status.c.  The latter definitely indicates a CVS bug
+@c (should it be worded more like "internal error" so
+@c people submit bug reports if they see it?).  The former
+@c I'm not as sure; I haven't tracked down whether/when it
+@c appears in "cvs status" output.
+
 @end table
 
-You can use the @code{status} command to find out the status of a given
-file.  @xref{status}.
+To help clarify the file status, @code{status} also
+reports the @code{Working revision} which is the
+revision that the file in the working directory derives
+from, and the @code{Repository revision} which is the
+latest revision in the repository for the branch in
+use.
+@c FIXME: should we clarify "in use"?  The answer is
+@c sticky tags, and trying to distinguish branch sticky
+@c tags from non-branch sticky tags seems rather awkward
+@c here.
+@c FIXME: What happens with non-branch sticky tags?
+@c What is the Repository Revision there?  See the
+@c comment at vn_rcs in cvs.h, which is kind of
+@c confused--we really need to document better what this
+@c field contains.
+@c Q: Should we document "New file!" and other such
+@c outputs or are they self-explanatory?
+@c FIXME: what about the date to the right of "Working
+@c revision"?  It doesn't appear with client/server and
+@c seems unnecessary (redundant with "ls -l") so
+@c perhaps it should be removed for non-client/server too?
+@c FIXME: Need some examples.
+
+For information on the options to @code{status}, see
+@ref{status}.  For information on its @code{Sticky tag}
+and @code{Sticky date} output, see @ref{Sticky tags}.
+For information on its @code{Sticky options} output,
+see the @samp{-k} option in @ref{update options}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Updating a file
@@ -2115,6 +2197,23 @@ Checking in driver.c;
 new revision: 1.7; previous revision: 1.6
 done
 @end example
+
+For your protection, @sc{cvs} will refuse to check in a
+file if a conflict occurred and you have not resolved
+the conflict.  Currently to resolve a conflict, you
+must change the timestamp on the file, and must also
+insure that the file contains no conflict markers.  If
+your file legitimately contains conflict markers (that
+is, occurrences of @samp{>>>>>>> } at the start of a
+line that don't mark a conflict), then @sc{cvs} has
+trouble handling this and you need to start hacking on
+the @code{CVS/Entries} file or other such workarounds.
+@c FIXME: There should be a "cvs resolved" command
+@c which clears the conflict indication.  For a nice user
+@c interface, this should be invoked by an interactive
+@c merge tool like emerge rather than by the user
+@c directly--such a tool can verify that the user has
+@c really dealt with each conflict.
 
 @cindex emerge
 If you use release 1.04 or later of pcl-cvs (a @sc{gnu}
@@ -6577,6 +6676,13 @@ module).
 @appendixsec status---Display status information on checked out files
 @cindex Status (subcommand)
 
+@c It is not clear to me what the best home for this
+@c information is.  Probably put a @deffn in "File
+@c status" listing options and documenting -l and -R,
+@c and refer to Sticky tags,
+@c Tags, and <something for sticky options> for the more
+@c obscure features.
+
 @itemize @bullet
 @item
 status [-lR] [-v] [files@dots{}]
@@ -6587,8 +6693,12 @@ Changes: nothing.
 @end itemize
 
 Display a brief report on the current status of files
-with respect to the source repository, including any
-sticky tags, dates, or @samp{-k} options.
+with respect to the source repository.  For information
+on the basic output see @ref{File status}.  For
+information on the @code{Sticky tag} and @code{Sticky
+date} output, see @ref{Sticky tags}.  For information
+on the @code{Sticky options} output, see the @samp{-k}
+option in @ref{update options}.
 
 You can also use this command to determine the
 potential impact of a @samp{cvs update} on your working
@@ -6622,7 +6732,7 @@ There is one additional option:
 Verbose.  In addition to the information normally
 displayed, print all symbolic tags, together with the
 numerical value of the revision or branch they refer
-to.
+to.  For more information, see @ref{Tags}
 @end table
 
 @ignore
@@ -6932,7 +7042,13 @@ on the two revisions; an unmodified copy of your file
 is also in your working directory, with the name
 @file{.#@var{file}.@var{revision}} where @var{revision}
 is the @sc{rcs} revision that your modified file started
-from.  (Note that some systems automatically purge
+from.  Resolve the conflict as described in
+@ref{Conflicts example}
+@c "some systems" as in out-of-the-box OSes?  Not as
+@c far as I know.  We need to advise sysadmins as well
+@c as users how to set up this kind of purge, if that is
+@c what they want.
+(Note that some systems automatically purge
 files that begin with @file{.#} if they have not been
 accessed for a few days.  If you intend to keep a copy
 of your original file, it is a very good idea to rename

@@ -1,3 +1,15 @@
+Tue Sep 10 10:36:00 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Conflicts example): Describe the "feature" by which
+	CVS won't check in files with conflicts.
+	(File status): Expand and revise to document all the possible
+	statuses from cvs status.  Also document "Working revision" and
+	"Repository revision".  Refer to other sections for other aspects
+	of cvs status.
+	(status options): Refer to other sections as appropriate.
+	(update output): Refer user to Conflicts example node.  Add
+	comment regarding purging of .# files.
+
 Fri Sep  6 11:47:14 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (Kerberos authenticated): Mention need for
