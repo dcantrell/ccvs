@@ -1,3 +1,7 @@
+2004-10-25  Derek Price  <derek@ximbiot.com>
+
+	* validate_repo.in: Loosen revision regex even more.
+
 2004-10-22  Derek Price  <derek@ximbiot.com>
 
 	* validate_repo.in: Loosen revision regex, trusting later verification.
