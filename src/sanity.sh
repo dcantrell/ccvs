@@ -718,6 +718,12 @@ done'
 :	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
 	  dotest basicb-1a "test -d CVS" ''
+	  # See comment at modules3-7f for more on this behavior.
+	  dotest basicb-1b "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/first-dir" "${TESTDIR}/cvsroot/\."
+	  dotest basicb-1c "cat first-dir/CVS/Repository" \
+"${TESTDIR}/cvsroot/first-dir"
+
 	  cd first-dir
 	  mkdir sdir1 sdir2
 	  dotest basicb-2 "${testcvs} add sdir1 sdir2" \
@@ -804,6 +810,11 @@ U first-dir1/sdir2/sfile2'
 'U newdir/sdir1/sfile1
 U newdir/sdir2/sfile2'
 	  dotest basicb-9a "test -d CVS" ''
+	  # See comment at modules3-7f for more on this behavior.
+	  dotest basicb-9b "cat CVS/Repository" \
+"${TESTDIR}/cvsroot/first-dir" "${TESTDIR}/cvsroot/\."
+	  dotest basicb-9c "cat newdir/CVS/Repository" \
+"${TESTDIR}/cvsroot/CVSROOT/Emptydir"
 	  dotest basicb-10 "cat newdir/sdir1/sfile1 newdir/sdir2/sfile2" \
 "sfile1 develops
 sfile2 starts"

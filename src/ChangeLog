@@ -1,3 +1,8 @@
+Sat Apr 12 16:47:13 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (basicb): New tests basicb-1b, basicb-1c, basicb-9b,
+	basic-9c test current build_dirs_and_chdir behavior.
+
 Fri Apr 11 23:54:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (modules3): New tests modules3-7* test for ability to
