@@ -17,9 +17,6 @@ HEADERS = \
   config.h \
   options.h \
   pwd.h \
-  SIOUXMenus.h \
-  SIOUXGlobals.h \
-  SIOUXWindows.h \
   maccvs.pch
   
 SOURCES = \
@@ -31,8 +28,7 @@ SOURCES = \
   pwd.c \
   rcmd.c \
   run.c \
-  server_if.c \
-  SIOUX.c
+  server_if.c
   
 DISTFILES = \
   ${HEADERS} \
