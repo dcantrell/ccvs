@@ -39,14 +39,18 @@ expand_string (char **strptr, size_t *n, size_t newsize)
 
 
 
-/* *STR is a pointer to a malloc'd string.  *LENP is its allocated
-   length.  Add SRC to the end of it, reallocating if necessary.  */
+/* *STR is a pointer to a malloc'd string or NULL.  *LENP is its allocated
+ * length.  If *STR is NULL then *LENP must be 0 and visa-versa.
+ * Add SRC to the end of *STR, reallocating *STR if necessary.  */
 void
 xrealloc_and_strcat (char **str, size_t *lenp, const char *src)
 {
-
-    expand_string (str, lenp, strlen (*str) + strlen (src) + 1);
-    strcat (*str, src);
+    short newstr = !*lenp;
+    expand_string (str, lenp, (newstr ? 0 : strlen (*str)) + strlen (src) + 1);
+    if (newstr)
+	strcpy (*str, src);
+    else
+	strcat (*str, src);
 }
 
 

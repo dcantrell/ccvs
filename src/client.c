@@ -4285,8 +4285,7 @@ send_file_names( int argc, char **argv, unsigned int flags )
 	char buf[1];
 	char *p;
 #ifdef FILENAMES_CASE_INSENSITIVE
-	char *line = xmalloc (1);
-	*line = '\0';
+	char *line = NULL;
 #endif /* FILENAMES_CASE_INSENSITIVE */
 
 	if (arg_should_not_be_sent_to_server (argv[i]))
