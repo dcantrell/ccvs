@@ -336,7 +336,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 		err++;
 		goto out;
 	    }
-	    if (!isfile (CVSADM) && !isfile (OCVSADM))
+	    if (!isfile (CVSADM))
 	    {
 		char nullrepos[PATH_MAX];
 

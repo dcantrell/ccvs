@@ -140,14 +140,6 @@ extern int errno;
 #define	CVSADM_TAG	"CVS/Tag"
 
 /*
- * The following are obsolete and are maintained here only so that they can be
- * cleaned up during the transition
- */
-#define	OCVSADM		"CVS.adm"	/* for CVS 1.2 and earlier */
-#define	CVSADM_FILE	"CVS/Files"
-#define	CVSADM_MOD	"CVS/Mod"
-
-/*
  * Definitions for the CVSROOT Administrative directory and the files it
  * contains.  This directory is created as a sub-directory of the $CVSROOT
  * environment variable, and holds global administration information for the
@@ -167,12 +159,6 @@ extern int errno;
 /* support for the modules file (CVSROOTADM_MODULES) */
 #define	CVSMODULE_OPTS	"ad:i:lo:s:t:u:"/* options in modules file */
 #define CVSMODULE_SPEC	'&'		/* special delimiter */
-
-/*
- * The following are obsolete and are maintained here only so that they can be
- * cleaned up during the transition
- */
-#define	OCVSROOTADM		"CVSROOT.adm"	/* for CVS 1.2 and earlier */
 
 /* Other CVS file names */
 #define	CVSATTIC	"Attic"

@@ -45,13 +45,6 @@ Create_Admin (dir, update_dir, repository, tag, date)
 	return;
 
     if (dir != NULL)
-	(void) sprintf (tmp, "%s/%s", dir, OCVSADM);
-    else
-	(void) strcpy (tmp, OCVSADM);
-    if (isfile (tmp))
-	error (1, 0, "there is a version in %s already", update_dir);
-
-    if (dir != NULL)
 	(void) sprintf (tmp, "%s/%s", dir, CVSADM);
     else
 	(void) strcpy (tmp, CVSADM);

@@ -343,7 +343,7 @@ checkout (argc, argv)
 	    error (1, errno, "cannot chdir to %s", where);
 	preload_update_dir = xstrdup (where);
 	where = (char *) NULL;
-	if (!isfile (CVSADM) && !isfile (OCVSADM))
+	if (!isfile (CVSADM))
 	{
 	    (void) sprintf (repository, "%s/%s/%s", CVSroot, CVSROOTADM,
 			    CVSNULLREPOS);
@@ -620,7 +620,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	free (prepath);
 
 	/* set up the repository (or make sure the old one matches) */
-	if (!isfile (CVSADM) && !isfile (OCVSADM))
+	if (!isfile (CVSADM))
 	{
 	    FILE *fp;
 
@@ -799,8 +799,7 @@ build_dirs_and_chdir (dir, prepath, realdir, sticky)
 	    error (0, errno, "cannot chdir to %s", cp);
 	    return (1);
 	}
-	if (!isfile (CVSADM) && !isfile (OCVSADM) &&
-	    strcmp (command_name, "export") != 0)
+	if (!isfile (CVSADM) && strcmp (command_name, "export") != 0)
 	{
 	    (void) sprintf (repository, "%s/%s", prepath, path2);
 	    /* I'm not sure whether this check is redundant.  */

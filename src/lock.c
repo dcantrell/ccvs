@@ -37,8 +37,7 @@ static List *locklist;
 
 #define L_OK		0		/* success */
 #define L_ERROR		1		/* error condition */
-#define L_LOCK_OWNED	2		/* lock already owned by us */
-#define L_LOCKED	3		/* lock owned by someone else */
+#define L_LOCKED	2		/* lock owned by someone else */
 
 /*
  * Clean up all outstanding locks
@@ -307,7 +306,7 @@ write_lock (repository)
 
     /* make sure the lock dir is ours (not necessarily unique to us!) */
     status = set_lock (repository, 0);
-    if (status == L_OK || status == L_LOCK_OWNED)
+    if (status == L_OK)
     {
 	/* we now own a writer - make sure there are no readers */
 	if (readers_exist (repository))
@@ -487,15 +486,7 @@ set_lock (repository, will_wait)
 	    return (L_ERROR);
 	}
 
-	/*
-	 * if we already own the lock, go ahead and return 1 which means it
-	 * existed but we owned it
-	 */
-	if (sb.st_uid == geteuid () && !will_wait)
-	    return (L_LOCK_OWNED);
-
 #ifdef CVS_FUDGELOCKS
-
 	/*
 	 * If the create time of the directory is more than CVSLCKAGE seconds
 	 * ago, try to clean-up the lock directory, and if successful, just

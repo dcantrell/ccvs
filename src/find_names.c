@@ -261,12 +261,7 @@ find_dirs (dir, list, checkadm)
 	    /* check for new style */
 	    (void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, CVSADM);
 	    if (!isdir (tmp))
-	    {
-		/* and old style */
-		(void) sprintf (tmp, "%s/%s/%s", dir, dp->d_name, OCVSADM);
-		if (!isdir (tmp))
-		    continue;
-	    }
+		continue;
 	}
 
 	/* put it in the list */

@@ -202,7 +202,6 @@ ParseEntries (aflag)
     char *cp, *user, *vn, *ts, *options;
     char *tag_or_date, *tag, *date, *ts_conflict;
     char *dirtag, *dirdate;
-    int lineno = 0;
     int do_rewrite = 0;
     FILE *fpin;
 
@@ -239,7 +238,6 @@ ParseEntries (aflag)
     {
 	while (fgets (line, sizeof (line), fpin) != NULL)
 	{
-	    lineno++;
 	    if (line[0] == '/')
 	    {
 		user = line + 1;
@@ -303,16 +301,6 @@ ParseEntries (aflag)
 		(void) AddEntryNode (entries, user, vn, ts, options, tag,
 				     date, ts_conflict);
 	    }
-	    else
-	    {
-		/* try conversion only on first line */
-		if (lineno == 1)
-		{
-		    (void) fclose (fpin);
-		    check_entries ((char *) NULL);
-		    goto again;
-		}
-	    }
 	}
     }
 
@@ -329,91 +317,6 @@ ParseEntries (aflag)
     return (entries);
 }
 
-/*
- * Look at the entries file to determine if it is in the old entries format.
- * If so, convert it to the new format.
- */
-void
-check_entries (dir)
-    char *dir;
-{
-    FILE *fpin, *fpout;
-    char tmp[MAXLINELEN];
-    char line[MAXLINELEN];
-    char entname[MAXLINELEN];
-    char entbak[MAXLINELEN];
-    char *cp, *user, *rev, *ts, *opt;
-
-    if (dir != NULL)
-    {
-	(void) sprintf (entname, "%s/%s", dir, CVSADM_ENT);
-	(void) sprintf (entbak, "%s/%s", dir, CVSADM_ENTBAK);
-    }
-    else
-    {
-	(void) strcpy (entname, CVSADM_ENT);
-	(void) strcpy (entbak, CVSADM_ENTBAK);
-    }
-
-    fpin = open_file (entname, "r");
-    if (fgets (line, sizeof (line), fpin) == NULL)
-    {
-	(void) fclose (fpin);
-	return;
-    }
-    (void) fclose (fpin);
-    if (line[0] != '/')
-    {
-	rename_file (entname, entbak);
-	fpin = open_file (entbak, "r");
-	fpout = open_file (entname, "w+");
-	while (fgets (line, sizeof (line), fpin) != NULL)
-	{
-	    if (line[0] == '/')
-	    {
-		if (fputs (line, fpout) == EOF)
-		    error (1, errno, "cannot write %s", CVSADM_ENT);
-		continue;
-	    }
-	    rev = line;
-	    if ((ts = strchr (line, '|')) == NULL)
-		continue;
-	    *ts++ = '\0';
-	    if ((user = strrchr (ts, ' ')) == NULL)
-		continue;
-	    *user++ = '\0';
-	    if ((cp = strchr (user, '|')) == NULL)
-		continue;
-	    *cp = '\0';
-	    opt = "";
-#ifdef HAVE_RCS5
-#ifdef HAD_RCS4
-	    opt = "-V4";
-#endif
-#endif
-	    if (fprintf (fpout, "/%s/%s/%s/%s/\n", user, rev, ts, opt) < 0)
-		error (1, errno, "cannot write %s", CVSADM_ENT);
-	}
-	(void) fclose (fpin);
-	if (fclose (fpout) == EOF)
-	    error (1, errno, "cannot close %s", entname);
-
-	/* clean up any old Files or Mod files */
-	if (dir != NULL)
-	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_FILE);
-	else
-	    (void) strcpy (tmp, CVSADM_FILE);
-	if (isfile (tmp))
-	    (void) unlink (tmp);
-
-	if (dir != NULL)
-	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_MOD);
-	else
-	    (void) strcpy (tmp, CVSADM_MOD);
-	if (isfile (tmp))
-	    (void) unlink (tmp);
-    }
-}
 
 /*
  * Free up the memory associated with the data section of an ENTRIES type
