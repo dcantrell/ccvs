@@ -41,7 +41,7 @@ if test x"$1" = x"-r"; then
 	remote=yes
 	# If we're going to do remote testing, make sure 'rsh' works first.
         host="`hostname`"
-	if test "x`${CVS_RSH-rsh} $host 'echo hi'`" != "xhi"; then
+	if test "x`${CVS_RSH-rsh} $host -n 'echo hi'`" != "xhi"; then
 	    echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
 	    exit 1
 	fi
