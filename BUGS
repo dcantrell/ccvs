@@ -1,6 +1,6 @@
 * CVS leaves .#mumble files around when a conflict occurs.  (Note:
-this is intentional and is documented in doc/cvs.texinfo.  Of course
-whether it is a good idea is a separate question).
+  this is intentional and is documented in doc/cvs.texinfo.  Of course
+  whether it is a good idea is a separate question).
 
 * If patch fails, CCVS tries to transfer the whole file, but it
   doesn't seem to handle this correctly:
