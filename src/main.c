@@ -291,7 +291,6 @@ lookup_command_attribute (cmd_name)
         (strcmp (cmd_name, "init") != 0) &&
         (strcmp (cmd_name, "login") != 0) &&
 	(strcmp (cmd_name, "logout") != 0) &&
-        (strcmp (cmd_name, "rdiff") != 0) &&
         (strcmp (cmd_name, "release") != 0) &&
         (strcmp (cmd_name, "rtag") != 0))
     {
@@ -304,6 +303,7 @@ lookup_command_attribute (cmd_name)
        add to this list if you are _certain_ something is safe. */
     if ((strcmp (cmd_name, "checkout") != 0) &&
         (strcmp (cmd_name, "diff") != 0) &&
+        (strcmp (cmd_name, "rdiff") != 0) &&
         (strcmp (cmd_name, "update") != 0) &&
         (strcmp (cmd_name, "history") != 0) &&
         (strcmp (cmd_name, "editors") != 0) &&
