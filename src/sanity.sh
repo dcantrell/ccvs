@@ -163,13 +163,15 @@ find_tool ()
   TOOL=""
   for path in $GLOCS ; do
     if test -x $path/g$1 ; then
-      if test "X`$path/g$1 --version`" != "X--version" ; then
+      RES="`$path/g$1 --version </dev/null 2>/dev/null`"
+      if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
         TOOL=$path/g$1
         break
       fi
     fi
     if test -x $path/$1 ; then
-      if test "X`$path/$1 --version`" != "X--version" ; then
+      RES="`$path/$1 --version </dev/null 2>/dev/null`"
+      if test "X$RES" != "X--version" && test "X$RES" != "X" ; then
         TOOL=$path/$1
         break
       fi
@@ -186,7 +188,7 @@ find_tool ()
 
 # You can't run CVS as root; print a nice error message here instead
 # of somewhere later, after making a mess.
-case "`$ID -u`" in
+case "`$ID -u 2>/dev/null`" in
   "0")
     echo "Test suite does not work correctly when run as root" >&2
     exit 1

@@ -1,5 +1,7 @@
 2000-09-27  Larry Jones  <larry.jones@sdrc.com> 
 
+	* sanity.sh (find_tool): Correct method of checking for GNU tools.
+
 	* checkout.c (checkout_proc): Match up user directories with
 	repository directories instead of using Emptydir.
 	* sanity.sh (cvsadm, emptydir): Update to match.
