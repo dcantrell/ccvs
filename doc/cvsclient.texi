@@ -212,10 +212,41 @@ encoded (see scramble.c in the cvs sources), a linefeed, the string
 identical string for cvs root both here and later in the
 @code{Root} request of the cvs
 protocol itself.  Servers are encouraged to enforce this restriction.
-The server responds with
-@samp{I LOVE YOU} and a linefeed if the authentication is successful or
-@samp{I HATE YOU} and a linefeed if the authentication fails.  After
-receiving @samp{I LOVE YOU}, the client proceeds with the cvs protocol.
+The possible server responses (each of which is followed by a linefeed)
+are the following.  Note that although there is a small similarity
+between this authentication protocol and the cvs protocol, they are
+separate.
+
+@table @code
+@item I LOVE YOU
+The authentication is successful.  The client proceeds with the cvs
+protocol itself.
+
+@item I HATE YOU
+The authentication fails.  After sending this response, the server may
+close the connection.  It is up to the server to decide whether to give
+this response, which is generic, or a more specific response using
+@samp{E} and/or @samp{error}.
+
+@item E @var{text}
+Provide a message for the user.  After this reponse, the authentication
+protocol continues with another response.  Typically the server will
+provide a series of @samp{E} responses followed by @samp{error}.
+Compatibility note: @sc{cvs} 1.9.10 and older clients will print
+@code{unrecognized auth response} and @var{text}, and then exit, upon
+receiving this response.
+
+@item error @var{code} @var{text}
+The authentication fails.  After sending this response, the server may
+close the connection.  The @var{code} is a code describing why it
+failed, intended for computer consumption.  The only code currently
+defined is @samp{0} which is nonspecific, but clients must silently
+ignore any unrecognized codes.  The @var{text} should be supplied to the
+user.  Compatibility note: @sc{cvs} 1.9.10 and older clients will print
+@code{unrecognized auth response} and @var{text}, and then exit, upon
+receiving this response.
+@end table
+
 If the client wishes to merely authenticate without starting the cvs
 protocol, the procedure is the same, except @samp{BEGIN AUTH REQUEST} is
 replaced with @samp{BEGIN VERIFICATION REQUEST}, @samp{END AUTH REQUEST}

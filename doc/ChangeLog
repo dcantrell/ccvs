@@ -1,5 +1,10 @@
 Tue Jun 24 09:37:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Connection and Authentication): Add "E" and
+	"error" as responses in authentication protocol.  The server
+	already was in the (formerly bad) habit of sending them, and we
+	might as well implement this in the client and document it.
+
 	* cvs.texinfo (Password authentication security): Note about
 	permissions on $CVSROOT also applies to its parent and so on up to
 	/.
