@@ -157,10 +157,17 @@ extern long timezone;
 **            PATH_MAX in terms of MAXPATHLEN.
 **         3. If neither is defined, include limits.h and check for
 **            PATH_MAX again.
+**         3.1 If we now have PATHSIZE, define PATH_MAX in terms of that.
+**             and ignore the rest.  Since _POSIX_PATH_MAX (checked for
+**             next) is the *most* restrictive (smallest) value, if we
+**             trust _POSIX_PATH_MAX, several of our buffers are too small.
 **         4. If PATH_MAX is still not defined but _POSIX_PATH_MAX is,
 **            then define PATH_MAX in terms of _POSIX_PATH_MAX.
 **         5. And if even _POSIX_PATH_MAX doesn't exist just put in
 **            a reasonable value.
+**         *. All in all, this is an excellent argument for using pathconf()
+**            when at all possible.  Or better yet, dynamically allocate
+**            our buffers and use getcwd() not getwd().
 **
 **     This works on:
 **         Sun Sparc 10        SunOS 4.1.3  &  Solaris 1.2
@@ -169,6 +176,7 @@ extern long timezone;
 **         IBM RS6000          AIX 3.2
 **         Dec Alpha           OSF 1 ????
 **         Intel 386           BSDI BSD/386
+**         Intel 386           SCO OpenServer Release 5
 **         Apollo              Domain 10.4
 **         NEC                 SVR4
 */
@@ -185,12 +193,16 @@ extern long timezone;
 #  else
 #    include <limits.h>
 #    ifndef PATH_MAX
-#      ifdef _POSIX_PATH_MAX
-#        define PATH_MAX             _POSIX_PATH_MAX
-#      else
-#        define PATH_MAX             1024
-#      endif  /* _POSIX_PATH_MAX */
-#    endif  /* PATH_MAX   */
+#      ifdef PATHSIZE
+#         define PATH_MAX               PATHSIZE
+#      else /* no PATHSIZE */
+#        ifdef _POSIX_PATH_MAX
+#          define PATH_MAX             _POSIX_PATH_MAX
+#        else
+#          define PATH_MAX             1024
+#        endif  /* no _POSIX_PATH_MAX */
+#      endif  /* no PATHSIZE */
+#    endif /* no PATH_MAX   */
 #  endif  /* MAXPATHLEN */
 #endif  /* PATH_MAX   */
 
