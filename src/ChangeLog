@@ -1,5 +1,7 @@
 1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (rcs): Add test for annotate and the year 2000.
+
 	* server.c (do_cvs_command): If there are partial lines left when
 	the child process is done, send them along.
 	* sanity.sh (rcs, rcs2): Enable all tests for remote; tests for
