@@ -728,6 +728,7 @@ move_file_offset (int fd, off_t src, off_t dest)
     off_t end;
     off_t p, q;
     char buf[4096];
+#if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
     int flags;
 
     /* Save current blocking status and set file descriptor to block.  */
@@ -735,6 +736,7 @@ move_file_offset (int fd, off_t src, off_t dest)
     if (flags < 0) error (1, errno, "Failed to retrieve FD flags");
     if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
 	error (1, errno, "Failed to set FD flags.");
+#endif /* F_GETFL && O_NONBLOCK && F_SETFL */
 
     /* Make sure all data written to this file has been committed to disk
      * before mucking around with it.
@@ -799,8 +801,10 @@ move_file_offset (int fd, off_t src, off_t dest)
     }
 
     /* Restore blocking status.  */
+#if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
     if (fcntl (fd, F_SETFL, flags) < 0)
 	error (1, errno, "Failed to restore FD flags.");
+#endif /* F_GETFL && O_NONBLOCK && F_SETFL */
 }
 
 
@@ -3348,9 +3352,9 @@ static int flowcontrol_pipe[2];
  * code.
  */
 int
-set_nonblock_fd (fd)
-     int fd;
+set_nonblock_fd (int fd)
 {
+#if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
     int flags;
 
     flags = fcntl (fd, F_GETFL, 0);
@@ -3358,6 +3362,7 @@ set_nonblock_fd (fd)
 	return errno;
     if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
 	return errno;
+#endif /* F_GETFL && O_NONBLOCK && F_SETFL */
     return 0;
 }
 
