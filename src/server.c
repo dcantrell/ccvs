@@ -3601,7 +3601,7 @@ struct request requests[] =
   REQ_LINE("Root", serve_root, rq_essential),
   REQ_LINE("Valid-responses", serve_valid_responses, rq_essential),
   REQ_LINE("valid-requests", serve_valid_requests, rq_essential),
-  REQ_LINE("Repository", serve_repository, rq_essential),
+  REQ_LINE("Repository", serve_repository, rq_optional),
   REQ_LINE("Directory", serve_directory, rq_essential),
   REQ_LINE("Max-dotdot", serve_max_dotdot, rq_optional),
   REQ_LINE("Static-directory", serve_static_directory, rq_optional),
