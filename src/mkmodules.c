@@ -542,7 +542,7 @@ checkout_file (file, temp)
 			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
     if (retcode != 0)
     {
-	error (0, retcode == -1 ? errno : 0, "failed to check out %s file",
+	error (0, 0, "failed to check out %s file",
 	       file);
     }
     freercsnode (&rcsnode);

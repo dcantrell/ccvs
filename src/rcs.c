@@ -2887,7 +2887,11 @@ expand_keywords (rcs, ver, name, log, loglen, expand, buf, len, retbuf, retlen)
 
    OPTIONS is a string such as "-kb" or "-kv" for keyword expansion
    options.  It may be NULL to use the default expansion mode of the
-   file, typically "-kkv".  */
+   file, typically "-kkv".
+
+   On an error which prevented checking out the file, either print a
+   nonfatal error and return 1, or give a fatal error.  On success,
+   return 0.  */
 
 /* This function mimics the behavior of `rcs co' almost exactly.  The
    chief difference is in its support for preserving file ownership,
@@ -4005,7 +4009,7 @@ RCS_checkin (rcs, workfile, message, rev, flags)
 			   tmpfile,
 			   (RCSCHECKOUTPROC)0, NULL);
     if (status != 0)
-	error (1, status < 0 ? errno : 0,
+	error (1, 0,
 	       "could not check out revision %s of `%s'",
 	       commitpt->version, rcs->path);
 
@@ -4256,7 +4260,7 @@ RCS_cmp_file (rcs, rev, options, filename)
         retcode = RCS_checkout (rcs, (char *) NULL, rev, (char *) NULL,
 				options, RUN_TTY, cmp_file_buffer,
 				(void *) &data);
-	
+
         /* If we have not yet found a difference, make sure that we are at
            the end of the file.  */
         if (! data.different)
@@ -4266,7 +4270,7 @@ RCS_cmp_file (rcs, rev, options, filename)
         }
 	
         fclose (fp);
-	
+
 	if (retcode != 0)
 	    return 1;
 	
@@ -5068,13 +5072,6 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 	if (status > 0)
 	    goto delrev_done;
 
-	else if (status < 0)
-	{
-	    error (0, errno,
-		   "cannot check out revision %s of %s", after, rcs->path);
-	    goto delrev_done;
-	}
-
 	if (before == NULL)
 	{
 	    /* We are deleting revisions from the head of the tree,
@@ -5102,12 +5099,6 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 				   (RCSCHECKOUTPROC)0, NULL);
 	    if (status > 0)
 		goto delrev_done;
-	    else if (status < 0)
-	    {
-		error (0, errno, "cannot check out revision %s of %s",
-		       before, rcs->path);
-		goto delrev_done;
-	    }
 
 	    outfile = cvs_temp_name();
 	    status = diff_exec (beforefile, afterfile, "-n", outfile);

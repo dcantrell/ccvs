@@ -1646,9 +1646,8 @@ remove_file (finfo, tag, message)
 			    (RCSCHECKOUTPROC) NULL, (void *) NULL);
     if (retcode != 0)
     {
-	if (!quiet)
-	    error (0, retcode == -1 ? errno : 0,
-		   "failed to check out `%s'", finfo->fullname);
+	error (0, 0,
+	       "failed to check out `%s'", finfo->fullname);
 	return (1);
     }
 
