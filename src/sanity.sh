@@ -15703,6 +15703,11 @@ total revisions: 2
 done"
 	  fi # end of tests skipped for remote
 
+	  # Now test that plain -e is at least parsed right.  CVS 1.10
+	  # would wrongly treat "-e file1" as "-efile1".
+	  dotest_fail admin-19a-2 "${testcvs} -q admin -e file1" \
+"${PROG} \[[a-z]* aborted\]: removing entire access list not yet implemented"
+
 	  # Add another revision to file2, so we can delete one.
 	  echo 'add a line' >> file2
 	  dotest admin-21 "${testcvs} -q ci -m modify file2" \

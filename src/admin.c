@@ -158,7 +158,7 @@ admin (argc, argv)
 
     optind = 0;
     while ((c = getopt (argc, argv,
-			"+ib::c:a:A:e:l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
+			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
 	switch (c)
 	{
@@ -211,6 +211,11 @@ admin (argc, argv)
 		break;
 
 	    case 'e':
+		if (optarg == NULL)
+		{
+		    error (1, 0,
+			   "removing entire access list not yet implemented");
+		}
 		arg_add (&admin_data, 'e', optarg);
 		break;
 

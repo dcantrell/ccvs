@@ -1,5 +1,9 @@
 1999-03-25  Jim Kingdon  <http://www.cyclic.com>
 
+	* admin.c (admin): Make argument to -e optional, to match the
+	documentation.
+	* sanity.sh (admin-19a-2): Test for this.
+
 	* server.c (serve_root): Update comment about checking for missing
 	Root request.
 
