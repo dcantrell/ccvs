@@ -1,3 +1,7 @@
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Note --without-gssapi required to configure on OS X.
+
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
 	* BUGS: Remove mention of wrappers -t/-f since they are no longer

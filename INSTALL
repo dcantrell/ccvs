@@ -182,8 +182,8 @@ PowerPC or RS/6000:
 	Lynx 2.5 (1.9) (footnote 10)
 	MkLinux DR3 GENERIC #6 (1.10.5.1) (presumably LinuxPPC too)
 	Mac OS X Darwin 6.6 Darwin Kernel Version 6.6 (1.11.1p1)
-	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.11.6)
-	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.12.1)
+	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.11.6) (footnote 12)
+	Mac OS X Darwin 5.5 Darwin Kernel Version 5.5 (1.12.1) (footnote 12)
 SPARC:
 	Sun SPARC running SunOS 4.1.x (1.10)
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
@@ -240,6 +240,12 @@ VAX:
       ci: 'RCS/loginfo,v' is not a regular file
       ci:  RCS/loginfo,v: Invalid argument
       cvs [init aborted]: failed to checkin n:/safe/CVSROOT/loginfo
+
+(footnote 12)
+    Need to `configure --without-gssapi' unless you have installed Kerberos 5
+    libraries on the system yourself.  For some reason Apple ships OS X with
+    the Kerberos 5 headers installed and not the libraries, which confuses the
+    current configure script.  Some Sun and BSD boxes hace similar problems.
 
 -------------------------------------------------------------------------------
 
