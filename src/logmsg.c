@@ -551,6 +551,7 @@ do_verify (messagep, repository)
 	error (0, errno, "cannot remove %s", fname);
     free (fname);
     free( verifymsg_script );
+    verifymsg_script = NULL;
 }
 
 /*
