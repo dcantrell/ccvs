@@ -563,6 +563,13 @@ RCS_reparsercsfile (RCSNode *rdata, FILE **pfp, struct rcsbuffer *rcsbufp)
 
 	if (STREQ (key, "comment"))
 	{
+	    if (rdata->comment)
+	    {
+		error (0, 0,
+		       "warning: duplicate key `%s' in RCS file `%s'",
+		       key, rcsfile);
+		free (rdata->comment);
+	    }
 	    rdata->comment = rcsbuf_valcopy (&rcsbuf, value, 0, NULL);
 	    continue;
 	}
@@ -2249,6 +2256,12 @@ RCS_tag2rev (RCSNode *rcs, char *tag)
 	* the 0 in some other position -- <dan@gasboy.com>
 	*/ 
 	pa = strrchr (rev, '.');
+	if (!pa)
+	    /* This might happen, for instance, if an RCS file only contained
+	     * revisions 2.x and higher, and REV == "1".
+	     */
+	    error (1, 0, "revision `%s' does not exist", tag);
+
 	pb = xmalloc (strlen (rev) + 3);
 	*pa++ = 0;
 	(void) sprintf (pb, "%s.%d.%s", rev, RCS_MAGIC_BRANCH, pa);
@@ -4742,6 +4755,13 @@ RCS_findlock_or_tip (RCSNode *rcs)
        that in other ways if at all anyway (e.g. rcslock.pl).  */
 
     p = findnode (rcs->versions, RCS_getbranch (rcs, rcs->branch, 0));
+    if (!p)
+    {
+	error (0, 0, "RCS file `%s' does not contain its default revision.",
+	       rcs->path);
+	return NULL;
+    }
+
     return p->data;
 }
 
@@ -5594,7 +5614,13 @@ workfile);
 
     freedeltatext (dtext);
     if (status != 0)
+    {
+	/* If delta has not been added to a List, then freeing the Node key
+	 * won't free delta->version.
+	 */
+	if (delta->version) free (delta->version);
 	free_rcsvers_contents (delta);
+    }
 
     return status;
 }
@@ -7392,6 +7418,9 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf,
 		if (vers->branches == NULL)
 		    error (1, 0, "missing expected branches in %s",
 			   rcs->print_path);
+		if (!cpversion)
+		    error (1, 0, "Invalid revision number in `%s'.",
+		           rcs->print_path);
 		*cpversion = '.';
 		++cpversion;
 		cpversion = strchr (cpversion, '.');

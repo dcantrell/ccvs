@@ -1053,8 +1053,19 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 	    /* If both first and last are NULL, it means that we want
 	       just the head of the default branch, which is RCS_head.  */
 	    nr->first = RCS_head (rcs);
-	    nr->last = xstrdup (nr->first);
-	    nr->fields = numdots (nr->first) + 1;
+	    if (!nr->first)
+	    {
+		if (!really_quiet)
+		    error (0, 0, "No head revision in archive `%s'.",
+		           rcs->path);
+		nr->last = NULL;
+		nr->fields = 0;
+	    }
+	    else
+	    {
+		nr->last = xstrdup (nr->first);
+		nr->fields = numdots (nr->first) + 1;
+	    }
 	}
 	else if (r->branchhead)
 	{
@@ -1074,10 +1085,11 @@ log_expand_revlist (RCSNode *rcs, char *baserev,
 		    free (branch);
 		}
 	    }
-	    if (nr->first == NULL && !really_quiet)
+	    if (!nr->first)
 	    {
-		error (0, 0, "warning: no branch `%s' in `%s'",
-		       r->first, rcs->print_path);
+		if (!really_quiet)
+		    error (0, 0, "warning: no branch `%s' in `%s'",
+			   r->first, rcs->print_path);
 		nr->last = NULL;
 		nr->fields = 0;
 	    }
