@@ -20,6 +20,7 @@
 # GNU General Public License for more details.
 
 EXTRA_DIST = \
+	stamp-ch \
 	config.h \
 	config.h.in \
 	ndir.h \
@@ -36,8 +37,7 @@ EXTRA_DIST = \
 	stripslash.c \
 	waitpid.c \
 	woe32.c \
-	.cvsignore \
-	stamp-ch
+	.cvsignore
 
 SUBDIRS = SCC
 
