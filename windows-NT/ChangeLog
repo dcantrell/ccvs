@@ -1,3 +1,8 @@
+Fri Dec 22 12:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* run.c (filter_stream_through_program): On error, error() rather
+	than returning -1.
+
 Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	* options.h: Don't define NO_SOCKET_TO_FD.
