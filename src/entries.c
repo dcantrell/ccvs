@@ -12,6 +12,7 @@
  */
 
 #include "cvs.h"
+#include "getline.h"
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)entries.c 1.44 94/10/07 $";
@@ -196,19 +197,33 @@ struct entent {
     char *tag;
     char *date;
     char *ts_conflict;
+    char *line;
 };
 
-struct entent *
+static void
+free_entent (ent)
+     struct entent *ent;
+{
+    free (ent->line);
+    free (ent);
+}
+
+static struct entent *
 fgetentent(fpin)
     FILE *fpin;
 {
-    static struct entent ent;
-    static char line[MAXLINELEN];
+    struct entent *ent;
+    char *line;
+    size_t line_chars_allocated;
     register char *cp;
     char *user, *vn, *ts, *options;
     char *tag_or_date, *tag, *date, *ts_conflict;
 
-    while (fgets (line, sizeof (line), fpin) != NULL)
+    line = NULL;
+    line_chars_allocated = 0;
+
+    ent = NULL;
+    while (getline (&line, &line_chars_allocated, fpin) > 0)
     {
 	if (line[0] != '/')
 	    continue;
@@ -270,18 +285,23 @@ fgetentent(fpin)
 	    }
 	}
 
-	ent.user = user;
-	ent.vn = vn;
-	ent.ts = ts;
-	ent.options = options;
-	ent.tag = tag;
-	ent.date = date;
-	ent.ts_conflict = ts_conflict;
+	ent = (struct entent *) xmalloc (sizeof (*ent));
+	ent->user = user;
+	ent->vn = vn;
+	ent->ts = ts;
+	ent->options = options;
+	ent->tag = tag;
+	ent->date = date;
+	ent->ts_conflict = ts_conflict;
+	ent->line = line;
 
-	return &ent;
+	break;
     }
 
-    return NULL;
+    if (ent == NULL && line)
+        free (line);
+
+    return ent;
 }
 
 
@@ -336,6 +356,7 @@ Entries_Open (aflag)
 				 ent->tag,
 				 ent->date,
 				 ent->ts_conflict);
+	    free_entent (ent);
 	}
 
 	fclose (fpin);
@@ -353,6 +374,7 @@ Entries_Open (aflag)
 				 ent->tag,
 				 ent->date,
 				 ent->ts_conflict);
+	    free_entent (ent);
 	}
 	do_rewrite = 1;
 	fclose (fpin);
