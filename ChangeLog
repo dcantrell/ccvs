@@ -1,5 +1,9 @@
 2003-12-05  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Update to require Automake 1.7.9.
+
+2003-12-05  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Add since 1.12.3 section.
 	* configure.in: Update for dev version 1.12.3.1.
 	* configure: Regenerated.
