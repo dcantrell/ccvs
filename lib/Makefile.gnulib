@@ -25,6 +25,8 @@ MOSTLYCLEANFILES =
 CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
+
+## For module alloca:
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
@@ -37,6 +39,8 @@ alloca.h: alloca_.h
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 libgnu_a_LIBADD += @ALLOCA@
+
+## For module alloca-opt:
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
@@ -48,14 +52,16 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-
+## For module dirname:
 libgnu_a_SOURCES += dirname.h dirname.c basename.c stripslash.c
 
+## For module exit:
 libgnu_a_SOURCES += exit.h
 
+## For module exitfail:
 libgnu_a_SOURCES += exitfail.h exitfail.c
 
-
+## For module fnmatch:
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 
@@ -67,15 +73,17 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
-
-
+## For module getline:
 libgnu_a_SOURCES += getline.h
 EXTRA_DIST += getndelim2.h getndelim2.c
 
+## For module getndelim2:
 EXTRA_DIST += getndelim2.h getndelim2.c
 
+## For module getnline:
 libgnu_a_SOURCES += getnline.h getnline.c
 
+## For module getopt:
 BUILT_SOURCES += $(GETOPT_H)
 EXTRA_DIST += getopt_.h getopt_int.h
 
@@ -87,29 +95,31 @@ getopt.h: getopt_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
+## For module getpass-gnu:
 libgnu_a_SOURCES += getpass.h
 
+## For module gettext:
 libgnu_a_SOURCES += gettext.h
 
+## For module gettime:
 libgnu_a_SOURCES += gettime.c
 
-
-
-
+## For module minmax:
 libgnu_a_SOURCES += minmax.h
 
-
-
-
+## For module pathmax:
 libgnu_a_SOURCES += pathmax.h
 
+## For module regex:
 libgnu_a_SOURCES += regex.h
 
-
+## For module save-cwd:
 libgnu_a_SOURCES += save-cwd.h save-cwd.c
 
+## For module stat:
 libgnu_a_SOURCES += stat-macros.h
 
+## For module stdbool:
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
 
@@ -121,22 +131,28 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
+## For module strcase:
 libgnu_a_SOURCES += strcase.h
 
-
+## For module time_r:
 libgnu_a_SOURCES += time_r.h
 
+## For module timespec:
 libgnu_a_SOURCES += timespec.h
 
-
+## For module unlocked-io:
 libgnu_a_SOURCES += unlocked-io.h
 
+## For module vasnprintf:
 libgnu_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
+## For module xalloc:
 libgnu_a_SOURCES += xalloc.h xmalloc.c
 
+## For module xgetcwd:
 libgnu_a_SOURCES += xgetcwd.h xgetcwd.c
 
+## For module xsize:
 libgnu_a_SOURCES += xsize.h
 
 
