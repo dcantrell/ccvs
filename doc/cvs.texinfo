@@ -3252,6 +3252,12 @@ like this:
 @cindex Sticky tags
 @cindex Tags, sticky
 
+@c A somewhat related issue is per-directory sticky
+@c tags (see comment at CVS/Tag in node Working
+@c directory storage); we probably want to say
+@c something like "you can set a sticky tag for only
+@c some files, but you don't want to" or some such.
+
 Sometimes a working copy's revision has extra data
 associated with it, for example it might be on a branch
 (@pxref{Branching and merging}), or restricted to
@@ -3262,20 +3268,14 @@ working copy -- we refer to it as @dfn{sticky}.
 
 Most of the time, stickiness is an obscure aspect of
 @sc{cvs} that you don't need to think about.  However,
-there are occasionally situations where a more thorough
-understanding is useful; for example, when your working
-copy has sticky data that you'd like to clear.
+even if you don't want to use the feature, you may need
+to know @emph{something} about sticky tags (for
+example, how to avoid them!).
 
 You can use the @code{status} command to see if any
 sticky tags or dates are set:
 
 @example
-$ vi driver.c   # @r{Make changes to the file}
-$ cvs commit -m "Fixed initialization bug" driver.c
-Checking in driver.c;
-/usr/local/cvsroot/yoyodyne/tc/driver.c,v  <--  driver.c
-new revision: 1.7.2.1; previous revision: 1.7
-done
 $ cvs status driver.c
 ===================================================================
 File: driver.c          Status: Up-to-date
@@ -3298,7 +3298,10 @@ the head of the trunk, and forgets any sticky tags,
 dates, or options.
 
 @cindex sticky date
-Sticky tags are not just for branches.  For example,
+The most common use of sticky tags is to identify which
+branch one is working on, as described in
+@ref{Accessing branches}.  However, non-branch
+sticky tags have uses as well.  For example,
 suppose that you want to avoid updating your working
 directory, to isolate yourself from possibly
 destabilizing changes other people are making.  You
@@ -3306,7 +3309,8 @@ can, of course, just refrain from running @code{cvs
 update}.  But if you want to avoid updating only a
 portion of a larger tree, then sticky tags can help.
 If you check out a certain revision (such as 1.4) it
-will become sticky.  Subsequent @code{cvs update} will
+will become sticky.  Subsequent @code{cvs update}
+commands will
 not retrieve the latest revision until you reset the
 tag with @code{cvs update -A}.  Likewise, use of the
 @samp{-D} option to @code{update} or @code{checkout}
@@ -3519,8 +3523,7 @@ Once you have a working copy tied to a particular
 branch, it remains there until you tell it otherwise.
 This means that changes checked in from the working
 copy will add new revisions on that branch, while
-leaving the main trunk and other branches unaffected
-(but see @pxref{Merging a branch}).
+leaving the main trunk and other branches unaffected.
 
 @cindex Branches, sticky
 To find out what branch a working copy is on, you can
