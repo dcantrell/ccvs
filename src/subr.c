@@ -20,22 +20,6 @@ extern char *getlogin (void);
 
 
 
-/* Two constants which tune expand_string.  Having MIN_INCR as large
-   as 1024 might waste a bit of memory, but it shouldn't be too bad
-   (CVS used to allocate arrays of, say, 3000, PATH_MAX (8192, often),
-   or other such sizes).  Probably anything which is going to allocate
-   memory which is likely to get as big as MAX_INCR shouldn't be doing
-   it in one block which must be contiguous, but since getrcskey does
-   so, we might as well limit the wasted memory to MAX_INCR or so
-   bytes.
-
-   MIN_INCR and MAX_INCR should both be powers of two and we generally
-   try to keep our allocations to powers of two for the most part.
-   Most malloc implementations these days tend to like that.  */
-
-#define MIN_INCR 1024
-#define MAX_INCR (2*1024*1024)
-
 /* *STRPTR is a pointer returned from malloc (or NULL), pointing to *N
    characters of space.  Reallocate it so that points to at least
    NEWSIZE bytes of space.  Gives a fatal error if out of memory;
@@ -43,23 +27,8 @@ extern char *getlogin (void);
 void
 expand_string (char **strptr, size_t *n, size_t newsize)
 {
-    if (*n < newsize)
-    {
-	while (*n < newsize)
-	{
-	    if (*n < MIN_INCR)
-		*n = MIN_INCR;
-	    else if (*n >= MAX_INCR)
-		*n += MAX_INCR;
-	    else
-	    {
-		*n *= 2;
-		if (*n > MAX_INCR)
-		    *n = MAX_INCR;
-	    }
-	}
-	*strptr = xrealloc (*strptr, *n);
-    }
+    while (*n < newsize)
+	*strptr = x2realloc (*strptr, n);
 }
 
 

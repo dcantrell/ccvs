@@ -1,5 +1,10 @@
 2004-02-20  Derek Price  <derek@ximbiot.com>
 
+	* subr.c (expand_string): Use x2realloc() from GNULIB for core
+	functionality.
+
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
 	* subr.c (set_nonblock_fd): Move back to...
 	* server.c: ...here.
 	* cvs.h: Remove protos for the above two functions.
