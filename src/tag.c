@@ -31,11 +31,9 @@ static int force_tag_move;		/* don't force tag to move by default */
 
 static const char *const tag_usage[] =
 {
-    "Usage: %s %s [-QlRqF] [-b] [-d] tag [files...]\n",
-    "\t-Q\tReally quiet.\n",
+    "Usage: %s %s [-lRF] [-b] [-d] tag [files...]\n",
     "\t-l\tLocal directory only, not recursive.\n",
     "\t-R\tProcess directories recursively.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-d\tDelete the given Tag.\n",
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-F\tMove tag if it already exists\n",
@@ -59,10 +57,15 @@ tag (argc, argv)
 	switch (c)
 	{
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'l':
 		local = 1;
@@ -108,10 +111,6 @@ tag (argc, argv)
 
 	if (local)
 	    send_arg("-l");
-	if (quiet)
-	    send_arg("-q");
-	if (really_quiet)
-	    send_arg("-Q");
 	if (delete)
 	    send_arg("-d");
 	if (branch_mode)
