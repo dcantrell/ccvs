@@ -1,5 +1,8 @@
 Tue Nov 19 09:39:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Tags): Suggest that future special tag names might
+	start with ".".  Fix typo.
+
 	* cvs.texinfo (Removing directories): -P is also available with
 	export.
 	(Moving directories): Rewrite first paragraph; now says that you

@@ -2987,10 +2987,14 @@ contain uppercase and lowercase letters, digits,
 @samp{-}, and @samp{_}.  The two tag names @code{BASE}
 and @code{HEAD} are reserved for use by @sc{cvs}.  It
 is expected that future names which are special to
-@sc{cvs} will contain characters such as @samp{%} or
-@samp{=}, rather than being named analogously to
+@sc{cvs} will be specially named, for example by
+starting with @samp{.}, rather than being named analogously to
 @code{BASE} and @code{HEAD}, to avoid conflicts with
 actual tag names.
+@c Including a character such as % or = has also been 
+@c suggested as the naming convention for future
+@c special tag names.  Starting with . is nice because
+@c that is not a legal tag name as far as RCS is concerned.
 @c FIXME: CVS actually accepts quite a few characters
 @c in tag names, not just the ones documented above
 @c (see RCS_check_tag).  RCS
@@ -2998,7 +3002,7 @@ actual tag names.
 @c characters rather than legal ones.  CVS is said to lose its
 @c mind if you try to use "/" (try making such a tag sticky
 @c and using "cvs status" client/server--see remote
-@c protocol format for entries line for probably cause).
+@c protocol format for entries line for probable cause).
 @c TODO: The testsuite
 @c should test for whatever are documented above as
 @c officially-OK tag names, and CVS should at least reject
