@@ -1,3 +1,9 @@
+1999-02-17  Jim Kingdon  <http://www.cyclic.com>
+	    and Hallvard B Furuseth
+
+	* root.c (parse_cvsroot): Rearrange ifdefs to squelch possible
+	warnings about statement not reached.
+
 1999-02-16  Jim Kingdon  <http://www.cyclic.com>
 
 	* recurse.c (start_recursion): If we are skipping the current

@@ -448,18 +448,20 @@ parse_cvsroot (CVSroot)
 	error (0, 0, "but your CVS executable doesn't support it");
 	error (0, 0, "(%s)", CVSroot);
 	return 1;
-#endif
+#else
 	check_hostname = 1;
 	break;
+#endif
     case gserver_method:
 #ifndef HAVE_GSSAPI
 	error (0, 0, "Your CVSROOT is set for a GSSAPI access method");
 	error (0, 0, "but your CVS executable doesn't support it");
 	error (0, 0, "(%s)", CVSroot);
 	return 1;
-#endif
+#else
 	check_hostname = 1;
 	break;
+#endif
     case server_method:
     case ext_method:
     case pserver_method:
