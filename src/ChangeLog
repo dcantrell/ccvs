@@ -1,5 +1,10 @@
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
+	* log.c (log_expand_revlist): Suppress message and not error handling
+	when really_quiet.
+
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
 	* client.c (call_in_directory): Put function call after var decls.
 
 2005-03-16  Derek Price  <derek@ximbiot.com>
