@@ -1,3 +1,15 @@
+Wed Feb  8 06:42:27 1995  Roland McGrath  <roland@churchy.gnu.ai.mit.edu>
+
+	* server.c: Don't include <sys/stat.h>; system.h already does, and
+ 	4.3BSD can't take it twice.
+
+	* subr.c [! HAVE_VPRINTF] (run_setup, run_args): Don't use va_dcl
+ 	in declaration.  Declare the a1..a8 args which are used in the
+ 	sprintf call.
+	* cvs.h [! HAVE_VPRINTF] (run_setup, run_args): Don't prototype
+ 	args, to avoid conflicting with the function definitions
+ 	themselves.
+
 Tue Feb  7 20:10:00 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* client.c (update_entries): Pass the patch subprocess the switch
