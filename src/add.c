@@ -28,14 +28,14 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)add.c 1.55 94/10/22 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static int add_directory PROTO((char *repository, char *dir));
 static int build_entry PROTO((char *repository, char *user, char *options,
 		        char *message, List * entries, char *tag));
 
-static char *add_usage[] =
+static const char *const add_usage[] =
 {
     "Usage: %s %s [-k rcs-kflag] [-m message] files...\n",
     "\t-k\tUse \"rcs-kflag\" to add the file with the specified kflag.\n",

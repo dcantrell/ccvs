@@ -11,7 +11,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)hash.c 1.19 94/09/23 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 /* global caches */

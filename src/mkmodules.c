@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)mkmodules.c 1.45 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 #ifndef DBLKSIZ

@@ -16,7 +16,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static RETSIGTYPE patch_cleanup PROTO((void));
@@ -39,7 +39,7 @@ static char *date2 = NULL;
 static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
 static int unidiff = 0;
 
-static char *patch_usage[] =
+static const char *const patch_usage[] =
 {
     "Usage: %s %s [-Qflq] [-c|-u] [-s|-t] [-V %%d]\n",
     "    -r rev|-D date [-r rev2 | -D date2] modules...\n",

@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)tag.c 1.60 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static Dtype tag_dirproc PROTO((char *dir, char *repos, char *update_dir));
@@ -29,7 +29,7 @@ static int branch_mode;			/* make an automagic "branch" tag */
 static int local;			/* recursive by default */
 static int force_tag_move;		/* don't force tag to move by default */
 
-static char *tag_usage[] =
+static const char *const tag_usage[] =
 {
     "Usage: %s %s [-QlRqF] [-b] [-d] tag [files...]\n",
     "\t-Q\tReally quiet.\n",

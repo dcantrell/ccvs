@@ -37,7 +37,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)checkout.c 1.78 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static char *findslash PROTO((char *start, char *p));
@@ -48,7 +48,7 @@ static int checkout_proc PROTO((int *pargc, char *argv[], char *where,
 		          int local_specified, char *omodule,
 		          char *msg));
 
-static char *checkout_usage[] =
+static const char *const checkout_usage[] =
 {
     "Usage:\n  %s %s [-ANPQcflnpqs] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
@@ -70,7 +70,7 @@ static char *checkout_usage[] =
     NULL
 };
 
-static char *export_usage[] =
+static const char *const export_usage[] =
 {
     "Usage: %s %s [-NPQflnq] [-r rev | -D date] [-d dir] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
@@ -109,7 +109,8 @@ checkout (argc, argv)
     int local = 0;
     int shorten = -1;
     char *where = NULL;
-    char *valid_options, **valid_usage;
+    char *valid_options;
+    const char *const *valid_usage;
 
     /*
      * A smaller subset of options are allowed for the export command, which
