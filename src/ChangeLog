@@ -1,3 +1,8 @@
+1998-10-14  Jim Kingdon
+
+	* subr.c (expand_string): Tweak the algorithm so that the size
+	that it allocates is generally a power of two.
+
 1998-10-14  Eivind Eklund and Jim Kingdon
 
 	* commit.c (commit): For the client, don't worry about whether we
