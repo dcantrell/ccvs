@@ -442,7 +442,7 @@ RCS file: ", 0);
 
    Some issues:
 
-   1.  Should option parsing be part of the library or the caller?  The
+   * Should option parsing be part of the library or the caller?  The
    former allows the library to add options without changing the callers,
    but it causes various problems.  One is that something like --brief really
    wants special handling in CVS, and probably the caller should retain
@@ -453,15 +453,7 @@ RCS file: ", 0);
    "cvs diff" options like -l (that is, if the library adds an option which
    conflicts with a CVS option, it is trouble).
 
-   2.  Should there be a way of invoking an external diff program?  This is
-   pretty much orthogonal to the issue of a diff library.  The fact that
-   CVS uses an external diff program isn't particularly useful for
-   user-supplied diff programs because there is no way to distinguish
-   between the various uses CVS makes of it (e.g. supply this to the user
-   or supply this to the remote protocol), and because there is no way to
-   pick a different user-supplied diff for different file types.
-
-   3.  This isn't required for a first-cut diff library, but if there
+   * This isn't required for a first-cut diff library, but if there
    would be a way for the caller to specify the timestamps that appear
    in the diffs (rather than the library getting them from the files),
    that would clean up the kludgy utime() calls in patch.c.
