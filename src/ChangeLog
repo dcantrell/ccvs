@@ -1,3 +1,8 @@
+2003-11-09  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (tests): Remove basicb.
+	(basicb): Remove these tests since they made it into the new suite.
+
 2003-11-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (tests): Remove basica.
