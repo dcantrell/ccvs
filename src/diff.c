@@ -117,7 +117,7 @@ static struct option const longopts[] =
     {"ignore-matching-lines", 1, 0, 'I'},
     {"label", 1, 0, 'L'},
     {"new-file", 0, 0, 'N'},
-    {"initial-tab", 0, 0, 148},
+    {"initial-tab", 0, 0, 'T'},
     {"width", 1, 0, 'W'},
     {"text", 0, 0, 'a'},
     {"ignore-space-change", 0, 0, 'b'},
@@ -138,7 +138,7 @@ static struct option const longopts[] =
     {"report-identical-files", 0, 0, 's'},
     {"expand-tabs", 0, 0, 't'},
     {"ignore-all-space", 0, 0, 'w'},
-    {"side-by-side", 0, 0, 147},
+    {"side-by-side", 0, 0, 'y'},
     {"unified", 2, 0, 146},
     {"left-column", 0, 0, 129},
     {"suppress-common-lines", 0, 0, 130},
@@ -224,16 +224,17 @@ diff (argc, argv)
 
     optind = 0;
     while ((c = getopt_long (argc, argv,
-	       "+abcdefhilnpstuw0123456789BHNRC:D:F:I:L:U:V:W:k:r:",
+	       "+abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:V:W:k:r:",
 			     longopts, &option_index)) != -1)
     {
 	switch (c)
 	{
 	    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
 	    case 'h': case 'i': case 'n': case 'p': case 's': case 't':
-	    case 'u': case 'w': case '0': case '1': case '2':
-	    case '3': case '4': case '5': case '6': case '7': case '8':
-	    case '9': case 'B': case 'H':
+	    case 'u': case 'w': case 'y':
+            case '0': case '1': case '2': case '3': case '4': case '5':
+            case '6': case '7': case '8': case '9':
+	    case 'B': case 'H': case 'T':
 		(void) sprintf (tmp, " -%c", (char) c);
 		allocate_and_strcat (&opts, &opts_allocated, tmp);
 		break;
@@ -261,7 +262,6 @@ diff (argc, argv)
 	    case 129: case 130:           case 132: case 133: case 134:
 	    case 135: case 136: case 137: case 138: case 139: case 140:
 	    case 141: case 142: case 143: case 144: case 145: case 146:
-	    case 147: case 148:
 		allocate_and_strcat (&opts, &opts_allocated, " --");
 		allocate_and_strcat (&opts, &opts_allocated,
 				     longopts[option_index].name);

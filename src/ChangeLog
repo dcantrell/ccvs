@@ -1,3 +1,19 @@
+2001-03-24  Noel Cragg  <noel@shave.cnet.com>
+
+	* diff.c: mods to allow `-T' and `-y' options to be passed through
+	to the diff library.  This wasn't allowed earlier because of a
+	similarly named options that got passed through to the old rcs
+	programs.  We've long since stopped sending `-T' to any rcs
+	utility and have never used `-y'.  Any users of moldly CVS
+	versions which used to support `-T' have (hopefully) upgraded to
+	one where that option isn't supported.  It seems reasonable to
+	enable them again and pass them through.  (sanity.sh still works
+	anyways...)
+	(longopts): add short option equivalents for --initial-tab and
+	--side-by-side.
+	(diff): add new short options to getopt string and switch
+	statement.
+
 2001-03-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh: Add check for ${DOTSTAR} with large matches.
