@@ -1,7 +1,11 @@
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
-	* cvsnt.dep, cvsnt.mak: New files created by Visual C++ 6.0.
-	* cvsnt.dsp, cvsnt.dsw: Updated by Visual C++ 6.0.
+	* Makefile.am (EXTRA_DIST): Add cvsnt.dep.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.dep: New files created by Visual C++ 6.0.
+	* cvsnt.dsp, cvsnt.dsw, cvsnt.mak: Updated by Visual C++ 6.0.
 	* .cvsignore: Add and remove files for new MSVC++ setup.
 
 2004-03-25  Derek Price  <derek@ximbiot.com>
