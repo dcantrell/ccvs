@@ -1045,7 +1045,7 @@ read_hrecs (fname)
 {
     char *cp=NULL, *cp2=NULL;
     char *cpstart=NULL, *oldcp=NULL, *hrline=NULL;
-    size_t i=0;
+    ssize_t i=0;
     int fd, hrec_end=0;
    
     struct hrec *hr=NULL;
