@@ -305,7 +305,7 @@ do_editor (dir, messagep, repository, changes)
 	/* On NT, we might read less than st_size bytes, but we won't
 	   read more.  So this works.  */
 	*messagep = (char *) xmalloc (post_stbuf.st_size + 1);
- 	*messagep[0] = '\0';
+ 	(*messagep)[0] = '\0';
     }
 
     line = NULL;
@@ -338,8 +338,14 @@ do_editor (dir, messagep, repository, changes)
 
     if (pre_stbuf.st_mtime == post_stbuf.st_mtime ||
 	*messagep == NULL ||
+	(*messagep)[0] == '\0' ||
 	strcmp (*messagep, "\n") == 0)
     {
+	if (*messagep)
+	{
+	    free (*messagep);
+	    *messagep = NULL;
+	}
 	for (;;)
 	{
 	    (void) printf ("\nLog message unchanged or not specified\n");
