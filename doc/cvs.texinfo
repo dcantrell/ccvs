@@ -4533,8 +4533,9 @@ portion of the history you are accessing.  For example,
 time of the rename.
 
 When @var{new} is committed its revision numbers will
-start at 1.0 again, so if that bothers you, use the
-@samp{-r rev} option to commit (@pxref{commit options})
+start again, usually at 1.1, so if that bothers you,
+use the @samp{-r rev} option to commit.  For more
+information see @ref{Assigning revisions}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Inside
