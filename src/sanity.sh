@@ -28157,12 +28157,17 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	    dotest writeproxy-6 "$testcvs -Q add file1"
 	    dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
 
+	    # Make sure the sync took place
+	    dotest writeproxy-7a "$testcvs -Q up"
+
 	    # Checkout from primary
 	    cd ../../../primary
 	    dotest writeproxy-8 "$testcvs -qd$PRIMARY_CVSROOT co firstdir" \
 "U firstdir/file1"
 
 	    # Confirm data present
+	    #  - This test indirectly confirms that the commit did not take
+	    #    place on the secondary.
 	    cd firstdir
 	    dotest writeproxy-9 "cat file1" "now you see me"
 
