@@ -1,3 +1,9 @@
+2000-10-26  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in: Get path to pr for diff.
+	(Patch submitted by Urs Thuermann <urs@isnogud.escape.de>.)
+	* configure: Regenerated.
+
 2000-10-18  Derek Price  <derek.price@openavenue.com>
 
 	* .cvsignore: Added .fname & .version, two temporary files used in spec

@@ -13,6 +13,7 @@ AC_PROG_YACC
 
 AC_PATH_PROG(perl_path, perl, no)
 AC_PATH_PROG(csh_path, csh, no)
+AC_PATH_PROG(pr_path, pr, no)
 
 AC_SYS_INTERPRETER
 if test X"$ac_cv_sys_interpreter" != X"yes" ; then
