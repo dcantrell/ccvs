@@ -1,3 +1,11 @@
+Mon Feb 10 20:01:20 1997  Ullrich von Bassewitz <uz@musoftware.com>
+
+	* filesubr.c: Add an OS/2 specific chdir function that will not
+        only change the path but will also make the drive current that
+        is given in the argument string.
+        config.h: #define the macro CVS_CHDIR to os2_chdir so cvs will
+        use the os2_chdir function instead of chdir.
+
 Mon Feb 10 18:29:04 1997  Ullrich von Bassewitz <uz@musoftware.com>
 
 	* config.h: Define VA_LIST_IS_ARRAY so that vasprintf will work
