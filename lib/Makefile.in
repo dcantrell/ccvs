@@ -214,7 +214,6 @@ libcvs_a_SOURCES = \
 	strftime.c \
 	yesno.c \
 	error.h \
-	exit.h \
 	getline.h \
 	getndelim2.h \
 	getnline.h \
@@ -226,7 +225,7 @@ libcvs_a_SOURCES = \
 	wait.h \
 	xselect.h \
 	xtime.h\
-basename.c dirname.c dirname.h stripslash.c exitfail.h exitfail.c getdate.h getdate.y gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
+basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h exitfail.c getdate.h getdate.y gettext.h gettime.c pathmax.h regex.h save-cwd.h save-cwd.c time_r.h timespec.h unlocked-io.h printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
 libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(STDBOOL_H)

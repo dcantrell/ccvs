@@ -29,7 +29,6 @@ libcvs_a_SOURCES = \
 	strftime.c \
 	yesno.c \
 	error.h \
-	exit.h \
 	getline.h \
 	getndelim2.h \
 	getnline.h \
@@ -74,6 +73,9 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 ## For GNULIB's dirname module.
 libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
+
+## For GNULIB's exit module.
+libcvs_a_SOURCES += exit.h
 
 ## For GNULIB's exitfail module.
 libcvs_a_SOURCES += exitfail.h exitfail.c
