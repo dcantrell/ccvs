@@ -948,6 +948,24 @@ init (argc, argv)
         chmod (info, 0666);
     }
 
+    /* Make an empty val-tags file to prevent problems creating it later.  */
+    strcpy (info, adm);
+    strcat (info, "/");
+    strcat (info, CVSROOTADM_VALTAGS);
+    if (!isfile (info))
+    {
+	FILE *fp;
+
+	fp = open_file (info, "w");
+	if (fclose (fp) < 0)
+	    error (1, errno, "cannot close %s", info);
+ 
+        /* Make the new val-tags file world-writeable, since every CVS
+           user will need to be able to write to it.  We use chmod()
+           because xchmod() is too shy. */
+        chmod (info, 0666);
+    }
+
     free (info);
     free (info_v);
 
