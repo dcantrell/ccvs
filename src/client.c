@@ -124,6 +124,40 @@ change_mode (filename, mode_string)
     char *filename;
     char *mode_string;
 {
+#ifdef CHMOD_BROKEN
+	char *p;
+	int writeable = 0;
+
+    /* We can only distinguish between
+         1) readable
+         2) writeable
+         3) Picasso's "Blue Period"
+       We handle the first two. */
+    p = mode_string;
+    while (*p != '\0')
+    {
+	if ((p[0] == 'u' || p[0] == 'g' || p[0] == 'o') && p[1] == '=')
+	{
+	    char *q = p + 2;
+	    while (*q != ',' && *q != '\0')
+	    {
+		if (*q == 'w')
+		    writeable = 1;
+		++q;
+	    }
+	}
+	/* Skip to the next field.  */
+	while (*p != ',' && *p != '\0')
+	    ++p;
+	if (*p == ',')
+	    ++p;
+    }
+
+    xchmod (filename, writeable);
+	return 0;
+
+#else /* ! CHMOD_BROKEN */
+
     char *p;
     mode_t mode = 0;
 
@@ -151,13 +185,7 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWUSR;
 		if (can_execute)
-                  {
-#ifdef EXECUTE_PERMISSION_LOSES
-                    KFF_DEBUG (printf ("*** S_IXUSR in change_mode().\n"));
-#else /* ! EXECUTE_PERMISSION_LOSES */
-                    mode |= S_IXUSR;
-#endif /* EXECUTE_PERMISSION_LOSES */
-                  }
+		    mode |= S_IXUSR;
 	    }
 	    else if (p[0] == 'g')
 	    {
@@ -166,13 +194,7 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWGRP;
 		if (can_execute)
-                  {
-#ifdef EXECUTE_PERMISSION_LOSES
-                    KFF_DEBUG (printf ("*** S_IXGRP in change_mode().\n"));
-#else /* ! EXECUTE_PERMISSION_LOSES */
 		    mode |= S_IXGRP;
-#endif /* EXECUTE_PERMISSION_LOSES */
-                  }
 	    }
 	    else if (p[0] == 'o')
 	    {
@@ -181,13 +203,7 @@ change_mode (filename, mode_string)
 		if (can_write)
 		    mode |= S_IWOTH;
 		if (can_execute)
-                  {
-#ifdef EXECUTE_PERMISSION_LOSES
-                    KFF_DEBUG (printf ("*** S_IXOTH in change_mode().\n"));
-#else /* ! EXECUTE_PERMISSION_LOSES */
 		    mode |= S_IXOTH;
-#endif /* EXECUTE_PERMISSION_LOSES */
-                  }
 	    }
 	}
 	/* Skip to the next field.  */
@@ -197,27 +213,10 @@ change_mode (filename, mode_string)
 	    ++p;
     }
 
-#ifdef CHMOD_BROKEN
-    /* We can only distinguish between
-         1) readable
-         2) writeable
-         3) Picasso's "Blue Period"
-       We handle the first two. */
-    if (! ((mode && S_IWUSR)  /* No writeable requested. */
-           || (mode && S_IWGRP)
-           || (mode && S_IWOTH))
-    {
-        xchmod (filename, 0);
-    }
-    else /* writeable requested */
-    {
-        xchmod (filename, 1);
-    }
-#else /* ! CHMOD_BROKEN */
     if (chmod (filename, mode) < 0)
 	return errno;
-#endif /* ! CHMOD_BROKEN */
     return 0;
+#endif /* ! CHMOD_BROKEN */
 }
 
 #endif /* CLIENT_SUPPORT or SERVER_SUPPORT */
