@@ -3787,6 +3787,28 @@ recv_line (sock, resultp)
     return input_index;
 }
 
+/* Connect to a forked server process. */
+
+void
+connect_to_forked_server (tofdp, fromfdp)
+     int *tofdp, *fromfdp;
+{
+    /* This is pretty simple.  All we need to do is choose the correct
+       cvs binary and call piped_child. */
+
+    char *command[3];
+
+    command[0] = getenv ("CVS_SERVER");
+    if (! command[0])
+	command[0] = "cvs";
+    
+    command[1] = "server";
+    command[2] = NULL;
+
+    if (! piped_child (command, tofdp, fromfdp))
+	error (1, 0, "could not fork server process");
+}
+
 /* Connect to the authenticating server.
 
    If VERIFY_ONLY is non-zero, then just verify that the password is
@@ -4277,6 +4299,10 @@ start_server ()
 	    error (1, 0, "\
 the :server: access method is not supported by this port of CVS");
 #endif
+	    break;
+
+        case fork_method:
+	    connect_to_forked_server (&tofd, &fromfd);
 	    break;
 
 	default:
