@@ -1,3 +1,8 @@
+2004-04-29  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: s/jm_FUNC_GLIBC_UNLOCKED_IO/gl_FUNC_GLIBC_UNLOCKED_IO/.
+	* aclocal.m4, configure: Regenerated.
+
 2004-04-28  Derek Price  <derek@ximbiot.com>
 
 	* ylwrap: Add from Automake to support YACC.
