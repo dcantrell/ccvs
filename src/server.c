@@ -3108,6 +3108,8 @@ serve_questionable (char *arg)
     if (proxy_log) return;
 #endif /* PROXY_SUPPORT */
 
+    if (error_pending ()) return;
+
     if (!initted)
     {
 	/* Pick up ignores from CVSROOTADM_IGNORE, $HOME/.cvsignore on server,
@@ -3118,7 +3120,9 @@ serve_questionable (char *arg)
 
     if (gDirname == NULL)
     {
-	buf_output0 (buf_to_net, "E Protocol error: 'Directory' missing");
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+"E Protocol error: `Directory' missing");
 	return;
     }
 

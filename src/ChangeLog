@@ -1,5 +1,9 @@
 2004-10-01  Derek Price <derek@ximbiot.com>
 
+	* server.c (serve_questionable): Use pending errors per API.
+
+2004-10-01  Derek Price <derek@ximbiot.com>
+
 	* repos.c (Name_Repository): asnprintf, not sprintf.
 
 2004-10-01  Derek Price <derek@ximbiot.com>
