@@ -1,3 +1,11 @@
+Mon Dec 16 13:24:47 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* lock.c (remove_locks): New static function, copied from part of
+	Lock_Cleanup.
+	(Lock_Cleanup): Call remove_locks.
+	(Writer_Lock): Call remove_locks rather than Lock_Cleanup when
+	waiting for a lock.
+
 Thu Dec 12 10:36:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* login.c (get_cvs_password): If CVS_PASSWORD is set, print a

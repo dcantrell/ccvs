@@ -89,6 +89,7 @@ struct lock {
        to set a flag like we do for CVSLCK.  */
 };
 
+static void remove_locks PROTO((void));
 static int readers_exist PROTO((char *repository));
 static int set_lock PROTO ((struct lock *lock, int will_wait));
 static void clear_lock PROTO ((struct lock *lock));
@@ -129,6 +130,25 @@ static List *locked_list;
 void
 Lock_Cleanup ()
 {
+    remove_locks ();
+
+    dellist (&lock_tree_list);
+
+    if (locked_dir != NULL)
+    {
+	dellist (&locked_list);
+	free (locked_dir);
+	locked_dir = NULL;
+	locked_list = NULL;
+    }
+}
+
+/*
+ * Remove locks without discarding the lock information
+ */
+static void
+remove_locks ()
+{
     /* clean up simple locks (if any) */
     if (global_readlock.repository != NULL)
     {
@@ -141,16 +161,6 @@ Lock_Cleanup ()
     {
 	(void) walklist (locklist, unlock_proc, NULL);
 	locklist = (List *) NULL;
-    }
-
-    dellist (&lock_tree_list);
-
-    if (locked_dir != NULL)
-    {
-	dellist (&locked_list);
-	free (locked_dir);
-	locked_dir = NULL;
-	locked_list = NULL;
     }
 }
 
@@ -312,7 +322,7 @@ Writer_Lock (list)
 		return (1);
 
 	    case L_LOCKED:		/* Someone already had a lock */
-		Lock_Cleanup ();	/* clean up any locks we set */
+		remove_locks ();	/* clean up any locks we set */
 		lock_wait (lock_error_repos); /* sleep a while and try again */
 		wait_repos = xstrdup (lock_error_repos);
 		continue;
