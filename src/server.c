@@ -1568,11 +1568,14 @@ serve_modified (char *arg)
 	serve_is_modified (arg);
 }
 
-
+
+
 static void
 serve_enable_unchanged (char *arg)
 {
 }
+
+
 
 struct an_entry {
     struct an_entry *next;
@@ -1581,7 +1584,7 @@ struct an_entry {
 
 static struct an_entry *entries;
 
-static void serve_unchanged (char *);
+
 
 static void
 serve_unchanged (char *arg)
@@ -1622,6 +1625,8 @@ serve_unchanged (char *arg)
 	}
     }
 }
+
+
 
 static void
 serve_is_modified (char *arg)
@@ -1679,7 +1684,7 @@ serve_is_modified (char *arg)
     {
 	/* We got Is-modified but no Entry.  Add a dummy entry.
 	   The "D" timestamp is what makes it a dummy.  */
-	p = (struct an_entry *) xmalloc (sizeof (struct an_entry));
+	p = xmalloc (sizeof (struct an_entry));
 	if (p == NULL)
 	{
 	    pending_error = ENOMEM;
