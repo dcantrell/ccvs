@@ -1,5 +1,11 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Import xsize module from GNULIB for vasnprintf().
+	* xsize.h: New file.
+	* Makefile.am (libcvs_a_SOURCES): Add xsize.h.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	Import alloca module from GNULIB for vasnprintf().
 	* alloca_.h, alloca.c: New files.
 	* .cvsignore: Ignore alloca.h.

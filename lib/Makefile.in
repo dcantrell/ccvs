@@ -214,6 +214,7 @@ libcvs_a_SOURCES = \
 	unlocked-io.h \
 	wait.h \
 	xselect.h \
+	xsize.h \
 	xtime.h
 
 libcvs_a_LIBADD = @LIBOBJS@

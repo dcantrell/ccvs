@@ -59,6 +59,7 @@ libcvs_a_SOURCES = \
 	unlocked-io.h \
 	wait.h \
 	xselect.h \
+	xsize.h \
 	xtime.h
 ## Because @LIBOBJS@ is included below and AC_LIBOBJ is sometimes called on
 ## these files from configure.in, automake automatically knows about many of
