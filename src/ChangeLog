@@ -1,3 +1,8 @@
+2002-05-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* create_adm.c (Create_Admin): Add dotemplate parameter to trace.
+	Remove unreachable code.
+
 2002-05-03  Larry Jones  <lawrence.jones@eds.com>
 
 	* server.c (serve_watch_on, serve_watch_off, serve_watch_add,
