@@ -1,3 +1,8 @@
+Sat Oct 19 13:06:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Add note about what to do if you got a binary
+	distribution of CVS.  Add VAX/VMS entry.
+
 Thu Oct 17 15:38:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS, README: Reinstate 30 Sep 96 changes concerning US letter
