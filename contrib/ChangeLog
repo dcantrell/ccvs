@@ -1,3 +1,9 @@
+10 May 1997  Jim Kingdon
+
+	* listen2.c, listen2.mak: New files.
+	* Makefile.in (DISTFILES): Add them.
+	* .cvsignore: Add Debug.
+
 Thu Feb 20 22:43:45 1997  David J MacKenzie  <djm@va.pubnix.com>
 
 	* rcs-to-cvs.sh: Put temporary files in /var/tmp or /usr/tmp
