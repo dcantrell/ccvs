@@ -1,5 +1,10 @@
 2004-05-17  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.dsp: Add "lib/xtime.h" to project header files.
+	* cvsnt.dep: Regnerated for "cvsnt.dsp" file change.
+
+2004-05-17  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Note assertion failure of r* commands.
 
 2004-05-17  Derek Price  <derek@ximbiot.com>

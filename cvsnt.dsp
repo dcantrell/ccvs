@@ -568,6 +568,10 @@ SOURCE=.\lib\xalloc.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\xtime.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\zlib\zconf.h
 # End Source File
 # Begin Source File
