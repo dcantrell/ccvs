@@ -90,7 +90,10 @@ extern int errno;
 #include "rcs.h"
 
 
-/* XXX - for now this is static */
+/* This actually gets set in system.h.  Note that the _ONLY_ reason for
+   this is if various system calls (getwd, getcwd, readlink) require/want
+   us to use it.  All other parts of CVS allocate pathname buffers
+   dynamically, and we want to keep it that way.  */
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
 #define	PATH_MAX MAXPATHLEN+2
@@ -753,7 +756,7 @@ int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
 char *wrap_rcsoption PROTO ((const char *fileName, int asFlag));
 char *wrap_tocvs_process_file PROTO((const char *fileName));
 int   wrap_merge_is_copy PROTO((const char *fileName));
-char *wrap_fromcvs_process_file PROTO((const char *fileName));
+void wrap_fromcvs_process_file PROTO ((const char *fileName));
 void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
 void wrap_send PROTO ((void));

@@ -788,8 +788,9 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
     {
 	if (update_build_dirs)
 	{
-	    char tmp[PATH_MAX];
+	    char *tmp;
 
+	    tmp = xmalloc (strlen (dir) + sizeof (CVSADM_ENTSTAT) + 10);
 	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_ENTSTAT);
 	    if (unlink_file (tmp) < 0 && ! existence_error (errno))
 		error (1, errno, "cannot remove file %s", tmp);
@@ -797,6 +798,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	    if (server_active)
 		server_clear_entstat (update_dir, repository);
 #endif
+	    free (tmp);
 	}
 
 	/* keep the CVS/Tag file current with the specified arguments */
@@ -995,7 +997,7 @@ checkout_file (finfo, vers_ts, adding)
     Vers_TS *vers_ts;
     int adding;
 {
-    char backup[PATH_MAX];
+    char *backup;
     int set_time, retval = 0;
     int retcode = 0;
     int status;
@@ -1004,6 +1006,10 @@ checkout_file (finfo, vers_ts, adding)
     /* don't screw with backup files if we're going to stdout */
     if (!pipeout)
     {
+	backup = xmalloc (strlen (finfo->file)
+			  + sizeof (CVSADM)
+			  + sizeof (CVSPREFIX)
+			  + 10);
 	(void) sprintf (backup, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
 	if (isfile (finfo->file))
 	    rename_file (finfo->file, backup);
@@ -1156,9 +1162,12 @@ VERS: ", 0);
     }
 
     if (!pipeout)
+    {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
 	(void) unlink_file_dir (backup);
+	free (backup);
+    }
 
     return (retval);
 }
@@ -1176,9 +1185,9 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     struct stat *file_info;
     unsigned char *checksum;
 {
-    char backup[PATH_MAX];
-    char file1[PATH_MAX];
-    char file2[PATH_MAX];
+    char *backup;
+    char *file1;
+    char *file2;
     int retval = 0;
     int retcode = 0;
     int fail;
@@ -1192,13 +1201,25 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
 	return 0;
     }
 
+    backup = xmalloc (strlen (finfo->file)
+		      + sizeof (CVSADM)
+		      + sizeof (CVSPREFIX)
+		      + 10);
     (void) sprintf (backup, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
     if (isfile (finfo->file))
         rename_file (finfo->file, backup);
     else
         (void) unlink_file (backup);
-    
+
+    file1 = xmalloc (strlen (finfo->file)
+		     + sizeof (CVSADM)
+		     + sizeof (CVSPREFIX)
+		     + 10);
     (void) sprintf (file1, "%s/%s%s-1", CVSADM, CVSPREFIX, finfo->file);
+    file2 = xmalloc (strlen (finfo->file)
+		     + sizeof (CVSADM)
+		     + sizeof (CVSPREFIX)
+		     + 10);
     (void) sprintf (file2, "%s/%s%s-2", CVSADM, CVSPREFIX, finfo->file);
 
     fail = 0;
@@ -1379,6 +1400,9 @@ patch_file (finfo, vers_ts, docheckout, file_info, checksum)
     (void) unlink_file (file1);
     (void) unlink_file (file2);
 
+    free (backup);
+    free (file1);
+    free (file2);
     return (retval);
 }
 #endif
@@ -1418,9 +1442,10 @@ merge_file (finfo, vers)
     struct file_info *finfo;
     Vers_TS *vers;
 {
-    char backup[PATH_MAX];
+    char *backup;
     int status;
     int retcode = 0;
+    int retval;
 
     /*
      * The users currently modified file is moved to a backup file name
@@ -1429,6 +1454,10 @@ merge_file (finfo, vers)
      * is the version of the file that the user was most up-to-date with
      * before the merge.
      */
+    backup = xmalloc (strlen (finfo->file)
+		      + strlen (vers->vn_user)
+		      + sizeof (BAKPREFIX)
+		      + 10);
     (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     (void) unlink_file (backup);
@@ -1460,8 +1489,10 @@ merge_file (finfo, vers)
 	error (0, 0, "file from working directory is now in %s", backup);
 	write_letter (finfo->file, 'C', finfo->update_dir);
 
-	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
-	return 0;
+	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
+		       finfo->repository);
+	retval = 0;
+	goto out;
     }
 
     status = RCS_merge(vers->srcfile->path, 
@@ -1473,7 +1504,8 @@ merge_file (finfo, vers)
 	error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
 	       finfo->fullname, backup);
 	rename_file (backup, finfo->file);
-	return (1);
+	retval = 1;
+	goto out;
     }
 
     if (strcmp (vers->options, "-V4") == 0)
@@ -1515,8 +1547,10 @@ merge_file (finfo, vers)
     {
 	printf ("%s already contains the differences between %s and %s\n",
 		finfo->fullname, vers->vn_user, vers->vn_rcs);
-	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
-	return (0);
+	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
+		       finfo->repository);
+	retval = 0;
+	goto out;
     }
 
     if (status == 1)
@@ -1531,14 +1565,19 @@ merge_file (finfo, vers)
     }
     else if (retcode == -1)
     {
-	error (1, errno, "fork failed while examining update of %s", finfo->fullname);
+	error (1, errno, "fork failed while examining update of %s",
+	       finfo->fullname);
     }
     else
     {
 	write_letter (finfo->file, 'M', finfo->update_dir);
-	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
+	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
+		       finfo->repository);
     }
-    return (0);
+    retval = 0;
+ out:
+    free (backup);
+    return retval;
 }
 
 /*
@@ -1550,7 +1589,7 @@ join_file (finfo, vers)
     struct file_info *finfo;
     Vers_TS *vers;
 {
-    char backup[PATH_MAX];
+    char *backup;
     char *options;
     int status;
 
@@ -1876,6 +1915,10 @@ join_file (finfo, vers)
      * is the version of the file that the user was most up-to-date with
      * before the merge.
      */
+    backup = xmalloc (strlen (finfo->file)
+		      + strlen (vers->vn_user)
+		      + sizeof (BAKPREFIX)
+		      + 10);
     (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     (void) unlink_file (backup);
@@ -1934,6 +1977,7 @@ join_file (finfo, vers)
 			(struct stat *) NULL, (unsigned char *) NULL);
     }
 #endif
+    free (backup);
 }
 
 int

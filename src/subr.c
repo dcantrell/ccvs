@@ -229,15 +229,21 @@ gca (rev1, rev2)
     char *rev2;
 {
     int dots;
-    char gca[PATH_MAX];
+    char *gca;
     char *p[2];
     int j[2];
+    char *retval;
 
     if (rev1 == NULL || rev2 == NULL)
     {
 	error (0, 0, "sanity failure in gca");
 	abort();
     }
+
+    /* The greatest common ancestor will have no more dots, and numbers
+       of digits for each component no greater than the arguments.  Therefore
+       this string will be big enough.  */
+    gca = xmalloc (strlen (rev1) + strlen (rev2) + 100);
 
     /* walk the strings, reading the common parts. */
     gca[0] = '\0';
@@ -326,7 +332,9 @@ gca (rev1, rev2)
 	*s = '\0';
     }
 
-    return (xstrdup (gca));
+    retval = xstrdup (gca);
+    free (gca);
+    return retval;
 }
 
 /*

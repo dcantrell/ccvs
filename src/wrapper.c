@@ -68,13 +68,18 @@ void wrap_restore_saved PROTO((void));
 
 void wrap_setup()
 {
-    char file[PATH_MAX];
     struct passwd *pw;
 
 #ifdef CLIENT_SUPPORT
     if (!client_active)
 #endif
     {
+	char *file;
+
+	file = xmalloc (strlen (CVSroot_directory)
+			+ sizeof (CVSROOTADM)
+			+ sizeof (CVSROOTADM_WRAPPER)
+			+ 10);
 	/* Then add entries found in repository, if it exists.  */
 	(void) sprintf (file, "%s/%s/%s", CVSroot_directory, CVSROOTADM,
 			CVSROOTADM_WRAPPER);
@@ -82,6 +87,7 @@ void wrap_setup()
 	{
 	    wrap_add_file(file,0);
 	}
+	free (file);
     }
 
     /* Then add entries found in home dir, (if user has one) and file
@@ -89,11 +95,15 @@ void wrap_setup()
        get_homedir, i.e. $HOME).  */
     if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
     {
+	char *file;
+
+	file = xmalloc (strlen (pw->pw_dir) + sizeof (CVSDOTWRAPPER) + 10);
 	(void) sprintf (file, "%s/%s", pw->pw_dir, CVSDOTWRAPPER);
 	if (isfile (file))
 	{
 	    wrap_add_file (file, 0);
 	}
+	free (file);
     }
 
     /* Then add entries found in CVSWRAPPERS environment variable. */
@@ -449,17 +459,16 @@ wrap_merge_is_copy (fileName)
     return 1;
 }
 
-char *
+void
 wrap_fromcvs_process_file(fileName)
     const char *fileName;
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
-    static char buf[PATH_MAX];
 
     if(e==NULL || e->fromcvsFilter==NULL)
-	return NULL;
+	return;
 
     run_setup(e->fromcvsFilter,fileName);
     run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL );
-    return buf;
+    return;
 }
