@@ -1,10 +1,10 @@
 /*
- *    Copyright (c) 1993 david d zuhn
- *
- *    written by david d `zoo' zuhn while at Cygnus Support
- *
- *    You may distribute under the terms of the GNU General Public License
- *    as specified in the README file that comes with the CVS 1.4 kit.
+ * Copyright (c) 1993 david d zuhn
+ * 
+ * Written by david d `zoo' zuhn while at Cygnus Support
+ * 
+ * You may distribute under the terms of the GNU General Public License as
+ * specified in the README file that comes with the CVS source distribution.
  *
  */
 
