@@ -1373,9 +1373,11 @@ merge_file (file, repository, entries, vers, update_dir)
     xchmod (file, 1);
 
     /* We pass -E to rcsmerge so that it will not indicate a conflict if
-       both things we are merging are modified the same way.  */
+       both things we are merging are modified the same way.
+
+       Well, okay, but my rcsmerge doesn't take a -E option.  --JimB */
     /* XXX - Do merge by hand instead of using rcsmerge, due to -k handling */
-    run_setup ("%s%s -E %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, vers->options,
+    run_setup ("%s%s %s -r%s -r%s", Rcsbin, RCS_RCSMERGE, vers->options,
 	       vers->vn_user, vers->vn_rcs);
     run_arg (vers->srcfile->path);
     status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
