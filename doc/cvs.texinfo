@@ -3625,16 +3625,22 @@ what you want.
 However, there might be cases in which one uses a tag
 temporarily or accidentally puts one in the wrong
 place.  Therefore, one might delete, move, or rename a
-tag.  Warning: the commands in this section are
+tag.
+
+@noindent
+@emph{Warning: the commands in this section are
 dangerous; they permanently discard historical
-information and it can difficult or impossible to
+information and it can be difficult or impossible to
 recover from errors.  If you are a @sc{cvs}
 administrator, you may consider restricting these
-commands with taginfo (@pxref{user-defined logging}).
+commands with taginfo (@pxref{user-defined logging}).}
 
 @cindex Deleting tags
+@cindex Deleting branch tags
 @cindex Removing tags
+@cindex Removing branch tags
 @cindex Tags, deleting
+@cindex Branch tags, deleting
 To delete a tag, specify the @samp{-d} option to either
 @code{cvs tag} or @code{cvs rtag}.  For example:
 
@@ -3643,15 +3649,29 @@ cvs rtag -d rel-0-4 tc
 @end example
 
 @noindent
-deletes the tag @code{rel-0-4} from the module @code{tc}.
+deletes the non-branch tag @code{rel-0-4} from the module @code{tc}.
+In the event that branch tags are encountered within the repository
+with the given name, a warning message will be issued and the branch 
+tag will not be deleted.  If you are absolutely certain you know what
+you are doing, the @code{-B} option may be specified to allow deletion
+of branch tags.  In that case, any non-branch tags encountered will
+trigger warnings and will not be deleted.
+
+@noindent
+@emph{Warning: Moving branch tags is very dangerous!  If you think you need the
+@code{-B} option, think again and ask your @sc{cvs} administrator about it (if
+that isn't you).  There is almost certainly another way to accomplish what you
+want to accomplish.}
 
 @cindex Moving tags
+@cindex Moving branch tags
 @cindex Tags, moving
+@cindex Branch tags, moving
 When we say @dfn{move} a tag, we mean to make the same
 name point to different revisions.  For example, the
 @code{stable} tag may currently point to revision 1.4
 of @file{backend.c} and perhaps we want to make it
-point to revision 1.6.  To move a tag, specify the
+point to revision 1.6.  To move a non-branch tag, specify the
 @samp{-F} option to either @code{cvs tag} or @code{cvs
 rtag}.  For example, the task just mentioned might be
 accomplished as:
@@ -3659,6 +3679,20 @@ accomplished as:
 @example
 cvs tag -r 1.6 -F stable backend.c
 @end example
+
+@noindent
+If any branch tags are encountered in the repository 
+with the given name, a warning is issued and the branch
+tag is not disturbed.  If you are absolutely certain you
+wish to move the branch tag, the @code{-B} option may be specified.
+In that case, non-branch tags encountered with the given
+name are ignored with a warning message.
+
+@noindent
+@emph{Warning: Moving branch tags is very dangerous!  If you think you need the
+@code{-B} option, think again and ask your @sc{cvs} administrator about it (if
+that isn't you).  There is almost certainly another way to accomplish what you
+want to accomplish.}
 
 @cindex Renaming tags
 @cindex Tags, renaming
@@ -3668,9 +3702,10 @@ tag.  For example, one may have misspelled the tag name
 and want to correct it (hopefully before others are
 relying on the old spelling).  To rename a tag, first
 create a new tag using the @samp{-r} option to
-@code{cvs rtag}, and then delete the old name.  This
-leaves the new tag on exactly the same files as the old
-tag.  For example:
+@code{cvs rtag}, and then delete the old name.  (Caution:
+this method will not work with branch tags.) 
+This leaves the new tag on exactly the 
+same files as the old tag.  For example:
 
 @example
 cvs rtag -r old-name-0-4 rel-0-4 tc
@@ -11069,6 +11104,10 @@ be tagged.  See @ref{Tagging add/remove}.
 
 @item -b
 Create a branch named @var{tag}.  See @ref{Branching and merging}.
+
+@item -B
+Used in conjuntion with -F or -d, enables movement and deletion of
+branch tags.  Use with extreme caution. 
 
 @item -D @var{date}
 Tag revisions as of @var{date}.  See @ref{Tagging by date/tag}.
