@@ -1558,6 +1558,17 @@ join_file (file, srcfiles, vers, update_dir, entries)
 	return;
     }
 
+    /* Fix for bug CVS/193:
+     * Used to dump core if the file had been removed on the current branch.
+     */
+    if (strcmp(vers->vn_user, "0") == 0)
+    {
+        error(0, 0,
+              "file %s has been deleted",
+              file);
+        return;
+    }
+
     /* convert the second rev spec, walking branches and dates. */
 
     rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, 0);
