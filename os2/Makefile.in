@@ -1,10 +1,9 @@
-### OS/2 has a GNU `make', so we might actually end up using
-### `Makefile.in'.  In any case, we would need it for 'make dist' to
-### work properly on Unix machines. 
+# Makefile for OS/2.  Generated from Makefile.in when CVS is
+# configured for a dist-build.  Configure never gets run on OS/2, so
+# we must include the generated Makefile in the distribution.  See the
+# `dist-dir' rule.
 
 project: cvs.exe
-
-# This causes problems with make.
 # .SUFFIXES .c .obj .exe
 
 # I don't want to fool around with autoconf right now.  First get it
@@ -13,13 +12,10 @@ srcdir     = .
 top_srcdir = ..
 libdir     = ../lib
 cvs_srcdir = ../src
-VPATH      = ${srcdir}
-
-SHELL = /bin/sh
 
 # Do we need these?
-# prefix = @prefix@
-# exec_prefix = @exec_prefix@
+# prefix = /usr/local
+# exec_prefix = ${prefix}
 
 # taken straight from the example project
 LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
@@ -185,9 +181,9 @@ LIB_OBJECTS = \
        ${libdir}/getopt1.obj \
        ${libdir}/getline.obj
 
-SOURCES = ${OS2_SOURCES} ${COMMON_SOURCES} ${LIB_SOURCES}
-HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
-OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS} ${LIB_OBJECTS}
+SOURCES = ${COMMON_SOURCES} ${LIB_SOURCES} ${OS2_SOURCES}
+HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
+OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   README ChangeLog Makefile.in .cvsignore test-makefile Makefile
@@ -220,7 +216,7 @@ dist-dir:
 clean:
 	del *.obj cvs.exe
 
-.c.obj:
+%.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c
 
 # There seems to be no ICC option for specifying library locations, so
@@ -228,6 +224,4 @@ clean:
 cvs.exe: ${OBJECTS}
 	set LIB=${LIB} & icc -Q+ -Ti+ -Fe$@ -B"/batch" ${OBJECTS} ${TCPIPLIB}
 
-cvs.obj: ${SOURCES} ${HEADERS}
-
-
+# cvs.obj: ${OBJECTS} ${SOURCES} ${HEADERS}

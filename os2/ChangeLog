@@ -7,7 +7,10 @@ Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
         (LIB_SOURCES, LIB_OBJECTS): new vars; we'll just build stuff in
         the lib directory and link it in directly.
         Made rules for compiling objects and for the full executable.
-
+        (SHELL): got rid of this var, no need for it here.
+        Use a pattern rule for obj files.
+        Some other minor tweaks for OS/2.
+        
         * threads.c: new file.
 
 Wed Nov  8 11:14:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
