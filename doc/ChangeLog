@@ -1,5 +1,8 @@
 Fri Jul 18 08:41:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): Add "cannot open CVS/Root" for cvs
+	init.
+
 	* cvs.texinfo (Error messages): Add "missing author".
 
 Tue Jul 15 16:47:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
