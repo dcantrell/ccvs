@@ -12763,6 +12763,19 @@ have printed a message, which will appear before the
 above message.  For more information on setting up a
 @sc{cvs} client and server, see @ref{Remote repositories}.
 
+@item cvs [update aborted]: EOF in key in RCS file @var{file},v
+@itemx cvs [checkout aborted]: EOF while looking for end of string in RCS file @var{file},v
+This means that there is a syntax error in the given
+RCS file.  Note that this might be true even if RCS can
+read the file OK; @sc{cvs} does more error checking of
+errors in the RCS file.  That is why you may see this
+message when upgrading from @sc{cvs} 1.9 to @sc{cvs}
+1.10.  The likely cause for the original corruption is
+hardware, the operating system, or the like.  Of
+course, if you find a case in which @sc{cvs} seems to
+corrupting the file, by all means report it,
+(@pxref{BUGS}).
+
 @cindex mkmodules
 @item cvs commit: Executing 'mkmodules'
 This means that your repository is set up for a version
