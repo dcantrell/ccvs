@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 1992, Brian Berliner and Jeff Polk
+ * Copyright (c) 1989-1992, Brian Berliner
+ *
+ * You may distribute under the terms of the GNU General Public License as
+ * specified in the README file that comes with the CVS kit.
+ */
+
+/*
  * basic information used in all source files
  *
  */
@@ -102,16 +110,8 @@ extern int errno;
 #endif
 #endif /* PATH_MAX */
 
-/*
- * Copyright (c) 1992, Brian Berliner and Jeff Polk
- * Copyright (c) 1989-1992, Brian Berliner
- *
- * You may distribute under the terms of the GNU General Public License as
- * specified in the README file that comes with the CVS 1.4 kit.
- *
- * Definitions for the CVS Administrative directory and the files it contains.
- * Here as #define's to make changing the names a simple task.
- */
+/* Definitions for the CVS Administrative directory and the files it contains.
+   Here as #define's to make changing the names a simple task.  */
 
 #ifdef USE_VMS_FILENAMES
 #define CVSADM          "CVS"
