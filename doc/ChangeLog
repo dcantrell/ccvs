@@ -1,3 +1,10 @@
+Mon Jun 23 18:28:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Protocol Notes): Remove multisite item; it is
+	replaced by item 186 in TODO.  Add a general reference to TODO.
+	Rewrite accordingly the sentence about multisite in the item
+	concerning sending modified files in "cvs update".
+
 Fri Jun 20 17:00:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add "binary files differ" when
