@@ -4826,6 +4826,12 @@ done"
 	  # the head.
 	  dotest rmadd2-14 "${testcvs} -q update -j 1.3 -j 1.2 file1" \
 "${PROG} [a-z]*: scheduling file1 for removal"
+
+	  # Check that -p can get arbitrary revisions of a removed file
+	  dotest rmadd2-14a "${testcvs} -q update -p" "initial contents"
+	  dotest rmadd2-14b "${testcvs} -q update -p -r 1.5" "initial contents"
+	  dotest rmadd2-14c "${testcvs} -q update -p -r 1.3" "initial contents"
+
 	  dotest rmadd2-15 "${testcvs} -q ci -m re-remove" \
 "Removing file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
