@@ -1,3 +1,8 @@
+Wed Dec 13 20:08:37 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h.in (RCSBIN_DFLT): Recommend specifying -b in
+	inetd.conf for pserver.  That is a pretty good solution.
+
 Wed Dec 13 18:29:59 1995  Preston L. Bannister <pbannister@ca.mdis.com>
                           and Karl Fogel       <kfogel@floss.cyclic.com>
 
