@@ -1,3 +1,10 @@
+1999-05-10  Jim Kingdon  <http://www.cyclic.com>
+
+	* rcs.c (RCS_tag2rev): Also look for a physical branch with
+	RCS_getversion.
+	* sanity.sh (tagf): Adjust tagf-12 and following tests to test for
+	the fixed behavior rather than the broken behavior.
+
 1999-05-07  Jim Kingdon  <http://www.cyclic.com>
 
 	* server.c (server_notify): Also set last_node to NULL.
