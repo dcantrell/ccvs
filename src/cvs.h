@@ -40,6 +40,7 @@
 #endif /* __attribute__ */
 
 /* begin GNULIB headers */
+#include "dirname.h"
 #include "exit.h"
 #include "minmax.h"
 #include "vasnprintf.h"
@@ -632,7 +633,6 @@ int cvs_casecmp (const char *, const char *);
 void signals_register (RETSIGTYPE (*handler)(int));
 void cleanup_register (void (*handler) (void));
 
-void strip_trailing_slashes (char *path);
 void update_delproc (Node * p);
 void usage (const char *const *cpp);
 void xchmod (const char *fname, int writable);
