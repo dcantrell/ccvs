@@ -1,5 +1,9 @@
 Tue Oct 28 19:30:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_delete_revs): Restore code which passes rev2 to
+	RCS_getbranchpoint if rev1 is NULL; it still makes sense for the
+	non-trunk case.  Fixes admin-22-o22 in testsuite.
+
 	* sanity.sh (admin-18): Adjust to reflect "rcs failed" no longer
 	being suppressed by global -q option.
 
