@@ -1,3 +1,8 @@
+Wed Aug 27 08:09:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Fix doubled 'the the' typos.  Reported by
+	karlb@atg.com.
+
 Tue Aug 26 12:25:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Checklist): Reword xref to point to Binary files

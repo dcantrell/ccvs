@@ -2322,7 +2322,7 @@ user-lookup routine (using the system's user-lookup
 routine can be disabled by setting @code{SystemAuth=no}
 in the config file, @pxref{config}).  When using the @sc{cvs}
 @file{passwd} file, the server runs under as the
-username specified in the the third argument in the
+username specified in the third argument in the
 entry, or as the first argument if there is no third
 argument (in this way @sc{cvs} allows imaginary
 usernames provided the @sc{cvs} @file{passwd} file
@@ -8435,7 +8435,7 @@ files.  Each @sc{rcs} file is searched for the revision or
 tag.
 
 @item -t @var{tag}
-Show records since tag @var{tag} was last added to the the
+Show records since tag @var{tag} was last added to the
 history file.  This differs from the @samp{-r} flag
 above in that it reads only the history file, not the
 @sc{rcs} files, and is much faster.
@@ -11015,7 +11015,7 @@ For example, some valid format strings are @samp{%},
 @samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
 
 The output will be a string of tokens separated by
-spaces.  For backwards compatibility, the the first
+spaces.  For backwards compatibility, the first
 token will be the repository name.  The rest of the
 tokens will be comma-delimited lists of the information
 requested in the format string.  For example, if
@@ -11535,7 +11535,7 @@ send from the server is logged into
 @item $CVS_SERVER_SLEEP
 Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
-server child process the the specified amount of
+server child process the specified amount of
 seconds so that you can attach to it with a debugger.
 
 @cindex CVS_IGNORE_REMOTE_ROOT
