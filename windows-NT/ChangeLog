@@ -1,3 +1,8 @@
+Fri Jul 18 09:49:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Adjust discussion of makefiles to deal with Visual C++
+	5.x.  One doesn't need patch if client and server are current.
+
 10 Jul 1997  Jim Kingdon
 
 	* config.h: Define USE_SETMODE_STDOUT.
