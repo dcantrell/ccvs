@@ -1,3 +1,7 @@
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (HAVE_OS_H): Undef this on Windoze.
+
 2004-10-20  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (select): Undef this for new sunos57-select.
