@@ -9,6 +9,10 @@ are some other reported bugs in MINOR-BUGS; the difference, at least
 in theory, is that those bugs are less serious.
 
 
+* The '-f' option of "cvs rm" does not work with client/server CVS.
+CVS will accept the option, but it won't actually remove the local file!
+
+
 * For platform-specific information (in some cases including known
 bugs), see README.VMS, windows-NT/README, or os2/README.  There is no
 similar file for the unix-like operating systems (not yet, at least).
@@ -23,6 +27,9 @@ non-client/server CVS) is the correct one.
 * The -m option to "cvs add" does not work with client/server CVS.
 CVS will accept the option, but it won't actually set the
 file's description.
+(Note that it doesn't create the ,t file, and so 'cvs commit' doesn't
+try to pick up the ,t file and use its content as the argument to ci's
+"-t-<DESC>" option, probably because it doesn't have an equivalent '-t'.)
 
 
 * cvs update walks into a user's work directory if there's a directory
