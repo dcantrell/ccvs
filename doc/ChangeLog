@@ -1,3 +1,21 @@
+2003-08-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (CLEANFILES): Move...
+	(MOSTLYCLEANFILES): ...here and drop PDFs since this is where Automake
+	cleans PDFs & PSs by default.
+	(MAINTAINERCLEANFILES): Clean all PostScripts even though they will
+	have been removed in mostlyclean.  That is a bug in Automake.
+	(doc): Depend on info & ps.
+	(pdf, ps): Removed in favor of Automake's default targets for these
+	types.
+	(cvsclient.* targets): Depened on version-client.texi.
+	(cvs-paper.pdf): Remove in favor of Automake's default target.
+	(.{texinfo,texi,txi}.{pdf,txt}): Update these targets based on
+	Automake's similar treatment of dvi, ps, and info targets.
+	* .cvsignore: Add cvs.tmp, a `make pdf' generated file.
+
+	* Makefile.in: Regenerated.
+
 2003-07-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Expand comment on RCS terminology.
