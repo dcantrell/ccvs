@@ -1,3 +1,8 @@
+Fri Feb  9 02:41:50 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* Makefile.in (DISTFILES): Remove config.sub and config.guess from
+	the list; they're not distributed any more.
+
 Thu Feb  1 19:47:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove RM; no longer used.
