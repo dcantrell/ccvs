@@ -518,7 +518,8 @@ void Lock_Cleanup PROTO((void));
 
 /* Writelock an entire subtree, well the part specified by ARGC, ARGV, LOCAL,
    and AFLAG, anyway.  */
-void lock_tree_for_write PROTO ((int argc, char **argv, int local, int aflag));
+void lock_tree_for_write PROTO ((int argc, char **argv, int local, int which,
+				 int aflag));
 
 /* See lock.c for description.  */
 extern void lock_dir_for_write PROTO ((char *));
