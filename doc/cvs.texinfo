@@ -7379,7 +7379,7 @@ via Kerberos.
 @item $CVS_RCMD_PORT
 Used in client-server mode.  If set, specifies the port
 number to be used when accessing the @sc{rcmd} demon on
-the server side. (Cuuently not used for Unix clients).
+the server side. (Currently not used for Unix clients).
 
 @cindex CVS_CLIENT_LOG
 @item $CVS_CLIENT_LOG
@@ -7393,7 +7393,8 @@ send from the server is logged into
 @item $CVS_SERVER_SLEEP
 Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
-server the the specified amount of seconds.
+server child process the the specified amount of
+seconds so that you can attach to it with a debugger.
 
 @cindex CVS_IGNORE_REMOTE_ROOT
 @item $CVS_IGNORE_REMOTE_ROOT
@@ -7408,7 +7409,11 @@ command interpreter and defaults to @sc{cmd.exe}.
 @end table
 
 @sc{cvs} is a front-end to @sc{rcs}.  The following environment
-variables affect @sc{rcs}:
+variables affect @sc{rcs}.  Note that if you are using
+the client/server @sc{cvs}, these variables need to be
+set on the server side (which may or not may be
+possible depending on how you are connecting).  There
+is probably not any need to set any of them, however.
 
 @table @code
 @cindex LOGNAME
