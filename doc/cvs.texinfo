@@ -3393,8 +3393,8 @@ rcsmap.c        5.2
 rcsutil.c       5.10
 @end example
 
-@cindex tag, command, introduction
-@cindex Tag, symbolic name
+@cindex tag (subcommand), introduction
+@cindex Tags, symbolic name
 @cindex Symbolic name (tag)
 @cindex Name, symbolic (tag)
 @cindex HEAD, as reserved tag name
@@ -3445,7 +3445,7 @@ taginfo file (@pxref{user-defined logging}).
 @c issues which arise.
 
 @cindex Adding a tag
-@cindex Tag, example
+@cindex Tags, example
 The following example shows how you can add a tag to a
 file.  The commands must be issued inside your working
 directory.  That is, you should issue the
@@ -3494,7 +3494,7 @@ operation to all the files in that directory, and (recursively), to any
 subdirectories that it may contain.  @xref{Recursive behavior}.)
 
 @cindex Retrieving an old revision using tags
-@cindex Tag, retrieving old revisions
+@cindex Tags, retrieving old revisions
 The @code{checkout} command has a flag, @samp{-r}, that lets you check out
 a certain revision of a module.  This flag makes it easy to
 retrieve the sources that make up release 1.0 of the module @samp{tc} at
@@ -3933,8 +3933,8 @@ the main trunk, or leave them on the branch.
 @section Creating a branch
 @cindex Creating a branch
 @cindex Branch, creating a
-@cindex tag, creating a branch using
-@cindex rtag, creating a branch using
+@cindex tag (subcommand), creating a branch using
+@cindex rtag (subcommand), creating a branch using
 
 You can create a branch with @code{tag -b}; for
 example, assuming you're in a working copy:
