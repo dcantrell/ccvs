@@ -1884,6 +1884,15 @@ rcsmerge: warning: conflicts during merge'
 		mkdir 2
 		cd 2
 
+		# TODO-maybe: we could also check this (also in an empty
+		# directory) after the file has nonempty contents.
+		dotest conflicts-126.5 "${testcvs} co -p first-dir" \
+"${PROG} [a-z]*"': Updating first-dir
+===================================================================
+Checking out first-dir/a
+RCS:  /tmp/cvs-sanity/cvsroot/first-dir/a,v
+VERS: 1\.1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*'
 		if ${CVS} co first-dir ; then
 			echo 'PASS: test 127' >>${LOGFILE}
 		else
