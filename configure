@@ -2578,7 +2578,7 @@ else
   cat conftest.$ac_ext >&5
 fi
 rm -f conftest*
-test "$ac_cv_search_connect" = "no" && for i in xnet nsl_s nsl socket inet; do
+test "$ac_cv_search_connect" = "no" && for i in xnet socket inet; do
 LIBS="-l$i  $ac_func_search_save_LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 2585 "configure"
@@ -2643,7 +2643,7 @@ else
   cat conftest.$ac_ext >&5
 fi
 rm -f conftest*
-test "$ac_cv_search_gethostbyname" = "no" && for i in netinet; do
+test "$ac_cv_search_gethostbyname" = "no" && for i in netinet nsl; do
 LIBS="-l$i  $ac_func_search_save_LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 2650 "configure"

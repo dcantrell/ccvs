@@ -1,3 +1,9 @@
+1999-12-09  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in: Correctly handle systems that need both libsocket
+	and libnsl.
+	* configure: Regenerated.
+
 1999-12-06  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in: Update to autoconf 2.13; use new AC_SEARCH_LIBS
