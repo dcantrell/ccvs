@@ -1,3 +1,7 @@
+2004-11-03  Derek Price  <derek@ximbiot.com>
+
+	* HACKING, NEWS: Note new Autoconf & Automake versions.
+
 2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note xreadlink fix.
