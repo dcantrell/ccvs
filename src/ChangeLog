@@ -19,6 +19,7 @@
 	(RCS_reparsercsfile): Change callers to compensate.
 	(rcsbuf_valcmp, rcsbuf_valword): New functions.
 	(rcsbuf_getid, rcsbuf_getstring, rcsbuf_getword): Deleted.
+	* sanity.sh (rcs3-1): Now get slightly different error message.
 
 2000-06-08  Larry Jones  <larry.jones@sdrc.com>
 

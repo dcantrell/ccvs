@@ -14091,7 +14091,7 @@ EOF
 	  # question one way or the other (it has a grammar but almost
 	  # nothing about lexical analysis).
 	  dotest_fail rcs3-1 "${testcvs} -q co first-dir" \
-"${PROG} \[[a-z]* aborted\]: unexpected end of file reading ${TESTDIR}/cvsroot/first-dir/file1,v"
+"${PROG} \[[a-z]* aborted\]: EOF while looking for value in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
 	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
 head 1.1; access; symbols; locks; expand o; 1.1 date 2007.03.20.04.03.02
 ; author jeremiah ;state ;  branches; next;desc @@1.1log@@text@head@
