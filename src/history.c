@@ -233,6 +233,8 @@ static short tz_local;
 static time_t tz_seconds_east_of_GMT;
 static char *tz_name = "+0000";
 
+char *logHistory = ALL_REC_TYPES;
+
 /* -r, -t, or -b options, malloc'd.  These are "" if the option in
    question is not specified or is overridden by another option.  The
    main reason for using "" rather than NULL is historical.  Together
@@ -710,6 +712,8 @@ history_write (type, update_dir, revs, name, repository)
     static char *PrCurDir = NULL;
 
     if (logoff)			/* History is turned off by cmd line switch */
+	return;
+    if ( strchr(logHistory,(const char *) type) == NULL )	
 	return;
     fname = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM)
 		     + sizeof (CVSROOTADM_HISTORY) + 10);

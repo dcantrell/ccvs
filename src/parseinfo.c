@@ -10,6 +10,8 @@
 #include "getline.h"
 #include <assert.h>
 
+char *logHistory;
+
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
  * the first line in the file that matches the REPOSITORY, or if ALL != 0, any lines
@@ -373,6 +375,14 @@ warning: this CVS does not support PreservePermissions");
 	    /* Could try some validity checking, like whether we can
 	       opendir it or something, but I don't see any particular
 	       reason to do that now rather than waiting until lock.c.  */
+	}
+	else if (strcmp (line, "LogHistory") == 0)
+	{
+	    if (!strcmp (p, "all") == 0)
+        {
+         logHistory=malloc(strlen (p) + 1);
+         strcpy (logHistory, p);
+	    }
 	}
 	else
 	{

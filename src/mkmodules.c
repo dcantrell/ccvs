@@ -288,6 +288,10 @@ static const char *const config_contents[] = {
     "# level of the new working directory when using the `cvs checkout'\n",
     "# command.\n",
     "#TopLevelAdmin=no\n",
+    "\n",
+    "# Set `LogHistory' to `all' or `TOFEWGCMAR' to log all transactions to the\n",
+    "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
+    "#LogHistory=TOFEWGCMAR\n",
     NULL
 };
 

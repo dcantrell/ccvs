@@ -1,3 +1,9 @@
+2000-02-21  K.J. Paradise <kj@sourcegear.com>
+
+	* history.c mkmodules.c parseinfo.c: control which actions
+	get logged to the cvs history file via CVSROOT/config file
+	and LogHistory keyword.
+
 2000-02-18  Karl Fogel  <kfogel@red-bean.com>
 
 	* history.c (history_write): don't die if history file not
