@@ -5501,6 +5501,7 @@ trap 'rm -fr `echo "Makefile \
 	  os2/Makefile \
 	  src/Makefile \
 	  src/cvsbug \
+	  src/version.h \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
@@ -5639,6 +5640,7 @@ CONFIG_FILES=\${CONFIG_FILES-"Makefile \
 	  os2/Makefile \
 	  src/Makefile \
 	  src/cvsbug \
+	  src/version.h \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \

@@ -401,6 +401,7 @@ AC_OUTPUT([Makefile \
 	  os2/Makefile \
 	  src/Makefile \
 	  src/cvsbug \
+	  src/version.h \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
