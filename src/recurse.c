@@ -204,7 +204,98 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 		   appropriate "Argument" commands to the server.  In
 		   this case, that won't have happened, so we need to
 		   do it here.  While this example uses "update", this
-		   generalizes to other commands. */
+		   generalizes to other commands.
+		
+		   FIXME (njc): in the multiroot case, we don't want
+		   to send argument commands for those top-level
+		   directories which do not contain any subdirectories
+		   which have files checked out from current_root.  If
+		   we do, and two repositories have a module with the
+		   same name, nasty things could happen.
+
+		   This is hard.  Perhaps we should send the Argument
+		   commands later in this procedure, after we've had a
+		   chance to notice which directores we're using
+		   (after do_recursion has been called once).  This
+		   means a _lot_ of rewriting, however.
+
+		   What we need to do for that to happen is descend
+		   the tree and construct a list of directories which
+		   are checked out from current_cvsroot.  Now, we
+		   eliminate from the list all of those directories
+		   which are immediate subdirectories of another
+		   directory in the list.  To say that the opposite
+		   way, we keep the directories which are not
+		   immediate subdirectories of any other in the list.
+		   Here's a picture:
+
+			      a
+			     / \
+			    B   C
+			   / \
+			  D   e
+			     / \
+			    F   G
+			       / \
+			      H   I
+
+		   The node in capitals are those directories which
+		   are checked out from current_cvsroot.  We want the
+		   list to contain B, C, F, and G.  D, H, and I are
+		   not included, because their parents are also
+		   checked out from current_cvsroot.
+
+		   The algorithm should be:
+		   
+		   1) construct a tree of all directory names where
+		   each element contains a directory name and a flag
+		   which notes if that directory is checked out from
+		   current_cvsroot
+
+			      a0
+			     / \
+			    B1  C1
+			   / \
+			  D1  e0
+			     / \
+			    F1  G1
+			       / \
+			      H1  I1
+
+		   2) Recursively descend the tree.  For each node,
+		   recurse before processing the node.  If the flag is
+		   zero, do nothing.  If the flag is 1, check the
+		   node's parent.  If the parent's flag is one, change
+		   the current entry's flag to zero.
+
+			      a0
+			     / \
+			    B1  C1
+			   / \
+			  D0  e0
+			     / \
+			    F1  G1
+			       / \
+			      H0  I0
+
+		   3) Walk the tree and spit out "Argument" commands
+		   to tell the server which directories to munge.
+		   
+		   Yuck.  It's not clear this is worth spending time
+		   on, since we might want to disable cvs commands
+		   entirely from directories that do not have CVSADM
+		   files...
+
+		   Anyways, the solution as it stands has modified
+		   server.c (dirswitch) to create admin files [via
+		   server.c (create_adm_p)] in all path elements for a
+		   client's "Directory xxx" command, which forces the
+		   server to descend and serve the files there.
+		   client.c (send_file_names) has also been modified
+		   to send only those arguments which are appropriate
+		   to current_root.
+
+		*/
 
 		err += walklist (dirlist, do_argument_proc, NULL);
 	    }

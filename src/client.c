@@ -737,7 +737,7 @@ int filter_through_gunzip (fd, dir, pidp)
  * The Repository for the top level of this command (not necessarily
  * the CVSROOT, just the current directory at the time we do it).
  */
-static char *toplevel_repos;
+static char *toplevel_repos = NULL;
 
 /* Working directory when we first started.  Note: we could speed things
    up on some systems by using savecwd.h here instead of just always
@@ -2762,47 +2762,55 @@ send_a_repository (dir, repository, update_dir)
 		 * directories (and cvs invoked on the containing
 		 * directory).  I'm not sure the latter case needs to
 		 * work.
+		 *
+		 * 21 Aug 1998: Well, Mr. Above-Comment-Writer, it
+		 * does need to work after all.  When we are using the
+		 * client in a multi-cvsroot environment, it will be
+		 * fairly common that we have the above case (e.g.,
+		 * cwd checked out from one repository but
+		 * subdirectory checked out from another).  We can't
+		 * assume that by walking up a directory in our wd we
+		 * necessarily walk up a directory in the repository.
 		 */
 		/*
 		 * This gets toplevel_repos wrong for "cvs update ../foo"
 		 * but I'm not sure toplevel_repos matters in that case.
 		 */
-		int slashes_in_update_dir;
-		int slashes_skipped;
-		char *p;
 
-		/*
-		 * Strip trailing slashes from the name of the update directory.
-		 * Otherwise, running `cvs update dir/' provokes the failure
-		 * `protocol error: illegal directory syntax in dir/' when
-		 * running in client/server mode.
-		 */
+		int repository_len, update_dir_len;
+
 		strip_trailing_slashes (update_dir);
 
-		slashes_in_update_dir = 0;
-		for (p = update_dir; *p != '\0'; ++p)
-		    if (*p == '/')
-			++slashes_in_update_dir;
+		repository_len = strlen (repository);
+		update_dir_len = strlen (update_dir);
 
-		slashes_skipped = 0;
-		p = repository + strlen (repository);
-		while (1)
+		/* Try to remove the path components in UPDATE_DIR
+                   from REPOSITORY.  If the path elements don't exist
+                   in REPOSITORY, or the removal of those path
+                   elements mean that we "step above"
+                   CVSroot_directory, set toplevel_repos to
+                   CVSroot_directory. */
+		if ((repository_len > update_dir_len)
+		    && (strcmp (repository + repository_len - update_dir_len,
+				update_dir) == 0)
+		    /* TOPLEVEL_REPOS shouldn't be above CVSroot_directory */
+		    && ((repository_len - update_dir_len)
+			> strlen (CVSroot_directory)))
 		{
-		    if (p == repository)
-			error (1, 0,
-			       "internal error: not enough slashes in %s",
-			       repository);
-		    if (*p == '/')
-			++slashes_skipped;
-		    if (slashes_skipped < slashes_in_update_dir + 1)
-			--p;
-		    else
-			break;
+		    /* The repository name contains UPDATE_DIR.  Set
+                       toplevel_repos to the repository name without
+                       UPDATE_DIR. */
+
+		    toplevel_repos = xmalloc (repository_len - update_dir_len);
+		    /* Note that we don't copy the trailing '/'.  */
+		    strncpy (toplevel_repos, repository,
+			     repository_len - update_dir_len - 1);
+		    toplevel_repos[repository_len - update_dir_len - 1] = '\0';
 		}
-		toplevel_repos = xmalloc (p - repository + 1);
-		/* Note that we don't copy the trailing '/'.  */
-		strncpy (toplevel_repos, repository, p - repository);
-		toplevel_repos[p - repository] = '\0';
+		else
+		{
+		    toplevel_repos = xstrdup (CVSroot_directory);
+		}
 	    }
 	}
     }
@@ -3960,6 +3968,13 @@ start_server ()
     int tofd, fromfd;
     char *log = getenv ("CVS_CLIENT_LOG");
 
+
+    /* Clear our static variables for this invocation. */
+    if (toplevel_repos != NULL)
+	free (toplevel_repos);
+    toplevel_repos = NULL;
+
+
     /* Note that generally speaking we do *not* fall back to a different
        way of connecting if the first one does not work.  This is slow
        (*really* slow on a 14.4kbps link); the clean way to have a CVS
@@ -5090,6 +5105,60 @@ send_file_names (argc, argv, flags)
 	char buf[1];
 	char *p = argv[i];
 	char *line = NULL;
+
+	/* Try to decide whether we should send this command-line
+	   argument to the server by checking the contents of the
+	   corresponding CVSADM directory. */
+	
+	{
+	    char *this_root;
+
+	    if (isdir (p))
+	    {
+		this_root = Name_Root (p, (char *) NULL);
+	    }
+	    else
+	    {
+		/* Calculate "dirname p" and check the CVSADM files
+		   there. */
+		char *t;
+
+		for (t = argv[i] + strlen (argv[i]) - 1;
+		     t >= argv[i];
+		     t--)
+		{
+		    if (ISDIRSEP(*t))
+			break;
+		}
+
+		/* Now we're either poiting to the beginning of the
+                   string, or we found a path separator. */
+		if (t >= argv[i])
+		{
+		    /* Found a path separator. */
+		    char c = *t;
+		    *t = '\0';
+		    this_root = Name_Root (argv[i], (char *) NULL);
+		    *t = c;
+		}
+		else
+		{
+		    /* We're at the beginning of the string. */
+		    this_root = Name_Root ((char *) NULL, (char *) NULL);
+		}
+	    }
+
+	    /* Now check the value for root. */
+
+	    if (this_root && current_root
+		&& (strcmp (this_root, current_root) != 0))
+	    {
+		/* Skip this one. */
+		free (this_root);
+		continue;
+	    }
+	    free (this_root);
+	}
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 	/* We want to send the file name as it appears
