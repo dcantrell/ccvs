@@ -1,5 +1,9 @@
 1999-02-24  Jim Kingdon  <http://www.cyclic.com>
 
+	* sanity.sh (keyword2): Restore the original \\\$ instead of $.
+	The latter ends up working due to various kludgy semantics in the
+	shell and regular expressions, but the former is cleaner.
+
 	* sanity.sh (keyword2): Protect keywords against accidental
 	expansion in sanity.sh itself (most occurrences had this, but not
 	all).
