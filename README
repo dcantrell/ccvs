@@ -99,6 +99,7 @@ Please read the INSTALL file for installation instructions.  Brief summary:
 
 	$ ./configure
 	$ make
+	$ make check	# optional, long-running, step
 	$ make install
 	$ cvsinit
 

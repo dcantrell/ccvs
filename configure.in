@@ -1,15 +1,32 @@
 dnl configure.in for cvs
+dnl "$CVSid$"
 AC_INIT(src/cvs.h)
-AC_PREREQ(2.1)dnl Required Autoconf version.
+AC_PREREQ(2.4)dnl Required Autoconf version.
 AC_CONFIG_HEADER(config.h src/options.h)
 
+AC_CANONICAL_HOST
+
 AC_PROG_CC
+
 AC_AIX
 AC_MINIX
 AC_ISC_POSIX
 if test "$ISC" = yes; then
 CFLAGS="$CFLAGS -D_SYSV3"
 fi
+
+AC_PREFIX_PROGRAM(cvs)
+
+dnl FIXME: configure normally doesn't expand these until it is too late
+dnl to make any use of them
+dnl
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+# NOTE:  don't quote the ${prefix} here -- it'll be replaced properly later
+test "x$exec_prefix" = xNONE && exec_prefix=${prefix}
+# NOTE:  we hope most makefiles will have a similar line to this
+bindir=$exec_prefix/bin
+
+AC_C_CROSS
 
 AC_C_CONST
 AC_C_CHAR_UNSIGNED
@@ -30,15 +47,303 @@ if test X"$ac_cv_sys_interpreter" != X"yes" ; then
   AC_MSG_WARN($ac_msg)
 fi
 
-AC_PATH_PROGS(gdiff_path, gnudiff diff, diff)
-AC_MSG_CHECKING(to see if $gdiff_path supports -a)
-if $gdiff_path -a /dev/null /dev/null > /dev/null 2>&1 ; then
-  AC_MSG_RESULT(yes; appending -a to $gdiff_path)
-  gdiff_path="$gdiff_path -a"
-fi
-AC_DEFINE_UNQUOTED(DIFF, "$gdiff_path")
+dnl
+dnl borrowed diff stuff from the RCS configure.in (Thanks Paul!)
+dnl we probably don't need the DIFF3*, DIFF_L, DIFF_SUCCESS, DIFF_TROUBLE
+dnl settings just now, but we'll keep all the kruft just in case....
+dnl
 
-AC_PATH_PROGS(ggrep_path, ggrep gnugrep grep, grep)
+# Set up simple `diff' test.
+echo 0 >conftest0
+echo 0 >conftest0c
+echo 1 >conftest1
+cat >conftestok <<'EOF'
+1c1
+< 0
+---
+> 1
+EOF
+
+# WARNING:  remove config.cache if you change this option....
+#
+AC_ARG_WITH(diffutils,
+  [  --with-diffutils        assume GNU diffutils is similarly installed],
+  [with_diffutils=$withval],
+  [with_diffutils='']
+)
+#
+# NOTE:  assume they mean what they say and know what they're doing.
+#
+case "$with_diffutils" in
+yes)
+  : ${DIFF=$bindir/diff}
+  : ${DIFF3=${DIFF}3}
+  : ${DIFF3_BIN=1}
+  : ${DIFFFLAGS=-a}
+  : ${DIFF_L=1}
+  : ${DIFF_FAILURE=1}
+  : ${DIFF_SUCCESS=0}
+  : ${DIFF_TROUBLE=2}
+  ;;
+no)
+  # I don't know why anyone would say this, but just in case....
+  : ${DIFF='diff'}
+  ;;
+*)
+  : ${DIFF=$with_diffutils}
+  : ${DIFF3=${DIFF}3}
+  : ${DIFF3_BIN=1}
+  : ${DIFFFLAGS=-a}
+  : ${DIFF_L=1}
+  : ${DIFF_FAILURE=1}
+  : ${DIFF_SUCCESS=0}
+  : ${DIFF_TROUBLE=2}
+  ;;
+esac
+
+# date: 1995/07/12 15:17:50;  author: meyering;  state: Exp;  lines: +1 -1
+# (gdiff_path): Remove gdiff from the list of programs.
+# SGI's Irix includes a program named gdiff that is an X-based GUI to diff.
+#
+# What a pitty.  We need config.sub and config.guess just to work around this.
+#
+case $host_os in
+  irix*)	GDIFF='';;
+  *)		GDIFF='gdiff';;
+esac
+
+# Set DIFF to the name of the `diff' program to be run.
+AC_SUBST(DIFF)
+AC_MSG_CHECKING([diff basename])
+AC_CACHE_VAL(cvs_cv_prog_diff, [
+  cvs_cv_prog_diff=$DIFF
+  case "$cvs_cv_prog_diff" in
+  '')
+    for i in gnudiff $GDIFF diff
+    do
+      sh -c "exec $i conftest0 conftest1" >conftestout 2>/dev/null
+      case $? in
+      1)
+	if cmp -s conftestok conftestout
+	then cvs_cv_prog_diff=$i; break
+	fi
+	;;
+      esac
+    done
+    # try to get the right diff3....
+    case "$cvs_cv_prog_diff" in
+    g*) DIFF3="${cvs_cv_prog_diff}3";;
+    esac
+    ;;
+  esac
+])
+DIFF=$cvs_cv_prog_diff
+case "$DIFF" in
+'') AC_MSG_ERROR(cannot find a CVS-compatible diff);;
+esac
+AC_MSG_RESULT($DIFF)
+AC_PATH_PROG(DIFF, $DIFF, $DIFF)
+
+# Set DIFF_SUCCESS, DIFF_FAILURE, DIFF_TROUBLE to diff's exit status
+# when it finds no differences, some differences, or trouble.
+AC_SUBST(DIFF_SUCCESS)
+AC_MSG_CHECKING([diff success status])
+AC_CACHE_VAL(cvs_cv_status_diff_success, [
+  cvs_cv_status_diff_success=$DIFF_SUCCESS
+  case "$cvs_cv_status_diff_success" in
+  '')
+    # We can't use `$DIFF conftest0 conftest0',
+    # since buggy NEXTSTEP 3.0 diff silently yields exit status 2 for this.
+    $DIFF conftest0 conftest0c >/dev/null 2>&1
+    cvs_cv_status_diff_success=$?
+    ;;
+  esac
+])
+DIFF_SUCCESS=$cvs_cv_status_diff_success
+AC_MSG_RESULT($DIFF_SUCCESS)
+#
+AC_SUBST(DIFF_FAILURE)
+AC_MSG_CHECKING([diff failure status])
+AC_CACHE_VAL(cvs_cv_status_diff_failure, [
+  cvs_cv_status_diff_failure=$DIFF_FAILURE
+  case "$cvs_cv_status_diff_failure" in
+  '')
+    $DIFF conftest0 conftest1 >/dev/null 2>&1
+    cvs_cv_status_diff_failure=$?
+    ;;
+  esac
+])
+DIFF_FAILURE=$cvs_cv_status_diff_failure
+AC_MSG_RESULT($DIFF_FAILURE)
+#
+AC_SUBST(DIFF_TROUBLE)
+AC_MSG_CHECKING([diff trouble status])
+AC_CACHE_VAL(cvs_cv_status_diff_trouble, [
+  cvs_cv_status_diff_trouble=$DIFF_TROUBLE
+  case "$cvs_cv_status_diff_trouble" in
+  '')
+    $DIFF conftest0 no/such/file >/dev/null 2>&1
+    cvs_cv_status_diff_trouble=$?
+    ;;
+  esac
+])
+DIFF_TROUBLE=$cvs_cv_status_diff_trouble
+AC_MSG_RESULT($DIFF_TROUBLE)
+
+# Set DIFFFLAGS to the options of the `diff' program to be run.
+# Use -a if possible
+AC_SUBST(DIFFFLAGS)
+AC_MSG_CHECKING([diff options for CVS])
+AC_CACHE_VAL(cvs_cv_options_diff, [
+  cvs_cv_options_diff=$DIFFFLAGS
+  case "$cvs_cv_options_diff" in
+  '')
+    cvs_cv_options_diff=
+    $DIFF -a conftest0 conftest1 >conftestout 2>conftestout2
+    case $? in
+    1)
+      if cmp -s conftestok conftestout && test ! -s conftestout2
+      then cvs_cv_options_diff=-a
+      fi
+      ;;
+    esac
+    ;;
+  esac
+])
+DIFFFLAGS=$cvs_cv_options_diff
+AC_MSG_RESULT($DIFFFLAGS)
+
+# Set DIFF_L to 1 if diff understands the L option, 0 otherwise.
+AC_SUBST(DIFF_L)
+AC_MSG_CHECKING([diff -L])
+AC_CACHE_VAL(cvs_cv_options_diff_l, [
+  cvs_cv_options_diff_l=$DIFF_L
+  case "$cvs_cv_options_diff_l" in
+  '')
+    cvs_cv_options_diff_l=0
+    $DIFF -c -L 0 -L 1 conftest0 conftest1 >conftestout 2>/dev/null
+    case $? in
+    1)
+      if cmp -s - conftestout <<'EOF'
+*** 0
+--- 1
+***************
+*** 1 ****
+! 0
+--- 1 ----
+! 1
+EOF
+      then cvs_cv_options_diff_l=1
+      fi
+      ;;
+    esac
+    ;;
+  esac
+])
+DIFF_L=$cvs_cv_options_diff_l
+case "$DIFF_L" in
+1) AC_MSG_RESULT(yes);;
+*) AC_MSG_RESULT(no);;
+esac
+
+# Set DIFF3 to the name of the diff3 program.
+# In some systems (e.g. BSD/OS 2.0), diffutils diff3 lives in /usr/libexec.
+diff3PATH=$PATH:/usr/libexec
+AC_SUBST(DIFF3)
+AC_MSG_CHECKING([diff3 -m])
+AC_CACHE_VAL(cvs_cv_prog_diff3_bin, [
+  cvs_cv_prog_diff3_bin=$DIFF3
+  case "$cvs_cv_prog_diff3_bin" in
+  '')
+    PATH=$diff3PATH sh -c "exec diff3 -E -m -L 0 -L 1 -L 2 conftest0 conftest1 /dev/null" >conftestout 2>/dev/null
+    case $? in
+    1)
+      if cmp -s - conftestout <<'EOF'
+<<<<<<< 0
+0
+=======
+>>>>>>> 2
+EOF
+      then cvs_cv_prog_diff3_bin=diff3
+      fi
+      ;;
+    esac
+  ;;
+  esac
+])
+case "$cvs_cv_prog_diff3_bin" in
+?*)
+  AC_MSG_RESULT(yes)
+  ac_save_path=$PATH
+  PATH=$diff3PATH
+  dnl FIXME:  for the moment we don't really care if we don't find diff3
+  AC_PATH_PROG(DIFF3, $cvs_cv_prog_diff3_bin, $cvs_cv_prog_diff3_bin)
+  PATH=$ac_save_path
+  ;;
+'')
+  AC_MSG_RESULT(no)
+  AC_MSG_CHECKING([diff3 library program])
+  dnl We can't use AC_PATH_PROG since we don't want to inspect /bin,
+  dnl and AC_PATH_PROG uses `test'.
+  AC_CACHE_VAL(cvs_cv_path_diff3_lib, [
+    $DIFF conftest0 conftest1 >conftest01
+    $DIFF /dev/null conftest1 >conftestn1
+    for i in /usr/*lib*/*diff3*; do
+      sh -c "exec $i -E conftest01 conftestn1 conftest0 /dev/null conftest1" >conftestout 2>/dev/null
+      # The exit status is arbitrary!  Test the output a bit.
+      if
+	grep '^<<* *conftest0$' conftestout >/dev/null 2>&1 &&
+	grep '^>>* *conftest1$' conftestout >/dev/null 2>&1 &&
+	grep '^0a$' conftestout >/dev/null 2>&1
+      then
+	cvs_cv_path_diff3_lib=$i
+	break
+      fi
+    done
+  ])
+  DIFF3=$cvs_cv_path_diff3_lib
+  case "$DIFF3" in
+  '') AC_MSG_ERROR(cannot find a working diff3 library program);;
+  ?*) AC_MSG_RESULT($DIFF3);;
+  esac
+  ;;
+esac
+
+AC_SUBST(DIFF3_BIN)
+case "$DIFF3_BIN" in
+'')
+  case "$cvs_cv_prog_diff3_bin" in
+  '') DIFF3_BIN=0;;
+  ?*) DIFF3_BIN=1;;
+  esac
+  ;;
+esac
+
+# Clean up simple `diff' test.
+rm -f conftest*
+
+AC_DEFINE_UNQUOTED(DIFF, "$DIFF $DIFFFLAGS")
+
+AC_ARG_WITH(gnugrep,
+  [  --with-gnugrep          assume GNU grep is similarly installed],
+  [with_gnugrep=$withval],
+  [with_gnugrep=no]
+)
+case "$with_gnugrep" in
+yes)
+  : ${GGREP=$bindir/grep}
+  ;;
+no)
+  : ${GGREP=''}
+  ;;
+*)
+  : ${GGREP=$with_gnugrep}
+  ;;
+esac
+
+dnl hmmm, I wonder if egrep will ever be appropriate?
+dnl
+AC_PATH_PROGS(ggrep_path, $GGREP ggrep gnugrep grep, grep)
 AC_MSG_CHECKING(to see if $ggrep_path supports -s)
 [echo foostring | $ggrep_path -s foostring > conftest.out 2>/dev/null]
 dnl
@@ -116,8 +421,9 @@ dnl set $(KRB4) from --with-krb4=value -- WITH_KRB4
 dnl
 KRB4=/usr/kerberos
 define(WITH_KRB4,[
-AC_WITH([krb4],
-KRB4=$withval,
+AC_ARG_WITH([krb4],
+  [  --with-krb4=value       set default $(KRB4) from value],
+  [KRB4=$withval],
 )dnl
 echo "default place for krb4 is $KRB4"
 AC_SUBST(KRB4)])dnl
@@ -126,33 +432,33 @@ WITH_KRB4
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(int)
 
-AC_REQUIRE([AC_CROSS_CHECK])
 krb_h=
-AC_COMPILE_CHECK(krb.h,[#include <krb.h>],[int i;],
+AC_MSG_CHECKING([for krb.h])
+AC_TRY_LINK([#include <krb.h>],[int i;],
   [krb_h=yes krb_incdir=],
   [if test "$cross_compiling" != yes && test -r $KRB4/include/krb.h; then
      hold_cflags=$CFLAGS
      CFLAGS="$CFLAGS -I$KRB4/include"
-     AC_COMPILE_CHECK(krb.h in $KRB4/include,
-       [#include <krb.h>],[int i;],
+     AC_TRY_LINK([#include <krb.h>],[int i;],
        [krb_h=yes krb_incdir=$KRB4/include])
      CFLAGS=$hold_cflags
    fi])
 if test -z "$krb_h"; then
-  AC_COMPILE_CHECK(krb.h,[#include <krb.h>],[int i;],
+  AC_TRY_LINK([#include <krb.h>],[int i;],
     [krb_h=yes krb_incdir=],
     [if test "$cross_compiling" != yes && test -r $KRB4/include/kerberosIV/krb.h; then
        hold_cflags=$CFLAGS
        CFLAGS="$CFLAGS -I$KRB4/include/kerberosIV"
-       AC_COMPILE_CHECK(krb.h in $KRB4/include/kerberosIV,
-	 [#include <krb.h>],[int i;],
+       AC_TRY_LINK([#include <krb.h>],[int i;],
 	 [krb_h=yes krb_incdir=$KRB4/include/kerberosIV])
        CFLAGS=$hold_cflags
      fi])
 fi
+AC_MSG_RESULT($krb_h)
+
 if test -n "$krb_h"; then
   krb_lib=
-  AC_HAVE_LIBRARY(-lkrb,[krb_lib=yes krb_libdir=],
+  AC_CHECK_LIB(-lkrb,main,[krb_lib=yes krb_libdir=],
     [if test "$cross_compiling" != yes && test -r $KRB4/lib/libkrb.a; then
        krb_lib=yes krb_libdir=$KRB4/lib
      fi])
@@ -160,7 +466,7 @@ if test -n "$krb_h"; then
     AC_DEFINE(HAVE_KERBEROS)
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
     LIBS="${LIBS} -lkrb"
-    AC_HAVE_LIBRARY(-ldes,[LIBS="${LIBS} -ldes"])
+    AC_CHECK_LIB(-ldes,main,[LIBS="${LIBS} -ldes"])
     if test -n "$krb_incdir"; then
       includeopt="${includeopt} -I$krb_incdir"
       AC_SUBST(includeopt)
@@ -175,19 +481,19 @@ AC_CHECK_FUNCS(krb_get_err_text)
 # it.
 unset ac_cv_func_connect
 AC_CHECK_FUNC(connect, :, 
-[case $LIBS in
+[case "$LIBS" in
 *-lnsl*) ;;
 *) AC_CHECK_LIB(nsl_s, main) ;;
 esac
-case $LIBS in
+case "$LIBS" in
 *-lnsl*) ;;
 *) AC_CHECK_LIB(nsl, main) ;;
 esac
-case $LIBS in
+case "$LIBS" in
 *-lsocket*) ;;
 *) AC_CHECK_LIB(socket, connect) ;;
 esac
-case $LIBS in
+case "$LIBS" in
 *-linet*) ;;
 *) AC_CHECK_LIB(inet, connect) ;;
 esac
