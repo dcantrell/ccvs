@@ -234,6 +234,7 @@ update (argc, argv)
 		option_with_arg ("-j", join_rev1);
 	    if (join_rev2)
 		option_with_arg ("-j", join_rev2);
+	    wrap_send ();
 
 	    /* If the server supports the command "update-patches", that means
 	       that it knows how to handle the -u argument to update, which

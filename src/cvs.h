@@ -689,6 +689,7 @@ int   wrap_merge_is_copy PROTO((const char *fileName));
 char *wrap_fromcvs_process_file PROTO((const char *fileName));
 void wrap_add_file PROTO((const char *file,int temp));
 void wrap_add PROTO((char *line,int temp));
+void wrap_send PROTO ((void));
 
 /* Pathname expansion */
 char *expand_path PROTO((char *name, char *file, int line));

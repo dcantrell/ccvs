@@ -35,7 +35,11 @@ typedef struct {
     char *wildCard;
     char *tocvsFilter;
     char *fromcvsFilter;
+
+    /* FIXME: conflictHook, WRAP_CONFLICT, and the -c option are never
+       used.  Nuke them.  */
     char *conflictHook;
+
     char *rcsOption;
     WrapMergeMethod mergeMethod;
 } WrapperEntry;
@@ -46,7 +50,16 @@ static WrapperEntry **wrap_saved_list=NULL;
 static int wrap_size=0;
 static int wrap_count=0;
 static int wrap_tempcount=0;
+
+/* FIXME: wrap_saved_count is never set to any non-zero value.
+   wrap_name_has and wrap_matching_entry should be using
+   wrap_tempcount instead.  I believe the consequence of this is that
+   .cvswrappers files are ignored (that was my own experience when I
+   tried to use one).  If this bug is fixed, would be nice to write a
+   sanity.sh testcase for .cvswrappers files.  */
+
 static int wrap_saved_count=0;
+
 static int wrap_saved_tempcount=0;
 
 #define WRAPPER_GROW	8
@@ -63,24 +76,67 @@ void wrap_setup()
     char file[PATH_MAX];
     struct passwd *pw;
 
-	/* Then add entries found in repository, if it exists */
-    (void) sprintf (file, "%s/%s/%s", CVSroot_directory, CVSROOTADM,
-		    CVSROOTADM_WRAPPER);
-    if (isfile (file)){
-	wrap_add_file(file,0);
+#ifdef CLIENT_SUPPORT
+    if (!client_active)
+#endif
+    {
+	/* Then add entries found in repository, if it exists.  */
+	(void) sprintf (file, "%s/%s/%s", CVSroot_directory, CVSROOTADM,
+			CVSROOTADM_WRAPPER);
+	if (isfile (file))
+	{
+	    wrap_add_file(file,0);
+	}
     }
 
-	/* Then add entries found in home dir, (if user has one) and file exists */
-    if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir){
+    /* Then add entries found in home dir, (if user has one) and file
+       exists.  (FIXME: I think this probably should be using
+       get_homedir, i.e. $HOME).  */
+    if ((pw = (struct passwd *) getpwuid (getuid ())) && pw->pw_dir)
+    {
 	(void) sprintf (file, "%s/%s", pw->pw_dir, CVSDOTWRAPPER);
-	if (isfile (file)){
+	if (isfile (file))
+	{
 	    wrap_add_file (file, 0);
 	}
     }
 
-	/* Then add entries found in CVSWRAPPERS environment variable. */
+    /* Then add entries found in CVSWRAPPERS environment variable. */
     wrap_add (getenv (WRAPPER_ENV), 0);
 }
+
+#ifdef CLIENT_SUPPORT
+/* Send -W arguments for the wrappers to the server.  The command must
+   be one that accepts them (e.g. update, import).  */
+void
+wrap_send ()
+{
+    int i;
+
+    for (i = 0; i < wrap_count + wrap_tempcount; ++i)
+    {
+	if (wrap_list[i]->tocvsFilter != NULL
+	    || wrap_list[i]->fromcvsFilter != NULL)
+	    /* For greater studliness we would print the offending option
+	       and (more importantly) where we found it.  */
+	    error (0, 0, "\
+-t and -f wrapper options are not supported remotely; ignored");
+	if (wrap_list[i]->mergeMethod == WRAP_COPY)
+	    /* For greater studliness we would print the offending option
+	       and (more importantly) where we found it.  */
+	    error (0, 0, "\
+-m wrapper option is not supported remotely; ignored");
+	if (wrap_list[i]->rcsOption != NULL)
+	{
+	    send_to_server ("Argument -W\012Argument ", 0);
+	    send_to_server (wrap_list[i]->wildCard, 0);
+	    send_to_server (" -k '", 0);
+	    send_to_server (wrap_list[i]->rcsOption, 0);
+	    send_to_server ("'\012", 0);
+	}
+    }
+}
+#endif /* CLIENT_SUPPORT */
 
 /*
  * Open a file and read lines, feeding each line to a line parser. Arrange
