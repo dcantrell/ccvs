@@ -1,3 +1,14 @@
+2000-12-28  Derek Price  <derek.price@openavenue.com>
+
+	* INSTALL (BUILDING FROM SOURCES): Added a couple more platforms to the
+	build and test list.
+	(Building ... under Unix): Added note about BSD make and
+	--disable-dependency-tracking
+	(Building ... under Windows ...): Added note about using MSVC++ 6.0
+	(Building [on] other platforms): Added note about wincvs.org and
+	cvsnt.org.  Added more complete note about BSD make and
+	--disable-dependency-tracking than the above
+
 2000-12-27  Derek Price  <derek.price@openavenue.com>
 
 	* NEWS: Fix comments about the changes to ~/.cvspass
