@@ -2840,8 +2840,9 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 	(void) fprintf (stderr,
 			"%c-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
 			(server_active) ? 'S' : ' ', /* silly */
-			name, version, timestamp, options, tag ? tag : "",
-			date ? date : "", conflict ? conflict : "");
+			name, version, timestamp ? timestamp : "", options,
+			tag ? tag : "", date ? date : "",
+			conflict ? conflict : "");
     }
 
     if (entries_line != NULL)
