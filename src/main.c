@@ -60,7 +60,11 @@ int UseNewInfoFmtStrings = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 #ifdef PROXY_SUPPORT
 cvsroot_t *PrimaryServer;
-size_t MaxProxyBufferSize = (size_t)0; /* 0 bytes = disabled. */
+# ifndef TRUST_OS_FILE_CACHE
+size_t MaxProxyBufferSize = (size_t)(8 * 2^10 * 2^10); /* 8 megabytes,
+                                                       * by default.
+                                                       */
+# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
 
 

@@ -511,6 +511,7 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 #ifdef PROXY_SUPPORT
+# ifndef TRUST_OS_FILE_CACHE
 /* Copy data structures and append them to a buffer.
  *
  * ERRORS
@@ -545,6 +546,7 @@ buf_copy_data (struct buffer *buf, struct buffer_data *data,
 
     buf_append_data (buf, first, cur);
 }
+# endif /* !TRUST_OS_FILE_CACHE */
 
 
 

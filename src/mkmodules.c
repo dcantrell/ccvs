@@ -490,13 +490,15 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   PrimaryServer=:fork:localhost/cvsroot\n",
+# ifndef TRUST_OS_FILE_CACHE
     "\n",
     "# Set `MaxProxyBufferSize' to the the maximum allowable secondary\n",
     "# buffer memory cache size before the buffer begins being stored to disk, in\n",
     "# bytes.  Must be a positive integer but may end in `k', `M', `G', or `T' (for\n",
-    "# kiilo, mega, giga, tera).  If an otherwise valid number you specifyis greater\n",
-    "# than the SIZE_MAX defined by your system's C compiler, then it will be\n",
-    "# resolved to SIZE_MAX without a warning.  Defaults to 0.\n",
+    "# kiilo, mega, giga, & tera, respectively).  If an otherwise valid number you\n",
+    "# specify is greater than the SIZE_MAX defined by your system's C compiler,\n",
+    "# then it will be resolved to SIZE_MAX without a warning.  Defaults to 8M (8\n",
+    "# megabytes).\n",
     "#\n",
     "# High values for MaxProxyBufferSize may speed up a secondary server\n",
     "# with old hardware and a lot of available memory but can actually slow a\n",
@@ -505,6 +507,7 @@ static const char *const config_contents[] = {
     "# For example:\n",
     "#\n",
     "#   MaxProxyBufferSize=1G\n",
+# endif /* !TRUST_OS_FILE_CACHE */
 #endif /* PROXY_SUPPORT */
     NULL
 };
