@@ -1,5 +1,9 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* rpmatch.m4, yesno.m4: Back out addition.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* rpmatch.m4, yesno.m4: New files from GNULIB.
 
 2004-10-21  Derek Price  <derek@ximbiot.com>
