@@ -424,7 +424,7 @@ history (argc, argv)
 		if (strlen (optarg) >= sizeof (backto))
 		{
 		    error (0, 0, "backto truncated to %d bytes",
-			   sizeof (backto) - 1);
+			   (int) sizeof (backto) - 1);
 		    optarg[sizeof (backto) - 1] = '\0';
 		}
 		(void) strcpy (backto, optarg);
@@ -1410,7 +1410,8 @@ report_hrecs ()
 		if (lr->rev && *(lr->rev))
 		    (void) printf (" [%s]", lr->rev);
 		(void) printf (" %-*s =%s%-*s %s", repos_len, repos, lr->mod,
-			       mod_len + 1 - strlen (lr->mod), "=", workdir);
+			       mod_len + 1 - (int) strlen (lr->mod),
+			       "=", workdir);
 		break;
 	    case 'W':
 	    case 'U':

@@ -1,5 +1,10 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* history.c (history): Cast sizeof to int to use correct type in
+	error printf string.
+	(report_hrecs): Cast strlen result to int to use correct type in
+	printf string.
+
 	* server.c (cvs_flusherr): Correct typo in comment.
 
 	* rcs.c (getrcskey): Hoist three constant strcmp calls out of the
