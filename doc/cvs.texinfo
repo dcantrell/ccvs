@@ -7548,11 +7548,11 @@ you would type:
 
 @example
 $ cd ~/work.d/wdiff
-$ cvs admin -bWDIFF .
+$ cvs admin -bFSF_DIST .
 @end example
 
 @noindent
-You must specify the @samp{-bWDIFF} without any space
+You must specify the @samp{-bFSF_DIST} without any space
 after the @samp{-b}.  @xref{admin options}.
 
 @node Binary files in imports
