@@ -25,9 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "libcvs - Win32 Release"
 
 OUTDIR=.\WinRel
@@ -60,7 +57,7 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
-	-@erase "$(INTDIR)\savecwd.obj"
+	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
@@ -68,7 +65,8 @@ CLEAN :
 	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
-	-@erase "$(INTDIR)\xgetwd.obj"
+	-@erase "$(INTDIR)\xalloc-die.obj"
+	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xstrdup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
@@ -79,7 +77,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\windows-NT" /I "." /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
 BSC32_SBRS= \
@@ -90,6 +121,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\argmatch.obj" \
 	"$(INTDIR)\asnprintf.obj" \
 	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\dirname.obj" \
 	"$(INTDIR)\exitfail.obj" \
 	"$(INTDIR)\fncase.obj" \
 	"$(INTDIR)\fnmatch.obj" \
@@ -106,18 +138,18 @@ LIB32_OBJS= \
 	"$(INTDIR)\printf-parse.obj" \
 	"$(INTDIR)\realloc.obj" \
 	"$(INTDIR)\regex.obj" \
-	"$(INTDIR)\savecwd.obj" \
+	"$(INTDIR)\save-cwd.obj" \
 	"$(INTDIR)\sighandle.obj" \
 	"$(INTDIR)\strftime.obj" \
 	"$(INTDIR)\stripslash.obj" \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
-	"$(INTDIR)\xgetwd.obj" \
+	"$(INTDIR)\xalloc-die.obj" \
+	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\dirname.obj"
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -156,7 +188,7 @@ CLEAN :
 	-@erase "$(INTDIR)\printf-parse.obj"
 	-@erase "$(INTDIR)\realloc.obj"
 	-@erase "$(INTDIR)\regex.obj"
-	-@erase "$(INTDIR)\savecwd.obj"
+	-@erase "$(INTDIR)\save-cwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
 	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
@@ -165,7 +197,8 @@ CLEAN :
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
-	-@erase "$(INTDIR)\xgetwd.obj"
+	-@erase "$(INTDIR)\xalloc-die.obj"
+	-@erase "$(INTDIR)\xgetcwd.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xstrdup.obj"
 	-@erase "$(INTDIR)\yesno.obj"
@@ -174,52 +207,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\windows-NT" /I "." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_CONFIG_H" /Fp"$(INTDIR)\libcvs.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
-BSC32_SBRS= \
-	
-LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
-LIB32_OBJS= \
-	"$(INTDIR)\argmatch.obj" \
-	"$(INTDIR)\asnprintf.obj" \
-	"$(INTDIR)\basename.obj" \
-	"$(INTDIR)\exitfail.obj" \
-	"$(INTDIR)\fncase.obj" \
-	"$(INTDIR)\fnmatch.obj" \
-	"$(INTDIR)\fseeko.obj" \
-	"$(INTDIR)\ftello.obj" \
-	"$(INTDIR)\getdate.obj" \
-	"$(INTDIR)\getline.obj" \
-	"$(INTDIR)\getndelim2.obj" \
-	"$(INTDIR)\getopt.obj" \
-	"$(INTDIR)\getopt1.obj" \
-	"$(INTDIR)\gettime.obj" \
-	"$(INTDIR)\md5.obj" \
-	"$(INTDIR)\printf-args.obj" \
-	"$(INTDIR)\printf-parse.obj" \
-	"$(INTDIR)\realloc.obj" \
-	"$(INTDIR)\regex.obj" \
-	"$(INTDIR)\savecwd.obj" \
-	"$(INTDIR)\sighandle.obj" \
-	"$(INTDIR)\strftime.obj" \
-	"$(INTDIR)\stripslash.obj" \
-	"$(INTDIR)\time_r.obj" \
-	"$(INTDIR)\valloc.obj" \
-	"$(INTDIR)\vasnprintf.obj" \
-	"$(INTDIR)\xgetwd.obj" \
-	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\dirname.obj"
-
-"$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
-    $(LIB32) @<<
-  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
-<<
-
-!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -250,6 +239,54 @@ LIB32_OBJS= \
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
+
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\libcvs.bsc" 
+BSC32_SBRS= \
+	
+LIB32=link.exe -lib
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\libcvs.lib" 
+LIB32_OBJS= \
+	"$(INTDIR)\argmatch.obj" \
+	"$(INTDIR)\asnprintf.obj" \
+	"$(INTDIR)\basename.obj" \
+	"$(INTDIR)\dirname.obj" \
+	"$(INTDIR)\exitfail.obj" \
+	"$(INTDIR)\fncase.obj" \
+	"$(INTDIR)\fnmatch.obj" \
+	"$(INTDIR)\fseeko.obj" \
+	"$(INTDIR)\ftello.obj" \
+	"$(INTDIR)\getdate.obj" \
+	"$(INTDIR)\getline.obj" \
+	"$(INTDIR)\getndelim2.obj" \
+	"$(INTDIR)\getopt.obj" \
+	"$(INTDIR)\getopt1.obj" \
+	"$(INTDIR)\gettime.obj" \
+	"$(INTDIR)\md5.obj" \
+	"$(INTDIR)\printf-args.obj" \
+	"$(INTDIR)\printf-parse.obj" \
+	"$(INTDIR)\realloc.obj" \
+	"$(INTDIR)\regex.obj" \
+	"$(INTDIR)\save-cwd.obj" \
+	"$(INTDIR)\sighandle.obj" \
+	"$(INTDIR)\strftime.obj" \
+	"$(INTDIR)\stripslash.obj" \
+	"$(INTDIR)\time_r.obj" \
+	"$(INTDIR)\valloc.obj" \
+	"$(INTDIR)\vasnprintf.obj" \
+	"$(INTDIR)\xalloc-die.obj" \
+	"$(INTDIR)\xgetcwd.obj" \
+	"$(INTDIR)\xmalloc.obj" \
+	"$(INTDIR)\xstrdup.obj" \
+	"$(INTDIR)\yesno.obj"
+
+"$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+    $(LIB32) @<<
+  $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
+<<
+
+!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -362,9 +399,9 @@ SOURCE=.\regex.c
 "$(INTDIR)\regex.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=.\savecwd.c
+SOURCE=".\save-cwd.c"
 
-"$(INTDIR)\savecwd.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\save-cwd.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\sighandle.c
@@ -397,9 +434,14 @@ SOURCE=.\vasnprintf.c
 "$(INTDIR)\vasnprintf.obj" : $(SOURCE) "$(INTDIR)"
 
 
-SOURCE=.\xgetwd.c
+SOURCE=".\xalloc-die.c"
 
-"$(INTDIR)\xgetwd.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\xalloc-die.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\xgetcwd.c
+
+"$(INTDIR)\xgetcwd.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\xmalloc.c

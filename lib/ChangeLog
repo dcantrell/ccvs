@@ -1,3 +1,10 @@
+2004-10-05  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Remove "savecwd.c", "savecwd.h", "xgetwd.c" from project.
+	Add "save-cwd.c", "save-cwd.h", "xgetcwd.c", "xgetcwd.h" to project.
+	* libcvs.dep: Regenerated for "libcvs.dsp" change.
+	* libcvs.mak: Regenerated for "libcvs.dsp" change.
+
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
 	* basename.c, dirname.c, dirname.h, stripslash.c: Updated from GNULIB.

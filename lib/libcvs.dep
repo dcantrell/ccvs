@@ -11,11 +11,13 @@
 
 .\basename.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	".\dirname.h"\
 	
 
 .\dirname.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	".\dirname.h"\
 	".\xalloc.h"\
 	
@@ -112,14 +114,14 @@
 	"..\windows-NT\config.h"\
 	".\gettext.h"\
 	".\regex.h"\
-	".\unlocked-io.h"\
 	
 
-.\savecwd.c : \
+".\save-cwd.c" : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	"..\windows-NT\unistd.h"\
-	".\error.h"\
-	".\savecwd.h"\
+	".\save-cwd.h"\
+	".\xgetcwd.h"\
 	
 
 .\sighandle.c : \
@@ -142,6 +144,7 @@
 
 .\stripslash.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdbool.h"\
 	".\dirname.h"\
 	
 
@@ -173,25 +176,23 @@
 	".\xsize.h"\
 	
 
-.\xgetwd.c : \
-	"..\windows-NT\config.h"\
-	"..\windows-NT\ndir.h"\
-	"..\windows-NT\pwd.h"\
-	"..\windows-NT\stdbool.h"\
-	"..\windows-NT\unistd.h"\
-	".\fnmatch.h"\
-	".\gettext.h"\
-	".\pathmax.h"\
-	".\system.h"\
-	".\timespec.h"\
-	".\unlocked-io.h"\
-	
-
-.\xmalloc.c : \
+".\xalloc-die.c" : \
 	"..\windows-NT\config.h"\
 	".\error.h"\
 	".\exitfail.h"\
 	".\gettext.h"\
+	".\xalloc.h"\
+	
+
+.\xgetcwd.c : \
+	"..\windows-NT\config.h"\
+	"..\windows-NT\unistd.h"\
+	".\xalloc.h"\
+	".\xgetcwd.h"\
+	
+
+.\xmalloc.c : \
+	"..\windows-NT\config.h"\
 	".\xalloc.h"\
 	
 
