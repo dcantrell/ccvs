@@ -630,9 +630,13 @@ rtag_fileproc (file, update_dir, repository, entries, srcfiles)
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag `%s' to revision `%s' in `%s'",
 	       symtag, rev, rcsfile->path);
-       free (version);
-       return (1);
+        if (branch_mode)
+	    free (rev);
+        free (version);
+        return (1);
     }
+    if (branch_mode)
+	free (rev);
     free (version);
     return (0);
 }
