@@ -2863,7 +2863,7 @@ static void
 serve_log (arg)
     char *arg;
 {
-    do_cvs_command ("cvslog", cvslog);
+    do_cvs_command ("log", cvslog);
 }
 
 static void
