@@ -1,3 +1,7 @@
+2004-09-02  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (PROXY_SUPPORT, TRUST_OS_FILE_CACHE): New defines.
+
 2004-06-24  Derek Price  <derek@ximbiot.com>
 
 	* config.h.in.in (restrict): Define empty for Windows.
