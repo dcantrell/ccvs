@@ -4592,8 +4592,6 @@ send_file_names (argc, argv, flags)
     unsigned int flags;
 {
     int i;
-    char *p;
-    char *q;
     int level;
     int max_level;
 
@@ -4606,25 +4604,9 @@ send_file_names (argc, argv, flags)
     max_level = 0;
     for (i = 0; i < argc; ++i)
     {
-	p = argv[i];
-	level = 0;
-	do
-	{
-	    q = strchr (p, '/');
-	    if (q != NULL)
-		++q;
-	    if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/'))
-	    {
-		--level;
-		if (-level > max_level)
-		    max_level = -level;
-	    }
-	    else if (p[0] == '.' && (p[1] == '\0' || p[1] == '/'))
-		;
-	    else
-		++level;
-	    p = q;
-	} while (p != NULL);
+	level = pathname_levels (argv[i]);
+	if (level > max_level)
+	    max_level = level;
     }
     if (max_level > 0)
     {

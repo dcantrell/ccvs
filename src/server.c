@@ -566,6 +566,28 @@ Sorry, you don't have read/write access to the history file %s", path);
     /* do not free env, as putenv has control of it */
 #endif
 }
+
+static int max_dotdot_limit = 0;
+
+/* Is this pathname OK to recurse into when we are running as the server?
+   If not, call error() with a fatal error.  */
+void
+server_pathname_check (path)
+    char *path;
+{
+    /* An absolute pathname is almost surely a path on the *client* machine,
+       and is unlikely to do us any good here.  It also is probably capable
+       of being a security hole in the anonymous readonly case.  */
+    if (isabsolute (path))
+	error (1, 0, "absolute pathname `%s' illegal for server", path);
+    if (pathname_levels (path) > max_dotdot_limit)
+    {
+	/* Similar to the isabsolute case in security implications.  */
+	error (0, 0, "protocol error: `%s' contains more leading ..", path);
+	error (1, 0, "than the %d which Max-dotdot specified",
+	       max_dotdot_limit);
+    }
+}
 
 /*
  * Add as many directories to the temp directory as the client tells us it
@@ -594,6 +616,7 @@ serve_max_dotdot (arg)
     if (server_temp_dir != orig_server_temp_dir)
 	free (server_temp_dir);
     server_temp_dir = p;
+    max_dotdot_limit = lim;
 }
 
 static char *dir_name;
