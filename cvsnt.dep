@@ -1,18 +1,11 @@
 # Microsoft Developer Studio Generated Dependency File, included by cvsnt.mak
 
 .\src\add.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -24,24 +17,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\admin.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -52,24 +37,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\annotate.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -80,33 +57,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\lib\argmatch.c : \
-	".\windows-NT\config.h"\
-	
-
-.\lib\asnprintf.c : \
-	".\lib\vasnprintf.h"\
-	".\windows-NT\config.h"\
 	
 
 .\src\buffer.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -117,24 +77,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\checkin.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -147,24 +99,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\checkout.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -175,24 +119,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\classify.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -203,60 +139,41 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\client.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
 	".\lib\md5.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
 	".\src\edit.h"\
 	".\src\hash.h"\
-	".\src\log-buffer.h"\
 	".\src\myndbm.h"\
 	".\src\rcs.h"\
 	".\src\root.h"\
-	".\src\rsh-client.h"\
 	".\src\server.h"\
-	".\src\socket-client.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\commit.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -270,24 +187,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\create_adm.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -298,25 +207,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\cvsrc.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -327,24 +228,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\diff.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -355,25 +248,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\edit.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -387,25 +272,17 @@
 	".\src\stack.h"\
 	".\src\update.h"\
 	".\src\watch.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\entries.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -416,24 +293,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\error.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -444,52 +313,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\src\exithandle.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
-	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
-	".\lib\regex.h"\
-	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
-	".\lib\wait.h"\
-	".\lib\xalloc.h"\
-	".\lib\xtime.h"\
-	".\src\client.h"\
-	".\src\cvs.h"\
-	".\src\hash.h"\
-	".\src\myndbm.h"\
-	".\src\rcs.h"\
-	".\src\root.h"\
-	".\src\server.h"\
-	".\src\stack.h"\
-	".\src\update.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\expand_path.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -500,25 +333,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\fileattr.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -530,24 +355,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 ".\windows-NT\filesubr.c" : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -558,24 +375,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\find_names.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -586,51 +395,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\lib\fncase.c : \
-	".\lib\fnmatch.h"\
-	".\lib\gettext.h"\
-	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\xtime.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\lib\fnmatch.c : \
-	".\lib\alloca.h"\
-	".\lib\fnmatch.h"\
-	".\lib\fnmatch_loop.c"\
-	".\windows-NT\config.h"\
-	
-
-.\lib\fseeko.c : \
-	".\windows-NT\config.h"\
-	
-
-.\lib\ftello.c : \
-	".\windows-NT\config.h"\
 	
 
 .\src\hash.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -641,25 +415,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\history.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -671,25 +437,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\ignore.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -700,25 +458,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\import.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -729,24 +479,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\lock.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -757,52 +499,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-".\src\log-buffer.c" : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
-	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
-	".\lib\regex.h"\
-	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
-	".\lib\wait.h"\
-	".\lib\xalloc.h"\
-	".\lib\xtime.h"\
-	".\src\client.h"\
-	".\src\cvs.h"\
-	".\src\hash.h"\
-	".\src\myndbm.h"\
-	".\src\rcs.h"\
-	".\src\root.h"\
-	".\src\server.h"\
-	".\src\stack.h"\
-	".\src\update.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\log.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -813,25 +519,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\login.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -842,25 +540,17 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\logmsg.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -871,52 +561,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\src\ls.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
-	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
-	".\lib\regex.h"\
-	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
-	".\lib\wait.h"\
-	".\lib\xalloc.h"\
-	".\lib\xtime.h"\
-	".\src\client.h"\
-	".\src\cvs.h"\
-	".\src\hash.h"\
-	".\src\myndbm.h"\
-	".\src\rcs.h"\
-	".\src\root.h"\
-	".\src\server.h"\
-	".\src\stack.h"\
-	".\src\update.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
 	
 
 .\src\main.c : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -927,29 +581,16 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	
-
-.\lib\md5.c : \
-	".\lib\md5.h"\
-	".\windows-NT\config.h"\
 	
 
 ".\windows-NT\mkdir.c" : \
-	".\lib\exit.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
-	".\lib\gettext.h"\
-	".\lib\pathmax.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
-	".\lib\unlocked-io.h"\
-	".\lib\vasnprintf.h"\
 	".\lib\wait.h"\
-	".\lib\xalloc.h"\
 	".\lib\xtime.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -960,8 +601,639 @@
 	".\src\server.h"\
 	".\src\stack.h"\
 	".\src\update.h"\
-	".\windows-NT\config.h"\
+	".\windows-nt\config.h"\
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
+	
+
+.\src\mkmodules.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\history.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\modules.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\myndbm.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\ndir.c" : \
+	".\windows-NT\ndir.h"\
+	
+
+.\src\no_diff.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\parseinfo.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\patch.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\pwd.c" : \
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\rcmd.c" : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\rcmd.h"\
+	
+
+.\src\rcs.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\hardlink.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\rcscmds.c : \
+	".\diff\diffrun.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\recurse.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\release.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\remove.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\repos.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\root.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\run.c" : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\scramble.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\server.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\src\watch.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\sockerror.c" : \
+	
+
+.\src\stack.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\startserver.c" : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	".\windows-NT\rcmd.h"\
+	
+
+.\src\status.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\subr.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\tag.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\update.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\savecwd.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\src\hardlink.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\src\watch.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\vers_ts.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\version.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\waitpid.c" : \
+	".\windows-nt\config.h"\
+	
+
+.\src\watch.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\edit.h"\
+	".\src\fileattr.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\src\watch.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+".\windows-NT\woe32.c" : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\wrapper.c : \
+	".\lib\getline.h"\
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	
+
+.\src\zlib.c : \
+	".\lib\getopt.h"\
+	".\lib\regex.h"\
+	".\lib\system.h"\
+	".\lib\wait.h"\
+	".\lib\xtime.h"\
+	".\src\client.h"\
+	".\src\cvs.h"\
+	".\src\hash.h"\
+	".\src\myndbm.h"\
+	".\src\rcs.h"\
+	".\src\root.h"\
+	".\src\server.h"\
+	".\src\stack.h"\
+	".\src\update.h"\
+	".\windows-nt\config.h"\
+	".\windows-NT\ndir.h"\
+	".\windows-NT\pwd.h"\
+	".\zlib\zconf.h"\
+	".\zlib\zlib.h"\
 	

@@ -1,3 +1,15 @@
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.dsw: Rename "zlib/zlib.*" to "zlib/libz.*".
+	Add project "lib/libcvs".
+	* cvsnt.dsp: Revised for "cvsnt.dsw" changes.  Move "lib/*.c" to
+	project "lib/libcvs".  Upgraded to Visual C++ 6.0 format.
+	* cvsnt.dep: Added for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerated for "cvsnt.dsp" change.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
+	* configure.in: Generate windows-NT/fix-msvc-mak.
+
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that man page is generated from cvs.texinfo now.
