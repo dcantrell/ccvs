@@ -12,7 +12,7 @@ Fri Sep 29 14:41:14 1995  <bmeier@rzu.unizh.ch>
 
 Fri Sep 29 14:32:36 1995  Norbert Kiesel <nk@col.sw-ley.de>
         
-        * repos.c (Short_Repository): 
+        * repos.c (Short_Repository): chop superfluous "/".
         
         * tag.c (pretag_proc): correct user-visible string.
         
