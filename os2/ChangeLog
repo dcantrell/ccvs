@@ -1,5 +1,7 @@
 Sat Dec 09 15:05:41 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
 
+		* makefile.in (libdir): Fixed.
+
 		* options.h: define CVS_AUTH_CLIENT_SUPPORT and
 		CVS_AUTH_SERVER_SUPPORT, instead of CVS_LOGIN.
 
