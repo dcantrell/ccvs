@@ -1,3 +1,13 @@
+Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* fileattr.c (fileattr_get): Change parameter types from char * to
+ 	const char *.
+	(fileattr_get0, fileattr_modify, fileattr_set): Likewise.
+	(fileattr_newfile): Likewise.
+	* fileattr.h (fileattr_get): Update declaration.
+	(fileattr_get0, fileattr_modify, fileattr_set): Likewise.
+	(fileattr_newfile): Likewise.
+
 Thu May 16 11:12:18 1996  Mark P. Immel <immel@radix.net>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 

@@ -137,8 +137,8 @@ fileattr_read ()
 
 char *
 fileattr_get (filename, attrname)
-    char *filename;
-    char *attrname;
+    const char *filename;
+    const char *attrname;
 {
     Node *node;
     size_t attrname_len = strlen (attrname);
@@ -180,8 +180,8 @@ fileattr_get (filename, attrname)
 
 char *
 fileattr_get0 (filename, attrname)
-    char *filename;
-    char *attrname;
+    const char *filename;
+    const char *attrname;
 {
     char *cp;
     char *cpend;
@@ -202,8 +202,8 @@ fileattr_get0 (filename, attrname)
 char *
 fileattr_modify (list, attrname, attrval, namevalsep, entsep)
     char *list;
-    char *attrname;
-    char *attrval;
+    const char *attrname;
+    const char *attrval;
     int namevalsep;
     int entsep;
 {
@@ -298,9 +298,9 @@ fileattr_modify (list, attrname, attrval, namevalsep, entsep)
 
 void
 fileattr_set (filename, attrname, attrval)
-    char *filename;
-    char *attrname;
-    char *attrval;
+    const char *filename;
+    const char *attrname;
+    const char *attrval;
 {
     Node *node;
     char *p;
@@ -357,7 +357,7 @@ fileattr_set (filename, attrname, attrval)
 
 void
 fileattr_newfile (filename)
-    char *filename;
+    const char *filename;
 {
     Node *node;
 
