@@ -1,3 +1,12 @@
+2004-05-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Changed for "libz.dsp", "zlib.dsp" changes.
+	* libz.dsp: Added for "../cvsnt.dsw" changes.
+	* libz.dep: Added for "libz.dsp" addition.
+	* libz.mak: Added for "libz.dsp" addition.
+	* zlib.dsp: Removed for "../cvsnt.dsw" changes.
+	(Patch from Conrad Pino <conrad@pino.com>.)
+
 2003-08-07  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in (pdf ps): New recursive targets to be ignored for
