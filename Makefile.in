@@ -57,6 +57,7 @@ AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
+AUTOM4TE = @AUTOM4TE@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
@@ -399,7 +400,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/contrib $(distdir)/emx $(distdir)/os2 $(distdir)/src $(distdir)/zlib
+	$(mkinstalldirs) $(distdir)/. $(distdir)/contrib $(distdir)/emx $(distdir)/os2 $(distdir)/src $(distdir)/src/tests $(distdir)/zlib
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
