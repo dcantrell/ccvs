@@ -1,3 +1,8 @@
+Mon Mar 11 13:12:35 1996  Samuel Tardieu  <sam@inf.enst.fr>
+
+	* BUGS: removed previous description from Greg Woods (3/6/96)
+	since the bug seems to be corrected
+
 Wed Mar  6 10:35:32 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* BUGS: describe a weird core-dump with 'cvs co -c'.  Now I can't
