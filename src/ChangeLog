@@ -1,3 +1,10 @@
+2000-03-02  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c: Use identical #if's in the command table and the code
+	for pserver and kserver to prevent "peculiar" configurations from
+	having really perverse behavior because the command table entries
+	are present but the related code isn't.
+
 2000-03-01  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (import): Don't allow importing the repository.
