@@ -1,5 +1,10 @@
 Changes since 1.12.1:
 
+* When running the `cvs history' command, clients will now send the
+  long-accepted `-e' option, for all records, rather than explicitly requesting
+  `P' record types, a request which servers prior to 1.11.7 will reject with a
+  fatal error message.
+
 * A problem with locating files requested by case insensitive clients which was
   accidentally introduced in 1.11.6 as part of a fix for a data loss problem
   involving `cvs add's from case insensitive clients has been fixed.  The
