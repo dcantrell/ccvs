@@ -1,3 +1,9 @@
+Thu Jul 13 11:22:21 1995  Jim Meyering  (meyering@comco.com)
+
+	* xgetwd.c: New file.
+	* Makefile.in (SOURCES): Add xgetwd.c
+	(OBJECTS): Add xgetwd.o.
+
 Wed Jul 12 09:18:49 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (OBJECTS): Remove fnmatch.o.  Now configure adds it

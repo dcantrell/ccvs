@@ -1,5 +1,11 @@
 Thu Jul 13 11:03:17 1995  Jim Meyering  (meyering@comco.com)
 
+	* cvs.h: Add prototype for xgetwd.
+	* recurse.c (save_cwd, restore_cwd): New functions to encapsulate
+	run-time solution to secure-SunOS vs. fchown problem.
+	(do_dir_proc, unroll_files_proc): Use new functions instead of
+	open-coded fchdir/chdir calls with cpp directives.
+
         * sanity.sh: Change out of TESTDIR before removing it.
 	Some versions of rm fail when asked to delete the current directory.
 
