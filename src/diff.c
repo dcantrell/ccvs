@@ -269,6 +269,13 @@ diff (int argc, char **argv)
     diff_date2 = NULL;
 
     optind = 0;
+    /* FIXME: This should really be allocating an argv to be passed to diff
+     * later rather than strcatting onto the opts variable.  We have some
+     * handling routines that can already handle most of the argc/argv
+     * maintenance for us and currently, if anyone were to attempt to pass a
+     * quoted string in here, it would be split on spaces and tabs on its way
+     * to diff.
+     */
     while ((c = getopt_long (argc, argv,
 	       "+abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:W:k:r:",
 			     longopts, &option_index)) != -1)
