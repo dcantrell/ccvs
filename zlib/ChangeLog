@@ -1,3 +1,7 @@
+2004-11-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (clean): Don't remove Windows build files.
+
 2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
 
 	* infback.c (out_desc): Security Bugfixes (CAN-2004-0797,
