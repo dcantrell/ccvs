@@ -1,3 +1,16 @@
+1998-07-01  Jim Meyering  <meyering@ascend.com>
+
+	* edit.c (unedit_fileproc): Handle the case in which base_get
+	returns a NULL baserev.  That happens when a file being `unedit'ed
+	exists in the CVS/Base directory, but isn't listed in the CVS/Baserev
+	file.  The one case I've seen had no Baserev file at all.  The symptom
+	(if you're lucky) is a segmentation fault upon unedit.  If you use
+	SunOS4.1.4 for which printf prints NULL pointers as `(null)', your
+	unedit command will complete normally, but it will have corrupted
+	your CVS/Entries file and a subsequent update may result in an
+	assertion failure, a core dump, and a stale lock in the repository.
+	* sanity.sh (unedit-without-baserev): New test for this.
+
 1998-07-01  Andy Mortimer of aeat.co.uk
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
