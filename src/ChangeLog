@@ -25,6 +25,8 @@
 
 	* checkout.c (findslash): Fix non-ANSI code.
 
+	* sanity.sh (modes3): Fix test names.
+
 2000-06-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Plug memory leaks.
