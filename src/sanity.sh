@@ -504,7 +504,7 @@ if test x"$*" = x; then
 	tests="${tests} rdiff death death2 branches"
 	tests="${tests} multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2"
-	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
+	tests="${tests} modules modules2 modules3 mflag editor errmsg1 errmsg2"
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
 	tests="${tests} mwrap info config"
@@ -5081,6 +5081,92 @@ done"
 	    rm -rf ${CVSROOT_DIRNAME}/a-dir
 	  done
 	  ;;
+
+	editor)
+	  # More tests of log messages, in this case the ability to
+	  # run an external editor.
+	  # TODO:
+	  #   * also test $EDITOR, $CVSEDITOR, &c.
+	  #   * test what happens if up-to-date check fails.
+
+	  # Our "editor" puts "x" at the start of each line, so we
+	  # can see the "CVS:" lines.
+	  cat >${TESTDIR}/editme <<EOF
+#!/bin/sh
+sleep 1
+sed <\$1 -e 's/^/x&/g' >${TESTDIR}/edit.new
+mv ${TESTDIR}/edit.new \$1
+exit 0
+EOF
+	  chmod +x ${TESTDIR}/editme
+
+	  mkdir 1; cd 1
+	  dotest editor-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest editor-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch file1
+	  dotest editor-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest editor-4 "${testcvs} -e ${TESTDIR}/editme -q ci" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  dotest editor-5 "${testcvs} -q tag -b br" "T file1"
+	  dotest editor-6 "${testcvs} -q update -r br" ''
+	  echo modify >>file1
+	  dotest editor-6 "${testcvs} -e ${TESTDIR}/editme -q ci" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest editor-7 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Committing in .
+xCVS:
+xCVS: Added Files:
+xCVS: 	file1
+xCVS: ----------------------------------------------------------------------
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+x
+xCVS: ----------------------------------------------------------------------
+xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
+xCVS:
+xCVS: Committing in .
+xCVS:
+xCVS: Modified Files:
+xCVS:  Tag: br
+xCVS: 	file1
+xCVS: ----------------------------------------------------------------------
+============================================================================="
+	  cd ../..
+	  rm -r 1
+	  rm ${TESTDIR}/editme
+	  ;;
+
 	errmsg1)
 	  mkdir ${CVSROOT_DIRNAME}/1dir
 	  mkdir 1
