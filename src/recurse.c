@@ -226,7 +226,11 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 		addfile (&files_by_dir, dir, comp);
 	    else if (isdir (dir))
 	    {
-		if ((which & W_LOCAL) && isdir (CVSADM))
+		if ((which & W_LOCAL) && isdir (CVSADM)
+#ifdef CLIENT_SUPPORT
+		    && !client_active
+#endif
+		    )
 		{
 		    /* otherwise, look for it in the repository. */
 		    char *tmp_update_dir;
@@ -257,6 +261,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 			addfile (&files_by_dir, dir, comp);
 
 		    free (tmp_update_dir);
+		    free (reposfile);
 		}
 		else
 		    addfile (&files_by_dir, dir, comp);
