@@ -1,3 +1,9 @@
+2004-09-03  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (skip): New function.
+	(sshstdio): Use new function.
+	(writeproxy): Skip test when rsync isn't found.
+
 2004-09-02  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (serve_directory): C89 compilers do not like mixed

@@ -902,6 +902,11 @@ pass ()
   echo "PASS: $1" >>${LOGFILE}
 }
 
+skip ()
+{
+  echo "SKIP: $1${2+ ($2)}" >>${LOGFILE}
+}
+
 fail ()
 {
   echo "FAIL: $1" | tee -a ${LOGFILE}
@@ -2176,9 +2181,9 @@ case "\$dir" in
     # UseNewInfoFmtStrings key in CVSROOT/config.  It's inefficient, but there
     # aren't many tests than need it and the alternative is an awful lot of
     # special casing.
-    rsync -rglop --delete --exclude '#cvs.*' \\
-          $CVSROOT_DIRNAME/ \\
-          $SECONDARY_CVSROOT_DIRNAME
+    $RSYNC -rglop --delete --exclude '#cvs.*' \\
+           $CVSROOT_DIRNAME/ \\
+           $SECONDARY_CVSROOT_DIRNAME
     ;;
 
   *)
@@ -2191,36 +2196,38 @@ case "\$dir" in
 	#
 	# For \`import', a recursive update is necessary since subdirs may have
 	# been added underneath the root dir we were passed. 
-        rsync -rglop \\
-	      $CVSROOT_DIRNAME/"\$dir" \\
-	      $SECONDARY_CVSROOT_DIRNAME/\`dirname -- "\$dir"\`
+        $RSYNC -rglop \\
+	       $CVSROOT_DIRNAME/"\$dir" \\
+	       $SECONDARY_CVSROOT_DIRNAME/\`dirname -- "\$dir"\`
         ;;
 
       tag)
 	# \`tag' may have changed CVSROOT/val-tags too.
-        rsync -glop \\
-              $CVSROOT_DIRNAME/CVSROOT/val-tags \\
-              $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+        $RSYNC -glop \\
+               $CVSROOT_DIRNAME/CVSROOT/val-tags \\
+               $SECONDARY_CVSROOT_DIRNAME/CVSROOT
 	# Otherwise it is identical to other write commands.
-        rsync -rglop --delete \\
-              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
-              $CVSROOT_DIRNAME/"\$dir"/ \\
-              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        $RSYNC -rglop --delete \\
+               --include Attic --include CVS \
+               --exclude '#cvs.*' --exclude '*/' \\
+               $CVSROOT_DIRNAME/"\$dir"/ \\
+               $SECONDARY_CVSROOT_DIRNAME/"\$dir"
         ;;
 
       *)
 	# By default, sync just what changed.
-        rsync -rglop --delete \\
-              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
-              $CVSROOT_DIRNAME/"\$dir"/ \\
-              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        $RSYNC -rglop --delete \\
+               --include Attic --include CVS \
+               --exclude '#cvs.*' --exclude '*/' \\
+               $CVSROOT_DIRNAME/"\$dir"/ \\
+               $SECONDARY_CVSROOT_DIRNAME/"\$dir"
         ;;
     esac # \$cmd
 
     # And keep the history file up to date for all commands.
-    rsync -glop \\
-          $CVSROOT_DIRNAME/CVSROOT/history \\
-          $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+    $RSYNC -glop \\
+           $CVSROOT_DIRNAME/CVSROOT/history \\
+           $SECONDARY_CVSROOT_DIRNAME/CVSROOT
     ;; # \$dir = *
 esac # \$dir
 
@@ -21652,7 +21659,7 @@ new revision: 1\.6; previous revision: 1\.5"
           fi
 
           if [ -n "$skipreason" ]; then
-            pass "sshstdio (test skipped ... $skipreason)"
+            skip "sshstdio" "$skipreason"
           else
             mkdir sshstdio; cd sshstdio
             dotest sshstdio-1 "${testcvs} -d ${SSHSTDIO_ROOT} -q co -l ." ''
@@ -29432,6 +29439,15 @@ ${SPROG} update: Updating first/subdir"
 	  #
 	  # These tests are only meaningful in client/server mode.
 	  if $remote; then :; else
+	    skip writeproxy 'remote-only test'
+	    continue
+	  fi
+
+	  tryrsync=`which rsync`
+	  if test -r "$tryrsync"; then
+	    RSYNC=$tryrsync
+	  else
+	    skip writeproxy "No rsync found in $PATH"
 	    continue
 	  fi
 
@@ -29448,7 +29464,7 @@ ${SPROG} update: Updating first/subdir"
 	  dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
 	  cd CVSROOT
 	  cat >>loginfo <<EOF
-ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 EOF
 	  cat >>config <<EOF
 PrimaryServer=$PRIMARY_CVSROOT
@@ -29457,7 +29473,7 @@ EOF
 "$testcvs -Q ci -mconfigure-writeproxy"
 
 	  # And now the secondary.
-	  rsync -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 
 	  CVS_SERVER_save=$CVS_SERVER
 	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
@@ -29526,7 +29542,7 @@ U CVSROOT/verifymsg"
 	  # Confirm data present
 	  cd CVSROOT
 	  dotest writeproxy-2 "grep rsync loginfo" \
-"ALL rsync -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
+"ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME"
 	  dotest writeproxy-3 "grep PrimaryServer config" \
 "${DOTSTAR}
 PrimaryServer=$PRIMARY_CVSROOT"
