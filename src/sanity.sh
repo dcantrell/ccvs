@@ -451,7 +451,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos rcs"
 else
 	tests="$*"
 fi
@@ -4683,6 +4683,11 @@ U file1'
 
 	log)
 	  # Test selecting revisions with cvs log.
+	  # See also log2 tests for more tests.
+	  # See also rcs tests, for -d option to log.
+	  # See also branches-14.3 for logging with a branch off of a branch.
+	  # See also multibranch-14 for logging with several branches off the
+	  #   same branchpoint.
 
 	  # Check in a file with a few revisions and branches.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
@@ -4998,6 +5003,181 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 "test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
 
 	  fi # end of tests to be skipped for remote
+	  ;;
+
+	rcs)
+	  # Test ability to import an RCS file.  Note that this format
+	  # is fixed--files written by RCS5, and other software which
+	  # implements this format, will be out there "forever" and
+	  # CVS must always be able to import such files.
+
+	  # TODO: would be nice to have a corresponding test for exporting
+	  # RCS files.  Rather than try to write a rigorous check for whether
+	  # the file CVS exports is legal, we could just write a simpler test
+	  # for what CVS actually exports, and revise the check as needed.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+
+	  # Currently the way to import an RCS file is to copy it
+	  # directly into the repository.
+	  # This file was written by RCS 5.7, and then the dates were
+	  # hacked so that we test year 2000 stuff.  Note also that
+	  # "author" names are just strings, as far as importing
+	  # RCS files is concerned--they need not correspond to user
+	  # IDs on any particular system.
+	  cat <<EOF >${CVSROOT_DIRNAME}/first-dir/file1,v
+head	1.3;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.3
+date	2000.11.24.15.58.37;	author kingdon;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	96.11.24.15.57.41;	author kingdon;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	96.11.24.15.56.05;	author kingdon;	state Exp;
+branches;
+next	;
+
+
+desc
+@file1 is for testing CVS
+@
+
+
+1.3
+log
+@delete second line; modify twelfth line
+@
+text
+@This is the first line
+This is the third line
+This is the fourth line
+This is the fifth line
+This is the sixth line
+This is the seventh line
+This is the eighth line
+This is the ninth line
+This is the tenth line
+This is the eleventh line
+This is the twelfth line (and what a line it is)
+This is the thirteenth line
+@
+
+
+1.2
+log
+@add more lines
+@
+text
+@a1 1
+This is the second line
+d11 1
+a11 1
+This is the twelfth line
+@
+
+
+1.1
+log
+@add file1
+@
+text
+@d2 12
+@
+EOF
+	  dotest rcs-1 "${testcvs} -q co first-dir" 'U first-dir/file1'
+	  cd first-dir
+	  dotest rcs-2 "${testcvs} -q log" "
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+file1 is for testing CVS
+----------------------------
+revision 1\.3
+date: 2000/11/24 15:58:37;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+delete second line; modify twelfth line
+----------------------------
+revision 1\.2
+date: 1996/11/24 15:57:41;  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+add more lines
+----------------------------
+revision 1\.1
+date: 1996/11/24 15:56:05;  author: kingdon;  state: Exp;
+add file1
+============================================================================="
+
+	  # Note that the dates here are chosen so that (a) we test
+	  # at least one date after 2000, (b) we will notice if the
+	  # month and day are getting mixed up with each other.
+	  # TODO: also test that year isn't getting mixed up with month
+	  # or day, for example 01-02-03.
+
+	  # ISO8601 format.  There are many, many, other variations
+	  # specified by ISO8601 which we should be testing too.
+	  dotest rcs-3 "${testcvs} -q log -d 1996-12-11<" "
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 1
+description:
+file1 is for testing CVS
+----------------------------
+revision 1\.3
+date: 2000/11/24 15:58:37;  author: kingdon;  state: Exp;  lines: ${PLUS}1 -2
+delete second line; modify twelfth line
+============================================================================="
+
+	  # RFC822 format (as amended by RFC1123).
+	  if ${testcvs} -q log -d '<3 Apr 2000 00:00' >${TESTDIR}/rcs4.tmp
+	  then
+	    dotest rcs-4 "cat ${TESTDIR}/rcs4.tmp" "
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.3
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 2
+description:
+file1 is for testing CVS
+----------------------------
+revision 1\.2
+date: 1996/11/24 15:57:41;  author: kingdon;  state: Exp;  lines: ${PLUS}12 -0
+add more lines
+----------------------------
+revision 1\.1
+date: 1996/11/24 15:56:05;  author: kingdon;  state: Exp;
+add file1
+============================================================================="
+	  else
+	    fail rcs-4
+	  fi
+
+	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/rcs4.tmp
 	  ;;
 
 	*)
