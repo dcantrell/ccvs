@@ -10366,10 +10366,8 @@ U temp2\.txt
 ""
 	  cd ../join7
 	  if $remote; then
-	    # FIXCVS: When CVS sends "Unchanged temp.txt" from the
-	    # client to the server, the server should still checkout
-	    # the file from the repository to do the merge.
-            # merge_file
+            # FIXCVS: This test should NOT return a
+	    # "temp.txt: No such file or directory" error message.
 	    skip join7-5 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
 "RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
 retrieving revision 1\.1\.1\.1
@@ -10377,7 +10375,8 @@ retrieving revision 1\.1\.1\.2
 Merging differences between 1\.1\.1\.1 and 1\.1\.1\.2 into temp.txt
 rcsmerge: warning: conflicts during merge"
 	  else
-	    dotest join7-6 "${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
+	    dotest join7-5 \
+"${testcvs} -n update -jvers-1 -jvers-2 temp.txt" \
 "RCS file: $CVSROOT_DIRNAME/join7/temp.txt,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
