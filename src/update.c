@@ -1763,14 +1763,6 @@ join_file (finfo, vers)
 	}
 
 	free (tst);
-
-	/* these two cases are noops */
-	if (strcmp (rev1, rev2) == 0)
-	{
-	    free (rev1);
-	    free (rev2);
-	    return;
-	}
     }
     else
     {
@@ -1792,6 +1784,14 @@ join_file (finfo, vers)
 	  }
 	  return;
 	}
+    }
+
+    /* If the two revisions are the same, the merge is a noop.  */
+    if (strcmp (rev1, rev2) == 0)
+    {
+	free (rev1);
+	free (rev2);
+	return;
     }
 
     /* do the join */
