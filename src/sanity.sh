@@ -6752,16 +6752,30 @@ done"
 deleting revision 1\.2
 rcs: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v: can't remove branch point 1\.1
 ${PROG} [a-z]*: rcs failed for .brmod-trmod."
-	  : dotest binfiles2-o2 "${testcvs} -q admin -o 1.1.2.1: brmod-trmod" \
+	  dotest binfiles2-o2 "${testcvs} -q admin -o 1.1.2.1: brmod-trmod" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
-deleting revision 1\.1\.\2\.1
+deleting revision 1\.1\.2\.1
 done"
-	  : dotest binfiles2-o3 "${testcvs} -q admin -o :1.2 brmod-trmod" \
+	  dotest binfiles2-o3 "${testcvs} -q admin -o :1.2 brmod-trmod" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
 deleting revision 1\.2
 deleting revision 1\.1
 done"
-	  : dotest binfiles2-o4 "${testcvs} -q log -N brmod-trmod" fixme
+	  dotest binfiles2-o4 "${testcvs} -q log -N brmod-trmod" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/brmod-trmod,v
+Working file: brmod-trmod
+head: 1\.3
+branch:
+locks: strict
+access list:
+keyword substitution: b
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+checkin
+============================================================================="
 	  cd ..
 	  cd ..
 

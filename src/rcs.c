@@ -4436,8 +4436,7 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    *bp = '.';
 	}
     }
-
-    if (strcmp (rev1, branchpoint) != 0)
+    else if (strcmp (rev1, branchpoint) != 0)
     {
 	/* Walk deltas from BRANCHPOINT on, looking for REV1. */
 	nodep = findnode (rcs->versions, branchpoint);
@@ -4453,6 +4452,18 @@ RCS_delete_revs (rcs, tag1, tag2)
 	    goto delrev_done;
 	}
 	before = xstrdup (revp->version);
+    }
+    else if (numdots (branchpoint) > 1)
+    {
+	/* Example: rev1 is "1.3.2.1", branchpoint is "1.3.2.1".
+	   Set before to "1.3".  */
+	char *bp;
+	bp = strrchr (branchpoint, '.');
+	while (*--bp != '.')
+	    ;
+	*bp = '\0';
+	before = xstrdup (branchpoint);
+	*bp = '.';
     }
 
     /* If any revision between REV1 and REV2 is locked or is a branch point,
@@ -4491,7 +4502,7 @@ RCS_delete_revs (rcs, tag1, tag2)
     }
 
     if (rev2 == NULL)
-	rev2 = revp->version;
+	;
     else if (found)
 	after = xstrdup (next);
     else
@@ -4629,8 +4640,13 @@ RCS_delete_revs (rcs, tag1, tag2)
 		   strcmp (nodep->key, rev1) != 0)
 		nodep = nodep->next;
 	    assert (nodep != revp->branches->list);
-	    free (nodep->key);
-	    nodep->key = xstrdup (after);
+	    if (after == NULL)
+		delnode (nodep);
+	    else
+	    {
+		free (nodep->key);
+		nodep->key = xstrdup (after);
+	    }
 	}
 	else
 	{
