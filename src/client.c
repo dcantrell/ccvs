@@ -791,10 +791,10 @@ socket_buffer_shutdown (buf)
     {
 	int err = 0;
 	if (! buf_empty_p (buf)
-	    || (err = read (n->socket, &tmp, 1)) > 0)
+	    || (err = recv (n->socket, &tmp, 1, 0)) > 0)
 	    error (0, 0, "dying gasps from %s unexpected", current_parsed_root->hostname);
 	else if (err == -1)
-	    error (0, errno, "reading from %s", current_parsed_root->hostname);
+	    error (0, 0, "reading from %s: %s", current_parsed_root->hostname, SOCK_STRERROR (SOCK_ERRNO));
 
 	/* shutdown() socket */
 # ifdef SHUTDOWN_SERVER
@@ -825,6 +825,8 @@ socket_buffer_shutdown (buf)
 
 	buf->output = NULL;
     }
+
+    return 0;
 }
 
 #endif /* NO_SOCKET_TO_FD */

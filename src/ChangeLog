@@ -1,5 +1,11 @@
 2001-08-09  Derek Price  <dprice@collab.net>
 
+	* client.c (socket_buffer_shutdown): Use recv instead of read and
+	return 0 on success.
+	(Patch from "Manfred Klug" <manklu@web.de>.)
+
+2001-08-09  Derek Price  <dprice@collab.net>
+
 	* buffer.c (stdio_buffer_shutdown): Assume the buffer is not a socket
 	when NO_SOCKET_TO_FD is defined.
 	* client.c (make_bufs_from_fds): Add is_sock argument and remove fstat
