@@ -95,7 +95,10 @@ close_module (DBM *db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC callback_proc, char *where, int shorten, int local_specified, int run_module_prog, int build_dirs, char *extra_arg)
+do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
+           CALLBACKPROC callback_proc, char *where, int shorten,
+           int local_specified, int run_module_prog, int build_dirs,
+           char *extra_arg)
 {
     char *checkout_prog = NULL;
     char *export_prog = NULL;
