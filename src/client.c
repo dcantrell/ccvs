@@ -19,6 +19,7 @@
 #include "edit.h"
 #include "buffer.h"
 #include "log-buffer.h"
+#include "savecwd.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -4280,49 +4281,104 @@ send_file_names( int argc, char **argv, unsigned int flags )
     for (i = 0; i < argc; ++i)
     {
 	char buf[1];
-	char *p = argv[i];
-	char *line = NULL;
+	char *p;
+#ifdef FILENAMES_CASE_INSENSITIVE
+	char *line = xmalloc (1);
+	*line = '\0';
+#endif /* FILENAMES_CASE_INSENSITIVE */
 
 	if (arg_should_not_be_sent_to_server (argv[i]))
 	    continue;
 
 #ifdef FILENAMES_CASE_INSENSITIVE
-	/* We want to send the file name as it appears
-	   in CVS/Entries.  We put this inside an ifdef
+	/* We want to send the path as it appears in the
+	   CVS/Entries files.  We put this inside an ifdef
 	   to avoid doing all these system calls in
 	   cases where fncmp is just strcmp anyway.  */
-	/* For now just do this for files in the local
-	   directory.  Would be nice to handle the
-	   non-local case too, though.  */
-	/* The isdir check could more gracefully be replaced
+	/* The isdir (CVSADM) check could more gracefully be replaced
 	   with a way of having Entries_Open report back the
 	   error to us and letting us ignore existence_error.
 	   Or some such.  */
-	if (p == last_component (p) && isdir (CVSADM))
 	{
-	    List *entries;
-	    Node *node;
+	    List *stack;
+	    size_t line_len = 0;
+	    char *q, *r;
+	    struct saved_cwd sdir;
 
-	    /* If we were doing non-local directory,
-	       we would save_cwd, CVS_CHDIR
-	       like in update.c:isemptydir.  */
-	    /* Note that if we are adding a directory,
-	       the following will read the entry
-	       that we just wrote there, that is, we
-	       will get the case specified on the
-	       command line, not the case of the
-	       directory in the filesystem.  This
-	       is correct behavior.  */
-	    entries = Entries_Open (0, NULL);
-	    node = findnode_fn (entries, p);
-	    if (node != NULL)
+	    /* Split the argument onto the stack.  */
+	    stack = getlist();
+	    r = xstrdup (argv[i]);
+	    while ((q = last_component (r)) != r)
 	    {
-		line = xstrdup (node->key);
-		p = line;
-		delnode (node);
+		push (stack, xstrdup (q));
+		*--q = '\0';
 	    }
-	    Entries_Close (entries);
+	    push (stack, r);
+
+	    /* Normalize the path into outstr. */
+	    save_cwd (&sdir);
+	    while (q = pop (stack))
+	    {
+		Node *node = NULL;
+	        if (isdir (CVSADM))
+		{
+		    List *entries;
+
+		    /* Note that if we are adding a directory,
+		       the following will read the entry
+		       that we just wrote there, that is, we
+		       will get the case specified on the
+		       command line, not the case of the
+		       directory in the filesystem.  This
+		       is correct behavior.  */
+		    entries = Entries_Open (0, NULL);
+		    node = findnode_fn (entries, q);
+		    if (node != NULL)
+		    {
+			/* Add the slash unless this is our first element. */
+			if (line_len)
+			    xrealloc_and_strcat (&line, &line_len, "/");
+			xrealloc_and_strcat (&line, &line_len, node->key);
+			delnode (node);
+		    }
+		    Entries_Close (entries);
+		}
+
+		/* If node is still NULL then we either didn't find CVSADM or
+		 * we didn't find an entry there.
+		 */
+		if (node == NULL)
+		{
+		    /* Add the slash unless this is our first element. */
+		    if (line_len)
+			xrealloc_and_strcat (&line, &line_len, "/");
+		    xrealloc_and_strcat (&line, &line_len, q);
+		    break;
+		}
+
+		/* And descend the tree. */
+		if (isdir (q))
+		    CVS_CHDIR (q);
+		free (q);
+	    }
+	    restore_cwd (&sdir, NULL);
+	    free_cwd (&sdir);
+
+	    /* Now put everything we didn't find entries for back on. */
+	    while (q = pop (stack))
+	    {
+		if (line_len)
+		    xrealloc_and_strcat (&line, &line_len, "/");
+		xrealloc_and_strcat (&line, &line_len, q);
+		free (q);
+	    }
+
+	    p = line;
+
+	    dellist (&stack);
 	}
+#else /* !FILENAMES_CASE_INSENSITIVE */
+	p = argv[i];
 #endif /* FILENAMES_CASE_INSENSITIVE */
 
 	send_to_server ("Argument ", 0);
@@ -4346,8 +4402,9 @@ send_file_names( int argc, char **argv, unsigned int flags )
 	    ++p;
 	}
 	send_to_server ("\012", 1);
-	if (line != NULL)
-	    free (line);
+#ifdef FILENAMES_CASE_INSENSITIVE
+	free (line);
+#endif /* FILENAMES_CASE_INSENSITIVE */
     }
 
     if (flags & SEND_EXPAND_WILD)

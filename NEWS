@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Clients on case insensitive systems now preserve the case of directories in
+  CVS/Entries, in addition to files, for use in communications with the CVS
+  server.
+
 * Some previously untested behavior is now being tested.
 
 * Misc status message fixes for consistency.

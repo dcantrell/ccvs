@@ -65,6 +65,7 @@ char *strerror (int);
 #include "system.h"
 
 #include "hash.h"
+#include "stack.h"
 
 #include "root.h"
 
