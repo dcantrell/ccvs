@@ -1,3 +1,8 @@
+1999-08-16  Larry Jones  <larry.jones@sdrc.com>
+
+	client.c: Eliminate redundant #if.  (Patch submitted by Assar
+	Westerlund <assar@sics.se>.)
+  
 1999-07-30  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_checkin): Terminate cleanly if RCS_addbranch fails
