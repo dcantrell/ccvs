@@ -655,6 +655,7 @@ dirswitch (dir, repos)
     int status;
     FILE *f;
     char *b;
+    size_t dir_len;
 
     server_write_entries ();
 
@@ -663,20 +664,22 @@ dirswitch (dir, repos)
     if (dir_name != NULL)
 	free (dir_name);
 
+    dir_len = strlen (dir);
+
     /* Check for a trailing '/'.  This is not ISDIRSEP because \ in the
        protocol is an ordinary character, not a directory separator (of
        course, it is perhaps unwise to use it in directory names, but that
        is another issue).  */
-    if (strlen (dir) > 0
-	&& dir[strlen (dir) - 1] == '/')
+    if (dir_len > 0
+	&& dir[dir_len - 1] == '/')
     {
-	if (alloc_pending (80 + strlen (dir)))
+	if (alloc_pending (80 + dir_len))
 	    sprintf (pending_error_text,
-		     "E protocol error: illegal directory syntax in %s", dir);
+		     "E protocol error: invalid directory syntax in %s", dir);
 	return;
     }
 
-    dir_name = malloc (strlen (server_temp_dir) + strlen (dir) + 40);
+    dir_name = malloc (strlen (server_temp_dir) + dir_len + 40);
     if (dir_name == NULL)
     {
 	pending_error = ENOMEM;
