@@ -1,5 +1,9 @@
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Retroactively add CVE issue name for the piped etc issue.
+
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Retroactively add CVE issue name for the trojan server issue.
 
 2004-04-15  Derek Price  <derek@ximbiot.com>
