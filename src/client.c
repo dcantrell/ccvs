@@ -580,13 +580,45 @@ handle_valid_requests (char *args, size_t len)
 
 
 
+/* Has the server told us its name since the last redirect?
+ */
+static bool referred_since_last_redirect = false;
+static bool free_client_referrer = false;
+
+
+
+static void
+handle_referrer (char *args, size_t len)
+{
+    TRACE (TRACE_FUNCTION, "handle_referrer (%s)", args);
+    client_referrer = parse_cvsroot (args);
+    referred_since_last_redirect = true;
+    free_client_referrer = true;
+}
+
+
+
 /* Redirect our connection to a different server and start over.
  *
  * GLOBALS
  *   current_parsed_root	The CVSROOT being accessed.
+ *   client_referrer		Used to track the server which referred us to a
+ *				new server.  Can be supplied by the referring
+ *				server.
+ *   free_client_referrer	Used to track whether the client_referrer needs
+ *				to be freed before changing it.
+ *   referred_since_last_redirect	
+ *				Tracks whether the currect server told us how
+ *				to refer to it.
  *
  * OUTPUTS
  *   current_parsed_root	Updated to point to the new CVSROOT.
+ *   referred_since_last_redirect
+ *				Always cleared.
+ *   client_referrer		Set automatically to current_parsed_root if
+ *				the current server did not give us a name to
+ *				refer to it by.
+ *   free_client_referrer	Reset when necessary.
  */
 static void
 handle_redirect (char *args, size_t len)
@@ -603,11 +635,31 @@ handle_redirect (char *args, size_t len)
 	push_string (redirects, args);
     }
 
-    client_referrer = current_parsed_root;
+    if (referred_since_last_redirect)
+	referred_since_last_redirect = false;
+    else
+    {
+	if (free_client_referrer) free (client_referrer);
+	client_referrer = current_parsed_root;
+	free_client_referrer = false;
+    }
+
     current_parsed_root = parse_cvsroot (args);
-    /* We deliberately do not set ORIGINAL_ROOT here.  ORIGINAL_ROOT is used
-     * by the client to determine the current root being processed for the
-     * purpose of looking it up in lists and such, even after a redirect.
+
+    /* We deliberately do not set ORIGINAL_PARSED_ROOT here.
+     * ORIGINAL_PARSED_ROOT is used by the client to determine the current root
+     * being processed for the purpose of looking it up in lists and such, even
+     * after a redirect.
+     *
+     * FIXME
+     *   CURRENT_PARSED_ROOT should not be reset by this function.  Redirects
+     *   should be "added" to it.  The REDIRECTS list should also be replaced
+     *   by this new CURRENT_PARSED_ROOT element.  This way, if, for instance,
+     *   a multi-root workspace had two secondaries pointing to the same
+     *   primary, then the client would not report a looping error.
+     *
+     *   There is also a potential memory leak above and storing new roots as
+     *   part of the original could help avoid it fairly elegantly.
      */
     if (!current_parsed_root)
 	error (1, 0, "Server requested redirect to invalid root: `%s'",
@@ -2917,6 +2969,7 @@ struct response responses[] =
     RSP_LINE("error", handle_error, response_type_error, rs_essential),
     RSP_LINE("Valid-requests", handle_valid_requests, response_type_normal,
        rs_essential),
+    RSP_LINE("Referrer", handle_referrer, response_type_normal, rs_optional),
     RSP_LINE("Redirect", handle_redirect, response_type_redirect, rs_optional),
     RSP_LINE("Checked-in", handle_checked_in, response_type_normal,
        rs_essential),
