@@ -2615,13 +2615,13 @@ static int module_argc;
 static char **module_argv;
 
 void
-client_expand_modules ( int argc, char **argv, int local)
+client_expand_modules (int argc, char **argv, int local)
 {
     int errs;
     int i;
 
     module_argc = argc;
-    module_argv = xmalloc ((argc + 1) * sizeof (module_argv[0]));
+    module_argv = xnmalloc (argc + 1, sizeof (module_argv[0]));
     for (i = 0; i < argc; ++i)
 	module_argv[i] = xstrdup (argv[i]);
     module_argv[argc] = NULL;
@@ -2633,12 +2633,15 @@ client_expand_modules ( int argc, char **argv, int local)
     send_to_server ("expand-modules\012", 0);
 
     errs = get_server_responses ();
+
     if (last_repos != NULL)
         free (last_repos);
     last_repos = NULL;
+
     if (last_update_dir != NULL)
         free (last_update_dir);
     last_update_dir = NULL;
+
     if (errs)
 	error (errs, 0, "cannot expand modules");
 }

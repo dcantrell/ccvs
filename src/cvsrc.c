@@ -114,7 +114,7 @@ read_cvsrc (int *argc, char ***argv, const char *cmdname)
 
     new_argc = 1;
     max_new_argv = (*argc) + GROW;
-    new_argv = (char **) xmalloc (max_new_argv * sizeof (char*));
+    new_argv = xnmalloc (max_new_argv, sizeof (char *));
     new_argv[0] = xstrdup ((*argv)[0]);
 
     if (found)
@@ -129,7 +129,7 @@ read_cvsrc (int *argc, char ***argv, const char *cmdname)
 	    if (new_argc >= max_new_argv)
 	    {
 		max_new_argv += GROW;
-		new_argv = (char **) xrealloc (new_argv, max_new_argv * sizeof (char*));
+		new_argv = xnrealloc (new_argv, max_new_argv, sizeof (char *));
 	    }
 	}
     }
@@ -142,12 +142,10 @@ read_cvsrc (int *argc, char ***argv, const char *cmdname)
     if (new_argc + *argc > max_new_argv)
     {
 	max_new_argv = new_argc + *argc;
-	new_argv = (char **) xrealloc (new_argv, max_new_argv * sizeof (char*));
+	new_argv = xnrealloc (new_argv, max_new_argv, sizeof (char *));
     }
-    for (i=1; i < *argc; i++)
-    {
+    for (i = 1; i < *argc; i++)
 	new_argv [new_argc++] = xstrdup ((*argv)[i]);
-    }
 
     if (old_argv != NULL)
     {

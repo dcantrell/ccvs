@@ -1,3 +1,18 @@
+2005-02-28  Mark D. Baushke  <mdb@cvshome.org>
+
+	* admin.c (arg_add): Use xnmalloc and xnrealloc.
+	(admin): Use xnmalloc. Minor reformatting.
+	Xasprintf instead of xmalloc/strcpy+strcat.
+	* client.c (client_expand_modules): Use xnmalloc.
+	Minor reformatting.
+	* cvsrc.c (read_cvsrc): Use xnmalloc and xnrealloc.
+	Minor reformatting.
+	* history.c (read_hrecs): Use xnrealloc. Minor reformatting.
+	* ignore.c (ign_add): Use xnrealloc. Minor reformatting.
+	* rcscmds.c (call_diff_add_arg): Use xnrealloc.
+	* wrapper.c (wrap_add_entry): Use xnrealloc. Gratuitous
+	reformatting.
+
 2005-02-28  Derek Price  <derek@ximbiot.com>
 
 	* edit.c (notify_proc), logmsg.c (logfile_write): Minor reformatting.

@@ -191,8 +191,7 @@ ign_add (char *ign, int hold)
 	if (ign_count >= ign_size)
 	{
 	    ign_size += IGN_GROW;
-	    ign_list = (char **) xrealloc ((char *) ign_list,
-					   (ign_size + 1) * sizeof (char *));
+	    ign_list = xnrealloc (ign_list, ign_size + 1, sizeof (char *));
 	}
 
 	/*
@@ -212,7 +211,7 @@ ign_add (char *ign, int hold)
 		    free (ign_list[i]);
 		ign_count = 1;
 		/* Always ignore the "CVS" directory.  */
-		ign_list[0] = xstrdup("CVS");
+		ign_list[0] = xstrdup ("CVS");
 		ign_list[1] = NULL;
 
 		/* if we are doing a '!', continue; otherwise add the '*' */
