@@ -1,3 +1,8 @@
+2004-11-30  Mark D. Baushke  <mdb@cvshome.org>
+
+	* HACKING (Coding standards): Add the primary URL for the GNU
+	coding standards.
+
 2004-11-30  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add "src/subr.h" to project.

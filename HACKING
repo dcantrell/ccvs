@@ -181,7 +181,9 @@ argument.
 Generally speaking the GNU coding standards are mostly used by CVS
 (but see the exceptions mentioned above, such as indentation style,
 and perhaps an exception or two we haven't mentioned).  This is the
-file standards.text at the GNU FTP sites.
+file standards.text at the GNU FTP sites. The primary URL for this
+information is http://www.gnu.org/prep/standards/ which contains links
+to many different formats of the standards.
 
 * Regenerating Build Files (UNIX)
 
