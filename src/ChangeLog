@@ -1,5 +1,8 @@
 Thu Oct 17 15:21:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	Reinstate change from 30 Sep 96:
+	* patch.c (patch): CLIENT_SUPPORT: send '-f' if NOT force_tag_match
+
 	* client.c (process_prune_candidates): Do not ignore errors from
 	unlink_file_dir.
 
