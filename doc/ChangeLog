@@ -1,5 +1,7 @@
 Tue Jan  9 16:03:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Getting Notified): Document users file.
+
 	* cvs.texinfo (cvsignore): Add *.obj to list of ignored files.
 
 Wed Jan  3 17:01:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
