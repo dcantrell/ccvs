@@ -715,7 +715,8 @@ RCS file: ", 0);
     if (empty_file == DIFF_REMOVED
 	|| (empty_file == DIFF_ADDED && use_rev2 != NULL))
     {
-	(void) CVS_UNLINK (tmp);
+	if (CVS_UNLINK (tmp) < 0)
+	    error (0, errno, "cannot remove %s", tmp);
 	free (tmp);
     }
 

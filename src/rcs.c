@@ -4246,7 +4246,8 @@ RCS_cmp_file (rcs, rev, options, filename)
 	    return 1;
 
 	retcode = xcmp (tmp, filename);
-	CVS_UNLINK (tmp);
+	if (CVS_UNLINK (tmp) < 0)
+	    error (0, errno, "cannot remove %s", tmp);
 	return retcode;
     }
     else
