@@ -6685,7 +6685,41 @@ File: nibfile          	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		(none)
    Sticky Options:	-kb"
-	  # Eventually we should test that -A removes the -kb here...
+
+	  # Now test that -A can clear the sticky option.
+	  if test "$remote" = no; then
+	    dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
+"[UP] nibfile"
+	  else
+	    dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
+""
+	    # Oops.  Clear the sticky option by brute force.
+	    rm nibfile
+	    dotest binfiles-sticky5r "${testcvs} -q update -A nibfile" \
+"[UP] nibfile"
+	  fi
+	  dotest binfiles-sticky6 "${testcvs} -q status nibfile" \
+"===================================================================
+File: nibfile          	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/nibfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)"
+	  dotest binfiles-15 "${testcvs} -q admin -kb nibfile" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/nibfile,v
+done"
+	  dotest binfiles-16 "${testcvs} -q update nibfile" "[UP] nibfile"
+	  dotest binfiles-17 "${testcvs} -q status nibfile" \
+"===================================================================
+File: nibfile          	Status: Up-to-date
+
+   Working revision:	1\.1.*
+   Repository revision:	1\.1	${TESTDIR}/cvsroot/first-dir/nibfile,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	-kb"
 
 	  dotest binfiles-o1 "${testcvs} admin -o1.3:: binfile" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/binfile,v

@@ -21,7 +21,11 @@ Classify_File (finfo, tag, date, options, force_tag_match, aflag, versp,
     struct file_info *finfo;
     char *tag;
     char *date;
+
+    /* Keyword expansion options.  Can be either NULL or "" to
+       indicate none are specified here.  */
     char *options;
+
     int force_tag_match;
     int aflag;
     Vers_TS **versp;

@@ -18,6 +18,10 @@ static void time_stamp_server PROTO((char *, Vers_TS *, Entnode *));
 Vers_TS *
 Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     struct file_info *finfo;
+
+    /* Keyword expansion options, I think generally from the command
+       line.  Can be either NULL or "" to indicate none are specified
+       here.  */
     char *options;
     char *tag;
     char *date;
@@ -102,9 +106,9 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
      * -k options specified on the command line override (and overwrite)
      * options stored in the entries file
      */
-    if (options)
+    if (options && *options != '\0')
 	vers_ts->options = xstrdup (options);
-    else if (!vers_ts->options)
+    else if (!vers_ts->options || *vers_ts->options == '\0')
     {
 	if (finfo->rcs != NULL)
 	{
