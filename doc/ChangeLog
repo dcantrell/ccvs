@@ -1,3 +1,9 @@
+Tue Jan 30 17:52:06 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* cvs.texinfo: Tweak @top node, to make file compatible with both
+	makeinfo and texinfo-format-buffer.  Perhaps we should fix the
+	formatters to agree on what constitutes valid texinfo.
+
 Mon Jan 29 16:38:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requirements): New node, to talk about required
