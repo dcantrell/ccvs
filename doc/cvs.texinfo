@@ -6187,8 +6187,13 @@ If @var{files} is omitted, it defaults to the current directory.
 
 @deffn Command {cvs watch off} [@code{-lR}] files @dots{}
 
-Do not provide notification about work on @var{files}.  CVS will create
-working copies of @var{files} read-write.
+Do not create @var{files} read-only on checkout; thus,
+developers will not be reminded to use @code{cvs edit}
+and @code{cvs unedit}.  CVS will check out @var{files}
+read-write as usual, unless other permissions override
+due to the @code{PreservePermissions} option being
+enabled in the @file{config} administrative file
+(@pxref{Special Files}, @pxref{config})
 
 The @var{files} and options are processed as for @code{cvs
 watch on}.

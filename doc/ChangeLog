@@ -1,5 +1,10 @@
 1999-11-03  Karl Fogel  <kfogel@red-bean.com>
 
+	* cvs.texinfo (Setting a watch): describe `watch off' behavior
+	more accurately.
+
+1999-11-03  Karl Fogel  <kfogel@red-bean.com>
+
 	* cvs.texinfo (log options): correct documentation for -D and -s
 	options.  There can be no space between these options and their
 	arguments.
