@@ -1,5 +1,10 @@
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* release.c: In comment about CVSROOTADM_IGNORE, also mention
+	comment just added to entries.c.
+	* entries.c: Expand this comment, especially the part about
+	CVS/Template.
+
 	Keep track of what revisions CVS/Base correspond to:
 	* cvs.h (CVSADM_BASEREV, CVSADM_BASEREVTMP): Added.
 	* entries.c, cvs.h (base_register, base_deregister, base_get,
