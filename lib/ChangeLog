@@ -1,3 +1,12 @@
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	Import xalloc module from GNULIB, as well as its remaining unimported
+	dependency, the exitfail module.
+
+	* Makefile.am (libcvs_a_SOURCES): Add new sources.
+	* exitfail.c, exitfail.h, xalloc.h, xmalloc.c, xstrdup.c: New files.
+	* Makefile.in: Regenerated.
+
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
 	Import vasnprintf module from GNULIB.

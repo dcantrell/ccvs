@@ -187,7 +187,11 @@ noinst_LIBRARIES = libcvs.a
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 
+# For GNULIB's exitfail module.
+
 # For GNULIB's vasnprintf module.
+
+# For GNULIB's xalloc module.
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getdate.y \
@@ -218,7 +222,7 @@ libcvs_a_SOURCES = \
 	xselect.h \
 	xsize.h \
 	xtime.h\
-printf-args.h printf-parse.h vasnprintf.h
+exitfail.h exitfail.c printf-args.h printf-parse.h vasnprintf.h xalloc.h xmalloc.c xstrdup.c
 libcvs_a_LIBADD = @LIBOBJS@
 
 
@@ -243,7 +247,8 @@ am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
 	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
 	md5.$(OBJEXT) regex.$(OBJEXT) savecwd.$(OBJEXT) \
 	sighandle.$(OBJEXT) stripslash.$(OBJEXT) xgetwd.$(OBJEXT) \
-	yesno.$(OBJEXT)
+	yesno.$(OBJEXT) exitfail.$(OBJEXT) xmalloc.$(OBJEXT) \
+	xstrdup.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -264,12 +269,14 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
 @AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
 @AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/getdate.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/regex.Po ./$(DEPDIR)/savecwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/regex.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/xstrdup.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -342,6 +349,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
@@ -352,6 +360,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xgetwd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xmalloc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xstrdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yesno.Po@am__quote@
 
 .c.o:
