@@ -257,6 +257,7 @@ extern int errno;
 /* structure of a entry record */
 struct entnode
 {
+    char *user;
     char *version;
     char *timestamp;
     char *options;
