@@ -50,17 +50,15 @@ static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 
 static const char *const checkout_usage[] =
 {
-    "Usage:\n  %s %s [-ANPQcflnpqs] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
+    "Usage:\n  %s %s [-ANPcflnps] [-r rev | -D date] [-d dir] [-k kopt] modules...\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
     "\t-P\tPrune empty directories.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-c\t\"cat\" the module database.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-n\tDo not run module program (if any).\n",
     "\t-p\tCheck out files to standard output.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-s\tLike -c, but include module status.\n",
     "\t-r rev\tCheck out revision or tag. (implies -P)\n",
     "\t-D date\tCheck out revisions as of date. (implies -P)\n",
@@ -72,13 +70,11 @@ static const char *const checkout_usage[] =
 
 static const char *const export_usage[] =
 {
-    "Usage: %s %s [-NPQflnq] [-r rev | -D date] [-d dir] module...\n",
+    "Usage: %s %s [-NPfln] [-r rev | -D date] [-d dir] module...\n",
     "\t-N\tDon't shorten module paths if -d specified.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, not recursive\n",
     "\t-n\tDo not run module program (if any).\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-r rev\tCheck out revision or tag.\n",
     "\t-D date\tCheck out revisions as of date.\n",
     "\t-d dir\tCheck out into dir instead of module name.\n",
@@ -155,10 +151,15 @@ checkout (argc, argv)
 		run_module_prog = 0;
 		break;
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'l':
 		local = 1;
@@ -265,8 +266,6 @@ checkout (argc, argv)
 	  }
 
 	if (!run_module_prog) send_arg ("-n");
-	if (really_quiet) send_arg ("-Q");
-	if (quiet) send_arg ("-q");
 	if (local) send_arg ("-l");
 	if (pipeout) send_arg ("-p");
 	if (!force_tag_match) send_arg ("-f");

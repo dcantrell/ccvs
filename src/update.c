@@ -97,17 +97,15 @@ static List *ignlist = (List *) NULL;
 static time_t last_register_time;
 static const char *const update_usage[] =
 {
-    "Usage: %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev]\n",
+    "Usage: %s %s [-APdflRp] [-k kopt] [-r rev|-D date] [-j rev]\n",
     "    [-I ign] [-W spec] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",
     "\t-P\tPrune empty directories.\n",
-    "\t-Q\tReally quiet.\n",
     "\t-d\tBuild directories, like checkout does.\n",
     "\t-f\tForce a head revision match if tag/date not found.\n",
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-p\tSend updates to standard output.\n",
-    "\t-q\tSomewhat quiet.\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     "\t-r rev\tUpdate using specified revision/tag.\n",
     "\t-D date\tSet date to update from.\n",
@@ -162,10 +160,15 @@ update (argc, argv)
 		local = 0;
 		break;
 	    case 'Q':
-		really_quiet = 1;
-		/* FALL THROUGH */
 	    case 'q':
-		quiet = 1;
+#ifdef SERVER_SUPPORT
+		/* The CVS 1.5 client sends these options (in addition to
+		   Global_option requests), so we must ignore them.  */
+		if (!server_active)
+#endif
+		    error (1, 0,
+			   "-q or -Q must be specified before \"%s\"",
+			   command_name);
 		break;
 	    case 'd':
 		update_build_dirs = 1;
@@ -227,10 +230,6 @@ update (argc, argv)
 
 	    if (local)
 		send_arg("-l");
-	    if (quiet)
-		send_arg("-q");
-	    if (really_quiet)
-		send_arg("-Q");
 	    if (update_build_dirs)
 		send_arg("-d");
 	    if (pipeout)
