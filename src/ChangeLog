@@ -1,3 +1,7 @@
+2001-08-06  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated.
+
 2001-08-01  Derek Price  <dprice@collab.net>
 
 	* diff.c (diff): Send long option for side-by-side diffs to the server

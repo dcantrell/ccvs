@@ -73,6 +73,7 @@ AWK = @AWK@
 CC = @CC@
 CSH = @CSH@
 DEPDIR = @DEPDIR@
+EXEEXT = @EXEEXT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KRB4 = @KRB4@
 LN_S = @LN_S@
@@ -128,7 +129,6 @@ MAINTAINERCLEANFILES = \
 
 
 SUFFIXES = .aux .txt .pdf
-EXEEXT =
 OBJEXT = o
 subdir = doc
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
