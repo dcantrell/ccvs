@@ -3,6 +3,12 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* CVS's client and server IO buffers now rely on a GNULIB modules for memory
+  management rather than taking on the task themseleves.  This should be faster
+  on any system but may increase memory usage noticably on systems without the
+  POSIX mmap() function.  Benchmark reports to <bug-cvs@gnulib.org> would be
+  welcome.
+
 * Some more GNULIB functions have been imported and/or updated for portability
   reasons.  This change should not be visible to most users, though CVS may now
   compile on a few more platforms.
