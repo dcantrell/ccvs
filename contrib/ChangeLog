@@ -1,3 +1,7 @@
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (contrib_MANS): Add rcs2log.1.
+
 2004-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* README: Remove Dr. Pascal Molli's CVS URL from the
