@@ -1,3 +1,7 @@
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* getdate.y: Update from GNULIB.
+
 2005-04-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* strtol.c: Update from GNULIB.
