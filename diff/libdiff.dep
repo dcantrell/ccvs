@@ -1,7 +1,7 @@
 # Microsoft Developer Studio Generated Dependency File, included by libdiff.mak
 
 .\analyze.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\cmpbuf.h"\
@@ -18,7 +18,7 @@
 	
 
 .\context.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -29,7 +29,7 @@
 .\diff.c : \
 	"..\lib\fnmatch.h"\
 	"..\lib\getopt.h"\
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -46,7 +46,7 @@
 	
 
 .\dir.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -55,7 +55,7 @@
 	
 
 .\ed.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -64,7 +64,7 @@
 	
 
 .\ifdef.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -73,7 +73,7 @@
 	
 
 .\io.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -82,7 +82,7 @@
 	
 
 .\normal.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -91,7 +91,7 @@
 	
 
 .\side.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\
@@ -100,7 +100,7 @@
 	
 
 .\util.c : \
-	"..\LIB\regex.h"\
+	"..\lib\regex.h"\
 	"..\windows-NT\config.h"\
 	"..\windows-NT\ndir.h"\
 	".\diff.h"\

@@ -1,3 +1,8 @@
+2004-04-17  Derek Price  <derek@ximbiot.com>
+
+	* libdiff.dep, libdiff.mak: Regenerated for "../cvsnt.dsw" changes.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-15  Derek Price  <derek@ximbiot.com>
 
 	* libdiff.dsp: Set PROP BASE directories to projet standard
