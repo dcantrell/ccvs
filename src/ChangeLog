@@ -1,5 +1,11 @@
 2000-01-26  Larry Jones  <larry.jones@sdrc.com>
 
+	* run.c (run_exec): Conditionalize K.J.'s change so that it only
+	applies when SETXID_SUPPORT is defined since some platforms don't
+	have setegid().
+
+2000-01-26  Larry Jones  <larry.jones@sdrc.com>
+
 	* sanity.sh: Make TESTDIR earlier then use it to check for versions
 	of expr that don't work right with long expressions.
 
