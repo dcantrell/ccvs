@@ -1,5 +1,10 @@
+2005-03-01  Derek Price  <derek@ximbiot.com>
+
+	Update installed GNULIB modules.
+	* getdate.texi: Update from GNULIB.
+
 2005-02-25  Derek Price  <derek@ximbiot.com>
-            for Frank Hemer  <frank@hemer.org>
+	    for Frank Hemer  <frank@hemer.org>
 
 	* cvs.texinfo, RCSFILES: Describe commitid.
 
