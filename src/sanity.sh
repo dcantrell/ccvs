@@ -125,7 +125,7 @@ proxy=false
 remote=false
 servercvs=false
 skipfail=false
-while getopts Hc:f:h:klprs:-: option ; do
+while getopts Hc:ef:h:klprs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	# remove any argument
