@@ -3513,7 +3513,7 @@ File: no file file7		Status: Locally Removed
    Repository revision:	1\.1	${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file7,v
    Sticky Tag:		(none)
    Sticky Date:		(none)
-   Sticky Options:	(none).*"
+   Sticky Options:	(none)${DOTSTAR}"
 
 # XXX why is this commented out?
 #		if ${CVS} diff -u first-dir  >> ${LOGFILE} || test $? = 1 ; then
