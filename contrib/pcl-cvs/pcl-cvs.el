@@ -43,7 +43,7 @@
 (defvar cvs-diff-program "/usr/local/bin/diff"
   "*Full path to the diff program.")
 
-(defvar cvs-rmdir-program "/usr/local/bin/rmdir"
+(defvar cvs-rmdir-program "/bin/rmdir"
   "*Full path to the rmdir program. Typically /bin/rmdir.")
 
 ;; Uncomment the following line if you are running on 18.57 or earlier.
