@@ -138,7 +138,7 @@ i386 family:
 	FreeBSD 2.1.5-stable (1.8.87)
 	NextSTEP 3.3 (1.7)
 	SCO Unix 3.2.4.2, gcc 2.7.2 (1.8.87) (footnote 4)
-	SCO OpenServer 5 (1.9.29)
+	SCO OpenServer 5.0.5 (1.10.2)
 	Sequent Dynix/PTX 4.1.4 (1.9.20 or so + patches)
 	Lynx 2.3.0 080695 (1.6.86) (footnote 9)
 	Windows NT 3.51 (1.8.86 client; 1.8.3 local)

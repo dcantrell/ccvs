@@ -1,3 +1,8 @@
+1998-09-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL (Tested platforms): Update SCO OpenServer information,
+	from a report by Robert Lipe@DIGI.
+
 1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Add items about multiple roots and -d not updating
