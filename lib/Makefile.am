@@ -39,6 +39,7 @@ libcvs_a_SOURCES = \
 	gettext.h \
 	getpagesize.h \
 	md5.h \
+	minmax.h \
 	pathmax.h \
 	regex.h \
 	savecwd.h \

@@ -1,3 +1,10 @@
+2004-08-27  Derek Price  <derek@ximbiot.com>
+
+	Import minmax module from GNULIB.
+
+	* Makefile.am (libcvs_A_SOURCES): Add minmax.h.
+	* minmax.h: New file.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* .cvsignore: Ignore GCC profiling data.
