@@ -2905,7 +2905,7 @@ start_server ()
 #endif /* HAVE_KERBEROS || USE_DIRECT_TCP */
       }
 
-#ifdef VMS && NO_SOCKET_TO_FD
+#if defined(VMS) && defined(NO_SOCKET_TO_FD)
     /* Avoid mixing sockets with stdio */
     use_socket_style = 1;
     server_sock = tofd;

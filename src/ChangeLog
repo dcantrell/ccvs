@@ -1,3 +1,8 @@
+Wed Feb 28 23:27:04 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+      * client.c: Changed #ifdef VMS && NO_SOCKET_TO_FD to
+      #if defined(VMS) && defined(NO_SOCKET_TO_FD)
+
 Wed Feb 28 22:28:43 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* build_src.com: Added DCL command procedure to build
