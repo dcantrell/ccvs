@@ -148,7 +148,7 @@ static const char *const usg[] =
 {
     "Usage: %s [cvs-options] command [command-options] [files...]\n",
     "    Where 'cvs-options' are:\n",
-    "        -H           Displays this Usage information\n",
+    "        -H           Displays Usage information for command\n",
     "        -Q           Cause CVS to be really quiet.\n",
     "        -q           Cause CVS to be somewhat quiet.\n",
     "        -r           Make checked-out files read-only\n",
