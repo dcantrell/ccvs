@@ -1,3 +1,7 @@
+2001-07-26  Larry Jones  <larry.jones@sdr.com>
+
+	* NEWS: Fix format, add note about tag -B.
+
 2001-07-16  Derek Price  <dprice@collab.net>
 
 	* compile: New Automake file.
