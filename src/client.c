@@ -2740,11 +2740,6 @@ start_server ()
   from_server_logfile = (FILE *) NULL;
   to_server_logfile   = (FILE *) NULL;
 
-#if HAVE_KERBEROS
-    start_kerberos_server (&tofd, &fromfd);
-
-#else /* ! HAVE_KERBEROS */
-
 #ifdef AUTH_CLIENT_SUPPORT
     if (use_authenticating_server)
       {
@@ -2755,6 +2750,10 @@ start_server ()
     else
 #endif /* AUTH_CLIENT_SUPPORT */
       {
+#if HAVE_KERBEROS
+        start_kerberos_server (&tofd, &fromfd);
+#else /* ! HAVE_KERBEROS */
+
 #if ! RSH_NOT_TRANSPARENT
         start_rsh_server (&tofd, &fromfd);
 #else /* RSH_NOT_TRANSPARENT */
@@ -2763,9 +2762,10 @@ start_server ()
         START_SERVER (&tofd, &fromfd, getcaller (),
                       server_user, server_host, server_cvsroot);
 #endif /* defined(START_SERVER) */
+
 #endif /* ! RSH_NOT_TRANSPARENT */
-      }
 #endif /* HAVE_KERBEROS */
+      }
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
