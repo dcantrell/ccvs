@@ -1,3 +1,8 @@
+2000-05-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_checkin, RCS_cmp_file): Plug memory leaks.  (Patch
+	submitted by Chris G. Demetriou <cgd@sibyte.com>.)
+
 2000-05-20  Ian Lance Taylor  <ian@zembu.com>
 
 	* client.c (connect_to_gserver): Handle server error messages
