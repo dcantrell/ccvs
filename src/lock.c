@@ -75,6 +75,16 @@
 #include "cvs.h"
 #include <assert.h>
 
+#ifdef HAVE_NANOSLEEP
+# include "xtime.h"
+#else /* HAVE_NANOSLEEP */
+# if !defined HAVE_USLEEP && defined HAVE_SELECT
+    /* use select as a workaround */
+#   include "xselect.h"
+# endif /* !defined HAVE_USLEEP && defined HAVE_SELECT */
+#endif /* !HAVE_NANOSLEEP */
+
+
 struct lock {
     /* This is the directory in which we may have a lock named by the
        readlock variable, a lock named by the writelock variable, and/or
@@ -723,7 +733,7 @@ set_lockers_name (statp)
 }
 
 /*
- * Persistently tries to make the directory "lckdir",, which serves as a
+ * Persistently tries to make the directory "lckdir", which serves as a
  * lock. If the create time on the directory is greater than CVSLCKAGE
  * seconds old, just try to remove the directory.
  */
@@ -733,6 +743,7 @@ set_lock (lock, will_wait)
     int will_wait;
 {
     int waited;
+    long us;
     struct stat sb;
     mode_t omask;
 #ifdef CVS_FUDGELOCKS
@@ -749,6 +760,7 @@ set_lock (lock, will_wait)
      * directory before they exit.
      */
     waited = 0;
+    us = 1;
     lock->have_lckdir = 0;
     for (;;)
     {
@@ -810,6 +822,33 @@ set_lock (lock, will_wait)
 	/* if he wasn't willing to wait, return an error */
 	if (!will_wait)
 	    return (L_LOCKED);
+
+	/* if possible, try a very short sleep without a message */
+	if (!waited && us < 1000)
+	{
+	    us += us;
+#if defined HAVE_NANOSLEEP
+	    {
+		struct timespec ts;
+		ts.tv_sec = 0;
+		ts.tv_nsec = us * 1000;
+		(void)nanosleep (&ts, NULL);
+		continue;
+	    }
+#elif defined HAVE_USLEEP
+	    (void)usleep (us);
+	    continue;
+#elif defined HAVE_SELECT
+	    {
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = us;
+		(void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
+		continue;
+	    }
+#endif
+	}
+
 	lock_wait (lock->repository);
 	waited = 1;
     }
