@@ -73,7 +73,7 @@ rm config.cache
 %endif
 
 # The standard package
-%configure
+%configure --without-gssapi
 
 make LDFLAGS=-s
 make -C doc info

@@ -1,3 +1,9 @@
+2000-11-03  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.spec (build): pass in --without-gssapi when configuring the main
+	package so that the Kerberized version of CVS doesn't get built when
+	the user happens to have Kerberos installed in the default location.
+
 2000-10-31  Derek Price  <derek.price@openavenue.com>
 
 	* NEWS: Mention zlib was updated to 1.1.3.
