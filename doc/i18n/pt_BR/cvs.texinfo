@@ -5532,7 +5532,7 @@ $ cvs release -d CVSROOT
 @comment <en>prefer to have more knowledge and control concerning
 @comment <en>how @sc{cvs} assigns revision numbers.
 Para muitos usos do @sc{cvs}, não é necessário se
-preocupar com o número de revisões; @sc{cvs} atribui
+preocupar com o número de revisões; o @sc{cvs} atribui
 números tais como @code{1.1}, @code{1.2} e por aí vai,
 e isto é tudo que se precisa saber.  Entretanto,
 Algumas pessoas preferem ter mais conhecimento e
@@ -5548,7 +5548,7 @@ Se você quiser marcar um conjunto de revisões
 envolvendo mais de um arquivo, tais como as revisões
 que integram uma release, pode usar uma @dfn{etiqueta} (tag),
 que é uma revisão simbólica que pode ser associada a uma
-revisão numérica em cada arquivo.
+revisão numérica em cada um dos arquivos.
 
 @menu
 @c <en>* Revision numbers::            The meaning of a revision number
@@ -5627,7 +5627,7 @@ Também é possível ter números com mais de um ponto, por
 exemplo @samp{1.3.2.2}.  Tais revisões representam
 revisões em ramos (@pxref{Ramificando e mesclando});
 estes números de revisão são explicados em detalhes em
-@ref{Branches and revisions}.
+@ref{Ramos e revisões}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Versions revisions releases
@@ -5654,9 +5654,8 @@ software recebe um número de versão, tal como @samp{4.1.1}.
 @c <en>in this document, and versions in the second sense are
 @c <en>called @dfn{releases}.  To avoid confusion, the word
 @c <en>@dfn{version} is almost never used in this document.
-Versões, neste documento são chamadas, ???in the first
-sense??? @dfn{revisions} , e versões, ???in the second
-sense??? são chamadas @dfn{releases}.  Para evitar
+Versões, neste documento são chamadas, principalmente,
+de @dfn{revisões} , e também de @dfn{releases}.  Para evitar
 confusão, o termo @dfn{versão} praticamente não é usado
 neste documento.
 
@@ -6017,10 +6016,10 @@ like this:
 @c <en>@node Tagging the working directory
 @node Etiquetando o diretório de trabalho
 @c <en>@section Specifying what to tag from the working directory
-@section Specifying what to tag from the working directory
+@section Especificando o que etiquetar no diretório de trabalho
 
 @c <en>@cindex tag (subcommand)
-@cindex tag (subcommand)
+@cindex tag (subcomando)
 @c <en>The example in the previous section demonstrates one of
 @c <en>the most common ways to choose which revisions to tag.
 @c <en>Namely, running the @code{cvs tag} command without
@@ -6034,19 +6033,19 @@ like this:
 @c <en>operations in which one first modifies the working
 @c <en>directory and then runs @code{cvs commit} to transfer
 @c <en>that modification to the repository.
-The example in the previous section demonstrates one of
-the most common ways to choose which revisions to tag.
-Namely, running the @code{cvs tag} command without
-arguments causes @sc{cvs} to select the revisions which
-are checked out in the current working directory.  For
-example, if the copy of @file{backend.c} in working
-directory was checked out from revision 1.4, then
-@sc{cvs} will tag revision 1.4.  Note that the tag is
-applied immediately to revision 1.4 in the repository;
-tagging is not like modifying a file, or other
-operations in which one first modifies the working
-directory and then runs @code{cvs commit} to transfer
-that modification to the repository.
+O exemplo na seção anterior  demonstra uma das formas
+mais comuns de escolher que revisões etiquetar. A
+saber, rodando o comando @code{cvs tag} sem argumentos
+faz com que o @sc{cvs} selecione as revisões que estão
+presentes no diretório de trabalho atual.  Por exemplo,
+se a cópia do arquivo @file{backend.c} no diretório de
+trabalho foi pega da revisão 1.4, então o @sc{cvs} vai
+etiquetar a revisão 1.4. Observe que a etiqueta é
+aplicada na revisão 1.4 no repositório imediatamente;
+Etiquetar não funciona como modificar arquivos ou
+outras operações nas quais primeiros você modifica o
+diretório de trabalho e então roda o @code{cvs commit}
+para mandar as modificações para o repositório.
 
 @c <en>One potentially surprising aspect of the fact that
 @c <en>@code{cvs tag} operates on the repository is that you
@@ -6056,14 +6055,14 @@ that modification to the repository.
 @c <en>@samp{-c} option to @code{cvs tag}.  If there are any
 @c <en>locally modified files, @sc{cvs} will abort with an
 @c <en>error before it tags any files:
-One potentially surprising aspect of the fact that
-@code{cvs tag} operates on the repository is that you
-are tagging the checked-in revisions, which may differ
-from locally modified files in your working directory.
-If you want to avoid doing this by mistake, specify the
-@samp{-c} option to @code{cvs tag}.  If there are any
-locally modified files, @sc{cvs} will abort with an
-error before it tags any files:
+Um aspecto potencialmente confuso no fato de o comando
+@code{cvs tag} operar no repositório é que você está
+etiquetando revisões devolvidas, que podem diferir de
+arquivos localmente modificados no seu diretório de
+trabalho. Se você quer evitar fazer isto por engano,
+use a opção @samp{-c} no @code{cvs tag}.  Se existe
+qualquer arquivo localmente modificado, o @sc{cvs} vai
+abortar com erro antes de etiquetar qualquer arquivo:
 
 @example
 $ cvs tag -c rel-0-4
@@ -6074,47 +6073,49 @@ cvs [tag aborted]: correct the above errors first!
 @c <en>@node Tagging by date/tag
 @node Etiquetando por data/etiqueta
 @c <en>@section Specifying what to tag by date or revision
-@section Specifying what to tag by date or revision
+@section Especificando o que etiquetar por data ou revisão
 @c <en>@cindex rtag (subcommand)
-@cindex rtag (subcommand)
+@cindex rtag (subcomando)
 
 @c <en>The @code{cvs rtag} command tags the repository as of a
 @c <en>certain date or time (or can be used to tag the latest
 @c <en>revision).  @code{rtag} works directly on the
 @c <en>repository contents (it requires no prior checkout and
 @c <en>does not look for a working directory).
-The @code{cvs rtag} command tags the repository as of a
-certain date or time (or can be used to tag the latest
-revision).  @code{rtag} works directly on the
-repository contents (it requires no prior checkout and
-does not look for a working directory).
+O comando @code{cvs rtag} etiqueta o repositório em uma
+certa data ou hora (ou pode ser usado para etiquetar a
+última revisão).  @code{rtag} trabalha diretamente no
+repositório (não requer um checkout e não procura por
+um diretório de trabalho).
 
 @c <en>The following options specify which date or revision to
 @c <en>tag.  See @ref{Common options}, for a complete
 @c <en>description of them.
-The following options specify which date or revision to
-tag.  See @ref{Common options}, for a complete
-description of them.
+As seguintes opções especificam que data ou revisão
+etiquetar.  Veja em @ref{Opções comuns}, para uma
+descrição completa delas.
 
 @table @code
-@c <en>@item -D @var{date}
-@item -D @var{date}
+@c <en>@item -D @var{data}
+@item -D @var{data}
 @c <en>Tag the most recent revision no later than @var{date}.
-Tag the most recent revision no later than @var{date}.
+Etiqueta a revisão mais recente que seja anterior a @var{data}.
 
 @c <en>@item -f
 @item -f
 @c <en>Only useful with the @samp{-D @var{date}} or @samp{-r @var{tag}}
 @c <en>flags.  If no matching revision is found, use the most
 @c <en>recent revision (instead of ignoring the file).
-Only useful with the @samp{-D @var{date}} or @samp{-r @var{tag}}
-flags.  If no matching revision is found, use the most
-recent revision (instead of ignoring the file).
+Útil apenas em conjunto com @samp{-D @var{data}} ou
+@samp{-r @var{etiqueta}}.  Se não encontrar uma revisã
+casando com o padrão, usar a revisão mais recente (ao
+invés de ignorar o arquivo).
 
 @c <en>@item -r @var{tag}
-@item -r @var{tag}
+@item -r @var{etiqueta}
 @c <en>Only tag those files that contain existing tag @var{tag}.
-Only tag those files that contain existing tag @var{tag}.
+Etiqueta apenas os arquivos que contém a etiqueta
+@var{etiqueta} existente.
 @end table
 
 @c <en>The @code{cvs tag} command also allows one to specify
@@ -6126,15 +6127,16 @@ Only tag those files that contain existing tag @var{tag}.
 @c <en>than the files which existed as of the given tag/date.
 @c <en>Therefore, you are generally better off using @code{cvs
 @c <en>rtag}.  The exceptions might be cases like:
-The @code{cvs tag} command also allows one to specify
-files by revision or date, using the same @samp{-r},
-@samp{-D}, and @samp{-f} options.  However, this
-feature is probably not what you want.  The reason is
-that @code{cvs tag} chooses which files to tag based on
-the files that exist in the working directory, rather
-than the files which existed as of the given tag/date.
-Therefore, you are generally better off using @code{cvs
-rtag}.  The exceptions might be cases like:
+O comando @code{cvs tag} também permite que você
+especifique arquivos por revisão ou data, usando as
+mesmas opções @samp{-r}, @samp{-D} e @samp{-f}.
+Entretanto, este característica não é provavelmente o
+que você quer.  A razão é que o @code{cvs tag} escolhe
+que arquivos etiquetar baseado nos arquivos que existem
+no diretório de trabalho, ao invés de arquivos que
+existem na dada etiqueta/data. Portanto, você é
+geralmente ???better off??? usar @code{cvs rtag}.  As
+exceções devem ser casos como:
 
 @example
 cvs tag -r 1.4 stable backend.c
@@ -6581,7 +6583,7 @@ copy the changes onto another branch.
 @c <en>* Accessing branches::          Checking out and updating branches
 * Accessing branches::          Checking out and updating branches
 @c <en>* Branches and revisions::      Branches are reflected in revision numbers
-* Branches and revisions::      Branches are reflected in revision numbers
+* Ramos e revisões::      Branches are reflected in revision numbers
 @c <en>* Magic branch numbers::        Magic branch numbers
 * Números de ramos mágicos::        Magic branch numbers
 @c <en>* Merging a branch::            Merging an entire branch
@@ -6888,14 +6890,14 @@ that @samp{driver.c} had been through more changes than
 
 @c <en>See @ref{Branches and revisions} for details about how
 @c <en>branch numbers are constructed.
-See @ref{Branches and revisions} for details about how
+See @ref{Ramos e revisões} for details about how
 branch numbers are constructed.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @c <en>@node Branches and revisions
-@node Branches and revisions
+@node Ramos e revisões
 @c <en>@section Branches and revisions
-@section Branches and revisions
+@section Ramos e revisões
 @c <en>@cindex Branch number
 @cindex Branch number
 @c <en>@cindex Number, branch
@@ -8858,7 +8860,7 @@ or replaced; you need to use @code{cvs diff} for that
 The options to @code{cvs annotate} are listed in
 @ref{Chamando o CVS}, and can be used to select the files
 and revisions to annotate.  The options are described
-in more detail there and in @ref{Common options}.
+in more detail there and in @ref{Opções comuns}.
 
 @c FIXME: maybe an example using the options?  Just
 @c what it means to select a revision might be worth a
@@ -11539,7 +11541,7 @@ reference to @sc{cvs} commands, @pxref{Chamando o CVS}).
 @c <en>* Global options::              Options you give to the left of cvs_command
 * Opções globais::              Options you give to the left of cvs_command
 @c <en>* Common options::              Options you give to the right of cvs_command
-* Common options::              Options you give to the right of cvs_command
+* Opções comuns::              Options you give to the right of cvs_command
 @c <en>* admin::                       Administration
 * admin::                       Administration
 @c <en>* checkout::                    Checkout sources for editing
@@ -11933,9 +11935,13 @@ Only has an effect on the @sc{cvs} client.
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Common options
+@c <en>@node Common options
+@node Opções comuns
+@c <en>@appendixsec Common command options
 @appendixsec Common command options
-@cindex Common options
+@c <en>@cindex Common options
+@cindex Opções comuns
+@c <en>@cindex Right-hand options
 @cindex Right-hand options
 
 This section describes the @samp{command_options} that
@@ -12825,8 +12831,11 @@ see @ref{update output}.
 @node checkout options
 @appendixsubsec checkout options
 
+@c <en>These standard options are supported by @code{checkout}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are supported by @code{checkout}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -13053,8 +13062,11 @@ that the argument file contains the log message.
 @node commit options
 @appendixsubsec commit options
 
+@c <en>These standard options are supported by @code{commit}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are supported by @code{commit}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -13086,9 +13098,12 @@ cannot commit to a specific revision on a branch.
 Read the log message from @var{file}, instead
 of invoking an editor.
 
+@c <en>@item -f
 @item -f
+@c <en>Note that this is not the standard behavior of
+@c <en>the @samp{-f} option as defined in @ref{Common options}.
 Note that this is not the standard behavior of
-the @samp{-f} option as defined in @ref{Common options}.
+the @samp{-f} option as defined in @ref{Opções comuns}.
 
 Force @sc{cvs} to commit a new revision even if you haven't
 made any changes to the file.  If the current revision
@@ -13244,8 +13259,11 @@ The exit status for diff is different than for other
 @node diff options
 @appendixsubsec diff options
 
+@c <en>These standard options are supported by @code{diff}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are supported by @code{diff}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -13886,8 +13904,11 @@ use @samp{-kv}.
 @node export options
 @appendixsubsec export options
 
+@c <en>These standard options are supported by @code{export}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are supported by @code{export}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -13962,9 +13983,12 @@ various formats.
 Logging must be enabled by creating the file
 @file{$CVSROOT/CVSROOT/history}.
 
+@c <en>@strong{Note: @code{history} uses @samp{-f}, @samp{-l},
+@c <en>@samp{-n}, and @samp{-p} in ways that conflict with the
+@c <en>normal use inside @sc{cvs} (@pxref{Common options}).}
 @strong{Note: @code{history} uses @samp{-f}, @samp{-l},
 @samp{-n}, and @samp{-p} in ways that conflict with the
-normal use inside @sc{cvs} (@pxref{Common options}).}
+normal use inside @sc{cvs} (@pxref{Opções comuns}).}
 
 @menu
 * history options::             history options
@@ -14210,8 +14234,10 @@ directory (@pxref{Obtendo os fontes}).
 @node import options
 @appendixsubsec import options
 
+@c <en>This standard option is supported by @code{import}
+@c <en>(@pxref{Common options}, for a complete description):
 This standard option is supported by @code{import}
-(@pxref{Common options}, for a complete description):
+(@pxref{Opções comuns}, for a complete description):
 
 @table @code
 @item -m @var{message}
@@ -14344,8 +14370,10 @@ Coordinated Universal Time (UTC).  (Other parts of
 @c client then communicates to the server, is the
 @c right solution.
 
+@c <en>@strong{Note: @code{log} uses @samp{-R} in a way that conflicts
+@c <en>with the normal use inside @sc{cvs} (@pxref{Common options}).}
 @strong{Note: @code{log} uses @samp{-R} in a way that conflicts
-with the normal use inside @sc{cvs} (@pxref{Common options}).}
+with the normal use inside @sc{cvs} (@pxref{Opções comuns}).}
 
 @menu
 * log options::                 log options
@@ -14364,12 +14392,19 @@ available.  All other options restrict the output.
 Print information about the revisions on the default
 branch, normally the highest branch on the trunk.
 
+@c <en>@item -d @var{dates}
 @item -d @var{dates}
+@c <en>Print information about revisions with a checkin
+@c <en>date/time in the range given by the
+@c <en>semicolon-separated list of dates.  The date formats
+@c <en>accepted are those accepted by the @samp{-D} option to
+@c <en>many other @sc{cvs} commands (@pxref{Common options}).
+@c <en>Dates can be combined into ranges as follows:
 Print information about revisions with a checkin
 date/time in the range given by the
 semicolon-separated list of dates.  The date formats
 accepted are those accepted by the @samp{-D} option to
-many other @sc{cvs} commands (@pxref{Common options}).
+many other @sc{cvs} commands (@pxref{Opções comuns}).
 Dates can be combined into ranges as follows:
 
 @c Should we be thinking about accepting ISO8601
@@ -14558,8 +14593,11 @@ the files that are located in other directories.
 @node rdiff options
 @appendixsubsec rdiff options
 
+@c <en>These standard options are supported by @code{rdiff}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are supported by @code{rdiff}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -14804,8 +14842,11 @@ into any destination revisions specified with @code{-r},
 @node update options
 @appendixsubsec update options
 
+@c <en>These standard options are available with @code{update}
+@c <en>(@pxref{Common options}, for a complete description of
+@c <en>them):
 These standard options are available with @code{update}
-(@pxref{Common options}, for a complete description of
+(@pxref{Opções comuns}, for a complete description of
 them):
 
 @table @code
@@ -15353,7 +15394,7 @@ Show last revision where each line was modified.  See
 @c <en>Annotate the most recent revision no later than
 @c <en>@var{date}.  See @ref{Common options}.
 Annotate the most recent revision no later than
-@var{date}.  See @ref{Common options}.
+@var{date}.  See @ref{Opções comuns}.
 
 @c <en>@item -F
 @item -F
@@ -15367,7 +15408,7 @@ binary files are skipped with a message.)
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -l
 @item -l
@@ -15384,7 +15425,7 @@ Operate recursively (default).
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Annotate revision @var{tag}.  See @ref{Common options}.
-Annotate revision @var{tag}.  See @ref{Common options}.
+Annotate revision @var{tag}.  See @ref{Opções comuns}.
 @end table
 
 @c ------------------------------------------------------------
@@ -15411,7 +15452,7 @@ Output the module database.  See @ref{checkout options}.
 @c <en>Check out revisions as of @var{date} (is sticky).  See
 @c <en>@ref{Common options}.
 Check out revisions as of @var{date} (is sticky).  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -d @var{dir}
 @item -d @var{dir}
@@ -15423,7 +15464,7 @@ Check out into @var{dir}.  See @ref{checkout options}.
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c Probably want to use rev1/rev2 style like for diff
 @c -r.  Here and in on-line help.
@@ -15477,7 +15518,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
-Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+Checkout revision @var{tag} (is sticky).  See @ref{Opções comuns}.
 
 @c <en>@item -s
 @item -s
@@ -15655,7 +15696,7 @@ Export files from @sc{cvs}.  See @ref{export}.
 @c <en>Check out revisions as of @var{date}.  See
 @c <en>@ref{Common options}.
 Check out revisions as of @var{date}.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -d @var{dir}
 @item -d @var{dir}
@@ -15667,7 +15708,7 @@ Check out into @var{dir}.  See @ref{export options}.
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -k @var{kflag}
 @item -k @var{kflag}
@@ -15702,7 +15743,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Checkout revision @var{tag}.  See @ref{Common options}.
-Checkout revision @var{tag}.  See @ref{Common options}.
+Checkout revision @var{tag}.  See @ref{Opções comuns}.
 @end table
 
 @c ------------------------------------------------------------
@@ -15972,7 +16013,7 @@ Show last revision where each line was modified.  See
 @c <en>Annotate the most recent revision no later than
 @c <en>@var{date}.  See @ref{Common options}.
 Annotate the most recent revision no later than
-@var{date}.  See @ref{Common options}.
+@var{date}.  See @ref{Opções comuns}.
 
 @c <en>@item -F
 @item -F
@@ -15986,7 +16027,7 @@ binary files are skipped with a message.)
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -l
 @item -l
@@ -16001,7 +16042,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Annotate revision @var{tag}.  See @ref{Common options}.
-Annotate revision @var{tag}.  See @ref{Common options}.
+Annotate revision @var{tag}.  See @ref{Opções comuns}.
 @end table
 
 @c ------------------------------------------------------------
@@ -16019,14 +16060,14 @@ Context diff output format (default).  See @ref{rdiff options}.
 @c <en>@item -D @var{date}
 @item -D @var{date}
 @c <en>Select revisions based on @var{date}.  See @ref{Common options}.
-Select revisions based on @var{date}.  See @ref{Common options}.
+Select revisions based on @var{date}.  See @ref{Opções comuns}.
 
 @c <en>@item -f
 @item -f
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -l
 @item -l
@@ -16042,7 +16083,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{rev}
 @item -r @var{rev}
 @c <en>Select revisions based on @var{rev}.  See @ref{Common options}.
-Select revisions based on @var{rev}.  See @ref{Common options}.
+Select revisions based on @var{rev}.  See @ref{Opções comuns}.
 
 @c <en>@item -s
 @item -s
@@ -16226,7 +16267,7 @@ Local; run only in current working directory.  See @ref{Comportamento recursivo}
 @c <en>@item -n
 @item -n
 @c <en>No execution of tag program.  See @ref{Common options}.
-No execution of tag program.  See @ref{Common options}.
+No execution of tag program.  See @ref{Opções comuns}.
 
 @c <en>@item -R
 @item -R
@@ -16380,7 +16421,7 @@ the repository (the modified file is saved in
 @c <en>Check out revisions as of @var{date} (is sticky).  See
 @c <en>@ref{Common options}.
 Check out revisions as of @var{date} (is sticky).  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -d
 @item -d
@@ -16392,7 +16433,7 @@ Create directories.  See @ref{update options}.
 @c <en>Use head revision if tag/date not found.  See
 @c <en>@ref{Common options}.
 Use head revision if tag/date not found.  See
-@ref{Common options}.
+@ref{Opções comuns}.
 
 @c <en>@item -I @var{ign}
 @item -I @var{ign}
@@ -16441,7 +16482,7 @@ Operate recursively (default).  @xref{Comportamento recursivo}.
 @c <en>@item -r @var{tag}
 @item -r @var{tag}
 @c <en>Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
-Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+Checkout revision @var{tag} (is sticky).  See @ref{Opções comuns}.
 
 @c <en>@item -W @var{spec}
 @item -W @var{spec}
@@ -18937,7 +18978,7 @@ the @file{val-tags} file; see discussion of val-tags in
 this once for a given tag; when a tag is listed in
 @file{val-tags}, it stays there.  Note that using
 @samp{-f} to not require tag matches does not override
-this check; see @ref{Common options}.
+this check; see @ref{Opções comuns}.
 
 @c <en>@item *PANIC* administration files missing
 @item *PANIC* administration files missing
