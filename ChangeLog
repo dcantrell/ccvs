@@ -1,5 +1,9 @@
 2004-03-28  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.mak: Print "Debug" when defaulting to Debug.
+
+2004-03-28  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.mak: Default to using debugging symbols so that folks who don't
 	know enough to remove the debugging symbols might still be able to send
 	us stack traces after encountering problems.
