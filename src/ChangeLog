@@ -1,3 +1,8 @@
+1999-05-25  Jim Kingdon  <http://www.cyclic.com>
+
+	* subr.c (xmalloc, xrealloc): The new error.c does not support
+	%lu; use sprintf instead.
+
 1999-05-25 Derek Price
 	<http://www-personal.engin.umich.edu/~oberon/resume.html>
 

@@ -30,8 +30,12 @@ xmalloc (bytes)
 
     cp = malloc (bytes);
     if (cp == NULL)
-	error (1, 0, "out of memory; can not allocate %lu bytes",
-	       (unsigned long) bytes);
+    {
+	char buf[80];
+	sprintf (buf, "out of memory; can not allocate %lu bytes",
+		 (unsigned long) bytes);
+	error (1, 0, buf);
+    }
     return (cp);
 }
 
@@ -53,7 +57,12 @@ xrealloc (ptr, bytes)
 	cp = realloc (ptr, bytes);
 
     if (cp == NULL)
-	error (1, 0, "can not reallocate %lu bytes", (unsigned long) bytes);
+    {
+	char buf[80];
+	sprintf (buf, "out of memory; can not reallocate %lu bytes",
+		 (unsigned long) bytes);
+	error (1, 0, buf);
+    }
     return (cp);
 }
 
