@@ -1,3 +1,14 @@
+Sun Jun  8 20:52:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (getrcsrev): Before printing error, check whether it was
+	feof or ferror.
+
+	* rcs.h, import.c (add_rcs_file): No longer static.  New arguments
+	add_vbranch, add_vhead, and add_logfp replace access to static
+	variables vbranch, vhead, and logfp.
+	* mkmodules.c: Call it instead of RCS_CI.
+	* import.c (process_import_file): Adjust call to add_rcs_file.
+
 Tue Jun  3 10:18:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basicb): Match "." with "\." not ".".
