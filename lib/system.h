@@ -270,18 +270,20 @@ extern long timezone;
    check for struct utimbuf, but for now I'm checking NeXT here (so I don't
    have to debug the configure check across all the machines).  */
 #if defined (HAVE_UTIME_H) && !defined (NeXT)
-#include <utime.h>
-#elif defined (HAVE_SYS_UTIME_H)
-# include <sys/utime.h>
+#  include <utime.h>
 #else
-#ifndef ALTOS
+#  if defined (HAVE_SYS_UTIME_H)
+#    include <sys/utime.h>
+#  else
+#    ifndef ALTOS
 struct utimbuf
 {
   long actime;
   long modtime;
 };
-#endif
+#    endif
 int utime ();
+#  endif
 #endif
 
 #if STDC_HEADERS || HAVE_STRING_H
