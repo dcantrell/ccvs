@@ -1,3 +1,7 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with new version of Automake.
+
 2001-06-15  Derek Price  <dprice@collab.net>
 
 	* xselect.h: Don't include xtime.h.
