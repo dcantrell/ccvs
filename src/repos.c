@@ -96,7 +96,7 @@ Name_Repository (dir, update_dir)
 	error (0, 0, "`..'-relative repositories are not supported.");
 	error (1, 0, "illegal source repository");
     }
-    if (repos[0] != '/')
+    if (! isabsolute(repos))
     {
 	if (CVSroot == NULL)
 	{
