@@ -3,6 +3,16 @@ Low-priority bugs go here.  Actually, most every documented bug is
 has gotten around to fixing it.
 
 
+* "cvs update -ko -p -r REV file" doesn't seem to pay attention to the
+  '-ko', at least in client/server mode.  A simple work around is to
+  temporarily change the db file with "cvs admin -ko file", then switch
+  it back to the original modes after the checkout (probably '-kkv').
+
+* "cvs status" has a difference in its output between local and
+  client/server mode.  Namely there's a tab character followed by a
+  ctime(3)-style date string at the end of the "Working revision:"
+  field.
+
 * commands which don't work in a local working directory should probably
   ignore any CVS/Root values and revert to using CVSROOT alone.  The
   current use of CVS/Root can be very confusing if you forget you're in
