@@ -1,5 +1,14 @@
 2005-03-17  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (checkaddfile): Avoid dereferencing a NULL pointer in
+	response to a rare error.
+	* admin.c (admin_fileproc), log.c (log_expand_revlist), mkmodules.c
+	(checkout_file), rcs.c (RCS_getdate, RCS_deltas, RCS_findlock_or_tip,
+	RCS_tag2rev): Avoid dereferencing NULL pointer.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
+
+2005-03-17  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (RCS_reparsercsfile): Avoid memory leak.
 	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
 
