@@ -1,3 +1,8 @@
+Tue May 16 21:49:05 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* subr.c (xmalloc): Never try to malloc zero bytes; if the user
+	asks for zero bytes, malloc one instead.
+
 Mon May 15 14:35:11 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* lock.c (L_LOCK_OWNED): Removed.
