@@ -1,7 +1,12 @@
+Wed Dec 13 19:52:08 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * waitpid.c (waitpid): be more careful about child's exit status,
+        and about return status of this function.
+
 Wed Dec 13 20:10:50 1995  Karl Fogel  (kfogel@floss.cyclic.com)
 
         * makefile.in (clean): pass /NOE to the linker, to avoid duplicate
-		symbols when linking with setargv.obj.
+	symbols when linking with setargv.obj.
 
 Wed Dec 13 18:44:47 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
