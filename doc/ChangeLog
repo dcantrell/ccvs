@@ -1,3 +1,10 @@
+1998-10-13  Jim Kingdon
+
+	* cvsclient.texi (Protocol Notes): Remove item about "cvs update"
+	sending modified files to the server; there are some better ideas
+	at http://www.cyclic.com/cvs/dev-update.txt
+	Add mention of www.cyclic.com.
+
 1998-09-30  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Committing your changes, Environment variables):
