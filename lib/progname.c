@@ -21,4 +21,4 @@
 /* Written by Derek R. Price <derek@ximbiot.com>.  */
 
 /* This gets set to the name of the executing program.  */
-char *program_name;
+char *program_name = "getdate";
