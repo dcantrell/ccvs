@@ -587,9 +587,6 @@ main (argc, argv)
 		    /* If this is "cvs init", the root need not exist yet.  */
 		    if (strcmp (command_name, "init") != 0)
 		    {
-			error (0, 0,
-			       "Sorry, you don't have sufficient access to %s",
-			       CVSroot_directory);
 			error (1, save_errno, "%s", path);
 		    }
 		}
