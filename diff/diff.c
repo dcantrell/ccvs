@@ -247,11 +247,21 @@ diff_run (argc, argv, out, callbacks_arg)
 
   /* Do our initializations.  */
   initialize_main (&argc, &argv);
-
-  /* Decode the options.  */
-
   optind_old = optind;
   optind = 0;
+
+  /* Set the jump buffer, so that diff may abort execution without
+     terminating the process. */
+  val = setjmp (diff_abort_buf);
+  if (val != 0)
+    {
+      optind = optind_old;
+      if (opened_file)
+	fclose (outfile);
+      return val;
+    }
+
+  /* Decode the options.  */
   while ((c = getopt_long (argc, argv,
 			   "0123456789abBcC:dD:efF:hHiI:lL:nNpPqrsS:tTuU:vwW:x:X:y",
 			   longopts, 0)) != EOF)
@@ -684,17 +694,6 @@ diff_run (argc, argv, out, callbacks_arg)
 	    }
 	  opened_file = 1;
 	}
-    }
-
-  /* Set the jump buffer, so that diff may abort execution without
-     terminating the process. */
-  val = setjmp (diff_abort_buf);
-  if (val != 0)
-    {
-      optind = optind_old;
-      if (opened_file)
-	fclose (outfile);
-      return val;
     }
 
   val = compare_files (0, argv[optind], 0, argv[optind + 1], 0);

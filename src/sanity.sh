@@ -68,10 +68,10 @@ export LC_ALL
 #     So this would be lost if everything was `pwd`-based.  I suppose
 #     if we wanted to get baroque we could start making symlinks
 #     to ensure the two are different.
-TESTDIR=${TESTDIR:-/tmp/cvs-sanity}
+: ${TESTDIR=/tmp/cvs-sanity}
 
 # Some people may need to use nawk or gawk instead
-AWK=awk
+: ${AWK=awk}
 
 # "debugger"
 #set -x
@@ -831,6 +831,15 @@ RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.2
 retrieving revision 1\.3
 diff -r1\.2 -r1\.3"
+
+	  dotest_fail basica-8b1 "${testcvs} -q diff -r1.2 -r1.3 -C 3isacrowd" \
+"Index: sdir/ssdir/ssfile
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
+retrieving revision 1\.2
+retrieving revision 1\.3
+diff -C3isacrowd -r1\.2 -r1\.3
+${PROG} [a-z]*: invalid context length argument"
 
 	  # The .* here will normally be "No such file or directory",
 	  # but if memory serves some systems (AIX?) have a different message.
