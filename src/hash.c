@@ -119,6 +119,7 @@ dellist (listp)
     (*listp)->next = listcache;
     listcache = *listp;
 #else
+    free ((*listp)->list);
     free (*listp);
 #endif
     *listp = (List *) NULL;

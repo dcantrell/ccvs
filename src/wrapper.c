@@ -181,6 +181,8 @@ wrap_add_file (file, temp)
     }
     while (getline (&line, &line_allocated, fp) >= 0)
 	wrap_add (line, temp);
+    if (line)
+        free (line);
     if (ferror (fp))
 	error (0, errno, "cannot read %s", file);
     if (fclose (fp) == EOF)

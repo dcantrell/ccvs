@@ -801,6 +801,8 @@ rcsvers_delproc (p)
 	free (rnode->next);
     if (rnode->author != (char *) NULL)
 	free (rnode->author);
+    if (rnode->state != (char *) NULL)
+	free (rnode->state);
     if (rnode->other != (List *) NULL)
 	dellist (&rnode->other);
     free ((char *) rnode);

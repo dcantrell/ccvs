@@ -449,6 +449,7 @@ cannot resurrect %s; RCS file removed by second party", user);
 
     if (message)
 	free (message);
+    free (repository);
 
     return (err);
 }

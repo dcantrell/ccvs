@@ -868,9 +868,9 @@ main (argc, argv)
     SYSTEM_CLEANUP ();
 #endif
 
-    if (err)
-	return (EXIT_FAILURE);
-    return 0;
+    /* This is exit rather than return because apparently that keeps
+       some tools which check for memory leaks happier.  */
+    exit (err ? EXIT_FAILURE : 0);
 }
 
 char *

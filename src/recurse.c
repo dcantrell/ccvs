@@ -135,7 +135,6 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
     }
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
-/* FIXME-krp: clean up files_by_dir */
     if (dirlist)
 	dellist (&dirlist);
 
@@ -280,6 +279,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
        calling do_recursion. */
 
     err += walklist (files_by_dir, unroll_files_proc, (void *) &frame);
+    dellist(&files_by_dir);
 
     /* then do_recursion on the dirlist. */
     if (dirlist != NULL)
@@ -782,6 +782,7 @@ unroll_files_proc (p, closure)
 
     /* otherwise, call dorecusion for this list of files. */
     filelist = (List *) p->data;
+    p->data = NULL;
     save_dirlist = dirlist;
     dirlist = NULL;
 

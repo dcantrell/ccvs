@@ -1833,16 +1833,7 @@ check_command_legal_p (cmd_name)
                      linebuf[num_red - 1] = '\0';
 
                  if (strcmp (linebuf, CVS_Username) == 0)
-                 {
-                     free (linebuf);
-                     linebuf = NULL;
-                     linebuf_len = 0;
                      goto handle_illegal;
-                 }
-                 /* else */
-                 free (linebuf);
-                 linebuf = NULL;
-                 linebuf_len = 0;
              }
 
              /* If not listed specifically as a reader, then this user
@@ -1870,6 +1861,8 @@ check_command_legal_p (cmd_name)
          {
              /* writers file does not exist, so everyone is a writer,
                 by default */
+	     if (linebuf)
+	         free (linebuf);
              return 1;
          }
 
@@ -1884,27 +1877,24 @@ check_command_legal_p (cmd_name)
            
              if (strcmp (linebuf, CVS_Username) == 0)
              {
-                 free (linebuf);
-                 linebuf = NULL;
-                 linebuf_len = 0;
                  found_it = 1;
                  break;
              }
-             /* else */
-             free (linebuf);
-             linebuf = NULL;
-             linebuf_len = 0;
          }
 
          if (found_it)
          {
              fclose (fp);
+             if (linebuf)
+                 free (linebuf);
              return 1;
          }
          else   /* writers file exists, but this user not listed in it */
          {
          handle_illegal:
              fclose (fp);
+             if (linebuf)
+                 free (linebuf);
 	     return 0;
          }
     }
@@ -4377,8 +4367,6 @@ check_repository_password (username, password, repository, host_user_ptr)
 	    found_it = 1;
 	    break;
         }
-        free (linebuf);
-        linebuf = NULL;
     }
     if (ferror (fp))
 	error (0, errno, "cannot read %s", filename);
@@ -4399,9 +4387,7 @@ check_repository_password (username, password, repository, host_user_ptr)
 	if (strcmp (found_password, crypt (password, found_password)) == 0)
         {
             /* Give host_user_ptr permanent storage. */
-            *host_user_ptr = xmalloc (strlen (host_user_tmp) + 1);
-            strcpy (*host_user_ptr, host_user_tmp);
-
+            *host_user_ptr = xstrdup (host_user_tmp);
 	    retval = 1;
         }
 	else
@@ -4417,6 +4403,8 @@ check_repository_password (username, password, repository, host_user_ptr)
     }
 
     free (filename);
+    if (linebuf)
+        free (linebuf);
 
     return retval;
 }

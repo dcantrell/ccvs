@@ -1,3 +1,33 @@
+Fri May  9 22:19:36 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Add comment explaining why we call exit.  Pass 0
+	not EXIT_SUCCESS, because lib/system.h has portability cruft for
+	EXIT_FAILURE but not EXIT_SUCCESS.
+
+Fri May  9 17:25:00 1997  Larry Jones  <larry.jones@sdrc.com>
+
+	Fix miscellaneous memory allocation problems:
+	* add.c (add): Free repository.
+	* client.c (notified_a_file): Free getline buffer.
+	* edit.c (notify_check): Free getline buffer.
+	* hash.c (dellist): Free header node when not caching.
+	* login.c (login): Don't continually free & allocate getline
+	buffer, use xstrdup instead of xmalloc/strcpy, free getline
+	buffer before returning.
+	* main.c (main): Call exit instead of returning so tools like
+	Purify won't consider permanently allocated memory as leaks.
+	* mkmodules.c (mkmodules): Free getline buffer.
+	* modules.c (cat_module): Call close_module.
+	* rcs.c (rcsvers_delproc): Free state.
+	* recurse.c (start_recursion): Free files_by_dir.
+	(unroll_files_proc): NULL out p->data after using it to set
+	filelist to avoid multiple frees.
+	* server.c (check_command_legal_p): Don't continually free &
+	allocate getline buffer, free getline buffer before returning.
+	(check_repository_password): Ditto, use xstrdup instead of
+	xmalloc/strcpy.
+	* wrapper.c (wrap_add_file): Free getline buffer.
+
 Thu May  8 14:21:00 1997  Larry Jones  <larry.jones@sdrc.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
