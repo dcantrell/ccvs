@@ -1,5 +1,9 @@
 2003-02-03  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Remote repositories): :METHOD: is optional.
+
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
 	* cvs.texinfo (Committing your changes): Move index entries closer to
 	their corresponding references.
 	(Environment variables): Include $VISUAL in order of

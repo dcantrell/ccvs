@@ -2029,7 +2029,7 @@ repository is just like using a local one, except that
 the format of the repository name is:
 
 @example
-:@var{method}:[[@var{user}][:@var{password}]@@]@var{hostname}[:[@var{port}]]/path/to/repository
+[:@var{method}:][[@var{user}][:@var{password}]@@]@var{hostname}[:[@var{port}]]/path/to/repository
 @end example
 
 Specifying a password in the repository name is not recommended during
