@@ -1,3 +1,7 @@
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-10-27  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (libcvs_a_SOURCES): Remove obsolete PROTO.h.

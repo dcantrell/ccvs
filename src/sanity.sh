@@ -259,11 +259,28 @@ if test -n "$remotehost" && test -z "$TESTDIR"; then
     echo "directory on both this client and the CVS server." >&2
 fi
 
-# Set a default value for $CVS_RSH.
+# Read our config file if we can find it.
 #
-# FIXME: Since the CVS default can be configured, this default should be set in
-# the config file.
-: ${CVS_RSH=ssh}; export CVS_RSH
+# The config file should always be located in the same directory as the CVS
+# executable, unless we are testing an executable outside of the build
+# directory.  In this case, we echo a warning and attempt to assume the most
+# portable configuration.
+if test -z "$configfile"; then
+	configfile=`dirname $testcvs`/sanity.config.sh
+fi
+if test -r "$configfile"; then
+	. "$configfile"
+else
+	echo "WARNING: Failed to locate test suite config file" >&2
+	echo "         \`$configfile'." >&2
+fi
+
+
+
+# Set a default value for $CVS_RSH. The sanity.config.sh file will
+# have the configured value in the RSH_DFLT variable.
+#
+: ${CVS_RSH=${RSH_DFLT:-ssh}}; export CVS_RSH
 
 if test -n "$remotehost"; then
     # Verify that $CVS_RSH $remotehost works.
@@ -364,24 +381,6 @@ dokeep()
       exit 0
     fi
 }
-
-
-
-# Read our config file if we can find it.
-#
-# The config file should always be located in the same directory as the CVS
-# executable, unless we are testing an executable outside of the build
-# directory.  In this case, we echo a warning and attempt to assume the most
-# portable configuration.
-if test -z "$configfile"; then
-	configfile=`dirname $testcvs`/sanity.config.sh
-fi
-if test -r "$configfile"; then
-	. "$configfile"
-else
-	echo "WARNING: Failed to locate test suite config file" >&2
-	echo "         \`$configfile'." >&2
-fi
 
 
 

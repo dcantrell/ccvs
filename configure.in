@@ -495,7 +495,8 @@ AC_DEFINE_UNQUOTED(
   [RSH_DFLT], ["$with_default_rsh"],
   [The default remote shell to use, if one does not specify the
    CVS_RSH environment variable.])
-
+RSH_DFLT=$with_default_rsh
+AC_SUBST(RSH_DFLT)
 dnl done with finding a default CVS_RSH value
 dnl
 dnl end --with-rsh
