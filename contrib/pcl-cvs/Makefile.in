@@ -40,8 +40,10 @@ infodir = $(prefix)/info
 # Where to put the manual pages.
 mandir = $(prefix)/man
 
-# Used to byte-compile files.
-EMACS=emacs
+# Used to batch-byte-compile files.
+EMACS = emacs
+# compile with noninteractive and relatively clean environment
+BATCHFLAGS = -batch -n -q
 
 # This is the directory in which the ELCFILES will be installed.
 lispdir = $(libdir)/emacs/site-lisp
@@ -58,10 +60,17 @@ SHELL = /bin/sh
 
 DISTFILES = \
 	.cvsignore ChangeLog INSTALL Makefile.in NEWS README \
-	${ELFILES} compile-all.el \
+	${ELFILES} \
 	pcl-cvs.texinfo texinfo.tex
 
-OBJDIR_DISTFILES = pcl-cvs.aux pcl-cvs.ps
+OBJDIR_DISTFILES = $(ELCFILES) pcl-cvs.aux pcl-cvs.ps
+
+# files that contain key macro definitions.  almost everything
+# depends on them because the byte-compiler inlines macro
+# expansions.  everything also depends on the byte compiler
+# options file since this might do odd things like turn off
+# certain compiler optimizations.
+CORE = 
 
 ELFILES = pcl-cvs.el pcl-cvs-lucid.el pcl-cvs-startup.el
 ELCFILES = pcl-cvs.elc pcl-cvs-lucid.elc
@@ -80,11 +89,13 @@ MAKEINFO = makeinfo
 DVIPS = dvips
 DVIPSFLAGS = 
 
-pcl-cvs.elc pcl-cvs-lucid.elc elcfiles:
-	$(EMACS) -batch -n -q -l ${srcdir}/compile-all.el -f compile-pcl-cvs
+.SUFFIXES:	.el .elc
+.el.elc:
+	@echo "You can probably ignore free variable and unknown function warnings..."
+	$(EMACS) $(BATCHFLAGS) -f batch-byte-compile $?
 
-# CYGNUS LOCAL: install does not depend on install-info
-all: elcfiles # info
+# CYGNUS LOCAL: install does not depend on info
+all: $(ELCFILES) # info
 .PHONY:	all
 
 check installcheck:
@@ -92,7 +103,7 @@ check installcheck:
 .PHONY:	check installcheck
 
 # CYGNUS LOCAL: install does not depend on install-info
-install: install-elc # install-el install-info
+install: install-elc # install-info install-el
 
 install-el: $(ELFILES)
 	for i in $(ELFILES) ; do \
@@ -118,7 +129,7 @@ installdirs: $(top_srcdir)/mkinstalldirs
 .PHONY:	installdirs
 
 uninstall:
-	@echo "$@ not supported in this makefile..."
+	@echo "$@ not yet supported in this makefile..."
 .PHONY:	uninstall
 
 info: pcl-cvs.info
@@ -162,8 +173,6 @@ ls:
 	@echo $(DISTFILES)
 .PHONY: ls
 
-# ***XXX+++FIXME:  does this really get used in CVS???
-#
 dist: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
@@ -180,8 +189,10 @@ subdir = contrib/pcl-cvs
 Makefile: ../../config.status Makefile.in
 	cd ../.. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
 
+# CYGNUS LOCAL: don't depend on auto-re-config
 #../config.status: ../configure
 #	cd .. ; $(SHELL) config.status --recheck
 
+# CYGNUS LOCAL: don't depend on auto-re-config
 #../configure: ../configure.in
 #	cd $(top_srcdir) ; autoconf
