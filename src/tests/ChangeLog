@@ -1,5 +1,10 @@
 2003-11-20  Derek R. Price  <derek@ximbiot.com>
 
+	* basic.at: Reformat & add some keywords.
+	* suite: Regenerated.
+
+2003-11-20  Derek R. Price  <derek@ximbiot.com>
+
 	* src/tests/basic.at (AT_CVS_SIMPLE_PROJECT): Move...
 	(cvs_project_init_simple): ...here.
 	(*): s/AT_CVS_SIMPLE_PROJECT()/cvs_project_init_simple/.
