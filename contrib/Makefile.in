@@ -89,7 +89,6 @@ install: all $(libdir)/cvs/contrib
 	for f in $(PROGS) ; do\
 		$(INSTALL_PROGRAM) $(srcdir)/$$f $(bindir)/$$f; \
 	done
-	@echo "Remember to re-run 'cvsinit' for your repository(ies)..."
 .PHONY: install
 
 $(libdir)/cvs/contrib:

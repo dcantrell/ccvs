@@ -142,7 +142,6 @@ install-local: all-local
 	  echo Installing $$prog in $(bindir); \
 	  $(INSTALL) $$prog $(bindir)/$$prog ; \
 	done
-	@echo "Remember to run 'cvsinit' for your repository(ies)"
 
 .PHONY: tags
 tags:
