@@ -479,7 +479,9 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if ( rmdir (path) != 0 && errno == ENOTEMPTY )
+    /* ENOTEMPTY for NT (obvious) but EACCES for Win95 (not obvious) */
+    if (rmdir (path) != 0
+	&& (errno == ENOTEMPTY || errno == EACCES))
     {
 	if ((dirp = opendir (path)) == NULL)
 	    /* If unable to open the directory return
