@@ -1,5 +1,10 @@
 2003-03-07  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (help): Add explanation of CVS-TO-TEST and edit for
+	consistency.
+
+2003-03-07  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (usage): Show users long --help rather than less
 	informative -h.
 
