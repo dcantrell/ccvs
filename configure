@@ -9824,6 +9824,87 @@ _ACEOF
 
 
 
+echo "$as_me:$LINENO: checking whether lstat dereferences a symlink specified with a trailing slash" >&5
+echo $ECHO_N "checking whether lstat dereferences a symlink specified with a trailing slash... $ECHO_C" >&6
+if test "${ac_cv_func_lstat_dereferences_slashed_symlink+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  rm -f conftest.sym conftest.file
+echo >conftest.file
+if test "$as_ln_s" = "ln -s" && ln -s conftest.file conftest.sym; then
+  if test "$cross_compiling" = yes; then
+  ac_cv_func_lstat_dereferences_slashed_symlink=no
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+struct stat sbuf;
+     /* Linux will dereference the symlink and fail.
+	That is better in the sense that it means we will not
+	have to compile and use the lstat wrapper.  */
+     exit (lstat ("conftest.sym/", &sbuf) ? 0 : 1);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_lstat_dereferences_slashed_symlink=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+ac_cv_func_lstat_dereferences_slashed_symlink=no
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+else
+  # If the `ln -s' command failed, then we probably don't even
+  # have an lstat function.
+  ac_cv_func_lstat_dereferences_slashed_symlink=no
+fi
+rm -f conftest.sym conftest.file
+
+fi
+echo "$as_me:$LINENO: result: $ac_cv_func_lstat_dereferences_slashed_symlink" >&5
+echo "${ECHO_T}$ac_cv_func_lstat_dereferences_slashed_symlink" >&6
+
+test $ac_cv_func_lstat_dereferences_slashed_symlink = yes &&
+
+cat >>confdefs.h <<_ACEOF
+#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+_ACEOF
+
+
+if test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
+  case $LIBOBJS in
+    "lstat.$ac_objext"   | \
+  *" lstat.$ac_objext"   | \
+    "lstat.$ac_objext "* | \
+  *" lstat.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS lstat.$ac_objext" ;;
+esac
+
+fi
+
 echo "$as_me:$LINENO: checking for stdbool.h that conforms to C99" >&5
 echo $ECHO_N "checking for stdbool.h that conforms to C99... $ECHO_C" >&6
 if test "${ac_cv_header_stdbool_h+set}" = set; then
@@ -16095,6 +16176,78 @@ done
 
 
 
+  echo "$as_me:$LINENO: checking whether stat accepts an empty string" >&5
+echo $ECHO_N "checking whether stat accepts an empty string... $ECHO_C" >&6
+if test "${ac_cv_func_stat_empty_string_bug+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_func_stat_empty_string_bug=yes
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+struct stat sbuf;
+  exit (stat ("", &sbuf) ? 1 : 0);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_stat_empty_string_bug=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+ac_cv_func_stat_empty_string_bug=no
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+fi
+echo "$as_me:$LINENO: result: $ac_cv_func_stat_empty_string_bug" >&5
+echo "${ECHO_T}$ac_cv_func_stat_empty_string_bug" >&6
+if test $ac_cv_func_stat_empty_string_bug = yes; then
+  case $LIBOBJS in
+    "stat.$ac_objext"   | \
+  *" stat.$ac_objext"   | \
+    "stat.$ac_objext "* | \
+  *" stat.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS stat.$ac_objext" ;;
+esac
+
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STAT_EMPTY_STRING_BUG 1
+_ACEOF
+
+fi
+
+    if test $ac_cv_func_stat_empty_string_bug = yes; then
+
+  :
+
+  fi
+
+
 
 
   # Define two additional variables used in the Makefile substitution.
@@ -20778,87 +20931,6 @@ fi
 
 
 
-echo "$as_me:$LINENO: checking whether lstat dereferences a symlink specified with a trailing slash" >&5
-echo $ECHO_N "checking whether lstat dereferences a symlink specified with a trailing slash... $ECHO_C" >&6
-if test "${ac_cv_func_lstat_dereferences_slashed_symlink+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  rm -f conftest.sym conftest.file
-echo >conftest.file
-if test "$as_ln_s" = "ln -s" && ln -s conftest.file conftest.sym; then
-  if test "$cross_compiling" = yes; then
-  ac_cv_func_lstat_dereferences_slashed_symlink=no
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-$ac_includes_default
-int
-main ()
-{
-struct stat sbuf;
-     /* Linux will dereference the symlink and fail.
-	That is better in the sense that it means we will not
-	have to compile and use the lstat wrapper.  */
-     exit (lstat ("conftest.sym/", &sbuf) ? 0 : 1);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_lstat_dereferences_slashed_symlink=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-ac_cv_func_lstat_dereferences_slashed_symlink=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-else
-  # If the `ln -s' command failed, then we probably don't even
-  # have an lstat function.
-  ac_cv_func_lstat_dereferences_slashed_symlink=no
-fi
-rm -f conftest.sym conftest.file
-
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_lstat_dereferences_slashed_symlink" >&5
-echo "${ECHO_T}$ac_cv_func_lstat_dereferences_slashed_symlink" >&6
-
-test $ac_cv_func_lstat_dereferences_slashed_symlink = yes &&
-
-cat >>confdefs.h <<_ACEOF
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
-_ACEOF
-
-
-if test $ac_cv_func_lstat_dereferences_slashed_symlink = no; then
-  case $LIBOBJS in
-    "lstat.$ac_objext"   | \
-  *" lstat.$ac_objext"   | \
-    "lstat.$ac_objext "* | \
-  *" lstat.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS lstat.$ac_objext" ;;
-esac
-
-fi
-
 
 
 
@@ -21499,78 +21571,6 @@ fi
 
 
     if test X"$ac_cv_func_realloc_0_nonnull" = Xno || test X"$ac_cv_func_realloc_works" = Xno; then
-
-  :
-
-  fi
-
-
-  echo "$as_me:$LINENO: checking whether stat accepts an empty string" >&5
-echo $ECHO_N "checking whether stat accepts an empty string... $ECHO_C" >&6
-if test "${ac_cv_func_stat_empty_string_bug+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test "$cross_compiling" = yes; then
-  ac_cv_func_stat_empty_string_bug=yes
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-$ac_includes_default
-int
-main ()
-{
-struct stat sbuf;
-  exit (stat ("", &sbuf) ? 1 : 0);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_func_stat_empty_string_bug=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-ac_cv_func_stat_empty_string_bug=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-fi
-echo "$as_me:$LINENO: result: $ac_cv_func_stat_empty_string_bug" >&5
-echo "${ECHO_T}$ac_cv_func_stat_empty_string_bug" >&6
-if test $ac_cv_func_stat_empty_string_bug = yes; then
-  case $LIBOBJS in
-    "stat.$ac_objext"   | \
-  *" stat.$ac_objext"   | \
-    "stat.$ac_objext "* | \
-  *" stat.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS stat.$ac_objext" ;;
-esac
-
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_STAT_EMPTY_STRING_BUG 1
-_ACEOF
-
-fi
-
-    if test $ac_cv_func_stat_empty_string_bug = yes; then
 
   :
 
