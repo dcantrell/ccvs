@@ -288,9 +288,6 @@ add (int argc, char **argv)
 #endif
 	struct file_info finfo;
 	char *p;
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-	char *found_name = NULL;
-#endif
 
 	memset (&finfo, 0, sizeof finfo);
 
@@ -338,62 +335,6 @@ add (int argc, char **argv)
 
 	finfo.repository = repository;
 	finfo.entries = entries;
-
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-	if (ign_case)
-	{
-	    /* Need to check whether there is a directory with the
-	       same name but different case.  We'll check for files
-	       with the same name later (when Version_TS calls
-	       RCS_parse which calls locate_rcs).  If CVS some day
-	       records directories in the RCS files, then we should be
-	       able to skip the separate check here, which would be
-	       cleaner.  */
-	    DIR *dirp;
-	    struct dirent *dp;
-
-	    dirp = CVS_OPENDIR (finfo.repository);
-	    if (dirp == NULL)
-		error (1, errno, "cannot read directory `%s'",
-		       finfo.repository);
-	    errno = 0;
-	    while ((dp = CVS_READDIR (dirp)) != NULL)
-	    {
-		if (cvs_casecmp (dp->d_name, finfo.file) == 0)
-		{
-		    if (found_name != NULL)
-			error (1, 0,
-			       "`%s' is ambiguous; could mean `%s' or `%s'",
-			       finfo.file, dp->d_name, found_name);
-		    found_name = xstrdup (dp->d_name);
-		}
-	    }
-	    if (errno != 0)
-		error (1, errno, "cannot read directory `%s'",
-		       finfo.repository);
-	    CVS_CLOSEDIR (dirp);
-
-	    if (found_name != NULL)
-	    {
-		/* OK, we are about to patch up the name, so patch up
-		   the temporary directory too to match.  The isdir
-		   should "always" be true (since files have ,v), but
-		   I guess we might as well make some attempt to not
-		   get confused by stray files in the repository.  */
-		if (isdir (finfo.file))
-		{
-		    if (CVS_MKDIR (found_name, 0777) < 0
-			&& errno != EEXIST)
-			error (0, errno, "cannot create `%s'", finfo.file);
-		}
-
-		/* OK, we found a directory with the same name, maybe in
-		   a different case.  Treat it as if the name were the
-		   same.  */
-		finfo.file = found_name;
-	    }
-	}
-#endif
 
 	/* We pass force_tag_match as 1.  If the directory has a
            sticky branch tag, and there is already an RCS file which
@@ -647,10 +588,6 @@ re-adding file `%s' (in place of dead revision %s)",
 	free_cwd (&cwd);
 
 	free (finfo.fullname);
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-	if (found_name != NULL)
-	    free (found_name);
-#endif
     }
     if (added_files && !really_quiet)
 	error (0, 0, "use `%s commit' to add %s permanently",
