@@ -1,5 +1,10 @@
 2003-09-29  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (make_file_label): Make a failure to stat a file a fatal error
+	since it signals that a later read will also fail.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
 	* rcs.c (make_file_label): Optimize the check for labels set by the
 	user.
 

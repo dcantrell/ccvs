@@ -1,5 +1,9 @@
 2003-09-29  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note recent fix of the potential segfault during a diff.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
 	* HACKING (Indentation style): Put an ANSI function prototype in the
 	indentation style example.
 	(Portability): Add a few more notes on assuming a freestanding C89
