@@ -1,3 +1,7 @@
+2004-02-24  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: Add xstrdup, xalloc, exitfail.
+
 2004-02-20  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note that the dying gasp check has now been completely removed.
