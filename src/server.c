@@ -133,7 +133,7 @@ char *CVS_Username = NULL;
 
 /* Used to check that same repos is transmitted in pserver auth and in
    later CVS protocol.  Exported because root.c also uses. */
-char *Pserver_Repos = NULL;
+static char *Pserver_Repos = NULL;
 
 /* Should we check for system usernames/passwords?  Can be changed by
    CVSROOT/config.  */
@@ -725,6 +725,19 @@ serve_root (arg)
 	return;
     }
 
+    if (Pserver_Repos != NULL)
+    {
+	if (strcmp (Pserver_Repos, arg) != 0)
+	{
+	    if (alloc_pending (80 + strlen (Pserver_Repos) + strlen (arg)))
+		/* The explicitness is to aid people who are writing clients.
+		   I don't see how this information could help an
+		   attacker.  */
+		sprintf (pending_error_text, "\
+E Protocol error: Root says \"%s\" but pserver says \"%s\"",
+			 arg, Pserver_Repos);
+	}
+    }
     set_local_cvsroot (arg);
 
     /* For pserver, this will already have happened, and the call will do

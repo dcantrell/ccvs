@@ -292,30 +292,6 @@ char *CVSroot_username;		/* the username or NULL if method == local */
 char *CVSroot_hostname;		/* the hostname or NULL if method == local */
 char *CVSroot_directory;	/* the directory name */
 
-#ifdef AUTH_SERVER_SUPPORT
-/* Die if CVSroot_directory and Pserver_Repos don't match. */
-static void
-check_root_consistent ()
-{
-    /* FIXME: Should be using a deferred error, as the rest of
-       serve_root does.  As it is now the call to error could conceivably
-       cause deadlock, as noted in server_cleanup.  Best solution would
-       presumably be to write some code so that error() automatically
-       defers the error in those cases where that is needed.  */
-    /* FIXME?  Possible that the wording should be more clear (e.g.
-          Root says "%s" but pserver protocol says "%s"
-       or something which would aid people who are writing implementations
-       of the client side of the CVS protocol.  I don't see any security
-       problem with revealing that information.  */
-    if ((Pserver_Repos != NULL) && (CVSroot_directory != NULL))
-	if (strcmp (Pserver_Repos, CVSroot_directory) != 0)
-	    error (1, 0, "repository mismatch: \"%s\" vs \"%s\"",
-		   Pserver_Repos, CVSroot_directory);
-}
-
-#endif /* AUTH_SERVER_SUPPORT */
-
-
 int
 parse_cvsroot (CVSroot)
     char *CVSroot;
@@ -421,9 +397,6 @@ parse_cvsroot (CVSroot)
     }
 
     CVSroot_directory = cvsroot_copy;
-#ifdef AUTH_SERVER_SUPPORT
-    check_root_consistent ();
-#endif /* AUTH_SERVER_SUPPORT */
 
 #if ! defined (CLIENT_SUPPORT) && ! defined (DEBUG)
     if (CVSroot_method != local_method)
@@ -518,9 +491,6 @@ set_local_cvsroot (dir)
     CVSroot_original = xstrdup (dir);
     CVSroot_method = local_method;
     CVSroot_directory = CVSroot_original;
-#ifdef AUTH_SERVER_SUPPORT
-    check_root_consistent ();
-#endif /* AUTH_SERVER_SUPPORT */
     CVSroot_username = NULL;
     CVSroot_hostname = NULL;
     client_active = 0;
