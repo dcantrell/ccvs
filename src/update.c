@@ -49,12 +49,12 @@ static int patch_file PROTO ((struct file_info *finfo,
 			      int *docheckout, struct stat *file_info,
 			      unsigned char *checksum));
 #endif
-static int isemptydir PROTO((char *dir));
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
 static int scratch_file PROTO((struct file_info *finfo));
 static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
 					char *repository, char *update_dir,
 					List *entries));
+static int isremoved PROTO ((Node* node, void* closure));
 static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
 					int err, char *update_dir,
 					List *entries));
@@ -869,29 +869,94 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 }
 
 /*
- * Returns 1 if the argument directory is completely empty, other than the
- * existence of the CVS directory entry.  Zero otherwise.
+ * Returns 1 if the file indicated by node has been removed.
  */
 static int
+isremoved(node, closure)
+    Node* node;
+    void* closure;
+{
+    Entnode *entdata = (Entnode*) node->data;
+
+    /* If the first character of the version is a '-', the file has been
+       removed. */
+    return (entdata->version && entdata->version[0] == '-') ? 1 : 0;
+}
+
+/*
+ * Returns 1 if the argument directory is completely empty, other than the
+ * existence of the CVS directory entry.  Zero otherwise.
+ * FIXME: move this to some common utility library....
+ */
+int
 isemptydir (dir)
-    char *dir;
+    const char *dir;
 {
     DIR *dirp;
     struct dirent *dp;
 
     if ((dirp = CVS_OPENDIR (dir)) == NULL)
     {
-	error (0, 0, "cannot open directory %s for empty check", dir);
+	if (! existence_error (errno))
+	    error (0, 0, "cannot open directory %s for empty check", dir);
 	return (0);
     }
+    errno = 0;
     while ((dp = readdir (dirp)) != NULL)
     {
-	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0)
+	if (strcmp (dp->d_name, ".") != 0 && 
+	    strcmp (dp->d_name, "..") != 0) 
 	{
-	    (void) closedir (dirp);
-	    return (0);
+	    if (strcmp (dp->d_name, CVSADM) != 0) 
+	    {
+		/* An entry other than the CVS directory.  The directory
+		   is certainly not empty. */
+		(void) closedir (dirp);
+		return (0);
+	    }
+	    else
+	    {
+		/* The CVS directory entry.  We don't have to worry about
+		   this unless the Entries file indicates that files have
+		   been removed, but not committed, in this directory.
+		   (Removing the directory would prevent people from
+		   comitting the fact that they removed the files!) */
+		List* l;
+		int   files_removed;
+		struct saved_cwd cwd;
+
+		if (save_cwd (&cwd)) {
+		    (void) closedir (dirp);
+		    return (0);
+		}
+
+		chdir (dir);
+		l = Entries_Open (0);
+		files_removed =
+			walklist (l, (int (*)(Node*, void*)) isremoved, 0);
+		Entries_Close (l);
+
+		if (restore_cwd (&cwd, NULL)) {
+		    (void) closedir (dirp);
+		    return (0);
+		}
+		free_cwd (&cwd);
+
+		if (files_removed != 0) {
+		    /* There are files that have been removed, but not
+		       committed!  Do not consider the directory empty. */
+		    (void) closedir (dirp);
+		    return (0);
+		} /* if */
+	    }
 	}
+	errno = 0;			/* going around again.... */
+    }
+    if (!errno)
+    {
+	error (0, errno, "cannot read directory %s", dir);
+	(void) closedir (dirp);
+	return (0);
     }
     (void) closedir (dirp);
     return (1);

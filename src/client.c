@@ -623,6 +623,7 @@ int filter_through_gunzip (fd, dir, pidp)
     pid_t *pidp;
 {
     static char *gunzip_argv[3] = { "gzip", "-d" };
+
     return filter_stream_through_program (fd, dir, &gunzip_argv[0], pidp);
 }
 
@@ -653,12 +654,13 @@ handle_error (args, len)
     int len;
 {
     int something_printed;
-    
+    char *p;
+
     /*
      * First there is a symbolic error code followed by a space, which
      * we ignore.
      */
-    char *p = strchr (args, ' ');
+    p = strchr (args, ' ');
     if (p == NULL)
     {
 	error (0, 0, "invalid data from cvs server");
@@ -683,6 +685,7 @@ handle_valid_requests (args, len)
 {
     char *p = args;
     char *q;
+
     struct request *rq;
     do
     {
@@ -737,6 +740,7 @@ get_short_pathname (name)
     const char *name;
 {
     const char *retval;
+
     if (use_directory)
 	return (char *) name;
     if (strncmp (name, toplevel_repos, strlen (toplevel_repos)) != 0)
@@ -2170,45 +2174,6 @@ do_deferred_progs ()
     update_progs = NULL;
 }
 
-static int client_isemptydir PROTO((char *));
-
-/*
- * Returns 1 if the argument directory exists and is completely empty,
- * other than the existence of the CVS directory entry.  Zero otherwise.
- */
-static int
-client_isemptydir (dir)
-    char *dir;
-{
-    DIR *dirp;
-    struct dirent *dp;
-
-    if ((dirp = CVS_OPENDIR (dir)) == NULL)
-    {
-	if (! existence_error (errno))
-	    error (0, errno, "cannot open directory %s for empty check", dir);
-	return (0);
-    }
-    errno = 0;
-    while ((dp = readdir (dirp)) != NULL)
-    {
-	if (strcmp (dp->d_name, ".") != 0 && strcmp (dp->d_name, "..") != 0 &&
-	    strcmp (dp->d_name, CVSADM) != 0)
-	{
-	    (void) closedir (dirp);
-	    return (0);
-	}
-    }
-    if (errno != 0)
-    {
-	error (0, errno, "cannot read directory %s", dir);
-	(void) closedir (dirp);
-	return (0);
-    }
-    (void) closedir (dirp);
-    return (1);
-}
-
 struct save_dir {
     char *dir;
     struct save_dir *next;
@@ -2245,7 +2210,7 @@ process_prune_candidates ()
     }
     for (p = prune_candidates; p != NULL; )
     {
-	if (client_isemptydir (p->dir))
+	if (isemptydir (p->dir))
 	{
 	    char *b;
 
