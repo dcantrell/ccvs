@@ -67,10 +67,12 @@ if test x$with_gssapi = xyes; then
       break
     fi
     if test x$acx_gssapi_cv_gssapi = xyes; then
-      AS_MESSAGE(checking for GSSAPI...)
+      AC_MSG_CHECKING([for GSSAPI])
+      AC_MSG_RESULT([])
     else
       CPPFLAGS="$acx_gssapi_save_CPPFLAGS -I$acx_gssapi_cv_gssapi/include"
-      AS_MESSAGE(checking for GSSAPI in $acx_gssapi_cv_gssapi...)
+      AC_MSG_CHECKING([for GSSAPI in $acx_gssapi_cv_gssapi])
+      AC_MSG_RESULT([])
     fi
     unset ac_cv_header_gssapi_h
     unset ac_cv_header_gssapi_gssapi_h

@@ -7628,12 +7628,16 @@ if test x$with_gssapi = xyes; then
       break
     fi
     if test x$acx_gssapi_cv_gssapi = xyes; then
-      { echo "$as_me:$LINENO: checking for GSSAPI..." >&5
-echo "$as_me: checking for GSSAPI..." >&6;}
+      echo "$as_me:$LINENO: checking for GSSAPI" >&5
+echo $ECHO_N "checking for GSSAPI... $ECHO_C" >&6
+      echo "$as_me:$LINENO: result: " >&5
+echo "${ECHO_T}" >&6
     else
       CPPFLAGS="$acx_gssapi_save_CPPFLAGS -I$acx_gssapi_cv_gssapi/include"
-      { echo "$as_me:$LINENO: checking for GSSAPI in $acx_gssapi_cv_gssapi..." >&5
-echo "$as_me: checking for GSSAPI in $acx_gssapi_cv_gssapi..." >&6;}
+      echo "$as_me:$LINENO: checking for GSSAPI in $acx_gssapi_cv_gssapi" >&5
+echo $ECHO_N "checking for GSSAPI in $acx_gssapi_cv_gssapi... $ECHO_C" >&6
+      echo "$as_me:$LINENO: result: " >&5
+echo "${ECHO_T}" >&6
     fi
     unset ac_cv_header_gssapi_h
     unset ac_cv_header_gssapi_gssapi_h
