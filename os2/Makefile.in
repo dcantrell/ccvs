@@ -256,8 +256,10 @@ dist-dir:
 	  ln ${srcdir}${PS}$${i} ${DISTDIR}; \
 	done
 
+# We don't have a real distclean or anything like that, but at least
+# we can get rid of the obj files and cvs.exe. 
 clean:
-	rm -f *.obj cvs.exe
+	rm -f *.obj cvs.exe ..${PS}src${PS}*.obj ..${PS}lib${PS}*.obj
 
 %.obj: %.c
 	icc ${OBJ_CFLAGS} ${CFLAGS} /Fo$@ $*.c

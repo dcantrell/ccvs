@@ -1,3 +1,7 @@
+Sun Nov 19 13:43:02 1995  unknown  (unknown@beezley)
+
+		* makefile.in (clean): remove obj files in src/ and lib/ dirs too.
+
 Sun Nov 19 12:35:08 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (start_server): took out old debug statements.
