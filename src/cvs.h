@@ -847,11 +847,6 @@ extern void cvs_output_binary PROTO ((char *, size_t));
 extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));
-
-#if ! HAVE_MEMPCPY
-/* Be CAREFUL that there are no side effects in N.  */
-# define mempcpy(D, S, N) ((void *) ((char *) memcpy (D, S, N) + (N)))
-#endif
 
 #if defined(SERVER_SUPPORT) || defined(CLIENT_SUPPORT)
 #include "server.h"
