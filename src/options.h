@@ -75,15 +75,6 @@
 /* #define SETXID_SUPPORT */
 #endif
 
-/*
- * Should we build the password-authenticating client?  Whether to
- * include the password-authenticating _server_, on the other hand, is
- * set in config.h.
- */
-#ifdef CLIENT_SUPPORT
-#define AUTH_CLIENT_SUPPORT 1
-#endif
-
 
 /* End of CVS configuration section */
 
