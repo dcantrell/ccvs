@@ -350,7 +350,7 @@ check_fileproc (finfo)
     p->type = UPDATE;
     p->delproc = tag_delproc;
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL,
-        (char *) NULL, finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
+        (char *) NULL, finfo->file, 0, 0, finfo->entries, finfo->rcs);
     p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
     if (p->data != NULL)
     {
@@ -505,10 +505,8 @@ rtag_fileproc (finfo)
     int retcode = 0;
 
     /* find the parsed RCS data */
-    p = findnode (finfo->srcfiles, finfo->file);
-    if (p == NULL)
+    if ((rcsfile = finfo->rcs) == NULL)
 	return (1);
-    rcsfile = (RCSNode *) p->data;
 
     /*
      * For tagging an RCS file which is a symbolic link, you'd best be
@@ -576,7 +574,7 @@ rtag_fileproc (finfo)
        oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
        if (oversion != NULL)
        {
-	  int isbranch = RCS_isbranch (finfo->file, symtag, finfo->srcfiles);
+	  int isbranch = RCS_isbranch (finfo->file, symtag, finfo->rcs);
 
 	  /*
 	   * if versions the same and neither old or new are branches don't

@@ -396,7 +396,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     }
 
     /* process the files (if any) */
-    if (filelist != NULL)
+    if (filelist != NULL && fileproc)
     {
 	struct file_info finfo_struct;
 
@@ -413,12 +413,6 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	    notify_check (repository, update_dir);
 #endif /* CLIENT_SUPPORT */
 
-	/* pre-parse the source files */
-	if (dosrcs && repository)
-	    finfo_struct.srcfiles = RCS_parsefiles (filelist, repository);
-	else
-	    finfo_struct.srcfiles = (List *) NULL;
-
 	finfo_struct.repository = repository;
 	finfo_struct.update_dir = update_dir;
 	finfo_struct.entries = entries;
@@ -433,7 +427,6 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 
 	/* clean up */
 	dellist (&filelist);
-	dellist (&finfo_struct.srcfiles);
     }
 
     if (entries) 
@@ -477,11 +470,18 @@ do_file_proc (p, closure)
     void *closure;
 {
     struct file_info *finfo = (struct file_info *)closure;
+    int ret;
+
     finfo->file = p->key;
-    if (fileproc != NULL)
-	return fileproc (finfo);
-    else
-	return (0);
+    if (dosrcs && repository)
+	finfo->rcs = RCS_parse (finfo->file, repository);
+    else 
+        finfo->rcs = (RCSNode *) NULL;
+    ret = fileproc (finfo);
+
+    freercsnode(&finfo->rcs);
+
+    return (ret);
 }
 
 /*

@@ -235,7 +235,7 @@ check_fileproc (finfo)
     p->type = UPDATE;
     p->delproc = tag_delproc;
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
+		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
     p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
     if (p->data != NULL)
     {
@@ -392,7 +392,7 @@ tag_fileproc (finfo)
     int retcode = 0;
 
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 0, 0, finfo->entries, finfo->srcfiles);
+		       finfo->file, 0, 0, finfo->entries, finfo->rcs);
 
     if ((numtag != NULL) || (date != NULL))
     {
@@ -500,7 +500,7 @@ tag_fileproc (finfo)
     oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
     if (oversion != NULL)
     {
-       int isbranch = RCS_isbranch (finfo->file, symtag, finfo->srcfiles);
+       int isbranch = RCS_isbranch (finfo->file, symtag, finfo->rcs);
 
        /*
 	* if versions the same and neither old or new are branches don't have 
@@ -599,12 +599,10 @@ val_fileproc (finfo)
     struct val_args *args = val_args_static;
     char *tag;
 
-    node = findnode (finfo->srcfiles, finfo->file);
-    if (node == NULL)
+    if ((rcsdata = finfo->rcs) == NULL)
 	/* Not sure this can happen, after all we passed only
 	   W_REPOS | W_ATTIC.  */
 	return 0;
-    rcsdata = (RCSNode *) node->data;
 
     tag = RCS_gettag (rcsdata, args->name, 1, 0);
     if (tag != NULL)

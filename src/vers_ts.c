@@ -14,12 +14,12 @@ static void time_stamp_server PROTO((char *, Vers_TS *));
 
 /*
  * Fill in and return a Vers_TS structure "user" is the name of the local
- * file; entries is the entries file - preparsed for our pleasure. xfiles is
- * all source code control files, preparsed for our pleasure
+ * file; entries is the entries file - preparsed for our pleasure. rcs is
+ * the current source control file - preparsed for our pleasure.
  */
 Vers_TS *
 Version_TS (repository, options, tag, date, user, force_tag_match,
-	    set_time, entries, xfiles)
+	    set_time, entries, rcs)
     char *repository;
     char *options;
     char *tag;
@@ -28,7 +28,7 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
     int force_tag_match;
     int set_time;
     List *entries;
-    List *xfiles;
+    RCSNode *rcs;
 {
     Node *p;
     RCSNode *rcsdata;
@@ -112,16 +112,10 @@ Version_TS (repository, options, tag, date, user, force_tag_match,
     }
 
     /* Now look up the info on the source controlled file */
-    if (xfiles != (List *) NULL)
+    if (rcs != NULL)
     {
-	p = findnode (xfiles, user);
-	if (p != NULL)
-	{
-	    rcsdata = (RCSNode *) p->data;
-	    rcsdata->refcount++;
-	}
-	else
-	    rcsdata = NULL;
+	rcsdata = rcs;
+	rcsdata->refcount++;
     }
     else if (repository != NULL)
 	rcsdata = RCS_parse (user, repository);

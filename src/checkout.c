@@ -779,7 +779,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 
 	    user = argv[i];
 	    vers = Version_TS (repository, options, tag, date, user,
-			       force_tag_match, 0, entries, (List *) NULL);
+			       force_tag_match, 0, entries, (RCSNode *) NULL);
 	    if (vers->ts_user == NULL)
 	    {
 		line = xmalloc (strlen (user) + 15);

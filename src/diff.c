@@ -20,7 +20,7 @@ static Dtype diff_dirproc PROTO((char *dir, char *pos_repos, char *update_dir));
 static int diff_filesdoneproc PROTO((int err, char *repos, char *update_dir));
 static int diff_dirleaveproc PROTO((char *dir, int err, char *update_dir));
 static int diff_file_nodiff PROTO((char *file, char *repository, List *entries,
-			     List *srcfiles, Vers_TS *vers));
+			     RCSNode *rcs, Vers_TS *vers));
 static int diff_fileproc PROTO((struct file_info *finfo));
 static void diff_mark_errors PROTO((int err));
 
@@ -240,7 +240,7 @@ diff_fileproc (finfo)
     user_file_rev = 0;
 #endif
     vers = Version_TS (finfo->repository, (char *) NULL, (char *) NULL, (char *) NULL,
-		       finfo->file, 1, 0, finfo->entries, finfo->srcfiles);
+		       finfo->file, 1, 0, finfo->entries, finfo->rcs);
 
     if (diff_rev2 != NULL || diff_date2 != NULL)
     {
@@ -308,7 +308,7 @@ diff_fileproc (finfo)
 	}
     }
 
-    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo->file, finfo->repository, finfo->entries, finfo->srcfiles, vers))
+    if (empty_file == DIFF_NEITHER && diff_file_nodiff (finfo->file, finfo->repository, finfo->entries, finfo->rcs, vers))
     {
 	freevers_ts (&vers);
 	return (0);
@@ -485,11 +485,11 @@ diff_dirleaveproc (dir, err, update_dir)
  * verify that a file is different 0=same 1=different
  */
 static int
-diff_file_nodiff (file, repository, entries, srcfiles, vers)
+diff_file_nodiff (file, repository, entries, rcs, vers)
     char *file;
     char *repository;
     List *entries;
-    List *srcfiles;
+    RCSNode *rcs;
     Vers_TS *vers;
 {
     Vers_TS *xvers;
@@ -511,7 +511,7 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 	else
 	{
 	    xvers = Version_TS (repository, (char *) NULL, diff_rev1,
-				diff_date1, file, 1, 0, entries, srcfiles);
+				diff_date1, file, 1, 0, entries, rcs);
 	    if (xvers->vn_rcs == NULL)
 	    {
 		/* Don't gripe if it doesn't exist, just ignore! */
@@ -538,7 +538,7 @@ diff_file_nodiff (file, repository, entries, srcfiles, vers)
 	else
 	{
 	    xvers = Version_TS (repository, (char *) NULL, diff_rev2,
-				diff_date2, file, 1, 0, entries, srcfiles);
+				diff_date2, file, 1, 0, entries, rcs);
 	    if (xvers->vn_rcs == NULL)
 	    {
 		/* Don't gripe if it doesn't exist, just ignore! */

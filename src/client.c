@@ -3448,7 +3448,7 @@ send_fileproc (finfo)
 
     vers = Version_TS ((char *)NULL, (char *)NULL, (char *)NULL,
 		       (char *)NULL,
-		       finfo->file, 0, 0, finfo->entries, (List *)NULL);
+		       finfo->file, 0, 0, finfo->entries, (RCSNode *)NULL);
 
     if (vers->vn_user != NULL)
     {
