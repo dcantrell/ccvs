@@ -2126,9 +2126,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	struct utimbuf t;
 
 	memset (&t, 0, sizeof (t));
-	/* There is probably little point in trying to preserved the
-	   actime (or is there? What about Checked-in?).  */
-	t.modtime = t.actime = stored_modtime;
+	t.modtime = stored_modtime;
+	(void) time (&t.actime);
 
 #ifdef UTIME_EXPECTS_WRITABLE
 	if (!iswritable (filename))
@@ -2142,7 +2141,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    error (0, errno, "cannot set time on %s", filename);
 
 #ifdef UTIME_EXPECTS_WRITABLE
-	if (change_it_back == 1)
+	if (change_it_back)
 	{
 	    xchmod (filename, 0);
 	    change_it_back = 0;
