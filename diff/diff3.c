@@ -676,7 +676,7 @@ make_3way_diff (thread0, thread1)
 
   struct diff3_block const *last_diff3;
 
-  static struct diff3_block const zero_diff3;
+  static struct diff3_block const zero_diff3 = { 0 };
 
   /* Initialization */
   result = 0;
