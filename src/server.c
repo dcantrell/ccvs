@@ -1822,6 +1822,7 @@ static void
 serve_modified (char *arg)
 {
     size_t size;
+    int read_size;
     int status;
     char *size_text;
     char *mode_text;
@@ -1892,11 +1893,20 @@ serve_modified (char *arg)
     if (size_text[0] == 'z')
     {
 	gzipped = 1;
-	size = atoi (size_text + 1);
+	read_size = atoi (size_text + 1);
     }
     else
-	size = atoi (size_text);
+	read_size = atoi (size_text);
     free (size_text);
+
+    if (read_size < 0 && alloc_pending (80))
+    {
+	sprintf (pending_error_text,
+		 "E client sent invalid (negative) file size");
+	return;
+    }
+    else
+	size = read_size;
 
     if (error_pending ())
     {
@@ -1926,19 +1936,16 @@ serve_modified (char *arg)
 	return;
     }
 
-    if (size >= 0)
-    {
-	receive_file (size,
+    receive_file (size,
 #ifdef PROXY_SUPPORT
-	              proxy_log ? DEVNULL :
+	          proxy_log ? DEVNULL :
 #endif /* PROXY_SUPPORT */
-				      arg,
-		      gzipped);
-	if (error_pending ())
-	{
-	    free (mode_text);
-	    return;
-	}
+			      arg,
+		  gzipped);
+    if (error_pending ())
+    {
+	free (mode_text);
+	return;
     }
 
 #ifdef PROXY_SUPPORT

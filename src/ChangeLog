@@ -1,5 +1,11 @@
 2004-10-18 Derek Price <derek@ximbiot.com>
 
+	* server.c (serve_modified): Eliminate >= 0 check since size_t may not
+	be negative.
+	(Originally reported by Martin Neitzel <neitzel@sco.gaertner.de>.)
+
+2004-10-18 Derek Price <derek@ximbiot.com>
+
 	* cvs.h (DEVNULL): This is system dependant.  Move it to lib/system.h.
 	* client.c (copy_a_file): Consolidate USE_VMS_FILENAMES stuff under a
 	single #ifdef.
