@@ -1,3 +1,8 @@
+Thu Feb  5 22:51:13 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* subr.c (getcaller): Cache the result, so that we don't keep
+	searching the password file.
+
 Wed Feb  4 23:31:08 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (max_rev): Don't prototype.  Interesting that noone
