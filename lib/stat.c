@@ -1,7 +1,8 @@
 /* Work around the bug in some systems whereby stat/lstat succeeds when
    given the zero-length file name argument.  The stat/lstat from SunOS4.1.4
-   has this bug.
-   Copyright (C) 1997-2002 Free Software Foundation, Inc.
+   has this bug.  Also work around a deficiency in Solaris systems (up to at
+   least Solaris5.9) regarding the semantics of `lstat ("symlink/", sbuf).'
+   Copyright (C) 1997-2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 #ifndef errno
 extern int errno;
 #endif
-#if defined( LSTAT ) && !defined( LSTAT_FOLLOWS_SLASHED_SYMLINK )
+#if defined LSTAT && ! LSTAT_FOLLOWS_SLASHED_SYMLINK
 # include <string.h>
 
 # if HAVE_STDLIB_H
@@ -94,7 +95,7 @@ slash_aware_lstat (const char *file, struct stat *sbuf)
 
   return lstat_result;
 }
-#endif /* LSTAT && !LSTAT_FOLLOWS_SLASHED_SYMLINK */
+#endif /* LSTAT && ! LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* This is a wrapper for stat/lstat.
    If FILE is the empty string, fail with errno == ENOENT.
@@ -109,11 +110,11 @@ slash_aware_lstat (const char *file, struct stat *sbuf)
 
 #ifdef LSTAT
 # define rpl_xstat rpl_lstat
-# ifdef LSTAT_FOLLOWS_SLASHED_SYMLINK
-#   define xstat_return_val(F, S) lstat (F, S)
-# else /* !LSTAT_FOLLOWS_SLASHED_SYMLINK */
-#   define xstat_return_val(F, S) slash_aware_lstat (F, S)
-# endif /* LSTAT_FOLLOWS_SLASHED_SYMLINK */
+# if ! LSTAT_FOLLOWS_SLASHED_SYMLINK
+#  define xstat_return_val(F, S) slash_aware_lstat (F, S)
+# else
+#  define xstat_return_val(F, S) lstat (F, S)
+# endif
 #else
 # define rpl_xstat rpl_stat
 # define xstat_return_val(F, S) stat (F, S)
