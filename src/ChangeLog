@@ -1,3 +1,8 @@
+Tue Oct 21 16:48:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* tag.c (tag_check_valid): Add comment about locking or lack
+	thereof.
+
 1997-10-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.19.
