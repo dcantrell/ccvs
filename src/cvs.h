@@ -422,6 +422,7 @@ int unlink_file_dir PROTO((const char *f));
 int update PROTO((int argc, char *argv[]));
 int xcmp PROTO((const char *file1, const char *file2));
 int yesno PROTO((void));
+char * valloc PROTO((int bytes));
 time_t get_date PROTO((char *date, struct timeb *now));
 void Create_Admin PROTO((char *dir, char *update_dir,
 			 char *repository, char *tag, char *date));
