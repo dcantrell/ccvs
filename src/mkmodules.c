@@ -280,10 +280,15 @@ static const char *const config_contents[] = {
     "# Set this to \"no\" if pserver shouldn't check system users/passwords\n",
     "#SystemAuth=no\n",
     "\n",
+    "# Put CVS lock files in this directory rather than directly in the repository.\n",
+    "#LockDir=/var/lock/cvs\n",
+    "\n",
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
     "# Set `PreservePermissions' to `yes' to save file status information\n",
     "# in the repository.\n",
     "#PreservePermissions=no\n",
     "\n",
+#endif
     "# Set `TopLevelAdmin' to `yes' to create a CVS directory at the top\n",
     "# level of the new working directory when using the `cvs checkout'\n",
     "# command.\n",

@@ -1,3 +1,9 @@
+2000-07-19  Pavel Roskin  <proski@gnu.org>
+	and Larry Jones  <larry.jones@sdrc.com>
+
+	* mkmodules.c (config_contents): Add a commented out example for
+	LockDir. Don't suggest PreservePermissions unless it's enabled.
+
 2000-07-17  Larry Jones  <larry.jones@sdrc.com>
 
 	* login.c (get_cvs_password): Handle malformed ~/.cvspass more
