@@ -1,3 +1,8 @@
+2001-03-29  Derek Price  <dprice@collab.net>
+
+	* sanity.sh: cd to $TESTDIR once after it is normalized.  Make TODO
+	on history and symlinks more specific.  Tested properly this time.
+
 2001-03-29  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (cmds[], lookup_command_attribute, main): Include the
