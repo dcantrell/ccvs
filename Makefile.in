@@ -56,10 +56,10 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(top_srcdir)/emx/Makefile.in $(top_srcdir)/os2/Makefile.in \
 	$(top_srcdir)/zlib/Makefile.in ABOUT-NLS AUTHORS COPYING \
 	COPYING.LIB ChangeLog INSTALL NEWS TODO build-aux/compile \
-	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
-	build-aux/install-sh build-aux/mdate-sh build-aux/missing \
-	build-aux/texinfo.tex build-aux/ylwrap config.rpath \
-	mkinstalldirs
+	build-aux/config.guess build-aux/config.rpath \
+	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
+	build-aux/mdate-sh build-aux/missing build-aux/texinfo.tex \
+	build-aux/ylwrap
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
