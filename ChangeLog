@@ -1,3 +1,11 @@
+2003-02-28  Derek Price  <derek@ximbiot.com>
+
+	* acinclude.m4 (ACX_WITH_GSSAPI): Move the checkin from 1/23 to
+	aclocal.m4 to the source, here.
+
+	* aclocal.m4: Regenerated.
+	* configure: Regenerated.
+
 2003-02-28  Larry Jones  <lawrence.jones@eds.com>
 
 	* TODO (206): Done in 1.11.3.
