@@ -1,5 +1,9 @@
 Sun Feb 16 12:00:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (client_process_import_file): New variable fullname;
+	pass it to send_modified.  This finishes the job of untangling the
+	old short_pathname variable into update_dir vs. fullname.
+
 	* client.c (client_process_import_file): Nuke first_time.  If
 	toplevel_repos were ever NULL here, the code would dump core in
 	strncmp a few lines down.  And client_import_setup ensures
