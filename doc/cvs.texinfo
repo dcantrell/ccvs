@@ -1475,10 +1475,62 @@ described in @ref{Connecting via rsh}.
 @c that you need an @code{rsh} binary on the client to use
 @c :server:.
 @menu
+* Server requirements::         Memory and other resources for servers
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords
 * Kerberos authenticated::      Direct connections with kerberos
 @end menu
+
+@node Server requirements
+@subsection Server requirements
+
+The quick answer to what sort of machine is suitable as
+a server is that requirements are modest---a server
+with 32M of memory or even less can handle a fairly
+large source tree with a fair amount of activity.
+@c Say something about CPU speed too?  I'm even less sure
+@c what to say on that subject...
+
+The real answer, of course, is more complicated.  The
+@sc{cvs} server consists of two processes for each
+client that it is serving.  Memory consumption on the
+child process should remain fairly small.  Memory
+consumption on the parent process, particularly if the
+network connection to the client is slow, can be
+expected to grow to slightly more than the size of the
+sources in a single directory, or two megabytes,
+whichever is larger.
+@c "two megabytes" of course is SERVER_HI_WATER.  But
+@c we don't mention that here because we are
+@c documenting the default configuration of CVS.  If it
+@c is a "standard" thing to change that value, it
+@c should be some kind of run-time configuration.
+@c 
+@c See cvsclient.texi for more on the design decision
+@c to not have locks in place while waiting for the
+@c client, which is what results in memory consumption
+@c as high as this.
+
+Multiplying the size of each @sc{cvs} server by the
+number of servers which you expect to have active at
+one time should give an idea of memory requirements for
+the server.  For the most part, the memory consumed by
+the parent process probably can be swap space rather
+than physical memory.
+@c Has anyone verified that notion about swap space?
+@c I say it based pretty much on guessing that the
+@c ->text of the struct buffer_data only gets accessed
+@c in a first in, first out fashion, but I haven't
+@c looked very closely.
+
+Resource consumption for the client or the
+non-client/server @sc{cvs} is even more modest---any
+machine with enough capacity to run the operating system
+in question should have little trouble.
+@c Probably we could be saying more about this.
+@c I would guess for non-client/server CVS in an NFS
+@c environment the biggest issues is the network and
+@c the NFS server.
 
 @node Connecting via rsh
 @subsection Connecting with rsh
