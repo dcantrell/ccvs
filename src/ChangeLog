@@ -1,3 +1,9 @@
+2004-08-12  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Don't process --primary-root without PROXY_SUPPORT.
+	* root.c (primary_root_translate, primary_root_inverse_translate):
+	Declare inline.
+
 2004-08-11  Derek Price  <derek@ximbiot.com>
 
 	* ms-buffer.h, ms-buffer.c: Disable contents without PROXY_SUPPORT.
