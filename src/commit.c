@@ -1661,12 +1661,12 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	    /* no revision exists on this branch.  use the previous
 	       revision but do not lock. */
 	    corev = RCS_gettag (finfo->rcs, tag, 1, (int *) NULL);
-	    prev_rev = xstrdup(rev);
+	    prev_rev = xstrdup (corev);
 	    lockflag = 0;
 	} else
 	{
 	    corev = xstrdup (rev);
-	    prev_rev = xstrdup(branchname);
+	    prev_rev = xstrdup (branchname);
 	    free (branchname);
 	}
 

@@ -289,6 +289,71 @@ get_date( char *date, struct timeb *now )
 #endif
 #endif
 
+
+
+/* Given some revision, REV, return the first prior revision that exists in the
+ * RCS file, RCS.
+ *
+ * ASSUMPTIONS
+ *   REV exists.
+ *
+ * INPUTS
+ *   RCS	The RCS node pointer.
+ *   REV	An existing revision in the RCS file referred to by RCS.
+ *
+ * RETURNS
+ *   The first prior revision that exists in the RCS file, or NULL if no prior
+ *   revision exists.  The caller is responsible for disposing of this string.
+ *
+ * NOTES
+ *   This function currently neglects the case where we are on the trunk with
+ *   rev = X.1, where X != 1.  If rev = X.Y, where X != 1 and Y > 1, then this
+ *   function should work fine, as revision X.1 must exist, due to RCS rules.
+ */
+char *
+previous_rev (rcs, rev)
+    RCSNode *rcs;
+    const char *rev;
+{
+    char *p;
+    char *tmp = xstrdup (rev);
+    long r1;
+    char *retval;
+
+    /* Our retval can have no more digits and dots than our input revision.  */
+    retval = xmalloc (strlen (rev) + 1);
+    p = strrchr (tmp, '.');
+    *p = '\0';
+    r1 = strtol (p+1, NULL, 10);
+    do {
+	if (--r1 == 0)
+	{
+		/* If r1 == 0, then we must be on a branch and our parent must
+		 * exist, or we must be on the trunk with a REV like X.1.
+		 * We are neglecting the X.1 with X != 1 case by assuming that
+		 * there is no previous revision when we discover we were on
+		 * the trunk.
+		 */
+		p = strrchr (tmp, '.');
+		if (p == NULL)
+		    /* We are on the trunk.  */
+		    retval == NULL;
+		else
+		{
+		    *p = '\0';
+		    sprintf (retval, "%s", tmp);
+		}
+		break;
+	}
+	sprintf (retval, "%s.%ld", tmp, r1);
+    } while (!RCS_exist_rev (rcs, retval));
+
+    free (tmp);
+    return retval;
+}
+
+
+
 /* Given two revisions, find their greatest common ancestor.  If the
    two input revisions exist, then rcs guarantees that the gca will
    exist.  */

@@ -1020,7 +1020,7 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2"
-	tests="${tests} rm-update-message rmadd rmadd2 rmadd3"
+	tests="${tests} rm-update-message rmadd rmadd2 rmadd3 resurrection"
 	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc import-CVS"
@@ -5240,7 +5240,7 @@ diff -N file1
 	  dotest death2-8 "${testcvs} -q ci -m removed" \
 "Removing file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Test diff of a dead file.
@@ -5345,7 +5345,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest death2-10b "${testcvs} -q ci -m removed" \
 "Removing file4;
 ${CVSROOT_DIRNAME}/first-dir/file4,v  <--  file4
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Back to the trunk.
@@ -5982,6 +5982,88 @@ $CPROG \[commit aborted\]: correct above errors first!"
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
+	resurrection)
+	  # This test tests a few file resurrection scenarios.
+	  mkdir 1; cd 1
+	  dotest resurrection-init1 "$testcvs -q co -l ." ''
+	  mkdir first-dir
+	  dotest resurrection-init2 "$testcvs add first-dir" \
+"Directory $CVSROOT_DIRNAME/first-dir added to the repository"
+	  cd first-dir
+
+	  echo initial content for file1 >file1
+	  dotest resurrection-init3 "$testcvs add file1" \
+"$SPROG add: scheduling file \`file1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest resurrection-init4 "$testcvs -q ci -m add" \
+"RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  dotest resurrection-init5 "$testcvs -Q rm -f file1"
+
+	  # The first test is that `cvs add' will resurrect a file before it
+	  # has been committed.
+	  dotest resurrection-1 "$testcvs add file1" \
+"U file1
+$SPROG add: \`file1', version 1\.1, resurrected"
+	  dotest resurrection-2 "$testcvs -Q diff file1" ""
+
+	  dotest resurrection-init6 "$testcvs -Q tag -b resurrection"
+	  dotest resurrection-init7 "$testcvs -Q rm -f file1"
+	  dotest resurrection-init8 "$testcvs -Q ci -mrm" \
+"Removing file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # The next test is that CVS will resurrect a committed removal.
+	  dotest_sort resurrection-3 "$testcvs add file1" \
+"U file1
+$SPROG add: file \`file1' resurrected from revision 1\.1
+$SPROG add: re-adding file \`file1' after dead revision 1\.2
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest resurrection-4 "$testcvs -q diff -r1.1 file1" ""
+	  dotest resurrection-5 "$testcvs -q ci -mreadd" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  dotest resurrection-init9 "$testcvs -Q up -rresurrection"
+	  dotest resurrection-init10 "$testcvs -Q rm -f file1"
+	  dotest resurrection-init11 "$testcvs -Q ci -mrm-on-resurrection" \
+"Removing file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: delete; previous revision: 1\.1
+done"
+
+	  # The next test is that CVS will resurrect a committed removal to a
+	  # branch.
+	  dotest_sort resurrection-6 "$testcvs add file1" \
+"U file1
+$SPROG add: file \`file1' resurrected from revision 1\.1
+$SPROG add: re-adding file \`file1' on branch \`resurrection' after dead revision 1\.1\.2\.1
+$SPROG add: use \`$SPROG commit' to add this file permanently"
+	  dotest resurrection-7 "$testcvs -Q diff -r1.1 file1" ""
+	  dotest resurrection-8 "$testcvs -q ci -mreadd" \
+"Checking in file1;
+$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf 1
+	  rm -rf $CVSROOT_DIRNAME/first-dir
+	  ;;
+
 	dirs)
 	  # Tests related to removing and adding directories.
 	  # See also:
@@ -6157,7 +6239,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest dirs2-13 "${testcvs} -q ci -m remove" \
 "Removing sdir/file1;
 ${CVSROOT_DIRNAME}/first-dir/sdir/file1,v  <--  file1
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../2/first-dir
 	  if $remote; then
@@ -9930,15 +10012,15 @@ done"
 	  dotest join-rm-init-8 "$testcvs -Q ci -mrm" \
 "Removing b;
 $CVSROOT_DIRNAME/join-rm/b,v  <--  b
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done
 Removing d;
 $CVSROOT_DIRNAME/join-rm/d,v  <--  d
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done
 Removing g;
 $CVSROOT_DIRNAME/join-rm/g,v  <--  g
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # update to the trunk
@@ -10004,7 +10086,7 @@ rm
 	  dotest join-rm-init-12 "$testcvs -Q ci -m rma" \
 "Removing a;
 $CVSROOT_DIRNAME/join-rm/a,v  <--  a
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # now the test: update to the trunk
@@ -10137,7 +10219,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest newb-123h "${testcvs} -q ci -m removed" \
 "Removing a;
 ${CVSROOT_DIRNAME}/first-dir/a,v  <--  a
-new revision: delete; previous revision: 1\.1\.2
+new revision: delete; previous revision: 1\.1
 done"
 
 	  # Check out the file on the branch.  This should report
@@ -28116,7 +28198,7 @@ EOF
 
 	    dotest pserver-25 "${servercvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU
-E $CSPROG \\[server aborted\\]: .init. requires write access to the repository
+E $CPROG \\[server aborted\\]: .init. requires write access to the repository
 error  " <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}

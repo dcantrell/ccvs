@@ -449,6 +449,7 @@ void root_allow_add (char *);
 void root_allow_free (void);
 int root_allow_ok (char *);
 
+char *previous_rev (RCSNode *_rcs, const char *_rev);
 char *gca (const char *rev1, const char *rev2);
 void check_numeric (const char *, int, char **);
 char *getcaller (void);
@@ -495,7 +496,43 @@ char *increment_revnum (const char *);
 int compare_revnums (const char *, const char *);
 int unlink_file (const char *f);
 int unlink_file_dir (const char *f);
+
+/* This is the structure that the recursion processor passes to the
+   fileproc to tell it about a particular file.  */
+struct file_info
+{
+    /* Name of the file, without any directory component.  */
+    char *file;
+
+    /* Name of the directory we are in, relative to the directory in
+       which this command was issued.  We have cd'd to this directory
+       (either in the working directory or in the repository, depending
+       on which sort of recursion we are doing).  If we are in the directory
+       in which the command was issued, this is "".  */
+    char *update_dir;
+
+    /* update_dir and file put together, with a slash between them as
+       necessary.  This is the proper way to refer to the file in user
+       messages.  */
+    char *fullname;
+
+    /* Name of the directory corresponding to the repository which contains
+       this file.  */
+    char *repository;
+
+    /* The pre-parsed entries for this directory.  */
+    List *entries;
+
+    RCSNode *rcs;
+};
+
 int update (int argc, char *argv[]);
+/* The only place this is currently used outside of update.c is add.c.
+ * Restricting its use to update.c seems to be in the best interest of
+ * modularity, but I can't think of a good way to get an update of a
+ * resurrected file done and print the fact otherwise.
+ */
+void write_letter (struct file_info *finfo, int letter);
 int xcmp (const char *file1, const char *file2);
 int yesno (void);
 void *valloc (size_t bytes);
@@ -594,39 +631,11 @@ typedef	int (*CALLBACKPROC)	(int argc, char *argv[], char *where,
 	char *mwhere, char *mfile, int shorten, int local_specified,
 	char *omodule, char *msg);
 
-/* This is the structure that the recursion processor passes to the
-   fileproc to tell it about a particular file.  */
-struct file_info
-{
-    /* Name of the file, without any directory component.  */
-    char *file;
-
-    /* Name of the directory we are in, relative to the directory in
-       which this command was issued.  We have cd'd to this directory
-       (either in the working directory or in the repository, depending
-       on which sort of recursion we are doing).  If we are in the directory
-       in which the command was issued, this is "".  */
-    char *update_dir;
-
-    /* update_dir and file put together, with a slash between them as
-       necessary.  This is the proper way to refer to the file in user
-       messages.  */
-    char *fullname;
-
-    /* Name of the directory corresponding to the repository which contains
-       this file.  */
-    char *repository;
-
-    /* The pre-parsed entries for this directory.  */
-    List *entries;
-
-    RCSNode *rcs;
-};
 
 typedef	int (*FILEPROC) (void *callerdat, struct file_info *finfo);
 typedef	int (*FILESDONEPROC) (void *callerdat, int err,
-				     char *repository, char *update_dir,
-				     List *entries);
+                              char *repository, char *update_dir,
+                              List *entries);
 typedef	Dtype (*DIRENTPROC) (void *callerdat, char *dir,
 				    char *repos, char *update_dir,
 				    List *entries);

@@ -1,10 +1,22 @@
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
-	* NEWS: Note sanity.sh client/server message fix.
+	* NEWS: Note resurrection fix.
 
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note error & status message corrections.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note diff of added files against arbitrary revisions fix.
+
+2004-03-12  Derek Price  <derek@ximbiot.com>
+
 	* NEWS: Remove header comment fix note, per GNU coding standards.
+
+2004-03-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note sanity.sh client/server message fix.
 
 2004-03-14  Derek Price  <derek@ximbiot.com>
 
