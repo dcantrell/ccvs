@@ -614,6 +614,9 @@ main (argc, argv)
     else
 	command_name = cm->fullname;	/* Global pointer for later use */
 
+    /* This should probably remain a warning, rather than an error,
+       for quite a while.  For one thing the version of VC distributed
+       with GNU emacs 19.34 invokes 'cvs rlog' instead of 'cvs log'.  */
     if (strcmp (argv[0], "rlog") == 0)
     {
 	error (0, 0, "warning: the rlog command is deprecated");
