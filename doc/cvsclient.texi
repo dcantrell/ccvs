@@ -1,4 +1,4 @@
-\input texinfo
+\input texinfo @c -*- texinfo -*-
 
 @setfilename cvsclient.info
 
@@ -396,6 +396,13 @@ Response expected: no.  Additional data: no.  Tell the server to check
 whether @var{filename} should be ignored, and if not, next time the
 server sends responses, send (in a @code{M} response) @samp{?} followed
 by the directory and filename.
+
+@item Case \n
+Tell the server that filenames should be matched against ignore patterns
+in a case-insensitive fashion.  Note that this does not apply to other
+comparisons---for example the filenames given in @code{Entry} and
+@code{Modified} requests for the same file must match in case regardless
+of whether the @code{Case} request is sent.
 
 @item Argument @var{text} \n
 Response expected: no.

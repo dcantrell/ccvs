@@ -1,3 +1,7 @@
+Mon Mar 18 14:43:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Add Case request.
+
 Wed Mar 13 16:01:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): New node.
