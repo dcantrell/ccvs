@@ -15,11 +15,6 @@
 /* Only good for NT or DOS with hacked open */
 /* #undef LINES_CRLF_TERMINATED */
 
-/* Define if type char is unsigned and you are not using gcc.  */
-#ifndef __CHAR_UNSIGNED__
-/* #undef __CHAR_UNSIGNED__ */
-#endif
-
 /* Define to empty if the keyword does not work.  */
 /* #undef const */
 

@@ -1,3 +1,11 @@
+Tue Aug 20 12:22:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* configure.in (AC_C_CHAR_UNSIGNED): Removed; it is not used
+	anywhere.
+	* config.h.in, configure: Regenerated.
+	* os2/config.h, vms/config.h, windows-NT/config.h: Likewise,
+	remove __CHAR_UNSIGNED__.
+
 Fri Aug 16 13:37:19 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.spec (%description): Replace description with one that
