@@ -49,8 +49,9 @@ char *CurDir;
  * Defaults, for the environment variables that are not set
  */
 char *Rcsbin = RCSBIN_DFLT;
-char *Diffbin = DIFFBIN_DFLT;
-char *Grepbin = GREPBIN_DFLT;
+char *Diffbin = DIFF_DFLT;
+char *Grepbin = GREP_DFLT;
+char *Patchbin = PATCH_DFLT;
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 /*
@@ -312,7 +313,7 @@ main (argc, argv)
     const struct cmd *cm;
     int c, err = 0;
     int rcsbin_update_env, diffbin_update_env, grepbin_update_env,
-	    tmpdir_update_env, cvs_update_env;
+	    patchbin_update_env, tmpdir_update_env, cvs_update_env;
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
@@ -361,16 +362,22 @@ main (argc, argv)
 	rcsbin_update_env = 0;		/* it's already there */
     }
     diffbin_update_env = *Diffbin;	/* DIFF must be set */
-    if ((cp = getenv (DIFFBIN_ENV)) != NULL)
+    if ((cp = getenv (DIFF_ENV)) != NULL)
     {
 	Diffbin = cp;
 	diffbin_update_env = 0;		/* it's already there */
     }
     grepbin_update_env = *Grepbin;	/* GREP must be set */
-    if ((cp = getenv (GREPBIN_ENV)) != NULL)
+    if ((cp = getenv (GREP_ENV)) != NULL)
     {
 	Grepbin = cp;
 	grepbin_update_env = 0;		/* it's already there */
+    }
+    patchbin_update_env = *Patchbin;	/* PATCH must be set */
+    if ((cp = getenv (PATCH_ENV)) != NULL)
+    {
+	Patchbin = cp;
+	patchbin_update_env = 0;	/* it's already there */
     }
     tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
@@ -424,7 +431,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:D:g:T:e:d:Hfz:s:x", long_options, &option_index))
+            (argc, argv, "Qqrwtnlvb:D:g:p:T:e:d:Hfz:s:x", long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -481,6 +488,10 @@ main (argc, argv)
 	    case 'g':
 		Grepbin = optarg;
 		grepbin_update_env = 1;	/* need to update environment */
+		break;
+	    case 'p':
+		Patchbin = optarg;
+		patchbin_update_env = 1; /* need to update environment */
 		break;
 	    case 'T':
 		Tmpdir = optarg;
@@ -788,16 +799,24 @@ main (argc, argv)
 	if (diffbin_update_env)
 	{
 	    char *env;
-	    env = xmalloc (strlen (DIFFBIN_ENV) + strlen (Diffbin) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", DIFFBIN_ENV, Diffbin);
+	    env = xmalloc (strlen (DIFF_ENV) + strlen (Diffbin) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", DIFF_ENV, Diffbin);
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
 	if (grepbin_update_env)
 	{
 	    char *env;
-	    env = xmalloc (strlen (GREPBIN_ENV) + strlen (Grepbin) + 1 + 1);
-	    (void) sprintf (env, "%s=%s", GREPBIN_ENV, Grepbin);
+	    env = xmalloc (strlen (GREP_ENV) + strlen (Grepbin) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", GREP_ENV, Grepbin);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+	if (patchbin_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (PATCH_ENV) + strlen (Patchbin) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", PATCH_ENV, Grepbin);
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
