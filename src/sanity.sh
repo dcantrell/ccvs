@@ -854,7 +854,8 @@ modify_repo ()
 {
     eval "$*"
     if $proxy; then
-	$TESTDIR/sync-secondary "repo modification" "modify_repo" "$*"
+	# And now resync the secondary.
+	$TESTDIR/sync-secondary "repo modification" modify_repo ALL "$@"
     fi
 }
 
@@ -2124,25 +2125,80 @@ if $proxy; then
 #! $TESTSHELL
 date >>$TESTDIR/update-log
 
-# Get our args.
 ps=\$1
 cmd=\$2
+dir=\$3
+shift
 shift
 shift
 
-echo "updating after \$ps for command \\\`\$cmd'" \${1+"\$@"} \\
+echo "updating from \$ps for command \\\`\$cmd' in dir \\\`\$dir'" \${1+"\$@"} \\
      >>$TESTDIR/update-log
 
 # If multiple CVS executables could attempt to access the repository, we would
-# Need to lock for this sync and sleep.
-rsync -glopr --delete --exclude '#cvs.*' \\
-      $CVSROOT_DIRNAME/ \\
-      $SECONDARY_CVSROOT_DIRNAME
+# Need to lock for this sync and sleep
+case "\$dir" in
+  ALL)
+    # This is a hack to allow a few of the tests to play with the
+    # UseNewInfoFmtStrings key in CVSROOT/config.  It's inefficient, but there
+    # aren't many tests than need it and the alternative is an awful lot of
+    # special casing.
+    rsync -rglop --delete --exclude '#cvs.*' \\
+          $CVSROOT_DIRNAME/ \\
+          $SECONDARY_CVSROOT_DIRNAME
+    ;;
+
+  *)
+    # For the majority of the tests we will only sync the directories that
+    # were written to.
+    case "\$cmd" in
+      add|import)
+	# For \`add', we need a recursive update due to quirks in rsync syntax,
+	# but it shouldn't affect efficiency since any new dir should be empty.
+	#
+	# For \`import', a recursive update is necessary since subdirs may have
+	# been added underneath the root dir we were passed. 
+        rsync -rglop \\
+	      $CVSROOT_DIRNAME/"\$dir" \\
+	      $SECONDARY_CVSROOT_DIRNAME/\`dirname "\$dir"\`
+        ;;
+
+      tag)
+	# \`tag' may have changed CVSROOT/val-tags too.
+        rsync -glop \\
+              $CVSROOT_DIRNAME/CVSROOT/val-tags \\
+              $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+	# Otherwise it is identical to other write commands.
+        rsync -rglop --delete \\
+              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
+              $CVSROOT_DIRNAME/"\$dir"/ \\
+              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        ;;
+
+      *)
+	# By default, sync just what changed.
+        rsync -rglop --delete \\
+              --include Attic --include CVS --exclude '#cvs.*' --exclude '*/' \\
+              $CVSROOT_DIRNAME/"\$dir"/ \\
+              $SECONDARY_CVSROOT_DIRNAME/"\$dir"
+        ;;
+    esac # \$cmd
+
+    # And keep the history file up to date for all commands.
+    rsync -glop \\
+          $CVSROOT_DIRNAME/CVSROOT/history \\
+          $SECONDARY_CVSROOT_DIRNAME/CVSROOT
+    ;; # \$dir = *
+esac # \$dir
 
 # Avoid timestamp comparison issues with rsync.
 sleep 1
 EOF
     chmod a+x $TESTDIR/sync-secondary
+
+    # And now init the secondary.
+    $TESTDIR/sync-secondary "- no, before - create secondary root" \
+                            sanity-setup ALL
 
     # Initialize the primary repository
     mkdir proxy-init; cd proxy-init
@@ -2152,16 +2208,16 @@ EOF
 PrimaryServer=$CVSROOT
 EOF
     cat >>loginfo <<EOF
-ALL $TESTDIR/sync-secondary loginfo %c
+ALL $TESTDIR/sync-secondary loginfo %c %p %{sVv}
 EOF
     cat >>postadmin <<EOF
-ALL $TESTDIR/sync-secondary admin %c
+ALL $TESTDIR/sync-secondary postadmin %c %p
 EOF
     cat >>posttag <<EOF
-ALL $TESTDIR/sync-secondary tag %c %o %b %t %{sVv}
+ALL $TESTDIR/sync-secondary posttag %c %p %o %b %t %{sVv}
 EOF
     cat >>postwatch <<EOF
-ALL $TESTDIR/sync-secondary watch %c
+ALL $TESTDIR/sync-secondary postwatch %c %p
 EOF
     dotest proxy-init-2 \
 "$testcvs -Q ci -mconfigure-writeproxy"
@@ -2176,10 +2232,6 @@ EOF
     # done in here
     cd ../..
     rm -rf proxy-init
-
-    # And now init the secondary.
-    $TESTDIR/sync-secondary "- no, before - create secondary root" \
-			    "sanity-setup"
 
     # Wrap the CVS server to allow --primary-root to be set by the
     # secondary.
@@ -7872,17 +7924,17 @@ diff -c -F\.\*( -r1\.1 rgx\.c
 
 	  cd ..
 
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  modify_repo rm -rf $CVSROOT_DIRNAME/first-dir
 	  rm -r first-dir
 
 	  mkdir 1; cd 1
-	  dotest rcslib-merge-1 "${testcvs} -q co -l ." ""
+	  dotest rcslib-merge-1 "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest rcslib-merge-2 "${testcvs} -q add first-dir" \
-"Directory ${CVSROOT_DIRNAME}.*/first-dir added to the repository"
+	  dotest rcslib-merge-2 "$testcvs -q add first-dir" \
+"Directory $CVSROOT_DIRNAME.*/first-dir added to the repository"
 	  cd ..; rm -r 1
 
-	  dotest rcslib-merge-3 "${testcvs} -q co first-dir" ""
+	  dotest rcslib-merge-3 "$testcvs -q co first-dir" ""
 	  cd first-dir
 
 	  echo '$''Revision$' > file1
@@ -16992,6 +17044,8 @@ C aa"
 	  dotest info-1 "$testcvs -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  dotest info-2 "$testcvs -Q tag info-start"
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -17009,9 +17063,9 @@ C aa"
 	  # Might be nice to move this to crerepos tests; it should
 	  # work to create a loginfo file if you didn't create one
 	  # with "cvs init".
-	  : dotest info-2 "${testcvs} add loginfo" \
-"${SPROG}"' add: scheduling file `loginfo'"'"' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  : dotest info-2 "$testcvs add loginfo" \
+"$SPROG add: scheduling file \`loginfo' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 
 	  dotest_fail info-3 "$testcvs -q ci -m new-loginfo" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
@@ -17025,14 +17079,14 @@ Info files are the hook files, verifymsg, taginfo, commitinfo, etc\."
 	  cd ..
 
 	  modify_repo mkdir $CVSROOT_DIRNAME/first-dir
-	  dotest info-5 "${testcvs} -q co first-dir" ''
+	  dotest info-5 "$testcvs -q co first-dir" ''
 	  cd first-dir
 	  touch file1
-	  dotest info-6 "${testcvs} add file1" \
-"${SPROG}"' add: scheduling file `file1'\'' for addition
-'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  dotest info-6 "$testcvs add file1" \
+"$SPROG add: scheduling file \`file1' for addition
+$SPROG add: use \`$SPROG commit' to add this file permanently"
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
-	  dotest info-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
+	  dotest info-6b "$testcvs -q -s OTHER=value ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 $SPROG commit: loginfo:[0-9]*: no such user variable \${=ZEE}
@@ -17118,6 +17172,8 @@ first-dir file1ux'
 	  cd CVSROOT
 	  dotest info-setup-intfmt-1 "$testcvs -q up -prinfo-start config >config"
 	  dotest info-setup-intfmt-2 "$testcvs -q up -prinfo-start loginfo >loginfo"
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" >> loginfo
           # The following cases test the format string substitution
           echo "ALL echo %1{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
@@ -17591,8 +17647,12 @@ EOF
 	  echo "ALL ${TESTDIR}/1/loggit" >>taginfo
 	  sed -e's/^UseNewInfoFmtStrings=yes$/#&/' <config >tmpconfig
 	  mv tmpconfig config
+	  sed -e's/%p/ALL/' <loginfo >tmploginfo
+	  mv tmploginfo loginfo
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
 "$TESTDIR/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$CVSROOT_DIRNAME/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $CVSROOT_DIRNAME/CVSROOT/taginfo,v  <--  taginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
