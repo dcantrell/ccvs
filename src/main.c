@@ -48,6 +48,9 @@ int logoff = 0;
    least for now we'll make the default be off (the CVS 1.9, not CVS
    1.9.2, behavior). */
 int top_level_admin = 0;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+int UseNewInfoFmtStrings = 0;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 
 mode_t cvsumask = UMASK_DFLT;
 

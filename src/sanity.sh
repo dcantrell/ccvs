@@ -12565,7 +12565,7 @@ U dir5/sdir/file2"
 	  dotest cvsadm-setup-1 "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "TopLevelAdmin=yes" >config
+	  echo "TopLevelAdmin=yes" >>config
 	  dotest cvsadm-setup-2 "${testcvs} -q ci -m yes-top-level" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -13656,8 +13656,8 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  dotest cvsadm-cleanup-1 "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "# empty file" >config
-	  dotest cvsadm-cleanup-2 "${testcvs} -q ci -m cvsadm-cleanup" \
+	  dotest cvsadm-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest cvsadm-cleanup-3 "${testcvs} -q ci -m cvsadm-cleanup" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -14049,7 +14049,7 @@ $CPROG \[checkout aborted\]: end of file from server (consult above messages if 
 	  dotest toplevel-1a "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "TopLevelAdmin=yes" >config
+	  echo "TopLevelAdmin=yes" >>config
 	  dotest toplevel-1b "${testcvs} -q ci -m yes-top-level" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -14163,8 +14163,8 @@ ${SPROG} checkout: Updating top-dir"
 	  dotest toplevel-cleanup-1 "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "# empty file" >config
-	  dotest toplevel-cleanup-2 "${testcvs} -q ci -m toplevel-cleanup" \
+	  dotest toplevel-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest toplevel-cleanup-3 "${testcvs} -q ci -m toplevel-cleanup" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -14184,7 +14184,7 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  dotest toplevel2-1a "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "TopLevelAdmin=no" >config
+	  echo "TopLevelAdmin=no" >>config
 	  dotest toplevel2-1b "${testcvs} -q ci -m no-top-level" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -14259,8 +14259,8 @@ U top-dir/file1"
 	  dotest toplevel2-cleanup-1 "${testcvs} -q co CVSROOT/config" \
 "U CVSROOT/config"
 	  cd CVSROOT
-	  echo "# empty file" >config
-	  dotest toplevel2-cleanup-2 "${testcvs} -q ci -m toplevel2-cleanup" \
+	  dotest toplevel2-cleanup-2 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest toplevel2-cleanup-3 "${testcvs} -q ci -m toplevel2-cleanup" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -14604,7 +14604,7 @@ Action: (continue) ${CPROG} \[commit aborted\]: aborted by user"
 "U CVSROOT/loginfo"
 
           cd CVSROOT
-	  echo 'DEFAULT (echo Start-Log;cat;echo End-Log) >> \$CVSROOT/CVSROOT/commitlog' > loginfo
+	  echo 'DEFAULT (echo Start-Log;cat;echo End-Log) >> $CVSROOT/CVSROOT/commitlog' > loginfo
 	  dotest editor-emptylog-continue-2 "${testcvs} commit -m add loginfo" \
 "Checking in loginfo;
 ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
@@ -14760,7 +14760,7 @@ EOF
 	      chmod +x ${TESTDIR}/env/test-cvs-pid
 	    fi
 	    cd CVSROOT
-	    echo "^env ${TESTDIR}/env/test-cvs-pid" >>commitinfo
+	    echo "^env ${TESTDIR}/env/test-cvs-pid %r/%p %s" >>commitinfo
 	    dotest env-2 "${testcvs} -q ci -m test-pid commitinfo" \
 "Checking in commitinfo;
 ${CVSROOT_DIRNAME}/CVSROOT/commitinfo,v  <--  commitinfo
@@ -17131,15 +17131,19 @@ ${SPROG} commit: Rebuilding administrative file database"
 
 	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
 	  cd CVSROOT
-	  rm -f $TESTDIR/testlog $TESTDIR/testlog2
 	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
           # The following cases test the format string substitution
-          echo "ALL echo %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo % >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{sxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
-          echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %s %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
           echo "first-dir echo %sux >>$TESTDIR/testlog2; cat >/dev/null" \
             >> loginfo
+	  sed -e's/^UseNewInfoFmtStrings=yes$/#&/' <config >tmpconfig
+	  mv tmpconfig config
 
 	  # Might be nice to move this to crerepos tests; it should
 	  # work to create a loginfo file if you didn't create one
@@ -17149,7 +17153,11 @@ ${SPROG} commit: Rebuilding administrative file database"
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 
 	  dotest info-3 "${testcvs} -q ci -m new-loginfo" \
-"Checking in loginfo;
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in loginfo;
 ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
@@ -17164,54 +17172,318 @@ ${SPROG} commit: Rebuilding administrative file database"
 "${SPROG}"' add: scheduling file `file1'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
-	  dotest info-6a "${testcvs} -q -s OTHER=value ci -m add-it" \
+	  dotest info-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
 done
 Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 	  echo line0 >>file1
-	  dotest info-6b "${testcvs} -q -sOTHER=foo ci -m mod-it" \
+	  dotest info-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
 "Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done
-${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
 	  echo line1 >>file1
 	  dotest info-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
-done"
+done
+${SPROG} commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\."
+
 	  cd ..
 	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${CVSROOT_DIRNAME}="
           dotest info-10 "cat $TESTDIR/testlog2" \
-'first-dir file1,NONE,1.1
+'first-dir
+first-dir
+first-dir
+first-dir file1,,NONE,1.1
 first-dir 1.1
-first-dir file1
+first-dir file1 %s
 first-dir NONEAX
 first-dir file1ux
-first-dir file1,1.1,1.2
+first-dir
+first-dir
+first-dir
+first-dir file1,,1.1,1.2
 first-dir 1.2
-first-dir file1
+first-dir file1 %s
 first-dir 1.1AX
 first-dir file1ux
-first-dir file1,1.2,1.3
+first-dir
+first-dir
+first-dir
+first-dir file1,,1.2,1.3
 first-dir 1.3
-first-dir file1
+first-dir file1 %s
 first-dir 1.2AX
 first-dir file1ux'
 
+	  # and make sure adding a '1' in the format strings really does ensure
+	  # ensure backwards compatibility.
+	  #
+	  # these tests are identical to the above except for the loginfo setup
+	  # and the project name
 	  cd CVSROOT
-	  echo '# do nothing' >loginfo
-	  dotest info-11 "${testcvs} -q -s ZEE=garbage ci -m nuke-loginfo" \
+	  dotest info-setup-intfmt-1 "${testcvs} -q up -pr1.1 config >config" ""
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\"" > loginfo
+          # The following cases test the format string substitution
+          echo "ALL echo %1{} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1x >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1 >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1{sxVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1s %%s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %1{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "third-dir echo %1sux >>$TESTDIR/testlog2; cat >/dev/null" \
+            >> loginfo
+
+	  dotest info-setup-intfmt-2 "${testcvs} -q -s ZEE=garbage ci -m nuke-admin-for-info-intfmt" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in loginfo;
+${TESTDIR}/cvsroot/CVSROOT/loginfo,v  <--  loginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${SPROG} commit: warning:  Set to use deprecated info format strings\.  Establish
+compatibility with the new info file format strings (add a temporary .1. in
+all info files after each .%. which doesn.t represent a literal percent)
+and set UseNewInfoFmtStrings=yes in CVSROOT/config\.  After that, convert
+individual command lines and scripts to handle the new format at your
+leisure\.
+${SPROG} commit: Rebuilding administrative file database"
+	  cd ..
+
+	  # delete the logs now so the results look more like the last tests
+	  # (they won't include the config file update)
+	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
+
+	  mkdir ${CVSROOT_DIRNAME}/third-dir
+	  dotest info-intfmt-5 "${testcvs} -q co third-dir" ''
+	  cd third-dir
+	  touch file1
+	  dotest info-intfmt-6 "${testcvs} add file1" \
+"${SPROG}"' add: scheduling file `file1'\'' for addition
+'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
+	  dotest info-intfmt-6b "${testcvs} -q -s OTHER=value ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/third-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\."
+	  echo line0 >>file1
+	  dotest info-intfmt-6c "${testcvs} -q -sOTHER=foo ci -m mod-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\."
+	  echo line1 >>file1
+	  dotest info-intfmt-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/third-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove '1's from your info file format strings\."
+
+	  cd ..
+	  dotest info-intfmt-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
+          dotest info-intfmt-10 "cat $TESTDIR/testlog2" \
+'third-dir
+third-dir
+third-dir
+third-dir file1,,NONE,1.1
+third-dir 1.1
+third-dir file1 %s
+third-dir NONEAX
+third-dir file1ux
+third-dir
+third-dir
+third-dir
+third-dir file1,,1.1,1.2
+third-dir 1.2
+third-dir file1 %s
+third-dir 1.1AX
+third-dir file1ux
+third-dir
+third-dir
+third-dir
+third-dir file1,,1.2,1.3
+third-dir 1.3
+third-dir file1 %s
+third-dir 1.2AX
+third-dir file1ux'
+
+	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
+
+	  # test the new format strings too
+	  cd CVSROOT
+	  echo "ALL sh -c \"echo x\${=MYENV}\${=OTHER}y\${=ZEE}=\$USER=\$CVSROOT= >>$TESTDIR/testlog; cat >/dev/null\" %{sVv}" > loginfo
+          # The following cases test the format string substitution
+          echo "ALL echo %p %{sVv} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{v} >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %s >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "ALL echo %{V}AX >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+          echo "second-dir echo %sux >>$TESTDIR/testlog2; cat >/dev/null" >> loginfo
+	  dotest info-setup-newfmt-1 "${testcvs} -q -s ZEE=garbage ci -m nuke-admin-for-info-newfmt" \
 "Checking in loginfo;
 ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
+${SPROG} commit: Using deprecated info format strings\.  Convert your scripts to use
+the new argument format and remove .1.s from your info file format strings\.
 ${SPROG} commit: Rebuilding administrative file database"
+	  cd ..
+
+	  # delete the logs now so the results look more like the last tests
+	  # (they won't include the config file update)
+	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
+
+	  mkdir $CVSROOT_DIRNAME/fourth-dir
+	  dotest info-newfmt-1 "${testcvs} -q co fourth-dir" ''
+	  cd fourth-dir
+	  touch file1
+	  dotest info-newfmt-2 "${testcvs} add file1" \
+"${SPROG}"' add: scheduling file `file1'\'' for addition
+'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+	  echo "cvs -s OTHER=not-this -s MYENV=env-" >>$HOME/.cvsrc
+	  dotest info-newfmt-3 "${testcvs} -q -s OTHER=value ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/fourth-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+	  echo line0 >>file1
+	  dotest info-newfmt-4 "${testcvs} -q -sOTHER=foo ci -m mod-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}"
+	  echo line1 >>file1
+	  dotest info-newfmt-5 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/fourth-dir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  cd ..
+	  dotest info-newfmt-6 "cat $TESTDIR/testlog" \
+"xenv-valueyz=${username}=${TESTDIR}/cvsroot="
+          dotest info-newfmt-7 "cat $TESTDIR/testlog2" \
+'fourth-dir file1 NONE 1\.1
+1\.1
+file1
+NONEAX
+fourth-dir file1 1\.1 1\.2
+1\.2
+file1
+1\.1AX
+fourth-dir file1 1\.2 1\.3
+1\.3
+file1
+1\.2AX'
+
+	  # clean up after newfmt tests
+	  cd CVSROOT
+	  dotest info-cleanup-newfmt-1 "${testcvs} -q up -pr1.1 loginfo >loginfo" ""
+	  dotest info-cleanup-newfmt-2 "${testcvs} -q ci -m nuke-loginfo" \
+"Checking in loginfo;
+${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${SPROG} commit: loginfo:1: no such user variable \${=ZEE}
+${SPROG} commit: Rebuilding administrative file database"
+
+	  # clean up the logs
+	  rm ${TESTDIR}/testlog ${TESTDIR}/testlog2
 
 	  # Now test verifymsg
 	  cat >${TESTDIR}/vscript <<EOF
@@ -17247,10 +17519,10 @@ EOF
 	  else
 	    chmod +x ${TESTDIR}/vscript*
 	  fi
-	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2" >>verifymsg
-	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript" >>verifymsg
-	  echo "^missing-script\$ ${TESTDIR}/bogus" >>verifymsg
-	  echo "^missing-var\$ ${TESTDIR}/vscript \${=Bogus}" >>verifymsg
+	  echo "^first-dir/yet-another\\(/\\|\$\\) ${TESTDIR}/vscript2 %l" >>verifymsg
+	  echo "^first-dir\\(/\\|\$\\) ${TESTDIR}/vscript %l" >>verifymsg
+	  echo "^missing-script\$ ${TESTDIR}/bogus %l" >>verifymsg
+	  echo "^missing-var\$ ${TESTDIR}/vscript %l \${=Bogus}" >>verifymsg
 	  # first test the directory independant verifymsg
 	  dotest info-v1 "${testcvs} -q ci -m add-verification" \
 "Checking in verifymsg;
@@ -17332,7 +17604,7 @@ ${SPROG} \[import aborted\]: Message verification failed" \
 "${SPROG} \[import aborted\]: Message verification failed"
 
 	  dotest_fail info-v8 "${testcvs} import -m bogus missing-var x y" \
-"${SPROG} import: verifymsg:25: no such user variable \${=Bogus}
+"${SPROG} import: verifymsg:33: no such user variable \${=Bogus}
 ${SPROG} \[import aborted\]: Message verification failed"
 
 	  rm file2
@@ -17420,10 +17692,15 @@ BugId: new
 See what happens next.
 ============================================================================="
 
+	  #cd CVSROOT
 	  cd ../CVSROOT
-	  echo 'DEFAULT false' >verifymsg
-	  echo 'DEFAULT true' >>verifymsg
-	  echo '# defaults' >config
+	  dotest info-reread-cleanup-1 \
+"${testcvs} -q up -pr1.1 config >config" \
+""
+	  # Append the NULL format string until we remove the deprecation
+	  # warning for lack of format strings.
+	  echo 'DEFAULT false %n' >verifymsg
+	  echo 'DEFAULT true %n' >>verifymsg
 	  dotest info-multdef "${testcvs} -q ci -m multdef" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -17450,28 +17727,27 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  dotest_fail info-cleanup-0 "${testcvs} -n release -d CVSROOT" \
 "${CPROG} \[release aborted\]: cannot run command ${DOTSTAR}"
 
-	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
-	    pass info-cleanup
-	  else
-	    fail info-cleanup
-	  fi
-	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE} ; then
-	    pass info-cleanup-2
-	  else
-	    fail info-cleanup-2
-	  fi
+	  dotest info-cleanup-1 "echo yes |${testcvs} -q release -d CVSROOT >/dev/null" ""
+	  dotest info-cleanup-2 "echo yes |${testcvs} -q release -d first-dir >/dev/null" ""
+	  dotest info-cleanup-3 "echo yes |${testcvs} -q release -d third-dir >/dev/null" ""
+	  dotest info-cleanup-4 "echo yes |${testcvs} -q release -d fourth-dir >/dev/null" ""
 	  cd ..
 	  rm -r wnt
 	  rm $HOME/.cvsrc
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/third-dir
+	  rm -rf ${CVSROOT_DIRNAME}/fourth-dir
 	  ;;
 
 	taginfo)
 	  # Tests of the CVSROOT/taginfo file.  See the comment at the
 	  # "info" tests for a full list of administrative file tests.
 
-	  # Tests to add:
-	  #   -F to move
+	  # all the oldfmt stuff can come out once we finish deprecating
+	  # the old info file command line format stuff.
+	  #
+	  # grep the code for SUPPORT_OLD_INFO_FMT_STRINGS and see the stuff
+	  # in configure.in about oldinfoformatsupport
 
 	  mkdir 1; cd 1
 	  dotest taginfo-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
@@ -17492,10 +17768,16 @@ EOF
 	    chmod +x ${TESTDIR}/1/loggit
 	  fi
 	  echo "ALL ${TESTDIR}/1/loggit" >taginfo
+	  sed -e's/^UseNewInfoFmtStrings=yes$/#&/' <config >tmpconfig
+	  mv tmpconfig config
 	  dotest taginfo-2 "${testcvs} -q ci -m check-in-taginfo" \
-"Checking in taginfo;
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in taginfo;
 ${CVSROOT_DIRNAME}/CVSROOT/taginfo,v  <--  taginfo
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} commit: Rebuilding administrative file database"
 	  cd ..
@@ -17519,8 +17801,18 @@ Checking in file1;
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
-	  dotest taginfo-6 "${testcvs} -q tag tag1" "T file1"
-	  dotest taginfo-7 "${testcvs} -q tag -b br" "T file1"
+	  dotest taginfo-6 "${testcvs} -q tag tag1" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+T file1"
+	  dotest taginfo-7 "${testcvs} -q tag -b br" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+T file1"
 	  dotest taginfo-8 "${testcvs} -q update -r br" ""
 	  echo add text on branch >>file1
 	  dotest taginfo-9 "${testcvs} -q ci -m modify-on-br" \
@@ -17528,31 +17820,71 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
-	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" "T file1"
+	  dotest taginfo-10 "${testcvs} -q tag -F -c brtag" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+T file1"
 
 	  dotest_fail taginfo-11 "${testcvs} -q tag rejectme" \
-"${SPROG} tag: Pre-tag check failed
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+${SPROG} tag: Pre-tag check failed
 ${SPROG} \[tag aborted\]: correct the above errors first!"
 
 	  # When we are using taginfo to allow/disallow, it would be
 	  # convenient to be able to use "cvs -n tag" to test whether
 	  # the allow/disallow functionality is working as expected.
-	  dotest taginfo-12 "${testcvs} -nq tag rejectme" "T file1"
+	  dotest taginfo-12 "${testcvs} -nq tag rejectme" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+T file1"
 
 	  # But when taginfo is used for logging, it is a pain for -n
 	  # to call taginfo, since taginfo doesn't know whether -n was
 	  # specified or not.
-	  dotest taginfo-13 "${testcvs} -nq tag would-be-tag" "T file1"
+	  dotest taginfo-13 "${testcvs} -nq tag would-be-tag" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+T file1"
 
 	  # Deleting: the cases are basically either the tag existed,
 	  # or it didn't exist.
-	  dotest taginfo-14 "${testcvs} -q tag -d tag1" "D file1"
-	  dotest taginfo-15 "${testcvs} -q tag -d tag1" ""
+	  dotest taginfo-14 "${testcvs} -q tag -d tag1" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\.
+D file1"
+	  dotest taginfo-15 "${testcvs} -q tag -d tag1" \
+"${SPROG} tag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\."
 
 	  # Likewise with rtag.
-	  dotest taginfo-16 "${testcvs} -q rtag tag1 first-dir" ""
-	  dotest taginfo-17 "${testcvs} -q rtag -d tag1 first-dir" ""
-	  dotest taginfo-18 "${testcvs} -q rtag -d tag1 first-dir" ""
+	  dotest taginfo-16 "${testcvs} -q rtag tag1 first-dir" \
+"${SPROG} rtag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\."
+	  dotest taginfo-17 "${testcvs} -q rtag -d tag1 first-dir" \
+"${SPROG} rtag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\."
+	  dotest taginfo-18 "${testcvs} -q rtag -d tag1 first-dir" \
+"${SPROG} rtag: warning: taginfo line contains no format strings:
+    \"${TESTDIR}/1/loggit\"
+Filling in old defaults ('%t %o %p %{sv}'), but please be aware that this
+usage is deprecated\."
 
 	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
 	  # But it turns out that is very hard to implement, since
@@ -17565,27 +17897,231 @@ ${SPROG} \[tag aborted\]: correct the above errors first!"
 	  # see whether a tag would be allowed.  Failing that,
 	  # I suppose passing "1.1.branch" or "branch" for "br"
 	  # would be an improvement.
-	  dotest taginfo-examine "cat ${TESTDIR}/1/taglog" \
-"tag1 add ${CVSROOT_DIRNAME}/first-dir file1 1.1
-br add ${CVSROOT_DIRNAME}/first-dir file1 1.1
-brtag mov ${CVSROOT_DIRNAME}/first-dir file1 1.1.2.1
-tag1 del ${CVSROOT_DIRNAME}/first-dir file1 1.1
-tag1 del ${CVSROOT_DIRNAME}/first-dir
-tag1 add ${CVSROOT_DIRNAME}/first-dir file1 1.1
-tag1 del ${CVSROOT_DIRNAME}/first-dir file1 1.1
-tag1 del ${CVSROOT_DIRNAME}/first-dir"
+	  dotest taginfo-examine-1 "cat ${TESTDIR}/1/taglog" \
+"tag1 add first-dir file1 1\.1
+br add first-dir file1 1\.1
+brtag mov first-dir file1 1\.1\.2\.1
+tag1 del first-dir file1 1\.1
+tag1 del first-dir file1 1\.1\.2\.1
+tag1 add first-dir file1 1\.1
+tag1 del first-dir file1 1\.1
+tag1 del first-dir file1 1\.1"
+
+	  # now that we've tested the default operation, try a new
+	  # style fmt string.
+	  rm ${TESTDIR}/1/taglog
+	  cd ..
+	  cd CVSROOT
+	  echo "ALL ${TESTDIR}/1/loggit %r %t %o %b %p %{sVv}" >taginfo
+	  dotest taginfo-newfmt-1 "${testcvs} -q ci -m check-in-taginfo" \
+"Checking in taginfo;
+${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${SPROG} commit: Rebuilding administrative file database"
+
+	  cat >${TESTDIR}/1/loggit <<EOF
+#!${TESTSHELL}
+if test "\$1" = rejectme; then
+  exit 1
+else
+  while [ -n "\$1" ]; do
+    echo "\$1" >>${TESTDIR}/1/taglog
+    shift
+  done
+  exit 0
+fi
+EOF
+
+	  cd ..
+	  cd first-dir
+	  dotest taginfo-newfmt-2 "${testcvs} -q update -A" "[UP] file1"
+	  echo "bull pucky" >'file 2'
+	  dotest taginfo-newfmt-2b "${testcvs} add 'file 2'" \
+"${SPROG} add: scheduling file .file 2. for addition
+${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest taginfo-newfmt-2c "${testcvs} -q ci -m add-it" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file 2,v
+done
+Checking in file 2;
+${TESTDIR}/cvsroot/first-dir/file 2,v  <--  file 2
+initial revision: 1\.1
+done"
+
+	  dotest taginfo-newfmt-3 "${testcvs} -q tag tag1" \
+"T file 2
+T file1"
+	  dotest taginfo-newfmt-4 "${testcvs} -q tag tag3" \
+"T file 2
+T file1"
+
+	  dotest taginfo-newfmt-examine-1 "cat ${TESTDIR}/1/taglog" \
+"${TESTDIR}/cvsroot
+tag1
+add
+N
+first-dir
+file 2
+NONE
+1\.1
+file1
+NONE
+1\.1
+${TESTDIR}/cvsroot
+tag3
+add
+N
+first-dir
+file 2
+NONE
+1\.1
+file1
+NONE
+1\.1"
+
+	  # now update to use the new format strings (really, disable support
+	  # of the old format) and run the whole gamut of tests again.
+	  rm ${TESTDIR}/1/taglog
+	  cd ..
+	  cd CVSROOT
+	  cat >${TESTDIR}/1/loggit <<EOF
+#!${TESTSHELL}
+if test "\$1" = rejectme; then
+  exit 1
+else
+  echo "\$@" >>${TESTDIR}/1/taglog
+  exit 0
+fi
+EOF
+	  echo "ALL ${TESTDIR}/1/loggit %{t} %b %{o} %p %{sVv}" >taginfo
+	  echo "UseNewInfoFmtStrings=yes" >>config
+	  dotest taginfo-newfmt-7 "${testcvs} -q ci -m check-in-taginfo" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in taginfo;
+${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${SPROG} commit: Rebuilding administrative file database"
+
+	  cd ../first-dir
+	  dotest taginfo-newfmt-8 "${testcvs} -q tag tag1" ""
+	  mkdir sdir
+	  dotest taginfo-newfmt-8b "${testcvs} -q add sdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+	  touch sdir/file3
+	  dotest taginfo-newfmt-8c "${testcvs} -q add sdir/file3" \
+"${SPROG} add: use .${SPROG} commit. to add this file permanently"
+	  dotest taginfo-newfmt-8d "${testcvs} -q ci -m added-sdir" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/file3,v
+done
+Checking in sdir/file3;
+${TESTDIR}/cvsroot/first-dir/sdir/file3,v  <--  file3
+initial revision: 1\.1
+done"
+	  dotest taginfo-newfmt-9 "${testcvs} -q tag -b br" \
+"T file 2
+W file1 : br already exists on branch 1\.1\.2\.1 : NOT MOVING tag to branch 1\.1\.0\.4
+T sdir/file3"
+	  dotest taginfo-newfmt-10 "${testcvs} -q update -r br" "[UP] file1"
+	  echo add more text on branch >>file1
+	  dotest taginfo-newfmt-11 "${testcvs} -q ci -m modify-on-br" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
+done"
+	  dotest taginfo-newfmt-12 "${testcvs} -q tag -F -c brtag" \
+"T file 2
+T file1
+T sdir/file3"
+
+	  # we are being called once for each directory.  I'm not sure
+	  # I like this, but I'm also not sure how hard it would be to change,
+	  # It seems like it would be more trouble than it is really worth
+	  # to let a partial tag go through...
+	  dotest_fail taginfo-newfmt-13 "${testcvs} -q tag rejectme" \
+"${SPROG} tag: Pre-tag check failed
+${SPROG} tag: Pre-tag check failed
+${SPROG} \[tag aborted\]: correct the above errors first!"
+
+	  # When we are using taginfo to allow/disallow, it would be
+	  # convenient to be able to use "cvs -n tag" to test whether
+	  # the allow/disallow functionality is working as expected.
+	  # see the comment before taginfo-newfmt-15 for notes on
+	  # pretag and posttag proc
+	  dotest taginfo-newfmt-14 "${testcvs} -nq tag rejectme" \
+"T file 2
+T file1
+T sdir/file3"
+
+	  # But when taginfo is used for logging, it is a pain for -n
+	  # to call taginfo, since taginfo doesn't know whether -n was
+	  # specified or not. (this could be fixed pretty easily now
+	  # with a new fmt string.  i suppose it would be better to
+	  # have a pretag proc and a posttag proc, though.)
+	  dotest taginfo-newfmt-15 "${testcvs} -nq tag would-be-tag" \
+"T file 2
+T file1
+T sdir/file3"
+
+	  # Deleting: the cases are basically either the tag existed,
+	  # or it didn't exist.
+	  dotest taginfo-newfmt-16 "${testcvs} -q tag -d tag1" \
+"D file 2
+D file1"
+	  dotest taginfo-newfmt-17 "${testcvs} -q tag -d tag1" ""
+
+	  # Likewise with rtag.
+	  dotest taginfo-newfmt-18 "${testcvs} -q rtag tag1 first-dir" ""
+	  dotest taginfo-newfmt-19 "${testcvs} -q rtag -d tag1 first-dir" ""
+	  dotest taginfo-newfmt-20 "${testcvs} -q rtag -d tag1 first-dir" ""
+
+	  # The "br" example should be passing 1.1.2 or 1.1.0.2.
+	  # But it turns out that is very hard to implement, since
+	  # check_fileproc doesn't know what branch number it will
+	  # get.  Probably the whole thing should be re-architected
+	  # so that taginfo only allows/denies tagging, and a new
+	  # hook, which is done from tag_fileproc, does logging.
+	  # That would solve this, some more subtle races, and also
+	  # the fact that it is nice for users to run "-n tag foo" to
+	  # see whether a tag would be allowed.  Failing that,
+	  # I suppose passing "1.1.branch" or "branch" for "br"
+	  # would be an improvement.
+	  dotest taginfo-newfmt-examine-2 "cat ${TESTDIR}/1/taglog" \
+"tag1 N add first-dir file 2 1.1 1.1 file1 1.1 1.1
+br T add first-dir file 2 NONE 1\.1 file1 1\.1\.2\.1 1\.1
+br T add first-dir/sdir file3 NONE 1\.1
+brtag N mov first-dir file 2 NONE 1\.1 file1 1\.1\.2\.1 1\.1\.2\.2
+brtag N mov first-dir/sdir file3 NONE 1\.1
+tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
+tag1 ? del first-dir/sdir file3 NONE 1\.1
+tag1 ? del first-dir file 2 NONE 1\.1 file1 NONE 1\.1\.2\.2
+tag1 ? del first-dir/sdir file3 NONE 1\.1
+tag1 N add first-dir file 2 NONE 1\.1 file1 NONE 1\.1
+tag1 N add first-dir/sdir file3 NONE 1\.1
+tag1 ? del first-dir file 2 1\.1 1\.1 file1 1\.1 1\.1
+tag1 ? del first-dir/sdir file3 1\.1 1\.1
+tag1 ? del first-dir file 2 NONE 1\.1 file1 NONE 1\.1
+tag1 ? del first-dir/sdir file3 NONE 1\.1"
 
 	  cd ..
 	  cd CVSROOT
 	  echo '# Keep life simple' > taginfo
-	  dotest taginfo-cleanup-1 "${testcvs} -q ci -m check-in-taginfo" \
-"Checking in taginfo;
-${CVSROOT_DIRNAME}/CVSROOT/taginfo,v  <--  taginfo
-new revision: 1\.3; previous revision: 1\.2
+	  dotest taginfo-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest taginfo-cleanup-2 "${testcvs} -q ci -m check-in-admin-files" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+Checking in taginfo;
+${TESTDIR}/cvsroot/CVSROOT/taginfo,v  <--  taginfo
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} commit: Rebuilding administrative file database"
-	  cd ..
-	  cd ..
+
+	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
@@ -17619,7 +18155,9 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} commit: Rebuilding administrative file database"
 	  echo '# No config is a good config' > config
-	  dotest config-5 "${testcvs} -q ci -m change-to-comment" \
+	  dotest config-cleanup-1 "${testcvs} -q up -pr1.1 config >config" \
+"${SPROG} [a-z]*: ${TESTDIR}/cvsroot/CVSROOT/config: unrecognized keyword 'BogusOption'"
+	  dotest config-cleanup-2 "${testcvs} -q ci -m change-to-comment" \
 "${SPROG} [a-z]*: ${CVSROOT_DIRNAME}/CVSROOT/config: unrecognized keyword 'BogusOption'
 Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -20073,7 +20611,7 @@ File: file1            	Status: Up-to-date
 "U first-dir/sdir/ssdir/file1"
 	  dotest lockfiles-3 "${testcvs} -Q co CVSROOT" ""
 	  cd CVSROOT
-	  echo "LockDir=${TESTDIR}/locks" >config
+	  echo "LockDir=${TESTDIR}/locks" >>config
 	  dotest lockfiles-4 "${testcvs} -q ci -m config-it" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -20245,8 +20783,8 @@ new revision: 1\.4; previous revision: 1\.3
 done"
 
 	  cd CVSROOT
-	  echo "# nobody here but us comments" >config
-	  dotest lockfiles-cleanup-1 "${testcvs} -q ci -m config-it" \
+	  dotest lockfiles-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
+	  dotest lockfiles-cleanup-2 "${testcvs} -q ci -m config-it" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -23871,7 +24409,11 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  fi
 	  echo more stuff >> a-lock
 	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
-"fred has file a-lock locked for version  1\.1
+"${SPROG} commit: warning: commitinfo line contains no format strings:
+    \"${TESTDIR}/lockme\"
+Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+deprecated\.
+fred has file a-lock locked for version  1\.1
 ${SPROG} commit: Pre-commit check failed
 ${SPROG} \[commit aborted\]: correct above errors first!"
 	  # OK, now test "cvs admin -l" in the case where someone
@@ -23886,7 +24428,11 @@ ${SPROG} admin: ${CVSROOT_DIRNAME}/first-dir/a-lock,v: revision 1\.1 locked by f
 1\.1 unlocked
 done"
 	  dotest reserved-15 "${testcvs} -q ci -m success a-lock" \
-"Checking in a-lock;
+"${SPROG} commit: warning: commitinfo line contains no format strings:
+    \"${TESTDIR}/lockme\"
+Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+deprecated\.
+Checking in a-lock;
 ${CVSROOT_DIRNAME}/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2; previous revision: 1\.1
 done"
@@ -23901,7 +24447,11 @@ done"
 	  dotest reserved-18 "${testcvs} -q update -r br a-lock" ""
 	  echo edit it >>a-lock
 	  dotest reserved-19 "${testcvs} -q ci -m modify a-lock" \
-"Checking in a-lock;
+"${SPROG} commit: warning: commitinfo line contains no format strings:
+    \"${TESTDIR}/lockme\"
+Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+deprecated\.
+Checking in a-lock;
 ${CVSROOT_DIRNAME}/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2\.2\.1; previous revision: 1\.2
 done"
@@ -23910,7 +24460,11 @@ done"
 	  cd ../CVSROOT
 	  echo '# vanilla commitinfo' >commitinfo
 	  dotest reserved-cleanup-1 "${testcvs} -q ci -m back commitinfo" \
-"Checking in commitinfo;
+"${SPROG} commit: warning: commitinfo line contains no format strings:
+    \"${TESTDIR}/lockme\"
+Appending defaults (\" %r/%p %s\"), but please be aware that this usage is
+deprecated\.
+Checking in commitinfo;
 ${CVSROOT_DIRNAME}/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.3; previous revision: 1\.2
 done
@@ -27080,7 +27634,7 @@ ${CPROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or direc
 	    mkdir 1; cd 1
 	    dotest pserver-1 "${testcvs} -Q co CVSROOT" ""
 	    cd CVSROOT
-	    echo "SystemAuth=no" >config
+	    echo "SystemAuth=no" >>config
 	    dotest pserver-2 "${testcvs} -q ci -m config-it" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
@@ -27514,8 +28068,8 @@ EOF
 "${SPROG} \[pserver aborted\]: bad auth protocol start: EOF" </dev/null
 
 	    # Clean up.
-	    echo "# comments only" >config
-	    dotest pserver-cleanup-1 "${testcvs} -q ci -m config-it" \
+	    dotest pserver-cleanup-1 "${testcvs} -q up -pr1.1 config >config" ""
+	    dotest pserver-cleanup-2 "${testcvs} -q ci -m config-it" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*

@@ -14,19 +14,36 @@ static int find_type (Node * p, void *closure);
 static int fmt_proc (Node * p, void *closure);
 static int logfile_write (char *repository, char *filter,
 			  char *message, FILE * logfp, List * changes);
-static int rcsinfo_proc ( char *repository, char *template,
-                                void *closure );
+static int logmsg_list_to_args_proc ( Node *p, void *closure );
+static int rcsinfo_proc ( char *repository, char *template, void *closure );
 static int title_proc (Node * p, void *closure);
 static int update_logfile_proc ( char *repository, char *filter,
-                                       void *closure);
+                                 void *closure);
 static void setup_tmpfile (FILE * xfp, char *xprefix, List * changes);
-static int verifymsg_proc ( char *repository, char *script,
-                                  void *closure );
+static int verifymsg_proc ( char *repository, char *script, void *closure );
 
 static FILE *fp;
 static char *str_list;
 static char *str_list_format;	/* The format for str_list's contents. */
 static Ctype type;
+
+struct verifymsg_proc_data
+{
+    /* The name of the temp file storing the log message to be verified.  This
+     * is initially NULL and verifymsg_proc() writes message into it so that it
+     * can be shared when multiple verifymsg scripts exist.  do_verify() is
+     * responsible for rereading the message from the file when
+     * RereadLogAfterVerify is in effect and the file has changed.
+     */
+    char *fname;
+    /* The initial message text to be verified.
+     */
+    char *message;
+    /* The initial stats of the temp file so we can tell that the temp file has
+     * been changed when RereadLogAfterVerify is STAT.
+     */
+    struct stat pre_stbuf;
+};
 
 /* 
  * Should the logmsg be re-read during the do_verify phase?
@@ -217,7 +234,7 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     if (repository != NULL)
 	/* tack templates on if necessary */
 	(void) Parse_Info (CVSROOTADM_RCSINFO, repository, rcsinfo_proc,
-		PIOPT_ALL, 0);
+		PIOPT_ALL, NULL);
     else
     {
 	FILE *tfp;
@@ -389,96 +406,69 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
 void
 do_verify (char **messagep, char *repository)
 {
-    FILE *fp;
-    char *fname;
-    int retcode = 0;
-    char *verifymsg_script = NULL;
-
-    struct stat pre_stbuf, post_stbuf;
+    int err;
+    struct verifymsg_proc_data data;
+    struct stat post_stbuf;
 
 #ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote)
+    if( current_parsed_root->isremote )
 	/* The verification will happen on the server.  */
 	return;
 #endif
 
     /* FIXME? Do we really want to skip this on noexec?  What do we do
        for the other administrative files?  */
+    /* EXPLAIN: Why do we check for repository == NULL here? */
     if (noexec || repository == NULL)
 	return;
 
     /* Get the name of the verification script to run  */
 
-    if (Parse_Info (CVSROOTADM_VERIFYMSG, repository, verifymsg_proc, 0, &verifymsg_script) > 0)
-	error (1, 0, "Message verification failed");
-
-    if (!verifymsg_script)
-	return;
-
-    /* open a temporary file, write the message to the 
-       temp file, and close the file.  */
-
-    if ((fp = cvs_temp_file (&fname)) == NULL)
-	error (1, errno, "cannot create temporary file %s", fname);
-
-    if (*messagep != NULL)
-	fputs (*messagep, fp);
-    if (*messagep == NULL ||
-	(*messagep)[0] == '\0' ||
-	(*messagep)[strlen (*messagep) - 1] != '\n')
-	putc ('\n', fp);
-    if (fclose (fp) == EOF)
-	error (1, errno, "%s", fname);
-
-    if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+    data.message = *messagep;
+    data.fname = NULL;
+    if( err = Parse_Info( CVSROOTADM_VERIFYMSG, repository, 
+	                  verifymsg_proc, 0, &data ) )
     {
-	/* Remember the status of the temp file for later */
-	if ( CVS_STAT (fname, &pre_stbuf) != 0 )
-	    error (1, errno, "cannot stat temp file %s", fname);
-
-	/*
-	 * See if we need to sleep before running the verification
-	 * script to avoid time-stamp races.
-	 */
-	sleep_past (pre_stbuf.st_mtime);
-    }
-
-    run_setup (verifymsg_script);
-    run_arg (fname);
-    if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY,
-			     RUN_NORMAL | RUN_SIGIGNORE)) != 0)
-    {
+	int saved_errno = errno;
 	/* Since following error() exits, delete the temp file now.  */
-	if (unlink_file (fname) < 0)
-	    error (0, errno, "cannot remove %s", fname);
+	if( data.fname != NULL && unlink_file( data.fname ) < 0 )
+	    error( 0, errno, "cannot remove %s", data.fname );
+	free( data.fname );
 
-	error (1, retcode == -1 ? errno : 0, 
-	       "Message verification failed");
+	errno = saved_errno;
+	error( 1, err == -1 ? errno : 0, 
+	       "Message verification failed" );
     }
+
+    /* Return if no temp file was created.  That means that we didn't call any
+     * verifymsg scripts.
+     */
+    if( data.fname == NULL )
+	return;
 
     /* Get the mod time and size of the possibly new log message
      * in always and stat modes.
      */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+    if( RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	RereadLogAfterVerify == LOGMSG_REREAD_STAT )
     {
-	if ( CVS_STAT (fname, &post_stbuf) != 0 )
-	    error (1, errno, "cannot find size of temp file %s", fname);
+	if( CVS_STAT( data.fname, &post_stbuf ) != 0 )
+	    error( 1, errno, "cannot find size of temp file %s", data.fname );
     }
 
     /* And reread the log message in `always' mode or in `stat' mode when it's
-     * changed
+     * changed.
      */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
-	    (pre_stbuf.st_mtime != post_stbuf.st_mtime ||
-	     pre_stbuf.st_size != post_stbuf.st_size)))
+    if( RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	( RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
+	  ( data.pre_stbuf.st_mtime != post_stbuf.st_mtime ||
+	    data.pre_stbuf.st_size != post_stbuf.st_size ) ) )
     {
 	/* put the entire message back into the *messagep variable */
 
-	if (*messagep) free (*messagep);
+	if( *messagep ) free( *messagep );
 
-	if (post_stbuf.st_size == 0)
+	if( post_stbuf.st_size == 0 )
 	    *messagep = NULL;
 	else
 	{
@@ -486,47 +476,44 @@ do_verify (char **messagep, char *repository)
 	    int line_length;
 	    size_t line_chars_allocated = 0;
 	    char *p;
+	    FILE *fp;
 
-	    if ( (fp = open_file (fname, "r")) == NULL )
-		error (1, errno, "cannot open temporary file %s", fname);
+	    if( ( fp = open_file( data.fname, "r" ) ) == NULL )
+		error( 1, errno, "cannot open temporary file %s", data.fname );
 
 	    /* On NT, we might read less than st_size bytes,
 	       but we won't read more.  So this works.  */
-	    p = *messagep = (char *) xmalloc (post_stbuf.st_size + 1);
+	    p = *messagep = (char *) xmalloc( post_stbuf.st_size + 1 );
 	    *messagep[0] = '\0';
 
-	    while (1)
+	    while( 1 )
 	    {
-		line_length = getline (&line,
+		line_length = getline( &line,
 				       &line_chars_allocated,
-				       fp);
-		if (line_length == -1)
+				       fp );
+		if( line_length == -1 )
 		{
-		    if (ferror (fp))
+		    if( ferror( fp ) )
 			/* Fail in this case because otherwise we will have no
 			 * log message
 			 */
-			error (1, errno, "cannot read %s", fname);
+			error( 1, errno, "cannot read %s", data.fname );
 		    break;
 		}
-		if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
+		if( strncmp( line, CVSEDITPREFIX, CVSEDITPREFIXLEN ) == 0 )
 		    continue;
-		(void) strcpy (p, line);
+		(void) strcpy( p, line );
 		p += line_length;
 	    }
-	    if (line) free (line);
-	    if (fclose (fp) < 0)
-	        error (0, errno, "warning: cannot close %s", fname);
+	    if( line ) free( line );
+	    if( fclose( fp ) < 0 )
+	        error( 0, errno, "warning: cannot close %s", data.fname );
 	}
     }
-
     /* Delete the temp file  */
-
-    if (unlink_file (fname) < 0)
-	error (0, errno, "cannot remove %s", fname);
-    free (fname);
-    free( verifymsg_script );
-    verifymsg_script = NULL;
+    if(unlink_file(data.fname) < 0)
+	error(0, errno, "cannot remove `%s'", data.fname);
+    free(data.fname);
 }
 
 /*
@@ -597,9 +584,11 @@ Update_Logfile (char *repository, char *xmessage, FILE *xlogfp, List *xchanges)
     ud.changes = xchanges;
 
     /* call Parse_Info to do the actual logfile updates */
-    (void) Parse_Info (CVSROOTADM_LOGINFO, repository, update_logfile_proc,
-		PIOPT_ALL, &ud);
+    (void) Parse_Info( CVSROOTADM_LOGINFO, repository, update_logfile_proc,
+		       PIOPT_ALL, &ud );
 }
+
+
 
 /*
  * callback proc to actually do the logfile write from Update_Logfile
@@ -608,91 +597,121 @@ static int
 update_logfile_proc(char *repository, char *filter, void *closure)
 {
     struct ulp_data *udp = (struct ulp_data *)closure;
+    TRACE( TRACE_FUNCTION, "update_logfile_proc(%s,%s)", repository, filter );
     return (logfile_write (repository, filter, udp->message, udp->logfp,
 			   udp->changes));
 }
 
-/*
- * concatenate each filename/version onto str_list
+
+
+/* static int
+ * logmsg_list_to_args_proc( Node *p, void *closure )
+ * This function is intended to be passed into walklist() with a list of tags
+ * (nodes in the same format as pretag_list_proc() accepts - p->key = tagname
+ * and p->data = a revision.
+ *
+ * closure will be a struct format_cmdline_walklist_closure
+ * where closure is undefined.
  */
 static int
-title_proc (Node *p, void *closure)
+logmsg_list_to_args_proc(Node *p, void *closure)
 {
+    struct format_cmdline_walklist_closure *c;
     struct logfile_info *li;
-    char *c;
+    char *arg;
+    char *f, *d;
+    size_t doff;
+    int firstarg = 1;
 
-    li = (struct logfile_info *) p->data;
-    if (li->type == type)
+    if( p->data == NULL ) return 1;
+
+    c = (struct format_cmdline_walklist_closure *) closure;
+    f = c->format;
+    d = *( c->d );
+    /* foreach requested atribute */
+    while( *f )
     {
-	/* Until we decide on the correct logging solution when we add
-	   directories or perform imports, T_TITLE nodes will only
-	   tack on the name provided, regardless of the format string.
-	   You can verify that this assumption is safe by checking the
-	   code in add.c (add_directory) and import.c (import). */
-
-	str_list = xrealloc (str_list, strlen (str_list) + 5);
-	(void) strcat (str_list, " ");
-
-	if (li->type == T_TITLE)
+	switch( *f++ )
 	{
-	    str_list = xrealloc (str_list,
-				 strlen (str_list) + strlen (p->key) + 5);
-	    (void) strcat (str_list, p->key);
+	    case 's':
+		arg = p->key;
+		break;
+	    case 'V':
+		li = (struct logfile_info *) p->data;
+		arg = li->rev_old ? li->rev_old : "NONE";
+		break;
+	    case 'v':
+		li = (struct logfile_info *) p->data;
+		arg = li->rev_new ? li->rev_new : "NONE";
+		break;
+	    default:
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+		if( c->onearg )
+		{
+		    /* The old deafult was to print the empty string for
+		     * unknown args.
+		     */
+		    arg = "\0";
+		}
+		else
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+		    error( 1, 0,
+		           "Unknown format character or not a list atribute: %c", f[-1]) ;
+		break;
 	}
-	else
+	/* copy the attribute into an argument */
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	if( c->onearg )
 	{
-	    /* All other nodes use the format string. */
-
-	    for (c = str_list_format; *c != '\0'; c++)
+	    if( c->firstpass )
 	    {
-		switch (*c)
-		{
-		case 's':
-		    str_list =
-			xrealloc (str_list,
-				  strlen (str_list) + strlen (p->key) + 5);
-		    (void) strcat (str_list, p->key);
-		    break;
-		case 'V':
-		    str_list =
-			xrealloc (str_list,
-				  (strlen (str_list)
-				   + (li->rev_old ? strlen (li->rev_old) : 0)
-				   + 10)
-				  );
-		    (void) strcat (str_list, (li->rev_old
-					      ? li->rev_old : "NONE"));
-		    break;
-		case 'v':
-		    str_list =
-			xrealloc (str_list,
-				  (strlen (str_list)
-				   + (li->rev_new ? strlen (li->rev_new) : 0)
-				   + 10)
-				  );
-		    (void) strcat (str_list, (li->rev_new
-					      ? li->rev_new : "NONE"));
-		    break;
-		/* All other characters, we insert an empty field (but
-		   we do put in the comma separating it from other
-		   fields).  This way if future CVS versions add formatting
-		   characters, one can write a loginfo file which at least
-		   won't blow up on an old CVS.  */
-		/* Note that people who have to deal with spaces in file
-		   and directory names are using space to get a known
-		   delimiter for the directory name, so it's probably
-		   not a good idea to ever define that as a formatting
-		   character.  */
-		}
-		if (*(c + 1) != '\0')
-		{
-		    str_list = xrealloc (str_list, strlen (str_list) + 5);
-		    (void) strcat (str_list, ",");
-		}
+		c->firstpass = 0;
+		doff = d - *( c->buf );
+		expand_string( c->buf, c->length,
+		               doff + strlen( c->srepos ) + 1 );
+		d = *( c->buf ) + doff;
+		strncpy( d, c->srepos, strlen( c->srepos ) );
+		d += strlen( c->srepos );
+	    	*d++ = ' ';
 	    }
 	}
+	else /* c->onearg */
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	{
+	    if ( c->quotes )
+	    {
+		arg = cmdlineescape( c->quotes, arg );
+	    }
+	    else
+	    {
+		arg = cmdlinequote( '"', arg );
+	    }
+	} /* !c->onearg */
+	doff = d - *( c->buf );
+	expand_string( c->buf, c->length, doff + strlen( arg ) );
+	d = *( c->buf ) + doff;
+	strncpy( d, arg, strlen( arg ) );
+	d += strlen( arg );
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	if( !c->onearg )
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	    free( arg );
+
+	/* Always put the extra space on.  we'll have to back up a char
+	 * when we're done, but that seems most efficient.
+	 */
+	doff = d - *( c->buf );
+	expand_string( c->buf, c->length, doff + 1 );
+	d = *( c->buf ) + doff;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	if( c->onearg && *f ) *d++ = ',';
+	else
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	    *d++ = ' ';
     }
-    return (0);
+    /* correct our original pointer into the buff */
+    *( c->d ) = d;
+    return 0;
 }
 
 /*
@@ -702,13 +721,12 @@ title_proc (Node *p, void *closure)
 static int
 logfile_write (char *repository, char *filter, char *message, FILE *logfp, List *changes)
 {
+    char *cmdline;
     FILE *pipefp;
-    char *prog;
     char *cp;
     int c;
     int pipestatus;
-    char *fmt_percent;		/* the location of the percent sign
-				   that starts the format string. */
+    char *srepos = Short_Repository (repository);
 
     /* The user may specify a format string as part of the filter.
        Originally, `%s' was the only valid string.  The string that
@@ -761,127 +779,34 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
        Why this duplicates the old behavior when the format string is
        `%s' is left as an exercise for the reader. */
 
-    fmt_percent = strchr (filter, '%');
-    if (fmt_percent)
+    /* %p = shortrepos
+     * %r = repository
+     * %{sVv} = file name, old revision (precommit), new revision (postcommit)
+     */
+    cmdline = format_cmdline(
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	                      !UseNewInfoFmtStrings, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	                      filter,
+	                      "p", "s", srepos,
+	                      "r", "s", current_parsed_root->directory,
+	                      "sVv", ",", changes,
+			             logmsg_list_to_args_proc, (void *) NULL,
+	                      NULL
+	                    );
+    if( !cmdline || !strlen( cmdline ) )
     {
-	int len;
-	char *srepos;
-	char *fmt_begin, *fmt_end;	/* beginning and end of the
-					   format string specified in
-					   filter. */
-	char *fmt_continue;		/* where the string continues
-					   after the format string (we
-					   might skip a '}') somewhere
-					   in there... */
-
-	/* Grab the format string. */
-
-	if ((*(fmt_percent + 1) == ' ') || (*(fmt_percent + 1) == '\0'))
-	{
-	    /* The percent stands alone.  This is an error.  We could
-	       be treating ' ' like any other formatting character, but
-	       using it as a formatting character seems like it would be
-	       a mistake.  */
-
-	    /* Would be nice to also be giving the line number.  */
-	    error (0, 0, "loginfo: '%%' not followed by formatting character");
-	    fmt_begin = fmt_percent + 1;
-	    fmt_end = fmt_begin;
-	    fmt_continue = fmt_begin;
-	}
-	else if (*(fmt_percent + 1) == '{')
-	{
-	    /* The percent has a set of characters following it. */
-
-	    fmt_begin = fmt_percent + 2;
-	    fmt_end = strchr (fmt_begin, '}');
-	    if (fmt_end)
-	    {
-		/* Skip over the '}' character. */
-
-		fmt_continue = fmt_end + 1;
-	    }
-	    else
-	    {
-		/* There was no close brace -- assume that format
-                   string continues to the end of the line. */
-
-		/* Would be nice to also be giving the line number.  */
-		error (0, 0, "loginfo: '}' missing");
-		fmt_end = fmt_begin + strlen (fmt_begin);
-		fmt_continue = fmt_end;
-	    }
-	}
-	else
-	{
-	    /* The percent has a single character following it.  FIXME:
-	       %% should expand to a regular percent sign.  */
-
-	    fmt_begin = fmt_percent + 1;
-	    fmt_end = fmt_begin + 1;
-	    fmt_continue = fmt_end;
-	}
-
-	len = fmt_end - fmt_begin;
-	str_list_format = xmalloc (len + 1);
-	strncpy (str_list_format, fmt_begin, len);
-	str_list_format[len] = '\0';
-
-	/* Allocate an initial chunk of memory.  As we build up the string
-	   we will realloc it.  */
-	if (!str_list)
-	    str_list = xmalloc (1);
-	str_list[0] = '\0';
-
-	/* Add entries to the string.  Don't bother looking for
-           entries if the format string is empty. */
-
-	if (str_list_format[0] != '\0')
-	{
-	    type = T_TITLE;
-	    (void) walklist (changes, title_proc, NULL);
-	    type = T_ADDED;
-	    (void) walklist (changes, title_proc, NULL);
-	    type = T_MODIFIED;
-	    (void) walklist (changes, title_proc, NULL);
-	    type = T_REMOVED;
-	    (void) walklist (changes, title_proc, NULL);
-	}
-
-	free (str_list_format);
-	
-	/* Construct the final string. */
-
-	srepos = Short_Repository (repository);
-
-	prog = cp = xmalloc ((fmt_percent - filter) + 2 * strlen (srepos)
-			+ 2 * strlen (str_list) + strlen (fmt_continue)
-			+ 10);
-	(void) memcpy (cp, filter, fmt_percent - filter);
-	cp += fmt_percent - filter;
-	*cp++ = '"';
-	cp = shell_escape (cp, srepos);
-	cp = shell_escape (cp, str_list);
-	*cp++ = '"';
-	(void) strcpy (cp, fmt_continue);
-	    
-	/* To be nice, free up some memory. */
-
-	free (str_list);
-	str_list = (char *) NULL;
-    }
-    else
-    {
-	/* There's no format string. */
-	prog = xstrdup (filter);
+	if( cmdline ) free( cmdline );
+	error( 0, 0, "logmsg proc resolved to the empty string!" );
+	return 1;
     }
 
-    if ((pipefp = run_popen (prog, "w")) == NULL)
+    if( ( pipefp = run_popen( cmdline, "w" ) ) == NULL )
     {
 	if (!noexec)
-	    error (0, 0, "cannot write entry to log filter: %s", prog);
-	free (prog);
-	return (1);
+	    error( 0, 0, "cannot write entry to log filter: %s", cmdline );
+	free( cmdline );
+	return 1;
     }
     (void) fprintf (pipefp, "Update of %s\n", repository);
     (void) fprintf (pipefp, "In directory %s:", hostname);
@@ -904,24 +829,127 @@ logfile_write (char *repository, char *filter, char *message, FILE *logfp, List 
 	while ((c = getc (logfp)) != EOF)
 	    (void) putc ((char) c, pipefp);
     }
-    free (prog);
+    free (cmdline);
     pipestatus = pclose (pipefp);
     return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
 }
 
 
 
-/*  This routine is calld by Parse_Info.  It picks up the name of the
+/*  This routine is calld by Parse_Info.  It runs the
  *  message verification script.
  */
 static int
 verifymsg_proc(char *repository, char *script, void *closure)
 {
-    char **verifymsg_script = (char **)closure;
-    if (*verifymsg_script && strcmp (*verifymsg_script, script) == 0)
-	return (0);
-    if (*verifymsg_script)
-	free (*verifymsg_script);
-    *verifymsg_script = xstrdup (script);
-    return (0);
+    char *verifymsg_script;
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    int disposescript = 0;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+    struct verifymsg_proc_data *vpd = (struct verifymsg_proc_data *) closure;
+    char *srepos = Short_Repository( repository );
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if( !strchr( script, '%' ) )
+    {
+	char *tmpscript;
+	error( 0, 0,
+	       "warning: verifymsg line doesn't contain any format strings:\n"
+               "    \"%s\"\n"
+               "Appending default format string (\" %%l\"), but be aware that this usage is\n"
+               "deprecated.", script );
+	tmpscript = xmalloc( strlen( script ) + 4 );
+	strcpy( tmpscript, script );
+	strcat( tmpscript, " %l" );
+	script = tmpscript;
+	disposescript = 1;
+    }
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    /* If we don't already have one, open a temporary file, write the message
+     * to the temp file, and close the file.
+     *
+     * We do this here so that we only create the file when there is a
+     * verifymsg script specified and we only create it once when there is
+     * more than one verifymsg script specified.
+     */
+    if( vpd->fname == NULL )
+    {
+	FILE *fp;
+	if( ( fp = cvs_temp_file( &( vpd->fname ) ) ) == NULL )
+	    error( 1, errno, "cannot create temporary file %s", vpd->fname );
+
+	if( vpd->message != NULL )
+	    fputs( vpd->message, fp );
+	if( vpd->message == NULL ||
+	    ( vpd->message )[0] == '\0' ||
+	    ( vpd->message )[strlen( vpd->message ) - 1] != '\n' )
+	    putc( '\n', fp );
+	if( fclose( fp ) == EOF )
+	    error( 1, errno, "%s", vpd->fname );
+
+	if( RereadLogAfterVerify == LOGMSG_REREAD_STAT )
+	{
+	    /* Remember the status of the temp file for later */
+	    if ( CVS_STAT( vpd->fname, &(vpd->pre_stbuf) ) != 0 )
+		error( 1, errno, "cannot stat temp file %s", vpd->fname );
+
+	    /*
+	     * See if we need to sleep before running the verification
+	     * script to avoid time-stamp races.
+	     */
+	    sleep_past( vpd->pre_stbuf.st_mtime );
+	}
+    } /* if( vpd->fname == NULL ) */
+
+    verifymsg_script = format_cmdline(
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+                                       0, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+                                       script,
+                                       "p", "s", srepos,
+                                       "r", "s",
+                                       current_parsed_root->directory,
+                                       "l", "s", vpd->fname,
+                                       NULL
+                                     );
+
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if( disposescript ) free( script );
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    if( !verifymsg_script || !strlen( verifymsg_script ) )
+    {
+	if( verifymsg_script ) free( verifymsg_script );
+	verifymsg_script = NULL;
+	error( 0, 0, "verifymsg proc resolved to the empty string!" );
+	return 1;
+    }
+
+    run_setup( verifymsg_script );
+
+    /* FIXME - because run_exec can return negative values and Parse_Info adds
+     * the values of each call to this function to get a total error, we are
+     * calling abs on the value of run_exec to ensure two errors do not sum to
+     * zero.
+     *
+     * The only REALLY obnoxious thing about this, I guess, is that a -1 return
+     * code from run_exec can mean we failed to call the process for some
+     * reason and should care about errno or that the process we called
+     * returned -1 and the value of errno is undefined.  In other words,
+     * run_exec should probably be rewritten to have two return codes.  one
+     * which is it's own exit status and one which is the child process's.  So
+     * there.  :P
+     *
+     * Once run_exec is returning two error codes, we should probably be
+     * failing here with an error message including errno when we get the
+     * return code which means we care about errno, in case you missed that
+     * little tidbit.
+     *
+     * I do happen to know we just fail for a non-zero value anyway and I
+     * believe the docs actually state that if the verifymsg_proc returns a
+     * "non-zero" value we will fail.
+     */
+    return abs( run_exec( RUN_TTY, RUN_TTY, RUN_TTY,
+			  RUN_NORMAL | RUN_SIGIGNORE ) );
 }

@@ -19,7 +19,8 @@ extern char *logHistory;
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
-Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *closure)
+Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt,
+           void *closure)
 {
     int err = 0;
     FILE *fp_info;
@@ -135,7 +136,9 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *c
 	    if (! (opt & PIOPT_ALL))
 		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		      line_number, infofile);
-	    else if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
+	    else if( ( expanded_value = expand_path( value, infofile,
+	                                             line_number, 1 ) )
+	             != NULL )
 	    {
 		err += callproc( repository, expanded_value, closure );
 		free (expanded_value);
@@ -160,7 +163,8 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *c
 	    continue;				/* no match */
 
 	/* it did, so do the callback and note that we did one */
-	if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
+	if( ( expanded_value = expand_path( value, infofile, line_number, 1 )
+	    ) != NULL )
 	{
 	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
@@ -177,7 +181,9 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *c
     /* if we fell through and didn't callback at all, do the default */
     if (callback_done == 0 && default_value != NULL)
     {
-	if ((expanded_value = expand_path (default_value, infofile, default_line)) != NULL)
+	if( ( expanded_value = expand_path( default_value, infofile,
+	                                    line_number, 1 )
+	    ) != NULL )
 	{
 	    err += callproc( repository, expanded_value, closure );
 	    free (expanded_value);
@@ -408,6 +414,20 @@ warning: this CVS does not support PreservePermissions");
 	    UserAdminOptions = xmalloc(strlen(p) + 1);
 	    strcpy(UserAdminOptions, p);
 	}
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	else if (strcmp (line, "UseNewInfoFmtStrings") == 0)
+	{
+	    if (strcmp (p, "no") == 0)
+		UseNewInfoFmtStrings = 0;
+	    else if (strcmp (p, "yes") == 0)
+		UseNewInfoFmtStrings = 1;
+	    else
+	    {
+		error (0, 0, "unrecognized value '%s' for UseNewInfoFmtStrings", p);
+		goto error_return;
+	    }
+	}
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	else
 	{
 	    /* We may be dealing with a keyword which was added in a

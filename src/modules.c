@@ -687,7 +687,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	    }
 
 	    /* XXX can we determine the line number for this entry??? */
-	    expanded_path = expand_path (prog, "modules", 0);
+	    expanded_path = expand_path (prog, "modules", 0, 0);
 	    if (expanded_path != NULL)
 	    {
 		run_setup (expanded_path);

@@ -87,7 +87,7 @@ variable_set (char *nameval)
    to something; LINE can be zero to indicate the line number is not
    known.  */
 char *
-expand_path (char *name, char *file, int line)
+expand_path (char *name, char *file, int line, int formatsafe)
 {
     char *s;
     char *d;
@@ -98,6 +98,7 @@ expand_path (char *name, char *file, int line)
     size_t buf_size = 0;
 
     size_t doff;
+    char inquotes;
 
     char *result;
 
@@ -114,9 +115,45 @@ expand_path (char *name, char *file, int line)
     doff = d - mybuf;
     expand_string (&mybuf, &mybuf_size, doff + 1);
     d = mybuf + doff;
-    while ((*d++ = *s))
+    while (*d++ = *s)
     {
-	if (*s++ == '$')
+	if (*s == '\\')
+	{
+	    /* The next character is a literal.  Leave the \ in the string since
+	     * it will be needed again when the string is split into arguments.
+	     */
+	    /* if we have a \ as the last character of the string, just leave it there
+	     * - this is where we would set the escape flag to tell our parent we want
+	     * another line if we cared.
+	     */
+	    if (*++s)
+	    {
+		doff = d - mybuf;
+		expand_string (&mybuf, &mybuf_size, doff + 1);
+		d = mybuf + doff;
+		*d++ = *s++;
+	    }
+	}
+	/* skip $ variable processing for text inside single quotes */
+	else if (inquotes == '\'')
+	{
+	    if (*s++ == '\'')
+	    {
+		inquotes = '\0';
+	    }
+	}
+	else if (*s == '\'')
+	{
+	    s++;
+	    inquotes = '\'';
+	}
+	else if (*s == '"')
+	{
+	    s++;
+	    if (inquotes) inquotes = '\0';
+	    else inquotes = '"';
+	}
+	else if (*s++ == '$')
 	{
 	    char *p = d;
 	    char *e;
@@ -148,6 +185,31 @@ expand_path (char *name, char *file, int line)
 		    doff = d - mybuf;
 		    expand_string (&mybuf, &mybuf_size, doff + 1);
 		    d = mybuf + doff;
+		    if (d[-1] == '"')
+		    {
+			/* escape the double quotes if we're between a matched pair of
+			 * double quotes so that this sub will be passed inside as or as
+			 * part of a single argument during the argument split later.
+			 */
+			if (inquotes)
+			{
+			    d[-1] = '\\';
+			    doff = d - mybuf;
+			    expand_string (&mybuf, &mybuf_size, doff + 1);
+			    d = mybuf + doff;
+			    *d++ = '"';
+			}
+		    }
+		    else if (formatsafe && d[-1] == '%')
+		    {
+			/* escape '%' to get past printf style format strings later
+			 * (in make_cmdline).
+			 */
+			doff = d - mybuf;
+			expand_string (&mybuf, &mybuf_size, doff + 1);
+			d = mybuf + doff;
+			*d++ = d[-1];
+		    }
 		}
 		--d;
 		if (flag && *s)

@@ -20,12 +20,12 @@ static int rtag_proc (int argc, char **argv, char *xwhere,
 		      int local_specified, char *mname, char *msg);
 static int check_fileproc (void *callerdat, struct file_info *finfo);
 static int check_filesdoneproc (void *callerdat, int err,
-				       char *repos, char *update_dir,
-				       List *entries);
-static int pretag_proc ( char *repository, char *filter, void *closure );
-static void masterlist_delproc (Node *p);
-static void tag_delproc (Node *p);
-static int pretag_list_proc (Node *p, void *closure);
+				char *repos, char *update_dir,
+				List *entries);
+static int pretag_proc (char *_repository, char *_filter, void *_closure);
+static void masterlist_delproc (Node *_p);
+static void tag_delproc (Node *_p);
+static int pretag_list_to_args_proc (Node *_p, void *_closure);
 
 static Dtype tag_dirproc (void *callerdat, char *dir,
 				 char *repos, char *update_dir,
@@ -50,6 +50,7 @@ static int is_rtag;
 struct tag_info
 {
     Ctype status;
+    char *oldrev;
     char *rev;
     char *tag;
     char *options;
@@ -416,13 +417,15 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int s
 
 /* check file that is to be tagged */
 /* All we do here is add it to our list */
-
 static int
 check_fileproc (void *callerdat, struct file_info *finfo)
 {
     char *xdir;
     Node *p;
     Vers_TS *vers;
+    List *tlist;
+    struct tag_info *ti;
+    int addit = 1;
 
     TRACE ( TRACE_FUNCTION, "check_fileproc ( %s, %s, %s )",
 	    finfo->repository ? finfo->repository : "(null)",
@@ -496,20 +499,20 @@ check_fileproc (void *callerdat, struct file_info *finfo)
        version we are going to tag.  There probably are some subtle races
        (e.g. numtag is "foo" which gets moved between here and
        tag_fileproc).  */
+    p->data = (void *) ti = xmalloc( sizeof( struct tag_info ) );
     if (!is_rtag && numtag == NULL && date == NULL)
-	p->data = xstrdup (vers->vn_user);
+	ti->rev = xstrdup( vers->vn_user );
     else
-	p->data = RCS_getversion (vers->srcfile, numtag, date,
-				  force_tag_match, NULL);
+	ti->rev = RCS_getversion( vers->srcfile, numtag, date,
+				  force_tag_match, NULL );
 
-    if (p->data != NULL)
+    if( ti->rev != NULL )
     {
         int addit = 1;
-        char *oversion;
+        ti->oldrev = RCS_getversion( vers->srcfile, symtag, (char *) NULL, 1,
+	                             (int *) NULL );
 
-        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
-				   (int *) NULL);
-        if (oversion == NULL)
+	if( ti->oldrev == NULL ) 
         {
             if (delete_flag)
             {
@@ -520,10 +523,15 @@ check_fileproc (void *callerdat, struct file_info *finfo)
         }
 	else if (delete_flag)
 	{
-	    free (p->data);
-	    p->data = xstrdup (oversion);
+	    free (ti->rev);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	    /* a hack since %v used to mean old or new rev */
+	    ti->rev = xstrdup (ti->oldrev);
+#else /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	    ti->rev = NULL;
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	}
-        else if (strcmp(oversion, p->data) == 0)
+        else if (strcmp(ti->oldrev, p->data) == 0)
         {
             addit = 0;
         }
@@ -531,15 +539,15 @@ check_fileproc (void *callerdat, struct file_info *finfo)
         {
             addit = 0;
         }
-        if (oversion != NULL)
-        {
-            free(oversion);
-        }
-        if (!addit)
-        {
-            free(p->data);
-            p->data = NULL;
-        }
+    }
+    else
+    {
+	addit = 0;
+    }
+    if (!addit)
+    {
+	free(p->data);
+	p->data = NULL;
     }
     freevers_ts (&vers);
     (void) addnode (tlist, p);
@@ -554,10 +562,12 @@ struct pretag_proc_data {
 };
 
 static int
-check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, List *entries)
+check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir,
+                     List *entries)
 {
     int n;
     Node *p;
+    List *tlist;
     struct pretag_proc_data ppd;
 
     p = findnode(mtlist, update_dir);
@@ -586,37 +596,94 @@ check_filesdoneproc (void *callerdat, int err, char *repos, char *update_dir, Li
     return (err);
 }
 
+/*
+ * called from Parse_Info, this routine processes a line that came out
+ * of a taginfo file and turns it into a command and executes it.
+ *
+ * RETURNS
+ *    the absolute value of the return value of run_exec, which may or
+ *    may not be the return value of the child process.  this is
+ *    contrained to return positive values because Parse_Info is adding up
+ *    return values and testing for non-zeroness to signify one or more
+ *    of its callbacks having returned an error.
+ */
 static int
 pretag_proc(char *repository, char *filter, void *closure)
 {
+    int disposefilter = 0;
+    char *cmdline;
+    char *srepos = Short_Repository (repository);
     struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
-    if (filter[0] == '/')
-    {
-        char *s, *cp;
 
-        s = xstrdup(filter);
-        for (cp=s; *cp; cp++)
-        {
-            if (isspace ((unsigned char) *cp))
-            {
-                *cp = '\0';
-                break;
-            }
-        }
-        if (!isfile(s))
-        {
-            error (0, errno, "cannot find pre-tag filter '%s'", s);
-            free(s);
-            return (1);
-        }
-        free(s);
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+    if (!strchr(filter, '%'))
+    {
+	char *tmpfilter;
+	error(0,0,
+              "warning: taginfo line contains no format strings:\n"
+              "    \"%s\"\n"
+              "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
+              "usage is deprecated.", filter);
+	tmpfilter = xmalloc (strlen(filter) + 16);
+	strcpy (tmpfilter, filter);
+	strcat (tmpfilter, " %t %o %p %{sv}");
+	filter = tmpfilter;
+	disposefilter = 1;
     }
-    run_setup (filter);
-    run_arg (ppd->symtag);
-    run_arg (ppd->delete_flag ? "del" : ppd->force_tag_move ? "mov" : "add");
-    run_arg (repository);
-    walklist(ppd->tlist, pretag_list_proc, NULL);
-    return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+
+    /* %t = tag being added/moved/removed
+     * %o = operation = "add" | "mov" | "del"
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch) | "N" (not branch)
+     * %p = path from $CVSROOT
+     * %r = path from root
+     * %{sVv} = attribute list = file name, old version tag will be deleted from,
+     *             new version tag will be added to (or deleted from until
+     *             SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
+     */
+    cmdline = format_cmdline(
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	0, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	filter,
+	"t", "s", ppd->symtag,
+	"o", "s", ppd->delete_flag ? "del" :
+	          ppd->force_tag_move ? "mov" : "add",
+    	"b", "hhc", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+    	"p", "s", srepos,
+	"r", "s", current_parsed_root->directory,
+	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
+	NULL
+	);
+
+    if (disposefilter) free(filter);
+
+    if (!cmdline || !strlen(cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error(0, 0, "pretag proc resolved to the empty string!");
+	return (1);
+    }
+
+    run_setup(cmdline);
+
+    /* FIXME - the old code used to run the following here:
+     *
+     * if (!isfile(s))
+     * {
+     *     error (0, errno, "cannot find pre-tag filter '%s'", s);
+     *     free(s);
+     *     return (1);
+     * }
+     *
+     * not sure this is really necessary.  it might give a little finer grained
+     * error than letting the execution attempt fail but i'm not sure.  in any
+     * case it should be easy enough to add a function in run.c to test its
+     * first arg for fileness & executability.
+     */
+
+    free(cmdline);
+    return (abs(run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)));
 }
 
 static void
@@ -633,22 +700,91 @@ masterlist_delproc(Node *p)
 static void
 tag_delproc(Node *p)
 {
+    struct tag_info *ti;
     if (p->data != NULL)
     {
+	ti = (struct tag_info *) p->data;
+	if (ti->oldrev) free (ti->oldrev);
+	if (ti->rev) free (ti->rev);
         free(p->data);
         p->data = NULL;
     }
     return;
 }
 
+/* to be passed into walklist with a list of tags
+ * p->key = tagname
+ * p->data = struct tag_info *
+ * p->data->oldrev = rev tag will be deleted from
+ * p->data->rev = rev tag will be added to
+ *
+ * closure will be a struct format_cmdline_walklist_closure
+ * where closure is undefined
+ */
 static int
-pretag_list_proc(Node *p, void *closure)
+pretag_list_to_args_proc(Node *p, void *closure)
 {
-    if (p->data != NULL)
+    struct format_cmdline_walklist_closure *c =
+            (struct format_cmdline_walklist_closure *)closure;
+    char *arg;
+    char *f, *d;
+    size_t doff;
+    int firstarg = 1;
+
+    if (p->data == NULL) return (1);
+
+    f = c->format;
+    d = *(c->d);
+    /* foreach requested atribute */
+    while (*f)
     {
-        run_arg(p->key);
-        run_arg(p->data);
+   	switch (*f++)
+	{
+	    case 's':
+		arg = p->key;
+		break;
+	    case 'v':
+		arg = ((struct tag_info *) p->data)->rev ?
+                        ((struct tag_info *) p->data)->rev : "NONE";
+		break;
+	    case 'V':
+		arg = ((struct tag_info *) p->data)->oldrev ?
+                        ((struct tag_info *) p->data)->oldrev : "NONE";
+		break;
+	    default:
+		error(1,0,
+                      "Unknown format character or not a list atribute: %c",
+		      f[-1]);
+		break;
+	}
+	/* copy the attribute into an argument */
+	if (c->quotes)
+	{
+	    arg = cmdlineescape(c->quotes, arg);
+	}
+	else
+	{
+	    arg = cmdlinequote('"', arg);
+	}
+
+	doff = d - *(c->buf);
+	expand_string (c->buf, c->length, doff + strlen(arg));
+	d = *(c->buf) + doff;
+	strncpy(d, arg, strlen(arg));
+	d += strlen(arg);
+
+	free(arg);
+
+	/* and always put the extra space on.  we'll have to back up a char when we're
+	 * done, but that seems most efficient
+	 */
+	doff = d - *(c->buf);
+	expand_string (c->buf, c->length, doff + 1);
+	d = *(c->buf) + doff;
+	*d++ = ' ';
     }
+    /* correct our original pointer into the buff */
+    *(c->d) = d;
     return (0);
 }
 
