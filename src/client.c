@@ -2680,7 +2680,7 @@ send_repository (dir, repos, update_dir)
     {
 	Node *n;
 	n = getnode ();
-	n->type = UNKNOWN;
+	n->type = NT_UNKNOWN;
 	n->key = xstrdup (update_dir);
 	n->data = NULL;
 

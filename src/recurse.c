@@ -590,7 +590,7 @@ do_recursion (frame)
 		/* Add it to our list. */
 
 		Node *n = getnode ();
-		n->type = UNKNOWN;
+		n->type = NT_UNKNOWN;
 		n->key = xstrdup (this_root);
 
 		if (addnode (root_directories, n))
@@ -1015,7 +1015,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 		/* Add it to our list. */
 
 		Node *n = getnode ();
-		n->type = UNKNOWN;
+		n->type = NT_UNKNOWN;
 		n->key = xstrdup (this_root);
 
 		if (addnode (root_directories, n))

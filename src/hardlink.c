@@ -85,7 +85,7 @@ lookup_file_by_inode (filepath)
     if (hp == NULL)
     {
 	hp = getnode ();
-	hp->type = UNKNOWN;
+	hp->type = NT_UNKNOWN;
 	hp->key = inodestr;
 	hp->data = (char *) getlist();
 	hp->delproc = dellist;
@@ -100,7 +100,7 @@ lookup_file_by_inode (filepath)
     if (p == NULL)
     {
 	p = getnode();
-	p->type = UNKNOWN;
+	p->type = NT_UNKNOWN;
 	p->key = xstrdup (filepath);
 	p->data = NULL;
 	(void) addnode ((List *) hp->data, p);

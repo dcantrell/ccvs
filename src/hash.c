@@ -102,7 +102,7 @@ dellist (listp)
 	{
 	    /* put the nodes into the cache */
 #ifndef NOCACHE
-	    p->type = UNKNOWN;
+	    p->type = NT_UNKNOWN;
 	    p->next = nodecache;
 	    nodecache = p;
 #else
@@ -147,7 +147,7 @@ getnode ()
 
     /* always make it clean */
     memset ((char *) p, 0, sizeof (Node));
-    p->type = UNKNOWN;
+    p->type = NT_UNKNOWN;
 
     return (p);
 }
@@ -211,7 +211,7 @@ freenode (p)
 
     /* then put it in the cache */
 #ifndef NOCACHE
-    p->type = UNKNOWN;
+    p->type = NT_UNKNOWN;
     p->next = nodecache;
     nodecache = p;
 #else
@@ -456,7 +456,7 @@ nodetypestring (type)
     Ntype type;
 {
     switch (type) {
-    case UNKNOWN:	return("UNKNOWN");
+    case NT_UNKNOWN:	return("UNKNOWN");
     case HEADER:	return("HEADER");
     case ENTRIES:	return("ENTRIES");
     case FILES:		return("FILES");

@@ -878,7 +878,7 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	{
 	    Node *n;
 	    n = getnode ();
-	    n->type = UNKNOWN;
+	    n->type = NT_UNKNOWN;
 	    n->key = xstrdup (CVSroot);
 	    n->data = NULL;
 
