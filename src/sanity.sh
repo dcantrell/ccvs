@@ -9441,9 +9441,13 @@ U CVSROOT/rcsinfo
 U CVSROOT/taginfo
 U CVSROOT/verifymsg"
 
+	  # FIXCVS: The sleep in the following script helps avoid out of
+	  # order messages, but we really need to figure out how to fix
+	  # cvs to prevent them in the first place.
 	  for i in checkin checkout update export tag; do
 	    cat >> ${CVSROOT_DIRNAME}/$i.sh <<EOF
 #! /bin/sh
+sleep 1
 echo "$i script invoked in \`pwd\`"
 echo "args: \$@"
 EOF
