@@ -498,7 +498,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
       for (p = longopts, option_index = 0; p->name; p++, option_index++)
 	if (!strncmp (p->name, nextchar, nameend - nextchar))
 	  {
-	    if (nameend - nextchar == strlen (p->name))
+	    if (nameend - nextchar == (int) strlen (p->name))
 	      {
 		/* Exact match found.  */
 		pfound = p;
