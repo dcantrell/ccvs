@@ -1344,7 +1344,7 @@ This function returns the last cons-cell in the list that is built."
 
 	     ((looking-at
 	       ;; Allow both RCS 5.5 and 5.6.  (5.6 prints "rcs" and " warning").
-	       "^\\(rcs\\)?merge[:]*\\( warning\\)?: \((overlaps\\|conflicts\\) during merge$")
+	       "^\\(rcs\\)?merge[:]*\\( warning\\)?: \\((overlaps\\|conflicts\\) during merge$")
 
 	      ;; Yes, this is a conflict.
 	      (cvs-skip-line stdout-buffer stderr-buffer
