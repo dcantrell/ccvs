@@ -1200,7 +1200,10 @@ history of the source files.  It should be accessable
 (directly or via a networked file system) from all
 machines which want to use @sc{cvs} in server or local
 mode; the client machines need not have any access to
-it other than via the @sc{cvs} protocol.
+it other than via the @sc{cvs} protocol.  It is not
+possible to use @sc{cvs} to read from a repository
+which one only has read access to; @sc{cvs} needs to be
+able to create lock files (@pxref{Concurrency}).
 
 @cindex init (subcommand)
 To create a repository, run the @code{cvs init}
@@ -2085,6 +2088,8 @@ newsgroup.
 @section Several developers simultaneously attempting to run CVS
 
 @cindex locks, cvs
+@c For a discussion of *why* CVS creates locks, see
+@c the comment at the start of src/lock.c
 If several developers try to run @sc{cvs} at the same
 time, one may get the following message:
 

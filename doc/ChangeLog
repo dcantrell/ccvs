@@ -1,5 +1,8 @@
 Thu Jul 18 18:27:40 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Creating a repository): Mention need to be able to
+	create lock files in the repository.
+
 	* cvsclient.texi (Responses): In F response, make at least a
 	minimal attempt to define "flush".
 
