@@ -1,3 +1,8 @@
+Thu Mar 14 13:45:11 1996  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* configure.in (AC_OUTPUT): Don't create examples/Makefile; we're
+	not using the examples directory any more.
+
 Wed Mar 13 17:02:00 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Refer to cvs.texinfo rather than out-of-date cvsinit
