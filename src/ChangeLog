@@ -1,5 +1,8 @@
 Thu Sep  4 15:55:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (binwrap2): New tests, test for the ability to specify
+	all files are binary except certain patterns.
+
 	* sanity.sh (modules3): New tests modules3-16 and modules3-17 test
 	for another behavior involving '/' in a module name.
 
