@@ -1,3 +1,8 @@
+Thu Jul 25 10:37:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (krb_encrypt_buffer_output): Fix typo in comment
+	(krb_recv_auth -> krb_recvauth).
+
 Wed Jul 24 09:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* lock.c (set_lock): Adjust comment regarding why we call stat.
