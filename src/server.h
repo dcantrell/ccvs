@@ -122,8 +122,6 @@ extern void server_update_entries
    to the client.  */
 extern char *server_dir;
 
-enum progs {PROG_CHECKIN, PROG_UPDATE};
-extern void server_prog PROTO((char *, char *, enum progs));
 extern void server_cleanup PROTO((int sig));
 
 #ifdef SERVER_FLOWCONTROL

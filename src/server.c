@@ -4641,112 +4641,8 @@ serve_expand_modules (arg)
     buf_flush (buf_to_net, 1);
 }
 
-void
-server_prog (dir, name, which)
-    char *dir;
-    char *name;
-    enum progs which;
-{
-    if (!supported_response ("Set-checkin-prog"))
-    {
-	buf_output0 (protocol, "E \
-warning: this client does not support -i or -u flags in the modules file.\n");
-	return;
-    }
-    switch (which)
-    {
-	case PROG_CHECKIN:
-	    buf_output0 (protocol, "Set-checkin-prog ");
-	    break;
-	case PROG_UPDATE:
-	    buf_output0 (protocol, "Set-update-prog ");
-	    break;
-    }
-    buf_output0 (protocol, dir);
-    buf_append_char (protocol, '\n');
-    buf_output0 (protocol, name);
-    buf_append_char (protocol, '\n');
-    buf_send_counted (protocol);
-}
 
-static void
-serve_checkin_prog (arg)
-    char *arg;
-{
-    FILE *f;
-    f = CVS_FOPEN (CVSADM_CIPROG, "w+");
-    if (f == NULL)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
-	    sprintf (pending_error_text, "E cannot open %s", CVSADM_CIPROG);
-	pending_error = save_errno;
-	return;
-    }
-    if (fprintf (f, "%s\n", arg) < 0)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
-	    sprintf (pending_error_text,
-		     "E cannot write to %s", CVSADM_CIPROG);
-	pending_error = save_errno;
-	return;
-    }
-    if (fclose (f) == EOF)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_CIPROG)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_CIPROG);
-	pending_error = save_errno;
-	return;
-    }
-}
 
-static void
-serve_update_prog (arg)
-    char *arg;
-{
-    FILE *f;
-
-    /* Before we do anything we need to make sure we are not in readonly
-       mode.  */
-    if (!check_command_valid_p ("commit"))
-    {
-	/* I might be willing to make this a warning, except we lack the
-	   machinery to do so.  */
-	if (alloc_pending (80))
-	    sprintf (pending_error_text, "\
-E Flag -u in modules not allowed in readonly mode");
-	return;
-    }
-
-    f = CVS_FOPEN (CVSADM_UPROG, "w+");
-    if (f == NULL)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
-	    sprintf (pending_error_text, "E cannot open %s", CVSADM_UPROG);
-	pending_error = save_errno;
-	return;
-    }
-    if (fprintf (f, "%s\n", arg) < 0)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
-	    sprintf (pending_error_text, "E cannot write to %s", CVSADM_UPROG);
-	pending_error = save_errno;
-	return;
-    }
-    if (fclose (f) == EOF)
-    {
-	int save_errno = errno;
-	if (alloc_pending (80 + strlen (CVSADM_UPROG)))
-	    sprintf (pending_error_text, "E cannot close %s", CVSADM_UPROG);
-	pending_error = save_errno;
-	return;
-    }
-}
-
 static void serve_valid_requests PROTO((char *arg));
 
 #endif /* SERVER_SUPPORT */
@@ -4776,8 +4672,6 @@ struct request requests[] =
   REQ_LINE("Max-dotdot", serve_max_dotdot, 0),
   REQ_LINE("Static-directory", serve_static_directory, 0),
   REQ_LINE("Sticky", serve_sticky, 0),
-  REQ_LINE("Checkin-prog", serve_checkin_prog, 0),
-  REQ_LINE("Update-prog", serve_update_prog, 0),
   REQ_LINE("Entry", serve_entry, RQ_ESSENTIAL),
   REQ_LINE("Kopt", serve_kopt, 0),
   REQ_LINE("Checkin-time", serve_checkin_time, 0),

@@ -1048,8 +1048,6 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     char *update_dir;
     List *entries;
 {
-    FILE *fp;
-
     /* Delete the ignore list if it hasn't already been done.  */
     if (ignlist)
 	dellist (&ignlist);
@@ -1074,45 +1072,6 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	warned = 0;
 	free (tag_update_dir);
 	tag_update_dir = NULL;
-    }
-
-    /* run the update_prog if there is one */
-    /* FIXME: should be checking for errors from CVS_FOPEN and printing
-       them if not existence_error.  */
-    if (err == 0 && !pipeout && !noexec &&
-	(fp = CVS_FOPEN (CVSADM_UPROG, "r")) != NULL)
-    {
-	char *cp;
-	char *repository;
-	char *line = NULL;
-	size_t line_allocated = 0;
-
-	repository = Name_Repository ((char *) NULL, update_dir);
-	if (getline (&line, &line_allocated, fp) >= 0)
-	{
-	    if ((cp = strrchr (line, '\n')) != NULL)
-		*cp = '\0';
-	    run_setup (line);
-	    run_arg (repository);
-	    cvs_output (program_name, 0);
-	    cvs_output (" ", 1);
-	    cvs_output (command_name, 0);
-	    cvs_output (": Executing '", 0);
-	    run_print (stdout);
-	    cvs_output ("'\n", 0);
-	    cvs_flushout ();
-	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-	}
-	else if (ferror (fp))
-	    error (0, errno, "cannot read %s", CVSADM_UPROG);
-	else
-	    error (0, 0, "unexpected end of file on %s", CVSADM_UPROG);
-
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", CVSADM_UPROG);
-	if (line != NULL)
-	    free (line);
-	free (repository);
     }
 
     if (strchr (dir, '/') == NULL)

@@ -1,3 +1,12 @@
+2003-04-28  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Working directory storage, Module options, Module
+	program options): Remove references to Checkin.prog and Update.prog.
+	(commit options): Remove reference to -n option.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-04-10  Larry Jones  <lawrence.jones@eds.com>
 
 	* Makefile.in: Regenerated.

@@ -1,3 +1,29 @@
+2003-04-28  Derek Price  <derek@ximbiot.com>
+
+	* client.c (save_prog): Remove unneeded struct.
+	(checkin_progs, update_progs): Remove these unneeded globals.
+	(handle_set_checkin_prog, handle_set_update_prog, do_deferred_progs):
+	Remove these functions.
+	(send_repository): Remove checkin and update prog support.
+	(responses): Remove Set-checkin-prog and Set-update-prog.
+	(get_responses_and_close): Don't call do_deferred_prog().
+	* commit.c (commit_usage): Remove reference to -n.
+	(commit): Don't set and send run_module_prog via -n.  Don't run
+	Checkin.prog or Checkout.prog in local mode.
+	* modules.c (CVSMODULE_OPTS): Remove -i and -u.
+	(do_module): Don't process -i and -u options to set checkin and update
+	progs, respectively.
+	* server.c (server_prog, serve_checkin_prog, server_update_prog):
+	Remove unused functions.
+	(requests): Remove Checkin-prog and Update-prog.
+	* update.c (update_dirleave_proc): Remove update prog functionality.
+
+	* cvs.h (CVSADM_CIPROG, CVSADM_UPROG): Remove unneeded defines.
+	* server.h (server_prog): Remove proto.
+	(progs): Remove enum.
+
+	* sanity.sh (modules5): Remove tests for checkin and update programs.
+
 2003-04-15  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (*): Shrink the yucky case statement using sed's transform
