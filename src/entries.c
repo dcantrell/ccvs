@@ -28,6 +28,7 @@ static char *entfilename;		/* for error messages */
 /*
  * Write out the line associated with a node of an entries file
  */
+static int write_ent_proc PROTO ((Node *, void *));
 static int
 write_ent_proc (node, closure)
      Node *node;
