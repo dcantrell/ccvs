@@ -4652,6 +4652,12 @@ File: nibfile          	Status: Up-to-date
 	  mkdir dir-to-import
 	  cd dir-to-import
 	  touch foo.c foo.exe
+
+	  # While we're here, test for rejection of duplicate tag names.
+	  dotest_fail binwrap-0 \
+	    "${testcvs} import -m msg -I ! first-dir dup dup" \
+"${PROG} \[[a-z]* aborted\]: tag .dup. was specified more than once"
+
 	  if ${testcvs} import -m message -I ! -W "*.exe -k 'b'" \
 	      first-dir tag1 tag2 >>${LOGFILE}; then
 	    pass binwrap-1
