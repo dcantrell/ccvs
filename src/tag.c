@@ -633,6 +633,23 @@ val_fileproc (file, update_dir, repository, entries, srcfiles)
     return 0;
 }
 
+static Dtype val_direntproc PROTO ((char *, char *, char *));
+
+static Dtype
+val_direntproc (dir, repository, update_dir)
+    char *dir;
+    char *repository;
+    char *update_dir;
+{
+    /* This is not quite right--it doesn't get right the case of "cvs
+       update -d -r foobar" where foobar is a tag which exists only in
+       files in a directory which does not exist yet, but which is
+       about to be created.  */
+    if (isdir (dir))
+	return 0;
+    return R_SKIP_ALL;
+}
+
 /* Check to see whether NAME is a valid tag.  If so, return.  If not
    print an error message and exit.  ARGC, ARGV, LOCAL, and AFLAG specify
    which files we will be operating on.
@@ -734,7 +751,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
     }
 
     err = start_recursion (val_fileproc, (FILESDONEPROC) NULL,
-			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
+			   val_direntproc, (DIRLEAVEPROC) NULL,
 			   argc, argv, local, which, aflag,
 			   1, NULL, 1, 0);
     if (repository != NULL && repository[0] != '\0')
