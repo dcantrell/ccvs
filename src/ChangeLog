@@ -1,5 +1,33 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_getdate): Fix a bug that shows up when checking out
+	files by date with the "-D date" command line option. There is
+	code in the original to handle a special case. If the date search
+	finds revision 1.1 it is supposed to check whether revision
+	1.1.1.1 has the same date stamp, which would indicate that the
+	file was originally brought in with "cvs import". In that case it
+	is supposed to return the vendor branch version 1.1.1.1.
+
+	However, there was a bug in the code. It actually compares the date
+	of revision 1.1 for equality with the date given on the command
+	line -- clearly wrong. This commit fixes the coding bug.
+
+	Note: There is an additional bug which is _not_ fixed in this
+	commit. The date comparison should not be a strict equality test.
+	It should allow a fudge factor of, say, 2-3 seconds. Old versions
+	of CVS created the two revisions with two separate invocations of
+	the RCS "ci" command. We have many old files in the tree in which
+	the dates of revisions 1.1 and 1.1.1.1 differ by 1 second.
+
+	This bug was discovered and fixed for FreeBSD cvs. See v 1.21 of
+	<http://www.freebsd.org/cgi/cvsweb.cgi/src/contrib/cvs/src/rcs.c.diff>
+        for more information. 
+
+	* sanity.sh (rcs4): Tests for same.
+	(Patch from Mark D. Baushke <mdb@cvshome.org>.)
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* logmsg.c (logfile_write): Do not pass a NULL pointer to
 	fprintf() when we have an empty log message.
 	* sanity.sh (editor): Add new tests to verify correct behavior of
