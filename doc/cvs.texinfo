@@ -8215,7 +8215,7 @@ The first matching regular expression is used.
 @xref{commit files}, for a description of the syntax of
 the @file{loginfo} file.  
 
-The user may specify a format string (a la printf) as
+The user may specify a format string as
 part of the filter.  The string is composed of a
 @samp{%} followed by a space, or followed by a single
 format character, or followed by a set of format
