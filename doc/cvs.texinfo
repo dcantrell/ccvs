@@ -3815,7 +3815,7 @@ The sticky tags will remain on your working files until
 you delete them with @samp{cvs update -A}.  The
 @samp{-A} option merges local changes into the version of the
 file from the head of the trunk, removing any sticky tags,
-dates, or options.  See @xref{update} for more on the operation
+dates, or options.  See @ref{update} for more on the operation
 of @code{cvs update}.
 
 @cindex Sticky date
@@ -6386,7 +6386,7 @@ To enable the watch features, you first specify that
 certain files are to be watched.
 
 @cindex watch on (subcommand)
-@deffn Command {cvs watch on} [@code{-lR}] files @dots{}
+@deffn Command {cvs watch on} [@code{-lR}] [@var{files}]@dots{}
 
 @cindex Read-only files, and watches
 Specify that developers should run @code{cvs edit}
@@ -6410,7 +6410,7 @@ If @var{files} is omitted, it defaults to the current directory.
 @cindex watch off (subcommand)
 @end deffn
 
-@deffn Command {cvs watch off} [@code{-lR}] files @dots{}
+@deffn Command {cvs watch off} [@code{-lR}] [@var{files}]@dots{}
 
 Do not create @var{files} read-only on checkout; thus,
 developers will not be reminded to use @code{cvs edit}
@@ -6439,7 +6439,7 @@ watch on}, to remind developers to use the @code{cvs edit}
 command.
 
 @cindex watch add (subcommand)
-@deffn Command {cvs watch add} [@code{-a} action] [@code{-lR}] files @dots{}
+@deffn Command {cvs watch add} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
 Add the current user to the list of people to receive notification of
 work done on @var{files}.
@@ -6493,7 +6493,7 @@ The @var{files} and options are processed as for
 
 
 @cindex watch remove (subcommand)
-@deffn Command {cvs watch remove} [@code{-a} action] [@code{-lR}] files @dots{}
+@deffn Command {cvs watch remove} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
 Remove a notification request established using @code{cvs watch add};
 the arguments are the same.  If the @code{-a} option is present, only
@@ -6587,19 +6587,19 @@ source}), an operation which those systems call a
 @c a technical meaning for).
 
 @cindex edit (subcommand)
-@deffn Command {cvs edit} [options] files @dots{}
+@deffn Command {cvs edit} [@code{-lR}] [@code{-a} @var{action}]@dots{} [@var{files}]@dots{}
 
 Prepare to edit the working files @var{files}.  @sc{cvs} makes the
 @var{files} read-write, and notifies users who have requested
 @code{edit} notification for any of @var{files}.
 
-The @code{cvs edit} command accepts the same @var{options} as the
+The @code{cvs edit} command accepts the same options as the
 @code{cvs watch add} command, and establishes a temporary watch for the
 user on @var{files}; @sc{cvs} will remove the watch when @var{files} are
 @code{unedit}ed or @code{commit}ted.  If the user does not wish to
 receive notifications, she should specify @code{-a none}.
 
-The @var{files} and options are processed as for the @code{cvs
+The @var{files} and the options are processed as for the @code{cvs
 watch} commands.
 
 @ignore
@@ -6624,7 +6624,7 @@ the @code{cvs unedit} command.
 @cindex unedit (subcommand)
 @cindex Abandoning work
 @cindex Reverting to repository version
-@deffn Command {cvs unedit} [@code{-lR}] files @dots{}
+@deffn Command {cvs unedit} [@code{-lR}] [@var{files}]@dots{}
 
 Abandon work on the working files @var{files}, and revert them to the
 repository versions on which they are based.  @sc{cvs} makes those
@@ -6657,7 +6657,7 @@ successful @sc{cvs} command.
 @subsection Information about who is watching and editing
 
 @cindex watchers (subcommand)
-@deffn Command {cvs watchers} [@code{-lR}] files @dots{}
+@deffn Command {cvs watchers} [@code{-lR}] [@var{files}]@dots{}
 
 List the users currently watching changes to @var{files}.  The report
 includes the files being watched, and the mail address of each watcher.
@@ -6669,7 +6669,7 @@ The @var{files} and options are processed as for the
 
 
 @cindex editors (subcommand)
-@deffn Command {cvs editors} [@code{-lR}] files @dots{}
+@deffn Command {cvs editors} [@code{-lR}] [@var{files}]@dots{}
 
 List the users currently working on @var{files}.  The report
 includes the mail address of each user, the time when the user began
