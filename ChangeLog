@@ -1,5 +1,11 @@
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Use gl_GETNLINE rather than the obsolete
+	gl_FUNC_GETNLINE.
+	* aclocal.m4: Regenerated.
+
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Use gl_FUNC_GETNLINE rather than the obsolete
 	gl_PREREQ_GETNLINE,
 
