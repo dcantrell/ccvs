@@ -1,3 +1,7 @@
+Fri Sep  1 12:07:02 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* BUGS: Remove items about refetching unpatchable files and options.h.
+
 Fri Sep  1 09:20:09 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* Makefile.in (DISTFILES): Remove cvsnt.vcp; it's been deleted.
