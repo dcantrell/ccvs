@@ -824,3 +824,12 @@ wasn't caught by the test suite.
 and other non-canonical paths confuse CVS.  Most of the cases that do
 work are handled on an ad-hoc basis.  We need to come up with a coherent
 strategy to address path canonicalization and apply it consistently.
+
+206.  Restore directory-at-a-time locking for tag operations instead of
+locking the entire tree.
+
+207.  Fix the branch following logic in log to work with CVS branching. 
+Right now the code assumes RCS branching where all revisions on the
+branch have the same number of components in their revision numbers and
+that isn't true for CVS (revisions 1.2 and 2.4.6.8 can be on the same
+branch in CVS).
