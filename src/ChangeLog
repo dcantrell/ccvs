@@ -1,5 +1,12 @@
 2004-08-24  Derek Price <derek@ximbiot.com>
 
+	* rcs.c (translate_symtag): Prevent infinite loop.
+	* tag.c (tag_check_valid): Check tag syntax before searching for tags.
+	* sanity.sh (tag-space): Some tests for the above.
+	(Report from Dan Peterson <dbpete@aol.com>.)
+
+2004-08-24  Derek Price <derek@ximbiot.com>
+
 	* tag.c (tag_check_valid): Use RCS_valid_rev() rather than duplicating
 	code.  Misc error message improvements.  
 
