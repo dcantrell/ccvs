@@ -1,3 +1,14 @@
+Sun May  5 17:38:21 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	Integrated changes submitted by Ian Taylor <ian@cygnus.com>
+
+	* update.c (update_dirent_proc): cvs co -p doesn't print
+	anything when run from an empty directory.
+
+        * import.c (import_descend_dir): Check for a file in the
+        repository which will be checked out to the same name as the
+        directory.
+
 Sun May  5 15:49:00 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* configure.in: autoconf 2.9 handles AC_CHECK_LIB in a

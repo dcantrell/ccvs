@@ -1,3 +1,14 @@
+Sun May  5 17:38:21 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+        Integrated changes submitted by Ian Taylor <ian@cygnus.com>
+
+        * update.c (update_dirent_proc): cvs co -p doesn't print
+        anything when run from an empty directory.
+
+        * import.c (import_descend_dir): Check for a file in the
+        repository which will be checked out to the same name as the
+        directory.
+
 Thu May  2 13:34:37 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.7.88
