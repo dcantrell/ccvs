@@ -67,15 +67,15 @@ error_exit PROTO ((void))
 
 /* VARARGS */
 void
-#if __STDC__
+#if PROTOTYPES
 error (int status, int errnum, const char *message, ...)
-#else /* ! __STDC__ */
+#else /* ! PROTOTYPES */
 error (status, errnum, message, va_alist)
     int status;
     int errnum;
     const char *message;
     va_dcl
-#endif /* __STDC__ */
+#endif /* PROTOTYPES */
 {
     int save_errno = errno;
 
@@ -184,16 +184,16 @@ error (status, errnum, message, va_alist)
    Exit with status EXIT_FAILURE if STATUS is nonzero.  */
 /* VARARGS */
 void
-#if __STDC__
+#if PROTOTYPES
 fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
-#else /* ! __STDC__ */
+#else /* ! PROTOTYPES */
 fperrmsg (fp, status, errnum, message, va_alist)
     FILE *fp;
     int status;
     int errnum;
     char *message;
     va_dcl
-#endif /* __STDC__ */
+#endif /* PROTOTYPES */
 {
     va_list args;
 
