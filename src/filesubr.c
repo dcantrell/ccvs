@@ -721,22 +721,12 @@ cvs_temp_name ()
  *	on error, errno will be set to some value either by CVS_FOPEN or
  *	whatever system function is called to generate the temporary file name
  */
-/* There are at least four functions for generating temporary
- * filenames.  We use mkstemp (BSD 4.3) if possible, else tempnam (SVID 3),
- * else mktemp (BSD 4.3), and as last resort tmpnam (POSIX).  Reason is that
- * mkstemp, tempnam, and mktemp both allow to specify the directory in which
- * the temporary file will be created.
- *
- * And the _correct_ way to use the deprecated functions probably involves
- * opening file descriptors using O_EXCL & O_CREAT and even doing the annoying
- * NFS locking thing, but until I hear of more problems, I'm not going to
- * bother.
- */
 FILE *cvs_temp_file (filename)
     char **filename;
 {
     char *fn;
     FILE *fp;
+    int fd;
 
     /* FIXME - I'd like to be returning NULL here in noexec mode, but I think
      * some of the rcs & diff functions which rely on a temp file run in
@@ -744,11 +734,6 @@ FILE *cvs_temp_file (filename)
      */
 
     assert (filename != NULL);
-
-#ifdef HAVE_MKSTEMP
-
-    {
-    int fd;
 
     fn = xmalloc (strlen (Tmpdir) + 11);
     sprintf (fn, "%s/%s", Tmpdir, "cvsXXXXXX" );
@@ -777,63 +762,6 @@ FILE *cvs_temp_file (filename)
      * linking to and not chmod for 2.0.7+
      */
     else chmod (fn, 0600);
-
-    }
-
-#elif HAVE_TEMPNAM
-
-    /* tempnam has been deprecated due to under-specification */
-
-    fn = tempnam (Tmpdir, "cvs");
-    if (fn == NULL) fp = NULL;
-    else if ((fp = CVS_FOPEN (fn, "w+")) == NULL) free (fn);
-    else chmod (fn, 0600);
-
-    /* tempnam returns a pointer to a newly malloc'd string, so there's
-     * no need for a xstrdup
-     */
-
-#elif HAVE_MKTEMP
-
-    /* mktemp has been deprecated due to the BSD 4.3 specification specifying
-     * that XXXXXX will be replaced by a PID and a letter, creating only 26
-     * possibilities, a security risk, and a race condition.
-     */
-
-    {
-    char *ifn;
-
-    ifn = xmalloc (strlen (Tmpdir) + 11);
-    sprintf (ifn, "%s/%s", Tmpdir, "cvsXXXXXX" );
-    fn = mktemp (ifn);
-
-    if (fn == NULL) fp = NULL;
-    else fp = CVS_FOPEN (fn, "w+");
-
-    if (fp == NULL) free (ifn);
-    else chmod (fn, 0600);
-
-    }
-
-#else	/* use tmpnam if all else fails */
-
-    /* tmpnam is deprecated */
-
-    {
-    char ifn[L_tmpnam + 1];
-
-    fn = tmpnam (ifn);
-
-    if (fn == NULL) fp = NULL;
-    else if ((fp = CVS_FOPEN (ifn, "w+")) != NULL)
-    {
-	fn = xstrdup (ifn);
-	chmod (fn, 0600);
-    }
-
-    }
-
-#endif
 
     *filename = fn;
     return fp;
