@@ -19,9 +19,6 @@ extern int execvp (char *file, char **argv);
 #endif
 
 static void run_add_arg (const char *s);
-static void cmdline_bindings_hash_node_delete (Node *p);
-
-extern char *strtok (char *, const char *);
 
 
 

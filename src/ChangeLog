@@ -1,5 +1,9 @@
 2004-04-03  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* cvsrc.c: Remove unused declarations.
+	* run.c: Ditto.
+	* server.h (gunzip_and_write): Declare.
+
 	* client.c (send_file_names): Remove unused variables.
 
 2004-04-02  Derek Price  <derek@ximbiot.com>
