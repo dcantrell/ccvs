@@ -1,3 +1,7 @@
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
+	* bison.m4: Use AM_MISSING_PROG rather than a set/subst combination.
+
 2004-05-02  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Add strerror.m4 & strerror_r.m4.
