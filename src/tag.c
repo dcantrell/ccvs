@@ -617,7 +617,6 @@ val_fileproc (file, update_dir, repository, entries, srcfiles)
 {
     RCSNode *rcsdata;
     Node *node;
-    char *foundtag;
     struct val_args *args = val_args_static;
 
     node = findnode (srcfiles, file);

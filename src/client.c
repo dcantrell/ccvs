@@ -2070,7 +2070,7 @@ client_expand_modules (argc, argv, local)
         free (last_update_dir);
     last_update_dir = NULL;
     if (errs)
-	error (errs, 0, "");
+	error (errs, 0, "cannot expand modules");
 }
 
 void
@@ -2427,6 +2427,8 @@ supported_request (name)
     if (!strcmp (rq->name, name))
       return rq->status == rq_supported;
   error (1, 0, "internal error: testing support for unknown option?");
+  /* NOTREACHED */
+  return 0;
 }
 
 
