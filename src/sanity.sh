@@ -70,6 +70,9 @@ export LC_ALL
 #     to ensure the two are different.
 TESTDIR=${TESTDIR:-/tmp/cvs-sanity}
 
+# Some people may need to use nawk or gawk instead
+AWK=awk
+
 # "debugger"
 #set -x
 
@@ -5166,14 +5169,14 @@ ${PROG} [a-z]*: Updating bdir/subdir"
 "${PROG} [a-z]*: in directory adir/sub1/ssdir:
 ${PROG} \[[a-z]* aborted\]: there is no version here; do .${PROG} checkout. first"
 	    # The workaround is to leave off the "-r wip_test".
-	    dotest importc-8 "${testcvs} -q ci -m modify" \
+	    dotest importc-7a "${testcvs} -q ci -m modify" \
 "Checking in cdir/cfile;
 ${TESTDIR}/cvsroot/first-dir/cdir/cfile,v  <--  cfile
 new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
 done"
 	  else
 	    # Remote doesn't have the bug in the first place.
-	    dotest importc-7 "${testcvs} -q ci -m modify -r wip_test" \
+	    dotest importc-7r "${testcvs} -q ci -m modify -r wip_test" \
 "Checking in cdir/cfile;
 ${TESTDIR}/cvsroot/first-dir/cdir/cfile,v  <--  cfile
 new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
@@ -10914,7 +10917,7 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
-	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | tr '@' '\000' >binfile.dat
 	  cat binfile.dat binfile.dat >binfile2.dat
 	  cd first-dir
@@ -11186,7 +11189,7 @@ total revisions: 1
 	  # each be distinct from each other.  We also make sure to include
 	  # a few likely end-of-line patterns to make sure nothing is
 	  # being munged as if in text mode.
-	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | tr '@' '\000' >../binfile
 	  cat ../binfile ../binfile >../binfile2
 	  cat ../binfile2 ../binfile >../binfile3
@@ -11348,7 +11351,7 @@ checkin
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles3-1 "${testcvs} -q co first-dir" ''
-	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | tr '@' '\000' >binfile.dat
 	  cd first-dir
 	  echo hello >file1
@@ -13846,7 +13849,7 @@ ${PROG} \[log aborted\]: no repository"
 "${TESTDIR}/cvsroot/first-dir/file1,v"
 
 	  # OK, now put an extraneous '\0' at the end.
-	  awk </dev/null 'BEGIN { printf "@%c", 10 }' | tr '@' '\000' \
+	  ${AWK} </dev/null 'BEGIN { printf "@%c", 10 }' | tr '@' '\000' \
 	    >>${CVSROOT_DIRNAME}/first-dir/file1,v
 	  dotest_fail rcs3-7 "${testcvs} log -s nostate file1" \
 "${PROG} \[[a-z]* aborted\]: unexpected '.x0' reading revision number in RCS file ${TESTDIR}/cvsroot/first-dir/file1,v"
@@ -14126,9 +14129,9 @@ ${PROG} \[[a-z]* aborted\]: could not find desired version 1\.6 in ${TESTDIR}/cv
 # database dirs in a workspace with later revisions than those in the
 # recovered repository
 cd repos-first-dir
-DATADIRS=\`find . -name CVS\`
+DATADIRS=\`find . -name CVS -print\`
 cd ../first-dir
-find . -name CVS |xargs rm -rf
+find . -name CVS -print | xargs rm -rf
 for file in \${DATADIRS}; do
 	cp -r ../repos-first-dir/\${file} \${file}
 done" >fixit
@@ -15497,7 +15500,7 @@ xx"
 "${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 
-	  awk 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", \
+	  ${AWK} 'BEGIN { printf "%c%c%c%sRevision: 1.1 $@%c%c", \
 	    2, 10, 137, "$", 13, 10 }' \
 	    </dev/null | tr '@' '\000' >../binfile.dat
 	  cp ../binfile.dat .
@@ -15604,7 +15607,7 @@ done"
 T file1"
 	  dotest keyword2-18 "${testcvs} -q update -r branch2" ''
 
-	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	  ${AWK} 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
 	    </dev/null | tr '@' '\000' >>binfile.dat
 	  dotest keyword2-19 "${testcvs} -q ci -m badbadbad" \
 "Checking in binfile\.dat;
@@ -19890,7 +19893,7 @@ EOF
 	    dotest server-3 "test -d ${TESTDIR}/crerepos/CVSROOT" ""
 
 	    # Now some tests of gzip-file-contents (used by jCVS).
-	    awk 'BEGIN { \
+	    ${AWK} 'BEGIN { \
 printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", \
 31, 139, 8, 64, 5, 7, 64, 3, 225, 2, 64, 198, 185, 5, 64, 64, 64}' \
 	      </dev/null | tr '\100' '\000' >gzipped.dat
