@@ -41,7 +41,7 @@ PowerPC or RS/6000:
 SPARC:
 	Sun SPARC running SunOS 4.1.3, 4.1.2, and 4.1.1 (1.5)
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
-	Sun SPARCstation running Solaris 2.4 using gcc and cc
+	Sun SPARCstation running Solaris 2.4 using gcc and cc (about 1.5.91)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 
 (footnote 1)

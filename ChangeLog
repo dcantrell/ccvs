@@ -1,3 +1,7 @@
+Mon Oct  2 17:01:07 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Indicate CVS version tested with Solaris 2.4.
+
 Mon Oct  2 10:42:37 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * (configure): Re-ran autoconf.
