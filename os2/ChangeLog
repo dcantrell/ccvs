@@ -1,3 +1,17 @@
+Mon Nov 13 07:28:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in: Include lib/regex, lib/getdate, strippath.
+
+        * strippath.c: new file.
+        
+        * popen.c: set DIAGNOSTIC off.  Reformat for readability.
+
+        * popen.h: new file.
+
+        * config.h (USE_OWN_POPEN): define to 1.
+
+        * run.c (Popen): make this work now that we have popen().
+        
 Mon Nov 13 01:23:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in: 

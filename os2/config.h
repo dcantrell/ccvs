@@ -315,12 +315,6 @@ unsigned sleep (unsigned);
 /* todo: got to do some research here... */
 int gethostname(char *name, int namelen);
 
-/* Don't worry, Microsoft, it's okay for these functions to
-   be in our namespace.  */
-/* todo: OS/2 doesn't have these at all; go find them. */
-#define popen _popen
-#define pclose _pclose
-
 /* Under OS/2, filenames are case-insensitive, and both / and \
    are path component separators.  */
 #define FOLD_FN_CHAR(c) (OS2_filename_classes[(unsigned char) (c)])
@@ -391,3 +385,6 @@ extern void os2_shutdown_server (int fd);
 
 /* For getpid() */
 #include <process.h>
+
+/* Under OS/2, we have our own popen() and pclose(). */
+#define USE_OWN_POPEN 1

@@ -334,9 +334,6 @@ Popen (cmd, mode)
 	(void) fprintf (stderr, "-> Popen(%s,%s)\n", cmd, mode);
 #endif
 
-/* OS/2 doesn't have pipes.  This shouldn't be a problem for the
-   client, but we'll print an error and exit just in case. */
-#if 0
     if (noexec)
 	return (NULL);
 
@@ -348,11 +345,6 @@ Popen (cmd, mode)
 	free (requoted);
 	return result;
     }
-#endif /* 0 */
-
-    fprintf (stderr,
-             "Error: Popen() should never have been called in client.\n");
-    exit (1);
 }
 
 
@@ -481,9 +473,10 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
 int
 pipe (int *filedesc)
 {
-    fprintf (stderr,
-             "Error: pipe() should not have been called in client.\n");
-    exit (1);
+  /* todo: actually, we can use DosCreatePipe().  Fix this. */
+  fprintf (stderr,
+           "Error: pipe() should not have been called in client.\n");
+  exit (1);
 }
 
 

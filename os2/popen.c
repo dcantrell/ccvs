@@ -1,14 +1,8 @@
-/****************************************************************
-**
-**  POPEN.C     Popen substitute for OS/2
-**
-****************************************************************/
+/* popen.c -- popen/pclose for OS/2. */
 
-/* Undef this for distribution. */
-#define DIAGNOSTIC 1
-
-/* todo: Local include file you might not have */
-/* #include    <portable.h> */
+/* Set to 0 for distribution.
+   Search for "DIAGNOSTIC" in the code to see what it's for. */
+#define DIAGNOSTIC 0
 
 #define INCL_DOSQUEUES
 #define INCL_DOSPROCESS
@@ -31,21 +25,26 @@
 #define STDOUT      1
 #define STDERR      2
 
-/* Map integer PID's onto integer termination codes. */
+/* ********************************************************************* *
+ *                                                                       *
+ *   First, a little linked-list library to help keep track of pipes:    *
+ *                                                                       *
+ * ********************************************************************* */
 
+/* Map integer PID's onto integer termination codes. */
 struct pid_list
 {
-  unsigned long pid;        /* key */
-  unsigned long term_code;  /* val */
-  struct pid_list *next;    /* duh */ 
+  HFILE pid;              /* key */
+  ULONG term_code;        /* val */
+  struct pid_list *next;  /* duh */ 
 };
 
 static struct pid_list *pid_ll = (struct pid_list *) NULL;
 
-/* The ll_*() functions all make use of the global `pid_ll'. */
+/* The ll_*() functions all make use of the global var `pid_ll'. */
 
-void               /* HFILE */     /* RESULTCODES.codeTerminate */
-ll_insert (unsigned long int key, unsigned long int val)
+void
+ll_insert (HFILE key, ULONG val)
 {
   struct pid_list *new;
   new = (struct pid_list *) malloc (sizeof (*new));
@@ -58,7 +57,7 @@ ll_insert (unsigned long int key, unsigned long int val)
 }
 
 
-void       /* int fileno(Pipe) ??? */
+void
 ll_delete (int key)
 {
   struct pid_list *this, *last;
@@ -85,8 +84,8 @@ ll_delete (int key)
     }
 }
 
-unsigned long int /* int fileno(Pipe) ??? */
-ll_lookup (unsigned long int key)
+ULONG
+ll_lookup (HFILE key)
 {
   struct pid_list *this = pid_ll;
 
@@ -104,7 +103,7 @@ ll_lookup (unsigned long int key)
 }
 
 #if DIAGNOSTIC
-unsigned long int
+ULONG
 ll_length ()
 {
   struct pid_list *this = pid_ll;
@@ -116,7 +115,7 @@ ll_length ()
   return len;
 }
 
-unsigned long int
+ULONG
 ll_print ()
 {
   struct pid_list *this = pid_ll;
@@ -130,24 +129,29 @@ ll_print ()
     }
 
   if (i == 0)
-	  printf ("No entries.\n");
+    printf ("No entries.\n");
 
   return i;
 }
 #endif /* DIAGNOSTIC */
 
+/* ********************************************************************* *
+ *                                                                       *
+ *       End of linked-list library, beginning of popen/pclose:          *
+ *                                                                       *
+ * ********************************************************************* */
 
-/****************************************************************
-**  Routine: popen
-**  Returns: FILE pointer to pipe.
-**  Action : Exec program connected via pipe, connect a FILE * to the
-**           pipe and return it.
-**  Params : Command - Program to run
-**           Mode    - Mode to open pipe.  "r" implies pipe is connected
-**                     to the programs stdout, "w" connects to stdin.
-****************************************************************/
-
-FILE *popen (const char *Command, const char *Mode)
+/*
+ *  Routine: popen
+ *  Returns: FILE pointer to pipe.
+ *  Action : Exec program connected via pipe, connect a FILE * to the
+ *           pipe and return it.
+ *  Params : Command - Program to run
+ *           Mode    - Mode to open pipe.  "r" implies pipe is connected
+ *                     to the programs stdout, "w" connects to stdin.
+ */
+FILE *
+popen (const char *Command, const char *Mode)
 {
     HFILE   End1,
             End2,
@@ -231,18 +235,16 @@ FILE *popen (const char *Command, const char *Mode)
 }
         
 
-
-/****************************************************************
-**  Routine: popenRW
-**  Returns: TRUE on success
-**  Action : Exec program connected via pipe, connect FILE *'s to 
-**           both the stdin and stdout of the process.
-**  Params : Command - Program to run
-**           Pipes   - Array of FILE * to store the pipe descriptors
-**                     Pipe[0] is attached to the child's stdin,
-**                     Pipe[1] is attached to its stdout/err
-****************************************************************/
-
+/*
+ *  Routine: popenRW
+ *  Returns: TRUE on success
+ *  Action : Exec program connected via pipe, connect FILE *'s to 
+ *           both the stdin and stdout of the process.
+ *  Params : Command - Program to run
+ *           Pipes   - Array of FILE * to store the pipe descriptors
+ *                     Pipe[0] is attached to the child's stdin,
+ *                     Pipe[1] is attached to its stdout/err
+ */
 int
 popenRW (const char  *Command, FILE **Pipes)
 {
@@ -350,14 +352,12 @@ popenRW (const char  *Command, FILE **Pipes)
 }
 
 
-
-/****************************************************************
-**  Routine: pclose
-**  Returns: TRUE on success
-**  Action : Close a pipe opened with Popen();
-**  Params : Pipe - pIpe to close
-****************************************************************/
-
+/*
+ *  Routine: pclose
+ *  Returns: TRUE on success
+ *  Action : Close a pipe opened with popen();
+ *  Params : Pipe - pipe to close
+ */
 int
 pclose (FILE *Pipe) 
 {
