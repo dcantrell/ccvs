@@ -1,3 +1,7 @@
+Wed Dec 31 15:24:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.MacCVS: Mention web sites as place for MacCVS updates.
+
 Sat Dec 27 16:57:41 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h (HAVE_RCS5): Remove; no longer used.
