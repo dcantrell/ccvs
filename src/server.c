@@ -1108,6 +1108,8 @@ serve_directory (char *arg)
     int status;
     char *repos;
 
+    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg );
+
     status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {

@@ -1,5 +1,9 @@
 2003-07-23  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server_directory): Add a TRACE for OS X debugging.
+
+2003-07-23  Derek Price  <derek@ximbiot.com>
+
 	* client.c: Avoid some warning from gcc -Wall.
 	* lock.c: Ditto.
 	* login.c: Ditto.
