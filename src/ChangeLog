@@ -1,3 +1,8 @@
+2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* modules.c (_do_module): Rename to my_module to avoid reserved name.
+	* stack.c (_push, _pop, _unshift, _shift): Rename to do_*.
+
 2004-02-12  Mark D. Baushke  <mdb@cvshome.org>
 
 	* commit.c (find_fileproc): Plug a memory leak.

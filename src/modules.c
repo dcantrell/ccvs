@@ -97,7 +97,7 @@ close_module (DBM *db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-_do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
+my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
             CALLBACKPROC callback_proc, char *where, int shorten,
             int local_specified, int run_module_prog, int build_dirs,
             char *extra_arg, List *stack)
@@ -129,7 +129,7 @@ _do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
     char *server_dir_to_restore = NULL;
 #endif
 
-    TRACE (TRACE_FUNCTION, "_do_module (%s, %s, %s, %s)",
+    TRACE (TRACE_FUNCTION, "my_module (%s, %s, %s, %s)",
            mname ? mname : "(null)", msg ? msg : "(null)",
            where ? where : "NULL", extra_arg ? extra_arg : "NULL");
 
@@ -492,7 +492,7 @@ _do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	    {
 		if (!stack) stack = getlist();
 		push_string (stack, mname);
-		err += _do_module (db, modargv[i], m_type, msg, callback_proc,
+		err += my_module (db, modargv[i], m_type, msg, callback_proc,
                                    where, shorten, local_specified,
                                    run_module_prog, build_dirs, extra_arg,
                                    stack);
@@ -635,7 +635,7 @@ module `%s' is a request for a file in a module which is not a directory",
 	    error (0, 0, "Mal-formed %c option for module %s - ignored",
 		   CVSMODULE_SPEC, mname);
 	else
-	    err += _do_module (db, spec_opt, m_type, msg, callback_proc,
+	    err += my_module (db, spec_opt, m_type, msg, callback_proc,
                                (char *) NULL, 0, local_specified,
                                run_module_prog, build_dirs, extra_arg,
 	                       stack);
@@ -744,7 +744,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
            int local_specified, int run_module_prog, int build_dirs,
            char *extra_arg)
 {
-    return _do_module (db, mname, m_type, msg, callback_proc, where, shorten,
+    return my_module (db, mname, m_type, msg, callback_proc, where, shorten,
                        local_specified, run_module_prog, build_dirs, extra_arg,
                        NULL);
 }
