@@ -2950,7 +2950,8 @@ start_server ()
 	    break;
 
 	default:
-	    error (1, 0, "(start_server): unknown access method %s");
+	    error (1, 0, "\
+(start_server internal error): unknown access method");
 	    break;
     }
 
