@@ -1121,6 +1121,27 @@ serve_directory (char *arg)
     status = buf_read_line (buf_from_net, &repos, NULL);
     if (status == 0)
     {
+	if (!isabsolute (repos))
+	{
+	    /* Make absolute.
+	     *
+	     * FIXME: This is kinda hacky - we should probably only ever store
+	     * and pass SHORT_REPOS (perhaps with the occassional exception
+	     * for optimizations, but many, many functions end up
+	     * deconstructing REPOS to gain SHORT_REPOS anyhow) - the
+	     * CVSROOT portion of REPOS is redundant with
+	     * current_parsed_root->directory - but since this is the way
+	     * things have always been done, changing this will likely involve
+	     * a major overhaul.
+	     */
+	    char *short_repos;
+	    size_t dummy;
+
+	    short_repos = repos;
+	    repos = asnprintf (NULL, &dummy, "%s/%s",
+	                       current_parsed_root->directory, short_repos);
+	    free (short_repos);
+	}
 	if (!outside_root (repos))
 	    dirswitch (arg, repos);
 	free (repos);
@@ -3456,6 +3477,10 @@ char *server_dir = NULL;
 static void
 output_dir (const char *update_dir, const char *repository)
 {
+    /* Set up SHORT_REPOS.  */
+    const char *short_repos = Short_Repository (repository);
+
+    /* Send the update_dir/repos.  */
     if (server_dir != NULL)
     {
 	buf_output0 (protocol, server_dir);
@@ -3466,7 +3491,10 @@ output_dir (const char *update_dir, const char *repository)
     else
 	buf_output0 (protocol, update_dir);
     buf_output0 (protocol, "/\n");
-    buf_output0 (protocol, repository);
+    if (short_repos[0] == '\0')
+	buf_output0 (protocol, ".");
+    else
+	buf_output0 (protocol, short_repos);
     buf_output0 (protocol, "/");
 }
 
@@ -4720,6 +4748,7 @@ struct request requests[] =
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
   REQ_LINE("Repository", serve_repository, 0),
   REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
+  REQ_LINE("Relative-directory", serve_directory, 0),
   REQ_LINE("Max-dotdot", serve_max_dotdot, 0),
   REQ_LINE("Static-directory", serve_static_directory, 0),
   REQ_LINE("Sticky", serve_sticky, 0),
