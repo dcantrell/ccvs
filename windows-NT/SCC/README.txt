@@ -62,5 +62,5 @@ worse yet, usenet posting, so it probably should be verified before
 relying on it.
 
 * Microsoft Developer Studio 4.x Professional (not Standard, not 2.x)
-* Powersoft's Optima++
+* Powersoft's Optima++, PowerJ, and Power++.
 * CodeWright editor
