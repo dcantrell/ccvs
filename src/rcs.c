@@ -13,7 +13,8 @@
 
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, const char *rcsfile));
 static char *RCS_getdatebranch PROTO((RCSNode * rcs, char *date, char *branch));
-static int getrcskey PROTO((FILE * fp, char **keyp, char **valp));
+static int getrcskey PROTO((FILE * fp, char **keyp, char **valp,
+			    size_t *lenp));
 static int checkmagic_proc PROTO((Node *p, void *closure));
 static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
@@ -145,7 +146,7 @@ RCS_parsercsfile_i (fp, rcsfile)
      * information.  Those that do call XXX to completely parse the
      * RCS file.  */
 
-    if (getrcskey (fp, &key, &value) == -1 || key == NULL)
+    if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
     if (strcmp (key, RCSDESC) == 0)
 	goto l_error;
@@ -153,7 +154,7 @@ RCS_parsercsfile_i (fp, rcsfile)
     if (strcmp (RCSHEAD, key) == 0 && value != NULL)
 	rdata->head = xstrdup (value);
 
-    if (getrcskey (fp, &key, &value) == -1 || key == NULL)
+    if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL)
 	goto l_error;
     if (strcmp (key, RCSDESC) == 0)
 	goto l_error;
@@ -232,7 +233,7 @@ RCS_reparsercsfile (rdata, pfp)
 
 	/* if key is NULL here, then the file is missing some headers
 	   or we had trouble reading the file. */
-	if (getrcskey (fp, &key, &value) == -1 || key == NULL
+	if (getrcskey (fp, &key, &value, NULL) == -1 || key == NULL
 	    || strcmp (key, RCSDESC) == 0)
 	{
 	    if (ferror(fp))
@@ -297,7 +298,7 @@ RCS_reparsercsfile (rdata, pfp)
 	vnode->date = xstrdup (valp);
 
 	/* Get author field.  */
-	(void) getrcskey (fp, &key, &value);
+	(void) getrcskey (fp, &key, &value, NULL);
 	/* FIXME: should be using errno in case of ferror.  */
 	if (key == NULL || strcmp (key, "author") != 0)
 	    error (1, 0, "\
@@ -305,7 +306,7 @@ unable to parse rcs file; `author' not in the expected place");
 	vnode->author = xstrdup (value);
 
 	/* Get state field.  */
-	(void) getrcskey (fp, &key, &value);
+	(void) getrcskey (fp, &key, &value, NULL);
 	/* FIXME: should be using errno in case of ferror.  */
 	if (key == NULL || strcmp (key, "state") != 0)
 	    error (1, 0, "\
@@ -316,7 +317,7 @@ unable to parse rcs file; `state' not in the expected place");
 	}
 
 	/* fill in the branch list (if any branches exist) */
-	(void) getrcskey (fp, &key, &value);
+	(void) getrcskey (fp, &key, &value, NULL);
 	/* FIXME: should be handling various error conditions better.  */
 	if (key != NULL && strcmp (key, RCSDESC) == 0)
 	    value = NULL;
@@ -327,7 +328,7 @@ unable to parse rcs file; `state' not in the expected place");
 	}
 
 	/* fill in the next field if there is a next revision */
-	(void) getrcskey (fp, &key, &value);
+	(void) getrcskey (fp, &key, &value, NULL);
 	/* FIXME: should be handling various error conditions better.  */
 	if (key != NULL && strcmp (key, RCSDESC) == 0)
 	    value = NULL;
@@ -339,7 +340,7 @@ unable to parse rcs file; `state' not in the expected place");
 	 * we put the symbolic link stuff???
 	 */
 	/* FIXME: Does not correctly handle errors, e.g. from stdio.  */
-	while ((n = getrcskey (fp, &key, &value)) >= 0)
+	while ((n = getrcskey (fp, &key, &value, NULL)) >= 0)
 	{
 	    assert (key != NULL);
 
@@ -389,6 +390,8 @@ unable to parse rcs file; `state' not in the expected place");
 	if (n < 0)
 	    break;
     }
+
+    rdata->delta_pos = ftell (fp);
 
     if (pfp == NULL)
     {
@@ -471,8 +474,10 @@ rcsvers_delproc (p)
  *    o return 0 since we found something besides "desc"
  *
  * Sets *KEYP and *VALUEP to point to storage managed by the getrcskey
- * function; the contents are only valid until the next call to getrcskey
- * or getrcsrev.
+ * function; the contents are only valid until the next call to
+ * getrcskey or getrcsrev.  If LENP is not NULL, this sets *LENP to
+ * the length of *VALUEP; this is needed if the string might contain
+ * binary data.
  */
 
 static char *key = NULL;
@@ -483,13 +488,17 @@ static size_t valsize = 0;
 #define ALLOCINCR 1024
 
 static int
-getrcskey (fp, keyp, valp)
+getrcskey (fp, keyp, valp, lenp)
     FILE *fp;
     char **keyp;
     char **valp;
+    size_t *lenp;
 {
     char *cur, *max;
     int c;
+
+    if (lenp != NULL)
+        *lenp = 0;
 
     /* skip leading whitespace */
     do
@@ -662,8 +671,12 @@ getrcskey (fp, keyp, valp)
     *cur = '\0';
 
     /* if the string is empty, make it null */
-    if (value && *value != '\0')
+    if (value && cur != value)
+    {
 	*valp = value;
+	if (lenp != NULL)
+	    *lenp = cur - value;
+    }
     else
 	*valp = NULL;
     *keyp = key;
@@ -1712,6 +1725,153 @@ RCS_getexpand (rcs)
 	RCS_reparsercsfile (rcs, NULL);
     return rcs->expand;
 }
+
+/* Check out a revision from RCS.  This function optimizes by reading
+   the head version directly if it is easy.  Check out the revision
+   into WORKFILE, or to standard output if WORKFILE is NULL.  If
+   WORKFILE is "", let RCS pick the working file name.  TAG is the tag
+   to check out, or NULL if one should check out the head of the
+   default branch.  OPTIONS is a string such as -kb or -kkv, for
+   keyword expansion options, or NULL if there are none.  If WORKFILE
+   is NULL, run regardless of noexec; if non-NULL, noexec inhibits
+   execution.  SOUT is what to do with standard output (typically
+   RUN_TTY).  If FLAGS & RCS_FLAGS_LOCK, lock it.  If FLAGS &
+   RCS_FLAGS_FORCE, check out even on top of an existing file.  If
+   NOERR is nonzero, suppress errors.  */
+
+int
+RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
+     RCSNode *rcs;
+     char *workfile;
+     char *tag;
+     char *options;
+     char *sout;
+     int flags;
+     int noerr;
+{
+    if ((workfile == NULL || *workfile != '\0')
+	&& ! noexec
+	&& (tag == NULL || strcmp (tag, rcs->head) == 0)
+	&& sout == RUN_TTY
+	&& (flags & RCS_FLAGS_LOCK) == 0)
+    {
+        FILE *fp;
+	struct stat sb;
+        int found;
+        char *key;
+	char *value;
+	size_t len;
+
+        /* We want the head revision.  Try to read it directly.  */
+
+	if (rcs->flags & PARTIAL)
+	    RCS_reparsercsfile (rcs, &fp);
+	else
+	{
+	    fp = fopen (rcs->path, FOPEN_BINARY_READ);
+	    if (fp == NULL)
+	        error (1, 0, "unable to reopen `%s'", rcs->path);
+	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
+	        error (1, 0, "cannot fseek RCS file");
+	}
+
+	found = 0;
+	getrcsrev (fp, &key);
+	while (getrcskey (fp, &key, &value, &len) >= 0)
+	{
+	    if (strcmp (key, "text") == 0)
+	    {
+	        found = 1;
+		break;
+	    }
+	}
+
+	if (fstat (fileno (fp), &sb) < 0)
+	    error (1, errno, "cannot fstat %s", rcs->path);
+
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", rcs->path);
+
+	if (found)
+	{
+	    if (options != NULL
+		? (strcmp (options, "-ko") != 0
+		   && strcmp (options, "-kb") != 0)
+		: (rcs->expand == NULL
+		   || (strcmp (rcs->expand, "o") != 0
+		       && strcmp (rcs->expand, "b") != 0)))
+	    {
+	        register int inkeyword;
+	        register char *s, *send;
+
+	        /* Keyword expansion is being done.  Make sure the
+                   text does not contain any keywords.  If it does
+                   have any, do the regular checkout.  */
+		inkeyword = 0;
+		send = value + len;
+		for (s = value; s < send; s++)
+		{
+		    register char c;
+
+		    c = *s;
+		    if (c == '$')
+		    {
+		        if (inkeyword)
+			{
+			    found = 0;
+			    break;
+			}
+			inkeyword = 1;
+		    }
+		    else if (c == ':')
+		    {
+		        if (inkeyword)
+			{
+			    found = 0;
+			    break;
+			}
+		    }
+		    else if (inkeyword && ! isalpha ((unsigned char) c))
+		        inkeyword = 0;
+		}
+	    }
+	}
+
+	if (found)
+	{
+	    FILE *ofp;
+
+	    /* We have the text we want.  */
+
+	    if (workfile == NULL)
+	        ofp = stdout;
+	    else
+	    {
+	        ofp = fopen (workfile, FOPEN_BINARY_WRITE);
+		if (ofp == NULL)
+		    error (1, errno, "cannot open %s", workfile);
+	    }
+
+	    if (fwrite (value, 1, len, ofp) != len)
+	        error (1, errno, "cannot write %s", workfile);
+
+	    if (workfile != NULL)
+	        if (fclose (ofp) < 0)
+		    error (1, errno, "cannot close %s", workfile);
+
+	    if (chmod (workfile,
+		       sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
+	        error (0, errno, "cannot change mode of file %s", workfile);
+
+	    return 0;
+	}
+    }
+
+    /* We were not able to optimize retrieving this revision.  */
+
+    return RCS_checkout (rcs->path, workfile, tag, options, sout, flags,
+			 noerr);
+}
 
 /* Stuff related to annotate command.  This should perhaps be split
    into the stuff which knows about the guts of RCS files, and the
@@ -1963,10 +2123,16 @@ annotate_fileproc (finfo)
     cvs_outerr (finfo->fullname, 0);
     cvs_outerr ("\n***************\n", 0);
 
-    if (!(finfo->rcs->flags & PARTIAL))
-	/* We are leaking memory by calling RCS_reparsefile again.  */
-	error (0, 0, "internal warning: non-partial rcs in annotate_fileproc");
-    RCS_reparsercsfile (finfo->rcs, &fp);
+    if (finfo->rcs->flags & PARTIAL)
+        RCS_reparsercsfile (finfo->rcs, &fp);
+    else
+    {
+        fp = fopen (finfo->rcs->path, FOPEN_BINARY_READ);
+	if (fp == NULL)
+	    error (1, 0, "unable to reopen `%s'", finfo->rcs->path);
+	if (fseek (fp, finfo->rcs->delta_pos, SEEK_SET) != 0)
+	    error (1, 0, "cannot fseek RCS file");
+    }
 
     ishead = 1;
     vers = NULL;
@@ -1984,7 +2150,7 @@ annotate_fileproc (finfo)
 		   finfo->rcs->path);
 	vers = (RCSVers *) node->data;
 
-	while ((n = getrcskey (fp, &key, &value)) >= 0)
+	while ((n = getrcskey (fp, &key, &value, NULL)) >= 0)
 	{
 	    if (strcmp (key, "text") == 0)
 	    {

@@ -954,9 +954,9 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir)
 	    }
 	}
 
-	status = RCS_checkout (vers_ts->srcfile->path,
-			       pipeout ? NULL : file, vers_ts->vn_tag,
-			       vers_ts->options, RUN_TTY, 0, 0);
+	status = RCS_fast_checkout (vers_ts->srcfile,
+				    pipeout ? NULL : file, vers_ts->vn_tag,
+				    vers_ts->options, RUN_TTY, 0, 0);
     }
     if (file_is_dead || status == 0)
     {
@@ -982,10 +982,10 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir)
 		       a dead revision in the old version of death
 		       support which used a hacked RCS instead of using
 		       the RCS state.  */
-		    retcode = RCS_checkout (vers_ts->srcfile->path, file,
-		                            vers_ts->vn_rcs,
-		                            vers_ts->options, RUN_TTY,
-		                            RCS_FLAGS_FORCE, 0);
+		    retcode = RCS_fast_checkout (vers_ts->srcfile, file,
+						 vers_ts->vn_rcs,
+						 vers_ts->options, RUN_TTY,
+						 RCS_FLAGS_FORCE, 0);
 		    if (retcode != 0)
 		    {
 			error (retcode == -1 ? 1 : 0,
@@ -1169,9 +1169,9 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
     if (noexec)
 	retcode = 0;
     else
-	retcode = RCS_checkout (vers_ts->srcfile->path, NULL,
-	                        vers_ts->vn_user,
-	                        vers_ts->options, file1, 0, 0);
+	retcode = RCS_fast_checkout (vers_ts->srcfile, NULL,
+				     vers_ts->vn_user,
+				     vers_ts->options, file1, 0, 0);
     if (retcode != 0)
         fail = 1;
     else
@@ -1196,9 +1196,9 @@ patch_file (file, repository, entries, rcsnode, vers_ts, update_dir,
            can get the right modes into *FILE_INFO.  We can't check it
            out directly into file2 because co doesn't understand how
            to do that.  */
-	retcode = RCS_checkout (vers_ts->srcfile->path, file,
-	                        vers_ts->vn_rcs,
-	                        vers_ts->options, RUN_TTY, 0, 0);
+	retcode = RCS_fast_checkout (vers_ts->srcfile, file,
+				     vers_ts->vn_rcs,
+				     vers_ts->options, RUN_TTY, 0, 0);
 	if (retcode != 0)
 	    fail = 1;
 	else
@@ -1746,8 +1746,8 @@ join_file (file, rcsnode, vers, update_dir, entries)
     {
 	int retcode;
 	/* The file is up to date.  Need to check out the current contents.  */
-	retcode = RCS_checkout (vers->srcfile->path, "", vers->vn_user, NULL,
-	                        RUN_TTY, 0, 0);
+	retcode = RCS_fast_checkout (vers->srcfile, "", vers->vn_user, NULL,
+				     RUN_TTY, 0, 0);
 	if (retcode != 0)
 	    error (1, retcode == -1 ? errno : 0,
 		   "failed to check out %s file", file);
