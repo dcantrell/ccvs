@@ -2064,7 +2064,11 @@ if $proxy; then
     cat >$TESTDIR/sync-secondary <<EOF
 #! $TESTSHELL
 date >>$TESTDIR/update-log
-echo "updating after \$1 for command \$2" >>$TESTDIR/update-log
+ps=\$1
+cmd=\$2
+shift
+shift
+echo "updating after \$ps for command \$cmd" \${1+"\$@"} >>$TESTDIR/update-log
 rsync -glopr --delete --exclude '#cvs.*' $CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 EOF
     chmod a+x $TESTDIR/sync-secondary
@@ -2083,7 +2087,7 @@ EOF
 ALL $TESTDIR/sync-secondary admin %c
 EOF
     cat >>posttag <<EOF
-ALL $TESTDIR/sync-secondary tag %c
+ALL $TESTDIR/sync-secondary tag %c %o %b %t %{sVv}
 EOF
     cat >>postwatch <<EOF
 ALL $TESTDIR/sync-secondary watch %c
