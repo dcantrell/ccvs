@@ -1,11 +1,19 @@
 Changes since 1.12.9:
 *********************
 
-BUG FIXES
+NEW FEATURES
 
-* "cvs import" now has a new option, `-X', which causes new files to be
-  imported in a way that they appear only on the vendor branch, and do not
-  automatically appear on the main trunk.
+* The CVS server now sneds paths to files relative to the repository.  CVS
+  clients have been able to handle this since at least the 10 year old
+  CVS 1.9.2 release, so no attempt at verifying compatibility of clients has
+  been made.  This saves a small amount of bandwidth and may enable some future
+  functionality.
+
+* The CVS client will send relative Directory requests if the server claims to
+  support it.  This saves a very small amount of bandwidth but may enable some
+  future functionality.
+
+BUG FIXES
 
 * Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.
 
