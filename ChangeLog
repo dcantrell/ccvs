@@ -1,3 +1,8 @@
+Tue Jul 28 22:16:48 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* Makefile.in (dist): unset the GZIP shell variable before calling
+ 	gzip to avoid invocation problems.
+
 Sun Jul 26 16:22:21 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* NEWS: add info about TopLevelAdmin.
