@@ -1,5 +1,18 @@
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
+	* commit.c (checkaddfile): Do not lose the vendor branch when
+	adding files to a new branch. Avoids extranious conflicts for
+	future vendor imports. This was found and fixed in FreeBSD cvs.
+	See http://www.freebsd.org/cgi/query-pr.cgi?pr=4033 for details.
+	* sanity.sh (branch-after-import): New test.
+	(Thanks to Mark D Baushke <mdb@cvshome.org> for forwarding the
+	patch and writing the test cases!)
+
+	* sanity.sh (branch-after-import): Misc portablility and standard
+	changes.
+
+2003-02-07  Derek Price  <derek@ximbiot.com>
+
 	* add.c: Exercise the pet peeve Karl Fogel, I think, infected me with
 	about using the word invalid rather than illegal and reserving illegal
 	for use when actually discussing laws and governmentally enforced

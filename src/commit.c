@@ -2145,6 +2145,8 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	    char *head;
 	    char *magicrev;
 
+	    fixbranch (rcsfile, sbranch);
+
 	    head = RCS_getversion (rcsfile, NULL, NULL, 0, (int *) NULL);
 	    magicrev = RCS_magicrev (rcsfile, head);
 
