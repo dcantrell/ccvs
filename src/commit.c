@@ -68,6 +68,8 @@ static char *write_dirtag;
 static char *logfile;
 static List *mulist;
 static char *message;
+static time_t last_register_time;
+
 
 static const char *const commit_usage[] =
 {
@@ -414,6 +416,18 @@ commit (argc, argv)
      */
     lock_tree_cleanup ();
     dellist (&mulist);
+
+    if (last_register_time)
+    {
+	time_t now;
+
+	(void) time (&now);
+	if (now == last_register_time) 
+	{
+	    sleep (1);			/* to avoid time-stamp races */
+	}
+    }
+
     return (err);
 }
 
@@ -957,6 +971,8 @@ commit_fileproc (finfo)
 		fixbranch (finfo->file, finfo->repository, sbranch);
 	    }
 
+	    (void) time (&last_register_time);
+
 	    ci->status = T_UPTODATE;
 	}
     }
@@ -991,6 +1007,9 @@ commit_fileproc (finfo)
 	err = Checkin ('M', finfo->file, finfo->update_dir, finfo->repository,
 		       rcs, ci->rev, ci->tag,
 		       ci->options, message, finfo->entries);
+
+	(void) time (&last_register_time);
+
 	if (err != 0)
 	{
 	    unlockrcs (finfo->file, finfo->repository);
@@ -1414,6 +1433,9 @@ finaladd (file, rev, tag, options, update_dir, repository, entries)
     }
     else
 	fixaddfile (file, repository);
+
+    (void) time (&last_register_time);
+
     return (ret);
 }
 

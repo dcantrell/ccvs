@@ -1,5 +1,11 @@
 Mon Feb 12 16:07:45 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
+	* commit.c: define last_register_time
+	(commit): make sure cvs doesn't exit in the same second it wrote
+	the last timestamp
+	(commit_fileproc): set last_register_time
+	(finaladd): set last_register_time
+
 	* run.c, cvs.h: Changed more Popen() to run_popen()
 
 Mon Feb 12 03:06:50 1996  Benjamin J. Lee  <benjamin@cyclic.com>
