@@ -924,6 +924,13 @@ This is just like @code{Updated} and takes the same additional data, but
 is used only if a @code{Entry}, @code{Modified}, or @code{Unchanged}
 request has been sent for the file in question.
 
+This response, or @code{Merged}, indicates that the server has
+determined that it is OK to overwrite the previous contents of the file
+specified by @var{pathname}.  Provided that the client has correctly
+sent @code{Modified} or @code{Is-modified} requests for a modified file,
+and the file was not modified while CVS was running, the server can
+ensure that a user's modifications are not lost.
+
 @item Merged @var{pathname} \n
 This is just like @code{Updated} and takes the same additional data,
 with the one difference that after the new copy of the file is enclosed,

@@ -2,6 +2,8 @@ Wed Apr 16 12:35:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Add paragraph describing how
 	Copy-file relates to Merged.
+	(Responses): Add paragraph about how it is the server which
+	worries about not clobbering the user's file.
 
 Tue Apr 15 00:57:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
