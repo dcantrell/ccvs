@@ -1,3 +1,13 @@
+Fri Oct 20 14:41:49 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Add test 87a, to test for bug fixed by garyo in
+	change below.
+
+Fri Oct 20 10:59:58 1995  Gary Oberbrunner  <garyo@darkstar.avs.com>
+
+	* update.c (join_file): send file back to client even if no
+	conflicts were detected, by calling Register().
+
 Fri Oct 20 10:46:45 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* lock.c: Add prototype for Check_Owner
