@@ -61,9 +61,6 @@ $GNULIB/m4/tm_gmtoff.m4				m4		no NI
 $GNULIB/lib/gettime.c				lib		no NI
 $GNULIB/m4/clock_time.m4			m4		no NI
 $GNULIB/m4/gettime.m4				m4		no NI
-# $GNULIB/modules/gettimeofday
-$GNULIB/lib/gettimeofday.c			lib		no NI
-$GNULIB/m4/gettimeofday.m4			m4		no NI
 # $GNULIB/modules/lstat
 $GNULIB/lib/lstat.c				lib		no NI
 $GNULIB/m4/lstat.m4				m4		yes NI
