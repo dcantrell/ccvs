@@ -1,3 +1,7 @@
+2005-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mmap-anon.m4: Update from GNULIB.
+
 2005-03-03  Derek Price  <derek@ximbiot.com>
 
 	* mmap-anon.m4, pagealign_alloc.m4: New files from GNULIB.

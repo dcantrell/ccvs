@@ -1,3 +1,7 @@
+2005-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* pagealign_alloc.c: Update from GNULIB.
+
 2005-03-04  Jim Hyslop  <jhyslop@ieee.org>
 
 	* xtime.h: added include guards to fix compile errors on IRIX 5.3
