@@ -163,8 +163,8 @@ AC_CHECK_FUNC(connect, :,
 [AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
 
 # On Unix systems, we want the full client & server arrangement.
-AC_DEFINE (SERVER_SUPPORT)
-AC_DEFINE (CLIENT_SUPPORT)
+AC_DEFINE(SERVER_SUPPORT)
+AC_DEFINE(CLIENT_SUPPORT)
 
 test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
