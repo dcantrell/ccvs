@@ -44,6 +44,7 @@ check_PROGRAMS =
 EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
+	Makefile.gnulib \
 	build_lib.com \
 	libcvs.dep \
 	libcvs.dsp \
