@@ -1,3 +1,7 @@
+Tue Apr 25 22:19:16 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* sanity.sh: Add new tests to catch bugs in Apr 23 change.
+
 Tue Apr 25 17:10:55 1995  Roland McGrath  <roland@baalperazim.frob.com>
 
 	* create_adm.c (Create_Admin): Use getwd instead of getcwd.
