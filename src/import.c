@@ -613,13 +613,11 @@ add_rev (message, rcs, vfile, vers)
 	}
     }
 
-    run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
-    run_args ("-m%s", make_message_rcslegal (message));
-    if (use_file_modtime)
-	run_arg ("-d");
-    run_arg (tocvsPath == NULL ? vfile : tocvsPath);
-    run_arg (rcs);
-    status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+    status = RCS_checkin (rcs, tocvsPath == NULL ? vfile : tocvsPath,
+			  message, vbranch,
+			  (RCS_FLAGS_QUIET
+			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)),
+			  0);
     ierrno = errno;
 
     if (tocvsPath == NULL)

@@ -141,7 +141,7 @@ admin_fileproc (file, update_dir, repository, entries, srcfiles)
 	goto exitfunc;
     }
 
-    run_setup ("%s%s", Rcsbin, RCS);
+    run_setup ("%s%s -x,v/", Rcsbin, RCS);
     for (argc = ac, argv = av; argc; argc--, argv++)
 	run_arg (*argv);
     run_arg (vers->srcfile->path);

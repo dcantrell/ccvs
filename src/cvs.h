@@ -109,9 +109,6 @@ extern int errno;
 #include "getopt.h"
 #include "wait.h"
 
-/* Define to enable alternate death support (which uses the RCS state).  */
-#define DEATH_STATE 1
-
 #define DEATH_SUPPORT 1
 
 #include "rcs.h"
@@ -427,10 +424,20 @@ int RCS_setbranch PROTO((const char *, const char *));
 int RCS_lock PROTO((const char *, const char *, int));
 int RCS_unlock PROTO((const char *, const char *, int));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
-int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag, char *options,
+int RCS_checkout PROTO ((char *rcsfile, char *workfile, char *tag,
+			 char *options,
                          char *sout, int flags, int noerr));
+/* Flags used by RCS_* functions.  See the description of the individual
+   functions for which flags mean what for each function.  */
 #define RCS_FLAGS_LOCK 1
 #define RCS_FLAGS_FORCE 2
+#define RCS_FLAGS_DEAD 4
+#define RCS_FLAGS_QUIET 8
+#define RCS_FLAGS_MODTIME 16
+int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
+			char *rev, int flags, int noerr));
+
+
 
 #include "error.h"
 

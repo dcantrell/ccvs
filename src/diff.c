@@ -382,13 +382,13 @@ diff_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	if (use_rev2)
 	{
-	    run_setup ("%s%s %s %s -r%s -r%s", Rcsbin, RCS_DIFF,
+	    run_setup ("%s%s -x,v/ %s %s -r%s -r%s", Rcsbin, RCS_DIFF,
 		       opts, *options ? options : vers->options,
 		       use_rev1, use_rev2);
 	}
 	else
 	{
-	    run_setup ("%s%s %s %s -r%s", Rcsbin, RCS_DIFF, opts,
+	    run_setup ("%s%s -x,v/ %s %s -r%s", Rcsbin, RCS_DIFF, opts,
 		       *options ? options : vers->options, use_rev1);
 	}
 	run_arg (vers->srcfile->path);

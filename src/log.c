@@ -126,7 +126,7 @@ log_fileproc (file, update_dir, repository, entries, srcfiles)
 	return (1);
     }
 
-    run_setup ("%s%s", Rcsbin, RCS_RLOG);
+    run_setup ("%s%s -x,v/", Rcsbin, RCS_RLOG);
     {
       int i;
       for (i = 1; i < ac && av[i][0] == '-'; i++)

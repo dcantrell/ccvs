@@ -1,3 +1,23 @@
+Fri Feb  9 15:30:32 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.h (RCS_MERGE): Removed; unused.
+
+	* commit.c (checkaddfile): Fix memory leak.
+
+	* admin.c, commit.c, diff.c, log.c, mkmodules.c: Pass -x,v/ to RCS
+	commands.
+
+	* rcscmds.c, cvs.h (RCS_checkin): New function.
+	* checkin.c, commit.c, import.c: Call it, rather than run_*.
+	* cvs.h, commit.c: Remove DEATH_STATE define; the behavior
+	which used to be the default (DEATH_STATE) is now the only one.
+	Failing to define DEATH_STATE has been commented as obsolete at
+	least since CVS 1.5.  We still can read repositories created with
+	such a CVS, however.
+	* rcs.h, rcs.c: Adjust comments regarding DEATH_STATE.
+	* subr.c (make_message_rcslegal): Add comment, describing
+	allocation of returned value.
+
 Fri Feb  9 09:53:44 MET 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* sanity.sh: use "${testcvs}" instead of "cvs" in devcom tests
