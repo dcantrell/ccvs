@@ -244,6 +244,9 @@ commit (argc, argv)
     }
 #endif
 
+    if (tag != NULL)
+	tag_check_valid (tag, argc, argv, local, aflag, "");
+
     /* XXX - this is not the perfect check for this */
     if (argc <= 0)
 	write_dirtag = tag;

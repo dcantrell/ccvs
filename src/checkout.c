@@ -89,6 +89,7 @@ static int pipeout;
 static int aflag;
 static char *options = NULL;
 static char *tag = NULL;
+static int tag_validated = 0;
 static char *date = NULL;
 static char *join_rev1 = NULL;
 static char *join_rev2 = NULL;
@@ -722,12 +723,28 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	    return (1);
 	}
 	which = W_REPOS;
+	if (tag != NULL && !tag_validated)
+	{
+	    tag_check_valid (tag, *pargc - 1, argv + 1, 0, aflag, NULL);
+	    tag_validated = 1;
+	}
     }
     else
+    {
 	which = W_LOCAL | W_REPOS;
+	if (tag != NULL && !tag_validated)
+	{
+	    tag_check_valid (tag, *pargc - 1, argv + 1, 0, aflag,
+			     repository);
+	    tag_validated = 1;
+	}
+    }
 
     if (tag != NULL || date != NULL)
 	which |= W_ATTIC;
+
+    /* FIXME: We don't call tag_check_valid on join_rev1 and join_rev2
+       yet (make sure to handle ':' correctly if we do, though).  */
 
     /*
      * if we are going to be recursive (building dirs), go ahead and call the

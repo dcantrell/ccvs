@@ -55,6 +55,7 @@ static List *tlist;
 
 static char *symtag;
 static char *numtag;
+static int numtag_validated = 0;
 static int delete;			/* adding a tag by default */
 static int attic_too;			/* remove tag from Attic files */
 static int branch_mode;			/* make an automagic "branch" tag */
@@ -287,6 +288,12 @@ rtag_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	which = W_REPOS | W_ATTIC;
     else
 	which = W_REPOS;
+
+    if (numtag != NULL && !numtag_validated)
+    {
+	tag_check_valid (numtag, *pargc - 1, argv + 1, local, 0, NULL);
+	numtag_validated = 1;
+    }
 
     /* check to make sure they are authorized to tag all the 
        specified files in the repository */

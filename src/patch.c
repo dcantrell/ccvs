@@ -34,7 +34,9 @@ static int toptwo_diffs = 0;
 static int local = 0;
 static char *options = NULL;
 static char *rev1 = NULL;
+static int rev1_validated = 1;
 static char *rev2 = NULL;
+static int rev2_validated = 1;
 static char *date1 = NULL;
 static char *date2 = NULL;
 static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
@@ -309,6 +311,17 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	which = W_REPOS | W_ATTIC;
     else
 	which = W_REPOS;
+
+    if (rev1 != NULL && !rev1_validated)
+    {
+	tag_check_valid (rev1, *pargc - 1, argv + 1, local, 0, NULL);
+	rev1_validated = 1;
+    }
+    if (rev2 != NULL && !rev2_validated)
+    {
+	tag_check_valid (rev2, *pargc - 1, argv + 1, local, 0, NULL);
+	rev2_validated = 1;
+    }
 
     /* start the recursion processor */
     err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
