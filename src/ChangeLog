@@ -1,3 +1,7 @@
+Wed Feb 28 13:32:28 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* logmsg.c (do_editor): Fix indentation.
+
 Wed Feb 28 12:56:49 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* logmsg.c (do_editor): If no editor is defined, exit and print
