@@ -1,3 +1,8 @@
+1998-10-25  Jim Kingdon
+
+	* cvs.texinfo (Branches and revisions): Fix error in branch
+	numbering which was introduced with change of 4 May 1997.
+
 1998-10-20  Jim Kingdon
 
 	* cvs.texinfo (Tags): Point to Invoking CVS node so people aren't

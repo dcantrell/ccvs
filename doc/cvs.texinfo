@@ -3832,12 +3832,16 @@ The following figure illustrates branching with an
 example.
 
 @example
+@c This example used to have a 1.2.2.4 revision, which
+@c might help clarify that development can continue on
+@c 1.2.2.  Might be worth reinstating if it can be done
+@c without overfull hboxes.
 @group
-                                      +-------------+
-           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
-                                    / +-------------+
-                                   /
-                                  /
+                                                      +-------------+
+                           Branch 1.2.2.3.2 ->        ! 1.2.2.3.2.1 !
+                                                    / +-------------+
+                                                   /
+                                                  /
                  +---------+    +---------+    +---------+
 Branch 1.2.2 -> _! 1.2.2.1 !----! 1.2.2.2 !----! 1.2.2.3 !
                / +---------+    +---------+    +---------+
