@@ -210,3 +210,6 @@ lib/asprintf.c
 m4/vasprintf.m4
 
 m4/onceonly_2_57.m4
+lib/malloc.c
+
+m4/onceonly_2_57.m4

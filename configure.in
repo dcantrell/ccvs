@@ -218,7 +218,6 @@ dnl Always use the GNULIB getpass to work around 8 character password limits on
 dnl HP-UX.
 gl_FUNC_GNU_STRFTIME
 gl_GETDATE
-jm_FUNC_MALLOC
 jm_FUNC_REALLOC
 dnl The following macros can be called by other GNULIB macros but are also
 dnl used by the UNIQUE_*_TYPE stuff below.  I don't want to rely on the GNULIB

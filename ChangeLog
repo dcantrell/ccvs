@@ -1,5 +1,11 @@
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Remove call to jm_MALLOC.
+	* gnulib-update (MODULES): Add malloc module.
+	* srclist.txt: Remove GNULIB malloc module.
+
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
 	* TODO (22, 31): Remove completed items.
 
 2004-10-21  Derek Price  <derek@ximbiot.com>
