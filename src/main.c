@@ -42,6 +42,7 @@ int quiet = 0;
 int trace = 0;
 int noexec = 0;
 int logoff = 0;
+int multiroot_debug = 0;
 
 /* Set if we should be writing CVSADM directories at top level.  At
    least for now we'll make the default be off (the CVS 1.9, not CVS
@@ -512,7 +513,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xa", long_options, &option_index))
+            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xam", long_options, &option_index))
            != EOF)
     {
 	switch (c)
@@ -630,6 +631,9 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
                    have it in their .cvsrc and not cause any trouble.
                    We will issue an error later if stream
                    authentication is not supported.  */
+		break;
+	    case 'm':
+		multiroot_debug = 1;
 		break;
 	    case '?':
 	    default:
@@ -898,6 +902,7 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	root_directories = getlist ();
 
 	/* Prime it. */
+	if (CVSroot != NULL)
 	{
 	    Node *n;
 	    n = getnode ();
@@ -910,12 +915,23 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 	}
 
 	assert (current_root == NULL);
-	
-	while (walklist (root_directories, set_root_directory, NULL))
-	{
-#ifdef DEBUG_NJC
-	    error (0, 0, "notice: main loop with CVSROOT=%s", current_root);
+
+	/* If we're running the server, we want to execute this main
+	   loop once and only once (we won't be serving multiple roots
+	   from this connection, so there's no need to do it more than
+	   once).  To get out of the loop, we perform a "break" at the
+	   end of things.  */
+
+	while (
+#ifdef SERVER_SUPPORT
+	       server_active ||
 #endif
+	       walklist (root_directories, set_root_directory, NULL)
+	       )
+	{
+	    if (multiroot_debug)
+		error (0, 0, "notice: main loop with CVSROOT=%s",
+		       current_root);
 
 #ifdef SERVER_SUPPORT
 	    /* Fiddling with CVSROOT doesn't make sense if we're running
@@ -1019,17 +1035,26 @@ Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
 		Create_Root (NULL, CVSroot);
 	    }
 
-	    /* Mark this root directory as done. */
+	    /* Mark this root directory as done.  When the server is
+               active, current_root will be NULL -- don't try and
+               remove it from the list. */
+
+	    if (current_root != NULL)
 	    {
 		Node *n = findnode (root_directories, current_root);
 		assert (n != NULL);
 		n->data = (void *) 1;
+		current_root = NULL;
 	    }
-	    current_root = NULL;
 	
 #if 0
 	    /* This will not work yet, since it tries to free (void *) 1. */
 	    dellist (&root_directories);
+#endif
+
+#ifdef SERVER_SUPPORT
+	    if (server_active)
+	      break;
 #endif
 	} /* end of loop for cvsroot values */
 

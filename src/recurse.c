@@ -358,7 +358,6 @@ do_recursion (frame)
     int err = 0;
     int dodoneproc = 1;
     char *srepository;
-    char *this_root;
     List *entries = NULL;
     int should_readlock;
     int process_this_directory = 1;
@@ -419,36 +418,45 @@ do_recursion (frame)
        usual.  THIS_ROOT might be NULL if we're doing an initial
        checkout -- check before using it.  The default should be that
        we process a directory's contents and only skip those contents
-       if a CVS/Root file exists.  */
+       if a CVS/Root file exists. 
 
-    this_root = Name_Root ((char *) NULL, update_dir);
-    if (this_root != NULL)
+       If we're running the server, we want to process all
+       directories, since we're guaranteed to have only one CVSROOT --
+       our own.  */
+
+#ifdef SERVER_SUPPORT
+    if (! server_active)
+#endif
     {
-	if (findnode (root_directories, this_root) == NULL)
+	char *this_root = Name_Root ((char *) NULL, update_dir);
+	if (this_root != NULL)
 	{
-	    /* Add it to our list. */
+	    if (findnode (root_directories, this_root) == NULL)
+	    {
+		/* Add it to our list. */
 
-	    Node *n = getnode ();
-	    n->type = UNKNOWN;
-	    n->key = xstrdup (this_root);
+		Node *n = getnode ();
+		n->type = UNKNOWN;
+		n->key = xstrdup (this_root);
 
-	    if (addnode (root_directories, n))
-		error (1, 0, "cannot add new CVSROOT %s", this_root);
+		if (addnode (root_directories, n))
+		    error (1, 0, "cannot add new CVSROOT %s", this_root);
 	
 #ifdef DEBUG_NJC
-	    error (0, 0, "notice: noticed new CVSROOT %s in do_recursion",
-		   this_root);
+		error (0, 0, "notice: noticed new CVSROOT %s in do_recursion",
+		       this_root);
 #endif
+	    }
+	
+	    process_this_directory = (strcmp (current_root, this_root) == 0);
+#ifdef DEBUG_NJC
+	    if (! process_this_directory)
+		error (0, 0, "notice: skipping CVSROOT %s for %s in do_recursion",
+		       this_root, strcmp (update_dir, "") ? update_dir : ".");
+#endif
+	
+	    free (this_root);
 	}
-
-	process_this_directory = (strcmp (current_root, this_root) == 0);
-#ifdef DEBUG_NJC
-	if (! process_this_directory)
-	    error (0, 0, "notice: skipping CVSROOT %s for %s in do_recursion",
-		   this_root, strcmp (update_dir, "") ? update_dir : ".");
-#endif
-	
-	free (this_root);
     }
 
     /*
@@ -808,6 +816,10 @@ but CVS uses %s for its own purposes; skipping %s directory",
 
     /* Only process this directory if the root matches.  This nearly
        duplicates code in do_recursion. */
+
+#ifdef SERVER_SUPPORT
+    if (! server_active)
+#endif
     {
 	char *this_root = Name_Root (dir, update_dir);
 	if (this_root != NULL)

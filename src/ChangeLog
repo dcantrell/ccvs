@@ -1,5 +1,15 @@
 Wed Aug 19 00:28:50 1998  Noel Cragg  <noel@swish.red-bean.com>
 
+	* recurse.c (do_dir_proc): don't muck with CVS/Root directories
+ 	when running in server mode.
+	(do_recursion): same.
+
+	* main.c (main): add the command-line option `m' to help debug the
+ 	multiroot environment; it prints out the value of CVSROOT for each
+ 	iteration through the main loop.  Also, changed the main loop so
+ 	that it gets executed only once when running in server mode (the
+ 	server will only deal with a single CVSROOT).
+
 	* recurse.c (do_recursion): change default for
  	PROCESS_THIS_DIRECTORY to true; we should always process a
  	directory's contents unless there's an existing CVS/Root file with
