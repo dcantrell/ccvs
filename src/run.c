@@ -386,6 +386,24 @@ run_exec (stin, stout, sterr, flags)
     return (rc);
 }
 
+/* diff_run is imported from libdiff.a. */
+int diff_run PROTO((int argc, char **argv, char *out));
+
+int
+call_diff (out)
+    char *out;
+{
+    extern int optind;
+
+    /* Getopt has already been run by CVS, but we need to run it again
+       to process diff options.  Reset it artificially. */
+    optind = 0;
+    if (out == RUN_TTY)
+	return diff_run (run_argc, run_argv, NULL);
+    else
+	return diff_run (run_argc, run_argv, out);
+}
+
 void
 run_print (fp)
     FILE *fp;

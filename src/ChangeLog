@@ -1,3 +1,17 @@
+Sat Sep 20 07:19:18 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	Integrate diff library into CVS.
+	* run.c, cvs.h (call_diff): New function.
+	* rcscmds.c (diff_exec, diff_execv): Get diffs from call_diff
+	instead of running diff as a subprocess.
+	* Makefile.in (cvs): Add ../diff/libdiff.a.
+
+	* diff.c (longopts, diff): Use 131 for --ifdef, fixing Jim's thinko
+	(using 147 for both --side-by-side and --ifdef).
+
+	* sanity.sh (rcslib): Added tests rcslib-diffrgx-*, to test
+	handling of regex diff options.
+
 1997-09-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	(Note that this requires that DIFF support -L.  I'll be checking

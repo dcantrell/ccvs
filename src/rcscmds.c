@@ -403,14 +403,10 @@ diff_exec (file1, file2, options, out)
     char *options;
     char *out;
 {
+    /* The first word in this string is used only for error reporting. */
     run_setup ("%s %s %s %s", DIFF, options, file1, file2);
-    if (out == RUN_TTY)
-	/* I'm not 100% sure about the need for RUN_COMBINED here.  But
-	   the code I took this from had it, and I suspect it may
-	   avoid some out-of-order bugs.  */
-	return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY | RUN_COMBINED);
-    else
-	return run_exec (RUN_TTY, out, RUN_TTY, RUN_REALLY);
+
+    return call_diff (out);
 }
 
 int
@@ -430,13 +426,7 @@ diff_execv (file1, file2, label1, label2, options, out)
     run_arg (file1);
     run_arg (file2);
 
-    if (out == RUN_TTY)
-	/* I'm not 100% sure about the need for RUN_COMBINED here.  But
-	   the code I took this from had it, and I suspect it may
-	   avoid some out-of-order bugs.  */
-	return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY | RUN_COMBINED);
-    else
-	return run_exec (RUN_TTY, out, RUN_TTY, RUN_REALLY);
+    return call_diff (out);
 }
 
 /* Print the options passed to DIFF, in the format used by rcsdiff.
