@@ -233,7 +233,10 @@
      change the Repository file with some degree of error checking?
      Something like "cvs admin reposmv /old/path /new/pretty/path".  Before
      it does the replace it check to see that the files
-     /new/pretty/path/<dir>/<files> exist.
+     /new/pretty/path/<dir>/<files> exist.  (This was written before
+     CVS/Root existed.  Nowadays the more relevant issue is being able to
+     change CVS/Root with some degree of error checking, and RELATIVE_REPOS,
+     so that changing CVS/Root suffices -kingdon, Jul 1997).
 
 150. I have a customer request for a way to specify log message per
      file, non-interactively before the commit, such that a single, fully
