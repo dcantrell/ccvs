@@ -1,3 +1,12 @@
+Thu Oct 17 15:21:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (process_prune_candidates): Do not ignore errors from
+	unlink_file_dir.
+
+	* filesubr.c (deep_remove_dir): If rmdir returns an error other
+	than ENOTEMPTY or EEXIST, return -1 not 0.  Add workaround for AIX
+	header bug.
+
 Tue Apr 30 08:21:27 1996  Mike Sutton <mike_sutton@dayton.saic.com>
 
 	* checkout.c, history.c: added logging/reporting of cvs export
