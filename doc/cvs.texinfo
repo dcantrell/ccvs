@@ -137,6 +137,7 @@ similar.
 * Tracking sources::            Tracking third-party sources
 * Moving files::                Moving and renaming files
 * Moving directories::          Moving and renaming directories
+* History browsing::            Viewing the history of files in various ways
 * Keyword substitution::        CVS can include the revision inside the file
 * Binary files::                CVS can handle binary files
 * Revision management::         Policy questions for revision management
@@ -3304,13 +3305,18 @@ directory you are unlikely to be able to retrieve old
 releases correctly, since they probably depend on the
 name of the directories.
 
-@ignore
 @c ---------------------------------------------------------------------
-@c @node History browsing
+@node History browsing
 @chapter History browsing
 @cindex History browsing
 @cindex Traceability
 @cindex Isolation
+
+@ignore
+@c This is too long for an introduction (goal is
+@c one 20x80 character screen), and also mixes up a
+@c variety of issues (parallel development, history,
+@c maybe even touches on process control).
 
 @c -- @quote{To lose ones history is to lose ones soul.}
 @c -- ///
@@ -3356,32 +3362,128 @@ This chapter should talk about the history file, the
 @code{log} command, the usefulness of ChangeLogs
 even when you run @sc{cvs}, and things like that.
 
+@end ignore
+
+@c kind of lame, in a lot of ways the above text inside
+@c the @ignore motivates this chapter better
+Once you have used @sc{cvs} to store a version control
+history---what files have changed when, how, and by
+whom, there are a variety of mechanisms for looking
+through the history.
+
 @menu
 * log messages::                Log messages
 * history database::            The history database
 * user-defined logging::        User-defined logging
+* annotate::                    What revision modified each line of a file?
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node log messages
 @section Log messages
 
-Whenever you commit a file you specify a log message. ///
-@c -- 
+@c FIXME: @xref to place where we talk about how to
+@c specify message to commit.
+Whenever you commit a file you specify a log message.
+
+@c FIXME: bring the information here, and get rid of or
+@c greatly shrink the "log" node.
+To look through the log messages which have been
+specified for every revision which has been committed,
+use the @code{cvs log} command (@pxref{log}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history database
 @section The history database
 
-///
+@c FIXME: bring the information from the history file
+@c and history nodes here.  Rewrite it to be motivated
+@c better (start out by clearly explaining what gets
+@c logged in history, for example).
+You can use the history file (@pxref{history file}) to
+log various @sc{cvs} actions.  To retrieve the
+information from the history file, use the @code{cvs
+history} command (@pxref{history}).
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node user-defined logging
 @section User-defined logging
 
-///
+@c FIXME: should probably also mention the fact the -l
+@c global option can disable most of the mechanisms
+@c discussed here (why?  What is the -l global option for?).
+@c
+@c FIXME: probably should centralize this information
+@c here, at least to some extent.  Maybe by moving the
+@c loginfo, etc., nodes here and replacing
+@c the "user-defined logging" node with one node for
+@c each method.
+You can customize @sc{cvs} to log various kinds of
+actions, in whatever manner you choose.  These
+mechanisms operate by executing a script at various
+times.  The script might append a message to a file
+listing the information and the programmer who created
+it, or send mail to a group of developers, or, perhaps,
+post a message to a particular newsgroup.  To log
+commits, use the @file{loginfo} file (@pxref{loginfo}).
+@c FIXME: What is difference between doing it in the
+@c modules file and using loginfo/taginfo?  Why should
+@c user use one or the other?
+To log commits, checkouts, exports, and tags,
+respectively, you can also use the @samp{-i},
+@samp{-o}, @samp{-e}, and @samp{-t} options in the
+modules file.  For a more flexible way of giving
+notifications to various users, which requires less in
+the way of keeping centralized scripts up to date, use
+the @code{cvs watch add} command (@pxref{Getting
+Notified}); this command is useful even if you are not
+using @code{cvs watch on}.
 
-@end ignore
+@cindex taginfo
+The @file{taginfo} file defines programs to execute
+when someone executes a @code{tag} or @code{rtag}
+command.  The @file{taginfo} file has the standard form
+for administrative files (@pxref{Administrative
+files}), where each line is a regular expression
+followed by a command to execute.  The arguments passed
+to the command are, in order, the @var{tagname},
+@var{operation} (@code{add} for @code{tag},
+@code{mov} for @code{tag -F}, and @code{del} for
+@code{tag -d}), @var{repository}, and any remaining are
+pairs of @var{filename} @var{revision}.  A non-zero
+exit of the filter program will cause the tag to be
+aborted.
+
+@node annotate
+@section Annotate command
+@cindex annotate (subcommand)
+
+@deffn Command {cvs annotate} [@code{-l}] files @dots{}
+
+For each file in @var{files}, print the head revision
+of the trunk, together with information on the last
+modification for each line.  The @code{-l} option means
+to process the local directory only, not to recurse
+(@pxref{Common options}).  For example:
+
+@example
+$ cvs annotate ssfile
+Annotations for ssfile
+***************
+1.1          (mary     27-Mar-96): ssfile line 1
+1.2          (joe      28-Mar-96): ssfile line 2
+@end example
+
+The file @file{ssfile} currently contains two lines.
+The @code{ssfile line 1} line was checked in by
+@code{mary} on March 27.  Then, on March 28, @code{joe}
+added a line @code{ssfile line 2}, without modifying
+the @code{ssfile line 1} line.  This report doesn't
+tell you anything about lines which have been deleted
+or replaced; you need to use @code{cvs diff} for that
+(@pxref{diff}).
+
+@end deffn
 
 @c ---------------------------------------------------------------------
 @node Keyword substitution
