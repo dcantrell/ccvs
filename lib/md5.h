@@ -16,11 +16,11 @@ struct cvs_MD5Context {
 	unsigned char in[64];
 };
 
-void cvs_MD5Init PROTO ((struct cvs_MD5Context *context));
-void cvs_MD5Update PROTO ((struct cvs_MD5Context *context,
-			   unsigned char const *buf, unsigned len));
-void cvs_MD5Final PROTO ((unsigned char digest[16],
-			  struct cvs_MD5Context *context));
-void cvs_MD5Transform PROTO ((cvs_uint32 buf[4], const unsigned char in[64]));
+void cvs_MD5Init (struct cvs_MD5Context *context);
+void cvs_MD5Update (struct cvs_MD5Context *context,
+			   unsigned char const *buf, unsigned len);
+void cvs_MD5Final (unsigned char digest[16],
+			  struct cvs_MD5Context *context);
+void cvs_MD5Transform (cvs_uint32 buf[4], const unsigned char in[64]);
 
 #endif /* !MD5_H */

@@ -37,8 +37,6 @@
 #include <stdio.h>
 #include <signal.h>
 
-#include "PROTO.h"
-
 #ifdef STDC_HEADERS
 #include <stdlib.h>
 #else
@@ -77,7 +75,7 @@ static	struct sigaction	*SIG_defaults;
 #ifdef BSD_SIGNALS
 static	struct sigvec		*SIG_defaults;
 #else
-static	RETSIGTYPE		(**SIG_defaults) PROTO ((int));
+static	RETSIGTYPE		(**SIG_defaults) (int);
 #endif
 #endif
 
@@ -122,8 +120,8 @@ static int SIG_init()
 			calloc(i, sizeof(struct sigvec));
 #else
 	if (!SIG_defaults)
-		SIG_defaults = (RETSIGTYPE (**) PROTO ((int)) )
-			calloc(i, sizeof(RETSIGTYPE (**) PROTO ((int)) ));
+		SIG_defaults = ( RETSIGTYPE (**) (int) )
+			calloc( i, sizeof( RETSIGTYPE (**) (int) ) );
 #endif
 	SIG_crSectMask = 0;
 #endif
@@ -137,7 +135,7 @@ static int SIG_init()
  * The following invokes each signal handler in the reverse order in which
  * they were registered.
  */
-static RETSIGTYPE SIG_handle PROTO ((int));
+static RETSIGTYPE SIG_handle (int);
 
 static RETSIGTYPE SIG_handle(sig)
 int			sig;
