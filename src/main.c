@@ -329,7 +329,7 @@ lookup_command_attribute (cmd_name)
 
     for (cm = cmds; cm->fullname; cm++)
     {
-	if (strcmp (command_name, cm->fullname) == 0)
+	if (strcmp (cmd_name, cm->fullname) == 0)
 	    break;
     }
     return cm->attr;

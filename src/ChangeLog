@@ -1,3 +1,8 @@
+2001-04-27  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (lookup_command_attribute): Lookup specified command, not
+	whatever's in the global command_name.
+
 2001-04-25  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated using AM 1.4e as of today at 18:10 -0400.
