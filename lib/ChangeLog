@@ -1,3 +1,7 @@
+2004-07-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Ignore GCC profiling data.
+
 2004-06-24  Derek Price  <derek@ximbiot.com>
 
 	* libcvs.dsp: Add "./xsize.h" to Header file list.  Add "./strftime.c"
