@@ -20,6 +20,12 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+
+
+# Need Perl 5.005 or greater for re 'eval'.
+require 5.005;
+
+# The usual.
 use strict;
 use IO::File;
 
@@ -137,10 +143,6 @@ for my $file (@ARGV)
 				print ".SP\n";
 				next;
 			}
-
-			# Replace special chars.
-			s/\@([{}])/$1/g;
-			s/\@\@/\@/g;
 
 			# Preserve the newline.
 			$_ = qq{.IP "" $indent\n} . $_;
@@ -281,6 +283,7 @@ for my $file (@ARGV)
 		}
 
 		# Finally, unprotect texinfo special characters.
+		s/\@://g;
 		s/\@([{}])/$1/g;
 		s/\@\@/\@/g;
 
