@@ -56,12 +56,12 @@ TCPIPLIB = s:${SL}ibmtcpip${SL}lib${SL}tcp32dll.lib	s:${SL}ibmtcpip${SL}lib${SL}
 # We list OS2_HEADERS so we know what to include when we make dist-dir
 # here.
 OS2_HEADERS = \
-       ${srcdir}${SL}tcpip.h \
-       ${srcdir}${SL}config.h \
-       ${srcdir}${SL}pwd.h \
-       ${srcdir}${SL}dirent.h \
-       ${srcdir}${SL}rcmd.h \
-       ${srcdir}${SL}popen.h
+       tcpip.h \
+       config.h \
+       pwd.h \
+       dirent.h \
+       rcmd.h \
+       popen.h
 
 # headers we use from the common src dir, ..${SL}src
 COMMON_HEADERS = \
@@ -77,17 +77,17 @@ COMMON_HEADERS = \
 
 # sources specific to OS/2
 OS2_SOURCES = \
-       ${srcdir}${SL}mkdir.c \
-       ${srcdir}${SL}pwd.c \
-       ${srcdir}${SL}filesubr.c \
-       ${srcdir}${SL}dirent.c \
-       ${srcdir}${SL}run.c \
-       ${srcdir}${SL}stripslash.c \
-       ${srcdir}${SL}rcmd.c \
-       ${srcdir}${SL}waitpid.c \
-       ${srcdir}${SL}popen.c \
-       ${srcdir}${SL}porttcp.c \
-       ${srcdir}${SL}getpass.c
+       mkdir.c \
+       pwd.c \
+       filesubr.c \
+       dirent.c \
+       run.c \
+       stripslash.c \
+       rcmd.c \
+       waitpid.c \
+       popen.c \
+       porttcp.c \
+       getpass.c
 
 # sources we use from the common src dir, ..${SL}src
 # FIXME: Is this used anywhere?  I don't think it is.
@@ -264,10 +264,10 @@ HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
 OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS} ${ZLIB_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  ${srcdir}${SL}README ${srcdir}${SL}ChangeLog \
-  ${srcdir}${SL}Makefile.in ${srcdir}${SL}.cvsignore \
-  ${srcdir}${SL}test-makefile Makefile ${srcdir}/os2inc.h \
-  ${srcdir}/watcom.mak
+  README ChangeLog \
+  Makefile.in .cvsignore \
+  test-makefile Makefile os2inc.h \
+  watcom.mak
 
 all:
 
@@ -296,27 +296,27 @@ lint:
 .PHONY: check
 check:
 
-# distdir added for CVS.
-top_builddir = ..
+# distdir added for compatibility with CVS automake.
+top_distdir = ..
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
-# FIXME - sedding the directory off of the DISTFILES targets is really yucky.
-# The $(srcdir) prefixes should really be removed from all of the files in the
-# lists that make up DISTFILES above.  Unfortunately, I don't have an OS2 box
-# to test on.
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
+
 distdir: $(DISTFILES)
-	@d=$(srcdir); \
-	for f in $(DISTFILES); do \
-	  file=`echo $$f |sed 's,.*/,,'`; \
-	  if test -d $(distdir)/`dirname $$file`; then \
-	    :; \
+	@list='$(DISTFILES)'; for file in $$list; do \
+	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    dir="/$$dir"; \
+	    $(mkinstalldirs) "$(distdir)$$dir"; \
 	  else \
-	    mkdir $(distdir)/`dirname $$file`; \
+	    dir=''; \
 	  fi; \
 	  if test -d $$d/$$file; then \
-	    cp -pR $$d/$$file $(distdir) \
-	    || exit 1; \
+	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
+	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
+	    fi; \
+	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || cp -p $$d/$$file $(distdir)/$$file \

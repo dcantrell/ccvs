@@ -1,3 +1,9 @@
+2002-03-21  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Remove unecessary dependence on $(srcdir) to
+	fix the dist target.
+	(distdir): Use new automake generated target (copied from src).
+
 2002-12-19  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Remove reference to options.h.
