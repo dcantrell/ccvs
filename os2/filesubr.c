@@ -66,7 +66,8 @@ copy_file (from, to)
 	error (1, errno, "cannot open %s for copying", from);
     if (fstat (fdin, &sb) < 0)
 	error (1, errno, "cannot fstat %s", from);
-    if ((fdout = creat (to, (int) sb.st_mode & 07777)) < 0)
+    if ((fdout = open (to, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY,
+					   (int) sb.st_mode & 07777)) < 0)
 	error (1, errno, "cannot create %s for copying", to);
     if (sb.st_size > 0)
     {
