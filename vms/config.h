@@ -113,9 +113,6 @@
 /* Define if you have the rename function */
 #define HAVE_RENAME 1
 
-/* Define if you have the strdup function */
-#define HAVE_STRDUP 1
-
 /* Define if you have the putenv function.  */
 /* #undef HAVE_PUTENV */
 
