@@ -4092,7 +4092,7 @@ start_server (void)
 
 /* Send an argument STRING.  */
 void
-send_arg (char *string)
+send_arg (const char *string)
 {
     char buf[1];
     char *p = string;
@@ -4567,7 +4567,7 @@ send_dirleave_proc (void *callerdat, const char *dir, int err,
  */
 
 void
-send_option_string (char *string)
+send_option_string (const char *string)
 {
     char *copy;
     char *p;
@@ -5092,7 +5092,7 @@ client_notify (const char *repository, const char *update_dir,
  * the argument.  If ARG is NULL, forget the whole thing.
  */
 void
-option_with_arg (char *option, char *arg)
+option_with_arg (const char *option, const char *arg)
 {
     if (arg == NULL)
 	return;

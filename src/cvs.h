@@ -474,7 +474,7 @@ typedef	int (*CALLPROC)	(const char *repository, const char *value,
 int Parse_Info (const char *infofile, const char *repository,
                 CALLPROC callproc, int opt, void *closure);
 
-typedef	RETSIGTYPE (*SIGCLEANUPPROC)	();
+typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
 int isdir (const char *file);
 int isfile (const char *file);

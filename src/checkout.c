@@ -106,7 +106,7 @@ checkout (int argc, char **argv)
     int local = 0;
     int shorten = -1;
     char *where = NULL;
-    char *valid_options;
+    const char *valid_options;
     const char *const *valid_usage;
 
     /* initialize static options */
