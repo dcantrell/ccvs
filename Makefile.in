@@ -111,7 +111,7 @@ all:
 all install uninstall: config.h Makefile all-local
 	@for subdir in $(SUBDIRS); do \
 	  echo "making $@ in $$subdir"; \
-	  ( cd $$subdir; $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
+	  ( cd $$subdir && $(MAKE) $(FLAGS_TO_PASS) $@ ) || exit 1; \
 	done
 
 install: all install-local install-info
@@ -133,7 +133,7 @@ cvsinit: cvsinit.sh
 
 .PHONY: info dvi clean-info install-info
 info dvi clean-info install-info:
-	cd doc ; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1
+	cd doc && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1
 
 .PHONY: install-local
 install-local: all-local
@@ -144,13 +144,13 @@ install-local: all-local
 
 .PHONY: tags
 tags:
-	@for dir in $(TSUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(TSUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 	@echo making $@ in .
 	@ctags `for i in \`$(MAKE) SUBDIRS="$(TSUBDIRS)" ls\` ; do echo $(srcdir)/$$i ; done`
 
 .PHONY: TAGS
 TAGS:
-	@for dir in $(TSUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(TSUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 	@echo making $@ in .
 	@etags `for i in \`$(MAKE) SUBDIRS="$(TSUBDIRS)" ls | grep -v 'make\[[0-9]\]'\` ; do echo $(srcdir)/$$i ; done`
 
@@ -158,23 +158,23 @@ TAGS:
 ls:
 	@echo $(DISTFILES)
 	@for dir in $(SUBDIRS); do \
-		for i in `cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ | grep -v 'make\[[0-9]\]'` ; do \
+		for i in `cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ | grep -v 'make\[[0-9]\]'` ; do \
 			echo $$dir/$$i ; \
 		done ; \
 	done
 
 .PHONY: clean
 clean: clean-local
-	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 
 .PHONY: distclean
 distclean: distclean-local
-	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 	rm -f config.status
 
 .PHONY: realclean
 realclean: realclean-local
-	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 	rm -f config.status
 
 .PHONY: mostlyclean-local
@@ -194,7 +194,7 @@ realclean-local: distclean-local
 
 .PHONY: saber
 saber:
-	@for dir in $(SUBDIRS); do cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	@for dir in $(SUBDIRS); do cd $$dir && $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
 
 .PHONY: check
 check:
@@ -210,7 +210,7 @@ installcheck:
 
 .PHONY: lint
 lint:
-	@for dir in $(SUBDIRS); do cd $$dir; $(MAKE) $(FLAGS_TO_PASS) xlint || exit 1; cd ..; done
+	@for dir in $(SUBDIRS); do cd $$dir && $(MAKE) $(FLAGS_TO_PASS) xlint || exit 1; cd ..; done
 
 .PHONY: dist
 GZIP=gzip --best
@@ -225,7 +225,7 @@ dist:
 	${MAKE} dist-dir DISTDIR="`cat .fname`"
 	for dir in ${SUBDIRS}; do \
 	  ( DISTDIR="../`cat .fname`/$${dir}"; \
-            cd $${dir}; \
+            cd $${dir} && \
 	    ${MAKE} dist-dir DISTDIR="$${DISTDIR}" \
 	  ); \
 	done

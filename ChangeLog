@@ -1,3 +1,8 @@
+Thu Aug 31 13:47:35 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Change "cd foo; make" to "cd foo && make";
+	otherwise we get into an infinite loop if an objdir doesn't exist.
+
 Wed Aug 30 18:45:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
         * .cvsignore: Ignore WinDebug and WinRel directories, used by
