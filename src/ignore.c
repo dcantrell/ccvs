@@ -5,7 +5,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)ignore.c 1.16 94/09/24 $";
+static const char rcsid[] = "$CVSid: @(#)ignore.c 1.16 94/09/24 $";
 USE(rcsid)
 #endif
 
@@ -27,7 +27,7 @@ static int ign_size;			/* This many slots available (plus
 static int ign_hold;			/* Index where first "temporary" item
 					 * is held */
 
-char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state .nse_depinfo #* .#* cvslog.* ,* CVS* .del-* *.a *.o *.so *.Z *~ *.old *.elc *.ln *.bak *.BAK *.orig *.rej";
+const char *ign_default = ". .. core RCSLOG tags TAGS RCS SCCS .make.state .nse_depinfo #* .#* cvslog.* ,* CVS* .del-* *.a *.o *.so *.Z *~ *.old *.elc *.ln *.bak *.BAK *.orig *.rej";
 
 #define IGN_GROW 16			/* grow the list by 16 elements at a
 					 * time */

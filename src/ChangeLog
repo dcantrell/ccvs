@@ -1,3 +1,18 @@
+Fri Jun  9 11:24:06 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* all source files (rcsid): Added const qualifer.
+	* ignore.c (ign_default): Added const qualifier.
+	* subr.c (numdots): Added const qualifier to function argument.
+	* cvs.h (numdots): Added const qualifier to prototype argument.
+
+	* client.c (change_mode): Tied consecutive if statements testing
+	  the same variable together with else if.
+
+	* import.c (import_descend): Build list of subdirectories when
+	  reading directory, and then process the subdirectories in that
+	  list.  This change avoids I/O overhead of rereading directory
+	  and reloading ignore list (.cvsignore) for each subdirectory.
+
 Thu Jun  8 11:54:24 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* import.c (import_descend): Use 4.4BSD d_type field if it is

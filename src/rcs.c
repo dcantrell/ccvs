@@ -12,7 +12,7 @@
 #include "cvs.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)rcs.c 1.40 94/10/07 $";
+static const char rcsid[] = "$CVSid: @(#)rcs.c 1.40 94/10/07 $";
 USE(rcsid)
 #endif
 

@@ -46,7 +46,7 @@
 #endif
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
+static const char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
 USE(rcsid)
 #endif
 

@@ -38,7 +38,7 @@
 #include "md5.h"
 
 #ifndef lint
-static char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
+static const char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
 USE(rcsid)
 #endif
 

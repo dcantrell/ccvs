@@ -83,9 +83,9 @@ change_mode (filename, mode_string)
 	    {
 		if (*q == 'r')
 		    can_read = 1;
-		if (*q == 'w')
+		else if (*q == 'w')
 		    can_write = 1;
-		if (*q == 'x')
+		else if (*q == 'x')
 		    can_execute = 1;
 		++q;
 	    }
