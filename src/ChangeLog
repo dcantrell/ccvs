@@ -1,3 +1,10 @@
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (SIZE_MAX, SSIZE_MAX): New constants.
+	(xreadlink): Deal with symlinks longer than 127 bytes.
+	(Problem reported as issue 190 by Gottfried Ganssauge
+	<gotti@cvshome.org>.)
+	
 2004-10-28  Mark D. Baushke  <mdb@cvshome.org>
 
 	* release.c (release): Allow builds of cvs with --disable-server
