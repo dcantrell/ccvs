@@ -533,13 +533,30 @@ This section is taken from release 2.3 of the @sc{cvs}
 @cindex Modules (intro)
 @cindex Repository (intro)
 
-@sc{cvs} stores all files in a centralized @dfn{repository}: a
-directory (such as @file{/usr/local/cvsroot}) which is populated with a
-hierarchy of files and directories.
+@sc{cvs} stores all files in a centralized
+@dfn{repository}: a directory (such as @file{/usr/local/cvsroot} 
+or @file{user@@remotehost:/usr/local/cvsroot}) which is
+populated with a hierarchy of files and directories.
 
 Normally, you never access any of the files in the
-repository directly.  Instead, you use @sc{cvs} commands to
-get your own copy of the files, and then work on that copy.
+repository directly.  Instead, you use @sc{cvs}
+commands to get your own copy of the files, and then
+work on that copy.  When you've finished a set of
+changes, you check (or @dfn{commit}) them back into the
+repository.
+
+@cindex Remote Repository
+@cindex Repository (remote)
+@cindex Client/Server Operation
+Your working copy can be checked out to a machine other
+than the one the repository resides on, as long as the
+two machines are connected via a network.  To access a
+remote repository, use the syntax @file{hostname:/path}
+in naming the repository.  If you have different
+usernames on the local and remote hosts, then use
+@file{user@@hostname:/path} (but you'll have to make
+sure your @file{.rhosts} file is set up so that
+@file{rsh} works transparently).
 
 The files in the repository are organized in
 @dfn{modules}.  Each module is made up of one or more
@@ -894,11 +911,21 @@ Only directories are shown below.
               +--(other Yoyodyne software)
 @end example                              
 
-The @code{$CVSROOT} environment variable should always
-be set to an absolute path to the root of the
+
+There are a couple of different ways for telling @sc{cvs}
+where to find the repository.  You can name the
+repository on the command line directly, with the
+@code{-d} (for "directory") option to @sc{cvs}:
+
+@example
+cvs -d /usr/local/cvsroot checkout yoyodyne/tc
+@end example
+
+        Or you can set the @code{$CVSROOT} environment
+variable to an absolute path to the root of the
 repository, @file{/usr/local/cvsroot} in this example.
-With this setup all @code{csh} and @code{tcsh} users
-should have this line in their @file{.cshrc} or
+To set @code{$CVSROOT}, all @code{csh} and @code{tcsh}
+users should have this line in their @file{.cshrc} or
 @file{.tcshrc} files:
 
 @example
@@ -914,10 +941,31 @@ CVSROOT=/usr/local/cvsroot
 export CVSROOT
 @end example
 
+        A repository specified with @code{-d} will
+override the @code{$CVSROOT} environment variable.
+Once you've checked a working copy out from the
+repository, it will remember where its repository is
+(the information is recorded in the
+@file{@sc{cvs}/Root} file in the working copy).
+However, @sc{CVS} will complain if the @code{$CVSROOT}
+environment variable and the @file{@sc{cvs}/Root} file
+disagree on where the repository is.
+
 There is nothing magical about the name
 @file{/usr/local/cvsroot}.  You can choose to place the
-repository anywhere you like, but @code{$CVSROOT} must
-always point to it.
+repository anywhere you like.
+
+@cindex Remote Repository
+@cindex Repository (remote)
+@cindex Client/Server Operation
+To specify a repository on a remote machine (accessed
+through a network), use the syntax
+"@file{user@@host:/path/to/repository}".  The user on
+the remote machine must have a @file{.rhosts} that will
+allow transparent access (i.e.: rsh won't be prompted
+for a password) from the user on the local machine.
+You can omit the "@file{user@@}" if you have the same
+username on both machines.
 
 The repository is split in two parts.  @file{$CVSROOT/CVSROOT} contains
 administrative files for @sc{cvs}.  The other directories contain the actual
