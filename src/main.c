@@ -21,9 +21,9 @@
 extern int gethostname ();
 #endif
 
-char *program_name;
-char *program_path;
-char *command_name;
+const char *program_name;
+const char *program_path;
+const char *command_name;
 
 /* I'd dynamically allocate this, but it seems like gethostname
    requires a fixed size array.  If I'm remembering the RFCs right,
@@ -1023,7 +1023,11 @@ Copyright (c) 1989-2004 Brian Berliner, david d `zoo' zuhn, \n\
 
     Lock_Cleanup ();
 
-    free (program_path);
+    /* It's okay to cast out the const below since we know we allocated this in
+     * this function.  The const was to keep other functions from messing with
+     * this.
+     */
+    free ((char *)program_path);
     if (CVSroot_cmdline != NULL)
 	free (CVSroot_cmdline);
     if (free_CVSroot)

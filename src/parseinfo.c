@@ -14,15 +14,16 @@ extern char *logHistory;
 
 /*
  * Parse the INFOFILE file for the specified REPOSITORY.  Invoke CALLPROC for
- * the first line in the file that matches the REPOSITORY, or if ALL != 0, any lines
- * matching "ALL", or if no lines match, the last line matching "DEFAULT".
+ * the first line in the file that matches the REPOSITORY, or if ALL != 0, any
+ * lines matching "ALL", or if no lines match, the last line matching
+ * "DEFAULT".
  *
  * Return 0 for success, -1 if there was not an INFOFILE, and >0 for failure.
  */
 int
 Parse_Info (infofile, repository, callproc, all)
-    char *infofile;
-    char *repository;
+    const char *infofile;
+    const char *repository;
     CALLPROC callproc;
     int all;
 {
@@ -35,7 +36,8 @@ Parse_Info (infofile, repository, callproc, all)
     int default_line = 0;
     char *expanded_value;
     int callback_done, line_number;
-    char *cp, *exp, *value, *srepos;
+    char *cp, *exp, *value;
+    const char *srepos;
     const char *regex_err;
 
     if (current_parsed_root == NULL)
@@ -146,7 +148,8 @@ Parse_Info (infofile, repository, callproc, all)
 	    if (!all)
 		error(0, 0, "Keyword `ALL' is ignored at line %d in %s file",
 		      line_number, infofile);
-	    else if ((expanded_value = expand_path (value, infofile, line_number)) != NULL)
+	    else if ((expanded_value = expand_path (value, infofile,
+                                                    line_number)) != NULL)
 	    {
 		err += callproc (repository, expanded_value);
 		free (expanded_value);

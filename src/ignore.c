@@ -317,7 +317,7 @@ ign_dir_add (name)
 
 int
 ignore_directory (name)
-    char *name;
+    const char *name;
 {
     int i;
 
@@ -333,7 +333,9 @@ ignore_directory (name)
 
     return 0;
 }
-
+
+
+
 /*
  * Process the current directory, looking for files not in ILIST and
  * not on the global ignore list for this directory.  If we find one,
@@ -346,7 +348,7 @@ void
 ignore_files (ilist, entries, update_dir, proc)
     List *ilist;
     List *entries;
-    char *update_dir;
+    const char *update_dir;
     Ignore_proc proc;
 {
     int subdirs;
@@ -354,7 +356,7 @@ ignore_files (ilist, entries, update_dir, proc)
     struct dirent *dp;
     struct stat sb;
     char *file;
-    char *xdir;
+    const char *xdir;
     List *files;
     Node *p;
 

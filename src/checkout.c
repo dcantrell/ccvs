@@ -466,8 +466,11 @@ safe_location (where)
 		char *parent;
 
 		/* strip the last_component */
-		where_location = xstrdup( where );
-		parent = last_component( where_location );
+		where_location = xstrdup (where);
+                /* It's okay to cast out the const below since we know we just
+                 * allocated where_location and can do what we like with it.
+                 */
+		parent = (char *)last_component (where_location);
 		parent[-1] = '\0';
 
 		if( chdir( where_location ) != -1 )
@@ -1233,7 +1236,7 @@ build_dirs_and_chdir (dirs, sticky)
 
     while (dirs != NULL)
     {
-	char *dir = last_component (dirs->dirpath);
+	const char *dir = last_component (dirs->dirpath);
 
 	if (!dirs->just_chdir)
 	{

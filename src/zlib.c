@@ -618,7 +618,7 @@ gunzip_and_write (fd, fullname, buf, size)
 int
 read_and_gzip (fd, fullname, buf, size, len, level)
     int fd;
-    char *fullname;
+    const char *fullname;
     unsigned char **buf;
     size_t *size;
     size_t *len;

@@ -3363,16 +3363,18 @@ server_pause_check()
     }
 }
 #endif /* SERVER_FLOWCONTROL */
-
+
 /* This variable commented in server.h.  */
 char *server_dir = NULL;
 
-static void output_dir PROTO((char *, char *));
+
+
+static void output_dir PROTO((const char *, const char *));
 
 static void
 output_dir (update_dir, repository)
-    char *update_dir;
-    char *repository;
+    const char *update_dir;
+    const char *repository;
 {
     if (server_dir != NULL)
     {
@@ -3387,7 +3389,9 @@ output_dir (update_dir, repository)
     buf_output0 (protocol, repository);
     buf_output0 (protocol, "/");
 }
-
+
+
+
 /*
  * Entries line that we are squirreling away to send to the client when
  * we are ready.
@@ -3406,15 +3410,17 @@ static char *scratched_file;
  */
 static int kill_scratched_file;
 
+
+
 void
 server_register (name, version, timestamp, options, tag, date, conflict)
-    char *name;
-    char *version;
-    char *timestamp;
-    char *options;
-    char *tag;
-    char *date;
-    char *conflict;
+    const char *name;
+    const char *version;
+    const char *timestamp;
+    const char *options;
+    const char *tag;
+    const char *date;
+    const char *conflict;
 {
     int len;
 
@@ -3480,9 +3486,11 @@ server_register (name, version, timestamp, options, tag, date, conflict)
     }
 }
 
+
+
 void
 server_scratch (fname)
-    char *fname;
+    const char *fname;
 {
     /*
      * I have reports of Scratch_Entry and Register both happening, in
@@ -3580,9 +3588,9 @@ checked_in_response (file, update_dir, repository)
 
 void
 server_checked_in (file, update_dir, repository)
-    char *file;
-    char *update_dir;
-    char *repository;
+    const char *file;
+    const char *update_dir;
+    const char *repository;
 {
     if (noexec)
 	return;
@@ -3608,9 +3616,9 @@ server_checked_in (file, update_dir, repository)
 
 void
 server_update_entries (file, update_dir, repository, updated)
-    char *file;
-    char *update_dir;
-    char *repository;
+    const char *file;
+    const char *update_dir;
+    const char *repository;
     enum server_updated_arg4 updated;
 {
     if (noexec)
@@ -3931,13 +3939,15 @@ serve_export (arg)
     command_name = "export";
     serve_co (arg);
 }
-
+
+
+
 void
 server_copy_file (file, update_dir, repository, newfile)
-    char *file;
-    char *update_dir;
-    char *repository;
-    char *newfile;
+    const char *file;
+    const char *update_dir;
+    const char *repository;
+    const char *newfile;
 {
     /* At least for now, our practice is to have the server enforce
        noexec for the repository and the client enforce it for the
@@ -4301,10 +4311,12 @@ server_use_rcs_diff ()
     return supported_response ("Rcs-diff");
 }
 
+
+
 void
 server_set_entstat (update_dir, repository)
-    char *update_dir;
-    char *repository;
+    const char *update_dir;
+    const char *repository;
 {
     static int set_static_supported = -1;
     if (set_static_supported == -1)
@@ -4317,10 +4329,12 @@ server_set_entstat (update_dir, repository)
     buf_send_counted (protocol);
 }
 
+
+
 void
 server_clear_entstat (update_dir, repository)
-     char *update_dir;
-     char *repository;
+     const char *update_dir;
+     const char *repository;
 {
     static int clear_static_supported = -1;
     if (clear_static_supported == -1)
@@ -4335,13 +4349,15 @@ server_clear_entstat (update_dir, repository)
     buf_output0 (protocol, "\n");
     buf_send_counted (protocol);
 }
-
+
+
+
 void
 server_set_sticky (update_dir, repository, tag, date, nonbranch)
-    char *update_dir;
-    char *repository;
-    char *tag;
-    char *date;
+    const char *update_dir;
+    const char *repository;
+    const char *tag;
+    const char *date;
     int nonbranch;
 {
     static int set_sticky_supported = -1;
@@ -4386,8 +4402,8 @@ server_set_sticky (update_dir, repository, tag, date, nonbranch)
 
 struct template_proc_data
 {
-    char *update_dir;
-    char *repository;
+    const char *update_dir;
+    const char *repository;
 };
 
 /* Here as a static until we get around to fixing Parse_Info to pass along
@@ -4442,10 +4458,12 @@ template_proc (repository, template)
     return 0;
 }
 
+
+
 void
 server_template (update_dir, repository)
-    char *update_dir;
-    char *repository;
+    const char *update_dir;
+    const char *repository;
 {
     struct template_proc_data data;
     data.update_dir = update_dir;
@@ -4453,7 +4471,9 @@ server_template (update_dir, repository)
     tpd = &data;
     (void) Parse_Info (CVSROOTADM_RCSINFO, repository, template_proc, 1);
 }
-
+
+
+
 static void
 serve_gzip_contents (arg)
      char *arg;
@@ -6520,8 +6540,8 @@ cvs_flushout ()
 
 void
 cvs_output_tagged (tag, text)
-    char *tag;
-    char *text;
+    const char *tag;
+    const char *text;
 {
     if (text != NULL && strchr (text, '\n') != NULL)
 	/* Uh oh.  The protocol has no way to cope with this.  For now

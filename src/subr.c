@@ -592,9 +592,10 @@ check_numeric (rev, argc, argv)
  */
 char *
 make_message_rcslegal (message)
-     char *message;
+     const char *message;
 {
-    char *dst, *dp, *mp;
+    char *dst, *dp;
+    const char *mp;
 
     if (message == NULL) message = "";
 
@@ -844,7 +845,7 @@ resolve_symlink (filename)
 	}
 	else
 	{
-	    char *oldname = last_component (*filename);
+	    const char *oldname = last_component (*filename);
 	    int dirlen = oldname - *filename;
 	    char *fullnewname = xmalloc (dirlen + strlen (newname) + 1);
 	    strncpy (fullnewname, *filename, dirlen);
