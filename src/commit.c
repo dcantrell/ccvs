@@ -1155,14 +1155,14 @@ precommit_proc (const char *repository, const char *filter, void *closure)
     List *ulist = (List *)closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (!strchr(filter, '%'))
+    if (!strchr (filter, '%'))
     {
-	error(0,0,
-              "warning: commitinfo line contains no format strings:\n"
-              "    \"%s\"\n"
-              "Appending defaults (\" %%r/%%p %%s\"), but please be aware that this usage is\n"
-              "deprecated.", filter);
-	newfilter = xmalloc (strlen(filter) + 10);
+	error (0, 0,
+               "warning: commitinfo line contains no format strings:\n"
+               "    \"%s\"\n"
+               "Appending defaults (\" %%r/%%p %%s\"), but please be aware that this usage is\n"
+               "deprecated.", filter);
+	newfilter = xmalloc (strlen (filter) + 10);
 	strcpy (newfilter, filter);
 	strcat (newfilter, " %r/%p %s");
 	filter = newfilter;
@@ -1171,28 +1171,28 @@ precommit_proc (const char *repository, const char *filter, void *closure)
 
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-		    0, srepos,
+        0, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	filter,
-    	"p", "s", srepos,
-	"r", "s", current_parsed_root->directory,
-	"s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
-	(char *)NULL
+        filter,
+        "p", "s", srepos,
+        "r", "s", current_parsed_root->directory,
+        "s", ",", ulist, precommit_list_to_args_proc, (void *) NULL,
+        (char *)NULL
 	);
 
     if (newfilter) free (newfilter);
 
-    if (!cmdline || !strlen(cmdline))
+    if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error(0, 0, "precommit proc resolved to the empty string!");
-	return (1);
+	error (0, 0, "precommit proc resolved to the empty string!");
+	return 1;
     }
 
-    run_setup(cmdline);
-    free(cmdline);
+    run_setup (cmdline);
+    free (cmdline);
 
-    return (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
+    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY);
 }
 
 

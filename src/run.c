@@ -136,6 +136,8 @@ run_add_arg (const char *s)
 	run_argv[run_argc] = (char *) 0;	/* not post-incremented on purpose! */
 }
 
+
+
 int
 run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 {
@@ -170,10 +172,10 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 	cvs_outerr (")\n", 0);
     }
     if (noexec && (flags & RUN_REALLY) == 0)
-	return (0);
+	return 0;
 
     /* make sure that we are null terminated, since we didn't calloc */
-    run_add_arg ((char *) 0);
+    run_add_arg ((char *)0);
 
     /* setup default file descriptor numbers */
     shin = 0;
@@ -211,8 +213,8 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
     }
 
     /* Make sure we don't flush this twice, once in the subprocess.  */
-    fflush (stdout);
-    fflush (stderr);
+    cvs_flushout();
+    cvs_flusherr();
 
     /* The output files, if any, are now created.  Do the fork and dups.
 
@@ -292,7 +294,7 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #ifdef BSD_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	memset ((char *) &vec, 0, sizeof (vec));
+	memset ((char *)&vec, 0, sizeof (vec));
 	vec.sv_handler = SIG_IGN;
 	(void) sigvec (SIGINT, &vec, &ivec);
 	(void) sigvec (SIGQUIT, &vec, &qvec);
@@ -341,17 +343,17 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
 #ifdef POSIX_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	(void) sigaction (SIGINT, &iact, (struct sigaction *) NULL);
-	(void) sigaction (SIGQUIT, &qact, (struct sigaction *) NULL);
+	(void) sigaction (SIGINT, &iact, (struct sigaction *)NULL);
+	(void) sigaction (SIGQUIT, &qact, (struct sigaction *)NULL);
     }
     else
-	(void) sigprocmask (SIG_SETMASK, &sigset_omask, (sigset_t *) NULL);
+	(void) sigprocmask (SIG_SETMASK, &sigset_omask, (sigset_t *)NULL);
 #else
 #ifdef BSD_SIGNALS
     if (flags & RUN_SIGIGNORE)
     {
-	(void) sigvec (SIGINT, &ivec, (struct sigvec *) NULL);
-	(void) sigvec (SIGQUIT, &qvec, (struct sigvec *) NULL);
+	(void) sigvec (SIGINT, &ivec, (struct sigvec *)NULL);
+	(void) sigvec (SIGQUIT, &qvec, (struct sigvec *)NULL);
     }
     else
 	(void) sigsetmask (mask);
@@ -385,8 +387,10 @@ run_exec (const char *stin, const char *stout, const char *sterr, int flags)
   out0:
     if (rerrno)
 	errno = rerrno;
-    return (rc);
+    return rc;
 }
+
+
 
 void
 run_print (FILE *fp)

@@ -1,3 +1,9 @@
+2004-04-01  Derek Price  <derek@ximbiot.com>
+
+	* commit.c, cvs.h, server.c: Gratuitous restyling.
+	* run.c (run_exec): Ditto, plus call cvs_flush{out,err}() instead of
+	flushing stderr & stdout directly.
+
 2004-03-29  Derek Price  <derek@ximbiot.com>
 
 	* login.c, server.c: Gratuitous restyling.
