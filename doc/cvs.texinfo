@@ -111,7 +111,12 @@ Free Software Foundation instead of in the original English.
 @ifinfo
 @c ---------------------------------------------------------------------
 @node    Top
-@top
+@top 
+@c Note: there is a space after that @top command.
+@c The texinfo-format-buffer Emacs function and
+@c the makeinfo shell command disagree on what arguments
+@c @top takes; @top followed by a single space is
+@c something they can both cope with.
 
 This info manual describes how to use and administer
 @sc{cvs} and is updated to release 1.4 or something
