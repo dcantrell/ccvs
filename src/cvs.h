@@ -524,10 +524,6 @@ extern int init PROTO ((int argc, char **argv));
 int do_module PROTO((DBM * db, char *mname, enum mtype m_type, char *msg,
 		CALLBACKPROC callback_proc, char *where, int shorten,
 		int local_specified, int run_module_prog, char *extra_arg));
-int do_recursion PROTO((FILEPROC xfileproc, FILESDONEPROC xfilesdoneproc,
-		  DIRENTPROC xdirentproc, DIRLEAVEPROC xdirleaveproc,
-		  Dtype xflags, int xwhich, int xaflag, int xreadlock,
-		  int xdosrcs));
 void history_write PROTO((int type, char *update_dir, char *revs, char *name,
 		    char *repository));
 int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
