@@ -3494,6 +3494,9 @@ send_modified (file, short_pathname, vers)
     int bufsize;
     int bin;
 
+    if (trace)
+	(void) fprintf (stderr, " -> Sending file `%s' to server\n", file);
+
     /* Don't think we can assume fstat exists.  */
     if ( CVS_STAT (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);

@@ -1,5 +1,7 @@
 Sat Jun 29 20:23:50 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* client.c (send_modified): Add trace output.
+
 	* diff.c (diff_fileproc): Always call diff_file_nodiff.  Handle
 	dead versions correctly.  Handle diffs between a specified
 	revision to a dead file correctly.
