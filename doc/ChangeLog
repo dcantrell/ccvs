@@ -1,5 +1,8 @@
 Tue Jul  1 09:19:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Substitution modes): Add comment about -A resetting
+	both sticky tags/dates and sticky options.
+
 	* cvs.texinfo (File permissions): Add paragraph concerning
 	ownership of the RCS files.
 
