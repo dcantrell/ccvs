@@ -799,12 +799,12 @@ unrecognized operation '\\x%x' in %s",
 				   op, rcs->path);
 			(void) strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != ' ')
-			    error (1, 0, "space expected in %s",
-				   rcs->path);
+			    error (1, 0, "space expected in %s revision %s",
+				   rcs->path, vnode->version);
 			count = strtoul (cp, (char **) &cp, 10);
 			if (*cp++ != '\012')
-			    error (1, 0, "linefeed expected in %s",
-				   rcs->path);
+			    error (1, 0, "linefeed expected in %s revision %s",
+				   rcs->path, vnode->version);
 
 			if (op == 'd')
 			    del += count;
@@ -819,8 +819,8 @@ unrecognized operation '\\x%x' in %s",
 				{
 				    if (count != 1)
 					error (1, 0, "\
-invalid rcs file %s: premature end of value",
-					       rcs->path);
+premature end of value in %s revision %s",
+					       rcs->path, vnode->version);
 				    else
 					break;
 				}

@@ -1,3 +1,7 @@
+2001-10-02  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_fully_parse): Add revision number to more error messages.
+
 2001-09-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c (RCS_fully_parse, RCS_getdeltatext): Add the missing revision
