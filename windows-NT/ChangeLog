@@ -13,7 +13,7 @@ Tue Oct 24 10:59:03 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 Mon Oct 23 18:51:49 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
-        * Makefile.in (clean): new rule, does nothing but satisfies
+        * Makefile.in (clean): new rule, does nothing but satisfy
         top-level Makefile's beliefs about what its children can do.
 
 Fri Oct 20 11:09:55 1995  Norbert Kiesel  <nk@col.sw-ley.de>
