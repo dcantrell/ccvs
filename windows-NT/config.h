@@ -321,3 +321,20 @@ extern void wnt_shutdown_server (int fd);
 extern void init_winsock();
 
 #define HAVE_WINSOCK_H
+
+/* This tells the client that it must use send()/recv() to talk to the
+   server if it is connected to the server via a socket; Win95 needs
+   it because _open_osfhandle doesn't work.  */
+#define NO_SOCKET_TO_FD 1
+
+/* The internal rsh client uses sockets not file descriptors.  Note
+   that as the code stands now, it often takes values from a SOCKET and
+   puts them in an int.  This is ugly but it seems like sizeof
+   (SOCKET) <= sizeof (int) on win32, even the 64-bit variants.  */
+#define START_SERVER_RETURNS_SOCKET 1
+
+/* Is this true on NT?  Seems like I remember reports that NT 3.51 has
+   problems with 200K writes (of course, the issue of large writes is
+   moot since the use of buffer.c ensures that writes will only be as big
+   as the buffers).  */
+#define SEND_NEVER_PARTIAL 1
