@@ -1,5 +1,9 @@
 2002-04-03  Derek Price  <oberon@umich.edu>
 
+	* stamp-h2.in: Regenerate with recent version of Autoconf.
+
+2002-04-03  Derek Price  <oberon@umich.edu>
+
 	* sanity.sh (TR): Send the stderr of one of the tool setup (tr) tests
 	to /dev/null to avoid spurious output on some operating systems
 	(notably Mac OS X).
