@@ -582,10 +582,16 @@ patch_fileproc (callerdat, finfo)
 	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
 		getline (&line2, &line2_chars_allocated, fp) < 0)
 	    {
-		error (0, errno, "failed to read diff file header %s for %s",
-		       tmpfile3, rcs);
+		if (feof (fp))
+		    error (0, 0, "\
+failed to read diff file header %s for %s: end of file", tmpfile3, rcs);
+		else
+		    error (0, errno,
+			   "failed to read diff file header %s for %s",
+			   tmpfile3, rcs);
 		ret = 1;
-		(void) fclose (fp);
+		if (fclose (fp) < 0)
+		    error (0, errno, "error closing %s", tmpfile3);
 		goto out;
 	    }
 	    if (!unidiff)
@@ -597,7 +603,8 @@ patch_fileproc (callerdat, finfo)
 		{
 		    error (0, 0, "invalid diff header for %s", rcs);
 		    ret = 1;
-		    (void) fclose (fp);
+		    if (fclose (fp) < 0)
+			error (0, errno, "error closing %s", tmpfile3);
 		    goto out;
 		}
 	    }
@@ -610,7 +617,8 @@ patch_fileproc (callerdat, finfo)
 		{
 		    error (0, 0, "invalid unidiff header for %s", rcs);
 		    ret = 1;
-		    (void) fclose (fp);
+		    if (fclose (fp) < 0)
+			error (0, errno, "error closing %s", tmpfile3);
 		    goto out;
 		}
 	    }
