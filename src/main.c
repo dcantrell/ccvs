@@ -76,7 +76,7 @@ int status PROTO((int argc, char **argv));
 int tag PROTO((int argc, char **argv));
 int update PROTO((int argc, char **argv));
 
-const struct cmd
+static const struct cmd
 {
     char *fullname;		/* Full name of the function (e.g. "commit") */
     char *nick1;		/* alternate name (e.g. "ci") */
@@ -87,14 +87,14 @@ const struct cmd
 {
     { "add",      "ad",       "new",       add },
     { "admin",    "adm",      "rcs",       admin },
-    { "annotate", NULL,       NULL,        annotate },
+    { "annotate", "ann",      "list",      annotate },
     { "checkout", "co",       "get",       checkout },
     { "commit",   "ci",       "com",       commit },
-    { "diff",     "di",       "dif",      diff },
-    { "edit",     "edit",     "edit",      edit },
-    { "editors",  "editors",  "editors",   editors },
+    { "diff",     "di",       "dif",       diff },
+    { "edit",     NULL,	      NULL,	   edit },
+    { "editors",  NULL,       NULL,	   editors },
     { "export",   "exp",      "ex",        checkout },
-    { "history",  "hi",       "his",       history },
+    { "history",  "hi",       "hist",      history },
     { "import",   "im",       "imp",       import },
     { "init",     NULL,       NULL,        init },
 #ifdef SERVER_SUPPORT
@@ -113,12 +113,12 @@ const struct cmd
     { "status",   "st",       "stat",      status },
     { "rtag",     "rt",       "rfreeze",   rtag },
     { "tag",      "ta",       "freeze",    tag },
-    { "unedit",   "unedit",   "unedit",    unedit },
+    { "unedit",   NULL,	      NULL,	   unedit },
     { "update",   "up",       "upd",       update },
-    { "watch",    "watch",    "watch",     watch },
-    { "watchers", "watchers", "watchers",  watchers },
+    { "watch",    NULL,	      NULL,	   watch },
+    { "watchers", NULL,	      NULL,	   watchers },
 #ifdef SERVER_SUPPORT
-    { "server",   "server",   "server",    server },
+    { "server",   NULL,       NULL,        server },
 #endif
     { NULL, NULL, NULL, NULL },
 };
@@ -154,34 +154,68 @@ static const char *const usg[] =
 static const char *const cmd_usage[] =
 {
     "CVS commands are:\n",
-    "        add          Adds a new file/directory to the repository\n",
+    "        add          Add a new file/directory to the repository\n",
     "        admin        Administration front end for rcs\n",
-    "        annotate     Show revision where each line was modified\n",
+    "        annotate     Show last revision where each line was modified\n",
     "        checkout     Checkout sources for editing\n",
-    "        commit       Checks files into the repository\n",
-    "        diff         Runs diffs between revisions\n",
+    "        commit       Check files into the repository\n",
+    "        diff         Run diffs between revisions\n",
     "        edit         Get ready to edit a watched file\n",
     "        editors      See who is editing a watched file\n",
     "        export       Export sources from CVS, similar to checkout\n",
-    "        history      Shows status of files and users\n",
+    "        history      Show repository access history\n",
     "        import       Import sources into CVS, using vendor branches\n",
     "        init         Create a CVS repository if it doesn't exist\n",
-    "        log          Prints out 'rlog' information for files\n",
+    "        log          Print out history information for files\n",
 #ifdef AUTH_CLIENT_SUPPORT
     "        login        Prompt for password for authenticating server.\n",
 #endif /* AUTH_CLIENT_SUPPORT */
     "        rdiff        Create 'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
-    "        remove       Removes an entry from the repository\n",
+    "        remove       Remove an entry from the repository\n",
     "        rtag         Add a symbolic tag to a module\n",
     "        status       Display status information on checked out files\n",
     "        tag          Add a symbolic tag to checked out version of files\n",
     "        unedit       Undo an edit command\n",
-    "        update       Brings work tree in sync with repository\n",
+    "        update       Bring work tree in sync with repository\n",
     "        watch        Set watches\n",
     "        watchers     See who is watching a file\n",
+    "(Use the --help-synonyms option for a list of alternate command names)\n",
     NULL,
 };
+
+static const char * const*
+cmd_synonyms ()
+{
+    char ** synonyms;
+    char ** line;
+    const struct cmd *c = &cmds[0];
+    int numcmds = 2;		/* two more for title and end */
+
+    while (c->fullname != NULL)
+    {
+	numcmds++;
+	c++;
+    }
+    
+    synonyms = (char **) xmalloc(numcmds * sizeof(char *));
+    line = synonyms;
+    *line++ = "CVS command synonyms are:\n";
+    for (c = &cmds[0]; c->fullname != NULL; c++)
+    {
+	if (c->nick1 || c->nick2)
+	{
+	    *line = xmalloc(100); /* wild guess */
+	    sprintf(*line, "        %-12s %s %s\n", c->fullname,
+		    c->nick1 ? c->nick1 : "",
+		    c->nick2 ? c->nick2 : "");
+	    line++;
+	}
+    }
+    *line = NULL;
+    
+    return (const char * const*) synonyms; /* will never be freed */
+}
 
 static RETSIGTYPE
 main_cleanup (sig)
@@ -260,6 +294,7 @@ main (argc, argv)
         {"help", 0, NULL, 'H'},
         {"version", 0, NULL, 'v'},
 	{"help-commands", 0, NULL, 1},
+	{"help-synonyms", 0, NULL, 2},
         {0, 0, 0, 0}
       };
     /* `getopt_long' stores the option index here, but right now we
@@ -346,6 +381,10 @@ main (argc, argv)
             case 1:
 	        /* --help-commands */
                 usage (cmd_usage);
+                break;
+            case 2:
+	        /* --help-synonyms */
+                usage (cmd_synonyms());
                 break;
 	    case 'Q':
 		really_quiet = TRUE;
