@@ -1,3 +1,12 @@
+Mon Jan 15 13:03:28 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* filesubr.c (deep_remove_dir): added test of EEXIST for nonempty
+	  directory (Posix states that both ENOTEMPTY (BSD) and EEXIST
+	  (SYSV) are valid)
+
+	* main.c (main): run getopt_long twice to allow command-line
+	  suppression of reading the cvsrc file
+
 Fri Jan 12 10:02:43 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.6.86.
