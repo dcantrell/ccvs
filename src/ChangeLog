@@ -1,3 +1,11 @@
+2003-03-14  Mark D. Baushke  <mdb@cvshome.org>
+
+	* server.c (template_proc): Fix broken Template protocol code.
+	Must call send buf_send_counted() for Template files to avoid
+	"Protocol error: uncounted data discarded" messages in some
+	circumstances.
+	* sanity.sh (template): Test case to verify fix this fix.
+
 2003-03-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.h (WriteTemplate): Add missing prototype.
