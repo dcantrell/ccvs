@@ -1,3 +1,9 @@
+22 Feb 1997  patch by Tom Hageman  <tom@basil.icce.rug.nl> (4 Jun 1996)
+	updated and commented by Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (checkout_file): Call unlink_file_dir on backup, not
+	unlink_file.
+
 Fri Feb 21 16:40:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): Remove NOTES.
