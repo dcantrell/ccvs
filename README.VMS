@@ -181,6 +181,23 @@ should probably be using the callable editors (e.g. TPU$TPU), although
 of course we also need interface(s) which are not locked into any
 particular editors.
 
+----------------------------------------
+
+Notes regarding compiling on VAX/VMS 6.2 (not Alpha) (These are items
+which hopefully will have cleaner solutions in the future, but here is
+how to get around them for now):
+
+* Need to compile lib/getdate.c with vaxc instead of decc to avoid a
+compiler bugcheck.  Therefore one must add SYS$LIBRARY:VAXCRTL/LIBRARY
+to the link.
+
+* In src/ignore.c, change lstat to stat.  In vms/filesubr.c, change
+"#ifdef S_ISLNK" to "#if 0".
+
+* Ignore the warnings in vms/vmsmunch.c; the system include file
+declares something as an int when it should be void *.  Not *our*
+fault!
+
 Credits:
 
 Initial VMS port by Benjamin J. Lee <benjamin@cyclic.com>, Cyclic
