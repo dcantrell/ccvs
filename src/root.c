@@ -884,6 +884,9 @@ error_exit:
  * FIXME - we could cache the canonicalized version of a root inside the
  * cvsroot_t, but we'd have to un'const the input here and stop expecting the
  * caller to be responsible for our return value
+ *
+ * ASSUMPTIONS
+ *   ROOT->method == pserver_method
  */
 char *
 normalize_cvsroot (const cvsroot_t *root)
