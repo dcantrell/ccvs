@@ -1,3 +1,9 @@
+Tue Jan 28 10:41:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Revise criterion for whether something goes in NEWS
+	again (now "user-visible change worth mentioning"--the language
+	from the GNU coding standards).
+
 Mon Jan 27 23:05:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* HACKING: Criterion for whether something goes in NEWS is not
