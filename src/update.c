@@ -1994,23 +1994,6 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     }
 #endif
 
-    /* FIXME: the noexec case is broken.  RCS_merge could be doing the
-       xcmp on the temporary files without much hassle, I think.  */
-    if (!noexec && !xcmp (backup, finfo->file))
-    {
-	cvs_output (finfo->fullname, 0);
-	cvs_output (" already contains the differences between ", 0);
-	cvs_output (vers->vn_user, 0);
-	cvs_output (" and ", 0);
-	cvs_output (vers->vn_rcs, 0);
-	cvs_output ("\n", 1);
-
-	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
-		       finfo->repository);
-	retval = 0;
-	goto out;
-    }
-
     if (status == 1)
     {
 	error (0, 0, "conflicts found in %s", finfo->fullname);
@@ -2021,11 +2004,27 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	               finfo->repository);
 
     }
-    else
+    else /* status == 0 */
     {
-	write_letter (finfo, 'M');
 	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
+
+	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
+	   xcmp on the temporary files without much hassle, I think.  */
+	if (!noexec && !xcmp (backup, finfo->file))
+	{
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output (vers->vn_user, 0);
+	    cvs_output (" and ", 0);
+	    cvs_output (vers->vn_rcs, 0);
+	    cvs_output ("\n", 1);
+
+	    retval = 0;
+	    goto out;
+	}
+
+	write_letter (finfo, 'M');
     }
     retval = 0;
  out:

@@ -1,5 +1,9 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* update.c (merge_file): Optimize & eliminate code.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* recurse.c (do_recursion): Assert that ignoring the return value of
 	Name_Repository is not a memory leak.
 
