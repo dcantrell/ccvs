@@ -45,8 +45,8 @@ struct config
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     bool UseNewInfoFmtStrings;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-#ifdef PROXY_SUPPORT
     cvsroot_t *PrimaryServer;
+#ifdef PROXY_SUPPORT
     size_t MaxProxyBufferSize;
 #endif /* PROXY_SUPPORT */
 #ifdef PRESERVE_PERMISSIONS_SUPPORT

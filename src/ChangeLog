@@ -1,3 +1,22 @@
+2005-02-24 Derek Price <derek@ximbiot.com>
+
+	* client.c (open_connection_to_server): Fail with an expressive error
+	message when connection is attempted via an unsupported protocol since
+	this is no longer caught in parse_root().
+	* edit.c (edit_fileproc), import.c (import): Don't verify
+	current_parsed_root->isremote without client support.
+	* parseinfo.c (parse_config): Parse PrimaryServer without proxy
+	support.  Postpone method verification until the connect phase.
+	* parseinfo.h (struct config): Always include PrimaryServer.
+	* root.c (primary_root_translate, primary_root_inverse_translate):
+	Don't declare vars without PROXY_SUPPORT when they won't be used.
+	(parse_cvsroot): Parse remote connection methods with server support
+	for PrimaryServer/Redirects.  Delay method support verification until
+	the connect phase.
+	* root.h (cvsroot_t): Include remote elements with SERVER_SUPPORT.
+	* server.c (isProxyServer): Delay method verification until the connect
+	phase.
+
 2005-02-23 Derek Price <derek@ximbiot.com>
 
 	* tag.c (tag): Handle -r<tag>:<date>.
