@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* gethostname.c: Update from gnulib.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Move getline, getnline, & getndelim2
 	sources to their own sections.
 	* getline.c, getndelim2.c, getndelim2.h, getnline.c, getnline.h: Update
