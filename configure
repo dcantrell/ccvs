@@ -4610,6 +4610,8 @@ fi
 
 done
 
+
+# Some checks for stat() functionality.
 echo "$as_me:$LINENO: checking whether stat file-mode macros are broken" >&5
 echo $ECHO_N "checking whether stat file-mode macros are broken... $ECHO_C" >&6
 if test "${ac_cv_header_stat_broken+set}" = set; then
@@ -4664,6 +4666,221 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+# At least on SCO OpenServer 5.0.6a, we use S_ISNAM rather than S_ISSOCK.
+# Too bad POSIX didn't define S_ISSOCK & S_ISLNK earlier (they are not present
+# in POSIX.1-1996 and earlier.
+echo "$as_me:$LINENO: checking for S_ISSOCK" >&5
+echo $ECHO_N "checking for S_ISSOCK... $ECHO_C" >&6
+if test "${acx_cv_s_issock+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  acx_cv_s_issock=no
+   cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <sys/stat.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+int a; S_ISSOCK(a);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  acx_cv_s_issock=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+   if test $acx_cv_s_issock = no; then
+     cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+#include <sys/stat.h>
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+int a; S_ISNAM(a);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  acx_cv_s_issock=ISNAM
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+   fi
+fi
+echo "$as_me:$LINENO: result: $acx_cv_s_issock" >&5
+echo "${ECHO_T}$acx_cv_s_issock" >&6
+if test $acx_cv_s_issock != yes && test $acx_cv_s_issock != no; then
+  # don't define for yes since that means it already means something and
+  # don't define for no since we'd rather the compiler catch the error
+  # It's debatable whether we'd prefer that the compiler catch the error
+  #  - it seems our estranged developer is more likely to be familiar with
+  #	 the intricacies of the compiler than with those of autoconf, but by
+  #	 the same token, maybe we'd rather alert them to the fact that most
+  #	 of the support they need to fix the problem is installed if they can
+  #	 simply locate the appropriate symbol.
+
+cat >>confdefs.h <<_ACEOF
+#define S_ISSOCK $acx_cv_s_issock
+_ACEOF
+
+fi
+
+echo "$as_me:$LINENO: checking for struct stat.st_blksize" >&5
+echo $ECHO_N "checking for struct stat.st_blksize... $ECHO_C" >&6
+if test "${ac_cv_member_struct_stat_st_blksize+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+static struct stat ac_aggr;
+if (ac_aggr.st_blksize)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_member_struct_stat_st_blksize=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_member_struct_stat_st_blksize=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_member_struct_stat_st_blksize" >&5
+echo "${ECHO_T}$ac_cv_member_struct_stat_st_blksize" >&6
+if test $ac_cv_member_struct_stat_st_blksize = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_BLKSIZE 1
+_ACEOF
+
+
+fi
+
+echo "$as_me:$LINENO: checking for struct stat.st_rdev" >&5
+echo $ECHO_N "checking for struct stat.st_rdev... $ECHO_C" >&6
+if test "${ac_cv_member_struct_stat_st_rdev+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+#include "confdefs.h"
+$ac_includes_default
+#ifdef F77_DUMMY_MAIN
+#  ifdef __cplusplus
+     extern "C"
+#  endif
+   int F77_DUMMY_MAIN() { return 1; }
+#endif
+int
+main ()
+{
+static struct stat ac_aggr;
+if (ac_aggr.st_rdev)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_member_struct_stat_st_rdev=yes
+else
+  echo "$as_me: failed program was:" >&5
+cat conftest.$ac_ext >&5
+ac_cv_member_struct_stat_st_rdev=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_member_struct_stat_st_rdev" >&5
+echo "${ECHO_T}$ac_cv_member_struct_stat_st_rdev" >&6
+if test $ac_cv_member_struct_stat_st_rdev = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_RDEV 1
+_ACEOF
+
+
+fi
+
 
 echo "$as_me:$LINENO: checking whether time.h and sys/time.h may both be included" >&5
 echo $ECHO_N "checking whether time.h and sys/time.h may both be included... $ECHO_C" >&6
@@ -5188,119 +5405,6 @@ cat >>confdefs.h <<_ACEOF
 #define RETSIGTYPE $ac_cv_type_signal
 _ACEOF
 
-
-
-echo "$as_me:$LINENO: checking for struct stat.st_blksize" >&5
-echo $ECHO_N "checking for struct stat.st_blksize... $ECHO_C" >&6
-if test "${ac_cv_member_struct_stat_st_blksize+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-$ac_includes_default
-#ifdef F77_DUMMY_MAIN
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-#endif
-int
-main ()
-{
-static struct stat ac_aggr;
-if (ac_aggr.st_blksize)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_member_struct_stat_st_blksize=yes
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-ac_cv_member_struct_stat_st_blksize=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_member_struct_stat_st_blksize" >&5
-echo "${ECHO_T}$ac_cv_member_struct_stat_st_blksize" >&6
-if test $ac_cv_member_struct_stat_st_blksize = yes; then
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_STRUCT_STAT_ST_BLKSIZE 1
-_ACEOF
-
-
-fi
-
-echo "$as_me:$LINENO: checking for struct stat.st_rdev" >&5
-echo $ECHO_N "checking for struct stat.st_rdev... $ECHO_C" >&6
-if test "${ac_cv_member_struct_stat_st_rdev+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-#include "confdefs.h"
-$ac_includes_default
-#ifdef F77_DUMMY_MAIN
-#  ifdef __cplusplus
-     extern "C"
-#  endif
-   int F77_DUMMY_MAIN() { return 1; }
-#endif
-int
-main ()
-{
-static struct stat ac_aggr;
-if (ac_aggr.st_rdev)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_member_struct_stat_st_rdev=yes
-else
-  echo "$as_me: failed program was:" >&5
-cat conftest.$ac_ext >&5
-ac_cv_member_struct_stat_st_rdev=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_member_struct_stat_st_rdev" >&5
-echo "${ECHO_T}$ac_cv_member_struct_stat_st_rdev" >&6
-if test $ac_cv_member_struct_stat_st_rdev = yes; then
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_STRUCT_STAT_ST_RDEV 1
-_ACEOF
-
-
-fi
 
 
 
