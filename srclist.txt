@@ -169,7 +169,6 @@ $GNULIB/lib/nanosleep.c				lib		no NI
 $GNULIB/m4/nanosleep.m4				m4		no NI
 # $GNULIB/modules/pathmax
 $GNULIB/lib/pathmax.h				lib		no NI
-$GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/pathmax.m4				m4		no NI
 # $GNULIB/modules/realloc
 $GNULIB/lib/realloc.c				lib		no NI
@@ -239,7 +238,6 @@ $GNULIB/lib/getnline.h				lib		yes NI
 $GNULIB/m4/getndelim2.m4			m4		no NI
 $GNULIB/m4/getnline.m4				m4		no NI
 $GNULIB/m4/inttypes_h.m4			m4		no NI
-$GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/ssize_t.m4				m4		no NI
 $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
