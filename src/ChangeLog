@@ -1,3 +1,7 @@
+2002-04-17  Derek Price  <oberon@umich.edu>
+
+	* version.h: Regenerated for 1.11.2.
+
 2002-04-03  Derek Price  <oberon@umich.edu>
 
 	* stamp-h2.in: Regenerate with recent version of Autoconf.

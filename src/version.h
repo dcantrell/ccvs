@@ -10,6 +10,6 @@
 #ifndef VERSION_H
 #define VERSION_H 1
 
-#define version_string "Concurrent Versions System (CVS) 1.11.1.1"
+#define version_string "Concurrent Versions System (CVS) 1.11.2"
 
 #endif /* VERSION_H */
