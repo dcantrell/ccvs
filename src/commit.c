@@ -1145,7 +1145,7 @@ remove_file (file, repository, tag, message, entries, srcfiles)
 #endif
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	if ((retcode = RCS_deltag (rcs, tag)) != 0) 
+	if ((retcode = RCS_deltag (rcs, tag, 1)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1343,7 +1343,7 @@ unlockrcs (file, repository)
 
     locate_rcs (file, repository, rcs);
 
-    if ((retcode = RCS_unlock (rcs, NULL)) != 0)
+    if ((retcode = RCS_unlock (rcs, NULL, 0)) != 0)
 	error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
 	       "could not unlock %s", rcs);
 }
@@ -1701,12 +1701,12 @@ lock_RCS (user, rcs, rev, repository)
 		    return (1);
 		}
 	    }
-	    err = RCS_lock(rcs, NULL);
+	    err = RCS_lock(rcs, NULL, 0);
 	}
     }
     else
     {
-	(void) RCS_lock(rcs, rev);
+	(void) RCS_lock(rcs, rev, 1);
     }
 
     if (err == 0)

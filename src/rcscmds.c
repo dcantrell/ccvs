@@ -22,14 +22,16 @@ RCS_settag(path, tag, rev)
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 }
 
+/* NOERR is 1 to suppress errors--FIXME it would
+   be better to avoid the errors or some cleaner solution.  */
 int
-RCS_deltag(path, tag)
+RCS_deltag(path, tag, noerr)
     const char *path;
     const char *tag;
 {
     run_setup ("%s%s -q -N%s", Rcsbin, RCS, tag);
     run_arg (path);
-    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+    return run_exec (RUN_TTY, RUN_TTY, noerr ? DEVNULL : RUN_TTY, RUN_NORMAL);
 }
 
 /* set RCS branch to REV */
@@ -43,26 +45,29 @@ RCS_setbranch(path, rev)
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 }
 
-/* lock revision REV */
+/* Lock revision REV.  NOERR is 1 to suppress errors--FIXME it would
+   be better to avoid the errors or some cleaner solution.  */
 int
-RCS_lock(path, rev)
+RCS_lock(path, rev, noerr)
     const char *path;
     const char *rev;
+    int noerr;
 {
     run_setup ("%s%s -q -l%s", Rcsbin, RCS, rev ? rev : "");
     run_arg (path);
-    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+    return run_exec (RUN_TTY, RUN_TTY, noerr ? DEVNULL : RUN_TTY, RUN_NORMAL);
 }
 
-/* unlock revision REV */
+/* Unlock revision REV.  NOERR is 1 to suppress errors--FIXME it would
+   be better to avoid the errors or some cleaner solution.  */
 int
-RCS_unlock(path, rev)
+RCS_unlock(path, rev, noerr)
     const char *path;
-const char *rev;
+    const char *rev;
 {
     run_setup ("%s%s -q -u%s", Rcsbin, RCS, rev ? rev : "");
     run_arg (path);
-    return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+    return run_exec (RUN_TTY, RUN_TTY, noerr ? DEVNULL : RUN_TTY, RUN_NORMAL);
 }
 
 /* Merge revisions REV1 and REV2. */

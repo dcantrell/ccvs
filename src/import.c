@@ -575,7 +575,10 @@ add_rev (message, rcs, vfile, vers)
     locked = 0;
     if (vers != NULL)
     {
-        if (RCS_lock (rcs, vbranch) != 0)
+	/* Before RCS_lock existed, we were directing stdout, as well as
+	   stderr, from the RCS command, to DEVNULL.  I wouldn't guess that
+	   was necessary, but I don't know for sure.  */
+        if (RCS_lock (rcs, vbranch, 1) != 0)
 	{
 	    error (0, errno, "fork failed");
 	    return (1);
@@ -627,7 +630,7 @@ add_rev (message, rcs, vfile, vers)
 	}
 	if (locked)
 	{
-	    (void) RCS_unlock(rcs, vbranch);
+	    (void) RCS_unlock(rcs, vbranch, 0);
 	}
 	return (1);
     }

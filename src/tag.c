@@ -360,7 +360,7 @@ tag_fileproc (file, update_dir, repository, entries, srcfiles)
 	}
 	free (version);
 
-	if ((retcode = RCS_deltag(vers->srcfile->path, symtag)) != 0) 
+	if ((retcode = RCS_deltag(vers->srcfile->path, symtag, 1)) != 0) 
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,

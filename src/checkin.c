@@ -185,7 +185,7 @@ Checkin (type, file, update_dir, repository,
      */
     if (rev)
     {
-	(void) RCS_unlock (rcs, NULL);
+	(void) RCS_unlock (rcs, NULL, 1);
     }
 
 #ifdef SERVER_SUPPORT
