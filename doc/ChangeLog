@@ -1,3 +1,13 @@
+2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Remote repositories): Add options CVS_RSH and
+	CVS_SERVER to the docs.
+	(Connecting via rsh): Ditto.
+	(getdate.texi): Replaced reference to getdate-cvs.texi file that
+	does not exist.
+	* stamp-1, stamp-vti, version-client.texi, version.texi:
+	Regenerated.
+	
 2004-11-30  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Responses): Document the `Referrer' response.

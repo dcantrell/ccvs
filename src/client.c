@@ -3730,7 +3730,8 @@ connect_to_forked_server (cvsroot_t *root, struct buffer **to_server_p,
 
      char *command[3];
 
-    command[0] = getenv ("CVS_SERVER");
+    command[0] = (root->cvs_server != NULL
+		  ? root->cvs_server : getenv ("CVS_SERVER"));
     if (!command[0])
 # ifdef SERVER_SUPPORT
         /* FIXME:

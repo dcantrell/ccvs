@@ -1,3 +1,18 @@
+2004-12-03  Mark D. Baushke  <mdb@cvshome.org>
+
+	* root.h (cvsroot_t): Add cvs_rsh and cvs_server for bookkeeping
+	purposes.
+	* root.c (new_cvsroot_t, free_cvsroot_t): Add support for case
+	insensitive options CVS_RSH and CVS_SERVER.
+	(parse_cvsroot): Ditto and make all keywords case insensitive.
+	* client.c (connect_to_forked_server): Add support for the new
+	"CVS_SERVER" option to CVSROOT.
+	* rsh-client.c (connect_to_forked_server): Ditto
+	(start_rsh_server): Ditto and add support for the new "CVS_RSH"
+	option to CVSROOT.
+	* sanity.sh (parseroot3): New tests for the new options to
+	CVSROOT.
+	
 2004-11-30  Larry Jones  <lawrence.jones@ugs.com>
 
 	* mkmodules.c (config_contents): Add LocalKeyword and KeywordExpand,

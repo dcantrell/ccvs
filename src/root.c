@@ -386,6 +386,8 @@ new_cvsroot_t (void)
     newroot->username = NULL;
     newroot->password = NULL;
     newroot->hostname = NULL;
+    newroot->cvs_rsh = NULL;
+    newroot->cvs_server = NULL;
     newroot->port = 0;
     newroot->directory = NULL;
     newroot->proxy_hostname = NULL;
@@ -417,6 +419,10 @@ free_cvsroot_t (cvsroot_t *root)
     }
     if (root->hostname != NULL)
 	free (root->hostname);
+    if (root->cvs_rsh != NULL)
+	free (root->cvs_rsh);
+    if (root->cvs_server != NULL)
+	free (root->cvs_server);
     if (root->proxy_hostname != NULL)
 	free (root->proxy_hostname);
 #endif /* CLIENT_SUPPORT */
@@ -509,19 +515,19 @@ parse_cvsroot (const char *root_in)
 
 	/* Now we have an access method -- see if it's valid. */
 
-	if (strcmp (method, "local") == 0)
+	if (!strcasecmp (method, "local"))
 	    newroot->method = local_method;
-	else if (strcmp (method, "pserver") == 0)
+	else if (!strcasecmp (method, "pserver"))
 	    newroot->method = pserver_method;
-	else if (strcmp (method, "kserver") == 0)
+	else if (!strcasecmp (method, "kserver"))
 	    newroot->method = kserver_method;
-	else if (strcmp (method, "gserver") == 0)
+	else if (!strcasecmp (method, "gserver"))
 	    newroot->method = gserver_method;
-	else if (strcmp (method, "server") == 0)
+	else if (!strcasecmp (method, "server"))
 	    newroot->method = server_method;
-	else if (strcmp (method, "ext") == 0)
+	else if (!strcasecmp (method, "ext"))
 	    newroot->method = ext_method;
-	else if (strcmp (method, "fork") == 0)
+	else if (!strcasecmp (method, "fork"))
 	    newroot->method = fork_method;
 	else
 	{
@@ -542,11 +548,12 @@ parse_cvsroot (const char *root_in)
 	    }
 
 	    *q++ = '\0';
-	    if (strcmp (p, "proxy") == 0)
+	    TRACE (TRACE_DATA, "CVSROOT option=`%s' value=`%s'", p, q);
+	    if (!strcasecmp (p, "proxy"))
 	    {
 		newroot->proxy_hostname = xstrdup (q);
 	    }
-	    else if (strcmp (p, "proxyport") == 0)
+	    else if (!strcasecmp (p, "proxyport"))
 	    {
 		char *r = q;
 		if (*r == '-') r++;
@@ -564,6 +571,19 @@ parse_cvsroot (const char *root_in)
 		    error (0, 0,
 "CVSROOT may only specify a positive, non-zero, integer proxy port (not `%s').",
 			   q);
+	    }
+	    else if (!strcasecmp (p, "CVS_RSH"))
+	    {
+		/* override CVS_RSH environment variable */
+		if (newroot->method == ext_method)
+		    newroot->cvs_rsh = xstrdup (q);
+	    }
+	    else if (!strcasecmp (p, "CVS_SERVER"))
+	    {
+		/* override CVS_SERVER environment variable */
+		if (newroot->method == ext_method
+		    || newroot->method == fork_method)
+		    newroot->cvs_server = xstrdup (q);
 	    }
 	    else
 	    {
