@@ -101,7 +101,7 @@ static const struct cmd
 {
     { "add",      "ad",       "new",       add },
     { "admin",    "adm",      "rcs",       admin },
-    { "annotate", NULL,       NULL,        annotate },
+    { "annotate", "ann",      NULL,        annotate },
     { "checkout", "co",       "get",       checkout },
     { "commit",   "ci",       "com",       commit },
     { "diff",     "di",       "dif",       diff },
