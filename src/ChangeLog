@@ -1,5 +1,7 @@
 Sun Dec 24 01:38:36 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * server.c (authenticate_connection): clarify protocol.
+
         * login.c (login): deprolixify the password prompt.
 
 Sat Dec 23 10:46:41 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>

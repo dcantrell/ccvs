@@ -4287,9 +4287,9 @@ authenticate_connection ()
    *
    * if it denies access (and it exits if denying).
    *
-   * When the client is "cvs login", no repository access is needed,
-   * but the client would like to confirm the password with the
-   * server.  In this case, the start and stop strings are
+   * When the client is "cvs login", the user does not desire actual
+   * repository access, but would like to confirm the password with
+   * the server.  In this case, the start and stop strings are
    *
    *   BEGIN VERIFICATION REQUEST\n
    *
@@ -4299,21 +4299,16 @@ authenticate_connection ()
    *
    * On a verification request, the server's responses are the same
    * (with the obvious semantics), but it exits immediately after
-   * sending the response.
+   * sending the response in both cases.
    *
-   * Note that the actual client/server protocol has not started up
-   * yet, because we haven't authenticated!  Therefore, there are
-   * certain things we can't take for granted.  For example, don't use
-   * error() because `error_use_protocol' has not yet been set by
-   * server().  
-   *
-   * We need to know where the repository is too, to look up the
-   * password in the special CVS passwd file before we try
-   * /etc/passwd.  However, the repository is normally transmitted in
-   * the regular client/server protocol, which has not yet started,
-   * blah blah blah.  This is why the client transmits the repository
-   * as part of the "authentication protocol".  Thus, the repository
-   * will be redundantly retransmitted later, but that's no big deal.
+   * Why is the repository sent?  Well, note that the actual
+   * client/server protocol can't start up until authentication is
+   * successful.  But in order to perform authentication, the server
+   * needs to look up the password in the special CVS passwd file,
+   * before trying /etc/passwd.  So the client transmits the
+   * repository as part of the "authentication protocol".  The
+   * repository will be redundantly retransmitted later, but that's no
+   * big deal.
    */
 
   /* Since we're in the server parent process, error should use the
@@ -4322,14 +4317,10 @@ authenticate_connection ()
 
   /* Make sure the protocol starts off on the right foot... */
   fgets (tmp, PATH_MAX, stdin);
-
   if (strcmp (tmp, "BEGIN VERIFICATION REQUEST\n") == 0)
-    {
-      verify_and_exit = 1;
-    }
+    verify_and_exit = 1;
   else if (strcmp (tmp, "BEGIN AUTH REQUEST\n") != 0)
     error (1, 0, "bad auth protocol start: %s", tmp);
-
     
   /* Get the three important pieces of information in order. */
   fgets (repository, PATH_MAX, stdin);
