@@ -1,3 +1,21 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* configure: re-ran autoconf-2.4
+
+	* cvsinit.sh: make use of xVERSIONx from the Makefile
+	- get rid of stuff duplicated in examples/* and use that instead
+
+	* Makefile.in: $(VERSION) for cvsinit.sh wasn't set, so get it
+        from src/version.c instead.
+
+	* cvsinit.sh: install two more example CVSROOT control/config
+        files: rcstemplate checkoutlist
+	- install useful scripts from $CVSLIB/contrib too...
+	(from previous local changes)
+
+	* Makefile.in: add another reminder to run 'cvsinit' to update
+        repository(ies) (from previous local changes)
+        
 Thu Jul  6 17:53:55 1995  Paul Eggert  <eggert@twinsun.com>
 
 	* Makefile.in (mostlyclean-local): Remove $(PROGS).

@@ -13,6 +13,11 @@
 # this line is edited by Makefile when creating cvsinit.inst
 CVSLIB="xLIBDIRx"
 
+CVS_VERSION="xVERSIONx"
+
+echo "Initialising a $CVS_VERSION repository...."
+echo ""
+
 # Make sure that the CVSROOT variable is set
 if [ "x$CVSROOT" = x ]; then
     echo "The CVSROOT environment variable is not set."
@@ -84,47 +89,8 @@ else
     else
 	echo "The $CVSROOT/CVSROOT/modules file does not exist."
 	echo "Making a simple one for you..."
-	cat > $CVSROOT/CVSROOT/modules <<"HERE"
-#
-# The CVS modules file
-#
-# Three different line formats are valid:
-#	key	-a    aliases...
-#	key [options] directory
-#	key [options] directory files...
-#
-# Where "options" are composed of:
-#	-i prog		Run "prog" on "cvs commit" from top-level of module.
-#	-o prog		Run "prog" on "cvs checkout" of module.
-#	-t prog		Run "prog" on "cvs rtag" of module.
-#	-u prog		Run "prog" on "cvs update" of module.
-#	-d dir		Place module in directory "dir" instead of module name.
-#	-l		Top-level directory only -- do not recurse.
-#
-# And "directory" is a path to a directory relative to $CVSROOT.
-#
-# The "-a" option specifies an alias.  An alias is interpreted as if
-# everything on the right of the "-a" had been typed on the command line.
-#
-# You can encode a module within a module by using the special '&'
-# character to interpose another module into the current module.  This
-# can be useful for creating a module that consists of many directories
-# spread out over the entire source repository.
-#
+	sed -n -e '/END_REQUIRED_CONTENT/q' -e p $CVSLIB/examples/modules > $CVSROOT/CVSROOT/modules
 
-# Convenient aliases
-world		-a .
-
-# CVSROOT support; run mkmodules whenever anything changes.
-CVSROOT		-i mkmodules CVSROOT
-modules		-i mkmodules CVSROOT modules
-loginfo		-i mkmodules CVSROOT loginfo
-commitinfo	-i mkmodules CVSROOT commitinfo
-rcsinfo		-i mkmodules CVSROOT rcsinfo
-editinfo	-i mkmodules CVSROOT editinfo
-
-# Add other modules here...
-HERE
     fi
     (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of modules' modules)
     echo ""
@@ -167,34 +133,18 @@ else
 	done
 	if [ $perlpath = x ]; then
 	    # we did not find perl anywhere, so make a simple loginfo file
-	    cat > $CVSROOT/CVSROOT/loginfo <<"HERE"
-#
-# The "loginfo" file is used to control where "cvs commit" log information
-# is sent.  The first entry on a line is a regular expression which is tested
-# against the directory that the change is being made to, relative to the
-# $CVSROOT.  If a match is found, then the remainder of the line is a filter
-# program that should expect log information on its standard input.
-#
-# The filter program may use one and only one % modifier (ala printf).  If
-# %s is specified in the filter program, a brief title is included (enclosed
-# in single quotes) showing the modified file names.
-#
-# If the repository name does not match any of the regular expressions in this
-# file, the "DEFAULT" line is used, if it is specified.
-#
-# If the name ALL appears as a regular expression it is always used
-# in addition to the first matching regex or DEFAULT.
-#
+	    grep '^#' $CVSLIB/examples/loginfo > $CVSROOT/CVSROOT/loginfo
+	    cat >> $CVSROOT/CVSROOT/loginfo <<"END_HERE_DOC"
 DEFAULT		(echo ""; echo $USER; date; cat) >> $CVSROOT/CVSROOT/commitlog
-HERE
+END_HERE_DOC
 	fi
     fi
     (cd $CVSROOT/CVSROOT; ci -q -u -t/dev/null -m'initial checkin of loginfo' loginfo)
     echo ""
 fi
 
-# The remaining files are generated from the examples files.
-for info in commitinfo rcsinfo editinfo; do
+# These files are generated from the examples files.
+for info in commitinfo rcsinfo editinfo rcstemplate checkoutlist; do
     if [ -f $CVSROOT/CVSROOT/${info},v ]; then
 	if [ ! -f $CVSROOT/CVSROOT/$info ]; then
 	    echo "You have a $CVSROOT/CVSROOT/${info},v file,"
@@ -217,6 +167,13 @@ for info in commitinfo rcsinfo editinfo; do
 	echo ""
     fi
 done
+
+# These files are generated from the contrib files.
+for contrib in log commit_prep log_accum cln_hist; do
+    echo "Copying the new version of '${contrib}' to $CVSROOT/CVSROOT for you..."
+    cp $CVSLIB/contrib/$contrib $CVSROOT/CVSROOT/$contrib
+done
+echo "Remember, to install these files you must run 'cvsinit' for each repository!"
 
 # XXX - also add a stub for the cvsignore file
 

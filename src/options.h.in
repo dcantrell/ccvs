@@ -61,8 +61,15 @@
  * commands use rcsdiff which will use whatever version of diff was specified
  * when rcsdiff was built on your system.
  */
+
+/* Waiting on some patches to configure.in from Greg Woods.
+ * #ifndef DIFF
+ * #define	DIFF	"@gdiff_path@"
+ * #endif
+ */
+
 #ifndef DIFF
-#define	DIFF	"diff"
+#define	DIFF "diff"
 #endif
 
 /*
@@ -71,8 +78,15 @@
  * regular expression as an argument.  Specify a full pathname if your site
  * wants to use a particular grep.
  */
+
+/* Waiting on some patches to configure.in from Greg Woods.
+ * #ifndef GREP
+ * #define GREP "@ggrep_path@"
+ * #endif
+ */      
+
 #ifndef GREP
-#define	GREP	"grep"
+#define GREP "grep"
 #endif
 
 /*

@@ -1,3 +1,39 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+        
+	* .cvsignore: added new backup file
+        
+	* options.h.in: our new configure.in finds the right diff and
+        grep paths now....
+
+	* subr.c: quote the string in run_print() for visibility
+	- indent a comment
+	- Jun Hamano's xchmod() patch to prevent writable files
+	(from previous local changes)
+
+	* logmsg.c: fix a NULL pointer de-reference
+	- clean up some string handling code...
+	(from previous local changes)
+
+	* parseinfo.c: add hack to expand $CVSROOT in an *info file.
+	- document "ALL" and "DEFAULT" in opening comment for Parse_Info()
+	- fix the code to match the comments w.r.t. callbacks for "ALL"
+	- add a line of trace output...
+	(from previous local changes)
+
+	* mkmodules.c: add support for comments in CVSROOT/checkoutlist
+	- add CVSroot used by something other .o, ala main.c
+	(from previous local changes)
+
+	* main.c, cvs.h: add support for $VISUAL as log msg editor
+	(from previous local changes)
+
+	* status.c: add support for -q and -Q (from previous local changes)
+        
+        
+Sun Jul  9 18:44:32 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * log.c: trivial change to test ChangeLog stuff.
+
 Sat Jul  8 20:33:57 1995  Paul Eggert  <eggert@twinsun.com>
 
 	* history.c: (history_write): Don't assume that fopen(..., "a")

@@ -1,3 +1,12 @@
+Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
+        
+	* cvs.1: document 'cvs status [-qQ]'
+	- note reference to cvsinit(8) and cvsbug(8)
+	(from previous local changes)
+
+	* Makefile.in: add support for installing in man8, and new cvsbug
+        and cvsinit pages (from previous local changes)
+        
 Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (Makefile): Regenerate only Makefile in current
