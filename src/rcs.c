@@ -20,6 +20,10 @@ static void do_branches PROTO((List * list, char *val));
 static void do_symbols PROTO((List * list, char *val));
 static void rcsvers_delproc PROTO((Node * p));
 
+enum rcs_delta_op {RCS_ANNOTATE, RCS_FETCH};
+static void RCS_deltas PROTO ((RCSNode *, FILE *, char *, enum rcs_delta_op,
+			       char **, size_t *));
+
 /*
  * We don't want to use isspace() from the C library because:
  *
@@ -1742,7 +1746,6 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 {
     if ((workfile == NULL || *workfile != '\0')
 	&& ! noexec
-	&& (tag == NULL || strcmp (tag, rcs->head) == 0)
 	&& (sout == RUN_TTY || workfile == NULL)
 	&& (flags & RCS_FLAGS_LOCK) == 0)
     {
@@ -1754,39 +1757,94 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 	size_t len;
 	char *ouroptions;
 
-        /* We want the head revision.  Try to read it directly.  */
+	if (tag == NULL || strcmp (tag, rcs->head) == 0)
+	{
+	    /* We want the head revision.  Try to read it directly.  */
 
-	if (rcs->flags & PARTIAL)
-	    RCS_reparsercsfile (rcs, &fp);
+	    if (rcs->flags & PARTIAL)
+		RCS_reparsercsfile (rcs, &fp);
+	    else
+	    {
+		fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
+		if (fp == NULL)
+		    error (1, 0, "unable to reopen `%s'", rcs->path);
+		if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
+		    error (1, 0, "cannot fseek RCS file");
+	    }
+
+	    found = 0;
+	    getrcsrev (fp, &key);
+	    while (getrcskey (fp, &key, &value, &len) >= 0)
+	    {
+		if (strcmp (key, "text") == 0)
+		{
+		    found = 1;
+		    break;
+		}
+	    }
+
+	    if (fstat (fileno (fp), &sb) < 0)
+		error (1, errno, "cannot fstat %s", rcs->path);
+
+	    if (fclose (fp) < 0)
+		error (0, errno, "cannot close %s", rcs->path);
+	}
 	else
 	{
-	    fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
-	    if (fp == NULL)
-	        error (1, 0, "unable to reopen `%s'", rcs->path);
-	    if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
-	        error (1, 0, "cannot fseek RCS file");
-	}
+#if 0
+	    /* RCS_deltas for this use is not ready for the prime
+	       time; first we need to (a) fix RCS_deltas so it handles
+	       \0 within the file, (b) check RCS_deltas for memory
+	       leaks, (c) make the thing pass the testsuite (when I
+	       tried it got partway but not all the way).  */
 
-	found = 0;
-	getrcsrev (fp, &key);
-	while (getrcskey (fp, &key, &value, &len) >= 0)
-	{
-	    if (strcmp (key, "text") == 0)
+	    /* It isn't the head revision of the trunk.  We'll need to
+	       walk through the deltas.  */
+	    /* Numeric version of TAG.  (Should we be having the caller
+	       pass us this in addition to TAG which is often symbolic for the
+	       Name keyword?)  */
+	    char *num;
+
+	    fp = NULL;
+	    if (rcs->flags & PARTIAL)
+		RCS_reparsercsfile (rcs, &fp);
+	    num = RCS_getversion (rcs, tag, NULL, 1, 0);
+	    if (num == NULL)
 	    {
-	        found = 1;
-		break;
+		error (0, 0, "internal warning: cannot find revision");
+		found = 0;
 	    }
+	    else
+	    {
+		if (fp == NULL)
+		{
+		    /* If RCS_deltas didn't close the file, we could
+		       use fstat here too.  Probably should change it
+		       thusly....  */
+		    if (stat (rcs->path, &sb) < 0)
+			error (1, errno, "cannot stat %s", rcs->path);
+		}
+		else
+		{
+		    if (fstat (fileno (fp), &sb) < 0)
+			error (1, errno, "cannot fstat %s", rcs->path);
+		}
+
+		RCS_deltas (rcs, fp, num, RCS_FETCH, &value, &len);
+		found = 1;
+		free (num);
+	    }
+#else
+	    found = 0;
+#endif
 	}
 
-	if (fstat (fileno (fp), &sb) < 0)
-	    error (1, errno, "cannot fstat %s", rcs->path);
-
-	if (fclose (fp) < 0)
-	    error (0, errno, "cannot close %s", rcs->path);
-
-	/* I'm not completely sure that checking rcs->expand is necessary or even
-	   desirable.  It would appear that Version_TS takes care of that.  */
-	ouroptions = options != NULL ? options + 2 : (rcs->expand != NULL ? rcs->expand : "");
+	/* I'm not completely sure that checking rcs->expand is necessary
+	   or even desirable.  It would appear that Version_TS takes care
+	   of that.  */
+	ouroptions = (options != NULL
+		      ? options + 2
+		      : (rcs->expand != NULL ? rcs->expand : ""));
 	if (found)
 	{
 	    if (strcmp (ouroptions, "o") != 0
@@ -1879,9 +1937,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
     return RCS_checkout (rcs->path, workfile, tag, options, sout, flags);
 }
 
-/* Stuff related to annotate command.  This should perhaps be split
-   into the stuff which knows about the guts of RCS files, and the
-   command parsing type stuff.  */
+/* RCS_deltas and friends.  Processing of the deltas in RCS files.  */
 
 /* Linked list of allocated blocks.  Seems kind of silly to
    reinvent the obstack wheel, and this isn't as nice as obstacks
@@ -2103,21 +2159,32 @@ month_printname (month)
     return (char *)months[mnum - 1];
 }
 
-/* Options from the command line.  */
+/* Walk the deltas in RCS to get to revision VERSION.
 
-static int force_tag_match = 1;
-static char *tag = NULL;
-static char *date = NULL;
+   If OP is RCS_ANNOTATE, then write annotations using cvs_output.
 
-static int annotate_fileproc PROTO ((void *callerdat, struct file_info *));
+   If OP is RCS_FETCH, then put the contents of VERSION into a
+   newly-malloc'd array and put a pointer to it in *TEXT.  Each line
+   is \n terminated; the caller is responsible for converting text
+   files if desired.  The total length is put in *LEN.
 
-static int
-annotate_fileproc (callerdat, finfo)
-    void *callerdat;
-    struct file_info *finfo;
-{
-    char *version, *branchversion, *cpversion;
+   If FP is non-NULL, it should be a file descriptor open to the file
+   RCS with file position pointing to the deltas.  We close the file
+   when we are done.
+
+   On error, give a fatal error.  */
+
+static void
+RCS_deltas (rcs, fp, version, op, text, len)
+    RCSNode *rcs;
     FILE *fp;
+    char *version;
+    enum rcs_delta_op op;
+    char **text;
+    size_t *len;
+{
+    char *branchversion;
+    char *cpversion;
     char *key;
     char *value;
     RCSVers *vers;
@@ -2132,29 +2199,14 @@ annotate_fileproc (callerdat, finfo)
     struct linevector trunklines;
     int foundhead;
 
-    if (finfo->rcs == NULL)
-        return (1);
-
-    if (finfo->rcs->flags & PARTIAL)
-        RCS_reparsercsfile (finfo->rcs, &fp);
-    else
+    if (fp == NULL)
     {
-        fp = CVS_FOPEN (finfo->rcs->path, FOPEN_BINARY_READ);
+	fp = CVS_FOPEN (rcs->path, FOPEN_BINARY_READ);
 	if (fp == NULL)
-	    error (1, 0, "unable to reopen `%s'", finfo->rcs->path);
-	if (fseek (fp, finfo->rcs->delta_pos, SEEK_SET) != 0)
+	    error (1, 0, "unable to reopen `%s'", rcs->path);
+	if (fseek (fp, rcs->delta_pos, SEEK_SET) != 0)
 	    error (1, 0, "cannot fseek RCS file");
     }
-
-    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, 0);
-    if (version == NULL)
-        return 0;
-
-    /* Distinguish output for various files if we are processing
-       several files.  */
-    cvs_outerr ("Annotations for ", 0);
-    cvs_outerr (finfo->fullname, 0);
-    cvs_outerr ("\n***************\n", 0);
 
     ishead = 1;
     vers = NULL;
@@ -2190,11 +2242,11 @@ annotate_fileproc (callerdat, finfo)
 	    isnext = 1;
 
 	    /* look up the revision */
-	    node = findnode (finfo->rcs->versions, key);
+	    node = findnode (rcs->versions, key);
 	    if (node == NULL)
 	        error (1, 0,
 		       "mismatch in rcs file %s between deltas and deltatexts",
-		       finfo->rcs->path);
+		       rcs->path);
 
 	    /* Stash the previous version.  */
 	    prev_vers = vers;
@@ -2252,7 +2304,7 @@ annotate_fileproc (callerdat, finfo)
 			    /* Can't just skip over the deltafrag, because
 			       the value of op determines the syntax.  */
 			    error (1, 0, "unrecognized operation '%c' in %s",
-				   op, finfo->rcs->path);
+				   op, rcs->path);
 			df = (struct deltafrag *)
 			    xmalloc (sizeof (struct deltafrag));
 			df->next = dfhead;
@@ -2261,19 +2313,19 @@ annotate_fileproc (callerdat, finfo)
 
 			if (p == q)
 			    error (1, 0, "number expected in %s",
-				   finfo->rcs->path);
+				   rcs->path);
 			p = q;
 			if (*p++ != ' ')
 			    error (1, 0, "space expected in %s",
-				   finfo->rcs->path);
+				   rcs->path);
 			df->nlines = strtoul (p, &q, 10);
 			if (p == q)
 			    error (1, 0, "number expected in %s",
-				   finfo->rcs->path);
+				   rcs->path);
 			p = q;
 			if (*p++ != '\012')
 			    error (1, 0, "linefeed expected in %s",
-				   finfo->rcs->path);
+				   rcs->path);
 
 			if (op == 'a')
 			{
@@ -2294,7 +2346,7 @@ annotate_fileproc (callerdat, finfo)
 				    if (i != 1)
 					error (1, 0, "\
 invalid rcs file %s: premature end of value",
-					       finfo->rcs->path);
+					       rcs->path);
 				    else
 					break;
 				}
@@ -2333,7 +2385,7 @@ invalid rcs file %s: premature end of value",
 				|| df->pos + df->nlines > curlines.nlines)
 				error (1, 0, "\
 invalid rcs file %s (`d' operand out of range)",
-				       finfo->rcs->path);
+				       rcs->path);
 			    if (! onbranch)
 			        for (ln = df->pos;
 				     ln < df->pos + df->nlines;
@@ -2404,7 +2456,7 @@ invalid rcs file %s (`d' operand out of range)",
                    NODE->branches whose prefix is BRANCHVERSION.  */
 		if (vers->branches == NULL)
 		    error (1, 0, "missing expected branches in %s",
-			   finfo->rcs->path);
+			   rcs->path);
 		*cpversion = '.';
 		++cpversion;
 		for (p = vers->branches->list->next;
@@ -2412,78 +2464,118 @@ invalid rcs file %s (`d' operand out of range)",
 		     p = p->next)
 		    if (strncmp (p->key, branchversion,
 				 cpversion - branchversion) == 0)
-		      break;
+			break;
 		if (p == vers->branches->list)
 		    error (1, 0, "missing expected branch in %s",
-			   finfo->rcs->path);
+			   rcs->path);
 
 		next = p->key;
 
 		cpversion = strchr (cpversion, '.');
 		if (cpversion == NULL)
 		    error (1, 0, "version number confusion in %s",
-			   finfo->rcs->path);
+			   rcs->path);
 		cpversion = strchr (cpversion + 1, '.');
 		if (cpversion != NULL)
 		    *cpversion = '\0';
 	    }
 	}
-
+	if (op == RCS_FETCH && foundhead)
+	    break;
     } while (next != NULL);
 
     if (fclose (fp) < 0)
-	error (0, errno, "cannot close %s", finfo->rcs->path);
+	error (0, errno, "cannot close %s", rcs->path);
 
     if (! foundhead)
         error (1, 0, "could not find desired version %s in %s",
-	       version, finfo->rcs->path);
+	       version, rcs->path);
 
-    /* Now print out the data we have just computed.  */
+    /* Now print out or return the data we have just computed.  */
+    switch (op)
     {
-	unsigned int ln;
-
-	for (ln = 0; ln < headlines.nlines; ++ln)
-	{
-	    char buf[80];
-	    /* Period which separates year from month in date.  */
-	    char *ym;
-	    /* Period which separates month from day in date.  */
-	    char *md;
-	    RCSVers *prvers;
-
-	    prvers = headlines.vector[ln]->vers;
-	    if (prvers == NULL)
-		prvers = vers;
-
-	    sprintf (buf, "%-12s (%-8.8s ",
-		     prvers->version,
-		     prvers->author);
-	    cvs_output (buf, 0);
-
-	    /* Now output the date.  */
-	    ym = strchr (prvers->date, '.');
-	    if (ym == NULL)
-		cvs_output ("??-???-??", 0);
-	    else
+	case RCS_ANNOTATE:
 	    {
-		md = strchr (ym + 1, '.');
-		if (md == NULL)
-		    cvs_output ("??", 0);
-		else
-		    cvs_output (md + 1, 2);
+		unsigned int ln;
 
-		cvs_output ("-", 1);
-		cvs_output (month_printname (ym + 1), 0);
-		cvs_output ("-", 1);
-		/* Only output the last two digits of the year.  Our output
-		   lines are long enough as it is without printing the
-		   century.  */
-		cvs_output (ym - 2, 2);
+		for (ln = 0; ln < headlines.nlines; ++ln)
+		{
+		    char buf[80];
+		    /* Period which separates year from month in date.  */
+		    char *ym;
+		    /* Period which separates month from day in date.  */
+		    char *md;
+		    RCSVers *prvers;
+
+		    prvers = headlines.vector[ln]->vers;
+		    if (prvers == NULL)
+			prvers = vers;
+
+		    sprintf (buf, "%-12s (%-8.8s ",
+			     prvers->version,
+			     prvers->author);
+		    cvs_output (buf, 0);
+
+		    /* Now output the date.  */
+		    ym = strchr (prvers->date, '.');
+		    if (ym == NULL)
+			cvs_output ("??-???-??", 0);
+		    else
+		    {
+			md = strchr (ym + 1, '.');
+			if (md == NULL)
+			    cvs_output ("??", 0);
+			else
+			    cvs_output (md + 1, 2);
+
+			cvs_output ("-", 1);
+			cvs_output (month_printname (ym + 1), 0);
+			cvs_output ("-", 1);
+			/* Only output the last two digits of the year.  Our output
+			   lines are long enough as it is without printing the
+			   century.  */
+			cvs_output (ym - 2, 2);
+		    }
+		    cvs_output ("): ", 0);
+		    cvs_output (headlines.vector[ln]->text, 0);
+		    cvs_output ("\n", 1);
+		}
 	    }
-	    cvs_output ("): ", 0);
-	    cvs_output (headlines.vector[ln]->text, 0);
-	    cvs_output ("\n", 1);
-	}
+	    break;
+	case RCS_FETCH:
+	    {
+		char *p;
+		size_t n;
+		unsigned int ln;
+
+		assert (text != NULL);
+		assert (len != NULL);
+
+		n = 1; /* 1 for final \0 */
+		for (ln = 0; ln < curlines.nlines; ++ln)
+		    /* 1 for \n */
+		    n += strlen (curlines.vector[ln]->text) + 1;
+		p = xmalloc (n);
+		*text = p;
+		for (ln = 0; ln < curlines.nlines; ++ln)
+		{
+		    strcpy (p, curlines.vector[ln]->text);
+		    p += strlen (p);
+		    if (curlines.vector[ln]->has_newline)
+		    {
+			*p++ = '\n';
+			*p = '\0';
+		    }
+		}
+		/* FIXME: totally and utterly broken for (e.g. binary) files
+		   containing \0.  */
+		*len = strlen (*text);
+
+		/* <, not <=, because there is a final \0 (does there need
+		   to be, given the fact that we return the length?)  */
+		assert (*len < n);
+	    }
+	    break;
     }
 
     if (!ishead)
@@ -2491,16 +2583,56 @@ invalid rcs file %s (`d' operand out of range)",
 	linevector_free (&curlines);
 	linevector_free (&headlines);
     }
+    /* FIXME-leak: shouldn't we free trunklines at some point around here?  */
     block_free ();
-    return 0;
+    return;
 
   l_error:
     if (ferror (fp))
-	error (1, errno, "cannot read %s", finfo->rcs->path);
+	error (1, errno, "cannot read %s", rcs->path);
     else
         error (1, 0, "%s does not appear to be a valid rcs file",
-	       finfo->rcs->path);
-    /* Shut up gcc -Wall.  */
+	       rcs->path);
+}
+
+
+/* Annotate command.  Here for historical reasons (from back when
+   what is now RCS_deltas was part of annotate_fileproc).  */
+
+/* Options from the command line.  */
+
+static int force_tag_match = 1;
+static char *tag = NULL;
+static char *date = NULL;
+
+static int annotate_fileproc PROTO ((void *callerdat, struct file_info *));
+
+static int
+annotate_fileproc (callerdat, finfo)
+    void *callerdat;
+    struct file_info *finfo;
+{
+    FILE *fp = NULL;
+    char *version;
+
+    if (finfo->rcs == NULL)
+        return (1);
+
+    if (finfo->rcs->flags & PARTIAL)
+        RCS_reparsercsfile (finfo->rcs, &fp);
+
+    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, 0);
+    if (version == NULL)
+        return 0;
+
+    /* Distinguish output for various files if we are processing
+       several files.  */
+    cvs_outerr ("Annotations for ", 0);
+    cvs_outerr (finfo->fullname, 0);
+    cvs_outerr ("\n***************\n", 0);
+
+    RCS_deltas (finfo->rcs, fp, version, RCS_ANNOTATE, NULL, NULL);
+    free (version);
     return 0;
 }
 
