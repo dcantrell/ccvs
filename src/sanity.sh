@@ -5024,7 +5024,7 @@ diff -c first-dir/file3:1\.1\.2\.1 first-dir/file3:removed
 retrieving revision 1\.3
 retrieving revision 1\.3\.2\.1
 Merging differences between 1\.3 and 1\.3\.2\.1 into file1
-${SPROG} update: scheduling file2 for removal
+${SPROG} update: scheduling \`file2' for removal
 U file3"
 
 		dotest_fail death-file4-5 "test -f file4" ''
@@ -5840,7 +5840,7 @@ done"
 	  # Hmm, might be a bit odd that this works even if 1.3 is not
 	  # the head.
 	  dotest rmadd2-14 "${testcvs} -q update -j 1.3 -j 1.2 file1" \
-"${SPROG} update: scheduling file1 for removal"
+"${SPROG} update: scheduling \`file1' for removal"
 
 	  # Check that -p can get arbitrary revisions of a removed file
 	  dotest rmadd2-14a "${testcvs} -q update -p" "initial contents"
@@ -8609,15 +8609,15 @@ T file9'
 	  mkdir 3
 	  cd 3
 	  dotest join-16 "${testcvs} -q co -jT1 -jT2 first-dir" \
-'U first-dir/file1
+"U first-dir/file1
 U first-dir/file2
-'"${SPROG}"' checkout: file first-dir/file2 exists, but has been added in revision T2
+${SPROG} checkout: file first-dir/file2 exists, but has been added in revision T2
 U first-dir/file3
-'"${SPROG}"' checkout: scheduling first-dir/file3 for removal
+${SPROG} checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
-'"${SPROG}"' checkout: scheduling first-dir/file4 for removal
+${SPROG} checkout: scheduling \`first-dir/file4' for removal
 U first-dir/file7
-'"${SPROG}"' checkout: file first-dir/file9 does not exist, but is present in revision T2'
+${SPROG} checkout: file first-dir/file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  cd first-dir
@@ -8630,12 +8630,12 @@ R file4'
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
 	  dotest join-18 "${testcvs} -q update -jT1 -jT2 ." \
-'U file1
-'"${SPROG}"' update: file file2 exists, but has been added in revision T2
-'"${SPROG}"' update: scheduling file3 for removal
+"U file1
+$SPROG update: file file2 exists, but has been added in revision T2
+$SPROG update: scheduling \`file3' for removal
 M file4
-'"${SPROG}"' update: file file4 is locally modified, but has been removed in revision T2
-'"${SPROG}"' update: file file9 does not exist, but is present in revision T2'
+$SPROG update: file file4 is locally modified, but has been removed in revision T2
+$SPROG update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join-19 "${testcvs} -q update" \
@@ -8664,7 +8664,7 @@ retrieving revision 1\.1
 retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into file2
 U first-dir/file3
-${SPROG} checkout: scheduling first-dir/file3 for removal
+${SPROG} checkout: scheduling \`first-dir/file3' for removal
 U first-dir/file4
 ${SPROG} checkout: file first-dir/file4 has been modified, but has been removed in revision branch
 U first-dir/file7
@@ -8698,7 +8698,7 @@ RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1\.1
 retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into file2
-${SPROG} update: scheduling file3 for removal
+${SPROG} update: scheduling \`file3' for removal
 M file4
 ${SPROG} update: file file4 is locally modified, but has been removed in revision branch
 ${SPROG} update: file file9 does not exist, but is present in revision branch"
@@ -8737,7 +8737,7 @@ RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1.1
 retrieving revision 1.1.2.1
 Merging differences between 1.1 and 1.1.2.1 into file2
-${SPROG} update: scheduling file3 for removal
+${SPROG} update: scheduling \`file3' for removal
 ${SPROG} update: file file4 has been modified, but has been removed in revision branch
 U file8
 U file9"
@@ -8772,7 +8772,7 @@ retrieving revision 1\.1
 retrieving revision 1\.1\.2\.1
 Merging differences between 1\.1 and 1\.1\.2\.1 into file2
 U file3
-${SPROG} update: scheduling file3 for removal
+${SPROG} update: scheduling \`file3' for removal
 U file4
 ${SPROG} update: file file4 has been modified, but has been removed in revision branch
 U file7
@@ -9288,18 +9288,18 @@ T file9'
 	  cd ../../1/first-dir
 	  echo 'third revision of file4' > file4
 	  dotest join4-18 "${testcvs} -q update -jT1 -jT2 ." \
-'U file1
+"U file1
 R file10
 A file2
-'"${SPROG}"' update: file file2 exists, but has been added in revision T2
-'"${SPROG}"' update: scheduling file3 for removal
+${SPROG} update: file file2 exists, but has been added in revision T2
+${SPROG} update: scheduling \`file3' for removal
 M file4
-'"${SPROG}"' update: file file4 is locally modified, but has been removed in revision T2
+${SPROG} update: file file4 is locally modified, but has been removed in revision T2
 R file6
 A file7
 R file8
 R file9
-'"${SPROG}"' update: file file9 does not exist, but is present in revision T2'
+${SPROG} update: file file9 does not exist, but is present in revision T2"
 
 	  # Verify that the right changes have been scheduled.
 	  dotest join4-19 "${testcvs} -q update" \
