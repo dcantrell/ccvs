@@ -63,6 +63,7 @@ AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
 CPP = @CPP@
+CSH = @CSH@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 DEPDIR = @DEPDIR@
@@ -73,16 +74,15 @@ KRB4 = @KRB4@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+PERL = @PERL@
+PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
 VERSION = @VERSION@
 YACC = @YACC@
-csh_path = @csh_path@
 includeopt = @includeopt@
 install_sh = @install_sh@
-perl_path = @perl_path@
-pr_path = @pr_path@
 
 # Makefile for GNU CVS contributed sources.
 # Do not use this makefile directly, but only from `../Makefile'.
@@ -121,7 +121,8 @@ contrib_SCRIPTS = \
 	cvs_acls \
 	cvscheck \
 	debug_check_log \
-	log log_accum \
+	log \
+	log_accum \
 	mfpipe \
 	rcs-to-cvs \
 	rcs2log \
@@ -131,7 +132,6 @@ contrib_SCRIPTS = \
 
 contrib_DATA = \
 	README \
-	cvscheck.man \
 	intro.doc
 
 
@@ -144,43 +144,37 @@ bin_LINKS = \
 
 
 EXTRA_DIST = \
+	.cvsignore \
 	$(contrib_DATA) \
 	$(contrib_MANS) \
-	clmerge.pl \
-	cln_hist.pl \
-	commit_prep.pl \
 	cvs2vendor.sh \
-	cvs_acls.pl \
 	cvscheck.sh \
-	debug_check_log.sh \
-	log.pl \
-	log_accum.pl \
-	mfpipe.pl \
-	rcs-to-cvs.sh \
-	rcs2log.sh \
-	rcs2sccs.sh \
-	rcslock.pl \
-	sccs2rcs.csh \
 	cvshelp.man \
+	debug_check_log.sh \
 	descend.sh \
 	descend.man \
 	dirfns.shar \
-	.cvsignore
+	rcs-to-cvs.sh \
+	rcs2log.sh \
+	rcs2sccs.sh
 
 
 CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
 
-SUFFIXES = .pl .sh .csh
+SUFFIXES = .sh
 subdir = contrib
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h ../src/options.h
-CONFIG_CLEAN_FILES = 
+CONFIG_CLEAN_FILES =  clmerge cln_hist commit_prep cvs_acls log \
+log_accum mfpipe rcslock sccs2rcs
 SCRIPTS =  $(contrib_SCRIPTS)
 
 DIST_SOURCES = 
 DATA =  $(contrib_DATA)
 
-DIST_COMMON =  README ChangeLog Makefile.am Makefile.in
+DIST_COMMON =  README ChangeLog Makefile.am Makefile.in clmerge.in \
+cln_hist.in commit_prep.in cvs_acls.in log.in log_accum.in mfpipe.in \
+rcslock.in sccs2rcs.in
 
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -188,7 +182,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .pl .sh .csh
+.SUFFIXES: .sh
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu contrib/Makefile
 
@@ -196,6 +190,24 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+clmerge: $(top_builddir)/config.status clmerge.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+cln_hist: $(top_builddir)/config.status cln_hist.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+commit_prep: $(top_builddir)/config.status commit_prep.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+cvs_acls: $(top_builddir)/config.status cvs_acls.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+log: $(top_builddir)/config.status log.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+log_accum: $(top_builddir)/config.status log_accum.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+mfpipe: $(top_builddir)/config.status mfpipe.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+rcslock: $(top_builddir)/config.status rcslock.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+sccs2rcs: $(top_builddir)/config.status sccs2rcs.in
+	cd $(top_builddir) && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
 install-contribSCRIPTS: $(contrib_SCRIPTS)
 	@$(NORMAL_INSTALL)
@@ -347,18 +359,6 @@ uninstall-local:
 	list='$(bin_LINKS)'; for p in $$list; do \
 	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
 	done
-
-.pl:
-	rm -f $@
-	sed -e 's,xPERL_PATHx,$(perl_path),' $< > $@-t
-	mv $@-t $@
-	chmod +x $@
-
-.csh:
-	rm -f $@
-	sed -e 's,xCSH_PATHx,$(csh_path),' $< > $@-t
-	mv $@-t $@
-	chmod +x $@
 
 .sh:
 	rm -f $@

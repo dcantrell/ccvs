@@ -1,3 +1,28 @@
+2001-01-05  Derek Price  <derek.price@openavenue.com>
+
+	* contrib/Makefile.am (EXTRA_DIST, SUFFIXES, .pl:, .csh:): Move some
+	script targets to configure.in - see ../ChangeLog for more
+
+	* contrib/clmerge.in: Rename from clmerge.pl
+	* contrib/cln_hist.in: Rename from cln_hist.pl
+	* contrib/commit_prep.in: Rename from commit_prep.pl
+	* contrib/cvs_acls.in: Rename from cvs_acls.pl
+	* contrib/log.in: Rename from log.pl
+	* contrib/log_accum.in: Rename from log_accum.pl
+	* contrib/mfpipe.in: Rename from mfpipe.pl
+	* contrib/rcslock.in: Rename from rcslock.pl
+	* contrib/sccs2rcs.in: Rename from scc2rcs.csh
+
+	* contrib/clmerge.pl: Rename to clmerge.in
+	* contrib/cln_hist.pl: Rename to cln_hist.in
+	* contrib/commit_prep.pl: Rename to commit_prep.in
+	* contrib/cvs_acls.pl: Rename to cvs_acls.in
+	* contrib/log.pl: Rename to log.in
+	* contrib/log_accum.pl: Rename to log_accum.in
+	* contrib/mfpipe.pl: Rename to mfpipe.in
+	* contrib/rcslock.pl: Rename to rcslock.in
+	* contrib/sccs2rcs.csh: Rename to sccs2rcs.in
+
 2000-12-22  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.in: Regenerated

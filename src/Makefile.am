@@ -38,24 +38,13 @@ update.h server.h client.h error.h fileattr.h edit.h watch.h
 cvs_LDADD = version.o ../lib/libcvs.a ../diff/libdiff.a ../zlib/libz.a
 cvs_EXTRA_DIST = version.c
 
-cvsbug_EXTRA_DIST = cvsbug.sh
-
-# The cvsbug executable
-# version.c is in here so we'll notice if configure was run
-cvsbug: cvsbug.sh version.c
-	sed -e 's,xLIBDIRx,$(libdir)/cvs,g' \
-	    -e "s,xVERSIONx,$(VERSION),g" $(srcdir)/cvsbug.sh > $@-t
-	mv $@-t $@
-	chmod a+x $@
-
 # extra clean targets
 # wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = options.h-SAVED cvsbug check.log check.plog
+DISTCLEANFILES = options.h-SAVED check.log check.plog
 
 # General
 EXTRA_DIST = \
 	$(cvs_EXTRA_DIST) \
-	$(cvsbug_EXTRA_DIST) \
 	.cvsignore \
 	ChangeLog-9194 \
 	ChangeLog-9395 \
@@ -75,7 +64,8 @@ remotecheck: all
 
 ## MAINTAINER Targets
 
-## version.c.  ##
+# version.c
+# - build this here so that we can distribute it
 # - version.c needs to be updated only once, since it depends on
 #   configure.in, not on the results of a 'configure' run.
 # - It is guaranteed (with GNU Make) that when the version in configure.in

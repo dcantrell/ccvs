@@ -1,4 +1,4 @@
-#! xPERL_PATHx
+#! @PERL@
 # -*-Perl-*-
 #
 # Access control lists for CVS.  dgg@ksr.com (David G. Grubbs)

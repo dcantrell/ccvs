@@ -1,3 +1,53 @@
+2001-01-05  Derek Price  <derek.price@openavenue.com>
+
+	* configure.in (AC_OUTPUT): Move some script targets here
+	* contrib/Makefile.am (EXTRA_DIST, SUFFIXES, .pl:, .csh:): Move some
+	script targets to configure.in
+	* src/Makefile.am (cvsbug, cvsbug_EXTRA_DIST, EXTRA_DIST): move cvsbug
+	target to configure.in
+
+	* aclocal.m4: Regenerated due to change in Automake installation
+
+	* Makefile.in: Regenerated
+	* configure: ditto
+	* contrib/Makefile.in: ditto
+	* doc/Makefile.in: ditto
+	* lib/Makefile.in: ditto
+	* man/Makefile.in: ditto
+	* src/Makefile.in: ditto
+	* tools/Makefile.in: ditto
+	* vms/Makefile.in: ditto
+	* windows-NT/Makefile.in: ditto
+	* windows-NT/SCC/Makefile.in: ditto
+
+	* cvs.spec: updated timestamp
+	* stamp-h1.in: ditto
+	* doc/CVSvn.texi: ditto
+	* src/stamp-h2.in: ditto
+	* src/version.c: ditto
+
+	* contrib/clmerge.in: Rename from clmerge.pl
+	* contrib/cln_hist.in: Rename from cln_hist.pl
+	* contrib/commit_prep.in: Rename from commit_prep.pl
+	* contrib/cvs_acls.in: Rename from cvs_acls.pl
+	* contrib/log.in: Rename from log.pl
+	* contrib/log_accum.in: Rename from log_accum.pl
+	* contrib/mfpipe.in: Rename from mfpipe.pl
+	* contrib/rcslock.in: Rename from rcslock.pl
+	* contrib/sccs2rcs.in: Rename from scc2rcs.csh
+	* src/cvsbug.in: Rename from cvsbug.sh
+
+	* contrib/clmerge.pl: Rename to clmerge.in
+	* contrib/cln_hist.pl: Rename to cln_hist.in
+	* contrib/commit_prep.pl: Rename to commit_prep.in
+	* contrib/cvs_acls.pl: Rename to cvs_acls.in
+	* contrib/log.pl: Rename to log.in
+	* contrib/log_accum.pl: Rename to log_accum.in
+	* contrib/mfpipe.pl: Rename to mfpipe.in
+	* contrib/rcslock.pl: Rename to rcslock.in
+	* contrib/sccs2rcs.csh: Rename to sccs2rcs.in
+	* src/cvsbug.sh: Rename to cvsbug.in
+
 2001-01-03  Derek Price  <derek.price@openavenue.com>
 
 	* Makefile.am (remotecheck): depend on 'all'

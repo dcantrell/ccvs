@@ -1,4 +1,4 @@
-# aclocal.m4 generated automatically by aclocal 1.4a
+# aclocal.m4 generated automatically by aclocal 1.4c
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
 # Free Software Foundation, Inc.
@@ -248,9 +248,6 @@ depcpp=""])
 AC_MSG_CHECKING([dependency style of $depcc])
 AC_CACHE_VAL(am_cv_[$1]_dependencies_compiler_type,[
 if test -z "$AMDEP"; then
-  echo '#include "conftest.h"' > conftest.c
-  echo 'int i;' > conftest.h
-
   am_cv_[$1]_dependencies_compiler_type=none
   for depmode in `sed -n 's/^#*\([a-zA-Z0-9]*\))$/\1/p' < "$am_depcomp"`; do
     case "$depmode" in
@@ -265,6 +262,11 @@ if test -z "$AMDEP"; then
       ;;
     none) break ;;
     esac
+    # We need to recreate these files for each test, as the compiler may
+    # overwrite some of them when testing with obscure command lines.
+    # This happens at least with the AIX C compiler.
+    echo '#include "conftest.h"' > conftest.c
+    echo 'int i;' > conftest.h
     # We check with `-c' and `-o' for the sake of the "dashmstdout"
     # mode.  It turns out that the SunPro C++ compiler does not properly
     # handle `-M -o', and we need to detect this.

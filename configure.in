@@ -14,9 +14,9 @@ AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
 
-AC_PATH_PROG(perl_path, perl, no)
-AC_PATH_PROG(csh_path, csh, no)
-AC_PATH_PROG(pr_path, pr, no)
+AC_PATH_PROG(PERL, perl, no)
+AC_PATH_PROG(CSH, csh, no)
+AC_PATH_PROG(PR, pr, no)
 
 dnl FIXME This is truly gross.
 missing_dir=`cd $ac_aux_dir && pwd`
@@ -319,8 +319,17 @@ test -f src/options.h && (
   cp ./src/options.h ./src/options.h-SAVED
 )
 
-AC_OUTPUT(Makefile \
+AC_OUTPUT([Makefile \
 	  contrib/Makefile \
+	  contrib/clmerge \
+	  contrib/cln_hist \
+	  contrib/commit_prep \
+	  contrib/cvs_acls \
+	  contrib/log \
+	  contrib/log_accum \
+	  contrib/mfpipe \
+	  contrib/rcslock \
+	  contrib/sccs2rcs \
 	  diff/Makefile \
 	  doc/Makefile \
 	  emx/Makefile \
@@ -328,8 +337,20 @@ AC_OUTPUT(Makefile \
 	  man/Makefile \
 	  os2/Makefile \
 	  src/Makefile \
+	  src/cvsbug \
 	  tools/Makefile \
 	  vms/Makefile \
 	  windows-NT/Makefile \
 	  windows-NT/SCC/Makefile \
-	  zlib/Makefile)
+	  zlib/Makefile],
+	  [chmod +x \
+	  contrib/clmerge \
+	  contrib/cln_hist \
+	  contrib/commit_prep \
+	  contrib/cvs_acls \
+	  contrib/log \
+	  contrib/log_accum \
+	  contrib/mfpipe \
+	  contrib/rcslock \
+	  contrib/sccs2rcs \
+	  src/cvsbug])
