@@ -1,68 +1,7 @@
 /*  pwd.c - Try to approximate UN*X's getuser...() functions under MS-DOS.
     Copyright (C) 1990 by Thorsten Ohl, td12@ddagsi3.bitnet
 
-    testing gzip, yes we are...
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-    yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba yabba 
-
-    This program is free software; you can redistribute it and/or modify
+	This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 1, or (at your option)
     any later version.
