@@ -1,5 +1,24 @@
 2004-06-30  Derek Price  <derek@ximbiot.com>
 
+	* root.h (primary_root_add, primary_root_translate): New protos.
+	* root.c (primary_root_add, primary_root_translate): New functions.
+	* main.c (long_options): Add --primary-root.  Handle --primary-root
+	and --allow-root only with SERVER_SUPPORT.
+	(main): Ditto.
+	* server.c (move_file_offset): Set block before fsync.  Report
+	ftruncate errors.  Force sync after rearranging data.
+	(replace_file_offset): Force sync after replacing data.
+	(serve_directory): Translate roots based on --primary-root arg.
+	(serve_root): Likewise & don't rewrite the log file.
+	(become_proxy): Increment select's N arg because it is required.
+	(do_cvs_command): Use MAX macro appropriately.
+	* sanity.sh (writeproxy): Wrap the secondary server in such a way that
+	it gets the --primary-root option and the primary does not.  Move the
+	primary root out of the way for the read operations to prove only the
+	secondary was accessed.
+
+2004-06-30  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.c (log_buffer_input, log_buffer_output): Flush logs as
 	soon as they are written to better diagnose hangs.
 

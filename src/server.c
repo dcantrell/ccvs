@@ -836,6 +836,12 @@ move_file_offset (int fd, off_t src, off_t dest)
     char buf[4096];
     int flags;
 
+    /* Save current blocking status and set file descriptor to block.  */
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0) error (1, errno, "Failed to retrieve FD flags");
+    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
+	error (1, errno, "Failed to set FD flags.");
+
     /* Make sure all data written to this file has been committed to disk
      * before mucking around with it.
      */
@@ -845,12 +851,6 @@ move_file_offset (int fd, off_t src, off_t dest)
     /* Find EOF.  */
     end = lseek (fd, 0, SEEK_END);
     if (end < 0) error (1, errno, "Failed to find end of file");
-
-    /* Save current blocking status and set file descriptor to block.  */
-    flags = fcntl (fd, F_GETFL, 0);
-    if (flags < 0) error (1, errno, "Failed to retrieve FD flags");
-    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
-	error (1, errno, "Failed to set FD flags.");
 
     /* Move the data.  */
     if (src < dest)
@@ -900,8 +900,13 @@ move_file_offset (int fd, off_t src, off_t dest)
 		error (1, errno, "Failed to write to file");
 	    q += len;
 	}
-	ftruncate (fd, end - src + dest);
+	if (ftruncate (fd, end - src + dest) < 0)
+	    error (1, errno, "Failed to truncate file");
     }
+
+    /* Make sure all data written to this file has been committed to disk.  */
+    if (fsync (fd) < 0)
+	error (1, 0, "Failed to sync file data after moving");
 
     /* Restore blocking status.  */
     if (fcntl (fd, F_SETFL, flags) < 0)
@@ -930,6 +935,10 @@ replace_file_offset (int fd, off_t offset, size_t rlen, void *buf, size_t len)
 	error (1, errno, "Failed to write to file");
     if (lseek (fd, 0, SEEK_END) < 0)
 	error (1, errno, "Failed to set file position to EOF after replace");
+
+    /* Make sure all data written to this file has been committed to disk.  */
+    if (fsync (fd) < 0)
+	error (1, 0, "Failed to sync file data after moving");
 }
 
 
@@ -970,6 +979,8 @@ serve_root (char *arg)
 	return;
     }
 
+    arg = primary_root_translate (arg);
+
 #ifdef AUTH_SERVER_SUPPORT
     if (Pserver_Repos != NULL)
     {
@@ -988,6 +999,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 #endif
 
     current_parsed_root = local_cvsroot (arg);
+    free (arg);
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
@@ -998,15 +1010,16 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
      */
     if (isSecondaryServer ())
     {
-	size_t len;
-	char *buf;
-
 	if (!secondary_log)
 	    /* Exit with an error since we must have failed to open the
 	     * secondary log in server().
 	     */
 	    error (1, 0, "No secondary log found for write proxy.");
 
+/* I'm going to need the following for translation once the trunk gets
+ * merged and Root translation becomes necessary again.
+ */
+#if 0
 	/* Replace the `Root' request in the log with a request for our
 	 * primary.
 	 */
@@ -1017,6 +1030,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	                     buf_from_net->last_index,
 	                     buf_from_net->last_count,
 	                     buf, len);
+#endif
     }
     else
 	/* We are not a secondary server, so reprocess the secondary log and
@@ -1441,9 +1455,11 @@ serve_directory (char *arg)
     }
     else
     {
-	if (!secondary_log && !outside_root (repos))
-	    dirswitch (arg, repos);
+	char *lrepos = primary_root_translate (repos);
 	free (repos);
+	if (!secondary_log && !outside_root (lrepos))
+	    dirswitch (arg, lrepos);
+	free (lrepos);
     }
 }
 
@@ -3095,6 +3111,11 @@ become_proxy (void)
 	    numfds = MAX (numfds, from_primary_fd);
 	}
 
+	/* NUMFDS needs to be the highest descriptor + 1 according to the
+	 * select spec.
+	 */
+	numfds++;
+
 	do {
 	    /* This used to select on exceptions too, but as far
 	       as I know there was never any reason to do that and
@@ -3498,14 +3519,11 @@ error  \n");
 	FD_ZERO (&command_fds_to_drain.fds);
 	num_to_check = stdout_pipe[0];
 	FD_SET (stdout_pipe[0], &command_fds_to_drain.fds);
-	if (stderr_pipe[0] > num_to_check)
-	  num_to_check = stderr_pipe[0];
+	num_to_check = MAX (num_to_check, stderr_pipe[0]);
 	FD_SET (stderr_pipe[0], &command_fds_to_drain.fds);
-	if (protocol_pipe[0] > num_to_check)
-	  num_to_check = protocol_pipe[0];
+	num_to_check = MAX (num_to_check, protocol_pipe[0]);
 	FD_SET (protocol_pipe[0], &command_fds_to_drain.fds);
-	if (STDOUT_FILENO > num_to_check)
-	  num_to_check = STDOUT_FILENO;
+	num_to_check = MAX (num_to_check, STDOUT_FILENO);
 #ifdef SUNOS_KLUDGE
 	max_command_fd = num_to_check;
 #endif

@@ -448,7 +448,10 @@ main (int argc, char **argv)
 	{"help-commands", 0, NULL, 1},
 	{"help-synonyms", 0, NULL, 2},
 	{"help-options", 0, NULL, 4},
+#ifdef SERVER_SUPPORT
 	{"allow-root", required_argument, NULL, 3},
+	{"primary-root", required_argument, NULL, 5},
+#endif /* SERVER_SUPPORT */
         {0, 0, 0, 0}
     };
     /* `getopt_long' stores the option index here, but right now we
@@ -559,10 +562,16 @@ main (int argc, char **argv)
 		/* --help-options */
 		usage (opt_usage);
 		break;
+#ifdef SERVER_SUPPORT
 	    case 3:
 		/* --allow-root */
 		root_allow_add (optarg);
 		break;
+	    case 5:
+		/* --primary-root */
+		primary_root_add (optarg);
+		break;
+#endif /* SERVER_SUPPORT */
 	    case 'Q':
 		really_quiet = 1;
 		/* FALL THROUGH */
