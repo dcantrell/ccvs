@@ -15868,7 +15868,7 @@ ${PROG} [a-z]*: Updating first-dir"
 	  dotest multiroot-setup-3 "${testcvs2} init" ""
 
 	  #
-	  # create some modules in root1
+	  # create some directories in root1
 	  #
 	  mkdir 1; cd 1
 	  dotest multiroot-setup-4 "${testcvs1} co -l ." "${PROG} [a-z]*: Updating ."
@@ -15902,7 +15902,7 @@ done"
 	  rm -rf 1
 
 	  #
-	  # create some modules in root2
+	  # create some directories in root2
 	  #
 	  mkdir 1; cd 1
 	  dotest multiroot-setup-8 "${testcvs2} co -l ." "${PROG} [a-z]*: Updating ."
