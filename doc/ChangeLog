@@ -1,3 +1,8 @@
+Wed Oct 11 22:30:10 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (info): Look for *.info* either in build dir or in
+        srcdir.
+
 Mon Oct  2 17:10:49 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* cvs.texinfo (admin): Describe usage of CVS_ADMIN_GROUP to
