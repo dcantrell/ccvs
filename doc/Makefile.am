@@ -16,14 +16,14 @@
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
 
-POSTSCRIPTS = \
+PSS = \
 	cvs.ps \
 	cvs-paper.ps \
 	cvsclient.ps
 
 PDFS = \
-	cvs-paper.pdf \
 	cvs.pdf \
+	cvs-paper.pdf \
 	cvsclient.pdf
 
 TXTS = \
@@ -31,7 +31,7 @@ TXTS = \
 	cvsclient.txt
 
 EXTRA_DIST = \
-	$(POSTSCRIPTS) \
+	$(PSS) \
 	.cvsignore \
 	ChangeLog.fsf \
 	RCSFILES \
@@ -44,7 +44,7 @@ MOSTLYCLEANFILES = \
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(POSTSCRIPTS)
+	$(PSS)
 
 doc: info ps
 .PHONY: doc
@@ -58,9 +58,8 @@ dvi: cvs.dvi cvsclient.dvi
 # FIXME-AUTOMAKE:
 # For some reason if I remove version.texi, it doesn't get built automatically.
 # This needs to be fixed in automake.
-cvs.aux cvs.pdf cvs.txt: cvs.texinfo $(srcdir)/version.texi
-cvsclient.aux cvsclient.pdf cvsclient.txt: cvsclient.texi \
-					   $(srcdir)/version-client.texi
+cvs.txt: cvs.texinfo $(srcdir)/version.texi
+cvsclient.txt: cvsclient.texi $(srcdir)/version-client.texi
 
 # These targets need to be very specific so that the other PDFs get generated
 # correctly.  If they are more generic and cvs.ps is made before cvs.pdf, then
@@ -71,23 +70,11 @@ cvs-paper.ps: cvs-paper.ms
 	mv $@-t $@
 
 cvs-paper.pdf: cvs-paper.ps
+	ps2pdf $< $@
 
-SUFFIXES = .aux .txt .pdf
+SUFFIXES = .txt
 
 # texinfo based targets automake neglects to include
-.texinfo.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-.txi.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-.texi.pdf:
-	TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
-	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
-	$(TEXI2DVI) --pdf --batch `test -f '$<' || echo '$(srcdir)/'`$<
-
 .texinfo.txt:
 	$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
 	 --no-headers -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
