@@ -1,6 +1,12 @@
 Changes since 1.12.4:
 *********************
 
+SERVER SECURITY ISSUES
+
+* pserver can no longer be configured to run as root via the
+  $CVSROOT/CVSROOT/passwd file, so if your passwd file is compromised, it no
+  longer leads directly to a root hack.
+
 Changes between 1.12.3 and 1.12.4:
 **********************************
 

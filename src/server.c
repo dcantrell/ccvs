@@ -5114,6 +5114,12 @@ error 0 %s: no such system user\n", username);
 	exit (EXIT_FAILURE);
     }
 
+    if (pw->pw_uid == 0)
+    {
+        printf("error 0: root not allowed\n");
+        exit (EXIT_FAILURE);
+    }
+
 #if HAVE_INITGROUPS
     if (initgroups (pw->pw_name, pw->pw_gid) < 0
 #  ifdef EPERM
