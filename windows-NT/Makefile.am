@@ -21,6 +21,7 @@
 
 EXTRA_DIST = \
 	config.h \
+	config.h.in \
 	ndir.h \
 	pwd.h \
 	rcmd.h \
@@ -38,6 +39,20 @@ EXTRA_DIST = \
 	.cvsignore
 
 SUBDIRS = SCC
+
+###
+### Maintainer targets
+###
+all-local: config.h
+config.h: stamp-ch
+stamp-ch: config.h.in $(top_srcdir)/configure
+	sed "s/%PACKAGE_VERSION%/$(VERSION)/" <$(srcdir)/config.h.in \
+	  >config.tmp
+	@cmp -s config.tmp $(srcdir)/config.h \
+	  || (echo "Updating config.h"; \
+	      cp config.tmp $(srcdir)/config.h)
+	-@rm -f config.tmp
+	@cp $(srcdir)/config.h $@
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
