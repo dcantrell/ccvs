@@ -140,9 +140,13 @@ status_fileproc (callerdat, finfo)
 	    sstat = "Needs Patch";
 	    break;
 	case T_CONFLICT:
-	    /* I _think_ that "unresolved" is correct; that if it has
-	       been resolved then the status will change.  But I'm not
-	       sure about that.  */
+	    /* FIXME - This message needs to be clearer.  It comes up now
+	     * only when a file exists or has been added in the local sandbox
+	     * and a file of the same name has been committed indepenently to
+	     * the repository from a different sandbox.  It also comes up
+	     * whether an update has been attempted or not, so technically, I
+	     * think it is not actually a conflict yet.
+	     */
 	    sstat = "Unresolved Conflict";
 	    break;
 	case T_ADDED:
