@@ -15,7 +15,7 @@
 #include "cvs.h"
 #include "getline.h"
 
-static RETSIGTYPE patch_cleanup (void);
+static RETSIGTYPE patch_cleanup (int);
 static Dtype patch_dirproc (void *callerdat, const char *dir,
                             const char *repos, const char *update_dir,
                             List *entries);
@@ -255,7 +255,7 @@ patch (int argc, char **argv)
 			  (char *)NULL, 0, local, 0, 0, (char *)NULL);
     close_module (db);
     free (options);
-    patch_cleanup ();
+    patch_cleanup (0);
     return err;
 }
 
@@ -774,7 +774,7 @@ patch_dirproc (void *callerdat, const char *dir, const char *repos,
  * Clean up temporary files
  */
 static RETSIGTYPE
-patch_cleanup (void)
+patch_cleanup (int sig)
 {
     /* Note that the checks for existence_error are because we are
        called from a signal handler, without SIG_begincrsect, so
@@ -802,4 +802,52 @@ patch_cleanup (void)
 	free (tmpfile3);
     }
     tmpfile1 = tmpfile2 = tmpfile3 = NULL;
+
+    if (sig != 0)
+    {
+	const char *name;
+	char temp[10];
+
+	switch (sig)
+	{
+#ifdef SIGABRT
+	case SIGABRT:
+	    name = "abort";
+	    break;
+#endif
+#ifdef SIGHUP
+	case SIGHUP:
+	    name = "hangup";
+	    break;
+#endif
+#ifdef SIGINT
+	case SIGINT:
+	    name = "interrupt";
+	    break;
+#endif
+#ifdef SIGQUIT
+	case SIGQUIT:
+	    name = "quit";
+	    break;
+#endif
+#ifdef SIGPIPE
+	case SIGPIPE:
+	    name = "broken pipe";
+	    break;
+#endif
+#ifdef SIGTERM
+	case SIGTERM:
+	    name = "termination";
+	    break;
+#endif
+	default:
+	    /* This case should never be reached, because we list
+	       above all the signals for which we actually establish a
+	       signal handler.  */ 
+	    sprintf (temp, "%d", sig);
+	    name = temp;
+	    break;
+	}
+	error (0, 0, "received %s signal", name);
+    }
 }

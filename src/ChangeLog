@@ -1,5 +1,9 @@
 2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
 
+	* patch.c (patch_cleanup): Add signal argument and use it.
+
+2004-10-30  Mark D. Baushke  <mdb@cvshome.org>
+
 	* client.c: Adjust include files to avoid problems with incomplete
 	types under --disable-client.
 	* msg-buffer.c: Deal with --disable-client --disable-server
