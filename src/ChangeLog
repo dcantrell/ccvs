@@ -1,5 +1,10 @@
 2005-02-23 Derek Price <derek@ximbiot.com>
 
+	* tag.c (tag): Handle -r<tag>:<date>.
+	* sanity.sh (tagdate-13.*): New tests.
+
+2005-02-23 Derek Price <derek@ximbiot.com>
+
 	* annotate.c (annotate), ls.c (ls): Handle -r<tag>:<date>.
 
 2005-02-23 Derek Price <derek@ximbiot.com>

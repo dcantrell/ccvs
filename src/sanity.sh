@@ -24694,6 +24694,19 @@ diff -u -r1\.1\.4\.1 -r1\.1\.4\.2
 -br2-1
 ${PLUS}br2-2"
 
+	  # Tag a date on a branch.
+	  dotest tagdate-13c "$testcvs -q tag -rbr2:'$date_T3' tagdate" \
+"T file1"
+	  dotest tagdate-13d "$testcvs -q update -rtagdate" "[UP] file1"
+	  dotest tagdate-13e "cat file1" "br2-1"
+
+	  # This one should fail, though currently without an error message,
+	  # since a date on a static tag is meaningless.
+	  dotest tagdate-13f "$testcvs -q tag -rtagdate:'$date_T3' tagdate"
+
+	  # and restore to using the trunk for future tests.
+	  dotest tagdate-13g "$testcvs -q up -rbr2" "[UP] file1"
+
 	  cd ../..
 	  mkdir 2; cd 2
 	  dotest tagdate-14 \

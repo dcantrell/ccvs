@@ -168,11 +168,10 @@ cvstag (int argc, char **argv)
 		local = false;
 		break;
             case 'r':
-                numtag = optarg;
+		parse_tagdate (&numtag, &date, optarg);
                 break;
             case 'D':
-                if (date)
-                    free (date);
+                if (date) free (date);
                 date = Make_Date (optarg);
                 break;
 	    case '?':
@@ -190,8 +189,8 @@ cvstag (int argc, char **argv)
     argc--;
     argv++;
 
-    if (date && numtag)
-	error (1, 0, "-r and -D options are mutually exclusive");
+    if (date && delete_flag)
+	error (1, 0, "-d makes no sense with a date specification.");
     if (delete_flag && branch_mode)
 	error (0, 0, "warning: -b ignored with -d options");
     RCS_check_tag (symtag);
@@ -1085,8 +1084,7 @@ rtag_delete (RCSNode *rcsfile)
 
     if (numtag)
     {
-	version = RCS_getversion (rcsfile, numtag, (char *) NULL, 1,
-				  (int *) NULL);
+	version = RCS_getversion (rcsfile, numtag, NULL, 1, NULL);
 	if (version == NULL)
 	    return (0);
 	free (version);
@@ -1143,14 +1141,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
-    if ((numtag != NULL) || (date != NULL))
+    if (numtag || date)
     {
-        nversion = RCS_getversion(vers->srcfile,
-                                  numtag,
-                                  date,
-                                  force_tag_match,
-				  NULL);
-        if (nversion == NULL)
+        nversion = RCS_getversion (vers->srcfile, numtag, date,
+                                   force_tag_match, NULL);
+        if (!nversion)
 	    goto free_vars_and_return;
     }
     if (delete_flag)
@@ -1212,16 +1207,17 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
      * If we are adding a tag, we need to know which version we have checked
      * out and we'll tag that version.
      */
-    if (nversion == NULL)
+    if (!nversion)
         version = vers->vn_user;
     else
         version = nversion;
-    if (version == NULL)
+    if (!version)
 	goto free_vars_and_return;
     else if (strcmp (version, "0") == 0)
     {
 	if (!quiet)
-	    error (0, 0, "couldn't tag added but un-commited file `%s'", finfo->file);
+	    error (0, 0, "couldn't tag added but un-commited file `%s'",
+	           finfo->file);
 	goto free_vars_and_return;
     }
     else if (version[0] == '-')
@@ -1248,8 +1244,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
      * module -- which I have found to be a typical tagging operation.
      */
     rev = branch_mode ? RCS_magicrev (vers->srcfile, version) : version;
-    oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
-			       (int *) NULL);
+    oversion = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
     if (oversion != NULL)
     {
 	int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
@@ -1291,11 +1286,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 		if ((isbranch && !disturb_branch_tags) ||
 		    (!isbranch && disturb_branch_tags))
 	{
-	    error(0,0, "%s: Not moving %s tag `%s' from %s to %s%s.",
-		    finfo->fullname,
-		    isbranch ? "branch" : "non-branch",
-		    symtag, oversion, rev,
-		    isbranch ? "" : " due to `-B' option");
+	    error (0,0, "%s: Not moving %s tag `%s' from %s to %s%s.",
+		   finfo->fullname,
+		   isbranch ? "branch" : "non-branch",
+		   symtag, oversion, rev,
+		   isbranch ? "" : " due to `-B' option");
 	    free (oversion);
 	    if (branch_mode)
 		free (rev);
