@@ -1,3 +1,11 @@
+Mon Jul 15 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* client.c (send_file_names): Send file names as they appear
+	in CVS/Entries, rather than as specified (in cases where they
+	might differ in case).
+	(send_fileproc): Use file name from CVS/Entries (vers->entdata->user)
+	rather than file name as specified (finfo->file) when available.
+
 Sun Jul 14 15:39:44 1996  Mark Eichin  <eichin@cygnus.com>
 			  and Ian Lance Taylor  <ian@cygnus.com>
 

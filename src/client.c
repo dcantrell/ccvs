@@ -4016,6 +4016,9 @@ send_fileproc (callerdat, finfo)
 {
     Vers_TS *vers;
     struct file_info xfinfo;
+    /* File name to actually use.  Might differ in case from
+       finfo->file.  */
+    char *filename;
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -4024,14 +4027,19 @@ send_fileproc (callerdat, finfo)
     xfinfo.rcs = NULL;
     vers = Version_TS (&xfinfo, NULL, NULL, NULL, 0, 0);
 
+    if (vers->entdata != NULL)
+	filename = vers->entdata->user;
+    else
+	filename = finfo->file;
+
     if (vers->vn_user != NULL)
     {
       char *tmp;
 
-      tmp = xmalloc (strlen (finfo->file) + strlen (vers->vn_user)
+      tmp = xmalloc (strlen (filename) + strlen (vers->vn_user)
 		     + strlen (vers->options) + 200);
       sprintf (tmp, "Entry /%s/%s/%s%s/%s/", 
-               finfo->file, vers->vn_user,
+               filename, vers->vn_user,
                vers->ts_conflict == NULL ? "" : "+",
                (vers->ts_conflict == NULL ? ""
                 : (vers->ts_user != NULL &&
@@ -4068,7 +4076,7 @@ send_fileproc (callerdat, finfo)
 	{
 	    /* if the server is old, use the old request... */
 	    send_to_server ("Lost ", 0);
-	    send_to_server (finfo->file, 0);
+	    send_to_server (filename, 0);
 	    send_to_server ("\012", 1);
 	    /*
 	     * Otherwise, don't do anything for missing files,
@@ -4079,7 +4087,7 @@ send_fileproc (callerdat, finfo)
     else if (vers->ts_rcs == NULL
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
-	send_modified (finfo->file, finfo->fullname, vers);
+	send_modified (filename, finfo->fullname, vers);
     }
     else
     {
@@ -4087,7 +4095,7 @@ send_fileproc (callerdat, finfo)
 	if (use_unchanged)
           {
 	    send_to_server ("Unchanged ", 0);
-	    send_to_server (finfo->file, 0);
+	    send_to_server (filename, 0);
 	    send_to_server ("\012", 1);
           }
     }
@@ -4265,6 +4273,11 @@ send_file_names (argc, argv, flags)
     char *q;
     int level;
     int max_level;
+    char *line;
+    size_t line_allocated;
+
+    line = NULL;
+    line_allocated = 0;
 
     /* The fact that we do this here as well as start_recursion is a bit 
        of a performance hit.  Perhaps worth cleaning up someday.  */
@@ -4321,6 +4334,53 @@ send_file_names (argc, argv, flags)
 	char buf[1];
 	char *p = argv[i];
 
+#ifdef FILENAMES_CASE_INSENSITIVE
+	/* We want to send the file name as it appears
+	   in CVS/Entries.  We put this inside an ifdef
+	   to avoid doing all these system calls in
+	   cases where fncmp is just strcmp anyway.  */
+	/* For now just do this for files in the local
+	   directory.  Would be nice to handle the
+	   non-local case too, though.  */
+	if (p == last_component (p)
+	    && isfile (p))
+	{
+	    FILE *ent;
+
+	    ent = CVS_FOPEN (CVSADM_ENT, "r");
+	    if (ent == NULL)
+	    {
+		if (!existence_error (errno))
+		    error (0, errno, "cannot read %s", CVSADM_ENT);
+	    }
+	    else
+	    {
+		while (getline (&line, &line_allocated, ent) > 0)
+		{
+		    char *cp;
+
+		    if (line[0] != '/')
+			continue;
+		    cp = strchr (line + 1, '/');
+		    if (cp == NULL)
+			continue;
+		    *cp = '\0';
+		    if (fncmp (p, line + 1) == 0)
+		    {
+			p = line + 1;
+			break;
+		    }
+		}
+		if (ferror (ent))
+		    error (0, errno, "cannot read %s", CVSADM_ENT);
+		if (fclose (ent) < 0)
+		    error (0, errno, "cannot close %s", CVSADM_ENT);
+		/* We don't attempt to look at CVS/Entries.Log.  In a few cases that might
+		   lead to strange behaviors, but they should be fairly obscure.  */
+	    }
+	}
+#endif /* FILENAMES_CASE_INSENSITIVE */
+
 	send_to_server ("Argument ", 0);
 
 	while (*p)
@@ -4343,6 +4403,9 @@ send_file_names (argc, argv, flags)
 	}
 	send_to_server ("\012", 1);
     }
+
+    if (line != NULL)
+	free (line);
 
     if (flags & SEND_EXPAND_WILD)
     {
