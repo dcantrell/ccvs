@@ -10497,7 +10497,7 @@ U CVSROOT/verifymsg"
 	  # FIXCVS: The sleep in the following script helps avoid out of
 	  # order messages, but we really need to figure out how to fix
 	  # cvs to prevent them in the first place.
-	  for i in checkin checkout update export tag; do
+	  for i in checkout export tag; do
 	    cat >> ${CVSROOT_DIRNAME}/$i.sh <<EOF
 #! /bin/sh
 sleep 1
@@ -10507,7 +10507,7 @@ EOF
 	    chmod +x ${CVSROOT_DIRNAME}/$i.sh
 	  done
 
-	  OPTS="-i ${CVSROOT_DIRNAME}/checkin.sh -o${CVSROOT_DIRNAME}/checkout.sh -u ${CVSROOT_DIRNAME}/update.sh -e ${CVSROOT_DIRNAME}/export.sh -t${CVSROOT_DIRNAME}/tag.sh"
+	  OPTS="-o${CVSROOT_DIRNAME}/checkout.sh -e ${CVSROOT_DIRNAME}/export.sh -t${CVSROOT_DIRNAME}/tag.sh"
 	  cat >CVSROOT/modules <<EOF
 realmodule ${OPTS} first-dir/subdir a
 dirmodule ${OPTS} first-dir/subdir
@@ -10545,36 +10545,24 @@ args: realmodule"
 	    dotest modules5-11 "${testcvs} -q co realmodule" \
 "checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: realmodule"
-	    dotest modules5-12 "${testcvs} -q update" \
-"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/realmodule
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    dotest modules5-12 "${testcvs} -q update" ''
 	    echo "change" >>realmodule/a
 	    dotest modules5-13 "${testcvs} -q ci -m." \
 "Checking in realmodule/a;
 ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.2; previous revision: 1\.1
-done
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/realmodule
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+done"
 	  else
 	    dotest modules5-11 "${testcvs} -q co realmodule" \
 "checkout script invoked in ${TESTDIR}/1
 args: realmodule"
-	    dotest modules5-12 "${testcvs} -q update" \
-"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/realmodule
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    dotest modules5-12 "${testcvs} -q update" ''
 	    echo "change" >>realmodule/a
 	    dotest modules5-13 "${testcvs} -q ci -m." \
 "Checking in realmodule/a;
 ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.2; previous revision: 1\.1
-done
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${TESTDIR}/1/realmodule
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+done"
 	  fi
 	  dotest modules5-14 "echo yes | ${testcvs} release -d realmodule" \
 "You have \[0\] altered files in this repository\.
@@ -10670,17 +10658,11 @@ args: nameddir"
 	  if $remote; then
 	    dotest modules5-26 "${testcvs} -q co namedmodule" \
 "M nameddir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/nameddir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: nameddir"
 	  else
 	    dotest modules5-26 "${testcvs} -q co namedmodule" \
 "M nameddir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/nameddir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: nameddir"
 	  fi
@@ -10689,17 +10671,11 @@ args: nameddir"
 	  if $remote; then
 	    dotest modules5-27 "${testcvs} -q co namedmodule" \
 "U nameddir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/nameddir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: nameddir"
 	  else
 	    dotest modules5-27 "${testcvs} -q co namedmodule" \
 "U nameddir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/nameddir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: nameddir"
 	  fi
@@ -10729,36 +10705,24 @@ args: mydir"
 	    dotest modules5-32 "${testcvs} -q co -d mydir realmodule" \
 "checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
-	    dotest modules5-33 "${testcvs} -q update" \
-"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    dotest modules5-33 "${testcvs} -q update" ''
 	    echo "change" >>mydir/a
 	    dotest modules5-34 "${testcvs} -q ci -m." \
 "Checking in mydir/a;
 ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
-done
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+done"
 	  else
 	    dotest modules5-32 "${testcvs} -q co -d mydir realmodule" \
 "checkout script invoked in ${TESTDIR}/1
 args: mydir"
-	    dotest modules5-33 "${testcvs} -q update" \
-"${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+	    dotest modules5-33 "${testcvs} -q update" ''
 	    echo "change" >>mydir/a
 	    dotest modules5-34 "${testcvs} -q ci -m." \
 "Checking in mydir/a;
 ${CVSROOT_DIRNAME}/first-dir/subdir/a,v  <--  a
 new revision: 1\.3; previous revision: 1\.2
-done
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/checkin\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-checkin script invoked in ${TESTDIR}/1/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir"
+done"
 	  fi
 	  dotest modules5-35 "echo yes | ${testcvs} release -d mydir" \
 "You have \[0\] altered files in this repository\.
@@ -10849,17 +10813,11 @@ args: mydir"
 	  if $remote; then
 	    dotest modules5-47 "${testcvs} -q co -d mydir namedmodule" \
 "M mydir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-47 "${testcvs} -q co -d mydir namedmodule" \
 "M mydir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: mydir"
 	  fi
@@ -10868,17 +10826,11 @@ args: mydir"
 	  if $remote; then
 	    dotest modules5-48 "${testcvs} -q co -d mydir namedmodule" \
 "U mydir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TMPDIR}/cvs-serv[0-9a-z]*
 args: mydir"
 	  else
 	    dotest modules5-48 "${testcvs} -q co -d mydir namedmodule" \
 "U mydir/a
-${PROG} [a-z]*: Executing ..${CVSROOT_DIRNAME}/update\.sh. .${CVSROOT_DIRNAME}/first-dir/subdir..
-update script invoked in ${TESTDIR}/1/mydir
-args: ${CVSROOT_DIRNAME}/first-dir/subdir
 checkout script invoked in ${TESTDIR}/1
 args: mydir"
 	  fi
@@ -23094,7 +23046,6 @@ retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
 > down"
-
 
 	  dotest multiroot-commit-1 "${testcvs} commit -m actually" \
 "${PROG} [a-z]*: Examining \.

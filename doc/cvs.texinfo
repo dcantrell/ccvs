@@ -1668,23 +1668,6 @@ tags and dates, see @ref{Sticky tags}.
 @c someplace which discusses, per-directory sticky
 @c tags and the distinction with per-file sticky tags.
 
-@c FIXCVS THEN FIXME:
-@c This should be removed when the funcitonality is removed
-@c from CVS.
-@cindex Checkin program
-@cindex -i, in modules file
-@cindex Checkin.prog file, in CVS directory
-@cindex CVS/Checkin.prog file
-@cindex Update program
-@cindex -u, in modules file
-@cindex Update.prog file, in CVS directory
-@cindex CVS/Update.prog file
-@item Checkin.prog
-@itemx Update.prog
-These files store the programs specified by the
-@samp{-i} and @samp{-u} options in the modules file,
-respectively.  See @ref{Module options} for more.
-
 @cindex Notify file, in CVS directory
 @cindex CVS/Notify file
 @item Notify
@@ -9000,9 +8983,6 @@ them):
 @item -l
 Local; run only in current working directory.
 
-@item -n
-Do not run any module program.
-
 @item -R
 Commit directories recursively.  This is on by default.
 
@@ -12147,17 +12127,6 @@ module are exported.  @var{prog} runs with a single
 argument, the module name.
 @c FIXME: Is it run on server? client?
 
-@cindex Checkin program
-@cindex -i, in modules file
-@item -i @var{prog}
-Specify a program @var{prog} to run whenever files in a
-module are committed.  @var{prog} runs with a single
-argument, the full pathname of the affected directory
-in a source repository.  The @file{commitinfo},
-@file{loginfo}, and @file{verifymsg} files provide other
-ways to call a program on commit.  See @ref{Module program options} for
-information on how @var{prog} is called.
-
 @cindex Checkout program
 @cindex -o, in modules file
 @item -o @var{prog}
@@ -12194,21 +12163,6 @@ that taginfo is a better solution (@pxref{user-defined logging}).
 @c * It doesn't get passed all the information that
 @c   taginfo does ("mov", &c).
 @c * It only is run for rtag, not tag.
-
-@cindex Update program
-@cindex -u, in modules file
-@item -u @var{prog}
-Specify a program @var{prog} to run whenever @samp{cvs
-update} is executed from the top-level directory of the
-checked-out module.  @var{prog} runs with a single
-argument, the full path to the source repository for
-this module.  See @ref{Module program options} for
-information on how @var{prog} is called.
-@c One drawback of -u and -i are that CVS/Update.prog
-@c and CVS/Checkin.prog only get updated on initial
-@c checkout, and don't get updated if the modules file
-@c changes.  Also, the user can edit them, which means
-@c they are no good for security-type stuff.
 @end table
 
 You should also see @pxref{Module program options} about how the
@@ -12235,29 +12189,6 @@ If using ``local access'' (on a local or remote NFS file system, i.e.
 repository set just to a path),
 the program will be executed from the newly checked-out tree, if
 found there, or alternatively searched for in the path if not.
-
-@cindex Checkout program
-@cindex -i, in modules file
-@cindex Checkin.prog file, in CVS directory
-@cindex CVS/Checkin.prog file
-@cindex Update program
-@cindex -u, in modules file
-@cindex Update.prog file, in CVS directory
-@cindex CVS/Update.prog file
-@noindent
-The commit and update programs are locally-based, and are run as
-follows:-
-
-The program is run locally in local mode and in a copy of the sandbox in on
-the server in client/server mode.  One must
-re-checkout the tree one is using if these options are updated in the
-modules administrative file. The file CVS/Checkin.prog contains the
-value of the option `-i' set in the modules file, and similarly for
-the file CVS/Update.prog and `-u' (@pxref{Module options}). The program is
-executed from
-the current working directory on the client and the top level of
-the copy of the sandbox created on the server.  Again, the program
-is first searched for in the checked-out copy and then using the path.
 
 The programs are all run after the operation has effectively
 completed.

@@ -1,5 +1,10 @@
 Changes since 1.11.5:
 
+* The Checkin.prog and Update.prog functionality has been removed.  This
+fuctionality previously allowed executables to be specified in the modules file
+to be run at update and checkin time, but users could edit these files on a per
+workspace basis, creating a security hole.
+
 * Autoconf and Automake are no longer run automatically unless you run
 configure with --enable-maintainer-mode.  Accordingly, noautomake.sh is
 no longer needed and has been removed.
@@ -26,7 +31,7 @@ read-only filesystem.
 
 * Corrected the path in a failed write error message.
 
-* There is a new CVS_LOCAL_BRANCH_NUM environement variable, which
+* There is a new CVS_LOCAL_BRANCH_NUM environment variable, which
 may be used to give control over the branch number to be used next.
 Useful for having local changes in a CVSup mirrored repository.
 
