@@ -400,9 +400,16 @@ sites, for instance @t{prep.ai.mit.edu} in
 @cindex Mailing list
 @cindex List, mailing list
 @cindex Newsgroups
-There is a mailing list for @sc{cvs}.  To subscribe or
-unsubscribe, write to
-<@t{info-cvs-request@@prep.ai.mit.edu}>.  Please be
+@c Be careful in editing this--it is worded so that
+@c the long -request address is in the middle of a
+@c line, thus avoiding overfull hboxes.
+There is a mailing list, known as @w{@code{info-cvs}},
+devoted to @sc{cvs}.  To subscribe or
+unsubscribe 
+@c could add "to the mailing list,"
+send a message to
+@c or "write to"
+@w{@code{info-cvs-request@@prep.ai.mit.edu}}.  Please be
 specific about your email address.  As of May 1996,
 subscription requests are handled by a busy human
 being, so you cannot expect to be added or removed
