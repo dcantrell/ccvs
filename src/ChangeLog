@@ -1,3 +1,9 @@
+2001-01-04  Larry Jones  <larry.jones@sdrc.com>
+
+	* Makefile.am (cvsbug): Explicitly list input file ($< is only
+	valid in inference rules).
+	* Makefile.in: Ditto.
+
 2001-01-04  Derek Price  <derek.price@openavenue.com>
 
 	* sanity.sh: use getopts rather than getopt for portability reasons
