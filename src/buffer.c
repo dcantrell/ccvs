@@ -167,7 +167,7 @@ buf_empty_p (struct buffer *buf)
 
 
 
-# ifdef SERVER_FLOWCONTROL
+# if defined (SERVER_FLOWCONTROL) || defined (PROXY_SUPPORT)
 /*
  * Count how much data is stored in the buffer..
  * Note that each buffer is a xmalloc'ed chunk BUFFER_DATA_SIZE.
@@ -183,7 +183,7 @@ buf_count_mem (struct buffer *buf)
 
     return mem;
 }
-# endif /* SERVER_FLOWCONTROL */
+# endif /* SERVER_FLOWCONTROL || PROXY_SUPPORT */
 
 
 
@@ -506,7 +506,7 @@ buf_append_data (struct buffer *buf, struct buffer_data *data,
 
 
 
-#ifdef PROXY_SUPPORT
+# ifdef PROXY_SUPPORT
 /* Copy data structures and append them to a buffer.
  *
  * ERRORS
@@ -553,7 +553,7 @@ buf_free_data (struct buffer *buffer)
     free_buffer_data = buffer->data;
     buffer->data = buffer->last = NULL;
 }
-#endif /* PROXY_SUPPORT */
+# endif /* PROXY_SUPPORT */
 
 
 
@@ -1996,7 +1996,7 @@ static int
 fd_buffer_block (void *closure, bool block)
 {
     struct fd_buffer *fb = closure;
-#if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
+# if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
     int flags;
 
     flags = fcntl (fb->fd, F_GETFL, 0);
@@ -2040,7 +2040,7 @@ fd_buffer_block (void *closure, bool block)
 	    return errno;
 	}
     }
-#endif /* F_GETFL && O_NONBLOCK && F_SETFL */
+# endif /* F_GETFL && O_NONBLOCK && F_SETFL */
 
     fb->blocking = block;
 
