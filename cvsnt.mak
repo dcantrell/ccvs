@@ -537,6 +537,7 @@ SOURCE=.\src\mkmodules.c
 DEP_CPP_MKMOD=\
 	".\src\cvs.h"\
 	".\lib\savecwd.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1128,6 +1129,7 @@ NODEP_CPP_REPOS=\
 SOURCE=.\src\parseinfo.c
 DEP_CPP_PARSE=\
 	".\src\cvs.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
@@ -1391,6 +1393,7 @@ DEP_CPP_UPDAT=\
 	".\src\watch.h"\
 	".\src\fileattr.h"\
 	".\src\edit.h"\
+	".\lib\getline.h"\
 	".\windows-NT\config.h"\
 	".\windows-NT\options.h"\
 	".\lib\fnmatch.h"\
