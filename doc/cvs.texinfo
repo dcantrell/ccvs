@@ -3587,13 +3587,11 @@ aborted.
 @section Annotate command
 @cindex annotate (subcommand)
 
-@deffn Command {cvs annotate} [@code{-l}] files @dots{}
+@deffn Command {cvs annotate} [@code{-lf}] [@code{-r rev}|@code{-D date}] files @dots{}
 
 For each file in @var{files}, print the head revision
 of the trunk, together with information on the last
-modification for each line.  The @code{-l} option means
-to process the local directory only, not to recurse
-(@pxref{Common options}).  For example:
+modification for each line.  For example:
 
 @example
 $ cvs annotate ssfile
@@ -3613,6 +3611,27 @@ or replaced; you need to use @code{cvs diff} for that
 (@pxref{diff}).
 
 @end deffn
+
+These standard options are available with
+@code{annotate} (@pxref{Common options}, for a complete
+description of them):
+
+@table @code
+@item -D @var{date}
+Annotate the most recent revision no later than @var{date}.
+
+@item -f
+Only useful with the @samp{-D @var{date}} or @samp{-r
+@var{tag}} flags.  If no matching revision is found,
+annotate the most recent revision (instead of ignoring
+the file).
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -r @var{tag}
+Annotate revision @var{tag}.
+@end table
 
 @c ---------------------------------------------------------------------
 @node Keyword substitution
