@@ -1,3 +1,8 @@
+Sat Oct 19 18:34:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Say that the remote protocol is not interoperable before
+	CVS 1.5.
+
 Sat Oct 19 13:06:53 1996  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
