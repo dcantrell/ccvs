@@ -1,3 +1,8 @@
+1998-10-06  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (dirs): New tests, tests for some cases involving
+	admins who do surgery on the repository.
+
 1998-10-03  Johannes Stezenbach <johannes.stezenbach@propack-data.de>
 
 	* vers_ts.c (Version_TS): If UTIME_EXPECTS_WRITABLE, if
