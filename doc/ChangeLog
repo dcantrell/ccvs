@@ -1,5 +1,9 @@
 Fri Dec 26 18:30:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (What is CVS?): Just point to the two canonical web
+	sites (Pascal Molli and Cyclic) concerning CVS downloads.  The GNU
+	URL was out of date and GNU only has source distributions anyway.
+
 	* cvs.texinfo: Change bug-cvs address to gnu.org per email from
 	Martin Hamilton.
 
