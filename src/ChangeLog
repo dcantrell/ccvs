@@ -1,3 +1,8 @@
+Tue Apr 16 13:56:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* repos.c (Name_Repository): Fix comments.
+	* create_adm.c (Create_Admin): Fix indentation.
+
 Wed Apr 10 16:46:54 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* options.h.in: Include relevant information here rather than
