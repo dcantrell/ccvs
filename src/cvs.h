@@ -458,13 +458,13 @@ char *entries_time (time_t unixtime);
 time_t unix_time_stamp (const char *file);
 char *time_stamp (const char *file);
 
-void *xmalloc (size_t bytes)
-	__attribute__((__malloc__));
-void *xrealloc (void *ptr, size_t bytes)
-	__attribute__ ((__malloc__));
 void expand_string (char **, size_t *, size_t);
 void xrealloc_and_strcat (char **, size_t *, const char *);
-char *xstrdup (const char *str)
+/* Many, many CVS calls to xstrdup depend on it to return NULL when its
+ * argument is NULL.
+ */
+#define xstrdup Xstrdup
+char *Xstrdup (const char *str)
 	__attribute__ ((__malloc__));
 int strip_trailing_newlines (char *str);
 int pathname_levels (const char *path);
