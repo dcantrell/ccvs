@@ -5045,7 +5045,7 @@ Use the following command to help the merge:"
 
 		dotest import-113 \
 "${testcvs} -q co -jjunk-1_0 -jjunk-2_0 first-dir" \
-"${PROG} [a-z]*: file first-dir/imported-f1 is present in revision junk-2_0
+"${PROG} [a-z]*: file first-dir/imported-f1 is not present in revision junk-2_0
 RCS file: ${TESTDIR}/cvsroot/first-dir/imported-f2,v
 retrieving revision 1\.1\.1\.1
 retrieving revision 1\.1\.1\.2
