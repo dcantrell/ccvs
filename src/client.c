@@ -1794,6 +1794,27 @@ send_repository (dir, repos, update_dir)
 {
     char *adm_name;
 
+    /* FIXME: this is probably not the best place to check; I wish I
+     * knew where in here's callers to really trap this bug.  To
+     * reproduce the bug, just do this:
+     * 
+     *       mkdir junk
+     *       cd junk
+     *       cvs -d some_repos update foo
+     *
+     * Poof, CVS seg faults and dies!  It's because it's trying to
+     * send a NULL string to the server but dies in send_to_server.
+     * That string was supposed to be the repository, but it doesn't
+     * get set because there's no CVSADM dir, and somehow it's not
+     * getting set from the -d argument either... ?
+     */
+    if (repos == NULL)
+      {
+        /* Lame error.  I want a real fix but can't stay up to track
+           this down right now. */
+        error (1, 0, "no repository");
+      }
+
     if (update_dir == NULL || update_dir[0] == '\0')
 	update_dir = ".";
 
