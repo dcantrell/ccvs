@@ -542,7 +542,8 @@ in use, connection, authentication, etc., are already taken care of.
 
 The @code{Root} request must be sent only once, and it must be sent
 before any requests other than @code{Valid-responses},
-@code{valid-requests}, @code{UseUnchanged}, @code{Set} or @code{init}.
+@code{valid-requests}, @code{UseUnchanged}, @code{Set},
+@code{Global_option}, or @code{init}.
 
 @item Valid-responses @var{request-list} \n
 Response expected: no.
