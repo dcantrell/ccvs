@@ -47,7 +47,7 @@ m4_ifvaln([$3$5], [else
   asx_retval=-1
   for vsub1 in $asx_version_1; do
     vsub2=`echo "$asx_version_2" |awk -F. "{print \\\$$asx_count}"`
-    if test $vsub1 -gt $vsub2; then
+    if test -z "$vsub2" || test $vsub1 -gt $vsub2; then
       asx_retval=1
       break
     elif test $vsub1 -lt $vsub2; then
