@@ -3000,6 +3000,9 @@ server_updated (finfo, vers, updated, file_info, checksum)
 
 	if (updated == SERVER_UPDATED)
 	{
+	    Node *node;
+	    Entnode *entnode;
+
 	    if (!(supported_response ("Created")
 		  && supported_response ("Update-existing")))
 		buf_output0 (protocol, "Updated ");
@@ -3011,6 +3014,14 @@ server_updated (finfo, vers, updated, file_info, checksum)
 		else
 		    buf_output0 (protocol, "Update-existing ");
 	    }
+
+	    /* Now munge the entries to say that the file is unmodified,
+	       in case we end up processing it again (e.g. modules3-6
+	       in the testsuite).  */
+	    node = findnode_fn (finfo->entries, finfo->file);
+	    entnode = (Entnode *)node->data;
+	    free (entnode->timestamp);
+	    entnode->timestamp = xstrdup ("=");
 	}
 	else if (updated == SERVER_MERGED)
 	    buf_output0 (protocol, "Merged ");
