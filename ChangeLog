@@ -1,3 +1,10 @@
+Sun Jan 11 11:43:55 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Add example of indentation for switch statement.  I
+	always have to look this one up, and it seems worthwhile to
+	specify it here rather than be unsure which switch statement in
+	CVS to use as an example.
+
 Wed Jan  7 09:41:08 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Revise item 149 (concerning changing CVS/Root and such).
