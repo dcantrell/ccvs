@@ -120,11 +120,11 @@ check-local: localcheck remotecheck
 
 .PHONY: localcheck
 localcheck:
-	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
+	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
 remotecheck: all
-	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
+	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
 ## MAINTAINER Targets
 
