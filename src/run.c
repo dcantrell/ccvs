@@ -324,9 +324,19 @@ run_exec (stin, stout, sterr, flags)
   out:
     if (sterr)
 	(void) close (sherr);
+    else
+	/* ensure things are received by the parent in the correct order
+	 * relative to the protocol pipe
+	 */
+	cvs_flusherr();
   out2:
     if (stout)
 	(void) close (shout);
+    else
+	/* ensure things are received by the parent in the correct order
+	 * relative to the protocol pipe
+	 */
+	cvs_flushout();
   out1:
     if (stin)
 	(void) close (shin);
