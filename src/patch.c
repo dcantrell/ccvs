@@ -566,8 +566,9 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	    if (update_dir[0] != '\0')
 		(void) printf ("%s/", update_dir);
 	    (void) printf ("%s%s", rcs, cp2);
-	    while (getline (&line1, &line1_chars_allocated, fp) < 0)
-		(void) printf ("%s", line1);
+	    /* spew the rest of the diff out */
+	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
+		(void) fputs (line1, stdout);
 	    (void) fclose (fp);
 	    break;
 	default:
