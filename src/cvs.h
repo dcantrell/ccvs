@@ -211,11 +211,10 @@ extern int errno;
 /* Command attributes -- see function lookup_command_attribute(). */
 #define CVS_CMD_IGNORE_ADMROOT        1
 
-/* Set if CVS does _not_ need to create a CVS/Root file upon
-   completion of this command.  The name is confusing, both because
-   the meaning is closer to "does not use working directory" than
-   "uses working directory" and because the flag isn't really as
-   general purpose as it seems (cvs release sets it).  */
+/* Set if CVS needs to create a CVS/Root file upon completion of this
+   command.  The name may be slightly confusing, because the flag
+   isn't really as general purpose as it seems (it is not set for cvs
+   release).  */
 
 #define CVS_CMD_USES_WORK_DIR         2
 
