@@ -1,5 +1,9 @@
 2004-03-22  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (top-level): New test to confirm assertion failure.
+
+2004-03-22  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh: Only verify argument to -f when -f was passed.  Check for
 	$TMPDIR/cvsXXXXXX temp files after each test.
 

@@ -791,7 +791,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
-        tests="${tests} checkout_repository"
+        tests="${tests} top-level checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2 adderrmsg opterrmsg"
 	# Watches, binary files, history browsing, &c.
@@ -13784,6 +13784,30 @@ ${PROG} commit: Rebuilding administrative file database"
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
+
+
+
+	top-level)
+	  # FIXCVS:
+	  # This test confirms a bug that exists in the r* commands currently
+	  # when run against the top-level project.
+	  #
+	  # The copious usage of .* below is because there is not
+          # dotest_fail_sort to match:
+	  # "$PROG \[rlog aborted\]: received abort signal"
+
+	  dotest_fail top-level-1 "$testcvs rlog ." \
+"$PROG rlog: Logging \.
+$PROG rlog: Logging CVSROOT
+.*$PROG: \.\./\.\./src/recurse.c:642: do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+	;;
+
+
 
         checkout_repository)
           dotest_fail checkout_repository-1 \
