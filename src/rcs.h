@@ -53,7 +53,6 @@ struct rcsnode
     char *expand;
     List *symbols;
     List *versions;
-    List *dates;
 };
 
 typedef struct rcsnode RCSNode;

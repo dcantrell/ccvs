@@ -1,3 +1,17 @@
+Fri Feb  2 14:07:32 1996  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* rcs.h (struct rcsnode): Remove dates field (list of rcsversnodes
+ 	indexed by date).  CVS maintained this list for each RCS file even
+	though it was never used.  This resulted in higher then necessary 
+	memory requirements (and run time too).  Even if revision info was
+	needed, CVS' List data structure is inappropriate because can't
+	handle duplicate keys.  The above was discovered by tracking down
+	a memory leak.
+	* rcs.c (RCS_reparsercsfile): Don't build dates list.
+	(freercsnode): Don't delete dates list.
+	(rcsvers_delproc): Free date field.
+	(null_delproc): Removed.
+	
 Thu Feb  1 12:28:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* remove.c (cvsremove): Don't tell user the name of the program
