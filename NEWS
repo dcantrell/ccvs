@@ -3,6 +3,10 @@ Changes since 1.12.11:
 
 NEW FEATURES
 
+* CVS now uses ZLib 1.2.2.  This fixes the minor vulnerability described here:
+  <http://www.kb.cert.org/vuls/id/238678>, as well as some other minor bugs we
+  are not aware of bug reports for in conjunction with CVS.
+
 * `cvs -n release' now does what it should (see changes to the info-cleanup-0
   test in sanity.sh for more).
 
