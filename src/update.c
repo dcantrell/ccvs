@@ -628,9 +628,7 @@ update_fileproc (callerdat, finfo)
 	    case T_MODIFIED:		/* locally modified */
 	    case T_REMOVED:		/* removed but not committed */
 	    case T_CHECKOUT:		/* needs checkout */
-#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
-#endif
 		retval = checkout_file (finfo, vers, 0, 0, 0);
 		break;
 
@@ -736,8 +734,8 @@ update_fileproc (callerdat, finfo)
                     }
                 }
 		break;
-#ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
+#ifdef SERVER_SUPPORT
 		if (patches)
 		{
 		    int docheckout;
@@ -759,11 +757,11 @@ update_fileproc (callerdat, finfo)
 			break;
 		    }
 		}
+#endif
 		/* If we're not running as a server, just check the
 		   file out.  It's simpler and faster than producing
 		   and applying patches.  */
 		/* Fall through.  */
-#endif
 	    case T_CHECKOUT:		/* needs checkout */
 		retval = checkout_file (finfo, vers, 0, 0, 1);
 		break;

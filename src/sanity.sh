@@ -4356,12 +4356,7 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
 done"
 	  cd ../../2/first-dir
-	  # That this is an error is a bug.  Although the bug has existed
-	  # since tag -c was created, I don't think there would be a
-	  # compatibility problem with just fixing it.
-	  dotest_fail tagc-10 "${testcvs} -q tag -c tag4" \
-"${PROG} [a-z]*: file1 is locally modified
-${PROG} \[[a-z]* aborted\]: correct the above errors first!"
+	  dotest tagc-10 "${testcvs} -q tag -c tag4" "T file1"
 	  cd ../..
 
 	  rm -r 1 2

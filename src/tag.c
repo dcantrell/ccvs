@@ -231,7 +231,8 @@ check_fileproc (callerdat, finfo)
     {
 	Ctype status = Classify_File (finfo, (char *) NULL, (char *) NULL,
 				      (char *) NULL, 1, 0, &vers, 0);
-	if ((status != T_UPTODATE) && (status != T_CHECKOUT))
+	if ((status != T_UPTODATE) && (status != T_CHECKOUT) &&
+	    (status != T_PATCH))
 	{
 	    error (0, 0, "%s is locally modified", finfo->fullname);
 	    freevers_ts (&vers);

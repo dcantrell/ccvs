@@ -775,9 +775,7 @@ enum classify_type
     T_REMOVED,				/* R (removed file) list	 */
     T_REMOVE_ENTRY,			/* W (removed entry) list	 */
     T_UPTODATE,				/* File is up-to-date		 */
-#ifdef SERVER_SUPPORT
     T_PATCH,				/* P Like C, but can patch	 */
-#endif
     T_TITLE				/* title for node type 		 */
 };
 typedef enum classify_type Ctype;
