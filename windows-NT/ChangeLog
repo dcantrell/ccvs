@@ -1,3 +1,15 @@
+Wed Aug 30 15:39:57 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+        * Windows NT port merged.
+	* README, config.h, filesubr.c, mkdir.c, ndir.c, ndir.h,
+	options.h, pwd.c, pwd.h, rcmd.c, rcmd.h, run.c, startserver.c,
+	strippath.c, stripslash.c, waitpid.c, win32.c: Changed or added.
+
+Thu Aug 10 13:30:00 1995  Jim Blandy <jimb@cyclic.com>
+
+	* filesubr.c, mkdir.c, pwd.c, run.c, win32.c: New source files.
+	* pwd.h: New header file.
+
 Wed Jul 19 18:00:00 1995  Jim Blandy <jimb@cyclic.com>
 
 	* alloca.h: New file.
