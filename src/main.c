@@ -272,6 +272,11 @@ main (argc, argv)
     if (getenv (CVSREAD_ENV) != NULL)
 	cvswrite = FALSE;
 
+    /* This has the effect of setting getopt's ordering to REQUIRE_ORDER,
+       which is what we need to distinguish between global options and
+       command options.  FIXME: It would appear to be possible to do this
+       much less kludgily by passing "+" as the first character to the
+       option string we pass to getopt_long.  */
     optind = 1;
 
     while ((c = getopt_long

@@ -1,3 +1,8 @@
+Fri Sep  8 13:25:55 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c: Add comment regarding deleting temp file.
+	* main.c: Add comment regarding getopt REQUIRE_ORDER.
+
 Thu Sep  7 20:24:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * main.c (main): use getopt_long(), accept "--help" and
