@@ -1,3 +1,7 @@
+Tue Jan  9 16:22:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* .cvsignore: Add cvs.exe and icc.in.
+
 Tue Jan 09 16:43:59 1996  Jim Kingdon  (kingdon@beezley.cyclic.com)
 
 	* filesubr.c (link_file): New function (copied from
