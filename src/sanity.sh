@@ -454,7 +454,7 @@ if test x"$*" = x; then
 	# We omit rdiff for now, because we have put off
 	# committing the changes that make it work until after the 1.9
 	# release.
-	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
+	tests="basica basicb basic1 deep basic2 death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom ignore binfiles binwrap info serverpatch log log2"
 else
 	tests="$*"
 fi
@@ -3422,7 +3422,7 @@ C aa\.c"
 	  ;;
 
 	modules)
-	  rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
+	  # Tests of various ways to define and use modules.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
 	  mkdir 1
@@ -3710,6 +3710,39 @@ U first-dir/file2"
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
+
+	modules2)
+	  # More tests of modules, in particular the & feature.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir ${CVSROOT_DIRNAME}/second-dir
+
+	  mkdir 1
+	  cd 1
+
+	  dotest modules2-1 "${testcvs} -q co CVSROOT/modules" \
+'U CVSROOT/modules'
+	  cd CVSROOT
+	  echo 'ampermodule &first-dir &second-dir' > modules
+	  dotest modules2-2 "${testcvs} -q ci -m add-modules" \
+"Checking in modules;
+/tmp/cvs-sanity/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ..
+	  rm -rf CVSROOT
+
+	  dotest modules2-3 "${testcvs} -q co ampermodule" ''
+	  dotest modules2-4 "test -d ampermodule/first-dir" ''
+	  dotest modules2-5 "test -d ampermodule/second-dir" ''
+
+	  cd ..
+	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/second-dir
+	  ;;
+
 	mflag)
 	  for message in '' ' ' '	
            ' '    	  	test' ; do

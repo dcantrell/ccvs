@@ -2249,6 +2249,9 @@ server_pause_check()
 }
 #endif /* SERVER_FLOWCONTROL */
 
+/* This variable commented in server.h.  */
+char *server_dir = NULL;
+
 static void output_dir PROTO((char *, char *));
 
 static void
@@ -2256,6 +2259,11 @@ output_dir (update_dir, repository)
     char *update_dir;
     char *repository;
 {
+    if (server_dir != NULL)
+    {
+	buf_output0 (protocol, server_dir);
+	buf_output0 (protocol, "/");
+    }
     if (use_dir_and_repos)
     {
 	if (update_dir[0] == '\0')

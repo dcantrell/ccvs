@@ -1,3 +1,13 @@
+Thu Oct 10 14:52:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c, server.h (server_dir): New variable.
+	(output_dir): If it is set, send it before the directory name.
+	* modules.c (do_module): Set it, in the case of & modules, and
+	restore it when done.
+	* sanity.sh (modules): Don't clean up first-dir before starting;
+	tests now clean up for themselves at the end.
+	(modules2): New tests, for above fix.
+
 Wed Oct  9 15:52:34 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* sanity.sh: Barf immediately if run as root. 
