@@ -13,6 +13,15 @@
 
 # See TODO list at end of file.
 
+# You can't run CVS as root; print a nice error message here instead
+# of somewhere later, after making a mess.
+case "`whoami`" in
+  "root" )
+    echo "sanity.sh: test suite does not work correctly when run as root" >&2
+    exit 1
+  ;;
+esac
+
 # required to make this script work properly.
 unset CVSREAD
 
