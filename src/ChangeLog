@@ -1,3 +1,8 @@
+Sun Jan 22 15:25:45 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* update.c (merge_file): My rcsmerge doesn't accept a -E option,
+	and it doesn't look too important, so don't pass it.
+
 Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
 
 	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
