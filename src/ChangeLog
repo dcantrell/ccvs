@@ -1,3 +1,9 @@
+Tue Nov  7 16:59:25 1995  J.T. Conklin  <jtc@lestat.cygnus.com>
+
+	* rcs.c (RCS_getbranch, RCS_getdate, RCS_getrevtime, RCS_gettag,
+ 	RCS_getversion, RCS_head): Use assert() instead of attempting to
+	"do the right thing" with a bogus RCSNode argument.
+
 Mon Nov  6 14:24:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vers_ts.c: Remove ctime define.  It is just asking for trouble.
