@@ -365,6 +365,11 @@ extern void convert_file (char *INFILE,  int INFLAGS,
    according to the C library manual pages.  So we'll make decoys. */
 #define NEED_DECOY_PERMISSIONS 1     /* see system.h */
 
+/* See client.c.  Setting execute bits with chmod seems to lose under
+   OS/2, although in some places the documentation grudgingly admits
+   to the existence of execute bits. */
+#define EXECUTE_PERMISSION_LOSES 1
+
 
 
 /* For the access() function, for which OS/2 has no pre-defined
@@ -382,8 +387,10 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 /* The IBM TCP/IP library gets initialized in main(): */
 #define NEED_CALL_SOCKINIT 1
 
-/* Under OS/2, we have our own popen() and pclose(). */
+/* Under OS/2, we have our own popen() and pclose()... */
 #define USE_OWN_POPEN 1
+/* ... and we use popenRW to start the rsh server. */
+#define START_RSH_WITH_POPEN_RW 1
 
 /* Set to 1 for some debugging messages. */
 #if 0
