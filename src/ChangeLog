@@ -1,3 +1,9 @@
+1998-05-26  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (annotate): Call tag_check_valid like the other functions
+	which have a -r option.
+	* sanity.sh (ann): New test ann-14 tests for this.
+
 1998-05-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (importc): New tests importc-5 through importc-8 test

@@ -10876,6 +10876,8 @@ done"
 1\.2          (${username} *[0-9a-zA-Z-]*): line
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+	  dotest_fail ann-14 "${testcvs} ann -r bill-clintons-chastity file1" \
+"${PROG} \[[a-z]* aborted\]: no such tag bill-clintons-chastity"
 
 	  cd ../..
 	  rm -r 1
