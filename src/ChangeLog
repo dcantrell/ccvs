@@ -1,3 +1,14 @@
+2003-07-31  Derek Price  <derek@ximbiot.com>
+
+	* rcscmds.c (RCS_merge): Pass `--' before the filename arguments to
+	diff so that filenames starting with `-' can be merged.
+	* sanity.sh (join5): New test for same.
+
+2003-07-31  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add_directory): Don't print status information in really_quiet
+	mode.
+
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* checkout.c (checkaddfile): Simplify the logic here, using assumptions

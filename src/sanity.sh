@@ -911,7 +911,7 @@ if test x"$*" = x; then
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
-	tests="${tests} join join2 join3 join4 join-readonly-conflict"
+	tests="${tests} join join2 join3 join4 join5 join-readonly-conflict"
 	tests="${tests} join-admin join-admin-2"
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} clean"
@@ -9074,6 +9074,67 @@ R file9'
 
 	  rm -r 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	join5)
+	  # This test verifies that CVS can handle filenames starting with a
+	  # dash (`-') properly.  What used to happen was that CVS handled it
+	  # just fine, until it went to pass them as arguments to the diff
+	  # library, at which point it neglected to pass `--' before the file
+	  # list, causing the diff library to attempt to interpret the file
+	  # name as an argument.
+	  mkdir join5; cd join5
+	  mkdir 1; cd 1
+	  dotest join5-init-1 "${testcvs} -Q co -l ."
+	  mkdir join5
+	  dotest join5-init-2 "${testcvs} -Q add join5"
+	  cd join5
+	  echo "there once was a file from harrisburg" >-file
+	  echo "who's existance it seems was quiteabsurd" >>-file
+	  dotest join5-init-3 "${testcvs} -Q add -- -file"
+	  dotest join5-init-4 "${testcvs} -q ci -minitial" \
+"RCS file: ${CVSROOT_DIRNAME}/join5/-file,v
+done
+Checking in -file;
+${CVSROOT_DIRNAME}/join5/-file,v  <--  -file
+initial revision: 1\.1
+done"
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  dotest join5-init-5 "${testcvs} -Q co join5"
+	  cd join5
+	  echo "it tested for free" >>-file
+	  echo "when paid it should be" >>-file
+	  dotest join5-init-4 "${testcvs} -q ci -msecond" \
+"Checking in -file;
+${CVSROOT_DIRNAME}/join5/-file,v  <--  -file
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  cd ../..
+
+	  cd 1/join5
+	  echo "but maybe it could charge bytheword" >>-file
+	  # This is the test that used to spew complaints from diff3:
+	  dotest join5 "${testcvs} up" \
+"$PROG update: Updating .
+RCS file: ${CVSROOT_DIRNAME}/join5/-file,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+Merging differences between 1\.1 and 1\.2 into -file
+rcsmerge: warning: conflicts during merge
+cvs update: conflicts found in -file
+C -file"
+	  cd ../..
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r join5
+	  rm -rf ${CVSROOT_DIRNAME}/join5
 	  ;;
 
 	join-readonly-conflict)
@@ -22680,7 +22741,7 @@ ${SPROG} [a-z]*: Rebuilding administrative file database"
 	  # been lost.  Later you discover this, and you suspect me of
 	  # deliberately sabotaging your work, so you let all the air
 	  # out of my tires.  Only after a series of expensive lawsuits
-	  # and countersuits do we discover it this was all CVS's
+	  # and countersuits do we discover that this was all CVS's
 	  # fault.
 	  #
 	  # Luckily, this problem has been fixed now, as our test will

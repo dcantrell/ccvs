@@ -731,10 +731,11 @@ add_directory (struct file_info *finfo)
 
     /* setup the log message */
     message = xmalloc (strlen (rcsdir)
-		       + 80
-		       + (tag == NULL ? 0 : strlen (tag) + 80)
-		       + (date == NULL ? 0 : strlen (date) + 80));
-    (void) sprintf (message, "Directory %s added to the repository\n", rcsdir);
+		       + 36
+		       + (tag == NULL ? 0 : strlen (tag) + 38)
+		       + (date == NULL ? 0 : strlen (date) + 39));
+    (void) sprintf (message, "Directory %s added to the repository\n",
+		    rcsdir);
     if (tag)
     {
 	(void) strcat (message, "--> Using per-directory sticky tag `");
@@ -820,12 +821,13 @@ add_directory (struct file_info *finfo)
 
     Subdir_Register (entries, (char *) NULL, dir);
 
-    cvs_output (message, 0);
+    if (!really_quiet)
+	cvs_output (message, 0);
 
     free (rcsdir);
     free (message);
 
-    return (0);
+    return 0;
 
 out:
     if (restore_cwd (&cwd, NULL))
