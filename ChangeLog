@@ -1,3 +1,8 @@
+1998-06-03  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TESTS: Don't mention the version of Solaris; Mark Borges says
+	that it applies to Solaris 2.5 as well as 2.6.
+
 1998-06-02  Assar Westerlund  <assar@sics.se>
 
 	* configure.in: Test for GSS_C_NT_HOSTBASED_SERVICE in gssapi.h.
