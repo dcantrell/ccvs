@@ -1,5 +1,10 @@
 2003-12-09  Derek Price  <derek@ximbiot.com>
 
+	* cvs.texinfo (Locks): Provide technical details for promotable
+	readlocks.
+
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
 	* stamp-vti, version.texi: Regenerated.
 
 2003-12-05  Derek Price  <derek@ximbiot.com>
