@@ -1,5 +1,9 @@
 Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
+	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it
+	version C1.4A, not 1.4A2-remote.  Send bugs to cyclic-cvs, not
+	remote-cvs.
+
 	* classify.c (Classify_File): Put check for dead file inside
 	"#ifdef DEATH_SUPPORT".
 
