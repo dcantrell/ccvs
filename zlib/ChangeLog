@@ -1,3 +1,9 @@
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
+	* libz.dsp: Drop "example.c" & "minigzip.c" from build.
+	* libz.dep, libz.dep: Regenerated for "libz.dsp" change.
+	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
+
 2004-04-17  Derek Price  <derek@ximbiot.com>
 
 	* zlib.dep, zlib.dsp, zlib.mak: Move...
