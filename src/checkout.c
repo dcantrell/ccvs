@@ -674,6 +674,10 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	     */
 	    for (i = 1; i < *pargc; i++)/* free the old ones */
 		free (argv[i]);
+	    /* FIXME: Normally one has to realloc argv to make sure
+               argv[1] exists.  But this argv does not points to the
+               beginning of an allocated block.  For now we allocate
+               at least 4 entries for argv (in line2argv).  */
 	    argv[1] = xstrdup (mfile);	/* set up the new one */
 	    *pargc = 2;
 

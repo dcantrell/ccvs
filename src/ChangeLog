@@ -1,3 +1,10 @@
+Wed Apr 23 19:07:41 1997  Norbert Kiesel  <nk@cosa.de>
+
+	* subr.c (line2argv): Allocate at least 4 slots for argv.
+
+	* checkout.c (checkout_proc): Add a comment which says why the
+ 	above change was necessary to avoid writing to unallocated memory.
+
 Wed Apr 23 11:20:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* entries.c (ParseTag): Always set *NONBRANCHP.
