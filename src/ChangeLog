@@ -1,3 +1,7 @@
+Tue Oct 28 10:27:03 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (make_file_label): Remove extraneous `+'.
+
 Mon Oct 27 14:40:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* status.c (status): Don't pass SEND_NO_CONTENTS to send_files.
