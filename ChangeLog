@@ -1,57 +1,17 @@
-Fri Jun 16 19:29:14 1995  Karl Fogel  <kfogel@floss>
+Fri Jun 16 22:30:03 1995  Jim Kingdon  (kingdon@cyclic.com)
 
-	* src/update.c (update_file_proc):
-	applied Jim Meyering's patch to fix the behavior
-	of "cvs -n update FILE" when a conflict is detected.  The bug: the
-	"-n" option is supposed to prevent anything from actually happening,
-	but cvs went ahead with the merge anyway.  The fix: now when it
-	detects a conlict, it tests if it's running "-n" and simply writes the
-	letter 'C' to the output to indicate the presence of the conflict if
-	so; else actually performs the merge.
+	* Version 1.4.90.
 
-Fri Jun 16 16:27:02 1995  meyering  <meyering@floss>
+	* configure, configure.in (AC_OUTPUT): Add config/pcl-cvs/Makefile.
 
-	* src/entries.c (fgetentent):
-	Parenthesize assignment in if-expr to suppress warning.
+	* Makefile.in (dist): Rename dist from ccvs-<version> to cvs-<version>.
 
-Fri Jun 16 15:00:14 1995  kingdon  <kingdon@floss>
+	* Makefile.in (dist, dist-dir), src/Makefile.in, doc/Makefile.in,
+	examples/Makefile.in, contrib/Makefile.in,
+	contrib/pcl-cvs/Makefile, man/Makefile.in, lib/Makefile.in
+	(dist-dir): Use srcdir where appropriate.
 
-	* doc/ChangeLog, doc/cvs-paper.ps: * cvs-paper.ps: Added.
-
-Fri Jun 16 00:37:35 1995  jtc  <jtc@floss>
-
-	* src/server.c, src/ChangeLog:
-	* server.c (get_buffer_data, buf_append_char, buf_append_data):
-	  Don't conditionalize use of "inline".  Autoconf takes care of
-	  defining it away on systems that don't grok it.
-
-Thu Jun 15 21:48:14 1995  kingdon  <kingdon@floss>
-
-	* README, Makefile.in, NEWS, Attic/ChangeLog.fsf, Attic/CYCLIC-CVS-FAQ, ChangeLog:
-		* CYCLIC-CVS-FAQ: Removed.
-		* Rename ChangeLog.fsf to NEWS.  Add information about changes
-		since 1.4A2.
-		* Makefile.in (DISTFILES): Adjust accordingly.
-		* README: Revise to reflect current status of releases.
-
-	* ChangeLog, TODO:
-	* TODO: Remove various items already fixed.  Revise others.
-
-	* src/options.h.in, src/ChangeLog:
-		* options.h.in (DIFF): Default to "diff" not "diff -a" since diff
-		might not support the -a option.
-
-Thu Jun 15 20:13:30 1995  jtc  <jtc@floss>
-
-	* configure.in, configure, config.h.in, ChangeLog:
-	* configure.in: Use AC_C_INLINE to handle inline.
-	Reorganized to put compiler and OS checks first so that any
-	special defines they might provide are used in subsequent tests.
-
-	* configure, config.h.in: regenerated with autoconf and
-	autoheader version 2.3.
-
-Thu Jun 15 14:33:37 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+Thu Jun 15 14:33:37 1995  Jim Kingdon  (kingdon@cyclic.com)
 
 	* CYCLIC-CVS-FAQ: Removed.
 	* Rename ChangeLog.fsf to NEWS.  Add information about changes

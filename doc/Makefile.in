@@ -35,8 +35,11 @@ INSTALL_DATA = @INSTALL_DATA@
 DISTFILES = \
 	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
 	cvs-paper.ms cvs-paper.ps \
-	cvs.texinfo cvs.ps cvs.info cvs.aux \
-	cvsclient.texi cvsclient.ps cvsclient.info cvsclient.aux
+	cvs.texinfo \
+	cvsclient.texi
+
+OBJDIR_DISTFILES = cvs.ps cvs.info cvs.aux \
+	cvsclient.ps cvsclient.info cvsclient.aux
 
 # these are part of the texinfo distribution
 MAKEINFO=makeinfo
@@ -138,7 +141,10 @@ realclean: distclean
 
 dist-dir: $(DISTFILES)
 	mkdir ${DISTDIR}
-	ln ${DISTFILES} ${DISTDIR}
+	for i in ${DISTFILES}; do \
+	  ln $(srcdir)/$${i} ${DISTDIR}; \
+	done
+	ln ${OBJDIR_DISTFILES} ${DISTDIR}
 	if [ -f cvs.info-1 ]; \
 	  then ln -f cvs.info-* ${DISTDIR}; \
 	  else : Pacify Ultrix sh; \

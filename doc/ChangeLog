@@ -1,4 +1,9 @@
-Fri Jun 16 07:56:04 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
+Fri Jun 16 21:56:16 1995  Karl Fogel <kfogel@cyclic.com>
+			  and Jim Meyering <meyering@comco.com>
+
+	* update.c (update_file_proc): If noexec, just write 'C', don't merge.
+
+Fri Jun 16 07:56:04 1995  Jim Kingdon  (kingdon@cyclic.com)
 
 	* cvs-paper.ps: Added.
 
