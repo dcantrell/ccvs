@@ -42,6 +42,7 @@
 
 #ifdef STDC_HEADERS
 #include <stdlib.h>
+#include <stdarg.h>
 #else
 extern void exit ();
 extern char *getenv();
@@ -899,3 +900,7 @@ extern void cvs_outerr PROTO ((const char *, size_t));
 extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));
 extern void cvs_output_tagged PROTO ((char *, char *));
+
+/* The trace funciton from subr.c */
+void cvs_trace(int level, const char *fmt,...);
+#define TRACE cvs_trace

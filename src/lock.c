@@ -291,8 +291,7 @@ Lock_Cleanup ()
     /* FIXME-reentrancy: the workaround isn't reentrant.  */
     static int in_lock_cleanup = 0;
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> Lock_Cleanup()\n", CLIENT_SERVER_STR);
+    TRACE (1, "Lock_Cleanup()\n");
 
     if (in_lock_cleanup)
 	return;
@@ -399,9 +398,7 @@ Reader_Lock (xrepository)
     FILE *fp;
     char *tmp;
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> Reader_Lock(%s)\n", CLIENT_SERVER_STR,
-                        xrepository);
+    TRACE (1, "Reader_Lock(%s)\n", xrepository);
 
     if (noexec)
 	return (0);
@@ -561,9 +558,7 @@ write_lock (lock)
     FILE *fp;
     char *tmp;
 
-    if (trace)
-	(void) fprintf (stderr, "%s-> write_lock(%s)\n",
-                        CLIENT_SERVER_STR, lock->repository);
+    TRACE (1, "write_lock(%s)\n", lock->repository);
 
     if (writelock == NULL)
     {
