@@ -219,7 +219,7 @@ lint:
 .PHONY: dist
 GZIP=gzip --best
 GZIP_EXT=.gz
-TAR_VERBOSE=v
+TAR_VERBOSE=
 dist:
 	echo > .fname \
 	  cvs-`sed < $(srcdir)/src/version.c \
