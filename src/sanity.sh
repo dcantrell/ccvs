@@ -21856,11 +21856,11 @@ ${PROG} server: Updating dir1/sdir/ssdir"
 	  # messages are subject to out-of-order bugs (this one is hard
 	  # to work around).
 	  if $remote; then :; else
-	    dotest multiroot2-9 "${testcvs} -t update" \
-" -> main loop with CVSROOT=${TESTDIR}/root1
+	    dotest multiroot2-9a "${testcvs} -t update" \
+" *-> main loop with CVSROOT=${TESTDIR}/root1
 ${PROG} update: Updating \.
 ${PROG} update: Updating dir1
- -> main loop with CVSROOT=${TESTDIR}/root2
+ *-> main loop with CVSROOT=${TESTDIR}/root2
 ${PROG} update: Updating dir1/sdir
 ${PROG} update: Updating dir1/sdir/ssdir"
 	  fi
