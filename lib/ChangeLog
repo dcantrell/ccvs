@@ -1,5 +1,13 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add getdate.h, getdate.y in their own
+	section.
+	(BUILT_SOURCES, MAINTAINERCLEANFILES): Add getdate.c.
+	* getdate.h, getdate.y: Import updated versions from GNULIB.
+	* Makefile.in: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* mktime.c: New file.
 	* Makefile.in: Regenerated.
 

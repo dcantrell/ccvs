@@ -33,7 +33,6 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = \
 	argmatch.c \
-	getdate.y \
 	getnline.c \
 	getopt.c \
 	getopt1.c \
@@ -67,6 +66,7 @@ libcvs_a_LIBADD = @LIBOBJS@
 
 BUILT_SOURCES =
 MOSTLYCLEANFILES =
+MAINTAINERCLEANFILES =
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -101,6 +101,11 @@ fnmatch.h: fnmatch_.h
 	cp $(srcdir)/fnmatch_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
+
+# For GNULIB's getdate module.
+libcvs_a_SOURCES += getdate.h getdate.y
+BUILT_SOURCES += getdate.c
+MAINTAINERCLEANFILES += getdate.c
 
 # For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
