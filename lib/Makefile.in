@@ -29,7 +29,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-SOURCES = $(libcvs_a_SOURCES)
+SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -53,7 +53,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS =
+check_PROGRAMS = getdate$(EXEEXT)
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	ChangeLog asnprintf.c asprintf.c atexit.c dup2.c fncase.c \
@@ -61,40 +61,42 @@ DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	gethostname.c getline.c getndelim2.c getopt.c getopt1.c \
 	getpass.c gettimeofday.c lstat.c malloc.c memmove.c mkdir.c \
 	mkstemp.c mktime.c nanosleep.c printf-args.c printf-parse.c \
-	realloc.c regex.c rename.c rpmatch.c stat.c strcasecmp.c \
-	strerror.c strncasecmp.c strstr.c strtoul.c sunos57-select.c \
-	tempname.c time_r.c valloc.c vasnprintf.c vasprintf.c \
-	waitpid.c
+	realloc.c regex.c rename.c rpmatch.c setenv.c stat.c \
+	strcasecmp.c strerror.c strncasecmp.c strstr.c strtoul.c \
+	sunos57-select.c tempname.c time_r.c unsetenv.c valloc.c \
+	vasnprintf.c vasprintf.c waitpid.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_extract_cpp_defn.m4 \
 	$(top_srcdir)/m4/acx_with_external_zlib.m4 \
 	$(top_srcdir)/m4/acx_with_gssapi.m4 $(top_srcdir)/m4/alloca.m4 \
+	$(top_srcdir)/m4/allocsa.m4 \
 	$(top_srcdir)/m4/asx_version_compare.m4 \
 	$(top_srcdir)/m4/atexit.m4 $(top_srcdir)/m4/bison.m4 \
 	$(top_srcdir)/m4/clock_time.m4 \
 	$(top_srcdir)/m4/cvs_func_printf_ptr.m4 \
 	$(top_srcdir)/m4/dirname.m4 $(top_srcdir)/m4/dos.m4 \
-	$(top_srcdir)/m4/eoverflow.m4 $(top_srcdir)/m4/exitfail.m4 \
-	$(top_srcdir)/m4/extensions.m4 $(top_srcdir)/m4/fnmatch.m4 \
-	$(top_srcdir)/m4/getcwd.m4 $(top_srcdir)/m4/getdate.m4 \
-	$(top_srcdir)/m4/gethostname.m4 $(top_srcdir)/m4/getline.m4 \
-	$(top_srcdir)/m4/getndelim2.m4 $(top_srcdir)/m4/getnline.m4 \
-	$(top_srcdir)/m4/getopt.m4 $(top_srcdir)/m4/getpagesize.m4 \
-	$(top_srcdir)/m4/getpass.m4 $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/gettime.m4 $(top_srcdir)/m4/gettimeofday.m4 \
-	$(top_srcdir)/m4/gnulib.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intmax_t.m4 $(top_srcdir)/m4/inttypes.m4 \
-	$(top_srcdir)/m4/inttypes_h.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/longdouble.m4 $(top_srcdir)/m4/longlong.m4 \
-	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/mbstate_t.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memmove.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/onceonly_2_57.m4 $(top_srcdir)/m4/pathmax.m4 \
-	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
-	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/restrict.m4 \
-	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/save-cwd.m4 \
+	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/eoverflow.m4 \
+	$(top_srcdir)/m4/exitfail.m4 $(top_srcdir)/m4/extensions.m4 \
+	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/getcwd.m4 \
+	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/gethostname.m4 \
+	$(top_srcdir)/m4/getline.m4 $(top_srcdir)/m4/getndelim2.m4 \
+	$(top_srcdir)/m4/getnline.m4 $(top_srcdir)/m4/getopt.m4 \
+	$(top_srcdir)/m4/getpagesize.m4 $(top_srcdir)/m4/getpass.m4 \
+	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gettime.m4 \
+	$(top_srcdir)/m4/gettimeofday.m4 $(top_srcdir)/m4/gnulib.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/longdouble.m4 \
+	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/lstat.m4 \
+	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/onceonly_2_57.m4 \
+	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/regex.m4 \
+	$(top_srcdir)/m4/restrict.m4 $(top_srcdir)/m4/rpmatch.m4 \
+	$(top_srcdir)/m4/save-cwd.m4 $(top_srcdir)/m4/setenv.m4 \
 	$(top_srcdir)/m4/signed.m4 $(top_srcdir)/m4/size_max.m4 \
 	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_mtim.m4 \
 	$(top_srcdir)/m4/stat.m4 $(top_srcdir)/m4/stdbool.m4 \
@@ -120,13 +122,21 @@ AR = ar
 ARFLAGS = cru
 libcvs_a_AR = $(AR) $(ARFLAGS)
 libcvs_a_DEPENDENCIES = @LIBOBJS@
-am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) basename.$(OBJEXT) \
-	dirname.$(OBJEXT) stripslash.$(OBJEXT) exitfail.$(OBJEXT) \
-	getdate.$(OBJEXT) getnline.$(OBJEXT) gettime.$(OBJEXT) \
-	md5.$(OBJEXT) save-cwd.$(OBJEXT) strftime.$(OBJEXT) \
-	xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) xgetcwd.$(OBJEXT) \
-	yesno.$(OBJEXT)
+am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
+	basename.$(OBJEXT) dirname.$(OBJEXT) stripslash.$(OBJEXT) \
+	exitfail.$(OBJEXT) getdate.$(OBJEXT) getnline.$(OBJEXT) \
+	gettime.$(OBJEXT) md5.$(OBJEXT) save-cwd.$(OBJEXT) \
+	strftime.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
+	xgetcwd.$(OBJEXT) yesno.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
+am_getdate_OBJECTS = getdate-error.$(OBJEXT) \
+	getdate-exitfail.$(OBJEXT) getdate-getdate.$(OBJEXT) \
+	getdate-gettime.$(OBJEXT) getdate-xalloc-die.$(OBJEXT) \
+	getdate-xmalloc.$(OBJEXT) getdate-progname.$(OBJEXT)
+getdate_OBJECTS = $(am_getdate_OBJECTS)
+am__DEPENDENCIES_1 =
+getdate_DEPENDENCIES = @LIBOBJS@ $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -135,8 +145,9 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
-SOURCES = $(libcvs_a_SOURCES)
-DIST_SOURCES = $(libcvs_a_SOURCES)
+YLWRAP = $(top_srcdir)/ylwrap
+SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
+DIST_SOURCES = $(libcvs_a_SOURCES) $(getdate_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -276,50 +287,40 @@ noinst_LIBRARIES = libcvs.a
 # Should look into unifying regular expression matching in CVS
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
-# CVS test scripts for getdate.
-#TESTS += test-getdate.sh
-#MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
-#check_PROGRAMS += getdate
-#getdate_SOURCES = \
-#	getdate.y \
-#	gettime.c
-#getdate_SOURCES += \
-#	error.c \
-#	exitfail.c \
-#	exitfail.h \
-#	xalloc.h \
-#	xmalloc.c \
-#getdate_SOURCES += \
-#	progname.c
-#getdate_CPPFLAGS = -DTEST
-#getdate_LDADD = \
-#	@LIBOBJS@ \
-#	$(LIB_CLOCK_GETTIME) \
-#	$(LIBINTL)
 
 # For the vasprintf module from GNULIB.
 
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES = sighandle.c system.h wait.h xselect.h xtime.h \
-	basename.c dirname.c dirname.h stripslash.c error.h exit.h \
-	exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h \
-	getnline.c getpagesize.h getpass.h gettext.h gettime.c md5.c \
-	md5.h minmax.h pathmax.h regex.h save-cwd.h save-cwd.c \
-	stat-macros.h strcase.h strftime.c strftime.h time_r.h \
-	timespec.h unlocked-io.h printf-args.h printf-parse.h \
-	vasnprintf.h vasprintf.h xalloc.h xmalloc.c xalloc-die.c \
-	xgetcwd.h xgetcwd.c xsize.h yesno.c yesno.h
+	allocsa.h allocsa.c basename.c dirname.c dirname.h \
+	stripslash.c error.h exit.h exitfail.h exitfail.c getdate.h \
+	getdate.y getline.h getnline.h getnline.c getpagesize.h \
+	getpass.h gettext.h gettime.c md5.c md5.h minmax.h pathmax.h \
+	regex.h save-cwd.h save-cwd.c setenv.h stat-macros.h strcase.h \
+	strftime.c strftime.h time_r.h timespec.h unlocked-io.h \
+	printf-args.h printf-parse.h vasnprintf.h vasprintf.h xalloc.h \
+	xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h yesno.c \
+	yesno.h
 libcvs_a_LIBADD = @LIBOBJS@
 BUILT_SOURCES = $(ALLOCA_H) $(FNMATCH_H) $(GETOPT_H) $(STDBOOL_H) \
 	$(STDINT_H)
-MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t getopt.h \
-	getopt.h-t stdbool.h stdbool.h-t stdint.h stdint.h-t
+MOSTLYCLEANFILES = alloca.h alloca.h-t fnmatch.h fnmatch.h-t \
+	getdate-expected getdate-got getdate.diff getopt.h getopt.h-t \
+	stdbool.h stdbool.h-t stdint.h stdint.h-t
 MAINTAINERCLEANFILES = 
-TESTS = 
+TESTS = test-getdate.sh
 EXTRA_DIST = .cvsignore ChangeLog.fsf build_lib.com libcvs.dep \
 	libcvs.dsp libcvs.mak alloca_.h fnmatch_.h fnmatch_loop.c \
 	getndelim2.h getndelim2.c getndelim2.h getndelim2.c getopt_.h \
 	getopt_int.h stdbool_.h stdint_.h
+getdate_SOURCES = error.c exitfail.c exitfail.h getdate.y gettime.c \
+	xalloc-die.c xalloc.h xmalloc.c progname.c
+getdate_CPPFLAGS = -DTEST
+getdate_LDADD = \
+	@LIBOBJS@ \
+	$(LIB_CLOCK_GETTIME) \
+	$(LIBINTL)
+
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -364,6 +365,9 @@ libcvs.a: $(libcvs_a_OBJECTS) $(libcvs_a_DEPENDENCIES)
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+getdate$(EXEEXT): $(getdate_OBJECTS) $(getdate_DEPENDENCIES) 
+	@rm -f getdate$(EXEEXT)
+	$(LINK) $(getdate_LDFLAGS) $(getdate_OBJECTS) $(getdate_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -400,6 +404,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/rpmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/setenv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strerror.Po@am__quote@
@@ -409,13 +414,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/sunos57-select.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/tempname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/time_r.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/unsetenv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/valloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasnprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/vasprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allocsa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-error.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-gettime.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-progname.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xalloc-die.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-xmalloc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gettime.Po@am__quote@
@@ -443,26 +457,106 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
+getdate-error.o: error.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-error.o -MD -MP -MF "$(DEPDIR)/getdate-error.Tpo" -c -o getdate-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-error.Tpo" "$(DEPDIR)/getdate-error.Po"; else rm -f "$(DEPDIR)/getdate-error.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='error.c' object='getdate-error.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c
+
+getdate-error.obj: error.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-error.obj -MD -MP -MF "$(DEPDIR)/getdate-error.Tpo" -c -o getdate-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-error.Tpo" "$(DEPDIR)/getdate-error.Po"; else rm -f "$(DEPDIR)/getdate-error.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='error.c' object='getdate-error.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-error.obj `if test -f 'error.c'; then $(CYGPATH_W) 'error.c'; else $(CYGPATH_W) '$(srcdir)/error.c'; fi`
+
+getdate-exitfail.o: exitfail.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-exitfail.o -MD -MP -MF "$(DEPDIR)/getdate-exitfail.Tpo" -c -o getdate-exitfail.o `test -f 'exitfail.c' || echo '$(srcdir)/'`exitfail.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-exitfail.Tpo" "$(DEPDIR)/getdate-exitfail.Po"; else rm -f "$(DEPDIR)/getdate-exitfail.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='exitfail.c' object='getdate-exitfail.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-exitfail.o `test -f 'exitfail.c' || echo '$(srcdir)/'`exitfail.c
+
+getdate-exitfail.obj: exitfail.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-exitfail.obj -MD -MP -MF "$(DEPDIR)/getdate-exitfail.Tpo" -c -o getdate-exitfail.obj `if test -f 'exitfail.c'; then $(CYGPATH_W) 'exitfail.c'; else $(CYGPATH_W) '$(srcdir)/exitfail.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-exitfail.Tpo" "$(DEPDIR)/getdate-exitfail.Po"; else rm -f "$(DEPDIR)/getdate-exitfail.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='exitfail.c' object='getdate-exitfail.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-exitfail.obj `if test -f 'exitfail.c'; then $(CYGPATH_W) 'exitfail.c'; else $(CYGPATH_W) '$(srcdir)/exitfail.c'; fi`
+
+getdate-getdate.o: getdate.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-getdate.o -MD -MP -MF "$(DEPDIR)/getdate-getdate.Tpo" -c -o getdate-getdate.o `test -f 'getdate.c' || echo '$(srcdir)/'`getdate.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-getdate.Tpo" "$(DEPDIR)/getdate-getdate.Po"; else rm -f "$(DEPDIR)/getdate-getdate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getdate.c' object='getdate-getdate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-getdate.o `test -f 'getdate.c' || echo '$(srcdir)/'`getdate.c
+
+getdate-getdate.obj: getdate.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-getdate.obj -MD -MP -MF "$(DEPDIR)/getdate-getdate.Tpo" -c -o getdate-getdate.obj `if test -f 'getdate.c'; then $(CYGPATH_W) 'getdate.c'; else $(CYGPATH_W) '$(srcdir)/getdate.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-getdate.Tpo" "$(DEPDIR)/getdate-getdate.Po"; else rm -f "$(DEPDIR)/getdate-getdate.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='getdate.c' object='getdate-getdate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-getdate.obj `if test -f 'getdate.c'; then $(CYGPATH_W) 'getdate.c'; else $(CYGPATH_W) '$(srcdir)/getdate.c'; fi`
+
+getdate-gettime.o: gettime.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.o -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.o `test -f 'gettime.c' || echo '$(srcdir)/'`gettime.c
+
+getdate-gettime.obj: gettime.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-gettime.obj -MD -MP -MF "$(DEPDIR)/getdate-gettime.Tpo" -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-gettime.Tpo" "$(DEPDIR)/getdate-gettime.Po"; else rm -f "$(DEPDIR)/getdate-gettime.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gettime.c' object='getdate-gettime.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-gettime.obj `if test -f 'gettime.c'; then $(CYGPATH_W) 'gettime.c'; else $(CYGPATH_W) '$(srcdir)/gettime.c'; fi`
+
+getdate-xalloc-die.o: xalloc-die.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xalloc-die.o -MD -MP -MF "$(DEPDIR)/getdate-xalloc-die.Tpo" -c -o getdate-xalloc-die.o `test -f 'xalloc-die.c' || echo '$(srcdir)/'`xalloc-die.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xalloc-die.Tpo" "$(DEPDIR)/getdate-xalloc-die.Po"; else rm -f "$(DEPDIR)/getdate-xalloc-die.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xalloc-die.c' object='getdate-xalloc-die.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xalloc-die.o `test -f 'xalloc-die.c' || echo '$(srcdir)/'`xalloc-die.c
+
+getdate-xalloc-die.obj: xalloc-die.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xalloc-die.obj -MD -MP -MF "$(DEPDIR)/getdate-xalloc-die.Tpo" -c -o getdate-xalloc-die.obj `if test -f 'xalloc-die.c'; then $(CYGPATH_W) 'xalloc-die.c'; else $(CYGPATH_W) '$(srcdir)/xalloc-die.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xalloc-die.Tpo" "$(DEPDIR)/getdate-xalloc-die.Po"; else rm -f "$(DEPDIR)/getdate-xalloc-die.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xalloc-die.c' object='getdate-xalloc-die.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xalloc-die.obj `if test -f 'xalloc-die.c'; then $(CYGPATH_W) 'xalloc-die.c'; else $(CYGPATH_W) '$(srcdir)/xalloc-die.c'; fi`
+
+getdate-xmalloc.o: xmalloc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xmalloc.o -MD -MP -MF "$(DEPDIR)/getdate-xmalloc.Tpo" -c -o getdate-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xmalloc.Tpo" "$(DEPDIR)/getdate-xmalloc.Po"; else rm -f "$(DEPDIR)/getdate-xmalloc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmalloc.c' object='getdate-xmalloc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
+
+getdate-xmalloc.obj: xmalloc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-xmalloc.obj -MD -MP -MF "$(DEPDIR)/getdate-xmalloc.Tpo" -c -o getdate-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-xmalloc.Tpo" "$(DEPDIR)/getdate-xmalloc.Po"; else rm -f "$(DEPDIR)/getdate-xmalloc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmalloc.c' object='getdate-xmalloc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
+
+getdate-progname.o: progname.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-progname.o -MD -MP -MF "$(DEPDIR)/getdate-progname.Tpo" -c -o getdate-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-progname.Tpo" "$(DEPDIR)/getdate-progname.Po"; else rm -f "$(DEPDIR)/getdate-progname.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='getdate-progname.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+
+getdate-progname.obj: progname.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-progname.obj -MD -MP -MF "$(DEPDIR)/getdate-progname.Tpo" -c -o getdate-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-progname.Tpo" "$(DEPDIR)/getdate-progname.Po"; else rm -f "$(DEPDIR)/getdate-progname.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='getdate-progname.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
+
 .y.c:
-	$(YACCCOMPILE) $<
-	if test -f y.tab.h; then \
-	  to=`echo "$*_H" | sed \
-                -e 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/' \
-                -e 's/[^ABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g'`; \
-	  sed -e "/^#/!b" -e "s/Y_TAB_H/$$to/g" -e "s|y\.tab\.h|$*.h|" \
-            y.tab.h >$*.ht; \
-	  rm -f y.tab.h; \
-	  if cmp -s $*.ht $*.h; then \
-	    rm -f $*.ht ;\
-	  else \
-	    mv $*.ht $*.h; \
-	  fi; \
-	fi
-	if test -f y.output; then \
-	  mv y.output $*.output; \
-	fi
-	sed '/^#/ s|y\.tab\.c|$@|' y.tab.c >$@t && mv $@t $@
-	rm -f y.tab.c
+	$(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
