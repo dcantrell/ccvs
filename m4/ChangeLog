@@ -1,5 +1,9 @@
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in: Regenerate with Autoconf version 1.7.5.
+
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
 	* unlocked-io.m4: New file from GNULIB.
 
 2003-05-21  Derek Price  <derek@ximbiot.com>
