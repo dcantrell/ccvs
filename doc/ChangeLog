@@ -1,3 +1,7 @@
+Fri Apr 18 12:05:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Assigning revisions): Say that -r implies -f.
+
 Thu Apr 17 16:34:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (From other version control systems): Add comment
