@@ -1,3 +1,10 @@
+8 Jul 1997  Jim Kingdon
+
+	* rcmd.c (rcmd_authenticate): With error message, print the
+	user names that we were attempting to use.
+	* win32.c (win32getlogin): If GetUserName returns "", return
+	NULL.
+
 Sun, 22 Jun 1997  Jim Kingdon
 
 	* win32.c: Also include winsock.h.
