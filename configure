@@ -978,7 +978,7 @@ Optional Packages:
   --with-external-zlib    Use the specified ZLIB library (defaults to the
                           version distributed with the CVS source)
   --with-rsh              The default remote shell CVS will use for :ext:
-                          transport (default rsh)
+                          transport (default ssh)
   --with-editor           The default text editor CVS should use for log
                           messages (default autoselects)
   --with-hardcoded-pam-service-name
@@ -34670,7 +34670,7 @@ if test "${with_rsh+set}" = set; then
   withval="$with_rsh"
 
 else
-  with_rsh="rsh ssh"
+  with_rsh="ssh rsh"
 fi;
 
 if test no = "$with_rsh"; then
