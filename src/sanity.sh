@@ -10548,6 +10548,15 @@ ${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
 "${PROG} [a-z]*: while processing more than one file:
 ${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
 
+	  # try a bad symbolic revision
+	  dotest_fail admin-10c "${testcvs} -q admin -bBOGUS" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file1,v: Symbolic name BOGUS is undefined.
+${PROG} [a-z]*: cannot modify RCS file for .file1.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+${PROG} [a-z]*: ${TESTDIR}/cvsroot/first-dir/file2,v: Symbolic name BOGUS is undefined.
+${PROG} [a-z]*: cannot modify RCS file for .file2."
+
 	  # Note that -s option applies to the new default branch, not
 	  # the old one.
 	  # Also note that the implementation of -a via "rcs" requires
@@ -10557,8 +10566,33 @@ ${PROG} \[[a-z]* aborted\]: attempt to specify a numeric revision"
 -b1.1.2 -cxx -U -sfoo file1" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done"
-
-	  dotest admin-12 "${testcvs} log -N file1" "
+	  dotest admin-11a "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch: 1\.1\.2
+locks:
+access list:
+	foo
+	bar
+	baz
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+add
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+modify-on-branch
+============================================================================="
+	  dotest admin-12 "${testcvs} -q admin -bbr file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest admin-12a "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
 head: 1\.1
@@ -13590,17 +13624,7 @@ U ${TESTDIR}/1/mod2/file2"
 	  dotest abspath-6a "${testcvs} co -d ${TESTDIR}/1 ." \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/CVSROOT
-U ${TESTDIR}/1/CVSROOT/checkoutlist
-U ${TESTDIR}/1/CVSROOT/commitinfo
-U ${TESTDIR}/1/CVSROOT/config
-U ${TESTDIR}/1/CVSROOT/cvswrappers
-U ${TESTDIR}/1/CVSROOT/editinfo
-U ${TESTDIR}/1/CVSROOT/loginfo
-U ${TESTDIR}/1/CVSROOT/modules
-U ${TESTDIR}/1/CVSROOT/notify
-U ${TESTDIR}/1/CVSROOT/rcsinfo
-U ${TESTDIR}/1/CVSROOT/taginfo
-U ${TESTDIR}/1/CVSROOT/verifymsg
+${DOTSTAR}
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/mod1
 U ${TESTDIR}/1/mod1/file1
 ${PROG} [a-z]*: Updating ${TESTDIR}/1/mod2

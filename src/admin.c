@@ -490,9 +490,23 @@ admin_fileproc (callerdat, finfo)
     }
 
     if (admin_data->branch != NULL)
-	RCS_setbranch (rcs, (admin_data->branch[2] == '\0'
-			     ? NULL
-			     : admin_data->branch + 2));
+    {
+	char *branch = NULL;
+	if (admin_data->branch[2] != '\0')
+	{
+	    branch = RCS_whatbranch (rcs, admin_data->branch + 2);
+	    if (branch == NULL)
+	    {
+		error (0, 0, "%s: Symbolic name %s is undefined.",
+				rcs->path, admin_data->branch + 2);
+		status = 1;
+	    }
+	}
+	if (status == 0)
+	    RCS_setbranch (rcs, branch);
+	if (branch != NULL)
+	    free (branch);
+    }
     if (admin_data->comment != NULL)
     {
 	if (rcs->comment != NULL)
