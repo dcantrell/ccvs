@@ -1,3 +1,12 @@
+1999-10-18  K.J. Paradise <kj@sourcegear.com>
+
+	Bug: users 'stan' and 'cartman' both have full read/write access
+	to the cvs repository.  'cartman' does a 'cvs admin -l foo.c'. 
+	'stan' then does a 'cvs admin -u foo.c'.  The lock wouldn't be 
+	removed, and no warning/error would be given.  This is now fixed. 
+	* rcs.c:(c.6157) remove caller/user check on the multiple lock 
+        detection routines.  Sanity.sh runs with no errors after this fix.
+	
 1999-10-14  Larry Jones  <larry.jones@sdrc.com>
 
 	Make "cvs admin -e" (with no list of users) work:
