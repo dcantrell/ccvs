@@ -778,8 +778,6 @@ static char *value = NULL;
 static size_t keysize = 0;
 static size_t valsize = 0;
 
-#define ALLOCINCR 1024
-
 static int
 getrcskey (fp, keyp, valp, lenp)
     FILE *fp;
@@ -2009,6 +2007,7 @@ RCS_check_kflag (arg)
       "   -kb\tGenerate binary file unmodified (merges not allowed) (RCS 5.7).\n",
       NULL,
     };
+    /* Big enough to hold any of the strings from kflags.  */
     char karg[10];
     char const *const *cpp = NULL;
 

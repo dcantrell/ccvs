@@ -1,3 +1,26 @@
+Sat Mar  8 22:06:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	This cleans up the last known code which can overflow its buffers
+	(except the Mac client).  I've skimmed through much of CVS looking
+	for other such places; but I didn't read everything.  If I missed
+	any please report it to bug-cvs.
+	* logmsg.c (logfile_write, title_proc): Realloc str_list as
+	needed; don't assume MAXLISTLEN is enough.
+	* cvs.h (MAXLISTLEN, MAXFILEPERDIR): Removed; no longer used.
+	* add.c, myndbm.c, parseinfo.c, update.c: Nuke MAXLINELEN limit.
+	* parseinfo.c, update.c, mkmodules.c: Check for errors reading file.
+	* cvs.h (MAXLINELEN): Removed; no longer used.
+	* logmsg (MAXHOSTNAMELEN): Removed; not used.
+	* main.c (cmd_synonyms): Allocate based on fullname, nick1, and
+	nick2, just in case someone makes those big enough so that 100
+	bytes is not enough.
+	(Make_Date): Use MAXDATELEN rather than our own fixed size.
+	* mkmodules.c (mkmodules): Nuke arbitrary limit on line length.
+	* rcs.c (ALLOCINCR): Remove; not used.
+	(RCS_check_kflag): Add comment concerning karg size.
+	* run.c: Allocate run_prog to the needed size, rather than
+	allocating a fixed size buffer.
+
 Fri Mar  7 22:39:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c (logfile_write): Allocate prog to needed length rather

@@ -283,15 +283,6 @@ extern int errno;
  */
 #define	REPOS_STRIP	"/master/"
 
-/*
- * The maximum number of files per each CVS directory. This is mainly for
- * sizing arrays statically rather than dynamically.  3000 seems plenty for
- * now.
- */
-#define	MAXFILEPERDIR	3000
-#define	MAXLINELEN	5000		/* max input line from a file */
-#define	MAXLISTLEN	40000		/* For [A-Z]list holders */
-
 /* Large enough to hold DATEFORM.  Not an arbitrary limit as long as
    it is used for that purpose, and not to hold a string from the
    command line, the client, etc.  */

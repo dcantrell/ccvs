@@ -471,20 +471,13 @@ add_directory (repository, entries, dir)
 	List *ulist;
 	struct logfile_info *li;
 
-#if 0
-	char line[MAXLINELEN];
-
-	(void) printf ("Add directory %s to the repository (y/n) [n] ? ",
-		       rcsdir);
-	(void) fflush (stdout);
-	clearerr (stdin);
-	if (fgets (line, sizeof (line), stdin) == NULL ||
-	    (line[0] != 'y' && line[0] != 'Y'))
-	{
-	    error (0, 0, "directory %s not added", rcsdir);
-	    goto out;
-	}
-#endif
+	/* There used to be some code here which would prompt for
+	   whether to add the directory.  The details of that code had
+	   bitrotted, but more to the point it can't work
+	   client/server, doesn't ask in the right way for GUIs, etc.
+	   A better way of making it harder to accidentally add
+	   directories would be to have to add and commit directories
+	   like for files.  The code was #if 0'd at least since CVS 1.5.  */
 
 	if (!noexec)
 	{
@@ -562,7 +555,7 @@ build_entry (repository, user, options, message, entries, tag)
     char *tag;
 {
     char *fname;
-    char line[MAXLINELEN];
+    char *line;
     FILE *fp;
 
     if (noexec)
@@ -587,7 +580,9 @@ build_entry (repository, user, options, message, entries, tag)
      * without needing to clean anything up (well, we could clean up the
      * ,t file, but who cares).
      */
+    line = xmalloc (strlen (user) + 20);
     (void) sprintf (line, "Initial %s", user);
     Register (entries, user, "0", line, options, tag, (char *) 0, (char *) 0);
+    free (line);
     return (0);
 }

@@ -24,9 +24,9 @@ char *program_name;
 char *program_path;
 char *command_name;
 
-/*
- * Since some systems don't define this...
- */
+/* I'd dynamically allocate this, but it seems like gethostname
+   requires a fixed size array.  If I'm remembering the RFCs right,
+   256 should be enough.  */
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN  256
 #endif
@@ -208,7 +208,10 @@ cmd_synonyms ()
     {
 	if (c->nick1 || c->nick2)
 	{
-	    *line = xmalloc(100); /* wild guess */
+	    *line = xmalloc (strlen (c->fullname)
+			     + (c->nick1 != NULL ? strlen (c->nick1) : 0)
+			     + (c->nick2 != NULL ? strlen (c->nick2) : 0)
+			     + 40);
 	    sprintf(*line, "        %-12s %s %s\n", c->fullname,
 		    c->nick1 ? c->nick1 : "",
 		    c->nick2 ? c->nick2 : "");
@@ -878,7 +881,7 @@ Make_Date (rawdate)
 {
     struct tm *ftm;
     time_t unixtime;
-    char date[256];			/* XXX bigger than we'll ever need? */
+    char date[MAXDATELEN];
     char *ret;
 
     unixtime = get_date (rawdate, (struct timeb *) NULL);

@@ -41,6 +41,7 @@
 #include "watch.h"
 #include "fileattr.h"
 #include "edit.h"
+#include "getline.h"
 
 static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding));
@@ -839,15 +840,18 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
     FILE *fp;
 
     /* run the update_prog if there is one */
+    /* FIXME: should be checking for errors from CVS_FOPEN and printing
+       them if not existence_error.  */
     if (err == 0 && !pipeout && !noexec &&
 	(fp = CVS_FOPEN (CVSADM_UPROG, "r")) != NULL)
     {
 	char *cp;
 	char *repository;
-	char line[MAXLINELEN];
+	char *line = NULL;
+	size_t line_allocated = 0;
 
 	repository = Name_Repository ((char *) NULL, update_dir);
-	if (fgets (line, sizeof (line), fp) != NULL)
+	if (getline (&line, &line_allocated, fp) >= 0)
 	{
 	    if ((cp = strrchr (line, '\n')) != NULL)
 		*cp = '\0';
@@ -860,7 +864,15 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	    cvs_output ("'\n", 0);
 	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	}
-	(void) fclose (fp);
+	else if (ferror (fp))
+	    error (0, errno, "cannot read %s", CVSADM_UPROG);
+	else
+	    error (0, 0, "unexpected end of file on %s", CVSADM_UPROG);
+
+	if (fclose (fp) < 0)
+	    error (0, errno, "cannot close %s", CVSADM_UPROG);
+	if (line != NULL)
+	    free (line);
 	free (repository);
     }
 
