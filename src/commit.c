@@ -561,13 +561,6 @@ commit (argc, argv)
 	    send_arg("-n");
 	option_with_arg ("-r", saved_tag);
 
-	/* Sending only the names of the files which were modified, added,
-	   or removed means that the server will only do an up-to-date
-	   check on those files.  This is different from local CVS and
-	   previous versions of client/server CVS, but it probably is a Good
-	   Thing, or at least Not Such A Bad Thing.  */
-	send_file_names (find_args.argc, find_args.argv, 0);
-
 	/* FIXME: This whole find_args.force/SEND_FORCE business is a
 	   kludge.  It would seem to be a server bug that we have to
 	   say that files are modified when they are not.  This makes
@@ -579,6 +572,13 @@ commit (argc, argv)
 	   then it would be relatively simple to fix in the server.  */
 	send_files (find_args.argc, find_args.argv, local, 0,
 		    find_args.force ? SEND_FORCE : 0);
+
+	/* Sending only the names of the files which were modified, added,
+	   or removed means that the server will only do an up-to-date
+	   check on those files.  This is different from local CVS and
+	   previous versions of client/server CVS, but it probably is a Good
+	   Thing, or at least Not Such A Bad Thing.  */
+	send_file_names (find_args.argc, find_args.argv, 0);
 
 	send_to_server ("ci\012", 0);
 	err = get_responses_and_close ();

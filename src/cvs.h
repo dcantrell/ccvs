@@ -394,6 +394,13 @@ extern int top_level_admin;
 extern char *Pserver_Repos;     /* used to check that same repos is
                                    transmitted in pserver auth and in
                                    CVS protocol. */
+
+#ifdef CLIENT_SUPPORT
+extern List *dirs_sent_to_server; /* used to decide which "Argument
+				     xxx" commands to send to each
+				     server in multiroot mode. */
+#endif
+
 #endif /* AUTH_SERVER_SUPPORT */
 
 extern char hostname[];

@@ -178,8 +178,6 @@ cvstag (argc, argv)
 
 	send_arg (symtag);
 
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
-
 	/* SEND_NO_CONTENTS has a mildly bizarre interaction with
 	   check_uptodate; if the timestamp is modified but the file
 	   is unmodified, the check will fail, only to have "cvs diff"
@@ -187,6 +185,7 @@ cvstag (argc, argv)
 	   reset the client's notion of the timestamp).  */
 
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("tag\012", 0);
         return get_responses_and_close ();
     }

@@ -2492,6 +2492,16 @@ error  \n");
 	close (flowcontrol_pipe[1]);
 #endif /* SERVER_FLOWCONTROL */
 
+	/*
+	 * Set this in .bashrc if you want to give yourself time to attach
+	 * to the subprocess with a debugger.
+	 */
+	if (getenv ("CVS_SERVER_SLEEP2"))
+	{
+	    int secs = atoi (getenv ("CVS_SERVER_SLEEP2"));
+	    sleep (secs);
+	}
+
 	exitstatus = (*command) (argument_count, argument_vector);
 
 	/* Output any partial lines.  If the client doesn't support

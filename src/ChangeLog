@@ -1,3 +1,52 @@
+1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
+
+	* server.c (do_cvs_command): add another environment variable,
+	CVS_SERVER_SLEEP2, after forking to pause the program so one can
+	attach a debugger.
+
+	* sanity.sh (crerepos): clean up crerepos-18 now that multiroot
+	works in this case.
+	(multiroot): finalize tests for local vs. remote operation.
+
+	* recurse.c (start_recursion): near the beginning, save the list
+	of directories to spoof as command-line arguments, if necessary.
+	Use that list near the end and call send_file_names to send those
+	arguments to the server.
+	(do_argument_proc): removed, since we call send_file_names now.
+
+	* main.c (main): re-initialize dirs_sent_to_server on each pass
+	through the loop for each CVSROOT.
+
+	* cvs.h: add proto for global variable which keeps track of which
+	directories have been sent to the server when in client mode.
+
+	* client.c (is_arg_a_parent_or_listed_dir): new function.
+	(arg_should_not_be_sent_to_server): new function.  Tries to decide
+	whether the given argument should be sent to the server, based on
+	the current CVSROOT and the list of directories sent to the
+	server.
+	(send_repository): add the directory name to the list of
+	directories sent to the server.
+	(send_file_names): call arg_should_not_be_sent_to_server.
+
+	* add.c (add): switch the order of send_files and send_file_names
+	to make multiple repository support possible.  send_files needs to
+	create a list of directories being requested so that
+	send_file_names can decide which command-line arguments to send to
+	the server for the given current CVSROOT.
+	* admin.c (admin): same.
+	* commit.c (commit): same.
+	* diff.c (diff): same.
+	* edit.c (editors): same.
+	* log.c (cvslog): same.
+	* rcs.c (annotate): same.
+	* remove.c (cvsremove): same.
+	* status.c (cvsstatus): same.
+	* tag.c (cvstag): same.
+	* update.c (update): same.
+	* watch.c (watch_addremove): same.
+	(watchers): same.	
+
 1998-08-28  Noel Cragg  <noel@swish.red-bean.com>
 
 	* sanity.sh (crerepos-18): add new comment and change test

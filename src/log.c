@@ -233,8 +233,8 @@ cvslog (argc, argv)
 	for (i = 1; i < argc && argv[i][0] == '-'; i++)
 	  send_arg (argv[i]);
 
-	send_file_names (argc - i, argv + i, SEND_EXPAND_WILD);
 	send_files (argc - i, argv + i, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc - i, argv + i, SEND_EXPAND_WILD);
 
 	send_to_server ("log\012", 0);
         err = get_responses_and_close ();

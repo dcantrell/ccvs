@@ -11562,16 +11562,8 @@ U first-dir/file1"
 	  dotest crerepos-17 "${testcvs} -d ${CREREPOS_ROOT} co crerepos-dir" \
 "${PROG} [a-z]*: Updating crerepos-dir
 U crerepos-dir/cfile"
-	  # FIXME (njc): While this test works in both local (first
-	  # exp) and remote (second exp) modes now that we can support
-	  # multiple cvsroot directories, there's an inherent problem.
-	  # See multiroot-update-1 for a full description.
 	  dotest crerepos-18 "${testcvs} update" \
 "${PROG} [a-z]*: Updating first-dir
-${PROG} [a-z]*: Updating crerepos-dir" \
-"${PROG} [a-z]*: nothing known about crerepos-dir
-${PROG} [a-z]*: Updating first-dir
-${PROG} [a-z]*: nothing known about first-dir
 ${PROG} [a-z]*: Updating crerepos-dir"
 
 	  cd ..
@@ -15650,22 +15642,6 @@ U mod1-2/file1-2"
 	  # that there's not some kind of unexpected dependency on the
 	  # choice of which CVSROOT is specified on the command line.
 
-	  # FIXME (njc): Remote and local should really be the same
-	  # for these tests.  There's no way to do this currently,
-	  # however, because we're still supporting an old CVS
-	  # behavior, documented in start_recursion (search for
-	  # "always meant" and you'll find it).  In short, if you
-	  # perform a command in a directory where there are no
-	  # administrative files, cvs will look for all of the
-	  # subdirectores in the current directory and continue with
-	  # the operation as if you'd typed the names of all of those
-	  # directories on the command line.  This is bad, since there
-	  # might be a module with the same name in more than one
-	  # repository...
-
-	  # Note that this problem goes away when TopLevelAdmin=yes.
-
-
 	  dotest multiroot-update-1a "${testcvs1} update" \
 "${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
@@ -15673,12 +15649,10 @@ ${PROG} [a-z]*: Updating mod2-2/mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2" \
-"${PROG} [a-z]*: nothing known about mod2-1
-${PROG} [a-z]*: Updating mod1-1
+"${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
-${PROG} [a-z]*: nothing known about mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
@@ -15691,12 +15665,10 @@ ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2" \
-"${PROG} [a-z]*: nothing known about mod1-1
-${PROG} [a-z]*: Updating mod1-2
+"${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: nothing known about mod2-1
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2
@@ -15744,7 +15716,44 @@ RCS file: /tmp/cvs-sanity/root2/mod2-2/file2-2,v
 retrieving revision 1\.1
 diff -r1\.1 file2-2
 1a2
+> down" \
+"${PROG} [a-z]*: Diffing mod1-1
+Index: mod1-1/file1-1
+===================================================================
+RCS file: /tmp/cvs-sanity/root1/mod1-1/file1-1,v
+retrieving revision 1\.1
+diff -r1\.1 file1-1
+1a2
+> bobby
+${PROG} [a-z]*: Diffing mod1-2
+Index: mod1-2/file1-2
+===================================================================
+RCS file: /tmp/cvs-sanity/root1/mod1-2/file1-2,v
+retrieving revision 1\.1
+diff -r1\.1 file1-2
+1a2
+> brown
+${PROG} [a-z]*: Diffing mod2-2
+${PROG} [a-z]*: Diffing mod2-2/mod1-2
+${PROG} [a-z]*: Diffing mod1-2
+${PROG} [a-z]*: Diffing mod1-2/mod2-2
+${PROG} [a-z]*: Diffing mod2-1
+Index: mod2-1/file2-1
+===================================================================
+RCS file: /tmp/cvs-sanity/root2/mod2-1/file2-1,v
+retrieving revision 1\.1
+diff -r1\.1 file2-1
+1a2
+> goes
+${PROG} [a-z]*: Diffing mod2-2
+Index: mod2-2/file2-2
+===================================================================
+RCS file: /tmp/cvs-sanity/root2/mod2-2/file2-2,v
+retrieving revision 1\.1
+diff -r1\.1 file2-2
+1a2
 > down"
+
 
 	  dotest multiroot-commit-1 "${testcvs1} commit -m actually" \
 "${PROG} [a-z]*: Examining mod1-1
@@ -15778,7 +15787,17 @@ ${PROG} [a-z]*: Updating mod2-2
 ${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
-U mod2-2/mod1-2/file1-2"
+U mod2-2/mod1-2/file1-2" \
+"${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+P mod1-2/mod2-2/file2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+P mod2-2/mod1-2/file1-2"
 
 	  dotest multiroot-tag-1 "${testcvs1} tag cattle" \
 "${PROG} [a-z]*: Tagging mod1-1
@@ -15790,6 +15809,18 @@ ${PROG} [a-z]*: Tagging mod1-2/mod2-2
 T mod1-2/mod2-2/file2-2
 ${PROG} [a-z]*: Tagging mod2-1
 T mod2-1/file2-1
+${PROG} [a-z]*: Tagging mod2-2" \
+"${PROG} [a-z]*: Tagging mod1-1
+T mod1-1/file1-1
+${PROG} [a-z]*: Tagging mod1-2
+T mod1-2/file1-2
+${PROG} [a-z]*: Tagging mod2-2
+${PROG} [a-z]*: Tagging mod2-2/mod1-2
+${PROG} [a-z]*: Tagging mod1-2
+${PROG} [a-z]*: Tagging mod1-2/mod2-2
+T mod1-2/mod2-2/file2-2
+${PROG} [a-z]*: Tagging mod2-1
+T mod2-1/file2-1
 ${PROG} [a-z]*: Tagging mod2-2"
 
 	  echo anotherfile1-1 > mod1-1/anotherfile1-1
@@ -15797,12 +15828,32 @@ ${PROG} [a-z]*: Tagging mod2-2"
 	  echo anotherfile1-2 > mod2-2/mod1-2/anotherfile1-2
 	  echo anotherfile2-2 > mod1-2/mod2-2/anotherfile2-2
 
-	  dotest multiroot-add-1 "${testcvs1} add mod1-1/anotherfile1-1 mod2-1/anotherfile2-1 mod2-2/mod1-2/anotherfile1-2 mod1-2/mod2-2/anotherfile2-2" \
+	  if test "x$remote" = xno; then
+	    dotest multiroot-add-1 "${testcvs1} add mod1-1/anotherfile1-1 mod2-1/anotherfile2-1 mod2-2/mod1-2/anotherfile1-2 mod1-2/mod2-2/anotherfile2-2" \
 "${PROG} [a-z]*: scheduling file .mod1-1/anotherfile1-1. for addition
 ${PROG} [a-z]*: scheduling file .mod2-1/anotherfile2-1. for addition
 ${PROG} [a-z]*: scheduling file .mod2-2/mod1-2/anotherfile1-2. for addition
 ${PROG} [a-z]*: scheduling file .mod1-2/mod2-2/anotherfile2-2. for addition
 ${PROG} [a-z]*: use 'cvs commit' to add these files permanently"
+          else
+	    cd mod1-1
+	    dotest multiroot-add-1a "${testcvs1} add anotherfile1-1" \
+"${PROG} [a-z]*: scheduling file .anotherfile1-1. for addition
+${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+	    cd ../mod2-1
+	    dotest multiroot-add-1b "${testcvs2} add anotherfile2-1" \
+"${PROG} [a-z]*: scheduling file .anotherfile2-1. for addition
+${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+	    cd ../mod2-2/mod1-2
+	    dotest multiroot-add-1c "${testcvs1} add anotherfile1-2" \
+"${PROG} [a-z]*: scheduling file .anotherfile1-2. for addition
+${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+	    cd ../../mod1-2/mod2-2
+	    dotest multiroot-add-1d "${testcvs2} add anotherfile2-2" \
+"${PROG} [a-z]*: scheduling file .anotherfile2-2. for addition
+${PROG} [a-z]*: use 'cvs commit' to add this file permanently"
+	    cd ../..
+          fi
 
 	  dotest multiroot-status-1 "${testcvs2} status -v" \
 "${PROG} [a-z]*: Examining mod1-2/mod2-2
@@ -15917,6 +15968,121 @@ File: file1-2          	Status: Up-to-date
    Sticky Options:	(none)
 
    Existing Tags:
+	cattle                   	(revision: 1\.2)" \
+"${PROG} [a-z]*: Examining mod1-2
+${PROG} [a-z]*: Examining mod1-2/mod2-2
+===================================================================
+File: anotherfile2-2   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod2-1
+===================================================================
+File: anotherfile2-1   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file2-1          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod2-2
+===================================================================
+File: file2-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod1-1
+===================================================================
+File: anotherfile1-1   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file1-1          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod1-2
+===================================================================
+File: file1-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
+	cattle                   	(revision: 1\.2)
+
+${PROG} [a-z]*: Examining mod2-2
+${PROG} [a-z]*: Examining mod2-2/mod1-2
+===================================================================
+File: anotherfile1-2   	Status: Locally Added
+
+   Working revision:	New file!
+   Repository revision:	No revision control file
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+===================================================================
+File: file1-2          	Status: Up-to-date
+
+   Working revision:	1\.2.*
+   Repository revision:	1\.2	${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+   Sticky Tag:		(none)
+   Sticky Date:		(none)
+   Sticky Options:	(none)
+
+   Existing Tags:
 	cattle                   	(revision: 1\.2)"
 
 	  dotest multiroot-commit-2 "${testcvs1} commit -m reading" \
@@ -15951,11 +16117,21 @@ ${CVSROOT2_DIRNAME}/mod2-1/anotherfile2-1,v  <--  anotherfile2-1
 initial revision: 1\.1
 done"
 
-	  dotest multiroot-update-2 "${testcvs1} update" \
+	  dotest multiroot-update-3 "${testcvs1} update" \
 "${PROG} [a-z]*: Updating mod1-1
 ${PROG} [a-z]*: Updating mod1-2
 U mod1-2/anotherfile1-2
 ${PROG} [a-z]*: Updating mod2-2/mod1-2
+${PROG} [a-z]*: Updating mod1-2/mod2-2
+${PROG} [a-z]*: Updating mod2-1
+${PROG} [a-z]*: Updating mod2-2
+U mod2-2/anotherfile2-2" \
+"${PROG} [a-z]*: Updating mod1-1
+${PROG} [a-z]*: Updating mod1-2
+U mod1-2/anotherfile1-2
+${PROG} [a-z]*: Updating mod2-2
+${PROG} [a-z]*: Updating mod2-2/mod1-2
+${PROG} [a-z]*: Updating mod1-2
 ${PROG} [a-z]*: Updating mod1-2/mod2-2
 ${PROG} [a-z]*: Updating mod2-1
 ${PROG} [a-z]*: Updating mod2-2
@@ -16076,6 +16252,236 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 is
 =============================================================================
+${PROG} [a-z]*: Logging mod1-2/mod2-2
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v
+Working file: mod1-2/mod2-2/anotherfile2-2
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+Working file: mod1-2/mod2-2/file2-2
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+anyone
+=============================================================================
+${PROG} [a-z]*: Logging mod2-1
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-1/anotherfile2-1,v
+Working file: mod2-1/anotherfile2-1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-1/file2-1,v
+Working file: mod2-1/file2-1
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+anyone
+=============================================================================
+${PROG} [a-z]*: Logging mod2-2
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v
+Working file: mod2-2/anotherfile2-2
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT2_DIRNAME}/mod2-2/file2-2,v
+Working file: mod2-2/file2-2
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+anyone
+=============================================================================" \
+"${PROG} [a-z]*: Logging mod1-1
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v
+Working file: mod1-1/anotherfile1-1
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-1/file1-1,v
+Working file: mod1-1/file1-1
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+is
+=============================================================================
+${PROG} [a-z]*: Logging mod1-2
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/anotherfile1-2,v
+Working file: mod1-2/anotherfile1-2
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+Working file: mod1-2/file1-2
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+is
+=============================================================================
+${PROG} [a-z]*: Logging mod2-2
+${PROG} [a-z]*: Logging mod2-2/mod1-2
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/anotherfile1-2,v
+Working file: mod2-2/mod1-2/anotherfile1-2
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+reading
+=============================================================================
+
+RCS file: ${CVSROOT1_DIRNAME}/mod1-2/file1-2,v
+Working file: mod2-2/mod1-2/file1-2
+head: 1\.2
+branch:
+locks: strict
+access list:
+symbolic names:
+	cattle: 1\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +1 -0
+actually
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+is
+=============================================================================
+${PROG} [a-z]*: Logging mod1-2
 ${PROG} [a-z]*: Logging mod1-2/mod2-2
 
 RCS file: ${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v

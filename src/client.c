@@ -148,6 +148,139 @@ static void handle_notified PROTO((char *, int));
 static size_t try_read_from_server PROTO ((char *, size_t));
 #endif /* CLIENT_SUPPORT */
 
+#ifdef CLIENT_SUPPORT
+
+/* We need to keep track of the list of directories we've sent to the
+   server.  This list, along with the current CVSROOT, will help us
+   decide which command-line arguments to send.  */
+List *dirs_sent_to_server = NULL;
+
+static int is_arg_a_parent_or_listed_dir PROTO((Node *, void *));
+
+static int
+is_arg_a_parent_or_listed_dir (n, d)
+    Node *n;
+    void *d;
+{
+    char *directory = n->key;	/* name of the dir sent to server */
+    char *this_argv_elem = (char *) d;	/* this argv element */
+
+    /* Say we should send this argument if the argument matches the
+       beginning of a directory name sent to the server.  This way,
+       the server will know to start at the top of that directory
+       hierarchy and descend. */
+
+    if (strncmp (directory, this_argv_elem, strlen (this_argv_elem)) == 0)
+	return 1;
+
+    return 0;
+}
+
+static int arg_should_not_be_sent_to_server PROTO((char *));
+
+/* Return nonzero if this argument should not be sent to the
+   server. */
+
+static int
+arg_should_not_be_sent_to_server (arg)
+    char *arg;
+{
+    /* Decide if we should send this directory name to the server.  We
+       should always send argv[i] if:
+
+       1) the list of directories sent to the server is empty (as it
+       will be for checkout, etc.).
+
+       2) the argument is "."
+
+       3) the argument is a file in the cwd and the cwd is checked out
+       from the current root
+
+       4) the argument lies within one of the paths in
+       dirs_sent_to_server.
+
+       4) */
+
+    if (list_isempty (dirs_sent_to_server))
+	return 0;		/* always send it */
+
+    if (strcmp (arg, ".") == 0)
+	return 0;		/* always send it */
+
+    /* We should send arg if it is one of the directories sent to the
+       server or the parent of one; this tells the server to descend
+       the hierarchy starting at this level. */
+    if (isdir (arg))
+    {
+	if (walklist (dirs_sent_to_server, is_arg_a_parent_or_listed_dir, arg))
+	    return 0;
+
+	/* If arg wasn't a parent, we don't know anything about it (we
+	   would have seen something related to it during the
+	   send_files phase).  Don't send it.  */
+	return 1;
+    }
+
+    /* Try to decide whether we should send arg to the server by
+       checking the contents of the corresponding CVSADM directory. */
+    {
+	char *t, *this_root;
+
+	/* Calculate "dirname arg" */
+	for (t = arg + strlen (arg) - 1; t >= arg; t--)
+	{
+	    if (ISDIRSEP(*t))
+		break;
+	}
+
+	/* Now we're either poiting to the beginning of the
+	   string, or we found a path separator. */
+	if (t >= arg)
+	{
+	    /* Found a path separator.  */
+	    char c = *t;
+	    *t = '\0';
+	    
+	    /* First, check to see if we sent this directory to the
+               server, because it takes less time than actually
+               opening the stuff in the CVSADM directory.  */
+	    if (walklist (dirs_sent_to_server, is_arg_a_parent_or_listed_dir,
+			  arg))
+	    {
+		*t = c;		/* make sure to un-truncate the arg */
+		return 0;
+	    }
+
+	    /* Since we didn't find it in the list, check the CVSADM
+               files on disk.  */
+	    this_root = Name_Root (arg, (char *) NULL);
+	    *t = c;
+	}
+	else
+	{
+	    /* We're at the beginning of the string.  Look at the
+               CVSADM files in cwd.  */
+	    this_root = Name_Root ((char *) NULL, (char *) NULL);
+	}
+
+	/* Now check the value for root. */
+	if (this_root && current_root
+	    && (strcmp (this_root, current_root) != 0))
+	{
+	    /* Don't send this, since the CVSROOTs don't match. */
+	    free (this_root);
+	    return 1;
+	}
+	free (this_root);
+    }
+    
+    /* OK, let's send it. */
+    return 0;
+}
+
+
+#endif /* CLIENT_SUPPORT */
+
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)
 
 /* Shared with server.  */
@@ -2567,6 +2700,22 @@ send_repository (dir, repos, update_dir)
 
     if (client_prune_dirs)
 	add_prune_candidate (update_dir);
+
+    /* Add a directory name to the list of those sent to the
+       server. */
+    if (update_dir && (*update_dir != '\0')
+	&& (strcmp (update_dir, ".") != 0)
+	&& (findnode (dirs_sent_to_server, update_dir) == NULL))
+    {
+	Node *n;
+	n = getnode ();
+	n->type = UNKNOWN;
+	n->key = xstrdup (update_dir);
+	n->data = NULL;
+
+	if (addnode (dirs_sent_to_server, n))
+	    error (1, 0, "cannot add directory %s to list", n->key);
+    }
 
     /* 80 is large enough for any of CVSADM_*.  */
     adm_name = xmalloc (strlen (dir) + 80);
@@ -5065,7 +5214,7 @@ send_file_names (argc, argv, flags)
     int i;
     int level;
     int max_level;
-
+    
     /* The fact that we do this here as well as start_recursion is a bit 
        of a performance hit.  Perhaps worth cleaning up someday.  */
     if (flags & SEND_EXPAND_WILD)
@@ -5106,59 +5255,8 @@ send_file_names (argc, argv, flags)
 	char *p = argv[i];
 	char *line = NULL;
 
-	/* Try to decide whether we should send this command-line
-	   argument to the server by checking the contents of the
-	   corresponding CVSADM directory. */
-	
-	{
-	    char *this_root;
-
-	    if (isdir (p))
-	    {
-		this_root = Name_Root (p, (char *) NULL);
-	    }
-	    else
-	    {
-		/* Calculate "dirname p" and check the CVSADM files
-		   there. */
-		char *t;
-
-		for (t = argv[i] + strlen (argv[i]) - 1;
-		     t >= argv[i];
-		     t--)
-		{
-		    if (ISDIRSEP(*t))
-			break;
-		}
-
-		/* Now we're either poiting to the beginning of the
-                   string, or we found a path separator. */
-		if (t >= argv[i])
-		{
-		    /* Found a path separator. */
-		    char c = *t;
-		    *t = '\0';
-		    this_root = Name_Root (argv[i], (char *) NULL);
-		    *t = c;
-		}
-		else
-		{
-		    /* We're at the beginning of the string. */
-		    this_root = Name_Root ((char *) NULL, (char *) NULL);
-		}
-	    }
-
-	    /* Now check the value for root. */
-
-	    if (this_root && current_root
-		&& (strcmp (this_root, current_root) != 0))
-	    {
-		/* Skip this one. */
-		free (this_root);
-		continue;
-	    }
-	    free (this_root);
-	}
+	if (arg_should_not_be_sent_to_server (argv[i]))
+	    continue;
 
 #ifdef FILENAMES_CASE_INSENSITIVE
 	/* We want to send the file name as it appears
