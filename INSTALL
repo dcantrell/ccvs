@@ -111,6 +111,7 @@ Alpha:
 	Alpha running alpha-dec-osf4.0 (1.10)
 	DEC Alpha running Digital UNIX v4.0C using gcc 2.7.2.2 (1.9.14)
 	DEC Alpha running VMS 6.2 (1.8.85 client-only)
+	Alpha running NetBSD 1.2E (1.10)
 Cray:
 	J90 (CVS 970215 snapshot)
 	T3E (CVS 970215 snapshot)
@@ -159,9 +160,9 @@ m88k:
 	Harris Nighthawk 5800 running CX/UX 7.1 (1.5) (footnote 6)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
-	DECstation running Ultrix 4.3 (1.8.85)
+	DECstation running Ultrix 4.3 (1.10)
 	SGI running Irix 4.0.5H using gcc and cc (about 1.4A2) (footnote 2)
-	SGI running Irix 5.3 using gcc 2.7.2 (1.8.87)
+	SGI running Irix 5.3 (1.10)
 	SGI running Irix 6.2 using SGI MIPSpro 6.2 and beta 7.2 compilers (1.9)
 	SGI running Irix-6.2 (1.9.8)
 	Siemens-Nixdorf RM600 running SINIX-Y (1.6)

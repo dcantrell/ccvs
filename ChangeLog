@@ -1,3 +1,8 @@
+1998-08-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Update Irix, Ultrix, and NetBSD/Alpha with test results
+	from Noel.
+
 1998-08-14  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Add NetBSD/mac68k (reported by Hauke Fath of melog.de).
