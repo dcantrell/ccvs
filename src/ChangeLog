@@ -1,3 +1,8 @@
+Thu Aug  3 10:12:20 1995  Jim Meyering  (meyering@comco.com)
+
+	* import.c (import_descend_dir): Don't print probably-bogus CWD
+	in error messages saying `cannot get working directory'.
+
 Sun Jul 30 20:52:04 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* parseinfo.c (Parse_Info): Revise comments and indentation.
