@@ -222,8 +222,12 @@ compressed form) ends with a newline.
 
 @table @code
 @item Root @var{pathname} \n
-Response expected: no.
-Tell the server which @code{CVSROOT} to use.
+Response expected: no.  Tell the server which @code{CVSROOT} to use.
+@var{pathname} must already exist; if creating a new root, use the
+@code{init} request, not @code{Root}.  @var{pathname} does not include
+the hostname of the server, how to access the server, etc.; by the time
+the CVS protocol is in use, connection, authentication, etc., are
+already taken care of.
 
 @item Valid-responses @var{request-list} \n
 Response expected: no.
