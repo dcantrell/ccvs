@@ -108,6 +108,7 @@ PROG=`basename ${testcvs}`
 # not allowed in usernames.  Other than that I'm not sure.
 username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 author="[-a-zA-Z0-9][-a-zA-Z0-9]*"
+hostname="[-_.a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
@@ -13636,7 +13637,10 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # Test that CVS rejects a relative path in CVSROOT.
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get ." \
-"${PROG} \[[a-z]* aborted\]: CVSROOT \"../crerepos\" must be an absolute pathname"
+"\.\.: unknown host
+\.\.: unknown host
+\.\.: Unknown host
+${PROG} \[[a-z]* aborted\]: end of file from server (consult above messages if any)"
 	    cd ..
 	    rm -r 1
 
@@ -13652,16 +13656,23 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # does), does _not_ test for the bugs we are trying to catch
 	    # here.  The point is that malicious clients might send all
 	    # manner of things and the server better protect itself.
-	    dotest_fail crerepos-6a \
+	    dotest_fail crerepos-6a-r \
 "${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
-"Root ../crerepos must be an absolute pathname"
+"${PROG} [a-z]*: CVSROOT (\":ext:${hostname}:\.\./crerepos\")
+${PROG} [a-z]*: may only specify a positive, non-zero, integer port (not \"\.\.\").
+${PROG} [a-z]*: perhaps you entered a relative pathname?
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT."
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
-	    dotest_fail crerepos-6b \
+	    dotest_fail crerepos-6b-r \
 "${testcvs} -d :ext:`hostname`:crerepos init" \
-"Root crerepos must be an absolute pathname"
+"${PROG} [a-z]*: CVSROOT (\":ext:${hostname}:crerepos\")
+${PROG} [a-z]*: requires a path spec
+${PROG} [a-z]*: :(gserver|kserver|pserver):\[\[user\]\[:password\]@\]host\[:\[port\]\]/path
+${PROG} [a-z]*: \[:(ext|server):\]\[\[user\]@\]host\[:\]/path
+${PROG} \[[a-z]* aborted\]: Bad CVSROOT."
 	    cd ..
 	    rm -r 1
 	  fi # end of tests to be skipped for remote

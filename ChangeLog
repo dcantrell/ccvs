@@ -1,3 +1,7 @@
+2000-10-17  Derek Price  <derek.price@openavenue.com>
+
+	* NEWS: added a comment about the new format of ~/.cvspass
+
 2000-10-09  Derek Price  <derek.price@openavenue.com>
 
 	* cvsnt.mak: Some minor changes to allow CVS to compile correctly

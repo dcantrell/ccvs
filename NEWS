@@ -1,3 +1,14 @@
+Changes since 1.11:
+
+* The ~/.cvspass file has a slightly modified format.  Now two slightly
+different CVSROOTs which represent the same repository and user name no longer
+require separate calls to 'cvs login' to use.  The new code should be backwards
+compatible with the old file format unless you have an old password entry for a
+host name containing capital letters.  In this case the new version of CVS will
+be unable to log out.  The workaround for this is to log out using an old
+version of CVS or delete the appropriate line from ~/.cvspass, then log in
+with the new version.
+
 Changes since 1.10:
 
 * The new "cvs version" command gives a short version message.  If

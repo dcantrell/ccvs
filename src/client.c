@@ -3695,10 +3695,15 @@ init_sockaddr (name, hostname, port)
 
 #ifdef AUTH_CLIENT_SUPPORT
 
-static int auth_server_port_number PROTO ((void));
+int get_port_number PROTO((	const char *envname,
+				const char *portname,
+				int defaultport));
 
-static int
-get_port_number (const char *envname, const char *portname, int defaultport)
+int
+get_port_number (envname, portname, defaultport)
+    const char *envname;
+    const char *portname;
+    int defaultport;
 {
     struct servent *s;
     char *port_s;
@@ -3821,9 +3826,10 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     int tofd, fromfd;
 #endif
     int port_number;
+    char *username;			/* the username we use to connect */
     struct sockaddr_in client_sai;
     struct hostent *hostinfo;
-    char no_passwd = 0;   /* gets set if no password found */
+    char no_passwd = 0;			/* gets set if no password found */
 
     sock = socket (AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
@@ -3842,6 +3848,10 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     {
 #ifdef HAVE_GSSAPI
 	if (! connect_to_gserver (sock, hostinfo))
+	{
+	    error (0, 0,
+		    "authorization failed: server %s rejected access to %s",
+		    CVSroot_hostname, CVSroot_directory);
 	    goto rejected;
 #else
 	error (1, 0, "This client does not support GSSAPI authentication");
@@ -3850,11 +3860,9 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     else
     {
 	char *begin      = NULL;
-	char *repository = CVSroot_directory;
-	char *username   = CVSroot_username;
 	char *password   = NULL;
 	char *end        = NULL;
-
+	
 	if (verify_only)
 	{
 	    begin = "BEGIN VERIFICATION REQUEST\012";
@@ -3868,7 +3876,8 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 
 	/* Get the password, probably from ~/.cvspass. */
 	password = get_cvs_password ();
-        
+        username = CVSroot_username ? CVSroot_username : getcaller();
+
         /* Send the empty string by default.  This is so anonymous CVS
            access doesn't require client to have done "cvs login". */
         if (password == NULL) 
@@ -3882,7 +3891,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 
 	/* Send the data the server needs. */
-	if (send (sock, repository, strlen (repository), 0) < 0)
+	if (send (sock, CVSroot_directory, strlen (CVSroot_directory), 0) < 0)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
 	if (send (sock, "\012", 1, 0) < 0)
 	    error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
@@ -3913,7 +3922,29 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
 
 	    if (strcmp (read_buf, "I HATE YOU") == 0)
 	    {
-		/* Authorization not granted. */
+		/* Authorization not granted.
+		 *
+		 * This is a little confusing since we can reach this while loop in GSSAPI
+		 * mode, but if GSSAPI authentication failed, we already jumped to the
+		 * rejected label (there is no case where the connect_to_gserver function
+		 * can return 1 and we will not receive "I LOVE YOU" from the server, barring
+		 * broken connections and garbled messages, of course).
+		 *
+		 * i.e. This is a pserver specific error message and shoiuld be since
+		 * GSSAPI doesn't use username.
+		 */
+		error (0, 0,
+			"authorization failed: server %s rejected access to %s for user %s",
+			CVSroot_hostname, CVSroot_directory, username);
+
+		/* Output a special error message if authentication was attempted
+		with no password -- the user should be made aware that they may
+		have missed a step. */
+		if (no_passwd)
+		{
+		    error (0, 0,
+			    "used empty password; try \"cvs login\" with a real password");
+		}
 		goto rejected;
 	    }
 	    else if (strncmp (read_buf, "E ", 2) == 0)
@@ -3993,19 +4024,6 @@ connect_to_pserver (tofdp, fromfdp, verify_only, do_gssapi)
     return;
 
   rejected:
-    error (0, 0,
-	"authorization failed: server %s rejected access to %s for user %s",
-	CVSroot_hostname, CVSroot_directory, CVSroot_username);
-
-    /* Output a special error message if authentication was attempted
-       with no password -- the user should be made aware that they may
-       have missed a step. */
-    if (no_passwd)
-    {
-        error (0, 0,
-               "used empty password; try \"cvs login\" with a real password");
-    }
-
     if (shutdown (sock, 2) < 0)
     {
 	error (0, 0,

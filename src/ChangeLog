@@ -1,3 +1,32 @@
+2000-10-17  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.h: added CVSroot_password variable. Provided prototypes for
+	get_port_number & normalize_cvsroot.
+	* client.c (get_port_number): Fixed an ANSI prototype I had included
+	for get_port_number.
+	* login.c (login, logout): Removed two checks for a non-null
+	CVSroot_username since parse_cvsroot now supplies a default in pserver
+	mode. allow for a password in CVSROOT
+	(get_cvs_passsword): return CVSroot_password if it was supplied
+	in the CVSROOT.
+	* root.c (parse_cvsroot): Changed CVSROOT spec from
+	:method:user@host/port:/cvsroot to
+	:method:[[user][:password]@]host[:[port]]/cvsroot
+	Removed the xstrdup function since we'd rather have the error checking
+	from the version in subr.c anyhow.  Moved some error messages which
+	looked like they would print the wrong error message after a failed
+	connect_to_gserver call.
+	(normalize_cvsroot): return a normalized CVSROOT for use in the
+	.cvspass file.
+	* sanity.sh (crerepos-6): fix a test which was expecting an old error
+	message.
+
+	* client.c (connect_to_pserver): Moved some error messages which looked like they
+	would print the wrong error message after a failed connect_to_gserver
+	call.
+
+	* login.c (login): Paranoiacly zero a password in memory.
+
 2000-10-12  Derek Price  <derek.price@openavenue.com>
 
 	* client.c (auth_server_port_number -> get_port_number, start_pserver,

@@ -381,6 +381,7 @@ extern char *CVSroot_original;	/* the active, complete CVSroot string */
 extern int client_active;	/* nonzero if we are doing remote access */
 extern CVSmethod CVSroot_method; /* one of the enum values above */
 extern char *CVSroot_username;	/* the username or NULL if method == local */
+extern char *CVSroot_password;	/* the username or NULL if method == local */
 extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
 extern int CVSroot_port;	/* the port or zero if method == local */
 extern char *CVSroot_directory;	/* the directory name */
@@ -866,6 +867,8 @@ char *descramble PROTO ((char *str));
 
 #ifdef AUTH_CLIENT_SUPPORT
 char *get_cvs_password PROTO((void));
+int get_port_number PROTO((const char *envname, const char *portname, int defaultport));
+char *normalize_cvsroot PROTO((const char *default_user, int default_port));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 extern void tag_check_valid PROTO ((char *, int, char **, int, int, char *));
