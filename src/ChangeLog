@@ -1,5 +1,11 @@
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
+	* server.c (create_adm_p, serve_entry), tag.c (rtag_proc): Avoid memory
+	leaks.
+	(Thanks to report from Alen Zukich <alen.zukich@klocwork.com>.)
+
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
 	* logmsg.c (do_verify): Don't check for NULL return from xfopen().
 
 2005-03-16  Derek Price  <derek@ximbiot.com>
