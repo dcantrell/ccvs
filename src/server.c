@@ -849,12 +849,8 @@ outside_root (repos)
     size_t repos_len = strlen (repos);
     size_t root_len = strlen (current_parsed_root->directory);
 
-    /* I think isabsolute (repos) should always be true, and that
-       any RELATIVE_REPOS stuff should only be in CVS/Repository
-       files, not the protocol (for compatibility), but I'm putting
-       in the isabsolute check just in case.
-
-       This is a good security precaution regardless. -DRP
+    /* isabsolute (repos) should always be true, but
+       this is a good security precaution regardless. -DRP
      */
     if (!isabsolute (repos))
     {
