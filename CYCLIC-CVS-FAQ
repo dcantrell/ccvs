@@ -49,8 +49,9 @@ subscribe or unsubscribe.
 Nota bene:
 - It has not tested or ported much, with all that that entails ---
   bugs, portability problems, documentation inconsistencies.
-- I can't promise any support for it.  If you need it, get in touch
-  with me; maybe we can work something out.
+- I can't promise any support for it for free.  If you're interested
+  in a support or development contract, send me mail and we'll work
+  something out.
 - Nevertheless, please send all bug reports to cyclic-cvs@cyclic.com.
   Most people on the info-cvs mailing list probably won't be able to
   fix them (since they don't use the package).
