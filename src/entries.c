@@ -29,13 +29,10 @@ static char *entfilename;		/* for error messages */
 /*
  * Construct an Entnode
  */
-static Entnode *Entnode_Create (enum ent_type, const char *,
-				       const char *, const char *,
-				       const char *, const char *,
-				       const char *, const char *);
-
 static Entnode *
-Entnode_Create(enum ent_type type, const char *user, const char *vn, const char *ts, const char *options, const char *tag, const char *date, const char *ts_conflict)
+Entnode_Create (enum ent_type type, const char *user, const char *vn,
+                const char *ts, const char *options, const char *tag,
+                const char *date, const char *ts_conflict)
 {
     Entnode *ent;
     
