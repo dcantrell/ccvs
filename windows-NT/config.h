@@ -247,6 +247,10 @@
    don't. */
 #undef HAVE_DECL_STRERROR_R
 
+/* Define to 1 if you have the declaration of `__fpending', and to 0 if you
+   don't. */
+#undef HAVE_DECL___FPENDING
+
 /* Define to 1 if you have the <direct.h> header file. */
 #define HAVE_DIRECT_H 1
 
@@ -354,6 +358,9 @@
 /* Define to 1 if you have the `isascii' function. */
 #undef HAVE_ISASCII
 
+/* Define to 1 if you have the `iswprint' function. */
+#undef HAVE_ISWPRINT
+
 /* Define if you have MIT Kerberos version 4 available. */
 #undef HAVE_KERBEROS
 
@@ -395,11 +402,21 @@
    to 0 otherwise. */
 #define HAVE_MALLOC 1
 
+/* Define to 1 if mmap()'s MAP_ANONYMOUS flag is available after including
+   config.h and <sys/mman.h>. */
+#undef HAVE_MAP_ANONYMOUS
+
 /* Define to 1 if you have the `mblen' function. */
 #undef HAVE_MBLEN
 
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
+
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
+#undef HAVE_MBRTOWC
+
+/* Define to 1 if you have the `mbsinit' function. */
+#undef HAVE_MBSINIT
 
 /* Define to 1 if you have the `mbsrtowcs' function. */
 #undef HAVE_MBSRTOWCS
@@ -456,6 +473,9 @@
    defined, it doesn't matter whether HAVE_PARTLY_WORKING_GETCWD is defined.
    */
 #undef HAVE_PARTLY_WORKING_GETCWD
+
+/* Define to 1 if you have the `posix_memalign' function. */
+#undef HAVE_POSIX_MEMALIGN
 
 /* Define to 1 if the `printf' function supports the %p format for printing
    pointers. */
@@ -670,9 +690,6 @@
 /* Define to 1 if `utime(file, NULL)' sets file's timestamp to the present. */
 #define HAVE_UTIME_NULL 1
 
-/* Define to 1 if you have the `valloc' function. */
-#undef HAVE_VALLOC
-
 /* Define to 1 if you have the `vasnprintf' function. */
 #undef HAVE_VASNPRINTF
 
@@ -730,6 +747,9 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if you have the `__fpending' function. */
+#undef HAVE___FPENDING
+
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
@@ -760,6 +780,19 @@
 /* If malloc(0) is != NULL, define this to 1. Otherwise define this to 0. */
 #undef MALLOC_0_IS_NONNULL
 
+/* Define to a substitute value for mmap()'s MAP_ANONYMOUS flag. */
+#undef MAP_ANONYMOUS
+
+/* Define MAP_FILE when it isn't otherwise.  */
+#ifndef MAP_FILE
+# define MAP_FILE 0
+#endif
+
+/* Define MAP_FAILED for old systems which neglect to.  */
+#ifndef MAP_FAILED
+# define MAP_FAILED ((void *)-1)
+#endif
+
 /* By default, CVS stores its modules and other such items in flat text files
    (MY_NDBM enables this). Turning off MY_NDBM causes CVS to look for a
    system-supplied ndbm database library and use it instead. That may speed
@@ -789,6 +822,9 @@
    as. Otherwise, define to a double-quoted literal string, such as `"cvs"'.
    */
 #undef PAM_SERVICE_NAME
+
+/* the number of pending output bytes on stream `fp' */
+#undef PENDING_OUTPUT_N_BYTES
 
 /* Define if you want CVS to be able to serve as a transparent proxy for write
    operations. Disabling this may produce a slight performance gain on some
