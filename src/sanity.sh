@@ -482,8 +482,8 @@ if test x"$*" = x; then
 	tests="${tests} multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
-	tests="${tests} devcom devcom2"
-	tests="${tests} devcom3 ignore binfiles binfiles2 mcopy binwrap"
+	tests="${tests} devcom devcom2 devcom3 watch4"
+	tests="${tests} ignore binfiles binfiles2 mcopy binwrap"
 	tests="${tests} mwrap info config"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
 	tests="${tests} sticky keyword toplevel head admin reserved"
@@ -5436,6 +5436,57 @@ G@#..!@#=&"
 
 	  # Use -f because of the readonly files.
 	  rm -rf 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	watch4)
+	  # More watch tests, including adding directories.
+	  mkdir 1; cd 1
+	  dotest watch4-0a "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest watch4-0b "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+
+	  cd first-dir
+	  dotest watch4-1 "${testcvs} watch on" ''
+	  # This is just like the 173 test
+	  touch file1
+	  dotest watch4-2 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest watch4-3 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+	  # Now test the analogous behavior for directories.
+	  mkdir subdir
+	  dotest watch4-4 "${testcvs} add subdir" \
+"Directory ${TESTDIR}/cvsroot/first-dir/subdir added to the repository"
+	  cd subdir
+	  touch sfile
+	  dotest watch4-5 "${testcvs} add sfile" \
+"${PROG} [a-z]*: scheduling file .sfile. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest watch4-6 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/subdir/sfile,v
+done
+Checking in sfile;
+${TESTDIR}/cvsroot/first-dir/subdir/sfile,v  <--  sfile
+initial revision: 1\.1
+done"
+	  cd ../..
+	  mkdir 2; cd 2
+	  dotest watch4-7 "${testcvs} -q co first-dir" "U first-dir/file1
+U first-dir/subdir/sfile"
+	  dotest_fail watch4-8 "test -w first-dir/file1" ''
+	  dotest_fail watch4-9 "test -w first-dir/subdir/sfile" ''
+	  cd ..
+	  cd ..
+	  # Specify -f because of the readonly files.
+	  rm -rf 1 2
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 

@@ -1,3 +1,13 @@
+Fri Aug 15 11:11:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* add.c (add_directory): Copy default file attributes from the
+	parent directory to the directory we are creating.
+	* fileattr.h, fileattr.c (fileattr_getall, fileattr_setall):
+	New functions, in support of above.
+	* fileattr.c (fileattr_free): Add comment about fileattr_write
+	maybe not clearing attrs_modified.
+	* sanity.sh (watch4): New test, tests for above fix.
+
 Thu Aug 14 11:08:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (merge_file, join_file): If wrap_merge_is_copy, treat
