@@ -334,7 +334,6 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 	free (repository);
 	return (1);
     }
-    free (repository);
 
     if (force_tag_match)
 	which = W_REPOS | W_ATTIC;
@@ -343,12 +342,14 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     if (rev1 != NULL && !rev1_validated)
     {
-	tag_check_valid (rev1, argc - 1, argv + 1, local_specified, 0, NULL);
+	tag_check_valid (rev1, argc - 1, argv + 1, local_specified, 0,
+			 repository);
 	rev1_validated = 1;
     }
     if (rev2 != NULL && !rev2_validated)
     {
-	tag_check_valid (rev2, argc - 1, argv + 1, local_specified, 0, NULL);
+	tag_check_valid (rev2, argc - 1, argv + 1, local_specified, 0,
+			 repository);
 	rev2_validated = 1;
     }
 
@@ -356,7 +357,8 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
 			   (DIRLEAVEPROC) NULL, NULL,
 			   argc - 1, argv + 1, local_specified,
-			   which, 0, CVS_LOCK_READ, where, 1);
+			   which, 0, CVS_LOCK_READ, where, 1, repository);
+    free (repository);
     free (where);
 
     return (err);

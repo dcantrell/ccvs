@@ -5470,7 +5470,8 @@ send_files (argc, argv, local, aflag, flags)
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
 	 send_dirent_proc, send_dirleave_proc, (void *) &args,
-	 argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE, (char *)NULL, 0);
+	 argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE, (char *) NULL, 0,
+	 (char *) NULL);
     if (err)
 	error_exit ();
     if (toplevel_repos == NULL)

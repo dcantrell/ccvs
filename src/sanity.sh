@@ -22,7 +22,7 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]"
+    echo "Usage: `basename $0` [-klr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]"
 }
 
 exit_usage ()
@@ -36,6 +36,8 @@ exit_help ()
     usage
     echo
     echo "-h|--help	display this text"
+    echo "-l|--link-root"
+    echo "		test CVS using a symlink to a real CVSROOT"
     echo "-r|--remote	test remote instead of local cvs"
     echo "-k|--keep	try to keep directories created by individual tests"
     echo "		around, exiting after the first test which supports"
@@ -71,8 +73,9 @@ export LC_ALL
 #
 unset fromtest
 keep=false
+linkroot=false
 remote=false
-while getopts f:Hkr-: option ; do
+while getopts f:Hklr-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	case "$OPTARG" in
@@ -82,6 +85,10 @@ while getopts f:Hkr-: option ; do
 		;;
 	    [kK]|[kK][eE]|[kK][eE][eE]|[kK][eE][eE][pP])
 		option=k;
+		OPTARG=
+		;;
+	    l|li|lin|link|link-|link-r]|link-ro|link-roo|link-root)
+		option=l;
 		OPTARG=
 		;;
 	    [rR]|[rR][eE]|[rR][eE][mM]|[rR][eE][mM][oO]|[rR][eE][mM][oO][tT]|[rR][eE][mM][oO][tT][eE])
@@ -107,6 +114,9 @@ while getopts f:Hkr-: option ; do
 	    # more than one test, but this should work if each test uses a
 	    # uniquely named dir (use the name of the test).
 	    keep=:
+	    ;;
+	l)
+	    linkroot=:
 	    ;;
 	r)
 	    remote=:
@@ -753,7 +763,7 @@ if test x"$*" = x; then
 	# Multiple root directories and low-level protocol tests.
 	tests="${tests} multiroot multiroot2 multiroot3 multiroot4"
 	tests="${tests} rmroot reposmv pserver server server2 client"
-	tests="${tests} fork commit-d"
+	tests="${tests} dottedroot fork commit-d"
 else
 	tests="$*"
 fi
@@ -1601,6 +1611,10 @@ EOF
 }
 
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
+if $linkroot; then
+    mkdir ${TESTDIR}/realcvsroot
+    ln -s realcvsroot ${TESTDIR}/cvsroot
+fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 if $remote; then
 	# Currently we test :fork: and :ext: (see crerepos test).
@@ -13055,11 +13069,43 @@ ${PROG} commit: Rebuilding administrative file database"
         checkout_repository)
           dotest_fail checkout_repository-1 \
 "${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
+"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${PROG} \[checkout aborted\]: absolute pathname \`${CVSROOT_DIRNAME}' illegal for server"
+
+	  # The behavior of the client/server test below should be correct.
+	  # The CVS client currently has no way of knowing that the client and
+	  # server are the same machine and thus skips the $CVSROOT checks.
+	  # I think checking for this case in CVS would be bloat since this
+	  # should be a fairly rare occurance.
 	  cd ${CVSROOT_DIRNAME}
           dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
-          dotest checkout_repository-3 "${testcvs} co -p CVSROOT/modules >/dev/null" \
+"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${PROG} checkout: Updating CVSROOT
+${PROG} checkout: move away CVSROOT/checkoutlist; it is in the way
+C CVSROOT/checkoutlist
+${PROG} checkout: move away CVSROOT/commitinfo; it is in the way
+C CVSROOT/commitinfo
+${PROG} checkout: move away CVSROOT/config; it is in the way
+C CVSROOT/config
+${PROG} checkout: move away CVSROOT/cvswrappers; it is in the way
+C CVSROOT/cvswrappers
+${PROG} checkout: move away CVSROOT/editinfo; it is in the way
+C CVSROOT/editinfo
+${PROG} checkout: move away CVSROOT/loginfo; it is in the way
+C CVSROOT/loginfo
+${PROG} checkout: move away CVSROOT/modules; it is in the way
+C CVSROOT/modules
+${PROG} checkout: move away CVSROOT/notify; it is in the way
+C CVSROOT/notify
+${PROG} checkout: move away CVSROOT/rcsinfo; it is in the way
+C CVSROOT/rcsinfo
+${PROG} checkout: move away CVSROOT/taginfo; it is in the way
+C CVSROOT/taginfo
+${PROG} checkout: move away CVSROOT/verifymsg; it is in the way
+C CVSROOT/verifymsg"
+
+          dotest checkout_repository-3 \
+"${testcvs} co -p CVSROOT/modules >/dev/null" \
 "===================================================================
 Checking out CVSROOT/modules
 RCS:  ${CVSROOT_DIRNAME}/CVSROOT/modules,v
@@ -25529,6 +25575,47 @@ update"
 	  fi # skip the whole thing for local
 	  ;;
 
+	dottedroot)
+	  # Check that a CVSROOT with a "." in the name will work.
+	  CVSROOT_save=${CVSROOT}
+	  CVSROOT_DIRNAME_save=${CVSROOT_DIRNAME}
+	  CVSROOT_DIRNAME=${TESTDIR}/cvs.root
+	  if $remote; then
+	      CVSROOT=:fork:${CVSROOT_DIRNAME}
+	  else
+	      CVSROOT=${CVSROOT_DIRNAME}
+	  fi
+
+	  dotest dottedroot-init-1 "${testcvs} init" ""
+	  mkdir dir1
+	  mkdir dir1/dir2
+	  echo version1 >dir1/dir2/file1
+	  cd dir1
+	  dotest dottedroot-1 "${testcvs} import -m '' module1 AUTHOR INITIAL" \
+"${PROG} [a-z]*: Importing ${CVSROOT_DIRNAME}/module1/dir2
+N module1/dir2/file1
+
+No conflicts created by this import"
+	  cd ..
+
+	  # This is the test that used to cause an assertion failure
+	  # in recurse.c:do_recursion().
+	  dotest dottedroot-2 "${testcvs} co -rINITIAL module1" \
+"${PROG} [a-z]*: Updating module1
+${PROG} [a-z]*: Updating module1/dir2
+U module1/dir2/file1"
+
+	    if $keep; then
+	      echo Keeping ${TESTDIR} and exiting due to --keep
+	      exit 0
+	    fi
+
+	  rm -rf ${CVSROOT_DIRNAME}
+	  rm -r dir1 module1
+	  CVSROOT_DIRNAME=${CVSROOT_DIRNAME_save}
+	  CVSROOT=${CVSROOT_save}
+ 	  ;;
+ 
 	fork)
 	  # Test that the server defaults to the correct executable in :fork:
 	  # mode.  See the note in the TODO at the end of this file about this.

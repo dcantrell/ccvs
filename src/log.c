@@ -538,7 +538,6 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
 	    free( where );
 	    return (1);
 	}
-	free (repository);
 	/* End section which is identical to patch_proc.  */
 
 	which = W_REPOS | W_ATTIC;
@@ -552,8 +551,9 @@ rlog_proc (argc, argv, xwhere, mwhere, mfile, shorten, local, mname, msg)
     err = start_recursion (log_fileproc, (FILESDONEPROC) NULL, log_dirproc,
 			   (DIRLEAVEPROC) NULL, (void *) &log_data,
 			   argc - 1, argv + 1, local, which, 0, CVS_LOCK_READ,
-			   where, 1);
+			   where, 1, repository);
 
+    if ( ! ( which & W_LOCAL ) ) free (repository);
     if( where ) free( where );
 
     return err;
