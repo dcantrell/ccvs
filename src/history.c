@@ -850,9 +850,6 @@ history_write (int type, const char *update_dir, const char *revs,
      * Only "compress" if we save characters.
      */
 
-    if (!repos)
-	repos = "";
-
     cp = workdir + strlen (workdir) - 1;
     cp2 = repos + strlen (repos) - 1;
     for (i = 0; cp2 >= repos && cp > workdir && *cp == *cp2--; cp--)
