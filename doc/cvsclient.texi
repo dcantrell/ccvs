@@ -487,6 +487,16 @@ graceful handling of @code{valid-requests}, it is probably better to
 make new global options separate requests, rather than trying to add
 them to this request.
 
+@item Gzip-stream @var{level} \n
+Response expected: no.
+Use RFC 1950/1951 compression to compress all further communication
+between the client and the server.  After this request is sent, all
+further communication must be compressed.  All further data received
+from the server will also be compressed.  The @var{level} argument
+suggests to the server the level of compression that it should apply; it
+should be an integer between 1 and 9, inclusive, where a higher number
+indicates more compression.
+
 @item Set @var{variable}=@var{value} \n
 Response expected: no.
 Set a user variable @var{variable} to @var{value}.
