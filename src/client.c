@@ -3672,11 +3672,6 @@ start_rsh_server (tofdp, fromfdp)
     if (!cvs_server)
 	cvs_server = "cvs";
 
-    /* If you are running a very old (Nov 3, 1994, before 1.5)
-     * version of the server, you need to make sure that your .bashrc
-     * on the server machine does not set CVSROOT to something
-     * containing a colon (or better yet, upgrade the server).  */
-
     /* The command line starts out with rsh. */
     rsh_argv[i++] = cvs_rsh;
 
