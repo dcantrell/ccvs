@@ -593,6 +593,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    char *prog = (m_type == TAG ? tag_prog :
 			  (m_type == CHECKOUT ? checkout_prog : export_prog));
 	    char *real_where = (where != NULL ? where : mwhere);
+	    char *expanded_path;
 
 	    if ((*prog != '/') && (*prog != '.'))
 	    {
@@ -602,19 +603,24 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    }
 
 	    /* XXX can we determine the line number for this entry??? */
-	    run_setup ("%s %s", expand_path(prog, "modules", -1), real_where);
-
-	    if (extra_arg)
-		run_arg (extra_arg);
-
-	    if (!quiet)
+	    expanded_path = expand_path (prog, "modules", 0);
+	    if (expanded_path != NULL)
 	    {
-		(void) printf ("%s %s: Executing '", program_name,
-			       command_name);
-		run_print (stdout);
-		(void) printf ("'\n");
+		run_setup ("%s %s", expanded_path, real_where);
+
+		if (extra_arg)
+		    run_arg (extra_arg);
+
+		if (!quiet)
+		{
+		    (void) printf ("%s %s: Executing '", program_name,
+				   command_name);
+		    run_print (stdout);
+		    (void) printf ("'\n");
+		}
+		err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		free (expanded_path);
 	    }
-	    err += run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	}
     }
 
