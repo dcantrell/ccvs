@@ -1,3 +1,17 @@
+Fri Dec 22 13:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
+
+	* release.c (release): If SERVER_SUPPORT is not defined, still
+	set up arg_start_idx.
+
+	* release.c (release): When calling unedit, set argv[1] to
+	NULL (since argc is only 1).
+
+	* edit.c: Pass dosrcs 0 to all calls to start_recursion.
+	None of the fileprocs were using it, so it just slowed things
+	down and caused potentially harmful checks for rcs files.
+
+	* edit.c (send_notifications): In client case, do not readlock.
+
 Thu Dec 21 16:00:00 1995  Jim Kingdon  <kingdon@peary.cyclic.com>
 
 	Clean up Visual C++ lint:
