@@ -1,6 +1,11 @@
 dnl configure.in for cvs
 AC_INIT(src/cvs.h)
+dnl
 AC_PREREQ(2.4)dnl Required Autoconf version.
+dnl Do not use autoconf 2.12; it produces a configure script which produces
+dnl a "internal 2K buffer" error on HPUX when run with /bin/sh.
+dnl autoconf 2.10 seems like a good choice.
+dnl
 AC_CONFIG_HEADER(config.h src/options.h)
 
 AC_PROG_CC
