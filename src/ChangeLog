@@ -7,6 +7,8 @@ Sun Aug 20 00:59:46 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 Sat Aug 19 22:05:46 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
+	* recurse.c (start_recursion): Doc fix.
+
 	* server.c (do_cvs_command): Clear error_use_protocol in the
 	child.
 	(server): Set error_use_protocol.
