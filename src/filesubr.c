@@ -287,7 +287,8 @@ mkdir_if_needed (name)
 {
     if (mkdir (name, 0777) < 0)
     {
-	if (errno != EEXIST)
+	if (!(errno == EEXIST
+	      || (errno == EACCES && isdir (name))))
 	    error (1, errno, "cannot make directory %s", name);
 	return 1;
     }

@@ -7552,6 +7552,19 @@ U top-dir/file1"
 "${PROG} update: nothing known about second-dir"
 	  fi
 
+	  # Now remove the CVS directory (people may do this manually,
+	  # especially if they formed their habits with CVS
+	  # 1.9 and older, which didn't create it.  Or perhaps the working
+	  # directory itself was created with 1.9 or older).
+	  rm -r CVS
+	  # Now set the permissions so we can't recreate it.
+	  chmod -w ../1
+	  # Now see whether CVS has trouble because it can't create CVS.
+	  dotest toplevel-12 "${testcvs} co top-dir" \
+"${PROG} [a-z]*: warning: cannot make directory ./CVS: Permission denied
+${PROG} [a-z]*: Updating top-dir"
+	  chmod +w ../1
+
 	  cd ..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/top-dir

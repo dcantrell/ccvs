@@ -1,5 +1,16 @@
 Wed Jul 30 08:42:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* create_adm.c, cvs.h (Create_Admin): If new argument WARN is set,
+	then make creating the CVS directory itself a warning not a fatal
+	error.  New return value indicates whether we did this.
+	* checkout.c (build_one_dir), client.c (call_in_directory):
+	Pass WARN as one.
+	* add.c, client.c, checkout.c, modules.c, update.c: Pass WARN as
+	zero for all other Create_Admin callers.
+	* sanity.sh (toplevel): New test toplevel-12 tests for this fix.
+	* filesubr.c (mkdir_if_needed): Also check EACCES/isdir.  Needed
+	to make toplevel-12 test work.
+
 	* sanity.sh (toplevel): New test toplevel-11 and friends test for
 	another variation of the toplevel-9 bug.
 

@@ -821,6 +821,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	    Create_Admin (dir, update_dir, repository, tag, date,
 			  /* This is a guess.  We will rewrite it later
 			     via WriteTag.  */
+			  0,
 			  0);
 	    rewrite_tag = 1;
 	    nonbranch = 0;

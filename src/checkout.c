@@ -366,7 +366,7 @@ checkout (argc, argv)
 		error (1, 0, "there is no repository %s", repository);
 
 	    Create_Admin (".", preload_update_dir, repository,
-			  (char *) NULL, (char *) NULL, 0);
+			  (char *) NULL, (char *) NULL, 0, 0);
 	    if (!noexec)
 	    {
 		FILE *fp;
@@ -508,17 +508,18 @@ build_one_dir (repository, dirpath, sticky)
 	if (!isdir (repository))
 	    error (1, 0, "there is no repository %s", repository);
 
-	Create_Admin (".", dirpath, repository,
-		      sticky ? (char *) NULL : tag,
-		      sticky ? (char *) NULL : date,
+	if (Create_Admin (".", dirpath, repository,
+			  sticky ? (char *) NULL : tag,
+			  sticky ? (char *) NULL : date,
 
-		      /* FIXME?  This is a guess.  If it is important
-			 for nonbranch to be set correctly here I
-			 think we need to write it one way now and
-			 then rewrite it later via WriteTag, once
-			 we've had a chance to call RCS_nodeisbranch
-			 on each file.  */
-		      0);
+			  /* FIXME?  This is a guess.  If it is important
+			     for nonbranch to be set correctly here I
+			     think we need to write it one way now and
+			     then rewrite it later via WriteTag, once
+			     we've had a chance to call RCS_nodeisbranch
+			     on each file.  */
+			  0, 1))
+	    return;
 
 	if (!noexec)
 	{
@@ -839,7 +840,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 		    error (1, 0, "there is no repository %s", repository);
 
 		Create_Admin (".", preload_update_dir, repository,
-			      (char *) NULL, (char *) NULL, 0);
+			      (char *) NULL, (char *) NULL, 0, 0);
 		fp = open_file (CVSADM_ENTSTAT, "w+");
 		if (fclose(fp) == EOF)
 		    error(1, errno, "cannot close %s", CVSADM_ENTSTAT);
@@ -862,7 +863,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 				 then rewrite it later via WriteTag, once
 				 we've had a chance to call RCS_nodeisbranch
 				 on each file.  */
-			      0);
+			      0, 0);
 	    }
 	}
 	else
