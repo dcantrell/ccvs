@@ -1,5 +1,8 @@
 Sat Sep  6 09:48:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (join): New tests join-25 through join-29 test merging
+	from one branch to a different branch.
+
 	* release.c: In comment about CVSROOTADM_IGNORE, also mention
 	comment just added to entries.c.
 	* entries.c: Expand this comment, especially the part about
