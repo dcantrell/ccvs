@@ -764,7 +764,7 @@
 
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
-#define SIZE_MAX ((size_t) -1)
+#define SIZE_MAX (~(size_t)0)
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -965,7 +965,7 @@
 
 /* Define to equivalent of C99 restrict keyword, or to nothing if this is not
    supported. Do not define if restrict is supported directly. */
-#undef restrict
+#define restrict
 
 /* Define to empty if the C compiler doesn't support this keyword. */
 #undef signed
