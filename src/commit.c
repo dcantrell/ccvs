@@ -1442,7 +1442,7 @@ remove_file (file, repository, tag, message, entries, rcsnode)
        particular rev, then name it.  except when creating a branch,
        lock the rev we're checking out.  */
     retcode = RCS_checkout (rcs, "", rev ? corev : NULL, NULL, RUN_TTY,
-                            lockflag, 1);
+                            lockflag, 0);
     if (retcode != 0)
     {
 	if (!quiet)
