@@ -1,4 +1,14 @@
 Sat Nov  1 14:21:29 1997  Michael L.H. Brouwer  <michael@thi.nl>
+
+	* rcs.c (RCS_checkin): Change type of bufsize from int to size_t.
+	(RCS_delete_revs): Change type of bufsize and len from int to size_t.
+	(RCS_getdeltatext): Change type of textlen from int to size_t.
+	* rcs.h (struct deltatext): Change len from int to size_t to keep
+	the compiler happy on systems where size_t is unsigned int.
+	[This goes well beyond keeping the compiler happy; if sizeof
+	(size_t) != sizeof (int), the old code was quite broken -kingdon]
+
+Sat Nov  1 14:21:29 1997  Michael L.H. Brouwer  <michael@thi.nl>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkin): When checking if we were holding the lock

@@ -131,7 +131,7 @@ struct deltatext {
        file).  Note that it is perfectly legal to have log be NULL and
        text non-NULL, or vice-versa.  */
     char *text;
-    int len;
+    size_t len;
 
     /* Newphrase fields from deltatext nodes.  FIXME: duplicates the
        other field in the rcsversnode, I think.  */
