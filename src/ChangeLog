@@ -1,5 +1,8 @@
 Mon Mar 11 10:21:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: If expr accepts multi-line patterns but is too
+	liberal in matching them, print a warning but keep going.
+
 	* sanity.sh: Add QUESTION variable, analogous to PLUS.  Use it
 	instead of \? to match a question mark.
 
