@@ -3983,6 +3983,33 @@ ${PROG} [a-z]*: Updating adir/sub1/ssdir"
 "${PROG} [a-z]*: Updating adir/sub1
 ${PROG} [a-z]*: Updating adir/sub1/ssdir
 ${PROG} [a-z]*: Updating bdir/subdir"
+
+	  echo modify >>cdir/cfile
+	  dotest importc-5 \
+"${testcvs} -q rtag -b -r release wip_test first-dir" ""
+	  dotest importc-6 "${testcvs} -q update -r wip_test" "M cdir/cfile"
+
+	  if test "$remote" = no; then
+	    # This checkin should just succeed.  That it doesn't is a
+	    # bug (CVS 1.9.16 through the present seem to have it; CVS
+	    # 1.9 did not).
+	    dotest_fail importc-7 "${testcvs} -q ci -m modify -r wip_test" \
+"${PROG} [a-z]*: in directory adir/sub1/ssdir:
+${PROG} \[[a-z]* aborted\]: there is no version here; do .cvs checkout. first"
+	    # The workaround is to leave off the "-r wip_test".
+	    dotest importc-8 "${testcvs} -q ci -m modify" \
+"Checking in cdir/cfile;
+${TESTDIR}/cvsroot/first-dir/cdir/cfile,v  <--  cfile
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done"
+	  else
+	    # Remote doesn't have the bug in the first place.
+	    dotest importc-7 "${testcvs} -q ci -m modify -r wip_test" \
+"Checking in cdir/cfile;
+${TESTDIR}/cvsroot/first-dir/cdir/cfile,v  <--  cfile
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done"
+	  fi
 	  cd ..
 
 	  cd ..
