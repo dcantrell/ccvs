@@ -77,7 +77,7 @@ struct lock {
        readlock variable, a lock named by the writelock variable, and/or
        a lock named CVSLCK.  The storage is not allocated along with the
        struct lock; it is allocated by the Reader_Lock caller or in the
-       case of writelocks, it is just a pointer to the storage allocated
+       case of promotablelocks, it is just a pointer to the storage allocated
        for the ->key field.  */
     const char *repository;
 
@@ -407,7 +407,7 @@ unlock_proc (Node *p, void *closure)
 static void
 lock_simple_remove (struct lock *lock)
 {
-    TRACE (TRACE_FLOW, "lock_simple_remove()");
+    TRACE (TRACE_FLOW, "lock_simple_remove(%s)", lock->repository);
 
     /* If lock->file is set, the lock *might* have been created, but since
      * Reader_Lock & lock_dir_for_write don't use SIG_beginCrSect the way that
@@ -447,14 +447,19 @@ lock_simple_remove (struct lock *lock)
     /* And free the repository string.  We don't really have to set the
      * repository string to NULL first since there is no harm in running any of
      * the above code twice.
+     *
+     * Use SIG_beginCrSect since otherwise we might be interrupted between
+     * checking whether free_repository is set and freeing stuff.
      */
+    SIG_beginCrSect ();
     if (lock->free_repository)
     {
-	const char *tmp = lock->repository;
+	free ((char *)lock->repository);
 	lock->repository = NULL;
-	free ((char *)tmp);
+	lock->free_repository = 0;
     } else
 	lock->repository = NULL;
+    SIG_endCrSect ();
 }
 
 

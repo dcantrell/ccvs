@@ -1,5 +1,11 @@
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (lock_simple_remove): Add comments.  Use critical sections to
+	set some variables that might otherwise cause trouble.
+	(struct lock): Correct comment.
+
+2004-02-09  Derek Price  <derek@ximbiot.com>
+
 	Attempt to improve readability of code.
 
 	* lock.c (promotable_lock): Rename to...
