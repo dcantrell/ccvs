@@ -41,6 +41,7 @@ typedef struct cvsroot_s {
 				 */
     int proxy_port;		/* The port of the proxy or zero, as above. */
     unsigned char isremote;	/* Nonzero if we are doing remote access. */
+    bool redirect;		/* False if we are to disable redirects. */
 #endif /* CLIENT_SUPPORT */
 } cvsroot_t;
 

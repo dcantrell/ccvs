@@ -1631,6 +1631,7 @@ if test x"$*" = x; then
 	tests="${tests} rmroot reposmv pserver server server2 client"
 	tests="${tests} dottedroot fork commit-d template"
 	tests="${tests} writeproxy writeproxy-noredirect writeproxy-ssh"
+	tests="${tests} writeproxy-ssh-noredirect"
 else
 	tests="$*"
 fi
@@ -22618,15 +22619,38 @@ EOF
 	  dotest parseroot3-2 "$testcvs -Q up"
 	  cd ..
 
-	  # A degenerate remote case, just the server name and the directory
-	  # name, with no :'s to help parsing.  It can be mistaken for a
-	  # relative directory name.
+	  # Initial checkout.
 	  rm -r CVSROOT
 	  CVSROOT=":ext;cvs_RSH=$save_CVS_RSH;CVS_Server=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
 	  dotest parseroot3-3 "$testcvs -Q co CVSROOT"
 	  cd CVSROOT
 	  dotest parseroot3-4 "$testcvs -Q up"
 	  cd ..
+
+	  # Checkout bogus values for Redirect
+	  rm -r CVSROOT
+	  CVSROOT=":ext;Redirect=bogus;CVS_RSH=$save_CVS_RSH;CVS_SERVER=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
+	  dotest parseroot3-5 "$testcvs -Q co CVSROOT" \
+"$SPROG checkout: CVSROOT: unrecognized value \`bogus' for \`Redirect'"
+	  cd CVSROOT
+	  # FIXCVS: parse_cvsroot is called more often that is
+	  # desirable.	  
+	  dotest parseroot3-6 "$testcvs -Q up" \
+"$SPROG update: CVSROOT: unrecognized value \`bogus' for \`Redirect'"
+	  cd ..
+
+	  # Checkout good values for Redirect
+	  rm -r CVSROOT
+	  CVSROOT=":EXT;Redirect=no;CVS_RSH=$save_CVS_RSH;CVS_SERVER=$save_CVS_SERVER:$host$CVSROOT_DIRNAME"
+	  dotest parseroot3-7 "$testcvs -Q co CVSROOT"
+	  cd CVSROOT
+	  dotest parseroot3-8 "$testcvs -Q up"
+	  cd ..
+
+	  dotest parseroot3-9 "$testcvs -Q co -ldtop ."
+	  dotest parseroot3-10 "test -d top"
+	  dotest parseroot3-11 "test -d top/CVS"
+	  dotest parseroot3-10 "cat top/CVS/Root" "$CVSROOT"
 
 	  dokeep
 	  cd ..
@@ -31321,7 +31345,7 @@ EOF
 	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
 	  PRIMARY_CVSROOT=:ext:$host$PRIMARY_CVSROOT_DIRNAME
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
-	  SECONDARY_CVSROOT=:ext:$host$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT=":ext;Redirect=yes:$host$SECONDARY_CVSROOT_DIRNAME"
 
 	  # Initialize the primary repository
 	  dotest writeproxy-ssh-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
@@ -31353,7 +31377,12 @@ EOF
 
 	  # Checkin to secondary
 	  cd ../..
-	  dotest writeproxy-ssh-1 "$testcvs -Qd$SECONDARY_CVSROOT co -ldtop ."
+	  save_CVSROOT=$CVSROOT
+	  CVSROOT=$SECONDARY_CVSROOT
+	  export CVSROOT
+	  dotest writeproxy-ssh-1 "$testcvs -Q co -ldtop ."
+	  CVSROOT=$save_CVSROOT
+	  export CVSROOT
 	  cd top
 	  mkdir firstdir
 
@@ -31378,6 +31407,139 @@ EOF
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
 	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
 	  SECONDARY_CVSROOT=$SECONDARY_CVSROOT_save
+	  ;;
+
+
+
+	writeproxy-ssh-noredirect)
+	  # Various tests for a read-only CVS mirror set up as a write-proxy
+	  # for a central server accessed via the :ext: method.
+	  #
+	  # Mostly these tests are intended to set up for the final test which
+	  # verifies that the server registers the referrer.
+	  if $remote; then :; else
+	    remoteonly writeproxy-ssh-noredirect
+	    continue
+	  fi
+
+	  require_rsh "$CVS_RSH"
+	  if test $? -eq 77; then
+	    skip writeproxy-ssh-noredirect "$skipreason"
+	    continue
+	  fi
+
+	  require_rsync
+	  if test $? -eq 77; then
+	    skip writeproxy-ssh-noredirect "$skipreason"
+	    continue
+	  fi
+
+	  # Save old roots.
+	  PRIMARY_CVSROOT_DIRNAME_save=$PRIMARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_save=$PRIMARY_CVSROOT
+	  SECONDARY_CVSROOT_DIRNAME_save=$SECONDARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_save=$SECONDARY_CVSROOT
+
+	  # Set new roots.
+	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
+	  PRIMARY_CVSROOT=:ext:$host$PRIMARY_CVSROOT_DIRNAME
+	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
+	  SECONDARY_CVSROOT=":ext;Redirect=no:$host$PRIMARY_CVSROOT_DIRNAME"
+
+	  # Initialize the primary repository
+	  dotest writeproxy-ssh-noredirect-init-1 \
+"$testcvs -d$PRIMARY_CVSROOT init"
+	  mkdir writeproxy-ssh-noredirect; cd writeproxy-ssh-noredirect
+	  mkdir primary; cd primary
+	  dotest writeproxy-ssh-noredirect-init-2 \
+"$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
+	  cd CVSROOT
+	  cat >>loginfo <<EOF
+ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+EOF
+	  cat >>loginfo <<EOF
+ALL echo Referrer=%R; cat >/dev/null
+EOF
+	  cat >>config <<EOF
+PrimaryServer=$PRIMARY_CVSROOT
+EOF
+	  dotest writeproxy-ssh-noredirect-init-3 \
+"$testcvs -Q ci -mconfigure-writeproxy-ssh-noredirect" \
+"Referrer=NONE"
+
+	  # And now the secondary.
+	  $RSYNC -gopr $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
+
+	  # Wrap the CVS server to allow --primary-root to be set by the
+	  # secondary.
+	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
+#! $TESTSHELL
+CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+export CVS_SERVER
+
+# No need to check the PID of the last client since we are testing with
+# Redirect disabled.
+proot_arg="--allow-root=$SECONDARY_CVSROOT_DIRNAME"
+exec $CVS_SERVER \$proot_arg "\$@"
+EOF
+	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
+#! $TESTSHELL
+CVS_SERVER_LOG=/tmp/cvsprimarylog; export CVS_SERVER_LOG
+exec $CVS_SERVER \$proot_arg "\$@"
+EOF
+
+	  CVS_SERVER_save=$CVS_SERVER
+	  CVS_SERVER_secondary=$TESTDIR/writeproxy-secondary-wrapper
+	  CVS_SERVER=$CVS_SERVER_secondary
+
+	  chmod a+x $TESTDIR/writeproxy-secondary-wrapper \
+	            $TESTDIR/writeproxy-primary-wrapper
+
+	  # Checkout from secondary
+	  #
+	  # For now, move the primary root out of the way to satisfy
+	  # ourselves that the data is coming from the secondary.
+	  mv $PRIMARY_CVSROOT_DIRNAME $TESTDIR/save-root
+
+	  # Checkin to secondary
+	  cd ../..
+	  #CVSROOT_save=$CVSROOT
+	  #CVSROOT=$SECONDARY_CVSROOT
+	  #CVS_SERVER_LOG=/tmp/cvsserverlog
+	  #CVS_CLIENT_LOG=/tmp/cvsclientlog
+	  #export CVS_SERVER_LOG CVS_CLIENT_LOG
+	  dotest writeproxy-ssh-noredirect-1 \
+"$testcvs -qd '$SECONDARY_CVSROOT' co -ldtop ."
+	  #CVSROOT=$CVSROOT_save
+
+	  cd top
+	  mkdir firstdir
+
+	  # Have to move the primary root back before we can perform write
+	  # operations.
+	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
+
+	  dotest writeproxy-ssh-noredirect-2 "$testcvs -Q add firstdir" \
+"Referrer=NONE"
+
+	  cd firstdir
+	  echo now you see me >file1
+	  dotest writeproxy-ssh-noredirect-3 "$testcvs -Q add file1"
+	  dotest writeproxy-ssh-noredirect-4 \
+"$testcvs -Q ci -mfirst-file file1" \
+"Referrer=NONE"
+
+	  dokeep
+	  cd ../../..
+	  rm -r writeproxy-ssh-noredirect
+	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
+	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
+	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
+	  SECONDARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME_save
+	  SECONDARY_CVSROOT=$SECONDARY_CVSROOT_save
+	  rm $TESTDIR/writeproxy-secondary-wrapper \
+	     $TESTDIR/writeproxy-primary-wrapper
+	  CVS_SERVER=$CVS_SERVER_save
 	  ;;
 
 
