@@ -4919,6 +4919,30 @@ The repository format is compatible going back to
 @sc{cvs} 1.3.  But see @ref{Watches Compatibility}, if
 you have copies of @sc{cvs} 1.6 or older and you want
 to use the optional developer communication features.
+@c If you "cvs rm" and commit using 1.3, then you'll
+@c want to run "rcs -sdead <file,v>" on each of the
+@c files in the Attic if you then want 1.5 and
+@c later to recognize those files as dead (I think the
+@c symptom if this is not done is that files reappear
+@c in joins).  (Wait: the above will work but really to
+@c be strictly correct we should suggest checking
+@c in a new revision rather than just changing the
+@c state of the head revision, shouldn't we?).
+@c The old convert.sh script was for this, but it never
+@c did get updated to reflect use of the RCS "dead"
+@c state.
+@c Note: this is tricky to document without confusing
+@c people--need to carefully say what CVS version we
+@c are talking about and keep in mind the distinction 
+@c between a
+@c repository created with 1.3 and on which one now
+@c uses 1.5+, and a repository on which one wants to
+@c use both versions side by side (e.g. during a
+@c transition period).
+@c We might want to separate out the 1.3 compatibility
+@c section (for repository & working directory) from the
+@c rest--that might help avoid confusing people who
+@c are upgrading (for example) from 1.6 to 1.8.
 
 The working directory format is compatible going back
 to @sc{cvs} 1.5.  It did change between @sc{cvs} 1.3

@@ -1,5 +1,7 @@
 Wed Dec 11 08:55:26 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Compatibility): Add comment about 1.3 and file death.
+
 	* cvs.texinfo (update output, release output): Document "P" as
 	well as "U".
 
