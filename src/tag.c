@@ -273,12 +273,6 @@ cvstag (int argc, char **argv)
 			 NULL);
     }
 
-    if (!err && !noexec)
-	/* Most of these args don't need to be set to insert the tag in
-	 * val-tags.
-	 */
-	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
-
     return err;
 }
 
@@ -379,8 +373,8 @@ tag_filesdoneproc (void *callerdat, int err, const char *repository,
     ppd.delete_flag = delete_flag;
     ppd.force_tag_move = force_tag_move;
     ppd.symtag = symtag;
-    err += Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc,
-                       PIOPT_ALL, &ppd);
+    Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc,
+                PIOPT_ALL, &ppd);
 
     return err;
 }
@@ -907,12 +901,17 @@ static int
 rtag_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsfile;
-    char *version, *rev;
+    char *version = NULL, *rev = NULL;
     int retcode = 0;
+    int retval = 0;
+    static bool valtagged = false;
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
-	return 1;
+    {
+	retval = 1;
+	goto free_vars_and_return;
+    }
 
     /*
      * For tagging an RCS file which is a symbolic link, you'd best be
@@ -921,7 +920,10 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
      */
 
     if (delete_flag)
-	return rtag_delete (rcsfile);
+    {
+	retval = rtag_delete (rcsfile);
+	goto free_vars_and_return;
+    }
 
     /*
      * If we get here, we are adding a tag.  But, if -a was specified, we
@@ -931,7 +933,10 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     if (attic_too && (!numtag && !date))
     {
 	if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
-	    return rtag_delete (rcsfile);
+	{
+	    retval = rtag_delete (rcsfile);
+	    goto free_vars_and_return;
+	}
     }
 
     version = RCS_getversion (rcsfile, numtag, date, force_tag_match, NULL);
@@ -945,9 +950,9 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	{
 	    error (0, 0, "cannot find tag `%s' in `%s'",
 		   numtag ? numtag : "head", rcsfile->path);
-	    return 1;
+	    retval = 1;
 	}
-	return 0;
+	goto free_vars_and_return;
     }
     if (numtag
 	&& isdigit ((unsigned char)*numtag)
@@ -981,8 +986,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	 * typical tagging operation.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
-	oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
-				   (int *) NULL);
+	oversion = RCS_getversion (rcsfile, symtag, NULL, 1, NULL);
 	if (oversion != NULL)
 	{
 	    int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
@@ -994,8 +998,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
 	    {
 		free (oversion);
-		free (version);
-		return (0);
+		goto free_vars_and_return;
 	    }
 
 	    if (!force_tag_move)
@@ -1009,9 +1012,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 		(void)printf (" : NOT MOVING tag to %s %s\n",
 			      branch_mode ? "branch" : "version", rev);
 		free (oversion);
-		free (version);
-		if (branch_mode) free (rev);
-		return 0;
+		goto free_vars_and_return;
 	    }
 	    else /* force_tag_move is set and... */
 		if ((isbranch && !disturb_branch_tags) ||
@@ -1022,14 +1023,12 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 			isbranch ? "branch" : "non-branch",
 			symtag, oversion, rev,
 			isbranch ? "" : " due to `-B' option");
-		if (branch_mode) free(rev);
 		free (oversion);
-		free (version);
-		return 0;
+		goto free_vars_and_return;
 	    }
 	    free (oversion);
 	}
-	retcode = RCS_settag(rcsfile, symtag, rev);
+	retcode = RCS_settag (rcsfile, symtag, rev);
 	if (retcode == 0)
 	    RCS_rewrite (rcsfile, NULL, NULL);
     }
@@ -1039,15 +1038,19 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag `%s' to revision `%s' in `%s'",
 	       symtag, rev, rcsfile->path);
-        if (branch_mode)
-	    free (rev);
-        free (version);
-        return 1;
+        retval = 1;
+	goto free_vars_and_return;
     }
-    if (branch_mode)
-	free (rev);
-    free (version);
-    return 0;
+
+free_vars_and_return:
+    if (branch_mode && rev) free (rev);
+    if (version) free (version);
+    if (!delete_flag && !retval && !valtagged)
+    {
+	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
+	valtagged = true;
+    }
+    return retval;
 }
 
 
@@ -1125,6 +1128,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
     int retcode = 0;
     int retval = 0;
+    static bool valtagged = false;
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -1151,8 +1155,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	 * "rcs" to remove the tag... trust me.
 	 */
 
-	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
-				  (int *) NULL);
+	version = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
 	if (version == NULL || vers->srcfile == NULL)
 	    goto free_vars_and_return;
 
@@ -1172,7 +1175,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	    goto free_vars_and_return;
 	}
 
-	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0)
+	if ((retcode = RCS_deltag (vers->srcfile, symtag)) != 0)
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1199,17 +1202,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
      * out and we'll tag that version.
      */
     if (nversion == NULL)
-    {
         version = vers->vn_user;
-    }
     else
-    {
         version = nversion;
-    }
     if (version == NULL)
-    {
 	goto free_vars_and_return;
-    }
     else if (strcmp (version, "0") == 0)
     {
 	if (!quiet)
@@ -1219,13 +1216,15 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     else if (version[0] == '-')
     {
 	if (!quiet)
-	    error (0, 0, "skipping removed but un-commited file `%s'", finfo->file);
+	    error (0, 0, "skipping removed but un-commited file `%s'",
+		   finfo->file);
 	goto free_vars_and_return;
     }
     else if (vers->srcfile == NULL)
     {
 	if (!quiet)
-	    error (0, 0, "cannot find revision control file for `%s'", finfo->file);
+	    error (0, 0, "cannot find revision control file for `%s'",
+		   finfo->file);
 	goto free_vars_and_return;
     }
 
@@ -1320,6 +1319,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     if (nversion != NULL)
         free (nversion);
     freevers_ts (&vers);
+    if (!delete_flag && !retval && !valtagged)
+    {
+	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
+	valtagged = true;
+    }
     return retval;
 }
 
