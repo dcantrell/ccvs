@@ -1,5 +1,9 @@
 2005-03-08  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c: Define MAP_FILE & MAP_FAILED when necessary.
+
+2005-03-08  Derek Price  <derek@ximbiot.com>
+
 	* zlib.c (compress_buffer_input): Use pagealign_xalloc when allocating
 	buffer datas.
 	(compress_buffer_output, compress_buffer_flush,
