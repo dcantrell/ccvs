@@ -99,7 +99,6 @@ static void remove_locks (void);
 static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
-static int set_writelock_proc (Node * p, void *closure);
 static int unlock_proc (Node * p, void *closure);
 static void lock_simple_remove (struct lock *lock);
 
@@ -739,7 +738,7 @@ promotable_lock (struct lock *lock)
 	{
 	    int xerrno = errno;
 
-	    if ( CVS_UNLINK (lock->file1) < 0 && ! existence_error (errno))
+	    if (CVS_UNLINK (lock->file1) < 0 && ! existence_error (errno))
 		error (0, errno, "failed to remove lock %s", lock->file1);
 
 	    /* free the lock dir */
@@ -890,8 +889,8 @@ Attempting to write to a read-only filesystem is not allowed.");
     for (;;)
     {
 	/* try to lock everything on the list */
-	lock_error = L_OK;		/* init for set_writelock_proc */
-	lock_error_repos = (char *) NULL; /* init for set_writelock_proc */
+	lock_error = L_OK;		/* init for set_promotablelock_proc */
+	lock_error_repos = (char *) NULL; /* init for set_promotablelock_proc */
 	locklist = list;		/* init for Lock_Cleanup */
 	if (lockers_name != NULL)
 	    free (lockers_name);
