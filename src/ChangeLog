@@ -1,3 +1,11 @@
+1999-01-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (rcs3-5a): Allow for multiple lines of output before the
+	assertion failure message.
+
+	* sanity.sh (lockfiles-6, client-8): Work around bug in HP-UX chmod
+	(doesn't allow anything to follow omitted permissions).
+
 1999-01-09  Jim Kingdon  <http://www.cyclic.com>
 
 	* client.c (set_sticky): Nonfatal error if we can't write it.
