@@ -1,5 +1,8 @@
 Mon Apr 21 08:54:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Working directory storage): Describe what to do
+	with Entries.Log in more detail.
+
 	* cvsclient.texi (Responses): Say "CVS 1.9 and earlier" rather
 	than "pre version 1.10".  The latter increases confusion by
 	referring to a version which doesn't exist yet.
