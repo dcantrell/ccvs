@@ -1,3 +1,8 @@
+1999-01-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (mtfr-3): ls behavior varies wildly on nonexistant files,
+        just use echo instead.
+
 1999-01-11  Jim Meyering  <meyering@ascend.com>
 
 	* sanity.sh (mkmodules-temp-file-removal): New test, for this.
