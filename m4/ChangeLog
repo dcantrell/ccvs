@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* getpass.m4: Update from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* strcase.m4: New file from GNULIB.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
