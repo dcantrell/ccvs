@@ -195,7 +195,7 @@ static struct hrec
 } *hrec_head;
 
 
-static char *fill_hrec PROTO((char *line, struct hrec * hr));
+static void fill_hrec PROTO((char *line, struct hrec * hr));
 static int accept_hrec PROTO((struct hrec * hr, struct hrec * lr));
 static int select_hrec PROTO((struct hrec * hr));
 static int sort_order PROTO((const PTR l, const PTR r));
@@ -973,28 +973,20 @@ expand_modules ()
  * 
  */
 
-#define NEXT_BAR(here) do { while (isspace(*line)) line++; hr->here = line; while ((c = *line++) && c != '|') ; if (!c) return(rtn); *(line - 1) = '\0'; } while (0)
+#define NEXT_BAR(here) do { while (isspace(*line)) line++; hr->here = line; while ((c = *line++) && c != '|') ; if (!c) return; *(line - 1) = '\0'; } while (0)
 
-static char *
+static void
 fill_hrec (line, hr)
     char *line;
     struct hrec *hr;
 {
-    char *cp, *rtn;
+    char *cp;
     int c;
     int off;
     static int idx = 0;
     unsigned long date;
 
     memset ((char *) hr, 0, sizeof (*hr));
-
-    while (isspace (*line))
-	line++;
-
-    if (!(rtn = strchr (line, '\n')))
-	return ("");
-    *rtn++ = '\0';
-    /* rtn now points to the end of the original line. */
 
     while (isspace ((unsigned char) *line))
 	line++;
@@ -1005,7 +997,7 @@ fill_hrec (line, hr)
     while (*line && strchr ("0123456789abcdefABCDEF", *line))
 	line++;
     if (*line == '\0')
-	return (rtn);
+	return;
 
     line++;
     NEXT_BAR (user);
@@ -1024,8 +1016,7 @@ fill_hrec (line, hr)
     if (strchr ("FOET", *(hr->type)))
 	hr->mod = line;
 
-    NEXT_BAR (file);	/* This returns ptr to next line or final '\0' */
-    return (rtn);	/* If it falls through, go on to next record */
+    NEXT_BAR (file);
 }
 
 
@@ -1053,12 +1044,10 @@ static void
 read_hrecs (fname)
     char *fname;
 {
-    char *cp=NULL, *cp2=NULL;
-    char *cpstart=NULL, *oldcp=NULL, *hrline=NULL;
-    int i=0;
-    int fd, hrec_end=0;
-   
-    struct hrec *hr=NULL;
+    unsigned char *cpstart, *cp, *nl;
+    char *hrline;
+    int i;
+    int fd;
     struct stat st_buf;
 
     if ((fd = CVS_OPEN (fname, O_RDONLY | OPEN_BINARY)) < 0)
@@ -1067,130 +1056,75 @@ read_hrecs (fname)
     if (fstat (fd, &st_buf) < 0)
 	error (1, errno, "can't stat history file");
 
-    /* Exactly enough space for lines data */
     if (!(st_buf.st_size))
 	error (1, 0, "history file is empty");
 
-    /*  Read a block from the file.  use feof to see if the end of file 
-        was reached.  If it was, make the last line terminated by a newline.
-        Regardless, make certain that the string has a NULL after the last 
-        char.  Use strchr to verify that there is a newline left in the 
-        stream before calling fill_hrec.  If there is not, then read in 
-        another block, unless feof has been reached. */
-
-    cpstart = xmalloc ( STAT_BLOCKSIZE(st_buf) + 1 );
+    cpstart = xmalloc (2 * STAT_BLOCKSIZE(st_buf));
+    cpstart[0] = '\0';
     cp = cpstart;
 
-    i = read (fd, cpstart, STAT_BLOCKSIZE(st_buf) );
-    
     hrec_max = HREC_INCREMENT;
-    hrec_head = (struct hrec *) xmalloc (hrec_max * sizeof (struct hrec));
+    hrec_head = xmalloc (hrec_max * sizeof (struct hrec));
 
-    while(!hrec_end){
-	char temp[1];
+    for (;;)
+    {
+	for (nl = cp; *nl && *nl != '\n'; nl++)
+	    if (!isprint(*nl)) *nl = ' ';
 
-        /* i is the actual number of bytes read from the file
-	   cp points to where we are in the buffer. 
-           cpstart points to the start of the current buffer. */
-
-    	if( i < STAT_BLOCKSIZE(st_buf)){
-	    /* We are probably at the end of the file, but just to make sure... */
-	    if(read(fd, temp,1)<1)
-	    {  /* We are definitely at the end */
-		hrec_end=1;
-	        if (*(cpstart + i - 1) != '\n')
-                {
-                    *(cpstart + i) = '\n';/* Make sure last line ends in '\n' */
-	            i++;
-                }
-	    }else{
-	        /* since we know we still have space in the buffer, just tack the 
-                   temp character on to the end of the buffer */
-		*(cpstart + i) = *temp;
-	    }
-        }
-        *(cpstart + i) = '\0'; /* make certain the block is null terminated */
-	
-
-        for (cp2 = cpstart; cp2 - cpstart < i; cp2++)
-        {
-            if (*cp2 != '\n' && !isprint ((unsigned char) *cp2))
-                *cp2 = ' ';
-        }
-
-	while(*cp)
+	if (!*nl)
 	{
-	    char *nextnewline=NULL;
-
-	    if (hrec_count == hrec_max)
+	    if (nl - cp >= STAT_BLOCKSIZE(st_buf))
 	    {
-	        struct hrec *old_head = hrec_head;
-
-	        hrec_max += HREC_INCREMENT;
-	        hrec_head = (struct hrec *) xrealloc ((char *) hrec_head,
-					   hrec_max * sizeof (struct hrec));
-	        if (hrec_head != old_head)
-	        {
-		    if (last_since_tag)
-		        last_since_tag = hrec_head + (last_since_tag -old_head);
-		    if (last_backto)
-		        last_backto = hrec_head + (last_backto - old_head);
-	        }
+		error(1, 0, "history line too long (> %d)",
+		      STAT_BLOCKSIZE(st_buf));
 	    }
-
-	    hr = hrec_head + hrec_count;
-            nextnewline = strchr(cp, '\n');
-
-	    if(nextnewline  == NULL){
-		/* There isn't a full line left to read.  Get a new block*/
-		break;
+	    if (nl > cp)
+		memmove (cpstart, cp, nl - cp);
+	    nl = cpstart + (nl - cp);
+	    cp = cpstart;
+	    i = read (fd, nl, STAT_BLOCKSIZE(st_buf));
+	    if (i > 0)
+	    {
+		nl[i] = '\0';
+		continue;
 	    }
-	    /* fill_hrec dates from when history read the entire 
-	       history file in one chunk, and then records were pulled out
-	       by pointing to the various parts of this big chunk.  This is
-	       why there are ugly hacks here:  I don't want to completely
-	       re-write the whole history stuff right now.  */
+	    if (i < 0)
+		error (1, errno, "error reading history file");
+	    if (nl == cp) break;
+	    nl[1] = '\0';
+	}
+	*nl = '\0';
 
-	    hrline = xmalloc( 2 + nextnewline - cp);
-	    memcpy(hrline, cp, (1+ nextnewline - cp));
-	    hrline[ 1 + nextnewline - cp] = 0; /*we need the trailing newline */
-	    fill_hrec (hrline, hr);
+	if (hrec_count == hrec_max)
+	{
+	    struct hrec *old_head = hrec_head;
 
-	    cp = nextnewline + 1;
-            /* cp == next line or '\0' at end of buffer */
-	    /* fill_hrec takes a copy of the information stored at cp and 
-	       points the appropriate parts of hr to parts of the copy. 
-	       after fill_hrec has passed over a portion of cp, that portion of 
-	       cp can be free'd, but we wait until we are about to suck down a 
-	       new block of the file. 
-	    */
-	    if (select_hrec (hr))
-            {
-	        hrec_count++;
-	    }
-	    else 
-            {
-		/* hr->type et. al. point into hrline.  
-		   if we aren't selecting this particular hr, 
-		   hrline can go away. */ 
-		free(hrline);
-	    }
-        }
+	    hrec_max += HREC_INCREMENT;
+	    hrec_head = xrealloc ((char *) hrec_head,
+				  hrec_max * sizeof (struct hrec));
+	    if (last_since_tag)
+		last_since_tag = hrec_head + (last_since_tag - old_head);
+	    if (last_backto)
+		last_backto = hrec_head + (last_backto - old_head);
+	}
 
-	i=0;
+	/* fill_hrec dates from when history read the entire 
+	   history file in one chunk, and then records were pulled out
+	   by pointing to the various parts of this big chunk.  This is
+	   why there are ugly hacks here:  I don't want to completely
+	   re-write the whole history stuff right now.  */
 
-	oldcp = cp;
-	i = strlen(cp);
-	cp = xmalloc(i + STAT_BLOCKSIZE(st_buf) + 1);
-	memcpy( cp , oldcp , i );
-	cp[i]=0;
-	free(cpstart);
-	cpstart = cp;
-	i += read (fd, cp + strlen(cp), STAT_BLOCKSIZE(st_buf));
+	hrline = xstrdup ((char *)cp);
+	fill_hrec (hrline, &hrec_head[hrec_count]);
+	if (select_hrec (&hrec_head[hrec_count]))
+	    hrec_count++;
+	else 
+	    free(hrline);
 
+	cp = nl + 1;
     }
-
-    close(fd);
+    free (cpstart);
+    close (fd);
 
     /* Special selection problem: If "since_tag" is set, we have saved every
      * record from the 1st occurrence of "since_tag", when we want to save
@@ -1271,11 +1205,10 @@ select_hrec (hr)
     if (since_date)
     {
 	char *ourdate = date_from_time_t (hr->date);
-
-	if (RCS_datecmp (ourdate, since_date) < 0)
-	    return (0);
-
+	count = RCS_datecmp (ourdate, since_date);
 	free (ourdate);
+	if (count < 0)
+	    return (0);
     }
     else if (*since_rev)
     {
