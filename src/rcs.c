@@ -1855,7 +1855,8 @@ linevector_add (vec, text, vers, pos)
 	    lines[i - pos].text = p + 1;
 	    lines[i - pos].vers = vers;
 	    lines[i - pos].has_newline = 0;
-	    vec->vector[i++] = &lines[i - pos];
+	    vec->vector[i] = &lines[i - pos];
+	    ++i;
 	}
     vec->nlines += nnew;
 }

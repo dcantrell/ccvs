@@ -1,3 +1,8 @@
+Wed May  1 15:15:11 1996  Tom Jarmolowski  <tjj@booklink.com>
+
+	* rcs.c (linevector_add): Move increment of i out of larger
+	statement, to avoid assumptions about evaluation order.
+
 Tue Apr 30 15:46:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.7.87.
