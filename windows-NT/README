@@ -32,7 +32,9 @@ broken.
 
 To operate in client mode, you will need GNU patch.  To do compressed
 transfers with old versions of CVS (1.8 and older), you also need
-gzip.
+gzip.  Note that you do NOT need an rsh client if you are using the
+:server: access method (which uses the internal rsh client), except
+perhaps for debugging.
 
 To operate in local mode, you will need GNU patch, GNU diffutils,
 and rcs version 5.7 installed on your system.  Make

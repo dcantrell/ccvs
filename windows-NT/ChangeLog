@@ -1,3 +1,9 @@
+Tue Dec 31 12:33:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Add note about lack of need for rsh.  I don't know if
+	this is the best place to talk about this, but many people get
+	confused by it.
+
 Sat Nov 30 15:33:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Grep is no longer required.  Specify when gzip is required.
