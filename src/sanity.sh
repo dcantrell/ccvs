@@ -19247,17 +19247,101 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # then check in your changes before I check in mine:
 	  cd yours
 	  diffmerge_create_your_files
-	  dotest diffmerge1_yours \
-	    "${testcvs} ci -m yours" \
-	    "${DOTSTAR}hecking in ${DOTSTAR}"
+          dotest diffmerge1_yours "${testcvs} -q ci -m yours" \
+"Checking in testcase01;
+${TESTDIR}/cvsroot/diffmerge1/testcase01,v  <--  testcase01
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase02;
+${TESTDIR}/cvsroot/diffmerge1/testcase02,v  <--  testcase02
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase03;
+${TESTDIR}/cvsroot/diffmerge1/testcase03,v  <--  testcase03
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase04;
+${TESTDIR}/cvsroot/diffmerge1/testcase04,v  <--  testcase04
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase05;
+${TESTDIR}/cvsroot/diffmerge1/testcase05,v  <--  testcase05
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase06;
+${TESTDIR}/cvsroot/diffmerge1/testcase06,v  <--  testcase06
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase07;
+${TESTDIR}/cvsroot/diffmerge1/testcase07,v  <--  testcase07
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase08;
+${TESTDIR}/cvsroot/diffmerge1/testcase08,v  <--  testcase08
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase09;
+${TESTDIR}/cvsroot/diffmerge1/testcase09,v  <--  testcase09
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done
+Checking in testcase10;
+${TESTDIR}/cvsroot/diffmerge1/testcase10,v  <--  testcase10
+new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+done"
 
 	  # Change my copy.  Then I
 	  # update, after both my modifications and your checkin:
 	  cd ../mine
 	  diffmerge_create_my_files
-	  dotest diffmerge1_mine \
-	    "${testcvs} update -j tag" \
-	    "${DOTSTAR}erging${DOTSTAR}"
+	  dotest diffmerge1_mine "${testcvs} -q update -j tag" \
+"M testcase01
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase01,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase01
+M testcase02
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase02,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase02
+M testcase03
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase03,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase03
+M testcase04
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase04,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase04
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase05,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase05
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase06,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase06
+M testcase07
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase07,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase07
+M testcase08
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase08,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase08
+M testcase09
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase09,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase09
+M testcase10
+RCS file: ${TESTDIR}/cvsroot/diffmerge1/testcase10,v
+retrieving revision 1\.1\.1\.1
+retrieving revision 1\.1\.1\.1\.2\.1
+Merging differences between 1\.1\.1\.1 and 1\.1\.1\.1\.2\.1 into testcase10"
 
 	  # So if your changes didn't make it into my working copy, or
 	  # in any case if the files do not look like the final text
