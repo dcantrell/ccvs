@@ -57,6 +57,7 @@ EXTRA_DIST = \
 	malloc.m4 \
 	mbstate_t.m4 \
 	mkstemp.m4 \
+	mktime.m4 \
 	nanosleep.m4 \
 	nls.m4 \
 	onceonly_2_57.m4 \
