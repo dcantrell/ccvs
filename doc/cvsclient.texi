@@ -1318,6 +1318,14 @@ specifies the working directory at the time of the operation.
 Response expected: yes.  Note that a @code{cvs release} command has
 taken place and update the history file accordingly.
 
+@item global-list-quiet \n
+Response expected: yes.  This request is a synonym for noop, but its existance
+notifies the client that a @code{-q} option to @code{list} and @code{rlist}
+will be rejected.  This, in a reverse-logic sort of way, is here so that when
+it @emph{isn't} received, as for instance from CVSNT, the client will know that
+the quiet option has to be sent as a command option rather than a global
+option.
+
 @item noop \n
 Response expected: yes.  This request is a null command in the sense
 that it doesn't do anything, but merely (as with any other requests
