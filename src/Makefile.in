@@ -107,7 +107,7 @@ installcheck:
 .PHONY: installcheck
 
 check: all
-	if [ -d ../../rcs/src ] ; then \
+	if [ -x ../../rcs/src/rcs ] ; then \
 		RCSBIN=`pwd`/../../rcs/src ; \
 		export RCSBIN ; \
 	fi ; \
@@ -135,7 +135,7 @@ clean:
 .PHONY: clean
 
 distclean: clean
-	rm -f tags TAGS Makefile
+	rm -f tags TAGS Makefile options.h
 .PHONY: distclean
 
 realclean: distclean
