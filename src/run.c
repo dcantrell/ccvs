@@ -14,6 +14,10 @@
 
 #include "cvs.h"
 
+#ifndef HAVE_UNISTD_H
+extern int execvp PROTO((char *file, char **argv));
+#endif
+
 static void run_add_arg PROTO((const char *s));
 
 extern char *strtok ();
@@ -372,8 +376,6 @@ run_popen (cmd, mode)
 
     return (popen (cmd, mode));
 }
-
-extern int evecvp PROTO((char *file, char **argv));
 
 int
 piped_child (command, tofdp, fromfdp)
