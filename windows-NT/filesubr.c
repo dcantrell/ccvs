@@ -363,15 +363,6 @@ xchmod (fname, writable)
 }
 
 
-/* Read the value of a symbolic link.
-   Under Windows NT, this function always returns EINVAL.  */
-int
-readlink (char *path, char *buf, int buf_size)
-{
-    errno = EINVAL;
-    return -1;
-}
-
 /* Rename for NT which works for read only files.  Apparently if we are
    accessing FROM and TO via a Novell network, this is an issue.  */
 int
