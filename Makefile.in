@@ -45,7 +45,7 @@ DEFS = @DEFS@
 LIBS = @LIBS@
 
 INCLUDES = -I. -I../lib @includeopt@
-CFLAGS = -g
+CFLAGS = @CFLAGS@
 LDFLAGS = $(CDEBUG)
 
 MAKEINFO = makeinfo
