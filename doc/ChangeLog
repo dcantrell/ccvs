@@ -3,7 +3,7 @@
 	* cvs.texinfo (ls, ls options, ls examples): Document
 	new ls command.
 	(Original patch from Mark D. Baushke <mdb@cvshome.org>.)
-	* cvsclient.texi:
+	* cvsclient.texi (list, ls, rlist): New requests.
 	* stamp-1, version-client.texi: Regenerated.
 
 2004-04-23  Derek Price  <derek@ximbiot.com>
