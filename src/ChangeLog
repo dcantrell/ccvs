@@ -1,3 +1,10 @@
+27 Dec 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* zlib.c, server.h (gunzip_and_write): New function.
+	* client.c (update_entries): Call it instead of a gunzip subprocess.
+	* zlib.c, server.h (read_and_gzip): New function.
+	* client.c (send_modified): Call it instead of a gzip subprocess.
+
 Sat Dec 27 13:07:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Decrease RCS_deltas memory usage to what we need (approximately
