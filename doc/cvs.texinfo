@@ -4679,7 +4679,10 @@ Examples of valid date specifications include:
 @code{diff}, @code{export}, @code{history},
 @code{rdiff}, @code{rtag}, and @code{update} commands.
 (The @code{history} command uses this option in a
-slightly different way; @pxref{history options}).
+slightly different way; @pxref{history options}).  Note
+that when specifying a date like @samp{3/31/92} it is
+@code{@var{month}/@var{day}/@var{year}}.  So
+@samp{1/4/96} is January 4, not March 1.
 
 Remember to quote the argument to the @samp{-D}
 flag so that your shell doesn't interpret spaces as
