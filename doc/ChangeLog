@@ -1,3 +1,8 @@
+Mon Jul  7 12:04:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File permissions): Rewrite paragraph on setuid to
+	be more verbose and less unix-specific.
+
 Sat Jul  5 03:16:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Connection and Authentication): When we said to

@@ -1265,9 +1265,18 @@ of @sc{cvs}; do not rely on the setting of
 @code{CVSUMASK} on the client having no effect.
 @c FIXME: need to explain what a umask is or cite
 @c someplace which does.
+@c 
+@c There is also a larger (largely separate) issue
+@c about the meaning of CVSUMASK in a non-unix context.
+@c For example, whether there is
+@c an equivalent which fits better into other
+@c protection schemes like POSIX.6, VMS, &c.
+@c 
 @c FIXME: Need one place which discusses this
 @c read-only files thing.  Why would one use -r or
-@c CVSREAD?  Why would one use watches?  How do they interact?
+@c CVSREAD?  Why would one use watches?  How do they
+@c interact?
+@c 
 @c FIXME: We need to state
 @c whether using CVSUMASK removes the need for manually
 @c fixing permissions (in fact, if we are going to mention
@@ -1282,16 +1291,25 @@ authentication security}.
 @cindex setuid
 @cindex setgid
 @cindex security, setuid
-Since @sc{cvs} was not written to be run setuid, it is
-unsafe to try to run it setuid.  You cannot use the
-setuid features of @sc{rcs} together with @sc{cvs}.
-@c FIXME: This should be moved to a "Unix permissions"
-@c node analogous to the "Windows permissions" node.
-@c Same for CVSUMASK, maybe, although the meaning of
-@c CVSUMASK in a non-unix context is a larger issue.
-@c For example, whether there is
-@c an equivalent which fits better into other
-@c protection schemes like POSIX.6, VMS, &c.
+@cindex installed images (VMS)
+Some operating systems have features which allow a
+particular program to run with the ability to perform
+operations which the caller of the program could not.
+For example, the set user ID (setuid) or set group ID
+(setgid) features of unix or the installed image
+feature of VMS.  CVS was not written to use such
+features and therefore attempting to install CVS in
+this fashion will provide protection against only
+accidental lapses; anyone who is trying to circumvent
+the measure will be able to do so, and depending on how
+you have set it up may gain access to more than just
+CVS.  You may wish to instead consider pserver.  It
+shares some of the same attributes, in terms of
+possibly providing a false sense of security or opening
+security holes wider than the ones you are trying to
+fix, so read the documentation on pserver security
+carefully if you are considering this option
+(@ref{Password authentication security}).
 
 @node Windows permissions
 @subsection File Permission issues specific to Windows
