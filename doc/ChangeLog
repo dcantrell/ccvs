@@ -1,3 +1,8 @@
+2004-05-14  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Adding files): Cleanup example.
+	(Using keywords): Cleanup text.
+
 2004-05-13  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Adding files): Minor cleanup.
