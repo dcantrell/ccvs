@@ -7784,6 +7784,9 @@ Use @var{tempdir} as the directory where temporary files are
 located.  Overrides the setting of the @code{$TMPDIR} environment
 variable and any precompiled directory.  This parameter should be
 specified as an absolute pathname.
+(When running client/server, @samp{-T} affects only the local process;
+specifying @samp{-T} for the client has no effect on the server and
+vice versa.)
 
 @cindex CVSROOT, overriding
 @cindex Overriding CVSROOT
@@ -12982,9 +12985,12 @@ when @code{:ext:} access method is specified.
 @item $CVS_SERVER
 Used in client-server mode when accessing a remote
 repository using @sc{rsh}.  It specifies the name of
-the program to start on the server side when accessing
-a remote repository using @sc{rsh}.  The default value
-is @code{cvs}.  @pxref{Connecting via rsh}
+the program to start on the server side (and any
+necessary arguments) when accessing a remote repository
+using the @code{:ext:}, @code{:fork:}, or @code{:server:} access methods.
+The default value for @code{:ext:} and @code{:server:} is @code{cvs};
+the default value for @code{:fork:} is the name used to run the client.
+@pxref{Connecting via rsh}
 
 @item $CVS_PASSFILE
 Used in client-server mode when accessing the @code{cvs

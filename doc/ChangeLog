@@ -1,3 +1,11 @@
+2001-06-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Global options): Note that -T only affects the local
+	process in client/server mode.
+	(Environment variables): Note that CVS_SERVER can include arguments
+	as well as a program name, and note that it applies to :fork: as well
+	as to :ext: and :server:, although the default value is different.
+
 2001-06-08  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (config): Mention using LockDir on in-memory
