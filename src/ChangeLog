@@ -1,5 +1,8 @@
 Wed Apr 10 16:46:54 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h.in: Include relevant information here rather than
+	citing (former) FAQ.
+
 	* ChangeLog-9395: Fix typo in introductory paragraph.
 
 Wed Apr 10 14:55:10 1996  code by Mike Spengler  mks@msc.edu
