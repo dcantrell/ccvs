@@ -1,5 +1,8 @@
 Wed Oct 22 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (rcs_lockfilename): Allocate enough memory for terminating
+	'\0'.
+
 	* admin.c (admin_fileproc): Don't support '-' for ranges in "cvs
 	admin -o".
 	(admin): Adjust comment.

@@ -6067,7 +6067,7 @@ rcs_lockfilename (rcsfile)
 
     /* Create the lockfile name. */
     rcslen = strlen (rcsfile);
-    lockfile = (char *) xmalloc (rcslen);
+    lockfile = (char *) xmalloc (rcslen + 10);
     rcsbase = last_component (rcsfile);
     rcsend = rcsfile + rcslen - sizeof(RCSEXT);
     for (lockp = lockfile, rcsp = rcsfile; rcsp < rcsbase; ++rcsp)
