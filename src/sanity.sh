@@ -611,7 +611,7 @@ $CVS_RSH \
 	 "TMPDIR='\$TMPDIR';" \
 	 "export CVS_SECONDARY_LOG TMPDIR;" \
 	 "CVS_RSH='$TESTDIR/ssh-wrapper';" \
-	 "export CVS_SECONDARY_LOG ;" \
+	 "export CVS_RSH;" \
 	 $time \
 	 \${1+"\$@"}
 EOF
