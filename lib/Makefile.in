@@ -691,6 +691,7 @@ all-local $(lib_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
+
 # We need the following in order to create an <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)

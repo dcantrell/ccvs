@@ -80,9 +80,11 @@ libcvs_a_SOURCES += exit.h
 ## For GNULIB's exitfail module.
 libcvs_a_SOURCES += exitfail.h exitfail.c
 
-## For GNULIB's fnmatch module.
+## For GNULIB's fnmatch-posix module.
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
+
+## For GNULIB's fnmatch module.
 # We need the following in order to create an <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 all-local $(libcvs_a_OBJECTS): $(FNMATCH_H)
