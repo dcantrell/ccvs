@@ -91,6 +91,18 @@ else
 \)*'
 fi
 
+# Cause NextStep 3.3 users to lose in a more graceful fashion.
+if expr 'abc
+def' : 'abc
+def' >/dev/null; then
+  : good, it works
+else
+  echo 'Running these tests requires an "expr" program that can handle'
+  echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
+  echo 'not all vendor-supplied versions) is in your path.'
+  exit 1
+fi
+
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
