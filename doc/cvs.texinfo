@@ -10393,9 +10393,15 @@ person that is responsible for this module.
 Specify a program @var{prog} to run whenever files in a
 module are tagged with @code{rtag}.  @var{prog} runs
 with two arguments: the module name and the symbolic
-tag specified to @code{rtag}.  There is no way to
-specify a program to run when @code{tag} is executed.
+tag specified to @code{rtag}.  It is not run
+when @code{tag} is executed.  Generally you will find
+that taginfo is a better solution (@pxref{user-defined logging}).
 @c FIXME: Is it run on server? client?
+@c Problems with -t include:
+@c * It is run after the tag not before
+@c * It doesn't get passed all the information that
+@c   taginfo does ("mov", &c).
+@c * It only is run for rtag, not tag.
 
 @cindex Update program
 @item -u @var{prog}
@@ -10405,6 +10411,11 @@ checked-out module.  @var{prog} runs with a single
 argument, the full path to the source repository for
 this module.
 @c FIXME: Is it run on server? client?
+@c One drawback of -u and -i are that CVS/Update.prog
+@c and CVS/Checkin.prog only get updated on initial
+@c checkout, and don't get updated if the modules file
+@c changes.  Also, the user can edit them, which means
+@c they are no good for security-type stuff.
 @end table
 @end table
 
