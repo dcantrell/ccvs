@@ -1634,6 +1634,8 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (client/server)'
 	  dotest basica-1a0 "${testcvs} -q update" ''
 	  dotest basica-1a1 "${testcvs} -q diff -c" ''
 	  dotest basica-1a2 "${testcvs} -q status" ''
+	  dotest basica-1a3 "${testcvs} -q update ." ''
+	  dotest basica-1a4 "${testcvs} -q update ./" ''
 
 	  mkdir sdir
 	  # Remote CVS gives the "cannot open CVS/Entries" error, which is
@@ -1720,7 +1722,7 @@ done"
 	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
 "${PROG}"' [a-z]*: nothing known about `nonexist'\''
 '"${PROG}"' \[[a-z]* aborted\]: correct above errors first!'
-	  dotest basica-8 "${testcvs} -q update" ''
+	  dotest basica-8 "${testcvs} -q update ." ''
 
 	  # Test the -f option to ci
 	  cd sdir/ssdir
@@ -1755,7 +1757,7 @@ ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 3\.1\.2\.1; previous revision: 3\.1
 done"
 	  # now get rid of the sticky tag and go back to the trunk
-	  dotest basica-8a5 "${testcvs} -q up -A" "[UP] ssfile"
+	  dotest basica-8a5 "${testcvs} -q up -A ./" "[UP] ssfile"
 
 	  cd ../..
 	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \
@@ -1800,7 +1802,7 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: delete; previous revision: 3\.1
 done"
-	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ssfile >ssfile" ""
+	  dotest basica-r3 "${testcvs} -q up -p -r 3.1 ./ssfile >ssfile" ""
 	  dotest basica-r4 "${testcvs} add ssfile" \
 "${PROG} [a-z]*: re-adding file ssfile (in place of dead revision 3\.2)
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
@@ -1875,7 +1877,7 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 add-it
 ============================================================================="
-	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ssfile" "ssfile"
+	  dotest basica-o8 "${testcvs} -q update -p -r 1.1 ./ssfile" "ssfile"
 	  cd ../..
 
 	  cd ..
@@ -2071,7 +2073,7 @@ sfile2 starts"
 "U sub1/sub2/Emptydir/sfile1
 U sub1/sub2/sdir2/sfile2"
 	  cd sub1
-	  dotest basicb-12 "${testcvs} -q update" ''
+	  dotest basicb-12 "${testcvs} -q update ./." ''
 	  touch xx
 	  dotest basicb-13 "${testcvs} add xx" fixme
 	  cd ..

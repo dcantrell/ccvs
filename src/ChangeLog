@@ -1,3 +1,10 @@
+2001-06-25  Larry Jones  <larry.jones@sdrc.com>
+
+	* recurse.c (start_recursion): Deal with at least some of the cases
+	where trailing slashes cause confusion.
+	(Reported by Malcolm Fernandes <fernande@redback.com>.)
+	* sanity.sh (basica, basicb): Tweak existing tests to check this.
+
 2001-06-22  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (modules5): New tests with -d on command line.

@@ -247,7 +247,14 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	   directories. */
 
 	if (!wrap_name_has (argv[i], WRAP_TOCVS) && isdir (argv[i]))
+	{
+	    /* remove trailing slashes to prevent confusion */
+	    char *p = argv[i] + strlen(argv[i]);
+	    while (p > argv[i] && ISDIRSEP(p[-1]))
+		--p;
+	    *p = '\0';
 	    addlist (&dirlist, argv[i]);
+	}
 	else
 	{
 	    /* otherwise, split argument into directory and component names. */
