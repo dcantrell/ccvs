@@ -835,9 +835,23 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     parse_config (current_parsed_root->directory);
 
     /* At this point we have enough information to determine if we are a
-     * secondary server or not.  Disable the log if we are not.
+     * secondary server or not.
      */
-    if (!isSecondaryServer ()) log_buffer_disable (secondary_log);
+    if (isSecondaryServer ())
+    {
+	if (!secondary_log)
+	    /* Exit with an error since we must have failed to open the
+	     * secondary log in server().
+	     */
+	    error (1, 0, "No secondary log found for write proxy.");
+    }
+    else
+    {
+	/* We are not a secondary server.  Disable the log if it was created -
+	 * there is no longer a good reason to waste CPU and IO cycles on it.
+	 */
+	if (secondary_log) log_buffer_disable (secondary_log);
+    }
 
     path = xmalloc (strlen (current_parsed_root->directory)
 		   + sizeof (CVSROOTADM)
@@ -5235,12 +5249,34 @@ server (int argc, char **argv)
      * secondary or primary.
      */
     {
-	FILE *fp = cvs_temp_file (&secondary_log_name);
-	if (!fp)
-	    error (1, errno, "Failed to open writeproxy log.");
-	buf_from_net = log_buffer_initialize (buf_from_net, fp,
-                                              true, true, outbuf_memory_error);
-	secondary_log = buf_from_net;
+	FILE *fp;
+
+	/* This has to be in a critical section since an interrupt can cause
+	 * server_cleanup() to be called while this function is running.
+	 * server_cleanup() can then attempt to dispose of the secondary log
+	 * via secondary_log_name, the contents of which is undefined if
+	 * cvs_temp_file() returns an error.
+	 */
+	SIG_beginCrSect();
+	fp = cvs_temp_file (&secondary_log_name);
+	if (!fp) secondary_log_name = NULL;
+	SIG_endCrSect();
+
+	if (fp)
+	{
+	    /* The secondary log was successfully opened.  Store this info.  */
+	    buf_from_net = log_buffer_initialize (buf_from_net, fp, true, true,
+	                                          outbuf_memory_error);
+	    secondary_log = buf_from_net;
+	}
+	else
+	{
+	    /* This error is not fatal... if we failed to open the log though,
+	     * this fact will cause a fatal error later in serve_root() if we
+	     * discover that we are actually a secondary server.
+	     */
+	    error (0, errno, "Failed to open writeproxy log.");
+	}
     }
 
     saved_output = buf_nonio_initialize (outbuf_memory_error);

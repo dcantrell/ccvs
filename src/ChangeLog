@@ -1,5 +1,13 @@
 2004-06-22  Derek Price  <derek@ximbiot.com>
 
+	* server.c (server): Move previously fatal error on failure to open a
+	secondary log to...
+	(serve_root): ...here, and only when we discover we are actually a
+	secondary server.
+	(server): Ensure an interrupt cannot dump core.
+
+2004-06-22  Derek Price  <derek@ximbiot.com>
+
 	Enable the writeproxy log and turn it off when we determine we are not
 	running as a secondary server.
 
