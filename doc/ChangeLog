@@ -1,3 +1,7 @@
+Thu Feb 29 10:08:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (cvsignore): Document additions to default ignore list.
+
 Mon Feb 26 13:48:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Filenames): New node, documents / vs \, etc.
