@@ -60,6 +60,7 @@ libcvs_a_SOURCES = \
 	regex.h \
 	savecwd.h \
 	system.h \
+	unlocked-io.h \
 	wait.h \
 	xselect.h \
 	xtime.h
@@ -70,8 +71,10 @@ libcvs_a_SOURCES = \
 ##     fnmatch.h
 ##     ftruncate.c
 ##     gethostname.c
+##     malloc.c
 ##     memmove.c
 ##     mkdir.c
+##     realloc.c
 ##     rename.c
 ##     strstr.c
 ##     strerror.c

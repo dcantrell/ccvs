@@ -48,6 +48,9 @@
 #endif /* HAVE_UNISTD_H */
 /* End the default set of autoconf includes */
 
+/* This include enables the use of the *_unlocked IO functions from glibc. */
+#include "unlocked-io.h"
+
 #ifdef STAT_MACROS_BROKEN
 #undef S_ISBLK
 #undef S_ISCHR
