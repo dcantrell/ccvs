@@ -5049,19 +5049,25 @@ error ENOMEM Virtual memory exhausted.\n");
 		pending_error = status;
 	    }
 #ifndef CHMOD_BROKEN
-	    else
+	    else if (chmod (server_temp_dir, S_IRWXU) < 0)
 	    {
-		if (chmod (server_temp_dir, S_IRWXU) < 0)
-		{
-		    int save_errno = errno;
-		    if (alloc_pending (80 + strlen (server_temp_dir)))
-			sprintf (pending_error_text,
+		int save_errno = errno;
+		if (alloc_pending (80 + strlen (server_temp_dir)))
+		    sprintf (pending_error_text,
 "E cannot change permissions on temporary directory %s",
-				server_temp_dir);
-		    pending_error = save_errno;
-		}
+			     server_temp_dir);
+		pending_error = save_errno;
 	    }
 #endif
+	    else if (CVS_CHDIR (server_temp_dir) < 0)
+	    {
+		int save_errno = errno;
+		if (alloc_pending (80 + strlen (server_temp_dir)))
+		    sprintf (pending_error_text,
+"E cannot change to temporary directory %s",
+			     server_temp_dir);
+		pending_error = save_errno;
+	    }
 	}
     }
 

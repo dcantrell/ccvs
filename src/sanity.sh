@@ -8076,6 +8076,8 @@ args: ${CVSROOT_DIRNAME}/first-dir/subdir"
 Are you sure you want to release (and delete) directory .realmodule.: "
 	  dotest modules5-15 "${testcvs} -q rtag -Dnow MYTAG realmodule" \
 "tag script invoked in ${TESTDIR}/1
+args: realmodule MYTAG" \
+"tag script invoked in $tmp/cvs-serv[0-9a-z]*
 args: realmodule MYTAG"
 	  if test "$remote" = "yes"; then
 	    dotest modules5-16 "${testcvs} -q export -r MYTAG realmodule" \
