@@ -938,7 +938,7 @@ save_file (char *dir, char *name, char *module)
 	if (name && *name)
 	    fl->l_file = Xasprintf ("%s/%s", dir, name);
 	else
-	    fl->l_file = Xasprintf ("*%s", name);
+	    fl->l_file = Xasprintf ("*%s", dir);
     }
     else
     {
