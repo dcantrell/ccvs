@@ -370,7 +370,7 @@ int RCS_checkin PROTO ((char *rcsfile, char *workfile, char *message,
 
 DBM *open_module PROTO((void));
 FILE *open_file PROTO((const char *, const char *));
-List *Find_Directories PROTO((char *repository, int which));
+List *Find_Directories PROTO((char *repository, int which, List *entries));
 void Entries_Close PROTO((List *entries));
 List *Entries_Open PROTO((int aflag));
 char *Make_Date PROTO((char *rawdate));

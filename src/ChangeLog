@@ -1,5 +1,12 @@
 Sat Jun 29 20:23:50 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* find_names.c (Find_Directories): Add entries parameter, and pass
+	it to find_dirs.
+	(find_dirs): Add entries parameter, and skip all files it names.
+	* cvs.h (Find_Directories): Update declaration.
+	* recurse.c (start_recursion): Pass NULL to Find_Directories.
+	(do_recursion): Pass entries to Find_Directories.
+
 	* client.c (send_modified): Add trace output.
 
 	* diff.c (diff_fileproc): Always call diff_file_nodiff.  Handle

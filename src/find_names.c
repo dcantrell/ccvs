@@ -18,7 +18,8 @@
 
 #include "cvs.h"
 
-static int find_dirs PROTO((char *dir, List * list, int checkadm));
+static int find_dirs PROTO((char *dir, List * list, int checkadm,
+			    List *entries));
 static int find_rcs PROTO((char *dir, List * list));
 
 static List *filelist;
@@ -109,9 +110,10 @@ Find_Names (repository, which, aflag, optentries)
  * create a list of directories to traverse from the current directory
  */
 List *
-Find_Directories (repository, which)
+Find_Directories (repository, which, entries)
     char *repository;
     int which;
+    List *entries;
 {
     List *dirlist;
 
@@ -122,7 +124,7 @@ Find_Directories (repository, which)
     if (which & W_LOCAL)
     {
 	/* look only for CVS controlled sub-directories */
-	if (find_dirs (".", dirlist, 1) != 0)
+	if (find_dirs (".", dirlist, 1, entries) != 0)
 	    error (1, errno, "cannot open current directory");
     }
 
@@ -130,7 +132,7 @@ Find_Directories (repository, which)
     if ((which & W_REPOS) && repository)
     {
 	/* search the repository */
-	if (find_dirs (repository, dirlist, 0) != 0)
+	if (find_dirs (repository, dirlist, 0, entries) != 0)
 	    error (1, errno, "cannot open directory %s", repository);
 
 #ifdef ATTIC_DIR_SUPPORT		/* XXX - FIXME */
@@ -140,7 +142,7 @@ Find_Directories (repository, which)
 	    char dir[PATH_MAX];
 
 	    (void) sprintf (dir, "%s/%s", repository, CVSATTIC);
-	    (void) find_dirs (dir, dirlist, 0);
+	    (void) find_dirs (dir, dirlist, 0, entries);
 	}
 #endif
     }
@@ -189,15 +191,18 @@ find_rcs (dir, list)
 }
 
 /*
- * Finds all the subdirectories of the argument dir and adds them to the
- * specified list.  Sub-directories without a CVS administration directory
- * are optionally ignored  Returns 0 for success or 1 on error.
+ * Finds all the subdirectories of the argument dir and adds them to
+ * the specified list.  Sub-directories without a CVS administration
+ * directory are optionally ignored.  If ENTRIES is not NULL, all
+ * files on the list are ignored.  Returns 0 for success or 1 on
+ * error.
  */
 static int
-find_dirs (dir, list, checkadm)
+find_dirs (dir, list, checkadm, entries)
     char *dir;
     List *list;
     int checkadm;
+    List *entries;
 {
     Node *p;
     char tmp[PATH_MAX];
@@ -216,6 +221,9 @@ find_dirs (dir, list, checkadm)
 	    strcmp (dp->d_name, CVSATTIC) == 0 ||
 	    strcmp (dp->d_name, CVSLCK) == 0 ||
 	    strcmp (dp->d_name, CVSREP) == 0)
+	    continue;
+
+	if (entries != NULL && findnode (entries, dp->d_name) != NULL)
 	    continue;
 
 #ifdef DT_DIR
