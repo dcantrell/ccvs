@@ -164,11 +164,6 @@ $GNULIB/m4/tzset.m4				m4		no NI
 # $GNULIB/modules/unlocked-io
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/unlocked-io.m4			m4		no NI
-# $GNULIB/modules/xalloc
-$GNULIB/lib/xalloc.h				lib		no NI
-$GNULIB/lib/xmalloc.c				lib		no NI
-$GNULIB/lib/xstrdup.c				lib		yes NI
-$GNULIB/m4/xalloc.m4				m4		no NI
 
 
 
