@@ -16291,7 +16291,9 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 
 	  mkdir $TESTDIR/unwritable
 	  chmod a-w $TESTDIR/unwritable
-          save_CVS_CLIENT_LOG=$CVS_CLIENT_LOG
+	  if test -n "$CVS_CLIENT_LOG"; then
+              save_CVS_CLIENT_LOG=$CVS_CLIENT_LOG
+	  fi
 	  CVS_CLIENT_LOG=$TESTDIR/unwritable/cvsclientlog
 	  export CVS_CLIENT_LOG
 
@@ -16302,7 +16304,10 @@ $CPROG checkout: opening from-server logfile $TESTDIR/unwritable/cvsclientlog.ou
 
 	  dokeep
 	  rm -rf $TESTDIR/unwritable
-	  CVS_CLIENT_LOG=$save_CVS_CLIENT_LOG
+	  unset CVS_CLIENT_LOG
+	  if test -n "$save_CVS_CLIENT_LOG"; then
+	      CVS_CLIENT_LOG=$save_CVS_CLIENT_LOG
+	  fi
 	  ;;
 
 
