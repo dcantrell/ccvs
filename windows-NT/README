@@ -6,7 +6,7 @@ Check the ../INSTALL file for information on the most recent version
 of CVS which has been known to be tested with NT.
 
 This port implements the full set of CVS commands, both local and
-server.
+client.  It does not provide a CVS server for NT.
 
 We don't distribute a .ZIP source distribution partly because, as far
 as I can tell, PKZIP insists on munging long file names, which would
@@ -18,7 +18,7 @@ the sources get extracted without carriage returns and you must add
 carriage returns to the end of every line in cvsnt.mak.  I also had to
 add them to src/server.c.  It doesn't seem to be necessary to add them
 to any other file.  This makefile was generated with Visual C++ 2.1.
-As far as is known, it should work with Visual C++ 4,0 also.
+As far as is known, it should work with Visual C++ 4.0 also.
 
 Send bug reports to bug-cvs@prep.ai.mit.edu.
 
@@ -28,7 +28,7 @@ limitation in the NT command shell.  sanity.sh provides pretty minimal
 feature coverage, but still gives me some confidence it isn't totally
 broken.
 
-To operate in server mode, you will need GNU patch.  gzip is useful
+To operate in client mode, you will need GNU patch.  gzip is useful
 but not required.
 
 To operate in local mode, you will need GNU patch, GNU diffutils, a
@@ -36,7 +36,7 @@ version of grep, and rcs version 5.7 installed on your system.  Make
 sure NOT to get a version of rcs less than 5.7 (gr564bnt.zip was
 particularly bad), because those versions insist on putting their
 files in their own directory structure, making them incompatible with
-CVS.system.
+CVS.
 
 Noel Cragg, who did the latest mods to the Windows NT port, used the
 following packages:
