@@ -1,3 +1,8 @@
+Fri Jan 31 12:49:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh: Add modules3 and big to list of tests to run
+	by default; they were omitted by accident.
+
 Thu Jan 30 11:46:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c, main.c, mkmodules.c, modules.c, parseinfo.c, patch.c:

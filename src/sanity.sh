@@ -451,7 +451,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos rcs"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big"
 else
 	tests="$*"
 fi
