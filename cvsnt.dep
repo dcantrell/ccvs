@@ -1,7 +1,6 @@
 # Microsoft Developer Studio Generated Dependency File, included by cvsnt.mak
 
 .\src\add.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -25,7 +24,6 @@
 	
 
 .\src\admin.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -47,7 +45,6 @@
 	
 
 .\src\annotate.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -69,7 +66,6 @@
 	
 
 .\src\buffer.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -91,7 +87,6 @@
 	
 
 .\src\checkin.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -115,7 +110,6 @@
 	
 
 .\src\checkout.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -137,7 +131,6 @@
 	
 
 .\src\classify.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -159,7 +152,6 @@
 	
 
 .\src\client.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\md5.h"\
@@ -185,7 +177,6 @@
 	
 
 .\src\commit.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -211,7 +202,6 @@
 	
 
 .\src\create_adm.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -233,7 +223,6 @@
 	
 
 .\src\cvsrc.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -256,7 +245,6 @@
 	
 
 .\src\diff.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -278,7 +266,6 @@
 	
 
 .\src\edit.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -304,7 +291,6 @@
 	
 
 .\src\entries.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -327,7 +313,6 @@
 	
 
 .\src\error.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -349,7 +334,6 @@
 	
 
 .\src\expand_path.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -371,7 +355,6 @@
 	
 
 .\src\fileattr.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -395,7 +378,6 @@
 	
 
 ".\windows-NT\filesubr.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -418,7 +400,6 @@
 	
 
 .\src\find_names.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -440,7 +421,6 @@
 	
 
 .\src\hash.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -462,7 +442,6 @@
 	
 
 .\src\history.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -486,7 +465,6 @@
 	
 
 .\src\ignore.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -509,7 +487,6 @@
 	
 
 .\src\import.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -536,7 +513,6 @@
 	
 
 .\src\lock.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -558,7 +534,6 @@
 	
 
 .\src\log.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -580,7 +555,6 @@
 	
 
 .\src\login.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -603,7 +577,6 @@
 	
 
 .\src\logmsg.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -626,7 +599,6 @@
 	
 
 .\src\main.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -648,7 +620,6 @@
 	
 
 ".\windows-NT\mkdir.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -670,7 +641,6 @@
 	
 
 .\src\mkmodules.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -695,7 +665,6 @@
 	
 
 .\src\modules.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -718,7 +687,6 @@
 	
 
 .\src\myndbm.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -745,7 +713,6 @@
 	
 
 .\src\no_diff.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -767,7 +734,6 @@
 	
 
 .\src\parseinfo.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -790,7 +756,6 @@
 	
 
 .\src\patch.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -817,7 +782,6 @@
 	
 
 ".\windows-NT\rcmd.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -840,7 +804,6 @@
 	
 
 .\src\rcs.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -865,7 +828,6 @@
 
 .\src\rcscmds.c : \
 	".\diff\diffrun.h"\
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -887,7 +849,6 @@
 	
 
 .\src\recurse.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -912,7 +873,6 @@
 	
 
 .\src\release.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -936,7 +896,6 @@
 	
 
 .\src\remove.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -958,7 +917,6 @@
 	
 
 .\src\repos.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -981,7 +939,6 @@
 	
 
 .\src\root.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1004,7 +961,6 @@
 	
 
 ".\windows-NT\run.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1026,7 +982,6 @@
 	
 
 .\src\scramble.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1048,7 +1003,6 @@
 	
 
 .\src\server.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1077,7 +1031,6 @@
 	
 
 .\src\stack.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1099,7 +1052,6 @@
 	
 
 ".\windows-NT\startserver.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1122,7 +1074,6 @@
 	
 
 .\src\status.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1144,7 +1095,6 @@
 	
 
 .\src\subr.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1167,7 +1117,6 @@
 	
 
 .\src\tag.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\savecwd.h"\
@@ -1190,7 +1139,6 @@
 	
 
 .\src\update.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1218,7 +1166,6 @@
 	
 
 .\src\vers_ts.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1240,7 +1187,6 @@
 	
 
 .\src\version.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1266,7 +1212,6 @@
 	
 
 .\src\watch.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1291,7 +1236,6 @@
 	
 
 ".\windows-NT\woe32.c" : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
@@ -1313,7 +1257,6 @@
 	
 
 .\src\wrapper.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getline.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
@@ -1336,7 +1279,6 @@
 	
 
 .\src\zlib.c : \
-	".\lib\fnmatch.h"\
 	".\lib\getopt.h"\
 	".\lib\regex.h"\
 	".\lib\system.h"\
