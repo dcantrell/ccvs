@@ -1,3 +1,7 @@
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c: s/PROTO/.
+
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate for new configure.in.
