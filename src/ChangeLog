@@ -1,3 +1,7 @@
+2005-03-12  Mark D. Baushke  <mdb@cvshome.org>
+
+	* history.c (save_file): Bug fix from last change.
+
 2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
 
 	* update.c (get_linkinfo_proc): Use Xasprintf instead of
