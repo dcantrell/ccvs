@@ -29,7 +29,6 @@ Name_Repository (dir, update_dir)
     char tmp[PATH_MAX];
     char cvsadm[PATH_MAX];
     char *cp;
-    int has_cvsadm = 0;
 
     if (update_dir && *update_dir)
 	xupdate_dir = update_dir;
@@ -42,7 +41,7 @@ Name_Repository (dir, update_dir)
 	(void) strcpy (cvsadm, CVSADM);
 
     /* sanity checks */
-    if (!(has_cvsadm = isdir (cvsadm)))
+    if (!isdir (cvsadm))
     {
 	error (0, 0, "in directory %s:", xupdate_dir);
 	error (1, 0, "there is no version here; do '%s checkout' first",
