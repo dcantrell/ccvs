@@ -566,6 +566,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
+	tests="${tests} mkmodules-temp-file-removal"
 	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2"
@@ -7074,6 +7075,30 @@ add-it
 	  rm -r 1
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	mkmodules-temp-file-removal)
+	  # When a file listed in checkoutlist doesn't exist, cvs-1.10.4
+	  # would fail to remove the CVSROOT/.#[0-9]* temporary file it
+	  # creates while mkmodules is in the process of trying to check
+	  # out the missing file.
+
+	  mkdir 1; cd 1
+	  dotest mtfr-1 "${testcvs} -Q co CVSROOT" ''
+	  cd CVSROOT
+	  echo no-such-file >> checkoutlist
+	  dotest mtfr-2 "${testcvs} -Q ci -m. checkoutlist" \
+"Checking in checkoutlist;
+$CVSROOT_DIRNAME/CVSROOT/checkoutlist,v  <--  checkoutlist
+new revision: 1\.2; previous revision: 1\.1
+done
+$PROG [a-z]*: Rebuilding administrative file database"
+
+	  dotest_fail mtfr-3 "ls $CVSROOT_DIRNAME/CVSROOT/.#[0-9]*" \
+	    "ls: $CVSROOT_DIRNAME/CVSROOT/\.#\[0-9\]\*: .*"
+
+	  cd ../..
+	  rm -rf 1
 	  ;;
 
 	cvsadm)
