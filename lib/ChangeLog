@@ -1,3 +1,8 @@
+Tue Feb 17 18:33:26 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* memmove.c: New file, resurrecting the old one.
+	* Makefile.in (SOURCES): Add memmove.c.
+
 1998-02-03  Tim Pierce  <twp@skepsis.com>
 
 	* system.h (CVS_LSTAT): New macro.
