@@ -7143,7 +7143,7 @@ suppressed.
 
 @cindex read-only files, and -r
 @item -r
-Make new working files files read-only.  Same effect
+Make new working files read-only.  Same effect
 as if the @code{$CVSREAD} environment variable is set
 (@pxref{Environment variables}).  The default is to
 make working files writable, unless watches are on
@@ -9930,13 +9930,13 @@ options}.
 Do not change any files.  See @ref{Global options}.
 
 @item -Q
-Cause the command to be really quiet.  See @ref{Global options}.
+Be really quiet.  See @ref{Global options}.
 
 @item -q
-Cause the command to be somewhat quiet.  See @ref{Global options}.
+Be somewhat quiet.  See @ref{Global options}.
 
 @item -r
-Make new working files files read-only.  See @ref{Global options}.
+Make new working files read-only.  See @ref{Global options}.
 
 @item -s @var{variable}=@var{value}
 Set a user variable.  See @ref{Variables}.
@@ -10215,7 +10215,7 @@ Diff revision for @var{rev1} against working file.  See
 @ref{diff options}.
 
 @item -r @var{rev2}
-Diff rev1/date1 against rev2.  See @ref{diff options}.
+Diff @var{rev1}/@var{date1} against @var{rev2}.  See @ref{diff options}.
 @end table
 
 @item edit [@var{options}] [@var{files}@dots{}]
