@@ -851,7 +851,7 @@ internal error: %s doesn't start with %s in checkout_proc",
 	       build_one_dir whenever the -d command option was specified
 	       to checkout.  */
 
-	    if (! where_is_absolute && top_level_admin)
+	    if (! where_is_absolute && top_level_admin && m_type == CHECKOUT)
 	    {
 		/* It may be argued that we shouldn't set any sticky
 		   bits for the top-level repository.  FIXME?  */
