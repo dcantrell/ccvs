@@ -6510,6 +6510,7 @@ file, which defines the modules inside the repository.
 * cvsignore::                   Ignoring files via cvsignore
 * history file::                History information
 * Setting up::                  Setting up the repository
+* Variables::                   Various variables are expanded
 @end menu
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -7197,6 +7198,62 @@ you run @code{cvsinit} on an already set-up
 repository.  In fact, running it on an already set-up
 repository is the best way to update the various
 scripts from the @samp{contrib} directory.)
+
+@node Variables
+@appendixsec Expansions in administrative files
+
+@c This whole section should be better motivated.  Why
+@c would you want to do all this stuff? (give some
+@c examples).
+
+Before administrative files are processed various
+strings are expanded:
+
+@table
+@item ~
+@itemx ~@var{user}
+Either of these strings followed by @samp{/} or the
+end of the line is expanded by the home directory from
+the @code{HOME} environment variable, or the home
+directory of the user @var{user}, respectively.
+
+@item $@var{variable}
+@itemx $@{@var{variable}@}
+In the first case @var{variable} must be followed by a
+non-alphanumeric character other than @samp{_}.  This
+represents a variable which gets expanded.  If
+@var{variable} begins with @samp{=}, the following
+characters are an environment variable, and it is
+expanded based on the environment of the user running
+@sc{cvs}.  For example, if the environment variable
+@code{TESTDIR} is set to @file{/work/local/tests} and
+the administrative file contains @code{sh
+$@{=TESTDIR@}/runtests}, then it is expanded to
+@code{sh /work/local/tests/runtests}.
+
+If @var{variable} begins with a letter, it is the name
+of an internal @sc{cvs} variable.  Currently the only
+ones defined are:
+
+@table
+@item CVSROOT
+This is the value of the @sc{cvs} root in use.
+@xref{Repository}, for a description of the various
+ways to specify this.
+
+@item RCSBIN
+This is the value @sc{cvs} is using for where to find
+@sc{rcs} binaries.  @xref{Global options}, for a
+description of how to specify this.
+
+@item CVSEDITOR
+@itemx VISUAL
+@itemx EDITOR
+These all expand to the same value, which is the editor
+that @sc{cvs} is using.  @xref{Global options}, for how
+to specify this.
+@end table
+@end table
 
 @c ---------------------------------------------------------------------
 @node Environment variables
