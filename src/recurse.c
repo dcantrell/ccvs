@@ -145,9 +145,11 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
            && repository_in[strlen (repository_in) - 2] == '/'
            && repository_in[strlen (repository_in) - 1] == '.')
     {
-	/* Beware the case where the string is exactly "/.".  */
-	if (strlen (repository_in) == 2)
-	    repository_in[1] = '\0';
+	/* Beware the case where the string is exactly "/." or "//.".
+	 * Paths with a leading "//" are special on some early UNIXes.
+	 */
+	if (strlen (repository_in) == 2 || strlen (repository_in) == 3)
+	    repository_in[strlen (repository_in) - 1] = '\0';
 	else
 	    repository_in[strlen (repository_in) - 2] = '\0';
     }
