@@ -1,3 +1,15 @@
+Thu Feb 15 15:04:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (info): Correct syntax of .cvsrc file.
+
+	* cvs.h, expand_path.c, edit.c, parseinfo.c, wrapper.c:
+	expand_path now takes arguments containing file and line for error
+	message, and it prints the error message itself.
+	* sanity.sh (info-6a): Test printing of error message.
+
+	* expand_path.c (expand_variable): Add USER internal variable.
+	* sanity.sh (info): Test USER and CVSROOT internal variables too.
+
 Wed Feb 14 19:11:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (usg): Add -s option.

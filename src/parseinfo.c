@@ -93,14 +93,10 @@ Parse_Info (infofile, repository, callproc, all)
 	if ((cp = strrchr (value, '\n')) != NULL)
 	    *cp = '\0';
 
-	expanded_value = expand_path (value);
+	expanded_value = expand_path (value, infofile, line_number);
 	if (!expanded_value)
 	{
-	    error (0, 0,
-		   "Invalid environmental variable at line %d in file %s",
-		   line_number, infofile);
 	    continue;
-
 	}
 
 	/*
