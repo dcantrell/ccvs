@@ -116,13 +116,13 @@ checkout (argc, argv)
     if (strcmp (command_name, "export") == 0)
     {
         m_type = EXPORT;
-	valid_options = "Nnk:d:flRQqr:D:";
+	valid_options = "+Nnk:d:flRQqr:D:";
 	valid_usage = export_usage;
     }
     else
     {
         m_type = CHECKOUT;
-	valid_options = "ANnk:d:flRpQqcsr:D:j:P";
+	valid_options = "+ANnk:d:flRpQqcsr:D:j:P";
 	valid_usage = checkout_usage;
     }
 

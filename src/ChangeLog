@@ -1,5 +1,11 @@
 Tue Apr 15 00:36:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* add.c, checkout.c, commit.c, diff.c, edit.c, import.c,
+	history.c, log.c, main.c, patch.c, release.c, remove.c, rtag.c,
+	status.c, tag.c, update.c, watch.c: Pass "+" to all calls to
+	getopt.  This ensures that we maintain existing behavior even with
+	glibc2.
+
 	* filesubr.c (fopen_case): Don't set *PATHP if we return an
 	error.  Since the 9 Apr 1997 change, the behavior has been to
 	sometimes set it and sometimes not.

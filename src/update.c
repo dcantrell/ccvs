@@ -135,7 +135,7 @@ update (argc, argv)
 
     /* parse the args */
     optind = 1;
-    while ((c = getopt (argc, argv, "ApPflRQqduk:r:D:j:I:W:")) != -1)
+    while ((c = getopt (argc, argv, "+ApPflRQqduk:r:D:j:I:W:")) != -1)
     {
 	switch (c)
 	{

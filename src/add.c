@@ -103,7 +103,7 @@ add (argc, argv)
 
     /* parse args */
     optind = 1;
-    while ((c = getopt (argc, argv, "k:m:")) != -1)
+    while ((c = getopt (argc, argv, "+k:m:")) != -1)
     {
 	switch (c)
 	{
