@@ -1,5 +1,9 @@
 2004-12-08  Derek Price  <derek@ximbiot.com>
 
+	* root.c (parse_cvsroot): Suppress -Wall warning.
+
+2004-12-08  Derek Price  <derek@ximbiot.com>
+
 	* root.c (parse_cvsroot): findnode() compares LIST to NULL w/o help.
 
 2004-12-08  Derek Price  <derek@ximbiot.com>
