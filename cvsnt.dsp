@@ -94,6 +94,10 @@ SOURCE=.\src\admin.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\analyze.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\argmatch.c
 # End Source File
 # Begin Source File
@@ -126,11 +130,19 @@ SOURCE=.\src\client.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\cmpbuf.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\commit.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\zlib\compress.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\context.c
 # End Source File
 # Begin Source File
 
@@ -150,7 +162,51 @@ SOURCE=.\zlib\deflate.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\diff.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir ".\diff"
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+InputPath=.\diff\diff.c
+
+"diff\diff.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cl /MLd /W3 /Gm /GX /Zi /Ob1 /I ".\lib" /I ".\src" /I ".\windows-NT" /D\
+ "HAVE_CONFIG_H" /Fp".\diff" /YX /Fo".\diff\diff.obj" /Fd".\diff" /FD /c\
+ diff\diff.c
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\diff.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# SUBTRACT CPP /nologo
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\diff3.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\dir.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\ed.c
 # End Source File
 # Begin Source File
 
@@ -218,6 +274,10 @@ SOURCE=.\src\history.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\ifdef.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\ignore.c
 # End Source File
 # Begin Source File
@@ -247,6 +307,10 @@ SOURCE=.\zlib\inftrees.c
 # Begin Source File
 
 SOURCE=.\zlib\infutil.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\io.c
 # End Source File
 # Begin Source File
 
@@ -295,6 +359,10 @@ SOURCE=".\windows-NT\ndir.c"
 # Begin Source File
 
 SOURCE=.\src\no_diff.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\normal.c
 # End Source File
 # Begin Source File
 
@@ -366,6 +434,10 @@ SOURCE=.\src\server.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\side.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\sighandle.c
 # End Source File
 # Begin Source File
@@ -406,6 +478,10 @@ SOURCE=.\src\update.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\util.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\valloc.c
 # End Source File
 # Begin Source File
@@ -415,6 +491,28 @@ SOURCE=.\lib\vasprintf.c
 # Begin Source File
 
 SOURCE=.\src\vers_ts.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\version.c
+
+!IF  "$(CFG)" == "cvsnt - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "cvsnt - Win32 Debug"
+
+# PROP Intermediate_Dir ".\diff"
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+InputPath=.\diff\version.c
+
+"diff\version.obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cl /MLd /W3 /Gm /GX /Zi /Ob1 /Fp".\diff\" /YX /Fo".\diff\" /Fd".\diff\" /FD /c\
+ diff/version.c
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -466,7 +564,15 @@ SOURCE=.\src\client.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\diff\cmpbuf.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\zlib\deflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\diff.h
 # End Source File
 # Begin Source File
 
@@ -547,6 +653,10 @@ SOURCE=.\lib\savecwd.h
 # Begin Source File
 
 SOURCE=.\src\server.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\diff\system.h
 # End Source File
 # Begin Source File
 
