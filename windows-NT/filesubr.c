@@ -703,6 +703,9 @@ cvs_temp_name ()
  *	on error, errno will be set to some value either by CVS_FOPEN or
  *	whatever system function is called to generate the temporary file name
  */
+/* FIXME: This should use the mkstemp() function from the lib/mkstemp.c file
+ * from the GNULIB project.
+ */
 FILE *cvs_temp_file (filename)
     char **filename;
 {

@@ -1,3 +1,8 @@
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (cvs_temp_file): Add a FIXME comment in regards to using
+	mkstemp() from GNULIB (already in lib/mkstemp.c).
+
 2003-06-11  Larry Jones  <lawrence.jones@eds.com>
 
 	* filesubr.c (xresolvepath): Fix memory leak.
