@@ -130,6 +130,7 @@ static const struct cmd
     { "rdiff",    "patch",    "pa",        patch,     0 },
     { "release",  "re",       "rel",       release,   0 },
     { "remove",   "rm",       "delete",    cvsremove, CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
+    { "rlog",     "rl",       NULL,        cvslog,    0 },
     { "rtag",     "rt",       "rfreeze",   cvstag,    CVS_CMD_MODIFIES_REPOSITORY },
 #ifdef SERVER_SUPPORT
     { "server",   NULL,       NULL,        server,    CVS_CMD_MODIFIES_REPOSITORY | CVS_CMD_USES_WORK_DIR },
@@ -219,6 +220,7 @@ static const char *const cmd_usage[] =
     "        rdiff        Create 'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Remove an entry from the repository\n",
+    "        rlog         Print out history information for a module\n",
     "        rtag         Add a symbolic tag to a module\n",
 #ifdef SERVER_SUPPORT
     "        server       Server mode\n",
@@ -645,15 +647,6 @@ Copyright (c) 1989-2001 Brian Berliner, david d `zoo' zuhn, \n\
     }
     else
 	command_name = cm->fullname;	/* Global pointer for later use */
-
-    /* This should probably remain a warning, rather than an error,
-       for quite a while.  For one thing the version of VC distributed
-       with GNU emacs 19.34 invokes 'cvs rlog' instead of 'cvs log'.  */
-    if (strcmp (argv[0], "rlog") == 0)
-    {
-	error (0, 0, "warning: the rlog command is deprecated");
-	error (0, 0, "use the synonymous log command instead");
-    }
 
     if (help)
     {

@@ -314,7 +314,7 @@ typedef struct entnode Entnode;
 /* The type of request that is being done in do_module() */
 enum mtype
 {
-    CHECKOUT, TAG, PATCH, EXPORT
+    CHECKOUT, TAG, PATCH, EXPORT, MISC
 };
 
 /*

@@ -3625,6 +3625,15 @@ serve_log (arg)
 }
 
 static void
+serve_rlog (arg)
+    char *arg;
+{
+    /* Tell cvslog() to behave like rlog not log.  */
+    command_name = "rlog";
+    do_cvs_command ("rlog", cvslog);
+}
+
+static void
 serve_add (arg)
     char *arg;
 {
@@ -4753,6 +4762,7 @@ struct request requests[] =
   REQ_LINE("update", serve_update, RQ_ESSENTIAL),
   REQ_LINE("diff", serve_diff, 0),
   REQ_LINE("log", serve_log, 0),
+  REQ_LINE("rlog", serve_rlog, 0),
   REQ_LINE("add", serve_add, 0),
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),
