@@ -1,3 +1,7 @@
+2001-07-04  Derek Price  <dprice@collab.net>
+
+	* Makefile.in: Regenerated with new Automake release candidate 1.4h.
+
 2001-07-03  Derek Price  <dprice@collab.net>
 
 	* rcs.c (rcsbuf_open): Reduce memory consumption still further by not
