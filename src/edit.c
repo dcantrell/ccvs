@@ -89,8 +89,8 @@ watch_onoff (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server (turning_on ? "watch-on\012" : "watch-off\012", 0);
 	return get_responses_and_close ();
     }
@@ -1086,8 +1086,8 @@ editors (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_files (argc, argv, local, 0, SEND_NO_CONTENTS);
+	send_file_names (argc, argv, SEND_EXPAND_WILD);
 	send_to_server ("editors\012", 0);
 	return get_responses_and_close ();
     }

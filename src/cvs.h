@@ -384,6 +384,11 @@ extern char *CVSroot_username;	/* the username or NULL if method == local */
 extern char *CVSroot_hostname;	/* the hostname or NULL if method == local */
 extern char *CVSroot_directory;	/* the directory name */
 
+/* These variables keep track of all of the CVSROOT directories that
+   have been seen by the client and the current one of those selected.  */
+extern List *root_directories;
+extern char *current_root;
+
 extern char *emptydir_name PROTO ((void));
 
 extern int trace;		/* Show all commands */
@@ -396,6 +401,13 @@ extern int top_level_admin;
 extern char *Pserver_Repos;     /* used to check that same repos is
                                    transmitted in pserver auth and in
                                    CVS protocol. */
+
+#ifdef CLIENT_SUPPORT
+extern List *dirs_sent_to_server; /* used to decide which "Argument
+				     xxx" commands to send to each
+				     server in multiroot mode. */
+#endif
+
 #endif /* AUTH_SERVER_SUPPORT */
 
 extern char hostname[];

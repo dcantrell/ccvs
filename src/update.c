@@ -284,11 +284,11 @@ update (argc, argv)
 
 	    if (failed_patches == NULL)
 	    {
-		send_file_names (argc, argv, SEND_EXPAND_WILD);
 		/* If noexec, probably could be setting SEND_NO_CONTENTS.
 		   Same caveats as for "cvs status" apply.  */
 		send_files (argc, argv, local, aflag,
 			    update_build_dirs ? SEND_BUILD_DIRS : 0);
+		send_file_names (argc, argv, SEND_EXPAND_WILD);
 	    }
 	    else
 	    {
@@ -308,9 +308,9 @@ update (argc, argv)
 			&& !existence_error (errno))
 			error (0, errno, "cannot remove %s",
 			       failed_patches[i]);
-		send_file_names (failed_patches_count, failed_patches, 0);
 		send_files (failed_patches_count, failed_patches, local,
 			    aflag, update_build_dirs ? SEND_BUILD_DIRS : 0);
+		send_file_names (failed_patches_count, failed_patches, 0);
 	    }
 
 	    failed_patches = NULL;
