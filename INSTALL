@@ -123,6 +123,7 @@ HPPA:
 	HPPA running HP-UX 9.05 (1.9)
 	HPPA running HP-UX 10.01 (1.7)
 	HPPA running HP-UX 10.20 (1.10.7)
+	HPPA running HP-UX 11.11 (1.11.13) (footnote 12)
 	HPPA 2.0 running HP-UX 10.20 (1.10.9) (footnote 13)
 	NextSTEP 3.3 (1.7)
 i386 family:
@@ -246,7 +247,7 @@ VAX:
     Need to `configure --without-gssapi' unless you have installed Kerberos 5
     libraries on the system yourself.  For some reason Apple ships OS X with
     the Kerberos 5 headers installed and not the libraries, which confuses the
-    current configure script.  Some Sun and BSD boxes hace similar problems.
+    current configure script.  Some HP, BSD, & Sun boxes have similar problems.
 
 (footnote 13)
     A build under HP PA-RISC 2.0 will probably not run under PA-RISC 1.1
