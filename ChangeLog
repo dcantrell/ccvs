@@ -1,3 +1,8 @@
+Mon Apr 21 01:06:31 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* NEWS: Document that the client no longer needs an external patch
+	program.
+
 Thu Apr 17 14:28:20 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Combine items 150 and 181 since they are basically the same.
