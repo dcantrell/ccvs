@@ -2106,7 +2106,7 @@ RCS_getexpand (rcs)
    existing file.  */
 
 int
-RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
+RCS_checkout (rcs, workfile, tag, options, sout, flags)
      RCSNode *rcs;
      char *workfile;
      char *tag;
@@ -2322,7 +2322,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags)
 
     /* We were not able to optimize retrieving this revision.  */
 
-    return RCS_checkout (rcs->path, workfile, tag, options, sout, flags);
+    return RCS_exec_checkout (rcs->path, workfile, tag, options, sout, flags);
 }
 
 /* For RCS file RCS, make symbolic tag TAG point to revision REV.

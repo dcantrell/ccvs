@@ -528,11 +528,11 @@ diff_fileproc (callerdat, finfo)
 		int retcode;
 
 		tmp = cvs_temp_name ();
-		retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev2,
-					     (*options
-					      ? options
-					      : vers->options),
-					     tmp, 0);
+		retcode = RCS_checkout (vers->srcfile, NULL, use_rev2,
+					(*options
+					 ? options
+					 : vers->options),
+					tmp, 0);
 		if (retcode == -1)
 		{
 		    (void) CVS_UNLINK (tmp);
@@ -549,9 +549,9 @@ diff_fileproc (callerdat, finfo)
 	    int retcode;
 
 	    tmp = cvs_temp_name ();
-	    retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev1,
-					 *options ? options : vers->options,
-					 tmp, 0);
+	    retcode = RCS_checkout (vers->srcfile, NULL, use_rev1,
+				    *options ? options : vers->options,
+				    tmp, 0);
 	    if (retcode == -1)
 	    {
 		(void) CVS_UNLINK (tmp);
@@ -842,9 +842,9 @@ diff_file_nodiff (finfo, vers, empty_file)
      * should bother with it at all.
      */
     tmp = cvs_temp_name ();
-    retcode = RCS_fast_checkout (vers->srcfile, NULL, use_rev1,
-				 *options ? options : vers->options,
-				 tmp, 0);
+    retcode = RCS_checkout (vers->srcfile, NULL, use_rev1,
+			    *options ? options : vers->options,
+			    tmp, 0);
     switch (retcode)
     {
 	case 0:				/* everything ok */

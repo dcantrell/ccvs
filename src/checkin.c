@@ -78,14 +78,14 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 		options[0] = '\0';
 
 	    /* Reparse the RCS file, so that we can safely call
-               RCS_fast_checkout.  FIXME: We could probably calculate
+               RCS_checkout.  FIXME: We could probably calculate
                all the changes.  */
 	    freercsnode (&finfo->rcs);
 	    finfo->rcs = RCS_parse (finfo->file, finfo->repository);
 
 	    /* FIXME: should be checking for errors.  */
-	    (void) RCS_fast_checkout (finfo->rcs, finfo->file, rev, options,
-				      RUN_TTY, 0);
+	    (void) RCS_checkout (finfo->rcs, finfo->file, rev, options,
+				 RUN_TTY, 0);
 
 	    xchmod (finfo->file, 1);
 	    if (xcmp (finfo->file, fname) == 0)
