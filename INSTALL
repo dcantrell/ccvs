@@ -157,7 +157,11 @@ distribution, then skip to step 5):
     or a path specified with the -b option).  If you don't have RCS,
     you will need to get it from GNU as well.  It is best to get the
     version 5.7 (or later) version of RCS, available from
-    prep.ai.mit.edu in the file pub/gnu/rcs-5.7.tar.gz.
+    prep.ai.mit.edu in the file pub/gnu/rcs-5.7.tar.gz.  If you do not
+    have RCS version 5.x (for example, if you are using the old RCS
+    shipped with some versions of HPUX), CVS will probably fail to work
+    entirely.  To find out what version of RCS you have, invoke "co -V".
+    If it fails to print a version number, it is an old version.
 
     If you want version control of files with binary data, make sure
     that the RCS configure script finds GNU diff 1.15 or later and
