@@ -1,3 +1,7 @@
+2003-11-10  Derek Price  <derek@ximbiot.com>
+
+	* BUGS: Add some detail to the last two notes Mark added.
+
 2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* BUGS: Note bugs symlinks to files will not work with or without
