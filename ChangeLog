@@ -1,7 +1,7 @@
 2003-07-22  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: We can assume <limits.h> and <stdarg.h>, so we no
-	longer need to check for <limits.h> or <varargs>.
+	longer need to check for <limits.h> or <varargs.h>.
 	* srclist.txt (m4/gettext): Note local modifications.
 
 	* aclocal.m4: Regenerate.
