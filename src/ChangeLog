@@ -1,3 +1,9 @@
+Fri Jan 20 14:24:58 1995  Ian Lance Taylor  <ian@sanguine.cygnus.com>
+
+	* client.c (do_deferred_progs): Don't try to chdir to toplevel_wd
+	if it has not been set.
+	(process_prune_candidates): Likewise.
+
 Mon Nov 28 09:59:14 1994  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* client.c (client_commit): Move guts of function from here...
