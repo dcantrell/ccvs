@@ -481,7 +481,10 @@ int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
 int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
+#ifdef HAVE_READLINK
 char *xreadlink PROTO((const char *link));
+#endif
+char *xresolvepath PROTO((const char *path));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
 char *strcat_filename_onto_homedir PROTO ((const char *, const char *));
@@ -639,7 +642,7 @@ int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     void *callerdat,
 		     int argc, char *argv[], int local, int which,
 		     int aflag, int locktype, char *update_preload,
-		     int dosrcs));
+		     int dosrcs, char *repository));
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
 int SIG_inCrSect PROTO((void));

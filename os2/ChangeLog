@@ -1,3 +1,7 @@
+2003-11-10  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (xresolvepath): New function.
+
 2003-08-07  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in (pdf ps): New recursive targets to be ignored for

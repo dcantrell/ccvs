@@ -469,7 +469,7 @@ commit (argc, argv)
 			       find_dirent_proc, (DIRLEAVEPROC) NULL,
 			       (void *)&find_args,
 			       argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-			       (char *)NULL, 0);
+			       (char *) NULL, 0, (char *) NULL);
 	if (err)
 	    error (1, 0, "correct above errors first!");
 
@@ -648,7 +648,7 @@ commit (argc, argv)
     err = start_recursion (check_fileproc, check_filesdoneproc,
 			   check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
 			   argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			   (char *) NULL, 1);
+			   (char *) NULL, 1, (char *) NULL);
     if (err)
     {
 	Lock_Cleanup ();
@@ -663,7 +663,7 @@ commit (argc, argv)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
 			       commit_direntproc, commit_dirleaveproc, NULL,
 			       argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			       (char *) NULL, 1);
+			       (char *) NULL, 1, (char *) NULL);
 
     /*
      * Unlock all the dirs and clean up

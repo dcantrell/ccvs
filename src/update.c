@@ -414,7 +414,8 @@ update (argc, argv)
     /* call the command line interface */
     err = do_update (argc, argv, options, tag, date, force_tag_match,
 		     local, update_build_dirs, aflag, update_prune_dirs,
-		     pipeout, which, join_rev1, join_rev2, (char *) NULL, 1);
+		     pipeout, which, join_rev1, join_rev2, (char *) NULL, 1,
+		     (char *) NULL);
 
     /* free the space Make_Date allocated if necessary */
     if (date != NULL)
@@ -429,7 +430,7 @@ update (argc, argv)
 int
 do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir,
-	   xdotemplate)
+	   xdotemplate, repository)
     int argc;
     char **argv;
     char *xoptions;
@@ -446,6 +447,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     char *xjoin_rev2;
     char *preload_update_dir;
     int xdotemplate;
+    char *repository;
 {
     int err = 0;
     char *cp;
@@ -493,7 +495,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	err = start_recursion (get_linkinfo_proc, (FILESDONEPROC) NULL,
 			       (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
 			       argc, argv, local, which, aflag, CVS_LOCK_READ,
-			       preload_update_dir, 1);
+			       preload_update_dir, 1, (char *) NULL);
 	if (err)
 	    return (err);
 
@@ -509,7 +511,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     err = start_recursion (update_fileproc, update_filesdone_proc,
 			   update_dirent_proc, update_dirleave_proc, NULL,
 			   argc, argv, local, which, aflag, CVS_LOCK_READ,
-			   preload_update_dir, 1);
+			   preload_update_dir, 1, repository);
 
 #ifdef SERVER_SUPPORT
     if (server_active)

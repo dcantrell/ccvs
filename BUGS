@@ -32,6 +32,14 @@ provide a "Option-read-write" request which sends -w, in addition to
 "Global_option -r" which sends -r.
 
 
+* Symbolic links within the tree of a repository are not supported.
+In particular, in a repository using LockDir directives, any symbolic
+links pointing to other directories in the repository will not
+properly lock that directory. Symbolic links to files within the
+repository will also likely do the wrong thing if any changes are
+committed to the symlink.
+
+
 * "make remotecheck" sometimes fails on test 187a3 with
     cvs server: in directory .:
     cvs [server aborted]: *PANIC* administration files missing
