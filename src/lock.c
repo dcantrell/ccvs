@@ -694,16 +694,16 @@ static int lock_error;
 
 
 /*
- * Create a lock file for likely writers returns L_OK if lock set ok, L_LOCKED
+ * Create a lock file for potential writers returns L_OK if lock set ok, L_LOCKED
  * if lock held by someone else or L_ERROR if an error occurred.
  */
 static int
-promotable_lock (struct lock *lock)
+set_promotable_lock (struct lock *lock)
 {
     int status;
     FILE *fp;
 
-    TRACE (TRACE_FUNCTION, "promotable_lock(%s)",
+    TRACE (TRACE_FUNCTION, "set_promotable_lock(%s)",
 	   lock->repository ? lock->repository : "(null)");
 
     if (promotablelock == NULL)
@@ -792,7 +792,26 @@ promotable_lock (struct lock *lock)
 
 
 /*
- * walklist proc for setting write locks
+ * walklist proc for setting write locks.  Mostly just a wrapper for the
+ * set_promotable_lock function, which has a prettier API, but no other good
+ * reason for existing separately.
+ *
+ * INPUTS
+ *   p		The current node, as determined by walklist().
+ *   closure	Not used.
+ *
+ * GLOBAL INPUTS
+ *   lock_error		Any previous error encountered while attempting to get a lock.
+ *
+ * GLOBAL OUTPUTS
+ *   lock_error		Set if we encounter an error attempting to get axi
+ *			promotable lock.
+ *   lock_error_repos	Set so that if we set lock_error later functions will
+ *			be able to report where the other process's lock was
+ *			encountered.
+ *
+ * RETURNS
+ *   0 for no error.
  */
 static int
 set_promotablelock_proc (Node *p, void *closure)
@@ -803,7 +822,7 @@ set_promotablelock_proc (Node *p, void *closure)
 
     /* apply the write lock */
     lock_error_repos = p->key;
-    lock_error = promotable_lock ((struct lock *)p->data);
+    lock_error = set_promotable_lock ((struct lock *)p->data);
     return 0;
 }
 
@@ -860,11 +879,11 @@ lock_obtained (const char *repos)
 
 
 static int
-Promotable_Lock (List *list)
+lock_list_promotably (List *list)
 {
     char *wait_repos;
 
-    TRACE (TRACE_FLOW, "Promotable_Lock ()");
+    TRACE (TRACE_FLOW, "lock_list_promotably ()");
 
     if (noexec)
 	return 0;
@@ -881,7 +900,7 @@ Attempting to write to a read-only filesystem is not allowed.");
     if (locklist != (List *) NULL)
     {
 	error (0, 0,
-	       "Promotable_Lock called while promotable locks set - Help!");
+	       "lock_list_promotably called while promotable locks set - Help!");
 	return 1;
     }
 
@@ -924,7 +943,7 @@ Attempting to write to a read-only filesystem is not allowed.");
 	    default:
 		if (wait_repos != NULL)
 		    free (wait_repos);
-		error (0, 0, "unknown lock status %d in Promotable_Lock",
+		error (0, 0, "unknown lock status %d in lock_list_promotably",
 		       lock_error);
 		return 1;
 	}
@@ -1149,7 +1168,7 @@ lock_tree_promotably (int argc, char **argv, int local, int which, int aflag)
 	  argv, local, which, aflag, CVS_LOCK_NONE,
 	  (char *) NULL, 0, (char *) NULL );
     sortlist (lock_tree_list, fsortcmp);
-    if (Promotable_Lock (lock_tree_list) != 0)
+    if (lock_list_promotably (lock_tree_list) != 0)
 	error (1, 0, "lock failed - giving up");
 }
 

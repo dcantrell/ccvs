@@ -1,5 +1,15 @@
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
+	Attempt to improve readability of code.
+
+	* lock.c (promotable_lock): Rename to...
+	(set_promotable_lock): ...this.
+	(set_promotablelock_proc): Expand header comment.
+	(Promotable_Lock): Rename to...
+	(lock_tree_promotably): ...this.
+
+2004-02-09  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (set_writelock_proc): Remove unused prototype.
 	(promotable_lock): Remove unneded whitespace.
 	(Promotable_Lock): Correct comments.
