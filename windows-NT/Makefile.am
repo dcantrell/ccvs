@@ -74,8 +74,7 @@ stamp-ch: config.h.in Makefile
 DISTCLEANFILES += stamp-ch
 
 config.h.in: stamp-chi
-stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig config.h.in.in \
-           $(top_srcdir)/config.h.in
+stamp-chi: @MAINTAINER_MODE_TRUE@ mkconfig $(top_srcdir)/config.h.in $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
 	./mkconfig -q $(top_srcdir)/config.h.in $(srcdir)/config.h.in \
 	           $(srcdir)/config.h.in.in $(srcdir)/config.h.in.footer
 	@cp $(srcdir)/config.h.in $(srcdir)/$@
