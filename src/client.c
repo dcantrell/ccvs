@@ -650,7 +650,9 @@ int filter_through_gunzip (fd, dir, pidp)
  */
 static char *toplevel_repos;
 
-/* Working directory when we first started.  */
+/* Working directory when we first started.  Note: we could speed things
+   up on some systems by using savecwd.h here instead of just always
+   storing a name.  */
 char *toplevel_wd;
 
 static void
@@ -863,6 +865,38 @@ call_in_directory (pathname, func, data)
 	if (CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
 	newdir = 0;
+
+	/* Create the CVS directory at the top level if needed.
+	   The isdir seems like an unneeded system call, but it *does*
+	   need to be called both if the CVS_CHDIR below succeeds (e.g.
+	   "cvs co .") or if it fails (e.g. basicb-1a in testsuite).  */
+	if (/* I think the reposdirname_absolute case has to do with
+	       things like "cvs update /foo/bar".  In any event, the
+	       code below which tries to put toplevel_repos into
+	       CVS/Repository is almost surely unsuited to
+	       the reposdirname_absolute case.  */
+	    !reposdirname_absolute
+
+	    && ! isdir (CVSADM))
+	{
+	    char *repo;
+	    char *r;
+
+	    newdir = 1;
+
+	    repo = xmalloc (strlen (toplevel_repos)
+			    + 10);
+	    strcpy (repo, toplevel_repos);
+	    r = repo + strlen (repo);
+	    if (r[-1] != '.' || r[-2] != '/')
+	        strcpy (r, "/.");
+
+	    Create_Admin (".", ".", repo, (char *) NULL,
+			  (char *) NULL);
+
+	    free (repo);
+	}
+
 	if ( CVS_CHDIR (dir_name) < 0)
 	{
 	    char *dir;
@@ -936,7 +970,8 @@ call_in_directory (pathname, func, data)
 		if (fncmp (dir, CVSADM) == 0)
 		{
 		    error (0, 0, "cannot create a directory named %s", dir);
-		    error (0, 0, "because CVS uses \"%s\" for its own uses", CVSADM);
+		    error (0, 0, "because CVS uses \"%s\" for its own uses",
+			   CVSADM);
 		    error (1, 0, "rename the directory and try again");
 		}
 
@@ -1004,41 +1039,6 @@ call_in_directory (pathname, func, data)
 	    /* Now it better work.  */
 	    if ( CVS_CHDIR (dir_name) < 0)
 		error (1, errno, "could not chdir to %s", dir_name);
-	}
-
-	/* If the modules file has an entry for the entire tree (e.g.,
-           ``world -a .''), we may need to create the CVS directory
-           specially in this working directory.  */
-	if (strcmp (dir_name, ".") == 0
-	    && ! isdir (CVSADM))
-	{
-	    char *repo;
-	    char *r;
-
-	    newdir = 1;
-
-	    repo = xmalloc (strlen (reposdirname)
-			    + strlen (toplevel_repos)
-			    + 10);
-	    if (reposdirname_absolute)
-	        r = repo;
-	    else
-	    {
-	        strcpy (repo, toplevel_repos);
-		r = repo + strlen (repo);
-		*r++ = '/';
-	    }
-
-	    strcpy (r, reposdirname);
-
-	    r += strlen (r);
-	    if (r[-1] != '.' || r[-2] != '/')
-	        strcpy (r, "/.");
-
-	    Create_Admin (dir_name, dir_name, repo, (char *) NULL,
-			  (char *) NULL);
-
-	    free (repo);
 	}
 
 	if (strcmp (command_name, "export") != 0)

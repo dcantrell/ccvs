@@ -517,14 +517,19 @@ for what in $tests; do
 	  # tests, but hopefully a lot faster.  Also tests operating on
 	  # files two directories down *without* operating on the parent dirs.
 
-	  # Using mkdir in the repository is used throughout these
-	  # tests to create a top-level directory.  I think instead it
-	  # should be:
-	  #   cvs co -l .
-	  #   mkdir first-dir
-	  #   cvs add first-dir
-	  # but currently that works only for local CVS, not remote.
-	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  # Tests basica-0a and basica-0b provide the equivalent of the:
+	  #    mkdir ${CVSROOT_DIRNAME}/first-dir
+	  # used by many of the tests.  It is "more official" in the sense
+	  # that is does everything through CVS; the reason most of the
+	  # tests don't use it is mostly historical.
+	  mkdir 1; cd 1
+	  dotest basica-0a "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest basica-0b "${testcvs} add first-dir" \
+"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
+	  cd ..
+	  rm -rf 1
+
 	  dotest basica-1 "${testcvs} -q co first-dir" ''
 	  cd first-dir
 
@@ -645,10 +650,7 @@ done'
 	  # More basic tests, including non-branch tags and co -d.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
-	  # Skip for remote until we get around to fixing CVS
-	  if test "x$remote" = xno; then
-	    dotest basicb-1a "test -d CVS" ''
-	  fi
+	  dotest basicb-1a "test -d CVS" ''
 	  cd first-dir
 	  mkdir sdir1 sdir2
 	  dotest basicb-2 "${testcvs} add sdir1 sdir2" \
@@ -727,9 +729,7 @@ U first-dir1/sdir2/sfile2'
 "${testcvs} -q co -d newdir -r release-1 first-dir/sdir1 first-dir/sdir2" \
 'U newdir/sdir1/sfile1
 U newdir/sdir2/sfile2'
-	  if test "x$remote" = xno; then
-	    dotest basicb-9a "test -d CVS" ''
-	  fi
+	  dotest basicb-9a "test -d CVS" ''
 	  dotest basicb-10 "cat newdir/sdir1/sfile1 newdir/sdir2/sfile2" \
 "sfile1 develops
 sfile2 starts"
@@ -741,6 +741,7 @@ sfile2 starts"
 
 	basic1) # first dive - add a files, first singly, then in a group.
 		mkdir ${CVSROOT_DIRNAME}/first-dir
+		mkdir 1; cd 1
 		# check out an empty directory
 		if ${CVS} co first-dir  ; then
 		  echo "PASS: test 13a" >>${LOGFILE}
@@ -843,8 +844,15 @@ sfile2 starts"
 		  echo "FAIL: test 28" | tee -a ${LOGFILE} ; exit 1
 		fi
 		cd ..
+		cd ..
+
+		if test "$keep" = yes; then
+		  echo Keeping /tmp/cvs-sanity and exiting due to --keep
+		  exit 0
+		fi
+
+		rm -rf 1
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
-		rm -rf first-dir
 		;;
 
 	deep)
@@ -3235,7 +3243,7 @@ done"
 		fi
 		cd ../../2
 		mkdir first-dir/dir1 first-dir/sdir
-		dotest conflicts-136 "${testcvs} -q update" \
+		dotest conflicts-136 "${testcvs} -q update first-dir" \
 '[UP] first-dir/abc
 '"${QUESTION}"' first-dir/dir1
 '"${QUESTION}"' first-dir/sdir' \

@@ -1,3 +1,22 @@
+Wed Jan 15 09:14:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (call_in_directory): Take code that creates CVSADM at
+	top level, move it before the CVS_CHDIR (dir_name) call, and do it
+	regardless of whether dir_name is ".".  Pass "." not dir_name to
+	Create_Admin (when the code was written they were always the
+	same).  Don't add reposdirname to the repository we pass to
+	Create_Admin (when the code was written, I think reposdirname
+	probably would always be ".").  Don't create CVSADM if
+	reposdirname_absolute.
+	* sanity.sh (basicb): Enable tests basicb-1a and basicb-9a for
+	remote; tests for above fix.
+	(basic1): Do entire test within a "1" directory to deal with
+	creation of CVS directories at top level.  Support --keep.
+	(conflicts): In test conflicts-136, only update first-dir.
+	(basica): Uncomment the part that tests "cvs co -l .".  That tests
+	the existing functionality which I might have (but hopefully did not)
+	perturbed with the call_in_directory changes.
+
 Mon Jan 13 11:04:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (check_command_legal_p): Do not call error (1, ...)
