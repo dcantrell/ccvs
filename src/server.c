@@ -552,7 +552,6 @@ isThisHost (const char *otherhost)
     static char *thishost = NULL;
     struct hostent *hinfo;
 
-    /* Our hostname must also match for this to be the primary.  */
     if (!thishost)
     {
 	thishost = xmalloc (MAXHOSTNAMELEN);
@@ -560,6 +559,12 @@ isThisHost (const char *otherhost)
 	    error (1, errno, "Failed to retrieve hostname.");
 	thishost[MAXHOSTNAMELEN - 1] = '\0';
     }
+
+    /* As an optimization, check the literal strings before looking up
+     * OTHERHOST in the DNS.
+     */
+    if (!strcasecmp (thishost, otherhost))
+	return true;
 
     if (!(hinfo = gethostbyname (otherhost)))
 #ifdef HAVE_HSTRERROR
