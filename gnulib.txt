@@ -248,3 +248,25 @@ lib/yesno.h
 m4/yesno.m4
 
 m4/onceonly_2_57.m4
+lib/allocsa.h
+lib/allocsa.c
+m4/allocsa.m4
+m4/eealloc.m4
+m4/longlong.m4
+m4/longdouble.m4
+
+m4/onceonly_2_57.m4
+lib/setenv.h
+lib/setenv.c
+lib/unsetenv.c
+m4/setenv.m4
+
+m4/onceonly_2_57.m4
+doc/getdate.texi
+lib/getdate.h
+lib/getdate.y
+m4/bison.m4
+m4/tm_gmtoff.m4
+m4/getdate.m4
+
+m4/onceonly_2_57.m4
