@@ -2,6 +2,7 @@ $ CC :== CC/NOOPT/DEB/STANDARD=VAXC/DEFINE=HAVE_CONFIG_H-
 /INCLUDE_DIR=([-],[-.VMS],[-.LIB])/PREFIX=ALL
 $ CC add.c
 $ CC admin.c
+$ CC buffer.c
 $ CC checkin.c
 $ CC checkout.c
 $ CC classify.c
@@ -48,7 +49,8 @@ $ CC version.c
 $ CC vers_ts.c
 $ CC watch.c
 $ CC wrapper.c
-$ LIBRARY/CREATE cvslib.olb add.obj,admin.obj,checkin.obj,checkout.obj,-
+$ LIBRARY/CREATE cvslib.olb add.obj,admin.obj,buffer.obj,checkin.obj,-
+checkout.obj,-
 classify.obj,client.obj,commit.obj,create_adm.obj,cvsrc.obj,-
 diff.obj,edit.obj,entries.obj,error.obj,expand_path.obj,fileattr.obj,-
 find_names.obj,hash.obj,history.obj,ignore.obj,import.obj,-
@@ -57,4 +59,4 @@ parseinfo.obj,patch.obj,rcs.obj,rcscmds.obj,recurse.obj,release.obj,-
 remove.obj,repos.obj,root.obj,rtag.obj,run.obj,server.obj,status.obj,-
 subr.obj,tag.obj,update.obj,version.obj,vers_ts.obj,watch.obj,wrapper.obj
 $ link/nodeb/exe=cvs.exe main.obj,cvslib.olb/lib,[-.lib]gnulib.olb/lib,-
-[-.vms]openvmslib.olb/lib
+[-.vms]openvmslib.olb/lib,[-.zlib]zlib.olb/lib
