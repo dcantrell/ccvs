@@ -1,5 +1,7 @@
 Fri Feb  9 17:31:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Variables): New node.
+
 	* Makefile.in (CVSvn.texi): New rule.
 	(OBJDIR_DISTFILES): Add CVSvn.texi.
 	(cvs.dvi,cvs.info): Add cruft to deal with it being in build dir
