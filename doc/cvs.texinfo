@@ -6046,7 +6046,7 @@ File bar.h,v changed from revision 1.29.2.1 to 1.2
 
 @itemize @bullet
 @item
-release [-d] modules@dots{}
+release [-d] directories@dots{}
 @item
 Requires: Working directory.
 @item

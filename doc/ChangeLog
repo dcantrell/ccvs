@@ -1,5 +1,8 @@
 Wed Apr 10 16:56:21 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (release): Change "modules" to "directories".
+	Release does not take module names as arguments.
+
 	* cvs.texinfo (Creating a branch): Add comments about how we
 	should better document tagging the branchpoint.
 
