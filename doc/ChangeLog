@@ -1,5 +1,9 @@
 Mon Apr 14 12:37:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Requests): Clarify that arguments to co, rdiff,
+	and rtag are module names (and how that differs from file/directory
+	names).
+
 	* cvsclient.texi (Responses): Say that servers need to create
 	directories one at a time.
 

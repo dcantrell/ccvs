@@ -694,16 +694,13 @@ and then it knows to check the @file{1dir} directory and send
 requests such as @code{Entry} and @code{Modified} for the files in that
 directory.
 
-@item co \n
-@itemx ci \n
+@item ci \n
 @itemx diff \n
 @itemx tag \n
 @itemx status \n
 @itemx log \n
 @itemx add \n
 @itemx remove \n
-@itemx rdiff \n
-@itemx rtag \n
 @itemx admin \n
 @itemx export \n
 @itemx history \n
@@ -718,13 +715,30 @@ of the operation.  No provision is made for any input from the user.
 This means that @code{ci} must use a @code{-m} argument if it wants to
 specify a log message.
 
-@itemx init @var{root-name} \n
+@item co \n
+Response expected: yes.  Get files from the repository.  This uses any
+previous @code{Argument}, @code{Directory}, @code{Entry}, or
+@code{Modified} requests, if they have been sent.  Arguments to this
+command are module names; the client cannot know what directories they
+correspond to except by (1) just sending the @code{co} request, and then
+seeing what directory names the server sends back in its responses, and
+(2) the @code{expand-modules} request.
+
+@item rdiff \n
+@itemx rtag \n
+Response expected: yes.  Actually do a cvs command.  This uses any
+previous @code{Argument} requests, if they have been sent.  The client
+should not send @code{Directory}, @code{Entry}, or @code{Modified}
+requests for this command; they are not used.  Arguments to these
+commands are module names, as described for @code{co}.
+
+@item init @var{root-name} \n
 Response expected: yes.  If it doesn't already exist, create a @sc{cvs}
 repository @var{root-name}.  Note that @var{root-name} is a local
 directory and @emph{not} a fully qualified @code{CVSROOT} variable.  The
 @code{Root} request need not have been previously sent.
 
-@itemx update \n
+@item update \n
 Response expected: yes.  Actually do a @code{cvs update} command.  This
 uses any previous @code{Argument}, @code{Directory}, @code{Entry},
 or @code{Modified} requests, if they have been sent.  The
