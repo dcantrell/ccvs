@@ -1532,6 +1532,12 @@ RCS_getrevtime (rcs, rev, date, fudge)
     (void) sscanf (vers->date, SDATEFORM, &ftm->tm_year, &ftm->tm_mon,
 		   &ftm->tm_mday, &ftm->tm_hour, &ftm->tm_min,
 		   &ftm->tm_sec);
+
+    /* If the year is from 1900 to 1999, RCS files contain only two
+       digits, and sscanf gives us a year from 0-99.  If the year is
+       2000+, RCS files contain all four digits and we subtract 1900,
+       because the tm_year field should contain years since 1900.  */
+
     if (ftm->tm_year > 1900)
 	ftm->tm_year -= 1900;
 

@@ -1,5 +1,7 @@
 Thu Mar 28 10:56:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_getrevtime): Add comment regarding years after 1999.
+
 	* rcs.c: Add "cvs annotate" command and related code.
 	(getrcskey): Move special handling of RCSDESC from here to
 	callers.  Handle those keys (desc, log, text) which do not
