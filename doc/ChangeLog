@@ -1,3 +1,13 @@
+2003-02-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Watch Information, Editing files, Getting Notified,
+	Setting a watch): Edit usage specs for correctness and uniformity.
+	(Sticky tags): Use ref rather than xref to avoid a warning from
+	makeinfo.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-02-10  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Sticky tags, update): Make merging behavior of
