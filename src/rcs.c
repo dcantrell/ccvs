@@ -8518,6 +8518,11 @@ make_file_label (path, rev, rcs)
 	    (void) tm_to_internet (datebuf, wm);
 	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
 	}
+	else
+	{
+	    free (label);
+	    label = NULL;
+	}
     }
     return label;
 }
