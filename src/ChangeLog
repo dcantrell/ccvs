@@ -1,3 +1,15 @@
+2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (MAXSIZE): New macro.
+	(xreadlink): Ensure initial buffer size does not exceed MAXSIZE.
+	Avoid cast. If readlink fails with buffer size just under MAXSIZE,
+	try again with MAXSIZE.
+
+2004-11-02  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (xreadlink): AIX and HP-UX readlink() returns ERANGE
+	when there is not enough room in the buffer.
+
 2004-11-01 Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (rcslib): Fix typo in path.
