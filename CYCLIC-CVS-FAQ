@@ -28,8 +28,9 @@ Here are some of Cyclic CVS's features:
 There have been several CVS variants designed with similar goals.
 contrib/pcl-cvs/pcl-cvs.el mentions one or two, for example.  However,
 I've had a hard time finding more information about those
-implementations, so I can't comment on them.  Are they better?  Worse?
-Do they have the same name?  Let me know!
+implementations, so I can't comment on them.  The sense of the
+info-cvs mailing list seems to be that CCVS is the best extant
+implementation.
 
 
 * How can I get Cyclic CVS?
