@@ -612,7 +612,7 @@ commit (int argc, char **argv)
 
     wrap_setup ();
 
-    lock_tree_for_write (argc, argv, local, W_LOCAL, aflag);
+    lock_tree_promotably (argc, argv, local, W_LOCAL, aflag);
 
     /*
      * Set up the master update list and hard link list
@@ -649,10 +649,10 @@ commit (int argc, char **argv)
     write_dirnonbranch = 0;
     if (noexec == 0)
 	err = start_recursion
-	    ( commit_fileproc, commit_filesdoneproc,
-	      commit_direntproc, commit_dirleaveproc, NULL,
-	      argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-	      (char *) NULL, 1, (char *) NULL );
+	    (commit_fileproc, commit_filesdoneproc,
+	     commit_direntproc, commit_dirleaveproc, NULL,
+	     argc, argv, local, W_LOCAL, aflag, CVS_LOCK_WRITE,
+	     NULL, 1, NULL);
 
     /*
      * Unlock all the dirs and clean up

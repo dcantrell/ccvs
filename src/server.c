@@ -2569,6 +2569,8 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     int errs;
 
+    TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
+
     command_pid = -1;
     stdout_pipe[0] = -1;
     stdout_pipe[1] = -1;
@@ -2721,8 +2723,11 @@ error  \n");
 	if (getenv ("CVS_SERVER_SLEEP"))
 	{
 	    int secs = atoi (getenv ("CVS_SERVER_SLEEP"));
+	    TRACE (TRACE_DATA, "Sleeping CVS_SERVER_SLEEP (%d) seconds", secs);
 	    sleep (secs);
 	}
+	else
+	    TRACE (TRACE_DATA, "CVS_SERVER_SLEEP not set.");
 
 	exitstatus = (*command) (argument_count, argument_vector);
 
@@ -4878,6 +4883,16 @@ server (int argc, char **argv)
 	usage (msg);
     }
     /* Ignore argc and argv.  They might be from .cvsrc.  */
+
+    /*
+     * Set this in .bashrc if you want to give yourself time to attach
+     * to the subprocess with a debugger.
+     */
+    if (getenv ("CVS_PARENT_SERVER_SLEEP"))
+    {
+	int secs = atoi (getenv ("CVS_PARENT_SERVER_SLEEP"));
+	sleep (secs);
+    }
 
     buf_to_net = fd_buffer_initialize (STDOUT_FILENO, 0,
 				       outbuf_memory_error);

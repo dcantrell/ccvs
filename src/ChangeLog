@@ -1,3 +1,57 @@
+2003-12-09  Derek Price  <derek@ximbiot.com>
+
+	Rewrite code to use promotable write locks to avoid locking more than a
+	directory at a time for a full write.
+
+	* cvs.h (lock_tree_for_write): Rename to...
+	(lock_tree_promotably): ...this.
+	(Simple_Lock_Cleanup): New prototype.
+	* lock.c: Remove some unneeded prototypes.  Some function
+	reorganization.
+	 (struct lock): Make repository const.  Add file1 & file2 to
+	track lock names.  Keep track of when repository needs to be freed.
+	(promotablelock, global_writelock): New globals.
+	(locked_dir, locked_list): Remove unneeded globals.
+	(lock_name): Take const args.
+	(remove_locks): Update comment.  Move readlock cleanup...
+	(Simple_Lock_Cleanup): ...to this new function which also cleans up
+	writelocks.
+	(Lock_Cleanup): No need to clean up after the obsolete locked_dir &
+	locked_list.
+	(lock_simple_remove): Use new lock name cache.  Set lock->repository to
+	NULL to show locks are removed.  Free repository name when necessary.
+	(Reader_Lock): Copy xrepository argument so we do not need to trust the
+	caller not to dispose of it.  Use lock name cache.  Factor code to set
+	the global readlock variable...
+	(set_readlock_name): ...to this new function so it can be used by
+	promotable_lock too.
+	(readers_exist): Factor common code and make wrapper for...
+	(_lock_exists): ...this new function.
+	(promotable_exists): Wrapper for _lock_exists().
+	(write_lock): Rename to...
+	(promotable_lock): ...this and tweak for new behavior.
+	(set_writelock_proc): Rename to...
+	(set_promotablelock_proc): ...this and tweak for new functionality.
+	(Write_Lock): Rename to...
+	(Promotable_Lock): ...this and tweak for new functionality.
+	(set_lock): Add trace.
+	(lock_tree_for_write): Rename to...
+	(lock_tree_promotably): ...this and tweak for new functionality.
+	(lock_dir_for_write): Lock only one directory at a time in a promotable
+	lock aware fashion using new interfaces.
+	* admin.c, commit.c, edit.c, watch.c:
+	s/lock_tree_for_write/lock_tree_promotably/.
+	s/CVS_LOCK_NONE/CVS_LOCK_WRITE/ in calls to start_recursion that used
+	to rely on lock_tree_for_write() to obtain their write locks.  Remove
+	some unnecessary typecasting.
+	* recurse.c (do_recursion): Use Simple_Lock_Cleanup() rather than
+	Lock_Cleanup to avoid removing promotable locks.
+	* server.c (do_cvs_command): Add traces.
+	(server): Add new way to sleep the parent server process for connecting
+	a debugger.
+	* sanity.sh (lockfiles, multiroot2): Update tests to accomodate minor
+	trace inconsistencies.
+
 2003-12-09  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (trace): Remove trace from the set of tests to run.
