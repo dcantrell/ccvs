@@ -1,3 +1,9 @@
+Mon Nov 20 14:19:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Remove items about developer communications; they are done.
+	* NEWS: Mention developer communication features.
+	* cvsinit.sh: Also add notify file.
+
 Mon Dec 11 22:44:58 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * New subdir "macintosh", for Mike Ladwig's

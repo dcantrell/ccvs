@@ -1,5 +1,8 @@
 Changes since 1.6:
 
+* New developer communication features.  See the "Watches" section of
+doc/cvs.texinfo for details.
+
 * RCS keyword "Name" supported for "cvs update -r <tag>" and "cvs
 checkout -r <tag>".
 
