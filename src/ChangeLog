@@ -1,5 +1,8 @@
 Sun Sep  7 07:45:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rtag.c (rtag_usage), tag.c (tag_usage): Reword to hopefully be
+	clearer that -r takes either numeric or symbolic revision.
+
 	* ignore.c (ign_dir_add, ignore_directory): Reindent.  Tweaks to
 	comments.
 

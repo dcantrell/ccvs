@@ -72,7 +72,8 @@ static const char *const rtag_usage[] =
     "\t-n\tNo execution of 'tag program'\n",
     "\t-d\tDelete the given Tag.\n",
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
-    "\t-[rD]\tExisting tag or Date.\n",
+    "\t-r rev\tExisting revision/tag.\n",
+    "\t-D\tExisting date.\n",
     "\t-F\tMove tag if it already exists\n",	
     "(Specify the --help global option for a list of other help options)\n",
     NULL
