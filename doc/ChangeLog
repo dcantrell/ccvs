@@ -1,3 +1,8 @@
+1999-05-17  Jim Kingdon  <http://www.cyclic.com>
+
+	* cvsclient.texi (Requests): For Notify request, strike duplicate
+	"Response expected: no" and fix "a edit" -> "an edit".
+
 1999-05-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvs.texinfo (Working directory storage): Try to be more clear
