@@ -23897,6 +23897,7 @@ Valid-responses [-a-zA-Z ]*
 valid-requests
 Argument -D
 Argument [34] Oct 1999 [0-9][0-9]:00:00 -0000
+Argument --
 Directory \.
 ${CVSROOT_DIRNAME}/first-dir
 Entry /file1/1\.2///
