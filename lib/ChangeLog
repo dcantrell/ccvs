@@ -1,3 +1,22 @@
+Thu Mar  6 17:14:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* regex.c: Partial merge with version from emacs 19.34.  I brought
+	over most trivial changes (whitespace and so on).  Most of the
+	changes to portability cruft I did not bring over, on the theory
+	of sticking to the devil that we know.  I did bring over the
+	change to undef MAX and MIN (this is a better solution to a
+	problem we had been handling a different way).  There were a
+	variety of changes I probably could/should have brought over, but
+	elected not to try to understand them and whether they would cause
+	trouble (printchar -> putchar, changes to output format in
+	print_partial_compiled_pattern, internationalization,
+	FREE_STACK_RETURN and friends which would appear to be fixing
+	memory leaks in error cases, RE_TRANSLATE_TYPE, and others).  I
+	did merge the changes (union fail_stack_elt, PUSH_FAILURE_POINTER,
+	etc.) to use a union for the failure stack rather than playing
+	games with pointers and integers (that was my reason for
+	bothering; the code had been broken on the Alpha).
+
 Mon Feb 10 18:52:18 1997  Ullrich von Bassewitz <uz@musoftware.com>
 
 	* md5.c: Make the parameter to getu32 const since the function will
