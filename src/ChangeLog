@@ -1,5 +1,47 @@
 1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
 
+	* sanity.sh: change remote access method from ext to fork.  This
+	results in a significant speed improvement when running the
+	testsuite.  The ext method on my machine (i586 120MHz Linux 2.0.35
+	with TCP wrappers installed) runs in 450% of the time of the local
+	method while the fork method runs in only 150% of the time of the
+	local method!  Yow!  Am I SWAPPING yet?!
+	(crerepos-6a, crerepos-6b): change to reflect different error
+	messages for fork method.
+	(modes-15): same.
+
+	* client.c (connect_to_forked_server): new routine.
+	(start_server): call the above when method is fork_method.
+
+	* root.c: add a new method named "fork".  This method uses the
+	remote protocol, but does so by forking a "cvs server" process
+	directly rather than doing "rsh host cvs server" (for example).
+	This new method has few advantages for day-to-day use, but has
+	three important benefits for debugging:
+
+	  1) Most secure installations these days don't allow rsh access.
+	  With this new method, we can still test the remote protocol on
+	  these machines because we don't need to be able to make a local
+	  TCP connection.
+
+	  2) Even if installations allow rsh access, they almost always
+	  have TCP wrappers to check permissions by IP/hostname.  This
+	  causes a short delay for every connection.  For invocations from
+	  the command line, this doesn't matter much, but it adds up to a
+	  significant amount of time when running the testsuite.
+
+	  3) On machines that can't (or do not usually) provide rshd
+	  access (I'm thinking of WNT/W95 in particular), we can now run
+	  tests of the remote protocol using this method.  Indeed, we can
+	  run remote protocol tests on any machine that has an
+	  implementation of piped_child().
+
+	(parse_cvsroot): handle new method.
+	(error_exit, xstrdup, isabsolute): new stub functions to use when
+	compiling root.c with the DEBUG option.
+	(main): fix a few typos.
+	* cvs.h (CVSmethod): add fork_method.
+	
 	* server.c (create_adm_p): use Emptydir as the placeholder
 	directory instead of "." to avoid problems with "cvs update -d" et
 	al.

@@ -78,12 +78,6 @@ echo 'This test should produce no other output than this line, and a final "OK".
 if test x"$1" = x"-r"; then
 	shift
 	remote=yes
-	# If we're going to do remote testing, make sure 'rsh' works first.
-        host="`hostname`"
-	if test "x`${CVS_RSH-rsh} $host -n 'echo hi'`" != "xhi"; then
-	    echo "ERROR: cannot test remote CVS, because \`rsh $host' fails." >&2
-	    exit 1
-	fi
 else
 	remote=no
 fi
@@ -650,7 +644,7 @@ if test "x$remote" = xyes; then
 	# Use rsh so we can test it without having to muck with inetd
 	# or anything like that.  Also needed to get CVS_SERVER to
 	# work.
-	CVSROOT=:ext:`hostname`:${CVSROOT_DIRNAME} ; export CVSROOT
+	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
@@ -11666,7 +11660,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    mkdir crerepos
 	    mkdir crerepos/CVSROOT
 
-	    CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
+	    CREREPOS_ROOT=:fork:${TESTDIR}/crerepos
 
 	  fi
 
@@ -11687,15 +11681,15 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    # Test that CVS rejects a relative path in CVSROOT.
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6a \
-"${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
-"Root ../crerepos must be an absolute pathname"
+"${testcvs} -q -d :fork:../crerepos get ." \
+"${PROG} \[[a-z]* aborted\]: CVSROOT ../crerepos must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b \
-"${testcvs} -d :ext:`hostname`:crerepos init" \
-"Root crerepos must be an absolute pathname"
+"${testcvs} -d :fork:crerepos init" \
+"${PROG} \[[a-z]* aborted\]: CVSROOT crerepos must be an absolute pathname"
 	    cd ..
 	    rm -r 1
 	  fi # end of tests to be skipped for remote
@@ -12601,10 +12595,13 @@ done"
 	  if test "x$remote" = xyes; then
 	    # The problem here is that the CVSUMASK environment variable
 	    # needs to be set on the server (e.g. .bashrc).  This is, of
-	    # course, bogus, but that is the way it is currently.
+	    # course, bogus, but that is the way it is currently.  The
+	    # first match is for the :ext: method (where the CVSUMASK
+	    # won't be set), while the second is for the :fork: method
+	    # (where it will be).
 	    dotest modes-15 \
 "ls -l ${TESTDIR}/cvsroot/first-dir/Attic/ac,v" \
-"-r--r--r--.*"
+"-r--r--r--.*" "-r--r-----.*"
 	  else
 	    dotest modes-15 \
 "ls -l ${TESTDIR}/cvsroot/first-dir/Attic/ac,v" \
@@ -15815,8 +15812,8 @@ ${PROG} [a-z]*: Updating first-dir"
 	  CVSROOT1=${CVSROOT1_DIRNAME} ; export CVSROOT1
 	  CVSROOT2=${CVSROOT2_DIRNAME} ; export CVSROOT2
 	  if test "x$remote" = xyes; then
-	      CVSROOT1=:ext:`hostname`:${CVSROOT1_DIRNAME} ; export CVSROOT1
-	      CVSROOT2=:ext:`hostname`:${CVSROOT2_DIRNAME} ; export CVSROOT2
+	      CVSROOT1=:fork:${CVSROOT1_DIRNAME} ; export CVSROOT1
+	      CVSROOT2=:fork:${CVSROOT2_DIRNAME} ; export CVSROOT2
 	  fi
 	  testcvs1="${testcvs} -d ${CVSROOT1}"
 	  testcvs2="${testcvs} -d ${CVSROOT2}"
