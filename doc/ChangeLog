@@ -1,3 +1,7 @@
+2003-01-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (config): Correct LogHistory default (U was omitted).
+
 2003-01-16  Derek Price  <derek@ximbiot.com>
 
 	* stamp-1: Regenerated for version (1.11.5).
