@@ -15,6 +15,8 @@ AT_CVS_BANNER([Basic Functionality])
 
 AT_CVS_SETUP([Operations on empty projects])
 
+AT_KEYWORDS([update diff status])
+
 # Test a few operations, to ensure they gracefully do
 # nothing in an empty directory.
 AT_CHECK([cvs -q update])
