@@ -1,7 +1,7 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (EXTRA_DIST): Remove lib.dep.
-	* Makefile: Regenerated.
+	* Makefile.in: Regenerated.
 
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
