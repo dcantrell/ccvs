@@ -1,3 +1,7 @@
+2003-05-21  Derek Price  <derek@ximbiot.com>
+
+	* realloc.m4: New file from GNULIB.
+
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
 	* lstat.m4 (jm_FUNC_LSTAT): Add check for the lstat directory with a
