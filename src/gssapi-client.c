@@ -11,30 +11,36 @@
    GNU General Public License for more details.  */
 
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif /* HAVE_CONFIG_H */
 
 #include "cvs.h"
-
 #include "buffer.h"
-#include "socket-client.h"
-#include "gssapi-client.h"
+
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
+# include "gssapi-client.h"
 
 /* This is needed for GSSAPI encryption.  */
 gss_ctx_id_t gcontext;
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */
 
-#   ifdef ENCRYPTION
+#ifdef CLIENT_SUPPORT
+# include "socket-client.h"
+
+# ifdef ENCRYPTION
 /* Whether to encrypt GSSAPI communication.  We use a global variable
    like this because we use the same buffer type (gssapi_wrap) to
    handle both authentication and encryption, and we don't want
    multiple instances of that buffer in the communication stream.  */
 int cvs_gssapi_encrypt;
-#   endif
+# endif /* ENCRYPTION */
 
 
 /* Receive a given number of bytes.  */
 
 static void
-recv_bytes( int sock, char *buf, int need )
+recv_bytes (int sock, char *buf, int need)
 {
     while (need > 0)
     {
@@ -42,13 +48,16 @@ recv_bytes( int sock, char *buf, int need )
 
 	got = recv (sock, buf, need, 0);
 	if (got <= 0)
-	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
+	    error (1, 0, "recv() from server %s: %s",
+                   current_parsed_root->hostname,
 		   got == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
 
 	buf += got;
 	need -= got;
     }
 }
+
+
 
 /* Connect to the server using GSSAPI authentication.  */
 
@@ -68,7 +77,7 @@ recv_bytes( int sock, char *buf, int need )
  */
 #define BUFSIZE 1024
 int
-connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
+connect_to_gserver (cvsroot_t *root, int sock, struct hostent *hostinfo)
 {
     char *str;
     char buf[BUFSIZE];
@@ -110,13 +119,13 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 	    gss_display_status (&new_stat_min, stat_maj, GSS_C_GSS_CODE,
                                 GSS_C_NULL_OID, &message_context, &tok_out);
 	    error (0, 0, "GSSAPI authentication failed: %s",
-		   (char *) tok_out.value);
+		   (const char *) tok_out.value);
 
 	    message_context = 0;
 	    gss_display_status (&new_stat_min, stat_min, GSS_C_MECH_CODE,
 				GSS_C_NULL_OID, &message_context, &tok_out);
 	    error (1, 0, "GSSAPI authentication failed: %s",
-		   (char *) tok_out.value);
+		   (const char *) tok_out.value);
 	}
 
 	if (tok_out.length == 0)
@@ -171,8 +180,11 @@ connect_to_gserver( cvsroot_t *root, int sock, struct hostent *hostinfo )
 
     return 1;
 }
+#endif /* CLIENT_SUPPORT */
 
 
+
+#if defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT)
 /* A buffer interface using GSSAPI.  It is built on top of a
    packetizing buffer.  */
 
@@ -193,36 +205,35 @@ static int cvs_gssapi_wrap_output (void *, const char *, char *, int,
    GSSAPI wrapping routines.  */
 
 struct buffer *
-cvs_gssapi_wrap_buffer_initialize( struct buffer *buf, int input,
+cvs_gssapi_wrap_buffer_initialize (struct buffer *buf, int input,
                                    gss_ctx_id_t gcontext,
-                                   void (*memory) ( struct buffer * ) )
+                                   void (*memory) ( struct buffer * ))
 {
     struct cvs_gssapi_wrap_data *gd;
 
-    gd = (struct cvs_gssapi_wrap_data *) xmalloc (sizeof *gd);
+    gd = xmalloc (sizeof *gd);
     gd->gcontext = gcontext;
 
-    return (packetizing_buffer_initialize
-	    (buf,
-	     input ? cvs_gssapi_wrap_input : NULL,
-	     input ? NULL : cvs_gssapi_wrap_output,
-	     gd,
-	     memory));
+    return packetizing_buffer_initialize (buf,
+                                          input ? cvs_gssapi_wrap_input : NULL,
+                                          input ? NULL : cvs_gssapi_wrap_output,
+                                          gd, memory);
 }
+
+
 
 /* Unwrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
-                       int size )
+cvs_gssapi_wrap_input (void *fnclosure, const char *input, char *output,
+                       int size)
 {
-    struct cvs_gssapi_wrap_data *gd =
-	(struct cvs_gssapi_wrap_data *) fnclosure;
+    struct cvs_gssapi_wrap_data *gd = fnclosure;
     gss_buffer_desc inbuf, outbuf;
     OM_uint32 stat_min;
     int conf;
 
-    inbuf.value = (void *) input;
+    inbuf.value = (void *)input;
     inbuf.length = size;
 
     if (gss_unwrap (&stat_min, gd->gcontext, &inbuf, &outbuf, &conf, NULL)
@@ -244,19 +255,20 @@ cvs_gssapi_wrap_input( void *fnclosure, const char *input, char *output,
     return 0;
 }
 
+
+
 /* Wrap data using GSSAPI.  */
 
 static int
-cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
-                        int size, int *translated )
+cvs_gssapi_wrap_output (void *fnclosure, const char *input, char *output,
+                        int size, int *translated)
 {
-    struct cvs_gssapi_wrap_data *gd =
-	(struct cvs_gssapi_wrap_data *) fnclosure;
+    struct cvs_gssapi_wrap_data *gd = fnclosure;
     gss_buffer_desc inbuf, outbuf;
     OM_uint32 stat_min;
     int conf_req, conf;
 
-    inbuf.value = (void *) input;
+    inbuf.value = (void *)input;
     inbuf.length = size;
 
 #ifdef ENCRYPTION
@@ -285,17 +297,16 @@ cvs_gssapi_wrap_output( void *fnclosure, const char *input, char *output,
     return 0;
 }
 
+
+
 void
-initialize_gssapi_buffers( struct buffer **to_server_p,
-                           struct buffer **from_server_p )
+initialize_gssapi_buffers (struct buffer **to_server_p,
+                           struct buffer **from_server_p)
 {
   *to_server_p = cvs_gssapi_wrap_buffer_initialize (*to_server_p, 0,
-						    gcontext,
-						    ((BUFMEMERRPROC)
-						     NULL));
+						    gcontext, NULL);
 
   *from_server_p = cvs_gssapi_wrap_buffer_initialize (*from_server_p, 1,
-						      gcontext,
-						      ((BUFMEMERRPROC)
-						       NULL));
+						      gcontext, NULL);
 }
+#endif /* CLIENT_SUPPORT || SERVER_SUPPORT */

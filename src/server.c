@@ -5077,8 +5077,7 @@ error ENOMEM Virtual memory exhausted.\n");
 
     /* Small for testing.  */
     argument_vector_size = 1;
-    argument_vector =
-	(char **) xmalloc (argument_vector_size * sizeof (char *));
+    argument_vector = xmalloc (argument_vector_size * sizeof (char *));
     argument_count = 1;
     /* This gets printed if the client supports an option which the
        server doesn't, causing the server to print a usage message.
@@ -5087,7 +5086,7 @@ error ENOMEM Virtual memory exhausted.\n");
        by options which are for a particular command.  Might be nice to
        say something like "client apparently supports an option not supported
        by this server" or something like that instead of usage message.  */
-    error_prog_name = xmalloc( strlen(program_name) + 8 );
+    error_prog_name = xmalloc (strlen (program_name) + 8);
     sprintf(error_prog_name, "%s server", program_name);
     argument_vector[0] = error_prog_name;
 
@@ -5097,7 +5096,7 @@ error ENOMEM Virtual memory exhausted.\n");
 	struct request *rq;
 	int status;
 
-	status = buf_read_line (buf_from_net, &cmd, (int *) NULL);
+	status = buf_read_line (buf_from_net, &cmd, NULL);
 	if (status == -2)
 	{
 	    buf_output0 (buf_to_net, "E Fatal server error, aborting.\n\

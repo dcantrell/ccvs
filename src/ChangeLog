@@ -1,5 +1,13 @@
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
+	* root.h (cvsroot_t): Move username, password, hostname, port inside
+	CLIENT_SUPPORT ifdefs.
+	* buffer.c, gssapi-client.c, root.c, sever.c: Add #ifdefs as necessary
+	so that this will compile without client support and the root.h change.
+	Some gratuitous restyling.
+
+2004-04-06  Derek Price  <derek@ximbiot.com>
+
 	* log.c, tag.c: Gratuitous restyling.
 
 2004-04-04  Derek Price  <derek@ximbiot.com>
