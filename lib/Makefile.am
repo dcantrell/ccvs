@@ -43,7 +43,6 @@ libcvs_a_SOURCES = \
 	pathmax.h \
 	savecwd.h \
 	system.h \
-	unlocked-io.h \
 	wait.h \
 	xselect.h \
 	xtime.h
@@ -146,6 +145,9 @@ libcvs_a_SOURCES += time_r.h
 
 ## For GNULIB's timespec module.
 libcvs_a_SOURCES += timespec.h
+
+## For GNULIB's unlocked-io module.
+libcvs_a_SOURCES += unlocked-io.h
 
 ## For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h

@@ -206,7 +206,6 @@ $GNULIB/m4/timespec.m4				m4		no NI
 $GNULIB/m4/tzset.m4				m4		no NI
 # $GNULIB/modules/unlocked-io
 $GNULIB/lib/unlocked-io.h			lib		no NI
-$GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/unlocked-io.m4			m4		no NI
 # $GNULIB/modules/vasnprintf
 $GNULIB/lib/asnprintf.c				lib		no NI
