@@ -56,43 +56,6 @@
 # endif
 #endif
 
-/* Begin the default set of autoconf includes */
-#include <stdio.h>
-#if HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif /* HAVE_SYS_TYPES_H */
-#if HAVE_SYS_STAT_H
-# include <sys/stat.h>
-#endif /* HAVE_SYS_STAT_H */
-#if STDC_HEADERS
-# include <stdlib.h>
-# include <stddef.h>
-#else /* ! STDC_HEADERS */
-# if HAVE_STDLIB_H
-#   include <stdlib.h>
-# endif /* HAVE_STDLIB_H */
-#endif /* STDC_HEADERS */
-#if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif /* !STDC_HEADERS && HAVE_MEMORY_H */
-# include <string.h>
-#endif /* HAVE_STRING_H */
-#if HAVE_STRINGS_H
-# include <strings.h>
-#endif /* HAVE_STRINGS_H */
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else /* ! HAVE_INTTYPES_H */
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif /* HAVE_STDINT_H */
-#endif /* HAVE_INTTYPES_H */
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif /* HAVE_UNISTD_H */
-/* End the default set of autoconf includes */
-
 /* Begin includes for functions with variable numbers of arguments */
 #if STDC_HEADERS
 # include <stdarg.h>
