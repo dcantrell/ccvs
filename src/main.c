@@ -1206,7 +1206,7 @@ tm_to_internet (char *dest, const struct tm *source)
  *   UNIXTIME	The UNIX seconds since the epoch.
  *
  * RETURNS
- *   If strftime() encounters an error, this function can return NULL.
+ *   If my_strftime() encounters an error, this function can return NULL.
  *
  *   Otherwise, returns a date string in ISO8601 format, e.g.:
  *
@@ -1221,7 +1221,7 @@ format_time_t (time_t unixtime)
     /* Convert to a time in the local time zone.  */
     struct tm ltm = *(gmtime (&unixtime));
 
-    if (strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
 	return NULL;
 
     return xstrdup (buf);
@@ -1238,7 +1238,7 @@ gmformat_time_t (time_t unixtime)
     /* Convert to a time in the local time zone.  */
     struct tm ltm = *(gmtime (&unixtime));
 
-    if (strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
+    if (my_strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S %z", &ltm) == 0)
 	return NULL;
 
     return xstrdup (buf);
