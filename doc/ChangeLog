@@ -1,5 +1,8 @@
 1998-09-13  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Keyword list, Substitution modes): In describing
+	$Locker and -kkvl, refer to cvs admin -l.
+
 	* cvsclient.texi (Requests): Re-word description of Sticky to
 	allow room for "Ntagname" (or other, future, values).
 
