@@ -1,5 +1,11 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* client.c: #ifdef inclusion of gssapi-client.h.
+	* server.c: Ditto.
+	(Reported by Boyd Lynn Gerber <gerberb@zenez.com>.)
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* client.h: Move some of the GSSAPI stuff...
 	* gssapi-client.h: ...to this new file.
 	* client.c (start_server): Use new initialize_gssapi_buffers().

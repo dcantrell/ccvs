@@ -30,7 +30,9 @@
 #include "socket-client.h"
 #include "rsh-client.h"
 
-#include "gssapi-client.h"
+# ifdef HAVE_GSSAPI
+#   include "gssapi-client.h"
+# endif
 
 # if HAVE_KERBEROS
 
