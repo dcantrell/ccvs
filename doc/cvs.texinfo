@@ -410,9 +410,19 @@ Jeff Polk later helped Brian with the design of the @sc{cvs}
 module and vendor branch support.
 
 @cindex Source, getting CVS source
-You can get @sc{cvs} via anonymous ftp from a number of
-sites, for instance @t{prep.ai.mit.edu} in
-@file{pub/gnu}.
+You can get @sc{cvs} via anonymous @sc{ftp} from a
+number of sites; for example see
+@example
+http://www.gnu.ai.mit.edu/order/ftp.html
+@end example
+for a list of the @sc{gnu} @sc{ftp} sites.
+@c We could also be pointing to other resources like
+@c the cyclic getting.html, Pascal Molli's page, etc.,
+@c and probably should, when someone gets around to
+@c figuring out which pages are stable enough that we
+@c should cite them, which ones are best to point
+@c people to (supported? binary? source? zero-cost?
+@c buying CD-ROMs? etc.), etc.
 
 @cindex Mailing list
 @cindex List, mailing list
@@ -426,15 +436,42 @@ unsubscribe
 @c could add "to the mailing list,"
 send a message to
 @c or "write to"
-@w{@code{info-cvs-request@@prep.ai.mit.edu}}.  Please be
-specific about your email address.  As of May 1996,
+@w{@code{info-cvs-request@@prep.ai.mit.edu}}.  Please
+be specific about your email address.  As of May 1996,
 subscription requests are handled by a busy human
 being, so you cannot expect to be added or removed
-immediately.  The usenet group
-@code{comp.software.config-mgmt} is also a suitable
-place for @sc{cvs} discussions (along with other
-configuration management systems).
+immediately.  If you prefer a usenet group, the right
+group is @code{comp.software.config-mgmt} which is for
+@sc{cvs} discussions (along with other configuration
+management systems).  In the future, it might be
+possible to create a
+@code{comp.software.config-mgmt.cvs}, but probably only
+if there is sufficient @sc{cvs} traffic on
+@code{comp.software.config-mgmt}.
+@c Other random data is that past attempts to create a
+@c gnu.* group have failed (the relevant authorities
+@c say they'll do it, but don't), and that tale was very
+@c skeptical of comp.software.config-mgmt.cvs when the
+@c subject came up around 1995 or so (for one
+@c thing, because creating it would be a "reorg" which
+@c would need to take a more comprehensive look at the
+@c whole comp.software.config-mgmt.* hierarchy).
 
+@cindex Reporting bugs (CVS)
+@cindex Bugs, reporting (CVS)
+@cindex Errors, reporting (CVS)
+To report bugs in @sc{cvs} send mail to
+@code{bug-cvs@@prep.ai.mit.edu}.  Do note that someone
+may or may not feel like taking care of your bug
+report---if you need a response consider a support
+contract from Cyclic Software
+(@code{http://www.cyclic.com} or
+@code{info@@cyclic.com}).  This is also the procedure
+for submitting suggested changes to @sc{cvs} (see the file
+@sc{hacking} in the source distribution for more details).
+Note that all submitted changes may be distributed
+under the terms of the @sc{gnu} Public License, so if you
+don't like this, don't submit them.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @unnumberedsec CVS is not@dots{}
