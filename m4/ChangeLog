@@ -1,5 +1,13 @@
 2003-07-17  Derek Price  <derek@ximbiot.com>
 
+	* getndelim2.m4: New file.
+	* ssize_t.m4: Ditto.
+
+	* getline.m4: Depend on getndelim2 rather than getnline.
+	* getnline.m4: Depend on getndelim2.
+
+2003-07-17  Derek Price  <derek@ximbiot.com>
+
 	* getline.m4 (AM_FUNC_GETLINE): Define HAVE_GETDELIM when a working
 	GNU getline() is found.
 	(Thanks again to Steve McIntyre <stevem@cvshome.org> for the report.)
