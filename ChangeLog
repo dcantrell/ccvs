@@ -1,3 +1,7 @@
+2002-02-01  Larry Jones  <larry.jones@sdrc.com>
+
+	* NEWS (Changes from 1.9 to 1.10): Note -t/-f wrappers disabled.
+
 2001-12-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* NEWS (Changes from 1.10 to 1.11): Note update -C.

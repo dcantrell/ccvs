@@ -120,6 +120,11 @@ continues to be to put the lock files in the repository itself.
 
 Changes from 1.9 to 1.10:
 
+* A bug was discovered in the -t/-f wrapper support that can cause
+serious data loss.  Because of this (and also the fact that it doesn't
+work at all in client/server mode), the -t/-f wrapper code has been
+disabled until it can be fixed.
+
 * There is a new feature, enabled by TopLevelAdmin in CVSROOT/config,
 which tells CVS to modify the behavior of the "checkout" command.  The
 command now creates a CVS directory at the top level of the new
