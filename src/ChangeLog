@@ -1,3 +1,10 @@
+2004-01-06  Mark D. Baushke  <mdb@cvshome.org>
+
+	* socket-client.c (socket_buffer_initialize): Fix argument
+	declaration for VMS compiler.
+	(Patch submitted from Michael Lemke
+	<ai26@sternwarte.uni-erlangen.de>.)
+	
 2004-01-01  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* zlib.c (read_and_gzip, gunzip_and_write): Fix potential buffer

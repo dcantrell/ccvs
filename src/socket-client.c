@@ -84,7 +84,7 @@ static int socket_buffer_shutdown (struct buffer *);
 
 struct buffer *
 socket_buffer_initialize( int socket, int input,
-                          void *memory( struct buffer * ) )
+                          void (*memory) ( struct buffer * ) )
 {
     struct socket_buffer *sbuf = xmalloc (sizeof *sbuf);
     sbuf->socket = socket;
