@@ -25,7 +25,13 @@
 #define	RCSSYMBOLS	"symbols"
 #define	RCSDATE		"date"
 #define	RCSDESC		"desc"
+#define RCSEXPAND	"expand"
+
+/* Used by the version of death support which results if you define
+   DEATH_SUPPORT and not DEATH_STATE.  Requires a hacked up RCS.  Considered
+   obsolete.  */
 #define RCSDEAD		"dead"
+
 #define	DATEFORM	"%02d.%02d.%02d.%02d.%02d.%02d"
 #define	SDATEFORM	"%d.%d.%d.%d.%d.%d"
 
@@ -44,6 +50,7 @@ struct rcsnode
     char *head;
     char *branch;
     char *symbols_data;
+    char *expand;
     List *symbols;
     List *versions;
     List *dates;

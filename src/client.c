@@ -849,7 +849,58 @@ update_entries (data_arg, ent_list, short_pathname, filename)
     char *entries_line;
     struct update_entries_data *data = (struct update_entries_data *)data_arg;
 
+    char *cp;
+    char *user;
+    char *vn;
+    /* Timestamp field.  Always empty according to the protocol.  */
+    char *ts;
+    char *options;
+    char *tag;
+    char *date;
+    char *tag_or_date;
+    char *scratch_entries;
+
     read_line (&entries_line, 0);
+
+    /*
+     * Parse the entries line.
+     */
+    if (strcmp (command_name, "export") != 0)
+    {
+	scratch_entries = xstrdup (entries_line);
+
+	if (scratch_entries[0] != '/')
+	    error (1, 0, "bad entries line `%s' from server", entries_line);
+	user = scratch_entries + 1;
+	if ((cp = strchr (user, '/')) == NULL)
+	    error (1, 0, "bad entries line `%s' from server", entries_line);
+	*cp++ = '\0';
+	vn = cp;
+	if ((cp = strchr (vn, '/')) == NULL)
+	    error (1, 0, "bad entries line `%s' from server", entries_line);
+	*cp++ = '\0';
+	
+	ts = cp;
+	if ((cp = strchr (ts, '/')) == NULL)
+	    error (1, 0, "bad entries line `%s' from server", entries_line);
+	*cp++ = '\0';
+	options = cp;
+	if ((cp = strchr (options, '/')) == NULL)
+	    error (1, 0, "bad entries line `%s' from server", entries_line);
+	*cp++ = '\0';
+	tag_or_date = cp;
+
+	/* If a slash ends the tag_or_date, ignore everything after it.  */
+	cp = strchr (tag_or_date, '/');
+	if (cp != NULL)
+	    *cp = '\0';
+	tag = (char *) NULL;
+	date = (char *) NULL;
+	if (*tag_or_date == 'T')
+	    tag = tag_or_date + 1;
+	else if (*tag_or_date == 'D')
+	    date = tag_or_date + 1;
+    }
 
     if (data->contents == UPDATE_ENTRIES_UPDATE
 	|| data->contents == UPDATE_ENTRIES_PATCH)
@@ -888,6 +939,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	sprintf (temp_filename, ".new.%s", filename);
 #endif /* _POSIX_NO_TRUNC */
 	buf = xmalloc (size);
+#if LINES_CRLF_TERMINATED
+	if (strcmp (options, "-kb") == 0)
+	    fd = open (temp_filename,
+		       O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY,
+		       0777);
+	else
+#endif /* LINES_CRLF_TERMINATED */
 	fd = open (temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd < 0)
 	    error (1, errno, "writing %s", short_pathname);
@@ -938,7 +996,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	if (data->contents == UPDATE_ENTRIES_UPDATE)
 	{
 #ifdef LINES_CRLF_TERMINATED
-	    if (use_gzip)
+	    if (use_gzip && strcmp (options, "-kb") != 0)
 	    {
 	        convert_file (temp_filename, O_RDONLY | OPEN_BINARY,
 	    		      filename, O_WRONLY | O_CREAT | O_TRUNC);
@@ -1089,51 +1147,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
      */
     if (strcmp (command_name, "export") != 0)
     {
-	char *cp;
-	char *user;
-	char *vn;
-	/* Timestamp field.  Always empty according to the protocol.  */
-	char *ts;
-	char *options;
-	char *tag;
-	char *date;
-	char *tag_or_date;
 	char *local_timestamp;
 	char *file_timestamp;
-
-	char *scratch_entries = xstrdup (entries_line);
-
-	if (scratch_entries[0] != '/')
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	user = scratch_entries + 1;
-	if ((cp = strchr (user, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	vn = cp;
-	if ((cp = strchr (vn, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	
-	ts = cp;
-	if ((cp = strchr (ts, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	options = cp;
-	if ((cp = strchr (options, '/')) == NULL)
-	    error (1, 0, "bad entries line `%s' from server", entries_line);
-	*cp++ = '\0';
-	tag_or_date = cp;
-
-	/* If a slash ends the tag_or_date, ignore everything after it.  */
-	cp = strchr (tag_or_date, '/');
-	if (cp != NULL)
-	    *cp = '\0';
-	tag = (char *) NULL;
-	date = (char *) NULL;
-	if (*tag_or_date == 'T')
-	    tag = tag_or_date + 1;
-	else if (*tag_or_date == 'D')
-	    date = tag_or_date + 1;
 
 	local_timestamp = data->timestamp;
 	if (local_timestamp == NULL || ts[0] == '+')
@@ -1156,6 +1171,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 	if (file_timestamp)
 	    free (file_timestamp);
+
 	free (scratch_entries);
     }
     free (entries_line);
@@ -2640,10 +2656,13 @@ send_arg (string)
 	error (1, errno, "writing to server");
 }
 
-void
-send_modified (file, short_pathname)
+static void send_modified PROTO ((char *, char *, Vers_TS *));
+
+static void
+send_modified (file, short_pathname, vers)
     char *file;
     char *short_pathname;
+    Vers_TS *vers;
 {
     /* File was modified, send it.  */
     struct stat sb;
@@ -2666,6 +2685,11 @@ send_modified (file, short_pathname)
     bufsize = sb.st_size;
     buf = xmalloc (bufsize);
 
+#ifdef LINES_CRLF_TERMINATED
+    if (strcmp (vers->options, "-kb") == 0)
+	fd = open (file, O_RDONLY | OPEN_BINARY);
+    else
+#endif /* LINES_CRLF_TERMINATED */
     fd = open (file, O_RDONLY);
     if (fd < 0)
 	error (1, errno, "reading %s", short_pathname);
@@ -2678,36 +2702,50 @@ send_modified (file, short_pathname)
 	int readsize = 8192;
 #ifdef LINES_CRLF_TERMINATED
 	char tempfile[L_tmpnam];
+	int converting;
 #endif /* LINES_CRLF_TERMINATED */
 
 #ifdef LINES_CRLF_TERMINATED
-	/* gzip reads and writes files without munging CRLF sequences, as it
-	   should, but files should be transmitted in LF form.  Convert CRLF
-	   to LF before gzipping, on systems where this is necessary.
+	/* Assume everything in a "cvs import" is text.  */
+	if (vers == NULL)
+	    converting = 1;
+	else
+	    converting = strcmp (vers->options, "-kb") != 0;
 
-	   If Windows NT supported fork, we could do this by pushing another
-	   filter on in front of gzip.  But it doesn't.  I'd have to write a
-	   trivial little program to do the conversion and have CVS spawn it
-	   off.  But little executables like that always get lost.
+	if (converting)
+	{
+	    /* gzip reads and writes files without munging CRLF
+	       sequences, as it should, but files should be
+	       transmitted in LF form.  Convert CRLF to LF before
+	       gzipping, on systems where this is necessary.
 
-	   Alternatively, this cruft could go away if we switched to a gzip
-	   library instead of a subprocess; then we could tell gzip to open 
-	   the file with CRLF translation enabled.  */
-	if (close (fd) < 0)
-	    error (0, errno, "warning: can't close %s", short_pathname);
+	       If Windows NT supported fork, we could do this by
+	       pushing another filter on in front of gzip.  But it
+	       doesn't.  I'd have to write a trivial little program to
+	       do the conversion and have CVS spawn it off.  But
+	       little executables like that always get lost.
 
-	tmpnam (tempfile);
-	convert_file (file, O_RDONLY,
-	              tempfile, O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
+	       Alternatively, this cruft could go away if we switched
+	       to a gzip library instead of a subprocess; then we
+	       could tell gzip to open the file with CRLF translation
+	       enabled.  */
+	    if (close (fd) < 0)
+		error (0, errno, "warning: can't close %s", short_pathname);
 
-	/* This OPEN_BINARY doesn't make any difference, I think, because
-	   gzip will deal with the inherited handle as it pleases.  But I
-	   do remember something obscure in the manuals about propagating
-	   the translation mode to created processes via environment
-	   variables, ick.  */
-        fd = open (tempfile, O_RDONLY | OPEN_BINARY);
-        if (fd < 0)
-	    error (1, errno, "reading %s", short_pathname);
+	    tmpnam (tempfile);
+	    convert_file (file, O_RDONLY,
+			  tempfile,
+			  O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
+
+	    /* This OPEN_BINARY doesn't make any difference, I think, because
+	       gzip will deal with the inherited handle as it pleases.  But I
+	       do remember something obscure in the manuals about propagating
+	       the translation mode to created processes via environment
+	       variables, ick.  */
+	    fd = open (tempfile, O_RDONLY | OPEN_BINARY);
+	    if (fd < 0)
+		error (1, errno, "reading %s", short_pathname);
+	}
 #endif /* LINES_CRLF_TERMINATED */
 
 	fd = filter_through_gzip (fd, 1, gzip_level, &gzip_pid);
@@ -2743,8 +2781,12 @@ send_modified (file, short_pathname)
 	    error (1, errno, "gzip exited %d", gzip_status);
 
 #if LINES_CRLF_TERMINATED
-	if (unlink (tempfile) < 0)
-	    error (0, errno, "warning: can't remove temp file %s", tempfile);
+	if (converting)
+	{
+	    if (unlink (tempfile) < 0)
+		error (0, errno,
+		       "warning: can't remove temp file %s", tempfile);
+	}
 #endif /* LINES_CRLF_TERMINATED */
 
 	fprintf (to_server, "Modified %s\n%s\nz%lu\n", file, mode_string,
@@ -2857,7 +2899,7 @@ send_fileproc (file, update_dir, repository, entries, srcfiles)
     else if (vers->ts_rcs == NULL
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
-	send_modified (file, short_pathname);
+	send_modified (file, short_pathname, vers);
     }
     else
     {
@@ -3109,7 +3151,7 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     {
 	send_a_repository ("", repository, short_pathname);
     }
-    send_modified (vfile, short_pathname);
+    send_modified (vfile, short_pathname, NULL);
     return 0;
 }
 

@@ -1026,6 +1026,20 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 			      force_tag_match, set_time, entries, srcfiles);
 	    if (strcmp (xvers_ts->options, "-V4") == 0)
 		xvers_ts->options[0] = '\0';
+	    /* If no keyword expansion was specified on command line,
+	       use whatever was in the file.  This is how we tell the client
+	       whether a file is binary.  */
+	    if (xvers_ts->options[0] == '\0')
+	    {
+		if (vers_ts->srcfile->expand != NULL)
+		{
+		    free (xvers_ts->options);
+		    xvers_ts->options =
+			xmalloc (strlen (vers_ts->srcfile->expand) + 3);
+		    strcpy (xvers_ts->options, "-k");
+		    strcat (xvers_ts->options, vers_ts->srcfile->expand);
+		}
+	    }
 
 	    (void) time (&last_register_time);
 

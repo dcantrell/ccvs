@@ -347,6 +347,12 @@ RCS_reparsercsfile (rdata)
 	    }
 	}
 
+	if (strcmp (RCSEXPAND, key) == 0)
+	{
+	    rdata->expand = xstrdup (value);
+	    continue;
+	}
+
 	/*
 	 * check key for '.''s and digits (probably a rev) if it is a
 	 * revision, we are done with the headers and are down to the
@@ -494,6 +500,8 @@ freercsnode (rnodep)
 	dellist (&(*rnodep)->symbols);
     if ((*rnodep)->symbols_data != (char *) NULL)
 	free ((*rnodep)->symbols_data);
+    if ((*rnodep)->expand != NULL)
+	free ((*rnodep)->expand);
     if ((*rnodep)->head != (char *) NULL)
 	free ((*rnodep)->head);
     if ((*rnodep)->branch != (char *) NULL)
