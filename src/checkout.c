@@ -426,7 +426,10 @@ safe_location ()
     {
         strcpy(hardpath, CVSroot);
     }
-    hardpath[x] = '\0';
+    else
+    {
+      hardpath[x] = '\0';
+    }
     getwd (current);
     if (strncmp(current, hardpath, strlen(hardpath)) == 0)
     {
