@@ -297,6 +297,7 @@ contrib_DATA = \
 	intro.doc
 
 contrib_MANS = \
+	rcs2log.1 \
 	sandbox_status.man
 
 bin_LINKS = \
