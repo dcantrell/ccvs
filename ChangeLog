@@ -1,3 +1,9 @@
+Mon Oct 14 12:13:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Add "Submitting patches (strategy)" section and
+	sentence about test cases.  These changes have been run by
+	devel-cvs and there was no objection.
+
 Sat Oct 12 19:43:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README.VMS: Add notes about some build problems on VAX/VMS.
