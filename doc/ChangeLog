@@ -1,5 +1,10 @@
 Fri Jun 27 11:20:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvsclient.texi (Password scrambling): New node.
+	(Connection and Authentication): Adjust accordingly.
+	(Protocol Notes): Add long discussion of character sets and
+	password scrambling.
+
 	* cvs.texinfo (Repository files): Also mention doc/RCSFILES in
 	documenting RCS file format.
 	(CVSROOT, storage of files): New node.
