@@ -180,7 +180,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)history.c 1.33 94/09/21 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static struct hrec
@@ -272,7 +272,7 @@ static int histsize;
 static char *histdata;
 static char *histfile;		/* Ptr to the history file name */
 
-static char *history_usg[] =
+static const char *const history_usg[] =
 {
     "Usage: %s %s [-report] [-flags] [-options args] [files...]\n\n",
     "   Reports:\n",

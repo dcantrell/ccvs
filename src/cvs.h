@@ -47,7 +47,7 @@ char *alloca ();
 #endif
 
 #if __GNUC__ == 2
-#define USE(var) static char sizeof##var = sizeof(sizeof##var) + sizeof(var);
+#define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var);
 #else
 #define USE(var) 
 #endif
@@ -434,7 +434,7 @@ void run_args ();
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
-void usage PROTO((char **cpp));
+void usage PROTO((const char *const *cpp));
 void xchmod PROTO((char *fname, int writable));
 int Checkin PROTO((int type, char *file, char *update_dir,
 		   char *repository, char *rcs, char *rev,

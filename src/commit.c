@@ -18,7 +18,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)commit.c 1.101 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static Dtype check_direntproc PROTO((char *dir, char *repos, char *update_dir));
@@ -80,7 +80,7 @@ static List *mulist;
 static List *locklist;
 static char *message;
 
-static char *commit_usage[] =
+static const char *const commit_usage[] =
 {
     "Usage: %s %s [-nRlf] [-m msg | -F logfile] [-r rev] files...\n",
     "\t-n\tDo not run the module program (if any).\n",

@@ -1,3 +1,25 @@
+Tue Jan 31 20:59:19 1995  Ken Raeburn  <raeburn@cujo.cygnus.com>
+
+	* main.c (usage): Argument is now `const char *const *'.
+	* cvs.h (usage): Changed prototype.
+	(USE): Make new variable `const'.
+	* add.c (add_usage), admin.c (admin_usage), checkout.c
+	(checkout_usage, export_usage, checkout), commit.c (commit_usage),
+	diff.c (diff_usage), history.c (history_usg), import.c
+	(import_usage, keyword_usage), log.c (log_usage), main.c (usg),
+	patch.c (patch_usage), release.c (release_usage), remove.c
+	(remove_usage), rtag.c (rtag_usage), server.c (server), status.c
+	(status_usage), tag.c (tag_usage), update.c (update_usage): Usage
+	messages are now const arrays of pointers to const char.
+
+	* import.c (comtable): Now const.
+	* main.c (rcsid): Now static.
+	(cmd): Now const.
+	(main): Local variable CM now points to const.
+	* server.c (outbuf_memory_error): Local var MSG now const.
+
+	* client.c (client_commit_usage): Deleted.
+
 Fri Mar  3 11:59:49 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* cvsbug.sh: Call it "Cyclic CVS" now, not "Remote CVS".  Call it

@@ -19,7 +19,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)checkin.c 1.48 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 int

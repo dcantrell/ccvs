@@ -13,12 +13,12 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)release.c 1.23 94/09/21 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static void release_delete PROTO((char *dir));
 
-static char *release_usage[] =
+static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] modules...\n",
     "\t-Q\tReally quiet.\n",

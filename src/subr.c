@@ -12,7 +12,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)subr.c 1.64 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 #ifdef _MINIX

@@ -39,7 +39,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)update.c 1.95 94/10/22 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static int checkout_file PROTO((char *file, char *repository, List *entries,
@@ -91,7 +91,7 @@ List *ignlist = (List *) NULL;
 static List *ignlist = (List *) NULL;
 #endif
 static time_t last_register_time;
-static char *update_usage[] =
+static const char *const update_usage[] =
 {
     "Usage:\n %s %s [-APQdflRpq] [-k kopt] [-r rev|-D date] [-j rev] [-I ign] [files...]\n",
     "\t-A\tReset any sticky tags/date/kopts.\n",

@@ -15,7 +15,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)rtag.c 1.61 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static Dtype rtag_dirproc PROTO((char *dir, char *repos, char *update_dir));
@@ -37,7 +37,7 @@ static int local;			/* recursive by default */
 static int force_tag_match = 1;		/* force by default */
 static int force_tag_move;              /* don't move existing tags by default */
 
-static char *rtag_usage[] =
+static const char *const rtag_usage[] =
 {
     "Usage: %s %s [-QaflRnqF] [-b] [-d] [-r tag|-D date] tag modules...\n",
     "\t-Q\tReally quiet.\n",

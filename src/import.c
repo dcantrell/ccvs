@@ -20,7 +20,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)import.c 1.63 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 #define	FILE_HOLDER	".#cvsxxx"
@@ -52,7 +52,7 @@ static int conflicts;
 static int use_file_modtime;
 static char *keyword_opt = NULL;
 
-static char *import_usage[] =
+static const char *const import_usage[] =
 {
     "Usage: %s %s [-Qq] [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
     "    repository vendor-tag release-tags...\n",
@@ -66,7 +66,7 @@ static char *import_usage[] =
     NULL
 };
 
-static char *keyword_usage[] =
+static const char *const keyword_usage[] =
 {
   "%s %s: invalid RCS keyword expansion mode\n",
   "Valid expansion modes include:\n",
@@ -673,7 +673,7 @@ struct compair
     char *suffix, *comlead;
 };
 
-struct compair comtable[] =
+const struct compair comtable[] =
 {
 
 /*

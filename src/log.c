@@ -16,7 +16,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)log.c 1.44 94/09/30 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static Dtype log_dirproc PROTO((char *dir, char *repository, char *update_dir));
@@ -26,7 +26,7 @@ static void log_option_with_arg PROTO((char *name, char **var, char *opt));
 
 static char options[PATH_MAX];
 
-static char *log_usage[] =
+static const char *const log_usage[] =
 {
     "Usage: %s %s [-l] [rlog-options] [files...]\n",
     "\t-l\tLocal directory only, no recursion.\n",

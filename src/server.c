@@ -1869,7 +1869,7 @@ static void
 outbuf_memory_error (buf)
     struct buffer *buf;
 {
-    static char msg[] = "E Fatal error\n\
+    static const char msg[] = "E Fatal error\n\
 error ENOMEM Virtual memory exhausted.\n";
     if (command_pid > 0)
 	kill (command_pid, SIGTERM);
@@ -3250,7 +3250,7 @@ server (argc, argv)
 {
     if (argc == -1)
     {
-	static char *msg[] =
+	static const char *const msg[] =
 	{
 	    "Usage: %s %s\n",
 	    "  Normally invoked by a cvs client on a remote machine.\n",

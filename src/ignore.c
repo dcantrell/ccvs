@@ -6,7 +6,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)ignore.c 1.16 94/09/24 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 /*

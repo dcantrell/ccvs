@@ -12,7 +12,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)rcs.c 1.40 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static RCSNode *RCS_parsercsfile_i PROTO((FILE * fp, char *rcsfile));

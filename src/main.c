@@ -46,8 +46,8 @@
 #endif
 
 #ifndef lint
-char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
-USE(rcsid);
+static char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
+USE(rcsid)
 #endif
 
 extern char *getenv ();
@@ -95,7 +95,7 @@ int status PROTO((int argc, char **argv));
 int tag PROTO((int argc, char **argv));
 int update PROTO((int argc, char **argv));
 
-struct cmd
+const struct cmd
 {
     char *fullname;		/* Full name of the function (e.g. "commit") */
     char *nick1;		/* alternate name (e.g. "ci") */
@@ -131,7 +131,7 @@ struct cmd
     { NULL, NULL, NULL, NULL, NULL },
 };
 
-static char *usg[] =
+static const char *const usg[] =
 {
     "Usage: %s [cvs-options] command [command-options] [files...]\n",
     "    Where 'cvs-options' are:\n",
@@ -183,7 +183,7 @@ main (argc, argv)
 {
     extern char *version_string;
     char *cp;
-    struct cmd *cm;
+    const struct cmd *cm;
     int c, help = FALSE, err = 0;
     int rcsbin_update_env, cvs_update_env = 0;
     char tmp[PATH_MAX];
@@ -616,7 +616,7 @@ Make_Date (rawdate)
 
 void
 usage (cpp)
-    register char **cpp;
+    register const char *const *cpp;
 {
     (void) fprintf (stderr, *cpp++, program_name, command_name);
     for (; *cpp; cpp++)

@@ -19,7 +19,7 @@
 
 #ifndef lint
 static char rcsid[] = "$CVSid: @(#)remove.c 1.39 94/10/07 $";
-USE(rcsid);
+USE(rcsid)
 #endif
 
 static int remove_fileproc PROTO((char *file, char *update_dir,
@@ -32,7 +32,7 @@ static int local;
 static int removed_files;
 static int existing_files;
 
-static char *remove_usage[] =
+static const char *const remove_usage[] =
 {
     "Usage: %s %s [-flR] [files...]\n",
     "\t-f\tDelete the file before removing it.\n",
