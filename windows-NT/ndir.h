@@ -27,7 +27,10 @@
 
 #define	rewinddir(dirp)	seekdir(dirp, 0L)
 
-#define	MAXNAMLEN	12
+/* 255 is said to be big enough for Windows NT.  The more elegant
+   solution would be declaring d_name as one byte long and allocating
+   it to the actual size needed.  */
+#define	MAXNAMLEN	255
 
 struct direct
 {

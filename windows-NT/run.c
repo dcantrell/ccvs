@@ -583,7 +583,8 @@ build_command (char **argv)
     }
 
     {
-        char *command = (char *) malloc (len);
+	/* The + 10 is in case len is 0.  */
+        char *command = (char *) malloc (len + 10);
 	int i;
 	char *p;
 
@@ -594,6 +595,7 @@ build_command (char **argv)
 	}
 
 	p = command;
+        *p = '\0';
 	/* copy each element of argv to command, putting each command
 	   in double quotes, and backslashing any quotes that appear
 	   within an argument.  */
@@ -611,7 +613,8 @@ build_command (char **argv)
 	    *p++ = '"';
 	    *p++ = ' ';
 	}
-	p[-1] = '\0';
+	if (p > command)
+	    p[-1] = '\0';
 
         return command;
     }
@@ -720,7 +723,8 @@ filter_stream_through_program (oldfd, dir, prog, pidp)
     if ((newfd = _open_osfhandle ((long) newfd_handle, _O_BINARY)) == -1)
         error (1, errno, "cannot _open_osfhandle");
 
-    *pidp = child;
+    if (pidp)
+	*pidp = child;
     return newfd;    
 }
 

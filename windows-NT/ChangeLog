@@ -1,3 +1,12 @@
+Wed Jan  3 16:17:19 1996  Jon Dart  <jdart@tss.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c (filter_stream_through_program): If pidp is NULL, don't
+	store to *pidp.
+	* ndir.h: Change MAXNAMLEN to 255.
+	* run.c (build_command): Deal with it if there are no arguments at
+	all.
+
 Mon Jan  1 23:40:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c (link_file): New function.
