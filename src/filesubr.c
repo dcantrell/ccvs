@@ -848,21 +848,32 @@ isabsolute (filename)
     return filename[0] == '/';
 }
 
-/*
- * Return a string (dynamically allocated) with the name of the file to which
- * LINK is symlinked.
+
+
+#ifdef HAVE_READLINK
+/* char *
+ * xreadlink ( const char *link )
+ *
+ * Like the X/OPEN and 4.4BSD readlink() function, but allocates and returns
+ * its own buf.
+ *
+ * INPUTS
+ *  link	The original path.
+ *
+ * RETURNS
+ *  The resolution of the final symbolic link in the path.
+ *
+ * ERRORS
+ *  This function exits with a fatal error if it fails to read the link for
+ *  any reason.
  */
 char *
 xreadlink (link)
     const char *link;
 {
     char *file = NULL;
-    char *tfile;
     int buflen = 128;
     int link_name_len;
-
-    if (!islink (link))
-	return NULL;
 
     /* Get the name of the file to which `from' is linked.
        FIXME: what portability issues arise here?  Are readlink &
@@ -880,11 +891,51 @@ xreadlink (link)
 
     file[link_name_len] = '\0';
 
-    tfile = xstrdup (file);
-    free (file);
-
-    return tfile;
+    return file;
 }
+#endif /* HAVE_READLINK */
+
+
+
+/* char *
+ * xresolvepath ( const char *path )
+ *
+ * Like xreadlink(), but resolve all links in a path.
+ *
+ * INPUTS
+ *  path	The original path.
+ *
+ * RETURNS
+ *  The path with any symbolic links expanded.
+ *
+ * ERRORS
+ *  This function exits with a fatal error if it fails to read the link for
+ *  any reason.
+ */
+char *
+xresolvepath ( path )
+    const char *path;
+{
+    char *hardpath;
+    char *owd;
+
+    assert ( isdir ( path ) );
+
+    /* FIXME - If HAVE_READLINK is defined, we should probably walk the path
+     * bit by bit calling xreadlink().
+     */
+
+    owd = xgetwd();
+    if ( CVS_CHDIR ( path ) < 0)
+	error ( 1, errno, "cannot chdir to %s", path );
+    if ( ( hardpath = xgetwd() ) == NULL )
+	error (1, errno, "cannot readlink %s", hardpath);
+    if ( CVS_CHDIR ( owd ) < 0)
+	error ( 1, errno, "cannot chdir to %s", owd );
+
+    return hardpath;
+}
+
 
 
 /* Return a pointer into PATH's last component.  */

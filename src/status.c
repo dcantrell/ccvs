@@ -104,10 +104,10 @@ cvsstatus (argc, argv)
 #endif
 
     /* start the recursion processor */
-    err = start_recursion (status_fileproc, (FILESDONEPROC) NULL,
-			   status_dirproc, (DIRLEAVEPROC) NULL, NULL,
-			   argc, argv, local,
-			   W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1);
+    err = start_recursion
+	( status_fileproc, (FILESDONEPROC) NULL,
+	  status_dirproc, (DIRLEAVEPROC) NULL, NULL, argc, argv, local,
+	  W_LOCAL, 0, CVS_LOCK_READ, (char *) NULL, 1, (char *) NULL);
 
     return (err);
 }

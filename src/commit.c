@@ -457,11 +457,12 @@ commit (argc, argv)
 	   a little unneeded network traffic.  */
 	find_args.force = force_ci || saved_tag != NULL;
 
-	err = start_recursion (find_fileproc, find_filesdoneproc,
-			       find_dirent_proc, (DIRLEAVEPROC) NULL,
-			       (void *)&find_args,
-			       argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
-			       (char *)NULL, 0);
+	err = start_recursion
+	    ( find_fileproc, find_filesdoneproc,
+	      find_dirent_proc, (DIRLEAVEPROC) NULL,
+	      (void *) &find_args,
+	      argc, argv, local, W_LOCAL, 0, CVS_LOCK_NONE,
+	      (char *) NULL, 0, (char *) NULL );
 	if (err)
 	    error (1, 0, "correct above errors first!");
 
@@ -639,10 +640,11 @@ commit (argc, argv)
     /*
      * Run the recursion processor to verify the files are all up-to-date
      */
-    err = start_recursion (check_fileproc, check_filesdoneproc,
-			   check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
-			   argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			   (char *) NULL, 1);
+    err = start_recursion
+	( check_fileproc, check_filesdoneproc,
+	  check_direntproc, (DIRLEAVEPROC) NULL, NULL, argc,
+	  argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
+	  (char *) NULL, 1, (char *) NULL );
     if (err)
     {
 	Lock_Cleanup ();
@@ -654,10 +656,11 @@ commit (argc, argv)
      */
     write_dirnonbranch = 0;
     if (noexec == 0)
-	err = start_recursion (commit_fileproc, commit_filesdoneproc,
-			       commit_direntproc, commit_dirleaveproc, NULL,
-			       argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
-			       (char *) NULL, 1);
+	err = start_recursion
+	    ( commit_fileproc, commit_filesdoneproc,
+	      commit_direntproc, commit_dirleaveproc, NULL,
+	      argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE,
+	      (char *) NULL, 1, (char *) NULL );
 
     /*
      * Unlock all the dirs and clean up

@@ -412,9 +412,10 @@ update (argc, argv)
 	which |= W_ATTIC;
 
     /* call the command line interface */
-    err = do_update (argc, argv, options, tag, date, force_tag_match,
-		     local, update_build_dirs, aflag, update_prune_dirs,
-		     pipeout, which, join_rev1, join_rev2, (char *) NULL, 1);
+    err = do_update ( argc, argv, options, tag, date, force_tag_match,
+		      local, update_build_dirs, aflag, update_prune_dirs,
+		      pipeout, which, join_rev1, join_rev2, (char *) NULL, 1,
+		      (char *) NULL );
 
     /* free the space Make_Date allocated if necessary */
     if (date != NULL)
@@ -427,9 +428,9 @@ update (argc, argv)
  * Command line interface to update (used by checkout)
  */
 int
-do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
-	   xprune, xpipeout, which, xjoin_rev1, xjoin_rev2, preload_update_dir,
-	   xdotemplate)
+do_update ( argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
+	    xprune, xpipeout, which, xjoin_rev1, xjoin_rev2,
+	    preload_update_dir, xdotemplate, repository )
     int argc;
     char **argv;
     char *xoptions;
@@ -446,6 +447,12 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     char *xjoin_rev2;
     char *preload_update_dir;
     int xdotemplate;
+    /* repository = cvsroot->repository + update_dir.  This is necessary for
+     * checkout so that start_recursion can determine our repository.  In the
+     * update case, start_recursion can use the CVS/Root & CVS/Repository file
+     * to determine this value.
+     */
+    char *repository;
 {
     int err = 0;
     char *cp;
@@ -490,10 +497,11 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 	/* FIXME-twp: the arguments to start_recursion make me dizzy.  This
 	   function call was copied from the update_fileproc call that
 	   follows it; someone should make sure that I did it right. */
-	err = start_recursion (get_linkinfo_proc, (FILESDONEPROC) NULL,
-			       (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			       argc, argv, local, which, aflag, CVS_LOCK_READ,
-			       preload_update_dir, 1);
+	err = start_recursion
+	    ( get_linkinfo_proc, (FILESDONEPROC) NULL,
+	      (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+	      argc, argv, local, which, aflag, CVS_LOCK_READ,
+	      preload_update_dir, 1, (char *) NULL );
 	if (err)
 	    return (err);
 
@@ -506,10 +514,10 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
 #endif
 
     /* call the recursion processor */
-    err = start_recursion (update_fileproc, update_filesdone_proc,
-			   update_dirent_proc, update_dirleave_proc, NULL,
-			   argc, argv, local, which, aflag, CVS_LOCK_READ,
-			   preload_update_dir, 1);
+    err = start_recursion ( update_fileproc, update_filesdone_proc,
+			    update_dirent_proc, update_dirleave_proc, NULL,
+			    argc, argv, local, which, aflag, CVS_LOCK_READ,
+			    preload_update_dir, 1, repository );
 
 #ifdef SERVER_SUPPORT
     if (server_active)

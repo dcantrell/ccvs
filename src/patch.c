@@ -283,6 +283,9 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     char *repository;
     char *where;
 
+    TRACE ( TRACE_FUNCTION, "patch_proc ( %s, %s, %s, %d, %d, %s, %s )",
+	    xwhere, mwhere, mfile, shorten, local_specified, mname, msg );
+
     repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
 			  + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
     (void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
@@ -331,10 +334,8 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     if ( CVS_CHDIR (repository) < 0)
     {
 	error (0, errno, "cannot chdir to %s", repository);
-	free (repository);
 	return (1);
     }
-    free (repository);
 
     if (force_tag_match)
 	which = W_REPOS | W_ATTIC;
@@ -343,20 +344,23 @@ patch_proc (argc, argv, xwhere, mwhere, mfile, shorten, local_specified,
 
     if (rev1 != NULL && !rev1_validated)
     {
-	tag_check_valid (rev1, argc - 1, argv + 1, local_specified, 0, NULL);
+	tag_check_valid ( rev1, argc - 1, argv + 1, local_specified, 0,
+			  repository );
 	rev1_validated = 1;
     }
     if (rev2 != NULL && !rev2_validated)
     {
-	tag_check_valid (rev2, argc - 1, argv + 1, local_specified, 0, NULL);
+	tag_check_valid ( rev2, argc - 1, argv + 1, local_specified, 0,
+			  repository );
 	rev2_validated = 1;
     }
 
     /* start the recursion processor */
-    err = start_recursion (patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
-			   (DIRLEAVEPROC) NULL, NULL,
-			   argc - 1, argv + 1, local_specified,
-			   which, 0, CVS_LOCK_READ, where, 1);
+    err = start_recursion ( patch_fileproc, (FILESDONEPROC) NULL, patch_dirproc,
+			    (DIRLEAVEPROC) NULL, NULL,
+			    argc - 1, argv + 1, local_specified,
+			    which, 0, CVS_LOCK_READ, where, 1, repository );
+    free ( repository );
     free (where);
 
     return (err);

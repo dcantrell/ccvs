@@ -362,6 +362,9 @@ walklist (list, proc, closure)
     Node *head, *p;
     int err = 0;
 
+    TRACE ( TRACE_FLOW, "walklist ( list=%x, proc=%x, closure=%x )",
+	    list, proc, closure );
+
     if (list == NULL)
 	return (0);
 

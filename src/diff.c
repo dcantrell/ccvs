@@ -420,9 +420,10 @@ diff (argc, argv)
     wrap_setup ();
 
     /* start the recursion processor */
-    err = start_recursion (diff_fileproc, diff_filesdoneproc, diff_dirproc,
-			   diff_dirleaveproc, NULL, argc, argv, local,
-			   which, 0, CVS_LOCK_READ, (char *) NULL, 1);
+    err = start_recursion
+	    ( diff_fileproc, diff_filesdoneproc, diff_dirproc,
+	      diff_dirleaveproc, NULL, argc, argv, local,
+	      which, 0, CVS_LOCK_READ, (char *) NULL, 1, (char *) NULL );
 
     /* clean up */
     free (options);

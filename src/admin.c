@@ -519,10 +519,11 @@ admin (argc, argv)
 
     lock_tree_for_write (argc, argv, 0, W_LOCAL, 0);
 
-    err = start_recursion (admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
-			   (DIRLEAVEPROC) NULL, (void *)&admin_data,
-			   argc, argv, 0,
-			   W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1);
+    err = start_recursion
+	    ( admin_fileproc, (FILESDONEPROC) NULL, admin_dirproc,
+	      (DIRLEAVEPROC) NULL, (void *) &admin_data,
+	      argc, argv, 0,
+	      W_LOCAL, 0, CVS_LOCK_NONE, (char *) NULL, 1, (char *) NULL );
     Lock_Cleanup ();
 
  return_it:

@@ -548,7 +548,10 @@ int isreadable PROTO((const char *file));
 int iswritable PROTO((const char *file));
 int isaccessible PROTO((const char *file, const int mode));
 int isabsolute PROTO((const char *filename));
+#ifdef HAVE_READLINK
 char *xreadlink PROTO((const char *link));
+#endif /* HAVE_READLINK */
+char *xresolvepath PROTO((const char *path));
 char *last_component PROTO((char *path));
 char *get_homedir PROTO ((void));
 char *strcat_filename_onto_homedir PROTO ((const char *, const char *));
@@ -710,8 +713,8 @@ int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     void *callerdat,
 		     int argc, char *argv[], int local, int which,
-		     int aflag, int locktype, char *update_preload,
-		     int dosrcs));
+		     int afag, int locktype, char *update_preload,
+		     int dosrcsi, char *repository));
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
 int SIG_inCrSect PROTO((void));
@@ -977,7 +980,20 @@ extern void cvs_flusherr PROTO ((void));
 extern void cvs_flushout PROTO ((void));
 extern void cvs_output_tagged PROTO ((char *, char *));
 
-/* The trace funciton from subr.c */
+/* The trace function from subr.c */
 void cvs_trace PROTO ((int level, const char *fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3))));
 #define TRACE cvs_trace
+/* Trace levels:
+ *
+ * TRACE_FUNCTION	Trace function calls, often including function
+ * 			arguments.  This is the trace level that, historically,
+ * 			applied to all trace calls.
+ * TRACE_FLOW		Include the flow control functions, such as
+ * 			start_recursion, do_recursion, and walklist in the
+ * 			function traces.
+ * TRACE_DATA		Trace important internal function data.
+ */ 
+#define TRACE_FUNCTION		1
+#define TRACE_FLOW		2
+#define TRACE_DATA		3

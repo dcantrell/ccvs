@@ -22,7 +22,7 @@
 usage ()
 {
     echo "Usage: `basename $0` --help"
-    echo "Usage: `basename $0` [-kr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
+    echo "Usage: `basename $0` [-klr] [-c CONFIG-FILE] [-f FROM-TEST] \\"
     echo "                 [-s CVS-FOR-CVS-SERVER] CVS-TO-TEST \\"
     echo "                 [TESTS-TO-RUN...]"
 }
@@ -38,10 +38,12 @@ exit_help ()
     usage
     echo
     echo "-h|--help	display this text"
-    echo "-r|--remote	test remote instead of local cvs"
+    echo "-l|--link-root"
+    echo "              test CVS using a symlink to a real CVSROOT"
+    echo "-r|--remote	test client/server, as opposed to local, CVS"
     echo "-s CVS-FOR-CVS-SERVER"
     echo "--server=CVS-FOR-CVS-SERVER"
-    echo "		Use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
+    echo "		use CVS-FOR-CVS-SERVER as the path to the CVS SERVER"
     echo "		executable to be tested (defaults to CVS-TO-TEST and"
     echo "		implies --remote)"
     echo "-f FROM-TEST"
@@ -50,7 +52,7 @@ exit_help ()
     echo "		FROM-TEST"
     echo "-c CONFIG-FILE"
     echo "--config=CONFIG_FILE"
-    echo "		Use an alternate test suite config file (defaults to"
+    echo "		use an alternate test suite config file (defaults to"
     echo "		\`sanity.config.sh' in the same directory as"
     echo "		CVS-TO-TEST is found in)"
     echo "-k|--keep	try to keep directories created by individual tests"
@@ -104,6 +106,7 @@ export LC_ALL
 unset configfile
 unset fromtest
 keep=false
+linkroot=false
 remote=false
 servercvs=false
 # FIXME - If anyone knows a quick way in shell to expand something like
@@ -117,7 +120,7 @@ servercvs=false
 #		...
 #	esac
 #
-while getopts Hc:f:krs:-: option ; do
+while getopts Hc:f:klrs:-: option ; do
     # convert the long opts to short opts
     if test x$option = x-;  then
 	case "$OPTARG" in
@@ -135,6 +138,10 @@ while getopts Hc:f:krs:-: option ; do
 		;;
 	    [kK]|[kK][eE]|[kK][eE][eE]|[kK][eE][eE][pP])
 		option=k;
+		OPTARG=
+		;;
+	    [lL]|[lL][iI]|[lL][iI][nN]|[lL][iI][nN][kK]|[lL][iI][nN][kK]-|[lL][iI][nN][kK]-[rR]|[lL][iI][nN][kK]-[rR][oO]|[lL][iI][nN][kK]-[rR][oO][oO]|[lL][iI][nN][kK]-[rR][oO][oO][tT])
+		option=l;
 		OPTARG=
 		;;
 	    [rR]|[rR][eE]|[rR][eE][mM]|[rR][eE][mM][oO]|[rR][eE][mM][oO][tT]|[rR][eE][mM][oO][tT][eE])
@@ -167,6 +174,9 @@ while getopts Hc:f:krs:-: option ; do
 	    # more than one test, but this should work if each test uses a
 	    # uniquely named dir (use the name of the test).
 	    keep=:
+	    ;;
+	l)
+	    linkroot=:
 	    ;;
 	r)
 	    remote=:
@@ -1715,6 +1725,10 @@ EOF
 }
 
 # Set up CVSROOT (the crerepos tests will test operating without CVSROOT set).
+if $linkroot; then
+    mkdir ${TESTDIR}/realcvsroot
+    ln -s realcvsroot ${TESTDIR}/cvsroot
+fi
 CVSROOT_DIRNAME=${TESTDIR}/cvsroot
 if $remote; then
 	# Currently we test :fork: and :ext: (see crerepos test).
@@ -11679,7 +11693,7 @@ U dir/dir2d2-2/sub2d2-2/file2-2"
 	  ##################################################
 
 	  dotest_fail cvsadm-2d3-1 "${testcvs} co -d dir/dir2 1mod" \
-"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .dir.: No such file or directory"
+"${PROG} \[[a-z]* aborted\]: could not change directory to requested checkout directory .dir.: No such file or directory"
 
 	  if $remote; then :; else
 	    # Remote can't handle this, even with the "mkdir dir".
@@ -12115,7 +12129,7 @@ U ${TESTDIR}/1/file1"
 "${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .${TESTDIR}/1.: No such file or directory"
 	  fi
 	  dotest_fail abspath-3.2 "${testcvs} co -d 1/2 mod1" \
-"${PROG} \[checkout aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
+"${PROG} \[[a-z]* aborted\]: could not change directory to requested checkout directory .1.: No such file or directory"
 
 	  mkdir 1
 
@@ -12486,12 +12500,45 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  ;;
 
         checkout_repository)
-          dotest_fail check_repository-1 "${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
+          dotest_fail checkout_repository-1 \
+"${testcvs} co -d ${CVSROOT_DIRNAME} CVSROOT" \
+"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${PROG} \[server aborted\]: absolute pathnames invalid for server (specified \`${CVSROOT_DIRNAME}')"
+
+	  # The behavior of the client/server test below should be correct.
+	  # The CVS client currently has no way of knowing that the client and
+	  # server are the same machine and thus skips the $CVSROOT checks.
+	  # I think checking for this case in CVS would be bloat since this
+	  # should be a fairly rare occurance.
 	  cd ${CVSROOT_DIRNAME}
-          dotest_fail check_repository-2 "${testcvs} co CVSROOT" \
-"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself"
-          dotest check_repository-3 "${testcvs} co -p CVSROOT/modules >/dev/null" \
+          dotest_fail checkout_repository-2 "${testcvs} co CVSROOT" \
+"${PROG} \[checkout aborted\]: Cannot check out files into the repository itself" \
+"${PROG} server: Updating CVSROOT
+${PROG} checkout: move away CVSROOT/checkoutlist; it is in the way
+C CVSROOT/checkoutlist
+${PROG} checkout: move away CVSROOT/commitinfo; it is in the way
+C CVSROOT/commitinfo
+${PROG} checkout: move away CVSROOT/config; it is in the way
+C CVSROOT/config
+${PROG} checkout: move away CVSROOT/cvswrappers; it is in the way
+C CVSROOT/cvswrappers
+${PROG} checkout: move away CVSROOT/editinfo; it is in the way
+C CVSROOT/editinfo
+${PROG} checkout: move away CVSROOT/loginfo; it is in the way
+C CVSROOT/loginfo
+${PROG} checkout: move away CVSROOT/modules; it is in the way
+C CVSROOT/modules
+${PROG} checkout: move away CVSROOT/notify; it is in the way
+C CVSROOT/notify
+${PROG} checkout: move away CVSROOT/rcsinfo; it is in the way
+C CVSROOT/rcsinfo
+${PROG} checkout: move away CVSROOT/taginfo; it is in the way
+C CVSROOT/taginfo
+${PROG} checkout: move away CVSROOT/verifymsg; it is in the way
+C CVSROOT/verifymsg"
+
+          dotest checkout_repository-3 \
+"${testcvs} co -p CVSROOT/modules >/dev/null" \
 "===================================================================
 Checking out CVSROOT/modules
 RCS:  ${CVSROOT_DIRNAME}/CVSROOT/modules,v

@@ -1,3 +1,67 @@
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Accept new repository argument so that
+	the working directory may be tracked by do_recursion without using
+	xgetwd(), which returned a value different from the one the user
+	requested when symlinks were in use.  Add TRACE.  Pass repository_in
+	to do_recursion() as part of the recursion frame.
+	(do_recursion): Default srepository to NULL and only set when we set
+	repository.  Keep track of repository using xframe.repository for the
+	r* commands rather than xgetwd(), which used to break when CVSROOT was
+	a symlink to a real root.
+
+	* cvs.h (xreadlink): #ifdef HAVE_READLINK proto.
+	(xresolvepath): New proto.
+	(start_recursion): Add repository to proto.
+	(*): Define some more abstract TRACE levels.
+	* update.h (do_update): Add repository argument to proto.
+
+	* checkout.c (safe_location): Add more complete header comment.  Add
+	TRACE.  Use new xresolvepath() function.  Always return true in
+	client mode since checking our destination path against the CVSROOT
+	path is usually meaningless in client/server mode.
+	(checkout_proc): Pass repository to do_update() for later use with
+	start_recursion().
+	(*): s/<chdir>/CVS_CHDIR/.
+	* filesubr.c (xreadlink): #ifdef HAVE_READLINK this function.  Add more
+	complete header comment.
+	(xresolvepath): New function.
+	* hash.c (walklist): Add TRACE.
+	* main.c (main): Don't copy and dispose of CVSRoot_cmdline twice.
+	* patch.c (patch_proc): Add TRACE.  Pass repository to
+	tag_check_valid() for r* commands.
+	* root.c (parse_cvsroot): Add TRACE.
+	* tag.c (rtag_proc): Add TRACE.
+	(check_fileproc): Ditto.
+	(tag_check_valid): Ditto.
+	* update.c (do_update): Accept new repository argument for co.
+	(update): Pass NULL repository to do_update().
+
+	* admin.c (*): Use new definition of start_recursion().
+	* annotate.c (*): Ditto.
+	* client.c (*): Ditto.
+	* commit.c (*): Ditto.
+	* diff.c (*): Ditto.
+	* edit.c (*): Ditto.
+	* lock.c (*): Ditto.
+	* log.c (*): Ditto.
+	* patch.c (*): Ditto.
+	* remove.c (*): Ditto.
+	* status.c (*): Ditto.
+	* tag.c (*): Ditto.
+	* update.c (*): Ditto.
+	* watch.c (*): Ditto.
+
+	* sanity.sh: Add new -l option to test symlinked roots.
+	(abspath-3.2): Use [a-z]* rather than "checkout".
+	(check_repository-1): Add server error messages about absolute paths
+	since the client now skips destination validity checks.
+	(check_repository-2): Process client error messages avout CVSROOT
+	files being in the way since the client skips destination validity
+	checks since it should be rare that a client is running in
+	client/server mode on the server and CVS has no current way to check if
+	it is runnning on the server.
+
 2003-03-27  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (rdiff2): Add new test case for SEGV problem reported
@@ -399,6 +463,14 @@
 	* log.c (log_expand_revlist): Fix crashes in error cases.
 	(Reported by Bart Santy <Bart.Santy@switch.be>.)
 	* sanity.sh (log): New tests for above.
+
+2003-02-14  Derek Price  <derek@ximbiot.com>
+
+	* rcs.h (RCSNode): Add a field for the original path to print with
+	error messages.
+	* rcs.c (RCS_parsercsfile_i): Keep track of the original path for error
+	messages.
+	(freercsnode): Free the origpath.
 
 2003-02-14  Derek Price  <derek@ximbiot.com>
 
