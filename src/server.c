@@ -2544,38 +2544,34 @@ become_proxy (void)
 	    exit (EXIT_FAILURE);
 	}
 
-	/* If our "source pipe" is closed and all data has been sent, close
-	 * the corresponding "dest pipe".
+	/* If our "source pipe" is closed and all data has been sent, avoid
+	 * selecting it for writability, but don't actually close the buffer in
+	 * case other routines want to use it later.  The buffer will be closed
+	 * in server_cleanup ().
 	 */
 	if (from_primary_fd < 0
 	    && buf_to_net && buf_empty_p (buf_to_net))
-	{
 	    to_net_fd = -1;
-	    /* Don't actually shut down or free BUF_TO_NET unless BUF_FROM_NET
-	     * is already closed.  Let the shutdown handlers do it otherwise
-	     * since we might need it later.
-	     */
-	    if (!buf_from_net)
-	    {
-		SIG_beginCrSect();
-		/* Need only to shut this down and set to NULL, really, in
-		 * crit sec, to ensure no double-dispose and to make sure
-		 * network pipes are closed as properly as possible, but I
-		 * don't see much optimization potential in saving values and
-		 * postponing the free.
-		 */
-		buf_shutdown (buf_to_net);
-		buf_free (buf_to_net);
-		buf_to_net = NULL;
-		SIG_endCrSect();
-	    }
-	}
-	if (from_net_fd < 0
-	    && buf_to_primary && buf_empty_p (buf_to_primary))
+
+	if (buf_to_primary
+	    && (/* Assume that there is no further reason to keep the buffer to
+	         * the primary open if we can no longer read its responses.
+	         */
+	        from_primary_fd < 0 && buf_to_primary
+	        /* Also close buf_to_primary when it becomes impossible to find
+	         * more data to send to it.  We don't close buf_from_primary
+	         * yet since there may be data pending or the primary may react
+	         * to the EOF on its input pipe.
+	         */
+	        || from_net_fd < 0 && buf_empty_p (buf_to_primary)))
 	{
 	    buf_shutdown (buf_to_primary);
 	    buf_free (buf_to_primary);
 	    buf_to_primary = NULL;
+
+	    /* Setting the fd < 0 with from_primary_fd already < 0 will cause
+	     * an escape from this while loop.
+	     */
 	    to_primary_fd = -1;
 	}
     }
