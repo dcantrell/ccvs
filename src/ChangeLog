@@ -1,3 +1,17 @@
+Fri Sep 26 14:25:59 1997  Tim Pierce  <twp@twp.tezcat.com>
+
+	* run.c (call_diff): Don't reset optind; this is done by diff_run now.
+
+	Librarify rcsmerge/diff3.
+	* rcscmds.c, cvs.h (RCS_merge): Rewritten from scratch: check out
+	selected files and diff3 them.  Take new `rcs' and `workfile'
+	arguments, so we can resolve symbolic tags and manipulate the
+	working file.
+	* update.c (merge_file, join_file): Update RCS_merge calls.
+	* run.c, cvs.h (call_diff3): New function.
+
+	* sanity.sh (rcslib): New tests, rcslib-merge-{1..13}.
+
 Fri Sep 26 22:59:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* create_adm.c (Create_Admin): Fix thinko in Noel's change: keep
