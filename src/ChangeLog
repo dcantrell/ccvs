@@ -1,3 +1,8 @@
+Mon Nov 24 17:28:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_findlock_or_tip): Prototype.
+	(RCS_checkin): Fix call to pass correct number of arguments.
+
 Sun Nov 23 10:34:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* recurse.c (do_dir_proc): Move check for CVS/Repository and
