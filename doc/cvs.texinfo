@@ -2048,12 +2048,18 @@ single line in @file{inetd.conf}) should be sufficient:
 
 @example
 2401  stream  tcp  nowait  root  /usr/local/bin/cvs
-cvs -b /usr/local/bin pserver
+cvs -b /usr/local/bin --allow-root=/usr/cvsroot pserver
 @end example
 
 The @samp{-b} option specifies the directory which contains
 the @sc{rcs} binaries on the server.  You could also use the
 @samp{-T} option to specify a temporary directory.
+
+The @samp{--allow-root} option specifies the allowable
+@sc{cvsroot} directory.  Clients which attempt to use a
+different @sc{cvsroot} directory will not be allowed to
+connect.  If there is more than one @sc{cvsroot}
+directory which you want to allow, repeat the option.
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -2163,6 +2169,8 @@ passwd} command.
 @c would open up a can of worms in that the users next
 @c questions are likely to be "where do I get it?" and
 @c "how do I use it?"
+@c Also note that htpasswd, at least the version I had,
+@c likes to clobber the third field.
 
 @node Password authentication client
 @subsubsection Using the client with password authentication
@@ -6491,6 +6499,10 @@ The available @samp{cvs_options} (that are given to the
 left of @samp{cvs_command}) are:
 
 @table @code
+@item --allow-root=@var{rootdir}
+Specify legal @sc{cvsroot} directory.  See
+@ref{Password authentication server}.
+
 @cindex RCSBIN, overriding
 @cindex Overriding RCSBIN
 @item -b @var{bindir}
