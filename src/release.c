@@ -75,6 +75,7 @@ release (argc, argv)
     int arg_start_idx;
     int err = 0;
     short delete_flag = 0;
+    struct saved_cwd cwd;
 
 #ifdef SERVER_SUPPORT
     if (server_active)
@@ -127,16 +128,17 @@ release (argc, argv)
     }
 #endif /* CLIENT_SUPPORT */
 
+    /* Remember the directory where "cvs release" was invoked because
+       all args are relative to this directory and we chdir around.
+       */
+    if (save_cwd (&cwd))
+        error_exit ();
+
     arg_start_idx = 0;
 
     for (i = arg_start_idx; i < argc; i++)
     {
-	struct saved_cwd cwd;
-
 	thisarg = argv[i];
-
-	if (save_cwd (&cwd))
-	    error_exit ();
 
         if (isdir (thisarg))
         {
@@ -150,6 +152,8 @@ release (argc, argv)
 	    {
 		if (!really_quiet)
 		    error (0, 0, "no repository directory: %s", thisarg);
+		if (restore_cwd (&cwd, NULL))
+		    error_exit ();
 		continue;
 	    }
 	}
@@ -194,6 +198,9 @@ release (argc, argv)
 	    if ((pclose (fp)) != 0)
 	    {
 		error (0, 0, "unable to release `%s'", thisarg);
+		free (repository);
+		if (restore_cwd (&cwd, NULL))
+		    error_exit ();
 		continue;
 	    }
 
@@ -207,6 +214,8 @@ release (argc, argv)
 		(void) fprintf (stderr, "** `%s' aborted by user choice.\n",
 				command_name);
 		free (repository);
+		if (restore_cwd (&cwd, NULL))
+		    error_exit ();
 		continue;
 	    }
 	}
@@ -246,7 +255,6 @@ release (argc, argv)
 
 	if (restore_cwd (&cwd, NULL))
 	    error_exit ();
-	free_cwd (&cwd);
 
 	if (delete_flag)
 	{
@@ -263,6 +271,10 @@ release (argc, argv)
 	    err += get_server_responses ();
 #endif /* CLIENT_SUPPORT */
     }
+
+    if (restore_cwd (&cwd, NULL))
+	error_exit ();
+    free_cwd (&cwd);
 
 #ifdef CLIENT_SUPPORT
     if (client_active)

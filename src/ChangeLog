@@ -1,3 +1,13 @@
+1998-08-31  Norbert Kiesel  <nk@iname.com>
+
+	* release.c (release): modify last patch to release so that
+	save_cwd is called only once and restore_cwd is always called when 
+	neccessary.  Also fixed a tiny memory leak.
+
+	* sanity.sh (release): added some more tests for "cvs release"
+	including a test with two dirs and a "no" for the first one (which 
+	fails without the above patch).
+
 1998-08-28  Jim Meyering  <meyering@ascend.com>
 
 	* sanity.sh (basicc-8, basicc-11): Use `.*' instead of explicit

@@ -262,6 +262,16 @@ else
   QUESTION='\?'
 fi
 
+debug ()
+{
+  echo "$@"
+  /bin/sh
+  if [ $? != 0 ]; then
+    echo "Aborting."
+    exit 1
+  fi
+}
+
 pass ()
 {
   echo "PASS: $1" >>${LOGFILE}
@@ -586,6 +596,8 @@ if test x"$*" = x; then
 	tests="${tests} admin reserved"
 	# Nuts and bolts of diffing/merging (diff library, &c)
 	tests="${tests} diffmerge1 diffmerge2"
+	# Release of multiple directories
+	tests="${tests} release"
 else
 	tests="$*"
 fi
@@ -5584,7 +5596,7 @@ ${PROG} [a-z]*: ignoring first-dir/sdir (CVS/Entries missing)"
 
 	  dotest conflicts3-21 "${testcvs} -q update -d sdir" "U sdir/sfile"
 	  rm -r sdir/CVS
-	  dotest conflicts3-22 "${testcvs} -q update" "? sdir"
+	  dotest conflicts3-22 "${testcvs} -q update" "${QUESTION} sdir"
 	  if test "x$remote" = xyes; then
 	    # It isn't particularly swift that CVS prints this
 	    # "cannot open CVS/Entries" where it has already printed
@@ -15706,6 +15718,82 @@ d472 12
 	  cd ..
 	  rm -rf diffmerge2
 	  rm -rf ${CVSROOT_DIRNAME}/diffmerge2
+	  ;;
+
+	release)
+	  # Some specific tests on release. Although it is tested in
+	  # some other tests, we need to test some more cases like
+	  # multiple arguments.
+
+	  # First the usual setup; create a directory first-dir.
+	  mkdir 1; cd 1
+	  dotest release-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest release-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  mkdir dir1
+	  dotest release-3 "${testcvs} add dir1" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir1 added to the repository"
+	  mkdir dir2
+	  dotest release-4 "${testcvs} add dir2" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir2 added to the repository"
+          cd dir2
+	  mkdir dir3
+	  dotest release-5 "${testcvs} add dir3" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir2/dir3 added to the repository"
+
+          cd ../..
+	  dotest release-6 "${testcvs} release -d first-dir/dir2/dir3 first-dir/dir1" \
+"You have .0. altered files in this repository.
+Are you sure you want to release (and delete) directory .first-dir/dir2/dir3.: \
+You have .0. altered files in this repository.
+Are you sure you want to release (and delete) directory .first-dir/dir1.: " <<EOF
+yes
+yes
+EOF
+	  dotest_fail release-7 "test -d first-dir/dir1" ''
+	  dotest_fail release-8 "test -d first-dir/dir2/dir3" ''
+	  dotest release-9 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: Updating first-dir/dir2"
+
+          cd first-dir
+	  mkdir dir1
+	  dotest release-10 "${testcvs} add dir1" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir1 added to the repository"
+          cd dir2
+	  mkdir dir3
+	  dotest release-11 "${testcvs} add dir3" \
+"Directory ${TESTDIR}/cvsroot/first-dir/dir2/dir3 added to the repository"
+
+          cd ../..
+	  dotest release-12 "${testcvs} release first-dir/dir2/dir3 first-dir/dir1" \
+"You have .0. altered files in this repository.
+Are you sure you want to release directory .first-dir/dir2/dir3.: .. .release. aborted by user choice.
+You have .0. altered files in this repository.
+Are you sure you want to release directory .first-dir/dir1.: " <<EOF
+no
+yes
+EOF
+	  dotest release-13 "${testcvs} release first-dir/dir2/dir3 first-dir/dir2" \
+"You have .0. altered files in this repository.
+Are you sure you want to release directory .first-dir/dir2/dir3.: \
+You have .0. altered files in this repository.
+Are you sure you want to release directory .first-dir/dir2.: " <<EOF
+yes
+yes
+EOF
+	  dotest release-14 "test -d first-dir/dir1" ''
+	  dotest release-15 "test -d first-dir/dir2/dir3" ''
+	  rm -rf first-dir/dir1 first-dir/dir2
+
+	  dotest release-16 "${testcvs} update" \
+"${PROG} [a-z]*: Updating \.
+${PROG} [a-z]*: Updating first-dir"
+	  cd ..
+	  rm -rf 1
 	  ;;
 
 	*)
