@@ -1,3 +1,10 @@
+Wed Dec 18 10:51:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (CFLAGS): Specify -Gd- not -Gd+.  The documentation
+	says this causes a static link, although it hasn't yet been
+	verified whether this option is sufficient to make the binary work
+	on a system without the compiler's DLL.
+
 Fri Dec  6 11:00:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* os2inc.h, watcom.mak: Add GPL notice.
