@@ -1,3 +1,8 @@
+Thu Jul 24 12:22:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL (MIPS): Add more detailed report concerning Irix 6.2,
+	as reported by larry.jones@sdrc.com (Larry Jones).
+
 Tue Jul 22 17:35:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL (PowerPC): Add item for Lynx 2.5.
