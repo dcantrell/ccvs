@@ -381,7 +381,7 @@ test -f src/options.h && (
 )
 
 AC_OUTPUT(Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
-	  man/Makefile tools/Makefile tools/pcl-cvs/Makefile \
+	  man/Makefile tools/Makefile \
 	  contrib/Makefile contrib/elib/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
 	  os2/Makefile emx/Makefile macintosh/Makefile vms/Makefile \

@@ -3441,7 +3441,7 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
-	  man/Makefile tools/Makefile tools/pcl-cvs/Makefile \
+	  man/Makefile tools/Makefile \
 	  contrib/Makefile contrib/elib/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
 	  os2/Makefile emx/Makefile macintosh/Makefile vms/Makefile \
@@ -3495,7 +3495,7 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"Makefile lib/Makefile src/Makefile zlib/Makefile diff/Makefile doc/Makefile \
-	  man/Makefile tools/Makefile tools/pcl-cvs/Makefile \
+	  man/Makefile tools/Makefile \
 	  contrib/Makefile contrib/elib/Makefile \
 	  windows-NT/Makefile windows-NT/SCC/Makefile \
 	  os2/Makefile emx/Makefile macintosh/Makefile vms/Makefile \
