@@ -1,3 +1,12 @@
+2004-02-19  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* configure.in: Move the wint_t size check after all the base type
+	size checks and include the relevant header file, use "short" rather
+	than "short int" (ala "long" and "long long"), add a size check for
+	intmax_t, remove "CVSROOT/*" since it ends up embedded in a C
+	comment where the "/*" looks like an attempt to have a nested comment.
+	* config.h.in, configure: Regenerated.
+
 2004-02-19  Derek Price <derek@ximbiot.com>
 
 	* configure.in: AC_REQUIRE some HAVE_TYPE functions to avoid using
