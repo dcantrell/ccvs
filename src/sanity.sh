@@ -503,7 +503,7 @@ if test x"$*" = x; then
 	tests="basica basicb basicc basic1 deep basic2"
 	tests="${tests} rdiff death death2 branches"
 	tests="${tests} rcslib multibranch import importb join join2 join3"
-	tests="${tests} new newb conflicts conflicts2"
+	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	tests="${tests} modules modules2 modules3 mflag editor errmsg1 errmsg2"
 	tests="${tests} devcom devcom2 devcom3 watch4"
 	tests="${tests} ignore binfiles binfiles2 mcopy binwrap binwrap2"
@@ -4684,6 +4684,60 @@ File: aa\.c             	Status: Unresolved Conflict
 	  cd ../..
 
 	  rm -r 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	conflicts3)
+	  # More tests of conflicts and/or multiple working directories
+	  # in general.
+
+	  mkdir 1; cd 1
+	  dotest conflicts3-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest conflicts3-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+	  cd ..
+	  mkdir 2; cd 2
+	  dotest conflicts3-3 "${testcvs} -q co -l first-dir" ''
+	  cd ../1/first-dir
+	  touch file1 file2
+	  dotest conflicts3-4 "${testcvs} add file1 file2" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add these files permanently"
+	  dotest conflicts3-5 "${testcvs} -q ci -m add-them" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  cd ../../2/first-dir
+	  # Check that -n doesn't make CVS lose its mind as it creates
+	  # (or rather, doesn't) a new file.
+	  dotest conflicts3-6 "${testcvs} -nq update" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1
+${PROG} [a-z]*: warning: file2 was lost
+U file2" "U file1
+U file2"
+	  dotest_fail conflicts3-7 "test -f file1" ''
+	  dotest conflicts3-8 "${testcvs} -q update" \
+"${PROG} [a-z]*: warning: file1 was lost
+U file1
+${PROG} [a-z]*: warning: file2 was lost
+U file2" "U file1
+U file2"
+	  dotest conflicts3-7 "test -f file2" ''
+	  cd ../..
+
+	  rm -r 1 2
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	modules)

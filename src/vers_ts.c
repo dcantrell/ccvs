@@ -201,6 +201,12 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
 		if (t.modtime != (time_t) -1)
 		{
 		    t.actime = t.modtime;
+
+		    /* This used to need to ignore existence_errors
+		       (for cases like where update.c now clears
+		       set_time if noexec, but didn't used to).  I
+		       think maybe now it doesn't (server_modtime does
+		       not like those kinds of cases).  */
 		    (void) utime (finfo->file, &t);
 		}
 	    }
