@@ -1,3 +1,11 @@
+Mon Dec 30 13:29:14 1996  uz@wuschel.ibb.schwaben.com (Ullrich von Bassewitz)
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h (CVSEDITPREFIXLEN): New define.
+	* logmsg.c (do_editor): Use CVSEDITPREFIXLEN when deciding whether
+	to strip off CVSEDITPREFIX and when telling the user what we will
+	strip off.
+
 Sun Dec 22 22:06:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* logmsg.c (do_verify): If noexec, skip the verification *without*

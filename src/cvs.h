@@ -200,7 +200,15 @@ extern int errno;
 #define CVSDOTWRAPPER   ".cvswrappers"
 
 /* miscellaneous CVS defines */
+
+/* This is the string which is at the start of the non-log-message lines
+   that we put up for the user when they edit the log message.  */
 #define	CVSEDITPREFIX	"CVS: "
+/* Number of characters in CVSEDITPREFIX to compare when deciding to strip
+   off those lines.  We don't check for the space, to accomodate users who
+   have editors which strip trailing spaces.  */
+#define CVSEDITPREFIXLEN 4
+
 #define	CVSLCKAGE	(60*60)		/* 1-hour old lock files cleaned up */
 #define	CVSLCKSLEEP	30		/* wait 30 seconds before retrying */
 #define	CVSBRANCH	"1.1.1"		/* RCS branch used for vendor srcs */
