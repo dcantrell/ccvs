@@ -25,6 +25,7 @@ exec_prefix = @exec_prefix@
 SOURCES = \
 	argmatch.c \
 	dup2.c \
+	fncase.c \
 	fnmatch.c \
 	ftruncate.c \
 	getdate.c \
