@@ -18782,7 +18782,15 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
 done"
-	  dotest keyword-21 "${testcvs} -q update -r tag1" "[UP] file1"
+	  # FIXCVS - These unpatchable files are happening because the tag
+	  # associated with the current base version of the file in the
+	  # sandbox is not available in these cases.  See the note in the
+	  # patch_file function in update.c.
+	  dotest keyword-21 "${testcvs} -q update -r tag1" "U file1" \
+"P file1
+${PROG} update: checksum failure after patch to \./file1; will refetch
+${PROG} client: refetching unpatchable files
+U file1"
 
 	  dotest keyword-22 "cat file1" '\$'"Name: tag1 "'\$'
 
@@ -19073,18 +19081,22 @@ ${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
 done"
 
-	  # First check out a branch.  Note the lack of a substitution in
-	  # both the update and non-update case.  Though it seems natural and
-	  # the doc seems to agree that the non-update case shouldn't include
-	  # a substitution, I think this is a bug in the update case.  Why
-	  # should branch tags be treated differently than static tags here?
-	  # FIXCVS - BUG
+	  # First check out a branch.
 	  #
-	  # Of course, as far as it being natural that the non-update case not
-	  # contain the substitution, why shouldn't it?  an update -kk or -A
-	  # will unsub and sub keywords without updates being required.
-	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "[UP] file1"
-	  dotest keywordname-update-2 "cat file1" '\$'"Name:  "'\$'
+	  # There used to be a bug where static tags would be substituted for
+	  # Name keywords but not branch tags.
+	  #
+	  # FIXCVS - BUG
+	  # Why shouldn't the non-update case not cause a substitution?
+	  # An update -kk or -A will unsub and sub keywords without updates
+	  # being required.
+	  # FIXCVS - see note above keyword-21
+	  dotest keywordname-update-1 "${testcvs} -q up -rbr" "U file1" \
+"P file1
+${PROG} update: checksum failure after patch to \./file1; will refetch
+${PROG} client: refetching unpatchable files
+U file1"
+	  dotest keywordname-update-2 "cat file1" '\$'"Name: br "'\$'
 	  dotest keywordname-update-3 "cat file2" '\$'"Name:  "'\$'
 
 	  # Now verify that updating to the trunk leaves no substitution for
@@ -19092,14 +19104,24 @@ done"
 	  dotest keywordname-update-4 "${testcvs} -q tag firsttag" \
 "T file1
 T file2"
-	  dotest keywordname-update-5 "${testcvs} -q up -A" "[UP] file1"
+	  # FIXCVS - see note above keyword-21
+	  dotest keywordname-update-5 "${testcvs} -q up -A" "U file1" \
+"P file1
+${PROG} update: checksum failure after patch to \./file1; will refetch
+${PROG} client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-6 "cat file1" \
 '\$'"Name:  "'\$'"
 new data"
 	  dotest keywordname-update-7 "cat file2" '\$'"Name:  "'\$'
 
 	  # But updating to a static tag does cause a substitution
-	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "[UP] file1"
+	  # FIXCVS - see same note above
+	  dotest keywordname-update-8 "${testcvs} -q up -rfirsttag" "U file1" \
+"P file1
+${PROG} update: checksum failure after patch to \./file1; will refetch
+${PROG} client: refetching unpatchable files
+U file1"
 	  dotest keywordname-update-9 "cat file1" '\$'"Name: firsttag "'\$'
 	  dotest keywordname-update-10 "cat file2" '\$'"Name:  "'\$'
 
