@@ -877,10 +877,11 @@ sleep_past (time_t desttime)
 
 
 
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
 /* char *
  * locate_file_in_dir (const char *dir, const char *file)
  *
- * Search a directory for a filename, case insensitively when appropriate.
+ * Search a directory for a filename, case insensitively.
  *
  * INPUTS
  *
@@ -895,84 +896,69 @@ sleep_past (time_t desttime)
  *
  * ERRORS
  *
- *  When this function returns NULL, errno will be set appropriately.
+ *  When this function returns NULL, errno will be set to the system's
+ *  existence error value (sometimes ENOENT) if DIR did not exist or ENOENT if
+ *  no matching files were found in the directory.
  */
 char *
 locate_file_in_dir (const char *dir, const char *file)
 {
     char *retval;
+    DIR *dirp;
+    struct dirent *dp;
+    char *found_name = NULL;
 
-#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
-    if ( ign_case )
+    if ((dirp = CVS_OPENDIR (dir)) == NULL)
     {
-	DIR *dirp;
-	struct dirent *dp;
-	char *found_name = NULL;
-
-	if ( ( dirp = CVS_OPENDIR ( dir ) ) == NULL )
+	if (existence_error (errno))
 	{
-	    if ( existence_error ( errno ) )
-	    {
-		/* This can happen if we are looking in the Attic and the Attic
-		   directory does not exist.  Pass errno through to the caller;
-		   they know what to do with it.  */
-		return NULL;
-	    }
-	    else
-	    {
-		/* Give a fatal error; that way the error message can be
-		 * more specific than if we returned the error to the caller.
-		 */
-		error ( 1, errno, "cannot read directory %s", dir );
-	    }
-	}
-	errno = 0;
-	while ( ( dp = CVS_READDIR ( dirp ) ) != NULL )
-	{
-	    if ( cvs_casecmp ( dp->d_name, file ) == 0 )
-	    {
-		if ( found_name != NULL )
-		    error ( 1, 0, "%s is ambiguous; could mean %s or %s",
-			    file, dp->d_name, found_name );
-		found_name = xstrdup ( dp->d_name );
-	    }
-	}
-	if ( errno != 0 )
-	    error ( 1, errno, "cannot read directory %s", dir );
-
-	CVS_CLOSEDIR ( dirp );
-
-	if ( found_name == NULL )
-	{
-	    errno = ENOENT;
+	    /* This can happen if we are looking in the Attic and the Attic
+	       directory does not exist.  Pass errno through to the caller;
+	       they know what to do with it.  */
 	    return NULL;
 	}
-
-	/* Copy the found name back into DIR.  We are assuming that
-	   found_name is the same length as fname, which is true as
-	   long as the above code is just ignoring case and not other
-	   aspects of filename syntax.  */
-	retval = xmalloc ( strlen ( dir )
-			   + strlen ( found_name )
-			   + 2 );
-	sprintf ( retval, "%s/%s", dir, found_name );
-    }
-    else
-#endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
-    {
-	retval = xmalloc ( strlen ( dir )
-			   + strlen ( file )
-			   + 2 );
-	(void) sprintf ( retval, "%s/%s", dir, file );
-	if ( !isfile ( retval ) )
+	else
 	{
-	    free ( retval );
-	    return NULL;
+	    /* Give a fatal error; that way the error message can be
+	     * more specific than if we returned the error to the caller.
+	     */
+	    error (1, errno, "cannot read directory %s", dir);
 	}
     }
+    errno = 0;
+    while ((dp = CVS_READDIR (dirp)) != NULL)
+    {
+	if (cvs_casecmp (dp->d_name, file) == 0)
+	{
+	    if (found_name != NULL)
+		error (1, 0, "%s is ambiguous; could mean %s or %s",
+		       file, dp->d_name, found_name);
+	    found_name = xstrdup (dp->d_name);
+	}
+    }
+    if (errno != 0)
+	error (1, errno, "cannot read directory %s", dir);
+
+    CVS_CLOSEDIR (dirp);
+
+    if (found_name == NULL)
+    {
+	errno = ENOENT;
+	return NULL;
+    }
+
+    /* Copy the found name back into DIR.  We are assuming that
+       found_name is the same length as fname, which is true as
+       long as the above code is just ignoring case and not other
+       aspects of filename syntax.  */
+    retval = xmalloc (strlen (dir)
+		      + strlen (found_name)
+		      + 2);
+    sprintf (retval, "%s/%s", dir, found_name);
 
     return retval;
 }
+#endif /* defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE) */
 
 
 

@@ -1,5 +1,14 @@
 Changes since 1.12.1:
 
+* A problem with locating files requested by case insensitive clients which was
+  accidentally introduced in 1.11.6 as part of a fix for a data loss problem
+  involving `cvs add's from case insensitive clients has been fixed.  The
+  relevant error message was `cvs [<command> aborted]: filE,v is ambiguous;
+  could mean FILE,v or file,v'.
+
+* A problem in the CVS getpass library that could cause passwords to echo on
+  some systems has been fixed.
+
 * A segfault that could occur in very rare cases where the stat of a file
   failed during a diff has been fixed.
 

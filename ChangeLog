@@ -1,3 +1,7 @@
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note case insensitive file lookup fix.  Note getpass fix.
+
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
 	Add the GNULIB restrict module.
