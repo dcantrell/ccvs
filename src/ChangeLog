@@ -1,3 +1,16 @@
+Fri Sep  6 11:48:08 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* main.c (usg): Only mention -x if ENCRYPTION is defined.
+	(main): Mention ENCRYPTION define in comment for -x.
+	* client.h (krb_encrypt_buffer_initialize): Only declare if
+	ENCRYPTION is defined.
+	* client.c (start_server): Only encrypt if ENCRYPTION is defined.
+	* server.c (serve_kerberos_encrypt): Only define if ENCRYPTION is
+	defined.
+	(requests): Only include Kerberos-encrypt is ENCRYPTION is
+	defined.
+	(krb_encrypt_*): Only define if ENCRYPTION is defined.
+
 Thu Sep  5 17:32:39 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh: When testing remote, use :ext: instead of :server: to

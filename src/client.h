@@ -13,6 +13,7 @@ extern int filter_through_gunzip PROTO((int, int, pid_t *));
 
 extern int cvsencrypt;
 
+#ifdef ENCRYPTION
 #ifdef HAVE_KERBEROS
 
 /* We can't declare the arguments without including krb.h, and I don't
@@ -20,6 +21,7 @@ extern int cvsencrypt;
 extern struct buffer *krb_encrypt_buffer_initialize ();
 
 #endif /* HAVE_KERBEROS */
+#endif /* ENCRYPTION */
 
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 

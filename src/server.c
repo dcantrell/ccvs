@@ -1497,6 +1497,7 @@ serve_set (arg)
     variable_set (arg);
 }
 
+#ifdef ENCRYPTION
 #ifdef HAVE_KERBEROS
 
 static void
@@ -1513,7 +1514,8 @@ serve_kerberos_encrypt (arg)
 						  buf_from_net->memory_error);
 }
 
-#endif
+#endif /* HAVE_KERBEROS */
+#endif /* ENCRYPTION */
 
 #ifdef SERVER_FLOWCONTROL
 /* The maximum we'll queue to the remote client before blocking.  */
@@ -3402,8 +3404,10 @@ struct request requests[] =
   REQ_LINE("Global_option", serve_global_option, rq_optional),
   REQ_LINE("Gzip-stream", serve_gzip_stream, rq_optional),
   REQ_LINE("Set", serve_set, rq_optional),
+#ifdef ENCRYPTION
 #ifdef HAVE_KERBEROS
   REQ_LINE("Kerberos-encrypt", serve_kerberos_encrypt, rq_optional),
+#endif
 #endif
   REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
   REQ_LINE("ci", serve_ci, rq_essential),
@@ -4238,6 +4242,8 @@ error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
    the command line.  */
 int cvsencrypt;
 
+#ifdef ENCRYPTION
+
 #ifdef HAVE_KERBEROS
 
 /* An encryption interface using Kerberos.  This is built on top of
@@ -4620,6 +4626,7 @@ krb_encrypt_buffer_shutdown (closure)
 }
 
 #endif /* HAVE_KERBEROS */
+#endif /* ENCRYPTION */
 #endif /* defined (CLIENT_SUPPORT) || defined (SERVER_SUPPORT) */
 
 /* Output LEN bytes at STR.  If LEN is zero, then output up to (not including)

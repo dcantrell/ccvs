@@ -3590,6 +3590,7 @@ the :server: access method is not supported by this port of CVS");
     }
     if (cvsencrypt)
     {
+#ifdef ENCRYPTION
 	/* Turn on encryption before turning on compression.  We do
            not want to try to compress the encrypted stream.  Instead,
            we want to encrypt the compressed stream.  If we can't turn
@@ -3609,8 +3610,11 @@ the :server: access method is not supported by this port of CVS");
 							 buf_memory_error);
 	}
 	else
-#endif
+#endif /* HAVE_KERBEROS */
 	    error (1, 0, "Encryption is only supported when using Kerberos");
+#else /* ! ENCRYPTION */
+	error (1, 0, "This client does not support encryption");
+#endif /* ! ENCRYPTION */
     }
     if (gzip_level)
     {
