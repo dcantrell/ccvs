@@ -1,5 +1,8 @@
 Sat Oct 25 00:33:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (getdelta): Add comment about branches and next field
+	being mandatory.
+
 	* rcs.c (RCS_reparsercsfile, RCS_deltas), sanity.sh (reserved):
 	Reindent sections which were misindented as a result of recent
 	changes.
