@@ -349,6 +349,12 @@ char *getwd ();
 # endif
 #endif
 
+/* Under OS/2, this must be included _after_ stdio.h; that's why we do
+   it here. */
+#ifdef USE_OWN_TCPIP_H
+#include "tcpip.h"
+#endif
+
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #else
