@@ -1,5 +1,17 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* checkout.c (history_name): New static variable.
+	(checkout): Permit both tag and date to be specified.  Set
+	history_name.
+	(checkout_proc): Use history_name when calling history_write.
+	* rcs.c (RCS_getversion): If both tag and date are set, use
+	RCS_whatbranch to get the branch revision number of a symbolic
+	tag.
+	(RCS_getdatebranch): If the branch revision itself is early
+	enough, then use it if the first branch is not early enough.  Add
+	comment for invalid RCS file.  Don't bother to check for NULL
+	before calling xstrdup, since xstrdup checks anyhow.
+
 	* client.h (file_gzip_level): Declare.
 	* client.c (file_gzip_level): Define.
 	(start_server): Don't set gzip_level to zero after sending

@@ -90,6 +90,7 @@ static char *join_rev1 = NULL;
 static char *join_rev2 = NULL;
 static int join_tags_validated = 0;
 static char *preload_update_dir = NULL;
+static char *history_name = NULL;
 
 int
 checkout (argc, argv)
@@ -219,8 +220,7 @@ checkout (argc, argv)
     if (shorten == -1)
 	shorten = 0;
 
-    if ((!(cat + status) && argc == 0) || ((cat + status) && argc != 0)
-	|| (tag && date))
+    if ((!(cat + status) && argc == 0) || ((cat + status) && argc != 0))
 	usage (valid_usage);
 
     if (where && pipeout)
@@ -244,6 +244,7 @@ checkout (argc, argv)
 	  options = RCS_check_kflag ("v");/* -kv is default */
 #endif
     }
+    else
 
     if (!safe_location()) {
         error(1, 0, "Cannot check out files into the repository itself");
@@ -381,6 +382,21 @@ checkout (argc, argv)
 #endif
 	    }
 	}
+    }
+
+    /* If we will be calling history_write, work out the name to pass
+       it.  */
+    if (strcmp (command_name, "export") != 0 && !pipeout)
+    {
+	if (tag && date)
+	{
+	    history_name = xmalloc (strlen (tag) + strlen (date) + 2);
+	    sprintf (history_name, "%s:%s", tag, date);
+	}
+	else if (tag)
+	    history_name = tag;
+	else
+	    history_name = date;
     }
 
     /*
@@ -761,7 +777,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
     if (!(local_specified || *pargc > 1))
     {
 	if (strcmp (command_name, "export") != 0 && !pipeout)
-	    history_write ('O', preload_update_dir, tag ? tag : date, where,
+	    history_write ('O', preload_update_dir, history_name, where,
 			   repository);
 	err += do_update (0, (char **) NULL, options, tag, date,
 			  force_tag_match, 0 /* !local */ ,
@@ -815,7 +831,7 @@ checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 
     /* Don't log "export", just regular "checkouts" */
     if (strcmp (command_name, "export") != 0 && !pipeout)
-	history_write ('O', preload_update_dir, (tag ? tag : date), where,
+	history_write ('O', preload_update_dir, history_name, where,
 		       repository);
 
     /* go ahead and call update now that everything is set */
