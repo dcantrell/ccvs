@@ -6432,15 +6432,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest modules2-5 "test -d ampermodule/second-dir" ''
 
 	  # Test ability of cvs release to handle multiple arguments
-	  # Other CVS release tests:
-	  #   info-cleanup-0 for "cvs -n release".
-	  #   ignore-193 for the text of the question that cvs release asks.
-	  #     Also for interactions with cvsignore.
-	  #   basicc for:
-	  #     * "cvs release -d ."
-	  #     * "cvs -Q release"
-	  #     * "cvs release foo bar" (>1 argument).
-	  #     * "cvs release" without -d.
+	  # See comment at "release" for list of other cvs release tests.
 	  cd ampermodule
 	  if ${testcvs} release -d first-dir second-dir <<EOF >>${LOGFILE}
 yes
@@ -16221,9 +16213,15 @@ d472 12
 	  ;;
 
 	release)
-	  # Some specific tests on release. Although it is tested in
-	  # some other tests, we need to test some more cases like
-	  # multiple arguments.
+	  # Tests of "cvs release", particularly multiple arguments.
+	  # Other CVS release tests:
+	  #   info-cleanup-0 for "cvs -n release".
+	  #   ignore-193 for the text of the question that cvs release asks.
+	  #     Also for interactions with cvsignore.
+	  #   basicc: "-d .", global -Q, no arguments (is a noop),
+	  #     "cvs release" without -d, multiple arguments.
+	  #   dirs-4: repository directory has been deleted.
+	  #   modules2-6: multiple arguments.
 
 	  # First the usual setup; create a directory first-dir.
 	  mkdir 1; cd 1

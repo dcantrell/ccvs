@@ -111,6 +111,10 @@ release (argc, argv)
     /* We're going to run "cvs -n -q update" and check its output; if
      * the output is sufficiently unalarming, then we release with no
      * questions asked.  Else we prompt, then maybe release.
+     * (Well, actually we ask no matter what.  Our notion of "sufficiently
+     * unalarming" doesn't take into account "? foo.c" files, so it is
+     * up to the user to take note of them, at least currently
+     * (ignore-193 in testsuite)).
      */
     /* Construct the update command. */
     update_cmd = xmalloc (strlen (program_path)
