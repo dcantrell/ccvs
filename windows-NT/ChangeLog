@@ -1,3 +1,15 @@
+8 Apr 1997  Jim Kingdon
+
+	* rcmd.c: Instead of returning -1 and passing that back to
+	startserver.c which will print a very vague error message, call
+	error() right away with a specific message.  This also fixes
+	some places where we had bogusly called GetLastError instead of
+	WSAGetLastError.
+	(init_winsock): Remove call to setsockopt.  It was an artifact
+	from before the time that we defined NO_SOCKET_TO_FD, doesn't
+	seem to be needed any more, and fails with some non-Microsoft
+	winsock implementations.
+
 Wed Apr  2 14:08:10 1997  Vince Del Vecchio  <vdelvecc@spd.analog.com>
 			  and Jim Kingdon
 
