@@ -5336,6 +5336,8 @@ history---what files have changed when, how, and by
 whom, there are a variety of mechanisms for looking
 through the history.
 
+@c FIXME: should also be talking about how you look at
+@c old revisions (e.g. "cvs update -p -r 1.2 foo.c").
 @menu
 * log messages::                Log messages
 * history database::            The history database

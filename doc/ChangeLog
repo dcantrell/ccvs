@@ -1,3 +1,8 @@
+Tue May  6 18:02:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (History browsing): Add comment about looking at old
+	revisions.
+
 Tue May 06 15:05:00 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo: More additions/corrections for -R due to recent
