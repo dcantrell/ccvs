@@ -1,3 +1,9 @@
+Tue Sep 17 00:43:49 1996  VaX#n8  <vax@linkdead.paranoia.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Rename by copying): Suggest "cvs tag -d" on the file
+	"new", not on everything.  Also don't suggest deleting branch tags.
+
 Tue Sep 17 00:34:39 1996  David A. Swierczek  <swierczekd@med.ge.com>
 
 	* Makefile.in (install-info): Note whether files are in srcdir and
