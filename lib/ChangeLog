@@ -1,5 +1,9 @@
 2004-04-19  Derek Price  <derek@ximbiot.com>
 
+	* system.h: Gratuitous reformatting.
+
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): s/lib\.\w+/libcvs.*/i.
 	* Makefile.in: Regenerated.
 
