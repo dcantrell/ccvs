@@ -6079,7 +6079,8 @@ RCS_rewrite (rcs, newdtext, insertpt)
 
     if (ferror (fin))
 	error (0, errno, "warning: when closing RCS file `%s'", rcs->path);
-    fclose (fin);
+    if (fclose (fin) < 0)
+	error (0, errno, "warning: closing RCS file `%s'", rcs->path);
 
     rcs_internal_unlockfile (fout, rcs->path);
 }
