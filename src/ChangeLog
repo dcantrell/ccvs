@@ -1,3 +1,11 @@
+Thu May 16 01:29:47 1996  noel  <noel@BOAT_ANCHOR>
+
+	* commit.c (commit_filesdoneproc): Print the repository and root
+ 	directories as part of the error message.
+
+	* main.c (main): Don't buffer stdout or stderr.  It's inefficient,
+ 	but it then produces the right output for sanity.sh.
+
 Wed May 15 23:47:59 1996  Noel Cragg  <noel@gargle.rain.org>
 
 	* main.c (usg): revert usage strings for `-H' flag change.
