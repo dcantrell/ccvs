@@ -1331,6 +1331,13 @@ contains the @samp{-d} option, it will be the directory specified with
 @item M @var{text} \n
 A one-line message for the user.
 
+@item Mbinary \n
+Additional data: file transmission (note: compressed file transmissions
+are not supported).  This is like @samp{M}, except the contents of the
+file transmission are binary and should be copied to standard output
+without translation to local text file conventions.  To transmit a text
+file to standard output, servers should use a series of @samp{M} requests.
+
 @item E @var{text} \n
 Same as @code{M} but send to stderr not stdout.
 
