@@ -572,7 +572,7 @@ make_message_rcslegal (message)
  * RETURNS
  *  TRUE	ts_conflict matches the current timestamp.
  *  FALSE	The ts_conflict field does not match the file's
- *		timestamp does not match.
+ *		timestamp.
  */
 int
 file_has_conflict (finfo, ts_conflict)
