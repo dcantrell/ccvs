@@ -1,5 +1,11 @@
 Fri Oct 24 10:22:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_findlock_or_tip): Don't worry about file ownership
+	and nonstrict locking when returning the default branch or head.
+	The most conspicuous problem with the old code is that in the
+	error case it would examine rstat.st_uid when it had not been
+	set.  For a discussion of more fundamental reasons, see comment.
+
 	* admin.c (admin_fileproc): In handling -A, don't handle relative
 	pathnames differently from absolute pathnames.  See comment for
 	rationale.  If problem opening the file, give a nice error not a
