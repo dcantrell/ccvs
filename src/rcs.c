@@ -8236,7 +8236,26 @@ RCS_putdtree (rcs, rev, fp)
 
     /* Find the delta node for this revision. */
     p = findnode (rcs->versions, rev);
-    assert (p != NULL);
+    if(p == NULL){
+        /* This shouldn't happen if the repository is in good shape.
+            We need to clean up the lockfile, but we can't call 
+            rcs_internal_unlockfile, because that assumes that things 
+            are behaving normally.  rcs_internal_unlockfile copies the
+            lockfile back onto the repository (,v) file.  
+            Since the repository file is corrupt, this isn't a terribly 
+            destructive thing to do, but just in case the user isn't 
+            maintaining backups, and the ,v file does contain useful 
+            information, we'll just delete the lockfile and let the 
+            user sort out the problem. */
+ 
+        if (fclose(fp) == EOF)
+            error (1, 0, "error closing lock file %s", rcs_lockfile);
+        unlink_file(rcs_lockfile);
+        error (1, 0,
+               "error parsing repository file %s, file may be corrupt.", 
+               rcs->path);
+    }
+ 
     versp = (RCSVers *) p->data;
 
     /* Print the delta node and recurse on its `next' node.  This prints
