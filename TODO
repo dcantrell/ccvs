@@ -140,10 +140,6 @@ $CVSid: @(#)TODO 1.26 94/09/21 $
 93. Need to think hard about release and development environments.  Think
     about execsets as well.
 
-97. The documentation should describe how to undo a change ("cvs
-update -j 1.2 -j 1.1 foo.c" followed by a commit undoes the change
-from 1.1 to 1.2).
-
 98. If diff3 bombs out (too many differences) cvs then thinks that the file
     has been updated and is OK to be commited even though the file 
     has not yet been merged.
