@@ -1,5 +1,10 @@
 1999-05-10  Jim Kingdon  <http://www.cyclic.com>
 
+	* server.c (serve_notify), edit.c (notify_do): Check for
+	and reject characters which will get confused with delimiters.
+	* sanity.sh (server): New tests server-7 through server-15 test
+	for this and for other notify behaviors.
+
 	* rcs.c (RCS_tag2rev): Also look for a physical branch with
 	RCS_getversion.
 	* sanity.sh (tagf): Adjust tagf-12 and following tests to test for

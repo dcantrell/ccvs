@@ -1908,6 +1908,9 @@ serve_notify (arg)
     {
 	char *cp;
 
+	if (strchr (data, '+'))
+	    goto error;
+
 	new->type = data;
 	if (data[1] != '\t')
 	    goto error;
