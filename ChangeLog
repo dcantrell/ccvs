@@ -1,3 +1,8 @@
+Sun May  4 19:46:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Replace section on reporting bugs with a reference to
+	the bug-reporting section in cvs.texinfo.
+
 Fri May  2 22:50:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* BUGS: Remove item about importing binary files; the bug is fixed.
