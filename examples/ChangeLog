@@ -1,3 +1,8 @@
+Mon Jul 24 17:08:25 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* Updated comb program to work when the user runs update/commit
+	etc from the top directory of a source tree.
+
 Fri Jul 21 10:35:10 1995  Vince DeMarco <vdemarco@bou.shl.com>
 
 	* Makefile.in (DISTFILES, EXAMPLE_FILES): Add cvswrappers uncom comb.
