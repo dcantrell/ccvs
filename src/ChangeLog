@@ -1,3 +1,10 @@
+2003-10-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* admin.c (admin_fileproc): Force tag match on admin
+	-mversion:message rather than altering the wrong log message.
+	(Patch from "Rodolfo Schulz de Lima" <rodsoft@uol.com.br>.)
+	* sanity.sh (admin): Test case for it.
+
 2003-10-15  Larry Jones  <lawrence.jones@eds.com>
 
 	* commit.c (commit_fileproc, finaladd): Don't call fixaddfile()
