@@ -1,5 +1,9 @@
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
+	* HACKING: s/cvsntfix.pl/fix-msvc-head.pl/.
+
+2004-04-14  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Generate windows-NT/fix-msvc-mak.
 	* configure, Makefile.in: Regenerated.
 
