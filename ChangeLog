@@ -1,5 +1,10 @@
 Fri Sep  5 20:46:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  This was mainly as a proof of
+	concept that I could edit the Cygnus question and have the diffs
+	come out looking right (which worked), but I also discovered that
+	the previous checkin was truncated partway through.
+
 	* FAQ: Replace file with an introductory paragraph plus a
 	downloaded copy of Molli's FAQ-O-Matic.  I believe the content
 	closely matches the 1995 Grubbs FAQ but because everything is

@@ -8288,15 +8288,17 @@ Category: /Past__Future_/Professional_Support/
    -------------------------------
 
 
-   Cygnus is a company that supports a variety of
-   FSF software. It uses a version of CVS and people
-   from Cygnus are on the info-cvs mailing list. 
-
-   [[Could someone from Cygnus state Cygnus's
-   official and unofficial relationship with CVS?]] 
 
 
-   Last modified: 6/13/1997 
+           Cygnus is a company that supports free software such as the GCC
+           compiler.  They have never sold support for CVS, however.  They
+           do use CVS internally and have contributed much code to CVS over
+           the years (for which CVS users should be grateful).
+
+           kingdon@cyclic.com
+
+
+   Last modified: 9/6/1997 
 
    2. What is Cyclic Software doing with CVS? 
    -------------------------------------------
@@ -9731,4 +9733,1569 @@ Category: /User_Tasks_/Less_Common_User_Tas/
    your working directory. 
 
 
-   Last modified: 6/13
+   Last modified: 6/13/1997 
+
+   6. How do I create a branch? 
+   -----------------------------
+
+
+   Type this in your working directory: 
+
+                   cvs tag -b <branch_tag>
+
+   and you will create a branch. No files have real
+   branches in them yet, but if you move onto the
+   branch by typing: 
+
+                   cvs update -r <branch_tag>
+
+   and commit a file in the normal way: 
+
+                   cvs commit <file>
+
+   then a branch will be created in the underlying
+   <file>,v file and the new revision of <file> will
+   appear only on that branch. 
+
+   See Section 4C, on Branching. 
+
+
+   Last modified: 6/13/1997 
+
+   7. How do I modify the modules file? How about the other files in the CVSROOT
+   -----------------------------------------------------------------------------
+   administrative area? 
+   ---------------------
+
+
+   A module named "modules" has been provided in the
+   default modules file, so you can type: 
+
+                   cvs checkout modules
+                   cd modules
+
+   Another module named CVSROOT has been provided in
+   the default modules file, covering all the
+   administrative files. Type: 
+
+                   cvs checkout CVSROOT
+                   cd CVSROOT
+
+   Then you can edit your files, followed by: 
+
+                   cvs commit
+
+   If you start with the provided template for the
+   "modules" file, the CVSROOT and the "modules"
+   module will have the "mkmodules" program as a
+   "commit helper". After a file is committed to
+   such a module, "mkmodules" will convert a number
+   of standard files (See 4B.2) in the CVSROOT
+   directory inside the Repository into a form that
+   is usable by CVS. 
+
+
+   Last modified: 6/13/1997 
+
+   8. How do I split a file into pieces, retaining revision histories? 
+   --------------------------------------------------------------------
+
+
+   If you and a coworker find yourselves repeatedly
+   committing the same file, but never for changes
+   in the same area of the file, you might want to
+   split the file into two or more pieces. If you
+   are both changing the same section of code,
+   splitting the file is of no use. You should talk
+   to each other instead. 
+
+   If you decide to split the file, here's a
+   suggestion. In many ways, it is similar to
+   multiple "renamings" as described in 2C.4 above. 
+
+   Say you want to split <fileA>, which already in
+   the Repository, into three pieces, <fileA>,
+   <fileB> and <fileC>. 
+
+ o Copy the RCS (",v") files directly in the
+   Repository, creating the new files, then bring
+   readable copies of the new files into the working
+   directory via "update". 
+
+   cp $CVSROOT/<path>/<fileA>,v
+   $CVSROOT/<path>/<fileB>,v cp
+   $CVSROOT/<path>/<fileA>,v
+   $CVSROOT/<path>/<fileC>,v 
+
+                   cvs update <fileB> <fileC>
+
+ o Then remove all the <tags> from the new files by
+   using: 
+
+                   cvs log <fileB> <fileC>       # Save the list of <tag?>
+                   cvs tag -d <tag1> <fileB> <fileC>
+                   cvs tag -d <tag2> <fileB> <fileC>
+                   . . .
+
+ o Edit each file until it has the data you want in
+   it. This is a hand-editing job, not something CVS
+   can handle. Then commit all the files. 
+
+   [From experience, I'd suggest making sure that
+   only one copy of each line of code exists among
+   the three files, except for "include" statements,
+   which must be duplicated. And make sure the code
+   compiles.] 
+
+   emacs <fileA> <fileB> <fileC> 
+
+                   cvs commit <fileA> <fileB> <fileC>
+
+   As in the "rename" case, by duplicating the
+   files, you'll preserve the change history and the
+   ability to retrieve earlier revisions. 
+
+   Of course, you have to alter your build system
+   (e.g. Makefiles) to take the new names and the
+   change in contents into account. 
+
+
+   Last modified: 6/13/1997 
+
+Category: /What_is_CVS_/
+++++++++++++++++++++++++
+
+" What is CVS? " 
+
+Category: /What_is_CVS_/How_does_CVS_differ_/
++++++++++++++++++++++++++++++++++++++++++++++
+
+" How does CVS differ from other, similar
+software?" 
+
+   1. How does CVS differ from RCS? 
+   ---------------------------------
+
+
+   CVS uses RCS to do much of its work and
+   absolutely all the work of changing the
+   underlying RCS files in the Repository. 
+
+   RCS comprises a set of programs designed to keep
+   track of changes to individual files. Of course,
+   it also allows you to refer to multiple files on
+   the command line, but they are handled by
+   iterating over individual files. There is no
+   pretense of coordinated interaction among groups
+   of files. 
+
+   CVS's main intent is to provide a set of grouping
+   functions that allow you to treat a collection of
+   RCS files as a single object. Of course, CVS also
+   has to do a lot of iteration, but it tries its
+   best to hide that it is doing so. In addition,
+   CVS has some truly group-oriented facets, such as
+   the modules file and the CVS administrative files
+   that refer to a whole directory or module. 
+
+   One group aspect that can be a bit confusing is
+   that a CVS branch is not the same as an RCS
+   branch. To support a CVS branch, CVS uses "tags"
+   (what RCS calls "symbols") and some local state,
+   in addition to RCS branches. 
+
+   Other features offered by CVS that are not
+   supported directly by RCS are 
+
+ o Automatic determination of the state of a file,
+   (e.g. modified, up-to-date with the Repository,
+   already tagged with the same string, etc.) which
+   helps in limiting the amount of displayed text
+   you have to wade through to figure out what
+   changed and what to do next. 
+
+ o A copy-modify-merge scheme that avoids locking
+   the files and allows simultaneous development on
+   a single file. 
+
+ o Serialization of commits. CVS requires you to
+   merge all changes committed (via "update") since
+   you checked out your working copy of the file.
+   Although it is still possible to commit a file
+   filled with old data, it is less likely than when
+   using raw RCS. 
+
+ o Relatively easy merging of releases from external
+   Vendors. 
+
+
+   Last modified: 6/13/1997 
+
+   2. How does CVS differ from SCCS? 
+   ----------------------------------
+
+
+   SCCS is much closer to RCS than to CVS, so some
+   of the previous entry applies. 
+
+   You might want to take a look at Walter Tichy's
+   papers on RCS, which are referred to in the RCS
+   man pages. 
+
+   [[More info here?]] 
+
+
+   Last modified: 6/13/1997 
+
+   3. How does CVS differ from ClearCase? 
+   ---------------------------------------
+
+
+   ClearCase is a distributed client-server version
+   control system. ClearCase is a variant DSEE
+   tools, formerly available on Apollo platforms.
+   The ClearCase tool set includes a few X-based
+   interface tools, a command-line interface, and C
+   programmer API. It is currently available on Sun,
+   HP, SGI and OSF/1 platforms. 
+
+   ClearCase uses a special Unix filesystem type,
+   called "mvfs" for "multi-version file system".
+   Conceptually, mvfs adds another dimension to a
+   regular Unix filesystem. The new axis is used to
+   store the different versions of files and to
+   provide a tree-hierarchical view of a collection
+   of objects that might be scattered across any
+   number of separate hosts on your local network. 
+
+   Each user acquires a "view" into the file
+   database by creating a special mvfs mount point
+   on their machine. Each view has a "configuration
+   spec" containing a set of selection rules that
+   specify the particular version of each file to
+   make visible in that view. You can think of a
+   "view" as a work area in CVS, except that the
+   files don't really exist on your local disk until
+   you modify them. This technique conserves disk
+   space because it doesn't keep private copies of
+   read-only files. 
+
+   Another advantage is that a view is "transparent"
+   in the sense that all of the files in a "view"
+   appear to be regular Unix files to other tools
+   and Unix system calls. An extended naming
+   convention allows access to particular versions
+   of a file directly: "test.cc@@/main/bugfix/3"
+   identifies the third version of test.c on the
+   bugfix branch. 
+
+   ClearCase supports both the copy-modify-merge
+   model of CVS (by using what are called
+   "unreserved checkouts" and the checkin/checkout
+   development model with file locking. Directories
+   are version-controlled objects as well as files.
+   A graphical merge tool is provided. Like RCS,
+   ClearCase supports branches, symbolic tags, and
+   delta compression. ASCII as well as binary files
+   are supported, and converters from RCS, SCCS,
+   DSEE formats are also included. 
+
+   A make-compatible build facility is provided that
+   can identify common object code and share it
+   among developers. A build auditing feature
+   automatically records file dependencies by
+   tracking every file that is opened when producing
+   a derived object, thus making explicit dependency
+   lists unnecessary. Pre- and post-event triggers
+   are available for most ClearCase operations to
+   invoke user programs or shell scripts.
+   User-defined attributes can be assigned to any
+   version or object. Hyper-links between version
+   controlled objects can record their relationship.
+
+   For more information, contact: 
+
+   Atria Software, Inc. 24 Prime Park Way Natick, MA
+   01760 info@atria.com 
+
+   (508) 650-1193 (phone) (508) 650-1196 (fax) 
+
+                                   Originally contributed by Steve Turner
+                                   Edited by the author of this FAQ.
+
+
+   Last modified: 6/13/1997 
+
+   4. How does CVS differ from TeamWare/SparcWorks? 
+   -------------------------------------------------
+
+
+   TeamWare is a configuration management tool from
+   Sun Microsystems, a part of SparcWorks. It uses
+   the same copy and merge model as CVS. The central
+   abstraction is a workspace, which corresponds to
+   either a CVS branch or a checked out module.
+   TeamWare allows you to manipulate workspaces
+   directly, including moving and merging code
+   between workspaces. You can put your workspace on
+   tape and continue to work with it at home, just
+   like you can with CVS. TeamWare is built upon and
+   compatible with SCCS. 
+
+   TeamWare provides both a command line interface
+   and a graphical interface. The CodeManager tool
+   will display the project as a tree of workspaces,
+   and allows you to manipulate them with drag and
+   drop. The other tools are VersionTool that
+   displays and manipulates a dag with a version
+   history of a single file, CheckPoint that will
+   create symbolic tags, MakeTool, a make compatible
+   tool with a GUI, and FileMerge which will
+   interactively merge files when needed (like
+   emerge for emacs). If you have a sun, you can try
+   /usr/old/mergetool for an old SunView version of
+   FileMerge. 
+
+   Email: sunprosig@sun.com 
+
+                                   Originally extracted from TeamWare
+                                   Marketing literature by Per Abrahamsen.
+                                   Edited by the author of this FAQ.
+
+   For more information, contact: 
+
+   SunExpress, Inc. P.O. Box 4426 Bridgeton, MO
+   63044-9863 (800)873-7869 
+
+
+   Last modified: 6/13/1997 
+
+   5. How does CVS differ from Aegis? 
+   -----------------------------------
+
+
+   Aegis appears to be a policy-setting tool that
+   allows you to use other sub-programs (make, RCS,
+   etc.) to implement pieces of the imposed policy. 
+
+   The initial document seems to say that most Unix
+   tools are inadequate for use under Aegis. 
+
+   It is not really similar to CVS and requires a
+   different mindset. 
+
+   [[Need more info here.]] 
+
+
+   Last modified: 6/13/1997 
+
+   6. How does CVS differ from Shapetools? 
+   ----------------------------------------
+
+
+   Shapetools includes a build mechanism (called
+   Shape, not surprisingly) that is aware of the
+   version mechanism, and some dependency tracking.
+   It is based on a file system extension called
+   Attributed File System, which allows
+   arbitrary-sized "attributes" to be associated
+   with a file. Files are version controlled in a
+   manner similar to RCS. Configurations are managed
+   through the Shapefile, an extension of the
+   Makefile syntax and functionality. Shape includes
+   version selection rules to allow sophisticated
+   selection of component versions in a build. 
+
+   Shapetools' concurrency control is pessimistic,
+   in contrast to that of CVS. Also, there's very
+   limited support for branching and merging. It has
+   a built-in policy for transitioning a system from
+   initial development to production. 
+
+                                   Contributed by Don Dwiggins
+
+
+   Last modified: 6/13/1997 
+
+   7. How does CVS differ from TeamNet? 
+   -------------------------------------
+
+
+   TeamNet is a configuration management tool from
+   TeamOne. 
+
+   For more information, contact: 
+
+   TeamOne 710 Lakeway Drive, Ste 100 Sunnyvale, CA
+   94086 (800) 442-6650 
+
+                                   Contributed by Steve Turner
+
+
+   Last modified: 6/13/1997 
+
+   8. How does CVS differ from ProFrame? 
+   --------------------------------------
+
+
+   ProFrame is a new system integration framework
+   from IBM. ProFrame is compliant with the CFI (CAD
+   Framework Initiative) industry standards,
+   including the Scheme extension language. 
+
+   ProFrame consists of three major components: (1)
+   the Process Manager that automates your local
+   design methodology (2) the Design Data Manager
+   handles configuration management, and (3)
+   Inter-tool Communication to provide a
+   communication path among tools running on
+   heterogeneous servers. 
+
+   The Design Data Manager(2) is probably the
+   appropriate component to compare to CVS. The
+   Design Data Manager provides version control with
+   checkin/checkout capability, configuration
+   management, and data dependency tracking. A
+   graphical data selection interface is provided.
+   Using this interface, you may create and
+   manipulate objects and hierarchy structures, view
+   the revision history for an object, and view and
+   assign attributes to a design object. 
+
+   The ProFrame server currently runs only on
+   RS6000, but clients may be a wide variety of Unix
+   platforms. Contact IBM for the latest platform
+   information. 
+
+   For more information, contact: 
+
+   IBM EDA Marketing and Sales P.O. Box 950, M/S
+   P121 Poughkeepsie, NY 12602 (800) 332-0066 
+
+                                   Contributed by Steve Turner
+                           [extracted from the ProFrame 1.1.0 datasheet]
+
+
+   Last modified: 6/13/1997 
+
+   9. How does CVS differ from CaseWare/CM? 
+   -----------------------------------------
+
+
+   CaseWare/CM is a software configuration
+   management product from CaseWare, Inc.
+   CaseWare/CM may be customized to support a wide
+   variety of methodologies, including various
+   phases of the software lifecycle, and different
+   access rights for users. 
+
+   A GUI is provided to view version histories and
+   configurations. A merge tools is also included.
+   CaseWare supports type-specific lifecycles, which
+   allows different types of files to move through
+   different lifecycles. Also provided is a build
+   facility to support automatic dependency
+   analysis, parallel, distributed, and remote
+   builds, and variant releases. 
+
+   CaseWare/CM has been integrated with other CASE
+   tools, including FrameMaker, ALSYS Ada,
+   CodeCenter/Object Center, HP SoftBench, and
+   Software Through Pictures. CaseWare also offers
+   CaseWare/PT, a problem tracking system to
+   integrate change requests with configuration
+   management. 
+
+   Multiple vendors and operating systems are
+   supported. 
+
+   For more information, contact: 
+
+   CaseWare, Inc. 108 Pacifica, 2nd Floor Irvine, CA
+   92718-3332 (714) 453-2200 (phone) (714) 453-2276
+   (fax) 
+
+                                   Contributed by Steve Turner
+                           [extracted from the CaseWare/CM data sheet]
+
+
+   Last modified: 6/13/1997 
+
+   10. How does CVS differ from Sublime? 
+   --------------------------------------
+
+
+   Produced by AT&T. 
+
+   [[Need more info here.]] 
+
+
+   Last modified: 6/13/1997 
+
+   11. How does CVS differ from PVCS? 
+   -----------------------------------
+
+
+   PVCS works on single files like RCS and SCCS, CVS
+   works on complete subsystems. PVCS has a make
+   utility (called a configuration builder), CVS
+   does not. PVCS has a GUI interface for Unix, DOS,
+   OS/2, and MS Windows. 
+
+                   Intersolv, Inc.
+                   1700 NW 167th Place
+                   OR 97006
+
+                                   Contributed by Per Abrahamsen
+                           [Extracted from Intersolv Marketing literature.]
+
+
+   Last modified: 6/13/1997 
+
+   12. How does CVS differ from CMVC? 
+   -----------------------------------
+
+
+   CMVC is an IBM Configuration Management and
+   Version Control system. (Though I'm not certain
+   that's the right acronym expansion.) It runs on
+   Suns, HPs, RS6000s, OS/2 and Windows. 
+
+   Other than revision control, it apparently has
+   features to manage releases, bug tracking and the
+   connection between alterations and reported bugs
+   and feature requests. It is a client/server
+   system, based on a choice of commercial
+   Relational Database systems, and it provides a
+   Motif or command line interface. 
+
+   Unlike CVS, it uses a strict locking protocol to
+   serialize source code alterations. 
+
+
+   Last modified: 6/13/1997 
+
+Category: /What_is_CVS_/What_do_you_mean_by_/
++++++++++++++++++++++++++++++++++++++++++++++
+
+" What do you mean by . . .? (Definitions)" 
+
+   1. What are "The Repository", "$CVSROOT" and "CVSROOT"? 
+   --------------------------------------------------------
+
+
+   The Repository is a directory tree containing the
+   CVS administrative files and all the RCS files
+   that constitute "imported" or "committed" work.
+   The Repository is kept in a shared area, separate
+   from the working areas of all developers. 
+
+   Users of CVS must set their "CVSROOT" environment
+   variable to the absolute pathname of the head of
+   the Repository. Most command line interpreters
+   replace an instance of "$CVSROOT" with the value
+   of the "CVSROOT" environment variable. By
+   analogy, in this document "$CVSROOT" is used as
+   shorthand for "the absolute pathname of the
+   directory at the head of the Repository". 
+
+   One of the things found in $CVSROOT is a
+   directory named CVSROOT. It contains all the
+   "state", the administrative files, that CVS needs
+   during execution. The "modules", "history",
+   "commitinfo", "loginfo" and other files can be
+   found there. See 4B.2 for more information about
+   CVSROOT files. 
+
+
+   Last modified: 6/13/1997 
+
+   2. What is an RCS file? 
+   ------------------------
+
+
+   An RCS file is a text file containing the source
+   text and the revision history for all committed
+   revisions of a source file. It is stored
+   separately from the working files, in a directory
+   hierarchy, called the Repository. 
+
+   RCS is the "Revision Control System" that CVS
+   uses to manage individual files. RCS file names
+   normally end in ",v", but that can be altered
+   (via the RCS -x option) to conform to file naming
+   standards on platforms with unusual filename
+   limitations. 
+
+
+   Last modified: 6/13/1997 
+
+   3. What is a working file? 
+   ---------------------------
+
+
+   A working file is a disk file containing a
+   checked-out copy of a source file that earlier
+   had been placed under CVS. If the working file
+   has been edited, the changes since the last
+   committed revision are invisible to other users
+   of CVS. 
+
+
+   Last modified: 6/13/1997 
+
+   4. What is a working directory (or working area)? 
+   --------------------------------------------------
+
+
+   A working directory is the place where you work
+   and the place from which you "commit" files. 
+
+   The "checkout" command creates a tree of working
+   directories, filling them with working files.
+   Each working directory contains a sub-directory
+   named ./CVS containing three administrative
+   files, which are created by "checkout" and are
+   always present: 
+
+   ./CVS/Entries 
+
+                   contains information about working files.
+
+   ./CVS/Repository 
+
+                   contains the location of the directory within the
+                   Repository that was used to create the working directory.
+
+   ./CVS/Root 
+
+                   contains the value of $CVSROOT at the time you created
+                   the working directory.
+
+   Other files may also appear in ./CVS depending on
+   the state of your working directory: 
+
+   ./CVS/Tag 
+
+                   contains the "sticky tag" associated with the whole
+                   directory.  See 3A.2 for its main purpose.
+                   [Created by "checkout" or "update" when using "-r <tag>".]
+                   [Deleted by "checkout" or "update" when using '-A'.]
+
+   ./CVS/Entries.Static 
+
+                   contains a fixed list of working files.  If this file
+                   exists, an "update" doesn't automatically bring newly
+                   added files out of the Repository.
+                   [Created and maintained by hand.]
+
+   ./CVS/Checkin.prog 
+
+                   contains a program to run whenever anything in the
+                   working directory is committed.
+                   [Created by checkout if "-i <prog>" appears in the
+                    modules file for the checked-out module.]
+
+   ./CVS/Update.prog 
+
+                   contains a program to run whenever anything in the
+                   working directory is updated.
+                   [Created by checkout if "-u <prog>" appears in the
+                    modules file for the checked-out module.]
+
+   ./CVS/<file>,p ./CVS/<file>,t 
+
+                   contain (possibly zero-length) state information about an
+                   "add" that has not been committed.
+                   [Created by "add".]
+                   [Deleted by "commit" or "remove".]
+
+
+   Last modified: 6/13/1997 
+
+   5. What is "checking out"? 
+   ---------------------------
+
+
+   "Checking out" is the act of using the "checkout"
+   command to copy a particular revision from a set
+   of RCS files into your working area. You normally
+   execute "checkout" only once per working
+   directory (or tree of working directories),
+   maintaining them thereafter with the "update"
+   command. 
+
+   See section 3C on the "checkout" command. 
+
+
+   Last modified: 6/13/1997 
+
+   6. What is a revision? 
+   -----------------------
+
+
+   A "revision" is a version of a file that was
+   "committed" ("checked in", in RCS terms) some
+   time in the past. CVS (and RCS) can retrieve any
+   file that was committed by specifying its
+   revision number or its "tag" ("symbolic name", in
+   RCS terms). 
+
+   In CVS, a "tag" is more useful than a revision
+   number. It usually marks a milestone in
+   development represented by different revision
+   numbers in different files, all available as one
+   "tagged" collection. 
+
+   Sometimes the word "revision" is used as
+   shorthand for "the file you get if you retrieve
+   (via "checkout" or "update") the given revision
+   from the Repository." 
+
+
+   Last modified: 6/13/1997 
+
+   7. What is a "Tag"? 
+   --------------------
+
+
+   A "Tag" is a symbolic name, a synonym or alias
+   for a particular revision number in a file. The
+   CVS "tag" command places the same "Tag" on all
+   files in a working directory, allowing you to
+   retrieve those files by name in the future. 
+
+   The CVS "Tag" is implemented by applying RCS
+   "symbols" to each individual file. The Tags on a
+   file (or collection of files) may be displayed
+   using the "log" command. 
+
+
+   Last modified: 6/13/1997 
+
+   8. What are "HEAD" and "BASE"? 
+   -------------------------------
+
+
+   HEAD and BASE are built-in tags that don't show
+   up in the "log" or "status" listings. They are
+   interpreted directly by CVS. 
+
+   "HEAD" refers to the latest revision on the
+   current branch in the Repository. The current
+   branch is either the main line of development, or
+   a branch in development created by placing a
+   branch tag on a set of files and checking out
+   that branch. 
+
+   "BASE" refers to the revision on the current
+   branch you last checked out, updated, or
+   committed. If you have not modified your working
+   file, "BASE" is the committed revision matching
+   it. 
+
+   Most of the time BASE and HEAD refer to the same
+   revision. They can become different in two ways: 
+
+ o Someone else changed HEAD by committing a new
+   revision of your file to the Repository. You can
+   pull BASE up to equal HEAD by executing "update".
+
+ o You moved BASE backward by executing "checkout"
+   or "update" with the option "-r <rev/tag>" or "-D
+   <date>". CVS records a sticky tag and moves your
+   files to the specified earlier revision. You can
+   clear the sticky tag and pull BASE up to equal
+   HEAD again by executing "update -A". 
+
+
+   Last modified: 6/13/1997 
+
+   9. What is a Branch? 
+   ---------------------
+
+
+   In general, a branch is any mechanism that allows
+   one or more developers to modify a file without
+   affecting anyone other than those working on the
+   same branch. 
+
+   There are four kinds of "branch" CVS can manage: 
+
+ o The Vendor Branch. 
+
+   A single vendor branch is supported. The "import"
+   command takes a sequence of releases from a
+   source code vendor (called a "vendor" even if no
+   money is involved), placing them on a special
+   "Vendor" branch. The Vendor branch is considered
+   part of the "Main line" of development, though it
+   must be merged into locally modified files on the
+   RCS Main branch before the "import" is complete. 
+
+   See Section 3H ("import"). 
+
+ o Your Working directory. 
+
+   A checked-out working directory, can be treated
+   like a private branch. No one but you can touch
+   your files. You have complete control over when
+   you include work committed by others. However,
+   you can't commit or tag intermediate versions of
+   your work. 
+
+ o A Development branch. 
+
+   A group of developers can share changes among the
+   group, without affecting the Main line of
+   development, by creating a branch. Only those who
+   have checked-out the branch see the changes
+   committed to that branch. This kind of branch is
+   usually temporary, collapsing (i.e. merge and
+   forget) into the Main line when the project
+   requiring the branch is completed. 
+
+   You can also create a private branch of this
+   type, allowing an individual to commit (and tag)
+   intermediate revisions without changing the Main
+   line. It should be managed exactly like a
+   Development Branch -- collapsed into the Main
+   line (or its parent branch, if that is not the
+   Main Branch) and forgotten when the work is done.
+
+ o A Release branch. 
+
+   At release time, a branch should be created
+   marking what was released. Later, small changes
+   (sometimes called "patches") can be made to the
+   release without including everything else on the
+   Main line of development. You avoid forcing the
+   customer to accept new, possibly untested,
+   features added since the release. This is also
+   the way to correct bugs found during testing in
+   an environment where other developers have
+   continued to commit to the Main line while you
+   are testing and packaging the release. 
+
+   Although the internal format of this type of
+   branch (branch tag and RCS branches) is the same
+   as in a development branch, its purpose and the
+   way it is managed are different. The major
+   difference is that a Release branch is normally
+   Permanent. Once you let a release out the door to
+   customers, or to the next stage of whatever
+   process you are using, you should retain forever
+   the branch marking that release. 
+
+   Since the branch is permanent, you cannot
+   incorporate the branch fixes into the Main line
+   by "collapsing" (merging and forgetting) the
+   release branch. For large changes to many files
+   on the release branch, you will have to perform a
+   branch merge using "update -j <rev> -j <rev>".
+   (See 4C.7) 
+
+   The most common way to merge small changes back
+   into Main line development is to make the change
+   in both places simultaneously. This is faster
+   than trying to perform a selective merge. 
+
+   See 1D.12 (merges) and Section 4C, on Branching
+   for more info. 
+
+
+   Last modified: 6/13/1997 
+
+   10. What is "the trunk"? 
+   -------------------------
+
+
+   Another name for the RCS Main Branch. The RCS
+   Main Branch is related, but not equivalent, to
+   both the CVS Main branch and what developers
+   consider to be the Main line of development. See
+   3H.3 and Section 4C on Branching. 
+
+
+   Last modified: 6/13/1997 
+
+   11. What is a module? 
+   ----------------------
+
+
+   In essence, a module is a name you hand to the
+   "checkout" command to retrieve one or more files
+   to work on. It was originally intended to be a
+   simple, unique name in the "modules" file
+   attached to a directory or a subset of files
+   within a directory. 
+
+   The module idea is now a somewhat slippery
+   concept that can be defined in two different
+   ways: 
+
+ o A module is an argument to "checkout". There are
+   three types: 
+
+ o An entry in the modules file. A "module" name as
+   described in 'B.' below. 
+
+ o A relative path to a directory or file in the
+   Repository. 
+
+ o A mixed-mode string of
+   "modulename/relative-path". Everything up to the
+   first slash ('/') is looked up as a module. The
+   relative path is appended to the directory
+   associated with the module name and the resulting
+   path is checked out as in #2 above. 
+
+ o A module is a unique (within the file) character
+   string in the first column of the modules file.
+   There are five types: 
+
+ o A name for a directory within the Repository that
+   allows you to ignore the parent directories above
+   it. 
+
+   Example: 
+
+                     emacs  gnu/emacs
+
+ o A name for a subset of the files within such a
+   directory. 
+
+   Example: 
+
+                     ls    unix/bin Makefile ls.c
+
+   The 2nd through Nth strings in the above can be
+   files, directories or module substitutions. No
+   relative paths. 
+
+   A module substitution occurs when you use a
+   '&module-name' reference. The module-name
+   referred to is logically substituted for the
+   '&module-name' string. 
+
+ o A relative pathname to a directory within the
+   Repository which, when checked out, creates an
+   image of part of the Repository structure in your
+   current directory. 
+
+   Example: 
+
+   gnu/emacs -o /bin/emacs.helper gnu/emacs 
+
+   The files checked out are exactly the same as the
+   files "checkout" would retrieve if the path
+   weren't even in the modules file. The only reason
+   to put this kind of relative pathname into the
+   modules file is to hook one of the helper
+   functions onto it. 
+
+ o A relative pathname to a single file within the
+   Repository which, when checked out, creates
+   something you probably don't want: It creates a
+   directory by the name of the file and puts the
+   file in it. 
+
+   Example: 
+
+   gnu/emacs/Makefile -o /bin/emacs.helper gnu/emacs
+   Makefile 
+
+   The file checked out is the same as what you
+   would get if you handed the relative pathname to
+   the "checkout" command. But it puts it in a
+   strange place. The only reason to do this is to
+   hook a helper function onto a specific file name.
+
+ o An alias consisting of a list of any of the
+   above, including other aliases, plus exceptions. 
+
+   Example: 
+
+   my_work -a emacs !emacs/tests gnu/bison
+   unix/bin/ls.c 
+
+   The exception "!emacs/test" above is functionally
+   equivalent to specifying "!emacs/tests" on the
+   "checkout" command line. 
+
+   Another way to look at it is that the modules
+   file is simply another way to "name" files. The
+   hierarchical directory structure provides
+   another. You should use whatever turns out to be
+   simplest for your development group. 
+
+   See 4G.2 for some specific ideas about how to use
+   the modules file. 
+
+
+   Last modified: 6/13/1997 
+
+   12. What does "merge" mean? 
+   ----------------------------
+
+
+   A merge is a way of combining changes made in two
+   independent copies of a common starting file.
+   Checking out an RCS revision produces a file, so
+   for the purposes of a merge "file" and "revision"
+   are equivalent. So, we can say there are always
+   three "files" involved in a merge: 
+
+ o The original, starting, "base" or "branch point"
+   file. 
+ o A copy of the base file modified in one way. 
+ o Another copy of the base file modified in a
+   different way. 
+
+   Humans aren't very good at handling three things
+   at once, so the terminology dealing with merges
+   can become strained. One way to think about it is
+   that all merges are performed by inserting the
+   difference between a base revision and a later
+   revision (committed by someone else) into your
+   working file. Both the "later" revision and your
+   working file are presumed to have started life as
+   a copy of the "base" revision. 
+
+   In CVS, there are three main types of "merge": 
+
+ o The "update" command automatically merges
+   revisions committed by others into your working
+   file. In this case, the three files involved in
+   the merge are: 
+
+   Base: The revision you originally checked out.
+   Later: A revision committed onto the current
+   branch after you checked out the Base revision.
+   Working: Your working file. The one lying in the
+   working directory containing changes you have
+   made. 
+
+ o The "update -j <branch_tag> {optional files}"
+   command merges changes made on the given branch
+   into your working files, which is presumed to be
+   on the Main line of development. 
+
+   See 4C.6 
+
+ o The "update -j <rev> -j <rev> {optional files}"
+   command merges the difference between two
+   specified revisions into files in your working
+   directory. The two revisions <rev> are usually on
+   the same branch and, when updating multiple
+   files, they are most useful when they are Tag
+   names rather than numeric revisions. 
+
+   See 4C.7 
+
+
+   Last modified: 6/13/1997 
+
+Category: /What_is_CVS_/What_is_CVS_Whats_it/
++++++++++++++++++++++++++++++++++++++++++++++
+
+" What is CVS? What's it for? Why CVS?" 
+
+   1. What does CVS stand for? Can you describe it in one sentence? 
+   -----------------------------------------------------------------
+
+
+   "CVS" is an acronym for the "Concurrent Versions
+   System". 
+
+   CVS is a "Source Control" or "Revision Control"
+   tool designed to keep track of source changes
+   made by groups of developers working on the same
+   files, allowing them to stay in sync with each
+   other as each individual chooses. 
+
+
+   Last modified: 6/13/1997 
+
+   2. What is CVS for? What does it do for me? 
+   --------------------------------------------
+
+
+   CVS is used to keep track of collections of files
+   in a shared directory called "The Repository".
+   Each collection of files can be given a "module"
+   name, which is used to "checkout" that
+   collection. 
+
+   After checkout, files can be modified (using your
+   favorite editor), "committed" back into the
+   Repository and compared against earlier
+   revisions. Collections of files can be "tagged"
+   with a symbolic name for later retrieval. 
+
+   You can add new files, remove files you no longer
+   want, ask for information about sets of files in
+   three different ways, produce patch "diffs" from
+   a base revision and merge the committed changes
+   of other developers into your working files. 
+
+
+   Last modified: 6/13/1997 
+
+   3. How does CVS work? 
+   ----------------------
+
+
+   CVS saves its version-control information in RCS
+   files stored in a directory hierarchy, called the
+   Repository, which is separate from the user's
+   working directory. 
+
+   Files in the Repository are stored in a format
+   dictated by the RCS commands CVS uses to do much
+   of its real work. RCS files are standard
+   byte-stream files with an internal format
+   described by keywords stored in the files
+   themselves. 
+
+   To begin work, you execute a "checkout" command,
+   handing it a module name or directory path
+   (relative to the $CVSROOT variable) you want to
+   work on. CVS copies the latest revision of each
+   file in the specified module or directory out of
+   the Repository and into a directory tree created
+   in your current directory. You may specify a
+   particular branch to work on by symbolic name if
+   you don't want to work on the default (main or
+   trunk) branch. 
+
+   You may then modify files in the new directory
+   tree, build them into output files and test the
+   results. When you want to make your changes
+   available to other developers, you "commit" them
+   back into the Repository. 
+
+   Other developers can check out the same files at
+   the same time. To merge the committed work of
+   others into your working files you use the
+   "update" command. When your merged files build
+   and test correctly, you may commit the merged
+   result. This method is referred to as
+   "copy-modify-merge", which does not require locks
+   on the source files. 
+
+   At any time, usually at some milestone, you can
+   "tag" the committed files, producing a symbolic
+   name that can be handed to a future "checkout"
+   command. A special form of "tag" produces a
+   branch in development, as usually happens at
+   "release" time. 
+
+   When you no longer plan to modify or refer to
+   your local copy of the files, they can be
+   removed. 
+
+
+   Last modified: 6/13/1997 
+
+   4. What is CVS useful for? 
+   ---------------------------
+
+
+   CVS is intended to handle source control for
+   files in three major situations: 
+
+ o Multiple developers working on the same files. 
+
+   The major advantage of using CVS over the simpler
+   tools like RCS or SCCS is that it allows multiple
+   developers to work on the same sources at the
+   same time. 
+
+   The shared Repository provides a rendezvous for
+   committed sources that allows developers a fair
+   amount of flexibility in how often to publish
+   (via the "commit" command) changes or include
+   work committed by others (via the "update"
+   command). 
+
+ o Tracking a stream of releases from a source
+   vendor. 
+
+   If you are making changes to sources distributed
+   by someone else, the CVS feature, called the
+   Vendor Branch, allows you to combine local
+   modifications with repeated vendor releases. 
+
+   I have found this most useful when dealing with
+   sources from three major classes of source
+   vendor: 
+
+ o Large companies who send you tapes full of the
+   latest release (e.g. Unix OS vendors, database
+   companies). 
+
+ o Public Domain software which *always* requires
+   work. 
+
+ o Pseudo-Public sources which may require work.
+   (e.g. GNU programs, X, CVS itself, etc.) 
+
+ o Branching development. 
+
+   Aside from the "Vendor Branch", there are three
+   kinds of "branches in development" that CVS can
+   support: 
+
+ o Your working directory can be treated as a
+   private branch. 
+
+ o A Development branch can be shared by one or more
+   developers. 
+
+ o At release time, a branch is usually created for
+   bug fixes. 
+
+   (See 1D.9 and Section 4C for more info on
+   branches.) 
+
+   CVS's branch support is a bit primitive, but it
+   was designed to allow you to create branches,
+   work on them for while and merge them back into
+   the main line of development. You should also be
+   able to merge work performed on the main branch
+   into the branch you are working on. Arbitrary
+   sharing and merging between branches is not
+   currently supported. 
+
+
+   Last modified: 6/13/1997 
+
+   5. What is CVS *not* useful for? 
+   ---------------------------------
+
+
+   CVS is not a build system. 
+
+   Though the structure of your Repository and
+   modules file interact with your build system
+   (e.g. a tree of Makefiles), they are essentially
+   independent. 
+
+   CVS does not dictate how you build anything. It
+   merely stores files for retrieval in a tree
+   structure you devise. 
+
+   CVS does not dictate how to use disk space in the
+   checked out working directories. If you require
+   your Makefiles or build procedures to know the
+   relative positions of everything else, you wind
+   up requiring the entire Repository to be checked
+   out. That's simply bad planning. 
+
+   If you modularize your work, and construct a
+   build system that will share files (via links,
+   mounts, VPATH in Makefiles, etc.), you can
+   arrange your disk usage however you like. 
+
+   But you have to remember that *any* such system
+   is a lot of work to construct and maintain. CVS
+   does not address the issues involved. You must
+   use your brain and a collection of other tools to
+   provide a build scheme to match your plans. 
+
+   Of course, you should use CVS to maintain the
+   tools created to support such a build system
+   (scripts, Makefiles, etc). 
+
+   CVS is not a substitute for management. 
+
+   You and your project leaders are expected to plan
+   what you are doing. Everyone involved must be
+   aware of schedules, merge points, branch names,
+   release dates and the range of procedures needed
+   to build products. (If you produce it and someone
+   else uses it, it is a product.) CVS can't cover
+   for a failure to manage your project. 
+
+   CVS is an instrument for making sources dance to
+   your tune. But you are the piper and the
+   composer. No instrument plays itself or writes
+   its own music. 
+
+   CVS is not a substitute for developer
+   communication. 
+
+   When faced with conflicts within a single file,
+   most developers manage to resolve them without
+   too much effort. But a more general definition of
+   "conflict" includes problems too difficult to
+   solve without communication between developers. 
+
+   CVS cannot determine when simultaneous changes
+   within a single file, or across a whole
+   collection of files, will logically conflict with
+   one another. Its concept of a "conflict" is
+   purely textual, arising when two changes to the
+   same base file are near enough to spook the merge
+   command into dropping conflict markers into the
+   merged file. 
+
+   CVS is not capable of figuring out distributed
+   conflicts in program logic. For example, if you
+   change the arguments to function X defined in
+   file A and, at the same time, edit file B, adding
+   new calls to function X using the old arguments.
+   You are outside the realm of CVS's competence. 
+
+   Acquire the habit of reading specs and talking to
+   your peers. 
+
+   CVS is not a configuration management system. 
+
+   CVS is a source control system. The phrase
+   "configuration management" is a marketing term,
+   not an industry-recognized set of functions. 
+
+   A true "configuration management system" would
+   contain elements of the following: 
+
+                   * Source control.
+                   * Dependency tracking.
+                   * Build systems (i.e. What to build and how to find
+                     things during a build.  What is shared?  What is local?)
+                   * Bug tracking.
+                   * Automated Testing procedures.
+                   * Release Engineering documentation and procedures.
+                   * Tape Construction.
+                   * Customer Installation.
+                   * A way for users to run different versions of the same
+                     software on the same host at the same time.
+
+   CVS provides only the first. 
+
+
+   Last modified: 6/13/1997 
+
+Category: /What_is_CVS_/Where_do_I_find_CVS_/
++++++++++++++++++++++++++++++++++++++++++++++
+
+" Where do I find CVS? Where can I find Help?" 
+
+   1. How do I get more information about CVS? 
+   --------------------------------------------
+
+
+ o The first thing I would do is to read the Info
+   file that comes with the CVS sources under "doc".
+   You can format and read the cvs.texinfo file in
+   two ways: 1. Use TeX to format it and a "dvips"
+   command to print it and 2. Install the cvs.info
+   files that are created by the Makefile and read
+   them online using the Emacs "info-mode" or a
+   stand-alone "info" reader. 
+
+ o Then I'd run "cvsinit" to set up a Repository and
+   read the man page while trying out the commands. 
+
+   Type "cvs -H" for general help or "cvs -H
+   command" for command-specific help. 
+
+ o For background, you can read the original CVS
+   paper (in the source tree, under "doc"). It
+   describes the purpose of CVS and some of how it
+   was designed. Note that the emphasis of the
+   document (especially on multiple vendors
+   providing the same sources) is somewhat out of
+   date. 
+
+ o For more detailed information about "internals",
+   read the man pages for RCS. If you are a
+   programmer, you can also read the source code to
+   CVS. 
+
+ o Other information and tutorials may be available
+   in the "doc" directory of the FTP archive
+   described below. 
+
+ o For current information, and a fair amount of
+   detail, join the info-cvs mailing list described
+   below. 
+
+
+   Last modified: 6/13/1997 
+
+   2. Is there an archive of CVS material? 
+   ----------------------------------------
+
+
+   An anonymous FTP area has been set up. It
+   contains many of the CVS files you might want,
+   including extra documentation, patches and a copy
+   of the latest release. 
+
+                   ftp ftp.delos.com
+                   >>> User:       anonymous
+                   >>> Passwd:     <Your Internet address>
+                   cd /pub/cvs
+                   get README
+                   get Index
+
+   The README has more (and more up-to-date)
+   information. The Index contains a terse list of
+   what is in the archive. 
+
+   A WWW home page is also available at 
+   http://www.delos.com/cvs. 
+
+
+   Last modified: 6/13/1997 
+
+   3. How do I get files out of the archive if I don't have FTP? 
+   --------------------------------------------------------------
+
+
+   Use one of the FTP<->Email servers. These are the
+   ones I've been told about: 
+
+ o FTPMAIL service is available from the same host
+   as the FTP server described above. Send mail to
+   "ftpmail@delos.com" containing "help" in the body
+   of the message. For example, on most Unix
+   systems, you can type: 
+
+   echo help | Mail ftpmail@delos.com 
+
+   The FTPMAIL server will respond with a document
+   describing how to use the server. If the "Mail"
+   command doesn't exist on your system, try
+   "mailx", "/usr/ucb/mail" or "/bin/mail". 
+
+ o If you are on BITNET, use Princeton's BITFTP
+   server. Type 
+
+   echo 'send help' | Mail bitftp@pucc.princeton.edu
+
+   (It is likely that only BITNET addresses can use
+   this one.) 
+
+ o Other possibilities I've heard of from the net:
+   (Try the one closest to you.) 
+
+   ftpmail@decwrl.dec.com ftpmail@sunsite.unc.edu
+   ftpmail@cs.arizona.edu ftpmail@cs.uow.edu.au
+   ftpmail@doc.ic.ac.uk 
+
+
+   Last modified: 6/13/1997 
+
+   4. How do I get a copy of the latest version of CVS? 
+   -----------------------------------------------------
+
+
+   The latest released version of CVS and all the
+   programs it depends on should be available
+   through anonymous FTP on any FSF archive. The
+   main FSF archive is at "prep.ai.mit.edu". There
+   are mirrors of the FSF archive on UUNET and other
+   large Internet sites. 
+
+                   Program(s)      Suggested revision
+                   -----------     -----------------------
+                   CVS             1.5
+                   RCS             5.7 (latest version available today)
+                   GNU diff        2.7 (or later) [contained in diffutils-2.7]
+                   GDBM            1.5 (or later) [optional]
+
+   The GNU version of diff is suggested by both the
+   RCS and CVS configuration instructions because it
+   works better than the standard version. 
+
+   It is a good idea not to accept the versions of
+   CVS, RCS or diff you find lying on your system
+   unless you have checked out their provenance.
+   Using inconsistent collections of tools can cause
+   you more trouble than you can probably afford. 
+
+   The FTP archive mentioned above should contain
+   the latest official release of CVS, some official
+   and unofficial patches and possibly complete
+   patched versions of CVS in use somewhere. 
+
+
+   Last modified: 6/13/1997 
+
+   5. Is there a mailing list devoted to CVS? How do I find it? 
+   -------------------------------------------------------------
+
+
+   An Internet mailing list named "info-cvs" grew
+   out of the private mailing list used by the CVS
+   1.3 alpha testers in early 1992. Throughout 1994,
+   the list received an average of 100 messages per
+   month. 
+
+   You can add yourself to the mailing list by
+   sending an Email message to: 
+
+                   info-cvs-request@prep.ai.mit.edu
+
+   (Don't forget the "-request" or you'll send a
+   message to the whole list, some of whom are
+   capable of remote execution.) 
+
+   Mail to the whole list should be sent to: 
+
+                   info-cvs@prep.ai.mit.edu
+
+   An archive of the mailing list is maintained in
+   the FTP archive mentioned above. 
+
+
+   Last modified: 6/13/1997 
+
+   6. What happened to the CVS Usenet newsgroup I heard about? 
+   ------------------------------------------------------------
+
+
+   A Usenet newsgroup named "gnu.cvs.info" was
+   announced in April 1993, with an expected
+   creation date of August, 1993. 
+
+   As of this writing (October, 1994) it hasn't
+   appeared. 
+
+   If the newsgroup is ever created, it and the
+   mailing list should be bidirectionally gatewayed,
+   meaning that you only need access to one of them.
+   Anything sent to the mailing list would be
+   automatically posted to "gnu.cvs.info" and
+   anything posted to the newsgroup would be
+   automatically mailed to "info-cvs". 
+
+   A newsgroup would be easier to use than a mailing
+   list. If the CVS newsgroup ever shows up, ask
+   your system administrator whether you get the
+   "gnu" hierarchy. If so, select a news reader and
+   dive in. 
+
+
+   Last modified: 6/13/1997 
+
+
+[Add an answer to this category] 
+
+[Category /] 
+
+Search the FAQ-O-Matic: 
+
+                      
+
+Or look for questions modified in the last:  
+     
+
+
+The FAQ-O-Matic lives at
+http://gille.loria.fr:7000/cgi-bin/faqomatic. The
+code was written by Jon Howell, and the content by
+folks from all over the web. 
