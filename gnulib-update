@@ -34,11 +34,30 @@ fi
 mv lib/Makefile.am lib/Makefile.am.save
 
 # Run the update.
-$GNULIB_TOOL --import $MODULES
+$GNULIB_TOOL --import $MODULES >/dev/null
+
+# Extract the files we imported.
+$GNULIB_TOOL --extract-filelist $MODULES >gnulib.new
+
+# Wartn the user if the filelist has changed.
+if cmp gnulib.txt gnulib.new >/dev/null; then :; else
+  echo '********************************************************************' >&2
+  echo The file list has changed.  You may need to add or remove files from >&2
+  echo CVS and/or EXTRA_DIST in m4/Makefile.am.  Use \`cvs diff gnulib.txt\'
+>&2
+  echo to view changes. >&2
+  echo '********************************************************************' >&2
+fi
+
+# Save the file list for next time.
+mv gnulib.new gnulib.txt
 
 # Warn the user if changes have been made to the Makefile.am.
 if cmp lib/Makefile.am lib/Makefile.gnulib >/dev/null; then :; else
-  echo Makefile.am needs updating. >&2
+  echo '********************************************************************' >&2
+  echo Makefile.am needs updating. Use \`cvs diff lib/Makefile.gnulib\' >&2
+  echo to view changes. >&2
+  echo '********************************************************************' >&2
 fi
 
 # Save the generated lib/Makefile.am for next time.
