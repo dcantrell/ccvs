@@ -13940,13 +13940,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd t
 	  echo "Ahh'll be baaack." >topfile
 	  dotest trailingslashes-init-3 "$testcvs -Q add topfile"
-	  dotest trailingslashes-init-4 "$testcvs -Q ci -mto-top" \
-"RCS file: $CVSROOT_DIRNAME/topfile,v
-done
-Checking in topfile;
-$CVSROOT_DIRNAME/topfile,v  <--  topfile
-initial revision: 1\.1
-done"
+	  dotest trailingslashes-init-4 "$testcvs -Q ci -mto-top"
 
 	  # First, demonstrate the usual case.
 	  cd ../t2
@@ -13972,7 +13966,7 @@ done"
 	  fi
 
 	  cd ../..
-	  rm -r trailingslashes
+	  rm -rf trailingslashes $CVSROOT_DIRNAME/topfile,v
 	  ;;
 
 
