@@ -209,6 +209,7 @@ EXTRA_DIST = \
 	cvs2vendor.sh \
 	cvscheck.sh \
 	cvshelp.man \
+	cvs_acls.html \
 	debug_check_log.sh \
 	descend.sh \
 	descend.man \
