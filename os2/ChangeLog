@@ -1,6 +1,6 @@
-Thu Jan 11 18:27:36 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+Thu Jan 11 19:24:44 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
-        * Makefile.in (all): invoke "cvs.exe" rule.
+        * README: say to run "make cvs.exe".
 
 Thu Jan 11 12:04:42 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
