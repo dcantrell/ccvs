@@ -127,6 +127,7 @@ fd_buffer_initialize (fd, input, memory)
 			   input ? NULL : fd_buffer_output,
 			   input ? NULL : fd_buffer_flush,
 			   fd_buffer_block,
+			   (int (*) PROTO((void *))) NULL,
 			   memory,
 			   n);
 }
@@ -335,7 +336,7 @@ print_error (status)
 	buf_output0 (buf_to_net, msg);
     buf_append_char (buf_to_net, '\n');
 
-    buf_send_output (buf_to_net);
+    buf_flush (buf_to_net, 0);
 }
 
 static int pending_error;
@@ -359,7 +360,7 @@ print_pending_error ()
 	else
 	    buf_output0 (buf_to_net, "error  \n");
 
-	buf_send_output (buf_to_net);
+	buf_flush (buf_to_net, 0);
 
 	pending_error = 0;
 	free (pending_error_text);
@@ -428,10 +429,9 @@ serve_valid_responses (arg)
 	    buf_output0 (buf_to_net, rs->name);
 	    buf_output0 (buf_to_net, "' not supported by client\nerror  \n");
 
-	    /* FIXME: This call to buf_send_output could conceivably
+	    /* FIXME: This call to buf_flush could conceivably
 	       cause deadlock, as noted in server_cleanup.  */
-	    set_block (buf_to_net);
-	    buf_send_output (buf_to_net);
+	    buf_flush (buf_to_net, 1);
 
 	    exit (EXIT_FAILURE);
 	}
@@ -1691,7 +1691,7 @@ do_cvs_command (command)
     }
 
     /* Flush out any pending data.  */
-    buf_send_output (buf_to_net);
+    buf_flush (buf_to_net, 1);
 
     /* Don't use vfork; we're not going to exec().  */
     command_pid = fork ();
@@ -1711,6 +1711,12 @@ do_cvs_command (command)
 
 	protocol = fd_buffer_initialize (protocol_pipe[1], 0,
 					 protocol_memory_error);
+
+	/* At this point we should no longer be using buf_to_net and
+           buf_from_net.  Instead, everything should go through
+           protocol.  */
+	buf_to_net = NULL;
+	buf_from_net = NULL;
 
 	/* These were originally set up to use outbuf_memory_error.
            Since we're now in the child, we should use the simpler
@@ -2076,7 +2082,7 @@ E CVS locks may need cleaning up.\n");
 	 * and it's OK to block on the network.
 	 */
 	set_block (buf_to_net);
-	buf_send_output (buf_to_net);
+	buf_flush (buf_to_net, 1);
     }
 
     if (errs)
@@ -2123,7 +2129,7 @@ E CVS locks may need cleaning up.\n");
 
     /* Flush out any data not yet sent.  */
     set_block (buf_to_net);
-    buf_send_output (buf_to_net);
+    buf_flush (buf_to_net, 1);
 
     return;
 }
@@ -3082,6 +3088,23 @@ serve_gzip_contents (arg)
 	level = 6;
     gzip_level = level;
 }
+
+static void
+serve_gzip_stream (arg)
+     char *arg;
+{
+    int level;
+    level = atoi (arg);
+    if (level == 0)
+	level = 6;
+
+    /* All further communication with the client will be compressed.  */
+
+    buf_to_net = compress_buffer_initialize (buf_to_net, 0, level,
+					     buf_to_net->memory_error);
+    buf_from_net = compress_buffer_initialize (buf_from_net, 1, level,
+					       buf_from_net->memory_error);
+}
 
 static void
 serve_ignore (arg)
@@ -3193,7 +3216,7 @@ serve_expand_modules (arg)
 
     /* The client is waiting for the module expansions, so we must
        send the output now.  */
-    buf_send_output (buf_to_net);
+    buf_flush (buf_to_net, 1);
 }
 
 void
@@ -3321,6 +3344,7 @@ struct request requests[] =
   REQ_LINE("Argument", serve_argument, rq_essential),
   REQ_LINE("Argumentx", serve_argumentx, rq_essential),
   REQ_LINE("Global_option", serve_global_option, rq_optional),
+  REQ_LINE("Gzip-stream", serve_gzip_stream, rq_optional),
   REQ_LINE("Set", serve_set, rq_optional),
   REQ_LINE("expand-modules", serve_expand_modules, rq_optional),
   REQ_LINE("ci", serve_ci, rq_essential),
@@ -3378,7 +3402,7 @@ serve_valid_requests (arg)
 
     /* The client is waiting for the list of valid requests, so we
        must send the output now.  */
-    buf_send_output (buf_to_net);
+    buf_flush (buf_to_net, 1);
 }
 
 #ifdef sun
@@ -3402,19 +3426,41 @@ server_cleanup (sig)
     int sig;
 {
     /* Do "rm -rf" on the temp directory.  */
+    int status;
     int len;
     char *cmd;
     char *temp_dir;
 
-    /* FIXME: If this is not the final call from server, this could
-       deadlock, because the client might be blocked writing to us.
-       This should not be a problem in practice, because we do not
-       generate much output when the client is not waiting for it.  */
-    set_block (buf_to_net);
-    buf_send_output (buf_to_net);
+    if (buf_to_net != NULL)
+    {
+	/* FIXME: If this is not the final call from server, this
+	   could deadlock, because the client might be blocked writing
+	   to us.  This should not be a problem in practice, because
+	   we do not generate much output when the client is not
+	   waiting for it.  */
+	set_block (buf_to_net);
+	buf_flush (buf_to_net, 1);
+
+	/* The calls to buf_shutdown are currently only meaningful
+	   when we are using compression.  First we shut down
+	   BUF_FROM_NET.  That will pick up the checksum generated
+	   when the client shuts down its buffer.  Then, after we have
+	   generated any final output, we shut down BUF_TO_NET.  */
+
+	status = buf_shutdown (buf_from_net);
+	if (status != 0)
+	{
+	    error (0, status, "shutting down buffer from client");
+	    buf_flush (buf_to_net, 1);
+	}
+    }
 
     if (dont_delete_temp)
+    {
+	if (buf_to_net != NULL)
+	    (void) buf_shutdown (buf_to_net);
 	return;
+    }
 
     /* What a bogus kludge.  This disgusting code makes all kinds of
        assumptions about SunOS, and is only for a bug in that system.
@@ -3504,15 +3550,21 @@ server_cleanup (sig)
     cmd = malloc (len);
     if (cmd == NULL)
     {
-        buf_output0 (buf_to_net, "E Cannot delete ");
-	buf_output0 (buf_to_net, server_temp_dir);
-	buf_output0 (buf_to_net, " on server; out of memory\n");
-	buf_send_output (buf_to_net);
+        error (0, 0, "Cannot delete %s on server; out of memory\n",
+	       server_temp_dir);
+	if (buf_to_net != NULL)
+	{
+	    buf_flush (buf_to_net, 1);
+	    (void) buf_shutdown (buf_to_net);
+	}
 	return;
     }
     sprintf (cmd, "rm -rf %s", server_temp_dir);
     system (cmd);
     free (cmd);
+
+    if (buf_to_net != NULL)
+	(void) buf_shutdown (buf_to_net);
 }
 
 int server_active = 0;
