@@ -1,3 +1,10 @@
+Sat Sep 20 00:59:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Keyword list): Change title from "RCS Keywords" to
+	"Keyword list" as it is CVS that expands them.
+	(Avoiding substitution): Change "rcs" to "cvs", in the context of
+	the program which expands keywords.
+
 Fri Sep 19 22:57:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* RCSFILES: Grammar fix in first paragraph.  Re-word section on
