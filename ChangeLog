@@ -1,3 +1,11 @@
+2003-05-18  Larry Jones  <lawrence.jones@eds.com>
+
+	* acinclude.m4 (CVS_FUNC_PRINTF_PTR): New test.
+	* configure.in: Use it.
+	* aclocal.m4: Regenerated.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Back out all the S_ISSOCK changes I just made and move

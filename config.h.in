@@ -206,6 +206,10 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
+/* Define to 1 if the `printf' function supports the %p format for printing
+   pointers. */
+#undef HAVE_PRINTF_PTR
+
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 
