@@ -626,17 +626,26 @@
 /* The size of a `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
+/* The size of a `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
 /* The size of a `long double', as computed by sizeof. */
 #undef SIZEOF_LONG_DOUBLE
 
-/* The size of a `long int', as computed by sizeof. */
-#undef SIZEOF_LONG_INT
+/* The size of a `long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
 
-/* The size of a `long long int', as computed by sizeof. */
-#undef SIZEOF_LONG_LONG_INT
+/* The size of a `ptrdiff_t', as computed by sizeof. */
+#undef SIZEOF_PTRDIFF_T
 
 /* The size of a `short int', as computed by sizeof. */
 #undef SIZEOF_SHORT_INT
+
+/* The size of a `size_t', as computed by sizeof. */
+#undef SIZEOF_SIZE_T
+
+/* The size of a `wint_t', as computed by sizeof. */
+#undef SIZEOF_WINT_T
 
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
@@ -698,14 +707,22 @@
 #undef UNIQUE_INT_TYPE_INT
 
 /* Define if long int is the first integer type detected with its size. */
-#undef UNIQUE_INT_TYPE_LONG_INT
+#undef UNIQUE_INT_TYPE_LONG
 
-/* Define if long long int is the first integer type detected with its size.
-   */
-#undef UNIQUE_INT_TYPE_LONG_LONG_INT
+/* Define if long long is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_LONG_LONG
+
+/* Define if ptrdiff_t is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_PTRDIFF_T
 
 /* Define if short int is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_SHORT_INT
+
+/* Define if size_t is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_SIZE_T
+
+/* Define if wint_t is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_WINT_T
 
 /* Define if setmode is required when writing binary data to stdout. */
 #undef USE_SETMODE_STDOUT
@@ -768,7 +785,7 @@
 #undef inline
 #endif
 
-/* Define to long or long long if <stdint.h> and <inttypes.h> don't define. */
+/* Define to long or long long if <inttypes.h> and <stdint.h> don't define. */
 #undef intmax_t
 
 /* Define to rpl_malloc if the replacement function should be used. */
