@@ -1,5 +1,9 @@
 2004-02-11  Derek Price  <derek@ximbiot.com>
 
+	* checkout.c (checkout_proc): s/is_absolute/isabsolute/.
+
+2004-02-11  Derek Price  <derek@ximbiot.com>
+
 	* checkout.c (checkout_proc): Remove unneeded variable and enclosing
 	block.
 	* modules.c (_do_modules): Minor whitespace change.
