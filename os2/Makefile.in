@@ -166,15 +166,6 @@ SOURCES = ${OS2_SOURCES} ${COMMON_SOURCES}
 HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
 OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS}
 
-
-# There seems to be no option to icc for specifying library locations,
-# so must `set' the path in the compilation environment.
-cvs.exe: ${OBJS} ${TCPIPLIB}
-	set LIB=${LIB} & icc -Q+ -Ti+ -Fe$@ -B"/batch" ${OBJS} ${TCPIPLIB}
-
-cvs.obj: ${SOURCES} ${HEADERS}
-
-
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   README ChangeLog Makefile.in .cvsignore
 
@@ -205,3 +196,13 @@ dist-dir:
 
 clean:
 	@echo make clean does nothing right now in os2 subdir
+
+
+# There seems to be no option to icc for specifying library locations,
+# so must `set' the path in the compilation environment.
+cvs.exe: ${OBJECTS}
+	set LIB=${LIB} & icc -Q+ -Ti+ -Fe$@ -B"/batch" ${OBJECTS} ${TCPIPLIB}
+
+cvs.obj: ${SOURCES} ${HEADERS}
+
+
