@@ -928,6 +928,8 @@ verifymsg_proc(char *repository, char *script, void *closure)
 
     run_setup( verifymsg_script );
 
+    free (verifymsg_script);
+
     /* FIXME - because run_exec can return negative values and Parse_Info adds
      * the values of each call to this function to get a total error, we are
      * calling abs on the value of run_exec to ensure two errors do not sum to
