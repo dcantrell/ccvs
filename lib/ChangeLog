@@ -1,5 +1,9 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Move pathmax.h to its own section.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Move unlocked-io.h to its own
 	section.
 	* unlocked-io.h: Import most recent version from GNULIB.
