@@ -385,9 +385,9 @@ import (argc, argv)
     return (err);
 }
 
-/*
- * process all the files in ".", then descend into other directories.
- */
+/* Process all the files in ".", then descend into other directories.
+   Returns 0 for success, or >0 on error (in which case a message
+   will have been printed).  */
 static int
 import_descend (message, vtag, targc, targv)
     char *message;
@@ -406,25 +406,27 @@ import_descend (message, vtag, targc, targv)
 
     if ((dirp = CVS_OPENDIR (".")) == NULL)
     {
+	error (0, errno, "cannot open directory");
 	err++;
     }
     else
     {
+	errno = 0;
 	while ((dp = readdir (dirp)) != NULL)
 	{
 	    if (strcmp (dp->d_name, ".") == 0 || strcmp (dp->d_name, "..") == 0)
-		continue;
+		goto one_more_time_boys;
 #ifdef SERVER_SUPPORT
 	    /* CVS directories are created in the temp directory by
 	       server.c because it doesn't special-case import.  So
 	       don't print a message about them, regardless of -I!.  */
 	    if (server_active && strcmp (dp->d_name, CVSADM) == 0)
-		continue;
+		goto one_more_time_boys;
 #endif
 	    if (ign_name (dp->d_name))
 	    {
 		add_log ('I', dp->d_name);
-		continue;
+		goto one_more_time_boys;
 	    }
 
 	    if (
@@ -470,6 +472,13 @@ import_descend (message, vtag, targc, targv)
 		    err += process_import_file (message, dp->d_name,
 						vtag, targc, targv);
 	    }
+	one_more_time_boys:
+	    errno = 0;
+	}
+	if (errno != 0)
+	{
+	    error (0, errno, "cannot read directory");
+	    ++err;
 	}
 	(void) closedir (dirp);
     }

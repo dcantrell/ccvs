@@ -200,7 +200,9 @@ remove_fileproc (callerdat, finfo)
 			 + sizeof (CVSEXT_LOG)
 			 + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, finfo->file, CVSEXT_LOG);
-	(void) unlink_file (fname);
+	if (unlink_file (fname) < 0
+	    && !existence_error (errno))
+	    error (0, errno, "cannot remove %s", CVSEXT_LOG);
 	if (!quiet)
 	    error (0, 0, "removed `%s'", finfo->fullname);
 

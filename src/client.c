@@ -1766,7 +1766,11 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    backup = xmalloc (strlen (filename) + 5);
 	    strcpy (backup, filename);
 	    strcat (backup, "~");
-	    (void) unlink_file (backup);
+	    if (unlink_file (backup) < 0
+		&& !existence_error (errno))
+	    {
+		error (0, errno, "cannot remove %s", backup);
+	    }
 	    if (!isfile (filename))
 	        error (1, 0, "patch original file %s does not exist",
 		       short_pathname);
@@ -1798,12 +1802,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		run_arg (temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
-	    /* FIXME: should we really be silently ignoring errors?  */
-	    (void) unlink_file (temp_filename);
+	    if (unlink_file (temp_filename) < 0)
+		error (0, errno, "cannot remove %s", temp_filename);
 	    if (retcode == 0)
 	    {
-		/* FIXME: should we really be silently ignoring errors?  */
-		(void) unlink_file (backup);
+		if (unlink_file (backup) < 0)
+		    error (0, errno, "cannot remove %s", backup);
 	    }
 	    else
 	    {
@@ -1817,8 +1821,9 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		path_tmp = xmalloc (strlen (filename) + 10);
 		strcpy (path_tmp, filename);
 		strcat (path_tmp, ".rej");
-		/* FIXME: should we really be silently ignoring errors?  */
-		(void) unlink_file (path_tmp);
+		if (unlink_file (path_tmp) < 0
+		    && !existence_error (errno))
+		    error (0, errno, "cannot remove %s", path_tmp);
 		free (path_tmp);
 
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? old_errno : 0,

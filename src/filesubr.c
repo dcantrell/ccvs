@@ -489,6 +489,7 @@ deep_remove_dir (path)
 		 */
 		return -1;
 
+	    errno = 0;
 	    while ((dp = readdir (dirp)) != NULL)
 	    {
 		char *buf;
@@ -522,6 +523,15 @@ deep_remove_dir (path)
 		    }
 		}
 		free (buf);
+
+		errno = 0;
+	    }
+	    if (errno != 0)
+	    {
+		int save_errno = errno;
+		closedir (dirp);
+		errno = save_errno;
+		return -1;
 	    }
 	    closedir (dirp);
 	    return rmdir (path);

@@ -93,7 +93,9 @@ Find_Names (repository, which, aflag, optentries)
 	    char *dir;
 	    dir = xmalloc (strlen (repository) + sizeof (CVSATTIC) + 10);
 	    (void) sprintf (dir, "%s/%s", repository, CVSATTIC);
-	    (void) find_rcs (dir, files);
+	    if (find_rcs (dir, files) != 0
+		&& !existence_error (errno))
+		error (1, errno, "cannot open directory %s", dir);
 	    free (dir);
 	}
     }
@@ -235,7 +237,7 @@ Find_Directories (repository, which, entries)
 /*
  * Finds all the ,v files in the argument directory, and adds them to the
  * files list.  Returns 0 for success and non-zero if the argument directory
- * cannot be opened.
+ * cannot be opened, in which case errno is set to indicate the error.
  */
 static int
 find_rcs (dir, list)
@@ -251,6 +253,7 @@ find_rcs (dir, list)
 	return (1);
 
     /* read the dir, grabbing the ,v files */
+    errno = 0;
     while ((dp = readdir (dirp)) != NULL)
     {
 	if (CVS_FNMATCH (RCSPAT, dp->d_name, 0) == 0) 
@@ -265,6 +268,14 @@ find_rcs (dir, list)
 	    if (addnode (list, p) != 0)
 		freenode (p);
 	}
+	errno = 0;
+    }
+    if (errno != 0)
+    {
+	int save_errno;
+	(void) closedir (dirp);
+	errno = save_errno;
+	return 1;
     }
     (void) closedir (dirp);
     return (0);
@@ -275,7 +286,7 @@ find_rcs (dir, list)
  * the specified list.  Sub-directories without a CVS administration
  * directory are optionally ignored.  If ENTRIES is not NULL, all
  * files on the list are ignored.  Returns 0 for success or 1 on
- * error.
+ * error, in which case errno is set to indicate the error.
  */
 static int
 find_dirs (dir, list, checkadm, entries)
@@ -305,6 +316,7 @@ find_dirs (dir, list, checkadm, entries)
 	return (1);
 
     /* read the dir, grabbing sub-dirs */
+    errno = 0;
     while ((dp = readdir (dirp)) != NULL)
     {
 	if (strcmp (dp->d_name, ".") == 0 ||
@@ -380,6 +392,15 @@ find_dirs (dir, list, checkadm, entries)
 	p->key = xstrdup (dp->d_name);
 	if (addnode (list, p) != 0)
 	    freenode (p);
+
+	errno = 0;
+    }
+    if (errno != 0)
+    {
+	int save_errno = errno;
+	(void) closedir (dirp);
+	errno = save_errno;
+	return 1;
     }
     (void) closedir (dirp);
     if (tmp != NULL)
