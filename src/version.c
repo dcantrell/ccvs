@@ -51,16 +51,9 @@ version (int argc, char **argv)
     if (argc == -1)
 	usage (version_usage);
 
-#ifdef SERVER_SUPPORT
-    if (current_parsed_root && isSecondaryServer ())
-        cvs_output ("Secondary Server: ", 0);
-    else
-#endif
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
         cvs_output ("Client: ", 0);
-#else
-    /* For the else above.  */;
 #endif
 
     /* Having the year here is a good idea, so people have
@@ -68,12 +61,6 @@ version (int argc, char **argv)
        released.  */
     cvs_output (PACKAGE_STRING, 0);
     cvs_output (config_string, 0);
-
-#ifdef SERVER_SUPPORT
-    if (current_parsed_root && isSecondaryServer ())
-        /* Don't sent the request to the primary - it's already been done.  */
-	return err;
-#endif
 
 #ifdef CLIENT_SUPPORT
     if (current_parsed_root && current_parsed_root->isremote)
