@@ -1,5 +1,9 @@
 2000-10-17  Derek Price  <derek.price@openavenue.com>
 
+	* NEWS: added a comment about the new CVSROOT format for pserver.
+
+2000-10-17  Derek Price  <derek.price@openavenue.com>
+
 	* NEWS: added a comment about the new format of ~/.cvspass
 
 2000-10-09  Derek Price  <derek.price@openavenue.com>

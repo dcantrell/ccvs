@@ -2014,6 +2014,11 @@ the format of the repository name is:
 :@var{method}:[[@var{user}][:@var{password}]@@]@var{hostname}[:[@var{port}]]/path/to/repository
 @end example
 
+Specifying a password in the repository name is not recommended during
+checkout, since this will cause @sc{cvs} to store a cleartext copy of the
+password in each created directory.  @code{cvs login} first instead
+(@pxref{Password authentication client}).
+
 The details of exactly what needs to be set up depend
 on how you are connecting to the server.
 
