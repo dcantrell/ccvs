@@ -7941,13 +7941,21 @@ U file1'
 "${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
 '"${PROG}"' [a-z]*: use .'"${PROG}"' commit. to add this file permanently'
 
-	  dotest log-3 "${testcvs} -q commit -m 1" \
+	  # While we're at it, check multi-line comments, input from file,
+	  # and trailing whitespace trimming
+	  echo 'line 1     '	 >${TESTDIR}/comment.tmp
+	  echo '     '		>>${TESTDIR}/comment.tmp
+	  echo 'line 2	'	>>${TESTDIR}/comment.tmp
+	  echo '	'	>>${TESTDIR}/comment.tmp
+	  echo '  	  '	>>${TESTDIR}/comment.tmp
+	  dotest log-3 "${testcvs} -q commit -F ${TESTDIR}/comment.tmp" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 done
 Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
+	  rm -f ${TESTDIR}/comment.tmp
 
 	  echo 'second revision' > file1
 	  dotest log-4 "${testcvs} -q ci -m2 file1" \
@@ -8002,7 +8010,9 @@ revision'
 	  log_lines="  lines: ${PLUS}1 -1"
 	  log_rev1="${log_dash} 1\.1
 ${log_date}
-1"
+line 1
+
+line 2"
 	  log_rev2="${log_dash} 1\.2
 ${log_date}${log_lines}
 branches:  1\.2\.2;

@@ -1,3 +1,16 @@
+Fri Jan 16 15:34:02 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* diff.c (diff_fileproc): Free label1 and label2 when finished.
+
+	* edit.c (editor_set): Don't free edlist until after we're
+	done using it.
+
+	* rcscmds.c (RCS_merge): Free xrev1 and xrev2 when finished.
+
+	* subr.c (make_message_rcslegal): Don't access uninitialized or
+	unallocated memory; only strip trailing blank lines.
+	* sanity.sh (log-3): Enhance to test this fix.
+
 Fri Jan 16 12:41:03 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Add keywordlog to list of tests run by default.
