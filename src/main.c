@@ -432,7 +432,7 @@ error 0 %s: no such user\n", user);
 #endif /* No SERVER_SUPPORT */
     if (CVSADM_Root != NULL)
     {
-        if (CVSroot == NULL)
+        if (CVSroot == NULL || !cvs_update_env)
         {
 	    CVSroot = CVSADM_Root;
 	    cvs_update_env = 1;	/* need to update environment */
@@ -450,23 +450,12 @@ error 0 %s: no such user\n", user);
             if ((strcmp (CVSroot, CVSADM_Root) != 0) &&
 		!same_directories(CVSroot, CVSADM_Root))
 	    {
-	        error (0, 0, "%s value for CVS Root found in %s",
-		       CVSADM_Root, CVSADM_ROOT);
-		if (cvs_update_env)
-		{
-		    error (0, 0, "does not match command line -d %s setting",
-			   CVSroot);
-		    error (1, 0,
-			   "you may wish to try the cvs command again without the -d option ");
-                }
-		else
-		{
-		    error (0, 0,
-			   "does not match CVSROOT environment value of %s",
-			   CVSroot);
-		    error (1, 0,
-			   "you may wish to unsetenv CVSROOT and try again");
-                }
+              error (0, 0, "%s value for CVS Root found in %s",
+                     CVSADM_Root, CVSADM_ROOT);
+              error (0, 0, "does not match command line -d %s setting",
+                     CVSroot);
+              error (1, 0,
+                      "you may wish to try the cvs command again without the -d option ");
 	    }
         }
     }
