@@ -1,3 +1,8 @@
+Sun Apr 30 14:56:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* clmerge: Changes from Tom Tromey --- fix bug in date comparison
+	function.
+
 Sat Apr 29 20:53:08 1995  Bryan O'Sullivan  <bos@serpentine.com>
 
 	* ccvs-rsh.pl: created.  See the file itself for documentation.
