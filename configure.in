@@ -124,7 +124,13 @@ if test -n "$krb_h"; then
     AC_DEFINE(HAVE_KERBEROS)
     test -n "${krb_libdir}" && LIBS="${LIBS} -L${krb_libdir}"
     LIBS="${LIBS} -lkrb"
+    # Put -L${krb_libdir} in LDFLAGS temporarily so that it appears before
+    # -ldes in the command line.  Don't do it permanently so that we honor
+    # the user's setting for LDFLAGS
+    hold_ldflags=$LDFLAGS
+    test -n "${krb_libdir}" && LDFLAGS="$LDFLAGS -L${krb_libdir}"
     AC_CHECK_LIB(des,printf,[LIBS="${LIBS} -ldes"])
+    LDFLAGS=$hold_ldflags
     if test -n "$krb_incdir"; then
       includeopt="${includeopt} -I$krb_incdir"
       AC_SUBST(includeopt)
