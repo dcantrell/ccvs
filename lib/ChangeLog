@@ -1,5 +1,13 @@
 2004-05-15  Derek Price  <derek@ximbiot.com>
 
+	Back out GNULIB getdate update until date parsing problem is fixed.
+	* Makefile.am: Temporarily comment out getdate.y test targets.
+	* getdate.y: Restored from version 1.19.
+	* xtime.h: Readded from version 1.1.
+	* Makefile.in, getdate.c: Regenerated.
+
+2004-05-15  Derek Price  <derek@ximbiot.com>
+
 	* libcvs.dsp: Move all "../lib/*.c" files to this project.  Header file
 	list updated for GNULIB updates.
 	* libcvs.dep: Regenerated for "libcvs.dsp" changes.
