@@ -951,6 +951,36 @@ cvs \[[a-z]* aborted\]: correct above errors first!'
 
 		cd first-dir
 
+		# Create a directory with only dead files, to make sure CVS
+		# doesn't get confused by it.
+		mkdir subdir
+		dotest 65a0 "${testcvs} add subdir" \
+'Directory /tmp/cvs-sanity/cvsroot/first-dir/subdir added to the repository'
+		cd subdir
+		echo file in subdir >sfile
+		dotest 65a1 "${testcvs} add sfile" \
+'cvs [a-z]*: scheduling file `sfile'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+		dotest 65a2 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/subdir/sfile,v
+done
+Checking in sfile;
+/tmp/cvs-sanity/cvsroot/first-dir/subdir/sfile,v  <--  sfile
+initial revision: 1.1
+done'
+		rm sfile
+		dotest 65a3 "${testcvs} rm sfile" \
+'cvs [a-z]*: scheduling `sfile'\'' for removal
+cvs [a-z]*: use '\''cvs commit'\'' to remove this file permanently'
+		dotest 65a4 "${testcvs} -q ci -m remove-it" \
+'Removing sfile;
+/tmp/cvs-sanity/cvsroot/first-dir/subdir/sfile,v  <--  sfile
+new revision: delete; previous revision: 1.1
+done'
+		cd ..
+		dotest 65a5 "${testcvs} -q update -P" ''
+		dotest_fail 65a6 "test -d subdir" ''
+
 		# add a file.
 		touch file1
 		if ${CVS} add file1  2>> ${LOGFILE}; then

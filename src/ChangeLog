@@ -1,3 +1,12 @@
+Mon Jan 15 18:14:55 1996  Gary Oberbrunner  <garyo@avs.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* tag.c (val_direntproc):  New function to ignore
+	  nonexistent dirs when recursing to check tag validity.
+	  (tag_check_valid): Pass it to start_recursion.
+	* sanity.sh (death): New tests 65a0-65a6 cause test 74 to test for
+	above-fixed bug.
+
 Mon Jan 15 12:55:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c: Revert change to run getopt_long twice.  This can go in
