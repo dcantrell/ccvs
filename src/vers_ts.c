@@ -299,9 +299,10 @@ time_stamp_server (const char *file, Vers_TS *vers_ts, Entnode *entdata)
 	if (entdata == NULL)
 	    mark_lost (vers_ts);
 	else if (entdata->timestamp
-		 && entdata->timestamp[0] == '=')
+		 && entdata->timestamp[0] == '='
+		 && entdata->timestamp[1] == '\0')
 	    mark_unchanged (vers_ts);
-	else if (entdata->timestamp != NULL
+	else if (entdata->timestamp
 		 && (entdata->timestamp[0] == 'M'
 		     || entdata->timestamp[0] == 'D')
 		 && entdata->timestamp[1] == '\0')

@@ -539,7 +539,7 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
     /* If ts_conflict is NULL, there was no merge since the last
      * commit and there can be no conflict.
      */
-    assert ( ts_conflict );
+    assert (ts_conflict);
 
     /*
      * If the timestamp has changed and no
@@ -548,14 +548,14 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
      */
 
 #ifdef SERVER_SUPPORT
-    if ( server_active )
-	retcode = ts_conflict[0] == '=';
+    if (server_active)
+	retcode = ts_conflict[0] == '=' && ts_conflict[1] == '\0';
     else 
 #endif /* SERVER_SUPPORT */
     {
-	filestamp = time_stamp ( finfo->file );
-	retcode = !strcmp ( ts_conflict, filestamp );
-	free ( filestamp );
+	filestamp = time_stamp (finfo->file);
+	retcode = !strcmp (ts_conflict, filestamp);
+	free (filestamp);
     }
 
     return retcode;
