@@ -10235,9 +10235,8 @@ that you haven't changed but are not the most recent
 versions available in the repository.
 
 @item P @var{file}
-Like @samp{U}, but the @sc{cvs} server sends a patch
-instead of an entire file.  These two things accomplish
-the same thing.
+Like @samp{U}, but the @sc{cvs} server sends a patch instead of an entire
+file.  This accomplishes the same thing as @samp{U} using less bandwidth.
 
 @item A @var{file}
 The file has been added to your private copy of the
