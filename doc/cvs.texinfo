@@ -14064,9 +14064,10 @@ who committed the change.  If you are committing the change logged
 in as "root" (not under "su" or other root-priv giving program),
 @sc{cvs} cannot determine who is actually making the change.
 As such, by default, @sc{cvs} disallows changes to be committed by users
-logged in as "root".  (You can disable this option by commenting out
-the definition of @code{CVS_BADROOT} in @file{options.h} before
-building @sc{cvs}.
+logged in as "root".  (You can disable this option by passing the
+@code{--enable-rootcommit} option to @file{configure} and recompiling @sc{cvs}.
+On some systems this means editing the appropriate @file{config.h} file
+before building @sc{cvs}.)
 
 @item Too many arguments!
 This message is typically printed by the @file{log.pl}
