@@ -1,36 +1,3 @@
-2003-11-03  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (server): Test that the global `-l' option is ignored
-	nonfatally.
-
-2003-11-03  Derek Price  <derek@ximbiot.com>
-
-	* server.c (serve_global_option): Warn that -l is being ignored rather
-	than exiting fatally due to backwards compatibility complaints from
-	administrators.
-
-2003-11-01  Larry Jones  <lawrence.jones@eds.com>
-
-	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
-	(Reported by Paul Edwards <kerravon@nosppaam.w3.to>.)
-
-2003-10-31  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh: s/${TESTDIR}/cvsroot/${CVSROOT_DIRNAME}/.
-
-2003-10-28  Derek Price  <derek@ximbiot.com>
-
-	* sanity.sh (devcom): Renumber tests and use dotest function.
-
-2003-10-28  Derek Price  <derek@ximbiot.com>
-
-	* sever.h: Add the standard copyright notice.
-
-2003-10-28  Derek Price  <derek@ximbiot.com>
-
-	* lock.c: Remove some suggestions which have already been implemented
-	or which have become obsolete from the header comment.
-
 2003-10-26  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (join6): Fix a few typos in the last test and remove a

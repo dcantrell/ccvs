@@ -263,13 +263,8 @@ Building from source code under Unix:
     with --enable-maintainer-mode.
 
     The CVS Makefiles and configure script were built using Automake 1.7.5 and
-    a patched Autoconf 2.57, respectively.  The patched 2.57 Autoconf sources
-    are available from <http://ccvs.cvshome.org/servlets/ProjectDownloadList>
-    and should not be necessary with Autoconf 2.58 and later versions of
-    Autoconf.
-
-    Other combinations of autotool versions may or may not work.  If you get
-    other versions to work, please send a report to <bug-cvs@gnu.org>.
+    Autoconf 2.57, respectively.  Other combinations of autotool versions may
+    or may not work.
 
 2)  Run "configure":
 
@@ -469,12 +464,7 @@ following also works:
 	C:\> vcvars32
 	C:\> nmake /f cvsnt.mak CFG="cvsnt - Win32 Debug"
 
-* Using the Cygwin development environment <http://cygwin.com>, Windows clients
-  and servers can be built using the instructions for building on UNIX.  For
-  deploying the CVS server on Windows NT, see the `cygrunserv' executable that
-  comes with Cygwin.
-
-* You might also try <http://wincvs.org> & <http://www.cvsnt.org>.
+* You might also try http://cvsgui.org & http://www.cvsnt.org
 
 -------------------------------------------------------------------------------
 

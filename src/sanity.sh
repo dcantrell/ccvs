@@ -6779,10 +6779,10 @@ T file2"
 	  echo v1 > $file
 	  dotest update-p-4 "$testcvs -Q add $file" ''
 	  dotest update-p-5 "$testcvs -Q ci -m. $file" \
-"RCS file: ${CVSROOT_DIRNAME}/$module/$file,v
+"RCS file: ${TESTDIR}/cvsroot/$module/$file,v
 done
 Checking in $file;
-${CVSROOT_DIRNAME}/$module/$file,v  <--  $file
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
 initial revision: 1\.1
 done"
 	  dotest update-p-6 "$testcvs -Q tag T $file" ''
@@ -6797,7 +6797,7 @@ done"
 	  dotest update-p-9 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
-RCS:  ${CVSROOT_DIRNAME}/$module/$file,v
+RCS:  ${TESTDIR}/cvsroot/$module/$file,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 v1"
@@ -6811,7 +6811,7 @@ v1"
 	  dotest update-p-10 "$testcvs update -p -rT $file" \
 "===================================================================
 Checking out $file
-RCS:  ${CVSROOT_DIRNAME}/$module/$file,v
+RCS:  ${TESTDIR}/cvsroot/$module/$file,v
 VERS: 1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 v1"
@@ -6838,7 +6838,7 @@ U $file"
 	  dotest update-p-undead-4 "$testcvs -Q update -p -rT $file" v1
 	  dotest update-p-undead-5 "$testcvs -Q ci -m. $file" \
 "Removing $file;
-${CVSROOT_DIRNAME}/$module/$file,v  <--  $file
+${TESTDIR}/cvsroot/$module/$file,v  <--  $file
 new revision: delete; previous revision: 1\.1
 done"
 	  dotest update-p-undead-6 "$testcvs -Q update -p -rT $file" v1
@@ -13162,7 +13162,7 @@ U dir2d1/sub/sub2d1/file1"
 	  # test.
 	  dotest emptydir-13 "cat dir2d1/CVS/Repository" "moda"
 	  dotest_fail emptydir-14 "${testcvs} co comb" \
-"${SPROG} checkout: existing repository ${CVSROOT_DIRNAME}/moda/modasub does not match ${CVSROOT_DIRNAME}/mod1
+"${SPROG} checkout: existing repository ${CVSROOT_DIRNAME}/moda/modasub does not match ${TESTDIR}/cvsroot/mod1
 ${SPROG} checkout: ignoring module 2d1modb
 ${SPROG} checkout: Updating dir2d1/suba"
 	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "moda"
@@ -14434,97 +14434,137 @@ done"
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1
 	  cd 1
-	  dotest devcom-1 "${testcvs} -q co first-dir"
+	  if ${testcvs} -q co first-dir >>${LOGFILE} ; then
+	      pass 169
+	  else
+	      fail 169
+	  fi
 
 	  cd first-dir
 	  echo abb >abb
-	  dotest devcom-2 "${testcvs} add abb" \
-"$SPROG add: scheduling file \`abb' for addition
-$SPROG add: use \`$SPROG commit' to add this file permanently"
-
-	  dotest devcom-3 "${testcvs} -q ci -m added" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/abb,v
-done
-Checking in abb;
-${CVSROOT_DIRNAME}/first-dir/abb,v  <--  abb
-initial revision: 1\.1
-done"
-
-	  dotest_fail devcom-4 "${testcvs} watch" "Usage${DOTSTAR}"
-
-	  dotest devcom-5 "${testcvs} watch on"
-
+	  if ${testcvs} add abb 2>>${LOGFILE}; then
+	      pass 170
+	  else
+	      fail 170
+	  fi
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	      pass 171
+	  else
+	      fail 171
+	  fi
+	  dotest_fail 171a0 "${testcvs} watch" "Usage${DOTSTAR}"
+	  if ${testcvs} watch on; then
+	      pass 172
+	  else
+	      fail 172
+	  fi
 	  echo abc >abc
-	  dotest devcom-6 "${testcvs} add abc" \
-"$SPROG add: scheduling file \`abc' for addition
-$SPROG add: use \`$SPROG commit' to add this file permanently"
-
-	  dotest devcom-7 "${testcvs} -q ci -m added" \
-"RCS file: ${CVSROOT_DIRNAME}/first-dir/abc,v
-done
-Checking in abc;
-${CVSROOT_DIRNAME}/first-dir/abc,v  <--  abc
-initial revision: 1\.1
-done"
+	  if ${testcvs} add abc 2>>${LOGFILE}; then
+	      pass 173
+	  else
+	      fail 173
+	  fi
+	  if ${testcvs} ci -m added >>${LOGFILE} 2>&1; then
+	      pass 174
+	  else
+	      fail 174
+	  fi
 
 	  cd ../..
 	  mkdir 2
 	  cd 2
 
-	  dotest devcom-8 "${testcvs} -q co first-dir" \
-"U first-dir/abb
-U first-dir/abc"
-
+	  if ${testcvs} -q co first-dir >>${LOGFILE}; then
+	      pass 175
+	  else
+	      fail 175
+	  fi
 	  cd first-dir
-	  dotest_fail devcom-9 "test -w abb"
-	  dotest_fail devcom-9 "test -w abc"
+	  if test -w abb; then
+	      fail 176
+	  else
+	      pass 176
+	  fi
+	  if test -w abc; then
+	      fail 177
+	  else
+	      pass 177
+	  fi
 
-	  dotest devcom-10 "${testcvs} editors" ""
+	  dotest devcom-178 "${testcvs} editors" ""
 
-	  dotest devcom-11 "${testcvs} edit abb"
+	  if ${testcvs} edit abb; then
+	      pass 179
+	  else
+	      fail 179
+	  fi
 
 	  # Here we test for the traditional ISO C ctime() date format.
 	  # We assume the C locale; I guess that works provided we set
 	  # LC_ALL at the start of this script but whether these
 	  # strings should vary based on locale does not strike me as
 	  # self-evident.
-	  dotest devcom-12 "${testcvs} editors" \
+	  dotest devcom-180 "${testcvs} editors" \
 "abb	${username}	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/2/first-dir"
 
 	  echo aaaa >>abb
-	  dotest devcom-13 "${testcvs} ci -m modify abb" \
-"Checking in abb;
-${CVSROOT_DIRNAME}/first-dir/abb,v  <--  abb
-new revision: 1\.2; previous revision: 1\.1
-done"
-
+	  if ${testcvs} ci -m modify abb >>${LOGFILE} 2>&1; then
+	      pass 182
+	  else
+	      fail 182
+	  fi
 	  # Unedit of a file not being edited should be a noop.
-	  dotest devcom-14 "${testcvs} unedit abb" ''
+	  dotest 182.5 "${testcvs} unedit abb" ''
 
-	  dotest devcom-15 "${testcvs} editors" ""
+	  dotest devcom-183 "${testcvs} editors" ""
 
-	  dotest_fail devcom-16 "test -w abb"
+	  if test -w abb; then
+	      fail 185
+	  else
+	      pass 185
+	  fi
 
-	  dotest devcom-17 "${testcvs} edit abc"
-
+	  if ${testcvs} edit abc; then
+	      pass 186a1
+	  else
+	      fail 186a1
+	  fi
 	  # Unedit of an unmodified file.
-	  dotest devcom-18 "${testcvs} unedit abc"
-	  dotest devcom-19 "${testcvs} edit abc"
-
+	  if ${testcvs} unedit abc; then
+	      pass 186a2
+	  else
+	      fail 186a2
+	  fi
+	  if ${testcvs} edit abc; then
+	      pass 186a3
+	  else
+	      fail 186a3
+	  fi
 	  echo changedabc >abc
 	  # Try to unedit a modified file; cvs should ask for confirmation
-	  dotest devcom-20 "echo no | ${testcvs} unedit abc" \
-"abc has been modified; revert changes? "
-
-	  dotest devcom-21 "echo changedabc | cmp - abc"
-
+	  if (echo no | ${testcvs} unedit abc) >>${LOGFILE}; then
+	      pass 186a4
+	  else
+	      fail 186a4
+	  fi
+	  if echo changedabc | cmp - abc; then
+	      pass 186a5
+	  else
+	      fail 186a5
+	  fi
 	  # OK, now confirm the unedit
-	  dotest devcom-22 "echo yes | ${testcvs} unedit abc" \
-"abc has been modified; revert changes? "
+	  if (echo yes | ${testcvs} unedit abc) >>${LOGFILE}; then
+	      pass 186a6
+	  else
+	      fail 186a6
+	  fi
+	  if echo abc | cmp - abc; then
+	      pass 186a7
+	  else
+	      fail 186a7
+	  fi
 
-	  dotest devcom-23 "echo abc | cmp - abc"
-
-	  dotest devcom-24 "${testcvs} watchers" ''
+	  dotest devcom-a0 "${testcvs} watchers" ''
 
 	  # FIXME: This probably should be an error message instead
 	  # of silently succeeding and printing nothing.
@@ -19523,7 +19563,7 @@ new revision: 1\.3; previous revision: 1\.2
 done"
 
 	  # Save a backup copy
-	  cp -r ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/backup
+	  cp -r ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/cvsroot/backup
 
 	  # Simulate developer 3
 	  cd ../..
@@ -19594,7 +19634,7 @@ done"
 
 	  # Slag the original and restore it a few revisions back
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
-	  mv ${CVSROOT_DIRNAME}/backup ${CVSROOT_DIRNAME}/first-dir
+	  mv ${CVSROOT_DIRNAME}/backup ${TESTDIR}/cvsroot/first-dir
 
 	  # Have developer 1 try an update and lose some data
 	  #
@@ -20091,7 +20131,7 @@ ${SPROG} update: Updating second-dir"
 	  cd ..
 	  rm -r 1
 	  chmod u+rwx ${CVSROOT_DIRNAME}/first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${CVSROOT_DIRNAME}/second-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/cvsroot/second-dir
 	  ;;
 
 	stamps)
@@ -26196,14 +26236,6 @@ ${TESTDIR}/crerepos/dir1
 editors
 EOF
 
-	    # Test that the global `-l' option is ignored nonfatally.
-	    dotest server-16 "${testcvs} server" \
-"E cvs server: WARNING: global \`-l' option ignored\.
-ok" <<EOF
-Global_option -l
-noop
-EOF
-
 	    if $keep; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
 	      exit 0
@@ -26219,7 +26251,7 @@ EOF
 	  # possible security holes are plugged.
 	  if $remote; then
 	    dotest server2-1 "${servercvs} server" \
-"E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${CVSROOT_DIRNAME}'
+"E protocol error: directory '${CVSROOT_DIRNAME}/\.\./dir1' not within root '${TESTDIR}/cvsroot'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
 Directory .
@@ -26228,7 +26260,7 @@ noop
 EOF
 
 	    dotest server2-2 "${servercvs} server" \
-"E protocol error: directory '${CVSROOT_DIRNAME}dir1' not within root '${CVSROOT_DIRNAME}'
+"E protocol error: directory '${CVSROOT_DIRNAME}dir1' not within root '${TESTDIR}/cvsroot'
 error  " <<EOF
 Root ${CVSROOT_DIRNAME}
 Directory .
@@ -26495,11 +26527,11 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	  echo nosuchhost:/cvs > CVS/Root
 	  dotest commit-d-3 "$testcvs -Q -d $CVSROOT commit -m." \
 "Checking in file1;
-${CVSROOT_DIRNAME}/c-d-c/file1,v  <--  file1
+${TESTDIR}/cvsroot/c-d-c/file1,v  <--  file1
 new revision: 1.2; previous revision: 1.1
 done
 Checking in subdir/file2;
-${CVSROOT_DIRNAME}/c-d-c/subdir/file2,v  <--  file2
+${TESTDIR}/cvsroot/c-d-c/subdir/file2,v  <--  file2
 new revision: 1.2; previous revision: 1.1
 done"
 	  cd ../..

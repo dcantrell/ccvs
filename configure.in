@@ -15,9 +15,9 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.])
 
-AC_INIT([Concurrent Versions System (CVS)],[1.12.2.1],[bug-cvs@gnu.org],[cvs])
+AC_INIT([Concurrent Versions System (CVS)],[1.12.2],[bug-cvs@gnu.org],[cvs])
 AC_CONFIG_SRCDIR(src/cvs.h)
-AM_INIT_AUTOMAKE([gnu 1.7.5 dist-bzip2 no-define])
+AM_INIT_AUTOMAKE([gnu 1.5 dist-bzip2 no-define])
 AC_PREREQ(2.57)
 
 AC_PREFIX_PROGRAM(cvs)
@@ -207,7 +207,6 @@ AC_REPLACE_FUNCS(\
 # necessary.
 AM_FUNC_GETLINE
 AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION dnl work around for autoconf-2.57 bug.
 UTILS_FUNC_MKSTEMP
 gl_C_RESTRICT
 gl_FUNC_ATEXIT
@@ -945,60 +944,6 @@ fi # enable_server
 
 
 dnl
-dnl begin --enable-case-sensitivity
-dnl
-
-AC_ARG_ENABLE(
-  [case-sensitivity],
-  AC_HELP_STRING(
-    [--enable-case-sensitivity],
-    [Force CVS to expect a case sensitive file system (default autodetects)]),
-    [case "$enable_case_sensitivity" in
-       yes | no | auto) ;;
-       *)
-          AC_MSG_ERROR([Unrecognized argument to --enable-case-sensitivity: \`$enable_case_sensitivity'.  Acceptable values are \`yes', \`no', and \`auto'.])
-          ;;
-     esac],
-  [enable_case_sensitivity=auto])
-
-acx_forced=' (forced)'
-AC_MSG_CHECKING([for a case sensitive file system])
-if test $enable_case_sensitivity = auto; then
-  dnl
-  dnl Check for a case insensitive filesystem, like Mac OS X and Windows have.
-  dnl
-  AC_CACHE_VAL([acx_cv_case_sensitive],
-  [ rm -f ac_TEST_filenames_CASE_sensitive
-    echo foo >ac_test_filenames_case_sensitive
-    if test -f ac_TEST_filenames_CASE_sensitive; then
-      acx_cv_case_sensitive=no
-    else
-      acx_cv_case_sensitive=yes
-    fi
-    rm ac_test_filenames_case_sensitive
-  ])
-  enable_case_sensitivity=$acx_cv_case_sensitive
-  acx_forced=
-fi
-AC_MSG_RESULT([$enable_case_sensitivity$acx_forced])
-if test $enable_case_sensitivity = no; then
-  AC_DEFINE([FILENAMES_CASE_INSENSITIVE], [1],
-            [Define if this executable will be running on case insensitive
-             file systems.  In the client case, this means that it will request
-             that the server pretend to be case insensitive if it isn't
-             already.])
-fi
-
-dnl
-dnl end --enable-case-sensitivity
-dnl
-
-
-dnl
-dnl begin --enable-encryption
-dnl
-
-dnl
 dnl Use --enable-encryption to turn on encryption support, but ignore this
 dnl option unless either client or server is enabled.
 dnl
@@ -1105,7 +1050,6 @@ dnl
 dnl
 dnl end --enable-*
 dnl
-
 
 
 dnl For the moment we will assume that all systems which have
