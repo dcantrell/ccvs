@@ -15,7 +15,7 @@ TESTDIR=/tmp/cvs-sanity
 # "debugger"
 #set -x
 
-echo This test should produce no other output than this line.
+echo This test should produce no other output than this line, and "Ok."
 
 # clean any old remnants
 rm -rf ${TESTDIR}
