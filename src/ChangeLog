@@ -1,3 +1,8 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (server): Test that the global `-l' option is ignored
+	nonfatally.
+
 2003-11-01  Larry Jones  <lawrence.jones@eds.com>
 
 	* ignore.c (ignore_files): Use CVS_LSTAT() instead of lstat().
