@@ -1,3 +1,7 @@
+2001-10-21  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dep: Regenerated for "../zlib/lib.dsp" change.
+
 2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note `cvs ls filename' fix.
