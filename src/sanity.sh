@@ -14233,13 +14233,6 @@ $CPROG \[checkout aborted\]: end of file from server (consult above messages if 
 	  # test the feature that cvs creates a CVS subdir also for
 	  # the toplevel directory
 
-	  # Some test, somewhere, is creating Emptydir.  That test
-	  # should, perhaps, clean up for itself, but I don't know which
-	  # one it is (cvsadm, emptydir, &c).
-	  # (On the other hand, should CVS care whether there is an
-	  # Emptydir?  That would seem a bit odd).
-	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
-
 	  # First set the TopLevelAdmin setting.
 	  mkdir 1; cd 1
 	  dotest toplevel-1a "${testcvs} -q co CVSROOT/config" \
