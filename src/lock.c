@@ -28,6 +28,7 @@ static int unlock_proc PROTO((Node * p, void *closure));
 static int write_lock PROTO((char *repository));
 static void unlock PROTO((char *repository));
 static void lock_wait PROTO((char *repository));
+static int Check_Owner PROTO((char *lockdir));
 
 static char lockers_name[20];
 static char *repository;
