@@ -21801,6 +21801,7 @@ EOF
 	parseroot2)
 	  # Test some :ext: roots for consistancy.
 	  if $remote; then :; else
+	    remoteonly parseroot2
 	    continue
 	  fi
 
