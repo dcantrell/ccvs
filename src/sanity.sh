@@ -63,7 +63,7 @@ echo 'This test should produce no other output than this line, and a final "OK".
 
 exit_usage ()
 {
-    echo "Usage: `basename $0` [-r] [--keep] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
     exit 2
 }
 
@@ -77,9 +77,10 @@ while getopts f:kr option ; do
 	    fromtest="$OPTARG"
 	    ;;
 	k)
-	    # The --keep option will eventually cause all the tests to leave around the
+	    # The -k (keep) option will eventually cause all the tests to leave around the
 	    # contents of the /tmp directory; right now only some implement it.  Not
-	    # useful if you are running more than one test.
+	    # originally intended to be useful with more than one test, but this should work
+	    # if each test uses a uniquely named dir (use the name of the test).
 	    keep=yes
 	    ;;
 	r)
