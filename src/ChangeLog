@@ -1,3 +1,7 @@
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (RCS_getprevious): Remove erroneous FIXME.
+
 2005-03-20  Derek Price  <derek@ximbiot.com>
 
 	* rcs.c (RCS_nodeisbranch): Improve comments.  Return bool.  Gratuitous

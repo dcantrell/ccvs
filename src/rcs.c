@@ -3429,11 +3429,6 @@ RCS_getprevious (RCSNode *rcs, const char *rev)
 	     * is a subsequent cvs import of the same file ==> return 1.1.
 	     * If 1.1 is dead, the file was initially added on a branch
 	     * ==> return NULL.
-	     *
-	     * FIXME! This deserves more thought and discussion.
-	     * Chronologically, the revision previous to 1.2 could be any
-	     * version on the vendor branch.  Probably, the best way to do this
-	     * is to sort by date and determine the previous revision that way.
 	     */
 	    Node *rootnode = findnode (rcs->versions, trev);
 	    if (rootnode)
