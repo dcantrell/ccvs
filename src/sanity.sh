@@ -12574,6 +12574,7 @@ if head -1 < \$1 | grep '^BugId:[ ]*[0-9][0-9]*$' > /dev/null; then
     exit 0
 else
     echo "No BugId found."
+    sleep 1
     exit 1
 fi
 EOF
