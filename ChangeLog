@@ -1,3 +1,7 @@
+2001-06-27  Larry Jones  <larry.jones@sdr.com>
+
+	* NEWS (Changes since 1.11): Note new loginfo format string expansion.
+
 2001-06-11  Derek Price  <dprice@collab.net>
 
 	* cvsnt.dsp: Add src/annotate.c to source file list.
