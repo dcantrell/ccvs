@@ -1664,9 +1664,14 @@ repositories.
 To set up a @sc{cvs} repository, first choose the
 machine and disk on which you want to store the
 revision history of the source files.  CPU and memory
-requirements are modest---a server with 32M of memory
-or even less can handle a fairly large source tree with
-a fair amount of activity.  To estimate disk space
+requirements are modest, so most machines should be
+adequate.  For details see @ref{Server requirements}.
+@c Possible that we should be providing a quick rule of
+@c thumb, like the 32M memory for the server.  That
+@c might increase the number of people who are happy
+@c with the answer, without following the xref.
+
+To estimate disk space
 requirements, if you are importing RCS files from
 another system, the size of those files is the
 approximate initial size of your repository, or if you
@@ -1678,15 +1683,7 @@ for a while).  On the machines on which the developers
 will be working, you'll want disk space for
 approximately one working directory for each developer
 (either the entire tree or a portion of it, depending
-on what each developer uses).  Don't worry about CPU
-and memory requirements for the clients---any machine
-with enough capacity to run the operating system in
-question should have little trouble.
-@c Stuff about memory duplicates Server requirements
-@c to some extent.  I'm not sure this is a bad thing,
-@c though (one is aimed at people who are looking into
-@c this carefully, the other is aimed at people who
-@c want a rule of thumb).
+on what each developer uses).
 
 The repository should be accessable
 (directly or via a networked file system) from all
@@ -1905,6 +1902,9 @@ in question should have little trouble.
 @c I would guess for non-client/server CVS in an NFS
 @c environment the biggest issues is the network and
 @c the NFS server.
+
+For information on disk space requirements, see
+@ref{Creating a repository}.
 
 @node Connecting via rsh
 @subsection Connecting with rsh
