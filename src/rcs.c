@@ -3333,8 +3333,11 @@ compare_truncated_revnums (r, s)
    FIXME: isn't the max rev always the last one?
    If so, we don't even need a loop.  */
 
+static char *max_rev PROTO ((const RCSVers *));
+
 static char *
-max_rev (const RCSVers *branchnode)
+max_rev (branchnode)
+    const RCSVers *branchnode;
 {
     Node *head;
     Node *bp;
