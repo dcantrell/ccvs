@@ -263,8 +263,10 @@
 
 /*
  * This tells the client that it must use send()/recv() to talk to the
- * server if it is connected to the server via a socket.  Sigh.
- * OS/2 also cannot convert sockets to file descriptors.
+ * server if it is connected to the server via a socket; Win95 is said to
+ * need it because _open_osfhandle doesn't work.  This is only
+ * implemented for pserver, not rsh.  pserver is untested on NT; none of
+ * this is tested on Win95.
  */
 #define NO_SOCKET_TO_FD 1
 
