@@ -1349,8 +1349,6 @@ finaladd (file, rev, tag, options, update_dir, repository, entries)
 		   message, entries);
     if (ret == 0)
     {
-	(void) sprintf (tmp, "%s/%s%s", CVSADM, file, CVSEXT_OPT);
-	(void) unlink_file (tmp);
 	(void) sprintf (tmp, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
 	(void) unlink_file (tmp);
     }
@@ -1511,26 +1509,6 @@ checkaddfile (file, repository, tag, options, srcfiles)
 	if (isfile (fname))
 	    run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
 
-	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_OPT);
-	fp = fopen (fname, "r");
-	/* If the file does not exist, no big deal.  In particular, the
-	   server does not (yet at least) create CVSEXT_OPT files.  */
-	if (fp == NULL)
-	{
-	    if (errno != ENOENT)
-		error (1, errno, "cannot open %s", fname);
-	}
-	else
-	{
-	    while (fgets (fname, sizeof (fname), fp) != NULL)
-	    {
-		if ((cp = strrchr (fname, '\n')) != NULL)
-		    *cp = '\0';
-		if (*fname)
-		    run_arg (fname);
-	    }
-	    (void) fclose (fp);
-	}
 	/* when adding binary files, make sure the option is stored in the
 	   repository.  */
 	if (options)
@@ -1645,16 +1623,6 @@ checkaddfile (file, repository, tag, options, srcfiles)
 #else /* No DEATH_SUPPORT */
     run_setup ("%s%s -i", Rcsbin, RCS);
     run_args ("-t%s/%s%s", CVSADM, file, CVSEXT_LOG);
-    (void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_OPT);
-    fp = open_file (fname, "r");
-    while (fgets (fname, sizeof (fname), fp) != NULL)
-    {
-	if ((cp = strrchr (fname, '\n')) != NULL)
-	    *cp = '\0';
-	if (*fname)
-	    run_arg (fname);
-    }
-    (void) fclose (fp);
     /* when adding binary files, make sure the option is stored in the
        repository.  */
     if (options)
