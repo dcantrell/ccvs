@@ -1,5 +1,9 @@
 Sun Jul  6 13:36:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* diff.c (diff_fileproc): Change message from "during rcsdiff of"
+	to "while diffing".  For a while now, that message might be
+	printed after a call to DIFF instead of rcsdiff.
+
 	* diff.c (diff_fileproc): Call cvs_output not printf.  Remove
 	calls to fflush (should be handled now by call to cvs_outflush in
 	recurse.c).
