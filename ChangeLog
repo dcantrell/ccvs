@@ -1,5 +1,15 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (SUBDIRS): Add m4 subdir.
+	(ACLOCAL_AMFLAGS): Include m4 subdir when generating aclocal.m4.
+	* acinclude.m4: Remove this file, moving contents into two files in the
+	m4 subdirectory to ease maintenance.
+
+	* Makefile.in: Regenerated.
+	* aclocal.m4: Ditto.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* cvsnt.mak: added rules and dependencies for log-buffer.[c,obj],
 	socket-client.[c,obj], and rsh-client.[c,obj]
 	(Patch from Anthon Pang <apang@telus.net>.)

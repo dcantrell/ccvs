@@ -20,7 +20,9 @@
 USOURCE_SUBDIRS = lib zlib diff src
 # All other subdirs:
 SUBDIRS = $(USOURCE_SUBDIRS) man doc contrib tools \
-	windows-NT os2 emx vms
+	windows-NT os2 emx vms m4
+
+ACLOCAL_AMFLAGS = -I $(srcdir)/m4
 
 EXTRA_DIST = \
 	.cvsignore \
