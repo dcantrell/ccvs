@@ -1,5 +1,10 @@
 Thu Nov 30 18:09:50 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * waitpid.c (waitpid): if _cwait() returns -1, test errno.  If
+        ECHILD, then just return pid, else return -1.  This is for OS/2,
+        which doesn't have zombie processes, or any other way of
+        remembering a child process after it exits, as far as I can tell.
+
         * run.c (close_on_exec): don't error, just silently do nothing.
 
         * Makefile.in: use src/client.c, not os2/client.c.
