@@ -1,3 +1,13 @@
+1998-10-09  Jim Kingdon
+
+	* wrapper.c, cvsrc.c, ignore.c: Add comments about ignoring .cvsrc
+	and friends if we can't find a home directory.
+	* expand_path.c (expand_path): If we can't find the home
+	directory, give an error rather than a coredump (or worse).
+	* login.c (construct_cvspass_filename): Don't use errno in error
+	message; get_homedir doesn't set it.  Add comment about this
+	message.
+
 1998-10-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* diff.c (diff): Set variables to NULL at the start, and free

@@ -48,7 +48,14 @@ construct_cvspass_filename ()
     homedir = get_homedir ();
     if (! homedir)
     {
-	error (1, errno, "could not find out home directory");
+	/* FIXME?  This message confuses a lot of users, at least
+	   on Win95 (which doesn't set HOMEDRIVE and HOMEPATH like
+	   NT does).  I suppose the answer for Win95 is to store the
+	   passwords in the registry or something (??).  And .cvsrc
+	   and such too?  Wonder what WinCVS does (about .cvsrc, the
+	   right thing for a GUI is to just store the password in
+	   memory only)...  */
+	error (1, 0, "could not find out home directory");
 	return (char *) NULL;
     }
 

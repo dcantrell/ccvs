@@ -82,6 +82,11 @@ ign_setup ()
 
     /* Then add entries found in home dir, (if user has one) and file exists */
     home_dir = get_homedir ();
+    /* If we can't find a home directory, ignore ~/.cvsignore.  This may
+       make tracking down problems a bit of a pain, but on the other
+       hand it might be obnoxious to complain when CVS will function
+       just fine without .cvsignore (and many users won't even know what
+       .cvsignore is).  */
     if (home_dir)
     {
 	char *file = xmalloc (strlen (home_dir) + sizeof (CVSDOTIGNORE) + 10);

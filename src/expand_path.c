@@ -214,6 +214,9 @@ expand_path (name, file, line)
 	    t = ps->pw_dir;
 #endif
 	}
+	if (t == NULL)
+	    error (1, 0, "cannot find home directory");
+
 	doff = d - buf;
 	expand_string (&buf, &buf_size, doff + 1);
 	d = buf + doff;
