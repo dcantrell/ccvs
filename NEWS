@@ -1,5 +1,12 @@
 Changes since 1.6:
 
+* CVS now supports password authentication when accessing remote
+repositories; this is useful for sites that can't use rsh (because of
+a firewall, for example), and also don't have kerberos.  See node
+"Password authenticated" (in "Remote repositories", in cvs.texinfo)
+for more details.  Note: This feature requires both the client and
+server to be upgraded.
+
 * Using the -kb option to specify binary files now works--most cases
 did not work before.  See the "Binary files" section of
 doc/cvs.texinfo for details.
