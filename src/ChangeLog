@@ -1,3 +1,10 @@
+2004-02-19  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: No longer allow user override of $tmp.  Set $TMPDIR to a
+	directory under $TESTDIR, as for $HOME, but still allowing for user
+	override.  Check for cvs-serv* directories under $TMPDIR rather than
+	$tmp at the end of the script.
+
 2004-02-19  Derek Price <derek@ximbiot.com>
 
 	* run.c (cmdline_quote): Plug memory leak.

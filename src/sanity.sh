@@ -496,11 +496,9 @@ if test -n "$remotehost"; then
 	    echo "$CVS_RSH $remotehost failed." >&2
 	    exit 1
 	fi
-elif test -z "${tmp+set}"; then
+else
 	tmp=`(cd /tmp; /bin/pwd || pwd) 2>/dev/null`
 fi
-: ${TMPDIR=$tmp}
-export TMPDIR
 
 # Now:
 #	1) Set TESTDIR if it's not set already
@@ -534,6 +532,18 @@ if test -z "${TESTDIR}" || echo "${TESTDIR}" |grep '^[^/]'; then
     exit 1
 fi
 cd ${TESTDIR}
+
+# Now set $TMPDIR if the user hasn't overridden it.
+#
+# We use a $TMPDIR under $TESTDIR by default so that two tests may be run at
+# the same time without bumping heads without requiring the user to specify
+# more than $TESTDIR.  See the test for leftover cvs-serv* directories near the
+# end of this script at the end of "The big loop".
+: ${TMPDIR=$TESTDIR/tmp}
+export TMPDIR
+if test -d $TMPDIR; then :; else
+    mkdir $TMPDIR
+fi
 
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
@@ -31789,12 +31799,9 @@ You have \[0\] altered files in this repository\."
 
     # Test our temp directory for cvs-serv* directories.  We would like to not
     # leave any behind.
-    if $remote && ls $tmp/cvs-serv* >/dev/null 2>&1; then
+    if $remote && ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
-	fail \
-"Found cvs-serv* directories in $tmp.
-If you are testing on a system with an active CVS server, please consider
-setting an alternate value for \$tmp."
+	fail "Found cvs-serv* directories in $TMPDIR."
     fi
 
 done # The big loop
