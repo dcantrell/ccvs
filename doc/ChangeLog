@@ -1,3 +1,8 @@
+Sun Mar  9 09:06:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File permissions): Add comment about val-tags and
+	CVSUMASK.
+
 Sun Mar  2 12:33:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (From scratch): Add comment about creating

@@ -1214,6 +1214,10 @@ Note that users must also have write access to check
 out files, because @sc{cvs} needs to create lock files
 (@pxref{Concurrency}).
 
+@c CVS seems to use CVSUMASK in picking permissions for
+@c val-tags, but maybe we should say more about this.
+@c Like val-tags gets created by someone who doesn't
+@c have CVSUMASK set right?
 Also note that users must have write access to the
 @file{CVSROOT/val-tags} file.  @sc{Cvs} uses it to keep
 track of what tags are valid tag names (it is sometimes
