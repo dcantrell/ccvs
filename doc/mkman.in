@@ -31,9 +31,20 @@ use IO::File;
 
 
 
+###
+### GLOBALS
+###
+my $texi_num = 0; # Keep track of how many texinfo files have been encountered.
+my @parent;       # This needs to be global to be used inside of a regex later.
+
+
+
+###
+### FUNCTIONS
+###
 sub keyword_mode
 {
-	my ($keyword) = @_;
+	my ($keyword, $file) = @_;
 
 	return "\\fR"
 		if $keyword =~ /^(|r|t)$/;
@@ -41,7 +52,7 @@ sub keyword_mode
 		if $keyword =~ /^(strong|sc|code|file|samp)$/;
 	return "\\fI"
 		if $keyword =~ /^(emph|var|dfn)$/;
-	die "no handler for keyword $keyword\n";
+	die "no handler for keyword \`$keyword', found at line $. of file \`$file'\n";
 }
 
 
@@ -49,7 +60,7 @@ sub keyword_mode
 # Return replacement for \@$keyword{$content}.
 sub do_keyword
 {
-	my ($parent, $keyword, $content) = @_;
+	my ($file, $parent, $keyword, $content) = @_;
 
 	return "see node \`$content\\(aq in the CVS manual"
 		if $keyword =~ /^(p?x)?ref$/;
@@ -57,15 +68,16 @@ sub do_keyword
 		if $keyword =~ /^splitrcskeyword$/;
 
 	my $endmode = keyword_mode $parent;
-	my $startmode = keyword_mode $keyword;
+	my $startmode = keyword_mode $keyword, $file;
 
 	return "$startmode$content$endmode";
 }
 
 
 
-my $texi_num = 0; # Keep track of how many texinfo files have been encountered.
-my @parent;       # This needs to be global to be used inside of a regex later.
+###
+### MAIN
+###
 for my $file (@ARGV)
 {
 	my $fh = new IO::File "< $file"
@@ -266,12 +278,14 @@ for my $file (@ARGV)
 			/x;
 
 		@parent = ("");
-		while (s/$nk/do_keyword pop (@parent), $1, $2/e)
+		while (s/$nk/do_keyword $file, $parent[$#parent], $1, $2/e)
 		{
-			# Do nothing except replace our last-replacement tracker -
-			# the replacement regex above is handling everything else.
+			# Do nothing except replace our last-replacement
+			# tracker - the replacement regex above is handling
+			# everything else.
 			@parent = ("");
 		}
+		s/$nk/do_keyword $file, $parent[$#parent], $1, $2/ge;
 
 		if (/\@\w+\{/)
 		{
@@ -285,6 +299,13 @@ for my $file (@ARGV)
 		# Finally, unprotect texinfo special characters.
 		s/\@://g;
 		s/\@([{}])/$1/g;
+
+		# Verify we haven't left commands unprocessed.
+		die "Unprocessed command at line $. of file \`$file': "
+		    . ($1 ? "$1\n" : "<EOL>\n")
+			if /^(?>(?:[^\@]|\@\@)*)\@(\w+|.|$)/;
+
+		# Unprotect @@.
 		s/\@\@/\@/g;
 
 		# And print whatever's left.
