@@ -16474,7 +16474,7 @@ ${QUESTION} rootig.c"
 	  # CVS only prints it on update.
 	  rm optig.c
 	  if $remote; then
-	    dotest ignore-11r "${testcvs} -q diff" "${QUESTION} notig.c"
+	    dotest ignore-11r "$testcvs -q diff" "$QUESTION notig.c"
 
 	    # Force the server to be contacted.  Ugh.  Having CVS
 	    # contact the server for the sole purpose of checking
@@ -16485,8 +16485,8 @@ ${QUESTION} rootig.c"
 	    # contents.
 	    touch bar.c
 
-	    dotest ignore-11r "${testcvs} -q ci -m commit-it" \
-"${QUESTION} notig.c"
+	    dotest ignore-11ar "$testcvs -q ci -m commit-it" \
+"$QUESTION notig.c"
 	  fi
 
 	  # now test .cvsignore files
