@@ -1,5 +1,9 @@
 2004-03-25  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in: Regenerated.
+
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add cvsnt.dep.
 
 2004-03-25  Derek Price  <derek@ximbiot.com>
