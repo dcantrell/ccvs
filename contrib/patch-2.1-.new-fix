@@ -1,0 +1,584 @@
+Index: gnu/patch/.cvsignore
+diff -c /dev/null gnu/patch/.cvsignore:1.1
+*** /dev/null	Sun Sep 29 16:13:02 1996
+--- gnu/patch/.cvsignore	Wed Sep  4 17:51:44 1996
+***************
+*** 0 ****
+--- 1,4 ----
++ Makefile
++ config.h
++ config.status
++ patch
+Index: gnu/patch/ChangeLog
+diff -c gnu/patch/ChangeLog:1.1.1.1 gnu/patch/ChangeLog:1.2
+*** gnu/patch/ChangeLog:1.1.1.1	Thu Aug 19 14:26:32 1993
+--- gnu/patch/ChangeLog	Sun Sep 29 15:55:24 1996
+***************
+*** 1,3 ****
+--- 1,27 ----
++ Sun Sep 29 15:27:40 1996  Greg A. Woods  <woods@planix.com>
++ 
++ 	* patch.man: 
++ 	- use '\-' for real dashes, esp. in NAME section.
++ 	- use `"'s around multi-word .SH arguments.
++ 	- use .IR for manual pages
++ 	(SEE ALSO): mention ed(1).
++ 	(NOTES FOR PATCH SENDERS): clean up a bit, include paragraphs
++ 	(BUGS):
++ 	- mention that -t may be making bad assumptions
++ 	- mention that -E should probably be the default
++ 
++ 	* NEWS: describe new handling of patches which create files.
++ 
++ 	* patchlevel.h: identify local version
++ 
++ Wed Sep  4 17:40:56 1996  Greg A. Woods  <woods@planix.com>
++ 
++ 	* patch.c (main): Add test to see if file exists before creating
++ 	if ok_to_create_file has been set.  If the file patch would have
++ 	created isn't identical to existing file, keep the new file with
++ 	the extension ".new" (or "!").
++ 	* util.c (cmp_files): New function for comparing files.
++ 	
+  Thu Jun 10 21:13:47 1993  Paul Eggert  (eggert@twinsun.com)
+  
+  	* patchlevel.h: PATCH_VERSION 2.1.
+Index: gnu/patch/NEWS
+diff -c gnu/patch/NEWS:1.1.1.1 gnu/patch/NEWS:1.2
+*** gnu/patch/NEWS:1.1.1.1	Thu Aug 19 14:26:33 1993
+--- gnu/patch/NEWS	Sun Sep 29 15:54:59 1996
+***************
+*** 1,3 ****
+--- 1,15 ----
++ Changes since version 2.1:
++ 
++ * Instead of blindly prepending a ``new'' file to an existing file,
++   patch will compare the files and if the ``new'' file would be
++   different, it will leave the ``new'' file with an extension of
++   ".new" (or "!" if the original name is too long).  If there was no
++   existing file of the same name, the new file will be created as
++   before.  The logic for handling reversed patches is still handled to
++   some extent, which may confuse the user.  If a patch is known to be a
++   proper forward patch the "-N" or "--forward" option should always be
++   specified.
++ 
+  Changes in version 2.1:
+  
+  * A few more portability bugs have been fixed.  The version number has
+Index: gnu/patch/patch.c
+diff -c gnu/patch/patch.c:1.1.1.1 gnu/patch/patch.c:1.2
+*** gnu/patch/patch.c:1.1.1.1	Thu Aug 19 14:26:33 1993
+--- gnu/patch/patch.c	Sun Sep 29 15:53:06 1996
+***************
+*** 1,5 ****
+  char rcsid[] =
+! 	"$Header$";
+  
+  /* patch - a program to apply diffs to original files
+   *
+--- 1,5 ----
+  char rcsid[] =
+! 	"$Header$";
+  
+  /* patch - a program to apply diffs to original files
+   *
+***************
+*** 9,16 ****
+   * money off of it, or pretend that you wrote it.
+   *
+   * $Log$
+!  * Revision 1.1.1.1  1993/08/19 18:26:33  woods
+!  * GNU Unified Patch version 2.1 distribution
+   *
+   * Revision 2.0.2.0  90/05/01  22:17:50  davison
+   * patch12u: unidiff support added
+--- 9,19 ----
+   * money off of it, or pretend that you wrote it.
+   *
+   * $Log$
+!  * Revision 1.2  1996/09/29 19:53:06  woods
+!  * * patch.c (main): Add test to see if file exists before creating
+!  * if ok_to_create_file has been set.  If the file patch would have
+!  * created isn't identical to existing file, keep the new file with
+!  * the extension ".new" (or "!").
+   *
+   * Revision 2.0.2.0  90/05/01  22:17:50  davison
+   * patch12u: unidiff support added
+***************
+*** 209,214 ****
+--- 212,219 ----
+  	there_is_another_patch();
+  	reinitialize_almost_everything()
+      ) {					/* for each patch in patch file */
++ 	struct stat statbuf;
++ 	int compare_new_with_existing = FALSE;
+  
+  	if (outname == Nullch)
+  	    outname = savestr(filearg[0]);
+***************
+*** 226,231 ****
+--- 231,243 ----
+  	/* initialize reject file */
+  	init_reject(TMPREJNAME);
+      
++ 	/* if the patch says to create, but we already have it, reject patch */
++ 	if (!skip_rest_of_patch && ok_to_create_file && stat(outname, &statbuf) == 0) {
++ 	    if (!reverse && verbose)
++ 		say2("Cannot create new file %s--it already exists!  Will compare output...\n", outname);
++ 	    compare_new_with_existing = TRUE;
++ 	}
++ 
+  	/* find out where all the lines are */
+  	if (!skip_rest_of_patch)
+  	    scan_input(filearg[0]);
+***************
+*** 346,357 ****
+  	assert(hunk);
+      
+  	/* finish spewing out the new file */
+! 	if (!skip_rest_of_patch)
+  	    spew_output();
+! 	
+  	/* and put the output where desired */
+  	ignore_signals();
+! 	if (!skip_rest_of_patch) {
+  	    struct stat statbuf;
+  	    char *realout = outname;
+  
+--- 358,480 ----
+  	assert(hunk);
+      
+  	/* finish spewing out the new file */
+! 	if (!skip_rest_of_patch && !compare_new_with_existing)
+  	    spew_output();
+! 	Fclose(ofp);
+! 	ofp = Nullfp;
+! 
+! 	if (compare_new_with_existing) {
+! 	    int cmp = cmp_files(TMPOUTNAME, outname);
+! 
+! 	    if (cmp != 0 && !reverse_flag_specified) { /* clash with user file? */
+! 		char newname[128];
+! 
+! 		Strcpy(newname, outname);
+! 		addext(newname, ".new", '!');
+! 		if (move_file(TMPOUTNAME, newname) < 0) {
+! 		    toutkeep = TRUE;
+! 		    chmod(TMPOUTNAME, filemode);
+! 		} else {
+! 		    chmod(newname, filemode);
+! 		    if (verbose)
+! 			say3("Existing file %s different from patch--created %s.\n", outname, newname);
+! 		}
+! 	    } else if (cmp != 0 && reverse_flag_specified) { /* normal reverse && -R/--reverse given */
+! 		struct stat sb;
+! 		if (stat(TMPOUTNAME, &sb))
+! 		    pfatal2("Something very weird just happened to %s!\n", TMPOUTNAME);
+! 		if (sb.st_size) {		/* XXX how can this happen? */
+! 		    char newname[128];
+! 
+! 		    Strcpy(newname, outname);
+! 		    addext(newname, ".new", '!');
+! 		    if (move_file(TMPOUTNAME, newname) < 0) {
+! 			toutkeep = TRUE;
+! 			chmod(TMPOUTNAME, filemode);
+! 		    } else {
+! 			chmod(newname, filemode);
+! 			if (verbose)
+! 			    say3("Result of reversing patch for %s left non-zero file %s.\n", outname, newname);
+! 		    }
+! 		} else {			/* yes, really just a normal reverse */
+! 		    char *realout = outname;
+! 
+! 		    if (move_file(TMPOUTNAME, outname) < 0) {
+! 			toutkeep = TRUE;
+! 			realout = TMPOUTNAME;
+! 			chmod(TMPOUTNAME, filemode);
+! 		    } else
+! 			chmod(outname, filemode);
+! 		    if (remove_empty_files) {
+! 			if (verbose)
+! 			    say2("Removing %s (empty after patching).\n", realout);
+! 			while (unlink(realout) >= 0) ; /* while is for Eunice.  */
+! 		    }
+! 		}
+! 	    } else if (!force) {		/* they're identical, and -f/--force not given, so.... */
+! 		if (noreverse) {		/* i.e. -N/--forward given */
+! 		    if (verbose) {
+! 			say1("Ignoring previously applied (or possibly reversed) patch.\n");
+! 			say2("Patch would have created file identical to %s.\n", outname);
+! 		    }
+! 		} else if (batch) {		/* i.e. -t/--batch given */
+! 		    char newname[128];
+! 
+! 		    if (verbose) {
+! 			say2("%seversed (or previously applied) patch detected!",
+! 			     reverse ? "Unr" : "R");
+! 		    }
+! 		    Strcpy(newname, outname);
+! 		    addext(newname, ".new", '!');
+! 		    if (move_file(TMPOUTNAME, newname) < 0) {
+! 			toutkeep = TRUE;
+! 			chmod(TMPOUTNAME, filemode);
+! 		    } else {
+! 			chmod(newname, filemode);
+! 			if (verbose)
+! 			   say3("Existing file %s left alone--created %s.\n", outname, newname);
+! 		    }
+! 		} else {
+! 		    ask3("%seversed (or previously applied) patch detected!  Should I %s -R? [n] ",
+! 			 reverse ? "R" : "Unr",
+! 			 reverse ? "ignore" : "set");
+! 		    /* XXX this logic doesn't seem quite right.... */
+! 		    if (*buf == 'y' || *buf == 'Y') {
+! 			char *realout = outname;
+! 
+! 			/* have to do this to get the .orig file! */
+! 			if (move_file(TMPOUTNAME, outname) < 0) {
+! 			    toutkeep = TRUE;
+! 			    realout = TMPOUTNAME;
+! 			    chmod(TMPOUTNAME, filemode);
+! 			} else
+! 			    chmod(outname, filemode);
+! 			if (remove_empty_files) {
+! 			    if (verbose)
+! 				say2("Removing %s (empty after patching).\n", realout);
+! 			    while (unlink(realout) >= 0) ; /* while is for Eunice.  */
+! 			} else {
+! 			    /* clobber file -- a reversed patch would have removed it... */
+! 			    if (creat(realout, filemode) < 0) {
+! 				toutkeep = TRUE;
+! 				creat(TMPOUTNAME, filemode);
+! 			    }
+! 			}
+! 		    }
+! 		}
+! 	    } else {				/* reversed?, but "force" is on */
+! 		if (verbose) {
+! 		    say1("Ignoring previously applied (or possibly reversed) patch.\n");
+! 		    say3("Patch would have %s %s.\n",
+! 			 remove_empty_files ? "removed" : "emptied",
+! 			 outname);
+! 		}
+! 	    }
+! 	}
+! 
+  	/* and put the output where desired */
+  	ignore_signals();
+! 	if (!skip_rest_of_patch && !compare_new_with_existing) {
+  	    struct stat statbuf;
+  	    char *realout = outname;
+  
+***************
+*** 359,366 ****
+  		toutkeep = TRUE;
+  		realout = TMPOUTNAME;
+  		chmod(TMPOUTNAME, filemode);
+! 	    }
+! 	    else
+  		chmod(outname, filemode);
+  
+  	    if (remove_empty_files && stat(realout, &statbuf) == 0
+--- 482,488 ----
+  		toutkeep = TRUE;
+  		realout = TMPOUTNAME;
+  		chmod(TMPOUTNAME, filemode);
+! 	    } else
+  		chmod(outname, filemode);
+  
+  	    if (remove_empty_files && stat(realout, &statbuf) == 0
+***************
+*** 367,373 ****
+  		&& statbuf.st_size == 0) {
+  		if (verbose)
+  		    say2("Removing %s (empty after patching).\n", realout);
+! 	        while (unlink(realout) >= 0) ; /* while is for Eunice.  */
+  	    }
+  	}
+  	Fclose(rejfp);
+--- 489,495 ----
+  		&& statbuf.st_size == 0) {
+  		if (verbose)
+  		    say2("Removing %s (empty after patching).\n", realout);
+! 		while (unlink(realout) >= 0) ; /* while is for Eunice.  */
+  	    }
+  	}
+  	Fclose(rejfp);
+***************
+*** 858,865 ****
+  #endif
+      if (input_lines)
+  	copy_till(input_lines);		/* dump remainder of file */
+-     Fclose(ofp);
+-     ofp = Nullfp;
+  }
+  
+  /* Copy one line from input to output. */
+--- 980,985 ----
+Index: gnu/patch/patch.man
+diff -c gnu/patch/patch.man:1.1.1.1 gnu/patch/patch.man:1.2
+*** gnu/patch/patch.man:1.1.1.1	Thu Aug 19 14:26:33 1993
+--- gnu/patch/patch.man	Sun Sep 29 15:54:20 1996
+***************
+*** 1,10 ****
+  .\" -*- nroff -*-
+  .rn '' }`
+! '\" $Header$
+  '\" 
+  '\" $Log$
+! '\" Revision 1.1.1.1  1993/08/19 18:26:33  woods
+! '\" GNU Unified Patch version 2.1 distribution
+  '\"
+  '\" Revision 2.0.1.2  88/06/22  20:47:18  lwall
+  '\" patch12: now avoids Bell System Logo
+--- 1,18 ----
+  .\" -*- nroff -*-
+  .rn '' }`
+! '\" $Header$
+  '\" 
+  '\" $Log$
+! '\" Revision 1.2  1996/09/29 19:54:20  woods
+! '\" * patch.man:
+! '\" - use '\-' for real dashes, esp. in NAME section.
+! '\" - use `"'s around multi-word .SH arguments.
+! '\" - use .IR for manual pages
+! '\" (SEE ALSO): mention ed(1).
+! '\" (NOTES FOR PATCH SENDERS): clean up a bit, include paragraphs
+! '\" (BUGS):
+! '\" - mention that -t may be making bad assumptions
+! '\" - mention that -E should probably be the default
+  '\"
+  '\" Revision 2.0.1.2  88/06/22  20:47:18  lwall
+  '\" patch12: now avoids Bell System Logo
+***************
+*** 73,79 ****
+  'br\}
+  .TH PATCH 1 LOCAL
+  .SH NAME
+! patch - apply a diff file to an original
+  .SH SYNOPSIS
+  .B patch
+  [options] [origfile [patchfile]] [+ [options] [origfile]]...
+--- 81,87 ----
+  'br\}
+  .TH PATCH 1 LOCAL
+  .SH NAME
+! patch \- apply a diff file to an original
+  .SH SYNOPSIS
+  .B patch
+  [options] [origfile [patchfile]] [+ [options] [origfile]]...
+***************
+*** 409,415 ****
+  .B \-R
+  option set.
+  If it can't, the patch will continue to be applied normally.
+! (Note: this method cannot detect a reversed patch if it is a normal diff
+  and if the first command is an append (i.e. it should have been a delete)
+  since appends always succeed, due to the fact that a null context will match
+  anywhere.
+--- 417,423 ----
+  .B \-R
+  option set.
+  If it can't, the patch will continue to be applied normally.
+! (Note:  this method cannot detect a reversed patch if it is a normal diff
+  and if the first command is an append (i.e. it should have been a delete)
+  since appends always succeed, due to the fact that a null context will match
+  anywhere.
+***************
+*** 497,512 ****
+  Selects when numbered backup files are made.
+  .SH FILES
+  $TMPDIR/patch*
+! .SH SEE ALSO
+! diff(1)
+! .SH NOTES FOR PATCH SENDERS
+  There are several things you should bear in mind if you are going to
+! be sending out patches.
+  First, you can save people a lot of grief by keeping a patchlevel.h file
+  which is patched to increment the patch level as the first diff in the
+  patch file you send out.
+  If you put a Prereq: line in with the patch, it won't let them apply
+  patches out of order without some warning.
+  Second, make sure you've specified the file names right, either in a
+  context diff header, or with an Index: line.
+  If you are patching something in a subdirectory, be sure to tell the patch
+--- 505,523 ----
+  Selects when numbered backup files are made.
+  .SH FILES
+  $TMPDIR/patch*
+! .SH "SEE ALSO"
+! .IR diff (1),
+! .IR ed (1)
+! .SH "NOTES FOR PATCH SENDERS"
+  There are several things you should bear in mind if you are going to
+! be sending out patches:
+! .PP
+  First, you can save people a lot of grief by keeping a patchlevel.h file
+  which is patched to increment the patch level as the first diff in the
+  patch file you send out.
+  If you put a Prereq: line in with the patch, it won't let them apply
+  patches out of order without some warning.
++ .PP
+  Second, make sure you've specified the file names right, either in a
+  context diff header, or with an Index: line.
+  If you are patching something in a subdirectory, be sure to tell the patch
+***************
+*** 513,527 ****
+  user to specify a 
+  .B \-p
+  option as needed.
+! Third, you can create a file by sending out a diff that compares a
+! null file to the file you want to create.
+! This will only work if the file you want to create doesn't exist already in
+! the target directory.
+! Fourth, take care not to send out reversed patches, since it makes people wonder
+  whether they already applied the patch.
+! Fifth, while you may be able to get away with putting 582 diff listings into
+  one file, it is probably wiser to group related patches into separate files in
+  case something goes haywire.
+  .SH DIAGNOSTICS
+  Too many to list here, but generally indicative that
+  .I patch
+--- 524,561 ----
+  user to specify a 
+  .B \-p
+  option as needed.
+! .PP
+! Third, you can create a file by sending out a diff that compares an
+! empty file (such as the
+! .B /dev/null
+! device) to the file you want to create.
+! If the target directory already contains a file of the same name,
+! .I patch
+! will create the new file with the extension \*(L".new\*(R" (or
+! \*(L"!\*(R" on systems that do not support long file names) unless the
+! existing file is identical to the new file, in which case the patch will
+! essentially be ignored.
+! .PP
+! Fourth, you can remove a file by sending out a diff that compares the
+! file to be deleted with an empty file (such as the
+! .B /dev/null
+! device).  The file will be left empty, but not actually be removed
+! unless the user supplies the 
+! .BR "\-E" " (or " "\-\-remove\-empty\-files" ")"
+! option.
+! .PP
+! Fifth, take care not to send out reversed patches, since it makes people wonder
+  whether they already applied the patch.
+! .PP
+! Sixth, while you may be able to get away with putting 582 diff listings into
+  one file, it is probably wiser to group related patches into separate files in
+  case something goes haywire.
++ .PP
++ Finally, tell your users exactly how to apply the patch(es).  Always
++ tell them to \*(L"cd\*(R" into the top-level directory of the source to
++ be patched, and supply them the correct value of N for \*(L"-pN\*(R".
++ If your patch is sure to be a normal forward patch, tell them to always
++ use \*(L"-N\*(R".  Tell them to always use \*(L"-E\*(R".
+  .SH DIAGNOSTICS
+  Too many to list here, but generally indicative that
+  .I patch
+***************
+*** 570,573 ****
+--- 604,615 ----
+  .I patch
+  will think it is a reversed patch, and offer to un-apply the patch.
+  This could be construed as a feature.
++ .PP
++ Maybe
++ .BR "\-t" " (or " "\-\-batch" ")"
++ shouldn't assume patches are reversed if they at first appear to be.
++ .PP
++ The
++ .BR "\-E" " (or " "\-\-remove\-empty\-files" ")"
++ option should probably be the default.
+  .rn }` ''
+Index: gnu/patch/patchlevel.h
+diff -c gnu/patch/patchlevel.h:1.1.1.1 gnu/patch/patchlevel.h:1.2
+*** gnu/patch/patchlevel.h:1.1.1.1	Thu Aug 19 14:26:35 1993
+--- gnu/patch/patchlevel.h	Sun Sep 29 15:54:39 1996
+***************
+*** 1 ****
+! #define PATCH_VERSION "2.1"
+--- 1 ----
+! #define PATCH_VERSION "2.1-v0"
+Index: gnu/patch/util.c
+diff -c gnu/patch/util.c:1.1.1.1 gnu/patch/util.c:1.2
+*** gnu/patch/util.c:1.1.1.1	Thu Aug 19 14:26:34 1993
+--- gnu/patch/util.c	Sun Sep 29 15:53:40 1996
+***************
+*** 147,152 ****
+--- 147,219 ----
+      Close(tofd);
+  }
+  
++ /* compare two files. */
++ 
++ int
++ cmp_files(from,to)
++ char *from, *to;
++ {
++     Reg5 int tofd;
++     Reg4 int fromfd;
++     Reg3 int i;
++     Reg2 int j;
++     Reg1 int result = 0;
++     struct stat sto;
++     struct stat sfrom;
++     char buf2[sizeof buf];
++     
++     if ((tofd = open(to, O_RDONLY, 0)) < 0)
++ 	pfatal2("can't open %s", to);
++     if ((fromfd = open(from, O_RDONLY, 0)) < 0)
++ 	pfatal2("can't open %s", from);
++     if (fstat(tofd, &sto)) {
++ 	Close(tofd);
++ 	pfatal2("can't stat %s", to);
++     }
++     if (fstat(fromfd, &sfrom)) {
++ 	Close(tofd);
++ 	Close(fromfd);
++ 	pfatal2("can't stat %s", to);
++     }
++     if (sto.st_size != sfrom.st_size) {
++ 	Close(fromfd);
++ 	Close(tofd);
++ #ifdef DEBUGGING
++ 	if (debug & 4)
++ 	    say3("file %s is not the same length as file %s.\n", from, to);
++ #endif
++ 	return sto.st_size - sfrom.st_size;
++     }
++     while ((i = read(fromfd, buf, sizeof buf)) > 0) {
++ 	if ((j = read(tofd, buf2, i)) <= 0) {
++ 	    result = 1;
++ #ifdef DEBUGGING
++ 	    say3("Comparison file %s ended prematurely (before %s).\n", to, from);
++ #endif
++ 	    break;
++ 	}
++ 	if (j != i) {
++ 	    result = i - j;
++ #ifdef DEBUGGING
++ 	    say3("Not enough bytes in %s (more in %s).\n", to, from);
++ 	    exit(1);
++ #endif
++ 	    break;
++ 	}
++ 	if ((result = memcmp(buf, buf2, i)) != 0) {
++ #ifdef DEBUGGING
++ 	    if (debug & 4)
++ 		say3("contents of %s and %s differ.\n", from, to);
++ #endif
++ 	    break;
++ 	}
++     }
++     Close(fromfd);
++     Close(tofd);
++ 
++     return result;
++ }
++ 
+  /* Allocate a unique area for a string. */
+  
+  char *
