@@ -1,5 +1,9 @@
 Wed Jun 18 00:03:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Adding and removing): New node.  Move Adding files,
+	Removing files, Removing directories, Moving files, and Moving
+	directories under it.
+
 	* cvs.texinfo (Removing directories): Add sentence about how
 	one doesn't remove the directory itself.
 

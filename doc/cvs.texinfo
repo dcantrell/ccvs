@@ -139,11 +139,7 @@ This info manual describes how to use and administer
 @end ifinfo
 
 @c This menu is pretty long.  Not sure how easily that
-@c can be fixed; seems like "Adding files", "Removing
-@c files", "Removing directories", "Moving files",
-@c and "Moving directories" all go together (into
-@c "Adding, removing, and renaming"?).  Other than that
-@c no brilliant ideas for a fix...
+@c can be fixed (no brilliant ideas right away)...
 @menu
 * Preface::                     About this manual
 * What is CVS?::                What is CVS?
@@ -154,12 +150,8 @@ This info manual describes how to use and administer
 * Revisions and branches::      Numeric, symbolic, and branch revisions
 * Merging::                     How to move changes between branches
 * Recursive behavior::          CVS descends directories
-* Adding files::                Adding files
-* Removing files::              Removing files
-* Removing directories::        Removing directories
+* Adding and removing::         Adding/removing/renaming files/directories
 * Tracking sources::            Tracking third-party sources
-* Moving files::                Moving and renaming files
-* Moving directories::          Moving and renaming directories
 * History browsing::            Viewing the history of files in various ways
 * Keyword substitution::        CVS can include the revision inside the file
 * Binary files::                CVS can handle binary files
@@ -4656,8 +4648,28 @@ $ cvs update -l         # @r{Don't update files in subdirectories}
 @end example
 
 @c ---------------------------------------------------------------------
+@node Adding and removing
+@chapter Adding, removing, and renaming files and directories
+
+In the course of a project, one will often add new
+files.  Likewise with removing or renaming, or with
+directories.  The general concept to keep in mind in
+all these cases is that instead of making an
+irreversible change you want @sc{cvs} to record the
+fact that a change has taken place, just as with
+modifying an existing file.  The exact mechanisms to do
+this in @sc{cvs} vary depending on the situation.
+
+@menu
+* Adding files::                Adding files
+* Removing files::              Removing files
+* Removing directories::        Removing directories
+* Moving files::                Moving and renaming files
+* Moving directories::          Moving and renaming directories
+@end menu
+
 @node Adding files
-@chapter Adding files to a directory
+@section Adding files to a directory
 @cindex Adding files
 
 To add a new file to a directory, follow these steps.
@@ -4768,14 +4780,13 @@ later merge the additions to another branch if you want
 
 @c ---------------------------------------------------------------------
 @node Removing files
-@chapter Removing files
+@section Removing files
 @cindex Removing files
 @cindex Deleting files
 
 @c FIXME: this node wants to be split into several
-@c smaller nodes.  Probably would fit well with merging
-@c this chapter with "adding files" and the others, as
-@c suggested at the top-level menu (death support could
+@c smaller nodes.  Could make these children of
+@c "Adding and removing", probably (death support could
 @c be its own section, for example, as could the
 @c various bits about undoing mistakes in adding and
 @c removing).
@@ -4920,7 +4931,7 @@ later merge the removals to another branch if you want
 (@pxref{Merging adds and removals}).
 
 @node Removing directories
-@chapter Removing directories
+@section Removing directories
 @cindex removing directories
 @cindex directories, removing
 
@@ -4953,6 +4964,232 @@ options of @code{checkout} and @code{export}.  This way
 @sc{cvs} will be able to correctly create the directory
 or not depending on whether the particular version you
 are checking out contains any files in that directory.
+
+@c ---------------------------------------------------------------------
+@node Moving files
+@section Moving and renaming files
+@cindex Moving files
+@cindex Renaming files
+@cindex Files, moving
+
+Moving files to a different directory or renaming them
+is not difficult, but some of the ways in which this
+works may be non-obvious.  (Moving or renaming a
+directory is even harder.  @xref{Moving directories}.).
+
+The examples below assume that the file @var{old} is renamed to
+@var{new}.
+
+@menu
+* Outside::                     The normal way to Rename
+* Inside::                      A tricky, alternative way
+* Rename by copying::           Another tricky, alternative way
+@end menu
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Outside
+@subsection The Normal way to Rename
+
+@c More rename issues.  Not sure whether these are
+@c worth documenting; I'm putting them here because
+@c it seems to be as good a place as any to try to
+@c set down the issues.
+@c * "cvs annotate" will annotate either the new
+@c file or the old file; it cannot annotate _each
+@c line_ based on whether it was last changed in the
+@c new or old file.  Unlike "cvs log", where the
+@c consequences of having to select either the new
+@c or old name seem fairly benign, this may be a
+@c real advantage to having CVS know about renames
+@c other than as a deletion and an addition.
+
+The normal way to move a file is to copy @var{old} to
+@var{new}, and then issue the normal @sc{cvs} commands
+to remove @var{old} from the repository, and add
+@var{new} to it.
+@c The following sentence is not true: one must cd into
+@c the directory to run "cvs add".
+@c  (Both @var{old} and @var{new} could
+@c contain relative paths, for example @file{foo/bar.c}).
+
+@example
+$ mv @var{old} @var{new}
+$ cvs remove @var{old}
+$ cvs add @var{new} 
+$ cvs commit -m "Renamed @var{old} to @var{new}" @var{old} @var{new}
+@end example
+
+This is the simplest way to move a file, it is not
+error-prone, and it preserves the history of what was
+done.  Note that to access the history of the file you
+must specify the old or the new name, depending on what
+portion of the history you are accessing.  For example,
+@code{cvs log @var{old}} will give the log up until the
+time of the rename.
+
+When @var{new} is committed its revision numbers will
+start again, usually at 1.1, so if that bothers you,
+use the @samp{-r rev} option to commit.  For more
+information see @ref{Assigning revisions}.
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Inside
+@subsection Moving the history file
+
+This method is more dangerous, since it involves moving
+files inside the repository.  Read this entire section
+before trying it out!
+
+@example
+$ cd $CVSROOT/@var{module}
+$ mv @var{old},v @var{new},v
+@end example
+
+@noindent
+Advantages:
+
+@itemize @bullet
+@item
+The log of changes is maintained intact.
+
+@item
+The revision numbers are not affected.
+@end itemize
+
+@noindent
+Disadvantages:
+
+@itemize @bullet
+@item
+Old releases of the module cannot easily be fetched from the
+repository.  (The file will show up as @var{new} even
+in revisions from the time before it was renamed).
+
+@item
+There is no log information of when the file was renamed.
+
+@item
+Nasty things might happen if someone accesses the history file
+while you are moving it.  Make sure no one else runs any of the @sc{cvs}
+commands while you move it.
+@end itemize
+
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+@node Rename by copying
+@subsection Copying the history file
+
+This way also involves direct modifications to the
+repository.  It is safe, but not without drawbacks.
+
+@example
+# @r{Copy the @sc{rcs} file inside the repository}
+$ cd $CVSROOT/@var{module}
+$ cp @var{old},v @var{new},v
+# @r{Remove the old file}
+$ cd ~/@var{module}
+$ rm @var{old}
+$ cvs remove @var{old}
+$ cvs commit @var{old}
+# @r{Remove all tags from @var{new}}
+$ cvs update @var{new}
+$ cvs log @var{new}             # @r{Remember the non-branch tag names}
+$ cvs tag -d @var{tag1} @var{new}
+$ cvs tag -d @var{tag2} @var{new}
+@dots{}
+@end example
+
+By removing the tags you will be able to check out old
+revisions of the module.
+
+@noindent
+Advantages:
+
+@itemize @bullet
+@item
+@c FIXME: Is this true about -D now that we have death
+@c support?  See 5B.3 in the FAQ.
+Checking out old revisions works correctly, as long as
+you use @samp{-r@var{tag}} and not @samp{-D@var{date}}
+to retrieve the revisions.
+
+@item
+The log of changes is maintained intact.
+
+@item
+The revision numbers are not affected.
+@end itemize
+
+@noindent
+Disadvantages:
+
+@itemize @bullet
+@item
+You cannot easily see the history of the file across the rename.
+
+@ignore
+@c Is this true?  I don't see how the revision numbers
+@c _could_ start over, when new,v is just old,v with
+@c the tags deleted.
+@c If there is some need to reinstate this text,
+@c it is "usually 1.1", not "1.0" and it needs an
+@c xref to Assigning revisions
+@item
+Unless you use the @samp{-r rev} (@pxref{commit
+options}) flag when @var{new} is committed its revision
+numbers will start at 1.0 again.
+@end ignore
+@end itemize
+
+@c ---------------------------------------------------------------------
+@node Moving directories
+@section Moving and renaming directories
+@cindex Moving directories
+@cindex Renaming directories
+@cindex Directories, moving
+
+The normal way to rename or move a directory is to
+rename or move each file within it as described in
+@ref{Outside}.  Then check out with the @samp{-P}
+option, as described in @ref{Removing directories}.
+
+If you really want to hack the repository to rename or
+delete a directory in the repository, you can do it
+like this:
+
+@enumerate
+@item
+Inform everyone who has a copy of the module that the
+directory will be renamed.  They should commit all
+their changes, and remove their working copies of the
+module, before you take the steps below.
+
+@item
+Rename the directory inside the repository.
+
+@example
+$ cd $CVSROOT/@var{module}
+$ mv @var{old-dir} @var{new-dir}
+@end example
+
+@item
+Fix the @sc{cvs} administrative files, if necessary (for
+instance if you renamed an entire module).
+
+@item
+Tell everyone that they can check out the module and continue
+working.
+
+@end enumerate
+
+If someone had a working copy of the module the @sc{cvs} commands will
+cease to work for him, until he removes the directory
+that disappeared inside the repository.
+
+It is almost always better to move the files in the
+directory instead of moving the directory.  If you move the
+directory you are unlikely to be able to retrieve old
+releases correctly, since they probably depend on the
+name of the directories.
 
 @c ---------------------------------------------------------------------
 @node Tracking sources
@@ -5202,232 +5439,6 @@ an error in some future release.
 @c What about joining (perhaps not as useful with
 @c multiple branches, or perhaps it is.  Either way
 @c should be mentioned).
-
-@c ---------------------------------------------------------------------
-@node Moving files
-@chapter Moving and renaming files
-@cindex Moving files
-@cindex Renaming files
-@cindex Files, moving
-
-Moving files to a different directory or renaming them
-is not difficult, but some of the ways in which this
-works may be non-obvious.  (Moving or renaming a
-directory is even harder.  @xref{Moving directories}.).
-
-The examples below assume that the file @var{old} is renamed to
-@var{new}.
-
-@menu
-* Outside::                     The normal way to Rename
-* Inside::                      A tricky, alternative way
-* Rename by copying::           Another tricky, alternative way
-@end menu
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Outside
-@section The Normal way to Rename
-
-@c More rename issues.  Not sure whether these are
-@c worth documenting; I'm putting them here because
-@c it seems to be as good a place as any to try to
-@c set down the issues.
-@c * "cvs annotate" will annotate either the new
-@c file or the old file; it cannot annotate _each
-@c line_ based on whether it was last changed in the
-@c new or old file.  Unlike "cvs log", where the
-@c consequences of having to select either the new
-@c or old name seem fairly benign, this may be a
-@c real advantage to having CVS know about renames
-@c other than as a deletion and an addition.
-
-The normal way to move a file is to copy @var{old} to
-@var{new}, and then issue the normal @sc{cvs} commands
-to remove @var{old} from the repository, and add
-@var{new} to it.
-@c The following sentence is not true: one must cd into
-@c the directory to run "cvs add".
-@c  (Both @var{old} and @var{new} could
-@c contain relative paths, for example @file{foo/bar.c}).
-
-@example
-$ mv @var{old} @var{new}
-$ cvs remove @var{old}
-$ cvs add @var{new} 
-$ cvs commit -m "Renamed @var{old} to @var{new}" @var{old} @var{new}
-@end example
-
-This is the simplest way to move a file, it is not
-error-prone, and it preserves the history of what was
-done.  Note that to access the history of the file you
-must specify the old or the new name, depending on what
-portion of the history you are accessing.  For example,
-@code{cvs log @var{old}} will give the log up until the
-time of the rename.
-
-When @var{new} is committed its revision numbers will
-start again, usually at 1.1, so if that bothers you,
-use the @samp{-r rev} option to commit.  For more
-information see @ref{Assigning revisions}.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Inside
-@section Moving the history file
-
-This method is more dangerous, since it involves moving
-files inside the repository.  Read this entire section
-before trying it out!
-
-@example
-$ cd $CVSROOT/@var{module}
-$ mv @var{old},v @var{new},v
-@end example
-
-@noindent
-Advantages:
-
-@itemize @bullet
-@item
-The log of changes is maintained intact.
-
-@item
-The revision numbers are not affected.
-@end itemize
-
-@noindent
-Disadvantages:
-
-@itemize @bullet
-@item
-Old releases of the module cannot easily be fetched from the
-repository.  (The file will show up as @var{new} even
-in revisions from the time before it was renamed).
-
-@item
-There is no log information of when the file was renamed.
-
-@item
-Nasty things might happen if someone accesses the history file
-while you are moving it.  Make sure no one else runs any of the @sc{cvs}
-commands while you move it.
-@end itemize
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Rename by copying
-@section Copying the history file
-
-This way also involves direct modifications to the
-repository.  It is safe, but not without drawbacks.
-
-@example
-# @r{Copy the @sc{rcs} file inside the repository}
-$ cd $CVSROOT/@var{module}
-$ cp @var{old},v @var{new},v
-# @r{Remove the old file}
-$ cd ~/@var{module}
-$ rm @var{old}
-$ cvs remove @var{old}
-$ cvs commit @var{old}
-# @r{Remove all tags from @var{new}}
-$ cvs update @var{new}
-$ cvs log @var{new}             # @r{Remember the non-branch tag names}
-$ cvs tag -d @var{tag1} @var{new}
-$ cvs tag -d @var{tag2} @var{new}
-@dots{}
-@end example
-
-By removing the tags you will be able to check out old
-revisions of the module.
-
-@noindent
-Advantages:
-
-@itemize @bullet
-@item
-@c FIXME: Is this true about -D now that we have death
-@c support?  See 5B.3 in the FAQ.
-Checking out old revisions works correctly, as long as
-you use @samp{-r@var{tag}} and not @samp{-D@var{date}}
-to retrieve the revisions.
-
-@item
-The log of changes is maintained intact.
-
-@item
-The revision numbers are not affected.
-@end itemize
-
-@noindent
-Disadvantages:
-
-@itemize @bullet
-@item
-You cannot easily see the history of the file across the rename.
-
-@ignore
-@c Is this true?  I don't see how the revision numbers
-@c _could_ start over, when new,v is just old,v with
-@c the tags deleted.
-@c If there is some need to reinstate this text,
-@c it is "usually 1.1", not "1.0" and it needs an
-@c xref to Assigning revisions
-@item
-Unless you use the @samp{-r rev} (@pxref{commit
-options}) flag when @var{new} is committed its revision
-numbers will start at 1.0 again.
-@end ignore
-@end itemize
-
-@c ---------------------------------------------------------------------
-@node Moving directories
-@chapter Moving and renaming directories
-@cindex Moving directories
-@cindex Renaming directories
-@cindex Directories, moving
-
-The normal way to rename or move a directory is to
-rename or move each file within it as described in
-@ref{Outside}.  Then check out with the @samp{-P}
-option, as described in @ref{Removing directories}.
-
-If you really want to hack the repository to rename or
-delete a directory in the repository, you can do it
-like this:
-
-@enumerate
-@item
-Inform everyone who has a copy of the module that the
-directory will be renamed.  They should commit all
-their changes, and remove their working copies of the
-module, before you take the steps below.
-
-@item
-Rename the directory inside the repository.
-
-@example
-$ cd $CVSROOT/@var{module}
-$ mv @var{old-dir} @var{new-dir}
-@end example
-
-@item
-Fix the @sc{cvs} administrative files, if necessary (for
-instance if you renamed an entire module).
-
-@item
-Tell everyone that they can check out the module and continue
-working.
-
-@end enumerate
-
-If someone had a working copy of the module the @sc{cvs} commands will
-cease to work for him, until he removes the directory
-that disappeared inside the repository.
-
-It is almost always better to move the files in the
-directory instead of moving the directory.  If you move the
-directory you are unlikely to be able to retrieve old
-releases correctly, since they probably depend on the
-name of the directories.
 
 @c ---------------------------------------------------------------------
 @node History browsing
