@@ -5286,7 +5286,9 @@ date: [0-9/]* [0-9:]*;  author: '"${username}"';  state: Exp;
 	  # Various tests relating to creating repositories, operating
 	  # on repositories created with old versions of CVS, etc.
 
-	  # At the moment local only but that should be changed.
+	  # Because this test is all about -d options and such, it
+	  # at least to some extent needs to be different for remote vs.
+	  # local.
 	  if test "x$remote" = "xno"; then
 
 	    # First, if the repository doesn't exist at all...
@@ -5323,17 +5325,53 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    fi
 	    rm -rf CVS
 	    cd ..
-
 	    # The directory tmp should be empty
 	    dotest crerepos-6 "rmdir tmp" ''
 
-	    # CVS better not create a history file--if the administrator 
-	    # doesn't need it and wants to save on disk space, they just
-	    # delete it.
-	    dotest_fail crerepos-7 \
+	  else
+	    # For remote, just create the repository.  We don't yet do
+	    # the various other tests above for remote but that should be
+	    # changed.
+	    mkdir crerepos
+	    mkdir crerepos/CVSROOT
+	  fi
+
+	  if test "x$remote" = "xno"; then
+	    # Test that CVS rejects a relative path in CVSROOT.
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get ." \
+"${PROG} \[[a-z]* aborted\]: CVSROOT ../crerepos must be an absolute pathname"
+	    cd ..
+	    rm -rf 1
+
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
+"${PROG} \[[a-z]* aborted\]: CVSROOT crerepos must be an absolute pathname"
+	    cd ..
+	    rm -rf 1
+	  else # remote
+	    # Test that CVS rejects a relative path in CVSROOT.
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-6a \
+"${testcvs} -q -d :ext:`hostname`:../crerepos get ." \
+"Root ../crerepos must be an absolute pathname"
+	    cd ..
+	    rm -rf 1
+
+	    mkdir 1; cd 1
+	    dotest_fail crerepos-6b \
+"${testcvs} -d :ext:`hostname`:crerepos init" \
+"Root crerepos must be an absolute pathname"
+	    cd ..
+	    rm -rf 1
+	  fi # end of tests to be skipped for remote
+
+	  # CVS better not create a history file--if the administrator 
+	  # doesn't need it and wants to save on disk space, they just
+	  # delete it.
+	  dotest_fail crerepos-7 \
 "test -f ${TESTDIR}/crerepos/CVSROOT/history" ''
 
-	  fi # end of tests to be skipped for remote
 	  ;;
 
 	rcs)
