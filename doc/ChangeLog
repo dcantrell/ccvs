@@ -1,3 +1,8 @@
+Thu Aug  7 22:53:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (From other version control systems): Mention
+	pvcs_to_rcs alongside sccs2rcs.
+
 Tue Aug  5 17:22:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Compatibility): Add comment about how CVS probably
