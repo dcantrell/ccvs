@@ -391,21 +391,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 	    {
 		char *nullrepos;
 
-		nullrepos = xmalloc (strlen (CVSroot_directory)
-				     + sizeof (CVSROOTADM)
-				     + sizeof (CVSNULLREPOS)
-				     + 10);
-		(void) sprintf (nullrepos, "%s/%s/%s", CVSroot_directory,
-				CVSROOTADM, CVSNULLREPOS);
-		if (!isfile (nullrepos))
-		{
-		    mode_t omask;
-		    omask = umask (cvsumask);
-		    (void) CVS_MKDIR (nullrepos, 0777);
-		    (void) umask (omask);
-		}
-		if (!isdir (nullrepos))
-		    error (1, 0, "there is no repository %s", nullrepos);
+		nullrepos = emptydir_name ();
 
 		Create_Admin (".", dir,
 			      nullrepos, (char *) NULL, (char *) NULL, 0, 0);
