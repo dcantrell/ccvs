@@ -1,5 +1,9 @@
 4 Aug 1997  Jim Kingdon
 
+	Changes for Visual C++ 5.0:
+	* SCC.dsp: New file.
+	* .cvsignore: add SCC.dsw SCC.opt SCC.plg Release.
+
 	* scc.c (SccGet): Replace #if 0'd code with a comment and
 	adjust to avoid compiler warning.
 
