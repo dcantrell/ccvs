@@ -2329,13 +2329,13 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
     /* A bit of debugging code to make sure that NAMETAG corresponds
        to REV.  */
     if (nametag != NULL && strcmp (nametag, rev) != 0)
-      {
+    {
 	char *numtag;
 
 	numtag = translate_symtag (rcs, nametag);
 	assert (rev != NULL && numtag != NULL && strcmp (numtag, rev) == 0);
 	free (numtag);
-      }
+    }
 #endif
 
     ret = RCS_exec_checkout (rcs->path, workfile,
