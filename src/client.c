@@ -2529,9 +2529,12 @@ template (data, ent_list, short_pathname, filename)
     char *short_pathname;
     char *filename;
 {
-    /* FIXME: should be computing second argument from CVSADM_TEMPLATE
-       and short_pathname.  */
-    read_counted_file (CVSADM_TEMPLATE, "<CVS/Template file>");
+    char *buf = xmalloc ( strlen ( short_pathname )
+	    		  + strlen ( CVSADM_TEMPLATE )
+			  + 2 );
+    sprintf ( buf, "%s/%s", short_pathname, CVSADM_TEMPLATE );
+    read_counted_file ( CVSADM_TEMPLATE, buf );
+    free ( buf );
 }
 
 static void handle_template PROTO ((char *, int));
