@@ -64,7 +64,11 @@ extern char *getenv();
 char *strerror ();
 #endif
 
-#include <fnmatch.h> /* This is supposed to be available on Posix systems */
+#ifdef HAVE_FNMATCH
+# include <fnmatch.h> /* This is supposed to be available on Posix systems */
+#else /* HAVE_FNMATCH */
+# include <fnmatch.h> /* Our substitute */
+#endif /* HAVE_FNMATCH */
 
 #include <ctype.h>
 #include <pwd.h>
@@ -851,8 +855,17 @@ extern int history PROTO ((int argc, char **argv));
 extern int import PROTO ((int argc, char **argv));
 extern int cvslog PROTO ((int argc, char **argv));
 #ifdef AUTH_CLIENT_SUPPORT
+/* Some systems (namely Mac OS X) have conflicting definitions for these
+ * functions.  Avoid them.
+ */
+#ifdef HAVE_LOGIN
+# define login		cvs_login
+#endif /* HAVE_LOGIN */
+#ifdef HAVE_LOGOUT
+# define logout		cvs_logout
+#endif /* HAVE_LOGOUT */
 extern int login PROTO((int argc, char **argv));
-int logout PROTO((int argc, char **argv));
+extern int logout PROTO((int argc, char **argv));
 #endif /* AUTH_CLIENT_SUPPORT */
 extern int patch PROTO((int argc, char **argv));
 extern int release PROTO((int argc, char **argv));
