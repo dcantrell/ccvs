@@ -15620,12 +15620,19 @@ ${PROG} \[[a-z]* aborted\]: Bad CVSROOT\."
 	    rm -r 1
 	  else # local
 	    # Test that CVS rejects a relative path in CVSROOT.
+
+	    # Set CVS_RSH=/bin/false since ocassionally (e.g. when CVS_RSH=ssh),
+	    # some rsh implementations will block because they can look up '..'
+	    # and want to ask the user about the unknown host key or somesuch
+	    CVS_RSH_SAVE=$CVS_RSH
+	    CVS_RSH=/bin/false ; export CVS_RSH
 	    mkdir 1; cd 1
 	    # piping the output of this test to /dev/null since we have no way of knowing
 	    # what error messages different rsh implementations will output.
 	    dotest_fail crerepos-6a "${testcvs} -q -d ../crerepos get . >/dev/null 2>&1" ""
 	    cd ..
 	    rm -r 1
+	    CVS_RSH=$CVS_RSH_SAVE
 
 	    mkdir 1; cd 1
 	    dotest_fail crerepos-6b "${testcvs} -d crerepos init" \
