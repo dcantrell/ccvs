@@ -1,5 +1,15 @@
 2004-03-22  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (top-level): Don't match most of the assertion since this
+	string is often system dependent.
+	(Thanks to Larry Jones <lawrence.jones@ugsplm.com>.)
+
+2004-03-22  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (top-level): Don't match the assertion's line number.
+
+2004-03-22  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (top-level): New test to confirm assertion failure.
 
 2004-03-22  Derek Price  <derek@ximbiot.com>
