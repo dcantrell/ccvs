@@ -1,5 +1,8 @@
 2003-07-11  Larry Jones  <lawrence.jones@eds.com>
 
+	* Makefile.am (cvs_DEPENDENCIES): Include the libraries.
+	* Makefile.in: Regenerated.
+
 	* diff.c (diff_file_nodiff): Fix -Wall complaints.
 	* log.c (rlog_proc): Ditto.
 	* rcs.c (RCS_setlocalid): Ditto.
