@@ -1,3 +1,8 @@
+2000-05-19  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (requests): Make Global_option RQ_ROOTLESS so it can be
+	used with init.
+
 2000-05-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (start_server): Don't do encryption, authentication,
