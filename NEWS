@@ -1,5 +1,7 @@
 Changes since 1.7:
 
+* There is now a $USER internal variable for *info files.
+
 * There is no longer a separate `mkmodules' program; the functionality
 is now built into `cvs'.  If upgrading an old repository, it is OK to
 leave in the lines in the modules file which run mkmodules (the
