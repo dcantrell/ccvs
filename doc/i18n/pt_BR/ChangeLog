@@ -1,3 +1,9 @@
+2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (Common options): The -r TAG option works with
+	the cvs annotate command.
+	(Original patch from Ville Skytta <scop@cvshome.org>.)
+
 2004-04-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Latest update.
