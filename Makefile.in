@@ -30,6 +30,11 @@ VPATH = @srcdir@
 # ioctl calls will be compiled incorrectly on some systems.
 CC = @CC@
 AR = ar
+
+# FIXME: rumor has it that the correct way to set MAKE is AC_SET_MAKE
+# but currently we just leave it unset (which works with many makes but
+# perhaps not all).
+
 # Set RANLIB = echo if your system doesn't have or need ranlib.
 RANLIB = @RANLIB@
 # Set YACC = bison or yacc, depending on which you have on your system
