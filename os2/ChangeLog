@@ -1,3 +1,8 @@
+Mon Dec 18 22:49:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Reverted all changes between Mon Dec 18 14:54:04 1995 and
+        present, non-inclusive.
+
 Mon Dec 18 21:59:07 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * getpass.c: removed -- getpass() lives in os2/login.c now.
