@@ -2596,7 +2596,7 @@ invalid rcs file %s (`d' operand out of range)",
 }
 
 
-/* Annotate command.  Here for historical reasons (from back when
+/* Annotate command.  In rcs.c for historical reasons (from back when
    what is now RCS_deltas was part of annotate_fileproc).  */
 
 /* Options from the command line.  */
@@ -2694,7 +2694,7 @@ annotate (argc, argv)
 
 	if (local)
 	    send_arg ("-l");
-	if (force_tag_match)
+	if (!force_tag_match)
 	    send_arg ("-f");
 	option_with_arg ("-r", tag);
 	if (date)
