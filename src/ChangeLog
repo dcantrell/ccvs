@@ -1,5 +1,9 @@
 Sat Feb 22 08:30:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: Add variable username.
+	(basica rdiff multibranch log log2): Use it instead of our own
+	(inconsistent) ways of matching an author name.
+
 	* filesubr.c, root.c, rtag.c, server.c, subr.c, update.c,
 	wrapper.c: Nuke PATH_MAX.
 	* cvs.h, wrapper.c (wrap_fromcvs_process_file): Now returns void

@@ -80,6 +80,11 @@ shift
 # special characters we are probably in big trouble.
 PROG=`basename ${testcvs}`
 
+# Regexp to match an author name.  I'm not really sure what characters
+# should be here.  a-zA-Z obviously.  People complained when 0-9 were
+# not allowed in usernames.  Other than that I'm not sure.
+username="[a-zA-Z0-9][a-zA-Z0-9]*"
+
 # FIXME: try things (what things? checkins?) without -m.
 #
 # Some of these tests are written to expect -Q.  But testing with
@@ -654,8 +659,8 @@ diff -r1\.2 -r1\.3'
 	  dotest basica-10 "${testcvs} annotate" \
 'Annotations for sdir/ssdir/ssfile
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1\.1          .[a-z0-9@][a-z0-9@ ]* [0-9a-zA-Z-]*.: ssfile
-1\.2          .[a-z0-9@][a-z0-9@ ]* [0-9a-zA-Z-]*.: ssfile line 2'
+1\.1          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile
+1\.2          .'"${username}"' *[0-9a-zA-Z-]*.: ssfile line 2'
 	  cd ..
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -1445,10 +1450,10 @@ diff -c trdiff/foo:1\.1\.1\.1 trdiff/foo:1\.2
 --- trdiff/foo	.*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1,2 \*\*\*\*
-! \$''Id: foo,v 1\.1\.1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
+! \$''Id: foo,v 1\.1\.1\.1 [0-9/]* [0-9:]* '"${username}"' Exp \$
 ! \$''Name: T1 \$
 --- 1,3 ----
-! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$
+! \$''Id: foo,v 1\.2 [0-9/]* [0-9:]* '"${username}"' Exp \$
 ! \$''Name: local-v0 \$
 ! something
 Index: trdiff/new
@@ -1458,7 +1463,7 @@ diff -c /dev/null trdiff/new:1\.1
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 0 \*\*\*\*
 --- 1,2 ----
-'"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* [a-zA-Z0-9][a-zA-Z0-9]* Exp \$"
+'"${PLUS}"' #ident	"@(#)trdiff:\$''Name: local-v0 \$:\$''Id: new,v 1\.1 [0-9/]* [0-9:]* '"${username}"' Exp \$"
 '"${PLUS}"' new file'
 
 # FIXME: will this work here?
@@ -2411,16 +2416,16 @@ total revisions: 3;	selected revisions: 3
 description:
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 branches:  1\.1\.2;  1\.1\.4;
 add-it
 ----------------------------
 revision 1\.1\.4\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -0
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
 modify-on-br2
 ----------------------------
 revision 1\.1\.2\.1
-date: [0-9/]* [0-9:]*;  author: [0-9a-zA-Z-]*;  state: Exp;  lines: ${PLUS}1 -1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
 modify-on-br1
 ============================================================================="
 	  cd ..
@@ -4981,7 +4986,7 @@ access list:'
 	  log_header2='keyword substitution: kv'
 	  log_dash='----------------------------
 revision'
-	  log_date='date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;'
+	  log_date="date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;"
 	  log_lines="  lines: ${PLUS}1 -1"
 	  log_rev1="${log_dash} 1\.1
 ${log_date}
@@ -5168,7 +5173,7 @@ description:
 file1-is-for-testing
 ----------------------------
 revision 1\.1
-date: [0-9/]* [0-9:]*;  author: [a-zA-Z0-9@]*;  state: Exp;
+date: [0-9/]* [0-9:]*;  author: '"${username}"';  state: Exp;
 1
 ============================================================================='
 
