@@ -58,7 +58,7 @@ static int patch_file PROTO ((struct file_info *finfo,
 static void patch_file_write PROTO ((void *, const char *, size_t));
 #endif
 static int merge_file PROTO ((struct file_info *finfo, Vers_TS *vers));
-static int scratch_file PROTO((struct file_info *finfo));
+static int scratch_file PROTO((struct file_info *finfo, Vers_TS *vers));
 static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
 					char *repository, char *update_dir,
 					List *entries));
@@ -778,18 +778,7 @@ update_fileproc (callerdat, finfo)
 		retval = 0;
 		break;
 	    case T_REMOVE_ENTRY:	/* needs to be un-registered */
-		retval = scratch_file (finfo);
-#ifdef SERVER_SUPPORT
-		if (server_active && retval == 0)
-		{
-		    if (vers->ts_user == NULL)
-			server_scratch_entry_only ();
-		    server_updated (finfo, vers,
-				    SERVER_UPDATED, (mode_t) -1,
-				    (unsigned char *) NULL,
-				    (struct buffer *) NULL);
-		}
-#endif
+		retval = scratch_file (finfo, vers);
 		break;
 	    default:			/* can't ever happen :-) */
 		error (0, 0,
@@ -1241,13 +1230,46 @@ isemptydir (dir, might_not_exist)
  * scratch the Entries file entry associated with a file
  */
 static int
-scratch_file (finfo)
+scratch_file (finfo, vers)
     struct file_info *finfo;
+    Vers_TS *vers;
 {
     history_write ('W', finfo->update_dir, "", finfo->file, finfo->repository);
     Scratch_Entry (finfo->entries, finfo->file);
+#ifdef SERVER_SUPPORT
+    if (server_active)
+    {
+	if (vers->ts_user == NULL)
+	    server_scratch_entry_only ();
+	server_updated (finfo, vers,
+		SERVER_UPDATED, (mode_t) -1,
+		(unsigned char *) NULL,
+		(struct buffer *) NULL);
+    }
+#endif
     if (unlink_file (finfo->file) < 0 && ! existence_error (errno))
 	error (0, errno, "unable to remove %s", finfo->fullname);
+    else
+#ifdef SERVER_SUPPORT
+	/* skip this step when the server is running since
+	 * server_updated should have handled it */
+	if (!server_active)
+#endif
+    {
+	/* keep the vers structure up to date in case we do a join
+	 * - if there isn't a file, it can't very well have a version number, can it?
+	 */
+	if (vers->vn_user != NULL)
+	{
+	    free (vers->vn_user);
+	    vers->vn_user = NULL;
+	}
+	if (vers->ts_user != NULL)
+	{
+	    free (vers->ts_user);
+	    vers->ts_user = NULL;
+	}
+    }
     return (0);
 }
 
@@ -2113,6 +2135,17 @@ join_file (finfo, vers)
     char *jdate1;
     char *jdate2;
 
+    if (trace)
+	fprintf (stderr, "%s-> join_file(%s, %s%s%s%s, %s, %s)\n",
+		CLIENT_SERVER_STR,
+		finfo->file,
+		vers->tag ? vers->tag : "",
+		vers->tag ? " (" : "",
+		vers->vn_rcs ? vers->vn_rcs : "",
+		vers->tag ? ")" : "",
+		join_rev1 ? join_rev1 : "",
+		join_rev2 ? join_rev2 : "");
+
     jrev1 = join_rev1;
     jrev2 = join_rev2;
     jdate1 = date_rev1;
@@ -2281,7 +2314,14 @@ join_file (finfo, vers)
            for removal.  FIXME: If we are doing a checkout, this has
            the effect of first checking out the file, and then
            removing it.  It would be better to just register the
-           removal.  */
+           removal. 
+	
+	   The same goes for a removal then an add.  e.g.
+	   cvs up -rbr -jbr2 could remove and readd the same file
+	 */
+	/* save the rev since server_updated might invalidate it */
+	mrev = xmalloc (strlen (vers->vn_user) + 2);
+	sprintf (mrev, "-%s", vers->vn_user);
 #ifdef SERVER_SUPPORT
 	if (server_active)
 	{
@@ -2290,8 +2330,6 @@ join_file (finfo, vers)
 			    (unsigned char *) NULL, (struct buffer *) NULL);
 	}
 #endif
-	mrev = xmalloc (strlen (vers->vn_user) + 2);
-	sprintf (mrev, "-%s", vers->vn_user);
 	Register (finfo->entries, finfo->file, mrev, vers->ts_rcs,
 		  vers->options, vers->tag, vers->date, vers->ts_conflict);
 	free (mrev);

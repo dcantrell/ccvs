@@ -5722,6 +5722,41 @@ M file2
 R file3
 A file8"
 
+	  # Checkout the mainline again to try updating and merging between two
+	  # branches in the same step
+	  # this seems a likely scenario - the user finishes up on branch and
+	  # updates to br2 and merges in the same step - and there was a bug
+	  # once that if the file was removed in the update then it wouldn't be
+	  # readded in the merge
+	  cd ..
+	  rm -r first-dir
+	  dotest join-twobranch-1 "${testcvs} -q co -rbranch first-dir" \
+'U first-dir/file1
+U first-dir/file2
+U first-dir/file8'
+	  cd first-dir
+	  dotest join-twobranch-2 "${testcvs} -q update -rbr2 -jbranch" \
+"cvs [a-z]*: file1 is no longer in the repository
+U file1
+U file2
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+retrieving revision 1\.1
+retrieving revision 1\.1\.2\.1
+Merging differences between 1\.1 and 1\.1\.2\.1 into file2
+U file3
+${PROG} [a-z]*: scheduling file3 for removal
+U file4
+${PROG} [a-z]*: file file4 has been modified, but has been removed in revision branch
+U file7
+${PROG} [a-z]*: file8 is no longer in the repository
+U file8"
+	  # Verify that the right changes have been scheduled.
+	  dotest join-twobranch-3 "${testcvs} -q update" \
+"A file1
+M file2
+R file3
+A file8"
+
 	  # Checkout the mainline again to try merging from the trunk
 	  # to a branch.
 	  cd ..
