@@ -20,6 +20,9 @@
    Define this if you want to use names which are legal for VMS */
 #define USE_VMS_FILENAMES 1
 
+/* What VMS calls /dev/null.  */
+#define DEVNULL         "NLA0:"
+
 /* Define to empty if the keyword does not work.  */
 /* #undef const */
 
