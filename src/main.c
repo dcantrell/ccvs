@@ -480,21 +480,21 @@ main (argc, argv)
 		exit (0);
 		break;
 	    case 'b':
-		Rcsbin = xstrdup(optarg);
+		Rcsbin = xstrdup (optarg);
 		free_Rcsbin = 1;
 		rcsbin_update_env = 1;	/* need to update environment */
 		break;
 	    case 'T':
-		Tmpdir = xstrdup(optarg);
+		Tmpdir = xstrdup (optarg);
 		free_Tmpdir = 1;
 		tmpdir_update_env = 1;	/* need to update environment */
 		break;
 	    case 'e':
-		Editor = xstrdup(optarg);
+		Editor = xstrdup (optarg);
 		free_Editor = 1;
 		break;
 	    case 'd':
-		CVSroot = xstrdup(optarg);
+		CVSroot = xstrdup (optarg);
 		free_CVSroot = 1;
 		cvs_update_env = 1;	/* need to update environment */
 		break;
