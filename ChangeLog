@@ -1,5 +1,10 @@
 2003-07-18  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Remove mention of wrappers -t/-f since they are no longer
+	supported.
+
+2003-07-18  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add cvs.spec so that RPMs can be built
 	directly from tarballs.
 	* Makefile.in: Regenerated.
