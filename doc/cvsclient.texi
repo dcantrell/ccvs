@@ -796,61 +796,147 @@ The command completed successfully.
 @node Example
 @section Example
 
-@c FIXME: Use Directory, not Repository!
-@c FIXME-less-important: Use Created and Update-existing, not Updated.
-@c FIXME: the presence of timestamps in the entries lines is not right.
+@c The C:/S: convention is in imitation of RFC1869 (and presumably
+@c other RFC's).  In other formatting concerns, we might want to think
+@c about whether there is an easy way to provide RFC1543 formatting
+@c (without negating the advantages of texinfo), and whether we should
+@c use RFC822-style BNF (I fear that would be less clear than
+@c what we do now, however).  Plus what about IETF terminology (SHOULD,
+@c MUST, etc.) or ISO terminology (shall, should, or whatever they are)?
+Here is an example; lines are prefixed by @samp{C: } to indicate the
+client sends them or @samp{S: } to indicate the server sends them.
 
-This example is out of date; the general feel of how the protocol works
-is the same but many details have changed since it was written.
-
-Lines beginning with @samp{c>} are sent by the client; lines beginning
-with @samp{s>} are sent by the server; lines beginning with @samp{#} are
-not part of the actual exchange.
+The client starts by connecting, sending the root, and completing the
+protocol negotiation.  In actual practice the lists of valid responses
+and requests would be longer.
+@c The reason that we artificially shorten the lists is to avoid phony
+@c line breaks.  Any better solutions?
+@c Other than that, this exchange is taken verbatim from the data
+@c exchanged by CVS (as of Nov 1996).  That is why some of the requests and
+@c reponses are not quite what you would pick for pedagogical purposes.
 
 @example
-c> Root /rel/cvsfiles
-# In actual practice the lists of valid responses and requests would
-# be longer
-c> Valid-responses Updated Checked-in M ok error
-c> valid-requests
-s> Valid-requests Root co Modified Entry Repository ci Argument Argumentx
-s> ok
-# cvs co devo/foo
-c> Argument devo/foo
-c> co
-s> Updated /rel/cvsfiles/devo/foo/foo.c
-s> /foo.c/1.4/Mon Apr 19 15:36:47 1993 Mon Apr 19 15:36:47 1993//
-s> 26
-s> int mein () @{ abort (); @}
-s> Updated /rel/cvsfiles/devo/foo/Makefile
-s> /Makefile/1.2/Mon Apr 19 15:36:47 1993 Mon Apr 19 15:36:47 1993//
-s> 28
-s> foo: foo.c
-s>         $(CC) -o foo $<
-s> ok
-# The current implementation would break the connection here and make a
-# new connection for the next command.  However, the protocol allows it
-# to keep the connection open and continue, which is what we show here.
-c> Repository /rel/cvsfiles/devo/foo
-# foo.c relative to devo/foo just set as Repository.
-c> Entry /foo.c/1.4/Mon Apr 19 15:36:47 1993 Mon Apr 19 15:36:47 1993//
-c> Entry /Makefile/1.2/Mon Apr 19 15:36:47 1993 Mon Apr 19 15:36:47 1993//
-c> Modified foo.c
-c> 26
-c> int main () @{ abort (); @}
-# cvs ci -m <log message> foo.c
-c> Argument -m
-c> Argument Well, you see, it took me hours and hours to find this typo and I
-c> Argumentx searched and searched and eventually had to ask John for help.
-c> Argument foo.c
-c> ci
-s> Checked-in /rel/cvsfiles/devo/foo/foo.c
-s> /foo.c/1.5/ Mon Apr 19 15:54:22 CDT 1993//
-s> M Checking in foo.c;
-s> M /cygint/rel/cvsfiles/devo/foo/foo.c,v  <--  foo.c
-s> M new revision: 1.5; previous revision: 1.4
-s> M done
-s> ok
+C: Root /home/kingdon/testing/cvsroot
+C: Valid-responses ok error Checked-in M E
+C: valid-requests
+S: Valid-requests Root Directory Entry Modified Argument Argumentx ci co
+S: ok
+C: UseUnchanged
+@end example
+
+The client wants to check out the @code{supermunger} module into a fresh
+working directory.  Therefore it first expands the @code{supermunger}
+module; this step would be omitted if the client was operating on a
+directory rather than a module.
+@c Why does it send Directory here?  The description of expand-modules
+@c doesn't really say much of anything about what use, if any, it makes of
+@c Directory and similar requests sent previously.
+
+@example
+C: Argument supermunger
+C: Directory .
+C: /home/kingdon/testing/cvsroot
+C: expand-modules
+@end example
+
+The server replies that the @code{supermunger} module expands to the
+directory @code{supermunger} (the simplest case):
+
+@example
+S: Module-expansion supermunger
+S: ok
+@end example
+
+The client then proceeds to check out the directory.  The fact that it
+sends only a single @code{Directory} request which specifies @samp{.}
+for the working directory means that there is not already a
+@code{supermunger} directory on the client.
+@c What is -N doing here?
+
+@example
+C: Argument -N
+C: Argument supermunger
+C: Directory .
+C: /home/kingdon/testing/cvsroot
+C: co
+@end example
+
+The server replies with the requested files.  In this example, there is
+only one, @file{mungeall.c}.  The @code{Clear-sticky} and
+@code{Clear-static-directory} requests are sent by the current
+implementation but they have no effect because the default is for those
+settings to be clear when a directory is newly created.
+
+@example
+S: Clear-sticky supermunger/
+S: /home/kingdon/testing/cvsroot/supermunger/
+S: Clear-static-directory supermunger/
+S: /home/kingdon/testing/cvsroot/supermunger/
+S: E cvs server: Updating supermunger
+S: M U supermunger/mungeall.c
+S: Created supermunger/
+S: /home/kingdon/testing/cvsroot/supermunger/mungeall.c
+S: /mungeall.c/1.1///
+S: u=rw,g=r,o=r
+S: 26
+S: int mein () @{ abort (); @}
+S: ok
+@end example
+
+The current client implementation would break the connection here and make a
+new connection for the next command.  However, the protocol allows it
+to keep the connection open and continue, which is what we show here.
+
+After the user modifies the file and instructs the client to check it
+back in.  The client sends arguments to specify the log message and file
+to check in:
+
+@example
+C: Argument -m
+C: Argument Well, you see, it took me hours and hours to find this typo and I
+C: Argumentx searched and searched and eventually had to ask John for help.
+C: Argument mungeall.c
+@end example
+
+It also sends information about the contents of the working directory,
+including the new contents of the modified file.  Note that the user has
+changed into the @file{supermunger} directory before executing this
+command; the top level directory is a user-visible concept because the
+server should print filenames in @code{M} and @code{E} responses
+relative to that directory.
+@c We are waving our hands about the order of the requests.  "Directory"
+@c and "Argument" can be in any order, but this probably isn't specified
+@c very well.
+
+@example
+C: Directory .
+C: /home/kingdon/testing/cvsroot/supermunger
+C: Entry /mungeall.c/1.1///
+C: Modified mungeall.c
+C: u=rw,g=r,o=r
+C: 26
+C: int main () @{ abort (); @}
+@end example
+
+And finally, the client issues the checkin command (which makes use of
+the data just sent):
+
+@example
+C: ci
+@end example
+
+And the server tells the client that the checkin succeeded:
+
+@example
+S: M Checking in mungeall.c;
+S: E /home/kingdon/testing/cvsroot/supermunger/mungeall.c,v  <--  mungeall.c
+S: E new revision: 1.2; previous revision: 1.1
+S: E done
+S: Mode u=rw,g=r,o=r
+S: Checked-in ./
+S: /home/kingdon/testing/cvsroot/supermunger/mungeall.c
+S: /mungeall.c/1.2///
+S: ok
 @end example
 
 @node Requirements

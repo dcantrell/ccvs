@@ -1,3 +1,9 @@
+Sat Nov 16 18:03:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Example): Rewrite to actually be based on a real
+	live example (and therefore reflect the way the protocol currently
+	works).  Add comment about formatting of the document itself.
+
 Thu Nov 14 10:22:58 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Introduction): Use @ref, not @xref, after "see".
