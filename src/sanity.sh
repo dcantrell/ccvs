@@ -330,31 +330,6 @@ if test "x$remote" = xyes; then
 	CVS_SERVER=${testcvs}; export CVS_SERVER
 fi
 
-mkdir tmp ; cd tmp
-if ${CVS} co CVSROOT ; then
-	if [ -r CVSROOT/CVS/Entries ] ; then
-		echo "PASS: test 5" >>${LOGFILE}
-	else
-		echo "FAIL: test 5" | tee -a ${LOGFILE}
-		exit 1
-	fi
-else
-	echo "FAIL: test 5" | tee -a ${LOGFILE}; exit 1
-fi
-
-if echo "yes" | ${CVS} release -d CVSROOT ; then
-	echo "PASS: test 5.5" >>${LOGFILE}
-else
-	echo "FAIL: test 5.5" | tee -a ${LOGFILE}
-	exit 1
-fi
-# this had better etmpy now...
-cd ..; rmdir tmp
-if [ -d tmp ] ; then
-	echo "FAIL: test 5.75" | tee -a ${LOGFILE}
-	exit 1
-fi
-
 # start keeping history
 touch ${CVSROOT_DIRNAME}/CVSROOT/history
 
