@@ -175,28 +175,6 @@ Reader_Lock (xrepository)
     /* remember what we're locking (for lock_cleanup) */
     repository = xrepository;
 
-#ifdef BOGUS_UNLESS_PROVEN_OTHERWISE
-    /* make sure we can write the repository */
-    (void) sprintf (tmp,
-#ifdef HAVE_LONG_FILE_NAMES
-	"%s/%s.%s.%d", xrepository, CVSTFL, hostname,
-#else
-	"%s/%s.%d", xrepository, CVSTFL,
-#endif
-	getpid());
-    if ((fp = fopen (tmp, "w+")) == NULL || fclose (fp) == EOF)
-    {
-	error (0, errno, "cannot create read lock in repository `%s'",
-	       xrepository);
-	readlock[0] = '\0';
-	if (unlink (tmp) < 0 && ! existence_error (errno))
-	    error (0, errno, "failed to remove lock %s", tmp);
-	return (1);
-    }
-    if (unlink (tmp) < 0)
-	error (0, errno, "failed to remove lock %s", tmp);
-#endif
-
     /* get the lock dir for our own */
     if (set_lock (xrepository, 1) != L_OK)
     {
@@ -312,27 +290,6 @@ write_lock (repository)
 	    "%s.%ld", CVSWFL,
 #endif
 	(long) getpid());
-
-#ifdef BOGUS_UNLESS_PROVEN_OTHERWISE
-    /* make sure we can write the repository */
-    (void) sprintf (tmp,
-#ifdef HAVE_LONG_FILE_NAMES
-	"%s/%s.%s.%ld", repository, CVSTFL, hostname,
-#else
-	"%s/%s.%ld", repository, CVSTFL,
-#endif
-	getpid ());
-    if ((fp = fopen (tmp, "w+")) == NULL || fclose (fp) == EOF)
-    {
-	error (0, errno, "cannot create write lock in repository `%s'",
-	       repository);
-	if (unlink (tmp) < 0 && ! existence_error (errno))
-	    error (0, errno, "failed to remove lock %s", tmp);
-	return (L_ERROR);
-    }
-    if (unlink (tmp) < 0)
-	error (0, errno, "failed to remove lock %s", tmp);
-#endif
 
     /* make sure the lock dir is ours (not necessarily unique to us!) */
     status = set_lock (repository, 0);

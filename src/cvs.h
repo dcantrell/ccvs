@@ -198,7 +198,6 @@ extern int errno;
 #define	CVSATTIC	"Attic"
 
 #define	CVSLCK		"#cvs.lock"
-#define	CVSTFL		"#cvs.tfl"
 #define	CVSRFL		"#cvs.rfl"
 #define	CVSWFL		"#cvs.wfl"
 #define CVSRFLPAT	"#cvs.rfl.*"	/* wildcard expr to match read locks */
