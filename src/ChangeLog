@@ -1,3 +1,14 @@
+Fri Jun 20 22:56:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (connect_to_pserver): On "I HATE YOU", give
+	"authorization failed" fatal error regardless of verify_only.
+	* login.c (login): Don't print that "incorrect password" message;
+	it now is possible with an --allow-root failure as well as an
+	incorrect password.  cvsclient.texi doesn't really specify what I
+	HATE YOU means in any detail, and it seems a little silly for
+	login to give different messages than the other commands.
+	* client.c, client.h (connect_to_pserver): Return type now void.
+
 Thu Jun 19 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (serve_root): Give error on duplicate Root request.
