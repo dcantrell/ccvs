@@ -1,3 +1,7 @@
+2003-07-21  Derek Price  <derek@ximbiot.com>
+
+	* system.h: We can assume limits.h under C89.
+
 2003-07-12  Larry Jones  <lawrence.jones@eds.com>
 
 	* io.c (find_identical_ends): Update to match current diffutils
