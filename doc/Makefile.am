@@ -78,7 +78,7 @@ cvs-paper.pdf: cvs-paper.ps
 
 # Targets to build a man page from cvs.texinfo.
 cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
-	./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
+	$(PERL) $(srcdir)/mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
 MAINTAINERCLEANFILES += $(srcdir)/cvs.1
 
