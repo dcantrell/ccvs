@@ -26,7 +26,7 @@ static int long_format = 0;
 static char *xfile;
 static List *xsrcfiles;
 
-static char *status_usage[] =
+static const char *const status_usage[] =
 {
     "Usage: %s %s [-vlR] [files...]\n",
     "\t-v\tVerbose format; includes tag information for the file\n",

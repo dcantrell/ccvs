@@ -80,7 +80,7 @@ static List *mulist;
 static List *locklist;
 static char *message;
 
-static char *commit_usage[] =
+static const char *const commit_usage[] =
 {
     "Usage: %s %s [-nRlf] [-m msg | -F logfile] [-r rev] files...\n",
     "\t-n\tDo not run the module program (if any).\n",

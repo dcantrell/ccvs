@@ -832,7 +832,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
-	        run_setup ("%s -f -s -b~ %s %s", PATCH_PROGRAM,
+	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
@@ -1342,8 +1342,11 @@ do_deferred_progs ()
 
     char fname[PATH_MAX];
     FILE *f;
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = checkin_progs; p != NULL; )
     {
 	sprintf (fname, "%s/%s", p->dir, CVSADM_CIPROG);
@@ -1443,8 +1446,11 @@ process_prune_candidates ()
     struct save_dir *p;
     struct save_dir *q;
 
-    if (chdir (toplevel_wd) < 0)
-	error (1, errno, "could not chdir to %s", toplevel_wd);
+    if (toplevel_wd[0] != '\0')
+      {
+	if (chdir (toplevel_wd) < 0)
+	  error (1, errno, "could not chdir to %s", toplevel_wd);
+      }
     for (p = prune_candidates; p != NULL; )
     {
 	if (client_isemptydir (p->dir))

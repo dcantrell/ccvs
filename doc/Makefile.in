@@ -24,8 +24,8 @@ srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 
-prefix = /usr/local
-exec_prefix = $(prefix)
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
 infodir = $(prefix)/info
 
@@ -125,7 +125,7 @@ realclean: distclean
 	rm -f cvs.info* cvs-paper.ps
 .PHONY: realclean
 
-dist:
+dist: $(DISTFILES)
 	ln $(DISTFILES) ../`cat ../.fname`/doc
 .PHONY: dist
 

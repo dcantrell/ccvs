@@ -18,7 +18,7 @@ USE(rcsid)
 
 static void release_delete PROTO((char *dir));
 
-static char *release_usage[] =
+static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] modules...\n",
     "\t-Q\tReally quiet.\n",

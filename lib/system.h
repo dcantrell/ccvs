@@ -71,6 +71,26 @@ char *alloca ();
 #define mkfifo(path, mode) (mknod ((path), (mode) | S_IFIFO, 0))
 #endif
 
+#ifndef S_IRUSR
+#define	S_IRUSR 0400
+#define	S_IWUSR 0200
+#define	S_IXUSR 0100
+/* Read, write, and execute by owner.  */
+#define	S_IRWXU	(S_IRUSR|S_IWUSR|S_IXUSR)
+
+#define	S_IRGRP	(S_IRUSR >> 3)	/* Read by group.  */
+#define	S_IWGRP	(S_IWUSR >> 3)	/* Write by group.  */
+#define	S_IXGRP	(S_IXUSR >> 3)	/* Execute by group.  */
+/* Read, write, and execute by group.  */
+#define	S_IRWXG	(S_IRWXU >> 3)
+
+#define	S_IROTH	(S_IRGRP >> 3)	/* Read by others.  */
+#define	S_IWOTH	(S_IWGRP >> 3)	/* Write by others.  */
+#define	S_IXOTH	(S_IXGRP >> 3)	/* Execute by others.  */
+/* Read, write, and execute by others.  */
+#define	S_IRWXO	(S_IRWXG >> 3)
+#endif
+
 #if defined(POSIX) || defined(HAVE_UNISTD_H)
 #include <unistd.h>
 #include <limits.h>
