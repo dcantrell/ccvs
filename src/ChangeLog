@@ -40,6 +40,14 @@
 
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (lock_simple_remove): Move core functionality...
+	(_lock_simple_remove): ...here.
+	(lock_simple_remove_and_free): New function.
+	(set_promotable_lock): Use new function to avoid freeing data that will be
+	reused.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (do_cvs_command): s/FIXCVS/FIXME/ in comment.
 	(set_block_fd, set_nonblock_fd): Move to...
 	* subr.c: ...here.
