@@ -424,6 +424,17 @@ int diff_exec (const char *file1, const char *file2,
 
 #include "error.h"
 
+/* If non-zero, error will use the CVS protocol to report error
+ * messages.  This will only be set in the CVS server parent process;
+ * most other code is run via do_cvs_command, which forks off a child
+ * process and packages up its stderr in the protocol.
+ *
+ * This needs to be here rather than in error.h in order to use an unforked
+ * error.h from GNULIB.
+ */
+extern int error_use_protocol;
+
+
 DBM *open_module (void);
 FILE *open_file (const char *, const char *);
 List *Find_Directories (char *repository, int which, List *entries);

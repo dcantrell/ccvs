@@ -1,5 +1,10 @@
 2004-10-21 Derek Price <derek@ximbiot.com>
 
+	* cvs.h (error_use_protocol): Move decl here from lib/error.h so that
+	we may use an unforked error.h from GNULIB.
+
+2004-10-21 Derek Price <derek@ximbiot.com>
+
 	* main.c: #include strftime.h.
 	(format_time_t, gmformat_time_t): Supply missing args to my_strftime.
 
