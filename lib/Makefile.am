@@ -114,6 +114,7 @@ getdate_SOURCES += \
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
+	@ALLOCA@ \
 	$(LIB_CLOCK_GETTIME) \
 	$(LIBINTL)
 
