@@ -1,3 +1,13 @@
+2004-09-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* buffer.c (fd_buffer_block): Protect fcntl calls when F_GETFL,
+	O_NONBLOCK and F_SETFL are not available.
+	* server.c (move_file_offset): Ditto.
+	(set_nonblock_fd): Ditto.
+
+	* buffer.c (packetizing_buffer_input): Use size_t rather than int.
+	(struct packetizing_buffer): Ditto.
+	
 2004-09-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* server.c (server_updated): Deal with cvs -n update -jt1 -jt2

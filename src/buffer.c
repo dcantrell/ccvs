@@ -1362,7 +1362,7 @@ struct packetizing_buffer
        with the two byte packet size.  */
     int translated;
     /* The amount of buffered data.  */
-    int holdsize;
+    size_t holdsize;
     /* The buffer allocated to hold the data.  */
     char *holdbuf;
     /* The size of holdbuf.  */
@@ -1437,7 +1437,7 @@ packetizing_buffer_input (void *closure, char *data, size_t need, size_t size,
 
     if (pb->holdsize > 0 && pb->translated)
     {
-	int copy;
+	size_t copy;
 
 	copy = pb->holdsize;
 
@@ -2029,6 +2029,7 @@ static int
 fd_buffer_block (void *closure, bool block)
 {
     struct fd_buffer *fb = closure;
+#if defined (F_GETFL) && defined (O_NONBLOCK) && defined (F_SETFL)
     int flags;
 
     flags = fcntl (fb->fd, F_GETFL, 0);
@@ -2042,6 +2043,7 @@ fd_buffer_block (void *closure, bool block)
 
     if (fcntl (fb->fd, F_SETFL, flags) < 0)
 	return errno;
+#endif /* F_GETFL && O_NONBLOCK && F_SETFL */
 
     fb->blocking = block;
 
