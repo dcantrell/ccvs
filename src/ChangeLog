@@ -1,3 +1,11 @@
+2004-11-30  Derek Price  <derek@ximbiot.com>
+
+	* client.c (handle_referrer): New function.
+	(handle_redirect): Handle possibility that CLIENT_REFERRER was set via
+	a response.
+	* server.c (serve_command_prep): Send a normalized Referrer response
+	before a Redirect when the client supports it.
+
 2004-11-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* rcs.c (RCS_setlocalid): Do more configuration validation.

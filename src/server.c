@@ -5549,6 +5549,26 @@ serve_command_prep (char *arg)
 	 */
 	&& isProxyServer ())
     {
+	/* Before sending a redirect, send a "Referrer" line to the client,
+	 * if possible, to give admins more control over canonicalizing roots
+	 * sent from the client.
+	 */
+	if (supported_response ("Referrer"))
+	{
+	    /* assume :ext:, since that is all we currently support for
+	     * proxies and redirection.
+	     */
+	    char *referrer = Xasprintf (":ext:%s@%s%s", getcaller(),
+					server_hostname,
+					current_parsed_root->directory);
+
+	    buf_output0 (buf_to_net, "Referrer ");
+	    buf_output0 (buf_to_net, referrer);
+	    buf_output0 (buf_to_net, "\n");
+
+	    free (referrer);
+	}
+
 	/* Send `Redirect' to redirect client requests to the primary.  */
 	buf_output0 (buf_to_net, "Redirect ");
 	buf_output0 (buf_to_net, config->PrimaryServer->original);

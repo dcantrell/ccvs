@@ -30787,6 +30787,7 @@ ${SPROG} update: Updating first/subdir"
 	  dotest writeproxy-init-2 "$testcvs -Qd$PRIMARY_CVSROOT co CVSROOT"
 	  cd CVSROOT
 	  cat >>loginfo <<EOF
+ALL (cat >/dev/null; echo %R) >$TESTDIR/referrer
 ALL $RSYNC -gopr --delete $PRIMARY_CVSROOT_DIRNAME/ $SECONDARY_CVSROOT_DIRNAME
 EOF
 	  cat >>config <<EOF
@@ -30891,8 +30892,21 @@ PrimaryServer=$PRIMARY_CVSROOT"
 	  dotest writeproxy-6a "grep file1 CVS/Entries >/dev/null"
 	  dotest writeproxy-7 "$testcvs -Q ci -mfirst-file file1"
 
+	  # Verify that the server got the correct referrer.
+	  #
+	  # This happens even when using a :fork:ed server because CVS is
+	  # hardcoded to support only :ext: servers.
+	  #
+	  # This test meaningfully detects that a referrer was passed in fork
+	  # mode because the only time the referrer string can be altered from
+	  # its original state is when the server sends a Referrer response.
+	  # If the client were not parsing and resending the referrer, this
+	  # string would still match $SECONDARY_CVSROOT_DIRNAME.
+	  dotest writeproxy-7a "cat $TESTDIR/referrer" \
+":ext:$username@$hostname$SECONDARY_CVSROOT_DIRNAME"
+
 	  # Make sure the sync took place
-	  dotest writeproxy-7a "$testcvs -Q up"
+	  dotest writeproxy-7b "$testcvs -Q up"
 
 	  # Checkout from primary
 	  cd ../../../primary
@@ -30935,7 +30949,7 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 
 	  dokeep
 	  cd ../../..
-	  rm -r writeproxy
+	  rm -r writeproxy $TESTDIR/referrer
 	  rm -rf $PRIMARY_CVSROOT_DIRNAME $SECONDARY_CVSROOT_DIRNAME
 	  PRIMARY_CVSROOT_DIRNAME=$PRIMARY_CVSROOT_DIRNAME_save
 	  PRIMARY_CVSROOT=$PRIMARY_CVSROOT_save
@@ -31242,9 +31256,9 @@ EOF
 
 	  # Set new roots.
 	  PRIMARY_CVSROOT_DIRNAME=$TESTDIR/primary_cvsroot
-	  PRIMARY_CVSROOT=`newroot $PRIMARY_CVSROOT_DIRNAME`
+	  PRIMARY_CVSROOT=:ext:$host$PRIMARY_CVSROOT_DIRNAME
 	  SECONDARY_CVSROOT_DIRNAME=$TESTDIR/writeproxy_cvsroot
-	  SECONDARY_CVSROOT=`newroot $SECONDARY_CVSROOT_DIRNAME`
+	  SECONDARY_CVSROOT=:ext:$host$SECONDARY_CVSROOT_DIRNAME
 
 	  # Initialize the primary repository
 	  dotest writeproxy-ssh-init-1 "$testcvs -d$PRIMARY_CVSROOT init"
@@ -31285,13 +31299,13 @@ EOF
 	  mv $TESTDIR/save-root $PRIMARY_CVSROOT_DIRNAME
 
 	  dotest writeproxy-ssh-2 "$testcvs -Q add firstdir" \
-"Referrer=$SECONDARY_CVSROOT"
+"Referrer=:ext:$username@$hostname$SECONDARY_CVSROOT_DIRNAME"
 
 	  cd firstdir
 	  echo now you see me >file1
 	  dotest writeproxy-ssh-3 "$testcvs -Q add file1"
 	  dotest writeproxy-ssh-4 "$testcvs -Q ci -mfirst-file file1" \
-"Referrer=$SECONDARY_CVSROOT"
+"Referrer=:ext:$username@$hostname$SECONDARY_CVSROOT_DIRNAME"
 
 	  dokeep
 	  cd ../../..
