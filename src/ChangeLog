@@ -1,3 +1,10 @@
+Tue Sep 10 11:12:42 1996  Mark A. Solinski <markso@mcs.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (socket_buffer_output): Change ifdef VMS to ifdef
+	SEND_NEVER_PARTIAL. 
+	(start_server): Change ifdef VMS to ifdef START_SERVER_RETURNS_SOCKET.
+
 Tue Sep 10 17:15:21 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* client.c (auth_server_port_number): Look up "cvs" in the

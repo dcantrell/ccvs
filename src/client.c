@@ -517,11 +517,13 @@ socket_buffer_output (closure, data, have, wrote)
 
     *wrote = have;
 
-#ifdef VMS
-    /* send() blocks under VMS */
+#ifdef SEND_NEVER_PARTIAL
+    /* If send() never will produce a partial write, then just do it.  This
+       is needed for systems where its return value is something other than
+       the number of bytes written.  */
     if (send (sb->socket, data, have, 0) < 0)
 	error (1, errno, "writing to server socket");
-#else /* VMS */
+#else
     while (have > 0)
     {
 	int nbytes;
@@ -533,7 +535,7 @@ socket_buffer_output (closure, data, have, wrote)
 	have -= nbytes;
 	data += nbytes;
     }
-#endif  /* VMS */
+#endif
 
     return 0;
 }
@@ -3393,11 +3395,12 @@ the :server: access method is not supported by this port of CVS");
 	    break;
     }
 
-#if defined(VMS) && defined(NO_SOCKET_TO_FD)
-    /* Avoid mixing sockets with stdio */
+#if defined (START_SERVER_RETURNS_SOCKET) && defined (NO_SOCKET_TO_FD)
+    /* This is a system on which we can only write to a socket using
+       send/recv.  Therefore its START_SERVER needs to return a socket.  */
     use_socket_style = 1;
     server_sock = tofd;
-#endif /* VMS && NO_SOCKET_TO_FD */
+#endif
 
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
