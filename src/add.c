@@ -497,12 +497,14 @@ cannot resurrect %s; RCS file removed by second party", finfo.fullname);
 	    && !wrap_name_has (finfo.file, WRAP_TOCVS))
 	{
 	    err += add_directory (&finfo);
-	    continue;
 	}
+	else
+	{
 #ifdef SERVER_SUPPORT
-	if (server_active && begin_added_files != added_files)
-	    server_checked_in (finfo.file, finfo.update_dir, repository);
+	    if (server_active && begin_added_files != added_files)
+		server_checked_in (finfo.file, finfo.update_dir, repository);
 #endif
+	}
 	free (repository);
 	Entries_Close (entries);
 
