@@ -566,6 +566,11 @@ struct file_info
        in which the command was issued, this is "".  */
     char *update_dir;
 
+    /* update_dir and file put together, with a slash between them as
+       necessary.  This is the proper way to refer to the file in user
+       messages.  */
+    char *fullname;
+
     /* Name of the directory corresponding to the repository which contains
        this file.  */
     char *repository;

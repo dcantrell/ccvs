@@ -249,7 +249,7 @@ diff_fileproc (finfo)
     }
     else if (vers->vn_user == NULL)
     {
-	error (0, 0, "I know nothing about %s", finfo->file);
+	error (0, 0, "I know nothing about %s", finfo->fullname);
 	freevers_ts (&vers);
 	diff_mark_errors (err);
 	return (err);
@@ -260,7 +260,8 @@ diff_fileproc (finfo)
 	    empty_file = DIFF_ADDED;
 	else
 	{
-	    error (0, 0, "%s is a new entry, no comparison available", finfo->file);
+	    error (0, 0, "%s is a new entry, no comparison available",
+		   finfo->fullname);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -272,7 +273,8 @@ diff_fileproc (finfo)
 	    empty_file = DIFF_REMOVED;
 	else
 	{
-	    error (0, 0, "%s was removed, no comparison available", finfo->file);
+	    error (0, 0, "%s was removed, no comparison available",
+		   finfo->fullname);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -282,7 +284,8 @@ diff_fileproc (finfo)
     {
 	if (vers->vn_rcs == NULL && vers->srcfile == NULL)
 	{
-	    error (0, 0, "cannot find revision control file for %s", finfo->file);
+	    error (0, 0, "cannot find revision control file for %s",
+		   finfo->fullname);
 	    freevers_ts (&vers);
 	    diff_mark_errors (err);
 	    return (err);
@@ -291,7 +294,7 @@ diff_fileproc (finfo)
 	{
 	    if (vers->ts_user == NULL)
 	    {
-		error (0, 0, "cannot find %s", finfo->file);
+		error (0, 0, "cannot find %s", finfo->fullname);
 		freevers_ts (&vers);
 		diff_mark_errors (err);
 		return (err);
@@ -319,10 +322,7 @@ diff_fileproc (finfo)
 
     /* Output an "Index:" line for patch to use */
     (void) fflush (stdout);
-    if (finfo->update_dir[0])
-	(void) printf ("Index: %s/%s\n", finfo->update_dir, finfo->file);
-    else
-	(void) printf ("Index: %s\n", finfo->file);
+    (void) printf ("Index: %s\n", finfo->fullname);
     (void) fflush (stdout);
 
     tocvsPath = wrap_tocvs_process_file(finfo->file);
@@ -340,6 +340,8 @@ diff_fileproc (finfo)
 
     if (empty_file == DIFF_ADDED || empty_file == DIFF_REMOVED)
     {
+	/* This is file, not fullname, because it is the "Index:" line which
+	   is supposed to contain the directory.  */
 	(void) printf ("===================================================================\nRCS file: %s\n",
 		       finfo->file);
 	(void) printf ("diff -N %s\n", finfo->file);

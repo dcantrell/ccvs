@@ -558,51 +558,51 @@ rtag_fileproc (finfo)
     }
     else
     {
-       char *oversion;
+	char *oversion;
        
-       /*
-	* As an enhancement for the case where a tag is being re-applied to
-	* a large body of a module, make one extra call to RCS_getversion to
-	* see if the tag is already set in the RCS file.  If so, check to
-	* see if it needs to be moved.  If not, do nothing.  This will
-	* likely save a lot of time when simply moving the tag to the
-	* "current" head revisions of a module -- which I have found to be a
-	* typical tagging operation.
-	*/
-       rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
-       oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
-       if (oversion != NULL)
-       {
-	  int isbranch = RCS_isbranch (finfo->rcs, symtag);
+	/*
+	 * As an enhancement for the case where a tag is being re-applied to
+	 * a large body of a module, make one extra call to RCS_getversion to
+	 * see if the tag is already set in the RCS file.  If so, check to
+	 * see if it needs to be moved.  If not, do nothing.  This will
+	 * likely save a lot of time when simply moving the tag to the
+	 * "current" head revisions of a module -- which I have found to be a
+	 * typical tagging operation.
+	 */
+	rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
+	oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
+	if (oversion != NULL)
+	{
+	    int isbranch = RCS_isbranch (finfo->rcs, symtag);
 
-	  /*
-	   * if versions the same and neither old or new are branches don't
-	   * have to do anything
-	   */
-	  if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
-	  {
-	     free (oversion);
-	     free (version);
-	     return (0);
-	  }
+	    /*
+	     * if versions the same and neither old or new are branches don't
+	     * have to do anything
+	     */
+	    if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
+	    {
+		free (oversion);
+		free (version);
+		return (0);
+	    }
 	  
-	  if (!force_tag_move) {	/* we're NOT going to move the tag */
-	     if (finfo->update_dir[0])
-		(void) printf ("W %s/%s", finfo->update_dir, finfo->file);
-	     else
-		(void) printf ("W %s", finfo->file);
-	     
-	     (void) printf (" : %s already exists on %s %s", 
-			    symtag, isbranch ? "branch" : "version", oversion);
-	     (void) printf (" : NOT MOVING tag to %s %s\n", 
-			    branch_mode ? "branch" : "version", rev);
-	     free (oversion);
-	     free (version);
-	     return (0);
-	  }
-	  free (oversion);
-       }
-       retcode = RCS_settag(rcsfile->path, symtag, rev);
+	    if (!force_tag_move)
+	    {
+		/* we're NOT going to move the tag */
+		(void) printf ("W %s", finfo->fullname);
+
+		(void) printf (" : %s already exists on %s %s", 
+			       symtag, isbranch ? "branch" : "version",
+			       oversion);
+		(void) printf (" : NOT MOVING tag to %s %s\n", 
+			       branch_mode ? "branch" : "version", rev);
+		free (oversion);
+		free (version);
+		return (0);
+	    }
+	    free (oversion);
+	}
+	retcode = RCS_settag(rcsfile->path, symtag, rev);
     }
 
     if (retcode != 0)

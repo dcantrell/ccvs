@@ -3506,12 +3506,6 @@ send_fileproc (finfo)
     struct file_info *finfo;
 {
     Vers_TS *vers;
-    int update_dir_len = strlen (finfo->update_dir);
-    char *short_pathname = xmalloc (update_dir_len + strlen (finfo->file) + 40);
-    strcpy (short_pathname, finfo->update_dir);
-    if (finfo->update_dir[0] != '\0')
-	strcat (short_pathname, "/");
-    strcat (short_pathname, finfo->file);
 
     send_a_repository ("", finfo->repository, finfo->update_dir);
 
@@ -3574,7 +3568,7 @@ send_fileproc (finfo)
     else if (vers->ts_rcs == NULL
 	     || strcmp (vers->ts_user, vers->ts_rcs) != 0)
     {
-	send_modified (finfo->file, short_pathname, vers);
+	send_modified (finfo->file, finfo->fullname, vers);
     }
     else
     {
@@ -3599,7 +3593,6 @@ send_fileproc (finfo)
     }
 
     freevers_ts (&vers);
-    free (short_pathname);
     return 0;
 }
 

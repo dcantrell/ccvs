@@ -1,3 +1,23 @@
+Sat Mar 16 08:20:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	For reference, this change takes cvs's text segment from 315392
+	bytes to 311296 bytes (one 4096 byte page).
+	* cvs.h (struct file_info): Add fullname field.
+	* recurse.c (do_file_proc): Set it.
+	* commit.c (find_fileproc), client.c (send_fileproc), commit.c
+	(check_fileproc), diff.c (diff_fileproc), edit.c
+	(unedit_fileproc), patch.c (patch_fileproc), remove.c
+	(remove_fileproc), rtag.c (rtag_fileproc), tag.c (tag_fileproc),
+	update.c (update_fileproc), watch.c (watchers_fileproc): Use it
+	instead of computing it each time.
+	* diff.c (diff_fileproc), remove.c (remove_fileproc): Use fullname
+	where we had been (bogusly) omitting the directory from user
+	messages.
+	* edit.c (unedit_fileproc, edit_fileproc): If we cannot close
+	CVSADM_NOTIFY, mention CVSADM_NOTIFY rather than finfo->file in
+	error message.
+	* rtag.c (rtag_fileproc), tag.c (tag_fileproc): Reindent.
+
 Fri Mar 15 15:12:11 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* server.h: fix prototype of server_pause_check (was

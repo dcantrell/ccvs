@@ -429,10 +429,7 @@ watchers_fileproc (finfo)
     if (them == NULL)
 	return 0;
 
-    if (finfo->update_dir[0] == '\0')
-	printf ("%s", finfo->file);
-    else
-	printf ("%s/%s", finfo->update_dir, finfo->file);
+    fputs (finfo->fullname, stdout);
 
     p = them;
     while (1)
