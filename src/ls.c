@@ -328,7 +328,6 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
 {
     Vers_TS *vers;
     char *regex_err;
-    size_t length;
     Node *p, *n;
     bool isdead;
 
@@ -367,7 +366,7 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
     {
 	char *outdate = entries_time (RCS_getrevtime (finfo->rcs, vers->vn_rcs,
                                                       0, 0));
-	n->data = asnprintf (NULL, &length, "/%s/%s/%s/%s/%s%s\n",
+	n->data = Xasprintf ("/%s/%s/%s/%s/%s%s\n",
                              finfo->file, vers->vn_rcs,
                              outdate, vers->options,
                              show_tag ? "T" : "", show_tag ? show_tag : "");
@@ -377,23 +376,22 @@ ls_fileproc (void *callerdat, struct file_info *finfo)
     {
 	struct long_format_data *out =
 		xmalloc (sizeof (struct long_format_data));
-	out->header = asnprintf (NULL, &length, "%-5.5s",
+	out->header = Xasprintf ("%-5.5s",
                                  vers->options[0] != '\0' ? vers->options
                                                           : "----");
 	/* FIXME: Do we want to mimc the real `ls' command's date format?  */
 	out->time = gmformat_time_t (RCS_getrevtime (finfo->rcs, vers->vn_rcs,
                                                      0, 0));
-	out->footer = asnprintf (NULL, &length, " %-9.9s%s %s%s",
-                                 vers->vn_rcs,
+	out->footer = Xasprintf (" %-9.9s%s %s%s", vers->vn_rcs,
                                  strlen (vers->vn_rcs) > 9 ? "+" : " ",
                                  show_dead_revs ? (isdead ? "dead " : "     ")
-                                               : "",
-                                finfo->file);
+                                                : "",
+                                 finfo->file);
 	n->data = out;
 	n->delproc = long_format_data_delproc;
     }
     else
-	n->data = asnprintf (NULL, &length, "%s\n", finfo->file);
+	n->data = Xasprintf ("%s\n", finfo->file);
 
     p = findnode (callerdat, finfo->update_dir);
     assert (p);
@@ -447,24 +445,23 @@ ls_direntproc (void *callerdat, const char *dir, const char *repos,
     if (p)
     {
 	/* Push this dir onto our parent directory's listing.  */
-	size_t length;
 	Node *n = getnode();
 
 	if (entries_format)
-	    n->data = asnprintf (NULL, &length, "D/%s////\n", dir);
+	    n->data = Xasprintf ("D/%s////\n", dir);
 	else if (long_format)
 	{
 	    struct long_format_data *out =
 		    xmalloc (sizeof (struct long_format_data));
 	    out->header = xstrdup ("d--- ");
 	    out->time = gmformat_time_t (unix_time_stamp (repos));
-	    out->footer = asnprintf (NULL, &length, "%12s%s%s", "",
+	    out->footer = Xasprintf ("%12s%s%s", "",
                                      show_dead_revs ? "     " : "", dir);
 	    n->data = out;
 	    n->delproc = long_format_data_delproc;
 	}
 	else
-	    n->data = asnprintf (NULL, &length, "%s\n", dir);
+	    n->data = Xasprintf ("%s\n", dir);
 
 	addnode (p->data, n);
     }
@@ -592,7 +589,7 @@ ls_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	    }
 
 	    /* take care of the rest */
-	    path = asnprintf (NULL, NULL, "%s/%s", repository, mfile);
+	    path = Xasprintf ("%s/%s", repository, mfile);
 	    if (isdir (path))
 	    {
 		/* directory means repository gets the dir tacked on */

@@ -223,12 +223,11 @@ status_fileproc (void *callerdat, struct file_info *finfo)
 	{
 	    /* Convert from the asctime() format to ISO 8601 */
 	    char *buf;
-	    size_t dummy;
 
 	    cvs_output ("\t", 0);
 
 	    /* Allow conversion from CVS/Entries asctime() to ISO 8601 */
-	    buf = asnprintf (NULL, &dummy, "%s UTC", vers->ts_rcs);
+	    buf = Xasprintf ("%s UTC", vers->ts_rcs);
 	    cvs_output_tagged ("date", buf);
 	    free (buf);
 	}

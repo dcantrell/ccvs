@@ -1,3 +1,16 @@
+2004-10-15 Derek Price <derek@ximbiot.com>
+
+	* cvs.h: Don't include vasnprintf.h.
+	(Xasprintf): New prototype.
+	* client.c, edit.c, history.c, import.c, ls.c, main.c, parseinfo.c,
+	recurse.c, release.c, repos.c, root.c, server.c, status.c, subr.c,
+	vers_ts.c: s/asnprintf/Xasprintf/.
+	* root.c: Include vasnprintf.h.
+	(primary_root_translate, primary_root_inverse_translate): Use
+	asnprintf() properly.
+	* subr.c: Include vasprintf.h.
+	(Xasprintf): New function.
+
 2004-10-14 Derek Price <derek@ximbiot.com>
 
 	* import.c (import): Remove an unecessary level of nesting.  Simplify

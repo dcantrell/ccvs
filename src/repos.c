@@ -108,7 +108,6 @@ Name_Repository (const char *dir, const char *update_dir)
     if (!isabsolute (repos))
     {
 	char *newrepos;
-	size_t dummy;
 
 	if (current_parsed_root == NULL)
 	{
@@ -123,8 +122,7 @@ Name_Repository (const char *dir, const char *update_dir)
 	    error (0, 0, "`..'-relative repositories are not supported.");
 	    error (1, 0, "invalid source repository");
 	}
-	newrepos = asnprintf (NULL, &dummy, "%s/%s",
-			      original_parsed_root->directory, repos);
+	newrepos = Xasprintf ("%s/%s", original_parsed_root->directory, repos);
 	free (repos);
 	repos = newrepos;
     }
