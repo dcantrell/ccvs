@@ -29,7 +29,6 @@ extern char *strerror (int);
 void
 error_exit (void)
 {
-    rcs_cleanup ();
     Lock_Cleanup ();
     exit (EXIT_FAILURE);
 }
