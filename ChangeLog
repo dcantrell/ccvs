@@ -1,5 +1,10 @@
 2003-12-07  Mark D. Baushke  <mdb@cvshome.org>
 
+	* configure.in (AC_SYS_LARGEFILE): Remove. More work is needed
+	before AC_SYS_LARGEFILE will work on all platforms.
+	* configure, config.h.in: Regenerated.
+	* NEWS: Remove last note.
+
 	* configure.in (AC_SYS_LARGEFILE): Add. The history file on
 	Solaris boxes can grow beyond 2GB.
 	* configure, config.h.in: Regenerated.
