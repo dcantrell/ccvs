@@ -1,3 +1,9 @@
+Sun Jan 26 21:58:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (mkdir_p): Set retval to 0 at start of function.
+	Previously it had been uninitialized for some cases.  Thanks are
+	due to nightly testing for catching this one.
+
 Sat Jan 25 21:34:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* subr.c, cvs.h (expand_string): New function.

@@ -318,6 +318,8 @@ mkdir_p (dir)
     if (q == NULL)
 	return ENOMEM;
 
+    retval = 0;
+
     /*
      * Skip over leading slash if present.  We won't bother to try to
      * make '/'.
@@ -346,8 +348,6 @@ mkdir_p (dir)
 	{
 	    if (CVS_MKDIR (dir, 0777) < 0)
 		retval = errno;
-	    else
-		retval = 0;
 	    goto done;
 	}
     }
