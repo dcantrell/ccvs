@@ -243,6 +243,7 @@ with_default_rsh = @with_default_rsh@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 EXTRA_DIST = \
+	.cvsignore \
 	cvs.linux \
 	cvs.solaris
 
