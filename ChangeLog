@@ -1,5 +1,7 @@
 2001-12-03  Larry Jones  <larry.jones@sdr.com>
 
+	* TODO (206, 207): New items.
+
 	* NEWS (Changes since 1.11.1p1): Note -F flag for [r]annotate.
 	(Changes from 1.11 to 1.11.1): Note :: for log.
 
