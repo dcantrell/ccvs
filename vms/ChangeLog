@@ -1,5 +1,7 @@
 Tue Sep 24 14:11:30 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* options.h: Add TMPDIR_DFLT.
+
 	* Makefile.in (DISTFILES): Add getpass.c.
 
 Thu Sep 12 1996  Jim Kingdon  <kingdon@cyclic.com>

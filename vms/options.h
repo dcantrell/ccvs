@@ -118,6 +118,20 @@
 #endif
 
 /*
+ * The password-authenticating server creates a temporary checkout of
+ * the affected files.  The variable TMPDIR_DFLT (or even better, the
+ * command-line option "-T" in the line for CVS in /etc/inetd.conf)
+ * can be used to specify the used directory.  This directory will
+ * also be used for other temporary files.
+ *
+ * Is there a better default for VMS than SYS$LOGIN?  I'm not aware of a
+ * standard convention on VMS.
+ */
+#ifndef TMPDIR_DFLT
+#define	TMPDIR_DFLT	"sys$login"
+#endif
+
+/*
  * The default editor to use, if one does not specify the "-e" option to cvs,
  * or does not have an EDITOR environment variable.  I set this to just "vi",
  * and use the shell to find where "vi" actually is.  This allows sites with
