@@ -27,6 +27,10 @@ Fri Sep 29 14:41:14 1995  <bmeier@rzu.unizh.ch>
 
         * root.c: start rcsid[] with "CVSid".
 
+Fri Sep 29 13:22:44 1995  Jim Blandy  <jimb@totoro.cyclic.com>
+
+	* diff.c (diff): Doc fix.
+
 Fri Sep 29 14:32:36 1995  Norbert Kiesel <nk@col.sw-ley.de>
         
         * repos.c (Short_Repository): chop superfluous "/".
