@@ -1,3 +1,8 @@
+Wed Jan  1 22:50:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Reword comment for TMPDIR_DFLT to make it clear that
+	this isn't specific to the pserver server.
+
 Wed Dec 18 10:51:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (CFLAGS): Specify -Gd- not -Gd+.  The documentation

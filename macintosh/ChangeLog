@@ -1,3 +1,8 @@
+Wed Jan  1 22:49:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Reword comment for TMPDIR_DFLT to make it clear that
+	this isn't specific to the pserver server.
+
 Mon Oct 28 09:22:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* mac_init.c (macos_error_cleanup): Removed; SYSTEM_CLEANUP (aka

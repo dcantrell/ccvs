@@ -108,13 +108,10 @@
 #define	RCSBIN_DFLT	""
 #endif
 
-/*
- * The password-authenticating server creates a temporary checkout of
- * the affected files.  The variable TMPDIR_DFLT (or even better, the
- * command-line option "-T" in the line for CVS in /etc/inetd.conf)
- * can be used to specify the used directory.  This directory will
- * also be used for other temporary files.
- */
+/* Directory used for storing temporary files, if not overridden by
+   environment variables or the -T global option.  There should be little
+   need to change this (-T is a better mechanism if you need to use a
+   different directory for temporary files).  */
 #ifndef TMPDIR_DFLT
 #define	TMPDIR_DFLT	"c:\\temp"
 #endif
