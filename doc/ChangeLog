@@ -1,3 +1,7 @@
+2000-10-20  Jim Kingdon  <http://sourceforge.net/users/kingdon/>
+
+	* cvs.texinfo (Variables): Document CVS_USER.
+
 2000-10-17  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.texinfo (Remote repositories): added a comment about specifying
