@@ -90,7 +90,7 @@ FLAGS_TO_PASS = \
 
 DISTFILES = \
 	COPYING COPYING.LIB INSTALL README TODO PROJECTS \
-	BUGS MINOR-BUGS FAQ \
+	BUGS MINOR-BUGS FAQ HACKING \
 	ChangeLog NEWS ChangeLog.zoo \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh cvsinit.sh \
