@@ -2647,16 +2647,16 @@ static void start_rsh_server PROTO((int *, int *));
 
 int
 supported_request (name)
-     char *name;
+    char *name;
 {
-  struct request *rq;
+    struct request *rq;
 
-  for (rq = requests; rq->name; rq++)
-    if (!strcmp (rq->name, name))
-      return rq->status == rq_supported;
-  error (1, 0, "internal error: testing support for unknown option?");
-  /* NOTREACHED */
-  return 0;
+    for (rq = requests; rq->name; rq++)
+	if (!strcmp (rq->name, name))
+	    return rq->status == rq_supported;
+    error (1, 0, "internal error: testing support for unknown option?");
+    /* NOTREACHED */
+    return 0;
 }
 
 

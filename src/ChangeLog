@@ -1,3 +1,7 @@
+Thu Jun 13 17:24:38 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (supported_request): Reindent.
+
 Thu Jun 13 1996  Mark H. Wilkinson  <mhw@minster.york.ac.uk>
 
 	* options.h.in, mkmodules.c: Corrections to allow compilation of
