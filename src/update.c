@@ -260,16 +260,18 @@ update (argc, argv)
 
 	    /* If the server supports the command "update-patches", that means
 	       that it knows how to handle the -u argument to update, which
-	       means to send patches instead of complete files.  */
+	       means to send patches instead of complete files.
+
+	       We don't send -u if failed_patches != NULL, so that the
+	       server doesn't try to send patches which will just fail
+	       again.  At least currently, the client also clobbers the
+	       file and tells the server it is lost, which also will get
+	       a full file instead of a patch, but it seems clean to omit
+	       -u.  */
 	    if (failed_patches == NULL)
 	    {
-#ifndef DONT_USE_PATCH
-		/* Systems which don't have the patch program ported to them
-		   will want to define DONT_USE_PATCH; then CVS won't try to
-		   invoke patch.  */
 		if (supported_request ("update-patches"))
 		    send_arg ("-u");
-#endif
 	    }
 
 	    if (failed_patches == NULL)

@@ -5725,6 +5725,8 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	serverpatch)
 	  # Test remote CVS handling of unpatchable files.  This isn't
 	  # much of a test for local CVS.
+	  # We test this with some keyword expansion games, but the situation
+	  # also arises if the user modifies the file while CVS is running.
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1
 	  cd 1
