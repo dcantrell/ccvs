@@ -287,6 +287,10 @@
 #define CVS_MKDIR os2_mkdir
 extern int os2_mkdir (const char *PATH, int MODE);
 
+/* OS/2 needs a special chdir functions that handles drives */
+#define CVS_CHDIR os2_chdir
+extern int os2_chdir (const char *Dir);
+
 /* This function doesn't exist under OS/2; we provide a stub. */
 extern int readlink (char *path, char *buf, int buf_size);
 
