@@ -20,7 +20,8 @@
 @comment along with CVS; see the file COPYING.  If not, write to
 @comment the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-@afourpaper
+@c No, not afourpaper
+
 @setfilename cvs.info
 @include CVSvn.texi
 @settitle CVS---Concurrent Versions System
@@ -4262,7 +4263,7 @@ a new revision of the file.
 @cindex RCS keywords
 
 This is a list of the keywords that @sc{rcs} currently
-(in release 5.6.0.1) supports:
+(in release 5.7) supports:
 
 @table @code
 @cindex Author keyword
@@ -4314,6 +4315,12 @@ accumulating a complete change log in a source file,
 but for several reasons it can be problematic.
 @xref{Log keyword}.
 
+@cindex Name keyword
+@item $@asis{Name}$
+The symbolic name used to check out the revision, if
+any.  Without specifying a symbolic name, @sc{rcs}
+generates just @samp{$@asis{Name: }$}.
+
 @cindex RCSfile keyword
 @item $@asis{RCSfile}$
 The name of the RCS file without a path.
@@ -4362,7 +4369,9 @@ Even though a clever optimizing compiler could remove
 the unused variable @code{rcsid}, most compilers tend
 to include the string in the binary.  Some compilers
 have a @code{#pragma} directive to include literal text
-in the binary.
+in the binary.  Many compilers also have a
+@code{#ident} directive to include identification
+strings in the binary.
 
 @cindex Ident (shell command)
 The @code{ident} command (which is part of the @sc{rcs}
@@ -4393,6 +4402,19 @@ magic @sc{sccs} phrase, like this:
 
 @example
 static char *id="@@(#) $@asis{}Id: ab.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
+@end example
+
+If you generate releases with @code{cvs export -r TAG}
+you may wish to have the tag name included in your
+keyword expansions.  You can do this by embedding the
+keyword @code{$@asis{}Name$} in your identification
+string.  Note that @code{$@asis{}Name$} is only
+expanded when the @samp{-r} option is given with a
+vaild tag name to @code{checkout}, @code{export},
+and @code{rdiff}.
+
+@example
+#ident	"@@(#)module_name:$@asis{}Name$:$@asis{}Id$";
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4431,9 +4453,9 @@ each working directory copy of a file also has a
 substitution mode.  The former is set by the @samp{-k}
 option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the -k or -A options to @code{cvs
-checkout} or @code{cvs update}.  @code{cvs diff} also
-has a @samp{-k} option.  For some examples,
-@xref{Binary files}.
+checkout} or @code{cvs update}.  @code{cvs diff} and
+@code{cvs rdiff} also have @samp{-k} options.  For some
+examples, @xref{Binary files}.
 
 The modes available are:
 
@@ -5041,7 +5063,7 @@ the only option supported for all @sc{cvs} commands.
 
 @item -k @var{kflag}
 Alter the default @sc{rcs} processing of keywords.
-@xref{Keyword substitution}, for the meaning of
+@xref{Substitution modes}, for the meaning of
 @var{kflag}.  Your @var{kflag} specification is
 @dfn{sticky} when you use it to create a private copy
 of a source file; that is, when you use this option
@@ -5051,7 +5073,7 @@ file, and continues to use it with future update
 commands on the same file until you specify otherwise.
 
 The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff} and
+@code{checkout}, @code{diff}, @code{rdiff}, and
 @code{update} commands.
 
 @item -l
@@ -5563,8 +5585,9 @@ retrieve the most recent revision (instead of ignoring
 the file).
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.  See
-co(1).  This option is sticky; future updates of
+Process @sc{rcs} keywords according to @var{kflag}.
+@xref{Substitution modes}, for the meaning of
+@var{kflag}.  This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
 to see the sticky options.  @xref{status}.
@@ -5961,8 +5984,9 @@ figure out how @sc{cvs} was configured.  In the default
 configuration @sc{cvs} will use the @samp{-D @var{date}} option.
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.  See
-co(1).
+Process @sc{rcs} keywords according to @var{kflag}.
+@xref{Substitution modes}, for the meaning of
+@var{kflag}.
 
 @item -l
 Local; run only in current working directory.
@@ -6065,7 +6089,10 @@ files correctly.  Also be aware that after having used
 command (which is part of the @sc{rcs} suite---see
 ident(1)) which looks for @sc{rcs} keyword strings.  If
 you want to be able to use @code{ident} you must not
-use @samp{-kv}.
+use @samp{-kv}.  You can instead use the @code{what}
+command, if your system has it or you can find source
+to a version of it, by prefixing your keyword strings
+with @samp{@@(#)}.  (@pxref{Using keywords})
 
 @menu
 * export options::              export options
@@ -6338,12 +6365,12 @@ file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
 before being imported, @xref{Wrappers}.
 
-The outside source is saved in a first-level @sc{rcs}
-branch, by default 1.1.1.  Updates are leaves of this
-branch; for example, files from the first imported
-collection of source will be revision 1.1.1.1, then
-files from the first imported update will be revision
-1.1.1.2, and so on.
+The new source files are saved in a first-level
+@sc{rcs} branch, by default 1.1.1.  Updates are leaves
+of this branch; for example, files from the first
+imported collection of source will be revision 1.1.1.1,
+then files from the first imported update will be
+revision 1.1.1.2, and so on.
 
 At least three arguments are required.
 @var{repository} is needed to identify the collection
@@ -6380,8 +6407,10 @@ the @samp{-b @var{branch}} flag is given, revisions will
 @emph{always} be made to the branch 1.1.1---even if a
 @var{vendortag} that matches another branch is given!
 What happens in that case, is that the tag will be
-reset to 1.1.1.  Warning: This behavior might change
-in the future.
+reset to 1.1.1.  Warning:  This behavior might change
+in the future.  If the @var{branch} specified is
+@samp{1}, then the trunk will be used instead of the
+normal vendor branch 1.1.1.
 
 @item -k @var{subst}
 Indicate the RCS keyword expansion mode desired.  This
@@ -6719,7 +6748,32 @@ you should probably not use @samp{-u}.
 Expand @sc{rcs} keywords according to the rules current in
 @sc{rcs} version @var{vn} (the expansion format changed with
 @sc{rcs} version 5).
+
+@item -k @var{kflag}
+Specify the RCS keyword expansion options.
+@xref{Substitution modes}, for the meaning of
+@var{kflag}.  For locally developed code which you
+release with the @code{cvs export -kv}, you would also
+specify @samp{-kv} to @code{rdiff} in order to ensure
+your patches would properly upgrade a previous release
+to be identical to a new release.
+
+@item -K @var{kflag}
+Specify the RCS keyword expansion options for the old
+file only.  @xref{Substitution modes}, for the meaning
+of @var{kflag}.  This overrides any setting of
+@samp{-k} for the old file.
 @end table
+
+If neither @samp{-K} nor @samp{-k} are specified then
+@samp{-k o} is used to expand keywords for the ``old''
+file.  This has the effect of ensuring that for modules
+with a vendor branch the vendor's original keywords
+will be used to compare against thus producing a patch
+which will always properly apply against the vendor's
+original distribution.  You can override this to get
+default local keyword expansion by specifying the
+@samp{\-K kv} option.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node rdiff examples
