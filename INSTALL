@@ -19,7 +19,7 @@ i386 family:
 	PC Clone running ISC 4.0.1 (1.4.93) (footnote 5)
         PC Clone running Fintronic Linux 1.2.5 (1.4.93)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
-	SCO Unix 3.2.4.2 (1.4.92, with a few tweaks) (footnote 4)
+	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 m68k:
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 MIPS:
@@ -52,7 +52,8 @@ SPARC:
         There are some warnings about pointer casts which can safely be
         ignored.  (about 1.4.90).
 
-(footnote 4) Comment out the include of sys/time.h in src/server.c. (1.4.92)
+(footnote 4) Comment out the include of sys/time.h in src/server.c. (1.4.93)
+	You also may have to make sure TIME_WITH_SYS_TIME is undef'ed.
 
 (footnote 5) Add "#include <sys/bsdtypes.h>" to src/server.c. (1.4.93)
 
