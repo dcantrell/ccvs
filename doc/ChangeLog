@@ -1,3 +1,7 @@
+2001-02-20  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (BUGS): There's only one company listed now, not two.
+
 2001-02-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (Password authentication server, First import): Use

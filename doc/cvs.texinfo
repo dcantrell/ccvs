@@ -13596,7 +13596,7 @@ something about as well as problems with @sc{cvs} itself.
 @item
 If you want someone to help you and fix bugs that you
 report, there are companies which will do that for a
-fee.  Two such companies are:
+fee.  One such company is:
 
 @cindex Signum Support
 @cindex Support, getting CVS support
