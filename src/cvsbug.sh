@@ -6,7 +6,7 @@
 #
 # This file is part of GNU GNATS.
 # Modified by Berliner for CVS.
-# Modified by Jim Blandy for Cyclic CVS.
+# Modified by Jim Blandy for CVS 1.5.
 # $CVSid: @(#)cvsbug.sh 1.2 94/10/22 $
 #
 # GNU GNATS is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ SUBMITTER=net
 ## GNATS_ROOT=/usr/local/lib/gnats/gnats-db
 
 # The default mail address for PR submissions. 
-GNATS_ADDR=cyclic-cvs@cyclic.com
+GNATS_ADDR=bug-cvs@cyclic.com
 
 ## # Where the gnats category tree lives.
 ## DATADIR=/usr/local/lib
