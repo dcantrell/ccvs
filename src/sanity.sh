@@ -27368,6 +27368,27 @@ Global_option -l
 noop
 EOF
 
+	    # There used to be some exploits based on malformed Entry requests
+	    dotest server-17 "$testcvs server" \
+"E protocol error: Malformed Entry
+error  " <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos/dir1
+Entry X/file1/1.1////
+noop
+EOF
+
+	    dotest server-18 "$testcvs server" \
+"E protocol error: Malformed Entry
+error  " <<EOF
+Root $TESTDIR/crerepos
+Directory .
+$TESTDIR/crerepos/dir1
+Entry /CC/CC/CC
+noop
+EOF
+
 	    if $keep; then
 	      echo Keeping ${TESTDIR} and exiting due to --keep
 	      exit 0
