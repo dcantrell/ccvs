@@ -1,5 +1,9 @@
 Changes since 1.10:
 
+* The new "cvs version" command gives a short version message.  If
+the repository is remote, both the client and server versions are
+reported.
+
 * "cvs admin -t" now works correctly in client/server mode.
 
 * The "cvs history" command output format has changed -- the date
