@@ -152,6 +152,7 @@ CVS and the Real World.
 * Keyword substitution::        CVS can include the revision inside the file
 * Tracking sources::            Tracking third-party sources
 * Builds::                      Issues related to CVS and builds
+* Special Files::		Devices, links and other non-regular files
 
 References.
 -----------
@@ -5841,6 +5842,14 @@ receive notifications, she should specify @code{-a none}.
 The @var{files} and options are processed as for the @code{cvs
 watch} commands.
 
+@strong{Caution:} If the @var{PreservePermissions}
+option is enabled in the repository (@pxref{config}),
+CVS will not change the permissions on any of the
+@var{files}.  The reason for this change is to ensure
+that using @samp{cvs edit} does not interfere with the
+ability to store file permissions in the CVS
+repository.
+
 @end deffn
 
 Normally when you are done with a set of changes, you
@@ -6738,6 +6747,61 @@ is Odin (see
 @c ftp://ftp.uu.net/pub/cmvc/mk).  But I'm not sure
 @c there is any point in mentioning them here unless they
 @c can work with CVS.
+
+@c ---------------------------------------------------------------------
+@node Special Files
+@chapter Special Files
+
+In normal circumstances, CVS works only with regular
+files.  Every file in a project is assumed to be
+persistent; it must be possible to open, read and close
+them; and so on.  CVS also ignores file permissions and
+ownerships, leaving such issues to be resolved by the
+developer at installation time.  In other words, it is
+not possible to "check in" a device into a repository;
+if the device file cannot be opened, CVS will refuse to
+handle it.  Files also lose their ownerships and
+permissions during repository transactions.
+
+If the configuration variable @var{PreservePermissions}
+(@pxref{config}) is set in the repository, CVS will
+preserve file permissions and ownership across
+repository transactions, and will permit checkin and
+checkout of special files and symbolic links.
+
+Using this option affects the behavior of CVS in
+several ways.  First, some of the new operations
+supported by CVS are not accessible to all users.  In
+particular, file ownership and special file
+characteristics may only be changed by the superuser.
+When the @var{PreservePermissions} configuration
+variable is set, therefore, users will have to be
+`root' in order to perform CVS operations.
+
+A more subtle difference is that CVS considers a file
+to have changed only if its contents have changed
+(specifically, if the modification time of the working
+file does not match that of the repository's file).
+Therefore, if only the permissions or ownership have
+changed, or if a device's major or minor numbers have
+changed, CVS will not notice.  In order to commit such
+a change to the repository, you must force the commit
+with @samp{cvs commit -f}.  This also means that if a
+file's permissions have changed and the repository file
+is newer than the working copy, performing @samp{cvs
+update} will silently change the permissions on the
+working copy.
+
+Finally, it is worth noting that only regular files may
+be merged, for reasons that hopefully are obvious.  If
+@samp{cvs update} or @samp{cvs checkout -j} attempts to
+merge a symbolic link with a regular file, or two
+device files for different kinds of devices, CVS will
+report a conflict and refuse to perform the merge.  At
+the same time, @samp{cvs diff} will not report any
+differences between these files, since no meaningful
+textual comparisons can be made on files which contain
+no text.
 
 @c ---------------------------------------------------------------------
 @node CVS commands
@@ -11925,6 +11989,14 @@ for users in the system's user database if not found in
 pserver users must exist in @file{CVSROOT/passwd}.
 The default is @samp{yes}.  For more on pserver, see
 @ref{Password authenticated}.
+
+@cindex PreservePermissions, in CVSROOT/config
+@item PreservePermissions=@var{value}
+Enable support for saving special device files,
+symbolic links, file permissions and ownerships in the
+repository.  The default value is @samp{no}.
+@xref{Special Files} for the full implications of using
+this keyword.
 @end table
 
 @c ---------------------------------------------------------------------
