@@ -1182,12 +1182,8 @@ emptydir_name (void)
 {
     char *repository;
 
-    repository = xmalloc (strlen (current_parsed_root->directory) 
-			  + sizeof (CVSROOTADM)
-			  + sizeof (CVSNULLREPOS)
-			  + 3);
-    (void) sprintf (repository, "%s/%s/%s", current_parsed_root->directory,
-		    CVSROOTADM, CVSNULLREPOS);
+    repository = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+			    CVSROOTADM, CVSNULLREPOS);
     if (!isfile (repository))
     {
 	mode_t omask;
