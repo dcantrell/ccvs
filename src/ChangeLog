@@ -1,3 +1,8 @@
+Mon Jan 15 12:55:37 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c: Revert change to run getopt_long twice.  This can go in
+	after 1.7.
+
 Mon Jan 15 13:03:28 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* filesubr.c (deep_remove_dir): added test of EEXIST for nonempty
