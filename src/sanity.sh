@@ -988,7 +988,12 @@ done'
 	  dotest_fail deep-4a3 "test -d dir6/dir7/dir8" ''
 
 	  # Test that if we remove the working directory, CVS does not
-	  # recreate it.
+	  # recreate it.  (I realize that this behavior is what the
+	  # users expect, but in the longer run we might want to
+	  # re-think it.  The corresponding behavior for a file is that
+	  # CVS *will* recreate it, and we might want to make it so
+	  # that "cvs release -d" is the way to delete the directory
+	  # and have it stay gone -kingdon, Oct1996).
 	  rm -rf dir6
 	  dotest deep-4b1 "${testcvs} -q update" ''
 	  dotest deep-4b2 "${testcvs} -q update -d -P" \
