@@ -293,7 +293,7 @@ if there is sufficient @sc{cvs} traffic on
 
 You can also subscribe to the bug-cvs mailing list,
 described in more detail in @ref{BUGS}.  To subscribe
-send mail to bug-cvs-request@@prep.ai.mit.edu.
+send mail to bug-cvs-request@@gnu.org.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node What is CVS not?
@@ -12512,7 +12512,7 @@ in consequences and/or easy to fix, however.  You can
 also increase your odds by being as clear as possible
 about the exact nature of the bug and any other
 relevant information.  The way to report bugs is to
-send email to @code{bug-cvs@@prep.ai.mit.edu}.  Note
+send email to @code{bug-cvs@@gnu.org}.  Note
 that submissions to @code{bug-cvs} may be distributed
 under the terms of the @sc{gnu} Public License, so if
 you don't like this, don't submit them.  There is
