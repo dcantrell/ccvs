@@ -6,10 +6,9 @@
 project: cvs.exe
 # .SUFFIXES .c .obj .exe
 
-# path slash
-# Maintainers: always leave this set to "/", because `make dist' has
-# to work on Unix systems.  See os2/README to find out why we have
-# this var.
+# path slash.  This was introduced so that it can be set to \
+# instead of / for linking, but now that the cvs.exe rule uses
+# subst to produce \, it should be possible to nuke SL.
 SL = /
 
 # Directory in which to install executables.
@@ -289,16 +288,23 @@ install-cvs: cvs.exe
 
 # There seems to be no ICC option for specifying library locations, so
 # we must `set' the path in the compilation environment.  Urgkle. 
+#
+#         I'm having some weird problem with "\" vs. "/".  If I build
+# with "\" as the path separator in the makefile, the compiler dumps
+# core.  Go figure.  If I build with "/" as the path separator, the
+# object files compile fine but the linker thinks the "/" is indicating
+# options and gets all confused (though at least it doesn't dump core).
+# So, use subst to compile with "/" and link with "\".
 cvs.exe: ${OBJECTS}
 	echo Creating icc.in...
 	echo -Q+ -Ti+ -Fe$@ -B"/batch" -B"/NOE" > icc.in
-	echo ${OS2_OBJECTS}                    >> icc.in
-	echo ${LIB_OBJECTS}                    >> icc.in
-	echo ${COMMON_OBJECTS}                 >> icc.in
-	echo ${TCPIPLIB}                       >> icc.in
-	echo ${ARGVLIB}                        >> icc.in
+	echo $(subst /,\,$(OS2_OBJECTS))       >> icc.in
+	echo $(subst /,\,$(LIB_OBJECTS))       >> icc.in
+	echo $(subst /,\,$(COMMON_OBJECTS))    >> icc.in
+	echo $(subst /,\,$(TCPIPLIB))          >> icc.in
+	echo $(subst /,\,$(ARGVLIB))           >> icc.in
 	echo Creating icc.in... done.
-	set LIB=${LIB} & icc @icc.in
+	set LIB=$(subst /,\,$(LIB)) & icc @icc.in
 
 # cvs.obj: ${OBJECTS} ${SOURCES} ${HEADERS}
 
