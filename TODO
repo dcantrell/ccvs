@@ -788,3 +788,7 @@ request in the protocol could be extended to allow the client to just
 send differences instead of entire files.  In the degenerate case
 (e.g. "cvs diff" without arguments) the required network traffic is
 reduced to zero, and the client need not even contact the server.
+
+196.  Using a CVSROOT with a trailing slash will confuse CVS.  I think
+we need to add a call to strip_trailing_slashes in root.c
+(parse_cvsroot), but I haven't considered all of the ramifications.
