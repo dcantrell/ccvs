@@ -217,15 +217,15 @@ static bool
 readBool (const char *infopath, const char *option, const char *p, bool *val)
 {
     TRACE (TRACE_FLOW, "readBool (%s, %s, %s)", infopath, option, p);
-    if (!cvs_casecmp (p, "no") || !cvs_casecmp (p, "false")
-        || !cvs_casecmp (p, "off") || !strcmp (p, "0"))
+    if (!strcasecmp (p, "no") || !strcasecmp (p, "false")
+        || !strcasecmp (p, "off") || !strcmp (p, "0"))
     {
 	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = false;
 	return true;
     }
-    else if (!cvs_casecmp (p, "yes") || !cvs_casecmp (p, "true")
-	     || !cvs_casecmp (p, "on") || !strcmp (p, "1"))
+    else if (!strcasecmp (p, "yes") || !strcasecmp (p, "true")
+	     || !strcasecmp (p, "on") || !strcmp (p, "1"))
     {
 	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
 	*val = true;
@@ -252,7 +252,7 @@ readSizeT (const char *infopath, const char *option, const char *p,
     const char *q;
     size_t num, factor = 1;
 
-    if (!cvs_casecmp ("unlimited", p))
+    if (!strcasecmp ("unlimited", p))
     {
 	*val = SIZE_MAX;
 	return true;
@@ -495,11 +495,11 @@ warning: this CVS does not support PreservePermissions");
 	}
 	else if (strcmp (line, "RereadLogAfterVerify") == 0)
 	{
-	    if (!cvs_casecmp (p, "never"))
+	    if (!strcasecmp (p, "never"))
 	      retval->RereadLogAfterVerify = LOGMSG_REREAD_NEVER;
-	    else if (!cvs_casecmp (p, "always"))
+	    else if (!strcasecmp (p, "always"))
 	      retval->RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
-	    else if (!cvs_casecmp (p, "stat"))
+	    else if (!strcasecmp (p, "stat"))
 	      retval->RereadLogAfterVerify = LOGMSG_REREAD_STAT;
 	    else
 	    {
