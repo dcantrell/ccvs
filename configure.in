@@ -302,6 +302,9 @@ fi
 dnl for the buffer routine replacements
 AC_FUNC_MMAP
 
+dnl for debugging code
+CVS_FUNC_PRINTF_PTR
+
 # Try to find connect and gethostbyname.
 AC_CHECK_LIB(nsl, main)
 AC_SEARCH_LIBS(connect, xnet socket inet,
