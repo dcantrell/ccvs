@@ -24,9 +24,13 @@
 
 static int deep_remove_dir PROTO((const char *path));
 
-/*
- * Copies "from" to "to".
- */
+/* Copies "from" to "to".  Note that the functionality here is similar
+   to the win32 function CopyFile, but (1) we copy LastAccessTime and
+   CopyFile doesn't, (2) we set file attributes to the default set by
+   the C library and CopyFile copies them.  Neither #1 nor #2 was intentional
+   as far as I know, but changing them could be confusing, unless there
+   is some reason they should be changed (this would need more
+   investigation).  */
 void
 copy_file (from, to)
     const char *from;
