@@ -79,5 +79,10 @@ AC_CHECK_FUNCS(krb_get_err_text)
 AC_CHECK_FUNC(connect, :, 
 [AC_CHECK_LIB(socket, connect) AC_CHECK_LIB(nsl, connect)])
 
+test -f src/options.h || (
+  echo creating ./src/options.h 
+  cp ${srcdir}/src/options.h.in ./src/options.h
+)
+
 AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile man/Makefile \
  	  contrib/Makefile examples/Makefile stamp-h)
