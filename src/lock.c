@@ -21,6 +21,7 @@ static int unlock_proc PROTO((Node * p, void *closure));
 static int write_lock PROTO((char *repository));
 static void lock_simple_remove PROTO((char *repository));
 static void lock_wait PROTO((char *repository));
+static void lock_obtained PROTO((char *repository));
 static int Check_Owner PROTO((char *lockdir));
 
 static char lockers_name[20];
@@ -209,6 +210,8 @@ int
 Writer_Lock (list)
     List *list;
 {
+    char *wait_repos;
+
     if (noexec)
 	return (0);
 
@@ -219,6 +222,7 @@ Writer_Lock (list)
 	return (1);
     }
 
+    wait_repos = NULL;
     for (;;)
     {
 	/* try to lock everything on the list */
@@ -232,6 +236,8 @@ Writer_Lock (list)
 	switch (lock_error)
 	{
 	    case L_ERROR:		/* Real Error */
+		if (wait_repos != NULL)
+		    free (wait_repos);
 		Lock_Cleanup ();	/* clean up any locks we set */
 		error (0, 0, "lock failed - giving up");
 		return (1);
@@ -239,12 +245,20 @@ Writer_Lock (list)
 	    case L_LOCKED:		/* Someone already had a lock */
 		Lock_Cleanup ();	/* clean up any locks we set */
 		lock_wait (lock_error_repos); /* sleep a while and try again */
+		wait_repos = xstrdup (lock_error_repos);
 		continue;
 
 	    case L_OK:			/* we got the locks set */
+	        if (wait_repos != NULL)
+		{
+		    lock_obtained (wait_repos);
+		    free (wait_repos);
+		}
 		return (0);
 
 	    default:
+		if (wait_repos != NULL)
+		    free (wait_repos);
 		error (0, 0, "unknown lock status %d in Writer_Lock",
 		       lock_error);
 		return (1);
@@ -437,6 +451,7 @@ set_lock (repository, will_wait)
     char *repository;
     int will_wait;
 {
+    int waited;
     struct stat sb;
     mode_t omask;
 #ifdef CVS_FUDGELOCKS
@@ -450,6 +465,7 @@ set_lock (repository, will_wait)
      * handlers that do the appropriate things, like remove the lock
      * directory before they exit.
      */
+    waited = 0;
     cleanup_lckdir = 0;
     for (;;)
     {
@@ -479,6 +495,8 @@ set_lock (repository, will_wait)
 	    cleanup_lckdir = 1;
 	    SIG_endCrSect ();
 	    status = L_OK;
+	    if (waited)
+	        lock_obtained (repository);
 	    goto out;
 	}
 	SIG_endCrSect ();
@@ -535,6 +553,7 @@ set_lock (repository, will_wait)
 	if (!will_wait)
 	    return (L_LOCKED);
 	lock_wait (repository);
+	waited = 1;
     }
 }
 
@@ -569,6 +588,19 @@ lock_wait (repos)
     error (0, 0, "[%8.8s] waiting for %s's lock in %s", ctime (&now) + 11,
 	   lockers_name, repos);
     (void) sleep (CVSLCKSLEEP);
+}
+
+/*
+ * Print out a message when we obtain a lock.
+ */
+static void
+lock_obtained (repos)
+     char *repos;
+{
+    time_t now;
+
+    (void) time (&now);
+    error (0, 0, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
 }
 
 static int lock_filesdoneproc PROTO ((int err, char *repository,
