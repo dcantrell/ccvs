@@ -1,3 +1,9 @@
+2004-03-13  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Remove error.h since it is now included in
+	lib.
+	* Makefile.in: Regenerated.
+
 2004-03-09  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* run.c: Move #includes required for cmdline_escape and friends...
