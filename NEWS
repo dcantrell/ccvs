@@ -1,5 +1,7 @@
 Changes since 1.7:
 
+* Added the patterns *.olb *.exe _$* *$ to default ignore list.
+
 * There is now a $USER internal variable for *info files.
 
 * There is no longer a separate `mkmodules' program; the functionality

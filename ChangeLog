@@ -1,3 +1,7 @@
+Thu Feb 29 10:04:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* NEWS: Mention change to default ignore list.
+
 Thu Feb 29 00:28:08 1996  Peter Wemm  <peter@jhome.DIALix.COM>
 
 	* configure.in: correctly spell FNM_PATHNAME in fnmatch() test,
