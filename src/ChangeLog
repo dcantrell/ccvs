@@ -1,3 +1,8 @@
+Tue May  7 10:44:20 MET DST 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* rcs.c (rcsvers_delproc): fix memory leak by freeing author
+	  field.
+
 Mon May  6 10:40:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (conflicts): New test conflicts-126.5 tests for bug

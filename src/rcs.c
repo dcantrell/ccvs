@@ -451,6 +451,8 @@ rcsvers_delproc (p)
 	free (rnode->date);
     if (rnode->next != (char *) NULL)
 	free (rnode->next);
+    if (rnode->author != (char *) NULL)
+	free (rnode->author);
     free ((char *) rnode);
 }
 
