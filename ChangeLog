@@ -1,3 +1,7 @@
+Tue Nov 14 15:22:25 1995  Greg A. Woods  <woods@most.weird.com>
+
+	* cvsinit.sh: woops!  wasn't installing contrib/log!
+
 Tue Nov 14 12:09:11 1995  Greg A. Woods  <woods@most.weird.com>
 
 	* INSTALL: oops, missed a couple of things about "configure"
