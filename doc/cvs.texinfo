@@ -1916,6 +1916,7 @@ described in @ref{Connecting via rsh}.
 * Password authenticated::      Direct connections using passwords
 * GSSAPI authenticated::        Direct connections using GSSAPI
 * Kerberos authenticated::      Direct connections with kerberos
+* Connecting via fork::         Using a forked @code{cvs server} to connect
 @end menu
 
 @node Server requirements
@@ -2508,6 +2509,29 @@ cvs -d :kserver:chainsaw.yard.com:/usr/local/cvsroot checkout foo
 
 Previous versions of @sc{cvs} would fall back to a
 connection via rsh; this version will not do so.
+
+@node Connecting via fork
+@subsection Connecting with fork
+
+@cindex fork
+@cindex :fork:, setting up
+This access method allows you to connect to a
+repository on your local disk via the remote protocol.
+While this method isn't very useful for day-to-day
+operations, it is @emph{very} useful when testing or
+debugging @code{cvs} and the remote protocol.
+Specifically, we avoid all of the network-related
+setup/configuration, timeouts, and authentication
+inherent in the other remote access methods but still
+create a connection which uses the remote protocol.
+
+To connect using the @code{fork} method, use
+@samp{:fork:} and the pathname to your local
+repository.  For example:
+
+@example
+cvs -d :fork:/usr/local/cvsroot checkout foo
+@end example
 
 @c ---------------------------------------------------------------------
 @node Read-only access

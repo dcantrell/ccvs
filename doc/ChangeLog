@@ -1,3 +1,8 @@
+1998-09-24  Noel Cragg  <noel@swish.red-bean.com>
+
+	* cvs.texinfo (Connecting via fork): new node about the fork
+	access method.
+
 1998-09-22  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Environment variables): Document
