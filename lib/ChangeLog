@@ -1,3 +1,10 @@
+Wed Apr 10 17:55:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* getdate.y (get_date): Use a time_t variable rather than a field
+	in a struct timeb.  Works around Solaris compiler bug.  Sure, it
+	is a compiler bug, but the workaround is completely painless.
+	* getdate.c: Regenerated.
+
 Fri Mar 22 11:17:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: If EXIT_FAILURE is not defined by stdlib.h, define it
