@@ -236,8 +236,6 @@ static short tz_local;
 static time_t tz_seconds_east_of_GMT;
 static char *tz_name = "+0000";
 
-char *logHistory = ALL_HISTORY_REC_TYPES;
-
 /* -r, -t, or -b options, malloc'd.  These are "" if the option in
    question is not specified or is overridden by another option.  The
    main reason for using "" rather than NULL is historical.  Together
@@ -719,7 +717,7 @@ history_write (int type, const char *update_dir, const char *revs,
 				 * readonlyfs.
 				 */
 	return;
-    if (!strchr (logHistory, type))	
+    if (!strchr (config->logHistory, type))	
 	return;
 
     fname = asnprintf (NULL, &dummy, "%s/%s/%s",

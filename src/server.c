@@ -112,10 +112,6 @@ char *CVS_Username = NULL;
    later CVS protocol.  Exported because root.c also uses. */
 static char *Pserver_Repos = NULL;
 
-/* Should we check for system usernames/passwords?  Can be changed by
-   CVSROOT/config.  */
-bool system_auth = true;
-
 # endif /* AUTH_SERVER_SUPPORT */
 
 #ifdef HAVE_PAM
@@ -522,7 +518,8 @@ supported_response (char *name)
  *
  *
  * GLOBALS
- *   PrimaryServer        The parsed setting from CVSROOT/config, if any, or
+ *   config->PrimaryServer
+ *                        The parsed setting from CVSROOT/config, if any, or
  *                        NULL, otherwise.
  *   current_parsed_root  The current repository.
  *
@@ -547,12 +544,13 @@ isProxyServer (void)
     /* If there is no primary server defined in CVSROOT/config, then we can't
      * be a secondary.
      */
-    if (!PrimaryServer) return false;
+    if (!config || !config->PrimaryServer) return false;
 
     /* The directory must not match for fork.  */
-    if (PrimaryServer->method == fork_method)
+    if (config->PrimaryServer->method == fork_method)
     {
-	if (strcmp (PrimaryServer->directory, current_parsed_root->directory))
+	if (strcmp (config->PrimaryServer->directory,
+		    current_parsed_root->directory))
 	    return true;
 	return false;
     }
@@ -560,7 +558,7 @@ isProxyServer (void)
     /* Must be :ext: method, then.  This is enforced when CVSROOT/config is
      * parsed.
      */
-    assert (PrimaryServer->method == ext_method);
+    assert (config->PrimaryServer->method == ext_method);
 
     /* Our hostname and directory must match for this to be the primary.  */
     if (!hostname)
@@ -569,8 +567,9 @@ isProxyServer (void)
 	gethostname (hostname, sizeof hostname);
 	hostname[sizeof hostname - 1] = '\0';
     }
-    if (!strcmp (PrimaryServer->hostname, hostname)
-	&& !strcmp (PrimaryServer->directory, current_parsed_root->directory))
+    if (!strcmp (config->PrimaryServer->hostname, hostname)
+	&& !strcmp (config->PrimaryServer->directory,
+		    current_parsed_root->directory))
 	return false;
 
     return true;
@@ -844,6 +843,8 @@ serve_root (char *arg)
     char *env;
     char *path;
 
+    TRACE (TRACE_FUNCTION, "serve_root (%s)", arg ? arg : "(null)");
+
     /* Don't process this twice or when errors are pending.  */
     if (error_pending()
 #ifdef PROXY_SUPPORT
@@ -898,7 +899,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 
     /* For pserver, this will already have happened, and the call will do
        nothing.  But for rsh, we need to do it now.  */
-    parse_config (current_parsed_root->directory);
+    config = get_root_allow_config (current_parsed_root->directory);
 
 #ifdef PROXY_SUPPORT
     /* At this point we have enough information to determine if we are a
@@ -913,9 +914,9 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	/* Replace the `Root' request in the log with a request for our
 	 * primary.
 	 */
-	len = 5 + strlen (PrimaryServer->directory);
+	len = 5 + strlen (config->PrimaryServer->directory);
 	buf = xmalloc (len + 1);
-	sprintf (buf, "Root %s", PrimaryServer->directory);
+	sprintf (buf, "Root %s", config->PrimaryServer->directory);
 	replace_file_offset (log_buffer_get_log_fd (proxy_log),
 	                     buf_from_net->last_index,
 	                     buf_from_net->last_count,
@@ -2292,7 +2293,7 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 	                      "c", "s", cvs_cmd_name,
 	                      "p", "s", ".",
 	                      "r", "s", current_parsed_root->directory,
-	                      "P", "s", PrimaryServer->original,
+	                      "P", "s", config->PrimaryServer->original,
 	                      (char *)NULL
 	                     );
 
@@ -2353,7 +2354,7 @@ become_proxy (void)
 		prepost_proxy_proc, PIOPT_ALL, &pre);
 
     /* Open connection to primary server.  */
-    open_connection_to_server (PrimaryServer, &buf_to_primary,
+    open_connection_to_server (config->PrimaryServer, &buf_to_primary,
                                &buf_from_primary);
     setup_logfiles ("CVS_SECONDARY_LOG", &buf_to_primary, &buf_from_primary);
     if ((status = set_nonblock (buf_from_primary)))
@@ -5516,7 +5517,8 @@ serve_expand_modules (char *arg)
 /* Decide if we should redirect the client to another server.
  *
  * GLOBALS
- *   PrimaryServer	The server to redirect write requests to, if any.
+ *   config->PrimaryServer	The server to redirect write requests to, if
+ *				any.
  *
  * ASSUMPTIONS
  *   The `Root' request has already been processed.
@@ -5532,7 +5534,7 @@ serve_command_prep (char *arg)
     if (error_pending ()) return;
 
     supported = supported_response ("Redirect");
-    if (PrimaryServer && supported
+    if (config->PrimaryServer && supported
 	&& lookup_command_attribute (arg) & CVS_CMD_MODIFIES_REPOSITORY
 	/* I call isProxyServer() last because it is probably the slowest
 	 * call due to the call to gethostname().
@@ -5541,7 +5543,7 @@ serve_command_prep (char *arg)
     {
 	/* Send `Redirect' to redirect client requests to the primary.  */
 	buf_output0 (buf_to_net, "Redirect ");
-	buf_output0 (buf_to_net, PrimaryServer->original);
+	buf_output0 (buf_to_net, config->PrimaryServer->original);
 	buf_output0 (buf_to_net, "\n");
 	buf_flush (buf_to_net, 1);
     }
@@ -5990,6 +5992,12 @@ server_cleanup (void)
 
 
 
+#ifdef PROXY_SUPPORT
+size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
+                                                        * by default.
+                                                        */
+#endif /* PROXY_SUPPORT */
+
 int server_active = 0;
 
 int
@@ -6046,7 +6054,9 @@ server (int argc, char **argv)
 	buf_from_net = log_buffer_initialize (buf_from_net, NULL,
 # ifdef PROXY_SUPPORT
 					      true,
-					      MaxProxyBufferSize,
+					      config
+						? config->MaxProxyBufferSize
+						: MaxProxyBufferSize,
 # endif /* PROXY_SUPPORT */
 					      true, outbuf_memory_error);
 	proxy_log = buf_from_net;
@@ -6055,7 +6065,9 @@ server (int argc, char **argv)
 	buf_to_net = log_buffer_initialize (buf_to_net, NULL,
 # ifdef PROXY_SUPPORT
 					    true,
-					    MaxProxyBufferSize,
+					    config
+					      ? config->MaxProxyBufferSize
+					      : MaxProxyBufferSize,
 # endif /* PROXY_SUPPORT */
 					    false, outbuf_memory_error);
 	proxy_log_out = buf_to_net;
@@ -6809,7 +6821,7 @@ check_password (char *username, char *password, char *repository)
 
     assert (rc == 0);
 
-    if (!system_auth)
+    if (!config->system_auth)
     {
 	/* Note that the message _does_ distinguish between the case in
 	   which we check for a system password and the case in which
@@ -7022,7 +7034,7 @@ pserver_authenticate_connection (void)
        file, parse_config already printed an error.  We keep going.
        Why?  Because if we didn't, then there would be no way to check
        in a new CVSROOT/config file to fix the broken one!  */
-    parse_config (repository);
+    config = get_root_allow_config (repository);
 
     /* We need the real cleartext before we hash it. */
     descrambled_password = descramble (password);

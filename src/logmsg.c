@@ -44,15 +44,6 @@ struct verifymsg_proc_data
     struct stat pre_stbuf;
 };
 
-/* 
- * Should the logmsg be re-read during the do_verify phase?
- * RereadLogAfterVerify=no|stat|yes
- * LOGMSG_REREAD_NEVER  - never re-read the logmsg
- * LOGMSG_REREAD_STAT   - re-read the logmsg only if it has changed
- * LOGMSG_REREAD_ALWAYS - always re-read the logmsg
- */
-int RereadLogAfterVerify = LOGMSG_REREAD_ALWAYS;
-
 /*
  * Puts a standard header on the output which is either being prepared for an
  * editor session, or being sent to a logfile program.  The modified, added,
@@ -447,8 +438,8 @@ do_verify (char **messagep, const char *repository)
     /* Get the mod time and size of the possibly new log message
      * in always and stat modes.
      */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+    if (config->RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
     {
 	if(CVS_STAT (data.fname, &post_stbuf) != 0)
 	    error (1, errno, "cannot find size of temp file %s", data.fname);
@@ -457,8 +448,8 @@ do_verify (char **messagep, const char *repository)
     /* And reread the log message in `always' mode or in `stat' mode when it's
      * changed.
      */
-    if (RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
-	(RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
+    if (config->RereadLogAfterVerify == LOGMSG_REREAD_ALWAYS ||
+	(config->RereadLogAfterVerify == LOGMSG_REREAD_STAT &&
 	  (data.pre_stbuf.st_mtime != post_stbuf.st_mtime ||
 	    data.pre_stbuf.st_size != post_stbuf.st_size)))
     {
@@ -792,7 +783,7 @@ logfile_write (const char *repository, const char *filter, const char *message,
      */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	                      !UseNewInfoFmtStrings, srepos,
+	                      !config->UseNewInfoFmtStrings, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	                      filter,
 	                      "c", "s", cvs_cmd_name,
@@ -894,7 +885,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 	if (fclose (fp) == EOF)
 	    error (1, errno, "%s", vpd->fname);
 
-	if (RereadLogAfterVerify == LOGMSG_REREAD_STAT)
+	if (config->RereadLogAfterVerify == LOGMSG_REREAD_STAT)
 	{
 	    /* Remember the status of the temp file for later */
 	    if (CVS_STAT (vpd->fname, &(vpd->pre_stbuf)) != 0)

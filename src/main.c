@@ -51,27 +51,9 @@ int logoff = 0;
  ***   CVSROOT/config options
  ***
  ***/
-/* Set if we should be writing CVSADM directories at top level.  At
-   least for now we'll make the default be off (the CVS 1.9, not CVS
-   1.9.2, behavior). */
-bool top_level_admin = false;
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-bool UseNewInfoFmtStrings = false;
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-cvsroot_t *PrimaryServer;
-#ifdef PROXY_SUPPORT
-size_t MaxProxyBufferSize = (size_t)(8 * 1024 * 1024); /* 8 megabytes,
-                                                        * by default.
-                                                        */
-#endif /* PROXY_SUPPORT */
-size_t MaxCommentLeaderLength = 20;
-bool UseArchiveCommentLeader = false;
+struct config *config;
 
 
-
-/* Control default behavior of 'cvs import' (-X option on or off) in
-   CVSROOT/config.  Defaults to off, for backward compatibility. */
-bool ImportNewFilesToVendorBranchOnly = false;
 
 mode_t cvsumask = UMASK_DFLT;
 
@@ -1036,7 +1018,8 @@ cause intermittent sandbox corruption.");
 		   already printed an error.  We keep going.  Why?  Because
 		   if we didn't, then there would be no way to check in a new
 		   CVSROOT/config file to fix the broken one!  */
-		parse_config (current_parsed_root->directory);
+		if (config) free_config (config);
+		config = parse_config (current_parsed_root->directory);
 	    }
 
 #ifdef CLIENT_SUPPORT

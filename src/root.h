@@ -54,6 +54,7 @@ void Create_Root (const char *dir, const char *rootdir);
 void root_allow_add (const char *);
 void root_allow_free (void);
 bool root_allow_ok (const char *);
+struct config *get_root_allow_config (const char *arg);
 void primary_root_add (const char *arg);
 char *primary_root_translate (const char *root_in);
 char *primary_root_inverse_translate (const char *root_in);

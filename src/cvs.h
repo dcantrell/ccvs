@@ -380,24 +380,17 @@ extern int noexec;		/* Don't modify disk anywhere */
 extern int readonlyfs;		/* fail on all write locks; succeed all read locks */
 extern int logoff;		/* Don't write history entry */
 
-extern bool top_level_admin;
-#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-extern bool UseNewInfoFmtStrings;
-#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-extern bool ImportNewFilesToVendorBranchOnly;
-#ifdef PROXY_SUPPORT
-extern cvsroot_t *PrimaryServer;
-extern size_t MaxProxyBufferSize;
-#endif /* PROXY_SUPPORT */
-extern size_t MaxCommentLeaderLength;
-extern bool UseArchiveCommentLeader;
-
 
 
 #define LOGMSG_REREAD_NEVER 0	/* do_verify - never  reread message */
 #define LOGMSG_REREAD_ALWAYS 1	/* do_verify - always reread message */
 #define LOGMSG_REREAD_STAT 2	/* do_verify - reread message if changed */
-extern int RereadLogAfterVerify;
+
+/* This header needs the LOGMSG_* defns above.  */
+#include "parseinfo.h"
+
+/* This structure holds the global configuration data.  */
+extern struct config *config;
 
 #ifdef CLIENT_SUPPORT
 extern List *dirs_sent_to_server; /* used to decide which "Argument
@@ -476,7 +469,6 @@ typedef	int (*CALLPROC)	(const char *repository, const char *value,
                          void *closure);
 int Parse_Info (const char *infofile, const char *repository,
                 CALLPROC callproc, int opt, void *closure);
-int parse_config (char *);
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	();
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
@@ -569,12 +561,6 @@ void lock_tree_promotably (int argc, char **argv, int local, int which,
 
 /* See lock.c for description.  */
 void lock_dir_for_write (const char *);
-
-/* LockDir setting from CVSROOT/config.  */
-extern char *lock_dir;
-
-/* AllowedAdminOptions setting from CVSROOT/config.  */
-extern char *UserAdminOptions;
 
 void Scratch_Entry (List * list, const char *fname);
 void ParseTag (char **tagp, char **datep, int *nonbranchp);

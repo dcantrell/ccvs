@@ -80,7 +80,8 @@ import (int argc, char **argv)
 
     /* Force -X behaviour or not based on the CVS repository
        CVSROOT/config setting.  */
-    killnew = ImportNewFilesToVendorBranchOnly;
+    killnew = !current_parsed_root->isremote
+	      && config->ImportNewFilesToVendorBranchOnly;
 
     ign_setup ();
     wrap_setup ();
@@ -1143,7 +1144,11 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
     file_type = sb.st_mode & S_IFMT;
 
     fpuser = NULL;
-    if (!preserve_perms || file_type == S_IFREG)
+    if (
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	!config->preserve_perms ||
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */
+	file_type == S_IFREG)
     {
 	fpuser = CVS_FOPEN (userfile,
 			    ((key_opt != NULL && strcmp (key_opt, "b") == 0)
@@ -1259,7 +1264,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
-	if (preserve_perms)
+	if (config->preserve_perms)
 	{
 	    if (preserve_initial_permissions (fprcs, userfile,
 					      file_type, sbp))
@@ -1290,7 +1295,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	/* Store initial permissions if necessary. */
-	if (preserve_perms)
+	if (config->preserve_perms)
 	{
 	    if (preserve_initial_permissions (fprcs, userfile,
 					      file_type, sbp))
@@ -1309,7 +1314,7 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	    /* Store initial permissions if necessary. */
-	    if (preserve_perms)
+	    if (config->preserve_perms)
 	    {
 		if (preserve_initial_permissions (fprcs, userfile,
 						  file_type, sbp))
@@ -1387,7 +1392,8 @@ add_rcs_file (const char *message, const char *rcs, const char *user,
 	}
 
 	/* Now copy over the contents of the file, expanding at signs.
-	   If preserve_perms is set, do this only for regular files. */
+	 * If config->preserve_perms is set, do this only for regular files.
+	 */
 	if (!do_killnew)
 	{
             /* Now copy over the contents of the file, expanding at signs,
@@ -1553,7 +1559,7 @@ write_error:
 
 /* Copy file contents into an RCS file, expanding at signs.
  *
- * If preserve_perms is set, nothing is copied if the source is not
+ * If config->preserve_perms is set, nothing is copied if the source is not
  * a regular file.
  *
  * INPUTS
@@ -1576,7 +1582,11 @@ expand_and_copy_contents (fprcs, file_type, user, fpuser)
     mode_t file_type;
     const char *user;
 {
-    if (!preserve_perms || file_type == S_IFREG)
+    if (
+#ifdef PRESERVE_PERMISSIONS_SUPPORT
+	!config->preserve_perms ||
+#endif /* PRESERVE_PERMISSIONS_SUPPORT */
+	file_type == S_IFREG)
     {
 	char buf[8192];
 	unsigned int len;
