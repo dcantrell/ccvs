@@ -1,5 +1,9 @@
 Changes since 1.10:
 
+* There is a new access method :fork: which is similar to :local:
+except that it is implemented via the CVS remote protocol, and thus
+has a somewhat different set of quirks and bugs.
+
 * The -d command line option no longer updates the CVS/Root file.  For
 one thing, the CVS 1.9/1.10 behavior never had updated CVS/Root in
 subdirectories, and for another, it didn't seem that popular in
