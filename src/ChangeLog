@@ -1,3 +1,12 @@
+2001-03-29  Larry Jones  <larry.jones@sdrc.com>
+
+	* client.c (connect_to_pserver, start_tcp_server): Add IP address
+	to connect failed message.
+	(connect_to_forked_server, connect_to_pserver, start_tcp_server): Add
+	trace messages ala start_rsh_server.
+	(start_rsh_server): Include entire command in trace message for
+	START_RSH_WITH_POPEN_RW like ! START_RSH_WITH_POPEN_RW does.
+
 2001-03-29  Derek Price  <dprice@collab.net>
 
 	* sanity.sh: Global search & replace ${TESTDIR}/cvsroot with
