@@ -1,3 +1,8 @@
+Mon Jul 8 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* rcs.c (RCS_fast_checkout): If -kb is not in use, open the
+	working file in text, not binary, mode.
+
 Sun Jul  7 10:36:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c (RCS_settag): Add comment regarding moving check for
