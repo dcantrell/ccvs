@@ -120,7 +120,8 @@ getdate_SOURCES += \
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
-	$(LIB_CLOCK_GETTIME)
+	$(LIB_CLOCK_GETTIME) \
+	$(LIBINTL)
 
 ## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c

@@ -1,5 +1,9 @@
 2004-05-03  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (getdate_LDADD): Add $(LIBINTL), needed on some systems.
+
+2004-05-03  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (BUILT_SOURCES, MAINTAINERCLEANFILES): Remove getdate.c,
 	Automake determines this automatically.
 	* Makefile.in: Regenerated.
