@@ -1,5 +1,19 @@
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
+	* client.h: Move some of the GSSAPI stuff...
+	* gssapi-client.h: ...to this new file.
+	* client.c (start_server): Use new initialize_gssapi_buffers().
+	(*): Move most of the GSSAPI stuff from here and...
+	* server.c (*): ...here...
+	* gssapi-client.c: ...to this new file.
+	* Makefile.am (EXTRA_cvs_SOURCES, cvs_DEPENDENCIES, cvs_LDADD): Support
+	$(cvs_client_objects).
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
+2003-05-09  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c: Reindent some compiler directives in order to make nesting
 	clearer.
 

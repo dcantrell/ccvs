@@ -30,6 +30,8 @@
 #include "socket-client.h"
 #include "rsh-client.h"
 
+#include "gssapi-client.h"
+
 # if HAVE_KERBEROS
 
 #   include <krb.h>
@@ -44,17 +46,6 @@ static C_Block kblock;
 static Key_schedule sched;
 
 # endif /* HAVE_KERBEROS */
-
-# ifdef HAVE_GSSAPI
-
-#   include "xgssapi.h"
-
-/* This is needed for GSSAPI encryption.  */
-static gss_ctx_id_t gcontext;
-
-static int connect_to_gserver PROTO((cvsroot_t *, int, struct hostent *));
-
-# endif /* HAVE_GSSAPI */
 
 static void add_prune_candidate PROTO((char *));
 
@@ -3623,156 +3614,6 @@ start_tcp_server (root, to_server_p, from_server_p)
 
 #endif /* HAVE_KERBEROS */
 
-#ifdef HAVE_GSSAPI
-
-/* Receive a given number of bytes.  */
-
-static void
-recv_bytes (sock, buf, need)
-     int sock;
-     char *buf;
-     int need;
-{
-    while (need > 0)
-    {
-	int got;
-
-	got = recv (sock, buf, need, 0);
-	if (got <= 0)
-	    error (1, 0, "recv() from server %s: %s", current_parsed_root->hostname,
-		   got == 0 ? "EOF" : SOCK_STRERROR (SOCK_ERRNO));
-
-	buf += got;
-	need -= got;
-    }
-}
-
-/* Connect to the server using GSSAPI authentication.  */
-
-/* FIXME
- *
- * This really needs to be rewritten to use a buffer and not a socket.
- * This would enable gserver to work with the SSL code I'm about to commit
- * since the SSL connection is going to look like a FIFO and not a socket.
- *
- * I think, basically, it will need to use buf_output and buf_read directly
- * since I don't think there is a read_bytes function - only read_line.
- *
- * recv_bytes could then be removed too.
- *
- * Besides, I added some cruft to reenable the socket which shouldn't be
- * there.  This would also enable its removal.
- */
-#define BUFSIZE 1024
-static int
-connect_to_gserver (root, sock, hostinfo)
-    cvsroot_t *root;
-    int sock;
-    struct hostent *hostinfo;
-{
-    char *str;
-    char buf[BUFSIZE];
-    gss_buffer_desc *tok_in_ptr, tok_in, tok_out;
-    OM_uint32 stat_min, stat_maj;
-    gss_name_t server_name;
-
-    str = "BEGIN GSSAPI REQUEST\012";
-
-    if (send (sock, str, strlen (str), 0) < 0)
-	error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
-
-    if (strlen (hostinfo->h_name) > BUFSIZE - 5)
-	error (1, 0, "Internal error: hostname exceeds length of buffer");
-    sprintf (buf, "cvs@%s", hostinfo->h_name);
-    tok_in.length = strlen (buf);
-    tok_in.value = buf;
-    gss_import_name (&stat_min, &tok_in, GSS_C_NT_HOSTBASED_SERVICE,
-		     &server_name);
-
-    tok_in_ptr = GSS_C_NO_BUFFER;
-    gcontext = GSS_C_NO_CONTEXT;
-
-    do
-    {
-	stat_maj = gss_init_sec_context (&stat_min, GSS_C_NO_CREDENTIAL,
-					 &gcontext, server_name,
-					 GSS_C_NULL_OID,
-					 (GSS_C_MUTUAL_FLAG
-					  | GSS_C_REPLAY_FLAG),
-					 0, NULL, tok_in_ptr, NULL, &tok_out,
-					 NULL, NULL);
-	if (stat_maj != GSS_S_COMPLETE && stat_maj != GSS_S_CONTINUE_NEEDED)
-	{
-	    OM_uint32 message_context;
-	    OM_uint32 new_stat_min;
-
-	    message_context = 0;
-	    gss_display_status (&new_stat_min, stat_maj, GSS_C_GSS_CODE,
-                                GSS_C_NULL_OID, &message_context, &tok_out);
-	    error (0, 0, "GSSAPI authentication failed: %s",
-		   (char *) tok_out.value);
-
-	    message_context = 0;
-	    gss_display_status (&new_stat_min, stat_min, GSS_C_MECH_CODE,
-				GSS_C_NULL_OID, &message_context, &tok_out);
-	    error (1, 0, "GSSAPI authentication failed: %s",
-		   (char *) tok_out.value);
-	}
-
-	if (tok_out.length == 0)
-	{
-	    tok_in.length = 0;
-	}
-	else
-	{
-	    char cbuf[2];
-	    int need;
-
-	    cbuf[0] = (tok_out.length >> 8) & 0xff;
-	    cbuf[1] = tok_out.length & 0xff;
-	    if (send (sock, cbuf, 2, 0) < 0)
-		error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
-	    if (send (sock, tok_out.value, tok_out.length, 0) < 0)
-		error (1, 0, "cannot send: %s", SOCK_STRERROR (SOCK_ERRNO));
-
-	    recv_bytes (sock, cbuf, 2);
-	    need = ((cbuf[0] & 0xff) << 8) | (cbuf[1] & 0xff);
-
-	    if (need > sizeof buf)
-	    {
-		int got;
-
-		/* This usually means that the server sent us an error
-		   message.  Read it byte by byte and print it out.
-		   FIXME: This is a terrible error handling strategy.
-		   However, even if we fix the server, we will still
-		   want to do this to work with older servers.  */
-		buf[0] = cbuf[0];
-		buf[1] = cbuf[1];
-		got = recv (sock, buf + 2, sizeof buf - 2, 0);
-		if (got < 0)
-		    error (1, 0, "recv() from server %s: %s",
-			   root->hostname, SOCK_STRERROR (SOCK_ERRNO));
-		buf[got + 2] = '\0';
-		if (buf[got + 1] == '\n')
-		    buf[got + 1] = '\0';
-		error (1, 0, "error from server %s: %s", root->hostname,
-		       buf);
-	    }
-
-	    recv_bytes (sock, buf, need);
-	    tok_in.length = need;
-	}
-
-	tok_in.value = buf;
-	tok_in_ptr = &tok_in;
-    }
-    while (stat_maj == GSS_S_CONTINUE_NEEDED);
-
-    return 1;
-}
-
-#endif /* HAVE_GSSAPI */
 
 static int send_variable_proc PROTO ((Node *, void *));
 
@@ -4051,14 +3892,7 @@ start_server ()
 	    if (! supported_request ("Gssapi-encrypt"))
 		error (1, 0, "This server does not support encryption");
 	    send_to_server ("Gssapi-encrypt\012", 0);
-	    global_to_server = cvs_gssapi_wrap_buffer_initialize (global_to_server, 0,
-								  gcontext,
-								  ((BUFMEMERRPROC)
-								   NULL));
-	    global_from_server = cvs_gssapi_wrap_buffer_initialize (global_from_server, 1,
-								    gcontext,
-								    ((BUFMEMERRPROC)
-								     NULL));
+	    initialize_gssapi_buffers(&global_to_server, &global_from_server);
 	    cvs_gssapi_encrypt = 1;
 	}
 	else
@@ -4124,14 +3958,8 @@ start_server ()
 		error (1, 0,
 		       "This server does not support stream authentication");
 	    send_to_server ("Gssapi-authenticate\012", 0);
-	    global_to_server = cvs_gssapi_wrap_buffer_initialize (global_to_server, 0,
-								  gcontext,
-								  ((BUFMEMERRPROC)
-								   NULL));
-	    global_from_server = cvs_gssapi_wrap_buffer_initialize (global_from_server, 1,
-								    gcontext,
-								    ((BUFMEMERRPROC)
-								     NULL));
+	    initialize_gssapi_buffers(&global_to_server, &global_from_server);
+
 	}
 	else
 	    error (1, 0, "Stream authentication is only supported when using GSSAPI");
