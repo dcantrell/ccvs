@@ -5686,7 +5686,7 @@ done"
 	  ;;
 
 	tagf)
-	  # More tagging tests, including using tag -F to convert a
+	  # More tagging tests, including using tag -F -B to convert a
 	  # branch tag to a regular tag and recovering thereof.
 
 	  # Setup; check in first-dir/file1
@@ -5730,11 +5730,16 @@ Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
-	  # Here we make it a non-branch tag.  Some think this should
-	  # be an error.  But if -F means "I want to put this tag here,
-	  # never mind whether there was a tag of that name before", then
-	  # an error wouldn't fit.
-	  dotest tagf-8 "${testcvs} -q tag -F br" "T file1
+	  # Here we try to make it a non-branch tag, but will
+	  # succeed in getting only warnings, even with -F 
+	  # because converting a branch tag to non-branch 
+	  # is potentially catastrophic.
+	  dotest tagf-8a "${testcvs} -q tag -F br" \
+"${PROG} [a-z]*: file1: Not moving branch tag .br. from 1\.1\.2\.1 to 1\.1\\.2\.1\.
+${PROG} [a-z]*: file2: Not moving branch tag .br. from 1\.1\.2\.1 to 1\.1\.2\.1\."
+	  # however, if we *really* are sure we want to move a branch tag,
+	  # "-F -B" will do the trick
+	  dotest tagf-8 "${testcvs} -q tag -F -B br" "T file1
 T file2"
 	  echo moremod >> file1
 	  echo moremod >> file2
@@ -5793,6 +5798,106 @@ Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
+	  # try accidentally deleting branch tag, "tag -d"
+	  dotest_fail tagf-16 "${testcvs} tag -d br" \
+"${PROG} [a-z]*: Untagging \.
+${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v.\.
+${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v.\."
+	  # try accidentally deleting branch tag, "rtag -d"
+	  dotest_fail tagf-17 "${testcvs} rtag -d br first-dir" \
+"${PROG} [a-z]*: Untagging first-dir
+${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v.\.
+${PROG} [a-z]*: Not removing branch tag .br. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v.\."
+	  # try accidentally converting branch tag to non-branch tag "tag -F"
+	  dotest tagf-18 "${testcvs} tag -r1.1 -F br file1" \
+"${PROG} [a-z]*: file1: Not moving branch tag .br. from 1\.1\.4\.1 to 1\.1\."
+	  # try accidentally converting branch tag to non-branch tag "rtag -F"
+	  dotest tagf-19 "${testcvs} rtag -r1.1 -F br first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: first-dir/file1: Not moving branch tag .br. from 1\.1\.4\.1 to 1\.1\.
+${PROG} [a-z]*: first-dir/file2: Not moving branch tag .br. from 1\.1\.2\.2 to 1\.1\."
+	  # create a non-branch tag
+	  dotest tagf-20 "${testcvs} rtag regulartag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir"
+	  # try accidentally converting non-branch tag to branch tag (tag -F -B -b)
+	  dotest tagf-21 "${testcvs} tag -F -B -b regulartag file1" \
+"${PROG} [a-z]*: file1: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.4\.1\.0\.2 due to .-B. option\."
+	  # try accidentally converting non-branch tag to branch rtag (rtag -F -B -b)
+	  dotest tagf-22 "${testcvs} rtag -F -B -b regulartag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.0\.6 due to .-B. option\.
+${PROG} [a-z]*: first-dir/file2: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.0\.4 due to .-B. option\."
+	  # Try accidentally deleting non-branch: (tag -d -B)
+	  dotest_fail tagf-23 "${testcvs} tag -d -B regulartag file1" \
+"${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v. due to .-B. option\."
+	  # Try accidentally deleting non-branch: (rtag -d -B)
+	  dotest_fail tagf-24 \
+		"${testcvs} rtag -d -B regulartag first-dir" \
+"${PROG} [a-z]*: Untagging first-dir
+${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file1,v. due to .-B. option\.
+${PROG} [a-z]*: Not removing non-branch tag .regulartag. from ./tmp/cvs-sanity/cvsroot/first-dir/file2,v. due to .-B. option\."
+
+	  # the following tests (throught the next commit) keep moving the same
+	  # tag back and forth between 1.1.6 & 1.1.8  in file1 and between
+	  # 1.1.4 and 1.1.6 in file2 since nothing was checked in on some of
+	  # these branches and CVS only tracks branches via tags unless they contain data.
+
+	  # try intentionally converting non-branch tag to branch tag (tag -F -b)
+	  dotest tagf-25a "${testcvs} tag -F -b regulartag file1" "T file1"
+	  # try intentionally moving a branch tag to a newly created branch (tag -F -b -B)
+	  dotest tagf-25b "${testcvs} tag -F -B -b -r1.1 regulartag file1" \
+"T file1"
+	  # try intentionally converting mixed tags to branch tags (rtag -F -b)
+	  dotest tagf-26a "${testcvs} rtag -F -b regulartag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: first-dir/file1: Not moving branch tag .regulartag. from 1\.1 to 1\.1\.0\.8\."
+	  # try intentionally converting a branch to a new branch tag (rtag -F -b -B)
+	  dotest tagf-26b "${testcvs} rtag -F -B -b -r1.1 regulartag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir"
+	  # update to our new branch
+	  dotest tagf-27 "${testcvs} update -r regulartag" \
+"${PROG} [a-z]*: Updating \.
+U file1
+U file2"
+	  # commit some changes and see that all rev numbers look right
+	  echo changes >> file1
+	  echo changes >> file2
+	  dotest tagf-28 "${testcvs} ci -m changes" \
+"${PROG} [a-z]*: Examining \.
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.8\.1; previous revision: 1\.1
+done
+Checking in file2;
+/tmp/cvs-sanity/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.1\.6\.1; previous revision: 1\.1
+done"
+	  # try intentional branch to non-branch (tag -F -B)
+	  dotest tagf-29 "${testcvs} tag -F -B -r1.1 regulartag file1" \
+"T file1"
+	  # try non-branch to non-branch (tag -F -B)
+	  dotest tagf-29a "${testcvs} tag -F -B -r br regulartag file1" \
+"${PROG} [a-z]*: file1: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.4\.1 due to .-B. option\."
+	  # try mixed-branch to non-branch (rtag -F -B )
+	  dotest tagf-29b "${testcvs} rtag -F -B -r br regulartag first-dir" \
+"${PROG} [a-z]*: Tagging first-dir
+${PROG} [a-z]*: first-dir/file1: Not moving non-branch tag .regulartag. from 1\.1 to 1\.1\.4\.1 due to .-B. option\."
+	  # at this point, regulartag is a regular tag within
+	  # file1 and file2
+
+	  # try intentional branch to non-branch (rtag -F -B)
+	  dotest tagf-30 "${testcvs} rtag -F -B -r1.1 br first-dir"  \
+"${PROG} [a-z]*: Tagging first-dir"
+	  # create a branch tag so we can try to delete it.
+	  dotest tagf-31 "${testcvs} rtag -b brtag first-dir"  \
+"${PROG} [a-z]*: Tagging first-dir"
+	
+	  # try intentinal deletion of branch tag (tag -d -B)
+	  dotest tagf-32 "${testcvs} tag -d -B brtag file1" "D file1"
+	  # try intentinal deletion of branch tag (rtag -d -B)
+	  dotest tagf-33 "${testcvs} rtag -d -B brtag first-dir" \
+"${PROG} [a-z]*: Untagging first-dir"
+
 	  cd ../..
 
 	  rm -r 1

@@ -1,5 +1,17 @@
 2001-06-06  Derek Price  <dprice@collab.net>
 
+	(Reformatting, bug fixes, tests, and comments to a
+	patch from Stephen Cameron <steve.cameron@compaq.com>.)
+
+	* tag.c: (rtag_fileproc, rtag_delete, tag_fileproc)
+	  Changed behavior of "cvs tag -F", "cvs tag -d", "cvs rtag -F"
+	  and "cvs rtag -d" so that they will not disturb existing 
+	  branch tags unless a new "-B" option is given.
+	* sanity.sh (tagf-16 - tagf-33): Added tests for new -B option
+	  to "cvs tag" and "cvs rtag"
+
+2001-06-06  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (crerepos-6a): Set CVS_RSH=false and only for the actual
 	test call at Larry's suggestion.  Also, test the error message since
 	it's fixed now.
