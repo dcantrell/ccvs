@@ -67,12 +67,18 @@ construct_cvspass_filename ()
  * Because the user might be accessing multiple repositories, with
  * different passwords for each one, the format of ~/.cvspass is:
  *
- * user@host:/path cleartext_password
- * user@host:/path cleartext_password
+ * user@host:/path Acleartext_password
+ * user@host:/path Acleartext_password
  * ...
  *
  * Of course, the "user@" might be left off -- it's just based on the
  * value of CVSroot.
+ *
+ * The "A" before "cleartext_password" is a literal capital A.  It's a
+ * version number indicating which form of scrambling we're doing on
+ * the password -- someday we might provide something more secure than
+ * the trivial encoding we do now, and when that day comes, it would
+ * be nice to remain backward-compatible.
  *
  * Like .netrc, the file's permissions are the only thing preventing
  * it from being read by others.  Unlike .netrc, we will not be
@@ -251,7 +257,7 @@ login (argc, argv)
               if (strncmp (CVSroot, linebuf, root_len))
                 fprintf (tmp_fp, "%s", linebuf);
               else
-                fprintf (tmp_fp, "%s %s\n", CVSroot, typed_password);
+                fprintf (tmp_fp, "%s A%s\n", CVSroot, typed_password);
 
               free (linebuf);
               linebuf = (char *) NULL;
@@ -271,7 +277,7 @@ login (argc, argv)
           return 1;
         }
 
-      fprintf (fp, "%s %s\n", CVSroot, typed_password);
+      fprintf (fp, "%s A%s\n", CVSroot, typed_password);
       fclose (fp);
     }
 
@@ -289,6 +295,8 @@ login (argc, argv)
  * But to what purpose?
  */
 
+/* Returns the _scrambled_ password.  The server must descramble
+   before hashing and comparing. */
 char *
 get_cvs_password ()
 {
@@ -301,13 +309,22 @@ get_cvs_password ()
   char *passfile;
 
   /* If someone (i.e., login()) is calling connect_to_pserver() out of
-     context, then assume they have supplied the correct password. */
+     context, then assume they have supplied the correct, scrambled
+     password. */
   if (cvs_password)
     return cvs_password;
 
   /* Environment should override file. */
   if ((password = getenv ("CVS_PASSWORD")) != NULL)
-    return xstrdup (password);
+    {
+      char *p;
+      p = xstrdup (password);
+      /* If we got it from the environment, then it wasn't properly
+         scrambled.  Since unscrambling is done on the server side, we
+         need to transmit it scrambled. */
+      scramble (p);
+      return p;
+    }
 
   /* Else get it from the file. */
   passfile = construct_cvspass_filename ();
@@ -345,6 +362,18 @@ get_cvs_password ()
       strtok (linebuf, " ");
       password = strtok (NULL, "\n");
       
+      /* password[1] is 'A', because we prefix all passwords with a
+         letter indicating which version of scrambling was used.  As
+         of right now, there is only one kind of scrambling, so it's
+         safe to ignore the 'A'.  We'll just scoot right past it. */
+      password++;
+      /* No, it is not necessary to transmit the 'A' to the server to
+         insure the possibility of future backward-compatibility.  If
+         we ever have another kind of scrambling, we can just extend
+         the authentication protocol, so the scrambled password itself
+         does not need to indicate what kind of unscrambling is
+         needed. */
+
       /* Give it permanent storage. */
       tmp = xmalloc (strlen (password) + 1);
       strcpy (tmp, password);

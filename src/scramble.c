@@ -52,7 +52,7 @@
  * carriage-return are safely handled.
  */
 
-static unsigned char
+static char
 shifts[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 114, 120,
 53, 79, 96, 109, 72, 108, 70, 64, 76, 67, 116, 74, 68, 87, 111, 52,
@@ -74,7 +74,7 @@ shifts[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
 
 /* Encode the string in place. */
 void
-scramble (unsigned char *str)
+scramble (char *str)
 {
   int i;
 
