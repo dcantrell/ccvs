@@ -22697,6 +22697,14 @@ update"
 	esac
 done
 
+# sanity check sanity.sh.  :)
+#
+# Test our exit directory so that single tests that exit in an incorrect
+# directory are noticed
+if test "x$TESTDIR" != "x`pwd`"; then
+	fail "cleanup: PWD != TESTDIR (\``pwd`' != \`$TESTDIR')"
+fi
+
 echo "OK, all tests completed."
 
 # TODO:
