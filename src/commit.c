@@ -240,6 +240,7 @@ find_fileproc (void *callerdat, struct file_info *finfo)
 	    error (0, 0,
 		   "`%s' should be removed and is still there (or is back"
 		   " again)", finfo->fullname);
+	    freevers_ts (&vers);
 	    return 1;
 	}
 	/* else */
