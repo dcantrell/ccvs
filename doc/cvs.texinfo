@@ -1073,6 +1073,18 @@ the file permissions appropriate for the repository.
 @node Repository files
 @subsection Where files are stored within the repository
 
+@c @cindex filenames, legal
+@c @cindex legal filenames
+@c Somewhere we need to say something about legitimate
+@c characters in filenames in working directory and 
+@c repository.  Not "/" (not even on non-unix).  And
+@c here is a specific set of issues:
+@c 	Files starting with a - are handled inconsistently. They can not
+@c be added to a repository with an add command, because it they are
+@c interpreted as a switch. They can appear in a repository if they are
+@c part of a tree that is imported. They can not be removed from the tree
+@c once they are there.
+
 The overall structure of the repository is a directory
 tree corresponding to the directories in the working
 directory.  For example, supposing the repository is in
