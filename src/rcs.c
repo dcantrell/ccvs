@@ -2049,13 +2049,23 @@ annotate_fileproc (finfo)
 
 			    df->type = ADD;
 			    i = df->nlines;
+			    /* The text we want is the number of lines
+			       specified, or until the end of the value,
+			       whichever comes first (it will be the former
+			       except in the case where we are adding a line
+			       which does not end in newline).  */
 			    for (q = p; i != 0; ++q)
 				if (*q == '\n')
 				    --i;
-				else if (*q == '\0' && i != 1)
-				    error (1, 0, "\
+				else if (*q == '\0')
+				{
+				    if (i != 1)
+					error (1, 0, "\
 invalid rcs file %s: premature end of value",
-					   finfo->rcs->path);
+					       finfo->rcs->path);
+				    else
+					break;
+				}
 
 			    /* Copy the text we are adding into allocated
 			       space.  */
