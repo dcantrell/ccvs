@@ -52,6 +52,11 @@ AC_DEFUN([AM_FUNC_GETLINE],
   if test $am_cv_func_working_getline = yes; then
     AC_DEFINE([HAVE_WORKING_GETLINE], [1],
       [Define to 1 if your system has a working GNU getline() function.])
+    dnl Currently, we assume getdelim() in this case.  Moving the check for
+    dnl getdelim() up in front of this conditional doesn't make much sense
+    dnl unless we provide for having getline w/o getdelim in the *.{c,h} files.
+    AC_DEFINE([HAVE_GETDELIM], [1],
+      [Define to 1 if your system has the GNU getdelim() function.])
   else
     dnl We must choose a different name for our function, since on ELF systems
     dnl a broken getline() in libc.so would override our getline() in
