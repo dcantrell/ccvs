@@ -287,7 +287,7 @@ mkmodules (dir)
     const struct admin_file *fileptr;
 
     if (save_cwd (&cwd))
-	exit (1);
+	exit (EXIT_FAILURE);
 
     if (chdir (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
@@ -313,7 +313,7 @@ mkmodules (dir)
 
 	case -1:			/* fork failed */
 	    (void) unlink_file (temp);
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	    /* NOTREACHED */
 
 	default:
@@ -391,7 +391,7 @@ mkmodules (dir)
     }
 
     if (restore_cwd (&cwd, NULL))
-	exit (1);
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
     return (0);

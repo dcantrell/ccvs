@@ -2531,7 +2531,7 @@ init_sockaddr (name, hostname, port)
     if (hostinfo == NULL)
     {
 	fprintf (stderr, "Unknown host %s.\n", hostname);
-	exit (1);
+	exit (EXIT_FAILURE);
     }
     name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
 }
@@ -2574,7 +2574,7 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
     if (sock == -1)
     {
 	fprintf (stderr, "socket() failed\n");
-	exit (1);
+	exit (EXIT_FAILURE);
     }
     port_number = auth_server_port_number ();
     init_sockaddr (&client_sai, server_host, port_number);
@@ -3015,7 +3015,7 @@ start_server ()
     send_to_server ("valid-requests\012", 0);
 
     if (get_server_responses ())
-	exit (1);
+	exit (EXIT_FAILURE);
 
     /*
      * Now handle global options.
@@ -3843,7 +3843,7 @@ send_files (argc, argv, local, aflag)
 	 send_dirent_proc, (DIRLEAVEPROC)NULL,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0, 0);
     if (err)
-	exit (1);
+	exit (EXIT_FAILURE);
     if (toplevel_repos == NULL)
 	/*
 	 * This happens if we are not processing any files,

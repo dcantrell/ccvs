@@ -306,7 +306,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
     /* remember where we start */
     if (save_cwd (&cwd))
-	exit (1);
+	exit (EXIT_FAILURE);
 
     /* copy value to our own string since if we go recursive we'll be
        really screwed if we do another dbm lookup */
@@ -572,7 +572,7 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
     /* cd back to where we started */
     if (restore_cwd (&cwd, NULL))
-	exit (1);
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
     /* run checkout or tag prog if appropriate */
