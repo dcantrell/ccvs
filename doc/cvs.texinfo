@@ -3813,9 +3813,10 @@ File: driver.c          Status: Up-to-date
 @cindex Deleting sticky tags
 The sticky tags will remain on your working files until
 you delete them with @samp{cvs update -A}.  The
-@samp{-A} option retrieves the version of the file from
-the head of the trunk, and forgets any sticky tags,
-dates, or options.
+@samp{-A} option merges local changes into the version of the
+file from the head of the trunk, removing any sticky tags,
+dates, or options.  See @xref{update} for more on the operation
+of @code{cvs update}.
 
 @cindex Sticky date
 The most common use of sticky tags is to identify which
@@ -10679,7 +10680,11 @@ to time, when it is convenient in your development
 process, you can use the @code{update} command from
 within your working directory to reconcile your work
 with any revisions applied to the source repository
-since your last checkout or update.
+since your last checkout or update.  Without the @code{-C}
+option, @code{update} will also merge any differences
+between the local copy of files and their base revisions
+into any destination revisions specified with @code{-r},
+@code{-D}, or @code{-A}.
 
 @menu
 * update options::              update options

@@ -1,3 +1,13 @@
+2003-02-10  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Sticky tags, update): Make merging behavior of
+	`cvs update' a bit clearer.  Add cross references.
+	(Thanks to Jenn Vesperman <jenn@anthill.echidna.id.au> for the
+	report.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-02-07  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti: Regenerated.
