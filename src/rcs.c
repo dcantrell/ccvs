@@ -163,7 +163,7 @@ static const char spacetab[] = {
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
-static char *rcs_lockfile;
+static char *rcs_lockfile = NULL;
 static int rcs_lockfd = -1;
 
 /* A few generic thoughts on error handling, in particular the
@@ -7968,10 +7968,14 @@ rcs_cleanup (void)
        files got created.  */
 
     /* FIXME: Do not perform buffered I/O from an interrupt handler like
-       this (via error).  However, I'm leaving the error-calling code there
-       in the hope that on the rare occasion the error call is actually made
-       (e.g., a fluky I/O error or permissions problem prevents the deletion
-       of a just-created file) reentrancy won't be an issue.  */
+     * this (via error).  However, I'm leaving the error-calling code there
+     * in the hope that on the rare occasion the error call is actually made
+     * (e.g., a fluky I/O error or permissions problem prevents the deletion
+     * of a just-created file) reentrancy won't be an issue.
+     *
+     * If I understand what the above is referring to, reentrancy won't be an
+     * issue since this should only be called as the program is exiting.
+     */
     if (rcs_lockfile != NULL)
     {
 	char *tmp = rcs_lockfile;
@@ -8026,24 +8030,7 @@ rcs_internal_lockfile (char *rcsfile)
     {
 	first_call = 0;
 	/* clean up if we get a signal */
-#ifdef SIGABRT
-	(void) SIG_register (SIGABRT, rcs_cleanup);
-#endif
-#ifdef SIGHUP
-	(void) SIG_register (SIGHUP, rcs_cleanup);
-#endif
-#ifdef SIGINT
-	(void) SIG_register (SIGINT, rcs_cleanup);
-#endif
-#ifdef SIGQUIT
-	(void) SIG_register (SIGQUIT, rcs_cleanup);
-#endif
-#ifdef SIGPIPE
-	(void) SIG_register (SIGPIPE, rcs_cleanup);
-#endif
-#ifdef SIGTERM
-	(void) SIG_register (SIGTERM, rcs_cleanup);
-#endif
+	atexit (rcs_cleanup);
     }
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */
