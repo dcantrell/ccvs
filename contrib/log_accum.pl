@@ -22,6 +22,7 @@
 #	-M modulename	- set module name to "modulename"
 #	-f logfile	- write commit messages to logfile too
 #	-s		- *don't* run "cvs status -v" for each file
+#	-w		- show working directory with log message
 
 #
 #	Configurable options
@@ -228,7 +229,6 @@ sub mail_notification {
     print MAIL "Date:     " . $rfc822date . "\n";
     print MAIL "Subject:  CVS Update: " . $modulename . "\n";
     print MAIL "To:       " . $mailto . "\n";
-    print MAIL "From:     " . $login . "@" . $hostdomain . "\n";
     print MAIL "Reply-To: " . $replyto . "\n";
     print MAIL "\n";
     print MAIL join("\n", @text), "\n";
@@ -256,8 +256,12 @@ $login = getlogin || (getpwuid($<))[0] || "nobody";
 chop($hostname = `hostname`);
 chop($domainname = `domainname`);
 $hostdomain = $hostname . $domainname;
+if ($domainname !~ '^\..*') {
+    $domainname = '.' . $domainname;
+}
 $cvsroot = $ENV{'CVSROOT'};
 $do_status = 1;
+$show_wd = 0;			# useless in client/server
 $modulename = "";
 
 # parse command line arguments (file list is seen as one arg)
@@ -284,6 +288,8 @@ while (@ARGV) {
 	$modulename = shift @ARGV;
     } elsif ($arg eq '-s') {
 	$do_status = 0;
+    } elsif ($arg eq '-w') {
+	$show_wd = 1;
     } elsif ($arg eq '-f') {
 	($commitlog) && die("Too many '-f' args\n");
 	$commitlog = shift @ARGV;
@@ -384,8 +390,10 @@ while (<STDIN>) {
     chop;			# Drop the newline
 
     if (/^In directory/) {
-	push(@log_lines, $_);
-	push(@log_lines, "");
+	if ($show_wd) {		# useless in client/server mode
+	    push(@log_lines, $_);
+	    push(@log_lines, "");
+	}
 	next;
     }
 
