@@ -3,6 +3,8 @@ Changes since 1.11.14:
 
 GENERAL USER ISSUES
 
+* CVS on Cygwin correctly handles X:\ style paths.
+
 * Import now uses backslash rather than slash on Windows when checking for
   "CVS" directories to ignore in import commands.
 
@@ -10,8 +12,6 @@ GENERAL USER ISSUES
 
 * A race condition between the ordering of messages from CVS and messages from
   called scripts in client/server mode has been removed (server fix).
-
-* CVS on Cygwin no longer converts back slashes in paths into forward slashes.
 
 * Resurrected files now get their modes and timestamps set correctly and a
   longstanding bug involving resurrection of an uncommitted removal has been
