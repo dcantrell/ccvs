@@ -1,3 +1,9 @@
+1999-07-29  Larry Jones  <larry.jones@sdrc.com>
+
+	* import.c (add_rcs_file): change "cannot lstat" message to include
+	userfile (the actual file causing the problem) instead of user
+	(which may or may not be the same).
+
 1999-07-28  Eric Sink   <eric@sourcegear.com>
 
 	* sanity.sh: before running basicc-11, we need to see if
