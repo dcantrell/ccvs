@@ -1,5 +1,9 @@
 2002-03-09  Larry Jones  <larry.jones@sdrc.com>
 
+	* import.c (import): Change the suggested merge message to use
+	rev tags instead of the branch tag with a date.
+	* sanity.sh (import, importb): Change to match.
+
 	* remove.c (remove_fileproc): Disallow removing files with sticky
 	dates for the same reason we already disallow sticky numeric tags.
 	* sanity.sh (sticky): New test for above.
