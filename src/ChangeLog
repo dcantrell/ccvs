@@ -1,3 +1,8 @@
+1998-04-14  Wilfredo Sanchez  <wsanchez@apple.com>
+
+	* rcs.c: variable "lockfile" was being referenced after being
+	free'd.  Bad.  Moved the free() call down.
+
 1998-04-12  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (rcs): Add test for annotate and the year 2000.

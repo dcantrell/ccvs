@@ -8234,8 +8234,6 @@ rcs_internal_lockfile (rcsfile)
 	error (1, errno, "could not open lock file `%s'", lockfile);
     }
 
-    free (lockfile);
-
     /* Force the file permissions, and return a stream object. */
     /* Because we change the modes later, we don't worry about
        this in the non-HAVE_FCHMOD case.  */
@@ -8246,6 +8244,9 @@ rcs_internal_lockfile (rcsfile)
     fp = fdopen (fd, FOPEN_BINARY_WRITE);
     if (fp == NULL)
 	error (1, errno, "cannot fdopen %s", lockfile);
+
+    free (lockfile);
+
     return fp;
 }
 
