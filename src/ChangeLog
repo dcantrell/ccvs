@@ -1,3 +1,11 @@
+Thu Jul  4 00:12:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Increment version number to 1.8.6.
+
+Wed Jul  3 22:31:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Version 1.8.5.
+
 Wed Jul  3 21:51:23 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* server.c (blocking_error): Define macro.
