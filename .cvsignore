@@ -11,6 +11,9 @@ cvsinit
 cvsnt.mdp
 cvsnt.ncb
 cvsnt.vcp
+cvsnt.opt
+cvsnt.dsw
+cvsnt.plg
 cvsnt4.mak
 cvsnt4.mdp
 cvsnt4.ncb

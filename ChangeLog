@@ -1,3 +1,10 @@
+Sun, 22 Jun 1997  Jim Kingdon
+
+	* cvsnt.dsp: New file.  This apparently is what Visual C++ 5.0
+	uses in lieu of a .mak file (or so it seems).
+	* .cvsignore: Add cvsnt.opt cvsnt.dsw cvsnt.plg.  These seem to
+	be the generated files du jour for Visual C++ 5.0.
+
 Thu Jun 19 17:16:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Add item about CVSROOT/config.
