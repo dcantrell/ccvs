@@ -1,5 +1,8 @@
+*.plg
 .deps
 .pure
 Makefile
+WinDebug
+WinRel
 alloca.h
 fnmatch.h
