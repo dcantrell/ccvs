@@ -11,6 +11,34 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
+@SET_MAKE@
+
+# Makefile for GNU CVS documentation (excluding man pages - see ../man).
+# Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+#DISTFILES = \
+#	.cvsignore \
+#	RCSFILES \
+
+# AUTOMAKE_OPTIONS = no-texinfo.tex
+
+# FIXME - these rebuild every 'make dist' with some BSD makes due to a bug
+# that prevents make from searching VPATH for targets.  There is some
+# machinery in place in configure.in to work around this for some targets
+# (see the CVSvn.texi target below) now, but fixing the two info_TEXINFOS
+# targets below is probably going to require work on Automake
+
+
 SHELL = @SHELL@
 
 srcdir = @srcdir@
@@ -56,9 +84,6 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-
-@SET_MAKE@
-AMDEP = @AMDEP@
 AMTAR = @AMTAR@
 AWK = @AWK@
 CC = @CC@
@@ -82,34 +107,9 @@ TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 _am_include = @_am_include@
+_am_quote = @_am_quote@
 includeopt = @includeopt@
 install_sh = @install_sh@
-
-# Makefile for GNU CVS documentation (excluding man pages - see ../man).
-# Copyright (C) 1986, 1988-1990, 2000 Free Software Foundation, Inc.
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-#DISTFILES = \
-#	.cvsignore \
-#	RCSFILES \
-
-# AUTOMAKE_OPTIONS = no-texinfo.tex
-
-# FIXME - these rebuild every 'make dist' with some BSD makes due to a bug
-# that prevents make from searching VPATH for targets.  There is some
-# machinery in place in configure.in to work around this for some targets
-# (see the CVSvn.texi target below) now, but fixing the two info_TEXINFOS
-# targets below is probably going to require work on Automake
-
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
 cvs_TEXINFOS = CVSvn.texi
@@ -166,7 +166,8 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h $(top_builddir)/src/options.h
 CONFIG_CLEAN_FILES =
 CFLAGS = @CFLAGS@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =
@@ -174,8 +175,7 @@ INFO_DEPS = cvs.info cvsclient.info
 DVIS = cvs.dvi cvsclient.dvi
 TEXINFOS = cvs.texinfo cvsclient.texi
 DIST_COMMON = $(cvs_TEXINFOS) $(cvsclient_TEXINFOS) ChangeLog \
-Makefile.am Makefile.in texinfo.tex
-
+	Makefile.am Makefile.in texinfo.tex
 all: all-am
 
 .SUFFIXES:
@@ -257,10 +257,11 @@ dist-info: $(INFO_DEPS)
 	done
 
 mostlyclean-aminfo:
-	-rm -f cvs.aux cvs.cp cvs.dvi cvs.fn cvs.ky cvs.log cvs.pg cvs.ps cvs.toc \
-	  cvs.tp cvs.vr cvsclient.aux cvsclient.cp cvsclient.dvi \
-	  cvsclient.fn cvsclient.ky cvsclient.log cvsclient.pg \
-	  cvsclient.ps cvsclient.toc cvsclient.tp cvsclient.vr
+	-rm -f cvs.aux cvs.cp cvs.cps cvs.dvi cvs.fn cvs.fns cvs.ky cvs.log cvs.pg \
+	  cvs.ps cvs.toc cvs.tp cvs.vr cvsclient.aux cvsclient.cp \
+	  cvsclient.dvi cvsclient.fn cvsclient.ky cvsclient.log \
+	  cvsclient.pg cvsclient.ps cvsclient.toc cvsclient.tp \
+	  cvsclient.vr
 
 maintainer-clean-aminfo:
 	cd $(srcdir) && \
