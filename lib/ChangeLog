@@ -1,3 +1,7 @@
+Thu Mar 14 16:27:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: Remove alloca cruft.
+
 Wed Feb 28 03:16:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* build_lib.com: Changed definition of symbol CC to search
