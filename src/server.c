@@ -4594,7 +4594,7 @@ struct request requests[] =
   REQ_LINE("Case", serve_case, 0),
   REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
   REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
-  REQ_LINE("Global_option", serve_global_option, 0),
+  REQ_LINE("Global_option", serve_global_option, RQ_ROOTLESS),
   REQ_LINE("Gzip-stream", serve_gzip_stream, 0),
   REQ_LINE("wrapper-sendme-rcsOptions",
            serve_wrapper_sendme_rcs_options,
