@@ -860,10 +860,10 @@ not do anything) and clients must issue it.
 
 @item Notify @var{filename} \n
 Response expected: no.
-Tell the server that a @code{edit} or @code{unedit} command has taken
+Tell the server that an @code{edit} or @code{unedit} command has taken
 place.  The server needs to send a @code{Notified} response, but such
 response is deferred until the next time that the server is sending
-responses.  Response expected: no.  Additional data:
+responses.  Additional data:
 @example
 @var{notification-type} \t @var{time} \t @var{clienthost} \t
 @var{working-dir} \t @var{watches} \n
