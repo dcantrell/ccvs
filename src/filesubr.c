@@ -458,7 +458,7 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if ( rmdir (path) != 0 && errno == ENOTEMPTY )
+    if (rmdir (path) != 0 && (errno == ENOTEMPTY || errno == EEXIST)) 
     {
 	if ((dirp = opendir (path)) == NULL)
 	    /* If unable to open the directory return
@@ -496,7 +496,8 @@ deep_remove_dir (path)
 	}
 	closedir (dirp);
 	return rmdir (path);
-    }
+	}
+
     /* Was able to remove the directory return 0 */
     return 0;
 }
