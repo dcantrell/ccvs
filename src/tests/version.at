@@ -18,27 +18,45 @@ AT_CVS_SETUP([version])
 
 
 #
-# There is some sense to sedding out the years as I do some of the other
-# details below, but I think it is better to have a distcheck blocked because
-# someone neglected to update the copyright notice than to avoid a few spurious
-# failures when testing old versions of CVS.
+# The complex sed script below:
 #
-# FIXME: This could be done with sed branching - if the listed version is the
-# same as the CVS dist version that script was generated with, then check the
-# year.  Otherwise, ignore it.
-#
+#	1. Normalizes the version number.
+#       2. Removes the client/server string since there is no reason this test
+#	   should not pass regardless of whether the executable was compiled
+#	   with or without client and server support.
+#	3. Normalizes the second year in the copyright notice, _except_ when
+#	   the version of CVS being tested matches the version that this suite
+#	   was built specifically for and the year is not the current one.
+#	   This is so that this test will not fail when testing old versions of
+#          CVS yet it will fail when testing the current CVS and so spot when
+#	   the copyright notice has not been properly updated for the next
+#	   release (during `make distcheck', for example).
+#	   
 # The s# *$## command is necessary to test old versions of CVS since some are
-# known to have generated trailing spaces in their version string.
+# known to have generated trailing spaces on some lines of their version string.
 this_year=`date +%Y`
-AT_CHECK_NOESCAPE(
+suite_version=`echo AT_PACKAGE_VERSION |sed 's/\./\\\\./g'`
+AT_CHECK(
 [cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
-      -e 's# *$##'],
+  sed -e 't clear' \
+      -e ': clear' \
+      -e "s# $suite_version ([a-z/]*)\$# VERSION#;s# $suite_version\$# VERSION#" \
+      -e 't alt' \
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)$# VERSION#;s# 1[.][0-9][.0-9p]*$# VERSION#' \
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \
+      -e 's# *$##' \
+      -e 'b end' \
+      -e ': alt' \
+      -e 'n' \
+      -e "s# (c) 1989-$this_year Brian # (c) 1989-YEAR Brian #" \
+      -e 's# *$##' \
+      -e 'b alt' \
+      -e ': end'],
 [0],
 [
-Concurrent Versions System (CVS)
+Concurrent Versions System (CVS) VERSION
 
-Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+Copyright (c) 1989-YEAR Brian Berliner, david d `zoo' zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,

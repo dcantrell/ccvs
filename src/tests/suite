@@ -2194,35 +2194,65 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 
 
 #
-# There is some sense to sedding out the years as I do some of the other
-# details below, but I think it is better to have a distcheck blocked because
-# someone neglected to update the copyright notice than to avoid a few spurious
-# failures when testing old versions of CVS.
+# The complex sed script below:
 #
-# FIXME: This could be done with sed branching - if the listed version is the
-# same as the CVS dist version that script was generated with, then check the
-# year.  Otherwise, ignore it.
+#	1. Normalizes the version number.
+#       2. Removes the client/server string since there is no reason this test
+#	   should not pass regardless of whether the executable was compiled
+#	   with or without client and server support.
+#	3. Normalizes the second year in the copyright notice, _except_ when
+#	   the version of CVS being tested matches the version that this suite
+#	   was built specifically for and the year is not the current one.
+#	   This is so that this test will not fail when testing old versions of
+#          CVS yet it will fail when testing the current CVS and so spot when
+#	   the copyright notice has not been properly updated for the next
+#	   release (during `make distcheck', for example).
 #
 # The s# *$## command is necessary to test old versions of CVS since some are
-# known to have generated trailing spaces in their version string.
+# known to have generated trailing spaces on some lines of their version string.
 this_year=`date +%Y`
+suite_version=`echo 1.12.2.1 |sed 's/\./\\\\./g'`
 $at_traceoff
-echo "version.at:48: cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
-      -e 's# *\$##'"
-echo version.at:48 >$at_check_line_file
+echo "version.at:66: cvs --version |
+  sed -e 't clear' \\
+      -e ': clear' \\
+      -e \"s# \$suite_version ([a-z/]*)\\\$# VERSION#;s# \$suite_version\\\$# VERSION#\" \\
+      -e 't alt' \\
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)\$# VERSION#;s# 1[.][0-9][.0-9p]*\$# VERSION#' \\
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \\
+      -e 's# *\$##' \\
+      -e 'b end' \\
+      -e ': alt' \\
+      -e 'n' \\
+      -e \"s# (c) 1989-\$this_year Brian # (c) 1989-YEAR Brian #\" \\
+      -e 's# *\$##' \\
+      -e 'b alt' \\
+      -e ': end'"
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
-      -e 's# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 't clear' \
+      -e ': clear' \
+      -e "s# $suite_version ([a-z/]*)\$# VERSION#;s# $suite_version\$# VERSION#" \
+      -e 't alt' \
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)$# VERSION#;s# 1[.][0-9][.0-9p]*$# VERSION#' \
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \
+      -e 's# *$##' \
+      -e 'b end' \
+      -e ': alt' \
+      -e 'n' \
+      -e "s# (c) 1989-$this_year Brian # (c) 1989-YEAR Brian #" \
+      -e 's# *$##' \
+      -e 'b alt' \
+      -e ': end' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
 echo >>$at_stdout; echo "
-Concurrent Versions System (CVS)
+Concurrent Versions System (CVS) VERSION
 
-Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+Copyright (c) 1989-YEAR Brian Berliner, david d \`zoo' zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
@@ -2234,7 +2264,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:48: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2253,9 +2283,9 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:66: cvs version |
+echo "version.at:84: cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
-echo version.at:66 >$at_check_line_file
+echo version.at:84 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
@@ -2269,7 +2299,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:66: exit code was $at_status, expected 0"
+   *) echo "version.at:84: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2489,35 +2519,65 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 
 
 #
-# There is some sense to sedding out the years as I do some of the other
-# details below, but I think it is better to have a distcheck blocked because
-# someone neglected to update the copyright notice than to avoid a few spurious
-# failures when testing old versions of CVS.
+# The complex sed script below:
 #
-# FIXME: This could be done with sed branching - if the listed version is the
-# same as the CVS dist version that script was generated with, then check the
-# year.  Otherwise, ignore it.
+#	1. Normalizes the version number.
+#       2. Removes the client/server string since there is no reason this test
+#	   should not pass regardless of whether the executable was compiled
+#	   with or without client and server support.
+#	3. Normalizes the second year in the copyright notice, _except_ when
+#	   the version of CVS being tested matches the version that this suite
+#	   was built specifically for and the year is not the current one.
+#	   This is so that this test will not fail when testing old versions of
+#          CVS yet it will fail when testing the current CVS and so spot when
+#	   the copyright notice has not been properly updated for the next
+#	   release (during `make distcheck', for example).
 #
 # The s# *$## command is necessary to test old versions of CVS since some are
-# known to have generated trailing spaces in their version string.
+# known to have generated trailing spaces on some lines of their version string.
 this_year=`date +%Y`
+suite_version=`echo 1.12.2.1 |sed 's/\./\\\\./g'`
 $at_traceoff
-echo "version.at:48: cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
-      -e 's# *\$##'"
-echo version.at:48 >$at_check_line_file
+echo "version.at:66: cvs --version |
+  sed -e 't clear' \\
+      -e ': clear' \\
+      -e \"s# \$suite_version ([a-z/]*)\\\$# VERSION#;s# \$suite_version\\\$# VERSION#\" \\
+      -e 't alt' \\
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)\$# VERSION#;s# 1[.][0-9][.0-9p]*\$# VERSION#' \\
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \\
+      -e 's# *\$##' \\
+      -e 'b end' \\
+      -e ': alt' \\
+      -e 'n' \\
+      -e \"s# (c) 1989-\$this_year Brian # (c) 1989-YEAR Brian #\" \\
+      -e 's# *\$##' \\
+      -e 'b alt' \\
+      -e ': end'"
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
-      -e 's# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 't clear' \
+      -e ': clear' \
+      -e "s# $suite_version ([a-z/]*)\$# VERSION#;s# $suite_version\$# VERSION#" \
+      -e 't alt' \
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)$# VERSION#;s# 1[.][0-9][.0-9p]*$# VERSION#' \
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \
+      -e 's# *$##' \
+      -e 'b end' \
+      -e ': alt' \
+      -e 'n' \
+      -e "s# (c) 1989-$this_year Brian # (c) 1989-YEAR Brian #" \
+      -e 's# *$##' \
+      -e 'b alt' \
+      -e ': end' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
 echo >>$at_stdout; echo "
-Concurrent Versions System (CVS)
+Concurrent Versions System (CVS) VERSION
 
-Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+Copyright (c) 1989-YEAR Brian Berliner, david d \`zoo' zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
@@ -2529,7 +2589,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:48: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2548,9 +2608,9 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:66: cvs version |
+echo "version.at:84: cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##'"
-echo version.at:66 >$at_check_line_file
+echo version.at:84 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' ) >$at_stdout 2>$at_stder1
 at_status=$?
@@ -2564,7 +2624,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:66: exit code was $at_status, expected 0"
+   *) echo "version.at:84: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2803,35 +2863,65 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 
 
 #
-# There is some sense to sedding out the years as I do some of the other
-# details below, but I think it is better to have a distcheck blocked because
-# someone neglected to update the copyright notice than to avoid a few spurious
-# failures when testing old versions of CVS.
+# The complex sed script below:
 #
-# FIXME: This could be done with sed branching - if the listed version is the
-# same as the CVS dist version that script was generated with, then check the
-# year.  Otherwise, ignore it.
+#	1. Normalizes the version number.
+#       2. Removes the client/server string since there is no reason this test
+#	   should not pass regardless of whether the executable was compiled
+#	   with or without client and server support.
+#	3. Normalizes the second year in the copyright notice, _except_ when
+#	   the version of CVS being tested matches the version that this suite
+#	   was built specifically for and the year is not the current one.
+#	   This is so that this test will not fail when testing old versions of
+#          CVS yet it will fail when testing the current CVS and so spot when
+#	   the copyright notice has not been properly updated for the next
+#	   release (during `make distcheck', for example).
 #
 # The s# *$## command is necessary to test old versions of CVS since some are
-# known to have generated trailing spaces in their version string.
+# known to have generated trailing spaces on some lines of their version string.
 this_year=`date +%Y`
+suite_version=`echo 1.12.2.1 |sed 's/\./\\\\./g'`
 $at_traceoff
-echo "version.at:48: cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
-      -e 's# *\$##'"
-echo version.at:48 >$at_check_line_file
+echo "version.at:66: cvs --version |
+  sed -e 't clear' \\
+      -e ': clear' \\
+      -e \"s# \$suite_version ([a-z/]*)\\\$# VERSION#;s# \$suite_version\\\$# VERSION#\" \\
+      -e 't alt' \\
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)\$# VERSION#;s# 1[.][0-9][.0-9p]*\$# VERSION#' \\
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \\
+      -e 's# *\$##' \\
+      -e 'b end' \\
+      -e ': alt' \\
+      -e 'n' \\
+      -e \"s# (c) 1989-\$this_year Brian # (c) 1989-YEAR Brian #\" \\
+      -e 's# *\$##' \\
+      -e 'b alt' \\
+      -e ': end'"
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
-      -e 's# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 't clear' \
+      -e ': clear' \
+      -e "s# $suite_version ([a-z/]*)\$# VERSION#;s# $suite_version\$# VERSION#" \
+      -e 't alt' \
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)$# VERSION#;s# 1[.][0-9][.0-9p]*$# VERSION#' \
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \
+      -e 's# *$##' \
+      -e 'b end' \
+      -e ': alt' \
+      -e 'n' \
+      -e "s# (c) 1989-$this_year Brian # (c) 1989-YEAR Brian #" \
+      -e 's# *$##' \
+      -e 'b alt' \
+      -e ': end' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
 echo >>$at_stdout; echo "
-Concurrent Versions System (CVS)
+Concurrent Versions System (CVS) VERSION
 
-Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+Copyright (c) 1989-YEAR Brian Berliner, david d \`zoo' zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
@@ -2843,7 +2933,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:48: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -2858,10 +2948,10 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:58: cvs version |
+echo "version.at:76: cvs version |
   sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
        s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
-echo version.at:58 >$at_check_line_file
+echo version.at:76 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
        s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
@@ -2877,7 +2967,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:58: exit code was $at_status, expected 0"
+   *) echo "version.at:76: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -3152,35 +3242,65 @@ echo "$as_me: error: Couldn't cd to \\`project'.  Did \$HOME get set incorrectly
 
 
 #
-# There is some sense to sedding out the years as I do some of the other
-# details below, but I think it is better to have a distcheck blocked because
-# someone neglected to update the copyright notice than to avoid a few spurious
-# failures when testing old versions of CVS.
+# The complex sed script below:
 #
-# FIXME: This could be done with sed branching - if the listed version is the
-# same as the CVS dist version that script was generated with, then check the
-# year.  Otherwise, ignore it.
+#	1. Normalizes the version number.
+#       2. Removes the client/server string since there is no reason this test
+#	   should not pass regardless of whether the executable was compiled
+#	   with or without client and server support.
+#	3. Normalizes the second year in the copyright notice, _except_ when
+#	   the version of CVS being tested matches the version that this suite
+#	   was built specifically for and the year is not the current one.
+#	   This is so that this test will not fail when testing old versions of
+#          CVS yet it will fail when testing the current CVS and so spot when
+#	   the copyright notice has not been properly updated for the next
+#	   release (during `make distcheck', for example).
 #
 # The s# *$## command is necessary to test old versions of CVS since some are
-# known to have generated trailing spaces in their version string.
+# known to have generated trailing spaces on some lines of their version string.
 this_year=`date +%Y`
+suite_version=`echo 1.12.2.1 |sed 's/\./\\\\./g'`
 $at_traceoff
-echo "version.at:48: cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)\$##;s#  *1[.][0-9][.0-9p]*\$##' \\
-      -e 's# *\$##'"
-echo version.at:48 >$at_check_line_file
+echo "version.at:66: cvs --version |
+  sed -e 't clear' \\
+      -e ': clear' \\
+      -e \"s# \$suite_version ([a-z/]*)\\\$# VERSION#;s# \$suite_version\\\$# VERSION#\" \\
+      -e 't alt' \\
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)\$# VERSION#;s# 1[.][0-9][.0-9p]*\$# VERSION#' \\
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \\
+      -e 's# *\$##' \\
+      -e 'b end' \\
+      -e ': alt' \\
+      -e 'n' \\
+      -e \"s# (c) 1989-\$this_year Brian # (c) 1989-YEAR Brian #\" \\
+      -e 's# *\$##' \\
+      -e 'b alt' \\
+      -e ': end'"
+echo version.at:66 >$at_check_line_file
 ( $at_traceon; cvs --version |
-  sed -e 's#  *1[.][0-9][.0-9p]* ([a-z/]*)$##;s#  *1[.][0-9][.0-9p]*$##' \
-      -e 's# *$##' ) >$at_stdout 2>$at_stder1
+  sed -e 't clear' \
+      -e ': clear' \
+      -e "s# $suite_version ([a-z/]*)\$# VERSION#;s# $suite_version\$# VERSION#" \
+      -e 't alt' \
+      -e 's# 1[.][0-9][.0-9p]* ([a-z/]*)$# VERSION#;s# 1[.][0-9][.0-9p]*$# VERSION#' \
+      -e 's# (c) 1989-[12][0-9][0-9][0-9] Brian # (c) 1989-YEAR Brian #' \
+      -e 's# *$##' \
+      -e 'b end' \
+      -e ': alt' \
+      -e 'n' \
+      -e "s# (c) 1989-$this_year Brian # (c) 1989-YEAR Brian #" \
+      -e 's# *$##' \
+      -e 'b alt' \
+      -e ': end' ) >$at_stdout 2>$at_stder1
 at_status=$?
 grep '^ *+' $at_stder1 >&2
 grep -v '^ *+' $at_stder1 >$at_stderr
 at_failed=false
 $at_diff $at_devnull $at_stderr || at_failed=:
 echo >>$at_stdout; echo "
-Concurrent Versions System (CVS)
+Concurrent Versions System (CVS) VERSION
 
-Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+Copyright (c) 1989-YEAR Brian Berliner, david d \`zoo' zuhn,
                         Jeff Polk, and other authors
 
 CVS may be copied only under the terms of the GNU General Public License,
@@ -3192,7 +3312,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:48: exit code was $at_status, expected 0"
+   *) echo "version.at:66: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
@@ -3207,10 +3327,10 @@ $at_traceon
 
 
 $at_traceoff
-echo "version.at:58: cvs version |
+echo "version.at:76: cvs version |
   sed 's#^\\(Client.*\\)  *1[.][0-9][.0-9p]* (client[a-z/]*)\$#\\1 (client)#
        s#^\\(Server.*\\)  *1[.][0-9][.0-9p]* ([a-z/]*server)\$#\\1 (server)#'"
-echo version.at:58 >$at_check_line_file
+echo version.at:76 >$at_check_line_file
 ( $at_traceon; cvs version |
   sed 's#^\(Client.*\)  *1[.][0-9][.0-9p]* (client[a-z/]*)$#\1 (client)#
        s#^\(Server.*\)  *1[.][0-9][.0-9p]* ([a-z/]*server)$#\1 (server)#' ) >$at_stdout 2>$at_stder1
@@ -3226,7 +3346,7 @@ case $at_status in
    77) echo 77 > $at_status_file
             exit 77;;
    0) ;;
-   *) echo "version.at:58: exit code was $at_status, expected 0"
+   *) echo "version.at:76: exit code was $at_status, expected 0"
       at_failed=:;;
 esac
 if $at_failed; then
