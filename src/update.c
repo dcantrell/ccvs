@@ -2726,7 +2726,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    {
 		/* If the size of `ftype' changes, fix the sscanf call also */
 		char ftype[16];
-		if (sscanf (n->data, "%16s %lu", ftype,
+		if (sscanf (n->data, "%15s %lu", ftype,
 			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev1, n->data);
@@ -2804,7 +2804,7 @@ special_file_mismatch (finfo, rev1, rev2)
 	    {
 		/* If the size of `ftype' changes, fix the sscanf call also */
 		char ftype[16];
-		if (sscanf (n->data, "%16s %lu", ftype,
+		if (sscanf (n->data, "%15s %lu", ftype,
 			    &dev_long) < 2)
 		    error (1, 0, "%s:%s has bad `special' newphrase %s",
 			   finfo->file, rev2, n->data);

@@ -4345,7 +4345,7 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    /* If the size of `devtype' changes, fix the sscanf call also */
 	    char devtype[16];
 
-	    if (sscanf (info->data, "%16s %lu",
+	    if (sscanf (info->data, "%15s %lu",
 			devtype, &devnum_long) < 2)
 		error (1, 0, "%s:%s has bad `special' newphrase %s",
 		       workfile, vers->version, info->data);

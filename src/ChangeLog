@@ -1,3 +1,10 @@
+2001-07-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c (RCS_checkout): Correct scanf format to allow for trailing
+	NUL terminator.
+	* update.c (special_file_mismatch): Ditto.
+	(Reported by Pekka Savola <pekkas@netcore.fi>.)
+
 2001-07-05  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c, root.c: Fix -Wall warnings.
