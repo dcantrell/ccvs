@@ -12,11 +12,9 @@
 static void time_stamp_server PROTO((char *, Vers_TS *, Entnode *));
 #endif
 
-/*
- * Fill in and return a Vers_TS structure "user" is the name of the local
- * file; entries is the entries file - preparsed for our pleasure. rcs is
- * the current source control file - preparsed for our pleasure.
- */
+/* Fill in and return a Vers_TS structure for the file FINFO.  TAG and
+   DATE are from the command line.  */
+
 Vers_TS *
 Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     struct file_info *finfo;
