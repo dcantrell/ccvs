@@ -1,3 +1,8 @@
+2000-11-30  Derek Price  <derek.price@openavenue.com>
+	    Stephen Kennedy  <Stephen.Kennedy@havok.com>
+
+	* cvs.spec (krb5): Require krb5-devel for a build of the krb5 target
+
 2000-11-29  Derek Price  <derek.price@openavenue.com>
 	    Stephen Kennedy  <Stephen.Kennedy@havok.com>
 
