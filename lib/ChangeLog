@@ -1,3 +1,7 @@
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
+	* error.c, error.h: Update from GNULIB.
+
 2004-10-21  Mark Baushke  <mdb@cvshome.org>
 
 	* libcvs.dep, libcvs.mak: Remove argmatch references.
