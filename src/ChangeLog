@@ -1,5 +1,11 @@
 Thu Feb 29 08:39:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* patch.c (patch, patch_fileproc): Revert change to add optional
+	arguments to -c and -u.  Optional arguments are evil and in
+	violation of the POSIX argument syntax guidelines.  The correct
+	way to do this is -C and -U.  Also change DIFF back to "diff" in
+	output (see comments).
+
 	gcc -Wall lint:
 	* client.c (copy_a_file): Declare p inside the #ifdef in which is
 	it used.
@@ -9,6 +15,7 @@ Thu Feb 29 08:39:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	* rcs.c: Remove unused declarations and definitions of
 	parse_rcs_proc, rcsnode_delproc, rcslist, and repository.
 	* rtag.c (rtag_fileproc): Remove unused variable p.
+	* patch.c (patch_fileproc): Remove unused variable p.
 	* tag.c (val_fileproc): Remove unused variable node.
 	* client.c, import.c, lock.c, server.c: Cast pid_t to long before
 	passing it to %ld.

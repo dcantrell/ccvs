@@ -35,7 +35,6 @@ static char *date1 = NULL;
 static char *date2 = NULL;
 static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
 static int unidiff = 0;
-static char diff_opt[20] = "-c";
 
 static const char *const patch_usage[] =
 {
@@ -67,7 +66,7 @@ patch (argc, argv)
 	usage (patch_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "V:k:c::u::ftsQqlRD:r:")) != -1)
+    while ((c = getopt (argc, argv, "V:k:cuftsQqlRD:r:")) != -1)
     {
 	switch (c)
 	{
@@ -128,11 +127,11 @@ patch (argc, argv)
 		options = xmalloc (strlen (optarg) + 1 + 2);	/* for the -V */
 		(void) sprintf (options, "-V%s", optarg);
 		break;
-	    case 'c':
 	    case 'u':
-		unidiff = (c == 'u');
-		sprintf (diff_opt, "-%c%s", c,
-			 (optarg != NULL) ? optarg : "");
+		unidiff = 1;		/* Unidiff */
+		break;
+	    case 'c':			/* Context diff */
+		unidiff = 0;
 		break;
 	    case '?':
 	    default:
@@ -180,9 +179,9 @@ patch (argc, argv)
 	    send_arg("-t");
 	if (patch_short)
 	    send_arg("-s");
+	if (unidiff)
+	    send_arg("-u");
 
-	send_arg (diff_opt);
-	
 	if (rev1)
 	    option_with_arg ("-r", rev1);
 	if (date1)
@@ -340,7 +339,6 @@ patch_fileproc (finfo)
     char rcsspace[2][PATH_MAX];
     char *rcs = rcsspace[0];
     char *path = rcsspace[1];
-    Node *p;
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
     int ret = 0;
@@ -463,7 +461,7 @@ patch_fileproc (finfo)
 						    (char *) 0, 0)) != -1)
 		(void) utime (tmpfile2, &t);
     }
-    run_setup ("%s %s", DIFF, diff_opt);
+    run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
     run_arg (tmpfile1);
     run_arg (tmpfile2);
 
@@ -543,13 +541,18 @@ patch_fileproc (finfo)
 	    }
 	    (void) sprintf (file2, "%s:%s", path,
 			    vers_head ? vers_head : "removed");
-	    (void) printf ("%s %s %s %s\n", DIFF, diff_opt, file1, file2);
+
+	    /* Note that this prints "diff" not DIFF.  The format of a diff
+	       does not depend on the name of the program which happens to
+	       have produced it.  */
 	    if (unidiff)
 	    {
+		(void) printf ("diff -u %s %s\n", file1, file2);
 		(void) printf ("--- %s%s+++ ", file1, cp1);
 	    }
 	    else
 	    {
+		(void) printf ("diff -c %s %s\n", file1, file2);
 		(void) printf ("*** %s%s--- ", file1, cp1);
 	    }
 
