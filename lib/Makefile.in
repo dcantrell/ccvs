@@ -92,6 +92,7 @@ LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
+LIB_NANOSLEEP = @LIB_NANOSLEEP@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
@@ -280,21 +281,22 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/gettimeofday.Po $(DEPDIR)/lstat.Po \
 @AMDEP_TRUE@	$(DEPDIR)/malloc.Po $(DEPDIR)/memmove.Po \
 @AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/mkstemp.Po \
-@AMDEP_TRUE@	$(DEPDIR)/printf-args.Po $(DEPDIR)/printf-parse.Po \
-@AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/regex.Po \
-@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/stat.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/tempname.Po \
-@AMDEP_TRUE@	$(DEPDIR)/valloc.Po $(DEPDIR)/vasnprintf.Po \
-@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/basename.Po ./$(DEPDIR)/dirname.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/exitfail.Po ./$(DEPDIR)/getdate.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/gettime.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/savecwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/xmalloc.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xstrdup.Po ./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	$(DEPDIR)/nanosleep.Po $(DEPDIR)/printf-args.Po \
+@AMDEP_TRUE@	$(DEPDIR)/printf-parse.Po $(DEPDIR)/realloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/regex.Po $(DEPDIR)/rename.Po \
+@AMDEP_TRUE@	$(DEPDIR)/stat.Po $(DEPDIR)/strerror.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
+@AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/vasnprintf.Po $(DEPDIR)/waitpid.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/basename.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dirname.Po ./$(DEPDIR)/exitfail.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gettime.Po ./$(DEPDIR)/md5.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xmalloc.Po ./$(DEPDIR)/xstrdup.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -305,9 +307,9 @@ DIST_COMMON = README $(srcdir)/Makefile.in ChangeLog Makefile.am \
 	asnprintf.c atexit.c dup2.c fncase.c fnmatch.c fseeko.c \
 	ftello.c ftruncate.c getdate.c gethostname.c getline.c \
 	getndelim2.c getpass.c gettimeofday.c lstat.c malloc.c \
-	memmove.c mkdir.c mkstemp.c printf-args.c printf-parse.c \
-	realloc.c regex.c rename.c stat.c strerror.c strstr.c strtoul.c \
-	tempname.c valloc.c vasnprintf.c waitpid.c
+	memmove.c mkdir.c mkstemp.c nanosleep.c printf-args.c \
+	printf-parse.c realloc.c regex.c rename.c stat.c strerror.c \
+	strstr.c strtoul.c tempname.c valloc.c vasnprintf.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: $(BUILT_SOURCES)
@@ -354,6 +356,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memmove.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkstemp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/nanosleep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-args.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/printf-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/realloc.Po@am__quote@
