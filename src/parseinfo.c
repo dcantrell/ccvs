@@ -32,7 +32,7 @@ Parse_Info (infofile, repository, callproc, all)
     char *default_value = NULL;
     int callback_done, line_number;
     char *cp, *exp, *value, *srepos;
-    CONST char *regex_err;
+    const char *regex_err;
 
     if (CVSroot == NULL)
     {

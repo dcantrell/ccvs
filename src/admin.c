@@ -35,7 +35,7 @@ static char **av;
 int
 admin (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int err;
 

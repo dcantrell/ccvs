@@ -42,9 +42,8 @@ static void write_dbmfile PROTO((char *temp));
 int
 main (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
-    extern char *getenv ();
     char temp[PATH_MAX];
     char *cp, *last, *fname;
 #ifdef MY_NDBM

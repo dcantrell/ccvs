@@ -38,7 +38,7 @@ static const char *const status_usage[] =
 int
 status (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int c;
     int err = 0;

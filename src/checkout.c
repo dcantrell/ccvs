@@ -43,7 +43,7 @@ USE(rcsid)
 static char *findslash PROTO((char *start, char *p));
 static int build_dirs_and_chdir PROTO((char *dir, char *prepath, char *realdir,
 				 int sticky));
-static int checkout_proc PROTO((int *pargc, char *argv[], char *where,
+static int checkout_proc PROTO((int *pargc, char **argv, char *where,
 		          char *mwhere, char *mfile, int shorten,
 		          int local_specified, char *omodule,
 		          char *msg));
@@ -99,7 +99,7 @@ static char *preload_update_dir = NULL;
 int
 checkout (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     int i;
     int c;
@@ -409,7 +409,7 @@ static int
 checkout_proc (pargc, argv, where, mwhere, mfile, shorten,
 	       local_specified, omodule, msg)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *where;
     char *mwhere;
     char *mfile;

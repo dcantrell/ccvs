@@ -50,8 +50,6 @@ static char rcsid[] = "$CVSid: @(#)main.c 1.78 94/10/07 $\n";
 USE(rcsid)
 #endif
 
-extern char *getenv ();
-
 char *program_name;
 char *command_name = "";
 
@@ -188,7 +186,7 @@ main_cleanup ()
 int
 main (argc, argv)
     int argc;
-    char *argv[];
+    char **argv;
 {
     extern char *version_string;
     char *cp;

@@ -201,7 +201,7 @@ static struct hrec
 static char *fill_hrec PROTO((char *line, struct hrec * hr));
 static int accept_hrec PROTO((struct hrec * hr, struct hrec * lr));
 static int select_hrec PROTO((struct hrec * hr));
-static int sort_order PROTO((CONST PTR l, CONST PTR r));
+static int sort_order PROTO((const PTR l, const PTR r));
 static int within PROTO((char *find, char *string));
 static time_t date_and_time PROTO((char *date_str));
 static void expand_modules PROTO((void));
@@ -307,12 +307,12 @@ static const char *const history_usg[] =
 */
 static int
 sort_order (l, r)
-    CONST PTR l;
-    CONST PTR r;
+    const PTR l;
+    const PTR r;
 {
     int i;
-    CONST struct hrec *left = (CONST struct hrec *) l;
-    CONST struct hrec *right = (CONST struct hrec *) r;
+    const struct hrec *left = (const struct hrec *) l;
+    const struct hrec *right = (const struct hrec *) r;
 
     if (user_sort)	/* If Sort by username, compare users */
     {

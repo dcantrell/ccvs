@@ -25,7 +25,6 @@ char cvsrc[] = CVSRC_FILENAME;
 
 #define	GROW	10
 
-extern char *getenv ();
 extern char *strtok ();
 
 void

@@ -464,7 +464,7 @@ xcmp (file1, file2)
 void
 free_names (pargc, argv)
     int *pargc;
-    char *argv[];
+    char **argv;
 {
     register int i;
 
@@ -483,7 +483,7 @@ free_names (pargc, argv)
 void
 line2argv (pargc, argv, line)
     int *pargc;
-    char *argv[];
+    char **argv;
     char *line;
 {
     char *cp;

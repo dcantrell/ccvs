@@ -28,23 +28,36 @@ static void add_prune_candidate PROTO((char *));
  * corresponding to the mode in SB.
  */
 char *
-mode_to_string (sb)
-    struct stat *sb;
+#ifdef __STDC__
+mode_to_string (mode_t mode)
+#else
+mode_to_string (mode)
+	mode_t mode;
+#endif
 {
-    char *mode_string = xmalloc (80);
-    strcpy (mode_string, "u=");
-    if (sb->st_mode & S_IRUSR) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWUSR) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXUSR) strcat (mode_string, "x");
-    strcat (mode_string, ",g=");
-    if (sb->st_mode & S_IRGRP) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWGRP) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXGRP) strcat (mode_string, "x");
-    strcat (mode_string, ",o=");
-    if (sb->st_mode & S_IROTH) strcat (mode_string, "r");
-    if (sb->st_mode & S_IWOTH) strcat (mode_string, "w");
-    if (sb->st_mode & S_IXOTH) strcat (mode_string, "x");
-    return mode_string;
+	char buf[18], u[4], g[4], o[4];
+	int i;
+
+	i = 0;
+	if (mode & S_IRUSR) u[i++] = 'r';
+	if (mode & S_IWUSR) u[i++] = 'w';
+	if (mode & S_IXUSR) u[i++] = 'x';
+	u[i] = '\0';
+	
+	i = 0;
+	if (mode & S_IRGRP) g[i++] = 'r';
+	if (mode & S_IWGRP) g[i++] = 'w';
+	if (mode & S_IXGRP) g[i++] = 'x';
+	g[i] = '\0';
+	
+	i = 0;
+	if (mode & S_IROTH) o[i++] = 'r';
+	if (mode & S_IWOTH) o[i++] = 'w';
+	if (mode & S_IXOTH) o[i++] = 'x';
+	o[i] = '\0';
+
+	sprintf(buf, "u=%s,g=%s,o=%s", u, g, o);
+	return xstrdup(buf);
 }
 
 /*
@@ -2414,7 +2427,7 @@ send_modified (file, short_pathname)
     if (stat (file, &sb) < 0)
 	error (1, errno, "reading %s", short_pathname);
 
-    mode_string = mode_to_string (&sb);
+    mode_string = mode_to_string (sb.st_mode);
 
     bufsize = sb.st_size;
     buf = xmalloc (bufsize);
