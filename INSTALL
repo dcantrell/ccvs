@@ -23,6 +23,8 @@ i386 family:
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
 m68k:
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
+m88k:
+	Data General AViiON running dgux 5.4R2.10 (1.5)
 MIPS:
 	DECstation running Ultrix 4.2a (1.4.90)
 	DECstation running Ultrix 4.3 (1.5)
@@ -37,14 +39,6 @@ SPARC:
 	Sun SPARCstation 10 running Solaris 2.3 using gcc and cc (about 1.4A2)
 	Sun SPARCstation 10 running Solaris 2.4 using gcc (about 1.4A2)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
-Data General:
-        dgux 5.4R2.10 generic AViiON mc88100
-        According to the rcs man page, the rcs version is:
-                Author: Walter F. Tichy.
-                Revision Number: 5.1.1.1; Release Date: 1992/02/10.
-                Copyright 1982, 1988, 1989 by Walter F. Tichy.
-                Copyright 1990, 1991 by Paul Eggert.
-        Can't find any info on diff, but we're using the standard /bin/diff.
 
 (footnote 1)
 	AIX 4.1 systems fail to run "configure" due to bugs in their
