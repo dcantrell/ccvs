@@ -1,3 +1,10 @@
+Sat Dec 23 23:08:43 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * README: adjust for below change.
+
+        * Makefile.in (install-cvs): replaces `install', which must remain
+        a dummy rule so it will work under Unix.
+
 Wed Dec 20 15:18:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in: build scramble.obj.
