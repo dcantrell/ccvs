@@ -1,5 +1,14 @@
 2003-02-25  Derek Price  <derek@ximbiot.com>
 
+	* logmsg.c (logfile_write): Do not pass a NULL pointer to
+	fprintf() when we have an empty log message.
+	* sanity.sh (editor): Add new tests to verify correct behavior of
+	empty log messages.
+	(Patch from Mark D. Baushke <mdb@cvshome.org>, original report from
+	Piotr KUCHARSKI <chopin@sgh.waw.pl>.)
+
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
 	* cvs.h (user_admin_options): Rename to...
 	(UserAdminOptions): ...this to match the convention set by
 	of RereadLogAfterVerify.

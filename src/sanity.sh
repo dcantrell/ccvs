@@ -12363,6 +12363,97 @@ Log message unchanged or not specified
 a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
 Action: (continue) ${PROG} \[[a-z]* aborted\]: aborted by user"
 
+	  # Test CVS's response to a log message that is zero bytes
+	  # in length. This caused core dumps in cvs 1.11.5 on Solaris
+	  # hosts.
+	  cd ..
+	  dotest editor-emptylog-continue-1 "${testcvs} -q co CVSROOT/loginfo" \
+"U CVSROOT/loginfo"
+
+          cd CVSROOT
+	  echo 'DEFAULT (echo Start-Log;cat;echo End-Log) >> \$CVSROOT/CVSROOT/commitlog' > loginfo
+	  dotest editor-emptylog-continue-2 "${testcvs} commit -m add loginfo" \
+"Checking in loginfo;
+${CVSROOT_DIRNAME}/CVSROOT/loginfo,v  <--  loginfo
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ../first-dir
+	  cat >${TESTDIR}/editme <<EOF
+#!${TESTSHELL}
+sleep 1
+cp /dev/null \$1
+exit 1
+EOF
+	  chmod +x ${TESTDIR}/editme
+	  dotest editor-emptylog-continue-3 "echo c |${testcvs} -e ${TESTDIR}/editme ci -f file1" \
+"${PROG} [a-z]*: warning: editor session failed
+
+Log message unchanged or not specified
+a)bort, c)ontinue, e)dit, !)reuse this message unchanged for remaining dirs
+Action: (continue) Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  # The loginfo Log message should be an empty line and not "(null)"
+	  # which is what some fprintf() implementations do with "%s"
+	  # format and a NULL pointer...
+	  if $remote; then
+	    dotest editor-emptylog-continue-4r \
+"cat ${CVSROOT_DIRNAME}/CVSROOT/commitlog" \
+"Start-Log
+Update of ${CVSROOT_DIRNAME}/first-dir
+In directory ${hostname}:${TMPDIR}/cvs-serv[0-9a-z]*
+
+Modified Files:
+	file1 
+Log Message:
+
+End-Log"
+          else
+	    dotest editor-emptylog-continue-4 \
+"cat ${CVSROOT_DIRNAME}/CVSROOT/commitlog" \
+"Start-Log
+Update of ${CVSROOT_DIRNAME}/first-dir
+In directory ${hostname}:${TESTDIR}/1/first-dir
+
+Modified Files:
+	file1 
+Log Message:
+
+End-Log"
+         fi
+	  # There should have an empty log message at this point
+	  dotest editor-emptylog-continue-5 "${testcvs} log -N -r1.2 file1" \
+"
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+Working file: file1
+head: 1\.2
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 3;	selected revisions: 1
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: +0 -0
+\*\*\* empty log message \*\*\*
+============================================================================="
+
+	  # clean up
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  # restore the default loginfo script
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo,v \
+                ${CVSROOT_DIRNAME}/CVSROOT/loginfo \
+                ${CVSROOT_DIRNAME}/CVSROOT/commitlog
+	  dotest editor-emptylog-continue-cleanup-1 "${testcvs} init" ''
+
 	  cd ../..
 	  rm -r 1
 	  rm ${TESTDIR}/editme
