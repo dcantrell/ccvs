@@ -1,3 +1,7 @@
+Tue Jun  4 13:38:17 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* rcs.c (annotate_fileproc): Skip unrelated branch deltas.
+
 Fri Jun  7 13:04:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (main): Change INITIALIZE_SOCKET_SUBSYSTEM to

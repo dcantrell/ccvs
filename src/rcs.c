@@ -2125,7 +2125,7 @@ annotate_fileproc (finfo)
     RCSVers *vers;
     RCSVers *prev_vers;
     int n;
-    int ishead;
+    int ishead, isnext;
     Node *node;
     struct linevector headlines;
     struct linevector curlines;
@@ -2152,19 +2152,32 @@ annotate_fileproc (finfo)
 
     ishead = 1;
     vers = NULL;
+    prev_vers = NULL;
 
     do {
 	getrcsrev (fp, &key);
 
-	/* Stash the previous version.  */
-	prev_vers = vers;
+	if (vers == NULL || strcmp (vers->next, key) == 0)
+	    isnext = 1;
+	else
+	{
+	    /* This is not the next version we need.  It is a branch
+               version which we want to ignore.  */
+	    isnext = 0;
+	}
 
 	/* look up the revision */
 	node = findnode (finfo->rcs->versions, key);
 	if (node == NULL)
 	    error (1, 0, "mismatch in rcs file %s between deltas and deltatexts",
 		   finfo->rcs->path);
-	vers = (RCSVers *) node->data;
+
+	if (isnext)
+	{
+	    /* Stash the previous version.  */
+	    prev_vers = vers;
+	    vers = (RCSVers *) node->data;
+	}
 
 	while ((n = getrcskey (fp, &key, &value, NULL)) >= 0)
 	{
@@ -2183,7 +2196,7 @@ annotate_fileproc (finfo)
 		    linevector_copy (&curlines, &headlines);
 		    ishead = 0;
 		}
-		else
+		else if (isnext)
 		{
 		    char *p;
 		    char *q;
