@@ -1,8 +1,9 @@
 Changes for NT (this title will be removed when this branch is merged
 with the main trunk):
 
-* The CVSROOT variable specification has changed to support various
-"access methods."
+* The CVSROOT variable specification has changed to support more
+access methods.  In addition to "pserver," "server" (rsh), "kserver"
+(kerberos), and "local" (local fs access) can now be specified.
 
 * The "login" command no longer prompts the user for username and
 hostname, since one will have to provide that information via the `-d'
