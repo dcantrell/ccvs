@@ -78,6 +78,9 @@
 /* Define to enable encryption support. */
 #undef ENCRYPTION
 
+/* Define as good substitute value for EOVERFLOW. */
+#undef EOVERFLOW
+
 /* Define if this executable will be running on case insensitive file systems.
    In the client case, this means that it will request that the server pretend
    to be case insensitive if it isn't already. */
@@ -580,7 +583,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define if you have the 'unsigned long long' type. */
+/* Define if you have the unsigned long long type. */
 #undef HAVE_UNSIGNED_LONG_LONG
 
 /* Define to 1 if you have the <utime.h> header file. */
