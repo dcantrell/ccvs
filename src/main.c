@@ -1,9 +1,14 @@
 /*
- *    Copyright (c) 1992, Brian Berliner and Jeff Polk
- *    Copyright (c) 1989-1992, Brian Berliner
+ * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
  *
- *    You may distribute under the terms of the GNU General Public License
- *    as specified in the README file that comes with the CVS source distribution.
+ * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Portions Copyright (C) 1992, Brian Berliner and Jeff Polk
+ * Portions Copyright (C) 1989-1992, Brian Berliner
+ *
+ * You may distribute under the terms of the GNU General Public License
+ * as specified in the README file that comes with the CVS source distribution.
  *
  * This is the main C driver for the CVS system.
  *
@@ -528,7 +533,10 @@ main (argc, argv)
 		version (0, (char **) NULL);    
 		(void) fputs ("\n", stdout);
 		(void) fputs ("\
-Copyright (c) 1989-2004 Brian Berliner, david d `zoo' zuhn, \n\
+Copyright (c) 1998-2005 Free Software Foundation, Inc.,\n\
+                        Derek Price, Ximbiot <http://ximbiot.com>,\n\
+                        & others\n\
+Copyright (c) 1989-1998 Brian Berliner, david d `zoo' zuhn, \n\
                         Jeff Polk, and other authors\n", stdout);
 		(void) fputs ("\n", stdout);
 		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);

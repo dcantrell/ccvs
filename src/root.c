@@ -1,6 +1,10 @@
 /*
- * Copyright (c) 1992, Mark D. Baushke
- * Copyright (c) 2002, Derek R. Price
+ * Copyright (C) 1986-2005 The Free Software Foundation, Inc.
+ *
+ * Portions Copyright (C) 1998-2005 Derek Price, Ximbiot <http://ximbiot.com>,
+ *                                  and others.
+ *
+ * Poritons Copyright (c) 1992, Mark D. Baushke
  *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.

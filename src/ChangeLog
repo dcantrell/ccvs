@@ -1,3 +1,13 @@
+2005-01-31 Derek Price <derek@ximbiot.com>
+
+	* Makefile.am, add.c, admin.c, annotate.c, checkin.c, checkout.c,
+	classify.c, commit.c, create_adm.c, cvs.h, cvsrc.c, diff.c, entries.c,
+	find_names.c, hash.c, hash.h, history.h, import.c, lock.c, log.c,
+	login.c, logmsg.c, main.c, mkmodules.c, modules.c, myndbm.c, no_diff.c,
+	parseinfo.c, patch.c, rcs.c, rcs.h, rcscmds.c, recurse.c, remove.c,
+	repos.c, root.c, root.h, server.h, stack.c, stack.h, status.c, subr.c,
+	tag.c, update.c, vers_ts.c, version.c: Update copyright notices.
+
 2005-01-29 Derek Price <derek@ximbiot.com>
 
 	* log.c (log_usage): Add note about using -S with revision info
