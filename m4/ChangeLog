@@ -1,5 +1,15 @@
 2003-05-20  Derek Price  <derek@ximbiot.com>
 
+	* acx_with_external_zlib.m4 (--with-external-zlib): New file with new
+	ACX_WITH_SYSTEM_VLIB function to use the system's installed version of
+	zlib library.
+	(Original patch from Anthon Pang <apang@telus.net>.)
+
+	* Makefile.am (EXTRA_DIST): Add new file.
+	* Makefile.in: Regenerated.
+
+2003-05-20  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): s/acx_have_gssapi.m4/acx_with_gssapi.m4/.
 
 	* Makefile.in: Regenerated.

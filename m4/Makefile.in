@@ -102,6 +102,9 @@ STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
+ZLIB_CPPFLAGS = @ZLIB_CPPFLAGS@
+ZLIB_LIBS = @ZLIB_LIBS@
+ZLIB_SUBDIRS = @ZLIB_SUBDIRS@
 am__include = @am__include@
 am__quote = @am__quote@
 cvs_client_objects = @cvs_client_objects@
@@ -111,6 +114,7 @@ with_default_rsh = @with_default_rsh@
 EXTRA_DIST = \
 	cvs_func_printf_ptr.m4 \
 	acx_with_gssapi.m4 \
+	acx_with_external_zlib.m4 \
 	lstat.m4 \
 	malloc.m4 \
 	stat.m4

@@ -19,6 +19,7 @@
 EXTRA_DIST = \
 	cvs_func_printf_ptr.m4 \
 	acx_with_gssapi.m4 \
+	acx_with_external_zlib.m4 \
 	lstat.m4 \
 	malloc.m4 \
 	stat.m4
