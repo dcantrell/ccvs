@@ -1,5 +1,9 @@
 2004-04-07  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (parseroot): Replace hard path with $HOME.
+
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (parseroot): s/oberon/$username/.
 
 2004-04-07  Derek Price  <derek@ximbiot.com>

@@ -3714,7 +3714,7 @@ ${PROG} commit: Rebuilding administrative file database"
 "$PROG logout: WARNING: Ignoring method options found in CVSROOT: \`proxy=localhost;proxyport=8080'\.
 $PROG logout: Use CVS version 1\.12\.7 or later to handle method options\.
 Logging out of :pserver:$username@localhost:2401/dev/null
-$PROG logout: warning: failed to open /tmp/cvs-sanity-1.11.x/home/\.cvspass for reading: No such file or directory
+$PROG logout: warning: failed to open $HOME/\.cvspass for reading: No such file or directory
 $PROG logout: Entry not found\."
 	  fi
 
