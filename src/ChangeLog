@@ -1,3 +1,9 @@
+2000-03-13  Larry Jones  <larry.jones@sdrc.com>
+
+	* parseinfo.c: Add extern to logHistory declaration.  (Reported by
+	<John.Tytgat@aaug.net>.)
+	(parse_config): Reformat logHistory code.
+
 2000-03-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Don't try to set cvsroot_len until after checking
