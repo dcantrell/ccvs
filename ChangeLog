@@ -1,3 +1,9 @@
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak: Add stack.c and stack.h in order to compile under Windows.
+	* NEWS: Note Windows fixes.
+	* README: Update copyright notice.
+
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note new tests in sanity.sh.
