@@ -1,3 +1,7 @@
+Mon Jul 21 08:57:04 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add DIFFUTILS-2.7-BUG.
+
 Sun Jul 20 17:55:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (admin options): For options with optional
