@@ -1075,7 +1075,7 @@ if test x"$*" = x; then
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
 	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
-        tests="${tests} rstar-toplevel checkout_repository"
+        tests="${tests} rstar-toplevel trailingslashes checkout_repository"
 	# Log messages, error messages.
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
 	tests="${tests} errmsg3"
@@ -13928,6 +13928,52 @@ $SPROG commit: Rebuilding administrative file database"
 	    exit 0
 	  fi
 	;;
+
+
+
+	trailingslashes)
+	  # Some tests of CVS's reactions to path specifications containing
+	  # trailing slashes.
+	  mkdir trailingslashes; cd trailingslashes
+	  dotest trailingslashes-init-1 "$testcvs -Q co -ldt ."
+	  dotest trailingslashes-init-2 "$testcvs -Q co -dt2 ."
+	  cd t
+	  echo "Ahh'll be baaack." >topfile
+	  dotest trailingslashes-init-3 "$testcvs -Q add topfile"
+	  dotest trailingslashes-init-4 "$testcvs -Q ci -mto-top" \
+"RCS file: $CVSROOT_DIRNAME/topfile,v
+done
+Checking in topfile;
+$CVSROOT_DIRNAME/topfile,v  <--  topfile
+initial revision: 1\.1
+done"
+
+	  # First, demonstrate the usual case.
+	  cd ../t2
+	  dotest trailingslashes-1 "$testcvs -q up CVSROOT"
+	  dotest_fail trailingslashes-1a "test -f topfile"
+
+	  # FIXCVS:
+	  # Now the one that fails in remote mode.
+	  # This highlights one of the failure cases mentioned in TODO item
+	  # #205.
+	  if $remote; then
+		  dotest trailingslashes-2 "$testcvs -q up CVSROOT/" \
+"U topfile"
+		  dotest trailingslashes-2a "test -f topfile"
+	  else
+		  dotest trailingslashes-2 "$testcvs -q up CVSROOT/"
+		  dotest_fail trailingslashes-2a "test -f topfile"
+	  fi
+
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -r trailingslashes
+	  ;;
 
 
 
