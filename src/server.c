@@ -4546,7 +4546,7 @@ serve_expand_modules (arg)
     for (i = 1; i < argument_count; i++)
 	err += do_module (db, argument_vector[i],
 			  CHECKOUT, "Updating", expand_proc,
-			  NULL, 0, 0, 0,
+			  NULL, 0, 0, 0, 0,
 			  (char *) NULL);
     close_module (db);
     server_expanding = 0;

@@ -8232,18 +8232,18 @@ done"
 "U first-dir/file1"
 	  dotest modules3-13 "test -f path/in/modules/first-dir/file1" ''
 	  cd ..; rm -r 1
+	  fi # end of tests skipped for remote
 
-	  # Now here is where it gets seriously bogus.
+	  # Now here is where it used to get seriously bogus.
 	  mkdir 1; cd 1
 	  dotest modules3-14 \
 "${testcvs} -q rtag tag1 path/in/modules" ''
-	  # CVS creates this even though rtag should *never* affect
+	  # CVS used to create this even though rtag should *never* affect
 	  # the directory current when it is called!
-	  dotest modules3-15 "test -d path/in/modules" ''
-	  # Just for trivia's sake, rdiff is not similarly vulnerable
-	  # because it passes 0 for run_module_prog to do_module.
+	  dotest_fail modules3-15 "test -d path/in/modules" ''
+	  # Just for trivia's sake, rdiff was not similarly vulnerable
+	  # because it passed 0 for run_module_prog to do_module.
 	  cd ..; rm -r 1
-	  fi # end of tests skipped for remote
 
 	  # Some people seem to want this to work.  I still suspect there
 	  # are dark corners in slashes in module names.  This probably wants

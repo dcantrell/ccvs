@@ -253,7 +253,7 @@ cvstag (argc, argv)
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
 			      rtag_proc, (char *) NULL, 0, 0, run_module_prog,
-			      symtag);
+			      0, symtag);
 	}
 	close_module (db);
     }

@@ -640,7 +640,8 @@ extern int init PROTO ((int argc, char **argv));
 
 int do_module PROTO((DBM * db, char *mname, enum mtype m_type, char *msg,
 		CALLBACKPROC callback_proc, char *where, int shorten,
-		int local_specified, int run_module_prog, char *extra_arg));
+		int local_specified, int run_module_prog, int build_dirs,
+		char *extra_arg));
 void history_write PROTO((int type, char *update_dir, char *revs, char *name,
 		    char *repository));
 int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,

@@ -253,7 +253,7 @@ patch (argc, argv)
     db = open_module ();
     for (i = 0; i < argc; i++)
 	err += do_module (db, argv[i], PATCH, "Patching", patch_proc,
-			  (char *) NULL, 0, 0, 0, (char *) NULL);
+			  (char *) NULL, 0, 0, 0, 0, (char *) NULL);
     close_module (db);
     free (options);
     patch_cleanup ();
