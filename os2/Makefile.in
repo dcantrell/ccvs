@@ -275,26 +275,14 @@ all:
 all install uninstall:
 
 # Remove targets for Automake
-dvi:
-.PHONY: dvi
-
-info:
-.PHONY: info
-
-installcheck:
-.PHONY: installcheck
-
+dvi info pdf ps:
+.PHONY: dvi info pdf ps
+check installcheck:
+.PHONY: check installcheck
 installdirs:
-.PHONY: installdirs
-
-.PHONY: tags TAGS
-tags TAGS:
-
-.PHONY: lint
 lint:
-
-.PHONY: check
-check:
+tags TAGS:
+.PHONY: installdirs lint tags TAGS
 
 # distdir added for compatibility with CVS automake.
 top_distdir = ..

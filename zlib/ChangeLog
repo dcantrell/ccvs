@@ -1,3 +1,8 @@
+2003-08-07  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in (pdf ps): New recursive targets to be ignored for
+	Automake's benefit.
+
 2001-09-04  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with automake 1.5.
