@@ -40,9 +40,14 @@
 #endif /* __attribute__ */
 
 /* begin GNULIB headers */
+/* The folowing may have system equivalents.  */
+#include <getopt.h>
+
+/* The following do not.  */
 #include "dirname.h"
 #include "exit.h"
 #include "minmax.h"
+#include "regex.h"
 #include "vasnprintf.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
@@ -81,8 +86,6 @@ char *strerror (int);
 #include <ndbm.h>
 #endif /* MY_NDBM */
 
-#include "regex.h"
-#include "getopt.h"
 #include "wait.h"
 
 #include "rcs.h"

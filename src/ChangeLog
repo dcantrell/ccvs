@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* cvs.h: Move getopt.h and regex.h into the GNULIB include section.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* main.c (cmds): Release calls unedit, to it modifies the repository.
 	(struct cmd): Add const and full prototype where needed.
 	* sanity.sh (edit-check): Use modify_repo where needed.
