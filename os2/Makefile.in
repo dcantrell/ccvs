@@ -12,8 +12,12 @@ project: cvs.exe
 # this var.
 SL = /
 
+# srcdir is usually "."
 srcdir     = @srcdir@
+
+# top_srcdir is usually ".."
 top_srcdir = @top_srcdir@
+
 libdir     = @top_srcdir@${SL}lib
 cvs_srcdir = @top_srcdir@${SL}src
 
@@ -268,12 +272,12 @@ clean:
 # we must `set' the path in the compilation environment.  Urgkle. 
 cvs.exe: ${OBJECTS}
 	echo Creating icc.in...
-	echo -Q+ -Ti+ -Fe$@ -B"/batch" > icc.in
-	echo ${OS2_OBJECTS}            >> icc.in
-	echo ${LIB_OBJECTS}            >> icc.in
-	echo ${COMMON_OBJECTS}         >> icc.in
-	echo ${TCPIPLIB}               >> icc.in
-	echo ${ARGVLIB}                >> icc.in
+	echo -Q+ -Ti+ -Fe$@ -B"/batch" -B"/NOE" > icc.in
+	echo ${OS2_OBJECTS}                    >> icc.in
+	echo ${LIB_OBJECTS}                    >> icc.in
+	echo ${COMMON_OBJECTS}                 >> icc.in
+	echo ${TCPIPLIB}                       >> icc.in
+	echo ${ARGVLIB}                        >> icc.in
 	echo Creating icc.in... done.
 	set LIB=${LIB} & icc @icc.in
 
