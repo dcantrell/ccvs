@@ -1,5 +1,11 @@
 Thu Jan 29 00:01:05 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Version 1.9.24.
+
+	* sanity.sh (multibranch2): File file2 and tests multibranch2-13
+	through multibranch2-15 test a slightly different case than the
+	rest of multibranch2.
+
 	* mkmodules.c (cvswrappers_contents): Rewrite.  The text didn't
 	describe -k and had various other problems.
 
