@@ -526,7 +526,7 @@ supported_response (char *name)
  *   true                 If this server is configured as a secondary server.
  *   false                Otherwise.
  */
-bool
+static bool
 isSecondaryServer (void)
 {
     char hostname[MAXHOSTNAMELEN];

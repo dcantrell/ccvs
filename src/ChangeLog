@@ -1,5 +1,10 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (isSecondaryServer): Declare static.
+	* server.h (isSecondaryServer): Remove proto.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* log-buffer.h (log_buffer_rewind, log_buffer_closelog): Don't define
 	protos without SECONDARY_SUPPORT.
 	* server.c (*): #ifdef correctly for !SECONDARY_SUPPORT.
