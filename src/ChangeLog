@@ -1,5 +1,15 @@
 2003-01-31  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Allow multiple -t options.
+	(opt_usage): Correct usage.
+	* cvs.h (TRACE): New macro.
+	* subr.c (cvs_trace): New function.
+	(Thanks to the team at the CVSNT project.)
+
+	* lock.c (*): Use new TRACE macro.
+
+2003-01-31  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (keywordname): Change a "FIXME" comment to "FIXCVS".
 
 2003-01-30  Derek Price  <derek@ximbiot.com>

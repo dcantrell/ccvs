@@ -249,7 +249,8 @@ static const char *const opt_usage[] =
     "    -w           Make checked-out files read-write (default).\n",
     "    -l           Turn history logging off.\n",
     "    -n           Do not execute anything that will change the disk.\n",
-    "    -t           Show trace of program execution -- try with -n.\n",
+    "    -t           Show trace of program execution (repeat for more\n",
+    "                 verbosity) -- try with -n.\n",
     "    -v           CVS version and copyright.\n",
     "    -T tmpdir    Use 'tmpdir' for temporary files.\n",
     "    -e editor    Use 'editor' for editing log information.\n",
@@ -533,7 +534,7 @@ main (argc, argv)
 		cvswrite = 1;
 		break;
 	    case 't':
-		trace = 1;
+		trace++;
 		break;
 	    case 'n':
 		noexec = 1;
