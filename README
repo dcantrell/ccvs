@@ -116,6 +116,12 @@ Please read the INSTALL file for installation instructions.  Brief summary:
 	$ make install
 	$ cvsinit
 
+The documentation is in the doc subdirectory.  cvs.texinfo is the main
+manual; cvs.info* and cvs.ps are the info and postscript versions,
+respectively, generated from cvs.texinfo.  The postscript version is
+for A4 paper; if you want US letter size, you need to remove the line
+@afourpaper from cvs.texinfo and re-generate cvs.ps using TeX.
+
 -------------------------------------------------------------------------------
 
 * How do I get up-to-date information and information about other
