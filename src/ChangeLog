@@ -1,3 +1,9 @@
+Sat Dec 13 13:15:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c: Use indentation to indicate nesting of #ifdef's.
+
+	* client.c (connect_to_gserver): Reindent (in one place).
+
 Fri Dec 12 17:38:15 1997  Chris Provenzano <proven@cygnus.com>
 	and Ian Lance Taylor  <ian@cygnus.com>
 
