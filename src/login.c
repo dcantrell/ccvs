@@ -12,9 +12,7 @@
 
 #ifdef AUTH_CLIENT_SUPPORT   /* This covers the rest of the file. */
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
+extern char *getpass ();
 
 #ifndef CVS_PASSWORD_FILE 
 #define CVS_PASSWORD_FILE ".cvspass"
@@ -35,8 +33,8 @@ construct_cvspass_filename ()
     return xstrdup (passfile);
 
   /* Construct absolute pathname to user's password file. */
-  /* todo: does this work under Win-NT and OS/2 ? */
-  homedir = getenv ("HOME");
+  /* todo: does this work under OS/2 ? */
+  homedir = get_homedir ();
   if (! homedir)
     {
       error (1, errno, "could not find out home directory");
@@ -203,6 +201,8 @@ login (argc, argv)
      inefficient, but we're not talking about a gig of data here. */
 
   fp = fopen (passfile, "r");
+  /* FIXME: should be printing a message if fp == NULL and not
+     existence_error (errno).  */
   if (fp != NULL)
     {
       /* Check each line to see if we have this entry already. */
@@ -219,9 +219,8 @@ login (argc, argv)
               linebuf = (char *) NULL;
             }
         }
+      fclose (fp);
     }
-  fclose (fp);
-
       
   if (already_entered)
     {

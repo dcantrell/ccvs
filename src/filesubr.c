@@ -636,3 +636,11 @@ last_component (path)
     else
         return path;
 }
+
+/* Return the home directory.  Returns a pointer to storage
+   managed by this function or its callees (currently getenv).  */
+char *
+get_homedir ()
+{
+    return getenv ("HOME");
+}

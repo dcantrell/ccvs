@@ -1,3 +1,15 @@
+Fri Feb 23 1996  Jim Kingdon  <kingdon@cyclic.com
+
+	* client.c: Ifdef HAVE_WINSOCK_H, include winsock.h
+	instead of sys/socket.h and friends.
+	* login.c: Don't include sys/socket.h and friends.
+	* login.c (login): Only fclose fp in the case where it was
+	successfully fopen'd.
+	* login.c: Declare getpass.
+	* filesubr.c, cvs.h (get_homedir): New function.
+	* cvsrc.c, expand_path.c, history.c, login.c: Call it instead
+	of getenv ("HOME").
+
 Fri Feb 23 09:23:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (connect_to_pserver): Remove unused variable host.

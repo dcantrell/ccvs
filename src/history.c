@@ -706,7 +706,7 @@ history_write (type, update_dir, revs, name, repository)
     {
 	char *pwdir;
 
-	pwdir = getenv ("HOME");
+	pwdir = get_homedir ();
 	PrCurDir = CurDir;
 	if (pwdir != NULL)
 	{
