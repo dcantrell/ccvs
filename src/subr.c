@@ -217,6 +217,32 @@ numdots (const char *s)
 
 
 
+/*
+ * Returns 1 if this is a plain revision number without extensions
+ * A plain rev num never has a dot followed by an alpha 
+ */
+int
+isrevnumonly (const char *s)
+{
+    if (!isdigit ((unsigned char) *s))
+    {
+        return 0;
+    }
+    else
+    {
+        const char * c = s+1;
+	while (c = strchr (c,'.'))
+        {
+	    ++c;
+	    if (*c && isalpha ((unsigned char) *c))
+	        return 0;
+	}
+    }
+    return 1;
+}
+
+
+
 /* Compare revision numbers REV1 and REV2 by consecutive fields.
    Return negative, zero, or positive in the manner of strcmp.  The
    two revision numbers must have the same number of fields, or else
