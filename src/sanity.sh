@@ -20098,6 +20098,128 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  dotest lockfiles-8 "${testcvs} -q update" ""
 	  dotest lockfiles-9 "${testcvs} -q co -l ." ""
 
+	  ###
+	  ### There are race conditions in the following tests, but hopefully the
+	  ### 5 seconds the first process waits to remove the lockdir and the 30
+	  ### seconds CVS waits betweens checks will be significant enough to
+	  ### render the case moot.
+	  ###
+	  # Considers the following cases:
+	  #
+	  #                    Lock Present
+	  # Operation          Allowed (case #)
+	  #
+	  #                    Read      Promotable   Write
+	  #                    _______   __________   ______
+	  # Read              |Yes (1)   Yes (2)      No (3)
+	  # Promotable Read   |Yes (4)   No (5)       No (6)
+	  # Write             |No (7)    No (8)       No (9)
+	  #
+	  # Tests do not appear in same ordering as table:
+	  # 1. Read when read locks are present...
+	  # 2. Read when promotable locks are present...
+	  # 3. Don't read when write locks present...
+	  # 4. Read but don't write when read locks are present... (fail
+	  #    commit up-to-date check with promotable lock present).
+	  # 5. Don't allow promotable read when promotable locks are present...
+	  #    (fail to perform commit up-to-date check with promotable lock
+	  #     present).
+	  # 6. Don't allow promotable read when write locks are present...
+	  #    (fail to perform commit up-to-date check with promotable lock
+	  #     present).
+	  # 7. Don't write when read locks are present...
+	  # 8. Don't write when promotable locks are present...
+	  # 9. Don't write when write locks are present...
+
+	  # 3. Don't read when write locks present...
+	  mkdir "$TESTDIR/locks/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/#cvs.lock")&
+	  dotest lockfiles-10 "$testcvs -q co -l ." \
+"$SPROG checkout: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME
+$SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME"
+
+	  # 1. Read when read locks are present...
+	  touch "$TESTDIR/locks/#cvs.rfl.test.lock"
+	  dotest lockfiles-11 "$testcvs -q co -l ."
+	  rm "$TESTDIR/locks/#cvs.rfl.test.lock"
+
+	  # 2. Read when promotable locks are present...
+	  cd ..
+	  mkdir 3; cd 3
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
+	  dotest lockfiles-12 "$testcvs -q co first-dir" \
+"U first-dir/sdir/ssdir/file1"
+	  rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
+
+	  # 7. Don't write when read locks are present...
+	  echo I always have trouble coming up with witty text for the test files >>first-dir/sdir/ssdir/file1
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock"
+	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock")&
+	  dotest lockfiles-13 "$testcvs -q ci -mconflict first-dir" \
+"$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done"
+
+	  # 4. Read but don't write when read locks are present... (fail
+	  #    commit up-to-date check with promotable lock present).
+	  cd ../2
+	  echo something that would render readers all full of smiles >>first-dir/sdir/ssdir/file1
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock"
+	  dotest_fail lockfiles-14 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$SPROG commit: Up-to-date check failed for \`first-dir/sdir/ssdir/file1'
+$SPROG \[commit aborted\]: correct above errors first!"
+	  rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.rfl.test.lock"
+
+	  # 5. Don't allow promotable read when promotable locks are present...
+	  #    (fail to perform commit up-to-date check with promotable lock
+	  #     present).
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
+	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
+	  dotest_fail lockfiles-15 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: Up-to-date check failed for \`first-dir/sdir/ssdir/file1'
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  # 6. Don't allow promotable read when write locks are present...
+	  #    (fail to perform commit up-to-date check with promotable lock
+	  #     present).
+	  mkdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
+	  dotest_fail lockfiles-16 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: Up-to-date check failed for \`first-dir/sdir/ssdir/file1'
+$SPROG \[commit aborted\]: correct above errors first!"
+
+	  # 8. Don't write when promotable locks are present...
+	  dotest lockfiles-17 "$testcvs -Q up -C first-dir/sdir/ssdir"
+	  echo the kinds of smiles that light faces for miles >>first-dir/sdir/ssdir/file1
+	  touch "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock"
+	  (sleep 5; rm "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.pfl.test.lock")&
+	  dotest lockfiles-18 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.3; previous revision: 1\.2
+done"
+
+	  # 9. Don't write when write locks are present...
+	  echo yet this poem would probably only give longfellow bile >>first-dir/sdir/ssdir/file1
+	  mkdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock"
+	  (sleep 5; rmdir "$TESTDIR/locks/first-dir/sdir/ssdir/#cvs.lock")&
+	  dotest lockfiles-19 "$testcvs -q ci -mnot-up-to-date first-dir" \
+"$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+$SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
+Checking in first-dir/sdir/ssdir/file1;
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+new revision: 1\.4; previous revision: 1\.3
+done"
+
 	  cd CVSROOT
 	  echo "# nobody here but us comments" >config
 	  dotest lockfiles-cleanup-1 "${testcvs} -q ci -m config-it" \
@@ -20106,6 +20228,9 @@ ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${SPROG} commit: Rebuilding administrative file database"
+
+	  dokeep
+
 	  cd ../..
 	  # Perhaps should restore the umask and CVSUMASK to what they
 	  # were before.  But the other tests "should" not care about them...

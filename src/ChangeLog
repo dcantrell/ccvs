@@ -1,3 +1,14 @@
+2004-02-12  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (unlock_proc): Use closure as true/false free_repository
+	free_repository argument to remove_lock_files.  Move to a position
+	above remove_locks and delete prototype.
+	(remove_locks): Don't free storage, as specified in our header comment,
+	in order to avoid a seg fault that could otherwise occur after waiting
+	on a lock.
+	* sanity.sh (lockfiles): Add tests for all operation (read, read
+	promotably, or write) and lock combinations.
+
 2004-02-12  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* modules.c (_do_module): Rename to my_module to avoid reserved name.

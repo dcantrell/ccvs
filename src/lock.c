@@ -99,7 +99,6 @@ static void remove_locks (void);
 static int set_lock (struct lock *lock, int will_wait);
 static void clear_lock (struct lock *lock);
 static void set_lockers_name (struct stat *statp);
-static int unlock_proc (Node * p, void *closure);
 
 /* Malloc'd array containing the username of the whoever has the lock.
    Will always be non-NULL in the cases where it is needed.  */
@@ -435,6 +434,18 @@ Lock_Cleanup (void)
 
 
 /*
+ * walklist proc for removing a list of locks
+ */
+static int
+unlock_proc (Node *p, void *closure)
+{
+    remove_lock_files ((struct lock *)p->data, (int) closure);
+    return 0;
+}
+
+
+
+/*
  * Remove locks without discarding the lock information.
  */
 static void
@@ -453,21 +464,12 @@ remove_locks (void)
 	 */
 	List *tmp = locklist;
 	locklist = NULL;
-	walklist (tmp, unlock_proc, NULL);
+	/* The closure for unlock_proc() is actually an int, which I typecast
+	 * to (void *) below.
+	 */
+	walklist (tmp, unlock_proc, (void *) 0);
     }
     SIG_endCrSect();
-}
-
-
-
-/*
- * walklist proc for removing a list of locks
- */
-static int
-unlock_proc (Node *p, void *closure)
-{
-    remove_lock_files ((struct lock *)p->data, 1);
-    return (0);
 }
 
 
