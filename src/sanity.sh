@@ -43,6 +43,10 @@
 # required to make this script work properly.
 unset CVSREAD
 
+# Make sure the POSIX conforming versions of 'sort' do what we expect.
+LC_COLLATE=C
+export LC_COLLATE
+
 # The default value of /tmp/cvs-sanity for TESTDIR is dubious,
 # because it loses if two people/scripts try to run the tests
 # at the same time.  Some possible solutions:

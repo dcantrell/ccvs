@@ -1,3 +1,7 @@
+1998-08-26  Eric M. Hopper
+
+	* sanity.sh: Set LC_COLLATE to "C".
+
 1998-08-24  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* release.c (release): Use save_cwd and restore_cwd to get back to
