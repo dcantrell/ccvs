@@ -204,8 +204,9 @@ Parse_Info(char *infofile, char *repository, CALLPROC callproc, int opt, void *c
    KEYWORD=VALUE.  There is currently no way to have a multi-line
    VALUE (would be nice if there was, probably).
 
-   CVSROOT is the $CVSROOT directory (current_parsed_root->directory might not be
-   set yet).
+   CVSROOT is the $CVSROOT directory
+   (current_parsed_root->directory might not be set yet, so this
+   function takes the cvsroot as a function argument).
 
    Returns 0 for success, negative value for failure.  Call
    error(0, ...) on errors in addition to the return value.  */
@@ -279,7 +280,7 @@ parse_config (char *cvsroot)
 	   for making sure the syntax is consistent.  Any good examples
 	   to follow there (Apache?)?  */
 
-	/* Strip the training newline.  There will be one unless we
+	/* Strip the trailing newline.  There will be one unless we
 	   read a partial line without a newline, and then got end of
 	   file (or error?).  */
 
