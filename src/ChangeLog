@@ -1,3 +1,18 @@
+Sun Mar  2 13:12:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	The following are things that I noticed in the process of trying
+	to track down:
+	  can't create temporary directory
+	  Unknown error -1
+	  FAIL: test 28
+	from nightly testing.  I'm not sure that either item explains that
+	message however.
+	* server.c (server): Allocate pending_error_text;
+	print_pending_error will try to free it so
+	  pending_error_text = "foo"
+	won't work.
+	(mkdir_p): Don't assume that isdir will leave errno unmolested.
+
 Thu Feb 27 15:29:58 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* remove.c (cvsremove): When forcing removal in client mode, use
