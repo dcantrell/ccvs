@@ -21905,7 +21905,30 @@ text
 @a0 1
 add a line on the branch
 @"
-	  dotest admin-14 "${testcvs} -q admin -aauth3 -aauth2,foo \
+	  dotest_fail admin-14-1 "${testcvs} -q admin \
+-m1.1.1.1:changed-bogus-log-message file2" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+cvs admin: ${CVSROOT_DIRNAME}/first-dir/file2,v: no such revision 1\.1\.1\.1
+cvs admin: RCS file for .file2. not modified."
+	  dotest admin-14-2 "${testcvs} -q log file2" "
+RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+Working file: file2
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+
+	  dotest admin-14-3 "${testcvs} -q admin -aauth3 -aauth2,foo \
 -soneone:1.1 -m1.1:changed-log-message -ntagone: file2" \
 "RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 done"
@@ -22519,6 +22542,10 @@ text
 @"
 
 	  cd ../..
+
+	  dokeep
+
+	  # clean up our after ourselves
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
