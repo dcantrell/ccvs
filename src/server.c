@@ -3654,6 +3654,12 @@ server_copy_file (file, update_dir, repository, newfile)
     char *repository;
     char *newfile;
 {
+    /* At least for now, our practice is to have the server enforce
+       noexec for the repository and the client enforce it for the
+       working directory.  This might want more thought, and/or
+       documentation in cvsclient.texi (other responses do it
+       differently).  */
+
     if (!supported_response ("Copy-file"))
 	return;
     buf_output0 (protocol, "Copy-file ");
