@@ -1,3 +1,11 @@
+2003-03-19  Larry Jones  <lawrence.jones@eds.com>
+
+	* filesubr.c (mkdir_if_needed): Save errno since isdir() can clobber.
+	(Patch from Brian Poole <raj@cerias.purdue.edu>.)
+	* sanity.sh (abspath-4): Update to match.
+
+	* filesubr.c (locate_rcs): Fix gcc warning.
+
 2003-03-19  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add_directory): Only call WriteTemplate when the server is
