@@ -1,3 +1,8 @@
+2004-02-04  Derek Price  <derek@ximbiot.com>
+
+	* classify.c (Classify_File): Update header comment block and reformat
+	prototype for readability in 80 character widths.
+
 2004-02-02  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (*): Update tests for the new status message from update.c.

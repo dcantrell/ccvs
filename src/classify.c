@@ -13,22 +13,27 @@ static void sticky_ck (struct file_info *finfo, int aflag,
 			      Vers_TS * vers);
 
 /*
- * Classify the state of a file
+ * Classify the state of a file.
+ *
+ * INPUTS
+ *   finfo		Information about the file to be classified.
+ *   tag
+ *   date
+ *   options		Keyword expansion options.  Can be either NULL or "" to
+ *			indicate none are specified here.
+ *   force_tag_match
+ *   aflag
+ *   versp
+ *   pipeout		Did the user pass the "pipeout" flag to request that
+ *			all output go to STDOUT rather than to a file or files?
+ *
+ * RETURNS
+ *   A Ctype (defined as an enum) describing the state of the file relative to
+ *   the repository.  See the definition of Ctype for more.
  */
 Ctype
-Classify_File (struct file_info *finfo, char *tag, char *date, char *options, int force_tag_match, int aflag, Vers_TS **versp, int pipeout)
-                            
-              
-               
-
-    /* Keyword expansion options.  Can be either NULL or "" to
-       indicate none are specified here.  */
-                  
-
-                        
-              
-                    
-                
+Classify_File (struct file_info *finfo, char *tag, char *date, char *options,
+               int force_tag_match, int aflag, Vers_TS **versp, int pipeout)
 {
     Vers_TS *vers;
     Ctype ret;
