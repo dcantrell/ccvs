@@ -1,3 +1,9 @@
+Thu Oct 19 14:58:40 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcscmds.c (RCS_merge): Remove comment about rcsmerge -E.
+	Hacking CVS was never a very good solution; the situation is fixed
+	in RCS 5.7, and is documented in ../INSTALL.
+
 Thu Oct 19 15:06:15 1995  Jim Meyering  (meyering@comco.com)
 
 	* commit.c (checkaddfile): Remove dcls of unused variables.
