@@ -7858,18 +7858,35 @@ Copy the module file, sorted, to the standard output,
 instead of creating or modifying any files or
 directories in your working directory.
 
-@c Should clarify whether dir can specify a
-@c subdirectory (for example "foo/bar").  As of May,
-@c 1996, it is said to work for local CVS if the parent
-@c directories already exist, and not at all for remote
-@c CVS.  The remote CVS behavior at least seems like it
-@c is clearly a bug.
 @item -d @var{dir}
 Create a directory called @var{dir} for the working
-files, instead of using the module name.  Unless you
-also use @samp{-N}, the paths created under @var{dir}
-will be as short as possible.
-@c FIXME: What the #$@!#$# does "short as possible" mean?
+files, instead of using the module name.  In general,
+using this flag is equivalent to using @samp{mkdir
+@var{dir}; cd @var{dir}} followed by the checkout
+command without the @samp{-d} flag.
+
+There is an important exception, however.  It is very
+convenient when checking out a single item to have the
+output appear in a directory that doesn't contain empty
+intermediate directories.  In this case @emph{only},
+CVS tries to ``shorten'' pathnames to avoid those empty
+directories.
+
+For example, given a module @samp{foo} that contains
+the file @samp{bar.c}, the command @samp{cvs co -d dir
+foo} will create directory @samp{dir} and place
+@samp{bar.c} inside.  Similarly, given a module
+@samp{bar} which has subdirectory @samp{baz} wherein
+there is a file @samp{quux.c}, the command @samp{cvs -d
+dir co bar/baz} will create directory @samp{dir} and
+place @samp{quux.c} inside.
+
+Using the @samp{-N} flag will defeat this behavior.
+Given the same module definitions above, @samp{cvs co
+-N -d dir foo} will create directories @samp{dir/foo}
+and place @samp{bar.c} inside, while @samp{cvs co -N -d
+dir bar/baz} will create directories @samp{dir/bar/baz}
+and place @samp{quux.c} inside.
 
 @item -j @var{tag}
 With two @samp{-j} options, merge changes from the
@@ -7894,11 +7911,11 @@ date.  An optional date is specified by adding a colon
 @xref{Merging}.
 
 @item -N
-Only useful together with @samp{-d @var{dir}}.  With this
-option, @sc{cvs} will not shorten module paths in your
-working directory.  (Normally, @sc{cvs} shortens paths as
-much as possible when you specify an explicit target
-directory).
+Only useful together with @samp{-d @var{dir}}.  With
+this option, @sc{cvs} will not ``shorten'' module paths
+in your working directory when you check out a single
+module.  See the @samp{-d} flag for examples and a
+discussion.
 
 @item -s
 Like @samp{-c}, but include the status of all modules,
@@ -8368,19 +8385,17 @@ In addition, these options (that are common to
 @table @code
 @item -d @var{dir}
 Create a directory called @var{dir} for the working
-files, instead of using the module name.  Unless you
-also use @samp{-N}, the paths created under @var{dir}
-will be as short as possible.
+files, instead of using the module name.
+@xref{checkout options}, for complete details on how
+@sc{cvs} handles this flag.
 
 @item -k @var{subst}
 Set keyword expansion mode (@pxref{Substitution modes}).
 
 @item -N
-Only useful together with @samp{-d @var{dir}}.  With this
-option, @sc{cvs} will not shorten module paths in your
-working directory.  (Normally, @sc{cvs} shortens paths as
-much as possible when you specify an explicit target
-directory.)
+Only useful together with @samp{-d @var{dir}}.
+@xref{checkout options}, for complete details on how
+@sc{cvs} handles this flag.
 @end table
 
 @ignore
@@ -9776,7 +9791,8 @@ Use @var{kflag} keyword expansion.  See
 Local; run only in current working directory.  @xref{Recursive behavior}.
 
 @item -N
-Don't shorten module paths if -d specified.  See @ref{checkout options}.
+Don't ``shorten'' module paths if -d specified.  See
+@ref{checkout options}.
 
 @item -n
 Do not run module program (if any).  See @ref{checkout options}.
@@ -9919,7 +9935,8 @@ Use @var{kflag} keyword expansion.  See
 Local; run only in current working directory.  @xref{Recursive behavior}.
 
 @item -N
-Don't shorten module paths if -d specified.  See @ref{export options}.
+Don't ``shorten'' module paths if -d specified.  See
+@ref{export options}.
 
 @item -n
 Do not run module program (if any).  See @ref{export options}.
