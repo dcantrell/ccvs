@@ -1553,9 +1553,7 @@ process_prune_candidates ()
     {
 	if (client_isemptydir (p->dir))
 	{
-	    run_setup ("%s -fr", RM);
-	    run_arg (p->dir);
-	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+          unlink_file_dir (p->dir);
 	}
 	free (p->dir);
 	q = p->next;
