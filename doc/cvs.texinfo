@@ -20,19 +20,7 @@
 @comment along with CVS; see the file COPYING.  If not, write to
 @comment the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-@c See ../README for A4 vs. US letter size.
-@c When we provided A4 postscript, and people tried to
-@c print it on US letter, the usual complaint was that the
-@c page numbers would get cut off.  Also, some printers
-@c refuse to print A4 documents if they have only a
-@c "Letter" tray, forcing users to edit the postscript.
-@c If one prints US letter on A4, there is some extra
-@c space at the top and/or bottom, and the side
-@c margins are a bit narrow, but no text is lost.  At
-@c least some printers will print Letter documents on
-@c A4 paper without complaining, though it is not known
-@c how common this feature is.
-
+@afourpaper
 @setfilename cvs.info
 @include CVSvn.texi
 @settitle CVS---Concurrent Versions System
@@ -50,8 +38,7 @@
 
 @ifinfo
 Copyright @copyright{} 1992, 1993 Signum Support AB
-Copyright @copyright{} 1993, 1994 Free Software
-Foundation, Inc.
+Copyright @copyright{} 1993, 1994 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -269,8 +256,6 @@ to use it.
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Credits
 @unnumberedsec Credits
-
-@c FIXME: should we be updating/changing this?
 
 @cindex Contributors (manual)
 @cindex Credits (manual)
@@ -1524,10 +1509,7 @@ cvs -b /usr/local/bin pserver
 
 The @samp{-b} option specifies the directory which contains
 the @sc{rcs} binaries on the server.  You could also use the
-@samp{-T} option to specify a temporary directory, the
-@samp{-D} option to specify the pathname for the diff
-program, and the @samp{-g} option to specify the
-pathname for the grep program.
+@samp{-T} option to specify a temporary directory.
 
         If your @code{inetd} wants a symbolic service
 name instead of a raw port number, then put this in
@@ -1803,21 +1785,16 @@ repository as @file{$CVSROOT/yoyodyne/@var{rdir}}, you can do this:
 
 @example
 $ cd @var{wdir}
-$ cvs import -b 1 -m "Imported sources" yoyodyne/@var{rdir} yoyo start
+$ cvs import -m "Imported sources" yoyodyne/@var{rdir} yoyo start
 @end example
 
 Unless you supply a log message with the @samp{-m}
 flag, @sc{cvs} starts an editor and prompts for a
-message.  The @samp{-b 1} option tells @sc{cvs} to
-start the new versions on the main branch, or trunk.
-If you do not provide the @samp{-b 1}, @sc{cvs} creates
-a vendor branch for your module.  The string
-@samp{yoyo} is a @dfn{vendor tag}, and @samp{start} is
-a @dfn{release tag}.  They may fill no purpose in this
-context, especially if you supply the @samp{-b 1}
-option, but since @sc{cvs} requires them they must be
-present.  @xref{Tracking sources}, for more information
-about these tags and vendor branches.
+message.  The string @samp{yoyo} is a @dfn{vendor tag},
+and @samp{start} is a @dfn{release tag}.  They may fill
+no purpose in this context, but since @sc{cvs} requires
+them they must be present.  @xref{Tracking sources}, for
+more information about them.
 
 You can now verify that it worked, and remove your
 original source directory.
@@ -3596,8 +3573,6 @@ For example, the following commands add the file
 @c     -m "Optimizer and code generation passes." 
 @c to the cvs add command, but unless -m is known to
 @c work, seems better to not discuss that subject.
-@c It does work, but not for the remote version.  -GAW
-@c Note also that pcl-cvs *always* uses 'cvs add -m'.
 @example
 $ cvs add backend.c
 $ cvs commit -m "Early version. Not yet compilable." backend.c
@@ -3742,6 +3717,11 @@ distribution from the vendor is checked in on its own
 branch, the @dfn{vendor branch}.  @sc{cvs} reserves branch
 1.1.1 for this use.
 
+When you modify the source and commit it, your revision
+will end up on the main trunk.  When a new release is
+made by the vendor, you commit it on the vendor branch
+and copy the modifications onto the main trunk.
+
 Use the @code{import} command to create and update
 the vendor branch.  After a successful @code{import}
 the vendor branch is made the `head' revision, so
@@ -3750,25 +3730,9 @@ revision.  When a local modification is committed it is
 placed on the main trunk, and made the `head'
 revision.
 
-When a new release is made by the vendor, you commit it
-on the vendor branch by again using the @code{import}
-command.  The feature which makes @sc{cvs} vendor
-branch support worth while is the automatic conflict
-detection when you import new releases.  @sc{Cvs} will
-note any files which contain both local modifications
-(i.e. commits on the trunk), and new revisions on the
-vendor branch will be flagged as potential conflicts.
-If there are potential conflicts the @code{import}
-command will warn you that you need to merge your
-changes and will suggest a command-line for a `join'
-operation which will copy the new vendor modifications
-onto the main trunk for those files which have changes
-on the trunk (@pxref{Update imports}).
-
 @menu
 * First import::                Importing a module for the first time
 * Update imports::              Updating a module with the import command
-* Reverting local changes::	Reverting a module to the latest vendor release
 * Binary files in imports::     Binary files require special handling
 @end menu
 
@@ -3785,50 +3749,25 @@ tag} and @dfn{release tags} are useful.  The
 (which is always 1.1.1, unless you use the @samp{-b
 @var{branch}} flag---@xref{import options}).  The
 @dfn{release tags} are symbolic names for a particular
-release, such as @samp{WDIFF-0_04}.
-
-If you maintain a lot of packages from a large number
-of different third parties, and actual identification
-of the vendor in the repository is not particularly
-important, you might want to follow some simple to
-remember guidelines for naming modules, vendor tags,
-and release tags.  Always use the vendor's name for the
-package as the module name, but be sure to us all lower
-case characters.  Often the distribution archive you
-unpack will create a sub-directory with this name and
-the release number concatenated together.  Make the
-vendor tag be the same as the package name, but use all
-upper case characters.  For the release tag, use the
-vendor tag and the release number or name, with a dash
-(@samp{-}) between them, and with the periods in the
-release number replaced by underscores (@samp{_}) since
-you cannot use periods in @sc{CVS} symbolic names
-(@pxref{Tags}).  This naming scheme will make it easy
-for you to remember what names you used when the next
-release is available from the vendor, and to accurately
-predict what release tags you need to use to produce,
-for example, a patch to ship back to the vendor
-(@pxref{rdiff}).
+release, such as @samp{FSF_0_04}.
 
 @cindex Wdiff (import example)
-Suppose you use a package called @code{wdiff} (a
-variant of @code{diff} that ignores changes that only
-involve whitespace) from a vendor called FSF, and are
-going to make private modifications that you want to be
-able to use even when new releases are made in the
-future.  You start by importing the source to your
+Suppose you use @code{wdiff} (a variant of @code{diff}
+that ignores changes that only involve whitespace), and
+are going to make private modifications that you want
+to be able to use even when new releases are made in
+the future.  You start by importing the source to your
 repository:
 
 @example
 $ tar xfz wdiff-0.04.tar.gz
 $ cd wdiff-0.04
-$ cvs import -m "FSF wdiff ver. 0.04" fsf/wdiff WDIFF WDIFF-0_04
-$ cd ..; rm -rf wdiff-0.04
+$ cvs import -m "Import of FSF v. 0.04" fsf/wdiff FSF_DIST WDIFF_0_04
 @end example
 
-The vendor tag is named @samp{WDIFF} in the above
-example, and the single release tag assigned is
-@samp{WDIFF-0_04}.
+The vendor tag is named @samp{FSF_DIST} in the above
+example, and the only release tag assigned is
+@samp{WDIFF_0_04}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Update imports
@@ -3842,8 +3781,7 @@ specify a different release tag this time.
 @example
 $ tar xfz wdiff-0.05.tar.gz
 $ cd wdiff-0.05
-$ cvs import -m "FSF wdiff ver. 0.05" fsf/wdiff WDIFF WDIFF-0_05
-$ cd ..; rm -rf wdiff-0.05
+$ cvs import -m "Import of FSF v. 0.05" fsf/wdiff FSF_DIST WDIFF_0_05
 @end example
 
 For files that have not been modified locally, the newly created
@@ -3852,12 +3790,12 @@ changes, @code{import} will warn you that you must merge the changes
 into the main trunk, and tell you to use @samp{checkout -j} to do so.
 
 @example
-$ cvs checkout -jWDIFF:yesterday -jWDIFF wdiff
+$ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
 @end example
 
 @noindent
 The above command will check out the latest revision of
-@samp{wdiff}, merging the changes made on the vendor branch @samp{WDIFF}
+@samp{wdiff}, merging the changes made on the vendor branch @samp{FSF_DIST}
 since yesterday into the working copy.  If any conflicts arise during
 the merge they should be resolved in the normal way (@pxref{Conflicts
 example}).  Then, the modified files may be committed.
@@ -3868,72 +3806,12 @@ day. If you do, you can always use something like this
 instead:
 
 @example
-$ cvs checkout -jWDIFF-0_04 -jWDIFF-0_05 wdiff
+$ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
 @end example
 
 @noindent
 In this case, the two above commands are equivalent.
 
-If you already have an up-to-date working directory for
-@samp{wdiff} you could change to it and use the
-@code{update} command in place of @samp{checkout}.
-
-@example
-$ cd ~/work.d/wdiff
-$ cvs update -jWDIFF-0_04 -jWDIFF-0_05 wdiff
-@end example
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node Reverting local changes
-@section Reverting a module to the latest vendor release
-
-You can also revert local changes completely and return
-to the latest vendor release by changing the `head'
-revision back to the vendor branch on all files.
-
-@example
-$ cd ~/work.d/wdiff
-$ cvs admin -bWDIFF .
-@end example
-
-@noindent
-It is important that you specify the @samp{-bWDIFF}
-without any space after the @samp{-b}.  @xref{admin
-options}.
-
-This process can be useful if you wish to use the
-@samp{patch}(1) command to merge local changes.  Some
-people find this method of managing conflict resolution
-preferrable.
-
-You can create a patch file containing your previous
-local changes to be applied to the new vendor release
-by using the @code{rdiff} comand (@pxref{rdiff}) if you
-have first tagged your local release.
-
-@example
-$ cd ~work.d/wdiff
-$ cvs rdiff -r WDIFF-0_4 -r l-0_4-v1 wdiff > patch.out
-$ patch -N -p2 < patch.out
-@end example
-
-@noindent
-Here the tag @samp{l-0_4-v1} marks the local release
-@samp{1} based on the vendor release @samp{0.4}.  This
-tag would have been applied in an up-to-date working
-directory for the @samp{wdiff} module prior to
-importing the new vendor release using the @code{tag}
-command (@pxref{tag}).
-
-Since the patch command rejects conflicting changes and
-saves them in a separate file, it may be possible to
-compile the patched code without first resolving these
-conflicts.  This is made even more likely if the
-conflicts are due to the vendor applying some sub-set
-of your exact previous local changes to the new vendor
-release.
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Binary files in imports
 @section How to handle binary files with cvs import
 
@@ -4384,7 +4262,7 @@ a new revision of the file.
 @cindex RCS keywords
 
 This is a list of the keywords that @sc{rcs} currently
-(in release 5.7) supports:
+(in release 5.6.0.1) supports:
 
 @table @code
 @cindex Author keyword
@@ -4407,6 +4285,14 @@ will normally never be locked when you use @sc{cvs}.
 Same as @code{$@asis{Header}$}, except that the @sc{rcs}
 filename is without a path.
 
+@cindex Name keyword
+@item $@asis{Name}$
+Tag name used to check out this file.
+@c FIXME: should supply an example (e.g. "if you use
+@c "cvs update -r foo" then Name expands to "foo").  Also
+@c should add Name to testsuite (best way to ensure
+@c that the example is correct!)
+
 @cindex Locker keyword
 @item $@asis{Locker}$
 The login name of the user who locked the revision
@@ -4427,17 +4313,6 @@ It can be changed with @code{cvs admin -c}.
 accumulating a complete change log in a source file,
 but for several reasons it can be problematic.
 @xref{Log keyword}.
-
-@cindex Name keyword
-@item $@asis{Name}$
-The symbolic name used to check out the revision, if
-any.  Without specifying a symbolic name, @sc{rcs}
-generates just @samp{$@asis{Name: }$}.
-@c FIXME: should supply an example (e.g. "if you use
-@c "cvs update -r foo" then Name expands to "foo").  Also
-@c should add Name to testsuite (best way to ensure
-@c that the example is correct!).  See also the text in
-@c "Using keywords" below concerning Name.
 
 @cindex RCSfile keyword
 @item $@asis{RCSfile}$
@@ -4487,9 +4362,7 @@ Even though a clever optimizing compiler could remove
 the unused variable @code{rcsid}, most compilers tend
 to include the string in the binary.  Some compilers
 have a @code{#pragma} directive to include literal text
-in the binary.  Many compilers also have a
-@code{#ident} directive to include identification
-strings in the binary.
+in the binary.
 
 @cindex Ident (shell command)
 The @code{ident} command (which is part of the @sc{rcs}
@@ -4520,19 +4393,6 @@ magic @sc{sccs} phrase, like this:
 
 @example
 static char *id="@@(#) $@asis{}Id: ab.c,v 1.5 1993/10/19 14:57:32 ceder Exp $";
-@end example
-
-If you generate releases with @code{cvs export -r TAG}
-you may wish to have the tag name included in your
-keyword expansions.  You can do this by embedding the
-keyword @code{$@asis{}Name$} in your identification
-string.  Note that @code{$@asis{}Name$} is only
-expanded when the @samp{-r} option is given with a
-vaild tag name to @code{checkout}, @code{export},
-and @code{rdiff}.
-
-@example
-#ident	"@@(#)module_name:$@asis{}Name$:$@asis{}Id$";
 @end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -4571,9 +4431,9 @@ each working directory copy of a file also has a
 substitution mode.  The former is set by the @samp{-k}
 option to @code{cvs add} and @code{cvs admin}; the
 latter is set by the -k or -A options to @code{cvs
-checkout} or @code{cvs update}.  @code{cvs diff} and
-@code{cvs rdiff} also have @samp{-k} options.  For some
-examples, @xref{Binary files}.
+checkout} or @code{cvs update}.  @code{cvs diff} also
+has a @samp{-k} option.  For some examples,
+@xref{Binary files}.
 
 The modes available are:
 
@@ -4818,17 +4678,6 @@ goal, which is to get software written.
 @c quick reminder of what the commands are (the -H option
 @c serves this purpose).
 
-@c I agree with moving stuff from here to other
-@c relevant parts of the manual, but only if the manual
-@c page is kept rigorously up to date.  I feel it's
-@c very important to have at least one clean, clear,
-@c succinct, and concise description of all the command
-@c options, sub-commands, sub-command options,
-@c environment variables, files, etc. There should be
-@c few if any examples in the concise reference, and
-@c instead just references to the more descriptive part
-@c of the document which does contain examples.  -- GAW
-
 This appendix describes how to invoke @sc{cvs}, and
 describes in detail those subcommands of @sc{cvs} which
 are not fully described elsewhere.  To look up a
@@ -4983,22 +4832,6 @@ located.  Overrides the setting of the @code{$RCSBIN} environment
 variable and any precompiled directory.  This parameter should be
 specified as an absolute pathname.
 
-@cindex DIFFBIN, overriding
-@cindex Overriding DIFFBIN
-@item -D @var{diff}
-Use @var{diff} as the name or location of the
-@sc{diff} program.  Overrides the setting of the
-@code{$DIFFBIN} environment variable and any
-precompiled name.
-
-@cindex GREPBIN, overriding
-@cindex Overriding GREPBIN
-@item -g @var{grep}
-Use @var{grep} as the name or location of the
-@sc{grep} program.  Overrides the setting of the
-@code{$GREPBIN} environment variable and any
-precompiled name.
-
 @cindex TMPDIR, overriding
 @cindex Overriding TMPDIR
 @item -T @var{tempdir}
@@ -5146,10 +4979,6 @@ further updates in the same directory will use the same date
 @c use to specify dates)?  We want to rely on standards
 @c like ISO8601 and RFC822 as much as practical, but
 @c which standard(s)?....
-@c One more note: In output, CVS should consistently
-@c use one date format, and that format should be one that
-@c it accepts in input as well.  I don't think the latter is
-@c true currently, and I'm not so sure about the former.
 @cindex timezone, in input
 @cindex zone, time, in input
 A wide variety of date formats are supported by
@@ -5212,7 +5041,7 @@ the only option supported for all @sc{cvs} commands.
 
 @item -k @var{kflag}
 Alter the default @sc{rcs} processing of keywords.
-@xref{Substitution modes}, for the meaning of
+@xref{Keyword substitution}, for the meaning of
 @var{kflag}.  Your @var{kflag} specification is
 @dfn{sticky} when you use it to create a private copy
 of a source file; that is, when you use this option
@@ -5222,7 +5051,7 @@ file, and continues to use it with future update
 commands on the same file until you specify otherwise.
 
 The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff}, @code{rdiff}, and
+@code{checkout}, @code{diff} and
 @code{update} commands.
 
 @item -l
@@ -5698,9 +5527,6 @@ effect for that file (@pxref{Watches}).
 @c FIXME: misleading--checkout takes a module as
 @c argument, and update does not--so -d behavior is not the only
 @c difference.
-@c I'd be inclined to remove this paragraph in hopes of
-@c eventually erradicating such use, or at least not
-@c condoning it.  -- GAW
 Running @code{checkout} on a directory that was already
 built by a prior @code{checkout} is also permitted, and
 has the same effect as specifying the @samp{-d} option
@@ -5737,9 +5563,8 @@ retrieve the most recent revision (instead of ignoring
 the file).
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.
-@xref{Substitution modes}, for the meaning of
-@var{kflag}.  This option is sticky; future updates of
+Process @sc{rcs} keywords according to @var{kflag}.  See
+co(1).  This option is sticky; future updates of
 this file in this working directory will use the same
 @var{kflag}.  The @code{status} command can be viewed
 to see the sticky options.  @xref{status}.
@@ -6046,7 +5871,7 @@ checkout your experimental stuff and utilize the full
 benefit of @sc{cvs} conflict resolution.  The scenario might
 look like:
 
-@c FIXME: We should recommend tagging the branchpoint.
+@c FIXME: Should we be recommending tagging the branchpoint?
 @example
 [[ hacked sources are present ]]
 $ cvs tag -b EXPR1
@@ -6061,7 +5886,7 @@ changes to the files will never be removed by the
 automatically commit to the correct branch, because the
 @samp{-r} is sticky.  You could also do like this:
 
-@c FIXME: We should recommend tagging the branchpoint.
+@c FIXME: Should we be recommending tagging the branchpoint?
 @example
 [[ hacked sources are present ]]
 $ cvs tag -b EXPR1
@@ -6136,9 +5961,8 @@ figure out how @sc{cvs} was configured.  In the default
 configuration @sc{cvs} will use the @samp{-D @var{date}} option.
 
 @item -k @var{kflag}
-Process @sc{rcs} keywords according to @var{kflag}.
-@xref{Substitution modes}, for the meaning of
-@var{kflag}.
+Process @sc{rcs} keywords according to @var{kflag}.  See
+co(1).
 
 @item -l
 Local; run only in current working directory.
@@ -6241,14 +6065,10 @@ files correctly.  Also be aware that after having used
 command (which is part of the @sc{rcs} suite---see
 ident(1)) which looks for @sc{rcs} keyword strings.  If
 you want to be able to use @code{ident} you must not
-use @samp{-kv}.  You can instead use the @code{what}
-command, if your system has it or you can find source
-to a version of it, by prefixing your keyword strings
-with @samp{@@(#)}.  (@pxref{Using keywords})
+use @samp{-kv}.
 
 @menu
 * export options::              export options
-* export examples::		export examples
 @end menu
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -6301,28 +6121,14 @@ much as possible when you specify an explicit target
 directory.)
 @end table
 
+@ignore
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node export examples
+@c @node export examples
 @appendixsubsec export examples
 
-Suppose you have just completed testing release 1.3 of
-your module @samp{module-name}, and have tagged it with
-@samp{R-1_3}.  You can create a source code
-distribution like this:
-
-@example
-$ cd ~/release.d
-$ cvs export -kv -r R-1_3 -d module-name-1.3 module-name
-$ tar cfz module-name-1.3.tar.gz module-name-1.3
-@end example
-
-@noindent
-The @samp{-kv} option will expand all keywords in the
-files with just their values, thus preventing anyone
-you give this distribution to from confusing their
-local @sc{rcs}-based version control system, and also
-preventing such systems from eventually over-writing
-your keywords.
+Contributed examples are gratefully accepted.
+@c -- Examples here!!
+@end ignore
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node history
@@ -6532,12 +6338,12 @@ file will be treated as packages and the appropriate
 filtering will be performed on the file/directory
 before being imported, @xref{Wrappers}.
 
-The new source files are saved in a first-level
-@sc{rcs} branch, by default 1.1.1.  Updates are leaves
-of this branch; for example, files from the first
-imported collection of source will be revision 1.1.1.1,
-then files from the first imported update will be
-revision 1.1.1.2, and so on.
+The outside source is saved in a first-level @sc{rcs}
+branch, by default 1.1.1.  Updates are leaves of this
+branch; for example, files from the first imported
+collection of source will be revision 1.1.1.1, then
+files from the first imported update will be revision
+1.1.1.2, and so on.
 
 At least three arguments are required.
 @var{repository} is needed to identify the collection
@@ -6569,17 +6375,13 @@ There are three additional special options.
 
 @table @code
 @item -b @var{branch}
-Specify a first-level branch other than 1.1.1.  The
-only other useful value for this option is @samp{1},
-which will cause files to be imported on the main
-trunk.  Unless the @samp{-b @var{branch}} flag is
-given, revisions will @emph{always} be made to the
-branch 1.1.1---even if a @var{vendortag} that matches
-another branch is given!  What happens in that case, is
-that the tag will be reset to 1.1.1.  Warning: This
-behavior might change in the future.  If the
-@var{branch} specified is @samp{1}, then the trunk will
-be used instead of the normal vendor branch 1.1.1.
+Specify a first-level branch other than 1.1.1.  Unless
+the @samp{-b @var{branch}} flag is given, revisions will
+@emph{always} be made to the branch 1.1.1---even if a
+@var{vendortag} that matches another branch is given!
+What happens in that case, is that the tag will be
+reset to 1.1.1.  Warning: This behavior might change
+in the future.
 
 @item -k @var{subst}
 Indicate the RCS keyword expansion mode desired.  This
@@ -6688,11 +6490,6 @@ Coordinated Universal Time (UTC).  (Other parts of
 @c where LT means the client's timezone, which the
 @c client then communicates to the server, is the
 @c right solution.
-@c NOTE: using local time is bad practice though, and
-@c condoning it will surely lead to more confusion than
-@c we already have.  Currently the answer is easy --
-@c times are in UTC/GMT, and everyone on the planet
-@c shares the same temporal state for their flags.
 
 @menu
 * log options::                 log options
@@ -6863,12 +6660,6 @@ specify the @samp{-p} option to the patch command when
 patching the old sources, so that patch is able to find
 the files that are located in other directories.
 
-Patches generated by @code{rdiff} are always
-@def{forward} patches, and should always be applied
-with the GNU Patch 2.1 @samp{-N} (or @samp{--forward})
-option to ensure @samp{patch} doesn't get confused into
-thinking some parts of the patch are @def{reversed}.
-
 @menu
 * rdiff options::               rdiff options
 * rdiff examples::              rdiff examples
@@ -6928,32 +6719,7 @@ you should probably not use @samp{-u}.
 Expand @sc{rcs} keywords according to the rules current in
 @sc{rcs} version @var{vn} (the expansion format changed with
 @sc{rcs} version 5).
-
-@item -k @var{kflag}
-Specify the RCS keyword expansion options.
-@xref{Substitution modes}, for the meaning of
-@var{kflag}.  For locally developed code which you
-release with the @code{cvs export -kv}, you would also
-specify @samp{-kv} to @code{rdiff} in order to ensure
-your patches would properly upgrade a previous release
-to be identical to a new release.
-
-@item -K @var{kflag}
-Specify the RCS keyword expansion options for the old
-file only.  @xref{Substitution modes}, for the meaning
-of @var{kflag}.  This overrides any setting of
-@samp{-k} for the old file.
 @end table
-
-If neither @samp{-K} nor @samp{-k} are specified then
-@samp{-k o} is used to expand keywords for the ``old''
-file.  This has the effect of ensuring that for modules
-with a vendor branch the vendor's original keywords
-will be used to compare against thus producing a patch
-which will always properly apply against the vendor's
-original distribution.  You can override this to get
-default local keyword expansion by specifying the
-@samp{\-K kv} option.
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 @node rdiff examples
@@ -8253,19 +8019,6 @@ the @file{CVSROOT} directory) are also logged in
 @c above, but is it useful?  This example (with the
 @c mail to ceder put back in) is awkward to write if
 @c only the first matching line is used.
-@c
-@c Yes, it's a feature, and fairly powerful at that.
-@c You can specify "sub-defaults" in this manner.
-@c For example I have (in addition to ALL and DEFAULT):
-@c
-@c ^master/smail	$CVSROOT/CVSROOT/log_accum -M m-smail -m smail3-changes@mail.weird.com -R smail3-devel@planix.com %s
-@c ^master		$CVSROOT/CVSROOT/log_accum -M master-sources -m woods@mail.weird.com %s
-@c ^misc/bind		$CVSROOT/CVSROOT/log_accum -M bind -m woods@mail.weird.com %s
-@c ^misc/cvs		$CVSROOT/CVSROOT/log_accum -M cvs -d -m woods@mail.weird.com %s
-@c ^misc		$CVSROOT/CVSROOT/log_accum -M misc-stuff -m woods@mail.weird.com %s
-@c ^			$CVSROOT/CVSROOT/log_accum -M UNSPECIFIED -m woods@mail.weird.com %s
-@c
-@c
 @example
 ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog
 @c ^CVSROOT        Mail -s %s ceder
@@ -8515,16 +8268,6 @@ This is the value @sc{cvs} is using for where to find
 @sc{rcs} binaries.  @xref{Global options}, for a
 description of how to specify this.
 
-@item DIFFBIN
-This is the value @sc{cvs} is using for where to find
-the @sc{diff} program.  @xref{Global options}, for a
-description of how to specify this.
-
-@item GREPBIN
-This is the value @sc{cvs} is using for where to find
-the @sc{grep} program.  @xref{Global options}, for a
-description of how to specify this.
-
 @item CVSEDITOR
 @itemx VISUAL
 @itemx EDITOR
@@ -8622,19 +8365,7 @@ programs it uses.
 @item $RCSBIN
 This is the value @sc{cvs} is using for where to find
 @sc{rcs} binaries.  @xref{Global options}, for a
-description of how to specify this.  If it is not set, a
-compiled-in value is used, or your @code{$PATH} is searched.
-
-@item DIFFBIN
-This is the value @sc{cvs} is using for where to find
-the @sc{diff} program.  @xref{Global options}, for a
-description of how to specify this.  If it is not set, a
-compiled-in value is used, or your @code{$PATH} is searched.
-
-@item GREPBIN
-This is the value @sc{cvs} is using for where to find
-the @sc{grep} program.  @xref{Global options}, for a
-description of how to specify this.  If it is not set, a
+description of how to specify this.  If not set, a
 compiled-in value is used, or your @code{$PATH} is searched.
 
 @cindex HOME
