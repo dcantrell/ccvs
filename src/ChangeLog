@@ -1,3 +1,9 @@
+1999-02-04  Jim Kingdon  <http://www.cyclic.com>
+
+	* lock.c (lock_name): Permissions of directories in LockDir
+	shouldn't depend on the umask.
+	* sanity.sh (lockfiles): Set umask and CVSUMASK, to test for this.
+
 1999-02-01  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (keywordlog): New tests keywordlog-22 and
