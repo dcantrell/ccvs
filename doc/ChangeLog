@@ -1,3 +1,7 @@
+2004-11-17  Derek Price  <derek@ximbiot.com>
+
+	* getdate.texi: Update from GNULIB.
+
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am (stamp-gdt): Replace dependency on Makefile with
