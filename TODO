@@ -800,3 +800,7 @@ but most unlinks should probably be using unlink_file and not CVS_UNLINK.
 
 199.  Add test for login & logout functionality, including support for
 backwards compatibility with old CVSROOTs.
+
+200.  Make a 'cvs add' without write access a non-fatal error so that the
+user's Entries file is updated and future 'cvs diffs' will work properly.  This
+should ease patch submission.
