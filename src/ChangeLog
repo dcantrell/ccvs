@@ -1,3 +1,12 @@
+Fri Aug  9 20:16:20 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* server.c (dirswitch): Open the Entries file with mode "a" rather
+ 	than "w+".
+	(server_write_entries): Open the Entries file with mode "a" rather
+	than "w".
+	* sanity.sh (modules): Add topfiles module and 155cN tests for
+	above patch.
+
 Fri Aug  9 12:11:25 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (cmd): Add comment regarding synonyms.
