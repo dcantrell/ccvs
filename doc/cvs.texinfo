@@ -13508,6 +13508,12 @@ cvs [server aborted]: can't chdir(/root): Permission denied
 @end example
 
 then you probably haven't specified @samp{-f} in @file{inetd.conf}.
+(In releases prior to @sc{cvs} 1.11.1, this problem can be caused by
+your system setting the @code{$HOME} environment variable
+for programs being run by inetd.  In this case, you can either
+have inetd run a shell script that unsets @code{$HOME} and then runs
+@sc{cvs}, or you can use @code{env} to run @sc{cvs} with a pristine
+environment.)
 
 If you can connect successfully for a while but then can't,
 you've probably hit inetd's rate limit.
