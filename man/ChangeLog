@@ -1,3 +1,9 @@
+Mon Sep 16 23:22:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsbug.8: Remove references to cvsbug.el (or other aspects of
+	emacs interface) and cvsbug.info (or other aspects of texinfo
+	documentation).  Neither one has ever existed.
+
 Wed Jul 24 19:01:35 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.1: Document -x.
