@@ -3,6 +3,9 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* Import now uses backslash rather than slash on Windows when checking for
+  "CVS" directories to ignore in import commands.
+
 * Relative paths should now work in client/server mode (client fix).
 
 * A race condition between the ordering of messages from CVS and messages from
