@@ -4603,12 +4603,31 @@ static void wait_sig( int sig )
 }
 #endif /* SUNOS_KLUDGE */
 
+/* void server_cleanup (void)
+ *
+ * This function cleans up after the server.  Specifically, it:
+ *
+ * <ol>
+ * <li>Sets buf_to_net to blocking and fluxhes it.</li>
+ * <li>With SUNOS_KLUDGE enabled:
+ *   <ol>
+ *   <li>Terminates the command process.</li>
+ *   <li>Waits on the command process, draining output as necessary.</li>
+ *   </ol>
+ * </li>
+ * <li>Removes the temporary directory.</li>
+ * <li>Flush and shutdown the buffers.</li>
+ * <li>Set error_use_protocol and server_active to false.</li>
+ * </ol>
+ */
 void
-server_cleanup (int sig)
+server_cleanup (void)
 {
     /* Do "rm -rf" on the temp directory.  */
     int status;
     int save_noexec;
+
+    assert(server_active);
 
     if (buf_to_net != NULL)
     {
@@ -4661,11 +4680,10 @@ server_cleanup (int sig)
 	pid_t r;
 
 	signal (SIGCHLD, wait_sig);
-	if (sig)
-	    /* Perhaps SIGTERM would be more correct.  But the child
-	       process will delay the SIGINT delivery until its own
-	       children have exited.  */
-	    kill (command_pid, SIGINT);
+	/* Perhaps SIGTERM would be more correct.  But the child
+	   process will delay the SIGINT delivery until its own
+	   children have exited.  */
+	kill (command_pid, SIGINT);
 	/* The caller may also have sent a signal to command_pid, so
 	   always try waiting.  First, though, check and see if it's still
 	   there....  */
@@ -4747,6 +4765,7 @@ server_cleanup (int sig)
 	buf_free (buf_to_net);
 	buf_to_net = NULL;
 	error_use_protocol = 0;
+	server_active = 0;
     }
 }
 
@@ -4967,7 +4986,6 @@ error ENOMEM Virtual memory exhausted.\n");
 	free (orig_cmd);
     }
     free(error_prog_name);
-    server_cleanup (0);
     return 0;
 }
 

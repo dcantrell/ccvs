@@ -132,7 +132,7 @@ extern void server_update_entries
    to the client.  */
 extern char *server_dir;
 
-extern void server_cleanup (int sig);
+extern void server_cleanup (void);
 
 #ifdef SERVER_FLOWCONTROL
 /* Pause if it's convenient to avoid memory blowout */

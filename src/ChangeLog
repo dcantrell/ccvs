@@ -1,5 +1,16 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* error.c (exit_error): Remove call to server_cleanup.
+	* main.c (main): Call atexit(server_cleanup).  Let server_cleanup turn
+	server_active off.
+	* server.c (server_cleanup): Don't require an argument.  Fill out
+	header comment.  Unset server_active when done.
+	(server): Don't call server_cleanup - let it be called via the atexit
+	handler.
+	* server.h (server_cleanup): Update proto.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* server.c (buf_output): Don't check that the buffers exist before
 	using them since cvs_outerr does this without problems.
 

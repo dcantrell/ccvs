@@ -733,14 +733,17 @@ cause intermittent sandbox corruption.");
 
 #endif /* SERVER_SUPPORT */
 
-	/* This is only used for writing into the history file.  For
-	   remote connections, it might be nice to have hostname
-	   and/or remote path, on the other hand I'm not sure whether
-	   it is worth the trouble.  */
 
 #ifdef SERVER_SUPPORT
 	if (server_active)
+	{
+	    /* This is only used for writing into the history file.  For
+	       remote connections, it might be nice to have hostname
+	       and/or remote path, on the other hand I'm not sure whether
+	       it is worth the trouble.  */
 	    CurDir = xstrdup ("<remote>");
+	    atexit (server_cleanup);
+	}
 	else
 #endif
 	{
@@ -1030,10 +1033,7 @@ cause intermittent sandbox corruption.");
 
 #ifdef SERVER_SUPPORT
 	    if (server_active)
-	    {
-		server_active = 0;
 		break;
-	    }
 #endif
 	} /* end of loop for cvsroot values */
 
