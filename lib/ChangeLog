@@ -1,3 +1,7 @@
+2004-10-27  Mark D. Baushke  <mdb@cvshome.org>
+
+	* mktime.c (not_equal_tm): New patch from GNULIB.
+
 2004-10-26  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Add "rpmatch.c" and "yesno.h" to project.
