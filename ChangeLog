@@ -1,3 +1,10 @@
+2004-04-06  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note this change.
+	* configure.in: Do not try and use TMP, TEMP, or TMPDIR as default
+	temporary directories.
+	* configure: Regenerated.
+
 2004-04-05  Derek Price  <derek@ximbiot.com>
 
 	* srclist.txt: Note new location for GNULIB CVS repository.
