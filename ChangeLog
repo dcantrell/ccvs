@@ -2,6 +2,7 @@
 
 	Import alloca module from GNULIB for vasnprintf().
 	* configure.in: Use gl_FUNC_ALLOCA.
+	* srclist.txt: Add alloca module.
 
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
