@@ -5,6 +5,7 @@
 	(Suggested by David L. Martin <dlmart2@home.com>.)
 
 	* logmsg.c (do_editor): Don't add a blank line to the message.
+	* sanity.sh (editor-log-file*): Update to match.
 
 	* checkout.c, update.c: Note in usage message that -k is sticky.
 
