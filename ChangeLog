@@ -1,3 +1,7 @@
+2004-02-25  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note `cvs release' Entries corruption fix.
+
 2004-02-24  Derek Price  <derek@ximbiot.com>
 
 	* cvsnt.mak: Add xstrdup, xalloc, exitfail.
