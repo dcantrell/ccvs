@@ -296,7 +296,7 @@ Some text has been extracted from the man pages for
 
 The @sc{cvs} @sc{faq} by David G. Grubbs has provided
 useful material.  The @sc{faq} is no longer maintained,
-however, and this manual about the closest thing there
+however, and this manual is about the closest thing there
 is to a successor (with respect to documenting how to
 use @sc{cvs}, at least).
 
