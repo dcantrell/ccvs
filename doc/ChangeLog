@@ -1,3 +1,7 @@
+Mon Feb 12 16:38:41 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Remove references to mkmodules.
+
 Sun Feb 11 12:31:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi: Add Set request.

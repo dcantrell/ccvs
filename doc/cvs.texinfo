@@ -1068,9 +1068,11 @@ The most important of these files is the @file{modules}
 file.  It defines all modules in the repository.  This
 is a sample @file{modules} file.
 
+@c FIXME: The CVSROOT line is a goofy example now that
+@c mkmodules doesn't exist.
 @example
-CVSROOT         -i mkmodules CVSROOT
-modules         -i mkmodules CVSROOT modules
+CVSROOT         CVSROOT
+modules         CVSROOT modules
 cvs             gnu/cvs
 rcs             gnu/rcs
 diff            gnu/diff
@@ -1083,14 +1085,8 @@ where the module resides.  The directory is a path relative to
 @code{$CVSROOT}.  The last for lines in the example
 above are examples of such lines.
 
-@cindex mkmodules
-Each module definition can contain options.  The @samp{-i mkmodules} is
-an example of an option.  It arranges for @sc{cvs} to run the
-@code{mkmodules} program whenever any file in the module CVSROOT is
-committed.  That program is responsible for checking out read-only
-copies from the @sc{rcs} @dfn{history files} of all the administrative files.
-These read-only copies are used internally by @sc{cvs}.  You
-should never edit them directly.
+@c FIXME: might want to introduce the concept of options in modules file
+@c (the old example which was here, -i mkmodules, is obsolete).
 
 The line that defines the module called @samp{modules}
 uses features that are not explained here.
@@ -6528,37 +6524,10 @@ file, which defines the modules inside the repository.
 @cindex Defining modules (reference manual)
 
 The @file{modules} file records your definitions of
-names for collections of source code.  @sc{cvs} will use
-these definitions if you create a file with the right
-format in @file{$CVSROOT/CVSROOT/modules,v}.  The
-mkmodules(1) command should be run whenever the modules
-file changes, so that the appropriate files can be
-generated (depending on how you have configured @sc{cvs}
-operation).
-
-To allow convenient editing of the @file{modules} file
-itself, the file should include an entry like the
-following (where @var{localbin} represents the
-directory where your site installs programs like
-mkmodules(1)):
-
-@example
-modules    -i /@var{localbin}/mkmodules CVSROOT modules
-@end example
-
-@noindent
-This defines the name @samp{modules} as the module name
-for the file itself, so that you can use
-
-@example
-$ cvs checkout modules
-@end example
-
-@noindent
-to get a copy of the file that you can edit.  You should define
-similar module entries for the other configuration
-files described in this appendix, except
-@file{history}).
+names for collections of source code.  @sc{cvs} will
+use these definitions if you use @sc{cvs} to update the
+modules file (use normal commands like @code{add},
+@code{commit}, etc).
 
 The @file{modules} file may contain blank lines and
 comments (lines beginning with @samp{#}) as well as
