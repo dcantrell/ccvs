@@ -2507,7 +2507,7 @@ diff -c /dev/null trdiff/new:1\.1
 	  touch abc
 	  dotest diff-4 "${testcvs} add abc" \
 "${PROG} [a-z]*: scheduling file .abc. for addition
-${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest diff-5 "${testcvs} -q ci -mtest" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/abc,v
 done
@@ -3690,7 +3690,7 @@ ${PROG} update: cannot open CVS/Tag: No such file or directory"
 	  else
 	    dotest_fail dirs2-10 "${testcvs} update -d -r br" \
 "${PROG} update: in directory sdir:
-${PROG} \[update aborted\]: there is no version here; do 'cvs checkout' first"
+${PROG} \[update aborted\]: there is no version here; do '${PROG} checkout' first"
 	  fi
 	  cd ../..
 
@@ -4372,7 +4372,7 @@ retrieving revision 1\.1\.2\.1
 retrieving revision 1\.1
 Merging differences between 1\.1\.2\.1 and 1\.1 into file1
 rcsmerge: warning: conflicts during merge
-cvs [a-z]*: conflicts found in file1
+${PROG} [a-z]*: conflicts found in file1
 C file1
 M file2"
 	  # CVS is giving a conflict because we are trying to get back to
@@ -5137,7 +5137,7 @@ ${PROG} [a-z]*: Updating bdir/subdir"
 	    # 1.9 did not).
 	    dotest_fail importc-7 "${testcvs} -q ci -m modify -r wip_test" \
 "${PROG} [a-z]*: in directory adir/sub1/ssdir:
-${PROG} \[[a-z]* aborted\]: there is no version here; do .cvs checkout. first"
+${PROG} \[[a-z]* aborted\]: there is no version here; do .${PROG} checkout. first"
 	    # The workaround is to leave off the "-r wip_test".
 	    dotest importc-8 "${testcvs} -q ci -m modify" \
 "Checking in cdir/cfile;
@@ -6465,7 +6465,7 @@ ${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
 	    # Haven't investigated this one.
 	    dotest_fail conflicts2-142b8 "${testcvs} add first-dir/a" \
 "${PROG} add: in directory \.:
-${PROG} \[add aborted\]: there is no version here; do 'cvs checkout' first"
+${PROG} \[add aborted\]: there is no version here; do '${PROG} checkout' first"
 	    cd first-dir
 	  fi
 
