@@ -771,7 +771,7 @@ cause intermittent sandbox corruption.");
 	else
 #endif
 	{
-	    CurDir = xgetwd ();
+	    CurDir = xgetcwd ();
             if (CurDir == NULL)
 		error (1, errno, "cannot get working directory");
 	}

@@ -664,7 +664,7 @@ commit (int argc, char **argv)
 	 * We need to save the working directory so that
 	 * check_fileproc can construct a full pathname for each file.
 	 */
-	working_dir = xgetwd();
+	working_dir = xgetcwd ();
     }
 #endif
 

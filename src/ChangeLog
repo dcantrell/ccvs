@@ -1,3 +1,9 @@
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
+	* src/checkout.c, src/client.c, src/commit.c, src/create_adm.c,
+	src/cvs.h, src/filesubr.c, src/hardlink.c, src/history.c, src/logmsg.c,
+	src/main.c, src/recurse.c, src/update.c: s/xgetwd/xgetcwd/.
+
 2004-10-04  Derek Price  <derek@ximbiot.com>
 
 	* client.c (responses): Add "Edit-file".

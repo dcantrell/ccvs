@@ -777,7 +777,7 @@ call_in_directory (const char *pathname,
 
     if (toplevel_wd == NULL)
     {
-	toplevel_wd = xgetwd ();
+	toplevel_wd = xgetcwd ();
 	if (toplevel_wd == NULL)
 	    error (1, errno, "could not get working directory");
     }

@@ -781,7 +781,7 @@ history_write (int type, const char *update_dir, const char *revs,
 		if (save_cwd (&cwd))
 		    exit (EXIT_FAILURE);
 
-		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetwd ()) == NULL)
+		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetcwd ()) == NULL)
 		    homedir = pwdir;
 
 		if (restore_cwd (&cwd, NULL))
