@@ -737,8 +737,8 @@ ${PROG} \[[a-z]* aborted\]: failed to set tag BASE to revision 1\.1 in ${TESTDIR
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.1
 diff -c -r1\.1 ssfile
-\*\*\* ssfile	[0-9/]* [0-9:]*	1\.1
---- ssfile	[0-9/]* [0-9:]*
+\*\*\* sdir/ssdir/ssfile	[0-9/]* [0-9:]*	1\.1
+--- sdir/ssdir/ssfile	[0-9/]* [0-9:]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----
@@ -750,8 +750,8 @@ ${PLUS} ssfile line 2"
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v
 retrieving revision 1\.1
 diff -c -r1\.1 ssfile
-\*\*\* ssfile	[0-9/]* [0-9:]*	1\.1
---- ssfile	[0-9/]* [0-9:]*
+\*\*\* sdir/ssdir/ssfile	[0-9/]* [0-9:]*	1\.1
+--- sdir/ssdir/ssfile	[0-9/]* [0-9:]*
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
 \*\*\* 1 \*\*\*\*
 --- 1,2 ----

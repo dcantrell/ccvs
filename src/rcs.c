@@ -8741,7 +8741,7 @@ make_file_label (path, rev, rcs)
     char *file;
 
     file = last_component (path);
-    label = (char *) xmalloc (strlen (file)
+    label = (char *) xmalloc (strlen (path)
 			      + (rev == NULL ? 0 : strlen (rev))
 			      + 50);
 
@@ -8750,7 +8750,7 @@ make_file_label (path, rev, rcs)
 	char *date;
 	RCS_getrevtime (rcs, rev, datebuf, 0);
 	date = printable_date (datebuf);
-	(void) sprintf (label, "-L%s\t%s\t%s", file, date, rev);
+	(void) sprintf (label, "-L%s\t%s\t%s", path, date, rev);
 	free (date);
     }
     else
@@ -8767,7 +8767,7 @@ make_file_label (path, rev, rcs)
 			    wm->tm_year + 1900, wm->tm_mon + 1,
 			    wm->tm_mday, wm->tm_hour,
 			    wm->tm_min, wm->tm_sec);
-	    (void) sprintf (label, "-L%s\t%s", file, datebuf);
+	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
 	}
     }
     return label;
