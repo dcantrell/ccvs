@@ -1105,6 +1105,7 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 	    cvs_output (": Executing '", 0);
 	    run_print (stdout);
 	    cvs_output ("'\n", 0);
+	    cvs_flushout ();
 	    (void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	}
 	else if (ferror (fp))
