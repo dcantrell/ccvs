@@ -1,3 +1,11 @@
+Wed May 29 18:43:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* expand_path.c (expand_path): Document LINE == 0 and allocation
+	of return value.
+	* modules.c (do_module): Pass 0, not -1, to indicate line number
+	not known.  Free value returned from expand_path.  Deal with NULL
+	return from expand_path.
+
 Wed May 29 15:56:47 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* modules.c (do_module): call expand_path() on the program name
