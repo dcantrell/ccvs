@@ -1,3 +1,10 @@
+2001-07-03  Derek Price  <dprice@collab.net>
+
+	* configure.in: Test for mmap.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
 2001-06-28  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated with new version of Automake.
