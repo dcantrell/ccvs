@@ -234,7 +234,7 @@ jm_FUNC_LSTAT
 jm_FUNC_MALLOC
 jm_FUNC_REALLOC
 jm_FUNC_STAT
-dnl The following four macros can be called by other GNULIB macros but are also
+dnl The following macros can be called by other GNULIB macros but are also
 dnl used by the UNIQUE_*_TYPE stuff below.  I don't want to rely on the GNULIB
 dnl macros which call these to continue to do so, so use AC_REQUIRE, which can
 dnl only be called from within another macro, to only call them only once.
@@ -325,34 +325,18 @@ else
                            [Define if char is the first integer type
 		            detected with its size.])
 	fi
-	if test $gt_cv_c_wint_t != no; then
-		AC_CHECK_SIZEOF(wint_t)
-		AC_CACHE_CHECK(for uniquely sized wint_t,
-			ccvs_cv_unique_int_type_wint_t,
-			[if set |grep ^ccvs_cv_unique_int_type_ \
-				|grep -w $ac_cv_sizeof_wint_t >/dev/null ; then
-				ccvs_cv_unique_int_type_wint_t=no
-			else
-				ccvs_cv_unique_int_type_wint_t=yes\($ac_cv_sizeof_wint_t\)
-			fi])
-		if test $ccvs_cv_unique_int_type_wint_t != no ; then
-			AC_DEFINE( UNIQUE_INT_TYPE_WINT_T, 1,
-				   [Define if wint_t is the first integer type
-				    detected with its size.])
-		fi
-	fi
-	AC_CHECK_SIZEOF(short int)
-	AC_CACHE_CHECK(for uniquely sized short int,
-		ccvs_cv_unique_int_type_short_int,
+	AC_CHECK_SIZEOF(short)
+	AC_CACHE_CHECK(for uniquely sized short,
+		ccvs_cv_unique_int_type_short,
 		[if set |grep ^ccvs_cv_unique_int_type_ \
-			|grep -w $ac_cv_sizeof_short_int >/dev/null ; then
-			ccvs_cv_unique_int_type_short_int=no
+			|grep -w $ac_cv_sizeof_short >/dev/null ; then
+			ccvs_cv_unique_int_type_short=no
 		else
-			ccvs_cv_unique_int_type_short_int=yes\($ac_cv_sizeof_short_int\)
+			ccvs_cv_unique_int_type_short=yes\($ac_cv_sizeof_short\)
 		fi])
-	if test $ccvs_cv_unique_int_type_short_int != no ; then
-		AC_DEFINE( UNIQUE_INT_TYPE_SHORT_INT, 1,
-                           [Define if short int is the first integer type
+	if test $ccvs_cv_unique_int_type_short != no ; then
+		AC_DEFINE( UNIQUE_INT_TYPE_SHORT, 1,
+                           [Define if short is the first integer type
 		            detected with its size.])
 	fi
 	AC_CHECK_SIZEOF(int)
@@ -427,15 +411,48 @@ else
                           [Define if ptrdiff_t is the first integer type
 		           detected with its size.])
 	fi
-	dnl
-	dnl skipping intmax_t for now since we aren't sure we have it
-	dnl and I'm not sure how to get #include <stdint.h> into the
-	dnl AC_CHECK_SIZEOF macro anyhow...
-	dnl AC_CHECK_SIZEOF(intmax_t)
-	dnl
-	dnl As long as intmax_t is already defined to long or long long this
-	dnl will not matter in run.c.
-	dnl
+	if test $gt_cv_c_wint_t != no; then
+		AC_CHECK_SIZEOF(wint_t, [], [[#include <stdio.h>
+#include <wchar.h>
+]])
+		AC_CACHE_CHECK(for uniquely sized wint_t,
+			ccvs_cv_unique_int_type_wint_t,
+			[if set |grep ^ccvs_cv_unique_int_type_ \
+				|grep -w $ac_cv_sizeof_wint_t >/dev/null ; then
+				ccvs_cv_unique_int_type_wint_t=no
+			else
+				ccvs_cv_unique_int_type_wint_t=yes\($ac_cv_sizeof_wint_t\)
+			fi])
+		if test $ccvs_cv_unique_int_type_wint_t != no ; then
+			AC_DEFINE( UNIQUE_INT_TYPE_WINT_T, 1,
+				   [Define if wint_t is the first integer type
+				    detected with its size.])
+		fi
+	fi
+	if test $gt_cv_c_intmax_t != no; then
+		AC_CHECK_SIZEOF(intmax_t, [], [[#include <stdio.h>
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#else
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+#endif
+]])
+		AC_CACHE_CHECK(for uniquely sized intmax_t,
+			ccvs_cv_unique_int_type_intmax_t,
+			[if set |grep ^ccvs_cv_unique_int_type_ \
+				|grep -w $ac_cv_sizeof_intmax_t >/dev/null ; then
+				ccvs_cv_unique_int_type_intmax_t=no
+			else
+				ccvs_cv_unique_int_type_intmax_t=yes\($ac_cv_sizeof_intmax_t\)
+			fi])
+		if test $ccvs_cv_unique_int_type_intmax_t != no ; then
+			AC_DEFINE( UNIQUE_INT_TYPE_INTMAX_T, 1,
+                        	   [Define if intmax_t is the first integer type
+			            detected with its size.])
+		fi
+	fi
 
 	dnl
 	dnl and the same for floats...
@@ -1403,14 +1420,14 @@ AC_ARG_ENABLE(
   AC_HELP_STRING(
     [--enable-old-info-format-support],
     [Enable support for the pre 1.12.1 *info scripting hook format strings.
-     Disable this option for a smaller executable once your CVSROOT/* scripting
+     Disable this option for a smaller executable once your scripting
      hooks have been updated to use the new *info format strings (default).]), ,
   [enable_old_info_format_support=yes])
 if test "$enable_old_info_format_support" = yes; then
   AC_DEFINE(
     [SUPPORT_OLD_INFO_FMT_STRINGS], [1],
     [Enable support for the pre 1.12.1 *info scripting hook format strings.
-     Disable this option for a smaller executable once your CVSROOT/* scripting
+     Disable this option for a smaller executable once your scripting
      hooks have been updated to use the new *info format strings by passing
      "--disable-old-info-format-support" option to configure or by commenting
      out the line below.])

@@ -626,6 +626,9 @@
 /* The size of a `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
+/* The size of a `intmax_t', as computed by sizeof. */
+#undef SIZEOF_INTMAX_T
+
 /* The size of a `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
@@ -638,8 +641,8 @@
 /* The size of a `ptrdiff_t', as computed by sizeof. */
 #undef SIZEOF_PTRDIFF_T
 
-/* The size of a `short int', as computed by sizeof. */
-#undef SIZEOF_SHORT_INT
+/* The size of a `short', as computed by sizeof. */
+#undef SIZEOF_SHORT
 
 /* The size of a `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
@@ -666,8 +669,8 @@
 #undef STDC_HEADERS
 
 /* Enable support for the pre 1.12.1 *info scripting hook format strings.
-   Disable this option for a smaller executable once your CVSROOT/* scripting
-   hooks have been updated to use the new *info format strings by passing
+   Disable this option for a smaller executable once your scripting hooks have
+   been updated to use the new *info format strings by passing
    "--disable-old-info-format-support" option to configure or by commenting
    out the line below. */
 #undef SUPPORT_OLD_INFO_FMT_STRINGS
@@ -706,6 +709,9 @@
 /* Define if int is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_INT
 
+/* Define if intmax_t is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_INTMAX_T
+
 /* Define if long int is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_LONG
 
@@ -715,8 +721,8 @@
 /* Define if ptrdiff_t is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_PTRDIFF_T
 
-/* Define if short int is the first integer type detected with its size. */
-#undef UNIQUE_INT_TYPE_SHORT_INT
+/* Define if short is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_SHORT
 
 /* Define if size_t is the first integer type detected with its size. */
 #undef UNIQUE_INT_TYPE_SIZE_T
