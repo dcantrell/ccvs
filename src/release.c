@@ -82,7 +82,7 @@ release (argc, argv)
      */
     /* Construct the update command. */
     sprintf (update_cmd, "%s -n -q -d %s update",
-             program_name, CVSroot);
+             program_path, CVSroot);
 
 #ifdef CLIENT_SUPPORT
     /* Start the server; we'll close it after looping. */
@@ -223,6 +223,7 @@ release (argc, argv)
       } /* else server not active */
 #endif  /* SERVER_SUPPORT */
     }   /* `for' loop */
+    return (0);
 }
 
 

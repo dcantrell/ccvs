@@ -50,6 +50,7 @@ USE(rcsid);
 #endif
 
 char *program_name;
+char *program_path;
 /*
  * Initialize comamnd_name to "cvs" so that the first call to
  * read_cvsrc tries to find global cvs options.
@@ -265,6 +266,7 @@ main (argc, argv)
     /*
      * Just save the last component of the path for error messages
      */
+    program_path = xstrdup (argv[0]);
     program_name = last_component (argv[0]);
 
     CurDir = xmalloc (PATH_MAX);
