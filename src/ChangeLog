@@ -1,3 +1,8 @@
+Fri Mar 29 16:59:34 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* rcs.c (annotate_fileproc): allow last line of add-chunk not to
+	  be newline terminated
+
 Thu Mar 28 10:56:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Add more diff tests:
