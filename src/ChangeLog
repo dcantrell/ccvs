@@ -1,3 +1,14 @@
+2002-01-29  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (serve_root): If the specified root doesn't match the
+	pserver root, return before changing current_parsed_root to prevent
+	subsequent commands from accessing an unchecked root directory.
+	(server_init): Check specified root against the pserver root and
+	complain if they don't match.  Also, if there are pending errors,
+	print them and return before changing current_parsed_root to prevent
+	subsequent commands from accessing an unchecked root directory.
+	* sanity.sh (pserver): New tests for above.
+
 2002-01-10  Larry Jones  <larry.jones@sdrc.com>
 
 	* log.c (log_version_requested): Change :: in revision spec to be
