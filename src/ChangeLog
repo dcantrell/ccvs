@@ -1,5 +1,10 @@
 2003-02-06  Derek Price  <derek@ximbiot.com>
 
+	* rcs.c (RCS_getdatebranch): Update header comment to reflect the state
+	of the docs and the code's operation.
+
+2003-02-06  Derek Price  <derek@ximbiot.com>
+
 	* client.c: Use the complete path to the CVSADM_TEMPLATE file in
 	error messages.  Remove related FIXME.
 

@@ -3024,8 +3024,8 @@ RCS_getdate (rcs, date, force_tag_match)
 }
 
 /*
- * Look up the last element on a branch that was put in before the specified
- * date (return the rev or NULL)
+ * Look up the last element on a branch that was put in before or on
+ * the specified date and time (return the rev or NULL)
  */
 static char *
 RCS_getdatebranch (rcs, date, branch)
