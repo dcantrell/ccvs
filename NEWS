@@ -65,6 +65,10 @@ NEW FEATURES
   using the new ImportNewFilesToVendorBranchOnly=yes option in
   CVSROOT/config.
 
+* contrib/cvs_acls.in has been revised. Users of the old version will
+  want to upgrade to use the new format. See the documentation in
+  contrib/cvs_acls.html for more information.
+
 BUG FIXES
 
 * Thanks to a report from Chris Bohn <cbohn@rrinc.com>, links from J.C. Hamlin

@@ -3,6 +3,7 @@
 # Do not use this makefile directly, but only from `../Makefile'.
 # Copyright (C) 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994,
 #               1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003
+#               2004
 #               Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
@@ -55,6 +56,7 @@ EXTRA_DIST = \
 	cvs2vendor.sh \
 	sandbox_status.sh \
 	cvshelp.man \
+	cvs_acls.html \
 	debug_check_log.sh \
 	descend.sh \
 	descend.man \

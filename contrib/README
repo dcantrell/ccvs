@@ -57,9 +57,10 @@ An attempt at a table of Contents for this directory:
 			Contributed by Greg A. Woods <woods@planix.com>.
 
 	cvs_acls	A perl script that implements Access Control Lists
-			by using the "commitinfo" hook provided with the
+	cvs_acls.html	by using the "commitinfo" hook provided with the
 			"cvs commit" command.
 			Contributed by David G. Grubbs <dgg@ksr.com>.
+			Enhanced by Peter Connolly <Peter.Connolly@cnet.com>.
 
 	cvscheck	Identifies files added, changed, or removed in a
 	cvscheck.man	checked out CVS tree; also notices unknown files.
