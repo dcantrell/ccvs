@@ -1,5 +1,7 @@
 Changes since 1.8:
 
+* Windows NT client should now work on Windows 95 as well.
+
 * New option "--help-synonyms" prints a list of all recognized command
 synonyms.
 
