@@ -10283,10 +10283,31 @@ module definitions.  Long lines can be continued on the
 next line by specifying a backslash (@samp{\}) as the
 last character on the line.
 
-A module definition is a single line of the
-@file{modules} file, in either of two formats.  In both
-cases, @var{mname} represents the symbolic module name,
-and the remainder of the line is its definition.
+There are three basic types of modules: alias modules,
+regular modules, and ampersand modules.  The difference
+between them is the way that they map files in the
+repository to files in the working directory.  In all
+of the following examples, the top-level repository
+contains a directory called @file{first-dir}, which
+contains two files, @file{file1} and @file{file2}, and a
+directory @file{sdir}.  @file{first-dir/sdir} contains
+a file @file{sfile}.
+
+@c FIXME: should test all the examples in this section.
+
+@menu
+* Alias modules::             The simplest kind of module
+* Regular modules::
+* Ampersand modules::
+* Module options::            Regular and ampersand modules can take options
+@end menu
+
+@node Alias modules
+@appendixsubsec Alias modules
+@cindex Alias modules
+@cindex -a, in modules file
+
+Alias modules are the simplest kind of module:
 
 @table @code
 @item @var{mname} -a @var{aliases}@dots{}
@@ -10300,8 +10321,39 @@ paths.  When you use paths in aliases, @code{checkout}
 creates all intermediate directories in the working
 directory, just as if the path had been specified
 explicitly in the @sc{cvs} arguments.
+@end table
 
-@item @var{mname} [ options ] @var{dir} [ @var{files}@dots{} ] [ &@var{module}@dots{} ]
+For example, if the modules file contains:
+
+@example
+amodule -a first-dir
+@end example
+
+@noindent
+then the following two commands are equivalent:
+
+@example
+$ cvs co amodule
+$ cvs co first-dir
+@end example
+
+@noindent
+and they each would provide output such as:
+
+@example
+cvs checkout: Updating first-dir
+U first-dir/file1
+U first-dir/file2
+cvs checkout: Updating first-dir/sdir
+U first-dir/sdir/sfile
+@end example
+
+@node Regular modules
+@appendixsubsec Regular modules
+@cindex Regular modules
+
+@table @code
+@item @var{mname} [ options ] @var{dir} [ @var{files}@dots{} ]
 In the simplest case, this form of module definition
 reduces to @samp{@var{mname} @var{dir}}.  This defines
 all the files in directory @var{dir} as module mname.
@@ -10312,47 +10364,104 @@ case, on checkout, a single directory called
 intermediate directory levels are used by default, even
 if @var{dir} was a path involving several directory
 levels.
+@end table
 
-By explicitly specifying files in the module definition
-after @var{dir}, you can select particular files from
-directory @var{dir}.  The sample definition for
-@samp{modules} is an example of a module defined with a
-single file from a particular directory.  Here is
-another example:
+For example, if a module is defined by:
 
 @example
-m4test  unsupported/gnu/m4 foreach.m4 forloop.m4
+regmodule first-dir
 @end example
 
 @noindent
-With this definition, executing @samp{cvs checkout
-m4test} will create a single working directory
-@file{m4test} containing the two files listed, which
-both come from a common directory several levels deep
-in the @sc{cvs} source repository.
+then regmodule will contain the files from first-dir:
+
+@example
+$ cvs co regmodule
+cvs checkout: Updating regmodule
+U regmodule/file1
+U regmodule/file2
+cvs checkout: Updating regmodule/sdir
+U regmodule/sdir/sfile
+$
+@end example
+
+By explicitly specifying files in the module definition
+after @var{dir}, you can select particular files from
+directory @var{dir}.  Here is
+an example:
+
+@example
+regfiles first-dir/sdir sfile
+@end example
+
+@noindent
+With this definition, getting the regfiles module
+will create a single working directory
+@file{regfiles} containing the file listed, which
+comes from a directory deeper
+in the @sc{cvs} source repository:
+
+@example
+$ cvs co regfiles
+U regfiles/sfile
+$
+@end example
+
+@node Ampersand modules
+@appendixsubsec Ampersand modules
+@cindex Ampersand modules
+@cindex &, in modules file
 
 A module definition can refer to other modules by
 including @samp{&@var{module}} in its definition.
-@code{checkout} creates a subdirectory for each such
+@example
+@var{mname} [ options ] @var{&module}@dots{}
+@end example
+
+Then getting the module creates a subdirectory for each such
 module, in the directory containing the module.  For
 example, if modules contains
 
 @example
-m4test &unsupported
+ampermod &first-dir
 @end example
 
-then a checkout will create an @code{m4test} directory
-which contains a directory called @code{unsupported},
+then a checkout will create an @code{ampermod} directory
+which contains a directory called @code{first-dir},
 which in turns contains all the directories and files
-which live there.
-@c FIXME: this is hard to describe since we don't tell
-@c the user what the repository contains.  Best way to
-@c fix this whole mess is an extended example where we
-@c first say what is in the repository, then show a
-@c regular module, an alias module, and an & module.
-@c We should mention the concept of options only
-@c *after* we've taken care of those basics.
-@c 
+which live there.  For example, the command
+
+@example
+$ cvs co ampermod
+@end example
+
+@noindent
+will create the following files:
+
+@example
+ampermod/first-dir/file1
+ampermod/first-dir/file2
+ampermod/first-dir/sdir/sfile
+@end example
+
+There is one quirk/bug: the messages that @sc{cvs}
+prints omit the @file{ampermod}, and thus do not
+correctly display the location to which it is checking
+out the files:
+
+@example
+$ cvs co ampermod
+cvs checkout: Updating first-dir
+U first-dir/file1
+U first-dir/file2
+cvs checkout: Updating first-dir/sdir
+U first-dir/sdir/sfile
+$
+@end example
+
+Do not rely on this buggy behavior; it may get fixed in
+a future release of @sc{cvs}.
+
 @c FIXCVS: What happens if regular and & modules are
 @c combined, as in "ampermodule first-dir &second-dir"?
 @c When I tried it, it seemed to just ignore the
@@ -10362,12 +10471,25 @@ which live there.
 @c should put in a few words about why you would use one or
 @c the other in various situations.
 
+@node Module options
+@appendixsubsec Module options
+@cindex options, in modules file
+
+Either regular modules or ampersand modules can contain
+options, which supply additional information concerning
+the module.
+
 @table @code
+@cindex -d, in modules file
 @item -d @var{name}
 Name the working directory something other than the
 module name.
+@c FIXME: Needs a bunch of examples, analogous to the
+@c examples for alias, regular, and ampersand modules
+@c which show where the files go without -d.
 
 @cindex Export program
+@cindex -e, in modules file
 @item -e @var{prog}
 Specify a program @var{prog} to run whenever files in a
 module are exported.  @var{prog} runs with a single
@@ -10375,6 +10497,7 @@ argument, the module name.
 @c FIXME: Is it run on server? client?
 
 @cindex Checkin program
+@cindex -i, in modules file
 @item -i @var{prog}
 Specify a program @var{prog} to run whenever files in a
 module are committed.  @var{prog} runs with a single
@@ -10385,6 +10508,7 @@ ways to call a program on commit.
 @c FIXME: Is it run on server? client?
 
 @cindex Checkout program
+@cindex -o, in modules file
 @item -o @var{prog}
 Specify a program @var{prog} to run whenever files in a
 module are checked out.  @var{prog} runs with a single
@@ -10393,6 +10517,7 @@ argument, the module name.
 
 @cindex Status of a module
 @cindex Module status
+@cindex -s, in modules file
 @item -s @var{status}
 Assign a status to the module.  When the module file is
 printed with @samp{cvs checkout -s} the modules are
@@ -10403,6 +10528,7 @@ several things besides status: for instance, list the
 person that is responsible for this module.
 
 @cindex Tag program
+@cindex -t, in modules file
 @item -t @var{prog}
 Specify a program @var{prog} to run whenever files in a
 module are tagged with @code{rtag}.  @var{prog} runs
@@ -10418,6 +10544,7 @@ that taginfo is a better solution (@pxref{user-defined logging}).
 @c * It only is run for rtag, not tag.
 
 @cindex Update program
+@cindex -u, in modules file
 @item -u @var{prog}
 Specify a program @var{prog} to run whenever @samp{cvs
 update} is executed from the top-level directory of the
@@ -10430,7 +10557,6 @@ this module.
 @c checkout, and don't get updated if the modules file
 @c changes.  Also, the user can edit them, which means
 @c they are no good for security-type stuff.
-@end table
 @end table
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -1,3 +1,9 @@
+Thu Sep  4 17:09:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (modules): Break node into separate nodes for alias
+	modules, regular modules, ampersand modules, and options.  Expand
+	text with more examples and explanations.  Add index entries.
+
 Wed Sep  3 14:49:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Multiple developers): Add idea about cvs editors
