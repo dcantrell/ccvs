@@ -81,7 +81,7 @@ import (argc, argv)
 
     vbranch = xstrdup (CVSBRANCH);
     optind = 1;
-    while ((c = getopt (argc, argv, "Qqdb:m:I:k:W:")) != -1)
+    while ((c = getopt (argc, argv, "+Qqdb:m:I:k:W:")) != -1)
     {
 	switch (c)
 	{

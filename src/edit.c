@@ -61,7 +61,7 @@ watch_onoff (argc, argv)
     int err;
 
     optind = 1;
-    while ((c = getopt (argc, argv, "l")) != -1)
+    while ((c = getopt (argc, argv, "+l")) != -1)
     {
 	switch (c)
 	{
@@ -353,7 +353,7 @@ edit (argc, argv)
     setting_tunedit = 0;
     setting_tcommit = 0;
     optind = 1;
-    while ((c = getopt (argc, argv, "la:")) != -1)
+    while ((c = getopt (argc, argv, "+la:")) != -1)
     {
 	switch (c)
 	{
@@ -485,7 +485,7 @@ unedit (argc, argv)
 	usage (edit_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "l")) != -1)
+    while ((c = getopt (argc, argv, "+l")) != -1)
     {
 	switch (c)
 	{
@@ -971,7 +971,7 @@ editors (argc, argv)
 	usage (editors_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "l")) != -1)
+    while ((c = getopt (argc, argv, "+l")) != -1)
     {
 	switch (c)
 	{

@@ -329,7 +329,7 @@ commit (argc, argv)
 #endif /* CVS_BADROOT */
 
     optind = 1;
-    while ((c = getopt (argc, argv, "nlRm:fF:r:")) != -1)
+    while ((c = getopt (argc, argv, "+nlRm:fF:r:")) != -1)
     {
 	switch (c)
 	{

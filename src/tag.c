@@ -83,7 +83,7 @@ cvstag (argc, argv)
 	usage (tag_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "FQqlRcdr:D:bf")) != -1)
+    while ((c = getopt (argc, argv, "+FQqlRcdr:D:bf")) != -1)
     {
 	switch (c)
 	{

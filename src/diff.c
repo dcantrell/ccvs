@@ -202,7 +202,7 @@ diff (argc, argv)
 
     optind = 1;
     while ((c = getopt_long (argc, argv,
-	       "abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:V:W:k:r:",
+	       "+abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:V:W:k:r:",
 			     longopts, &option_index)) != -1)
     {
 	switch (c)

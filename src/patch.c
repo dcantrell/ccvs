@@ -70,7 +70,7 @@ patch (argc, argv)
 	usage (patch_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "V:k:cuftsQqlRD:r:")) != -1)
+    while ((c = getopt (argc, argv, "+V:k:cuftsQqlRD:r:")) != -1)
     {
 	switch (c)
 	{

@@ -41,7 +41,7 @@ status (argc, argv)
 	usage (status_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "vlR")) != -1)
+    while ((c = getopt (argc, argv, "+vlR")) != -1)
     {
 	switch (c)
 	{
