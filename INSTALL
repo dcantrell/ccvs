@@ -9,10 +9,11 @@ Alpha:
 	DEC Alpha running OSF/1 version 1.3 using cc (about 1.4A2)
 	DEC Alpha running OSF/1 version 2.0 (1.4.90)
 	DEC Alpha running OSF/1 version 2.1 (about 1.4A2)
-	DEC Alpha running OSF/1 version 3.0 (1.5.95)
+	DEC Alpha running OSF/1 version 3.0 (1.5.95) (footnote 7)
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
 	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
+        HPPA 1.1 running HP-UX A.09.03 (1.5.95) (footnote 8)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 i386 family:
 	Gateway P5-66 (pentium) running Solaris 2.4 using gcc (about 1.4A2)
@@ -69,6 +70,14 @@ SPARC:
 (footnote 6) Build in ucb universe with COFF compiler tools.  Put
 	/usr/local/bin first in PATH while doing a configure, make
 	and install of GNU diffutils-2.7, rcs-5.7, then cvs-1.5.
+
+(footnote 7) Manoj Srivastava <srivasta@pilgrim.umass.edu> reports
+        success with this configure command:
+  CC=cc CFLAGS='-O2 -Olimit 2000 -std1' ./configure --verbose alpha-dec-osf
+
+(footnote 8) Manoj Srivastava <srivasta@pilgrim.umass.edu> reports
+        success with this configure command:
+  CC=cc CFLAGS='+O2 -Aa -D_HPUX_SOURCE' ./configure --verbose hppa1.1-hp-hpux
 
 -------------------------------------------------------------------------------
 
