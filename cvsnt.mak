@@ -154,6 +154,9 @@ CLEAN :
 	-@erase ".\WinRel\ndir.obj"
 	-@erase ".\WinRel\getdate.obj"
 	-@erase ".\WinRel\mkdir.obj"
+	-@erase ".\WinRel\socket-client.obj"
+	-@erase ".\WinRel\log-buffer.obj"
+	-@erase '.\WInRel\rsh-client.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -283,7 +286,10 @@ LINK32_OBJS= \
 	"$(INTDIR)/status.obj" \
 	"$(INTDIR)/ndir.obj" \
 	"$(INTDIR)/getdate.obj" \
-	"$(INTDIR)/mkdir.obj"
+	"$(INTDIR)/mkdir.obj" \
+	"$(INTDIR)/socket-client.obj" \
+	"$(INTDIR)/log-buffer.obj" \
+	"$(INTDIR)/rsh-client.obj"
 
 "$(OUTDIR)\cvs.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -376,6 +382,9 @@ CLEAN :
 	-@erase ".\WinDebug\history.obj"
 	-@erase ".\WinDebug\run.obj"
 	-@erase ".\WinDebug\mkdir.obj"
+	-@erase ".\WinDebug\socket-client.obj"
+	-@erase ".\WinDebug\log-buffer.obj"
+	-@erase '.\WInDebug\rsh-client.obj"
 	-@erase ".\WinDebug\uncompr.obj"
 	-@erase ".\WinDebug\ignore.obj"
 	-@erase ".\WinDebug\root.obj"
@@ -508,6 +517,9 @@ LINK32_OBJS= \
 	"$(INTDIR)/history.obj" \
 	"$(INTDIR)/run.obj" \
 	"$(INTDIR)/mkdir.obj" \
+	"$(INTDIR)/socket-client.obj" \
+	"$(INTDIR)/log-buffer.obj" \
+	"$(INTDIR)/rsh-client.obj" \
 	"$(INTDIR)/uncompr.obj" \
 	"$(INTDIR)/ignore.obj" \
 	"$(INTDIR)/root.obj" \
@@ -2145,6 +2157,114 @@ NODEP_CPP_ANNOTATE_C=\
 	
 
 "$(INTDIR)\annotate.obj" : $(SOURCE) $(DEP_CPP_ANNOTATE_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\socket-client.c
+DEP_CPP_SOCKET_CLIENT_C=\
+	".\src\cvs.h"\
+	".\windows-NT\config.h"\
+	".\lib\fnmatch.h"\
+	".\windows-NT\pwd.h"\
+	".\lib\system.h"\
+	".\lib\xtime.h"\
+	".\src\hash.h"\
+	".\src\client.h"\
+	".\src\myndbm.h"\
+	".\lib\regex.h"\
+	".\lib\getopt.h"\
+	".\lib\wait.h"\
+	".\src\rcs.h"\
+	".\src\update.h"\
+	".\src\server.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_SOCKET_CLIENT_C=\
+	".\src\popen.h"\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\socket-client.obj" : $(SOURCE) $(DEP_CPP_SOCKET_CLIENT_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\rsh-client.c
+DEP_CPP_RSH_CLIENT_C=\
+	".\src\cvs.h"\
+	".\windows-NT\config.h"\
+	".\lib\fnmatch.h"\
+	".\windows-NT\pwd.h"\
+	".\lib\system.h"\
+	".\lib\xtime.h"\
+	".\src\hash.h"\
+	".\src\client.h"\
+	".\src\myndbm.h"\
+	".\lib\regex.h"\
+	".\lib\getopt.h"\
+	".\lib\wait.h"\
+	".\src\rcs.h"\
+	".\src\update.h"\
+	".\src\server.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_RSH_CLIENT_C=\
+	".\src\popen.h"\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\rsh-client.obj" : $(SOURCE) $(DEP_CPP_RSH_CLIENT_C) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\log-buffer.c
+DEP_CPP_LOG_BUFFER_C=\
+	".\src\cvs.h"\
+	".\windows-NT\config.h"\
+	".\lib\fnmatch.h"\
+	".\windows-NT\pwd.h"\
+	".\lib\system.h"\
+	".\lib\xtime.h"\
+	".\src\hash.h"\
+	".\src\client.h"\
+	".\src\myndbm.h"\
+	".\lib\regex.h"\
+	".\lib\getopt.h"\
+	".\lib\wait.h"\
+	".\src\rcs.h"\
+	".\src\update.h"\
+	".\src\server.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_LOG_BUFFER_C=\
+	".\src\popen.h"\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\log-buffer.obj" : $(SOURCE) $(DEP_CPP_LOG_BUFFER_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
