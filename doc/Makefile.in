@@ -214,8 +214,8 @@ MOSTLYCLEANFILES = \
 # These Automake generates MOSTLYCLEAN targets for PostScripts genersted from
 # TEXINFOS, but it shouldn't when those files are in EXTRA_DIST
 MAINTAINERCLEANFILES = \
-	$(PSS)
-
+	$(PSS)\
+$(srcdir)/cvs.1
 
 # texinfo based targets automake neglects to include
 SUFFIXES = .txt
