@@ -1,5 +1,7 @@
 2004-02-17  Larry Jones  <lawrence.jones@ugsplm.com>
 
+	* log.c (rlog_proc): Fix (harmless) uninitialized variable.
+
 	* sanity.sh (basicc): Add tests pointing out defective handling
 	of the Entries file.
 
