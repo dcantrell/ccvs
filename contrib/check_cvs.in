@@ -302,12 +302,13 @@ sub look_at_cvs_file
 sub get_history
 {
     my( $file ) = @_;
+    $file =~ s/(["\$`\\])/\\$1/g;
     my @revisions;
     my $revision;
     my $ignore = 1;
     my $save_ = $_;
 
-    open( FILE, "rlog -N '$file' 2>&1 |" ) or die( "unable to run rlog, help" );
+    open( FILE, "rlog -N \"$file\" 2>&1 |" ) or die( "unable to run rlog, help" );
 
     while( <FILE> )
     {
@@ -317,12 +318,13 @@ sub get_history
 	if( /^----------------------------$/ )
 	{
 	    $ignore = 0;
+            next;
         }
 
-        if( ( !$ignore ) && ( ( $revision ) = /^revision (.*)$/ ) )
-        {
-           push( @revisions, $revision );
-           $ignore = 1;
+	if( ( !$ignore ) && ( ( $revision ) = m/^revision (\S+)/ ) )
+	{
+            push( @revisions, $revision );
+            $ignore = 1;
         }
     }
 
@@ -372,11 +374,12 @@ sub get_history
 sub check_revision
 {
     my( $file, $revision ) = @_;
+    $file =~ s/(["\$`\\])/\\$1/g;
 
     my $cwd = getcwd();
     chdir( "/tmp" );
 
-    my $ret_code = 0xffff & system( "cvs -l co -n -p -r $revision '$file' > /dev/null 2>&1" );
+    my $ret_code = 0xffff & system( "cvs -l co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
 
     chdir( $cwd );
     return( 1 ) if ( $ret_code == 0 );
