@@ -3692,9 +3692,9 @@ cvs update: warning: oj.c was lost
 U oj.c
 @end example
 
-When you remove a file it is added only on the branch
+When you remove a file it is removed only on the branch
 which you are working on (@pxref{Branches}).  You can
-later merge the additions to another branch if you want
+later merge the removals to another branch if you want
 (@pxref{Merging adds and removals}).
 
 @c ---------------------------------------------------------------------
