@@ -781,7 +781,7 @@ xresolvepath ( path )
 	error (1, errno, "cannot readlink %s", hardpath);
     if ( CVS_CHDIR ( owd ) < 0)
 	error ( 1, errno, "cannot chdir to %s", owd );
-
+    free (owd);
     return hardpath;
 }
 
