@@ -488,6 +488,20 @@
 /* Define to 1 if you have the `__secure_getenv' function. */
 #undef HAVE___SECURE_GETENV
 
+/* Define to include locking code which prevents versions of CVS earlier than
+   1.12.4 directly accessing the same repositiory as this executable from
+   ignoring this executable's promotable read locks. If only CVS versions
+   1.12.4 and later will be accessing your repository directly (as a server or
+   locally), you can safely disable this option in return for fewer disk
+   accesses and a small speed increase. Disabling this option when versions of
+   CVS earlier than 1,12,4 _will_ be accessing your repository, however, is
+   *VERY* *VERY* *VERY* dangerous and could result in data loss. As such, by
+   default, CVS is compiled with this code enabled. If you are sure you would
+   like this code disabled, you can disable it by passing the
+   "--disable-lock-compatibility" option to configure or by commenting out the
+   lines below. */
+#undef LOCK_COMPATIBILITY
+
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
