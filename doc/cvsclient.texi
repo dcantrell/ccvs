@@ -536,6 +536,51 @@ that the server can assume that this is checkout or export, not rtag or
 rdiff; the latter do not access the working directory and thus have no
 need to expand modules on the client side.
 
+Expand may not be the best word for what this request does.  It does not
+necessarily tell you all the files contained in a module, for example.
+Basically it is a way of telling you which working directories the
+server needs to know about in order to handle a checkout of the
+specified modules.
+
+For example, suppose that the server has a module defined by
+
+@example
+aliasmodule -a 1dir
+@end example
+
+That is, one can check out @code{aliasmodule} and it will take
+@code{1dir} in the repository and check it out to @code{1dir} in the
+working directory.  Now suppose the client already has this module
+checked out and is planning on using the @code{co} request to update it.
+Without using @code{expand-modules}, the client would have two bad
+choices: it could either send information about @emph{all} working
+directories under the current directory, which could be unnecessarily
+slow, or it could be ignorant of the fact that @code{aliasmodule} stands
+for @code{1dir}, and neglect to send information for @code{1dir}, which
+would lead to incorrect operation.
+@c Those don't really seem like the only two options.  I mean, what
+@c about keeping track of the correspondence from when we first checked
+@c out a fresh directory?  Not that the CVS client does this, or that
+@c I've really thought about whether it would be a good idea...
+
+With @code{expand-modules}, the client would first ask for the module to
+be expanded:
+
+@example
+C: Root /home/kingdon/zwork/cvsroot
+. . .
+C: Argument aliasmodule
+C: Directory .
+C: /home/kingdon/zwork/cvsroot
+C: expand-modules
+S: Module-expansion 1dir
+S: ok
+@end example
+
+and then it knows to check the @file{1dir} directory and send
+requests such as @code{Entry} and @code{Modified} for the files in that
+directory.
+
 @item co \n
 @itemx ci \n
 @itemx diff \n
