@@ -83,9 +83,6 @@
 /* Define if the closedir function returns void instead of int.  */
 /* #undef VOID_CLOSEDIR */
 
-/* Define if you want direct TCP access to server */
-#define USE_DIRECT_TCP 1
-
 /* Define if you have MIT Kerberos version 4 available.  */
 /* #undef HAVE_KERBEROS */
 
