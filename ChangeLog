@@ -1,3 +1,11 @@
+2003-07-31  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Call the newly prescribed gl_FUNC_GETPASS_GNU rather
+	than the internal gl_PREREQ_GETPASS.
+	* srclist.txt ($GNULIB/modules/getpass): Rename to...
+	($GNULIB/modules/getpass-gnu): ...this new module.
+	* aclocal.m4, configure: Regenerated.
+	
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Replace my recent misuse of AH_VERBATIM with a call to

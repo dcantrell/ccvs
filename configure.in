@@ -225,7 +225,7 @@ jm_FUNC_STAT
 
 dnl We always want to use the GNULIB getpass, so define its name to something
 dnl that won't conflict with system declarations.
-gl_PREREQ_GETPASS
+gl_FUNC_GETPASS_GNU
 AC_DEFINE([getpass], [cvs_getpass],
   [We want to always use the GNULIB version of getpass which we have in lib,
    so define getpass to something that won't conflict with any existing system

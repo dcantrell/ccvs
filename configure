@@ -10683,7 +10683,15 @@ fi
 
 
 
+    LIBOBJS="$LIBOBJS getpass.$ac_objext"
+
   :
+
+
+cat >>confdefs.h <<\_ACEOF
+#define getpass gnu_getpass
+_ACEOF
+
 
 
 cat >>confdefs.h <<\_ACEOF
