@@ -135,9 +135,6 @@
 /* Define if you have the putenv function.  */
 #define HAVE_PUTENV 1
 
-/* Define if you have the setvbuf function.  */
-#define HAVE_SETVBUF 1
-
 /* Define if you have the sigaction function.  */
 #undef HAVE_SIGACTION
 

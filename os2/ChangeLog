@@ -1,3 +1,7 @@
+Wed Mar 12 16:10:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* config.h (HAVE_SETVBUF): Removed; no longer used.
+
 Mon Feb 10 20:01:20 1997  Ullrich von Bassewitz <uz@musoftware.com>
 
 	* filesubr.c: Add an OS/2 specific chdir function that will not

@@ -71,9 +71,6 @@
 /* Define if you have the ftruncate function.  */
 #undef HAVE_FTRUNCATE
 
-/* Define if you have the setvbuf function.  */
-//#define HAVE_SETVBUF 1
-
 /* Define if you have the vprintf function.  */
 #define HAVE_VPRINTF 1
 

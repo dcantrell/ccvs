@@ -125,9 +125,6 @@
 /* Define if you have the putenv function.  */
 /* #undef HAVE_PUTENV */
 
-/* Define if you have the setvbuf function.  */
-/* #undef HAVE_SETVBUF */
-
 /* Define if you have the timezone function.  */
 /* #undef HAVE_TIMEZONE */
 
