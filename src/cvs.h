@@ -49,7 +49,7 @@ char *alloca ();
 #if __GNUC__ == 2
 #define USE(var) static const char sizeof##var = sizeof(sizeof##var) + sizeof(var);
 #else
-#define USE(var) 
+#define USE(var)
 #endif
 
 
@@ -61,10 +61,10 @@ char *alloca ();
 extern void exit ();
 extern char *getenv();
 #endif
- 
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif 
+#endif
 
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -139,10 +139,10 @@ extern int errno;
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS 1.4 kit.
- * 
+ *
  * Definitions for the CVS Administrative directory and the files it contains.
  * Here as #define's to make changing the names a simple task.
  */
@@ -238,7 +238,7 @@ extern int errno;
 /*
  * If the beginning of the Repository matches the following string, strip it
  * so that the output to the logfile does not contain a full pathname.
- * 
+ *
  * If the CVSROOT environment variable is set, it overrides this define.
  */
 #define	REPOS_STRIP	"/master/"
@@ -298,7 +298,7 @@ typedef enum classify_type Ctype;
 /*
  * a struct vers_ts contains all the information about a file including the
  * user and rcs file names, and the version checked out and the head.
- * 
+ *
  * this is usually obtained from a call to Version_TS which takes a tag argument
  * for the RCS file if desired
  */
@@ -306,15 +306,15 @@ struct vers_ts
 {
     char *vn_user;			/* rcs version user file derives from
 					 * it can have the following special
-					 * values: 
-					 *    empty = no user file	
+					 * values:
+					 *    empty = no user file
 					 *    0 = user file is new
 					 *    -vers = user file to be removed */
     char *vn_rcs;			/* the version for the rcs file
 					 * (tag version?) 	 */
     char *ts_user;			/* the timestamp for the user file */
     char *ts_rcs;			/* the user timestamp from entries */
-    char *options;			/* opts from Entries file 
+    char *options;			/* opts from Entries file
 					 * (keyword expansion)	 */
     char *ts_conflict;			/* Holds time_stamp of conflict */
     char *tag;				/* tag stored in the Entries file */
@@ -375,7 +375,7 @@ extern int trace;		/* Show all commands */
 extern int noexec;		/* Don't modify disk anywhere */
 extern int logoff;		/* Don't write history entry */
 
-extern char hostname[];	
+extern char hostname[];
 
 /* Externs that are included directly in the CVS sources */
 int RCS_settag PROTO((const char *, const char *, const char *));
@@ -384,6 +384,8 @@ int RCS_setbranch PROTO((const char *, const char *));
 int RCS_lock PROTO((const char *, const char *));
 int RCS_unlock PROTO((const char *, const char *));
 int RCS_merge PROTO((const char *, const char *, const char *, const char *));
+
+#include "error.h"
 
 DBM *open_module PROTO((void));
 FILE *Popen PROTO((const char *, const char *));
@@ -437,7 +439,6 @@ void check_entries PROTO((char *dir));
 void close_module PROTO((DBM * db));
 void copy_file PROTO((const char *from, const char *to));
 void (*error_set_cleanup PROTO((void (*) PROTO((void)))));
-void error PROTO((int status, int errnum, char *message,...));
 void fperror PROTO((FILE * fp, int status, int errnum, char *message,...));
 void free_names PROTO((int *pargc, char *argv[]));
 void freevers_ts PROTO((Vers_TS ** versp));
