@@ -1,3 +1,13 @@
+1999-11-03  Karl Fogel  <kfogel@red-bean.com>
+
+	* cvs.texinfo (log options): correct documentation for -D and -s
+	options.  There can be no space between these options and their
+	arguments.
+
+	Also, make sure all @sc{cvs} codes refer to "cvs" in lower case;
+	this avoids makeinfo warnings.  And use @code for the CVSEDITOR
+	environment variable, not @sc.
+
 1999-09-24  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo: Misc. formatting cleanups.
