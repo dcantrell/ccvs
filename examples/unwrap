@@ -1,7 +1,8 @@
-#!/bin/sh
+#! /bin/sh
 #
-# extract the combined package (created with comb)
-# into the individual components.
+#	unwrap - extract the combined package (created with wrap)
+#
+#ident	"@(#)cvs/examples:$Name$:$Id$"
 
 # move the file to a new name with an extension
 rm -rf $1.cvswrap
