@@ -96,11 +96,9 @@ watch_onoff (int argc, char **argv)
 
     lock_tree_promotably (argc, argv, local, W_LOCAL, 0);
 
-    err = start_recursion
-	(onoff_fileproc, onoff_filesdoneproc,
-	 NULL, NULL, NULL,
-	 argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
-	 NULL, 0, NULL);
+    err = start_recursion (onoff_fileproc, onoff_filesdoneproc, NULL, NULL,
+			   NULL, argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
+			   NULL, 0, NULL);
 
     Lock_Cleanup ();
     return err;
@@ -229,11 +227,8 @@ send_notifications (int argc, char **argv, int local)
 	    ign_setup ();
 	}
 
-	err += start_recursion
-	    ( dummy_fileproc, (FILESDONEPROC) NULL,
-	      (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	      argc, argv, local, W_LOCAL, 0, 0, (char *) NULL,
-	      0, (char *) NULL );
+	err += start_recursion (dummy_fileproc, NULL, NULL, NULL, NULL, argc,
+				argv, local, W_LOCAL, 0, 0, NULL, 0, NULL);
 
 	send_to_server ("noop\012", 0);
 	if (strcmp (cvs_cmd_name, "release") == 0)
@@ -246,10 +241,9 @@ send_notifications (int argc, char **argv, int local)
     {
 	/* Local.  */
 
-	err += start_recursion
-	    (ncheck_fileproc, NULL, NULL, NULL, NULL,
-	     argc, argv, local, W_LOCAL, 0, CVS_LOCK_WRITE,
-	     NULL, 0, NULL);
+	err += start_recursion (ncheck_fileproc, NULL, NULL, NULL, NULL, argc,
+				argv, local, W_LOCAL, 0, CVS_LOCK_WRITE, NULL,
+				0, NULL);
 	Lock_Cleanup ();
     }
     return err;
@@ -317,7 +311,8 @@ static int find_editors_and_output (struct file_info *finfo)
  * These args could be const but this needs to fit the call_in_directory API.
  */
 void
-edit_file (void *data, List *ent_list, char *short_pathname, char *filename)
+edit_file (void *data, List *ent_list, char *short_pathname,
+	   char *filename)
 {
     Node *node;
     struct file_info finfo;
@@ -589,11 +584,8 @@ edit (int argc, char **argv)
     TRACE (TRACE_DATA, "edit(): EUC: %d%d%d edit-check: %d",
 	   setting_tedit, setting_tunedit, setting_tcommit, check_edited);
 
-    err = start_recursion
-	( edit_fileproc, (FILESDONEPROC) NULL,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, 0, (char *) NULL,
-	  0, (char *) NULL );
+    err = start_recursion (edit_fileproc, NULL, NULL, NULL, NULL, argc, argv,
+			   local, W_LOCAL, 0, 0, NULL, 0, NULL);
 
     err += send_notifications (argc, argv, local);
 
@@ -755,11 +747,8 @@ unedit (int argc, char **argv)
 
     /* No need to readlock since we aren't doing anything to the
        repository.  */
-    err = start_recursion
-	( unedit_fileproc, (FILESDONEPROC) NULL,
-	  (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-	  argc, argv, local, W_LOCAL, 0, 0, (char *) NULL,
-	  0, (char *) NULL );
+    err = start_recursion (unedit_fileproc, NULL, NULL, NULL, NULL, argc, argv,
+			   local, W_LOCAL, 0, 0, NULL, 0, NULL);
 
     err += send_notifications (argc, argv, local);
 
@@ -845,7 +834,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
     {
 	if (cmdline) free (cmdline);
 	error(0, 0, "pretag proc resolved to the empty string!");
-	return (1);
+	return 1;
     }
 
     pipefp = run_popen (cmdline, "w");
@@ -864,7 +853,7 @@ notify_proc (const char *repository, const char *filter, void *closure)
        logfile_write for inspiration.  */
 
     free(cmdline);
-    return (pclose (pipefp));
+    return pclose (pipefp);
 }
 
 

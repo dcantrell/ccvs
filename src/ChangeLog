@@ -1,5 +1,10 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* checkout.c, commit.c, edit.c, rcs.c: Avoid typecasts.  Some
+	reformatting.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* client.c: Avoid more typecasts.  Some reformatting.
 
 2004-10-06  Mark D. Baushke  <mdb@cvshome.org>

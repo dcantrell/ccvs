@@ -339,7 +339,7 @@ checkout (int argc, char **argv)
 	    free (options);
 	    options = NULL;
 	}
-	return (0);
+	return 0;
     }
     db = open_module ();
 
@@ -382,7 +382,7 @@ checkout (int argc, char **argv)
     }
     if (history_name != tag && history_name != date && history_name != NULL)
 	free (history_name);
-    return (err);
+    return err;
 }
 
 
