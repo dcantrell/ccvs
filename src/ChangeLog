@@ -1,3 +1,10 @@
+1999-05-05  Jim Kingdon  <http://www.cyclic.com>
+
+	* add.c (add): Look for directories with the same name in a
+	different case where appropriate (analogous to fopen_case).
+	In client code, add comment about how this doesn't do quite
+	everything.
+
 1999-05-03  Jim Meyering  <meyering@ascend.com>
 
 	Remove rcs-style ,file, lock files upon signal.
