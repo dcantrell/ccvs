@@ -4421,7 +4421,7 @@ RCS_delete_revs (rcs, tag1, tag2)
        it is not very handy for navigating the revision tree.  It's
        most useful just for checking out the revision preceding REV1. */
     before = NULL;
-    branchpoint = RCS_getbranchpoint (rcs, rev1);
+    branchpoint = RCS_getbranchpoint (rcs, rev1 != NULL ? rev1 : rev2);
     if (rev1 == NULL)
     {
 	rev1 = xstrdup (branchpoint);
