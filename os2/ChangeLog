@@ -1,3 +1,7 @@
+Mon Jan  1 22:59:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Makefile is not in srcdir.
+
 Sat Dec 23 23:08:43 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * README: adjust for below change.

@@ -1,3 +1,8 @@
+Mon Jan  1 22:45:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* os2/Makefile.in (Makefile), windows-NT/Makefile.in (Makefile):
+	New rules.
+
 Sun Dec 31 16:52:49 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * NEWS: add a blurb about password authentication.
