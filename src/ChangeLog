@@ -1,5 +1,10 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* recurse.c (do_recursion): Assert that ignoring the return value of
+	Name_Repository is not a memory leak.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* repos.c (Name_Repository): Replace a FIXME with the improved error
 	message it requested.
 	* sanity.sh (errmsg3): New test for the above.
