@@ -140,6 +140,7 @@ CLEAN :
 	-@erase ".\WinRel\stripslash.obj"
 	-@erase ".\WinRel\error.obj"
 	-@erase ".\WinRel\hash.obj"
+	-@erase ".\WinRel\stack.obj"
 	-@erase ".\WinRel\subr.obj"
 	-@erase ".\WinRel\fncase.obj"
 	-@erase ".\WinRel\import.obj"
@@ -277,6 +278,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/stripslash.obj" \
 	"$(INTDIR)/error.obj" \
 	"$(INTDIR)/hash.obj" \
+	"$(INTDIR)/stack.obj" \
 	"$(INTDIR)/subr.obj" \
 	"$(INTDIR)/fncase.obj" \
 	"$(INTDIR)/import.obj" \
@@ -350,6 +352,7 @@ CLEAN :
 	-@erase ".\WinDebug\parseinfo.obj"
 	-@erase ".\WinDebug\login.obj"
 	-@erase ".\WinDebug\hash.obj"
+	-@erase ".\WinDebug\stack.obj"
 	-@erase ".\WinDebug\1\version.obj"
 	-@erase ".\WinDebug\subr.obj"
 	-@erase ".\WinDebug\fncase.obj"
@@ -489,6 +492,7 @@ LINK32_OBJS= \
 	"$(INTDIR)/parseinfo.obj" \
 	"$(INTDIR)/login.obj" \
 	"$(INTDIR)/hash.obj" \
+	"$(INTDIR)/stack.obj" \
 	"$(INTDIR)/1/version.obj" \
 	"$(INTDIR)/subr.obj" \
 	"$(INTDIR)/fncase.obj" \
@@ -628,6 +632,7 @@ DEP_CPP_MKMOD=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -665,6 +670,7 @@ DEP_CPP_SUBR_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -701,6 +707,7 @@ DEP_CPP_ADMIN=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -742,6 +749,7 @@ DEP_CPP_SERVE=\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -789,6 +797,7 @@ DEP_CPP_DIFF_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -851,6 +860,7 @@ DEP_CPP_CLIEN=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -887,6 +897,7 @@ DEP_CPP_CHECK=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -923,6 +934,7 @@ DEP_CPP_NO_DI=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -961,6 +973,7 @@ DEP_CPP_ENTRI=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -998,6 +1011,7 @@ DEP_CPP_TAG_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1034,6 +1048,7 @@ DEP_CPP_STATU=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1071,6 +1086,7 @@ DEP_CPP_ROOT_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1108,6 +1124,7 @@ DEP_CPP_MYNDB=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1144,6 +1161,7 @@ DEP_CPP_HASH_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1171,6 +1189,43 @@ NODEP_CPP_HASH_=\
 ################################################################################
 # Begin Source File
 
+SOURCE=.\src\stack.c
+DEP_CPP_STACK_=\
+	".\src\cvs.h"\
+	".\windows-NT\config.h"\
+	".\lib\fnmatch.h"\
+	".\windows-NT\pwd.h"\
+	".\lib\system.h"\
+	".\lib\xtime.h"\
+	".\src\hash.h"\
+	".\src\stack.h"\
+	".\src\client.h"\
+	".\src\myndbm.h"\
+	".\lib\regex.h"\
+	".\lib\getopt.h"\
+	".\lib\wait.h"\
+	".\src\rcs.h"\
+	".\src\update.h"\
+	".\src\server.h"\
+	{$(INCLUDE)}"\sys\Types.h"\
+	{$(INCLUDE)}"\sys\Stat.h"\
+	{$(INCLUDE)}"\sys\Timeb.h"\
+	{$(INCLUDE)}"\sys\Utime.h"\
+	".\windows-NT\ndir.h"\
+	
+NODEP_CPP_STACK=\
+	".\src\popen.h"\
+	".\lib\tcpip.h"\
+	
+
+"$(INTDIR)\stack.obj" : $(SOURCE) $(DEP_CPP_STACK_) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
 SOURCE=.\src\repos.c
 DEP_CPP_REPOS=\
 	".\src\cvs.h"\
@@ -1181,6 +1236,7 @@ DEP_CPP_REPOS=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1218,6 +1274,7 @@ DEP_CPP_PARSE=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1254,6 +1311,7 @@ DEP_CPP_VERS_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1292,6 +1350,7 @@ DEP_CPP_CHECKI=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1332,6 +1391,7 @@ DEP_CPP_COMMI=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1368,6 +1428,7 @@ DEP_CPP_VERSI=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1427,6 +1488,7 @@ DEP_CPP_CVSRC=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1463,6 +1525,7 @@ DEP_CPP_REMOV=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1506,6 +1569,7 @@ DEP_CPP_UPDAT=\
 	".\windows-NT\pwd.h"\
 	".\lib\system.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1545,6 +1609,7 @@ DEP_CPP_LOGMS=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1581,6 +1646,7 @@ DEP_CPP_CLASS=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1618,6 +1684,7 @@ DEP_CPP_HISTO=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1656,6 +1723,7 @@ DEP_CPP_ADD_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1692,6 +1760,7 @@ DEP_CPP_LOCK_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1731,6 +1800,7 @@ DEP_CPP_RECUR=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1768,6 +1838,7 @@ DEP_CPP_MODUL=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1804,6 +1875,7 @@ DEP_CPP_FIND_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1842,6 +1914,7 @@ DEP_CPP_RCS_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1878,6 +1951,7 @@ DEP_CPP_CREAT=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1914,6 +1988,7 @@ DEP_CPP_MAIN_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1951,6 +2026,7 @@ DEP_CPP_PATCH=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -1989,6 +2065,7 @@ DEP_CPP_RELEA=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2025,6 +2102,7 @@ DEP_CPP_RCSCM=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2080,6 +2158,7 @@ DEP_CPP_IMPOR=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2117,6 +2196,7 @@ DEP_CPP_IGNOR=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2153,6 +2233,7 @@ DEP_CPP_ANNOTATE_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2352,6 +2433,7 @@ DEP_CPP_LOG_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2389,6 +2471,7 @@ DEP_CPP_WRAPP=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2425,6 +2508,7 @@ DEP_CPP_ERROR=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2462,6 +2546,7 @@ DEP_CPP_EXPAN=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2501,6 +2586,7 @@ DEP_CPP_EDIT_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2539,6 +2625,7 @@ DEP_CPP_FILEA=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2578,6 +2665,7 @@ DEP_CPP_WATCH=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2615,6 +2703,7 @@ DEP_CPP_LOGIN=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2651,6 +2740,7 @@ DEP_CPP_SCRAM=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2688,6 +2778,7 @@ DEP_CPP_BUFFE=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -2726,6 +2817,7 @@ DEP_CPP_ZLIB_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3003,6 +3095,7 @@ DEP_CPP_MKDIR=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3039,6 +3132,7 @@ DEP_CPP_RUN_C=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3088,6 +3182,7 @@ DEP_CPP_FILES=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3124,6 +3219,7 @@ DEP_CPP_WIN32=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3200,6 +3296,7 @@ DEP_CPP_RCMD_=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
@@ -3236,6 +3333,7 @@ DEP_CPP_START=\
 	".\lib\system.h"\
 	".\lib\xtime.h"\
 	".\src\hash.h"\
+	".\src\stack.h"\
 	".\src\client.h"\
 	".\src\myndbm.h"\
 	".\lib\regex.h"\
