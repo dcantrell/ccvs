@@ -1,3 +1,12 @@
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Add gettext.h.
+	* system.h: Include gettext.h.
+
+	* gettext.h: New file from GNULIB.
+
+	* Makefile.in: Regenerated.
+
 2003-06-09  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Reference the WIN32 macro only in order to define WOE32,
