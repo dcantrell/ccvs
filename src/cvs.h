@@ -181,7 +181,14 @@ extern int errno;
 #define CVSMODULE_SPEC	'&'		/* special delimiter */
 
 /* Other CVS file names */
+
+/* Files go in the attic if the head main branch revision is dead,
+   otherwise they go in the regular repository directories.  The whole
+   concept of having an attic is sort of a relic from before death
+   support but on the other hand, it probably does help the speed of
+   some operations (such as main branch checkouts and updates).  */
 #define	CVSATTIC	"Attic"
+
 #define	CVSLCK		"#cvs.lock"
 #define	CVSTFL		"#cvs.tfl"
 #define	CVSRFL		"#cvs.rfl"
