@@ -280,7 +280,7 @@ EXTRA_DIST = \
 	cvs-paper.ms \
 	cvs.man.header \
 	cvs.man.footer \
-	getdate.text \
+	getdate.texi \
 	mdate-sh
 
 MOSTLYCLEANFILES = \
@@ -760,7 +760,7 @@ cvs.1: @MAINTAINER_MODE_TRUE@ mkman cvs.man.header cvs.texinfo cvs.man.footer
 	$(PERL) ./mkman $(srcdir)/cvs.man.header $(srcdir)/cvs.texinfo \
 	        $(srcdir)/cvs.man.footer >$(srcdir)/$@
 
-cvs.html cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
+cvs.dvi cvs.html cvs.info cvs.pdf cvs.ps cvs.txt: getdate-cvs.texi
 getdate-cvs.texi: stamp-gdt
 stamp-gdt: getdate.texi Makefile
 	@echo "@c This file is generated via a rule in Makefile.am from the" \
