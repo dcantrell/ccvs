@@ -112,8 +112,10 @@ with_default_rsh = @with_default_rsh@
 USOURCE_SUBDIRS = lib zlib diff src
 # All other subdirs:
 SUBDIRS = $(USOURCE_SUBDIRS) man doc contrib tools \
-	windows-NT os2 emx vms
+	windows-NT os2 emx vms m4
 
+
+ACLOCAL_AMFLAGS = -I $(srcdir)/m4
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -144,8 +146,8 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
 DIST_COMMON = README AUTHORS COPYING COPYING.LIB ChangeLog INSTALL \
-	Makefile.am Makefile.in NEWS TODO acinclude.m4 aclocal.m4 \
-	compile config.h.in configure configure.in cvs.spec.in depcomp \
+	Makefile.am Makefile.in NEWS TODO aclocal.m4 compile \
+	config.h.in configure configure.in cvs.spec.in depcomp \
 	install-sh mdate-sh missing mkinstalldirs
 DIST_SUBDIRS = $(SUBDIRS)
 all: config.h
@@ -166,7 +168,7 @@ $(top_builddir)/config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 $(srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
 
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in acinclude.m4
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in 
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 
 config.h: stamp-h1
