@@ -1,3 +1,8 @@
+1997-10-28  Jim Kingdon
+
+	* system.h: Define HAVE_TIME_H.
+	* dir.c [_WIN32]: Define CLOSEDIR_VOID.
+
 1997-10-18  Jim Kingdon
 
 	* build_diff.com: Add diff3.c
