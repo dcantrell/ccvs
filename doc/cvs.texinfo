@@ -2625,6 +2625,8 @@ security, get Kerberos.
 @cindex GSSAPI
 @cindex security, GSSAPI
 @cindex :gserver:
+GSSAPI is a generic interface to network security
+systems such as Kerberos 5.
 If you have a working GSSAPI library, you can have
 @sc{cvs} connect via a direct @sc{tcp} connection,
 authenticating with GSSAPI.
@@ -2648,10 +2650,13 @@ You must then use the @code{-x} global option to
 request encryption.
 
 GSSAPI connections are handled on the server side by
-the password authentication server; see @ref{Password
-authentication server}.  If you wish to enforce GSSAPI
-authentication, and not permit passwords, you should
-create an empty @sc{cvs} password file, and set
+the same server which handles the password
+authentication server; see @ref{Password authentication
+server}.  If you are using a GSSAPI mechanism such as
+Kerberos which provides for strong authentication, you
+will probably want to disable the ability to
+authenticate via cleartext passwords.  To do so, create
+an empty @file{CVSROOT/passwd} password file, and set
 @code{SystemAuth=no} in the config file
 (@pxref{config}).
 
@@ -2680,6 +2685,11 @@ needs to pass through additional programs, so it may be
 slower.  So if you have kerberos installed you can
 connect via a direct @sc{tcp} connection,
 authenticating with kerberos.
+
+This section concerns the kerberos network security
+system, version 4.  Kerberos version 5 is supported via
+the GSSAPI generic network security interface, as
+described in the previous section.
 
 To do this, @sc{cvs} needs to be compiled with kerberos
 support; when configuring @sc{cvs} it tries to detect
