@@ -1,5 +1,9 @@
 1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TESTS: Remove note about SGI's XFS.  Someone reports that it
+	works (I would assume due to the 13 Feb 1998, and earlier, changes
+	to sanity.sh).
+
 	* NEWS: Add item about PreservePermissions.  Fix unclear wording
 	in gserver item.
 
