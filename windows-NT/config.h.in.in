@@ -828,6 +828,10 @@
 /* Define if tzset clobbers localtime's static buffer. */
 #undef TZSET_CLOBBERS_LOCALTIME_BUFFER
 
+/* Define to its maximum value if an unsigned integer type of width exactly 32
+   bits exists and the standard includes do not define UINT32_MAX. */
+#undef UINT32_MAX
+
 /* The default umask to use when creating or otherwise setting file or
    directory permissions in the repository. Must be a value in the range of 0
    through 0777. For example, a value of 002 allows group rwx access and world
@@ -885,6 +889,10 @@
 /* Define if utime requires write access to the file (true on Windows, but not
    Unix). */
 #define UTIME_EXPECTS_WRITABLE
+
+/* Define to 1 if your processor stores words with the most significant byte
+   first (like Motorola and SPARC, unlike Intel and VAX). */
+#undef WORDS_BIGENDIAN
 
 /* Define to 1 if on AIX 3.
    System headers sometimes define this.
@@ -1027,6 +1035,10 @@
 
 /* Define to `int' if <sys/types.h> doesn't define. */
 #define uid_t int
+
+/* Define to the type of a unsigned integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint32_t
 
 /* Define to unsigned long or unsigned long long if <stdint.h> and
    <inttypes.h> don't define. */

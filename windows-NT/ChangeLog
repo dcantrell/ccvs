@@ -1,3 +1,8 @@
+2004-10-22  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in.in (UINT32_MAX, WORDS_BIGENDIAN, uint32_t): Guess that
+	these should all be undef on WOE32.
+
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* config.h.in.footer (getpagesize): Define as 4096 because GNULIB
