@@ -1,5 +1,11 @@
 2004-10-09  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add stat-macros.h.
+	* stat.c: Update from GNULIB.
+	* stat-macros.c: New file from GNULIB.
+
+2004-10-09  Derek Price  <derek@ximbiot.com>
+
 	* nanosleep.c: Update from GNULIB.
 
 2004-10-09  Derek Price  <derek@ximbiot.com>
