@@ -1,4 +1,9 @@
 Wed Aug 20 09:51:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Remove "SparcClassing" typo that has been there for
+	a while.
+
+Wed Aug 20 09:51:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 			  and Loren James Rittle <rittle@comm.mot.com>
 
 	* INSTALL: Update information for SunOS4, Solaris, Digital Unix,
