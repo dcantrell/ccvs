@@ -1,3 +1,10 @@
+2003-05-28  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Use standard PROTOTYPES symbol instead of non-standard
+	USE_PROTOTYPES.
+	* error.h, cvs.h: Use PROTO.h.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
 2003-05-23  Larry Jones  <lawrence.jones@eds.com>
 
 	* sanity.sh (info-cleanup-verifymsg): Avoid race in output.

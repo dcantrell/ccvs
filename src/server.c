@@ -3945,7 +3945,7 @@ server_modtime (finfo, vers_ts)
 
 /* See server.h for description.  */
 
-#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
+#if defined (PROTOTYPES) ? PROTOTYPES : defined (__STDC__)
 /* Need to prototype because mode_t might be smaller than int.  */
 void
 server_updated (
