@@ -1,3 +1,15 @@
+Sat Oct 12 20:36:36 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* client.c (client_send_expansions): Add build_dirs parameter.
+	Change all callers.
+	(send_dirent_proc): Get build_dirs from callerdat; if it is
+	zero, don't send a nonexistent directory to the server.
+	(send_files): Add build_dirs parameter.  Change all callers.
+	* client.h (send_files): Update prototype.
+	(send_files_contents): Remove prototype for nonexistent function.
+	(client_send_expansions): Update prototype.
+	* sanity.sh (deep): Add deep-4b test for above patch.
+
 Fri Oct 11 14:07:12 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	gcc -Wall lint:

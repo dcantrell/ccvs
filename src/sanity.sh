@@ -986,6 +986,15 @@ done'
 	  dotest deep-4a2 "${testcvs} -q update -P dir6/dir7" ''
 	  # Should be using "test -e" if that is portable enough.
 	  dotest_fail deep-4a3 "test -d dir6/dir7/dir8" ''
+
+	  # Test that if we remove the working directory, CVS does not
+	  # recreate it.
+	  rm -rf dir6
+	  dotest deep-4b1 "${testcvs} -q update" ''
+	  dotest deep-4b2 "${testcvs} -q update -d -P" \
+'U dir6/file1
+U dir6/dir7/file1'
+
 	  cd ../../../../../..
 
 	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE}; then

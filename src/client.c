@@ -2606,9 +2606,10 @@ client_expand_modules (argc, argv, local)
 }
 
 void
-client_send_expansions (local, where)
+client_send_expansions (local, where, build_dirs)
     int local;
     char *where;
+    int build_dirs;
 {
     int i;
     char *argv[1];
@@ -2625,7 +2626,7 @@ client_send_expansions (local, where)
     {
 	argv[0] = where ? where : modules_vector[i];
 	if (isfile (argv[0]))
-	    send_files (1, argv, local, 0);
+	    send_files (1, argv, local, 0, build_dirs);
     }
     send_a_repository ("", CVSroot_directory, "");
 }
@@ -4281,6 +4282,7 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
     char *update_dir;
     List *entries;
 {
+    int build_dirs = *(int *) callerdat;
     int dir_exists;
     char *cvsadm_name;
     char *cvsadm_repos_name;
@@ -4328,7 +4330,14 @@ send_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	free (repos);
     }
     else
-	send_a_repository (dir, repository, update_dir);
+    {
+	/* Don't send a non-existent directory unless we are building
+           new directories (build_dirs is true).  Otherwise, CVS may
+           see a D line in an Entries file, and recreate a directory
+           which the user removed by hand.  */
+	if (dir_exists || build_dirs)
+	    send_a_repository (dir, repository, update_dir);
+    }
     free (cvsadm_repos_name);
 
     return (dir_exists ? R_PROCESS : R_SKIP_ALL);
@@ -4527,16 +4536,18 @@ send_file_names (argc, argv, flags)
 /*
  * Send Repository, Modified and Entry.  argc and argv contain only
  * the files to operate on (or empty for everything), not options.
- * local is nonzero if we should not recurse (-l option).  Also sends
+ * local is nonzero if we should not recurse (-l option).  build_dirs
+ * is nonzero if nonexistent directories should be sent.  Also sends
  * Argument lines for argc and argv, so should be called after options
  * are sent.
  */
 void
-send_files (argc, argv, local, aflag)
+send_files (argc, argv, local, aflag, build_dirs)
     int argc;
     char **argv;
     int local;
     int aflag;
+    int build_dirs;
 {
     int err;
 
@@ -4547,7 +4558,7 @@ send_files (argc, argv, local, aflag)
      */
     err = start_recursion
 	(send_fileproc, send_filesdoneproc,
-	 send_dirent_proc, (DIRLEAVEPROC)NULL, NULL,
+	 send_dirent_proc, (DIRLEAVEPROC)NULL, (void *) &build_dirs,
 	 argc, argv, local, W_LOCAL, aflag, 0, (char *)NULL, 0);
     if (err)
 	exit (EXIT_FAILURE);
