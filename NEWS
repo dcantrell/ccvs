@@ -9,14 +9,9 @@ SERVER SECURITY ISSUES
   misplaced directories, but nevertheless, the CVS server now rejects the
   malformed requests.
 
-OTHER ISSUES
+GENERAL USER ISSUES
 
-* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
-  new macros.  Again, this should only really affect developers.  See the
-  section of the INSTALL file about using the autotools if you are compiling
-  CVS yourself.
-
-* A minor problem that preveneted the correct version of a system ZLIB from
+* A minor problem that prevented the correct version of a system ZLIB from
   being detected on some platforms has been fixed.
 
 * Attempts to use the global `-l' option, removed from both client and server
@@ -30,6 +25,17 @@ OTHER ISSUES
   on Windows.  Autodetection can be overridden using the
   --disable-case-sensitivity and --enable-case-sensitivity arguments to
   configure.
+
+DEVELOPER ISSUES
+
+* We've standardized on Automake 1.7.9 to get a bug fix.  See the note below
+  on the Autoconf upgrade for more details.
+
+* We've standardized on Autoconf version 2.58 to avoid a bug and get at a few
+  new macros.  Again, this should only really affect developers, though it is
+  possible that CVS will now compile on a few new platforms.  Please see the
+  section of the INSTALL file about using the autotools if you are compiling
+  CVS yourself.
 
 Changes between 1.12.1 and 1.12.2:
 
