@@ -1023,7 +1023,7 @@ if test x"$*" = x; then
 	tests="${tests} keywordexpand"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4 modules5 modules6"
-	tests="${tests} mkmodules"
+	tests="${tests} mkmodules co-d"
 	tests="${tests} cvsadm emptydir abspath abspath2 toplevel toplevel2"
         tests="${tests} checkout_repository"
 	# Log messages, error messages.
@@ -12398,6 +12398,104 @@ ${SPROG} commit: Rebuilding administrative file database"
 	  rm -rf 1
 	  ;;
 
+	co-d)
+	  # Some tests of various permutations of co-d when directories exist
+	  # and checkouts lengthen.
+	  #
+	  # Interestingly enough, these same tests pass when the directory
+	  # lengthening happens via the modules file.  Go figure.
+	  module=co-d
+	  mkdir $module; cd $module
+	  mkdir top; cd top
+	  dotest co-d-init-1 "$testcvs -Q co -l ."
+	  mkdir $module
+	  dotest co-d-init-2 "$testcvs -Q add $module"
+	  cd $module
+	  echo content >file1
+	  echo different content >file2
+	  dotest co-d-init-3 "$testcvs -Q add file1 file2"
+	  dotest co-d-init-4 "$testcvs -Q ci -madd-em" \
+"RCS file: $CVSROOT_DIRNAME/co-d/file1,v
+done
+Checking in file1;
+$CVSROOT_DIRNAME/co-d/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: $CVSROOT_DIRNAME/co-d/file2,v
+done
+Checking in file2;
+$CVSROOT_DIRNAME/co-d/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  cd ../..
+
+	  mkdir 2; cd 2
+	  dotest co-d-1 "$testcvs -q co -d dir $module" \
+"U dir/file1
+U dir/file2"
+	  dotest co-d-1.2 "cat dir/CVS/Repository" "$module"
+
+	  # FIXCVS: This should work.  Correct expected result:
+	  #
+	  #"U dir2/sdir/file1
+	  #U dir2/sdir/file2"
+	  dotest_fail co-d-2 "$testcvs -q co -d dir2/sdir $module" \
+"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir2': No such file or directory"
+	  # FIXCVS:
+	  # dotest co-d-2.2 "cat dir4/CVS/Repository" "CVSROOT/Emptydir"
+	  # dotest co-d-2.3 "cat dir5/CVS/Repository" "$module"
+
+	  mkdir dir3
+	  dotest co-d-3 "$testcvs -q co -d dir3 $module" \
+"U dir3/file1
+U dir3/file2"
+	  dotest co-d-3.2 "cat dir3/CVS/Repository" "$module"
+
+	  if $remote; then
+	    # FIXCVS: As for co-d-2.
+	    mkdir dir4
+	    dotest_fail co-d-4r "$testcvs -q co -d dir4/sdir $module" \
+"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir4': No such file or directory"
+
+	    # FIXCVS: As for co-d-2.
+	    mkdir dir5
+	    mkdir dir5/sdir
+	    dotest_fail co-d-5r "$testcvs -q co -d dir5/sdir $module" \
+"$SPROG \[checkout aborted\]: could not change directory to requested checkout directory \`dir5': No such file or directory"
+	  else
+	    mkdir dir4
+	    dotest co-d-4 "$testcvs -q co -d dir4/sdir $module" \
+"U dir4/sdir/file1
+U dir4/sdir/file2"
+	    # CVS only creates administration directories for directories it
+	    # creates, and the last portion of the path passed to -d
+	    # regardless.
+	    dotest_fail co-d-4.2 "test -d dir4/CVS"
+	    dotest co-d-4.3 "cat dir4/sdir/CVS/Repository" "$module"
+
+	    mkdir dir5
+	    mkdir dir5/sdir
+	    dotest co-d-5 "$testcvs -q co -d dir5/sdir $module" \
+"U dir5/sdir/file1
+U dir5/sdir/file2"
+	    # CVS only creates administration directories for directories it
+	    # creates, and the last portion of the path passed to -d
+	    # regardless.
+	    dotest_fail co-d-5.2 "test -d dir5/CVS"
+	    dotest co-d-5.3 "cat dir5/sdir/CVS/Repository" "$module"
+	  fi
+
+	  # clean up
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
+	  rm -rf $CVSROOT_DIRNAME/$module
+	  rm -r $module
+	  ;;
+
 	cvsadm)
 	  # These test check the content of CVS' administrative
 	  # files as they are checked out in various configurations.
@@ -13658,7 +13756,23 @@ ${SPROG} checkout: Updating dir2d1/suba"
 	  dotest emptydir-15 "cat dir2d1/CVS/Repository" "moda"
 	  cd ..
 
-	  rm -r 1 2
+	  # Test the effect of a non-cvs directory already existing with the
+	  # same name as one in the modules file.
+	  mkdir 3; cd 3
+	  mkdir dir2d1
+	  dotest emptydir-16 "${testcvs} co 2d1mod" \
+"${SPROG} checkout: Updating dir2d1/sub/sub2d1
+U dir2d1/sub/sub2d1/file1"
+	  dotest emptydir-17 "test -d dir2d1/CVS"
+
+	  # clean up
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ..
+	  rm -r 1 2 3
 	  rm -rf ${CVSROOT_DIRNAME}/mod1 ${CVSROOT_DIRNAME}/moda
 	  # I guess for the moment the convention is going to be
 	  # that we don't need to remove ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
