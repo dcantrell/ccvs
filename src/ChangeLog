@@ -1,3 +1,7 @@
+1998-07-10  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (unedit-without-baserev): Also clean up "2" directory.
+
 1998-07-08  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* edit.c (unedit_fileproc): If the Baserev file is missing, don't
