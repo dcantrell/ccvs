@@ -1,3 +1,9 @@
+1998-08-28  Jim Meyering  <meyering@ascend.com>
+
+	* sanity.sh (basicc-8, basicc-11): Use `.*' instead of explicit
+	`Operation not permitted'.  Solaris2.5.1 gets a different error:
+	`Invalid argument'.
+
 1998-08-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Fix problems with trying to rename an open file:
