@@ -401,11 +401,6 @@ The "TODO" file!                              -*-Indented-Text-*-
 179. "cvs admin" does not log its actions with loginfo, nor does it check
      whether the action is allowed with commitinfo.  It should.
 
-180. "cvs edit" should show you who is already editing the files,
-     probably (that is, do "cvs editors" before executing, or some
-     similar result).  (But watch out for what happens if the network
-     is down!).
-
 182.  There should be a way to show log entries corresponding to
 changes from tag "foo" to tag "bar".  "cvs log -rfoo:bar" doesn't cut
 it, because it erroneously shows the changes associated with the

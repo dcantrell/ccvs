@@ -1,3 +1,11 @@
+2004-10-04  Derek Price  <derek@ximbiot.com>
+
+	* TODO: Item 180 is now done (cvs edit should report editors).
+	It reports editors as long as it can successfully contact the
+	server.  (Part of advisary locks patch originally from Noel Yap
+	<yap_noel@yahoo.com>, originally ported forward and enhanced by Matthew
+	Ogilvie <mmo9317bd@mailcan.com>.)
+
 2004-10-01  Derek Price  <derek@ximbiot.com>
 
 	* configure.in (getpass): Don't define twice.
