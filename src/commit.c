@@ -1746,18 +1746,41 @@ fixbranch (RCSNode *rcs, char *branch)
  * do the initial part of a file add for the named file.  if adding
  * with a tag, put the file in the Attic and point the symbolic tag
  * at the committed revision.
+ *
+ * INPUTS
+ *   file	The name of the file in the workspace.
+ *   repository	The repository directory to expect to find FILE,v in.
+ *   tag	The name or rev num of the branch being added to, if any.
+ *   options	Any RCS keyword expansion options specified by the user.
+ *   rcsnode	A pointer to the pre-parsed RCSNode for this file, if the file
+ *		exists in the repository.  If this is NULL, assume the file
+ *		does not yet exist.
+ *
+ * RETURNS
+ *   0 on success.
+ *   1 on errors, after printing any appropriate error messages.
+ *
+ * ERRORS
+ *   This function will return an error when any of the following functions do:
+ *     add_rcs_file
+ *     RCS_setattic
+ *     lock_RCS
+ *     RCS_checkin
+ *     RCS_parse (called to verify the newly created archive file)
+ *     RCS_settag
  */
 
 static int
-checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **rcsnode)
+checkaddfile (char *file, char *repository, char *tag, char *options,
+	      RCSNode **rcsnode)
 {
-    char *rcs;
+    RCSNode *rcs;
     char *fname;
-    int retcode = 0;
-    int newfile = 0;
-    RCSNode *rcsfile = NULL;
-    int retval;
+    int newfile = 0;		/* Set to 1 if we created a new RCS archive. */
+    int retval = 1;
     int adding_on_branch;
+
+    assert (rcsnode != NULL);
 
     /* Callers expect to be able to use either "" or NULL to mean the
        default keyword expansion.  */
@@ -1770,120 +1793,49 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
        this.  */
     adding_on_branch = tag != NULL && !isdigit ((unsigned char) tag[0]);
 
-    if ( ( rcs = locate_rcs ( repository, file, NULL ) ) == NULL )
+    if (*rcsnode == NULL)
     {
+	char *rcsname;
+	char *desc = NULL;
+	size_t descalloc = 0;
+	size_t desclen = 0;
+	char *opt;
+
 	if ( adding_on_branch )
 	{
 	    mode_t omask;
-	    rcs = xmalloc ( strlen ( repository )
-			    + sizeof ( CVSATTIC )
-		    	    + strlen ( file )
-			    + sizeof ( RCSEXT )
-			    + 3 );
-	    (void) sprintf ( rcs, "%s/%s", repository, CVSATTIC );
+	    rcsname = xmalloc (strlen (repository)
+			       + sizeof (CVSATTIC)
+			       + strlen (file)
+			       + sizeof (RCSEXT)
+			       + 3);
+	    (void) sprintf (rcsname, "%s/%s", repository, CVSATTIC);
 	    omask = umask ( cvsumask );
-	    if ( CVS_MKDIR ( rcs, 0777 ) != 0 && errno != EEXIST )
-		error ( 1, errno, "cannot make directory `%s'", rcs );
+	    if (CVS_MKDIR (rcsname, 0777 ) != 0 && errno != EEXIST)
+		error (1, errno, "cannot make directory `%s'", rcsname);
 	    (void) umask ( omask );
-	    (void) sprintf ( rcs,
-			     "%s/%s/%s%s",
-			     repository,
-			     CVSATTIC,
-			     file,
-			     RCSEXT );
+	    (void) sprintf (rcsname,
+			    "%s/%s/%s%s",
+			    repository,
+			    CVSATTIC,
+			    file,
+			    RCSEXT);
 	}
 	else
 	{
-	    rcs = xmalloc ( strlen ( repository )
-		    	    + strlen ( file )
-			    + sizeof ( RCSEXT )
-			    + 2 );
-	    (void) sprintf ( rcs,
-			     "%s/%s%s",
-			     repository,
-			     file,
-			     RCSEXT );
-	}
-    }
-
-    if (isreadable (rcs))
-    {
-	/* file has existed in the past.  Prepare to resurrect. */
-	char *rev;
-	char *oldexpand;
-
-	if ((rcsfile = *rcsnode) == NULL)
-	{
-	    error (0, 0, "could not find parsed rcsfile %s", file);
-	    retval = 1;
-	    goto out;
+	    rcsname = xmalloc (strlen (repository)
+			       + strlen (file)
+			       + sizeof (RCSEXT)
+			       + 2);
+	    (void) sprintf (rcsname,
+			    "%s/%s%s",
+			    repository,
+			    file,
+			    RCSEXT);
 	}
 
-	oldexpand = RCS_getexpand (rcsfile);
-	if ((oldexpand != NULL
-	     && options != NULL
-	     && strcmp (options + 2, oldexpand) != 0)
-	    || (oldexpand == NULL && options != NULL))
-	{
-	    /* We tell the user about this, because it means that the
-	       old revisions will no longer retrieve the way that they
-	       used to.  */
-	    error (0, 0, "changing keyword expansion mode to %s", options);
-	    RCS_setexpand (rcsfile, options + 2);
-	}
-
-	if (!adding_on_branch)
-	{
-	    /* We are adding on the trunk, so move the file out of the
-	       Attic.  */
-	    if (!(rcsfile->flags & INATTIC))
-	    {
-		error (0, 0, "warning: expected %s to be in Attic",
-		       rcsfile->path);
-	    }
-
-	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-
-	    /* Begin a critical section around the code that spans the
-	       first commit on the trunk of a file that's already been
-	       committed on a branch.  */
-	    SIG_beginCrSect ();
-
-	    if (RCS_setattic (rcsfile, 0))
-	    {
-		retval = 1;
-		goto out;
-	    }
-	}
-
-	rev = RCS_getversion (rcsfile, tag, NULL, 1, (int *) NULL);
-	/* and lock it */
-	if (lock_RCS (file, rcsfile, rev, repository))
-	{
-	    error (0, 0, "cannot lock `%s'.", rcs);
-	    if (rev != NULL)
-		free (rev);
-	    retval = 1;
-	    goto out;
-	}
-
-	if (rev != NULL)
-	    free (rev);
-    }
-    else
-    {
 	/* this is the first time we have ever seen this file; create
-	   an rcs file.  */
-
-	char *desc;
-	size_t descalloc;
-	size_t desclen;
-
-	char *opt;
-
-	desc = NULL;
-	descalloc = 0;
-	desclen = 0;
+	   an RCS file.  */
 	fname = xmalloc (strlen (file) + sizeof (CVSADM)
 			 + sizeof (CVSEXT_LOG) + 10);
 	(void) sprintf (fname, "%s/%s%s", CVSADM, file, CVSEXT_LOG);
@@ -1917,25 +1869,75 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
 	   RCS_checkin indicate that this is a new file?  Or does the
 	   "RCS file" message serve some function?).  */
 	cvs_output ("RCS file: ", 0);
-	cvs_output (rcs, 0);
+	cvs_output (rcsname, 0);
 	cvs_output ("\ndone\n", 0);
 
-	if (add_rcs_file (NULL, rcs, file, NULL, opt,
+	if (add_rcs_file (NULL, rcsname, file, NULL, opt,
 			  NULL, NULL, 0, NULL,
 			  desc, desclen, NULL) != 0)
 	{
-	    retval = 1;
 	    goto out;
 	}
-	rcsfile = RCS_parsercsfile (rcs);
+	rcs = RCS_parsercsfile (rcsname);
 	newfile = 1;
 	if (desc != NULL)
 	    free (desc);
-	if (rcsnode != NULL)
+	*rcsnode = rcs;
+    }
+    else
+    {
+	/* file has existed in the past.  Prepare to resurrect. */
+	char *rev;
+	char *oldexpand;
+
+	rcs = *rcsnode;
+
+	oldexpand = RCS_getexpand (rcs);
+	if ((oldexpand != NULL
+	     && options != NULL
+	     && strcmp (options + 2, oldexpand) != 0)
+	    || (oldexpand == NULL && options != NULL))
 	{
-	    assert (*rcsnode == NULL);
-	    *rcsnode = rcsfile;
+	    /* We tell the user about this, because it means that the
+	       old revisions will no longer retrieve the way that they
+	       used to.  */
+	    error (0, 0, "changing keyword expansion mode to %s", options);
+	    RCS_setexpand (rcs, options + 2);
 	}
+
+	if (!adding_on_branch)
+	{
+	    /* We are adding on the trunk, so move the file out of the
+	       Attic.  */
+	    if (!(rcs->flags & INATTIC))
+	    {
+		error (0, 0, "warning: expected %s to be in Attic",
+		       rcs->path);
+	    }
+
+	    /* Begin a critical section around the code that spans the
+	       first commit on the trunk of a file that's already been
+	       committed on a branch.  */
+	    SIG_beginCrSect ();
+
+	    if (RCS_setattic (rcs, 0))
+	    {
+		goto out;
+	    }
+	}
+
+	rev = RCS_getversion (rcs, tag, NULL, 1, (int *) NULL);
+	/* and lock it */
+	if (lock_RCS (file, rcs, rev, repository))
+	{
+	    error (0, 0, "cannot lock `%s'.", rcs->path);
+	    if (rev != NULL)
+		free (rev);
+	    goto out;
+	}
+
+	if (rev != NULL)
+	    free (rev);
     }
 
     /* when adding a file for the first time, and using a tag, we need
@@ -1946,6 +1948,7 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
 	{
 	    char *tmp;
 	    FILE *fp;
+	    int retcode;
 
 	    /* move the new file out of the way. */
 	    fname = xmalloc (strlen (file) + sizeof (CVSADM)
@@ -1965,14 +1968,13 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
 	    /* commit a dead revision. */
 	    (void) sprintf (tmp, "file %s was initially added on branch %s.",
 			    file, tag);
-	    retcode = RCS_checkin (rcsfile, NULL, tmp, NULL,
+	    retcode = RCS_checkin (rcs, NULL, tmp, NULL,
 				   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
 	    free (tmp);
 	    if (retcode != 0)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		       "could not create initial dead revision %s", rcs);
-		retval = 1;
+		       "could not create initial dead revision %s", rcs->path);
 		goto out;
 	    }
 
@@ -1981,58 +1983,39 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
 	    free (fname);
 
 	    /* double-check that the file was written correctly */
-	    freercsnode (&rcsfile);
-	    rcsfile = RCS_parse (file, repository);
-	    if (rcsfile == NULL)
+	    freercsnode (&rcs);
+	    rcs = RCS_parse (file, repository);
+	    if (rcs == NULL)
 	    {
-		error (0, 0, "could not read %s", rcs);
-		retval = 1;
+		error (0, 0, "could not read %s", rcs->path);
 		goto out;
 	    }
-	    if (rcsnode != NULL)
-		*rcsnode = rcsfile;
+	    *rcsnode = rcs;
 
 	    /* and lock it once again. */
-	    if (lock_RCS (file, rcsfile, NULL, repository))
+	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs);
-		retval = 1;
+		error (0, 0, "cannot lock `%s'.", rcs->path);
 		goto out;
 	    }
 	}
 
 	/* when adding with a tag, we need to stub a branch, if it
 	   doesn't already exist.  */
-
-	if (rcsfile == NULL)
-	{
-	    if (rcsnode != NULL && *rcsnode != NULL)
-		rcsfile = *rcsnode;
-	    else
-	    {
-		rcsfile = RCS_parse (file, repository);
-		if (rcsfile == NULL)
-		{
-		    error (0, 0, "could not read %s", rcs);
-		    retval = 1;
-		    goto out;
-		}
-	    }
-	}
-
-	if (!RCS_nodeisbranch (rcsfile, tag))
+	if (!RCS_nodeisbranch (rcs, tag))
 	{
 	    /* branch does not exist.  Stub it.  */
 	    char *head;
 	    char *magicrev;
+	    int retcode;
 
-	    fixbranch (rcsfile, sbranch);
+	    fixbranch (rcs, sbranch);
 
-	    head = RCS_getversion (rcsfile, NULL, NULL, 0, (int *) NULL);
-	    magicrev = RCS_magicrev (rcsfile, head);
+	    head = RCS_getversion (rcs, NULL, NULL, 0, (int *) NULL);
+	    magicrev = RCS_magicrev (rcs, head);
 
-	    retcode = RCS_settag (rcsfile, tag, magicrev);
-	    RCS_rewrite (rcsfile, NULL, NULL);
+	    retcode = RCS_settag (rcs, tag, magicrev);
+	    RCS_rewrite (rcs, NULL, NULL);
 
 	    free (head);
 	    free (magicrev);
@@ -2040,26 +2023,24 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
 	    if (retcode != 0)
 	    {
 		error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-		       "could not stub branch %s for %s", tag, rcs);
-		retval = 1;
+		       "could not stub branch %s for %s", tag, rcs->path);
 		goto out;
 	    }
 	}
 	else
 	{
 	    /* lock the branch. (stubbed branches need not be locked.)  */
-	    if (lock_RCS (file, rcsfile, NULL, repository))
+	    if (lock_RCS (file, rcs, NULL, repository))
 	    {
-		error (0, 0, "cannot lock `%s'.", rcs);
-		retval = 1;
+		error (0, 0, "cannot lock `%s'.", rcs->path);
 		goto out;
 	    }
 	}
 
-	if (rcsnode && *rcsnode != rcsfile)
+	if (*rcsnode != rcs)
 	{
 	    freercsnode(rcsnode);
-	    *rcsnode = rcsfile;
+	    *rcsnode = rcs;
 	}
     }
 
@@ -2087,7 +2068,6 @@ checkaddfile (char *file, char *repository, char *tag, char *options, RCSNode **
  out:
     if (retval != 0 && SIG_inCrSect ())
 	SIG_endCrSect ();
-    free (rcs);
     return retval;
 }
 
