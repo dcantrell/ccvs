@@ -1,5 +1,10 @@
 2005-04-05  Derek Price  <derek@ximbiot.com>
 
+	* mkinstalldirs: Remove this obsolete file.  It's work is now done by
+	`build-aux/install-sh -d'.
+
+2005-04-05  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Specify new build-aux directory for auxiliary build
 	files.
 	* compile, config.guess, config.rpath, config.sub, depcomp, install-sh,
