@@ -1,5 +1,7 @@
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.26.1.
+
 	* Version 1.9.26.
 
 	* entries.c, cvs.h (Entries_Open): New argument update_dir; use it
