@@ -1353,13 +1353,11 @@ struct val_args {
     int found;
 };
 
-static int val_fileproc (void *callerdat, struct file_info *finfo);
-
 static int
 val_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsdata;
-    struct val_args *args = (struct val_args *)callerdat;
+    struct val_args *args = callerdat;
     char *tag;
 
     if ((rcsdata = finfo->rcs) == NULL)
@@ -1367,7 +1365,7 @@ val_fileproc (void *callerdat, struct file_info *finfo)
 	   W_REPOS | W_ATTIC.  */
 	return 0;
 
-    tag = RCS_gettag (rcsdata, args->name, 1, (int *) NULL);
+    tag = RCS_gettag (rcsdata, args->name, 1, NULL);
     if (tag != NULL)
     {
 	/* FIXME: should find out a way to stop the search at this point.  */
@@ -1391,6 +1389,8 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
 	return R_PROCESS;
     return R_SKIP_ALL;
 }
+
+
 
 /* Check to see whether NAME is a valid tag.  If so, return.  If not
    print an error message and exit.  ARGC, ARGV, LOCAL, and AFLAG specify
@@ -1417,17 +1417,17 @@ tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
     int which;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE ( TRACE_FUNCTION,
-	    "tag_check_valid ( name=%s, argc=%d, argv=%p, local=%d,\n"
-       "                       aflag=%d, repository=%s )",
-	    name ? name : "(name)", argc, (void *)argv, local, aflag,
-	    repository ? repository : "(null)" );
+    TRACE (TRACE_FUNCTION,
+	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
+      "                      aflag=%d, repository=%s)",
+	   name ? name : "(name)", argc, (void *)argv, local, aflag,
+	   repository ? repository : "(null)");
 #else
-    TRACE ( TRACE_FUNCTION,
-	    "tag_check_valid ( name=%s, argc=%d, argv=%lx, local=%d,\n"
-       "                       aflag=%d, repository=%s )",
-	    name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
-	    repository ? repository : "(null)" );
+    TRACE (TRACE_FUNCTION,
+	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
+      "                      aflag=%d, repository=%s)",
+	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
+	   repository ? repository : "(null)");
 #endif
 
     /* Numeric tags require only a syntactic check.  */

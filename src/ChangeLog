@@ -1,5 +1,15 @@
 2004-07-08  Derek Price  <derek@ximbiot.com>
 
+	Intermediate checkin.  Adds some new server requests and test fixes.
+	* sanity.sh: Update tests to handle proxies and new hooks.
+	* cvs.h (CVSROOTADM_PREPROXY): Alphebetize & sub correct name.
+	* mkmodules.c (filelist): Alphabetize.
+	* server.c (serve_max_dotdot, serve_static_directory, serve_argumentx):
+	Handle secondary_log.
+	* tag.c (*): Misc gratuitous cleanup.
+
+2004-07-08  Derek Price  <derek@ximbiot.com>
+
 	Intermediate checkin.  Adds posttag, postadmin, preproxy, & postproxy
 	hooks and some test cruft to test everything.
 
