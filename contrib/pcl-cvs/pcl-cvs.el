@@ -1594,11 +1594,11 @@ For use by the cookie package."
   (define-key cvs-mode-map "\C-p"	'cvs-mode-previous-line)
   ;; ^C- keys are used to set various flags to control CVS features
   (define-key cvs-mode-map "\C-c"	'cvs-mode-map-control-c-prefix)
-  (define-key cvs-mode-map "\C-cc"	'cvs-change-cvsroot)
-  (define-key cvs-mode-map "\C-cd"	'cvs-set-diff-flags)
-  (define-key cvs-mode-map "\C-cl"	'cvs-set-log-flags)
-  (define-key cvs-mode-map "\C-cs"	'cvs-set-status-flags)
-  (define-key cvs-mode-map "\C-cu"	'cvs-set-update-optional-flags)
+  (define-key cvs-mode-map "\C-c\C-c"	'cvs-change-cvsroot)
+  (define-key cvs-mode-map "\C-c\C-d"	'cvs-set-diff-flags)
+  (define-key cvs-mode-map "\C-c\C-l"	'cvs-set-log-flags)
+  (define-key cvs-mode-map "\C-c\C-s"	'cvs-set-status-flags)
+  (define-key cvs-mode-map "\C-c\C-u"	'cvs-set-update-optional-flags)
   ;; M- keys are usually those that operate on modules
   (define-key cvs-mode-map "\M-\C-?"	'cvs-mode-unmark-all-files)
   (define-key cvs-mode-map "\M-C"	'cvs-mode-rcs2log) ; i.e. "Create a ChangeLog"
