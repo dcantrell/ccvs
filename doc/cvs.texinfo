@@ -20,7 +20,14 @@
 @comment along with CVS; see the file COPYING.  If not, write to
 @comment the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-@afourpaper
+@c See ../README for A4 vs. US letter size.
+@c When we provided A4 postscript, and people tried to
+@c print it on US letter, the usual complaint was that the
+@c page numbers would get cut off.
+@c If one prints US letter on A4, reportedly there is
+@c some extra space at the top and/or bottom, and the side
+@c margins are a bit narrow, but no text is lost.
+
 @setfilename cvs.info
 @include CVSvn.texi
 @settitle CVS---Concurrent Versions System
