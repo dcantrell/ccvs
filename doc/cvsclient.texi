@@ -117,18 +117,6 @@ The client stores what is stored in checked-out directories (including
 standard CVS.  The server requires no storage other than the repository,
 which also is totally compatible with standard CVS.
 
-The server is started by @code{cvs server}.  There is no particularly
-compelling reason for this rather than making it a separate program
-which shares a lot of sources with cvs.
-
-The server can also be started by @code{cvs kserver}, in which case it
-does an initial Kerberos authentication on stdin.  If the authentication
-succeeds, it subsequently runs identically to @code{cvs server}.
-
-@code{cvs pserver} can also be used, which makes the server use a simple
-password-authentication protocol.  If it succeeds, it subsequently runs
-identically to @code{cvs server}.
-
 The current server implementation can use up huge amounts of memory
 when transmitting a lot of data over a slow link (i.e. the network is
 slower than the server can generate the data).  There is some
@@ -307,7 +295,10 @@ carefully thought out).
 @section Requests
 
 By convention, requests which begin with a capital letter do not elicit
-a response from the server, while all others do.
+a response from the server, while all others do -- save one.  The
+exception is @samp{gzip-file-contents}.  Unrecognized requests will
+always elicit a response from the server, even if that request begins
+with a capital letter.
 
 File contents (noted below as @var{file transmission}) can be sent in
 one of two forms.  The simpler form is a number of bytes, followed by a
@@ -577,7 +568,8 @@ request.  The client must issue the @code{-u} argument to @code{update}
 in order to receive patches.
 
 @item gzip-file-contents @var{level} \n
-Response expected: yes.
+Response expected: no.  Note that this request does not follow the
+response convention stated above.
 This request asks the server to filter files it sends to the client
 through the @samp{gzip} program, using the specified level of
 compression.  If this request is not made, the server must not do any
