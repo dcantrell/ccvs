@@ -1,3 +1,8 @@
+Wed Jan 10 15:56:46 1996  Karl Fogel  <kfogel@floss.red-bean.com>
+
+        * options.h, config.h: moved NO_SOCKET_TO_FD definition from
+        options.h to config.h, which is where it belongs.
+
 Tue Jan  9 16:43:15 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * run.c (sleep): commented out this definition.
