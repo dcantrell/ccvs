@@ -79,6 +79,7 @@ PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
+TEXI2DVI = @TEXI2DVI@
 VERSION = @VERSION@
 YACC = @YACC@
 includeopt = @includeopt@
@@ -103,10 +104,16 @@ install_sh = @install_sh@
 
 # AUTOMAKE_OPTIONS = no-texinfo.tex
 
+# FIXME - these rebuild every 'make dist' with some BSD makes due to a bug
+# that prevents make from searching VPATH for targets.  There is some
+# machinery in place in configure.in to work around this for some targets
+# (see the CVSvn.texi target below) now, but fixing the two info_TEXINFOS
+# targets below is probably going to require work on Automake
+
 
 info_TEXINFOS = cvs.texinfo cvsclient.texi
-cvs_TEXINFOS = $(srcdir)/CVSvn.texi
-cvsclient_TEXINFOS = $(srcdir)/CVSvn.texi
+cvs_TEXINFOS = CVSvn.texi
+cvsclient_TEXINFOS = CVSvn.texi
 
 POSTSCRIPTS = \
 	cvs.ps \
@@ -155,7 +162,6 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CF
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = 
-TEXI2DVI = texi2dvi
 INFO_DEPS = cvs.info cvsclient.info
 DVIS = cvs.dvi cvsclient.dvi
 TEXINFOS = cvs.texinfo cvsclient.texi
@@ -311,7 +317,6 @@ TAGS:
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
 distdir: $(DISTFILES)
-	$(mkinstalldirs) $(distdir)/$(srcdir)
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \
@@ -450,9 +455,23 @@ cvs-paper.ps: cvs-paper.ms
 # - It is guaranteed (with GNU Make) that when the version in configure.in
 #   is changed, acversion.m4 is built only after the new version number is
 #   propagated to the Makefile.  (Libtool uses the same guarantee.)
-$(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
-	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
-	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
+# - Of the next three targets, only the next one or the following two should be
+#   enabled, not all three
+# - This is the target for systems without the BSD VPATH bug in make or with
+#   $(srcdir) = $(builddir)
+@MAKE_TARGETS_IN_VPATH_TRUE@CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+@MAKE_TARGETS_IN_VPATH_TRUE@	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
+@MAKE_TARGETS_IN_VPATH_TRUE@	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
+# - The next two targets are a workaround for the fact that some BSD makes
+#   don't look through VPATH for targets, but only for sources.
+# - They should be disabled on systems without the bug and in environments
+#   where $(srcdir) = $(builddir)
+@MAKE_TARGETS_IN_VPATH_FALSE@CVSvn.texi: $(srcdir)/CVSvn.texi
+@MAKE_TARGETS_IN_VPATH_FALSE@	# use cat so the time stamp gets set properly
+@MAKE_TARGETS_IN_VPATH_FALSE@	cat $(srcdir)/CVSvn.texi >$@
+@MAKE_TARGETS_IN_VPATH_FALSE@$(srcdir)/CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+@MAKE_TARGETS_IN_VPATH_FALSE@	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >$(srcdir)/CVSvn.ttexi
+@MAKE_TARGETS_IN_VPATH_FALSE@	mv $(srcdir)/CVSvn.ttexi $(srcdir)/CVSvn.texi
 
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
