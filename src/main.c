@@ -21,6 +21,7 @@
  *		commit		Checks files into the repository
  *		diff		Runs diffs between revisions
  *		log		Prints "rlog" information for files
+ *		login		Record user, host, repos, password
  *		add		Adds an entry to the repository
  *		remove		Removes an entry from the repository
  *		status		Status info on the revisions
