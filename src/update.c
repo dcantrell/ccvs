@@ -366,7 +366,7 @@ update (int argc, char **argv)
 #endif
 
     if (tag != NULL)
-	tag_check_valid (tag, argc, argv, local, aflag, "");
+	tag_check_valid (tag, argc, argv, local, aflag, "", false);
     if (join_rev1 != NULL)
         tag_check_valid_join (join_rev1, argc, argv, local, aflag, "");
     if (join_rev2 != NULL)

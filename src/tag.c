@@ -278,6 +278,109 @@ cvstag (int argc, char **argv)
 
 
 
+struct pretag_proc_data {
+     List *tlist;
+     bool delete_flag;
+     bool force_tag_move;
+     char *symtag;
+};
+
+/*
+ * called from Parse_Info, this routine processes a line that came out
+ * of the posttag file and turns it into a command and executes it.
+ *
+ * RETURNS
+ *    the absolute value of the return value of run_exec, which may or
+ *    may not be the return value of the child process.  this is
+ *    contrained to return positive values because Parse_Info is summing
+ *    return values and testing for non-zeroness to signify one or more
+ *    of its callbacks having returned an error.
+ */
+static int
+posttag_proc (const char *repository, const char *filter, void *closure)
+{
+    char *cmdline;
+    const char *srepos = Short_Repository (repository);
+    struct pretag_proc_data *ppd = closure;
+
+    /* %t = tag being added/moved/removed
+     * %o = operation = "add" | "mov" | "del"
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
+     *                    | "N" (not branch)
+     * %c = cvs_cmd_name
+     * %p = path from $CVSROOT
+     * %r = path from root
+     * %{sVv} = attribute list = file name, old version tag will be deleted
+     *                           from, new version tag will be added to (or
+     *                           deleted from until
+     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined).
+     */
+    cmdline = format_cmdline (
+#ifdef SUPPORT_OLD_INFO_FMT_STRINGS
+	false, srepos,
+#endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
+	filter,
+	"t", "s", ppd->symtag,
+	"o", "s", ppd->delete_flag ? "del" :
+	          ppd->force_tag_move ? "mov" : "add",
+    	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+        "c", "s", cvs_cmd_name,
+    	"p", "s", srepos,
+	"r", "s", current_parsed_root->directory,
+	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *)NULL,
+	(char *)NULL
+	);
+
+    if (!cmdline || !strlen (cmdline))
+    {
+	if (cmdline) free (cmdline);
+	error (0, 0, "pretag proc resolved to the empty string!");
+	return 1;
+    }
+
+    run_setup (cmdline);
+
+    free (cmdline);
+    return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
+}
+
+
+
+/*
+ * Call any postadmin procs.
+ */
+static int
+tag_filesdoneproc (void *callerdat, int err, const char *repository,
+                   const char *update_dir, List *entries)
+{
+    Node *p;
+    List *mtlist, *tlist;
+    struct pretag_proc_data ppd;
+
+    TRACE (TRACE_FUNCTION, "tag_filesdoneproc (%d, %s, %s)", err, repository,
+           update_dir);
+
+    mtlist = callerdat;
+    p = findnode (mtlist, update_dir);
+    if (p != NULL)
+        tlist = ((struct master_lists *) p->data)->tlist;
+    else
+        tlist = NULL;
+    if (tlist == NULL || tlist->list->next == tlist->list)
+        return err;
+
+    ppd.tlist = tlist;
+    ppd.delete_flag = delete_flag;
+    ppd.force_tag_move = force_tag_move;
+    ppd.symtag = symtag;
+    Parse_Info (CVSROOTADM_POSTTAG, repository, posttag_proc,
+                PIOPT_ALL, &ppd);
+
+    return err;
+}
+
+
+
 /*
  * callback proc for doing the real work of tagging
  */
@@ -392,14 +495,14 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     if (numtag != NULL && !numtag_validated)
     {
 	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
-			 repository );
+			 repository, false);
 	numtag_validated = true;
     }
 
     /* check to make sure they are authorized to tag all the
        specified files in the repository */
 
-    mtlist = getlist();
+    mtlist = getlist ();
     err = start_recursion (check_fileproc, check_filesdoneproc,
                            NULL, NULL, NULL,
 			   argc - 1, argv + 1, local_specified, which, 0,
@@ -417,7 +520,7 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     /* start the recursion processor */
     err = start_recursion
 	(is_rtag ? rtag_fileproc : tag_fileproc,
-	 NULL, tag_dirproc, NULL, NULL, argc - 1, argv + 1,
+	 tag_filesdoneproc, tag_dirproc, NULL, mtlist, argc - 1, argv + 1,
 	 local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
 	 repository);
     dellist (&mtlist);
@@ -560,13 +663,6 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
 
 
-struct pretag_proc_data {
-     List *tlist;
-     bool delete_flag;
-     bool force_tag_move;
-     char *symtag;
-};
-
 static int
 check_filesdoneproc (void *callerdat, int err, const char *repos,
                      const char *update_dir, List *entries)
@@ -576,25 +672,20 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
     List *tlist;
     struct pretag_proc_data ppd;
 
-    p = findnode(mtlist, update_dir);
+    p = findnode (mtlist, update_dir);
     if (p != NULL)
-    {
         tlist = ((struct master_lists *) p->data)->tlist;
-    }
     else
-    {
-        tlist = (List *) NULL;
-    }
-    if ((tlist == NULL) || (tlist->list->next == tlist->list))
-    {
-        return (err);
-    }
+        tlist = NULL;
+    if (tlist == NULL || tlist->list->next == tlist->list)
+        return err;
 
     ppd.tlist = tlist;
     ppd.delete_flag = delete_flag;
     ppd.force_tag_move = force_tag_move;
     ppd.symtag = symtag;
-    if ((n = Parse_Info(CVSROOTADM_TAGINFO, repos, pretag_proc, PIOPT_ALL, &ppd)) > 0)
+    if ((n = Parse_Info (CVSROOTADM_TAGINFO, repos, pretag_proc, PIOPT_ALL,
+			 &ppd)) > 0)
     {
         error (0, 0, "Pre-tag check failed");
         err += n;
@@ -621,17 +712,17 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     char *newfilter = NULL;
     char *cmdline;
     const char *srepos = Short_Repository (repository);
-    struct pretag_proc_data *ppd = (struct pretag_proc_data *)closure;
+    struct pretag_proc_data *ppd = closure;
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-    if (!strchr(filter, '%'))
+    if (!strchr (filter, '%'))
     {
-	error(0,0,
-              "warning: taginfo line contains no format strings:\n"
-              "    \"%s\"\n"
-              "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
-              "usage is deprecated.", filter);
-	newfilter = xmalloc (strlen(filter) + 16);
+	error (0,0,
+               "warning: taginfo line contains no format strings:\n"
+               "    \"%s\"\n"
+               "Filling in old defaults ('%%t %%o %%p %%{sv}'), but please be aware that this\n"
+               "usage is deprecated.", filter);
+	newfilter = xmalloc (strlen (filter) + 16);
 	strcpy (newfilter, filter);
 	strcat (newfilter, " %t %o %p %{sv}");
 	filter = newfilter;
@@ -640,22 +731,26 @@ pretag_proc (const char *repository, const char *filter, void *closure)
 
     /* %t = tag being added/moved/removed
      * %o = operation = "add" | "mov" | "del"
-     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch) | "N" (not branch)
+     * %b = branch mode = "?" (delete ops - unknown) | "T" (branch)
+     *                    | "N" (not branch)
+     * %c = cvs_cmd_name
      * %p = path from $CVSROOT
      * %r = path from root
-     * %{sVv} = attribute list = file name, old version tag will be deleted from,
-     *             new version tag will be added to (or deleted from until
-     *             SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
+     * %{sVv} = attribute list = file name, old version tag will be deleted
+     *                           from, new version tag will be added to (or
+     *                           deleted from until
+     *                           SUPPORT_OLD_INFO_FMT_STRINGS is undefined)
      */
-    cmdline = format_cmdline(
+    cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	0, srepos,
+	false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	filter,
 	"t", "s", ppd->symtag,
 	"o", "s", ppd->delete_flag ? "del" :
 	          ppd->force_tag_move ? "mov" : "add",
     	"b", "c", delete_flag ? '?' : branch_mode ? 'T' : 'N',
+        "c", "s", cvs_cmd_name,
     	"p", "s", srepos,
 	"r", "s", current_parsed_root->directory,
 	"sVv", ",", ppd->tlist, pretag_list_to_args_proc, (void *) NULL,
@@ -667,7 +762,7 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
-	error(0, 0, "pretag proc resolved to the empty string!");
+	error (0, 0, "pretag proc resolved to the empty string!");
 	return 1;
     }
 
@@ -692,18 +787,22 @@ pretag_proc (const char *repository, const char *filter, void *closure)
     return abs (run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL));
 }
 
+
+
 static void
-masterlist_delproc(Node *p)
+masterlist_delproc (Node *p)
 {
     struct master_lists *ml = p->data;
 
-    dellist(&ml->tlist);
-    free(ml);
+    dellist (&ml->tlist);
+    free (ml);
     return;
 }
 
+
+
 static void
-tag_delproc(Node *p)
+tag_delproc (Node *p)
 {
     struct tag_info *ti;
     if (p->data != NULL)
@@ -802,12 +901,17 @@ static int
 rtag_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsfile;
-    char *version, *rev;
+    char *version = NULL, *rev = NULL;
     int retcode = 0;
+    int retval = 0;
+    static bool valtagged = false;
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
-	return 1;
+    {
+	retval = 1;
+	goto free_vars_and_return;
+    }
 
     /*
      * For tagging an RCS file which is a symbolic link, you'd best be
@@ -816,7 +920,10 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
      */
 
     if (delete_flag)
-	return rtag_delete (rcsfile);
+    {
+	retval = rtag_delete (rcsfile);
+	goto free_vars_and_return;
+    }
 
     /*
      * If we get here, we are adding a tag.  But, if -a was specified, we
@@ -826,7 +933,10 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     if (attic_too && (!numtag && !date))
     {
 	if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
-	    return rtag_delete (rcsfile);
+	{
+	    retval = rtag_delete (rcsfile);
+	    goto free_vars_and_return;
+	}
     }
 
     version = RCS_getversion (rcsfile, numtag, date, force_tag_match, NULL);
@@ -840,9 +950,9 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	{
 	    error (0, 0, "cannot find tag `%s' in `%s'",
 		   numtag ? numtag : "head", rcsfile->path);
-	    return 1;
+	    retval = 1;
 	}
-	return 0;
+	goto free_vars_and_return;
     }
     if (numtag
 	&& isdigit ((unsigned char)*numtag)
@@ -876,8 +986,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	 * typical tagging operation.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
-	oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
-				   (int *) NULL);
+	oversion = RCS_getversion (rcsfile, symtag, NULL, 1, NULL);
 	if (oversion != NULL)
 	{
 	    int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
@@ -889,8 +998,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    if (strcmp (version, oversion) == 0 && !branch_mode && !isbranch)
 	    {
 		free (oversion);
-		free (version);
-		return (0);
+		goto free_vars_and_return;
 	    }
 
 	    if (!force_tag_move)
@@ -904,9 +1012,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 		(void)printf (" : NOT MOVING tag to %s %s\n",
 			      branch_mode ? "branch" : "version", rev);
 		free (oversion);
-		free (version);
-		if (branch_mode) free (rev);
-		return 0;
+		goto free_vars_and_return;
 	    }
 	    else /* force_tag_move is set and... */
 		if ((isbranch && !disturb_branch_tags) ||
@@ -917,14 +1023,12 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 			isbranch ? "branch" : "non-branch",
 			symtag, oversion, rev,
 			isbranch ? "" : " due to `-B' option");
-		if (branch_mode) free(rev);
 		free (oversion);
-		free (version);
-		return 0;
+		goto free_vars_and_return;
 	    }
 	    free (oversion);
 	}
-	retcode = RCS_settag(rcsfile, symtag, rev);
+	retcode = RCS_settag (rcsfile, symtag, rev);
 	if (retcode == 0)
 	    RCS_rewrite (rcsfile, NULL, NULL);
     }
@@ -934,15 +1038,19 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	error (1, retcode == -1 ? errno : 0,
 	       "failed to set tag `%s' to revision `%s' in `%s'",
 	       symtag, rev, rcsfile->path);
-        if (branch_mode)
-	    free (rev);
-        free (version);
-        return 1;
+        retval = 1;
+	goto free_vars_and_return;
     }
-    if (branch_mode)
-	free (rev);
-    free (version);
-    return 0;
+
+free_vars_and_return:
+    if (branch_mode && rev) free (rev);
+    if (version) free (version);
+    if (!delete_flag && !retval && !valtagged)
+    {
+	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
+	valtagged = true;
+    }
+    return retval;
 }
 
 
@@ -1020,6 +1128,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     Vers_TS *vers;
     int retcode = 0;
     int retval = 0;
+    static bool valtagged = false;
 
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
 
@@ -1046,8 +1155,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	 * "rcs" to remove the tag... trust me.
 	 */
 
-	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
-				  (int *) NULL);
+	version = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
 	if (version == NULL || vers->srcfile == NULL)
 	    goto free_vars_and_return;
 
@@ -1067,7 +1175,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
 	    goto free_vars_and_return;
 	}
 
-	if ((retcode = RCS_deltag(vers->srcfile, symtag)) != 0)
+	if ((retcode = RCS_deltag (vers->srcfile, symtag)) != 0)
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1094,17 +1202,11 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
      * out and we'll tag that version.
      */
     if (nversion == NULL)
-    {
         version = vers->vn_user;
-    }
     else
-    {
         version = nversion;
-    }
     if (version == NULL)
-    {
 	goto free_vars_and_return;
-    }
     else if (strcmp (version, "0") == 0)
     {
 	if (!quiet)
@@ -1114,13 +1216,15 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     else if (version[0] == '-')
     {
 	if (!quiet)
-	    error (0, 0, "skipping removed but un-commited file `%s'", finfo->file);
+	    error (0, 0, "skipping removed but un-commited file `%s'",
+		   finfo->file);
 	goto free_vars_and_return;
     }
     else if (vers->srcfile == NULL)
     {
 	if (!quiet)
-	    error (0, 0, "cannot find revision control file for `%s'", finfo->file);
+	    error (0, 0, "cannot find revision control file for `%s'",
+		   finfo->file);
 	goto free_vars_and_return;
     }
 
@@ -1215,7 +1319,12 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
     if (nversion != NULL)
         free (nversion);
     freevers_ts (&vers);
-    return (retval);
+    if (!delete_flag && !retval && !valtagged)
+    {
+	tag_check_valid (symtag, 0, NULL, 0, 0, NULL, true);
+	valtagged = true;
+    }
+    return retval;
 }
 
 
@@ -1258,13 +1367,11 @@ struct val_args {
     int found;
 };
 
-static int val_fileproc (void *callerdat, struct file_info *finfo);
-
 static int
 val_fileproc (void *callerdat, struct file_info *finfo)
 {
     RCSNode *rcsdata;
-    struct val_args *args = (struct val_args *)callerdat;
+    struct val_args *args = callerdat;
     char *tag;
 
     if ((rcsdata = finfo->rcs) == NULL)
@@ -1272,7 +1379,7 @@ val_fileproc (void *callerdat, struct file_info *finfo)
 	   W_REPOS | W_ATTIC.  */
 	return 0;
 
-    tag = RCS_gettag (rcsdata, args->name, 1, (int *) NULL);
+    tag = RCS_gettag (rcsdata, args->name, 1, NULL);
     if (tag != NULL)
     {
 	/* FIXME: should find out a way to stop the search at this point.  */
@@ -1297,48 +1404,71 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
     return R_SKIP_ALL;
 }
 
-/* Check to see whether NAME is a valid tag.  If so, return.  If not
-   print an error message and exit.  ARGC, ARGV, LOCAL, and AFLAG specify
-   which files we will be operating on.
 
-   REPOSITORY is the repository if we need to cd into it, or NULL if
-   we are already there, or "" if we should do a W_LOCAL recursion.
-   Sorry for three cases, but the "" case is needed in case the
-   working directories come from diverse parts of the repository, the
-   NULL case avoids an unneccesary chdir, and the non-NULL, non-""
-   case is needed for checkout, where we don't want to chdir if the
-   tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
-   local directory.  */
+
+/* With VALID set, insert NAME into val-tags if it is not already present
+ * there.
+ *
+ * Without VALID set, check to see whether NAME is a valid tag.  If so, return.
+ * If not print an error message and exit.
+ *
+ * INPUTS
+ *
+ *   ARGC, ARGV, LOCAL, and AFLAG specify which files we will be operating on.
+ *
+ *   REPOSITORY is the repository if we need to cd into it, or NULL if
+ *     we are already there, or "" if we should do a W_LOCAL recursion.
+ *     Sorry for three cases, but the "" case is needed in case the
+ *     working directories come from diverse parts of the repository, the
+ *     NULL case avoids an unneccesary chdir, and the non-NULL, non-""
+ *     case is needed for checkout, where we don't want to chdir if the
+ *     tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
+ *     local directory.
+ *
+ * ERRORS
+ *   Errors may be encountered opening and accessing the DBM file.  Write
+ *   errors generate warnings and read errors are fatal.  When !VALID and NAME
+ *   is not in val-tags, errors may also be generated as per start_recursion.
+ *   When !VALID, non-existance of tags both in val-tags and in the archive
+ *   files also causes a fatal error.
+ *
+ * RETURNS
+ *   Nothing.
+ */
 void
 tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
-                 char *repository)
+                 char *repository, bool valid)
 {
     DBM *db;
     char *valtags_filename;
     int nowrite = 0;
-    datum mytag;
+    datum mytag, val;
     struct val_args the_val_args;
     struct saved_cwd cwd;
     int which;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE ( TRACE_FUNCTION,
-	    "tag_check_valid ( name=%s, argc=%d, argv=%p, local=%d,\n"
-       "                       aflag=%d, repository=%s )",
-	    name ? name : "(name)", argc, (void *)argv, local, aflag,
-	    repository ? repository : "(null)" );
+    TRACE (TRACE_FUNCTION,
+	   "tag_check_valid (name=%s, argc=%d, argv=%p, local=%d,\n"
+      "                      aflag=%d, repository=%s, valid=%s)",
+	   name ? name : "(name)", argc, (void *)argv, local, aflag,
+	   repository ? repository : "(null)",
+	   valid ? "true" : "false");
 #else
-    TRACE ( TRACE_FUNCTION,
-	    "tag_check_valid ( name=%s, argc=%d, argv=%lx, local=%d,\n"
-       "                       aflag=%d, repository=%s )",
-	    name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
-	    repository ? repository : "(null)" );
+    TRACE (TRACE_FUNCTION,
+	   "tag_check_valid (name=%s, argc=%d, argv=%lx, local=%d,\n"
+      "                      aflag=%d, repository=%s, valid=%s)",
+	   name ? name : "(name)", argc, (unsigned long)argv, local, aflag,
+	   repository ? repository : "(null)",
+	   valid ? "true" : "false");
 #endif
 
     /* Numeric tags require only a syntactic check.  */
     if (isdigit ((unsigned char) name[0]))
     {
 	char *p;
+	/* insert is not possible for numeric revisions */
+	assert (!valid);
 	for (p = name; *p != '\0'; ++p)
 	{
 	    if (!(isdigit ((unsigned char) *p) || *p == '.'))
@@ -1351,7 +1481,11 @@ Numeric tag %s contains characters other than digits and '.'", name);
     /* Special tags are always valid.  */
     if (strcmp (name, TAG_BASE) == 0
 	|| strcmp (name, TAG_HEAD) == 0)
+    {
+	/* insert is not possible for numeric revisions */
+	assert (!valid);
 	return;
+    }
 
     /* FIXME: This routine doesn't seem to do any locking whatsoever
        (and it is called from places which don't have locks in place).
@@ -1384,12 +1518,12 @@ Numeric tag %s contains characters other than digits and '.'", name);
     }
     if (db != NULL)
     {
-	datum val;
-
 	val = dbm_fetch (db, mytag);
-	if (val.dptr != NULL)
+	if (val.dptr)
 	{
-	    /* Found.  The tag is valid.  */
+	    /* The tag is already in val-tags - return valid and don't insert
+	     * it a second time.
+	     */
 	    dbm_close (db);
 	    free (valtags_filename);
 	    return;
@@ -1397,88 +1531,88 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	/* FIXME: should check errors somehow (add dbm_error to myndbm.c?).  */
     }
 
-    /* We didn't find the tag in val-tags, so look through all the RCS files
-       to see whether it exists there.  Yes, this is expensive, but there
-       is no other way to cope with a tag which might have been created
-       by an old version of CVS, from before val-tags was invented.
-
-       Since we need this code anyway, we also use it to create
-       entries in val-tags in general (that is, the val-tags entry
-       will get created the first time the tag is used, not when the
-       tag is created).  */
-
-    the_val_args.name = name;
-    the_val_args.found = 0;
-
-    which = W_REPOS | W_ATTIC;
-
-    if (repository == NULL || repository[0] == '\0')
-	which |= W_LOCAL;
-    else
+    if (!valid)
     {
-	if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
-	if (CVS_CHDIR (repository) < 0)
-	    error (1, errno, "cannot change to %s directory", repository);
-    }
+	/* We didn't find the tag in val-tags, so look through all the RCS files
+	   to see whether it exists there.  Yes, this is expensive, but there
+	   is no other way to cope with a tag which might have been created
+	   by an old version of CVS, from before val-tags was invented.
 
-    start_recursion
-	(val_fileproc, NULL, val_direntproc, NULL,
-	 &the_val_args, argc, argv, local, which, aflag,
-	 CVS_LOCK_READ, NULL, 1, repository);
-    if (repository != NULL && repository[0] != '\0')
-    {
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
-	free_cwd (&cwd);
-    }
+	   Since we need this code anyway, we also use it to create
+	   entries in val-tags in general (that is, the val-tags entry
+	   will get created the first time the tag is used, not when the
+	   tag is created).  */
 
-    if (!the_val_args.found)
-	error (1, 0, "no such tag %s", name);
-    else
-    {
-	/* The tags is valid but not mentioned in val-tags.  Add it.  */
-	datum value;
+	the_val_args.name = name;
+	the_val_args.found = 0;
+	which = W_REPOS | W_ATTIC;
 
-	if (noexec || nowrite)
+	if (repository == NULL || repository[0] == '\0')
+	    which |= W_LOCAL;
+	else
 	{
-	    if (db != NULL)
-		dbm_close (db);
-	    free (valtags_filename);
-	    return;
+	    if (save_cwd (&cwd))
+		exit (EXIT_FAILURE);
+	    if (CVS_CHDIR (repository) < 0)
+		error (1, errno, "cannot change to %s directory", repository);
 	}
+
+	start_recursion
+	    (val_fileproc, NULL, val_direntproc, NULL,
+	     &the_val_args, argc, argv, local, which, aflag,
+	     CVS_LOCK_READ, NULL, 1, repository);
+	if (repository != NULL && repository[0] != '\0')
+	{
+	    if (restore_cwd (&cwd, NULL))
+		exit (EXIT_FAILURE);
+	    free_cwd (&cwd);
+	}
+
+	if (!the_val_args.found)
+	    error (1, 0, "no such tag %s", name);
+    }
+
+    /* The tags is valid but not mentioned in val-tags.  Add it.  */
+    if (noexec || nowrite)
+    {
+	if (db != NULL)
+	    dbm_close (db);
+	free (valtags_filename);
+	return;
+    }
+
+    if (db == NULL)
+    {
+	mode_t omask;
+	omask = umask (cvsumask);
+	db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
+	(void)umask (omask);
 
 	if (db == NULL)
 	{
-	    mode_t omask;
-	    omask = umask (cvsumask);
-	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	    (void)umask (omask);
-
-	    if (db == NULL)
-	    {
-		error (0, errno, "warning: cannot create %s", valtags_filename);
-		free (valtags_filename);
-		return;
-	    }
+	    error (0, errno, "warning: cannot create %s", valtags_filename);
+	    free (valtags_filename);
+	    return;
 	}
-	value.dptr = "y";
-	value.dsize = 1;
-	if (dbm_store (db, mytag, value, DBM_REPLACE) < 0)
-	    error (0, errno, "cannot store %s into %s", name,
-		   valtags_filename);
-	dbm_close (db);
     }
+    val.dptr = "y";
+    val.dsize = 1;
+    if (dbm_store (db, mytag, val, DBM_REPLACE) < 0)
+	error (0, errno, "cannot store %s into %s", name,
+	       valtags_filename);
+    dbm_close (db);
     free (valtags_filename);
 }
+
+
 
 /*
  * Check whether a join tag is valid.  This is just like
  * tag_check_valid, but we must stop before the colon if there is one.
  */
-
 void
-tag_check_valid_join (char *join_tag, int argc, char **argv, int local, int aflag, char *repository)
+tag_check_valid_join (char *join_tag, int argc, char **argv, int local,
+                      int aflag, char *repository)
 {
     char *c, *s;
 
@@ -1498,10 +1632,10 @@ tag_check_valid_join (char *join_tag, int argc, char **argv, int local, int afla
 	 */
 	if (!*c)
 	    error (1, 0,
-		   "argument to join may not contain a date specifier without a tag");
+"argument to join may not contain a date specifier without a tag");
     }
 
-    tag_check_valid (c, argc, argv, local, aflag, repository);
+    tag_check_valid (c, argc, argv, local, aflag, repository, false);
 
     free (c);
 }

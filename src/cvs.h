@@ -149,23 +149,26 @@ char *strerror (int);
  * entire source repository beginning at $CVSROOT.
  */
 #define	CVSROOTADM		"CVSROOT"
-#define	CVSROOTADM_MODULES	"modules"
-#define	CVSROOTADM_LOGINFO	"loginfo"
-#define	CVSROOTADM_RCSINFO	"rcsinfo"
-#define CVSROOTADM_COMMITINFO	"commitinfo"
-#define CVSROOTADM_TAGINFO      "taginfo"
-#define CVSROOTADM_VERIFYMSG    "verifymsg"
-#define	CVSROOTADM_HISTORY	"history"
-#define CVSROOTADM_VALTAGS	"val-tags"
-#define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
-#define CVSROOTADM_WRAPPER	"cvswrappers"
+#define CVSROOTADM_COMMITINFO	"commitinfo"
+#define	CVSROOTADM_CONFIG	"config"
+#define	CVSROOTADM_IGNORE	"cvsignore"
+#define	CVSROOTADM_HISTORY	"history"
+#define	CVSROOTADM_LOGINFO	"loginfo"
+#define	CVSROOTADM_MODULES	"modules"
 #define CVSROOTADM_NOTIFY	"notify"
-#define CVSROOTADM_USERS	"users"
-#define CVSROOTADM_READERS	"readers"
-#define CVSROOTADM_WRITERS	"writers"
 #define CVSROOTADM_PASSWD	"passwd"
-#define CVSROOTADM_CONFIG	"config"
+#define CVSROOTADM_POSTADMIN	"postadmin"
+#define CVSROOTADM_POSTTAG	"posttag"
+#define CVSROOTADM_POSTWATCH	"postwatch"
+#define	CVSROOTADM_RCSINFO	"rcsinfo"
+#define CVSROOTADM_READERS	"readers"
+#define CVSROOTADM_TAGINFO      "taginfo"
+#define CVSROOTADM_USERS	"users"
+#define CVSROOTADM_VALTAGS	"val-tags"
+#define CVSROOTADM_VERIFYMSG    "verifymsg"
+#define CVSROOTADM_WRAPPER	"cvswrappers"
+#define CVSROOTADM_WRITERS	"writers"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
@@ -948,7 +951,7 @@ char *normalize_cvsroot (const cvsroot_t *root)
 	__attribute__ ((__malloc__));
 #endif /* AUTH_CLIENT_SUPPORT */
 
-void tag_check_valid (char *, int, char **, int, int, char *);
+void tag_check_valid (char *, int, char **, int, int, char *, bool);
 void tag_check_valid_join (char *, int, char **, int, int,
                            char *);
 

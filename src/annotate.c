@@ -229,7 +229,7 @@ rannotate_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, 
 
     if (tag != NULL && !tag_validated)
     {
-	tag_check_valid (tag, argc - 1, argv + 1, local, 0, repository);
+	tag_check_valid (tag, argc - 1, argv + 1, local, 0, repository, false);
 	tag_validated = 1;
     }
 

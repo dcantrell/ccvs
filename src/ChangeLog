@@ -1,3 +1,53 @@
+2004-08-20  Derek Price <derek@ximbiot.com>
+
+	Cache tags in val-tags on successful creation to avoid problems with
+	write proxies.  Merged from `writeproxy2' branch.
+
+	* tag.c (tag_filesdoneproc): Don't track posttag errors.
+	(cvstag): Move addition of successful tags to val-tags to...
+	(tag_fileproc): ...here and...
+	(rtag_fileproc): ...here.  Consolidate returns at single location.
+	(*): Misc reformatting.
+
+	* tag.c (add_val_tag): New function with content factored from...
+	(tag_check_valid): ...here.
+	(cvstag): Call add_val_tag() when needed.
+	* annotate.c, checkout.c, commit.c, diff.c, ls.c, patch.c, recurse.c,
+	tag.c, update.c: Pass new args to tag_check_valid.
+
+	Merge of postadmin, posttag, and postwatch functionality from
+	`writeproxy2' branch.
+
+	* admin.c (postadmin_proc), commit.c (precommit_proc), edit.c
+	(notify_proc), fileattr.c (postwatch_proc), logmsg.c (logfile_write),
+	server.c (prepost_proxy_proc), tag.c (posttag_proc, pretag_proc): Add
+	default %c format string.
+
+	* cvs.h (CVSROOTADM_POSTWATCH): New macro.
+	* fileattr.c (*): Misc cleanup.
+	(postwatch_proc): New function.
+	(fileattr_write): Call watch proc when done writing fileattr.
+	* mkmodules.c (postwatch_contents): New var.
+	(filelist): Add postwatch.
+	* watch.c (addremove_filesdoneproc): Remove function.
+	(watch_addremove): Don't call above function.
+	(*): Misc cleanup.
+	* watch.h: Remove some unnecessary "extern" decls.
+
+	* admin.c (postadmin_proc, admin_filesdoneproc): New functions.
+	(admin): Pass admin_filesdoneproc() to start_recursion().
+	(*): Misc gratuitous cleanup.
+	* cvs.h (CVSROOTADM_*): Alphabetize, add new hook config files.
+	(format_cmdline): Fix proto to match change below.
+	* mkmodules.c (*_content): Add init content for new files.  Misc
+	cleanup.
+	(filelist): Add new files.
+	* tag.c (struct pretag_proc_data): Move before first use.
+	(posttag_proc, tag_filesdoneproc): New functions.
+	(rtag_proc): Pass new procs to start_recursion().
+	(*): Misc gratuitous cleanup.
+	* sanity.sh: Misc accommodations.
+
 2004-08-19  Mark D. Baushke  <mdb@cvshome.org>
 
 	* log-buffer.c (log_buffer_output): Protect call to fsync()
