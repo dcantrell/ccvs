@@ -3140,6 +3140,14 @@ File: file5            	Status: Up-to-date
 
 	dirs)
 	  # Tests related to removing and adding directories.
+	  # See also:
+	  #   conflicts (especially dir1 in conflicts-130): What happens if
+	  #     directory exists in repository and a non-CVS-controlled
+	  #     directory in the working directory?
+	  #   conflicts3-15.  More cases, especially where CVS directory
+	  #     exists but without CVS/Repository and friends.
+	  #   conflicts3-22.  Similar to conflicts-130 but there is a file
+	  #     in the directory.
 	  mkdir imp-dir; cd imp-dir
 	  echo file1 >file1
 	  mkdir sdir
@@ -5940,6 +5948,37 @@ ${PROG} update: move away sdir/sfile; it is in the way
 C sdir/sfile"
 	  else
 	    dotest conflicts3-23 "${testcvs} -q update -PdA" \
+"${QUESTION} sdir"
+	  fi
+
+	  # Not that it should really affect much, but let's do the case
+	  # where sfile has been removed.  For example, suppose that sdir
+	  # had been a CVS-controlled directory which was then removed
+	  # by removing each file (and using update -P or some such).  Then
+	  # suppose that the build process creates an sdir directory which
+	  # is not supposed to be under CVS.
+	  rm -r sdir
+	  dotest conflicts3-24 "${testcvs} -q update -d sdir" "U sdir/sfile"
+	  rm sdir/sfile
+	  dotest conflicts3-25 "${testcvs} rm sdir/sfile" \
+"${PROG} [a-z]*: scheduling .sdir/sfile. for removal
+${PROG} [a-z]*: use .${PROG} commit. to remove this file permanently"
+	  dotest conflicts3-26 "${testcvs} ci -m remove sdir/sfile" \
+"Removing sdir/sfile;
+${TESTDIR}/cvsroot/first-dir/sdir/sfile,v  <--  sfile
+new revision: delete; previous revision: 1\.1
+done"
+	  rm -r sdir/CVS
+	  dotest conflicts3-27 "${testcvs} -q update" "${QUESTION} sdir"
+	  if test "x$remote" = xyes; then
+	    # Regarding "cannot open CVS/Entries", see comments at
+	    # conflicts3-23.
+	    dotest conflicts3-28 "${testcvs} -q update -PdA" \
+"${QUESTION} sdir
+${PROG} update: in directory sdir:
+${PROG} update: cannot open CVS/Entries for reading: No such file or directory"
+	  else
+	    dotest conflicts3-28 "${testcvs} -q update -PdA" \
 "${QUESTION} sdir"
 	  fi
 
