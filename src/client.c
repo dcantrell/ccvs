@@ -4101,7 +4101,7 @@ void
 send_arg (const char *string)
 {
     char buf[1];
-    char *p = string;
+    const char *p = string;
 
     send_to_server ("Argument ", 0);
 
