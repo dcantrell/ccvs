@@ -997,16 +997,10 @@ log_version_requested (log_data, revlist, rcs, vnode)
     RCSVers *vnode;
 {
     /* Handle the list of states from the -s option.  */
-    if (log_data->statelist != NULL)
+    if (log_data->statelist != NULL
+	&& findnode (log_data->statelist, vnode->state) == NULL)
     {
-	Node *p;
-
-	p = findnode (vnode->other, "state");
-	if (p != NULL
-	    && findnode (log_data->statelist, p->data) == NULL)
-	{
-	    return 0;
-	}
+	return 0;
     }
 
     /* Handle the list of authors from the -w option.  */
@@ -1303,8 +1297,7 @@ log_version (log_data, revlist, rcs, ver, trunk)
     cvs_output (ver->author, 0);
 
     cvs_output (";  state: ", 0);
-    p = findnode (ver->other, "state");
-    cvs_output (p->data, 0);
+    cvs_output (ver->state, 0);
     cvs_output (";", 1);
 
     if (! trunk)

@@ -71,6 +71,7 @@ struct rcsversnode
     char *version;
     char *date;
     char *author;
+    char *state;
     char *next;
     int dead;
     List *branches;

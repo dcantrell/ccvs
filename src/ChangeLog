@@ -1,3 +1,25 @@
+Sun Apr 13 00:04:34 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	Expand RCS keywords internally; never call co:
+	* rcs.h (struct rcsversnode): Add state field.
+	* rcs.c (kflags): Move out of RCS_check_kflag, and make file
+	static.
+	(enum kflag): Define.
+	(RCS_reparsercsfile): Always save lock information.  Save state in
+	new state field, rather than other field.
+	(struct rcs_keyword): Define.
+	(keywords): New static variable.
+	(enum keyword): Define.
+	(printable_date, escape_keyword_value): New static functions.
+	(expand_keywords): New static function.
+	(RCS_checkout): Call expand_keywords.  Don't call
+	RCS_exec_checkout.
+	(RCS_deltas): Add log and loglen parameters.  Change all callers.
+	* log.c (log_version_requested): Use new state field.
+	(log_version): Likewise.
+	* cvs.h (RCS_exec_checkout): Don't declare.
+	* rcscmds.c (RCS_exec_checkout): Remove.
+
 Sat Apr 12 17:32:59 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* sanity.sh (modules3): Remove second-dir at end of tests.

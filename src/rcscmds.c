@@ -161,34 +161,6 @@ RCS_merge(path, options, rev1, rev2)
     return status;
 }
 
-/* Check out a revision from RCSFILE into WORKFILE, or to standard output
-   if WORKFILE is NULL.  TAG is the tag to check out, or NULL if one
-   should check out the head of the default branch.  OPTIONS is a string
-   such as -kb or -kkv, for keyword expansion options, or NULL if there
-   are none.  If WORKFILE is NULL, run regardless of noexec; if non-NULL,
-   noexec inhibits execution.  SOUT is what to do with standard output
-   (typically RUN_TTY).  */
-int
-RCS_exec_checkout (rcsfile, workfile, tag, options, sout)
-    char *rcsfile;
-    char *workfile;
-    char *tag;
-    char *options;
-    char *sout;
-{
-    run_setup ("%s%s -x,v/ -q %s%s", Rcsbin, RCS_CO,
-               tag ? "-r" : "", tag ? tag : "");
-    if (options != NULL && options[0] != '\0')
-	run_arg (options);
-    if (workfile == NULL)
-	run_arg ("-p");
-    run_arg (rcsfile);
-    if (workfile != NULL)
-	run_arg (workfile);
-    return run_exec (RUN_TTY, sout, RUN_TTY,
-                     workfile == NULL ? (RUN_NORMAL | RUN_REALLY) : RUN_NORMAL);
-}
-
 /* Check in to RCSFILE with revision REV (which must be greater than the
    largest revision) and message MESSAGE (which is checked for legality).
    If FLAGS & RCS_FLAGS_DEAD, check in a dead revision.  If FLAGS &
