@@ -1,5 +1,8 @@
 Mon Feb 12 10:06:27 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TODO: Remove mkmodules stuff.
+	* NEWS: Add item concerning mkmodules.
+
 	* configure.in (AC_REPLACE_FUNCS): Add vasprintf.
 	* configure: Regenerated.
 
