@@ -1,3 +1,7 @@
+2003-12-18  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note that pserver can no longer run as root.
+
 2003-12-07  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in (AC_SYS_LARGEFILE): Remove. More work is needed
