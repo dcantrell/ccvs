@@ -1,3 +1,7 @@
+Mon Jun  3 02:20:30 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* version.c: version 1.8.3.
+
 Thu May 30 10:07:24 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (cmds): Fix typo ("bdif" -> "dif") which was accidentally
