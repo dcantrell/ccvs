@@ -1108,21 +1108,26 @@ log_expand_revlist (rcs, revlist, default_branch)
                does.  This code is a bit cryptic for my tastes, but
                keeping the same implementation as rlog ensures a
                certain degree of compatibility.  */
-	    if (r->first == NULL && nr->last != NULL)
+	    if (r->first == NULL)
 	    {
-		nr->fields = numdots (nr->last) + 1;
-		if (nr->fields < 2)
-		    nr->first = xstrdup (".0");
+		if (nr->last == NULL)
+		    nr->fields = 0;
 		else
 		{
-		    char *cp;
+		    nr->fields = numdots (nr->last) + 1;
+		    if (nr->fields < 2)
+			nr->first = xstrdup (".0");
+		    else
+		    {
+			char *cp;
 
-		    nr->first = xstrdup (nr->last);
-		    cp = strrchr (nr->first, '.');
-		    strcpy (cp, ".0");
+			nr->first = xstrdup (nr->last);
+			cp = strrchr (nr->first, '.');
+			strcpy (cp + 1, "0");
+		    }
 		}
 	    }
-	    else if (r->last == NULL && nr->first != NULL)
+	    else if (r->last == NULL)
 	    {
 		nr->fields = numdots (nr->first) + 1;
 		nr->last = xstrdup (nr->first);
@@ -1136,13 +1141,30 @@ log_expand_revlist (rcs, revlist, default_branch)
 		    *cp = '\0';
 		}
 	    }
-	    else if (nr->first != NULL && nr->last != NULL)
+	    else if (nr->first == NULL || nr->last == NULL)
+		nr->fields = 0;
+	    else if (strcmp (nr->first, nr->last) == 0)
+		nr->fields = numdots (nr->last) + 1;
+	    else
 	    {
-		nr->fields = numdots (nr->first) + 1;
-		if (nr->fields != numdots (nr->last) + 1
-		    || (nr->fields > 2
-			&& version_compare (nr->first, nr->last,
-					    nr->fields - 1) != 0))
+		int ord;
+		int dots1 = numdots (nr->first);
+		int dots2 = numdots (nr->last);
+		if (dots1 > dots2 || (dots1 == dots2 &&
+		    version_compare (nr->first, nr->last, dots1 + 1) > 0))
+		{
+		    char *tmp = nr->first;
+		    nr->first = nr->last;
+		    nr->last = tmp;
+		    nr->fields = dots2 + 1;
+		    dots2 = dots1;
+		    dots1 = nr->fields - 1;
+		}
+		else
+		    nr->fields = dots1 + 1;
+		dots1 += (nr->fields & 1);
+		ord = version_compare (nr->first, nr->last, dots1);
+		if (ord > 0 || (nr->fields > 2 && ord < 0))
 		{
 		    error (0, 0,
 			   "invalid branch or revision pair %s:%s in `%s'",
@@ -1153,17 +1175,46 @@ log_expand_revlist (rcs, revlist, default_branch)
 		    nr->last = NULL;
 		    nr->fields = 0;
 		}
-		else if (version_compare (nr->first, nr->last, nr->fields) > 0)
+		else
 		{
-		    char *tmp;
+		    if (nr->fields <= dots2 && (nr->fields & 1))
+		    {
+			char *p = xmalloc (strlen (nr->first) + 3);
+			strcpy (p, nr->first);
+			strcat (p, ".0");
+			free (nr->first);
+			nr->first = p;
+			++nr->fields;
+		    }
+		    while (nr->fields <= dots2)
+		    {
+			char *p;
+			int i;
 
-		    tmp = nr->first;
-		    nr->first = nr->last;
-		    nr->last = tmp;
+			nr->next = NULL;
+			*pr = nr;
+			nr = (struct revlist *) xmalloc (sizeof *nr);
+			nr->inclusive = (*pr)->inclusive;
+			(*pr)->inclusive = 1;
+			nr->first = xstrdup ((*pr)->last);
+			nr->last = xstrdup ((*pr)->last);
+			nr->fields = (*pr)->fields;
+			p = (*pr)->last;
+			for (i = 0; i < nr->fields; i++)
+			    p = strchr (p, '.') + 1;
+			p[-1] = '\0';
+			p = strchr (nr->first + (p - (*pr)->last), '.');
+			if (p != NULL)
+			{
+			    *p = '\0';
+			    nr->fields += 2;
+			}
+			else
+			    ++nr->fields;
+			pr = &(*pr)->next;
+		    }
 		}
 	    }
-	    else
-		nr->fields = 0;
 	}
 
 	nr->next = NULL;
