@@ -138,7 +138,7 @@ login (argc, argv)
    * host:repos portion.
    */
   {
-    char *r, *p;
+    char *r;
 
     /* After confirming that CVSroot is non-NULL, we skip past the
        initial ":pserver:" to test the rest of it. */
