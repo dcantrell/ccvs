@@ -1,5 +1,15 @@
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (do_cvs_command): Have the server child close all the pipes
+	but the flow control pipe and wait on an EOF on the flow control pipe
+	from the parent when done to avoid a race condition that could
+	otherwise generate a SIGPIPE for the parent before the SIGCHILD when
+	the other pipes were so full after a child exited that the parent
+	attempted to write a stop byte to the flow control pipe.
+	(Original report from <jesse_off@stchome.com>.)
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (stdio_buffer_shutdown): Add a helpful comment.
 
 2004-02-09  Derek Price  <derek@ximbiot.com>
