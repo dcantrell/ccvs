@@ -1855,10 +1855,7 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
 	}
 
 	/* Work out the branch.  */
-	if (! isdigit (tag[0]))
-	    branch = RCS_whatbranch (rcs, tag);
-	else
-	    branch = xstrdup (tag);
+	branch = RCS_whatbranch (rcs, tag);
 
 	/* Fetch the revision of branch as of date.  */
 	rev = RCS_getdatebranch (rcs, date, branch);
@@ -2176,7 +2173,8 @@ RCS_nodeisbranch (rcs, rev)
 
 /*
  * Returns a pointer to malloc'ed memory which contains the branch
- * for the specified *symbolic* tag.  Magic branches are handled correctly.
+ * for the specified revision number or symbolic tag.  Magic branches
+ * are handled correctly.
  */
 char *
 RCS_whatbranch (rcs, rev)
@@ -2191,14 +2189,19 @@ RCS_whatbranch (rcs, rev)
 	return ((char *) NULL);
 
     /* now, look for a match in the symbols list */
-    version = translate_symtag (rcs, rev);
-    if (version == NULL)
-	return ((char *) NULL);
+    if (isdigit (*rev))
+	version = xstrdup (rev);
+    else
+	{
+	version = translate_symtag (rcs, rev);
+	if (version == NULL)
+	    return ((char *) NULL);
+	}
     dots = numdots (version);
     if ((dots & 1) == 0)
 	return (version);
 
-    /* got a symbolic tag match, but it's not a branch; see if it's magic */
+    /* it's not a branch; see if it's magic */
     if (dots > 2)
     {
 	char *magic;

@@ -1,3 +1,17 @@
+Wed Feb 18 16:03:37 1998  Larry Jones  <larry.jones@sdrc.com>
+
+	* admin.c (admin_fileproc): Convert -b argument from symbolic name
+	to revision number before storing in the RCS file.
+	* rcs.c (RCS_whatbranch): Allow numeric as well as symbolic revision.
+	(RCS_getversion): Take advantage of above.
+	* sanity.sh (admin): Add/revise/renumber admin-10c, admin-11a,
+	admin-12, and admin-12a to check above.
+
+	* commmit.c (lock_RCS): Minor clean-up.
+
+	* sanity.sh (abspath-6a): Don't depend on the sepcific contents of
+	CVSROOT, it depends on which other tests have been run.
+
 Wed Feb 18 01:56:04 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (putsymbol_proc): Use putc and fputs rather than fprintf.

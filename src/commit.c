@@ -2170,12 +2170,7 @@ lock_RCS (user, rcs, rev, repository)
     {
 	if (sbranch != NULL)
 	    free (sbranch);
-	if (branch)
-	{
-	    sbranch = branch;
-	}
-	else
-	    sbranch = NULL;
+	sbranch = branch;
 	return (0);
     }
 
