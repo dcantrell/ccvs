@@ -1070,7 +1070,13 @@ checkout_file (finfo, vers_ts, adding)
 	else
 	    /* If -f/-t wrappers are being used to wrap up a directory,
 	       then backup might be a directory instead of just a file.  */
-	    (void) unlink_file_dir (backup);
+	    if (unlink_file_dir (backup) < 0)
+	    {
+		/* Not sure if the existence_error check is needed here.  */
+		if (!existence_error (errno))
+		    /* FIXME: should include update_dir in message.  */
+		    error (0, errno, "error removing %s", backup);
+	    }
     }
 
     file_is_dead = RCS_isdead (vers_ts->srcfile, vers_ts->vn_rcs);
@@ -1220,7 +1226,13 @@ VERS: ", 0);
     {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
-	(void) unlink_file_dir (backup);
+	if (unlink_file_dir (backup) < 0)
+	{
+	    /* Not sure if the existence_error check is needed here.  */
+	    if (!existence_error (errno))
+		/* FIXME: should include update_dir in message.  */
+		error (0, errno, "error removing %s", backup);
+	}
 	free (backup);
     }
 
