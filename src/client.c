@@ -2607,8 +2607,10 @@ handle_mbinary( char *args, int len )
     }
 }
 
+
+
 static void
-handle_e( char *args, int len )
+handle_e (char *args, int len)
 {
     /* In the case where stdout and stderr point to the same place,
        fflushing stdout will make output happen in the correct order.  */
@@ -2617,17 +2619,19 @@ handle_e( char *args, int len )
     putc ('\n', stderr);
 }
 
+
+
 /*ARGSUSED*/
 static void
-handle_f( char *args, int len )
+handle_f  (char *args, int len)
 {
     fflush (stderr);
 }
 
-static void handle_mt (char *, int);
+
 
 static void
-handle_mt( char *args, int len )
+handle_mt (char *args, int len)
 {
     char *p;
     char *tag = args;
@@ -2762,6 +2766,8 @@ handle_mt( char *args, int len )
 		printf ("%s", text);
     }
 }
+
+
 
 #endif /* CLIENT_SUPPORT */
 #if defined(CLIENT_SUPPORT) || defined(SERVER_SUPPORT)

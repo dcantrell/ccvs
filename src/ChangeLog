@@ -1,5 +1,9 @@
 2004-07-12  Derek Price  <derek@ximbiot.com>
 
+	* client.c: Misc reformatting.
+
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
 	* main.c: fix format_time_t to call localtime
 	(Patch from Bart Robinson  <lomew@pobox.com>.)
 
