@@ -1,5 +1,11 @@
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* config.h (SYSTEM_CLEANUP): Update macro to be a name
+	replacement rather than a macro function. Note: This
+	change seems to be undone by 'autoreconf'.
+
+2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
+
 	* config.h (SYSTEM_CLEANUP): Update macro to be a name replacement
 	rather than a macro function.
 	(Patch from Rob Clevenger <rob@robsite.org>.)
