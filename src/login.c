@@ -146,15 +146,9 @@ login (argc, argv)
     if (! CVSroot)
       error (1, 0, "CVSroot is NULL");
     else if (! strchr ((r = (CVSroot + strlen (":pserver:"))), '@'))
-      {
-        error (0, 0, "*** it is : %s", r);
-        goto not_fqrn;
-      }
+      goto not_fqrn;
     else if (! strchr (r, ':'))
-      {
-        error (0, 0, "*** it is : %s", r);
-        goto not_fqrn;
-      }
+      goto not_fqrn;
     
     if (0)        /* Lovely. */
       {
