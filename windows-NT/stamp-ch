@@ -454,7 +454,7 @@ typedef int ssize_t;
  * platforms, like some of the Makefiles are.  That way, there is only one
  * place the version string needs to be updated by hand for a new release.
  */
-#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.18.1"
+#define PACKAGE_STRING "Concurrent Versions System (CVS) 1.11.19"
 
 /* The following were added to make #include "xsize.h" work. */
 
