@@ -1,3 +1,8 @@
+Tue Feb 11 16:43:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* .cvsignore: Add cvsnt.mdp and cvsnt.ncb.  They seem to be files
+	created by Visual C++ 4.x which were not created by Visual C++ 2.x.
+
 Tue Feb  4 11:42:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: OS/2 port is client only.
