@@ -1,5 +1,15 @@
 2003-05-08  Derek Price  <derek@ximbiot.com>
 
+	* client.c (log_buffer*): Move...
+	* log-buffer.c (log_buffer*): ...to this new file.
+	* log-buffer.h (setup_logfiles): New file to share prototype.
+	* Makefile.am: Add log-buffer.c & log-buffer.h.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
+2003-05-08  Derek Price  <derek@ximbiot.com>
+
 	* client.c (init_sockaddr): Move...
 	* socket-client.c (init_sockaddr): ...here.
 	* socket-client.h (init_sockaddr): Prototype.
