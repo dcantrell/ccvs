@@ -4081,7 +4081,15 @@ complicated, because @code{diff} doesn't have an option
 to specify use of the "old" format, so you would need
 @samp{cvs -f diff foobar}.
 
+In place of the command name you can use @code{cvs} to
+specify global options (@pxref{Global options}).  For
+example the following line in @file{.cvsrc}
 
+@example
+cvs -z6
+@end example
+
+causes @sc{cvs} to use compression level 6
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Global options
