@@ -1,5 +1,9 @@
 2003-10-04  Derek Price  <derek@ximbiot.com>
 
+	* buffer.c: Reformat a few long function prototypes and lines.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
 	* hash.c (dellist): Immediately set input pointers to NULL in case they
 	are references to global variables which might be accessed by interrupt
 	handlers.
