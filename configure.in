@@ -190,7 +190,7 @@ AC_CACHE_CHECK(
                    [acx_cv_s_issock=yes] )
    if test $acx_cv_s_issock = no; then
      AC_TRY_COMPILE( [#include <sys/stat.h>], [int a; S_ISNAM(a);],
-                     [acx_cv_s_issock=ISNAM] )
+                     [acx_cv_s_issock=S_ISNAM] )
    fi])
 if test $acx_cv_s_issock != yes && test $acx_cv_s_issock != no; then
 dnl   The following comment is repeated verbatim in ACX_GSSAPI in
