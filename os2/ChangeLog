@@ -1,5 +1,8 @@
 Fri Oct 27 13:03:28 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in (OS2_HEADERS, OS2_SOURCES): adjust as necessary for
+        below changes.
+
         * config.h: oops, don't forget second argument, MODE.
 
         * mkdir.c (os2_mkdir): new file, new function.
