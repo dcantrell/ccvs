@@ -7399,13 +7399,6 @@ server the the specified amount of seconds.
 @item $CVS_IGNORE_REMOTE_ROOT
 (What is the purpose of this variable?)
 
-@cindex POSIXLY_CORRECT
-@item $POSIXLY_CORRECT
-Used to control the command line option parsing.  If
-set, permuting the command line is disabled (i.e. you
-must specify all options before other command line
-parameters).
-
 @cindex COMSPEC
 @item $COMSPEC
 Used under OS/2 only.  It specifies the name of the
