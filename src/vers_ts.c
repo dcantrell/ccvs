@@ -10,7 +10,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)vers_ts.c 1.45 94/10/07 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 #define ctime(X)	do not use ctime, please

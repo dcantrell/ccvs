@@ -10,7 +10,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)logmsg.c 1.48 94/09/29 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static int find_type PROTO((Node * p, void *closure));

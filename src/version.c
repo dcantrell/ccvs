@@ -14,7 +14,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)version.c 1.15 94/10/03 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 char *version_string = "\nConcurrent Versions System (CVS) 1.5.1";

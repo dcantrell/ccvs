@@ -16,7 +16,7 @@
 
 #ifndef lint
 static const char rcsid[] = "$CVSid: @(#)patch.c 1.57 94/09/30 $";
-USE(rcsid)
+USE(rcsid);
 #endif
 
 static RETSIGTYPE patch_cleanup PROTO((void));
