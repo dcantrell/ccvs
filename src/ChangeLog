@@ -1,7 +1,7 @@
 1999-04-29  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh: If invoked without any arguments, print a usage
-	message (thanks to Pavel Roskin for the report/patch).
+	message (thanks to Pavel Roskin for a report/patch).
 
 	* run.c (piped_child): Make the error messages more verbose.
 	(close_on_exec): Reindent.
