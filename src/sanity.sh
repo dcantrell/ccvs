@@ -1623,6 +1623,7 @@ if test x"$*" = x; then
 	tests="${tests} mflag editor env errmsg1 errmsg2 adderrmsg opterrmsg"
 	tests="${tests} errmsg3"
 	tests="${tests} close-stdout"
+	tests="$tests debug-log-nonfatal"
 	# Watches, binary files, history browsing, &c.
 	tests="${tests} devcom devcom2 devcom3 watch4 watch5"
         tests="${tests} edit-check"
@@ -16277,6 +16278,31 @@ ${CPROG} \[update aborted\]: \*PANIC\* administration files missing!"
 	  else
 	    skip close-stdout '/dev/full is not available'
 	  fi
+	  ;;
+
+
+
+	debug-log-nonfatal)
+	  # Once upon a time, failure to create the debug log could be fatal.
+          if $remote; then :; else
+            remoteonly debug-log-nonfatal
+	    continue
+	  fi
+
+	  mkdir $TESTDIR/unwritable
+	  chmod a-w $TESTDIR/unwritable
+          save_CVS_CLIENT_LOG=$CVS_CLIENT_LOG
+	  CVS_CLIENT_LOG=$TESTDIR/unwritable/cvsclientlog
+	  export CVS_CLIENT_LOG
+
+	  dotest debug-log-nonfatal-1 \
+"$testcvs -Q co -p CVSROOT/config >/dev/null" \
+"$CPROG checkout: opening to-server logfile $TESTDIR/unwritable/cvsclientlog.in: Permission denied
+$CPROG checkout: opening from-server logfile $TESTDIR/unwritable/cvsclientlog.out: Permission denied"
+
+	  dokeep
+	  rm -rf $TESTDIR/unwritable
+	  CVS_CLIENT_LOG=$save_CVS_CLIENT_LOG
 	  ;;
 
 
