@@ -628,7 +628,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	# Basic/miscellaneous functionality
-	tests="basica basicb basicc basic1 deep basic2"
+	tests="version basica basicb basicc basic1 deep basic2"
 	tests="${tests} files spacefiles commit-readonly"
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff diff death death2 rmadd rmadd2 dirs dirs2"
@@ -743,6 +743,32 @@ for what in $tests; do
 	    fi
 	fi
 	case $what in
+
+	version)
+	  # We've had cases where the version command started dumping core,
+	  # so we might as well test it
+	  dotest version-1 "${testcvs} --version" \
+'
+Concurrent Versions System (CVS) [0-9.]* (client/server)
+
+Copyright (c) [-0-9]* Brian Berliner, david d .zoo. zuhn, 
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS'
+
+	  if test $remote = no ; then
+		dotest version-2 "${testcvs} version" \
+'Concurrent Versions System (CVS) [0-9.]* (client/server)'
+	  else
+		dotest version-2r "${testcvs} version" \
+'Client: Concurrent Versions System (CVS) [0-9.]* (client/server)
+Server: Concurrent Versions System (CVS) [0-9.]* (client/server)'
+	  fi
+	  ;;
+
 	basica)
 	  # Similar in spirit to some of the basic1, and basic2
 	  # tests, but hopefully a lot faster.  Also tests operating on

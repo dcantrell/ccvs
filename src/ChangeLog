@@ -1,3 +1,13 @@
+2001-01-18  Derek Price  <derek.price@openavenue.com>
+
+	* main.c: Add '2001' to the range of copyright years listed by the
+	--version option
+	* version.c.in (version): check current_parsed_root before its isremote
+	member to avoid a core dump
+	* sanity.sh (version): add a test for the version command
+
+	* version.c: regenerated
+
 2001-01-12  Larry Jones  <larry.jones@sdrc.com>
 
 	* rcs.c, rcs.h (RCS_lock, RCS_unlock): Use RCS_gettag to find the
