@@ -1,3 +1,11 @@
+2001-03-15  Larry Jones  <larry.jones@sdrc.com>
+
+	* subr.c (sleep_past): Fix various bugs that would result in a
+	negative sleep time if it weren't unsigned; since it is, it would
+	result in a very large sleep time.  Ensure that us is always less
+	than 1000000.  Don't try to sleep for more 1 sec with usleep.
+	Cast NULL select arguments to correct type just in case.
+
 2001-03-14  Derek Price  <derek.price@openavenue.com>
 
 	* subr.c (sleep_past): New function.
