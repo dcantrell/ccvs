@@ -1,3 +1,16 @@
+2003-05-07  Derek Price  <derek@ximbiot.com>
+
+	* client.h (make_bufs_from_fd): Prototype in order to make available to
+	rsh-client.c.
+	* client.c (start_rsh_server): Moved most of the RSH (:ext:) client
+	stuff to...
+	* rsh-client.h: ...here...
+	* rsh-client.c: ...and here.
+	* Makefile.am (cvs_SOURCES): Add new source files.
+	(Original patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* Makefile.in: Regenerated.
+
 2003-05-06  Derek Price  <derek@ximbiot.com>
 
 	* client.c (socket_buffer_*): Moved most of the socket stuff to...
