@@ -215,6 +215,9 @@ file's description.
   Send me a PGP-signed message if you want the password to use the machine
   where the problem showed up.
 
+* Compile is likely broken on Windows.  src/socket-client.c &
+  src/socket-client.h need to be added to the project.
+
 * Status
 
   This experimental version of CVS contains new features which may not have
