@@ -581,8 +581,8 @@ ${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
 	  dotest basica-10 "${testcvs} annotate" \
 'Annotations for sdir/ssdir/ssfile
 \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-1.1          .[a-z@][a-z@ ]* [0-9a-zA-Z-]*.: ssfile
-1.2          .[a-z@][a-z@ ]* [0-9a-zA-Z-]*.: ssfile line 2'
+1.1          .[a-z0-9@][a-z0-9@ ]* [0-9a-zA-Z-]*.: ssfile
+1.2          .[a-z0-9@][a-z0-9@ ]* [0-9a-zA-Z-]*.: ssfile line 2'
 	  cd ..
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
@@ -1191,44 +1191,44 @@ No conflicts created by this import'
 		# which don't exist in the remote output?  would seem to be
 		# a CVS bug.
 		dotest basic2-64 "${testcvs} his -e -a" \
-'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir           =first-dir= /tmp/cvs-sanity/\*
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1/dir2 == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir           == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1      == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1      == /tmp/cvs-sanity
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1/dir2 == /tmp/cvs-sanity
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
-F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]*                     =first-dir= /tmp/cvs-sanity/\*
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-revision:1.1\]
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* \[1.1\] first-dir           =first-dir= /tmp/cvs-sanity/\*
-U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == /tmp/cvs-sanity/first-dir
-U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file7     first-dir           == /tmp/cvs-sanity/first-dir' \
-'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir           =first-dir= <remote>/\*
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir           == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir           == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file6     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file7     first-dir/dir1/dir2 == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir           == <remote>
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir           == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1      == <remote>
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1      == <remote>
-A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.1 file14    first-dir/dir1/dir2 == <remote>
-M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* 1.2 file6     first-dir/dir1/dir2 == <remote>
-F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]*                     =first-dir= <remote>/\*
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-head:A\]
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
-T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* first-dir \[rtagged-by-revision:1.1\]
-O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z@][a-z@]* \[1.1\] first-dir           =first-dir= <remote>/\*'
+'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= /tmp/cvs-sanity/\*
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1/dir2 == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir           == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1      == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1      == /tmp/cvs-sanity
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1/dir2 == /tmp/cvs-sanity
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1/dir2 == /tmp/cvs-sanity
+F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]*                     =first-dir= /tmp/cvs-sanity/\*
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1.1\]
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1.1\] first-dir           =first-dir= /tmp/cvs-sanity/\*
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == /tmp/cvs-sanity/first-dir
+U [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file7     first-dir           == /tmp/cvs-sanity/first-dir' \
+'O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir           =first-dir= <remote>/\*
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file6     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file7     first-dir/dir1/dir2 == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir           == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir           == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1      == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1      == <remote>
+A [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.1 file14    first-dir/dir1/dir2 == <remote>
+M [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* 1.2 file6     first-dir/dir1/dir2 == <remote>
+F [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]*                     =first-dir= <remote>/\*
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-head:A\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-tag:rtagged-by-head\]
+T [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* first-dir \[rtagged-by-revision:1.1\]
+O [0-9/]* [0-9:]* '"${PLUS}"'0000 [a-z0-9@][a-z0-9@]* \[1.1\] first-dir           =first-dir= <remote>/\*'
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
@@ -1732,29 +1732,29 @@ total revisions: 6;	selected revisions: 6
 description:
 ----------------------------
 revision 1\.3
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 trunk-change-after-branch
 ----------------------------
 revision 1\.2
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 branches:  1\.2\.2;
 trunk-before-branch
 ----------------------------
 revision 1\.1
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;
 add-it
 ----------------------------
 revision 1\.2\.2\.2
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 change-on-br1
 ----------------------------
 revision 1\.2\.2\.1
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 branches:  1\.2\.2\.1\.2;
 modify
 ----------------------------
 revision 1\.2\.2\.1\.2\.1
-date: [0-9/: ]*;  author: [a-z@][a-z@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
+date: [0-9/: ]*;  author: [a-z0-9@][a-z0-9@]*;  state: Exp;  lines: '"${PLUS}"'1 -1
 modify
 ============================================================================='
 	  dotest_status branches-14.4 1 \
@@ -3232,7 +3232,7 @@ done'
 	  else
 	    fail info-8
 	  fi
-	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valueyz=[a-z@][a-z@]*=/tmp/cvs-sanity/cvsroot='
+	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valueyz=[a-z0-9@][a-z0-9@]*=/tmp/cvs-sanity/cvsroot='
 
 	  # I think this might be doable with cvs remove, or at least
 	  # checking in a version with only comments, but I'm too lazy
