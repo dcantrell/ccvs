@@ -61,7 +61,9 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\savecwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
@@ -111,7 +113,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\strftime.obj" \
+	"$(INTDIR)\time_r.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -151,7 +155,9 @@ CLEAN :
 	-@erase "$(INTDIR)\regex.obj"
 	-@erase "$(INTDIR)\savecwd.obj"
 	-@erase "$(INTDIR)\sighandle.obj"
+	-@erase "$(INTDIR)\strftime.obj"
 	-@erase "$(INTDIR)\stripslash.obj"
+	-@erase "$(INTDIR)\time_r.obj"
 	-@erase "$(INTDIR)\valloc.obj"
 	-@erase "$(INTDIR)\vasnprintf.obj"
 	-@erase "$(INTDIR)\vc60.idb"
@@ -200,7 +206,9 @@ LIB32_OBJS= \
 	"$(INTDIR)\xgetwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xstrdup.obj" \
-	"$(INTDIR)\yesno.obj"
+	"$(INTDIR)\yesno.obj" \
+	"$(INTDIR)\strftime.obj" \
+	"$(INTDIR)\time_r.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -355,9 +363,19 @@ SOURCE=.\sighandle.c
 "$(INTDIR)\sighandle.obj" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\strftime.c
+
+"$(INTDIR)\strftime.obj" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\stripslash.c
 
 "$(INTDIR)\stripslash.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\time_r.c
+
+"$(INTDIR)\time_r.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\valloc.c

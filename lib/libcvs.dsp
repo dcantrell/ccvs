@@ -169,7 +169,15 @@ SOURCE=.\sighandle.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\strftime.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\stripslash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\time_r.c
 # End Source File
 # Begin Source File
 
@@ -344,6 +352,10 @@ SOURCE="..\windows-NT\stdbool.h"
 # Begin Source File
 
 SOURCE=.\system.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\time_r.h
 # End Source File
 # Begin Source File
 

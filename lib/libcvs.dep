@@ -129,9 +129,19 @@
 	".\unlocked-io.h"\
 	
 
+.\strftime.c : \
+	"..\windows-NT\config.h"\
+	".\time_r.h"\
+	
+
 .\stripslash.c : \
 	"..\windows-NT\config.h"\
 	".\dirname.h"\
+	
+
+.\time_r.c : \
+	"..\windows-NT\config.h"\
+	".\time_r.h"\
 	
 
 .\valloc.c : \
