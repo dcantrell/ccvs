@@ -40,7 +40,7 @@ EXTRA_DIST = \
 	cvs-paper.ms \
 	cvs.man.header \
 	cvs.man.footer \
-	getdate.text \
+	getdate.texi \
 	mdate-sh
 
 MOSTLYCLEANFILES = \
