@@ -459,16 +459,21 @@ not importing any knowledge of their version history outside the
 current repository).
 
 * One approach would be to require checkins (or other modifications to
-the repository) to succeed at every site before they are allowed to
-complete.  This approach may break down if the network is unreliable
-but it has the advantages that reading the local repository is assured
-of having an up-to-date copy with no network traffic.  It also becomes
-possible to cut over from one set of servers to another (might want to
-look at something at least vaguely similar to the quorums used by
-VMSclusters, so if one server gets out of touch with the others, the
-system can continue to operate after a suitable timeout, and then when
-the out-of-touch server connects again, it updates its data before
-doing anything else).
+the repository) to succeed at a write quorum of sites (51%) before
+they are allowed to complete.  To work well, the network should be
+reliable enough that one can typically get to that many sites.  When a
+server which has been out of touch reconnects, it would want to update
+its data before doing anything else.  Any of the servers can service
+all requests locally, except perhaps for a check that they are
+up-to-date.  The way this differs from a run-of-the-mill distributed
+database is that if one only allows reversible operations via this
+mechanism (exclude "cvs admin -o", "cvs tag -d", &c), then each site
+can back up the others, such that failures at one site, including
+something like deleting all the sources, can be recovered from.  Thus
+the sites need not trust each other as much as for many shared
+databases, and the system may be resilient to many types of
+organizational failures.  Sometimes I call this design the
+"CVScluster" design.
 
 * Another approach is a master/slave one.  Checkins happen at the
 master site, and slave sites need to check whether their local

@@ -1,3 +1,8 @@
+Thu Nov  6 14:29:14 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO (#186): Rewrite paragraph on CVSclusters to be clearer
+	about what this can do and why I think it is a cool idea.
+
 Sun Nov  2 19:34:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* DEVEL-CVS: Wording fix: want to specify that new developers are
