@@ -1,3 +1,9 @@
+Fri Sep 27 05:24:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README-rm-add: Removed; the information which was here is now in
+	cvs.texinfo.
+	* Makefile.in (DISTFILES): Remove README-rm-add.
+
 Wed Sep 25 10:00:00 1996  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.in (cvsbug): Add dependency on version.c.
