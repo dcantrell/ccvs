@@ -106,7 +106,8 @@ cvs_DEPENDENCIES = $(cvs_client_objects) \
 cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
-	$(ZLIB_LIBS)
+	$(ZLIB_LIBS) \
+	$(LIBINTL)
 
 # General
 EXTRA_DIST = \
