@@ -1,3 +1,9 @@
+2000-06-26  Pavel Roskin <proski@gnu.org>
+	and Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (switch_to_user): Only set CVS_Username if
+	AUTH_SERVER_SUPPORT is defined.
+
 2000-06-23  Larry Jones  <larry.jones@sdrc.com>
 
 	* client.c (send_dirent_proc): Don't allocate ignlist if you're
