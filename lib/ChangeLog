@@ -1,3 +1,13 @@
+2003-04-03  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (distclean-local): New target to remove fnmatch.h when
+	necessary.  This should be handled by Automake, but until then...
+	(Resolves issue #100
+	<http://ccvs.cvshome.org/issues/show_bug.cgi?id=100> from
+	Serguei E. Leontiev <Serge3lse@cvshome.org>.)
+
+	* Makefile.in: Regenerated.
+
 2003-03-24  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Update copyright notice.
