@@ -1,5 +1,8 @@
 Fri Sep  1 00:03:17 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.el: Removed.  It was out of date, didn't do much, and I
+	doubt anyone was using it.
+
 	* no_diff.c (No_Difference): Don't change the modes of the files.
 
 Thu Aug 31 13:14:34 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
