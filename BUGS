@@ -25,6 +25,14 @@ assume it is a text file." in client.c.
 bugs and annoyances with wrappers.
 
 
+* If you specify the -w global option to client/server CVS, it only
+overrides a CVSREAD environment variable set on the client, not a
+CVSREAD variable which was set on the server (for example, in .bashrc
+when the server was run via rsh).  The fix of course will be to
+provide a "Option-read-write" request which sends -w, in addition to
+"Global_option -r" which sends -r.
+
+
 * Some people have reported seeing the message "dying gasps from %s
 unexpected" (where %s is the name of your server) when using
 client/server CVS.  One person reported that this had to do with using
