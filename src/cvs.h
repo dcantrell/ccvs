@@ -589,10 +589,8 @@ void rename_file PROTO((const char *from, const char *to));
    malloc'd.  It is OK to call it with PARGC == &ARGC or PARGV == &ARGV.  */
 extern void expand_wild PROTO ((int argc, char **argv, 
                                 int *pargc, char ***pargv));
+char *locate_file_in_dir PROTO(( char *dir, char *file ));
 
-extern char *locate_rcs PROTO (( const char *repository,
-				 const char *file,
-				 int *inattic ));
 #ifdef SERVER_SUPPORT
 extern int cvs_casecmp PROTO ((char *, char *));
 extern int fopen_case PROTO ((char *, char *, FILE **, char **));
