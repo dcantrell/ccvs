@@ -1,3 +1,9 @@
+Thu Sep  7 20:24:46 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * main.c (main): use getopt_long(), accept "--help" and
+        "--version".
+        Don't assume EOF is -1.
+
 Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
 
 	* cvs.h (unlink_file_dir): Add prototype for this.

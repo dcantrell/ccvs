@@ -209,6 +209,8 @@ error_cleanup ()
 #endif
 }
 
+#define KF_GETOPT_LONG 1
+
 int
 main (argc, argv)
     int argc;
@@ -218,9 +220,19 @@ main (argc, argv)
     extern char *config_string;
     char *cp;
     const struct cmd *cm;
-    int c, help = FALSE, err = 0;
+    int c, err = 0;
+    static int help = FALSE, version_flag = FALSE;
     int rcsbin_update_env, cvs_update_env = 0;
     char tmp[PATH_MAX];
+    static struct option long_options[] =
+      {
+        {"help", 0, &help, TRUE},
+        {"version", 0, &version_flag, TRUE},
+        {0, 0, 0, 0}
+      };
+    /* `getopt_long' stores the option index here, but right now we
+        don't use it. */
+    int option_index = 0;
 
     error_set_cleanup (error_cleanup);
 
@@ -261,10 +273,16 @@ main (argc, argv)
 	cvswrite = FALSE;
 
     optind = 1;
-    while ((c = getopt (argc, argv, "Qqrwtnlvb:e:d:Hfz:")) != -1)
-    {
+
+    while ((c = getopt_long
+            (argc, argv, "Qqrwtnlvb:e:d:Hfz:", long_options, &option_index))
+           != EOF)
+      {
 	switch (c)
-	{
+          {
+            case 0:
+                /* getopt_long took care of setting the flag. */ 
+                break;
 	    case 'Q':
 		really_quiet = TRUE;
 		/* FALL THROUGH */
@@ -286,19 +304,7 @@ main (argc, argv)
 		logoff = TRUE;
 		break;
 	    case 'v':
-		(void) fputs (version_string, stdout);
-		(void) fputs (config_string, stdout);
-		(void) sprintf (tmp, "Patch Level: %d\n", PATCHLEVEL);
-		(void) fputs (tmp, stdout);
-		(void) fputs ("\n", stdout);
-		(void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
-		(void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
-		(void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
-		(void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
-		(void) fputs ("\n", stdout);
-		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
-		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
-		exit (0);
+                version_flag = TRUE;
 		break;
 	    case 'b':
 		Rcsbin = optarg;
@@ -331,6 +337,24 @@ main (argc, argv)
 		usage (usg);
 	}
     }
+
+    if (version_flag == TRUE)
+      {
+        (void) fputs (version_string, stdout);
+        (void) fputs (config_string, stdout);
+        (void) sprintf (tmp, "Patch Level: %d\n", PATCHLEVEL);
+        (void) fputs (tmp, stdout);
+        (void) fputs ("\n", stdout);
+        (void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
+        (void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
+        (void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
+        (void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
+        (void) fputs ("\n", stdout);
+        (void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
+        (void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
+        exit (0);
+      }
+
     argc -= optind;
     argv += optind;
     if (argc < 1)
