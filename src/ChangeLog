@@ -1,5 +1,11 @@
 Thu Aug 24 18:57:49 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.h, rcscmds.c (RCS_unlock, RCS_deltag, RCS_lock): Add extra
+	parameter for whether to direct stderr to DEVNULL.
+	* checkin.c, tag.c, rtag.c, import.c, commit.c: Pass extra
+	argument.  1 if stderr had been directed to DEVNULL before
+	rcscmds.c was in use, 0 if it was RUN_TTY.
+
 	* cvs.h: Add comment regarding attic.
 
 Tue Aug 22 10:09:29 1995  Alexander Dupuy  <dupuy@smarts.com>
