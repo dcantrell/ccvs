@@ -381,3 +381,13 @@ extern void os2_start_server (int *tofd, int *fromfd,
 extern void os2_shutdown_server (int fd);
 #define START_SERVER os2_start_server
 #define SHUTDOWN_SERVER os2_shutdown_server
+
+/* For the access() function, for which OS/2 has no pre-defined
+   mnemonic masks. */
+#define R_OK 04
+#define W_OK 02
+#define F_OK 00
+#define X_OK R_OK  /* todo: that's OS/2, right? */
+
+/* For getpid() */
+#include <process.h>

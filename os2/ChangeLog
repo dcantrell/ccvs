@@ -1,3 +1,28 @@
+Mon Nov 13 01:23:27 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in: 
+	(cvs.exe): broke up OBJECTS into components to create icc.in in
+        more steps.  OBJECTS had gotten so big that it formed too long a
+        command line all by itself.  Sheesh.
+        Include stripslash (see below), lib/save_cwd, lib/sighandle,
+        lib/yesno, startserver (see below), rcmd (see below), lib/xgetwd,
+        lib/md5, waitpid (see below), lib/fnmatch, popen (see below).
+
+        * popen.c, rcmd.c, rcmd.h, startserver.c, stripslash.c, waitpid.c:
+        New files.
+        
+        * run.c (close_on_exec): new func (skeleton).
+        (sleep): new func (OS/2 doesn't seem to have this).
+        
+        * pwd.c (getlogin): Don't call win32getlogin(), obviously.        
+
+        * config.h (W_OK, R_OK, X_OK, F_OK): define masks for access().
+        Include <process.h> for getpid().
+        
+        * filesubr.c (isaccessable): define.  Don't know why I left it out
+        before.  For that matter, I don't know how the Windows NT port
+        gets along without it.  Hmmm.
+
 Sat Nov 11 15:00:01 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in: Use backslashes in pathnames, so ICC doesn't
