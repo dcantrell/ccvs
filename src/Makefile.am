@@ -102,10 +102,6 @@ cvs_LDADD = \
 	../lib/libcvs.a \
 	../zlib/libz.a
 
-# extra clean targets
-# wish this could be distclean-hdr-local but it's not part of automake
-DISTCLEANFILES = check.log check.plog
-
 # General
 EXTRA_DIST = \
 	.cvsignore \
@@ -125,6 +121,10 @@ localcheck:
 .PHONY: remotecheck
 remotecheck: all
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
+
+# Our distclean targets
+distclean-local:
+	rm -f check.log check.plog
 
 ## MAINTAINER Targets
 
