@@ -1,4 +1,4 @@
-#! @csh_path@ -f
+#! xCSH_PATHx -f
 #
 # Sccs2rcs is a script to convert an existing SCCS
 # history into an RCS history without losing any of
