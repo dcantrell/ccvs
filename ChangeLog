@@ -1,3 +1,9 @@
+Mon Jan 27 23:05:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Criterion for whether something goes in NEWS is not
+	whether it is user-visible; it is whether it is a bugfix or a
+	feature.
+
 Tue Jan 21 10:21:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Warn people against pre-5.x RCS; describe how to find

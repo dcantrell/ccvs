@@ -133,7 +133,8 @@ the code are appropriate for this, but not always)--patches should not
 be checked in unless there is some reason for them, and the
 description may be helpful if there is a better way to solve the
 problem.  In addition to the ChangeLog entry, there should be a change
-to the NEWS file and cvs.texinfo in the case of a user-visible change.
+to the NEWS file and cvs.texinfo in the case of a new or changed
+behavior (as distinguished from a bugfix).
 
 It is nice to have a test case (see TESTS), especially for fixes which
 involve subtle behaviors or twisted sections of the code.
