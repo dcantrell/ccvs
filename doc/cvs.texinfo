@@ -10686,7 +10686,7 @@ Contributed examples are gratefully accepted.
 
 @itemize @bullet
 @item
-ls [-e | -l] [-R] [-r revision] [-D date] [path@dots{}]
+ls [-e | -l] [-RP] [-r revision] [-D date] [path@dots{}]
 @item
 Requires: repository for @code{rls}, repository & working directory for
 @code{ls}.
@@ -10714,6 +10714,9 @@ by automation.
 
 @item -l
 Display all details.
+
+@item -P
+Don't list contents of empty directories when recursing.
 
 @item -R
 List recursively.
