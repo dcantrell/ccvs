@@ -123,7 +123,7 @@ month_data='
 # log the revisions checked in since the first ChangeLog entry.
 case $rlog_options in
 '')
-	date=1970
+	date=1970-01-01
 	if test -s ChangeLog
 	then
 		# Add 1 to seconds to avoid duplicating most recent log.
