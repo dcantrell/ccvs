@@ -624,10 +624,8 @@ alloc_pending (size_t size)
     }
     return 1;
 }
-
-static void serve_is_modified (char *);
 
-static int supported_response (char *);
+
 
 static int
 supported_response (char *name)
@@ -1417,6 +1415,131 @@ static time_t checkin_time;
 
 
 
+/*
+ * Used to keep track of Entry requests.
+ */
+struct an_entry {
+    struct an_entry *next;
+    char *entry;
+};
+
+static struct an_entry *entries;
+
+static void
+serve_is_modified (char *arg)
+{
+    struct an_entry *p;
+    char *name;
+    char *cp;
+    char *timefield;
+    /* Have we found this file in "entries" yet.  */
+    int found;
+
+    if (error_pending ()) return;
+
+    if (outside_dir (arg))
+	return;
+
+    /* Rewrite entries file to have `M' in timestamp field.  */
+    found = 0;
+    for (p = entries; p != NULL; p = p->next)
+    {
+	name = p->entry + 1;
+	cp = strchr (name, '/');
+	if (cp != NULL
+	    && strlen (arg) == cp - name
+	    && strncmp (arg, name, cp - name) == 0)
+	{
+	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
+	    {
+		/* We didn't find the record separator or it is followed by
+		 * the end of the string, so just exit.
+		 */
+		if (alloc_pending (80))
+		    sprintf (pending_error_text,
+		             "E Malformed Entry encountered.");
+		return;
+	    }
+	    /* If the time field is not currently empty, then one of
+	     * serve_modified, serve_is_modified, & serve_unchanged were
+	     * already called for this file.  We would like to ignore the
+	     * reinvocation silently or, better yet, exit with an error
+	     * message, but we just avoid the copy-forward and overwrite the
+	     * value from the last invocation instead.  See the comment below
+	     * for more.
+	     */
+	    if (*timefield == '/')
+	    {
+		/* Copy forward one character.  Space was allocated for this
+		 * already in serve_entry().  */
+		cp = timefield + strlen (timefield);
+		cp[1] = '\0';
+		while (cp > timefield)
+		{
+		    *cp = cp[-1];
+		    --cp;
+		}
+	    }
+	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
+	     * multiple calls to Is-modified & Unchanged by the client and
+	     * just overwrite the value from the last call.  Technically, we
+	     * should probably either ignore calls after the first or send the
+	     * client an error, since the client/server protocol specification
+	     * specifies that only one call to either Is-Modified or Unchanged
+	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
+	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
+	     * clients which depend on those broken versions of CVSNT (WinCVS
+	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
+	     */
+	    *timefield++ = 'M';
+	    if (kopt != NULL)
+	    {
+		if (alloc_pending (strlen (name) + 80))
+		    sprintf (pending_error_text,
+			     "E protocol error: both Kopt and Entry for %s",
+			     arg);
+		free (kopt);
+		kopt = NULL;
+		return;
+	    }
+	    found = 1;
+	    break;
+	}
+    }
+    if (!found)
+    {
+	/* We got Is-modified but no Entry.  Add a dummy entry.
+	   The "D" timestamp is what makes it a dummy.  */
+	p = xmalloc (sizeof (struct an_entry));
+	if (p == NULL)
+	{
+	    pending_error = ENOMEM;
+	    return;
+	}
+	p->entry = xmalloc (strlen (arg) + 80);
+	if (p->entry == NULL)
+	{
+	    pending_error = ENOMEM;
+	    free (p);
+	    return;
+	}
+	strcpy (p->entry, "/");
+	strcat (p->entry, arg);
+	strcat (p->entry, "//D/");
+	if (kopt != NULL)
+	{
+	    strcat (p->entry, kopt);
+	    free (kopt);
+	    kopt = NULL;
+	}
+	strcat (p->entry, "/");
+	p->next = entries;
+	entries = p;
+    }
+}
+
+
+
 static void
 serve_modified (char *arg)
 {
@@ -1577,15 +1700,6 @@ serve_enable_unchanged (char *arg)
 
 
 
-struct an_entry {
-    struct an_entry *next;
-    char *entry;
-};
-
-static struct an_entry *entries;
-
-
-
 static void
 serve_unchanged (char *arg)
 {
@@ -1672,121 +1786,6 @@ serve_unchanged (char *arg)
 	    *timefield = '=';
 	    break;
 	}
-    }
-}
-
-
-
-static void
-serve_is_modified (char *arg)
-{
-    struct an_entry *p;
-    char *name;
-    char *cp;
-    char *timefield;
-    /* Have we found this file in "entries" yet.  */
-    int found;
-
-    if (error_pending ()) return;
-
-    if (outside_dir (arg))
-	return;
-
-    /* Rewrite entries file to have `M' in timestamp field.  */
-    found = 0;
-    for (p = entries; p != NULL; p = p->next)
-    {
-	name = p->entry + 1;
-	cp = strchr (name, '/');
-	if (cp != NULL
-	    && strlen (arg) == cp - name
-	    && strncmp (arg, name, cp - name) == 0)
-	{
-	    if (!(timefield = strchr (cp + 1, '/')) || *++timefield == '\0')
-	    {
-		/* We didn't find the record separator or it is followed by
-		 * the end of the string, so just exit.
-		 */
-		if (alloc_pending (80))
-		    sprintf (pending_error_text,
-		             "E Malformed Entry encountered.");
-		return;
-	    }
-	    /* If the time field is not currently empty, then one of
-	     * serve_modified, serve_is_modified, & serve_unchanged were
-	     * already called for this file.  We would like to ignore the
-	     * reinvocation silently or, better yet, exit with an error
-	     * message, but we just avoid the copy-forward and overwrite the
-	     * value from the last invocation instead.  See the comment below
-	     * for more.
-	     */
-	    if (*timefield == '/')
-	    {
-		/* Copy forward one character.  Space was allocated for this
-		 * already in serve_entry().  */
-		cp = timefield + strlen (timefield);
-		cp[1] = '\0';
-		while (cp > timefield)
-		{
-		    *cp = cp[-1];
-		    --cp;
-		}
-	    }
-	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
-	     * multiple calls to Is-modified & Unchanged by the client and
-	     * just overwrite the value from the last call.  Technically, we
-	     * should probably either ignore calls after the first or send the
-	     * client an error, since the client/server protocol specification
-	     * specifies that only one call to either Is-Modified or Unchanged
-	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
-	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
-	     * clients which depend on those broken versions of CVSNT (WinCVS
-	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
-	     */
-	    *timefield++ = 'M';
-	    if (kopt != NULL)
-	    {
-		if (alloc_pending (strlen (name) + 80))
-		    sprintf (pending_error_text,
-			     "E protocol error: both Kopt and Entry for %s",
-			     arg);
-		free (kopt);
-		kopt = NULL;
-		return;
-	    }
-	    found = 1;
-	    break;
-	}
-    }
-    if (!found)
-    {
-	/* We got Is-modified but no Entry.  Add a dummy entry.
-	   The "D" timestamp is what makes it a dummy.  */
-	p = xmalloc (sizeof (struct an_entry));
-	if (p == NULL)
-	{
-	    pending_error = ENOMEM;
-	    return;
-	}
-	p->entry = xmalloc (strlen (arg) + 80);
-	if (p->entry == NULL)
-	{
-	    pending_error = ENOMEM;
-	    free (p);
-	    return;
-	}
-	strcpy (p->entry, "/");
-	strcat (p->entry, arg);
-	strcat (p->entry, "//D/");
-	if (kopt != NULL)
-	{
-	    strcat (p->entry, kopt);
-	    free (kopt);
-	    kopt = NULL;
-	}
-	strcat (p->entry, "/");
-	p->next = entries;
-	entries = p;
     }
 }
 
