@@ -542,6 +542,17 @@ socket_buffer_input (closure, data, need, size, got)
 
     do
     {
+
+	/* Note that for certain (broken?) networking stacks, like
+	   VMS's UCX (not sure what version, problem reported with
+	   recv() in 1997), and (according to windows-NT/config.h)
+	   Windows NT 3.51, we must call recv or send with a
+	   moderately sized buffer (say, less than 200K or something),
+	   or else there may be network errors (somewhat hard to
+	   produce, e.g. WAN not LAN or some such).  buf_read_data
+	   makes sure that we only recv() BUFFER_DATA_SIZE bytes at
+	   a time.  */
+
 	nbytes = recv (sb->socket, data, size, 0);
 	if (nbytes < 0)
 	    error (1, 0, "reading from server: %s", SOCK_STRERROR (SOCK_ERRNO));
@@ -578,6 +589,9 @@ socket_buffer_output (closure, data, have, wrote)
     struct socket_buffer *sb = (struct socket_buffer *) closure;
 
     *wrote = have;
+
+    /* See comment in socket_buffer_input regarding buffer size we pass
+       to send and recv.  */
 
 #ifdef SEND_NEVER_PARTIAL
     /* If send() never will produce a partial write, then just do it.  This
