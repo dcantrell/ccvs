@@ -419,6 +419,9 @@ for what in $tests; do
 	  dotest basica-4 "${testcvs} add ssfile" \
 "${PROG}"' [a-z]*: scheduling file `ssfile'\'' for addition
 '"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest_fail basica-4a "${testcvs} tag tag0 ssfile" \
+"${PROG} [a-z]*: nothing known about ssfile
+${PROG} "'\[[a-z]* aborted\]: correct the above errors first!'
 	  cd ../..
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
 'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/sdir/ssdir/ssfile,v
