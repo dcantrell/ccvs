@@ -3799,6 +3799,16 @@ tag} and @dfn{release tags} are useful.  The
 @dfn{release tags} are symbolic names for a particular
 release, such as @samp{FSF_0_04}.
 
+@c I'm not completely sure this belongs here.  But
+@c we need to say it _somewhere_ reasonably obvious; it
+@c is a common misconception among people first learning CVS
+Note that @code{import} does @emph{not} change the
+directory in which you invoke it.  In particular, it
+does not set up that directory as a @sc{cvs} working
+directory; if you want to work with the sources import
+them first and then check them out into a different
+directory (@pxref{Getting the source}).
+
 @cindex Wdiff (import example)
 Suppose you use @code{wdiff} (a variant of @code{diff}
 that ignores changes that only involve whitespace), and
@@ -6367,6 +6377,8 @@ Contributed examples will gratefully be accepted.
 @appendixsec import---Import sources into CVS, using vendor branches
 @cindex Import (subcommand)
 
+@c FIXME: This node is way too long for one which has subnodes.
+
 @itemize @bullet
 @item
 Synopsis: import [-options] repository vendortag releasetag@dots{}
@@ -6420,6 +6432,16 @@ of source.  @var{vendortag} is a tag for the entire
 branch (e.g., for 1.1.1).  You must also specify at
 least one @var{releasetag} to identify the files at
 the leaves created each time you execute @code{import}.
+
+@c I'm not completely sure this belongs here.  But
+@c we need to say it _somewhere_ reasonably obvious; it
+@c is a common misconception among people first learning CVS
+Note that @code{import} does @emph{not} change the
+directory in which you invoke it.  In particular, it
+does not set up that directory as a @sc{cvs} working
+directory; if you want to work with the sources import
+them first and then check them out into a different
+directory (@pxref{Getting the source}).
 
 @menu
 * import options::              import options

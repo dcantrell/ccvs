@@ -1,5 +1,8 @@
 Fri Oct 18 11:05:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (First import, import): Add paragraph about the fact
+	that import doesn't modify the directory which it imports from.
+
 	* cvs.texinfo (Creating a repository): Add paragraph about
 	resource requirements.
 
