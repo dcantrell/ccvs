@@ -1,3 +1,8 @@
+Mon Oct  2 17:10:49 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvs.texinfo (admin): Describe usage of CVS_ADMIN_GROUP to
+	restrict usage of admin.
+
 Fri Oct  6 21:17:50 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (~/.cvsrc): Document change to command name matching.
