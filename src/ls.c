@@ -157,7 +157,7 @@ ls (int argc, char **argv)
 	if (show_tag)
 	    option_with_arg ("-r", show_tag);
 	if (show_date)
-	    option_with_arg ("-D", show_date);
+	    client_senddate (show_date);
 
 	send_arg ("--");
 
