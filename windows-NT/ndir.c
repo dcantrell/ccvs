@@ -27,6 +27,7 @@
 #include <dos.h>
 
 #include <ndir.h>
+#include "xalloc.h"
 
 static void free_dircontents (struct _dircontents *);
 

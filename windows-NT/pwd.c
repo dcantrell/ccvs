@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pwd.h>
+#include "xalloc.h"
 
 char* win32getlogin();
 static char *lookup_env (char **);
