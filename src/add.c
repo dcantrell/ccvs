@@ -451,18 +451,19 @@ add (int argc, char **argv)
 		    {
 			if (!quiet)
 			{
+			    char *bbuf;
 			    if (vers->tag)
-				error (0, 0, "\
-file `%s' will be added on branch `%s' from version %s",
-					finfo.fullname, vers->tag, vers->vn_rcs);
+			    {
+				bbuf = xmalloc (strlen (vers->tag) + 14);
+				sprintf (bbuf, " on branch `%s'", vers->tag);
+			    }
 			    else
-				/* I'm not sure that mentioning
-				   vers->vn_rcs makes any sense here; I
-				   can't think of a way to word the
-				   message which is not confusing.  */
-				error (0, 0, "\
-re-adding file `%s' (in place of dead revision %s)",
-					finfo.fullname, vers->vn_rcs);
+				bbuf = "";
+			    error (0, 0, "\
+re-adding file `%s'%s after dead revision %s",
+				   finfo.fullname, bbuf, vers->vn_rcs);
+			    if (vers->tag)
+				free (bbuf);
 			}
 			Register (entries, finfo.file, "0", vers->ts_user,
 				  vers->options,
