@@ -1,3 +1,8 @@
+Mon Oct  7 17:20:11 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (Removing files): Correct apparent cut and paste
+	error: refer to the removed file, not the added file.
+
 Tue Oct  1 14:15:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: Revert all recent changes (the last unscathed one
