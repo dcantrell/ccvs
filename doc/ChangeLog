@@ -1,3 +1,9 @@
+2004-03-15  Derek Price <derek@ximbiot.com>
+
+	* cvs.texinfo: s/UseNewInfoFormatStrings/UseNewInfoFmtStrings/g.
+	(Reported by Matthew B. Doar <matt@trpz.com>.)
+	* stamp-vti, version.texi: Regenerated.
+
 2004-03-11  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* cvs.texinfo (loginfo, Error messages): Note that not reading all of
