@@ -1,3 +1,13 @@
+2004-04-21  Derek Price  <derek@ximbiot.com>
+
+	Add stdbool module from GNULIB.
+
+	* HACKING: Note availability of stdbool, fnmatch, alloca & GNULIB
+	substitutes in general.
+	* configure.in: Call AM_STDBOOL_H.
+	* srclist.txt: Add stdbool.
+	* aclocal.m4, configure, config.h.in, Makefile.in: Regenerated.
+
 2004-04-20  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note XP directory deletion fix.
