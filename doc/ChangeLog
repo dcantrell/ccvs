@@ -1,5 +1,8 @@
 Fri Oct 18 11:05:06 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Creating a repository): Add paragraph about
+	resource requirements.
+
 	* cvs.texinfo (Copying): Replace empty node with a copy of the GPL.
 
 Thu Oct 17 12:10:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
