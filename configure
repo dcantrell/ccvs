@@ -7359,21 +7359,7 @@ fi
 # Replace functions with versions in lib/ when they can't be found.
 
 
-
-
-
-
-
-
-
 for ac_func in \
-	dup2 \
-	ftruncate \
-	mkdir \
-	readlink \
-	rename \
-	strstr \
-	strtoul\
 	valloc \
 	waitpid \
 
