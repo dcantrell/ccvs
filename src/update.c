@@ -2034,7 +2034,19 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
 /*
  * Do all the magic associated with a file which needs to be joined
- * (-j option)
+ * (reached via the -j option to checkout or update).
+ *
+ * INPUTS
+ *   finfo		File information about the destination file.
+ *   vers		The Vers_TS structure for finfo.
+ *
+ * GLOBALS
+ *   join_rev1		From the command line.
+ *   join_rev2		From the command line.
+ *   server_active	Natch.
+ *
+ * ASSUMPTIONS
+ *   1.  Is not called in client mode.
  */
 static void
 join_file (struct file_info *finfo, Vers_TS *vers)
@@ -2265,14 +2277,43 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	return;
     }
 
-    /* At one time, there was a test here to see if the file to be
-       merged was already at rev2. If so, this function returned after
-       freeing rev1 and rev2. The assumption that there was nothing
-       useful to do appears to have been a bad one. However, not
-       having that block of code means that text that was
-       intentionally added, removed or modified in the area of the
-       merge requested will either be silently re-introduced,
-       re-removed, or result in conflict markers. */
+    /* If the two merge revisions are the same, then there is nothing
+     * to do.  This needs to be checked before the rev2 == up-to-date base
+     * revision check tha comes next.  Otherwise, rev1 can == rev2 and get an
+     * "already contains the changes between <rev1> and <rev1>" message.
+     */
+    if (rev1 && strcmp (rev1, rev2) == 0)
+    {
+	free (rev1);
+	free (rev2);
+	return;
+    }
+
+    /* If we know that the user file is up-to-date, then it becomes an
+     * optimization to skip the merge when rev2 is the same as the base
+     * revision.  i.e. we know that diff3(file2,file1,file2) will produce
+     * file2.
+     */
+    if (vers->ts_user
+        && strcmp (vers->ts_user, vers->ts_rcs) == 0
+        && strcmp (rev2, vers->vn_user) == 0)
+    {
+	if (!really_quiet)
+	{
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 0);
+	    cvs_output (rev2, 0);
+	    cvs_output ("\n", 1);
+	}
+
+	if (rev1 != NULL)
+	    free (rev1);
+	free (rev2);
+
+	return;
+    }
 
     /* If rev1 is dead or does not exist, then the file was added
        between rev1 and rev2.  */
@@ -2322,15 +2363,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		   "file %s exists, but has been added in revision %s",
 		   finfo->fullname, jrev2);
 
-	return;
-    }
-
-    /* If the two merge revisions are the same, then there is nothing
-       to do.  */
-    if (strcmp (rev1, rev2) == 0)
-    {
-	free (rev1);
-	free (rev2);
 	return;
     }
 
@@ -2498,16 +2530,39 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
 			    t_options, rev1, rev2);
 
-    if (status != 0 && status != 1)
+    if (status != 0)
     {
-	error (0, status == -1 ? errno : 0,
-	       "could not merge revision %s of %s", rev2, finfo->fullname);
-	error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
-	       finfo->fullname, backup);
-	rename_file (backup, finfo->file);
+	if (status != 1)
+	{
+	    error (0, status == -1 ? errno : 0,
+		   "could not merge revision %s of %s", rev2, finfo->fullname);
+	    error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
+		   finfo->fullname, backup);
+	    rename_file (backup, finfo->file);
+	}
     }
-    free (rev1);
-    free (rev2);
+    else /* status == 0 */
+    {
+	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
+	   xcmp on the temporary files without much hassle, I think.  */
+	if (!noexec && !xcmp (backup, finfo->file))
+	{
+	    if (!really_quiet)
+	    {
+		cvs_output (finfo->fullname, 0);
+		cvs_output (" already contains the differences between ", 0);
+		cvs_output (rev1, 0);
+		cvs_output (" and ", 0);
+		cvs_output (rev2, 0);
+		cvs_output ("\n", 1);
+	    }
+
+	    /* and skip the registering and sending the new file since it
+	     * hasn't been updated.
+	     */
+	    goto out;
+	}
+    }
 
     /* The file has changed, but if we just checked it out it may
        still have the same timestamp it did when it was first
@@ -2544,6 +2599,10 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 			(struct buffer *) NULL);
     }
 #endif
+
+out:
+    free (rev1);
+    free (rev2);
     free (backup);
 }
 
