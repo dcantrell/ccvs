@@ -332,7 +332,12 @@ int utime ();
      (((x) == ENOTEXIST) || ((x) == ENOENT))
 #  endif
 #else
+#  ifdef EVMSERR
+#     define existence_error(x) \
+((x) == ENOENT || (x) == EINVAL || (x) == EVMSERR)
+#  else
 #    define existence_error(x) ((x) == ENOENT)
+#  endif
 #endif
 
 

@@ -1,3 +1,8 @@
+Tue Feb 27 21:18:38 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* system.h: added an existence_error macro check for EVMSERR
+	necessary for happiness under VMS
+
 Thu Feb 22 22:30:04 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (OBJECTS): Remove @ALLOCA@
