@@ -12507,6 +12507,9 @@ to specify this.
 @cindex USER, internal variable
 Username of the user running @sc{cvs} (on the @sc{cvs}
 server machine).
+When using pserver, this is the user specified in the repository
+specification which need not be the same as the username the
+server is running as (@pxref{Password authentication server}).
 @end table
 
 If you want to pass a value to the administrative files
