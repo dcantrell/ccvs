@@ -55,13 +55,11 @@ struct recursion_frame {
  * Command line arguments dictate the directories and files on which
  * we operate.  In the special case of no arguments, we default to
  * ".".
- *
- * The general algorithm is as follows.
  */
 int
 start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		 argc, argv, local, which, aflag, readlock,
-		 update_preload, dosrcs, wd_is_repos)
+		 update_preload, dosrcs)
     FILEPROC fileproc;
     FILESDONEPROC filesdoneproc;
     DIRENTPROC 	direntproc;
@@ -69,12 +67,34 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
     int argc;
     char **argv;
     int local;
+
+    /* This specifies the kind of recursion.  There are several cases:
+
+       1.  W_LOCAL is not set but W_REPOS or W_ATTIC is.  The current
+       directory when we are called must be the repository and
+       recursion proceeds according to what exists in the repository.
+
+       2a.  W_LOCAL is set but W_REPOS and W_ATTIC are not.  The
+       current directory when we are called must be the working
+       directory.  Recursion proceeds according to what exists in the
+       working directory, never (I think) consulting any part of the
+       repository which does not correspond to the working directory
+       ("correspond" == Name_Repository).
+
+       2b.  W_LOCAL is set and so is W_REPOS or W_ATTIC.  This is the
+       weird one.  The current directory when we are called must be
+       the working directory.  We recurse through working directories,
+       but we recurse into a directory if it is exists in the working
+       directory *or* it exists in the repository.  If a directory
+       does not exist in the working directory, the direntproc must
+       either tell us to skip it (R_SKIP_ALL), or must create it (I
+       think those are the only two cases).  */
     int which;
+
     int aflag;
     int readlock;
     char *update_preload;
     int dosrcs;
-    int wd_is_repos;	/* Set if caller has already cd'd to the repository */
 {
     int i, err = 0;
     Dtype flags;
@@ -174,20 +194,20 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	    /* if this argument exists as a file in the current
 	       working directory tree, then add it to the files list.  */
 
-	    if (wd_is_repos)
+	    if (!(which & W_LOCAL))
 	    {
 		/* If doing rtag, we've done a chdir to the repository. */
 		sprintf (tmp, "%s%s", argv[i], RCSEXT);
 		file_to_try = tmp;
 	    }
 	    else
-	      file_to_try = argv[i];
+		file_to_try = argv[i];
 
 	    if(isfile(file_to_try))
 		addfile (&files_by_dir, dir, comp);
 	    else if (isdir (dir))
 	    {
-		if (isdir (CVSADM))
+		if ((which & W_LOCAL) && isdir (CVSADM))
 		{
 		    /* otherwise, look for it in the repository. */
 		    char *save_update_dir;

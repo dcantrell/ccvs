@@ -89,7 +89,7 @@ status (argc, argv)
     /* start the recursion processor */
     err = start_recursion (status_fileproc, (FILESDONEPROC) NULL, status_dirproc,
 			   (DIRLEAVEPROC) NULL, argc, argv, local,
-			   W_LOCAL, 0, 1, (char *) NULL, 1, 0);
+			   W_LOCAL, 0, 1, (char *) NULL, 1);
 
     return (err);
 }

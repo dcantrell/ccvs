@@ -575,8 +575,7 @@ done'
 "${PROG}: cannot access cvs root /tmp/cvs-sanity/nonexist: .*"
 	  dotest_fail basica-9 \
 	    "${testcvs} -q -d /tmp/cvs-sanity/nonexist update" \
-"${PROG} [a-z]*: Sorry, you don't have sufficient access to /tmp/cvs-sanity/nonexist
-${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
+"${PROG} \[[a-z]* aborted\]: /tmp/cvs-sanity/nonexist/CVSROOT: .*"
 
 	  dotest basica-10 "${testcvs} annotate" \
 'Annotations for sdir/ssdir/ssfile
@@ -2909,14 +2908,26 @@ abc	[a-z0-9]*	edit	unedit	commit'
 	  dotest devcom-a4 "${testcvs} watchers abb" \
 'abb	[a-z0-9]*	edit	commit'
 
+	  # Check tagging and checking out while we have a CVS
+	  # directory in the repository.
+	  dotest devcom-t0 "${testcvs} -q tag tag" \
+'T abb
+T abc'
+	  cd ../..
+	  mkdir 3
+	  cd 3
+	  dotest devcom-t1 "${testcvs} -q co -rtag first-dir/abb" \
+'U first-dir/abb'
+
 	  # Now remove all the file attributes
+	  cd ../2/first-dir
 	  dotest devcom-b0 "${testcvs} watch off" ''
 	  dotest devcom-b1 "${testcvs} watch remove" ''
 	  # Test that CVS 1.6 and earlier can handle the repository.
 	  dotest_fail devcom-b2 "test -d ${CVSROOT_DIRNAME}/first-dir/CVS"
 
 	  cd ../..
-	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  rm -rf 1 2 3 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	ignore)

@@ -402,7 +402,7 @@ do_update (argc, argv, xoptions, xtag, xdate, xforce, local, xbuild, xaflag,
     err = start_recursion (update_fileproc, update_filesdone_proc,
 			   update_dirent_proc, update_dirleave_proc,
 			   argc, argv, local, which, aflag, 1,
-			   preload_update_dir, 1, 0);
+			   preload_update_dir, 1);
 
     /* see if we need to sleep before returning */
     if (last_register_time)
@@ -726,12 +726,12 @@ update_dirent_proc (dir, repository, update_dir)
     char *update_dir;
 {
     if (ignore_directory (update_dir))
-      {
+    {
 	/* print the warm fuzzy message */
 	if (!quiet)
 	  error (0, 0, "Ignoring %s", update_dir);
         return R_SKIP_ALL;
-      }
+    }
 
     if (!isdir (dir))
     {

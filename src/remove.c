@@ -85,7 +85,7 @@ cvsremove (argc, argv)
     /* start the recursion processor */
     err = start_recursion (remove_fileproc, (FILESDONEPROC) NULL,
                            remove_dirproc, (DIRLEAVEPROC) NULL, argc, argv,
-                           local, W_LOCAL, 0, 1, (char *) NULL, 1, 0);
+                           local, W_LOCAL, 0, 1, (char *) NULL, 1);
 
     if (removed_files)
 	error (0, 0, "use '%s commit' to remove %s permanently", program_name,

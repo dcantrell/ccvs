@@ -395,7 +395,7 @@ commit (argc, argv)
 	err = start_recursion (find_fileproc, find_filesdoneproc,
 			       find_dirent_proc, (DIRLEAVEPROC) NULL,
 			       argc, argv, local, W_LOCAL, 0, 0,
-			       (char *)NULL, 0, 0);
+			       (char *)NULL, 0);
 	if (err)
 	    error (1, 0, "correct above errors first!");
 
@@ -515,8 +515,7 @@ commit (argc, argv)
      */
     err = start_recursion (check_fileproc, check_filesdoneproc,
 			   check_direntproc, (DIRLEAVEPROC) NULL, argc,
-			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 1,
-			   0);
+			   argv, local, W_LOCAL, aflag, 0, (char *) NULL, 1);
     if (err)
     {
 	lock_tree_cleanup ();
@@ -530,7 +529,7 @@ commit (argc, argv)
 	err = start_recursion (commit_fileproc, commit_filesdoneproc,
 			       commit_direntproc, commit_dirleaveproc,
 			       argc, argv, local, W_LOCAL, aflag, 0,
-			       (char *) NULL, 1, 0);
+			       (char *) NULL, 1);
 
     /*
      * Unlock all the dirs and clean up

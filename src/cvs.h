@@ -628,7 +628,7 @@ int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     int argc, char *argv[], int local, int which,
 		     int aflag, int readlock, char *update_preload,
-		     int dosrcs, int wd_is_repos));
+		     int dosrcs));
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv, char *cmdname));

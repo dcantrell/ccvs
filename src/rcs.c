@@ -2588,5 +2588,5 @@ annotate (argc, argv)
     return start_recursion (annotate_fileproc, (FILESDONEPROC) NULL,
 			    (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL,
 			    argc, argv, local, W_LOCAL, 0, 1, (char *)NULL,
-			    1, 0);
+			    1);
 }
