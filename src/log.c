@@ -405,14 +405,14 @@ cvslog (argc, argv)
 	for (i = 0; i < argc; i++)
 	{
 	    err += do_module (db, argv[i], MISC, "Logging", rlog_proc,
-			     (char *) NULL, 0, 0, 0, 0, (char *) NULL);
+			     (char *) NULL, 0, local, 0, 0, (char *) NULL);
 	}
 	close_module (db);
     }
     else
     {
 	err = rlog_proc (argc + 1, argv - 1, (char *) NULL,
-			 (char *) NULL, (char *) NULL, 0, 0, (char *) NULL,
+			 (char *) NULL, (char *) NULL, 0, local, (char *) NULL,
 			 (char *) NULL);
     }
 

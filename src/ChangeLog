@@ -1,5 +1,14 @@
 2001-05-05  Larry Jones  <larry.jones@sdrc.com>
 
+	* annotate.c (annotate): Pass local to do_module and rannotate_proc
+	so that -l actually works.
+	* log.c (cvslog): Ditto.
+	* patch.c (patch): Ditto; make local local instead of global.
+	(patch_proc): Use local_specified parameter instead of global.
+	* tag.c (cvstag, rtag_proc): Ditto.
+
+2001-05-05  Larry Jones  <larry.jones@sdrc.com>
+
 	* client.h: Declare "struct buffer" outside prototype for __STDC__
 	compilers.
 
