@@ -1,5 +1,9 @@
 2004-11-01  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note that CVS handles new time zones.
+
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
 	* srclist.txt: Remove getdate module.
 
 2004-11-01  Derek Price  <derek@ximbiot.com>
