@@ -51,11 +51,6 @@ extern int server_started;
 /* Is the -P option to checkout or update specified?  */
 extern int client_prune_dirs;
 
-/* Stream to write to the server.  */
-extern FILE *to_server;
-/* Stream to read from the server.  */
-extern FILE *from_server;
-
 #ifdef AUTH_CLIENT_SUPPORT
 extern int use_authenticating_server;
 void connect_to_pserver();

@@ -1,7 +1,13 @@
+Sun Dec 17 17:59:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.h (to_server, from_server): don't declare these anymore.
+        They are now entirely private to client.h (and in fact will go
+        away soon there too).
+        
 Sun Dec 17 15:40:58 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.h: update prototype of send_to_server().
-        
+
         * client.c, watch.c, update.c, tag.c, status.c, rtag.c, remove.c,
         release.c, patch.c, log.c, import.c, history.c, edit.c, diff.c,
         commit.c, client.c, checkout.c, admin.c, add.c:
