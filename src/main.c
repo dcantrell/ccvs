@@ -39,7 +39,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <krb.h>
-#include <pwd.h>
 #ifndef HAVE_KRB_GET_ERR_TEXT
 #define krb_get_err_text(status) krb_err_txt[status]
 #endif
