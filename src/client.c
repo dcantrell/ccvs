@@ -1575,7 +1575,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	        retcode = 0;
 	    else
 	    {
-	        run_setup ("%s -f -s -b ~ %s %s", PATCH_PROGRAM,
+	        run_setup ("%s -f -s -b ~ %s %s", Patch,
 			   filename, temp_filename);
 		retcode = run_exec (DEVNULL, RUN_TTY, RUN_TTY, RUN_NORMAL);
 	    }
@@ -3660,17 +3660,17 @@ start_rsh_server (tofdp, fromfdp)
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
+    char *cvs_rsh = getenv (CVS_RSH_ENV);
+    char *cvs_server = getenv (CVS_SERVER_ENV);
     int i = 0;
     /* This needs to fit "rsh", "-b", "-l", "USER", "host",
        "cmd (w/ args)", and NULL.  We leave some room to grow. */
     char *rsh_argv[10];
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
-	cvs_server = "cvs";
+	cvs_server = CVS_SERVER_DFLT;
 
     /* The command line starts out with rsh. */
     rsh_argv[i++] = cvs_rsh;
@@ -3720,14 +3720,14 @@ start_rsh_server (tofdp, fromfdp)
     /* If you're working through firewalls, you can set the
        CVS_RSH environment variable to a script which uses rsh to
        invoke another rsh on a proxy machine.  */
-    char *cvs_rsh = getenv ("CVS_RSH");
-    char *cvs_server = getenv ("CVS_SERVER");
+    char *cvs_rsh = getenv (CVS_RSH_ENV);
+    char *cvs_server = getenv (CVS_SERVER_ENV);
     char *command;
 
     if (!cvs_rsh)
-	cvs_rsh = "rsh";
+	cvs_rsh = RSH_DFLT;
     if (!cvs_server)
-	cvs_server = "cvs";
+	cvs_server = CVS_SERVER_DFLT;
 
     /* Pass the command to rsh as a single string.  This shouldn't
        affect most rsh servers at all, and will pacify some buggy

@@ -49,6 +49,13 @@ char *CurDir;
  * Defaults, for the environment variables that are not set
  */
 char *Rcsbin = RCSBIN_DFLT;
+char *Diff = DIFF_DFLT;
+
+#ifdef CLIENT_SUPPORT
+char *Rsh = RSH_DFLT;
+char *Patch = PATCH_DFLT;
+#endif
+
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 
@@ -136,6 +143,11 @@ static const char *const usg[] =
     "        -t           Show trace of program execution -- Try with -n\n",
     "        -v           CVS version and copyright\n",
     "        -b bindir    Find RCS programs in 'bindir'\n",
+    "        -D diff      Location of the 'diff' program\n",
+#ifdef CLIENT_SUPPORT
+    "        -R rsh       Location of the 'rsh' program\n",
+    "        -p patch     Location of the 'patch' program\n",
+#endif
     "        -T tmpdir    Use 'tmpdir' for temporary files\n",
     "        -e editor    Use 'editor' for editing log information\n",
     "        -d CVS_root  Overrides $CVSROOT as the root of the CVS tree\n",
@@ -324,7 +336,10 @@ main (argc, argv)
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    int rcsbin_update_env, tmpdir_update_env, cvs_update_env;
+    int rcsbin_update_env, diff_update_env, tmpdir_update_env, cvs_update_env;
+#ifdef CLIENT_SUPPORT
+    int patch_update_env, cvs_rsh_update_env;
+#endif
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
@@ -370,12 +385,32 @@ main (argc, argv)
      * they can be overridden by command line arguments
      */
     cvs_update_env = 0;
-    rcsbin_update_env = *Rcsbin;	/* RCSBIN_DFLT must be set */
+    rcsbin_update_env = *Rcsbin;	/* RCSBIN must be set */
     if ((cp = getenv (RCSBIN_ENV)) != NULL)
     {
 	Rcsbin = cp;
 	rcsbin_update_env = 0;		/* it's already there */
     }
+    diff_update_env = *Diff;		/* DIFF must be set */
+    if ((cp = getenv (DIFF_ENV)) != NULL)
+    {
+	Diff = cp;
+	diff_update_env = 0;		/* it's already there */
+    }
+#ifdef CLIENT_SUPPORT
+    patch_update_env = *Patch;		/* PATCH must be set */
+    if ((cp = getenv (PATCH_ENV)) != NULL)
+    {
+	Patch = cp;
+	patch_update_env = 0;		/* it's already there */
+    }
+    cvs_rsh_update_env = *Rsh;		/* CVS_RSH must be set (XXX ?) */
+    if ((cp = getenv (CVS_RSH_ENV)) != NULL)
+    {
+	Rsh = cp;
+	cvs_rsh_update_env = 0;		/* it's already there */
+    }
+#endif
     tmpdir_update_env = *Tmpdir;	/* TMPDIR_DFLT must be set */
     if ((cp = getenv (TMPDIR_ENV)) != NULL)
     {
@@ -427,8 +462,14 @@ main (argc, argv)
     optind = 1;
     opterr = 1;
 
+#ifdef CLIENT_SUPPORT
+# define CVS_GETOPT_OPTIONS	"Qqrwtnlvb:D:R:p:T:e:d:Hfz:s:x"
+#else
+# define CVS_GETOPT_OPTIONS	"Qqrwtnlvb:D:T:e:d:Hfz:s:x"
+#endif
+
     while ((c = getopt_long
-            (argc, argv, "Qqrwtnlvb:T:e:d:Hfz:s:x", long_options, &option_index))
+            (argc, argv, CVS_GETOPT_OPTIONS, long_options, &option_index))
            != EOF)
       {
 	switch (c)
@@ -478,6 +519,20 @@ main (argc, argv)
 		Rcsbin = optarg;
 		rcsbin_update_env = 1;	/* need to update environment */
 		break;
+	    case 'D':
+		Diff = optarg;
+		diff_update_env = 1;	/* need to update environment */
+		break;
+#ifdef CLIENT_SUPPORT
+	    case 'R':
+		Rsh = optarg;
+		cvs_rsh_update_env = 1;	/* need to update environment */
+		break;
+	    case 'p':
+		Patch = optarg;
+		patch_update_env = 1;	/* need to update environment */
+		break;
+#endif /* CLIENT_SUPPORT */
 	    case 'T':
 		Tmpdir = optarg;
 		tmpdir_update_env = 1;	/* need to update environment */
@@ -781,6 +836,32 @@ main (argc, argv)
 	    (void) putenv (env);
 	    /* do not free env, as putenv has control of it */
 	}
+	if (diff_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (DIFF_ENV) + strlen (Diff) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", DIFF_ENV, Diff);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+# ifdef CLIENT_SUPPORT
+	if (patch_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (PATCH_ENV) + strlen (Patch) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", PATCH_ENV, Patch);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+	if (cvs_rsh_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (CVS_RSH_ENV) + strlen (Rsh) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", CVS_RSH_ENV, Rsh);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+# endif
 	if (tmpdir_update_env)
 	{
 	    char *env;

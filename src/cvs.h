@@ -5,9 +5,6 @@
 
 
 #include "config.h"		/* this is stuff found via autoconf */
-#include "options.h"		/* these are some larger questions which
-				   can't easily be automatically checked
-				   for */
 
 /* Changed from if __STDC__ to ifdef __STDC__ because of Sun's acc compiler */
 
@@ -253,15 +250,19 @@ extern int errno;
 #define	CVSREAD_DFLT	FALSE		/* writable files by default */
 
 #define	RCSBIN_ENV	"RCSBIN"	/* RCS binary directory */
-/* #define	RCSBIN_DFLT		   Set by options.h */
+
+#ifdef CLIENT_SUPPORT
+# define CVS_RSH_ENV	"CVS_RSH"	/* Rsh binary (client.c) */
+# define CVS_SERVER_ENV	"CVS_SERVER"	/* CVS server binary (client.c) */
+# define PATCH_ENV	"PATCH"		/* Patch binary */
+#endif
+#define	DIFF_ENV	"DIFF"		/* Diff binary */
 
 #define	TMPDIR_ENV	"TMPDIR"	/* Temporary directory */
-/* #define	TMPDIR_DFLT		   Set by options.h */
 
 #define	EDITOR1_ENV	"CVSEDITOR"	/* which editor to use */
 #define	EDITOR2_ENV	"VISUAL"	/* which editor to use */
 #define	EDITOR3_ENV	"EDITOR"	/* which editor to use */
-/* #define	EDITOR_DFLT		   Set by options.h */
 
 #define	CVSROOT_ENV	"CVSROOT"	/* source directory root */
 #define	CVSROOT_DFLT	NULL		/* No dflt; must set for checkout */
@@ -270,7 +271,6 @@ extern int errno;
 #define WRAPPER_ENV     "CVSWRAPPERS"   /* name of the wrapper file */
 
 #define	CVSUMASK_ENV	"CVSUMASK"	/* Effective umask for repository */
-/* #define	CVSUMASK_DFLT		   Set by options.h */
 
 /*
  * If the beginning of the Repository matches the following string, strip it
@@ -358,7 +358,7 @@ typedef enum direnter_type Dtype;
 #endif
 
 extern char *program_name, *program_path, *command_name;
-extern char *Rcsbin, *Tmpdir, *Editor;
+extern char *Rcsbin, *Diff, *Patch, *Tmpdir, *Editor;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;

@@ -1,3 +1,61 @@
+Mon Feb 17 09:48:35 1997  Greg A. Woods  <woods@most.weird.com>
+
+	* .cvsignore: don't ignore options.h* any more as they should not
+	ever exist any more....
+	* client.c (start_rsh_server): get rid of the magic strings for
+	rsh and cvs -- use new constants RSH_DFLT and CVS_DFLT for their
+	default values and CVS_RSH_ENV and CVS_SERVER_ENV for the
+	environment variable names.
+	(update_entries): use Patch instead of PATCH_PROGRAM.
+
+	* main.c
+ 	(Patch): new global variable, set to PATCH_DFLT (ifdef
+	CLIENT_SUPPORT).
+ 	(Rsh): new global variable, set to RSH_DFLT (ifdef
+	CLIENT_SUPPORT).
+ 	(Diff): new global variable, set to DIFF_DFLT.
+	(main): set default Patch from getenv(PATCH_ENV).
+	(main): new local variable patch_update_env (ifdef
+	CLIENT_SUPPORT).
+	(main): set default Diff from getenv(DIFF_ENV).
+	(main): new local variable diff_update_env.
+	(main): new option -p to set Patch (ifdef CLIENT_SUPPORT).
+	(main): new option -R to set Rsh (ifdef CLIENT_SUPPORT).
+	(main): putenv(PATCH_ENV) if patch_update_env (ifdef
+	CLIENT_SUPPORT).
+	(main): putenv(CVS_RSH_ENV) if cvs_rsh__update_env (ifdef
+	CLIENT_SUPPORT).
+	(main): putenv(DIFF_ENV) if diff_update_env.
+	(CVS_GETOPT_OPTIONS): new define to allow compile time
+	definition sensitivity (i.e. for -p and -R ifdef CLIENT_SUPPORT).
+	(main): set Diff from optarg if '-D'.
+	(main): set Rsh from optarg if '-R'.
+	(main): set Patch from optarg if '-p'.
+
+	* cvs.h: don't include "options.h" any more.
+	remove mention of things that were mentioned as in options.h.
+	(DIFF_ENV): new define, set to "DIFF"
+	(CVS_RSH_ENV): new define #ifdef CLIENT_SUPPORT, set to
+	"CVS_RSH".
+	(CVS_SERVER_ENV): new define #ifdef CLIENT_SUPPORT, set to
+	"CVS_SERVER".
+	(PATCH_ENV): new define #ifdef CLIENT_SUPPORT, set to "PATCH".
+	(Diff, Patch): declare new global variables.
+
+	* diff.c (diff_fileproc): use Diff instead of DIFF.
+
+	* patch.c (patch_fileproc): use Diff instead of DIFF.
+
+	* update.c (patch_file): use Diff instead of DIFF.
+
+	* Makefile.in: remove all trace of options.h.
+
+	* options.h.in: removed (contents moved to ../acconfig.h).
+
+	* Makefile.in (Makefile): cause this target to fail after
+ 	rebuilding Makefile to force you to run make again to use the new
+ 	Makefile.
+
 Sun Feb 16 12:00:44 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (client_process_import_file): New variable fullname;
