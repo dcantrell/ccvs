@@ -8969,7 +8969,7 @@ add file1
 head			 	1.5                 ;
      branch        1.2.6;
 access ;
-symbols;
+symbols branch:1.2.6;
 locks;
 testofanewphrase @without newphrase we'd have trouble extending @@ all@ ;
 1.5 date 71.01.01.01.00.00; author joe; state bogus; branches; next 1.4;
@@ -9001,6 +9001,16 @@ EOF
 	  dotest rcs-5 "${testcvs} -q update file2" "U file2"
 	  dotest rcs-6 "cat file2" "branch revision"
 
+	  # Check in a revision on the branch to force CVS to
+	  # interpret every revision in the file.
+	  dotest rcs-6a "${testcvs} -q update -r branch file2" ""
+	  echo "next branch revision" > file2
+	  dotest rcs-6b "${testcvs} -q ci -m mod file2" \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.2\.6\.2; previous revision: 1\.2\.6\.1
+done"
+
 	  # Now get rid of the default branch, it will get in the way.
 	  dotest rcs-7 "${testcvs} admin -b file2" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
@@ -9017,7 +9027,8 @@ done"
 	  dotest rcs-8a "cat ${CVSROOT_DIRNAME}/first-dir/file2,v" \
 "head	1\.5;
 access;
-symbols;
+symbols
+	branch:1.2.6;
 locks;
 
 testofanewphrase	@without newphrase we'd have trouble extending @@ all@;
@@ -9051,6 +9062,11 @@ newph	;
 
 1\.2\.6\.1
 date	71\.01\.01\.08\.00\.05;	author joe;	state Exp;
+branches;
+next	1\.2\.6\.2;
+
+1\.2\.6\.2
+date	[0-9.]*;	author ${username};	state Exp;
 branches;
 next	;
 
@@ -9110,7 +9126,18 @@ log
 text
 @d1 1
 a1 1
-branch revision@"
+branch revision@
+
+
+1\.2\.6\.2
+log
+@mod
+@
+text
+@d1 1
+a1 1
+next branch revision
+@"
 
 	  # For remote, the "update -p -D" usage seems not to work.
 	  # I'm not sure what is going on.
@@ -9170,8 +9197,9 @@ branch:
 locks:
 access list:
 symbolic names:
+	branch: 1\.2\.6
 keyword substitution: kv
-total revisions: 6;	selected revisions: 6
+total revisions: 7;	selected revisions: 7
 description:
 ----------------------------
 revision 1\.5
@@ -9194,6 +9222,10 @@ branches:  1\.2\.6;
 revision 1\.1
 date: 1970/12/31 11:00:05;  author: joe;  state: bogus;
 \*\*\* empty log message \*\*\*
+----------------------------
+revision 1\.2\.6\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -1
+mod
 ----------------------------
 revision 1\.2\.6\.1
 date: 1971/01/01 08:00:05;  author: joe;  state: Exp;  lines: ${PLUS}1 -1
