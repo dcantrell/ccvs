@@ -43,8 +43,8 @@ CFLAGS = -pedantic -Wall -fno-builtin ${CINC} \
 # We list OS2_HEADERS so we know what to include when we make dist-dir
 # here.
 OS2_HEADERS = \
-       ${srcdir}/config.h \
-       ${srcdir}/rcmd.h
+       config.h \
+       rcmd.h
 
 # headers we use from the common src dir, ../src
 COMMON_HEADERS = \
@@ -66,11 +66,11 @@ DIFF_HEADERS = \
 
 # sources specific to OS/2
 OS2_SOURCES = \
-       ${srcdir}/filesubr.c \
-       ${srcdir}/startserver.c \
-       ${srcdir}/stripslash.c \
-       ${srcdir}/savecwd.c \
-       ${srcdir}/system.c
+       filesubr.c \
+       startserver.c \
+       stripslash.c \
+       savecwd.c \
+       system.c
 
 # sources we use from the common src dir, ../src
 # FIXME: Is this used anywhere?  I don't think it is.
@@ -273,8 +273,8 @@ OBJECTS = ${COMMON_OBJECTS} ${LIB_OBJECTS} ${OS2_OBJECTS} ${DIFF_OBJECTS} \
   ${ZLIB_OBJECTS}
 
 DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
-  ${srcdir}/README ${srcdir}/ChangeLog \
-  ${srcdir}/Makefile.in ${srcdir}/.cvsignore \
+  README ChangeLog \
+  Makefile.in .cvsignore \
   Makefile
 
 all:
@@ -295,31 +295,43 @@ clean distclean realclean maintainer-clean mostlyclean:
 .PHONY: lint
 lint:
 
-# distdir added for CVS.
-top_builddir = ..
+# distdir added for compatibility with CVS automake.
+top_distdir = ..
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
-distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
-# FIXME - sedding the directory off of the DISTFILES targets is really yucky.
-# The $(srcdir) prefixes should really be removed from all of the files in the
-# lists that make up DISTFILES above.  Unfortunately, I don't have an EMX box
-# to test on.
+distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 distdir: $(DISTFILES)
-	@d=$(srcdir); \
-	for f in $(DISTFILES); do \
-	  file=`echo $$f |sed 's,.*/,,'`; \
-	  if test -d $(distdir)/`dirname $$file`; then \
-	    :; \
+	@list='$(DISTFILES)'; for file in $$list; do \
+	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    dir="/$$dir"; \
+	    $(mkinstalldirs) "$(distdir)$$dir"; \
 	  else \
-	    mkdir $(distdir)/`dirname $$file`; \
+	    dir=''; \
 	  fi; \
 	  if test -d $$d/$$file; then \
-	    cp -pR $$d/$$file $(distdir) \
-	    || exit 1; \
+	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
+	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
+	    fi; \
+	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
 	  else \
 	    test -f $(distdir)/$$file \
 	    || cp -p $$d/$$file $(distdir)/$$file \
 	    || exit 1; \
+	  fi; \
+	done
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d $(distdir)/$$subdir \
+	    || mkdir $(distdir)/$$subdir \
+	    || exit 1; \
+	    (cd $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$(top_distdir)" \
+	        distdir=../$(distdir)/$$subdir \
+	        distdir) \
+	      || exit 1; \
 	  fi; \
 	done
 .PHONY: distdir
