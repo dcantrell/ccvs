@@ -16,7 +16,9 @@
     that other branch is already merged.  This has pitfalls--it could
     easily lead to invisible state which could confuse users very
     rapidly--but having to create a tag or some such mechanism to keep
-    track of what has been merged is a pain.
+    track of what has been merged is a pain.  Take a look at PRCS 1.2.
+    PRCS 1.0 was particularly bad the way it handled the "invisible
+    state", but 1.2 is significantly better.
 
 45. Consider enhancing the "rdiff" and "tag" (rtag??) command support in
     the module database -- they seem hard to use since these commands
