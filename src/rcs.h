@@ -103,5 +103,4 @@ char *RCS_getbranch PROTO((RCSNode * rcs, char *tag, int force_tag_match));
 
 int RCS_isdead PROTO((RCSNode *, const char *));
 char *RCS_getexpand PROTO ((RCSNode *));
-int RCS_fast_checkout PROTO ((RCSNode *, char *, char *, char *, char *, int,
-			      int));
+int RCS_fast_checkout PROTO ((RCSNode *, char *, char *, char *, char *, int));
