@@ -3668,7 +3668,7 @@ W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <
 	  mkdir 1; cd 1
 	  # Test odd cases involving CVSROOT.  At the moment, that means we
 	  # are testing roots with '/'s on the end, which CVS should parse off.
-	  CVSROOT_SAVED=${CVSROOT}
+	  CVSROOT_save=${CVSROOT}
 	  CVSROOT="${CVSROOT}/////"
 	  dotest parseroot-1 "${testcvs} -q co CVSROOT/modules" \
 "U CVSROOT/modules"
@@ -3678,7 +3678,7 @@ ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.2; previous revision: 1\.1
 done
 ${PROG} commit: Rebuilding administrative file database"
-	  CVSROOT=${CVSROOT_SAVED}
+	  CVSROOT=${CVSROOT_save}
 
 	  if $keep; then
 		echo Keeping ${TESTDIR} and exiting due to --keep
@@ -14602,7 +14602,7 @@ G@#..!@#=&"
 	  # Now test disconnected "cvs edit" and the format of the 
 	  # CVS/Notify file.
 	  if $remote; then
-	    CVS_SERVER_SAVED=${CVS_SERVER}
+	    CVS_SERVER_save=${CVS_SERVER}
 	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
 
 	    # The ${DOTSTAR} below matches the exact CVS server error message,
@@ -14622,7 +14622,7 @@ G@#..!@#=&"
 	    dotest devcom3-9br "test -w w1" ""
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
-	    CVS_SERVER=${CVS_SERVER_SAVED}; export CVS_SERVER
+	    CVS_SERVER=${CVS_SERVER_save}; export CVS_SERVER
 	    dotest devcom3-9dr "${testcvs} -q update" ""
 	    dotest_fail devcom3-9er "test -f CVS/Notify" ""
 	    dotest devcom3-9fr "${testcvs} watchers w1" \
@@ -16001,7 +16001,7 @@ ${PROG} commit: Rebuilding administrative file database"
           cd ..
 
           # Avoid environmental interference
-          CVSWRAPPERS_SAVED=${CVSWRAPPERS}
+          CVSWRAPPERS_save=${CVSWRAPPERS}
           unset CVSWRAPPERS
 
           # Do the import
@@ -16147,7 +16147,7 @@ done"
 	  cd ..
 	  rm -r wnt
 	  rm -rf ${CVSROOT_DIRNAME}/binwrap3
-          CVSWRAPPERS=${CVSWRAPPERS_SAVED}
+          CVSWRAPPERS=${CVSWRAPPERS_save}
           ;; 
 
 	mwrap)
@@ -18200,6 +18200,8 @@ Annotations for $file
 	  # Various tests relating to creating repositories, operating
 	  # on repositories created with old versions of CVS, etc.
 
+	  CVS_SERVER_save=$CVS_SERVER
+
 	  # Because this test is all about -d options and such, it
 	  # at least to some extent needs to be different for remote vs.
 	  # local.
@@ -18222,7 +18224,18 @@ Annotations for $file
 	    # with our own CVS_RSH rather than worrying about a system one
 	    # would do the trick.
 
+               # Make sure server ignores real ${HOME}/.cvsrc:
+            cat >$TESTDIR/cvs-setHome <<EOF
+#!/bin/sh
+HOME=$HOME
+export HOME
+exec $CVS_SERVER "\$@"
+EOF
+            chmod a+x $TESTDIR/cvs-setHome
+
 	    # Note that we set CVS_SERVER at the beginning.
+	    CVS_SERVER="$TESTDIR/cvs-setHome"
+
 	    if test -n "$remotehost"; then
 		CREREPOS_ROOT=:ext:$remotehost${TESTDIR}/crerepos
 	    else
@@ -18388,14 +18401,19 @@ ${PROG} update: Updating crerepos-dir"
 
 	  cd ..
 
+          CVS_SERVER=$CVS_SERVER_save; export CVS_SERVER
+
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
 	  fi
 
+          rm -f $TESTDIR/cvs-setHome
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir ${TESTDIR}/crerepos
 	  ;;
+
+
 
 	rcs)
 	  # Test ability to import an RCS file.  Note that this format
@@ -25938,41 +25956,41 @@ ${PROG} update: skipping directory "
 
 	  # CVS/Root overrides $CVSROOT
 	  if $remote; then
-	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=:fork:${TESTDIR}/root-moved; export CVSROOT
 	    dotest_fail reposmv-3r "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
-	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
+	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  else
-	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=${TESTDIR}/root-moved; export CVSROOT
 	    dotest reposmv-3 "${testcvs} update" \
 "${DOTSTAR}
 ${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
 ${PROG} update: Updating \.
 ${DOTSTAR}"
-	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
+	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  fi
 
 	  if $remote; then
-	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=:fork:${TESTDIR}/root-none; export CVSROOT
 	    dotest_fail reposmv-4 "${testcvs} update" \
 "Cannot access ${TESTDIR}/root1/CVSROOT
 No such file or directory"
-	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
+	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  else
 	    # CVS/Root doesn't seem to quite completely override $CVSROOT
 	    # Bug?  Not necessarily a big deal if it only affects error
 	    # messages.
-	    CVSROOT_SAVED=${CVSROOT}
+	    CVSROOT_save=${CVSROOT}
 	    CVSROOT=${TESTDIR}/root-none; export CVSROOT
 	    dotest_fail reposmv-4 "${testcvs} update" \
 "${PROG} update: in directory \.:
 ${PROG} update: ignoring CVS/Root because it specifies a non-existent repository ${TESTDIR}/root1
 ${PROG} \[update aborted\]: ${TESTDIR}/root-none/CVSROOT: No such file or directory"
-	    CVSROOT=${CVSROOT_SAVED}; export CVSROOT
+	    CVSROOT=${CVSROOT_save}; export CVSROOT
 	  fi
 
 	  # -d overrides CVS/Root
