@@ -1,3 +1,10 @@
+2002-10-25  Derek Price  <derek@ximbiot.com>
+
+	* root.c: Change some calls to SYSTEM_CLEANUP() and then exit() to
+	more appropriate calls to error_exit().
+	* server.c: Ditto.
+	* tag.c: Ditto.
+
 2002-10-24  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c (stdio_buffer_shutdown): Remove the getc() call used to
