@@ -1,5 +1,10 @@
 2002-04-17  Derek Price  <oberon@umich.edu>
 
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
+2002-04-17  Derek Price  <oberon@umich.edu>
+
 	* cvs.texinfo: Add index entries for inetd and xinetd.
 
 2002-03-26  Derek Price  <oberon@umich.edu>
