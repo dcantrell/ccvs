@@ -1,5 +1,10 @@
 2004-10-25 Derek Price <derek@ximbiot.com>
 
+	* import.c (import): Anchor and simplify branch verification regex.
+	* sanity.sh (import-quirks): Test another pattern that should fail.
+
+2004-10-25 Derek Price <derek@ximbiot.com>
+
 	* cvs.h (yesno): Remove prototype.
 	* edit.c, release.c: Include yesno.h.  Flush output before calling
 	yesno().

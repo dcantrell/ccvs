@@ -9280,7 +9280,12 @@ $SPROG import: Importing $CVSROOT_DIRNAME/import-CVS/sdir"
 	  dotest_fail import-quirks-1 \
 "$testcvs import -b1.1. -mbad-bad-bad import-quirks VB RT" \
 "$CPROG \[import aborted\]: Only numeric branch specifications with two dots are
-supported by import, not \`1.1.'\.  For example: \`1\.1\.1'\."
+supported by import, not \`1\.1\.'\.  For example: \`1\.1\.1'\."
+
+	  dotest_fail import-quirks-2 \
+"$testcvs import -b1.1.1.. -mbad-bad-bad import-quirks VB RT" \
+"$CPROG \[import aborted\]: Only numeric branch specifications with two dots are
+supported by import, not \`1\.1\.1\.\.'\.  For example: \`1\.1\.1'\."
 
 	  dokeep
 	  cd ..
