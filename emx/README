@@ -1,0 +1,44 @@
+
+CVS for OS/2
+based on EMX 0.9c (patch 02)
+
+
+This port requires EMX 0.9c (patch 02) and the BSD libraries. It should
+work in local mode, in client mode and also in server mode. Server mode
+will only work if the client uses the :server: method, because the CRLF
+handling of IBM's RSHD.EXE is not "compatible" with CVS. (If you find a
+better rshd for OS/2, please let me know!)
+
+To compile CVS for OS/2, you must install the following packages:
+
+ - EMX 0.9c (patch 02) and the GNU-C-Compiler
+
+      EMXDEV1.ZIP
+      EMXDEV2.ZIP
+      EMXRT.ZIP
+      GNUDEV1.ZIP
+      GNUDEV2.ZIP
+      BSDDEV.ZIP
+      EMXFIX02.ZIP
+
+ - GNU make for OS/2
+
+      GNUMAKE.ZIP
+
+ - ufc.a (ufc-crypt) as a replacement for crypt (this my be something
+   different if you live inside the USA)
+
+      GNUUFC.ZIP
+
+All packages can be found on ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu
+(You may also try http://www.leo.org/pub/comp/os/os2/leo/gnu).
+
+Change to the `emx' directory, do "make" and get emx\cvs.exe. Assuming
+you have edited the `install_dir' variable in the Makefile, you may type
+"make install-cvs" to put cvs.exe in the right place. You may also "make
+clean-cvs" to clean up object and library files.
+
+You will get warnings during the compilation; ignore them.
+Report bugs to <tepting@swol.de>.
+
+
