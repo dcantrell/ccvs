@@ -7,7 +7,10 @@
 #include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
-#include "ansidecl.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #ifndef ULONG_MAX
 #define	ULONG_MAX	((unsigned long)(~0L))		/* 0xFFFFFFFF */
@@ -17,11 +20,11 @@ extern int errno;
 
 unsigned long
 strtoul(s, ptr, base)
-     CONST char *s; char **ptr; int base;
+     const char *s; char **ptr; int base;
 {
   unsigned long total = 0;
   unsigned digit;
-  CONST char *start=s;
+  const char *start=s;
   int did_conversion=0;
   int overflow = 0;
   int negate = 0;
