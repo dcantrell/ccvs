@@ -121,7 +121,7 @@ approved by the Free Software Foundation.
 @comment                   The real text starts here
 @comment ================================================================
 
-@ifinfo
+@ifnottex
 @c ---------------------------------------------------------------------
 @node    Top
 @top
@@ -133,7 +133,7 @@ approved by the Free Software Foundation.
 
 This info manual describes how to use and administer
 @sc{cvs} version @value{CVSVN}.
-@end ifinfo
+@end ifnottex
 
 @c This menu is pretty long.  Not sure how easily that
 @c can be fixed (no brilliant ideas right away)...
