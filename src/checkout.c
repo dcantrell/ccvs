@@ -133,6 +133,7 @@ checkout (argc, argv)
 	usage (valid_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     optind = 1;
     while ((c = getopt (argc, argv, valid_options)) != -1)

@@ -236,7 +236,7 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	/* if this argument is a directory, then add it to the list of
 	   directories. */
 
-	if (isdir(argv[i]))
+	if (!wrap_name_has (argv[i], WRAP_TOCVS) && isdir (argv[i]))
 	    addlist (&dirlist, argv[i]);
 	else
 	{
@@ -294,8 +294,8 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 		    /* look for it in the repository. */
 		    repos = Name_Repository (dir, update_dir);
 		    (void) sprintf (tmp, "%s/%s", repos, comp);
-		
-		    if (isdir(tmp))
+
+		    if (!wrap_name_has (comp, WRAP_TOCVS) && isdir(tmp))
 			addlist (&dirlist, argv[i]);
 		    else
 			addfile (&files_by_dir, dir, comp);

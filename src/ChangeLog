@@ -1,3 +1,24 @@
+Fri Jul 21 10:35:10 1995  Vince DeMarco <vdemarco@bou.shl.com>
+
+	* Makefile.in (SOURCES, OBJECTS): Add wrapper.c, wrapper.o.
+	* add.c, admin.c, checkout.c, commit.c, diff.c, import.c, log.c,
+	remove.c, status.c: Call wrap_setup at start of commands.
+	* add.c (add): Check for wrapper, as well as directory, in repository.
+	* checkin.c: Add tocvsPath variable and associated handling.
+	* cvs.h: Add wrapper declarations.
+	* diff.c: Add tocvsPath variable and associated handling.
+	* import.c: Add -W option, CVSDOTWRAPPER handling.
+	(import_descend): check wrap_name_has.
+	(update_rcs_file, add_rev, add_rcs_file): add tocvsPath
+	variable and associated handling.
+	* no_diff.c: Add tocvsPath variable and associated handling.
+	* recurse.c (start_recursion): Check wrap_name_has.
+	* update.c: Copy, don't merge, copy-by-merge files.  Attempt to
+	use -j on a copy-by-merge file generates a warning and no further
+	action.
+	* update.c: Add CVSDOTWRAPPER handling.
+	* wrapper.c: Added.
+
 Fri Jul 21 00:20:52 1995  James Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c: Revert David Lamkin patch, except for the bits about

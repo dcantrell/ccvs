@@ -53,7 +53,7 @@ static char *keyword_opt = NULL;
 static const char *const import_usage[] =
 {
     "Usage: %s %s [-Qq] [-d] [-k subst] [-I ign] [-m msg] [-b branch]\n",
-    "    repository vendor-tag release-tags...\n",
+    "    [-W spec] repository vendor-tag release-tags...\n",
     "\t-Q\tReally quiet.\n",
     "\t-q\tSomewhat quiet.\n",
     "\t-d\tUse the file's modification time as the time of import.\n",
@@ -61,6 +61,7 @@ static const char *const import_usage[] =
     "\t-I ign\tMore files to ignore (! to reset).\n",
     "\t-b bra\tVendor branch id.\n",
     "\t-m msg\tLog message.\n",
+    "\t-W spec\tWrappers specification line.\n",
     NULL
 };
 
@@ -80,10 +81,11 @@ import (argc, argv)
 	usage (import_usage);
 
     ign_setup ();
+    wrap_setup ();
 
     (void) strcpy (vbranch, CVSBRANCH);
     optind = 1;
-    while ((c = getopt (argc, argv, "Qqdb:m:I:k:")) != -1)
+    while ((c = getopt (argc, argv, "Qqdb:m:I:k:W:")) != -1)
     {
 	switch (c)
 	{
@@ -116,6 +118,9 @@ import (argc, argv)
 		   as soon as it is returned. */
 		free (RCS_check_kflag(optarg));	
 		keyword_opt = optarg;
+		break;
+	    case 'W':
+		wrap_add (optarg, 0);
 		break;
 	    case '?':
 	    default:
@@ -312,6 +317,7 @@ import_descend (message, vtag, targc, targv)
 
     /* first, load up any per-directory ignore lists */
     ign_add_file (CVSDOTIGNORE, 1);
+    wrap_add_file (CVSDOTWRAPPER, 1);
 
     if ((dirp = opendir (".")) == NULL)
     {
@@ -339,9 +345,13 @@ import_descend (message, vtag, targc, targv)
 
 	    if (
 #ifdef DT_DIR
-		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+		(dp->d_type == DT_DIR
+		 || (dp->d_type == DT_UNKNOWN && isdir (dp->d_name)))
+#else
+		isdir (dp->d_name)
 #endif
-		isdir (dp->d_name))
+		&& !wrap_name_has (dp->d_name, WRAP_TOCVS)
+		)
             {	
 		Node *n;
 
@@ -449,6 +459,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     int letter;
     int ierrno;
     char *tmpdir;
+    char *tocvsPath;
 
     vers = Version_TS (repository, (char *) NULL, vbranch, (char *) NULL, vfile,
 		       1, 0, (List *) NULL, (List *) NULL);
@@ -497,7 +508,12 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	    (void) unlink_file (xtmpfile);
 	    return (1);
 	}
+
+	tocvsPath = wrap_tocvs_process_file (vfile);
 	different = xcmp (xtmpfile, vfile);
+	if (tocvsPath)
+	    unlink_file (tocvsPath);
+
 	(void) unlink_file (xtmpfile);
 	if (!different)
 	{
@@ -550,6 +566,7 @@ add_rev (message, rcs, vfile, vers)
     char *vers;
 {
     int locked, status, ierrno;
+    char *tocvsPath;
 
     if (noexec)
 	return (0);
@@ -564,29 +581,42 @@ add_rev (message, rcs, vfile, vers)
 	}
 	locked = 1;
     }
-    if (link_file (vfile, FILE_HOLDER) < 0)
+    tocvsPath = wrap_tocvs_process_file (vfile);
+    if (tocvsPath == NULL)
     {
-	if (errno == EEXIST)
+	if (link_file (vfile, FILE_HOLDER) < 0)
 	{
-	    (void) unlink_file (FILE_HOLDER);
-	    (void) link_file (vfile, FILE_HOLDER);
-	}
-	else
-	{
-	    ierrno = errno;
-	    fperror (logfp, 0, ierrno, "ERROR: cannot create link to %s", vfile);
-	    error (0, ierrno, "ERROR: cannot create link to %s", vfile);
-	    return (1);
+	    if (errno == EEXIST)
+	    {
+		(void) unlink_file (FILE_HOLDER);
+		(void) link_file (vfile, FILE_HOLDER);
+	    }
+	    else
+	    {
+		ierrno = errno;
+		fperror (logfp, 0, ierrno,
+			 "ERROR: cannot create link to %s", vfile);
+		error (0, ierrno, "ERROR: cannot create link to %s", vfile);
+		return (1);
+	    }
 	}
     }
+
     run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
     run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
+    run_arg (tocvsPath == NULL ? vfile : tocvsPath);
     run_arg (rcs);
     status = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
     ierrno = errno;
-    rename_file (FILE_HOLDER, vfile);
+
+    if (tocvsPath == NULL)
+	rename_file (FILE_HOLDER, vfile);
+    else
+	/* FIXME: should we be silently ignoring errors?  */
+	unlink_file (tocvsPath);
+
     if (status)
     {
 	if (!noexec)
@@ -802,12 +832,14 @@ add_rcs_file (message, rcs, user, vtag, targc, targv)
     char *author, *buf;
     int i, ierrno, err = 0;
     mode_t mode;
+    char *tocvsPath;
 
     if (noexec)
 	return (0);
 
     fprcs = open_file (rcs, "w+");
-    fpuser = open_file (user, "r");
+    tocvsPath = wrap_tocvs_process_file (user);
+    fpuser = open_file (tocvsPath == NULL ? user : tocvsPath, "r");
 
     /*
      * putadmin()

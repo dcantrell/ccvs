@@ -62,6 +62,8 @@ add (argc, argv)
     if (argc == 1 || argc == -1)
 	usage (add_usage);
 
+    wrap_setup ();
+
     /* parse args */
     optind = 1;
     while ((c = getopt (argc, argv, "k:m:")) != -1)
@@ -164,7 +166,7 @@ add (argc, argv)
 		    error (0, 0, "nothing known about %s", user);
 		    err++;
 		}
-		else if (!isdir (user))
+		else if (!isdir (user) || wrap_name_has (user, WRAP_TOCVS))
 		{
 		    /*
 		     * See if a directory exists in the repository with
@@ -185,19 +187,27 @@ add (argc, argv)
 		    /* There is a user file, so build the entry for it */
 		    if (build_entry (repository, user, vers->options,
 				     message, entries, vers->tag) != 0)
-		      err++;
+			err++;
 		    else 
 		    {
-		      added_files++;
-		      if (!quiet)
+			added_files++;
+			if (!quiet)
 			{
 #ifdef DEATH_SUPPORT
-			if (vers->tag)
-			    error (0, 0, "scheduling file `%s' for addition on branch `%s'",
-				   user, vers->tag);
-			else
+			    if (vers->tag)
+				error (0, 0, "\
+scheduling %s `%s' for addition on branch `%s'",
+				       (wrap_name_has (user, WRAP_TOCVS)
+					? "wrapper"
+					: "file"),
+				       user, vers->tag);
+			    else
 #endif /* DEATH_SUPPORT */
-		        error (0, 0, "scheduling file `%s' for addition", user);
+			    error (0, 0, "scheduling %s `%s' for addition",
+				   (wrap_name_has (user, WRAP_TOCVS)
+				    ? "wrapper"
+				    : "file"),
+				   user);
 			}
 		    }
 		}
@@ -310,7 +320,9 @@ add (argc, argv)
 	freevers_ts (&vers);
 
 	/* passed all the checks.  Go ahead and add it if its a directory */
-	if (begin_err == err && isdir (user))
+	if (begin_err == err
+	    && isdir (user)
+	    && !wrap_name_has (user, WRAP_TOCVS))
 	{
 	    err += add_directory (repository, user);
 	    continue;

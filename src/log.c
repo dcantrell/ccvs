@@ -93,6 +93,8 @@ cvslog (argc, argv)
     argc -= numopt;
     argv += numopt;
 
+    wrap_setup ();
+
 #ifdef CLIENT_SUPPORT
     if (client_active) {
 	/* We're the local client.  Fire up the remote server.  */

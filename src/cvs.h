@@ -162,6 +162,7 @@ extern int errno;
 #define	CVSROOTADM_HISTORY	"history"
 #define	CVSROOTADM_IGNORE	"cvsignore"
 #define	CVSROOTADM_CHECKOUTLIST "checkoutlist"
+#define CVSROOTADM_WRAPPER      "cvswrappers"
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
 /* support for the modules file (CVSROOTADM_MODULES) */
@@ -179,6 +180,7 @@ extern int errno;
 #define	CVSEXT_LOG	",t"
 #define	CVSPREFIX	",,"
 #define CVSDOTIGNORE	".cvsignore"
+#define CVSDOTWRAPPER   ".cvswrappers"
 
 /* Define to enable alternate death support (which doesn't require any
    help from RCS).  */
@@ -224,6 +226,7 @@ extern int errno;
 #define	CVSROOT_DFLT	NULL		/* No dflt; must set for checkout */
 
 #define	IGNORE_ENV	"CVSIGNORE"	/* More files to ignore */
+#define WRAPPER_ENV     "CVSWRAPPERS"   /* name of the wrapper file */
 
 /*
  * If the beginning of the Repository matches the following string, strip it
@@ -496,3 +499,14 @@ void SIG_endCrSect PROTO((void));
 void read_cvsrc PROTO((int *argc, char ***argv));
 
 char *make_message_rcslegal PROTO((char *message));
+
+/* Wrappers.  */
+
+typedef enum { WRAP_MERGE, WRAP_COPY } WrapMergeMethod;
+typedef enum { WRAP_TOCVS, WRAP_FROMCVS, WRAP_CONFLICT } WrapMergeHas;
+
+void  wrap_setup PROTO((void));
+int   wrap_name_has PROTO((const char *name,WrapMergeHas has));
+char *wrap_tocvs_process_file PROTO((const char *fileName));
+int   wrap_merge_is_copy PROTO((const char *fileName));
+char *wrap_fromcvs_process_file PROTO((const char *fileName));
