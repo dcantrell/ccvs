@@ -347,11 +347,20 @@ import_descend (message, vtag, targc, targv)
 		add_log ('I', dp->d_name);
 		continue;
 	    }
-	    if (isdir (dp->d_name))
-	    {
+
+	    if (
+#ifdef DTR_DIR
+		dp->d_type == DT_DIR || dp->d_type == DT_UNKNOWN &&
+#endif
+		isdir (dp->d_name))
+            {	
 		has_dirs = 1;
 	    }
-	    else if (islink (dp->d_name))
+	    else if (
+#ifdef DTR_DIR
+		dp->d_type == DT_LNK || dp->d_type == DT_UNKNOWN && 
+#endif
+		islink (dp->d_name))
 	    {
 		add_log ('L', dp->d_name);
 		err++;
