@@ -1,6 +1,5 @@
 *.dvi
 Makefile
-CVSvn.texi
 cvs-paper.pdf
 cvs-paper.ps
 cvs.aux

@@ -39,6 +39,8 @@ TXTS = \
 EXTRA_DIST = \
 	$(POSTSCRIPTS) \
 	.cvsignore \
+	CVSvn.texi \
+	CVSvn.texi.in \
 	ChangeLog.fsf \
 	RCSFILES \
 	cvs-paper.ms \
@@ -108,6 +110,19 @@ SUFFIXES = .aux .txt .pdf
 	TEXINPUTS=$(srcdir):$$TEXINPUTS \
 	  MAKEINFO='$(MAKEINFO) -I $(srcdir)' $(MAKEINFO) $< --no-headers -o $@
 
+## MAINTAINER Targets
+
+## CVSvn.texi ##
+# - CVSvn.texi needs to be updated only once, since it depends on
+#   configure.in, not on the results of a 'configure' run.
+# - It is guaranteed (with GNU Make) that when the version in configure.in
+#   is changed, acversion.m4 is built only after the new version number is
+#   propagated to the Makefile.  (Libtool uses the same guarantee.)
+CVSvn.texi: $(srcdir)/CVSvn.texi.in $(top_srcdir)/configure.in
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/CVSvn.texi.in >CVSvn.ttexi
+	mv CVSvn.ttexi $(srcdir)/CVSvn.texi
+
+## realclean ##
 # for backwards compatibility with the old makefiles
 realclean: maintainer-clean
 .PHONY: realclean
