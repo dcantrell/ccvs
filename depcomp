@@ -135,12 +135,6 @@ sgi)
     tr ' ' '
 ' < "$tmpdepfile" | sed 's/^.*\.o://' | tr '
 ' ' ' >> $depfile
-
-    tr ' ' '
-' < "$tmpdepfile" | \
-## Some versions of the HPUX 10.20 sed can't process this invocation
-## correctly.  Breaking it into two sed invocations is a workaround.
-      sed -e 's/^\\$//' -e '/^$/d' -e '/:$/d' | sed -e 's/$/ :/' >> "$depfile"
   else
     # The sourcefile does not contain any dependencies, so just
     # store a dummy comment line, to avoid errors with the Makefile
