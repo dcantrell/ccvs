@@ -1,3 +1,8 @@
+Sun Apr  6 19:03:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Explicitly mention the idea of
+	deferring "Notify" requests.
+
 Tue Apr  1 07:51:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Add paragraph about directory
