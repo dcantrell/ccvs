@@ -1,3 +1,8 @@
+2003-07-15  Derek Price  <derek@ximbiot.com>
+
+	* unlocked-io.m4: Use the onceonly_2_57.m4 functions.  This syncs us
+	with GNULIB.
+
 2003-06-16  Derek Price  <derek@ximbiot.com>
 
 	* acx_with_external_zlib.m4: Fix minor typo that was preventing
