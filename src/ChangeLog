@@ -22,7 +22,8 @@
 	older clients connecting to 1.11.2 servers, especially when
 	compression is enabled.
 	(Original report from Mark D. Baushke <mdb@juniper.net>.
-	 Original patch from Peter Wemm <peter@freebsd.org>.)
+	 Original patch from Ralf S. Engelschall <rse@engelschall.com>
+	 via Peter Wemm <peter@freebsd.org>.)
 
 2002-10-05  Larry Jones  <lawrence.jones@eds.com>
 
