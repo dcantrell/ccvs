@@ -1895,12 +1895,15 @@ more information about them.
 
 You can now verify that it worked, and remove your
 original source directory.
+@c FIXME: Need to say more about "verify that it
+@c worked".  What should the user look for in the output
+@c from "diff -r"?
 
 @example
 $ cd ..
 $ mv @var{dir} @var{dir}.orig
 $ cvs checkout yoyodyne/@var{dir}       # @r{Explanation below}
-$ ls -R yoyodyne
+$ diff -r @var{dir}.orig yoyodyne/@var{dir}
 $ rm -r @var{dir}.orig
 @end example
 
@@ -5419,7 +5422,7 @@ file, and continues to use it with future update
 commands on the same file until you specify otherwise.
 
 The @samp{-k} option is available with the @code{add},
-@code{checkout}, @code{diff} and
+@code{checkout}, @code{diff}, @code{import} and
 @code{update} commands.
 
 @item -l
@@ -5563,7 +5566,7 @@ with @sc{cvs}.  Some even makes it impossible to use
 
 This description of the available options is based on
 the @samp{rcs(1)} man page, but modified to suit
-readers that are more interrested in @sc{cvs} than
+readers that are more interested in @sc{cvs} than
 @sc{rcs}.
 
 @table @code

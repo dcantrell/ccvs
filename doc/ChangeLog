@@ -1,3 +1,12 @@
+Fri Nov 29 09:06:41 1996  fnf@ninemoons.com (Fred Fish)
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (From files): Suggest "diff -r" rather than "ls -R"
+	as the way to see that the sources seem to have been imported
+	correctly.
+	(Common options): -k is also available with import.
+	(admin options): Fix typo ("interrested" -> "interested").
+
 Mon Nov 25 10:03:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Add comments about two digit
