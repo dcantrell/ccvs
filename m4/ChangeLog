@@ -1,5 +1,11 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): Add getopt.m4.
+	* getopt.m4: New file from GNULIB.
+	* Makefile.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* gettext.m4: Don't check for headers we assume per the notes in
 	HACKING.
 
