@@ -1,3 +1,7 @@
+2005-04-06  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (DISTCLEANFILES): Remove stamp-ch.
+
 2005-03-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.in: Regenerated.
