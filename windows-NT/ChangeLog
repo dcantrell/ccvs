@@ -1,3 +1,9 @@
+Sat Sep 13 20:13:09 1997    <Martin.Sjoelin@ubs.ch>
+	indentation/whitespace fixes by Jim Kingdon
+
+	* run.c (quote): quote any " included in argument string to
+	avoid having ci choke on message string format.
+
 Sun Sep  7 19:59:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Add section on coding standards (win32, ANSI, &c).
