@@ -101,6 +101,7 @@ static const struct cmd
     { "log",      "lo",       "rlog",      cvslog },
 #ifdef AUTH_CLIENT_SUPPORT
     { "login",    "logon",    "lgn",       login },
+    { "logout",   NULL,       NULL,        logout },
 #ifdef SERVER_SUPPORT
     { "pserver",  NULL,       NULL,        server }, /* placeholder */
 #endif
@@ -170,6 +171,7 @@ static const char *const cmd_usage[] =
     "        log          Print out history information for files\n",
 #ifdef AUTH_CLIENT_SUPPORT
     "        login        Prompt for password for authenticating server.\n",
+    "        logout       Removes entry in .cvspass for remote repository.\n",
 #endif /* AUTH_CLIENT_SUPPORT */
     "        rdiff        Create 'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
@@ -230,16 +232,17 @@ lookup_command_attribute (cmd_name)
         ret |= CVS_CMD_IGNORE_ADMROOT;
     }
 
-    
+
     if ((strcmp (cmd_name, "checkout") != 0) &&
         (strcmp (cmd_name, "login") != 0) &&
+	(strcmp (cmd_name, "logout") != 0) &&
         (strcmp (cmd_name, "rdiff") != 0) &&
         (strcmp (cmd_name, "release") != 0) &&
         (strcmp (cmd_name, "rtag") != 0))
     {
         ret |= CVS_CMD_USES_WORK_DIR;
     }
-        
+
 
     /* The following commands do not modify the repository; we
        conservatively assume that everything else does.  Feel free to

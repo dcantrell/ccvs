@@ -202,7 +202,15 @@ extern int errno;
 
 /* Command attributes -- see function lookup_command_attribute(). */
 #define CVS_CMD_IGNORE_ADMROOT        1
+
+/* Set if CVS does _not_ need to create a CVS/Root file upon
+   completion of this command.  The name is confusing, both because
+   the meaning is closer to "does not use working directory" than
+   "uses working directory" and because the flag isn't really as
+   general purpose as it seems (cvs release sets it).  */
+
 #define CVS_CMD_USES_WORK_DIR         2
+
 #define CVS_CMD_MODIFIES_REPOSITORY   4
 
 /* miscellaneous CVS defines */
@@ -774,6 +782,7 @@ extern int import PROTO ((int argc, char **argv));
 extern int cvslog PROTO ((int argc, char **argv));
 #ifdef AUTH_CLIENT_SUPPORT
 extern int login PROTO((int argc, char **argv));
+int logout PROTO((int argc, char **argv));
 #endif /* AUTH_CLIENT_SUPPORT */
 extern int patch PROTO((int argc, char **argv));
 extern int release PROTO((int argc, char **argv));

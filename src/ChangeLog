@@ -1,3 +1,14 @@
+Sun Dec 15 13:12:30 1996  Michael Douglass <mikedoug@texas.net>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (cmds): Added an entry for new logout command.
+	(cmd_usage): Added an entry for new logout command.
+	(lookup_command_attribute): Added 'logout' to list of commands
+	that set need_to_crate_root to 1.
+	* login.c, cvs.h (logout): New command for removing entries from
+	the .cvspass file.
+	(logout_usage): Usage information on the logout command.
+
 Wed Feb 12 11:19:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (struct send_data): Fix indentation.
