@@ -29,6 +29,7 @@
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
 	".\getopt.h"\
@@ -67,6 +68,7 @@
 
 .\getndelim2.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
 	".\getndelim2.h"\
 	
 
@@ -90,6 +92,7 @@
 
 .\md5.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
 	".\md5.h"\
 	
 
@@ -100,6 +103,7 @@
 
 ".\printf-parse.c" : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
 	".\printf-args.h"\
 	".\printf-parse.h"\
 	".\xsize.h"\
@@ -128,6 +132,7 @@
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
 	".\getopt.h"\
@@ -162,6 +167,7 @@
 	"..\windows-NT\ndir.h"\
 	"..\windows-NT\pwd.h"\
 	"..\windows-NT\stdbool.h"\
+	"..\windows-NT\stdint.h"\
 	"..\windows-NT\unistd.h"\
 	".\fnmatch.h"\
 	".\getopt.h"\
@@ -174,6 +180,7 @@
 
 .\vasnprintf.c : \
 	"..\windows-NT\config.h"\
+	"..\windows-NT\stdint.h"\
 	".\alloca.h"\
 	".\printf-args.h"\
 	".\printf-parse.h"\
