@@ -1,3 +1,7 @@
+1999-02-22  Jim Kingdon  <http://www.cyclic.com>
+
+	* version.c: Version 1.10.5.
+
 1999-02-18  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (files): New test, for a relatively obscure spurious
