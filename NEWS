@@ -3,6 +3,10 @@ Changes since 1.12.6:
 
 GENERAL USER ISSUES
 
+* CVS now accepts the location of HTTP tunnel web proxies as part of the
+  CVSROOT string.  Actually using a proxy remains untested.  Please report
+  problems and successes to <bug-cvs@gnu.org>.
+
 * Configure no longer checks the $TMPDIR, $TMP, & $TEMP variables to set the
   default temporary directory.
 
