@@ -1,3 +1,10 @@
+Fri Jun  7 16:59:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Invoking CVS): Add comment describing why only some
+	commands are listed here.
+	(Structure, Environment variables): Don't describe CVS as a
+	front-end to RCS.
+
 Tue Jun  4 21:19:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Responses): Document Created and Update-existing.
