@@ -1,3 +1,8 @@
+1999-01-05  Jim Kingdon  <http://www.cyclic.com>
+
+	* client.c, update.c: Rename MD5* functions to cvs_MD5* per
+	corresponding change to ../lib/md5.h.
+
 1999-01-03  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (client): Give file1 a predictable mode so that the
