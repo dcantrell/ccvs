@@ -403,23 +403,65 @@ create_adm_p (base_dir, dir)
 	(void) sprintf (tmp, "%s/%s", dir_where_cvsadm_lives, CVSADM_REP);
 	if (! isfile (tmp))
 	{
+	    /* Use Emptydir as the placeholder until the client sends
+	       us the real value.  This code is similar to checkout.c
+	       (emptydir_name), but the code below returns errors
+	       differently.  */
+
+	    char *empty;
+	    empty = malloc (strlen (CVSroot_directory)
+			    + sizeof (CVSROOTADM)
+			    + sizeof (CVSNULLREPOS)
+			    + 10);
+	    if (! empty)
+	    {
+		retval = ENOMEM;
+		goto finish;
+	    }
+
+	    /* Create the directory name. */
+	    (void) sprintf (empty, "%s/%s/%s", CVSroot_directory,
+			    CVSROOTADM, CVSNULLREPOS);
+
+	    /* Create the directory if it doesn't exist. */
+	    if (! isfile (empty))
+	    {
+		mode_t omask;
+		omask = umask (cvsumask);
+		if (CVS_MKDIR (empty, 0777) < 0)
+		{
+		    retval = errno;
+		    free (empty);
+		    goto finish;
+		}
+		(void) umask (omask);
+	    }
+	    
+	    
 	    f = CVS_FOPEN (tmp, "w");
 	    if (f == NULL)
 	    {
 		retval = errno;
+		free (empty);
 		goto finish;
 	    }
-	    if (fprintf (f, "%s/.\n", CVSroot_directory) < 0)
+	    /* Write the directory name to CVSADM_REP. */
+	    if (fprintf (f, "%s\n", empty) < 0)
 	    {
 		retval = errno;
 		fclose (f);
+		free (empty);
 		goto finish;
 	    }
 	    if (fclose (f) == EOF)
 	    {
 		retval = errno;
+		free (empty);
 		goto finish;
 	    }
+
+	    /* Clean up after ourselves. */
+	    free (empty);
 	}
 
 	/* Create CVSADM_ENT.  We open in append mode because we
