@@ -66,18 +66,6 @@ char *strerror (int);
 # include "fnmatch.h"			/* Our substitute */
 #endif /* HAVE_FNMATCH */
 
-#include <ctype.h>
-#include <pwd.h>
-#include <signal.h>
-
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#else
-#ifndef errno
-extern int errno;
-#endif /* !errno */
-#endif /* HAVE_ERRNO_H */
-
 #include "system.h"
 
 #include "hash.h"
