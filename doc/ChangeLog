@@ -1,5 +1,8 @@
 Wed Mar 13 16:01:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Setting up): Don't refer to INSTALL file; revise to
+	reflect some information which had been in the INSTALL file.
+
 	* cvs.texinfo (history file): Update to reflect cvsinit -> cvs
 	init.  Adjust discussion of whether history file format is
 	documented.

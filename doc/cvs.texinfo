@@ -7186,16 +7186,18 @@ format changes with future releases of @sc{cvs}.
 @cindex Creating a repository
 @cindex Setting up a repository
 
-When you install @sc{cvs} for the first time, you should
-follow the instructions in the @file{INSTALL} file to
-set up the repository.
+To set up a @sc{cvs} repository, choose a directory
+with ample disk space available for the revision
+history of the source files.  It should be accessable
+(directly or via a networked file system) from all
+machines which want to use @sc{cvs} in server or local
+mode; the client machines need not have any access to
+it other than via the @sc{cvs} protocol.
 
-If you want to set up another repository, the easiest
-way to get a reasonable set of working administrative
-files is to run the @code{cvs init} command.  It will
-set up an empty repository in the @sc{cvs} root
-specified in the usual way (@pxref{Repository}).  For
-example,
+To create a repository, run the @code{cvs init}
+command.  It will set up an empty repository in the
+@sc{cvs} root specified in the usual way
+(@pxref{Repository}).  For example,
 
 @example
 cvs -d /usr/local/cvsroot init
