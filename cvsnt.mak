@@ -88,6 +88,7 @@ BSC32_SBRS= \
 	.\WinRel\classify.sbr \
 	.\WinRel\history.sbr \
 	.\WinRel\add.sbr \
+	.\WinRel\expand_path.sbr \
 	.\WinRel\lock.sbr \
 	.\WinRel\recurse.sbr \
 	.\WinRel\modules.sbr \
@@ -169,6 +170,7 @@ LINK32_OBJS= \
 	.\WinRel\classify.obj \
 	.\WinRel\history.obj \
 	.\WinRel\add.obj \
+	.\WinRel\expand_path.obj \
 	.\WinRel\lock.obj \
 	.\WinRel\recurse.obj \
 	.\WinRel\modules.obj \
@@ -273,6 +275,7 @@ BSC32_SBRS= \
 	.\WinDebug\classify.sbr \
 	.\WinDebug\history.sbr \
 	.\WinDebug\add.sbr \
+	.\WinDebug\expand_path.sbr \
 	.\WinDebug\lock.sbr \
 	.\WinDebug\recurse.sbr \
 	.\WinDebug\modules.sbr \
@@ -354,6 +357,7 @@ LINK32_OBJS= \
 	.\WinDebug\classify.obj \
 	.\WinDebug\history.obj \
 	.\WinDebug\add.obj \
+	.\WinDebug\expand_path.obj \
 	.\WinDebug\lock.obj \
 	.\WinDebug\recurse.obj \
 	.\WinDebug\modules.obj \
@@ -1074,6 +1078,41 @@ DEP_ADD_C=\
 ################################################################################
 # Begin Source File
 
+SOURCE=.\src\expand_path.c
+DEP_EXPAN=\
+	.\src\cvs.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	".\windows-NT\alloca.h"\
+	.\lib\fnmatch.h\
+	".\windows-NT\pwd.h"\
+	.\lib\system.h\
+	.\src\hash.h\
+	.\src\server.h\
+	.\src\client.h\
+	.\src\myndbm.h\
+	.\lib\regex.h\
+	.\lib\getopt.h\
+	.\lib\wait.h\
+	.\src\rcs.h\
+	".\windows-NT\ndir.h"
+
+!IF  "$(CFG)" == "Win32 Release"
+
+.\WinRel\expand_path.obj :  $(SOURCE)  $(DEP_EXPAN) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ELSEIF  "$(CFG)" == "Win32 Debug"
+
+.\WinDebug\expand_path.obj :  $(SOURCE)  $(DEP_EXPAN) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
 SOURCE=.\src\lock.c
 DEP_LOCK_=\
 	.\src\cvs.h\
@@ -1443,6 +1482,29 @@ DEP_WRAPP=\
 !ENDIF 
 
 # End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\src\error.c
+DEP_ERROR=\
+	.\src\cvs.h\
+	".\windows-NT\config.h"\
+	".\windows-NT\options.h"\
+	".\windows-NT\alloca.h"
+
+!IF  "$(CFG)" == "Win32 Release"
+
+.\WinRel\error.obj :  $(SOURCE)  $(DEP_ERROR) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ELSEIF  "$(CFG)" == "Win32 Debug"
+
+.\WinDebug\error.obj :  $(SOURCE)  $(DEP_ERROR) $(INTDIR)
+   $(CPP) $(CPP_PROJ)  $(SOURCE) 
+
+!ENDIF 
+
+# End Source File
 # End Group
 ################################################################################
 # Begin Group "lib"
@@ -1460,24 +1522,6 @@ SOURCE=.\lib\getwd.c
 !ELSEIF  "$(CFG)" == "Win32 Debug"
 
 .\WinDebug\getwd.obj :  $(SOURCE)  $(INTDIR)
-   $(CPP) $(CPP_PROJ)  $(SOURCE) 
-
-!ENDIF 
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\lib\error.c
-
-!IF  "$(CFG)" == "Win32 Release"
-
-.\WinRel\error.obj :  $(SOURCE)  $(INTDIR)
-   $(CPP) $(CPP_PROJ)  $(SOURCE) 
-
-!ELSEIF  "$(CFG)" == "Win32 Debug"
-
-.\WinDebug\error.obj :  $(SOURCE)  $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 !ENDIF 
@@ -1688,7 +1732,7 @@ SOURCE=".\lib\save-cwd.c"
 DEP_SAVE_=\
 	".\windows-NT\config.h"\
 	".\lib\save-cwd.h"\
-	.\lib\error.h
+	.\src\error.h
 
 !IF  "$(CFG)" == "Win32 Release"
 

@@ -1,3 +1,7 @@
+Fri Oct 20 17:04:55 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* cvsnt.mak: added src/expand_path.c, error.[ch] now in src
+
 Thu Oct 19 16:26:32 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove note about RCS 5.7 and log messages
