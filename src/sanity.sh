@@ -512,8 +512,12 @@ dotest_sort ()
   dotest_internal "$@"
 }
 
-# clean any old remnants
-rm -rf ${TESTDIR}
+# clean any old remnants (we need the chmod because some tests make
+# directories read-only)
+if test -d ${TESTDIR}; then
+    chmod -R a+wx ${TESTDIR}
+    rm -rf ${TESTDIR}
+fi
 mkdir ${TESTDIR}
 cd ${TESTDIR}
 # This will show up in cvs history output where it prints the working
@@ -557,7 +561,7 @@ if test x"$*" = x; then
 	tests="${tests} new newb conflicts conflicts2 conflicts3"
 	# Checking out various places (modules, checkout -d, &c)
 	tests="${tests} modules modules2 modules3 modules4"
-	tests="${tests} cvsadm emptydir abspath toplevel"
+	tests="${tests} cvsadm emptydir abspath toplevel toplevel2"
 	# Log messages, error messages.
 	tests="${tests} mflag editor errmsg1 errmsg2"
 	# Watches, binary files, history browsing, &c.
@@ -894,15 +898,19 @@ done"
 	  cd ..
 	  rm -r 2
 
-:	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest basicb-1 "${testcvs} -q co first-dir" ''
-	  dotest basicb-1a "test -d CVS" ''
+
+	  # The top-level CVS directory is not created by default.
+	  # I'm leaving basicb-1a and basicb-1b untouched, mostly, in
+	  # case we decide that the default should be reversed...
+
+	  dotest_fail basicb-1a "test -d CVS" ''
 
 	  # In 1b and 1c, the first string matches if we're using absolute
 	  # paths, while the second matches if RELATIVE_REPOS is defined
 	  # (we're using relative paths).
 
-	  dotest basicb-1b "cat CVS/Repository" \
+:	  dotest basicb-1b "cat CVS/Repository" \
 "${TESTDIR}/cvsroot/\." \
 "\."
 	  dotest basicb-1c "cat first-dir/CVS/Repository" \
@@ -1007,13 +1015,16 @@ U first-dir1/sdir2/sfile2'
 "${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
 'U newdir/first-dir/Emptydir/sfile1
 U newdir/first-dir/sdir2/sfile2'
-	  dotest basicb-9a "test -d CVS" ''
+
+	  # basicb-9a and basicb-9b: see note about basicb-1a
+
+	  dotest_fail basicb-9a "test -d CVS" ''
 
 	  # In 9b through 9f, the first string matches if we're using
           # absolute paths, while the second matches if RELATIVE_REPOS
 	  # is defined (we're using relative paths).
 
-	  dotest basicb-9b "cat CVS/Repository" \
+:	  dotest basicb-9b "cat CVS/Repository" \
 "${TESTDIR}/cvsroot/\." \
 "\."
 	  dotest basicb-9c "cat newdir/CVS/Repository" \
@@ -1125,10 +1136,11 @@ ${PROG} \[[a-z]* aborted\]: there is no version here; run .${PROG} checkout. fir
 Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
 	  # Old versions of CVS often didn't create this top-level CVS
 	  # directory in the first place.  I think that maybe the only
-	  # way to get avoid it currently is to let CVS create it, and
-	  # then blow it away.  But that is perfectly legal; people who
-	  # are used to the old behavior especially may be interested.
-	  rm -r CVS
+	  # way to get it to work currently is to let CVS create it,
+	  # and then blow it away (don't complain if it does not
+	  # exist).  But that is perfectly legal; people who are used
+	  # to the old behavior especially may be interested.
+	  rm -rf CVS
 	  dotest basicc-4 "echo *" "first-dir second-dir"
 	  dotest basicc-5 "${testcvs} update" \
 "${PROG} [a-z]*: Updating first-dir
@@ -3813,6 +3825,7 @@ modify-on-br1
 		  fail 106.5
 		fi
 		cd ..
+		rm imported-f2-orig.tmp
 
 		# co
 		if ${CVS} co first-dir  ; then
@@ -5910,9 +5923,11 @@ EOF
 "${PROG} [a-z]*: Updating first-dir
 ${PROG} [a-z]*: Updating second-dir"
 	  touch ampermodule/first-dir/amper1
-	  dotest modules2-10 "${testcvs} add ampermodule/first-dir/amper1" \
-"${PROG} [a-z]*: scheduling file .ampermodule/first-dir/amper1. for addition
+	  cd ampermodule
+	  dotest modules2-10 "${testcvs} add first-dir/amper1" \
+"${PROG} [a-z]*: scheduling file .first-dir/amper1. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  cd ..
 
 	  # As with the "Updating xxx" message, the "U first-dir/amper1"
 	  # message (instead of "U ampermodule/first-dir/amper1") is
@@ -6345,7 +6360,23 @@ add-it
 	  # convenience variables
 	  REP=${CVSROOT}
 
-	  # First, check out the modules file and edit it.
+	  # First, set TopLevelAdmin=yes so we're sure to get
+	  # top-level CVS directories.
+	  mkdir 1; cd 1
+	  dotest cvsadm-setup-1 "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "TopLevelAdmin=yes" >config
+	  dotest cvsadm-setup-2 "${testcvs} -q ci -m yes-top-level" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+	  rm -r 1
+
+	  # Second, check out the modules file and edit it.
 	  mkdir 1; cd 1
 	  dotest cvsadm-1 "${testcvs} co CVSROOT/modules" \
 "U CVSROOT/modules"
@@ -6401,26 +6432,27 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  rm -rf CVS CVSROOT;
 
 	  # Create the various modules
-	  mkdir ${CVSROOT_DIRNAME}/mod1
-	  mkdir ${CVSROOT_DIRNAME}/mod1-2
-	  mkdir ${CVSROOT_DIRNAME}/mod2
-	  mkdir ${CVSROOT_DIRNAME}/mod2/sub2
-	  mkdir ${CVSROOT_DIRNAME}/mod2-2
-	  mkdir ${CVSROOT_DIRNAME}/mod2-2/sub2-2
-	  dotest cvsadm-2 "${testcvs} co mod1 mod1-2 mod2 mod2-2" \
-"${PROG} [a-z]*: Updating mod1
-${PROG} [a-z]*: Updating mod1-2
-${PROG} [a-z]*: Updating mod2
-${PROG} [a-z]*: Updating mod2/sub2
-${PROG} [a-z]*: Updating mod2-2
-${PROG} [a-z]*: Updating mod2-2/sub2-2"
+	  dotest cvsadm-2 "${testcvs} -q co -l ." ''
+	  mkdir mod1
+	  mkdir mod1-2
+	  mkdir mod2
+	  mkdir mod2/sub2
+	  mkdir mod2-2
+	  mkdir mod2-2/sub2-2
+	  dotest cvsadm-2a "${testcvs} add mod1 mod1-2 mod2 mod2/sub2 mod2-2 mod2-2/sub2-2" \
+"Directory ${TESTDIR}/cvsroot/mod1 added to the repository
+Directory ${TESTDIR}/cvsroot/mod1-2 added to the repository
+Directory ${TESTDIR}/cvsroot/mod2 added to the repository
+Directory ${TESTDIR}/cvsroot/mod2/sub2 added to the repository
+Directory ${TESTDIR}/cvsroot/mod2-2 added to the repository
+Directory ${TESTDIR}/cvsroot/mod2-2/sub2-2 added to the repository"
 
 	  # Populate the directories for the halibut
 	  echo "file1" > mod1/file1
 	  echo "file1-2" > mod1-2/file1-2
 	  echo "file2" > mod2/sub2/file2
 	  echo "file2-2" > mod2-2/sub2-2/file2-2
-	  dotest cvsadm-2a "${testcvs} add mod1/file1 mod1-2/file1-2 mod2/sub2/file2 mod2-2/sub2-2/file2-2" \
+	  dotest cvsadm-2aa "${testcvs} add mod1/file1 mod1-2/file1-2 mod2/sub2/file2 mod2-2/sub2-2/file2-2" \
 "${PROG} [a-z]*: scheduling file .mod1/file1. for addition
 ${PROG} [a-z]*: scheduling file .mod1-2/file1-2. for addition
 ${PROG} [a-z]*: scheduling file .mod2/sub2/file2. for addition
@@ -7698,6 +7730,19 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  ## That's enough of that, thank you very much.
 	  ##################################################
 
+	  dotest cvsadm-cleanup-1 "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "# empty file" >config
+	  dotest cvsadm-cleanup-2 "${testcvs} -q ci -m cvsadm-cleanup" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+          cd ..
+          rm -rf CVSROOT CVS
+
 	  # remove our junk
 	  cd ..
 	  rm -rf 1
@@ -7723,8 +7768,7 @@ U dir/dir2/dir2d2/sub2d2/file2"
 	  echo "2d1mod -d dir2d1/sub2d1 mod1" >> CVSROOT/modules
 
 	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
-"${PROG} [a-z]*: Examining .
-${PROG} [a-z]*: Examining CVSROOT
+"${PROG} [a-z]*: Examining CVSROOT
 Checking in CVSROOT/modules;
 ${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
@@ -7737,9 +7781,11 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest emptydir-3 "${testcvs} co mod1" \
 "${PROG} [a-z]*: Updating mod1"
 	  echo "file1" > mod1/file1
-	  dotest emptydir-4 "${testcvs} add mod1/file1" \
-"${PROG} [a-z]*: scheduling file .mod1/file1. for addition
+	  cd mod1
+	  dotest emptydir-4 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
 ${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
+          cd ..
 	  dotest emptydir-5 "${testcvs} -q ci -m yup mod1" \
 "RCS file: ${CVSROOT_DIRNAME}/mod1/file1,v
 done
@@ -7747,7 +7793,7 @@ Checking in mod1/file1;
 ${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
 initial revision: 1\.1
 done"
-	  rm -r mod1 CVS
+	  rm -rf mod1 CVS
 	  # End Populate.
 
 	  dotest emptydir-6 "${testcvs} co 2d1mod" \
@@ -7772,7 +7818,7 @@ initial revision: 1\.1
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
-	  rm -r CVS dir2d1
+	  rm -rf CVS dir2d1
 
 	  # OK, while we have an Emptydir around, test a few obscure
 	  # things about it.
@@ -7812,10 +7858,16 @@ ${PROG} [a-z]*: Updating mod2"
 	  # Populate the module
 	  echo "file1" > mod1/file1
 	  echo "file2" > mod2/file2
-	  dotest abspath-1b "${testcvs} add mod1/file1 mod2/file2" \
-"${PROG} [a-z]*: scheduling file .mod1/file1. for addition
-${PROG} [a-z]*: scheduling file .mod2/file2. for addition
-${PROG} [a-z]*: use '${PROG} commit' to add these files permanently"
+	  cd mod1
+	  dotest abspath-1ba "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
+          cd ..
+          cd mod2
+	  dotest abspath-1bb "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use '${PROG} commit' to add this file permanently"
+          cd ..
 
 	  dotest abspath-1c "${testcvs} ci -m yup mod1 mod2" \
 "${PROG} [a-z]*: Examining mod1
@@ -7898,7 +7950,7 @@ ${PROG} [a-z]*: ignoring module mod1"
 "${PROG} [a-z]*: Updating 2
 U 2/file1"
 	    cd ..
-	    rm -r 1/CVS
+	    rm -rf 1/CVS
 	  else
 	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
@@ -8039,6 +8091,21 @@ ${PROG} \[server aborted\]: than the 0 which Max-dotdot specified"
 	  # Emptydir?  That would seem a bit odd).
 	  rm -rf ${CVSROOT_DIRNAME}/CVSROOT/Emptydir
 
+	  # First set the TopLevelAdmin setting.
+	  mkdir 1; cd 1
+	  dotest toplevel-1a "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "TopLevelAdmin=yes" >config
+	  dotest toplevel-1b "${testcvs} -q ci -m yes-top-level" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+	  rm -r 1
+
 	  mkdir 1; cd 1
 	  dotest toplevel-1 "${testcvs} -q co -l ." ''
 	  mkdir top-dir second-dir
@@ -8109,6 +8176,7 @@ ${PROG} [a-z]*: Updating top-dir"
 	  dotest toplevel-10 "${testcvs} co top-dir" \
 "${PROG} [a-z]*: Updating top-dir
 U top-dir/file1"
+
 	  # This tests more or less the same thing, in a particularly
 	  # "real life" example.
 	  dotest toplevel-11 "${testcvs} -q update -d second-dir" \
@@ -8122,12 +8190,124 @@ U top-dir/file1"
 	  # Now set the permissions so we can't recreate it.
 	  chmod -w ../1
 	  # Now see whether CVS has trouble because it can't create CVS.
+	  # First string is for local, second is for remote.
 	  dotest toplevel-12 "${testcvs} co top-dir" \
 "${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
+${PROG} [a-z]*: Updating top-dir" \
+"${PROG} [a-z]*: warning: cannot make directory CVS in \.: Permission denied
+${PROG} [a-z]*: in directory \.:
+${PROG} [a-z]*: cannot open CVS/Entries for reading: No such file or directory
 ${PROG} [a-z]*: Updating top-dir"
+
 	  chmod +w ../1
 
+	  dotest toplevel-cleanup-1 "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "# empty file" >config
+	  dotest toplevel-cleanup-2 "${testcvs} -q ci -m toplevel-cleanup" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
+	  ;;
+
+	toplevel2)
+	  # Similar to toplevel, but test the case where TopLevelAdmin=no.
+
+	  # First set the TopLevelAdmin setting.
+	  mkdir 1; cd 1
+	  dotest toplevel2-1a "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "TopLevelAdmin=no" >config
+	  dotest toplevel2-1b "${testcvs} -q ci -m no-top-level" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
+	  rm -r 1
+
+	  # Now set up some directories and subdirectories
+	  mkdir 1; cd 1
+	  dotest toplevel2-1 "${testcvs} -q co -l ." ''
+	  mkdir top-dir second-dir
+	  dotest toplevel2-2 "${testcvs} add top-dir second-dir" \
+"Directory ${TESTDIR}/cvsroot/top-dir added to the repository
+Directory ${TESTDIR}/cvsroot/second-dir added to the repository"
+	  cd top-dir
+
+	  touch file1
+	  dotest toplevel2-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest toplevel2-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/top-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/top-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
 	  cd ..
+
+	  cd second-dir
+	  touch file2
+	  dotest toplevel2-3s "${testcvs} add file2" \
+"${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
+	  dotest toplevel2-4s "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/second-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/second-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+
+	  cd ../..
+	  rm -r 1; mkdir 1; cd 1
+	  dotest toplevel2-5 "${testcvs} co top-dir" \
+"${PROG} [a-z]*: Updating top-dir
+U top-dir/file1"
+
+	  dotest toplevel2-6 "${testcvs} update top-dir" \
+"${PROG} [a-z]*: Updating top-dir"
+	  dotest toplevel2-7 "${testcvs} update"  \
+"${PROG} [a-z]*: Updating top-dir"
+
+	  dotest toplevel2-8 "${testcvs} update -d top-dir" \
+"${PROG} [a-z]*: Updating top-dir"
+	  # Contrast this with toplevel-9, which has TopLevelAdmin=yes.
+	  dotest toplevel2-9 "${testcvs} update -d" \
+"${PROG} [a-z]*: Updating top-dir"
+
+	  cd ..
+	  rm -r 1; mkdir 1; cd 1
+	  dotest toplevel2-10 "${testcvs} co top-dir" \
+"${PROG} [a-z]*: Updating top-dir
+U top-dir/file1"
+	  # This tests more or less the same thing, in a particularly
+	  # "real life" example.  With TopLevelAdmin=yes, this command
+	  # would give us second-dir and CVSROOT directories too.
+	  dotest toplevel2-11 "${testcvs} -q update -d" ""
+
+	  dotest toplevel2-cleanup-1 "${testcvs} -q co CVSROOT/config" \
+"U CVSROOT/config"
+	  cd CVSROOT
+	  echo "# empty file" >config
+	  dotest toplevel2-cleanup-2 "${testcvs} -q ci -m toplevel2-cleanup" \
+"Checking in config;
+${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/top-dir ${CVSROOT_DIRNAME}/second-dir
 	  ;;
@@ -10472,9 +10652,14 @@ new revision: 1\.2; previous revision: 1\.1
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  cd ..
-	  mkdir first-dir
-	  dotest taginfo-3 "${testcvs} add first-dir" \
-"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+
+	  # taginfo-3 used to rely on the top-level CVS directory
+	  # being created to add "first-dir" to the repository.  Since
+	  # that won't happen anymore, we create the directory in the
+	  # repository.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest taginfo-3 "${testcvs} -q co first-dir" ''
+
 	  cd first-dir
 	  echo first >file1
 	  dotest taginfo-4 "${testcvs} add file1" \
@@ -10555,10 +10740,12 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest config-1 "${testcvs} -q co CVSROOT" "U CVSROOT/${DOTSTAR}"
 	  cd CVSROOT
 	  echo 'bogus line' >config
+	  # We can't rely on specific revisions, since other tests
+	  # might need to modify CVSROOT/config
 	  dotest config-3 "${testcvs} -q ci -m change-to-bogus-line" \
 "Checking in config;
 ${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  echo 'BogusOption=yes' >config
@@ -10566,7 +10753,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "${PROG} [a-z]*: syntax error in ${TESTDIR}/cvsroot/CVSROOT/config: line 'bogus line' is missing '='
 Checking in config;
 ${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
-new revision: 1\.3; previous revision: 1\.2
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  echo '# No config is a good config' > config
@@ -10574,7 +10761,7 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 "${PROG} [a-z]*: ${TESTDIR}/cvsroot/CVSROOT/config: unrecognized keyword 'BogusOption'
 Checking in config;
 ${TESTDIR}/cvsroot/CVSROOT/config,v  <--  config
-new revision: 1\.4; previous revision: 1\.3
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	  dotest config-6 "${testcvs} -q update" ''
@@ -10624,7 +10811,7 @@ done"
 
 	  # Remove the tag.  This will leave the tag string in the
 	  # expansion of the Name keyword.
-	  dotest serverpatch-6 "${testcvs} -q update -A" ''
+	  dotest serverpatch-6 "${testcvs} -q update -A first-dir" ''
 
 	  # Modify and check in the first copy.
 	  cd ../1/first-dir
@@ -11259,7 +11446,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	    else
 	      fail crerepos-5
 	    fi
-	    rm -r CVS
+	    rm -rf CVS
 	    cd ..
 	    # The directory tmp should be empty
 	    dotest crerepos-6 "rmdir tmp" ''
@@ -11363,7 +11550,7 @@ U first-dir/file1"
 "${PROG} [a-z]*: Updating crerepos-dir
 U crerepos-dir/cfile"
 
-	  if test x`cat CVS/Repository` = x.; then
+	  if test x`cat crerepos-dir/CVS/Repository` = xcrerepos-dir; then
 	    # RELATIVE_REPOS
 	    # Fatal error so that we don't go traipsing through the
 	    # directories which happen to have the same names from the

@@ -960,17 +960,24 @@ call_in_directory (pathname, func, data)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
 	newdir = 0;
 
-	/* Create the CVS directory at the top level if needed.
-	   The isdir seems like an unneeded system call, but it *does*
-	   need to be called both if the CVS_CHDIR below succeeds (e.g.
-	   "cvs co .") or if it fails (e.g. basicb-1a in testsuite).  */
+	/* Create the CVS directory at the top level if needed.  The
+	   isdir seems like an unneeded system call, but it *does*
+	   need to be called both if the CVS_CHDIR below succeeds
+	   (e.g.  "cvs co .") or if it fails (e.g. basicb-1a in
+	   testsuite).  We only need to do this for the "." case,
+	   since the server takes care of forcing this directory to be
+	   created in all other cases.  If we don't create CVSADM
+	   here, the call to Entries_Open below will fail.  FIXME:
+	   perhaps this means that we should change our algorithm
+	   below that calls Create_Admin instead of having this code
+	   here? */
 	if (/* I think the reposdirname_absolute case has to do with
 	       things like "cvs update /foo/bar".  In any event, the
 	       code below which tries to put toplevel_repos into
 	       CVS/Repository is almost surely unsuited to
 	       the reposdirname_absolute case.  */
 	    !reposdirname_absolute
-
+	    && (strcmp (dir_name, ".") == 0)
 	    && ! isdir (CVSADM))
 	{
 	    char *repo;
