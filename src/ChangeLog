@@ -1,3 +1,10 @@
+Tue Aug 13 14:01:49 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* wrapper.c (wrap_rcsoption): fix memory access error
+
+	* rcs.c (RCS_fast_checkout): fix memory access error (triggered
+	by an empty option string)
+
 Mon Aug 12 17:45:15 1996  Jim Kingdon  (unknown@beezley)
 
 	* buffer.c, zlib.c: If EIO is not defined, try to define it.
