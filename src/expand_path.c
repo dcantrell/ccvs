@@ -42,14 +42,14 @@ expand_path (name)
 	char *result;
 	s = name;
 	d = mybuf;
-	while (*d++ = *s)
+	while ((*d++ = *s))
 		if (*s++ == '$')
 		{
 			char *p = d;
 			char *e;
 			int flag = (*s == '{');
 			
-			for (; *d++ = *s; s++)
+			for (; (*d++ = *s); s++)
 			    if (flag ? *s =='}' :
 					isalnum (*s) == 0 && *s!='_' )
 				break;
@@ -58,7 +58,7 @@ expand_path (name)
 			
 			if (e)
 			{
-			    for (d = &p[-1]; *d++ = *e++;)
+			    for (d = &p[-1]; **d++ = *e++);)
 				;
 			    --d;
 			    if (flag && *s)
@@ -90,7 +90,7 @@ expand_path (name)
 				return NULL;   /* no such user */
 			t = ps->pw_dir;
 		    }
-		while (*d++ = *t++)
+		while ((*d++ = *t++))
 		    ;
 		--d;
 		if (*p == 0)
@@ -100,7 +100,7 @@ expand_path (name)
 	else
 	    --s;
 	    /* Kill up to here */
-	while (*d++ = *s++)
+	while ((*d++ = *s++))
 	    ;
 	*d=0;
 	result = xmalloc (sizeof(char) * strlen(buf)+1);
