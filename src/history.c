@@ -268,8 +268,6 @@ static char **mod_list;		/* Ptr to array of ptrs to module names */
 static int mod_max;		/* Number of elements allocated */
 static int mod_count;		/* Number of elements used */
 
-static int histsize;
-static char *histdata;
 static char *histfile;		/* Ptr to the history file name */
 
 static const char *const history_usg[] =
@@ -1004,8 +1002,7 @@ read_hrecs (fname)
     /* Exactly enough space for lines data */
     if (!(i = st_buf.st_size))
 	error (1, 0, "history file is empty");
-    histdata = cp = xmalloc (i + 2);
-    histsize = i;
+    cp = xmalloc (i + 2);
 
     if (read (fd, cp, i) != i)
 	error (1, errno, "cannot read log file");
