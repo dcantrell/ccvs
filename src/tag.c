@@ -1408,16 +1408,15 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	{
 	    if (save_cwd (&cwd))
 		exit (EXIT_FAILURE);
-	    if ( CVS_CHDIR (repository) < 0)
+	    if (CVS_CHDIR (repository) < 0)
 		error (1, errno, "cannot change to %s directory", repository);
 	}
     }
 
     start_recursion
-	( val_fileproc, (FILESDONEPROC) NULL,
-	  val_direntproc, (DIRLEAVEPROC) NULL,
-	  (void *) &the_val_args, argc, argv, local, which, aflag,
-	  CVS_LOCK_READ, NULL, 1, repository );
+	(val_fileproc, NULL, val_direntproc, NULL,
+	 &the_val_args, argc, argv, local, which, aflag,
+	 CVS_LOCK_READ, NULL, 1, repository);
     if (repository != NULL && repository[0] != '\0')
     {
 	if (restore_cwd (&cwd, NULL))
@@ -1445,7 +1444,7 @@ Numeric tag %s contains characters other than digits and '.'", name);
 	    mode_t omask;
 	    omask = umask (cvsumask);
 	    db = dbm_open (valtags_filename, O_RDWR | O_CREAT | O_TRUNC, 0666);
-	    (void) umask (omask);
+	    (void)umask (omask);
 
 	    if (db == NULL)
 	    {
