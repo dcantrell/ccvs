@@ -1,3 +1,9 @@
+2003-11-24  Larry Jones  <lawrence.jones@eds.com>
+
+	* diff.c (diff_file_nodiff): use_rev1 does *not* imply that diff_rev1
+	is not null, diff_date1 could be set instead (ditto for use_rev2).
+	(Reported by <jnelson-cvsbug@jamponi.net>.)
+
 2003-11-24  Mark D. Baushke  <mdb@cvshome.org>
 
 	* client.c (connect_to_forked_server): Avoid passing NULL strings
