@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4b from Makefile.am
+# Makefile.in generated automatically by automake 1.4c from Makefile.am
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
 # Free Software Foundation, Inc.
@@ -173,24 +173,25 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(cvs_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/add.Po $(DEPDIR)/admin.Po \
-$(DEPDIR)/buffer.Po $(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
-$(DEPDIR)/classify.Po $(DEPDIR)/client.Po $(DEPDIR)/commit.Po \
-$(DEPDIR)/create_adm.Po $(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
-$(DEPDIR)/edit.Po $(DEPDIR)/entries.Po $(DEPDIR)/error.Po \
-$(DEPDIR)/expand_path.Po $(DEPDIR)/fileattr.Po $(DEPDIR)/filesubr.Po \
-$(DEPDIR)/find_names.Po $(DEPDIR)/hardlink.Po $(DEPDIR)/hash.Po \
-$(DEPDIR)/history.Po $(DEPDIR)/ignore.Po $(DEPDIR)/import.Po \
-$(DEPDIR)/lock.Po $(DEPDIR)/log.Po $(DEPDIR)/login.Po \
-$(DEPDIR)/logmsg.Po $(DEPDIR)/main.Po $(DEPDIR)/mkmodules.Po \
-$(DEPDIR)/modules.Po $(DEPDIR)/myndbm.Po $(DEPDIR)/no_diff.Po \
-$(DEPDIR)/parseinfo.Po $(DEPDIR)/patch.Po $(DEPDIR)/rcs.Po \
-$(DEPDIR)/rcscmds.Po $(DEPDIR)/recurse.Po $(DEPDIR)/release.Po \
-$(DEPDIR)/remove.Po $(DEPDIR)/repos.Po $(DEPDIR)/root.Po \
-$(DEPDIR)/rtag.Po $(DEPDIR)/run.Po $(DEPDIR)/scramble.Po \
-$(DEPDIR)/server.Po $(DEPDIR)/status.Po $(DEPDIR)/subr.Po \
-$(DEPDIR)/tag.Po $(DEPDIR)/update.Po $(DEPDIR)/vers_ts.Po \
-$(DEPDIR)/watch.Po $(DEPDIR)/wrapper.Po $(DEPDIR)/zlib.Po
+@AMDEP@DEP_FILES =  $(DEPDIR)/add.Po $(DEPDIR)/admin.Po \
+@AMDEP@$(DEPDIR)/buffer.Po $(DEPDIR)/checkin.Po $(DEPDIR)/checkout.Po \
+@AMDEP@$(DEPDIR)/classify.Po $(DEPDIR)/client.Po $(DEPDIR)/commit.Po \
+@AMDEP@$(DEPDIR)/create_adm.Po $(DEPDIR)/cvsrc.Po $(DEPDIR)/diff.Po \
+@AMDEP@$(DEPDIR)/edit.Po $(DEPDIR)/entries.Po $(DEPDIR)/error.Po \
+@AMDEP@$(DEPDIR)/expand_path.Po $(DEPDIR)/fileattr.Po \
+@AMDEP@$(DEPDIR)/filesubr.Po $(DEPDIR)/find_names.Po \
+@AMDEP@$(DEPDIR)/hardlink.Po $(DEPDIR)/hash.Po $(DEPDIR)/history.Po \
+@AMDEP@$(DEPDIR)/ignore.Po $(DEPDIR)/import.Po $(DEPDIR)/lock.Po \
+@AMDEP@$(DEPDIR)/log.Po $(DEPDIR)/login.Po $(DEPDIR)/logmsg.Po \
+@AMDEP@$(DEPDIR)/main.Po $(DEPDIR)/mkmodules.Po $(DEPDIR)/modules.Po \
+@AMDEP@$(DEPDIR)/myndbm.Po $(DEPDIR)/no_diff.Po $(DEPDIR)/parseinfo.Po \
+@AMDEP@$(DEPDIR)/patch.Po $(DEPDIR)/rcs.Po $(DEPDIR)/rcscmds.Po \
+@AMDEP@$(DEPDIR)/recurse.Po $(DEPDIR)/release.Po $(DEPDIR)/remove.Po \
+@AMDEP@$(DEPDIR)/repos.Po $(DEPDIR)/root.Po $(DEPDIR)/rtag.Po \
+@AMDEP@$(DEPDIR)/run.Po $(DEPDIR)/scramble.Po $(DEPDIR)/server.Po \
+@AMDEP@$(DEPDIR)/status.Po $(DEPDIR)/subr.Po $(DEPDIR)/tag.Po \
+@AMDEP@$(DEPDIR)/update.Po $(DEPDIR)/vers_ts.Po $(DEPDIR)/watch.Po \
+@AMDEP@$(DEPDIR)/wrapper.Po $(DEPDIR)/zlib.Po
 DIST_COMMON =  ./stamp-h2.in ChangeLog Makefile.am Makefile.in \
 options.h.in
 

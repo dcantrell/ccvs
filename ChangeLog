@@ -1,3 +1,17 @@
+2001-01-03  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.in (DEP_FILES): Regenerated with new version of Automake
+	(DEP_FILES_conditional patch for BSD make compatibility)
+	* contrib/Makefile.in: ditto
+	* doc/Makefile.in: ditto
+	* lib/Makefile.in: ditto
+	* man/Makefile.in: ditto
+	* src/Makefile.in: ditto
+	* tools/Makefile.in: ditto
+	* vms/Makefile.in: ditto
+	* windows-NT/Makefile.in: ditto
+	* windows-NT/SCC/Makefile.in: ditto
+
 2000-12-28  Derek Price  <derek.price@openavenue.com>
 
 	* INSTALL (BUILDING FROM SOURCES): Added a couple more platforms to the

@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4a from Makefile.am
+# Makefile.in generated automatically by automake 1.4c from Makefile.am
 
 # Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000
 # Free Software Foundation, Inc.
@@ -180,15 +180,15 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES =  $(libcvs_a_SOURCES)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
-DEP_FILES =  @AMDEP@ $(DEPDIR)/argmatch.Po $(DEPDIR)/dup2.Po \
-$(DEPDIR)/fncase.Po $(DEPDIR)/fnmatch.Po $(DEPDIR)/ftruncate.Po \
-$(DEPDIR)/getdate.Po $(DEPDIR)/getline.Po $(DEPDIR)/getopt.Po \
-$(DEPDIR)/getopt1.Po $(DEPDIR)/hostname.Po $(DEPDIR)/md5.Po \
-$(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po $(DEPDIR)/regex.Po \
-$(DEPDIR)/rename.Po $(DEPDIR)/savecwd.Po $(DEPDIR)/sighandle.Po \
-$(DEPDIR)/strerror.Po $(DEPDIR)/stripslash.Po $(DEPDIR)/strstr.Po \
-$(DEPDIR)/strtoul.Po $(DEPDIR)/valloc.Po $(DEPDIR)/waitpid.Po \
-$(DEPDIR)/xgetwd.Po $(DEPDIR)/yesno.Po
+@AMDEP@DEP_FILES =  $(DEPDIR)/argmatch.Po $(DEPDIR)/dup2.Po \
+@AMDEP@$(DEPDIR)/fncase.Po $(DEPDIR)/fnmatch.Po $(DEPDIR)/ftruncate.Po \
+@AMDEP@$(DEPDIR)/getdate.Po $(DEPDIR)/getline.Po $(DEPDIR)/getopt.Po \
+@AMDEP@$(DEPDIR)/getopt1.Po $(DEPDIR)/hostname.Po $(DEPDIR)/md5.Po \
+@AMDEP@$(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po $(DEPDIR)/regex.Po \
+@AMDEP@$(DEPDIR)/rename.Po $(DEPDIR)/savecwd.Po $(DEPDIR)/sighandle.Po \
+@AMDEP@$(DEPDIR)/strerror.Po $(DEPDIR)/stripslash.Po \
+@AMDEP@$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po $(DEPDIR)/valloc.Po \
+@AMDEP@$(DEPDIR)/waitpid.Po $(DEPDIR)/xgetwd.Po $(DEPDIR)/yesno.Po
 DIST_COMMON =  ChangeLog Makefile.am Makefile.in dup2.c fncase.c \
 fnmatch.c getdate.c hostname.c memmove.c mkdir.c rename.c strerror.c \
 strstr.c strtoul.c valloc.c waitpid.c
