@@ -1,6 +1,12 @@
-Wed Oct 15 15:21:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+1997-10-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* version.c: Change version number to 1.9.19.
+
+1997-10-19  Jim Kingdon
 
 	* Version 1.9.18.
+
+Wed Oct 15 15:21:43 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (username): Add '-' to characters allowed in user name.
 
