@@ -1,3 +1,9 @@
+2000-10-23  Derek Price  <derek.price@openavenue.com>
+
+	* debug_check_log.sh: added this script for analyzing sanity.sh output
+	* Makefile.in: add above file to DISTFILES and CONTRIB_PROGS
+	* .cvsignore: add debug_check_log
+
 2000-09-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.in: Use @bindir@, @libdir@, @infodir@, and @mandir@

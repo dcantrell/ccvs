@@ -42,7 +42,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 DISTFILES = \
 	ChangeLog README .cvsignore intro.doc \
 	Makefile.in clmerge.pl cln_hist.pl commit_prep.pl cvs2vendor.sh \
-	cvs_acls.pl cvscheck.sh cvscheck.man cvshelp.man descend.sh \
+	cvs_acls.pl cvscheck.sh cvscheck.man cvshelp.man debug_check_log.sh \
+	descend.sh \
 	descend.man dirfns.shar log.pl log_accum.pl mfpipe.pl rcs-to-cvs.sh \
 	rcs2log.sh rcslock.pl sccs2rcs.csh rcs2sccs.sh
 
@@ -54,7 +55,7 @@ CONTRIB_FILES = README intro.doc cvscheck.man
 #
 PROGS = rcs2log
 CONTRIB_PROGS = clmerge cln_hist commit_prep cvs2vendor cvs_acls cvscheck \
-	log log_accum mfpipe rcs-to-cvs rcs2log rcslock sccs2rcs
+	debug_check_log log log_accum mfpipe rcs-to-cvs rcs2log rcslock sccs2rcs
 
 .SUFFIXES: .pl .sh .csh
 
