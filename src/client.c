@@ -1690,8 +1690,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	free (size_string);
 
 	/* Note that checking this separately from writing the file is
-	   a race condition: if the existing or lack thereof of the
-	   file changes between now and the actually calls which
+	   a race condition: if the existence or lack thereof of the
+	   file changes between now and the actual calls which
 	   operate on it, we lose.  However (a) there are so many
 	   cases, I'm reluctant to try to fix them all, (b) in some
 	   cases the system might not even have a system call which
@@ -2177,7 +2177,17 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	else if (local_timestamp == NULL)
 	{
 	    local_timestamp = file_timestamp;
-	    mark_up_to_date (filename);
+
+	    /* Checking for command_name of "commit" doesn't seem like
+	       the cleanest way to handle this, but it seem to roughly
+	       parallel what the :local: code which calls
+	       mark_up_to_date ends up amounting to.  Some day, should
+	       think more about what the Checked-in response means
+	       vis-a-vis both Entries and Base and clarify
+	       cvsclient.texi accordingly.  */
+
+	    if (!strcmp (command_name, "commit"))
+		mark_up_to_date (filename);
 	}
 
 	Register (ent_list, filename, vn, local_timestamp,
