@@ -1075,8 +1075,8 @@ read_hrecs (fname)
 	{
 	    if (nl - cp >= STAT_BLOCKSIZE(st_buf))
 	    {
-		error(1, 0, "history line too long (> %d)",
-		      STAT_BLOCKSIZE(st_buf));
+		error(1, 0, "history line too long (> %lu)",
+		      (unsigned long) STAT_BLOCKSIZE(st_buf));
 	    }
 	    if (nl > cp)
 		memmove (cpstart, cp, nl - cp);
