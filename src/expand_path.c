@@ -181,7 +181,7 @@ expand_variable (name, file, line)
     int line;
 {
     if (strcmp (name, CVSROOT_ENV) == 0)
-	return CVSroot;
+	return CVSroot_original;
     else if (strcmp (name, RCSBIN_ENV)  == 0)
 	return Rcsbin;
     else if (strcmp (name, EDITOR1_ENV) == 0)

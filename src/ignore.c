@@ -62,8 +62,8 @@ ign_setup ()
 #endif
     {
 	/* Then add entries found in repository, if it exists */
-	(void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM,
-			CVSROOTADM_IGNORE);
+	(void) sprintf (file, "%s/%s/%s", CVSroot_directory,
+			CVSROOTADM, CVSROOTADM_IGNORE);
 	ign_add_file (file, 0);
     }
 

@@ -10,41 +10,6 @@ extern int filter_through_gunzip PROTO((int, int, pid_t *));
 
 #ifdef CLIENT_SUPPORT
 /*
- * Functions to perform CVS commands via the protocol.  argc and argv
- * are the arguments and the return value is the exit status (zero success
- * nonzero failure).
- */
-extern int client_commit PROTO((int argc, char **argv));
-extern int client_update PROTO((int argc, char **argv));
-extern int client_checkout PROTO((int argc, char **argv));
-extern int client_diff PROTO((int argc, char **argv));
-extern int client_log PROTO((int argc, char **argv));
-extern int client_add PROTO((int argc, char **argv));
-extern int client_remove PROTO((int argc, char **argv));
-extern int client_status PROTO((int argc, char **argv));
-extern int client_rdiff PROTO((int argc, char **argv));
-extern int client_tag PROTO((int argc, char **argv));
-extern int client_rtag PROTO((int argc, char **argv));
-extern int client_import PROTO((int argc, char **argv));
-extern int client_admin PROTO((int argc, char **argv));
-extern int client_export PROTO((int argc, char **argv));
-extern int client_history PROTO((int argc, char **argv));
-extern int client_release PROTO((int argc, char **argv));
-extern int client_watch PROTO((int argc, char **argv));
-extern int client_watchers PROTO((int argc, char **argv));
-extern int client_editors PROTO((int argc, char **argv));
-extern int client_edit PROTO((int argc, char **argv));
-extern int client_unedit PROTO((int argc, char **argv));
-extern int client_init PROTO ((int argc, char **argv));
-extern int client_annotate PROTO ((int argc, char **argv));
-
-/*
- * Flag variable for seeing whether common code is running as a client
- * or to do a local operation.
- */
-extern int client_active;
-
-/*
  * Flag variable for seeing whether the server has been started yet.
  * As of this writing, only edit.c:notify_check() uses it.
  */
@@ -62,7 +27,11 @@ int connect_to_pserver PROTO((int *tofdp, int* fromfdp, int verify_only));
 #endif /* AUTH_CLIENT_SUPPORT */
 
 #ifdef AUTH_SERVER_SUPPORT
-extern void authenticate_connection PROTO ((void));
+extern void pserver_authenticate_connection PROTO ((void));
+#endif
+
+#if defined (SERVER_SUPPORT) && defined (HAVE_KERBEROS)
+extern void kserver_authenticate_connection PROTO ((void));
 #endif
 
 /* Talking to the server. */

@@ -48,6 +48,10 @@ Wed May 22 19:06:23 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (death): Test for above fix, in test 89 and new test 89a.
 
+Tue May 21 09:49:04 1996  Greg A. Woods  <woods@most.weird.com>
+
+	* update.c (update_usage): oops -- fix my spelling typo.
+
 Mon May 20 10:53:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* commit.c (find_fileproc): Call freevers_ts.
@@ -60,10 +64,6 @@ Mon May 20 10:53:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	* sanity.sh (conflicts): Remove dir1 and sdir in parts of the test
 	where we aren't prepared for "? dir1" and similar output.
 
-Tue May 21 09:49:04 1996  Greg A. Woods  <woods@most.weird.com>
-
-	* update.c (update_usage): oops -- fix my spelling typo.
-
 Mon May 20 13:23:36 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* main.c (cmd_usage): minor corrections to descriptions of status,
@@ -75,14 +75,35 @@ Mon May 20 10:36:07 1996  Ian Lance Taylor  <ian@cygnus.com>
 	before the call to chdir, since Entries_Close examines files in
 	the current directory.
 
+Fri May 17 12:13:09 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (start_tcp_server, start_server, start_rsh_server,
+	read_line, filter_through_gzip, filter_through_gunzip,
+	call_in_directory): Reindent as needed.
+
+	* main.c (main): Add missing #endif.  Use indentation to indicate
+	nesting.
+
 Thu May 16 17:15:01 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* main.c (cmd_usage): Add "init" command.
 
-Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+Thu May 16 16:45:51 1996  Noel Cragg  <noel@gargle.rain.org>
 
-	* classify.c (Classify_File): Don't report a conflict for a
-	pending remove if somebody else has already removed the file.
+	* client.c (start_tcp_server): Error message modified to tell the
+ 	user to use ":server:" instead of setting CVS_CLIENT_PORT to a
+ 	negative number.
+
+	* main.c (main): Add #ifdefs for turning off buffering of
+ 	stdio/stderr, so we don't get it by default.
+
+Thu May 16 01:29:47 1996  noel  <noel@BOAT_ANCHOR>
+
+	* commit.c (commit_filesdoneproc): Print the repository and root
+ 	directories as part of the error message.
+
+	* main.c (main): Don't buffer stdout or stderr.  It's inefficient,
+ 	but it then produces the right output for sanity.sh.
 
 Thu May 16 09:44:47 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
@@ -110,6 +131,10 @@ Thu May 16 09:02:59 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 Sat May 16 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* main.c (main_cleanup): Report signal name before dying.
+
+Wed May 15 23:47:59 1996  Noel Cragg  <noel@gargle.rain.org>
+
+	* main.c (usg): revert usage strings for `-H' flag change.
 
 Sat May 15 1996  Ian Lance Taylor  <ian@cygnus.com>
 
@@ -154,26 +179,6 @@ Sat May 11 18:57:07 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Comment out test basica-9 until I get around to
 	actually fixing it (the -d vs. CVS/Root change broke it).
-
-Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
-
-	Extract the head revision directly from the RCS file when
-	possible, rather than execing co.
-	* rcs.c (RCS_reparsercsfile): Set delta_pos field.
-	(getrcskey): Add lenp parameter.  Change all callers.
-	(RCS_fast_checkout): New function.
-	(annotate_fileproc): If PARTIAL is not set, just fseek to
-	delta_pos.
-	* rcs.h (struct rcsnode): Add delta_pos field.
-	(RCS_fast_checkout): Declare.
-	* diff.c (diff_file_nodiff): Call RCS_fast_checkout rather than
-	RCS_checkout.
-	* import.c (update_rcs_file): Likewise.
-	* no_diff.c (No_Difference): Likewise.
-	* patch.c (patch_fileproc): Likewise.
-	* update.c (checkout_file): Likewise.
-	(patch_file): Likewise.
-	(join_file): Likewise.
 
 Fri May 10 09:39:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
@@ -250,6 +255,31 @@ Sun May  5 17:38:21 1996  Benjamin J. Lee  <benjamin@cyclic.com>
         repository which will be checked out to the same name as the
         directory.
 
+Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	Extract the head revision directly from the RCS file when
+	possible, rather than execing co.
+	* rcs.c (RCS_reparsercsfile): Set delta_pos field.
+	(getrcskey): Add lenp parameter.  Change all callers.
+	(RCS_fast_checkout): New function.
+	(annotate_fileproc): If PARTIAL is not set, just fseek to
+	delta_pos.
+	* rcs.h (struct rcsnode): Add delta_pos field.
+	(RCS_fast_checkout): Declare.
+	* diff.c (diff_file_nodiff): Call RCS_fast_checkout rather than
+	RCS_checkout.
+	* import.c (update_rcs_file): Likewise.
+	* no_diff.c (No_Difference): Likewise.
+	* patch.c (patch_fileproc): Likewise.
+	* update.c (checkout_file): Likewise.
+	(patch_file): Likewise.
+	(join_file): Likewise.
+
+Sat May  4 12:33:02 1996  Ian Lance Taylor  <ian@cygnus.com>
+
+	* classify.c (Classify_File): Don't report a conflict for a
+	pending remove if somebody else has already removed the file.
+
 Thu May  2 13:34:37 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.7.88
@@ -259,6 +289,18 @@ Thu May  2 01:40:55 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 	* server.c (HAVE_INITGROUPS): Use initgroups() only if
         located by configure, in the event a system has crypt(), but
 	no initgroups()
+
+Wed May 01 21:08:21 1996  noel  <noel@BOAT_ANCHOR>
+
+	* client.c (filter_through_gunzip): use "gzip -d" instead of
+ 	"gunzip," since there's no good reason (on NT at least) to have an
+ 	extra copy of gzip.exe copied to gunzip.exe (Arrrrgh!  No symbolic
+ 	links!).
+
+	* mkmodules.c (init): check to see that we have the correct number
+ 	of arguments or print out the usage message (used to be argc > 1,
+ 	should be argc != 1, because help forces argc == -1 as a special
+ 	case).
 
 Wed May  1 18:05:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
@@ -289,10 +331,197 @@ Tue Apr 30 15:46:03 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 	* server.c (check_password): Don't use ANSI string concatenation.
 	Reindent function.
 
+Mon Apr 29 10:48:38 1996  Noel Cragg  <noel@gargle>
+
+	* root.c (parse_cvsroot): removed "rsh" as an alias to "server" in
+ 	the method section.
+
+	* main.c (main): new variable help so we can support the `cvs -H
+ 	cmd' convention.  Reverts change of 26 Apr 96 which removed this
+ 	feature.
+
+Sun Apr 28 14:57:38 1996  Noel Cragg  <noel@gargle>
+
+        * main.c (main): update error message if parse_cvsroot fails.
+	* server.c (serve_root): same.
+	(serve_init): same.
+	
+	* client.c (start_tcp_server): get rid of the "fall through"
+ 	stuff, now that we have access methods.
+	(start_server): switch off the access method to choose routine
+ 	that starts the server.
+	(start_tcp_server): tofd wasn't getting set to -1 early enough,
+ 	because a call to error for bind or gethostbyname might fail and
+ 	the subsequent error check to see if the connection had been made
+ 	would fail.
+
+	* root.c: new variable method_names for error reporting purposes.
+
+Sun Apr 28 17:22:15 1996  Noel Cragg  <noel@occs.cs.oberlin.edu>
+
+	* server.c: moved kerberos #includes from main.c for the
+        kserver_authenticate_connection routine.
+
+Fri Apr 26 07:59:44 1996  Noel Cragg  <noel@gargle>
+
+	* server.c (serve_init): use the new return value from
+ 	parse_cvsroot.
+	(serve_root): same.
+	* main.c (main): same.
+
+	* root.c (parse_cvsroot): fix indentation, add a return value
+ 	which tells whether the command succeeded or failed.
+
+	* main.c (main): move the setting of the UMASK environment
+ 	variable inside the stuff that gets done if the user is NOT asking
+ 	for help, so we don't signal any errors prematurely (don't want to
+ 	give an error because we can't parse an environment variable
+ 	correctly if the user asks for help).  Similar mods for the code
+ 	that tries to get the working directory.
+
+	Also make CVSADM_Root a local variable instead of a global, since
+ 	its scope is only about 20 lines here!
+
+	* server.c (kserver_authenticate_connection): moved code from
+ 	main.c to clean up MAIN.  Makes sense, since we already have a
+ 	pserver_authenticate_connection.
+	(pserver_authenticate_connection): rename from
+ 	authenticate_connection.
+
+	* main.c (main): reorganized the routine to eliminate variables
+ 	help, help_commands, and version_flag.  Now the routine is much
+ 	clearer, since we don't have to be checking to see if these
+ 	variables are set.  One behavior that was a bug/feature which is
+ 	now gone is an invocation like "cvs -H rtag" -- previously this
+ 	would give usage for rtag, but now gives usage for cvs itself.
+  	The first behavior didn't make sense, especially since we say in
+ 	the docs that command-line flags are position-specific.  *Reverted
+ 	Above*
+
+Thu Apr 25 20:05:10 1996  Noel Cragg  <noel@gargle>
+
+        * main.c (main): make sure we have a valid command name before we
+ 	do anything else (moved the thing that looks for a command in CMDS
+ 	to right after the GETOPT loop).  Added `kserver' and `pserver' to
+ 	the table so they will be recognized; set their functions to
+ 	SERVER so that help will be given when asked for.
+	
+	* expand_path.c (expand_variable): return CVSroot_original rather
+ 	than CVSroot_directory.
+
+	* main.c (main): save CVSroot in the env rather than
+ 	CVSroot_original, since we might not have called PARSE_CVSROOT
+ 	(this can happen if we use the -H option to a command).
+
+	* root.c (parse_cvsroot): the parsing method was bogus for
+ 	guessing when we had hostnames vs. directories specified.  Any
+ 	ambiguity should be removed by having the user specify the access
+ 	method.  If the access method isn't specified, choose
+ 	server_method if the string contains a colon or local_method
+ 	otherwise.
+
+	* Changed CVSroot_remote back to client_active since the code
+ 	reads better.
+	
 Wed Apr 24 17:27:53 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* vers_ts.c (Version_TS): xmalloc enough space (1 more
 	  byte). Thanks to purify!
+
+Mon Apr 22 00:38:08 1996  Noel Cragg  <noel@gargle>
+
+	* create_adm.c (Create_Admin): pass CVSroot_original instead of
+ 	CVSroot_directory (oops!).
+	* update.c (update_filesdone_proc): same.
+
+	* server.c (serve_root): modify to use parse_cvsroot rather than
+ 	goofing around with other variables.  Will need to fix
+ 	parse_cvsroot to have a return value so we can return an error and
+ 	quit gracefully if in server mode.
+	(serve_init): same.
+
+	* main.c: modify command table to remove client_* routines, since
+ 	they no longer exist.
+	(main): don't try to switch off non-existent field in command
+ 	table! ;-)
+
+        * client.h (client_*): removed prototypes for now non-existent
+ 	functions.
+
+	* client.c: remove proto for get_cvs_password, since it is now in
+ 	cvs.h.  Modify routines to use new globals that describe CVSROOT
+ 	rather than client_active, server_host, server_user, and
+ 	server_cvsroot.
+	(parse_cvsroot): removed function, since a more generic version
+ 	now lives in root.c.
+	(connect_to_pserver): remove call to parse_cvsroot, since main.c
+ 	has already done it for us.
+	(client_*): removed all of these routines, since they only call
+ 	parse_cvsroot and then their respective operation functions.
+  	Since main.c has already called parse_cvsroot, we shouldn't bother
+ 	with the extra function call, since client-server diffs are
+ 	already handled in the core routines themselves.
+
+	* main.c: remove CVSroot as a global variable.  Remove
+ 	use_authenticating_server variable since we have a new
+ 	`CVSroot_method' variable instead.
+	(main): add `CVSroot' as a local variable.  Call parse_cvsroot
+ 	after we're sure we have the right setting for `CVSroot.'
+
+	* login.c (login): update to use new global variables.  Instead of
+ 	old behavior which let the user type in user@host when prompted,
+ 	it makes them do it in CVSROOT proper.  The routine still lets the
+ 	user type the password, however.
+	(get_cvs_password): make sure that CVSROOT is fully qualified
+ 	before trying to find the entry in the .cvspass file.
+	* cvs.h: add prototype for get_cvs_password.
+
+	* add.c: use new globals that describe CVSROOT.
+	* admin.c: same.
+	* checkout.c: same.
+	* commit.c: same.
+	* create_adm.c: same.
+	* diff.c: same.
+	* edit.c: same.
+	* expand_path.c: same.
+	* history.c: same.
+	* ignore.c: same.
+	* import.c: same.
+	* log.c: same.
+	* mkmodules.c: same.
+	* modules.c: same.
+	* parseinfo.c: same.
+	* patch.c: same.
+	* rcs.c: same.
+	* recurse.c: same.
+	* release.c: same.
+	* remove.c: same.
+	* repos.c: same.
+	* rtag.c: same.
+	* status.c: same.
+	* tag.c: same.
+	* update.c: same.
+	* watch.c: same.
+	* wrapper.c: same.
+	
+	* root.c (Name_Root): remove error message that reports missing
+ 	CVSROOT, since new code in main.c will catch it and also print out
+ 	an error.
+	(parse_cvsroot): new function -- takes a CVSROOT string and breaks
+ 	it up into its component parts -- method, hostname, username, and
+ 	repository directory.  Sets new global variables that describe the
+ 	repository location more precisely: CVSroot_original,
+ 	CVSroot_remote, CVSroot_method, CVSroot_username,
+ 	CVSroot_hostname, CVSroot_directory for use by all other
+ 	functions.  Checks for obvious errors in format of string.
+	(main): a short routine to test parse_cvsroot from the command
+ 	line.
+	* cvs.h: add prototype for parse_cvsroot and extern definitions
+ 	for new globals.
+
+	* cvs.h: removed CVSroot variable, since we don't want other
+ 	routines using the raw CVSROOT (also helped to find all of the
+ 	refs to the variable!).
 
 Fri Apr 19 11:22:35 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 

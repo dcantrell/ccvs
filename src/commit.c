@@ -1153,9 +1153,10 @@ commit_filesdoneproc (err, repository, update_dir)
     {
 	char *p;
 
-	if (strncmp (CVSroot, repository, strlen (CVSroot)) != 0)
-	    error (0, 0, "internal error: repository doesn't begin with root");
-	p = repository + strlen (CVSroot);
+	if (strncmp (CVSroot_directory, repository,
+		     strlen (CVSroot_directory)) != 0)
+	    error (0, 0, "internal error: repository (%s) doesn't begin with root (%s)", repository, CVSroot_directory);
+	p = repository + strlen (CVSroot_directory);
 	if (*p == '/')
 	    ++p;
 	if (strcmp ("CVSROOT", p) == 0)

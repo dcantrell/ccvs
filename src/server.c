@@ -6,6 +6,15 @@
 
 #ifdef SERVER_SUPPORT
 
+#if HAVE_KERBEROS
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <krb.h>
+#ifndef HAVE_KRB_GET_ERR_TEXT
+#define krb_get_err_text(status) krb_err_txt[status]
+#endif
+#endif
+
 /* for select */
 #include <sys/types.h>
 #ifdef HAVE_SYS_BSDTYPES_H
@@ -286,13 +295,14 @@ serve_root (arg)
     char *arg;
 {
     char *env;
-    extern char *CVSroot;
     char path[PATH_MAX];
     int save_errno;
     
     if (error_pending()) return;
+
+    set_local_cvsroot (arg);
     
-    (void) sprintf (path, "%s/%s", arg, CVSROOTADM);
+    (void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
     if (!isaccessible (path, R_OK | X_OK))
     {
 	save_errno = errno;
@@ -313,21 +323,14 @@ Sorry, you don't have read/write access to the history file %s", path);
 	pending_error = save_errno;
     }
 
-    CVSroot = malloc (strlen (arg) + 1);
-    if (CVSroot == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
-    strcpy (CVSroot, arg);
 #ifdef HAVE_PUTENV
-    env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot) + 1 + 1);
+    env = malloc (strlen (CVSROOT_ENV) + strlen (CVSroot_directory) + 1 + 1);
     if (env == NULL)
     {
 	pending_error = ENOMEM;
 	return;
     }
-    (void) sprintf (env, "%s=%s", CVSROOT_ENV, arg);
+    (void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot_directory);
     (void) putenv (env);
     /* do not free env, as putenv has control of it */
 #endif
@@ -3258,13 +3261,7 @@ static void
 serve_init (arg)
     char *arg;
 {
-    CVSroot = malloc (strlen (arg) + 1);
-    if (CVSroot == NULL)
-    {
-	pending_error = ENOMEM;
-	return;
-    }
-    strcpy (CVSroot, arg);
+    set_local_cvsroot (arg);
 
     do_cvs_command (init);
 }
@@ -4446,7 +4443,7 @@ error 0 %s: no such user\n", username);
    If correct, then switch to run as that user and send an ACK to the
    client via stdout, else send NACK and die. */
 void
-authenticate_connection ()
+pserver_authenticate_connection ()
 {
   char tmp[PATH_MAX];
   char repository[PATH_MAX];
@@ -4591,6 +4588,85 @@ authenticate_connection ()
 
 #endif /* AUTH_SERVER_SUPPORT */
 
+
+#ifdef HAVE_KERBEROS
+void
+kserver_authenticate_connection ()
+{
+    int status;
+    char instance[INST_SZ];
+    struct sockaddr_in peer;
+    struct sockaddr_in laddr;
+    int len;
+    KTEXT_ST ticket;
+    AUTH_DAT auth;
+    char version[KRB_SENDAUTH_VLEN];
+    Key_schedule sched;
+    char user[ANAME_SZ];
+    struct passwd *pw;
+
+    strcpy (instance, "*");
+    len = sizeof peer;
+    if (getpeername (STDIN_FILENO, (struct sockaddr *) &peer, &len) < 0
+	|| getsockname (STDIN_FILENO, (struct sockaddr *) &laddr,
+			&len) < 0)
+    {
+	printf ("E Fatal error, aborting.\n\
+error %s getpeername or getsockname failed\n", strerror (errno));
+	exit (EXIT_FAILURE);
+    }
+
+    status = krb_recvauth (KOPT_DO_MUTUAL, STDIN_FILENO, &ticket, "rcmd",
+			   instance, &peer, &laddr, &auth, "", sched,
+			   version);
+    if (status != KSUCCESS)
+    {
+	printf ("E Fatal error, aborting.\n\
+error 0 kerberos: %s\n", krb_get_err_text(status));
+	exit (EXIT_FAILURE);
+    }
+
+    /* Get the local name.  */
+    status = krb_kntoln (&auth, user);
+    if (status != KSUCCESS)
+    {
+	printf ("E Fatal error, aborting.\n\
+error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
+	exit (EXIT_FAILURE);
+    }
+
+    pw = getpwnam (user);
+    if (pw == NULL)
+    {
+	printf ("E Fatal error, aborting.\n\
+error 0 %s: no such user\n", user);
+	exit (EXIT_FAILURE);
+    }
+
+    initgroups (pw->pw_name, pw->pw_gid);
+    setgid (pw->pw_gid);
+    setuid (pw->pw_uid);
+    /* Inhibit access by randoms.  Don't want people randomly
+       changing our temporary tree before we check things in.  */
+    umask (077);
+
+#if HAVE_PUTENV
+    /* Set LOGNAME and USER in the environment, in case they are
+       already set to something else.  */
+    {
+	char *env;
+
+	env = xmalloc (sizeof "LOGNAME=" + strlen (user));
+	(void) sprintf (env, "LOGNAME=%s", user);
+	(void) putenv (env);
+
+	env = xmalloc (sizeof "USER=" + strlen (user));
+	(void) sprintf (env, "USER=%s", user);
+	(void) putenv (env);
+    }
+#endif
+}
+#endif /* HAVE_KERBEROS */
 
 #endif /* SERVER_SUPPORT */
 

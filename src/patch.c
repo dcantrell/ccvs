@@ -255,7 +255,7 @@ patch_proc (pargc, argv, xwhere, mwhere, mfile, shorten, local_specified,
     int which;
     char repository[PATH_MAX];
 
-    (void) sprintf (repository, "%s/%s", CVSroot, argv[0]);
+    (void) sprintf (repository, "%s/%s", CVSroot_directory, argv[0]);
     (void) strcpy (where, argv[0]);
 
     /* if mfile isn't null, we need to set up to do only part of the module */
@@ -530,8 +530,8 @@ patch_fileproc (finfo)
 		    goto out;
 		}
 	    }
-	    if (CVSroot != NULL)
-		(void) sprintf (strippath, "%s/", CVSroot);
+	    if (CVSroot_directory != NULL)
+		(void) sprintf (strippath, "%s/", CVSroot_directory);
 	    else
 		(void) strcpy (strippath, REPOS_STRIP);
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)

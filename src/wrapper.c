@@ -62,7 +62,8 @@ void wrap_setup()
     struct passwd *pw;
 
 	/* Then add entries found in repository, if it exists */
-    (void) sprintf (file, "%s/%s/%s", CVSroot, CVSROOTADM, CVSROOTADM_WRAPPER);
+    (void) sprintf (file, "%s/%s/%s", CVSroot_directory, CVSROOTADM,
+		    CVSROOTADM_WRAPPER);
     if (isfile (file)){
 	wrap_add_file(file,0);
     }

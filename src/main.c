@@ -20,15 +20,6 @@
 extern int gethostname ();
 #endif
 
-#if HAVE_KERBEROS
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <krb.h>
-#ifndef HAVE_KRB_GET_ERR_TEXT
-#define krb_get_err_text(status) krb_err_txt[status]
-#endif
-#endif
-
 char *program_name;
 char *program_path;
 /*
@@ -46,9 +37,6 @@ char *command_name = "";
 
 char hostname[MAXHOSTNAMELEN];
 
-#ifdef AUTH_CLIENT_SUPPORT
-int use_authenticating_server = FALSE;
-#endif /* AUTH_CLIENT_SUPPORT */
 int use_editor = TRUE;
 int use_cvsrc = TRUE;
 int cvswrite = !CVSREAD_DFLT;
@@ -66,12 +54,9 @@ char *CurDir;
  */
 char *Rcsbin = RCSBIN_DFLT;
 char *Editor = EDITOR_DFLT;
-char *CVSroot = CVSROOT_DFLT;
 /*
  * The path found in CVS/Root must match $CVSROOT and/or 'cvs -d root'
  */
-char *CVSADM_Root = CVSROOT_DFLT;
-
 int add PROTO((int argc, char **argv));
 int admin PROTO((int argc, char **argv));
 int checkout PROTO((int argc, char **argv));
@@ -97,55 +82,45 @@ const struct cmd
     char *nick1;		/* alternate name (e.g. "ci") */
     char *nick2;		/* another alternate names (e.g. "ci") */
     int (*func) ();		/* Function takes (argc, argv) arguments. */
-#ifdef CLIENT_SUPPORT
-    int (*client_func) ();	/* Function to do it via the protocol.  */
-#endif
 } cmds[] =
 
 {
-#ifdef CLIENT_SUPPORT
-#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1, f2 }
-#else
-#define CMD_ENTRY(n1, n2, n3, f1, f2) { n1, n2, n3, f1 }
-#endif
-
-    CMD_ENTRY("add",      "ad",    "new",     add,       client_add),
-    CMD_ENTRY("admin",    "adm",   "rcs",     admin,     client_admin),
-    CMD_ENTRY("annotate", NULL,    NULL,      annotate,  client_annotate),
-    CMD_ENTRY("checkout", "co",    "get",     checkout,  client_checkout),
-    CMD_ENTRY("commit",   "ci",    "com",     commit,    client_commit),
-    CMD_ENTRY("diff",     "di",    "dif",     diff,      client_diff),
-    CMD_ENTRY("edit",     "edit",  "edit",    edit,      client_edit),
-    CMD_ENTRY("editors",  "editors","editors",editors,   client_editors),
-    CMD_ENTRY("export",   "exp",   "ex",      checkout,  client_export),
-    CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
-    CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
-    CMD_ENTRY("init",     NULL,    NULL,      init,      client_init),
-    CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
-#ifdef AUTH_CLIENT_SUPPORT
-    CMD_ENTRY("login",    "logon", "lgn",     login,     login),
-#endif /* AUTH_CLIENT_SUPPORT */
-    CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
-    CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
-    CMD_ENTRY("remove",   "rm",    "delete",  cvsremove, client_remove),
-    CMD_ENTRY("status",   "st",    "stat",    status,    client_status),
-    CMD_ENTRY("rtag",     "rt",    "rfreeze", rtag,      client_rtag),
-    CMD_ENTRY("tag",      "ta",    "freeze",  tag,       client_tag),
-    CMD_ENTRY("unedit",   "unedit","unedit",  unedit,    client_unedit),
-    CMD_ENTRY("update",   "up",    "upd",     update,    client_update),
-    CMD_ENTRY("watch",    "watch", "watch",   watch,     client_watch),
-    CMD_ENTRY("watchers", "watchers","watchers",watchers,client_watchers),
+    { "add",      "ad",       "new",       add },
+    { "admin",    "adm",      "rcs",       admin },
+    { "annotate", NULL,       NULL,        annotate },
+    { "checkout", "co",       "get",       checkout },
+    { "commit",   "ci",       "com",       commit },
+    { "diff",     "di",       "bdif",      diff },
+    { "edit",     "edit",     "edit",      edit },
+    { "editors",  "editors",  "editors",   editors },
+    { "export",   "exp",      "ex",        checkout },
+    { "history",  "hi",       "his",       history },
+    { "import",   "im",       "imp",       import },
+    { "init",     NULL,       NULL,        init },
 #ifdef SERVER_SUPPORT
-    /*
-     * The client_func is also server because we might have picked up a
-     * CVSROOT environment variable containing a colon.  The client will send
-     * the real root later.
-     */
-    CMD_ENTRY("server",   "server", "server", server,    server),
+    { "kserver",  NULL,       NULL,        server }, /* placeholder */
 #endif
-    CMD_ENTRY(NULL, NULL, NULL, NULL, NULL),
-
-#undef CMD_ENTRY
+    { "log",      "lo",       "rlog",      cvslog },
+#ifdef AUTH_CLIENT_SUPPORT
+    { "login",    "logon",    "lgn",       login },
+#ifdef SERVER_SUPPORT
+    { "pserver",  NULL,       NULL,        server }, /* placeholder */
+#endif
+#endif /* AUTH_CLIENT_SUPPORT */
+    { "rdiff",    "patch",    "pa",        patch },
+    { "release",  "re",       "rel",       release },
+    { "remove",   "rm",       "delete",    cvsremove },
+    { "status",   "st",       "stat",      status },
+    { "rtag",     "rt",       "rfreeze",   rtag },
+    { "tag",      "ta",       "freeze",    tag },
+    { "unedit",   "unedit",   "unedit",    unedit },
+    { "update",   "up",       "upd",       update },
+    { "watch",    "watch",    "watch",     watch },
+    { "watchers", "watchers", "watchers",  watchers },
+#ifdef SERVER_SUPPORT
+    { "server",   "server",   "server",    server },
+#endif
+    { NULL, NULL, NULL, NULL },
 };
 
 static const char *const usg[] =
@@ -199,7 +174,7 @@ static const char *const cmd_usage[] =
     "        remove       Removes an entry from the repository\n",
     "        rtag         Add a symbolic tag to a module\n",
     "        status       Display status information on checked out files\n",
-    "        tag          Add a symbolic tag to checked out versions of files\n",
+    "        tag          Add a symbolic tag to checked out version of files\n",
     "        unedit       Undo an edit command\n",
     "        update       Brings work tree in sync with repository\n",
     "        watch        Set watches\n",
@@ -209,27 +184,27 @@ static const char *const cmd_usage[] =
 
 static RETSIGTYPE
 main_cleanup (sig)
-     int sig;
+    int sig;
 {
     const char *name;
 
     switch (sig)
     {
-	case SIGHUP:
-	    name = "hangup";
-	    break;
-	case SIGINT:
-	    name = "interrupt";
-	    break;
-	case SIGQUIT:
-	    name = "quit";
-	    break;
-	case SIGPIPE:
-	    name = "broken pipe";
-	    break;
-	case SIGTERM:
-	    name = "termination";
-	    break;
+    case SIGHUP:
+	name = "hangup";
+	break;
+    case SIGINT:
+	name = "interrupt";
+	break;
+    case SIGQUIT:
+	name = "quit";
+	break;
+    case SIGPIPE:
+	name = "broken pipe";
+	break;
+    case SIGTERM:
+	name = "termination";
+	break;
     }
 
     error (1, 0, "received %s signal", name);
@@ -250,20 +225,21 @@ main (argc, argv)
     int argc;
     char **argv;
 {
+    char *CVSroot = CVSROOT_DFLT;
     extern char *version_string;
     extern char *config_string;
     char *cp, *end;
     const struct cmd *cm;
     int c, err = 0;
-    static int help = FALSE;
-    static int version_flag = FALSE;
-    static int help_commands = FALSE;
-    int rcsbin_update_env, cvs_update_env = 0;
+    int rcsbin_update_env, cvs_update_env;
+    int help = 0;		/* Has the user asked for help?  This
+				   lets us support the `cvs -H cmd'
+				   convention to give help for cmd. */
     static struct option long_options[] =
       {
-        {"help", 0, &help, TRUE},
-        {"version", 0, &version_flag, TRUE},
-	{"help-commands", 0, &help_commands, TRUE},
+        {"help", 0, NULL, 'H'},
+        {"version", 0, NULL, 'v'},
+	{"help-commands", 0, NULL, 1},
         {0, 0, 0, 0}
       };
     /* `getopt_long' stores the option index here, but right now we
@@ -283,12 +259,6 @@ main (argc, argv)
      */
     program_path = xstrdup (argv[0]);
     program_name = last_component (argv[0]);
-
-    CurDir = xmalloc (PATH_MAX);
-#ifndef SERVER_SUPPORT
-    if (!getwd (CurDir))
-	error (1, 0, "cannot get working directory: %s", CurDir);
-#endif
 
     /*
      * Query the environment variables up-front, so that
@@ -314,14 +284,6 @@ main (argc, argv)
     }
     if (getenv (CVSREAD_ENV) != NULL)
 	cvswrite = FALSE;
-    if ((cp = getenv (CVSUMASK_ENV)) != NULL)
-    {
-	/* FIXME: Should be accepting symbolic as well as numeric mask.  */
-	cvsumask = strtol (cp, &end, 8) & 0777;
-	if (*end != '\0')
-	    error (1, errno, "invalid umask value in %s (%s)",
-		CVSUMASK_ENV, cp);
-    }
 
     /* This has the effect of setting getopt's ordering to REQUIRE_ORDER,
        which is what we need to distinguish between global options and
@@ -360,8 +322,9 @@ main (argc, argv)
       {
 	switch (c)
           {
-            case 0:
-                /* getopt_long took care of setting the flag. */ 
+            case 1:
+	        /* --help-commands */
+                usage (cmd_usage);
                 break;
 	    case 'Q':
 		really_quiet = TRUE;
@@ -384,7 +347,17 @@ main (argc, argv)
 		logoff = TRUE;
 		break;
 	    case 'v':
-                version_flag = TRUE;
+		(void) fputs (version_string, stdout);
+		(void) fputs (config_string, stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
+		(void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
+		(void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
+		(void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
+		(void) fputs ("\n", stdout);
+		(void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
+		(void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
+		exit (0);
 		break;
 	    case 'b':
 		Rcsbin = optarg;
@@ -398,11 +371,10 @@ main (argc, argv)
 		cvs_update_env = 1;	/* need to update environment */
 		break;
 	    case 'H':
-		use_cvsrc = FALSE;      /* this ensure that cvs -H works */
-		help = TRUE;
+	        help = 1;
 		break;
             case 'f':
-		use_cvsrc = FALSE;
+		use_cvsrc = FALSE; /* unnecessary, since we've done it above */
 		break;
 	    case 'z':
 #ifdef CLIENT_SUPPORT
@@ -424,302 +396,261 @@ main (argc, argv)
 	}
     }
 
-    if (version_flag == TRUE)
-    {
-        (void) fputs (version_string, stdout);
-        (void) fputs (config_string, stdout);
-        (void) fputs ("\n", stdout);
-        (void) fputs ("Copyright (c) 1993-1994 Brian Berliner\n", stdout);
-        (void) fputs ("Copyright (c) 1993-1994 david d `zoo' zuhn\n", stdout);
-        (void) fputs ("Copyright (c) 1992, Brian Berliner and Jeff Polk\n", stdout);
-        (void) fputs ("Copyright (c) 1989-1992, Brian Berliner\n", stdout);
-        (void) fputs ("\n", stdout);
-        (void) fputs ("CVS may be copied only under the terms of the GNU General Public License,\n", stdout);
-        (void) fputs ("a copy of which can be found with the CVS distribution kit.\n", stdout);
-        exit (0);
-    }
-    else if (help_commands)
-	usage (cmd_usage);
-
     argc -= optind;
     argv += optind;
     if (argc < 1)
 	usage (usg);
 
-#ifdef HAVE_KERBEROS
-    /* If we are invoked with a single argument "kserver", then we are
-       running as Kerberos server as root.  Do the authentication as
-       the very first thing, to minimize the amount of time we are
-       running as root.  */
-    if (strcmp (argv[0], "kserver") == 0)
-    {
-	int status;
-	char instance[INST_SZ];
-	struct sockaddr_in peer;
-	struct sockaddr_in laddr;
-	int len;
-	KTEXT_ST ticket;
-	AUTH_DAT auth;
-	char version[KRB_SENDAUTH_VLEN];
-	Key_schedule sched;
-	char user[ANAME_SZ];
-	struct passwd *pw;
 
-	strcpy (instance, "*");
-	len = sizeof peer;
-	if (getpeername (STDIN_FILENO, (struct sockaddr *) &peer, &len) < 0
-	    || getsockname (STDIN_FILENO, (struct sockaddr *) &laddr,
-			    &len) < 0)
-	{
-	    printf ("E Fatal error, aborting.\n\
-error %s getpeername or getsockname failed\n", strerror (errno));
-	    exit (EXIT_FAILURE);
-	}
+    /* Look up the command name. */
 
-	status = krb_recvauth (KOPT_DO_MUTUAL, STDIN_FILENO, &ticket, "rcmd",
-			       instance, &peer, &laddr, &auth, "", sched,
-			       version);
-	if (status != KSUCCESS)
-	{
-	    printf ("E Fatal error, aborting.\n\
-error 0 kerberos: %s\n", krb_get_err_text(status));
-	    exit (EXIT_FAILURE);
-	}
-
-	/* Get the local name.  */
-	status = krb_kntoln (&auth, user);
-	if (status != KSUCCESS)
-	{
-	    printf ("E Fatal error, aborting.\n\
-error 0 kerberos: can't get local name: %s\n", krb_get_err_text(status));
-	    exit (EXIT_FAILURE);
-	}
-
-	pw = getpwnam (user);
-	if (pw == NULL)
-	{
-	    printf ("E Fatal error, aborting.\n\
-error 0 %s: no such user\n", user);
-	    exit (EXIT_FAILURE);
-	}
-
-	initgroups (pw->pw_name, pw->pw_gid);
-	setgid (pw->pw_gid);
-	setuid (pw->pw_uid);
-	/* Inhibit access by randoms.  Don't want people randomly
-	   changing our temporary tree before we check things in.  */
-	umask (077);
-
-#if HAVE_PUTENV
-	/* Set LOGNAME and USER in the environment, in case they are
-           already set to something else.  */
-	{
-	    char *env;
-
-	    env = xmalloc (sizeof "LOGNAME=" + strlen (user));
-	    (void) sprintf (env, "LOGNAME=%s", user);
-	    (void) putenv (env);
-
-	    env = xmalloc (sizeof "USER=" + strlen (user));
-	    (void) sprintf (env, "USER=%s", user);
-	    (void) putenv (env);
-	}
-#endif
-
-	/* Pretend we were invoked as a plain server.  */
-	argv[0] = "server";
-    }
-#endif /* HAVE_KERBEROS */
-
-
-#if defined(AUTH_SERVER_SUPPORT) && defined(SERVER_SUPPORT)
-    if (strcmp (argv[0], "pserver") == 0)
-    {
-      /* Gets username and password from client, authenticates, then
-         switches to run as that user and sends an ACK back to the
-         client. */
-      authenticate_connection ();
-      
-      /* Pretend we were invoked as a plain server.  */
-      argv[0] = "server";
-    }
-#endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
-
-
-    /*
-     * See if we are able to find a 'better' value for CVSroot in the
-     * CVSADM_ROOT directory.
-     */
-#ifdef SERVER_SUPPORT
-    if (strcmp (argv[0], "server") == 0 && CVSroot == NULL)
-        CVSADM_Root = NULL;
-    else
-        CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#else /* No SERVER_SUPPORT */
-    CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
-#endif /* No SERVER_SUPPORT */
-    if (CVSADM_Root != NULL)
-    {
-        if (CVSroot == NULL || !cvs_update_env)
-        {
-	    CVSroot = CVSADM_Root;
-	    cvs_update_env = 1;	/* need to update environment */
-        }
-#ifdef CLIENT_SUPPORT
-        else if (!getenv ("CVS_IGNORE_REMOTE_ROOT"))
-#else /* ! CLIENT_SUPPORT */
-        else
-#endif /* CLIENT_SUPPORT */
-        {
-	    /* Let -d override CVS/Root file.  The user might want to
-	       change the access method, use a different server (if there
-	       are two server machines which share the repository using
-	       a networked file system), etc.  */
-	    if (strcmp (CVSroot, CVSADM_Root) != 0)
-	    {
-		/* Once we have verified that this root is usable, we will
-		   want to write it into CVS/Root.  */
-		need_to_create_root = 1;
-	    }
-        }
-    }
-
-    /* CVSroot may need fixing up, if an access-method was specified,
-     * but not a user.  Later code assumes that if CVSroot contains an
-     * access-method, then it also has a user.  We print a warning and
-     * die if we can't guarantee that.
-     */
-    if (CVSroot
-        && *CVSroot
-        && (CVSroot[0] == ':')
-        && (strchr (CVSroot, '@') == NULL))
-      {
-        error (1, 0,
-               "must also give a username if specifying access method");
-      }
-
-    /*
-     * Specifying just the '-H' flag to the sub-command causes a Usage
-     * message to be displayed.
-     */
-    command_name = cp = argv[0];
-    if (help == TRUE || (argc > 1 && strcmp (argv[1], "-H") == 0))
-	argc = -1;
-    else
-    {
-	/*
-	 * Check to see if we can write into the history file.  If not,
-	 * we assume that we can't work in the repository.
-	 * BUT, only if the history file exists.
-	 */
-#ifdef SERVER_SUPPORT
-        if (strcmp (command_name, "server") != 0 || CVSroot != NULL)
-#endif
-	{
-	    char path[PATH_MAX];
-	    int save_errno;
-
-	    if (!CVSroot || !*CVSroot)
-		error (1, 0, "You don't have a %s environment variable",
-		       CVSROOT_ENV);
-	    (void) sprintf (path, "%s/%s", CVSroot, CVSROOTADM);
-	    if (!isaccessible (path, R_OK | X_OK))
-	    {
-		save_errno = errno;
-		/* If this is "cvs init", the root need not exist yet.  */
-		if (strcmp (command_name, "init") != 0
-#ifdef CLIENT_SUPPORT
-		    /* If we are a remote client, the root need not exist
-		       on the client machine (FIXME: we should also skip
-		       the check for CVSROOTADM_HISTORY being writable;
-		       it shouldn't matter if there is a read-only file
-		       which happens to have the same name on the client
-		       machine).  */
-		    && strchr (CVSroot, ':') == NULL)
-#endif
-		{
-		error (0, 0,
-		    "Sorry, you don't have sufficient access to %s", CVSroot);
-		error (1, save_errno, "%s", path);
-		}
-	    }
-	    (void) strcat (path, "/");
-	    (void) strcat (path, CVSROOTADM_HISTORY);
-	    if (isfile (path) && !isaccessible (path, R_OK | W_OK))
-	    {
-		save_errno = errno;
-		error (0, 0,
-		 "Sorry, you don't have read/write access to the history file");
-		error (1, save_errno, "%s", path);
-	    }
-	}
-    }
-
-#ifdef SERVER_SUPPORT
-    if (strcmp (command_name, "server") == 0)
-	/* This is only used for writing into the history file.  Might
-	   be nice to have hostname and/or remote path, on the other hand
-	   I'm not sure whether it is worth the trouble.  */
-	strcpy (CurDir, "<remote>");
-    else if (!getwd (CurDir))
-	error (1, 0, "cannot get working directory: %s", CurDir);
-#endif
-
-#ifdef HAVE_PUTENV
-    /* Now, see if we should update the environment with the Rcsbin value */
-    if (cvs_update_env)
-    {
-	char *env;
-
-	env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot) + 1 + 1);
-	(void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot);
-	(void) putenv (env);
-	/* do not free env, as putenv has control of it */
-    }
-    if (rcsbin_update_env)
-    {
-	char *env;
-
-	env = xmalloc (strlen (RCSBIN_ENV) + strlen (Rcsbin) + 1 + 1);
-	(void) sprintf (env, "%s=%s", RCSBIN_ENV, Rcsbin);
-	(void) putenv (env);
-	/* do not free env, as putenv has control of it */
-    }
-#endif
-
-    /*
-     * If Rcsbin is set to something, make sure it is terminated with
-     * a slash character.  If not, add one.
-     */
-    if (*Rcsbin)
-    {
-	int len = strlen (Rcsbin);
-	char *rcsbin;
-
-	if (Rcsbin[len - 1] != '/')
-	{
-	    rcsbin = Rcsbin;
-	    Rcsbin = xmalloc (len + 2);	/* one for '/', one for NULL */
-	    (void) strcpy (Rcsbin, rcsbin);
-	    (void) strcat (Rcsbin, "/");
-	}
-    }
-
+    command_name = argv[0];
     for (cm = cmds; cm->fullname; cm++)
     {
-	if (cm->nick1 && !strcmp (cp, cm->nick1))
+	if (cm->nick1 && !strcmp (command_name, cm->nick1))
 	    break;
-	if (cm->nick2 && !strcmp (cp, cm->nick2))
+	if (cm->nick2 && !strcmp (command_name, cm->nick2))
 	    break;
-	if (!strcmp (cp, cm->fullname))
+	if (!strcmp (command_name, cm->fullname))
 	    break;
     }
 
     if (!cm->fullname)
-	usage (usg);			/* no match */
+	usage (cmd_usage);	        /* no match */
+    else
+	command_name = cm->fullname;	/* Global pointer for later use */
+
+
+    /* Now we have a valid command name; this saves us the trouble of
+       going through any of the following work only to find out that
+       we had a bad command name to begin with.
+
+       If the `-H' option is specified to any command, we want to make
+       sure that it ALWAYS works, regardless of CVSROOT screw-ups.
+       Check for it. */
+
+    optind = 1;			/* initialize current option */
+    opterr = 0;			/* inhibit error messages */
+    while ((c = getopt_long (argc, argv, "H", NULL, NULL)) != EOF)
+	if (c == 'H')
+	    break;
+
+    if (help || (c == 'H'))
+	argc = -1;		/* some functions only check for this */
     else
     {
-	command_name = cm->fullname;	/* Global pointer for later use */
+	/* The user didn't ask for help, so go ahead and authenticate,
+           set up CVSROOT, and the rest of it. */
+
+	/* The UMASK environment variable isn't handled with the
+	   others above, since we don't want to signal errors if the
+	   user has asked for help.  This won't work if somebody adds
+	   a command-line flag to set the umask, since we'll have to
+	   parse it before we get here. */
+
+	if ((cp = getenv (CVSUMASK_ENV)) != NULL)
+	{
+	    /* FIXME: Should be accepting symbolic as well as numeric mask.  */
+	    cvsumask = strtol (cp, &end, 8) & 0777;
+	    if (*end != '\0')
+		error (1, errno, "invalid umask value in %s (%s)",
+		       CVSUMASK_ENV, cp);
+	}
+
+#if defined (HAVE_KERBEROS) && defined (SERVER_SUPPORT)
+	/* If we are invoked with a single argument "kserver", then we are
+	   running as Kerberos server as root.  Do the authentication as
+	   the very first thing, to minimize the amount of time we are
+	   running as root.  */
+	if (strcmp (command_name, "kserver") == 0)
+	{
+	    kserver_authenticate_connection ();
+
+	    /* Pretend we were invoked as a plain server.  */
+	    command_name = "server";
+	}
+#endif /* HAVE_KERBEROS */
+
+
+#if defined(AUTH_SERVER_SUPPORT) && defined(SERVER_SUPPORT)
+	if (strcmp (command_name, "pserver") == 0)
+	{
+	    /* Gets username and password from client, authenticates, then
+	       switches to run as that user and sends an ACK back to the
+	       client. */
+	    pserver_authenticate_connection ();
+      
+	    /* Pretend we were invoked as a plain server.  */
+	    command_name = "server";
+	}
+#endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
+
+
+	/* Fiddling with CVSROOT doesn't make sense if we're running
+           in server mode, since the client will send the repository
+           directory after the connection is made. */
+
+#ifdef SERVER_SUPPORT
+	if (strcmp (command_name, "server") != 0)
+#endif
+	{
+	    char *CVSADM_Root;
+	    
+	    /* See if we are able to find a 'better' value for CVSroot
+	       in the CVSADM_ROOT directory. */
+
+	    CVSADM_Root = Name_Root((char *) NULL, (char *) NULL);
+
+	    if (CVSADM_Root != NULL)
+	    {
+		if (CVSroot == NULL || !cvs_update_env)
+		{
+		    CVSroot = CVSADM_Root;
+		    cvs_update_env = 1;	/* need to update environment */
+		}
+		/* Let -d override CVS/Root file.  The user might want
+		   to change the access method, use a different server
+		   (if there are two server machines which share the
+		   repository using a networked file system), etc.  */
+		else if (
+#ifdef CLIENT_SUPPORT
+		         !getenv ("CVS_IGNORE_REMOTE_ROOT") &&
+#endif
+			 strcmp (CVSroot, CVSADM_Root) != 0)
+		{
+		    /* Once we have verified that this root is usable,
+		       we will want to write it into CVS/Root.  */
+		    need_to_create_root = 1;
+		}
+	    }
+
+	    /* Now we've reconciled CVSROOT from the command line, the
+               CVS/Root file, and the environment variable.  Do the
+               last sanity checks on the variable. */
+
+	    if (! CVSroot)
+	    {
+		error (0, 0,
+		       "No CVSROOT specified!  Please use the `-d' option");
+		error (1, 0,
+		       "or set the %s environment variable.", CVSROOT_ENV);
+	    }
+	    
+	    if (! *CVSroot)
+	    {
+		error (0, 0,
+		       "CVSROOT is set but empty!  Make sure that the");
+		error (0, 0,
+		       "specification of CVSROOT is legal, either via the");
+		error (0, 0,
+		       "`-d' option, the %s environment variable, or the",
+		       CVSROOT_ENV);
+		error (1, 0,
+		       "CVS/Root file (if any).");
+	    }
+
+	    /* Now we're 100% sure that we have a valid CVSROOT
+	       variable.  Parse it to see if we're supposed to do
+	       remote accesses or use a special access method. */
+
+	    if (parse_cvsroot (CVSroot))
+		error (1, 0, "Bad CVSROOT.");
+
+	    /*
+	     * Check to see if we can write into the history file.  If not,
+	     * we assume that we can't work in the repository.
+	     * BUT, only if the history file exists.
+	     */
+
+	    if (!client_active)
+	    {
+		char path[PATH_MAX];
+		int save_errno;
+
+		(void) sprintf (path, "%s/%s", CVSroot_directory, CVSROOTADM);
+		if (!isaccessible (path, R_OK | X_OK))
+		{
+		    save_errno = errno;
+		    /* If this is "cvs init", the root need not exist yet.  */
+		    if (strcmp (command_name, "init") != 0)
+		    {
+			error (0, 0,
+			       "Sorry, you don't have sufficient access to %s",
+			       CVSroot_directory);
+			error (1, save_errno, "%s", path);
+		    }
+		}
+		(void) strcat (path, "/");
+		(void) strcat (path, CVSROOTADM_HISTORY);
+		if (isfile (path) && !isaccessible (path, R_OK | W_OK))
+		{
+		    save_errno = errno;
+		    error (0, 0, "Sorry, you don't have read/write access to the history file");
+		    error (1, save_errno, "%s", path);
+		}
+	    }
+
+#ifdef HAVE_PUTENV
+	    /* Update the CVSROOT environment variable if necessary. */
+
+	    if (cvs_update_env)
+	    {
+		char *env;
+		env = xmalloc (strlen (CVSROOT_ENV) + strlen (CVSroot)
+			       + 1 + 1);
+		(void) sprintf (env, "%s=%s", CVSROOT_ENV, CVSroot);
+		(void) putenv (env);
+		/* do not free env, as putenv has control of it */
+	    }
+#endif
+	}
+	
+	/* This is only used for writing into the history file.  For
+	   remote connections, it might be nice to have hostname
+	   and/or remote path, on the other hand I'm not sure whether
+	   it is worth the trouble.  */
+
+	CurDir = xmalloc (PATH_MAX);
+#ifdef SERVER_SUPPORT
+	if (strcmp (command_name, "server") == 0)
+	    strcpy (CurDir, "<remote>");
+	else
+#endif
+	{
+            if (!getwd (CurDir))
+		error (1, 0, "cannot get working directory: %s", CurDir);
+	}
+
+#ifdef HAVE_PUTENV
+	/* Now, see if we should update the environment with the
+           Rcsbin value */
+	if (rcsbin_update_env)
+	{
+	    char *env;
+	    env = xmalloc (strlen (RCSBIN_ENV) + strlen (Rcsbin) + 1 + 1);
+	    (void) sprintf (env, "%s=%s", RCSBIN_ENV, Rcsbin);
+	    (void) putenv (env);
+	    /* do not free env, as putenv has control of it */
+	}
+#endif
+
+	/*
+	 * If Rcsbin is set to something, make sure it is terminated with
+	 * a slash character.  If not, add one.
+	 */
+	if (*Rcsbin)
+	{
+	    int len = strlen (Rcsbin);
+	    char *rcsbin;
+
+	    if (Rcsbin[len - 1] != '/')
+	    {
+		rcsbin = Rcsbin;
+		Rcsbin = xmalloc (len + 2);	/* one for '/', one for NULL */
+		(void) strcpy (Rcsbin, rcsbin);
+		(void) strcat (Rcsbin, "/");
+	    }
+	}
 
 	/* make sure we clean up on error */
 #ifdef SIGHUP
@@ -750,31 +681,30 @@ error 0 %s: no such user\n", user);
 	 * Make stdout line buffered, so 'tail -f' can monitor progress.
 	 * Patch creates too much output to monitor and it runs slowly.
 	 */
+#  ifndef KLUDGE_FOR_WNT_TESTSUITE
+
 	if (strcmp (cm->fullname, "patch"))
-#ifdef BUFSIZ  /* traditional SysV chokes when size == 0 */
+#    ifdef BUFSIZ  /* traditional SysV chokes when size == 0 */
 	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, BUFSIZ);
-#else
+#    else
 	    (void) setvbuf (stdout, (char *) NULL, _IOLBF, 0);
-#endif
-#endif
+#    endif
+
+#  else /* KLUDGE_FOR_WNT_TESTSUITE */
+
+	    (void) setvbuf (stdout, (char *) NULL, _IONBF, 0);
+	    (void) setvbuf (stderr, (char *) NULL, _IONBF, 0);
+
+#  endif /* KLUDGE_FOR_WNT_TESTSUITE */
+
+#endif /* HAVE_SETVBUF */
 
 	if (use_cvsrc)
-	  read_cvsrc (&argc, &argv, command_name);
+	    read_cvsrc (&argc, &argv, command_name);
 
-#ifdef CLIENT_SUPPORT
-	/* If cvsroot contains a colon, try to do it via the protocol.  */
-        {
-	    char *p = CVSroot == NULL ? NULL : strchr (CVSroot, ':');
-	    if (p)
-		err = (*(cm->client_func)) (argc, argv);
-	    else
-		err = (*(cm->func)) (argc, argv);
-	}
-#else /* No CLIENT_SUPPORT */
-	err = (*(cm->func)) (argc, argv);
+    } /* end of stuff that gets done if the user DOESN'T ask for help */
 
-#endif /* No CLIENT_SUPPORT */
-    }
+    err = (*(cm->func)) (argc, argv);
 
     if (need_to_create_root)
     {

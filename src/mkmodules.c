@@ -660,10 +660,10 @@ init (argc, argv)
        old cvsinit.sh script did.  Few utilities do that, and a
        non-existent parent directory is as likely to be a typo as something
        which needs to be created.  */
-    mkdir_if_needed (CVSroot);
+    mkdir_if_needed (CVSroot_directory);
 
-    adm = xmalloc (strlen (CVSroot) + sizeof (CVSROOTADM) + 10);
-    strcpy (adm, CVSroot);
+    adm = xmalloc (strlen (CVSroot_directory) + sizeof (CVSROOTADM) + 10);
+    strcpy (adm, CVSroot_directory);
     strcat (adm, "/");
     strcat (adm, CVSROOTADM);
     mkdir_if_needed (adm);
