@@ -1,5 +1,10 @@
 2004-09-23  Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (crerepos, sshstdio): Minor modifications to make use of
+	the new depends_on_?sh API.
+
+2004-09-23  Derek Price <derek@ximbiot.com>
+
 	* sanity.sh: Accept new -e option to interpret non-fatal calls to skip
 	as errors.
 	(skip, depends_on_rsh, depends_on_ssh): New functions.

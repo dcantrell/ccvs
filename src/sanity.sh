@@ -571,8 +571,9 @@ else
   : good, it works
 fi
 
-# Test that $1 works as a remote shell.  If so, set $CVS_RSH & $save_CVS_RSH to
-# match and return 0.  Otherwise, set $skipreason and return 77.
+# Test that $1 works as a remote shell.  If so, set $host, $CVS_RSH, &
+# $save_CVS_RSH to match and return 0.  Otherwise, set $skipreason and return
+# 77.
 depends_on_rsh ()
 {
   host=${remotehost-"`hostname`"}
@@ -588,8 +589,8 @@ depends_on_rsh ()
   return 0
 }
 
-# Find a usable SSH.  When a usable ssh is found, set $CVS_RSH, $save_CVS_RSH,
-# and return 0.  Otherwise, set $skipreason and return 77.
+# Find a usable SSH.  When a usable ssh is found, set $host, $CVS_RSH, and
+# $save_CVS_RSH and return 0.  Otherwise, set $skipreason and return 77.
 depends_on_ssh ()
 {
   # Are we able to run find and use an ssh?
@@ -619,7 +620,7 @@ depends_on_ssh ()
       ;;
   esac
 
-  depends_on_rsh $tryssh
+  depends_on_rsh "$tryssh"
   return $?
 }
 
@@ -18963,12 +18964,7 @@ EOF
 
 	    # Note that we set CVS_SERVER at the beginning.
 	    CVS_SERVER=$TESTDIR/cvs-setHome; export CVS_SERVER
-
-	    if test -n "$remotehost"; then
-		CREREPOS_ROOT=:ext:$remotehost${TESTDIR}/crerepos
-	    else
-		CREREPOS_ROOT=:ext:`hostname`:${TESTDIR}/crerepos
-	    fi
+	    CREREPOS_ROOT=:ext:$host$TESTDIR/crerepos
 	  else
 
 	    # First, if the repository doesn't exist at all...
@@ -20249,11 +20245,7 @@ done"
 	    continue
 	  fi
 
-	  if test -n "$remotehost"; then
-	    SSHSTDIO_ROOT=:ext:$remotehost${CVSROOT_DIRNAME}
-	  else
-	    SSHSTDIO_ROOT=:ext:`hostname`:${CVSROOT_DIRNAME}
-	  fi
+	  SSHSTDIO_ROOT=:ext:$host$CVSROOT_DIRNAME
 
           mkdir sshstdio; cd sshstdio
           dotest sshstdio-1 "$testcvs -d $SSHSTDIO_ROOT -q co -l ."
