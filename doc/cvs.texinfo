@@ -4969,11 +4969,18 @@ Copy the module file, sorted, to the standard output,
 instead of creating or modifying any files or
 directories in your working directory.
 
+@c Should clarify whether dir can specify a
+@c subdirectory (for example "foo/bar").  As of May,
+@c 1996, it is said to work for local CVS if the parent
+@c directories already exist, and not at all for remote
+@c CVS.  The remote CVS behavior at least seems like it
+@c is clearly a bug.
 @item -d @var{dir}
 Create a directory called @var{dir} for the working
 files, instead of using the module name.  Unless you
 also use @samp{-N}, the paths created under @var{dir}
 will be as short as possible.
+@c FIXME: What the #$@!#$# does "short as possible" mean?
 
 @item -j @var{tag}
 With two @samp{-j} options, merge changes from the
