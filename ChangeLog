@@ -1,3 +1,13 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* configure.in (WITH_KRB4): Import KRB4 patch from Redhat 8.0's CVS
+	1.11.2-5 SRPM.  It's not the right fix, but it will work until I get
+	around to merging some of the code with WITH_GSSAPI and seperating the
+	bits into separate M4 files.
+
+	* configure: Regenerated.
+	* config.h.in: Ditto.
+
 2003-02-28  Derek Price  <derek@ximbiot.com>
 
 	* acinclude.m4 (ACX_WITH_GSSAPI): Move the checkin from 1/23 to
