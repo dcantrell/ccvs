@@ -1,5 +1,12 @@
 2001-04-29  Derek Price  <dprice@collab.net>
 
+	* Makefile.am (distcheck-hook): Undo last change.
+	(localcheck): New target.
+
+	* Makefile.in: Regenerated.
+
+2001-04-29  Derek Price  <dprice@collab.net>
+
 	* Makefile.am: Add remotecheck to distcheck-hook.
 
 	* Makefile.in: Regenerated.

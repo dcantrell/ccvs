@@ -41,18 +41,17 @@ EXTRA_DIST = \
 	cvsnt.dsw \
 	cvsnt.mak
 
-.PHONY: remotecheck
-remotecheck: all
+
+
+## MAINTAINER Targets
+
+.PHONY: localcheck remotecheck
+localcheck remotecheck: all
 	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
 .PHONY: doc
 doc:
 	cd doc && $(MAKE) $(AM_MAKEFLAGS) "$@"
-
-.PHONY: distcheck-hook
-distcheck-hook: remotecheck
-
-## MAINTAINER Targets
 
 ## cvs.spec  ##
 # - cvs.spec needs to be updated only once, since it depends on
