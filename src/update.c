@@ -34,7 +34,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 #ifdef SERVER_SUPPORT
 # include "md5.h"
 #endif
@@ -1122,7 +1122,7 @@ isemptydir (const char *dir, int might_not_exist)
 		struct saved_cwd cwd;
 
 		if (save_cwd (&cwd))
-		    exit (EXIT_FAILURE);
+		    error (1, errno, "Failed to save current directory.");
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
@@ -1130,8 +1130,10 @@ isemptydir (const char *dir, int might_not_exist)
 		files_removed = walklist (l, isremoved, 0);
 		Entries_Close (l);
 
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		free_cwd (&cwd);
 
 		if (files_removed != 0)

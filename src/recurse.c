@@ -9,7 +9,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 #include "fileattr.h"
 #include "edit.h"
 
@@ -1215,7 +1215,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
     {
 	/* save our current directory and static vars */
         if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
+	    error (1, errno, "Failed to save current directory.");
 	sdirlist = dirlist;
 	srepository = repository;
 	dirlist = NULL;
@@ -1273,8 +1273,9 @@ but CVS uses %s for its own purposes; skipping %s directory",
 				       frent->entries);
 
 	/* get back to where we started and restore state vars */
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
+	if (restore_cwd (&cwd))
+	    error (1, errno, "Failed to restore current directory, `%s'.",
+	           cwd.name);
 	free_cwd (&cwd);
 	dirlist = sdirlist;
 	repository = srepository;
@@ -1351,7 +1352,7 @@ unroll_files_proc (Node *p, void *closure)
     if (strcmp(p->key, ".") != 0)
     {
         if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
+	    error (1, errno, "Failed to save current directory.");
 	if ( CVS_CHDIR (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
@@ -1374,8 +1375,9 @@ unroll_files_proc (Node *p, void *closure)
 	free (update_dir);
 	update_dir = save_update_dir;
 
-	if (restore_cwd (&cwd, NULL))
-	    exit (EXIT_FAILURE);
+	if (restore_cwd (&cwd))
+	    error (1, errno, "Failed to restore current directory, `%s'.",
+	           cwd.name);
 	free_cwd (&cwd);
     }
 

@@ -180,7 +180,7 @@
 
 #include "cvs.h"
 #include "history.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 static struct hrec
 {
@@ -779,13 +779,15 @@ history_write (int type, const char *update_dir, const char *revs,
 		char *homedir;
 
 		if (save_cwd (&cwd))
-		    exit (EXIT_FAILURE);
+		    error (1, errno, "Failed to save current directory.");
 
 		if ( CVS_CHDIR (pwdir) < 0 || (homedir = xgetcwd ()) == NULL)
 		    homedir = pwdir;
 
-		if (restore_cwd (&cwd, NULL))
-		    exit (EXIT_FAILURE);
+		if (restore_cwd (&cwd))
+		    error (1, errno,
+		           "Failed to restore current directory, `%s'.",
+		           cwd.name);
 		free_cwd (&cwd);
 
 		i = strlen (homedir);

@@ -13,7 +13,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 static int rtag_proc (int argc, char **argv, char *xwhere,
 		      char *mwhere, char *mfile, int shorten,
@@ -1555,7 +1555,7 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	else
 	{
 	    if (save_cwd (&cwd))
-		exit (EXIT_FAILURE);
+		error (1, errno, "Failed to save current directory.");
 	    if (CVS_CHDIR (repository) < 0)
 		error (1, errno, "cannot change to %s directory", repository);
 	}
@@ -1566,8 +1566,9 @@ Numeric tag %s invalid.  Numeric tags should be of the form X[.X]...", name);
 	     CVS_LOCK_READ, NULL, 1, repository);
 	if (repository != NULL && repository[0] != '\0')
 	{
-	    if (restore_cwd (&cwd, NULL))
-		exit (EXIT_FAILURE);
+	    if (restore_cwd (&cwd))
+		error (1, errno, "Failed to restore current directory, `%s'.",
+		       cwd.name);
 	    free_cwd (&cwd);
 	}
 

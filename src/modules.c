@@ -22,7 +22,7 @@
  */
 
 #include "cvs.h"
-#include "savecwd.h"
+#include "save-cwd.h"
 
 
 /* Defines related to the syntax of the modules file.  */
@@ -287,7 +287,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	       the case where we found a file/directory rather than
 	       finding an entry in the modules file.  */
 	    if (save_cwd (&cwd))
-		exit (EXIT_FAILURE);
+		error (1, errno, "Failed to save current directory.");
 	    cwd_saved = 1;
 
 	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
@@ -297,8 +297,9 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	    free_names (&modargc, modargv);
 
 	    /* cd back to where we started.  */
-	    if (restore_cwd (&cwd, NULL))
-		exit (EXIT_FAILURE);
+	    if (restore_cwd (&cwd))
+		error (1, errno, "Failed to restore current directory, `%s'.",
+		       cwd.name);
 	    free_cwd (&cwd);
 	    cwd_saved = 0;
 
@@ -368,7 +369,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 
     /* remember where we start */
     if (save_cwd (&cwd))
-	exit (EXIT_FAILURE);
+	error (1, errno, "Failed to save current directory.");
     cwd_saved = 1;
 
     assert (value != NULL);
@@ -660,8 +661,9 @@ module `%s' is a request for a file in a module which is not a directory",
 #endif
 
     /* cd back to where we started */
-    if (restore_cwd (&cwd, NULL))
-	exit (EXIT_FAILURE);
+    if (restore_cwd (&cwd))
+	error (1, errno, "Failed to restore current directory, `%s'.",
+	       cwd.name);
     free_cwd (&cwd);
     cwd_saved = 0;
 
