@@ -1,5 +1,14 @@
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
+	* server.c (do_cvs_command): s/FIXCVS/FIXME/ in comment.
+	(set_block_fd, set_nonblock_fd): Move to...
+	* subr.c: ...here.
+	* cvs.h: Add protos for the above two functions.
+	* buffer.c (stdio_buffer_shutdown): Replace fgetc() which checked for
+	unread data on a pipe with a nonblock read.
+
+2004-02-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (do_cvs_command): Have the server child close all the pipes
 	but the flow control pipe and wait on an EOF on the flow control pipe
 	from the parent when done to avoid a race condition that could

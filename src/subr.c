@@ -926,5 +926,45 @@ sleep_past (desttime)
 
 
 
+/*
+ * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
+ * code.
+ */
+int
+set_nonblock_fd (fd)
+     int fd;
+{
+    int flags;
+
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+    if (fcntl (fd, F_SETFL, flags | O_NONBLOCK) < 0)
+	return errno;
+    return 0;
+}
+
+
+
+/*
+ * Set buffer FD to non-blocking I/O.  Returns 0 for success or errno
+ * code.
+ */
+int
+set_block_fd (fd)
+     int fd;
+{
+    int flags;
+
+    flags = fcntl (fd, F_GETFL, 0);
+    if (flags < 0)
+	return errno;
+    if (fcntl (fd, F_SETFL, flags & ~O_NONBLOCK) < 0)
+	return errno;
+    return 0;
+}
+
+
+
 /* vim:tabstop=8:shiftwidth=4
  */
