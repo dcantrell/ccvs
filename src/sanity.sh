@@ -20339,7 +20339,11 @@ EOF
 	  cd CVSROOT
 	  dotest parseroot-4-4 "$testcvs -Q up"
 
-	  dokeep
+	  if $keep; then
+	    echo Keeping $TESTDIR and exiting due to --keep
+	    exit 0
+	  fi
+  
 	  cd ../..
 	  rm -r parseroot2
 	  ;;

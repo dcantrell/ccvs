@@ -1,3 +1,7 @@
+2004-09-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (parseroot2): Expand dokeep inline.
+
 2004-09-24  Derek Price <derek@ximbiot.com>
 
 	* sanity.sh (tests): Add parseroot2.
