@@ -363,6 +363,12 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 /* We actually do have a transparent rsh, whew. */
 #undef RSH_NOT_TRANSPARENT
 
+/* OS/2 doesn't really have user/group permissions, at least not
+   according to the C library manual pages.  So we'll make decoys. */
+#define NEED_DECOY_PERMISSIONS 1     /* see system.h */
+
+
+
 /* For the access() function, for which OS/2 has no pre-defined
    mnemonic masks. */
 #define R_OK 04

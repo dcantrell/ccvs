@@ -1,3 +1,11 @@
+Fri Nov 17 21:13:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (change_mode): never set anything executable, until we
+        understand what that means in OS/2.
+
+        * config.h (NEED_DECOY_PERMISSIONS): define to 1 (& see
+        system.h).
+
 Fri Nov 17 15:02:05 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c: fixed up more error codes.
