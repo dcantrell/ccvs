@@ -1,5 +1,10 @@
 2003-10-03  Derek Price  <derek@ximbiot.com>
 
+	* main.c (main): Dispose of old Tmpdir and Editor when specified
+	multiple times between the command line & the ~/.cvsrc file.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (remove_locks): Eliminate unecessary typecasting.
 
 2003-10-03  Derek Price  <derek@ximbiot.com>
