@@ -14,21 +14,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-#
-# savecwd.h needs src/error.h
-#
-AM_CPPFLAGS = -I$(top_srcdir)/src
-
 noinst_LIBRARIES = libcvs.a
 
-# Always use CVS's regular expression matcher regex.o, because of
-# variations in regular expression syntax - we want to be the same
-# across systems and (probably) compared with old versions of CVS too.
-#
-# On a more mundane/detail level, having regex.h match regex.c can be
-# an issue if we aren't careful.
-#
-# Also should look into unifying regular expression matching in CVS
+# Should look into unifying regular expression matching in CVS
 # with the diff library (perhaps to have the caller, CVS, do the
 # matching?)
 libcvs_a_SOURCES = \
@@ -64,9 +52,14 @@ libcvs_a_SOURCES = \
 ## the *.c files in this directory.
 libcvs_a_LIBADD = @LIBOBJS@
 
+
+
+## Zero some variables so Automake will allow us to use += on them.
 BUILT_SOURCES =
 MOSTLYCLEANFILES =
 MAINTAINERCLEANFILES =
+TESTS =
+check_PROGRAMS =
 
 EXTRA_DIST = \
 	.cvsignore \
@@ -76,7 +69,7 @@ EXTRA_DIST = \
 	libcvs.dsp \
 	libcvs.mak
 
-# For GNULIB's alloca module.
+## For GNULIB's alloca module.
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 all-local $(lib_OBJECTS): $(ALLOCA_H)
@@ -85,13 +78,13 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-# For GNULIB's dirname module.
+## For GNULIB's dirname module.
 libcvs_a_SOURCES += basename.c dirname.c dirname.h stripslash.c
 
-# For GNULIB's exitfail module.
+## For GNULIB's exitfail module.
 libcvs_a_SOURCES += exitfail.h exitfail.c
 
-# For GNULIB's fnmatch module.
+## For GNULIB's fnmatch module.
 BUILT_SOURCES += $(FNMATCH_H)
 EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 # We need the following in order to create an <fnmatch.h> when the system
@@ -102,15 +95,26 @@ fnmatch.h: fnmatch_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
 
-# For GNULIB's getdate module.
+## For GNULIB's getdate module.
 libcvs_a_SOURCES += getdate.h getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
+# CVS test scripts for getdate.
+TESTS += test-getdate.sh
+MOSTLYCLEANFILES += getdate-expected getdate-got getdate.diff
+check_PROGRAMS += getdate
+getdate_SOURCES = \
+	getdate.y \
+	gettime.c
+getdate_CPPFLAGS = -DTEST
+getdate_LDADD = \
+	@LIBOBJS@ \
+	$(LIB_CLOCK_GETTIME)
 
-# For GNULIB's gettime module.
+## For GNULIB's gettime module.
 libcvs_a_SOURCES += gettime.c
 
-# For GNULIB's stdbool module.
+## For GNULIB's stdbool module.
 BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
 # We need the following in order to create an <stdbool.h> when the system
@@ -122,16 +126,16 @@ stdbool.h: stdbool_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
 
-# For GNULIB's time_r module.
+## For GNULIB's time_r module.
 libcvs_a_SOURCES += time_r.h
 
-# For GNULIB's timespec module.
+## For GNULIB's timespec module.
 libcvs_a_SOURCES += timespec.h
 
-# For GNULIB's vasnprintf module.
+## For GNULIB's vasnprintf module.
 libcvs_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
-# For GNULIB's xalloc module.
+## For GNULIB's xalloc module.
 libcvs_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
 # for backwards compatibility with the old makefiles

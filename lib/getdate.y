@@ -37,6 +37,10 @@
 # include <config.h>
 #endif
 
+#if TEST
+# include <stdio.h>
+#endif /* TEST */
+
 #include "getdate.h"
 
 #include <alloca.h>
@@ -1247,8 +1251,6 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 }
 
 #if TEST
-
-#include <stdio.h>
 
 int
 main (int ac, char **av)
