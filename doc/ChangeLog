@@ -1,3 +1,8 @@
+Tue Jul  2 22:40:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Sticky tags): Update to reflect change in
+	"resurrected" message.
+
 Fri Jun 28 10:48:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Connecting via rsh): Add comment about what we
