@@ -6340,7 +6340,7 @@ Checking in file3;
 ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
-	  rm ${CVSROOT_DIRNAME}/first-dir/file2,v
+	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
 	  dotest rcslib-symlink-3f "ln -s Attic/file3,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
 	  dotest rcslib-symlink-3g "${testcvs} update file2" "U file2"
 
@@ -6351,7 +6351,7 @@ done"
 ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v  <--  file3
 new revision: delete; previous revision: 1\.1\.2\.1
 done"
-	  rm ${CVSROOT_DIRNAME}/first-dir/file2,v
+	  rm -f ${CVSROOT_DIRNAME}/first-dir/file2,v
 	  rm -f ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
 	  dotest rcslib-symlink-3h "ln -s file1,v ${CVSROOT_DIRNAME}/first-dir/file2,v"
 
