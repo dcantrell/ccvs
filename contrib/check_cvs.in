@@ -20,7 +20,7 @@
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.])
+#  GNU General Public License for more details.
 #
 ########################################################################
 
@@ -31,7 +31,7 @@
 =head1 SYNOPSIS
 
     perldoc check_cvs.pl
-    check_cvs.pl --help
+    check_cvs.pl --help [--verbose]
     check_cvs.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
                  [module]...
 
@@ -104,15 +104,16 @@ use Pod::Usage;
 ######################################################################
 
 use vars qw(
-            $cvsroot
-            @extra_files
-            @ignore_files
-            @list_of_broken_files
-            @scripts
-            $total_revisions
-            $total_interesting_revisions
-            $total_files
-            $verbose
+             $cvsroot
+             @extra_files
+             @ignore_files
+             $ignored_files
+             @list_of_broken_files
+             @scripts
+             $total_files
+             $total_interesting_revisions
+             $total_revisions
+             $verbose
            );
 
 
@@ -155,9 +156,10 @@ sub main
 {
 	my $help;
 
-	$total_revisions = 0;
-	$total_interesting_revisions = 0;
+	$ignored_files = 0;
 	$total_files = 0;
+	$total_interesting_revisions = 0;
+	$total_revisions = 0;
 
 	Getopt::Long::Configure( "bundling" );
 	unless( GetOptions( 'verbose|v!' => \$verbose,
@@ -170,22 +172,11 @@ sub main
 	}
 
 	pod2usage( -exitval => 2,
-	           -verbose => 1,
+	           -verbose => $verbose ? 2 : 1,
 	           -output => \*STDOUT )
 		if $help;
 
-	print STDERR "Verbose Mode Turned On\n" if $verbose;
-
-	if( $verbose )
-	{
-		my $count;
-		foreach my $script (@scripts)
-		{
-			$count++;
-			print STDERR "Script $count: ***** ***** ***** ***** *****\n"
-				. $script . "\n";
-		}
-	}
+	verbose( "Verbose Mode Turned On\n" );
 
 	if( !$cvsroot && -f "CVS/Root" && -r "CVS/Root" )
 	{
@@ -233,26 +224,36 @@ sub main
 				if( $sym_count > 5 );
 		}
 
-		print STDERR "Processing: $directory_to_look_at\n" if( $verbose );
+		verbose( "Processing: $directory_to_look_at\n" );
 		@ignore_files = get_ignore_files_from_cvsroot( $directory_to_look_at );
 		find( \&process_file, $directory_to_look_at );
-
-		my $num_files = @list_of_broken_files;
-		print( "List of corrupted files\n" ) if( $num_files > 0 );
-		foreach my $broken ( @list_of_broken_files )
-		{
-			print( "**** File: $broken\n" );
-		}
-
-		$num_files = @extra_files;
-		print( "List of Files That Don't belong in Repository:\n" ) if( $num_files > 0 );
-		foreach my $extra ( @extra_files )
-		{
-			print( "**** File: $extra\n" );
-		}
-		print( "Total Files: $total_files\n" );
-		print( "Total Revisions: $total_revisions Interesting Revisions: $total_interesting_revisions\n" );
 	}
+
+	print "List of corrupted files\n" if @list_of_broken_files;
+	foreach my $broken ( @list_of_broken_files )
+	{
+		print( "**** File: $broken\n" );
+	}
+
+	print "List of Files That Don't belong in Repository:\n"
+		if @extra_files;
+	foreach my $extra ( @extra_files )
+	{
+		print( "**** File: $extra\n" );
+	}
+	print( "Total Files: $total_files  Corrupted files: "
+		   . scalar( @list_of_broken_files )
+		   . "  Extra files: "
+		   . scalar( @extra_files )
+		   . "  Ignored Files: $ignored_files\n" );
+	print( "Total Revisions: $total_revisions  Interesting Revisions: $total_interesting_revisions\n" );
+}
+
+
+
+sub verbose
+{
+	print STDERR @_ if $verbose;
 }
 
 
@@ -263,15 +264,22 @@ sub main
 #      process_file
 #
 #    PURPOSE :
-#      This function is called by the find function, it's purpose
-#      is to decide if it is important to look at a file or not.
-#      We only care about files that have the ,v at the end.
+#      This function is called by the find function, its purpose
+#      is to decide if it is important to look at a file or not.  When
+#      a file is important, we log it or call &look_at_cvs_file on it.
+#
+#    ALGORITHM
+#      1) If the file is an archive file, we call &look_at_cvs_file on
+#         it.
+#      2) Else, if the file is not in the ignore list, we store its name
+#         for later.
 #
 #    PARAMETERS :
 #      NONE
 #
 #    GLOBALS :
 #      $cvsroot               - The CVS repository to search through
+#      @ignore_files          - File patterns we can afford to ignore.
 #      $File::Find::name      - The absolute path of the file being examined.
 #
 #    RETURNS :
@@ -283,33 +291,29 @@ sub main
 ######################################################################
 sub process_file
 {
-    my $path = $File::Find::name;
+    if( ! -d $File::Find::name )
+	{
+		my $path = $File::Find::name;
+		$path =~ s#^$cvsroot/##;
+		$total_files++;
 
-    $total_files += 1;
-    $path =~ s#^$cvsroot/##;
+		verbose( "Examining `$path'\n" );
 
-    if( $path =~ /,v$/ )
-    {
-        $path =~ s/,v$//;
-        look_at_cvs_file( $path );
-    }
-    elsif( ! -d $File::Find::name )
-    {
-        my $save = 0;
-        foreach my $ignore ( @ignore_files )
-        {
-            if( $path =~ $ignore )
-            {
-                $save = 1;
-                last;
-            }
-        }
-
-        if( !$save )
-        {
-            push( @extra_files, $path );
-        }
-    }
+		if( $path =~ /,v$/ )
+		{
+			$path =~ s/,v$//;
+			look_at_cvs_file( $path );
+		}
+		elsif( !grep { $path =~ $_ } @ignore_files )
+		{
+			push @extra_files, $path;
+		}
+		else
+		{
+			$ignored_files++;
+			verbose( "Ignoring `$path'\n" );
+		}
+	}
 }
 
 ######################################################################
@@ -363,9 +367,8 @@ sub look_at_cvs_file
 
     if( !defined( $revisions ) )
     {
-        print "\t$file is corrupted, this was determined via a cvs log command"
-		      . "\n"
-			if $verbose;
+        verbose( "\t`$file' is corrupted.  It was determined to contain no\n"
+		         . "\trevisions via a cvs rlog command\n" );
         push( @list_of_broken_files, $file );
         return();
     }
@@ -374,11 +377,10 @@ sub look_at_cvs_file
 
     foreach my $revision ( @int_revisions )
     {
-        print "\t\tLooking at Revision: $revision\n" if $verbose;
+        verbose( "\t\tLooking at Revision: $revision\n" );
         if( !check_revision( $file, $revision ) )
         {
-            print "\t$file is corrupted in revision: $revision\n"
-				if $verbose;
+            verbose( "\t$file is corrupted in revision: $revision\n" );
             push( @list_of_broken_files, $file );
             return();
         }
@@ -559,38 +561,22 @@ sub find_interesting_revisions
 {
     my( @revisions ) = @_;
     my @new_revisions;
-    my %branch_revision;
+    my %max_branch_revision;
     my $branch_number;
     my $branch_rev;
     my $key;
     my $value;
 
-    START_OVER:
     foreach my $revision( @revisions )
     {
-        my $start_over = 0;
         ( $branch_number, $branch_rev ) = branch_split( $revision );
+		$max_branch_revision{$branch_number} = $branch_rev
+			if( !exists $max_branch_revision{$branch_number}
+				|| $max_branch_revision{$branch_number} < $branch_rev );
+	}
 
-        #if the number of elements in the branch is 1
-        #and the new branch is less than the old branch
-        if( elements_in_branch( $branch_number ) == 1 )
-        {
-            ( $start_over,
-              %branch_revision ) = find_int_mainline_revision( $branch_number,
-                                                               $branch_rev,
-                                                               %branch_revision );
-            next START_OVER if( $start_over );
-        }
-
-        %branch_revision = find_int_branch_revision( $branch_number,
-                                                     $branch_rev,
-                                                     %branch_revision );
-
-    }
-
-    %branch_revision = remove_duplicate_branches( %branch_revision );
-
-    while( ( $key, $value ) = each ( %branch_revision ) )
+	push( @new_revisions, "1.1" ) unless $max_branch_revision{1} == 1;
+    while( ( $key, $value ) = each ( %max_branch_revision ) )
     {
         push( @new_revisions, $key . "." . $value );
     }
@@ -604,230 +590,12 @@ sub find_interesting_revisions
     $total_revisions += $rc;
     $total_interesting_revisions += $nrc;
 
-    print( "\t\tTotal Revisions: $rc Interesting Revisions: $nrc\n" ) if( $verbose );
+    verbose( "\t\tTotal Revisions: $rc Interesting Revisions: $nrc\n" );
 
     return( @new_revisions );
 }
 
-########################################################################
-#
-#    NAME :
-#      remove_duplicate_branches
-#
-#    PURPOSE :
-#      To remove from the list of branches that we are interested
-#      in duplication that will cause cvs to check a revision multiple
-#      times.  For Instance revision 1.1.1.1 should be prefered
-#      to be checked over revision 1.1, as that v1.1.1.1 can
-#      only be retrieved by going through v1.1.  Therefore
-#      we should remove v1.1 from the list of branches that
-#      are interesting.
-#
-#    PARAMETERS :
-#      %branch_revisions - The hash of the interesting revisions
-#
-#    GLOBALS :
-#      NONE
-#
-#    RETURNS :
-#      %branch_revisions - The hash of the modified interesting revisions
-#
-#    COMMENTS :
-#      NONE
-#
-########################################################################
-sub remove_duplicate_branches
-{
-    my( %branch_revisions ) = @_;
-    my $key;
-    my $value;
-    my $branch_comp;
-    my $branch;
 
-
-  RESTART:
-    {
-        my @keys = keys( %branch_revisions );
-        while( ( $key, $value ) = each ( %branch_revisions ) )
-        {
-            $branch_comp = $key . "." . $value;
-            foreach $branch ( @keys )
-            {
-                if( $branch eq $key )
-                {
-                    next;
-                }
-                if( elements_in_branch( $branch_comp ) ==
-                    elements_in_branch( $branch ) - 1 )
-                {
-                    if( $branch =~ /^$branch_comp/ )
-                    {
-                        delete( $branch_revisions{ $key } );
-                        goto RESTART;
-                    }
-                }
-            }
-        }
-    }
-
-    return( %branch_revisions );
-}
-
-######################################################################
-#
-#    NAME :
-#      find_int_branch_revision
-#
-#    PURPOSE :
-#      To Find a interesting branch revision.
-#      Algorithm:
-#        If the $branch_revision exists in the interesting branch
-#        hash and the new $branch_rev is less than currently saved
-#        one replace it with the new $branch_rev.
-#        else if the $branch_revision doesn't exist in the interesting
-#        branch hash, then just store the $branch_number and $branch_rev
-#
-#    PARAMETERS :
-#      $branch_number - The branch that we are looking at
-#      $branch_rev    - The particular revision we are looking
-#                       at on the $branch_number.
-#      %branch_revision - The hash storing the interesting branches
-#                         and the revisions on them.
-#
-#    GLOBALS :
-#      NONE
-#
-#    RETURNS :
-#      %branch_revision - The modified hash that stores interesting
-#                         branches.
-#
-#    COMMENTS :
-#      NONE
-#
-######################################################################
-sub find_int_branch_revision
-{
-    my( $branch_number, $branch_rev, %branch_revision ) = @_;
-
-    if( exists( $branch_revision{ $branch_number } ) )
-    {
-        if( $branch_rev > $branch_revision{ $branch_number } )
-        {
-            $branch_revision{ $branch_number } = $branch_rev;
-        }
-    }
-    else
-    {
-        $branch_revision{ $branch_number } = $branch_rev;
-    }
-
-    return( %branch_revision );
-}
-
-######################################################################
-#
-#    NAME :
-#      find_int_mainline_revision
-#
-#    PURPOSE :
-#      To Find a interesting mainline revision.
-#      Algorithm:
-#        if the $branch_number is less then a branch number
-#        with one element in it, then delete the old branch_number
-#        and return.
-#        if the $branch_number is greater than a branch number
-#        then return, and tell the calling function that we
-#        should skip this element, as that it's not important.
-#        if the $branch_number is the same as a branch number
-#        with one element in it, then check to see if the
-#        $branch_rev is less than the stored branch rev if
-#        it is replace with new $branch_rev.  Else ignore revision
-#
-#    PARAMETERS :
-#      $branch_number - The branch that we are looking at
-#      $branch_rev    - The particular revision we are looking
-#                       at on the $branch_number.
-#      %branch_revision - The hash storing the interesting branches
-#                         and the revisions on them.
-#
-#    GLOBALS :
-#      NONE
-#
-#    RETURNS :
-#      ( $skip, %branch_revision ) -
-#      $skip - 1 if we need to ignore this particular $branch_number
-#              $branch_rev combo.  Else 0.
-#      %branch_revision - The modified hash that stores interesting
-#                         branches.
-#
-#    COMMENTS :
-#      NONE
-#
-######################################################################
-sub find_int_mainline_revision
-{
-    my( $branch_number, $branch_rev, %branch_revision ) = @_;
-
-    foreach my $key ( keys %branch_revision )
-    {
-        if( elements_in_branch( $key ) == 1 )
-        {
-            if( $branch_number < $key )
-            {
-                delete( $branch_revision{ $key } );
-                next;
-            }
-
-            if( $branch_number > $key )
-            {
-                return( 1, %branch_revision );
-            }
-            if( ( exists( $branch_revision{ $branch_number } ) ) &&
-                ( $branch_rev < $branch_revision{ $branch_number } ) )
-            {
-                $branch_revision{ $branch_number } = $branch_rev;
-                return( 1, %branch_revision );
-            }
-        }
-    }
-
-    return( 0, %branch_revision );
-}
-
-######################################################################
-#
-#    NAME :
-#      elements_in_branch
-#
-#    PURPOSE :
-#      Determine the number of elements in a revision number
-#      Elements are defined by numbers seperated by ".".
-#      the revision 1.2.3.4 would have 4 elements
-#      the revision 1.2.4.5.6.7 would have 6 elements
-#
-#    PARAMETERS :
-#      $branch - The revision to look at.
-#
-#    GLOBALS :
-#      NONE
-#
-#    RETURNS :
-#      $count - The number of elements
-#
-#    COMMENTS :
-#      NONE
-#
-######################################################################
-sub elements_in_branch
-{
-    my( $branch ) = @_;
-    my @split_rev;
-
-    @split_rev = split /\./, $branch;
-
-    my $count = @split_rev;
-    return( $count );
-}
 
 ######################################################################
 #
