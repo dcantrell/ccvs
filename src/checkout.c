@@ -578,7 +578,7 @@ build_one_dir (char *repository, char *dirpath, int sticky)
  */
 /* ARGSUSED */
 static int
-checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,i
+checkout_proc (int argc, char **argv, char *where_orig, char *mwhere,
                char *mfile, int shorten, int local_specified, char *omodule,
                char *msg)
 {
