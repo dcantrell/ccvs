@@ -25,15 +25,6 @@
 
 # See TODO list at end of file.
 
-# You can't run CVS as root; print a nice error message here instead
-# of somewhere later, after making a mess.
-case "`id -u`" in
-  "0" )
-    echo "sanity.sh: test suite does not work correctly when run as root" >&2
-    exit 1
-  ;;
-esac
-
 # required to make this script work properly.
 unset CVSREAD
 
@@ -115,6 +106,7 @@ PROG=`basename ${testcvs}`
 # should be here.  a-zA-Z obviously.  People complained when 0-9 were
 # not allowed in usernames.  Other than that I'm not sure.
 username="[-a-zA-Z0-9][-a-zA-Z0-9]*"
+author="[-a-zA-Z0-9][-a-zA-Z0-9]*"
 
 # Regexp to match the name of a temporary file (from cvs_temp_name).
 # This appears in certain diff output.
@@ -161,6 +153,7 @@ cd ${TESTDIR}
 # versions that do.
 : ${AWK=awk}
 : ${EXPR=expr}
+: ${ID=id}
 : ${TR=tr}
 
 find_tool ()
@@ -190,6 +183,33 @@ find_tool ()
   echo "$TOOL"
 }  
 
+# You can't run CVS as root; print a nice error message here instead
+# of somewhere later, after making a mess.
+case "`$ID -u`" in
+  "0")
+    echo "Test suite does not work correctly when run as root" >&2
+    exit 1
+    ;;
+
+  "")
+    ID=`find_tool id`
+    if test -z "$ID" ; then
+      echo 'Running these tests requires an "id" program that understands the' >&2
+      echo '-u and -n flags.  Make sure that such an id (GNU, or many but not' >&2
+      echo 'all vendor-supplied versions) is in your path.' >&2
+      exit 1
+    fi
+    ;;
+esac
+username=`$ID -un`
+if $EXPR "${username}" : "${username}" >/dev/null; then
+  : good, it works
+else
+  echo "Test suite does not work correctly when run by a username" >&2
+  echo "containing regular expression meta-characters." >&2
+  exit 1
+fi
+
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if $EXPR 'abc
 def' : 'abc
@@ -198,9 +218,9 @@ def' >/dev/null; then
 else
   EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
-    echo 'Running these tests requires an "expr" program that can handle'
-    echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
-    echo 'not all vendor-supplied versions) is in your path.'
+    echo 'Running these tests requires an "expr" program that can handle' >&2
+    echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but' >&2
+    echo 'not all vendor-supplied versions) is in your path.' >&2
     exit 1
   fi
 fi
@@ -17237,13 +17257,13 @@ add
 
 	  cat >${TESTDIR}/lockme <<EOF
 #!${TESTSHELL}
-line=\`grep <\$1/\$2,v 'locks ${username}:1\.[0-9];'\`
+line=\`grep <\$1/\$2,v 'locks ${author}:1\.[0-9];'\`
 if test -z "\$line"; then
   # It isn't locked
   exit 0
 else
-  user=\`echo \$line | sed -e 's/locks \\(${username}\\):[0-9.]*;.*/\\1/'\`
-  version=\`echo \$line | sed -e 's/locks ${username}:\\([0-9.]*\\);.*/\\1/'\`
+  user=\`echo \$line | sed -e 's/locks \\(${author}\\):[0-9.]*;.*/\\1/'\`
+  version=\`echo \$line | sed -e 's/locks ${author}:\\([0-9.]*\\);.*/\\1/'\`
   echo "\$user has file a-lock locked for version  \$version"
   exit 1
 fi
@@ -19964,9 +19984,9 @@ new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
 	    cat >${CVSROOT_DIRNAME}/CVSROOT/passwd <<EOF
-testme:q6WV9d2t848B2:`id -un`
-anonymous::`id -un`
-`id -un`:
+testme:q6WV9d2t848B2:$username
+anonymous::$username
+$username:
 willfail:   :whocares
 EOF
 	    dotest_fail pserver-3 "${testcvs} pserver" \
@@ -20056,12 +20076,11 @@ END AUTH REQUEST
 EOF
 
             # Test empty (both sides) password for non-aliased user
-            P_THISUSER=`id -un`
 	    dotest pserver-11 "${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver" \
 "${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
-${P_THISUSER}
+${username}
 A
 END AUTH REQUEST
 EOF
@@ -20071,7 +20090,7 @@ EOF
 "${DOTSTAR} LOVE YOU" <<EOF
 BEGIN AUTH REQUEST
 ${CVSROOT_DIRNAME}
-${P_THISUSER}
+${username}
 Anypasswordwouldworkwhynotthisonethen
 END AUTH REQUEST
 EOF

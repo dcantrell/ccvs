@@ -1,5 +1,12 @@
 2000-05-04  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh: Look for a useful id program.  Since we're getting
+	the real username for some tests anyway, use it for all the
+	tests instead of a generic regular expression that may or may
+	not match the actual username.
+
+2000-05-04  Larry Jones  <larry.jones@sdrc.com>
+
 	* server.c: More error messages.
 
 2000-05-02  Donald Sharp <sharpd@cisco.com>
