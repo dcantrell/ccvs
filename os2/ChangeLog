@@ -1,3 +1,14 @@
+Tue Nov 21 16:18:37 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c (start_server): set tofd and fromfd with popenRW, now
+        that it handles int file descriptors.
+        Log to a file if asked, now that we have
+        filter_stream_through_program().
+
+        * popen.c (popenRW): put int file descriptors into the `pipes'
+        array, not FILE *'s.  We'll fdopen in start_server, just like
+        the good old days.
+
 Tue Nov 21 16:34:37 1995  unknown  (unknown@beezley)
 
         * run.c (filter_stream_through_program): defined for OS/2.
@@ -10,12 +21,12 @@ Tue Nov 21 16:34:37 1995  unknown  (unknown@beezley)
 
 Mon Nov 20 23:31:54 1995  unknown  (unknown@beezley)
 
-		* filesubr.c (convert_file): pass (S_IREAD | S_IWRITE) to open();
-		we need it if O_CREAT, and it won't hurt if not.
+        * filesubr.c (convert_file): pass (S_IREAD | S_IWRITE) to open();
+        we need it if O_CREAT, and it won't hurt if not.
 
 Sun Nov 19 13:43:02 1995  unknown  (unknown@beezley)
 
-		* makefile.in (clean): remove obj files in src/ and lib/ dirs too.
+	* makefile.in (clean): remove obj files in src/ and lib/ dirs too.
 
 Sun Nov 19 12:35:08 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 

@@ -153,14 +153,9 @@ ll_print ()
 FILE *
 popen (const char *Command, const char *Mode)
 {
-    HFILE   End1,
-            End2,
-            Std,
-            Old1,
-            Old2,
-            Tmp;
+    HFILE End1, End2, Std, Old1, Old2, Tmp;
 
-    FILE    *File;
+    FILE *File;
 
     char    Fail[256],
             *Args,
@@ -237,27 +232,21 @@ popen (const char *Command, const char *Mode)
 
 /*
  *  Routine: popenRW
- *  Returns: TRUE on success
- *  Action : Exec program connected via pipe, connect FILE *'s to 
+ *  Returns: PID of child process
+ *  Action : Exec program connected via pipe, connect int fd's to 
  *           both the stdin and stdout of the process.
  *  Params : Command - Program to run
- *           Pipes   - Array of FILE * to store the pipe descriptors
- *                     Pipe[0] is attached to the child's stdin,
- *                     Pipe[1] is attached to its stdout/err
+ *           Pipes   - Array of 2 ints to store the pipe descriptors
+ *                     Pipe[0] writes to child's stdin,
+ *                     Pipe[1] reads from child's stdout/stderr
  */
 int
-popenRW (const char **argv, FILE **Pipes)
+popenRW (const char **argv, int *pipes)
 {
-    HFILE   Out1,
-            Out2,
-            In1,
-            In2,
-            Old0 = -1,
-            Old1 = -1,
-            Old2 = -1,
-            Tmp;
+    HFILE Out1, Out2, In1, In2;
+    HFILE Old0 = -1, Old1 = -1, Old2 = -1, Tmp;
 
-	PID pid;
+    PID pid;
 
     if (DosCreatePipe (&Out2, &Out1, 4096))
         return FALSE;
@@ -269,7 +258,7 @@ popenRW (const char **argv, FILE **Pipes)
         return FALSE;
     }
 
-    /* Save stdin/out/err */
+    /* Save std{in,out,err} */
     DosDupHandle (STDIN, &Old0);
     DosSetFHState (Old1, OPEN_FLAGS_NOINHERIT);
     DosDupHandle (STDOUT, &Old1);
@@ -277,7 +266,7 @@ popenRW (const char **argv, FILE **Pipes)
     DosDupHandle (STDERR, &Old2);
     DosSetFHState (Old2, OPEN_FLAGS_NOINHERIT);
 
-    /* Redirect stdin/out/err */
+    /* Redirect std{in,out,err} */
     Tmp = STDIN;
     DosDupHandle (In1, &Tmp);
     Tmp = STDOUT;
@@ -293,9 +282,9 @@ popenRW (const char **argv, FILE **Pipes)
     DosSetFHState (Out2, OPEN_FLAGS_NOINHERIT);
 
     /* Spawn we now our hoary brood. */
-	pid = spawnvp (P_NOWAIT, argv[0], argv);
+    pid = spawnvp (P_NOWAIT, argv[0], argv);
 
-    /* Restore stdin/out/err */
+    /* Restore std{in,out,err} */
     Tmp = STDIN;
     DosDupHandle (Old0, &Tmp);
     DosClose (Old0);
@@ -307,29 +296,20 @@ popenRW (const char **argv, FILE **Pipes)
     DosClose (Old2);
 
     if(pid < 0) 
-    {
+      {
         DosClose (In2);
         DosClose (Out2);
         return -1;
-    }
-  
-    if ((Pipes[0] = fdopen (In2, "wb")) == NULL)
-    {
-        fprintf (stderr, "popenRW(): Errno %d: %s\n",
-             errno, strerror (errno));
-        return FALSE;
-    }
-    else if ((Pipes[1] = fdopen (Out2, "rb")) == NULL)
-    {
-        fclose (Pipes[0]);
-        fprintf (stderr, "popenRW(): Errno %d: %s\n",
-             errno, strerror(errno));
-        return FALSE;
-    }
+      }
     
+    pipes[0] = In2;
+    _setmode (pipes[0], O_BINARY);
+    pipes[1] = Out2;
+    _setmode (pipes[1], O_BINARY);
+
     /* Save ID of write-to-child pipe for pclose() */
     ll_insert ((LL_KEY) In2, (LL_VAL) pid);
-
+    
     return pid;
 }
 
