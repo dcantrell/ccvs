@@ -1,3 +1,8 @@
+2003-03-17  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (switch_to_user): Add syslog calls for setgid/setuid
+	failure.
+
 2003-03-16  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.h (CVSREADONLYFS_ENV): New macro to support new environment

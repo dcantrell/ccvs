@@ -5321,6 +5321,11 @@ error 0 %s: no such system user\n", username);
 	{
 	    /* See comments at setuid call below for more discussion.  */
 	    printf ("error 0 setgid failed: %s\n", strerror (errno));
+#ifdef HAVE_SYSLOG_H
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "setgid to %d failed (%m): real %d/%d, effective %d/%d ",
+		    pw->pw_gid, getuid(), getgid(), geteuid(), getegid());
+#endif
 	    /* Don't worry about server_cleanup;
 	       server_active isn't set yet.  */
 	    error_exit ();
@@ -5336,6 +5341,11 @@ error 0 %s: no such system user\n", username);
 	   it does mean that some people might need to update their
 	   CVSROOT/passwd file.  */
 	printf ("error 0 setuid failed: %s\n", strerror (errno));
+#ifdef HAVE_SYSLOG_H
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "setuid to %d failed (%m): real %d/%d, effective %d/%d ",
+		    pw->pw_uid, getuid(), getgid(), geteuid(), getegid());
+#endif
 	/* Don't worry about server_cleanup; server_active isn't set yet.  */
 	error_exit ();
     }
