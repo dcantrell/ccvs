@@ -6301,6 +6301,12 @@ ${PROG} [a-z]*: Updating versions"
 	  dotest branches4-13 "cat mixed2/CVS/Tag" "Nxxx"
 	  dotest branches4-14 "cat versions/CVS/Tag" "Nxxx"
 
+	  # We only warn if there's mixed usage in a single directory.
+	  # We may want to consider changing that in the future.
+	  dotest branches4-15 "${testcvs} update -r xxx branches versions" \
+"${PROG} [a-z]*: Updating branches
+${PROG} [a-z]*: Updating versions"
+
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
 	    exit 0
