@@ -1,3 +1,8 @@
+Thu Jan 29 00:01:05 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* mkmodules.c (cvswrappers_contents): Rewrite.  The text didn't
+	describe -k and had various other problems.
+
 28 Jan 1998  Karl Fogel and Jim Kingdon
 
 	New feature to let server tell client about wrappers.
