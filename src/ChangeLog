@@ -1,5 +1,13 @@
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
+	* error.c (error_exit): Remove call to SYSTEM_CLEANUP.
+	* main.c (main): Set up atexit(SYSTEM_CLEANUP) rather than calling it
+	explicitly before exit.
+	* server.c (pserver_authenticate_connection): Don't call SYSTEM_CLEANUP
+	before exiting.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
 	* error.c (exit_error): Remove call to server_cleanup.
 	* main.c (main): Call atexit(server_cleanup).  Let server_cleanup turn
 	server_active off.
