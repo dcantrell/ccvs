@@ -108,12 +108,6 @@
 /* We don't need this for CLIENT side.  */
 #undef GREP
 
-/* The number of bytes in a int.  */
-#define SIZEOF_INT 4
-
-/* The number of bytes in a long.  */
-#define SIZEOF_LONG 4
-
 /* Define if you have the connect function.  */
 /* Not used?  */
 #define HAVE_CONNECT

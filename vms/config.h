@@ -89,12 +89,6 @@
 /* Define if you have MIT Kerberos version 4 available.  */
 /* #undef HAVE_KERBEROS */
 
-/* The number of bytes in a int.  */
-#define SIZEOF_INT 4
-
-/* The number of bytes in a long.  */
-#define SIZEOF_LONG 4
-
 /* Define if you have the fchmod function.  */
 /* #undef HAVE_FCHMOD */
 
