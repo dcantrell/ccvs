@@ -1,5 +1,13 @@
 2004-10-07  Mark D. Baushke  <mdb@cvshome.org>
 
+	* vers_ts.c (entries_time): Use size_t pointers. sizeof(int)
+	may not be the same as sizeof(size_t) on OpenBSD sparc64.
+	(Patch from Alexander Taler <dissent@cvshome.org>.)
+
+	* wrapper.c (wrap_clean_fmt_str): Make static.
+
+2004-10-07  Mark D. Baushke  <mdb@cvshome.org>
+
 	* client.h (struct response): Make name a const.
 	* cvs.h (RETSIGTYPE): Use a full prototype.
 	* hash.h (struct node): Use a full prototype for delproc.
