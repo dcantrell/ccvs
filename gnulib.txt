@@ -147,3 +147,7 @@ lib/getpass.c
 m4/getpass.m4
 
 m4/onceonly_2_57.m4
+lib/gettimeofday.c
+m4/gettimeofday.m4
+
+m4/onceonly_2_57.m4
