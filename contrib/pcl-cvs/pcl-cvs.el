@@ -1067,7 +1067,7 @@ second party")
 	       "^\\(rcs\\)?merge\\( warning\\)?: overlaps during merge$")
 
 	      (cvs-skip-line stdout-buffer stderr-buffer
-			     "^cvs update: conflicts found in ")
+			     "^cvs \\(update\\|server\\): conflicts found in ")
 
 	      (let ((fileinfo
 		     (cvs-create-fileinfo
