@@ -1,5 +1,9 @@
 2004-04-19  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.in (DISTFILES): Account for new MSVC project file names.
+
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
 	* libz.dsp: Drop "example.c" & "minigzip.c" from build.
 	* libz.dep, libz.dep: Regenerated for "libz.dsp" change.
 	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
