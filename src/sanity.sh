@@ -502,7 +502,7 @@ RCSINIT=; export RCSINIT
 if test x"$*" = x; then
 	tests="basica basicb basicc basic1 deep basic2"
 	tests="${tests} rdiff death death2 branches"
-	tests="${tests} multibranch import importb join join2 join3"
+	tests="${tests} rcslib multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag editor errmsg1 errmsg2"
 	tests="${tests} devcom devcom2 devcom3 watch4"
@@ -2857,6 +2857,87 @@ rcsmerge: warning: conflicts during merge"
 =======
 1:brbr
 [>]>>>>>> 1\.1\.2\.1\.2\.1'
+	  cd ..
+
+	  if test "$keep" = yes; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -r first-dir
+	  ;;
+
+	rcslib)
+	  # Test librarification of RCS.
+	  # First: test whether `cvs diff' handles $Name expansion
+	  # correctly.	We diff two revisions with their symbolic tags;
+	  # neither tag should be expanded in the output.  Also diff
+	  # one revision with the working copy.
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest rcsdiff-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  echo "I am the first foo, and my name is $""Name$." > foo.c
+	  dotest rcsdiff-2 "${testcvs} add -m new-file foo.c" \
+"${PROG} [a-z]*: scheduling file .foo\.c. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest rcsdiff-3 "${testcvs} commit -m rev1 foo.c" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/foo\.c,v
+done
+Checking in foo\.c;
+${TESTDIR}/cvsroot/first-dir/foo.c,v  <--  foo\.c
+initial revision: 1\.1
+done"
+	  dotest rcsdiff-4 "${testcvs} tag first foo.c" "T foo\.c"
+	  dotest rcsdiff-5 "${testcvs} update -p -r first foo.c" \
+"===================================================================
+Checking out foo\.c
+RCS:  ${TESTDIR}/cvsroot/first-dir/foo\.c,v
+VERS: 1\.1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+I am the first foo, and my name is \$""Name: first \$\."
+
+	  echo "I am the second foo, and my name is $""Name$." > foo.c
+	  dotest rcsdiff-6 "${testcvs} commit -m rev2 foo.c" \
+"Checking in foo\.c;
+${TESTDIR}/cvsroot/first-dir/foo\.c,v  <--  foo\.c
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest rcsdiff-7 "${testcvs} tag second foo.c" "T foo\.c"
+	  dotest rcsdiff-8 "${testcvs} update -p -r second foo.c" \
+"===================================================================
+Checking out foo\.c
+RCS:  ${TESTDIR}/cvsroot/first-dir/foo\.c,v
+VERS: 1\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+I am the second foo, and my name is \$""Name: second \$\."
+
+	dotest_fail rcsdiff-9 "${testcvs} diff -r first -r second" \
+"${PROG} [a-z]*: Diffing \.
+Index: foo\.c
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/foo\.c,v
+retrieving revision 1\.1
+retrieving revision 1\.2
+diff -r1\.1 -r1\.2
+1c1
+< I am the first foo, and my name is \$""Name:  \$\.
+---
+> I am the second foo, and my name is \$""Name:  \$\."
+
+	  echo "I am the once and future foo, and my name is $""Name$." > foo.c
+	  dotest_fail rcsdiff-10 "${testcvs} diff -r first" \
+"${PROG} [a-z]*: Diffing \.
+Index: foo\.c
+===================================================================
+RCS file: ${TESTDIR}/cvsroot/first-dir/foo\.c,v
+retrieving revision 1\.1
+diff -r1\.1 foo\.c
+1c1
+< I am the first foo, and my name is \$""Name:  \$\.
+---
+> I am the once and future foo, and my name is \$""Name\$\."
 	  cd ..
 
 	  if test "$keep" = yes; then

@@ -43,6 +43,7 @@ static void diff_mark_errors PROTO((int err));
 static char *diff_rev1, *diff_rev2;
 static char *diff_date1, *diff_date2;
 static char *use_rev1, *use_rev2;
+static int have_rev1_label, have_rev2_label;
 
 /* Revision of the user file, if it is unchanged from something in the
    repository and we want to use that fact.  */
@@ -110,7 +111,7 @@ static struct option const longopts[] =
     {"ignore-matching-lines", 1, 0, 'I'},
     {"label", 1, 0, 'L'},
     {"new-file", 0, 0, 'N'},
-    {"initial-tab", 0, 0, 'T'},
+    {"initial-tab", 0, 0, 148},
     {"width", 1, 0, 'W'},
     {"text", 0, 0, 'a'},
     {"ignore-space-change", 0, 0, 'b'},
@@ -131,7 +132,7 @@ static struct option const longopts[] =
     {"report-identical-files", 0, 0, 's'},
     {"expand-tabs", 0, 0, 't'},
     {"ignore-all-space", 0, 0, 'w'},
-    {"side-by-side", 0, 0, 'y'},
+    {"side-by-side", 0, 0, 147},
     {"unified", 2, 0, 146},
     {"left-column", 0, 0, 129},
     {"suppress-common-lines", 0, 0, 130},
@@ -147,6 +148,37 @@ static struct option const longopts[] =
     {"binary", 0, 0, 142},
     {0, 0, 0, 0}
 };
+
+/* CVS 1.9 and similar versions seemed to have pretty weird handling
+   of -y and -T.  In the cases where it called rcsdiff,
+   they would have the meanings mentioned below.  In the cases where it
+   called diff, they would have the meanings mentioned in "longopts".
+   Noone seems to have missed them, so I think the right thing to do is
+   just to remove the options altogether (which I have done).
+
+   In the case of -z and -q, "cvs diff" did not accept them even back
+   when we called rcsdiff (at least, it hasn't accepted them
+   recently).
+
+   In comparing rcsdiff to the new CVS implementation, I noticed that
+   the following rcsdiff flags are not handled by CVS diff:
+
+	   -y: perform diff even when the requested revisions are the
+		   same revision number
+	   -q: run quietly
+	   -T: preserve modification time on the RCS file
+	   -z: specify timezone for use in file labels
+
+   I think these are not really relevant.  -y is undocumented even in
+   RCS 5.7, and seems like a minor change at best.  According to RCS
+   documentation, -T only applies when a RCS file has been modified
+   because of lock changes; doesn't CVS sidestep RCS's entire lock
+   structure?  -z seems to be unsupported by CVS diff, and has a
+   different meaning as a global option anyway.  (Adding it could be
+   a feature, but if it is left out for now, it should not break
+   anything.)  For the purposes of producing output, CVS diff appears
+   mostly to ignore -q.  Maybe this should be fixed, but I think it's
+   a larger issue than the changes included here.  */
 
 static void strcat_and_allocate PROTO ((char **, size_t *, const char *));
 
@@ -184,6 +216,8 @@ diff (argc, argv)
     if (argc == -1)
 	usage (diff_usage);
 
+    have_rev1_label = have_rev2_label = 0;
+
     /*
      * Note that we catch all the valid arguments here, so that we can
      * intercept the -r arguments for doing revision diffs; and -l/-R for a
@@ -202,21 +236,31 @@ diff (argc, argv)
 
     optind = 0;
     while ((c = getopt_long (argc, argv,
-	       "+abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:V:W:k:r:",
+	       "+abcdefhilnpstuw0123456789BHNRC:D:F:I:L:U:V:W:k:r:",
 			     longopts, &option_index)) != -1)
     {
 	switch (c)
 	{
 	    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
 	    case 'h': case 'i': case 'n': case 'p': case 's': case 't':
-	    case 'u': case 'w': case 'y': case '0': case '1': case '2':
+	    case 'u': case 'w': case '0': case '1': case '2':
 	    case '3': case '4': case '5': case '6': case '7': case '8':
-	    case '9': case 'B': case 'H': case 'T':
+	    case '9': case 'B': case 'H':
 		(void) sprintf (tmp, " -%c", (char) c);
 		strcat_and_allocate (&opts, &opts_allocated, tmp);
 		break;
-	    case 'C': case 'F': case 'I': case 'L': case 'U': case 'V':
-	    case 'W':
+	    case 'L':
+		if (have_rev1_label++)
+		    if (have_rev2_label++)
+		    {
+			error (0, 0, "extra -L arguments ignored");
+			break;
+		    }
+
+	        strcat_and_allocate (&opts, &opts_allocated, " -L");
+	        strcat_and_allocate (&opts, &opts_allocated, optarg);
+		break;
+	    case 'C': case 'F': case 'I': case 'U': case 'V': case 'W':
 		(void) sprintf (tmp, " -%c", (char) c);
 		strcat_and_allocate (&opts, &opts_allocated, tmp);
 		strcat_and_allocate (&opts, &opts_allocated, optarg);
@@ -229,6 +273,7 @@ diff (argc, argv)
 	    case 129: case 130: case 131: case 132: case 133: case 134:
 	    case 135: case 136: case 137: case 138: case 139: case 140:
 	    case 141: case 142: case 143: case 144: case 145: case 146:
+	    case 147: case 148:
 		strcat_and_allocate (&opts, &opts_allocated, " --");
 		strcat_and_allocate (&opts, &opts_allocated,
 				     longopts[option_index].name);
@@ -620,11 +665,22 @@ RCS file: ", 0);
     }
     else
     {
-	status = RCS_exec_rcsdiff (vers->srcfile->path,
-				   opts,
+	char *label1 = NULL;
+	char *label2 = NULL;
+
+	if (!have_rev1_label)
+	    label1 =
+		make_file_label (finfo->fullname, use_rev1, vers->srcfile);
+
+	if (!have_rev2_label)
+	    label2 =
+		make_file_label (finfo->fullname, use_rev2, vers->srcfile);
+
+	status = RCS_exec_rcsdiff (vers->srcfile, opts,
 				   *options ? options : vers->options,
-				   use_rev1,
-				   use_rev2);
+				   use_rev1, use_rev2,
+				   label1, label2,
+				   finfo->file);
     }
 
     switch (status)
