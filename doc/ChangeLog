@@ -1,3 +1,10 @@
+1999-01-29  Derek Price
+	<http://www-personal.engin.umich.edu/~oberon/resume.html>
+
+	* cvs.texinfo:  Added new node/section on merging and keywords.  It
+	contains advice on how to avoid RCS keyword conflicts when merging
+	and avoid corrupting your binary files while doing it.
+
 1999-02-24  Jim Kingdon  <http://www.cyclic.com>
 
 	* cvsclient.texi (Request intro): Add paragraph about transmitting
