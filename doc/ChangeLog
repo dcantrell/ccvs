@@ -1,3 +1,8 @@
+Thu Jul 25 10:10:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Fix typo (Kerberos-request ->
+	Kerberos-encrypt).
+
 Wed Jul 24 18:53:13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (Kerberos authenticated): Change the note that the
