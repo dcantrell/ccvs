@@ -1,0 +1,96 @@
+__________________________________
+MacOS / Concurrent Versions System (CVS)
+Current Mac port version: d3
+
+Mike Ladwig <mike@twinpeaks.prc.com>
+__________________________________
+
+This is a port of the CVS client (1.6.1 ) to MacOS.
+
+1. Setup
+
+In order to use this, you must be willing to consider the Macintosh 
+a trusted host to the UN*X box where the CVS 1.6.1 server resides.
+This is a really dumb thing to do if you have any security concerns.
+I don't, so I can live with the problem.
+
+For the following example, "twinpeaks" is the repository host, and
+"cicily" is the Macintosh client.  "maggie" is the login account on
+twinpeaks 
+
+* 'twinpeaks' must have a login account which trusts 'cicily'. For
+me this is 'maggie', and 'maggie' has a .rhosts file that contains
+the line 'cicily joel'.
+
+* 'cicily' must have the Sharing Setup control panel configured
+to have "Owner Name" set to "joel" and "Macintosh Name" set to
+'cicily'.
+
+* 'cicily' must have the 'services' file (included) located in
+the "Preferences" folder.  You must rename this file to be
+'sys/services'.
+
+
+2. Usage
+
+Well, the interface is about as ugly as it could be.  When you launch
+MacCVS, it allows you to enter the command line and redirect the
+output of CVS to the screen or to a file.  If you send it to the screen,
+you can choose to save it to a file when you quit.
+
+I've been keeping the basic command line
+("-d maggie@twinpeaks:/projects/repository/eM2") in the Mac Note
+Pad, and just cut-n-pasting it into MacCVS, then adding the command
+-specific ("checkout commonFiles") stuff manually.
+
+On "checkin" or "commit" operations, use the '-m <log message>'
+command line option.
+
+Due to the strange way it is implemented in CVS, the 'release'
+command does not work.  Tell me if fixing this should be a priority.
+
+To change the file type and creator of files that MacCVS creates, you
+need ResEdit 2.1.3.   Edit the MacCVS file, and open the GUZ(sp)I resource
+and make the changes you want.
+
+
+3. Building MacCVS
+
+I have included the the two MacCVS project files as a binhex stuffit
+archive ('maccvs_projects.sit.hqx').   Copy them out to the folder above
+the cvs-1.6.1 folder.
+
+You may have to fiddle with the access paths.  I have a "Projects" folder,
+where I have the cvs-1.6.1 folder, the CWGUSI folder, and the MacCVS
+project files.
+
+
+4. Feedback
+
+Please tell me how this works for you (criticism, praise, flames, etc.).
+Any ideas for improvements, stuff for the 'README.MacOS' file, or
+anything else would be appreciated.
+
+
+5. MacCVS History
+
+Fri Dec 08 12:39:22 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Fixed problem with 'stat' emulation
+	* Used better GUSI resource template so file type/creator was available
+
+Thurs Dec 07 16:13:09 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Port cleanup for inclusion into main cvs distribution
+	* Fixed(?) binary file handling
+	* Better SIOUX feedback
+	* Updates only via whole files (no '-u' to update)
+
+Wed Nov  29 09:33:16 1995  Mike Ladwig  <mike@twinpeaks.prc.com>
+
+	* Initial port of CVS 1.6.1 snapshot 11/14/95
+	* Requires CW GUSI 1.6.4 and CodeWarrier 7
+	* 68k version is essentially untested, due to lack of a 68k machine
+	* 'release' doesn't work, due to cvs implementation approach
+	* Tons of obvious "TODOs", but at least the heavy stuff is done 
+
