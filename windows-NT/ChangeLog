@@ -1,5 +1,17 @@
 2003-06-04  Derek Price  <derek@ximbiot.com>
 
+	* config.h.in (RSH_DFLT): Replace accidentally deleted macro.
+	(USE_PROTOTYPES): Move back to...
+	(PROTOTYPES): ...here.
+	(HAVE_STDLIB_H, HAVE_SYS_TYPES_H, HAVE_SYS_STAT_H, HAVE_MALLOC,
+	HAVE_REALLOC): New defines to sync with UNIX code.
+	* filesubr.c (locate_rcs, find_file_in_dir): Remove these functions
+	since they are now available in the generic source.
+
+	* config.h: Regenerated.
+
+2003-06-04  Derek Price  <derek@ximbiot.com>
+
 	* config.h: Regenerated, but move the contents...
 	* config.h.in: ...into this new file first and stick a token in...
 	(PACKAGE_STRING): ...here in place of the CVS version number.
