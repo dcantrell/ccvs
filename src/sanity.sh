@@ -6500,8 +6500,7 @@ ${QUESTION} sdir"
 "${QUESTION} sdir
 ${SPROG} \[update aborted\]: no such tag br"
 	    dotest dirs2-10ar \
-"${testcvs} -q rdiff -u -r 1.1 -r br first-dir/sdir/file1" \
-""
+"$testcvs -q rdiff -u -r 1.1 -r br first-dir/sdir/file1"
 	    dotest_fail dirs2-10-againr "${testcvs} update -d -r br" \
 "${QUESTION} sdir
 ${SPROG} update: Updating \.
