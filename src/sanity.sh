@@ -818,7 +818,7 @@ ${TESTDIR}/cvsroot/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
 new revision: 3\.1\.2\.1; previous revision: 3\.1
 done"
 	  # now get rid of the sticky tag and go back to the trunk
-	  dotest basica-8a5 "${testcvs} -q up -A" "U ssfile"
+	  dotest basica-8a5 "${testcvs} -q up -A" "[UP] ssfile"
 
 	  cd ../..
 	  dotest basica-8b "${testcvs} -q diff -r1.2 -r1.3" \
