@@ -1,3 +1,7 @@
+Sun Apr  6 21:46:32 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (update): Add comment about noexec and SEND_NO_CONTENTS.
+
 Sun Apr  6 17:34:08 1997  Robert Bihlmeyer  <robbe@orcus.priv.at>
 
 	* Pass +f not f to getopt_long to prevent options from being
