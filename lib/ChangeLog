@@ -1,5 +1,11 @@
 2004-04-27  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add timespec.h.
+	* timespec.h: New file.
+	* Makefile.in: Regenerated.
+
+2004-04-27  Derek Price  <derek@ximbiot.com>
+
 	* system.h: Move definition of FILENAMES_CASE_INSENSITIVE to
 	windows-NT/config.h.
 
