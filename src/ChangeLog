@@ -1,3 +1,11 @@
+1998-10-19  Jim Kingdon
+
+	* lock.c (lock_name): Set the permissions on each directory we
+	create to that of the parent directory.
+	* sanity.sh (lockfiles): New chmod and tests lockfiles-7a and
+	lockfiles-7b test for this.  Adjust lockfiles-5 for new text of
+	error message.
+
 1998-10-15  Jim Kingdon
 
 	* server.c (requests): Set RQ_ROOTLESS for "Set".

@@ -12635,11 +12635,22 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	  # The error message appears twice because Lock_Cleanup only
 	  # stops recursing after the first attempt.
 	  dotest_fail lockfiles-5 "${testcvs} -q update" \
-"${PROG} \[[a-z]* aborted\]: cannot make directory ${TESTDIR}/locks/first-dir: No such file or directory
-${PROG} \[[a-z]* aborted\]: cannot make directory ${TESTDIR}/locks/first-dir: No such file or directory"
+"${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory
+${PROG} \[[a-z]* aborted\]: cannot stat ${TESTDIR}/locks: No such file or directory"
 	  mkdir ${TESTDIR}/locks
+	  chmod u=rwx,g=,o= ${TESTDIR}/locks
 	  dotest lockfiles-6 "${testcvs} -q update" ""
 	  dotest lockfiles-7 "ls ${TESTDIR}/locks/first-dir/sdir/ssdir" ""
+
+	  # The policy is that when CVS creates new lock directories, they
+	  # inherit the permissions from the parent directory.  CVSUMASK
+	  # isn't right, because typically the reason for LockDir is to
+	  # use a different set of permissions.
+	  dotest lockfiles-7a "ls -ld ${TESTDIR}/locks/first-dir" \
+"drwx------ .*first-dir"
+	  dotest lockfiles-7b "ls -ld ${TESTDIR}/locks/first-dir/sdir/ssdir" \
+"drwx------ .*first-dir/sdir/ssdir"
+
 	  cd ../../..
 	  dotest lockfiles-8 "${testcvs} -q update" ""
 
