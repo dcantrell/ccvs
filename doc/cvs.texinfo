@@ -1296,6 +1296,7 @@ there must be a single tab character there and no spaces.
 @subsection CVS locks in the repository
 
 @cindex #cvs.rfl, technical details
+@cindex #cvs.pfl, technical details
 @cindex #cvs.wfl, technical details
 @cindex #cvs.lock, technical details
 @cindex Locks, cvs, technical details
@@ -1312,6 +1313,8 @@ operating systems or databases.
 @cindex #cvs.tfl
 Any file in the repository with a name starting
 with @file{#cvs.rfl.} is a read lock.  Any file in
+the repository with a name starting with
+@file{#cvs.pfl} is a promotable read lock.  Any file in
 the repository with a name starting with
 @file{#cvs.wfl} is a write lock.  Old versions of @sc{cvs}
 (before @sc{cvs} 1.5) also created files with names starting
@@ -1334,15 +1337,41 @@ Then proceed with reading the repository.  When you are
 done, remove the @file{#cvs.rfl} file to release the
 read lock.
 
+Promotable read locks are a concept you may not find in other literature on
+concurrency.  They are used to allow a two (or more) pass process to only lock
+a file for read on the first (read) pass(es), then upgrade its read locks to
+write locks if necessary for a final pass, still assured that the files have
+not changed since they were first read.  @sc{cvs} uses promotable read locks,
+for example, to prevent commit and tag verification passes from interfering
+with other reading processes.  It can then lock only a single directory at a
+time for write during the write pass.
+
+To obtain a promotable read lock, first create the @file{#cvs.lock} directory,
+as with a non-promotable read lock.  Then check
+that there are no files that start with
+@file{#cvs.pfl}.  If there are, remove the master @file{#cvs.lock} directory,
+wait awhile (CVS waits 30 seconds between lock attempts), and try again.  If
+there are no other promotable locks, go ahead and create a file whose name is
+@file{#cvs.pfl} followed by information of your choice (for example, CVS uses
+its hostname and the process identification number of the CVS server process
+creating the lock).  If versions of @sc{cvs} older than version 1.12.4 access
+your repository directly (not via a @sc{cvs} server of version 1.12.4 or
+later), then you should also create a read lock since older versions of CVS
+will ignore the promotable lock when attempting to create their own write lock.
+Then remove the master @file{#cvs.lock} directory in order to allow other
+processes to obtain read locks.
+
 To obtain a writelock, first create the
-@file{#cvs.lock} directory, as with a readlock.  Then
+@file{#cvs.lock} directory, as with readlocks.  Then
 check that there are no files whose names start with
-@file{#cvs.rfl.}.  If there are, remove
-@file{#cvs.lock}, wait for a while, and try again.  If
-there are no readers, then create a file whose name is
-@file{#cvs.wfl} followed by information of your choice
-(for example, hostname and process identification
-number).  Hang on to the @file{#cvs.lock} lock.  Proceed
+@file{#cvs.rfl.} and no files whose names start with @file{#cvs.pfl} that are
+not owned by the process attempting to get the write lock.  If either exist,
+remove @file{#cvs.lock}, wait for a while, and try again.  If
+there are no readers or promotable locks from other processes, then create a
+file whose name is @file{#cvs.wfl} followed by information of your choice
+(again, CVS uses the hostname and server process identification
+number).  Remove your @file{#cvs.pfl} file if present.  Hang on to the
+@file{#cvs.lock} lock.  Proceed
 with writing the repository.  When you are done, first
 remove the @file{#cvs.wfl} file and then the
 @file{#cvs.lock} directory. Note that unlike the
