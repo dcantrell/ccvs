@@ -335,10 +335,12 @@ mkdir_p (dir)
 	    q[p - dir] = '\0';
 	    if (CVS_MKDIR (q, 0777) < 0)
 	    {
-		if (errno != EEXIST
-		    && (errno != EACCES || !isdir(q)))
+		int saved_errno = errno;
+
+		if (saved_errno != EEXIST
+		    && (saved_errno != EACCES || !isdir (q)))
 		{
-		    retval = errno;
+		    retval = saved_errno;
 		    goto done;
 		}
 	    }
@@ -3980,7 +3982,9 @@ error ENOMEM Virtual memory exhausted.\n");
 #endif
 	    if (status != 0)
 	    {
-		pending_error_text = "E can't create temporary directory";
+		if (alloc_pending (80))
+		    strcpy (pending_error_text,
+			    "E can't create temporary directory");
 		pending_error = status;
 	    }
 	}
