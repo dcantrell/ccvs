@@ -700,3 +700,26 @@ To make that example work, we need to think hard about:
 
 Because those issues are hairy, I suspect that having a change in
 CVSROOT be an error would be a better move.
+
+193.  The client relies on timestamps to figure out whether a file is
+(maybe) modified.  If something goes awry, then it ends up sending
+entire files to the server to be checked, and this can be quite slow
+especially over a slow network.  A couple of things that can happen:
+(a) other programs, like make, use timestamps, so one ends up needing
+to do "touch foo" and otherwise messing with timestamps, (b) changing
+the timezone offset (e.g. summer vs. winter or moving a machine)
+should work on unix, but there may be problems with non-unix.
+
+Possible solutions:
+
+   a.  Store a checksum for each file in CVS/Entries or some such
+   place.  What to do about hash collisions is interesting: using a
+   checksum, like MD5, large enough to "never" have collisions
+   probably works in practice (of course, if there is a collision then
+   all hell breaks loose because that code path was not tested, but
+   given the tiny, tiny probability of that I suppose this is only an
+   aesthetic issue).
+
+   b.  I'm not thinking of others, except storing the whole file in
+   CVS/Base, and I'm sure using twice the disk space would be
+   unpopular.
