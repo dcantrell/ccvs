@@ -888,7 +888,7 @@ call_in_directory (pathname, func, data)
 
 	if ( CVS_CHDIR (toplevel_wd) < 0)
 	    error (1, errno, "could not chdir to %s", toplevel_wd);
-	if (*submodule_dir[0] && CVS_CHDIR(submodule_dir) < 0) 
+	if (*submodule_dir && CVS_CHDIR(submodule_dir) < 0) 
 	    error (1, errno, "could not chdir to %s", submodule_dir);
 	newdir = 0;
 	if ( CVS_CHDIR (dir_name) < 0)
