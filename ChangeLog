@@ -1,3 +1,8 @@
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.am (proxycheck): Add new test target.
+	* Makefile.in: Regenerated.
+
 2004-10-22  Derek Price  <derek@ximbiot.com>
 
 	* gnulib-update (MODULES): Add md5.

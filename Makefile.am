@@ -48,8 +48,8 @@ EXTRA_DIST = \
 
 ## MAINTAINER Targets
 
-.PHONY: localcheck remotecheck
-localcheck remotecheck: all
+.PHONY: localcheck remotecheck proxycheck
+localcheck remotecheck proxycheck: all
 	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
 .PHONY: doc

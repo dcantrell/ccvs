@@ -125,7 +125,7 @@ EXTRA_DIST = \
 	build_src.com \
 	sanity.sh
 
-check-local: localcheck remotecheck
+check-local: localcheck remotecheck proxycheck
 
 .PHONY: localcheck
 localcheck: sanity.config.sh
@@ -134,6 +134,10 @@ localcheck: sanity.config.sh
 .PHONY: remotecheck
 remotecheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
+
+.PHONY: proxycheck
+proxycheck: all sanity.config.sh
+	$(SHELL) $(srcdir)/sanity.sh -p `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets
 distclean-local:

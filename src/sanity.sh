@@ -543,9 +543,8 @@ LOGFILE=`pwd`/check.log
 # Save the previous log in case the person running the tests decides
 # they want to look at it.  The extension ".plog" is chosen for consistency
 # with dejagnu.
-if test -f check.log; then
-	mv check.log check.plog
-fi
+test -f check.plog && mv check.plog check.plog~
+test -f check.log && mv check.log check.plog
 
 # Create the log file so check.log can be tailed almost immediately after
 # this script is started.  Otherwise it can take up to a minute or two before
