@@ -12096,7 +12096,7 @@ file, which defines the modules inside the repository.
 * modules::                     Defining modules
 * Wrappers::                    Specify binary-ness based on file name
 * commit files::                The commit support files (commitinfo,
-                                verifymsg, editinfo, loginfo)
+                                verifymsg, loginfo)
 * rcsinfo::                     Templates for the log messages
 * cvsignore::                   Ignoring files via cvsignore
 * checkoutlist::                Adding your own administrative files
@@ -12620,13 +12620,6 @@ fields.  This is most useful in combination with the
 @file{rcsinfo} file, which can hold a log message
 template (@pxref{rcsinfo}).
 
-@item editinfo
-The specified program is used to edit the log message,
-and possibly verify that it contains all required
-fields.  This is most useful in combination with the
-@file{rcsinfo} file, which can hold a log message
-template (@pxref{rcsinfo}).  (obsolete)
-
 @item loginfo
 The specified program is called when the commit is
 complete.  It receives the log message and some
@@ -12640,8 +12633,6 @@ imagination is the limit!
 * syntax::                      The common syntax
 * commitinfo::                  Pre-commit checking
 * verifymsg::                   How are log messages evaluated?
-* editinfo::                    Specifying how log messages are created
-                                (obsolete)
 * loginfo::                     Where should log messages be sent?
 @end menu
 
@@ -12926,124 +12917,6 @@ RereadLogAfterVerify=always
 @end example
 
 
-
-@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-@node editinfo
-@appendixsubsec Editinfo
-@cindex editinfo (admin file)
-@cindex Editor, specifying per module
-@cindex Per-module editor
-@cindex Log messages, editing
-
-@strong{Note: The @file{editinfo} feature has been
-rendered obsolete.  To set a default editor for log
-messages use the @code{CVSEDITOR}, @code{EDITOR} environment variables
-(@pxref{Environment variables}) or the @samp{-e} global
-option (@pxref{Global options}).  See @ref{verifymsg},
-for information on the use of the @file{verifymsg}
-feature for evaluating log messages.}
-
-If you want to make sure that all log messages look the
-same way, you can use the @file{editinfo} file to
-specify a program that is used to edit the log message.
-This program could be a custom-made editor that always
-enforces a certain style of the log message, or maybe a
-simple shell script that calls an editor, and checks
-that the entered message contains the required fields.
-
-If no matching line is found in the @file{editinfo}
-file, the editor specified in the environment variable
-@code{$CVSEDITOR} is used instead.  If that variable is
-not set, then the environment variable @code{$EDITOR}
-is used instead.  If that variable is not
-set a default will be used.  See @ref{Committing your changes}.
-
-The @file{editinfo} file is often most useful together
-with the @file{rcsinfo} file, which can be used to
-specify a log message template.
-
-Each line in the @file{editinfo} file consists of a
-regular expression and a command-line template.  The
-template must include a program name, and can include
-any number of arguments.  The full path to the current
-log message template file is appended to the template.
-
-One thing that should be noted is that the @samp{ALL}
-keyword is not supported.  If more than one matching
-line is found, the first one is used.  This can be
-useful for specifying a default edit script in a
-module, and then overriding it in a subdirectory.
-
-@cindex DEFAULT in editinfo
-If the repository name does not match any of the
-regular expressions in this file, the @samp{DEFAULT}
-line is used, if it is specified.
-
-If the edit script exits with a non-zero exit status,
-the commit is aborted.
-
-Note: when @sc{cvs} is accessing a remote repository,
-or when the @samp{-m} or @samp{-F} options to @code{cvs
-commit} are used, @file{editinfo} will not be consulted.
-There is no good workaround for this; use
-@file{verifymsg} instead.
-
-@menu
-* editinfo example::            Editinfo example
-@end menu
-
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-@node editinfo example
-@appendixsubsubsec Editinfo example
-
-The following is a little silly example of a
-@file{editinfo} file, together with the corresponding
-@file{rcsinfo} file, the log message template and an
-editor script.  We begin with the log message template.
-We want to always record a bug-id number on the first
-line of the log message.  The rest of log message is
-free text.  The following template is found in the file
-@file{/usr/cvssupport/tc.template}.
-
-@example
-BugId:
-@end example
-
-The script @file{/usr/cvssupport/bugid.edit} is used to
-edit the log message.
-
-@example
-#!/bin/sh
-#
-#       bugid.edit filename
-#
-#  Call $EDITOR on FILENAME, and verify that the
-#  resulting file contains a valid bugid on the first
-#  line.
-if [ "x$EDITOR" = "x" ]; then EDITOR=vi; fi
-if [ "x$CVSEDITOR" = "x" ]; then CVSEDITOR=$EDITOR; fi
-$CVSEDITOR $1
-until head -1|grep '^BugId:[ ]*[0-9][0-9]*$' < $1
-do  echo -n  "No BugId found.  Edit again? ([y]/n)"
-    read ans
-    case $@{ans@} in
-        n*) exit 1;;
-    esac
-    $CVSEDITOR $1
-done
-@end example
-
-The @file{editinfo} file contains this line:
-
-@example
-^tc     /usr/cvssupport/bugid.edit
-@end example
-
-The @file{rcsinfo} file contains this line:
-
-@example
-^tc     /usr/cvssupport/tc.template
-@end example
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node loginfo
