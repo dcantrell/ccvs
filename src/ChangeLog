@@ -1,5 +1,20 @@
 2004-08-03  Derek Price  <derek@ximbiot.com>
 
+	Checking in IO changes intended to improve speed for posterity since
+	they actually increase CPU usage by about .2% in remote mode and 5% in
+	writeproxy mode.
+	* Makefile.am (cvs_SOURCES): Add ms-buffer.c & ms-buffer.h.
+	* buffer.c (buf_free_data): New function.
+	(buf_read_data): s/abort/assert/.
+	(fd_buffer_input): Try to improve efficiency of blocking read.
+	* buffer.h (buf_free_data): New proto.
+	* server.c (reprocess_secondary_log): Only reopen log and attach to
+	BUF_FROM_NET - don't actually loop over inputs.
+	(become_proxy, serve_co, do_cvs_command): Use new log from above.
+	* ms-buffer.c, ms-buffer.h: New files.
+
+2004-08-03  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (TIMING): Make this work when not in $remotehost mode.
 	(reserved-13b): Use sorted output.
 
