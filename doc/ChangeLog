@@ -1,3 +1,8 @@
+2001-12-03  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.texinfo (Invoking CVS): Add -F option for annotate and
+	rannotate.
+
 2001-11-28  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (File permissions): Add note about SGID being required
