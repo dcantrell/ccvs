@@ -34,11 +34,20 @@ char *alloca ();
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef S_ISREG			/* Doesn't have POSIX.1 stat stuff. */
-#ifndef mode_t
-#define mode_t unsigned short
+
+#ifdef STAT_MACROS_BROKEN
+#undef S_ISBLK
+#undef S_ISCHR
+#undef S_ISDIR
+#undef S_ISREG
+#undef S_ISFIFO
+#undef S_ISLNK
+#undef S_ISSOCK
+#undef S_ISMPB
+#undef S_ISMPC
+#undef S_ISNWK
 #endif
-#endif
+
 #if !defined(S_ISBLK) && defined(S_IFBLK)
 #define	S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
 #endif
@@ -98,25 +107,30 @@ char *alloca ();
 off_t lseek ();
 #endif
 
-#ifdef TM_IN_SYS_TIME
-#include <sys/time.h>
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
 #else
-#include <time.h>
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
 #endif
 
-#ifndef HAVE_TIMEB_H
+#ifdef timezone
+#undef timezone /* needed for sgi */
+#endif
+
+#ifdef HAVE_TIMEB_H
+#include <sys/timeb.h>
+#else
 struct timeb {
     time_t		time;		/* Seconds since the epoch	*/
     unsigned short	millitm;	/* Field not used		*/
-#ifdef timezone
-    short		tzone;
-#else
     short		timezone;
-#endif
     short		dstflag;	/* Field not used		*/
 };
-#else
-#include <sys/timeb.h>
 #endif
 
 #if !defined(HAVE_FTIME) && !defined(HAVE_TIMEZONE)
@@ -255,23 +269,22 @@ char *getwd ();
 #define R_OK 4
 #endif
 
-/* unistd.h defines _POSIX_VERSION on POSIX.1 systems.  */
-#if defined(DIRENT) || defined(_POSIX_VERSION)
-#include <dirent.h>
-#define NLENGTH(dirent) (strlen((dirent)->d_name))
-#else /* not (DIRENT or _POSIX_VERSION) */
-#define dirent direct
-#define NLENGTH(dirent) ((dirent)->d_namlen)
-#ifdef SYSNDIR
-#include <sys/ndir.h>
-#endif /* SYSNDIR */
-#ifdef SYSDIR
-#include <sys/dir.h>
-#endif /* SYSDIR */
-#ifdef NDIR
-#include <ndir.h>
-#endif /* NDIR */
-#endif /* not (DIRENT or _POSIX_VERSION) */
+#if HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
+#endif
 
 /* Convert B 512-byte blocks to kilobytes if K is nonzero,
    otherwise return it unchanged. */

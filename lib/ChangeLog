@@ -1,3 +1,10 @@
+Mon May 29 22:32:40 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* system.h: Handle time and directory headers as recommended in
+	the autoconf manual.
+	Undefine the S_FOO() macros if STAT_MACROS_BROKEN is set.
+	Don't define mode_t, as it is handled by config.h.
+
 Sat May 27 08:46:00 1995  Jim Meyering  (meyering@comco.com)
 
 	* Makefile.in (Makefile): Regenerate only Makefile in current
