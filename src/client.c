@@ -21,6 +21,7 @@
 #include "getline.h"
 #include "edit.h"
 #include "buffer.h"
+#include "log-buffer.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -414,161 +415,6 @@ static struct buffer *global_to_server;
 static struct buffer *global_from_server;
 
 
-/* We want to be able to log data sent between us and the server.  We
-   do it using log buffers.  Each log buffer has another buffer which
-   handles the actual I/O, and a file to log information to.
-
-   This structure is the closure field of a log buffer.  */
-
-struct log_buffer
-{
-    /* The underlying buffer.  */
-    struct buffer *buf;
-    /* The file to log information to.  */
-    FILE *log;
-};
-
-static struct buffer *log_buffer_initialize
-  PROTO((struct buffer *, FILE *, int, void (*) (struct buffer *)));
-static int log_buffer_input PROTO((void *, char *, int, int, int *));
-static int log_buffer_output PROTO((void *, const char *, int, int *));
-static int log_buffer_flush PROTO((void *));
-static int log_buffer_block PROTO((void *, int));
-static int log_buffer_shutdown PROTO((struct buffer *));
-
-/* Create a log buffer.  */
-
-static struct buffer *
-log_buffer_initialize (buf, fp, input, memory)
-     struct buffer *buf;
-     FILE *fp;
-     int input;
-     void (*memory) PROTO((struct buffer *));
-{
-    struct log_buffer *n;
-
-    n = (struct log_buffer *) xmalloc (sizeof *n);
-    n->buf = buf;
-    n->log = fp;
-    return buf_initialize (input ? log_buffer_input : NULL,
-			   input ? NULL : log_buffer_output,
-			   input ? NULL : log_buffer_flush,
-			   log_buffer_block,
-			   log_buffer_shutdown,
-			   memory,
-			   n);
-}
-
-/* The input function for a log buffer.  */
-
-static int
-log_buffer_input (closure, data, need, size, got)
-     void *closure;
-     char *data;
-     int need;
-     int size;
-     int *got;
-{
-    struct log_buffer *lb = (struct log_buffer *) closure;
-    int status;
-    size_t n_to_write;
-
-    if (lb->buf->input == NULL)
-	abort ();
-
-    status = (*lb->buf->input) (lb->buf->closure, data, need, size, got);
-    if (status != 0)
-	return status;
-
-    if (*got > 0)
-    {
-	n_to_write = *got;
-	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (0, errno, "writing to log file");
-    }
-
-    return 0;
-}
-
-/* The output function for a log buffer.  */
-
-static int
-log_buffer_output (closure, data, have, wrote)
-     void *closure;
-     const char *data;
-     int have;
-     int *wrote;
-{
-    struct log_buffer *lb = (struct log_buffer *) closure;
-    int status;
-    size_t n_to_write;
-
-    if (lb->buf->output == NULL)
-	abort ();
-
-    status = (*lb->buf->output) (lb->buf->closure, data, have, wrote);
-    if (status != 0)
-	return status;
-
-    if (*wrote > 0)
-    {
-	n_to_write = *wrote;
-	if (fwrite (data, 1, n_to_write, lb->log) != n_to_write)
-	    error (0, errno, "writing to log file");
-    }
-
-    return 0;
-}
-
-/* The flush function for a log buffer.  */
-
-static int
-log_buffer_flush (closure)
-     void *closure;
-{
-    struct log_buffer *lb = (struct log_buffer *) closure;
-
-    if (lb->buf->flush == NULL)
-	abort ();
-
-    /* We don't really have to flush the log file here, but doing it
-       will let tail -f on the log file show what is sent to the
-       network as it is sent.  */
-    if (fflush (lb->log) != 0)
-        error (0, errno, "flushing log file");
-
-    return (*lb->buf->flush) (lb->buf->closure);
-}
-
-/* The block function for a log buffer.  */
-
-static int
-log_buffer_block (closure, block)
-     void *closure;
-     int block;
-{
-    struct log_buffer *lb = (struct log_buffer *) closure;
-
-    if (block)
-	return set_block (lb->buf);
-    else
-	return set_nonblock (lb->buf);
-}
-
-/* The shutdown function for a log buffer.  */
-
-static int
-log_buffer_shutdown (buf)
-     struct buffer *buf;
-{
-    struct log_buffer *lb = (struct log_buffer *) buf->closure;
-    int retval;
-
-    retval = buf_shutdown (lb->buf);
-    if (fclose (lb->log) < 0)
-	error (0, errno, "closing log file");
-    return retval;
-}
 
 /*
  * Read a line from the server.  Result does not include the terminating \n.
@@ -3948,7 +3794,6 @@ void
 start_server ()
 {
     int rootless;
-    char *log = getenv ("CVS_CLIENT_LOG");
 
     /* Clear our static variables for this invocation. */
     if (toplevel_repos != NULL)
@@ -4029,46 +3874,7 @@ start_server ()
     /* "Hi, I'm Darlene and I'll be your server tonight..." */
     server_started = 1;
 
-    /* Set up logfiles, if any.
-     *
-     * We do this _after_ authentication on purpose.  Wouldn't really like to
-     * worry about logging passwords...
-     */
-    if (log)
-    {
-	int len = strlen (log);
-	char *buf = xmalloc (len + 5);
-	char *p;
-	FILE *fp;
-
-	strcpy (buf, log);
-	p = buf + len;
-
-	/* Open logfiles in binary mode so that they reflect
-	   exactly what was transmitted and received (that is
-	   more important than that they be maximally
-	   convenient to view).  */
-	/* Note that if we create several connections in a single CVS client
-	   (currently used by update.c), then the last set of logfiles will
-	   overwrite the others.  There is currently no way around this.  */
-	strcpy (p, ".in");
-	fp = open_file (buf, "wb");
-        if (fp == NULL)
-	    error (0, errno, "opening to-server logfile %s", buf);
-	else
-	    global_to_server = log_buffer_initialize (global_to_server, fp, 0,
-						      (BUFMEMERRPROC) NULL);
-
-	strcpy (p, ".out");
-	fp = open_file (buf, "wb");
-        if (fp == NULL)
-	    error (0, errno, "opening from-server logfile %s", buf);
-	else
-	    global_from_server = log_buffer_initialize (global_from_server, fp, 1,
-							(BUFMEMERRPROC) NULL);
-
-	free (buf);
-    }
+    setup_logfiles(&global_to_server, &global_from_server);
 
     /* Clear static variables.  */
     if (toplevel_repos != NULL)

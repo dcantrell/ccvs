@@ -48,6 +48,7 @@ cvs_SOURCES = \
 	import.c \
 	lock.c \
 	log.c \
+	log-buffer.c log-buffer.h \
 	login.c \
 	logmsg.c \
 	main.c \
