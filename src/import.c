@@ -516,7 +516,6 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 #else
 				NULL,
 #endif
-				(char *) NULL,
 				xtmpfile);
 	if (retcode != 0)
 	{

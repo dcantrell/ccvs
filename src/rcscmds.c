@@ -153,7 +153,7 @@ RCS_merge(path, options, rev1, rev2)
     if (status == 0) 
     {
 	/* Run GREP to see if there appear to be conflicts in the file */
-	run_setup ("%s", Grepbin);
+	run_setup ("%s", GREP);
 	run_arg (RCS_MERGE_PAT);
 	run_arg (path);
 	status = (run_exec (RUN_TTY, DEVNULL, RUN_TTY, RUN_NORMAL) == 0);
@@ -168,23 +168,20 @@ RCS_merge(path, options, rev1, rev2)
    should check out the head of the default branch.  OPTIONS is a string
    such as -kb or -kkv, for keyword expansion options, or NULL if there
    are none.  If WORKFILE is NULL, run regardless of noexec; if non-NULL,
-   noexec inhibits execution.  RCSVER is for specifying a '-V' flag.
-   SOUT is what to do with standard output (typically RUN_TTY).  */
+   noexec inhibits execution.  SOUT is what to do with standard output
+   (typically RUN_TTY).  */
 int
-RCS_exec_checkout (rcsfile, workfile, tag, options, rcsver, sout)
+RCS_exec_checkout (rcsfile, workfile, tag, options, sout)
     char *rcsfile;
     char *workfile;
     char *tag;
     char *options;
-    char *rcsver;		/* either NULL, empty, or a '-V' flag */
     char *sout;
 {
     run_setup ("%s%s -x,v/ -q %s%s", Rcsbin, RCS_CO,
                tag ? "-r" : "", tag ? tag : "");
     if (options != NULL && options[0] != '\0')
 	run_arg (options);
-    if (rcsver && *rcsver)
-	run_arg (rcsver);
     if (workfile == NULL)
 	run_arg ("-p");
     run_arg (rcsfile);
