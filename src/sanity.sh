@@ -7731,9 +7731,19 @@ done"
 	  # Done.
 	  
 	  # Try checking out the module in a local directory
+	  if test "$remote" = yes; then
+	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
+	    dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1
+U ${TESTDIR}/1/file1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1
+U ${TESTDIR}/1/file1
+${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	  else
 	  dotest abspath-2a "${testcvs} co -d ${TESTDIR}/1 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1
 U ${TESTDIR}/1/file1"
+	  fi # remote workaround
 
 	  # Are we relative or absolute in our Repository file?
 	  echo "${CVSROOT_DIRNAME}/mod1" > ${TESTDIR}/dotest.abs
@@ -7767,9 +7777,19 @@ U ${TESTDIR}/1/file1"
 ${PROG} [a-z]*: ignoring module mod1"
 	  mkdir 1
 
+	  if test "$remote" = yes; then
+	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html rac.
+	    dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1/2
+U ${TESTDIR}/1/2/file1" \
+"${PROG} [a-z]*: Updating ${TESTDIR}/1/2
+U ${TESTDIR}/1/2/file1
+${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	  else
 	  dotest abspath-3a "${testcvs} co -d ${TESTDIR}/1/2 mod1" \
 "${PROG} [a-z]*: Updating ${TESTDIR}/1/2
 U ${TESTDIR}/1/2/file1"
+	  fi # remote workaround
 	  dotest abspath-3b "cat ${TESTDIR}/1/2/CVS/Repository" \
 "${AREP}mod1"
 
@@ -7832,8 +7852,16 @@ U ${TESTDIR}/1/mod2/file2"
 	  # doesn't mess with the current working directory.
 	  mkdir 1
 	  cd 1
+	  if test "$remote" = yes; then
+	    # Work around the http://www.cyclic.com/cvs/dev-abspath.html race.
+	    dotest abspath-7a "${testcvs} -q co -d ${TESTDIR}/2 mod2" \
+"U ${TESTDIR}/2/file2" \
+"U ${TESTDIR}/2/file2
+${PROG} \[server aborted\]: cannot rename file CVS/Entries.Backup to CVS/Entries: No such file or directory"
+	  else
 	  dotest abspath-7a "${testcvs} -q co -d ${TESTDIR}/2 mod2" \
 "U ${TESTDIR}/2/file2"
+	  fi # remote workaround
 	  if test "$remote" = no; then
 	    # Remote is creating a CVS directory.  Grr.
 	    dotest abspath-7b "ls" ""

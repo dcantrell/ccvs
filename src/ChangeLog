@@ -1,3 +1,7 @@
+1998-04-30  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (abspath): Work around the "cannot rename" bug.
+
 1998-04-27  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* classify.c (Classify_File): Add comments about checking whether
