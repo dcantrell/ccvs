@@ -1,3 +1,10 @@
+Wed Jun  5 13:32:40 1996  Larry Jones  <larry.jones@sdrc.com>
+			  and Jim Kingdon  <kingdon@cyclic.com>
+
+	* ignore.c: Set ign_hold to -1 when not holding instead of 0 so 
+	that holding an empty list works correctly.
+	* sanity.sh (ignore): New tests 190 & 191 for above fix.
+
 Wed Jun 5 1996  Jim Kingdon  <kingdon@cyclic.com>
 
 	Visual C++ lint:
