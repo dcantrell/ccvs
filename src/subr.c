@@ -488,9 +488,8 @@ check_numeric (rev, argc, argv)
        depending on whether a directory happens to contain only a single
        file or whether it contains more than one.  I strongly suspect this
        is the least confusing behavior.  */
-    if (argc == 0
-	|| argc > 1
-	|| (!wrap_name_has (argv[1], WRAP_TOCVS) && isdir (argv[1])))
+    if (argc != 1
+	|| (!wrap_name_has (argv[0], WRAP_TOCVS) && isdir (argv[0])))
     {
 	error (0, 0, "while processing more than one file:");
 	error (1, 0, "attempt to specify a numeric revision");
