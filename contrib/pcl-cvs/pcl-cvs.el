@@ -898,12 +898,12 @@ This function returns the last cons-cell in the list that is built."
 	 ;; End of RCVS stuff.
 
 	 ;; CVS is descending a subdirectory.
-	 
-	 ((looking-at "cvs update: Updating \\(.*\\)$")
+	 ;; (The "server" case is there to support Cygnus's Remote CVS.)
+	 ((looking-at "cvs \\(update\\|server\\): Updating \\(.*\\)$")
 	  (setq current-dir
 		(cvs-get-current-dir
 		 root-dir
-		 (buffer-substring (match-beginning 1) (match-end 1))))
+		 (buffer-substring (match-beginning 2) (match-end 2))))
 	  (setcdr head (list (cvs-create-fileinfo
 			      'DIRCHANGE current-dir
 			      nil (buffer-substring (match-beginning 0)
@@ -1009,6 +1009,10 @@ second party")
 			   nil
 			   (buffer-substring start (point)))))
 	    (setq head (cdr head))))
+
+	 ;; Ignore other messages from Cygnus's Remote CVS.
+	 ((looking-at "cvs server:")
+	  (forward-line 1))
 
 	 (t
 
