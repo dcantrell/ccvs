@@ -232,12 +232,3 @@ lib/getpagesize.h
 m4/getpagesize.m4
 
 m4/onceonly_2_57.m4
-lib/rpmatch.c
-m4/rpmatch.m4
-
-m4/onceonly_2_57.m4
-lib/yesno.c
-lib/yesno.h
-m4/yesno.m4
-
-m4/onceonly_2_57.m4
