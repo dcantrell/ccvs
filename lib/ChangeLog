@@ -1,3 +1,13 @@
+2000-02-14  Derek Price  <derek.price@openavenue.com>
+
+	* Makefile.am (libcvs_a_SOURCES): Add xtime.h & xselect.h.
+	* Makefile.in: Regenerated.
+	* getdate.y: Include xtime.h.
+	* getdate.c: Regenerated.
+	* system.h: Include xtime.h.
+	* xtime.h: New file to do include magic for time functions.
+	* xselect.h: New file to do select include magic.
+
 2000-02-06  Derek Price  <derek.price@openavenue.com>
 	    Rex Jolliff  <Rex_Jolliff@notes.ymp.gov>
 	    Shawn Smith  <Shawn_Smith@notes.ymp.gov>

@@ -55,11 +55,13 @@ libcvs_a_SOURCES = \
 	getline.h \
 	getopt.h \
 	fnmatch.h \
+	md5.h \
 	regex.h \
+	savecwd.h \
 	system.h \
 	wait.h \
-	md5.h \
-	savecwd.h
+	xselect.h \
+	xtime.h
 ## because @LIBOBJS@ is included below, automake automatically knows about
 ##     dup2.c
 ##     fncase.c
@@ -73,7 +75,6 @@ libcvs_a_SOURCES = \
 ##     strtoul.c
 ##     valloc.c
 ##     waitpid.c
-
 libcvs_a_LIBADD = @LIBOBJS@
 
 EXTRA_DIST = \
