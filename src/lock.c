@@ -354,7 +354,7 @@ Lock_Cleanup (void)
 static void
 remove_locks (void)
 {
-    TRACE (TRACE_FUNCTION, "remove_locks()");
+    TRACE (TRACE_FLOW, "remove_locks()");
 
     /* Avoid interrupts while accessing globals the interrupt handlers might
      * make use of.

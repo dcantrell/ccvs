@@ -1,5 +1,11 @@
 2003-10-08  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (remove_locks): Reduce TRACE level since this function is
+	rarely called and we can usually rely on tracing higher level
+	functions.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
 	* lock.c (lock_name, lock_simple_remove),
 	server.c (server_pathname_check, dirswitch): Add TRACE.
 
