@@ -1752,7 +1752,7 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
     if ((workfile == NULL || *workfile != '\0')
 	&& ! noexec
 	&& (tag == NULL || strcmp (tag, rcs->head) == 0)
-	&& sout == RUN_TTY
+	&& (sout == RUN_TTY || workfile == NULL)
 	&& (flags & RCS_FLAGS_LOCK) == 0)
     {
         FILE *fp;
@@ -1844,7 +1844,16 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 	    /* We have the text we want.  */
 
 	    if (workfile == NULL)
-	        ofp = stdout;
+	    {
+	        if (sout == RUN_TTY)
+		    ofp = stdout;
+		else
+		{
+		    ofp = fopen (sout, FOPEN_BINARY_WRITE);
+		    if (ofp == NULL)
+		        error (1, errno, "cannot open %s", sout);
+		}
+	    }
 	    else
 	    {
 	        ofp = fopen (workfile, FOPEN_BINARY_WRITE);
@@ -1863,6 +1872,11 @@ RCS_fast_checkout (rcs, workfile, tag, options, sout, flags, noerr)
 			   sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH)) < 0)
 		    error (0, errno, "cannot change mode of file %s",
 			   workfile);
+	    }
+	    else if (sout != RUN_TTY)
+	    {
+		if (fclose (ofp) < 0)
+		    error (1, errno, "cannot close %s", sout);
 	    }
 
 	    return 0;
