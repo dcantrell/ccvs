@@ -36,7 +36,10 @@ program and fill out the template:
 
 The "cvsbug" program is installed in the same location as the "cvs"
 program.  If your installation failed, you may need to run "cvsbug"
-directly out of the "src" directory as "src/cvsbug.sh".
+directly out of the "src" directory as "src/cvsbug.sh".  This is also
+the procedure for submitting suggested changes to CVS--note that all
+submitted changes may be distributed under the terms of the GNU Public
+License, so if you don't like this, don't submit them.
 
 Please consult the INSTALL file for information on tested
 configurations.  If you have a comment about an already tested
