@@ -1,3 +1,16 @@
+1998-06-27  Jim Meyering  <meyering@ascend.com>
+
+	* rcs.c (RCS_checkout): If opening the local workfile fails due to
+	lack of write access, try to chmod the file and retry the open.
+	Before, a commit could fail part way through merely because the
+	open to rewrite with newly expanded rcs keywords would fail.  It's
+	easy to make this happen if you use `cvs -r' or CVSREAD and you
+	apply a patch to one of your read-only source files -- patch
+	preserves the read-only setting for the file and your next commit
+	will fail after committing that file, but before rewriting
+	(checking out) your working copy.
+	* sanity.sh (commit-readonly): New test for this.
+
 1998-06-25  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (patch_file): Update comments regarding context diffs

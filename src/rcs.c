@@ -4539,9 +4539,27 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    if (islink (workfile))
 		if (unlink_file (workfile) < 0)
 		    error (1, errno, "cannot remove %s", workfile);
+
 	    ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
+
+	    /* If the open failed because the existing workfile was not
+	       writable, try to chmod the file and retry the open.  */
+	    if (ofp == NULL && errno == EACCES
+		&& isfile (workfile) && !iswritable (workfile))
+	    {
+		xchmod (workfile, 1);
+		ofp = CVS_FOPEN (workfile, expand == KFLAG_B ? "wb" : "w");
+	    }
+
 	    if (ofp == NULL)
-		error (1, errno, "cannot open %s", workfile);
+	    {
+		error (0, errno, "cannot open %s", workfile);
+		if (free_value)
+		    free (value);
+		if (free_rev)
+		    free (rev);
+		return 1;
+	    }
 	}
 
 	if (workfile == NULL && sout == RUN_TTY)
