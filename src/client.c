@@ -2334,27 +2334,35 @@ start_rsh_server (tofdp, fromfdp)
 	     a proxy machine.  */
 	  char *cvs_rsh = getenv ("CVS_RSH");
 	  char *cvs_server = getenv ("CVS_SERVER");
+	  char *command;
 
 	  cvs_rsh || (cvs_rsh = "rsh");
 	  cvs_server || (cvs_server = "cvs");
 
-	  execlp (cvs_rsh, cvs_rsh, server_host, cvs_server,
-#if 1
-		  /*
-		   * This is really cheesy, because it is redundant with the
-		   * Root request, inconsistent with how we do things when we
-		   * aren't using rsh, and the code in main.c which prints
-		   * an error on a bad root just writes to stderr rather than
-		   * using the protocol.
-		   * 
-		   * But I'm leaving it in for now because old (Nov 3, 1994)
-		   * versions of the server say
-		   * "`cvs server' is for internal use--don't use it directly"
-		   * if you try to start them up without -d and your .bashrc
-		   * sets CVSROOT to something containing a colon.  */
-		  "-d", server_cvsroot,
-#endif
-		  "server", (char *)NULL);
+	  /* Pass the command to rsh as a single string.  This
+	     shouldn't affect most rsh servers at all, and will pacify
+	     some buggy versions of rsh that grab switches out of the
+	     middle of the command (they're calling the GNU getopt
+	     routines incorrectly).  */
+	  command = xmalloc (strlen (cvs_server)
+			     + strlen (server_cvsroot)
+			     + 50);
+
+	  /*
+	   * The -d here is really cheesy, because it is redundant
+	   * with the Root request, inconsistent with how we do things
+	   * when we aren't using rsh, and the code in main.c which
+	   * prints an error on a bad root just writes to stderr
+	   * rather than using the protocol.
+	   * 
+	   * But I'm leaving it in for now because old (Nov 3, 1994)
+	   * versions of the server say "`cvs server' is for internal
+	   * use--don't use it directly" if you try to start them up
+	   * without -d and your .bashrc sets CVSROOT to something
+	   * containing a colon.  */
+	  sprintf (command, "%s -d %s server", cvs_server, server_cvsroot);
+
+	  execlp (cvs_rsh, cvs_rsh, server_host, command, (char *)NULL);
 	}
 	error (1, errno, "cannot exec");
     }
