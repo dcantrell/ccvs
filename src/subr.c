@@ -162,13 +162,13 @@ int
 strip_trailing_newlines (str)
     char *str;
 {
-    int len, origlen;
-    len = origlen = strlen (str) - 1;
+    size_t index, origlen;
+    index = origlen = strlen (str);
 
-    while (len >= 0 && str[len] == '\n')
-	str[len--] = '\0';
+    while (index > 0 && str[index-1] == '\n')
+	str[--index] = '\0';
 
-    return len != origlen;
+    return index != origlen;
 }
 
 
