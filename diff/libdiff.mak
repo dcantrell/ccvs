@@ -1,7 +1,7 @@
 # Microsoft Developer Studio Generated NMAKE File, Based on libdiff.dsp
 !IF "$(CFG)" == ""
 CFG=libdiff - Win32 Debug
-!MESSAGE No configuration specified. Defaulting to libdiff - Win32 Debug
+!MESSAGE No configuration specified. Defaulting to libdiff - Win32 Debug.
 !ENDIF 
 
 !IF "$(CFG)" != "libdiff - Win32 Release" && "$(CFG)" != "libdiff - Win32 Debug"
@@ -9,7 +9,7 @@ CFG=libdiff - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "libdiff.mak" CFG="libdiff - Win32 Release"
+!MESSAGE NMAKE /f "libdiff.mak" CFG="libdiff - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
