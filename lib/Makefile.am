@@ -34,7 +34,6 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getdate.y \
-	getline.c \
 	getopt.c \
 	getopt1.c \
 	md5.c \
@@ -45,6 +44,7 @@ libcvs_a_SOURCES = \
 	xgetwd.c \
 	yesno.c \
 	getline.h \
+	getnline.h \
 	getopt.h \
 	gettext.h \
 	getpagesize.h \
