@@ -2476,144 +2476,147 @@ connect_to_pserver (tofdp, fromfdp, verify_only)
      int *tofdp, *fromfdp;
      int verify_only;
 {
-  int sock;
-  int tofd, fromfd;
-  int port_number;
-  struct hostent *host;
-  struct sockaddr_in client_sai;
+    int sock;
+    int tofd, fromfd;
+    int port_number;
+    struct hostent *host;
+    struct sockaddr_in client_sai;
 
-  /* Does nothing if already called before now. */
-  parse_cvsroot ();
+    /* Does nothing if already called before now. */
+    parse_cvsroot ();
 
-  sock = socket (AF_INET, SOCK_STREAM, 0);
-  if (sock == -1)
+    sock = socket (AF_INET, SOCK_STREAM, 0);
+    if (sock == -1)
     {
-      fprintf (stderr, "socket() failed\n");
-      exit (1);
+	fprintf (stderr, "socket() failed\n");
+	exit (1);
     }
-  port_number = auth_server_port_number ();
-  init_sockaddr (&client_sai, server_host, port_number);
-  connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
+    port_number = auth_server_port_number ();
+    init_sockaddr (&client_sai, server_host, port_number);
+    if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
+	< 0)
+	error (1, errno, "connect to %s:%d failed", server_host,
+	       CVS_AUTH_PORT);
 
-  /* Run the authorization mini-protocol before anything else. */
-  {
-    int i;
-    char ch, read_buf[PATH_MAX];
-    char *begin      = NULL;
-    char *repository = server_cvsroot;
-    char *username   = server_user;
-    char *password   = NULL;
-    char *end        = NULL;
+    /* Run the authorization mini-protocol before anything else. */
+    {
+	int i;
+	char ch, read_buf[PATH_MAX];
+	char *begin      = NULL;
+	char *repository = server_cvsroot;
+	char *username   = server_user;
+	char *password   = NULL;
+	char *end        = NULL;
+
+	if (verify_only)
+	{
+	    begin = "BEGIN VERIFICATION REQUEST\n";
+	    end   = "END VERIFICATION REQUEST\n";
+	}
+	else
+	{
+	    begin = "BEGIN AUTH REQUEST\n";
+	    end   = "END AUTH REQUEST\n";
+	}
+
+	/* Get the password, probably from ~/.cvspass. */
+	password = get_cvs_password (server_user, server_host, server_cvsroot);
+
+	/* Announce that we're starting the authorization protocol. */
+	send (sock, begin, strlen (begin), 0);
+
+	/* Send the data the server needs. */
+	send (sock, repository, strlen (repository), 0);
+	send (sock, "\n", 1, 0);
+	send (sock, username, strlen (username), 0);
+	send (sock, "\n", 1, 0);
+	send (sock, password, strlen (password), 0);
+	send (sock, "\n", 1, 0);
+
+	/* Announce that we're ending the authorization protocol. */
+	send (sock, end, strlen (end), 0);
+
+	/* Paranoia. */
+	memset (password, 0, strlen (password));
+
+	/* Get ACK or NACK from the server. 
+	 * 
+	 * We could avoid this careful read-char loop by having the ACK
+	 * and NACK cookies be of the same length, so we'd simply read
+	 * that length and see what we got.  But then there'd be Yet
+	 * Another Protocol Requirement floating around, and someday
+	 * someone would make a change that breaks it and spend a hellish
+	 * day tracking it down.  Therefore, we use "\n" to mark off the
+	 * end of both ACK and NACK, and we loop, reading until "\n".
+	 */
+	ch = 0;
+	memset (read_buf, 0, PATH_MAX);
+	for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
+	{
+	    recv (sock, &ch, 1, 0);
+	    read_buf[i] = ch;
+	}
+
+	if (strcmp (read_buf, "I HATE YOU\n") == 0)
+	{
+	    /* Authorization not granted. */
+	    if (shutdown (sock, 2) < 0)
+	    {
+		error (0, 0, 
+		       "authorization failed: server %s rejected access", 
+		       server_host);
+		error (1, errno,
+		       "shutdown() failed (server %s)", server_host);
+	    }
+
+	    if (verify_only)
+		return 0;
+	    else
+		error (1, 0, 
+		       "authorization failed: server %s rejected access", 
+		       server_host);
+	}
+	else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
+	{
+	    /* Unrecognized response from server. */
+	    if (shutdown (sock, 2) < 0)
+	    {
+		error (0, 0,
+		       "unrecognized auth response from %s: %s", 
+		       server_host, read_buf);
+		error (1, errno, "shutdown() failed, server %s", server_host);
+	    }
+	    error (1, 0, 
+		   "unrecognized auth response from %s: %s", 
+		   server_host, read_buf);
+	}
+    }
 
     if (verify_only)
-      {
-        begin = "BEGIN VERIFICATION REQUEST\n";
-        end   = "END VERIFICATION REQUEST\n";
-      }
-    else
-      {
-        begin = "BEGIN AUTH REQUEST\n";
-        end   = "END AUTH REQUEST\n";
-      }
-
-    /* Get the password, probably from ~/.cvspass. */
-    password = get_cvs_password (server_user, server_host, server_cvsroot);
-
-    /* Announce that we're starting the authorization protocol. */
-    send (sock, begin, strlen (begin), 0);
-
-    /* Send the data the server needs. */
-    send (sock, repository, strlen (repository), 0);
-    send (sock, "\n", 1, 0);
-    send (sock, username, strlen (username), 0);
-    send (sock, "\n", 1, 0);
-    send (sock, password, strlen (password), 0);
-    send (sock, "\n", 1, 0);
-
-    /* Announce that we're ending the authorization protocol. */
-    send (sock, end, strlen (end), 0);
-
-    /* Paranoia. */
-    memset (password, 0, strlen (password));
-
-    /* Get ACK or NACK from the server. 
-     * 
-     * We could avoid this careful read-char loop by having the ACK
-     * and NACK cookies be of the same length, so we'd simply read
-     * that length and see what we got.  But then there'd be Yet
-     * Another Protocol Requirement floating around, and someday
-     * someone would make a change that breaks it and spend a hellish
-     * day tracking it down.  Therefore, we use "\n" to mark off the
-     * end of both ACK and NACK, and we loop, reading until "\n".
-     */
-    ch = 0;
-    memset (read_buf, 0, PATH_MAX);
-    for (i = 0; (i < (PATH_MAX - 1)) && (ch != '\n'); i++)
-      {
-        recv (sock, &ch, 1, 0);
-        read_buf[i] = ch;
-      }
-
-    if (strcmp (read_buf, "I HATE YOU\n") == 0)
-      {
-        /* Authorization not granted. */
-        if (shutdown (sock, 2) < 0)
-          {
-            error (0, 0, 
-                   "authorization failed: server %s rejected access", 
-                   server_host);
-            error (1, errno,
-                   "shutdown() failed (server %s)", server_host);
-          }
-   
-        if (verify_only)
-          return 0;
-        else
-          error (1, 0, 
-                 "authorization failed: server %s rejected access", 
-                 server_host);
-      }     
-    else if (strcmp (read_buf, "I LOVE YOU\n") != 0)
-      {
-        /* Unrecognized response from server. */
-        if (shutdown (sock, 2) < 0)
-          {
-            error (0, 0,
-                   "unrecognized auth response from %s: %s", 
-                   server_host, read_buf);
-            error (1, errno, "shutdown() failed, server %s", server_host);
-          }
-        error (1, 0, 
-               "unrecognized auth response from %s: %s", 
-               server_host, read_buf);
-      }
-  }
-
-  if (verify_only)
     {
-      if (shutdown (sock, 2) < 0)
-        error (0, errno, "shutdown() failed, server %s", server_host);
-      return 1;
+	if (shutdown (sock, 2) < 0)
+	    error (0, errno, "shutdown() failed, server %s", server_host);
+	return 1;
     }
-  else
+    else
     {
 #ifdef NO_SOCKET_TO_FD
-      use_socket_style = 1;
-      server_sock = sock;
-      /* Try to break mistaken callers: */
-      *tofdp = 0;
-      *fromfdp = 0;
+	use_socket_style = 1;
+	server_sock = sock;
+	/* Try to break mistaken callers: */
+	*tofdp = 0;
+	*fromfdp = 0;
 #else /* ! NO_SOCKET_TO_FD */
-      server_fd = sock;
-      close_on_exec (server_fd);
-      tofd = fromfd = sock;
-      /* Hand them back to the caller. */
-      *tofdp   = tofd;
-      *fromfdp = fromfd;
+	server_fd = sock;
+	close_on_exec (server_fd);
+	tofd = fromfd = sock;
+	/* Hand them back to the caller. */
+	*tofdp   = tofd;
+	*fromfdp = fromfd;
 #endif /* NO_SOCKET_TO_FD */
     }
 
-  return 1;
+    return 1;
 }
 #endif /* AUTH_CLIENT_SUPPORT */
 
