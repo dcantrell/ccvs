@@ -1,4 +1,11 @@
+Changes since 1.11.1:
+
+* Read only access was broken - now fixed.
+
 Changes since 1.11:
+
+* There was a bug in the diff code which sometimes caused conflicts to be flagged which
+shouldn't have been.  This has been fixed.
 
 * New "cvs rlog" and "cvs rannotate" commands have been added to get log
 messages and annotations without having to have a checked-out copy.

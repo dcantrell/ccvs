@@ -1,6 +1,6 @@
 dnl configure.in for cvs
 AC_INIT(src/cvs.h)
-AM_INIT_AUTOMAKE(cvs, 1.11.1)
+AM_INIT_AUTOMAKE(cvs, 1.11.1p1)
 AC_PREREQ(2.13)
 AC_PREFIX_PROGRAM(cvs)
 AM_CONFIG_HEADER(config.h src/options.h)
