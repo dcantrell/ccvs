@@ -1,3 +1,7 @@
+2004-02-26  Derek Price  <derek@ximbiot.com>
+
+	* cvsnt.mak (xmalloc.obj, xstrdup.obj): s/windows-NT/lib/.
+
 2004-02-25  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note `checkout -d' behavior change.

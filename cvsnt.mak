@@ -2461,7 +2461,7 @@ DEP_CPP_EXITFAIL_C=\
 SOURCE=.\lib\xmalloc.c
 DEP_CPP_XMALLOC_C=\
 	".\windows-NT\config.h"\
-	".\windows-NT\xalloc.h"\
+	".\lib\xalloc.h"\
 	
 "$(INTDIR)\xmalloc.obj" : $(SOURCE) $(DEP_CPP_XMALLOC_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
@@ -2473,7 +2473,7 @@ DEP_CPP_XMALLOC_C=\
 SOURCE=.\lib\xstrdup.c
 DEP_CPP_XSTRDUP_C=\
 	".\windows-NT\config.h"\
-	".\windows-NT\xalloc.h"\
+	".\lib\xalloc.h"\
 	
 "$(INTDIR)\xstrdup.obj" : $(SOURCE) $(DEP_CPP_XSTRDUP_C) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
