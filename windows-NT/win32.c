@@ -27,6 +27,23 @@ init_winsock ()
     }
 }
 
+void
+wnt_cleanup (void)
+{
+    if (WSACleanup ())
+    {
+	if (server_active || error_use_protocol)
+	    /* FIXME: how are we supposed to report errors?  As of now
+	       (Sep 98), error() can in turn call us (if it is out of
+	       memory) and in general is built on top of lots of
+	       stuff.  */
+	    ;
+	else
+	    fprintf (stderr, "cvs: cannot WSACleanup: %s\n",
+		     sock_strerror (WSAGetLastError ()));
+    }
+}
+
 unsigned sleep(unsigned seconds)
 {
 	Sleep(1000*seconds);

@@ -291,6 +291,8 @@ extern void wnt_shutdown_server (int fd);
 
 #define SYSTEM_INITIALIZE(pargc,pargv) init_winsock()
 extern void init_winsock();
+#define SYSTEM_CLEANUP() wnt_cleanup
+extern void wnt_cleanup (void);
 
 #define HAVE_WINSOCK_H
 
