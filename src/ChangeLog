@@ -1,3 +1,7 @@
+1996-11-16  Paul Eggert  <eggert@twinsun.com>
+
+	* rcs.c (RCS_deltas): Fix unintended trigraphs.
+
 Fri Nov 15 13:06:03 1996  Tom Hageman  <tom@basil.icce.rug.nl>
 
 	* diff.c (diff_fileproc): In printing error messages, use the
