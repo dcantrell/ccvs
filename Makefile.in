@@ -95,7 +95,7 @@ DISTFILES = \
 	configure configure.in stamp-h.in config.h.in Makefile.in acconfig.h \
 	cvs-format.el mkinstalldirs install-sh \
 	cvsnt.mak \
-	.cvsignore
+	.cvsignore cvs.spec
 
 ### Subdirectories to run make in for the primary targets.
 # Unix source subdirs, where we'll want to run lint and etags:

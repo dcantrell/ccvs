@@ -1,3 +1,7 @@
+Wed Sep  4 13:55:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (DISTFILES): Add cvs.spec.
+
 Mon Aug 26 15:30:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* TODO: Add item suggesting "cvs message" command.
