@@ -1,5 +1,19 @@
 Changes since 1.11.5:
 
+* A warning message is now issued if an administrative file contains
+more than one DEFAULT entry.
+
+* An error running a verifymsg script (such as referencing an unset user
+variable or the script not existing) now causes the verification to
+fail.
+
+* Errors in administrative files commands (like unset user variables)
+are no longer reported unless the command is actually executed.
+
+* When a file is initially checked out, its last access time is now set
+to the current time rather than being set to the time the file was last
+checked in like the modification time is.
+
 * The Checkin.prog and Update.prog functionality has been removed.  This
 fuctionality previously allowed executables to be specified in the modules file
 to be run at update and checkin time, but users could edit these files on a per

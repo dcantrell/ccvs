@@ -15750,16 +15750,27 @@ done"
 BugId: new
 See what happens next.
 ============================================================================="
-	  cd ..
 
-	  cd CVSROOT
-	  echo '# do nothing' >verifymsg
+	  cd ../CVSROOT
+	  echo 'DEFAULT echo first' >verifymsg
+	  echo 'DEFAULT echo second' >>verifymsg
 	  echo '# defaults' >config
-	  dotest info-cleanup-verifymsg "${testcvs} -q ci -m nuke-verifymsg" \
+	  dotest info-multdef "${testcvs} -q ci -m multdef" \
 "Checking in config;
 ${CVSROOT_DIRNAME}/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 done
+Checking in verifymsg;
+${CVSROOT_DIRNAME}/CVSROOT/verifymsg,v  <--  verifymsg
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+
+	  cd ../CVSROOT
+	  echo '# do nothing' >verifymsg
+	  dotest info-cleanup-verifymsg "${testcvs} -q ci -m nuke-verifymsg" \
+"${PROG} [a-z]*: Multiple .DEFAULT. lines (1 and 2) in verifymsg file
+second .*
 Checking in verifymsg;
 ${CVSROOT_DIRNAME}/CVSROOT/verifymsg,v  <--  verifymsg
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
