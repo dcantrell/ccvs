@@ -487,14 +487,14 @@ int Parse_Info (const char *infofile, const char *repository,
 
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	(int);
 int SIG_register (int sig, SIGCLEANUPPROC sigcleanup);
-int isdir (const char *file);
-int isfile (const char *file);
-int islink (const char *file);
-int isdevice (const char *file);
-int isreadable (const char *file);
-int iswritable (const char *file);
-int isaccessible (const char *file, const int mode);
-int isabsolute (const char *filename);
+bool isdir (const char *file);
+bool isfile (const char *file);
+bool islink (const char *file);
+bool isdevice (const char *file);
+bool isreadable (const char *file);
+bool iswritable (const char *file);
+bool isaccessible (const char *file, const int mode);
+bool isabsolute (const char *filename);
 #ifdef HAVE_READLINK
 char *xreadlink (const char *link);
 #endif /* HAVE_READLINK */

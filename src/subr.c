@@ -1801,9 +1801,9 @@ format_cmdline (const char *format, ...)
 
 
 
-/* Return non-zero iff FILENAME is absolute.
+/* Return true iff FILENAME is absolute.
    Trivial under Unix, but more complicated under other systems.  */
-int
+bool
 isabsolute (filename)
     const char *filename;
 {
