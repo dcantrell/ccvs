@@ -799,6 +799,19 @@ receive_partial_file (size, file)
 		if (pending_error_text != NULL)
 		    sprintf (pending_error_text, "E unable to write");
 		pending_error = errno;
+
+		/* Read and discard the file data.  */
+		while (size > 0)
+		{
+		    int status, nread;
+		    char *data;
+
+		    status = buf_read_data (buf_from_net, size, &data, &nread);
+		    if (status != 0)
+			return;
+		    size -= nread;
+		}
+
 		return;
 	    }
 	    nread -= nwrote;
@@ -955,7 +968,7 @@ serve_modified (arg)
     if (error_pending ())
     {
         /* Now that we know the size, read and discard the file data.  */
-        while (size >= 0)
+	while (size > 0)
 	{
 	    int status, nread;
 	    char *data;
