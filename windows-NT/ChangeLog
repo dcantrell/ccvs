@@ -1,3 +1,7 @@
+Thu Oct  5 17:28:52 1995  Kevin Layer  <layer@franz.com>
+
+	* filesubr.c: Add semicolon after USE.
+
 Thu Sep 7  19:18:00 1995  Jim Blandy  <jimb@cyclic.com>
 
 	* config.h (CVS_SUPPORT): #define this.
