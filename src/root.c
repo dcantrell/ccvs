@@ -485,7 +485,7 @@ parse_cvsroot (const char *root_in)
      */
     TRACE (TRACE_FLOW, "parse_cvsroot (%s)", root_in);
 
-    if (cache && (node = findnode (cache, root_in)))
+    if (node = findnode (cache, root_in))
 	return node->data;
 
     /* allocate some space */

@@ -1,5 +1,9 @@
 2004-12-08  Derek Price  <derek@ximbiot.com>
 
+	* root.c (parse_cvsroot): findnode() compares LIST to NULL w/o help.
+
+2004-12-08  Derek Price  <derek@ximbiot.com>
+
 	* root.c (Name_root), server.c (serve_referrer): Don't free cvsroot_t.
 	* server.sh (reposmv): Reaccount for multiple potential warnings and
 	comment.
