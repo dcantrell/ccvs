@@ -1,3 +1,15 @@
+2000-02-10  Larry Jones  <larry.jones@sdrc.com>
+
+	* cvs.h: Always #include "server.h" to prevent compile errors when
+	neither CLIENT_SUPPORT nor SERVER_SUPPORT is defined.
+	(Reported by "Crow, Ian" <ian.crow@linklaters.com>.)
+	* log.c (send_one, send_arg_list): Only define when CLIENT_SUPPORT
+	is defined to prevent link errors.
+
+	* server.c (server): Always create a new temporary directory, don't
+	try to reuse an existing one since we might not have correct
+	permissions.  Also, include directory name in error messages.
+
 2000-01-29  Jim Kingdon  <http://developer.redhat.com/>
 
 	* ignore.c (ignore_files): Correctly set errno to 0 when we go

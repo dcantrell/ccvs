@@ -149,6 +149,8 @@ static const char *const log_usage[] =
     NULL
 };
 
+#ifdef CLIENT_SUPPORT
+
 /* Helper function for send_arg_list.  */
 static int send_one PROTO ((Node *, void *));
 
@@ -185,6 +187,8 @@ send_arg_list (option, arg)
 	return;
     walklist (arg, send_one, (void *)option);
 }
+
+#endif
 
 int
 cvslog (argc, argv)
