@@ -400,7 +400,7 @@ dirswitch (dir, repos)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", repos) == EOF)
+    if (fprintf (f, "%s\n", repos) < 0)
     {
 	pending_error = errno;
 	fclose (f);
@@ -495,7 +495,7 @@ serve_sticky (arg)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
 	return;
@@ -887,7 +887,7 @@ server_write_entries ()
     {
 	if (!error_pending ())
 	{
-	    if (fprintf (f, "%s\n", p->entry) == EOF)
+	    if (fprintf (f, "%s\n", p->entry) < 0)
 	    {
 		pending_error = errno;
 	    }
@@ -3142,7 +3142,7 @@ serve_checkin_prog (arg)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
 	return;
@@ -3165,7 +3165,7 @@ serve_update_prog (arg)
 	pending_error = errno;
 	return;
     }
-    if (fprintf (f, "%s\n", arg) == EOF)
+    if (fprintf (f, "%s\n", arg) < 0)
     {
 	pending_error = errno;
 	return;

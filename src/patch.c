@@ -170,25 +170,25 @@ patch (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	if (really_quiet)
-	    if (fprintf (to_server, "Argument -Q\n") == EOF)
+	    if (fprintf (to_server, "Argument -Q\n") < 0)
 		error (1, errno, "writing to server");
 	if (quiet)
-	    if (fprintf (to_server, "Argument -q\n") == EOF)
+	    if (fprintf (to_server, "Argument -q\n") < 0)
 		error (1, errno, "writing to server");
 	if (force_tag_match)
-	    if (fprintf (to_server, "Argument -f\n") == EOF)
+	    if (fprintf (to_server, "Argument -f\n") < 0)
 		error (1, errno, "writing to server");
 	if (toptwo_diffs)
-	    if (fprintf (to_server, "Argument -t\n") == EOF)
+	    if (fprintf (to_server, "Argument -t\n") < 0)
 		error (1, errno, "writing to server");
 	if (patch_short)
-	    if (fprintf (to_server, "Argument -s\n") == EOF)
+	    if (fprintf (to_server, "Argument -s\n") < 0)
 		error (1, errno, "writing to server");
 	if (unidiff)
-	    if (fprintf (to_server, "Argument -u\n") == EOF)
+	    if (fprintf (to_server, "Argument -u\n") < 0)
 		error (1, errno, "writing to server");
 
 	if (rev1)
@@ -208,7 +208,7 @@ patch (argc, argv)
 		send_arg (argv[i]);
 	}
 
-	if (fprintf (to_server, "rdiff\n") == EOF)
+	if (fprintf (to_server, "rdiff\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }

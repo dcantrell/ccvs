@@ -233,19 +233,19 @@ commit (argc, argv)
 	option_with_arg ("-m", message);
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	if (force_ci)
-	    if (fprintf (to_server, "Argument -f\n") == EOF)
+	    if (fprintf (to_server, "Argument -f\n") < 0)
 		error (1, errno, "writing to server");
 	if (!run_module_prog)
-	    if (fprintf (to_server, "Argument -n\n") == EOF)
+	    if (fprintf (to_server, "Argument -n\n") < 0)
 		error (1, errno, "writing to server");
 	option_with_arg ("-r", tag);
 
 	send_files (argc, argv, local, 0);
 
-	if (fprintf (to_server, "ci\n") == EOF)
+	if (fprintf (to_server, "ci\n") < 0)
 	    error (1, errno, "writing to server");
 	return get_responses_and_close ();
     }
@@ -1901,7 +1901,7 @@ mark_dead (file, repository, new_rev)
     /* Now add NEW_REV to the revisions in the CVSDEA file for this file.  */
     sprintf (deafilename, "%s/%s/%s", repository, CVSDEA, file);
     deafile = open_file (deafilename, "a");
-    if (fprintf (deafile, "%s\n", new_rev) == EOF)
+    if (fprintf (deafile, "%s\n", new_rev) < 0)
 	error (1, errno, "cannot write %s", deafilename);
     if (fclose (deafile) == EOF)
 	error (1, errno, "cannot close %s", deafilename);

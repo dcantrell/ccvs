@@ -270,24 +270,24 @@ checkout (argc, argv)
 	if (pipeout) send_arg ("-p");
 	if (!force_tag_match) send_arg ("-f");
 	if (aflag)
-	    if (fprintf (to_server, "Argument -A\n") == EOF)
+	    if (fprintf (to_server, "Argument -A\n") < 0)
 		error (1, errno, "writing to server");
 	if (!shorten)
-	    if (fprintf (to_server, "Argument -N\n") == EOF)
+	    if (fprintf (to_server, "Argument -N\n") < 0)
 		error (1, errno, "writing to server");
 	if (checkout_prune_dirs && strcmp (command_name, "export") != 0)
-	    if (fprintf (to_server, "Argument -P\n") == EOF)
+	    if (fprintf (to_server, "Argument -P\n") < 0)
 		error (1, errno, "writing to server");
 	client_prune_dirs = checkout_prune_dirs;
 	if (cat)
-	    if (fprintf (to_server, "Argument -c\n") == EOF)
+	    if (fprintf (to_server, "Argument -c\n") < 0)
 		error (1, errno, "writing to server");
 	if (where != NULL)
 	{
 	    option_with_arg ("-d", where);
 	}
 	if (status)
-	    if (fprintf (to_server, "Argument -s\n") == EOF)
+	    if (fprintf (to_server, "Argument -s\n") < 0)
 		error (1, errno, "writing to server");
 	if (strcmp (command_name, "export") != 0
 	    && options != NULL
@@ -316,7 +316,7 @@ checkout (argc, argv)
 	if (fprintf
 	    (to_server,
 	     strcmp (command_name, "export") == 0 ? "export\n" : "co\n")
-	    == EOF)
+	    < 0)
 	  error (1, errno, "writing to server");
 
 	return get_responses_and_close ();

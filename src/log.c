@@ -97,7 +97,7 @@ cvslog (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	send_option_string (options);
 	if (dates_opt) send_arg (dates_opt);
@@ -114,7 +114,7 @@ cvslog (argc, argv)
 	send_files (argc, argv, local, 0);
 #endif
 
-	if (fprintf (to_server, "log\n") == EOF)
+	if (fprintf (to_server, "log\n") < 0)
 	    error (1, errno, "writing to server");
         err = get_responses_and_close ();
 	return err;

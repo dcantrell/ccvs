@@ -1,3 +1,11 @@
+Fri May 26 14:34:28 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
+
+	* add.c, admin.c, checkout.c, client.c, commit.c, diff.c,
+	  history.c, import.c, log.c, patch.c, release.c, remove.c,
+	  rtag.c, server.c, status.c, tag.c, update.c: Changed
+	  conditionals so that return value of *printf is tested less than
+	  0 instead of equal to EOF.
+
 Thu May 25 08:30:12 1995  Jim Kingdon  (kingdon@lioth.cygnus.com)
 
 	* subr.c (xmalloc): Never try to malloc zero bytes; if the user

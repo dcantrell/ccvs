@@ -169,10 +169,10 @@ diff (argc, argv)
 	ign_setup ();
 
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	if (empty_files)
-	    if (fprintf (to_server, "Argument -N\n") == EOF)
+	    if (fprintf (to_server, "Argument -N\n") < 0)
 		error (1, errno, "writing to server");
 	send_option_string (opts);
 	if (diff_rev1)
@@ -197,7 +197,7 @@ diff (argc, argv)
 	send_files (argc, argv, local, 0);
 #endif
 
-	if (fprintf (to_server, "diff\n") == EOF)
+	if (fprintf (to_server, "diff\n") < 0)
 	    error (1, errno, "writing to server");
         err = get_responses_and_close ();
 	free (options);

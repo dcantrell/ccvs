@@ -78,10 +78,10 @@ cvsremove (argc, argv)
 	start_server ();
 	ign_setup ();
 	if (local)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	send_files (argc, argv, local, 0);
-	if (fprintf (to_server, "remove\n") == EOF)
+	if (fprintf (to_server, "remove\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }

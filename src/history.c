@@ -542,25 +542,25 @@ history (argc, argv)
 	ign_setup ();
 
 	if (tag_report)
-	    if (fprintf (to_server, "Argument -T\n") == EOF)
+	    if (fprintf (to_server, "Argument -T\n") < 0)
 		error (1, errno, "writing to server");
 	if (all_users)
-	    if (fprintf (to_server, "Argument -a\n") == EOF)
+	    if (fprintf (to_server, "Argument -a\n") < 0)
 		error (1, errno, "writing to server");
 	if (modified)
-	    if (fprintf (to_server, "Argument -c\n") == EOF)
+	    if (fprintf (to_server, "Argument -c\n") < 0)
 		error (1, errno, "writing to server");
 	if (last_entry)
-	    if (fprintf (to_server, "Argument -l\n") == EOF)
+	    if (fprintf (to_server, "Argument -l\n") < 0)
 		error (1, errno, "writing to server");
 	if (v_checkout)
-	    if (fprintf (to_server, "Argument -o\n") == EOF)
+	    if (fprintf (to_server, "Argument -o\n") < 0)
 		error (1, errno, "writing to server");
 	if (working)
-	    if (fprintf (to_server, "Argument -w\n") == EOF)
+	    if (fprintf (to_server, "Argument -w\n") < 0)
 		error (1, errno, "writing to server");
 	if (histfile)
-	    if (fprintf (to_server, "Argument -X\n") == EOF)
+	    if (fprintf (to_server, "Argument -X\n") < 0)
 		error (1, errno, "writing to server");
 	if (since_date)
 	    option_with_arg ("-D", asctime (gmtime (&since_date)));
@@ -574,7 +574,7 @@ history (argc, argv)
 		option_with_arg ("-f", f1->l_file);
 	}
 	if (module_report)
-	    if (fprintf (to_server, "Argument -m\n") == EOF)
+	    if (fprintf (to_server, "Argument -m\n") < 0)
 		error (1, errno, "writing to server");
 	for (mod = mod_list; mod < &mod_list[mod_count]; ++mod)
 	    option_with_arg ("-n", *mod);
@@ -588,7 +588,7 @@ history (argc, argv)
 	    option_with_arg ("-x", rec_types);
 	option_with_arg ("-z", tz_name);
 
-	if (fprintf (to_server, "history\n") == EOF)
+	if (fprintf (to_server, "history\n") < 0)
 	    error (1, errno, "writing to server");
         return get_responses_and_close ();
     }
@@ -810,7 +810,7 @@ history_write (type, update_dir, revs, name, repository)
     }
 
     if (fprintf (fp, "%c%08x|%s|%s|%s|%s|%s\n", type, time ((time_t *) NULL),
-		 username, workdir, repos, revs ? revs : "", name) == EOF)
+		 username, workdir, repos, revs ? revs : "", name) < 0)
 	error (1, errno, "cannot write to history file: %s", fname);
     (void) fclose (fp);
 }
