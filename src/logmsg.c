@@ -315,6 +315,7 @@ do_editor (dir, messagep, repository, changes)
 
     if (*messagep)
     {
+	size_t message_len = post_stbuf.st_size + 1;
 	p = *messagep;
 	while (1)
 	{
@@ -327,6 +328,9 @@ do_editor (dir, messagep, repository, changes)
 	    }
 	    if (strncmp (line, CVSEDITPREFIX, CVSEDITPREFIXLEN) == 0)
 		continue;
+	    if (p - *messagep + line_length >= message_len)
+		expand_string (messagep, &message_len,
+				p - *messagep + line_length);
 	    (void) strcpy (p, line);
 	    p += line_length;
 	}
