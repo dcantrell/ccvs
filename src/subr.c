@@ -776,3 +776,35 @@ backup_file (filename, suffix)
     return backup_name;
 }
 
+/*
+ * Copy a string into a buffer escaping any shell metacharacters.  The
+ * buffer should be at least twice as long as the string.
+ *
+ * Returns a pointer to the terminating NUL byte in buffer.
+ */
+
+char *
+shell_escape(buf, str)
+    char *buf;
+    const char *str;
+{
+    static const char meta[] = "$`\\\"";
+    const char *p;
+
+    for (;;)
+    {
+	p = strpbrk(str, meta);
+	if (!p) p = str + strlen(str);
+	if (p > str)
+	{
+	    memcpy(buf, str, p - str);
+	    buf += p - str;
+	}
+	if (!*p) break;
+	*buf++ = '\\';
+	*buf++ = *p++;
+	str = p;
+    }
+    *buf = '\0';
+    return buf;
+}
