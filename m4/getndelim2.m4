@@ -1,7 +1,5 @@
 # getndelim2.m4 serial 1
-
 dnl Copyright (C) 2003 Free Software Foundation, Inc.
-
 dnl This file is free software, distributed under the terms of the GNU
 dnl General Public License.  As a special exception to the GNU General
 dnl Public License, this file may be distributed as part of a program
@@ -10,7 +8,14 @@ dnl the same distribution terms as the rest of that program.
 
 AC_DEFUN([gl_GETNDELIM2],
 [
-  AC_REQUIRE([AC_HEADER_STDC])
+  gl_PREREQ_GETNDELIM2
+])
+
+# Prerequisites of lib/getndelim2.h and lib/getndelim2.c.
+AC_DEFUN([gl_PREREQ_GETNDELIM2],
+[
+  dnl Prerequisites of lib/getndelim2.h.
   AC_REQUIRE([gt_TYPE_SSIZE_T])
-  AC_LIBOBJ(getndelim2)
+  dnl Prerequisites of lib/getndelim2.c.
+  AC_REQUIRE([AC_HEADER_STDC])
 ])
