@@ -10792,6 +10792,22 @@ done"
 1\.2          (${username} *[0-9a-zA-Z-]*): line
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
 1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
+	  # FIXCVS: shouldn't "-r 1.2.0.2" be the same as "-r br"?
+	  dotest ann-12 "${testcvs} ann -r 1.2.0.2 file1" ""
+	  dotest ann-13 "${testcvs} ann -r 1.2.2 file1" \
+"Annotations for file1
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+1\.1          (${username} *[0-9a-zA-Z-]*): this
+1\.1          (${username} *[0-9a-zA-Z-]*): is
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.1          (${username} *[0-9a-zA-Z-]*): file
+1\.2          (${username} *[0-9a-zA-Z-]*): 
+1\.2          (${username} *[0-9a-zA-Z-]*): with
+1\.2          (${username} *[0-9a-zA-Z-]*): a
+1\.2          (${username} *[0-9a-zA-Z-]*): blank
+1\.2          (${username} *[0-9a-zA-Z-]*): line
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): and some
+1\.2\.2\.1      (${username} *[0-9a-zA-Z-]*): branched content"
 
 	  cd ../..
 	  rm -r 1
