@@ -1431,15 +1431,17 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    size_t nread;
 	    size_t toread;
 
-	    /* size should be unsigned, but until we get around to fixing that, work around
-	       it.  */
-	    size_t usize = size;
+	    /* size should be unsigned, but until we get around to fixing
+	       that, work around it.  */
+	    size_t usize;
 
 	    char buf[8192];
 
 	    error (0, 0, "move away %s; it is in the way", short_pathname);
 
+	discard_file_and_return:
 	    /* Now read and discard the file contents.  */
+	    usize = size;
 	    nread = 0;
 	    while (nread < usize)
 	    {
@@ -1488,17 +1490,26 @@ update_entries (data_arg, ent_list, short_pathname, filename)
                    0777);
 
 	if (fd < 0)
-	    error (1, errno, "writing %s", short_pathname);
+	{
+	    /* I can see a case for making this a fatal error; for a condition
+	       like disk full or network unreachable (for a file server),
+	       carrying on and giving an error on each file seems unnecessary.
+	       But if it is a permission problem, or some such, then it is
+	       entirely possible that future files will not have the same
+	       problem.  */
+	    error (0, errno, "cannot write %s", short_pathname);
+	    goto discard_file_and_return;
+	}
 
 	if (use_gzip)
 	    fd = filter_through_gunzip (fd, 0, &gzip_pid);
 
 	if (size > 0)
 	{
-          read_from_server (buf, size);
-	    
-          if (write (fd, buf, size) != size)
-            error (1, errno, "writing %s", short_pathname);
+	    read_from_server (buf, size);
+
+	    if (write (fd, buf, size) != size)
+		error (1, errno, "writing %s", short_pathname);
 	}
 
 	if (close (fd) < 0)
