@@ -1,3 +1,8 @@
+Mon Nov 10 11:15:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c (call_diff, call_diff3): Removed, per change to
+	src/rcscmds.c.
+
 Fri Oct 31 16:52:30 1997  Abe Feldman
 
 	* config.h: Define UTIME_EXPECTS_WRITABLE.
