@@ -93,10 +93,9 @@ release (argc, argv)
       }
 #endif /* CLIENT_SUPPORT */
 
-    /* On the server, argv[0] is "Dummy argument", but on the client,
-     * it means something.  So the initializer of the `for' loop is
-     * different depending which side we're on.
-     */
+    /* If !server_active, we already skipped over argv[0] in the "argc
+       -= optind;" statement above.  But if server_active, we need to
+       skip it now.  */
 #ifdef SERVER_SUPPORT
     if (server_active)
       arg_start_idx = 1;
