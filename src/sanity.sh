@@ -23605,8 +23605,8 @@ EOF
 
 	    # pserver used to try and print from the NULL pointer 
 	    # in this error message in this case
-	    dotest_fail pserver-bufinit "cat /dev/null |${testcvs} pserver" \
-"$PROG \[pserver aborted\]: bad auth protocol start: "
+	    dotest_fail pserver-bufinit "${testcvs} pserver" \
+"$PROG \[pserver aborted\]: bad auth protocol start: EOF" </dev/null
 
 	    # Clean up.
 	    echo "# comments only" >config
