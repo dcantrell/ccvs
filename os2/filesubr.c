@@ -22,6 +22,9 @@
    file system semantics.  */
 
 #include <io.h>
+#define INCL_DOSFILEMGR   /* File Manager values */
+#define INCL_DOSERRORS
+#include <os2.h>
 
 #include "cvs.h"
 
@@ -739,8 +742,7 @@ get_homedir ()
     return getenv ("HOME");
 }
 
-/* See cvs.h for description.  On OS/2 this does nothing, but it probably
-   should be expanding wildcards like on NT.  */
+/* See cvs.h for description.  */
 void
 expand_wild (argc, argv, pargc, pargv)
     int argc;
@@ -749,8 +751,87 @@ expand_wild (argc, argv, pargc, pargv)
     char ***pargv;
 {
     int i;
-    *pargc = argc;
-    *pargv = (char **) xmalloc (argc * sizeof (char *));
+    int new_argc;
+    char **new_argv;
+    /* Allocated size of new_argv.  We arrange it so there is always room for
+	   one more element.  */
+    int max_new_argc;
+
+    new_argc = 0;
+    /* Add one so this is never zero.  */
+    max_new_argc = argc + 1;
+    new_argv = (char **) xmalloc (max_new_argc * sizeof (char *));
     for (i = 0; i < argc; ++i)
-	(*pargv)[i] = xstrdup (argv[i]);
+    {
+	HDIR          FindHandle = 0x0001;
+	FILEFINDBUF3  FindBuffer;
+	ULONG         FindCount = 1;
+	APIRET        rc;          /* Return code */
+#define ALL_FILES (FILE_ARCHIVED|FILE_DIRECTORY|FILE_SYSTEM|FILE_HIDDEN|FILE_READONLY) 
+ 
+	rc = DosFindFirst(argv[i],               /* File pattern */
+			  &FindHandle,           /* Directory search handle */
+			  ALL_FILES,             /* Search attribute */
+			  (PVOID) &FindBuffer,   /* Result buffer */
+			  sizeof(FindBuffer),    /* Result buffer length */
+			  &FindCount,            /* Number of entries to find */
+			  FIL_STANDARD);	 /* Return level 1 file info */
+ 
+	if (rc != 0)
+	{
+	    if (rc == ERROR_FILE_NOT_FOUND)
+	    {
+		/* No match.  The file specified didn't contain a wildcard (in which case
+		   we clearly should return it unchanged), or it contained a wildcard which
+		   didn't match (in which case it might be better for it to be an error,
+		   but we don't try to do that).  */
+		new_argv [new_argc++] = xstrdup (argv[i]);
+		if (new_argc == max_new_argc)
+		{
+		    max_new_argc *= 2;
+		    new_argv = xrealloc (new_argv, max_new_argc * sizeof (char *));
+		}
+	    }
+	    else
+	    {
+		error (1, rc, "cannot find %s", argv[i]);
+	    }
+	}
+	else
+	{
+	    while (1)
+	    {
+		/*
+		 * Don't match ".", "..", and files starting with '.'
+		 * (unless pattern also starts with '.').  This is
+		 * (more or less) what standard Unix globbing does.
+		 */
+		if ((strcmp(FindBuffer.achName, ".") != 0) &&
+		    (strcmp(FindBuffer.achName, "..") != 0) &&
+		    ((argv[i][0] == '.') || (FindBuffer.achName[0] != '.')))
+		{
+		    new_argv [new_argc++] = xstrdup (FindBuffer.achName);
+		    if (new_argc == max_new_argc)
+		    {
+			max_new_argc *= 2;
+			new_argv = xrealloc (new_argv, max_new_argc * sizeof (char *));
+		    }
+		}
+		
+		rc = DosFindNext(FindHandle,
+                     (PVOID) &FindBuffer,
+                     sizeof(FindBuffer),
+                     &FindCount);
+		if (rc == ERROR_NO_MORE_FILES)
+		    break;
+		else if (rc != NO_ERROR)
+		    error (1, rc, "cannot find %s", argv[i]);
+	    }
+	    rc = DosFindClose(FindHandle);
+	    if (rc != 0)
+		error (1, rc, "cannot close %s", argv[i]);
+	}
+    }
+    *pargc = new_argc;
+    *pargv = new_argv;
 }

@@ -1,3 +1,8 @@
+Tue May  7 10:50:13 MET DST 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* filesubr.c (expand_wild): Real implementation (like
+	Windows-NT) for expanding.
+
 Thu Apr 25 09:28:10 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* README: Add note about LF vs. CRLF in makefile.
