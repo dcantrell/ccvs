@@ -12344,8 +12344,13 @@ still provided).
 For example, some valid format strings are @samp{%},
 @samp{%s}, @samp{%@{s@}}, and @samp{%@{sVv@}}.
 
-The output will be a string of tokens separated by
-spaces.  For backwards compatibility, the first
+The output will be a space separated string of tokens enclosed in
+quotation marks (@t{"}).
+Any embedded dollar signs (@t{$}), backticks (@t{`}),
+backslashes (@t{\}), or quotation marks will be preceded
+by a backslash (this allows the shell to correctly parse it
+as a single string, reguardless of the characters it contains).
+For backwards compatibility, the first
 token will be the repository subdirectory.  The rest of the
 tokens will be comma-delimited lists of the information
 requested in the format string.  For example, if
@@ -12355,7 +12360,7 @@ is the format string, and three files (@t{ChangeLog},
 might be:
 
 @example
-yoyodyne/tc ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13
+"yoyodyne/tc ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13"
 @end example
 
 As another example, @samp{%@{@}} means that only the
