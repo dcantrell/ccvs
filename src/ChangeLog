@@ -1,3 +1,8 @@
+Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in, cvs.h, hash.h, myndbm.h, rcs.h: Remove CVSid; we
+	decided to get rid of these some time ago.
+
 Tue Jan  7 12:56:10 1997  Karl Fogel  <kfogel@ynu38.ynu.edu.cn>
 
         * root.c (check_root_consistent): new func, compares below new
