@@ -33,6 +33,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -67,6 +68,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -101,6 +103,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -135,6 +138,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -171,6 +175,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -205,6 +210,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -239,6 +245,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -280,6 +287,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -318,6 +326,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -352,6 +361,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -387,6 +397,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -421,6 +432,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -459,6 +471,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -494,6 +507,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -528,6 +542,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -562,6 +577,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -596,6 +612,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -632,6 +649,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -667,6 +685,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -701,6 +720,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -735,6 +755,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -771,6 +792,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -806,6 +828,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -841,12 +864,14 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
 ".\windows-NT\JmgStat.c" : \
 	".\windows-NT\JmgStat.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	
 
 .\src\lock.c : \
@@ -880,6 +905,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -914,6 +940,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -948,6 +975,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -984,6 +1012,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1019,6 +1048,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1053,6 +1083,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1088,6 +1119,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1122,6 +1154,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1159,6 +1192,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1194,6 +1228,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1229,6 +1264,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1268,6 +1304,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1304,6 +1341,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1339,6 +1377,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1379,6 +1418,7 @@
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1415,6 +1455,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1450,6 +1491,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1487,6 +1529,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1523,6 +1566,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1557,6 +1601,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1592,6 +1637,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1627,6 +1673,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1662,6 +1709,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1696,6 +1744,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1730,6 +1779,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1771,6 +1821,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1809,6 +1860,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1843,6 +1895,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1878,6 +1931,7 @@
 	".\windows-NT\pwd.h"\
 	".\windows-NT\rcmd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1912,6 +1966,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1949,6 +2004,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -1984,6 +2040,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2024,6 +2081,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2058,6 +2116,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2092,6 +2151,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2133,6 +2193,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2167,6 +2228,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2202,6 +2264,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
 
@@ -2236,6 +2299,7 @@
 	".\windows-NT\ndir.h"\
 	".\windows-NT\pwd.h"\
 	".\windows-NT\stdbool.h"\
+	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	".\zlib\zconf.h"\
 	".\zlib\zlib.h"\

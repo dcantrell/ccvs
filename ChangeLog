@@ -1,5 +1,10 @@
 2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* cvsnt.dsp: Add "windows-NT/stdint.h" to project.
+	* cvsnt.dep: Regenerated.
+
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
 	* configure: Regenerated.
 
 2004-10-22  Conrad T. Pino  <Conrad@Pino.com>
