@@ -168,9 +168,9 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
        "                       local=%d, which=%d, aflag=%d,\n"
        "                       locktype=%d, update_preload=%s\n"
        "                       dosrcs=%d, repository_in=%s )",
-	       fileproc, filesdoneproc,
-	       direntproc, dirleaveproc,
-	       callerdat, argc, argv,
+	       (void *) fileproc, (void *) filesdoneproc,
+	       (void *) direntproc, (void *) dirleaveproc,
+	       (void *) callerdat, argc, (void *) argv,
 	       local, which, aflag, locktype, update_preload, dosrcs,
 	       repository_in ? repository_in : "(null)");
 #else
@@ -588,7 +588,7 @@ do_recursion (struct recursion_frame *frame)
     int process_this_directory = 1;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", frame);
+    TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame);
 #else
     TRACE (TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame);
 #endif
@@ -875,7 +875,7 @@ do_recursion (struct recursion_frame *frame)
     repository = NULL;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", frame);
+    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", (void *) frame);
 #else
     TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%lx )", (unsigned long) frame);
 #endif
