@@ -1,5 +1,7 @@
 Wed Apr  9 15:21:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Working directory storage): New node.
+
 	* cvs.texinfo (Error messages): Add comment about "cvs co ." on
 	NT.
 

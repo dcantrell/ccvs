@@ -901,6 +901,7 @@ user-defined modules.
 @menu
 * Specifying a repository::     Telling CVS where your repository is
 * Repository storage::          The structure of the repository
+* Working directory storage::   The structure of working directories
 * Intro administrative files::  Defining modules
 * Multiple repositories::       Multiple repositories
 * Creating a repository::       Creating a repository
@@ -945,6 +946,8 @@ CVSROOT=/usr/local/cvsroot
 export CVSROOT
 @end example
 
+@cindex Root file, in CVS directory
+@cindex CVS/Root file
         A repository specified with @code{-d} will
 override the @code{$CVSROOT} environment variable.
 Once you've checked a working copy out from the
@@ -1204,6 +1207,232 @@ non-@code{dead} state.
 @c arrange the discussion of the dead state, versus
 @c discussion of the attic).
 
+@node Working directory storage
+@section How data is stored in the working directory
+
+While we are discussing @sc{cvs} internals which may
+become visible from time to time, we might as well talk
+about what @sc{cvs} puts in the @file{CVS} directories
+in the working directories.  As with the repository,
+@sc{cvs} handles this information and one can usually
+access it via @sc{cvs} commands.  But in some cases it
+may be useful to look at it, and other programs, such
+as the @code{jCVS} graphical user interface or the
+@code{VC} package for emacs, may need to look at it.
+Such programs should follow the recommendations in this
+section if they hope to be able to work with other
+programs which use those files, including future
+versions of the programs just mentioned and the
+command-line @sc{cvs} client.
+
+The @file{CVS} directory contains several files.
+Programs which are reading this directory should
+silently ignore files which are in the directory but
+which are not documented here, to allow for future
+expansion.
+
+@table @file
+@item Root
+This file contains the current @sc{cvs} root, as
+described in @ref{Specifying a repository}.
+
+@cindex Repository file, in CVS directory
+@cindex CVS/Repository file
+@item Repository
+This file contains the directory within the repository
+which the current directory corresponds with.  For
+historical reasons it is an absolute pathname, although
+it would make more sense for it to be relative to the
+root.  For example, after the command
+
+@example
+cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
+@end example
+
+@file{Root} will contain
+
+@example
+:local:/usr/local/cvsroot
+@end example
+
+and @file{Repository} will contain
+
+@example
+/usr/local/cvsroot/yoydyne/tc
+@end example
+
+@cindex Entries file, in CVS directory
+@cindex CVS/Entries file
+@item Entries
+This file lists the files and directories in the
+working directory.  It is a text file according to the
+conventions appropriate for the operating system in
+question.
+@c That seems like a lose, it makes it impossible (it
+@c would seem) to share a working directory via a
+@c networked file system between systems with diverse
+@c text file conventions.  But it seems to be how CVS
+@c currently works.
+The first character of each line indicates what sort of
+line it is.  If the character is unrecognized, programs
+reading the file should silently skip that line, to
+allow for future expansion.
+
+If the first character is @samp{/}, then the format is:
+
+@example
+/@var{name}/@var{revision}/@var{timestamp}[+@var{conflict}]/@var{options}/@var{tagdate}
+@end example
+
+where @samp{[} and @samp{]} are not part of the entry,
+but instead indicate that the @samp{+} and conflict
+marker are optional.  @var{name} is the name of the
+file within the directory.  @var{revision} is the
+revision that the file in the working derives from, or
+@samp{0} for an added file, or @samp{-} followed by a
+revision for a removed file.  @var{timestamp} is the
+timestamp of the file at the time that @sc{cvs} created
+it; if the timestamp differs with the actual
+modification time of the file it means the file has
+been modified.  @var{conflict} indicates that there was
+a conflict; if it is the same as the actual
+modification time of the file it means that the user
+has obviously not resolved the conflict.  @var{options}
+contains sticky options (for example @samp{-kb} for a
+binary file).  @var{tagdate} contains @samp{T} followed
+by a tag name, or @samp{D} for a date, followed by a
+sticky tag or date.  Note that if @var{timestamp}
+contains a pair of timestamps separated by a space,
+rather than a single timestamp, you are dealing with a
+version of @sc{cvs} earlier than @sc{cvs} 1.5 (not
+documented here).
+
+If the first character of a line in @file{Entries} is
+@samp{D}, then it indicates a subdirectory.  @samp{D}
+on a line all by itself indicates that the program
+which wrote the @file{Entries} file does record
+subdirectories (therefore, if there is such a line and
+no other lines beginning with @samp{D}, one knows there
+are no subdirectories).  Otherwise, the line looks
+like:
+
+@example
+D/@var{name}/@var{filler1}/@var{filler2}/@var{filler3}/@var{filler4}
+@end example
+
+where @var{name} is the name of the subdirectory, and
+all the @var{filler} fields should be silently ignored,
+for future expansion.  Programs which modify
+@code{Entries} files should preserve these fields.
+
+@cindex Entries.Log file, in CVS directory
+@cindex CVS/Entries.Log file
+@item Entries.Log
+This file does not record any information beyond that
+in @file{Entries}, but it does provide a way to update
+the information without having to rewrite the entire
+@file{Entries} file, including the ability to preserve
+the information even if the program writing
+@file{Entries} and @file{Entries.Log} abruptly aborts.
+The format of a line in @file{Entries.Log} is a single
+character command followed by a space followed by a
+line in the format specified for a line in
+@file{Entries}.  The single character command is
+@samp{A} to indicate that the entry is being added,
+@samp{R} to indicate that the entry is being removed,
+or any other character to indicate that the entire line
+in @file{Entries.Log} should be silently ignored (for
+future expansion).  If the second character of the line
+in @file{Entries.Log} is not a space, then it was
+written by an older version of @sc{cvs} (not documented
+here).
+
+@cindex Entries.Backup file, in CVS directory
+@cindex CVS/Entries.Backup file
+@item Entries.Backup
+This is a temporary file.  Recommended usage is to
+write a new entries file to @file{Entries.Backup}, and
+then to rename it (atomically, where possible) to @file{Entries}.
+
+@cindex Entries.Static file, in CVS directory
+@cindex CVS/Entries.Static file
+@item Entries.Static
+The only relevant thing about this file is whether it
+exists or not.  If it exists, then it means that only
+part of a directory was gotten and @sc{cvs} will
+not create additional files in that directory.  To
+clear it, use the @code{update} command with the
+@samp{-d} option, which will get the additional files
+and remove @file{Entries.Static}.
+
+@cindex Tag file, in CVS directory
+@cindex CVS/Tag file
+@cindex Sticky tags/dates, per-directory
+@cindex Per-directory sticky tags/dates
+@item Tag
+This file contains per-directory sticky tags or dates.
+The first character is @samp{T} for a branch tag,
+@samp{N} for a non-branch tag, or @samp{D} for a date,
+or another character to mean the file should be
+silently ignored, for future expansion.  This character
+is followed by the tag or date.  Note that
+per-directory sticky tags or dates are used for things
+like applying to files which are newly added; they
+might not be the same as the sticky tags or dates on
+individual files.  For general information on sticky
+tags and dates, see @ref{Sticky tags}.
+@c FIXME: This needs to be much better documented,
+@c preferably not in the context of "working directory
+@c storage".
+@c FIXME: The Sticky tags node needs to discuss, or xref to
+@c someplace which discusses, per-directory sticky
+@c tags and the distinction with per-file sticky tags.
+
+@cindex Checkin.prog file, in CVS directory
+@cindex CVS/Checkin.prog file
+@cindex Update.prog file, in CVS directory
+@cindex CVS/Update.prog file
+@item Checkin.prog
+@itemx Update.prog
+These files store the programs specified by the
+@samp{-i} and @samp{-u} options in the modules file,
+respectively.
+
+@cindex Notify file, in CVS directory
+@cindex CVS/Notify file
+@item Notify
+This file stores notifications (for example, for
+@code{edit} or @code{unedit}) which have not yet been
+sent to the server.  Its format is not yet documented
+here.
+
+@cindex Notify.tmp file, in CVS directory
+@cindex CVS/Notify.tmp file
+@item Notify.tmp
+This file is to @file{Notify} as @file{Entries.Backup}
+is to @file{Entries}.  That is, to write @file{Notify},
+first write the new contents to @file{Notify.tmp} and
+then (atomically where possible), rename it to
+@file{Notify}.
+
+@cindex Base directory, in CVS directory
+@cindex CVS/Base directory
+@item Base
+If watches are in use, then an @code{edit} command
+stores the original copy of the file in the @file{Base}
+directory.  This allows the @code{unedit} command to
+operate even if it is unable to communicate with the
+server.
+
+@cindex Template file, in CVS directory
+@cindex CVS/Template file
+@item Template
+This file contains the template specified by the
+@file{rcsinfo} file (@pxref{rcsinfo}).  It is only used
+by the client; the non-client/server @sc{cvs} consults
+@file{rcsinfo} directly.
+@end table
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Intro administrative files
 @section The administrative files
@@ -1306,7 +1535,9 @@ thinking of setting up several repositories on the same
 machine, you might want to consider using several
 directories within the same repository.
 @c FIXCVS: the thing about recursing into diverse roots
-@c would be nice to fix.
+@c would be nice to fix.  But it gets hairy if they are
+@c on diverse servers--it isn't clear this is really
+@c all that useful.
 @c FIXME: Does the FAQ have more about this?  I have a
 @c dim recollection, but I'm too lazy to check right now.
 
