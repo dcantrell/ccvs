@@ -241,8 +241,7 @@ add (int argc, char **argv)
 		   per-directory tags */
 		ParseTag (&tag, &date, &nonbranch);
 
-		rcsdir = xmalloc (strlen (repository) + strlen (p) + 5);
-		sprintf (rcsdir, "%s/%s", repository, p);
+		rcsdir = Xasprintf ("%s/%s", repository, p);
 
 		Create_Admin (p, argv[j], rcsdir, tag, date,
 			      nonbranch, 0, 1);
@@ -263,10 +262,10 @@ add (int argc, char **argv)
 		free (rcsdir);
 
 		if (p == filedir)
-		    Subdir_Register ((List *) NULL, (char *) NULL, argv[j]);
+		    Subdir_Register (NULL, NULL, argv[j]);
 		else
 		{
-		    Subdir_Register ((List *) NULL, update_dir, p);
+		    Subdir_Register (NULL, update_dir, p);
 		}
 		free (repository);
 		free (filedir);
@@ -366,10 +365,7 @@ add (int argc, char **argv)
 		     * See if a directory exists in the repository with
 		     * the same name.  If so, blow this request off.
 		     */
-		    char *dname = xmalloc (strlen (repository)
-					   + strlen (finfo.file)
-					   + 10);
-		    (void) sprintf (dname, "%s/%s", repository, finfo.file);
+		    char *dname = Xasprintf ("%s/%s", repository, finfo.file);
 		    if (isdir (dname))
 		    {
 			error (0, 0,
@@ -523,8 +519,8 @@ add (int argc, char **argv)
 			    char *bbuf;
 			    if (vers->tag)
 			    {
-				bbuf = xmalloc (strlen (vers->tag) + 14);
-				sprintf (bbuf, " on branch `%s'", vers->tag);
+				bbuf = Xasprintf (" on branch `%s'",
+						  vers->tag);
 			    }
 			    else
 				bbuf = "";
@@ -611,7 +607,7 @@ add (int argc, char **argv)
 		    char *tmp = xmalloc (strlen (vers->vn_user));
 		    (void) strcpy (tmp, vers->vn_user + 1);
 		    (void) strcpy (vers->vn_user, tmp);
-		    free( tmp );
+		    free (tmp);
 		    status = RCS_checkout (vers->srcfile, finfo.file,
 					   vers->vn_user, vers->tag,
 					   vers->options, RUN_TTY,
@@ -783,8 +779,7 @@ add_directory (struct file_info *finfo)
 	goto out;
     }
 
-    rcsdir = xmalloc (strlen (repository) + strlen (dir) + 5);
-    sprintf (rcsdir, "%s/%s", repository, dir);
+    rcsdir = Xasprintf ("%s/%s", repository, dir);
     if (isfile (rcsdir) && !isdir (rcsdir))
     {
 	error (0, 0, "%s is not a directory; %s not added", rcsdir,
@@ -856,13 +851,13 @@ add_directory (struct file_info *finfo)
 	p->type = UPDATE;
 	p->delproc = update_delproc;
 	p->key = xstrdup ("- New directory");
-	li = (struct logfile_info *) xmalloc (sizeof (struct logfile_info));
+	li = xmalloc (sizeof (struct logfile_info));
 	li->type = T_TITLE;
 	li->tag = xstrdup (tag);
 	li->rev_old = li->rev_new = NULL;
 	p->data = li;
 	(void) addnode (ulist, p);
-	Update_Logfile (rcsdir, message, (FILE *) NULL, ulist);
+	Update_Logfile (rcsdir, message, NULL, ulist);
 	dellist (&ulist);
     }
 
@@ -883,7 +878,7 @@ add_directory (struct file_info *finfo)
 	       cwd.name);
     free_cwd (&cwd);
 
-    Subdir_Register (entries, (char *) NULL, dir);
+    Subdir_Register (entries, NULL, dir);
 
     if (!really_quiet)
 	cvs_output (message, 0);
@@ -925,13 +920,12 @@ build_entry (const char *repository, const char *user, const char *options,
      * file user,t.  If the "message" argument is set, use it as the
      * initial creation log (which typically describes the file).
      */
-    fname = xmalloc (strlen (user) + 80);
-    (void) sprintf (fname, "%s/%s%s", CVSADM, user, CVSEXT_LOG);
+    fname = Xasprintf ("%s/%s%s", CVSADM, user, CVSEXT_LOG);
     fp = open_file (fname, "w+");
     if (message && fputs (message, fp) == EOF)
 	    error (1, errno, "cannot write to %s", fname);
-    if (fclose(fp) == EOF)
-        error(1, errno, "cannot close %s", fname);
+    if (fclose (fp) == EOF)
+        error (1, errno, "cannot close %s", fname);
     free (fname);
 
     /*
@@ -939,14 +933,8 @@ build_entry (const char *repository, const char *user, const char *options,
      * without needing to clean anything up (well, we could clean up the
      * ,t file, but who cares).
      */
-    line = xmalloc (strlen (user) + 20);
-    (void) sprintf (line, "Initial %s", user);
-    Register (entries, user, "0", line, options, tag, (char *) 0, (char *) 0);
+    line = Xasprintf ("Initial %s", user);
+    Register (entries, user, "0", line, options, tag, NULL, NULL);
     free (line);
     return 0;
 }
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */

@@ -1,3 +1,20 @@
+2005-03-01  Mark D. Baushke  <mdb@juniper.net>
+
+	* add.c (add): Xasprintf instead of xmalloc/sprintf.
+	Gratuitous reformatting.
+	(add_directory, build_entry): Ditto.
+	* annotate.c (rannotate_proc): Ditto.
+	* checkout.c (checkout_proc): Ditto.
+	(emptydir_name): Ditto.
+	* client.c (call_in_directory): Ditto.
+	(template, send_dirent_proc): Ditto.
+	(client_process_import_file): Ditto.
+	* commit.c (check_fileproc, precommit_proc): Ditto.
+	(commit_fileproc, finaladd): Ditto.
+	(checkaddfile): Ditto.
+	* create_adm.c (Create_Admin): Ditto.
+	* edit.c (notify_do): Ditto.
+
 2005-03-01  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (get_date): Minor reformatting.
