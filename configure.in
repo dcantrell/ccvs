@@ -878,7 +878,7 @@ if test "$enable_encryption" = yes; then
       [Define to enable encryption support.])
   else
     AC_MSG_WARN(
-      [--enable-encryption is meaningless with neither the CVS client
+      [--enable-encryption is meaningless when neither the CVS client
        nor the CVS server is enabled (--disable-client and --disable-server).])
   fi
 fi
