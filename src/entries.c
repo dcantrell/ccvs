@@ -628,6 +628,33 @@ AddEntryNode (list, entdata)
 }
 
 /*
+ * Write out the CVS/Template file.
+ */
+void
+WriteTemplate (update_dir, xdotemplate, repository)
+    char *update_dir;
+    int xdotemplate;
+    char *repository;
+{
+    if (noexec)
+	return;
+
+#ifdef SERVER_SUPPORT
+    if (server_active && xdotemplate)
+    {
+	/* Clear the CVS/Template if supported to allow for the case
+	 * where the rcsinfo file no longer has an entry for this
+	 * directory.
+	 */
+	server_clear_template (update_dir, repository);
+	server_template (update_dir, repository);
+    }
+
+    TRACE (1, "Write_Template (%s, %s)", update_dir, repository);
+#endif
+}
+
+/*
  * Write out/Clear the CVS/Tag file.
  */
 void

@@ -13107,14 +13107,15 @@ file.
 
 When @sc{cvs} is accessing a remote repository,
 the contents of @file{rcsinfo} at the time a directory
-is first checked out will specify a template which does
-not then change.  If you edit @file{rcsinfo} or its
-templates, you may need to check out a new working
-directory.
-@c Would be nice to fix CVS so this isn't needed.  For
-@c example, a mechanism analogous to CVS/Entries, where
-@c the client keeps track of what version of the template
-@c it has.
+is first checked out will specify a template. This
+template will be updated on all @samp{cvs update}
+commands. It will also be added to new directories
+added with a @samp{cvs add new-directry} command.
+In versions of @sc{cvs} prior to version 1.12, the
+@file{CVS/Template} file was not updated. If the
+@sc{cvs} server is at version 1.12 or higher an older
+client may be used and the @file{CVS/Template} will
+be updated from the server.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node cvsignore

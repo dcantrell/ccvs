@@ -123,6 +123,7 @@ static void handle_set_static_directory PROTO((char *, int));
 static void handle_clear_static_directory PROTO((char *, int));
 static void handle_set_sticky PROTO((char *, int));
 static void handle_clear_sticky PROTO((char *, int));
+static void handle_clear_template PROTO((char *, int));
 static void handle_set_checkin_prog PROTO((char *, int));
 static void handle_set_update_prog PROTO((char *, int));
 static void handle_module_expansion PROTO((char *, int));
@@ -2547,6 +2548,26 @@ handle_template (pathname, len)
     call_in_directory (pathname, template, NULL);
 }
 
+static void
+clear_template (data, ent_list, short_pathname, filename)
+    char *data;
+    List *ent_list;
+    char *short_pathname;
+    char *filename;
+{
+    if (unlink_file (CVSADM_TEMPLATE) < 0 && ! existence_error (errno))
+	error (1, errno, "cannot remove %s", CVSADM_TEMPLATE);
+}
+
+static void
+handle_clear_template (pathname, len)
+    char *pathname;
+    int len;
+{
+    call_in_directory (pathname, clear_template, NULL);
+}
+
+
 
 struct save_prog {
     char *name;
@@ -3408,6 +3429,8 @@ struct response responses[] =
     RSP_LINE("Clear-sticky", handle_clear_sticky, response_type_normal,
        rs_optional),
     RSP_LINE("Template", handle_template, response_type_normal,
+       rs_optional),
+    RSP_LINE("Clear-template", handle_clear_template, response_type_normal,
        rs_optional),
     RSP_LINE("Set-checkin-prog", handle_set_checkin_prog, response_type_normal,
        rs_optional),

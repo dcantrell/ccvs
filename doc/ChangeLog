@@ -1,3 +1,8 @@
+2003-03-07  Mark D. Baushke  <mdb@juniper.net>
+
+	* cvs.texinfo (rcsinfo): Document that CVS/Template will now be
+	updated during normal cvs update operations.
+
 2003-03-06  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (What is CVS?): Correct date of first post of CVS by

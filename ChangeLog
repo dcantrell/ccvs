@@ -1,3 +1,11 @@
+2003-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* NEWS: (Changes since 1.11.5): Mention rcsinfo template updates.
+
+2003-03-07  Mark D Baushke <mdb@cvshome.org>
+
+	* TESTS: Document some new global variables.
+
 2003-03-07  Derek Price  <derek@ximbiot.com>
 
 	* TESTS: Document some more global variables.

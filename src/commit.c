@@ -1455,6 +1455,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 	    cvs_output (": Rebuilding administrative file database\n", 0);
 	    mkmodules (admin_dir);
 	    free (admin_dir);
+	    WriteTemplate (".", 1, repository);
 	}
     }
 
@@ -1576,6 +1577,12 @@ commit_dirleaveproc (callerdat, dir, err, update_dir, entries)
 	char *repos = Name_Repository (NULL, update_dir);
 	WriteTag (NULL, write_dirtag, NULL, write_dirnonbranch,
 		  update_dir, repos);
+	free (repos);
+    }
+    if (err == 0)
+    {
+	char *repos = Name_Repository (NULL, update_dir);
+	WriteTemplate (update_dir, 1, repos);
 	free (repos);
     }
 

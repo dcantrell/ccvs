@@ -211,20 +211,23 @@ false when executed and are intended to be used like,
 "if $remote; then ... ; else ... ; fi"
 
 
-   * $testdir  = the directory this test is taking place in
+   * $testdir   = the directory this test is taking place in
      (CVSROOT=$testdir/cvsroot or CVSROOT=:fork:$testdir/cvsroot)
-   * $testcvs  = full path to the cvs executable we are testing
-   * $PLUS     = expr dependant uninterpreted '+' since this can vary
-   * $DOTSTAR  = expr dependant _interpreted_ .* since some exprs don't match
-                 EOL
-   * $username = regexp to match a username
-   * $hostname = regexp to match a hostname
-   * $PROG     = regexp to match progname in CVS error messages
-   * $remote   = ':' (true) or 'false', depending on whether the script is
-                 running with a remote CVSROOT
-   * $keep     = ':' (true) or 'false'.  When set, the first test run will
-                 leave any files and directories it created in $testdir and
-                 exit when complete.
+   * $testcvs   = full path to the cvs executable we are testing
+   * $PLUS      = expr dependant uninterpreted '+' since this can vary
+   * $DOTSTAR   = expr dependant _interpreted_ .* since some exprs don't match
+                  EOL
+   * $username  = regexp to match a username
+   * $hostname  = regexp to match a hostname
+   * $PROG      = regexp to match progname in CVS error messages
+   * $remote    = ':' (true) or 'false', depending on whether the script is
+                  running with a remote CVSROOT
+   * $keep      = ':' (true) or 'false'.  When set, the first test run will
+                  leave any files and directories it created in $testdir and
+                  exit when complete.
+   * $cmdargcvs = cvs executable passed on the command line
+   * $clientcvs = cvs executable to be run as the client in tests
+   * $servercvs = cvs executable to be run as CVS_SERVER in remote testing
 
 And, of course, some characters like '.' in regexps need to be '\' escaped when
 you mean them literally.  Some characters may be interpreted by the shell,
