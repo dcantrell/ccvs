@@ -1,3 +1,13 @@
+Sun Jul  9 21:16:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        These are actually Greg Woods' changes:
+        
+        * clmerge.pl, cvscheck.sh, descend.sh, dirfns.shar, rcs-to-cvs.sh,
+        rcs2log.sh, sccs2rcs.csh: renamed from the corresponding files
+        sans extensions.
+        
+        * rcs2sccs.sh: new file.
+
 Sun Jul  9 19:03:00 1995  Greg A. Woods  <woods@most.weird.com>
         
         * rcs2log.sh: oops, one more thing that should not have been
