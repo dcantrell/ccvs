@@ -40,7 +40,6 @@ noinst_LIBRARIES = libcvs.a
 # matching?)
 libcvs_a_SOURCES = \
 	argmatch.c \
-	ftruncate.c \
 	getdate.y \
 	getline.c \
 	getopt.c \
@@ -67,6 +66,7 @@ libcvs_a_SOURCES = \
 ##     fncase.c
 ##     fnmatch.c
 ##     fnmatch.h
+##     ftruncate.c
 ##     gethostname.c
 ##     memmove.c
 ##     mkdir.c
