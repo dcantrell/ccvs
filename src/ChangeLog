@@ -1,3 +1,9 @@
+1999-11-05  Jim Kingdon  <http://developer.redhat.com/>
+
+	* sanity.sh (logopt): New test, for Larry's fix.
+	* sanity.sh (log-18a, rcs-15 to rcs-19): New tests, to test -d
+	and -r more thoroughly.
+
 1999-11-05  Larry Jones <larry.jones@sdrc.com>
 
 	* log.c (cvslog): Fix -s and -d with spaces on client side.
