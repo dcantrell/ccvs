@@ -1,3 +1,7 @@
+2000-06-15  Larry Jones  <larry.jones@sdrc.com>
+
+	* diff3.c (diff3_run, make_3way_diff): Plug memory leaks.
+
 1999-12-29  Jim Kingdon  <http://developer.redhat.com/>
 
 	* diff.c (compare_files): Use explicit braces with if-if-else, per
