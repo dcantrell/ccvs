@@ -505,7 +505,7 @@ checkout_proc (pargc, argv, where_orig, mwhere, mfile, shorten,
      *  where contains where to put it (if supplied by checkout) 
      *  mwhere contains the module name or -d from module file 
      *  mfile says do only that part of the module
-     *  shorten = TRUE says shorten as much as possible 
+     *  shorten = 1 says shorten as much as possible 
      *  omodule is the original arg to do_module()
      */
 

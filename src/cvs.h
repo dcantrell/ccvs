@@ -244,9 +244,6 @@ extern int errno;
 #endif
 #endif /* USE_VMS_FILENAMES */
 
-#define	FALSE		0
-#define	TRUE		1
-
 /*
  * Special tags. -rHEAD	refers to the head of an RCS file, regardless of any
  * sticky tags. -rBASE	refers to the current revision the user has checked
@@ -257,7 +254,7 @@ extern int errno;
 
 /* Environment variable used by CVS */
 #define	CVSREAD_ENV	"CVSREAD"	/* make files read-only */
-#define	CVSREAD_DFLT	FALSE		/* writable files by default */
+#define	CVSREAD_DFLT	0		/* writable files by default */
 
 #define	RCSBIN_ENV	"RCSBIN"	/* RCS binary directory */
 /* #define	RCSBIN_DFLT		   Set by options.h */

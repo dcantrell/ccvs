@@ -33,14 +33,14 @@ char *command_name;
 
 char hostname[MAXHOSTNAMELEN];
 
-int use_editor = TRUE;
-int use_cvsrc = TRUE;
+int use_editor = 1;
+int use_cvsrc = 1;
 int cvswrite = !CVSREAD_DFLT;
-int really_quiet = FALSE;
-int quiet = FALSE;
-int trace = FALSE;
-int noexec = FALSE;
-int logoff = FALSE;
+int really_quiet = 0;
+int quiet = 0;
+int trace = 0;
+int noexec = 0;
+int logoff = 0;
 mode_t cvsumask = UMASK_DFLT;
 
 char *CurDir;
@@ -452,7 +452,7 @@ main (argc, argv)
 	cvs_update_env = 0;		/* it's already there */
     }
     if (getenv (CVSREAD_ENV) != NULL)
-	cvswrite = FALSE;
+	cvswrite = 0;
 
     /* Set this to 0 to force getopt initialization.  getopt() sets
        this to 1 internally.  */
@@ -469,7 +469,7 @@ main (argc, argv)
            != EOF)
     {
 	if (c == 'f')
-	    use_cvsrc = FALSE;
+	    use_cvsrc = 0;
     }
 
     /*
@@ -504,24 +504,24 @@ main (argc, argv)
 		root_allow_add (optarg);
 		break;
 	    case 'Q':
-		really_quiet = TRUE;
+		really_quiet = 1;
 		/* FALL THROUGH */
 	    case 'q':
-		quiet = TRUE;
+		quiet = 1;
 		break;
 	    case 'r':
-		cvswrite = FALSE;
+		cvswrite = 0;
 		break;
 	    case 'w':
-		cvswrite = TRUE;
+		cvswrite = 1;
 		break;
 	    case 't':
-		trace = TRUE;
+		trace = 1;
 		break;
 	    case 'n':
-		noexec = TRUE;
+		noexec = 1;
 	    case 'l':			/* Fall through */
-		logoff = TRUE;
+		logoff = 1;
 		break;
 	    case 'v':
 		/* Having the year here is a good idea, so people have
@@ -565,7 +565,7 @@ Copyright (c) 1989-1997 Brian Berliner, david d `zoo' zuhn, \n\
 	        help = 1;
 		break;
             case 'f':
-		use_cvsrc = FALSE; /* unnecessary, since we've done it above */
+		use_cvsrc = 0; /* unnecessary, since we've done it above */
 		break;
 	    case 'z':
 #ifdef CLIENT_SUPPORT
