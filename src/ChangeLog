@@ -1,3 +1,8 @@
+Sun Aug  2 20:27:44 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* mkmodules.c: add comment about TopLevelAdmin for the initial
+ 	contents of CVSROOT/config.
+
 1998-07-29  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_checkin): Only try to call xreadlink if HAVE_READLINK
