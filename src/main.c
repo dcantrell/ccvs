@@ -667,6 +667,7 @@ main (argc, argv)
 		    if (lookup_command_attribute (command_name) & CVS_CMD_USES_WORK_DIR)
 #else
 		    if ((strcmp (command_name, "checkout") != 0) &&
+			(strcmp (command_name, "init") != 0) &&
 			(strcmp (command_name, "login") != 0) &&
 			(strcmp (command_name, "rdiff") != 0) &&
 			(strcmp (command_name, "release") != 0) &&
