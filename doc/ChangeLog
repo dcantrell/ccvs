@@ -1,3 +1,11 @@
+Tue Oct  1 14:15:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo: Revert all recent changes (the last unscathed one
+	is the CVSUMASK one from Sunday).  For the most part said changes
+	are for new features which are not appropriate at this stage of
+	the release process.  None of the changes being reverted need to
+	go into 1.9, that is for sure.
+
 Mon Sep 30 18:17:34 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* cvs.texinfo (Credits): add comment asking if we should update.
