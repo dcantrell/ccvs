@@ -52,7 +52,6 @@
 
 .\regex.c : \
 	"..\windows-NT\config.h"\
-	".\alloca.h"\
 	".\regex.h"\
 	
 
