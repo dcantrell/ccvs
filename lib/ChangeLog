@@ -1,3 +1,7 @@
+Thu Feb 15 14:00:00  Jim Kingdon  <kingdon@cyclic.com>
+
+	* vasprintf.c: Declare abs().
+
 Wed Feb 14 14:48:31 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* vasprintf.c (int_vasprintf): Don't cast arguments to memcpy.
