@@ -1,8 +1,6 @@
 #! /bin/sh
 :
-#	sanity.sh -- a growing sanity test for cvs.
-#
-#ident	"$CVSid$"
+#	sanity.sh -- a growing testsuite for cvs.
 #
 # Copyright (C) 1992, 1993 Cygnus Support
 #
@@ -236,14 +234,13 @@ HOME=${TESTDIR}/home; export HOME
 
 # Remaining arguments are the names of tests to run.
 #
-# FIXME: not all combinations are possible; rtags depends on files set
-# up by basic2, for example.  This should be changed.  The goal is
-# that tests can be run in manageably-sized chunks, so that one can
-# quickly get a result from a cvs or testsuite change, and to
-# facilitate understanding the tests.
+# The testsuite is broken up into (hopefully manageably-sized)
+# independently runnable tests, so that one can quickly get a result
+# from a cvs or testsuite change, and to facilitate understanding the
+# tests.
 
 if test x"$*" = x; then
-	tests="basica basic1 deep basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basic1 deep basic2 death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -786,9 +783,8 @@ done'
 			echo "PASS: test 45.5" >>${LOGFILE}
 		fi
 
-		;;
+		# now try some rtags
 
-	rtags) # now try some rtags
 		# rtag HEADS
 		if ${CVS} rtag rtagged-by-head first-dir  ; then
 			echo "PASS: test 46" >>${LOGFILE}
