@@ -1,3 +1,8 @@
+2004-03-25  Derek Price  <derek@ximbiot.com>
+
+	* realloc.c: Update to more recent version from GNULIB to fix a WOE32
+	compilation problem.
+
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
 	* mkdir.c (mkdir): Declare string args const.
