@@ -1,9 +1,17 @@
 Sun Apr 28 14:57:38 1996  Noel Cragg  <noel@gargle>
 
+        * main.c (main): update error message if PARSE_CVSROOT fails.
+	* server.c (serve_root): same.
+	(serve_init): same.
+	
 	* client.c (start_tcp_server): get rid of the "fall through"
  	stuff, now that we have access methods.
 	(start_server): switch off the access method to choose routine
  	that starts the server.
+	(start_tcp_server): TOFD wasn't getting set to -1 early enough,
+ 	because a call to ERROR for bind or gethostbyname might fail and
+ 	the subsequent error check to see if the connection had been made
+ 	would fail.
 
 	* root.c: new variable METHOD_NAMES for error reporting purposes.
 
