@@ -1,3 +1,13 @@
+2001-09-06  Derek Price  <dprice@collab.net>
+
+	* cvs.texinfo (Watch information):  Cleanup some watch/edit
+	explanations and discourage the belief that files should be
+	releasable.
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+	(Patch from Eric Siegerman <erics@telepres.com>.)
+
 2001-09-05  Derek Price  <dprice@collab.net>
 
 	* cvsclient.texi: Use version-client.texi instead of version.texi so
