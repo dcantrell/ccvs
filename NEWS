@@ -3,6 +3,8 @@ Changes since 1.11.13:
 
 GENERAL USER ISSUES
 
+* The spec file has been updated to work with more recent versions of RPM.
+
 * Several memory leaks have been plugged.
 
 DEVELOPER ISSUES
