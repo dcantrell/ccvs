@@ -1,3 +1,7 @@
+Thu Aug 14 23:57:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Wrappers): Document new -m 'COPY' behavior.
+
 Tue Aug 12 20:56:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Sticky tags): Add comment about how we should be

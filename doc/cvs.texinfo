@@ -10441,13 +10441,20 @@ not work with client/server @sc{cvs}.
 The @file{cvswrappers} also has a @samp{-m} option to
 specify the merge methodology that should be used when
 the file is updated.  @code{MERGE} means the usual
-@sc{cvs} behavior: try to merge the files (this
-generally will not work for binary files).  @code{COPY}
-means that @code{cvs update} will merely copy one
-version over the other, and require the user using
+@sc{cvs} behavior: try to merge the files.  @code{COPY}
+means that @code{cvs update} will refuse to merge
+files, as it also does for files specified as binary
+with @samp{-kb}.  CVS will provide the user with the
+two versions of the files, and require the user using
 mechanisms outside @sc{cvs}, to insert any necessary
-changes.
-@c FIXME: which version is copied over which version?
+changes.  @strong{WARNING}: do not use @code{COPY} with
+@sc{cvs} 1.9 or earlier--such versions of @sc{cvs} will
+copy one version of your file over the other, wiping
+out the previous contents.
+@c Ordinarily we don't document the behavior of old
+@c versions.  But this one is so dangerous, I think we
+@c must.  I almost renamed it to -m 'NOMERGE' so we
+@c could say "never use -m 'COPY'".
 The @samp{-m} wrapper option only affects behavior when
 merging is done on update; it does not affect how files
 are stored.  See @ref{Binary files}, for more on
