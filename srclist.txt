@@ -57,9 +57,6 @@ $GNULIB/lib/getdate.y				lib		no NI
 $GNULIB/m4/bison.m4				m4		yes NI
 $GNULIB/m4/getdate.m4				m4		no NI
 $GNULIB/m4/tm_gmtoff.m4				m4		no NI
-# $GNULIB/modules/gethostname
-$GNULIB/lib/gethostname.c			lib		no NI
-$GNULIB/m4/gethostname.m4			m4		no NI
 # $GNULIB/modules/getpass-gnu
 $GNULIB/lib/getpass.c				lib		no NI
 $GNULIB/m4/getpass.m4				m4		no NI
