@@ -1,5 +1,10 @@
 2005-03-12  Mark D. Baushke  <mdb@cvshome.org>
 
+	* server.c (receive_partial_file): Use ssize_t to deal with < 0
+	return value from write().
+
+2005-03-12  Mark D. Baushke  <mdb@cvshome.org>
+
 	* history.c (save_file): Bug fix from last change.
 
 2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
