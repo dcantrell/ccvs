@@ -1,3 +1,8 @@
+2004-11-11  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: s/cp -r/cp -R/ to meet POSIX specification.
+	(Thanks to report from Paul Eggert <eggert@cs.ucla.edu>.)
+
 2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* ms-buffer.c (ms_buffer_input): Avoid UNICOS cc error where
@@ -6,11 +11,11 @@
 	* sanity.sh (importc, rcs, rcs4, tagdate): Use TZ=UTC0 not TZ=UTC
 	to get proper POSIX behavior on MacOS X.
 
-2004-11-10 Derek Price <derek@ximbiot.com>
+2004-11-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Actually parse -e option like we claim to.
 
-2004-11-10 Derek Price <derek@ximbiot.com>
+2004-11-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Maintain pass/skip/warn status and output at end.
 	(usage): Note new functionality of -e.
@@ -18,7 +23,7 @@
 	(verify_tmp_empty): Warn instead of failing.  Delete turds if warn()
 	doesn't exit.
 
-2004-11-10 Derek Price <derek@ximbiot.com>
+2004-11-10  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (verify_tmp_empty): New function.
 	(dotest_internal_*): Call verify_tmp_empty as needed.
@@ -27,7 +32,7 @@
 
 	* sanity.sh (expr_tooltest3): Bugfix. Use $expr rather than $EXPR.
 
-2004-11-08 Derek Price <derek@ximbiot.com>
+2004-11-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (version_test): Echo good version data to the log, even
 	when it went to stderr.  Don't echo bad version data.
@@ -55,12 +60,12 @@
 	(awk_tooltest1): Verify that awk the BEGIN clause works properly.
 	(awk_tooltest2): Verify that print %c format item works properly.
 
-2004-11-08 Derek Price <derek@ximbiot.com>
+2004-11-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (verify_tmp_empty): New function.
 	(dotest_internal_*): Call verify_tmp_empty as needed.
 
-2004-11-08 Derek Price <derek@ximbiot.com>
+2004-11-08  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (run_filter): Add function header comment block.
 
@@ -68,19 +73,19 @@
 
 	* sanity.sh: Remove trailing / from cp -r commands.
 
-2004-11-04 Derek Price <derek@ximbiot.com>
+2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* gssapi-client.c (connect_to_gserver): Silence gcc -Wall.
 
-2004-11-04 Derek Price <derek@ximbiot.com>
+2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (set_bad_tool): Remove unnecessary quotes.
 
-2004-11-04 Derek Price <derek@ximbiot.com>
+2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: s/depends_on_/require/.
 
-2004-11-04 Derek Price <derek@ximbiot.com>
+2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (find_tool): Eliminate variable with single reference.
 
@@ -96,7 +101,7 @@
 	* sanity.sh (depends_on_rsync): Do not echo rsync information to
 	stdout. Look for rsync in more directories.
 
-2004-11-04 Derek Price <derek@ximbiot.com>
+2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Minor simplifications.  Make sure that
 	an rsync that doesn't understand `--version' sends its error message to
@@ -121,12 +126,12 @@
 	* sanity.sh (depends_on_rsync): More rigorous tests for rsync
 	2.3.1 problems with --delete --include dir --exclude '*/.
 
-2004-11-03 Derek Price <derek@ximbiot.com>
+2004-11-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Verify that `rsync --delete' actually
 	does what it is supposed ot do.
 
-2004-11-03 Derek Price <derek@ximbiot.com>
+2004-11-03  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (Xreadlink): Remove MAXSIZE macro.  Minor reformatting.
 
@@ -156,18 +161,18 @@
 	* filesubr.c (xreadlink): AIX and HP-UX readlink() returns ERANGE
 	when there is not enough room in the buffer.
 
-2004-11-01 Derek Price <derek@ximbiot.com>
+2004-11-01  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Remove getdate proto in favor of including getdate.h.
 	* client.c (handle_mod_time), history.c (history), main.c (Make_Date,
 	format_date_alloc), rcs.c (RCS_getrevtime), server.c
 	(serve_checkin_time): Use new get_date API.
 
-2004-11-01 Derek Price <derek@ximbiot.com>
+2004-11-01  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcslib): Fix typo in path.
 
-2004-11-01 Derek Price <derek@ximbiot.com>
+2004-11-01  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (rcslib): Test a link to a path longer than 128
 	characters.
@@ -190,21 +195,21 @@
 	* server.c (isThisHost): Deal with possibility of a missing
 	hstrerror() function.
 
-2004-10-29 Derek Price <derek@ximbiot.com>
+2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* server.c (server_root, move_file_offset, replace_file_offset):
 	Remove dead code.
 
-2004-10-29 Derek Price <derek@ximbiot.com>
+2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* filesubr.c (xreadlink): Make sure allocation is tried once at the
 	maximum buffer size.  Protect against overflow.
 	
-2004-10-29 Derek Price <derek@ximbiot.com>
+2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSameHost): Handle gethostname & gethostbyname errors.
 
-2004-10-29 Derek Price <derek@ximbiot.com>
+2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSameHost): Use strcasecmp to compare host names.
 
@@ -225,7 +230,7 @@
 	(Problem reported as issue 190 by Gottfried Ganssauge
 	<gotti@cvshome.org>.)
 
-2004-10-29 Derek Price <derek@ximbiot.com>
+2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* server.c (isSameHost): New fuction.
 	(same_path): Rename to...
@@ -237,14 +242,14 @@
 	* sanity.sh (writeproxy): Use DOTSTAR to avoid problems with
 	a missing Gssapi-authenticate in Valid-requests.
 
-2004-10-28 Derek Price <derek@ximbiot.com>
+2004-10-28  Derek Price  <derek@ximbiot.com>
 
 	* server.c (same_path): New function.
 	(isProxyServer): Use new function.
 	* sanity.sh (writeproxy): Test that server resolves symlinks when
 	deciding whether it is a primary server.
 
-2004-10-28 Derek Price <derek@ximbiot.com>
+2004-10-28  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (isdir, isfile, islink, isdevice, isreadable, iswritable,
 	isaccessible, isabsolute): Return boolean rather than int.
@@ -253,7 +258,7 @@
 	* filesubr.c (xresolvepath): Use save_cwd in place of xgetwd.  Some
 	reformatting.
 	
-2004-10-28 Derek Price <derek@ximbiot.com>
+2004-10-28  Derek Price  <derek@ximbiot.com>
 
 	* client.c (handle_redirect): Detect redirect loops.
 	* sanity.sh (client-20): Test that client detects redirect loops.
@@ -294,7 +299,7 @@
 
 	* server.c (isProxyServer): Fix hostname setup.
 
-2004-10-26 Derek Price <derek@ximbiot.com>
+2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	Call all exit handlers via atexit() & exit().  Signal handlers exit().
 	Eliminates a compiler warning.
@@ -306,17 +311,17 @@
 	signals are blocked.
 	* main.c (main_cleanup): Declare noreturn attribute.
 
-2004-10-26 Derek Price <derek@ximbiot.com>
+2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	* gssapi-client.c (connect_to_gserver): Avoid truncating error messages
 	from the GSSAPI server.
 	(Report from Dan Peterson <dbpete@aol.com>.)
 
-2004-10-26 Derek Price <derek@ximbiot.com>
+2004-10-26  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (import-quirks): Test an even branch number.
 
-2004-10-25 Derek Price <derek@ximbiot.com>
+2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Repair regex for regressions introduced in last
 	commit.
@@ -328,12 +333,12 @@
 	* sanity.sh (modes3): Quiet rsync messages in proxy mode when
 	permissions are removed. They are expected and not a problem here.
 
-2004-10-25 Derek Price <derek@ximbiot.com>
+2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Anchor and simplify branch verification regex.
 	* sanity.sh (import-quirks): Test another pattern that should fail.
 
-2004-10-25 Derek Price <derek@ximbiot.com>
+2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (yesno): Remove prototype.
 	* edit.c, release.c: Include yesno.h.  Flush output before calling
@@ -350,7 +355,7 @@
 	(tagdate-{13,14,16}): Use it to avoid 'sleep 60' by using
 	the exact 1.1.4.1 timestamp for tagdate-14 and tagdate-16.
 	
-2004-10-25 Derek Price <derek@ximbiot.com>
+2004-10-25  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (depends_on_rsync): Redirect rsync output to /dev/null when
 	just testing.
@@ -379,7 +384,7 @@
 	* sanity.sh: Keep one more level of check.log backup.
 	* Makefile.in: Regenerated.
 
-2004-10-22 Derek Price <derek@ximbiot.com>
+2004-10-22  Derek Price  <derek@ximbiot.com>
 
 	* client.c, update.c: Use new MD5 interface.
 
@@ -392,28 +397,28 @@
 
 	* sanity.sh (tagdate): Fix typo.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* subr.c: #include vasnprintf.h to avoid compiler warning.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (error_use_protocol): Move decl here from lib/error.h so that
 	we may use an unforked error.h from GNULIB.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* main.c: #include strftime.h.
 	(format_time_t, gmformat_time_t): Supply missing args to my_strftime.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* buffer.c: Don't maintain last_index & last_count for buffers.
 	* buffer.h (struct buffer): Update struct.
 	(buf_initialize): Update proto.
 	* log-buffer.c, ms-buffer.c, zlib.c: Update all callers.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh: Fail gracefully in proxy mode when rsync is defective.
 	(depends_on_rsync): New function.
@@ -429,12 +434,12 @@
 	mode on a cvs add durring a resurrection. Verify that -r is not
 	honored when the resurrected file must be committed to be seen.
 
-2004-10-21 Derek Price <derek@ximbiot.com>
+2004-10-21  Derek Price  <derek@ximbiot.com>
 
 	* ls.c (ls_fileproc): Deal with files specified on the command line.
 	(ls_delproc): Move to a more accessible location.
 
-2004-10-20 Derek Price <derek@ximbiot.com>
+2004-10-20  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Avoid unnecessary typecast.
 
@@ -446,17 +451,17 @@
 
 	* add.c (add): Backout last typecasts cleanup.
 
-2004-10-19 Derek Price <derek@ximbiot.com>
+2004-10-19  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Avoid attempting to resurrect a dead rev 1.1.
 	* sanity.sh (resurrection): Add test for the above.
 	(Report from Dan Peterson <dbpete@aol.com>.)
 
-2004-10-19 Derek Price <derek@ximbiot.com>
+2004-10-19  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add): Avoid unnecessary typecasts.
 
-2004-10-19 Derek Price <derek@ximbiot.com>
+2004-10-19  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Prototype new function.
 	* subr.c (Xasnprintf): New function.
@@ -464,23 +469,23 @@
 	s/asnprintf/Xasnprintf/.
 	* client.c (connect_to_pserver): Store line length for efficiency.
 
-2004-10-19 Derek Price <derek@ximbiot.com>
+2004-10-19  Derek Price  <derek@ximbiot.com>
 
 	* history.c: Remove unecessary typecasts.  Some reformatting.
 
-2004-10-18 Derek Price <derek@ximbiot.com>
+2004-10-18  Derek Price  <derek@ximbiot.com>
 
 	* server.c (serve_modified): Eliminate >= 0 check since size_t may not
 	be negative.
 	(Originally reported by Martin Neitzel <neitzel@sco.gaertner.de>.)
 
-2004-10-18 Derek Price <derek@ximbiot.com>
+2004-10-18  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h (DEVNULL): This is system dependant.  Move it to lib/system.h.
 	* client.c (copy_a_file): Consolidate USE_VMS_FILENAMES stuff under a
 	single #ifdef.
 
-2004-10-15 Derek Price <derek@ximbiot.com>
+2004-10-15  Derek Price  <derek@ximbiot.com>
 
 	* cvs.h: Don't include vasnprintf.h.
 	(Xasprintf): New prototype.
@@ -493,12 +498,12 @@
 	* subr.c: Include vasprintf.h.
 	(Xasprintf): New function.
 
-2004-10-14 Derek Price <derek@ximbiot.com>
+2004-10-14  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Remove an unecessary level of nesting.  Simplify
 	xmalloc/sprintf with asnprintf.  Remove useless comment.
 
-2004-10-14 Derek Price <derek@ximbiot.com>
+2004-10-14  Derek Price  <derek@ximbiot.com>
 
 	* import.c (import): Verify branch specifications more thoroughly.
 	* sanity.sh (importb): Adapt to new error message.
