@@ -125,10 +125,22 @@ expand_variable (name)
 	else
 	if ( strcmp (name, EDITOR3_ENV) == 0 )
 		return Editor;
-	else
+	else if (isalpha (name[0]))
+		/* It is a CVS internal variable which is not recognized.
+		   Return an error; we want to reserve these names for
+		   future versions of CVS.  */
 		return NULL;
-		/* The code here could also just
-		 * return whatever getenv would
-		 * return.
-		 */
+	else if (name[0] == '=')
+		/* Crazy syntax for an environment variable.  But we want
+		   *something* that lets us specify all environment
+		   variables, without getting the namespace all mixed up
+		   with the CVS internal variables.  */
+		return getenv (name + 1);
+	else
+		/* It is unrecognized character.  We return an
+		   error to reserve these for future versions of CVS;
+		   it is plausible that various crazy syntaxes might be
+		   invented for inserting information about revisions,
+		   branches, etc.  */
+		return NULL;
 }

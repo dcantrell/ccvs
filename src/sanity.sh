@@ -241,7 +241,7 @@ HOME=${TESTDIR}/home; export HOME
 # facilitate understanding the tests.
 
 if test x"$*" = x; then
-	tests="basica basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles"
+	tests="basica basic1 basic2 rtags death branches import new conflicts modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -2339,6 +2339,59 @@ done'
 	  cd ../..
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  rm -r 1 2
+	  ;;
+	info)
+	  # Test CVS's ability to handle *info files.
+	  dotest info-1 "${testcvs} -q co CVSROOT" "[UP] CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+	  echo "ALL echo x\${=MYENV}y >>$TESTDIR/testlog" > loginfo
+	  dotest info-2 "${testcvs} add loginfo" \
+'cvs [a-z]*: scheduling file `loginfo'"'"' for addition
+cvs [a-z]*: use '"'"'cvs commit'"'"' to add this file permanently'
+	  dotest info-3 "${testcvs} -q ci -m new-loginfo" \
+'RCS file: /tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v
+done
+Checking in loginfo;
+/tmp/cvs-sanity/cvsroot/CVSROOT/loginfo,v  <--  loginfo
+initial revision: 1.1
+done
+cvs [a-z]*: Executing '"'"''"'"'.*mkmodules'"'"' '"'"'/tmp/cvs-sanity/cvsroot/CVSROOT'"'"''"'"''
+	  cd ..
+	  if echo "yes" | ${testcvs} release -d CVSROOT >>${LOGFILE} ; then
+	    pass info-4
+	  else
+	    fail info-4
+	  fi
+
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest info-5 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  touch file1
+	  dotest info-6 "${testcvs} add file1" \
+'cvs [a-z]*: scheduling file `file1'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  export MYENV=env-value
+	  dotest info-7 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1.1
+done'
+	  cd ..
+	  if echo "yes" | ${testcvs} release -d first-dir >>${LOGFILE} ; then
+	    pass info-8
+	  else
+	    fail info-8
+	  fi
+	  dotest info-9 "cat $TESTDIR/testlog" 'xenv-valuey'
+
+	  # I think this might be doable with cvs remove, or at least
+	  # checking in a version with only comments, but I'm too lazy
+	  # at the moment.  Blow it away.
+	  rm -f ${CVSROOT_DIRNAME}/CVSROOT/loginfo*
+
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 	*)
 	   echo $what is not the name of a test -- ignored
