@@ -61,12 +61,12 @@ MOBJECTS = hash.o mkmodules.o myndbm.o
 COMMON_OBJECTS = subr.o version.o
 
 HEADERS = cvs.h rcs.h hash.h myndbm.h patchlevel.h \
-	update.h server.h client.h options.h.in
+	update.h server.h client.h
 
 DISTFILES = .cvsignore Makefile.in ChangeLog ChangeLog.fsf \
 	    NOTES README-rm-add \
             sanity.sh sanity.el cvsbug.sh \
-            $(HEADERS) $(SOURCES) $(MSOURCES) 
+            $(HEADERS) options.h.in $(SOURCES) $(MSOURCES) 
 
 PROGS = cvs mkmodules cvsbug
 
@@ -175,7 +175,7 @@ cvsbug: cvsbug.sh
 
 # Compilation rules.
 
-$(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS)
+$(OBJECTS) $(COMMON_OBJECTS) mkmodules.o: $(HEADERS) options.h
 
 subdir = src
 Makefile: ../config.status Makefile.in
