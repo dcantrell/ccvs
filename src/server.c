@@ -5143,6 +5143,10 @@ error 0 %s: no such user\n", username);
        the client.  */
     umask (0);
 
+    /* Make sure our CVS_Username has been set. */
+    if (CVS_Username == NULL)
+	CVS_Username = xstrdup (username);
+      
 #if HAVE_PUTENV
     /* Set LOGNAME and USER in the environment, in case they are
        already set to something else.  */
