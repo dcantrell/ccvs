@@ -2586,6 +2586,8 @@ your changes, or not to make any changes, you can use
 the @code{cvs unedit} command.
 
 @cindex unedit (subcommand)
+@cindex abandoning work
+@cindex reverting to repository version
 @deffn Command {cvs unedit} [@code{-l}] files @dots{}
 
 Abandon work on the working files @var{files}, and revert them to the
@@ -2597,6 +2599,15 @@ notification for any of @var{files}.
 The @var{files} and @code{-l} option are processed as for the
 @code{cvs watch} commands.
 
+If watches are not in use, the @code{unedit} command
+probably does not work, and the way to revert to the
+repository version is to remove the file and then use
+@code{cvs update} to get a new copy.  The meaning is
+not precisely the same; removing and updating may also
+bring in some changes which have been made in the
+repository since the last time you updated.
+@c It would be a useful enhancement to CVS to make
+@c unedit work in the non-watch case as well.
 @end deffn
 
 When using client/server @sc{cvs}, you can use the

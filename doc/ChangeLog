@@ -1,5 +1,8 @@
 Tue Sep 24 11:49:02 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Editing files): Also discuss how to revert in the
+	non-watch case.  Add some index entries.
+
 	* cvs.texinfo (update output): Add comment about how we *should*
 	be handling .# files.  Mention fact that it is different under
 	VMS.  Add .# to index.
