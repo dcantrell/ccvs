@@ -42,9 +42,13 @@
 #include "fileattr.h"
 #include "edit.h"
 #include "getline.h"
+#include "buffer.h"
 
 static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
-				 int adding));
+				 int adding, int merging, int update_server));
+#ifdef SERVER_SUPPORT
+static void checkout_to_buffer PROTO ((void *, const char *, size_t));
+#endif
 #ifdef SERVER_SUPPORT
 static int patch_file PROTO ((struct file_info *finfo,
 			      Vers_TS *vers_ts, 
@@ -526,7 +530,7 @@ update_fileproc (callerdat, finfo)
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
 #endif
-		retval = checkout_file (finfo, vers, 0);
+		retval = checkout_file (finfo, vers, 0, 0, 0);
 		break;
 
 	    default:			/* can't ever happen :-) */
@@ -629,7 +633,8 @@ update_fileproc (callerdat, finfo)
 					    (rcs_diff_patches
 					     ? SERVER_RCS_DIFF
 					     : SERVER_PATCHED),
-					    &file_info, checksum);
+					    file_info.st_mode, checksum,
+					    (struct buffer *) NULL);
 			break;
 		    }
 		}
@@ -639,13 +644,7 @@ update_fileproc (callerdat, finfo)
 		/* Fall through.  */
 #endif
 	    case T_CHECKOUT:		/* needs checkout */
-		retval = checkout_file (finfo, vers, 0);
-#ifdef SERVER_SUPPORT
-		if (server_active && retval == 0)
-		    server_updated (finfo, vers,
-				    SERVER_UPDATED, (struct stat *) NULL,
-				    (unsigned char *) NULL);
-#endif
+		retval = checkout_file (finfo, vers, 0, 0, 1);
 		break;
 	    case T_ADDED:		/* added but not committed */
 		write_letter (finfo, 'A');
@@ -663,8 +662,9 @@ update_fileproc (callerdat, finfo)
 		    if (vers->ts_user == NULL)
 			server_scratch_entry_only ();
 		    server_updated (finfo, vers,
-				    SERVER_UPDATED, (struct stat *) NULL,
-				    (unsigned char *) NULL);
+				    SERVER_UPDATED, (mode_t) -1,
+				    (unsigned char *) NULL,
+				    (struct buffer *) NULL);
 		}
 #endif
 		break;
@@ -1063,22 +1063,29 @@ scratch_file (finfo)
  * Check out a file.
  */
 static int
-checkout_file (finfo, vers_ts, adding)
+checkout_file (finfo, vers_ts, adding, merging, update_server)
     struct file_info *finfo;
     Vers_TS *vers_ts;
     int adding;
+    int merging;
+    int update_server;
 {
     char *backup;
     int set_time, retval = 0;
-    int retcode = 0;
     int status;
     int file_is_dead;
+    struct buffer *revbuf;
 
-    /* Solely to suppress a warning from gcc -Wall.  */
     backup = NULL;
+    revbuf = NULL;
 
-    /* don't screw with backup files if we're going to stdout */
-    if (!pipeout)
+    /* Don't screw with backup files if we're going to stdout, or if
+       we are the server.  */
+    if (!pipeout
+#ifdef SERVER_SUPPORT
+	&& ! server_active
+#endif
+	)
     {
 	backup = xmalloc (strlen (finfo->file)
 			  + sizeof (CVSADM)
@@ -1128,22 +1135,64 @@ VERS: ", 0);
 	    }
 	}
 
-	status = RCS_checkout (vers_ts->srcfile,
-			       pipeout ? NULL : finfo->file,
-			       vers_ts->vn_rcs, vers_ts->vn_tag,
-			       vers_ts->options, RUN_TTY,
-			       (RCSCHECKOUTPROC) NULL, (void *) NULL);
+#ifdef SERVER_SUPPORT
+	if (update_server
+	    && server_active
+	    && ! pipeout
+	    && ! file_gzip_level
+	    && ! joining ()
+	    && ! wrap_name_has (finfo->file, WRAP_FROMCVS))
+	{
+	    revbuf = buf_nonio_initialize ((BUFMEMERRPROC) NULL);
+	    status = RCS_checkout (vers_ts->srcfile, (char *) NULL,
+				   vers_ts->vn_rcs, vers_ts->vn_tag,
+				   vers_ts->options, RUN_TTY,
+				   checkout_to_buffer, revbuf);
+	}
+	else
+#endif
+	    status = RCS_checkout (vers_ts->srcfile,
+				   pipeout ? NULL : finfo->file,
+				   vers_ts->vn_rcs, vers_ts->vn_tag,
+				   vers_ts->options, RUN_TTY,
+				   (RCSCHECKOUTPROC) NULL, (void *) NULL);
     }
     if (file_is_dead || status == 0)
     {
+	mode_t mode;
+
+	mode = (mode_t) -1;
+
 	if (!pipeout)
 	{
 	    Vers_TS *xvers_ts;
 
+	    if (revbuf != NULL)
+	    {
+		struct stat sb;
+
+		/* FIXME: We should have RCS_checkout return the mode.  */
+		if (stat (vers_ts->srcfile->path, &sb) < 0)
+		    error (1, errno, "cannot stat %s",
+			   vers_ts->srcfile->path);
+		mode = sb.st_mode &~ (S_IWRITE | S_IWGRP | S_IWOTH);
+	    }
+
 	    if (cvswrite
 		&& !file_is_dead
 		&& !fileattr_get (finfo->file, "_watched"))
-		xchmod (finfo->file, 1);
+	    {
+		if (revbuf == NULL)
+		    xchmod (finfo->file, 1);
+		else
+		{
+		    /* We know that we are the server here, so
+                       although xchmod checks umask, we don't bother.  */
+		    mode |= (((mode & S_IRUSR) ? S_IWUSR : 0)
+			     | ((mode & S_IRGRP) ? S_IWGRP : 0)
+			     | ((mode & S_IROTH) ? S_IWOTH : 0));
+		}
+	    }
 
 	    {
 		/* A newly checked out file is never under the spell
@@ -1175,6 +1224,27 @@ VERS: ", 0);
 	    if (strcmp (xvers_ts->options, "-V4") == 0)
 		xvers_ts->options[0] = '\0';
 
+	    if (revbuf != NULL)
+	    {
+		/* If we stored the file data into a buffer, then we
+                   didn't create a file at all, so xvers_ts->ts_user
+                   is wrong.  The correct value is to have it be the
+                   same as xvers_ts->ts_rcs, meaning that the working
+                   file is unchanged from the RCS file.
+
+		   FIXME: We should tell Version_TS not to waste time
+		   statting the nonexistent file.
+
+		   FIXME: Actually, I don't think the ts_user value
+		   matters at all here.  The only use I know of is
+		   that it is printed in a trace message by
+		   Server_Register.  */
+
+		if (xvers_ts->ts_user != NULL)
+		    free (xvers_ts->ts_user);
+		xvers_ts->ts_user = xstrdup (xvers_ts->ts_rcs);
+	    }
+
 	    (void) time (&last_register_time);
 
 	    if (file_is_dead)
@@ -1183,7 +1253,7 @@ VERS: ", 0);
 		{
 		    error (0, 0,
 			   "warning: %s is not (any longer) pertinent",
-			   finfo->fullname);
+ 			   finfo->fullname);
 		}
 		Scratch_Entry (finfo->entries, finfo->file);
 #ifdef SERVER_SUPPORT
@@ -1230,25 +1300,29 @@ VERS: ", 0);
 		write_letter (finfo, 'U');
 	    }
 	}
+
+#ifdef SERVER_SUPPORT
+	if (update_server && server_active)
+	    server_updated (finfo, vers_ts,
+			    merging ? SERVER_MERGED : SERVER_UPDATED,
+			    mode, (unsigned char *) NULL, revbuf);
+#endif
     }
     else
     {
-	int old_errno = errno;		/* save errno value over the rename */
-
-	if (!pipeout && backup != NULL)
+	if (backup != NULL)
 	{
 	    rename_file (backup, finfo->file);
 	    free (backup);
 	    backup = NULL;
 	}
 
-	error (retcode == -1 ? 1 : 0, retcode == -1 ? old_errno : 0,
-	       "could not check out %s", finfo->fullname);
+	error (0, 0, "could not check out %s", finfo->fullname);
 
-	retval = retcode;
+	retval = status;
     }
 
-    if (!pipeout && backup != NULL)
+    if (backup != NULL)
     {
 	/* If -f/-t wrappers are being used to wrap up a directory,
 	   then backup might be a directory instead of just a file.  */
@@ -1264,6 +1338,24 @@ VERS: ", 0);
 
     return (retval);
 }
+
+#ifdef SERVER_SUPPORT
+
+/* This function is used to write data from a file being checked out
+   into a buffer.  */
+
+static void
+checkout_to_buffer (callerdat, data, len)
+     void *callerdat;
+     const char *data;
+     size_t len;
+{
+    struct buffer *buf = (struct buffer *) callerdat;
+
+    buf_output (buf, data, len);
+}
+
+#endif /* SERVER_SUPPORT */
 
 #ifdef SERVER_SUPPORT
 
@@ -1652,19 +1744,17 @@ merge_file (finfo, vers)
 	   user the two files, and let them resolve it.  It is possible
 	   that we should require a "touch foo" or similar step before
 	   we allow a checkin.  */
-	status = checkout_file (finfo, vers, 0);
 #ifdef SERVER_SUPPORT
+	if (server_active)
+	    server_copy_file (finfo->file, finfo->update_dir,
+			      finfo->repository, backup);
+#endif
+
 	/* Send the new contents of the file before the message.  If we
 	   wanted to be totally correct, we would have the client write
 	   the message only after the file has safely been written.  */
-	if (server_active)
-	{
-	    server_copy_file (finfo->file, finfo->update_dir,
-			      finfo->repository, backup);
-	    server_updated (finfo, vers, SERVER_MERGED,
-			    (struct stat *) NULL, (unsigned char *) NULL);
-	}
-#endif
+	status = checkout_file (finfo, vers, 0, 1, 1);
+
 	/* Is there a better term than "nonmergeable file"?  What we
 	   really mean is, not something that CVS cannot or does not
 	   want to merge (there might be an external manual or
@@ -1725,7 +1815,8 @@ merge_file (finfo, vers)
         server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
 			  backup);
 	server_updated (finfo, vers, SERVER_MERGED,
-			(struct stat *) NULL, (unsigned char *) NULL);
+			(mode_t) -1, (unsigned char *) NULL,
+			(struct buffer *) NULL);
     }
 #endif
 
@@ -1959,8 +2050,8 @@ join_file (finfo, vers)
 	if (server_active)
 	{
 	    server_scratch (finfo->file);
-	    server_updated (finfo, vers, SERVER_UPDATED, (struct stat *) NULL,
-			    (unsigned char *) NULL);
+	    server_updated (finfo, vers, SERVER_UPDATED, (mode_t) -1,
+			    (unsigned char *) NULL, (struct buffer *) NULL);
 	}
 #endif
 	mrev = xmalloc (strlen (vers->vn_user) + 2);
@@ -2013,14 +2104,7 @@ join_file (finfo, vers)
 
 	    /* FIXME: If checkout_file fails, we should arrange to
                return a non-zero exit status.  */
-	    status = checkout_file (finfo, xvers, 1);
-
-#ifdef SERVER_SUPPORT
-	    if (server_active && status == 0)
-		server_updated (finfo, xvers,
-				SERVER_UPDATED, (struct stat *) NULL,
-				(unsigned char *) NULL);
-#endif
+	    status = checkout_file (finfo, xvers, 1, 0, 1);
 
 	    freevers_ts (&xvers);
 
@@ -2235,7 +2319,8 @@ join_file (finfo, vers)
 	server_copy_file (finfo->file, finfo->update_dir, finfo->repository,
 			  backup);
 	server_updated (finfo, vers, SERVER_MERGED,
-			(struct stat *) NULL, (unsigned char *) NULL);
+			(mode_t) -1, (unsigned char *) NULL,
+			(struct buffer *) NULL);
     }
 #endif
     free (backup);

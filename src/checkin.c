@@ -179,7 +179,8 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	if (set_time)
 	    /* Need to update the checked out file on the client side.  */
 	    server_updated (finfo, vers, SERVER_UPDATED,
-			    NULL, NULL);
+			    (mode_t) -1, (unsigned char *) NULL,
+			    (struct buffer *) NULL);
 	else
 	    server_checked_in (finfo->file, finfo->update_dir, finfo->repository);
     }

@@ -1280,8 +1280,9 @@ commit_fileproc (callerdat, finfo)
 			    /* Doesn't matter, it won't get checked.  */
 			    SERVER_UPDATED,
 
-			    (struct stat *) NULL,
-			    (unsigned char *) NULL);
+			    (mode_t) -1,
+			    (unsigned char *) NULL,
+			    (struct buffer *) NULL);
 	}
 #endif
     }
