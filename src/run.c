@@ -365,12 +365,8 @@ run_popen (cmd, mode)
     const char *mode;
 {
     if (trace)
-#ifdef SERVER_SUPPORT
-	(void) fprintf (stderr, "%c-> run_popen(%s,%s)\n",
-			(server_active) ? 'S' : ' ', cmd, mode);
-#else
-	(void) fprintf (stderr, "-> run_popen(%s,%s)\n", cmd, mode);
-#endif
+	(void) fprintf (stderr, "%s-> run_popen(%s,%s)\n",
+			CLIENT_SERVER_STR, cmd, mode);
     if (noexec)
 	return (NULL);
 

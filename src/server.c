@@ -2879,8 +2879,8 @@ server_register (name, version, timestamp, options, tag, date, conflict)
     if (trace)
     {
 	(void) fprintf (stderr,
-			"%c-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
-			(server_active) ? 'S' : ' ', /* silly */
+			"%s-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
+			CLIENT_SERVER_STR,
 			name, version, timestamp ? timestamp : "", options,
 			tag ? tag : "", date ? date : "",
 			conflict ? conflict : "");

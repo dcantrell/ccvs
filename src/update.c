@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
+ *
  * "update" updates the version in the present directory with respect to the RCS
  * repository.  The present version must have been created by "checkout". The
  * user can keep up-to-date by calling "update" whenever he feels like it.
- * 
+ *
  * The present version can be committed by "commit", but this keeps the version
  * in tact.
- * 
+ *
  * Arguments following the options are taken to be file names to be updated,
  * rather than updating the entire directory.
- * 
+ *
  * Modified or non-existent RCS files are checked out and reported as U
  * <user_file>
- * 
+ *
  * Modified user files are reported as M <user_file>.  If both the RCS file and
  * the user file have been modified, the user file is replaced by the result
  * of rcsmerge, and a backup file is written for the user in .#file.version.
  * If this throws up irreconcilable differences, the file is reported as C
  * <user_file>, and as M <user_file> otherwise.
- * 
+ *
  * Files added but not yet committed are reported as A <user_file>. Files
  * removed but not yet committed are reported as R <user_file>.
- * 
+ *
  * If the current directory contains subdirectories that hold concurrent
  * versions, these are updated too.  If the -d option was specified, new
  * directories added to the repository are automatically created and updated
@@ -1859,7 +1859,8 @@ merge_file (finfo, vers)
 		      + 10);
     (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
-    (void) unlink_file (backup);
+    if (unlink_file (backup) && !existence_error (errno))
+	error (0, errno, "unable to remove %s", backup);
     copy_file (finfo->file, backup);
     xchmod (finfo->file, 1);
 

@@ -719,12 +719,8 @@ history_write (type, update_dir, revs, name, repository)
     }
 
     if (trace)
-#ifdef SERVER_SUPPORT
-	fprintf (stderr, "%c-> fopen(%s,a)\n",
-		 (server_active) ? 'S' : ' ', fname);
-#else
-	fprintf (stderr, "-> fopen(%s,a)\n", fname);
-#endif
+	fprintf (stderr, "%s-> fopen(%s,a)\n",
+		 CLIENT_SERVER_STR, fname);
     if (noexec)
 	goto out;
     fd = CVS_OPEN (fname, O_WRONLY | O_APPEND | O_CREAT | OPEN_BINARY, 0666);
