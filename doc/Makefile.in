@@ -32,7 +32,11 @@ infodir = $(prefix)/info
 INSTALL	= @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 
-DISTFILES = Makefile.in cvs-paper.ms cvs-paper.ps cvs.texinfo cvs.ps
+DISTFILES = \
+	.cvsignore ChangeLog ChangeLog.fsf Makefile.in \
+	cvs-paper.ms cvs-paper.ps \
+	cvs.texinfo cvs.ps cvs.info cvs.aux \
+	cvsclient.texi cvsclient.ps cvsclient.info cvsclient.aux
 
 # these are part of the texinfo distribution
 MAKEINFO=makeinfo
@@ -62,7 +66,7 @@ all:
 install: all
 .PHONY: install
 
-doc: cvs.ps cvs-paper.ps
+doc: cvs.ps cvs-paper.ps cvsclient.ps
 
 info: cvs.info cvsclient.info
 
@@ -83,21 +87,24 @@ installdirs:
 
 dvi: cvs.dvi cvsclient.dvi
 
-cvs.dvi:
+cvs.dvi cvs.aux: cvs.texinfo
 	$(TEXI2DVI) $(srcdir)/cvs.texinfo
 
-cvsclient.dvi: cvsclient.texi
+cvsclient.dvi cvsclient.aux: cvsclient.texi
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
 	$(TEXINDEX) cvsclient.??
 	$(SET_TEXINPUTS) $(TEX) cvsclient.texi
-	rm -f cvsclient.?? cvsclient.log cvsclient.aux cvsclient.toc cvsclient.??s
+	rm -f cvsclient.?? cvsclient.log cvsclient.toc cvsclient.??s
 
 cvs.ps: cvs.dvi
 	$(DVIPS) $(DVIPSFLAGS) cvs.dvi -o cvs.ps
 
 cvs-paper.ps: cvs-paper.ms
 	$(ROFF) -t -p -ms -Tps $(srcdir)/cvs-paper.ms > $@
+
+cvsclient.ps: cvsclient.dvi
+	$(DVIPS) $(DVIPSFLAGS) cvsclient.dvi -o cvsclient.ps
 	
 tags:
 .PHONY: tags
@@ -129,9 +136,18 @@ realclean: distclean
 	rm -f cvs.info* cvs-paper.ps
 .PHONY: realclean
 
-dist: $(DISTFILES)
-	ln $(DISTFILES) ../`cat ../.fname`/doc
-.PHONY: dist
+dist-dir: $(DISTFILES)
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
+	if [ -f cvs.info-1 ]; \
+	  then ln -f cvs.info-* ${DISTDIR}; \
+	  else : Pacify Ultrix sh; \
+	fi
+	if [ -f cvsclient.info-1 ]; \
+	  then ln -f cvsclient.info-* ${DISTDIR}; \
+	  else : Pacify Ultrix sh; \
+	fi
+.PHONY: dist-dir
 
 Makefile: Makefile.in
 	cd .. ; $(SHELL) config.status
