@@ -39,7 +39,7 @@ SHELL = /bin/sh
 
 ELFILES = pcl-cvs.el pcl-cvs-lucid.el pcl-cvs-startup.el
 ELCFILES = pcl-cvs.elc pcl-cvs-lucid.elc
-INFOFILES = pcl-cvs
+INFOFILES = pcl-cvs.info*
 TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
 	pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky pcl-cvs.pg \
 	pcl-cvs.cps pcl-cvs.fns pcl-cvs.kys pcl-cvs.pgs pcl-cvs.tps \
@@ -48,7 +48,7 @@ TEXTMPS = pcl-cvs.aux pcl-cvs.log pcl-cvs.toc pcl-cvs.dvi pcl-cvs.cp \
 INSTALL = install
 INSTALL_DATA = $(INSTALL)
 
-pcl-cvs.elc pcl-cvs-lucid.el elcfiles:
+pcl-cvs.elc pcl-cvs-lucid.elc elcfiles:
 	$(EMACS) -batch -l ./compile-all.el -f compile-pcl-cvs
 
 all: elcfiles info
@@ -63,10 +63,10 @@ install: install_elc
 install_elc: elcfiles
 	for i in $(ELCFILES); do $(INSTALL_DATA) $$i $(lispdir)/$$i; done
 
-install_info: pcl-cvs
-	$(INSTALL_DATA) pcl-cvs $(infodir)/pcl-cvs
+install_info: pcl-cvs.info
+	$(INSTALL_DATA) pcl-cvs.info* $(infodir)/pcl-cvs.info
 
-info pcl-cvs: pcl-cvs.texinfo
+info pcl-cvs.info: pcl-cvs.texinfo
 	makeinfo --fill-column=70 pcl-cvs.texinfo
 
 pcl-cvs.aux pcl-cvs.dvi: pcl-cvs.texinfo
@@ -89,13 +89,10 @@ tags TAGS:
 DISTFILES = \
 	.cvsignore ChangeLog INSTALL Makefile NEWS README \
 	${ELFILES} ${ELCFILES} compile-all.el \
-	pcl-cvs.texinfo pcl-cvs.aux pcl-cvs.ps pcl-cvs texinfo.tex
+	pcl-cvs.texinfo pcl-cvs.aux pcl-cvs.ps texinfo.tex
 
-dist-dir: ${DISTFILES}
+dist-dir: ${DISTFILES} pcl-cvs.info
 	mkdir ${DISTDIR}
 	ln ${DISTFILES} ${DISTDIR}
-	if [ -f pcl-cvs-1 ]; \
-	  then ln pcl-cvs-[0-9]* ${DISTDIR}; \
-	  else : Pacify Ultrix sh; \
-	fi
+	ln pcl-cvs.info* ${DISTDIR}
 .PHONY: dist-dir
