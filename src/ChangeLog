@@ -1,3 +1,10 @@
+Wed Aug  7 15:11:40 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* main.c (cmds): Add some aliases for "annotate".
+	(usg): Improve usage message text
+	(cmd_synonyms): New function to print the command synonym list
+	(main): Add new option --help-synonyms
+
 Wed Aug  7 00:07:31 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (translate_symtag): New static function.

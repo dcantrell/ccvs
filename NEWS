@@ -1,5 +1,8 @@
 Changes since 1.8:
 
+* New option "--help-synonyms" prints a list of all recognized command
+synonyms.
+
 * The "log" command no longer invokes the RCS "rlog" program.  The
 option handling and printing are now handled internally.
 
