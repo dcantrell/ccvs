@@ -1,3 +1,8 @@
+2001-02-07  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (directory_cmp): Return status rather than setting ISDIFF.
+	(basic2): Rewrite using dotest.
+
 2001-02-06  Larry Jones  <larry.jones@sdrc.com>
 
 	* tag.c, rtag.c: Merge with tag.c being the surviving file.
