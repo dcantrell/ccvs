@@ -31,7 +31,7 @@ CFLAGS = @CFLAGS@
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 
-PR_PROGRAM = /bin/pr
+PR_PROGRAM = @pr_path@
 
 #### End of system configuration section. ####
 
@@ -67,7 +67,7 @@ libdiff libdiff.a: $(OBJECTS)
 $(OBJECTS): diff.h diffrun.h system.h
 analyze.o cmpbuf.o: cmpbuf.h
 
-util.o: util.c
+util.o: util.c Makefile
 	$(COMPILE) -DPR_PROGRAM=\"$(PR_PROGRAM)\" $<
 
 install: all
