@@ -1,5 +1,15 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* update.c (join_file): Restore the optimization Mark recently removed,
+	but fix it.  Move one other optimization up since it needs to be
+	checked for first.  Add bew status messages like merge_file produces
+	when the requested diff has already been applied to the destination.
+	Expand header comment.
+	* sanity.sh (join6): Add tests for the new error messages.
+	(import-113, join-admin-2, diffmerge1): Fix collateral damage.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* update.c (merge_file): Optimize & eliminate code.
 
 2003-10-24  Derek Price  <derek@ximbiot.com>

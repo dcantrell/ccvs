@@ -1,5 +1,9 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Update recent text about joins to reflect new behavior.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Note that release of a project subdir does not remove the entry
 	from `./CVS/Entries'.
 
