@@ -421,7 +421,7 @@ wrap_rcsoption (filename, asflag)
     if (e == NULL || e->rcsOption == NULL || (*e->rcsOption == '\0'))
 	return NULL;
 
-    buf = xmalloc (strlen (e->rcsOption + 3));
+    buf = xmalloc (strlen (e->rcsOption) + 3);
     if (asflag)
     {
 	strcpy (buf, "-k");
