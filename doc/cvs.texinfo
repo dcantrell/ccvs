@@ -1289,7 +1289,7 @@ operating systems or databases.
 
 @cindex #cvs.tfl
 Any file in the repository with a name starting
-with @file{#cvs.rfl} is a read lock.  Any file in
+with @file{#cvs.rfl.} is a read lock.  Any file in
 the repository with a name starting with
 @file{#cvs.wfl} is a write lock.  Old versions of CVS
 (before CVS 1.5) also created files with names starting
@@ -1304,7 +1304,7 @@ be true for creating a directory under most operating
 systems).  If it fails because the directory already
 existed, wait for a while and try again.  After
 obtaining the @file{#cvs.lock} lock, create a file
-whose name is @file{#cvs.rfl} followed by information
+whose name is @file{#cvs.rfl.} followed by information
 of your choice (for example, hostname and process
 identification number).  Then remove the
 @file{#cvs.lock} directory to release the master lock.
@@ -1315,7 +1315,7 @@ read lock.
 To obtain a writelock, first create the
 @file{#cvs.lock} directory, as with a readlock.  Then
 check that there are no files whose names start with
-@file{#cvs.rfl}.  If there are, remove
+@file{#cvs.rfl.}.  If there are, remove
 @file{#cvs.lock}, wait for a while, and try again.  If
 there are no readers, then create a file whose name is
 @file{#cvs.wfl} followed by information of your choice
