@@ -17,13 +17,14 @@
 
 const char *const watch_usage[] =
 {
-    "Usage: %s %s [on|off|add|remove] [-lR] [-a action] [files...]\n",
+    "Usage: %s %s (on|off|add|remove) [-lR] [-a <action>] [<path>...]\n",
     "on/off: turn on/off read-only checkouts of files\n",
     "add/remove: add or remove notification on actions\n",
     "-l (on/off/add/remove): Local directory only, not recursive\n",
-    "-R (on/off/add/remove): Process directories recursively\n",
+    "-R (on/off/add/remove): Process directories recursively (default)\n",
     "-a (add/remove): Specify what actions, one of\n",
-    "    edit,unedit,commit,all,none\n",
+    "    edit,unedit,commit,all,none (defaults to all, multiple -a\n",
+    "    options are permitted)\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
