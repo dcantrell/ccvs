@@ -3344,6 +3344,10 @@ source}), an operation which those systems call a
 @c still accept "checkout" in .cvsrc files indefinitely
 @c even if the CVS's messages are changed from "cvs checkout: "
 @c to "cvs get: ").
+@c There is a concern about whether "get" is not as
+@c good for novices because it is a more general term
+@c than "checkout" (and thus arguably harder to assign
+@c a technical meaning for).
 
 @cindex edit (subcommand)
 @deffn Command {cvs edit} [options] files @dots{}
