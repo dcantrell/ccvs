@@ -11940,9 +11940,10 @@ initial revision: 1\.1"
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
 
 	  cd first-dir
-          mkdir subdir
-          dotest modules4-3 "${testcvs} add subdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/subdir added to the repository"
+          mkdir subdir subdir_long
+          dotest modules4-3 "${testcvs} add subdir subdir_long" \
+"Directory ${CVSROOT_DIRNAME}/first-dir/subdir added to the repository
+Directory ${CVSROOT_DIRNAME}/first-dir/subdir_long added to the repository"
 
 	  echo file1 > file1
 	  dotest modules4-4 "${testcvs} add file1" \
@@ -11954,23 +11955,31 @@ initial revision: 1\.1"
 "${SPROG}"' add: scheduling file `subdir/file2'\'' for addition
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 
-	  dotest modules4-6 "${testcvs} -q ci -m add-it" \
+	  echo file3 > subdir_long/file3
+	  dotest modules4-6 "${testcvs} add subdir_long/file3" \
+"${SPROG}"' add: scheduling file `subdir_long/file3'\'' for addition
+'"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
+
+	  dotest modules4-7 "${testcvs} -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/subdir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/subdir/file2,v  <--  file2
+initial revision: 1\.1
+$CVSROOT_DIRNAME/first-dir/subdir_long/file3,v  <--  file3
 initial revision: 1\.1"
 
 	  cd ..
 
-	  dotest modules4-7 "${testcvs} -q update -d CVSROOT" \
+	  dotest modules4-8 "${testcvs} -q update -d CVSROOT" \
 "U CVSROOT${DOTSTAR}"
 	  cd CVSROOT
 	  cat >modules <<EOF
 all -a first-dir
 some -a !first-dir/subdir first-dir
+other -a !first-dir/subdir !first-dir/subdir_long first-dir
 somewhat -a first-dir !first-dir/subdir
 EOF
-	  dotest modules4-8 "${testcvs} -q ci -m add-modules" \
+	  dotest modules4-9 "${testcvs} -q ci -m add-modules" \
 "$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
@@ -11979,39 +11988,56 @@ $SPROG commit: Rebuilding administrative file database"
 	  cd ..
 	  mkdir 2; cd 2
 
-	  dotest modules4-9 "${testcvs} -q co all" \
+	  dotest modules4-10 "${testcvs} -q co all" \
 "U first-dir/file1
-U first-dir/subdir/file2"
+U first-dir/subdir/file2
+U first-dir/subdir_long/file3"
 	  rm -r first-dir
 
-	  dotest modules4-10 "${testcvs} -q co some" "U first-dir/file1"
-	  dotest_fail modules4-11 "test -d first-dir/subdir" ''
+	  dotest modules4-11 "${testcvs} -q co some" \
+"U first-dir/file1
+U first-dir/subdir_long/file3"
+	  dotest_fail modules4-12 "test -d first-dir/subdir" ''
+	  dotest modules4-13 "test -d first-dir/subdir_long" ''
 	  rm -r first-dir
 
 	  if $remote; then
 	    # But remote seems to do it the other way.
-	    dotest modules4-11a "${testcvs} -q co somewhat" "U first-dir/file1"
-	    dotest_fail modules4-11b "test -d first-dir/subdir" ''
+	    dotest modules4-14r-1 "${testcvs} -q co somewhat" \
+"U first-dir/file1
+U first-dir/subdir_long/file3"
+	    dotest_fail modules4-14r-2 "test -d first-dir/subdir" ''
+	    dotest modules4-14r-3 "test -d first-dir/subdir_long" ''
 	  else
 	    # This is strange behavior, in that the order of the
 	    # "!first-dir/subdir" and "first-dir" matter, and it isn't
 	    # clear that they should.  I suspect it is long-standing
 	    # strange behavior but I haven't verified that.
-	    dotest modules4-11a "${testcvs} -q co somewhat" \
+	    dotest modules4-14-1 "${testcvs} -q co somewhat" \
 "U first-dir/file1
-U first-dir/subdir/file2"
+U first-dir/subdir/file2
+U first-dir/subdir_long/file3"
+	    dotest modules4-14-2 "test -d first-dir/subdir" ''
+	    dotest modules4-14-3 "test -d first-dir/subdir_long" ''
 	  fi
+	  rm -r first-dir
+
+	  dotest modules4-15 "${testcvs} -q co other" \
+"U first-dir/file1"
+	  dotest_fail modules4-16 "test -d first-dir/subdir" ''
+	  dotest_fail modules4-17 "test -d first-dir/subdir_long" ''
 	  rm -r first-dir
 
 	  cd ..
 	  rm -r 2
 
-	  dotest modules4-12 "${testcvs} rtag tag some" \
+	  dotest modules4-18 "${testcvs} rtag tag some" \
 "${SPROG} rtag: Tagging first-dir
-${SPROG} rtag: Ignoring first-dir/subdir"
+${SPROG} rtag: Ignoring first-dir/subdir
+${SPROG} rtag: Tagging first-dir/subdir_long"
 
 	  cd 1/first-dir/subdir
-	  dotest modules4-13 "${testcvs} log file2" "
+	  dotest modules4-19 "${testcvs} log file2" "
 RCS file: ${CVSROOT_DIRNAME}/first-dir/subdir/file2,v
 Working file: file2
 head: 1\.1

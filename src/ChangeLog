@@ -1,3 +1,13 @@
+2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
+
+	* ignore.c (ignore_directory): Include the terminating NUL
+	character in the directory name comparison to avoid matching
+	substrings of directories by accident.
+	(Report and suggested fix from James E Wilson
+	<wilson@specifixinc.com>.)
+	* sanity.sh (modules4): Add some more tests testing the above
+	change.
+	
 2004-08-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (binfiles): Cleanup the 2a temporary directory.
