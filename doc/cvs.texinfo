@@ -2647,6 +2647,17 @@ the locks prevent other people from reading or writing.
 
 @cindex Atomic transactions, lack of
 @cindex Transactions, atomic, lack of
+@c the following talks about what one might call commit/update
+@c atomicity.
+@c Probably also should say something about
+@c commit/commit atomicity, that is, "An update will
+@c not get partial versions of more than one commit".
+@c CVS currently has this property and I guess we can
+@c make it a documented feature.
+@c For example one person commits
+@c a/one.c and b/four.c and another commits a/two.c and
+@c b/three.c.  Then an update cannot get the new a/one.c
+@c and a/two.c and the old b/four.c and b/three.c.
 One might hope for the following property
 
 @example
