@@ -2884,13 +2884,19 @@ RCS_getbranchpoint (RCSNode *rcs, char *target)
 /*
  * Get the head of the RCS file.  If branch is set, this is the head of the
  * branch, otherwise the real head.
- * Returns NULL or a newly malloc'd string.
+ *
+ * INPUTS
+ *   rcs	The parsed rcs node information.
+ *
+ * RETURNS
+ *   NULL when rcs->branch exists and cannot be found.
+ *   A newly malloc'd string, otherwise.
  */
 char *
 RCS_head (RCSNode *rcs)
 {
     /* make sure we have something to look at... */
-    assert (rcs != NULL);
+    assert (rcs);
 
     /*
      * NOTE: we call getbranch with force_tag_match set to avoid any
