@@ -156,7 +156,8 @@ This info manual describes how to use and administer
 * Builds::                      Issues related to CVS and builds
 * Compatibility::               Upgrading CVS versions
 * Revision management::         Policy questions for revision management
-* Invoking CVS::                Reference manual for CVS commands
+* CVS commands::                CVS commands share some things
+* Invoking CVS::                Quick reference to CVS commands
 * Administrative files::        Reference manual for the Administrative files
 * Environment variables::       All environment variables which affect CVS
 * Troubleshooting::             Some tips when nothing works
@@ -4325,26 +4326,15 @@ or replaced; you need to use @code{cvs diff} for that
 
 @end deffn
 
-These standard options are available with
-@code{annotate} (@pxref{Common options}, for a complete
-description of them):
+The options to @code{cvs annotate} are listed in
+@ref{Invoking CVS}, and can be used to select the files
+and revisions to annotate.  The options are described
+in more detail in @ref{Common options}.
 
-@table @code
-@item -D @var{date}
-Annotate the most recent revision no later than @var{date}.
-
-@item -f
-Only useful with the @samp{-D @var{date}} or @samp{-r
-@var{tag}} flags.  If no matching revision is found,
-annotate the most recent revision (instead of ignoring
-the file).
-
-@item -l
-Local; run only in current working directory.  @xref{Recursive behavior}.
-
-@item -r @var{tag}
-Annotate revision @var{tag}.
-@end table
+@c FIXME: maybe an example using the options?  Just
+@c what it means to select a revision might be worth a
+@c few words of explanation ("you want to see who
+@c changed this line *before* 1.4"...).
 
 @c ---------------------------------------------------------------------
 @node Keyword substitution
@@ -4907,28 +4897,18 @@ too regimented and thus counter-productive to the real
 goal, which is to get software written.
 
 @c ---------------------------------------------------------------------
-@node Invoking CVS
-@appendix Reference manual for CVS commands
-@cindex Command reference
-@cindex Reference, commands
-@cindex Invoking CVS
+@node CVS commands
+@appendix Guide to CVS commands
 
-@c This is a poor organization.  The manual should be
-@c organized by what the user wants to do, not by CVS
-@c commands.  That is why some commands are not described
-@c here--the idea is to (as people get around to it)
-@c move the information from this section to the rest
-@c of the manual.  Two functions where it might be useful to
-@c have a list of commands: (1) to look up where a command
-@c is described in this manual, if you know the name of
-@c the command (the index serves this purpose), (2) as a
-@c quick reminder of what the commands are (the -H option
-@c serves this purpose).
-
-This appendix describes how to invoke @sc{cvs}, and
-describes in detail those subcommands of @sc{cvs} which
-are not fully described elsewhere.  To look up a
-particular subcommand, see @ref{Index}.
+This appendix describes the overall structure of
+@sc{cvs} commands, and describes some commands in
+detail (others are described elsewhere; for a quick
+reference to @sc{cvs} commands, @pxref{Invoking CVS}).
+@c The idea is that we want to move the commands which
+@c are described here into the main body of the manual,
+@c in the process reorganizing the manual to be
+@c organized around what the user wants to do, not
+@c organized around CVS commands.
 
 @menu
 * Structure::                   Overall structure of CVS commands
@@ -5280,8 +5260,9 @@ tag or date.  (The most recent revision of the file
 will be used). 
 
 @need 800
-@samp{-f} is available with these commands: @code{checkout},
-@code{export}, @code{rdiff}, @code{rtag}, and @code{update}.
+@samp{-f} is available with these commands:
+@code{annotate}, @code{checkout}, @code{export},
+@code{rdiff}, @code{rtag}, and @code{update}.
 
 @strong{Warning:}  The @code{commit} command also has a
 @samp{-f} option, but it has a different behavior for
@@ -5486,6 +5467,8 @@ names appearing in the comma-separated list
 @var{logins} from the access list of the RCS file.  If
 @var{logins} is omitted, erase the entire access list.
 
+@c FIXME: Doesn't work with client/server CVS; we
+@c should probably just not accept the option.
 @item -I
 Run interactively, even if the standard input is not a
 terminal.
@@ -7485,8 +7468,8 @@ Prune empty directories.
 Pipe files to the standard output.
 
 @item -R
-Operate recursively.  This is on by default.
-@xref{Recursive behavior}.
+Operate recursively (default).  @xref{Recursive
+behavior}.
 
 @item -r tag
 Retrieve revision @var{tag}.  This option is sticky,
@@ -7650,6 +7633,660 @@ been going on with the project.
 @example
 $ cvs -n -q update
 @end example
+
+@node Invoking CVS
+@appendix Quick reference to CVS commands
+@cindex Command reference
+@cindex Reference, commands
+@cindex Invoking CVS
+
+This appendix describes how to invoke @sc{cvs}, with
+references to where each command or feature is
+described in detail.  Other relevant references are the
+@samp{--help}/@samp{-H} option to @sc{cvs}
+(@pxref{Global options}) and @ref{Index}.
+
+@c The idea behind this table is that we want each item
+@c to be a sentence or two at most.  Preferably a
+@c single line.
+@c 
+@c In some cases refs to "foo options" are just to get
+@c this thing written quickly, not because the "foo
+@c options" node is really the best place to point.
+@table @code
+@item add [@var{options}] [@var{files}@dots{}]
+Add a new file/directory.  See @ref{Adding files}.
+
+@table @code
+@item -k @var{kflag}
+Set keyword expansion.
+
+@item -m @var{msg}
+Set file description.
+@end table
+
+@item admin [@var{options}] [@var{files}@dots{}]
+Administration of history files in the repository.  See
+@ref{admin}.
+@c This list omits those options which are not
+@c documented as being useful with CVS.  That might be
+@c a mistake...
+
+@table @code
+@item -b[@var{rev}]
+Set default branch.
+@c FIXME: Should xref to a section which describes how
+@c to use this with the vendor branch.
+
+@item -c@var{string}
+Set comment leader.
+
+@item -k@var{subst}
+Set keyword substitution.  See @ref{Keyword
+substitution}.
+
+@item -l[@var{rev}]
+Lock revision @var{rev}, or latest revision.
+
+@item -m@var{rev}:@var{msg}
+Replace the log message of revision @var{rev} with
+@var{msg}.
+
+@item -o@var{range}
+Delete revisions from the history files
+
+@item -q
+Run quietly; do not print diagnostics.
+
+@item -s@var{state}[:@var{rev}]
+Set the state.
+
+@c Does not work for client/server CVS
+@item -t
+Set file description from standard input.
+
+@item -t@var{file}
+Set file description from @var{file}.
+
+@item -t-@var{string}
+Set file description to @var{string}.
+
+@item -u[@var{rev}]
+Unlock revision @var{rev}, or latest revision.
+@end table
+
+@item annotate [@var{options}] [@var{files}@dots{}]
+Show last revision where each line was modified.  See
+@ref{annotate}.
+
+@table @code
+@item -D @var{date}
+Annotate the most recent revision no later than
+@var{date}.  See @ref{Common options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -r @var{tag}
+Annotate revision @var{tag}.  See @ref{Common options}.
+@end table
+
+@item checkout [@var{options}] @var{modules}@dots{}
+Get a copy of the sources.  See @ref{checkout}.
+
+@table @code
+@item -A
+Reset any sticky tags/date/kopts.  See @ref{Sticky
+tags} and @ref{Keyword substitution}.
+
+@item -c
+Output the module database.  See @ref{checkout options}.
+
+@item -D @var{date}
+Check out revisions as of @var{date} (is sticky).  See
+@ref{Common options}.
+
+@item -d @var{dir}
+Check out into @var{dir}.  See @ref{checkout options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@c Probably want to use rev1/rev2 style like for diff
+@c -r.  Here and in on-line help.
+@item -j @var{rev}
+Merge in changes.  See @ref{checkout options}.
+
+@item -k @var{kflag}
+Use @var{kflag} keyword expansion.  See
+@ref{Substitution modes}.
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -N
+Don't shorten module paths if -d specified.  See @ref{checkout options}.
+
+@item -n
+Do not run module program (if any).  See @ref{checkout options}.
+
+@item -P
+Prune empty directories.  See @ref{checkout options}.
+
+@item -p
+Check out files to standard output (avoids
+stickiness).  See @ref{checkout options}.
+
+@item -r @var{tag}
+Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+
+@item -s
+Like -c, but include module status.  See @ref{checkout options}.
+@end table
+
+@item commit [@var{options}] [@var{files}@dots{}]
+Check changes into the repository.  See @ref{commit}.
+
+@table @code
+@item -F @var{file}
+Read log message from @var{file}.  See @ref{commit options}.
+
+@item -f
+@c What is this "disables recursion"?  It is from the
+@c on-line help; is it documented in this manual?
+Force the file to be committed; disables recursion.
+See @ref{commit options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -m @var{msg}
+Use @var{msg} as log message.  See @ref{commit options}.
+
+@item -n
+Do not run module program (if any).  See @ref{commit options}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
+@item -r @var{rev}
+Commit to @var{rev}.  See @ref{commit options}.
+@end table
+
+@item diff [@var{options}] [@var{files}@dots{}]
+Show differences between revisions.  See @ref{diff}.
+In addition to the options shown below, accepts a wide
+variety of options to control output style, for example
+@samp{-c} for context diffs.
+
+@table @code
+@item -D @var{date1}
+Diff revision for date against working file.  See
+@ref{diff options}.
+
+@item -D @var{date2}
+Diff @var{rev1}/@var{date1} against @var{date2}.  See
+@ref{diff options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -N
+Include diffs for added and removed files.  See
+@ref{diff options}.
+
+@item -r @var{rev1}
+Diff revision for @var{rev1} against working file.  See
+@ref{diff options}.
+
+@item -r @var{rev2}
+Diff rev1/date1 against rev2.  See @ref{diff options}.
+@end table
+
+@item edit [@var{options}] [@var{files}@dots{}]
+Get ready to edit a watched file.  See @ref{Editing files}.
+
+@table @code
+@item -a @var{actions}
+Specify actions for temporary watch, where
+@var{actions} is @code{edit}, @code{unedit},
+@code{commit}, @code{all}, or @code{none}.  See
+@ref{Editing files}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+@end table
+
+@item editors [@var{options}] [@var{files}@dots{}]
+See who is editing a watched file.  See @ref{Watch information}.
+
+@table @code
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+@end table
+
+@item export [@var{options}] @var{modules}@dots{}
+Export files from CVS.  See @ref{export}.
+
+@table @code
+@item -D @var{date}
+Check out revisions as of @var{date}.  See
+@ref{Common options}.
+
+@item -d @var{dir}
+Check out into @var{dir}.  See @ref{export options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@item -k @var{kflag}
+Use @var{kflag} keyword expansion.  See
+@ref{Substitution modes}.
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -N
+Don't shorten module paths if -d specified.  See @ref{export options}.
+
+@item -n
+Do not run module program (if any).  See @ref{export options}.
+
+@item -P
+Prune empty directories.  See @ref{export options}.
+
+@item -r @var{tag}
+Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+@end table
+
+@item history [@var{options}] [@var{files}@dots{}]
+Show repository access history.  See @ref{history}.
+
+@table @code
+@item -a
+All users (default is self).  See @ref{history options}.
+
+@item -b @var{str}
+Back to record with @var{str} in module/file/repos
+field.  See @ref{history options}.
+
+@item -c
+Report on committed (modified) files.  See @ref{history options}.
+
+@item -D @var{date}
+Since @var{date}.  See @ref{history options}.
+
+@item -e
+Report on all record types.  See @ref{history options}.
+
+@item -l
+Last modified (committed or modified report).  See @ref{history options}.
+
+@item -m @var{module}
+Report on @var{module} (repeatable).  See @ref{history
+options}.
+
+@item -n @var{module}
+In @var{module}.  See @ref{history options}.
+
+@item -o
+Report on checked out modules.  See @ref{history options}.
+
+@item -r @var{rev}
+Since revision @var{rev}.  See @ref{history options}.
+
+@item -T
+@c What the @#$@# is a TAG?  Same as a tag?  This
+@c wording is also in the online-line help.
+Produce report on all TAGs.  See @ref{history options}.
+
+@item -t @var{tag}
+Since tag record placed in history file (by anyone).
+See @ref{history options}.
+
+@item -u @var{user}
+For user @var{user} (repeatable).  See @ref{history
+options}.
+
+@item -w
+Working directory must match.  See @ref{history options}.
+
+@item -x @var{types}
+Report on @var{types}, one or more of
+@code{TOEFWUCGMAR}.  See @ref{history options}.
+
+@item -z @var{zone}
+Output for time zone @var{zone}.  See @ref{history
+options}.
+@end table
+
+@item import [@var{options}] @var{repository} @var{vendor-tag} @var{release-tags}@dots{}
+Import files into CVS, using vendor branches.  See
+@ref{import}.
+
+@table @code
+@item -b @var{bra}
+Import to vendor branch @var{bra}.  See
+@ref{import options}.
+
+@item -d
+Use the file's modification time as the time of
+import.  See @ref{import options}.
+
+@item -k @var{kflag}
+Set default RCS keyword substitution mode.  See
+@ref{import options}.
+
+@item -m @var{msg}
+Use @var{msg} for log message.  See
+@ref{import options}.
+
+@item -I @var{ign}
+More files to ignore (! to reset).  See
+@ref{import options}.
+
+@item -W @var{spec}
+More wrappers.  See @ref{import options}.
+@end table
+
+@item init
+Create a CVS repository if it doesn't exist.  See
+@ref{Creating a repository}.
+
+@item log [@var{options}] [@var{files}@dots{}]
+Print out history information for files.  See @ref{log}.
+
+@table @code
+@item -b
+Only list revisions on the default branch.  See @ref{log options}.
+
+@item -d @var{dates}
+Specify dates (@var{d1}<@var{d2} for range, @var{d} for
+latest before).  See @ref{log options}.
+
+@item -h
+Only print header.  See @ref{log options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -N
+Do not list tags.  See @ref{log options}.
+
+@item -R
+Only print name of RCS file.  See @ref{log options}.
+
+@item -r @var{revs}
+Only list revisions @var{revs}.  See @ref{log options}.
+
+@item -s @var{states}
+Only list revisions with specified states.  See @ref{log options}.
+
+@item -t
+Only print header and descriptive text.  See @ref{log
+options}.
+
+@item -w @var{logins}
+Only list revisions checked in by specified logins.  See @ref{log options}.
+@end table
+
+@item login
+Prompt for password for authenticating server.  See
+@ref{Password authentication client}.
+
+@item rdiff [@var{options}] @var{modules}@dots{}
+Show differences between releases.  See @ref{rdiff}.
+
+@table @code
+@item -c
+Context diff output format (default).  See @ref{rdiff options}.
+
+@item -D @var{date}
+Select revisions based on @var{date}.  See @ref{Common options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -r @var{rev}
+Select revisions based on @var{rev}.  See @ref{Common options}.
+
+@item -s
+Short patch - one liner per file.  See @ref{rdiff options}.
+
+@item -t
+Top two diffs - last change made to the file.  See
+@ref{diff options}.
+
+@item -u
+Unidiff output format.  See @ref{rdiff options}.
+
+@item -V @var{vers}
+Use RCS Version @var{vers} for keyword expansion.  See
+@ref{rdiff options}.
+@end table
+
+@item release [@var{options}] @var{directory}
+Indicate that a directory is no longer in use.  See
+@ref{release}.
+
+@table @code
+@item -d
+Delete the given directory.  See @ref{release options}.
+@end table
+
+@item remove [@var{options}] [@var{files}@dots{}]
+Remove an entry from the repository.  See @ref{Removing files}.
+
+@table @code
+@item -f
+Delete the file before removing it.  See @ref{Removing files}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+@end table
+
+@item rtag [@var{options}] @var{tag} @var{modules}@dots{}
+Add a symbolic tag to a module.  See @ref{rtag}.
+
+@table @code
+@c Is this one of those dumb options which used to
+@c work around the lack of death support?
+@item -a
+Clear tag from removed files that would not otherwise
+be tagged.  See @ref{rtag options}.
+
+@item -b
+Create a branch named @var{tag}.  See @ref{rtag options}.
+
+@item -D @var{date}
+Tag revisions as of @var{date}.  See @ref{rtag options}.
+
+@item -d
+Delete the given tag.  See @ref{rtag options}.
+
+@item -F
+Move tag if it already exists.  See @ref{rtag options}.
+
+@item -f
+Force a head revision match if tag/date not found.
+See @ref{rtag options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -n
+No execution of tag program.  See @ref{rtag options}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
+@item -r @var{tag}
+Tag existing tag @var{tag}.  See @ref{rtag options}.
+@end table
+
+@item status [@var{options}] @var{files}@dots{}
+Display status information in a working directory.  See
+@ref{status}.
+
+@table @code
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
+@item -v
+Include tag information for file.  See @ref{status options}.
+@end table
+
+@item tag [@var{options}] @var{tag} [@var{files}@dots{}]
+Add a symbolic tag to checked out version of files.
+See @ref{tag}.
+
+@table @code
+@item -b
+Create a branch named @var{tag}.  See @ref{tag options}.
+
+@item -D @var{date}
+Tag revisions as of @var{date}.  See @ref{tag options}.
+
+@item -d
+Delete the given tag.  See @ref{tag options}.
+
+@item -F
+Move tag if it already exists.  See @ref{tag options}.
+
+@item -f
+Force a head revision match if tag/date not found.
+See @ref{tag options}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+
+@item -n
+No execution of tag program.  See @ref{tag options}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
+@item -r @var{tag}
+Tag existing tag @var{tag}.  See @ref{tag options}.
+@end table
+
+@item unedit [@var{options}] [@var{files}@dots{}]
+Undo an edit command.  See @ref{Editing files}.
+
+@table @code
+@item -a @var{actions}
+Specify actions for temporary watch, where
+@var{actions} is @code{edit}, @code{unedit},
+@code{commit}, @code{all}, or @code{none}.  See
+@ref{Editing files}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+@end table
+
+@item update [@var{options}] [@var{files}@dots{}]
+Bring work tree in sync with repository.  See
+@ref{update}.
+
+@table @code
+@item -A
+Reset any sticky tags/date/kopts.  See @ref{Sticky
+tags} and @ref{Keyword substitution}.
+
+@item -D @var{date}
+Check out revisions as of @var{date} (is sticky).  See
+@ref{Common options}.
+
+@item -d
+Create directories.  See @ref{update options}.
+
+@item -f
+Use head revision if tag/date not found.  See
+@ref{Common options}.
+
+@item -I @var{ign}
+More files to ignore (! to reset).  See
+@ref{import options}.
+
+@c Probably want to use rev1/rev2 style like for diff
+@c -r.  Here and in on-line help.
+@item -j @var{rev}
+Merge in changes.  See @ref{update options}.
+
+@item -k @var{kflag}
+Use @var{kflag} keyword expansion.  See
+@ref{Substitution modes}.
+
+@item -l
+Local; run only in current working directory.  @xref{Recursive behavior}.
+
+@item -P
+Prune empty directories.  See @ref{update options}.
+
+@item -p
+Check out files to standard output (avoids
+stickiness).  See @ref{update options}.
+
+@item -R
+Operate recursively (default).  @xref{Recursive
+behavior}.
+
+@item -r @var{tag}
+Checkout revision @var{tag} (is sticky).  See @ref{Common options}.
+
+@item -W @var{spec}
+More wrappers.  See @ref{import options}.
+@end table
+
+@item watch [on|off|add|remove] [@var{options}] [@var{files}@dots{}]
+
+on/off: turn on/off read-only checkouts of files.  See
+@ref{Setting a watch}.
+
+add/remove: add or remove notification on actions.  See
+@ref{Getting Notified}.
+
+@table @code
+@item -a @var{actions}
+Specify actions for temporary watch, where
+@var{actions} is @code{edit}, @code{unedit},
+@code{commit}, @code{all}, or @code{none}.  See
+@ref{Editing files}.
+
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+@end table
+
+@item watchers [@var{options}] [@var{files}@dots{}]
+See who is watching a file.  See @ref{Watch information}.
+
+@table @code
+@item -l
+Local; run only in current working directory.  See @ref{Recursive behavior}.
+@end table
+
+@end table
 
 @c ---------------------------------------------------------------------
 @node Administrative files
