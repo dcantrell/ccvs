@@ -894,8 +894,8 @@ if test x"$*" = x; then
 	# Branching, tagging, removing, adding, multiple directories
 	tests="${tests} rdiff rdiff-short"
 	tests="${tests} rdiff2 diff diffnl death death2"
-	tests="${tests} rm-update-message rmadd"
-	tests="${tests} rmadd2 dirs dirs2 branches branches2 branches3"
+	tests="${tests} rm-update-message rmadd rmadd2 rmadd3"
+	tests="${tests} dirs dirs2 branches branches2 branches3"
 	tests="${tests} branches4 tagc tagf"
 	tests="${tests} rcslib multibranch import importb importc"
 	tests="${tests} update-p import-after-initial branch-after-import"
@@ -5744,6 +5744,60 @@ File: no file file1		Status: Up-to-date
 
 	  cd ../..
 
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	rmadd3)
+          # This test demonstrates that CVS notices that file1 exists rather
+	  # that deleting or writing over it after:
+	  #
+	  #   cvs remove -f file1; touch file1; cvs add file1.
+	  #
+          # According to the manual, this should work for:
+	  #
+	  #   rm file1; cvs remove file1; cvs add file1
+	  #
+	  # but in past version of CVS, new content in file1 would be
+	  # erroneously deleted when file1 reappeared between the remove and
+	  # the add.
+	  mkdir 1; cd 1
+	  dotest rmadd3-init1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest rmadd3-init2 "${testcvs} add first-dir" \
+"Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
+	  cd first-dir
+
+	  echo initial content for file1 >file1
+	  dotest rmadd3-init3 "${testcvs} add file1" \
+"${SPROG} add: scheduling file \`file1' for addition
+${SPROG} add: use '${SPROG} commit' to add this file permanently"
+	  dotest rmadd3-init4 "${testcvs} -q ci -m add" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file1,v
+done
+Checking in file1;
+${CVSROOT_DIRNAME}/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  # Here begins the guts of this test, as detailed above.
+	  dotest rmadd3-1 "${testcvs} rm -f file1" \
+"${SROG} remove: scheduling \`file1' for removal
+${SROG} remove: use '${SROG} commit' to remove this file permanently"
+
+          # Now recreate the file:
+	  echo desired future contents for file1 >file1
+
+	  # And attempt to resurrect it at the same time:
+	  dotest_fail rmadd3-2 "${testcvs} add file1" \
+"${SPROG} add: file1 should be removed and is still there (or is back again)"
+
+	  if $keep; then
+	    echo Keeping ${TESTDIR} and exiting due to --keep
+	    exit 0
+	  fi
+
+	  cd ../..
 	  rm -r 1
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;

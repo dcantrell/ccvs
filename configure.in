@@ -952,7 +952,17 @@ AC_ARG_ENABLE(
   [case-sensitivity],
   AC_HELP_STRING(
     [--enable-case-sensitivity],
-    [Force CVS to expect a case sensitive file system (default autodetects)]),
+    [Force CVS to expect a case sensitive file system.  Enabling this on a case
+     insensitive system should have little effect on the server or client
+     operation, though client users may ocassionally be suprised that the CVS
+     server appears to be case sensitive.  Disabling this for a case sensitive
+     server disables server support for case insensitive clients, which can
+     confuse all users of case insensitive clients contacting the server.
+     Disabling this for a case sensitive client will cause the client to ask
+     servers to behave case insensitively, which could cause confusion for
+     users, but also probably no real harm.  (default autoselects based on the
+     case sensitivity of the file system containing the current working
+     directory)]),
     [case "$enable_case_sensitivity" in
        yes | no | auto) ;;
        *)
