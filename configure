@@ -2108,7 +2108,7 @@ fi
 done
 
 
-for ac_func in fchmod fsync ftime mktemp putenv vprintf ftruncate timezone getpagesize initgroups fchdir sigaction sigprocmask sigvec sigsetmask sigblock tempnam tzset readlink wait3 mknod getpassphrase
+for ac_func in fchmod fsync ftime mktemp putenv vprintf ftruncate timezone getpagesize initgroups fchdir sigaction sigprocmask sigvec sigsetmask sigblock tempnam tzset readlink wait3 mknod getpassphrase getgroups
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 echo "configure:2115: checking for $ac_func" >&5

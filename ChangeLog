@@ -1,3 +1,8 @@
+2000-11-08  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in: Check for getgroups function.
+	* configure, config.h.in: Regenerated.
+
 2000-11-07  Larry Jones  <larry.jones@sdrc.com>
 
 	* Makefile.in (FLAGS_TO_PASS): Add INSTALL, INSTALL_DATA, and
