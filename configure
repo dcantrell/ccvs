@@ -327,7 +327,7 @@ ac_includes_default="\
 
 gl_header_list=
 gl_func_list=
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS ALLOCA ALLOCA_H FNMATCH_H GETOPT_H LIB_CLOCK_GETTIME STDBOOL_H HAVE__BOOL EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB LIB_NANOSLEEP YACC YFLAGS HAVE_PUTENV cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS ALLOCA ALLOCA_H FNMATCH_H GETOPT_H LIB_CLOCK_GETTIME LIB_NANOSLEEP STDBOOL_H HAVE__BOOL EOVERFLOW MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB YACC YFLAGS HAVE_PUTENV cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
 ac_subst_files='MKTEMP_SH_FUNCTION'
 
 # Initialize some variables set by options.
@@ -15414,6 +15414,238 @@ _ACEOF
   fi
 
 
+ nanosleep_save_libs=$LIBS
+
+ # Solaris 2.5.1 needs -lposix4 to get the nanosleep function.
+ # Solaris 7 prefers the library name -lrt to the obsolescent name -lposix4.
+ echo "$as_me:$LINENO: checking for library containing nanosleep" >&5
+echo $ECHO_N "checking for library containing nanosleep... $ECHO_C" >&6
+if test "${ac_cv_search_nanosleep+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+ac_cv_search_nanosleep=no
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char nanosleep ();
+int
+main ()
+{
+nanosleep ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_search_nanosleep="none required"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+if test "$ac_cv_search_nanosleep" = no; then
+  for ac_lib in rt posix4; do
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char nanosleep ();
+int
+main ()
+{
+nanosleep ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_search_nanosleep="-l$ac_lib"
+break
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+  done
+fi
+LIBS=$ac_func_search_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_search_nanosleep" >&5
+echo "${ECHO_T}$ac_cv_search_nanosleep" >&6
+if test "$ac_cv_search_nanosleep" != no; then
+  test "$ac_cv_search_nanosleep" = "none required" || LIBS="$ac_cv_search_nanosleep $LIBS"
+  test "$ac_cv_search_nanosleep" = "none required" ||
+	         LIB_NANOSLEEP=$ac_cv_search_nanosleep
+fi
+
+
+
+ echo "$as_me:$LINENO: checking whether nanosleep works" >&5
+echo $ECHO_N "checking whether nanosleep works... $ECHO_C" >&6
+if test "${jm_cv_func_nanosleep_works+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+
+
+  :
+
+
+
+
+
+   if test "$cross_compiling" = yes; then
+  	 jm_cv_func_nanosleep_works=no
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#   if TIME_WITH_SYS_TIME
+#    include <sys/time.h>
+#    include <time.h>
+#   else
+#    if HAVE_SYS_TIME_H
+#     include <sys/time.h>
+#    else
+#     include <time.h>
+#    endif
+#   endif
+
+    int
+    main ()
+    {
+      struct timespec ts_sleep, ts_remaining;
+      ts_sleep.tv_sec = 0;
+      ts_sleep.tv_nsec = 1;
+      exit (nanosleep (&ts_sleep, &ts_remaining) == 0 ? 0 : 1);
+    }
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  jm_cv_func_nanosleep_works=yes
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+jm_cv_func_nanosleep_works=no
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+fi
+echo "$as_me:$LINENO: result: $jm_cv_func_nanosleep_works" >&5
+echo "${ECHO_T}$jm_cv_func_nanosleep_works" >&6
+  if test $jm_cv_func_nanosleep_works = no; then
+    case $LIBOBJS in
+    "nanosleep.$ac_objext"   | \
+  *" nanosleep.$ac_objext"   | \
+    "nanosleep.$ac_objext "* | \
+  *" nanosleep.$ac_objext "* ) ;;
+  *) LIBOBJS="$LIBOBJS nanosleep.$ac_objext" ;;
+esac
+
+
+cat >>confdefs.h <<\_ACEOF
+#define nanosleep rpl_nanosleep
+_ACEOF
+
+
+
+  :
+
+
+
+
+
+
+  fi
+
+ LIBS=$nanosleep_save_libs
+
+
 
   :
 
@@ -20211,238 +20443,6 @@ cat >>confdefs.h <<\_ACEOF
 #define my_strftime nstrftime
 _ACEOF
 
-
-
- nanosleep_save_libs=$LIBS
-
- # Solaris 2.5.1 needs -lposix4 to get the nanosleep function.
- # Solaris 7 prefers the library name -lrt to the obsolescent name -lposix4.
- echo "$as_me:$LINENO: checking for library containing nanosleep" >&5
-echo $ECHO_N "checking for library containing nanosleep... $ECHO_C" >&6
-if test "${ac_cv_search_nanosleep+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-ac_cv_search_nanosleep=no
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char nanosleep ();
-int
-main ()
-{
-nanosleep ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_nanosleep="none required"
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-if test "$ac_cv_search_nanosleep" = no; then
-  for ac_lib in rt posix4; do
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char nanosleep ();
-int
-main ()
-{
-nanosleep ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_c_werror_flag"
-			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_search_nanosleep="-l$ac_lib"
-break
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-  done
-fi
-LIBS=$ac_func_search_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_search_nanosleep" >&5
-echo "${ECHO_T}$ac_cv_search_nanosleep" >&6
-if test "$ac_cv_search_nanosleep" != no; then
-  test "$ac_cv_search_nanosleep" = "none required" || LIBS="$ac_cv_search_nanosleep $LIBS"
-  test "$ac_cv_search_nanosleep" = "none required" ||
-	         LIB_NANOSLEEP=$ac_cv_search_nanosleep
-fi
-
-
-
- echo "$as_me:$LINENO: checking whether nanosleep works" >&5
-echo $ECHO_N "checking whether nanosleep works... $ECHO_C" >&6
-if test "${jm_cv_func_nanosleep_works+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-
-
-
-  :
-
-
-
-
-
-   if test "$cross_compiling" = yes; then
-  	 jm_cv_func_nanosleep_works=no
-else
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#   if TIME_WITH_SYS_TIME
-#    include <sys/time.h>
-#    include <time.h>
-#   else
-#    if HAVE_SYS_TIME_H
-#     include <sys/time.h>
-#    else
-#     include <time.h>
-#    endif
-#   endif
-
-    int
-    main ()
-    {
-      struct timespec ts_sleep, ts_remaining;
-      ts_sleep.tv_sec = 0;
-      ts_sleep.tv_nsec = 1;
-      exit (nanosleep (&ts_sleep, &ts_remaining) == 0 ? 0 : 1);
-    }
-
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  jm_cv_func_nanosleep_works=yes
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-jm_cv_func_nanosleep_works=no
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-
-fi
-echo "$as_me:$LINENO: result: $jm_cv_func_nanosleep_works" >&5
-echo "${ECHO_T}$jm_cv_func_nanosleep_works" >&6
-  if test $jm_cv_func_nanosleep_works = no; then
-    case $LIBOBJS in
-    "nanosleep.$ac_objext"   | \
-  *" nanosleep.$ac_objext"   | \
-    "nanosleep.$ac_objext "* | \
-  *" nanosleep.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS nanosleep.$ac_objext" ;;
-esac
-
-
-cat >>confdefs.h <<\_ACEOF
-#define nanosleep rpl_nanosleep
-_ACEOF
-
-
-
-  :
-
-
-
-
-
-
-  fi
-
- LIBS=$nanosleep_save_libs
 
 
 
@@ -33850,6 +33850,7 @@ s,@ALLOCA_H@,$ALLOCA_H,;t t
 s,@FNMATCH_H@,$FNMATCH_H,;t t
 s,@GETOPT_H@,$GETOPT_H,;t t
 s,@LIB_CLOCK_GETTIME@,$LIB_CLOCK_GETTIME,;t t
+s,@LIB_NANOSLEEP@,$LIB_NANOSLEEP,;t t
 s,@STDBOOL_H@,$STDBOOL_H,;t t
 s,@HAVE__BOOL@,$HAVE__BOOL,;t t
 s,@EOVERFLOW@,$EOVERFLOW,;t t
@@ -33873,7 +33874,6 @@ s,@INTLLIBS@,$INTLLIBS,;t t
 s,@LIBINTL@,$LIBINTL,;t t
 s,@LTLIBINTL@,$LTLIBINTL,;t t
 s,@POSUB@,$POSUB,;t t
-s,@LIB_NANOSLEEP@,$LIB_NANOSLEEP,;t t
 s,@YACC@,$YACC,;t t
 s,@YFLAGS@,$YFLAGS,;t t
 s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
