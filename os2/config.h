@@ -294,7 +294,6 @@
 #undef HAVE_LIBSOCKET
 
 /* Under OS/2, mkdir only takes one argument.  */
-/* todo: remember to define this! */
 #define CVS_MKDIR os2_mkdir
 extern int os2_mkdir (const char *PATH, int MODE);
 
@@ -307,8 +306,7 @@ extern pid_t getpid (void);
 /* We definitely have prototypes.  */
 #define USE_PROTOTYPES 1
 
-/* This is just a call to the Win32 Sleep function.  */
-/* todo: we don't appear to have a sleep function at all.  Blech. */
+/* This should really be DosSleep(). */
 unsigned sleep (unsigned);
 
 /* Under OS/2, filenames are case-insensitive, and both / and \
@@ -374,7 +372,7 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 #define R_OK 04
 #define W_OK 02
 #define F_OK 00
-#define X_OK R_OK  /* todo: that's OS/2, right? */
+#define X_OK R_OK  /* I think this is right for OS/2. */
 
 /* For getpid() */
 #include <process.h>
@@ -387,8 +385,8 @@ extern void convert_file (char *INFILE,  int INFLAGS,
 /* Under OS/2, we have our own popen() and pclose(). */
 #define USE_OWN_POPEN 1
 
-/* For debugging. */
-#if 1
+/* Set to 1 for some debugging messages. */
+#if 0
 #define KFF_DEBUG(call) printf("*** %s:%d: ", __FILE__, __LINE__); \
                         call; fflush(stdout);
 #else
