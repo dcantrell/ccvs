@@ -1,5 +1,9 @@
 2004-08-05  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c (copy_file): Don't fsync.  It's slow.
+
+2004-08-05  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_copy_data): New function.
 	* buffer.h: Proto new function.
 	* cvs.h (MaxSecondaryBufferSize): Declare new config global.

@@ -88,11 +88,6 @@ copy_file (const char *from, const char *to)
 		    error (1, errno, "cannot write file %s for copying", to);
 		}
 	    }
-
-#ifdef HAVE_FSYNC
-	    if (fsync (fdout)) 
-		error (1, errno, "cannot fsync file %s after copying", to);
-#endif
 	}
 
 	if (close (fdin) < 0) 
