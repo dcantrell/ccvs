@@ -1,3 +1,7 @@
+2004-09-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* filesubr.c (check_statbuf): Remove unused variables.
+
 2004-09-08  Derek Price  <derek@ximbiot.com>
 
 	* JmgStat.c, JmgStat.h: Convert to use UNIX line endings on UNIX.

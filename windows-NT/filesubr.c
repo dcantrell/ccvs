@@ -1007,9 +1007,6 @@ expand_wild (argc, argv, pargc, pargv)
 
 static void check_statbuf (const char *file, struct stat *sb)
 {
-    struct tm *newtime;
-    time_t long_time;
-
     /* Win32 processes file times in a 64 bit format
        (see Win32 functions SetFileTime and GetFileTime).
        If the file time on a file doesn't fit into the
