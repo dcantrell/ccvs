@@ -1,5 +1,10 @@
 2003-06-13  Derek Price  <derek@ximbiot.com>
 
+	* filesubr.c (cvs_temp_name): Remove portability cruft obsoleted by the
+	import of GNULIB's mkstemp().
+
+2003-06-13  Derek Price  <derek@ximbiot.com>
+
 	* diff.c (diff_fileproc): Fix memory leak.
 	(Patch from Kenneth Lorber <keni@his.com>.)
 
