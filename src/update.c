@@ -1873,7 +1873,6 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 {
     char *backup;
     int status;
-    int retcode = 0;
     int retval;
 
     /*
@@ -2021,11 +2020,6 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
 	               finfo->repository);
 
-    }
-    else if (retcode == -1)
-    {
-	error (1, errno, "fork failed while examining update of %s",
-	       finfo->fullname);
     }
     else
     {
