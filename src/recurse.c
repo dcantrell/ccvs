@@ -298,22 +298,24 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	    char *comp;
 	    char *file_to_try;
 
-	    /* Now break out argv[i] into directory part (DIR) and file part (COMP).
-		   DIR and COMP will each point to a newly malloc'd string.  */
-	    dir = xstrdup (argv[i]);
-	    comp = last_component (dir);
-	    if (comp == dir)
+	    /* Now break out argv[i] into directory part (DIR) and file part
+	     * (COMP).  DIR and COMP will each point to a newly malloc'd
+	     * string.
+	     */
+	    comp = last_component( argv[i] );
+	    if( comp == argv[i] )
 	    {
 		/* no dir component.  What we have is an implied "./" */
 		dir = xstrdup(".");
 	    }
 	    else
 	    {
-		char *p = comp;
-
-		p[-1] = '\0';
-		comp = xstrdup (p);
+		size_t dirlen = comp - argv[i] - 1;
+		dir = xmalloc( dirlen + 1 );
+		strncpy( dir, argv[i], dirlen );
+		dir[dirlen] = '\0';
 	    }
+	    comp = xstrdup( comp );
 
 	    /* if this argument exists as a file in the current
 	       working directory tree, then add it to the files list.  */
@@ -321,7 +323,8 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc, callerdat,
 	    if (!(which & W_LOCAL))
 	    {
 		/* If doing rtag, we've done a chdir to the repository. */
-		file_to_try = xmalloc (strlen (argv[i]) + sizeof (RCSEXT) + 5);
+		file_to_try = xmalloc( strlen( argv[i] )
+		                       + sizeof( RCSEXT ) + 1 );
 		sprintf (file_to_try, "%s%s", argv[i], RCSEXT);
 	    }
 	    else

@@ -1,3 +1,8 @@
+2003-06-10  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Avoid a memory leak.  Avoid unneeded
+	allocation.
+
 2003-06-10  Mark D. Baushke  <mdb@gnu.org>
 
 	* rcs.c (RCS_setlocalid,RCS_setincexc): New functions to support
