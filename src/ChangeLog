@@ -1,3 +1,12 @@
+Sat Apr 29 03:26:19 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* options.h.in, Attic/options.h:
+	We don't want to include a file the user has to edit in the
+	distribution.
+	* src/options.h: No longer distributed.
+	* src/options.h.in: Distribute this instead.
+	* INSTALL, README: Installation instructions updated.
+
 Wed May  3 11:08:32 1995  J.T. Conklin  <jtc@rtl.cygnus.com>
 
 	* create_adm.c, entries.c, import.c, root.c: Changed conditionals
