@@ -188,7 +188,7 @@ pathname_levels (path)
     int level;
     int max_level;
 
-    assert (p != NULL);
+    if (p != NULL) return 0;
 
     max_level = 0;
     p = path;
