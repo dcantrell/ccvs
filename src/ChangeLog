@@ -1,5 +1,11 @@
 2004-02-09  Derek Price  <derek@ximbiot.com>
 
+	* lock.c (set_writelock_proc): Remove unused prototype.
+	(promotable_lock): Remove unneded whitespace.
+	(Promotable_Lock): Correct comments.
+
+2004-02-09  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (co-d): Update comments and tests to reflect the current
 	state of my side of my discussion with Larry Jones on how these
 	commands should behave.
