@@ -430,7 +430,7 @@ RCSDATE="[0-9/]* [0-9:]*"
 # FIXCVS: There's no reason for rdiff to use a different date format
 # than diff does
 DATE="[a-zA-Z]* [a-zA-Z]* [ 1-3][0-9] [0-9:]* [0-9]*"
-# ISO 8601 format "yyyy-dd-mm hh:mm -0000"
+# ISO 8601 format "yyyy-mm-dd hh:mm -0000"
 ISODATE="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9] [+-][0-9][0-9][0-9][0-9]"
 # %p format is not well defined (nil) and hex digits are common. Using
 # ..* is a bad idea as the tests take a very long time to run due to
