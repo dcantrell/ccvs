@@ -1,3 +1,9 @@
+Wed Feb 28 03:16:48 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* build_lib.com: Changed definition of symbol CC to search
+	for include files in [-.VMS] so VMS config.h can be picked
+	up without copying.
+
 Tue Feb 27 21:26:34 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* build_lib.com: Added.  DCL File to build contents of [.lib]
