@@ -616,6 +616,10 @@ SOURCE=.\lib\xgetcwd.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lib\xgethostname.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lib\xreadlink.h
 # End Source File
 # Begin Source File

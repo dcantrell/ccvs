@@ -75,6 +75,7 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
+	-@erase "$(INTDIR)\xgethostname.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xreadlink.obj"
 	-@erase "$(INTDIR)\yesno.obj"
@@ -127,6 +128,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
+	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
 	"$(INTDIR)\yesno.obj" \
@@ -185,6 +187,7 @@ CLEAN :
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\xalloc-die.obj"
 	-@erase "$(INTDIR)\xgetcwd.obj"
+	-@erase "$(INTDIR)\xgethostname.obj"
 	-@erase "$(INTDIR)\xmalloc.obj"
 	-@erase "$(INTDIR)\xreadlink.obj"
 	-@erase "$(INTDIR)\yesno.obj"
@@ -234,6 +237,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
+	"$(INTDIR)\xgethostname.obj" \
 	"$(INTDIR)\xmalloc.obj" \
 	"$(INTDIR)\xreadlink.obj" \
 	"$(INTDIR)\yesno.obj" \
@@ -455,6 +459,11 @@ SOURCE=".\xalloc-die.c"
 SOURCE=.\xgetcwd.c
 
 "$(INTDIR)\xgetcwd.obj" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\xgethostname.c
+
+"$(INTDIR)\xgethostname.obj" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\xmalloc.c

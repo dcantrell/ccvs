@@ -1134,6 +1134,7 @@
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
 	".\lib\xgetcwd.h"\
+	".\lib\xgethostname.h"\
 	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\

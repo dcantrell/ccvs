@@ -1,3 +1,8 @@
+2004-11-21  Mark D. Baushke  <mdb@cvshome.org>
+
+	* libcvs.dep, libcvs.dsp, libcvs.mak: Add "xgethostname.c" to
+	project.
+
 2004-11-19  Derek Price  <derek@ximbiot.com>
 
 	* xgethostname.h, xgethostname.c: New files from GNULIB.
