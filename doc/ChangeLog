@@ -1,3 +1,9 @@
+Tue Aug 26 12:25:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Checklist): Reword xref to point to Binary files
+	rather than Keyword expansion.  Credit goes to jeff@alum.mit.edu
+	(Jeff Breidenbach) for reporting the problem.
+
 Mon Aug 18 17:23:18 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (modules): Suggest taginfo instead of -t.  Add

@@ -234,9 +234,7 @@ flag (release 1.15 and later are OK).  You must also
 configure both @sc{rcs} and @sc{cvs} to handle binary
 files when you install them.
 
-Keyword substitution can be a source of trouble with
-binary files. @xref{Keyword substitution}, for
-solutions.
+See @ref{Binary files}, for more details on binary files.
 
 @item The @code{admin} command
 Careless use of the @code{admin} command can cause
