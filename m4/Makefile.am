@@ -44,6 +44,7 @@ EXTRA_DIST = \
 	mkstemp.m4 \
 	nls.m4 \
 	onceonly_2_57.m4 \
+	pathmax.m4 \
 	po.m4 \
 	progtest.m4 \
 	realloc.m4 \
