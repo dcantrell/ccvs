@@ -1,5 +1,10 @@
 2000-11-16  Derek Price  <derek.price@openavenue.com>
 
+	* filesubr.c (cvs_temp_file): back out the previous change in the
+	interests of portability, add an assertion, and fix the header comment
+
+2000-11-16  Derek Price  <derek.price@openavenue.com>
+
 	* filesubr.c (cvs_temp_file): refine the exit behavior to notice if
 	the out param was passed in NULL and, if so, avoid setting it and delete
 	the temp file for later

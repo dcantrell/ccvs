@@ -17,6 +17,7 @@
    definitions under operating systems (like, say, Windows NT) with different
    file system semantics.  */
 
+#include <assert.h>
 #include "cvs.h"
 
 static int deep_remove_dir PROTO((const char *path));
@@ -710,24 +711,22 @@ cvs_temp_name ()
 /* Generate a unique temporary filename and return an open file stream
  * to the truncated file by that name
  *
- * INPUTS
- *   filename	where to place the pointer to the newly allocated file
- *   		name string or NULL
+ *  INPUTS
+ *	filename	where to place the pointer to the newly allocated file
+ *   			name string
  *
- * OUTPUTS
- *   filename	dereferenced, will point to the newly allocated file name
- *   		string, unless filename was NULL initially, in which case the
- *   		file will be deleted so that the space can be reclaimed when
- *   		it is closed.
- *   		This value is undefined if the function returns an error.
+ *  OUTPUTS
+ *	filename	dereferenced, will point to the newly allocated file
+ *			name string.  This value is undefined if the function
+ *			returns an error.
  *
- * RETURNS
- *   An open file pointer to a read/write mode empty temporary file with the
- *   unique file name or NULL on failure.
+ *  RETURNS
+ *	An open file pointer to a read/write mode empty temporary file with the
+ *	unique file name or NULL on failure.
  *
- * ERRORS
- *   on error, errno will be set to some value either by CVS_FOPEN or
- *   whatever system function is called to generate the temporary file name
+ *  ERRORS
+ *	on error, errno will be set to some value either by CVS_FOPEN or
+ *	whatever system function is called to generate the temporary file name
  */
 /* There are at least four functions for generating temporary
  * filenames.  We use mkstemp (BSD 4.3) if possible, else tempnam (SVID 3),
@@ -750,6 +749,8 @@ FILE *cvs_temp_file (filename)
      * some of the rcs & diff functions which rely on a temp file run in
      * noexec mode too.
      */
+
+    assert (filename != NULL);
 
 #ifdef HAVE_MKSTEMP
 
@@ -841,21 +842,7 @@ FILE *cvs_temp_file (filename)
 
 #endif
 
-    if (fp != NULL)
-    {
-	/* if we're going to exit normally, take care of setting the exit
-	 * value of filename and deleting the newly created temp file if
-	 * necessary
-	 */
-	if (filename == NULL)
-	{
-	    /* the caller doesn't want the file name */
-	    if (unlink (fn))
-		error (0, errno, "Failed to unlink temporary file %s", fn);
-	}
-	else *filename = fn;
-    }
-
+    *filename = fn;
     return fp;
 }
 
