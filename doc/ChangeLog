@@ -1,3 +1,8 @@
+Sun Apr 27 16:17:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Error messages): Add "cannot change permissions on
+	temporary directory" message.
+
 Wed Apr 23 12:53:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvsclient.texi (Requests): Document "add" in much more detail.
