@@ -2358,10 +2358,6 @@ connect_to_pserver (tofdp, fromfdp, log)
                "unrecognized auth response from %s: %s", 
                server_host, read_buf);
     }
-
-    /* Else authorization granted, so we can go on... */
-    printf ("*** auth succeeded: %s\n", read_buf);
-    fflush (stdout);
   }
 
   /* This was stolen straight from start_kerberos_server(). */
