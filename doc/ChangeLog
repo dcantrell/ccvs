@@ -1,5 +1,8 @@
 Thu Jun 19 07:11:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Error messages): Add
+	"*PANIC* administration files missing".
+
 	* cvs.texinfo (Password authentication server): Mention
 	permissions on $CVSROOT and $CVSROOT/CVSROOT as part of the
 	installation process.
