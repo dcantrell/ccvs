@@ -10,8 +10,6 @@
 #define getpagesize() 4096
 #endif
 
-extern char *malloc ();
-
 void *
 valloc (bytes)
      size_t bytes;
