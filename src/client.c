@@ -3957,10 +3957,11 @@ auth_server (root, lto_server, lfrom_server, verify_only, do_gssapi, hostinfo)
     if (do_gssapi)
     {
 #ifdef HAVE_GSSAPI
-	int fd = (int) lto_server->closure;
+	FILE *fp = stdio_buffer_get_file(lto_server);
+	int fd = fp ? fileno(fp) : -1;
 	struct stat s;
 
-	if (fstat (fd, &s) < 0 || !S_ISSOCK(s.st_mode))
+	if ((fd < 0) || (fstat (fd, &s) < 0) || !S_ISSOCK(s.st_mode))
 	{
 	    error (1, 0, "gserver currently only enabled for socket connections");
 	}
