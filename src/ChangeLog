@@ -1,3 +1,11 @@
+Tue Feb  7 20:10:00 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* client.c (update_entries): Pass the patch subprocess the switch
+	"-b ~", not "-b~"; the latter form seems not to work with patch
+	version 2.0 and earlier --- it takes the next argv element as the
+	backup suffix, and thus doesn't notice that the patch file's name
+	has been specified, thus doesn't find the patch, thus...  *aargh*
+
 Fri Feb  3 20:28:21 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* log.c (log_option_with_arg): New function.
