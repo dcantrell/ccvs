@@ -76,7 +76,8 @@ ms_buffer_input (void *closure, char *data, size_t need, size_t size,
 	buf_free (mb->cur);
 	p = mb->bufs->list->next;
 	mb->cur = p->data;
-	p->delproc = p->data = NULL;
+	p->delproc = NULL;
+	p->data = NULL;
 	delnode (p);
 	if (!buf_empty_p (mb->cur)) buf_append_buffer (mb->buf, mb->cur);
 	ms_buffer_block (closure, mb->block);
