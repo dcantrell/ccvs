@@ -16,6 +16,8 @@
 
 SHELL = /bin/sh
 
+SUBDIRS = tests
+
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
@@ -117,14 +119,15 @@ EXTRA_DIST = \
 	sanity.sh
 
 check-local: localcheck remotecheck
+	$(SHELL) $(srcdir)/tests/suite
 
 .PHONY: localcheck
 localcheck:
-	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
+##	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
 remotecheck: all
-	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
+##	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets
 distclean-local:

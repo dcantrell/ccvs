@@ -8,3 +8,5 @@ cvs
 cvsbug
 mkmodules
 sanity.config.sh
+suite.dir
+suite.log
