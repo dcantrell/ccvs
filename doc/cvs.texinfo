@@ -6424,20 +6424,32 @@ hoping that the changes they actually made were the
 changes that they intended to make.
 
 Another ability of a version control system is the
-ability to merge two revisions.  In the case of text
+ability to merge two revisions.  For @sc{cvs} this
+happens in two contexts.  The first is when users make
+changes in separate working directories
+(@pxref{Multiple developers}).  The second is when one
+merges from one branch to another with the @samp{update
+-j} command (@pxref{Merging}).
+
+In the case of text
 files, @sc{cvs} can merge changes made independently,
 and signal a conflict if the changes conflict.  With
 binary files, the best that @sc{cvs} can do is present
 the two different copies of the file, and leave it to
 the user to resolve the conflict.  The user may choose
 one copy or the other, or may run an external merge
-tool which knows about that particular file format.  If
-no such tool exists, or is thought to be too
-cumbersome, the best choice may be to avoid merging.
-This can be achieved by (1) restricting one's use of
-branches, and (2) file locking.  See the discussion of
-reserved checkouts in @ref{Multiple developers}, for
-more information on the latter.
+tool which knows about that particular file format, if
+one exists.
+Note that having the user merge relies primarily on the
+user to not accidentally omit some changes, and thus is
+potentially error prone.
+
+If this process is thought to be undesirable, the best
+choice may be to avoid merging.  To avoid the merges
+that result from separate working directories, see the
+discussion of reserved checkouts (file locking) in
+@ref{Multiple developers}.  To avoid the merges
+resulting from branches, restrict use of branches.
 
 @node Binary howto
 @section How to store binary files
