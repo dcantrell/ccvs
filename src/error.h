@@ -18,6 +18,16 @@
 #ifndef _error_h_
 #define _error_h_
 
+/* Add prototype support.  Normally this is done in cvs.h, but that
+   doesn't get included from lib/savecwd.c.  */
+#ifndef PROTO
+#if defined (USE_PROTOTYPES) ? USE_PROTOTYPES : defined (__STDC__)
+#define PROTO(ARGS) ARGS
+#else
+#define PROTO(ARGS) ()
+#endif
+#endif
+
 #ifndef __attribute__
 /* This feature is available in gcc versions 2.5 and later.  */
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5) || __STRICT_ANSI__
