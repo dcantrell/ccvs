@@ -26,51 +26,79 @@
 
 =head1 check_cvs.pl
 
-    Script to check the integrity of the Repository
+Script to check the integrity of the Repository.
 
 =head1 SYNOPSIS
 
     perldoc check_cvs.pl
-    check_cvs.pl --help [--verbose]
+    check_cvs.pl --help [--verbose!]
     check_cvs.pl [--verbose!] [--cvsroot=CVSROOT] [--exec=SCRIPT]...
-                 [module]...
+                 [--all-revisions!] [module]...
 
 =head1 DESCRIPTION
 
-    This script will search through a repository and determine if
-    any of the files in it are corrupted.
+This script will search through a repository and determine if any of the
+files in it are corrupted.
 
-    Please do not run this script inside of the repository itself.
-    This will cause it too fail.
+This is normally accomplished by checking out all I<important> revisions, where
+I<important> revisions are defined as the smallest set which, when checked out,
+will cause each and every revision's integrity to be verified.  This resolves
+to the most recent revision on each branch and the first and last revisions on
+the trunk.
+
+Please do not run this script inside of the repository itself.  This will cause
+it too fail.
 
 =head1 OPTIONS
 
-    --help           Print this very help text.
-    -d,--cvsroot=CVSROOT
-                     Use repository specified by CVSROOT.  Defaults to
-                     the contents of the ./CVS/Root file when it exists
-                     and is readable, then to the contents of the
-                     $CVSROOT environment variable when it is set and
-                     non-empty.
-    -e,--exec=SCRIPT Execute (as from command prompt) or evaluate (as a
-                     perl script) SCRIPT for each RCS archive in
-                     CVSROOT.  Executed scripts are passed CVSROOT FILE
-                     NAME, where CVSROOT is what you'd think, FILE is
-                     the path to the file relative to CVSROOT and
-                     suitable for use as an argument to cvs co, cvs
-                     rlog, and so on, and NAME is FILE minus the path.
-                     An evaluated SCRIPT will find the same three
-                     arguments in the same order in @_.
-                     FIXME: This argument should be run once on each
-                     checked out file or the like.  This could have been
-                     implemented with find |xargs...
-    -v,--verbose     Print verbose debugging information.
+=over
+
+=item C<--help>
+
+Print this very help text.
+
+=item C<-a> or C<--all-revisions>
+
+Check out each and every revision rather than just the I<important> ones.
+This flag is useful with C<--exec> to execute the C<SCRIPT> (from C<--exec>
+below) on a checked out copy of each and every revision.
+
+=item C<-d> or C<--cvsroot=CVSROOT>
+
+Use repository specified by C<CVSROOT>.  Defaults to the contents of the
+F<./CVS/Root> file when it exists and is readable, then to the contents of the
+C<$CVSROOT> environment variable when it is set and non-empty.
+
+=item C<-e> or C<--exec=SCRIPT>
+
+Execute (as from command prompt) C<SCRIPT> if it exists as a file, is readable,
+and is executable, or evaluate (as a perl script) C<SCRIPT> for a checked out
+copy of each I<important> revision of each RCS archive in CVSROOT.  Executed
+scripts are passed C<CVSROOT FILE REVISION FNO>, where C<CVSROOT> is what
+you'd think, C<FILE> is the path to the file relative to C<CVSROOT> and
+suitable for use as an argument to C<cvs co>, C<cvs rlog>, and so on,
+C<REVISION> is the revision of the checked out file, and C<FNO> is the file
+number of the open, read-only file descriptor containing the checked out
+contents of revision C<REVISION> of C<FILE>.  An evaluated C<SCRIPT> will find
+the same four arguments in the same order in C<@_>, except that C<FNO> will be
+an open file handle.
+
+With C<--all-revisions>, execute or evaluate C<SCRIPT> for a checked out
+version of each revsion in the RCS archive.
+
+=item C<-v> or C<--verbose>
+
+Print verbose debugging information.
 
 =head1 ARGUMENTS
 
-    modules   The module in the repository to examine.  Defaults to the
-              contents of the ./CVS/Repository file when it exists and
-              is readable, then to "." (all modules).
+=over
+
+=item C<modules>
+
+The module in the repository to examine.  Defaults to the contents of the
+F<./CVS/Repository> file when it exists and is readable, then to F<.>
+(all modules).
 
 =head1 EXAMPLES
 
@@ -79,12 +107,14 @@
 
 
     check_cvs.pl -d /another/cvsroot --verbose --exec '
-    system "grep", "This string means I\'m a bad file!", "$_[2],v"
-        or die "File $_[0]/$_[1],v is bad!"'
+    system "grep \"This string means Im a bad, bad file!\" <&"
+           . fileno( $_[3] )
+	       . ">/dev/null"
+        or die "Revision $_[2] of $_[0]/$_[1],v is bad, bad, bad!"'
 
 =head1 SEE ALSO
 
-    None
+None.
 
 =cut
 
@@ -94,6 +124,7 @@
 use strict;
 
 use Cwd;
+use Fcntl qw( F_GETFD F_SETFD );
 use File::Find;
 use File::Basename;
 use File::Path;
@@ -107,6 +138,7 @@ use Pod::Usage;
 ######################################################################
 
 use vars qw(
+             $all_revisions
              $cvsroot
              @extra_files
              @ignore_files
@@ -165,10 +197,14 @@ sub main
 	$total_revisions = 0;
 
 	Getopt::Long::Configure( "bundling" );
-	unless( GetOptions( 'verbose|v!' => \$verbose,
+	unless( GetOptions(
+	                    'all-revisions|a!' => \$all_revisions,
 	                    'cvsroot|d=s' => \$cvsroot,
+	                    'exec|e=s' => \@scripts,
 	                    'help|h|?!' => \$help,
-	                    'exec|e=s' => \@scripts ) )
+	                    'verbose|v!' => \$verbose
+ 	                  )
+	      )
 	{
 		pod2usage( 2 );
 		exit 2;
@@ -199,7 +235,7 @@ sub main
 
 	for (@scripts)
 	{
-		$_ = File::Spec->rel2abs ($_) if -x $_;
+		$_ = File::Spec->rel2abs( $_ ) unless /\n/ || !-x $_;
 	}
 
 
@@ -302,9 +338,8 @@ sub process_file
 
 		verbose( "Examining `$path'\n" );
 
-		if( $path =~ /,v$/ )
+		if( $path =~ s/,v$// )
 		{
-			$path =~ s/,v$//;
 			look_at_cvs_file( $path );
 		}
 		elsif( !grep { $path =~ $_ } @ignore_files )
@@ -330,14 +365,10 @@ sub process_file
 #              - If that fails the file is broken, save the fact
 #                and continue processing other files.
 #              - If that succeeds we have a list of revisions.
-#      b)  For Each revision try to retrieve that version
+#      b)  For each revision call &check_revision on the file.
 #              - If that fails the file is broken, save the fact
 #                and continue processing other files.
-#      c)  Attempt to exec or evaluate any scripts in @scripts (passed in as
-#          arguments to --exec).  If executable scripts exit with a non-zero
-#          status or evaluated scripts set $@ (die), print $status or $@
-#          as a warning.
-#      d)  Continue on 
+#      c)  Continue on 
 #
 #    PARAMETERS :
 #      $file - The path of the file to look at, relative to $cvsroot and
@@ -361,10 +392,7 @@ sub look_at_cvs_file
     my( $file ) = @_;
     my( $name, $path ) = fileparse( $file );
 
-    if( $path =~ s#Attic/$## )
-    {
-        $file = $path . $name;
-    }
+    $file = $path . $name if $path =~ s#Attic/$##;
 
     my $revisions = get_history( $name );
 
@@ -376,7 +404,15 @@ sub look_at_cvs_file
         return();
     }
 
-    my @int_revisions = find_interesting_revisions( @$revisions );
+    my @int_revisions;
+	if( $all_revisions )
+	{
+		@int_revisions = @$revisions;
+	}
+	else
+	{
+    	@int_revisions = find_interesting_revisions( @$revisions );
+	}
 
     foreach my $revision ( @int_revisions )
     {
@@ -388,28 +424,6 @@ sub look_at_cvs_file
             return();
         }
     }
-
-	my $count;
-	foreach my $script (@scripts)
-	{
-		$count++;
-		if (-x $script)
-		{
-			# exec external script
-			my $status = system $script, $cvsroot, $file, $name;
-			warn "'$script $cvsroot $file $name' exited with status " . $status
-				if $status;
-		}
-		else
-		{
-			# eval script
-			@_ = ($cvsroot, $file, $name);
-			eval $script;
-			warn "script $count ($cvsroot, $file, $name) exited abnormally: "
-			     . $@
-				if $@;
-		}
-	}
 }
 
 ######################################################################
@@ -480,8 +494,13 @@ sub get_history
 #      check_revision
 #
 #    PURPOSE :
-#      Given a file and a revision number ensure that we can 
-#      check out that file
+#      Given a file and a revision number ensure that we can check out that
+#      file.
+#
+#      If the user has specified any scripts (passed in as arguments to --exec
+#      and stored in @scripts), run them on the checked out revision.  If
+#      executable scripts exit with a non-zero status or evaluated scripts set
+#      $@ (die), print $status or $@ as a warning.
 #
 #    PARAMETERS :
 #      $file     - The file to look at.
@@ -513,15 +532,48 @@ sub check_revision
 	$file =~ s/(["\$`\\])/\\$1/g;
 
     my $cwd = getcwd();
-    chdir( "/tmp" );
 
-    my $ret_code = 0xffff & system( "cvs -d $cvsroot -l co -n -p -r $revision \"$file\" > /dev/null 2>&1" );
+    my $command = "cvs -d $cvsroot -l co -n -p -r $revision \"$file\"";
+	my $ret_code;
+	if( @scripts )
+	{
+    	my $fh = new IO::File "$command 2>&1 |";
+		fcntl( $fh, F_SETFD, 0 )
+			or die "Can't clear close-on-exec flag on filehandle: $!";
+		my $count;
+		foreach my $script (@scripts)
+		{
+			$count++;
+			if( $script !~ /\n/ && -x $script )
+			{
+				# exec external script
+				my $status = system $script, $cvsroot, $file, $revision,
+				                    fileno( $fh );
+				warn "`$script $cvsroot $file $revision "
+				     . fileno( $fh )
+				     . "' exited with code $status"
+					if $status;
+			}
+			else
+			{
+				# eval script
+				@_ = ($cvsroot, $file, $revision, $fh);
+				eval $script;
+				warn "script $count ($cvsroot, $file, $revision, $fh) exited abnormally: $@"
+					if $@;
+			}
+		}
+		die "Syserr closing pipe from `cvs co': $!"
+			if !$fh->close && $!;
+		$ret_code = $?;
+	}
+	else
+	{
+    	$ret_code = 0xffff & system "$command > /dev/null 2>&1";
+	}
 
-    chdir( $cwd );
-    return( 1 ) if ( $ret_code == 0 );
+    return( 1 ) if $ret_code == 0;
     return( 0 );
-
-    return( $ret_code );
 }
 
 ######################################################################

@@ -1,3 +1,19 @@
+2003-04-16  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.pl (pod documentation): Add --all-revisions flag and
+	change documented behavior of --exec to execute once on each checkedu
+	out revision of a file.  Document passing of an open file descriptor
+	rather than a file name.  Major cosmetic changes to be more compatible
+	with POD.
+	(global variables): Add $all_revisions.
+	(main): Accept new --all-revisions flag.  Check for newlines in --exec
+	arguments before testing for executability.
+	(process_file):  Document new behavior.  Don't filter revisions when
+	--all-revisions is specified.  Don't process @scripts here.  Minor
+	cosmetic changes.
+	(check_revision): Document new behavior.  Process @scripts here.
+	Remove unused code.  Minor cosmetic changes.
+
 2003-04-10  Larry Jones  <lawrence.jones@eds.com>
 
 	* Makefile.in: Regenerated.
