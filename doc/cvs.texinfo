@@ -743,7 +743,7 @@ the source files.
 
 @example
 $ cd tc
-$ ls tc
+$ ls
 CVS         Makefile    backend.c   driver.c    frontend.c  parser.c
 @end example
 
