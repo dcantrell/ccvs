@@ -215,6 +215,7 @@ lint:
 .PHONY: dist
 GZIP=gzip --best
 GZIP_EXT=.gz
+TAR_VERBOSE=v
 dist:
 	echo > .fname \
 	  cvs-`sed < $(srcdir)/src/version.c \
@@ -229,7 +230,7 @@ dist:
 	    ${MAKE} dist-dir DISTDIR="$${DISTDIR}" \
 	  ); \
 	done
-	tar chvf - `cat .fname` | ${GZIP} > "`cat .fname`.tar${GZIP_EXT}"
+	tar chf${TAR_VERBOSE} - `cat .fname` | ${GZIP} > "`cat .fname`.tar${GZIP_EXT}"
 	rm -rf `cat .fname` .fname
 
 .PHONY: dist-dir
