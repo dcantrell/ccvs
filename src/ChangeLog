@@ -1,5 +1,7 @@
 Tue Jul 23 12:05:42 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* tag.c (tag_check_valid): Fix indentation.
+
 	* client.c (handle_e): Flush stdout before writing to stderr.
 	(handle_m): Flush stderr before writing to stdout.
 
