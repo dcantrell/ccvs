@@ -291,10 +291,10 @@ noinst_LIBRARIES = libcvs.a
 
 # For the xsize module from GNULIB.
 libcvs_a_SOURCES = argmatch.c md5.c sighandle.c strftime.c yesno.c \
-	error.h getpagesize.h md5.h minmax.h system.h wait.h xselect.h \
-	xtime.h basename.c dirname.c dirname.h stripslash.c exit.h \
-	exitfail.h exitfail.c getdate.h getdate.y getline.h getnline.h \
-	getnline.c getpass.h gettext.h gettime.c pathmax.h regex.h \
+	error.h getpagesize.h md5.h system.h wait.h xselect.h xtime.h \
+	basename.c dirname.c dirname.h stripslash.c exit.h exitfail.h \
+	exitfail.c getdate.h getdate.y getline.h getnline.h getnline.c \
+	getpass.h gettext.h gettime.c minmax.h pathmax.h regex.h \
 	save-cwd.h save-cwd.c strcase.h time_r.h timespec.h \
 	unlocked-io.h printf-args.h printf-parse.h vasnprintf.h \
 	xalloc.h xmalloc.c xalloc-die.c xgetcwd.h xgetcwd.c xsize.h
