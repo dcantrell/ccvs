@@ -297,6 +297,8 @@ wrap_name_has (name,has)
 	    case WRAP_CONFLICT:
 		temp=wrap_list[x]->conflictHook;
 		break;
+	    default:
+	        abort ();
 	    }
 	    if(temp==NULL)
 		return (0);
@@ -311,7 +313,6 @@ wrap_matching_entry (name)
     const char *name;
 {
     int x,count=wrap_count+wrap_saved_count;
-    char *temp;
 
     for(x=0;x<count;++x)
 	if (fnmatch (wrap_list[x]->wildCard, name, 0) == 0)
@@ -325,7 +326,6 @@ wrap_tocvs_process_file(fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char buf[L_tmpnam+1];
-    int err;
 
     if(e==NULL || e->tocvsFilter==NULL)
 	return NULL;
@@ -355,7 +355,6 @@ wrap_fromcvs_process_file(fileName)
 {
     WrapperEntry *e=wrap_matching_entry(fileName);
     static char buf[PATH_MAX];
-    int err;
 
     if(e==NULL || e->fromcvsFilter==NULL)
 	return NULL;
