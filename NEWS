@@ -1,5 +1,9 @@
 Changes since 1.6:
 
+* Using the -kb option to specify binary files now works--most cases
+did not work before.  See the "Binary files" section of
+doc/cvs.texinfo for details.
+
 * New developer communication features.  See the "Watches" section of
 doc/cvs.texinfo for details.
 
