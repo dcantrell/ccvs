@@ -278,7 +278,7 @@ clean:
 	rm -f ${libdir}${SL}*.obj 
 	rm -f ${cvs_srcdir}${SL}*.obj 
 
-install: cvs.exe
+install-cvs: cvs.exe
 	cp ${srcdir}${SL}cvs.exe ${install_dir}${SL}cvs.exe
 
 %.obj: %.c
