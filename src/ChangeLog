@@ -1,3 +1,8 @@
+Mon Jul 24 18:32:06 1995  Vince DeMarco  <vdemarco@bou.shl.com>
+
+	* main.c:  fix an ifdef so the code will compile. syntax error in
+	the ifdef for CVS_NOADMIN.
+
 Mon Jul 24 13:25:00 1995  Del <del@babel.dialix.oz.au>
 
 	* checkout.c:  New procedure safe_location.
