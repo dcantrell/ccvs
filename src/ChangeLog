@@ -1,5 +1,8 @@
 Sun Mar 16 10:18:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh (modes): Don't use export -n; it doesn't seem
+	to be sufficiently portable.
+
 	* version.c: Change version number to 1.9.5.
 
 	* version.c: Version 1.9.4.
