@@ -1181,7 +1181,7 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 		    rename_file (backup, filename);
        
 		/* Get rid of the patch reject file.  */
-		path_tmp = xmalloc (strlen (filename + 10));
+		path_tmp = xmalloc (strlen (filename) + 10);
 		strcpy (path_tmp, filename);
 		strcat (path_tmp, ".rej");
 		/* FIXME: should we really be silently ignoring errors?  */

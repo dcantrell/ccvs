@@ -1,5 +1,8 @@
 Wed Jan  3 01:19:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (update_entries): Fix typo ("strlen (filename + 10)"
+	-> "strlen (filename) + 10").
+
 	* commit.c (checkaddfile): Remove arbitrary limit.
 
 Tue Jan  2 11:25:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
