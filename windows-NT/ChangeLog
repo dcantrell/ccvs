@@ -1,5 +1,11 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	Use getpass proto from getpass.h.
+	* config.h.in.in: Undo last defn.
+	* unistd.h (getpass): Remove proto.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* config.h.in.in: Tell compiler we have a decl for getpass().
 
 2004-10-06  Derek Price  <derek@ximbiot.com>

@@ -206,7 +206,7 @@
 
 /* Define to 1 if you have the declaration of `getpass', and to 0 if you
    don't. */
-#undef HAVE_DECL_GETPASS
+#define HAVE_DECL_GETPASS
 
 /* Define to 1 if you have the declaration of `nanosleep', and to 0 if you
    don't. */
