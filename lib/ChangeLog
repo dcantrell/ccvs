@@ -1,5 +1,9 @@
 2003-05-19  Derek Price  <derek@ximbiot.com>
 
+	* malloc.c: New file from <https://savannah.gnu.org/projects/gnulib>.
+
+2003-05-19  Derek Price  <derek@ximbiot.com>
+
 	* lstat.c: New file from <https://savannah.gnu.org/projects/gnulib>.
 	* stat.c: Ditto.
 	* system.h: Define CVS_STAT and CVS_LSTAT properly when the system
