@@ -4627,6 +4627,8 @@ server_cleanup (void)
     int status;
     int save_noexec;
 
+    TRACE (TRACE_FUNCTION, "server_cleanup()");
+
     assert(server_active);
 
     if (buf_to_net != NULL)
@@ -4643,18 +4645,27 @@ server_cleanup (void)
 	 * generated when the client shuts down its buffer.  Then, after we
 	 * have generated any final output, we shut down BUF_TO_NET.
 	 */
-
 	if (buf_from_net != NULL)
 	{
-	    status = buf_shutdown (buf_from_net);
+	    /* Set the buffer to NULL first since I don't know for certain that
+	     * a function called from atexit() cannot be interrupted.
+	     */
+	    struct buffer *buf_from_net_save = buf_from_net;
+	    buf_from_net = NULL;
+	    status = buf_shutdown (buf_from_net_save);
 	    if (status != 0)
 		error (0, status, "shutting down buffer from client");
-	    buf_free (buf_from_net);
-	    buf_from_net = NULL;
+	    buf_free (buf_from_net_save);
 	}
     }
 
-    if (!dont_delete_temp)
+    /* Since we install this function in an atexit() handler before forking,
+     * reuse the ERROR_USE_PROTOCOL flag, which we know is only set in the
+     * parent server process, to avoid cleaning up the temp space multiple
+     * times.  It is ok to let the other buffer checks go since BUF_TO_NET is
+     * set to NULL in the child process anyhow.
+     */
+    if (!dont_delete_temp && error_use_protocol)
     {
 	/* What a bogus kludge.  This disgusting code makes all kinds of
 	   assumptions about SunOS, and is only for a bug in that system.
@@ -4747,11 +4758,11 @@ server_cleanup (void)
 	   log file.  */
 	unlink_file_dir (orig_server_temp_dir);
 	noexec = save_noexec;
-    }
+    } /* !dont_delete_temp && error_use_protocol */
 
     if (buf_to_net != NULL)
     {
-	/* Save buf_to_net and set the global pointer to NULL so that any
+	/* Save BUF_TO_NET and set the global pointer to NULL so that any
 	 * error messages generated during shutdown go to the syslog rather
 	 * than getting lost.
 	 */

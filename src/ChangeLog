@@ -1,3 +1,11 @@
+2003-10-02  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Don't free globals that might be needed by the cleanup
+	functions.
+	* server.c (server_cleanup): Only clean up when called in the parent
+	process.  Set buffers to NULL before shutting down and freeing in case
+	we are interrupted.  Improve comments.  Add TRACE.
+
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
 	* main.c (main): Use symbolic name for trace level.

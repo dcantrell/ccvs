@@ -396,8 +396,6 @@ main (int argc, char **argv)
     int c, err = 0;
     int tmpdir_update_env, cvs_update_env;
     int free_CVSroot = 0;
-    int free_Editor = 0;
-    int free_Tmpdir = 0;
 
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
@@ -573,12 +571,10 @@ Copyright (c) 1989-2003 Brian Berliner, david d `zoo' zuhn, \n\
 		break;
 	    case 'T':
 		Tmpdir = xstrdup (optarg);
-		free_Tmpdir = 1;
 		tmpdir_update_env = 1;	/* need to update environment */
 		break;
 	    case 'e':
 		Editor = xstrdup (optarg);
-		free_Editor = 1;
 		break;
 	    case 'd':
 		if (CVSroot_cmdline != NULL)
@@ -1048,15 +1044,8 @@ cause intermittent sandbox corruption.");
 
     Lock_Cleanup ();
 
-    free (program_path);
-    if (CVSroot_cmdline != NULL)
-	free (CVSroot_cmdline);
     if (free_CVSroot)
 	free (CVSroot);
-    if (free_Editor)
-	free (Editor);
-    if (free_Tmpdir)
-	free (Tmpdir);
     root_allow_free ();
 
     /* This is exit rather than return because apparently that keeps
