@@ -1,5 +1,9 @@
 1999-01-29  Jim Kingdon  <http://www.cyclic.com>
 
+	* commit.c (checkaddfile): If options is "", treat it the same as
+	NULL.  Centralize this check, and the one for it starting with
+	"-k", at the start of the function.
+
 	* rcs.c, rcs.h (RCS_setexpand): New function.
 	* admin.c (admin_fileproc): Access keyword expansion field via
 	RCS_getexpand and RCS_setexpand, rather than directly.
