@@ -1,5 +1,7 @@
 Fri Nov 17 21:13:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in: use getdate.c from os2/ subdir, not lib/.
+
         * client.c (change_mode): never set anything executable, until we
         understand what that means in OS/2.
 

@@ -85,7 +85,8 @@ OS2_SOURCES = \
        waitpid.c \
        popen.c \
        strippath.c \
-       client.c
+       client.c \
+       getdate.c
 
 # sources we use from the common src dir, ..${PS}src
 COMMON_SOURCES = \
@@ -146,8 +147,7 @@ LIB_SOURCES = \
        ${libdir}${PS}xgetwd.c \
        ${libdir}${PS}md5.c \
        ${libdir}${PS}fnmatch.c \
-       ${libdir}${PS}regex.c \
-       ${libdir}${PS}getdate.c
+       ${libdir}${PS}regex.c
 
 # object files from OS/2 sources
 OS2_OBJECTS = \
@@ -162,7 +162,8 @@ OS2_OBJECTS = \
        waitpid.obj \
        popen.obj \
        strippath.obj \
-       client.obj
+       client.obj \
+       getdate.obj
 
 # object files from ..${PS}src
 COMMON_OBJECTS = \
@@ -223,8 +224,7 @@ LIB_OBJECTS = \
        ${libdir}${PS}xgetwd.obj \
        ${libdir}${PS}md5.obj \
        ${libdir}${PS}fnmatch.obj \
-       ${libdir}${PS}regex.obj \
-       ${libdir}${PS}getdate.obj
+       ${libdir}${PS}regex.obj
 
 SOURCES = ${COMMON_SOURCES} ${LIB_SOURCES} ${OS2_SOURCES}
 HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
