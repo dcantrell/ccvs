@@ -2303,7 +2303,7 @@ serve_case (char *arg)
     ign_case = 1;
 }
 
-static struct buffer *protocol;
+static struct buffer *protocol = NULL;
 
 /* This is the output which we are saving up to send to the server, in the
    child process.  We will push it through, via the `protocol' buffer, when
@@ -4652,121 +4652,119 @@ server_cleanup (void)
 	    buf_free (buf_from_net);
 	    buf_from_net = NULL;
 	}
-
-	if (dont_delete_temp)
-	{
-	    (void) buf_flush (buf_to_net, 1);
-	    (void) buf_shutdown (buf_to_net);
-	    buf_free (buf_to_net);
-	    buf_to_net = NULL;
-	    error_use_protocol = 0;
-	    return;
-	}
     }
-    else if (dont_delete_temp)
-	return;
 
-    /* What a bogus kludge.  This disgusting code makes all kinds of
-       assumptions about SunOS, and is only for a bug in that system.
-       So only enable it on Suns.  */
-#ifdef SUNOS_KLUDGE
-    if (command_pid > 0)
+    if (!dont_delete_temp)
     {
-	/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
-	   triggered by the use of rename() in RCS, wait for the
-	   subprocess to die.  Unfortunately, this means draining output
-	   while waiting for it to unblock the signal we sent it.  Yuck!  */
-	int status;
-	pid_t r;
-
-	signal (SIGCHLD, wait_sig);
-	/* Perhaps SIGTERM would be more correct.  But the child
-	   process will delay the SIGINT delivery until its own
-	   children have exited.  */
-	kill (command_pid, SIGINT);
-	/* The caller may also have sent a signal to command_pid, so
-	   always try waiting.  First, though, check and see if it's still
-	   there....  */
-    do_waitpid:
-	r = waitpid (command_pid, &status, WNOHANG);
-	if (r == 0)
-	    ;
-	else if (r == command_pid)
-	    command_pid_is_dead++;
-	else if (r == -1)
-	    switch (errno)
-	    {
-		case ECHILD:
-		    command_pid_is_dead++;
-		    break;
-		case EINTR:
-		    goto do_waitpid;
-	    }
-	else
-	    /* waitpid should always return one of the above values */
-	    abort ();
-	while (!command_pid_is_dead)
+	/* What a bogus kludge.  This disgusting code makes all kinds of
+	   assumptions about SunOS, and is only for a bug in that system.
+	   So only enable it on Suns.  */
+#ifdef SUNOS_KLUDGE
+	if (command_pid > 0)
 	{
-	    struct timeval timeout;
-	    struct fd_set_wrapper readfds;
-	    char buf[100];
-	    int i;
+	    /* To avoid crashes on SunOS due to bugs in SunOS tmpfs
+	       triggered by the use of rename() in RCS, wait for the
+	       subprocess to die.  Unfortunately, this means draining output
+	       while waiting for it to unblock the signal we sent it.  Yuck!  */
+	    int status;
+	    pid_t r;
 
-	    /* Use a non-zero timeout to avoid eating up CPU cycles.  */
-	    timeout.tv_sec = 2;
-	    timeout.tv_usec = 0;
-	    readfds = command_fds_to_drain;
-	    switch (select (max_command_fd + 1, &readfds.fds,
-			    (fd_set *)0, (fd_set *)0,
-			    &timeout))
+	    signal (SIGCHLD, wait_sig);
+	    /* Perhaps SIGTERM would be more correct.  But the child
+	       process will delay the SIGINT delivery until its own
+	       children have exited.  */
+	    kill (command_pid, SIGINT);
+	    /* The caller may also have sent a signal to command_pid, so
+	       always try waiting.  First, though, check and see if it's still
+	       there....  */
+	do_waitpid:
+	    r = waitpid (command_pid, &status, WNOHANG);
+	    if (r == 0)
+		;
+	    else if (r == command_pid)
+		command_pid_is_dead++;
+	    else if (r == -1)
+		switch (errno)
+		{
+		    case ECHILD:
+			command_pid_is_dead++;
+			break;
+		    case EINTR:
+			goto do_waitpid;
+		}
+	    else
+		/* waitpid should always return one of the above values */
+		abort ();
+	    while (!command_pid_is_dead)
 	    {
-		case -1:
-		    if (errno != EINTR)
+		struct timeval timeout;
+		struct fd_set_wrapper readfds;
+		char buf[100];
+		int i;
+
+		/* Use a non-zero timeout to avoid eating up CPU cycles.  */
+		timeout.tv_sec = 2;
+		timeout.tv_usec = 0;
+		readfds = command_fds_to_drain;
+		switch (select (max_command_fd + 1, &readfds.fds,
+				(fd_set *)0, (fd_set *)0,
+				&timeout))
+		{
+		    case -1:
+			if (errno != EINTR)
+			    abort ();
+		    case 0:
+			/* timeout */
+			break;
+		    case 1:
+			for (i = 0; i <= max_command_fd; i++)
+			{
+			    if (!FD_ISSET (i, &readfds.fds))
+				continue;
+			    /* this fd is non-blocking */
+			    while (read (i, buf, sizeof (buf)) >= 1)
+				;
+			}
+			break;
+		    default:
 			abort ();
-		case 0:
-		    /* timeout */
-		    break;
-		case 1:
-		    for (i = 0; i <= max_command_fd; i++)
-		    {
-			if (!FD_ISSET (i, &readfds.fds))
-			    continue;
-			/* this fd is non-blocking */
-			while (read (i, buf, sizeof (buf)) >= 1)
-			    ;
-		    }
-		    break;
-		default:
-		    abort ();
+		}
 	    }
 	}
-    }
 #endif /* SUNOS_KLUDGE */
 
-    CVS_CHDIR (Tmpdir);
-    /* Temporarily clear noexec, so that we clean up our temp directory
-       regardless of it (this could more cleanly be handled by moving
-       the noexec check to all the unlink_file_dir callers from
-       unlink_file_dir itself).  */
-    save_noexec = noexec;
-    noexec = 0;
-    /* FIXME?  Would be nice to not ignore errors.  But what should we do?
-       We could try to do this before we shut down the network connection,
-       and try to notify the client (but the client might not be waiting
-       for responses).  We could try something like syslog() or our own
-       log file.  */
-    unlink_file_dir (orig_server_temp_dir);
-    noexec = save_noexec;
+	CVS_CHDIR (Tmpdir);
+	/* Temporarily clear noexec, so that we clean up our temp directory
+	   regardless of it (this could more cleanly be handled by moving
+	   the noexec check to all the unlink_file_dir callers from
+	   unlink_file_dir itself).  */
+	save_noexec = noexec;
+	noexec = 0;
+	/* FIXME?  Would be nice to not ignore errors.  But what should we do?
+	   We could try to do this before we shut down the network connection,
+	   and try to notify the client (but the client might not be waiting
+	   for responses).  We could try something like syslog() or our own
+	   log file.  */
+	unlink_file_dir (orig_server_temp_dir);
+	noexec = save_noexec;
+    }
 
     if (buf_to_net != NULL)
     {
-	(void) buf_flush (buf_to_net, 1);
-	(void) buf_shutdown (buf_to_net);
-	buf_free (buf_to_net);
+	/* Save buf_to_net and set the global pointer to NULL so that any
+	 * error messages generated during shutdown go to the syslog rather
+	 * than getting lost.
+	 */
+	struct buffer *buf_to_net_save = buf_to_net;
 	buf_to_net = NULL;
+
+	(void) buf_flush (buf_to_net_save, 1);
+	(void) buf_shutdown (buf_to_net_save);
+	buf_free (buf_to_net_save);
 	error_use_protocol = 0;
-	server_active = 0;
     }
+
+    server_active = 0;
 }
 
 int server_active = 0;
@@ -6017,16 +6015,32 @@ cvs_output (const char *str, size_t len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol && buf_to_net)
+    if (error_use_protocol)
     {
-	buf_output (saved_output, str, len);
-	buf_copy_lines (buf_to_net, saved_output, 'M');
+	if (buf_to_net)
+	{
+	    buf_output (saved_output, str, len);
+	    buf_copy_lines (buf_to_net, saved_output, 'M');
+	}
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write message after close of network buffer.  "
+		    "Message was: %s",
+		    str);
     }
-    else if (server_active && protocol)
+    else if (server_active)
     {
-	buf_output (saved_output, str, len);
-	buf_copy_lines (protocol, saved_output, 'M');
-	buf_send_counted (protocol);
+	if (protocol)
+	{
+	    buf_output (saved_output, str, len);
+	    buf_copy_lines (protocol, saved_output, 'M');
+	    buf_send_counted (protocol);
+	}
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write message before initialization of "
+		    "protocol buffer.  Message was: %s",
+		    str);
     }
     else
 #endif
@@ -6145,16 +6159,32 @@ cvs_outerr (const char *str, size_t len)
     if (len == 0)
 	len = strlen (str);
 #ifdef SERVER_SUPPORT
-    if (error_use_protocol && buf_to_net)
+    if (error_use_protocol)
     {
-	buf_output (saved_outerr, str, len);
-	buf_copy_lines (buf_to_net, saved_outerr, 'E');
+	if (buf_to_net)
+	{
+	    buf_output (saved_outerr, str, len);
+	    buf_copy_lines (buf_to_net, saved_outerr, 'E');
+	}
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write error message after close of network "
+		    "buffer.  Message was: %s",
+		    str);
     }
-    else if (server_active && protocol)
+    else if (server_active)
     {
-	buf_output (saved_outerr, str, len);
-	buf_copy_lines (protocol, saved_outerr, 'E');
-	buf_send_counted (protocol);
+	if (protocol)
+	{
+	    buf_output (saved_outerr, str, len);
+	    buf_copy_lines (protocol, saved_outerr, 'E');
+	    buf_send_counted (protocol);
+	}
+	else
+	    syslog (LOG_DAEMON | LOG_ERR,
+		    "Attempt to write error message before initialization of "
+		    "protocol buffer.  Message was: %s",
+		    str);
     }
     else
 #endif

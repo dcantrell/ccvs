@@ -1320,11 +1320,9 @@ stdio_buffer_shutdown (struct buffer *buf)
     {
 	if ( !buf_empty_p (buf) )
 	{
+	    /* FIXME: Put buffer contents in error message?  */
 # ifdef SERVER_SUPPORT
 	    if (server_active)
-		/* FIXME: This should probably be sysloged since it doesn't
-		 * have anywhere else to go at this point.
-		 */
 		error (0, 0, "dying gasps from client unexpected");
 	    else
 # endif
@@ -1334,9 +1332,6 @@ stdio_buffer_shutdown (struct buffer *buf)
 	{
 # ifdef SERVER_SUPPORT
 	    if (server_active)
-		/* FIXME: This should probably be sysloged since it doesn't
-		 * have anywhere else to go at this point.
-		 */
 		error (0, errno, "reading from client");
 	    else
 # endif

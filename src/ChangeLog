@@ -1,3 +1,15 @@
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* server.c (protocol): Initialize the protocol buffer to NULL so that
+	use before initialization may be detected.
+	(cvs_output, cvs_outerr): Syslog messages when the appropriate buffers
+	are not available.
+	(server_cleanup): Reorganize for a single exit point and to eliminate
+	duplicated code.  Set buf_to_net to NULL before calling the buffer
+	shutdown functions in order to force error messages into the syslog.
+	* buffer.c (stdio_buffer_close): Remove FIXME comment re syslog since
+	the calls to error should go through the cvs_outerr function anyhow.
+
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
 	* entries.c (WriteTemplate): TRACE on entrance to a function, not exit.
