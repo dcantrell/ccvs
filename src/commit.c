@@ -74,7 +74,7 @@ static int force_ci = 0;
 static int got_message;
 static int run_module_prog = 1;
 static int aflag;
-static char *tag;
+static char *saved_tag;
 static char *write_dirtag;
 static int write_dirnonbranch;
 static char *logfile;
@@ -247,7 +247,7 @@ find_fileproc (callerdat, finfo)
     xfinfo.repository = NULL;
     xfinfo.rcs = NULL;
 
-    vers = Version_TS (&xfinfo, NULL, tag, NULL, 0, 0);
+    vers = Version_TS (&xfinfo, NULL, saved_tag, NULL, 0, 0);
     if (vers->ts_user == NULL
 	&& vers->vn_user != NULL
 	&& vers->vn_user[0] == '-')
@@ -373,9 +373,9 @@ commit (argc, argv)
 		message = xstrdup(optarg);
 		break;
 	    case 'r':
-		if (tag)
-		    free (tag);
-		tag = xstrdup (optarg);
+		if (saved_tag)
+		    free (saved_tag);
+		saved_tag = xstrdup (optarg);
 		break;
 	    case 'l':
 		local = 1;
@@ -405,12 +405,12 @@ commit (argc, argv)
     argv += optind;
 
     /* numeric specified revision means we ignore sticky tags... */
-    if (tag && isdigit (*tag))
+    if (saved_tag && isdigit (*saved_tag))
     {
 	aflag = 1;
 	/* strip trailing dots */
-	while (tag[strlen (tag) - 1] == '.')
-	    tag[strlen (tag) - 1] = '\0';
+	while (saved_tag[strlen (saved_tag) - 1] == '.')
+	    saved_tag[strlen (saved_tag) - 1] = '\0';
     }
 
     /* some checks related to the "-F logfile" option */
@@ -443,7 +443,6 @@ commit (argc, argv)
 #ifdef CLIENT_SUPPORT
     if (client_active)
     {
-	int err;
 	struct find_data find_args;
 
 	ign_setup ();
@@ -458,7 +457,7 @@ commit (argc, argv)
 	   I haven't really thought about it much.
 	   Anyway, I suspect that setting it unnecessarily only causes
 	   a little unneeded network traffic.  */
-	find_args.force = force_ci || tag != NULL;
+	find_args.force = force_ci || saved_tag != NULL;
 
 	err = start_recursion (find_fileproc, find_filesdoneproc,
 			       find_dirent_proc, (DIRLEAVEPROC) NULL,
@@ -559,7 +558,7 @@ commit (argc, argv)
 	    send_arg("-f");
 	if (!run_module_prog)
 	    send_arg("-n");
-	option_with_arg ("-r", tag);
+	option_with_arg ("-r", saved_tag);
 
 	/* Sending only the names of the files which were modified, added,
 	   or removed means that the server will only do an up-to-date
@@ -610,12 +609,12 @@ commit (argc, argv)
     }
 #endif
 
-    if (tag != NULL)
-	tag_check_valid (tag, argc, argv, local, aflag, "");
+    if (saved_tag != NULL)
+	tag_check_valid (saved_tag, argc, argv, local, aflag, "");
 
     /* XXX - this is not the perfect check for this */
     if (argc <= 0)
-	write_dirtag = tag;
+	write_dirtag = saved_tag;
 
     wrap_setup ();
 
@@ -702,10 +701,10 @@ classify_file_internal (finfo, vers)
     noexec = quiet = really_quiet = 1;
 
     /* handle specified numeric revision specially */
-    if (tag && isdigit (*tag))
+    if (saved_tag && isdigit (*saved_tag))
     {
 	/* If the tag is for the trunk, make sure we're at the head */
-	if (numdots (tag) < 2)
+	if (numdots (saved_tag) < 2)
 	{
 	    status = Classify_File (finfo, (char *) NULL, (char *) NULL,
 				    (char *) NULL, 1, aflag, vers, 0);
@@ -715,7 +714,7 @@ classify_file_internal (finfo, vers)
 		Ctype xstatus;
 
 		freevers_ts (vers);
-		xstatus = Classify_File (finfo, tag, (char *) NULL,
+		xstatus = Classify_File (finfo, saved_tag, (char *) NULL,
 					 (char *) NULL, 1, aflag, vers, 0);
 		if (xstatus == T_REMOVE_ENTRY)
 		    status = T_MODIFIED;
@@ -733,7 +732,7 @@ classify_file_internal (finfo, vers)
 	     * The revision is off the main trunk; make sure we're
 	     * up-to-date with the head of the specified branch.
 	     */
-	    xtag = xstrdup (tag);
+	    xtag = xstrdup (saved_tag);
 	    if ((numdots (xtag) & 1) != 0)
 	    {
 		cp = strrchr (xtag, '.');
@@ -754,12 +753,12 @@ classify_file_internal (finfo, vers)
 	    }
 	    /* now, muck with vers to make the tag correct */
 	    free ((*vers)->tag);
-	    (*vers)->tag = xstrdup (tag);
+	    (*vers)->tag = xstrdup (saved_tag);
 	    free (xtag);
 	}
     }
     else
-	status = Classify_File (finfo, tag, (char *) NULL, (char *) NULL,
+	status = Classify_File (finfo, saved_tag, (char *) NULL, (char *) NULL,
 				1, 0, vers, 0);
     noexec = save_noexec;
     quiet = save_quiet;
@@ -824,7 +823,7 @@ check_fileproc (callerdat, finfo)
 	     *    allow the commit if timestamp is identical or if we find
 	     *    an RCS_MERGE_PAT in the file.
 	     */
-	    if (!tag || !isdigit (*tag))
+	    if (!saved_tag || !isdigit (*saved_tag))
 	    {
 		if (vers->date)
 		{
@@ -1455,7 +1454,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 	    char *line;
 	    int line_length;
 	    size_t line_chars_allocated;
-	    char *repository;
+	    char *repos;
 
 	    line = NULL;
 	    line_chars_allocated = 0;
@@ -1465,9 +1464,9 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 		/* Remove any trailing newline.  */
 		if (line[line_length - 1] == '\n')
 		    line[--line_length] = '\0';
-		repository = Name_Repository ((char *) NULL, update_dir);
+		repos = Name_Repository ((char *) NULL, update_dir);
 		run_setup (line);
-		run_arg (repository);
+		run_arg (repos);
 		cvs_output (program_name, 0);
 		cvs_output (" ", 1);
 		cvs_output (command_name, 0);
@@ -1475,7 +1474,7 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 		run_print (stdout);
 		cvs_output ("'\n", 0);
 		(void) run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
-		free (repository);
+		free (repos);
 	    }
 	    else
 	    {
