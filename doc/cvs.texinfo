@@ -12568,6 +12568,21 @@ All other strings containing @samp{$} are reserved;
 there is no way to quote a @samp{$} character so that
 @samp{$} represents itself.
 
+Environment variables passed to administrative files are:
+
+@table @code
+@cindex environment variables, passed to administrative files
+@c FIXME: should document USER, LOGNAME, and whatever else is
+@c available both in internal variables and environment variables.
+
+@item CVS_USER
+The CVS-specific username provided by the user, if it
+can be provided (currently just for the pserver access
+method), and to the empty string otherwise.  (CVS_USER
+and USER may differ when @file{$CVSROOT/CVSROOT/passwd}
+is used to map cvs usernames to system usernames.)
+@end table
+
 @node config
 @appendixsec The CVSROOT/config configuration file
 
