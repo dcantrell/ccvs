@@ -423,9 +423,14 @@ void make_directories PROTO((char *name));
 void make_directory PROTO((char *name));
 void rename_file PROTO((char *from, char *to));
 void run_arg PROTO((char *s));
-void run_args PROTO((char *fmt,...));
 void run_print PROTO((FILE * fp));
+#ifdef HAVE_VPRINTF
 void run_setup PROTO((char *fmt,...));
+void run_args PROTO((char *fmt,...));
+#else
+void run_setup ();
+void run_args ();
+#endif
 void strip_path PROTO((char *path));
 void strip_trailing_slashes PROTO((char *path));
 void update_delproc PROTO((Node * p));
