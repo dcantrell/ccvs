@@ -1,5 +1,9 @@
 2004-01-22  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note recent infinite alias loop fix.
+
+2004-01-22  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Remove a note about an Automake bug that has been fixed for
 	quite awhile.
 

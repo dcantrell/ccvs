@@ -262,7 +262,7 @@ Building from source code under Unix:
     automatically aren't included in the generated Makefiles unless you run
     configure with --enable-maintainer-mode.
 
-    The CVS Makefiles and configure script were built using Automake 1.7.5 and
+    The CVS Makefiles and configure script were built using Automake 1.7.9 and
     Autoconf 2.58, respectively.
 
     There is a known bug in Autoconf 2.57 that will prevent the configure
@@ -490,19 +490,5 @@ For older versions of Mac OS, you might try <http://wincvs.org>.
 For a Java client, see jCVS (which is a separate package from CVS
 itself, but which might be preferable to the Macintosh port mentioned
 above, for example).
-
-                                  **** ****
-
-Builds are breaking on some systems (notably,
-BSD/OS thor.sdrc.com 4.0.1 BSDI BSD/OS 4.0.1 Kernel #3: Thu Mar  9 11:29:16 EST 2000
-) due to Automake's dependency tracking code.  The work around for this is to
-comile without it by passing the '--disable-dependency-tracking' option to
-configure:
-
-	$ ./configure --disable-dependency-tracking
-
-This will allow a compile but make will no longer be tracking header
-dependencies.  This means that if you make any changes to header files you may
-have to run 'make clean' before running a 'make' to get everything to compile.
 
 -------------------------------------------------------------------------------
