@@ -1504,14 +1504,14 @@ join_file (finfo, vers)
     }
 
     /* Convert the second revision, walking branches and dates.  */
-    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, 0);
+    rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, (int *) NULL);
 
     /* If this is a merge of two revisions, get the first revision.
        If only one join tag was specified, then the first revision is
        the greatest common ancestor of the second revision and the
        working file.  */
     if (jrev1 != NULL)
-	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1, 0);
+	rev1 = RCS_getversion (vers->srcfile, jrev1, jdate1, 1, (int *) NULL);
     else
     {
 	/* Note that we use vn_rcs here, since vn_user may contain a

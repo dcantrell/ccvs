@@ -832,7 +832,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 		if (RCS_nodeisbranch (rcs, r->first))
 		    nr->first = RCS_whatbranch (rcs, r->first);
 		else
-		    nr->first = RCS_gettag (rcs, r->first, 1, 0);
+		    nr->first = RCS_gettag (rcs, r->first, 1, (int *) NULL);
 		if (nr->first == NULL)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",
@@ -851,7 +851,7 @@ log_expand_revlist (rcs, revlist, default_branch)
 		if (RCS_nodeisbranch (rcs, r->last))
 		    nr->last = RCS_whatbranch (rcs, r->last);
 		else
-		    nr->last = RCS_gettag (rcs, r->last, 1, 0);
+		    nr->last = RCS_gettag (rcs, r->last, 1, (int *) NULL);
 		if (nr->last == NULL)
 		{
 		    error (0, 0, "warning: no revision `%s' in `%s'",

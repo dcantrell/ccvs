@@ -359,13 +359,15 @@ check_fileproc (callerdat, finfo)
     p->type = UPDATE;
     p->delproc = tag_delproc;
     vers = Version_TS (finfo, NULL, NULL, NULL, 0, 0);
-    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match,
+			     (int *) NULL);
     if (p->data != NULL)
     {
         int addit = 1;
         char *oversion;
         
-        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+				   (int *) NULL);
         if (oversion == NULL) 
         {
             if (delete_flag)
@@ -542,7 +544,8 @@ rtag_fileproc (callerdat, finfo)
 	    return (rtag_delete (rcsfile));
     }
 
-    version = RCS_getversion (rcsfile, numtag, date, force_tag_match, 0);
+    version = RCS_getversion (rcsfile, numtag, date, force_tag_match,
+			      (int *) NULL);
     if (version == NULL)
     {
 	/* If -a specified, clean up any old tags */
@@ -585,7 +588,8 @@ rtag_fileproc (callerdat, finfo)
 	 * typical tagging operation.
 	 */
 	rev = branch_mode ? RCS_magicrev (rcsfile, version) : version;
-	oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
+	oversion = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
+				   (int *) NULL);
 	if (oversion != NULL)
 	{
 	    int isbranch = RCS_isbranch (finfo->rcs, symtag);
@@ -656,13 +660,15 @@ rtag_delete (rcsfile)
 
     if (numtag)
     {
-	version = RCS_getversion (rcsfile, numtag, (char *) NULL, 1, 0);
+	version = RCS_getversion (rcsfile, numtag, (char *) NULL, 1,
+				  (int *) NULL);
 	if (version == NULL)
 	    return (0);
 	free (version);
     }
 
-    version = RCS_getversion (rcsfile, symtag, (char *) NULL, 1, 0);
+    version = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
+			      (int *) NULL);
     if (version == NULL)
 	return (0);
     free (version);

@@ -1108,13 +1108,16 @@ do_branches (list, val)
  * The result is returned; null-string if error.
  */
 char *
-RCS_getversion (rcs, tag, date, force_tag_match, return_both)
+RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
     RCSNode *rcs;
     char *tag;
     char *date;
     int force_tag_match;
-    int return_both;
+    int *simple_tag;
 {
+    if (simple_tag != NULL)
+	*simple_tag = 0;
+
     /* make sure we have something to look at... */
     assert (rcs != NULL);
 
@@ -1141,7 +1144,7 @@ RCS_getversion (rcs, tag, date, force_tag_match, return_both)
 	return (rev);
     }
     else if (tag)
-	return (RCS_gettag (rcs, tag, force_tag_match, return_both));
+	return (RCS_gettag (rcs, tag, force_tag_match, simple_tag));
     else if (date)
 	return (RCS_getdate (rcs, date, force_tag_match));
     else
@@ -1158,14 +1161,17 @@ RCS_getversion (rcs, tag, date, force_tag_match, return_both)
  * If the matched tag is a branch tag, find the head of the branch.
  */
 char *
-RCS_gettag (rcs, symtag, force_tag_match, return_both)
+RCS_gettag (rcs, symtag, force_tag_match, simple_tag)
     RCSNode *rcs;
     char *symtag;
     int force_tag_match;
-    int return_both;
+    int *simple_tag;
 {
     char *tag = symtag;
     int tag_allocated = 0;
+
+    if (simple_tag != NULL)
+	*simple_tag = 0;
 
     /* make sure we have something to look at... */
     assert (rcs != NULL);
@@ -1268,29 +1274,18 @@ RCS_gettag (rcs, symtag, force_tag_match, return_both)
 	p = findnode (rcs->versions, tag);
 	if (p != NULL)
 	{
-	    /*
-	     * we have found a numeric revision for the revision tag.
-	     * To support expanding the RCS keyword Name, return both
-	     * the numeric tag and the supplied tag (which might be
-	     * symbolic).  They are separated with a ':' which is not
-	     * a valid tag char.  The variable return_both is only set
-	     * if this function is called through Version_TS ->
-	     * RCS_getversion.
-	     */
-	    if (return_both)
-	    {
-		char *both = xmalloc(strlen(tag) + 2 + strlen(symtag));
-		sprintf(both, "%s:%s", tag, symtag);
-		if (tag_allocated)
-		    free (tag);
-		return both;
-	    }
-	    else
-	    {
-		if (! tag_allocated)
-		    tag = xstrdup (tag);
-		return (tag);
-	    }
+	    /* We have found a numeric revision for the revision tag.
+	       To support expanding the RCS keyword Name, if
+	       SIMPLE_TAG is not NULL, tell the the caller that this
+	       is a simple tag which co will recognize.  FIXME: Are
+	       there other cases in which we should set this?  In
+	       particular, what if we expand RCS keywords internally
+	       without calling co?  */
+	    if (simple_tag != NULL)
+		*simple_tag = 1;
+	    if (! tag_allocated)
+		tag = xstrdup (tag);
+	    return (tag);
 	}
 	else
 	{
@@ -2199,7 +2194,7 @@ RCS_checkout (rcs, workfile, tag, options, sout)
 	fp = NULL;
 	if (rcs->flags & PARTIAL)
 	    RCS_reparsercsfile (rcs, 0, &fp);
-	num = RCS_getversion (rcs, tag, NULL, 1, 0);
+	num = RCS_getversion (rcs, tag, NULL, 1, (int *) NULL);
 	if (num == NULL)
 	{
 	    error (0, 0, "internal error: cannot find revision");
@@ -3216,7 +3211,8 @@ annotate_fileproc (callerdat, finfo)
     if (finfo->rcs->flags & PARTIAL)
         RCS_reparsercsfile (finfo->rcs, 0, &fp);
 
-    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match, 0);
+    version = RCS_getversion (finfo->rcs, tag, date, force_tag_match,
+			      (int *) NULL);
     if (version == NULL)
         return 0;
 

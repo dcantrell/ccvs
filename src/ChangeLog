@@ -1,5 +1,13 @@
 Fri Sep  6 11:48:08 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* rcs.c (RCS_getversion): Replace return_both parameter with
+	simple_tag.  Change all callers.
+	(RCS_gettag): Likewise.
+	* rcs.h (RCS_getversion, RCS_gettag): Update declarations.
+	* vers_ts.c (Version_TS): Simplify vn_tag initialization using new
+	simple_tag rather than old return_both.
+	* cvs.h (struct vers_ts): Clarify vn_tag comment a bit.
+
 	* main.c (usg): Only mention -x if ENCRYPTION is defined.
 	(main): Mention ENCRYPTION define in comment for -x.
 	* client.h (krb_encrypt_buffer_initialize): Only declare if

@@ -267,13 +267,15 @@ check_fileproc (callerdat, finfo)
 	    error (0, 0, "nothing known about %s", finfo->file);
 	return (1);
     }
-    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match, 0);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match,
+			     (int *) NULL);
     if (p->data != NULL)
     {
         int addit = 1;
         char *oversion;
         
-        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+				   (int *) NULL);
         if (oversion == NULL) 
         {
             if (delete_flag)
@@ -437,7 +439,8 @@ tag_fileproc (callerdat, finfo)
         nversion = RCS_getversion(vers->srcfile,
                                   numtag,
                                   date,
-                                  force_tag_match, 0);
+                                  force_tag_match,
+				  (int *) NULL);
         if (nversion == NULL)
         {
 	    freevers_ts (&vers);
@@ -456,7 +459,8 @@ tag_fileproc (callerdat, finfo)
 	 * "rcs" to remove the tag... trust me.
 	 */
 
-	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
+	version = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+				  (int *) NULL);
 	if (version == NULL || vers->srcfile == NULL)
 	{
 	    freevers_ts (&vers);
@@ -532,7 +536,8 @@ tag_fileproc (callerdat, finfo)
      * module -- which I have found to be a typical tagging operation.
      */
     rev = branch_mode ? RCS_magicrev (vers->srcfile, version) : version;
-    oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1, 0);
+    oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+			       (int *) NULL);
     if (oversion != NULL)
     {
 	int isbranch = RCS_isbranch (finfo->rcs, symtag);
@@ -708,7 +713,7 @@ val_fileproc (callerdat, finfo)
 	   W_REPOS | W_ATTIC.  */
 	return 0;
 
-    tag = RCS_gettag (rcsdata, args->name, 1, 0);
+    tag = RCS_gettag (rcsdata, args->name, 1, (int *) NULL);
     if (tag != NULL)
     {
 	/* FIXME: should find out a way to stop the search at this point.  */
