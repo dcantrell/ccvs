@@ -89,6 +89,7 @@ run_arg (s)
     run_add_arg (s);
 }
 
+void
 run_args (const char *fmt,...)
 {
     va_list args;
@@ -269,12 +270,11 @@ run_exec (stin, stout, sterr, flags)
       (void) close( saerr);
     }
 
-    /* Recognize the return code for an interrupted subprocess.  */
-	/* kff: todo: hmmm... */
-    if (rval == CONTROL_C_EXIT)
+    /* Recognize the return code for a failed subprocess.  */
+    if (rval == -1)
         return 2;
     else
-        return rval;		/* end, if all went coorect */
+        return rval;		/* return child's exit status */
 
     /* error cases */
     /* cleanup the open file descriptors */

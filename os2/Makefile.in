@@ -10,8 +10,8 @@ project: cvs.exe
 # working, then make it fancy.
 srcdir     = .
 top_srcdir = ..
-libdir     = ../lib
-cvs_srcdir = ../src
+libdir     = ..\lib
+cvs_srcdir = ..\src
 
 # Do we need these?
 # prefix = /usr/local
@@ -19,7 +19,7 @@ cvs_srcdir = ../src
 
 # taken straight from the example project
 LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
-CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
+CINC = -Is:\ibmcpp\include -Is:\toolkt21\c\os2h
 # This says we are building an object file, not a full executable.
 OBJ_CFLAGS = -C+
 CFLAGS = -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm ${CINC}
@@ -45,17 +45,17 @@ OS2_HEADERS = \
        pwd.h \
        dirent.h
 
-# headers we use from the common src dir, ../src
+# headers we use from the common src dir, ..\src
 COMMON_HEADERS = \
-       ${cvs_srcdir}/cvs.h \
-       ${cvs_srcdir}/rcs.h \
-       ${cvs_srcdir}/hash.h \
-       ${cvs_srcdir}/myndbm.h \
-       ${cvs_srcdir}/patchlevel.h \
-       ${cvs_srcdir}/update.h \
-       ${cvs_srcdir}/server.h \
-       ${cvs_srcdir}/client.h \
-       ${cvs_srcdir}/error.h
+       ${cvs_srcdir}\cvs.h \
+       ${cvs_srcdir}\rcs.h \
+       ${cvs_srcdir}\hash.h \
+       ${cvs_srcdir}\myndbm.h \
+       ${cvs_srcdir}\patchlevel.h \
+       ${cvs_srcdir}\update.h \
+       ${cvs_srcdir}\server.h \
+       ${cvs_srcdir}\client.h \
+       ${cvs_srcdir}\error.h
 
 # sources specific to OS/2
 OS2_SOURCES = \
@@ -65,59 +65,59 @@ OS2_SOURCES = \
        dirent.c \
        run.c
 
-# sources we use from the common src dir, ../src
+# sources we use from the common src dir, ..\src
 COMMON_SOURCES = \
-       ${cvs_srcdir}/add.c \
-       ${cvs_srcdir}/admin.c \
-       ${cvs_srcdir}/checkin.c \
-       ${cvs_srcdir}/checkout.c \
-       ${cvs_srcdir}/classify.c \
-       ${cvs_srcdir}/client.c \
-       ${cvs_srcdir}/commit.c \
-       ${cvs_srcdir}/create_adm.c \
-       ${cvs_srcdir}/cvsrc.c \
-       ${cvs_srcdir}/diff.c \
-       ${cvs_srcdir}/entries.c \
-       ${cvs_srcdir}/error.c \
-       ${cvs_srcdir}/expand_path.c \
-       ${cvs_srcdir}/find_names.c \
-       ${cvs_srcdir}/hash.c \
-       ${cvs_srcdir}/history.c \
-       ${cvs_srcdir}/ignore.c \
-       ${cvs_srcdir}/import.c \
-       ${cvs_srcdir}/lock.c \
-       ${cvs_srcdir}/log.c \
-       ${cvs_srcdir}/login.c \
-       ${cvs_srcdir}/logmsg.c \
-       ${cvs_srcdir}/main.c \
-       ${cvs_srcdir}/modules.c \
-       ${cvs_srcdir}/myndbm.c \
-       ${cvs_srcdir}/no_diff.c \
-       ${cvs_srcdir}/parseinfo.c \
-       ${cvs_srcdir}/patch.c \
-       ${cvs_srcdir}/rcs.c \
-       ${cvs_srcdir}/rcscmds.c \
-       ${cvs_srcdir}/recurse.c \
-       ${cvs_srcdir}/release.c \
-       ${cvs_srcdir}/remove.c \
-       ${cvs_srcdir}/repos.c \
-       ${cvs_srcdir}/root.c \
-       ${cvs_srcdir}/rtag.c \
-       ${cvs_srcdir}/server.c \
-       ${cvs_srcdir}/status.c \
-       ${cvs_srcdir}/subr.c \
-       ${cvs_srcdir}/tag.c \
-       ${cvs_srcdir}/update.c \
-       ${cvs_srcdir}/wrapper.c \
-       ${cvs_srcdir}/vers_ts.c \
-       ${cvs_srcdir}/version.c
+       ${cvs_srcdir}\add.c \
+       ${cvs_srcdir}\admin.c \
+       ${cvs_srcdir}\checkin.c \
+       ${cvs_srcdir}\checkout.c \
+       ${cvs_srcdir}\classify.c \
+       ${cvs_srcdir}\client.c \
+       ${cvs_srcdir}\commit.c \
+       ${cvs_srcdir}\create_adm.c \
+       ${cvs_srcdir}\cvsrc.c \
+       ${cvs_srcdir}\diff.c \
+       ${cvs_srcdir}\entries.c \
+       ${cvs_srcdir}\error.c \
+       ${cvs_srcdir}\expand_path.c \
+       ${cvs_srcdir}\find_names.c \
+       ${cvs_srcdir}\hash.c \
+       ${cvs_srcdir}\history.c \
+       ${cvs_srcdir}\ignore.c \
+       ${cvs_srcdir}\import.c \
+       ${cvs_srcdir}\lock.c \
+       ${cvs_srcdir}\log.c \
+       ${cvs_srcdir}\login.c \
+       ${cvs_srcdir}\logmsg.c \
+       ${cvs_srcdir}\main.c \
+       ${cvs_srcdir}\modules.c \
+       ${cvs_srcdir}\myndbm.c \
+       ${cvs_srcdir}\no_diff.c \
+       ${cvs_srcdir}\parseinfo.c \
+       ${cvs_srcdir}\patch.c \
+       ${cvs_srcdir}\rcs.c \
+       ${cvs_srcdir}\rcscmds.c \
+       ${cvs_srcdir}\recurse.c \
+       ${cvs_srcdir}\release.c \
+       ${cvs_srcdir}\remove.c \
+       ${cvs_srcdir}\repos.c \
+       ${cvs_srcdir}\root.c \
+       ${cvs_srcdir}\rtag.c \
+       ${cvs_srcdir}\server.c \
+       ${cvs_srcdir}\status.c \
+       ${cvs_srcdir}\subr.c \
+       ${cvs_srcdir}\tag.c \
+       ${cvs_srcdir}\update.c \
+       ${cvs_srcdir}\wrapper.c \
+       ${cvs_srcdir}\vers_ts.c \
+       ${cvs_srcdir}\version.c
 # end of $COMMON_SOURCES
 
-# sources from ../lib
+# sources from ..\lib
 LIB_SOURCES = \
-       ${libdir}/getopt.c \
-       ${libdir}/getopt1.c \
-       ${libdir}/getline.c
+       ${libdir}\getopt.c \
+       ${libdir}\getopt1.c \
+       ${libdir}\getline.c
 
 # object files from OS/2 sources
 OS2_OBJECTS = \
@@ -127,59 +127,59 @@ OS2_OBJECTS = \
        dirent.obj \
        run.obj
 
-# object files from ../src
+# object files from ..\src
 COMMON_OBJECTS = \
-       ${cvs_srcdir}/add.obj \
-       ${cvs_srcdir}/admin.obj \
-       ${cvs_srcdir}/checkin.obj \
-       ${cvs_srcdir}/checkout.obj \
-       ${cvs_srcdir}/classify.obj \
-       ${cvs_srcdir}/client.obj \
-       ${cvs_srcdir}/commit.obj \
-       ${cvs_srcdir}/create_adm.obj \
-       ${cvs_srcdir}/cvsrc.obj \
-       ${cvs_srcdir}/diff.obj \
-       ${cvs_srcdir}/entries.obj \
-       ${cvs_srcdir}/error.obj \
-       ${cvs_srcdir}/expand_path.obj \
-       ${cvs_srcdir}/find_names.obj \
-       ${cvs_srcdir}/hash.obj \
-       ${cvs_srcdir}/history.obj \
-       ${cvs_srcdir}/ignore.obj \
-       ${cvs_srcdir}/import.obj \
-       ${cvs_srcdir}/lock.obj \
-       ${cvs_srcdir}/log.obj \
-       ${cvs_srcdir}/login.obj \
-       ${cvs_srcdir}/logmsg.obj \
-       ${cvs_srcdir}/main.obj \
-       ${cvs_srcdir}/modules.obj \
-       ${cvs_srcdir}/myndbm.obj \
-       ${cvs_srcdir}/no_diff.obj \
-       ${cvs_srcdir}/parseinfo.obj \
-       ${cvs_srcdir}/patch.obj \
-       ${cvs_srcdir}/rcs.obj \
-       ${cvs_srcdir}/rcscmds.obj \
-       ${cvs_srcdir}/recurse.obj \
-       ${cvs_srcdir}/release.obj \
-       ${cvs_srcdir}/remove.obj \
-       ${cvs_srcdir}/repos.obj \
-       ${cvs_srcdir}/root.obj \
-       ${cvs_srcdir}/rtag.obj \
-       ${cvs_srcdir}/server.obj \
-       ${cvs_srcdir}/status.obj \
-       ${cvs_srcdir}/subr.obj \
-       ${cvs_srcdir}/tag.obj \
-       ${cvs_srcdir}/update.obj \
-       ${cvs_srcdir}/wrapper.obj \
-       ${cvs_srcdir}/vers_ts.obj \
-       ${cvs_srcdir}/version.obj
+       ${cvs_srcdir}\add.obj \
+       ${cvs_srcdir}\admin.obj \
+       ${cvs_srcdir}\checkin.obj \
+       ${cvs_srcdir}\checkout.obj \
+       ${cvs_srcdir}\classify.obj \
+       ${cvs_srcdir}\client.obj \
+       ${cvs_srcdir}\commit.obj \
+       ${cvs_srcdir}\create_adm.obj \
+       ${cvs_srcdir}\cvsrc.obj \
+       ${cvs_srcdir}\diff.obj \
+       ${cvs_srcdir}\entries.obj \
+       ${cvs_srcdir}\error.obj \
+       ${cvs_srcdir}\expand_path.obj \
+       ${cvs_srcdir}\find_names.obj \
+       ${cvs_srcdir}\hash.obj \
+       ${cvs_srcdir}\history.obj \
+       ${cvs_srcdir}\ignore.obj \
+       ${cvs_srcdir}\import.obj \
+       ${cvs_srcdir}\lock.obj \
+       ${cvs_srcdir}\log.obj \
+       ${cvs_srcdir}\login.obj \
+       ${cvs_srcdir}\logmsg.obj \
+       ${cvs_srcdir}\main.obj \
+       ${cvs_srcdir}\modules.obj \
+       ${cvs_srcdir}\myndbm.obj \
+       ${cvs_srcdir}\no_diff.obj \
+       ${cvs_srcdir}\parseinfo.obj \
+       ${cvs_srcdir}\patch.obj \
+       ${cvs_srcdir}\rcs.obj \
+       ${cvs_srcdir}\rcscmds.obj \
+       ${cvs_srcdir}\recurse.obj \
+       ${cvs_srcdir}\release.obj \
+       ${cvs_srcdir}\remove.obj \
+       ${cvs_srcdir}\repos.obj \
+       ${cvs_srcdir}\root.obj \
+       ${cvs_srcdir}\rtag.obj \
+       ${cvs_srcdir}\server.obj \
+       ${cvs_srcdir}\status.obj \
+       ${cvs_srcdir}\subr.obj \
+       ${cvs_srcdir}\tag.obj \
+       ${cvs_srcdir}\update.obj \
+       ${cvs_srcdir}\wrapper.obj \
+       ${cvs_srcdir}\vers_ts.obj \
+       ${cvs_srcdir}\version.obj
 # end of $COMMON_OBJECTS
 
-# objects from ../lib
+# objects from ..\lib
 LIB_OBJECTS = \
-       ${libdir}/getopt.obj \
-       ${libdir}/getopt1.obj \
-       ${libdir}/getline.obj
+       ${libdir}\getopt.obj \
+       ${libdir}\getopt1.obj \
+       ${libdir}\getline.obj
 
 SOURCES = ${COMMON_SOURCES} ${LIB_SOURCES} ${OS2_SOURCES}
 HEADERS = ${COMMON_HEADERS} ${OS2_HEADERS}
@@ -210,7 +210,7 @@ lint:
 dist-dir:
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
-	  ln ${srcdir}/$${i} ${DISTDIR}; \
+	  ln ${srcdir}\$${i} ${DISTDIR}; \
 	done
 
 clean:

@@ -1,7 +1,13 @@
 Sat Nov 11 15:00:01 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * Makefile.in: Use backslashes in pathnames, so ICC doesn't
+        mistake them for options.
+
         * run.c (run_setup): cleared away Windows NT stuff, left skeleton
         functions that just complain and die for now.
+        (run_exec): correctly check return of spawn under OS/2; return
+        child's exit status.
+        (run_args): declare as returning void, in agreement with cvs.h.
 
 Fri Nov 10 14:21:14 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
