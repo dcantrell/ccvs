@@ -745,11 +745,14 @@ done"
 "${TESTDIR}/cvsroot/first-dir"
 
 	  cd first-dir
-	  mkdir sdir1 sdir2
-	  dotest basicb-2 "${testcvs} add sdir1 sdir2" \
-"Directory ${TESTDIR}/cvsroot/first-dir/sdir1 added to the repository
+	  # Note that the name Emptydir is chosen to test that CVS just
+	  # treats it like any other directory name.  It should be
+	  # special only when it is directly in $CVSROOT/CVSROOT.
+	  mkdir Emptydir sdir2
+	  dotest basicb-2 "${testcvs} add Emptydir sdir2" \
+"Directory ${TESTDIR}/cvsroot/first-dir/Emptydir added to the repository
 Directory ${TESTDIR}/cvsroot/first-dir/sdir2 added to the repository"
-	  cd sdir1
+	  cd Emptydir
 	  echo sfile1 starts >sfile1
 	  dotest basicb-2a10 "${testcvs} -n add sfile1" \
 "${PROG} [a-z]*: scheduling file .sfile1. for addition
@@ -784,10 +787,10 @@ ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
 ${PROG} [a-z]*: but CVS uses CVS for its own purposes; skipping CVS directory"
 	  cd ..
 	  dotest basicb-5 "${testcvs} -q ci -m add" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/sdir1/sfile1,v
+"RCS file: ${TESTDIR}/cvsroot/first-dir/Emptydir/sfile1,v
 done
-Checking in sdir1/sfile1;
-${TESTDIR}/cvsroot/first-dir/sdir1/sfile1,v  <--  sfile1
+Checking in Emptydir/sfile1;
+${TESTDIR}/cvsroot/first-dir/Emptydir/sfile1,v  <--  sfile1
 initial revision: 1\.1
 done
 RCS file: ${TESTDIR}/cvsroot/first-dir/sdir2/sfile2,v
@@ -796,13 +799,13 @@ Checking in sdir2/sfile2;
 ${TESTDIR}/cvsroot/first-dir/sdir2/sfile2,v  <--  sfile2
 initial revision: 1\.1
 done"
-	  echo sfile1 develops >sdir1/sfile1
+	  echo sfile1 develops >Emptydir/sfile1
 	  dotest basicb-6 "${testcvs} -q ci -m modify" \
-"Checking in sdir1/sfile1;
-${TESTDIR}/cvsroot/first-dir/sdir1/sfile1,v  <--  sfile1
+"Checking in Emptydir/sfile1;
+${TESTDIR}/cvsroot/first-dir/Emptydir/sfile1,v  <--  sfile1
 new revision: 1\.2; previous revision: 1\.1
 done"
-	  dotest basicb-7 "${testcvs} -q tag release-1" 'T sdir1/sfile1
+	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
 T sdir2/sfile2'
 	  echo not in time for release-1 >sdir2/sfile2
 	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
@@ -820,14 +823,14 @@ done"
 	  # for existing files, even if co -d is in use.
 	  touch first-dir/extra
 	  dotest basicb-cod-1 "${testcvs} -q co -d first-dir1 first-dir" \
-'U first-dir1/sdir1/sfile1
+'U first-dir1/Emptydir/sfile1
 U first-dir1/sdir2/sfile2'
 	  rm -r first-dir1
 
 	  rm -r first-dir
 	  dotest basicb-9 \
-"${testcvs} -q co -d newdir -r release-1 first-dir/sdir1 first-dir/sdir2" \
-'U newdir/sdir1/sfile1
+"${testcvs} -q co -d newdir -r release-1 first-dir/Emptydir first-dir/sdir2" \
+'U newdir/Emptydir/sfile1
 U newdir/sdir2/sfile2'
 	  dotest basicb-9a "test -d CVS" ''
 	  # See comment at modules3-7f for more on this behavior.
@@ -835,7 +838,7 @@ U newdir/sdir2/sfile2'
 "${TESTDIR}/cvsroot/first-dir" "${TESTDIR}/cvsroot/\."
 	  dotest basicb-9c "cat newdir/CVS/Repository" \
 "${TESTDIR}/cvsroot/CVSROOT/Emptydir"
-	  dotest basicb-10 "cat newdir/sdir1/sfile1 newdir/sdir2/sfile2" \
+	  dotest basicb-10 "cat newdir/Emptydir/sfile1 newdir/sdir2/sfile2" \
 "sfile1 develops
 sfile2 starts"
 
@@ -845,7 +848,7 @@ sfile2 starts"
 	  # seem to deal with it...
 	  if false; then
 	  dotest basicb-11 "${testcvs} -q co -d sub1/sub2 first-dir" \
-"U sub1/sub2/sdir1/sfile1
+"U sub1/sub2/Emptydir/sfile1
 U sub1/sub2/sdir2/sfile2"
 	  cd sub1
 	  dotest basicb-12 "${testcvs} -q update" ''
@@ -883,7 +886,7 @@ done"
 	  # but for the moment I am just trying to figure out what
 	  # CVS's current behaviors are.
 	  dotest basicb-18 "${testcvs} -q co -d test2 first-dir second-dir" \
-"U test2/first-dir/sdir1/sfile1
+"U test2/first-dir/Emptydir/sfile1
 U test2/first-dir/sdir2/sfile2
 U test2/second-dir/aa"
 	  cd test2
@@ -921,6 +924,18 @@ ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information" \
 ${PROG} \[admin aborted\]: specify ${PROG} -H admin for usage information"
 	  cd ..
 	  rmdir 1
+
+	  # OK, while we have an Emptydir around, test a few obscure
+	  # things about it.
+	  mkdir edir; cd edir
+	  dotest basicb-edir-1 "${testcvs} -q co -l CVSROOT" \
+"U CVSROOT${DOTSTAR}"
+	  cd CVSROOT
+	  dotest_fail basicb-edir-2 "test -d Emptydir" ''
+	  # This tests the code in find_dirs which skips Emptydir.
+	  dotest basicb-edir-3 "${testcvs} -q -n update -d -P" ''
+	  cd ../..
+	  rm -r edir
 
 	  if test "$keep" = yes; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep

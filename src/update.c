@@ -784,7 +784,7 @@ update_dirent_proc (callerdat, dir, repository, update_dir, entries)
 	if (noexec)
 	{
 	    /* ignore the missing dir if -n is specified */
-	    error (0, 0, "New directory `%s' -- ignored", dir);
+	    error (0, 0, "New directory `%s' -- ignored", update_dir);
 	    return (R_SKIP_ALL);
 	}
 	else

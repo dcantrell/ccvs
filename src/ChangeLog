@@ -1,3 +1,14 @@
+Tue Aug 26 01:04:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (update_dirent_proc): Use update_dir not dir in "new
+	directory" message.
+	* find_names.c (find_dirs): Skip CVSNULLREPOS.
+	(Find_Directories): Add comment about find_dirs skipping CVSATTIC
+	and CVSLCK in working directories.
+	* sanity.sh (basicb): New tests basicb-edir-* test for find_dirs
+	fix.  Change other tests to test that Emptydir is not special in
+	non-CVSNULLREPOS contexts.
+
 Sun Aug 17 14:44:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* import.c (add_rcs_file): Add comment about -k overriding wrappers.
