@@ -1,3 +1,9 @@
+2004-01-01  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* zlib.c (read_and_gzip, gunzip_and_write): Fix potential buffer
+	overruns, use names for magic numbers.
+	(Original patch from Jeff Downs <heydowns@borg.com>.)
+
 2003-12-17  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* main.c (main): Don't reference isremote without CLIENT_SUPPORT.
