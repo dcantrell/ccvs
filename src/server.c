@@ -6424,8 +6424,9 @@ this client does not support writing binary files to stdout");
     }
 }
 
-/* Like CVS_OUTPUT but output is for stderr not stdout.  */
 
+
+/* Like CVS_OUTPUT but output is for stderr not stdout.  */
 void
 cvs_outerr (str, len)
     const char *str;
@@ -6469,10 +6470,11 @@ cvs_outerr (str, len)
     }
 }
 
+
+
 /* Flush stderr.  stderr is normally flushed automatically, of course,
    but this function is used to flush information from the server back
    to the client.  */
-
 void
 cvs_flusherr ()
 {
@@ -6499,10 +6501,11 @@ cvs_flusherr ()
 	fflush (stderr);
 }
 
+
+
 /* Make it possible for the user to see what has been written to
    stdout (it is up to the implementation to decide exactly how far it
    should go to ensure this).  */
-
 void
 cvs_flushout ()
 {
