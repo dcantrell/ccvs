@@ -1,3 +1,10 @@
+2003-06-20  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Compile kerberos4-client.[ch] if needed.
+	(Patch from Alexey Mahotkin <alexm@hsys.msk.ru>.)
+
+	* configure: Regenerated.
+
 2003-06-14  Derek Price  <derek@ximbiot.com>
 
 	* aclocal.m4: Regenerated.
