@@ -337,24 +337,14 @@ X-send-pr-version: $VERSION
 >Submitter-Id:   $SUBMITTER
 >Originator: 	 $ORIGINATOR
 >Organization:
-`
-  if [ -n "$ORGANIZATION" ]; then
-    echo "$ORGANIZATION"
-  else
-    echo "	$ORGANIZATION_C" ;
-  fi ;
-`
+${ORGANIZATION-$ORGANIZATION_C}
 >Confidential:  $CONFIDENTIAL_C
 >Synopsis:	$SYNOPSIS_C
 >Severity:	$SEVERITY_C
 >Priority:	$PRIORITY_C
 >Category: 	$CATEGORY_C
 >Class:		$CLASS_C
->Release:	 `if [ -n "$DEFAULT_RELEASE" ]; then
-		   echo "$DEFAULT_RELEASE"
-		  else
-		   echo "	$RELEASE_C"
-		  fi; `
+>Release:	${DEFAULT_RELEASE-$RELEASE_C}
 >Environment:
     	$ENVIRONMENT_C
 `[ -n "$SYSTEM" ] && echo System: $SYSTEM`
