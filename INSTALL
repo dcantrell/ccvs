@@ -225,7 +225,7 @@ distribution, then skip to step 5):
     END OF NOTE FOR NDBM GUNK.
 
 2)  Edit src/options.h.  Appropriate things to look at may be the
-    invocation locations of programs like DIFF and GREP.
+    invocation locations of programs like DIFF.
     Also glance at the default values for the environment variables
     that CVS uses, in particular, the RCSBIN variable, which holds the
     path to where the RCS programs live on your system.

@@ -1,5 +1,7 @@
 Sun Apr 27 19:54:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL: Don't mention GREP; CVS no longer uses it.
+
 	* configure.in: Add comment about --bindir.
 
 Thu Apr 24 15:21:17 1997  Norbert Kiesel  <nk@cosa.de>
