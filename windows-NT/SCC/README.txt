@@ -76,7 +76,7 @@ The only publicly available document which we are aware of is pubscc.h
 in this directory.  This should be sufficient to get a start at
 playing around with the SCC, and if you have done that and then
 proceed to run into those areas which pubscc.h does not document well,
-you are encouraged to send mail to bug-cvs@prep.ai.mit.edu with your
+you are encouraged to send mail to bug-cvs@gnu.org with your
 questions.
 
 OTHER INTERFACES
