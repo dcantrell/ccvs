@@ -10228,8 +10228,8 @@ Are you sure you want to release (and delete) directory .second-dir': "
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles-1 "${testcvs} -q co first-dir" ''
-	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
-	    </dev/null >binfile.dat
+	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	    </dev/null | tr '@' '\000' >binfile.dat
 	  cat binfile.dat binfile.dat >binfile2.dat
 	  cd first-dir
 	  cp ../binfile.dat binfile
@@ -10495,8 +10495,8 @@ total revisions: 1
 	  # each be distinct from each other.  We also make sure to include
 	  # a few likely end-of-line patterns to make sure nothing is
 	  # being munged as if in text mode.
-	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
-	    </dev/null >../binfile
+	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	    </dev/null | tr '@' '\000' >../binfile
 	  cat ../binfile ../binfile >../binfile2
 	  cat ../binfile2 ../binfile >../binfile3
 
@@ -10657,8 +10657,8 @@ checkin
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  mkdir 1; cd 1
 	  dotest binfiles3-1 "${testcvs} -q co first-dir" ''
-	  awk 'BEGIN { printf "%c%c%c%c%c%c", 2, 10, 137, 0, 13, 10 }' \
-	    </dev/null >binfile.dat
+	  awk 'BEGIN { printf "%c%c%c@%c%c", 2, 10, 137, 13, 10 }' \
+	    </dev/null | tr '@' '\000' >binfile.dat
 	  cd first-dir
 	  echo hello >file1
 	  dotest binfiles3-2 "${testcvs} add file1" \
@@ -18297,8 +18297,8 @@ EOF
 	    # Now some tests of gzip-file-contents (used by jCVS).
 	    awk 'BEGIN {
 printf "%c%c%c%c%c%c.6%c%c+I-.%c%c%c%c5%c;%c%c%c%c", 
-31, 139, 8, 0, 5, 7, 0, 3, 225, 2, 0, 198, 185, 5, 0, 0, 0}' \
-	      </dev/null >gzipped.dat
+31, 139, 8, 64, 5, 7, 64, 3, 225, 2, 64, 198, 185, 5, 64, 64, 64}' \
+	      </dev/null | tr '\100' '\000' >gzipped.dat
 	    echo Root ${TESTDIR}/crerepos >session.dat
 	    # Note that the CVS client sends "-b 1.1.1", and this
 	    # test doesn't.  But the server also defaults to that.
