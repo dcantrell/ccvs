@@ -242,9 +242,9 @@
 #endif
 
 /*
- * The authenticated client/server is under construction.  Don't
- * define either of these unless you're testing them, in which case 
- * you're me and you already know that.
+ * The client and server will not perform password-authentication
+ * unless you explicitly ask for it.  You can build a binary that only
+ * serves or only clients (sure it's a verb), or one that does both.
  */
 /* #define AUTH_CLIENT_SUPPORT 1 */
 /* #define AUTH_SERVER_SUPPORT 1 */
