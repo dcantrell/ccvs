@@ -169,6 +169,8 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 EXTRA_DIST = \
+	JmgStat.c \
+	JmgStat.h \
 	stamp-ch \
 	config.h \
 	config.h.in \
