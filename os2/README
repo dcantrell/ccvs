@@ -1,5 +1,28 @@
-        Someday, when the port is ready, this will say something about
-CVS under OS/2.  For now, just pretend I'm not telling you anything
-useful.
+        This port requires IBM C/C++ and the IBM TCPIP library.
+You'll need to edit the makefile to reflect your system's paths
+(unless you're at Goldman Sachs, in which case the paths are correct
+because we did the port on your machine. :-) ).
 
--Karl <kfogel@cyclic.com>
+        I'm having some weird problem with "\" vs. "/".  If I build
+with "\" as the path separator in the makefile, the compiler dumps
+core.  Go figure.  If I build with "/" as the path separator, the
+object files compile fine but the linker thinks the "/" is indicating
+options and gets all confused (though at least it doesn't dump core).
+
+        Right now the solution is to have a makefile variable called
+PS, which must be set to "/" for the first invocation of make and "\"
+for the second (the first pass will successfully build the object
+files, but you can expect it do die with "unknown options" errors at
+link time).
+
+        $PS is defined near the top of the makefile.  If you're going
+to set $PS in the makefile itself, make sure to quote it ("\\").  On
+the command line (i.e., "make PS=\"), I believe just one will do.
+
+        That should be all -- edit the makefile, then run make twice
+(changing $PS the second time), and get os2\cvs.exe.
+
+        Report bugs to <bug-cvs@prep.ai.mit.edu>.
+
+-Karl
+ <kfogel@cyclic.com>

@@ -1,8 +1,13 @@
 Mon Nov 13 07:28:04 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * README: updated.
+
+        * rcmd.c: #include <stdio.h>.
+
         * Makefile.in: Include lib/regex, lib/getdate, strippath.
         (PS): default to "/", since we always "make dist" on Unix
         systems.
+        Ahem, "save-cwd" with a hyphen, not an underscore.  Oops.
 
         * strippath.c: new file.
         

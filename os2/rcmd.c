@@ -2,6 +2,7 @@
    Karl Fogel <kfogel@cyclic.com> --- November 1995  */
 
 #include <io.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include <malloc.h>
 #include <errno.h>

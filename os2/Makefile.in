@@ -1,4 +1,3 @@
-# Generated automatically from Makefile.in by configure.
 # Makefile for OS/2.  Generated from Makefile.in when CVS is
 # configured for a dist-build.  Configure never gets run on OS/2, so
 # we must include the generated Makefile in the distribution.  See the
@@ -138,7 +137,7 @@ LIB_SOURCES = \
        ${libdir}${PS}getopt1.c \
        ${libdir}${PS}getline.c \
        ${libdir}${PS}getwd.c \
-       ${libdir}${PS}save_cwd.c \
+       ${libdir}${PS}save-cwd.c \
        ${libdir}${PS}sighandle.c \
        ${libdir}${PS}yesno.c \
        ${libdir}${PS}xgetwd.c \
@@ -215,7 +214,7 @@ LIB_OBJECTS = \
        ${libdir}${PS}getopt1.obj \
        ${libdir}${PS}getline.obj \
        ${libdir}${PS}getwd.obj \
-       ${libdir}${PS}save_cwd.obj \
+       ${libdir}${PS}save-cwd.obj \
        ${libdir}${PS}sighandle.obj \
        ${libdir}${PS}yesno.obj \
        ${libdir}${PS}xgetwd.obj \
