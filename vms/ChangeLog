@@ -1,5 +1,8 @@
 Wed Sep 11 15:53:18 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* config.h: Define getopt, optind, optopt, optarg, and opterr to
+	avoid name conflicts with system libraries.
+
 	* filesubr.c (expand_wild): Added.
 
 Wed Sep 11 11:12:01 1996  Jim Blandy  <jimb@totoro.cyclic.com>

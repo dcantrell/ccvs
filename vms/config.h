@@ -182,3 +182,10 @@
 #define NO_SOCKET_TO_FD 1
 #define START_SERVER_RETURNS_SOCKET 1
 #define SEND_NEVER_PARTIAL 1
+
+/* Avoid name conflicts with VMS libraries.  */
+#define getopt cvs_getopt
+#define optind cvs_optind
+#define optopt cvs_optopt
+#define optarg cvs_optarg
+#define opterr cvs_opterr
