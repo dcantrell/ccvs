@@ -1,5 +1,10 @@
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (stamp-gdt): Replace dependency on Makefile with
+	dependency on configure.
+
+2004-11-15  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): s/getdate.text/getdate.texi/.
 
 2004-11-15  Derek Price  <derek@ximbiot.com>
