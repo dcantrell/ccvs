@@ -29,6 +29,7 @@ EXTRA_DIST = \
 	pwd.h \
 	rcmd.h \
 	stdbool.h \
+	stdint.h \
 	filesubr.c \
 	mkdir.c \
 	ndir.c \
@@ -49,7 +50,7 @@ SUBDIRS = SCC
 MAINTAINERCLEANFILES =
 DISTCLEANFILES =
 
-all-local: config.h stdbool.h
+all-local: config.h stdbool.h stdint.h
 config.h: stamp-ch
 stamp-ch: config.h.in Makefile
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
@@ -106,7 +107,7 @@ stamp-sh2: $(top_srcdir)/lib/stdint_.h
 	@echo " * Edit ../lib/stdint_.h instead." >>stdint.tmp
 	@echo " */" >>stdint.tmp
 	sed 's/@''HAVE_LONG_64BIT''@/0/g;s/@''HAVE_LONGLONG_64BIT@/0/g' \
-	  < $(srcdir)/stdint_.h >>stdint.tmp
+	  <$(top_srcdir)/lib/stdint_.h >>stdint.tmp
 	@cmp -s stdint.tmp $(srcdir)/stdint.h \
 	  || (echo "Updating stdint.h"; \
 	      cp stdint.tmp $(srcdir)/stdint.h)
