@@ -557,9 +557,6 @@ sub get_history
 #
 #    COMMENTS :
 #      cvs command line options are as followed:
-#        -l - Do not log this command in the history file.  I am
-#             doing this because we will literaly be looking at 
-#             thousands of files with *lots* of revisions.
 #        -n - Do not run any checkout program as specified by the -o
 #             option in the modules file
 #        -p - Put all output to standard out.
@@ -580,7 +577,7 @@ sub check_revision
 	# Allow binaries to be checked out as such.  Otherwise, use -ko to avoid
 	# replacing keywords in the files.
 	my $kwmode = $finfo->{'kwmode'} eq 'b' ? '' : ' -ko';
-    my $command = "cvs -d $cvsroot -l co$kwmode -npr $revision \"$file\"";
+    my $command = "cvs -d $cvsroot co$kwmode -npr $revision \"$file\"";
 	my $ret_code;
 	if( @scripts )
 	{
