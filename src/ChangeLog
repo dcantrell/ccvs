@@ -1,3 +1,7 @@
+Wed Sep 25 09:01:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c (get_homedir), update.c (update): Reindent.
+
 Wed Sep 25 04:44:54 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* version.c (version_string): Bump to 1.8.86.
