@@ -2,6 +2,10 @@
 
 	* version.c: Regenerated.
 
+2001-04-27  Derek Price  <dprice@collab.net>
+
+	* version.c: Regenerated.
+
 2001-04-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* main.c (lookup_command_attribute): Lookup specified command, not
