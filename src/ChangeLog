@@ -1,3 +1,8 @@
+2000-03-23  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c: Alphabetize cmds[] and cmd_usage[] and add server
+	commands to cmd_usage[].
+
 2000-03-21  Larry Jones  <larry.jones@sdrc.com>
 
 	* sanity.sh (client-1): May get "Broken pipe" message from the
