@@ -1,5 +1,10 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* configure.in: Enable proxy support by default.
+	* NEWS: Note this.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: s/SECONDARY_SUPPORT/PROXY_SUPPORT/.
 
 2004-08-10  Derek Price  <derek@ximbiot.com>

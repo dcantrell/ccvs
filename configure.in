@@ -1168,14 +1168,17 @@ AC_ARG_ENABLE(
   [proxy],
   AC_HELP_STRING(
     [--enable-proxy],
-    [Include code for running as a transparent proxy server]), ,
-  [enable_proxy=no])
+    [Include code for running as a transparent proxy server.  Disabling this
+     may produce a slight performance gain on some systems, at the expense of
+     write proxy support. (default)]), ,
+  [enable_proxy=yes])
 
 if test no != "$enable_proxy"; then
   AC_DEFINE(
     [PROXY_SUPPORT], [1],
     [Define if you want CVS to be able to serve as a transparent proxy for
-     write operations.])
+     write operations.  Disabling this may produce a slight performance gain on
+     some systems, at the expense of write proxy support.])
 fi
 dnl
 dnl end --enable-proxy

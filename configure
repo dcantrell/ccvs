@@ -905,7 +905,9 @@ Optional Features:
                           water mark in bytes, separated by commas. (default
                           is enabled 1M,2M)
   --enable-proxy          Include code for running as a transparent proxy
-                          server
+                          server. Disabling this may produce a slight
+                          performance gain on some systems, at the expense of
+                          write proxy support. (default)
   --enable-pam            Use to enable system authentication with PAM instead
                           of using the simple getpwnam interface. This allows
                           authentication (in theory) with any PAM module, e.g.
@@ -31129,7 +31131,7 @@ if test "${enable_proxy+set}" = set; then
   enableval="$enable_proxy"
 
 else
-  enable_proxy=no
+  enable_proxy=yes
 fi;
 
 if test no != "$enable_proxy"; then
