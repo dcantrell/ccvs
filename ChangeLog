@@ -1,5 +1,9 @@
 2004-07-12  Derek Price  <derek@ximbiot.com>
 
+	* NEWS: Note improved time zone handling.  Attribute previous change.
+
+2004-07-12  Derek Price  <derek@ximbiot.com>
+
 	* configure.in: Update copyright year.
 
 2004-06-29  Derek Price  <derek@ximbiot.com>
