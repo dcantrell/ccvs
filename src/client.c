@@ -1320,6 +1320,9 @@ warning: server is not creating directories one at a time");
 	    if ( CVS_CHDIR (dir_name) < 0)
 		error (1, errno, "could not chdir to %s", dir_name);
 	}
+	else if (strcmp (command_name, "export") == 0)
+	    /* Don't create CVSADM directories if this is export.  */
+	    ;
 	else if (!isdir (CVSADM))
 	{
 	    /*
