@@ -1,3 +1,7 @@
+Mon Dec 11 15:53:51 1995  Karl Fogel  (kfogel@beezley.cyclic.com)
+
+		* rcmd.c (init_sockets): use sock_init(), not SockInit().
+
 Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
         
 	* config.h: Remove NEED_CALL_SOCKINIT macro in favor of the more

@@ -17,9 +17,12 @@
 void
 init_sockets ()
 {
-    if (SockInit () != TRUE)
+	int rc;
+
+	rc = sock_init ();
+    if (rc != 0)
     {
-      fprintf (stderr, "SockInit() failed!\n");
+      fprintf (stderr, "sock_init() failed -- returned %d!\n", rc);
       exit (1);
     }
 }
