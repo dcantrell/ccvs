@@ -3385,7 +3385,7 @@ U second-dir/dir1/dir2/file7"
 		cd first-dir
 		dotest basic2-34 "${testcvs} update -A -l *file*" \
 "[UP] file6
-${PROG} [a-z]*: warning: file7 is not (any longer) pertinent"
+${PROG} [a-z]*: file7 is no longer in the repository"
 
 		# If we don't delete the tag first, cvs won't retag it.
 		# This would appear to be a feature.
@@ -3452,7 +3452,7 @@ T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
 O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= ${TESTDIR}/\*
 U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file6     first-dir           == ${TESTDIR}/first-dir
-U [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.2 file7     first-dir           == ${TESTDIR}/first-dir" \
+W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == ${TESTDIR}/first-dir" \
 "O [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir           =first-dir= <remote>/\*
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file6     first-dir           == <remote>
 A [0-9-]* [0-9:]* ${PLUS}0000 ${username} 1\.1 file7     first-dir           == <remote>
@@ -3473,7 +3473,8 @@ F [0-9-]* [0-9:]* ${PLUS}0000 ${username}                     =first-dir= <remot
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-head:A\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-tag:rtagged-by-head\]
 T [0-9-]* [0-9:]* ${PLUS}0000 ${username} first-dir \[rtagged-by-revision:1\.1\]
-O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*"
+O [0-9-]* [0-9:]* ${PLUS}0000 ${username} \[1\.1\] first-dir           =first-dir= <remote>/\*
+W [0-9-]* [0-9:]* ${PLUS}0000 ${username}     file7     first-dir           == <remote>" \
 
 		rm -rf ${CVSROOT_DIRNAME}/first-dir
 		rm -rf ${CVSROOT_DIRNAME}/second-dir
@@ -4470,7 +4471,7 @@ done"
 	  dotest death2-14 "${testcvs} -q update -r branch" \
 "[UP] file1
 ${PROG} [a-z]*: file2 is no longer in the repository
-${PROG} [a-z]*: warning: file4 is not (any longer) pertinent"
+${PROG} [a-z]*: file4 is no longer in the repository"
 
 	  # Add a file on the branch with the same name.
 	  echo "branch revision" > file2
@@ -6252,7 +6253,7 @@ done"
 
 		# update to main line
 		dotest import-105 "${testcvs} -q update -A" \
-"${PROG} [a-z]*: warning: imported-f1 is not (any longer) pertinent
+"${PROG} [a-z]*: imported-f1 is no longer in the repository
 [UP] imported-f2"
 
 		# second import - file4 deliberately unchanged
@@ -6306,7 +6307,7 @@ Use the following command to help the merge:"
 
 		# update to main line
 		dotest import-112 "${testcvs} -q update -A" \
-"${PROG} [a-z]*: warning: imported-f1 is not (any longer) pertinent
+"${PROG} [a-z]*: imported-f1 is no longer in the repository
 [UP] imported-f2"
 
 		cd ..
@@ -7241,7 +7242,7 @@ done"
 	  # CVS, would be a lot of work and I'm not sure this case justifies
 	  # it.
 	  dotest join2-17-circumvent "${testcvs} -q update -A" \
-"${PROG} [a-z]*: warning: bradd is not (any longer) pertinent
+"${PROG} [a-z]*: bradd is no longer in the repository
 [UP] file1"
 :	  dotest join2-17 "${testcvs} -q update -A bradd" \
 "${PROG} [a-z]*: warning: bradd is not (any longer) pertinent"
@@ -7699,21 +7700,12 @@ done"
 
 	  # Update the other copy, and make sure that a is removed.
 	  cd ../1/first-dir
-	  # "Needs Patch" is a rather strange output here.  Something like
+	  # "Entry Invalid" is a rather strange output here.  Something like
 	  # "Removed in Repository" would make more sense.
-	  # The "Need Checkout" output is what CVS does if configured
-	  # --disable-server.
 	  dotest newb-123j0 "${testcvs} status a" \
-"===================================================================
-File: a                	Status: Needs Patch
-
-   Working revision:	1\.1.*
-   Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/a,v
-   Sticky Tag:		branch (branch: 1\.1\.2)
-   Sticky Date:		(none)
-   Sticky Options:	(none)" \
-"===================================================================
-File: a                	Status: Needs Checkout
+"${PROG} [a-z]*: a is no longer in the repository
+===================================================================
+File: a                	Status: Entry Invalid
 
    Working revision:	1\.1.*
    Repository revision:	1\.1\.2\.1	${CVSROOT_DIRNAME}/first-dir/a,v
@@ -7721,7 +7713,7 @@ File: a                	Status: Needs Checkout
    Sticky Date:		(none)
    Sticky Options:	(none)"
 	  dotest newb-123j "${testcvs} -q update" \
-"${PROG} [a-z]*: warning: a is not (any longer) pertinent"
+"${PROG} [a-z]*: a is no longer in the repository"
 
 	  if test -f a; then
 	    fail newb-123k
@@ -8272,11 +8264,11 @@ new revision: delete; previous revision: 1\.1
 done"
 	  cd ../../1/first-dir
 	  dotest conflicts3-12 "${testcvs} -n -q update" \
-"${PROG} [a-z]*: warning: file1 is not (any longer) pertinent
-${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
+"${PROG} [a-z]*: file1 is no longer in the repository
+${PROG} [a-z]*: file2 is no longer in the repository"
 	  dotest conflicts3-13 "${testcvs} -q update" \
-"${PROG} [a-z]*: warning: file1 is not (any longer) pertinent
-${PROG} [a-z]*: warning: file2 is not (any longer) pertinent"
+"${PROG} [a-z]*: file1 is no longer in the repository
+${PROG} [a-z]*: file2 is no longer in the repository"
 
 	  # OK, now add a directory to both working directories
 	  # and see that CVS doesn't lose its mind.
@@ -11906,20 +11898,11 @@ xCVS: ----------------------------------------------------------------------
 	  fi
 
 	  cd ../../2/1dir
-	  # FIXME: should be using dotest.
-	  ${testcvs} -q update 2>../tst167.err
-	  cat ../tst167.err >>${LOGFILE}
-	  cat <<EOF >../tst167.ans
-${PROG} server: warning: foo is not (any longer) pertinent
-${PROG} update: unable to remove ./foo: Permission denied
-EOF
-	  if cmp ../tst167.ans ../tst167.err >/dev/null ||
-	  ( echo "${PROG} [update aborted]: cannot rename file foo to CVS/,,foo: Permission denied" | cmp - ../tst167.err >/dev/null )
-	  then
-	      pass 168
-	  else
-	      fail 168
-	  fi
+	  dotest 168 "${testcvs} -q update" \
+"${PROG} [a-z]*: foo is no longer in the repository
+${PROG} update: unable to remove foo: Permission denied" \
+"${PROG} [a-z]*: foo is no longer in the repository
+${PROG} update: unable to remove \./foo: Permission denied"
 
 	  cd ..
 	  chmod u+w 1dir
@@ -13332,7 +13315,7 @@ ${CVSROOT_DIRNAME}/first-dir/brmod-wdmod,v  <--  brmod-wdmod
 new revision: 1\.1\.2\.1; previous revision: 1\.1
 done"
 	  dotest binfiles2-6 "${testcvs} -q update -A" \
-"${PROG} [a-z]*: warning: binfile\.dat is not (any longer) pertinent
+"${PROG} [a-z]*: binfile\.dat is no longer in the repository
 [UP] brmod
 [UP] brmod-trmod
 [UP] brmod-wdmod"
