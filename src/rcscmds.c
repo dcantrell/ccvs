@@ -54,19 +54,8 @@
    See doc/RCSFILES in the CVS distribution for documentation of this
    file format.
 
-   On somewhat related notes:
-
-   1.  A library for diff is an obvious idea.  The one thing which I'm
-   not so sure about is that I think CVS probably wants the ability to
-   allow arbitrarily-bizarre (and possibly customized for particular
-   file formats) external diff programs.
-
-   2.  A library for patch is another such idea.  CVS's needs are
-   smaller than the functionality of the standalone patch program (it
-   only calls patch in the client, and only needs to be able to patch
-   unmodified versions, which is something that RCS_deltas already
-   does in a different context).  But it is silly for CVS to be making
-   people install patch as well as CVS for such a simple purpose.  */
+   On a related note, see the comments at diff_exec, later in this file,
+   for more on a diff library.  */
 
 /* For RCS file PATH, make symbolic tag TAG point to revision REV.
    This validates that TAG is OK for a user to use.  Return value is
@@ -256,4 +245,64 @@ RCS_exec_rcsdiff (rcsfile, opts, options, rev1, rev2)
     }
     run_arg (rcsfile);
     return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY|RUN_COMBINED);
+}
+
+
+/* Show differences between two files.  This is the start of a diff library.
+
+   Some issues:
+
+   1.  Should option parsing be part of the library or the caller?  The
+   former allows the library to add options without changing the callers,
+   but it causes various problems.  One is that something like --brief really
+   wants special handling in CVS, and probably the caller should retain
+   some flexibility in this area.  Another is online help (the library could
+   have some feature for providing help, but how does that interact with
+   the help provided by the caller directly?).  Another is that as things
+   stand currently, there is no separate namespace for diff options versus
+   "cvs diff" options like -l (that is, if the library adds an option which
+   conflicts with a CVS option, it is trouble).
+
+   2.  Should there be a way of invoking an external diff program?  This is
+   pretty much orthogonal to the issue of a diff library.  The fact that
+   CVS uses an external diff program isn't particularly useful for
+   user-supplied diff programs because there is no way to distinguish
+   between the various uses CVS makes of it (e.g. supply this to the user
+   or supply this to the remote protocol), and because there is no way to
+   pick a different user-supplied diff for different file types.
+
+   3.  This isn't required for a first-cut diff library, but if there
+   would be a way for the caller to specify the timestamps that appear
+   in the diffs (rather than the library getting them from the files),
+   that would clean up the kludgy utime() calls in patch.c.
+
+   Show differences between FILE1 and FILE2.  Either one can be
+   DEVNULL to indicate a nonexistent file (same as an empty file
+   currently, I suspect, but that may be an issue in and of itself).
+   OPTIONS is a list of diff options, or "" if none.  At a minimum,
+   CVS expects that -c (update.c, patch.c) and -n (update.c) will be
+   supported.  Other options, like -u, --speed-large-files, &c, will
+   be specified if the user specified them.
+
+   OUT is a filename to send the diffs to, or RUN_TTY to send them to
+   stdout.  Error messages go to stderr.  Return value is 0 for
+   success, -1 for a failure which set errno, 1 for success (and some
+   differences were found), or >1 for a failure which printed a
+   message on stderr.  */
+
+int
+diff_exec (file1, file2, options, out)
+    char *file1;
+    char *file2;
+    char *options;
+    char *out;
+{
+    run_setup ("%s %s %s %s", DIFF, options, file1, file2);
+    if (out == RUN_TTY)
+	/* I'm not 100% sure about the need for RUN_COMBINED here.  But
+	   the code I took this from had it, and I suspect it may
+	   avoid some out-of-order bugs.  */
+	return run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_REALLY | RUN_COMBINED);
+    else
+	return run_exec (RUN_TTY, out, RUN_TTY, RUN_REALLY);
 }
