@@ -1,3 +1,8 @@
+Wed Jun  5 1996  Jim Kingdon  <kingdon@cyclic.com>
+
+	* cvsnt.mak: Visual C++ 2.1 seems to want to reformat the line
+	breaks.  No substantive changes, I think.
+
 Thu May 30 15:35:57 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in (DISTFILES): add TESTS.
