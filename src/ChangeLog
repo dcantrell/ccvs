@@ -2,6 +2,12 @@
 
 	* tag.c (val_direntproc): Return R_PROCESS instead of 0.
 
+	* client.c (update_entries): Fix type clash calling gunzip_and_write().
+	* server.c (receive_file): Fix type clash calling gunzip_and_write().
+	(server_updated): Fix type clash calling buf_output().
+	* error.c (error): Make buf char instead of unsigned char to avoid
+	type clashes.
+
 2000-06-13  Larry Jones  <larry.jones@sdrc.com>
 
 	* add.c (add): Plug memory leaks.

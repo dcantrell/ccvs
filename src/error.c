@@ -122,7 +122,7 @@ error (status, errnum, message, va_alist)
 	int num;
 	unsigned int unum;
 	int ch;
-	unsigned char buf[100];
+	char buf[100];
 
 	cvs_outerr (program_name, 0);
 	if (command_name && *command_name)
