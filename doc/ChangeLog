@@ -1,5 +1,8 @@
 Sun Sep  7 18:38:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (update options): Reword -r doc to hopefully be
+	clearer that it takes either numeric or symbolic revision.
+
 	* cvs.texinfo (syntax): Add comment about how regexp syntax may
 	be, er, creatively altered, by configure.in.
 
