@@ -2,9 +2,9 @@
 
 	* NEWS: (Changes since 1.11.5): Mention rcsinfo template updates.
 
-2003-03-07  Mark D Baushke <mdb@cvshome.org>
-
 	* TESTS: Document some new global variables.
+
+	* TESTS: Remove some obsolete global variables.
 
 2003-03-07  Derek Price  <derek@ximbiot.com>
 
