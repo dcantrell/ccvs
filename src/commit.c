@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
+ *
  * You may distribute under the terms of the GNU General Public License as
  * specified in the README file that comes with the CVS source distribution.
- * 
+ *
  * Commit Files
- * 
+ *
  * "commit" commits the present version to the RCS repository, AFTER
  * having done a test on conflicts.
  *
  * The call is: cvs commit [options] files...
- * 
+ *
  */
 
 #include <assert.h>
@@ -29,7 +29,7 @@ static int check_filesdoneproc PROTO ((void *callerdat, int err,
 				       char *repos, char *update_dir,
 				       List *entries));
 static int checkaddfile PROTO((char *file, char *repository, char *tag,
-			       char *options, RCSNode **rcsnode)); 
+			       char *options, RCSNode **rcsnode));
 static Dtype commit_direntproc PROTO ((void *callerdat, char *dir,
 				       char *repos, char *update_dir,
 				       List *entries));
@@ -441,7 +441,7 @@ commit (argc, argv)
     }
 
 #ifdef CLIENT_SUPPORT
-    if (client_active) 
+    if (client_active)
     {
 	int err;
 	struct find_data find_args;
@@ -505,7 +505,7 @@ commit (argc, argv)
 	/* Run the user-defined script to verify/check information in
 	 *the log message
 	 */
-	do_verify (message, (char *)NULL);  	
+	do_verify (message, (char *)NULL);
 
 	/* We always send some sort of message, even if empty.  */
 	/* FIXME: is that true?  There seems to be some code in do_editor
@@ -672,7 +672,7 @@ commit (argc, argv)
 	time_t now;
 
 	(void) time (&now);
-	if (now == last_register_time) 
+	if (now == last_register_time)
 	{
 	    sleep (1);			/* to avoid time-stamp races */
 	}
@@ -785,7 +785,7 @@ check_fileproc (callerdat, finfo)
     Vers_TS *vers;
     struct commit_info *ci;
     struct logfile_info *li;
-    
+
     status = classify_file_internal (finfo, &vers);
 
     /*
@@ -1112,7 +1112,7 @@ precommit_proc (repository, filter)
     if (isabsolute (filter))
     {
     	char *s, *cp;
-	
+
 	s = xstrdup (filter);
 	for (cp = s; *cp; cp++)
 	    if (isspace (*cp))
@@ -1227,7 +1227,7 @@ commit_fileproc (callerdat, finfo)
 	got_message = 1;
 	if (use_editor)
 	    do_editor (finfo->update_dir, &message, finfo->repository, ulist);
-	do_verify (message, finfo->repository);  
+	do_verify (message, finfo->repository);
     }
 
     p = findnode (cilist, finfo->file);
@@ -1359,7 +1359,7 @@ out:
            been removed from the archive, which is not the behavior we
            want for our commitlog messages; we want the old version
            number and then "NONE." */
-	
+
 	if (ci->status != T_REMOVED)
 	{
 	    p = findnode (ulist, finfo->file);
@@ -1367,7 +1367,7 @@ out:
 	    {
 		Vers_TS *vers;
 		struct logfile_info *li;
-	    
+
 		(void) classify_file_internal (finfo, &vers);
 		li = (struct logfile_info *) p->data;
 		li->rev_new = xstrdup (vers->vn_rcs);
@@ -1533,7 +1533,7 @@ commit_direntproc (callerdat, dir, repos, update_dir, entries)
     got_message = 1;
     if (use_editor)
 	do_editor (update_dir, &message, real_repos, ulist);
-    do_verify (message, real_repos);  
+    do_verify (message, real_repos);
     free (real_repos);
     return (R_PROCESS);
 }
@@ -1625,7 +1625,7 @@ remove_file (finfo, tag, message)
     if (tag && !(branch = RCS_nodeisbranch (finfo->rcs, tag)))
     {
 	/* a symbolic tag is specified; just remove the tag from the file */
-	if ((retcode = RCS_deltag (finfo->rcs, tag)) != 0) 
+	if ((retcode = RCS_deltag (finfo->rcs, tag)) != 0)
 	{
 	    if (!quiet)
 		error (0, retcode == -1 ? errno : 0,
@@ -1658,7 +1658,7 @@ remove_file (finfo, tag, message)
 	    error (0, 0, "cannot find branch \"%s\".", tag);
 	    return (1);
 	}
-	
+
 	branchname = RCS_getbranch (finfo->rcs, rev, 1);
 	if (branchname == NULL)
 	{
@@ -1679,12 +1679,12 @@ remove_file (finfo, tag, message)
         /* Get current head revision of file. */
 	prev_rev = RCS_head (finfo->rcs);
     }
-    
+
     /* if removing without a tag or a branch, then make sure the default
        branch is the trunk. */
     if (!tag && !branch)
     {
-        if (RCS_setbranch (finfo->rcs, NULL) != 0) 
+        if (RCS_setbranch (finfo->rcs, NULL) != 0)
 	{
 	    error (0, 0, "cannot change branch to default for %s",
 		   finfo->fullname);
@@ -1743,7 +1743,7 @@ remove_file (finfo, tag, message)
     if (!branch)
     {
 	/* this was the head; really move it into the Attic */
-	tmp = xmalloc(strlen(finfo->repository) + 
+	tmp = xmalloc(strlen(finfo->repository) +
 		      sizeof('/') +
 		      sizeof(CVSATTIC) +
 		      sizeof('/') +
@@ -1754,7 +1754,7 @@ remove_file (finfo, tag, message)
 	(void) CVS_MKDIR (tmp, 0777);
 	(void) umask (omask);
 	(void) sprintf (tmp, "%s/%s/%s%s", finfo->repository, CVSATTIC, finfo->file, RCSEXT);
-	
+
 	if (strcmp (finfo->rcs->path, tmp) != 0
 	    && CVS_RENAME (finfo->rcs->path, tmp) == -1
 	    && (isreadable (finfo->rcs->path) || !isreadable (tmp)))
@@ -1934,7 +1934,7 @@ checkaddfile (file, repository, tag, options, rcsnode)
 	       Attic. */
 	    oldfile = xstrdup (rcs);
 	    sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-	    
+
 	    if (strcmp (oldfile, rcs) == 0)
 	    {
 		error (0, 0, "internal error: confused about attic for %s",
@@ -2157,7 +2157,7 @@ internal error: `%s' didn't move out of the attic",
 		retval = 1;
 		goto out;
 	    }
-	} 
+	}
 
 	if (rcsnode && *rcsnode != rcsfile)
 	{
@@ -2203,7 +2203,7 @@ lock_RCS (user, rcs, rev, repository)
      * For a specified, numeric revision of the form "1" or "1.1", (or when
      * no revision is specified ""), definitely move the branch to the trunk
      * before locking the RCS file.
-     * 
+     *
      * The assumption is that if there is more than one revision on the trunk,
      * the head points to the trunk, not a branch... and as such, it's not
      * necessary to move the head in this case.
