@@ -1,5 +1,15 @@
 Changes since 1.8.86n:
 
+* Fix so that the "&" option in the modules file for nesting sub-modules
+works for remote clients too.
+
+* Fix so that "cvs update -P" won't remove a directory if all the files
+in the directory have been removed with "cvs remove", but their removal
+has not yet been committed.
+
+* The CVS version name is now exactly the symbolic tag name used to tag
+the release.
+
 * The src/options.h file is no more.  All site-specific compile-time
 options can now be set with options to the configure script.  Some of
 these things can also be set by the new command-line options and
