@@ -1,3 +1,11 @@
+Thu Apr 24 11:35:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* filesubr.c: Do not define L_tmpnam.  It is in ANSI and SunOS4,
+	so I don't think there will be a problem with it being missing.
+	Defining it too small can cause memory corruption.
+	(cvs_temp_name): Do not use L_tmpnam in the mktemp code; this
+	could cause a buffer overflow if the -T global option was in use.
+
 Thu Apr 24 13:21:15 1997  Norbert Kiesel  <nk@cosa.de>
 
 	* filesubr.c (cvs_temp_name): Use tempnam if available, else
