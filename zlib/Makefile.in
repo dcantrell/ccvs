@@ -62,7 +62,7 @@ DISTFILES = README FAQ INDEX ChangeLog configure Makefile.* *.[ch] *.mms \
   contrib/untgz/Makefile contrib/untgz/*.c contrib/untgz/*.w32 \
   contrib/minizip/[CM]*[pe] contrib/minizip/*.[ch] contrib/minizip/*.[td]?? \
   contrib/delphi*/*.??? \
-  Make_vms.com zlib.dsp zlib.mak zlib.dep .cvsignore
+  Make_vms.com zlib.dsp zlib.mak .cvsignore
 
 # for CVS's distdir & Makefile targets
 subdir = zlib
