@@ -1,3 +1,30 @@
+Mon Feb 12 12:20:04 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	These changes introduce functions cvs_output and cvs_outerr;
+	eventually all server output will go through them rather than
+	stdio directly.
+	* server.c (saved_output, saved_outerr): New variables.
+	(do_cvs_command): Initialize them.
+	(buf_output): Don't require that buf->output be set; saved_* use
+	this to shove some data in a buffer which buf_copy_lines will
+	later want to get data from.
+	* server.c, cvs.h (cvs_output, cvs_outerr): New functions.
+	* mkmodules.c (cvs_outerr): New function, so error() works.
+	* error.c: Reindent.  Don't declare program_name and command_name;
+	cvs.h declares them.
+	(error): Use vasprintf and cvs_outerr (or fputs in the
+	error_use_protocol case) rather than stdio directly.
+	* import.c (import_descend_dir): Remove kludge which had prevented
+	messages from error() from being out of order with respect to
+	messages from printf; cvs_output and cvs_outerr are a cleaner
+	solution to the problem.
+	(add_log, import): Use cvs_output not printf.
+	* update.c (write_letter): Use cvs_output not printf.
+	(checkout_file): Use write_letter not printf.
+	* sanity.sh: Use dotest for test 56 (test that output is actually
+	correct).  In theory should test that the import.c bug is fixed,
+	but I was unable to reproduce the bug (it is timing dependent).
+
 Mon Feb 12 16:07:45 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* commit.c: define last_register_time

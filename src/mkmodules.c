@@ -423,6 +423,18 @@ server_cleanup (sig)
     int sig;
 {
 }
+
+void
+cvs_outerr (str, len)
+    char *str;
+    size_t len;
+{
+    if (len != 0)
+	fwrite (str, 1, len, stderr);
+    else
+	fputs (str, stderr);
+}
+
 
 static void
 mkmodules_usage ()

@@ -259,11 +259,21 @@ import (argc, argv)
     {
 	if (!really_quiet)
 	{
-	    (void) printf ("\n%d conflicts created by this import.\n",
-			   conflicts);
-	    (void) printf ("Use the following command to help the merge:\n\n");
-	    (void) printf ("\t%s checkout -j%s:yesterday -j%s %s\n\n",
-			   program_name, argv[1], argv[1], argv[0]);
+	    char buf[80];
+	    sprintf (buf, "\n%d conflicts created by this import.\n",
+		     conflicts);
+	    cvs_output (buf, 0);
+	    cvs_output ("Use the following command to help the merge:\n\n",
+			0);
+	    cvs_output ("\t", 1);
+	    cvs_output (program_name, 0);
+	    cvs_output (" checkout -j", 0);
+	    cvs_output (argv[1], 0);
+	    cvs_output (":yesterday -j", 0);
+	    cvs_output (argv[1], 0);
+	    cvs_output (" ", 1);
+	    cvs_output (argv[0], 0);
+	    cvs_output ("\n\n", 0);
 	}
 
 	(void) fprintf (logfp, "\n%d conflicts created by this import.\n",
@@ -276,7 +286,7 @@ import (argc, argv)
     else
     {
 	if (!really_quiet)
-	    (void) printf ("\nNo conflicts created by this import\n\n");
+	    cvs_output ("\nNo conflicts created by this import\n\n", 0);
 	(void) fprintf (logfp, "\nNo conflicts created by this import\n\n");
     }
 
@@ -1077,12 +1087,22 @@ add_log (ch, fname)
 {
     if (!really_quiet)			/* write to terminal */
     {
+	char buf[2];
+	buf[0] = ch;
+	buf[1] = ' ';
+	cvs_output (buf, 2);
 	if (repos_len)
-	    (void) printf ("%c %s/%s\n", ch, repository + repos_len + 1, fname);
-	else if (repository[0])
-	    (void) printf ("%c %s/%s\n", ch, repository, fname);
-	else
-	    (void) printf ("%c %s\n", ch, fname);
+	{
+	    cvs_output (repository + repos_len + 1, 0);
+	    cvs_output ("/", 1);
+	}
+	else if (repository[0] != '\0')
+	{
+	    cvs_output (repository, 0);
+	    cvs_output ("/", 1);
+	}
+	cvs_output (fname, 0);
+	cvs_output ("\n", 1);
     }
 
     if (repos_len)			/* write to logfile */
@@ -1132,14 +1152,7 @@ import_descend_dir (message, dir, vtag, targc, targv)
 #else
     if (!quiet)
 #endif
-#ifdef SERVER_SUPPORT
-	/* Needs to go on stdout, not stderr, to avoid being interspersed
-	   with the add_log messages.  */
-	printf ("%s %s: Importing %s\n",
-		program_name, command_name, repository);
-#else
 	error (0, 0, "Importing %s", repository);
-#endif
 
     if (chdir (dir) < 0)
     {
