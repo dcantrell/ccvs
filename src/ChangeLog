@@ -1,3 +1,24 @@
+Sun Mar 30 00:07:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.h (struct vers_ts): Adjust comment regarding ts_user.
+	* server.c (serve_is_modified): New function.  Set entries to show
+	that the file is modified but we don't know the contents.
+	* server.c (requests): Add "Is-modified" request.
+	* vers_ts.c (time_stamp_server): If the timestamp in entdata is
+	"M" or "D", just copy that over into ts_user.
+	* vers_ts.c (Version_TS): If timestamp is "D", use the entries
+	line for the sole purpose of passing it to time_stamp_server.
+	* no_diff.c (No_Difference): If ts_user is "M", conclude the files
+	are different.
+	* client.h, client.c (send_files): Replace arguments build_dirs
+	and force with argument flags.  Add flag SEND_NO_CONTENTS and add
+	to struct send_data.
+	(send_fileproc): If no_contents, then send Is-modified instead of
+	Modified.
+	* add.c, admin.c, client.c, commit.c, diff.c, edit.c, log.c,
+	rcs.c, remove.c, status.c, tag.c, update.c, watch.c: Change all
+	send_files callers.
+
 Fri Mar 28 22:32:25 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* server.c (requests): Change "Repository" to rq_optional.  I'm
