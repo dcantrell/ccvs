@@ -2052,7 +2052,7 @@ annotate_fileproc (finfo)
 			    for (q = p; i != 0; ++q)
 				if (*q == '\n')
 				    --i;
-				else if (*q == '\0')
+				else if (*q == '\0' && i != 1)
 				    error (1, 0, "\
 invalid rcs file %s: premature end of value",
 					   finfo->rcs->path);
