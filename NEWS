@@ -1,4 +1,9 @@
-Changes since 1.11.5:
+Changes since 1.11.6:
+
+* The global '-l' option, which suppressed history logging, has been removed
+from both client and server.
+
+Changes from 1.11.5 to 1.11.6:
 
 * A warning message is now issued if an administrative file contains
 more than one DEFAULT entry.

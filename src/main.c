@@ -247,7 +247,6 @@ static const char *const opt_usage[] =
     "    -q           Cause CVS to be somewhat quiet.\n",
     "    -r           Make checked-out files read-only.\n",
     "    -w           Make checked-out files read-write (default).\n",
-    "    -l           Turn history logging off.\n",
     "    -n           Do not execute anything that will change the disk.\n",
     "    -t           Show trace of program execution -- try with -n.\n",
     "    -v           CVS version and copyright.\n",
@@ -407,7 +406,7 @@ main (argc, argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
-    static const char short_options[] = "+Qqrwtnlvb:T:e:d:Hfz:s:xa";
+    static const char short_options[] = "+Qqrwtnvb:T:e:d:Hfz:s:xa";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -537,7 +536,6 @@ main (argc, argv)
 		break;
 	    case 'n':
 		noexec = 1;
-	    case 'l':			/* Fall through */
 		logoff = 1;
 		break;
 	    case 'v':

@@ -4450,16 +4450,6 @@ start_server ()
 		error (1, 0,
 		       "This server does not support the global -t option.");
 	}
-	if (logoff)
-	{
-	    if (have_global)
-	    {
-		send_to_server ("Global_option -l\012", 0);
-	    }
-	    else
-		error (1, 0,
-		       "This server does not support the global -l option.");
-	}
     }
 
     /* Find out about server-side cvswrappers.  An extra network

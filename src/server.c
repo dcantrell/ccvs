@@ -2170,6 +2170,7 @@ serve_global_option (arg)
     {
 	case 'n':
 	    noexec = 1;
+	    logoff = 1;
 	    break;
 	case 'q':
 	    quiet = 1;
@@ -2179,9 +2180,6 @@ serve_global_option (arg)
 	    break;
 	case 'Q':
 	    really_quiet = 1;
-	    break;
-	case 'l':
-	    logoff = 1;
 	    break;
 	case 't':
 	    trace = 1;
