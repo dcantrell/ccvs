@@ -1,5 +1,14 @@
 2002-03-19  Larry Jones  <larry.jones@sdrc.com>
 
+	* aclocal.m4: Regenerate with recent version of Autoconf.  It looks
+	like things changed because of some RedHat patches or the like which
+	didn't change the Autoconf version number, but the differences look
+	like useful changes so I'm going to use them for consistency.
+	* config.h.in: Ditto.
+	* configure: Ditto.
+
+2002-03-19  Larry Jones  <larry.jones@sdrc.com>
+
 	* NEWS (Changes since 1.11.1p1): Note -S flag for [r]log.
 
 2002-02-08  Larry Jones  <larry.jones@sdrc.com>
