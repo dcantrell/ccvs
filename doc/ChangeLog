@@ -1,3 +1,12 @@
+Thu Mar 28 09:51:13 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (History browsing): Reinstate this node.  Try to get
+	it into some minimally useful state (it still needs a lot of
+	work).
+	(annotate): New node, subnode of History browing.
+
+	* cvsclient.texi (Requests): Add annotate request.
+
 Tue Mar 26 08:46:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo: In various examples, change tag names to avoid tag

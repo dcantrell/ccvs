@@ -496,6 +496,7 @@ need to expand modules on the client side.
 @itemx history \n
 @itemx watchers \n
 @itemx editors \n
+@itemx annotate \n
 Response expected: yes.  Actually do a cvs command.  This uses any
 previous @code{Argument}, @code{Repository}, @code{Entry},
 @code{Modified}, or @code{Lost} requests, if they have been sent.  The
