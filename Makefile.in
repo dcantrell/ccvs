@@ -174,10 +174,12 @@ clean: clean-local
 .PHONY: distclean
 distclean: distclean-local
 	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
 
 .PHONY: realclean
 realclean: realclean-local
 	@for dir in $(SUBDIRS); do echo making $@ in $$dir; cd $$dir; $(MAKE) $(FLAGS_TO_PASS) $@ || exit 1; cd ..; done
+	rm -f config.status
 
 .PHONY: mostlyclean-local
 mostlyclean-local:
@@ -188,7 +190,7 @@ clean-local: mostlyclean-local
 
 .PHONY: distclean-local
 distclean-local: clean-local
-	rm -f Makefile config.cache config.h config.log config.status stamp-h
+	rm -f Makefile config.cache config.h config.log stamp-h
 	rm -f tags TAGS
 
 .PHONY: realclean-local
