@@ -1,5 +1,9 @@
 Tue Jul 16 11:37:41 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* update.c (join_file): Always skip rcsmerge if the two revisions
+ 	are the same (the old code always did the rcsmerge when two -j
+	options were specified).
+
 	* checkout.c (history_name): New static variable.
 	(checkout): Permit both tag and date to be specified.  Set
 	history_name.
