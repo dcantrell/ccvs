@@ -1,5 +1,10 @@
 2003-06-11  Derek Price  <derek@ximbiot.com>
 
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
+2003-06-11  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.in: Regenerated for new configure.in.
 	* stamp-vti: Ditto.
 	* version.texi: Ditto.
