@@ -192,25 +192,37 @@ log_buffer_block (void *closure, int block)
 
 
 /* Disable logging without shutting down the next buffer in the chain.
- *
- * For an input buffer, this function also truncates the log before any unread
- * data based on BUF->LAST_INDEX & BUF->LAST_COUNT.
  */
-void
+FILE *
 log_buffer_disable (struct buffer *buf)
 {
     struct log_buffer *lb = buf->closure;
+    FILE *fp;
 
-    if (lb->log)
+    fp = lb->log;
+    if (fp)
     {
-	fflush (lb->log);
-	/* fsync (fileno (lb->log)); */
-	SIG_beginCrSect();
-	if (fclose (lb->log) < 0)
-	    error (0, errno, "closing log file");
+	fflush (fp);
 	lb->log = NULL;
-	SIG_endCrSect();
     }
+
+    return fp;
+}
+
+
+
+/* Disable logging and clsoe the log without shutting down the next buffer in
+ * the chain.
+ */
+void
+log_buffer_closelog (struct buffer *buf)
+{
+    struct log_buffer *lb = buf->closure;
+    FILE *fp;
+
+    fp = log_buffer_disable (buf);
+    if (fp && fclose (fp) < 0)
+	error (0, errno, "closing log file");
 }
 
 

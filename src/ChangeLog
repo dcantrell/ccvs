@@ -1,5 +1,16 @@
 2004-07-19  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.c (log_buffer_disable): Return log FILE *.  Don't close
+	log.  Fix header comment.
+	(log_buffer_closelog): New function.
+	* log-buffer.h: Update protos to match.
+	* server.c (read_secondary_log): Rewind file pointer rather than
+	closing and reopening file for speed.
+	(serve_root): Close secondary log rather than just disabling when not
+	running in secondary mode.
+
+2004-07-19  Derek Price  <derek@ximbiot.com>
+
 	* buffer.c (buf_flush): Replace abort w/assert.
 	* log-buffer.c (log_buffer_flush_log): New function for syncing a log.
 	(log_buffer_flush, log_buffer_flush): Don't sync log for speed.
