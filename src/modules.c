@@ -109,6 +109,13 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *cp;
     int c, err = 0;
 
+    if (trace)
+      {
+	fprintf (stderr, "%c-> do_module (%s, %s, %s, %s)\n",
+		 (server_active) ? 'S' : ' ',
+		 mname, msg, where, extra_arg);
+      }
+
     /* remember where we start */
     if (getwd (cwd) == NULL)
 	error (1, 0, "cannot get current working directory: %s", cwd);
@@ -607,7 +614,10 @@ static struct sortrec *s_head;
 static int s_max = 0;			/* Number of elements allocated */
 static int s_count = 0;			/* Number of elements used */
 
-static int Status;
+static int Status;		        /* Nonzero if the user is
+					   interested in status
+					   information as well as
+					   module name */
 static char def_status[] = "NONE";
 
 /* Sort routine for qsort:
@@ -712,6 +722,9 @@ save_d (k, ks, d, ds)
 
     s_count++;
 }
+
+/* Print out the module database as we know it.  If STATUS is
+   non-zero, print out status information for each module. */
 
 void
 cat_module (status)

@@ -537,23 +537,62 @@ call_in_directory (pathname, func, data)
 	    dirp = dirname;
 	    rdirp = reposdirname;
 
+	    /* This algorithm makes nested directories one at a time
+               and create CVS administration files in them.  For
+               example, we're checking out foo/bar/baz from the
+               repository:
+
+	       1) create foo, point CVS/Repository to <root>/foo
+	       2)     .. foo/bar                   .. <root>/foo/bar
+	       3)     .. foo/bar/baz               .. <root>/foo/bar/baz
+	       
+	       As you can see, we're just stepping along DIRNAME (with
+	       DIRP) and REPOSDIRNAME (with RDIRP) respectively.
+
+	       We need to be careful when we are checking out a
+	       module, however, since DIRNAME and REPOSDIRNAME are not
+	       going to be the same.  Since modules will not have any
+	       slashes in their names, we should watch the output of
+	       STRCHR to decide whether or not we should use STRCHR on
+	       the RDIRP.  That is, if we're down to a module name,
+	       don't keep picking apart the repository directory name.  */
+
 	    do
 	    {
 		dirp = strchr (dirp, '/');
-		if (rdirp == NULL)
-		    error (0, 0,
-			   "internal error: repository string too short.");
-		else
-		    rdirp = strchr (rdirp, '/');
 		if (dirp)
-		{
+		  {
 		    strncpy (dir, dirname, dirp - dirname);
 		    dir[dirp - dirname] = '\0';
 		    /* Skip the slash.  */
 		    ++dirp;
-		}
+		    if (rdirp == NULL)
+		      error (0, 0,
+			     "internal error: repository string too short.");
+		    else
+		      rdirp = strchr (rdirp, '/');
+		  }
 		else
+		  {
+		    /* If there are no more slashes in the dir name,
+                       we're down to the most nested directory -OR- to
+                       the name of a module.  In the first case, we
+                       should be down to a DIRP that has no slashes,
+                       so it won't help/hurt to do another STRCHR call
+                       on DIRP.  It will definitely hurt, however, if
+                       we're down to a module name, since a module
+                       name can point to a nested directory (that is,
+                       DIRP will still have slashes in it.  Therefore,
+                       we should set it to NULL so the routine below
+                       copies the contents of REMOTEDIRNAME onto the
+                       root repository directory (does this if rdirp
+                       is set to NULL, because we used to do an extra
+                       STRCHR call here). */
+
+		    rdirp = NULL;
 		    strcpy (dir, dirname);
+		  }
+
 		if (mkdir (dir, 0777) < 0)
 		{
 		    if (errno != EEXIST)
@@ -1784,6 +1823,7 @@ client_expand_modules (argc, argv, local)
 
 void
 client_send_expansions (local)
+     int local;
 {
     int i;
     char *argv[1];

@@ -32,6 +32,15 @@ Create_Admin (dir, update_dir, repository, tag, date)
     char *cp;
     char tmp[PATH_MAX];
 
+    if (trace)
+      {
+	char wd[1000];
+	getcwd (wd, sizeof (wd));
+	fprintf (stderr, "%c-> Create_Admin (%s, %s, %s, %s, %s) in %s\n",
+		 (server_active) ? 'S' : ' ',
+		 dir, update_dir, repository, tag, date, wd);
+      }
+
     if (noexec)
 	return;
 
@@ -124,6 +133,14 @@ Create_Admin (dir, update_dir, repository, tag, date)
 
     /* Create a new CVS/Tag file */
     WriteTag (dir, tag, date);
+
     if (server_active)
-	server_set_sticky (update_dir, repository, tag, date);
+      server_set_sticky (update_dir, repository, tag, date);
+
+    if (trace)
+      {
+	fprintf (stderr, "%c<- Create_Admin\n",
+		 (server_active) ? 'S' : ' ');
+      }
+
 }

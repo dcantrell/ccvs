@@ -2392,6 +2392,15 @@ server_register (name, version, timestamp, options, tag, date, conflict)
 {
     int len;
 
+    if (trace)
+    {
+	(void) fprintf (stderr,
+			"%c-> server_register(%s, %s, %s, %s, %s, %s, %s)\n",
+			(server_active) ? 'S' : ' ', /* silly */
+			name, version, timestamp, options, tag,
+			date, conflict);
+    }
+
     if (options == NULL)
 	options = "";
 
@@ -2479,9 +2488,7 @@ server_scratch_entry_only ()
 
 /* Print a new entries line, from a previous server_register.  */
 static void
-new_entries_line (file, repository)
-    char *file;
-    char *repository;
+new_entries_line (void)
 {
     if (entries_line)
     {
@@ -2530,7 +2537,7 @@ server_checked_in (file, update_dir, repository)
 	output_dir (update_dir, repository);
 	buf_output0 (&protocol, file);
 	buf_output (&protocol, "\n", 1);
-	new_entries_line (file, repository);
+	new_entries_line ();
     }
     buf_send_counted (&protocol);
 }
@@ -2556,7 +2563,7 @@ server_update_entries (file, update_dir, repository, updated)
     output_dir (update_dir, repository);
     buf_output0 (&protocol, file);
     buf_output (&protocol, "\n", 1);
-    new_entries_line (file, repository);
+    new_entries_line ();
     buf_send_counted (&protocol);
 }
 
@@ -2803,7 +2810,7 @@ server_updated (file, update_dir, repository, updated, file_info, checksum)
 	buf_output0 (&protocol, file);
 	buf_output (&protocol, "\n", 1);
 
-	new_entries_line (file, repository);
+	new_entries_line ();
 
         {
 	    char *mode_string;

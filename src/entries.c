@@ -92,7 +92,8 @@ Scratch_Entry (list, fname)
     Node *node;
 
     if (trace)
-	(void) fprintf (stderr, "-> Scratch_Entry(%s)\n", fname);
+	(void) fprintf (stderr, "%c-> Scratch_Entry(%s)\n",
+			(server_active) ? 'S' : ' ', fname);
 
     /* hashlookup to see if it is there */
     if ((node = findnode (list, fname)) != NULL)
@@ -132,7 +133,8 @@ Register (list, fname, vn, ts, options, tag, date, ts_conflict)
 
     if (trace)
     {
-	(void) fprintf (stderr, "-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
+	(void) fprintf (stderr, "%c-> Register(%s, %s, %s%s%s, %s, %s %s)\n",
+			(server_active) ? 'S' : ' ',
 			fname, vn, ts,
 			ts_conflict ? "+" : "", ts_conflict ? ts_conflict : "",
 			options, tag ? tag : "",	date ? date : "");
