@@ -1,3 +1,9 @@
+2003-12-23  Larry Jones  <lawrence.jones@eds.com>
+
+	* configure.in: Get mktemp.sh from $srcdir.
+	* configure: Regenerated.
+	(Reported by Matt Selsky <selsky@columbia.edu>.)
+
 2003-12-18  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Add since 1.12.5 section.
