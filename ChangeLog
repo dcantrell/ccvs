@@ -1,3 +1,14 @@
+2004-02-20  Derek Price  <derek@ximbiot.com>
+
+	Import xalloc module from GNULIB, as well as its remaining unimported
+	dependency, the exitfail module.
+
+	* NEWS: Note addition of xalloc & vasnprintf modules from GNULIB.
+	* configure.in: Call gl_XALLOC & gl_EXITFAIL.
+	* cvsnt.mak: Add new objects & sources.
+	* srclist.txt (exitfail, xalloc): New GNULIB modules.
+	* Makefile.in, aclocal.m4, configure: Regenerated.
+
 2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
 
 	* configure.in: Don't use grep -w, it's not portable.
