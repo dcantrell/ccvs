@@ -31,7 +31,7 @@
 	* atexit.c: New file.
 	* Makefile.in: Regenerated.
 
-2003-08-29  Derek Price  <derek@ximbiot.com>
+2003-08-19  Derek Price  <derek@ximbiot.com>
 
 	* system.h: Assume more headers, re C89 & GNULIB.
 
