@@ -1,3 +1,10 @@
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.in: Remove reference to options.h.
+	* startserver.c: Ditto.
+	* options.h: Remove file and move relevant content...
+	* config.h: ...here.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* options.h: Remove prototype of STDC exit().

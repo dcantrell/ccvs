@@ -44,7 +44,6 @@ CFLAGS = -pedantic -Wall -fno-builtin ${CINC} \
 # here.
 OS2_HEADERS = \
        ${srcdir}/config.h \
-       ${srcdir}/options.h \
        ${srcdir}/rcmd.h
 
 # headers we use from the common src dir, ../src
