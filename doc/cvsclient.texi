@@ -979,6 +979,12 @@ Additional data: @var{newname} \n.  Copy file @var{pathname} to
 @var{newname} in the same directory where it already is.  This does not
 affect @code{CVS/Entries}.
 
+This can optionally be implemented as a rename instead of a copy.  The
+only use for it which currently has been identified is prior to a
+@code{Merged} response as described under @code{Merged}.  Clients can
+probably assume that is how it is being used, if they want to worry
+about things like how long to keep the @var{newname} file around.
+
 @item Removed @var{pathname} \n
 The file has been removed from the repository (this is the case where
 cvs prints @samp{file foobar.c is no longer pertinent}).
