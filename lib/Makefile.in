@@ -52,6 +52,7 @@ SOURCES = \
 
 HEADERS = getline.h getopt.h fnmatch.h regex.h system.h wait.h md5.h savecwd.h
 
+# See long comment in ../configure.in concerning inclusion of regex.o.
 OBJECTS = \
     @LIBOBJS@ \
     argmatch.o \
@@ -59,6 +60,7 @@ OBJECTS = \
     getopt.o \
     getopt1.o \
     md5.o \
+    regex.o \
     savecwd.o \
     sighandle.o \
     stripslash.o \

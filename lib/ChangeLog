@@ -1,3 +1,7 @@
+Wed Sep 24 10:35:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in (OBJECTS): Add regex.o.
+
 Wed Sep 17 16:37:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* getdate.y (ToSeconds): For am or pm, a hour of "12" really means 0.
