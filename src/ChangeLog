@@ -1,5 +1,30 @@
 2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
 
+	* update.c (get_linkinfo_proc): Use Xasprintf instead of
+	xmalloc/sprintf.  Gratuitous reformatting.
+	(update_ignproc, update_dirent_proc, checkout_file): Ditto.
+	(patch_file, merge_file, join_file): Ditto.
+	* modules.c (open_module): Ditto.
+
+	* modules (my_module): Use Xasprintf instead of xmalloc/sprintf
+	and avoid possibility of trying to free(NULL).
+
+	* subr.c (backup_file): Use Xasprintf instead of xmalloc/sprintf.
+	(cmdlinequote): Use Xasprintf instead of xmalloc/strcat+strlen.
+	* modules.c (my_module): Ditto.
+
+	* client.c (handle_module_expansion): Use xnmalloc, xnrealloc,
+	and xstrdup in place of xmalloc, xrealloc, and xmalloc/strcpy.
+	(start_server): Do not assume gzip_level precision encoding.
+	(send_modified): Do not assume 1024 bytes is sufficient for
+	a temporary filename.
+
+	* modules.c (my_module): Use xnmalloc and xnrealloc. Gratuitous
+	reformatting.
+	* subr.c (line2argv): Ditto.
+
+2005-03-11  Mark D. Baushke  <mdb@cvshome.org>
+
 	* modules.c (my_module): Protect against free (NULL) code path.
 
 2005-03-11  Derek Price  <derek@ximbiot.com>

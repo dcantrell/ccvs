@@ -182,15 +182,15 @@ line2argv (int *pargc, char ***argv, char *line, char *sepchars)
 
     /* Small for testing.  */
     argv_allocated = 1;
-    *argv = (char **) xmalloc (argv_allocated * sizeof (**argv));
+    *argv = xnmalloc (argv_allocated, sizeof (**argv));
 
     *pargc = 0;
-    for (cp = strtok (line, sepchars); cp; cp = strtok ((char *) NULL, sepchars))
+    for (cp = strtok (line, sepchars); cp; cp = strtok (NULL, sepchars))
     {
 	if (*pargc == argv_allocated)
 	{
 	    argv_allocated *= 2;
-	    *argv = xrealloc (*argv, argv_allocated * sizeof (**argv));
+	    *argv = xnrealloc (*argv, argv_allocated, sizeof (**argv));
 	}
 	(*argv)[*pargc] = xstrdup (cp);
 	(*pargc)++;
@@ -808,21 +808,8 @@ resolve_symlink (char **filename)
 char *
 backup_file (const char *filename, const char *suffix)
 {
-    char *backup_name;
-
-    if (suffix == NULL)
-    {
-        backup_name = xmalloc (sizeof (BAKPREFIX) + strlen (filename) + 1);
-        sprintf (backup_name, "%s%s", BAKPREFIX, filename);
-    }
-    else
-    {
-        backup_name = xmalloc (sizeof (BAKPREFIX)
-                               + strlen (filename)
-                               + strlen (suffix)
-                               + 2);  /* one for dot, one for trailing '\0' */
-        sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
-    }
+    char *backup_name = Xasprintf ("%s%s%s%s", BAKPREFIX, filename,
+				   suffix ? "." : "", suffix ? suffix : "");
 
     if (isfile (filename))
         copy_file (filename, backup_name);
@@ -945,14 +932,9 @@ char *
 cmdlinequote (char quotes, char *s)
 {
     char *quoted = cmdlineescape (quotes, s);
-    char *buf = xmalloc(strlen(quoted)+3);
+    char *buf = Xasprintf ("%c%s%c", quotes, quoted, quotes);
 
-    buf[0] = quotes;
-    buf[1] = '\0';
-    strcat (buf, quoted);
     free (quoted);
-    buf[strlen(buf)+1] = '\0';
-    buf[strlen(buf)] = quotes;
     return buf;
 }
 

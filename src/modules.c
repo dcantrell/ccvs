@@ -75,11 +75,8 @@ open_module (void)
 	error (0, 0, "must set the CVSROOT environment variable");
 	error (1, 0, "or specify the '-d' global option");
     }
-    mfile = xmalloc (strlen (current_parsed_root->directory)
-		     + sizeof (CVSROOTADM)
-		     + sizeof (CVSROOTADM_MODULES) + 3);
-    (void) sprintf (mfile, "%s/%s/%s", current_parsed_root->directory,
-		    CVSROOTADM, CVSROOTADM_MODULES);
+    mfile = Xasprintf ("%s/%s/%s", current_parsed_root->directory,
+		       CVSROOTADM, CVSROOTADM_MODULES);
     retval = dbm_open (mfile, O_RDONLY, 0666);
     free (mfile);
     return retval;
@@ -244,7 +241,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 		/* if mname was a file, we have to split it into "dir file" */
 		if ((cp = strrchr (mname, '/')) != NULL && cp != mname)
 		{
-		    modargv = xmalloc (2 * sizeof (*modargv));
+		    modargv = xnmalloc (2, sizeof (*modargv));
 		    modargv[0] = xmalloc (strlen (mname) + 2);
 		    strncpy (modargv[0], mname, cp - mname);
 		    modargv[0][cp - mname] = '\0';
@@ -261,7 +258,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 		    if (cp == mname)
 		    {
 			/* drop the leading / if specified */
-			modargv = xmalloc (2 * sizeof (*modargv));
+			modargv = xnmalloc (2, sizeof (*modargv));
 			modargv[0] = xstrdup (".");
 			modargv[1] = xstrdup (mname + 1);
 			modargc = 2;
@@ -269,7 +266,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 		    else
 		    {
 			/* otherwise just copy it */
-			modargv = xmalloc (2 * sizeof (*modargv));
+			modargv = xnmalloc (2, sizeof (*modargv));
 			modargv[0] = xstrdup (".");
 			modargv[1] = xstrdup (mname);
 			modargc = 2;
@@ -404,9 +401,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
      */
 
     /* Put the value on a line with XXX prepended for getopt to eat */
-    line = xmalloc (strlen (value) + 5);
-    strcpy(line, "XXX ");
-    strcpy(line + 4, value);
+    line = Xasprintf ("XXX %s", value);
 
     /* turn the line into an argv[] array */
     line2argv (&xmodargc, &xmodargv, line, " \t");
@@ -608,19 +603,12 @@ module `%s' is a request for a file in a module which is not a directory",
 	change_to = where ? where : (mwhere ? mwhere : mname);
 	server_dir_to_restore = server_dir;
 	restore_server_dir = 1;
-	server_dir =
-	    xmalloc ((server_dir_to_restore != NULL
-		      ? strlen (server_dir_to_restore)
-		      : 0)
-		     + strlen (change_to)
-		     + 5);
-	server_dir[0] = '\0';
-	if (server_dir_to_restore != NULL)
-	{
-	    strcat (server_dir, server_dir_to_restore);
-	    strcat (server_dir, "/");
-	}
-	strcat (server_dir, change_to);
+	server_dir = Xasprintf ("%s%s%s",
+				server_dir_to_restore != NULL
+				? server_dir_to_restore : "",
+				server_dir_to_restore != NULL
+				? "/" : "",
+				change_to);
     }
 #endif
 
@@ -693,9 +681,7 @@ module `%s' is a request for a file in a module which is not a directory",
 
 	    if ((*prog != '/') && (*prog != '.'))
 	    {
-		real_prog = xmalloc (strlen (real_where) + strlen (prog)
-				     + 10);
-		(void) sprintf (real_prog, "%s/%s", real_where, prog);
+		real_prog = Xasprintf ("%s/%s", real_where, prog);
 		if (isfile (real_prog))
 		    prog = real_prog;
 	    }

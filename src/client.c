@@ -2584,18 +2584,17 @@ handle_module_expansion (char *args, size_t len)
     if (modules_vector == NULL)
     {
 	modules_allocated = 1; /* Small for testing */
-	modules_vector = xmalloc (modules_allocated
-				  * sizeof (modules_vector[0]));
+	modules_vector = xnmalloc (modules_allocated,
+				   sizeof (modules_vector[0]));
     }
     else if (modules_count >= modules_allocated)
     {
 	modules_allocated *= 2;
-	modules_vector = xrealloc (modules_vector,
-				   modules_allocated
-				   * sizeof (modules_vector[0]));
+	modules_vector = xnrealloc (modules_vector,
+				    modules_allocated,
+				    sizeof (modules_vector[0]));
     }
-    modules_vector[modules_count] = xmalloc (strlen (args) + 1);
-    strcpy (modules_vector[modules_count], args);
+    modules_vector[modules_count] = xstrdup (args);
     ++modules_count;
 }
 
@@ -4095,10 +4094,10 @@ start_server (void)
     {
 	if (supported_request ("Gzip-stream"))
 	{
-	    char gzip_level_buf[5];
+	    char *gzip_level_buf = Xasprintf ("%d", gzip_level);
 	    send_to_server ("Gzip-stream ", 0);
-	    sprintf (gzip_level_buf, "%d", gzip_level);
 	    send_to_server (gzip_level_buf, 0);
+	    free (gzip_level_buf);
 	    send_to_server ("\012", 1);
 
 	    /* All further communication with the server will be
@@ -4113,11 +4112,10 @@ start_server (void)
 #ifndef NO_CLIENT_GZIP_PROCESS
 	else if (supported_request ("gzip-file-contents"))
 	{
-            char gzip_level_buf[5];
+            char *gzip_level_buf = Xasprintf ("%d", gzip_level);
 	    send_to_server ("gzip-file-contents ", 0);
-            sprintf (gzip_level_buf, "%d", gzip_level);
 	    send_to_server (gzip_level_buf, 0);
-
+	    free (gzip_level_buf);
 	    send_to_server ("\012", 1);
 
 	    file_gzip_level = gzip_level;
@@ -4240,12 +4238,13 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 	   conversion, use convert_file which can compensate
 	   (FIXME: we could just use stdio instead which would
 	   avoid the whole problem).  */
-	char tfile[1024]; strcpy(tfile, file); strcat(tfile, ".CVSBFCTMP");
+	char *tfile = Xasprintf ("%s.CVSBFCTMP", file);
 	convert_file (file, O_RDONLY,
 		      tfile, O_WRONLY | O_CREAT | O_TRUNC | OPEN_BINARY);
 	fd = CVS_OPEN (tfile, O_RDONLY | OPEN_BINARY);
 	if (fd < 0)
 	    error (1, errno, "reading %s", short_pathname);
+	free (tfile);
     }
     else
 	fd = CVS_OPEN (file, O_RDONLY | OPEN_BINARY);
@@ -4320,9 +4319,10 @@ send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 #ifdef BROKEN_READWRITE_CONVERSION
 	if (!bin)
 	{
-	    char tfile[1024]; strcpy(tfile, file); strcat(tfile, ".CVSBFCTMP");
+	    char *tfile = Xasprintf ("%s.CVSBFCTMP", file);
 	    if (CVS_UNLINK (tfile) < 0)
 		error (0, errno, "warning: can't remove temp file %s", tfile);
+	    free (tfile);
 	}
 #endif
 

@@ -548,16 +548,14 @@ do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
  */
 
 static int
-get_linkinfo_proc( void *callerdat, struct file_info *finfo )
+get_linkinfo_proc (void *callerdat, struct file_info *finfo)
 {
     char *fullpath;
     Node *linkp;
     struct hardlink_info *hlinfo;
 
     /* Get the full pathname of the current file. */
-    fullpath = xmalloc (strlen(working_dir) +
-			strlen(finfo->fullname) + 2);
-    sprintf (fullpath, "%s/%s", working_dir, finfo->fullname);
+    fullpath = Xasprintf ("%s/%s", working_dir, finfo->fullname);
 
     /* To permit recursing into subdirectories, files
        are keyed on the full pathname and not on the basename. */
@@ -570,8 +568,7 @@ get_linkinfo_proc( void *callerdat, struct file_info *finfo )
     }
     
     /* Create a new, empty hardlink_info node. */
-    hlinfo = (struct hardlink_info *)
-	xmalloc (sizeof (struct hardlink_info));
+    hlinfo = xmalloc (sizeof (struct hardlink_info));
 
     hlinfo->status = (Ctype) 0;	/* is this dumb? */
     hlinfo->checked_out = 0;
@@ -812,17 +809,11 @@ update_ignproc (const char *file, const char *dir)
     memset (&finfo, 0, sizeof (finfo));
     finfo.file = file;
     finfo.update_dir = dir;
-    if (dir[0] == '\0')
-	tmp = xstrdup (file);
-    else
-    {
-	tmp = xmalloc (strlen (file) + strlen (dir) + 10);
-	strcpy (tmp, dir);
-	strcat (tmp, "/");
-	strcat (tmp, file);
-    }
 
-    finfo.fullname = tmp;
+    finfo.fullname = tmp = Xasprintf ("%s%s%s",
+				      dir[0] == '\0' ? "" : dir,
+				      dir[0] == '\0' ? "" : "/",
+				      file);
     write_letter (&finfo, '?');
     free (tmp);
 }
@@ -971,10 +962,7 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
 	/* The directory exists.  Check to see if it has a CVS
 	   subdirectory.  */
 
-	cvsadmdir = xmalloc (strlen (dir) + 80);
-	strcpy (cvsadmdir, dir);
-	strcat (cvsadmdir, "/");
-	strcat (cvsadmdir, CVSADM);
+	cvsadmdir = Xasprintf ("%s/%s", dir, CVSADM);
 
 	if (!isdir (cvsadmdir))
 	{
@@ -995,10 +983,8 @@ update_dirent_proc (void *callerdat, const char *dir, const char *repository,
     {
 	if (update_build_dirs)
 	{
-	    char *tmp;
+	    char *tmp = Xasprintf ("%s/%s", dir, CVSADM_ENTSTAT);
 
-	    tmp = xmalloc (strlen (dir) + sizeof (CVSADM_ENTSTAT) + 10);
-	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_ENTSTAT);
 	    if (unlink_file (tmp) < 0 && ! existence_error (errno))
 		error (1, errno, "cannot remove file %s", tmp);
 #ifdef SERVER_SUPPORT
@@ -1248,11 +1234,7 @@ checkout_file (struct file_info *finfo, Vers_TS *vers_ts, int adding,
 #endif
 	)
     {
-	backup = xmalloc (strlen (finfo->file)
-			  + sizeof (CVSADM)
-			  + sizeof (CVSPREFIX)
-			  + 10);
-	(void) sprintf (backup, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
+	backup = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
 	if (isfile (finfo->file))
 	    rename_file (finfo->file, backup);
 	else
@@ -1611,11 +1593,7 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	return 0;
     }
 
-    backup = xmalloc (strlen (finfo->file)
-		      + sizeof (CVSADM)
-		      + sizeof (CVSPREFIX)
-		      + 10);
-    (void) sprintf (backup, "%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
+    backup = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, finfo->file);
     if (isfile (finfo->file))
         rename_file (finfo->file, backup);
     else
@@ -1625,16 +1603,8 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout,
 	    error (0, errno, "cannot remove %s", backup);
     }
 
-    file1 = xmalloc (strlen (finfo->file)
-		     + sizeof (CVSADM)
-		     + sizeof (CVSPREFIX)
-		     + 10);
-    (void) sprintf (file1, "%s/%s%s-1", CVSADM, CVSPREFIX, finfo->file);
-    file2 = xmalloc (strlen (finfo->file)
-		     + sizeof (CVSADM)
-		     + sizeof (CVSPREFIX)
-		     + 10);
-    (void) sprintf (file2, "%s/%s%s-2", CVSADM, CVSPREFIX, finfo->file);
+    file1 = Xasprintf ("%s/%s%s-1", CVSADM, CVSPREFIX, finfo->file);
+    file2 = Xasprintf ("%s/%s%s-2", CVSADM, CVSPREFIX, finfo->file);
 
     fail = 0;
 
@@ -1936,11 +1906,7 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
      * is the version of the file that the user was most up-to-date with
      * before the merge.
      */
-    backup = xmalloc (strlen (finfo->file)
-		      + strlen (vers->vn_user)
-		      + sizeof (BAKPREFIX)
-		      + 10);
-    (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
+    backup = Xasprintf ("%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     if (unlink_file (backup) && !existence_error (errno))
 	error (0, errno, "unable to remove %s", backup);
@@ -2304,8 +2270,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	   cvs up -rbr -jbr2 could remove and readd the same file
 	 */
 	/* save the rev since server_updated might invalidate it */
-	mrev = xmalloc (strlen (vers->vn_user) + 2);
-	sprintf (mrev, "-%s", vers->vn_user);
+	mrev = Xasprintf ("-%s", vers->vn_user);
 #ifdef SERVER_SUPPORT
 	if (server_active)
 	{
@@ -2467,11 +2432,7 @@ join_file (struct file_info *finfo, Vers_TS *vers)
      * is the version of the file that the user was most up-to-date with
      * before the merge.
      */
-    backup = xmalloc (strlen (finfo->file)
-		      + strlen (vers->vn_user)
-		      + sizeof (BAKPREFIX)
-		      + 10);
-    (void) sprintf (backup, "%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
+    backup = Xasprintf ("%s%s.%s", BAKPREFIX, finfo->file, vers->vn_user);
 
     if (unlink_file (backup) < 0
 	&& !existence_error (errno))
