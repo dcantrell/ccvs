@@ -2301,6 +2301,11 @@ $(INTDIR)/startserver.obj :  $(SOURCE)  $(DEP_START) $(INTDIR)
    $(CPP) $(CPP_PROJ)  $(SOURCE) 
 
 # End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=".\windows-NT\ChangeLog"
+# End Source File
 # End Group
 ################################################################################
 # Begin Group "zlib"
