@@ -214,34 +214,6 @@ every @sc{cvs} command is gathered together.  There is also
 an extensive index, and a lot of cross references.
 @end itemize
 
-@cindex Signum Support
-@cindex Support, getting CVS support
-This manual was contributed by Signum Support AB in
-Sweden.  Signum is yet another in the growing list of
-companies that support free software.  You are free to
-copy both this manual and the @sc{cvs} program.
-@xref{Copying}, for the details.  Signum Support offers
-@c -- Check this reference! It has been bogus in the past.
-support contracts and binary distribution for many
-programs, such as @sc{cvs}, @sc{gnu} Emacs, the
-@sc{gnu} C compiler and others.  Write to us for
-more information.
-
-@example
-Signum Support AB
-Box 2044
-S-580 02  Linkoping
-Sweden
-
-Email: info@@signum.se
-Phone: +46 (0)13 - 21 46 00
-Fax:   +46 (0)13 - 21 47 00
-@end example
-
-Another company selling support for @sc{cvs} is Cyclic
-Software, web: @code{http://www.cyclic.com/}, email:
-@code{info@@cyclic.com}.
-
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @menu
 * Checklist::                   
@@ -317,54 +289,120 @@ Inge Wallin <@t{ingwa@@signum.se}>,
 Dirk Koschuetzki <@t{koschuet@@fmi.uni-passau.de}>
 and Michael Brown <@t{brown@@wi.extrel.com}>.
 
+The above list is not comprehensive; for a more
+complete list of who has contributed to this manual see
+the file @file{doc/ChangeLog} in the @sc{cvs} source
+distribution.
+
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node BUGS
 @unnumberedsec BUGS
 
-@cindex Bugs, known in this manual
-@cindex Known bugs in this manual
-This manual is known to have room for improvement.
-Here is a list of known deficiencies:
+@cindex Bugs in this manual or CVS
+Neither @sc{cvs} nor this manual is perfect, and they
+probably never will be.  If you are having trouble
+using @sc{cvs}, or think you have found a bug, there
+are a number of things you can do about it.  Note that
+if the manual is unclear, that can be considered a bug
+in the manual, so these problems are often worth doing
+something about as well as problems with @sc{cvs} itself.
 
+@cindex Reporting bugs
+@cindex Bugs, reporting
+@cindex Errors, reporting
 @itemize @bullet
 @item
-In the examples, the output from @sc{cvs} is sometimes
-displayed, sometimes not.
+If you want someone to help you and fix bugs that you
+report, there are companies which will do that for a
+fee.  Two such companies are:
+
+@cindex Signum Support
+@cindex Cyclic Software
+@cindex Support, getting CVS support
+@example
+Signum Support AB
+Box 2044
+S-580 02  Linkoping
+Sweden
+Email: info@@signum.se
+Phone: +46 (0)13 - 21 46 00
+Fax:   +46 (0)13 - 21 47 00
+http://www.signum.se/
+
+Cyclic Software
+United States of America
+http://www.cyclic.com/
+info@@cyclic.com
+@end example
 
 @item
-The input that you are supposed to type in the examples
-should have a different font than the output from the
-computer.
+If you got @sc{cvs} through a distributor, such as an
+operating system vendor or a vendor of freeware
+@sc{cd-rom}s, you may wish to see whether the
+distributor provides support.  Often, they will provide
+no support or minimal support, but this may vary from
+distributor to distributor.
 
 @item
-This manual should be clearer about what file
-permissions you should set up in the repository, and
-about setuid/setgid.
+If you have the skills and time to do so, you may wish
+to fix the bug yourself.  If you wish to submit your
+fix for inclusion in future releases of @sc{cvs}, see
+the file @sc{hacking} in the @sc{cvs} source
+distribution.  It contains much more information on the
+process of submitting fixes.
 
 @item
-Some of the chapters are not yet complete.  They are
-noted by comments in the @file{cvs.texinfo} file.
+There may be resources on the net which can help.  Two
+good places to start are:
+
+@example
+http://www.cyclic.com
+  @r{particularly the Unsupported Resources page}
+http://www.loria.fr/~molli/cvs-index.html
+@end example
+
+If you are so inspired, increasing the information
+available on the net is likely to be appreciated.  For
+example, before the standard @sc{cvs} distribution
+worked on Windows 95, there was a web page with some
+explanation and patches for running @sc{cvs} on Windows
+95, and various people helped out by mentioning this
+page on mailing lists or newsgroups when the subject
+came up.
 
 @item
-@cindex Reporting bugs (manual)
-@cindex Bugs, reporting (manual)
-@cindex Errors, reporting (manual)
-This list is not complete.  If you notice any error,
-omission, or something that is unclear, please send
-mail to @t{bug-cvs@@prep.ai.mit.edu}.  This is also the
-address for reporting bugs in @sc{cvs}.
-@c FIXME: There is a lot more to say on this, when we
-@c get around to writing it up.
+It is also possible to report bugs to @code{bug-cvs}.
+Note that someone may or may not want to do anything
+with your bug report---if you need a solution consider
+one of the options mentioned above.  People probably do
+want to hear about bugs which are particularly severe
+in consequences and/or easy to fix, however.  You can
+also increase your odds by being as clear as possible
+about the exact nature of the bug and any other
+relevant information.  The way to report bugs is to
+send email to @code{bug-cvs@@prep.ai.mit.edu}.  Note
+that submissions to @code{bug-cvs} may be distributed
+under the terms of the @sc{gnu} Public License, so if
+you don't like this, don't submit them.  There is
+usually no justification for sending mail directly to
+one of the @sc{cvs} maintainers rather than to
+@code{bug-cvs}; those maintainers who want to hear
+about such bug reports read @code{bug-cvs}.  Also note
+that sending a bug report to other mailing lists or
+newsgroups is @emph{not} a substitute for sending it to
+@code{bug-cvs}.  It is fine to discuss @sc{cvs} bugs on
+whatever forum you prefer, but there are not
+necessarily any maintainers reading bug reports sent
+anywhere except @code{bug-cvs}.
 @end itemize
 
-I hope that you will find this manual useful, despite
-the above-mentioned shortcomings.
-
-@flushright
-
-Linkoping, October 1993
-Per Cederqvist
-@end flushright
+@cindex Known bugs in this manual or CVS
+People often ask if there is a list of known bugs or
+whether a particular bug is a known one.  The file
+@sc{bugs} in the @sc{cvs} source distribution is one
+list of known bugs, but it doesn't necessarily try to
+be comprehensive.  Perhaps there will never be a
+comprehensive, detailed list of known bugs.
 
 @c ---------------------------------------------------------------------
 @node What is CVS?
@@ -470,21 +508,9 @@ if there is sufficient @sc{cvs} traffic on
 @c would need to take a more comprehensive look at the
 @c whole comp.software.config-mgmt.* hierarchy).
 
-@cindex Reporting bugs (CVS)
-@cindex Bugs, reporting (CVS)
-@cindex Errors, reporting (CVS)
-To report bugs in @sc{cvs} send mail to
-@code{bug-cvs@@prep.ai.mit.edu}.  Do note that someone
-may or may not feel like taking care of your bug
-report---if you need a response consider a support
-contract from Cyclic Software
-(@code{http://www.cyclic.com} or
-@code{info@@cyclic.com}).  This is also the procedure
-for submitting suggested changes to @sc{cvs} (see the file
-@sc{hacking} in the source distribution for more details).
-Note that all submitted changes may be distributed
-under the terms of the @sc{gnu} Public License, so if you
-don't like this, don't submit them.
+You can also subscribe to the bug-cvs mailing list,
+described in more detail in @ref{BUGS}.  To subscribe
+send mail to bug-cvs-request@@prep.ai.mit.edu.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @unnumberedsec CVS is not@dots{}
