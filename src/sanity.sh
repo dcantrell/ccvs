@@ -785,6 +785,7 @@ sfile2 starts"
 	  rm -rf newdir
 
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  rm -f ${CVSROOT_DIRNAME}/topfile,v
 	  ;;
 
 	basic1) # first dive - add a files, first singly, then in a group.
