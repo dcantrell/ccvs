@@ -4470,6 +4470,9 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
     }
 
+    if (free_rev)
+	free (rev);
+
     if (log != NULL)
     {
 	free (log);
@@ -4556,8 +4559,6 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		error (0, errno, "cannot open %s", workfile);
 		if (free_value)
 		    free (value);
-		if (free_rev)
-		    free (rev);
 		return 1;
 	    }
 	}
@@ -4591,10 +4592,15 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    while (nleft > 0)
 	    {
 		if (fwrite (p, 1, nstep, ofp) != nstep)
-		    error (1, errno, "cannot write %s",
+		{
+		    error (0, errno, "cannot write %s",
 			   (workfile != NULL
 			    ? workfile
 			    : (sout != RUN_TTY ? sout : "stdout")));
+		    if (free_value)
+			free (value);
+		    return 1;
+		}
 		p += nstep;
 		nleft -= nstep;
 		if (nleft < nstep)
@@ -4603,13 +4609,19 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	}
     }
 
+    if (free_value)
+	free (value);
+
     if (workfile != NULL)
     {
 	int ret;
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
 	if (!special_file && fclose (ofp) < 0)
-	    error (1, errno, "cannot close %s", workfile);
+	{
+	    error (0, errno, "cannot close %s", workfile);
+	    return 1;
+	}
 
 	if (change_rcs_owner_or_group)
 	{
@@ -4624,7 +4636,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 		     : sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH));
 #else
 	if (fclose (ofp) < 0)
-	    error (1, errno, "cannot close %s", workfile);
+	{
+	    error (0, errno, "cannot close %s", workfile);
+	    return 1;
+	}
 
 	ret = chmod (workfile,
 		     sb.st_mode & ~(S_IWRITE | S_IWGRP | S_IWOTH));
@@ -4642,7 +4657,10 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
 	    !special_file &&
 #endif
 	    fclose (ofp) < 0)
-	    error (1, errno, "cannot close %s", sout);
+	{
+	    error (0, errno, "cannot close %s", sout);
+	    return 1;
+	}
     }
 
 #ifdef PRESERVE_PERMISSIONS_SUPPORT
@@ -4651,11 +4669,6 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     if (preserve_perms && workfile != NULL)
 	update_hardlink_info (workfile);
 #endif
-
-    if (free_value)
-	free (value);
-    if (free_rev)
-	free (rev);
 
     return 0;
 }
