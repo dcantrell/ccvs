@@ -98,7 +98,7 @@ copy_file (from, to)
     memset ((char *) &t, 0, sizeof (t));
     t.actime = sb.st_atime;
     t.modtime = sb.st_mtime;
-    (void) utime (to, &t);
+    (void) utime ((char *)to, &t);
 }
 
 /*
@@ -227,7 +227,7 @@ make_directory (name)
 
     if (stat (name, &buf) == 0 && (!S_ISDIR (buf.st_mode)))
 	    error (0, 0, "%s already exists but is not a directory", name);
-    if (!noexec && mkdir (name) < 0)
+    if (!noexec && mkdir ((char *)name) < 0)
 	error (1, errno, "cannot make directory %s", name);
 }
 
@@ -244,7 +244,7 @@ make_directories (name)
     if (noexec)
 	return;
 
-    if (mkdir (name) == 0 || errno == EACCESS)
+    if (mkdir ((char *)name) == 0 || errno == EACCESS)
 	return;
     if (! existence_error (errno))
     {
@@ -258,7 +258,7 @@ make_directories (name)
     *cp++ = '/';
     if (*cp == '\0')
 	return;
-    (void) mkdir (name);
+    (void) mkdir ((char *)name);
 }
 
 /* Create directory NAME if it does not already exist; fatal error for
@@ -313,7 +313,11 @@ xchmod (fname, writable)
     char *q;
 
     if (!isfile (fname))
-	return ENOENT;
+    {
+	error (0, 0, "cannot change mode of file %s; it does not exist",
+	       fname);
+	return;
+    }
 
     attrib_cmd = "attrib "; /* No, really? */
 
@@ -383,7 +387,7 @@ unlink_file (f)
     * name is closer to our interface, what the heck.  Also, we know
     * unlink()'s error code when trying to remove a directory.
     */
-    xchmod (f, 1);
+    xchmod ((char *)f, 1);
     return (unlink (f));
 }
 
@@ -434,9 +438,9 @@ deep_remove_dir (path)
     struct dirent *dp;
     char	   buf[PATH_MAX];
 
-    if ( rmdir (path) != 0 && errno == EACCESS )
+    if ( rmdir ((char *)path) != 0 && errno == EACCESS )
     {
-	if ((dirp = opendir (path)) == NULL)
+	if ((dirp = opendir ((char *)path)) == NULL)
 	    /* If unable to open the directory return
 	     * an error
 	     */
@@ -471,7 +475,7 @@ deep_remove_dir (path)
 	    }
 	}
 	closedir (dirp);
-	return rmdir (path);
+	return rmdir ((char *)path);
     }
     /* Was able to remove the directory return 0 */
     return 0;

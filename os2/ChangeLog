@@ -1,5 +1,10 @@
 Fri Nov 08 11:46:50 1996  Jim Kingdon
 
+	IBM ICC (OS/2) lint:
+	* filesubr.c: Cast from const char * to char * before passing to
+	various system functions.
+	(xchmod): Print error message instead of trying to return ENOENT.
+
 	* Makefile.in (CFLAGS): Don't specify -Wpro; there is no way
 	that we could prototype getopt, for example.
 	Don't specify -Wuse.  The EDC0805 warning ("Automatic
