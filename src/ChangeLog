@@ -1,5 +1,9 @@
 Fri Dec 12 15:33:19 1997  Ian Lance Taylor  <ian@cygnus.com>
 
+	* cvs.h (CVSmethod): Add gserver_method.
+	* root.c (method_names): Add gserver.
+	(parse_cvsroot): Handle :gserver:.
+
 	* buffer.c (PACKET_SLOP): Define.
 	(packetizing_buffer_initialize): Use PACKET_SLOP when allocating
 	holdbuf.

@@ -18,7 +18,7 @@
    Watch out if the enum is changed in cvs.h! */
 
 char *method_names[] = {
-    "local", "server (rsh)", "pserver", "kserver", "ext"
+    "local", "server (rsh)", "pserver", "kserver", "gserver", "ext"
 };
 
 #ifndef DEBUG
@@ -300,6 +300,7 @@ parse_cvsroot (CVSroot)
 {
     static int cvsroot_parsed = 0;
     char *cvsroot_copy, *p;
+    int check_hostname;
 
     /* Don't go through the trouble twice. */
     if (cvsroot_parsed)
@@ -339,6 +340,8 @@ parse_cvsroot (CVSroot)
 	    CVSroot_method = pserver_method;
 	else if (strcmp (method, "kserver") == 0)
 	    CVSroot_method = kserver_method;
+	else if (strcmp (method, "gserver") == 0)
+	    CVSroot_method = gserver_method;
 	else if (strcmp (method, "server") == 0)
 	    CVSroot_method = server_method;
 	else if (strcmp (method, "ext") == 0)
@@ -444,15 +447,31 @@ parse_cvsroot (CVSroot)
 	error (0, 0, "(%s)", CVSroot);
 	return 1;
 #endif
+	check_hostname = 1;
+	break;
+    case gserver_method:
+#ifndef HAVE_GSSAPI
+	error (0, 0, "Your CVSROOT is set for a GSSAPI access method");
+	error (0, 0, "but your CVS executable doesn't support it");
+	error (0, 0, "(%s)", CVSroot);
+	return 1;
+#endif
+	check_hostname = 1;
+	break;
     case server_method:
     case ext_method:
     case pserver_method:
+	check_hostname = 1;
+	break;
+    }
+
+    if (check_hostname)
+    {
 	if (! CVSroot_hostname)
 	{
 	    error (0, 0, "didn't specify hostname in CVSROOT: %s", CVSroot);
 	    return 1;
 	}
-	break;
     }
 
     if (*CVSroot_directory == '\0')
