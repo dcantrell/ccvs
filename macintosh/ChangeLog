@@ -1,3 +1,8 @@
+Tue Mar 19 17:51:52 1996  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* server_if.c (macos_start_server): Added support for
+	  CVS_RCMD_PORT (and thus made consistent with WindowsNT and VMS)
+
 Wed Feb 28 11:31:11 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* config.h: Remove alloca cruft.
