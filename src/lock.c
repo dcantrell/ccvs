@@ -101,16 +101,50 @@ unlock (repository)
      * lead to the limitation that one user ID should not be committing
      * files into the same Repository directory at the same time. Oh well.
      */
-    if (writelock[0] != '\0' || (readlock[0] != '\0' && cleanup_lckdir)) 
+    (void) sprintf (tmp, "%s/%s", repository, CVSLCK);
+    if ( Check_Owner(tmp) &&
+	(writelock[0] != '\0' || (readlock[0] != '\0' && cleanup_lckdir))) 
     {
-	(void) sprintf (tmp, "%s/%s", repository, CVSLCK);
-	if (stat (tmp, &sb) != -1 && sb.st_uid == geteuid ())
-	{
-	    (void) rmdir (tmp);
-	}
+#ifdef AFSCVS
+      char rmuidlock[PATH_MAX];
+      sprintf(rmuidlock, "rm -f %s/uidlock%d", tmp, geteuid() );
+      system(rmuidlock);
+#endif
+      (void) rmdir (tmp);
     }
     cleanup_lckdir = 0;
 }
+
+/*
+ * Check the owner of a lock.  Returns 1 if we own it, 0 otherwise.
+ */
+Check_Owner(lockdir)
+     char *lockdir;
+{
+  struct stat sb;
+
+#ifdef AFSCVS
+  /* In the Andrew File System (AFS), user ids from stat don't match
+     those from geteuid().  The AFSCVS code can deal with either AFS or
+     non-AFS repositories; the non-AFSCVS code is faster.  */
+  char uidlock[PATH_MAX];
+
+  /* Check if the uidlock is in the lock directory */
+  sprintf(uidlock, "%s/uidlock%d", lockdir, geteuid() );
+  if( stat(uidlock, &sb) != -1)
+    return 1;   /* The file exists, therefore we own the lock */
+  else
+    return 0; 	/* The file didn't exist or some other error.
+		 * Assume that we don't own it.
+		 */
+#else
+  if (stat (lockdir, &sb) != -1 && sb.st_uid == geteuid ())
+    return 1;
+  else
+    return 0;
+#endif
+}  /* end Check_Owner() */
+
 
 /*
  * Create a lock file for readers
@@ -456,6 +490,22 @@ set_lock (repository, will_wait)
 	SIG_beginCrSect ();
 	if (CVS_MKDIR (masterlock, 0777) == 0)
 	{
+#ifdef AFSCVS
+	  char uidlock[PATH_MAX];
+	  FILE *fp;
+
+	  sprintf(uidlock, "%s/uidlock%d", masterlock, geteuid() );
+	  if( (fp = fopen(uidlock, "w+")) == NULL )
+	    {
+	      /* We failed to create the uidlock, so rm masterlock and leave */
+	      rmdir(masterlock);
+	      SIG_endCrSect ();
+	      return (L_ERROR);
+	    }
+
+	  /* We successfully created the uid lock, so close the file */
+	  fclose(fp);
+#endif
 	    cleanup_lckdir = 1;
 	    SIG_endCrSect ();
 	    return (L_OK);
@@ -492,6 +542,12 @@ set_lock (repository, will_wait)
 	(void) time (&now);
 	if (now >= (sb.st_ctime + CVSLCKAGE))
 	{
+#ifdef AFSCVS
+	  /* Remove the uidlock first */
+	  char rmuidlock[PATH_MAX];
+	  sprintf(rmuidlock, "rm -f %s/uidlock%d", masterlock, geteuid() );
+	  system(rmuidlock);
+#endif
 	    if (rmdir (masterlock) >= 0)
 		continue;
 	}
@@ -514,6 +570,12 @@ set_lock (repository, will_wait)
 static void
 clear_lock()
 {
+#ifdef AFSCVS
+  /* Remove the uidlock first */
+  char rmuidlock[PATH_MAX];
+  sprintf(rmuidlock, "rm -f %s/uidlock%d", masterlock, geteuid() );
+  system(rmuidlock);
+#endif
     if (rmdir (masterlock) < 0)
 	error (0, errno, "failed to remove lock dir `%s'", masterlock);
     cleanup_lckdir = 0;
