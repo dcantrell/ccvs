@@ -1,5 +1,8 @@
 Mon Sep 16 23:33:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (modules): Add comments about how we should be
+	documenting how -i and friends operate in client/server CVS.
+
 	* cvs.texinfo (File permissions): Describe the need for write
 	permissions for locks and val-tags.
 
