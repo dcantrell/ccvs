@@ -6395,15 +6395,15 @@ ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 		# Make sure we detect any one of the three conflict markers
 		mv a aa
 		grep '^<<<<<<<' aa >a
-		dotest conflicts-status-2 "${testcvs} -nq ci -m try" \
+		dotest conflicts-status-2 "${testcvs} -nq ci -m try a" \
 "${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
 
 		grep '^=======' aa >a
-		dotest conflicts-status-3 "${testcvs} -nq ci -m try" \
+		dotest conflicts-status-3 "${testcvs} -nq ci -m try a" \
 "${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
 
 		grep '^>>>>>>>' aa >a
-		dotest conflicts-status-4 "${testcvs} -qn ci -m try" \
+		dotest conflicts-status-4 "${testcvs} -qn ci -m try a" \
 "${PROG} [a-z]*: warning: file .a. seems to still contain conflict indicators"
 
 		mv aa a
@@ -12299,11 +12299,18 @@ ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done
 ${PROG} [a-z]*: loginfo:1: no such user variable \${=ZEE}"
+	  echo line0 >>file1
+	  dotest info-6b "${testcvs} -q -sOTHER=foo ci -m mod-it" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.2; previous revision: 1\.1
+done
+${PROG} [a-z]*: loginfo:1: no such user variable \${=ZEE}"
 	  echo line1 >>file1
 	  dotest info-7 "${testcvs} -q -s OTHER=value -s ZEE=z ci -m mod-it" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.2; previous revision: 1\.1
+new revision: 1\.3; previous revision: 1\.2
 done"
 	  cd ..
 	  dotest info-9 "cat $TESTDIR/testlog" "xenv-valueyz=${username}=${TESTDIR}/cvsroot="
@@ -12316,6 +12323,11 @@ first-dir file1,1.1,1.2
 first-dir 1.2
 first-dir file1
 first-dir 1.1AX
+first-dir file1ux
+first-dir file1,1.2,1.3
+first-dir 1.3
+first-dir file1
+first-dir 1.2AX
 first-dir file1ux'
 
 	  cd CVSROOT
@@ -12359,7 +12371,7 @@ EOF
 	  dotest info-v3 "${testcvs} -q ci -F ${TESTDIR}/comment.tmp" \
 "Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1\.3; previous revision: 1\.2
+new revision: 1\.4; previous revision: 1\.3
 done"
 	  cd ..
 	  mkdir another-dir

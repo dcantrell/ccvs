@@ -427,6 +427,7 @@ main (argc, argv)
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
 				   convention to give help for cmd. */
+    static const char short_options[] = "+Qqrwtnlvb:T:e:d:Hfz:s:xa";
     static struct option long_options[] =
     {
         {"help", 0, NULL, 'H'},
@@ -501,7 +502,7 @@ main (argc, argv)
     opterr = 0;
 
     while ((c = getopt_long
-            (argc, argv, "+f", NULL, NULL))
+            (argc, argv, short_options, long_options, &option_index))
            != EOF)
     {
 	if (c == 'f')
@@ -518,7 +519,7 @@ main (argc, argv)
     opterr = 1;
 
     while ((c = getopt_long
-            (argc, argv, "+Qqrwtnlvb:T:e:d:Hfz:s:xa", long_options, &option_index))
+            (argc, argv, short_options, long_options, &option_index))
            != EOF)
     {
 	switch (c)

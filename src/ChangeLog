@@ -1,3 +1,13 @@
+2000-05-17  Larry Jones  <larry.jones@sdrc.com>
+
+	* main.c (main): Use full set of options when looking for -f to
+	avoid misparsing options that take values (previously, -sVAR=foo
+	was incorrectly parsed as though it were -s -V -A -R -= -f -o -o
+	because it didn't know that -s takes a value).
+	* sanity.sh (info-6b): New test for above.
+
+	* sanity.sh (conflicts-status): Fix tests so they work remotely, too.
+
 2000-05-17  Jim Meyering  <meyering@lucent.com>
 
 	* sanity.sh (TESTDIR): Fix braino in last change:
