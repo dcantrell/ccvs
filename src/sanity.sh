@@ -4723,8 +4723,12 @@ EOF
 	  ;;
 
 	errmsg2)
-	  # More tests of various miscellaneous error handling.
+	  # More tests of various miscellaneous error handling,
+	  # and cvs add behavior in general.
 	  # See also test basicb-4a, concerning "cvs ci CVS".
+	  # Too many tests to mention test the simple cases of
+	  # adding files and directories.
+	  # Test basicb-2a10 tests cvs -n add.
 
 	  # First the usual setup; create a directory first-dir.
 	  mkdir 1; cd 1
@@ -4771,6 +4775,23 @@ done"
 	  # prevent us from proceeding normally.
 	  dotest errmsg2-9 "${testcvs} add sdir" \
 "Directory ${TESTDIR}/cvsroot/first-dir/sdir added to the repository"
+
+	  touch file10
+	  mkdir sdir10
+	  dotest errmsg2-10 "${testcvs} add file10 sdir10" \
+"${PROG} [a-z]*: scheduling file .file10. for addition
+Directory ${TESTDIR}/cvsroot/first-dir/sdir10 added to the repository
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest errmsg2-11 "${testcvs} -q ci -m add-file10" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file10,v
+done
+Checking in file10;
+${TESTDIR}/cvsroot/first-dir/file10,v  <--  file10
+initial revision: 1\.1
+done"
+	  # Again, try to see that there are no droppings.
+	  dotest errmsg2-12 "${testcvs} -q update" ""
+
 	  cd ../..
 	  rm -r 1
 	  rm -rf ${TESTDIR}/cvsroot/first-dir

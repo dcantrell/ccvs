@@ -57,6 +57,18 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     {
 	entdata = (Entnode *) p->data;
 
+	if (entdata->type == ENT_SUBDIR)
+	{
+	    /* According to cvs.texinfo, the various fields in the Entries
+	       file for a directory (other than the name) do not have a
+	       defined meaning.  We need to pass them along without getting
+	       confused based on what is in them.  Therefore we make sure
+	       not to set vn_user and the like from Entries, add.c and
+	       perhaps other code will expect these fields to be NULL for
+	       a directory.  */
+	    vers_ts->entdata = entdata;
+	}
+	else
 #ifdef SERVER_SUPPORT
 	/* An entries line with "D" in the timestamp indicates that the
 	   client sent Is-modified without sending Entry.  So we want to
