@@ -4,10 +4,5 @@ Sun Apr 14 11:21:03 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * Added ChangeLog (this file).
         
-        * Added subdir elib.  Filled it with contents of
-        `ftp://ftp.lysator.liu.se/pub/emacs/elib-1.0.tar.gz'.
-        We will not actively maintain elib here, in the sense of fixing
-        bugs, but will try to keep it up-to-date with the latest
-        releases.
-
+        * Added elib-1.0.tar.gz.
 
