@@ -1,5 +1,10 @@
 2003-10-24  Derek Price  <derek@ximbiot.com>
 
+	* BUGS: Note that release of a project subdir does not remove the entry
+	from `./CVS/Entries'.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
 	* BUGS: Remove obsolete bug report.
 	(Patch from Paul Edwards <somewhere in Australia>.)
 
