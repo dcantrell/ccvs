@@ -3115,9 +3115,6 @@ done'
 		mkdir 2
 		cd 2
 
-		# TODO-maybe: we could also check this (also in an empty
-		# directory) after the file has nonempty contents.
-		#
 		# The need for TMPPWD here is a (minor) CVS bug; the
 		# output should use the name of the repository as specified.
 		dotest conflicts-126.5 "${testcvs} co -p first-dir" \
@@ -3149,7 +3146,28 @@ VERS: 1\.1
 /tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
 new revision: 1\.2; previous revision: 1\.1
 done'
-		cd ../../2/first-dir
+		cd ../..
+
+		# Similar to conflicts-126.5, but now the file has nonempty
+		# contents.
+		mkdir 3
+		cd 3
+		# The need for TMPPWD here is a (minor) CVS bug; the
+		# output should use the name of the repository as specified.
+		dotest conflicts-128.5 "${testcvs} co -p -l first-dir" \
+"${PROG} [a-z]*"': Updating first-dir
+===================================================================
+Checking out first-dir/a
+RCS:  '"${TMPPWD}"'/cvs-sanity/cvsroot/first-dir/a,v
+VERS: 1\.2
+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+add a line'
+		cd ..
+		rmdir 3
+
+		# Now go over the to the other working directory and
+		# start testing conflicts
+		cd 2/first-dir
 		echo add a conflicting line >>a
 		dotest_fail conflicts-129 "${testcvs} -q ci -m changed" \
 "${PROG}"' [a-z]*: Up-to-date check failed for `a'\''

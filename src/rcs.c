@@ -2306,11 +2306,19 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout)
 		error (1, errno, "cannot open %s", workfile);
 	}
 
-	if (fwrite (value, 1, len, ofp) != len)
-	    error (1, errno, "cannot write %s",
-		   (workfile != NULL
-		    ? workfile
-		    : (sout != RUN_TTY ? sout : "stdout")));
+	if (workfile == NULL && sout == RUN_TTY)
+	{
+	    if (len > 0)
+		cvs_output (value, len);
+	}
+	else
+	{
+	    if (fwrite (value, 1, len, ofp) != len)
+		error (1, errno, "cannot write %s",
+		       (workfile != NULL
+			? workfile
+			: (sout != RUN_TTY ? sout : "stdout")));
+	}
 
 	if (workfile != NULL)
 	{
