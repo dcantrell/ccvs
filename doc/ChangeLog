@@ -1,5 +1,9 @@
 2003-10-14  Derek Price  <derek@ximbiot.com>
 
+	* stamp-vti, version.texi: Regenerated.
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
 	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
 	testing with _POSIX2_VERSION=200112 in the environment.
 
