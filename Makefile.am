@@ -42,10 +42,11 @@ EXTRA_DIST = \
 	cvsnt.dsw \
 	cvsnt.mak \
 	cvs.spec \
-	gnulib.txt \
-	gnulib-update \
 	mktemp.sh \
-	srclist.txt \
+	maint-aux/gnulib.txt \
+	maint-aux/gnulib-modules \
+	maint-aux/gnulib-update \
+	maint-aux/srclist.txt \
 	$(top_srcdir)/m4/ChangeLog \
 	$(top_srcdir)/m4/README
 
