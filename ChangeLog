@@ -1,3 +1,7 @@
+2001-06-28  Derek Price  <dprice@collab.net>
+
+	* mdate-sh: New file to support doc/version.texi.
+
 2001-06-27  Larry Jones  <larry.jones@sdr.com>
 
 	* TESTS: Note environment variables to select certain tools,
