@@ -524,7 +524,6 @@ ParseTag (tagp, datep)
     char **datep;
 {
     FILE *fp;
-    char *cp;
 
     if (tagp)
 	*tagp = (char *) NULL;
