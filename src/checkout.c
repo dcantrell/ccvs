@@ -1102,15 +1102,13 @@ findslash (start, p)
     char *start;
     char *p;
 {
-    while (p >= start && *p != '/')
-	p--;
-    /* FIXME: indexing off the start of the array like this is *NOT*
-       OK according to ANSI, and will break some of the time on certain
-       segmented architectures.  */
-    if (p < start)
-	return (NULL);
-    else
-	return (p);
+    for (;;)
+    {
+	if (*p == '/') return p;
+	if (p == start) break;
+	--p;
+    }
+    return NULL;
 }
 
 /* Return a newly malloc'd string containing a pathname for CVSNULLREPOS,
