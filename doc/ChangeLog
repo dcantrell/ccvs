@@ -1,3 +1,8 @@
+2001-06-07  Derek Price  <dprice@collab.net>
+
+	* README.DOCS: New file attempting to document some of our texinfo
+	conventions.
+
 2001-06-06  Derek Price  <dprice@collab.net>
 
 	(Reformatting, rewording, & additions to a patch from
