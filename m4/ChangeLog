@@ -1,3 +1,8 @@
+2004-11-03  Derek Price  <derek@ximbiot.com>
+
+	* bison.m4 (gl_BISON): Update comment to specify the correct Automake
+	version number.
+
 2004-11-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* readlink.m4, xreadlink.m4: New from GNULIB.
