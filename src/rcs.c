@@ -4094,22 +4094,14 @@ RCS_checkout (rcs, workfile, rev, nametag, options, sout, pfn, callerdat)
     dev_t devnum = 0;
 #endif
 
-    if (trace)
-    {
-	(void) fprintf (stderr, "%s-> checkout (%s, %s, %s, %s)\n",
-#ifdef SERVER_SUPPORT
-			server_active ? "S" : " ",
-#else
-			"",
-#endif
-			rcs->path,
-			rev != NULL ? rev : "",
-			options != NULL ? options : "",
-			(pfn != NULL ? "(function)"
-			 : (workfile != NULL
-			    ? workfile
-			    : (sout != RUN_TTY ? sout : "(stdout)"))));
-    }
+    TRACE ( 1, "checkout (%s, %s, %s, %s)",
+	    rcs->path,
+	    rev != NULL ? rev : "",
+	    options != NULL ? options : "",
+	    (pfn != NULL ? "(function)"
+	      : (workfile != NULL ? workfile
+		  : (sout != RUN_TTY ? sout
+		      : "(stdout)" ) ) ) );
 
     assert (rev == NULL || isdigit ((unsigned char) *rev));
 

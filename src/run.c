@@ -387,9 +387,7 @@ run_popen (cmd, mode)
     const char *cmd;
     const char *mode;
 {
-    if (trace)
-	(void) fprintf (stderr, "%s-> run_popen(%s,%s)\n",
-			CLIENT_SERVER_STR, cmd, mode);
+    TRACE ( 1, "run_popen(%s,%s)", cmd, mode );
     if (noexec)
 	return (NULL);
 

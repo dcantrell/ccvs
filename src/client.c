@@ -3848,10 +3848,7 @@ connect_to_forked_server (to_server, from_server)
     command[1] = "server";
     command[2] = NULL;
 
-    if (trace)
-    {
-	fprintf (stderr, " -> Forking server: %s %s\n", command[0], command[1]);
-    }
+    TRACE ( 1, "Forking server: %s %s", command[0], command[1] );
 
     child_pid = piped_child (command, &tofd, &fromfd);
     if (child_pid < 0)
@@ -3893,12 +3890,9 @@ connect_to_pserver (root, to_server_p, from_server_p, verify_only, do_gssapi)
     }
     port_number = get_cvs_port_number (root);
     hostinfo = init_sockaddr (&client_sai, root->hostname, port_number);
-    if (trace)
-    {
-	fprintf (stderr, " -> Connecting to %s(%s):%d\n",
-		 root->hostname,
-		 inet_ntoa (client_sai.sin_addr), port_number);
-    }
+    TRACE ( 1, "Connecting to %s(%s):%d",
+	    root->hostname,
+	    inet_ntoa (client_sai.sin_addr), port_number );
     if (connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai))
 	< 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
@@ -4145,12 +4139,10 @@ start_tcp_server (root, to_server, from_server)
     hname = xmalloc (strlen (hp->h_name) + 1);
     strcpy (hname, hp->h_name);
   
-    if (trace)
-    {
-	fprintf (stderr, " -> Connecting to %s(%s):%d\n",
-		 root->hostname,
-		 inet_ntoa (sin.sin_addr), port);
-    }
+    TRACE ( 1, "Connecting to %s(%s):%d",
+	    root->hostname,
+	    inet_ntoa (sin.sin_addr),
+	    port );
 
     if (connect (s, (struct sockaddr *) &sin, sizeof sin) < 0)
 	error (1, 0, "connect to %s(%s):%d failed: %s",
@@ -4593,7 +4585,8 @@ start_server ()
 	{
 	    if (have_global)
 	    {
-		send_to_server ("Global_option -t\012", 0);
+	        int count = trace;
+		while (count--) send_to_server ("Global_option -t\012", 0);
 	    }
 	    else
 		error (1, 0,
@@ -4990,8 +4983,7 @@ send_modified (file, short_pathname, vers)
     size_t bufsize;
     int bin;
 
-    if (trace)
-	(void) fprintf (stderr, " -> Sending file `%s' to server\n", file);
+    TRACE ( 1, "Sending file `%s' to server", file );
 
     /* Don't think we can assume fstat exists.  */
     if ( CVS_STAT (file, &sb) < 0)
@@ -5948,3 +5940,5 @@ send_init_command ()
 }
 
 #endif /* CLIENT_SUPPORT */
+/* vim:tabstop=8:shiftwidth=4
+ */

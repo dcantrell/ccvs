@@ -81,9 +81,7 @@ No_Difference (finfo, vers)
     {
 	/* Need to call unlink myself because the noexec variable
 	 * has been set to 1.  */
-	if (trace)
-	    (void) fprintf (stderr, "%s-> unlink (%s)\n",
-			    CLIENT_SERVER_STR, tocvsPath);
+	TRACE ( 1, "unlink (%s)", tocvsPath);
 	if ( CVS_UNLINK (tocvsPath) < 0)
 	    error (0, errno, "could not remove %s", tocvsPath);
     }

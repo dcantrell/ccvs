@@ -901,9 +901,7 @@ Copyright (c) 1989-2002 Brian Berliner, david d `zoo' zuhn, \n\
 		if ((current_parsed_root = parse_cvsroot (current_root)) == NULL)
 		    error (1, 0, "Bad CVSROOT: `%s'.", current_root);
 
-		if (trace)
-		    fprintf (stderr, "%s-> main loop with CVSROOT=%s\n",
-			   CLIENT_SERVER_STR, current_root);
+		TRACE ( 1, "main loop with CVSROOT=%s", current_root);
 
 		/*
 		 * Check to see if the repository exists.

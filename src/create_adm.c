@@ -38,13 +38,9 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
     char *reposcopy;
     char *tmp;
 
-    if (trace)
-    {
-	fprintf (stderr, "%s-> Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)\n",
-		 CLIENT_SERVER_STR,
-		 dir, update_dir, repository, tag ? tag : "",
-		 date ? date : "", nonbranch, warn, dotemplate);
-    }
+    TRACE ( 1, "Create_Admin (%s, %s, %s, %s, %s, %d, %d, %d)",
+	    dir, update_dir, repository, tag ? tag : "",
+	    date ? date : "", nonbranch, warn, dotemplate );
 
     if (noexec)
 	return 0;
@@ -169,11 +165,7 @@ Create_Admin (dir, update_dir, repository, tag, date, nonbranch, warn,
 	server_template (update_dir, repository);
     }
 
-    if (trace)
-    {
-	fprintf (stderr, "%c<- Create_Admin\n",
-		 (server_active) ? 'S' : ' ');
-    }
+    TRACE ( 1, "Create_Admin" );
 #endif
 
     free (reposcopy);

@@ -1,3 +1,11 @@
+2003-02-03  Derek Price  <derek@ximbiot.com>
+
+	* client.c (start_Server): Send multiple trace options when
+	necessary.
+	* server.c (server): Update trace option processing to accept multiple
+	-t arguments.
+	* *: Use new TRACE macro.
+
 2003-02-02  Larry Jones  <lawrence.jones@eds.com>
 
 	* error.c: Update to match error.h.
