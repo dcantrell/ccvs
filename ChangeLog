@@ -1,3 +1,13 @@
+Sun May 11 11:38:03 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README.VMS: Remove information about "direct TCP".  Noone has
+	been complaining about it being broken (the code bitrotted not long
+	after it was written), nor has anyone complained
+	that contrib/listener.c was omitted from the distribution (because
+	it wasn't mentioned in contrib/Makefile.in DISTFILES).  If there
+	is a desire to resurrect such a feature, it should use port 2401
+	as now discussed in doc/cvsclient.texi.
+
 Thu May  8 12:14:40 1997  Larry Jones  <larry.jones@sdrc.com>
 	and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
