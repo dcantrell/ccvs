@@ -49,6 +49,9 @@ remotecheck: all
 doc:
 	cd doc && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
+.PHONY: distcheck-hook
+distcheck-hook: remotecheck
+
 ## MAINTAINER Targets
 
 ## cvs.spec  ##
