@@ -1,5 +1,10 @@
 Fri Sep  8 13:25:55 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* sanity.sh: When committing a removal, send stdout to LOGFILE;
+	this is no longer a silent operation.
+
+	* sanity.sh: Remove OUTPUT variable; it is unused.
+
 	* client.c: Add comment regarding deleting temp file.
 	* main.c: Add comment regarding getopt REQUIRE_ORDER.
 
