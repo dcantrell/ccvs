@@ -1,5 +1,15 @@
 Changes since 1.8:
 
+* New global option '-D diff' to set the path/name of the diff program
+used by 'cvs patch' and 'cvs update' (the latter only if sending patches
+to a remote client.  This value can also now be defaulted at run-time by
+setting the environment variable DIFFBIN.
+
+* New global option '-g grep to set the path/name of the grep program
+used by 'cvs update' when searching for conflict markers after merging.
+This value can also now be defaulted at run-time by setting the
+environment variable GREPBIN.
+
 * The postscript documentation (doc/cvs.ps) shipped with CVS is now
 formatted for US letter size instead of A4.  This is not because we
 consider this size "better" than A4, but because we believe that the
