@@ -1,3 +1,8 @@
+2001-03-21  Derek Price  <dprice@collab.net>
+
+	* sanity.sh: cd to '/tmp' again rather than $HOME since HOME was set to
+	a value inside ${TESTDIR} by the script.
+
 2001-03-20  Derek Price  <dprice@collab.net>
 
 	* sanity.sh (diffmerge1): Minor formatting and syntax changes.
