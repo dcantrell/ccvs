@@ -402,40 +402,6 @@ rename_file (from, to)
 }
 
 /*
- * Rename a file to an appropriate backup name based on BAKPREFIX.
- * If suffix non-null, then ".<suffix>" is appended to the new name.
- *
- * Returns the new name, which caller may free() if desired.
- */
-char *
-backup_file (filename, suffix)
-     const char *filename;
-     const char *suffix;
-{
-    char *backup_name;
-
-    if (suffix == NULL)
-    {
-        backup_name = xmalloc (sizeof (BAKPREFIX) + strlen (filename) + 1);
-        sprintf (backup_name, "%s%s", BAKPREFIX, filename);
-    }
-    else
-    {
-        backup_name = xmalloc (sizeof (BAKPREFIX)
-                               + strlen (filename)
-                               + strlen (suffix)
-                               + 2);  /* one for dot, one for trailing '\0' */
-        sprintf (backup_name, "%s%s.%s", BAKPREFIX, filename, suffix);
-    }
-
-    if (isfile (filename))
-        copy_file (filename, backup_name);
-
-    return backup_name;
-}
-
-
-/*
  * unlink a file, if possible.
  */
 int
