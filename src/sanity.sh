@@ -2158,7 +2158,7 @@ if $proxy; then
     # Where the secondary root will be
     SECONDARY_CVSROOT_DIRNAME=$TESTDIR/secondary_cvsroot
 
-    tryrsync=`which rsync`
+    tryrsync=`Which rsync`
     if test -r "$tryrsync"; then
 	RSYNC=$tryrsync
     else
