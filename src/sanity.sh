@@ -24679,6 +24679,21 @@ new revision: 1\.1\.4\.1; previous revision: 1\.1"
 new revision: 1\.1\.4\.2; previous revision: 1\.1\.4\.1"
 	  date_T4=`getrlogdate -r1.1.4.2 first-dir/file1`
 
+	  # Test diff -r<tag>:<date> with two revisions specified.
+	  dotest_fail tagdate-13b \
+"$testcvs -q diff -u -rbr2:'$date_T3' -rbr2:now file1" \
+"Index: file1
+===================================================================
+RCS file: $CVSROOT_DIRNAME/first-dir/file1,v
+retrieving revision 1\.1\.4\.1
+retrieving revision 1\.1\.4\.2
+diff -u -r1\.1\.4\.1 -r1\.1\.4\.2
+--- file1	$RFCDATE	1\.1\.4\.1
++++ file1	$RFCDATE	1\.1\.4\.2
+@@ -1 ${PLUS}1 @@
+-br2-1
+${PLUS}br2-2"
+
 	  cd ../..
 	  mkdir 2; cd 2
 	  dotest tagdate-14 \
