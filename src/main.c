@@ -125,16 +125,16 @@ static const struct cmd
     { "rdiff",    "patch",    "pa",        patch },
     { "release",  "re",       "rel",       release },
     { "remove",   "rm",       "delete",    cvsremove },
-    { "status",   "st",       "stat",      cvsstatus },
     { "rtag",     "rt",       "rfreeze",   rtag },
+#ifdef SERVER_SUPPORT
+    { "server",   NULL,       NULL,        server },
+#endif
+    { "status",   "st",       "stat",      cvsstatus },
     { "tag",      "ta",       "freeze",    cvstag },
     { "unedit",   NULL,	      NULL,	   unedit },
     { "update",   "up",       "upd",       update },
     { "watch",    NULL,	      NULL,	   watch },
     { "watchers", NULL,	      NULL,	   watchers },
-#ifdef SERVER_SUPPORT
-    { "server",   NULL,       NULL,        server },
-#endif
     { NULL, NULL, NULL, NULL },
 };
 
@@ -199,15 +199,24 @@ static const char *const cmd_usage[] =
     "        history      Show repository access history\n",
     "        import       Import sources into CVS, using vendor branches\n",
     "        init         Create a CVS repository if it doesn't exist\n",
+#if defined (HAVE_KERBEROS) && defined (SERVER_SUPPORT)
+    "        kserver      Kerberos server mode\n",
+#endif
     "        log          Print out history information for files\n",
 #ifdef AUTH_CLIENT_SUPPORT
-    "        login        Prompt for password for authenticating server.\n",
-    "        logout       Removes entry in .cvspass for remote repository.\n",
+    "        login        Prompt for password for authenticating server\n",
+    "        logout       Removes entry in .cvspass for remote repository\n",
 #endif /* AUTH_CLIENT_SUPPORT */
+#if (defined(AUTH_SERVER_SUPPORT) || defined (HAVE_GSSAPI)) && defined(SERVER_SUPPORT)
+    "        pserver      Password server mode\n",
+#endif
     "        rdiff        Create 'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
     "        remove       Remove an entry from the repository\n",
     "        rtag         Add a symbolic tag to a module\n",
+#ifdef SERVER_SUPPORT
+    "        server       Server mode\n",
+#endif
     "        status       Display status information on checked out files\n",
     "        tag          Add a symbolic tag to checked out version of files\n",
     "        unedit       Undo an edit command\n",
