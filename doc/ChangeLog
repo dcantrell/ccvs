@@ -1,3 +1,7 @@
+Wed Apr 23 12:53:45 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi (Requests): Document "add" in much more detail.
+
 Wed Apr 23 00:38:17 1997  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvsclient.texi (Requests): Correct small typo (`a' for `as').

@@ -747,7 +747,6 @@ directory.
 @itemx tag \n
 @itemx status \n
 @itemx log \n
-@itemx add \n
 @itemx remove \n
 @itemx admin \n
 @itemx export \n
@@ -805,6 +804,78 @@ requests (files which the client knows should be ignored are not sent;
 the server must still process the CVSROOT/cvsignore file unless -I ! is
 sent).  A log message must have been specified with a @code{-m}
 argument.
+
+@item add \n
+Response expected: yes.  Add a file or directory.  This uses any
+previous @code{Argument}, @code{Directory}, @code{Entry}, or
+@code{Modified} requests, if they have been sent.  The
+last @code{Directory} sent specifies the working directory at the time
+of the operation.
+
+To add a directory, send the directory to be added using
+@code{Directory} and @code{Argument} requests.  For example:
+
+@example
+C: Root /home/kingdon/zwork/cvsroot
+. . .
+C: Argument nsdir
+C: Directory nsdir
+C: /home/kingdon/zwork/cvsroot/1dir/nsdir
+C: Directory .
+C: /home/kingdon/zwork/cvsroot/1dir
+C: add
+S: M Directory /home/kingdon/zwork/cvsroot/1dir/nsdir added to the repository
+S: ok
+@end example
+
+You will notice that the server does not signal to the client in any
+particular way that the directory has been successfully added.  The
+client is supposed to just assume that the directory has been added and
+update its records accordingly.  Note also that adding a directory is
+immediate; it does not wait until a @code{ci} request as files do.
+
+To add a file, send the file to be added using a @code{Modified}
+request.  For example:
+
+@example
+C: Argument nfile
+C: Directory .
+C: /home/kingdon/zwork/cvsroot/1dir
+C: Modified nfile
+C: u=rw,g=r,o=r
+C: 6
+C: hello
+C: add
+S: E cvs server: scheduling file `nfile' for addition
+S: Mode u=rw,g=r,o=r
+S: Checked-in ./
+S: /home/kingdon/zwork/cvsroot/1dir/nfile
+S: /nfile/0///
+S: E cvs server: use 'cvs commit' to add this file permanently
+S: ok
+@end example
+
+Note that the file has not been added to the repository; the only effect
+of a successful @code{add} request, for a file, is to supply the client
+with a new entries line containing @samp{0} to indicate an added file.
+In fact, the client probably could perform this operation without
+contacting the server, although using @code{add} does cause the server
+to perform a few more checks.
+
+The client sends a subsequent @code{ci} to actually add the file to the
+repository.
+
+Another quirk of the @code{add} request is that a pathname specified in
+an @code{Argument} request cannot contain @samp{/}.  There is no good
+reason for this restriction, and it could be eliminated if someone took
+the effort to rewrite the @code{add} code in the CVS server to not have
+it.  But in the meantime, the way to comply with it is to ensure that
+all @code{Directory} requests for @code{add} (except those used to add
+directories, as described above), use @samp{.} for
+@var{local-directory}.  Specifying another string for
+@var{local-directory} may not get an error, but it will get you strange
+@code{Checked-in} responses, until servers are fixed to send the correct
+responses.
 
 @item watch-on \n
 @itemx watch-off \n
