@@ -1,3 +1,9 @@
+2003-12-14  Mark D. Baushke  <mdb@cvshome.org>
+
+	* fseeko.c: Remove unnecessary #ifdef code.
+	* ftello.c: Ditto.
+	* system.h: Ditto.
+
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* ftello.c: Rework for AC_FUNC_FSEEKO.

@@ -466,15 +466,8 @@ extern int errno;
 #endif
 
 #ifndef HAVE_FSEEKO
-
-#ifndef ftello
 off_t ftello (FILE *);
-#endif
-
-#ifndef fseeko
 int fseeko (FILE *, off_t, int);
-#endif
-
 #endif /* HAVE_FSEEKO */
 
 #if defined (__CYGWIN32__) || defined (WIN32)
