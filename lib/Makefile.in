@@ -237,9 +237,9 @@ EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
 	build_lib.com \
-	LIB.dep \
-	lib.dsp \
-	lib.mak\
+	libcvs.dep \
+	libcvs.dsp \
+	libcvs.mak\
 alloca_.h fnmatch_.h fnmatch_loop.c
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4

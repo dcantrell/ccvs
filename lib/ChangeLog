@@ -1,5 +1,10 @@
 2004-04-19  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (EXTRA_DIST): s/lib\.\w+/libcvs.*/i.
+	* Makefile.in: Regenerated.
+
+2004-04-19  Derek Price  <derek@ximbiot.com>
+
 	* libcvs.mak: Regenerated for "zlib/libz.dsp" change.
 	(Patch from Conrad T. Pino <Conrad@Pino.com>.)
 

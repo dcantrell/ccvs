@@ -73,9 +73,9 @@ EXTRA_DIST = \
 	.cvsignore \
 	ChangeLog.fsf \
 	build_lib.com \
-	LIB.dep \
-	lib.dsp \
-	lib.mak
+	libcvs.dep \
+	libcvs.dsp \
+	libcvs.mak
 
 # For GNULIB's alloca module.
 BUILT_SOURCES += $(ALLOCA_H)
