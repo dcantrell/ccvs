@@ -1,5 +1,8 @@
 2000-07-27  Larry Jones  <larry.jones@sdrc.com>
 
+	* lock.c (set_lock): Include actual lock directory in error message.
+	* sanity.sh (multiroot3-10): Change to match.
+
 	* sanity.sh (client-3): Allow for a potential "broken pipe".
 
 2000-07-26  Larry Jones  <larry.jones@sdrc.com>
