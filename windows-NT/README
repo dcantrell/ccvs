@@ -63,6 +63,10 @@ and source:
 
 	ftp://microlib.cc.utexas.edu/microlib/nt/gnu/
 
+In particular, microlib seems to have versions of GNU tar and gzip
+which support long file names, which you will need to unpack the CVS
+source distribution.
+
 The CYGWIN32 package is a port of various GNU tools for NT, providing
 bash as the shell and gcc as the compiler.  The tools are still in
 development, but they are useful for running a modified version of
