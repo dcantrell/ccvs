@@ -1,3 +1,9 @@
+1999-10-21  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (dotest_sort): Convert any tabs in the output into spaces
+	before sorting to avoid POSIX.2 sort weirdness.
+	(import-106, importb-2): Change expected output per above.
+
 1999-10-18  K.J. Paradise <kj@sourcegear.com>
 
 	Bug: users 'stan' and 'cartman' both have full read/write access
