@@ -1,3 +1,7 @@
+Wed Nov 19 17:44:21 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* INSTALL: Add Sequent entry per bug-cvs report.
+
 1997-11-17  Karl Fogel  <kfogel@floss.red-bean.com>
 
 	* BUGS: Remove item about exporting binary files to non-unix
