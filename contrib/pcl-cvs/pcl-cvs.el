@@ -2349,12 +2349,14 @@ Return non-nil iff it is."
 		      ".* "
 		      (regexp-quote (substring (current-time-string) -4))
 		      "[ \t]+"
-		      (regexp-quote (if (boundp 'add-log-full-name)
+		      (regexp-quote (if (and (boundp 'add-log-full-name)
+                                             add-log-full-name)
                                         add-log-full-name
                                       user-full-name))
 		      "  <"
                       (regexp-quote
-                       (if (boundp 'add-log-mailing-address)
+                       (if (and (boundp 'add-log-mailing-address)
+                                add-log-mailing-address)
                            add-log-mailing-address
                          user-mail-address)))))
 
