@@ -1,3 +1,8 @@
+Thu Jul 17 12:39:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (socket_buffer_input, socket_buffer_output): Add
+	comment regarding size of of buffer we pass to send and recv.
+
 Sat Jul 12 15:21:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* import.c, rcs.h (add_rcs_file): New argument key_opt replaces
