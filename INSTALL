@@ -154,10 +154,7 @@ Installation under Unix:
     configuration information.
 
     If you are using gcc and are planning to modify CVS, you may want to
-    configure with -Wall, which can detect many programming errors.  This
-    is not the default because it might cause spurious warnings, but at least
-    on some machines, there are no spurious warnings.  For example:
-	$ CFLAGS="-g -Wall" ./configure
+    configure with -Wall; see the file HACKING for details.
 
     Try './configure --help' for further information on its usage.
 

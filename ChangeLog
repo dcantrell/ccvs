@@ -1,3 +1,10 @@
+Mon Jan 29 15:16:39 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* README: Refer to HACKING file.  Refer to cvs.texinfo not
+	manpage.  Rewrite section about compatibility between CVS versions.
+	* HACKING: New file.
+	* INSTALL: Move -Wall section to HACKING; refer to HACKING.
+
 Wed Jan 24 20:26:55 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* configure.in: Remove diff stuff.  Also remove AC_CANONICAL_HOST
