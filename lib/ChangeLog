@@ -1,3 +1,10 @@
+2004-04-15  Derek Price  <derek@ximbiot.com>
+
+	* lib.dsp: Update to compile fnmatch.
+	* LIB.dep: New generated file.
+	* lib.mak: Regenerated.
+	(Patch from Conrad T. Pino <conrad@pino.com>.)
+
 2004-04-14  Derek Price  <derek@ximbiot.com>
 
 	Update to current fnmatch module from GNULIB.
