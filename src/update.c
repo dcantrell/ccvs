@@ -40,6 +40,7 @@
 #include "watch.h"
 #include "fileattr.h"
 #include "edit.h"
+#include "savecwd.h"
 
 static int checkout_file PROTO ((struct file_info *finfo, Vers_TS *vers_ts,
 				 int adding));
@@ -54,7 +55,7 @@ static int scratch_file PROTO((struct file_info *finfo));
 static Dtype update_dirent_proc PROTO ((void *callerdat, char *dir,
 					char *repository, char *update_dir,
 					List *entries));
-static int isremoved PROTO ((Node* node, void* closure));
+static int isremoved PROTO ((Node *node, void *closure));
 static int update_dirleave_proc PROTO ((void *callerdat, char *dir,
 					int err, char *update_dir,
 					List *entries));
@@ -873,8 +874,8 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
  */
 static int
 isremoved(node, closure)
-    Node* node;
-    void* closure;
+    Node *node;
+    void *closure;
 {
     Entnode *entdata = (Entnode*) node->data;
 
@@ -932,8 +933,7 @@ isemptydir (dir)
 
 		chdir (dir);
 		l = Entries_Open (0);
-		files_removed =
-			walklist (l, (int (*)(Node*, void*)) isremoved, 0);
+		files_removed = walklist (l, isremoved, 0);
 		Entries_Close (l);
 
 		if (restore_cwd (&cwd, NULL)) {
