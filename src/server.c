@@ -3775,7 +3775,15 @@ error ENOMEM Virtual memory exhausted.\n");
     }
 
     argument_count = 1;
-    argument_vector[0] = "Dummy argument 0";
+    /* This gets printed if the client supports an option which the
+       server doesn't, causing the server to print a usage message.
+       FIXME: probably should be using program_name here.
+       FIXME: just a nit, I suppose, but the usage message the server
+       prints isn't literally true--it suggests "cvs server" followed
+       by options which are for a particular command.  Might be nice to
+       say something like "client apparently supports an option not supported
+       by this server" or something like that instead of usage message.  */
+    argument_vector[0] = "cvs server";
 
     server_active = 1;
 
