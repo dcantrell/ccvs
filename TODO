@@ -257,14 +257,6 @@ from 1.1 to 1.2).
      number of each file it is checking in.
      [[ Sort of solved by contrib/log.pl, which does a good job of this ]]
 
-136. Is it possible to specify a command to be run on each file when it is
-     checked out and another command to be run before it is checked in?
-     My idea of how this feature would be used:
-	On checkout:
-		run indent with user's preferred style
-	On checkin:
-		run indent with space-saving, style-free for checkin
-
 137. Some sites might want CVS to fsync() the RCS ,v file to protect
      against nasty hardware errors.  There is a slight performance hit with
      doing so, though, so it should be configurable in the .cvsrc file.
