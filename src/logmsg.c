@@ -927,7 +927,7 @@ logfile_write (repository, filter, message, logfp, changes)
     }
 
     setup_tmpfile (pipefp, "", changes);
-    (void) fprintf (pipefp, "Log Message:\n%s\n", message);
+    (void) fprintf (pipefp, "Log Message:\n%s\n", (message) ? message : "");
     if (logfp != (FILE *) 0)
     {
 	(void) fprintf (pipefp, "Status:\n");
