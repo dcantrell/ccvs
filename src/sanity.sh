@@ -11765,7 +11765,6 @@ description:
 revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 branches:  1\.1\.2;
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -11777,7 +11776,6 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -11805,7 +11803,6 @@ description:
 revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 branches:  1\.1\.2;
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -11817,7 +11814,6 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -11839,7 +11835,6 @@ description:
 revision 1\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 branches:  1\.1\.2;
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
@@ -11851,7 +11846,6 @@ xCVS: ----------------------------------------------------------------------
 ----------------------------
 revision 1\.1\.2\.1
 date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
-x
 xCVS: ----------------------------------------------------------------------
 xCVS: Enter Log.  Lines beginning with .CVS:. are removed automatically
 xCVS:
