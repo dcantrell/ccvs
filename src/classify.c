@@ -196,7 +196,8 @@ conflict: %s created independently by second party",
 
 	    (void) sprintf (tmp, "-%s", vers->vn_rcs ? vers->vn_rcs : "");
 
-	    if (vers->vn_rcs == NULL)
+	    if (vers->vn_rcs == NULL
+		|| RCS_isdead (vers->srcfile, vers->vn_rcs))
 	    {
 
 		/*
