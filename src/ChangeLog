@@ -1,3 +1,9 @@
+2004-10-25 Derek Price <derek@ximbiot.com>
+
+	* cvs.h (yesno): Remove prototype.
+	* edit.c, release.c: Include yesno.h.  Flush output before calling
+	yesno().
+
 2004-10-25  Mark D. Baushke  <mdb@cvshome.org>
 
 	* sanity.sh (tagdate): Added some additional tests and FIXCVS

@@ -548,7 +548,6 @@ int update (int argc, char *argv[]);
  */
 void write_letter (struct file_info *finfo, int letter);
 int xcmp (const char *file1, const char *file2);
-int yesno (void);
 void *valloc (size_t bytes);
 
 /* Need this until we back out the get_date () proto again and use a current
