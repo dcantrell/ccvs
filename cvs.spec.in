@@ -32,7 +32,7 @@ Install the cvs package if you need to use a version control system.
 %package krb5
 Summary: A version control system with Kerberos authentication.
 Group: Development/Tools
-Requires: cvs krb5-libs krb5-configs
+Requires: cvs krb5-libs
 BuildRequires: krb5-devel
 
 %description krb5
@@ -114,7 +114,8 @@ fi
 %doc BUGS FAQ MINOR-BUGS NEWS PROJECTS TODO README
 %doc doc/RCSFILES doc/*.ps
 %{_bindir}
-%{_datadir}
+%{_infodir}/cvs*.gz
+%{_mandir}
 
 %if %gssapi
 %files krb5
@@ -123,6 +124,10 @@ fi
 %endif
 
 %changelog
+* Thu Apr 26 2001 Derek Price <dprice@collab.net>
+- avoid picking up %{_infodir}/dir.
+- remove krb5-configs from requirements since RedHat doesn't use it anymore.
+
 * Wed Nov 29 2000 Derek Price <dprice@openavenue.com>
 - Use _infodir consistently for info pages and _bindir for binaries.
 - use more succinct file list

@@ -1,3 +1,10 @@
+2001-04-26  Derek Price  <dprice@collab.net>
+
+	* cvs.spec.in: Don't include %{_infodir}/dir.
+	(krb5): Remove krb5-config from dependencies.
+
+	* cvs.spec: Regenerated.
+
 2001-04-25  Derek Price  <dprice@collab.net>
 
 	* configure.in: Update version to 1.11.1.
