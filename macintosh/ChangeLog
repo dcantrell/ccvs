@@ -1,6 +1,12 @@
 Wed Jul 31 11:41:55 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* server_if.c (macos_start_server): If getservbyname returns NULL,
+	use port 514 rather than giving an error.
+
+Wed Jul 31 11:41:55 1996  Mike Ladwig  <mike@twinpeaks.prc.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
 	* Makefile.in (DISTFILES): Add maccvs.r.
 
 Mon Jul 29 14:48:45 1996  Jim Blandy  <jimb@totoro.cyclic.com>
