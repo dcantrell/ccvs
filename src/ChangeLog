@@ -1,5 +1,12 @@
 2004-08-10  Derek Price  <derek@ximbiot.com>
 
+	* log-buffer.h (log_buffer_rewind, log_buffer_closelog): Don't define
+	protos without SECONDARY_SUPPORT.
+	* server.c (*): #ifdef correctly for !SECONDARY_SUPPORT.
+	* version.c (version): Remove unused code.
+
+2004-08-10  Derek Price  <derek@ximbiot.com>
+
 	* server.c (server_cleanup): Remove unused variable.
 
 2004-08-10  Derek Price  <derek@ximbiot.com>

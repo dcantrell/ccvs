@@ -22,7 +22,9 @@ log_buffer_initialize (struct buffer *buf, FILE *fp, bool fatal_errors,
                        bool input, size_t max,
 		       void (*memory) (struct buffer *));
 
+# ifdef SECONDARY_SUPPORT
 struct buffer *log_buffer_rewind (struct buffer *buf);
 void log_buffer_closelog (struct buffer *buf);
+# endif /* SECONDARY_SUPPORT */
 
 #endif /* LOG_BUFFER_H__ */
