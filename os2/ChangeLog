@@ -1,3 +1,8 @@
+Mon Nov 20 23:31:54 1995  unknown  (unknown@beezley)
+
+		* filesubr.c (convert_file): pass (S_IREAD | S_IWRITE) to open();
+		we need it if O_CREAT, and it won't hurt if not.
+
 Sun Nov 19 13:43:02 1995  unknown  (unknown@beezley)
 
 		* makefile.in (clean): remove obj files in src/ and lib/ dirs too.
