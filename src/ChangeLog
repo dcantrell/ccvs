@@ -1,3 +1,7 @@
+2004-02-20  Larry Jones  <lawrence.jones@ugsplm.com>
+
+	* add.c (add): Remove unused variable.
+
 2004-03-20  Derek Price  <derek@ximbiot.com>
 
 	* add.c (add, add_directory, build_entry), admin.c (admin_dirproc),
