@@ -1,3 +1,7 @@
+Thu Oct  9 12:01:35 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (log options): Add comment about "cvs log -r".
+
 Wed Oct  8 10:24:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (rtag options): Add comment about how this is
