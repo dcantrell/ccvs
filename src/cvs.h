@@ -24,14 +24,7 @@
 #define	PTR	char *
 #endif
 
-/* Add prototype support.  */
-#ifndef PROTO
-# if PROTOTYPES
-#   define PROTO(ARGS) ARGS
-# else
-#   define PROTO(ARGS) ()
-# endif
-#endif
+#include "PROTO.h"
 
 /* Add GNU attribute suppport.  */
 #ifndef __attribute__

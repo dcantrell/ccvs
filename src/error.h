@@ -14,15 +14,7 @@
 #ifndef ERROR_H
 #define ERROR_H
 
-/* Add prototype support.  Normally this is done in cvs.h, but that
-   doesn't get included from lib/savecwd.c.  */
-#ifndef PROTO
-# if PROTOTYPES
-#   define PROTO(ARGS) ARGS
-# else
-#   define PROTO(ARGS) ()
-# endif
-#endif
+#include "PROTO.h"
 
 /* Add GNU attribute suppport.  */
 #ifndef __attribute__
