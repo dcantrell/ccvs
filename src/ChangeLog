@@ -74,6 +74,12 @@
 	userfile (the actual file causing the problem) instead of user
 	(which may or may not be the same).
 
+1999-07-29  Eric Sink   <eric@sourcegear.com>
+
+	* version.c: Push version number to 1.10.7.1.
+
+	* version.c: Version 1.10.7.
+
 1999-07-28  Eric Sink   <eric@sourcegear.com>
 
 	* sanity.sh: before running basicc-11, we need to see if
