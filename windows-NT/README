@@ -30,10 +30,9 @@ hand, since we couldn't find a port of the Bourne shell good enough to
 execute the script).  Sanity.sh provides pretty minimal feature
 coverage, but still gives me some confidence it isn't totally broken.
 
-For best results, you will also need GNU patch and GZIP installed on
-your system, although CVS can be used without them.  The Congruent
-ports of these packages to Windows NT, binary and source, are
-available in:
+You will also need GNU patch installed on your system.  GZIP is useful
+but not required.  The Congruent ports of these packages to Windows
+NT, binary and source, are available in:
 
 	ftp://microlib.cc.utexas.edu/microlib/nt/gnu
 
