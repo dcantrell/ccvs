@@ -1,5 +1,14 @@
 2004-10-05  Derek Price  <derek@ximbiot.com>
 
+	* savecwd.c: Rename to...
+	* save-cwd.c: ...this and replace with the newest version from GNULIB.
+	* savecwd.h: Ditto, but to...
+	* save-cwd.h: ...this name.
+	* Makefile.am (libcvs_a_SOURCES): Remove savecwd.[ch].  Add save-cwd.h
+	& save-cwd.c in their own section.
+
+2004-10-05  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Remove xgetwd.c, add xgetcwd.h &
 	xgetcwd.c in their own section.
 	* xgetwd.c: Removed.
