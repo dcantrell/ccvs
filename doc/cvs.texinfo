@@ -2267,6 +2267,14 @@ Furthermore, there may be other ways in which having
 access to @sc{cvs} allows people to gain more general
 access to the system; noone has done a careful audit.
 
+Note that because the @file{$CVSROOT/CVSROOT} directory
+contains @file{passwd} and other files which are used
+to check security, you must control the permissions on
+this directory as tightly as the permissions on
+@file{/etc}.  Anyone who has write access to this
+directory will have the ability to become any user on
+the system.
+
 In summary, anyone who gets the password gets
 repository access, and some measure of general system
 access as well.  The password is available to anyone
