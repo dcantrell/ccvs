@@ -8342,14 +8342,20 @@ are likely to disappear in the future.  This command
 used.
 
 @cindex cvsadmin
+@cindex UserAdminOptions, in CVSROOT/config
 On unix, if there is a group named @code{cvsadmin},
 only members of that group can run @code{cvs admin}
-(except for the @code{cvs admin -k} command, which can
-be run by anybody).  This group should exist on the
-server, or any system running the non-client/server
-@sc{cvs}.  To disallow @code{cvs admin} for all users,
-create a group with no users in it.  On NT, the
-@code{cvsadmin} feature does not exist and all users
+commands, except for those specified using the
+@code{UserAdminOptions} configuration option in the
+@file{CVSROOT/config} file.  Options specified using
+@code{UserAdminOptions} can be run by any user.  See
+@ref{config} for more on @code{UserAdminOptions}.
+
+The @code{cvsadmin} group should exist on the server,
+or any system running the non-client/server @sc{cvs}.
+To disallow @code{cvs admin} for all users, create a
+group with no users in it.  On NT, the @code{cvsadmin}
+feature does not exist and all users
 can run @code{cvs admin}.
 
 @menu
@@ -13525,6 +13531,30 @@ CPU intensive but is not recommended for use with large repositories}
 
 @xref{verifymsg}, for more information on how verifymsg
 may be used.
+
+@cindex UserAdminOptions, in CVSROOT/config
+@item UserAdminOptions=@var{value}
+Control what options will be allowed with the @code{cvs admin}
+command (@pxref{admin}) for users not in the @code{cvsadmin} group.
+The @var{value} string is a list of single character options
+which should be allowed.  If a user who is not a member of the
+@code{cvsadmin} group tries to execute any @code{cvs admin}
+option which is not listed they will will receive an error message
+reporting that the option is restricted.
+
+If no @code{cvsadmin} group exists on the server, @sc{cvs} will
+ignore the @code{UserAdminOptions} keyword (@pxref{admin}).
+
+When not specified, @code{UserAdminOptions} defaults to
+@samp{k}.  In other words, it defaults to allowing
+users outside of the @code{cvsadmin} group to use the
+@code{cvs admin} command only to change the default keyword
+expansion mode for files.
+
+As an example, to restrict users not in the @code{cvsadmin}
+group to using @code{cvs admin} to change the default keyword
+substitution mode, lock revisions, unlock revisions, and
+replace the log message, use @samp{UserAdminOptions=klum}.
 @end table
 
 @c ---------------------------------------------------------------------

@@ -1,3 +1,12 @@
+2003-02-25  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (admin): Mention UserAdminOptions.
+	(config): Ditto.
+	(Original patch from Dan Peterson <dbpete@aol.com>.)
+
+	* stamp-vti: Regenerated.
+	* version.texi: Ditto.
+
 2003-02-24  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (*): Modify some tag index entries for uniformity.
