@@ -1,3 +1,16 @@
+Thu Nov 16 21:47:22 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+	* startserver.c: removed.  We don't need this anymore.
+        
+        * config.h (RSH_NOT_TRANSPARENT: undef this.  We have a
+        transparent rsh.
+        (HAVE_POPEN_RW): define to 1.
+
+        * popen.c (popenRW): open writing and reading streams in binary
+        mode (i.e., "wb" and "rb").
+
+        * Makefile.in (clean): use `rm' not `del' to remove files.
+
 Wed Nov 15 15:21:53 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * config.h: don't prototype gethostname() here anymore.

@@ -360,17 +360,10 @@ extern void convert_file (char *INFILE,  int INFLAGS,
    to deal with.  */
 #define CLIENT_ONLY
 
-/* Don't use an rsh subprocess to connect to the server, because
-   the rsh does inappropriate translations on the data (CR-LF/LF).  */
-#define RSH_NOT_TRANSPARENT 1
-extern void os2_start_server (int *tofd, int *fromfd,
-			      char *client_user,
-			      char *server_user,
-			      char *server_host,
-			      char *server_cvsroot);
-extern void os2_shutdown_server (int fd);
-#define START_SERVER os2_start_server
-#define SHUTDOWN_SERVER os2_shutdown_server
+/* We actually do have a transparent rsh, whew. */
+#undef RSH_NOT_TRANSPARENT
+/* This causes us to use a special definition of start_server(): */
+#define HAVE_POPEN_RW 1
 
 /* For the access() function, for which OS/2 has no pre-defined
    mnemonic masks. */
