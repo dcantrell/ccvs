@@ -1,5 +1,11 @@
 Fri Sep 19 15:08:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* rcs.c (RCS_nodeisbranch): Assert that RCS is non-NULL.
+	* commit.c (remove_file), rcs.c (RCS_getversion), rtag.c
+	(rtag_fileproc), status.c (status_fileproc, tag_list_proc), tag.c
+	(tag_fileproc): Call RCS_nodeisbranch not RCS_isbranch
+	in contexts where we know the RCS argument is non-NULL.
+
 	* commit.c (find_fileproc): Pass tag not NULL to Version_TS for
 	the tag.
 	* vers_ts.c (Version_TS): Improve (somewhat) the introductory

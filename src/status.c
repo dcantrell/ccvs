@@ -244,7 +244,7 @@ status_fileproc (callerdat, finfo)
 		{
 		    char *branch = NULL;
 
-		    if (RCS_isbranch (finfo->rcs, edata->tag))
+		    if (RCS_nodeisbranch (finfo->rcs, edata->tag))
 			branch = RCS_whatbranch(finfo->rcs, edata->tag);
 
 		    cvs_output ("   Sticky Tag:\t\t", 0);
@@ -329,7 +329,7 @@ tag_list_proc (p, closure)
     char *branch = NULL;
     char *buf;
 
-    if (RCS_isbranch (xrcsnode, p->key))
+    if (RCS_nodeisbranch (xrcsnode, p->key))
 	branch = RCS_whatbranch(xrcsnode, p->key) ;
 
     buf = xmalloc (80 + strlen (p->key)

@@ -556,7 +556,7 @@ tag_fileproc (callerdat, finfo)
 			       (int *) NULL);
     if (oversion != NULL)
     {
-	int isbranch = RCS_isbranch (finfo->rcs, symtag);
+	int isbranch = RCS_nodeisbranch (finfo->rcs, symtag);
 
 	/*
 	 * if versions the same and neither old or new are branches don't have 

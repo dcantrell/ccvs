@@ -1198,7 +1198,7 @@ RCS_getversion (rcs, tag, date, force_tag_match, simple_tag)
     {
 	char *branch, *rev;
 
-	if (! RCS_isbranch (rcs, tag))
+	if (! RCS_nodeisbranch (rcs, tag))
 	{
 	    /* We can't get a particular date if the tag is not a
                branch.  */
@@ -1482,6 +1482,8 @@ RCS_nodeisbranch (rcs, rev)
 {
     int dots;
     char *version;
+
+    assert (rcs != NULL);
 
     /* numeric revisions are easy -- even number of dots is a branch */
     if (isdigit (*rev))
