@@ -1050,31 +1050,36 @@ Category: /Advanced_Topics_/Branching_and_Mergin/
 
 
    You can avoid digging into RCS revision numbers
-   (executing "update -r <rev>" on each file) by
-   trying one of these: 
+   (executing "update -r " on each file) by trying
+   one of these: 
 
  o Use non-branch tags as you normally would.
    Non-branch tags attach to specific revisions, so
-   a "tag <tag>" command would mark the revisions
-   you have in your working directory, which are on
-   your branch. If you need to retrieve them, use
-   "update -r <non-branch-tag>" 
+   a "tag " command would mark the revisions you
+   have in your working directory, which are on your
+   branch. If you need to retrieve them, use "update
+   -r " 
 
-   Doing this overrides the sticky <branch_tag>
-   attached to your working directory with a
-   non-branch tag, which means you won't be able to
-   commit until you again move forward to the end of
-   the branch with "update -r <branch_tag>". 
+   Doing this overrides the sticky attached to your
+   working directory with a non-branch tag, which
+   means you won't be able to commit until you again
+   move forward to the end of the branch with
+   "update -r ". 
 
- o Use the "update -r <branch_tag>:<date>" trick. 
+ o Use the "update -r :" trick. 
 
    This is almost like using the '-D' option, but it
-   looks for revisions extant on <date> only along
-   the given branch. 
+   looks for revisions extant on only along the
+   given branch. 
 
    As in #1, you can't commit to this kind of
    working area, because it has a sticky date
    referring to revisions in the middle of a branch.
+
+   [comment from the audience: You are dreaming..
+   this does not work.. try it, you get No such tag:
+   "MYTAG:May 1" or similar. I wish it did because I
+   need it. julian@whistle.com] 
 
  o You can branch a branch. 
 
@@ -1090,7 +1095,7 @@ Category: /Advanced_Topics_/Branching_and_Mergin/
    revision 1.2.4.2.4.2.2.1 grab you?) 
 
 
-   Last modified: 6/13/1997 
+   Last modified: 9/8/1997 
 
    17. Once I've found the files I want, how do I start changing them? I keep getting
    ----------------------------------------------------------------------------------
