@@ -778,9 +778,10 @@ admin_fileproc (callerdat, finfo)
 		}
                 else
 		{
-		    error (0, 0,
-			  "%s: Symbolic name or revision %s is undefined",
-			   rcs->path, p);
+		    if (!really_quiet)
+			error (0, 0,
+			       "%s: Symbolic name or revision %s is undefined.",
+			       rcs->path, p);
 		    status = 1;
 		}
 		free (tag);
@@ -879,7 +880,8 @@ admin_fileproc (callerdat, finfo)
 	   message has given a more specific error.  The point of this
 	   additional message is to make it clear that the previous problems
 	   caused CVS to forget about the idea of modifying the RCS file.  */
-	error (0, 0, "RCS file for `%s' not modified", finfo->file);
+	if (!really_quiet)
+	    error (0, 0, "RCS file for `%s' not modified.", finfo->file);
 	RCS_abandon (rcs);
     }
 
