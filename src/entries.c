@@ -217,7 +217,7 @@ freesdt (p)
     free ((char *) sdtp);
 }
 
-Entnode *
+static Entnode *
 fgetentent(fpin)
     FILE *fpin;
 {
