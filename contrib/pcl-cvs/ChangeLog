@@ -1,3 +1,18 @@
+Tue Jan 16 13:57:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* Makefile.in: Rename "dist" target back to "dist-dir".  The
+	latter is what actually gets used.
+	(pcl-cvs.dvi): Restore srcdir to pcl-cvs.texinfo.  Fix typo
+	(pcl-cvs.texifo -> pcl-cvs.texinfo).
+	(TEXINDEX,TEX,SET_TEXINPUTS): New variables.
+	(.el.elc): Copy .el file to build dir so .elc file gets put there.
+	(dist-dir): Fix typo (cvs.info -> pcl-cvs.info).
+	* cookie.el: New file, copied from elib 1.0.
+	* README: Remove note about requiring elib; it claimed that CVS
+	contained a copy of elib, but it lied.
+	* pcl-cvs.el: Change (require 'cookie) to (load "cookie.el").
+	* pcl-cvs-lucid.el: Change (require 'pcl-cvs) to (load "pcl-cvs.el").
+
 Fri Jan 12 10:32:14 1996  Greg A. Woods  <woods@most.weird.com>
 
 	* pcl-cvs.elc, pcl-cvs-lucid.elc: removed

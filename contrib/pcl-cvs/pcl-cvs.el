@@ -36,7 +36,8 @@
 ;;; or newer.  Use the version of RCS best suited for the version of CVS you're
 ;;; using.
 
-(require 'cookie)			; from ELIB-1.0
+; (require 'cookie)			; from ELIB-1.0
+(load "cookie.el")
 (require 'add-log)			; for all the ChangeLog goodies
 
 (provide 'pcl-cvs)

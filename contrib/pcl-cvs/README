@@ -3,11 +3,6 @@ This is the readme file for pcl-cvs, release 1.05-CVS-$Name$.
 Pcl-cvs is a front-end to CVS versions 1.5 through 1.7.  It integrates
 the most frequently used CVS commands into an emacs interface.
 
-This release of pcl-cvs requires Elib 1.0 or later.  Elib-1.0 is
-included with the CVS distribution.  You can also get Elib from
-prep.ai.mit.edu in pub/gnu/elib-1.0.tar.gz, and possibly at many other
-sites which mirror prep.
-
 There may be some configuration that needs to be done in pcl-cvs.el to
 get it to work.  See the instructions in the file INSTALL.
 

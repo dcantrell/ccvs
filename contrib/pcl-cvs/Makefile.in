@@ -86,17 +86,42 @@ INSTALL_DATA = @INSTALL_DATA@
 
 MAKEINFO = makeinfo
 
+SET_TEXINPUTS = TEXINPUTS=.:$(srcdir):$$TEXINPUTS
+
+# Don Knuth's TeX formatter
+TEX = tex
+
+# auxiliary program for sorting Texinfo indices
+TEXINDEX = texindex
+
 DVIPS = dvips
 DVIPSFLAGS = 
-
-.SUFFIXES:	.el .elc
-.el.elc:
-	@echo "You can probably ignore free variable and unknown function warnings..."
-	$(EMACS) $(BATCHFLAGS) -f batch-byte-compile $?
 
 # CYGNUS LOCAL: install does not depend on info
 all: $(ELCFILES) # info
 .PHONY:	all
+
+.SUFFIXES:	.el .elc
+# We copy the .el file to the build dir--is there a cleaner way to get
+# emacs to compile the .el file from srcdir and put the .elc in the build dir?
+# (that is also why we have separate rules for pcl-cvs.elc and 
+# pcl-cvs-lucid.elc rather than just using a .el.elc rule).
+pcl-cvs.elc: pcl-cvs.el
+	@echo "You can probably ignore free variable and unknown function warnings..."
+	if test -f pcl-cvs.el; then \
+	  : OK, we are building in srcdir ; \
+	else \
+	  ln $(srcdir)/pcl-cvs.el . ; \
+	fi
+	$(EMACS) $(BATCHFLAGS) -f batch-byte-compile pcl-cvs.el
+pcl-cvs-lucid.elc: pcl-cvs-lucid.el
+	@echo "You can probably ignore free variable and unknown function warnings..."
+	if test -f pcl-cvs-lucid.el; then \
+	  : OK, we are building in srcdir ; \
+	else \
+	  ln $(srcdir)/pcl-cvs-lucid.el . ; \
+	fi
+	$(EMACS) $(BATCHFLAGS) -f batch-byte-compile pcl-cvs-lucid.el
 
 check installcheck:
 	@echo "$@ not supported in this makefile..."
@@ -143,11 +168,11 @@ dvi: pcl-cvs.dvi
 
 # this mess seems to be necessary to make the index right...
 pcl-cvs.dvi pcl-cvs.aux: pcl-cvs.texinfo
-	$(SET_TEXINPUTS) $(TEX) pcl-cvs.texinfo
-	$(SET_TEXINPUTS) $(TEX) pcl-cvs.texinfo
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/pcl-cvs.texinfo
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/pcl-cvs.texinfo
 	-$(TEXINDEX) pcl-cvs.cp pcl-cvs.fn pcl-cvs.vr pcl-cvs.tp pcl-cvs.ky \
 		pcl-cvs.pg
-	$(SET_TEXINPUTS) $(TEX) pcl-cvs.texifo
+	$(SET_TEXINPUTS) $(TEX) $(srcdir)/pcl-cvs.texinfo
 
 pcl-cvs.ps: pcl-cvs.dvi
 	$(DVIPS) $(DVIPSFLAGS) pcl-cvs.dvi -o pcl-cvs.ps
@@ -173,14 +198,14 @@ ls:
 	@echo $(DISTFILES)
 .PHONY: ls
 
-dist: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
+dist-dir: ${OBJDIR_DISTFILES} ${DISTFILES} pcl-cvs.info
 	mkdir ${DISTDIR}
 	for i in ${DISTFILES}; do \
 	  ln $(srcdir)/$${i} ${DISTDIR}; \
 	done
 	ln ${OBJDIR_DISTFILES} ${DISTDIR}
 	if [ -f pcl-cvs.info-1 ]; \
-	  then ln -f cvs.info-* ${DISTDIR}; \
+	  then ln -f pcl-cvs.info-* ${DISTDIR}; \
 	  else : Pacify Ultrix sh; \
 	fi
 .PHONY: dist-dir
