@@ -1,5 +1,9 @@
 2002-12-19  Derek Price  <derek@ximbiot.com>
 
+	* cvsnt.mak: Add lib/fnmatch.h.in -> lib/fnmatch.h rule.
+
+2002-12-19  Derek Price  <derek@ximbiot.com>
+
 	* INSTALL: Remove references to options.h.
 	* cvsnt.mak: Ditto.
 	* FAQ: Ditto, plus some references to installing RCS & DIFF.  Wow.

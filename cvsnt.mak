@@ -3627,6 +3627,8 @@ NODEP_CPP_FNCAS=\
 "$(INTDIR)\fncase.obj" : $(SOURCE) $(DEP_CPP_FNCAS) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+".\lib\fnmatch.h" : .\lib\fnmatch.h.in
+	-@copy .\lib\fnmatch.h.in .\lib\fnmatch.h
 
 # End Source File
 # End Target
