@@ -1,3 +1,10 @@
+2004-10-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* commit.c (checkaddfile): Create a dead version for a new file
+	added to a branch. Fixes FIXCVS for tagdate tests.
+	* sanity.sh (tagdate): Update to expect correct results.
+	(death2, branch-after-import, join, ignore-on-branch): Ditto.
+	
 2004-10-26 Derek Price <derek@ximbiot.com>
 
 	* client.c (connect_to_gserver): Avoid truncating error messages from

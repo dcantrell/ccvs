@@ -5375,7 +5375,7 @@ ${PROG} update: file4 is no longer in the repository"
 	  dotest death2-16 "${testcvs} -q commit -m add" \
 "Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
-new revision: 1\.1\.2\.1; previous revision: 1\.1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 
 	  # Add a new file on the branch.
@@ -8408,7 +8408,7 @@ ${PROG} add: use .${PROG} commit. to add this file permanently"
 "${testcvs} commit -m cvs-add file2" \
 "Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
-new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1
+new revision: 1\.1\.1\.1\.2\.2; previous revision: 1\.1\.1\.1\.2\.1
 done"
 
 	  if $keep; then
@@ -8704,7 +8704,7 @@ new revision: 1\.1\.2\.1; previous revision: 1\.1
 done
 Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
-new revision: 1\.1\.2\.1; previous revision: 1\.1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done
 Removing file3;
 ${CVSROOT_DIRNAME}/first-dir/file3,v  <--  file3
@@ -8791,8 +8791,8 @@ M file4'
 U first-dir/file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into file2
+retrieving revision 1\.1\.2\.2
+Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U first-dir/file3
 ${PROG} checkout: scheduling first-dir/file3 for removal
 U first-dir/file4
@@ -8826,8 +8826,8 @@ U first-dir/file7'
 "U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into file2
+retrieving revision 1\.1\.2\.2
+Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 ${PROG} update: scheduling file3 for removal
 M file4
 ${PROG} update: file file4 is locally modified, but has been removed in revision branch
@@ -8865,8 +8865,8 @@ T file7"
 "U file1
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1.1
-retrieving revision 1.1.2.1
-Merging differences between 1.1 and 1.1.2.1 into file2
+retrieving revision 1.1.2.2
+Merging differences between 1.1 and 1.1.2.2 into file2
 ${PROG} update: scheduling file3 for removal
 ${PROG} update: file file4 has been modified, but has been removed in revision branch
 U file8
@@ -8899,8 +8899,8 @@ U file1
 U file2
 RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
 retrieving revision 1\.1
-retrieving revision 1\.1\.2\.1
-Merging differences between 1\.1 and 1\.1\.2\.1 into file2
+retrieving revision 1\.1\.2\.2
+Merging differences between 1\.1 and 1\.1\.2\.2 into file2
 U file3
 ${PROG} update: scheduling file3 for removal
 U file4
@@ -15927,7 +15927,7 @@ T file1'
 	  dotest ignore-on-branch-5 "$testcvs -q ci -mbranch file2" \
 "Checking in file2;
 $CVSROOT_DIRNAME/ignore-on-branch/file2,v  <--  file2
-new revision: 1\.1\.2\.1; previous revision: 1\.1
+new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
 done"
 	  dotest ignore-on-branch-6 "$testcvs -q up -rbranch2" \
 "${PROG} update: file2 is no longer in the repository"
@@ -22446,17 +22446,12 @@ done"
 	  dotest tagdate-24 "${testcvs} add file2" \
 "${PROG} add: scheduling file \`file2' for addition on branch \`br2'
 ${PROG} add: use .${PROG} commit. to add this file permanently"
-	  # FIXCVS: This test should create a 1.2.2.1 that is dead
-	  # and a 1.2.2.2 here. Otherwise datestamp checkouts of
-	  # the branch between creation of 1.1 and 1.2.2.1 will
-	  # cause a trunk version of the file to be visible on the
-          # branch.
 	  dotest tagdate-25 "${testcvs} -q ci -m add file2" \
 "Checking in file2;
 ${CVSROOT_DIRNAME}/first-dir/file2,v  <--  file2
-new revision: 1\.2\.2\.1; previous revision: 1\.2
+new revision: 1\.2\.2\.2; previous revision: 1\.2\.2\.1
 done"
-	  date_T9=`getrlogdate -r1.2.2.1 first-dir/file2`
+	  date_T9=`getrlogdate -r1.2.2.2 first-dir/file2`
 	  cd ../..
 
 	  # Time  Rev     Branch  Comments
@@ -22473,13 +22468,8 @@ done"
 	  # T6    1.1.2.1 br2     first-dir/file3 committed "br2-1"
 	  # T7    1.1     trunk   first-dir/file2 committed "trunk-1"
 	  # T8    1.2     trunk   first-dir/file2 committed "trunk-2"
-	  #
-	  # FIXCVS? PROBLEM... checkouts of the br2 branch after T8
-	  # which specifies a timestamp between T8 and before T9 will
-	  # show version 1.2 of the file on the br branch even though
-	  # that was not the real branch point chosen by the user.
-	  #
-	  # T9    1.2.2.1 br2     first-dir/file2 committed "br2-1"
+	  # T8    1.2.2.1 br2     first-dir/file2 dead
+	  # T9    1.2.2.2 br2     first-dir/file2 committed "br2-1"
 	  # 
 
 	  mkdir 4; cd 4
@@ -22540,7 +22530,6 @@ U first-dir-trunk-t8/file2"
 "${testcvs} co -r br2 -D'$date_T8' -d first-dir-br2-t8 first-dir" \
 "${PROG} checkout: Updating first-dir-br2-t8
 U first-dir-br2-t8/file1
-U first-dir-br2-t8/file2
 U first-dir-br2-t8/file3"
 	  dotest tagdate-26-br2-t9 \
 "${testcvs} co -r br2 -D'$date_T9' -d first-dir-br2-t9 first-dir" \
@@ -22694,14 +22683,6 @@ File: file2            	Status: Up-to-date
    Sticky Tag:		(none)
    Sticky Date:		[0-9.]*
    Sticky Options:	(none)"
-
-	  #
-	  # FIXCVS? It is considered unexpected by some that creation
-	  # of a branch br2 on file2 means that the trunk version of
-	  # the file shows thru to the branch in time-based checkouts
-	  # between the time that file2 was created and the actual
-	  # version of the file was committed to the branch.
-	  #
 	  dotest tagdate-27-br2-t8 \
 "${testcvs} status first-dir-br2-t8" \
 "${PROG} status: Examining first-dir-br2-t8
@@ -22711,15 +22692,6 @@ File: file1            	Status: Up-to-date
    Working revision:	1\.1\.4\.2[^.]*
    Repository revision:	1\.1\.4\.2	${CVSROOT_DIRNAME}/first-dir/file1,v
    Sticky Tag:		br2 (branch: 1\.1\.4)
-   Sticky Date:		(none)
-   Sticky Options:	(none)
-
-===================================================================
-File: file2            	Status: Needs Patch
-
-   Working revision:	1\.2[^.]*
-   Repository revision:	1\.2\.2\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
-   Sticky Tag:		br2 (branch: 1\.2\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)
 
@@ -22746,8 +22718,8 @@ File: file1            	Status: Up-to-date
 ===================================================================
 File: file2            	Status: Up-to-date
 
-   Working revision:	1\.2\.2\.1[^.]*
-   Repository revision:	1\.2\.2\.1	${CVSROOT_DIRNAME}/first-dir/file2,v
+   Working revision:	1\.2\.2\.2[^.]*
+   Repository revision:	1\.2\.2\.2	${CVSROOT_DIRNAME}/first-dir/file2,v
    Sticky Tag:		br2 (branch: 1\.2\.2)
    Sticky Date:		(none)
    Sticky Options:	(none)
@@ -22777,14 +22749,6 @@ File: file3            	Status: Up-to-date
 	  dotest tagdate-28-trunk-t8a 'cat first-dir-trunk-t8/file1' "trunk-2"
 	  dotest tagdate-28-trunk-t8b 'cat first-dir-trunk-t8/file2' "trunk-2"
 	  dotest tagdate-28-br2-t8a 'cat first-dir-br2-t8/file1' "br2-2"
-	  #
-	  # FIXCVS? It is considered unexpected by some that creation
-	  # of a branch br2 on file2 means that the trunk version of
-	  # the file shows thru to the branch in time-based checkouts
-	  # between the time that file2 was created and the actual
-	  # version of the file was committed to the branch.
-	  #
-	  dotest tagdate-28-br2-t8b 'cat first-dir-br2-t8/file2' "trunk-2"
 	  dotest tagdate-28-br2-t8c 'cat first-dir-br2-t8/file3' "br2-1"
 	  dotest tagdate-28-br2-t9a 'cat first-dir-br2-t9/file1' "br2-2"
 	  dotest tagdate-28-br2-t9b 'cat first-dir-br2-t9/file2' "br2-1"
