@@ -1,3 +1,11 @@
+Sun Feb 11 12:31:36 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsclient.texi: Add Set request.
+
+	* cvs.texinfo (Variables): Rewrite to reflect user variables
+	replacing environment variables; motivate the discussion better.
+	(Global options): Add -s option.
+
 Sat Feb 10 11:18:37 1996  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* cvs.texinfo (Variables): Fix @table commands.

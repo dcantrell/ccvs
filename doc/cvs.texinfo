@@ -4007,7 +4007,11 @@ suppressed.
 Make new working files files read-only.  Same effect
 as if the @code{$CVSREAD} environment variable is set
 (@pxref{Environment variables}).  The default is to
-make working files writable.
+make working files writable, unless watches are on
+(@pxref{Watches}).
+
+@item -s @var{variable}=@var{value}
+Set a user variable (@pxref{Variables}).
 
 @cindex Trace
 @item -t
@@ -4025,6 +4029,10 @@ Make new working files read-write.  Overrides the
 setting of the @code{$CVSREAD} environment variable.
 Files are created read-write by default, unless @code{$CVSREAD} is
 set or @samp{-r} is given.
+
+@item -z @var{gzip-level}
+Set the compression level.  Only has an effect on the
+@sc{cvs} client.
 
 @end table
 
@@ -7202,38 +7210,33 @@ scripts from the @samp{contrib} directory.)
 @node Variables
 @appendixsec Expansions in administrative files
 
-@c This whole section should be better motivated.  Why
-@c would you want to do all this stuff? (give some
-@c examples).
+Sometimes in writing an administrative file, you might
+want the file to be able to know various things based
+on environment @sc{cvs} is running in.  There are
+several mechanisms to do that.
 
-Before administrative files are processed various
-strings are expanded:
+To find the home directory of the user running @sc{cvs}
+(from the @code{HOME} environment variable), use
+@samp{~} followed by @samp{/} or the end of the line.
+Likewise for the home directory of @var{user}, use
+@samp{~@var{user}}.  These variables are expanded on
+the server machine, and don't get any resonable
+expansion if pserver (@pxref{Password authenticated})
+is in used; therefore user variables (see below) may be
+a better choice to customize behavior based on the user
+running @sc{cvs}.
+@c Based on these limitations, should we deprecate ~?
+@c What is it good for?  Are people using it?
 
-@table @code
-@item ~
-@itemx ~@var{user}
-Either of these strings followed by @samp{/} or the
-end of the line is expanded by the home directory from
-the @code{HOME} environment variable, or the home
-directory of the user @var{user}, respectively.
-
-@item $@var{variable}
-@itemx $@{@var{variable}@}
-In the first case @var{variable} must be followed by a
-non-alphanumeric character other than @samp{_}.  This
-represents a variable which gets expanded.  If
-@var{variable} begins with @samp{=}, the following
-characters are an environment variable, and it is
-expanded based on the environment of the user running
-@sc{cvs}.  For example, if the environment variable
-@code{TESTDIR} is set to @file{/work/local/tests} and
-the administrative file contains @code{sh
-$@{=TESTDIR@}/runtests}, then it is expanded to
-@code{sh /work/local/tests/runtests}.
-
-If @var{variable} begins with a letter, it is the name
-of an internal @sc{cvs} variable.  Currently the only
-ones defined are:
+One may want to know about various pieces of
+information internal to @sc{cvs}.  A @sc{cvs} internal
+variable has the syntax @code{$@{@var{variable}@}},
+where @var{variable} starts with a letter and consists
+of alphanumberic characters and @samp{_}.  If the
+character following @var{variable} is a
+non-alphanumeric character other than @samp{_}, the
+@samp{@{} and @samp{@}} can be omitted.  The @sc{cvs}
+internal variables are:
 
 @table @code
 @item CVSROOT
@@ -7253,7 +7256,28 @@ These all expand to the same value, which is the editor
 that @sc{cvs} is using.  @xref{Global options}, for how
 to specify this.
 @end table
-@end table
+
+If you want to pass a value to the administrative files
+which the user that is running @sc{cvs} can specify,
+use a user variable.  To expand a user variable, the
+administrative file contains
+@code{$@{=@var{variable}@}}.  To set a user variable,
+specify the global option @samp{-s} to @sc{cvs}, with
+argument @code{@var{variable}=@var{value}}.  It may be
+particularly useful to specify this option via
+@file{.cvsrc} (@pxref{~/.cvsrc}).
+
+For example, if you want the administrative file to
+refer to a test directory you might create a user
+variable @code{TESTDIR}.  Then if @sc{cvs} is invoked
+as @code{cvs -s TESTDIR=/work/local/tests}, and the
+administrative file contains @code{sh
+$@{=TESTDIR@}/runtests}, then that string is expanded
+to @code{sh /work/local/tests/runtests}.
+
+All other strings containing @samp{$} are reserved;
+there is no way to quote a @samp{$} character so that
+@samp{$} represents itself.
 
 @c ---------------------------------------------------------------------
 @node Environment variables
