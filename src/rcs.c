@@ -5510,7 +5510,6 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
      const char *filename;
 {
     int binary;
-    int retcode;
 
     TRACE( TRACE_FUNCTION, "RCS_cmp_file( %s, %s, %s, %s, %s )",
            rcs->path, rev1, rev2, options, filename );
@@ -5541,6 +5540,7 @@ RCS_cmp_file ( rcs, rev1, rev1_cache, rev2, options, filename )
     if (preserve_perms)
     {
 	char *tmp;
+	int retcode;
 
 	tmp = cvs_temp_name();
 	retcode = RCS_checkout(rcs, NULL, rev, NULL, options, tmp, NULL, NULL);

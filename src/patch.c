@@ -454,8 +454,9 @@ patch_fileproc (callerdat, finfo)
 	vers_tag = NULL;
     }
 
-    if( vers_tag == NULL && vers_head == NULL
-        || vers_tag && vers_head && strcmp( vers_head, vers_tag ) == 0 )
+    if ((vers_tag == NULL && vers_head == NULL) ||
+        (vers_tag != NULL && vers_head != NULL &&
+	 strcmp (vers_head, vers_tag) == 0))
     {
 	/* Nothing known about specified revs or
 	 * not changed between releases.

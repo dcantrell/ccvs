@@ -931,10 +931,10 @@ diff_file_nodiff( finfo, vers, empty_file, rev1_cache )
      * err...  ok, then both rev1 & rev2 must have resolved to an existing,
      * live version due to if statement we just closed.
      */
-    assert( !( diff_rev2 || diff_date2 ) || use_rev1 && use_rev2 );
+    assert (!(diff_rev2 || diff_date2) || (use_rev1 && use_rev2));
 
-    if( ( diff_rev1 || diff_date1 )
-        && ( use_rev1 == NULL || RCS_isdead( vers->srcfile, use_rev1 ) ) )
+    if ((diff_rev1 || diff_date1) &&
+	(use_rev1 == NULL || RCS_isdead (vers->srcfile, use_rev1)))
     {
 	/* The first revision does not exist, and no second revision
            was given.  */
