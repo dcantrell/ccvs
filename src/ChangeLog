@@ -1,5 +1,7 @@
 Sun Feb 22 13:31:51 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* commit.c (lock_RCS): Don't call RCS_rewrite.
+
 	* update.c (patch_file): If the revision is dead, let
 	checkout_file handle it.
 	* sanity.sh (death2): Add test for above patch: add

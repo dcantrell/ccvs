@@ -2164,7 +2164,25 @@ lock_RCS (user, rcs, rev, repository)
     {
 	(void) RCS_lock(rcs, rev, 1);
     }
-    RCS_rewrite (rcs, NULL, NULL);
+
+    /* We used to call RCS_rewrite here, and that might seem
+       appropriate in order to write out the locked revision
+       information.  However, such a call would actually serve no
+       purpose.  CVS locks will prevent any interference from other
+       CVS processes.  The comment above rcs_internal_lockfile
+       explains that it is already unsafe to use RCS and CVS
+       simultaneously.  It follows that writing out the locked
+       revision information here would add no additional security.
+
+       If we ever do care about it, the proper fix is to create the
+       RCS lock file before calling this function, and maintain it
+       until the checkin is complete.
+
+       The call to RCS_lock is still required at present, since in
+       some cases RCS_checkin will determine which revision to check
+       in by looking for a lock.  FIXME: This is rather roundabout,
+       and a more straightforward approach would probably be easier to
+       understand.  */
 
     if (err == 0)
     {
