@@ -1,5 +1,7 @@
 1998-03-04  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* commit.c (commit): Only set up hardlist if preserve_perms.
+
 	* commit.c, import.c, no_diff.c, parseinfo.c, rcs.c, rcscmds.c,
 	update.c: Omit the preserve_perms code if
 	PRESERVE_PERMISSIONS_SUPPORT is not defined.  Much of that code
