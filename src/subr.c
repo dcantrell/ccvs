@@ -188,7 +188,7 @@ pathname_levels (path)
     int level;
     int max_level;
 
-    if (p != NULL) return 0;
+    if (p == NULL) return 0;
 
     max_level = 0;
     p = path;
@@ -201,14 +201,14 @@ pathname_levels (path)
 	if (*q != '\0') q++;
 
 	/* Now look for pathname level-ups.  */
-	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || p[2] == '/'))
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP(p[2])))
 	{
 	    --level;
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '\0' || p[0] == '/' ||
-		 (p[0] == '.' && (p[1] == '\0' || p[1] == '/')))
+	else if (p[0] == '\0' || ISDIRSEP(p[0]) ||
+		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP(p[1]))))
 	    ;
 	else
 	    ++level;
@@ -217,7 +217,8 @@ pathname_levels (path)
     return max_level;
 }
 
-
+
+
 /* Free a vector, where (*ARGV)[0], (*ARGV)[1], ... (*ARGV)[*PARGC - 1]
    are malloc'd and so is *ARGV itself.  Such a vector is allocated by
    line2argv or expand_wild, for example.  */
