@@ -1,3 +1,8 @@
+1999-03-25  Jim Kingdon  <http://www.cyclic.com>
+
+	* server.c (serve_root): Update comment about checking for missing
+	Root request.
+
 1999-03-24  Jim Kingdon  <http://www.cyclic.com>
 
 	* server.c (dirswitch): Also check dir here, similar to
