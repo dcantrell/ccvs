@@ -9661,6 +9661,13 @@ behavior}.
 @cindex Reference manual (files)
 @cindex CVSROOT (file)
 
+@c FIXME?  Somewhere there needs to be a more "how-to"
+@c guide to writing these.  I think the triggers
+@c (commitinfo, loginfo, taginfo, &c) are perhaps a
+@c different case than files like modules.  One
+@c particular issue that people sometimes are
+@c (unnecessarily?) worried about is performance, and
+@c the impact of writing in perl or sh or ____.
 Inside the repository, in the directory
 @file{$CVSROOT/CVSROOT}, there are a number of
 supportive files for @sc{cvs}.  You can use @sc{cvs} in a limited
