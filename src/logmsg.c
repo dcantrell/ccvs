@@ -173,6 +173,10 @@ fmt_proc (Node *p, void *closure)
  * If REPOSITORY is non-NULL, process rcsinfo for that repository; if it
  * is NULL, use the CVSADM_TEMPLATE file instead.  REPOSITORY should be
  * NULL when running in client mode.
+ *
+ * GLOBALS
+ *   Editor     Set to a default value by configure and overridable using the
+ *              -e option to the CVS executable.
  */
 void
 do_editor (char *dir, char **messagep, char *repository, List *changes)
@@ -195,13 +199,18 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
     if (noexec || reuse_log_message)
 	return;
 
-    /* Abort creation of temp file if no editor is defined */
-    /* FIXME - why test this here?  Editor is set by configure and
-     * editinfo_editor is really set later in this function.  This test
-     * should either be deleted or moved below the call to Parse_Info().
+    /* Abort before creation of the temp file if no editor is defined. */
+#ifdef CLIENT_SUPPORT
+    /* Skip looking for an editinfo_editor in CVSROOT/editinfo when we are
+     * running on a client (leave editinfo_editor NULL).
      */
+    if (!current_parsed_root->isremote)
+#endif
+    if( repository != NULL )
+        Parse_Info( CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
+                    &editinfo_editor );
     if (strcmp (Editor, "") == 0 && !editinfo_editor)
-	error(1, 0, "no editor defined, must use -e or -m");
+        error(1, 0, "no editor defined, must use -e or -m");
 
     /* Create a temporary file */
     /* FIXME - It's possible we should be relying on cvs_temp_file to open
@@ -281,18 +290,6 @@ do_editor (char *dir, char **messagep, char *repository, List *changes)
         error (1, errno, "%s", fname);
     if ( CVS_STAT (fname, &pre_stbuf) == -1)
 	pre_stbuf.st_mtime = 0;
-
-    if (editinfo_editor)
-	free (editinfo_editor);
-    editinfo_editor = (char *) NULL;
-#ifdef CLIENT_SUPPORT
-    if (current_parsed_root->isremote)
-	; /* nothing, leave editinfo_editor NULL */
-    else
-#endif
-    if (repository != NULL)
-	(void) Parse_Info (CVSROOTADM_EDITINFO, repository, editinfo_proc, 0,
-		 &editinfo_editor);
 
     /* run the editor */
     run_setup (editinfo_editor ? editinfo_editor : Editor);
