@@ -62,7 +62,9 @@ EXTRA_DIST = \
 	ChangeLog-96 \
 	ChangeLog-97 \
 	build_src.com \
-	sanity.sh
+	sanity.sh \
+	version.c \
+	version.c.in
 
 check-local:
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs
@@ -70,6 +72,18 @@ check-local:
 .PHONY: remotecheck
 remotecheck:
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs
+
+## MAINTAINER Targets
+
+## version.c.  ##
+# - version.c needs to be updated only once, since it depends on
+#   configure.in, not on the results of a 'configure' run.
+# - It is guaranteed (with GNU Make) that when the version in configure.in
+#   is changed, acversion.m4 is built only after the new version number is
+#   propagated to the Makefile.  (Libtool uses the same guarantee.)
+version.c: $(srcdir)/version.c.in $(top_srcdir)/configure.in
+	sed 's,@VERSION\@,$(VERSION),g' $(srcdir)/version.c.in >version.tc
+	mv version.tc $(srcdir)/version.c
 
 # for backwards compatibility with the old makefiles
 .PHONY: realclean

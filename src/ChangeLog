@@ -1,5 +1,14 @@
 2000-12-26  Derek Price  <derek.price@openavenue.com>
 
+	* Makefile.am: new target for version.c
+	(EXTRA_DIST): add version.c.in & version.c so builds work when
+	configure doesn't
+	* Makefile.in: Regenerated
+	* stamp-h2.in: update timestamp
+	* version.c: ditto
+
+2000-12-26  Derek Price  <derek.price@openavenue.com>
+
 	* Makefile.am (INCLUDES): add zlib
 	* Makefile.in: Regenerated
 
