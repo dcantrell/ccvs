@@ -1010,17 +1010,17 @@ to perform a few more checks.
 The client sends a subsequent @code{ci} to actually add the file to the
 repository.
 
-Another quirk of the @code{add} request is that a pathname specified in
+Another quirk of the @code{add} request is that with CVS 1.9 and older,
+a pathname specified in
 an @code{Argument} request cannot contain @samp{/}.  There is no good
-reason for this restriction, and it could be eliminated if someone took
-the effort to rewrite the @code{add} code in the CVS server to not have
-it.  But in the meantime, the way to comply with it is to ensure that
+reason for this restriction, and in fact more recent CVS servers don't
+have it.
+But the way to interoperate with the older servers is to ensure that
 all @code{Directory} requests for @code{add} (except those used to add
 directories, as described above), use @samp{.} for
 @var{local-directory}.  Specifying another string for
 @var{local-directory} may not get an error, but it will get you strange
-@code{Checked-in} responses, until servers are fixed to send the correct
-responses.
+@code{Checked-in} responses from the buggy servers.
 
 @item watch-on \n
 @itemx watch-off \n
