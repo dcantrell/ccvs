@@ -1,3 +1,11 @@
+2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* client.c (start_rsh_server): Use new definition of RSH_DFLT to
+	allow "rsh" to be configured to default to "ssh" or some other
+	local remote transport program.
+
+	* Makefile.in: Regenerated.
+
 2003-03-19  Larry Jones  <lawrence.jones@eds.com>
 
 	* filesubr.c (mkdir_if_needed): Save errno since isdir() can clobber.

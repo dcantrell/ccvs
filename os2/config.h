@@ -109,6 +109,10 @@
 /* IBMCPP manual indicates they are void.  */
 #define RETSIGTYPE void
 
+/* The default remote shell to use, if one does not specify the CVS_RSH
+   environment variable. */
+#define RSH_DFLT "rsh"
+
 /* Define to `unsigned' if <sys/types.h> doesn't define.  */
 /* sys/types.h doesn't define it, but stdio.h does, which cvs.h
    #includes, so things should be okay.  */

@@ -62,6 +62,10 @@
 /* Define as the return type of signal handlers (int or void).  */
 #define RETSIGTYPE void
 
+/* The default remote shell to use, if one does not specify the CVS_RSH
+   environment variable. */
+#define RSH_DFLT "rsh"
+
 /* Define to `unsigned' if <sys/types.h> doesn't define.  */
 /* #undef size_t */
 

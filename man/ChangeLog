@@ -1,4 +1,9 @@
-2003-03-09  Mark D. Baushke  <mdb@cvshome.org>
+2003-03-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.1 (CVS_RSH): Note that the default "rsh" value may be set by
+	the --with-rsh configure option.
+
+	* Makefile.in: Regenerated.
 
 	* cvs.1 (Environment Variables): Document new CVS_PID variable.
 
