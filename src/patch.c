@@ -209,11 +209,21 @@ patch (argc, argv)
 #endif
 
     /* clean up if we get a signal */
+#ifdef SIGHUP
     (void) SIG_register (SIGHUP, patch_cleanup);
+#endif
+#ifdef SIGINT
     (void) SIG_register (SIGINT, patch_cleanup);
+#endif
+#ifdef SIGQUIT
     (void) SIG_register (SIGQUIT, patch_cleanup);
+#endif
+#ifdef SIGPIPE
     (void) SIG_register (SIGPIPE, patch_cleanup);
+#endif
+#ifdef SIGTERM
     (void) SIG_register (SIGTERM, patch_cleanup);
+#endif
 
     db = open_module ();
     for (i = 0; i < argc; i++)
