@@ -837,10 +837,13 @@ lock_wait (repos)
 {
     time_t now;
     char *msg;
+    struct tm *tm_p;
 
     (void) time (&now);
+    tm_p = gmtime (&now);
     msg = xmalloc (100 + strlen (lockers_name) + strlen (repos));
-    sprintf (msg, "[%8.8s] waiting for %s's lock in %s", ctime (&now) + 11,
+    sprintf (msg, "[%8.8s] waiting for %s's lock in %s",
+	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11,
 	     lockers_name, repos);
     error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
@@ -859,10 +862,13 @@ lock_obtained (repos)
 {
     time_t now;
     char *msg;
+    struct tm *tm_p;
 
     (void) time (&now);
+    tm_p = gmtime (&now);
     msg = xmalloc (100 + strlen (repos));
-    sprintf (msg, "[%8.8s] obtained lock in %s", ctime (&now) + 11, repos);
+    sprintf (msg, "[%8.8s] obtained lock in %s",
+	     (tm_p ? asctime (tm_p) : ctime (&now)) + 11, repos);
     error (0, 0, "%s", msg);
     /* Call cvs_flusherr to ensure that the user sees this message as
        soon as possible.  */
