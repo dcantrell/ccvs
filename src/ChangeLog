@@ -1,5 +1,8 @@
 Fri Jul  5 17:19:57 1996  Ian Lance Taylor  <ian@cygnus.com>
 
+	* server.c (server_pause_check): Check for errors when reading
+	from flowcontrol_pipe.
+
 	* client.c (call_in_directory): If dir_name is ".", call
 	Create_Admin if there is no CVS directory.
 	(send_dirent_proc): If there is no CVS subdirectory, pretend that
