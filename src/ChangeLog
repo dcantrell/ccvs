@@ -1,3 +1,14 @@
+Tue Jun 20 15:52:53 1995  Jim Meyering  (meyering@comco.com)
+
+	* checkout.c (checkout): Remove dcl of unused variable.
+	* client.c (call_in_directory, handle_clear_static_directory,
+	handle_set_sticky, handle_clear_sticky, send_a_repository,
+	send_modified, send_dirent_proc): Remove dcls of unused variables.
+	* server.c (receive_file, serve_modified, server_cleanup):
+	Remove dcls of unused variables.
+	* subr.c (copy_file): Remove dcl of unused variable.
+	* vers_ts.c (time_stamp_server): Remove dcl of unused variable.
+
 Mon Jun 19 13:49:35 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
 	* sanity.sh: Fix commencement message --- the test suite says
