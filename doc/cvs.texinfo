@@ -4863,13 +4863,12 @@ not recursive.  You have to expcicitly name files and
 directories that you wish to add to the repository.
 However, each directory will need to be added
 separately before you will be able to add new files
-to those directories. 
+to those directories.
 
 @example
 $ mkdir -p foo/bar
 $ cp ~/myfile foo/bar/myfile
-$ cvs add foo
-$ cvs add foo/bar
+$ cvs add foo foo/bar
 $ cvs add foo/bar/myfile
 @end example
 
@@ -7085,6 +7084,7 @@ relevant text string, such as @code{$@splitrcskeyword{Id}$}, inside the
 file, and commit the file.  @sc{cvs} will automatically (Or,
 more accurately, as part of the update run that
 automatically happens after a commit.)
+expand the string as part of the commit operation.
 
 It is common to embed the @code{$@splitrcskeyword{Id}$} string in
 the source files so that it gets passed through to
@@ -10732,7 +10732,7 @@ selected by @samp{-b} and @samp{-r}.
 
 Contributed examples are gratefully accepted.
 
-@c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+@c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node ls & rls
 @appendixsec ls & rls
 @cindex ls (subcommand)
