@@ -6852,19 +6852,16 @@ ${PROG} [a-z]*: Updating top-dir"
           #   ${PROG} [a-z]*: Updating top-dir"
 	  # is correct but it isn't clear why that would be correct instead
 	  # of the remote CVS behavior.
+	  #
+	  # The DOTSTAR matches of a bunch of lines like
+	  # "U CVSROOT/checkoutlist".  Trying to match them more precisely
+	  # seemed to cause trouble.  For example CVSROOT/cvsignore will
+	  # be present or absent depending on whether we ran the "ignore"
+	  # test or not.
 	  dotest toplevel-9 "${testcvs} update -d" \
 "${PROG} [a-z]*: Updating \.
 ${PROG} [a-z]*: Updating CVSROOT
-U CVSROOT/checkoutlist
-U CVSROOT/commitinfo
-U CVSROOT/cvswrappers
-U CVSROOT/editinfo
-U CVSROOT/loginfo
-U CVSROOT/modules
-U CVSROOT/notify
-U CVSROOT/rcsinfo
-U CVSROOT/taginfo
-U CVSROOT/verifymsg
+${DOTSTAR}
 ${PROG} [a-z]*: Updating top-dir" \
 "${PROG} [a-z]*: Updating \.
 U file1

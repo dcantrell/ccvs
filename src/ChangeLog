@@ -1,3 +1,8 @@
+Sun Jun 15 22:30:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (toplevel): Match U CVSROOT/* lines with DOTSTAR in
+	test toplevel-9.
+
 Thu Jun 12 10:27:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (toplevel): Remove Emptydir before starting.
