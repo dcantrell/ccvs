@@ -1,3 +1,8 @@
+2004-05-02  Derek Price  <derek@ximbiot.com>
+
+	* ls.c (ls_print): Return 0.
+	(Patch from Mark D. Baushke <mdb@cvshome.org>.)
+
 2004-04-30  Derek Price  <derek@ximbiot.com>
 
 	* tag.c (tag_check_valid): Treat a NULL repository the same as an empty
