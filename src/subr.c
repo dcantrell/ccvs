@@ -864,13 +864,20 @@ sleep_past (desttime)
  * Print tracing information to stderr on request.  I haven't decided to
  * actually use levels yet, but I did implement them as CVSNT did.
  */
-void cvs_trace(int level, const char *fmt, ...)
+#if PROTOTYPES
+void cvs_trace ( int level, const char *fmt, ... )
+#else /* ! PROTOTYPES */
+void cvs_trace ( level, fmt, va_alist )
+    int level;
+    const char *fmt;
+    va_dcl
+#endif /* PROTOTYPES */
 {
     if(trace >= level)
     {
 	va_list va;
 
-	va_start(va, fmt);
+	VA_START(va, fmt);
 	fprintf(stderr,"%c -> ",server_active?'S':' ');
 	vfprintf(stderr, fmt, va);
 	fprintf(stderr,"\n");

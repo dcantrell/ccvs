@@ -16,46 +16,11 @@
 
 #include "cvs.h"
 
-#include <stdio.h>
-
 /* If non-zero, error will use the CVS protocol to stdout to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
    process and packages up its stderr in the protocol.  */
 int error_use_protocol; 
-
-#ifdef HAVE_VPRINTF
-
-#ifdef __STDC__
-#include <stdarg.h>
-#define VA_START(args, lastarg) va_start(args, lastarg)
-#else /* ! __STDC__ */
-#include <varargs.h>
-#define VA_START(args, lastarg) va_start(args)
-#endif /* __STDC__ */
-
-#else /* ! HAVE_VPRINTF */ 
-
-#ifdef HAVE_DOPRNT
-#define va_alist args
-#define va_dcl int args;
-#else /* ! HAVE_DOPRNT */
-#define va_alist a1, a2, a3, a4, a5, a6, a7, a8
-#define va_dcl char *a1, *a2, *a3, *a4, *a5, *a6, *a7, *a8;
-#endif /* HAVE_DOPRNT */
-
-#endif /* HAVE_VPRINTF */ 
-
-#if STDC_HEADERS
-#include <stdlib.h>
-#include <string.h>
-#else /* ! STDC_HEADERS */
-#ifdef __STDC__
-void exit(int status);
-#else /* ! __STDC__ */
-void exit ();
-#endif /* __STDC__ */
-#endif /* STDC_HEADERS */
 
 #ifndef strerror
 extern char *strerror ();
@@ -102,15 +67,15 @@ error_exit PROTO ((void))
 
 /* VARARGS */
 void
-#if defined (__STDC__)
+#if __STDC__
 error (int status, int errnum, const char *message, ...)
-#else
+#else /* ! __STDC__ */
 error (status, errnum, message, va_alist)
     int status;
     int errnum;
     const char *message;
     va_dcl
-#endif
+#endif /* __STDC__ */
 {
     int save_errno = errno;
 
@@ -219,33 +184,23 @@ error (status, errnum, message, va_alist)
    Exit with status EXIT_FAILURE if STATUS is nonzero.  */
 /* VARARGS */
 void
-#if defined (HAVE_VPRINTF) && defined (__STDC__)
+#if __STDC__
 fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
-#else
+#else /* ! __STDC__ */
 fperrmsg (fp, status, errnum, message, va_alist)
     FILE *fp;
     int status;
     int errnum;
     char *message;
     va_dcl
-#endif
+#endif /* __STDC__ */
 {
-#ifdef HAVE_VPRINTF
     va_list args;
-#endif
 
     fprintf (fp, "%s: ", program_name);
-#ifdef HAVE_VPRINTF
     VA_START (args, message);
     vfprintf (fp, message, args);
     va_end (args);
-#else
-#ifdef HAVE_DOPRNT
-    _doprnt (message, &args, fp);
-#else
-    fprintf (fp, message, a1, a2, a3, a4, a5, a6, a7, a8);
-#endif
-#endif
     if (errnum)
 	fprintf (fp, ": %s", strerror (errnum));
     putc ('\n', fp);
