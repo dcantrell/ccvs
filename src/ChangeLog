@@ -1,3 +1,15 @@
+2003-10-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (admin): Fix a typo.
+
+	* admin.c (admin_fileproc): Restore the ':' character in the
+	-mtag:message admin argument even if the tag does not exist so
+	that other files with the tag will be found. Also, be more
+	paranoid that a symbolic tag actually points to a version that
+	exists.
+	(Reported by Rodolfo Schulz de Lima <rodolfo@rodsoft.org>.)
+	* sanity.sh (admin): Test these changes.
+	
 2003-10-17  Mark D. Baushke  <mdb@cvshome.org>
 
 	* admin.c (admin_fileproc): Force tag match on admin

@@ -22541,6 +22541,135 @@ text
 @d2 1
 @"
 
+	  dotest_fail admin-30 "${testcvs} admin -mbr:another-log-message \
+file2 aaa file3" \
+"RCS file: ${CVSROOT_DIRNAME}/first-dir/file2,v
+${SPROG} admin: ${CVSROOT_DIRNAME}/first-dir/file2,v: no such revision br: 1\.1
+${SPROG} admin: RCS file for .file2. not modified.
+RCS file: ${CVSROOT_DIRNAME}/first-dir/aaa,v
+${SPROG} admin: ${CVSROOT_DIRNAME}/first-dir/aaa,v: no such revision br
+${SPROG} admin: RCS file for .aaa. not modified.
+RCS file: ${CVSROOT_DIRNAME}/first-dir/Attic/file3,v
+done"
+	  dotest admin-31 "${testcvs} log" \
+"${SPROG} log: Logging \.
+
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aaa,v
+Working file: aaa
+head: 1\.4
+branch:
+locks: strict
+access list:
+symbolic names:
+	br1: 1\.3\.0\.2
+keyword substitution: kv
+total revisions: 5;	selected revisions: 5
+description:
+----------------------------
+revision 1\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+fourth
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+branches:  1\.3\.2;
+third
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+second
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+first
+----------------------------
+revision 1\.3\.2\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}4 -0
+branch-four
+=============================================================================
+
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+	foo
+	auth2
+symbolic names:
+	tagten: 1\.1
+	BO${PLUS}GUS: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+add
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+modify-on-branch
+=============================================================================
+
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.4
+branch:
+locks: strict
+access list:
+	auth3
+	auth2
+	foo
+symbolic names:
+	tagfour: 1\.3
+	br4: 1\.1\.0\.2
+	br2: 1\.1\.0\.2
+	tagthree: 1\.1
+	br1: 1\.1\.0\.2
+	tagtwo: 1\.1
+	tagone: 1\.1
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 3;	selected revisions: 3
+description:
+----------------------------
+revision 1\.4
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+yet_another
+----------------------------
+revision 1\.3
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+nuthr_line
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+modify
+=============================================================================
+
+RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/file3,v
+Working file: file3
+head: 1\.1
+branch:
+locks: strict
+access list:
+symbolic names:
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: dead;
+branches:  1\.1\.2;
+file file3 was initially added on branch br\.
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;  lines: ${PLUS}1 -0
+another-log-message
+============================================================================="
+
 	  cd ../..
 
 	  dokeep
