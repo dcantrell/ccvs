@@ -1,3 +1,8 @@
+2000-08-01  Larry Jones  <larry.jones@sdrc.com>
+
+	* configure.in, config.h.in: Add check for getpassphrase (Solaris).
+	* configure: Regenerated.
+
 2000-07-11  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in, config.h.in: Add checks for mknod() and st_rdev
