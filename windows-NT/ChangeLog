@@ -1,3 +1,9 @@
+Sun, 22 Jun 1997  Jim Kingdon
+
+	* win32.c: Also include winsock.h.
+	Include stdlib.h (for exit()).
+	* rcmd.c: Move include of cvs.h above test of HAVE_WINSOCK_H.
+
 Tue Jun 17 16:35:06 1997  Jim Kingdon  (unknown@beezley)
 
 	* rcmd.c: Check HAVE_WINSOCK_H in figuring out which files

@@ -12,6 +12,8 @@
 #include <windows.h>
 
 #include <config.h>
+#include <winsock.h>
+#include <stdlib.h>
 
 void
 init_winsock ()
