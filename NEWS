@@ -3,6 +3,8 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* `cvs ls filename' no longer causes an assertion failure.
+
 * The maximum length of the discovered comment leader used in a Log keyword
   substitution is now limited to 20 characters by default.  If a longer leader
   is discovered, then the keyword is not expanded.  This default behavior may

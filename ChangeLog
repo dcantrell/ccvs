@@ -1,3 +1,7 @@
+2004-10-21  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note `cvs ls filename' fix.
+
 2004-10-20  Mark D. Baushke  <mdb@cvshome.org>
 
 	* configure.in (ccvs_FUNC_SELECT): Work around Solaris 7 select()
