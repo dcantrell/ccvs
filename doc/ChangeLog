@@ -1,3 +1,9 @@
+Thu Nov 23 08:59:09 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (admin options): In saying that cvs admin -o is not
+	such a good way to undo a change, refer to the section which
+	describes the preferred way.
+
 Thu Nov 13 16:39:03 1995  Fred Fish  <fnf@cygnus.com>
 
 	* Makefile.in: Remove extraneous tab from empty line.
