@@ -28,7 +28,7 @@ m4/ulonglong.m4
 m4/wchar_t.m4
 m4/wint_t.m4
 m4/xsize.m4
-config/config.rpath
+build-aux/config.rpath
 
 m4/onceonly_2_57.m4
 lib/printf-args.h
