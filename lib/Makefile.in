@@ -180,18 +180,18 @@ LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = $(DEPDIR)/dup2.Po $(DEPDIR)/fncase.Po \
-@AMDEP_TRUE@	$(DEPDIR)/fnmatch.Po $(DEPDIR)/gethostname.Po \
-@AMDEP_TRUE@	$(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po \
-@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/strerror.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
-@AMDEP_TRUE@	$(DEPDIR)/valloc.Po $(DEPDIR)/waitpid.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/ftruncate.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getline.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/regex.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	$(DEPDIR)/fnmatch.Po $(DEPDIR)/fnmatch.h.in \
+@AMDEP_TRUE@	$(DEPDIR)/gethostname.Po $(DEPDIR)/memmove.Po \
+@AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/rename.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/valloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ftruncate.Po ./$(DEPDIR)/getdate.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getline.Po ./$(DEPDIR)/getopt.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/regex.Po ./$(DEPDIR)/savecwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -200,8 +200,9 @@ CFLAGS = @CFLAGS@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 DIST_SOURCES = $(libcvs_a_SOURCES)
 DIST_COMMON = ChangeLog Makefile.am Makefile.in dup2.c fncase.c \
-	fnmatch.c fnmatch.h getdate.c gethostname.c memmove.c mkdir.c \
-	rename.c strerror.c strstr.c strtoul.c valloc.c waitpid.c
+	fnmatch.c fnmatch.h.in getdate.c gethostname.c memmove.c \
+	mkdir.c rename.c strerror.c strstr.c strtoul.c valloc.c \
+	waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: all-am
@@ -232,6 +233,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.h.in@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/gethostname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/memmove.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/mkdir.Po@am__quote@
