@@ -1,9 +1,10 @@
 ;;;
 ;;;#ident "@(#)original: pcl-cvs.el,v 1.93 1993/05/31 22:44:00 ceder Exp"
 ;;;
-;;;#ident "@(#)elisp/pcl-cvs:$Name$:$Id$"
+;;;#ident "@(#)cvs/contrib/pcl-cvs:$Name$:$Id$"
 ;;;
-;;; pcl-cvs.el -- A Front-end to CVS 1.3 or later.  Release 1.05-$Name$.
+;;; pcl-cvs.el -- A Front-end to CVS 1.3 or later.
+;;; Release 1.05-CVS-$Name$.
 ;;; Copyright (C) 1991, 1992, 1993  Per Cederqvist
 
 ;;; This program is free software; you can redistribute it and/or modify
@@ -31,11 +32,11 @@
 ;;; Send bug reports and improvements to ceder@lysator.liu.se or
 ;;; ceder@signum.se.  Talk some about Signum Support here.  +++FIXME
 
-;;; Don't try to use this with CVS 1.2 or earlier.  It won't work.  Get CVS 1.6
+;;; Don't try to use this with CVS 1.2 or earlier.  It won't work.  Get CVS 1.7
 ;;; or newer.  Use the version of RCS best suited for the version of CVS you're
 ;;; using.
 
-(require 'cookie)			; from ELIB-0.7
+(require 'cookie)			; from ELIB-1.0
 (require 'add-log)			; for all the ChangeLog goodies
 
 (provide 'pcl-cvs)
@@ -43,7 +44,7 @@
 ;;; -------------------------------------------------------
 ;;;	    START OF THINGS TO CHECK WHEN INSTALLING
 
-;; use $GNU here, since may folks might install CVS as a GNU package
+;; also use $GNU here, since may folks might install CVS as a GNU package
 ;;
 (defvar local-path (cond
 		      ((getenv "LOCAL")
@@ -54,19 +55,20 @@
 		       "/usr/local"))
   "*Path prefix for most locally installed things.")
 
-;; this isn't likely to be right....
+;; this isn't likely to be right all the time....
 ;;
 (defvar local-gnu-path (cond
 		      ((getenv "GNU")
 		       (getenv "GNU"))
 		      (t
-		       "/usr/gnu"))
+		       "/usr/local"))	; or "/usr/gnu"?
   "*Path prefix for locally installed GNU software.")
 
 (defvar cvs-program (concat local-path "/bin/cvs")
   "*Full path to the cvs executable.")
 
 ;; SunOS-4.1.1_U1 has "diff.c 1.12 88/08/04 SMI; from UCB 4.6 86/04/03"
+;;
 (defvar cvs-diff-program (concat local-gnu-path "/bin/diff")
   "*Full path to the best diff program you've got.
 NOTE:  there are some nasty bugs in the context diff variants of some vendor
@@ -253,13 +255,14 @@ Due to a bug in emacs 18.57 the sentinel can't discard them reliably.")
 (defvar cvs-inhibit-copyright-message nil
   "*Non-nil means don't display a Copyright message in the ``*cvs*'' buffer.")
 
-(defconst pcl-cvs-version "1.05-$Name$"
+(defconst pcl-cvs-version "1.05-CVS-$Name$"
   "A string denoting the current release version of pcl-cvs.")
 
 (defconst cvs-startup-message
   (if cvs-inhibit-copyright-message
-      "PCL-CVS release 1.05-$Name$"
-    "PCL-CVS release 1.05-$Name$.  Copyright (C) 1992, 1993 Per Cederqvist
+      "PCL-CVS release 1.05-CVS-$Name$"
+    "PCL-CVS release 1.05 from CVS release $Name$.
+Copyright (C) 1992, 1993 Per Cederqvist
 Pcl-cvs comes with absolutely no warranty; for details consult the manual.
 This is free software, and you are welcome to redistribute it under certain
 conditions; again, consult the TeXinfo manual for details.
@@ -722,7 +725,7 @@ Full documentation is in the Texinfo file.  Here are the most useful commands:
 \\[cvs-mode-undo-local-changes]   Revert the last checked in version - discard your changes to the file.
 
 Entry to this mode runs cvs-mode-hook.
-This description is updated for release 1.05-$Name$ of pcl-cvs.
+This description is updated for release 1.05-CVS-$Name$ of pcl-cvs.
 
 All bindings:
 \\{cvs-mode-map}"
@@ -1010,8 +1013,8 @@ ERR-BUF should be 'STDOUT or 'STDERR."
     (insert "\nEmacs-version: " (emacs-version) "\n")
     (insert "Pcl-cvs Version: "
 	    "@(#)OrigId: pcl-cvs.el,v 1.93 1993/05/31 22:44:00 ceder Exp\n")
-    (insert "Local Version: "
-	    "@(#)elisp/pcl-cvs:$Name$:$Id$\n\n")
+    (insert "CVS Version: "
+	    "@(#)cvs/contrib/pcl-cvs:$Name$:$Id$\n\n")
     (insert (format "--- Contents of stdout buffer (%d chars) ---\n"
 		    (length stdout)))
     (insert stdout)
