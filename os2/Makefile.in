@@ -1,24 +1,177 @@
-### OS/2 has a real `make', so we might actually end up using this
+### OS/2 has a GNU `make', so we might actually end up using this
 ### file.  In any case, we would need it for 'make dist' to work
 ### properly on Unix machines.
 
-srcdir     = @srcdir@
-top_srcdir = @top_srcdir@
-cvs_srcdir = @top_srcdir@/src
-VPATH      = @srcdir@
+project: cvs.exe
+
+.SUFFIXES .c .obj .exe
+
+# I don't want to fool around with autoconf right now.  First get it
+# working, then make it fancy.
+srcdir     = .
+top_srcdir = ..
+cvs_srcdir = ../src
+VPATH      = ${srcdir}
 
 SHELL = /bin/sh
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
+# Do we need these?
+# prefix = @prefix@
+# exec_prefix = @exec_prefix@
 
+# taken straight from the example project
+LIB = s:\ibmcpp\lib;s:\toolkt21\os2lib;
+CINC = -Is:/ibmcpp/include -Is:/toolkt21/c/os2h
+CFLAGS = -C+ -W3 -Wpro+rea+tru+use+ -Ti+ -Ss+ -Gd+ -Gm+ -G4 -Q+ -Sm $(CINC)
+CFLAGS += -DIBM_CPP
+
+# TCP/IP stuff
+TCPIPLIB = s:\ibmtcpip\lib\tcp32dll.lib	s:\ibmtcpip\lib\so32dll.lib porttcp.obj
+RPCLIB   = s:\ibmtcpip\lib\rpc32dll.lib
+FTPLIB   = s:\ibmtcpip\lib\ftpapi.lib
+CFLAGS 	 += -DTCPIP_IBM -Is:\ibmtcpip\include
+
+# standard source rule
+.c.obj:
+	icc $(CFLAGS) /Fo$@ $*.c
+
+# headers specific to OS/2
 # tcpip.mak will probably be unnecessary, but I include it for now.
+OS2_HEADERS = tcpip.h tcpip.mak
 
-HEADERS = tcpip.h tcpip.mak
+# headers we use from the common src dir, ../src
+COMMON_HEADERS = \
+       ${cvs_srcdir}/cvs.h \
+       ${cvs_srcdir}/rcs.h \
+       ${cvs_srcdir}/hash.h \
+       ${cvs_srcdir}/myndbm.h \
+       ${cvs_srcdir}/patchlevel.h \
+       ${cvs_srcdir}/update.h \
+       ${cvs_srcdir}/server.h \
+       ${cvs_srcdir}/client.h \
+       ${cvs_srcdir}/error.h
 
-SOURCES = 
+# sources specific to OS/2
+OS2_SOURCES = 
 
-DISTFILES = ${HEADERS} ${SOURCES} \
+# sources we use from the common src dir, ../src
+COMMON_SOURCES = \
+       ${cvs_srcdir}/add.c \
+       ${cvs_srcdir}/admin.c \
+       ${cvs_srcdir}/checkin.c \
+       ${cvs_srcdir}/checkout.c \
+       ${cvs_srcdir}/classify.c \
+       ${cvs_srcdir}/client.c \
+       ${cvs_srcdir}/commit.c \
+       ${cvs_srcdir}/create_adm.c \
+       ${cvs_srcdir}/cvsrc.c \
+       ${cvs_srcdir}/diff.c \
+       ${cvs_srcdir}/entries.c \
+       ${cvs_srcdir}/error.c \
+       ${cvs_srcdir}/expand_path.c \
+       ${cvs_srcdir}/find_names.c \
+       ${cvs_srcdir}/hash.c \
+       ${cvs_srcdir}/history.c \
+       ${cvs_srcdir}/ignore.c \
+       ${cvs_srcdir}/import.c \
+       ${cvs_srcdir}/lock.c \
+       ${cvs_srcdir}/log.c \
+       ${cvs_srcdir}/login.c \
+       ${cvs_srcdir}/logmsg.c \
+       ${cvs_srcdir}/main.c \
+       ${cvs_srcdir}/modules.c \
+       ${cvs_srcdir}/myndbm.c \
+       ${cvs_srcdir}/no_diff.c \
+       ${cvs_srcdir}/parseinfo.c \
+       ${cvs_srcdir}/patch.c \
+       ${cvs_srcdir}/rcs.c \
+       ${cvs_srcdir}/rcscmds.c \
+       ${cvs_srcdir}/recurse.c \
+       ${cvs_srcdir}/release.c \
+       ${cvs_srcdir}/remove.c \
+       ${cvs_srcdir}/repos.c \
+       ${cvs_srcdir}/root.c \
+       ${cvs_srcdir}/rtag.c \
+       ${cvs_srcdir}/server.c \
+       ${cvs_srcdir}/status.c \
+       ${cvs_srcdir}/subr.c \
+       ${cvs_srcdir}/filesubr.c \
+       ${cvs_srcdir}/run.c \
+       ${cvs_srcdir}/tag.c \
+       ${cvs_srcdir}/update.c \
+       ${cvs_srcdir}/wrapper.c \
+       ${cvs_srcdir}/vers_ts.c \
+       ${cvs_srcdir}/version.c
+# end of $COMMON_SOURCES
+
+# object files from OS/2 sources
+OS2_OBJECTS = 
+
+
+# object files from ../src
+COMMON_OBJECTS = \
+       ${cvs_srcdir}/add.obj \
+       ${cvs_srcdir}/admin.obj \
+       ${cvs_srcdir}/checkin.obj \
+       ${cvs_srcdir}/checkout.obj \
+       ${cvs_srcdir}/classify.obj \
+       ${cvs_srcdir}/client.obj \
+       ${cvs_srcdir}/commit.obj \
+       ${cvs_srcdir}/create_adm.obj \
+       ${cvs_srcdir}/cvsrc.obj \
+       ${cvs_srcdir}/diff.obj \
+       ${cvs_srcdir}/entries.obj \
+       ${cvs_srcdir}/error.obj \
+       ${cvs_srcdir}/expand_path.obj \
+       ${cvs_srcdir}/find_names.obj \
+       ${cvs_srcdir}/hash.obj \
+       ${cvs_srcdir}/history.obj \
+       ${cvs_srcdir}/ignore.obj \
+       ${cvs_srcdir}/import.obj \
+       ${cvs_srcdir}/lock.obj \
+       ${cvs_srcdir}/log.obj \
+       ${cvs_srcdir}/login.obj \
+       ${cvs_srcdir}/logmsg.obj \
+       ${cvs_srcdir}/main.obj \
+       ${cvs_srcdir}/modules.obj \
+       ${cvs_srcdir}/myndbm.obj \
+       ${cvs_srcdir}/no_diff.obj \
+       ${cvs_srcdir}/parseinfo.obj \
+       ${cvs_srcdir}/patch.obj \
+       ${cvs_srcdir}/rcs.obj \
+       ${cvs_srcdir}/rcscmds.obj \
+       ${cvs_srcdir}/recurse.obj \
+       ${cvs_srcdir}/release.obj \
+       ${cvs_srcdir}/remove.obj \
+       ${cvs_srcdir}/repos.obj \
+       ${cvs_srcdir}/root.obj \
+       ${cvs_srcdir}/rtag.obj \
+       ${cvs_srcdir}/server.obj \
+       ${cvs_srcdir}/status.obj \
+       ${cvs_srcdir}/subr.obj \
+       ${cvs_srcdir}/filesubr.obj \
+       ${cvs_srcdir}/run.obj \
+       ${cvs_srcdir}/tag.obj \
+       ${cvs_srcdir}/update.obj \
+       ${cvs_srcdir}/wrapper.obj \
+       ${cvs_srcdir}/vers_ts.obj \
+       ${cvs_srcdir}/version.obj
+# end of $COMMON_OBJECTS
+
+SOURCES = ${OS2_SOURCES} ${COMMON_SOURCES}
+HEADERS = ${OS2_HEADERS} ${COMMON_HEADERS}
+OBJECTS = ${OS2_OBJECTS} ${COMMON_OBJECTS}
+
+
+# There seems to be no option to icc for specifying library locations,
+# so must `set' the path in the compilation environment.
+cvs.exe: ${OBJS} ${TCPIPLIB}
+	set LIB=${LIB} & icc -Q+ -Ti+ -Fe$@ -B"/batch" ${OBJS} ${TCPIPLIB}
+
+cvs.obj: ${SOURCES} ${HEADERS}
+
+
+DISTFILES = ${OS2_HEADERS} ${OS2_SOURCES} \
   README ChangeLog Makefile.in .cvsignore
 
 all:

@@ -1,3 +1,9 @@
+Wed Oct 25 12:52:54 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in: started adding lots of OS/2 gunk.
+        Took out autoconf stuff; don't want to fool around with that until
+        after it compiles on beezley.
+
 Tue Oct 24 13:51:05 1995  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* Makefile.in: add autoconf variables
