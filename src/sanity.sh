@@ -159,11 +159,36 @@ cd ${TESTDIR}
 
 # Make sure various tools work the way we expect, or try to find
 # versions that do.
-GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
-
 : ${AWK=awk}
 : ${EXPR=expr}
 : ${TR=tr}
+
+find_tool ()
+{
+  GLOCS="`echo $PATH | sed 's/:/ /g'` /usr/local/bin /usr/contrib/bin /usr/gnu/bin /local/bin /local/gnu/bin /gun/bin"
+  TOOL=""
+  for path in $GLOCS ; do
+    if test -x $path/g$1 ; then
+      if test "X`$path/g$1 --version`" != "X--version" ; then
+        TOOL=$path/g$1
+        break
+      fi
+    fi
+    if test -x $path/$1 ; then
+      if test "X`$path/$1 --version`" != "X--version" ; then
+        TOOL=$path/$1
+        break
+      fi
+    fi
+  done
+  if test -z "$TOOL"; then
+    :
+  else
+    echo "Notice: The default version of $1 is defective, using" >&2
+    echo "$TOOL instead." >&2
+  fi
+  echo "$TOOL"
+}  
 
 # Cause NextStep 3.3 users to lose in a more graceful fashion.
 if $EXPR 'abc
@@ -171,21 +196,7 @@ def' : 'abc
 def' >/dev/null; then
   : good, it works
 else
-  EXPR=""
-  for path in $GLOCS ; do
-    if test -x $path/gexpr ; then
-      if test "X`$path/gexpr --version`" != "X--version" ; then
-        EXPR=$path/gexpr
-        break
-      fi
-    fi
-    if test -x $path/expr ; then
-      if test "X`$path/expr --version`" != "X--version" ; then
-        EXPR=$path/expr
-        break
-      fi
-    fi
-  done
+  EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
     echo 'Running these tests requires an "expr" program that can handle'
     echo 'multi-line patterns.  Make sure that such an expr (GNU, or many but'
@@ -199,21 +210,7 @@ fi
 if $EXPR 'a
 b' : 'a
 c' >/dev/null; then
-  EXPR=""
-  for path in $GLOCS ; do
-    if test -x $path/gexpr ; then
-      if test "X`$path/gexpr --version`" != "X--version" ; then
-        EXPR=$path/gexpr
-        break
-      fi
-    fi
-    if test -x $path/expr ; then
-      if test "X`$path/expr --version`" != "X--version" ; then
-        EXPR=$path/expr
-        break
-      fi
-    fi
-  done
+  EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
     echo 'Warning: you are using a version of expr which does not correctly'
     echo 'match multi-line patterns.  Some tests may spuriously pass.'
@@ -232,21 +229,7 @@ cat ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo ${TESTDIR}/foo >${TESTDIR}/bar
 if $EXPR "`cat ${TESTDIR}/bar`" : "`cat ${TESTDIR}/bar`" >/dev/null; then
   : good, it works
 else
-  EXPR=""
-  for path in $GLOCS ; do
-    if test -x $path/gexpr ; then
-      if test "X`$path/gexpr --version`" != "X--version" ; then
-        EXPR=$path/gexpr
-        break
-      fi
-    fi
-    if test -x $path/expr ; then
-      if test "X`$path/expr --version`" != "X--version" ; then
-        EXPR=$path/expr
-        break
-      fi
-    fi
-  done
+  EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
     echo 'Warning: you are using a version of expr which does not correctly'
     echo 'match large patterns.  Some tests may spuriously fail.'
@@ -255,21 +238,7 @@ else
   fi
 fi
 if $EXPR "`cat ${TESTDIR}/bar`x" : "`cat ${TESTDIR}/bar`y" >/dev/null; then
-  EXPR=""
-  for path in $GLOCS ; do
-    if test -x $path/gexpr ; then
-      if test "X`$path/gexpr --version`" != "X--version" ; then
-        EXPR=$path/gexpr
-        break
-      fi
-    fi
-    if test -x $path/expr ; then
-      if test "X`$path/expr --version`" != "X--version" ; then
-        EXPR=$path/expr
-        break
-      fi
-    fi
-  done
+  EXPR=`find_tool expr`
   if test -z "$EXPR" ; then
     echo 'Warning: you are using a version of expr which does not correctly'
     echo 'match large patterns.  Some tests may spuriously pass.'
@@ -333,21 +302,7 @@ fi
 
 # now make sure that tr works on NULs
 if $EXPR `echo "123" | ${TR} '2' '\0'` : "123" >/dev/null; then
-  TR=""
-  for path in $GLOCS ; do
-    if test -x $path/gtr ; then
-      if test "X`$path/gtr --version`" != "X--version" ; then
-        TR=$path/gtr
-        break
-      fi
-    fi
-    if test -x $path/tr ; then
-      if test "X`$path/tr --version`" != "X--version" ; then
-        EXPR=$path/tr
-        break
-      fi
-    fi
-  done
+  TR=`find_tool tr`
   if test -z "$TR" ; then
     echo 'Warning: you are using a version of tr which does not correctly'
     echo 'handle NUL bytes.  Some tests may spuriously pass or fail.'
