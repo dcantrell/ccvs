@@ -1,3 +1,7 @@
+Tue Sep  9 13:09:58 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* DIFFUTILS-2.7-BUG: Eggert patch is preferred to Rittle one.
+
 Sun Sep  7 18:38:23 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (history options): Revise -e to say that it includes

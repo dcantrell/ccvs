@@ -1,9 +1,12 @@
 The enclosed two messages describe a bug in GNU diff 2.6 and 2.7 which
 may cause CVS to perform an erroneous merge.  You may wish to use GNU
-diff 2.5 or apply the patch supplied by Loren James Rittle below.  It
-would be nice to add this to the CVS testsuite, but I haven't done so
-because probably a lot of people who would like to run the testsuite
-are using the buggy diff.
+diff 2.5 or apply the patch supplied by Paul Eggert below.  Although
+there is also a patch from Loren James Rittle below, it is not
+recommended; it causes certains merges/diffs which should be noops to
+show differences (I have a testcase which I haven't gotten around to
+doing much with -kingdon).  It would be nice to add this to the CVS
+testsuite, but I haven't done so because probably a lot of people who
+would like to run the testsuite are using the buggy diff.
 
 From: friedman@splode.com (Noah Friedman)
 To: bug-gnu-utils@prep.ai.mit.edu
