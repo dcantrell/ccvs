@@ -1,3 +1,10 @@
+Wed Jun 25 13:39:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Common options): Rewrite comments concerning HEAD
+	and testcases and solution.  Changing HEAD might be too big a
+	change; might be better to phase it out.
+	(Common options, Tags): Add index entries for HEAD and BASE.
+
 Tue Jun 24 09:37:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Error messages): Add assertion failed.

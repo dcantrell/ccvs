@@ -4005,6 +4005,8 @@ rcsutil.c       5.10
 @cindex Tag, symbolic name
 @cindex Symbolic name (tag)
 @cindex Name, symbolic (tag)
+@cindex HEAD, as reserved tag name
+@cindex BASE, as reserved tag name
 You can use the @code{tag} command to give a symbolic name to a
 certain revision of a file.  You can use the @samp{-v} flag to the
 @code{status} command to see all tags that a file has, and
@@ -6971,6 +6973,8 @@ Available with the following commands: @code{annotate}, @code{checkout},
 and @code{watchers}.
 
 @item -r @var{tag}
+@cindex HEAD, special tag
+@cindex BASE, special tag
 Use the revision specified by the @var{tag} argument instead of the
 default @dfn{head} revision.  As well as arbitrary tags defined
 with the @code{tag} or @code{rtag} command, two special tags are
@@ -6989,14 +6993,20 @@ revision you last checked out into the current working directory.
 @c presumably be
 @c little problem changing it.  (b) is ugly as it differs
 @c from what HEAD means for other commands, but people
-@c might be used to it (note a change in NEWS? Or provide
-@c advance warning of it changing?) and possible useful
-@c (could be fixed by a new tag ".bhead" which would mean
-@c the head of the appropriate branch).  This
-@c should be investigated, test cases written, and
-@c documented (but HEAD should mean the same thing for all
-@c CVS commands, so I don't know if we should be
-@c documenting the current "cvs diff" behavior).
+@c and/or scripts are quite possibly used to it.
+@c See "head" tests in sanity.sh.
+@c Probably the best fix is to introduce two new
+@c special tags, ".thead" for the head of the trunk,
+@c and ".bhead" for the head of the current branch.
+@c Then deprecate HEAD.  This has the advantage of
+@c not suprising people with a change to HEAD, and a
+@c side benefit of also phasing out the poorly-named
+@c HEAD (see discussion of reserved tag names in node
+@c "Tags").  Of course, .thead and .bhead should be
+@c carefully implemented (with the implementation the
+@c same for "diff" as for everyone else), test cases
+@c written (similar to the ones in "head"), new tests
+@c cases written for things like default branches, &c.
 
 The tag specification is sticky when you use this
 @c option
