@@ -1,5 +1,12 @@
 2004-11-15  Derek Price  <derek@ximbiot.com>
 
+	* mkconfig.pl: Improve diagnostic messages.
+	(make_config_h): Don't use dir when creating temp file.
+	(save_copy): Use File::Copy::move to portably rename the file, possibly
+	across device boundries.
+
+2004-11-15  Derek Price  <derek@ximbiot.com>
+
 	* mkconfig.pl (make_config_h): Improve diagnostic message.
 
 2004-11-11  Mark D. Baushke  <mdb@cvshome.org>
