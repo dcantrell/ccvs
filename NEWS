@@ -3,6 +3,10 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Case insensitive clients once again preserve the case of filenames in
+  CVS/Entries for communication with the server, as specified in the CVS
+  client/server protocol spec.
+
 * Thanks to Ville Skyttä the man page is a bit more accurate.
 
 * Thanks to Ville Skyttä some unused variables were removed from the log_accum
