@@ -317,6 +317,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* Path to the pr utility */
+#undef PR_PROGRAM
+
 /* Define if you have GSSAPI with Kerberos version 5 available. */
 #undef HAVE_GSSAPI
 

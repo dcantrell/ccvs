@@ -1,3 +1,11 @@
+2001-02-22  Derek Price  <derek.price@openavenue.com>
+	    Pavel Roskin  <proski@gnu.org>
+
+	* configure.in: Define PR_PROGRAM if `pr' has been found.
+
+	* config.h.in: Regenerated.
+	* configure: Regenerated.
+
 2001-02-20  Derek Price  <derek.price@openavenue.com>
 
 	* acconfig.h (HAVE_GSSAPI): Removed.  Entries in acconfig.h aren't
