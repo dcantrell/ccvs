@@ -1,5 +1,14 @@
 Wed Jan  1 18:12:11 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Conflicts example): Use @asis in example to prevent
+	starting a line with a conflict marker.  This means that when
+	maintaining the file with CVS itself, CVS will not think there is
+	a conflict merely because of the conflict marker in the example.
+	IMHO, this is totally bogus and CVS needs a better way of figuring
+	out whether a conflict is resolved (see comments elsewhere in this
+	node), but until then....  Credit to Fred Fish for reporting the
+	problem.
+
 	* cvs.texinfo (cvsignore): Add paragraph about how .cvsignore
 	files in the sources being imported by "cvs import" override
 	"-I !".  Credit goes to Fred Fish for pointing out this problem.
