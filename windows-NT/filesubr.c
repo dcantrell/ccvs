@@ -475,11 +475,9 @@ unlink_file_dir (f)
     chmod (f, _S_IWRITE);
     if (unlink (f) != 0)
     {
-	/* Under Windows NT, unlink returns EACCES if the path
-           is a directory.  Under Windows 95, it returns ENOENT.
-           Under Windows XP, it can return ENOTEMPTY. */
-        if (errno == EISDIR || errno == EACCES || errno == ENOENT
-            || errno == ENOTEMPTY)
+	/* under Windows NT, unlink returns EACCES if the path
+	   is a directory.  Under Windows 95, ENOENT.  */
+        if (errno == EISDIR || errno == EACCES || errno == ENOENT)
                 return deep_remove_dir (f);
         else
 		/* The file wasn't a directory and some other
@@ -527,17 +525,13 @@ deep_remove_dir (path)
 		if (unlink (buf) != 0 )
 		{
 		    /* Under Windows NT, unlink returns EACCES if the path
-		     * is a directory.  Under Windows 95, it returns ENOENT.
-                     * Under Windows XP, it can return ENOTEMPTY.  It
-		     * isn't really clear to me whether checking errno is
-		     * better or worse than using _stat to check for a
-                     * directory.
-		     * We aren't really trying to prevent race conditions here
-		     * (e.g. what if something changes between readdir and
-		     * unlink?)
-                     */
-		    if (errno == EISDIR || errno == EACCES || errno == ENOENT
-                        || errno == ENOTEMPTY)
+		       is a directory.  Under Windows 95, ENOENT.  It
+		       isn't really clear to me whether checking errno is
+		       better or worse than using _stat to check for a directory.
+		       We aren't really trying to prevent race conditions here
+		       (e.g. what if something changes between readdir and
+		       unlink?)  */
+		    if (errno == EISDIR || errno == EACCES || errno == ENOENT)
 		    {
 			if (deep_remove_dir (buf))
 			{
@@ -786,7 +780,7 @@ last_component (const char *path)
     const char *last = 0;
 
     for (scan = path; *scan; scan++)
-        if (ISSLASH (*scan))
+        if (ISDIRSEP (*scan))
 	    last = scan;
 
     if (last && (last != path))

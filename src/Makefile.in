@@ -76,10 +76,8 @@ ECHO_T = @ECHO_T@
 EDITOR = @EDITOR@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FNMATCH_H = @FNMATCH_H@
 GMSGFMT = @GMSGFMT@
 HAVE_PUTENV = @HAVE_PUTENV@
-HAVE__BOOL = @HAVE__BOOL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -91,8 +89,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
-LIB_NANOSLEEP = @LIB_NANOSLEEP@
 LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
@@ -126,14 +122,12 @@ SENDMAIL = @SENDMAIL@
 SET_MAKE = @SET_MAKE@
 
 SHELL = /bin/sh
-STDBOOL_H = @STDBOOL_H@
 STRIP = @STRIP@
 TEXI2DVI = @TEXI2DVI@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
 YACC = @YACC@
-YFLAGS = @YFLAGS@
 ZLIB_CPPFLAGS = @ZLIB_CPPFLAGS@
 ZLIB_LIBS = @ZLIB_LIBS@
 ZLIB_SUBDIRS = @ZLIB_SUBDIRS@
@@ -176,9 +170,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib \
-              -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
-
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
@@ -214,7 +206,6 @@ cvs_SOURCES = \
 	log-buffer.c log-buffer.h \
 	login.c \
 	logmsg.c \
-	ls.c \
 	main.c \
 	mkmodules.c \
 	modules.c \
@@ -273,8 +264,6 @@ cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
 	$(ZLIB_LIBS) \
-	$(LIB_CLOCK_GETTIME) \
-	$(LIB_NANOSLEEP) \
 	$(LIBINTL)
 
 
@@ -306,16 +295,16 @@ am_cvs_OBJECTS = add.$(OBJEXT) admin.$(OBJEXT) annotate.$(OBJEXT) \
 	hash.$(OBJEXT) history.$(OBJEXT) ignore.$(OBJEXT) \
 	import.$(OBJEXT) lock.$(OBJEXT) log.$(OBJEXT) \
 	log-buffer.$(OBJEXT) login.$(OBJEXT) logmsg.$(OBJEXT) \
-	ls.$(OBJEXT) main.$(OBJEXT) mkmodules.$(OBJEXT) \
-	modules.$(OBJEXT) myndbm.$(OBJEXT) no_diff.$(OBJEXT) \
-	parseinfo.$(OBJEXT) patch.$(OBJEXT) rcs.$(OBJEXT) \
-	rcscmds.$(OBJEXT) recurse.$(OBJEXT) release.$(OBJEXT) \
-	remove.$(OBJEXT) repos.$(OBJEXT) root.$(OBJEXT) \
-	rsh-client.$(OBJEXT) run.$(OBJEXT) scramble.$(OBJEXT) \
-	server.$(OBJEXT) socket-client.$(OBJEXT) stack.$(OBJEXT) \
-	status.$(OBJEXT) subr.$(OBJEXT) tag.$(OBJEXT) update.$(OBJEXT) \
-	version.$(OBJEXT) vers_ts.$(OBJEXT) watch.$(OBJEXT) \
-	wrapper.$(OBJEXT) zlib.$(OBJEXT)
+	main.$(OBJEXT) mkmodules.$(OBJEXT) modules.$(OBJEXT) \
+	myndbm.$(OBJEXT) no_diff.$(OBJEXT) parseinfo.$(OBJEXT) \
+	patch.$(OBJEXT) rcs.$(OBJEXT) rcscmds.$(OBJEXT) \
+	recurse.$(OBJEXT) release.$(OBJEXT) remove.$(OBJEXT) \
+	repos.$(OBJEXT) root.$(OBJEXT) rsh-client.$(OBJEXT) \
+	run.$(OBJEXT) scramble.$(OBJEXT) server.$(OBJEXT) \
+	socket-client.$(OBJEXT) stack.$(OBJEXT) status.$(OBJEXT) \
+	subr.$(OBJEXT) tag.$(OBJEXT) update.$(OBJEXT) version.$(OBJEXT) \
+	vers_ts.$(OBJEXT) watch.$(OBJEXT) wrapper.$(OBJEXT) \
+	zlib.$(OBJEXT)
 cvs_OBJECTS = $(am_cvs_OBJECTS)
 cvs_LDFLAGS =
 SCRIPTS = $(bin_SCRIPTS)
@@ -341,21 +330,21 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/kerberos4-client.Po ./$(DEPDIR)/lock.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/log-buffer.Po ./$(DEPDIR)/log.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/login.Po ./$(DEPDIR)/logmsg.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ls.Po ./$(DEPDIR)/main.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/mkmodules.Po ./$(DEPDIR)/modules.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/myndbm.Po ./$(DEPDIR)/no_diff.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/parseinfo.Po ./$(DEPDIR)/patch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/rcs.Po ./$(DEPDIR)/rcscmds.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/recurse.Po ./$(DEPDIR)/release.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/remove.Po ./$(DEPDIR)/repos.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/root.Po ./$(DEPDIR)/rsh-client.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/run.Po ./$(DEPDIR)/scramble.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/server.Po ./$(DEPDIR)/socket-client.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/stack.Po ./$(DEPDIR)/status.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/subr.Po ./$(DEPDIR)/tag.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/update.Po ./$(DEPDIR)/vers_ts.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/version.Po ./$(DEPDIR)/watch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/wrapper.Po ./$(DEPDIR)/zlib.Po
+@AMDEP_TRUE@	./$(DEPDIR)/main.Po ./$(DEPDIR)/mkmodules.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/modules.Po ./$(DEPDIR)/myndbm.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/no_diff.Po ./$(DEPDIR)/parseinfo.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/patch.Po ./$(DEPDIR)/rcs.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rcscmds.Po ./$(DEPDIR)/recurse.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/release.Po ./$(DEPDIR)/remove.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/repos.Po ./$(DEPDIR)/root.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/rsh-client.Po ./$(DEPDIR)/run.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/scramble.Po ./$(DEPDIR)/server.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/socket-client.Po ./$(DEPDIR)/stack.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/status.Po ./$(DEPDIR)/subr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tag.Po ./$(DEPDIR)/update.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/vers_ts.Po ./$(DEPDIR)/version.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/watch.Po ./$(DEPDIR)/wrapper.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/zlib.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -464,7 +453,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/login.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logmsg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ls.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mkmodules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modules.Po@am__quote@

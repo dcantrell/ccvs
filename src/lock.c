@@ -66,6 +66,10 @@
 
 #include "cvs.h"
 
+#if !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT
+  /* use select as a workaround */
+# include "xselect.h"
+#endif /* !defined HAVE_NANOSLEEP && !defined HAVE_USLEEP && defined HAVE_SELECT */
 
 
 struct lock {
@@ -229,13 +233,13 @@ lock_name (const char *repository, const char *name)
 	p = short_repos;
 	while (1)
 	{
-	    while (!ISSLASH (*p) && *p != '\0')
+	    while (!ISDIRSEP (*p) && *p != '\0')
 		++p;
-	    if (ISSLASH (*p))
+	    if (ISDIRSEP (*p))
 	    {
 		strncpy (q, short_repos, p - short_repos);
 		q[p - short_repos] = '\0';
-		if (!ISSLASH (q[p - short_repos - 1])
+		if (!ISDIRSEP (q[p - short_repos - 1])
 		    && CVS_MKDIR (retval, new_mode) < 0)
 		{
 		    int saved_errno = errno;
@@ -377,14 +381,6 @@ Simple_Lock_Cleanup (void)
 
 /*
  * Clean up all outstanding locks and free their storage.
- *
- * NOTES
- *   This function needs to be reentrant since a call to exit() can cause a
- *   call to this function, which can then be interrupted by a signal, which
- *   can cause a second call to this function.
- *
- * RETURNS
- *   Nothing.
  */
 void
 Lock_Cleanup (void)
@@ -393,10 +389,17 @@ Lock_Cleanup (void)
 
     TRACE (TRACE_FUNCTION, "Lock_Cleanup()");
 
-    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
-     * allowing this function to be called twice as an optimization.
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
      *
-     * If we are already in a signal critical section, assume we were called
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
      * The only time that we should get into one of these functions otherwise
      * while still in a critical section is if error(1,...) is called from a
@@ -1093,6 +1096,7 @@ set_lock (struct lock *lock, int will_wait)
 	if (!waited && us < 1000)
 	{
 	    us += us;
+#if defined HAVE_NANOSLEEP
 	    {
 		struct timespec ts;
 		ts.tv_sec = 0;
@@ -1100,6 +1104,18 @@ set_lock (struct lock *lock, int will_wait)
 		(void)nanosleep (&ts, NULL);
 		continue;
 	    }
+#elif defined HAVE_USLEEP
+	    (void)usleep (us);
+	    continue;
+#elif defined HAVE_SELECT
+	    {
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = us;
+		(void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL, &tv);
+		continue;
+	    }
+#endif
 	}
 
 	lock_wait (lock->repository);

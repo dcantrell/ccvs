@@ -36,17 +36,17 @@ static int rtag_delete (RCSNode *rcsfile);
 static int tag_fileproc (void *callerdat, struct file_info *finfo);
 
 static char *numtag;			/* specific revision to tag */
-static bool numtag_validated = false;
+static int numtag_validated = 0;
 static char *date = NULL;
 static char *symtag;			/* tag to add or delete */
-static bool delete_flag;		/* adding a tag by default */
-static bool branch_mode;		/* make an automagic "branch" tag */
-static bool disturb_branch_tags = false;/* allow -F,-d to disturb branch tags */
-static bool force_tag_match = true;	/* force tag to match by default */
-static bool force_tag_move;		/* don't force tag to move by default */
-static bool check_uptodate;		/* no uptodate-check by default */
-static bool attic_too;			/* remove tag from Attic files */
-static bool is_rtag;
+static int delete_flag;			/* adding a tag by default */
+static int branch_mode;			/* make an automagic "branch" tag */
+static int disturb_branch_tags = 0;	/* allow -F,-d to disturb branch tags */
+static int force_tag_match = 1;		/* force tag to match by default */
+static int force_tag_move;		/* don't force tag to move by default */
+static int check_uptodate;		/* no uptodate-check by default */
+static int attic_too;			/* remove tag from Attic files */
+static int is_rtag;
 
 struct tag_info
 {
@@ -101,15 +101,13 @@ static const char *const tag_usage[] =
     NULL
 };
 
-
-
 int
 cvstag (int argc, char **argv)
 {
-    bool local = false;			/* recursive by default */
+    int local = 0;			/* recursive by default */
     int c;
     int err = 0;
-    bool run_module_prog = true;
+    int run_module_prog = 1;
 
     is_rtag = (strcmp (cvs_cmd_name, "rtag") == 0);
 
@@ -122,31 +120,31 @@ cvstag (int argc, char **argv)
 	switch (c)
 	{
 	    case 'a':
-		attic_too = true;
+		attic_too = 1;
 		break;
 	    case 'b':
-		branch_mode = true;
+		branch_mode = 1;
 		break;
 	    case 'B':
-		disturb_branch_tags = true;
+		disturb_branch_tags = 1;
 		break;
 	    case 'c':
-		check_uptodate = true;
+		check_uptodate = 1;
 		break;
 	    case 'd':
-		delete_flag = true;
+		delete_flag = 1;
 		break;
             case 'F':
-		force_tag_move = true;
+		force_tag_move = 1;
 		break;
 	    case 'f':
-		force_tag_match = false;
+		force_tag_match = 0;
 		break;
 	    case 'l':
-		local = true;
+		local = 1;
 		break;
 	    case 'n':
-		run_module_prog = false;
+		run_module_prog = 0;
 		break;
 	    case 'Q':
 	    case 'q':
@@ -160,7 +158,7 @@ cvstag (int argc, char **argv)
 			   cvs_cmd_name);
 		break;
 	    case 'R':
-		local = false;
+		local = 0;
 		break;
             case 'r':
                 numtag = optarg;
@@ -200,23 +198,23 @@ cvstag (int argc, char **argv)
 	ign_setup ();
 
 	if (attic_too)
-	    send_arg ("-a");
+	    send_arg("-a");
 	if (branch_mode)
-	    send_arg ("-b");
+	    send_arg("-b");
 	if (disturb_branch_tags)
-	    send_arg ("-B");
+	    send_arg("-B");
 	if (check_uptodate)
-	    send_arg ("-c");
+	    send_arg("-c");
 	if (delete_flag)
-	    send_arg ("-d");
+	    send_arg("-d");
 	if (force_tag_move)
-	    send_arg ("-F");
+	    send_arg("-F");
 	if (!force_tag_match)
 	    send_arg ("-f");
 	if (local)
-	    send_arg ("-l");
+	    send_arg("-l");
 	if (!run_module_prog)
-	    send_arg ("-n");
+	    send_arg("-n");
 
 	if (numtag)
 	    option_with_arg ("-r", numtag);
@@ -262,7 +260,7 @@ cvstag (int argc, char **argv)
 			   (date ? date : "A"))), symtag, argv[i], "");
 	    err += do_module (db, argv[i], TAG,
 			      delete_flag ? "Untagging" : "Tagging",
-			      rtag_proc, NULL, 0, local, run_module_prog,
+			      rtag_proc, (char *) NULL, 0, local, run_module_prog,
 			      0, symtag);
 	}
 	close_module (db);
@@ -273,18 +271,15 @@ cvstag (int argc, char **argv)
 			 NULL);
     }
 
-    return err;
+    return (err);
 }
-
-
 
 /*
  * callback proc for doing the real work of tagging
  */
 /* ARGSUSED */
 static int
-rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
-           int shorten, int local_specified, char *mname, char *msg)
+rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile, int shorten, int local_specified, char *mname, char *msg)
 {
     /* Begin section which is identical to patch_proc--should this
        be abstracted out somehow?  */
@@ -295,19 +290,19 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
     char *where;
 
 #ifdef HAVE_PRINTF_PTR
-    TRACE (TRACE_FUNCTION,
-	   "rtag_proc (argc=%d, argv=%p, xwhere=%s,\n"
-      "                mwhere=%s, mfile=%s, shorten=%d,\n"
-      "                local_specified=%d, mname=%s, msg=%s)",
+    TRACE ( TRACE_FUNCTION,
+	    "rtag_proc ( argc=%d, argv=%p, xwhere=%s,\n"
+       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
+       "                 local_specified=%d, mname=%s, msg=%s )",
 	    argc, (void *)argv, xwhere ? xwhere : "(null)",
 	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
 	    shorten, local_specified,
 	    mname ? mname : "(null)", msg ? msg : "(null)" );
 #else
-    TRACE (TRACE_FUNCTION,
-	   "rtag_proc (argc=%d, argv=%lx, xwhere=%s,\n"
-      "                mwhere=%s, mfile=%s, shorten=%d,\n"
-      "                local_specified=%d, mname=%s, msg=%s )",
+    TRACE ( TRACE_FUNCTION,
+	    "rtag_proc ( argc=%d, argv=%lx, xwhere=%s,\n"
+       "                 mwhere=%s, mfile=%s, shorten=%d,\n"
+       "                 local_specified=%d, mname=%s, msg=%s )",
 	    argc, (unsigned long)argv, xwhere ? xwhere : "(null)",
 	    mwhere ? mwhere : "(null)", mfile ? mfile : "(null)",
 	    shorten, local_specified,
@@ -316,28 +311,20 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 
     if (is_rtag)
     {
-	repository = xmalloc (strlen (current_parsed_root->directory)
-                              + strlen (argv[0])
-			      + (mfile == NULL ? 0 : strlen (mfile) + 1)
-                              + 2);
-	(void) sprintf (repository, "%s/%s", current_parsed_root->directory,
-                        argv[0]);
-	where = xmalloc (strlen (argv[0])
-                         + (mfile == NULL ? 0 : strlen (mfile) + 1)
+	repository = xmalloc (strlen (current_parsed_root->directory) + strlen (argv[0])
+			      + (mfile == NULL ? 0 : strlen (mfile) + 1) + 2);
+	(void) sprintf (repository, "%s/%s", current_parsed_root->directory, argv[0]);
+	where = xmalloc (strlen (argv[0]) + (mfile == NULL ? 0 : strlen (mfile) + 1)
 			 + 1);
 	(void) strcpy (where, argv[0]);
 
-	/* If MFILE isn't null, we need to set up to do only part of the
-         * module.
-         */
+	/* if mfile isn't null, we need to set up to do only part of the module */
 	if (mfile != NULL)
 	{
 	    char *cp;
 	    char *path;
 
-	    /* If the portion of the module is a path, put the dir part on
-             * REPOS.
-             */
+	    /* if the portion of the module is a path, put the dir part on repos */
 	    if ((cp = strrchr (mfile, '/')) != NULL)
 	    {
 		*cp = '\0';
@@ -369,11 +356,11 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 	}
 
 	/* cd to the starting repository */
-	if (CVS_CHDIR (repository) < 0)
+	if ( CVS_CHDIR (repository) < 0)
 	{
 	    error (0, errno, "cannot chdir to %s", repository);
 	    free (repository);
-	    return 1;
+	    return (1);
 	}
 	/* End section which is identical to patch_proc.  */
 
@@ -391,19 +378,19 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 
     if (numtag != NULL && !numtag_validated)
     {
-	tag_check_valid (numtag, argc - 1, argv + 1, local_specified, 0,
-			 repository );
-	numtag_validated = true;
+	tag_check_valid ( numtag, argc - 1, argv + 1, local_specified, 0,
+			  repository );
+	numtag_validated = 1;
     }
 
     /* check to make sure they are authorized to tag all the
        specified files in the repository */
 
     mtlist = getlist();
-    err = start_recursion (check_fileproc, check_filesdoneproc,
-                           NULL, NULL, NULL,
-			   argc - 1, argv + 1, local_specified, which, 0,
-			   CVS_LOCK_READ, where, 1, repository);
+    err = start_recursion ( check_fileproc, check_filesdoneproc,
+                            (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
+			    argc - 1, argv + 1, local_specified, which, 0,
+			    CVS_LOCK_READ, where, 1, repository );
 
     if (err)
     {
@@ -416,18 +403,17 @@ rtag_proc (int argc, char **argv, char *xwhere, char *mwhere, char *mfile,
 
     /* start the recursion processor */
     err = start_recursion
-	(is_rtag ? rtag_fileproc : tag_fileproc,
-	 NULL, tag_dirproc, NULL, NULL, argc - 1, argv + 1,
-	 local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
-	 repository);
+	( is_rtag ? rtag_fileproc : tag_fileproc,
+	  (FILESDONEPROC) NULL, tag_dirproc,
+	  (DIRLEAVEPROC) NULL, NULL, argc - 1, argv + 1,
+	  local_specified, which, 0, CVS_LOCK_WRITE, where, 1,
+	  repository );
     dellist (&mtlist);
-    if (which & W_REPOS) free (repository);
+    if ( which & W_REPOS ) free ( repository );
     if (where != NULL)
 	free (where);
-    return err;
+    return (err);
 }
-
-
 
 /* check file that is to be tagged */
 /* All we do here is add it to our list */
@@ -441,15 +427,16 @@ check_fileproc (void *callerdat, struct file_info *finfo)
     struct tag_info *ti;
     int addit = 1;
 
-    TRACE (TRACE_FUNCTION, "check_fileproc (%s, %s, %s)",
-	   finfo->repository ? finfo->repository : "(null)",
-	   finfo->fullname ? finfo->fullname : "(null)",
-	   finfo->rcs ? (finfo->rcs->path ? finfo->rcs->path : "(null)")
-	   : "NULL");
+    TRACE ( TRACE_FUNCTION, "check_fileproc ( %s, %s, %s )",
+	    finfo->repository ? finfo->repository : "(null)",
+	    finfo->fullname ? finfo->fullname : "(null)",
+	    finfo->rcs ? (finfo->rcs->path ? finfo->rcs->path : "(null)")
+	    : "NULL" );
 
     if (check_uptodate)
     {
-	switch (Classify_File (finfo, NULL, NULL, NULL, 1, 0, &vers, 0))
+	switch (Classify_File (finfo, (char *) NULL, (char *) NULL,
+				      (char *) NULL, 1, 0, &vers, 0))
 	{
 	case T_UPTODATE:
 	case T_CHECKOUT:
@@ -465,7 +452,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	default:
 	    error (0, 0, "%s is locally modified", finfo->fullname);
 	    freevers_ts (&vers);
-	    return 1;
+	    return (1);
 	}
     }
     else
@@ -487,7 +474,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	p = getnode ();
 	p->key = xstrdup (xdir);
 	p->type = UPDATE;
-	ml = xmalloc (sizeof (struct master_lists));
+	ml = (struct master_lists *)
+	    xmalloc (sizeof (struct master_lists));
 	ml->tlist = tlist;
 	p->data = ml;
 	p->delproc = masterlist_delproc;
@@ -504,7 +492,7 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	    error (0, 0, "nothing known about %s", finfo->file);
 	freevers_ts (&vers);
 	freenode (p);
-	return 1;
+	return (1);
     }
 
     /* Here we duplicate the calculation in tag_fileproc about which
@@ -520,7 +508,8 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 
     if (ti->rev != NULL)
     {
-        ti->oldrev = RCS_getversion (vers->srcfile, symtag, NULL, 1, NULL);
+        ti->oldrev = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1,
+	                             (int *) NULL);
 
 	if (ti->oldrev == NULL)
         {
@@ -542,28 +531,32 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 	}
         else if (strcmp(ti->oldrev, p->data) == 0)
+        {
             addit = 0;
+        }
         else if (!force_tag_move)
+        {
             addit = 0;
+        }
     }
     else
+    {
 	addit = 0;
+    }
     if (!addit)
     {
 	free(p->data);
 	p->data = NULL;
     }
     freevers_ts (&vers);
-    (void)addnode (tlist, p);
-    return 0;
+    (void) addnode (tlist, p);
+    return (0);
 }
-
-
 
 struct pretag_proc_data {
      List *tlist;
-     bool delete_flag;
-     bool force_tag_move;
+     int delete_flag;
+     int force_tag_move;
      char *symtag;
 };
 
@@ -599,7 +592,7 @@ check_filesdoneproc (void *callerdat, int err, const char *repos,
         error (0, 0, "Pre-tag check failed");
         err += n;
     }
-    return err;
+    return (err);
 }
 
 
@@ -807,7 +800,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 
     /* find the parsed RCS data */
     if ((rcsfile = finfo->rcs) == NULL)
-	return 1;
+	return (1);
 
     /*
      * For tagging an RCS file which is a symbolic link, you'd best be
@@ -816,7 +809,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
      */
 
     if (delete_flag)
-	return rtag_delete (rcsfile);
+	return (rtag_delete (rcsfile));
 
     /*
      * If we get here, we are adding a tag.  But, if -a was specified, we
@@ -826,26 +819,27 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
     if (attic_too && (!numtag && !date))
     {
 	if ((rcsfile->flags & VALID) && (rcsfile->flags & INATTIC))
-	    return rtag_delete (rcsfile);
+	    return (rtag_delete (rcsfile));
     }
 
-    version = RCS_getversion (rcsfile, numtag, date, force_tag_match, NULL);
+    version = RCS_getversion (rcsfile, numtag, date, force_tag_match,
+			      (int *) NULL);
     if (version == NULL)
     {
 	/* If -a specified, clean up any old tags */
 	if (attic_too)
-	    (void)rtag_delete (rcsfile);
+	    (void) rtag_delete (rcsfile);
 
 	if (!quiet && !force_tag_match)
 	{
 	    error (0, 0, "cannot find tag `%s' in `%s'",
 		   numtag ? numtag : "head", rcsfile->path);
-	    return 1;
+	    return (1);
 	}
-	return 0;
+	return (0);
     }
     if (numtag
-	&& isdigit ((unsigned char)*numtag)
+	&& isdigit ((unsigned char) *numtag)
 	&& strcmp (numtag, version) != 0)
     {
 
@@ -896,17 +890,17 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 	    if (!force_tag_move)
 	    {
 		/* we're NOT going to move the tag */
-		(void)printf ("W %s", finfo->fullname);
+		(void) printf ("W %s", finfo->fullname);
 
-		(void)printf (" : %s already exists on %s %s",
-			      symtag, isbranch ? "branch" : "version",
-			      oversion);
-		(void)printf (" : NOT MOVING tag to %s %s\n",
-			      branch_mode ? "branch" : "version", rev);
+		(void) printf (" : %s already exists on %s %s",
+			       symtag, isbranch ? "branch" : "version",
+			       oversion);
+		(void) printf (" : NOT MOVING tag to %s %s\n",
+			       branch_mode ? "branch" : "version", rev);
 		free (oversion);
 		free (version);
-		if (branch_mode) free (rev);
-		return 0;
+		if (branch_mode) free(rev);
+		return (0);
 	    }
 	    else /* force_tag_move is set and... */
 		if ((isbranch && !disturb_branch_tags) ||
@@ -920,7 +914,7 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
 		if (branch_mode) free(rev);
 		free (oversion);
 		free (version);
-		return 0;
+		return (0);
 	    }
 	    free (oversion);
 	}
@@ -937,15 +931,13 @@ rtag_fileproc (void *callerdat, struct file_info *finfo)
         if (branch_mode)
 	    free (rev);
         free (version);
-        return 1;
+        return (1);
     }
     if (branch_mode)
 	free (rev);
     free (version);
-    return 0;
+    return (0);
 }
-
-
 
 /*
  * If -d is specified, "force_tag_match" is set, so that this call to
@@ -973,9 +965,10 @@ rtag_delete (RCSNode *rcsfile)
 	free (version);
     }
 
-    version = RCS_getversion (rcsfile, symtag, NULL, 1, NULL);
+    version = RCS_getversion (rcsfile, symtag, (char *) NULL, 1,
+			      (int *) NULL);
     if (version == NULL)
-	return 0;
+	return (0);
     free (version);
 
 
@@ -984,12 +977,12 @@ rtag_delete (RCSNode *rcsfile)
 	(!isbranch && disturb_branch_tags))
     {
 	if (!quiet)
-	    error (0, 0,
-                   "Not removing %s tag `%s' from `%s'%s.",
-                   isbranch ? "branch" : "non-branch",
-                   symtag, rcsfile->path,
-                   isbranch ? "" : " due to `-B' option");
-	return 1;
+	    error(0, 0,
+		"Not removing %s tag `%s' from `%s'%s.",
+		isbranch ? "branch" : "non-branch",
+		symtag, rcsfile->path,
+		isbranch ? "" : " due to `-B' option");
+	return (1);
     }
 
     if ((retcode = RCS_deltag(rcsfile, symtag)) != 0)
@@ -998,12 +991,11 @@ rtag_delete (RCSNode *rcsfile)
 	    error (0, retcode == -1 ? errno : 0,
 		   "failed to remove tag `%s' from `%s'", symtag,
 		   rcsfile->path);
-	return 1;
+	return (1);
     }
     RCS_rewrite (rcsfile, NULL, NULL);
-    return 0;
+    return (0);
 }
-
 
 
 /*
@@ -1029,7 +1021,7 @@ tag_fileproc (void *callerdat, struct file_info *finfo)
                                   numtag,
                                   date,
                                   force_tag_match,
-				  NULL);
+				  (int *) NULL);
         if (nversion == NULL)
 	    goto free_vars_and_return;
     }
@@ -1238,13 +1230,10 @@ tag_dirproc (void *callerdat, const char *dir, const char *repos,
     }
 
     if (!quiet)
-	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging",
-               update_dir);
-    return R_PROCESS;
+	error (0, 0, "%s %s", delete_flag ? "Untagging" : "Tagging", update_dir);
+    return (R_PROCESS);
 }
-
-
-
+
 /* Code relating to the val-tags file.  Note that this file has no way
    of knowing when a tag has been deleted.  The problem is that there
    is no way of knowing whether a tag still exists somewhere, when we
@@ -1310,8 +1299,7 @@ val_direntproc (void *callerdat, const char *dir, const char *repository,
    tag is found in CVSROOTADM_VALTAGS, but there is not (yet) any
    local directory.  */
 void
-tag_check_valid (char *name, int argc, char **argv, int local, int aflag,
-                 char *repository)
+tag_check_valid (char *name, int argc, char **argv, int local, int aflag, char *repository)
 {
     DBM *db;
     char *valtags_filename;
@@ -1412,14 +1400,17 @@ Numeric tag %s contains characters other than digits and '.'", name);
 
     which = W_REPOS | W_ATTIC;
 
-    if (repository == NULL || repository[0] == '\0')
-	which |= W_LOCAL;
-    else
+    if (repository != NULL)
     {
-	if (save_cwd (&cwd))
-	    exit (EXIT_FAILURE);
-	if (CVS_CHDIR (repository) < 0)
-	    error (1, errno, "cannot change to %s directory", repository);
+	if (repository[0] == '\0')
+	    which |= W_LOCAL;
+	else
+	{
+	    if (save_cwd (&cwd))
+		exit (EXIT_FAILURE);
+	    if (CVS_CHDIR (repository) < 0)
+		error (1, errno, "cannot change to %s directory", repository);
+	}
     }
 
     start_recursion

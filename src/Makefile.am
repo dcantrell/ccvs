@@ -16,8 +16,7 @@
 
 SHELL = /bin/sh
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_builddir)/lib \
-              -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
@@ -53,7 +52,6 @@ cvs_SOURCES = \
 	log-buffer.c log-buffer.h \
 	login.c \
 	logmsg.c \
-	ls.c \
 	main.c \
 	mkmodules.c \
 	modules.c \
@@ -109,8 +107,6 @@ cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
 	$(ZLIB_LIBS) \
-	$(LIB_CLOCK_GETTIME) \
-	$(LIB_NANOSLEEP) \
 	$(LIBINTL)
 
 # General

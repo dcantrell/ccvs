@@ -10,6 +10,7 @@
 
 #include "cvs.h"
 #include "getline.h"
+#include "vasnprintf.h"
 
 /* Get wint_t.  */
 #ifdef HAVE_WINT_T
@@ -93,20 +94,20 @@ pathname_levels (const char *p)
     do
     {
 	/* Now look for pathname level-ups.  */
-	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISSLASH (p[2])))
+	if (p[0] == '.' && p[1] == '.' && (p[2] == '\0' || ISDIRSEP (p[2])))
 	{
 	    --level;
 	    if (-level > max_level)
 		max_level = -level;
 	}
-	else if (p[0] == '\0' || ISSLASH (p[0]) ||
-		 (p[0] == '.' && (p[1] == '\0' || ISSLASH (p[1]))))
+	else if (p[0] == '\0' || ISDIRSEP (p[0]) ||
+		 (p[0] == '.' && (p[1] == '\0' || ISDIRSEP (p[1]))))
 	    ;
 	else
 	    ++level;
 
-	/* q = strchr (p, '/'); but sub ISSLASH() for '/': */
-	while (*p != '\0' && !ISSLASH (*p)) p++;
+	/* q = strchr (p, '/'); but sub ISDIRSEP() for '/': */
+	while (*p != '\0' && !ISDIRSEP (*p)) p++;
 	if (*p != '\0') p++;
     } while (*p != '\0');
     return max_level;
@@ -539,7 +540,7 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
     /* If ts_conflict is NULL, there was no merge since the last
      * commit and there can be no conflict.
      */
-    assert (ts_conflict);
+    assert ( ts_conflict );
 
     /*
      * If the timestamp has changed and no
@@ -548,14 +549,14 @@ file_has_conflict (const struct file_info *finfo, const char *ts_conflict)
      */
 
 #ifdef SERVER_SUPPORT
-    if (server_active)
-	retcode = ts_conflict[0] == '=' && ts_conflict[1] == '\0';
+    if ( server_active )
+	retcode = ts_conflict[0] == '=';
     else 
 #endif /* SERVER_SUPPORT */
     {
-	filestamp = time_stamp (finfo->file);
-	retcode = !strcmp (ts_conflict, filestamp);
-	free (filestamp);
+	filestamp = time_stamp ( finfo->file );
+	retcode = !strcmp ( ts_conflict, filestamp );
+	free ( filestamp );
     }
 
     return retcode;
@@ -827,12 +828,33 @@ sleep_past (time_t desttime)
 	us = 20000;
 #endif
 
+#if defined(HAVE_NANOSLEEP)
 	{
 	    struct timespec ts;
 	    ts.tv_sec = s;
 	    ts.tv_nsec = us * 1000;
 	    (void)nanosleep (&ts, NULL);
 	}
+#elif defined(HAVE_USLEEP)
+	if (s > 0)
+	    (void)sleep (s);
+	else
+	    (void)usleep (us);
+#elif defined(HAVE_SELECT)
+	{
+	    /* use select instead of sleep since it is a fairly portable way of
+	     * sleeping for ms.
+	     */
+	    struct timeval tv;
+	    tv.tv_sec = s;
+	    tv.tv_usec = us;
+	    (void)select (0, (fd_set *)NULL, (fd_set *)NULL, (fd_set *)NULL,
+                          &tv);
+	}
+#else
+	if (us > 0) s++;
+	(void)sleep(s);
+#endif
     }
 }
 

@@ -37,7 +37,6 @@ EXTRA_DIST = \
 	TESTS \
 	build.com \
 	cvs-format.el \
-	cvsnt.dep \
 	cvsnt.dsp \
 	cvsnt.dsw \
 	cvsnt.mak \

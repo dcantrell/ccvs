@@ -4841,7 +4841,7 @@ RCS_checkin (RCSNode *rcs, const char *workfile_in, const char *message,
     resolve_symlink (&(rcs->path));
 
     checkin_quiet = flags & RCS_FLAGS_QUIET;
-    if (!(checkin_quiet || really_quiet))
+    if (!checkin_quiet)
     {
 	cvs_output (rcs->path, 0);
 	cvs_output ("  <--  ", 7);
@@ -5004,7 +5004,7 @@ workfile);
 		  rcs->expand != NULL && STREQ (rcs->expand, "b") ? "rb" : "r",
 		  &dtext->text, &bufsize, &dtext->len);
 
-	if (!(checkin_quiet || really_quiet))
+	if (!checkin_quiet)
 	{
 	    cvs_output ("initial revision: ", 0);
 	    cvs_output (rcs->head, 0);
@@ -5030,6 +5030,9 @@ workfile);
 		/* FIXME-update-dir: message does not include update_dir.  */
 		error (0, errno, "cannot remove %s", workfile);
 	}
+
+	if (!checkin_quiet)
+	    cvs_output ("done\n", 5);
 
 	status = 0;
 	goto checkin_done;
@@ -5363,7 +5366,7 @@ workfile);
     (void) addnode (rcs->versions, nodep);
 	
     /* Write the new RCS file, inserting the new delta at COMMITPT. */
-    if (!(checkin_quiet || really_quiet))
+    if (!checkin_quiet)
     {
 	cvs_output ("new revision: ", 14);
 	cvs_output (delta->version, 0);
@@ -5386,6 +5389,9 @@ workfile);
     if (unlink_file (changefile) < 0)
 	error (0, errno, "cannot remove %s", changefile);
     free (changefile);
+
+    if (!checkin_quiet)
+	cvs_output ("done\n", 5);
 
  checkin_done:
     free (workfile);
@@ -8038,14 +8044,6 @@ count_delta_actions (Node *np, void *ignore)
 
 /*
  * Clean up temporary files.
- *
- * NOTES
- *   This function needs to be reentrant since a call to exit() can cause a
- *   call to this function, which can then be interrupted by a signal, which
- *   can cause a second call to this function.
- *
- * RETURNS
- *   Nothing.
  */
 static void
 rcs_cleanup (void)
@@ -8054,10 +8052,17 @@ rcs_cleanup (void)
 
     TRACE (TRACE_FUNCTION, "rcs_cleanup()");
 
-    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
-     * allowing this function to be called twice as an optimization.
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
      *
-     * If we are already in a signal critical section, assume we were called
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
      * The only time that we should get into one of these functions otherwise
      * while still in a critical section is if error(1,...) is called from a

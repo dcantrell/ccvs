@@ -49,41 +49,12 @@ $GNULIB/m4/alloca.m4				m4		no NI
 # $GNULIB/modules/atexit
 $GNULIB/lib/atexit.c				lib		no NI
 $GNULIB/m4/atexit.m4				m4		no NI
-# $GNULIB/modules/dirname
-$GNULIB/lib/basename.c				lib		no NI
-$GNULIB/lib/dirname.c				lib		no NI
-$GNULIB/lib/dirname.h				lib		no NI
-$GNULIB/lib/stripslash.				lib		no NI
-$GNULIB/m4/dirname.m4				m4		no NI
-$GNULIB/m4/dos.m4				m4		no NI
-# The following error module is only half-imported to support getdate.y's test
-# hooks when xmalloc, which calls error(), is needed.  We cannot completely
-# import the error module since it would conflict with CVS's error() function,
-# which is needed to send errors across the connection to the client.
-# $GNULIB/modules/error
-$GNULIB/lib/error.c				lib		no NI
-$GNULIB/m4/strerror_r.m4			lib		no NI
 # $GNULIB/modules/exit
 $GNULIB/lib/exit.h				lib		no NI
 # $GNULIB/modules/exitfail
 $GNULIB/lib/exitfail.h				lib		no NI
 $GNULIB/lib/exitfail.c				lib		no NI
 $GNULIB/m4/exitfail.m4				m4		no NI
-# $GNULIB/modules/extensions
-$GNULIB/m4/extensions.m4			m4		no NI
-# $GNULIB/modules/fnmatch-posix
-# $GNULIB/modules/fnmatch
-$GNULIB/lib/fnmatch.c				lib		no NI
-$GNULIB/lib/fnmatch_.h				lib		no NI
-$GNULIB/lib/fnmatch_loop.c			lib		no NI
-$GNULIB/m4/mbstate_t.m4				m4		no NI
-$GNULIB/m4/fnmatch.m4				m4		no NI
-# $GNULIB/modules/getdate
-$GNULIB/lib/getdate.h				lib		no NI
-$GNULIB/lib/getdate.y				lib		no NI
-$GNULIB/m4/bison.m4				m4		yes NI
-$GNULIB/m4/getdate.m4				m4		no NI
-$GNULIB/m4/tm_gmtoff.m4				m4		no NI
 # $GNULIB/modules/gethostname
 $GNULIB/lib/gethostname.c			lib		no NI
 $GNULIB/m4/gethostname.m4			m4		no NI
@@ -134,13 +105,6 @@ $GNULIB/m4/progtest.m4				m4		no NI
 $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
 $GNULIB/m4/ulonglong.m4				m4		no NI
-# $GNULIB/modules/gettime
-$GNULIB/lib/gettime.c				lib		no NI
-$GNULIB/m4/clock_time.m4			m4		no NI
-$GNULIB/m4/gettime.m4				m4		no NI
-# $GNULIB/modules/gettimeofday
-$GNULIB/lib/gettimeofday.c			lib		no NI
-$GNULIB/m4/gettimeofday.m4			m4		no NI
 # $GNULIB/modules/lstat
 $GNULIB/lib/lstat.c				lib		no NI
 $GNULIB/m4/lstat.m4				m4		yes NI
@@ -159,12 +123,6 @@ $GNULIB/m4/onceonly_2_57.m4			m4		no NI
 $GNULIB/m4/stdint_h.m4				m4		no NI
 $GNULIB/m4/uintmax_t.m4				m4		no NI
 $GNULIB/m4/ulonglong.m4				m4		no NI
-# $GNULIB/modules/mktime
-$GNULIB/lib/mktime.c				lib		no NI
-$GNULIB/m4/mktime.m4				m4		no NI
-# $GNULIB/modules/nanosleep
-$GNULIB/lib/nanosleep.c				lib		no NI
-$GNULIB/m4/nanosleep.m4				m4		no NI
 # $GNULIB/modules/pathmax
 $GNULIB/lib/pathmax.h				lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI
@@ -181,27 +139,9 @@ $GNULIB/m4/restrict.m4				m4		no NI
 # $GNULIB/modules/stat
 $GNULIB/lib/stat.c				lib		yes NI
 $GNULIB/m4/stat.m4				m4		no NI
-# $GNULIB/modules/stdbool
-$GNULIB/lib/stdbool_.h				lib		no NI
-$GNULIB/m4/stdbool.m4				m4		no NI
 # $GNULIB/modules/strerror
 $GNULIB/lib/strerror.c				lib		no NI
 $GNULIB/m4/strerror.m4				m4		no NI
-# $GNULIB/modules/strerror
-$GNULIB/lib/strftime.c				lib		no NI
-$GNULIB/m4/mbstate_t.m4				m4		no NI
-$GNULIB/m4/tm_gmtoff.m4				m4		no NI
-$GNULIB/m4/strftime.m4				m4		no NI
-# $GNULIB/modules/time_r
-$GNULIB/lib/time_r.c				lib		no NI
-$GNULIB/lib/time_r.h				lib		no NI
-$GNULIB/m4/time_r.m4				m4		no NI
-# $GNULIB/modules/timespec
-$GNULIB/lib/timespec.h				lib		no NI
-$GNULIB/m4/st_mtim.m4				m4		no NI
-$GNULIB/m4/timespec.m4				m4		no NI
-# $GNULIB/modules/tzset
-$GNULIB/m4/tzset.m4				m4		no NI
 # $GNULIB/modules/unlocked-io
 $GNULIB/lib/unlocked-io.h			lib		no NI
 $GNULIB/m4/onceonly_2_57.m4			m4		no NI

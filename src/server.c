@@ -941,7 +941,7 @@ dirswitch (char *dir, char *repos)
 
     dir_len = strlen (dir);
 
-    /* Check for a trailing '/'.  This is not ISSLASH because \ in the
+    /* Check for a trailing '/'.  This is not ISDIRSEP because \ in the
        protocol is an ordinary character, not a directory separator (of
        course, it is perhaps unwise to use it in directory names, but that
        is another issue).  */
@@ -1099,8 +1099,6 @@ dirswitch (char *dir, char *repos)
     }
 }
 
-
-
 static void
 serve_repository (char *arg)
 {
@@ -1110,17 +1108,15 @@ serve_repository (char *arg)
     return;
 }
 
-
-
 static void
 serve_directory (char *arg)
 {
     int status;
     char *repos;
 
-    TRACE (TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)");
+    TRACE( TRACE_FUNCTION, "serve_directory (%s)", arg ? arg : "(null)" );
 
-    status = buf_read_line (buf_from_net, &repos, NULL);
+    status = buf_read_line (buf_from_net, &repos, (int *) NULL);
     if (status == 0)
     {
 	if (!outside_root (repos))
@@ -1151,9 +1147,7 @@ serve_directory (char *arg)
 	}
     }
 }
-
-
-
+
 static void
 serve_static_directory (char *arg)
 {
@@ -1405,8 +1399,6 @@ receive_file (int size, char *file, int gzipped)
     }
 }
 
-
-
 /* Kopt for the next file sent in Modified or Is-modified.  */
 static char *kopt;
 
@@ -1415,7 +1407,7 @@ static char *kopt;
 static int checkin_time_valid;
 static time_t checkin_time;
 
-
+static void serve_modified (char *);
 
 static void
 serve_modified (char *arg)
@@ -1435,7 +1427,7 @@ serve_modified (char *arg)
      * read the file if we can.
      */
 
-    status = buf_read_line (buf_from_net, &mode_text, NULL);
+    status = buf_read_line (buf_from_net, &mode_text, (int *) NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -1461,7 +1453,7 @@ serve_modified (char *arg)
 	return;
     }
 
-    status = buf_read_line (buf_from_net, &size_text, NULL);
+    status = buf_read_line (buf_from_net, &size_text, (int *) NULL);
     if (status != 0)
     {
 	if (status == -2)
@@ -1568,14 +1560,11 @@ serve_modified (char *arg)
 	serve_is_modified (arg);
 }
 
-
-
+
 static void
 serve_enable_unchanged (char *arg)
 {
 }
-
-
 
 struct an_entry {
     struct an_entry *next;
@@ -1584,7 +1573,7 @@ struct an_entry {
 
 static struct an_entry *entries;
 
-
+static void serve_unchanged (char *);
 
 static void
 serve_unchanged (char *arg)
@@ -1610,18 +1599,8 @@ serve_unchanged (char *arg)
 	    && strncmp (arg, name, cp - name) == 0)
 	{
 	    timefield = strchr (cp + 1, '/') + 1;
-	    /* If the time field is not currently empty, then one of
-	     * serve_modified, serve_is_modified, & serve_unchanged were
-	     * already called for this file.  We would like to ignore the
-	     * reinvocation silently or, better yet, exit with an error
-	     * message, but we just avoid the copy-forward and overwrite the
-	     * value from the last invocation instead.  See the comment below
-	     * for more.
-	     */
-	    if (*timefield == '/')
+	    if (*timefield != '=')
 	    {
-		/* Copy forward one character.  Space was allocated for this
-		 * already in serve_entry().  */
 		cp = timefield + strlen (timefield);
 		cp[1] = '\0';
 		while (cp > timefield)
@@ -1629,45 +1608,12 @@ serve_unchanged (char *arg)
 		    *cp = cp[-1];
 		    --cp;
 		}
+		*timefield = '=';
 	    }
-	    else if (timefield[1] != '/')
-	    {
-		/* Obliterate anything else in TIMEFIELD.  This is again to
-		 * support the broken CVSNT clients mentioned below, in
-		 * conjunction with strict timestamp string boundry checking in
-		 * time_stamp_server() from vers_ts.c & file_has_conflict()
-		 * from subr.c, since the broken clients used to send malformed
-		 * timestamp fields in the Entry request that they then
-		 * depended on the subsequent Unchanged request to overwrite.
-		 */
-		char *d = timefield + 1;
-		if (cp = strchr (d, '/'))
-		{
-		    while (*cp)
-		    {
-			*d++ = *cp++;
-		    }
-		    *d = '\0';
-		}
-	    }
-	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
-	     * multiple calls to Is-modified & Unchanged by the client and
-	     * just overwrite the value from the last call.  Technically, we
-	     * should probably either ignore calls after the first or send the
-	     * client an error, since the client/server protocol specification
-	     * specifies that only one call to either Is-Modified or Unchanged
-	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
-	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
-	     * clients which depend on those broken versions of CVSNT (WinCVS
-	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
-	     */
-	    *timefield = '=';
 	    break;
 	}
     }
 }
-
-
 
 static void
 serve_is_modified (char *arg)
@@ -1696,18 +1642,8 @@ serve_is_modified (char *arg)
 	    && strncmp (arg, name, cp - name) == 0)
 	{
 	    timefield = strchr (cp + 1, '/') + 1;
-	    /* If the time field is not currently empty, then one of
-	     * serve_modified, serve_is_modified, & serve_unchanged were
-	     * already called for this file.  We would like to ignore the
-	     * reinvocation silently or, better yet, exit with an error
-	     * message, but we just avoid the copy-forward and overwrite the
-	     * value from the last invocation instead.  See the comment below
-	     * for more.
-	     */
-	    if (*timefield == '/')
+	    if (!(timefield[0] == 'M' && timefield[1] == '/'))
 	    {
-		/* Copy forward one character.  Space was allocated for this
-		 * already in serve_entry().  */
 		cp = timefield + strlen (timefield);
 		cp[1] = '\0';
 		while (cp > timefield)
@@ -1715,19 +1651,8 @@ serve_is_modified (char *arg)
 		    *cp = cp[-1];
 		    --cp;
 		}
+		*timefield = 'M';
 	    }
-	    /* If *TIMEFIELD wasn't '/', we assume that it was because of
-	     * multiple calls to Is-modified & Unchanged by the client and
-	     * just overwrite the value from the last call.  Technically, we
-	     * should probably either ignore calls after the first or send the
-	     * client an error, since the client/server protocol specification
-	     * specifies that only one call to either Is-Modified or Unchanged
-	     * is allowed, but broken versions of CVSNT (at least 2.0.34 -
-	     * 2.0.41, reported fixed in 2.0.41a) and the WinCVS & TortoiseCVS
-	     * clients which depend on those broken versions of CVSNT (WinCVS
-	     * 1.3 & at least one TortoiseCVS release) rely on this behavior.
-	     */
-	    *timefield++ = 'M';
 	    if (kopt != NULL)
 	    {
 		if (alloc_pending (strlen (name) + 80))
@@ -1746,7 +1671,7 @@ serve_is_modified (char *arg)
     {
 	/* We got Is-modified but no Entry.  Add a dummy entry.
 	   The "D" timestamp is what makes it a dummy.  */
-	p = xmalloc (sizeof (struct an_entry));
+	p = (struct an_entry *) xmalloc (sizeof (struct an_entry));
 	if (p == NULL)
 	{
 	    pending_error = ENOMEM;
@@ -1774,7 +1699,7 @@ serve_is_modified (char *arg)
     }
 }
 
-
+static void serve_entry (char *);
 
 static void
 serve_entry (char *arg)
@@ -1801,7 +1726,7 @@ serve_entry (char *arg)
     entries = p;
 }
 
-
+static void serve_kopt (char *);
 
 static void
 serve_kopt (char *arg)
@@ -3674,18 +3599,6 @@ serve_rlog (char *arg)
 }
 
 static void
-serve_ls (char *arg)
-{
-  do_cvs_command ("ls", ls);
-}
-
-static void
-serve_rls (char *arg)
-{
-  do_cvs_command ("rls", ls);
-}
-
-static void
 serve_add (char *arg)
 {
     do_cvs_command ("add", add);
@@ -4708,14 +4621,6 @@ struct request requests[] =
   REQ_LINE("diff", serve_diff, 0),
   REQ_LINE("log", serve_log, 0),
   REQ_LINE("rlog", serve_rlog, 0),
-  REQ_LINE("list", serve_ls, 0),
-  REQ_LINE("rlist", serve_rls, 0),
-  /* This allows us to avoid sending `-q' as a command argument to `cvs ls',
-   * or more accurately, allows us to send `-q' to backwards CVSNT servers.
-   */
-  REQ_LINE("global-list-quiet", serve_noop, RQ_ROOTLESS),
-  /* Deprecated synonym for rlist, for compatibility with CVSNT. */
-  REQ_LINE("ls", serve_rls, 0),
   REQ_LINE("add", serve_add, 0),
   REQ_LINE("remove", serve_remove, 0),
   REQ_LINE("update-patches", serve_ignore, 0),
@@ -4744,11 +4649,10 @@ struct request requests[] =
 
 #undef REQ_LINE
 };
+
 #endif /* SERVER_SUPPORT or CLIENT_SUPPORT */
-
-
-
 #ifdef SERVER_SUPPORT
+
 static void
 serve_valid_requests (char *arg)
 {
@@ -4771,15 +4675,13 @@ serve_valid_requests (char *arg)
     buf_flush (buf_to_net, 1);
 }
 
-
-
 #ifdef SUNOS_KLUDGE
 /*
  * Delete temporary files.  SIG is the signal making this happen, or
  * 0 if not called as a result of a signal.
  */
 static int command_pid_is_dead;
-static void wait_sig (int sig)
+static void wait_sig( int sig )
 {
     int status;
     pid_t r = wait (&status);
@@ -4787,8 +4689,6 @@ static void wait_sig (int sig)
 	command_pid_is_dead++;
 }
 #endif /* SUNOS_KLUDGE */
-
-
 
 /*
  * This function cleans up after the server.  Specifically, it:
@@ -4805,11 +4705,6 @@ static void wait_sig (int sig)
  * <li>Flush and shutdown the buffers.</li>
  * <li>Set ERROR_USE_PROTOCOL and SERVER_ACTIVE to false.</li>
  * </ol>
- *
- * NOTES
- *   This function needs to be reentrant since a call to exit() can cause a
- *   call to this function, which can then be interrupted by a signal, which
- *   can cause a second call to this function.
  *
  * GLOBALS
  *   buf_from_net		The input buffer which brings data from the
@@ -4847,10 +4742,17 @@ server_cleanup (void)
 
     TRACE (TRACE_FUNCTION, "server_cleanup()");
 
-    /* Since main_cleanup() always calls exit() (via error (1, ...)), we avoid
-     * allowing this function to be called twice as an optimization.
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
      *
-     * If we are already in a signal critical section, assume we were called
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
      * via the signal handler and set a flag which will prevent future calls.
      * The only time that we should get into one of these functions otherwise
      * while still in a critical section is if error(1,...) is called from a
@@ -4868,7 +4770,7 @@ server_cleanup (void)
     if (never_run_again) return;
     if (SIG_inCrSect()) never_run_again = 1;
 
-    assert (server_active);
+    assert(server_active);
 
     /* Since we install this function in an atexit() handler before forking,
      * reuse the ERROR_USE_PROTOCOL flag, which we know is only set in the
@@ -4926,11 +4828,9 @@ server_cleanup (void)
 	    if (command_pid > 0)
 	    {
 		/* To avoid crashes on SunOS due to bugs in SunOS tmpfs
-		 * triggered by the use of rename() in RCS, wait for the
-		 * subprocess to die.  Unfortunately, this means draining
-		 * output while waiting for it to unblock the signal we sent
-		 * it.  Yuck!
-		 */
+		   triggered by the use of rename() in RCS, wait for the
+		   subprocess to die.  Unfortunately, this means draining output
+		   while waiting for it to unblock the signal we sent it.  Yuck!  */
 		int status;
 		pid_t r;
 
@@ -4940,9 +4840,8 @@ server_cleanup (void)
 		   children have exited.  */
 		kill (command_pid, SIGINT);
 		/* The caller may also have sent a signal to command_pid, so
-		 * always try waiting.  First, though, check and see if it's
-		 * still there....
-		 */
+		   always try waiting.  First, though, check and see if it's still
+		   there....  */
 	    do_waitpid:
 		r = waitpid (command_pid, &status, WNOHANG);
 		if (r == 0)
@@ -5036,8 +4935,6 @@ server_cleanup (void)
 
     server_active = 0;
 }
-
-
 
 int server_active = 0;
 
@@ -6661,30 +6558,10 @@ cvs_output_tagged (const char *tag, const char *text)
 	    buf_send_counted (protocol);
     }
     else
-#endif /* SERVER_SUPPORT */
+#endif
     {
-	/* No MT support or we are using a local repository. */
 	if (strcmp (tag, "newline") == 0)
 	    cvs_output ("\n", 1);
-	else if (strcmp (tag, "date") == 0)
-	{
-#ifdef SERVER_SUPPORT
-	    if (server_active)
-		/* Output UTC when running as a server without MT support in
-		 * the client since it is likely to be more meaningful than
-	         * localtime.
-		 */
-		cvs_output (text, 0);
-	    else
-#endif /* SERVER_SUPPORT */
-	    {
-		char *date_in = xstrdup (text);
-		char *date = format_date_alloc (date_in);
-		cvs_output (date, 0);
-		free (date);
-		free (date_in);
-	    }
-	}
 	else if (text != NULL)
 	    cvs_output (text, 0);
     }

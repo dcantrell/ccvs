@@ -20,6 +20,7 @@
 #include "buffer.h"
 #include "log-buffer.h"
 #include "savecwd.h"
+#include "vasnprintf.h"
 
 #ifdef CLIENT_SUPPORT
 
@@ -175,7 +176,7 @@ arg_should_not_be_sent_to_server( char *arg )
 	/* Calculate "dirname arg" */
 	for (t = arg + strlen (arg) - 1; t >= arg; t--)
 	{
-	    if (ISSLASH (*t))
+	    if (ISDIRSEP(*t))
 		break;
 	}
 
@@ -583,7 +584,7 @@ int path_list_prefixed (Node *p, void *closure)
     const char *prefix = p->key;
     if (strncmp (prefix, questionable, strlen (prefix))) return 0;
     questionable += strlen (prefix);
-    while (ISSLASH (*questionable)) questionable++;
+    while (ISDIRSEP (*questionable)) questionable++;
     if (*questionable == '\0') return 1;
     return pathname_levels (questionable);
 }
@@ -2251,7 +2252,7 @@ send_repository (const char *dir, const char *repos, const char *update_dir)
 	while (*p != '\0')
 	{
 	    assert (*p != '\012');
-	    if (ISSLASH (*p))
+	    if (ISDIRSEP (*p))
 	    {
 		buf[0] = '/';
 		send_to_server (buf, 1);
@@ -2734,12 +2735,6 @@ handle_mt( char *args, int len )
 	    }
 	    else if (strcmp (tag, "newline") == 0)
 		printf ("\n");
-	    else if (strcmp (tag, "date") == 0)
-	    {
-		char *date = format_date_alloc (text);
-		printf ("%s", date);
-		free (date);
-	    }
 	    else if (text != NULL)
 		printf ("%s", text);
     }
@@ -3210,9 +3205,9 @@ make_bufs_from_fds( int tofd, int fromfd, int child_pid,
    If we fail to connect or if access is denied, then die with fatal
    error.  */
 void
-connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
+connect_to_pserver( cvsroot_t *root, struct buffer **to_server_p,
                     struct buffer **from_server_p, int verify_only,
-                    int do_gssapi)
+                    int do_gssapi )
 {
     int sock;
     int port_number, proxy_port_number;
@@ -3259,8 +3254,7 @@ connect_to_pserver (cvsroot_t *root, struct buffer **to_server_p,
 #define CONNECT_STRING "CONNECT %s:%d HTTP/1.0\r\n\r\n"
 	/* Send a "CONNECT" command to proxy: */
 	char* read_buf;
-	int codenum;
-	size_t count;
+	int codenum, count;
 	/* 4 characters for port covered by the length of %s & %d */
 	char* write_buf = asnprintf (NULL, &count, CONNECT_STRING,
                                      root->hostname, port_number);
@@ -3931,6 +3925,7 @@ send_arg (char *string)
 /* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
    using any other fields of the struct vers, we would need to fix
    client_process_import_file to set them up.  */
+
 static void
 send_modified (const char *file, const char *short_pathname, Vers_TS *vers)
 {
@@ -4088,7 +4083,7 @@ struct send_data
 static int
 send_fileproc (void *callerdat, struct file_info *finfo)
 {
-    struct send_data *args = callerdat;
+    struct send_data *args = (struct send_data *) callerdat;
     Vers_TS *vers;
     struct file_info xfinfo;
     /* File name to actually use.  Might differ in case from
@@ -4527,7 +4522,7 @@ send_file_names (int argc, char **argv, unsigned int flags)
 	    {
 		send_to_server ("\012Argumentx ", 0);
 	    }
-	    else if (ISSLASH (*p))
+	    else if (ISDIRSEP (*p))
 	    {
 		buf[0] = '/';
 		send_to_server (buf, 1);
@@ -4627,9 +4622,10 @@ send_files (int argc, char **argv, int local, int aflag, unsigned int flags)
     args.no_contents = flags & SEND_NO_CONTENTS;
     args.backup_modified = flags & BACKUP_MODIFIED_FILES;
     err = start_recursion
-	(send_fileproc, send_filesdoneproc, send_dirent_proc,
-         send_dirleave_proc, &args, argc, argv, local, W_LOCAL, aflag,
-         CVS_LOCK_NONE, NULL, 0, NULL);
+	( send_fileproc, send_filesdoneproc,
+	  send_dirent_proc, send_dirleave_proc, (void *) &args,
+	  argc, argv, local, W_LOCAL, aflag, CVS_LOCK_NONE, (char *) NULL, 0,
+	  (char *) NULL );
     if (err)
 	exit (EXIT_FAILURE);
     if (toplevel_repos == NULL)
