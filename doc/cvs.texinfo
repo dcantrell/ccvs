@@ -11364,6 +11364,16 @@ happening with CVS 1.9 on Solaris 2.5.  The cause is
 unknown; if you know more about what causes it, let us
 know as described in @ref{BUGS}.
 
+@item ci: @var{file},v: bad diff output line: Binary files - and /tmp/T2a22651 differ
+This happens when trying to check in a binary file if
+@sc{rcs} is not correctly installed.  Re-read the
+instructions that came with your @sc{rcs} distribution
+and the @sc{install} file in the @sc{cvs}
+distribution.
+@c I'm sort of tempted to try to point people towards
+@c RCS binaries which are correctly set up, but that
+@c answer is kind of complex and subject to change.
+
 @item cvs [update aborted]: could not patch @var{file}: No such file or directory
 This means that there was a problem finding the
 @code{patch} program.  Make sure that it is in your
