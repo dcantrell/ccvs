@@ -158,16 +158,6 @@
           Thoughts?
 
 
-* Is it still the case that cvs tries to use Perl and fails, so that
-  installers need to fix by hand the line in
-  $repository/CVSROOT/loginfo to read:
-
-  DEFAULT       (echo ""; echo $USER; date; cat) >> $CVSROOT/CVSROOT/commitlog
-
-  If so, we ought to either make it work as intended or take out the
-  attempted Perl entirely.
-
-
 * (Charles Hannum <mycroft@ai.mit.edu>) has these bugs:
 
   I just tossed remote CVS at a fairly large source tree that I already
