@@ -67,6 +67,7 @@ struct master_lists
     List *cilist;			/* list with commit_info structs */
 };
 
+static int check_valid_edit = 0;
 static int force_ci = 0;
 static int got_message;
 static int aflag;
@@ -80,7 +81,8 @@ static time_t last_register_time;
 
 static const char *const commit_usage[] =
 {
-    "Usage: %s %s [-Rlf] [-m msg | -F logfile] [-r rev] files...\n",
+    "Usage: %s %s [-cRlf] [-m msg | -F logfile] [-r rev] files...\n",
+    "    -c          Check for valid edits before committing.\n",
     "    -R          Process directories recursively.\n",
     "    -l          Local directory only (not recursive).\n",
     "    -f          Force the file to be committed; disables recursion.\n",
@@ -324,9 +326,9 @@ copy_ulist (Node *node, void *data)
 
 
 #ifdef SERVER_SUPPORT
-# define COMMIT_OPTIONS "+nlRm:fF:r:"
+# define COMMIT_OPTIONS "+cnlRm:fF:r:"
 #else /* !SERVER_SUPPORT */
-# define COMMIT_OPTIONS "+lRm:fF:r:"
+# define COMMIT_OPTIONS "+clRm:fF:r:"
 #endif /* SERVER_SUPPORT */
 int
 commit (int argc, char **argv)
@@ -369,6 +371,9 @@ commit (int argc, char **argv)
     {
 	switch (c)
 	{
+            case 'c':
+                check_valid_edit = 1;
+                break;
 #ifdef SERVER_SUPPORT
 	    case 'n':
 		/* Silently ignore -n for compatibility with old
@@ -403,6 +408,7 @@ commit (int argc, char **argv)
 		break;
 	    case 'f':
 		force_ci = 1;
+                check_valid_edit = 0;
 		local = 1;		/* also disable recursion */
 		break;
 	    case 'F':
@@ -574,6 +580,8 @@ commit (int argc, char **argv)
 
 	if (local)
 	    send_arg("-l");
+        if (check_valid_edit)
+            send_arg("-c");
 	if (force_ci)
 	    send_arg("-f");
 	option_with_arg ("-r", saved_tag);
@@ -846,6 +854,9 @@ check_fileproc (void *callerdat, struct file_info *finfo)
 	case T_MODIFIED:
 	case T_ADDED:
 	case T_REMOVED:
+        {
+            char *editor;
+
 	    /*
 	     * some quick sanity checks; if no numeric -r option specified:
 	     *	- can't have a sticky date
@@ -995,6 +1006,59 @@ warning: file `%s' seems to still contain conflict indicators",
 	    li = ((struct logfile_info *)
 		  xmalloc (sizeof (struct logfile_info)));
 	    li->type = status;
+
+	    if (check_valid_edit)
+            {
+                char *editors = NULL;
+
+		editor = NULL;
+                editors = fileattr_get0 (finfo->file, "_editors");
+                if (editors != NULL)
+                {
+                    char *caller = getcaller ();
+                    char *p = NULL;
+                    char *p0 = NULL;
+
+                    p = editors;
+                    p0 = p;
+                    while (*p != '\0')
+                    {
+                        p = strchr (p, '>');
+                        if (p == NULL)
+                        {
+                            break;
+                        }
+                        *p = '\0';
+                        if (strcmp (caller, p0) == 0)
+                        {
+                            break;
+                        }
+                        p = strchr (p + 1, ',');
+                        if (p == NULL)
+                        {
+                            break;
+                        }
+                        ++p;
+                        p0 = p;
+                    }
+
+                    if (strcmp (caller, p0) == 0)
+                    {
+                        editor = caller;
+                    }
+
+                    free (editors);
+                }
+            }
+
+            if (check_valid_edit && editor == NULL)
+            {
+                error (0, 0, "Valid edit does not exist for %s",
+                       finfo->fullname);
+                freevers_ts (&vers);
+                return 1;
+            }
+
 	    li->tag = xstrdup (vers->tag);
 	    li->rev_old = xstrdup (vers->vn_rcs);
 	    li->rev_new = NULL;
@@ -1055,6 +1119,8 @@ warning: file `%s' seems to still contain conflict indicators",
 #endif
 
 	    break;
+        }
+
 	case T_UNKNOWN:
 	    error (0, 0, "nothing known about `%s'", finfo->fullname);
 	    goto out;
@@ -1443,7 +1509,8 @@ commit_fileproc (void *callerdat, struct file_info *finfo)
 
     /* Clearly this is right for T_MODIFIED.  I haven't thought so much
        about T_ADDED or T_REMOVED.  */
-    notify_do ('C', finfo->file, getcaller (), NULL, NULL, finfo->repository);
+    notify_do ('C', finfo->file, finfo->update_dir, getcaller (), NULL, NULL,
+	       finfo->repository);
 
 out:
     if (err != 0)

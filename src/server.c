@@ -1118,6 +1118,7 @@ serve_max_dotdot (char *arg)
 
 
 static char *gDirname;
+static char *gupdate_dir;
 
 static void
 dirswitch (char *dir, char *repos)
@@ -1170,6 +1171,13 @@ dirswitch (char *dir, char *repos)
 
     if (gDirname != NULL)
 	free (gDirname);
+    if (gupdate_dir != NULL)
+	free (gupdate_dir);
+
+    if (!strcmp (dir, "."))
+	gupdate_dir = xstrdup ("");
+    else
+	gupdate_dir = xstrdup (dir);
 
     gDirname = xmalloc (strlen (server_temp_dir) + dir_len + 40);
     if (gDirname == NULL)
@@ -2632,6 +2640,9 @@ struct notify_note {
     char *dir;
 
     /* xmalloc'd.  */
+    char *update_dir;
+
+    /* xmalloc'd.  */
     char *filename;
 
     /* The following three all in one xmalloc'd block, pointed to by TYPE.
@@ -2693,8 +2704,9 @@ serve_notify (char *arg)
 	return;
     }
     new->dir = xmalloc (strlen (gDirname) + 1);
+    new->update_dir = xmalloc (strlen (gupdate_dir) + 1);
     new->filename = xmalloc (strlen (arg) + 1);
-    if (new->dir == NULL || new->filename == NULL)
+    if (new->dir == NULL || new->update_dir == NULL || new->filename == NULL)
     {
 	pending_error = ENOMEM;
 	if (new->dir != NULL)
@@ -2703,6 +2715,7 @@ serve_notify (char *arg)
 	return;
     }
     strcpy (new->dir, gDirname);
+    strcpy (new->update_dir, gupdate_dir);
     strcpy (new->filename, arg);
 
     status = buf_read_line (buf_from_net, &data, NULL);
@@ -2786,10 +2799,38 @@ serve_notify (char *arg)
     if (new != NULL)
     {
 	free (new->filename);
+	free (new->update_dir);
 	free (new->dir);
 	free (new);
     }
     return;
+}
+
+
+
+static void
+serve_hostname (char *arg)
+{
+    if (strlen (hostname) >= MAXHOSTNAMELEN)
+    {
+	pending_error = 0;
+	if (alloc_pending (80))
+	    strcpy (pending_error_text,
+		    "E Protocol error; hostname too long.");
+	return;
+    }
+
+    strcpy (hostname, arg);
+    return;
+}
+
+
+
+static void
+serve_localdir (char *arg)
+{
+    if (CurDir) free (CurDir);
+    CurDir = xstrdup (arg);
 }
 
 
@@ -2818,8 +2859,9 @@ server_notify (void)
 
 	fileattr_startdir (repos);
 
-	notify_do (*notify_list->type, notify_list->filename, getcaller(),
-		   notify_list->val, notify_list->watches, repos);
+	notify_do (*notify_list->type, notify_list->filename,
+		   notify_list->update_dir, getcaller(), notify_list->val,
+		   notify_list->watches, repos);
 
 	buf_output0 (buf_to_net, "Notified ");
 	{
@@ -4586,6 +4628,12 @@ serve_editors (char *arg)
     do_cvs_command ("editors", editors);
 }
 
+static void
+serve_edit (char *arg)
+{
+    do_cvs_command ("edit", edit);
+}
+
 
 
 #ifdef PROXY_SUPPORT
@@ -5204,6 +5252,18 @@ server_set_sticky (const char *update_dir, const char *repository,
 
 
 
+void
+server_edit_file (struct file_info *finfo)
+{
+    buf_output (protocol, "Edit-file ", 10);
+    output_dir (finfo->update_dir, finfo->repository);
+    buf_output0 (protocol, finfo->file);
+    buf_output (protocol, "\n", 1);
+    buf_send_counted (protocol);
+}
+
+
+
 struct template_proc_data
 {
     const char *update_dir;
@@ -5667,6 +5727,8 @@ struct request requests[] =
 
   REQ_LINE("Unchanged", serve_unchanged, RQ_ESSENTIAL),
   REQ_LINE("Notify", serve_notify, 0),
+  REQ_LINE("Hostname", serve_hostname, 0),
+  REQ_LINE("LocalDir", serve_localdir, 0),
   REQ_LINE("Questionable", serve_questionable, 0),
   REQ_LINE("Argument", serve_argument, RQ_ESSENTIAL),
   REQ_LINE("Argumentx", serve_argumentx, RQ_ESSENTIAL),
@@ -5721,6 +5783,7 @@ struct request requests[] =
   REQ_LINE("watch-remove", serve_watch_remove, 0),
   REQ_LINE("watchers", serve_watchers, 0),
   REQ_LINE("editors", serve_editors, 0),
+  REQ_LINE("edit", serve_edit, 0),
   REQ_LINE("init", serve_init, RQ_ROOTLESS),
   REQ_LINE("annotate", serve_annotate, 0),
   REQ_LINE("rannotate", serve_rannotate, 0),

@@ -1,3 +1,41 @@
+2004-10-04  Derek Price  <derek@ximbiot.com>
+
+	* client.c (responses): Add "Edit-file".
+	(handle_edit_file): New function.
+	* commit.c (usage): Add -c option.
+	(check_fileproc): Check for edit when requested.
+	(commit_fileproc): Use new notify_do API.
+	* edit.c (check_edited): New global.
+	(setting_tedit, setting_tunedit, setting_tcommit): s/int/bool/.
+	(ncheck_fileproc): Use new notify_do API.
+	(send_notifications): Remove redundant proto.  Remove unnecessary
+	repository lock.
+	(editors_output, find_editors_and_output, edit_file): New functions.
+	edit_file() factored from...
+	(edit_fileproc): ...here.  Skip files with existing editors when
+	requested.
+	(usage): Add -c and -f.
+	(edit): Handle new -c and -f options.
+	(notify_do): Accept update_dir as an argument for user messages.
+	(editors_fileproc): Factor most content to find_editors_and_output()
+	and edit_file().
+	* edit.h (notify_do): Proto new API.
+	(editors_output, edit_file): New functions.
+	* rcs.c (RCS_unlock): Use new notify_do() API.
+	* sanity.sh: Update assorted tests to compensate for new output.
+	(edit-check): New tests.
+	* server.c (gupdate_dir): New global.
+	(struct notify_note): Keep track of update_dir.
+	(serve_notify): Use update_dir.
+	(serve_hostname, serve_localdir, serve_edit, server_edit_file): New
+	functions.
+	(server_notify): Use new notify_do() API.
+	(requests): Add Hostname, LocalDir, and edit.
+	* server.h (server_edit_file): New proto.
+	(Note: Original design of new advisory lock behavior came from Noel Yap
+	<yap_noel@yahoo.com>'s original advisory locks patch, originally ported
+	forward and enhanced by Matthew Ogilvie <mmo9317bd@mailcan.com>.)
+
 2004-10-04 Derek Price <derek@ximbiot.com>
 
 	* admin.c (postadmin_proc), edit.c (notify_proc), fileattr.c

@@ -2157,6 +2157,16 @@ handle_clear_sticky (char *pathname, int len)
 
 
 
+/* Handle the client-side support for a successful edit.
+ */
+static void
+handle_edit_file (char *pathname, int len)
+{
+    call_in_directory (pathname, edit_file, NULL);
+}
+
+
+
 static void
 template (void *data, List *ent_list, char *short_pathname, char *filename)
 {
@@ -2916,6 +2926,8 @@ struct response responses[] =
     RSP_LINE("Set-sticky", handle_set_sticky, response_type_normal,
        rs_optional),
     RSP_LINE("Clear-sticky", handle_clear_sticky, response_type_normal,
+       rs_optional),
+    RSP_LINE("Edit-file", handle_edit_file, response_type_normal,
        rs_optional),
     RSP_LINE("Template", handle_template, response_type_normal,
        rs_optional),
