@@ -1,5 +1,12 @@
 Wed Mar 13 17:02:00 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* INSTALL: Refer to cvs.texinfo rather than out-of-date cvsinit
+	instructions.  Instead of telling everyone to update modules
+	whenever adding directories (which is optional), refer to the
+	manual regarding all administrative files.  Revise "make check"
+	instructions to be even less encouraging about submitting bug
+	reports.
+
 	* examples/*: Removed.
 	* Makefile.in (SUBDIRS): Remove examples.
 	* cvsinit.sh: Removed.
