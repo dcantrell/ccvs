@@ -1,3 +1,9 @@
+Wed Aug 20 09:51:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+			  and Loren James Rittle <rittle@comm.mot.com>
+
+	* INSTALL: Update information for SunOS4, Solaris, Digital Unix,
+	and HPUX.
+
 Fri Aug 15 16:42:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* INSTALL: Remove the "CVS 1.6" crud; it really isn't needed.  Add
