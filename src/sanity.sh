@@ -3951,7 +3951,7 @@ ${SPROG} commit: Rebuilding administrative file database"
 	    # logout does not try to contact the server.
 	    CVSROOT=":pserver;proxy=localhost;proxyport=8080:localhost/dev/null"
 	    dotest parseroot-3r "$testcvs -d'$CVSROOT' logout" \
-"Logging out of :pserver:oberon@localhost:2401/dev/null
+"Logging out of :pserver:$username@localhost:2401/dev/null
 $CPROG logout: warning: failed to open $HOME/\.cvspass for reading: No such file or directory
 $CPROG logout: Entry not found."
 	    CVSROOT=":pserver;proxyport=8080:localhost/dev/null"

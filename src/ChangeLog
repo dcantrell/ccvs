@@ -1,3 +1,7 @@
+2004-04-07  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (parseroot): s/oberon/$username/.
+
 2004-04-06  Derek Price  <derek@ximbiot.com>
 
 	Import Jim Kingdon's old, old patch which allows CVS to work via a
