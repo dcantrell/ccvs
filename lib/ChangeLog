@@ -1,3 +1,8 @@
+2003-05-27  Derek Price  <derek@ximbiot.com>
+
+	* README: New file explaining the GNULIB origin of many of the lib
+	files.
+
 2003-05-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerate with Automake version 1.7.5.
