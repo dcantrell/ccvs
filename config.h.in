@@ -18,6 +18,9 @@
    */
 #undef CRAY_STACKSEG_END
 
+/* define if cross compiling */
+#undef CROSS_COMPILING
+
 /* The CVS admin command is restricted to the members of the group
    CVS_ADMIN_GROUP. If this group does not exist, all users are allowed to run
    CVS admin. To disable the CVS admin command for all users, create an empty
@@ -611,6 +614,30 @@
    */
 #undef SERVER_SUPPORT
 
+/* The size of a `char', as computed by sizeof. */
+#undef SIZEOF_CHAR
+
+/* The size of a `double', as computed by sizeof. */
+#undef SIZEOF_DOUBLE
+
+/* The size of a `float', as computed by sizeof. */
+#undef SIZEOF_FLOAT
+
+/* The size of a `int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of a `long double', as computed by sizeof. */
+#undef SIZEOF_LONG_DOUBLE
+
+/* The size of a `long int', as computed by sizeof. */
+#undef SIZEOF_LONG_INT
+
+/* The size of a `long long int', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG_INT
+
+/* The size of a `short int', as computed by sizeof. */
+#undef SIZEOF_SHORT_INT
+
 /* Define as the maximum value of type 'size_t', if the system doesn't define
    it. */
 #undef SIZE_MAX
@@ -629,6 +656,13 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Enable support for the pre 1.12.1 *info scripting hook format strings.
+   Disable this option for a smaller executable once your CVSROOT/* scripting
+   hooks have been updated to use the new *info format strings by passing
+   "--disable-old-info-format-support" option to configure or by commenting
+   out the line below. */
+#undef SUPPORT_OLD_INFO_FMT_STRINGS
+
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
 
@@ -645,6 +679,33 @@
    value is overridden by the value of the CVSUMASK environment variable,
    which is interpreted as an octal number. */
 #undef UMASK_DFLT
+
+/* Define if double is the first floating point type detected with its size.
+   */
+#undef UNIQUE_FLOAT_TYPE_DOUBLE
+
+/* Define if float is the first floating point type detected with its size. */
+#undef UNIQUE_FLOAT_TYPE_FLOAT
+
+/* Define if long double is the first floating point type detected with its
+   size. */
+#undef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
+
+/* Define if char is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_CHAR
+
+/* Define if int is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_INT
+
+/* Define if long int is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_LONG_INT
+
+/* Define if long long int is the first integer type detected with its size.
+   */
+#undef UNIQUE_INT_TYPE_LONG_LONG_INT
+
+/* Define if short int is the first integer type detected with its size. */
+#undef UNIQUE_INT_TYPE_SHORT_INT
 
 /* Define if setmode is required when writing binary data to stdout. */
 #undef USE_SETMODE_STDOUT
