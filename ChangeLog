@@ -1,3 +1,8 @@
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure.in (RSH_DFLT): Macro substitution for configured CVS_RSH.
+	* Makefile.in, configure: Regenerated.
+
 2003-11-19  Derek Price  <derek@ximbiot.com>
 
 	* srclist.txt (getline): Update to match new module definitions and
