@@ -1,3 +1,8 @@
+2003-12-10  Derek Price  <derek@ximbiot.com>
+
+	* config.h.in (SYSTEM_CLEANUP): That's because you need to change it
+	here.
+
 2003-12-10  Mark D. Baushke  <mdb@cvshome.org>
 
 	* config.h (SYSTEM_CLEANUP): Update macro to be a name
