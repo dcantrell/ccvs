@@ -1,5 +1,7 @@
 Thu Jan 29 00:01:05 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* version.c: Change version number to 1.9.25.
+
 	* Version 1.9.24.
 
 	* sanity.sh (multibranch2): File file2 and tests multibranch2-13
