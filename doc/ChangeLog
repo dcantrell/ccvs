@@ -1,3 +1,10 @@
+1998-03-17  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Copying): Remove this node.  This basically
+	restores the status quo prior to 18 Oct 1996 (before then the node
+	existed but was empty).
+	(before Top): Adjust copyright notice accordingly.
+
 1998-03-12  Tim Pierce  <twp@skepsis.com>
 
 	* RCSFILES: Updated description of `hardlinks' newphrases.
