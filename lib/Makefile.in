@@ -240,35 +240,35 @@ libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/dup2.Po $(DEPDIR)/fncase.Po \
-@AMDEP_TRUE@	$(DEPDIR)/fnmatch.Po $(DEPDIR)/fnmatch.h.in \
-@AMDEP_TRUE@	$(DEPDIR)/ftruncate.Po $(DEPDIR)/gethostname.Po \
-@AMDEP_TRUE@	$(DEPDIR)/getline.Po $(DEPDIR)/getndelim2.Po \
-@AMDEP_TRUE@	$(DEPDIR)/getpass.Po $(DEPDIR)/lstat.Po \
-@AMDEP_TRUE@	$(DEPDIR)/malloc.Po $(DEPDIR)/memmove.Po \
-@AMDEP_TRUE@	$(DEPDIR)/mkdir.Po $(DEPDIR)/mkstemp.Po \
-@AMDEP_TRUE@	$(DEPDIR)/realloc.Po $(DEPDIR)/rename.Po \
-@AMDEP_TRUE@	$(DEPDIR)/stat.Po $(DEPDIR)/strerror.Po \
-@AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
-@AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
-@AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/regex.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@DEP_FILES = $(DEPDIR)/atexit.Po $(DEPDIR)/dup2.Po \
+@AMDEP_TRUE@	$(DEPDIR)/fncase.Po $(DEPDIR)/fnmatch.Po \
+@AMDEP_TRUE@	$(DEPDIR)/fnmatch.h.in $(DEPDIR)/ftruncate.Po \
+@AMDEP_TRUE@	$(DEPDIR)/gethostname.Po $(DEPDIR)/getline.Po \
+@AMDEP_TRUE@	$(DEPDIR)/getndelim2.Po $(DEPDIR)/getpass.Po \
+@AMDEP_TRUE@	$(DEPDIR)/lstat.Po $(DEPDIR)/malloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/memmove.Po $(DEPDIR)/mkdir.Po \
+@AMDEP_TRUE@	$(DEPDIR)/mkstemp.Po $(DEPDIR)/realloc.Po \
+@AMDEP_TRUE@	$(DEPDIR)/rename.Po $(DEPDIR)/stat.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strerror.Po $(DEPDIR)/strstr.Po \
+@AMDEP_TRUE@	$(DEPDIR)/strtoul.Po $(DEPDIR)/tempname.Po \
+@AMDEP_TRUE@	$(DEPDIR)/valloc.Po $(DEPDIR)/waitpid.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/argmatch.Po ./$(DEPDIR)/getdate.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/regex.Po ./$(DEPDIR)/savecwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 DIST_SOURCES = $(libcvs_a_SOURCES)
-DIST_COMMON = README ChangeLog Makefile.am Makefile.in dup2.c fncase.c \
-	fnmatch.c fnmatch.h.in ftruncate.c getdate.c gethostname.c \
-	getline.c getndelim2.c getpass.c lstat.c malloc.c memmove.c \
-	mkdir.c mkstemp.c realloc.c rename.c stat.c strerror.c strstr.c \
-	strtoul.c tempname.c valloc.c waitpid.c
+DIST_COMMON = README ChangeLog Makefile.am Makefile.in atexit.c dup2.c \
+	fncase.c fnmatch.c fnmatch.h.in ftruncate.c getdate.c \
+	gethostname.c getline.c getndelim2.c getpass.c lstat.c malloc.c \
+	memmove.c mkdir.c mkstemp.c realloc.c rename.c stat.c \
+	strerror.c strstr.c strtoul.c tempname.c valloc.c waitpid.c
 SOURCES = $(libcvs_a_SOURCES)
 
 all: all-am
@@ -296,6 +296,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/atexit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/dup2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fncase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/fnmatch.Po@am__quote@
