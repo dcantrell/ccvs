@@ -35,6 +35,7 @@ static char *date1 = NULL;
 static char *date2 = NULL;
 static char tmpfile1[L_tmpnam+1], tmpfile2[L_tmpnam+1], tmpfile3[L_tmpnam+1];
 static int unidiff = 0;
+static char diff_opt[20] = "-c";
 
 static const char *const patch_usage[] =
 {
@@ -66,7 +67,7 @@ patch (argc, argv)
 	usage (patch_usage);
 
     optind = 1;
-    while ((c = getopt (argc, argv, "V:k:cuftsQqlRD:r:")) != -1)
+    while ((c = getopt (argc, argv, "V:k:c::u::ftsQqlRD:r:")) != -1)
     {
 	switch (c)
 	{
@@ -127,11 +128,11 @@ patch (argc, argv)
 		options = xmalloc (strlen (optarg) + 1 + 2);	/* for the -V */
 		(void) sprintf (options, "-V%s", optarg);
 		break;
+	    case 'c':
 	    case 'u':
-		unidiff = 1;		/* Unidiff */
-		break;
-	    case 'c':			/* Context diff */
-		unidiff = 0;
+		unidiff = (c == 'u');
+		sprintf (diff_opt, "-%c%s", c,
+			 (optarg != NULL) ? optarg : "");
 		break;
 	    case '?':
 	    default:
@@ -179,9 +180,9 @@ patch (argc, argv)
 	    send_arg("-t");
 	if (patch_short)
 	    send_arg("-s");
-	if (unidiff)
-	    send_arg("-u");
 
+	send_arg (diff_opt);
+	
 	if (rev1)
 	    option_with_arg ("-r", rev1);
 	if (date1)
@@ -336,8 +337,9 @@ patch_fileproc (finfo)
 {
     struct utimbuf t;
     char *vers_tag, *vers_head;
-    char rcsspace[PATH_MAX];
-    char *rcs = rcsspace;
+    char rcsspace[2][PATH_MAX];
+    char *rcs = rcsspace[0];
+    char *path = rcsspace[1];
     Node *p;
     RCSNode *rcsfile;
     FILE *fp1, *fp2, *fp3;
@@ -348,7 +350,7 @@ patch_fileproc (finfo)
     char *line1, *line2;
     size_t line1_chars_allocated;
     size_t line2_chars_allocated;
-    char *cp1, *cp2, *commap;
+    char *cp1, *cp2;
     FILE *fp;
 
     /* find the parsed rcs file */
@@ -358,6 +360,8 @@ patch_fileproc (finfo)
 	isattic = 1;
 
     (void) sprintf (rcs, "%s%s", finfo->file, RCSEXT);
+    (void) sprintf (path, "%s%s%s", finfo->update_dir,
+		    finfo->update_dir[0] ? "/" : "", finfo->file);
 
     /* if vers_head is NULL, may have been removed from the release */
     if (isattic && rev2 == NULL && date2 == NULL)
@@ -391,12 +395,12 @@ patch_fileproc (finfo)
 
     if (patch_short)
     {
-	(void) printf ("File ");
+	(void) printf ("File %s ", path);
 	if (vers_tag == NULL)
-	    (void) printf ("%s is new; current revision %s\n", rcs, vers_head);
+	    (void) printf ("is new; current revision %s\n", vers_head);
 	else if (vers_head == NULL)
 	{
-	    (void) printf ("%s is removed; not included in ", rcs);
+	    (void) printf ("is removed; not included in ");
 	    if (rev2 != NULL)
 		(void) printf ("release tag %s", rev2);
 	    else if (date2 != NULL)
@@ -406,8 +410,8 @@ patch_fileproc (finfo)
 	    (void) printf ("\n");
 	}
 	else
-	    (void) printf ("%s changed from revision %s to %s\n",
-			   rcs, vers_tag, vers_head);
+	    (void) printf ("changed from revision %s to %s\n",
+			   vers_tag, vers_head);
 	return (0);
     }
     if ((fp1 = fopen (tmpnam (tmpfile1), "w+")) != NULL)
@@ -459,7 +463,7 @@ patch_fileproc (finfo)
 						    (char *) 0, 0)) != -1)
 		(void) utime (tmpfile2, &t);
     }
-    run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
+    run_setup ("%s %s", DIFF, diff_opt);
     run_arg (tmpfile1);
     run_arg (tmpfile2);
 
@@ -484,10 +488,7 @@ patch_fileproc (finfo)
 
 	    /* Output an "Index:" line for patch to use */
 	    (void) fflush (stdout);
-	    if (finfo->update_dir[0])
-	      (void) printf ("Index: %s/%s\n", finfo->update_dir, finfo->file);
-	    else
-	      (void) printf ("Index: %s\n", finfo->file);
+	    (void) printf ("Index: %s\n", path);
 	    (void) fflush (stdout);
 
 	    fp = open_file (tmpfile3, "r");
@@ -532,41 +533,34 @@ patch_fileproc (finfo)
 		(void) strcpy (strippath, REPOS_STRIP);
 	    if (strncmp (rcs, strippath, strlen (strippath)) == 0)
 		rcs += strlen (strippath);
-	    commap = strrchr (rcs, ',');
-	    *commap = '\0';
 	    if (vers_tag != NULL)
 	    {
-		(void) sprintf (file1, "%s%s%s:%s", finfo->update_dir,
-				finfo->update_dir[0] ? "/" : "", rcs, vers_tag);
+		(void) sprintf (file1, "%s:%s", path, vers_tag);
 	    }
 	    else
 	    {
 		(void) strcpy (file1, DEVNULL);
 	    }
-	    (void) sprintf (file2, "%s%s%s:%s", finfo->update_dir,
-			    finfo->update_dir[0] ? "/" : "", rcs,
+	    (void) sprintf (file2, "%s:%s", path,
 			    vers_head ? vers_head : "removed");
+	    (void) printf ("%s %s %s %s\n", DIFF, diff_opt, file1, file2);
 	    if (unidiff)
 	    {
-		(void) printf ("diff -u %s %s\n", file1, file2);
 		(void) printf ("--- %s%s+++ ", file1, cp1);
 	    }
 	    else
 	    {
-		(void) printf ("diff -c %s %s\n", file1, file2);
 		(void) printf ("*** %s%s--- ", file1, cp1);
 	    }
 
-	    if (finfo->update_dir[0] != '\0')
-		(void) printf ("%s/", finfo->update_dir);
-	    (void) printf ("%s%s", rcs, cp2);
+	    (void) printf ("%s%s", path, cp2);
 	    /* spew the rest of the diff out */
 	    while (getline (&line1, &line1_chars_allocated, fp) >= 0)
 		(void) fputs (line1, stdout);
 	    (void) fclose (fp);
 	    break;
 	default:
-	    error (0, 0, "diff failed for %s", rcs);
+	    error (0, 0, "diff failed for %s", path);
     }
   out:
     if (line1)

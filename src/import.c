@@ -487,7 +487,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	if (tmpdir == NULL || tmpdir[0] == '\0') 
 	  tmpdir = "/tmp";
 
-	(void) sprintf (xtmpfile, "%s/cvs-imp%d", tmpdir, getpid());
+	(void) sprintf (xtmpfile, "%s/cvs-imp%ld", tmpdir, getpid());
 
 	/*
 	 * The rcs file does have a revision on the vendor branch. Compare

@@ -325,9 +325,11 @@ xchmod (fname, writable)
     if (trace)
 #ifdef SERVER_SUPPORT
 	(void) fprintf (stderr, "%c-> chmod(%s,%o)\n",
-			(server_active) ? 'S' : ' ', fname, mode);
+			(server_active) ? 'S' : ' ', fname,
+			(unsigned int) mode);
 #else
-	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname, mode);
+	(void) fprintf (stderr, "-> chmod(%s,%o)\n", fname,
+			(unsigned int) mode);
 #endif
     if (noexec)
 	return;

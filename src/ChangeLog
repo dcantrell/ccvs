@@ -1,3 +1,28 @@
+Thu Feb 29 10:29:25 MET 1996  Norbert Kiesel (nk)  <nk@col.sw-ley.de>
+
+	* sanity.sh: added "cat > /dev/null" to loginfo entry to avoid the
+	  SIGPIPE signal
+
+Thu Feb 29 10:28:25 MET 1996  Norbert Kiesel (nk)  <nk@col.sw-ley.de>
+
+	* patch.c: added new variable diff_opt
+	(patch): allow optional parameter to -c and -u option, send it to
+	server
+	(patch_fileproc): cleaned up the code which prints the current
+	filename.  For "-s" option, print the pathname relative to CVSROOT
+	instead of just the filename.
+
+	* filesubr.c (xchmod): added cast to shut up gcc
+
+	* cvs.h: added prototype for gethostname
+
+Thu Feb 29 10:27:25 MET 1996  Norbert Kiesel (nk)  <nk@col.sw-ley.de>
+
+	* lock.c (write_lock), (Reader_Lock), import.c (update_rcs_file),
+	  client.c (update_entries), (send_modified), server.c (server),
+	  (receive_file), (server_updated): use %ld for printing pid_t
+	  variables
+
 Thu Feb 29 02:22:12 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* run.c (run_exec): Added VMS return status support.

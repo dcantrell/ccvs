@@ -425,16 +425,16 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
     List *changes;
 {
     char cwd[PATH_MAX];
-    FILE *pipefp, *run_popen ();
+    FILE *pipefp;
     char *prog = xmalloc (MAXPROGLEN);
     char *cp;
     int c;
+    int pipestatus;
 
-    /* XXX <woods@web.net> -- this is gross, ugly, and a hack!  FIXME! */
     /*
-     * A maximum of 6 %s arguments are supported in the filter
+     * Only 1 %s argument is supported in the filter
      */
-    (void) sprintf (prog, filter, title, title, title, title, title, title);
+    (void) sprintf (prog, filter, title);
     if ((pipefp = run_popen (prog, "w")) == NULL)
     {
 	if (!noexec)
@@ -457,7 +457,8 @@ logfile_write (repository, filter, title, message, revision, logfp, changes)
 	    (void) putc ((char) c, pipefp);
     }
     free (prog);
-    return (pclose (pipefp));
+    pipestatus = pclose (pipefp);
+    return ((pipestatus == -1) || (pipestatus == 127)) ? 1 : 0;
 }
 
 /*
