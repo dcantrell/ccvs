@@ -1,3 +1,7 @@
+2004-09-08  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (join7): Re-order join7-5 and join7-6 tests.
+
 2004-09-08  Conrad T. Pino  <Conrad@Pino.com>
 
 	* server.c: Remove extra token in conditional compile line 5580
