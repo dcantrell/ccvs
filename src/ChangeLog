@@ -1,5 +1,9 @@
 2004-07-11  Derek Price  <derek@ximbiot.com>
 
+	* checkin.c (checkout_proc): Correct vi induced typo.
+
+2004-07-11  Derek Price  <derek@ximbiot.com>
+
 	* admin.c (postadmin_proc), commit.c (precommit_proc), edit.c
 	(notify_proc), fileattr.c (postwatch_proc), logmsg.c (logfile_write),
 	server.c (prepost_proxy_proc), tag.c (posttag_proc, pretag_proc): Add
