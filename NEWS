@@ -3,6 +3,10 @@ Changes since 1.12.9:
 
 NEW FEATURES
 
+* Thanks again to Bart Robinson <lomew@pobox.com>, `cvs log' & `cvs ls' now
+  actually output local times when the server is version 1.12.9 or greater and
+  the client is version  1.12.10 or greater.  
+
 * The CVS server now sneds paths to files relative to the repository.  CVS
   clients have been able to handle this since at least the 10 year old
   CVS 1.9.2 release, so no attempt at verifying compatibility of clients has
@@ -37,7 +41,7 @@ SERVER SECURITY FIXES
 NEW FEATURES
 
 * `cvs log' & `cvs ls' now output local times when both the server and client
-  are 1.12.9 or greater.
+  are 1.12.9 or greater.  (Thanks to Bart Robinson <lomew@pobox.com>.)
 
 DEVELOPER NOTES
 
