@@ -1,3 +1,14 @@
+2005-03-16  Derek Price  <derek@ximbiot.com>
+
+	* client.c (call_in_directory), commit.c (commit_filesdoneproc), log.c
+	(log_expand_revlist, log_version), logmsg.c (logfile_write), modules
+	(my_module), no_diff.c (No_Difference), parseinfo.c (Parse_Info), rcs.c
+	(RCS_deltas, RCS_checkin, RCS_addbranch, do_locks, do_symbols),
+	rcscmds.c (RCS_merge), root.c (parse_cvsroot, normalize_cvsroot),
+	update.c (merge_file): Verify assumptions via assertions.
+	(Thanks to (probably) incorrect reports from Alen Zukich
+	<alen.zukich@klocwork.com>.)
+
 2005-03-16  Mark D. Baushke  <mdb@cvshome.org>
 
 	* rcs.c (RCS_check_kflag): Use Xasprintf instead of

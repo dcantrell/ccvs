@@ -346,6 +346,7 @@ my_module (DBM *db, char *mname, enum mtype m_type, char *msg,
 	    /* mwhere gets just the module name */
 	    mwhere = xstrdup (mname);
 	    mfile = cp + 1;
+	    assert (strlen (mfile));
 
 	    /* put the / back in mname */
 	    *cp = '/';

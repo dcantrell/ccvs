@@ -252,6 +252,7 @@ RCS_merge (RCSNode *rcs, const char *path, const char *workfile,
        numeric revisions.  */
     xrev1 = RCS_gettag (rcs, rev1, 0, NULL);
     xrev2 = RCS_gettag (rcs, rev2, 0, NULL);
+    assert (xrev1 && xrev2);
 
     /* Check out chosen revisions.  The error message when RCS_checkout
        fails is not very informative -- it is taken verbatim from RCS 5.7,
