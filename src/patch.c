@@ -342,7 +342,9 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     int isattic = 0;
     int retcode = 0;
     char file1[PATH_MAX], file2[PATH_MAX], strippath[PATH_MAX];
-    char line1[MAXLINELEN], line2[MAXLINELEN];
+    char *line1, *line2;
+    size_t line1_chars_allocated;
+    size_t line2_chars_allocated;
     char *cp1, *cp2, *commap;
     FILE *fp;
 
@@ -465,6 +467,12 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
     run_setup ("%s -%c", DIFF, unidiff ? 'u' : 'c');
     run_arg (tmpfile1);
     run_arg (tmpfile2);
+
+    line1 = NULL;
+    line1_chars_allocated = 0;
+    line2 = NULL;
+    line2_chars_allocated = 0;
+
     switch (run_exec (RUN_TTY, tmpfile3, RUN_TTY, RUN_NORMAL))
     {
 	case -1:			/* fork/wait failure */
@@ -488,8 +496,8 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	    (void) fflush (stdout);
 
 	    fp = open_file (tmpfile3, "r");
-	    if (fgets (line1, sizeof (line1), fp) == NULL ||
-		fgets (line2, sizeof (line2), fp) == NULL)
+	    if (getline (&line1, &line1_chars_allocated, fp) < 0 ||
+		getline (&line2, &line2_chars_allocated, fp) < 0)
 	    {
 		error (0, errno, "failed to read diff file header %s for %s",
 		       tmpfile3, rcs);
@@ -557,7 +565,7 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	    if (update_dir[0] != '\0')
 		(void) printf ("%s/", update_dir);
 	    (void) printf ("%s%s", rcs, cp2);
-	    while (fgets (line1, sizeof (line1), fp) != NULL)
+	    while (getline (&line1, &line1_chars_allocated, fp) < 0)
 		(void) printf ("%s", line1);
 	    (void) fclose (fp);
 	    break;
@@ -565,6 +573,10 @@ patch_fileproc (file, update_dir, repository, entries, srcfiles)
 	    error (0, 0, "diff failed for %s", rcs);
     }
   out:
+    if (line1)
+        free (line1);
+    if (line2)
+        free (line2);
     (void) unlink_file (tmpfile1);
     (void) unlink_file (tmpfile2);
     (void) unlink_file (tmpfile3);
