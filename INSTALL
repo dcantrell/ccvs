@@ -12,7 +12,7 @@ Alpha:
 	DEC Alpha running OSF/1 version 3.0 (1.5.95) (footnote 7)
 HPPA:
 	HP 9000/710 running HP-UX 8.07A using gcc (about 1.4A2)
-	HP 9000/715 running HP-UX 9.01 using gcc (about 1.4A2)
+	HP 9000/715 running HP-UX 9.01 (1.6)
         HPPA 1.1 running HP-UX A.09.03 (1.5.95) (footnote 8)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 i386 family:
@@ -21,7 +21,7 @@ i386 family:
 	PC Clone running ISC 4.0.1 (1.5.94)
 	PC Clone running Fintronic Linux 1.2.5 (1.5)
 	PC Clone running BSDI 2.0 (1.4.93) (footnote 5)
-	PC Clone running Windows NT 3.51 (1.5 client)
+	PC Clone running Windows NT 3.51 (1.6 client)
 	FreeBSD 2.0.5, i486, gcc (1.5.95)
 	NextSTEP 3.3 (1.4.92, a few tweaks needed)
 	SCO Unix 3.2.4.2 (1.4.93) (footnote 4)
