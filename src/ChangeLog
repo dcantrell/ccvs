@@ -1,3 +1,11 @@
+Wed Aug 19 00:28:50 1998  Noel Cragg  <noel@swish.red-bean.com>
+
+	* recurse.c (do_recursion): change default for
+ 	PROCESS_THIS_DIRECTORY to true; we should always process a
+ 	directory's contents unless there's an existing CVS/Root file with
+ 	a different root than the current root to tell us otherwise.
+	(do_dir_proc): same.
+
 Tue Aug 18 14:30:59 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* recurse.c (do_recursion): check the current value of CVS/Root
