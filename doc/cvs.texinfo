@@ -2363,7 +2363,7 @@ The first line in the example will grant access to any
 including an empty password.  (This is typical for
 sites granting anonymous read-only access; for
 information on how to do the "read-only" part, see
-@xref{Read-only access}.)
+@ref{Read-only access}.)
 
 The second and third lines will grant access to
 @code{bach} and @code{spwang} if they supply their
@@ -2451,7 +2451,7 @@ rather than via @sc{cvs}.  This is because of the
 possible security risks of having the @file{passwd}
 file checked out to people's working copies.  If you do
 want to include the @file{passwd} file in checkouts of
-@file{$CVSROOT/CVSROOT}, see @xref{checkoutlist}.
+@file{$CVSROOT/CVSROOT}, see @ref{checkoutlist}.
 
 @c We might also suggest using the @code{htpasswd} command
 @c from freely available web servers as well, but that
@@ -7086,7 +7086,7 @@ command to track third-party sources, the @dfn{vendor
 tag} and @dfn{release tags} are useful.  The
 @dfn{vendor tag} is a symbolic name for the branch
 (which is always 1.1.1, unless you use the @samp{-b
-@var{branch}} flag---@xref{Multiple vendor branches}.).  The
+@var{branch}} flag---see @ref{Multiple vendor branches}.).  The
 @dfn{release tags} are symbolic names for a particular
 release, such as @samp{FSF_0_04}.
 
