@@ -1,3 +1,7 @@
+2000-07-06  Larry Jones  <larry.jones@sdrc.com>
+
+	* NEWS: Note that admin -t works in client/server.
+
 2000-06-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* configure.in (AC_DEFINE): Define REGEX_MALLOC and _REGEX_RE_COMP
