@@ -206,6 +206,15 @@ run_exec (stin, stout, sterr, flags)
 	    (void) dup2 (sherr, 2);
 	    (void) close (sherr);
 	}
+	/*
+	** This prevents a user from creating a privileged shell
+	** from the text editor when the SETXID_SUPPORT option is selected.
+	*/
+	if (!strcmp (run_argv[0], Editor) && setegid (getgid ()))
+	{
+	    error (0, errno, "cannot set egid to gid");
+	    _exit (127);
+	}
 
 	/* dup'ing is done.  try to run it now */
 	(void) execvp (run_argv[0], run_argv);
