@@ -44,7 +44,7 @@
 /* When committing or importing files, you must enter a log message. Normally,
    you can do this either via the -m flag on the command line, the -F flag on
    the command line, or an editor will be started for you. If you like to use
-   logging templates (the rcsinfo file within the /CVSROOT directory),
+   logging templates (the rcsinfo file within the $CVSROOT/CVSROOT directory),
    you might want to force people to use the editor even if they specify a
    message with -m or -F. Enabling FORCE_USE_EDITOR will cause the -m or -F
    message to be appended to the temp file when the editor is started. */
@@ -83,7 +83,7 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
-/* Define to 1 if your system has a working `fnmatch' function. */
+/* Define to 1 if your system has a working POSIX `fnmatch' function. */
 #undef HAVE_FNMATCH
 
 /* Define to 1 if you have the <fnmatch.h> header file. */
