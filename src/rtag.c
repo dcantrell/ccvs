@@ -326,6 +326,7 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
 {
     char *xdir;
     Node *p;
+    Vers_TS *vers;
     
     if (update_dir[0] == '\0')
 	xdir = ".";
@@ -355,7 +356,41 @@ check_fileproc(file, update_dir, repository, entries, srcfiles)
     p->key = xstrdup (file);
     p->type = UPDATE;
     p->delproc = tag_delproc;
-    p->data = NULL;
+    vers = Version_TS (repository, (char *) NULL, (char *) NULL,
+        (char *) NULL, file, 0, 0, entries, srcfiles);
+    p->data = RCS_getversion(vers->srcfile, numtag, date, force_tag_match);
+    if (p->data != NULL)
+    {
+        int addit = 1;
+        char *oversion;
+        
+        oversion = RCS_getversion (vers->srcfile, symtag, (char *) NULL, 1);
+        if (oversion == NULL) 
+        {
+            if (delete)
+            {
+                addit = 0;
+            }
+        }
+        else if (strcmp(oversion, p->data) == 0)
+        {
+            addit = 0;
+        }
+        else if (!force_tag_move)
+        {
+            addit = 0;
+        }
+        if (oversion != NULL)
+        {
+            free(oversion);
+        }
+        if (!addit)
+        {
+            free(p->data);
+            p->data = NULL;
+        }
+    }
+    freevers_ts (&vers);
     (void) addnode (tlist, p);
     return (0);
 }
@@ -416,7 +451,11 @@ pretag_proc(repository, filter)
         }
         free(s);
     }
-    run_setup("%s %s %s", filter, symtag, repository);
+    run_setup("%s %s %s %s",
+              filter,
+              symtag,
+              delete ? "del" : "add",
+              repository);
     walklist(tlist, pretag_list_proc, NULL);
     return (run_exec(RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL|RUN_REALLY));
 }
@@ -437,7 +476,11 @@ static void
 tag_delproc(p)
     Node *p;
 {
-    p->data = NULL;
+    if (p->data != NULL)
+    {
+        free(p->data);
+        p->data = NULL;
+    }
     return;
 }
 
@@ -446,7 +489,11 @@ pretag_list_proc(p, closure)
     Node *p;
     void *closure;
 {
-    run_arg(p->key);
+    if (p->data != NULL)
+    {
+        run_arg(p->key);
+        run_arg(p->data);
+    }
     return (0);
 }
 
