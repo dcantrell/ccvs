@@ -1,5 +1,7 @@
 Sun May 18 10:24:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* RCSFILES: Add list of known newphrase extensions.
+
 	* cvs.texinfo (From other version control systems): Fix typo
 	("systesm" -> "systems").
 
