@@ -1,5 +1,10 @@
 2003-12-03  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh (recase-8csss): rename to...
+	(recase-8sscs): ...this to match the convention.
+
+2003-12-03  Derek Price  <derek@ximbiot.com>
+
 	* sanity.sh (recase): Add some clarifying comments.
 
 2003-12-03  Larry Jones  <lawrence.jones@eds.com>
