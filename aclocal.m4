@@ -923,7 +923,7 @@ if eval "test \"`echo '$ac_cv_prog_cc_'${ac_cc}_c_o`\" != yes"; then
 fi
 ])
 
-# getline.m4 serial 10
+# getline.m4 serial 9
 
 dnl Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 dnl Foundation, Inc.
@@ -974,15 +974,7 @@ AC_DEFUN([AM_FUNC_GETLINE],
     )])
   fi
 
-  if test $am_cv_func_working_getline = yes; then
-    AC_DEFINE([HAVE_WORKING_GETLINE], [1],
-      [Define to 1 if your system has a working GNU getline() function.])
-    dnl Currently, we assume getdelim() in this case.  Moving the check for
-    dnl getdelim() up in front of this conditional doesn't make much sense
-    dnl unless we provide for having getline w/o getdelim in the *.{c,h} files.
-    AC_DEFINE([HAVE_GETDELIM], [1],
-      [Define to 1 if your system has the GNU getdelim() function.])
-  else
+  if test $am_cv_func_working_getline = no; then
     dnl We must choose a different name for our function, since on ELF systems
     dnl a broken getline() in libc.so would override our getline() in
     dnl libgettextlib.so.

@@ -474,9 +474,6 @@
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
-/* Define to 1 if your system has a working GNU getline() function. */
-#undef HAVE_WORKING_GETLINE
-
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
