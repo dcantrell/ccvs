@@ -431,7 +431,8 @@ commit (argc, argv)
 	/* strip trailing dots and leading zeros */
 	while (*--p == '.') ;
 	p[1] = '\0';
-	while (*saved_tag == '0') ++saved_tag;
+	while (saved_tag[0] == '0' && isdigit ((unsigned char) saved_tag[1]))
+	    ++saved_tag;
     }
 
     /* some checks related to the "-F logfile" option */
