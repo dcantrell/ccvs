@@ -1,5 +1,13 @@
 2003-10-01  Derek Price  <derek@ximbiot.com>
 
+	Add the GNULIB restrict module.
+
+	* Makefile.am (EXTRA_DIST): Add restrict.m4.
+	* restrict.m4: New file.
+	* Makefile.in: Regenerated.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (EXTRA_DIST): Add getopt.m4.
 	* getopt.m4: New file from GNULIB.
 	* Makefile.in: Regenerated.

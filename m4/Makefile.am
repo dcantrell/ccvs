@@ -50,6 +50,7 @@ EXTRA_DIST = \
 	po.m4 \
 	progtest.m4 \
 	realloc.m4 \
+	restrict.m4 \
 	stat.m4 \
 	stdint_h.m4 \
 	uintmax_t.m4 \
