@@ -592,7 +592,7 @@ if test x"$*" = x; then
 	# Release of multiple directories
 	tests="${tests} release"
 	# Multiple root directories and low-level protocol tests.
-	tests="${tests} multiroot multiroot2 reposmv pserver client"
+	tests="${tests} multiroot multiroot2 reposmv pserver server client"
 else
 	tests="$*"
 fi
@@ -17558,6 +17558,24 @@ ${PROG} [a-z]*: Rebuilding administrative file database"
 	    cd ../..
 	    rm -r 1
 	    rm ${CVSROOT_DIRNAME}/CVSROOT/passwd
+	  fi # skip the whole thing for local
+	  ;;
+
+	server)
+	  # Some tests of the server (independent of the client).
+	  if test "$remote" = yes; then
+	    if ${testcvs} server >${TESTDIR}/server.tmp <<EOF; then
+Directory bogus
+mumble/bar
+update
+EOF
+	      dotest server-1 "cat ${TESTDIR}/server.tmp" \
+"E Protocol error: Root request missing
+error  "
+	    else
+	      echo "exit status was $?" >>${LOGFILE}
+	      fail server-1
+	    fi
 	  fi # skip the whole thing for local
 	  ;;
 
