@@ -1,3 +1,8 @@
+Sat Nov 29 22:20:42 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Remove declaration of getwd; see lib/ChangeLog for
+	rationale.
+
 Fri Nov 14 13:37:33 1997  Abe Feldman and Jim Kingdon
 
 	* savecwd.c: New file, copied from lib/savecwd.c except it calls

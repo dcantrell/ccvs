@@ -237,10 +237,6 @@
 extern void exit ();
 #endif
 
-#ifndef getwd
-extern char *getwd ();
-#endif
-
 #ifdef AUTH_CLIENT_SUPPORT
 char *getpass (char *passbuf);
 #endif /* AUTH_CLIENT_SUPPORT */
