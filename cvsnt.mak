@@ -143,11 +143,9 @@ $(OUTDIR)/cvsnt.bsc : $(OUTDIR)  $(BSC32_SBRS)
 <<
 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386 /OUT:"WinRel/cvs.exe"
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
- advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
- odbccp32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /INCREMENTAL:no\
+# ADD BASE LINK32 advapi32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386
+# ADD LINK32 advapi32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /MACHINE:I386 /OUT:"WinRel/cvs.exe"
+LINK32_FLAGS=advapi32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /INCREMENTAL:no\
  /PDB:$(OUTDIR)/"cvsnt.pdb" /MACHINE:I386 /OUT:"WinRel/cvs.exe" 
 DEF_FILE=
 LINK32_OBJS= \
@@ -346,11 +344,9 @@ $(OUTDIR)/cvsnt.bsc : $(OUTDIR)  $(BSC32_SBRS)
 <<
 
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386 /OUT:"WinDebug/cvs.exe"
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
- advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
- odbccp32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /INCREMENTAL:yes\
+# ADD BASE LINK32 advapi32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386
+# ADD LINK32 advapi32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /DEBUG /MACHINE:I386 /OUT:"WinDebug/cvs.exe"
+LINK32_FLAGS=advapi32.lib wsock32.lib /NOLOGO /SUBSYSTEM:console /INCREMENTAL:yes\
  /PDB:$(OUTDIR)/"cvsnt.pdb" /DEBUG /MACHINE:I386 /OUT:"WinDebug/cvs.exe" 
 DEF_FILE=
 LINK32_OBJS= \

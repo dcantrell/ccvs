@@ -1,3 +1,8 @@
+Wed May 01 00:18:01 1996  noel  <noel@BOAT_ANCHOR>
+
+	* cvsnt.mak: remove all of those unnecessary libraries!  We only
+ 	need advapi32.lib and wsock32.lib.
+
 Fri Apr 19 11:22:35 1996  Benjamin J. Lee  <benjamin@cyclic.com>
 
 	* Version 1.7.86
