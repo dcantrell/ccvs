@@ -104,9 +104,8 @@ find_type (p, closure)
     Node *p;
     void *closure;
 {
-    struct logfile_info *li;
+    struct logfile_info *li = p->data;
 
-    li = (struct logfile_info *) p->data;
     if (li->type == type)
 	return (1);
     else
@@ -125,7 +124,7 @@ fmt_proc (p, closure)
 {
     struct logfile_info *li;
 
-    li = (struct logfile_info *) p->data;
+    li = p->data;
     if (li->type == type)
     {
         if (li->tag == NULL
@@ -646,10 +645,9 @@ title_proc (p, closure)
     Node *p;
     void *closure;
 {
-    struct logfile_info *li;
     char *c;
+    struct logfile_info *li = p->data;
 
-    li = (struct logfile_info *) p->data;
     if (li->type == type)
     {
 	/* Until we decide on the correct logging solution when we add

@@ -343,7 +343,7 @@ unlock_proc (p, closure)
     Node *p;
     void *closure;
 {
-    lock_simple_remove ((struct lock *)p->data);
+    lock_simple_remove (p->data);
     return (0);
 }
 
@@ -547,7 +547,7 @@ set_writelock_proc (p, closure)
 
     /* apply the write lock */
     lock_error_repos = p->key;
-    lock_error = write_lock ((struct lock *)p->data);
+    lock_error = write_lock (p->data);
     return (0);
 }
 

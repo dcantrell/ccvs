@@ -379,7 +379,7 @@ import (argc, argv)
     li->type = T_TITLE;
     li->tag = xstrdup (vbranch);
     li->rev_old = li->rev_new = NULL;
-    p->data = (char *) li;
+    p->data = li;
     (void) addnode (ulist, p);
     Update_Logfile (repository, message, logfp, ulist);
     dellist (&ulist);
@@ -573,7 +573,8 @@ process_import_file (message, vfile, vtag, targc, targv)
 		node = findnode_fn (entries, vfile);
 		if (node != NULL)
 		{
-		    Entnode *entdata = (Entnode *) node->data;
+		    Entnode *entdata = node->data;
+
 		    if (entdata->type == ENT_FILE)
 		    {
 			assert (entdata->options[0] == '-'

@@ -810,9 +810,8 @@ log_fileproc (callerdat, finfo)
 	p = findnode (finfo->entries, finfo->file);
 	if (p != NULL)
 	{
-	    Entnode *e;
-	    
-	    e = (Entnode *) p->data;
+	    Entnode *e = p->data;
+
 	    if (e->version[0] == '0' && e->version[1] == '\0')
 	    {
 		if (!really_quiet)
@@ -977,9 +976,8 @@ log_fileproc (callerdat, finfo)
 		   finfo->fullname);
 	while (p != NULL)
 	{
-	    RCSVers *vers;
+	    RCSVers *vers = p->data;
 
-	    vers = (RCSVers *) p->data;
 	    log_version (log_data, revlist, rcsfile, vers, 1);
 	    if (vers->next == NULL)
 		p = NULL;
@@ -1429,7 +1427,7 @@ log_fix_singledate (p, closure)
     if (pv == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
 	       p->key, data->rcs->path);
-    vnode = (RCSVers *) pv->data;
+    vnode = pv->data;
 
     /* We are only interested if this revision passes any other tests.
        Temporarily clear log_data->singledatelist to avoid confusing
@@ -1485,7 +1483,7 @@ log_count_print (p, closure)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
 	       p->key, data->rcs->path);
     if (log_version_requested (data->log_data, data->revlist, data->rcs,
-			       (RCSVers *) pv->data))
+			       pv->data))
 	return 1;
     else
 	return 0;
@@ -1509,7 +1507,7 @@ log_tree (log_data, revlist, rcs, ver)
     if (p == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
 	       ver, rcs->path);
-    vnode = (RCSVers *) p->data;
+    vnode = p->data;
     if (vnode->next != NULL)
 	log_tree (log_data, revlist, rcs, vnode->next);
     if (vnode->branches != NULL)
@@ -1545,7 +1543,7 @@ log_abranch (log_data, revlist, rcs, ver)
     if (p == NULL)
 	error (1, 0, "missing version `%s' in RCS file `%s'",
 	       ver, rcs->path);
-    vnode = (RCSVers *) p->data;
+    vnode = p->data;
     if (vnode->next != NULL)
 	log_abranch (log_data, revlist, rcs, vnode->next);
     log_version (log_data, revlist, rcs, vnode, 0);
@@ -1616,7 +1614,7 @@ log_version (log_data, revlist, rcs, ver, trunk)
 	if (nextp == NULL)
 	    error (1, 0, "missing version `%s' in `%s'", ver->next,
 		   rcs->path);
-	nextver = (RCSVers *) nextp->data;
+	nextver = nextp->data;
 	pdel = findnode (nextver->other, ";add");
 	padd = findnode (nextver->other, ";delete");
     }
@@ -1645,14 +1643,14 @@ log_version (log_data, revlist, rcs, ver, trunk)
        would be the p == NULL case would mean an RCS file which was
        missing the "log" keyword (which is illegal according to
        rcsfile.5).  */
-    if (p == NULL || p->data == NULL || p->data[0] == '\0')
+    if (p == NULL || p->data == NULL || *(char *)p->data == '\0')
 	cvs_output ("*** empty log message ***\n", 0);
     else
     {
 	/* FIXME: Technically, the log message could contain a null
            byte.  */
 	cvs_output (p->data, 0);
-	if (p->data[strlen (p->data) - 1] != '\n')
+	if (((char *)p->data)[strlen (p->data) - 1] != '\n')
 	    cvs_output ("\n", 1);
     }
 }

@@ -355,9 +355,8 @@ ignore_files (ilist, entries, update_dir, proc)
 	subdirs = 0;
     else
     {
-	struct stickydirtag *sdtp;
+	struct stickydirtag *sdtp = entries->list->data;
 
-	sdtp = (struct stickydirtag *) entries->list->data;
 	subdirs = sdtp == NULL || sdtp->subdirs;
     }
 

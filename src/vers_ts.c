@@ -55,13 +55,13 @@ Version_TS (finfo, options, tag, date, force_tag_match, set_time)
     else
     {
 	p = findnode_fn (finfo->entries, finfo->file);
-	sdtp = (struct stickydirtag *) finfo->entries->list->data; /* list-private */
+	sdtp = finfo->entries->list->data; /* list-private */
     }
 
     entdata = NULL;
     if (p != NULL)
     {
-	entdata = (Entnode *) p->data;
+	entdata = p->data;
 
 	if (entdata->type == ENT_SUBDIR)
 	{
