@@ -1,7 +1,7 @@
         This port requires IBM C/C++ and the IBM TCPIP library.
 You'll need to edit the makefile to reflect your system's paths
-(unless you're at Goldman Sachs, in which case the paths are correct
-because we did the port on your machine. :-) ).
+(unless you're our customer for this port, in which case the paths
+are correct because we did the port on your machine. :-) ).
 
         I'm having some weird problem with "\" vs. "/".  If I build
 with "\" as the path separator in the makefile, the compiler dumps
