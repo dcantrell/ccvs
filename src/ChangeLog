@@ -1,5 +1,14 @@
 2004-09-29  Derek Price <derek@ximbiot.com>
 
+	* root.c (root_allow_count, root_allow_vector, root_allow_size):
+	Replace with...
+	(root_allow): ...this single List *.
+	(root_allow_add, root_allow_free, root_allow_ok): Use new List API.
+	Make args const.  Return bool rather than int when necessary.
+	* root.h (root_allow_add, root_allow_ok): Update protos to match.
+
+2004-09-29  Derek Price <derek@ximbiot.com>
+
 	* admin.c (admin): s/int/bool/ as appropriate.  Some reformatting.
 
 2004-09-29  Derek Price <derek@ximbiot.com>
