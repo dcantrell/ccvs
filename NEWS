@@ -3,6 +3,8 @@ Changes since 1.12.5:
 
 GENERAL USER ISSUES
 
+* Server no longer claims to support the "Case" request.
+
 * Case insensitive clients once again preserve the case of filenames in
   CVS/Entries for communication with the server, as specified in the CVS
   client/server protocol spec.  Note that all CVS _servers_ still lack support
