@@ -1,3 +1,11 @@
+2001-01-09  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (server): Change to server_temp_dir immediately after
+	creating it so that any stray files that happen to be created go
+	there instead of in the server's initial directory, wherever that
+	may be.
+	* sanity.sh (modules5-15): Update to match.
+
 2001-01-09  Derek Price  <derek.price@openavenue.com>
 
 	* cvs.h: Remove the various CVSroot_* bits and replace them with a
