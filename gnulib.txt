@@ -79,3 +79,6 @@ lib/exitfail.c
 m4/exitfail.m4
 
 m4/onceonly_2_57.m4
+m4/extensions.m4
+
+m4/onceonly_2_57.m4
