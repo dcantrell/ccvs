@@ -1,5 +1,8 @@
 Sun Apr 27 16:17:06 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* RCSFILES: Add discussion of the common concern regarding
+	applying deltas to get to a branch head.
+
 	* DIFFUTILS-2.7-BUG: New file.
 
 	* cvs.texinfo (File status): Refer to "Invoking CVS", not
