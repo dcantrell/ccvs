@@ -1,3 +1,13 @@
+Tue Feb 20 12:34:07 EST 1996: Gary Oberbrunner <garyo@avs.com>
+			      and Jim Kingdon <kingdon@cyclic.com>
+
+	* history.c (history_write): Change username to char * and call
+	getcaller() to set it.  Setting username accidentally got deleted
+	8 Feb 96.
+	* sanity.sh: Revise test 64 to test for above-fixed bug.
+	* sanity.sh (PLUS): New variable, work around yet another GNU expr
+	bug.
+
 Tue Feb 20 14:07:50 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh: Merge test rtags into test basic2.  They never were

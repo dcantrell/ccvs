@@ -668,7 +668,7 @@ history_write (type, update_dir, revs, name, repository)
     char *repository;
 {
     char fname[PATH_MAX], workdir[PATH_MAX], homedir[PATH_MAX];
-    static char username[20];		/* !!! Should be global */
+    char *username = getcaller ();
     int fd;
     char *line;
     char *slash = "", *cp, *cp2, *repos;
