@@ -1,3 +1,13 @@
+2001-03-14  Derek Price  <derek.price@openavenue.com>
+
+	New version of Automake (1.4e).  With luck it works with the quirky BSD
+	Make.
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+	* Makefile.in: Ditto.
+	* stamp-h1.in: Ditto.
+
 2001-02-28  Derek Price  <derek.price@openavenue.com>
 
 	* acinclude.m4 (ACX_WITH_GSSAPI): Move the -L linker option back into
