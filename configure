@@ -6002,18 +6002,7 @@ echo "$as_me:$LINENO: result: $am_cv_func_working_getline" >&5
 echo "${ECHO_T}$am_cv_func_working_getline" >&6
   fi
 
-  if test $am_cv_func_working_getline = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_WORKING_GETLINE 1
-_ACEOF
-
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_GETDELIM 1
-_ACEOF
-
-  else
+  if test $am_cv_func_working_getline = no; then
 
 cat >>confdefs.h <<\_ACEOF
 #define getline gnu_getline

@@ -1,3 +1,8 @@
+2003-07-25  Derek Price  <derek@ximbiot.com>
+
+	* srclist.txt (getlinem getnline, getndelim2): Mark some files sync'd.
+	* aclocal.m4, config.h.in, configure: Regenerated.
+
 2003-07-24  Derek Price  <derek@ximbiot.com>
 
 	* configure.in: Remove gethostname from AC_REPLACE_FUNCS call and add a
