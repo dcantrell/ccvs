@@ -521,11 +521,14 @@ unedit_fileproc (callerdat, finfo)
 	if (node != NULL)
 	{
 	    entdata = (Entnode *) node->data;
+	    if (baserev == NULL)
+	        baserev = xstrdup (entdata->version);
 	    Register (finfo->entries, finfo->file, baserev, entdata->timestamp,
 		      entdata->options, entdata->tag, entdata->date,
 		      entdata->conflict);
 	}
-	free (baserev);
+	if (baserev)
+	    free (baserev);
 	base_deregister (finfo);
     }
 
