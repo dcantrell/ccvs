@@ -821,11 +821,20 @@ check_fileproc (callerdat, finfo)
 
 		if (file_has_markers (finfo))
 		{
+		    /* Make this a warning, not an error, because we have
+		       no way of knowing whether the "conflict indicators"
+		       are really from a conflict or whether they are part
+		       of the document itself (cvs.texinfo and sanity.sh in
+		       CVS itself, for example, tend to want to have strings
+		       like ">>>>>>>" at the start of a line).  Making people
+		       kludge this the way they need to kludge keyword
+		       expansion seems undesirable.  And it is worse than
+		       keyword expansion, because there is no -ko
+		       analogue.  */
 		    error (0, 0,
-			   "file `%s' still contains conflict indicators",
+			   "\
+warning: file `%s' seems to still contain conflict indicators",
 			   finfo->fullname);
-		    freevers_ts (&vers);
-		    return (1);
 		}
 	    }
 
