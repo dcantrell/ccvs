@@ -1,3 +1,25 @@
+2003-11-06  Derek Price  <derek@ximbiot.com>
+
+	* remove.c (cvsremove): Use consistent quoting in messages.
+
+2003-08-16  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Use consistent quoting style in user messages.
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (tests): Remove version.
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (version): This test moved to tests/suite.
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add suite.dir & suite.log.
+	* Makefile.am: Add tests/suite to `make check'.  Remove localcheck and
+	remotecheck, at least temporarily.
+
 2003-11-03  Derek Price  <derek@ximbiot.com>
 
 	* sanity.sh (server): Test that the global `-l' option is ignored
@@ -1421,6 +1443,12 @@
 
 	* sanity.sh (multiroot2-9): Add newly TRACEd parse_cvsroot() to
 	expected output.
+
+2003-03-31  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (SUBDIRS): Add `tests' subdir.
+
+	* Makefile.in: Regenerated.
 
 2003-03-31  Derek Price  <derek@ximbiot.com>
 

@@ -57,6 +57,7 @@ AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
+AUTOM4TE = @AUTOM4TE@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
@@ -198,7 +199,8 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = cvs.spec emx/Makefile os2/Makefile zlib/Makefile
+CONFIG_CLEAN_FILES = cvs.spec emx/Makefile os2/Makefile \
+	src/tests/Makefile src/tests/package.m4 zlib/Makefile
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -254,6 +256,10 @@ cvs.spec: $(top_builddir)/config.status cvs.spec.in
 emx/Makefile: $(top_builddir)/config.status $(top_srcdir)/emx/Makefile.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 os2/Makefile: $(top_builddir)/config.status $(top_srcdir)/os2/Makefile.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+src/tests/Makefile: $(top_builddir)/config.status $(top_srcdir)/src/tests/Makefile.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+src/tests/package.m4: $(top_builddir)/config.status $(top_srcdir)/src/tests/package.m4.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 zlib/Makefile: $(top_builddir)/config.status $(top_srcdir)/zlib/Makefile.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -399,7 +405,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/contrib $(distdir)/emx $(distdir)/os2 $(distdir)/src $(distdir)/zlib
+	$(mkinstalldirs) $(distdir)/. $(distdir)/contrib $(distdir)/emx $(distdir)/os2 $(distdir)/src $(distdir)/src/tests $(distdir)/zlib
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

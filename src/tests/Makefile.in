@@ -14,17 +14,14 @@
 
 @SET_MAKE@
 
-# Makefile for GNU CVS contributed sources.
-# Do not use this makefile directly, but only from `../Makefile'.
-# Copyright (C) 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994,
-#               1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003
-#               Free Software Foundation, Inc.
-
+# Makefile for GNU CVS program.
+# Copyright (C) 2003 Derek Price, Ximbiot, & The Free Software Foundation, Inc.
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2, or (at your option)
 # any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,7 +33,7 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
-top_builddir = ..
+top_builddir = ../..
 
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 INSTALL = @INSTALL@
@@ -168,148 +165,40 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 with_default_rsh = @with_default_rsh@
 
-contribdir = $(pkgdatadir)/contrib
-
-contrib_SCRIPTS = \
-	check_cvs \
-	clmerge \
-	cln_hist \
-	commit_prep \
-	cvs2vendor \
-	cvs_acls \
-	cvscheck \
-	debug_check_log \
-	log \
-	log_accum \
-	mfpipe \
-	newcvsroot \
-	pvcs2rcs \
-	rcs-to-cvs \
-	rcs2log \
-	rcslock \
-	sccs2rcs
-
-
-contrib_DATA = \
-	README \
-	intro.doc
-
-
-contrib_MANS = \
-	cvscheck.man
-
-
-bin_LINKS = \
-	rcs2log
+TESTSUITE = $(srcdir)/suite
+TESTSUITE_AT = \
+	suite.at \
+	init.at \
+	version.at \
+	basic.at
 
 
 EXTRA_DIST = \
-	.cvsignore \
-	$(contrib_DATA) \
-	$(contrib_MANS) \
-	cvs2vendor.sh \
-	cvscheck.sh \
-	cvshelp.man \
-	debug_check_log.sh \
-	descend.sh \
-	descend.man \
-	dirfns.shar \
-	newcvsroot.sh \
-	rcs-to-cvs.sh \
-	rcs2log.sh \
-	rcs2sccs.sh
+	$(TESTSUITE_AT) \
+	atspecific.m4 \
+	package.m4.in \
+	suite
 
 
-CLEANFILES = $(bin_SCRIPTS) $(contrib_SCRIPTS)
-
-SUFFIXES = .sh
-subdir = contrib
+AUTOTEST = $(AUTOM4TE) --language=autotest
+subdir = src/tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = check_cvs clmerge cln_hist commit_prep cvs_acls log \
-	log_accum mfpipe pvcs2rcs rcs2log rcslock sccs2rcs
-SCRIPTS = $(contrib_SCRIPTS)
-
+CONFIG_CLEAN_FILES = package.m4
 DIST_SOURCES =
-DATA = $(contrib_DATA)
-
-DIST_COMMON = README ChangeLog Makefile.am Makefile.in check_cvs.in \
-	clmerge.in cln_hist.in commit_prep.in cvs_acls.in log.in \
-	log_accum.in mfpipe.in pvcs2rcs.in rcs2log.sh rcslock.in \
-	sccs2rcs.in
+DIST_COMMON = README ChangeLog Makefile.am Makefile.in package.m4.in
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .sh
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  contrib/Makefile
+	  $(AUTOMAKE) --gnu  src/tests/Makefile
 Makefile: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-check_cvs: $(top_builddir)/config.status check_cvs.in
+package.m4: $(top_builddir)/config.status package.m4.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-clmerge: $(top_builddir)/config.status clmerge.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-cln_hist: $(top_builddir)/config.status cln_hist.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-commit_prep: $(top_builddir)/config.status commit_prep.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-cvs_acls: $(top_builddir)/config.status cvs_acls.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-log: $(top_builddir)/config.status log.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-log_accum: $(top_builddir)/config.status log_accum.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-mfpipe: $(top_builddir)/config.status mfpipe.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-pvcs2rcs: $(top_builddir)/config.status pvcs2rcs.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-rcs2log: $(top_builddir)/config.status rcs2log.sh
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-rcslock: $(top_builddir)/config.status rcslock.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-sccs2rcs: $(top_builddir)/config.status sccs2rcs.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-contribSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-install-contribSCRIPTS: $(contrib_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(contribdir)
-	@list='$(contrib_SCRIPTS)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f $$d$$p; then \
-	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	    echo " $(contribSCRIPT_INSTALL) $$d$$p $(DESTDIR)$(contribdir)/$$f"; \
-	    $(contribSCRIPT_INSTALL) $$d$$p $(DESTDIR)$(contribdir)/$$f; \
-	  else :; fi; \
-	done
-
-uninstall-contribSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(contrib_SCRIPTS)'; for p in $$list; do \
-	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	  echo " rm -f $(DESTDIR)$(contribdir)/$$f"; \
-	  rm -f $(DESTDIR)$(contribdir)/$$f; \
-	done
 uninstall-info-am:
-contribDATA_INSTALL = $(INSTALL_DATA)
-install-contribDATA: $(contrib_DATA)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(contribdir)
-	@list='$(contrib_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " $(contribDATA_INSTALL) $$d$$p $(DESTDIR)$(contribdir)/$$f"; \
-	  $(contribDATA_INSTALL) $$d$$p $(DESTDIR)$(contribdir)/$$f; \
-	done
-
-uninstall-contribDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(contrib_DATA)'; for p in $$list; do \
-	  f="`echo $$p | sed -e 's|^.*/||'`"; \
-	  echo " rm -f $(DESTDIR)$(contribdir)/$$f"; \
-	  rm -f $(DESTDIR)$(contribdir)/$$f; \
-	done
 tags: TAGS
 TAGS:
 
@@ -318,7 +207,7 @@ CTAGS:
 
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
-top_distdir = ..
+top_distdir = ../..
 distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
@@ -349,11 +238,11 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-local
 check: check-am
-all-am: Makefile $(SCRIPTS) $(DATA)
+all-am: Makefile
 
 installdirs:
-	$(mkinstalldirs) $(DESTDIR)$(contribdir) $(DESTDIR)$(contribdir)
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -371,7 +260,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
@@ -381,7 +269,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 
@@ -395,8 +283,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-contribDATA install-contribSCRIPTS \
-	install-data-local
+install-data-am:
 
 install-exec-am:
 
@@ -422,55 +309,27 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-contribDATA uninstall-contribSCRIPTS \
-	uninstall-info-am uninstall-local
+uninstall-am: uninstall-info-am
 
-.PHONY: all all-am check check-am clean clean-generic distclean \
-	distclean-generic distdir dvi dvi-am info info-am install \
-	install-am install-contribDATA install-contribSCRIPTS \
-	install-data install-data-am install-data-local install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-contribDATA uninstall-contribSCRIPTS \
-	uninstall-info-am uninstall-local
+.PHONY: all all-am check check-am check-local clean clean-generic \
+	clean-local distclean distclean-generic distdir dvi dvi-am info \
+	info-am install install-am install-data install-data-am \
+	install-exec install-exec-am install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
+	uninstall-am uninstall-info-am
 
+$(TESTSUITE): @MAINTAINER_MODE_TRUE@ package.m4 atspecific.m4 $(TESTSUITE_AT)
+@MAINTAINER_MODE_TRUE@	$(AUTOTEST) -I $(srcdir) $(srcdir)/suite.at -o $@.tmp
+@MAINTAINER_MODE_TRUE@	mv $@.tmp $@
 
-# we'd rather have a link here rather than two copies of a script
-install-data-local:
-	: FIXME - this path should be determined dynamically from bindir
-	: and contribdir
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	@list='$(bin_LINKS)'; for p in $$list; do \
-	    echo "test ! -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`"; \
-	    echo "  && cd $(DESTDIR)$(bindir) && $(LN_S) ../share/$(PACKAGE)/contrib/`echo $$p|sed '$(transform)'` ."; \
-	    (test ! -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'` \
-	        && cd $(DESTDIR)$(bindir) && $(LN_S) ../share/$(PACKAGE)/contrib/`echo $$p|sed '$(transform)'` .) \
-	      || (echo "Link creation failed" && if test -f $$p; then \
-	           echo " $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`"; \
-	           $(INSTALL_SCRIPT) $$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
-	         else if test -f $(srcdir)/$$p; then \
-	           echo " $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`"; \
-	           $(INSTALL_SCRIPT) $(srcdir)/$$p $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
-	         else :; fi; fi); \
-	done
+check-local: $(TESTSUITE)
 
-uninstall-local:
-	@$(NORMAL_UNINSTALL)
-	list='$(bin_LINKS)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(bindir)/`echo $$p|sed '$(transform)'`; \
-	done
-
-.sh:
-	rm -f $@
-	cp $< $@
-	chmod +x $@
-
-# for backwards compatibility with the old makefiles
-realclean: maintainer-clean
-.PHONY: realclean
+clean-local:
+	test ! -f $(TESTSUITE) || $(SHELL) $(TESTSUITE) --clean
+	rm -f *.tmp
+	rm -rf autom4te.cache
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
