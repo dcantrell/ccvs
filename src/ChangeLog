@@ -1,3 +1,8 @@
+2000-07-28  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (server_noop): Avoid do_cvs_command() overhead.
+	(requests): Make noop RQ_ROOTLESS.
+
 2000-07-27  Noel Cragg  <noel@red-bean.com>
 
 	* root.c (parse_cvsroot): change fork method to behave like other
