@@ -8882,6 +8882,21 @@ which is the name of the file to filter from. The end
 result of this filter will be a file in the users directory
 that they can work on as they normally would.
 
+Note that the @samp{-t}/@samp{-f} features do not
+conveniently handle one portion of CVS's operation:
+determining when files are modified.  CVS will still
+want a file (or directory) to exist, and it will use
+its modification time to determine whether a file is
+modified.  If CVS erroneously thinks a file is
+unmodified (for example, a directory is unchanged but
+one of the files within it is changed), you can force
+it to check in the file anyway by specifying the
+@samp{-f} option to @code{cvs commit} (@pxref{Commit
+options}).
+@c This is, of course, a serious design flaw in -t/-f.
+@c Probably the whole functionality needs to be
+@c redesigned (starting from requirements) to fix this.
+
 For another example, the following command imports a
 directory, treating files whose name ends in
 @samp{.exe} as binary:
