@@ -161,7 +161,7 @@ static const char *const cmd_usage[] =
     "        annotate     Show last revision where each line was modified\n",
     "        checkout     Checkout sources for editing\n",
     "        commit       Check files into the repository\n",
-    "        diff         Run diffs between revisions\n",
+    "        diff         Show differences between revisions\n",
     "        edit         Get ready to edit a watched file\n",
     "        editors      See who is editing a watched file\n",
     "        export       Export sources from CVS, similar to checkout\n",

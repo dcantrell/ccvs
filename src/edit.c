@@ -331,7 +331,7 @@ static const char *const edit_usage[] =
     "Usage: %s %s [-l] [files...]\n",
     "-l: Local directory only, not recursive\n",
     "-a: Specify what actions for temporary watch, one of\n",
-    "    edit,unedit,commit.all,none\n",
+    "    edit,unedit,commit,all,none\n",
     NULL
 };
 
@@ -902,7 +902,8 @@ notify_check (repository, update_dir)
 
 static const char *const editors_usage[] =
 {
-    "Usage: %s %s [files...]\n",
+    "Usage: %s %s [-l] [files...]\n",
+    "\t-l\tProcess this directory only (not recursive).\n",
     NULL
 };
 

@@ -1,3 +1,12 @@
+Mon Apr 28 22:36:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (cmd_usage): Change "run diffs" to "show differences";
+	the former is jargon.
+	* edit.c (edit_usage): Fix typo ("." -> ",").
+	* edit.c (editors_usage), watch.c (watchers_usage): Mention -l.
+	* checkout.c (export_usage): Say what -P does.
+	* history.c (history_usg): Add comment about message wording.
+
 Mon Apr 28 14:47:45 1997  Norbert Kiesel  <nk@cosa.de>
 
 	* checkin.c (Checkin): use filename without path when calling
