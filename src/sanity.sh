@@ -13133,6 +13133,20 @@ ${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/first-dir: Permission d
 ${PROG} [a-z]*: skipping directory first-dir
 ${PROG} [a-z]*: Updating second-dir"
 
+	  # OK, I can see why one might say the above case could be a
+	  # fatal error, because normally users without access to first-dir
+	  # won't have it in their working directory.  But the next
+	  # one is more of a problem if it is fatal.
+	  rm -r first-dir
+	  dotest modes-6 "${testcvs} update -dP" \
+"${PROG} [a-z]*: Updating .
+${PROG} [a-z]*: Updating CVSROOT
+U ${DOTSTAR}
+${PROG} [a-z]*: Updating first-dir
+${PROG} [a-z]*: cannot open directory ${TESTDIR}/cvsroot/first-dir: Permission denied
+${PROG} [a-z]*: skipping directory first-dir
+${PROG} [a-z]*: Updating second-dir"
+
 	  cd ..
 	  rm -r 1
 	  chmod u+rwx ${TESTDIR}/cvsroot/first-dir
