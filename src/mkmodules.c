@@ -435,18 +435,30 @@ checkout_file (file, temp)
     char *file;
     char *temp;
 {
-    char rcs[PATH_MAX];
+    char *rcs;
+    RCSNode *rcsnode;
     int retcode = 0;
 
-    (void) sprintf (rcs, "%s%s", file, RCSEXT);
+    if (noexec)
+	return 0;
+
+    rcs = xmalloc (strlen (file) + 5);
+    strcpy (rcs, file);
+    strcat (rcs, RCSEXT);
     if (!isfile (rcs))
-	return (1);
-    run_setup ("%s%s -x,v/ -q -p", Rcsbin, RCS_CO);
-    run_arg (rcs);
-    if ((retcode = run_exec (RUN_TTY, temp, RUN_TTY, RUN_NORMAL)) != 0)
     {
-	error (0, retcode == -1 ? errno : 0, "failed to check out %s file", file);
+	free (rcs);
+	return (1);
     }
+    rcsnode = RCS_parsercsfile (rcs);
+    retcode = RCS_checkout (rcsnode, NULL, NULL, NULL, NULL, temp);
+    if (retcode != 0)
+    {
+	error (0, retcode == -1 ? errno : 0, "failed to check out %s file",
+	       file);
+    }
+    freercsnode (&rcsnode);
+    free (rcs);
     return (retcode);
 }
 

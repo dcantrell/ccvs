@@ -1,3 +1,8 @@
+Sun Oct 27 08:34:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* mkmodules.c (checkout_file): Call RCS_checkout rather than
+	run_exec on RCS_CO.
+
 Sat Oct 26 18:29:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (rdiff): cd out of testimport directory and remove it
