@@ -1,5 +1,7 @@
 Mon Jul 21 00:19:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Version 1.9.12.
+
 	* sanity.sh (toplevel, head): Delete our files from the repository
 	when done with them.
 
