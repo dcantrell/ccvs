@@ -1,5 +1,11 @@
 2004-05-05  Derek Price  <derek@ximbiot.com>
 
+	* sanity.sh: Wait a second and retry if cvs-serv* directories are
+	discovered to avoid race conditions on some systems.
+	(Patch from Pavel Roskin <proski@gnu.org>.)
+
+2004-05-05  Derek Price  <derek@ximbiot.com>
+
 	* commit.c: Some gratuitous reformatting.
 
 2004-05-04  Derek Price  <derek@ximbiot.com>

@@ -32719,7 +32719,11 @@ You have \[0\] altered files in this repository\."
     # files.  We would like to not leave any behind.
     if $remote && ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
-	fail "Found cvs-serv* directories in $TMPDIR."
+	# Give the server some time to finish, then retry.
+	sleep 1
+	if ls $TMPDIR/cvs-serv* >/dev/null 2>&1; then
+	    fail "Found cvs-serv* directories in $TMPDIR."
+	fi
     fi
     if ls $TMPDIR/cvs?????? >/dev/null 2>&1; then
 	# A true value means ls found files/directories with these names.
