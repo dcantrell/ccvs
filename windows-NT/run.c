@@ -23,9 +23,8 @@
 #include <fcntl.h>
 
 static void run_add_arg( const char *s );
-static void run_init_prog( void );
 
-extern char *strtok ();
+
 
 /*
  * To exec a program under CVS, first call run_setup() to setup any initial

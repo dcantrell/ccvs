@@ -1,3 +1,8 @@
+2005-02-22  Derek Price  <derek@ximbiot.com>
+
+	* run.c: Remove several unneeded declarations.
+	(Suggestion from Conrad Pino <conrad@pino.com>.)
+
 2005-01-31  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.am: Update copyright notices.
