@@ -48,7 +48,13 @@
 
 struct rcsnode
 {
+    /* Reference count for this structure.  Used to deal with the
+       fact that there might be a pointer from the Vers_TS or might
+       not.  Callers who increment this field are responsible for
+       calling freercsnode when they are done with their reference.  */
     int refcount;
+
+    /* Flags (INATTIC, PARTIAL, &c), see above.  */
     int flags;
 
     /* File name of the RCS file.  This is not necessarily the name
@@ -57,22 +63,56 @@ struct rcsnode
        (the various names might differ in case).  */
     char *path;
 
+    /* Value for head keyword from RCS header, or NULL if empty.  */
     char *head;
+
+    /* Value for branch keyword from RCS header, or NULL if omitted.  */
     char *branch;
+
+    /* Raw data on symbolic revisions.  The first time that RCS_symbols is
+       called, we parse these into ->symbols, and free ->symbols_data.  */
     char *symbols_data;
+
+    /* Value for expand keyword from RCS header, or NULL if omitted.  */
     char *expand;
+
+    /* List of nodes, the key of which is the symbolic name and the data
+       of which is the numeric revision that it corresponds to (malloc'd).  */
     List *symbols;
+
+    /* List of nodes (type RCSVERS), the key of which the numeric revision
+       number, and the data of which is an RCSVers * for the revision.  */
     List *versions;
+
+    /* Value for access keyword from RCS header, or NULL if empty.
+       FIXME: RCS_delaccess would also seem to use "" for empty.  We
+       should pick one or the other.  */
     char *access;
+
+    /* Raw data on locked revisions.  The first time that RCS_getlocks is
+       called, we parse these into ->locks, and free ->locks_data.  */
     char *locks_data;
+
+    /* List of nodes, the key of which is the numeric revision and the
+       data of which is the user that it corresponds to (malloc'd).  */
     List *locks;
+
+    /* Set for the strict keyword from the RCS header.  */
     int strict_locks;
+
+    /* Value for the comment keyword from RCS header (comment leader), or
+       NULL if omitted.  */
     char *comment;
+
+    /* Value for the desc field in the RCS file, or NULL if empty.  */
     char *desc;
 
     /* File offset of the first deltatext node, so we can seek there.  */
     long delta_pos;
 
+    /* Newphrases from the RCS header.  List of nodes, the key of which
+       is the "id" which introduces the newphrase, and the value of which
+       is the value from the newphrase.  */
     List *other;
 };
 

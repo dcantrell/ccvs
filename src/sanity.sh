@@ -9271,6 +9271,17 @@ ${PLUS} modify on branch after brtag"
 
 	  # Note that we are testing both the case where this deletes
 	  # a revision (file1) and the case where it does not (file2)
+	  dotest_fail head-o0a "${testcvs} admin -o ::br1" \
+"${PROG} [a-z]*: Administrating \.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+${PROG} [a-z]*: cannot remove revision 1\.3\.2\.1 because it has tags
+${PROG} [a-z]*: cannot modify RCS file for .file1.
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+	  dotest head-o0b "${testcvs} tag -d brtag" \
+"${PROG} [a-z]*: Untagging \.
+D file1
+D file2"
 	  dotest head-o1 "${testcvs} admin -o ::br1" \
 "${PROG} [a-z]*: Administrating \.
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v

@@ -4322,6 +4322,23 @@ RCS_getaccess (rcs)
     return rcs->access;
 }
 
+static int findtag PROTO ((Node *, void *));
+
+/* Return a nonzero value if the revision specified by ARG is found.  */
+
+static int
+findtag (node, arg)
+    Node *node;
+    void *arg;
+{
+    char *rev = (char *)arg;
+
+    if (strcmp (node->data, rev) == 0)
+	return 1;
+    else
+	return 0;
+}
+
 /* Delete revisions between REV1 and REV2.  The changes between the two
    revisions must be collapsed, and the result stored in the revision
    immediately preceding the lower one.  Return 0 for successful completion,
@@ -4550,17 +4567,6 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
     {
 	nodep = findnode (rcs->versions, next);
 	revp = (RCSVers *) nodep->data;
-	if (findnode (RCS_getlocks (rcs), revp->version))
-	{
-	    rcserror (rcs->path, "can't remove locked revision %s",
-		      revp->version);
-	    goto delrev_done;
-	}
-	if (revp->branches != NULL)
-	{
-	    rcserror (rcs->path, "can't remove branch point %s",revp->version);
-	    goto delrev_done;
-	}
 
 	if (rev2 != NULL)
 	    found = (strcmp (revp->version, rev2) == 0);
@@ -4568,6 +4574,32 @@ RCS_delete_revs (rcs, tag1, tag2, inclusive)
 
 	if ((!found && next != NULL) || rev2_inclusive || rev2 == NULL)
 	{
+	    if (findnode (RCS_getlocks (rcs), revp->version))
+	    {
+		rcserror (rcs->path, "can't remove locked revision %s",
+			  revp->version);
+		goto delrev_done;
+	    }
+	    if (revp->branches != NULL)
+	    {
+		rcserror (rcs->path, "can't remove branch point %s",
+			  revp->version);
+		goto delrev_done;
+	    }
+
+	    /* Doing this only for the :: syntax is for compatibility.
+	       See cvs.texinfo for somewhat more discussion.  */
+	    if (!inclusive
+		&& walklist (RCS_symbols (rcs), findtag, revp->version))
+	    {
+		/* We don't print which file this happens to on the theory
+		   that the caller will print the name of the file in a
+		   more useful fashion (fullname not rcs->path).  */
+		error (0, 0, "cannot remove revision %s because it has tags",
+		       revp->version);
+		goto delrev_done;
+	    }
+
 	    /* It's misleading to print the `deleting revision' output
 	       here, since we may not actually delete these revisions.
 	       But that's how RCS does it.  Bleah.  Someday this should be
