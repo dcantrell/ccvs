@@ -1,5 +1,11 @@
 2005-01-29 Derek Price <derek@ximbiot.com>
 
+	* log.c (log_usage): Add note about using -S with revision info
+	supression and selection.
+	(Suggestion from Dan Peterson <dbpete@aol.com>.)
+
+2005-01-29 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (writeproxy-ssh-noredirect): Remove some commented out
 	code.
 
