@@ -312,24 +312,24 @@ SOURCE=.\version.c
 !IF  "$(CFG)" == "libdiff - Win32 Release"
 
 "LIB - Win32 Release" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "..\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" 
    cd "..\diff"
 
 "LIB - Win32 ReleaseCLEAN" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "..\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Release" RECURSE=1 CLEAN 
    cd "..\diff"
 
 !ELSEIF  "$(CFG)" == "libdiff - Win32 Debug"
 
 "LIB - Win32 Debug" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "..LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" 
    cd "..\diff"
 
 "LIB - Win32 DebugCLEAN" : 
-   cd "\Documents and Settings\Derek R. Price\My Documents\work\ccvs\LIB"
+   cd "..\LIB"
    $(MAKE) /$(MAKEFLAGS) /F ".\LIB.mak" CFG="LIB - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\diff"
 
