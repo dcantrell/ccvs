@@ -1,3 +1,10 @@
+2004-06-29  Derek Price  <derek@ximbiot.com>
+
+	* cvsclient.texi (Requests): Note new `Relative-directory request' as
+	well as new semantics for `Directory'.
+	(Response pathnames): Detail previously undocumented client
+	functionality with regards to pathnames specified in responses.
+
 2004-06-26  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Vendor branch): Document that sometimes
