@@ -1,3 +1,8 @@
+Fri Mar 22 11:17:05 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* system.h: If EXIT_FAILURE is not defined by stdlib.h, define it
+	ourself.
+
 Thu Mar 14 16:27:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* system.h: Remove alloca cruft.
