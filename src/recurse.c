@@ -103,7 +103,10 @@ start_recursion (fileproc, filesdoneproc, direntproc, dirleaveproc,
 	repository = (char *) NULL;
     }
     if (entries)
+    {
 	Entries_Close (entries);
+	entries = NULL;
+    }
     if (srcfiles)
 	dellist (&srcfiles);
     if (filelist)
@@ -378,6 +381,7 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
 	dellist (&filelist);
 	dellist (&srcfiles);
 	Entries_Close (entries);
+	entries = NULL;
     }
 
     /* call-back files done proc (if any) */
