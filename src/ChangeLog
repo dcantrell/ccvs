@@ -1,3 +1,10 @@
+Sat Oct 19 12:44:08 1996  J. Richard Sladkey  <jrs@world.std.com>
+			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* hash.c (sortlist, new function qsort_comp): Rewrite to use qsort
+	instead of insert sort.  Changes algorithm from n^2 to n log n
+	(assuming qsort is implemented with quicksort or similar).
+
 Sat Oct 19 12:44:08 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (basic2): In test basic2-64, use -x and specify types
