@@ -315,7 +315,7 @@ update (argc, argv)
     {
 	if (update_build_dirs)
 	{
-	    if (unlink_file (CVSADM_ENTSTAT) < 0 && errno != ENOENT)
+	    if (unlink_file (CVSADM_ENTSTAT) < 0 && ! existence_error (errno))
 		error (1, errno, "cannot remove file %s", CVSADM_ENTSTAT);
 #ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -780,7 +780,7 @@ update_dirent_proc (dir, repository, update_dir)
 	    char tmp[PATH_MAX];
 
 	    (void) sprintf (tmp, "%s/%s", dir, CVSADM_ENTSTAT);
-	    if (unlink_file (tmp) < 0 && errno != ENOENT)
+	    if (unlink_file (tmp) < 0 && ! existence_error (errno))
 		error (1, errno, "cannot remove file %s", tmp);
 #ifdef SERVER_SUPPORT
 	    if (server_active)
@@ -1044,7 +1044,7 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 			       update_dir, file);
 		}
 		Scratch_Entry (entries, file);
-		if (unlink_file (file) < 0 && errno != ENOENT)
+		if (unlink_file (file) < 0 && ! existence_error (errno))
 		{
 		    if (update_dir[0] == '\0')
 			error (0, errno, "cannot remove %s", file);

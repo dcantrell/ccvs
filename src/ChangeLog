@@ -1,3 +1,10 @@
+Sat Nov 18 16:22:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * client.c, update.c, vers_ts.c, server.c, rcs.c, lock.c,
+        ignore.c, entries.c, diff.c, commit.c, checkin.c:
+        Use new macro `existence_error', instead of comparing errno to
+        ENOENT directly.
+
 Fri Nov 17 14:56:12 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c (start_server): removed alternate version of this func,

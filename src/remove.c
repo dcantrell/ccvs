@@ -127,7 +127,7 @@ remove_fileproc (file, update_dir, repository, entries, srcfiles)
     {
 	if (!noexec)
 	{
-	    if (unlink (file) < 0 && errno != ENOENT)
+	    if (unlink (file) < 0 && ! existence_error (errno))
 	    {
 		if (update_dir[0] == '\0')
 		    error (0, errno, "unable to remove %s", file);

@@ -511,7 +511,7 @@ WriteTag (dir, tag, date)
 	    error (1, errno, "cannot close %s", tmp);
     }
     else
-	if (unlink_file (tmp) < 0 && errno != ENOENT)
+	if (unlink_file (tmp) < 0 && ! existence_error (errno))
 	    error (1, errno, "cannot remove %s", tmp);
 }
 
