@@ -427,31 +427,17 @@ update (int argc, char **argv)
 
 /*
  * Command line interface to update (used by checkout)
+ *
+ * repository = cvsroot->repository + update_dir.  This is necessary for
+ * checkout so that start_recursion can determine our repository.  In the
+ * update case, start_recursion can use the CVS/Root & CVS/Repository file
+ * to determine this value.
  */
 int
-do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate, int xforce, int local, int xbuild, int xaflag, int xprune, int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2, char *preload_update_dir, int xdotemplate, char *repository)
-             
-                
-                   
-               
-                
-               
-              
-               
-               
-               
-                 
-              
-                     
-                     
-                             
-                    
-    /* repository = cvsroot->repository + update_dir.  This is necessary for
-     * checkout so that start_recursion can determine our repository.  In the
-     * update case, start_recursion can use the CVS/Root & CVS/Repository file
-     * to determine this value.
-     */
-                     
+do_update (int argc, char **argv, char *xoptions, char *xtag, char *xdate,
+           int xforce, int local, int xbuild, int xaflag, int xprune,
+           int xpipeout, int which, char *xjoin_rev1, char *xjoin_rev2,
+           char *preload_update_dir, int xdotemplate, char *repository)
 {
     int err = 0;
     char *cp;
@@ -1122,7 +1108,7 @@ isemptydir (char *dir, int might_not_exist)
 		struct saved_cwd cwd;
 
 		if (save_cwd (&cwd))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 
 		if (CVS_CHDIR (dir) < 0)
 		    error (1, errno, "cannot change directory to %s", dir);
@@ -1131,7 +1117,7 @@ isemptydir (char *dir, int might_not_exist)
 		Entries_Close (l);
 
 		if (restore_cwd (&cwd, NULL))
-		    error_exit ();
+		    exit (EXIT_FAILURE);
 		free_cwd (&cwd);
 
 		if (files_removed != 0)
@@ -1419,6 +1405,8 @@ VERS: ", 0);
 	    /* fix up the vers structure, in case it is used by join */
 	    if (join_rev1)
 	    {
+		/* FIXME: Throwing away the original revision info is almost
+		   certainly wrong -- what if join_rev1 is "BASE"?  */
 		if (vers_ts->vn_user != NULL)
 		    free (vers_ts->vn_user);
 		if (vers_ts->vn_rcs != NULL)
@@ -1771,10 +1759,10 @@ patch_file (struct file_info *finfo, Vers_TS *vers_ts, int *docheckout, struct s
 	if (CVS_STAT (finfo->file, file_info) < 0)
 	    error (1, errno, "could not stat %s", finfo->file);
 
-	/* If this is really Update and not Checkout, recode history */
+	/* If this is really Update and not Checkout, record history.  */
 	if (strcmp (command_name, "update") == 0)
-	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs, finfo->file,
-			   finfo->repository);
+	    history_write ('P', finfo->update_dir, xvers_ts->vn_rcs,
+	                   finfo->file, finfo->repository);
 
 	freevers_ts (&xvers_ts);
 
@@ -1885,7 +1873,6 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 {
     char *backup;
     int status;
-    int retcode = 0;
     int retval;
 
     /*
@@ -1986,6 +1973,8 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     /* fix up the vers structure, in case it is used by join */
     if (join_rev1)
     {
+	/* FIXME: Throwing away the original revision info is almost
+	   certainly wrong -- what if join_rev1 is "BASE"?  */
 	if (vers->vn_user != NULL)
 	    free (vers->vn_user);
 	vers->vn_user = xstrdup (vers->vn_rcs);
@@ -2005,42 +1994,37 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
     }
 #endif
 
-    /* FIXME: the noexec case is broken.  RCS_merge could be doing the
-       xcmp on the temporary files without much hassle, I think.  */
-    if (!noexec && !xcmp (backup, finfo->file))
-    {
-	cvs_output (finfo->fullname, 0);
-	cvs_output (" already contains the differences between ", 0);
-	cvs_output (vers->vn_user, 0);
-	cvs_output (" and ", 0);
-	cvs_output (vers->vn_rcs, 0);
-	cvs_output ("\n", 1);
-
-	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
-		       finfo->repository);
-	retval = 0;
-	goto out;
-    }
-
     if (status == 1)
     {
 	error (0, 0, "conflicts found in %s", finfo->fullname);
 
 	write_letter (finfo, 'C');
 
-	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file, finfo->repository);
+	history_write ('C', finfo->update_dir, vers->vn_rcs, finfo->file,
+	               finfo->repository);
 
     }
-    else if (retcode == -1)
+    else /* status == 0 */
     {
-	error (1, errno, "fork failed while examining update of %s",
-	       finfo->fullname);
-    }
-    else
-    {
-	write_letter (finfo, 'M');
 	history_write ('G', finfo->update_dir, vers->vn_rcs, finfo->file,
 		       finfo->repository);
+
+	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
+	   xcmp on the temporary files without much hassle, I think.  */
+	if (!noexec && !xcmp (backup, finfo->file))
+	{
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output (vers->vn_user, 0);
+	    cvs_output (" and ", 0);
+	    cvs_output (vers->vn_rcs, 0);
+	    cvs_output ("\n", 1);
+
+	    retval = 0;
+	    goto out;
+	}
+
+	write_letter (finfo, 'M');
     }
     retval = 0;
  out:
@@ -2050,7 +2034,19 @@ merge_file (struct file_info *finfo, Vers_TS *vers)
 
 /*
  * Do all the magic associated with a file which needs to be joined
- * (-j option)
+ * (reached via the -j option to checkout or update).
+ *
+ * INPUTS
+ *   finfo		File information about the destination file.
+ *   vers		The Vers_TS structure for finfo.
+ *
+ * GLOBALS
+ *   join_rev1		From the command line.
+ *   join_rev2		From the command line.
+ *   server_active	Natch.
+ *
+ * ASSUMPTIONS
+ *   1.  Is not called in client mode.
  */
 static void
 join_file (struct file_info *finfo, Vers_TS *vers)
@@ -2096,6 +2092,9 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	jdate2 = jdate1;
 	jdate1 = NULL;
     }
+
+    /* FIXME: Need to handle "BASE" for jrev1 and/or jrev2.  Note caveat
+       below about vn_user.  */
 
     /* Convert the second revision, walking branches and dates.  */
     rev2 = RCS_getversion (vers->srcfile, jrev2, jdate2, 1, (int *) NULL);
@@ -2278,13 +2277,41 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	return;
     }
 
-    /* If the target of the merge is the same as the working file
-       revision, then there is nothing to do.  */
-    if (vers->vn_user != NULL && strcmp (rev2, vers->vn_user) == 0)
+    /* If the two merge revisions are the same, then there is nothing
+     * to do.  This needs to be checked before the rev2 == up-to-date base
+     * revision check tha comes next.  Otherwise, rev1 can == rev2 and get an
+     * "already contains the changes between <rev1> and <rev1>" message.
+     */
+    if (rev1 && strcmp (rev1, rev2) == 0)
     {
+	free (rev1);
+	free (rev2);
+	return;
+    }
+
+    /* If we know that the user file is up-to-date, then it becomes an
+     * optimization to skip the merge when rev2 is the same as the base
+     * revision.  i.e. we know that diff3(file2,file1,file2) will produce
+     * file2.
+     */
+    if (vers->ts_user
+        && strcmp (vers->ts_user, vers->ts_rcs) == 0
+        && strcmp (rev2, vers->vn_user) == 0)
+    {
+	if (!really_quiet)
+	{
+	    cvs_output (finfo->fullname, 0);
+	    cvs_output (" already contains the differences between ", 0);
+	    cvs_output (rev1, 0);
+	    cvs_output (" and ", 0);
+	    cvs_output (rev2, 0);
+	    cvs_output ("\n", 1);
+	}
+
 	if (rev1 != NULL)
 	    free (rev1);
 	free (rev2);
+
 	return;
     }
 
@@ -2336,15 +2363,6 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 		   "file %s exists, but has been added in revision %s",
 		   finfo->fullname, jrev2);
 
-	return;
-    }
-
-    /* If the two merge revisions are the same, then there is nothing
-       to do.  */
-    if (strcmp (rev1, rev2) == 0)
-    {
-	free (rev1);
-	free (rev2);
 	return;
     }
 
@@ -2512,16 +2530,39 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 	status = RCS_merge (finfo->rcs, vers->srcfile->path, finfo->file,
 			    t_options, rev1, rev2);
 
-    if (status != 0 && status != 1)
+    if (status != 0)
     {
-	error (0, status == -1 ? errno : 0,
-	       "could not merge revision %s of %s", rev2, finfo->fullname);
-	error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
-	       finfo->fullname, backup);
-	rename_file (backup, finfo->file);
+	if (status != 1)
+	{
+	    error (0, status == -1 ? errno : 0,
+		   "could not merge revision %s of %s", rev2, finfo->fullname);
+	    error (status == -1 ? 1 : 0, 0, "restoring %s from backup file %s",
+		   finfo->fullname, backup);
+	    rename_file (backup, finfo->file);
+	}
     }
-    free (rev1);
-    free (rev2);
+    else /* status == 0 */
+    {
+	/* FIXME: the noexec case is broken.  RCS_merge could be doing the
+	   xcmp on the temporary files without much hassle, I think.  */
+	if (!noexec && !xcmp (backup, finfo->file))
+	{
+	    if (!really_quiet)
+	    {
+		cvs_output (finfo->fullname, 0);
+		cvs_output (" already contains the differences between ", 0);
+		cvs_output (rev1, 0);
+		cvs_output (" and ", 0);
+		cvs_output (rev2, 0);
+		cvs_output ("\n", 1);
+	    }
+
+	    /* and skip the registering and sending the new file since it
+	     * hasn't been updated.
+	     */
+	    goto out;
+	}
+    }
 
     /* The file has changed, but if we just checked it out it may
        still have the same timestamp it did when it was first
@@ -2558,6 +2599,10 @@ join_file (struct file_info *finfo, Vers_TS *vers)
 			(struct buffer *) NULL);
     }
 #endif
+
+out:
+    free (rev1);
+    free (rev2);
     free (backup);
 }
 

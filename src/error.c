@@ -16,9 +16,6 @@
 
 #include "cvs.h"
 
-/* For functions with variable numbers of arguments */
-#include <stdarg.h>
-
 /* If non-zero, error will use the CVS protocol to stdout to report error
    messages.  This will only be set in the CVS server parent process;
    most other code is run via do_cvs_command, which forks off a child
@@ -29,22 +26,7 @@ int error_use_protocol;
 extern char *strerror (int);
 #endif
 
-void
-error_exit (void)
-{
-    rcs_cleanup ();
-    Lock_Cleanup ();
-#ifdef SERVER_SUPPORT
-    if (server_active)
-	server_cleanup (0);
-#endif
-#ifdef SYSTEM_CLEANUP
-    /* Hook for OS-specific behavior, for example socket subsystems on
-       NT and OS2 or dealing with windows and arguments on Mac.  */
-    SYSTEM_CLEANUP ();
-#endif
-    exit (EXIT_FAILURE);
-}
+
 
 /* Print the program name and error message MESSAGE, which is a printf-style
    format string with optional args.  This is a very limited printf subset:
@@ -169,7 +151,7 @@ error (int status, int errnum, const char *message, ...)
     }
 
     if (status)
-	error_exit ();
+	exit (EXIT_FAILURE);
     errno = save_errno;
 }
 
@@ -192,5 +174,5 @@ fperrmsg (FILE *fp, int status, int errnum, char *message, ...)
     putc ('\n', fp);
     fflush (fp);
     if (status)
-	error_exit ();
+	exit (EXIT_FAILURE);
 }

@@ -8,7 +8,6 @@
  * manipulation
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "edit.h"
 #include "hardlink.h"
@@ -164,8 +163,125 @@ static const char spacetab[] = {
 
 #define whitespace(c)	(spacetab[(unsigned char)c] != 0)
 
-static char *rcs_lockfile;
+static char *rcs_lockfile = NULL;
 static int rcs_lockfd = -1;
+
+
+
+/*
+ * char *
+ * locate_rcs ( const char* file, const char *repository , int *inattic )
+ *
+ * Find an RCS file in the repository, case insensitively when the cased name
+ * doesn't exist, we are running as the server, and a client has asked us to
+ * ignore case.
+ *
+ * Most parts of CVS will want to rely instead on RCS_parse which calls this
+ * function and is called by recurse.c which then puts the result in useful
+ * places like the rcs field of struct file_info.
+ *
+ * INPUTS
+ *
+ *  repository		the repository (including the directory)
+ *  file		the filename within that directory (without RCSEXT).
+ *  inattic		NULL or a pointer to the output boolean
+ *
+ * GLOBALS
+ *  ign_case		Whether the client has requested case insensitive mode.
+ *
+ * OUTPUTS
+ *
+ *  inattic		If this input was non-null, the destination will be
+ *  			set to true if the file was found in the attic or
+ *  			false if not.  If no RCS file is found, this value
+ *  			is undefined.
+ *
+ * RETURNS
+ *
+ *  a newly-malloc'd array containing the absolute pathname of the RCS
+ *  file that was found or NULL when none was found.
+ *
+ * ERRORS
+ *
+ *  errno can be set by the return value of the final call to
+ *  locate_file_in_dir().  This should resolve to the system's existence error
+ *  value (sometime ENOENT) if the Attic directory did not exist and ENOENT if
+ *  the Attic was found but no matching files were found in the Attic or its
+ *  parent.
+ */
+static char *
+locate_rcs (const char *repository, const char *file, int *inattic)
+{
+    char *rcsfile;
+    char *dir;
+    char *retval;
+
+    /* First, try to find the file as cased. */
+    retval = xmalloc (strlen (repository)
+                      + sizeof (CVSATTIC)
+                      + strlen (file)
+                      + sizeof (RCSEXT)
+                      + 3);
+    sprintf (retval, "%s/%s%s", repository, file, RCSEXT);
+    if (isreadable (retval))
+    {
+	if (inattic)
+	    *inattic = 0;
+	return retval;
+    }
+    sprintf (retval, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
+    if (isreadable (retval))
+    {
+	if (inattic)
+	    *inattic = 1;
+	return retval;
+    }
+    free (retval);
+
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+    /* We didn't find the file as cased, so try again case insensitively if the
+     * client has requested that mode.
+     */
+    if (ign_case)
+    {
+	/* Allocate space and add the RCS extension */
+	rcsfile = xmalloc (strlen (file)
+	                   + sizeof (RCSEXT));
+	sprintf (rcsfile, "%s%s", file, RCSEXT);
+
+
+	/* Search in the top dir given */
+	if ((retval = locate_file_in_dir (repository, rcsfile)) != NULL)
+	{
+	    if (inattic)
+		*inattic = 0;
+	    goto out;
+	}
+
+	/* Search in the Attic */
+	dir = xmalloc (strlen (repository)
+	               + sizeof (CVSATTIC)
+	               + 2);
+	sprintf (dir, "%s/%s", repository, CVSATTIC);
+
+	if ((retval = locate_file_in_dir (dir, rcsfile)) != NULL
+	    && inattic)
+	    *inattic = 1;
+
+	free (dir);
+
+    out:
+	free (rcsfile);
+	return retval;
+    }
+    else /* !ign_case */
+#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
+    {
+	return NULL;
+    }
+}
+
+
 
 /* A few generic thoughts on error handling, in particular the
    printing of unexpected characters that we find in the RCS file
@@ -7155,13 +7271,6 @@ RCS_deltas (RCSNode *rcs, FILE *fp, struct rcsbuffer *rcsbuf, char *version, enu
 		    ym = strchr (prvers->date, '.');
 		    if (ym == NULL)
 		    {
-			/* ??- is an ANSI trigraph.  The ANSI way to
-			   avoid it is \? but some pre ANSI compilers
-			   complain about the unrecognized escape
-			   sequence.  Of course string concatenation
-			   ("??" "-???") is also an ANSI-ism.  Testing
-			   __STDC__ seems to be a can of worms, since
-			   compilers do all kinds of things with it.  */
 			cvs_output ("??", 0);
 			cvs_output ("-???", 0);
 			cvs_output ("-??", 0);
@@ -7965,23 +8074,63 @@ count_delta_actions (Node *np, void *ignore)
     return 0;
 }
 
+
+
 /*
- * Clean up temporary files
+ * Clean up temporary files.
  */
-RETSIGTYPE
+static void
 rcs_cleanup (void)
 {
-    /* Note that the checks for existence_error are because we are
-       called from a signal handler, so we don't know whether the
-       files got created.  */
+    static short int never_run_again = 0;
+
+    TRACE (TRACE_FUNCTION, "rcs_cleanup()");
+
+    /* Since our signal handler must allow cleanup handlers to be called twice
+     * in order to avoid a race condition and still use the exit function,
+     *
+     *   (There must be a few operations in exit() between when this function
+     *    is removed from its list of functions to call and when this function
+     *    is actually called and when the actual signal blocking takes place in
+     *    SIG_beginCrSect().  A signal could theoretically be recieved during
+     *    that time, triggering a call to exit() which would not cause this
+     *    function to be called a second time.)
+     *
+     * if we are already in a signal critical section, assume we were called
+     * via the signal handler and set a flag which will prevent future calls.
+     * The only time that we should get into one of these functions otherwise
+     * while still in a critical section is if error(1,...) is called from a
+     * critical section, in which case we are exiting and interrupts are
+     * already being ignored.
+     *
+     * For Lock_Cleanup(), this is not a run_once variable since Lock_Cleanup()
+     * can be called to clean up the current lock set multiple times by the
+     * same run of a CVS command.
+     *
+     * For server_cleanup() and rcs_cleanup(), this is not a run_once variable
+     * since a call to the cleanup function from atexit() could be interrupted
+     * by the interrupt handler.
+     */
+    if (never_run_again) return;
+    if (SIG_inCrSect()) never_run_again = 1;
 
     /* FIXME: Do not perform buffered I/O from an interrupt handler like
-       this (via error).  However, I'm leaving the error-calling code there
-       in the hope that on the rare occasion the error call is actually made
-       (e.g., a fluky I/O error or permissions problem prevents the deletion
-       of a just-created file) reentrancy won't be an issue.  */
+     * this (via error).  However, I'm leaving the error-calling code there
+     * in the hope that on the rare occasion the error call is actually made
+     * (e.g., a fluky I/O error or permissions problem prevents the deletion
+     * of a just-created file) reentrancy won't be an issue.
+     */
+
+    /* Avoid being interrupted during calls which set globals to NULL.  This
+     * avoids having interrupt handlers attempt to use these global variables
+     * in inconsistent states.
+     */
+    SIG_beginCrSect();
     if (rcs_lockfile != NULL)
     {
+	/* Use a tmp var since any of these functions could call exit, causing
+	 * us to be called a second time.
+	 */
 	char *tmp = rcs_lockfile;
 	rcs_lockfile = NULL;
 	if (rcs_lockfd >= 0)
@@ -7990,11 +8139,19 @@ rcs_cleanup (void)
 		error (0, errno, "error closing lock file %s", tmp);
 	    rcs_lockfd = -1;
 	}
+
+	/* Note that the checks for existence_error are because we can be
+	 * called from a signal handler, so we don't know whether the
+	 * files got created.
+	 */
 	if (unlink_file (tmp) < 0
 	    && !existence_error (errno))
 	    error (0, errno, "cannot remove %s", tmp);
     }
+    SIG_endCrSect();
 }
+
+
 
 /* RCS_internal_lockfile and RCS_internal_unlockfile perform RCS-style
    locking on the specified RCSFILE: for a file called `foo,v', open
@@ -8033,25 +8190,8 @@ rcs_internal_lockfile (char *rcsfile)
     if (first_call)
     {
 	first_call = 0;
-	/* clean up if we get a signal */
-#ifdef SIGABRT
-	(void) SIG_register (SIGABRT, rcs_cleanup);
-#endif
-#ifdef SIGHUP
-	(void) SIG_register (SIGHUP, rcs_cleanup);
-#endif
-#ifdef SIGINT
-	(void) SIG_register (SIGINT, rcs_cleanup);
-#endif
-#ifdef SIGQUIT
-	(void) SIG_register (SIGQUIT, rcs_cleanup);
-#endif
-#ifdef SIGPIPE
-	(void) SIG_register (SIGPIPE, rcs_cleanup);
-#endif
-#ifdef SIGTERM
-	(void) SIG_register (SIGTERM, rcs_cleanup);
-#endif
+	/* Clean up if we get a signal or exit.  */
+	cleanup_register (rcs_cleanup);
     }
 
     /* Get the lock file name: `,file,' for RCS file `file,v'. */
@@ -8269,15 +8409,17 @@ make_file_label (char *path, char *rev, RCSNode *rcs)
     else
     {
 	struct stat sb;
-	struct tm *wm = NULL;
+	struct tm *wm;
 
 	if (strcmp(DEVNULL, path))
 	{
 	    char *file = last_component (path);
 	    if (CVS_STAT (file, &sb) < 0)
-		error (0, 1, "could not get info for `%s'", path);
-	    else
-		wm = gmtime (&sb.st_mtime);
+		/* Assume that if the stat fails,then the later read for the
+		 * diff will too.
+		 */
+		error (1, errno, "could not get info for `%s'", path);
+	    wm = gmtime (&sb.st_mtime);
 	}
 	else
 	{
@@ -8285,11 +8427,8 @@ make_file_label (char *path, char *rev, RCSNode *rcs)
 	    wm = gmtime(&t);
 	}
 
-	if (wm)
-	{
-	    (void) tm_to_internet (datebuf, wm);
-	    (void) sprintf (label, "-L%s\t%s", path, datebuf);
-	}
+	(void) tm_to_internet (datebuf, wm);
+	(void) sprintf (label, "-L%s\t%s", path, datebuf);
     }
     return label;
 }
@@ -8391,77 +8530,6 @@ getfullCVSname(char *CVSname, char **pathstore)
 	    CVSname = (*pathstore);
     }
     return CVSname;
-}
-
-/*
- * char *
- * locate_rcs ( const char* file, const char *repository , int *inattic )
- *
- * Find an RCS file in the repository.  Most parts of CVS will want to
- * rely instead on RCS_parse which calls this function and is
- * called by recurse.c which then puts the result in useful places
- * like the rcs field of struct file_info.
- *
- * INPUTS
- *
- *  repository		the repository (including the directory)
- *  file		the filename within that directory (without RCSEXT).
- *  inattic		NULL or a pointer to the output boolean
- *
- * OUTPUTS
- *
- *  inattic		If this input was non-null, the destination will be
- *  			set to true if the file was found in the attic or
- *  			false if not.  If no RCS file is found, this value
- *  			is undefined.
- *
- * RETURNS
- *
- *  a newly-malloc'd array containing the absolute pathname of the RCS
- *  file that was found or NULL on error.
- *
- * ERRORS
- *
- *  errno will be set by the system calls in the case of failure.
- */
-char *
-locate_rcs (const char *repository, const char *file, int *inattic)
-{
-    char *rcsfile;
-    char *dir;
-    char *retval;
-
-    /* Allocate space and add the RCS extension */
-    rcsfile = xmalloc ( strlen ( file )
-		    + sizeof ( RCSEXT ) );
-    (void) sprintf ( rcsfile, "%s%s", file, RCSEXT );
-
-    /* Search in the top dir given */
-    if (( retval = locate_file_in_dir ( repository, rcsfile )) != NULL )
-    {
-	if ( inattic )
-	    *inattic = 0;
-	goto out;
-    }
-
-    /* Search in the Attic */
-    dir = xmalloc ( strlen ( repository )
-		    + sizeof ( CVSATTIC )
-		    + 2 );
-    (void) sprintf ( dir,
-		     "%s/%s",
-		     repository,
-		     CVSATTIC );
-
-    if ( ( retval = locate_file_in_dir ( dir, rcsfile ) ) != NULL
-	 && inattic != NULL )
-	*inattic = 1;
-
-    free ( dir );
-
-out:
-    free ( rcsfile );
-    return retval;
 }
 
 

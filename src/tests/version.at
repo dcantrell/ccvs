@@ -1,0 +1,63 @@
+dnl Copyright (C) 2003 Derek Price, Ximbiot,
+dnl			& The Free Software Foundation, Inc.
+dnl
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2, or (at your option)
+dnl any later version.
+dnl
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+
+AT_CVS_BANNER([CVS Version Strings])
+
+AT_CVS_SETUP([version])
+
+
+
+#
+# There is some sense to sedding out the years as I do some of the other
+# details below, but I think it is better to have a distcheck blocked because
+# someone neglected to update the copyright notice than to avoid a few spurious
+# failures when testing old versions of CVS.
+#
+this_year=`date +%Y`
+AT_CHECK_NOESCAPE(
+[cvs --version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##
+       s# *$##'], [0],
+[
+Concurrent Versions System (CVS)
+
+Copyright (c) 1989-$this_year Brian Berliner, david d \`zoo' zuhn,
+                        Jeff Polk, and other authors
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.
+
+Specify the --help option for further information about CVS
+])
+
+
+
+AT_CVS_REMOTE(
+[AT_CHECK([cvs version |
+  sed 's#^\(Client.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (client\(/server\)\?)$#\1 (client)#
+       s#^\(Server.*\) 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)* (\(client/\)\?server)$#\1 (server)#'], [0],
+[Client: Concurrent Versions System (CVS) (client)
+Server: Concurrent Versions System (CVS) (server)
+])])
+
+
+
+AT_CVS_LOCAL(
+[AT_CHECK([cvs version |
+  sed 's# 1\.[0-9][0-9]*\(\.[0-9][0-9p]*\)*\( ([a-z/]*)\)\?$##'], [0],
+[Concurrent Versions System (CVS)
+])])
+
+
+
+AT_CLEANUP

@@ -1,3 +1,70 @@
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* cvs2vendor.sh: Work with POSIX sort as well as with
+	traditional sort.
+	* rcs2sccs.sh, sccs2rcs.in: Likewise.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
+2003-09-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sccs2rcs.in: Use @AWK@ to avoid ancient Solaris awk (no support
+	for the "?" operator). Add support for handling binary SCCS files.
+	(Suggestion from Allan Schrum <agschrum@mindspring.com>.)
+	
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_ignore_files_from_cvsroot): Handle error messages
+	specified in checkoutlist.
+	(Report from Matthew Doar <matt@trpz.com>.)
+
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history, check_revision): Pass the STDERR of child
+	processes through in verbose mode.
+
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Die on failure to close a pipe due to a system
+	error.
+	(check_revision): Simplify return syntax.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
+	* pvcs2rcs.in: Don't rely on `which' to exit with a non-zero exit
+	status when it fails to find the requested executable.  Use split in an
+	undeprecated manner.  Don't assign to $_ just for split.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
+	* pvcs2rcs.in: Use UNIX EOL instead of DOS EOL.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs (main): Strip trailing (/+.)+ off examined directories.
+	(process_file): Log files corrupted by virtue of lacking an RCS
+	extension as they are found in verbose mode.
+	(check_revision): Log RCS `ci' command in verbose mode.
+
+2003-09-02  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Don't let revision locks prevent the
+	revision tag from being read.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Pass $cvsroot to `cvs rlog'.
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
+2003-08-13  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in (get_history): Require -----... before the revision
+	marker, not a revision marker after -----...
+	(Reported by Dan Peterson <dbpete@aol.com>.)
+
 2003-08-09  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.in: Don't use unneeded Cwd module.

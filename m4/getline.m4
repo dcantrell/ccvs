@@ -1,4 +1,4 @@
-# getline.m4 serial 9
+# getline.m4 serial 10
 
 dnl Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software
 dnl Foundation, Inc.
@@ -56,9 +56,17 @@ AC_DEFUN([AM_FUNC_GETLINE],
     AC_DEFINE([getline], [gnu_getline],
       [Define to a replacement function name for getline().])
     AC_LIBOBJ(getline)
-    AC_LIBOBJ(getndelim2)
     gl_PREREQ_GETLINE
-    gl_PREREQ_GETNDELIM2
+    dnl The following lines used to be here:
+    dnl
+    dnl   AC_LIBOBJ(getndelim2)
+    dnl   gl_PREREQ_GETNDELIM2
+    dnl
+    dnl The fix to Autoconf that forbids multiple inclusions in LIBOBJ of the
+    dnl same filename went in before release 2.58, so after GNULIB requires
+    dnl Autoconf 2.58 or greater, the following line can be removed and the
+    dnl above two restored.
+    gl_GETNDELIM2
   fi
 ])
 

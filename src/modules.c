@@ -20,7 +20,6 @@
  *	command line.
  */
 
-#include <assert.h>
 #include "cvs.h"
 #include "savecwd.h"
 
@@ -96,7 +95,10 @@ close_module (DBM *db)
  * It runs the post checkout or post tag proc from the modules file
  */
 int
-do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC callback_proc, char *where, int shorten, int local_specified, int run_module_prog, int build_dirs, char *extra_arg)
+do_module (DBM *db, char *mname, enum mtype m_type, char *msg,
+           CALLBACKPROC callback_proc, char *where, int shorten,
+           int local_specified, int run_module_prog, int build_dirs,
+           char *extra_arg)
 {
     char *checkout_prog = NULL;
     char *export_prog = NULL;
@@ -123,26 +125,10 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
 #ifdef SERVER_SUPPORT
     int restore_server_dir = 0;
     char *server_dir_to_restore = NULL;
-    if (trace)
-    {
-	char *buf;
-
-	/* We use cvs_outerr, rather than fprintf to stderr, because
-	   this may be called by server code with error_use_protocol
-	   set.  */
-	buf = xmalloc (100
-		       + strlen (mname)
-		       + strlen (msg)
-		       + (where ? strlen (where) : 0)
-		       + (extra_arg ? strlen (extra_arg) : 0));
-	sprintf (buf, "%s-> do_module (%s, %s, %s, %s)\n",
-		 CLIENT_SERVER_STR,
-		 mname, msg, where ? where : "",
-		 extra_arg ? extra_arg : "");
-	cvs_outerr (buf, 0);
-	free (buf);
-    }
 #endif
+
+    TRACE (TRACE_FUNCTION, "do_module (%s, %s, %s, %s)",
+           mname, msg, where ? where : "NULL", extra_arg ? extra_arg : "NULL");
 
     /* if this is a directory to ignore, add it to that list */
     if (mname[0] == '!' && mname[1] != '\0')
@@ -278,7 +264,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
 	       the case where we found a file/directory rather than
 	       finding an entry in the modules file.  */
 	    if (save_cwd (&cwd))
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    cwd_saved = 1;
 
 	    err += callback_proc (modargc, modargv, where, mwhere, mfile,
@@ -289,7 +275,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
 
 	    /* cd back to where we started.  */
 	    if (restore_cwd (&cwd, NULL))
-		error_exit ();
+		exit (EXIT_FAILURE);
 	    free_cwd (&cwd);
 	    cwd_saved = 0;
 
@@ -359,7 +345,7 @@ do_module (DBM *db, char *mname, enum mtype m_type, char *msg, CALLBACKPROC call
 
     /* remember where we start */
     if (save_cwd (&cwd))
-	error_exit ();
+	exit (EXIT_FAILURE);
     cwd_saved = 1;
 
     assert (value != NULL);
@@ -632,7 +618,7 @@ module `%s' is a request for a file in a module which is not a directory",
 
     /* cd back to where we started */
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
     cwd_saved = 0;
 

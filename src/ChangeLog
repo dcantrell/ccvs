@@ -1,3 +1,555 @@
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (server): Test that the global `-l' option is ignored
+	nonfatally.
+
+2003-11-03  Derek Price  <derek@ximbiot.com>
+
+	* server.c (serve_global_option): Warn that -l is being ignored rather
+	than exiting fatally due to backwards compatibility complaints from
+	administrators.
+
+2003-11-01  Larry Jones  <lawrence.jones@eds.com>
+
+	* filesubr.c (xcmp): Make sure S_ISLNK exists before calling it.
+	(Reported by Paul Edwards <kerravon@nosppaam.w3.to>.)
+
+2003-10-31  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh: s/${TESTDIR}/cvsroot/${CVSROOT_DIRNAME}/.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (devcom): Renumber tests and use dotest function.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
+	* sever.h: Add the standard copyright notice.
+
+2003-10-28  Derek Price  <derek@ximbiot.com>
+
+	* lock.c: Remove some suggestions which have already been implemented
+	or which have become obsolete from the header comment.
+
+2003-10-26  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (join6): Fix a few typos in the last test and remove a
+	misplaced test.
+
+2003-10-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (parseroot): Use dokeep function.
+
+	* sanity.sh (parseroot): Perform this test in a subdirectory.
+	It should avoid problems on case-insensitive systems where 
+	CVSROOT and cvsroot are the same directory (eg, MacOS X).
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* update.c (join_file): Restore the optimization Mark recently removed,
+	but fix it.  Move one other optimization up since it needs to be
+	checked for first.  Add bew status messages like merge_file produces
+	when the requested diff has already been applied to the destination.
+	Expand header comment.
+	* sanity.sh (join6): Add tests for the new error messages.
+	(import-113, join-admin-2, diffmerge1): Fix collateral damage.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* update.c (merge_file): Optimize & eliminate code.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (do_recursion): Assert that ignoring the return value of
+	Name_Repository is not a memory leak.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* repos.c (Name_Repository): Replace a FIXME with the improved error
+	message it requested.
+	* sanity.sh (errmsg3): New test for the above.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* patch.c (patch_proc): Avoid memory leak.
+	(Patch from Mark D. Baushke  <mdb@cvshome.org>.)
+	(patch_proc): Reformat a few long lines for readability.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* vers_ts.c (Version_TS): Move variable declaration inside the only
+	block where it is used and remove uneeded reinitialization.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* server.h: s/^extern// off of function declarations per HACKING.
+	Reformat protos for readability.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* vers_ts.c (Version_TS): Reformat declaration and expand header
+	comment.
+
+2003-10-24  Derek Price  <derek@ximbiot.com>
+
+	* update.c (merge_file): Remove code that hasn't been used since CVS
+	used an external RCS (1.9.something).
+
+2003-10-23  Mark D. Baushke  <mdb@cvshome.org>
+
+	* update.c (join_file): Do the -jrev1 -jrev2 merge even when
+	the file is already at rev2.
+	* sanity.sh (join6): New testcase for above.
+	(Suggested by Paul Edwards, from somewhere in Australia.)
+	(import): Fix collateral damage.
+	
+2003-10-23  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (fail): Refer the user to the `TESTS' and `check.log' files
+	on failure.
+
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Reformat function declaration and
+	expand comments.
+	(Original patch from Terrence Enger <tenger@iSeries-guru.com>.)
+
+2003-10-22  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_LDADD): Add $(LIBINTL) for gettext.
+	* Makefile.in: Regenerated.
+
+2003-10-19  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (admin-31): Fix more typos.
+
+2003-10-18  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (admin): Fix a typo.
+
+	* admin.c (admin_fileproc): Restore the ':' character in the
+	-mtag:message admin argument even if the tag does not exist so
+	that other files with the tag will be found. Also, be more
+	paranoid that a symbolic tag actually points to a version that
+	exists.
+	(Reported by Rodolfo Schulz de Lima <rodolfo@rodsoft.org>.)
+	* sanity.sh (admin): Test these changes.
+	
+2003-10-17  Mark D. Baushke  <mdb@cvshome.org>
+
+	* admin.c (admin_fileproc): Force tag match on admin
+	-mversion:message rather than altering the wrong log message.
+	(Patch from "Rodolfo Schulz de Lima" <rodsoft@uol.com.br>.)
+	* sanity.sh (admin): Test case for it.
+
+2003-10-15  Larry Jones  <lawrence.jones@eds.com>
+
+	* commit.c (commit_fileproc, finaladd): Don't call fixaddfile()
+	if the RCS file didn't get created at all.
+	(Reported by David Wood <David.Wood@thestreet.com>.)
+
+2003-10-14  Derek Price  <derek@ximbiot.com>
+
+	Port to pedantic POSIX 1003.1-2001 hosts, such as Debian GNU/Linux
+	testing with _POSIX2_VERSION=200112 in the environment.
+
+	* sanity.sh: Use 'sed 1q', not 'head -1'.
+	(Patch from Paul Eggert <eggert@twinsun.com>.)
+
+2003-10-10  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (set_lock): Clarify comment.
+
+2003-10-11  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Replace CVS_CHDIR call: some systems
+	won't allow you to delete a directory tree containg your working
+	directory.
+
+2003-10-10  Derek Price  <derek@ximbiot.com>
+
+	* server.c (cvs_output, cvs_outerr): Protect calls to syslog()
+	with the usual preprocessor condition: HAVE_SYSLOG_H.
+	(Original patch from Terrence Enger <tenger@iSeries-guru.com>.)
+
+2003-10-09  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h: s/^extern// off of function declarations per HACKING.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* Makefile.am (cvs_SOURCES): Add history.h.
+	* history.c: Include history.h.  Add the `P' record types to more
+	comments. s/ALL_REC_TYPES/ALL_HISTORY_REC_TYPES/.
+	(usage): Reference ALL_HISTORY_REC_TYPES rather than using a separate
+	string literal.
+	(report_hrecs): Handle `P' record type.
+	(ALL_REC_TYPES): Rename and move...
+	* history.h (ALL_HISTORY_REC_TYPES): ...here.
+	* mkmodules.c: Include history.h.
+	(config_contents): Update contents of and references to LogHistory
+	records to use ALL_HISTORY_REC_TYPES.
+	* sanity.sh (basic2-64): Update to include history records of type `P'.
+
+	* Makefile.in: Regenerated.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* update.c (patch_file): Correct spelling and punctuation in comment.
+	Update some lines to fit in 80 characters.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (remove_locks): Copy global struct and set status variable to
+	NULL before calling disposal functions that might try to access it
+	during calls to error(1,...).
+
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* history.c (history): Don't conflate -e with -x since the client's
+	idea of what -e means may not match the server's.
+	(Reported by Frank Hemer <frank@hemer.org>.)
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (Lock_Cleanup), rcs.c (rcs_cleanup), server.c
+	(server_cleanup): Expand comments about the never_run_again variable
+	and its interoperation with critical sections, exit, and interrupts.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (remove_locks): Reduce TRACE level since this function is
+	rarely called and we can usually rely on tracing higher level
+	functions.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (lock_name, lock_simple_remove),
+	server.c (server_pathname_check, dirswitch): Add TRACE.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* main.c: Reformat header comment to fit in 80 chars.
+
+2003-10-08  Larry Jones  <lawrence.jones@eds.com>
+
+	* sanity.sh: Use dotest_fail instead of dotest_status for diff tests
+	since CVS only returns success/fail rather than 0/1/2 like diff does.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	Fix a client/server bug introduced via the data loss fix of 2003-03-17.
+	Basically, the server was reporting ambiguous filename requests when it
+	should have been trusting the user to type the intended case or using
+	the case the client preserved in CVS/Entries before it tried to look
+	anything up in case insensitive mode.
+
+	* rcs.c (locate_rcs): Use the filename exactly as cased before
+	investigating a case insensitive lookup, per the client/server protocol
+	specification.  Expand comments.
+	* subr.c (locate_file_in_dir): This function only needs to locate files
+	case insensitively.  Expand comments.
+	* cvs.h (locate_file_in_dir): Only prototype when servers which need to
+	handle case insensitivity are being compiled.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (locate_rcs): Declare static.  Move to an earlier location in
+	file to avoid prototyping.
+	* rcs.h (locate_rcs): Remove proto.
+
+2003-10-08  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (lock_filesdoneproc): Reformat long function prototype.
+
+2003-10-07  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Remove old code that was commented out
+	with //, which isn't valid in C.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* exithandle.c: New file.
+	* Makefile.am (cvs_SOURCES): Add exithandle.c.
+	* cvs.h (cleanup_register, signals_register): New prototypes.
+	* lock.c (Lock_Cleanup, remove_locks), rcs.c (rcs_cleanup),
+	server.c (server_cleanup): Avoid calling twice when called from a
+	signal handler and then exit.  Avoid being interrupted while globals
+	that the signal handler might touch are in inconsistent states.  Expand
+	comments.
+	* rcs.c (rcs_internal_lockfile): Ditto. Use cleanup_register rather
+	than calling atexit() directly.
+	* main.c (main): Consolidate signal stuff into a call to
+	signals_register().  Call cleanup_register to register cleanup
+	functions rather than calling atexit() directly.
+
+	* Makefile.in: Regenerated.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* error.c, error.h: Remove error_exit() function.
+	* add.c, client.c, history.c, import.c, main.c, mkmodules.c, modules.c,
+	rcscmds.c, recurse.c, release.c, root.c, server.c, socket-client.c,
+	tag.c, update.c: s/\<error_exit *();$/exit (EXIT_FAILURE);/.  Remove
+	related comments.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c: Reformat a few long function prototypes and lines.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* hash.c (dellist): Immediately set input pointers to NULL in case they
+	are references to global variables which might be accessed by interrupt
+	handlers.
+
+2003-10-04  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (rcs_cleanup): Declare static.
+	* rcs.h (rcs_cleanup): Remove prototype.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	Move calls to Lock_Cleanup to the atexit handler.
+
+	* commit.c (commit): Don't call Lock_Cleanup on error exit.
+	* error.c (error_exit): Don't call Lock_Cleanup.
+	* lock.c (Lock_Cleanup): Don't worry about recursive calls now that we
+	are using atexit for calls on exit.  Dispose locklist storage after the
+	locks are removed.  Expand comments.
+	* main.c (main): Move Lock_Cleanup call into atexit(Lock_Cleanup).
+	* server.c (server_notify): Add TRACE.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* recurse.c (start_recursion): Remove unnecessary typecasts.
+	(do_recursion): Ditto.  Add TRACE.  Expand comments.  Remove unneeded
+	parens.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Dispose of old Tmpdir and Editor when specified
+	multiple times between the command line & the ~/.cvsrc file.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (remove_locks): Eliminate unecessary typecasting.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	Move calls to rcs_cleanup to the atexit handler.
+
+	* error.c (error_exit): Don't call rcs_cleanup.
+	* rcs.c: Initialize global RCS_LOCKFILE to NULL.
+	(rcs_internal_lockfile): Use atexit (rcs_cleanup) rather than
+	setting up signal handlers.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* modules.c (do_module): Format prototype.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* server.c (server_cleanup): Skip BUF_TO_NET checks as an optimization
+	when ERROR_USE_PROTOCOL is set.
+
+2003-10-03  Derek Price  <derek@ximbiot.com>
+
+	* modules.c (do_module): Use TRACE.
+
+2003-10-02  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Don't free globals that might be needed by the cleanup
+	functions.
+	* server.c (server_cleanup): Only clean up when called in the parent
+	process.  Set buffers to NULL before shutting down and freeing in case
+	we are interrupted.  Improve comments.  Add TRACE.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* main.c (main): Use symbolic name for trace level.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* client.c (connect_to_forked_server): Use TRACE macro rather than the
+	old style.
+
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* server.c (protocol): Initialize the protocol buffer to NULL so that
+	use before initialization may be detected.
+	(cvs_output, cvs_outerr): Syslog messages when the appropriate buffers
+	are not available.
+	(server_cleanup): Reorganize for a single exit point and to eliminate
+	duplicated code.  Set buf_to_net to NULL before calling the buffer
+	shutdown functions in order to force error messages into the syslog.
+	* buffer.c (stdio_buffer_close): Remove FIXME comment re syslog since
+	the calls to error should go through the cvs_outerr function anyhow.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* entries.c (WriteTemplate): TRACE on entrance to a function, not exit.
+	Don't worry about checking noexec without server support since this
+	function will then do nothing.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* update.c (do_update): Reformat function decl.  Move and merge
+	comment.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* client.h (buf_output, buf_outerr): Check that our buffers exist
+	before sending them data.
+	(buf_output_binary): Assert that the output buffer is not NULL.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* client.h, rcs.c, rcs.h, server.h: Assume __STDC__ since it is
+	defined as part of the C89 spec.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* commit.c (commit): Optimize function towards a single exit point.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* error.c (error_exit): Remove call to SYSTEM_CLEANUP.
+	* main.c (main): Set up atexit(SYSTEM_CLEANUP) rather than calling it
+	explicitly before exit.
+	* server.c (pserver_authenticate_connection): Don't call SYSTEM_CLEANUP
+	before exiting.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* error.c (exit_error): Remove call to server_cleanup.
+	* main.c (main): Call atexit(server_cleanup).  Let server_cleanup turn
+	server_active off.
+	* server.c (server_cleanup): Don't require an argument.  Fill out
+	header comment.  Unset server_active when done.
+	(server): Don't call server_cleanup - let it be called via the atexit
+	handler.
+	* server.h (server_cleanup): Update proto.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* server.c (buf_output): Don't check that the buffers exist before
+	using them since cvs_outerr does this without problems.
+
+2003-09-30  Derek Price  <derek@ximbiot.com>
+
+	* server.c: Remove some unecessary function prototypes.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
+	* rcs.c (make_file_label): Make a failure to stat a file a fatal error
+	since it signals that a later read will also fail.
+
+2003-09-29  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff_fileproc): Optimize the check for labels set by the
+	user.
+
+2003-09-26  Derek Price  <derek@ximbiot.com>
+
+	* diff.c (diff): Add a FIXME re spaces in diff arguments.
+
+2003-09-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* rcs.c (make_file_label): Do not return an uninitialized label.
+	(Reported by "Todd C. Miller" <Todd.Miller@courtesan.com>)
+
+2003-09-24  Derek Price  <derek@ximbiot.com>
+
+	* lock.c (lock_name): Remove useless prototype.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* sanity.sh (mkmodules): Correct comments.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (mkmodules): Do not pass a string which came from the
+	checkoutlist file directly to error as a format string since we don't
+	want to trust any user with access to checkoutlist with creating printf
+	format strings.  I already claimed I did this in the NEWS file.
+	(Thanks to Larry Jones for spotting my mistake.)
+	* sanity.sh (mkmodules): Test for the above.
+
+2003-09-12  Derek Price  <derek@ximbiot.com>
+
+	* mkmodules.c (checkoutlist_contents): Document the optional portions
+	of this file format more accurately.
+	(mkmodules): Ditto, in comments.  Fix bug that always failed to ignore
+	whitespace before error messages.
+	* sanity.sh (mkmodules-temp-file-removal): Rename to...
+	(mkmodules): ...this and add a test of the checkoutlist error message.
+	Add cleanup step to restore checkoutlist.
+
+2003-09-08  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (cvs_temp_file): Replace a chmod 0600, which shouldn't
+	really be necessary and which provided a false sense of security, with
+	an informative comment.
+	(Thanks to Paul Eggert <eggert@cs.ucla.edu> for his educational
+	advice.)
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h: Delete reference to CVSADMROOT_EDITINFO.
+	* logmsg.c (editinfo_proc): Delete function and proto.
+	(do_editor): Don't look for editinfo script.
+	* mkmodules.c (editinfo_contents): Delete.
+	* sanity.sh (*): Remove references to editinfo in updates of the
+	CVSROOT module.
+
+2003-08-29  Derek Price  <derek@ximbiot.com>
+
+	* remove.c (cvsremove): Update quotes for consistency.
+
+2003-08-27  Larry Jones  <lawrence.jones@eds.com>
+
+	* history.c: 'P' is a valid record type and has been for a long time.
+	Add it to the comments, usage message, and, most important,
+	ALL_REC_TYPES so it gets recorded by default.
+	* server.c (do_cvs_command): Set global command_name to the real
+	command name rather than leaving it set to "server".
+	* sanity.sh: Update to match.
+	(Reported by Dmitry Ryzhkov <rdim_outside@softhome.net>.)
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c (cvs_temp_file): Expand comments.  Check for glibc version
+	before compiling chmod command.  Remove FIXME to this effect.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* logmsg.c (do_editor): Use cvs_temp_file rather than cvs_temp_name to
+	create and open the temporary file.  Remove FIXME to this effect.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* logmsg.c (do_editor): Move editinfo processing to before creation of
+	the temp file so that it may be skipped when no editor is defined.
+	Remove related FIXME.  Add comments.  Remove some processing of
+	editinfo_editor rendered obsolete when editinfo_editor ceased to be a
+	global.
+
+2003-08-19  Derek Price  <derek@ximbiot.com>
+
+	* (*.c): Move some includes to lib/system.h.
+
+2003-08-18  Derek Price  <derek@ximbiot.com>
+
+	* add.c (add): Use consistent quoting style in user messages.
+	* sanity.sh (*): Ditto.
+
+2003-08-13  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.c (server_cleanup): Don't shutdown buf_from_net if it's
+	null.
+	(Reported by Scott Mitchell <scott@fishballoon.org>.)
+
 2003-08-03  Mark D. Baushke  <mdb@cvshome.org>
 
 	* lock.c: Do not include xtime.h (already included via system.h).
@@ -30,7 +582,7 @@
 
 2003-07-29  Derek Price  <derek@ximbiot.com>
 
-	* checkout.c (checkaddfile): Simplify the logic here, using assumptions
+	* commit.c (checkaddfile): Simplify the logic here, using assumptions
 	already made later in the function to remove calls to locate_rcs and
 	some conditionals.  Use same assumptions to remove some variables.
 

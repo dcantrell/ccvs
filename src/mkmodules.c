@@ -6,8 +6,9 @@
  * specified in the README file that comes with the CVS kit.  */
 
 #include "cvs.h"
-#include "savecwd.h"
 #include "getline.h"
+#include "history.h"
+#include "savecwd.h"
 
 #ifndef DBLKSIZ
 #define	DBLKSIZ	4096			/* since GNU ndbm doesn't define it */
@@ -93,30 +94,7 @@ static const char *const rcsinfo_contents[] = {
     NULL
 };
 
-static const char *const editinfo_contents[] = {
-    "# The \"editinfo\" file is used to allow verification of logging\n",
-    "# information.  It works best when a template (as specified in the\n",
-    "# rcsinfo file) is provided for the logging procedure.  Given a\n",
-    "# template with locations for, a bug-id number, a list of people who\n",
-    "# reviewed the code before it can be checked in, and an external\n",
-    "# process to catalog the differences that were code reviewed, the\n",
-    "# following test can be applied to the code:\n",
-    "#\n",
-    "#   Making sure that the entered bug-id number is correct.\n",
-    "#   Validating that the code that was reviewed is indeed the code being\n",
-    "#       checked in (using the bug-id number or a seperate review\n",
-    "#       number to identify this particular code set.).\n",
-    "#\n",
-    "# If any of the above test failed, then the commit would be aborted.\n",
-    "#\n",
-    "# Actions such as mailing a copy of the report to each reviewer are\n",
-    "# better handled by an entry in the loginfo file.\n",
-    "#\n",
-    "# One thing that should be noted is the the ALL keyword is not\n",
-    "# supported.  There can be only one entry that matches a given\n",
-    "# repository.\n",
-    NULL
-};
+
 
 static const char *const verifymsg_contents[] = {
     "# The \"verifymsg\" file is used to allow verification of logging\n",
@@ -197,7 +175,7 @@ static const char *const checkoutlist_contents[] = {
     "#\n",
     "# File format:\n",
     "#\n",
-    "#	[<whitespace>]<filename><whitespace><error message><end-of-line>\n",
+    "#	[<whitespace>]<filename>[<whitespace><error message>]<end-of-line>\n",
     "#\n",
     "# comment lines begin with '#'\n",
     NULL
@@ -296,9 +274,9 @@ static const char *const config_contents[] = {
     "# command.\n",
     "#TopLevelAdmin=no\n",
     "\n",
-    "# Set `LogHistory' to `all' or `TOFEWGCMAR' to log all transactions to the\n",
+    "# Set `LogHistory' to `all' or `" ALL_HISTORY_REC_TYPES "' to log all transactions to the\n",
     "# history file, or a subset as needed (ie `TMAR' logs all write operations)\n",
-    "#LogHistory=TOFEWGCMAR\n",
+    "#LogHistory=" ALL_HISTORY_REC_TYPES "\n",
     "\n",
     "# Set `RereadLogAfterVerify' to `always' (the default) to allow the verifymsg\n",
     "# script to change the log message.  Set it to `stat' to force CVS to verify\n",
@@ -327,9 +305,6 @@ static const struct admin_file filelist[] = {
     {CVSROOTADM_RCSINFO,
 	"a %s file can be used to configure 'cvs commit' templates",
 	rcsinfo_contents},
-    {CVSROOTADM_EDITINFO,
-	"a %s file can be used to validate log messages",
-	editinfo_contents},
     {CVSROOTADM_VERIFYMSG,
 	"a %s file can be used to validate log messages",
 	verifymsg_contents},
@@ -404,7 +379,7 @@ mkmodules (char *dir)
 	return 0;
 
     if (save_cwd (&cwd))
-	error_exit ();
+	exit (EXIT_FAILURE);
 
     if ( CVS_CHDIR (dir) < 0)
 	error (1, errno, "cannot chdir to %s", dir);
@@ -469,7 +444,7 @@ mkmodules (char *dir)
     {
 	/*
 	 * File format:
-	 *  [<whitespace>]<filename><whitespace><error message><end-of-line>
+	 *  [<whitespace>]<filename>[<whitespace><error message>]<end-of-line>
 	 *
 	 * comment lines begin with '#'
 	 */
@@ -500,12 +475,13 @@ mkmodules (char *dir)
 	    }
 	    else
 	    {
+		/* Skip leading white space before the error message.  */
 		for (cp++;
-		     cp < last && *last && isspace ((unsigned char) *last);
+		     cp < last && *cp && isspace ((unsigned char) *cp);
 		     cp++)
 		    ;
 		if (cp < last && *cp)
-		    error (0, 0, cp, fname);
+		    error (0, 0, "%s", cp);
 	    }
 	    if (unlink_file (temp) < 0
 		&& !existence_error (errno))
@@ -527,7 +503,7 @@ mkmodules (char *dir)
     }
 
     if (restore_cwd (&cwd, NULL))
-	error_exit ();
+	exit (EXIT_FAILURE);
     free_cwd (&cwd);
 
     return (0);

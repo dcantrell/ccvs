@@ -12,7 +12,6 @@
 #include "savecwd.h"
 #include "fileattr.h"
 #include "edit.h"
-#include <assert.h>
 
 static int do_dir_proc (Node * p, void *closure);
 static int do_file_proc (Node * p, void *closure);
@@ -62,58 +61,97 @@ struct frame_and_entries {
 
 
 /* Start a recursive command.
-
-   Command line arguments (ARGC, ARGV) dictate the directories and
-   files on which we operate.  In the special case of no arguments, we
-   default to ".".  */
+ *
+ * INPUT
+ *
+ *   fileproc
+ *     Function called with each file as an argument.
+ *
+ *   filesdoneproc
+ *     Function called after all the files in a directory have been processed,
+ *     before subdirectories have been processed.
+ *
+ *   direntproc
+ *     Function called immediately upon entering a directory, before processing
+ *     any files or subdirectories.
+ *
+ *   dirleaveproc
+ *     Function called upon finishing a directory, immediately before leaving
+ *     it and returning control to the function processing the parent
+ *     directory.
+ *
+ *   callerdat
+ *   	This void * is passed to the functions above.
+ *
+ *   argc, argv
+ *     The files on which to operate, interpreted as command line arguments.
+ *     In the special case of no arguments, defaults to operating on the
+ *     current directory (`.').
+ *
+ *   local
+ *
+ *   which
+ *     specifies the kind of recursion.  There are several cases:
+ *
+ *       1.  W_LOCAL is not set but W_REPOS or W_ATTIC is.  The current
+ *       directory when we are called must be the repository and
+ *       recursion proceeds according to what exists in the repository.
+ *
+ *       2a.  W_LOCAL is set but W_REPOS and W_ATTIC are not.  The
+ *       current directory when we are called must be the working
+ *       directory.  Recursion proceeds according to what exists in the
+ *       working directory, never (I think) consulting any part of the
+ *       repository which does not correspond to the working directory
+ *       ("correspond" == Name_Repository).
+ *
+ *       2b.  W_LOCAL is set and so is W_REPOS or W_ATTIC.  This is the
+ *       weird one.  The current directory when we are called must be
+ *       the working directory.  We recurse through working directories,
+ *       but we recurse into a directory if it is exists in the working
+ *       directory *or* it exists in the repository.  If a directory
+ *       does not exist in the working directory, the direntproc must
+ *       either tell us to skip it (R_SKIP_ALL), or must create it (I
+ *       think those are the only two cases).
+ *
+ *   aflag
+ *   locktype
+ *   update_preload
+ *   dosrcs
+ *
+ *   repository_in
+ *     keeps track of the repository string.  This is only for the remote mode,
+ *     specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was used
+ *     to locate the repository.  Things would break when xgetwd() was used
+ *     with a symlinked repository because xgetwd() would return the true path
+ *     and in some cases this would cause the path to be printed as other than
+ *     the user specified in error messages and in other cases some of CVS's
+ *     security assertions would fail.
+ *
+ * GLOBALS
+ *   ???
+ *
+ * OUTPUT
+ *
+ *  callerdat can be modified by the FILEPROC, FILESDONEPROC, DIRENTPROC, and
+ *  DIRLEAVEPROC.
+ *
+ * RETURNS
+ *   A count of errors counted by walking the argument list with
+ *   unroll_files_proc() and do_recursion().
+ *
+ * ERRORS
+ *   Fatal errors occur:
+ *     1.  when there were no arguments and the current directory
+ *         does not contain CVS metadata.
+ *     2.  when all but the last path element from an argument from ARGV cannot
+ *         be found to be a local directory.
+ */
 int
-start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc, void *callerdat, int argc, char **argv, int local, int which, int aflag, int locktype, char *update_preload, int dosrcs, char *repository_in)
-                      
-                                
-               	           
-                              
-                    
-
-             
-                
-              
-
-    /* This specifies the kind of recursion.  There are several cases:
-
-       1.  W_LOCAL is not set but W_REPOS or W_ATTIC is.  The current
-       directory when we are called must be the repository and
-       recursion proceeds according to what exists in the repository.
-
-       2a.  W_LOCAL is set but W_REPOS and W_ATTIC are not.  The
-       current directory when we are called must be the working
-       directory.  Recursion proceeds according to what exists in the
-       working directory, never (I think) consulting any part of the
-       repository which does not correspond to the working directory
-       ("correspond" == Name_Repository).
-
-       2b.  W_LOCAL is set and so is W_REPOS or W_ATTIC.  This is the
-       weird one.  The current directory when we are called must be
-       the working directory.  We recurse through working directories,
-       but we recurse into a directory if it is exists in the working
-       directory *or* it exists in the repository.  If a directory
-       does not exist in the working directory, the direntproc must
-       either tell us to skip it (R_SKIP_ALL), or must create it (I
-       think those are the only two cases).  */
-              
-
-              
-                 
-                         
-               
-    /* Keep track of the repository string.  This is only for the remote mode,
-     * specifically, r* commands (rtag, rdiff, co, ...) where xgetwd() was
-     * used to locate the repository.  Things would break when xgetwd() was
-     * used with a symlinked repository because xgetwd() would return the true
-     * path and in some cases this would cause the path to be printed as other
-     * than the user specified in error messages and in other cases some of
-     * CVS's security assertions would fail.
-     */
-                        
+start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc,
+                 DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
+                 void *callerdat, int argc, char **argv, int local,
+                 int which, int aflag, int locktype,
+                 char *update_preload, int dosrcs, char *repository_in)
 {
     int i, err = 0;
 #ifdef CLIENT_SUPPORT
@@ -130,9 +168,9 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
        "                       local=%d, which=%d, aflag=%d,\n"
        "                       locktype=%d, update_preload=%s\n"
        "                       dosrcs=%d, repository_in=%s )",
-	       (void *) fileproc, (void *) filesdoneproc,
-	       (void *) direntproc, (void *) dirleaveproc,
-	       callerdat, argc, (void *) argv,
+	       fileproc, filesdoneproc,
+	       direntproc, dirleaveproc,
+	       callerdat, argc, argv,
 	       local, which, aflag, locktype, update_preload, dosrcs,
 	       repository_in ? repository_in : "(null)");
 #else
@@ -173,7 +211,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
     if (repository)
     {
 	free (repository);
-	repository = (char *) NULL;
+	repository = NULL;
     }
     if (filelist)
 	dellist (&filelist); /* FIXME-krp: no longer correct. */
@@ -224,7 +262,7 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 	 */
 	if (just_subdirs)
 	{
-	    dirlist = Find_Directories ((char *) NULL, W_LOCAL, (List *) NULL);
+	    dirlist = Find_Directories (NULL, W_LOCAL, NULL);
 	    /* If there are no sub-directories, there is a certain logic in
 	       favor of doing nothing, but in fact probably the user is just
 	       confused about what directory they are in, or whether they
@@ -254,9 +292,9 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 		/* This is the same call to Find_Directories as above.
                    FIXME: perhaps it would be better to write a
                    function that duplicates a list. */
-		args_to_send_when_finished = Find_Directories ((char *) NULL,
+		args_to_send_when_finished = Find_Directories (NULL,
 							       W_LOCAL,
-							       (List *) NULL);
+							       NULL);
 	    }
 #endif
 	}
@@ -349,16 +387,16 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
 		    strcpy (tmp_update_dir, update_dir);
 
 		    if (*tmp_update_dir != '\0')
-			(void) strcat (tmp_update_dir, "/");
+			strcat (tmp_update_dir, "/");
 
-		    (void) strcat (tmp_update_dir, dir);
+		    strcat (tmp_update_dir, dir);
 
 		    /* look for it in the repository. */
 		    repos = Name_Repository (dir, tmp_update_dir);
 		    reposfile = xmalloc (strlen (repos)
 					 + strlen (comp)
 					 + 5);
-		    (void) sprintf (reposfile, "%s/%s", repos, comp);
+		    sprintf (reposfile, "%s/%s", repos, comp);
 		    free (repos);
 
 		    if (!wrap_name_has (comp, WRAP_TOCVS) && isdir (reposfile))
@@ -533,9 +571,11 @@ start_recursion (FILEPROC fileproc, FILESDONEPROC filesdoneproc, DIRENTPROC dire
     return (err);
 }
 
+
+
 /*
  * Implement the recursive policies on the local directory.  This may be
- * called directly, or may be called by start_recursion
+ * called directly, or may be called by start_recursion.
  */
 static int
 do_recursion (struct recursion_frame *frame)
@@ -548,14 +588,14 @@ do_recursion (struct recursion_frame *frame)
     int process_this_directory = 1;
 
 #ifdef HAVE_PRINT_PTR
-    TRACE ( TRACE_FLOW, "do_recursion ( frame=%p )", (void *) frame );
+    TRACE (TRACE_FLOW, "do_recursion ( frame=%p )", frame);
 #else
-    TRACE ( TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame );
+    TRACE (TRACE_FLOW, "do_recursion ( frame=%lx )", (unsigned long) frame);
 #endif
 
     /* do nothing if told */
     if (frame->flags == R_SKIP_ALL)
-	return (0);
+	return 0;
 
     locktype = noexec ? CVS_LOCK_NONE : frame->locktype;
 
@@ -630,7 +670,7 @@ do_recursion (struct recursion_frame *frame)
 #endif
 	)
     {
-	char *this_root = Name_Root ((char *) NULL, update_dir);
+	char *this_root = Name_Root (NULL, update_dir);
 	if (this_root != NULL)
 	{
 	    if (findnode (root_directories, this_root) == NULL)
@@ -660,7 +700,7 @@ do_recursion (struct recursion_frame *frame)
     {
 	if (isdir (CVSADM))
 	{
-	    repository = Name_Repository ((char *) NULL, update_dir);
+	    repository = Name_Repository (NULL, update_dir);
 	    srepository = repository;		/* remember what to free */
 	}
 	else
@@ -710,8 +750,10 @@ do_recursion (struct recursion_frame *frame)
 	       repository at this point.  Name_Repository will give a
 	       reasonable error message.  */
 	    if (repository == NULL)
-		repository = Name_Repository ((char *) NULL, update_dir);
-
+	    {
+		Name_Repository (NULL, update_dir);
+	        assert (!"Not reached.  Please report this problem to <bug-cvs@gnu.org>");
+	    }
 	    /* find the files and fill in entries if appropriate */
 	    if (process_this_directory)
 	    {
@@ -751,7 +793,7 @@ do_recursion (struct recursion_frame *frame)
 	struct file_info finfo_struct;
 	struct frame_and_file frfile;
 
-	/* read lock it if necessary */
+	/* Lock the repository, if necessary. */
 	if (repository)
 	{
 	    if (locktype == CVS_LOCK_READ)
@@ -784,7 +826,10 @@ do_recursion (struct recursion_frame *frame)
 	err += walklist (filelist, do_file_proc, &frfile);
 
 	/* unlock it */
-	if (locktype != CVS_LOCK_NONE)
+	if (/* We only lock the repository above when repository is set */
+	    repository
+	    /* and when asked for a read or write lock. */
+	    && locktype != CVS_LOCK_NONE)
 	    Lock_Cleanup ();
 
 	/* clean up */
@@ -808,7 +853,7 @@ do_recursion (struct recursion_frame *frame)
 
 	frent.frame = frame;
 	frent.entries = entries;
-	err += walklist (dirlist, do_dir_proc, (void *) &frent);
+	err += walklist (dirlist, do_dir_proc, &frent);
     }
 #if 0
     else if (frame->dirleaveproc != NULL)
@@ -827,9 +872,15 @@ do_recursion (struct recursion_frame *frame)
     {
 	free (srepository);
     }
-    repository = (char *) NULL;
+    repository = NULL;
 
-    return (err);
+#ifdef HAVE_PRINT_PTR
+    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%p )", frame);
+#else
+    TRACE (TRACE_FLOW, "Leaving do_recursion ( frame=%lx )", (unsigned long) frame);
+#endif
+
+    return err;
 }
 
 /*
@@ -1114,7 +1165,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
     {
 	/* save our current directory and static vars */
         if (save_cwd (&cwd))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	sdirlist = dirlist;
 	srepository = repository;
 	dirlist = NULL;
@@ -1170,7 +1221,7 @@ but CVS uses %s for its own purposes; skipping %s directory",
 
 	/* get back to where we started and restore state vars */
 	if (restore_cwd (&cwd, NULL))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
 	dirlist = sdirlist;
 	repository = srepository;
@@ -1247,7 +1298,7 @@ unroll_files_proc (Node *p, void *closure)
     if (strcmp(p->key, ".") != 0)
     {
         if (save_cwd (&cwd))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	if ( CVS_CHDIR (p->key) < 0)
 	    error (1, errno, "could not chdir to %s", p->key);
 
@@ -1271,7 +1322,7 @@ unroll_files_proc (Node *p, void *closure)
 	update_dir = save_update_dir;
 
 	if (restore_cwd (&cwd, NULL))
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	free_cwd (&cwd);
     }
 

@@ -208,7 +208,7 @@ root_allow_add (char *arg)
 	    printf ("E Fatal server error, aborting.\n\
 error ENOMEM Virtual memory exhausted.\n");
 
-	    error_exit ();
+	    exit (EXIT_FAILURE);
 	}
     }
     p = xmalloc (strlen (arg) + 1);
@@ -244,7 +244,7 @@ root_allow_ok (char *arg)
 	   expects responses.  */
 	printf ("\
 error 0 Server configuration missing --allow-root in inetd.conf\n");
-	error_exit ();
+	exit (EXIT_FAILURE);
     }
 
     for (i = 0; i < root_allow_count; ++i)
@@ -777,12 +777,6 @@ char *command_name = "parse_cvsroot";		/* XXX is this used??? */
 /* Toy versions of various functions when debugging under unix.  Yes,
    these make various bad assumptions, but they're pretty easy to
    debug when something goes wrong.  */
-
-void
-error_exit( void )
-{
-    exit( 1 );
-}
 
 int
 isabsolute( const char *dir )

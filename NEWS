@@ -1,6 +1,94 @@
-Changes since 1.12.1:
+Changes since 1.12.2:
 
-* CVS now will always compile and its own getpass() function (originally from
+* A minor problem that preveneted the correct version of a system ZLIB from
+  being detected on some platforms has been fixed.
+
+* Attempts to use the global `-l' option, removed from both client and server
+  as of version 1.12.1, will now elicit a warning rather than a fatal error
+  from the server.
+
+* The configure script now tests whether it is building CVS on a case
+  insensitive file system.  If it is, CVS assumes that all file systems on this
+  platform will be case insensitive.  This is useful for getting the case
+  insensitivity flag set correctly when compiling on Mac OS X and under Cygwin
+  on Windows.  Autodetection can be overridden using the
+  --disable-case-sensitivity and --enable-case-sensitivity arguments to
+  configure.
+
+Changes between 1.12.1 and 1.12.2:
+
+* Misc cleanup, reorganization, and other minor fixes.
+
+* A behavior change in `cvs up -jrev1 -jrev2' for modified files with a base
+  revision of rev2 (ie, checked-out version matches rev2 and file has been
+  modified).  The operation is no longer ignored and instead is passed to
+  diff3.  This will potentially re-apply the diffs between the two revisions to
+  a modified local file.  Status messages like from a standard merge have also
+  been added when the file would not or does not change due to this merge
+  request ("[file] already contains the changes between [revisions]...").
+
+* A build problem that caused warnings and slower builds on systems without a
+working getline() function (e.g. Mac OS X 10.1) has been fixed.
+
+* A build problem that prevented the CVS executable from being built on systems
+with the gettext library installed has been fixed.
+
+* A bug which could stop `cvs admin -mTAG:message' from recursing has been
+  fixed.
+
+* Misc documentation cleanup and fixes.
+
+* Some of the contrib scripts, some of the documentation, and sanity.sh were
+  modified to use and recommend more portable commands rather than using and
+  recommending commands which were not compatible with the POSIX 1003.1-2001
+  specification.
+
+* CVS now knows how to report, as well as record, `P' record types.
+
+* When running the `cvs history' command, clients will now send the
+  long-accepted `-e' option, for all records, rather than explicitly requesting
+  `P' record types, a request which servers prior to 1.11.7 will reject with a
+  fatal error message.
+
+* A problem with locating files requested by case insensitive clients which was
+  accidentally introduced in 1.11.6 as part of a fix for a data loss problem
+  involving `cvs add's from case insensitive clients has been fixed.  The
+  relevant error message was `cvs [<command> aborted]: filE,v is ambiguous;
+  could mean FILE,v or file,v'.
+
+* A problem in the CVS getpass library that could cause passwords to echo on
+  some systems has been fixed.
+
+* A segfault that could occur in very rare cases where the stat of a file
+  failed during a diff has been fixed.
+
+* Any user with write privleges to the CVSROOT/checkoutlist file could pass
+arbitrary format strings directly through to a printf function.  This was
+probably bad and has been fixed.  White space at the beginning of error strings
+in checkoutlist is now ignored properly.
+
+* A chmod 0600 that CVS performed on temp files it created designed to work
+around a bug in versions of GLIBC eariler than 2.0.7 has been removed since it
+still left a race condition open to exploitation and provided a false sense of
+security.  If you are linking CVS against a version of GLIBC prior to 2.0.7,
+you should consider upgrading GLIBC.
+
+* The CVSROOT/editinfo file is no longer referenced by CVS.  This funcitonality
+has been deprecated for over six years and removing it will presumably not
+cause anyone any problems.
+
+* In client/server mode, most messages from CVS now contain the actual
+command name rather than the generic "server".
+
+* A long-standing bug that prevented most client/server updates from being
+logged in the history file has been fixed.
+
+* Updates done via a patch ("P" status) are now logged in the history file
+by default and the corresponding "P" history record type is now documented.
+If you're setting the LogHistory option in your CVSROOT/config file, you may
+want to add "P" to the list of record types.
+
+* CVS now will always compile its own getpass() function (originally from
 GNULIB) in favor of any system one that may exist.  This avoids some problems
 with long passwords on some systems and updates us to POSIX.2 compliance, since
 getpass() was removed from the POSIX.2 specification.

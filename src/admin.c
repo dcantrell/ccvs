@@ -13,7 +13,6 @@
 #ifdef CVS_ADMIN_GROUP
 #include <grp.h>
 #endif
-#include <assert.h>
 
 static Dtype admin_dirproc (void *callerdat, char *dir,
 				   char *repos, char *update_dir,
@@ -852,19 +851,31 @@ admin_fileproc (void *callerdat, struct file_info *finfo)
 		    status = 1;
 		    continue;
 		}
-		*p = '\0';
-		rev = RCS_gettag (rcs, arg + 2, 0, NULL);
+		*p = '\0';	/* temporarily make arg+2 its own string */
+		rev = RCS_gettag (rcs, arg + 2, 1, NULL); /* Force tag match */
 		if (rev == NULL)
 		{
-		    error (0, 0, "%s: no such revision %s", rcs->path, rev);
+		    error (0, 0, "%s: no such revision %s", rcs->path, arg+2);
 		    status = 1;
+		    *p = ':';	/* restore the full text of the -m argument */
 		    continue;
 		}
-		*p++ = ':';
-		msg = p;
+		msg = p+1;
 
 		n = findnode (rcs->versions, rev);
+		/* tags may exist against non-existing versions */
+		if (n == NULL)
+		{
+		     error (0, 0, "%s: no such revision %s: %s",
+			    rcs->path, arg+2, rev);
+		    status = 1;
+		    *p = ':';	/* restore the full text of the -m argument */
+		    free (rev);
+		    continue;
+		}
+		*p = ':';	/* restore the full text of the -m argument */
 		free (rev);
+
 		delta = (RCSVers *) n->data;
 		if (delta->text == NULL)
 		{
