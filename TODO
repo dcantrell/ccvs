@@ -173,10 +173,6 @@
      see if an error had occurred.  (we should be checking for errors, quite
      aside from NFS issues -kingdon, June 1996).
 
-135. The email CVS sends with each checkin, should include the version
-     number of each file it is checking in.
-     [[ Sort of solved by contrib/log.pl, which does a good job of this ]]
-
 137. Some sites might want CVS to fsync() the RCS ,v file to protect
      against nasty hardware errors.  There is a slight performance hit with
      doing so, though, so it should be configurable in the .cvsrc file.

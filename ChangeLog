@@ -1,5 +1,7 @@
 Wed Mar 12 14:32:50 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* TODO: Remove item 135; this is solved by %v and %V in loginfo.
+
 	* configure.in (AC_CHECK_FUNCS): Don't check for setvbuf;
 	HAVE_SETVBUF is no longer used.
 	* config.h, configure: Regenerated with autoconf 2.10.
