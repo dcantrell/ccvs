@@ -303,6 +303,9 @@ Building from source code under Unix:
     read, write, and execute permissions to from $TMPDIR, $TMP, $TEMP,
     /tmp, and /var/tmp, in that order.  Failing that, it will use /tmp.
 
+    The --with-umask argument to configure can be used to change
+    the default umask used by the CVS server executable.
+
     Unlike previous versions of CVS, you do not need to install RCS
     or GNU diff.  
 

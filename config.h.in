@@ -404,6 +404,14 @@
    directory for temporary files). */
 #undef TMPDIR_DFLT
 
+/* The default umask to use when creating or otherwise setting file or
+   directory permissions in the repository. Must be a value in the range of 0
+   through 0777. For example, a value of 002 allows group rwx access and world
+   rx access; a value of 007 allows group rwx access but no world access. This
+   value is overridden by the value of the CVSUMASK environment variable,
+   which is interpreted as an octal number. */
+#undef UMASK_DFLT
+
 /* Define if setmode is required when writing binary data to stdout. */
 #undef USE_SETMODE_STDOUT
 
