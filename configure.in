@@ -195,7 +195,6 @@ AC_REPLACE_FUNCS(\
 	dup2 \
 	ftruncate \
 	gethostname \
-	memmove \
 	mkdir \
 	rename \
 	strerror \
@@ -211,6 +210,7 @@ gl_PATHMAX
 gl_GETNDELIM2
 gl_GETNLINE
 jm_FUNC_MALLOC
+jm_FUNC_MEMMOVE
 jm_FUNC_REALLOC
 jm_FUNC_STAT
 jm_FUNC_LSTAT

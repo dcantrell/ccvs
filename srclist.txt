@@ -92,6 +92,9 @@ $GNULIB/m4/lstat.m4				m4		no NI
 # $GNULIB/modules/malloc
 $GNULIB/lib/malloc.c				lib		no NI
 $GNULIB/m4/malloc.m4				m4		no NI
+# $GNULIB/modules/memmove
+$GNULIB/lib/memmove.c				lib		no NI
+$GNULIB/m4/memmove.m4				m4		no NI
 # $GNULIB/modules/mkstemp
 $GNULIB/lib/mkstemp.c				lib		no NI
 $GNULIB/lib/tempname.c				lib		no NI
