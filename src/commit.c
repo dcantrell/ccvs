@@ -54,7 +54,6 @@ static void fixbranch PROTO((RCSNode *, char *branch));
 static void unlockrcs PROTO((RCSNode *rcs));
 static void ci_delproc PROTO((Node *p));
 static void masterlist_delproc PROTO((Node *p));
-static char *locate_rcs PROTO((char *file, char *repository));
 
 struct commit_info
 {
@@ -1781,7 +1780,7 @@ finaladd (finfo, rev, tag, options)
     int ret;
     char *rcs;
 
-    rcs = locate_rcs (finfo->file, finfo->repository);
+    rcs = locate_rcs ( finfo->repository, finfo->file, NULL );
     ret = Checkin ('A', finfo, rcs, rev, tag, options, saved_message);
     if (ret == 0)
     {
@@ -1830,7 +1829,7 @@ fixaddfile (file, repository)
     char *rcs;
     int save_really_quiet;
 
-    rcs = locate_rcs (file, repository);
+    rcs = locate_rcs ( repository, file, NULL );
     save_really_quiet = really_quiet;
     really_quiet = 1;
     if ((rcsfile = RCS_parsercsfile (rcs)) == NULL)
@@ -1879,7 +1878,6 @@ checkaddfile (file, repository, tag, options, rcsnode)
 {
     char *rcs;
     char *fname;
-    mode_t omask;
     int retcode = 0;
     int newfile = 0;
     RCSNode *rcsfile = NULL;
@@ -1897,24 +1895,41 @@ checkaddfile (file, repository, tag, options, rcsnode)
        this.  */
     adding_on_branch = tag != NULL && !isdigit ((unsigned char) tag[0]);
 
-    if (adding_on_branch)
+    if ( ( rcs = locate_rcs ( repository, file, NULL ) ) == NULL )
     {
-	rcs = xmalloc (strlen (repository) + strlen (file)
-		       + sizeof (RCSEXT) + sizeof (CVSATTIC) + 10);
-        (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-	if (! isreadable (rcs))
+	if ( adding_on_branch )
 	{
-	    (void) sprintf(rcs, "%s/%s", repository, CVSATTIC);
-	    omask = umask (cvsumask);
-	    if (CVS_MKDIR (rcs, 0777) != 0 && errno != EEXIST)
-		error (1, errno, "cannot make directory `%s'", rcs);;
-	    (void) umask (omask);
-	    (void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file,
-			    RCSEXT);
+	    mode_t omask;
+	    rcs = xmalloc ( strlen ( repository )
+			    + sizeof ( CVSATTIC )
+		    	    + strlen ( file )
+			    + sizeof ( RCSEXT )
+			    + 3 );
+	    (void) sprintf ( rcs, "%s/%s", repository, CVSATTIC );
+	    omask = umask ( cvsumask );
+	    if ( CVS_MKDIR ( rcs, 0777 ) != 0 && errno != EEXIST )
+		error ( 1, errno, "cannot make directory `%s'", rcs );
+	    (void) umask ( omask );
+	    (void) sprintf ( rcs,
+			     "%s/%s/%s%s",
+			     repository,
+			     CVSATTIC,
+			     file,
+			     RCSEXT );
+	}
+	else
+	{
+	    rcs = xmalloc ( strlen ( repository )
+		    	    + strlen ( file )
+			    + sizeof ( RCSEXT )
+			    + 2 );
+	    (void) sprintf ( rcs,
+			     "%s/%s%s",
+			     repository,
+			     file,
+			     RCSEXT );
 	}
     }
-    else
-	rcs = locate_rcs (file, repository);
 
     if (isreadable (rcs))
     {
@@ -2337,29 +2352,7 @@ masterlist_delproc (p)
     free (ml);
 }
 
-/* Find an RCS file in the repository.  Most parts of CVS will want to
-   rely instead on RCS_parse which performs a similar operation and is
-   called by recurse.c which then puts the result in useful places
-   like the rcs field of struct file_info.
 
-   REPOSITORY is the repository (including the directory) and FILE is
-   the filename within that directory (without RCSEXT).  Returns a
-   newly-malloc'd array containing the absolute pathname of the RCS
-   file that was found.  */
-static char *
-locate_rcs (file, repository)
-    char *file;
-    char *repository;
-{
-    char *rcs;
 
-    rcs = xmalloc (strlen (repository) + strlen (file) + sizeof (RCSEXT) + 10);
-    (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-    if (!isreadable (rcs))
-    {
-	(void) sprintf (rcs, "%s/%s/%s%s", repository, CVSATTIC, file, RCSEXT);
-	if (!isreadable (rcs))
-	    (void) sprintf (rcs, "%s/%s%s", repository, file, RCSEXT);
-    }
-    return rcs;
-}
+/* vim:tabstop=8:shiftwidth=4
+ */

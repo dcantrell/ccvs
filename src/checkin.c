@@ -15,6 +15,7 @@
  * Returns non-zero on error.
  */
 
+#include <assert.h>
 #include "cvs.h"
 #include "fileattr.h"
 #include "edit.h"
@@ -53,10 +54,18 @@ Checkin (type, finfo, rcs, rev, tag, options, message)
 	}
     }
 
-    if (finfo->rcs == NULL)
-	finfo->rcs = RCS_parse (finfo->file, finfo->repository);
+    /* There use to be a check for finfo->rcs == NULL here and then a
+     * call to RCS_parse when necessary, but Checkin() isn't called
+     * if the RCS file hasn't already been parsed in one of the
+     * check functions.
+     */
+    assert ( finfo->rcs != NULL );
 
-    switch (RCS_checkin (finfo->rcs, NULL, message, rev, RCS_FLAGS_KEEPFILE))
+    switch ( RCS_checkin ( finfo->rcs,
+			   finfo->file,
+			   message,
+			   rev,
+			   RCS_FLAGS_KEEPFILE ) )
     {
 	case 0:			/* everything normal */
 
