@@ -1,3 +1,9 @@
+Sat Oct 25 00:33:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_reparsercsfile, RCS_deltas), sanity.sh (reserved):
+	Reindent sections which were misindented as a result of recent
+	changes.
+
 Fri Oct 24 10:22:15 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcs.c (RCS_findlock_or_tip): Don't worry about file ownership

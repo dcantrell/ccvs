@@ -9770,69 +9770,70 @@ else
 fi
 EOF
 	  chmod +x ${TESTDIR}/lockme
-		echo stuff > a-lock
-		dotest reserved-9 "${testcvs} add a-lock" \
+
+	  echo stuff > a-lock
+	  dotest reserved-9 "${testcvs} add a-lock" \
 "${PROG} [a-z]*: scheduling file .a-lock. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
-		dotest reserved-10 "${testcvs} -q ci -m new a-lock" \
+	  dotest reserved-10 "${testcvs} -q ci -m new a-lock" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
 done
 Checking in a-lock;
 ${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
 initial revision: 1\.1
 done"
-		# FIXME: the contents of CVSROOT fluctuate a lot
-		# here. Maybe the expect pattern should just
-		# confirm that commitinfo is one of the files checked out,
-		# but for now we just check that CVS exited with success.
-		cd ..
-		if ${testcvs} -q co CVSROOT >>${LOGFILE} ; then
-		  pass reserved-11
-		else
-		  fail reserved-11
-		fi
-		cd CVSROOT
-		echo "DEFAULT ${TESTDIR}/lockme" >>commitinfo
-		dotest reserved-12 "${testcvs} -q ci -m rcslock commitinfo" \
+	  # FIXME: the contents of CVSROOT fluctuate a lot
+	  # here. Maybe the expect pattern should just
+	  # confirm that commitinfo is one of the files checked out,
+	  # but for now we just check that CVS exited with success.
+	  cd ..
+	  if ${testcvs} -q co CVSROOT >>${LOGFILE} ; then
+	    pass reserved-11
+	  else
+	    fail reserved-11
+	  fi
+	  cd CVSROOT
+	  echo "DEFAULT ${TESTDIR}/lockme" >>commitinfo
+	  dotest reserved-12 "${testcvs} -q ci -m rcslock commitinfo" \
 "Checking in commitinfo;
 ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.2; previous revision: 1\.1
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
-		cd ..; cd first-dir
+	  cd ..; cd first-dir
 
-		# Simulate (approximately) what a-lock would look like
-		# if someone else had locked revision 1.1.
-		sed -e 's/locks; strict;/locks fred:1.1; strict;/' ${TESTDIR}/cvsroot/first-dir/a-lock,v > a-lock,v
-		chmod 644 ${TESTDIR}/cvsroot/first-dir/a-lock,v
-		dotest reserved-13 "mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v"
-		chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
-		echo more stuff >> a-lock
-		dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
+	  # Simulate (approximately) what a-lock would look like
+	  # if someone else had locked revision 1.1.
+	  sed -e 's/locks; strict;/locks fred:1.1; strict;/' ${TESTDIR}/cvsroot/first-dir/a-lock,v > a-lock,v
+	  chmod 644 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+	  dotest reserved-13 "mv a-lock,v ${TESTDIR}/cvsroot/first-dir/a-lock,v"
+	  chmod 444 ${TESTDIR}/cvsroot/first-dir/a-lock,v
+	  echo more stuff >> a-lock
+	  dotest_fail reserved-13b "${testcvs} ci -m '' a-lock" \
 "fred has file a-lock locked for version  1\.1
 ${PROG} [a-z]*: Pre-commit check failed
 ${PROG} \[[a-z]* aborted\]: correct above errors first!"
 
-		dotest reserved-14 "${testcvs} admin -u1.1 a-lock" \
+	  dotest reserved-14 "${testcvs} admin -u1.1 a-lock" \
 "RCS file: ${TESTDIR}/cvsroot/first-dir/a-lock,v
 1\.1 unlocked
 done"
-		dotest reserved-15 "${testcvs} -q ci -m success a-lock" \
+	  dotest reserved-15 "${testcvs} -q ci -m success a-lock" \
 "Checking in a-lock;
 ${TESTDIR}/cvsroot/first-dir/a-lock,v  <--  a-lock
 new revision: 1\.2; previous revision: 1\.1
 done"
 
-		# undo commitinfo changes
-		cd ../CVSROOT
-		echo '# vanilla commitinfo' >commitinfo
-		dotest reserved-16 "${testcvs} -q ci -m back commitinfo" \
+	  # undo commitinfo changes
+	  cd ../CVSROOT
+	  echo '# vanilla commitinfo' >commitinfo
+	  dotest reserved-16 "${testcvs} -q ci -m back commitinfo" \
 "Checking in commitinfo;
 ${TESTDIR}/cvsroot/CVSROOT/commitinfo,v  <--  commitinfo
 new revision: 1\.3; previous revision: 1\.2
 done
 ${PROG} [a-z]*: Rebuilding administrative file database"
-		cd ..; rm -r CVSROOT; cd first-dir
+	  cd ..; rm -r CVSROOT; cd first-dir
 
 	  cd ../..
 	  rm -r 1
