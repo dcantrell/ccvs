@@ -327,7 +327,7 @@ ac_includes_default="\
 
 gl_header_list=
 gl_func_list=
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE am__leading_dot ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB STDBOOL_H HAVE__BOOL ALLOCA ALLOCA_H FNMATCH_H LIB_NANOSLEEP YACC LIB_CLOCK_GETTIME HAVE_PUTENV cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE am__leading_dot ac_prefix_program MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP EGREP RANLIB ac_ct_RANLIB LN_S PERL CSH MKTEMP SENDMAIL PR ROFF PS2PDF TEXI2DVI MAKE_TARGETS_IN_VPATH_TRUE MAKE_TARGETS_IN_VPATH_FALSE LIBOBJS MKINSTALLDIRS USE_NLS MSGFMT GMSGFMT XGETTEXT MSGMERGE build build_cpu build_vendor build_os host host_cpu host_vendor host_os LIBICONV LTLIBICONV INTLLIBS LIBINTL LTLIBINTL POSUB STDBOOL_H HAVE__BOOL ALLOCA ALLOCA_H FNMATCH_H LIB_NANOSLEEP YACC YFLAGS LIB_CLOCK_GETTIME HAVE_PUTENV cvs_client_objects KRB4 ZLIB_SUBDIRS ZLIB_CPPFLAGS ZLIB_LIBS with_default_rsh RSH_DFLT EDITOR LTLIBOBJS'
 ac_subst_files='MKTEMP_SH_FUNCTION'
 
 # Initialize some variables set by options.
@@ -788,6 +788,14 @@ ac_env_CPP_set=${CPP+set}
 ac_env_CPP_value=$CPP
 ac_cv_env_CPP_set=${CPP+set}
 ac_cv_env_CPP_value=$CPP
+ac_env_YACC_set=${YACC+set}
+ac_env_YACC_value=$YACC
+ac_cv_env_YACC_set=${YACC+set}
+ac_cv_env_YACC_value=$YACC
+ac_env_YFLAGS_set=${YFLAGS+set}
+ac_env_YFLAGS_value=$YFLAGS
+ac_cv_env_YFLAGS_set=${YFLAGS+set}
+ac_cv_env_YFLAGS_value=$YFLAGS
 ac_env_EDITOR_set=${EDITOR+set}
 ac_env_EDITOR_value=$EDITOR
 ac_cv_env_EDITOR_set=${EDITOR+set}
@@ -996,6 +1004,13 @@ Some influential environment variables:
   CPPFLAGS    C/C++ preprocessor flags, e.g. -I<include dir> if you have
               headers in a nonstandard directory <include dir>
   CPP         C preprocessor
+  YACC        The `Yet Another C Compiler' implementation to use. Defaults to
+              `bison -y'. Values other than `bison -y' will most likely break
+              on most systems.
+  YFLAGS      YFLAGS contains the list arguments that will be passed by
+              default to Bison. This script will default YFLAGS to the empty
+              string to avoid a default value of `-d' given by some make
+              applications.
   EDITOR      The text editor CVS will use by default for log messages.
 
 Use these variables to override the choices made by `configure' or to help
@@ -15505,6 +15520,8 @@ fi
   # getdate.y works with bison only.
 
 YACC=${YACC-"${am_missing_run}bison -y"}
+
+
 
 
 
@@ -31474,6 +31491,7 @@ s,@ALLOCA_H@,$ALLOCA_H,;t t
 s,@FNMATCH_H@,$FNMATCH_H,;t t
 s,@LIB_NANOSLEEP@,$LIB_NANOSLEEP,;t t
 s,@YACC@,$YACC,;t t
+s,@YFLAGS@,$YFLAGS,;t t
 s,@LIB_CLOCK_GETTIME@,$LIB_CLOCK_GETTIME,;t t
 s,@HAVE_PUTENV@,$HAVE_PUTENV,;t t
 s,@cvs_client_objects@,$cvs_client_objects,;t t
