@@ -1,3 +1,7 @@
+Mon Feb 19 09:00:29 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (send_repository): Fix indentation.
+
 Mon Feb 19 01:10:01 1996  Karl Fogel  <kfogel@floss.red-bean.com>
 
         * login.c (login): print out full repos so user knows which server
