@@ -3822,6 +3822,66 @@ ${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  rm -rf ${CVSROOT_DIRNAME}/second-dir
 	  ;;
 
+	modules3)
+	  # More tests of modules, in particular what happens if several
+	  # modules point to the same file.
+
+	  # First just set up a directory first-dir and a file file1 in it.
+	  mkdir 1; cd 1
+
+	  # Creating the directory with "cvs add" puts
+	  # "${CVSROOT_DIRNAME}/./first-dir" in first-dir/CVS/Repository, 
+	  # which causes test modules3-6 to fail with 
+	  # "existing repository . . . does not match . . ."
+	  # Might be worth fixing CVS (probably make it omit "."),
+	  # but for now we work around it.
+:	  dotest modules3-0 "${testcvs} -q co -l ." ''
+:	  mkdir first-dir
+:	  dotest modules3-1 "${testcvs} add first-dir" \
+"Directory /tmp/cvs-sanity/cvsroot/\./first-dir added to the repository"
+	  # begin workaround
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest modules3-1a "${testcvs} -q co first-dir" ''
+	  # end workaround
+
+	  cd first-dir
+	  echo file1 >file1
+	  dotest modules3-2 "${testcvs} add file1" \
+"${PROG}"' [a-z]*: scheduling file `file1'\'' for addition
+'"${PROG}"' [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+	  dotest modules3-3 "${testcvs} -q ci -m add-it" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done'
+	  cd ..
+
+	  dotest modules3-4 "${testcvs} -q co CVSROOT/modules" \
+'U CVSROOT/modules'
+	  cd CVSROOT
+	  cat >modules <<EOF
+mod1 -a first-dir/file1
+bigmod -a mod1 first-dir/file1
+EOF
+	  dotest modules3-5 "${testcvs} -q ci -m add-modules" \
+"Checking in modules;
+/tmp/cvs-sanity/cvsroot/CVSROOT/modules,v  <--  modules
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+done
+${PROG} [a-z]*: Rebuilding administrative file database"
+	  cd ..
+
+	  dotest modules3-6 "${testcvs} -q co bigmod" ''
+	  rm -rf first-dir
+	  dotest modules3-7 "${testcvs} -q co bigmod" 'U first-dir/file1'
+	  cd ..
+
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
 	mflag)
 	  for message in '' ' ' '	
            ' '    	  	test' ; do
