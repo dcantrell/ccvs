@@ -1,3 +1,8 @@
+Sat Jul 12 15:43:01 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* HACKING: Rewrite paragraph on arbitrary limits to reflect the
+	fact that the known arbitrary limits are gone.
+
 8 Jul 1997  Jim Kingdon
 
 	* cvsnt.dsp: Turn on browse information.
