@@ -16,6 +16,14 @@ NEW FEATURES
   to a single primary CVS server, allowing for a massive redistribution of
   server load which is transparent to all known CVS clients.
 
+* Some code has been added which attempts to second-giess the system file
+  cache, which may provide a performance boost on some systems.  Since this
+  code actually slows CVS down in conjunction with many modern file caches, it
+  is disabled by default.  To check for a performance boost on your system,
+  configure with the --disable-file-cache-trust option.  If you find any
+  systems where this improves your performance, please send a note describing
+  it to the <bug-cvs@gnu.org> mailing list.
+
 Changes from 1.12.8 to 1.12.9:
 ******************************
 
