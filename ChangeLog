@@ -1,3 +1,9 @@
+1998-07-29  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsnt.mak: For rcscmds.c, also include files from the diff
+	directory.  Plus of course the usual voluminous "because Visual
+	C++ 4.0 feels like it" changes.
+
 Tue Jul 28 22:16:48 1998  Noel Cragg  <noel@swish.red-bean.com>
 
 	* Makefile.in (dist): unset the GZIP shell variable before calling
