@@ -3640,7 +3640,7 @@ place.  Therefore, one might delete, move, or rename a
 tag.
 
 @noindent
-@emph{Warning: the commands in this section are
+@strong{WARNING: the commands in this section are
 dangerous; they permanently discard historical
 information and it can be difficult or impossible to
 recover from errors.  If you are a @sc{cvs}
@@ -3670,10 +3670,10 @@ of branch tags.  In that case, any non-branch tags encountered will
 trigger warnings and will not be deleted.
 
 @noindent
-@emph{Warning: Moving branch tags is very dangerous!  If you think you need the
-@code{-B} option, think again and ask your @sc{cvs} administrator about it (if
-that isn't you).  There is almost certainly another way to accomplish what you
-want to accomplish.}
+@strong{WARNING: Moving branch tags is very dangerous!  If you think
+you need the @code{-B} option, think again and ask your @sc{cvs}
+administrator about it (if that isn't you).  There is almost certainly
+another way to accomplish what you want to accomplish.}
 
 @cindex Moving tags
 @cindex Moving branch tags
@@ -3701,10 +3701,10 @@ In that case, non-branch tags encountered with the given
 name are ignored with a warning message.
 
 @noindent
-@emph{Warning: Moving branch tags is very dangerous!  If you think you need the
-@code{-B} option, think again and ask your @sc{cvs} administrator about it (if
-that isn't you).  There is almost certainly another way to accomplish what you
-want to accomplish.}
+@strong{WARNING: Moving branch tags is very dangerous!  If you think you
+need the @code{-B} option, think again and ask your @sc{cvs}
+administrator about it (if that isn't you).  There is almost certainly
+another way to accomplish what you want to accomplish.}
 
 @cindex Renaming tags
 @cindex Tags, renaming
@@ -6570,13 +6570,13 @@ The @var{files} and the options are processed as for the @code{cvs
 watch} commands.
 
 @ignore
-@strong{Caution:} If the @code{PreservePermissions}
+@strong{Caution: If the @code{PreservePermissions}
 option is enabled in the repository (@pxref{config}),
 @sc{cvs} will not change the permissions on any of the
 @var{files}.  The reason for this change is to ensure
 that using @samp{cvs edit} does not interfere with the
 ability to store file permissions in the @sc{cvs}
-repository.
+repository.}
 @end ignore
 
 @end deffn
@@ -8124,8 +8124,8 @@ option as in other commands.  (Other command options,
 which are listed with the individual commands, may have
 different behavior from one @sc{cvs} command to the other).
 
-@strong{Warning:} the @samp{history} command is an exception; it supports
-many options that conflict even with these standard options.
+@strong{Note: the @samp{history} command is an exception; it supports
+many options that conflict even with these standard options.}
 
 @table @code
 @cindex Dates
@@ -8328,11 +8328,11 @@ give an error if you mistype a tag name.
 @code{annotate}, @code{checkout}, @code{export},
 @code{rdiff}, @code{rtag}, and @code{update}.
 
-@strong{Warning:}  The @code{commit} and @code{remove}
+@strong{WARNING:  The @code{commit} and @code{remove}
 commands also have a
 @samp{-f} option, but it has a different behavior for
 those commands.  See @ref{commit options}, and
-@ref{Removing files}.
+@ref{Removing files}.}
 
 @item -k @var{kflag}
 Override the default processing of RCS keywords other than
@@ -8358,10 +8358,6 @@ more.}
 Local; run only in current working directory, rather than
 recursing through subdirectories.
 
-@strong{Warning:} this is not the same
-as the overall @samp{cvs -l} option, which you can specify to the
-left of a cvs command!
-
 Available with the following commands: @code{annotate}, @code{checkout},
 @code{commit}, @code{diff}, @code{edit}, @code{editors}, @code{export},
 @code{log}, @code{rdiff}, @code{remove}, @code{rtag},
@@ -8378,12 +8374,12 @@ Available with the following commands: @code{add},
 @code{commit} and @code{import}.
 
 @item -n
-Do not run any checkout/commit/tag program.  (A program can be
-specified to run on each of these activities, in the modules
+Do not run any tag program.  (A program can be
+specified to run in the modules
 database (@pxref{modules}); this option bypasses it).
 
-@strong{Warning:} this is not the same as the overall @samp{cvs -n}
-option, which you can specify to the left of a cvs command!
+@strong{Note: this is not the same as the @samp{cvs -n}
+program option, which you can specify to the left of a cvs command!}
 
 Available with the @code{checkout}, @code{commit}, @code{export},
 and @code{rtag} commands.
@@ -8454,8 +8450,8 @@ Specifying the @samp{-q} global option along with the
 the warning messages when the @sc{rcs} file
 does not contain the specified tag.
 
-@strong{Warning:} this is not the same as the overall @samp{cvs -r} option,
-which you can specify to the left of a @sc{cvs} command!
+@strong{Note: this is not the same as the overall @samp{cvs -r} option,
+which you can specify to the left of a @sc{cvs} command!}
 
 @samp{-r} is available with the @code{checkout}, @code{commit},
 @code{diff}, @code{history}, @code{export}, @code{rdiff},
@@ -10017,9 +10013,9 @@ various formats.
 Logging must be enabled by creating the file
 @file{$CVSROOT/CVSROOT/history}.
 
-@strong{Warning:} @code{history} uses @samp{-f}, @samp{-l},
+@strong{Note: @code{history} uses @samp{-f}, @samp{-l},
 @samp{-n}, and @samp{-p} in ways that conflict with the
-normal use inside @sc{cvs} (@pxref{Common options}).
+normal use inside @sc{cvs} (@pxref{Common options}).}
 
 @menu
 * history options::             history options
@@ -10390,8 +10386,8 @@ Coordinated Universal Time (UTC).  (Other parts of
 @c client then communicates to the server, is the
 @c right solution.
 
-@strong{Warning:} @code{log} uses @samp{-R} in a way that conflicts
-with the normal use inside @sc{cvs} (@pxref{Common options}).
+@strong{Note: @code{log} uses @samp{-R} in a way that conflicts
+with the normal use inside @sc{cvs} (@pxref{Common options}).}
 
 @menu
 * log options::                 log options
@@ -10741,13 +10737,13 @@ Delete your working copy of the file if the release
 succeeds.  If this flag is not given your files will
 remain in your working directory.
 
-@strong{Warning:}  The @code{release} command deletes
+@strong{WARNING:  The @code{release} command deletes
 all directories and files recursively.  This
 has the very serious side-effect that any directory
 that you have created inside your checked-out sources,
 and not added to the repository (using the @code{add}
 command; @pxref{Adding files}) will be silently deleted---even
-if it is non-empty!
+if it is non-empty!}
 @end table
 
 @c . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -10757,14 +10753,6 @@ if it is non-empty!
 Before @code{release} releases your sources it will
 print a one-line message for any file that is not
 up-to-date.
-
-@strong{Warning:}  Any new directories that you have
-created, but not added to the @sc{cvs} directory hierarchy
-with the @code{add} command (@pxref{Adding files}) will be
-silently ignored (and deleted, if @samp{-d} is
-specified), even if they contain files.
-@c FIXCVS: This is a bug.  But is it true?  I think
-@c maybe they print "? dir" now.
 
 @table @code
 @item U @var{file}
@@ -12355,8 +12343,8 @@ completed.
 @cindex Wrappers
 
 @c FIXME: need some better way of separating this out
-@c by functionality.  -t/-f is one feature, -m is
-@c another, and -k is a third.  And this discussion
+@c by functionality.  -m is
+@c one feature, and -k is a another.  And this discussion
 @c should be better motivated (e.g. start with the
 @c problems, then explain how the feature solves it).
 
@@ -12365,25 +12353,6 @@ control certain settings based on the name of the file
 which is being operated on.  The settings are @samp{-k}
 for binary files, and @samp{-m} for nonmergeable text
 files.
-
-@ignore
-Wrappers allow you to set a hook which transforms files on
-their way in and out of @sc{cvs}.
-
-The file @file{cvswrappers} defines the script that will be
-run on a file when its name matches a regular
-expression. There are two scripts that can be run on a
-file or directory. One script is executed on the file/directory
-before being checked into the repository (this is denoted
-with the @code{-t} flag) and the other when the file is
-checked out of the repository (this is denoted with the
-@code{-f} flag).  The @samp{-t}/@samp{-f} feature does
-not work with client/server @sc{cvs}.
-@c I think maybe -t/-f works client/server if a single
-@c file converts to/from a single file, as opposed to
-@c the file<->directory case.  Could use more
-@c investigation...
-@end ignore
 
 The @samp{-m} option
 specifies the merge methodology that should be used when
@@ -12396,10 +12365,12 @@ binary, there is no need to specify @samp{-m 'COPY'}).
 @sc{cvs} will provide the user with the
 two versions of the files, and require the user using
 mechanisms outside @sc{cvs}, to insert any necessary
-changes.  @strong{WARNING}: do not use @code{COPY} with
-@sc{cvs} 1.9 or earlier--such versions of @sc{cvs} will
+changes.
+
+@strong{WARNING: do not use @code{COPY} with
+@sc{cvs} 1.9 or earlier - such versions of @sc{cvs} will
 copy one version of your file over the other, wiping
-out the previous contents.
+out the previous contents.}
 @c Ordinarily we don't document the behavior of old
 @c versions.  But this one is so dangerous, I think we
 @c must.  I almost renamed it to -m 'NOMERGE' so we
@@ -12417,10 +12388,6 @@ The basic format of the file @file{cvswrappers} is:
 wildcard     [option value][option value]...
 
 where option is one of
-@ignore
--f           from cvs filter         value: path to filter
--t           to cvs filter           value: path to filter
-@end ignore
 -m           update methodology      value: MERGE or COPY
 -k           keyword expansion       value: expansion mode
 
@@ -12872,13 +12839,13 @@ RereadLogAfterVerify=always
 @cindex Per-module editor
 @cindex Log messages, editing
 
-@emph{NOTE:} The @file{editinfo} feature has been
+@strong{Note: The @file{editinfo} feature has been
 rendered obsolete.  To set a default editor for log
-messages use the @code{EDITOR} environment variable
+messages use the @code{CVSEDITOR}, @code{EDITOR} environment variables
 (@pxref{Environment variables}) or the @samp{-e} global
 option (@pxref{Global options}).  See @ref{verifymsg},
 for information on the use of the @file{verifymsg}
-feature for evaluating log messages.
+feature for evaluating log messages.}
 
 If you want to make sure that all log messages look the
 same way, you can use the @file{editinfo} file to
@@ -13624,7 +13591,7 @@ that the file should be checked with the filesystem
 @samp{stat()} function to see if it has changed (see warning below)
 before rereading.  The default value is @samp{always}.
 
-@emph{Note that `stat' mode can cause CVS to pause for up to
+@strong{Note: the `stat' mode can cause CVS to pause for up to
 one extra second per directory committed.  This can be less IO and
 CPU intensive but is not recommended for use with large repositories}
 

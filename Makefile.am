@@ -39,7 +39,8 @@ EXTRA_DIST = \
 	cvs-format.el \
 	cvsnt.dsp \
 	cvsnt.dsw \
-	cvsnt.mak
+	cvsnt.mak \
+	cvs.spec
 
 
 ## MAINTAINER Targets

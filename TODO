@@ -53,8 +53,8 @@ The "TODO" file!                              -*-Indented-Text-*-
 66. Length of the CVS temporary files must be limited to 14 characters for
     System-V stupid support.  As well as the length on the CVS.adm files.
 
-72. Consider re-design of the module -o, -i, -t options to use the file
-    system more intuitively.
+72. Consider re-design of the module -t options to use the file system more
+    intuitively.
 
 73. Consider an option (in .cvsrc?) to automatically add files that are new
     and specified to commit.
