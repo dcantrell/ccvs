@@ -468,6 +468,9 @@ piped_child (char **argv, int *to, int *from)
 /*
  * dir = 0 : main proc writes to new proc, which writes to oldfd
  * dir = 1 : main proc reads from new proc, which reads from oldfd
+ *
+ * If this returns at all, then it was successful and the return value
+ * is a file descriptor; else it errors and exits.
  */
 int
 filter_stream_through_program (int oldfd, int dir,
@@ -540,7 +543,7 @@ filter_stream_through_program (int oldfd, int dir,
     {
         DosClose (from);
         DosClose (to);
-        return -1;
+        error (1, 0, "error spawning %s", prog[0]);
     }
 
     return newfd;

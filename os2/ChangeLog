@@ -1,5 +1,8 @@
 Thu Dec 14 12:18:20 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * run.c (filter_stream_through_program): die, rather than return
+        -1, if spawn failed.
+
         * options.h (AUTH_CLIENT_SUPPORT): leave unset by default.
 
 Wed Dec 13 21:31:10 1995  Karl Fogel  (kfogel@floss.cyclic.com)
