@@ -1,8 +1,14 @@
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.am (libcvs_a_OBJECTS): Fix typo for $(ALLOCA_H) and
+	($STDBOOL_H). Also update rules for stdint GNULIB module.	
+	* Makefile.in: Regenerated.
+
 2004-10-22  Conrad T. Pino  <Conrad@Pino.com>
 
 	* libcvs.dsp: Remove "argmatch.c" from project.
 
-2004-10-22  Mark D. Baushke  <mdb@juniper.net>
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
 	* Makefile.am (libcvs_a_SOURCES): Add stdint GNULIB module.
 	Fix typos in alloca and stdbool sections.

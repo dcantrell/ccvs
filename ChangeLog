@@ -1,3 +1,7 @@
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
+
+	* configure: Regenerated.
+
 2004-10-22  Conrad T. Pino  <Conrad@Pino.com>
 
 	* cvsnt.dsp: Add "lib/strftime.h" to project.

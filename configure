@@ -1455,12 +1455,12 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+gl_header_list="$gl_header_list sys/param.h"
 gl_header_list="$gl_header_list unistd.h"
 gl_header_list="$gl_header_list stdio_ext.h"
 gl_header_list="$gl_header_list sys/time.h"
 gl_func_list="$gl_func_list gettimeofday"
 gl_header_list="$gl_header_list fcntl.h"
-gl_header_list="$gl_header_list sys/param.h"
 gl_header_list="$gl_header_list wchar.h"
 gl_header_list="$gl_header_list wctype.h"
 gl_func_list="$gl_func_list isascii"
@@ -8614,6 +8614,12 @@ done
 
 
 
+
+
+
+
+
+
       echo "$as_me:$LINENO: checking whether getpass is declared" >&5
 echo $ECHO_N "checking whether getpass is declared... $ECHO_C" >&6
 if test "${ac_cv_have_decl_getpass+set}" = set; then
@@ -10568,12 +10574,6 @@ if test $ac_cv_func_working_mktime = no; then
 esac
 
 fi
-
-
-
-
-
-
 
 echo "$as_me:$LINENO: checking for C/C++ restrict keyword" >&5
 echo $ECHO_N "checking for C/C++ restrict keyword... $ECHO_C" >&6
@@ -15907,6 +15907,9 @@ _ACEOF
 
 
   :
+
+
+
 
 
 

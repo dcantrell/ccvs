@@ -51,7 +51,7 @@ EXTRA_DIST = \
 ## For GNULIB's alloca module.
 BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
-all-local $(lib_OBJECTS): $(ALLOCA_H)
+all-local $(libcvs_a_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
 	cp $(srcdir)/alloca_.h $@-t
 	mv $@-t $@
@@ -163,12 +163,24 @@ BUILT_SOURCES += $(STDBOOL_H)
 EXTRA_DIST += stdbool_.h
 # We need the following in order to create an <stdbool.h> when the system
 # doesn't have one that works.
-all-local $(lib_OBJECTS): $(STDBOOL_H)
+all-local $(libcvs_a_OBJECTS): $(STDBOOL_H)
 stdbool.h: stdbool_.h
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' \
 		< $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
+
+## For GNULIB's stdint module.
+BUILT_SOURCES += $(STDINT_H)
+EXTRA_DIST += stdint_.h
+
+# We need the following in order to create an <stdint.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libcvs_a_OBJECTS): $(STDINT_H)
+stdint.h: stdint_.h
+	sed -e 's/@''HAVE_LONG_64BIT''@/$(HAVE_LONG_64BIT)/g;s/@''HAVE_LONGLONG_64BIT@/$(HAVE_LONGLONG_64BIT)/g' < $(srcdir)/stdint_.h > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += stdint.h stdint.h-t
 
 ## For GNULIB's strcase module.
 libcvs_a_SOURCES += strcase.h

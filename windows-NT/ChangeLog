@@ -1,5 +1,9 @@
-2004-10-22  Mark D. Baushke  <mdb@juniper.net>
+2004-10-22  Mark D. Baushke  <mdb@cvshome.org>
 
+	* Makefile.am (EXTRA_DIST): Add stdint.h.
+	* stdint.h: Regenerated.
+	* Makefile.in: Ditto.
+	
 	* confi.h.in.in (HAVE_SYS_INTTYPES_H): Update from GNULIB.
 	* Makefile.am (stamp-sh2): Add stdint from GNULIB.
 
