@@ -75,6 +75,7 @@ construct_cvspass_filename ()
 static const char *const login_usage[] =
 {
     "Usage: %s %s\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 
@@ -358,6 +359,7 @@ get_cvs_password ()
 static const char *const logout_usage[] =
 {
     "Usage: %s %s\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

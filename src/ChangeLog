@@ -1,5 +1,13 @@
 Tue Jul  1 09:52:09 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* main.c (cmd_usage): Say "specify" --help rather than the vague
+	"use".
+	(opt_usage, cmd_synonyms): Mention --help here too.
+	* add.c, admin.c, checkout.c, commit.c, diff.c, edit.c, import.c,
+	log.c, login.c, mkmodules.c, patch.c, rcs.c, release.c, remove.c,
+	rtag.c, status.c, tag.c, update.c, watch.c: Likewise, for all the
+	other help messages.
+
 	* sanity.sh (join2): New tests.
 
 	* repos.c (Name_Repository): Check for errors from fclose.

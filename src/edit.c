@@ -336,6 +336,7 @@ static const char *const edit_usage[] =
     "-R: Process directories recursively\n",
     "-a: Specify what actions for temporary watch, one of\n",
     "    edit,unedit,commit,all,none\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 
@@ -916,6 +917,7 @@ static const char *const editors_usage[] =
     "Usage: %s %s [-lR] [files...]\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

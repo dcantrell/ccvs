@@ -61,6 +61,7 @@ static const char *const checkout_usage[] =
     "\t-d dir\tCheck out into dir instead of module name.\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
     "\t-j rev\tMerge in changes made between current revision and rev.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 
@@ -76,6 +77,7 @@ static const char *const export_usage[] =
     "\t-D date\tExport revisions as of date.\n",
     "\t-d dir\tExport into dir instead of module name.\n",
     "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

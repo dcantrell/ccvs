@@ -2067,6 +2067,7 @@ RCS_check_kflag (arg)
       "   -kv\tGenerate only keyword values in keyword strings.\n",
       "   -ko\tGenerate the old keyword string (no changes from checked in file).\n",
       "   -kb\tGenerate binary file unmodified (merges not allowed) (RCS 5.7).\n",
+      "(Specify the --help global option for a list of other help options)\n",
       NULL,
     };
     /* Big enough to hold any of the strings from kflags.  */
@@ -4203,6 +4204,7 @@ static const char *const annotate_usage[] =
     "\t-f\tUse head revision if tag/date not found.\n",
     "\t-r rev\tAnnotate file as of specified revision/tag.\n",
     "\t-D date\tAnnotate file as of specified date.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

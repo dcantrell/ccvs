@@ -201,7 +201,7 @@ static const char *const cmd_usage[] =
     "        update       Bring work tree in sync with repository\n",
     "        watch        Set watches\n",
     "        watchers     See who is watching a file\n",
-    "(Use the --help option for a list of other help options)\n",
+    "(Specify the --help option for a list of other help options)\n",
     NULL,
 };
 
@@ -229,6 +229,7 @@ static const char *const opt_usage[] =
 #endif
 #endif
     "    -s VAR=VAL   Set CVS user variable.\n",
+    "(Specify the --help option for a list of other help options)\n",
     NULL
 };
 
@@ -238,7 +239,8 @@ cmd_synonyms ()
     char ** synonyms;
     char ** line;
     const struct cmd *c = &cmds[0];
-    int numcmds = 2;		/* two more for title and end */
+    /* Three more for title, "specify --help" line, and NULL.  */
+    int numcmds = 3;
 
     while (c->fullname != NULL)
     {
@@ -263,6 +265,7 @@ cmd_synonyms ()
 	    line++;
 	}
     }
+    *line++ = "(Specify the --help option for a list of other help options)\n";
     *line = NULL;
     
     return (const char * const*) synonyms; /* will never be freed */

@@ -148,6 +148,7 @@ static const char *const log_usage[] =
     "\t-d dates\tSpecify dates (D1<D2 for range, D for latest before).\n",
     "\t-s states\tOnly list revisions with specified states.\n",
     "\t-w[logins]\tOnly list revisions checked in by specified logins.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

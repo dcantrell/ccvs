@@ -37,6 +37,7 @@ static const char *const remove_usage[] =
     "\t-f\tDelete the file before removing it.\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

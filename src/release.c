@@ -14,6 +14,7 @@ static const char *const release_usage[] =
 {
     "Usage: %s %s [-d] directories...\n",
     "\t-d\tDelete the given directory.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

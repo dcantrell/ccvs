@@ -26,6 +26,7 @@ static const char *const status_usage[] =
     "\t-v\tVerbose format; includes tag information for the file\n",
     "\t-l\tProcess this directory only (not recursive).\n",
     "\t-R\tProcess directories recursively.\n",
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 

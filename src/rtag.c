@@ -74,6 +74,7 @@ static const char *const rtag_usage[] =
     "\t-b\tMake the tag a \"branch\" tag, allowing concurrent development.\n",
     "\t-[rD]\tExisting tag or Date.\n",
     "\t-F\tMove tag if it already exists\n",	
+    "(Specify the --help global option for a list of other help options)\n",
     NULL
 };
 
