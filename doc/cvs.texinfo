@@ -1487,6 +1487,11 @@ system administrator accidentally looking at the file),
 and will not prevent even a naive attacker from gaining
 the password.
 
+@c FIXME: The bit about "access to the repository
+@c implies general access to the system is *not* specific
+@c to pserver; it applies to kerberos and SSH and
+@c everything else too.  Should reorganize the
+@c documentation to make this clear.
 The separate @sc{cvs} password file (@pxref{Password
 authentication server}) allows people
 to use a different password for repository access than

@@ -1,3 +1,8 @@
+Mon Aug 12 14:58:54 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Password authentication security): Add comment
+	about how some of this is not pserver-specific.
+
 Tue Aug  6 16:48:53 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* cvs.texinfo (log, log options): Update for changes to cvs log
