@@ -1769,6 +1769,7 @@ join_file (file, srcfiles, vers, update_dir, entries)
     free (rev1);
     free (rev2);
 
+#ifdef SERVER_SUPPORT
     /*
      * If we're in server mode, then we need to re-register the file
      * even if there were no conflicts (status == 0).
@@ -1776,6 +1777,9 @@ join_file (file, srcfiles, vers, update_dir, entries)
      * the client.
      */
     if (status == 1 || (status == 0 && server_active))
+#else
+    if (status == 1)
+#endif
     {
 	char *cp = 0;
 
