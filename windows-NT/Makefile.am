@@ -52,7 +52,7 @@ DISTCLEANFILES =
 
 all-local: config.h stdbool.h stdint.h
 config.h: stamp-ch
-stamp-ch: $(srcdir)/config.h.in Makefile
+stamp-ch: $(srcdir)/config.h.in $(top_srcdir)/configure
 	@echo "/* This file is generated via a rule in Makefile.am from the" \
 	  >config.tmp
 	@echo " * config.h.in file." >>config.tmp
