@@ -10266,12 +10266,14 @@ G@#..!@#=&"
 	  if test "$remote" = yes; then
 	    CVS_SERVER_SAVED=${CVS_SERVER}
 	    CVS_SERVER=${TESTDIR}/cvs-none; export CVS_SERVER
-	    # Egads, this message is horrible: (1) should say the pathname
-	    # which it can't exec; (2) shouldn't say "end of file from
-	    # server" I don't think (although I haven't looked into that).
+
+	    # The ${DOTSTAR} matches either "end of file from server"
+	    # (if the process doing the exec exits before the parent
+	    # gets around to sending data to it) or "broken pipe" (if it
+	    # is the other way around).
 	    dotest_fail devcom3-9a "${testcvs} edit w1" \
-"${PROG} \[edit aborted\]: cannot exec: No such file or directory
-${PROG} \[edit aborted\]: end of file from server (consult above messages if any)"
+"${PROG} \[edit aborted\]: cannot exec ${TESTDIR}/cvs-none: No such file or directory
+${DOTSTAR}"
 	    dotest devcom3-9b "test -w w1" ""
 	    dotest devcom3-9c "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
