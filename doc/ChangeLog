@@ -1,3 +1,8 @@
+2003-11-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* cvs.texinfo (CVS commands): Fix typo.
+	(FreeBSD PR docs/58669 reported by Ceri Davies <ceri@FreeBSD.org>.)
+
 2003-10-30  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti, version.texi: Regenerated.
