@@ -501,7 +501,6 @@ supported_response (char *name)
 
 
 
-#ifdef PROXY_SUPPORT
 /*
  * Return true if we need to relay write requests to a primary server
  * and false otherwise.
@@ -529,7 +528,10 @@ supported_response (char *name)
 static inline bool
 isProxyServer (void)
 {
-    char hostname[MAXHOSTNAMELEN];
+    /* HOSTNAME is static so that it may be cached.  Our hostname will not
+     * change from one call to the next.
+     */
+    static char *hostname = NULL;
     assert (current_parsed_root);
 
     /***
@@ -556,15 +558,18 @@ isProxyServer (void)
     assert (PrimaryServer->method == ext_method);
 
     /* Our hostname and directory must match for this to be the primary.  */
-    gethostname (hostname, sizeof hostname);
-    hostname[sizeof hostname - 1] = '\0';
+    if (!hostname)
+    {
+	hostname = xmalloc (MAXHOSTNAMELEN);
+	gethostname (hostname, sizeof hostname);
+	hostname[sizeof hostname - 1] = '\0';
+    }
     if (!strcmp (PrimaryServer->hostname, hostname)
 	&& !strcmp (PrimaryServer->directory, current_parsed_root->directory))
 	return false;
 
     return true;
 }
-#endif /* PROXY_SUPPORT */
 
 
 
@@ -896,7 +901,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 /* I'm going to need the following for translation once the trunk gets
  * merged and Root translation becomes necessary again.
  */
-#if 0
+# if 0
 	/* Replace the `Root' request in the log with a request for our
 	 * primary.
 	 */
@@ -907,7 +912,7 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
 	                     buf_from_net->last_index,
 	                     buf_from_net->last_count,
 	                     buf, len);
-#endif
+# endif
     }
     else if (proxy_log)
     {
@@ -957,7 +962,9 @@ E Protocol error: Root says \"%s\" but pserver says \"%s\"",
     /* do not free env, as putenv has control of it */
 #endif
 }
-
+
+
+
 static int max_dotdot_limit = 0;
 
 /* Is this pathname OK to recurse into when we are running as the server?
@@ -2612,14 +2619,27 @@ serve_notify (char *arg)
 
     if (error_pending ()) return;
 
-#ifdef PROXY_SUPPORT
     if (isProxyServer())
     {
-	/* This is effectively a write command, so run it on the primary.  */
-	become_proxy ();
-	exit (EXIT_SUCCESS);
-    }
+#ifdef PROXY_SUPPORT
+	if (!proxy_log)
+	{
 #endif /* PROXY_SUPPORT */
+	    if (alloc_pending (160) + strlen (program_name))
+		sprintf (pending_error_text, 
+"E This CVS server does not support disconnected `%s edit'.  For now, remove all `%s' files in your workspace and try your command again.",
+			 program_name, CVSADM_NOTIFY);
+	return;
+#ifdef PROXY_SUPPORT
+	}
+	else
+	{
+	    /* This is effectively a write command, so run it on the primary.  */
+	    become_proxy ();
+	    exit (EXIT_SUCCESS);
+	}
+#endif /* PROXY_SUPPORT */
+    }
 
     if (outside_dir (arg))
 	return;
@@ -3340,13 +3360,13 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 
     TRACE (TRACE_FUNCTION, "do_cvs_command (%s)", cmd_name);
 
-#ifdef PROXY_SUPPORT
     /* Write proxy logging is always terminated when a command is received.
      * Therefore, we wish to avoid reprocessing the command since that would
      * cause endless recursion.
      */
     if (isProxyServer())
     {
+#ifdef PROXY_SUPPORT
 	if (reprocessing)
 	    /* This must be the second time we've reached this point.
 	     * Done reprocessing.
@@ -3373,8 +3393,15 @@ do_cvs_command (char *cmd_name, int (*command) (int, char **))
 		return;
 	    }
 	}
-    }
+#else /* !PROXY_SUPPORT */
+	if (lookup_command_attribute (cmd_name)
+		    & CVS_CMD_MODIFIES_REPOSITORY
+	    && alloc_pending (120))
+	    sprintf (pending_error_text, 
+"E You need a CVS client that supports the `Redirect' response for write requests to this server.");
+	return;
 #endif /* PROXY_SUPPORT */
+    }
 
     command_pid = -1;
     stdout_pipe[0] = -1;
@@ -4628,7 +4655,10 @@ serve_co (char *arg)
     {
 	if (reprocessing)
 	    reprocessing = false;
-	else
+	else if (/* The proxy log may be closed if the client sent a
+		  * `Command-prep' request.
+		  */
+		 proxy_log)
 	{
 	    /* Set up the log for reprocessing.  */
 	    rewind_buf_from_net ();
@@ -5451,6 +5481,67 @@ serve_expand_modules (char *arg)
 
 
 
+/* Decide if we should redirect the client to another server.
+ *
+ * GLOBALS
+ *   PrimaryServer	The server to redirect write requests to, if any.
+ *
+ * ASSUMPTIONS
+ *   The `Root' request has already been processed.
+ *
+ * RETURNS
+ *   Nothing.
+ */
+static void
+serve_command_prep (char *arg)
+{
+    bool supported;
+
+    if (error_pending ()) return;
+
+    supported = supported_response ("Redirect");
+    if (PrimaryServer && supported
+	&& lookup_command_attribute (arg) & CVS_CMD_MODIFIES_REPOSITORY
+	/* I call isProxyServer() last because it is probably the slowest
+	 * call due to the call to gethostname().
+	 */
+	&& isProxyServer ())
+    {
+	/* Send `Redirect' to redirect client requests to the primary.  */
+	buf_output0 (buf_to_net, "Redirect ");
+	buf_output0 (buf_to_net, PrimaryServer->original);
+	buf_output0 (buf_to_net, "\n");
+	buf_flush (buf_to_net, 1);
+    }
+    else
+    {
+	/* Send `ok' so the client can proceed.  */
+	buf_output0 (buf_to_net, "ok\n");
+	buf_flush (buf_to_net, 1);
+    }
+#ifdef PROXY_SUPPORT
+    if (proxy_log && supported)
+    {
+	/* If the client supported the redirect response, then they will always
+	 * be redirected if they are preparing for a write request.  It is
+	 * therefore safe to close the proxy logs.
+	 *
+	 * If the client is broken and ignores the redirect, this will be
+	 * detected later, in rewind_buf_from_net().
+	 *
+	 * Since a `Command-prep' respnose is only acceptable immediately
+	 * following the `Root' request according to the specification, there
+	 * is no need to rewind the log and reprocess.
+	 */
+	log_buffer_closelog (proxy_log);
+	log_buffer_closelog (proxy_log_out);
+	proxy_log = NULL;
+    }
+#endif /* PROXY_SUPPORT */
+}
+
+
+
 static void serve_valid_requests (char *arg);
 
 #endif /* SERVER_SUPPORT */
@@ -5475,7 +5566,7 @@ struct request requests[] =
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
   REQ_LINE("valid-requests", serve_valid_requests,
 	   RQ_ESSENTIAL | RQ_ROOTLESS),
-  REQ_LINE("Command-prep", serve_noop, 0),
+  REQ_LINE("Command-prep", serve_command_prep, 0),
   REQ_LINE("Repository", serve_repository, 0),
   REQ_LINE("Directory", serve_directory, RQ_ESSENTIAL),
   REQ_LINE("Max-dotdot", serve_max_dotdot, 0),

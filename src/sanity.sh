@@ -2239,7 +2239,21 @@ EOF
 #! $TESTSHELL
 CVS_SERVER=$TESTDIR/primary-wrapper
 export CVS_SERVER
-$CVS_SERVER --primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
+
+# Decide if we should be talking to the secondary or the primary.
+#
+# This is a hack which is only necessary when testing in :fork: mode since the
+# servers need to be able to tell the two roots apart given the same \`Root'
+# request from the client.
+if test -f $TESTDIR/last-client-pid \\
+   && expr \$PPID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+    proot_arg=
+else
+    proot_arg="--primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+fi
+echo \$PPID >$TESTDIR/last-client-pid
+
+$CVS_SERVER \$proot_arg "\$@"
 EOF
     cat <<EOF >$TESTDIR/primary-wrapper
 #! $TESTSHELL
@@ -2318,39 +2332,39 @@ Server: Concurrent Versions System (CVS) [0-9p.]* (.*server)'
 	  # that is does everything through CVS; the reason most of the
 	  # tests don't use it is mostly historical.
 	  mkdir 1; cd 1
-	  dotest basica-0a "${testcvs} -q co -l ." ''
+	  dotest basica-0a "$testcvs -q co -l ."
 	  mkdir first-dir
-	  dotest basica-0b "${testcvs} add first-dir" \
+	  dotest basica-0b "$testcvs add first-dir" \
 "Directory ${CVSROOT_DIRNAME}/first-dir added to the repository"
 	  cd ..
 	  rm -r 1
 
-	  dotest basica-1 "${testcvs} -q co first-dir" ''
+	  dotest basica-1 "$testcvs -q co first-dir" ''
 	  cd first-dir
 
 	  # Test a few operations, to ensure they gracefully do
 	  # nothing in an empty directory.
-	  dotest basica-1a0 "${testcvs} -q update" ''
-	  dotest basica-1a1 "${testcvs} -q diff -c" ''
-	  dotest basica-1a2 "${testcvs} -q status" ''
-	  dotest basica-1a3 "${testcvs} -q update ." ''
-	  dotest basica-1a4 "${testcvs} -q update ./" ''
+	  dotest basica-1a0 "$testcvs -q update"
+	  dotest basica-1a1 "$testcvs -q diff -c"
+	  dotest basica-1a2 "$testcvs -q status"
+	  dotest basica-1a3 "$testcvs -q update ."
+	  dotest basica-1a4 "$testcvs -q update ./"
 
 	  mkdir sdir
 	  # Remote CVS gives the "cannot open CVS/Entries" error, which is
 	  # clearly a bug, but not a simple one to fix.
-	  dotest basica-1a10 "${testcvs} -n add sdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository" \
-"${SPROG} add: cannot open CVS/Entries for reading: No such file or directory
-Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
+	  dotest basica-1a10 "$testcvs -n add sdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository" \
+"$SPROG add: cannot open CVS/Entries for reading: No such file or directory
+Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository"
 	  dotest_fail basica-1a11 \
-	    "test -d ${CVSROOT_DIRNAME}/first-dir/sdir" ''
-	  dotest basica-2 "${testcvs} add sdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir added to the repository"
+	    "test -d $CVSROOT_DIRNAME/first-dir/sdir"
+	  dotest basica-2 "$testcvs add sdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir added to the repository"
 	  cd sdir
 	  mkdir ssdir
-	  dotest basica-3 "${testcvs} add ssdir" \
-"Directory ${CVSROOT_DIRNAME}/first-dir/sdir/ssdir added to the repository"
+	  dotest basica-3 "$testcvs add ssdir" \
+"Directory $CVSROOT_DIRNAME/first-dir/sdir/ssdir added to the repository"
 	  cd ssdir
 	  echo ssfile >ssfile
 
@@ -15464,12 +15478,20 @@ G@#..!@#=&"
 	    dotest devcom3-9cr "cat CVS/Notify" \
 "Ew1	[SMTWF][uoehra][neduit] [JFAMSOND][aepuco][nbrylgptvc] [0-9 ][0-9] [0-9:]* [0-9][0-9][0-9][0-9] GMT	[-a-zA-Z_.0-9]*	${TESTDIR}/1/first-dir	EUC"
 	    CVS_SERVER=${CVS_SERVER_save}; export CVS_SERVER
-	    dotest devcom3-9dr "${testcvs} -q update" ""
-	    dotest_fail devcom3-9er "test -f CVS/Notify" ""
-	    dotest devcom3-9fr "${testcvs} watchers w1" \
-"w1	${username}	tedit	tunedit	tcommit"
-	    dotest devcom3-9gr "${testcvs} unedit w1" ""
-	    dotest devcom3-9hr "${testcvs} watchers w1" ""
+	    if $proxy; then
+	      dotest_fail devcom3-9dp "$testcvs -q update" \
+"This CVS server does not support disconnected \`cvs edit'\.  For now, remove all \`CVS/Notify' files in your workspace and try your command again\."
+	      dotest devcom3-9ep "test -f CVS/Notify"
+	      rm CVS/Notify
+	      dotest devcom3-9hp "$testcvs watchers w1"
+	    else
+	      dotest devcom3-9dr "$testcvs -q update"
+	      dotest_fail devcom3-9er "test -f CVS/Notify"
+	      dotest devcom3-9fr "$testcvs watchers w1" \
+"w1	$username	tedit	tunedit	tcommit"
+	    fi
+	    dotest devcom3-9gr "$testcvs unedit w1"
+	    dotest devcom3-9hr "$testcvs watchers w1"
 	  fi
 
 	  cd ../..
@@ -18042,22 +18064,40 @@ retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
 Merging differences between 1.[0-9]* and 1.[0-9]* into config"
 	  echo 'BogusOption=yes' >>config
-	  dotest config-4 "$testcvs -q ci -m change-to-bogus-opt" \
+	  if $proxy; then
+	    dotest config-4p "$testcvs -q ci -m change-to-bogus-opt" \
+"$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  else
+	    dotest config-4 "$testcvs -q ci -m change-to-bogus-opt" \
 "$SPROG [a-z]*: syntax error in $CVSROOT_DIRNAME/CVSROOT/config: line 'bogus line' is missing '='
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
+	  fi
 	  dotest config-cleanup-1 "$testcvs -Q update -jHEAD -jconfig-start" \
 "$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 RCS file: $CVSROOT_DIRNAME/CVSROOT/config,v
 retrieving revision 1.[0-9]*
 retrieving revision 1.[0-9]*
 Merging differences between 1.[0-9]* and 1.[0-9]* into config"
-	  dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
+	  if $proxy; then
+	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
+"$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
+$CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
+new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
+$SPROG commit: Rebuilding administrative file database"
+	  else
+	    dotest config-cleanup-3 "$testcvs -q ci -m change-to-comment" \
 "$SPROG [a-z]*: $CVSROOT_DIRNAME/CVSROOT/config: unrecognized keyword 'BogusOption'
 $CVSROOT_DIRNAME/CVSROOT/config,v  <--  config
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
+	  fi
 	  dotest config-6 "$testcvs -q update"
 
 	  dokeep
@@ -25081,9 +25121,16 @@ $SPROG update: Updating first-dir"
 initial revision: 1\.1"
 	  dotest release-21 "$testcvs edit file1"
 	  cd ..
-	  dotest release-22 "echo yes | $testcvs release -d second-dir" \
+	  if $proxy; then
+	    dotest_fail release-22p \
+"echo yes | $testcvs release -d second-dir" \
+"You have \[0\] altered files in this repository.
+Are you sure you want to release (and delete) directory \`second-dir': This CVS server does not support disconnected \`cvs edit'\.  For now, remove all \`CVS/Notify' files in your workspace and try your command again\."
+	  else
+	    dotest release-22 "echo yes | $testcvs release -d second-dir" \
 "You have \[0\] altered files in this repository.
 Are you sure you want to release (and delete) directory \`second-dir': "
+	  fi
 	  dotest release-23 "$testcvs -q update -d" "U second-dir/file1"
 	  dotest release-24 "$testcvs edit"
 
@@ -28671,7 +28718,21 @@ EOF
 #! $TESTSHELL
 CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
 export CVS_SERVER
-$servercvs --primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
+
+# Decide if we should be talking to the secondary or the primary.
+#
+# This is a hack which is only necessary when testing in :fork: mode since the
+# servers need to be able to tell the two roots apart given the same \`Root'
+# request from the client.
+if test -f $TESTDIR/last-client-pid \\
+   && expr \$PPID : \`cat $TESTDIR/last-client-pid\` >/dev/null; then
+    proot_arg=
+else
+    proot_arg="--primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME"
+fi
+echo \$PPID >$TESTDIR/last-client-pid
+
+$servercvs \$proot_arg "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
 #! $TESTSHELL
