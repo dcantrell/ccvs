@@ -1,5 +1,9 @@
 2004-11-01 Derek Price <derek@ximbiot.com>
 
+	* sanity.sh (rcslib): Fix typo in path.
+
+2004-11-01 Derek Price <derek@ximbiot.com>
+
 	* sanity.sh (rcslib): Test a link to a path longer than 128
 	characters.
 
