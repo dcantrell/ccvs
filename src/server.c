@@ -3239,6 +3239,10 @@ server_cleanup (sig)
     if (dont_delete_temp)
 	return;
 
+    /* What a bogus kludge.  This disgusting code makes all kinds of
+       assumptions about SunOS, and is only for a bug in that system.
+       So only enable it on Suns.  */
+#ifdef sun
     if (command_pid > 0) {
       /* To avoid crashes on SunOS due to bugs in SunOS tmpfs
 	 triggered by the use of rename() in RCS, wait for the
@@ -3307,6 +3311,7 @@ server_cleanup (sig)
 	}
       }
     }
+#endif
 
     /* This might be set by the user in ~/.bashrc, ~/.cshrc, etc.  */
     temp_dir = getenv ("TMPDIR");
