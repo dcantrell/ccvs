@@ -1,3 +1,10 @@
+Mon Dec  4 11:28:10 1995  Norbert Kiesel  <nk@col.sw-ley.de>
+
+	* Makefile.in (DISTFILES): prefix all filenames with
+	  ${srcdir}${PS}
+	  (dist-dir): remove ${srcdir}${PS} (some files already had this
+	  prefix, now all have it)
+
 Fri Dec  1 14:29:44 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (srcdir, libdir, cvs_srcdir): use autoconf vars.
