@@ -1,3 +1,7 @@
+Thu Jun 12 09:33:40 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Environment variables): Add CVSUMASK.
+
 Mon Jun  2 18:39:57 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Moving a repository): New node.
