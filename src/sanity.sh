@@ -13799,7 +13799,7 @@ ${PROG} commit: Rebuilding administrative file database"
 	  dotest_fail top-level-1 "$testcvs rlog ." \
 "$PROG rlog: Logging \.
 $PROG rlog: Logging CVSROOT
-.*$PROG: \.\./\.\./src/recurse.c:642: do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
+.*$PROG: \.\./\.\./src/recurse.c:[0-9][0-9]*: do_recursion: Assertion \`strstr (repository, \"/\./\") == ((void \*)0)' failed\..*"
 
 	  if $keep; then
 	    echo Keeping ${TESTDIR} and exiting due to --keep
