@@ -1,3 +1,9 @@
+1999-01-15  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (binfiles, binfiles2, binfiles3, server): Use the same
+	tr trick as in rcs3.  People don't seem to have been complaining,
+	and this should fix server-4 for HPUX.
+
 1999-01-14  Jim Kingdon  <http://www.cyclic.com>
 
 	* client.c (recv_line): If the line we are reading contains a
