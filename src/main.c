@@ -134,6 +134,7 @@ const struct cmd
     CMD_ENTRY("export",   "exp",   "ex",      checkout,  client_export),
     CMD_ENTRY("history",  "hi",    "his",     history,   client_history),
     CMD_ENTRY("import",   "im",    "imp",     import,    client_import),
+    CMD_ENTRY("init",     NULL,    NULL,      init,      client_init),
     CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
 #ifdef AUTH_CLIENT_SUPPORT
     CMD_ENTRY("login",    "logon", "lgn",     login,     login),
@@ -618,16 +619,22 @@ error 0 %s: no such user\n", user);
 	    if (!isaccessible (path, R_OK | X_OK))
 	    {
 		save_errno = errno;
+		/* If this is "cvs init", the root need not exist yet.  */
+		if (strcmp (command_name, "init") != 0
 #ifdef CLIENT_SUPPORT
-		if (strchr (CVSroot, ':') == NULL)
-		{
+		    /* If we are a remote client, the root need not exist
+		       on the client machine (FIXME: we should also skip
+		       the check for CVSROOTADM_HISTORY being writable;
+		       it shouldn't matter if there is a read-only file
+		       which happens to have the same name on the client
+		       machine).  */
+		    && strchr (CVSroot, ':') == NULL)
 #endif
+		{
 		error (0, 0,
 		    "Sorry, you don't have sufficient access to %s", CVSroot);
 		error (1, save_errno, "%s", path);
-#ifdef CLIENT_SUPPORT
 		}
-#endif
 	    }
 	    (void) strcat (path, "/");
 	    (void) strcat (path, CVSROOTADM_HISTORY);

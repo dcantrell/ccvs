@@ -2993,9 +2993,12 @@ start_server ()
     stored_checksum_valid = 0;
     stored_mode_valid = 0;
 
-    send_to_server ("Root ", 0);
-    send_to_server (server_cvsroot, 0);
-    send_to_server ("\012", 1);
+    if (strcmp (command_name, "init") != 0)
+    {
+	send_to_server ("Root ", 0);
+	send_to_server (server_cvsroot, 0);
+	send_to_server ("\012", 1);
+    }
 
     {
 	struct response *rs;
@@ -4322,4 +4325,22 @@ client_unedit (argc, argv)
     return unedit (argc, argv);	/* Call real code */
 }
 
+void
+send_init_command ()
+{
+    /* This is here because we need the server_cvsroot variable.  */
+    send_to_server ("init ", 0);
+    send_to_server (server_cvsroot, 0);
+    send_to_server ("\012", 0);
+}
+
+int
+client_init (argc, argv)
+    int argc;
+    char **argv;
+{
+    parse_cvsroot ();
+
+    return init (argc, argv);	/* Call real code */
+}
 #endif /* CLIENT_SUPPORT */
