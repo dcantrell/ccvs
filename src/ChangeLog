@@ -1,5 +1,10 @@
 Thu Feb 29 16:54:14 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* lock.c (write_lock, Reader_Lock): Remove
+	BOGUS_UNLESS_PROVEN_OTHERWISE code.  It was pretty bogus, and has
+	been ifdeffed out for a long time.
+	* cvs.h (CVSTFL): Removed; no longer used.
+
 	* cvsrc.c, cvs.h (read_cvsrc): Pass in command name rather than
 	using global variable command_name.
 	* main.c (command_name): Initialize to "", not "cvs" so that error
