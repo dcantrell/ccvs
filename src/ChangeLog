@@ -1,3 +1,8 @@
+2005-03-16  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh (debug-log-nonfatal): Only set CVS_CLIENT_LOG to the
+	old value if it was previously set.
+
 2005-03-16  Derek Price  <derek@ximbiot.com>
 
 	* server.c (create_adm_p, serve_entry), tag.c (rtag_proc): Avoid memory
