@@ -58,7 +58,7 @@
 # Feb. 29, 2096 8 years
 #   8 years from this date is _not_ a leap year, so Feb. 29th does not exist.
 
-TZ=UTC; export TZ
+TZ=UTC0; export TZ
 
 cat >getdate-expected <<EOF
 Enter date, or blank line to exit.

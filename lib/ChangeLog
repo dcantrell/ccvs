@@ -1,5 +1,10 @@
 2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
 
+	* test-getdate.sh (TZ): Set to UTC0 instead of UTC to fix MacOS X
+	problem.
+
+2004-11-10  Mark D. Baushke  <mdb@cvshome.org>
+
 	* mktime.c (SHR): New macro, which is a portable substitute for >>
 	that should work even on Crays.
 	Problem reported by Mark D. Baushke.
