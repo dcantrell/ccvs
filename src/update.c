@@ -1921,40 +1921,23 @@ merge_file (finfo, vers)
 
     if (strcmp (vers->options, "-V4") == 0)
 	vers->options[0] = '\0';
-    (void) time (&last_register_time);
+
+    /* This file is the result of a merge, which means that it has
+       been modified.  We use a special timestamp string which will
+       not compare equal to any actual timestamp.  */
     {
-	char *cp;
+	char *cp = 0;
 
-	cp = time_stamp (finfo->file);
-
-	/* RCS_merge just created a modified file.  If the RCS file
-           was just changed, it is possible for the time stamp of the
-           file created by RCS_merge to be the same as the time stamp
-           we are about to put in the Entries file, which means that a
-           later run of CVS will think that the file has not been
-           modified.  We change the time stamp of the file if
-           necessary to avoid this.  */
-	if (strcmp (cp, vers->ts_rcs) == 0)
+	if (status)
 	{
-	    struct utimbuf t;
-
-	    memset (&t, 0, sizeof t);
-
-	    /* Note that, because we use last_register_time, by the
-               time we exit the time stamp of the file will not be in
-               the future.  */
-	    t.modtime = t.actime = last_register_time + 1;
-
-	    if (utime (finfo->file, &t) < 0)
-		error (0, errno, "cannot set time on %s", finfo->file);
-
-	    free (cp);
+	    (void) time (&last_register_time);
 	    cp = time_stamp (finfo->file);
 	}
-
-	Register (finfo->entries, finfo->file, vers->vn_rcs, vers->ts_rcs, vers->options,
-		  vers->tag, vers->date, status ? cp : NULL);
-	free (cp);
+	Register (finfo->entries, finfo->file, vers->vn_rcs,
+		  "Result of merge", vers->options, vers->tag,
+		  vers->date, cp);
+	if (cp)
+	    free (cp);
     }
 
     /* fix up the vers structure, in case it is used by join */
@@ -2035,8 +2018,6 @@ join_file (finfo, vers)
     char *jrev2;
     char *jdate1;
     char *jdate2;
-    char *cp;
-    int same_time_stamp;
 
     jrev1 = join_rev1;
     jrev2 = join_rev2;
@@ -2453,75 +2434,29 @@ join_file (finfo, vers)
     free (rev1);
     free (rev2);
 
-    cp = time_stamp (finfo->file);
+    /* The file has changed, but if we just checked it out it may
+       still have the same timestamp it did when it was first
+       registered above in checkout_file.  We register it again with a
+       dummy timestamp to make sure that later runs of CVS will
+       recognize that it has changed.
 
-    /* RCS_merge just created a modified file.  It is possible for the
-       time stamp of the file created by RCS_merge to be the same as
-       the time stamp in the Entries file, which means that a later
-       run of CVS will think that the file has not been modified.  We
-       change the time stamp of the file if necessary to avoid this.
-       We also make sure that the time stamp is different from ts_rcs,
-       in case we register the file again just below.  If we just
-       checked out the file, the time stamp in the Entries file will
-       have been registered by checkout_file and will not be the same
-       as the time stamp in VERS, so we have to look in the entries
-       list.  */
-
-    same_time_stamp = 0;
-    if ((vers->ts_user != NULL && strcmp (cp, vers->ts_user) == 0)
-	|| (vers->ts_rcs != NULL && strcmp (cp, vers->ts_rcs) == 0))
+       We don't actually need to register again if we called
+       RCS_checkout above, and we aren't running as the server.
+       However, that is not the normal case, and calling Register
+       again won't cost much in that case.  */
     {
-	same_time_stamp = 1;
-    }
-    else if (finfo->entries != NULL)
-    {
-	Node *p;
+	char *cp = 0;
 
-	p = findnode_fn (finfo->entries, finfo->file);
-	if (p != NULL)
+	if (status)
 	{
-	    Entnode *entdata;
-
-	    entdata = (Entnode *) p->data;
-	    if (strcmp (cp, entdata->timestamp) == 0)
-		same_time_stamp = 1;
+	    (void) time (&last_register_time);
+	    cp = time_stamp (finfo->file);
 	}
-    }
-
-
-    if (same_time_stamp)
-    {
-	struct utimbuf t;
-
-	/* Using last_register_time here means that by the time we
-           exit the time stamp of the file will not be in the future.  */
-	(void) time (&last_register_time);
-
-	memset (&t, 0, sizeof t);
-	t.modtime = t.actime = last_register_time + 1;
-	if (utime (finfo->file, &t) < 0)
-	    error (0, errno, "cannot set time on %s", finfo->file);
-
-	free (cp);
-	cp = time_stamp (finfo->file);
-    }
-
-#ifdef SERVER_SUPPORT
-    /*
-     * If we're in server mode, then we need to re-register the file
-     * even if there were no conflicts (status == 0).
-     * This tells server_updated() to send the modified file back to
-     * the client.
-     */
-    if (status == 1 || (status == 0 && server_active))
-#else
-    if (status == 1)
-#endif
-    {
-	Register (finfo->entries, finfo->file,
-		  vers->vn_rcs, vers->ts_rcs, vers->options,
-		  vers->tag, vers->date, status ? cp : NULL);
-	free(cp);
+	Register (finfo->entries, finfo->file, vers->vn_rcs,
+		  "Result of merge", vers->options, vers->tag,
+		  vers->date, cp);
+	if (cp)
+	    free(cp);
     }
 
 #ifdef SERVER_SUPPORT

@@ -1,3 +1,11 @@
+1998-06-21  Ian Lance Taylor  <ian@cygnus.com>
+
+	* update.c (merge_files): Revert changes of 1998-06-19.  Instead,
+	register a merged file with a dummy time stamp.  Only set
+	last_register_time if we need to.
+	(join_file): Likewise.  Always register a merged file, not just
+	when the merge fails.
+
 1998-06-21  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* call_diff_write_output, call_diff_printf_output,
