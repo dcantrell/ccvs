@@ -1,3 +1,20 @@
+2003-05-18  Mark D. Baushke  <mdb@gnu.org>
+
+	* Makefile.am (localcheck,remotecheck): Use cvs$(EXEEXT) not cvs.
+	* Makefile.in: Regenerated.
+	* sanity.sh (status-init-7): Use ${PROG} not cvs in tests.
+	(branch-after-import-5): Ditto.
+	(keywordname-update-11): Ditto.
+
+2003-05-18  Larry Jones  <lawrence.jones@eds.com>
+
+	* server.h (kserver_authenticate_connection,
+	pserver_authenticate_connection): Add prototypes.
+
+	* client.c (update_entries): Set file's access time to the current
+	time rather than the same as the modification time.
+	* vers_ts.c (Version_TS): Ditto.
+
 2003-05-09  Derek Price  <derek@ximbiot.com>
 
 	* client.c: #ifdef inclusion of gssapi-client.h.
