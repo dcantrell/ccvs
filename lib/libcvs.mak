@@ -118,11 +118,11 @@ LIB32_OBJS= \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
+	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\vasprintf.obj"
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
@@ -217,11 +217,11 @@ LIB32_OBJS= \
 	"$(INTDIR)\time_r.obj" \
 	"$(INTDIR)\valloc.obj" \
 	"$(INTDIR)\vasnprintf.obj" \
+	"$(INTDIR)\vasprintf.obj" \
 	"$(INTDIR)\xalloc-die.obj" \
 	"$(INTDIR)\xgetcwd.obj" \
 	"$(INTDIR)\xmalloc.obj" \
-	"$(INTDIR)\yesno.obj" \
-	"$(INTDIR)\vasprintf.obj"
+	"$(INTDIR)\yesno.obj"
 
 "$(OUTDIR)\libcvs.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
