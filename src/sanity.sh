@@ -13889,6 +13889,8 @@ done"
 
 	  # FIXCVS:
 	  # Now the one that fails in remote mode.
+	  # This highlights one of the failure cases mentioned in TODO item
+	  # #205.
 	  if $remote; then
 		  dotest trailingslashes-2 "$testcvs -q up CVSROOT/" \
 "U topfile"
