@@ -1,5 +1,5 @@
 /* xgetwd.c -- return current directory with unlimited length
-   Copyright (C) 1992 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1997 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ extern int errno;
 #endif
 #include <sys/types.h>
 
-#ifndef HAVE_GETWD
+#ifdef HAVE_GETWD
 char *getwd ();
 #define GETWD(buf, max) getwd (buf)
 #else
