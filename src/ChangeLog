@@ -1,3 +1,8 @@
+1999-03-24  Larry Jones  <larry.jones@sdrc.com>
+
+	* rcs.c: Change enum constants ADD and DELETE to something less
+	likely to run into conflicts.
+
 1999-03-21  Jim Kingdon  <http://www.cyclic.com>
 
 	* sanity.sh (tagf): New test, tests for moving a branch tag to a
