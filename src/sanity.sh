@@ -7240,6 +7240,8 @@ done"
 	  cd CVSROOT
 	  echo 'ampermodule &first-dir &second-dir' > modules
 	  echo 'combmodule third-dir file3 &first-dir' >> modules
+	  echo 'ampdirmod -d newdir &first-dir &second-dir' >> modules
+	  echo 'badmod -d newdir' >> modules
 	  # Depending on whether the user also ran the modules test
 	  # we will be checking in revision 1.2 or 1.3.
 	  dotest modules2-2 "${testcvs} -q ci -m add-modules" \
@@ -7316,11 +7318,11 @@ initial revision: 1\.1
 done"
 	    cd ..
 	  fi
+	  cd ..
+	  rm -r 1
 
 	  # Now test the "combmodule" module (combining regular modules
 	  # and ampersand modules in the same module definition).
-	  cd ..
-	  rm -r 1
 	  mkdir 1; cd 1
 	  dotest modules2-14 "${testcvs} co combmodule" \
 "U combmodule/file3
@@ -7344,6 +7346,22 @@ U first-dir/amper1"
 	  dotest modules2-18 "${testcvs} -q co combmodule" \
 "U first-dir/amper1"
 	  dotest modules2-19 "test -f combmodule/first-dir/amper1" ""
+	  cd ..
+	  rm -r 1
+
+	  # Now test the "ampdirmod" and "badmod" modules to be sure that
+	  # options work with ampersand modules but don't prevent the
+	  # "missing directory" error message.
+	  mkdir 1; cd 1
+	  dotest modules2-20 "${testcvs} co ampdirmod" \
+"${PROG} [a-z]*: Updating first-dir
+U first-dir/amper1
+${PROG} [a-z]*: Updating second-dir"
+	  dotest modules2-21 "test -f newdir/first-dir/amper1" ""
+	  dotest_fail modules2-22 "${testcvs} co badmod" \
+"${PROG} [a-z]*: modules file missing directory for module badmod" \
+"${PROG} [a-z]*: modules file missing directory for module badmod
+${PROG} \[[a-z]* aborted\]: cannot expand modules"
 	  cd ..
 	  rm -r 1
 

@@ -1,3 +1,10 @@
+1999-09-02  Larry Jones  <larry.jones@sdrc.com>
+
+	* modules.c (do_module): Handle case where module definition has
+	options and special options but no directory; fix potential problems
+	running off beginning of string while stripping trailing blanks.
+	* sanity.sh (modules2): New tests for above.
+
 1999-08-26  Larry Jones  <larry.jones@sdrc.com>
 
 	* lock.c (lock_name): Remove side-effects from assert() expression
