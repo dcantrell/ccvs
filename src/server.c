@@ -2651,6 +2651,7 @@ do_cvs_command (cmd_name, command)
 error  \n");
 	goto free_args_and_return;
     }
+    command_name = cmd_name;
 
     (void) server_notify ();
 
@@ -3619,8 +3620,6 @@ static void
 serve_rlog (arg)
     char *arg;
 {
-    /* Tell cvslog() to behave like rlog not log.  */
-    command_name = "rlog";
     do_cvs_command ("rlog", cvslog);
 }
 
@@ -3663,8 +3662,6 @@ static void
 serve_rtag (arg)
     char *arg;
 {
-    /* Tell cvstag() to behave like rtag not tag.  */
-    command_name = "rtag";
     do_cvs_command ("rtag", cvstag);
 }
 
@@ -3830,8 +3827,6 @@ static void
 serve_rannotate (arg)
     char *arg;
 {
-    /* Tell annotate() to behave like rannotate not annotate.  */
-    command_name = "rannotate";
     do_cvs_command ("rannotate", annotate);
 }
 
