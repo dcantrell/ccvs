@@ -1,3 +1,8 @@
+2004-09-14  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Keyword list, config): Note new config options and how
+	they effect the Log keyword.
+
 2004-08-17  Derek Price  <derek@ximbiot.com>
 
 	* cvsclient.texi (Requests): s/Command-prenotify/Command-prep/.
