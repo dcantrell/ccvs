@@ -1,5 +1,9 @@
 Fri Sep  5 14:42:39 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (BUGS): Remove mention of unsupported resources page
+	on http://www.cyclic.com, as it might go away in a future 
+	reorganization.
+
 	* DIFFUTILS-2.7-BUG: Further info from Eggert.
 
 1997-09-05  Paul Eggert  <eggert@twinsun.com>
