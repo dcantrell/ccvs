@@ -59,7 +59,7 @@ static List *tlist;
 
 static const char *const tag_usage[] =
 {
-    "Usage: %s %s [-lRF] [-b] [-d] [-c] [-r tag|-D date] tag [files...]\n",
+    "Usage: %s %s [-lRF] [-b] [-d] [-c] [-r rev|-D date] tag [files...]\n",
     "\t-l\tLocal directory only, not recursive.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-d\tDelete the given tag.\n",
