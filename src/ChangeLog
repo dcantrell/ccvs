@@ -1,3 +1,7 @@
+Wed Apr  9 09:49:17 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (update_entries): Fix typo in call to error (1 -> errno).
+
 Tue Apr  8 23:02:22 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* error.h, error.c: Test for #ifdef __STDC__, not #if __STDC__.
