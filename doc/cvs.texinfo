@@ -255,7 +255,7 @@ module and vendor branch support.
 
 @cindex Source, getting CVS source
 You can get @sc{cvs} in a variety of ways, including
-free download from the internet.  For more information
+free download from the Internet.  For more information
 on downloading @sc{cvs} and other @sc{cvs} topics, see:
 
 @example
@@ -271,10 +271,10 @@ devoted to @sc{cvs}.  To subscribe or
 unsubscribe
 write to
 @email{info-cvs-request@@gnu.org}.
-If you prefer a usenet group, there is a one-way mirror (posts to the email
+If you prefer a Usenet group, there is a one-way mirror (posts to the email
 list are usually sent to the news group, but not visa versa) of
 @email{info-cvs@@gnu.org} at @url{news:gnu.cvs.help}.  The right
-usenet group for posts is @url{news:comp.software.config-mgmt} which is for
+Usenet group for posts is @url{news:comp.software.config-mgmt} which is for
 @sc{cvs} discussions (along with other configuration
 management systems).  In the future, it might be
 possible to create a
@@ -291,7 +291,7 @@ if there is sufficient @sc{cvs} traffic on
 You can also subscribe to the @email{bug-cvs@@gnu.org} mailing list,
 described in more detail in @ref{BUGS}.  To subscribe
 send mail to @email{bug-cvs-request@@gnu.org}.  There is a two-way
-usenet mirror (posts to the usenet group are usually sent to the email list and
+Usenet mirror (posts to the Usenet group are usually sent to the email list and
 visa versa) of @email{bug-cvs@@gnu.org} named @url{news:gnu.cvs.bug}.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -421,11 +421,11 @@ nothing falls through the cracks.
 @item @sc{cvs} is not an automated testing program
 
 It should be possible to enforce mandatory use of a
-testsuite using the @code{commitinfo} file.  I haven't
+test suite using the @code{commitinfo} file.  I haven't
 heard a lot about projects trying to do that or whether
 there are subtle gotchas, however.
 
-@item @sc{cvs} does not have a builtin process model
+@item @sc{cvs} does not have a built-in process model
 
 Some systems provide ways to ensure that changes or
 releases go through various steps, with various
@@ -1002,7 +1002,7 @@ rules see @ref{Tags}.
 @c FIXME: we need to somehow reflect "permissions in
 @c repository" versus "permissions in working
 @c directory" in the index entries.
-@cindex Group, UNIX file premissions, in repository
+@cindex Group, UNIX file permissions, in repository
 @cindex Read-only files, in repository
 All @samp{,v} files are created read-only, and you
 should not change the permission of those files.  The
@@ -1211,7 +1211,7 @@ files.
 This behavior is implemented only by @sc{cvs} 1.7 and
 later; for details see @ref{Watches Compatibility}.
 
-The format of the fileattr file is a series of entries
+The format of the @file{fileattr} file is a series of entries
 of the following form (where @samp{@{} and @samp{@}}
 means the text between the braces can be repeated zero
 or more times):
@@ -1234,7 +1234,7 @@ Note that the order of the lines is not significant;
 a program writing the fileattr file may
 rearrange them at its convenience.
 
-There is currently no way of quoting tabs or linefeeds in the
+There is currently no way of quoting tabs or line feeds in the
 filename, @samp{=} in @var{attrname},
 @samp{;} in @var{attrval}, etc.  Note: some implementations also
 don't handle a NUL character in any of the fields, but
@@ -1244,7 +1244,7 @@ By convention, @var{attrname} starting with @samp{_} is for an attribute given
 special meaning by @sc{cvs}; other @var{attrname}s are for user-defined attributes
 (or will be, once implementations start supporting user-defined attributes).
 
-Builtin attributes:
+Built-in attributes:
 
 @table @code
 @item _watched
@@ -1323,7 +1323,7 @@ The directory @file{#cvs.lock} serves as a master
 lock.  That is, one must obtain this lock first before
 creating any of the other locks.
 
-To obtain a readlock, first create the @file{#cvs.lock}
+To obtain a read lock, first create the @file{#cvs.lock}
 directory.  This operation must be atomic (which should
 be true for creating a directory under most operating
 systems).  If it fails because the directory already
@@ -1361,8 +1361,8 @@ will ignore the promotable lock when attempting to create their own write lock.
 Then remove the master @file{#cvs.lock} directory in order to allow other
 processes to obtain read locks.
 
-To obtain a writelock, first create the
-@file{#cvs.lock} directory, as with readlocks.  Then
+To obtain a write lock, first create the
+@file{#cvs.lock} directory, as with read locks.  Then
 check that there are no files whose names start with
 @file{#cvs.rfl.} and no files whose names start with @file{#cvs.pfl} that are
 not owned by the process attempting to get the write lock.  If either exist,
@@ -1380,7 +1380,7 @@ informational; it has no effect on the locking operation
 beyond what is provided by holding on to the
 @file{#cvs.lock} lock itself.
 
-Note that each lock (writelock or readlock) only locks
+Note that each lock (write lock or read lock) only locks
 a single directory in the repository, including
 @file{Attic} and @file{CVS} but not including
 subdirectories which represent other directories under
@@ -1389,11 +1389,11 @@ lock each directory (note that if you fail to obtain
 any lock you need, you must release the whole tree
 before waiting and trying again, to avoid deadlocks).
 
-Note also that @sc{cvs} expects writelocks to control
+Note also that @sc{cvs} expects write locks to control
 access to individual @file{foo,v} files.  @sc{rcs} has
 a scheme where the @file{,foo,} file serves as a lock,
 but @sc{cvs} does not implement it and so taking out a
-@sc{cvs} writelock is recommended.  See the comments at
+@sc{cvs} write lock is recommended.  See the comments at
 rcs_internal_lockfile in the @sc{cvs} source code for
 further discussion/rationale.
 
@@ -2130,7 +2130,7 @@ variable.
 * Connecting via rsh::          Using the @code{rsh} program to connect
 * Password authenticated::      Direct connections using passwords
 * GSSAPI authenticated::        Direct connections using GSSAPI
-* Kerberos authenticated::      Direct connections with kerberos
+* Kerberos authenticated::      Direct connections with Kerberos
 * Connecting via fork::         Using a forked @code{cvs server} to connect
 @end menu
 
@@ -2547,7 +2547,7 @@ user-lookup routines (this "fallback" behavior can be
 disabled by setting @code{SystemAuth=no} in the
 @sc{cvs} @file{config} file, @pxref{config}).
 
-The default fallback behaviour is to look in 
+The default fallback behavior is to look in 
 @file{/etc/passwd} for this system password unless your
 system has PAM (Pluggable Authentication Modules)
 and your @sc{cvs} server executable was configured to
@@ -2594,7 +2594,7 @@ See the @file{contrib/pam} subdirectory of the @sc{cvs}
 source distribution for further example configurations.
 
 The PAM service name given above as "cvs" is just
-the service name in the default configuration amd can be
+the service name in the default configuration and can be
 set using
 @code{./configure --with-hardcoded-pam-service-name=<pam-service-name>}
 before compiling.  @sc{cvs} can also be configured to use whatever
@@ -2622,7 +2622,7 @@ password on a regular basis.
 In the non-PAM configuration where the password is stored in the
 @file{CVSROOT/passwd} file, it is difficult to change passwords on a
 regular basis since only administrative users (or in some cases
-processes that act as an administrative user) are typicaly given
+processes that act as an administrative user) are typically given
 access to modify this file.  Either there needs to be some
 hand-crafted web page or set-uid program to update the file, or the
 update needs to be done by submitting a request to an administrator to
@@ -2838,7 +2838,7 @@ authenticating with GSSAPI.
 
 To do this, @sc{cvs} needs to be compiled with GSSAPI
 support; when configuring @sc{cvs} it tries to detect
-whether GSSAPI libraries using kerberos version 5 are
+whether GSSAPI libraries using Kerberos version 5 are
 present.  You can also use the @file{--with-gssapi}
 flag to configure.
 
@@ -2878,27 +2878,27 @@ cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
 @end example
 
 @node Kerberos authenticated
-@subsection Direct connection with kerberos
+@subsection Direct connection with Kerberos
 
 @cindex Kerberos, using :kserver:
-@cindex Security, kerberos
+@cindex Security, Kerberos
 @cindex :kserver:, setting up
-The easiest way to use kerberos is to use the kerberos
+The easiest way to use Kerberos is to use the Kerberos
 @code{rsh}, as described in @ref{Connecting via rsh}.
 The main disadvantage of using rsh is that all the data
 needs to pass through additional programs, so it may be
-slower.  So if you have kerberos installed you can
+slower.  So if you have Kerberos installed you can
 connect via a direct @sc{tcp} connection,
-authenticating with kerberos.
+authenticating with Kerberos.
 
-This section concerns the kerberos network security
+This section concerns the Kerberos network security
 system, version 4.  Kerberos version 5 is supported via
 the GSSAPI generic network security interface, as
 described in the previous section.
 
-To do this, @sc{cvs} needs to be compiled with kerberos
+To do this, @sc{cvs} needs to be compiled with Kerberos
 support; when configuring @sc{cvs} it tries to detect
-whether kerberos is present or you can use the
+whether Kerberos is present or you can use the
 @file{--with-krb4} flag to configure.
 
 The data transmitted is @emph{not} encrypted by
@@ -4068,7 +4068,7 @@ out release 1.0 (@pxref{Tags}) and find the bug
 (which turns out to have a trivial fix).  However, the current revision
 of the sources are in a state of flux and are not expected to be stable
 for at least another month.  There is no way to make a
-bugfix release based on the newest sources.
+bug fix release based on the newest sources.
 
 The thing to do in a situation like this is to create a @dfn{branch} on
 the revision trees for all the files that make up
@@ -5513,10 +5513,6 @@ Note: you can control what is logged to this file by using the
 @node user-defined logging
 @section User-defined logging
 
-@c FIXME: should probably also mention the fact the -l
-@c global option can disable most of the mechanisms
-@c discussed here (why?  What is the -l global option for?).
-@c
 @c FIXME: probably should centralize this information
 @c here, at least to some extent.  Maybe by moving the
 @c loginfo, etc., nodes here and replacing
@@ -5872,7 +5868,7 @@ to RCS wouldn't think to use chmod anyway).
 
 Implementation: use file attributes or use RCS
 locking.  The former avoids more dependence on RCS
-behaviors we will need to reimplement as we librarify
+behaviors we will need to re-implement as we librarify
 RCS, and makes it easier to import/export RCS files (in
 that context, want to ignore the locker field).  But
 note that RCS locks are per-branch, which is the
@@ -7292,14 +7288,14 @@ handle an export containing binary files correctly.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node Configuring keyword expansion
-@section Configuring Keyord Expansion
+@section Configuring Keyword Expansion
 @cindex Configuring keyword expansion
 
 In a repository that includes third-party software on
 vendor branches, it is sometimes helpful to configure
 CVS to use a local keyword instead of the standard
 $@splitrcskeyword{Id}$ or $@splitrcskeyword{Header}$ keywords. Examples from
-real projects includ, $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
+real projects include $@splitrcskeyword{Xorg}$, $@splitrcskeyword{XFree86}$,
 $@splitrcskeyword{FreeBSD}$, $@splitrcskeyword{NetBSD}$,
 $@splitrcskeyword{OpenBSD}$, and even $@splitrcskeyword{dotat}$.
 The advantage of this is that
@@ -7358,7 +7354,7 @@ $@splitrcskeyword{CVSHeader}$ keyword and retain all of the
 others. The exclusion entry could also contain the
 standard RCS keyword list, but this could be confusing
 to users that expect RCS keywords to be expanded, so
-ycare should be taken to properly set user expectations
+care should be taken to properly set user expectations
 for a repository that is configured in that manner.
 
 If there is a desire to not have any RCS keywords
@@ -7950,10 +7946,10 @@ Arguments to the commands.
 
 There is unfortunately some confusion between
 @code{cvs_options} and @code{command_options}.
-@samp{-l}, when given as a @code{cvs_option}, only
-affects some of the commands.  When it is given as a
-@code{command_option} is has a different meaning, and
-is accepted by more commands.  In other words, do not
+When given as a @code{cvs_option}, some options only
+affect some of the commands.  When given as a
+@code{command_option} it may have a different meaning, and
+be accepted by more commands.  In other words, do not
 take the above categorization too seriously.  Look at
 the documentation instead.
 
@@ -8139,19 +8135,15 @@ a command name, @samp{cvs -H} displays overall help for
 @c every time that we add a --help-foo option.  But
 @c perhaps that is confusing...
 
-@item -l
-Do not log the @samp{cvs_command} in the command history (but execute it
-anyway).  @xref{history}, for information on command history.
-
 @cindex Read-only repository mode
 @item -R
 Turns on read-only repository mode.  This allows one to check out from a
-read-only repository, such as within an anoncvs server, or from a CDROM
+read-only repository, such as within an anoncvs server, or from a @sc{cd-rom}
 repository.
 
 Same effect as if the @code{CVSREADONLYFS} environment
 variable is set. Using @samp{-R} can also considerably
-speed up checkout's over NFS.
+speed up checkouts over NFS.
 
 @cindex Read-only mode
 @item -n
@@ -10800,7 +10792,7 @@ $$ Mail -s 'The patches you asked for' foo@@example.net
 @end example
 
 Suppose you have made release 1.3, and forked a branch
-called @samp{R_1_3fix} for bugfixes.  @samp{R_1_3_1}
+called @samp{R_1_3fix} for bug fixes.  @samp{R_1_3_1}
 corresponds to release 1.3.1, which was made some time
 ago.  Now, you want to see how much development has been
 done on the branch.  This command can be used:
@@ -11216,10 +11208,6 @@ options}.
 @item -H
 @itemx --help
 Print a help message.  See @ref{Global options}.
-
-@item -l
-Do not log in @file{$CVSROOT/CVSROOT/history} file.  See @ref{Global
-options}.
 
 @item -n
 Do not change any files.  See @ref{Global options}.
@@ -12825,7 +12813,7 @@ A log message.
 @appendixsubsec  Updating legacy repositories to stop using deprecated command line template formats
 @cindex Info files (syntax), updating legacy repositories
 @cindex Syntax of info files, updating legacy repositories
-@cindex Common syntax of info files, updating legacy repositorie
+@cindex Common syntax of info files, updating legacy repositories
 New repositories are created set to use the new format strings by default, so
 if you are creating a new repository, you shouldn't have to worry about this
 section.
@@ -13403,7 +13391,7 @@ the contents of @file{rcsinfo} at the time a directory
 is first checked out will specify a template. This
 template will be updated on all @samp{cvs update}
 commands. It will also be added to new directories
-added with a @samp{cvs add new-directry} command.
+added with a @samp{cvs add new-directory} command.
 In versions of @sc{cvs} prior to version 1.12, the
 @file{CVS/Template} file was not updated. If the
 @sc{cvs} server is at version 1.12 or higher an older
@@ -13892,7 +13880,7 @@ log message after running the program specified by @file{verifymsg}.
 the log message should always be reread; @samp{no}
 or @samp{never}, indicating that it should never be
 reread; or @var{value} may be @samp{stat}, indicating
-that the file should be checked with the filesystem
+that the file should be checked with the file system
 @samp{stat()} function to see if it has changed (see warning below)
 before rereading.  The default value is @samp{always}.
 
@@ -13976,7 +13964,7 @@ is to permit modification of your working files.
 @item $CVSREADONLYFS
 Turns on read-only repository mode. This allows one to
 check out from a read-only repository, such as within
-an anoncvs server, or from a CDROM repository.
+an anoncvs server, or from a @sc{cd-rom} repository.
 
 It has the same effect as if the @samp{-R} command-line
 option is used. This can also allow the use of
@@ -14214,7 +14202,7 @@ The remote protocol is interoperable going back to @sc{cvs} 1.5, but no
 further (1.5 was the first official release with the remote protocol,
 but some older versions might still be floating around).  In many
 cases you need to upgrade both the client and the server to take
-advantage of new features and bugfixes, however.
+advantage of new features and bug fixes, however.
 
 @c Perhaps should be saying something here about the
 @c "D" lines in Entries (written by CVS 1.9; 1.8 and
@@ -14315,7 +14303,7 @@ This message has been happening in a non-reproducible,
 occasional way when we run the client/server testsuite,
 both on Red Hat Linux 3.0.3 and 4.1.  We haven't been
 able to figure out what causes it, nor is it known
-whether it is specific to linux (or even to this
+whether it is specific to Linux (or even to this
 particular machine!).  If the problem does occur on
 other unices, @samp{Operation not permitted} would be
 likely to read @samp{Not owner} or whatever the system
@@ -14584,9 +14572,9 @@ called from the @file{loginfo} administrative file.
 Check that the arguments passed in @file{loginfo} match
 what your version of @file{log.pl} expects.  In
 particular, the @file{log.pl} from @sc{cvs} 1.3 and
-older expects the logfile as an argument whereas the
+older expects the log file as an argument whereas the
 @file{log.pl} from @sc{cvs} 1.5 and newer expects the
-logfile to be specified with a @samp{-f} option.  Of
+log file to be specified with a @samp{-f} option.  Of
 course, if you don't need @file{log.pl} you can just
 comment it out of @file{loginfo}.
 
