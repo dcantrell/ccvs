@@ -222,16 +222,24 @@ replaced with BEGIN VERIFICATION REQUEST, END AUTH REQUEST
 is replaced with END VERIFICATION REQUEST, and upon receipt of
 I LOVE YOU the connection is closed rather than continuing.
 
+The pserver can also handle GSSAPI authentication, if it has been built
+with a GSSAPI library.  The procedure here is to start with @samp{BEGIN
+GSSAPI REQUEST}.  GSSAPI authentication information is then exchanged
+between the client and the server.  Each packet of information consists
+of a two byte big endian length, followed by that many bytes of data.
+After the GSSAPI authentication is complete, the server continues with
+the responses described above (@samp{I LOVE YOU}, etc.).
+
 @item future possibilities
 There are a nearly unlimited number of ways to connect and authenticate.
 One might want to allow access based on IP address (similar to the usual
 rsh protocol but with different/no restrictions on ports < 1024), to
-adopt mechanisms such as the General Security Service (GSS) API or
-Pluggable Authentication Modules (PAM), to allow users to run their own
-servers under their own usernames without root access, or any number of
-other possibilities.  The way to add future mechanisms, for the most
-part, should be to continue to use port 2401, but to use different
-strings in place of @samp{BEGIN AUTH REQUEST}.
+adopt mechanisms such as Pluggable Authentication Modules (PAM), to
+allow users to run their own servers under their own usernames without
+root access, or any number of other possibilities.  The way to add
+future mechanisms, for the most part, should be to continue to use port
+2401, but to use different strings in place of @samp{BEGIN AUTH
+REQUEST}.
 @end table
 
 @node Password scrambling
@@ -770,6 +778,23 @@ the @code{Kerberos-encrypt} requests are used, the
 the client and server encrypt the compressed data, as opposed to
 compressing the encrypted data.  Encrypted data is generally
 incompressible.
+
+@item Gssapi-encrypt \n
+Response expected: no.
+Use GSSAPI encryption to encrypt all further communication between the
+client and the server.  This will only work if the connection was made
+over GSSAPI in the first place.  See @code{Kerberos-encrypt}, above, for
+the relation between @code{Gssapi-encrypt} and @code{Gzip-stream}.
+
+@item Gssapi-authenticate \n
+Response expected: no.
+Use GSSAPI authentication to authenticate all further communication
+between the client and the server.  This will only work if the
+connection was made over GSSAPI in the first place.  Encrypted data is
+automatically authenticated, so using both @code{Gssapi-authenticate}
+and @code{Gssapi-encrypt} has no effect beyond that of
+@code{Gssapi-encrypt}.  Unlike encrypted data, it is reasonable to
+compress authenticated data.
 
 @item Set @var{variable}=@var{value} \n
 Response expected: no.

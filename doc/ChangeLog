@@ -1,3 +1,12 @@
+Fri Dec 12 17:36:46 1997  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvs.texinfo (GSSAPI authenticated): New node.
+	(Global options): Document -a.  Mention GSSAPI in -x
+	documentation.
+	* cvsclient.texi (Connection and Authentication): Document GSSAPI
+	authentication.
+	(Requests): Add Gssapi-encrypt and Gssapi-authenticate.
+
 Fri Dec 12 09:27:38 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (cvsignore): Add note about comments and the
