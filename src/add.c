@@ -292,6 +292,7 @@ add (argc, argv)
 	char *p;
 #if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
 	char *found_name = NULL;
+	int restore_case = 0;
 #endif
 
 	memset (&finfo, 0, sizeof finfo);
@@ -390,14 +391,28 @@ add (argc, argv)
 		   same.  */
 		finfo.file = found_name;
 	    }
+	    else
+	    {
+		/* We didn't find a directory match.  Turn off ign_case so that
+		 * file names are looked up case sensitively.  We do this so
+		 * that file adds always use the case specified by the user.
+		 */
+		ign_case = 0;
+		restore_case = 1;
+	    }
 	}
-#endif
+#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
 
 	/* We pass force_tag_match as 1.  If the directory has a
            sticky branch tag, and there is already an RCS file which
            does not have that tag, then the head revision is
            meaningless to us.  */
 	vers = Version_TS (&finfo, options, NULL, NULL, 1, 0);
+
+#if defined (SERVER_SUPPORT) && !defined (FILENAMES_CASE_INSENSITIVE)
+	ign_case = restore_case;
+#endif /* SERVER_SUPPORT && !FILENAMES_CASE_INSENSITIVE */
+
 	if (vers->vn_user == NULL)
 	{
 	    /* No entry available, ts_rcs is invalid */
