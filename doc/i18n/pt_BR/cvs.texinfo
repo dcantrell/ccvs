@@ -476,7 +476,7 @@ manter. @sc{cvs} não se importa com tais questões.
 @c <en>support such a build system (scripts, @file{Makefile}s,
 @c <en>etc) under @sc{cvs}.
 Obviamente, você pode botar as ferramentas criadas para
-suportar um tail sistema de construção (scripts,
+auxiliar tal sistema de construção (scripts,
 @file{Makefile}s, etc) dentro do @sc{cvs}.
 
 @c <en>Figuring out what files need to be rebuilt when
@@ -490,7 +490,7 @@ quando algo muda é, novamente, algo para ser visto fora
 do escopo do @sc{cvs}.  Uma abordagem tradicional é
 usar o @code{make} para construir, e usar alguma
 ferramenta automatizada para gerar as dependências que
-o @code{make}.
+o @code{make} usa.
 
 @c <en>Veja em @ref{Builds}, for more information on doing builds
 @c <en>in conjunction with @sc{cvs}.
@@ -542,8 +542,8 @@ que é necessária a comunicação entre os desenvolvedores.
 simultâneas em um arquivo, ou vários, vão conflitar
 logicamente umas com as outras. Seu conceito de
 @dfn{conflito} é puramente textual, surgindo quando
-duas alterações num mesmo arquivo inicial são próximas o
-suficiente para intimidar o comando mescla dos
+duas alterações num mesmo arquivo base são próximas o
+suficiente para intimidar o comando de mescla
 (i.e. @code{diff3}).
 
 @c <en>@sc{cvs} does not claim to help at all in figuring out
