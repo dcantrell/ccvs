@@ -1,6 +1,15 @@
 Changes since 1.12.11:
 **********************
 
+NEW FEATURES
+
+* Some files missing from the distribution have been added or readded.  The
+  missing files were mostly development support files, with a few docs and
+  .cvsignore files thrown in.
+
+* The incomplete Brazillian Portugese translation of the CVS manual is now
+  included in the distribution.
+
 Changes from 1.12.10 to 1.12.11:
 ********************************
 

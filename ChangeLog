@@ -1,3 +1,11 @@
+2004-12-14  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note no-longer missing files.
+	* Makefile.am (EXTRA_DIST): Add m4/README, gnulib-update, gnulib.txt,
+	and srclist.txt.
+	* configure.in (AC_OUTPUT): Add doc/i18n/Makefile &
+	doc/i18n/pt_BR/Makefile.
+
 2004-12-13  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note Windows build fixes.
