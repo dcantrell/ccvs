@@ -1,3 +1,9 @@
+2001-08-01  Derek Price  <dprice@collab.net>
+
+	* diff.c (diff): Send long option for side-by-side diffs to the server
+	rather than '-y', for backwards compatibility with old servers.
+	(Original patch from Peter Mathiasson <peter@mathiasson.nu>.)
+
 2001-07-19  Larry Jones  <larry.jones@sdrc.com>
 
 	* mkmodules.c (cvswrappers_contents): Remove -t/-f since they're

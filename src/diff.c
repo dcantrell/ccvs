@@ -229,9 +229,12 @@ diff (argc, argv)
     {
 	switch (c)
 	{
+	    case 'y':
+		xrealloc_and_strcat (&opts, &opts_allocated, " --side-by-side");
+		break;
 	    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
 	    case 'h': case 'i': case 'n': case 'p': case 's': case 't':
-	    case 'u': case 'w': case 'y':
+	    case 'u': case 'w':
             case '0': case '1': case '2': case '3': case '4': case '5':
             case '6': case '7': case '8': case '9':
 	    case 'B': case 'H': case 'T':
