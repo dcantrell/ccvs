@@ -225,8 +225,6 @@ false when executed and are intended to be used like,
    * $keep      = ':' (true) or 'false'.  When set, the first test run will
                   leave any files and directories it created in $testdir and
                   exit when complete.
-   * $cmdargcvs = cvs executable passed on the command line
-   * $clientcvs = cvs executable to be run as the client in tests
    * $servercvs = cvs executable to be run as CVS_SERVER in remote testing
 
 And, of course, some characters like '.' in regexps need to be '\' escaped when

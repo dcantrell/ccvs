@@ -21,7 +21,7 @@
 # usage:
 exit_usage ()
 {
-    echo "Usage: `basename $0` [-kr] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
+    echo "Usage: `basename $0` [-kr] [-s CVS-FOR-CVS_SERVER] [-f FROM-TEST] CVS-TO-TEST [TESTS-TO-RUN...]" 1>&2
     exit 2
 }
 # -r		test remote instead of local cvs.
@@ -55,9 +55,8 @@ export LC_ALL
 unset fromtest
 keep=false
 remote=false
-clientcvs=false
 servercvs=false
-while getopts f:krc:s: option ; do
+while getopts f:krs: option ; do
     case "$option" in
 	f)
 	    fromtest="$OPTARG"
@@ -72,10 +71,6 @@ while getopts f:krc:s: option ; do
 	r)
 	    remote=:
 	    ;;
-        c)
-	    clientcvs="$OPTARG"
-	    remote=:
-	    ;;
         s)
 	    servercvs="$OPTARG"
 	    remote=:
@@ -85,6 +80,17 @@ while getopts f:krc:s: option ; do
 	    ;;
     esac
 done
+
+case $servercvs in
+"")
+  exit_usage
+  ;;
+/*)
+  ;;
+*)
+  servercvs=`pwd`/$servercvs
+  ;;
+esac
 
 # boot the arguments we used above
 while test $OPTIND -gt 1 ; do
@@ -99,19 +105,13 @@ case $1 in
   exit_usage
   ;;
 /*)
-  cmdargcvs=$1
+  testcvs=$1
   ;;
 *)
-  cmdargcvs=`pwd`/$1
+  testcvs=`pwd`/$1
   ;;
 esac
 shift
-
-if [ "$clientcvs" != "false" ]; then
-    testcvs="${clientcvs}"
-else
-    testcvs="${cmdargcvs}"
-fi
 
 dokeep() 
 { 
@@ -1603,7 +1603,7 @@ if $remote; then
 	# difference in modes-15 (see comments there).
 	CVSROOT=:fork:${CVSROOT_DIRNAME} ; export CVSROOT
 	if [ $servercvs = "false" ]; then
-	    CVS_SERVER=${cmdargcvs}; export CVS_SERVER
+	    CVS_SERVER=${testcvs}; export CVS_SERVER
         else
 	    CVS_SERVER=${servercvs}; export CVS_SERVER
         fi

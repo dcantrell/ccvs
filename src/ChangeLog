@@ -1,3 +1,8 @@
+2003-03-07  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sanity.sh: Drop the clientcvs option. Add usage info for
+	the -s servercvs option.
+
 2003-03-07  Larry Jones  <lawrence.jones@eds.com>
 
 	* commit.c (check_fileproc): Remove unused variables.
@@ -34,7 +39,7 @@
 	(getopts): Allow tests to be run with specified client and server
 	cvs commands to allow for interoperatbility testing.
 	(check_keep): New shell function for --keep processing.
-	
+
 2003-03-06  Derek Price  <derek@ximbiot.com>
 
 	* subr.c (file_has_conflict): New file.
