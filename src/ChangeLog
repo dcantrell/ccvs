@@ -1,3 +1,13 @@
+Tue Oct 10 19:11:16 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in (SOURCES, OBJECTS): include login.c, login.o.
+
+        * main.c: added protoype for login().
+        Added "login" entry to cmds[].
+        (usg): added line about "login".
+
+        * login.c: new file.
+
 Tue Oct 10 18:33:47 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
 
         * Makefile.in (COMMON_OBJECTS): added error.o.
