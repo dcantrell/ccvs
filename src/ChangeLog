@@ -1,3 +1,12 @@
+Mon Dec 11 12:43:35 1995  adamg  <adamg@microsoft.com>
+
+	* error.c, client.c, remove.c, main.c: Add explicit casts for some
+ 	function pointers to remove warnings under MS VC.
+	* main.c (main): remove use of NEED_CALL_SOCKINIT in favor of the
+	more generic INITIALIZE_SOCKET_SUBSYSTEM.  Note that the code assumes
+	that if INITIALIZE_SOCKET_SUBSYSTEM() returns, socket subsystem
+	initialization has been successful.
+
 Sat Dec  9 22:01:41 1995  Dan O'Connor  <doconnor@tii.com>
 
         * commit.c (check_fileproc): pass RUN_REALLY flag to run_exec,

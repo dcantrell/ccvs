@@ -221,7 +221,7 @@ main_cleanup ()
 }
 
 static void
-error_cleanup ()
+error_cleanup PROTO((void))
 {
     Lock_Cleanup();
 #ifdef SERVER_SUPPORT
@@ -255,14 +255,10 @@ main (argc, argv)
 
     error_set_cleanup (error_cleanup);
 
-/* The IBM TCP/IP library under OS/2 needs to be initialized: */
-#ifdef NEED_CALL_SOCKINIT
-	if (SockInit () != TRUE)
-	{
-          fprintf (stderr, "SockInit() failed!\n");
-          exit (1);
-	}
-#endif /* NEED_CALL_SOCKINIT */
+/* The socket subsystems on NT and OS2 must be initialized before use */
+#ifdef INITIALIZE_SOCKET_SUBSYSTEM
+        INITIALIZE_SOCKET_SUBSYSTEM();
+#endif /* INITIALIZE_SOCKET_SUBSYSTEM */
 
     /*
      * Just save the last component of the path for error messages

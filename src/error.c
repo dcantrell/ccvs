@@ -68,7 +68,7 @@ void exit ();
 
 extern char *strerror ();
 
-typedef void (*fn_returning_void) ();
+typedef void (*fn_returning_void) PROTO((void));
 
 /* Function to call before exiting.  */
 static fn_returning_void cleanup_fn;
