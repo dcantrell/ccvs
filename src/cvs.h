@@ -362,7 +362,7 @@ enum direnter_type
 };
 typedef enum direnter_type Dtype;
 
-extern char *program_name, *command_name;
+extern char *program_name, *program_path, *command_name;
 extern char *Rcsbin, *Editor, *CVSroot;
 #ifdef CVSADM_ROOT
 extern char *CVSADM_Root;
