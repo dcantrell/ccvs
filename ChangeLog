@@ -1,3 +1,8 @@
+Sun Oct  1 18:48:19 1995  Karl Fogel  <kfogel@totoro.cyclic.com>
+
+        * (configure): re-ran autoconf following Peter Wemm's change
+        below.
+
 Sun Oct  1 22:24:56 1995  Peter Wemm  <peter@haywire.dialix.com>
 
 	* configure.in: more extensive searching for -lsocket and -lnsl
