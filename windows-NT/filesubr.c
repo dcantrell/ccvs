@@ -731,14 +731,7 @@ FILE *cvs_temp_file (filename)
     return fp;
 }
 
-/* Return non-zero iff FILENAME is absolute.
-   Trivial under Unix, but more complicated under other systems.  */
-int
-isabsolute (filename)
-    const char *filename;
-{
-    return ISABSOLUTE (filename);
-}
+
 
 /* char *
  * xresolvepath ( const char *path )
