@@ -1834,7 +1834,7 @@ remove_file (struct file_info *finfo, char *tag, char *message)
 	free (corev);
 
     retcode = RCS_checkin (finfo->rcs, NULL, finfo->file, message,
-			   rev, RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
+			   rev, 0, RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
     if (retcode	!= 0)
     {
 	if (!quiet)
@@ -2192,7 +2192,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* commit a dead revision. */
 	    (void) sprintf (tmp, "file %s was initially added on branch %s.",
 			    file, tag);
-	    retcode = RCS_checkin (rcs, NULL, NULL, tmp, NULL,
+	    retcode = RCS_checkin (rcs, NULL, NULL, tmp, NULL, 0,
 				   RCS_FLAGS_DEAD | RCS_FLAGS_QUIET);
 	    free (tmp);
 	    if (retcode != 0)
@@ -2232,7 +2232,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    char *head;
 	    char *magicrev;
 	    int retcode;
-	    struct utimbuf headt;
+	    time_t headtime = -1;
 	    char *revnum, *tmp;
 	    FILE *fp;
 	    time_t t = -1;
@@ -2246,8 +2246,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* If this is not a new branch, then we will want a dead
 	       version created before this one. */
 	    if (!newfile)
-		headt.actime = headt.modtime =
-		    RCS_getrevtime (rcs, head, 0, 0);
+		headtime = RCS_getrevtime (rcs, head, 0, 0);
 
 	    retcode = RCS_settag (rcs, tag, magicrev);
 	    RCS_rewrite (rcs, NULL, NULL);
@@ -2264,7 +2263,7 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 	    /* We need to add a dead version here to avoid -rtag -Dtime
 	       checkout problems between when the head version was
 	       created and now. */
-	    if (!newfile && headt.modtime != -1)
+	    if (!newfile && headtime != -1)
 	    {
 		/* move the new file out of the way. */
 		fname = Xasprintf ("%s/%s%s", CVSADM, CVSPREFIX, file);
@@ -2278,10 +2277,6 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 		if (fclose (fp) < 0)
 		    error (0, errno, "cannot close %s", file);
 
-		/* The temporary file should have the same time as the
-		   head version */
-		(void) utime (file, &headt);
-
 		/* As we will be hacking the delta date, put the time
 		   this was added into the log message. */
 		t = time(NULL);
@@ -2294,10 +2289,10 @@ checkaddfile (const char *file, const char *repository, const char *tag,
 			 
 		/* commit a dead revision. */
 		revnum = RCS_whatbranch (rcs, tag);
-		retcode = RCS_checkin (rcs, NULL, NULL, tmp, revnum,
+		retcode = RCS_checkin (rcs, NULL, NULL, tmp, revnum, headtime,
 				       RCS_FLAGS_DEAD |
-				       RCS_FLAGS_MODTIME |
-				       RCS_FLAGS_QUIET);
+				       RCS_FLAGS_QUIET |
+				       RCS_FLAGS_USETIME);
 		free (revnum);
 		free (tmp);
 

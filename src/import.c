@@ -772,7 +772,7 @@ add_rev (char *message, RCSNode *rcs, char *vfile, char *vers)
     tocvsPath = wrap_tocvs_process_file (vfile);
 
     status = RCS_checkin (rcs, NULL, tocvsPath == NULL ? vfile : tocvsPath,
-			  message, vbranch,
+			  message, vbranch, 0,
 			  (RCS_FLAGS_QUIET | RCS_FLAGS_KEEPFILE
 			   | (use_file_modtime ? RCS_FLAGS_MODTIME : 0)));
     ierrno = errno;

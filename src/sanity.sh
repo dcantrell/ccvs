@@ -24136,14 +24136,8 @@ ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 	  dotest tagdate-19 "${testcvs} -q ci -m add file3" \
 "$CVSROOT_DIRNAME/first-dir/Attic/file3,v  <--  file3
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
-	  # Version 1.1 was created dead to put 1.1.2.1 on the branch
-	  # and not the trunk.
 	  date_T5=`getrlogdate -r1.1 first-dir/file3`
 	  date_T6=`getrlogdate -r1.1.2.1 first-dir/file3`
-	  (echo Dates for tagdate-19b are:;\
-	   echo "  date_T5='$date_T5'";\
-	   echo "  date_T6='$date_T6'") >>$LOGFILE
-	  dotest tagdate-19b "test 'x$date_T5' = 'x$date_T6'" ''
 
 	  cd ../..
 	  mkdir 3; cd 3
@@ -24184,7 +24178,6 @@ new revision: 1\.2\.2\.2; previous revision: 1\.2\.2\.1"
 	  # +60s
 	  # T4    1.1.4.2 br2     first-dir/file1 committed "br2-2"
 	  # T5    1.1     trunk   first-dir/file3 dead
-	  # NOTE T5 and T6 will have should the same timestamp
 	  # T6    1.1.2.1 br2     first-dir/file3 committed "br2-1"
 	  # T7    1.1     trunk   first-dir/file2 committed "trunk-1"
 	  # T8    1.2     trunk   first-dir/file2 committed "trunk-2"
@@ -24198,6 +24191,7 @@ new revision: 1\.2\.2\.2; previous revision: 1\.2\.2\.1"
 	   echo "  date_T2='$date_T2'";\
 	   echo "  date_T3='$date_T3'";\
 	   echo "  date_T4='$date_T4'";\
+	   echo "  date_T5='$date_T5'";\
 	   echo "  date_T6='$date_T6'";\
 	   echo "  date_T7='$date_T7'";\
 	   echo "  date_T8='$date_T8'";\
