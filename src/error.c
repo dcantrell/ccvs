@@ -123,6 +123,7 @@ error (status, errnum, message, va_alist)
 	int num;
 	long lnum;
 	unsigned int unum;
+	unsigned long ulnum;
 	int ch;
 	char buf[100];
 
@@ -159,11 +160,19 @@ error (status, errnum, message, va_alist)
 		cvs_outerr (buf, strlen (buf));
 		break;
 	    case 'l':
-		if (q[2] != 'd') goto bad;
-		q++;
-		lnum = va_arg (args, long);
-		sprintf (buf, "%ld", lnum);
+		if (q[2] == 'd')
+		{
+		    lnum = va_arg (args, long);
+		    sprintf (buf, "%ld", lnum);
+		}
+		else if (q[2] == 'u')
+		{
+		    ulnum = va_arg (args, unsigned long);
+		    sprintf (buf, "%lu", ulnum);
+		}
+		else goto bad;
 		cvs_outerr (buf, strlen (buf));
+		q++;
 		break;
 	    case 'x':
 		unum = va_arg (args, unsigned int);
