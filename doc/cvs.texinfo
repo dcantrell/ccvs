@@ -6004,33 +6004,33 @@ invoking an editor.
 
 @appendixsubsubsec New major release number
 
-When you make a major release of your product, you
-might want the revision numbers to track your major
-release number.  You should normally not care about
-the revision numbers, but this is a thing that many
-people want to do, and it can be done without doing any
-harm.
+@c "commit examples" seems like a bad place for this.
+@c What is the right place?
+By default, @sc{cvs} will assign numeric revisions by
+leaving the first number the same and incrementing the
+second number.  For example, @code{1.1}, @code{1.2},
+@code{1.3}, etc.  Normally there is no reason to care
+about the revision numbers---it is easier to treat them
+as internal numbers that @sc{cvs} maintains, and tags
+provide a better way to distinguish between things like
+release 1 versus release 2 of your product
+(@pxref{Tags}).  However, if you want to set the
+numeric revisions, the @samp{-r} option to @code{cvs
+commit} can do that.
 
-To bring all your files up to the @sc{rcs} revision 3.0
-(including those that haven't changed), you might do:
+For example, to bring all your files up to the @sc{rcs}
+revision 3.0 (including those that haven't changed),
+you might invoke:
 
 @example
 $ cvs commit -r 3.0
 @end example
 
-Note that it is generally a bad idea to try to make the
-@sc{rcs} revision number equal to the current release number
-of your product.  You should think of the revision
-number as an internal number that the @sc{cvs} package
-maintains, and that you generally never need to care
-much about.  Using the @code{tag} and @code{rtag}
-commands you can give symbolic names to the releases
-instead.  @xref{tag} and @xref{rtag}.
-
 Note that the number you specify with @samp{-r} must be
 larger than any existing revision number.  That is, if
 revision 3.0 exists, you cannot @samp{cvs commit
--r 1.3}.
+-r 1.3}.  If you want to maintain several releases in
+parallel, you need to use a branch (@pxref{Branches}).
 
 @appendixsubsubsec Committing to a branch
 
