@@ -1281,6 +1281,25 @@ protocol error: compressed files not supported for that operation");
 	error (1, errno, "cannot close %s", fullname);
 }
 
+/* OK, we want to swallow the "U foo.c" response and then output it only
+   if we can update the file.  In the future we probably want some more
+   systematic approach to parsing tagged text, but for now we keep it
+   ad hoc.  "Why," I hear you cry, "do we not just look at the
+   Update-existing and Created responses?"  That is an excellent question,
+   and the answer is roughly conservatism/laziness--I haven't read through
+   update.c enough to figure out the exact correspondence or lack thereof
+   between those responses and a "U foo.c" line (note that Merged, from
+   join_file, can be either "C foo" or "U foo" depending on the context).  */
+/* Nonzero if we have seen +updated and not -updated.  */
+static int updated_seen;
+/* Filename from an "fname" tagged response within +updated/-updated.  */
+static char *updated_fname;
+
+
+/* Nonzero if we should arrange to return with a failure exit status.  */
+static int failure_exit;
+
+
 /*
  * The time stamp of the last file we registered.
  */
@@ -1552,6 +1571,13 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	       I hope the above paragraph makes it clear that making this
 	       clearer is not a one-line fix.  */
 	    error (0, 0, "move away %s; it is in the way", short_pathname);
+	    if (updated_fname != NULL)
+	    {
+		cvs_output ("C ", 0);
+		cvs_output (updated_fname, 0);
+		cvs_output ("\n", 1);
+	    }
+	    failure_exit = 1;
 
 	discard_file_and_return:
 	    /* Now read and discard the file contents.  */
@@ -1580,6 +1606,11 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    stored_modtime_valid = 0;
 	    stored_checksum_valid = 0;
 
+	    if (updated_fname != NULL)
+	    {
+		free (updated_fname);
+		updated_fname = NULL;
+	    }
 	    return;
 	}
 
@@ -1669,6 +1700,22 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    }
 
 	    gzip_pid = -1;
+	}
+
+	/* This is after we have read the file from the net (a change
+	   from previous versions, where the server would send us
+	   "M U foo.c" before Update-existing or whatever), but before
+	   we finish writing the file (arguably a bug).  The timing
+	   affects a user who wants status info about how far we have
+	   gotten, and also affects whether "U foo.c" appears in addition
+	   to various error messages.  */
+	if (updated_fname != NULL)
+	{
+	    cvs_output ("U ", 0);
+	    cvs_output (updated_fname, 0);
+	    cvs_output ("\n", 1);
+	    free (updated_fname);
+	    updated_fname = 0;
 	}
 
 	/* Since gunzip writes files without converting LF to CRLF
@@ -2994,10 +3041,35 @@ handle_mt (args, len)
     switch (tag[0])
     {
 	case '+':
+	    if (strcmp (tag, "+updated") == 0)
+		updated_seen = 1;
+	    break;
 	case '-':
+	    if (strcmp (tag, "-updated") == 0)
+		updated_seen = 0;
 	    break;
 	default:
-	    if (strcmp (tag, "newline") == 0)
+	    if (updated_seen)
+	    {
+		if (strcmp (tag, "fname") == 0)
+		{
+		    if (updated_fname != NULL)
+		    {
+			/* Output the previous message now.  This can happen
+			   if there was no Update-existing or other such
+			   response, due to the -n global option.  */
+			cvs_output ("U ", 0);
+			cvs_output (updated_fname, 0);
+			cvs_output ("\n", 1);
+			free (updated_fname);
+		    }
+		    updated_fname = xstrdup (text);
+		}
+		/* Swallow all other tags.  Either they are extraneous
+		   or they reflect future extensions that we can
+		   safely ignore.  */
+	    }
+	    else if (strcmp (tag, "newline") == 0)
 		printf ("\n");
 	    else if (text != NULL)
 		printf ("%s", text);
@@ -3196,7 +3268,24 @@ get_server_responses ()
 		   cmd);
 	free (cmd);
     } while (rs->type == response_type_normal);
-    return rs->type == response_type_error ? 1 : 0;
+
+    if (updated_fname != NULL)
+    {
+	/* Output the previous message now.  This can happen
+	   if there was no Update-existing or other such
+	   response, due to the -n global option.  */
+	cvs_output ("U ", 0);
+	cvs_output (updated_fname, 0);
+	cvs_output ("\n", 1);
+	free (updated_fname);
+	updated_fname = NULL;
+    }
+
+    if (rs->type == response_type_error)
+	return 1;
+    if (failure_exit)
+	return 1;
+    return 0;
 }
 
 /* Get the responses and then close the connection.  */

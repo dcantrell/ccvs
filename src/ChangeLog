@@ -1,3 +1,19 @@
+Mon Dec 15 00:07:02 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* client.c (failure_exit): New variable.
+	(get_server_responses): If it is set, then return
+	failure.
+	(updated_seen, updated_fname): New variables.
+	(update_entries): Use updated_fname if set.  In the "move away
+	foo.c; it is in the way" case print "C" not "U", and set
+	failure_exit.
+	(handle_mt): If we get +updated tagged text, stash it away in
+	updated_fname rather than printing it immediately.
+	(handle_mt, get_server_responses): If we stashed a filename and
+	didn't get around to printing it, go ahead and print it.
+	* sanity.sh (conflicts2-142d2): Adjust to test for fix.  Remote is
+	now like local was in terms of exit status and "C aa.c" message.
+
 Sun Dec 14 00:27:26 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	Implement tagged text feature:
