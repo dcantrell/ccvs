@@ -1,5 +1,9 @@
 Wed Jul 30 15:35:33 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* Makefile.in: In comment about Makefile rule, remove note about
+	this not being a problem for os2/Makefile.in.  It is a problem
+	there too.
+
 	* README: Add note about srcdir and top_srcdir.
 
 Mon Jul 21 15:36:48 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
