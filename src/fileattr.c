@@ -517,6 +517,11 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
      * %p = shortrepos
      * %r = repository
      */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      false, srepos,
@@ -528,7 +533,7 @@ postwatch_proc (const char *repository, const char *filter, void *closure)
 #endif /* SERVER_SUPPORT */
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
-	                      NULL);
+	                      (char *) NULL);
 
     if (!cmdline || !strlen (cmdline))
     {

@@ -787,6 +787,11 @@ logfile_write (const char *repository, const char *filter, const char *message,
      * %r = repository
      * %{sVv} = file name, old revision (precommit), new revision (postcommit)
      */
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      !config->UseNewInfoFmtStrings, srepos,
@@ -799,8 +804,8 @@ logfile_write (const char *repository, const char *filter, const char *message,
 	                      "p", "s", srepos,
 	                      "r", "s", current_parsed_root->directory,
 	                      "sVv", ",", changes,
-			      logmsg_list_to_args_proc, NULL,
-	                      NULL);
+			      logmsg_list_to_args_proc, (void *) NULL,
+	                      (char *) NULL);
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
@@ -907,6 +912,11 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
 	}
     } /* if (vpd->fname == NULL) */
 
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     verifymsg_script = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
                                        false, srepos,
@@ -921,7 +931,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
                                        "r", "s",
                                        current_parsed_root->directory,
                                        "l", "s", vpd->fname,
-                                       NULL);
+				       (char *) NULL);
 
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     if (newscript) free (newscript);

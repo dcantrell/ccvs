@@ -2232,6 +2232,11 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
     TRACE (TRACE_FUNCTION, "prepost_proxy_proc (%s, %s, %s)", repository,
 	   filter, *pre ? "pre" : "post");
 
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 # ifdef SUPPORT_OLD_INFO_FMT_STRINGS
 	                      0, ".",
@@ -2242,7 +2247,7 @@ prepost_proxy_proc (const char *repository, const char *filter, void *closure)
 	                      "p", "s", ".",
 	                      "r", "s", current_parsed_root->directory,
 	                      "P", "s", config->PrimaryServer->original,
-	                      NULL);
+	                      (char *) NULL);
 
     if (!cmdline || !strlen (cmdline))
     {

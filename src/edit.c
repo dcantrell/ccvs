@@ -813,20 +813,24 @@ notify_proc (const char *repository, const char *filter, void *closure)
     const char *srepos = Short_Repository (repository);
     struct notify_proc_args *args = closure;
 
+    /*
+     * Cast any NULL arguments as appropriate pointers as this is an
+     * stdarg function and we need to be certain the caller gets what
+     * is expected.
+     */
     cmdline = format_cmdline (
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
-	false, srepos,
+			      false, srepos,
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-	filter,
-	"c", "s", cvs_cmd_name,
+			      filter,
+			      "c", "s", cvs_cmd_name,
 #ifdef SERVER_SUPPORT
-        "R", "s", referrer ? referrer->original : "NONE",
+			      "R", "s", referrer ? referrer->original : "NONE",
 #endif /* SERVER_SUPPORT */
-    	"p", "s", srepos,
-	"r", "s", current_parsed_root->directory,
-	"s", "s", args->notifyee,
-	NULL
-	);
+			      "p", "s", srepos,
+			      "r", "s", current_parsed_root->directory,
+			      "s", "s", args->notifyee,
+			      (char *) NULL);
     if (!cmdline || !strlen (cmdline))
     {
 	if (cmdline) free (cmdline);
