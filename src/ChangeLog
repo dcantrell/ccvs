@@ -1,5 +1,10 @@
 2001-04-02  Derek Price  <dprice@collab.net>
 
+	* sanity.sh: Use less obfuscated English in my comment about sanity
+	checking sanity.sh.
+
+2001-04-02  Derek Price  <dprice@collab.net>
+
 	* sanity.sh (rm-update-message): Create a test directory again but
 	change back to the correct directory upon completion this time.
 
