@@ -1,3 +1,9 @@
+2004-10-16  Conrad T. Pino  <Conrad@Pino.com>
+
+	* libcvs.dsp: Add "vasprintf.c" and "vasprintf.h" to project.
+	* libcvs.dep: Regenerate for "libcvs.dsp" change.
+	* libcvs.mak: Regenerate for "libcvs.dsp" change.
+
 2004-10-15  Derek Price  <derek@ximbiot.com>
 
 	* asprintf.c, vasprintf.c, vasprintf.h: New files from GNULIB.

@@ -197,6 +197,10 @@ SOURCE=.\vasnprintf.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\vasprintf.c
+# End Source File
+# Begin Source File
+
 SOURCE=".\xalloc-die.c"
 # End Source File
 # Begin Source File
@@ -411,6 +415,10 @@ SOURCE=".\unlocked-io.h"
 # Begin Source File
 
 SOURCE=.\vasnprintf.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\vasprintf.h
 # End Source File
 # Begin Source File
 
