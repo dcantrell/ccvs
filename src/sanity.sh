@@ -1212,7 +1212,7 @@ ${PROG} [a-z]*: Updating second-dir"
 	  # For CVS to make a syntactic check for "." wouldn't suffice.
 	  # On Linux 2.2 systems, the cwd may be gone, so we recreate it
           # to allow basicc-11 to actually happen 
-	  if ! test -d ../first-dir; then
+	  if test ! -d ../first-dir; then
 	    cd ..
 	    mkdir ./first-dir
             cd ./first-dir

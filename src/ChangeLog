@@ -1,5 +1,11 @@
 1999-08-17  Larry Jones  <larry.jones@sdrc.com>
 
+	* sanity.sh (basicc-11): Older versions of sh don't understand
+	``if ! test...''.  (Patch submitted by David J N Begley
+	<david@avarice.nepean.uws.edu.au>.)
+
+1999-08-17  Larry Jones  <larry.jones@sdrc.com>
+
 	* client.c, hardlink.c, hash.c, hash.h, main.c, recurse.c: Change
 	enum constant UNKNOWN to avoid conflicts on HPUX 11.0.  (Reported
 	by Laurent Duperval <laurent.duperval@cgi.ca>.)
