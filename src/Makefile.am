@@ -16,7 +16,7 @@
 
 SHELL = /bin/sh
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff -I$(top_srcdir)/zlib
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/diff $(ZLIB_CPPFLAGS)
 
 bin_PROGRAMS = cvs
 bin_SCRIPTS = cvsbug
@@ -100,7 +100,7 @@ cvs_DEPENDENCIES = $(cvs_client_objects)
 cvs_LDADD = $(cvs_client_objects) \
 	../diff/libdiff.a \
 	../lib/libcvs.a \
-	../zlib/libz.a
+	$(ZLIB_LIBS)
 
 # General
 EXTRA_DIST = \
