@@ -1,3 +1,14 @@
+Sat Nov  1 14:21:29 1997  Michael L.H. Brouwer  <michael@thi.nl>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* rcs.c (RCS_checkin): When checking if we were holding the lock
+	use delta->author instead of user since the latter might have been
+	clobbered by a call to getcaller.  This resulted in the failure of
+	test basica-7.
+	[I don't completely follow the scenario where it gets clobbered,
+	it but sounds vaguely plausible and the replacement seems
+	cleaner, precisely because it avoids allocation issues -kingdon]
+
 Wed Nov  5 20:16:12 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* checkin.c, checkout.c, commit.c, cvs.h, import.c, login.c,
