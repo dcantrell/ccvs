@@ -42,7 +42,8 @@
 #include "edit.h"
 
 static int checkout_file PROTO((char *file, char *repository, List *entries,
-			  RCSNode *rcsnode, Vers_TS *vers_ts, char *update_dir));
+				RCSNode *rcsnode, Vers_TS *vers_ts,
+				char *update_dir, int *resurrecting_out));
 #ifdef SERVER_SUPPORT
 static int patch_file PROTO((char *file, char *repository, List *entries,
 		       RCSNode*rcsnode, Vers_TS *vers_ts, char *update_dir,
@@ -62,7 +63,8 @@ static int update_filesdone_proc PROTO((int err, char *repository,
 static int write_letter PROTO((char *file, int letter, char *update_dir));
 #ifdef SERVER_SUPPORT
 static void join_file PROTO((char *file, RCSNode *rcsnode, Vers_TS *vers_ts,
-		       char *update_dir, List *entries, char *repository));
+			     char *update_dir, List *entries,
+			     char *repository, int resurrecting));
 #else
 static void join_file PROTO((char *file, RCSNode *rcsnode, Vers_TS *vers_ts,
 		       char *update_dir, List *entries));
@@ -437,6 +439,9 @@ update_fileproc (finfo)
     int retval;
     Ctype status;
     Vers_TS *vers;
+    int resurrecting;
+
+    resurrecting = 0;
 
     status = Classify_File (finfo->file, tag, date, options, force_tag_match,
 			    aflag, finfo->repository, finfo->entries, finfo->rcs, &vers,
@@ -469,8 +474,9 @@ update_fileproc (finfo)
 #ifdef SERVER_SUPPORT
 	    case T_PATCH:		/* needs patch */
 #endif
-		retval = checkout_file (finfo->file, finfo->repository, finfo->entries, finfo->rcs,
-					vers, finfo->update_dir);
+		retval = checkout_file (finfo->file, finfo->repository,
+					finfo->entries, finfo->rcs,
+					vers, finfo->update_dir, NULL);
 		break;
 
 	    default:			/* can't ever happen :-) */
@@ -504,8 +510,11 @@ update_fileproc (finfo)
 		    if (wrap_merge_is_copy (finfo->file))
 			/* Should we be warning the user that we are
 			 * overwriting the user's copy of the file?  */
-			retval = checkout_file (finfo->file, finfo->repository, finfo->entries,
-						finfo->rcs, vers, finfo->update_dir);
+			retval =
+			  checkout_file (finfo->file, finfo->repository,
+					 finfo->entries,
+					 finfo->rcs, vers, finfo->update_dir,
+					 NULL);
 		    else
 			retval = merge_file (finfo->file, finfo->repository, finfo->entries,
 					     vers, finfo->update_dir);
@@ -597,8 +606,10 @@ update_fileproc (finfo)
 		/* Fall through.  */
 #endif
 	    case T_CHECKOUT:		/* needs checkout */
-		retval = checkout_file (finfo->file, finfo->repository, finfo->entries, finfo->rcs,
-					vers, finfo->update_dir);
+		retval = checkout_file (finfo->file, finfo->repository,
+					finfo->entries, finfo->rcs,
+					vers, finfo->update_dir,
+					&resurrecting);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
 		    server_updated (finfo->file, finfo->update_dir, finfo->repository,
@@ -632,7 +643,8 @@ update_fileproc (finfo)
     /* only try to join if things have gone well thus far */
     if (retval == 0 && join_rev1)
 #ifdef SERVER_SUPPORT
-	join_file (finfo->file, finfo->rcs, vers, finfo->update_dir, finfo->entries, finfo->repository);
+	join_file (finfo->file, finfo->rcs, vers, finfo->update_dir,
+		   finfo->entries, finfo->repository, resurrecting);
 #else
 	join_file (finfo->file, finfo->rcs, vers, finfo->update_dir, finfo->entries);
 #endif
@@ -906,16 +918,18 @@ scratch_file (file, repository, entries, update_dir)
 }
 
 /*
- * check out a file - essentially returns the result of the fork on "co".
+ * Check out a file.
  */
 static int
-checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir)
+checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir,
+	       resurrecting_out)
     char *file;
     char *repository;
     List *entries;
     RCSNode *rcsnode;
     Vers_TS *vers_ts;
     char *update_dir;
+    int *resurrecting_out;
 {
     char backup[PATH_MAX];
     int set_time, retval = 0;
@@ -969,6 +983,8 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir)
 	    int resurrecting;
 
 	    resurrecting = 0;
+	    if (resurrecting_out)
+		*resurrecting_out = 0;
 
 	    if (file_is_dead && joining())
 	    {
@@ -999,6 +1015,8 @@ checkout_file (file, repository, entries, rcsnode, vers_ts, update_dir)
 		    }
 		    file_is_dead = 0;
 		    resurrecting = 1;
+		    if (resurrecting_out)
+			*resurrecting_out = 1;
 		}
 		else
 		{
@@ -1487,8 +1505,9 @@ merge_file (file, repository, entries, vers, update_dir)
  */
 static void
 #ifdef SERVER_SUPPORT
-join_file (file, rcsnode, vers, update_dir, entries, repository)
+join_file (file, rcsnode, vers, update_dir, entries, repository, resurrecting)
     char *repository;
+    int resurrecting;
 #else
 join_file (file, rcsnode, vers, update_dir, entries)
 #endif
@@ -1810,7 +1829,14 @@ join_file (file, rcsnode, vers, update_dir, entries)
 
 	if (status)
 	    cp = time_stamp (file);
-	Register (entries, file, vers->vn_rcs, vers->ts_rcs, vers->options,
+	Register (entries, file,
+#ifdef SERVER_SUPPORT
+		  (server_active && resurrecting) ? "0" :
+		  vers->vn_rcs,
+#else /* SERVER_SUPPORT */
+		  vers->vn_rcs, 
+#endif /* SERVER_SUPPORT */
+		  vers->ts_rcs, vers->options,
 		  vers->tag, vers->date, cp);
 	if (cp)
 	    free(cp);
