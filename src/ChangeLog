@@ -1,3 +1,12 @@
+2004-07-15  Derek Price  <derek@ximbiot.com>
+
+	* log-buffer.c (log_buffer_output): Remove extremely slow fsync call.
+	(log_buffer_disable): Move to here so log files are sync'd before
+	close.
+	* sanity.sh (run_filter): New function to allow for filtering of cruft
+	output by Rational Quantify or other profilers.
+	(dotest_*): Call new function.
+
 2004-07-13  Derek Price  <derek@ximbiot.com>
 
 	* server.c (prepost_proxy_proc): Add the CVSROOT string for the primary
