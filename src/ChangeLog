@@ -1,4 +1,8 @@
-2005-02-04 Derek Price <derek@ximbiot.com>
+2005-02-08 Derek Price <derek@ximbiot.com>
+
+	* rsh-client.c: Some reformatting.
+
+2005-02-01  Larry Jones  <lawrence.jones@ugs.com>
 
 	* zlib.c (compress_buffer_input): Don't return EOF when there is data
 	pending.
