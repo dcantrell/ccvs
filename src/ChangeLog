@@ -1,3 +1,8 @@
+Fri May 16 13:14:30 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* main.c (main): Use "xstrdup (foo)" not "xstrdup(foo)" as
+	specified in HACKING.
+
 Fri May 16 15:10:37 1997  Norbert Kiesel  <nk@cosa.de>
 
 	* modules.c (do_module): initialize optind to 0.  use local copies
