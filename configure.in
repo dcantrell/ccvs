@@ -1,7 +1,7 @@
 dnl configure.in for cvs
 AC_INIT(src/cvs.h)
 AC_PREREQ(2.1)dnl Required Autoconf version.
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADER(config.h src/options.h)
 
 AC_DEFINE(CVS_SUPPORT)
 
@@ -170,18 +170,9 @@ test -f src/options.h && (
   AC_MSG_WARN(saving ./src/options.h in ./src/options.h-SAVED)
   AC_MSG_WARN(You may wish to check that local options have not been lost.)
   AC_MSG_WARN(Do not re-run ./configure or ./config.status until you have....)
-  mv ./src/options.h ./src/options.h-SAVED
+  cp ./src/options.h ./src/options.h-SAVED
 )
 
-dnl FIXME: AC needs another feature to not touch files that don't change....
-dnl FIXME: particularly for src/options.h
-dnl FIXME: We'll use an ugly hack for now, but it won't work for config.status....
-
-AC_OUTPUT(Makefile lib/Makefile src/Makefile src/options.h doc/Makefile \
+AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile \
 	  man/Makefile contrib/Makefile contrib/pcl-cvs/Makefile \
 	  examples/Makefile windows-NT/Makefile stamp-h)
-
-if cmp src/options.h-SAVED src/options.h > /dev/null 2>&1 ; then
-  AC_MSG_WARN(src/options.h unchanged)
-  mv src/options.h-SAVED src/options.h
-fi
