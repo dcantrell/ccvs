@@ -625,10 +625,13 @@ update_fileproc (finfo)
 		retval = scratch_file (finfo->file, finfo->repository, finfo->entries, finfo->update_dir);
 #ifdef SERVER_SUPPORT
 		if (server_active && retval == 0)
+		{
+		    server_scratch_entry_only ();
 		    server_updated (finfo->file, finfo->update_dir,
 				    finfo->repository, vers,
 				    SERVER_UPDATED, (struct stat *) NULL,
 				    (unsigned char *) NULL);
+		}
 #endif
 		break;
 	    default:			/* can't ever happen :-) */
