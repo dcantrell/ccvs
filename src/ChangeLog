@@ -1,3 +1,7 @@
+2004-10-14  Derek Price  <derek@ximbiot.com>
+
+	* gssapi-client.c: Use new size_t buffer APIs.
+
 2004-10-11  Mark D. Baushke  <mdb@cvshome.org>
 
 	* buffer.h, buffer.c (buf_output, buf_input_data, buf_read_line,
