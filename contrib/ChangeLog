@@ -1,3 +1,8 @@
+2002-11-08  Derek Price  <derek@ximbiot.com>
+
+	* debug_check_log.sh: Simplify some code.  Attempt to default to
+	src/check.log before falling back to ./check.log.
+
 2002-09-24  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Regenerated using Automake 1.6.3.
