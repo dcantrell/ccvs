@@ -6587,14 +6587,11 @@ done"
 	  cd ../../1/first-dir
 	  dotest binfiles-con5 "${testcvs} -q update" '[UP] binfile'
 
-	  # The bugs which these test for are apparently not fixed for remote.
-	  if test "$remote" = no; then
-	    dotest binfiles-9 "${testcvs} -q update -A" ''
-	    dotest binfiles-10 "${testcvs} -q update -kk" '[UP] binfile'
-	    dotest binfiles-11 "${testcvs} -q update" ''
-	    dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
-	    dotest binfiles-13 "${testcvs} -q update -A" ''
-	  fi
+	  dotest binfiles-9 "${testcvs} -q update -A" ''
+	  dotest binfiles-10 "${testcvs} -q update -kk" '[UP] binfile'
+	  dotest binfiles-11 "${testcvs} -q update" ''
+	  dotest binfiles-12 "${testcvs} -q update -A" '[UP] binfile'
+	  dotest binfiles-13 "${testcvs} -q update -A" ''
 
 	  cd ../..
 	  rm -r 1
@@ -6687,17 +6684,8 @@ File: nibfile          	Status: Up-to-date
    Sticky Options:	-kb"
 
 	  # Now test that -A can clear the sticky option.
-	  if test "$remote" = no; then
-	    dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
+	  dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
 "[UP] nibfile"
-	  else
-	    dotest binfiles-sticky5 "${testcvs} -q update -A nibfile" \
-""
-	    # Oops.  Clear the sticky option by brute force.
-	    rm nibfile
-	    dotest binfiles-sticky5r "${testcvs} -q update -A nibfile" \
-"[UP] nibfile"
-	  fi
 	  dotest binfiles-sticky6 "${testcvs} -q status nibfile" \
 "===================================================================
 File: nibfile          	Status: Up-to-date
@@ -8983,17 +8971,7 @@ xx "'\$'"Log"'\$'
 
 	  # Test the Name keyword.  First go back to normal expansion.
 
-	  # FIXME: When using remote, update -A does not revert the
-	  # keyword expansion mode.  We work around that bug here.
-	  # This workaround should be removed when the bug is fixed.
-	  if test "x$remote" = "xyes"; then
-	    cd ..
-	    rm -r first-dir
-	    dotest keyword-17 "${testcvs} -q co first-dir" "U first-dir/file1"
-	    cd first-dir
-	  else
-	    dotest keyword-17 "${testcvs} update -A file1" "U file1"
-	  fi
+	  dotest keyword-17 "${testcvs} update -A file1" "U file1"
 
 	  echo '$''Name$' > file1
 	  dotest keyword-18 "${testcvs} ci -m modify file1" \

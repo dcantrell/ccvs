@@ -1,5 +1,12 @@
 Sat Nov 22 10:54:16 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* client.c (send_fileproc): Send options field from
+	vers->entdata->options not vers->options.
+	* cvs.h (struct entnode): Add comment (options and timestamp must
+	not be NULL).
+	* sanity.sh (binfiles-9 through binfiles-13, binfiles-sticky5,
+	keyword-17): Remove kludges for remote; tests for fix.
+
 	* update.c (update_fileproc): Fix comment; direct checkout is
 	still faster than patches for local but not for quite the
 	same reasons.
