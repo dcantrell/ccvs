@@ -3632,7 +3632,7 @@ T file7"
 	  # the trunk (e.g. join-23).
 	  dotest join-28 "${testcvs} -q update -j branch" \
 "U file1
-RCS file: /home/kingdon/tmp/cvs-sanity/cvsroot/first-dir/file2,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
 retrieving revision 1.1
 retrieving revision 1.1.2.1
 Merging differences between 1.1 and 1.1.2.1 into file2
