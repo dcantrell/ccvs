@@ -1,3 +1,8 @@
+2003-07-16  Derek Price  <derek@ximbiot.com>
+
+	* filesubr.c: s/PROTO/.
+	* savecwd.c: Ditto.
+
 2002-03-21  Derek Price  <derek@ximbiot.com>
 
 	* Makefile.in: Remove unecessary dependence on $(srcdir) to
