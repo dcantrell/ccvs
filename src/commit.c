@@ -1411,11 +1411,14 @@ commit_filesdoneproc (callerdat, err, repository, update_dir, entries)
 
 	if (strncmp (CVSroot_directory, repository,
 		     strlen (CVSroot_directory)) != 0)
-	    error (0, 0, "internal error: repository (%s) doesn't begin with root (%s)", repository, CVSroot_directory);
+	    error (0, 0,
+		 "internal error: repository (%s) doesn't begin with root (%s)",
+		   repository, CVSroot_directory);
 	p = repository + strlen (CVSroot_directory);
 	if (*p == '/')
 	    ++p;
-	if (strcmp ("CVSROOT", p) == 0)
+	if (strcmp ("CVSROOT", p) == 0
+	    || strncmp ("CVSROOT/", p, strlen ("CVSROOT/")) == 0)
 	{
 	    /* "Database" might a little bit grandiose and/or vague,
 	       but "checked-out copies of administrative files, unless
