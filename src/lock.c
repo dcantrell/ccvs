@@ -154,7 +154,6 @@ lock_name (repository, name)
     char *retval;
     char *p;
     char *q;
-    mode_t oumask;
     char *short_repos;
 
     if (lock_dir == NULL)
@@ -166,6 +165,9 @@ lock_name (repository, name)
     }
     else
     {
+	struct stat sb;
+	mode_t new_mode = 0;
+
 	/* The interesting part of the repository is the part relative
 	   to CVSROOT.  */
 	assert (CVSroot_directory != NULL);
@@ -184,22 +186,43 @@ lock_name (repository, name)
 
 	strcpy (q, short_repos);
 
-	oumask = umask (cvsumask);
-
 	/* In the common case, where the directory already exists, let's
 	   keep it to one system call.  */
-	if (CVS_MKDIR (retval, 0777) < 0)
+	if (CVS_STAT (retval, &sb) < 0)
 	{
-	    if (errno == EEXIST)
-		goto created;
 	    /* If we need to be creating more than one directory, we'll
 	       get the existence_error here.  */
 	    if (!existence_error (errno))
-		error (1, errno, "cannot make directory %s", retval);
+		error (1, errno, "cannot stat directory %s", retval);
+	}
+	else
+	{
+	    if (S_ISDIR (sb.st_mode))
+		goto created;
+	    else
+		error (1, 0, "%s is not a directory", retval);
 	}
 
-	/* Now add the directories one at a time, so we can create them
-	   if needed.  */
+	/* Now add the directories one at a time, so we can create
+	   them if needed.
+
+	   The idea behind the new_mode stuff is that the directory we
+	   end up creating will inherit permissions from its parent
+	   directory (we re-set new_mode with each EEXIST).  CVSUMASK
+	   isn't right, because typically the reason for LockDir is to
+	   use a different set of permissions.  We probably want to
+	   inherit group ownership also (but we don't try to deal with
+	   that, some systems do it for us either always or when g+s is on).
+
+	   We don't try to do anything about the permissions on the lock
+	   files themselves.  The permissions don't really matter so much
+	   because the locks will generally be removed by the process
+	   which created them.  */
+
+	if (CVS_STAT (lock_dir, &sb) < 0)
+	    error (1, errno, "cannot stat %s", lock_dir);
+	new_mode = sb.st_mode;
+
 	p = short_repos;
 	while (1)
 	{
@@ -210,18 +233,24 @@ lock_name (repository, name)
 		strncpy (q, short_repos, p - short_repos);
 		q[p - short_repos] = '\0';
 		if (!ISDIRSEP (q[p - short_repos - 1])
-		    && CVS_MKDIR (retval, 0777) < 0)
+		    && CVS_MKDIR (retval, new_mode) < 0)
 		{
 		    int saved_errno = errno;
 		    if (saved_errno != EEXIST)
 			error (1, errno, "cannot make directory %s", retval);
+		    else
+		    {
+			if (CVS_STAT (retval, &sb) < 0)
+			    error (1, errno, "cannot stat %s", retval);
+			new_mode = sb.st_mode;
+		    }
 		}
 		++p;
 	    }
 	    else
 	    {
 		strcpy (q, short_repos);
-		if (CVS_MKDIR (retval, 0777) < 0
+		if (CVS_MKDIR (retval, new_mode) < 0
 		    && errno != EEXIST)
 		    error (1, errno, "cannot make directory %s", retval);
 		goto created;
@@ -229,7 +258,6 @@ lock_name (repository, name)
 	}
     created:;
 
-	(void) umask (oumask);
 	strcat (retval, "/");
 	strcat (retval, name);
     }
