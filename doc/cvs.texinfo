@@ -11596,6 +11596,16 @@ can be handled as with other @sc{cvs} bugs
 exact nature of which would depend on the situation but
 which hopefully could be figured out.
 
+@c This is more obscure than it might sound; it only
+@c happens if you run "cvs init" from a directory which
+@c contains a CVS/Root file at the start.
+@item cvs [init aborted]: cannot open CVS/Root: No such file or directory
+This message is harmless.  Provided it is not
+accompanied by other errors, the operation has
+completed successfully.  This message should not occur
+with current versions of @sc{cvs}, but it is documented
+here for the benefit of @sc{cvs} 1.9 and older.
+
 @item cvs [checkout aborted]: cannot rename file @var{file} to CVS/,,@var{file}: Invalid argument
 This message has been reported as intermittently
 happening with CVS 1.9 on Solaris 2.5.  The cause is
