@@ -1,3 +1,13 @@
+2003-08-09  Derek Price  <derek@ximbiot.com>
+
+	* check_cvs.in: Don't use unneeded Cwd module.
+	 (process_file): s/^(./)*// paths to files.
+	(look_at_cvs_file): Pass complete path from CVSROOT to get_history.
+	Remove unecessary syntax.
+	(get_history): Use `cvs rlog' instead of rlog.  Return undef for $rinfo
+	when %rinfo is empty.
+	(check_revision): Remove unecessary call to cwd.
+
 2003-08-06  Derek Price  <derek@ximbiot.com>
 
 	* commit_prep.in, log_accum.in: Port copious changes from Karl Fogel
