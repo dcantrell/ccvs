@@ -901,15 +901,6 @@ else
   : good, it works
 fi
 
-# Find rsync for the writeproxy tests.
-RSYNC=
-if $remote; then
-    tryrsync=`Which rsync`
-    if test -r "$tryrsync"; then
-	RSYNC=$tryrsync
-    fi
-fi
-
 
 # MacOS X (10.2.8) has a /bin/ls that does not work correctly in that
 # it will return true even if the wildcard argument does not match any
@@ -963,6 +954,39 @@ restore_adm ()
 {
     modify_repo rm -rf $CVSROOT_DIRNAME/CVSROOT
     modify_repo cp -rp $TESTDIR/CVSROOT.save/ $CVSROOT_DIRNAME/CVSROOT
+}
+
+# Test that $RSYNC supports the options we need or try to find a replacement.
+# If $RSYNC works or we replace it, set $save_RSYNC and return 0.  Otherwise,
+# set $skipreason and return 77.
+depends_on_rsync ()
+{
+  # Save a copy and set the absolute path to our default.
+  save_RSYNC=$RSYNC
+  : ${RSYNC=rsync}
+  RSYNC=`Which $RSYNC`
+
+  # Make some data to test rsync on.
+  mkdir $TESTDIR/rsync-test
+  for file in 1 2 3 4 5; do
+    touch $TESTDIR/rsync-test/$file
+  done
+
+  if test -f "$RSYNC" && test -r "$RSYNC" \
+     && $RSYNC -gopr --delete $TESTDIR/rsync-test/ $TESTDIR/rsync-test-copy
+  then
+    # good, it works
+    rm -r $TESTDIR/rsync-test $TESTDIR/rsync-test-copy
+  else
+    rm -r $TESTDIR/rsync-test
+    RSYNC=`find_tool rsync`
+    if test -z "$RSYNC" ; then
+      skipreason="unusable or no rsync found"
+      return 77
+    fi
+  fi
+
+  return 0
 }
 
 # Test that $1 works as a remote shell.  If so, set $host, $CVS_RSH, &
@@ -2289,9 +2313,9 @@ if $proxy; then
     # Now set the global CVSROOT to use the secondary.
     CVSROOT=$SECONDARY_CVSROOT; export CVSROOT
 
-    tryrsync=`Which rsync`
-    if test -n "$RSYNC"; then :; else
-	echo "Unable to test in proxy mode: No rsync found in $PATH" >&2
+    depends_on_rsync
+    if test $? -eq 77; then
+	echo "Unable to test in proxy mode: $skipreason" >&2
 	exit 1
     fi
 
@@ -29994,9 +30018,9 @@ ${SPROG} update: Updating first/subdir"
 	    continue
 	  fi
 
-	  tryrsync=`Which rsync`
-	  if test -n "$RSYNC"; then :; else
-	    skip writeproxy "No rsync found in $PATH"
+	  depends_on_rsync
+	  if test $? -eq 77; then
+	    skip writeproxy "$skipreason"
 	    continue
 	  fi
 
@@ -30147,8 +30171,9 @@ $SPROG \[update aborted\]: could not find desired version 1\.4 in $PRIMARY_CVSRO
 	    continue
 	  fi
 
-	  if test -n "$RSYNC"; then :; else
-	    skip writeproxy-noredirect "No rsync found in $PATH"
+	  depends_on_rsync
+	  if test $? -eq 77; then
+	    skip writeproxy-noredirect "$skipreason"
 	    continue
 	  fi
 
@@ -30412,9 +30437,9 @@ EOF
 	    continue
 	  fi
 
-	  tryrsync=`Which rsync`
-	  if test -n "$RSYNC"; then :; else
-	    skip writeproxy-ssh "No rsync found in $PATH"
+	  depends_on_rsync
+	  if test $? -eq 77; then
+	    skip writeproxy-ssh "$skipreason"
 	    continue
 	  fi
 
