@@ -1,3 +1,8 @@
+Thu Feb 16 12:17:20 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
+
+	* pcl-cvs.el (cvs-parse-stderr): Recognize "conflicts found in..."
+	messages attributed to "cvs server", as well as "cvs update".
+
 Sat Feb  4 01:47:01 1995  Jim Blandy  <jimb@totoro.bio.indiana.edu>
 
 	* pcl-cvs.el: Deal with the 'P' action, produced by remote CVS.
