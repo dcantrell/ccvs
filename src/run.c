@@ -15,6 +15,16 @@
 #include "cvs.h"
 #include "vasnprintf.h"
 
+/* Get wchar_t.  */
+#ifdef HAVE_WCHAR_T
+# include <stddef.h>
+#endif
+
+/* Get wint_t.  */
+#ifdef HAVE_WINT_T
+# include <wchar.h>
+#endif
+
 #ifndef HAVE_UNISTD_H
 extern int execvp (char *file, char **argv);
 #endif
@@ -23,6 +33,8 @@ static void run_add_arg (const char *s);
 static void cmdline_bindings_hash_node_delete (Node *p);
 
 extern char *strtok (char *, const char *);
+
+typedef int (*CONVPROC_t) (Node *, void *);
 
 /*
  * To exec a program under CVS, first call run_setup() to setup initial
@@ -73,7 +85,7 @@ run_setup( const char *prog )
     doff = d - buf;
     expand_string(&buf, &length, doff + 1);
     d = buf + doff;
-    while (*d = *s++)
+    while ((*d = *s++) != '\0')
     {
 	switch (*d)
 	{
@@ -589,7 +601,7 @@ cmdlineescape (quotes, s)
 	doff = d - buf;
 	expand_string (&buf, &length, doff + 1);
 	d = buf + doff;
-    } while (*d++ = *s++);
+    } while ((*d++ = *s++) != '\0');
     return (buf);
 }
 
@@ -619,7 +631,7 @@ cmdlineescape (quotes, s)
  *    							taginfo or loginfo)
  *    							multiple characters in
  *    							this strings will be
- *    							aliai for each other
+ *    							aliases for each other
  *    				char *printfformat	the same list of args
  *    							printf uses to
  *    							determine what kind of
@@ -649,7 +661,7 @@ cmdlineescape (quotes, s)
  *							possible format
  *							characters in
  *							userformat
- *				int (*convproc)		see data
+ *				int (*convproc)()	see data
  *				void *closure		arg to be passed into
  *							walklist as closure
  *							data for convproc
@@ -663,7 +675,7 @@ cmdlineescape (quotes, s)
  *                    "xG", "ld", longintwhichwontbeusedthispass,
  *                    "sVv", ",", tlist, pretag_list_to_args_proc,
  *                      (void *) mydata,
- *                    NULL);
+ *                    (char *)NULL);
  *
  *    would generate the following command line, assuming two files in tlist,
  *    file1 & file2, each with old versions 1.1 and new version 1.1.2.3:
@@ -691,9 +703,6 @@ format_cmdline (char *format, ...)
     char *pfmt;		/* initially the list of fmt keys passed in,
 			 * but used as a temporary key buffer later
 			 */
-    size_t plen;	/* pfmt length near the end where it becomes a
-			 * temporary buffer
-			 */
     char *fmt;		/* buffer for format string which we are processing */
     size_t flen;	/* length of fmt buffer */
     char *d, *q, *r,
@@ -707,7 +716,7 @@ format_cmdline (char *format, ...)
     Node *p;
     struct cmdline_bindings *b;
     static int warned_of_deprecation = 0;
-    char key[] = "\0\0";	/* Used as temporary storage for a single
+    char key[] = "?";		/* Used as temporary storage for a single
 				 * character search string used to locate a
 				 * hash key.
 				 */
@@ -739,7 +748,7 @@ format_cmdline (char *format, ...)
      * expect a certain number of arguments by type and a NULL format
      * string to terminate the list.
      */
-    while (pfmt = va_arg (args, char *))
+    while ((pfmt = va_arg (args, char *)) != NULL)
     {
 	char *conversion = va_arg (args, char *);
 
@@ -764,7 +773,6 @@ format_cmdline (char *format, ...)
 	    switch (*s)
 	    {
 		case 'h':
-		    char_conversion = 1;
 		    integer_conversion = 1;
 		    if (s[1] == 'h')
 		    {
@@ -773,7 +781,8 @@ format_cmdline (char *format, ...)
 		    }
 		    else
 		    {
-			length = sizeof (short int);
+			char_conversion = 1;
+			length = sizeof (short);
 			s++;
 		    }
 		    break;
@@ -788,14 +797,16 @@ format_cmdline (char *format, ...)
 		    integer_conversion = 1;
 		    if (s[1] == 'l')
 		    {
-			length = sizeof (long long int);
+#ifdef HAVE_LONG_LONG
+			length = sizeof (long long);
+#endif
 			s += 2;
 		    }
 		    else
 		    {
 			char_conversion = 2;
 			string_conversion = 2;
-			length = sizeof (long int);
+			length = sizeof (long);
 			s++;
 		    }
 		    break;
@@ -811,7 +822,9 @@ format_cmdline (char *format, ...)
 		    break;
 		case 'L':
 		    decimal_conversion = 1;
+#ifdef HAVE_LONG_DOUBLE
 		    length = sizeof (long double);
+#endif
 		    s++;
 		    break;
 		default:
@@ -848,6 +861,9 @@ format_cmdline (char *format, ...)
 		    break;
 #endif
 		}
+		else
+		    length = sizeof (char);
+		/* fall through... */
 	    case 'd':
 	    case 'i':
 	    case 'o':
@@ -866,70 +882,79 @@ format_cmdline (char *format, ...)
 		}
 		switch (length)
 		{
-		    char arg_char;
-#ifdef UNIQUE_INT_TYPE_WINT_T
-		    wint_t arg_wint_t;
-#endif /* UNIQUE_INT_TYPE_WINT_T */
-#ifdef UNIQUE_INT_TYPE_SHORT_INT
-		    short int arg_short_int;
-#endif /* UNIQUE_INT_TYPE_SHORT_INT */
-#ifdef UNIQUE_INT_TYPE_INT
-		    int arg_int;
-#endif /* UNIQUE_INT_TYPE_INT */
-#ifdef UNIQUE_INT_TYPE_LONG
-		    long int arg_long_int;
-#endif /* UNIQUE_INT_TYPE_LONG */
-#ifdef UNIQUE_INT_TYPE_LONG_LONG
-		    long long int arg_long_long_int;
-#endif /* UNIQUE_INT_TYPE_LONG_LONG */
-#ifdef UNIQUE_INT_TYPE_INTMAX_T
-		    intmax_t arg_intmax_t;
-#endif /* UNIQUE_INT_TYPE_INTMAX_T */
-#ifdef UNIQUE_INT_TYPE_SIZE_T
-		    size_t arg_size_t;
-#endif /* UNIQUE_INT_TYPE_SIZE_T */
-#ifdef UNIQUE_INT_TYPE_PTRDIFF_T
-		    ptrdiff_t arg_ptrdiff_t;
-#endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
 		    case sizeof(char):
-		    	arg_char = (char) va_arg (args, int);
+		    {
+		    	char arg_char = (char) va_arg (args, int);
 			b->data = asnprintf(NULL, &dummy, buf, arg_char);
 			break;
+		    }
+#ifdef HAVE_WINT_T
 #ifdef UNIQUE_INT_TYPE_WINT_T
 		    case sizeof(wint_t):
-		    	arg_wint_t = va_arg (args, wint_t);
+		    {
+		    	wint_t arg_wint_t = va_arg (args, wint_t);
 			b->data = asnprintf(NULL, &dummy, buf, arg_wint_t);
 			break;
+		    }
 #endif /* UNIQUE_INT_TYPE_WINT_T */
-#ifdef UNIQUE_INT_TYPE_SHORT_INT
-		    case sizeof(short int):
-		    	arg_short_int = (short int) va_arg (args, int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_short_int);
+#endif /* HAVE_WINT_T */
+#ifdef UNIQUE_INT_TYPE_SHORT
+		    case sizeof(short):
+		    {
+		    	short arg_short = (short) va_arg (args, int);
+			b->data = asnprintf(NULL, &dummy, buf, arg_short);
 			break;
-#endif /* UNIQUE_INT_TYPE_SHORT_INT */
+		    }
+#endif /* UNIQUE_INT_TYPE_SHORT */
 #ifdef UNIQUE_INT_TYPE_INT
 		    case sizeof(int):
-		    	arg_int = va_arg (args, int);
+		    {
+		    	int arg_int = va_arg (args, int);
 			b->data = asnprintf(NULL, &dummy, buf, arg_int);
 			break;
+		    }
 #endif /* UNIQUE_INT_TYPE_INT */
+#ifdef UNIQUE_INT_TYPE_SIZE_T
+		    case sizeof(size_t):
+		    {
+		    	size_t arg_size_t = va_arg (args, size_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_size_t);
+			break;
+		    }
+#endif /* UNIQUE_INT_TYPE_SIZE_T */
+#ifdef UNIQUE_INT_TYPE_PTRDIFF_T
+		    case sizeof(ptrdiff_t):
+		    {
+		    	ptrdiff_t arg_ptrdiff_t = va_arg (args, ptrdiff_t);
+			b->data = asnprintf(NULL, &dummy, buf, arg_ptrdiff_t);
+			break;
+		    }
+#endif /* UNIQUE_INT_TYPE_PTRDIFF_T */
 #ifdef UNIQUE_INT_TYPE_LONG
-		    case sizeof(long int):
-		    	arg_long_int = va_arg (args, long int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_int);
+		    case sizeof(long):
+		    {
+		    	long arg_long = va_arg (args, long);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long);
 			break;
+		    }
 #endif /* UNIQUE_INT_TYPE_LONG */
+#ifdef HAVE_LONG_LONG
 #ifdef UNIQUE_INT_TYPE_LONG_LONG
-		    case sizeof(long long int):
-		    	arg_long_long_int = va_arg (args, long long int);
-			b->data = asnprintf(NULL, &dummy, buf, arg_long_long_int);
+		    case sizeof(long long):
+		    {
+		    	long long arg_long_long = va_arg (args, long long);
+			b->data = asnprintf(NULL, &dummy, buf, arg_long_long);
 			break;
+		    }
 #endif /* UNIQUE_INT_TYPE_LONG_LONG */
+#endif /* HAVE_LONG_LONG */
 #ifdef UNIQUE_INT_TYPE_INTMAX_T
 		    case sizeof(intmax_t):
-		    	arg_intmax_t = va_arg (args, intmax_t);
+		    {
+		    	intmax_t arg_intmax_t = va_arg (args, intmax_t);
 			b->data = asnprintf(NULL, &dummy, buf, arg_intmax_t);
 			break;
+		    }
 #endif /* UNIQUE_INT_TYPE_INTMAX_T */
 #ifdef UNIQUE_INT_TYPE_SIZE_T
 		    case sizeof(size_t):
@@ -972,18 +997,22 @@ format_cmdline (char *format, ...)
 		}
 		switch (length)
 		{
-		    double arg_double;
-		    long double arg_long_double;
 		    case sizeof(double):
-		    	arg_double = va_arg (args, double);
+		    {
+		    	double arg_double = va_arg (args, double);
 			b->data = asnprintf(NULL, &dummy, buf, arg_double);
 			break;
+		    }
+#ifdef HAVE_LONG_DOUBLE
 #ifdef UNIQUE_FLOAT_TYPE_LONG_DOUBLE
 		    case sizeof(long double):
-		    	arg_long_double = va_arg (args, long double);
+		    {
+		    	long double arg_long_double = va_arg (args, long double);
 			b->data = asnprintf(NULL, &dummy, buf, arg_long_double);
 			break;
+		    }
 #endif /* UNIQUE_FLOAT_TYPE_LONG_DOUBLE */
+#endif /* HAVE_LONG_DOUBLE */
 		    default:
 	    		dellist(&pflist);
 	    		free(b);
@@ -996,15 +1025,18 @@ format_cmdline (char *format, ...)
 	    case 's':
 		switch (string_conversion)
 		{
-		    wchar_t *arg_wchar_t_string;
 		    case 1:
 			b->data = xstrdup (va_arg (args, char *));
 			break;
+#ifdef HAVE_WCHAR_T
 		    case 2:
-		    	arg_wchar_t_string = va_arg (args, wchar_t *);
+		    {
+		    	wchar_t *arg_wchar_t_string = va_arg (args, wchar_t *);
 			b->data = asnprintf (NULL, &dummy, buf,
 			                     arg_wchar_t_string);
 			break;
+		    }
+#endif /* HAVE_WCHAR_T */
 		    default:
 			conversion_error = 1;
 			break;
@@ -1017,7 +1049,7 @@ format_cmdline (char *format, ...)
 		    break;
 		}
 		b->data = va_arg (args, List *);
-		b->convproc = va_arg (args, void (*));
+		b->convproc = va_arg (args, CONVPROC_t);
 		b->closure = va_arg (args, void *);
 		break;
 	    default:
@@ -1062,7 +1094,7 @@ format_cmdline (char *format, ...)
 	    {
 		/* copy the data since we'll need it again */
     	    	tb = xmalloc(sizeof(struct cmdline_bindings));
-		if (b->conversion = ',')
+		if (b->conversion == ',')
 		{
 		    tb->data = b->data;
 		}
@@ -1162,7 +1194,7 @@ format_cmdline (char *format, ...)
 #ifdef SUPPORT_OLD_INFO_FMT_STRINGS
     subbedsomething = 0;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
-    while (*d++ = *s)
+    while ((*d++ = *s) != '\0')
     {
 	int list = 0;
 	switch (*s++)
@@ -1259,8 +1291,8 @@ format_cmdline (char *format, ...)
 "unterminated format string encountered in command spec.\n"
 "This error is likely to have been caused by an invalid line in a hook script\n"
 "spec (see taginfo, loginfo, verifymsginfo, etc. in the Cederqvist).  Most\n"
-"likely the offending line would end with a '%' character or contain a string\n"
-"beginning \"%{\" and no closing '}' before the end of the line.");
+"likely the offending line would end with a '%%' character or contain a string\n"
+"beginning \"%%{\" and no closing '}' before the end of the line.");
 		}
 		if (list)
 		{
@@ -1305,7 +1337,7 @@ format_cmdline (char *format, ...)
 		 * see the "user format strings" section above for more info
 		 */
 		key[0] = *q;
-		if (p = findnode (pflist, key))
+		if ((p = findnode (pflist, key)) != NULL)
 		{
 		    b = (struct cmdline_bindings *) p->data;
 		    if (b->conversion == ',')
@@ -1324,7 +1356,7 @@ format_cmdline (char *format, ...)
 			c.srepos = srepos;
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 			walklist((List *)b->data,
-			         (void (*))b->convproc,
+			         (CONVPROC_t)b->convproc,
 			         (void *)&c);
 			d--;	/* back up one space.  we know that ^
 				   always adds 1 extra */
