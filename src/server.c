@@ -5007,46 +5007,62 @@ switch_to_user (username)
     {
 	printf ("E Fatal error, aborting.\n\
 error 0 %s: no such user\n", username);
-	/* I'm doing this manually rather than via error_exit ()
-	   because I'm not sure whether we want to call server_cleanup.
-	   Needs more investigation....  */
-
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-
-	exit (EXIT_FAILURE);
+	/* Don't worry about server_cleanup; server_active isn't set yet.  */
+	error_exit ();
     }
 
-    /* FIXME?  We don't check for errors from initgroups, setuid, &c.
-       I think this mainly would come up if someone is trying to run
-       the server as a non-root user.  I think we should be checking for
-       errors and aborting (as with the error above from getpwnam) if
-       there is an error (presumably EPERM).  That means that pserver
-       should continue to work right if all of the "system usernames"
-       in CVSROOT/passwd match the user which the server is being run
-       as (in inetd.conf), but fail otherwise.  */
-
 #if HAVE_INITGROUPS
-    initgroups (pw->pw_name, pw->pw_gid);
+    if (initgroups (pw->pw_name, pw->pw_gid) < 0)
+    {
+	/* This could be a warning, but I'm not sure I see the point
+	   in doing that instead of an error given that it would happen
+	   on every connection.  We could log it somewhere and not tell
+	   the user.  But at least for now make it an error.  */
+	printf ("error 0 initgroups failed: %s\n", strerror (errno));
+	/* Don't worry about server_cleanup; server_active isn't set yet.  */
+	error_exit ();
+    }
 #endif /* HAVE_INITGROUPS */
 
 #ifdef SETXID_SUPPORT
     /* honor the setgid bit iff set*/
     if (getgid() != getegid())
     {
-	setgid (getegid ());
+	if (setgid (getegid ()) < 0)
+	{
+	    /* See comments at setuid call below for more discussion.  */
+	    printf ("error 0 setuid failed: %s\n", strerror (errno));
+	    /* Don't worry about server_cleanup;
+	       server_active isn't set yet.  */
+	    error_exit ();
+	}
     }
     else
-#else
-    {
-	setgid (pw->pw_gid);
-    }
 #endif
+    {
+	if (setgid (pw->pw_gid) < 0)
+	{
+	    /* See comments at setuid call below for more discussion.  */
+	    printf ("error 0 setuid failed: %s\n", strerror (errno));
+	    /* Don't worry about server_cleanup;
+	       server_active isn't set yet.  */
+	    error_exit ();
+	}
+    }
     
-    setuid (pw->pw_uid);
+    if (setuid (pw->pw_uid) < 0)
+    {
+	/* Note that this means that if run as a non-root user,
+	   CVSROOT/passwd must contain the user we are running as
+	   (e.g. "joe:FsEfVcu:cvs" if run as "cvs" user).  This seems
+	   cleaner than ignoring the error like CVS 1.10 and older but
+	   it does mean that some people might need to update their
+	   CVSROOT/passwd file.  */
+	printf ("error 0 setuid failed: %s\n", strerror (errno));
+	/* Don't worry about server_cleanup; server_active isn't set yet.  */
+	error_exit ();
+    }
+
     /* We don't want our umask to change file modes.  The modes should
        be set by the modes used in the repository, and by the umask of
        the client.  */
@@ -5461,17 +5477,10 @@ pserver_authenticate_connection ()
     i_hate_you:
 	printf ("I HATE YOU\n");
 	fflush (stdout);
-	/* I'm doing this manually rather than via error_exit ()
-	   because I'm not sure whether we want to call server_cleanup.
-	   Needs more investigation....  */
 
-#ifdef SYSTEM_CLEANUP
-	/* Hook for OS-specific behavior, for example socket subsystems on
-	   NT and OS2 or dealing with windows and arguments on Mac.  */
-	SYSTEM_CLEANUP ();
-#endif
-
-	exit (EXIT_FAILURE);
+	/* Don't worry about server_cleanup, server_active isn't set
+	   yet.  */
+	error_exit ();
     }
 
     /* Don't go any farther if we're just responding to "cvs login". */

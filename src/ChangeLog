@@ -1,3 +1,11 @@
+1999-05-11  Jim Kingdon  <http://www.cyclic.com>
+
+	* server.c (pserver_authenticate_connection): Call error_exit
+	rather than reinventing the wheel ourselves.
+	(switch_to_user): Check for errors from setuid, setgid, and
+	initgroups.  Fix the #ifdef's (the previous code would skip the
+	setuid call if SETXID_SUPPORT).
+
 1999-05-10  Jim Kingdon  <http://www.cyclic.com>
 
 	* server.c (serve_notify), edit.c (notify_do): Check for
