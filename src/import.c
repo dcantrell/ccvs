@@ -618,6 +618,7 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
     Vers_TS *vers;
     int letter;
     char *tocvsPath;
+    char *expand;
     struct file_info finfo;
 
     memset (&finfo, 0, sizeof finfo);
@@ -647,7 +648,9 @@ update_rcs_file (message, vfile, vtag, targc, targv, inattic)
 	tocvsPath = wrap_tocvs_process_file (vfile);
 	/* FIXME: Why don't we pass tocvsPath to RCS_cmp_file if it is
            not NULL?  */
-	different = RCS_cmp_file (vers->srcfile, vers->vn_rcs, "-ko", vfile);
+	expand = vers->srcfile->expand != NULL &&
+			vers->srcfile->expand[0] == 'b' ? "-kb" : "-ko";
+	different = RCS_cmp_file (vers->srcfile, vers->vn_rcs, expand, vfile);
 	if (tocvsPath)
 	    if (unlink_file_dir (tocvsPath) < 0)
 		error (0, errno, "cannot remove %s", tocvsPath);
