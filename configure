@@ -839,6 +839,9 @@ Optional Features:
   --enable-dependency-tracking  Do not reject slow dependency extractors
   --enable-client         Include code for running as a remote client
                           (default)
+  --enable-password-authenticated-client
+                          Enable pserver as a remote access method in the CVS
+                          client (default)
   --enable-server         Include code for running as a server (default)
   --enable-server-flow-control
                           If you are working with a large remote repository
@@ -9202,6 +9205,27 @@ _ACEOF
 
 fi
 
+# Check whether --enable-password-authenticated-client or --disable-password-authenticated-client was given.
+if test "${enable_password_authenticated_client+set}" = set; then
+  enableval="$enable_password_authenticated_client"
+
+fi;
+
+if test no != "$enable_password_authenticated_client"; then
+  if test no != "$enable_client"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define AUTH_CLIENT_SUPPORT 1
+_ACEOF
+
+  else
+    { echo "$as_me:$LINENO: WARNING: --enable-password-authenticated-server is meaningless with
+       the CVS client disabled (--disable-client)" >&5
+echo "$as_me: WARNING: --enable-password-authenticated-server is meaningless with
+       the CVS client disabled (--disable-client)" >&2;}
+  fi
+fi
+
 
 # Check whether --enable-server or --disable-server was given.
 if test "${enable_server+set}" = set; then
@@ -9412,12 +9436,10 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
   else
-    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless unless the CVS client is enabled
-       (--enable-client), the CVS server is enabled (--enable-server),
-       or both." >&5
-echo "$as_me: WARNING: --enable-encryption is meaningless unless the CVS client is enabled
-       (--enable-client), the CVS server is enabled (--enable-server),
-       or both." >&2;}
+    { echo "$as_me:$LINENO: WARNING: --enable-encryption is meaningless with neither the CVS client
+       nor the CVS server is enabled (--disable-client and --disable-server)." >&5
+echo "$as_me: WARNING: --enable-encryption is meaningless with neither the CVS client
+       nor the CVS server is enabled (--disable-client and --disable-server)." >&2;}
   fi
 fi
 

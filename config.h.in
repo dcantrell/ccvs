@@ -1,5 +1,9 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Enable AUTH_CLIENT_SUPPORT to enable pserver as a remote access method in
+   the CVS client (default) */
+#undef AUTH_CLIENT_SUPPORT
+
 /* Define if you want to use the password authenticated server. */
 #undef AUTH_SERVER_SUPPORT
 
