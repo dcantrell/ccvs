@@ -1,3 +1,13 @@
+2 May 1997  Ziv Gigus <ziv@rest.home.net>
+	    and Jim Kingdon
+
+	* client.c, client.h (client_process_import_file): New argument
+	all_files_binary means treat all files as binary.
+	* import.c (import_descend): Pass it if -kb is specified.
+	* client.c (client_process_import_file): In the
+	non-all_files_binary case, call wrap_rcsoption to determine
+	whether the file is binary.
+
 Thu May  1 13:44:51 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (binfiles2): New tests, for update -j and binary files.

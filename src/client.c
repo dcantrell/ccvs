@@ -4079,6 +4079,10 @@ send_arg (string)
 
 static void send_modified PROTO ((char *, char *, Vers_TS *));
 
+/* VERS->OPTIONS specifies whether the file is binary or not.  NOTE: BEFORE
+   using any other fields of the struct vers, we would need to fix
+   client_process_import_file to set them up.  */
+
 static void
 send_modified (file, short_pathname, vers)
     char *file;
@@ -4153,8 +4157,8 @@ send_modified (file, short_pathname, vers)
 #endif /* LINES_CRLF_TERMINATED */
 
 #ifdef LINES_CRLF_TERMINATED
-	/* Assume everything in a "cvs import" is text.  */
 	if (vers == NULL)
+	    /* "Can't happen".  */
 	    converting = 1;
 	else
             /* Otherwise, we convert things unless they're binary. */
@@ -4768,16 +4772,19 @@ client_import_setup (repository)
  * Process the argument import file.
  */
 int
-client_process_import_file (message, vfile, vtag, targc, targv, repository)
+client_process_import_file (message, vfile, vtag, targc, targv, repository,
+                            all_files_binary)
     char *message;
     char *vfile;
     char *vtag;
     int targc;
     char *targv[];
     char *repository;
+    int all_files_binary;
 {
     char *update_dir;
     char *fullname;
+    Vers_TS vers;
 
     assert (toplevel_repos != NULL);
 
@@ -4802,7 +4809,18 @@ client_process_import_file (message, vfile, vtag, targc, targv, repository)
     }
 
     send_a_repository ("", repository, update_dir);
-    send_modified (vfile, fullname, NULL);
+    if (all_files_binary)
+    {
+	vers.options = xmalloc (4); /* strlen("-kb") + 1 */
+	strcpy (vers.options, "-kb");
+    }
+    else
+    {
+	vers.options = wrap_rcsoption (vfile, 1);
+    }
+    send_modified (vfile, fullname, &vers);
+    if (vers.options != NULL)
+	free (vers.options);
     free (fullname);
     return 0;
 }
