@@ -2184,7 +2184,8 @@ EOF
     # secondary.
     cat <<EOF >$TESTDIR/secondary-wrapper
 #! $TESTSHELL
-export CVS_SERVER=$TESTDIR/primary-wrapper
+CVS_SERVER=$TESTDIR/primary-wrapper
+export CVS_SERVER
 $CVS_SERVER --primary-root $CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
 EOF
     cat <<EOF >$TESTDIR/primary-wrapper
@@ -28601,7 +28602,8 @@ EOF
 	  # secondary.
 	  cat <<EOF >$TESTDIR/writeproxy-secondary-wrapper
 #! $TESTSHELL
-export CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+CVS_SERVER=$TESTDIR/writeproxy-primary-wrapper
+export CVS_SERVER
 $servercvs --primary-root $PRIMARY_CVSROOT_DIRNAME=$SECONDARY_CVSROOT_DIRNAME "\$@"
 EOF
 	  cat <<EOF >$TESTDIR/writeproxy-primary-wrapper
