@@ -129,7 +129,7 @@ am_libcvs_a_OBJECTS = sighandle.$(OBJEXT) allocsa.$(OBJEXT) \
 	strftime.$(OBJEXT) xmalloc.$(OBJEXT) xalloc-die.$(OBJEXT) \
 	xgetcwd.$(OBJEXT) yesno.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
-am_getdate_OBJECTS = getdate-error.$(OBJEXT) \
+am_getdate_OBJECTS = getdate-allocsa.$(OBJEXT) getdate-error.$(OBJEXT) \
 	getdate-exitfail.$(OBJEXT) getdate-getdate.$(OBJEXT) \
 	getdate-gettime.$(OBJEXT) getdate-xalloc-die.$(OBJEXT) \
 	getdate-xmalloc.$(OBJEXT) getdate-progname.$(OBJEXT)
@@ -313,8 +313,8 @@ EXTRA_DIST = .cvsignore ChangeLog.fsf build_lib.com libcvs.dep \
 	libcvs.dsp libcvs.mak alloca_.h fnmatch_.h fnmatch_loop.c \
 	getndelim2.h getndelim2.c getndelim2.h getndelim2.c getopt_.h \
 	getopt_int.h stdbool_.h stdint_.h
-getdate_SOURCES = error.c exitfail.c exitfail.h getdate.y gettime.c \
-	xalloc-die.c xalloc.h xmalloc.c progname.c
+getdate_SOURCES = allocsa.c error.c exitfail.c exitfail.h getdate.y \
+	gettime.c xalloc-die.c xalloc.h xmalloc.c progname.c
 getdate_CPPFLAGS = -DTEST
 getdate_LDADD = \
 	@LIBOBJS@ \
@@ -423,6 +423,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basename.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exitfail.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-allocsa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-exitfail.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate-getdate.Po@am__quote@
@@ -456,6 +457,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+getdate-allocsa.o: allocsa.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-allocsa.o -MD -MP -MF "$(DEPDIR)/getdate-allocsa.Tpo" -c -o getdate-allocsa.o `test -f 'allocsa.c' || echo '$(srcdir)/'`allocsa.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-allocsa.Tpo" "$(DEPDIR)/getdate-allocsa.Po"; else rm -f "$(DEPDIR)/getdate-allocsa.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='allocsa.c' object='getdate-allocsa.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-allocsa.o `test -f 'allocsa.c' || echo '$(srcdir)/'`allocsa.c
+
+getdate-allocsa.obj: allocsa.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-allocsa.obj -MD -MP -MF "$(DEPDIR)/getdate-allocsa.Tpo" -c -o getdate-allocsa.obj `if test -f 'allocsa.c'; then $(CYGPATH_W) 'allocsa.c'; else $(CYGPATH_W) '$(srcdir)/allocsa.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/getdate-allocsa.Tpo" "$(DEPDIR)/getdate-allocsa.Po"; else rm -f "$(DEPDIR)/getdate-allocsa.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='allocsa.c' object='getdate-allocsa.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o getdate-allocsa.obj `if test -f 'allocsa.c'; then $(CYGPATH_W) 'allocsa.c'; else $(CYGPATH_W) '$(srcdir)/allocsa.c'; fi`
 
 getdate-error.o: error.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(getdate_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT getdate-error.o -MD -MP -MF "$(DEPDIR)/getdate-error.Tpo" -c -o getdate-error.o `test -f 'error.c' || echo '$(srcdir)/'`error.c; \

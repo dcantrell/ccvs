@@ -102,10 +102,17 @@ EOF
 
 echo >>getdate-got
 
-if diff -u getdate-expected getdate-got >getdate.diff; then :; else
-	echo "Failed!  See getdate.diff for more!" >&2
+if cmp getdate-expected getdate-got >getdate.cmp; then :; else
+	LOGFILE=`pwd`/getdate.log
+	cat getdate.cmp >${LOGFILE}
+	echo "** expected: " >>${LOGFILE}
+	cat getdate-expected >>${LOGFILE}
+	echo "** got: " >>${LOGFILE}
+	cat getdate-got >>${LOGFILE}
+	echo "FAIL: getdate" | tee -a ${LOGFILE}
+	echo "Failed!  See ${LOGFILE} for more!" >&2
 	exit 1
 fi
 
-rm getdate-expected getdate-got getdate.diff
+rm getdate-expected getdate-got getdate.cmp
 exit 0
