@@ -43,7 +43,7 @@ GNATS_ADDR=cyclic-cvs@cyclic.com
 ## [ ! -d $DATADIR/gnats -a -d "$GCC_EXEC_PREFIX" ] && DATADIR=${GCC_EXEC_PREFIX}..
 
 # The default release for this host.
-DEFAULT_RELEASE="cvs-1.5"
+DEFAULT_RELEASE="post-cvs-1.5"
 
 # The default organization.
 DEFAULT_ORGANIZATION="net"
