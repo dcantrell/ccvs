@@ -1,5 +1,8 @@
 Thu Mar 21 08:25:17 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo (Environment variables): Expand introduction to RCS
+	environment variables.  Expand and correct CVS_SERVER_SLEEP.
+
 	* cvs.texinfo (Environment variables): Remove POSIXLY_CORRECT; cvs
 	requires options to precede arguments regardless of it.
 
