@@ -2305,8 +2305,3 @@ masterlist_delproc (p)
     dellist (&ml->cilist);
     free (ml);
 }
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */

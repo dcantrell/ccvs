@@ -8592,8 +8592,3 @@ make_file_label (path, rev, rcs)
     }
     return label;
 }
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */

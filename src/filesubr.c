@@ -1073,8 +1073,3 @@ cvs_casecmp (str1, str2)
     return pqdiff;
 }
 #endif /* SERVER_SUPPORT */
-
-
-
-/* vim:tabstop=8:shiftwidth=4
- */
