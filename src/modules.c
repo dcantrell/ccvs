@@ -116,10 +116,11 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 #ifdef SERVER_SUPPORT
     if (trace)
       {
-	fprintf (stderr, "%c-> do_module (%s, %s, %s, %s)\n",
+	fprintf (stderr, "%s%c-> do_module (%s, %s, %s, %s)\n",
+		 error_use_protocol ? "E " : "",
 		 (server_active) ? 'S' : ' ',
-                mname, msg, where ? where : "",
-                extra_arg ? extra_arg : "");
+		 mname, msg, where ? where : "",
+		 extra_arg ? extra_arg : "");
       }
 #endif
 
