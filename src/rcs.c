@@ -184,9 +184,6 @@ static int rcs_lockfd = -1;
  *  file		the filename within that directory (without RCSEXT).
  *  inattic		NULL or a pointer to the output boolean
  *
- * GLOBALS
- *  ign_case		Whether the client has requested case insensitive mode.
- *
  * OUTPUTS
  *
  *  inattic		If this input was non-null, the destination will be

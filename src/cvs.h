@@ -540,7 +540,6 @@ int ignore_directory (char *name);
 typedef void (*Ignore_proc) (char *, char *);
 void ignore_files (List *, List *, char *, Ignore_proc);
 extern int ign_inhibit_server;
-extern int ign_case;
 
 #include "update.h"
 
