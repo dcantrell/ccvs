@@ -3,6 +3,8 @@ Changes since 1.11.17:
 
 BUG FIXES
 
+* Thanks to Conrad Pino <conrad@pino.com>, the Windows build works once again.
+
 * Misc updates to the manual.
 
 Changes from 1.11.16 to 1.11.17:
