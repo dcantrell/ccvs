@@ -1057,7 +1057,14 @@ add_rcs_file (message, rcs, user, add_vhead, key_opt,
        stat the file before opening it. -twp */
 
     if (CVS_LSTAT (userfile, &sb) < 0)
-	error (1, errno, "cannot lstat %s", userfile);
+    {
+	/* not fatal, continue import */
+	if (add_logfp != NULL)
+	    fperrmsg (add_logfp, 0, errno,
+			  "ERROR: cannot lstat file %s", userfile);
+	error (0, errno, "cannot lstat file %s", userfile);
+	goto read_error;
+    }
     file_type = sb.st_mode & S_IFMT;
 
     fpuser = NULL;
