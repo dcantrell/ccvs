@@ -55,6 +55,7 @@ EXTRA_DIST = \
 	po.m4 \
 	progtest.m4 \
 	realloc.m4 \
+	regex.m4 \
 	restrict.m4 \
 	signed.m4 \
 	size_max.m4 \
