@@ -539,6 +539,7 @@ diff_fileproc (callerdat, finfo)
 					(*options
 					 ? options
 					 : vers->options),
+					(char *) NULL,
 					tmp);
 		if (retcode == -1)
 		{
@@ -559,6 +560,7 @@ diff_fileproc (callerdat, finfo)
 	    retcode = RCS_checkout (vers->srcfile, (char *) NULL,
 				    use_rev1, (char *) NULL,
 				    *options ? options : vers->options,
+				    (char *) NULL,
 				    tmp);
 	    if (retcode == -1)
 	    {
@@ -853,6 +855,7 @@ diff_file_nodiff (finfo, vers, empty_file)
     retcode = RCS_checkout (vers->srcfile, (char *) NULL, use_rev1,
 			    (char *) NULL,
 			    *options ? options : vers->options,
+			    (char *) NULL,
 			    tmp);
     switch (retcode)
     {
