@@ -1,6 +1,10 @@
 Changes since 1.12.6:
 *********************
 
+GENERAL USER ISSUES
+
+* Some user messages have been updated for consistency.
+
 DEVELOPER ISSUES
 
 * Misc cosmetic fixes to the source and commenting therein.
