@@ -1,5 +1,10 @@
 Changes since 1.9:
 
+* "cvs admin [options]" will now recurse.  In previous versions of
+CVS, it was an error and one needed to specify "cvs admin [options] ."
+to recurse.  This change brings admin in line with the other CVS
+commands.
+
 * New "logout" command to remove the password for a remote cvs
 repository from the cvspass file.
 
