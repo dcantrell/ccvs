@@ -3557,18 +3557,11 @@ tag with @code{cvs update -A}.  Likewise, use of the
 sets a @dfn{sticky date}, which, similarly, causes that
 date to be used for future retrievals.
 
-@cindex Restoring old version of removed file
-@cindex Resurrecting old version of dead file
-Many times you will want to retrieve an old version of
-a file without setting a sticky tag.  The way to do
-that is with the @samp{-p} option to @code{checkout} or
+People often want to retrieve an old version of
+a file without setting a sticky tag.  This can
+be done with the @samp{-p} option to @code{checkout} or
 @code{update}, which sends the contents of the file to
-standard output.  For example, suppose you have a file
-named @file{file1} which existed as revision 1.1, and
-you then removed it (thus adding a dead revision 1.2).
-Now suppose you want to add it again, with the same
-contents it had previously.  Here is how to do it:
-
+standard output.  For example:
 @example
 $ cvs update -p -r 1.1 file1 >file1
 ===================================================================
@@ -3576,16 +3569,15 @@ Checking out file1
 RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
 VERS: 1.1
 ***************
-$ cvs add file1
-cvs add: re-adding file file1 (in place of dead revision 1.2)
-cvs add: use 'cvs commit' to add this file permanently
-$ cvs commit -m test
-Checking in file1;
-/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
-new revision: 1.3; previous revision: 1.2
-done
 $
 @end example
+
+However, this isn't the easiest way, if you are asking
+how to undo a previous checkin (in this example, put
+@file{file1} back to the way it was as of revision
+1.1).  In that case you are better off using the
+@samp{-j} option to @code{update}; for further
+discussion see @ref{Merging two revisions}.
 
 @c ---------------------------------------------------------------------
 @node Branching and merging
@@ -4112,7 +4104,7 @@ $ cvs update -j 1.5 -j 1.3 backend.c
 @end example
 
 @noindent
-will @emph{remove} all changes made between revision
+will undo all changes made between revision
 1.3 and 1.5.  Note the order of the revisions!
 
 If you try to use this option when operating on
@@ -4121,6 +4113,27 @@ probably be very different between the various files.
 You almost always use symbolic
 tags rather than revision numbers when operating on
 multiple files.
+
+@cindex Restoring old version of removed file
+@cindex Resurrecting old version of dead file
+Specifying two @samp{-j} options can also undo file
+removals or additions.  For example, suppose you have
+a file
+named @file{file1} which existed as revision 1.1, and
+you then removed it (thus adding a dead revision 1.2).
+Now suppose you want to add it again, with the same
+contents it had previously.  Here is how to do it:
+
+@example
+$ cvs update -j 1.2 -j 1.1 file1
+U file1
+$ cvs commit -m test
+Checking in file1;
+/tmp/cvs-sanity/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1.3; previous revision: 1.2
+done
+$
+@end example
 
 @node Merging adds and removals
 @section Merging can add or remove files
