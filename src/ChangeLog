@@ -1,3 +1,8 @@
+2005-03-09  Mark D. Baushke  <mdb@cvshome.org>
+
+	* history.c (history, save_file): Cleanup the API to match the
+	comments.
+
 2005-02-27  Jim Meyering  <jim@meyering.net>
 
 	* login.c (password_entry_operation): Exit nonzero when
