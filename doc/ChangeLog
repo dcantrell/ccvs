@@ -1,3 +1,7 @@
+1998-03-12  Tim Pierce  <twp@skepsis.com>
+
+	* RCSFILES: Updated description of `hardlinks' newphrases.
+
 1998-03-07  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Tags, Sticky tags, Creating a branch, Accessing

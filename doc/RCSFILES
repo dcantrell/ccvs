@@ -64,7 +64,7 @@ rules.
 
 CVS does use newphrases to implement the `PreservePermissions'
 extension introduced in CVS 1.9.26.  The following new keywords are
-defined:
+defined when PreservePermissions=yes:
 
    owner
    group
@@ -81,9 +81,18 @@ representing the permissions that should be applied to the file.  The
 or `character', and the second is the file's device number.  The
 `symlink' field should be present only in files which are symbolic
 links to other files, and absent on all regular files.  The
-`hardlinks' field contains a space-separated list of files to which
-the current file is linked, in alphabetical order.  (It should always
-include the name of the current file.)
+`hardlinks' field contains a list of filenames to which the current
+file is linked, in alphabetical order.  Because files often contain
+characters special to RCS, like `.' and sometimes even contain spaces
+or eight-bit characters, the filenames in the hardlinks field will
+usually be enclosed in RCS strings.  For example:
+
+	hardlinks	README @install.txt@ @Installation Notes@;
+
+The hardlinks field should always include the name of the current
+file.  That is, in the repository file README,v, any hardlinks fields
+in the delta nodes should include `README'; CVS will not operate
+properly if this is not done.
 
 The rules regarding keyword expansion are not documented along with
 the rest of the RCS file format; they are documented in the co(1)
