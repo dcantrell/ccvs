@@ -2739,20 +2739,15 @@ error  \n");
 	 * how to handle correctly.
 	 */
 	/* Let exit() close STDIN - it's from /dev/null anyhow.  */
-	fflush (stderr);
 	fclose (stderr);
-	fflush (stdout);
 	fclose (stdout);
-	{
-	    FILE *ptmp = fdopen (protocol_pipe[1], "w");
-	    fflush (ptmp);
-	    fclose (ptmp);
-	}
+	close (protocol_pipe[1]);
 #ifdef SERVER_FLOWCONTROL
-	if (set_block_fd (flowcontrol_pipe[0]) == 0) 
 	{
-	  char junk;
-	  while (read (flowcontrol_pipe[0], &junk, 1) != 0);
+	    char junk;
+	    ssize_t status;
+	    while ((status = read (flowcontrol_pipe[0], &junk, 1)) > 0
+	           || (status == -1 && errno == EAGAIN));
 	}
 	/* FIXME: No point in printing an error message with error(),
 	 * as STDERR is already closed, but perhaps this could be syslogged?

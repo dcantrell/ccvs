@@ -1,3 +1,11 @@
+2004-02-11  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note :fork: segfault avoidance.
+
+2004-02-11  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note readability improvements.
+
 2004-02-10  Derek Price  <derek@ximbiot.com>
 
 	* NEWS: Note dying gasp check.
