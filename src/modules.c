@@ -122,13 +122,24 @@ do_module (db, mname, m_type, msg, callback_proc, where,
 
 #ifdef SERVER_SUPPORT
     if (trace)
-      {
-	fprintf (stderr, "%s%c-> do_module (%s, %s, %s, %s)\n",
-		 error_use_protocol ? "E " : "",
+    {
+	char *buf;
+
+	/* We use cvs_outerr, rather than fprintf to stderr, because
+	   this may be called by server code with error_use_protocol
+	   set.  */
+	buf = xmalloc (100
+		       + strlen (mname)
+		       + strlen (msg)
+		       + (where ? strlen (where) : 0)
+		       + (extra_arg ? strlen (extra_arg) : 0));
+	sprintf (buf, "%c-> do_module (%s, %s, %s, %s)\n",
 		 (server_active) ? 'S' : ' ',
 		 mname, msg, where ? where : "",
 		 extra_arg ? extra_arg : "");
-      }
+	cvs_outerr (buf, 0);
+	free (buf);
+    }
 #endif
 
     /* if this is a directory to ignore, add it to that list */
