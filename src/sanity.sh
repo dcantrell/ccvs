@@ -6835,13 +6835,13 @@ ${PROG} update: cannot open CVS/Entries for reading: No such file or directory"
 	  cd first-dir
 	  echo "The usual boring test text." > cleanme.txt
           dotest clean-3 "${testcvs} add cleanme.txt" \
-"${PROG} [a-z]*: scheduling file .cleanme.txt. for addition
+"${PROG} [a-z]*: scheduling file .cleanme\.txt. for addition
 ${PROG} [a-z]*: use .${PROG} commit. to add this file permanently"
 	  dotest clean-4 "${testcvs} -q ci -m clean-3" \
-"RCS file: ${TESTDIR}/cvsroot/first-dir/cleanme.txt,v
+"RCS file: ${TESTDIR}/cvsroot/first-dir/cleanme\.txt,v
 done
-Checking in cleanme.txt;
-${TESTDIR}/cvsroot/first-dir/cleanme.txt,v  <--  cleanme.txt
+Checking in cleanme\.txt;
+${TESTDIR}/cvsroot/first-dir/cleanme\.txt,v  <--  cleanme\.txt
 initial revision: 1\.1
 done"
           # Okay, preparation is done, now test.
@@ -6851,27 +6851,29 @@ done"
 	  dotest clean-6 "${testcvs} -q update -C" ''
           # Check that updating a modified copy works.
 	  echo "fish" >> cleanme.txt
-	  dotest clean-7 "${testcvs} -q update" 'M cleanme.txt'
+	  dotest clean-7 "${testcvs} -q update" 'M cleanme\.txt'
           # Check that updating -C a modified copy works.
 	  dotest clean-8 "${testcvs} -q update -C" \
-'.*(Locally modified cleanme.txt moved to .#cleanme.txt.1.1).*'
+"(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
+U cleanme\.txt"
 	  # And check that the backup copy really was made.
 	  # We just `ls' to make sure it's there.  It would be
           # preferable to diff the two files, but then sanity.sh would
           # require a standalone `diff' command, which seems losing.
           # Oh well.
-	  dotest clean-9 "ls .#cleanme.txt.1.1" '.#cleanme.txt.1.1'
+	  dotest clean-9 "ls .#cleanme.txt.1.1" '\.#cleanme\.txt\.1\.1'
 
           # Do it all again, this time naming the file explicitly.
 	  rm .#cleanme.txt.1.1
 	  dotest clean-10 "${testcvs} -q update cleanme.txt" ''
 	  dotest clean-11 "${testcvs} -q update -C cleanme.txt" ''
 	  echo "fish" >> cleanme.txt
-	  dotest clean-12 "${testcvs} -q update cleanme.txt" 'M cleanme.txt'
+	  dotest clean-12 "${testcvs} -q update cleanme.txt" 'M cleanme\.txt'
 	  dotest clean-13 "${testcvs} -q update -C cleanme.txt" \
-'.*(Locally modified cleanme.txt moved to .#cleanme.txt.1.1).*'
+"(Locally modified cleanme\.txt moved to \.#cleanme\.txt\.1\.1)
+U cleanme\.txt"
 	  # And check that the backup copy really was made.
-	  dotest clean-14 "ls .#cleanme.txt.1.1" '.#cleanme.txt.1.1'
+	  dotest clean-14 "ls .#cleanme.txt.1.1" '\.#cleanme\.txt\.1\.1'
 
           # Done.  Clean up.
 	  cd ../..
