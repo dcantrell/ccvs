@@ -1,5 +1,12 @@
 Tue Dec 16 13:13:53 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* FAQ: Re-import from FAQ-O-Matic.  The content is the same, but
+	instead of being from Mosaic, it is from "lynx -dump -nolist".
+ 	This output is somewhat better (for example, it is formatted for
+	80 columns or so, rather than Mosaic which is rather
+	inconsistent), and also lynx is free and still maintained whereas
+	NCSA Mosaic is proprietary and no longer maintained.
+
 	* FAQ: Re-import from FAQ-O-Matic.  Features an update to the
 	Sablime question.
 
