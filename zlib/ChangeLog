@@ -1,6 +1,9 @@
 Wed Sep 11 00:59:44 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* build_zlib.com: Add infblock.c and infcodes.c.
+
 	* build_zlib.com: New file.
+
 	* Makefile.in (DISTFILES): Add build_zlib.com.
 
 Fri Aug 16 16:07:38 1996  Norbert Kiesel  <nk@col.sw-ley.de>

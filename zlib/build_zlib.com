@@ -8,9 +8,11 @@ $ CC deflate.c
 $ CC trees.c
 $ CC zutil.c
 $ CC inflate.c
+$ CC infblock.c
 $ CC inftrees.c
+$ CC infcodes.c
 $ CC infutil.c
 $ CC inffast.c
 $ library/create zlib.olb adler32.obj,-
 compress.obj,crc32.obj,uncompr.obj,deflate.obj,trees.obj,zutil.obj,-
-inflate.obj,inftrees.obj,infutil.obj,inffast.obj
+inflate.obj,infblock.obj,inftrees.obj,infcodes.obj,infutil.obj,inffast.obj
