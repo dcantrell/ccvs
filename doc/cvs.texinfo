@@ -20,7 +20,10 @@
 @comment along with CVS; see the file COPYING.  If not, write to
 @comment the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-@c No, not afourpaper
+@c See ../README for A4 vs. US letter size.
+@c When we provided A4 postscript, and people tried to
+@c print it on US letter, the usual complaint was that the
+@c page numbers would get cut off.
 
 @setfilename cvs.info
 @include CVSvn.texi
@@ -39,7 +42,8 @@
 
 @ifinfo
 Copyright @copyright{} 1992, 1993 Signum Support AB
-Copyright @copyright{} 1993, 1994 Free Software Foundation, Inc.
+Copyright @copyright{} 1993, 1994 Free Software
+Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice

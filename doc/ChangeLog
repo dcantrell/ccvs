@@ -1,5 +1,8 @@
 Mon Sep 30 08:09:53 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* cvs.texinfo: Adjust comments concerning A4 vs. US letter,
+	referring to ../README.
+
 	* cvs.texinfo (Common options): Add comment about dates which CVS
 	uses in output.
 
