@@ -1,5 +1,11 @@
 2004-02-15  Derek Price  <derek@ximbiot.com>
 
+	Import xsize module from GNULIB for vasnprintf().
+	* size_max.m4, xsize.m4: New files.
+	* Makefile.am (EXTRA_DIST): Add new files.
+
+2004-02-15  Derek Price  <derek@ximbiot.com>
+
 	Import alloca module from GNULIB for vasnprintf().
 	* alloca.m4: New file.
 
