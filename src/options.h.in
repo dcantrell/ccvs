@@ -232,7 +232,7 @@
  * explicitly ask for it.  Whether to include the authenticating
  * server is set in config.h.
  */
-/* #define AUTH_CLIENT_SUPPORT 1 */
+#define AUTH_CLIENT_SUPPORT 1
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is
