@@ -114,9 +114,6 @@ all install uninstall: config.h Makefile all-local
 
 install: all install-local install-info
 
-install-info:
-	( cd doc; make install-info )
-
 .PHONY: all-local
 all-local: $(PROGS)
 
