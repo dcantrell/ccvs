@@ -1,3 +1,8 @@
+Mon Feb 12 15:42:46 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* modules: Remove mkmodules stuff; mkmodules is no longer a
+	separate program.
+
 Tue Jan 30 15:24:52 1996  Vince Demarco  <vdemarco@bou.shl.com>
 
 	* modules: change /usr/local/bin/mkmodules to
