@@ -1,3 +1,9 @@
+2005-03-07  Derek Price  <derek@ximbiot.com>
+
+	* buffer.c (packetizing_buffer_input, packetizing_buffer_output): Don't
+	assume BUFFER_DATA_SIZE is a constant.
+	(Thanks to report from Larry Jones <lawrence.jones@ugs.com>.)
+
 2005-03-03  Derek Price  <derek@ximbiot.com>
 
 	Use new pagealign_alloc() and pagealign_free() functions in
