@@ -364,6 +364,11 @@ typedef int Dtype;
 typedef enum direnter_type Dtype;
 #endif
 
+/* Recursion processor lock types */
+#define LOCK_NONE	0
+#define LOCK_READ	1
+#define LOCK_WRITE	2
+
 extern char *program_name, *program_path, *command_name;
 extern char *Tmpdir, *Editor;
 extern int cvsadmin_root;
@@ -640,7 +645,7 @@ int start_recursion PROTO((FILEPROC fileproc, FILESDONEPROC filesdoneproc,
 		     DIRENTPROC direntproc, DIRLEAVEPROC dirleaveproc,
 		     void *callerdat,
 		     int argc, char *argv[], int local, int which,
-		     int aflag, int readlock, char *update_preload,
+		     int aflag, int locktype, char *update_preload,
 		     int dosrcs));
 void SIG_beginCrSect PROTO((void));
 void SIG_endCrSect PROTO((void));

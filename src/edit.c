@@ -103,8 +103,8 @@ watch_onoff (argc, argv)
 
     err = start_recursion (onoff_fileproc, onoff_filesdoneproc,
 			   (DIRENTPROC) NULL, (DIRLEAVEPROC) NULL, NULL,
-			   argc, argv, local, W_LOCAL, 0, 0, (char *)NULL,
-			   0);
+			   argc, argv, local, W_LOCAL, 0, LOCK_NONE,
+			   (char *)NULL, 0);
 
     Lock_Cleanup ();
     return err;

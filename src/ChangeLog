@@ -1,3 +1,12 @@
+2002-10-05  Larry Jones  <lawrence.jones@eds.com>
+
+	* recurse.c (start_recursion, do_recursion): Allow write locking
+	in addition to read locking.  Change all callers.
+	* cvs.h: Change prototype to match, add lock types.
+	* tag.c (rtag_proc, rtag_fileproc, tag_fileproc): Have start_recursion
+	use write locks rather than calling lock_dir_for_write to avoid deadly
+	embrace.
+
 2002-10-04  Larry Jones  <lawrence.jones@eds.com>
 
 	* client.c (get_responses_and_close, connect_to_pserver): Set
