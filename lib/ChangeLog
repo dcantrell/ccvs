@@ -1,5 +1,11 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* Makefile.am (libcvs_a_SOURCES): Add getpass.h.
+	* getpass.h: New file from GNULIB.
+	* getpass.c: Update from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* Makefile.am (libcvs_a_SOURCES): Add strcase.h.
 	* strcase.h, strcasecmp.c, strncasecmp.c: New files from GNULIB.
 

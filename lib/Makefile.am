@@ -123,6 +123,9 @@ EXTRA_DIST += getndelim2.h getndelim2.c
 ## For GNULIB's getnline module.
 libcvs_a_SOURCES += getnline.h getnline.c
 
+## For GNULIB's getpass module.
+libcvs_a_SOURCES += getpass.h
+
 ## For GNULIB's getopt module.
 BUILT_SOURCES += $(GETOPT_H)
 EXTRA_DIST += getopt_.h getopt_int.h
