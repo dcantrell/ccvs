@@ -485,7 +485,7 @@ if test x"$*" = x; then
 	tests="${tests} devcom devcom2"
 	tests="${tests} devcom3 ignore binfiles binfiles2 binwrap mwrap info"
 	tests="${tests} serverpatch log log2 crerepos rcs big modes stamps"
-	tests="${tests} sticky keyword toplevel head"
+	tests="${tests} sticky keyword toplevel head admin reserved"
 else
 	tests="$*"
 fi
@@ -905,10 +905,7 @@ done"
 	  cd ..
 
 	  mkdir 1; cd 1
-	  # "cvs admin" tests are scattered around a bit.  Here we test
-	  # ability to reject an unrecognized option.  The "keyword"
-	  # test has a test of "cvs admin -l" and the "binfiles" test
-	  # has a test of "cvs admin -k".  Note that -H is an illegal
+	  # Note that -H is an illegal
 	  # option.  It probably should be an error message.  But 
 	  # currently it is one error message for each file operated on,
 	  # which in this case is zero files.
@@ -6175,10 +6172,6 @@ ${log_trailer}"
 	log2)
 	  # More "cvs log" tests, for example the file description.
 
-	  # Setting the file description doesn't yet work client/server, so 
-	  # skip these tests for remote.
-	  if test "x$remote" = xno; then
-
 	  # Check in a file
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 	  dotest log2-1 "${testcvs} -q co first-dir" ''
@@ -6194,6 +6187,10 @@ Checking in file1;
 ${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
 initial revision: 1\.1
 done"
+	  # Setting the file description with add -m doesn't yet work
+	  # client/server, so skip log2-4 for remote.
+	  if test "x$remote" = xno; then
+
 	  dotest log2-4 "${testcvs} log -N file1" "
 RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 Working file: file1
@@ -6211,11 +6208,88 @@ date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
 1
 ============================================================================="
 
-	  cd ..
-	  rm -r first-dir
-	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  fi # end of tests skipped for remote
+
+	  dotest log2-5 "${testcvs} admin -t-change-description file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest log2-6 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+change-description
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+1
+============================================================================="
+
+	  # I believe that in Real Life (TM), this is broken for remote.
+	  # That is, the filename in question must be the filename of a
+	  # file on the server.  It only happens to work here because the
+	  # client machine and the server machine are one and the same.
+	  echo 'longer description' >${TESTDIR}/descrip
+	  echo 'with two lines' >>${TESTDIR}/descrip
+	  dotest log2-7 "${testcvs} admin -t${TESTDIR}/descrip file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest log2-8 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+longer description
+with two lines
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+1
+============================================================================="
+
+	  # Reading the description from stdin is broken for remote.
+	  # See comments in cvs.texinfo for a few more notes on this.
+	  if test "x$remote" = xno; then
+
+	    if echo change from stdin | ${testcvs} admin -t -q file1
+	    then
+	      pass log2-9
+	    else
+	      fail log2-9
+	    fi
+	    dotest log2-10 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+change from stdin
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+1
+============================================================================="
 
 	  fi # end of tests skipped for remote
+
+	  cd ..
+	  rm ${TESTDIR}/descrip
+	  rm -r first-dir
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 
 	  ;;
 	crerepos)
@@ -6316,10 +6390,7 @@ ${testcvs} -d ${TESTDIR}/crerepos release -d CVSROOT >>${LOGFILE}; then
 	  # implements this format, will be out there "forever" and
 	  # CVS must always be able to import such files.
 
-	  # TODO: would be nice to have a corresponding test for exporting
-	  # RCS files.  Rather than try to write a rigorous check for whether
-	  # the file CVS exports is legal, we could just write a simpler test
-	  # for what CVS actually exports, and revise the check as needed.
+	  # See test admin-13 for exporting RCS files.
 
 	  mkdir ${CVSROOT_DIRNAME}/first-dir
 
@@ -7323,6 +7394,416 @@ ${PLUS} modify on branch after brtag"
 
 	  cd ../..
 	  rm -r 1
+	  ;;
+
+	admin)
+	  # More "cvs admin" tests.
+	  # The basicb-21 test tests rejecting an illegal option.
+	  # For -l and -u, see "reserved" and "keyword" tests.
+	  # "binfiles" test has a test of "cvs admin -k".
+	  # "log2" test has tests of -t and -q options to cvs admin.
+	  mkdir 1; cd 1
+	  dotest admin-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest admin-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+
+	  # In cvs.texinfo -i is listed as useless.  I suppose it
+	  # should be an error.  Currently admin has no ability to create 
+	  # new RCS files (which probably is as it should be;
+	  # see test for vers->vn_user being NULL in admin_fileproc).
+	  dotest admin-3 "${testcvs} -q admin -i file1" ""
+	  dotest_fail admin-4 "${testcvs} -q log file1" \
+"${PROG} [a-z]*: nothing known about file1"
+
+	  # Set up some files, file2 a plain one and file1 with a revision
+	  # on a branch.
+	  touch file1 file2
+	  dotest admin-5 "${testcvs} add file1 file2" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: scheduling file .file2. for addition
+${PROG} [a-z]*: use .cvs commit. to add these files permanently"
+	  dotest admin-6 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done
+Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+initial revision: 1\.1
+done"
+	  dotest admin-7 "${testcvs} -q tag -b br" "T file1
+T file2"
+	  dotest admin-8 "${testcvs} -q update -r br" ""
+	  echo 'add a line on the branch' >> file1
+	  dotest admin-9 "${testcvs} -q ci -m modify-on-branch" \
+"Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done"
+	  dotest admin-10 "${testcvs} -q update -A" "U file1"
+
+	  # Note that -s option applies to the new default branch, not
+	  # the old one.
+	  # Also note that the implementation of -a via "rcs" requires
+	  # no space between -a and the argument.  However, we expect
+	  # to change that once CVS parses options.
+	  dotest admin-11 "${testcvs} -q admin -afoo,bar -abaz \
+-b1.1.2 -cxx -U -sfoo file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+
+	  dotest admin-12 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch: 1\.1\.2
+locks:
+access list:
+	foo
+	bar
+	baz
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+add
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+modify-on-branch
+============================================================================="
+
+	  # "cvs log" doesn't print the comment leader.  RCS 5.7 will print
+	  # the comment leader only if one specifies "-V4" to rlog.  So it
+	  # seems like the only way to test it is by looking at the RCS file
+	  # directly.  This also serves as a test of exporting RCS files
+	  # (analogous to the import tests in "rcs").
+	  # Rather than try to write a rigorous check for whether the
+	  # file CVS exports is legal, we just write a simpler
+	  # test for what CVS actually exports, and figure we can revise
+	  # the check as needed (within the confines of the RCS5 format as
+	  # documented in RCSFILES).
+	  dotest admin-13 "cat ${CVSROOT_DIRNAME}/first-dir/file1,v" \
+"head	1\.1;
+branch	1\.1\.2;
+access
+	foo
+	bar
+	baz;
+symbols
+	br:1\.1\.0\.2;
+locks;
+comment	@xx@;
+
+
+1\.1
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+branches
+	1\.1\.2\.1;
+next	;
+
+1\.1\.2\.1
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1\.1
+log
+@add
+@
+text
+@@
+
+
+1\.1\.2\.1
+log
+@modify-on-branch
+@
+text
+@a0 1
+add a line on the branch
+@"
+	  dotest admin-14 "${testcvs} -q admin -aauth3 -aauth2,foo \
+-soneone:1.1 -m1.1:changed-log-message -ntagone: file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+done"
+	  dotest admin-15 "${testcvs} -q log file2" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.1
+branch:
+locks: strict
+access list:
+	auth3
+	auth2
+	foo
+symbolic names:
+	tagone: 1\.1
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: oneone;
+changed-log-message
+============================================================================="
+
+	  dotest admin-16 "${testcvs} -q admin \
+-A${CVSROOT_DIRNAME}/first-dir/file2,v -b -L -Nbr:1.1 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest admin-17 "${testcvs} -q log file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+	foo
+	bar
+	baz
+	auth3
+	auth2
+symbolic names:
+	br: 1\.1
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+add
+----------------------------
+revision 1\.1\.2\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+modify-on-branch
+============================================================================="
+
+	  dotest_fail admin-18 "${testcvs} -q admin -nbr:1.1.2 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+rcs: ${TESTDIR}/cvsroot/first-dir/file1,v: symbolic name br already bound to 1\.1"
+	  dotest admin-19 "${testcvs} -q admin -ebaz -ebar,auth3 -nbr file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  dotest admin-20 "${testcvs} -q log file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+	foo
+	auth2
+symbolic names:
+keyword substitution: kv
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+branches:  1\.1\.2;
+add
+----------------------------
+revision 1.1.2.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: foo;  lines: ${PLUS}1 -0
+modify-on-branch
+============================================================================="
+
+	  # Add another revision to file2, so we can delete one.
+	  echo 'add a line' >> file2
+	  dotest admin-21 "${testcvs} -q ci -m modify file2" \
+"Checking in file2;
+${TESTDIR}/cvsroot/first-dir/file2,v  <--  file2
+new revision: 1\.2; previous revision: 1\.1
+done"
+	  dotest admin-22 "${testcvs} -q admin -o1.1 file2" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+deleting revision 1\.1
+done"
+	  # Lots more that we could be testing with -o:
+	  # * :REV
+	  # * REV:
+	  # * REV1:REV2
+	  # * if a rev being deleted has a lock, should be an error.
+	  # * if a rev being deleted has a branch, should be an error.
+
+	  # The bit here about how there is a "tagone" tag pointing to
+	  # a nonexistent revision is documented by rcs.  I dunno, I
+	  # wonder whether the "cvs admin -o" should give a warning in
+	  # this case.
+	  dotest admin-23 "${testcvs} -q log file2" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file2,v
+Working file: file2
+head: 1\.2
+branch:
+locks: strict
+access list:
+	auth3
+	auth2
+	foo
+symbolic names:
+	tagone: 1\.1
+	br: 1\.1\.0\.2
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.2
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+modify
+============================================================================="
+
+	  dotest admin-24 "${testcvs} -q admin -V4 file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done"
+	  # The astute reader will notice that -V4 didn't actually do
+	  # anything.  Based on a quick glance at the RCS sources, it
+	  # seems like -Vn affects mostly some pretty obscure stuff
+	  # (and keyword expansion which is a whole separate issue,
+	  # for which we don't try to support -Vn).  I didn't look all
+	  # that carefully, though.
+	  dotest admin-25 "cat ${CVSROOT_DIRNAME}/first-dir/file1,v" \
+"head	1\.1;
+access
+	foo
+	auth2;
+symbols;
+locks; strict;
+comment	@xx@;
+
+
+1\.1
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state Exp;
+branches
+	1\.1\.2\.1;
+next	;
+
+1\.1\.2\.1
+date	[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9];	author ${username};	state foo;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1\.1
+log
+@add
+@
+text
+@@
+
+
+1\.1\.2\.1
+log
+@modify-on-branch
+@
+text
+@a0 1
+add a line on the branch
+@"
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	reserved)
+	  # Tests of reserved checkouts.  Eventually this will test
+	  # rcslock.pl (or equivalent) and all kinds of stuff.  Right
+	  # now it just does some very basic checks on cvs admin -u
+	  # and cvs admin -l.
+	  # Also should test locking on a branch (and making sure that
+	  # locks from one branch don't get mixed up with those from
+	  # another.  Both the case where one of the branches is the
+	  # main branch, and in which neither one is).
+	  # See also test keyword, which tests that keywords and -kkvl
+	  # do the right thing in the presence of locks.
+
+	  # The usual setup, directory first-dir containing file file1.
+	  mkdir 1; cd 1
+	  dotest reserved-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest reserved-2 "${testcvs} add first-dir" \
+"Directory ${TESTDIR}/cvsroot/first-dir added to the repository"
+          cd first-dir
+	  touch file1
+	  dotest reserved-3 "${testcvs} add file1" \
+"${PROG} [a-z]*: scheduling file .file1. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest reserved-4 "${testcvs} -q ci -m add" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+done
+Checking in file1;
+${TESTDIR}/cvsroot/first-dir/file1,v  <--  file1
+initial revision: 1\.1
+done"
+
+	  dotest reserved-5 "${testcvs} -q admin -l file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+1\.1 locked
+done"
+	  dotest reserved-6 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+	${username}: 1\.1
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1	locked by: ${username};
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+
+	  # Note that this just tests the owner of the lock giving
+	  # it up.  It doesn't test breaking a lock.
+	  dotest reserved-7 "${testcvs} -q admin -u file1" \
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+1\.1 unlocked
+done"
+
+	  dotest reserved-8 "${testcvs} log -N file1" "
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
+Working file: file1
+head: 1\.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1\.1
+date: [0-9/]* [0-9:]*;  author: ${username};  state: Exp;
+add
+============================================================================="
+
+	  cd ../..
+	  rm -r 1
+	  rm -rf ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	*)

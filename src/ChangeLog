@@ -1,3 +1,10 @@
+Sun Jul 20 15:53:08 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* sanity.sh (admin, reserved): New tests, test most cvs admin
+	behaviors.
+	(log2): New tests log2-5 through log2-10 test setting the
+	description via cvs admin.
+
 Thu Jul 17 12:39:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (socket_buffer_input, socket_buffer_output): Add
