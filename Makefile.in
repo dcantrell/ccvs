@@ -351,7 +351,6 @@ distcheck: dist
 	mkdir $(distdir)/=inst
 	chmod a-w $(distdir)
 	dc_install_base=`CDPATH=: && cd $(distdir)/=inst && pwd` \
-	  && $(MAKE) $(AM_MAKEFLAGS) distcheck-hook \
 	  && cd $(distdir)/=build \
 	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
@@ -454,16 +453,13 @@ mostlyclean-am: mostlyclean-generic
 	uninstall-am uninstall-recursive
 
 
-.PHONY: remotecheck
-remotecheck: all
+.PHONY: localcheck remotecheck
+localcheck remotecheck: all
 	cd src && $(MAKE) $(AM_MAKEFLAGS) "$@"
 
 .PHONY: doc
 doc:
 	cd doc && $(MAKE) $(AM_MAKEFLAGS) "$@"
-
-.PHONY: distcheck-hook
-distcheck-hook: remotecheck
 
 # - cvs.spec needs to be updated only once, since it depends on
 #   configure.in, not on the results of a 'configure' run.
