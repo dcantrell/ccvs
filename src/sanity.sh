@@ -23463,13 +23463,20 @@ ${PROG} update: Updating first-dir"
 	  # Some tests of behavior which broke at one time or another when run
 	  # from case insensitive clients against case sensitive servers.
 	  #
+	  # These tests are namned according to the following convention:
+	  #
+	  #   ci	Client (sandbox filesystem) case Insensitive
+	  #   cs	Client (sandbox filesystem) case Sensitive
+	  #   si	Server (repository filesystem) case Insensitive
+	  #   ss	Server (repository filesystem) case Sensitive
+	  #
 
 	  mkdir 1; cd 1
 
-	  # first, we will expect different results for a few of these tests
+	  # First, we will expect different results for a few of these tests
 	  # based on whether the repository is on a case sensitive filesystem
 	  # or not and whether the sandbox is on a case sensitive filesystem or
-	  # not.
+	  # not, so determine which cases we are dealing with:
 	  echo file >file
 	  echo FiLe >FiLe
 	  if cmp file FiLe >/dev/null; then
@@ -23527,7 +23534,7 @@ Checking in FiLe;
 $CVSROOT_DIRNAME/first-dir/FiLe,v  <--  FiLe
 initial revision: 1\.1
 done"
-	  else
+	  else # server insensitive
 	    dotest recase-1si "$testcvs add FiLe" \
 "$PROG add: re-adding file \`FiLe' (in place of dead revision 1\.2)
 $PROG add: use '$PROG commit' to add this file permanently"
@@ -23551,11 +23558,13 @@ done"
 	    if $client_sensitive; then
 	      file=file
 	      fIlE=fIlE
-	    else
+	    else # client insensitive
+	      # Because FiLe is present on a case insensitive client, it is the
+	      # only one ever found and queried or altered.
 	      file=FiLe
 	      fIlE=FiLe
 	    fi
-	  else
+	  else # ! $remote
 	    file=file
 	    fIlE=fIlE
 	  fi
@@ -23616,7 +23625,7 @@ revision 1\.1
 date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
 recase
 ============================================================================="
-	    else
+	    else # client insensitive
 	      # Client finds same Entry for file & FiLe.
 	      dotest recase-4ssci "$testcvs status file" \
 "===================================================================
@@ -23671,7 +23680,7 @@ date: [0-9/]* [0-9:]*;  author: $username;  state: Exp;
 recase
 ============================================================================="
 	    fi
-	  else
+	  else # server insensitive
 	    # There is only one archive when the server is insensitive, but the
 	    # printed file/archive name can vary.
 	    dotest recase-4si "$testcvs status file" \
@@ -23749,15 +23758,15 @@ add
 	  # And when the file does not exist on the client, we go with the
 	  # client Entries match.
 	  if $client_sensitive && $server_sensitive; then
-	    dotest recase-8cs "$testcvs status fIlE" \
+	    dotest recase-8csss "$testcvs status fIlE" \
 "$PROG status: nothing known about fIlE
 ===================================================================
 File: no file fIlE		Status: Unknown
 
    Working revision:	No entry for fIlE
    Repository revision:	No revision control file"
-	  else
-	    dotest recase-8ci "$testcvs status fIlE" \
+	  else # ! $client_sensitive && ! $server_sensitive
+	    dotest recase-8 "$testcvs status fIlE" \
 "===================================================================
 File: $fIlE             	Status: Up-to-date
 
@@ -23778,7 +23787,7 @@ U file"
 	      dotest recase-10sscs "$testcvs -q up -A" \
 "U FiLe
 $PROG update: file is no longer in the repository"
-	    else
+	    else # client insensitive
 	      # FIXCVS: This should remove the offending file first.
 	      dotest_fail recase-10ssci "$testcvs -q up -A" \
 "$PROG update: move away \./FiLe; it is in the way
@@ -23807,12 +23816,12 @@ $PROG update: file is no longer in the repository"
 
 	    if $client_sensitive; then
 	      dotest recase-12sscs "$testcvs -q up" "U FILE"
-	    else
+	    else # client insensitive
 	      dotest_fail recase-12ssci "$testcvs -q up" \
 "$PROG update: move away \./FILE; it is in the way
 C FILE"
 	    fi
-	  else
+	  else # server insensitive
 	    dotest recase-9si "$testcvs -q up -rfirst" "U FiLe"
 	    dotest recase-10si "$testcvs -q up -A" "U FiLe"
 	  fi
