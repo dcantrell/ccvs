@@ -974,23 +974,40 @@ checkout_file (file, repository, entries, srcfiles, vers_ts, update_dir)
 
 	    if (file_is_dead && joining())
 	    {
-		/* when joining, we need to get dead files checked
-		   out.  Try harder.  */
-		run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO, vers_ts->vn_rcs,
-			   vers_ts->options);
-		
-		run_arg ("-f");
-		run_arg (vers_ts->srcfile->path);
-		run_arg (file);
-		if ((retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL)) != 0)
+		if (RCS_getversion (vers_ts->srcfile, join_rev1,
+				    date_rev1, 1, 0)
+		    || (join_rev2 != NULL && 
+			RCS_getversion (vers_ts->srcfile, join_rev2,
+					date_rev2, 1, 0)))
 		{
-		    error (retcode == -1 ? 1 : 0, retcode == -1 ? errno : 0,
-			   "could not check out %s", file);
-		    (void) unlink_file (backup);
-		    return (retcode);
+		    /* when joining, we need to get dead files checked
+		       out.  Try harder.  */
+		    run_setup ("%s%s -q -r%s %s", Rcsbin, RCS_CO,
+			       vers_ts->vn_rcs,
+			       vers_ts->options);
+
+		    run_arg ("-f");
+		    run_arg (vers_ts->srcfile->path);
+		    run_arg (file);
+		    retcode = run_exec (RUN_TTY, RUN_TTY, RUN_TTY, RUN_NORMAL);
+		    if (retcode != 0)
+		    {
+			error (retcode == -1 ? 1 : 0,
+			       retcode == -1 ? errno : 0,
+			       "could not check out %s", file);
+			(void) unlink_file (backup);
+			return (retcode);
+		    }
+		    file_is_dead = 0;
+		    resurrecting = 1;
 		}
-		file_is_dead = 0;
-		resurrecting = 1;
+		else
+		{
+		    /* If the file is dead and does not contain either of
+		       the join revisions, then we don't want to check it
+		       out. */
+		    return 0;
+		}
 	    }
 #endif /* DEATH_SUPPORT */
 

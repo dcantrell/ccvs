@@ -999,6 +999,27 @@ done'
 			echo "FAIL: test 72" | tee -a ${LOGFILE} ; exit 1
 		fi
 
+		# file4 will be dead at the time of branching and stay dead.
+		echo file4 > file4
+		dotest death-file4-add "${testcvs} add file4" \
+'cvs [a-z]*: scheduling file `file4'\'' for addition
+cvs [a-z]*: use '\''cvs commit'\'' to add this file permanently'
+		dotest death-file4-ciadd "${testcvs} -q ci -m add file4" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file4,v
+done
+Checking in file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+initial revision: 1.1
+done'
+		rm file4
+		dotest death-file4-rm "${testcvs} remove file4" \
+'cvs [a-z]*: scheduling `file4'\'' for removal
+cvs [a-z]*: use '\''cvs commit'\'' to remove this file permanently'
+		dotest death-file4-cirm "${testcvs} -q ci -m remove file4" \
+'Removing file4;
+/tmp/cvs-sanity/cvsroot/first-dir/file4,v  <--  file4
+new revision: delete; previous revision: 1.1
+done'
 
 		# branch1
 		if ${CVS} tag -b branch1  ; then
@@ -1013,6 +1034,8 @@ done'
 		else
 			echo "FAIL: test 74" | tee -a ${LOGFILE} ; exit 1
 		fi
+
+		dotest_fail death-file4-3 "test -f file4" ''
 
 		# add a file in the branch
 		echo line1 from branch1 >> file3
@@ -1091,6 +1114,8 @@ done'
 			echo "FAIL: test 84" | tee -a ${LOGFILE} ; exit 1
 		fi
 
+		dotest_fail death-file4-4 "test -f file4" ''
+
 		if [ -f file3 ] ; then
 			echo "FAIL: test 85" | tee -a ${LOGFILE} ; exit 1
 		else
@@ -1103,6 +1128,8 @@ done'
 		else
 			echo "FAIL: test 86" | tee -a ${LOGFILE} ; exit 1
 		fi
+
+		dotest_fail death-file4-5 "test -f file4" ''
 
 		if [ -f file3 ] ; then
 			echo "PASS: test 87" >>${LOGFILE}
@@ -1175,6 +1202,8 @@ done'
 			echo "FAIL: test 93" | tee -a ${LOGFILE} ; exit 1
 		fi
 
+		dotest_fail death-file4-6 "test -f file4" ''
+
 		if [ -f file1 ] ; then
 			echo "PASS: test 94" >>${LOGFILE}
 		else
@@ -1187,6 +1216,8 @@ done'
 		else
 			echo "FAIL: test 95" | tee -a ${LOGFILE} ; exit 1
 		fi
+
+		dotest_fail death-file4-7 "test -f file4" ''
 
 		cd .. ; rm -rf first-dir ${CVSROOT_DIRNAME}/first-dir
 		;;
