@@ -5978,9 +5978,9 @@ ${QUESTION} file2" "${QUESTION} file2
 	  dotest sticky-13 "${testcvs} add file2" \
 "${PROG} [a-z]*: scheduling file .file2. for addition
 ${PROG} [a-z]*: use .cvs commit. to add this file permanently"
-	  cd ..
 
-	  rm -rf 1 ${TESTDIR}/first-dir
+	  cd ../..
+	  rm -rf 1 ${CVSROOT_DIRNAME}/first-dir
 	  ;;
 
 	keyword)
