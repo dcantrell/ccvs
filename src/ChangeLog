@@ -1,3 +1,10 @@
+2002-09-15  Larry Jones  <lawrence.jones@eds.com>
+
+	* myndbm.c (mydbm_open): Open the file read/write rather than read-
+	only if that's what the user asked for to ensure that the later open
+	for write will succeed.
+	(Patch submitted by Josh Lehan <cvs@krellan.com>.)
+
 2002-08-28  Larry Jones  <lawrence.jones@eds.com>
 
 	* logmsg.c (do_editor): Fix bug which prevented reusing log messages.
