@@ -326,9 +326,11 @@ int utime ();
 # else /* !HAVE_MALLOC */
 # define CVS_MALLOC rpl_malloc
 #endif /* HAVE_MALLOC */
-#ifndef CVS_REALLOC
+#ifdef HAVE_REALLOC
 # define CVS_REALLOC realloc
-#endif /* !CVS_REALLOC */
+#else /* !HAVE_REALLOC */
+# define CVS_REALLOC rpl_realloc
+#endif /* HAVE_REALLOC */
 
 #ifndef HAVE_STDLIB_H
 char *getenv ();
