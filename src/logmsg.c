@@ -869,10 +869,7 @@ verifymsg_proc (const char *repository, const char *script, void *closure)
                "    \"%s\"\n"
                "Appending default format string (\" %%l\"), but be aware that this usage is\n"
                "deprecated.", script);
-	newscript = xmalloc (strlen (script) + 4);
-	strcpy (newscript, script);
-	strcat (newscript, " %l");
-	script = newscript;
+	script = newscript = Xasprintf ("%s %%l", script);
     }
 #endif /* SUPPORT_OLD_INFO_FMT_STRINGS */
 

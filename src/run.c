@@ -117,7 +117,7 @@ run_add_arg (const char *s)
     if (run_argc >= run_argc_allocated)
     {
 	run_argc_allocated += 50;
-	run_argv = xrealloc (run_argv, run_argc_allocated * sizeof (char **));
+	run_argv = xnrealloc (run_argv, run_argc_allocated, sizeof (char **));
     }
 
     if (s)

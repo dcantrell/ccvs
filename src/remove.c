@@ -242,11 +242,9 @@ cannot remove file `%s' which has a sticky date of `%s'",
 	char *fname;
 
 	/* Re-register it with a negative version number.  */
-	fname = xmalloc (strlen (vers->vn_user) + 5);
-	(void) strcpy (fname, "-");
-	(void) strcat (fname, vers->vn_user);
-	Register (finfo->entries, finfo->file, fname, vers->ts_rcs, vers->options,
-		  vers->tag, vers->date, vers->ts_conflict);
+	fname = Xasprintf ("-%s", vers->vn_user);
+	Register (finfo->entries, finfo->file, fname, vers->ts_rcs,
+		  vers->options, vers->tag, vers->date, vers->ts_conflict);
 	if (!quiet)
 	    error (0, 0, "scheduling `%s' for removal", finfo->fullname);
 	removed_files++;

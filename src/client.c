@@ -4964,14 +4964,10 @@ client_process_import_file (char *message, char *vfile, char *vtag, int targc,
 
     send_a_repository ("", repository, update_dir);
     if (all_files_binary)
-    {
-	vers.options = xmalloc (4); /* strlen ("-kb") + 1 */
-	strcpy (vers.options, "-kb");
-    }
+	vers.options = xstrdup ("-kb");
     else
-    {
 	vers.options = wrap_rcsoption (vfile, 1);
-    }
+
     if (vers.options != NULL)
     {
 	if (supported_request ("Kopt"))
