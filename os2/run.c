@@ -31,8 +31,8 @@
 #define STDOUT      1
 #define STDERR      2
 
-static void run_add_arg PROTO((const char *s));
-static void run_init_prog PROTO((void));
+static void run_add_arg( const char *s );
+static void run_init_prog( void );
 
 extern char *strtok ();
 
