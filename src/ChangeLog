@@ -1,3 +1,9 @@
+Sun Dec 31 17:33:47 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* import.c (add_rev): Revert portion of 31 Aug 95 change which
+	passes -u to ci instead of using a hard link.
+	* sanity.sh (import): Add test for above-fixed bug.
+
 Sun Dec 31 16:40:41 1995  Peter Chubb  <peterc@bookworm.sw.oz.au>
 			  and Jim Kingdon  <kingdon@cyclic.com>
 
