@@ -1759,11 +1759,7 @@ remove_file (finfo, tag, message)
     }
 /* At this point, the file has been committed as removed.  We should 
         probably tell the history file about it  */
-    history_write ('R', 
-                  finfo->update_dir, 
-                  finfo->rcs->head,
-                  finfo->file,
-                  finfo->repository);
+    history_write ('R', NULL, finfo->rcs->head, finfo->file, finfo->repository);
 
     if (rev != NULL)
 	free (rev);
