@@ -1,3 +1,7 @@
+1999-01-22  Jim Kingdon  <http://www.cyclic.com>
+
+	* sanity.sh (rmadd2): New tests, for undoing a commit.
+
 1999-01-21  Eric Mumpower  <nocturne@cygnus.com>
 
 	* sanity.sh (reposmv): Actually modify CVSROOT in current
