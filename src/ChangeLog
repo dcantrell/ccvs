@@ -1,3 +1,8 @@
+Sun, 9 Nov 1997  Jim Kingdon
+
+	* rcs.c (rcs_internal_unlockfile): Call rename_file not rename.
+	This makes it work on NT again.
+
 Sun Nov  9 16:54:28 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* sanity.sh (diffmerge2): Protect keywords against unwanted
