@@ -1,3 +1,12 @@
+2002-09-24  Derek Price  <derek@ximbiot.com>
+
+	* INSTALL: Explain --with-editor.
+	* configure.in (--with-editor): New configure argument.
+
+	* Makefile.in: Regenerated.
+	* configure: Ditto.
+	* config.h.in: Ditto.
+
 2002-09-24  Larry Jones  <lawrence.jones@eds.com>
 
 	* TODO (226): New item.
