@@ -1587,6 +1587,23 @@ MT fname @var{name}
 MT -updated
 @end example
 
+The @code{importmergecmd} tag is used when doing an import which has
+conflicts.  The client can use it to report how to merge in the newly
+imported changes.  The @var{count} is the number of conflicts.  The
+newly imported changes can be merged by running the following command:
+@smallexample
+cvs checkout -j @var{tag1} -j @var{tag2} @var{repository}
+@end smallexample
+
+@example
+MT +importmergecmd
+MT conflicts @var{count}
+MT mergetag1 @var{tag1}
+MT mergetag2 @var{tag2}
+MT repository @var{repository}
+MT -importmergecmd
+@end example
+
 @node Example
 @section Example
 

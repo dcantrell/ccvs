@@ -1,3 +1,7 @@
+1998-08-21  Ian Lance Taylor  <ian@cygnus.com>
+
+	* cvsclient.texi (Text tags): Document importmergecmd tag.
+
 1998-08-20  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Common options): Replace out of date URL concerning
