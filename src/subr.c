@@ -1,11 +1,18 @@
 /*
  * Copyright (c) 1992, Brian Berliner and Jeff Polk
  * Copyright (c) 1989-1992, Brian Berliner
- * 
- * You may distribute under the terms of the GNU General Public License as
- * specified in the README file that comes with the CVS source distribution.
- * 
- * Various useful functions for the CVS support code.
+ * Copyright (c) 2004, Derek R. Price and Ximbiot <http://ximbiot.com>
+ * Copyright (c) 1989-2004 The Free Software Foundation <http://gnu.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 #include "cvs.h"
@@ -159,6 +166,8 @@ free_names (int *pargc, char **argv)
     *pargc = 0;				/* and set it to zero when done */
 }
 
+
+
 /* Convert LINE into arguments separated by SEPCHARS.  Set *ARGC
    to the number of arguments found, and (*ARGV)[0] to the first argument,
    (*ARGV)[1] to the second, etc.  *ARGV is malloc'd and so are each of
@@ -190,6 +199,8 @@ line2argv (int *pargc, char ***argv, char *line, char *sepchars)
     }
 }
 
+
+
 /*
  * Returns the number of dots ('.') found in an RCS revision number
  */
@@ -205,6 +216,8 @@ numdots (const char *s)
     }
     return (dots);
 }
+
+
 
 /* Compare revision numbers REV1 and REV2 by consecutive fields.
    Return negative, zero, or positive in the manner of strcmp.  The
@@ -230,6 +243,8 @@ compare_revnums (const char *rev1, const char *rev2)
 
     return result;
 }
+
+
 
 /* Increment a revision number.  Working on the string is a bit awkward,
    but it avoid problems with integer overflow should the revision numbers
@@ -265,6 +280,8 @@ increment_revnum (const char *rev)
     *p = '\0';
     return newrev;
 }
+
+
 
 /* Return the username by which the caller should be identified in
    CVS, in contexts such as the author field of RCS files, various
@@ -320,6 +337,8 @@ getcaller (void)
 #endif
 }
 
+
+
 #ifdef lint
 #ifndef __GNUC__
 /* ARGSUSED */
@@ -328,7 +347,7 @@ get_date( char *date, struct timeb *now )
 {
     time_t foo = 0;
 
-    return (foo);
+    return foo;
 }
 #endif
 #endif
@@ -355,9 +374,7 @@ get_date( char *date, struct timeb *now )
  *   function should work fine, as revision X.1 must exist, due to RCS rules.
  */
 char *
-previous_rev (rcs, rev)
-    RCSNode *rcs;
-    const char *rev;
+previous_rev (RCSNode *rcs, const char *rev)
 {
     char *p;
     char *tmp = xstrdup (rev);
@@ -401,7 +418,6 @@ previous_rev (rcs, rev)
 /* Given two revisions, find their greatest common ancestor.  If the
    two input revisions exist, then rcs guarantees that the gca will
    exist.  */
-
 char *
 gca (const char *rev1, const char *rev2)
 {
@@ -480,6 +496,8 @@ gca (const char *rev1, const char *rev2)
     return retval;
 }
 
+
+
 /* Give fatal error if REV is numeric and ARGC,ARGV imply we are
    planning to operate on more than one file.  The current directory
    should be the working directory.  Note that callers assume that we
@@ -487,7 +505,6 @@ gca (const char *rev1, const char *rev2)
    '\0' at the end of the tag name and other niceties.  Right now this
    is only called from admin.c, but if people like the concept it probably
    should also be called from diff -r, update -r, get -r, and log -r.  */
-
 void
 check_numeric (const char *rev, int argc, char **argv)
 {
@@ -506,6 +523,8 @@ check_numeric (const char *rev, int argc, char **argv)
 	error (1, 0, "attempt to specify a numeric revision");
     }
 }
+
+
 
 /*
  *  Sanity checks and any required fix-up on message passed to RCS via '-m'.
@@ -643,6 +662,8 @@ out:
     return result;
 }
 
+
+
 /* Read the entire contents of the file NAME into *BUF.
    If NAME is NULL, read from stdin.  *BUF
    is a pointer returned from malloc (or NULL), pointing to *BUFSIZE
@@ -650,9 +671,9 @@ out:
    give a fatal error.  The name of the file to use in error messages
    (typically will include a directory if we have changed directory)
    is FULLNAME.  MODE is "r" for text or "rb" for binary.  */
-
 void
-get_file (const char *name, const char *fullname, const char *mode, char **buf, size_t *bufsize, size_t *len)
+get_file (const char *name, const char *fullname, const char *mode, char **buf,
+	  size_t *bufsize, size_t *len)
 {
     struct stat s;
     size_t nread;
@@ -732,11 +753,11 @@ get_file (const char *name, const char *fullname, const char *mode, char **buf, 
 }
 
 
+
 /* Follow a chain of symbolic links to its destination.  FILENAME
    should be a handle to a malloc'd block of memory which contains the
    beginning of the chain.  This routine will replace the contents of
    FILENAME with the destination (a real file).  */
-
 void
 resolve_symlink (char **filename)
 {
@@ -777,6 +798,8 @@ resolve_symlink (char **filename)
     }
 }
 
+
+
 /*
  * Rename a file to an appropriate backup name based on BAKPREFIX.
  * If suffix non-null, then ".<suffix>" is appended to the new name.
@@ -808,13 +831,14 @@ backup_file (const char *filename, const char *suffix)
     return backup_name;
 }
 
+
+
 /*
  * Copy a string into a buffer escaping any shell metacharacters.  The
  * buffer should be at least twice as long as the string.
  *
  * Returns a pointer to the terminating NUL byte in buffer.
  */
-
 char *
 shell_escape(char *buf, const char *str)
 {
@@ -1911,4 +1935,52 @@ Xasnprintf (char *resultbuf, size_t *lengthp, const char *format, ...)
     va_end (args);
 
     return result;
+}
+
+
+
+/* Print a warning and return false if P doesn't look like a string specifying
+ * a boolean value.
+ *
+ * Sets *VAL to the parsed value when it is found to be valid.  *VAL will not
+ * be altered when false is returned.
+ *
+ * INPUTS
+ *   infopath	Where the error is reported to be from on error.  This could
+ *		be, for example, the name of the file the boolean is being read
+ *		from.
+ *   option	An option name being parsed, reported in traces and any error
+ *		message.
+ *   p		The string to actually read the option from.
+ *   val	Pointer to where to store the boolean read from P.
+ *
+ * OUTPUTS
+ *   val	TRUE/FALSE stored, as read, when there are no errors.
+ *
+ * RETURNS
+ *   true	If VAL was read.
+ *   false	On error.
+ */
+bool
+readBool (const char *infopath, const char *option, const char *p, bool *val)
+{
+    TRACE (TRACE_FLOW, "readBool (%s, %s, %s)", infopath, option, p);
+    if (!strcasecmp (p, "no") || !strcasecmp (p, "false")
+        || !strcasecmp (p, "off") || !strcmp (p, "0"))
+    {
+	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
+	*val = false;
+	return true;
+    }
+    else if (!strcasecmp (p, "yes") || !strcasecmp (p, "true")
+	     || !strcasecmp (p, "on") || !strcmp (p, "1"))
+    {
+	TRACE (TRACE_DATA, "Read %d for %s", *val, option);
+	*val = true;
+	return true;
+    }
+
+    error (0, 0, "%s: unrecognized value `%s' for `%s'",
+	   infopath, p, option);
+    return false;
 }
