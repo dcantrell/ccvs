@@ -6,6 +6,9 @@ NEW FEATURES
 * Glob matches, as specified in ignore lists and wrapper options, now conform
   to the POSIX.2 specification for fnmatch on all platforms.
 
+* The Windows MS Visual C++ project files, including the nmake build files,
+  are now generated with MSVC++ 6.0, but should still work with MSVC++ 5.0.
+
 Changes from 1.12.6 to 1.12.7:
 ******************************
 
