@@ -959,7 +959,10 @@ main (argc, argv)
     {
 	/* Update the CVS/Root file.  We might want to do this in
 	   all directories that we recurse into, but currently we
-	   don't.  */
+	   don't.  Note that if there is an error writing the file,
+	   we give an error/warning.  This is so if users try to rewrite
+	   CVS/Root with the -d option (a documented feature), they will
+	   either succeed, or be told why it didn't work.  */
 	Create_Root (NULL, CVSroot);
     }
 
