@@ -1,3 +1,10 @@
+2004-11-04  Conrad T. Pino  <Conrad@Pino.com>
+
+	* cvsnt.dsp: Remove "lib/allocsa.c", "lib/readlink.c", "lib/xreadlink.c"
+	and "allocsa.h" from project.
+	* cvsnt.dep: Regenerate for "cvsnt.dsp" change.
+	* cvsnt.mak: Regenerate for "cvsnt.dsp" change.
+
 2004-11-04  Derek Price  <derek@ximbiot.com>
 
 	* TODO (233): New item.

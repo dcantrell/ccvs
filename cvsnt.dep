@@ -74,16 +74,6 @@
 	".\windows-NT\unistd.h"\
 	
 
-.\lib\allocsa.c : \
-	".\lib\allocsa.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	".\windows-NT\stdint.h"\
-	".\windows-NT\unistd.h"\
-
-
 .\src\annotate.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
@@ -1546,15 +1536,6 @@
 	".\windows-NT\unistd.h"\
 	
 
-.\lib\readlink.c : \
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	".\windows-NT\stdint.h"\
-	".\windows-NT\unistd.h"\
-
-
 .\src\recurse.c : \
 	".\lib\dirname.h"\
 	".\lib\exit.h"\
@@ -1648,8 +1629,8 @@
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xreadlink.h"\
 	".\lib\xgetcwd.h"\
+	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -1685,8 +1666,8 @@
 	".\lib\unlocked-io.h"\
 	".\lib\wait.h"\
 	".\lib\xalloc.h"\
-	".\lib\xreadlink.h"\
 	".\lib\xgetcwd.h"\
+	".\lib\xreadlink.h"\
 	".\lib\xsize.h"\
 	".\src\client.h"\
 	".\src\cvs.h"\
@@ -2349,17 +2330,6 @@
 	".\windows-NT\stdint.h"\
 	".\windows-NT\unistd.h"\
 	
-
-.\lib\xreadlink.c : \
-	".\lib\xalloc.h"\
-	".\lib\xreadlink.h"\
-	".\windows-NT\config.h"\
-	".\windows-NT\ndir.h"\
-	".\windows-NT\pwd.h"\
-	".\windows-NT\stdbool.h"\
-	".\windows-NT\stdint.h"\
-	".\windows-NT\unistd.h"\
-
 
 .\src\zlib.c : \
 	".\lib\dirname.h"\
