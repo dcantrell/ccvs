@@ -1,7 +1,8 @@
 Changes since 1.7:
 
-* One can now specify environment variables in *info files via the
-${=envname} syntax.  See the Variables node in cvs.texinfo for details.
+* One can now specify user variables in *info files via the
+${=varname} syntax; there is a -s global option to set them.  See the
+Variables node in cvs.texinfo for details.
 
 Changes from 1.6 to 1.7:
 
