@@ -1,3 +1,8 @@
+Wed Aug 13 13:50:00 1997  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh: Replace hard-coded directory with ${TESTDIR}, add
+	join3 to default tests
+
 Wed Aug 13 11:42:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* rcscmds.c: Adjust comment to reflect progress on removing RCS

@@ -479,7 +479,7 @@ RCSINIT=; export RCSINIT
 
 if test x"$*" = x; then
 	tests="basica basicb basic1 deep basic2 rdiff death death2 branches"
-	tests="${tests} multibranch import importb join join2"
+	tests="${tests} multibranch import importb join join2 join3"
 	tests="${tests} new newb conflicts conflicts2"
 	tests="${tests} modules modules2 modules3 mflag errmsg1 errmsg2"
 	tests="${tests} devcom devcom2"
@@ -3740,7 +3740,7 @@ T file2"
 	  dotest join3-11 "${testcvs} -q update -r br1" "[UP] file1
 ${PROG} [a-z]*: file2 is no longer in the repository"
 	  dotest join3-12 "${testcvs} -q update -j br2" \
-"RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+"RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.1
 retrieving revision 1\.2
 Merging differences between 1\.1 and 1\.2 into file1
@@ -7778,7 +7778,7 @@ add a line on trunk after trunktag"
 	  dotest_fail head-trunk-diff "${testcvs} -q diff -c -r HEAD -r br1" \
 "Index: file1
 ===================================================================
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.3
 retrieving revision 1\.3\.2\.2
 diff -c -r1\.3 -r1\.3\.2\.2
@@ -7815,7 +7815,7 @@ add a line on trunk after trunktag"
 	  dotest_fail head-brtag-diff "${testcvs} -q diff -c -r HEAD -r br1" \
 "Index: file1
 ===================================================================
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.3\.2\.1
 retrieving revision 1\.3\.2\.2
 diff -c -r1\.3\.2\.1 -r1\.3\.2\.2
@@ -7845,7 +7845,7 @@ add a line on trunk after trunktag"
 	    "${testcvs} -q diff -c -r HEAD -r br1" \
 "Index: file1
 ===================================================================
-RCS file: /tmp/cvs-sanity/cvsroot/first-dir/file1,v
+RCS file: ${TESTDIR}/cvsroot/first-dir/file1,v
 retrieving revision 1\.2
 retrieving revision 1\.3\.2\.2
 diff -c -r1\.2 -r1\.3\.2\.2
