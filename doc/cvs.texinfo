@@ -13383,7 +13383,7 @@ have inetd run a shell script that unsets @code{HOME} and then runs
 @sc{cvs}, or you can use @code{env} to run @sc{cvs} with a pristine
 environment.
 
-If you can connect successfully for awhile but then can't,
+If you can connect successfully for a while but then can't,
 you've probably hit inetd's rate limit.
 (If inetd receives too many requests for the same service
 in a short period of time, it assumes that something is wrong
