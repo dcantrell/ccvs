@@ -1,3 +1,7 @@
+2004-08-24  Derek Price  <derek@ximbiot.com>
+
+	* NEWS: Note error message corrections.
+
 2004-08-24  Mark D. Baushke  <mdb@cvshome.org>
 
 	* NEWS: Note that modules -a bugfix has a change in behavior.
