@@ -1,3 +1,9 @@
+Sun, 22 Jun 1997  Jim Kingdon
+
+	* main.c (main): Move setting of server_active inside #ifdef
+	SERVER_SUPPORT; otherwise the variable doesn't exist.
+	* main.c (main): Call return after exit to shut up warning.
+
 Fri Jun 20 22:56:34 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* client.c (connect_to_pserver): On "I HATE YOU", give

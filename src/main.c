@@ -626,13 +626,13 @@ main (argc, argv)
 	}
 #endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
 
+#ifdef SERVER_SUPPORT
 	server_active = strcmp (command_name, "server") == 0;
 
 	/* Fiddling with CVSROOT doesn't make sense if we're running
            in server mode, since the client will send the repository
            directory after the connection is made. */
 
-#ifdef SERVER_SUPPORT
 	if (!server_active)
 #endif
 	{
@@ -922,6 +922,8 @@ main (argc, argv)
     /* This is exit rather than return because apparently that keeps
        some tools which check for memory leaks happier.  */
     exit (err ? EXIT_FAILURE : 0);
+	/* Keep picky/stupid compilers (e.g. Visual C++ 5.0) happy.  */
+	return 0;
 }
 
 char *
