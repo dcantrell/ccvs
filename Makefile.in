@@ -11,8 +11,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-# $CVSid: @(#)Makefile.in 1.30 94/10/22 $
-
 SHELL = /bin/sh
 
 #### Start of system configuration section. ####

@@ -1023,5 +1023,3 @@ Mon Nov 19 23:15:11 1990  Brian Berliner  (berliner at prisma.com)
 	1986 version of CVS and making it available to the world.  Dick's
 	version is available on uunet.uu.net in the
 	comp.sources.unix/volume6/cvs directory.
-
-$CVSid: @(#)ChangeLog 1.35 94/10/22 $
