@@ -186,7 +186,6 @@ noinst_LIBRARIES = libcvs.a
 libcvs_a_SOURCES = \
 	argmatch.c \
 	getdate.y \
-	getndelim2.c \
 	getnline.c \
 	getopt.c \
 	getopt1.c \
@@ -232,10 +231,10 @@ LIBRARIES = $(noinst_LIBRARIES)
 libcvs_a_AR = $(AR) cru
 libcvs_a_DEPENDENCIES = @LIBOBJS@
 am_libcvs_a_OBJECTS = argmatch.$(OBJEXT) getdate.$(OBJEXT) \
-	getndelim2.$(OBJEXT) getnline.$(OBJEXT) getopt.$(OBJEXT) \
-	getopt1.$(OBJEXT) md5.$(OBJEXT) regex.$(OBJEXT) \
-	savecwd.$(OBJEXT) sighandle.$(OBJEXT) stripslash.$(OBJEXT) \
-	xgetwd.$(OBJEXT) yesno.$(OBJEXT)
+	getnline.$(OBJEXT) getopt.$(OBJEXT) getopt1.$(OBJEXT) \
+	md5.$(OBJEXT) regex.$(OBJEXT) savecwd.$(OBJEXT) \
+	sighandle.$(OBJEXT) stripslash.$(OBJEXT) xgetwd.$(OBJEXT) \
+	yesno.$(OBJEXT)
 libcvs_a_OBJECTS = $(am_libcvs_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -253,12 +252,12 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	$(DEPDIR)/strstr.Po $(DEPDIR)/strtoul.Po \
 @AMDEP_TRUE@	$(DEPDIR)/tempname.Po $(DEPDIR)/valloc.Po \
 @AMDEP_TRUE@	$(DEPDIR)/waitpid.Po ./$(DEPDIR)/argmatch.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getndelim2.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getnline.Po ./$(DEPDIR)/getopt.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/getopt1.Po ./$(DEPDIR)/md5.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/regex.Po ./$(DEPDIR)/savecwd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/sighandle.Po ./$(DEPDIR)/stripslash.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xgetwd.Po ./$(DEPDIR)/yesno.Po
+@AMDEP_TRUE@	./$(DEPDIR)/getdate.Po ./$(DEPDIR)/getnline.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/getopt.Po ./$(DEPDIR)/getopt1.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/md5.Po ./$(DEPDIR)/regex.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/savecwd.Po ./$(DEPDIR)/sighandle.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/stripslash.Po ./$(DEPDIR)/xgetwd.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/yesno.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -322,7 +321,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/waitpid.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/argmatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdate.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getndelim2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getnline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt1.Po@am__quote@
