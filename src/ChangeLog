@@ -1,5 +1,8 @@
 Mon Nov  6 11:58:26 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
+        * vers_ts.c: ifdef ctime, undef it before redefining it.  It is a
+        macro on some systems.
+
         * lock.c: don't prototype ctime() here.  (See note below about
         fgetentent() in entries.c.)
 
