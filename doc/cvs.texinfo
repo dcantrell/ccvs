@@ -2571,7 +2571,7 @@ encouraged.  Please send a mail to one of the @sc{cvs} mailing lists
 flexibility about how @sc{cvs} users are authenticated but 
 no more security than other methods.  See below for more.} 
 
-CVS needs an "auth" and "account" module in the 
+CVS needs an "auth", "account" and "session" module in the 
 PAM configuration file. A typical PAM configuration 
 would therefore have the following lines 
 in @file{/etc/pam.conf} to emulate the standard @sc{cvs} 
@@ -2580,6 +2580,7 @@ system @file{/etc/passwd} authentication:
 @example
 cvs	auth	    required	pam_unix.so
 cvs	account	    required	pam_unix.so
+cvs	session	    required	pam_unix.so
 @end example
 
 The the equivalent @file{/etc/pam.d/cvs} would contain
@@ -2587,6 +2588,7 @@ The the equivalent @file{/etc/pam.d/cvs} would contain
 @example
 auth	    required	pam_unix.so
 account	    required	pam_unix.so
+session	    required	pam_unix.so
 @end example
 
 Some systems require a full path to the module so that
