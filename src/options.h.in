@@ -249,6 +249,25 @@
  */
 /* #define CVS_LOGIN */
 
+/*
+ * If you are working with a large remote repository and a 'cvs checkout' is
+ * swamping your network and memory, define these to enable flow control.
+ * You will end up with even less guarantees of a consistant checkout,
+ * but that may be better than no checkout at all.  The master server process
+ * will monitor how far it is getting behind, if it reaches the high water
+ * mark, it will signal the child process to stop generating data when
+ * convenient (ie: no locks are held, currently at the beginning of a 
+ * new directory).  Once the buffer has drained sufficiently to reach the
+ * low water mark, it will be signalled to start again.
+ * -- EXPERIMENTAL! --  A better solution may be in the works.
+ * You may override the default hi/low watermarks here too.
+ */
+#ifndef SERVER_FLOWCONTROL
+/* #define SERVER_FLOWCONTROL */
+/* #define SERVER_HI_WATER (2 * 1024 * 1024) */
+/* #define SERVER_LO_WATER (1 * 1024 * 1024) */
+#endif
+
 /* End of CVS configuration section */
 
 /*

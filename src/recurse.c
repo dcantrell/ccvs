@@ -296,6 +296,17 @@ do_recursion (xfileproc, xfilesdoneproc, xdirentproc, xdirleaveproc,
     readlock = noexec ? 0 : xreadlock;
     dosrcs = xdosrcs;
 
+#if defined(SERVER_SUPPORT) && defined(SERVER_FLOWCONTROL)
+    /*
+     * Now would be a good time to check to see if we need to stop
+     * generating data, to give the buffers a chance to drain to the
+     * remote client.  We should not have locks active at this point for
+     * an operation that's going to swamp the outgoing buffers. 
+     */
+    if (server_active)
+	server_pause_check();
+#endif
+
     /*
      * Fill in repository with the current repository
      */

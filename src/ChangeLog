@@ -1,3 +1,14 @@
+Sun Nov 19 10:04:50 1995  Peter Wemm  <peter@haywire.DIALix.COM>
+
+	* server.c, server.h, options.h.in: Implement hooks for doing
+	simple flow control on the server to prevent VM exhaustion on a
+	slow network with a fast server.
+	* recurse.c: Call the flow control check at a convenient location
+	while no locks are active.  This is a convenience tradeoff against
+	accurate flow control - if you have a large directory it will all
+	be queued up, bypassing the flow control check until the next
+	directory is processed.
+
 Sat Nov 18 16:22:06 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * client.c, update.c, vers_ts.c, server.c, rcs.c, lock.c,
