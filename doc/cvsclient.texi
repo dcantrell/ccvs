@@ -720,9 +720,10 @@ responses.
 @item Sticky @var{tagspec} \n
 Response expected: no.  Tell the server that the directory most recently
 specified with @code{Directory} has a sticky tag or date @var{tagspec}.
-The first character of @var{tagspec} is @samp{T} for a tag, or @samp{D}
-for a date.  The remainder of @var{tagspec} contains the actual tag or
-date.
+The first character of @var{tagspec} is @samp{T} for a tag, @samp{D}
+for a date, or some other character supplied by a Set-sticky response
+from a previous request to the server.  The remainder of @var{tagspec}
+contains the actual tag or date, again as supplied by Set-sticky.
 
 The server should remember @code{Static-directory} and @code{Sticky}
 requests for a particular directory; the client need not resend them
