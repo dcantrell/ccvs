@@ -1,3 +1,12 @@
+Tue Jan 13 16:57:56 1998  Ian Lance Taylor  <ian@cygnus.com>
+
+	* config.h (FOLD_FN_CHAR): Don't define; instead move to
+	lib/system.h, where it is defined conditionally.
+	(FILENAMES_CASE_INSENSITIVE, ISDIRSEP): Likewise.
+	(WNT_filename_classes, fncmp, fnfold): Likewise for declarations.
+	* filesubr.c (WNT_filename_classes): Remove; now in lib/fncase.c.
+	(fncmp, fnfold): Likewise.
+
 Tue Jan 13 13:15:34 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* run.c: Adjust run_setup for new calling convention.

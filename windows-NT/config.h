@@ -254,26 +254,6 @@ unsigned int sleep (unsigned int);
 #define popen _popen
 #define pclose _pclose
 
-/* Under Windows NT, filenames are case-insensitive, and both / and \
-   are path component separators.  */
-#define FOLD_FN_CHAR(c) (WNT_filename_classes[(unsigned char) (c)])
-extern unsigned char WNT_filename_classes[];
-#define FILENAMES_CASE_INSENSITIVE 1
-
-/* Is the character C a path name separator?  Under
-   Windows NT, you can use either / or \.  */
-#define ISDIRSEP(c) (FOLD_FN_CHAR(c) == '/')
-
-/* Like strcmp, but with the appropriate tweaks for file names.
-   Under Windows NT, filenames are case-insensitive but case-preserving,
-   and both \ and / are path element separators.  */
-extern int fncmp (const char *n1, const char *n2);
-
-/* Fold characters in FILENAME to their canonical forms.  
-   If FOLD_FN_CHAR is not #defined, the system provides a default
-   definition for this.  */
-extern void fnfold (char *FILENAME);
-
 /* When writing binary data to stdout, we better set
    stdout to binary mode using setmode.  */
 #define USE_SETMODE_STDOUT 1
