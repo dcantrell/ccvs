@@ -12,7 +12,9 @@
    the interface to work.  */
 typedef long SCC_return;
 #define SCC_return_success 0
+#define SCC_return_unknown_project -2
 #define SCC_return_not_supported -14
+#define SCC_return_non_specific_error -15
 enum SCC_command
 {
 	SCC_command_get,
@@ -28,7 +30,10 @@ enum SCC_command
 	SCC_command_options
 };
 
-typedef long (*SCC_out_proc) (LPCSTR, DWORD);
+/* Outproc codes, for second argument to outproc.  */
+#define SCC_outproc_info 1
+typedef long (*SCC_out_proc) (char *, long);
+
 typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
                                 LONG status, LPCSTR file);
 
@@ -38,12 +43,24 @@ typedef BOOL (*SCC_popul_proc) (LPVOID callerdat, BOOL add_keep,
 #define SCC_max_name 31
 /* Path argument to SccInitialize.  */
 #define SCC_max_init_path 31
+/* Various paths many places in the interface.  */
+#include <stdlib.h>
+#define SCC_max_path _MAX_PATH
+
+/* Bits to set in the caps used by SccInitialize.  */
+#define SCC_cap_GetProjPath 0x200L
+#define SCC_cap_want_outproc 0x8000L
 
 
 /* We get to put whatever we want here, and the caller will pass it
    to us, so we don't need any global variables.  */
 struct context {
     FILE *debuglog;
+    /* Value of the CVSROOT we are currently working with (that is, the
+       "open project" in SCC terminology), malloc'd, or NULL if there is
+       no project currently open.  */
+    char *root;
+    SCC_out_proc out_proc;
 };
 
 /* Return the version of the SCC spec, major version in the high word,
@@ -75,9 +92,10 @@ SccInitialize (void **contextp, HWND window, LPSTR caller, LPSTR name,
         abort ();
     }
     context->debuglog = fp;
+    context->root = NULL;
     *contextp = context;
     fprintf (fp, "Made it into SccInitialize!\n");
-    *caps = 0;
+    *caps = SCC_cap_GetProjPath | SCC_cap_want_outproc;
     /* I think maybe this should have some more CVS-like
        name, like "CVS Root", if we decide that is what
        a SCC "project" is.  */
@@ -113,13 +131,46 @@ SccOpenProject (void *context_arg, HWND window, LPSTR user,
                  LPSTR comment, SCC_out_proc outproc, LONG flags)
 {
     struct context *context = (struct context *)context_arg;
-    fprintf (context->debuglog, "SccOpenProject called\n");
+    fprintf (context->debuglog, "SccOpenProject (aux_proj=%s)\n",
+	     aux_proj);
+
+    /* This can happen if the IDE opens a project which is not under
+       CVS control.  I'm not sure whether checking for aux_proj
+       being "" is the right way to detect this case, but it seems
+       it should work because I think that the source code control
+       system is what has control over the contents of aux_proj.  */
+    if (aux_proj[0] == '\0')
+	return SCC_return_unknown_project;
+
+    context->root = malloc (strlen (aux_proj) + 5);
+    if (context->root == NULL)
+	return SCC_return_non_specific_error;
+    strcpy (context->root, aux_proj);
+    /* Since we don't yet support creating projects, we don't
+       do anything with flags.  */
+
+    if (outproc == 0)
+    {
+	/* This supposedly can happen if the IDE chooses not to implement
+	   the outproc feature.  */
+	fprintf (context->debuglog, "Uh oh.  outproc is a null pointer\n");
+	context->root = NULL;
+	fflush (context->debuglog);
+	return SCC_return_non_specific_error;
+    }
+    context->out_proc = outproc;
+    (*context->out_proc) ("Hello, world.\n", SCC_outproc_info);
+    fflush (context->debuglog);
     return SCC_return_success;
 }
 
 SCC_return
 SccCloseProject (void *context_arg)
 {
+    struct context *context = (struct context *)context_arg;
+    if (context->root != NULL)
+	free (context->root);
+    context->root = NULL;
     return SCC_return_success;
 }
 
@@ -273,7 +324,37 @@ SccGetProjPath (void *context_arg, HWND window, LPSTR user,
                 LPSTR proj_name, LPSTR local_proj, LPSTR aux_proj,
                 BOOL allow_change, BOOL *new)
 {
-    return SCC_return_not_supported;
+    /* For now we just hardcode the CVSROOT.  In the future we will
+       of course prompt the user for it (simple implementation would
+       have them supply a string; potentially better implementation
+       would have menus or something for access methods and so on,
+       although it might also have a way of bypassing that in case
+       CVS supports new features that the GUI code doesn't
+       understand).  We probably will also at some point want a
+       "project" to encompass both a CVSROOT and a directory or
+       module name within that CVSROOT, but we don't try to handle
+       that yet either.  We also will want to be able to use "user"
+       instead of having the username encoded in the aux_proj or
+       proj_name, probably.  */
+
+    struct context *context = (struct context *)context_arg;
+    fprintf (context->debuglog, "SccGetProjPath called\n");
+
+    /* At least for now we leave the proj_name alone, and just use
+       the aux_proj.  */
+    strncpy (proj_name, "zwork", SCC_max_path);
+    strncpy (aux_proj, ":server:harvey:/home/kingdon/zwork/cvsroot",
+	     SCC_max_path);
+    if (local_proj[0] == '\0' && allow_change)
+	strncpy (local_proj, "d:\\sccwork", SCC_max_path);
+    if (*new)
+	/* It is OK for us to prompt the user for creating a new
+	   project.  */
+	/* We will say that the user said to create a new one.  */
+	*new = 1;
+
+    fflush (context->debuglog);
+    return SCC_return_success;
 }
 
 /* Pretty much similar to SccPopulateList.  */
