@@ -1,3 +1,11 @@
+Tue May  6 16:56:00 1997  Larry Jones  <larry.jones@sdrc.com>
+	and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvsrc.c (read_cvsrc): Fix various memory allocation problems:
+	rearrange code to avoid leaks, use xrealloc instead of xmalloc/
+	copy/free, make sure there's room for the remaining args before
+	appending them.
+
 Tue May  6 14:20:00 1997  Larry Jones  <larry.jones@sdrc.com>
 
 	* edit.c (watch_onoff, edit, unedit, editors): Add -R like
