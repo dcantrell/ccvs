@@ -35,6 +35,7 @@ extern int client_watchers PROTO((int argc, char **argv));
 extern int client_editors PROTO((int argc, char **argv));
 extern int client_edit PROTO((int argc, char **argv));
 extern int client_unedit PROTO((int argc, char **argv));
+extern int client_init PROTO ((int argc, char **argv));
 
 /*
  * Flag variable for seeing whether common code is running as a client
@@ -170,6 +171,8 @@ extern void client_senddate PROTO((const char *date));
 extern void client_expand_modules PROTO((int argc, char **argv, int local));
 extern void client_send_expansions PROTO((int local));
 extern void client_nonexpanded_setup PROTO((void));
+
+extern void send_init_command PROTO ((void));
 
 extern char **failed_patches;
 extern int failed_patches_count;

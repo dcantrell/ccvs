@@ -3208,6 +3208,23 @@ serve_noop (arg)
 {
     do_cvs_command (noop);
 }
+
+static void serve_init PROTO ((char *));
+
+static void
+serve_init (arg)
+    char *arg;
+{
+    CVSroot = malloc (strlen (arg) + 1);
+    if (CVSroot == NULL)
+    {
+	pending_error = ENOMEM;
+	return;
+    }
+    strcpy (CVSroot, arg);
+
+    do_cvs_command (init);
+}
 
 static void
 serve_co (arg)
@@ -3817,6 +3834,7 @@ struct request requests[] =
   REQ_LINE("watch-remove", serve_watch_remove, rq_optional),
   REQ_LINE("watchers", serve_watchers, rq_optional),
   REQ_LINE("editors", serve_editors, rq_optional),
+  REQ_LINE("init", serve_init, rq_optional),
   REQ_LINE("noop", serve_noop, rq_optional),
   REQ_LINE(NULL, NULL, rq_optional)
 

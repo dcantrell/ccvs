@@ -1,3 +1,19 @@
+Wed Mar 13 09:25:56 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Add a "cvs init" command.  This is needed because cvsinit.sh
+	invoked mkmodules which doesn't exist any more.
+	* mkmodules.c: Break filelist out of mkmodules function, rename
+	struct _checkout_file to struct admin_file (for namespace
+	correctness), and add contents field.
+	(init,mkdir_if_needed): New functions.
+	* cvs.h (init): Declare.
+	* main.c (cmds): Add init.
+	(main): If command is init, don't require cvsroot to exist.
+	* client.c, client.h (client_init, send_init_command): New functions.
+	* client.c (start_server): Don't send Root request if command is init.
+	* server.c (serve_init): New function.
+	(requests): Add "init".
+
 Wed Mar 13 09:51:03 MET 1996  Norbert Kiesel  <nk@col.sw-ley.de>
 
 	* vers_ts.c (Version_TS): set options to default option if the
