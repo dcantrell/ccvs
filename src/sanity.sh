@@ -19477,7 +19477,8 @@ Root ${CVSROOT_DIRNAME}
 noop
 EOF
 	    dotest pserver-4 "cat ${TESTDIR}/pserver.tmp" \
-"I LOVE YOU${DOTSTAR}ok"
+"${DOTSTAR} LOVE YOU
+ok"
 
 	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF
 BEGIN AUTH REQUEST
@@ -19489,7 +19490,8 @@ Root ${TESTDIR}/1
 noop
 EOF
 	    dotest pserver-5 "cat ${TESTDIR}/pserver.tmp" \
-"I LOVE YOU${DOTSTAR}E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
+"${DOTSTAR} LOVE YOU
+E Protocol error: Root says \"${TESTDIR}/1\" but pserver says \"${CVSROOT_DIRNAME}\"
 error  "
 
 	    ${testcvs} --allow-root=${CVSROOT_DIRNAME} pserver >${TESTDIR}/pserver.tmp 2>&1 <<EOF

@@ -1,3 +1,9 @@
+1999-05-12  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (pserver-4, pserver-5): Bogus error messages from
+	non-root initgroups on some 4.4BSD derived systems now show up
+	in different places in the output.
+
 1999-05-12  Jim Kingdon  <http://www.cyclic.com>
 
 	* import.c (import): Don't allow the user to supply a repository
