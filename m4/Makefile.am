@@ -28,6 +28,7 @@ EXTRA_DIST = \
 	codeset.m4 \
 	getline.m4 \
 	getnline.m4 \
+	getopt.m4 \
 	gettext.m4 \
 	glibc21.m4 \
 	iconv.m4 \
