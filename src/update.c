@@ -118,7 +118,7 @@ static const char *const update_usage[] =
     "\t-l\tLocal directory only, no recursion.\n",
     "\t-R\tProcess directories recursively.\n",
     "\t-p\tSend updates to standard output (avoids stickiness).\n",
-    "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
+    "\t-k kopt\tUse RCS kopt -k option on checkout. (is sticky)\n",
     "\t-r rev\tUpdate using specified revision/tag (is sticky).\n",
     "\t-D date\tSet date to update from (is sticky).\n",
     "\t-j rev\tMerge in changes made between current revision and rev.\n",

@@ -59,7 +59,7 @@ static const char *const checkout_usage[] =
     "\t-r rev\tCheck out revision or tag. (implies -P) (is sticky)\n",
     "\t-D date\tCheck out revisions as of date. (implies -P) (is sticky)\n",
     "\t-d dir\tCheck out into dir instead of module name.\n",
-    "\t-k kopt\tUse RCS kopt -k option on checkout.\n",
+    "\t-k kopt\tUse RCS kopt -k option on checkout. (is sticky)\n",
     "\t-j rev\tMerge in changes made between current revision and rev.\n",
     "(Specify the --help global option for a list of other help options)\n",
     NULL
