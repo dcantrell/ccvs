@@ -1,3 +1,9 @@
+2000-06-16  Larry Jones  <larry.jones@sdrc.com>
+
+	* fileattr.c (fileattr_read): Plug memory leak.
+	* rcs.c (RCS_whatbranch): Ditto.
+	* update.c (update_dirleave_proc): Ditto.
+
 2000-06-15  Larry Jones  <larry.jones@sdrc.com>
 
 	* checkout.c (checkout_proc): Fix non-ANSI code in call to

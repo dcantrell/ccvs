@@ -126,7 +126,7 @@ fileattr_read ()
 		   any line other than the first for that filename.  This
 		   is the way that CVS has behaved since file attributes
 		   were first introduced.  */
-		free (newnode);
+		freenode (newnode);
 	}
 	else if (line[0] == 'D')
 	{

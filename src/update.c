@@ -1058,6 +1058,10 @@ update_dirleave_proc (callerdat, dir, err, update_dir, entries)
 {
     FILE *fp;
 
+    /* Delete the ignore list if it hasn't already been done.  */
+    if (ignlist)
+	dellist (&ignlist);
+
     /* If we set the tag or date for a new subdirectory in
        update_dirent_proc, and we're now done with that subdirectory,
        undo the tag/date setting.  Note that we know that the tag and
