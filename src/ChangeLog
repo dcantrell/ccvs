@@ -1,3 +1,9 @@
+Thu Dec 18 13:05:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* run.c: Fix typo in declaration (evecvp -> execvp) (credit to
+	Erik Walthinsen for reporting this).  Only declare it if not
+	HAVE_UNISTD_H.  Move declaration to before the first use.
+
 Tue Dec 16 12:59:00 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c: Collapse two identical declarations for join_file.
