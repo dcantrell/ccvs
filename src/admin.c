@@ -169,7 +169,7 @@ admin (argc, argv)
     while ((c = getopt (argc, argv,
 			"+ib::c:a:A:e::l::u::LUn:N:m:o:s:t::IqxV:k:")) != -1)
     {
-	if (c != 'k')
+	if (c != 'k' && c != 'q')
 	    only_k_option = 0;
 
 	switch (c)
