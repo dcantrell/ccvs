@@ -41,10 +41,13 @@ INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
-DISTFILES = Makefile.in README clmerge cln_hist.pl commit_prep.pl cvs_acls.pl \
+# intro.doc used to be in this list, but wasn't in the disty I got.
+DISTFILES = \
+	ChangeLog README .cvsignore \
+	Makefile.in clmerge cln_hist.pl commit_prep.pl cvs_acls.pl \
 	cvscheck cvscheck.man cvshelp.man descend descend.man dirfns \
-	log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
-# intro.doc used to be in the above list, but wasn't in the disty I got.
+	log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcs2log rcslock.pl \
+	sccs2rcs
 
 CONTRIB_FILES = README cln_hist.pl commit_prep.pl cvs_acls.pl cvscheck cvscheck.man \
 	cvshelp.man intro.doc log.pl log_accum.pl mfpipe.pl rcs-to-cvs rcslock.pl sccs2rcs
@@ -82,9 +85,11 @@ distclean: clean
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/contrib
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
+	cd pcl-cvs; ${MAKE} dist-dir DISTDIR="../${DISTDIR}/pcl-cvs"
+.PHONY: dist-dir
 
 Makefile: Makefile.in
 	cd ..; $(SHELL) config.status
