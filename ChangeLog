@@ -1,3 +1,13 @@
+2001-05-02  Derek Price  <dprice@collab.net>
+
+	* acinclude.m4 (ACX_WITH_GSSAPI): Make krb5.h a requirement for GSSAPI.
+	krb5.h shouldn't be required, but CVS's GSSAPI implementation is
+	broken.
+	(Reported by Stephen Rasku  <stephen@tgivan.com>.)
+
+	* aclocal.m4: Regenerated.
+	* configure: Ditto.
+
 2001-04-29  Derek Price  <dprice@collab.net>
 
 	* Makefile.am (distcheck-hook): Undo last change.
