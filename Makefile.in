@@ -246,10 +246,12 @@ config.status: configure
 
 config.h: stamp-h
 
-# The ./config.status --recheck line is to update config.status with
-# any new #defines from config.h.in.
+# This used to do a ./config.status --recheck, to update config.status with
+# any new #defines from config.h.in.  The problem was that the rule itself
+# depends on config.status, so that the --recheck would get run several
+# times, which is bad if the user was trying to specify CFLAGS manually.
+# It was a big pain in the neck.
 stamp-h: config.h.in config.status
-	./config.status --recheck
 	CONFIG_FILES=$@ CONFIG_HEADERS=config.h ./config.status
 
 #config.h.in: stamp-h.in
