@@ -456,7 +456,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big"
 else
 	tests="$*"
 fi
@@ -4300,6 +4300,46 @@ U first-dir/w3'
 	  dotest_fail devcom2-9 "test -w first-dir/w1" ''
 	  dotest_fail devcom2-10 "test -w first-dir/w2" ''
 	  dotest_fail devcom2-11 "test -w first-dir/w3" ''
+	  cd ..
+
+	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	devcom3)
+	  # More watch tests, most notably handling of features designed
+	  # for future expansion.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  mkdir 1
+	  cd 1
+	  dotest devcom3-1 "${testcvs} -q co first-dir" ''
+	  cd first-dir
+
+	  touch w1 w2
+	  dotest devcom3-2 "${testcvs} add w1 w2" "${DOTSTAR}"
+	  dotest devcom3-3 "${testcvs} watch on w1 w2" ''
+	  dotest devcom3-4 "${testcvs} -q ci -m add-them" "${DOTSTAR}"
+
+	  # OK, since we are about to delve into CVS's internals, make
+	  # sure that we seem to be correct about how they work.
+	  dotest devcom3-5 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
+"Fw1	_watched=
+Fw2	_watched="
+	  # Now write a few more lines, just as if we were a newer version
+	  # of CVS implementing some new feature.
+	  cat <<EOF >>${CVSROOT_DIRNAME}/first-dir/CVS/fileattr
+Enew	line	here
+G@#$^!@#=&
+EOF
+	  # Now get CVS to write to the fileattr file....
+	  dotest devcom3-6 "${testcvs} watch off w1" ''
+	  # ...and make sure that it hasn't clobbered our new lines.
+	  # Note that writing these lines in another order would be OK
+	  # too.
+	  dotest devcom3-7 "cat ${CVSROOT_DIRNAME}/first-dir/CVS/fileattr" \
+"Fw2	_watched=
+G@#..!@#=&
+Enew	line	here"
+
 	  cd ..
 
 	  rm -rf 1 2 ${CVSROOT_DIRNAME}/first-dir

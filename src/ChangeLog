@@ -1,5 +1,15 @@
 Sun Feb 23 09:54:49 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* fileattr.h: Add comment about unrecognized ENT-TYPE and order of
+	lines in fileattr file.
+	* fileattr.c (struct unrecog, unrecog_head): New variables, to
+	record unrecognized lines.
+	(fileattr_startdir): Assert that unrecog_head == NULL.
+	(fileattr_read): Record unrecognized lines in unrecog_head linked
+	list rather than ignoring them.
+	(fileattr_write): Also write out unrecognized lines, if any.
+	* sanity.sh (devcom3): New tests, test for above fix.
+
 	* fileattr.h (fileattr_modify): Fix example in comment.
 
 Sat Feb 22 08:30:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>

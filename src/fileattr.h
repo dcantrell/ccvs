@@ -23,6 +23,13 @@
    ENT-TYPE is 'D', and FILENAME empty, to specify default attributes
    to be used for newly added files.
 
+   Other ENT-TYPE are reserved for future expansion.  CVS 1.9 and older
+   will delete them any time it writes file attributes.  Current versions
+   of CVS will preserve them.
+
+   Note that the order of the line is not significant; CVS is free to
+   rearrange them at its convenience.
+
    There is currently no way of quoting tabs or linefeeds in the
    filename, '=' in ATTRNAME, ';' in ATTRVAL, etc.  I'm not sure
    whether I think we need one.  Note: the current implementation also
