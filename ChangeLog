@@ -1,3 +1,7 @@
+Fri Mar  1 01:26:28 1996  Benjamin J. Lee  <benjamin@cyclic.com>
+
+	* README.VMS, build.com: Added for VMS.
+
 Thu Feb 29 10:04:20 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* NEWS: Mention change to default ignore list.
