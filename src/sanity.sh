@@ -20420,47 +20420,23 @@ done"
 	    chmod a= ${CVSROOT_DIRNAME}/first-dir
 	  fi
 	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
-	    # Use a different test under Cygwin since permissions work
-	    # differently there.
+	    # Avoid this test under Cygwin since permissions work differently
+	    # there.
+	    #
+	    # This test also gets avoided under Mac OS X since the system `ls'
+	    # is broken and exits with a 0 status despite the permission
+	    # denied error.
 	    if test -n "$remotehost"; then
 	      cygwin_hack=false
 	    else
 	      cygwin_hack=:
-	      # This has a different effect in remote mode, apparently.
-	      if $remote; then
-		cygwin_hack_2=:
-	      else
-		cygwin_hack_2=false
-	      fi
 	    fi
 	  else
 	    cygwin_hack=false
 	  fi
 
 	  cd $TESTDIR/1
-	  if $cygwin_hack; then
-	    # Use a different test under Cygwin since permissions work
-	    # differently there..
-	    #
-	    # When this is converted to autotest, this should be an XFAIL test
-	    # - I expect the fault lies with Cygwin since `cd first-dir'
-	    # fails and `ls first-dir' does not.  I think what is happening is
-	    # that the open directory works but reading the directory returns
-	    # an empty file list.
-	    if $cygwin_hack_2; then
-	      dotest modes3-5cygwin2 "${testcvs} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating first-dir
-${SPROG} update: Updating second-dir"
-	    else
-	      dotest_fail modes3-5cygwin "${testcvs} update" \
-"${SPROG} update: Updating \.
-${SPROG} update: Updating first-dir
-${SPROG} update: failed to create lock directory for \`$CVSROOT_DIRNAME/first-dir' ($CVSROOT_DIRNAME/first-dir/#cvs.lock): Permission denied
-${SPROG} update: failed to obtain dir lock in repository \`$CVSROOT_DIRNAME/first-dir'
-${SPROG} \[update aborted\]: read lock failed - giving up"
-	    fi
-	  else
+	  if $cygwin_hack; then :; else
 	    dotest modes3-5 "${testcvs} update" \
 "${SPROG} update: Updating \.
 ${SPROG} update: Updating first-dir
