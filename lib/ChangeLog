@@ -1,3 +1,9 @@
+Tue Jan 28 17:45:46 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* md5.c, md5.h: Changes so these work without having an integer
+	type which is exactly 32 bits.  Modeled after changes by Tatu Ylonen
+	<ylo@cs.hut.fi> as part of SSH but rewritten.
+
 Wed Jan  8 14:50:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Makefile.in, getopt.h, sighandle.c, system.h: Remove CVSid; we
