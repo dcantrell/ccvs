@@ -1,3 +1,13 @@
+Mon Feb  9 18:34:39 1998  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	Tweaks to Ian's checkin:
+	* update.c (merge_file): Remove comment about sending file to
+	client before the message.  It doesn't apply to this code any more
+	(it does apply to checkout_file, but I'm not sure it is important
+	to have such a comment anyway).
+	* buffer.c (buf_default_memory_error, buf_length): Reindent.
+	* server.h: Declare struct buffer before use.
+
 Mon Feb  9 21:05:28 1998  Ian Lance Taylor  <ian@cygnus.com>
 
 	* rcs.c (RCS_fully_parse): Call getrevnum rather than getrcsrev.

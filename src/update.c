@@ -1750,9 +1750,6 @@ merge_file (finfo, vers)
 			      finfo->repository, backup);
 #endif
 
-	/* Send the new contents of the file before the message.  If we
-	   wanted to be totally correct, we would have the client write
-	   the message only after the file has safely been written.  */
 	status = checkout_file (finfo, vers, 0, 1, 1);
 
 	/* Is there a better term than "nonmergeable file"?  What we
