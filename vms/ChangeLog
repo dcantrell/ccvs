@@ -1,3 +1,8 @@
+2002-05-22  Derek Price  <oberon@umich.edu>
+
+	* config.h: Remove obsolete definition of NO_SLASH_AFTER_HOMEDIR.
+	* filesubr.c (strcat_filename_onto_homedir): New function.
+
 2002-04-30  Derek Price  <oberon@umich.edu>
 
 	* Makefile.in: Regenerated with automake 1.6.
