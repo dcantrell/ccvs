@@ -98,15 +98,17 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     char *update_prog = NULL;
     struct saved_cwd cwd;
     char line[MAXLINELEN];
-    char *xmodargv[MAXFILEPERDIR];
+    int modargc;
+    int xmodargc;
     char **modargv;
+    char *xmodargv[MAXFILEPERDIR];
     char *value;
     char *zvalue;
     char *mwhere = NULL;
     char *mfile = NULL;
     char *spec_opt = NULL;
     char xvalue[PATH_MAX];
-    int modargc, alias = 0;
+    int alias = 0;
     datum key, val;
     char *cp;
     int c, err = 0;
@@ -394,7 +396,8 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     (void) sprintf (line, "%s %s", "XXX", value);
 
     /* turn the line into an argv[] array */
-    line2argv (&modargc, xmodargv, line);
+    line2argv (&xmodargc, xmodargv, line);
+    modargc = xmodargc;
     modargv = xmodargv;
 
     /* parse the args */
@@ -476,8 +479,12 @@ do_module (db, mname, m_type, msg, callback_proc, where,
     err += callback_proc (&modargc, modargv, where, mwhere, mfile, shorten,
 			  local_specified, mname, msg);
 
-    /* clean up */
-    free_names (&modargc, modargv);
+#if 0
+    /* FIXME: I've fixed this so that the correct arguments are called, 
+       but now this fails because there is code below this point that
+       uses optarg values extracted from the arg vector. */
+    free_names (&xmodargc, xmodargv);
+#endif
 
     /* if there were special include args, process them now */
 
@@ -871,5 +878,7 @@ cat_module (status)
 	    *cp++ = '\0';
 	    (void) printf ("%s\n", cp2);
 	}
+
+	free_names(&moduleargc, moduleargv);
     }
 }
