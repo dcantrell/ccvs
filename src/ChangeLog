@@ -8,6 +8,9 @@
 	(rcs_internal_lockfile, rcs_internal_unlockfile): Keep track of
 	lock file fd for rcs_cleanup ().
 
+	* client.c (handle_set_checkin_prog, handle_set_update_prog):
+	Just ignore the request when exporting.
+
 2000-06-27  Larry Jones  <larry.jones@sdrc.com>
 
 	* create_adm.c, cvs.h (Create_Admin): Add dotemplate argument.

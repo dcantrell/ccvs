@@ -2491,7 +2491,11 @@ handle_set_checkin_prog (args, len)
 {
     char *prog;
     struct save_prog *p;
+
     read_line (&prog);
+    if (strcmp (command_name, "export") == 0)
+	return;
+
     p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
     p->next = checkin_progs;
     p->dir = xstrdup (args);
@@ -2506,7 +2510,11 @@ handle_set_update_prog (args, len)
 {
     char *prog;
     struct save_prog *p;
+
     read_line (&prog);
+    if (strcmp (command_name, "export") == 0)
+	return;
+
     p = (struct save_prog *) xmalloc (sizeof (struct save_prog));
     p->next = update_progs;
     p->dir = xstrdup (args);
