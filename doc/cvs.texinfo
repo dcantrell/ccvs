@@ -1224,6 +1224,18 @@ typical for newly created files, except that sometimes
 @sc{cvs} creates them read-only (see the sections on
 watches, @ref{Setting a watch}; -r, @ref{Global
 options}; or CVSREAD, @ref{Environment variables}).
+@c FIXME: Need more discussion of which users and
+@c groups should own the file in the repository.
+@c Include a somewhat detailed example of the usual
+@c case where CVSUMASK is 007, the developers are all
+@c in a group, and that group owns stuff in the
+@c repository.  Need to talk about group ownership of
+@c newly-created directories/files (on some unices,
+@c such as SunOS4, setting the setgid bit on the
+@c directories will make files inherit the directory's
+@c group.  On other unices, your mileage may vary.  I
+@c can't remember what POSIX says about this, if
+@c anything).
 
 Note that using the client/server @sc{cvs}
 (@pxref{Remote repositories}), there is no good way to

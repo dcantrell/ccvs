@@ -1,3 +1,8 @@
+Sat May 24 23:47:47 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (File permissions): Add comment about group
+	ownership in repository and setgid bit on directories.
+
 Fri May 23 17:14:05 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* RCSFILES: Fix typo in dead newphrase description ("an" -> "a").
