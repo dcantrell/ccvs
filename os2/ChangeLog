@@ -1,3 +1,8 @@
+Mon Nov  6 16:29:00 1995  Karl Fogel  <kfogel@floss.cyclic.com>
+
+        * Makefile.in (OS2_SOURCES): added filesubr.c; this may not be
+        permanent.
+
 Sun Nov  5 16:17:33 1995  Karl Fogel  <kfogel@floss.cyclic.com>
 
         * Makefile.in (OS2_HEADERS, OS2_SOURCES): added dirent.h and
