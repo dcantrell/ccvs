@@ -1,3 +1,10 @@
+2001-05-04  Derek Price  <dprice@collab.net>
+
+	* zlib.c (compress_buffer_shutdown_input): Use new buffer shutdown
+	prototype.
+	(compress_buffer_shutdown_output): Ditto.
+	(Thanks to Pavel Roskin <proski@gnu.org>.)
+
 2001-05-03  Derek Price  <dprice@collab.net>
 
 	* buffer.c (struct stdio_buffer_closure): New structure to hold a
