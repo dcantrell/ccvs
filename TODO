@@ -728,3 +728,11 @@ Possible solutions:
    b.  I'm not thinking of others, except storing the whole file in
    CVS/Base, and I'm sure using twice the disk space would be
    unpopular.
+
+194.  CVS does not separate the "metadata" from the actual revision
+history; it stores them both in the RCS files.  Metadata means tags
+and header information such as the number of the head revision.
+Storing the metadata separately could speed up "cvs tag" enormously,
+which is a big problem for large repositories.  It could also probably
+make CVS's locking much less in the way (see comment in do_recursion
+about "two-pass design").
