@@ -1,4 +1,11 @@
 Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
+		 and Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* update.c (checkout_file): Call server_scratch_entry_only when a
+	non-pertinent file is found that does not exist.
+	* sanity.sh (newb): Add test case for above patch.
+
+Thu Jun 13 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* update.c (update_fileproc): Call server_scratch_entry_only when
 	handling T_REMOVE_ENTRY on the server.

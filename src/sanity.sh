@@ -346,7 +346,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 death branches import new conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
+	tests="basica basicb basic1 deep basic2 death branches import new newb conflicts conflicts2 modules mflag errmsg1 devcom ignore binfiles info"
 else
 	tests="$*"
 fi
@@ -2064,6 +2064,80 @@ rcsmerge: warning: conflicts during merge'
 
 		cd .. ; rm -rf first-dir ; rm -rf ${CVSROOT_DIRNAME}/first-dir
 		;;
+
+	newb)
+	  # Test removing a file on a branch and then checking it out.
+
+	  # We call this "newb" only because it, like the "new" tests,
+	  # has something to do with "no longer pertinent" messages.
+	  # Not necessarily the most brilliant nomenclature.
+
+	  # Create file 'a'.
+	  mkdir ${CVSROOT_DIRNAME}/first-dir
+	  dotest newb-123a "${testcvs} -q co first-dir" ''
+	  cd first-dir
+	  touch a
+	  dotest newb-123b "${testcvs} add a" \
+"${PROG} [a-z]*: scheduling file .a. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest newb-123c "${testcvs} -q ci -m added" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/a,v
+done
+Checking in a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+initial revision: 1\.1
+done'
+
+	  # Make a branch.
+	  dotest newb-123d "${testcvs} -q tag -b branch" "T a"
+
+	  # Check out the branch.
+	  cd ..
+	  rm -rf first-dir
+	  mkdir 1
+	  cd 1
+	  dotest newb-123e "${testcvs} -q co -r branch first-dir" \
+"U first-dir/a"
+
+	  # Remove 'a' on another copy of the branch.
+	  cd ..
+	  mkdir 2
+	  cd 2
+	  dotest newb-123f "${testcvs} -q co -r branch first-dir" \
+"U first-dir/a"
+	  cd first-dir
+	  rm a
+	  dotest newb-123g "${testcvs} rm a" \
+"${PROG} [a-z]*: scheduling .a. for removal
+${PROG} [a-z]*: use .cvs commit. to remove this file permanently"
+	  dotest newb-123h "${testcvs} -q ci -m removed" \
+'Removing a;
+/tmp/cvs-sanity/cvsroot/first-dir/a,v  <--  a
+new revision: delete; previous revision: 1\.1\.2
+done'
+
+	  # Check out the file on the branch.  This should report
+	  # that the file is not pertinent, but it should not
+	  # say anything else.
+	  cd ..
+	  rm -rf first-dir
+	  dotest newb-123i "${testcvs} -q co -r branch first-dir/a" \
+"${PROG} [a-z]*: warning: first-dir/a is not (any longer) pertinent"
+
+	  # Update the other copy, and make sure that a is removed.
+	  cd ../1/first-dir
+	  dotest newb-123j "${testcvs} -q update" \
+"${PROG} [a-z]*: warning: a is not (any longer) pertinent"
+
+	  if test -f a; then
+	    fail newb-123k
+	  else
+	    pass newb-123k
+	  fi
+
+	  cd ../..
+	  rm -rf 1 2 ; rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
 
 	conflicts)
 		mkdir ${CVSROOT_DIRNAME}/first-dir
