@@ -707,6 +707,7 @@ ParseTag (tagp, datep, nonbranchp)
 		    /* Silently ignore it; it may have been
 		       written by a future version of CVS which extends the
 		       syntax.  */
+		    break;
 	    }
 	}
 	(void) fclose (fp);
