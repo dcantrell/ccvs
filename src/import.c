@@ -577,7 +577,7 @@ add_rev (message, rcs, vfile, vers)
 	}
     }
     run_setup ("%s%s -q -f -r%s", Rcsbin, RCS_CI, vbranch);
-    run_args ("-m%s", message);
+    run_args ("-m%s", make_message_rcslegal (message));
     if (use_file_modtime)
 	run_arg ("-d");
     run_arg (rcs);

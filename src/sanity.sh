@@ -31,7 +31,7 @@ testcvs=$1; shift
 
 # Remaining arguments are the names of tests to run.
 if test x"$*" = x; then
-  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules"
+  tests="basic0 basic1 basic2 basic3 rtags death import new conflicts modules mflag"
 else
   tests="$*"
 fi
@@ -1353,6 +1353,56 @@ for what in $tests; do
 	    echo 'FAIL: test 155' | tee -a ${LOGFILE}
 	  fi
 	  cd ..
+	  ;;
+	mflag)
+	  for message in '' ' ' '	
+           ' '    	  	test' ; do
+	    # Set up
+	    mkdir a-dir; cd a-dir
+	    # Test handling of -m during import
+	    echo testa >>test
+	    if ${testcvs} import -m "$message" a-dir A A1 >>${LOGFILE} 2>&1;then
+	      echo 'PASS: test 156' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 156' | tee -a ${LOGFILE}
+	    fi
+	    # Must import twice since the first time uses inline code that
+	    # avoids RCS call.
+	    echo testb >>test
+	    if ${testcvs} import -m "$message" a-dir A A2 >>${LOGFILE} 2>&1;then
+	      echo 'PASS: test 157' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 157' | tee -a ${LOGFILE}
+	    fi
+	    # Test handling of -m during ci
+	    cd ..; rm -rf a-dir;
+	    if ${testcvs} co a-dir >>${LOGFILE} 2>&1; then
+	      echo 'PASS: test 158' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 158' | tee -a ${LOGFILE}
+	    fi
+	    cd a-dir
+	    echo testc >>test
+	    if ${testcvs} ci -m "$message" >>${LOGFILE} 2>&1; then
+	      echo 'PASS: test 159' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 159' | tee -a ${LOGFILE}
+	    fi
+	    # Test handling of -m during rm/ci
+	    rm test;
+	    if ${testcvs} rm test >>${LOGFILE} 2>&1; then
+	      echo 'PASS: test 160' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 160' | tee -a ${LOGFILE}
+	    fi
+	    if ${testcvs} ci -m "$message" >>${LOGFILE} 2>&1; then
+	      echo 'PASS: test 161' >>${LOGFILE}
+	    else
+	      echo 'FAIL: test 161' | tee -a ${LOGFILE}
+	    fi
+	    # Clean up
+	    cd ..; rm -rf a-dir ${CVSROOT_FILENAME}/a-dir
+	  done
 	  ;;
 
 	*) echo $what is not the name of a test -- ignored ;;
