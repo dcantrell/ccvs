@@ -456,7 +456,7 @@ HOME=${TESTDIR}/home; export HOME
 # tests.
 
 if test x"$*" = x; then
-	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big"
+	tests="basica basicb basic1 deep basic2 rdiff death death2 branches multibranch import join new newb conflicts conflicts2 modules modules2 modules3 mflag errmsg1 devcom devcom2 devcom3 ignore binfiles binwrap info serverpatch log log2 crerepos rcs big modes"
 else
 	tests="$*"
 fi
@@ -5583,6 +5583,100 @@ done'
 
 	  rm -rf first-dir
 	  rm -rf ${CVSROOT_DIRNAME}/first-dir
+	  ;;
+
+	modes)
+	  # Test repository permissions (CVSUMASK and so on).
+	  # Although the tests in this section "cheat" by testing
+	  # repository permissions, which are sort of not a user-visible
+	  # sort of thing, the modes do have user-visible consequences,
+	  # such as whether a second user can check out the files.  But
+	  # it would be awkward to test the consequences, so we don't.
+
+	  export -n CVSUMASK # if unset, defaults to 002
+	  umask 077
+	  mkdir 1; cd 1
+	  dotest modes-1 "${testcvs} -q co -l ." ''
+	  mkdir first-dir
+	  dotest modes-2 "${testcvs} add first-dir" \
+"Directory /tmp/cvs-sanity/cvsroot/first-dir added to the repository"
+	  cd first-dir
+	  touch aa
+	  dotest modes-3 "${testcvs} add aa" \
+"${PROG} [a-z]*: scheduling file .aa. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest modes-4 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/aa,v
+done
+Checking in aa;
+/tmp/cvs-sanity/cvsroot/first-dir/aa,v  <--  aa
+initial revision: 1\.1
+done'
+	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r--r--.
+	  dotest modes-5 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
+"-r-------- .*"
+
+	  # Test for whether we can set the execute bit.
+	  chmod +x aa
+	  echo change it >>aa
+	  dotest modes-6 "${testcvs} -q ci -m set-execute-bit" \
+'Checking in aa;
+/tmp/cvs-sanity/cvsroot/first-dir/aa,v  <--  aa
+new revision: 1\.2; previous revision: 1\.1
+done'
+	  # If CVS let us update the execute bit, it would be set here.
+	  # But it doesn't, and as far as I know that is longstanding
+	  # CVS behavior.
+	  dotest modes-7 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/aa,v" \
+"-r-------- .*"
+
+	  CVSUMASK=007
+	  export CVSUMASK
+	  touch ab
+	  # Might as well test the execute bit too.
+	  chmod +x ab
+	  dotest modes-8 "${testcvs} add ab" \
+"${PROG} [a-z]*: scheduling file .ab. for addition
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  dotest modes-9 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/ab,v
+done
+Checking in ab;
+/tmp/cvs-sanity/cvsroot/first-dir/ab,v  <--  ab
+initial revision: 1\.1
+done'
+	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r-----.
+	  dotest modes-10 "ls -l /tmp/cvs-sanity/cvsroot/first-dir/ab,v" \
+"-r-x------.*"
+
+	  # OK, now add a file on a branch.  Check that the mode gets
+	  # set the same way (it is a different code path in CVS).
+	  dotest modes-11 "${testcvs} -q tag -b br" 'T aa
+T ab'
+	  dotest modes-12 "${testcvs} -q update -r br" ''
+	  touch ac
+	  dotest modes-13 "${testcvs} add ac" \
+"${PROG} [a-z]*: scheduling file .ac. for addition on branch .br.
+${PROG} [a-z]*: use .cvs commit. to add this file permanently"
+	  # Not sure it really makes sense to refer to a "previous revision"
+	  # when we are just now adding the file; as far as I know
+	  # that is longstanding CVS behavior, for what it's worth.
+	  dotest modes-14 "${testcvs} -q ci -m add" \
+'RCS file: /tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v
+done
+Checking in ac;
+/tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v  <--  ac
+new revision: 1\.1\.2\.1; previous revision: 1\.1
+done'
+	  # FIXME: really should be honoring CVSUMASK, i.e. -r--r-----.
+	  dotest modes-15 \
+"ls -l /tmp/cvs-sanity/cvsroot/first-dir/Attic/ac,v" \
+"-r--------.*"
+
+	  cd ../..
+	  rm -rf 1 ${TESTDIR}/first-dir
+	  # Perhaps should restore the umask and CVSUMASK.  But the other
+	  # tests "should" not care about them...
 	  ;;
 
 	*)
