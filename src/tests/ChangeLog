@@ -1,3 +1,9 @@
+2003-11-11  Derek R. Price  <derek@ximbiot.com>
+
+	* atspecific.at (AT_CVS_CHECK_ANNOTATE): Don't assume a six character
+	username.
+	* suite: Regenerated.
+
 2003-11-10  Derek R. Price  <derek@ximbiot.com>
 
 	* basic.at (Operations on empty projects): Add keywords for this test
