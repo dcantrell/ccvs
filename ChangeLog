@@ -1,5 +1,7 @@
 Tue Sep 16 00:14:55 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* BUGS: Add item about importing binary files.
+
 	* TODO: Adjust item #150 to reflect the fact that the client is
 	not quite so mean about tossing the log message as it was.
 

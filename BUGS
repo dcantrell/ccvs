@@ -21,6 +21,13 @@ are thinking of fixing this, check out the comment "For cvs export,
 assume it is a text file." in client.c.
 
 
+* The only way to specify some files as binary in a "cvs import" is
+the command line -W option.  Both CVSROOT/cvswrappers and .cvswrappers
+are broken (the latter, in general, see comment in wrapper.c, the
+former, for this usage, note that client_process_import_file has no
+way of knowing about CVSROOT/cvswrappers which is off on the server).
+
+
 * Wrappers (-t/-f) do not work client/server, and there are a variety of other
 bugs and annoyances with wrappers.
 
