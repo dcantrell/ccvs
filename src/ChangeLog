@@ -1,3 +1,8 @@
+2002-03-13  Derek Price  <oberon@umich.edu>
+
+	* main.c (usg): Correct a spelling mistake in a comment.
+	(Thanks to Matt Kraai <kraai@alumni.cmu.edu>.)
+
 2002-03-09  Larry Jones  <larry.jones@sdrc.com>
 
 	* import.c (import): Change the suggested merge message to use
