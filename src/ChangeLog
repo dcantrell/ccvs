@@ -1,3 +1,8 @@
+1999-05-11  Larry Jones  <larry.jones@sdrc.com>
+
+	* server.c (serve_notify): Allocate enough memory to hold the
+	"misformed Notify request" message in pending_error_text.
+
 1999-05-11  Jim Kingdon  <http://www.cyclic.com>
 
 	* server.c (switch_to_user): Ignore EPERM from initgroups.  Fixes

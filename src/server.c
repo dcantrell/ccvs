@@ -1950,7 +1950,7 @@ serve_notify (arg)
     }
     return;
   error:
-    pending_error_text = malloc (40);
+    pending_error_text = malloc (80);
     if (pending_error_text)
 	strcpy (pending_error_text,
 		"E Protocol error; misformed Notify request");
