@@ -808,8 +808,10 @@ should ease patch submission.
 201.  cvs_temp_file should be creating temporary files in a privately owned
 subdirectory of of temp due to security issues on some systems.
 
-**
 202.  Merge most of the diff & rdiff code.  Enable rdiff to accept most diff
-options.  Make rdiff output look like diff's.  Make diff garbage go to stderr
+options.  Make rdiff output look like diff's.  Make CVS diff garbage go to stderr
 and only standard diff output go to stdout.
-**  In progress - DRP
+
+203.  Add val-tags additions to the tagging code.  Don't remove the update additions
+since val-tags could still be used as a cache when the repository was imported from elsewhere
+(the tags weren't applied with a version which wrote val-tags).
