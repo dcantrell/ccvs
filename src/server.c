@@ -2,6 +2,7 @@
 #include "cvs.h"
 #include "watch.h"
 #include "edit.h"
+#include "fileattr.h"
 
 #ifdef SERVER_SUPPORT
 
@@ -227,6 +228,8 @@ supported_response (name)
 	if (strcmp (rs->name, name) == 0)
 	    return rs->status == rs_supported;
     error (1, 0, "internal error: testing support for unknown response?");
+    /* NOTREACHED */
+    return 0;
 }
 
 static void
@@ -1080,7 +1083,6 @@ static int
 server_notify ()
 {
     struct notify_note *p;
-    char *val;
     char *repos;
     List *list;
     Node *node;

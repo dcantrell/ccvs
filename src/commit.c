@@ -169,6 +169,7 @@ copy_ulist (node, data)
 {
     struct find_data *args = (struct find_data *)data;
     args->argv[args->argc++] = node->key;
+    return 0;
 }
 #endif /* CLIENT_SUPPORT */
 

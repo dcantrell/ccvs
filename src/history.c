@@ -943,6 +943,7 @@ fill_hrec (line, hr)
     int c;
     int off;
     static int idx = 0;
+    unsigned long date;
 
     memset ((char *) hr, 0, sizeof (*hr));
     while (isspace (*line))
@@ -952,7 +953,8 @@ fill_hrec (line, hr)
     *rtn++ = '\0';
 
     hr->type = line++;
-    (void) sscanf (line, "%x", &hr->date);
+    (void) sscanf (line, "%lx", &date);
+    hr->date = date;
     while (*line && strchr ("0123456789abcdefABCDEF", *line))
 	line++;
     if (*line == '\0')

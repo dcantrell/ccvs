@@ -1,3 +1,17 @@
+Tue Jan  2 11:25:22 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	gcc -Wall lint:
+	* client.c (client_expand_modules): Pass error message not "" to error.
+	* client.c (supported_request), server.c (supported_response):
+	Return a value (gcc -Wall can't know that error doesn't return).
+	* commit.c (copy_ulist): Return a value.
+	* history.c (fill_hrec): Don't make assumptions about whether
+	time_t is "int" or "long" or what.
+	* cvs.h: Declare link_file.
+	* server.c: Include fileattr.h.
+	* server.c (server_notify): Remove unused variable val.
+	* tag.c (val_fileproc): Remove unused variable foundtag.
+
 Mon Jan  1 09:49:16 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* Version 1.6.5.
