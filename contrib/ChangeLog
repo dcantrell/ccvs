@@ -1,3 +1,9 @@
+2003-09-26  Mark D. Baushke  <mdb@cvshome.org>
+
+	* sccs2rcs.in: Use @AWK@ to avoid ancient Solaris awk (no support
+	for the "?" operator). Add support for handling binary SCCS files.
+	(Suggestion from Allan Schrum <agschrum@mindspring.com>.)
+	
 2003-09-12  Derek Price  <derek@ximbiot.com>
 
 	* check_cvs.in (get_ignore_files_from_cvsroot): Handle error messages
