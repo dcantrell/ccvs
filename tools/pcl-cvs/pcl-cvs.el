@@ -1176,6 +1176,11 @@ This function returns the last cons-cell in the list that is built."
 	   "^cvs \\(update\\|server\\): warning: .* was lost$")
 	  (forward-line 1))
 
+	 ;; Patch failed; CVS will refetch the file.  Ignored.
+	 ((looking-at
+	   "^[0-9]+ out of [0-9]+ hunks failed--saving rejects to .*$")
+	  (forward-line 1))
+
 	 ;; File unknown for some reason.
 	 ;; FIXME:  is it really a good idea to add this as unknown here?
 
