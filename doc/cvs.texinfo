@@ -11091,6 +11091,7 @@ More wrappers.  See @ref{import options}.
 @end table
 
 @item version
+@cindex version (subcommand)
 
 Display the version of @sc{cvs} being used.  If the repository
 is remote, display both the client and server versions.

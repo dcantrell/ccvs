@@ -1,3 +1,8 @@
+2001-01-18  Derek Price  <derek.price@openavenue.com>
+
+	* cvs.texinfo (Quick reference to CVS commands): add index entry for
+	version subcommand
+
 2001-01-18  Larry Jones  <larry.jones@sdrc.com>
 
 	* cvs.texinfo (log options): Document new :: syntax for -r.
