@@ -1,3 +1,8 @@
+2003-10-30  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (File permissions, Error messages): Add index entries for
+	CVSROOT/val-tags file.
+
 2003-10-21  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo: Note gnu.cvs.* usenet mirrors of the email lists.
