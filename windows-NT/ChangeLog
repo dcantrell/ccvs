@@ -1,3 +1,9 @@
+1997-01-08  Jim Kingdon
+
+	* filesubr.c (expand_wild): If we just find a file (that
+	is, without expanding a wildcard), return the file name
+	as specified rather than as it exists in the filesystem.
+
 Thu Jan  2 13:30:56 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* filesubr.c, ndir.c, ndir.h, pwd.c, pwd.h, run.c, stripslash.c:
