@@ -234,6 +234,7 @@ lookup_command_attribute (cmd_name)
 
 
     if ((strcmp (cmd_name, "checkout") != 0) &&
+        (strcmp (cmd_name, "init") != 0) &&
         (strcmp (cmd_name, "login") != 0) &&
 	(strcmp (cmd_name, "logout") != 0) &&
         (strcmp (cmd_name, "rdiff") != 0) &&
