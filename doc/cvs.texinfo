@@ -4787,6 +4787,63 @@ You can use the history file (@pxref{history file}) to
 log various @sc{cvs} actions.  To retrieve the
 information from the history file, use the @code{cvs
 history} command (@pxref{history}).
+@c
+@c The history database has many problems:
+@c * It is very unclear what field means what.  This
+@c could be improved greatly by better documentation,
+@c but there are still non-orthogonalities (for
+@c example, tag does not record the "repository"
+@c field but most records do).
+@c * Confusion about files, directories, and modules.
+@c Some commands record one, some record others.
+@c * File removal is not logged.  There is an 'R'
+@c record type documented, but CVS never uses it.
+@c * Tags are only logged for the "cvs rtag" command,
+@c not "cvs tag".  The fix for this is not completely
+@c clear (see above about modules vs. files).
+@c * Are there other cases of operations that are not
+@c logged?  One would hope for all changes to the
+@c repository to be logged somehow (particularly
+@c operations like tagging, "cvs admin -k", and other
+@c operations which do not record a history that one
+@c can get with "cvs log").  Operations on the working
+@c directory, like export, get, and release, are a
+@c second category also covered by the current "cvs
+@c history".
+@c * The history file does not record the options given
+@c to a command.  The most serious manifestation of
+@c this is perhaps that it doesn't record whether a command
+@c was recursive.  It is not clear to me whether one
+@c wants to log at a level very close to the command
+@c line, as a sort of way of logging each command
+@c (more or less), or whether one wants
+@c to log more at the level of what was changed (or
+@c something in between), but either way the current
+@c information has pretty big gaps.
+@c * Further details about a tag--like whether it is a
+@c branch tag or, if a non-branch tag, which branch it
+@c is on.  One can find out this information about the
+@c tag as it exists _now_, but if the tag has been
+@c moved, one doesn't know what it was like at the time
+@c the history record was written.
+@c * Whether operating on a particular tag, date, or
+@c options was implicit (sticky) or explicit.
+@c
+@c Another item, only somewhat related to the above, is a
+@c way to control what is logged in the history file.
+@c This is probably the only good way to handle
+@c different people having different ideas about
+@c information/space tradeoffs.
+@c
+@c It isn't really clear that it makes sense to try to
+@c patch up the history file format as it exists now to
+@c include all that stuff.  It might be better to
+@c design a whole new CVSROOT/nhistory file and "cvs
+@c nhistory" command, or some such, or in some other
+@c way trying to come up with a clean break from the
+@c past, which can address the above concerns.  Another
+@c open question is how/whether this relates to
+@c taginfo/loginfo/etc.
 
 @c - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @node user-defined logging
