@@ -1,3 +1,9 @@
+Sun Dec 22 22:06:49 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* logmsg.c (do_verify): If noexec, skip the verification *without*
+	printing a message.  Use cvs_output not printf.  Skip verification
+	for client_active.
+
 Wed Dec 18 12:27:35 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* repos.c (Name_Repository): Add comment regarding wording of

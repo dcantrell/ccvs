@@ -383,11 +383,22 @@ do_verify (message, repository)
     char *fname;
     int retcode = 0;
 
-    /* if there's no message, then we have nothing to verify */
+#ifdef CLIENT_SUPPORT
+    if (client_active)
+	/* The verification will happen on the server.  */
+	return;
+#endif
 
-    if ((message == (char *) NULL) || (noexec))
+    /* FIXME? Do we really want to skip this on noexec?  What do we do
+       for the other administrative files?  */
+    if (noexec)
+	return;
+
+    /* If there's no message, then we have nothing to verify.  Can this
+       case happen?  And if so why would we print a message?  */
+    if (message == NULL)
     {
-	printf ("No message to verify\n");
+	cvs_output ("No message to verify\n", 0);
 	return;
     }
 
