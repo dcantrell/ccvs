@@ -493,7 +493,7 @@ cd ${TESTDIR}
 # This will show up in cvs history output where it prints the working
 # directory.  It should *not* appear in any cvs output referring to the
 # repository; cvs should use the name of the repository as specified.
-TMPPWD=`/bin/pwd`
+TMPPWD=`pwd`
 
 # Avoid picking up any stray .cvsrc, etc., from the user running the tests
 mkdir home

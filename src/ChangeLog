@@ -1,5 +1,7 @@
 Tue Jan 13 13:49:53 1998  Ian Lance Taylor  <ian@cygnus.com>
 
+	* sanity.sh: When setting TMPPWD use just pwd, not /bin/pwd.
+
 	* update.c (checkout_file): Don't pass set_time as true to
 	Version_TS if the file is dead.
 	* sanity.sh (modules): Add tests modules-155c6 through
