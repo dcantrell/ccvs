@@ -1,3 +1,7 @@
+1999-11-19  Larry Jones <larry.jones@sdrc.com>
+
+	* server.c (switch_to_user): Correct setgid error messages.
+
 1999-11-19  Karl Fogel  <kfogel@red-bean.com>
 
 	* edit.c (unedit_usage, unedit): new struct, use it.  Now "cvs
