@@ -449,20 +449,23 @@ process_import_file (message, vfile, vtag, targc, targv)
     {
 	char *attic_name;
 
-	free (rcs);
 	attic_name = xmalloc (strlen (repository) + strlen (vfile) +
 			      sizeof (CVSATTIC) + sizeof (RCSEXT) + 10);
 	(void) sprintf (attic_name, "%s/%s/%s%s", repository, CVSATTIC,
 			vfile, RCSEXT);
 	if (!isfile (attic_name))
 	{
+	    int retval;
+
 	    free (attic_name);
 	    /*
 	     * A new import source file; it doesn't exist as a ,v within the
 	     * repository nor in the Attic -- create it anew.
 	     */
 	    add_log ('N', vfile);
-	    return (add_rcs_file (message, rcs, vfile, vtag, targc, targv));
+	    retval = add_rcs_file (message, rcs, vfile, vtag, targc, targv);
+	    free (rcs);
+	    return retval;
 	}
 	free (attic_name);
 	inattic = 1;

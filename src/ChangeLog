@@ -1,5 +1,8 @@
 Mon Jan 27 17:25:27 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* import.c (process_import_file): Fix freeing of rcs (Don't free
+	it before we are done using it, and don't free it twice).
+
 	* modules.c (cat_module): Allocate line right before we use
 	it.  The previous code was wrong because the length of the
 	s_h->rest changes between the time we allocate line and the time we
