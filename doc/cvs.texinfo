@@ -1299,6 +1299,12 @@ cvs -d :server:bach@@chainsaw.brickyard.com:/usr/local/cvsroot checkout foo
 (The @file{bach@@} can be omitted if the username is
 the same on both the local and remote hosts.)
 
+@c Should we mention "rsh host echo hi" and "rsh host
+@c cat" (the latter followed by typing text and ^D)
+@c as troubleshooting techniques?  Probably yes
+@c (people tend to have trouble setting this up),
+@c but this kind of thing can be hard to spell out.
+
 @node Password authenticated
 @subsection Direct connection with password authentication
 

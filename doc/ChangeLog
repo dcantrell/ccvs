@@ -1,3 +1,8 @@
+Fri Jun 28 10:48:33 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Connecting via rsh): Add comment about what we
+	might be saying about troubleshooting.
+
 Sun Jun 23 10:07:45 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* cvs.texinfo (Password authentication security): Add comment
