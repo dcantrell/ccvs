@@ -1,5 +1,8 @@
 2002-01-29  Larry Jones  <larry.jones@sdrc.com>
 
+	* error.h (error_exit): Declare __noreturn__ to avoid spurious
+	warnings.
+
 	* server.c (serve_root): If the specified root doesn't match the
 	pserver root, return before changing current_parsed_root to prevent
 	subsequent commands from accessing an unchecked root directory.
