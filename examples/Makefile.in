@@ -43,7 +43,9 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 
 EXAMPLE_FILES = commitinfo editinfo loginfo modules rcsinfo
 
-DISTFILES = Makefile.in commitinfo loginfo modules rcsinfo
+DISTFILES = \
+	.cvsignore Makefile.in ChangeLog \
+	commitinfo editinfo loginfo modules rcsinfo
 
 all: Makefile
 .PHONY: all
@@ -78,9 +80,10 @@ distclean: clean
 realclean: distclean
 .PHONY: realclean
 
-dist:
-	ln $(DISTFILES) ../`cat ../.fname`/examples
-.PHONY: dist
+dist-dir:
+	mkdir ${DISTDIR}
+	ln ${DISTFILES} ${DISTDIR}
+.PHONY: dist-dir
 
 Makefile: Makefile.in
 	cd ..; $(SHELL) config.status
