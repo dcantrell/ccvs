@@ -1,3 +1,8 @@
+2001-05-18  Derek Price  <dprice@collab.net>
+
+	* cvs.1: Add note about 'P' file status from update.
+	(Reported by Jani Averbach <jaa@cc.jyu.fi>).
+
 2001-04-25  Derek Price  <dprice@collab.net>
 
 	* Makefile.in: Regenerated using AM 1.4e as of today at 18:10 -0400.
