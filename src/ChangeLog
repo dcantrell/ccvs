@@ -1,3 +1,8 @@
+2002-03-22  Larry Jones  <larry.jones@sdrc.com>
+
+	* sanity.sh (rcslib): Correct new tests to use ${testcvs} instead
+	of cvs.
+
 2002-03-21  Derek Price  <oberon@umich.edu>
 
 	* vers_ts.c (time_stamp): Return the timestamp for the newer of the
