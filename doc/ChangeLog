@@ -1,3 +1,11 @@
+2003-07-12  Larry Jones  <lawrence.jones@eds.com>
+
+	* cvs.texinfo (Binary howto): Add note about how to determine whether
+	a file is marked as binary or not.
+	(Suggested by Erik Sigra <sigra@home.se>.)
+	* stamp-vti: Regenerated.
+	* version.texi: Regenerated.
+
 2003-06-23  Derek Price  <derek@ximbiot.com>
 
 	* stamp-vti: Regenerated.
