@@ -23758,7 +23758,7 @@ add
 	  # And when the file does not exist on the client, we go with the
 	  # client Entries match.
 	  if $client_sensitive && $server_sensitive; then
-	    dotest recase-8csss "$testcvs status fIlE" \
+	    dotest recase-8sscs "$testcvs status fIlE" \
 "$PROG status: nothing known about fIlE
 ===================================================================
 File: no file fIlE		Status: Unknown
