@@ -1,3 +1,8 @@
+2005-03-04  Georg Schwarz <georg.scwarz@freenet.de>
+
+       * lib/xtime.h - added include guards to fix compile errors
+       on IRIX 5.3
+
 2005-03-03 Derek Price <derek@ximbiot.com>
 
 	* configure.in: Remove checks for valloc and mmap.
