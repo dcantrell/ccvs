@@ -67,7 +67,7 @@ libcvs_a_SOURCES = \
 ##     fncase.c
 ##     fnmatch.c
 ##     fnmatch.h
-##     hostname.c
+##     gethostname.c
 ##     memmove.c
 ##     mkdir.c
 ##     rename.c

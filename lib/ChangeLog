@@ -1,3 +1,11 @@
+2001-04-30  Derek Price  <oberon@umich.edu>
+
+	* hostname.c: Rename to...
+	* gethostname.c: this.
+	* Makefile.am: Change comment to reflect above.
+
+	* Makefile.in: Regenerated with automake 1.6.
+
 2001-04-28  Derek Price  <oberon@umich.edu>
 
 	* getopt.h: #define new names for functions and variables when they
@@ -6,7 +14,6 @@
 	dev packages are fixed.).
 	* regex.h: Ditto.
 	* Makefile.am (libcvs_a_SOURCES): Remove fnmatch.h.
-	* Makefile.in: Regenerated.
 
 2002-04-20  Larry Jones  <larry.jones@sdrc.com>
 
