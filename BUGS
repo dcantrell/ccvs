@@ -1,3 +1,23 @@
+*         We need some version numbers really badly.  Are there some
+  (and Charles Hannum is just not including them in his reports), or do
+  we simply have no reliable way to distinguish between the various
+  versions of rCVS people on the list are running?
+  
+          Now that I think of it, version numbers present a problem when
+  people can update their sources anytime and rebuild.  I think the
+  solution is to increment a minor version number *every* time a bug is
+  fixed, so we can identify uniquely what someone is running when they
+  submit a report.  This implies recording the version increments in the
+  ChangeLog; that way we can just look to see where a particular version
+  lies in relation to the flow of changing code.
+  
+          Should we be doing same with Guppy?  I guess not -- it's only
+  important when you have people who are updating directly from your
+  development tree, which is the case with the remote-cvs folks.
+  
+          Thoughts?
+
+
 * We don't understand the relationship between modules and subdirs
   very well.  However, it is certainly the case that
 
@@ -256,3 +276,22 @@ diff -c -2 -r1.1.1.1 commit.c
   to see what switches the utility programs on the host machine seem to
   accept, and tweak the definitions in rcs.h appropriately.
   
+
+* From: "Charles M. Hannum" <mycroft@ai.mit.edu>
+  To: remote-cvs@cyclic.com
+  Subject: Still one more bug
+  Date: Sat, 25 Feb 1995 17:01:15 -0500
+  
+  mycroft@duality [1]; cd /usr/src/lib/libc
+  mycroft@duality [1]; cvs diff -c2 '-D1 day ago' -Dnow
+  cvs server: Diffing .
+  cvs server: Diffing DB
+  cvs [server aborted]: could not chdir to DB: No such file or directory
+  mycroft@duality [1];
+  
+  `DB' is an old directory, which no longer has files in it, and is
+  removed automatically when I use the `-P' option to checkout.
+  
+  This error doesn't occur when run locally.
+  
+  P.S.  Is anyone working on fixing these bugs?
