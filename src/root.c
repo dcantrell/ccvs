@@ -609,6 +609,7 @@ parse_cvsroot (const char *root_in)
 	    error (0, 0, "when using fork access method.");
 	    goto error_exit;
 	}
+	newroot->hostname = xstrdup("server");  /* for error messages */
 	if (!isabsolute (newroot->directory))
 	{
 	    error (0, 0, "CVSROOT must be an absolute pathname (not `%s')",
