@@ -115,6 +115,7 @@ PR = @PR@
 PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 ROFF = @ROFF@
+RSH_DFLT = @RSH_DFLT@
 SENDMAIL = @SENDMAIL@
 SET_MAKE = @SET_MAKE@
 
@@ -682,11 +683,11 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 check-local: localcheck remotecheck
 
 .PHONY: localcheck
-localcheck:
+localcheck: sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh `pwd`/cvs$(EXEEXT)
 
 .PHONY: remotecheck
-remotecheck: all
+remotecheck: all sanity.config.sh
 	$(SHELL) $(srcdir)/sanity.sh -r `pwd`/cvs$(EXEEXT)
 
 # Our distclean targets

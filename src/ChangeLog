@@ -1,5 +1,11 @@
 2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
 
+	* sanity.sh (CVS_RSH): Read config file sooner to pickup RSH_DFLT
+	for use in setting CVS_RSH variable.
+	* sanity.config.sh.in (RSH_DFLT): Use new substitution variable.
+	* Makefile.am (localcheck, remotecheck): Depend on sanity.config.sh.
+	* Makefile.in: Regenerate for new Makefile.am.
+
 	* update.c (join_file): Deal with rev1 == NULL due to rev1 merge tag
 	being missing from the current file.
 	* sanity.sh (join6): New tests for this case.

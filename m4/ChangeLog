@@ -1,3 +1,7 @@
+2003-11-25  Mark D. Baushke  <mdb@cvshome.org>
+
+	* Makefile.in: Regenerate for new configure.in.
+
 2003-11-19  Derek Price  <derek@ximbiot.com>
 
 	* getline.m4, getndelim2.m4: Import new, synchronized, versions from
