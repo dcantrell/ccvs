@@ -1,3 +1,8 @@
+2004-03-18  Derek Price  <derek@ximbiot.com>
+
+	* cvs.h (pathname_levels): Make string argument const.
+	* subr.c (pathname_levels): Simplify function.
+
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
 	* commit.c (precommit_list_to_args_proc), logmsg.c (do_editor), subr.c
@@ -7,21 +12,21 @@
 
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
-	* src/subr.c (pathname_levels): Get it right this time.
+	* subr.c (pathname_levels): Get it right this time.
 
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
-	* src/subr.c (pathname_levels): Remove incorrect assertion and just
+	* subr.c (pathname_levels): Remove incorrect assertion and just
 	return 0 when pathname is NULL.
 
 2004-03-17  Derek Price  <derek@ximbiot.com>
 
-	* src/subr.c (pathname_levels): Use ISDIRSEP() instead of strchr('/')
+	* subr.c (pathname_levels): Use ISDIRSEP() instead of strchr('/')
 	and remove FIXME comment to that effect.
 
 2004-03-16  Derek Price  <derek@ximbiot.com>
 
-	* src/main.c (main): Update the --version Copyright (c) string to
+	* main.c (main): Update the --version Copyright (c) string to
 	include 2004.
 
 2004-03-15  Mark D. Baushke  <mdb@cvshome.org>

@@ -464,7 +464,7 @@ void xrealloc_and_strcat (char **, size_t *, const char *);
 char *xstrdup (const char *str)
 	__attribute__ ((__malloc__));
 int strip_trailing_newlines (char *str);
-int pathname_levels (char *path);
+int pathname_levels (const char *_path);
 
 typedef	int (*CALLPROC)	(char *_repository, char *_value, void *_closure);
 int Parse_Info (char *_infofile, char *_repository, CALLPROC _callproc,
