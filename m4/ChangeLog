@@ -1,5 +1,9 @@
 2004-10-06  Derek Price  <derek@ximbiot.com>
 
+	* stdbool.m4: Update from GNULIB.
+
+2004-10-06  Derek Price  <derek@ximbiot.com>
+
 	* getopt.m4: Update from GNULIB.
 
 2004-10-06  Derek Price  <derek@ximbiot.com>
