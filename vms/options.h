@@ -220,16 +220,16 @@
 #endif
 
 /*
- * define this to enable the SETXID support (see FAQ 4D.13)
+ * Yes, we can do the authenticated client.
+ */
+#define AUTH_CLIENT_SUPPORT 1
+
+/*
+ * define this to enable the SETXID support.  Probably has no effect on VMS.
  */
 #ifndef SETXID_SUPPORT
 /* #define SETXID_SUPPORT */
 #endif
-
-/*
- * The authenticated client is not yet ported to VMS.
- */
-/* #define AUTH_CLIENT_SUPPORT 1 */
 
 /*
  * If you are working with a large remote repository and a 'cvs checkout' is

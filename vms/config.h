@@ -12,6 +12,9 @@
    Define this if you want to use names which are legal for VMS */
 #define USE_VMS_FILENAMES 1
 
+/* More issues with how VMS names files, kind of a kludge.  See login.c.  */
+#define NO_SLASH_AFTER_HOME 1
+
 /* Only good for NT or DOS with hacked open */
 /* #undef LINES_CRLF_TERMINATED */
 
