@@ -100,6 +100,7 @@ int import PROTO((int argc, char **argv));
 int cvslog PROTO((int argc, char **argv));
 #ifdef CVS_LOGIN
 int login PROTO((int argc, char **argv));
+int connect_to_pserver PROTO((int argc, char **argv));
 #endif
 int patch PROTO((int argc, char **argv));
 int release PROTO((int argc, char **argv));
@@ -140,6 +141,8 @@ const struct cmd
     CMD_ENTRY("log",      "lo",    "rlog",    cvslog,    client_log),
 #ifdef CVS_LOGIN
     CMD_ENTRY("login",    "logon", "lgn",     login,     login),
+    CMD_ENTRY("connect",  "conn",  "con",     connect_to_pserver, \
+                                                         connect_to_pserver),
 #endif
     CMD_ENTRY("rdiff",    "patch", "pa",      patch,     client_rdiff),
     CMD_ENTRY("release",  "re",    "rel",     release,   client_release),
@@ -195,6 +198,7 @@ static const char *const usg[] =
     "        log          Prints out 'rlog' information for files\n",
 #ifdef CVS_LOGIN
     "        login        Prompt for password for authenticating server.\n",
+    "        connect      Connect to the authenticating server.\n",
 #endif
     "        rdiff        'patch' format diffs between releases\n",
     "        release      Indicate that a Module is no longer in use\n",
@@ -372,7 +376,7 @@ main (argc, argv)
 #endif
 	    case '?':
 	    default:
-		usage (usg);
+                usage (usg);
 	}
     }
 
@@ -485,55 +489,68 @@ error 0 %s: no such user\n", user);
 
 #ifdef CVS_LOGIN
 #ifdef SERVER_SUPPORT
-    else if (strcmp (argv[0], "pserver") == 0)
+
+    if (strcmp (argv[0], "pserver") == 0)
       {
+        /* If we were invoked this way, then stdin comes from the
+           client and stdout/stderr writes to it. */
+        int c;
+        while ((c = getc (stdin)) != EOF && c != '*')
+          {
+            printf ("%c", toupper (c));
+            fflush (stdout);
+          }
+        fclose (stdout);
+        exit (0);
+
         /* todo:
          * Here, `user' will have to gotten somehow, and looked up in
          * CVSROOT/passwd or else /etc/passwd.
          */
-	int len;
-	char user[ANAME_SZ];
-	struct passwd *pw;
-
-        /* user = somehow_get_username (); */
-
-	pw = getpwnam (user);
-	if (pw == NULL)
-          {
-	    printf ("E Fatal error, aborting.\n"
-                    "error 0 %s: no such user\n", user);
-	    exit (1);
-	}
-
-	initgroups (pw->pw_name, pw->pw_gid);
-	setgid (pw->pw_gid);
-	setuid (pw->pw_uid);
-	/* Inhibit access by randoms.  Don't want people randomly
-	   changing our temporary tree before we check things in.  */
-	umask (077);
-
+        {
+          int len;
+          char user[PATH_MAX];
+          struct passwd *pw;
+          
+          /* user = somehow_get_username (); */
+          
+          pw = getpwnam (user);
+          if (pw == NULL)
+            {
+              printf ("E Fatal error, aborting.\n"
+                      "error 0 %s: no such user\n", user);
+              exit (1);
+            }
+          
+          initgroups (pw->pw_name, pw->pw_gid);
+          setgid (pw->pw_gid);
+          setuid (pw->pw_uid);
+          /* Inhibit access by randoms.  Don't want people randomly
+             changing our temporary tree before we check things in.  */
+          umask (077);
+          
 #if HAVE_PUTENV
-	/* Set LOGNAME and USER in the environment, in case they are
-           already set to something else.  */
-	{
-	    char *env;
-
-	    env = xmalloc (sizeof "LOGNAME=" + strlen (user));
-	    (void) sprintf (env, "LOGNAME=%s", user);
-	    (void) putenv (env);
-
-	    env = xmalloc (sizeof "USER=" + strlen (user));
-	    (void) sprintf (env, "USER=%s", user);
-	    (void) putenv (env);
-	}
+          /* Set LOGNAME and USER in the environment, in case they are
+             already set to something else.  */
+          {
+            char *env;
+            
+            env = xmalloc (sizeof "LOGNAME=" + strlen (user));
+            (void) sprintf (env, "LOGNAME=%s", user);
+            (void) putenv (env);
+            
+            env = xmalloc (sizeof "USER=" + strlen (user));
+            (void) sprintf (env, "USER=%s", user);
+            (void) putenv (env);
+          }
 #endif
-	/* Pretend we were invoked as a plain server.  */
-	argv[0] = "server";
+          /* Pretend we were invoked as a plain server.  */
+          argv[0] = "server";
+        }
       }
 
 #endif /* SERVER_SUPPORT */
 #endif /* CVS_LOGIN */
-
 
 #ifdef CVSADM_ROOT
     /*

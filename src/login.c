@@ -8,6 +8,9 @@
  */
 
 #include "cvs.h"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #ifdef CVS_LOGIN   /* This covers the rest of the file. */
 
@@ -20,7 +23,7 @@ USE(rcsid);
 #define CVS_PASSWORD_FILE ".cvspass"
 #endif
 
-/* Prompt for a password, and store it in ~/.cvspass.
+/* Prompt for a password, and store it in the file "CVS/.cvspass".
  *
  * Because the user might be accessing multiple repositories, with
  * different passwords for each one, the format of ~/.cvspass is:
@@ -169,6 +172,58 @@ login (argc, argv)
 /* todo: "cvs logout" could erase an entry from the file.
  * But to what purpose?
  */
+
+
+
+void
+init_sockaddr (struct sockaddr_in *name,
+               const char *hostname,
+               unsigned short int port)
+{
+  struct hostent *hostinfo;
+  
+  name->sin_family = AF_INET;
+  name->sin_port = htons (port);
+  hostinfo = gethostbyname (hostname);
+  if (hostinfo == NULL)
+    {
+      fprintf (stderr, "Unknown host %s.\n", hostname);
+      exit (EXIT_FAILURE);
+    }
+  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+}
+
+
+
+void
+connect_to_pserver (argc, argv)
+{
+  int sock;
+  struct hostent *host;
+  struct sockaddr_in client_sai;
+  char *test_str = "this is a test\n";
+  char read_buf[1];
+  int i, len;
+
+  sock = socket (AF_INET, SOCK_STREAM, 0);
+  if (sock == -1)
+    {
+      fprintf (stderr, "socket() failed\n");
+      exit (1);
+    }
+  init_sockaddr (&client_sai, "floss.cyclic.com", 2401);
+
+  connect (sock, (struct sockaddr *) &client_sai, sizeof (client_sai));
+
+  len = write (sock, test_str, strlen (test_str));
+  printf ("+++ len written: %d\n", len);
+
+  while (read (sock, read_buf, 1) > 0)
+    {
+      printf ("| %c", read_buf[0]);
+      fflush (stdout);
+    }
+}
 
 #endif /* CVS_LOGIN from beginning of file. */
 
