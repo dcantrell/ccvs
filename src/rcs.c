@@ -834,8 +834,7 @@ RCS_getversion (rcs, tag, date, force_tag_match)
     int force_tag_match;
 {
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return ((char *) NULL);
+    assert (rcs != NULL);
 
     if (tag && date)
     {
@@ -882,8 +881,7 @@ RCS_gettag (rcs, symtag, force_tag_match)
     char *tag = symtag;
 
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return ((char *) NULL);
+    assert (rcs != NULL);
 
     /* XXX this is probably not necessary, --jtc */
     if (rcs->flags & PARTIAL) 
@@ -1217,8 +1215,7 @@ RCS_getbranch (rcs, tag, force_tag_match)
     char *cp;
 
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return ((char *) NULL);
+    assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs);
@@ -1329,16 +1326,14 @@ RCS_head (rcs)
     RCSNode *rcs;
 {
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return ((char *) NULL);
-
-    if (rcs->branch)
-	return (RCS_getbranch (rcs, rcs->branch, 1));
+    assert (rcs != NULL);
 
     /*
      * NOTE: we call getbranch with force_tag_match set to avoid any
      * possibility of recursion
      */
+    if (rcs->branch)
+	return (RCS_getbranch (rcs, rcs->branch, 1));
     else
 	return (xstrdup (rcs->head));
 }
@@ -1359,8 +1354,7 @@ RCS_getdate (rcs, date, force_tag_match)
     RCSVers *vers = NULL;
 
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return ((char *) NULL);
+    assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs);
@@ -1532,8 +1526,7 @@ RCS_getrevtime (rcs, rev, date, fudge)
     RCSVers *vers;
 
     /* make sure we have something to look at... */
-    if (rcs == NULL)
-	return (revdate);
+    assert (rcs != NULL);
 
     if (rcs->flags & PARTIAL)
 	RCS_reparsercsfile (rcs);
