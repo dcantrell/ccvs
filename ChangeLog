@@ -1,3 +1,13 @@
+2003-10-01  Derek Price  <derek@ximbiot.com>
+
+	* configure.in: Remove call to AC_TYPE_SIZE_T since size_t can be
+	assumed via our C89 assumption of stddef.h.  Don't check for errno.h
+	or string.h.  We are assuming these headers.
+	* HACKING (Portability): Add a few more notes on our header assumptions
+	based on some comments from Paul Eggert <eggert@cs.ucla.edu> on the
+	GNULIB list.
+	* config.h.in, configure.in: Regenerated.
+
 2003-09-30  Derek Price  <derek@ximbiot.com>
 
 	Provide an atexit() function on systems which provide on_exit() but not
