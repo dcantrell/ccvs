@@ -46,8 +46,8 @@ Checkin (int type, struct file_info *finfo, char *rev, char *tag,
      */
     assert (finfo->rcs != NULL);
 
-    switch (RCS_checkin (finfo->rcs, finfo->file, message, rev,
-                         RCS_FLAGS_KEEPFILE))
+    switch (RCS_checkin (finfo->rcs, finfo->update_dir, finfo->file, message,
+			 rev, RCS_FLAGS_KEEPFILE))
     {
 	case 0:			/* everything normal */
 

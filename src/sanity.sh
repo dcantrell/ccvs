@@ -2433,7 +2433,7 @@ ${CPROG}"' \[commit aborted\]: correct above errors first!' \
 ${SPROG} "'\[tag aborted\]: correct the above errors first!'
 	  cd ../..
 	  dotest basica-5 "${testcvs} -q ci -m add-it" \
-"$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+"$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
 initial revision: 1\.1"
 	  dotest_fail basica-5a \
 	    "${testcvs} -q tag BASE sdir/ssdir/ssfile" \
@@ -2478,7 +2478,7 @@ retrieving revision 1\.1
 diff -c -C3isacrowd -r1\.1 ssfile
 ${SPROG} diff: invalid context length argument"
 	  dotest basica-7 "${testcvs} -q ci -m modify-it" \
-"$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  ssfile
+"$CVSROOT_DIRNAME/first-dir/sdir/ssdir/ssfile,v  <--  sdir/ssdir/ssfile
 new revision: 1\.2; previous revision: 1\.1"
 	  dotest_fail basica-nonexist "${testcvs} -q ci nonexist" \
 "${CPROG}"' commit: nothing known about `nonexist'\''
@@ -2738,19 +2738,19 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 ${CPROG} commit: but CVS uses CVS for its own purposes; skipping CVS directory"
 	  cd ..
 	  dotest basicb-5 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/Emptydir/sfile1,v  <--  sfile1
+"$CVSROOT_DIRNAME/first-dir/Emptydir/sfile1,v  <--  Emptydir/sfile1
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/sdir2/sfile2,v  <--  sfile2
+$CVSROOT_DIRNAME/first-dir/sdir2/sfile2,v  <--  sdir2/sfile2
 initial revision: 1\.1"
 	  echo sfile1 develops >Emptydir/sfile1
 	  dotest basicb-6 "${testcvs} -q ci -m modify" \
-"$CVSROOT_DIRNAME/first-dir/Emptydir/sfile1,v  <--  sfile1
+"$CVSROOT_DIRNAME/first-dir/Emptydir/sfile1,v  <--  Emptydir/sfile1
 new revision: 1\.2; previous revision: 1\.1"
 	  dotest basicb-7 "${testcvs} -q tag release-1" 'T Emptydir/sfile1
 T sdir2/sfile2'
 	  echo not in time for release-1 >sdir2/sfile2
 	  dotest basicb-8 "${testcvs} -q ci -m modify-2" \
-"$CVSROOT_DIRNAME/first-dir/sdir2/sfile2,v  <--  sfile2
+"$CVSROOT_DIRNAME/first-dir/sdir2/sfile2,v  <--  sdir2/sfile2
 new revision: 1\.2; previous revision: 1\.1"
 	  # See if CVS can correctly notice when an invalid numeric
 	  # revision is specified.
@@ -3338,21 +3338,21 @@ new revision: delete; previous revision: 1\.1"
 	  done
 	  cd ../../../../../../../../..
 	  dotest_lit deep-4 "$testcvs -q ci -m add-them first-dir" <<HERE
-$CVSROOT_DIRNAME/first-dir/dir1/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/file1,v  <--  first-dir/dir1/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/file1,v  <--  first-dir/dir1/dir2/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/file1,v  <--  first-dir/dir1/dir2/dir3/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/file1,v  <--  first-dir/dir1/dir2/dir3/dir4/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  first-dir/dir1/dir2/dir3/dir4/dir5/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1
 initial revision: 1.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1,v  <--  first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/dir8/file1
 initial revision: 1.1
 HERE
 
@@ -3395,7 +3395,7 @@ ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest deep-rm2 "${testcvs} -q update -d -P" 'R dir7/file1'
 	  dotest deep-rm3 "test -d dir7" ''
 	  dotest deep-rm4 "$testcvs -q ci -m rm-it" \
-"$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  file1
+"$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/dir7/file1,v  <--  dir7/file1
 new revision: delete; previous revision: 1\.1"
 	  dotest deep-rm5 "${testcvs} -q update -d -P" ''
 	  dotest_fail deep-rm6 "test -d dir7" ''
@@ -3409,9 +3409,9 @@ ${SPROG} remove: Removing dir5/dir6
 ${SPROG} remove: scheduling .dir5/dir6/file1. for removal
 ${SPROG} remove: use .${SPROG} commit. to remove these files permanently"
 	  dotest deep-rm8 "${testcvs} -q ci -m rm-it" \
-"$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  file1
+"$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/file1,v  <--  dir5/file1
 new revision: delete; previous revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/dir3/dir4/dir5/dir6/file1,v  <--  dir5/dir6/file1
 new revision: delete; previous revision: 1\.1"
 	  dotest deep-rm9 "${testcvs} -q update -d -P" ''
 	  dotest_fail deep-rm10 "test -d dir5"
@@ -3551,17 +3551,17 @@ File: file7            	Status: Locally Added
 #		fi
 
 		dotest basic2-8 "${testcvs} -q ci -m 'second dive' first-dir" \
-"$CVSROOT_DIRNAME/first-dir/file6,v  <--  file6
+"$CVSROOT_DIRNAME/first-dir/file6,v  <--  first-dir/file6
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/file7,v  <--  file7
+$CVSROOT_DIRNAME/first-dir/file7,v  <--  first-dir/file7
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/file6,v  <--  file6
+$CVSROOT_DIRNAME/first-dir/dir1/file6,v  <--  first-dir/dir1/file6
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/file7,v  <--  file7
+$CVSROOT_DIRNAME/first-dir/dir1/file7,v  <--  first-dir/dir1/file7
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/file6,v  <--  file6
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/file6,v  <--  first-dir/dir1/dir2/file6
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/dir2/file7,v  <--  file7
+$CVSROOT_DIRNAME/first-dir/dir1/dir2/file7,v  <--  first-dir/dir1/dir2/file7
 initial revision: 1\.1"
 
 		dotest basic2-9 "${testcvs} tag second-dive first-dir" \
@@ -3821,23 +3821,23 @@ File: no file file7		Status: Locally Removed
 "${CPROG} commit: Examining first-dir
 ${CPROG} commit: Examining first-dir/dir1
 ${CPROG} commit: Examining first-dir/dir1/dir2
-${CVSROOT_DIRNAME}/first-dir/file14,v  <--  file14
+${CVSROOT_DIRNAME}/first-dir/file14,v  <--  first-dir/file14
 initial revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/file6,v  <--  file6
+${CVSROOT_DIRNAME}/first-dir/file6,v  <--  first-dir/file6
 new revision: 1\.2; previous revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/file7,v  <--  file7
+${CVSROOT_DIRNAME}/first-dir/file7,v  <--  first-dir/file7
 new revision: delete; previous revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/file14,v  <--  file14
+${CVSROOT_DIRNAME}/first-dir/dir1/file14,v  <--  first-dir/dir1/file14
 initial revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/file6,v  <--  file6
+${CVSROOT_DIRNAME}/first-dir/dir1/file6,v  <--  first-dir/dir1/file6
 new revision: 1\.2; previous revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/file7,v  <--  file7
+${CVSROOT_DIRNAME}/first-dir/dir1/file7,v  <--  first-dir/dir1/file7
 new revision: delete; previous revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file14,v  <--  file14
+${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file14,v  <--  first-dir/dir1/dir2/file14
 initial revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file6,v  <--  file6
+${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file6,v  <--  first-dir/dir1/dir2/file6
 new revision: 1\.2; previous revision: 1\.1
-${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file7,v  <--  file7
+${CVSROOT_DIRNAME}/first-dir/dir1/dir2/file7,v  <--  first-dir/dir1/dir2/file7
 new revision: delete; previous revision: 1\.1"
 		dotest basic2-17 "${testcvs} -q update first-dir" ''
 
@@ -4479,7 +4479,7 @@ $output_dead"
 	  dotest parseroot-1 "${testcvs} -q co CVSROOT/modules" \
 "U CVSROOT/modules"
 	  dotest parseroot-2 "${testcvs} -q ci -fmnull-change CVSROOT/modules" \
-"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.2; previous revision: 1\.1
 $SPROG commit: Rebuilding administrative file database"
 
@@ -4572,13 +4572,13 @@ ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest files-10 "${testcvs} -q ci -m test" \
 "$CVSROOT_DIRNAME/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.1; previous revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+$CVSROOT_DIRNAME/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  sdir/ssdir/\.file
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 	  dotest files-11 \
 "${testcvs} commit -m test -f ./.file ./sdir/ssdir/.file" \
 "${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1
-${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \./sdir/ssdir/\.file
 new revision: 1\.1\.2\.2; previous revision: 1\.1\.2\.1"
 	  if $remote; then
 	    # This is a bug, looks like that toplevel_repos cruft in
@@ -4596,33 +4596,26 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	    # local or remote.
 	    dotest files-12-workaround \
 "${testcvs} commit -f -m test sdir/ssdir/.file .file" \
-"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  sdir/ssdir/\.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
 ${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2"
 	  else
 	    dotest files-12 \
 "${testcvs} commit -f -m test ./sdir/ssdir/.file ./.file" \
-"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \./sdir/ssdir/\.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2
 ${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.file
 new revision: 1\.1\.2\.3; previous revision: 1\.1\.2\.2"
 	  fi
 	  dotest files-13 \
 "${testcvs} commit -fmtest ./sdir/../sdir/ssdir/..///ssdir/.file" \
-"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \.file
+"${CVSROOT_DIRNAME}/first-dir/dir/sdir/ssdir/Attic/\.file,v  <--  \./sdir/\.\./sdir/ssdir/\.\.///ssdir/\.file
 new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3"
-	  if $remote; then
-	    dotest files-14 \
+	  dotest files-14 \
 "${testcvs} commit -fmtest ../../first-dir/dir/.file" \
-"${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  .file
+"${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.\./\.\./first-dir/dir/\.file
 new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3"
-	  else
-	    dotest files-14 \
-"${testcvs} commit -fmtest ../../first-dir/dir/.file" \
-"${CVSROOT_DIRNAME}/first-dir/dir/Attic/\.file,v  <--  \.file
-new revision: 1\.1\.2\.4; previous revision: 1\.1\.2\.3"
-	  fi
 
 	  dokeep
 	  cd ../../..
@@ -5124,7 +5117,7 @@ new revision: delete; previous revision: 1\.1\.1\.1"
 	  # Modify "d/bar"
 	  echo foo >d/bar
 	  dotest rdiff2-5 "${testcvs} commit -m Changed d/bar" \
-"${CVSROOT_DIRNAME}/m/d/bar,v  <--  bar
+"${CVSROOT_DIRNAME}/m/d/bar,v  <--  d/bar
 new revision: 1\.2; previous revision: 1\.1"
 	  
 	  # Crash before showing d/bar diffs
@@ -6248,7 +6241,7 @@ File: file5            	Status: Up-to-date
 "${SPROG} add: use .${SPROG} commit. to add this file permanently"
 
 	  dotest rmadd-28 "${testcvs} -q ci -m. sub" \
-"$CVSROOT_DIRNAME/first-dir/sub/subfile,v  <--  subfile
+"$CVSROOT_DIRNAME/first-dir/sub/subfile,v  <--  sub/subfile
 initial revision: 1\.1"
 
 	  # lose the branch
@@ -6273,7 +6266,7 @@ $CVSROOT_DIRNAME/first-dir/file2,v  <--  file2
 new revision: 9\.2; previous revision: 9\.1
 $CVSROOT_DIRNAME/first-dir/file5,v  <--  file5
 new revision: 9\.2; previous revision: 9\.1
-$CVSROOT_DIRNAME/first-dir/sub/subfile,v  <--  subfile
+$CVSROOT_DIRNAME/first-dir/sub/subfile,v  <--  sub/subfile
 new revision: 9\.1; previous revision: 1\.1"
 
 	  if $remote; then
@@ -6602,7 +6595,7 @@ D/sdir////"
 "${SPROG} add: scheduling file .sdir/file1. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest dirs2-5 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/sdir/file1,v  <--  file1
+"$CVSROOT_DIRNAME/first-dir/sdir/file1,v  <--  sdir/file1
 initial revision: 1\.1"
 	  rm -r sdir/CVS
 	  if $remote; then
@@ -6677,7 +6670,7 @@ $QUESTION sdir"
 "${SPROG} remove: scheduling .sdir/file1. for removal
 ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest dirs2-13 "${testcvs} -q ci -m remove" \
-"$CVSROOT_DIRNAME/first-dir/sdir/file1,v  <--  file1
+"$CVSROOT_DIRNAME/first-dir/sdir/file1,v  <--  sdir/file1
 new revision: delete; previous revision: 1\.1"
 	  cd ../../2/first-dir
 	  if $remote; then
@@ -6947,7 +6940,7 @@ initial revision: 1\.1"
 	  dotest branches2-11 "${testcvs} -q ci -madd ." \
 "$CVSROOT_DIRNAME/first-dir/Attic/file2,v  <--  file2
 new revision: 1\.1\.2\.1; previous revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir1/Attic/file3,v  <--  file3
+$CVSROOT_DIRNAME/first-dir/dir1/Attic/file3,v  <--  dir1/file3
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  # Check out the second branch, and update the working
@@ -7288,7 +7281,7 @@ U first-dir/dir1/file3'
 "${SPROG}"' add: scheduling file `dir2/file4'\'' for addition on branch `b1'\''
 '"${SPROG}"' add: use .'"${SPROG}"' commit. to add this file permanently'
 	  dotest branches2-27 "${testcvs} -q commit -madd" \
-"$CVSROOT_DIRNAME/first-dir/dir2/Attic/file4,v  <--  file4
+"$CVSROOT_DIRNAME/first-dir/dir2/Attic/file4,v  <--  dir2/file4
 new revision: 1\.1\.2\.1; previous revision: 1\.1"
 
 	  cd ../../b1b/first-dir
@@ -8790,7 +8783,7 @@ ${SPROG} update: Updating bdir/subdir"
 
 	  # This used to fail in local mode
 	  dotest importc-7 "${testcvs} -q ci -m modify -r wip_test" \
-"$CVSROOT_DIRNAME/first-dir/cdir/cfile,v  <--  cfile
+"$CVSROOT_DIRNAME/first-dir/cdir/cfile,v  <--  cdir/cfile
 new revision: 1\.1\.1\.1\.2\.1; previous revision: 1\.1\.1\.1"
 
 	  # TODO: should also be testing "import -d" when we update
@@ -11322,7 +11315,7 @@ ${SPROG} update: \`file2' is no longer in the repository"
 "${SPROG} add: scheduling file .sdir/sfile. for addition
 ${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest conflicts3-14b "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/sdir/sfile,v  <--  sfile
+"$CVSROOT_DIRNAME/first-dir/sdir/sfile,v  <--  sdir/sfile
 initial revision: 1\.1"
 
 	  cd ../../2/first-dir
@@ -11408,7 +11401,7 @@ C sdir/sfile"
 "${SPROG} remove: scheduling .sdir/sfile. for removal
 ${SPROG} remove: use .${SPROG} commit. to remove this file permanently"
 	  dotest conflicts3-26 "${testcvs} ci -m remove sdir/sfile" \
-"${CVSROOT_DIRNAME}/first-dir/sdir/sfile,v  <--  sfile
+"${CVSROOT_DIRNAME}/first-dir/sdir/sfile,v  <--  sdir/sfile
 new revision: delete; previous revision: 1\.1"
 	  rm -r sdir/CVS
 	  dotest conflicts3-27 "${testcvs} -q update" "${QUESTION} sdir"
@@ -11644,7 +11637,7 @@ U CVSROOT/taginfo
 U CVSROOT/verifymsg'
 	  echo "# made a change" >>CVSROOT/modules
 	  dotest modules-1d "${testcvs} -q ci -m add-modules" \
-"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  cd ..
@@ -11670,7 +11663,7 @@ U CVSROOT/taginfo
 U CVSROOT/verifymsg'
 	  echo "# made a change" >>CVSROOT/modules
 	  dotest modules-2d "${testcvs} -q ci -m add-modules" \
-"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  cd ..
@@ -11699,7 +11692,7 @@ U CVSROOT/taginfo
 U CVSROOT/verifymsg'
 	  echo "# made a change" >>CVSROOT/modules
 	  dotest modules-3g "${testcvs} -q ci -m add-modules" \
-"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 	  cd ../..
@@ -11790,7 +11783,7 @@ infinitealias5 -a infinitealias3/
 bogusalias first-dir/subdir/a -a
 EOF
 	  dotest modules-148 "$testcvs ci -m 'add modules' CVSROOT/modules" \
-"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  modules
+"$CVSROOT_DIRNAME/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 $SPROG commit: Rebuilding administrative file database"
 
@@ -12084,15 +12077,15 @@ A first-dir/amper1
 ${SPROG} checkout: Updating second-dir"
 
 	  if $remote; then
-	    dotest modules2-13 "${testcvs} -q ci -m add-it ampermodule" \
-"$CVSROOT_DIRNAME/first-dir/amper1,v  <--  amper1
+	    dotest modules2-13r "$testcvs -q ci -m add-it ampermodule" \
+"$CVSROOT_DIRNAME/first-dir/amper1,v  <--  ampermodule/first-dir/amper1
 initial revision: 1\.1"
 	  else
 	    # Trying this as above led to a "protocol error" message.
 	    # Work around this bug.
 	    cd ampermodule
-	    dotest modules2-13 "${testcvs} -q ci -m add-it" \
-"$CVSROOT_DIRNAME/first-dir/amper1,v  <--  amper1
+	    dotest modules2-13 "$testcvs -q ci -m add-it" \
+"$CVSROOT_DIRNAME/first-dir/amper1,v  <--  first-dir/amper1
 initial revision: 1\.1"
 	    cd ..
 	  fi
@@ -12422,9 +12415,9 @@ Directory ${CVSROOT_DIRNAME}/first-dir/subdir_long added to the repository"
 	  dotest modules4-7 "${testcvs} -q ci -m add-it" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/subdir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/subdir/file2,v  <--  subdir/file2
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/subdir_long/file3,v  <--  file3
+$CVSROOT_DIRNAME/first-dir/subdir_long/file3,v  <--  subdir_long/file3
 initial revision: 1\.1"
 
 	  cd ..
@@ -12621,7 +12614,7 @@ args: realmodule"
 	    dotest modules5-12 "${testcvs} -q update" ''
 	    echo "change" >>realmodule/a
 	    dotest modules5-13 "${testcvs} -q ci -m." \
-"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  a
+"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  realmodule/a
 new revision: 1\.2; previous revision: 1\.1"
 	  else
 	    dotest modules5-11 "${testcvs} -q co realmodule" \
@@ -12630,7 +12623,7 @@ args: realmodule"
 	    dotest modules5-12 "${testcvs} -q update" ''
 	    echo "change" >>realmodule/a
 	    dotest modules5-13 "${testcvs} -q ci -m." \
-"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  a
+"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  realmodule/a
 new revision: 1\.2; previous revision: 1\.1"
 	  fi
 	  dotest modules5-14 "echo yes | ${testcvs} release -d realmodule" \
@@ -12777,7 +12770,7 @@ args: mydir"
 	    dotest modules5-33 "${testcvs} -q update" ''
 	    echo "change" >>mydir/a
 	    dotest modules5-34 "${testcvs} -q ci -m." \
-"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  a
+"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  mydir/a
 new revision: 1\.3; previous revision: 1\.2"
 	  else
 	    dotest modules5-32 "${testcvs} -q co -d mydir realmodule" \
@@ -12786,7 +12779,7 @@ args: mydir"
 	    dotest modules5-33 "${testcvs} -q update" ''
 	    echo "change" >>mydir/a
 	    dotest modules5-34 "${testcvs} -q ci -m." \
-"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  a
+"$CVSROOT_DIRNAME/first-dir/subdir/a,v  <--  mydir/a
 new revision: 1\.3; previous revision: 1\.2"
 	  fi
 	  dotest modules5-35 "echo yes | ${testcvs} release -d mydir" \
@@ -13167,7 +13160,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  dotest cvsadm-1e "${testcvs} ci -m add-modules" \
 "${CPROG} commit: Examining .
 ${CPROG} commit: Examining CVSROOT
-${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 ${SPROG} commit: Rebuilding administrative file database" \
 "${CPROG} commit: Examining .
@@ -13209,13 +13202,13 @@ ${CPROG} commit: Examining mod2
 ${CPROG} commit: Examining mod2/sub2
 ${CPROG} commit: Examining mod2-2
 ${CPROG} commit: Examining mod2-2/sub2-2
-${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
+${CVSROOT_DIRNAME}/mod1/file1,v  <--  mod1/file1
 initial revision: 1.1
-${CVSROOT_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
+${CVSROOT_DIRNAME}/mod1-2/file1-2,v  <--  mod1-2/file1-2
 initial revision: 1.1
-${CVSROOT_DIRNAME}/mod2/sub2/file2,v  <--  file2
+${CVSROOT_DIRNAME}/mod2/sub2/file2,v  <--  mod2/sub2/file2
 initial revision: 1.1
-${CVSROOT_DIRNAME}/mod2-2/sub2-2/file2-2,v  <--  file2-2
+${CVSROOT_DIRNAME}/mod2-2/sub2-2/file2-2,v  <--  mod2-2/sub2-2/file2-2
 initial revision: 1.1"
 	  # Finished creating the modules -- clean up.
 	  rm -rf CVS mod1 mod1-2 mod2 mod2-2
@@ -14219,7 +14212,7 @@ U dir/dir2/dir2d2/sub2d2/file2"
 
 	  dotest emptydir-2 "${testcvs} ci -m add-modules" \
 "${CPROG} commit: Examining CVSROOT
-${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  modules
+${CVSROOT_DIRNAME}/CVSROOT/modules,v  <--  CVSROOT/modules
 new revision: 1\.[0-9]*; previous revision: 1\.[0-9]*
 ${SPROG} commit: Rebuilding administrative file database" \
 "${CPROG} commit: Examining CVSROOT"
@@ -14241,9 +14234,9 @@ ${SPROG} checkout: Updating moda"
 ${SPROG} add: scheduling file .moda/modasub/filea. for addition
 ${SPROG} add: use \`${SPROG} commit' to add these files permanently"
 	  dotest emptydir-5 "${testcvs} -q ci -m yup" \
-"$CVSROOT_DIRNAME/mod1/file1,v  <--  file1
+"$CVSROOT_DIRNAME/mod1/file1,v  <--  mod1/file1
 initial revision: 1\.1
-${CVSROOT_DIRNAME}/moda/modasub/filea,v  <--  filea
+${CVSROOT_DIRNAME}/moda/modasub/filea,v  <--  moda/modasub/filea
 initial revision: 1\.1"
 	  rm -rf mod1 moda CVS
 	  # End Populate.
@@ -14350,9 +14343,9 @@ ${SPROG} add: use \`${SPROG} commit' to add this file permanently"
 	  dotest abspath-1c "${testcvs} ci -m yup mod1 mod2" \
 "${CPROG} commit: Examining mod1
 ${CPROG} commit: Examining mod2
-${CVSROOT_DIRNAME}/mod1/file1,v  <--  file1
+${CVSROOT_DIRNAME}/mod1/file1,v  <--  mod1/file1
 initial revision: 1.1
-${CVSROOT_DIRNAME}/mod2/file2,v  <--  file2
+${CVSROOT_DIRNAME}/mod2/file2,v  <--  mod2/file2
 initial revision: 1.1"
 	  # Finished creating the module -- clean up.
 	  rm -rf CVS mod1 mod2
@@ -15483,9 +15476,9 @@ ${CPROG} \[add aborted\]: no repository"
 	  # or directory which already is there.
 
 	  dotest errmsg2-17 "${testcvs} -q ci -m checkin" \
-"$CVSROOT_DIRNAME/first-dir/file15,v  <--  file15
+"$CVSROOT_DIRNAME/first-dir/file15,v  <--  first-dir/file15
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/sdir10/ssdir/ssfile,v  <--  ssfile
+$CVSROOT_DIRNAME/first-dir/sdir10/ssdir/ssfile,v  <--  first-dir/sdir10/ssdir/ssfile
 initial revision: 1\.1"
 	  dotest errmsg2-18 "${testcvs} -Q tag test" ''
 
@@ -18445,7 +18438,7 @@ leisure\."
 	  dotest taginfo-newfmt-8c "${testcvs} -q add sdir/file3" \
 "${SPROG} add: use .${SPROG} commit. to add this file permanently"
 	  dotest taginfo-newfmt-8d "${testcvs} -q ci -m added-sdir" \
-"${TESTDIR}/cvsroot/first-dir/sdir/file3,v  <--  file3
+"${TESTDIR}/cvsroot/first-dir/sdir/file3,v  <--  sdir/file3
 initial revision: 1\.1"
 	  dotest taginfo-newfmt-9 "${testcvs} -q tag -b br" \
 "T file 2
@@ -21277,7 +21270,7 @@ $SPROG checkout: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir"
 	  dotest lockfiles-13 "$testcvs -q ci -mconflict first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
-$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  first-dir/sdir/ssdir/file1
 new revision: 1\.2; previous revision: 1\.1"
 
 	  # 4. Read but don't write when read locks are present... (fail
@@ -21320,7 +21313,7 @@ $SPROG \[commit aborted\]: correct above errors first!"
 	  dotest lockfiles-18 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
-$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  first-dir/sdir/ssdir/file1
 new revision: 1\.3; previous revision: 1\.2"
 
 	  # 9. Don't write when write locks are present...
@@ -21330,7 +21323,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest lockfiles-19 "$testcvs -q ci -mnot-up-to-date first-dir" \
 "$SPROG commit: \[[0-9:]*\] waiting for $username's lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
 $SPROG commit: \[[0-9:]*\] obtained lock in $CVSROOT_DIRNAME/first-dir/sdir/ssdir
-$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  file1
+$CVSROOT_DIRNAME/first-dir/sdir/ssdir/file1,v  <--  first-dir/sdir/ssdir/file1
 new revision: 1\.4; previous revision: 1\.3"
 
 	  cd CVSROOT
@@ -21390,7 +21383,7 @@ $SPROG commit: Rebuilding administrative file database"
 	  dotest backuprecover-5 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 initial revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 initial revision: 1\.1"
 	  echo "Line one" >>file1
 	  echo "  is the place" >>file1
@@ -21407,7 +21400,7 @@ initial revision: 1\.1"
 	  dotest backuprecover-6 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.2; previous revision: 1\.1
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.2; previous revision: 1\.1"
 
 	  # Simulate the lazy developer
@@ -21430,7 +21423,7 @@ new revision: 1\.2; previous revision: 1\.1"
 	  dotest backuprecover-8 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.3; previous revision: 1\.2
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.3; previous revision: 1\.2"
 
 	  # Save a backup copy
@@ -21450,7 +21443,7 @@ new revision: 1\.3; previous revision: 1\.2"
 	  dotest backuprecover-9b "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.4; previous revision: 1\.3"
 
 	  # Developer 4 so we can simulate a conflict later...
@@ -21476,7 +21469,7 @@ new revision: 1\.4; previous revision: 1\.3"
 	  dotest backuprecover-12 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.5; previous revision: 1\.4"
 
 	  # developer 3'll do a bit of work that never gets checked in
@@ -21549,7 +21542,7 @@ done" >fixit
 	  dotest backuprecover-19 "${testcvs} -q ci -mrecover/merge" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.4; previous revision: 1\.3
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.4; previous revision: 1\.3"
 
 	  # and we should get a conflict on developer 4's stuff
@@ -21579,7 +21572,7 @@ C dir/file2"
 /^>>>>>>>/d
 s/quit and/be fired so he can/" dir/file2 >tmp; mv tmp dir/file2
 	  dotest backuprecover-21 "${testcvs} -q ci -mrecover/merge" \
-"$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+"$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.5; previous revision: 1\.4"
 
 	  # go back and commit developer 2's stuff to prove it can still be done
@@ -21596,7 +21589,7 @@ Merging differences between 1\.2 and 1\.5 into file2"
 	  dotest backuprecover-23 "${testcvs} -q ci -mtest" \
 "$CVSROOT_DIRNAME/first-dir/file1,v  <--  file1
 new revision: 1\.5; previous revision: 1\.4
-$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  file2
+$CVSROOT_DIRNAME/first-dir/dir/file2,v  <--  dir/file2
 new revision: 1\.6; previous revision: 1\.5"
 
 	  # and restore the data to developer 1
@@ -22081,9 +22074,9 @@ Directory ${CVSROOT_DIRNAME}/second-dir added to the repository"
 ${SPROG} add: scheduling file .second-dir/ab. for addition
 ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  dotest modes3-4 "${testcvs} -q ci -m add" \
-"$CVSROOT_DIRNAME/first-dir/aa,v  <--  aa
+"$CVSROOT_DIRNAME/first-dir/aa,v  <--  first-dir/aa
 initial revision: 1\.1
-$CVSROOT_DIRNAME/second-dir/ab,v  <--  ab
+$CVSROOT_DIRNAME/second-dir/ab,v  <--  second-dir/ab
 initial revision: 1\.1"
 	  modify_repo chmod a= $CVSROOT_DIRNAME/first-dir
 	  if ls ${CVSROOT_DIRNAME}/first-dir >/dev/null 2>&1; then
@@ -26496,9 +26489,9 @@ ${SPROG} add: use \`${SPROG} commit' to add these files permanently"
 "${CPROG} commit: Examining \.
 ${CPROG} commit: Examining mod1-1
 ${CPROG} commit: Examining mod1-2
-${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
+${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  mod1-1/file1-1
 initial revision: 1.1
-${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
+${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  mod1-2/file1-2
 initial revision: 1.1"
 	  cd ..
 	  rm -rf 1
@@ -26522,9 +26515,9 @@ ${SPROG} add: use \`${SPROG} commit' to add these files permanently"
 "${CPROG} commit: Examining \.
 ${CPROG} commit: Examining mod2-1
 ${CPROG} commit: Examining mod2-2
-${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  file2-1
+${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  mod2-1/file2-1
 initial revision: 1.1
-${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  file2-2
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  mod2-2/file2-2
 initial revision: 1.1"
 	  cd ..
 	  rm -rf 1
@@ -26711,16 +26704,16 @@ diff -r1\.1 file2-2
 ${CPROG} commit: Examining mod1-1
 ${CPROG} commit: Examining mod1-2
 ${CPROG} commit: Examining mod2-2/mod1-2
-${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  file1-1
+${CVSROOT1_DIRNAME}/mod1-1/file1-1,v  <--  mod1-1/file1-1
 new revision: 1.2; previous revision: 1.1
-${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  file1-2
+${CVSROOT1_DIRNAME}/mod1-2/file1-2,v  <--  mod1-2/file1-2
 new revision: 1.2; previous revision: 1.1
 ${CPROG} commit: Examining mod1-2/mod2-2
 ${CPROG} commit: Examining mod2-1
 ${CPROG} commit: Examining mod2-2
-${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  file2-1
+${CVSROOT2_DIRNAME}/mod2-1/file2-1,v  <--  mod2-1/file2-1
 new revision: 1.2; previous revision: 1.1
-${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  file2-2
+${CVSROOT2_DIRNAME}/mod2-2/file2-2,v  <--  mod2-2/file2-2
 new revision: 1.2; previous revision: 1.1"
 
 	  dotest multiroot-update-2 "${testcvs} update" \
@@ -27040,16 +27033,16 @@ File: file2-2          	Status: Up-to-date
 ${CPROG} commit: Examining mod1-1
 ${CPROG} commit: Examining mod1-2
 ${CPROG} commit: Examining mod2-2/mod1-2
-${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v  <--  anotherfile1-1
+${CVSROOT1_DIRNAME}/mod1-1/anotherfile1-1,v  <--  mod1-1/anotherfile1-1
 initial revision: 1\.1
-${CVSROOT1_DIRNAME}/mod1-2/anotherfile1-2,v  <--  anotherfile1-2
+${CVSROOT1_DIRNAME}/mod1-2/anotherfile1-2,v  <--  mod2-2/mod1-2/anotherfile1-2
 initial revision: 1\.1
 ${CPROG} commit: Examining mod1-2/mod2-2
 ${CPROG} commit: Examining mod2-1
 ${CPROG} commit: Examining mod2-2
-${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v  <--  anotherfile2-2
+${CVSROOT2_DIRNAME}/mod2-2/anotherfile2-2,v  <--  mod1-2/mod2-2/anotherfile2-2
 initial revision: 1\.1
-${CVSROOT2_DIRNAME}/mod2-1/anotherfile2-1,v  <--  anotherfile2-1
+${CVSROOT2_DIRNAME}/mod2-1/anotherfile2-1,v  <--  mod2-1/anotherfile2-1
 initial revision: 1\.1"
 
 	  dotest multiroot-update-3 "${testcvs} update" \
@@ -27657,9 +27650,9 @@ T dir1/sdir/ssdir/ssfile"
 	  echo "change it" >>dir1/file1
 	  echo "change him too" >>dir1/sdir/sfile
 	  dotest multiroot2-10 "${testcvs} -q ci -m modify" \
-"$TESTDIR/root1/dir1/file1,v  <--  file1
+"$TESTDIR/root1/dir1/file1,v  <--  dir1/file1
 new revision: 1\.2; previous revision: 1\.1
-$TESTDIR/root2/sdir/sfile,v  <--  sfile
+$TESTDIR/root2/sdir/sfile,v  <--  dir1/sdir/sfile
 new revision: 1\.2; previous revision: 1\.1"
 	  dotest multiroot2-11 "${testcvs} -q tag tag2" \
 "T dir1/file1
@@ -27764,9 +27757,9 @@ ${SPROG} add: use .${SPROG} commit. to add these files permanently"
 	  fi
 
 	  dotest multiroot3-9 "${testcvs} -q ci -m add-them" \
-"$TESTDIR/root2/dir2/file2,v  <--  file2
+"$TESTDIR/root2/dir2/file2,v  <--  dir2/file2
 initial revision: 1\.1
-$TESTDIR/root1/dir1/file1,v  <--  file1
+$TESTDIR/root1/dir1/file1,v  <--  dir1/file1
 initial revision: 1\.1"
 
 	  # That this is an error is good - we are asking CVS to do
@@ -29238,7 +29231,7 @@ ${SPROG} \[commit aborted\]: correct above errors first!"
 	  dotest commit-d-3 "$testcvs -q -d $CVSROOT commit -m." \
 "$CVSROOT_DIRNAME/c-d-c/file1,v  <--  file1
 new revision: 1.2; previous revision: 1.1
-$CVSROOT_DIRNAME/c-d-c/subdir/file2,v  <--  file2
+$CVSROOT_DIRNAME/c-d-c/subdir/file2,v  <--  subdir/file2
 new revision: 1.2; previous revision: 1.1"
 
 	  dokeep
