@@ -482,13 +482,15 @@ parse_cvsroot (CVSroot)
 
 
 /* Set up the global CVSroot* variables as if we're using the local
-   repository DIR. */
+   repository DIR.  DIR must point to storage which will last for the
+   rest of the CVS invocation (for example, the caller might malloc it
+   and never free it, or free it just before exiting CVS).  */
 
 void
 set_local_cvsroot (dir)
     char *dir;
 {
-    CVSroot_original = xstrdup (dir);
+    CVSroot_original = dir;
     CVSroot_method = local_method;
     CVSroot_directory = CVSroot_original;
     CVSroot_username = NULL;

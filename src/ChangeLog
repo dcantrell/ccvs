@@ -1,5 +1,8 @@
 1998-09-09  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
+	* root.c (set_local_cvsroot): Move memory allocation from here...
+	* server.c (serve_root): ...to here.  Fixes error handling.
+
 	* root.c (parse_cvsroot): Don't call check_root_consistent;
 	parse_cvsroot is only used for local and client.
 	* root.c (set_local_cvsroot): Move check_root_consistent
