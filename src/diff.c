@@ -150,7 +150,7 @@ diff (argc, argv)
 #endif
     optind = 1;
     while ((c = getopt_long (argc, argv,
-	       "abcdefhilnpqstuwy0123456789BHNQRTC:D:F:I:L:U:V:W:k:r:",
+	       "abcdefhilnpstuwy0123456789BHNRTC:D:F:I:L:U:V:W:k:r:",
 			     longopts, &option_index)) != -1)
     {
 	switch (c)
@@ -159,15 +159,9 @@ diff (argc, argv)
 	    case 'h': case 'i': case 'n': case 'p': case 's': case 't':
 	    case 'u': case 'w': case 'y': case '0': case '1': case '2':
 	    case '3': case '4': case '5': case '6': case '7': case '8':
-	    case '9': case 'B': case 'H': case 'T': case 'Q':
+	    case '9': case 'B': case 'H': case 'T':
 		(void) sprintf (tmp, " -%c", (char) c);
 		(void) strcat (opts, tmp);
-		if (c == 'Q')
-		{
-		    quiet = 1;
-		    really_quiet = 1;
-		    c = 'q';
-		}
 		break;
 	    case 'C': case 'F': case 'I': case 'L': case 'U': case 'V':
 	    case 'W':
@@ -198,9 +192,6 @@ diff (argc, argv)
 		break;
 	    case 'l':
 		local = 1;
-		break;
-	    case 'q':
-		quiet = 1;
 		break;
 	    case 'k':
 		if (options)

@@ -1,3 +1,12 @@
+Fri Jun 28 20:30:48 1996  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* diff.c (diff): Remove -q and -Q command options.  This somehow
+	slipped through the cracks of the general removal of -q and -Q
+	command options on Jul 21 1995.  Note that there is no need to
+	accept and ignore these options in server mode, like there is for
+	some of the commands, because the client has never sent -q and -Q
+	command options for "cvs diff".
+
 Fri Jun 28 16:50:18 1996  Ian Lance Taylor  <ian@cygnus.com>
 
 	* add.c (add): Pass force_tag_match as 1 when calling Version_TS.
