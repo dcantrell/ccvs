@@ -1,3 +1,8 @@
+Fri Sep 22 14:29:31 1995  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* TODO: Remove item about reindenting on the way in and out.
+	wrappers provide this functionality.
+
 Wed Sep 20 14:27:28 1995  Jim Blandy  <jimb@totoro.cyclic.com>
 
         * configure.in: #define the symbols DIFF and GREP to be the paths
