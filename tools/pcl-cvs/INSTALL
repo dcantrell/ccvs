@@ -36,7 +36,7 @@ Installation of the pcl-cvs program
      before proceeding.
 
      *NOTE:* The version of pcl-cvs included with CVS includes a copy
-     of Elib in the sub-directory `elib' under the `contrib/pcl-cvs'
+     of Elib in the sub-directory `elib' under the `contrib/elib'
      directory.
 
   4. Type `make install' in the source directory.  This will
