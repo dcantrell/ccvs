@@ -151,7 +151,10 @@ line2argv (pargc, argv, line)
     char *line;
 {
     char *cp;
-    size_t argv_allocated;
+    /* Could make a case for size_t or some other unsigned type, but
+       we'll stick with int to avoid signed/unsigned warnings when
+       comparing with *pargc.  */
+    int argv_allocated;
 
     /* Small for testing.  */
     argv_allocated = 1;
