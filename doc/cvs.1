@@ -467,60 +467,8 @@ further updates in the same directory will use the same date
 (The \fBhistory\fR command uses this option in a
 slightly different way; see node `history options\(aq in the CVS manual).
 .SP
-.IX "Timezone, in input"
-.IX "Zone, time, in input"
-A wide variety of date formats are supported by
-\fBcvs\fR.  The most standard ones are ISO8601 (from the
-International Standards Organization) and the Internet
-e-mail standard (specified in RFC822 as amended by
-RFC1123).
-.SP
-ISO8601 dates have many variants but a few examples
-are:
-.SP
-.PD 0
-.SP
-.IP "" 4
-1972-09-24
-.IP "" 4
-1972-09-24 20:05
-
-.PD
-.IP "" 2
-.SP
-There are a lot more ISO8601 date formats, and \fBcvs\fR
-accepts many of them, but you probably don\(aqt want to
-hear the \fIwhole\fR long story :-).
-.SP
-In addition to the dates allowed in Internet e-mail
-itself, \fBcvs\fR also allows some of the fields to be
-omitted.  For example:
-.SP
-.PD 0
-.SP
-.IP "" 4
-24 Sep 1972 20:05
-.IP "" 4
-24 Sep
-
-.PD
-.IP "" 2
-.SP
-The date is interpreted as being in the
-local timezone, unless a specific timezone is
-specified.
-.SP
-These two date formats are preferred.  However,
-\fBcvs\fR currently accepts a wide variety of other date
-formats.  They are intentionally not documented here in
-any detail, and future versions of \fBcvs\fR might not
-accept all of them.
-.SP
-One such format is
-\fB\fImonth\fB/\fIday\fB/\fIyear\fB\fR.  This may
-confuse people who are accustomed to having the month
-and day in the other order; \fB1/4/96\fR is January 4,
-not April 1.
+For a complete description of the date formats accepted by \fBcvs\fR,
+see node `Date input formats\(aq in the CVS manual.
 .SP
 Remember to quote the argument to the \fB-D\fR
 flag so that your shell doesn\(aqt interpret spaces as

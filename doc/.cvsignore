@@ -37,4 +37,6 @@ cvsclient.toc
 cvsclient.tp
 cvsclient.txt
 cvsclient.vr
+getdate-cvs.texi
+stamp-gdt
 mkman

@@ -1,3 +1,16 @@
+2004-11-01  Derek Price  <derek@ximbiot.com>
+
+	* .cvsignore: Add stamp-gdt & getdate-cvs.texi.
+	* Makefile.am (EXTRA_DIST): Distribute getdate.texi.
+	(getdate-cvs.texi, stamp-gdt): New targets.
+	(cvs.html, cvs.info, cvs.pdf, cvs.ps, cvs.txt): Depend on
+	getdate-cvs.texi.
+	* cvs.texinfo: Include getdate-cvs.texi.
+	(Common options): Reference new section rather than describing valid
+	dates.
+	* getdate.texi: New file from GNULIB.
+	* mkman.pl:  Ignore include lines.
+
 2004-10-29  Derek Price  <derek@ximbiot.com>
 
 	* cvs.texinfo (Write proxies): Mention PrimaryServer name resolution.
