@@ -13131,6 +13131,10 @@ program trying to use port 2401.  This is AIX's problem
 in the sense that port 2401 is registered for use with
 @sc{cvs}.  I hear that there is an AIX patch available
 to address this problem.
+
+Another good debugging tool is the @samp{-d}
+(debugging) option to inetd.  Consult your system
+documentation for more information.
 @end table
 
 @node Other problems
