@@ -1,3 +1,7 @@
+2005-03-03  Derek Price  <derek@ximbiot.com>
+
+	* mmap-anon.m4, pagealign_alloc.m4: New files from GNULIB.
+
 2005-03-02  Jim Meyering  <jim@meyering.net>
 
 	* closeout.m4, fpending.m4, mbrtowc.m4, quotearg.m4: New from gnulib.
