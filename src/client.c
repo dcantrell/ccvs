@@ -1766,10 +1766,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	}
 	else
 	{
-	    struct stat s;
-	    char *filebuf, *tobuf;
+	    char *filebuf;
 	    size_t filebufsize;
-	    FILE *e;
 	    size_t nread;
 	    char *patchedbuf;
 	    size_t patchedlen;
@@ -1779,50 +1777,12 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 	    if (!isfile (filename))
 	        error (1, 0, "patch original file %s does not exist",
 		       short_pathname);
-	    if (CVS_STAT (filename, &s) < 0)
-	        error (1, errno, "can't stat %s", short_pathname);
-
-	    filebufsize = s.st_size;
-	    filebuf = xmalloc (filebufsize);
-
-	    e = open_file (filename, bin ? FOPEN_BINARY_READ : "r");
-
-	    tobuf = filebuf;
+	    filebuf = NULL;
+	    filebufsize = 0;
 	    nread = 0;
-	    while (1)
-	    {
-		size_t got;
 
-		got = fread (tobuf, 1, filebufsize - (tobuf - filebuf), e);
-		if (ferror (e))
-		    error (1, errno, "can't read %s", short_pathname);
-		nread += got;
-		tobuf += got;
-
-		if (feof (e))
-		    break;
-
-		/* It's probably paranoid to think S.ST_SIZE might be
-                   too small to hold the entire file contents, but we
-                   handle it just in case.  */
-		if (tobuf == filebuf + filebufsize)
-		{
-		    int c;
-		    long off;
-
-		    c = getc (e);
-		    if (c == EOF)
-			break;
-		    off = tobuf - filebuf;
-		    expand_string (&filebuf, &filebufsize, filebufsize + 100);
-		    tobuf = filebuf + off;
-		    *tobuf++ = c;
-		    ++nread;
-		}
-	    }
-
-	    fclose (e);
-
+	    get_file (filename, short_pathname, bin ? FOPEN_BINARY_READ : "r",
+		      &filebuf, &filebufsize, &nread);
 	    /* At this point the contents of the existing file are in
                FILEBUF, and the length of the contents is in NREAD.
                The contents of the patch from the network are in BUF,
@@ -1858,6 +1818,8 @@ update_entries (data_arg, ent_list, short_pathname, filename)
 
 		if (! patch_failed)
 		{
+		    FILE *e;
+
 		    e = open_file (temp_filename,
 				   bin ? FOPEN_BINARY_WRITE : "w");
 		    if (fwrite (patchedbuf, 1, patchedlen, e) != patchedlen)

@@ -1,3 +1,17 @@
+Sat Jul 12 15:21:24 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* import.c, rcs.h (add_rcs_file): New argument key_opt replaces
+	access to global variable keyword_opt.  New arguments desctext and
+	desclen allow one to set the description.  If add_vhead is NULL,
+	then omit a revision, like rcs -i.
+	* import.c (process_import_file), mkmodules.c (init): Change
+	callers.
+	* subr.c, cvs.h (get_file): New function, adapted from code in
+	update_entries.
+	* client.c (update_entries): Call it.
+	* commit.c (checkaddfile): Create new RCS files with add_rcs_file
+	rather than rcs -i.
+
 Fri Jul 11 12:14:54 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (join_file): Handle binary files ourself rather than
