@@ -143,7 +143,8 @@ sub make_config_h
     #==========================================================================
     my $temp_name = "$out_name.tmp";
 
-    open FOUT, "> $temp_name" or die "open error: ", $temp_name;
+    open FOUT, "> $temp_name"
+	or die "error opening ", $temp_name, "for read: $!";
 
     #==========================================================================
     # copy build level configuration append file to output file
