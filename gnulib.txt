@@ -132,3 +132,7 @@ m4/getndelim2.m4
 m4/ssize_t.m4
 
 m4/onceonly_2_57.m4
+lib/gethostname.c
+m4/gethostname.m4
+
+m4/onceonly_2_57.m4
