@@ -14437,8 +14437,11 @@ all uses of @code{cvs import} on the repository will behave as if the
 When specified, and the repository specified by @var{CVSROOT} is not the one
 currently being accessed, then the server will turn itself into a transparent
 proxy to @var{CVSROOT} for write requests.  The @var{hostname} configured as
-part of @var{CVSROOT} must be the same as that returned by the uname command
-on the primary server for this to work.
+part of @var{CVSROOT} must resolve to the same string returned by the
+@command{uname} command on the primary server for this to work.  Host name
+resolution is performed via some combination of @command{named}, a broken out
+line from @file{/etc/hosts}, and the Network Information Service (NIS or YP),
+depending on the configuration of the particular system.
 
 Only the @samp{:ext:} method is
 currently supported for primaries (actually, @samp{:fork:} is supported as

@@ -1,3 +1,7 @@
+2004-10-29  Derek Price  <derek@ximbiot.com>
+
+	* cvs.texinfo (Write proxies): Mention PrimaryServer name resolution.
+
 2004-10-29  Mark D. Baushke  <mdb@cvshome.org>
 
 	* cvs.texinfo (Common options): The -r TAG option works with
