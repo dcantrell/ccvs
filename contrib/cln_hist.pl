@@ -1,7 +1,6 @@
 #! xPERL_PATHx
 # -*-Perl-*-
 #
-# $Id$
 # Contributed by David G. Grubbs <dgg@ksr.com>
 #
 # Clean up the history file.  10 Record types: MAR OFT WUCG

@@ -1,5 +1,4 @@
 #! /bin/sh
-# $Id$
 #
 # descend - walk down a directory tree and execute a command at each node
 

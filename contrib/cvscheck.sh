@@ -1,5 +1,4 @@
 #! /bin/sh
-# $Id$
 #
 # cvscheck - identify files added, changed, or removed 
 #            in CVS working directory

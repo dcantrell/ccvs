@@ -1,7 +1,6 @@
 #! xPERL_PATHx
 # -*-Perl-*-
 #
-#ident	"@(#)cvs/contrib:$Name$:$Id$"
 #
 # Perl filter to handle pre-commit checking of files.  This program
 # records the last directory where commits will be taking place for

@@ -1,8 +1,6 @@
 #! xPERL_PATHx
 # -*-Perl-*-
 #
-# $Id$
-#
 # Access control lists for CVS.  dgg@ksr.com (David G. Grubbs)
 #
 # CVS "commitinfo" for matching repository names, running the program it finds

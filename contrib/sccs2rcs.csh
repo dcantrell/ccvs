@@ -42,8 +42,6 @@
 # ...!harvard!cg-atla!viewlog!kenstir
 #
 # Various hacks made by Brian Berliner before inclusion in CVS contrib area.
-#
-# $Id$
 
 
 #we'll assume the user set up the path correctly
