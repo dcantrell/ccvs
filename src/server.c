@@ -526,7 +526,33 @@ serve_root (arg)
 		     "E Root %s must be an absolute pathname", arg);
 	return;
     }
+
+    /* Sending "Root" twice is illegal.  It would also be nice to
+       check for the other case, in which there is no Root request
+       prior to a request which requires one.
+
+       The other way to handle a duplicate Root requests would be as a
+       request to clear out all state and start over as if it was a
+       new connection.  Doign this would cause interoperability
+       headaches, so it should be a different request, if there is
+       any reason why such a feature is needed.  */
+    if (CVSroot_directory != NULL)
+    {
+	if (alloc_pending (80 + strlen (arg)))
+	    sprintf (pending_error_text,
+		     "E Protocol error: Duplicate Root request, for %s", arg);
+	return;
+    }
+
     set_local_cvsroot (arg);
+
+    if (parse_config (1) < 0)
+    {
+	if (alloc_pending (80))
+	    sprintf (pending_error_text,
+		     "E Error parsing CVSROOT/config file");
+	return;
+    }
 
     path = xmalloc (strlen (CVSroot_directory)
 		    + sizeof (CVSROOTADM)
@@ -4219,8 +4245,6 @@ error ENOMEM Virtual memory exhausted.\n");
        say something like "client apparently supports an option not supported
        by this server" or something like that instead of usage message.  */
     argument_vector[0] = "cvs server";
-
-    server_active = 1;
 
     while (1)
     {

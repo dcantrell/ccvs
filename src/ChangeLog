@@ -1,3 +1,16 @@
+Thu Jun 19 12:16:10 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* server.c (serve_root): Give error on duplicate Root request.
+	Call parse_config.
+	* parseinfo.c, cvs.h (parse_config): New function.
+	* cvs.h (CVSROOTADM_CONFIG): Added.
+	* main.c (main): Set server_active here...
+	* server.c (server): ...not here.  That seems cleaner than
+	strcmp's between command_name and "server" in main.c.
+	* main.c (main): Call parse_config.
+	* main.c, cvs.h (free_Rcsbin): Make global.
+	* mkmodules.c (filelist): Add CVSROOTADM_CONFIG.
+
 Wed Jun 18 11:24:31 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* version.c: Change version number to 1.9.11.

@@ -49,6 +49,9 @@ char *CurDir;
  * Defaults, for the environment variables that are not set
  */
 char *Rcsbin = RCSBIN_DFLT;
+/* Nonzero if Rcsbin points to a malloc'd array which needs to be free'd
+   when we are done with it.  */
+int free_Rcsbin = 0;
 char *Tmpdir = TMPDIR_DFLT;
 char *Editor = EDITOR_DFLT;
 
@@ -332,7 +335,6 @@ main (argc, argv)
     int free_CVSroot = 0;
     int free_Editor = 0;
     int free_Tmpdir = 0;
-    int free_Rcsbin = 0;
 
     int help = 0;		/* Has the user asked for help?  This
 				   lets us support the `cvs -H cmd'
@@ -624,13 +626,14 @@ main (argc, argv)
 	}
 #endif /* AUTH_SERVER_SUPPORT && SERVER_SUPPORT */
 
+	server_active = strcmp (command_name, "server") == 0;
 
 	/* Fiddling with CVSROOT doesn't make sense if we're running
            in server mode, since the client will send the repository
            directory after the connection is made. */
 
 #ifdef SERVER_SUPPORT
-	if (strcmp (command_name, "server") != 0)
+	if (!server_active)
 #endif
 	{
 	    char *CVSADM_Root;
@@ -777,7 +780,7 @@ main (argc, argv)
 	   it is worth the trouble.  */
 
 #ifdef SERVER_SUPPORT
-	if (strcmp (command_name, "server") == 0)
+	if (server_active)
 	    CurDir = xstrdup ("<remote>");
 	else
 #endif
@@ -866,6 +869,25 @@ main (argc, argv)
 	if (use_cvsrc)
 	    read_cvsrc (&argc, &argv, command_name);
 
+	/* Parse the CVSROOT/config file, but only for local.  For the
+	   server, we parse it after we know $CVSROOT.  For the
+	   client, it doesn't get parsed at all, obviously.  The
+	   presence of the parse_config call here is not mean to
+	   predetermine whether CVSROOT/config overrides things from
+	   read_cvsrc and other such places or vice versa.  That sort
+	   of thing probably needs more thought.  */
+	if (1
+#ifdef SERVER_SUPPORT
+	    && !server_active
+#endif
+#ifdef CLIENT_SUPPORT
+	    && !client_active
+#endif
+	    )
+	{
+	    if (parse_config (0) < 0)
+		error (1, 0, "cannot parse CVSROOT/config");
+	}
     } /* end of stuff that gets done if the user DOESN'T ask for help */
 
     err = (*(cm->func)) (argc, argv);

@@ -275,6 +275,12 @@ static const char *const modules_contents[] = {
     NULL
 };
 
+static const char *const config_contents[] = {
+    "# Specify the directory of the RCS binaries (like global option -b)\n",
+    "#RCSBIN=/usr/local/bin\n",
+    NULL
+};
+
 static const struct admin_file filelist[] = {
     {CVSROOTADM_LOGINFO, 
 	"no logging of 'cvs commit' messages is done without a %s file",
@@ -324,6 +330,9 @@ static const struct admin_file filelist[] = {
        they might be using it elsewhere, using a similar password, etc,
        and so it doesn't seem to me like we should be saving old passwords,
        even hashed.  */
+    {CVSROOTADM_CONFIG,
+	 "a %s file configures various behaviors",
+	 config_contents},
     {NULL, NULL}
 };
 

@@ -182,6 +182,7 @@ extern int errno;
 #define CVSROOTADM_READERS	"readers"
 #define CVSROOTADM_WRITERS	"writers"
 #define CVSROOTADM_PASSWD	"passwd"
+#define CVSROOTADM_CONFIG	"config"
 
 #define CVSNULLREPOS		"Emptydir"	/* an empty directory */
 
@@ -354,6 +355,7 @@ typedef enum direnter_type Dtype;
 
 extern char *program_name, *program_path, *command_name;
 extern char *Rcsbin, *Tmpdir, *Editor;
+extern int free_Rcsbin;
 extern int cvsadmin_root;
 extern char *CurDir;
 extern int really_quiet, quiet;
@@ -443,6 +445,8 @@ int pathname_levels PROTO ((char *path));
 
 typedef	int (*CALLPROC)	PROTO((char *repository, char *value));
 int Parse_Info PROTO((char *infofile, char *repository, CALLPROC callproc, int all));
+extern int parse_config PROTO ((int));
+
 typedef	RETSIGTYPE (*SIGCLEANUPPROC)	PROTO(());
 int SIG_register PROTO((int sig, SIGCLEANUPPROC sigcleanup));
 int isdir PROTO((const char *file));
