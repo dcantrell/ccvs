@@ -12201,14 +12201,8 @@ send from the server is logged into
 @item $CVS_SERVER_SLEEP
 Used only for debugging the server side in
 client-server mode.  If set, delays the start of the
-server child process the specified amount of seconds so
-that you can attach to it with a debugger.  This pause
-occurs before forking the child process.
-
-@cindex CVS_SERVER_SLEEP2, environment variable
-@item $CVS_SERVER_SLEEP2
-Similar to @code{CVS_SERVER_SLEEP}, but pauses the
-program just after forking the child process.
+server child process the specified amount of
+seconds so that you can attach to it with a debugger.
 
 @cindex CVS_IGNORE_REMOTE_ROOT, environment variable
 @item $CVS_IGNORE_REMOTE_ROOT

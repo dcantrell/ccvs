@@ -1,3 +1,9 @@
+1998-09-01  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* cvs.texinfo (Environment variables): Revert change regarding
+	CVS_SERVER_SLEEP*; having that kind of debugging code in the main
+	CVS is getting out of hand.
+
 1998-09-01  Noel Cragg  <noel@swish.red-bean.com>
 
 	* cvs.texinfo (Multiple repositories): brief mention that cvs now
