@@ -1,4 +1,9 @@
-Tue Aug 22 10:09:29 1995  Kirby Koster <koster@sctc.com>
+Tue Aug 22 10:09:29 1995  Alexander Dupuy  <dupuy@smarts.com>
+
+	* rcs.c (whitespace): Cast to unsigned char in case char is signed
+	and value is negative.
+
+Tue Aug 22 10:09:29 1995  Kirby Koster  <koster@sctc.com>
 			  and Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* update.c (join_file): If vers->vn_user is NULL, just return.
