@@ -56,17 +56,6 @@ provide a "Option-read-write" request which sends -w, in addition to
 "Global_option -r" which sends -r.
 
 
-* Some people have reported seeing the message "dying gasps from %s
-unexpected" (where %s is the name of your server) when using
-client/server CVS.  One person reported that this had to do with using
-pserver and trying to run a program not in the PATH (which is set up
-by inetd, I think) from one of the *info scripts.  But noone has
-carefully tracked this down (is it caused by something in the server
-writing to stdout or stderr when it shouldn't?  But then wouldn't the
-"dying gasps" message be preceded by "warning: unrecognized response
-`%s' from cvs server"?).
-
-
 * "make remotecheck" sometimes fails on test 187a3 with
     cvs server: in directory .:
     cvs [server aborted]: *PANIC* administration files missing
