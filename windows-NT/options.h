@@ -224,8 +224,3 @@
 #ifndef STDC_HEADERS
 extern void exit ();
 #endif
-
-#ifndef getwd
-extern char *getwd ();
-#endif
-

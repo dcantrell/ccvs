@@ -1,3 +1,8 @@
+Sat Nov 29 22:21:19 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
+
+	* options.h: Remove declaration of getwd; see lib/ChangeLog for
+	rationale.
+
 Fri May 30 22:11:52 1997  Jim Kingdon  <kingdon@harvey.cyclic.com>
 
 	* pwd.c: Remove $Header; we decided to get rid of these some time
