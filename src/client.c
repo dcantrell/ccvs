@@ -2600,6 +2600,11 @@ handle_m (args, len)
     char *args;
     int len;
 {
+    /* In the case where stdout and stderr point to the same place,
+       fflushing stderr will make output happen in the correct order.
+       Often stderr will be line-buffered and this won't be needed,
+       but not always.  */
+    fflush (stderr);
     fwrite (args, len, sizeof (*args), stdout);
     putc ('\n', stdout);
 }
@@ -2609,6 +2614,9 @@ handle_e (args, len)
     char *args;
     int len;
 {
+    /* In the case where stdout and stderr point to the same place,
+       fflushing stdout will make output happen in the correct order.  */
+    fflush (stdout);
     fwrite (args, len, sizeof (*args), stderr);
     putc ('\n', stderr);
 }
