@@ -26,6 +26,10 @@
 #include <sys/socket.h>
 #endif
 
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
+
 #ifdef HAVE_KERBEROS
 #  include <netinet/in.h>
 #  include <krb.h>
@@ -2438,6 +2442,9 @@ error ENOMEM Virtual memory exhausted.\n";
 
     /* If this gives an error, not much we could do.  syslog() it?  */
     write (STDOUT_FILENO, msg, sizeof (msg) - 1);
+#ifdef HAVE_SYSLOG_H
+    syslog (LOG_DAEMON | LOG_ERR, "virtual memory exhausted");
+#endif
     error_exit ();
 }
 
@@ -5724,8 +5731,13 @@ pserver_authenticate_connection ()
     {
 	int on = 1;
 
-	(void) setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
-			   (char *) &on, sizeof on);
+	if (setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
+			   (char *) &on, sizeof on) < 0)
+	{
+#ifdef HAVE_SYSLOG_H
+	    syslog (LOG_DAEMON | LOG_ERR, "error setting KEEPALIVE: %m");
+#endif
+	}
     }
 #endif
 
@@ -5783,6 +5795,9 @@ pserver_authenticate_connection ()
     if (!root_allow_ok (repository))
     {
 	printf ("error 0 %s: no such repository\n", repository);
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE, "login refused for %s", repository);
+#endif
 	goto i_hate_you;
     }
 
@@ -5800,6 +5815,13 @@ pserver_authenticate_connection ()
     free (descrambled_password);
     if (host_user == NULL)
     {
+#ifdef HAVE_SYSLOG_H
+	syslog (LOG_DAEMON | LOG_NOTICE, "login failure (for %s)", repository);
+#ifdef LOG_AUTHPRIV
+        syslog (LOG_AUTHPRIV | LOG_NOTICE, "login failure by %s / %s (for %s)",
+        	username, descrambled_password, repository);
+#endif
+#endif
     i_hate_you:
 	printf ("I HATE YOU\n");
 	fflush (stdout);
@@ -5881,8 +5903,13 @@ error %s getpeername or getsockname failed\n", strerror (errno));
     {
 	int on = 1;
 
-	(void) setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
-			   (char *) &on, sizeof on);
+	if (setsockopt (STDIN_FILENO, SOL_SOCKET, SO_KEEPALIVE,
+			   (char *) &on, sizeof on) < 0)
+	{
+#ifdef HAVE_SYSLOG_H
+	    syslog (LOG_DAEMON | LOG_ERR, "error setting KEEPALIVE: %m");
+#endif
+	}
     }
 #endif
 
